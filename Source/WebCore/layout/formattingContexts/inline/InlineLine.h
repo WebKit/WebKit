@@ -45,6 +45,8 @@ public:
     void initialize(const Vector<InlineItem>& lineSpanningInlineBoxes, bool isFirstFormattedLine);
 
     void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
+    // Reserved for TextOnlyLineBuilder
+    void appendTextFast(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
 
     bool hasContent() const;
     bool hasContentOrListMarker() const;

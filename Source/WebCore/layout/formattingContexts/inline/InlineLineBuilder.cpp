@@ -219,9 +219,6 @@ struct LineCandidate {
         InlineLayoutUnit accumulatedClonedDecorationEnd() const { return m_accumulatedClonedDecorationEnd; }
 
     private:
-        // FIXME: Enable this when we stop feature-matching legacy line layout.
-        bool m_ignoreTrailingLetterSpacing { true };
-
         InlineContentBreaker::ContinuousContent m_continuousContent;
         const InlineItem* m_trailingLineBreak { nullptr };
         const InlineItem* m_trailingWordBreakOpportunity { nullptr };
@@ -241,32 +238,9 @@ inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inl
     if (inlineItem.isBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd())
         return m_continuousContent.append(inlineItem, style, logicalWidth);
 
-    if (inlineItem.isText()) {
-        auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-        // https://www.w3.org/TR/css-text-4/#white-space-phase-2
-        auto isTrailingHangingContent = inlineTextItem.isWhitespace() && TextUtil::shouldTrailingWhitespaceHang(style);
-        auto trimmableWidth = [&]() -> std::optional<InlineLayoutUnit> {
-            if (isTrailingHangingContent)
-                return { };
-            if (inlineTextItem.isFullyTrimmable() || inlineTextItem.isQuirkNonBreakingSpace()) {
-                // Fully trimmable trailing content.
-                return logicalWidth;
-            }
-            // Check for partially trimmable content.
-            if (m_ignoreTrailingLetterSpacing)
-                return { };
-            auto letterSpacing = style.letterSpacing();
-            if (letterSpacing <= 0)
-                return { };
-            ASSERT(logicalWidth > letterSpacing);
-            return letterSpacing;
-        };
-        m_continuousContent.appendTextContent(inlineTextItem, style, logicalWidth, trimmableWidth());
-        // FIXME: Should reset this hanging content when not trailing anymore (probably never happens though).
-        if (isTrailingHangingContent)
-            m_continuousContent.setHangingContentWidth(logicalWidth);
-        return;
-    }
+    if (inlineItem.isText())
+        return m_continuousContent.appendTextContent(downcast<InlineTextItem>(inlineItem), style, logicalWidth);
+
     ASSERT_NOT_REACHED();
 }
 
@@ -340,7 +314,7 @@ LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext,
 {
 }
 
-LineBuilder::LayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, const std::optional<PreviousLine>& previousLine)
+LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, const std::optional<PreviousLine>& previousLine)
 {
     auto previousLineEndsWithLineBreak = !previousLine ? std::nullopt : std::make_optional(previousLine->endsWithLineBreak);
     initialize(lineInput.initialLogicalRect, initialConstraintsForLine(lineInput.initialLogicalRect, previousLineEndsWithLineBreak), lineInput.needsLayoutRange, previousLine);
@@ -366,7 +340,7 @@ LineBuilder::LayoutResult LineBuilder::layoutInlineContent(const LineInput& line
         , { m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), m_lineInitialLogicalRect.left() + m_initialIntrusiveFloatsWidth, m_initialLetterClearGap }
         , { !m_line.isHangingTrailingContentWhitespace(), m_line.hangingTrailingContentWidth() }
         , { computedVisualOrder(m_line), inlineBaseDirection }
-        , { isFirstFormattedLine() ? LayoutResult::IsFirstLast::FirstFormattedLine::WithinIFC : LayoutResult::IsFirstLast::FirstFormattedLine::No, isLastLine }
+        , { isFirstFormattedLine() ? LineLayoutResult::IsFirstLast::FirstFormattedLine::WithinIFC : LineLayoutResult::IsFirstLast::FirstFormattedLine::No, isLastLine }
         , m_line.nonSpanningInlineLevelBoxCount()
         , lineContent.range.isEmpty() ? std::make_optional(m_lineLogicalRect.top() + m_candidateInlineContentEnclosingHeight) : std::nullopt
     };

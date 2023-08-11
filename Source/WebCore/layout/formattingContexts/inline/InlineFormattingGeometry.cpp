@@ -47,7 +47,7 @@ InlineFormattingGeometry::InlineFormattingGeometry(const InlineFormattingContext
 {
 }
 
-InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineBuilder::LayoutResult& lineLayoutResult, const InlineRect& lineLogicalRect, const FloatingContext& floatingContext) const
+InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineLayoutResult& lineLayoutResult, const InlineRect& lineLogicalRect, const FloatingContext& floatingContext) const
 {
     auto didManageToPlaceInlineContentOrFloat = !lineLayoutResult.inlineItemRange.isEmpty();
     if (didManageToPlaceInlineContentOrFloat) {

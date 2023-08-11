@@ -91,7 +91,7 @@ InlineDisplayContentBuilder::InlineDisplayContentBuilder(const InlineFormattingC
     m_initialContaingBlockSize = ceiledIntSize(LayoutSize { initialContainingBlockGeometry.contentBoxWidth(), initialContainingBlockGeometry.contentBoxHeight() });
 }
 
-InlineDisplay::Boxes InlineDisplayContentBuilder::build(const LineBuilder::LayoutResult& lineLayoutResult, const LineBox& lineBox)
+InlineDisplay::Boxes InlineDisplayContentBuilder::build(const LineLayoutResult& lineLayoutResult, const LineBox& lineBox)
 {
     auto boxes = InlineDisplay::Boxes { };
     boxes.reserveInitialCapacity(lineLayoutResult.inlineContent.size() + lineBox.nonRootInlineLevelBoxes().size() + 1);
@@ -440,7 +440,7 @@ void InlineDisplayContentBuilder::appendInlineDisplayBoxAtBidiBoundary(const Box
     });
 }
 
-void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LayoutResult& lineLayoutResult, const LineBox& lineBox, InlineDisplay::Boxes& boxes)
+void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& lineLayoutResult, const LineBox& lineBox, InlineDisplay::Boxes& boxes)
 {
 #ifndef NDEBUG
     auto hasContent = false;
@@ -660,7 +660,7 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
         displayBox.setHasContent();
 }
 
-void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LayoutResult& lineLayoutResult, const LineBox& lineBox, InlineDisplay::Boxes& boxes)
+void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lineLayoutResult, const LineBox& lineBox, InlineDisplay::Boxes& boxes)
 {
     ASSERT(lineLayoutResult.directionality.visualOrderList.size() <= lineLayoutResult.inlineContent.size());
 
@@ -825,7 +825,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LayoutRe
     handleTrailingOpenInlineBoxes();
 }
 
-void InlineDisplayContentBuilder::processFloatBoxes(const LineBuilder::LayoutResult&)
+void InlineDisplayContentBuilder::processFloatBoxes(const LineLayoutResult&)
 {
     // Float boxes are not part of the inline content so we don't construct inline display boxes for them.
     // However box geometry still needs flipping from logical to visual.

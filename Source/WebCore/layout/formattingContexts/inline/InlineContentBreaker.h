@@ -92,7 +92,7 @@ public:
         bool isHangingContent() const { return hangingContentWidth() == logicalWidth(); }
 
         void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
-        void appendTextContent(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalWidth, std::optional<InlineLayoutUnit> trimmableWidth);
+        void appendTextContent(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
         void setHangingContentWidth(InlineLayoutUnit logicalWidth) { m_hangingContentWidth = logicalWidth; }
         void reset();
 

@@ -36,7 +36,7 @@
 namespace WebCore {
 namespace Layout {
 
-LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingContext, const InlineLayoutState& inlineLayoutState, const LineBuilder::LayoutResult& lineLayoutResult)
+LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingContext, const InlineLayoutState& inlineLayoutState, const LineLayoutResult& lineLayoutResult)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_inlineLayoutState(inlineLayoutState)
     , m_lineLayoutResult(lineLayoutResult)

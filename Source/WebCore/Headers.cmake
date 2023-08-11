@@ -1279,6 +1279,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/LayoutUnits.h
     layout/MarginTypes.h
 
+    layout/floats/FloatingState.h
+
     layout/formattingContexts/FormattingConstraints.h
     layout/formattingContexts/FormattingContext.h
 

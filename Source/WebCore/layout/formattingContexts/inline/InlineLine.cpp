@@ -541,6 +541,81 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
         m_trailingSoftHyphenWidth = style.fontCascade().width(TextRun { StringView { style.hyphenString() } });
 }
 
+void Line::appendTextFast(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
+{
+    auto lineHasContent = !m_runs.isEmpty();
+    auto willCollapseCompletely = [&] {
+        if (inlineTextItem.isEmpty())
+            return true;
+        if (!inlineTextItem.isWhitespace() || InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem))
+            return false;
+        return !lineHasContent || m_runs.last().hasCollapsibleTrailingWhitespace();
+    };
+
+    if (willCollapseCompletely())
+        return;
+
+    auto needsNewRun = [&] {
+        if (!lineHasContent)
+            return true;
+        auto& lastRun = m_runs.last();
+        if (lastRun.hasCollapsedTrailingWhitespace())
+            return true;
+        if (&lastRun.layoutBox() != &inlineTextItem.layoutBox())
+            return true;
+        if (inlineTextItem.isZeroWidthSpaceSeparator())
+            return true;
+        if (inlineTextItem.isQuirkNonBreakingSpace() || lastRun.isNonBreakingSpace())
+            return true;
+        return false;
+    }();
+    auto oldContentLogicalWidth = contentLogicalWidth();
+    if (needsNewRun) {
+        auto runLogicalLeft = lastRunLogicalRight();
+        m_runs.append({ inlineTextItem, style, runLogicalLeft, logicalWidth });
+        m_contentLogicalWidth = runLogicalLeft + logicalWidth;
+    } else {
+        auto& lastRun = m_runs.last();
+        ASSERT(lastRun.isText());
+        if (style.letterSpacing() >= 0) {
+            lastRun.expand(inlineTextItem, logicalWidth);
+            m_contentLogicalWidth = lastRun.logicalRight();
+        } else {
+            auto contentWidthWithoutLastTextRun = m_contentLogicalWidth - std::max(0.f, lastRun.logicalWidth());
+            auto lastRunLogicalRight = lastRun.logicalRight();
+            lastRun.expand(inlineTextItem, logicalWidth);
+            // Negative letter spacing should only shorten the content to the boundary of the previous run.
+            m_contentLogicalWidth = std::max(contentWidthWithoutLastTextRun, lastRunLogicalRight + logicalWidth);
+        }
+    }
+
+    m_trailingSoftHyphenWidth = { };
+    auto updateTrimmableStatus = [&] {
+        if (inlineTextItem.isFullyTrimmable()) {
+            auto trimmableWidth = logicalWidth;
+            auto trimmableContentOffset = (contentLogicalWidth() - oldContentLogicalWidth) - trimmableWidth;
+            m_trimmableTrailingContent.addFullyTrimmableContent(m_runs.size() - 1, trimmableContentOffset, trimmableWidth);
+            return true;
+        }
+        m_trimmableTrailingContent.reset();
+        return false;
+    };
+    auto isTrimmable = updateTrimmableStatus();
+
+    auto updateHangingStatus = [&] {
+        auto runHasHangableWhitespaceEnd = !isTrimmable && inlineTextItem.isWhitespace() && TextUtil::shouldTrailingWhitespaceHang(style);
+        if (runHasHangableWhitespaceEnd) {
+            m_hangingContent.setTrailingWhitespace(inlineTextItem.length(), logicalWidth);
+            return;
+        }
+        m_hangingContent.resetTrailingContent();
+    };
+    updateHangingStatus();
+
+    if (inlineTextItem.hasTrailingSoftHyphen())
+        m_trailingSoftHyphenWidth = style.fontCascade().width(TextRun { StringView { style.hyphenString() } });
+}
+
 void Line::appendNonReplacedInlineLevelBox(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit marginBoxLogicalWidth)
 {
     resetTrailingContent();

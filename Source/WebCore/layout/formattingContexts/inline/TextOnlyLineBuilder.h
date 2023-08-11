@@ -1,0 +1,77 @@
+/*
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "AbstractLineBuilder.h"
+#include "FormattingConstraints.h"
+#include "InlineLine.h"
+#include "InlineLineBuilder.h"
+#include "InlineLineTypes.h"
+
+namespace WebCore {
+namespace Layout {
+
+struct TextOnlyLineBreakResult;
+
+class TextOnlyLineBuilder : public AbstractLineBuilder {
+public:
+    TextOnlyLineBuilder(const InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&, std::optional<IntrinsicWidthMode> = { });
+    LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&) final;
+
+    static bool isEligibleForSimplifiedTextOnlyInlineLayout(const ElementBox& root, const FloatingState&, const InlineFormattingState&);
+
+private:
+    InlineItemPosition placeInlineTextContent(const InlineItemRange&);
+    InlineItemPosition placeNonWrappingInlineTextContent(const InlineItemRange&);
+    TextOnlyLineBreakResult handleInlineTextContent(InlineContentBreaker&, const InlineContentBreaker::ContinuousContent&, const InlineItemRange&);
+    void initialize(const InlineItemRange&, const InlineRect& initialLogicalRect, const std::optional<PreviousLine>&);
+    void handleLineEnding(InlineItemPosition, size_t layoutRangeEndIndex);
+    InlineLayoutUnit horizontalAlignmentOffset(bool isLastLine) const;
+    size_t rebuildLine(const InlineItemRange&, const InlineTextItem&);
+
+    bool isFirstFormattedLine() const { return !m_previousLine.has_value(); }
+    std::optional<IntrinsicWidthMode> intrinsicWidthMode() const { return m_intrinsicWidthMode; }
+    bool isInIntrinsicWidthMode() const { return !!intrinsicWidthMode(); }
+
+    const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
+    const ElementBox& root() const;
+
+private:
+    std::optional<PreviousLine> m_previousLine { };
+    std::optional<IntrinsicWidthMode> m_intrinsicWidthMode;
+    const InlineFormattingContext& m_inlineFormattingContext;
+    std::optional<HorizontalConstraints> m_rootHorizontalConstraints;
+
+    Line m_line;
+    InlineRect m_lineLogicalRect;
+    const InlineItems& m_inlineItems;
+    Vector<const InlineTextItem*> m_wrapOpportunityList;
+
+    std::optional<InlineTextItem> m_partialLeadingTextItem;
+};
+
+}
+}

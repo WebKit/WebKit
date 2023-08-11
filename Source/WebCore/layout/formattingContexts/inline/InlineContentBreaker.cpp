@@ -811,8 +811,20 @@ void InlineContentBreaker::ContinuousContent::append(const InlineItem& inlineIte
     }
 }
 
-void InlineContentBreaker::ContinuousContent::appendTextContent(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit logicalWidth, std::optional<InlineLayoutUnit> trimmableWidth)
+void InlineContentBreaker::ContinuousContent::appendTextContent(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
+    // https://www.w3.org/TR/css-text-4/#white-space-phase-2
+    auto isTrailingHangingContent = inlineTextItem.isWhitespace() && TextUtil::shouldTrailingWhitespaceHang(style);
+    if (isTrailingHangingContent)
+        setHangingContentWidth(logicalWidth);
+
+    auto trimmableWidth = [&]() -> std::optional<InlineLayoutUnit> {
+        if (isTrailingHangingContent)
+            return { };
+        if (inlineTextItem.isFullyTrimmable() || inlineTextItem.isQuirkNonBreakingSpace())
+            return logicalWidth;
+        return { };
+    }();
     if (!trimmableWidth) {
         appendToRunList(inlineTextItem, style, logicalWidth);
         resetTrailingTrimmableContent();
