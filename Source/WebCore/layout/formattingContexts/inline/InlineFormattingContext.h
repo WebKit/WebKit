@@ -73,7 +73,7 @@ private:
     void layoutFloatContentOnly(const ConstraintsForInlineContent&, FloatingState&);
     void computeStaticPositionForOutOfFlowContent(const FormattingState::OutOfFlowBoxList&, const ConstraintsForInFlowContent&, const InlineDisplay::Content&, const FloatingState&);
 
-    InlineLayoutUnit computedIntrinsicWidthForConstraint(IntrinsicWidthMode) const;
+    InlineLayoutUnit computedIntrinsicWidthForConstraint(IntrinsicWidthMode, AbstractLineBuilder&) const;
 
     void collectContentIfNeeded();
     InlineRect createDisplayContentForLine(size_t lineIndex, const LineLayoutResult&, const ConstraintsForInlineContent&, const InlineLayoutState&, InlineDisplay::Content&);

@@ -98,6 +98,16 @@ class AbstractLineBuilder {
 public:
     virtual LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&) = 0;
     virtual ~AbstractLineBuilder() { };
+
+    void setIntrinsicWidthMode(IntrinsicWidthMode intrinsicWidthMode) { m_intrinsicWidthMode = intrinsicWidthMode; }
+
+protected:
+    std::optional<IntrinsicWidthMode> intrinsicWidthMode() const { return m_intrinsicWidthMode; }
+    bool isInIntrinsicWidthMode() const { return !!intrinsicWidthMode(); }
+
+private:
+    std::optional<IntrinsicWidthMode> m_intrinsicWidthMode;
+
 };
 
 

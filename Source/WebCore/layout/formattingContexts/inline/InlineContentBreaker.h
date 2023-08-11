@@ -40,8 +40,6 @@ struct CandidateTextRunForBreaking;
 
 class InlineContentBreaker {
 public:
-    InlineContentBreaker(std::optional<IntrinsicWidthMode>);
-
     struct PartialRun {
         size_t length { 0 };
         InlineLayoutUnit logicalWidth { 0 };
@@ -130,8 +128,8 @@ public:
         bool hasWrapOpportunityAtPreviousPosition { false };
     };
     Result processInlineContent(const ContinuousContent&, const LineStatus&);
-    void setHyphenationDisabled() { n_hyphenationIsDisabled = true; }
-
+    void setHyphenationDisabled(bool hyphenationIsDisabled) { n_hyphenationIsDisabled = hyphenationIsDisabled; }
+    void setIsInIntrinsicWidthMode(bool isInIntrinsicWidthMode) { m_isInIntrinsicWidthMode = isInIntrinsicWidthMode; }
     static bool isWrappingAllowed(const ContinuousContent::Run&);
 
 private:
@@ -165,9 +163,10 @@ private:
         AtHyphenationOpportunities     = 1 << 2
     };
     OptionSet<WordBreakRule> wordBreakBehavior(const RenderStyle&, bool hasWrapOpportunityAtPreviousPosition) const;
-    bool isInIntrinsicWidthMode() const { return !!m_intrinsicWidthMode; }
+    bool isInIntrinsicWidthMode() const { return m_isInIntrinsicWidthMode; }
 
-    std::optional<IntrinsicWidthMode> m_intrinsicWidthMode;
+private:
+    bool m_isInIntrinsicWidthMode { false };
     bool n_hyphenationIsDisabled { false };
 };
 

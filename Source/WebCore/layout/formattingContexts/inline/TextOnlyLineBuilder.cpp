@@ -87,9 +87,8 @@ static inline bool consumeTrailingLineBreakIfApplicable(const TextOnlyLineBreakR
     return true;
 }
 
-TextOnlyLineBuilder::TextOnlyLineBuilder(const InlineFormattingContext& inlineFormattingContext, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems, std::optional<IntrinsicWidthMode> intrinsicWidthMode)
-    : m_intrinsicWidthMode(intrinsicWidthMode)
-    , m_inlineFormattingContext(inlineFormattingContext)
+TextOnlyLineBuilder::TextOnlyLineBuilder(const InlineFormattingContext& inlineFormattingContext, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems)
+    : m_inlineFormattingContext(inlineFormattingContext)
     , m_rootHorizontalConstraints(rootHorizontalConstraints)
     , m_line(inlineFormattingContext)
     , m_inlineItems(inlineItems)
@@ -141,8 +140,6 @@ void TextOnlyLineBuilder::initialize(const InlineItemRange& layoutRange, const I
 InlineItemPosition TextOnlyLineBuilder::placeInlineTextContent(const InlineItemRange& layoutRange)
 {
     auto candidateContent = InlineContentBreaker::ContinuousContent { };
-    auto inlineContentBreaker = InlineContentBreaker { intrinsicWidthMode() };
-
     auto isFirstFormattedLine = this->isFirstFormattedLine();
     auto isEndOfLine = false;
 
@@ -151,7 +148,7 @@ InlineItemPosition TextOnlyLineBuilder::placeInlineTextContent(const InlineItemR
     auto placeSingleInlineTextItem = [&] (auto& inlineTextItem) {
         candidateContent.reset();
         appendInlineTextItem(inlineTextItem, isFirstFormattedLine, m_line, candidateContent);
-        result = handleInlineTextContent(inlineContentBreaker, candidateContent, layoutRange);
+        result = handleInlineTextContent(candidateContent, layoutRange);
         nextItemIndex = !result.isRevert ? nextItemIndex + result.committedCount : result.committedCount;
         isEndOfLine = result.isEndOfLine == InlineContentBreaker::IsEndOfLine::Yes || nextItemIndex >= layoutRange.endIndex();
     };
@@ -189,8 +186,6 @@ InlineItemPosition TextOnlyLineBuilder::placeNonWrappingInlineTextContent(const 
     ASSERT(!TextUtil::isWrappingAllowed(root().style()));
 
     auto candidateContent = InlineContentBreaker::ContinuousContent { };
-    auto inlineContentBreaker = InlineContentBreaker { intrinsicWidthMode() };
-
     auto isFirstFormattedLine = this->isFirstFormattedLine();
     auto isEndOfLine = false;
     auto trailingLineBreakIndex = std::optional<size_t> { };
@@ -217,7 +212,7 @@ InlineItemPosition TextOnlyLineBuilder::placeNonWrappingInlineTextContent(const 
         return { *trailingLineBreakIndex + 1, { } };
     }
 
-    auto result = handleInlineTextContent(inlineContentBreaker, candidateContent, layoutRange);
+    auto result = handleInlineTextContent(candidateContent, layoutRange);
     nextItemIndex = layoutRange.startIndex() + result.committedCount;
     if (consumeTrailingLineBreakIfApplicable(result, nextItemIndex, layoutRange.endIndex(), m_line, m_inlineItems))
         ++nextItemIndex;
@@ -228,11 +223,12 @@ InlineItemPosition TextOnlyLineBuilder::placeNonWrappingInlineTextContent(const 
     return placedContentEnd;
 }
 
-TextOnlyLineBreakResult TextOnlyLineBuilder::handleInlineTextContent(InlineContentBreaker& inlineContentBreaker, const InlineContentBreaker::ContinuousContent& candidateContent, const InlineItemRange& layoutRange)
+TextOnlyLineBreakResult TextOnlyLineBuilder::handleInlineTextContent(const InlineContentBreaker::ContinuousContent& candidateContent, const InlineItemRange& layoutRange)
 {
     auto availableWidth = (m_lineLogicalRect.width() + LayoutUnit::epsilon()) - m_line.contentLogicalRight();
     auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidth, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), m_line.hasContentOrListMarker(), !m_wrapOpportunityList.isEmpty() };
-    auto lineBreakingResult = inlineContentBreaker.processInlineContent(candidateContent, lineStatus);
+    m_inlineContentBreaker.setIsInIntrinsicWidthMode(isInIntrinsicWidthMode());
+    auto lineBreakingResult = m_inlineContentBreaker.processInlineContent(candidateContent, lineStatus);
 
     ASSERT(!candidateContent.runs().isEmpty());
 
@@ -347,9 +343,9 @@ const ElementBox& TextOnlyLineBuilder::root() const
     return formattingContext().root();
 }
 
-bool TextOnlyLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(const ElementBox& rootBox, const FloatingState& floatingState, const InlineFormattingState& inlineFormattingState)
+bool TextOnlyLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(const ElementBox& rootBox, const InlineFormattingState& inlineFormattingState, const FloatingState* floatingState)
 {
-    if (!floatingState.isEmpty())
+    if (floatingState && !floatingState->isEmpty())
         return false;
     if (!inlineFormattingState.isNonBidiTextAndForcedLineBreakOnlyContent())
         return false;

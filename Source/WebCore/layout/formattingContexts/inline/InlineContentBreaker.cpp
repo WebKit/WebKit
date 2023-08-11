@@ -108,11 +108,6 @@ static inline std::optional<size_t> firstTextRunIndex(const InlineContentBreaker
     return { };
 }
 
-InlineContentBreaker::InlineContentBreaker(std::optional<IntrinsicWidthMode> intrinsicWidthMode)
-    : m_intrinsicWidthMode(intrinsicWidthMode)
-{
-}
-
 InlineContentBreaker::Result InlineContentBreaker::processInlineContent(const ContinuousContent& candidateContent, const LineStatus& lineStatus)
 {
     ASSERT(!std::isnan(lineStatus.availableWidth));

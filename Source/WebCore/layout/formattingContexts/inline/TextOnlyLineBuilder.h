@@ -34,27 +34,26 @@
 namespace WebCore {
 namespace Layout {
 
+class InlineContentBreaker;
 struct TextOnlyLineBreakResult;
 
 class TextOnlyLineBuilder : public AbstractLineBuilder {
 public:
-    TextOnlyLineBuilder(const InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&, std::optional<IntrinsicWidthMode> = { });
+    TextOnlyLineBuilder(const InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&);
     LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&) final;
 
-    static bool isEligibleForSimplifiedTextOnlyInlineLayout(const ElementBox& root, const FloatingState&, const InlineFormattingState&);
+    static bool isEligibleForSimplifiedTextOnlyInlineLayout(const ElementBox& root, const InlineFormattingState&, const FloatingState* = nullptr);
 
 private:
     InlineItemPosition placeInlineTextContent(const InlineItemRange&);
     InlineItemPosition placeNonWrappingInlineTextContent(const InlineItemRange&);
-    TextOnlyLineBreakResult handleInlineTextContent(InlineContentBreaker&, const InlineContentBreaker::ContinuousContent&, const InlineItemRange&);
+    TextOnlyLineBreakResult handleInlineTextContent(const InlineContentBreaker::ContinuousContent&, const InlineItemRange&);
     void initialize(const InlineItemRange&, const InlineRect& initialLogicalRect, const std::optional<PreviousLine>&);
     void handleLineEnding(InlineItemPosition, size_t layoutRangeEndIndex);
     InlineLayoutUnit horizontalAlignmentOffset(bool isLastLine) const;
     size_t rebuildLine(const InlineItemRange&, const InlineTextItem&);
 
     bool isFirstFormattedLine() const { return !m_previousLine.has_value(); }
-    std::optional<IntrinsicWidthMode> intrinsicWidthMode() const { return m_intrinsicWidthMode; }
-    bool isInIntrinsicWidthMode() const { return !!intrinsicWidthMode(); }
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     const ElementBox& root() const;
@@ -66,6 +65,7 @@ private:
     std::optional<HorizontalConstraints> m_rootHorizontalConstraints;
 
     Line m_line;
+    InlineContentBreaker m_inlineContentBreaker;
     InlineRect m_lineLogicalRect;
     const InlineItems& m_inlineItems;
     Vector<const InlineTextItem*> m_wrapOpportunityList;

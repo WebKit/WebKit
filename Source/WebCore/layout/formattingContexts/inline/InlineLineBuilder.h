@@ -42,7 +42,7 @@ struct LineCandidate;
 
 class LineBuilder : public AbstractLineBuilder {
 public:
-    LineBuilder(const InlineFormattingContext&, const InlineLayoutState&, FloatingState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&, std::optional<IntrinsicWidthMode> = std::nullopt);
+    LineBuilder(const InlineFormattingContext&, const InlineLayoutState&, FloatingState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&);
     virtual ~LineBuilder() { };
     LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&) final;
 
@@ -72,7 +72,7 @@ private:
     };
     enum MayOverConstrainLine : bool { No, Yes };
     bool tryPlacingFloatBox(const Box&, MayOverConstrainLine);
-    Result handleInlineContent(InlineContentBreaker&, const InlineItemRange& needsLayoutRange, const LineCandidate&);
+    Result handleInlineContent(const InlineItemRange& needsLayoutRange, const LineCandidate&);
     std::tuple<InlineRect, bool> adjustedLineRectWithCandidateInlineContent(const LineCandidate&) const;
     size_t rebuildLineWithInlineContent(const InlineItemRange& needsLayoutRange, const InlineItem& lastInlineItemToAdd);
     size_t rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange);
@@ -87,9 +87,6 @@ private:
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft) const;
     bool isLastLineWithInlineContent(const InlineItemRange& lineRange, size_t lastInlineItemIndex, bool hasPartialTrailingContent) const;
-
-    std::optional<IntrinsicWidthMode> intrinsicWidthMode() const { return m_intrinsicWidthMode; }
-    bool isInIntrinsicWidthMode() const { return !!intrinsicWidthMode(); }
 
     TextDirection inlineBaseDirectionForLineContent() const;
     InlineLayoutUnit horizontalAlignmentOffset(bool isLastLine) const;
@@ -108,13 +105,13 @@ private:
 
 private:
     std::optional<PreviousLine> m_previousLine { };
-    std::optional<IntrinsicWidthMode> m_intrinsicWidthMode;
     const InlineFormattingContext& m_inlineFormattingContext;
     const InlineLayoutState& m_inlineLayoutState;
     FloatingState& m_floatingState;
     std::optional<HorizontalConstraints> m_rootHorizontalConstraints;
 
     Line m_line;
+    InlineContentBreaker m_inlineContentBreaker;
     InlineRect m_lineInitialLogicalRect;
     InlineRect m_lineLogicalRect;
     InlineLayoutUnit m_lineMarginStart { 0.f };

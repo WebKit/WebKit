@@ -303,9 +303,8 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
     return boxGeometry.marginBoxWidth();
 }
 
-LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, const InlineLayoutState& inlineLayoutState, FloatingState& floatingState, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems, std::optional<IntrinsicWidthMode> intrinsicWidthMode)
-    : m_intrinsicWidthMode(intrinsicWidthMode)
-    , m_inlineFormattingContext(inlineFormattingContext)
+LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, const InlineLayoutState& inlineLayoutState, FloatingState& floatingState, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems)
+    : m_inlineFormattingContext(inlineFormattingContext)
     , m_inlineLayoutState(inlineLayoutState)
     , m_floatingState(floatingState)
     , m_rootHorizontalConstraints(rootHorizontalConstraints)
@@ -449,7 +448,6 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
 
     auto layoutInlineAndFloatContent = [&] {
         auto lineCandidate = LineCandidate { };
-        auto inlineContentBreaker = InlineContentBreaker { intrinsicWidthMode() };
 
         auto currentItemIndex = needsLayoutRange.startIndex();
         while (currentItemIndex < needsLayoutRange.endIndex()) {
@@ -469,7 +467,7 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
                 }
                 ++placedInlineItemCount;
             } else {
-                auto result = handleInlineContent(inlineContentBreaker, needsLayoutRange, lineCandidate);
+                auto result = handleInlineContent(needsLayoutRange, lineCandidate);
                 auto isEndOfLine = result.isEndOfLine == InlineContentBreaker::IsEndOfLine::Yes;
                 if (!result.committedCount.isRevert) {
                     placedInlineItemCount += result.committedCount.value;
@@ -1137,7 +1135,7 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
     return true;
 }
 
-LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlineContentBreaker, const InlineItemRange& layoutRange, const LineCandidate& lineCandidate)
+LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layoutRange, const LineCandidate& lineCandidate)
 {
     auto& inlineContent = lineCandidate.inlineContent;
     auto& continuousInlineContent = inlineContent.continuousContent();
@@ -1146,8 +1144,8 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
         ASSERT(inlineContent.trailingLineBreak() || inlineContent.trailingWordBreakOpportunity());
         return { inlineContent.trailingLineBreak() ? InlineContentBreaker::IsEndOfLine::Yes : InlineContentBreaker::IsEndOfLine::No };
     }
-    if (shouldDisableHyphenation(root().style(), m_successiveHyphenatedLineCount))
-        inlineContentBreaker.setHyphenationDisabled();
+    m_inlineContentBreaker.setHyphenationDisabled(shouldDisableHyphenation(root().style(), m_successiveHyphenatedLineCount));
+    m_inlineContentBreaker.setIsInIntrinsicWidthMode(isInIntrinsicWidthMode());
 
     // While the floats are not considered to be on the line, they make the line contentful for line breaking.
     auto [lineRectAdjutedWithCandidateContent, candidateContentIsConstrainedByFloat] = adjustedLineRectWithCandidateInlineContent(lineCandidate);
@@ -1253,7 +1251,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
         return { InlineContentBreaker::IsEndOfLine::No };
     };
 
-    auto lineBreakingResult = inlineContentBreaker.processInlineContent(continuousInlineContent, lineStatus);
+    auto lineBreakingResult = m_inlineContentBreaker.processInlineContent(continuousInlineContent, lineStatus);
     auto lineGainsNewContent = lineBreakingResult.action == InlineContentBreaker::Result::Action::Keep || lineBreakingResult.action == InlineContentBreaker::Result::Action::Break; 
     if (lineGainsNewContent) {
         // Sometimes in order to put this content on the line, we have to avoid additional float boxes (when the new content is taller than any previous content and we have vertically stacked floats on this line)
