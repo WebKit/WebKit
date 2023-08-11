@@ -108,7 +108,7 @@ bool updateCurrentUserInterfaceIdiom()
         return UserInterfaceIdiom::Default;
     }();
 
-    if (oldIdiom == newIdiom)
+    if (s_currentUserInterfaceIdiom.load() && oldIdiom == newIdiom)
         return false;
 
     setCurrentUserInterfaceIdiom(newIdiom);
