@@ -291,7 +291,9 @@ public:
 
     static void setCachedProcessSuspensionDelayForTesting(Seconds);
 
+#if !PLATFORM(COCOA)
     void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);
+#endif
     void allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo&);
 
     DeviceIdHashSaltStorage& deviceIdHashSaltStorage() { return m_deviceIdHashSaltStorage.get(); }

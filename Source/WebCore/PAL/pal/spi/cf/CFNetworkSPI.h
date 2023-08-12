@@ -241,8 +241,6 @@ typedef enum {
 #endif
 
 @interface NSURLRequest ()
-+ (NSArray *)allowsSpecificHTTPSCertificateForHost:(NSString *)host;
-+ (void)setAllowsSpecificHTTPSCertificate:(NSArray *)allow forHost:(NSString *)host;
 + (void)setDefaultTimeoutInterval:(NSTimeInterval)seconds;
 - (NSArray *)contentDispositionEncodingFallbackArray;
 - (CFMutableURLRequestRef)_CFURLRequest;

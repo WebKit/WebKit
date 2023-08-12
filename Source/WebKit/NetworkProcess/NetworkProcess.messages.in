@@ -63,7 +63,9 @@ messages -> NetworkProcess LegacyReceiver {
 
     FlushCookies(PAL::SessionID sessionID) -> ()
 
+#if !PLATFORM(COCOA)
     AllowSpecificHTTPSCertificateForHost(PAL::SessionID sessionID, WebCore::CertificateInfo certificate, String host)
+#endif
     AllowTLSCertificateChainForLocalPCMTesting(PAL::SessionID sessionID, WebCore::CertificateInfo certificate)
 
     SetCacheModel(enum:uint8_t WebKit::CacheModel cacheModel)
