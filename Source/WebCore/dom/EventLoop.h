@@ -123,6 +123,7 @@ protected:
     EventLoop();
     void run();
     void clearAllTasks();
+    void stopCurrentRun() { m_isStoppingCurrentRun = true; }
 
     // FIXME: Account for fully-activeness of each document.
     bool hasTasksForFullyActiveDocument() const { return !m_tasks.isEmpty(); }
@@ -140,6 +141,7 @@ private:
     WeakHashSet<EventLoopTaskGroup> m_groupsWithSuspendedTasks;
     WeakHashSet<ScriptExecutionContext> m_associatedContexts;
     bool m_isScheduledToRun { false };
+    bool m_isStoppingCurrentRun { false };
 };
 
 class EventLoopTaskGroup : public CanMakeWeakPtr<EventLoopTaskGroup> {

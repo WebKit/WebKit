@@ -293,6 +293,7 @@ void EventLoop::scheduleToRunIfNeeded()
 void EventLoop::run()
 {
     m_isScheduledToRun = false;
+    m_isStoppingCurrentRun = false;
     bool didPerformMicrotaskCheckpoint = false;
 
     if (!m_tasks.isEmpty()) {
@@ -303,6 +304,11 @@ void EventLoop::run()
             auto* group = task->group();
             if (!group || group->isStoppedPermanently())
                 continue;
+
+            if (m_isStoppingCurrentRun) {
+                remainingTasks.append(WTFMove(task));
+                continue;
+            }
 
             if (group->isSuspended()) {
                 m_groupsWithSuspendedTasks.add(*group);
@@ -318,6 +324,10 @@ void EventLoop::run()
             remainingTasks.append(WTFMove(task));
         m_tasks = WTFMove(remainingTasks);
     }
+
+    // The current run was stopped preemptively. Schedule to run again if there are still tasks to execute.
+    if (m_isStoppingCurrentRun && !m_tasks.isEmpty())
+        scheduleToRunIfNeeded();
 
     // FIXME: Remove this once everything is integrated with the event loop.
     if (!didPerformMicrotaskCheckpoint)

@@ -1070,6 +1070,7 @@ public:
     ExceptionOr<void> queueTask(ScriptExecutionContext&, const String& source, RefPtr<VoidCallback>&&);
     ExceptionOr<void> queueTaskToQueueMicrotask(Document&, const String& source, RefPtr<VoidCallback>&&);
     ExceptionOr<bool> hasSameEventLoopAs(WindowProxy&);
+    void breakToAllowRenderingUpdate();
 
     void markContextAsInsecure();
 

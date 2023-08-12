@@ -217,7 +217,9 @@ void WindowEventLoop::breakToAllowRenderingUpdate()
     // On Mac rendering updates happen in a runloop observer.
     // Avoid running timers and doing other work (like processing asyncronous IPC) until it is completed.
 
-    // FIXME: Also bail out from the task loop in EventLoop::run().
+    for (auto it : windowEventLoopMap())
+        it.value->stopCurrentRun();
+
     threadGlobalData().threadTimers().breakFireLoopForRenderingUpdate();
 
     RunLoop::main().suspendFunctionDispatchForCurrentCycle();
