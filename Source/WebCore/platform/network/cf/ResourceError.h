@@ -55,8 +55,10 @@ public:
     WEBCORE_EXPORT NSError *nsError() const;
     WEBCORE_EXPORT operator NSError *() const;
 
-    bool blockedKnownTracker() const { return !m_blockedTrackerHostName.isEmpty(); }
-    const String& blockedTrackerHostName() const { return m_blockedTrackerHostName; }
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    WEBCORE_EXPORT bool blockedKnownTracker() const;
+    WEBCORE_EXPORT String blockedTrackerHostName() const;
+#endif
 
     WEBCORE_EXPORT ErrorRecoveryMethod errorRecoveryMethod() const;
 
@@ -76,7 +78,6 @@ private:
 
     mutable RetainPtr<NSError> m_platformError;
     bool m_dataIsUpToDate { true };
-    String m_blockedTrackerHostName;
 };
 
 } // namespace WebCore
