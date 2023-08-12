@@ -1110,7 +1110,8 @@ void NetworkResourceLoader::didFailLoading(const ResourceError& error)
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     if (error.blockedKnownTracker()) {
         auto effectiveBlockedURL = error.failingURL();
-        effectiveBlockedURL.setHost(error.blockedTrackerHostName());
+        if (auto hostName = error.blockedTrackerHostName(); !hostName.isEmpty())
+            effectiveBlockedURL.setHost(hostName);
         m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::DidBlockLoadToKnownTracker(m_parameters.webPageProxyID, WTFMove(effectiveBlockedURL)), 0);
     }
 #endif
