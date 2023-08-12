@@ -1465,7 +1465,7 @@ auto FunctionParser<Context>::checkBranchTarget(const ControlType& target) -> Pa
 template<typename Context>
 auto FunctionParser<Context>::unify(const ControlType& controlData) -> PartialResult
 {
-    const TypeDefinition* typeDefinition = controlData.signature(); // just to avoid a weird compiler error with templates at the next line.
+    RefPtr<const TypeDefinition> typeDefinition = controlData.signature(); // just to avoid a weird compiler error with templates at the next line.
     const FunctionSignature* signature = typeDefinition->as<FunctionSignature>();
     WASM_VALIDATOR_FAIL_IF(signature->returnCount() != m_expressionStack.size(), " block with type: ", signature->toString(), " returns: ", signature->returnCount(), " but stack has: ", m_expressionStack.size(), " values");
     for (unsigned i = 0; i < signature->returnCount(); ++i)

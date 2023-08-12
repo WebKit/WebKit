@@ -94,6 +94,7 @@ protected:
     bool WARN_UNUSED_RETURN parseVarInt64(int64_t&);
 
     PartialResult WARN_UNUSED_RETURN parseBlockSignature(const ModuleInformation&, BlockSignature&);
+    PartialResult WARN_UNUSED_RETURN parseReftypeSignature(const ModuleInformation&, BlockSignature&);
     bool WARN_UNUSED_RETURN parseValueType(const ModuleInformation&, Type&);
     bool WARN_UNUSED_RETURN parseRefType(const ModuleInformation&, Type&);
     bool WARN_UNUSED_RETURN parseExternalKind(ExternalKind&);
@@ -310,9 +311,16 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseVarUInt1(uint8_t& result)
 template<typename SuccessType>
 ALWAYS_INLINE typename Parser<SuccessType>::PartialResult Parser<SuccessType>::parseBlockSignature(const ModuleInformation& info, BlockSignature& result)
 {
-    int8_t typeKind;
-    if (peekInt7(typeKind) && isValidTypeKind(typeKind)) {
-        Type type = { static_cast<TypeKind>(typeKind), 0 };
+    int8_t kindByte;
+    if (peekInt7(kindByte) && isValidTypeKind(kindByte)) {
+        TypeKind typeKind = static_cast<TypeKind>(kindByte);
+
+        if (UNLIKELY(Options::useWebAssemblyTypedFunctionReferences())) {
+            if ((isValidHeapTypeKind(typeKind) || typeKind == TypeKind::Ref || typeKind == TypeKind::RefNull))
+                return parseReftypeSignature(info, result);
+        }
+
+        Type type = { typeKind, 0 };
         WASM_PARSER_FAIL_IF(!(isValueType(type) || type.isVoid()), "result type of block: ", makeString(type.kind), " is not a value type or Void");
         result = m_typeInformation.thunkFor(type);
         m_offset++;
@@ -325,6 +333,17 @@ ALWAYS_INLINE typename Parser<SuccessType>::PartialResult Parser<SuccessType>::p
     WASM_PARSER_FAIL_IF(static_cast<size_t>(index) >= info.typeCount(), "Block-like instruction signature index is out of bounds. Index: ", index, " type index space: ", info.typeCount());
 
     result = &info.typeSignatures[index].get();
+    return { };
+}
+
+template<typename SuccessType>
+typename Parser<SuccessType>::PartialResult Parser<SuccessType>::parseReftypeSignature(const ModuleInformation& info, BlockSignature& result)
+{
+    Type resultType;
+    WASM_PARSER_FAIL_IF(!parseValueType(info, resultType), "result type of block is not a valid ref type");
+    Vector<Type, 16> returnTypes { resultType };
+    result = TypeInformation::typeDefinitionForFunction(returnTypes, { });
+
     return { };
 }
 
