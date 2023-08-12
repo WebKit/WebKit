@@ -3184,7 +3184,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nEXP_GENERATED=\"${SCRIPT_OUTPUT_FILE_0}\"\n\n[[ -z \"${EXP_GENERATED}\" ]] && exit 1\n\nif [[ \"${WK_PLATFORM_NAME}\" != \"macosx\" ]]; then\n    EXP_WEBKIT_PLATFORM=\"${SCRIPT_INPUT_FILE_2}\"\nelse\n    EXP_WEBKIT_PLATFORM=\"${SCRIPT_INPUT_FILE_1}\"\nfi\n\ncat \"${SCRIPT_INPUT_FILE_0}\" > \"${EXP_GENERATED}\"\ncat \"${EXP_WEBKIT_PLATFORM}\" >> \"${EXP_GENERATED}\"\n\nif [ \"${WK_PLATFORM_NAME}\" != \"macosx\" ]; then\n    echo >> \"${EXP_GENERATED}\"\n    echo \"# Reexported from migrated WebCore headers\" >> \"${EXP_GENERATED}\"\n    cat \"${SCRIPT_INPUT_FILE_3}\" >> \"${EXP_GENERATED}\"\nfi\n\nif [[ \"${WK_BUILD_FOR_TESTING}\" == \"YES\" ]]; then\n    cat \"${SCRIPT_INPUT_FILE_4}\" >> \"${EXP_GENERATED}\"\nfi\n";
+			shellScript = "set -e\nexec > \"${SCRIPT_OUTPUT_FILE_0}\"\n\ncat \"${SCRIPT_INPUT_FILE_0}\"\n\nif [[ \"${WK_PLATFORM_NAME}\" == \"macosx\" ]]; then\n    cat \"${SCRIPT_INPUT_FILE_1}\"\nelse\n    cat \"${SCRIPT_INPUT_FILE_2}\"\nfi\n\necho\necho \"# Reexported from migrated WebCore headers\"\ncat \"${SCRIPT_INPUT_FILE_3}\"\n\nif [[ \"${WK_BUILD_FOR_TESTING}\" == \"YES\" ]]; then\n    cat \"${SCRIPT_INPUT_FILE_4}\"\nfi\n";
 		};
 		3713F018142905B70036387F /* Check For Inappropriate Objective-C Class Names */ = {
 			isa = PBXShellScriptBuildPhase;

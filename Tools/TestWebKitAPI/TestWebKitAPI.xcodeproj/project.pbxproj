@@ -1063,6 +1063,7 @@
 		DD0EDF8D2798A6AD005152AD /* libgtest.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = F3FC3EE213678B7300126A65 /* libgtest.a */; };
 		DD403D4A28EB932F009B4684 /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD403D4928EB932F009B4684 /* libbmalloc.a */; };
 		DD42949F284BE0B7004D49ED /* WebKit.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = C081224813FC1B0300DC39AE /* WebKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		DD4671652A685F6800E49DBD /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B9FC5B628A52236007570E7 /* WebCore.framework */; };
 		DDAA0E2129E63FED003ECAE2 /* libpas.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDAA0E2029E63FED003ECAE2 /* libpas.a */; };
 		DDAA0E2929E640FA003ECAE2 /* libpas.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDAA0E2029E63FED003ECAE2 /* libpas.a */; };
 		DDADB22628FA094400918467 /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3FC3EE213678B7300126A65 /* libgtest.a */; };
@@ -3684,6 +3685,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1798B7F22431D2B000764BD /* libWebCoreTestSupport.dylib in Frameworks */,
+				DD4671652A685F6800E49DBD /* WebCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
