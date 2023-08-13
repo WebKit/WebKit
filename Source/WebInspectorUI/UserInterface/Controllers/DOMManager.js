@@ -585,6 +585,19 @@ WI.DOMManager = class DOMManager extends WI.Object
         // FIXME: Handle shadow roots.
     }
 
+    // Private
+    listFontStyles() {
+        let cssManager = WI.cssManager;
+        cssManager.loadAllStyleSheets()
+
+        let set = new Set();
+        const nodeStyles = cssManager._nodeStylesMap;
+        for (const nodeStyle in nodeStyles) {
+            const style = nodeStyles[nodeStyle];
+            set.add(style._computedPrimaryFont?.name)
+        }
+    }
+
     get restoreSelectedNodeIsAllowed()
     {
         return this._restoreSelectedNodeIsAllowed;

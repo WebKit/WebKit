@@ -351,6 +351,20 @@ WI.CSSManager = class CSSManager extends WI.Object
         return target.PageAgent.setForcedAppearance.invoke(commandArguments);
     }
 
+    loadAllStyleSheets() {
+        let target = WI.assumingMainTarget();
+        let dom = WI.domManager;
+        target.DOMAgent.requestChildNodes(dom._document.id, -1);
+        const count = Object.keys(dom._idToDOMNode).length;
+        // FIXME: This will only work for the current version and not past versions of iOS and macOS.
+        for (const id in dom._idToDOMNode) {
+            const node = dom._idToDOMNode[id];
+            if (node.nodeType() === Node.ELEMENT_NODE) {
+                this.stylesForNode(node);
+            }
+        }
+    }
+
     set layoutContextTypeChangedMode(layoutContextTypeChangedMode)
     {
         for (let target of WI.targets) {

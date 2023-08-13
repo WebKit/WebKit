@@ -146,6 +146,9 @@ localizedStrings["All Changes"] = "All Changes";
 localizedStrings["All Events @ Event Breakpoint"] = "All Events";
 /* Break (pause) on all exceptions */
 localizedStrings["All Exceptions @ JavaScript Breakpoint"] = "All Exceptions";
+localizedStrings["All Fonts @ Font Details Sidebar Property"] = "All Fonts";
+localizedStrings["All Fonts Properties @ Font Details Sidebar Section"] = "All Fonts Properties";
+localizedStrings["All Fonts ToolTip @ Font Details Sidebar"] = "All Fonts ToolTip";
 /* Break (pause) on all intervals */
 localizedStrings["All Intervals @ Event Breakpoint"] = "All Intervals";
 localizedStrings["All Layers"] = "All Layers";

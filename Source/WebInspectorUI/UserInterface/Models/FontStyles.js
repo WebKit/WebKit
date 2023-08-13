@@ -311,7 +311,6 @@ WI.FontStyles = class FontStyles
                 style.featuresMap.delete(fontFeatureSetting);
             }
         }
-
         return resultProperties;
     }
 

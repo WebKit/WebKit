@@ -35,6 +35,8 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
         this._fontStyles = null;
         this._fontVariationRowsMap = new Map;
         this._basicPropertyRowsMap = new Map;
+        this._allFontsRowsMap = new Map;
+        this._fontNameSet = new Set();
         this._basicPropertyNames = ["font-size", "font-style", "font-weight", "font-stretch"];
 
         this._abortController = new AbortController;
@@ -122,6 +124,18 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
 
             this._fontVariationsGroup.rows = [emptyRow];
         }
+
+        for (let [fontNames, allFontNames] of this._fontNameSet || []) {
+            let allFontsRow = this._allFontsRowsMap.get(fontNames);
+            allFontsRow.value = allFontsRow.value ?? allFontNames.defaultValue;
+        }
+
+        if (!this._allFontsRowsMap.size) {
+            let emptyRow = new WI.DetailsSectionRow(WI.UIString("No additional font axes.", "No additional font axes. @ Font Details Sidebar", "Message shown when there are no additional variation axes to show."));
+            emptyRow.showEmptyMessage();
+
+            this._fontVariationsGroup.rows = [emptyRow];
+        }
     }
 
     // Protected
@@ -182,7 +196,19 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
         }
 
         this._fontVariationsGroup.rows = [...this._fontVariationRowsMap.values()];
-    }
+
+        for (let [fontNames, allFontsNames] of this._allFontsRowsMap) {
+            allFontsNames.element.remove();
+            allFontsNames.removeEventListener(this._handleAllFontsValuesChanged, this);
+
+            this._allFontsRowsMap.delete(fontNames);
+        }
+
+        for (let [fontNames, allFontsNames] of this._fontNameSet) {
+            document.addEventListener("DOMContentLoaded")
+            this._allFontsRowsMap.set(fontNames, allFontsNames);
+            }
+        }
 
     initialLayout()
     {
@@ -220,13 +246,35 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
 
         let fontVariationPropertiesSection = new WI.DetailsSection("font-variation-properties", WI.UIString("Variation Properties", "Variation Properties @ Font Details Sidebar Section", "Section title for font variation properties."), [this._fontVariationsGroup]);
         this.element.appendChild(fontVariationPropertiesSection.element);
+
+<<<<<<< Updated upstream
+        // Font Properties
+        let fontList = this._listAllWebpageFonts();
+        this._allFontsGroup = new WI.DetailsSectionGroup();
+
+        for (let fontName of fontList) {
+            let row = document.createElement("div");
+            row.textContent = fontName;
+            row.style.fontFamily = fontName;
+            this._allFontsGroup.element.appendChild(row);
+        }
+
+        let allFontsSection = new WI.DetailsSection("font-all-fonts-used", "All Fonts", [this._allFontsGroup]);
+=======
+        // All Fonts Properties
+        let allFontsRow = new WI.DetailsSectionSimpleRow(WI.UIString("All Fonts", "All Fonts @ Font Details Sidebar Property", "Font title for the family name of the font."))
+        this._allFontsGroup = new WI.DetailsSectionGroup(allFontsRow);
+
+        let allFontsSection = new WI.DetailsSection("all-fonts-properties", WI.UIString("All Fonts Properties", "All Fonts Properties @ Font Details Sidebar Section", "Section title for all fonts properties."), [this._allFontsGroup]);
+>>>>>>> Stashed changes
+        this.element.appendChild(allFontsSection.element);
     }
 
     // Private
 
     get _fontPropertiesMap()
     {
-        return this._fontStyles?.propertiesMap ?? new Map;   
+        return this._fontStyles?.propertiesMap ?? new Map;
     }
 
     get _fontVariationsMap()
@@ -237,6 +285,15 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
     get _fontFeaturesMap()
     {
         return this._fontStyles?.featuresMap ?? new Map;
+    }
+
+    _updateUIWithFontNames(fontNames) {
+        this._allFontsGroup.clear();
+
+        for (const fontName of fontNames) {
+            let fontNameRow = new WI.DetailsSectionSimpleRow(fontName);
+            this._allFontsGroup.add(fontNameRow);
+        }
     }
 
     _createDetailsSectionRowForProperty(propertyName)
@@ -262,18 +319,18 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
         }
 
         switch (propertyName) {
-        case "font-size":
-            return new WI.DetailsSectionSimpleRow(WI.UIString("Size", "Size @ Font Details Sidebar Property", "Property title for `font-size`."));
-            break;
-        case "font-style":
-            return new WI.DetailsSectionSimpleRow(WI.UIString("Style", "Style @ Font Details Sidebar Property", "Property title for `font-style`."));
-            break;
-        case "font-weight":
-            return new WI.DetailsSectionSimpleRow(WI.UIString("Weight", "Weight @ Font Details Sidebar Property", "Property title for `font-weight` and `wght` variation axis."));
-            break;
-        case "font-stretch":
-            return new WI.DetailsSectionSimpleRow(WI.UIString("Stretch", "Stretch @ Font Details Sidebar Property", "Property title for `font-stretch`."));
-            break;
+            case "font-size":
+                return new WI.DetailsSectionSimpleRow(WI.UIString("Size", "Size @ Font Details Sidebar Property", "Property title for `font-size`."));
+                break;
+            case "font-style":
+                return new WI.DetailsSectionSimpleRow(WI.UIString("Style", "Style @ Font Details Sidebar Property", "Property title for `font-style`."));
+                break;
+            case "font-weight":
+                return new WI.DetailsSectionSimpleRow(WI.UIString("Weight", "Weight @ Font Details Sidebar Property", "Property title for `font-weight` and `wght` variation axis."));
+                break;
+            case "font-stretch":
+                return new WI.DetailsSectionSimpleRow(WI.UIString("Stretch", "Stretch @ Font Details Sidebar Property", "Property title for `font-stretch`."));
+                break;
         }
 
         console.assert(false, "Should not be reached.", propertyName);
@@ -282,12 +339,12 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
     _formatPropertyValue(propertyName, propertyValue)
     {
         switch (propertyName) {
-        case "font-size":
-            return propertyValue;
-        case "font-style":
-            return propertyValue === "normal" ? WI.UIString("Normal", "Normal @ Font Details Sidebar Property Value", "Property value for any `normal` CSS value.") : propertyValue;
-        default:
-            return this._formatAxisValueAsString(propertyValue);
+            case "font-size":
+                return propertyValue;
+            case "font-style":
+                return propertyValue === "normal" ? WI.UIString("Normal", "Normal @ Font Details Sidebar Property Value", "Property value for any `normal` CSS value.") : propertyValue;
+            default:
+                return this._formatAxisValueAsString(propertyValue);
         }
     }
 
@@ -538,6 +595,28 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
         ], WI.UIString("Normal", "Normal @ Font Details Sidebar Property Value", "Property value for any `normal` CSS value."));
     }
 
+    _listAllWebpageFonts() {
+        let allElements = document.querySelectorAll("*");
+        let fontSet = new Set();
+
+        allElements.forEach(element => {
+            let computedStyle = window.getComputedStyle(element);
+
+            let fontFamily = computedStyle.getPropertyValue("font-family");
+
+            let fontNames = fontFamily.split(",").map(name => name.trim());
+
+            fontNames.forEach(name => {
+                fontSet.add(name);
+            });
+        });
+
+        let fontList = Array.from(fontSet);
+        fontList.sort();
+
+        return fontList;
+    }
+
     _featureIsEnabled(property, featureTag, tagNotPresentCondition)
     {
         let featureValue = property.features?.get(featureTag);
@@ -552,4 +631,21 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
         this._debouncedUpdate.delayForTime(100);
         this._fontStyles.writeFontVariation(event.data.tag, event.data.value);
     }
+<<<<<<< Updated upstream
 };
+=======
+
+    _handleAllFontsValuesChanged()
+    {
+        this._skipNextUpdate = true;
+        let dom = WI.domManager;
+
+        this._fontNameSet = dom.listFontStyles();
+
+        let fontNames = Array.from(this._fontNameSet);
+        fontNames.sort();
+
+        this._updateUIWithFontNames(fontNames);
+    }
+};
+>>>>>>> Stashed changes
