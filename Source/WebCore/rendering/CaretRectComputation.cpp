@@ -126,13 +126,13 @@ static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& re
     return currentStyle.isHorizontalWritingMode() ? rect : rect.transposedRect();
 }
 
-static LayoutRect computeCaretRectForLinePosition(const InlineIterator::LineBoxIterator& lineBox, float logicalLeftPosition, CaretRectMode caretRectMode)
+static LayoutRect computeCaretRectForLinePosition(const InlineIterator::LeafBoxIterator& leafBox, float logicalLeftPosition, CaretRectMode caretRectMode)
 {
-    auto& root = lineBox->formattingContextRoot();
-    auto lineSelectionRect = LineSelection::logicalRect(*lineBox);
+    auto& root = leafBox->lineBox()->formattingContextRoot();
+    auto lineSelectionRect = LineSelection::logicalRect(*(leafBox->lineBox()));
 
-    int height = lineSelectionRect.height();
-    int top = lineSelectionRect.y();
+    int height = leafBox->style().metricsOfPrimaryFont().height();
+    int top = leafBox->logicalTop();
 
     // Distribute the caret's width to either side of the offset.
     float left = logicalLeftPosition;
@@ -209,7 +209,7 @@ static LayoutRect computeCaretRectForText(const InlineBoxAndOffset& boxAndOffset
         return snapRectToDevicePixelsWithWritingDirection(selectionRect, textBox->renderer().document().deviceScaleFactor(), textRun.ltr()).maxX();
     };
 
-    return computeCaretRectForLinePosition(textBox->lineBox(), positionForOffset(boxAndOffset.offset), caretRectMode);
+    return computeCaretRectForLinePosition(textBox, positionForOffset(boxAndOffset.offset), caretRectMode);
 }
 
 static LayoutRect computeCaretRectForLineBreak(const InlineBoxAndOffset& boxAndOffset, CaretRectMode caretRectMode)
@@ -219,8 +219,7 @@ static LayoutRect computeCaretRectForLineBreak(const InlineBoxAndOffset& boxAndO
     if (!boxAndOffset.box)
         return { };
 
-    auto lineBox = boxAndOffset.box->lineBox();
-    return computeCaretRectForLinePosition(lineBox, lineBox->contentLogicalLeft(), caretRectMode);
+    return computeCaretRectForLinePosition(boxAndOffset.box, boxAndOffset.box->lineBox()->contentLogicalLeft(), caretRectMode);
 }
 
 static LayoutRect computeCaretRectForSVGInlineText(const InlineBoxAndOffset& boxAndOffset, CaretRectMode)
