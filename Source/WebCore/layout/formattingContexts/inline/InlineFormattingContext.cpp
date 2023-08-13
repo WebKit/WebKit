@@ -127,17 +127,19 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicWidthConstra
         return ceiledLayoutUnit(computedIntrinsicWidthForConstraint(intrinsicWidthMode, inlineBuilder));
     };
 
+    auto intrinsicSizes = IntrinsicWidthConstraints { };
     if (TextOnlyLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineFormattingState)) {
         auto simplifiedLineBuilder = TextOnlyLineBuilder { *this, { }, inlineFormattingState.inlineItems() };
-        return { computedIntrinsicValue(IntrinsicWidthMode::Minimum, simplifiedLineBuilder), computedIntrinsicValue(IntrinsicWidthMode::Maximum, simplifiedLineBuilder) };
+        intrinsicSizes = { computedIntrinsicValue(IntrinsicWidthMode::Minimum, simplifiedLineBuilder), computedIntrinsicValue(IntrinsicWidthMode::Maximum, simplifiedLineBuilder) };
+    } else {
+        auto floatingState = FloatingState { root() };
+        auto parentBlockLayoutState = BlockLayoutState { floatingState, { } };
+        auto inlineLayoutState = InlineLayoutState { parentBlockLayoutState, { } };
+        auto lineBuilder = LineBuilder { *this, inlineLayoutState, floatingState, { }, inlineFormattingState.inlineItems() };
+        intrinsicSizes = { computedIntrinsicValue(IntrinsicWidthMode::Minimum, lineBuilder), computedIntrinsicValue(IntrinsicWidthMode::Maximum, lineBuilder) };
     }
-
-    auto floatingState = FloatingState { root() };
-    auto parentBlockLayoutState = BlockLayoutState { floatingState, { } };
-    auto inlineLayoutState = InlineLayoutState { parentBlockLayoutState, { } };
-    auto lineBuilder = LineBuilder { *this, inlineLayoutState, floatingState, { }, inlineFormattingState.inlineItems() };
-
-    return { computedIntrinsicValue(IntrinsicWidthMode::Minimum, lineBuilder), computedIntrinsicValue(IntrinsicWidthMode::Maximum, lineBuilder) };
+    formattingState().setIntrinsicWidthConstraints(intrinsicSizes);
+    return intrinsicSizes;
 }
 
 LayoutUnit InlineFormattingContext::maximumContentSize()
