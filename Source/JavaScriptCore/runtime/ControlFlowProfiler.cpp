@@ -66,7 +66,7 @@ void ControlFlowProfiler::dumpData() const
     }
 }
 
-Vector<BasicBlockRange> ControlFlowProfiler::getBasicBlocksForSourceIDWithoutFunctionRange(SourceID sourceID, VM& vm) const
+Vector<BasicBlockRange> ControlFlowProfiler::getBasicBlocksForSourceIDWithoutFunctionRange(SourceID sourceID, VM&) const
 {
     Vector<BasicBlockRange> result(0);
     auto bucketFindResult = m_sourceIDBuckets.find(sourceID);
