@@ -27,6 +27,8 @@
 
 #include "TaskSource.h"
 #include <wtf/Function.h>
+#include <wtf/Markable.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/RefCounted.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/WeakHashSet.h>
@@ -119,8 +121,12 @@ public:
     void addAssociatedContext(ScriptExecutionContext&);
     void removeAssociatedContext(ScriptExecutionContext&);
 
+    void invalidateNextTimerFiringTimeCache() { m_nextTimerFiringTimeCache = std::nullopt; }
+    Markable<MonotonicTime> nextTimerFiringTime() const;
+
 protected:
     EventLoop();
+    void scheduleToRunIfNeeded();
     void run();
     void clearAllTasks();
 
@@ -128,7 +134,6 @@ protected:
     bool hasTasksForFullyActiveDocument() const { return !m_tasks.isEmpty(); }
 
 private:
-    void scheduleToRunIfNeeded();
     virtual void scheduleToRun() = 0;
     virtual bool isContextThread() const = 0;
 
@@ -140,6 +145,7 @@ private:
     WeakHashSet<EventLoopTaskGroup> m_groupsWithSuspendedTasks;
     WeakHashSet<ScriptExecutionContext> m_associatedContexts;
     bool m_isScheduledToRun { false };
+    mutable Markable<MonotonicTime> m_nextTimerFiringTimeCache;
 };
 
 class EventLoopTaskGroup : public CanMakeWeakPtr<EventLoopTaskGroup> {

@@ -1232,6 +1232,7 @@ http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Skip ]
 # Only supported on CF (Apple) WebKit2 ports for now.
 requestidlecallback [ Skip ]
 imported/w3c/web-platform-tests/requestidlecallback [ Skip ]
+http/tests/eventloop/idle-callback-not-affected-by-timers-in-cross-origin.html [ Skip ]
 
 # Only supported in WebKit2.
 http/wpt/cross-origin-resource-policy/ [ Skip ]

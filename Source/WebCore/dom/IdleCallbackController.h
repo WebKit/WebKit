@@ -46,6 +46,7 @@ public:
     void removeIdleCallback(int);
 
     void startIdlePeriod();
+    bool isEmpty() { return m_idleRequestCallbacks.isEmpty() && m_runnableIdleCallbacks.isEmpty(); }
 
 private:
     void queueTaskToStartIdlePeriod();

@@ -158,21 +158,52 @@ bool WindowEventLoop::shouldEndIdlePeriod()
 
 MonotonicTime WindowEventLoop::computeIdleDeadline()
 {
+    auto minTime = m_lastIdlePeriodStartTime + 50_ms;
+
+    auto timerTime = nextTimerFiringTime();
+    if (timerTime && *timerTime < minTime)
+        minTime = *timerTime;
+
     if (!m_pagesWithRenderingOpportunity.isEmptyIgnoringNullReferences()) {
-        MonotonicTime minRenderingUpdateTime = MonotonicTime::infinity();
         for (auto it : m_pagesWithRenderingOpportunity) {
-            if (it.value < minRenderingUpdateTime)
-                minRenderingUpdateTime = it.value;
+            if (it.value < minTime)
+                minTime = it.value;
         }
-        return minRenderingUpdateTime;
     }
-    return m_lastIdlePeriodStartTime + 50_ms;
+
+    return minTime;
 }
 
 void WindowEventLoop::didReachTimeToRun()
 {
     Ref protectedThis { *this }; // Executing tasks may remove the last reference to this WindowEventLoop.
     run();
+
+    if (hasTasksForFullyActiveDocument() || !microtaskQueue().isEmpty())
+        return;
+
+    bool hasIdleCallbacks = false;
+    forEachAssociatedContext([&](ScriptExecutionContext& context) {
+        RefPtr document = dynamicDowncast<Document>(context);
+        if (!document)
+            return;
+        auto* idleCallbackController = document->idleCallbackController();
+        if (!idleCallbackController)
+            return;
+        hasIdleCallbacks = hasIdleCallbacks || !idleCallbackController->isEmpty();
+    });
+    if (!hasIdleCallbacks)
+        return;
+
+    auto now = MonotonicTime::now();
+
+    auto timerTime = nextTimerFiringTime();
+    if (timerTime && *timerTime <= now + 4_ms) {
+        scheduleToRunIfNeeded();
+        return;
+    }
+
+    opportunisticallyRunIdleCallbacks();
 }
 
 void WindowEventLoop::queueMutationObserverCompoundMicrotask()

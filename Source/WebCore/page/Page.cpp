@@ -1690,7 +1690,11 @@ void Page::scheduleRenderingUpdateInternal()
         renderingUpdateScheduler().scheduleRenderingUpdate();
 
     forEachWindowEventLoop([&](WindowEventLoop& windowEventLoop) {
-        windowEventLoop.didScheduleRenderingUpdate(*this, m_lastRenderingUpdateTimestamp + preferredRenderingUpdateInterval());
+        auto nextRenderingUpdateTime = m_lastRenderingUpdateTimestamp + preferredRenderingUpdateInterval();
+        auto now = MonotonicTime::now();
+        if (nextRenderingUpdateTime < now)
+            nextRenderingUpdateTime = now;
+        windowEventLoop.didScheduleRenderingUpdate(*this, nextRenderingUpdateTime);
     });
 }
 

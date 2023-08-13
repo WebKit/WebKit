@@ -39,6 +39,7 @@ public:
 
     Type type() const { return m_type; }
     EventLoopTaskGroup* group() const { return m_task ? m_task->group() : nullptr; }
+    bool isSuspended() { return m_suspended; }
 
     void stop()
     {
@@ -199,6 +200,7 @@ EventLoopTimerHandle EventLoop::scheduleTask(Seconds timeout, std::unique_ptr<Ev
 
     EventLoopTimerHandle handle { timer };
     m_scheduledTasks.add(timer);
+    invalidateNextTimerFiringTimeCache();
     return handle;
 }
 
@@ -206,6 +208,7 @@ void EventLoop::removeScheduledTimer(EventLoopTimer& timer)
 {
     ASSERT(timer.type() == EventLoopTimer::Type::OneShot);
     m_scheduledTasks.remove(timer);
+    invalidateNextTimerFiringTimeCache();
 }
 
 EventLoopTimerHandle EventLoop::scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, std::unique_ptr<EventLoopTask>&& action)
@@ -220,6 +223,7 @@ EventLoopTimerHandle EventLoop::scheduleRepeatingTask(Seconds nextTimeout, Secon
 
     EventLoopTimerHandle handle { timer };
     m_repeatingTasks.add(timer);
+    invalidateNextTimerFiringTimeCache();
     return handle;
 }
 
@@ -227,6 +231,7 @@ void EventLoop::removeRepeatingTimer(EventLoopTimer& timer)
 {
     ASSERT(timer.type() == EventLoopTimer::Type::Repeating);
     m_repeatingTasks.remove(timer);
+    invalidateNextTimerFiringTimeCache();
 }
 
 void EventLoop::queueMicrotask(std::unique_ptr<EventLoopTask>&& microtask)
@@ -330,6 +335,25 @@ void EventLoop::clearAllTasks()
     m_groupsWithSuspendedTasks.clear();
 }
 
+Markable<MonotonicTime> EventLoop::nextTimerFiringTime() const
+{
+    if (!m_nextTimerFiringTimeCache) {
+        Markable<MonotonicTime> nextFireTime;
+        auto updateResult = [&](auto& tasks) {
+            for (auto& timer : tasks) {
+                if (timer.isSuspended())
+                    continue;
+                if (!nextFireTime || timer.nextFireTime() < *nextFireTime)
+                    nextFireTime = timer.nextFireTime();
+            }
+        };
+        updateResult(m_scheduledTasks);
+        updateResult(m_repeatingTasks);
+        m_nextTimerFiringTimeCache = nextFireTime;
+    }
+    return m_nextTimerFiringTimeCache;
+}
+
 void EventLoopTaskGroup::markAsReadyToStop()
 {
     if (isReadyToStop() || isStoppedPermanently())
@@ -360,6 +384,8 @@ void EventLoopTaskGroup::suspend()
     // EventLoop::run checks whether each task's group is suspended or not.
     for (auto& timer : m_timers)
         timer.suspend();
+    if (RefPtr eventLoop = m_eventLoop.get())
+        m_eventLoop->invalidateNextTimerFiringTimeCache();
 }
 
 void EventLoopTaskGroup::resume()
@@ -367,8 +393,10 @@ void EventLoopTaskGroup::resume()
     ASSERT(!isStoppedPermanently());
     ASSERT(!isReadyToStop());
     m_state = State::Running;
-    if (auto* eventLoop = m_eventLoop.get())
+    if (RefPtr eventLoop = m_eventLoop.get()) {
         eventLoop->resumeGroup(*this);
+        eventLoop->invalidateNextTimerFiringTimeCache();
+    }
     for (auto& timer : m_timers)
         timer.resume();
 }
@@ -457,6 +485,8 @@ void EventLoopTaskGroup::setTimerAlignment(EventLoopTimerHandle handle, TimerAli
         return;
     ASSERT(m_timers.contains(*handle.m_timer));
     handle.m_timer->setTimerAlignment(timerAlignment);
+    if (RefPtr eventLoop = m_eventLoop.get())
+        eventLoop->invalidateNextTimerFiringTimeCache();
 }
 
 void EventLoopTaskGroup::didChangeTimerAlignmentInterval(EventLoopTimerHandle handle)
@@ -465,6 +495,8 @@ void EventLoopTaskGroup::didChangeTimerAlignmentInterval(EventLoopTimerHandle ha
         return;
     ASSERT(m_timers.contains(*handle.m_timer));
     handle.m_timer->didChangeAlignmentInterval();
+    if (RefPtr eventLoop = m_eventLoop.get())
+        eventLoop->invalidateNextTimerFiringTimeCache();
 }
 
 void EventLoopTaskGroup::setTimerHasReachedMaxNestingLevel(EventLoopTimerHandle handle, bool value)
@@ -473,6 +505,8 @@ void EventLoopTaskGroup::setTimerHasReachedMaxNestingLevel(EventLoopTimerHandle 
         return;
     ASSERT(m_timers.contains(*handle.m_timer));
     handle.m_timer->setHasReachedMaxNestingLevel(value);
+    if (RefPtr eventLoop = m_eventLoop.get())
+        eventLoop->invalidateNextTimerFiringTimeCache();
 }
 
 void EventLoopTaskGroup::adjustTimerNextFireTime(EventLoopTimerHandle handle, Seconds delta)
@@ -481,6 +515,8 @@ void EventLoopTaskGroup::adjustTimerNextFireTime(EventLoopTimerHandle handle, Se
         return;
     ASSERT(m_timers.contains(*handle.m_timer));
     handle.m_timer->adjustNextFireTime(delta);
+    if (RefPtr eventLoop = m_eventLoop.get())
+        eventLoop->invalidateNextTimerFiringTimeCache();
 }
 
 void EventLoopTaskGroup::adjustTimerRepeatInterval(EventLoopTimerHandle handle, Seconds delta)
@@ -489,6 +525,8 @@ void EventLoopTaskGroup::adjustTimerRepeatInterval(EventLoopTimerHandle handle, 
         return;
     ASSERT(m_timers.contains(*handle.m_timer));
     handle.m_timer->adjustRepeatInterval(delta);
+    if (RefPtr eventLoop = m_eventLoop.get())
+        eventLoop->invalidateNextTimerFiringTimeCache();
 }
 
 void EventLoopTaskGroup::didAddTimer(EventLoopTimer& timer)

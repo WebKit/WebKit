@@ -66,6 +66,7 @@ public:
     WEBCORE_EXPORT void stop();
     bool isActive() const;
 
+    MonotonicTime nextFireTime() const { return m_heapItem ? m_heapItem->time : MonotonicTime { }; }
     WEBCORE_EXPORT Seconds nextFireInterval() const;
     Seconds nextUnalignedFireInterval() const;
     Seconds repeatInterval() const { return m_repeatInterval; }
@@ -104,8 +105,6 @@ private:
     void heapPop();
     void heapPopMin();
     static void heapDeleteNullMin(ThreadTimerHeap&);
-
-    MonotonicTime nextFireTime() const { return m_heapItem ? m_heapItem->time : MonotonicTime { }; }
 
     WeakPtr<TimerAlignment> m_alignment;
     MonotonicTime m_unalignedNextFireTime; // m_nextFireTime not considering alignment interval
