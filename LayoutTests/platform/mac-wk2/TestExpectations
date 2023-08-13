@@ -721,6 +721,7 @@ webkit.org/b/141085 http/tests/media/video-query-url.html [ Pass Timeout ]
 ########################################
 
 # Network interception with a mapped file is only mac-wk2 for now.
+http/tests/inspector/network/local-resource-override-mapped-to-directory.html [ Pass ]
 http/tests/inspector/network/local-resource-override-mapped-to-file.html [ Pass ]
 
 # Network throttling is currently only enabled on Cocoa platforms.
@@ -1650,8 +1651,6 @@ webkit.org/b/242164 [ Debug ] imported/w3c/web-platform-tests/service-workers/se
 
 webkit.org/b/242138 imported/w3c/web-platform-tests/css/css-transforms/huge-length-tiny-scale.html [ Pass Crash ImageOnlyFailure ]
 
-webkit.org/b/227555 http/tests/privateClickMeasurement/attribution-conversion-through-fetch-keepalive.html [ Pass Failure ]
-
 webkit.org/b/242462 [ Monterey Release ] imported/w3c/web-platform-tests/IndexedDB/string-list-ordering.htm [ Pass Crash ]
 
 webkit.org/b/246357 imported/w3c/web-platform-tests/feature-policy/reporting/payment-reporting.https.html [ Pass Failure ]
@@ -1816,7 +1815,10 @@ http/tests/media/media-stream/audio-capture-and-category.https.html [ Pass Crash
 # Lack of support for WPT custom domains.
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox-top-navigation-escalate-privileges.tentative.sub.window.html [ Failure ]
 
+webkit.org/b/259160 http/tests/privateClickMeasurement/attribution-conversion-through-fetch-keepalive.html [ Pass Failure ] # related: https://webkit.org/b/227555
+webkit.org/b/259160 http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-ephemeral.html [ Pass Failure ]
 webkit.org/b/259160 http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive.html [ Pass Failure ]
+webkit.org/b/259160 http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive-ephemeral.html [ Pass Failure ]
 
 webkit.org/b/259228 [ Release ] fast/dom/lazy-image-loading-document-leak.html [ Pass Failure ]
 
@@ -1842,3 +1844,5 @@ webkit.org/b/259708 fast/mediastream/video-rotation-gpu-process-crash.html [ Pas
 webkit.org/b/259712 media/media-source/media-source-paint-after-display-none.html [ Pass Crash Failure Timeout ]
 
 webkit.org/b/259740 [ Ventura Release arm64 ] css3/color-filters/color-filter-outline.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/260113 [ arm64 ] http/wpt/webauthn/ctap-hid-failure.https.html [ Pass Failure ]

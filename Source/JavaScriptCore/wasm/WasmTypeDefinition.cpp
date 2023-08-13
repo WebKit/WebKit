@@ -423,10 +423,10 @@ const TypeDefinition& TypeDefinition::replacePlaceholders(TypeIndex projectee) c
 {
     if (is<FunctionSignature>()) {
         const FunctionSignature* func = as<FunctionSignature>();
-        Vector<Type> newArguments;
-        Vector<Type, 1> newReturns;
-        newArguments.tryReserveCapacity(func->argumentCount());
-        newReturns.tryReserveCapacity(func->returnCount());
+        Vector<Type, 16> newArguments;
+        Vector<Type, 16> newReturns;
+        newArguments.reserveInitialCapacity(func->argumentCount());
+        newReturns.reserveInitialCapacity(func->returnCount());
         for (unsigned i = 0; i < func->argumentCount(); ++i)
             newArguments.uncheckedAppend(substitute(func->argumentType(i), projectee));
         for (unsigned i = 0; i < func->returnCount(); ++i)
@@ -585,8 +585,8 @@ const TypeDefinition& TypeInformation::signatureForLLIntBuiltin(LLIntBuiltin bui
 }
 
 struct FunctionParameterTypes {
-    const Vector<Type, 1>& returnTypes;
-    const Vector<Type>& argumentTypes;
+    const Vector<Type, 16>& returnTypes;
+    const Vector<Type, 16>& argumentTypes;
 
     static unsigned hash(const FunctionParameterTypes& params)
     {
@@ -869,7 +869,7 @@ TypeInformation::TypeInformation()
     m_Anyref_Externref = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { anyrefType() }, { externrefType() } }).iterator->key;
 }
 
-RefPtr<TypeDefinition> TypeInformation::typeDefinitionForFunction(const Vector<Type, 1>& results, const Vector<Type>& args)
+RefPtr<TypeDefinition> TypeInformation::typeDefinitionForFunction(const Vector<Type, 16>& results, const Vector<Type, 16>& args)
 {
     if constexpr (ASSERT_ENABLED) {
         ASSERT(!results.contains(Wasm::Types::Void));

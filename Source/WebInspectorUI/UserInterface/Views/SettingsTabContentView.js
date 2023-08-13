@@ -255,7 +255,11 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         searchGroup.addSetting(WI.settings.searchFromSelection, WI.UIString("%s from selection", "Global Search From Selection @ Settings", "Settings tab checkbox label for whether the global search should populate from the current selection.").format(WI.searchKeyboardShortcut.displayName));
 
         generalSettingsView.addSeparator();
-
+        
+        generalSettingsView.addSetting(WI.UIString("Details Sidebars:", "Details Sidebars: @ Settings General Pane", "Category label for detail sidebar settings."), WI.settings.enableNarrowLayoutMode, WI.UIString("Show on bottom when narrow", "Show on bottom when narrow @ Settings General Pane", "Settings tab checkbox label for whether the details sidebars (on the right in LTR locales) are at the bottom"));
+        
+        generalSettingsView.addSeparator();
+        
         const zoomLevels = [0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2, 2.2, 2.4];
         const zoomValues = zoomLevels.map((level) => [level, Number.percentageString(level, 0)]);
 

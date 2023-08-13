@@ -1,7 +1,5 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT HttpOnly cookies are not observed Test timed out
-NOTRUN HttpOnly cookies can not be set by document.cookie
-NOTRUN HttpOnly cookies can not be set by CookieStore
+PASS HttpOnly cookies are not observed
+PASS HttpOnly cookies can not be set by document.cookie
+PASS HttpOnly cookies can not be set by CookieStore
 

@@ -2488,7 +2488,7 @@ int32_t CodeBlock::codeTypeThresholdMultiplier() const
     return 1;
 }
 
-double CodeBlock::optimizationThresholdScalingFactor()
+double CodeBlock::optimizationThresholdScalingFactor() const
 {
     // This expression arises from doing a least-squares fit of
     //

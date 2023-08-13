@@ -65,7 +65,7 @@ void ReportingScope::registerReportingObserver(ReportingObserver& observer)
 
 void ReportingScope::unregisterReportingObserver(ReportingObserver& observer)
 {
-    m_reportingObservers.removeFirstMatching([&observer](auto item) {
+    m_reportingObservers.removeFirstMatching([&observer](auto& item) {
         return item.ptr() == &observer;
     });
 }

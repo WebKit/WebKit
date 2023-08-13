@@ -435,9 +435,9 @@ static void testWebsiteDataCache(WebsiteDataTest* test, gconstpointer)
     test->waitUntilLoadFinished();
 
     // Disk cache delays the storing of initial resources for 1 second to avoid
-    // affecting early page load. So, wait 1 second here to make sure resources
+    // affecting early page load. So, wait here to make sure resources
     // have already been stored.
-    test->wait(1);
+    test->wait(2);
 
     dataList = test->fetch(cacheTypes);
     g_assert_nonnull(dataList);

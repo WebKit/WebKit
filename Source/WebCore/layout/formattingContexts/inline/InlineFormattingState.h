@@ -47,11 +47,15 @@ public:
     void setInlineItems(InlineItems&& inlineItems) { m_inlineItems = WTFMove(inlineItems); }
     void appendInlineItems(InlineItems&& inlineItems) { m_inlineItems.appendVector(WTFMove(inlineItems)); }
 
+    void setIsNonBidiTextAndForcedLineBreakOnlyContent(bool isNonBidiTextAndForcedLineBreakOnlyContent) { m_isNonBidiTextAndForcedLineBreakOnlyContent = isNonBidiTextAndForcedLineBreakOnlyContent; }
+    bool isNonBidiTextAndForcedLineBreakOnlyContent() const { return m_isNonBidiTextAndForcedLineBreakOnlyContent; }
+
     void clearInlineItems() { m_inlineItems.clear(); }
     void shrinkToFit() { m_inlineItems.shrinkToFit(); }
 
 private:
     InlineItems m_inlineItems;
+    bool m_isNonBidiTextAndForcedLineBreakOnlyContent { false };
 };
 
 }

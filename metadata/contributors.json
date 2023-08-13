@@ -1137,6 +1137,14 @@
    },
    {
       "emails" : [
+         "ben_schwartz@apple.com"
+      ],
+      "github" : "bls1999",
+      "name" : "Ben Schwartz",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "benwells@chromium.org"
       ],
       "name" : "Ben Wells",
@@ -2789,6 +2797,17 @@
          "forms-bugs@chromium.org"
       ],
       "name" : "Forms Bugs"
+   },
+   {
+      "emails" : [
+         "frances_c@cox.net"
+      ],
+      "expertise" : "Web Inspector",
+      "github" : "francescorn",
+      "name" : "Frances Cornwall",
+      "nicks" : [
+         "Frances"
+      ]
    },
    {
       "emails" : [
@@ -6405,6 +6424,16 @@
    },
    {
       "emails" : [
+         "ryanfuller@apple.com"
+      ],
+      "github" : "rsfuller",
+      "name" : "Ryan Fuller",
+      "nicks" : [
+         "ryanfuller"
+      ]
+   },
+   {
+      "emails" : [
          "ryanhaddad@apple.com"
       ],
       "github" : "ryanhaddad",
@@ -7860,13 +7889,5 @@
          "zdobersek"
       ],
       "status" : "reviewer"
-   },
-   {
-      "emails" : [
-         "ben_schwartz@apple.com"
-      ],
-      "github" : "bls1999",
-      "name" : "Ben Schwartz",
-      "status" : "committer"
    }
 ]

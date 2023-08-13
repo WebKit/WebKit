@@ -211,9 +211,3 @@ list(APPEND WebCoreTestSupport_LIBRARIES
     Cairo::Cairo
     shlwapi
 )
-
-file(COPY
-    "${WEBCORE_DIR}/en.lproj/Localizable.strings"
-    DESTINATION
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/en.lproj
-)

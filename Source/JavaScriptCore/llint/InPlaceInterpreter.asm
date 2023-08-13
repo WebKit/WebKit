@@ -300,6 +300,7 @@ end
 
 # Instruction labels
 
+# FIXME: switch offlineasm unalignedglobal to take alignment and optionally pad with breakpoint instructions (rdar://113594783)
 macro alignment()
 if ARM64 or ARM64E
     # fill with brk instructions
@@ -387,6 +388,26 @@ end
 # In-Place Interpreter #
 ########################
 
+# FIXME: switch offlineasm unalignedglobal to take alignment and optionally pad with breakpoint instructions (rdar://113594783)
+macro argumINTAlign()
+    emit ".balign 64"
+end
+
+macro argumINTDispatch()
+    loadb [PM], csr0
+    addq 1, PM
+    lshiftq 6, csr0
+if ARM64 or ARM64E
+    pcrtoaddr _argumINT_a0, csr4
+    addq csr0, csr4
+    emit "br x23"
+elsif X86_64
+    leap (_argumINT_a0), csr4
+    addq csr0, csr4
+    emit "jmp *(%r13)"
+end
+end
+
 global _ipint_entry
 _ipint_entry:
 if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
@@ -398,66 +419,31 @@ if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
     # Allocate space for locals
     loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], csr0
     mulq LocalSize, csr0
+    move sp, csr3
     subq csr0, sp
+    loadp Wasm::IPIntCallee::m_argumINTBytecodePointer[ws0], PM
 
-    if ARM64 or ARM64E
-        storepairq t0, t1, 0x00[sp]
-        storepairq t2, t3, 0x10[sp]
-        storepairq t4, t5, 0x20[sp]
-        storepairq t6, t7, 0x30[sp]
-        storepaird fa0, fa1, 0x40[sp]
-        storepaird fa2, fa3, 0x50[sp]
-    elsif JSVALUE64
-        storeq t0, 0x00[sp]
-        storeq t1, 0x08[sp]
-        storeq t2, 0x10[sp]
-        storeq t3, 0x18[sp]
-        storeq t4, 0x20[sp]
-        storeq t5, 0x28[sp]
-        stored fa0, 0x40[sp]
-        stored fa1, 0x48[sp]
-        stored fa2, 0x50[sp]
-        stored fa3, 0x58[sp]
-    else
-        storeq t0, 0x00[sp]
-        storeq t1, 0x08[sp]
-        storeq t2, 0x10[sp]
-        storeq t3, 0x18[sp]
-        stored fa0, 0x40[sp]
-        stored fa1, 0x48[sp]
-    end
+    # PM = location in argumINT bytecode
+    # csr0 = tmp
+    # csr1 = dst
+    # csr2 = src
+    # csr3 = end
+    # csr4 = for dispatch
+
+    move sp, csr1
+    leap FirstArgumentOffset[cfr], csr2
+
+    argumINTDispatch()
+
+.ipint_entry_end_local:
+    # zero out remaining locals
+    bqeq csr1, csr3, .ipint_entry_finish_zero
+    storeq 0, [csr1]
+    addq 8, csr1
+    jmp .ipint_entry_end_local
+.ipint_entry_finish_zero:
+
     move sp, PL
-
-    # Copy over arguments on stack
-    # csr0 = argument index
-    # csr1 = total arguments
-    # csr2 = tmp
-    # csr3 = stack index
-    # csr4 = first argument offset
-    move 0, csr0
-    loadi Wasm::IPIntCallee::m_numArgumentsOnStack[ws0], csr1
-    move 16, csr3
-    leap FirstArgumentOffset[cfr], csr4
-
-.argloop:
-    bqeq csr0, csr1, .endargs
-    # Load from stack
-    loadq [csr4, csr0, LocalSize], csr2
-    storeq csr2, 0x80[PL, csr0, LocalSize]
-    addq 1, csr0
-    jmp .argloop
-
-.endargs:
-    # Zero out everything else
-    loadi Wasm::IPIntCallee::m_numArgumentsOnStack[ws0], csr0
-    addq 16, csr0
-    loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], csr1
-.localLoop:
-    bieq csr0, csr1, .endlocals
-    storeq 0, [PL, csr0, LocalSize]
-    addq 1, csr0
-    jmp .localLoop
-.endlocals:
 
     loadp CodeBlock[cfr], wasmInstance
     if ARM64 or ARM64E
@@ -506,14 +492,14 @@ instructionLabel(_nop)
 
 instructionLabel(_block)
     # block
-    loadq [PM, MC], PC
-    advanceMC(8)
+    loadi [PM, MC], PC
+    loadi 4[PM, MC], MC
     nextIPIntInstruction()
 
 instructionLabel(_loop)
     # loop
-    loadq [PM, MC], PC
-    advanceMC(8)
+    loadi [PM, MC], PC
+    loadi 4[PM, MC], MC
     nextIPIntInstruction()
 
 instructionLabel(_if)
@@ -544,6 +530,31 @@ reservedOpcode(0x08)
 reservedOpcode(0x09)
 reservedOpcode(0x0a)
 
+# FIXME: switch offlineasm unalignedglobal to take alignment and optionally pad with breakpoint instructions (rdar://113594783)
+macro uintAlign()
+    emit ".balign 64"
+end
+
+macro uintDispatch()
+    loadb [PM], csr3
+    addq 1, PM
+    bilt csr3, 5, .safe
+    break
+.safe:
+    lshiftq 6, csr3
+if ARM64 or ARM64E
+    pcrtoaddr _uint_r0, csr4
+    addq csr3, csr4
+    # csr4 = x23
+    emit "br x23"
+elsif X86_64
+    leap (_uint_r0), csr4
+    addq csr3, csr4
+    # csr4 = r13
+    emit "jmp *(%r13)"
+end
+end
+
 instructionLabel(_end)
     loadi Wasm::IPIntCallee::m_bytecodeLength[ws0], t0
     subq 1, t0
@@ -551,28 +562,8 @@ instructionLabel(_end)
     advancePC(1)
     nextIPIntInstruction()
 .ipint_end_ret:
-    # Get number of returns
-    loadh [PM, MC], t1
-    move MC, t0
-    addq 2, t0
-    addq MC, t1
-.ipint_ret_loop:
-    bqeq t0, t1, .ipint_ret_loop_end
-    loadb [PM, t0], t2
-    bqeq t2, 0, .ipint_ret_loop_end
-    addq 1, t0
-    bqgteq t2, 6, .ipint_ret_stack
-    bqeq t2, 5, .ipint_ret_fpr
-    popQuad(r0, r1)
-    jmp .ipint_ret_loop
-.ipint_ret_fpr:
-    popFPR()
-    jmp .ipint_ret_loop
-.ipint_ret_stack:
-    # TODO
-    break
-.ipint_ret_loop_end:
-    jmp .ipint_exit
+    addq MC, PM
+    uintDispatch()
 
 instructionLabel(_br)
     # br
@@ -621,15 +612,21 @@ instructionLabel(_br_if)
 instructionLabel(_br_table)
     # br_table
     popInt32(t0, t2)
-    loadq [PM, MC], t1
-    advanceMC(8)
+    loadi [PM, MC], t1
+    advanceMC(4)
     biaeq t0, t1, .ipint_br_table_maxout
-    lshiftq 4, t0
+    move t0, t1
+    lshiftq 3, t0
+    lshiftq 2, t1
+    addq t1, t0
     addq t0, MC
     jmp _ipint_br
 .ipint_br_table_maxout:
     subq 1, t1
-    lshiftq 4, t1
+    move t1, t2
+    lshiftq 3, t1
+    lshiftq 2, t2
+    addq t2, t1
     addq t1, MC
     jmp _ipint_br
 
@@ -652,14 +649,16 @@ instructionLabel(_call_indirect)
     popInt32(t0, t1)
     push PC, MC # a4
     move t0, a2
-    leap [PM, MC], a3
+    leap 1[PM, MC], a3
     move wasmInstance, a0
     move cfr, a1
     operationCall(macro() cCall4(_ipint_extern_call_indirect) end)
     pop MC, PC
     btpz r1, .ipint_call_indirect_throw
 
-    advanceMC(8)
+    loadb [PM, MC], t2
+    advancePCByReg(t2)
+    advanceMC(9)
 
     jmp .ipint_call_common
 .ipint_call_indirect_throw:
@@ -721,44 +720,74 @@ reservedOpcode(0x1f)
 
 instructionLabel(_local_get)
     # local.get
-    # Load pre-computed index from metadata
-    loadi [PM, MC], t0
+    loadb [PM, MC], t1
+    bineq t1, 0, .ipint_local_get_longpath
+
+    loadb 1[PB, PC], t0
     # Index into locals
-    loadq [PL, t0, LocalSize],t0
+    loadq [PL, t0, LocalSize], t0
+    # Push to stack
+    pushQuad(t0)
+    advancePC(2)
+    advanceMC(1)
+    nextIPIntInstruction()
+
+.ipint_local_get_longpath:
+    # Load pre-computed index from metadata
+    loadi 1[PM, MC], t0
+    # Index into locals
+    loadq [PL, t0, LocalSize], t0
     # Push to stack
     pushQuad(t0)
 
-    loadi 4[PM, MC], t0
-
-    advancePCByReg(t0)
-    advanceMC(8)
+    advancePCByReg(t1)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_local_set)
     # local.set
-    # Load pre-computed index from metadata
-    loadi [PM, MC], t0
     # Pop from stack
-    popQuad(t1, t2)
+    loadb [PM, MC], t1
+    popQuad(t2, t3)
+
+    bineq t1, 0, .ipint_local_set_longpath
+
+    loadb 1[PB, PC], t0
     # Store to locals
-    storeq t1, [PL, t0, LocalSize]
+    storeq t2, [PL, t0, LocalSize]
+    advancePC(2)
+    advanceMC(1)
+    nextIPIntInstruction()
 
-    loadi 4[PM, MC], t0
+.ipint_local_set_longpath:
+    # Load pre-computed index from metadata
+    loadi 1[PM, MC], t0
+    # Store to locals
+    storeq t2, [PL, t0, LocalSize]
 
-    advancePCByReg(t0)
-    advanceMC(8)
+    advancePCByReg(t1)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_local_tee)
     # local.tee
-    loadi [PM, MC], t0
-    loadq [sp], t1
-    storeq t1, [PL, t0, LocalSize]
+    loadb [PM, MC], t1
+    loadq [sp], t2
+    bineq t1, 0, .ipint_local_tee_longpath
 
-    loadi 4[PM, MC], t0
+    loadb 1[PB, PC], t0
+    storeq t2, [PL, t0, LocalSize]
 
-    advancePCByReg(t0)
-    advanceMC(16)
+    advancePC(2)
+    advanceMC(2)
+    nextIPIntInstruction()
+
+.ipint_local_tee_longpath:
+    loadi 1[PM, MC], t0
+    storeq t2, [PL, t0, LocalSize]
+
+    advancePCByReg(t1)
+    advanceMC(10)
     nextIPIntInstruction()
 
 instructionLabel(_global_get)
@@ -820,30 +849,30 @@ instructionLabel(_global_set)
 
 instructionLabel(_table_get)
     # Load pre-computed index from metadata
-    loadi [PM, MC], a1
+    loadi 1[PM, MC], a1
     popInt32(a2, t3)
 
     operationCallMayThrow(macro() cCall3(_ipint_extern_table_get) end)
 
     pushQuad(t0)
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
 
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_table_set)
     # Load pre-computed index from metadata
-    loadi [PM, MC], a1
+    loadi 1[PM, MC], a1
     popQuad(a3, t0)
     popInt32(a2, t0)
     operationCallMayThrow(macro() cCall4(_ipint_extern_table_set) end)
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
 
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 reservedOpcode(0x27)
@@ -861,64 +890,64 @@ instructionLabel(_i32_load_mem)
     # i32.load
     # pop index
     popInt32(t0, t2)
-    loadi [PM, MC], t2
+    loadi 1[PM, MC], t2
     addq t2, t0
     ipintCheckMemoryBound(t0, 4)
     # load memory location
     loadi [memoryBase, t0], t1
     pushInt32(t1)
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_i64_load_mem)
     # i32.load
     # pop index
     popInt32(t0, t2)
-    loadi [PM, MC], t2
+    loadi 1[PM, MC], t2
     addq t2, t0
     ipintCheckMemoryBound(t0, 8)
     # load memory location
     loadq [memoryBase, t0], t1
     pushInt64(t1)
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_f32_load_mem)
     # f32.load
     # pop index
     popInt32(t0, t2)
-    loadi [PM, MC], t2
+    loadi 1[PM, MC], t2
     addq t2, t0
     ipintCheckMemoryBound(t0, 4)
     # load memory location
     loadf [memoryBase, t0], ft0
     pushFloat32FT0()
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
     
 instructionLabel(_f64_load_mem)
     # f64.load
     # pop index
     popInt32(t0, t2)
-    loadi [PM, MC], t2
+    loadi 1[PM, MC], t2
     addq t2, t0
     ipintCheckMemoryBound(t0, 8)
     # load memory location
     loadd [memoryBase, t0], ft0
     pushFloat64FT0()
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
     
 
@@ -926,7 +955,7 @@ instructionLabel(_i32_load8s_mem)
     # i32.load8_s
     # pop index
     popInt32(t0, t2)
-    loadi [PM, MC], t2
+    loadi 1[PM, MC], t2
     addq t2, t0
     ipintCheckMemoryBound(t0, 1)
     # load memory location
@@ -934,32 +963,32 @@ instructionLabel(_i32_load8s_mem)
     sxb2i t1, t1
     pushInt32(t1)
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_i32_load8u_mem)
     # i32.load8_u
     # pop index
     popInt32(t0, t2)
-    loadi [PM, MC], t2
+    loadi 1[PM, MC], t2
     addq t2, t0
     ipintCheckMemoryBound(t0, 1)
     # load memory location
     loadb [memoryBase, t0], t1
     pushInt32(t1)
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_i32_load16s_mem)
     # i32.load16_s
     # pop index
     popInt32(t0, t2)
-    loadi [PM, MC], t2
+    loadi 1[PM, MC], t2
     addq t2, t0
     ipintCheckMemoryBound(t0, 2)
     # load memory location
@@ -967,25 +996,25 @@ instructionLabel(_i32_load16s_mem)
     sxh2i t1, t1
     pushInt32(t1)
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_i32_load16u_mem)
     # i32.load16_u
     # pop index
     popInt32(t0, t2)
-    loadi [PM, MC], t2
+    loadi 1[PM, MC], t2
     addq t2, t0
     ipintCheckMemoryBound(t0, 2)
     # load memory location
     loadh [memoryBase, t0], t1
     pushInt32(t1)
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 
@@ -993,7 +1022,7 @@ instructionLabel(_i64_load8s_mem)
     # i64.load8_s
     # pop index
     popInt32(t0, t2)
-    loadi [PM, MC], t2
+    loadi 1[PM, MC], t2
     addq t2, t0
     ipintCheckMemoryBound(t0, 1)
     # load memory location
@@ -1001,32 +1030,32 @@ instructionLabel(_i64_load8s_mem)
     sxb2q t1, t1
     pushInt64(t1)
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_i64_load8u_mem)
     # i64.load8_u
     # pop index
     popInt32(t0, t2)
-    loadi [PM, MC], t2
+    loadi 1[PM, MC], t2
     addq t2, t0
     ipintCheckMemoryBound(t0, 1)
     # load memory location
     loadb [memoryBase, t0], t1
     pushInt64(t1)
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_i64_load16s_mem)
     # i64.load16_s
     # pop index
     popInt32(t0, t2)
-    loadi [PM, MC], t2
+    loadi 1[PM, MC], t2
     addq t2, t0
     ipintCheckMemoryBound(t0, 2)
     # load memory location
@@ -1034,32 +1063,32 @@ instructionLabel(_i64_load16s_mem)
     sxh2q t1, t1
     pushInt64(t1)
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_i64_load16u_mem)
     # i64.load16_u
     # pop index
     popInt32(t0, t2)
-    loadi [PM, MC], t2
+    loadi 1[PM, MC], t2
     addq t2, t0
     ipintCheckMemoryBound(t0, 2)
     # load memory location
     loadh [memoryBase, t0], t1
     pushInt64(t1)
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_i64_load32s_mem)
     # i64.load32_s
     # pop index
     popInt32(t0, t2)
-    loadi [PM, MC], t2
+    loadi 1[PM, MC], t2
     addq t2, t0
     ipintCheckMemoryBound(t0, 4)
     # load memory location
@@ -1067,25 +1096,25 @@ instructionLabel(_i64_load32s_mem)
     sxi2q t1, t1
     pushInt64(t1)
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_i64_load32u_mem)
     # i64.load8_s
     # pop index
     popInt32(t0, t2)
-    loadi [PM, MC], t2
+    loadi 1[PM, MC], t2
     addq t2, t0
     ipintCheckMemoryBound(t0, 4)
     # load memory location
     loadi [memoryBase, t0], t1
     pushInt64(t1)
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 
@@ -1095,15 +1124,15 @@ instructionLabel(_i32_store_mem)
     popInt32(t1, t2)
     # pop index
     popInt32(t0, t2)
-    loadi [PM, MC], t2
+    loadi 1[PM, MC], t2
     addq t2, t0
     ipintCheckMemoryBound(t0, 4)
     # load memory location
     storei t1, [memoryBase, t0]
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_i64_store_mem)
@@ -1112,15 +1141,15 @@ instructionLabel(_i64_store_mem)
     popInt64(t1, t2)
     # pop index
     popInt64(t0, t2)
-    loadi [PM, MC], t2
+    loadi 1[PM, MC], t2
     addq t2, t0
     ipintCheckMemoryBound(t0, 8)
     # load memory location
     storeq t1, [memoryBase, t0]
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_f32_store_mem)
@@ -1129,15 +1158,15 @@ instructionLabel(_f32_store_mem)
     popFloat32FT0()
     # pop index
     popInt32(t0, t2)
-    loadi [PM, MC], t2
+    loadi 1[PM, MC], t2
     addq t2, t0
     ipintCheckMemoryBound(t0, 4)
     # load memory location
     storef ft0, [memoryBase, t0]
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_f64_store_mem)
@@ -1146,15 +1175,15 @@ instructionLabel(_f64_store_mem)
     popFloat64FT0()
     # pop index
     popInt32(t0, t2)
-    loadi [PM, MC], t2
+    loadi 1[PM, MC], t2
     addq t2, t0
     ipintCheckMemoryBound(t0, 8)
     # load memory location
     stored ft0, [memoryBase, t0]
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_i32_store8_mem)
@@ -1163,15 +1192,15 @@ instructionLabel(_i32_store8_mem)
     popInt32(t1, t2)
     # pop index
     popInt32(t0, t2)
-    loadi [PM, MC], t2
+    loadi 1[PM, MC], t2
     addq t2, t0
     ipintCheckMemoryBound(t0, 1)
     # load memory location
     storeb t1, [memoryBase, t0]
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_i32_store16_mem)
@@ -1180,15 +1209,15 @@ instructionLabel(_i32_store16_mem)
     popInt32(t1, t2)
     # pop index
     popInt32(t0, t2)
-    loadi [PM, MC], t2
+    loadi 1[PM, MC], t2
     addq t2, t0
     ipintCheckMemoryBound(t0, 2)
     # load memory location
     storeh t1, [memoryBase, t0]
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
     
 instructionLabel(_i64_store8_mem)
@@ -1197,15 +1226,15 @@ instructionLabel(_i64_store8_mem)
     popInt64(t1, t2)
     # pop index
     popInt64(t0, t2)
-    loadi [PM, MC], t2
+    loadi 1[PM, MC], t2
     addq t2, t0
     ipintCheckMemoryBound(t0, 1)
     # load memory location
     storeb t1, [memoryBase, t0]
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_i64_store16_mem)
@@ -1214,15 +1243,15 @@ instructionLabel(_i64_store16_mem)
     popInt64(t1, t2)
     # pop index
     popInt64(t0, t2)
-    loadi [PM, MC], t2
+    loadi 1[PM, MC], t2
     addq t2, t0
     ipintCheckMemoryBound(t0, 2)
     # load memory location
     storeh t1, [memoryBase, t0]
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_i64_store32_mem)
@@ -1231,15 +1260,15 @@ instructionLabel(_i64_store32_mem)
     popInt64(t1, t2)
     # pop index
     popInt64(t0, t2)
-    loadi [PM, MC], t2
+    loadi 1[PM, MC], t2
     addq t2, t0
     ipintCheckMemoryBound(t0, 4)
     # load memory location
     storei t1, [memoryBase, t0]
 
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 
@@ -1263,26 +1292,36 @@ instructionLabel(_memory_grow)
 
 instructionLabel(_i32_const)
     # i32.const
+    loadb [PM, MC], t1
+    bigteq t1, 2, .ipint_i32_const_slowpath
+    loadb 1[PB, PC], t0
+    lshiftq 7, t1
+    orq t1, t0
+    sxb2i t0, t0
+    pushInt32(t0)
+    advancePC(2)
+    advanceMC(1)
+    nextIPIntInstruction()
+.ipint_i32_const_slowpath:
     # Load pre-computed value from metadata
-    loadi [PM, MC], t0
+    loadi 1[PM, MC], t0
     # Push to stack
     pushInt32(t0)
-    loadi 4[PM, MC], t0
 
-    advancePCByReg(t0)
-    advanceMC(8)
+    advancePCByReg(t1)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_i64_const)
     # i64.const
     # Load pre-computed value from metadata
-    loadq [PM, MC], t0
+    loadq 1[PM, MC], t0
     # Push to stack
     pushInt64(t0)
-    loadq 8[PM, MC], t0
+    loadb [PM, MC], t0
 
     advancePCByReg(t0)
-    advanceMC(16)
+    advanceMC(9)
     nextIPIntInstruction()
 
 instructionLabel(_f32_const)
@@ -2842,11 +2881,11 @@ reservedOpcode(0xcf)
     #####################
 
 instructionLabel(_ref_null_t)
-    loadi [PM, MC], t0
+    loadi 1[PM, MC], t0
     pushQuad(t0)
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePC(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_ref_is_null)
@@ -2858,12 +2897,12 @@ instructionLabel(_ref_is_null)
 
 instructionLabel(_ref_func)
     move wasmInstance, a0
-    loadi [PM, MC], a1
+    loadi 1[PM, MC], a1
     operationCall(macro() cCall2(_ipint_extern_ref_func) end)
     pushQuad(t0)
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePC(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 reservedOpcode(0xd3)
@@ -3186,20 +3225,20 @@ instructionLabel(_memory_init)
     lshiftq 32, t1
     orq t1, t0
     move t0, a3
-    loadi [PM, MC], a1
+    loadi 1[PM, MC], a1
     operationCallMayThrow(macro() cCall4(_ipint_extern_memory_init) end)
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_data_drop)
     # data.drop
-    loadi [PM, MC], a1
+    loadi 1[PM, MC], a1
     operationCall(macro() cCall2(_ipint_extern_data_drop) end)
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_memory_copy)
@@ -3230,18 +3269,18 @@ instructionLabel(_table_init)
     move t0, a3
     leap [PM, MC], a1
     operationCallMayThrow(macro() cCall4(_ipint_extern_table_init) end)
-    loadq 8[PM, MC], t0
+    loadb 8[PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(16)
+    advanceMC(9)
     nextIPIntInstruction()
 
 instructionLabel(_elem_drop)
     # elem.drop
-    loadi [PM, MC], a1
+    loadi 1[PM, MC], a1
     operationCall(macro() cCall2(_ipint_extern_elem_drop) end)
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_table_copy)
@@ -3254,31 +3293,31 @@ instructionLabel(_table_copy)
     move t0, a3
     leap [PM, MC], a1
     operationCallMayThrow(macro() cCall4(_ipint_extern_table_copy) end)
-    loadq 8[PM, MC], t0
+    loadb 8[PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(16)
+    advanceMC(9)
     nextIPIntInstruction()
 
 instructionLabel(_table_grow)
     # table.grow
-    loadi [PM, MC], a1
+    loadi 1[PM, MC], a1
     popQuad(a3, t0) # n
     popQuad(a2, t0) # fill
     operationCall(macro() cCall4(_ipint_extern_table_grow) end)
     pushQuad(t0)
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_table_size)
     # table.size
-    loadi [PM, MC], a1
+    loadi 1[PM, MC], a1
     operationCall(macro() cCall2(_ipint_extern_table_size) end)
     pushQuad(t0)
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_table_fill)
@@ -3288,11 +3327,11 @@ instructionLabel(_table_fill)
     popQuad(t3, t1) # i
     lshiftq 32, t3
     orq t0, t3
-    loadi [PM, MC], a1
+    loadi 1[PM, MC], a1
     operationCallMayThrow(macro() cCall4(_ipint_extern_table_fill) end)
-    loadi 4[PM, MC], t0
+    loadb [PM, MC], t0
     advancePCByReg(t0)
-    advanceMC(8)
+    advanceMC(5)
     nextIPIntInstruction()
 
     ##################################
@@ -3302,191 +3341,491 @@ instructionLabel(_table_fill)
 _ipint_call_impl:
     # 0 - 3: function index
     # 4 - 7: PC post call
-    # 8 - 23: offsets for GPR
-    # 24 - 39: offsets for FPR
-    # 40 - 42: length of stack data
-    # 42 - 44: number of arguments
-    # 44 - 46: number of stack arguments
-    # 46 - x: offsets
+    # 8 - 9: length of mint bytecode
+    # 10 - : mint bytecode
 
     # function index
-    loadi [PM, MC], t0
+    loadi 1[PM, MC], t0
+
+    loadb [PM, MC], t1
+    advancePCByReg(t1)
+    advanceMC(5)
 
     # Get function data
     move t0, a1
     move wasmInstance, a0
     cCall2(_ipint_extern_call)
 
+# FIXME: switch offlineasm unalignedglobal to take alignment and optionally pad with breakpoint instructions (rdar://113594783)
+macro mintAlign()
+    emit ".balign 64"
+end
+
+macro mintPop(reg)
+    loadq [ws1], reg
+    addq 16, ws1
+end
+
+macro mintPopF(reg)
+    loadd [ws1], reg
+    addq 16, ws1
+end
+
+macro mintArgDispatch()
+    loadb [PM], ws0
+    addq 1, PM
+    andq 15, ws0
+    lshiftq 6, ws0
+if ARM64 or ARM64E
+    pcrtoaddr _mint_a0, csr4
+    addq ws0, csr4
+    # csr4 = x23
+    emit "br x23"
+elsif X86_64
+    leap (_mint_a0), csr4
+    addq ws0, csr4
+    # csr4 = r13
+    emit "jmp *(%r13)"
+end
+end
+
+macro mintRetDispatch()
+    loadb [PM], ws0
+    addq 1, PM
+    bilt ws0, 14, .safe
+    break
+.safe:
+    lshiftq 6, ws0
+if ARM64 or ARM64E
+    pcrtoaddr _mint_r0, csr4
+    addq ws0, csr4
+    # csr4 = x23
+    emit "br x23"
+elsif X86_64
+    leap (_mint_r0), csr4
+    addq ws0, csr4
+    # csr4 = r13
+    emit "jmp *(%r13)"
+end
+end
+
 .ipint_call_common:
+    # wasmInstance = csr0
+    # PM = csr1
+    # PB = csr2
+    # memoryBase = csr3
+    # boundsCheckingSize = csr4
 
-    move r0, ws0
-    move r1, wasmInstance
+    # CANNOT throw away: entrypoint, new instance, PM
+    # CAN throw away immediately: memoryBase, boundsCheckingSize, PB
+    # for call: MUST preserve MC
+    # for call: PB/PM (load from callee)
 
-    # Set up stack first
-    loadh 44[PM, MC], t2
-    move t2, t3
-    # 8B per argument on the stack
-    lshiftq 3, t2
-    # round up to nearest multiple of 16
-    # keep an extra 16 for saved PL
-    addq 24, t2
-    andq -16, t2
-    move sp, t1
-    subp t2, t1
-    leap 46[PM, MC], t2
-    move 0, t0
-.ipint_call_stack_loop:
-    loadh [t2], t4
-    lshiftq 4, t4
-    bqeq t0, t3, .ipint_call_stack_end
-    loadq [sp, t4], t4
-    addp 2, t2
-    storeq t4, [t1]
-    addp 8, t1
-    addq 1, t0
-    jmp .ipint_call_stack_loop
-.ipint_call_stack_end:
-    move MC, PB
-    pushQuad(PL)
+    # csr0 = wasmInstance, then PC
+    # csr1 = PM (later PM + PB)
+    # csr2 = new entrypoint
+    # csr3 = new instance, then old instance
+    # csr4 = temp
+    # ws0 = temp
 
-    # Set up arguments in registers
-    loadh 8[PM, PB], ws1
-    lshiftq 4, ws1
-    loadq 16[sp, ws1], a0
-    loadh 10[PM, PB], ws1
-    lshiftq 4, ws1
-    loadq 16[sp, ws1], a1
-    loadh 12[PM, PB], ws1
-    lshiftq 4, ws1
-    loadq 16[sp, ws1], a2
-    loadh 14[PM, PB], ws1
-    lshiftq 4, ws1
-    loadq 16[sp, ws1], a3
-    loadh 16[PM, PB], ws1
+    const ipintCallSavedEntrypoint = PB
+    const ipintCallNewInstance = memoryBase
+
+    # shadow stack pointer
+    const ipintCallShadowSP = ws1
+
+    push PL, wasmInstance
+    move sp, ipintCallShadowSP
+    addq 16, ipintCallShadowSP
+    move PC, wasmInstance
+
+    # Free up r0, r1 to be used as argument registers
+    move r0, ipintCallSavedEntrypoint
+    move r1, ipintCallNewInstance
+
+    # We'll update PM to be the value that the return metadata starts at
+    addq MC, PM
+    mintArgDispatch()
+
+mintAlign()
+_mint_a0:
+    mintPop(a0)
+    mintArgDispatch()
+
+mintAlign()
+_mint_a1:
+    mintPop(a1)
+    mintArgDispatch()
+
+mintAlign()
+_mint_a2:
+    mintPop(a2)
+    mintArgDispatch()
+
+mintAlign()
+_mint_a3:
+    mintPop(a3)
+    mintArgDispatch()
+
+mintAlign()
+_mint_a4:
 if ARM64 or ARM64E
-    lshiftq 4, ws1
-    loadq 16[sp, ws1], a4
-    loadh 18[PM, PB], ws1
-    lshiftq 4, ws1
-    loadq 16[sp, ws1], a5
-    loadh 20[PM, PB], ws1
-    lshiftq 4, ws1
-    loadq 16[sp, ws1], a6
-    loadh 22[PM, PB], ws1
-    lshiftq 4, ws1
-    loadq 16[sp, ws1], a7
+    mintPop(a4)
+    mintArgDispatch()
+else
+    break
 end
 
-    loadh 24[PM, PB], ws1
-    lshiftq 4, ws1
-    loadd 16[sp, ws1], wfa0
-    loadh 26[PM, PB], ws1
-    lshiftq 4, ws1
-    loadd 16[sp, ws1], wfa1
-    loadh 28[PM, PB], ws1
-    lshiftq 4, ws1
-    loadd 16[sp, ws1], wfa2
-    loadh 30[PM, PB], ws1
-    lshiftq 4, ws1
-    loadd 16[sp, ws1], wfa3
-    loadh 32[PM, PB], ws1
-    lshiftq 4, ws1
-    loadd 16[sp, ws1], wfa4
-    loadh 34[PM, PB], ws1
-    lshiftq 4, ws1
-    loadd 16[sp, ws1], wfa5
+mintAlign()
+_mint_a5:
 if ARM64 or ARM64E
-    loadh 36[PM, PB], ws1
-    lshiftq 4, ws1
-    loadd 16[sp, ws1], wfa6
-    loadh 38[PM, PB], ws1
-    lshiftq 4, ws1
-    loadd 16[sp, ws1], wfa7
+    mintPop(a5)
+    mintArgDispatch()
+else
+    break
 end
 
-    loadq [sp], ws1
-    addq 16, sp
+mintAlign()
+_mint_a6:
+if ARM64 or ARM64E
+    mintPop(a6)
+    mintArgDispatch()
+else
+    break
+end
 
-    # reset SP to top of params
-    loadh 44[PM, PB], ws1
-    # 8B per argument on the stack
-    lshiftq 3, ws1
-    # round up to nearest multiple of 16
-    # keep an extra 16 for saved PL
-    addq 24, ws1
-    andq -16, ws1
-    subp ws1, sp
+mintAlign()
+_mint_a7:
+if ARM64 or ARM64E
+    mintPop(a7)
+    mintArgDispatch()
+else
+    break
+end
 
-    # Space for caller frame
+mintAlign()
+_mint_fa0:
+    mintPopF(fa0)
+    mintArgDispatch()
+
+mintAlign()
+_mint_fa1:
+    mintPopF(fa1)
+    mintArgDispatch()
+
+mintAlign()
+_mint_fa2:
+    mintPopF(fa2)
+    mintArgDispatch()
+
+mintAlign()
+_mint_fa3:
+    mintPopF(fa3)
+    mintArgDispatch()
+
+mintAlign()
+_mint_stackzero:
+    mintPop(ws0)
+    storeq ws0, [sp]
+    mintArgDispatch()
+
+mintAlign()
+_mint_stackeight:
+    mintPop(ws0)
+    pushQuad(ws0)
+    mintArgDispatch()
+
+mintAlign()
+_mint_gap:
+    subq 16, sp
+    mintArgDispatch()
+
+mintAlign()
+_mint_call:
+    # Set up the rest of the stack frame
     subp FirstArgumentOffset - 16, sp
 
+    # wasmInstance = PC
+    storeq wasmInstance, ThisArgumentOffset - 16[sp]
+
+    # Swap instances
+    move ipintCallNewInstance, wasmInstance
     # Make the call
-    move wasmInstance, PM
-    call ws0, JSEntrySlowPathPtrTag
+    call ipintCallSavedEntrypoint, JSEntrySlowPathPtrTag
 
-    addq FirstArgumentOffset - 16, sp
+    loadq ThisArgumentOffset - 16[sp], PB
+    # Restore the stack pointer
+    addp FirstArgumentOffset - 16, sp
 
-    # Post-call: restore instance and MC
+    # Hey, look. PM hasn't been used to store anything.
+    # No need to compute anything, just directly load stuff we need.
+    loadh [PM], ws0  # number of stack args
+    leap [sp, ws0, 8], sp
 
-    move PM, wasmInstance
-    getIPIntCallee()
-    # Saved MC
-    move PB, ws1
-    # Throw away PM value since it's already in wasmInstance
-    popQuad(PB, PM)
-    loadp Wasm::IPIntCallee::m_metadata[ws0], PM
+    const ipintCallSavedPL = memoryBase
 
-    # ws0 = limit
-    # csr3 = index
-    # csr4 = value
-    move ws1, csr3
-    addq 40, csr3
-    # Load size of parameter group
-    loadh [PM, csr3], ws0
-    loadh 2[PM, csr3], csr4
-    addq ws0, csr3
+    # Grab PL
+    pop wasmInstance, ipintCallSavedPL
 
-    # Pop all arguments off stack
-    lshiftq 4, csr4
-    addp csr4, sp
+    loadh 2[PM], ws0
+    lshiftq 4, ws0
+    addq ws0, sp
+    addq 4, PM
+    mintRetDispatch()
 
-    # Load size of return group
-    loadh [PM, csr3], ws0
-    addq csr3, ws0
-.ipint_call_ret_loop:
-    bqeq ws0, csr3, .ipint_call_ret_loop_end
-    loadb 2[PM, csr3], csr4
-    bqeq csr4, 0, .ipint_call_ret_loop_end
-    addq 1, csr3
-    bqgteq csr4, 6, .ipint_call_ret_stack
-    bqeq csr4, 5, .ipint_call_ret_fpr
-    pushQuad(t0)
-    jmp .ipint_call_ret_loop
-.ipint_call_ret_fpr:
-    pushFPR()
-    jmp .ipint_call_ret_loop
-.ipint_call_ret_stack:
+mintAlign()
+_mint_r0:
+    pushQuad(r0)
+    mintRetDispatch()
+
+mintAlign()
+_mint_r1:
+    pushQuad(r1)
+    mintRetDispatch()
+
+mintAlign()
+_mint_r2:
+    pushQuad(t2)
+    mintRetDispatch()
+
+mintAlign()
+_mint_r3:
+    pushQuad(t3)
+    mintRetDispatch()
+
+mintAlign()
+_mint_r4:
+if ARM64 or ARM64E
+    pushQuad(t4)
+    mintRetDispatch()
+else
+    break
+end
+
+mintAlign()
+_mint_r5:
+if ARM64 or ARM64E
+    pushQuad(t5)
+    mintRetDispatch()
+else
+    break
+end
+
+mintAlign()
+_mint_r6:
+if ARM64 or ARM64E
+    pushQuad(t6)
+    mintRetDispatch()
+else
+    break
+end
+
+mintAlign()
+_mint_r7:
+if ARM64 or ARM64E
+    pushQuad(t7)
+    mintRetDispatch()
+else
+    break
+end
+
+mintAlign()
+_mint_fr0:
+    if ARM64 or ARM64E
+        emit "str q0, [sp, #-16]!"
+    else
+        emit "sub $16, %esp"
+        emit "movdqu %xmm0, (%esp)"
+    end
+    mintRetDispatch()
+
+mintAlign()
+_mint_fr1:
+    if ARM64 or ARM64E
+        emit "str q1, [sp, #-16]!"
+    else
+        emit "sub $16, %esp"
+        emit "movdqu %xmm1, (%esp)"
+    end
+    mintRetDispatch()
+
+mintAlign()
+_mint_fr2:
+    if ARM64 or ARM64E
+        emit "str q2, [sp, #-16]!"
+    else
+        emit "sub $16, %esp"
+        emit "movdqu %xmm2, (%esp)"
+    end
+    mintRetDispatch()
+
+mintAlign()
+_mint_fr3:
+    if ARM64 or ARM64E
+        emit "str q3, [sp, #-16]!"
+    else
+        emit "sub $16, %esp"
+        emit "movdqu %xmm3, (%esp)"
+    end
+    mintRetDispatch()
+
+mintAlign()
+_mint_ret_stack:
     # TODO
     break
-.ipint_call_ret_loop_end:
 
-    move ws0, MC
-    move PB, PL
+mintAlign()
+_mint_end:
 
-    # Restore PC
-    loadi 4[PM, ws1], PC
-    # Restore ws1
+    move PM, MC
+    move PB, PC
+    # Restore PL
+    move ipintCallSavedPL, PL
+    # Restore PB/PM
     getIPIntCallee()
     loadp Wasm::IPIntCallee::m_bytecode[ws0], PB
-
+    loadp Wasm::IPIntCallee::m_metadata[ws0], PM
+    subq PM, MC
     # Restore IB
     if ARM64 or ARM64E
         pcrtoaddr _ipint_unreachable, IB
     end
-
+    # Restore memory
     ipintReloadMemory()
-
     nextIPIntInstruction()
+
+uintAlign()
+_uint_r0:
+    popQuad(r0, t3)
+    uintDispatch()
+
+uintAlign()
+_uint_r1:
+    popQuad(r1, t3)
+    uintDispatch()
+
+uintAlign()
+_uint_fr1:
+    popFPR()
+    uintDispatch()
+
+uintAlign()
+_uint_stack:
+    break
+
+uintAlign()
+_uint_ret:
+    jmp .ipint_exit
+
+# PM = location in argumINT bytecode
+# csr0 = tmp
+# csr1 = dst
+# csr2 = src
+# csr3
+# csr4 = for dispatch
+
+const argumINTDest = csr1
+const argumINTSrc = csr2
+
+argumINTAlign()
+_argumINT_a0:
+    storeq a0, [argumINTDest]
+    addq 8, argumINTDest
+    argumINTDispatch()
+
+argumINTAlign()
+_argumINT_a1:
+    storeq a1, [argumINTDest]
+    addq 8, argumINTDest
+    argumINTDispatch()
+
+argumINTAlign()
+_argumINT_a2:
+    storeq a2, [argumINTDest]
+    addq 8, argumINTDest
+    argumINTDispatch()
+
+argumINTAlign()
+_argumINT_a3:
+    storeq a3, [argumINTDest]
+    addq 8, argumINTDest
+    argumINTDispatch()
+
+argumINTAlign()
+_argumINT_a4:
+if ARM64 or ARM64E
+    storeq a4, [argumINTDest]
+    addq 8, argumINTDest
+    argumINTDispatch()
+else
+    break
+end
+
+argumINTAlign()
+_argumINT_a5:
+if ARM64 or ARM64E
+    storeq a5, [argumINTDest]
+    addq 8, argumINTDest
+    argumINTDispatch()
+else
+    break
+end
+
+argumINTAlign()
+_argumINT_a6:
+if ARM64 or ARM64E
+    storeq a6, [argumINTDest]
+    addq 8, argumINTDest
+    argumINTDispatch()
+else
+    break
+end
+
+argumINTAlign()
+_argumINT_a7:
+if ARM64 or ARM64E
+    storeq a7, [argumINTDest]
+    addq 8, argumINTDest
+    argumINTDispatch()
+else
+    break
+end
+
+argumINTAlign()
+_argumINT_fa0:
+    stored fa0, [argumINTDest]
+    addq 8, argumINTDest
+    argumINTDispatch()
+
+argumINTAlign()
+_argumINT_fa1:
+    stored fa1, [argumINTDest]
+    addq 8, argumINTDest
+    argumINTDispatch()
+
+argumINTAlign()
+_argumINT_fa2:
+    stored fa2, [argumINTDest]
+    addq 8, argumINTDest
+    argumINTDispatch()
+
+argumINTAlign()
+_argumINT_fa3:
+    stored fa3, [argumINTDest]
+    addq 8, argumINTDest
+    argumINTDispatch()
+
+argumINTAlign()
+_argumINT_stack:
+    loadq [argumINTSrc], csr0
+    addq 8, argumINTSrc
+    storeq csr0, [argumINTDest]
+    addq 8, argumINTDest
+    argumINTDispatch()
+
+argumINTAlign()
+_argumINT_end:
+    jmp .ipint_entry_end_local
 
 # Put all operations before this `else`, or else 32-bit architectures will fail to build.
 else

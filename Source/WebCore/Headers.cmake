@@ -1279,6 +1279,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/LayoutUnits.h
     layout/MarginTypes.h
 
+    layout/floats/FloatingState.h
+
     layout/formattingContexts/FormattingConstraints.h
     layout/formattingContexts/FormattingContext.h
 
@@ -1528,7 +1530,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/SpeechSynthesisClient.h
     page/StorageBlockingPolicy.h
     page/StructuredSerializeOptions.h
-    page/SuspendableTimer.h
     page/TextDirectionSubmenuInclusionBehavior.h
     page/TextIndicator.h
     page/TranslationContextMenuInfo.h

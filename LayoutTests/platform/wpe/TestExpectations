@@ -1635,3 +1635,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/
 imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/registration-attribute.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h264_avc [ Pass Failure ]
 perf/htmlcollection-backwards-iteration.html [ Pass Failure ]
+
+# Unable to reproduce this crash outside of WPE bots.
+webkit.org/b/260072 fast/mediastream/success.html [ Crash ]

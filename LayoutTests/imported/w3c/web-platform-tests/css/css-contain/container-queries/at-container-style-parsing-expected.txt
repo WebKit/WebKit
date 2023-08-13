@@ -1,0 +1,12 @@
+
+FAIL style(--my-prop: foo) assert_equals: expected "true" but got ""
+FAIL style(--my-prop: foo - bar ()) assert_equals: expected "true" but got ""
+FAIL style(not ((--foo: calc(10px + 2em)) and ((--foo: url(x))))) assert_equals: expected "true" but got ""
+FAIL style((--foo: bar) or (--bar: 10px)) assert_equals: expected "true" but got ""
+FAIL style(--my-prop:) assert_equals: expected "true" but got ""
+FAIL style(--my-prop: ) assert_equals: expected "true" but got ""
+FAIL style(--foo: bar !important) assert_equals: expected "true" but got ""
+FAIL style(--foo) assert_equals: expected "true" but got ""
+PASS style(--foo: bar;)
+PASS style(style(--foo: bar))
+

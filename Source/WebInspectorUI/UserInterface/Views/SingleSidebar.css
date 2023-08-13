@@ -35,11 +35,11 @@
     top: var(--navigation-bar-height);
 }
 
-.single-sidebar.trailing > .resizer {
+.single-sidebar.trailing > .resizer.vertical-rule {
     inset-inline-start: -3px;
 }
 
-.single-sidebar.leading > .resizer {
+.single-sidebar.leading > .resizer.vertical-rule {
     inset-inline-end: -3px;
 }
 
@@ -47,6 +47,16 @@
     border-inline-end: 1px solid var(--border-color);
 }
 
-.single-sidebar.trailing {
+body:not(.narrow) .single-sidebar.trailing {
     border-inline-start: 1px solid var(--border-color);
+}
+
+body.narrow .single-sidebar.trailing {
+    border-top: none;
+    flex-grow: 1;
+}
+
+.single-sidebar.trailing .resizer.horizontal-rule,
+body.narrow .single-sidebar.trailing .resizer.vertical-rule {
+    display: none;
 }

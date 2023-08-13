@@ -95,6 +95,7 @@ imported/w3c/web-platform-tests/fetch [ Skip ]
 # Shared workers are only implemented for WebKit2.
 http/tests/navigation/page-cache-shared-worker.html [ Skip ]
 http/tests/workers/shared [ Skip ]
+http/wpt/workers/modules/shared-worker-import-csp.html [ Skip ]
 imported/w3c/web-platform-tests/WebCryptoAPI/historical.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-allowed.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-blocked.sub.html [ Skip ]
@@ -1581,6 +1582,7 @@ http/tests/inspector/network/intercept-request-with-error.html [ Skip ]
 http/tests/inspector/network/intercept-request-with-response.html [ Skip ]
 http/tests/inspector/network/local-resource-override-basic.html [ Skip ]
 http/tests/inspector/network/local-resource-override-main-resource.html [ Skip ]
+http/tests/inspector/network/local-resource-override-mapped-to-directory.html [ Skip ]
 http/tests/inspector/network/local-resource-override-mapped-to-file.html [ Skip ]
 http/tests/inspector/network/local-resource-override-script-tag.html [ Skip ]
 http/tests/inspector/network/resource-response-inspector-override.html [ Skip ]
@@ -2587,3 +2589,9 @@ webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visi
 webkit.org/b/259485 [ Ventura ] http/tests/media/hls/track-in-band-multiple-cues.html [ Crash ]
 
 webkit.org/b/259546 [ Debug ] media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Crash Timeout ]
+
+webkit.org/b/260070 fast/selectors/style-invalidation-hover-change-descendants.html [ Pass Failure ]
+webkit.org/b/260070 fast/selectors/style-invalidation-hover-change-siblings.html [ Failure ]
+
+webkit.org/b/260107 [ Debug ] http/wpt/workers/modules/dedicated-worker-import-csp.html [ Skip ]
+webkit.org/b/260111 [ Ventura Release ] http/wpt/workers/modules/dedicated-worker-import-csp.html [ Failure ]

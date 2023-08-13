@@ -1173,10 +1173,6 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
         if (m_page->preferences().siteIsolationEnabled())
             result = true;
 
-        // FIXME: Either make this work with TiledCoreAnimationDrawingArea or only enable it where remote layer trees are used.
-        if (m_page->preferences().processSwapOnCrossSiteWindowOpenEnabled())
-            result = true;
-
         if (isInRecoveryOS()) {
             // Temporarily disable UI side compositing in Recovery OS <rdar://107964149>.
             WTFLogAlways("Disabling UI side compositing in Recovery OS");

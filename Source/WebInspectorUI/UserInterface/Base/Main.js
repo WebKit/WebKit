@@ -48,6 +48,13 @@ WI.LayoutDirection = {
     RTL: "rtl",
 };
 
+WI.LayoutMode = {
+    Default: "default",
+    Narrow: "narrow",
+};
+
+WI.NarrowLayoutMaximumWidth = 700;
+
 WI.loaded = function()
 {
     if (InspectorFrontendHost.connect)
@@ -283,14 +290,16 @@ WI.contentLoaded = function()
     WI.consoleLogViewController = WI.consoleContentView.logViewController;
 
     WI.navigationSidebar = new WI.SingleSidebar(document.getElementById("navigation-sidebar"), WI.Sidebar.Sides.Leading, WI.UIString("Navigation", "Navigation @ Sidebar", "Label for the navigation sidebar."));
-    WI.navigationSidebar.addEventListener(WI.Sidebar.Event.WidthDidChange, WI._sidebarWidthDidChange, WI);
-    WI.navigationSidebar.addEventListener(WI.Sidebar.Event.CollapsedStateDidChange, WI._sidebarWidthDidChange, WI);
+    WI.navigationSidebar.addEventListener(WI.Sidebar.Event.WidthDidChange, WI._sidebarSizeDidChange, WI);
+    WI.navigationSidebar.addEventListener(WI.Sidebar.Event.CollapsedStateDidChange, WI._sidebarSizeDidChange, WI);
 
     WI.detailsSidebar = new WI.MultiSidebar(document.getElementById("details-sidebar"), WI.Sidebar.Sides.Trailing, WI.UIString("Details", "Details @ Sidebar", "Label for the details sidebar."));
-    WI.detailsSidebar.addEventListener(WI.Sidebar.Event.WidthDidChange, WI._sidebarWidthDidChange, WI);
-    WI.detailsSidebar.addEventListener(WI.Sidebar.Event.CollapsedStateDidChange, WI._sidebarWidthDidChange, WI);
-    WI.detailsSidebar.addEventListener(WI.MultiSidebar.Event.MultipleSidebarsVisibleChanged, WI._sidebarWidthDidChange, WI);
-
+    WI.detailsSidebar.addEventListener(WI.Sidebar.Event.WidthDidChange, WI._sidebarSizeDidChange, WI);
+    WI.detailsSidebar.addEventListener(WI.Sidebar.Event.HeightDidChange, WI._sidebarSizeDidChange, WI);
+    WI.detailsSidebar.addEventListener(WI.Sidebar.Event.CollapsedStateDidChange, WI._sidebarSizeDidChange, WI);
+    WI.detailsSidebar.addEventListener(WI.MultiSidebar.Event.MultipleSidebarsVisibleChanged, WI._sidebarSizeDidChange, WI);
+    WI.detailsSidebar.canMoveToBottom = true;
+    
     WI.searchKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Shift, "F", WI._focusSearchField);
     WI._findKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "F", WI._find);
     WI.saveKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "S", WI._save);
@@ -560,6 +569,9 @@ WI.contentLoaded = function()
     WI.tabBar.addEventListener(WI.TabBar.Event.TabBarItemAdded, WI._rememberOpenTabs, WI);
     WI.tabBar.addEventListener(WI.TabBar.Event.TabBarItemRemoved, WI._rememberOpenTabs, WI);
     WI.tabBar.addEventListener(WI.TabBar.Event.TabBarItemsReordered, WI._rememberOpenTabs, WI);
+    
+    WI._updateLayoutMode();
+    WI.settings.enableNarrowLayoutMode.addEventListener(WI.Setting.Event.Changed, WI._updateLayoutMode, WI);
 
     function updateConsoleSavedResultPrefixCSSVariable() {
         document.body.style.setProperty("--console-saved-result-prefix", "\"" + WI.RuntimeManager.preferredSavedResultPrefix() + "\"");
@@ -1370,6 +1382,12 @@ WI.getMaximumSidebarWidth = function(sidebar)
     return minimumWidth;
 };
 
+WI.getMaximumSidebarHeight = function(sidebar)
+{
+    console.assert(sidebar instanceof WI.Sidebar);
+    return WI._contentElement.offsetHeight - WI.TabBrowser.MinimumHeight;
+};
+
 WI.tabContentViewClassForRepresentedObject = function(representedObject)
 {
     if (representedObject instanceof WI.DOMTree)
@@ -1451,6 +1469,7 @@ WI.showLocalResourceOverride = function(localResourceOverride, options = {})
 
     switch (localResourceOverride.type) {
     case WI.LocalResourceOverride.InterceptType.Response:
+    case WI.LocalResourceOverride.InterceptType.ResponseMappedDirectory:
     case WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork:
         if (options.overriddenResource) {
             const onlyExisting = true;
@@ -1825,9 +1844,25 @@ WI._updateWindowInactiveState = function(event)
 
 WI._windowResized = function(event)
 {
+    WI._updateLayoutMode();
     WI.tabBar.updateLayout(WI.View.LayoutReason.Resize);
-    WI._tabBrowserSizeDidChange();
     WI._updateSheetRect();
+};
+
+WI._updateLayoutMode = function()
+{
+    let computedMode = WI.LayoutMode.Default;
+    
+    if (WI.settings.enableNarrowLayoutMode.value && window.innerWidth < WI.NarrowLayoutMaximumWidth)
+        computedMode = WI.LayoutMode.Narrow;
+    
+    if (WI.layoutMode !== computedMode) {
+        WI.layoutMode = computedMode;
+        document.body.classList.toggle("narrow", WI.layoutMode === WI.LayoutMode.Narrow);
+        WI.detailsSidebar.updateLayout(WI.View.LayoutReason.Resize);
+    }
+    
+    WI._tabBrowserSizeDidChange();
 };
 
 WI._updateSheetRect = function()
@@ -2004,7 +2039,7 @@ WI._consoleDrawerDidResize = function(event)
     WI.tabBrowser.updateLayout(WI.View.LayoutReason.Resize);
 };
 
-WI._sidebarWidthDidChange = function(event)
+WI._sidebarSizeDidChange = function(event)
 {
     WI._tabBrowserSizeDidChange();
 };

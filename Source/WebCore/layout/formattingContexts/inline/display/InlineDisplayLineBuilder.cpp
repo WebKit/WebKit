@@ -55,7 +55,7 @@ InlineDisplayLineBuilder::InlineDisplayLineBuilder(const InlineFormattingContext
 {
 }
 
-InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collectEnclosingLineGeometry(const LineBuilder::LayoutResult& lineLayoutResult, const LineBox& lineBox, const InlineRect& lineBoxRect) const
+InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collectEnclosingLineGeometry(const LineLayoutResult& lineLayoutResult, const LineBox& lineBox, const InlineRect& lineBoxRect) const
 {
     auto& rootInlineBox = lineBox.rootInlineBox();
     auto initialEnclosingTopAndBottom = [&]() -> std::tuple<std::optional<InlineLayoutUnit>, std::optional<InlineLayoutUnit>>  {
@@ -121,7 +121,7 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
     return { { enclosingTop.value_or(lineBoxRect.top()), enclosingBottom.value_or(lineBoxRect.top()) }, contentOverflowRect };
 }
 
-InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LayoutResult& lineLayoutResult, const LineBox& lineBox, const ConstraintsForInlineContent& constraints, bool lineIsFullyTruncatedInBlockDirection) const
+InlineDisplay::Line InlineDisplayLineBuilder::build(const LineLayoutResult& lineLayoutResult, const LineBox& lineBox, const ConstraintsForInlineContent& constraints, bool lineIsFullyTruncatedInBlockDirection) const
 {
     auto& rootInlineBox = lineBox.rootInlineBox();
     auto isLeftToRightDirection = lineLayoutResult.directionality.inlineBaseDirection == TextDirection::LTR;

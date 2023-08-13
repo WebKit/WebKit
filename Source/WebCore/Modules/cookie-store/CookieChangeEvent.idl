@@ -30,6 +30,6 @@
     SecureContext
 ] interface CookieChangeEvent : Event {
     constructor([AtomString] DOMString type, optional CookieChangeEventInit eventInitDict = {});
-    [SameObject] readonly attribute FrozenArray<CookieListItem> changed;
-    [SameObject] readonly attribute FrozenArray<CookieListItem> deleted;
+    [CachedAttribute, SameObject] readonly attribute FrozenArray<CookieListItem> changed;
+    [CachedAttribute, SameObject] readonly attribute FrozenArray<CookieListItem> deleted;
 };

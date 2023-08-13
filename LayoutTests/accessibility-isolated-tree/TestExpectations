@@ -13,7 +13,6 @@ accessibility/mac/relationships-in-frames.html [ Timeout ]
 accessibility/multiple-label-input.html [ Timeout ]
 
 # Text failures
-accessibility/aria-current.html [ Failure ]
 accessibility/dialog-showModal.html [ Failure ]
 accessibility/dynamically-ignored-canvas.html [ Failure ]
 accessibility/element-reflection-ariacontrols.html [ Failure ]

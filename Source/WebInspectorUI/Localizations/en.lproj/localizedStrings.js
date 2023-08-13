@@ -61,6 +61,10 @@ localizedStrings["%s (Case Insensitive) @ Symbolic Breakpoint"] = "%s (Case Inse
 /* Label for the IP address of a proxy server used to retrieve a network resource. */
 localizedStrings["%s (Proxy) @ Resource Remote Address"] = "%s (Proxy)";
 localizedStrings["%s (default)"] = "%s (default)";
+/* Label modifier indicating that the local override maps to a directory on disk. */
+localizedStrings["%s (directory) @ Local Override Type"] = "%s (directory)";
+/* Label modifier indicating that the local override maps to a file on disk. */
+localizedStrings["%s (file) @ Local Override Type"] = "%s (file)";
 localizedStrings["%s (hidden)"] = "%s (hidden)";
 localizedStrings["%s Callback"] = "%s Callback";
 localizedStrings["%s Event Dispatched"] = "%s Event Dispatched";
@@ -324,6 +328,10 @@ localizedStrings["Child"] = "Child";
 localizedStrings["Child Layers"] = "Child Layers";
 localizedStrings["Child added to "] = "Child added to ";
 localizedStrings["Children"] = "Children";
+/* Text of button that shows native UI to pick a directory on disk. */
+localizedStrings["Choose Directory @ Local Override Popover"] = "Choose Directory";
+/* Text of button that shows native UI to pick a file on disk. */
+localizedStrings["Choose File @ Local Override Popover"] = "Choose File";
 localizedStrings["Choose which badges are shown in the DOM tree"] = "Choose which badges are shown in the DOM tree";
 localizedStrings["Cipher"] = "Cipher";
 localizedStrings["Clamp to sRGB"] = "Clamp to sRGB";
@@ -515,6 +523,8 @@ localizedStrings["Details"] = "Details";
 localizedStrings["Details @ Sidebar"] = "Details";
 /* Category label for detail sidebar settings. */
 localizedStrings["Details Sidebars: @ Settings Elements Pane"] = "Details Sidebars:";
+/* Category label for detail sidebar settings. */
+localizedStrings["Details Sidebars: @ Settings General Pane"] = "Details Sidebars:";
 localizedStrings["Device %d"] = "Device %d";
 localizedStrings["Device Settings"] = "Device Settings";
 localizedStrings["Diagnoses common accessibility problems affecting screen readers and other assistive technology."] = "Diagnoses common accessibility problems affecting screen readers and other assistive technology.";
@@ -525,6 +535,10 @@ localizedStrings["Diagonal Fractions @ Font Details Sidebar Property Value"] = "
 localizedStrings["Dimensions"] = "Dimensions";
 /* Section header for the group of CSS variables with dimensions as values */
 localizedStrings["Dimensions @ Computed style variables section"] = "Dimensions";
+/* Label for the input used for mapping the local override to a directory on disk. */
+localizedStrings["Directory @ Local Override Popopver"] = "Directory";
+/* Option for creating a local override for an entire directory. */
+localizedStrings["Directory @ Local Override Type"] = "Directory";
 localizedStrings["Disable All"] = "Disable All";
 localizedStrings["Disable Audit"] = "Disable Audit";
 localizedStrings["Disable Breakpoint"] = "Disable Breakpoint";
@@ -725,6 +739,10 @@ localizedStrings["Feature Properties @ Font Details Sidebar Section"] = "Feature
 localizedStrings["Fetch"] = "Fetch";
 /* Resources loaded via 'fetch' method */
 localizedStrings["Fetches"] = "Fetches";
+/* Label for the input used for mapping the local override to a file on disk. */
+localizedStrings["File @ Local Override Popopver"] = "File";
+/* Option for creating a local override for a single file. */
+localizedStrings["File @ Local Override Type"] = "File";
 localizedStrings["File or Resource"] = "File or Resource";
 localizedStrings["Filename"] = "Filename";
 localizedStrings["Filter"] = "Filter";
@@ -993,7 +1011,10 @@ localizedStrings["MSE Logging:"] = "MSE Logging:";
 localizedStrings["Main Thread"] = "Main Thread";
 localizedStrings["Main: %s"] = "Main: %s";
 localizedStrings["Manifest URL"] = "Manifest URL";
-localizedStrings["Map to File"] = "Map to File";
+/* Navigation item that changes the local override to fetch its content from a directory on disk. */
+localizedStrings["Map to Directory @ Resource Preview"] = "Map to Directory";
+/* Navigation item that changes the local override to fetch its content from a file on disk. */
+localizedStrings["Map to File @ Resource Preview"] = "Map to File";
 localizedStrings["Mapped to \u201C%s\u201D"] = "Mapped to \u201C%s\u201D";
 localizedStrings["Mass"] = "Mass";
 localizedStrings["Matching"] = "Matching";
@@ -1342,8 +1363,6 @@ localizedStrings["Response"] = "Response";
 localizedStrings["Response (DOM Tree)"] = "Response (DOM Tree)";
 localizedStrings["Response (Object Tree)"] = "Response (Object Tree)";
 localizedStrings["Response (Text)"] = "Response (Text)";
-/* Text indicating that the local override will skip all network activity and instead immediately serve the response. */
-localizedStrings["Response (skip network) @ Local Override Type"] = "Response (skip network)";
 /* Text indicating that the local override intercepts the response phase of network activity. */
 localizedStrings["Response @ Local Override Type"] = "Response";
 localizedStrings["Response Cookies"] = "Response Cookies";
@@ -1498,6 +1517,8 @@ localizedStrings["Show hidden tabs\u2026"] = "Show hidden tabs\u2026";
 localizedStrings["Show independent Styles sidebar @ Settings Elements Pane"] = "Show independent Styles sidebar";
 localizedStrings["Show jump to effective property button"] = "Show jump to effective property button";
 localizedStrings["Show jump to variable declaration button"] = "Show jump to variable declaration button";
+/* Settings tab checkbox label for whether the details sidebars (on the right in LTR locales) are at the bottom */
+localizedStrings["Show on bottom when narrow @ Settings General Pane"] = "Show on bottom when narrow";
 localizedStrings["Show page rulers and node border lines"] = "Show page rulers and node border lines";
 localizedStrings["Show property syntax in documentation popover"] = "Show property syntax in documentation popover";
 localizedStrings["Show rulers"] = "Show rulers";
@@ -1597,6 +1618,8 @@ localizedStrings["Styles \u2014 Computed"] = "Styles \u2014 Computed";
 localizedStrings["Styles \u2014 Rules"] = "Styles \u2014 Rules";
 localizedStrings["Styles:"] = "Styles:";
 localizedStrings["Subject"] = "Subject";
+/* Label for the input of where to find the corresponding file within the mapped directory on disk. */
+localizedStrings["Subpath @ Local Override Popover"] = "Subpath";
 /* Property value for `font-variant-position: sub`. */
 localizedStrings["Subscript @ Font Details Sidebar Property Value"] = "Subscript";
 /* A submenu item of 'Break On' that breaks (pauses) before child DOM node is modified */
@@ -1777,6 +1800,8 @@ localizedStrings["Valid From"] = "Valid From";
 localizedStrings["Valid Until"] = "Valid Until";
 localizedStrings["Value"] = "Value";
 localizedStrings["Variables"] = "Variables";
+/* Title of swatches section in Color Picker */
+localizedStrings["Variables @ Color Picker"] = "Variables";
 /* Section title for font variation properties. */
 localizedStrings["Variation Properties @ Font Details Sidebar Section"] = "Variation Properties";
 localizedStrings["Verbose"] = "Verbose";
@@ -1931,6 +1956,10 @@ localizedStrings["invalid HAR"] = "invalid HAR";
 localizedStrings["invalid JSON"] = "invalid JSON";
 localizedStrings["key"] = "key";
 localizedStrings["line "] = "line ";
+/* Placeholder text indicating that no directory has been selected. */
+localizedStrings["no directory selected @ Local Override Popover"] = "no directory selected";
+/* Placeholder text indicating that no file has been selected. */
+localizedStrings["no file selected @ Local Override Popover"] = "no file selected";
 localizedStrings["non-array %s"] = "non-array %s";
 localizedStrings["non-integer %s"] = "non-integer %s";
 localizedStrings["non-number %s"] = "non-number %s";

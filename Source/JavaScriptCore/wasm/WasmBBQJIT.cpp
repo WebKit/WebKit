@@ -7794,10 +7794,11 @@ public:
     void emitCCall(Func function, const Vector<Value, N>& arguments)
     {
         // Currently, we assume the Wasm calling convention is the same as the C calling convention
-        Vector<Type, 1> resultTypes;
-        Vector<Type> argumentTypes;
+        Vector<Type, 16> resultTypes;
+        Vector<Type, 16> argumentTypes;
+        argumentTypes.reserveInitialCapacity(arguments.size());
         for (const Value& value : arguments)
-            argumentTypes.append(Type { value.type(), 0u });
+            argumentTypes.uncheckedAppend(Type { value.type(), 0u });
         RefPtr<TypeDefinition> functionType = TypeInformation::typeDefinitionForFunction(resultTypes, argumentTypes);
         CallInformation callInfo = wasmCallingConvention().callInformationFor(*functionType, CallRole::Caller);
         Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), callInfo.headerAndArgumentStackSizeInBytes);
@@ -7822,10 +7823,11 @@ public:
         ASSERT(result.isTemp());
 
         // Currently, we assume the Wasm calling convention is the same as the C calling convention
-        Vector<Type, 1> resultTypes = { Type { result.type(), 0u } };
-        Vector<Type> argumentTypes;
+        Vector<Type, 16> resultTypes = { Type { result.type(), 0u } };
+        Vector<Type, 16> argumentTypes;
+        argumentTypes.reserveInitialCapacity(arguments.size());
         for (const Value& value : arguments)
-            argumentTypes.append(Type { value.type(), 0u });
+            argumentTypes.uncheckedAppend(Type { value.type(), 0u });
         RefPtr<TypeDefinition> functionType = TypeInformation::typeDefinitionForFunction(resultTypes, argumentTypes);
         CallInformation callInfo = wasmCallingConvention().callInformationFor(*functionType, CallRole::Caller);
         Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), callInfo.headerAndArgumentStackSizeInBytes);

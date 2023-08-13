@@ -4802,6 +4802,16 @@ void WebPage::updateRendering()
 #endif
 }
 
+bool WebPage::hasRootFrames()
+{
+    bool result = m_page && !m_page->rootFrames().isEmptyIgnoringNullReferences();
+    if (!result) {
+        ASSERT(m_page->settings().processSwapOnCrossSiteWindowOpenEnabled());
+        ASSERT(!m_page->settings().siteIsolationEnabled());
+    }
+    return result;
+}
+
 void WebPage::didUpdateRendering()
 {
     didPaintLayers();

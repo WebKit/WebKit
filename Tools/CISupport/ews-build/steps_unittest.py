@@ -2243,7 +2243,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
         )
         self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('build_summary'), 'Found test failures')
+        self.assertEqual(self.getProperty('build_summary'), 'Found test failures in stress mode')
         return rc
 
     def test_success(self):
@@ -2346,7 +2346,7 @@ class TestRunWebKitTestsInStressGuardmallocMode(BuildStepMixinAdditions, unittes
         )
         self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('build_summary'), 'Found test failures')
+        self.assertEqual(self.getProperty('build_summary'), 'Found test failures in stress mode')
         return rc
 
 

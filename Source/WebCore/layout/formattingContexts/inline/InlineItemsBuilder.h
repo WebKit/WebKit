@@ -57,6 +57,7 @@ private:
     // FIXME: We should not need this here. This is only required by the out of flow boxes.
     InlineFormattingState& m_formattingState;
     bool m_contentRequiresVisualReordering { false };
+    bool m_isNonBidiTextAndForcedLineBreakOnlyContent { true };
 };
 
 }

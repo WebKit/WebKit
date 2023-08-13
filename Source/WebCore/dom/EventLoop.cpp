@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 
 #include "Microtasks.h"
 #include "ScriptExecutionContext.h"
-#include "SuspendableTimer.h"
 
 namespace WebCore {
 
@@ -94,6 +93,33 @@ public:
         }
     }
 
+    void adjustNextFireTime(Seconds delta)
+    {
+        if (!m_suspended)
+            TimerBase::augmentFireInterval(delta);
+        else if (m_savedIsActive)
+            m_savedNextFireInterval += delta;
+        else {
+            m_savedIsActive = true;
+            m_savedNextFireInterval = delta;
+            m_savedRepeatInterval = 0_s;
+        }
+    }
+
+    void adjustRepeatInterval(Seconds delta)
+    {
+        if (!m_suspended)
+            TimerBase::augmentRepeatInterval(delta);
+        else if (m_savedIsActive) {
+            m_savedNextFireInterval += delta;
+            m_savedRepeatInterval += delta;
+        } else {
+            m_savedIsActive = true;
+            m_savedNextFireInterval = delta;
+            m_savedRepeatInterval = delta;
+        }
+    }
+
 private:
     EventLoopTimer(Type type, std::unique_ptr<EventLoopTask>&& task)
         : m_task(WTFMove(task))
@@ -106,9 +132,10 @@ private:
         Ref protectedThis { *this };
         if (!m_task)
             return;
+        WeakPtr group = m_task->group();
         m_task->execute();
-        if (m_type == Type::OneShot)
-            m_task->group()->removeScheduledTimer(*this);
+        if (group && m_type == Type::OneShot)
+            group->removeScheduledTimer(*this);
     }
 
     std::unique_ptr<EventLoopTask> m_task;
@@ -164,6 +191,8 @@ EventLoopTimerHandle EventLoop::scheduleTask(Seconds timeout, std::unique_ptr<Ev
 {
     auto timer = EventLoopTimer::create(EventLoopTimer::Type::OneShot, WTFMove(action));
     timer->startOneShot(timeout);
+    if (timer->group()->isSuspended())
+        timer->suspend();
 
     ASSERT(timer->group());
     timer->group()->didAddTimer(timer);
@@ -183,6 +212,8 @@ EventLoopTimerHandle EventLoop::scheduleRepeatingTask(Seconds nextTimeout, Secon
 {
     auto timer = EventLoopTimer::create(EventLoopTimer::Type::Repeating, WTFMove(action));
     timer->startRepeating(nextTimeout, interval);
+    if (timer->group()->isSuspended())
+        timer->suspend();
 
     ASSERT(timer->group());
     timer->group()->didAddTimer(timer);
@@ -418,6 +449,46 @@ void EventLoopTaskGroup::removeRepeatingTimer(EventLoopTimer& timer)
     if (RefPtr eventLoop = m_eventLoop.get())
         eventLoop->removeRepeatingTimer(timer);
     m_timers.remove(timer);
+}
+
+void EventLoopTaskGroup::setTimerAlignment(EventLoopTimerHandle handle, TimerAlignment& timerAlignment)
+{
+    if (!handle.m_timer)
+        return;
+    ASSERT(m_timers.contains(*handle.m_timer));
+    handle.m_timer->setTimerAlignment(timerAlignment);
+}
+
+void EventLoopTaskGroup::didChangeTimerAlignmentInterval(EventLoopTimerHandle handle)
+{
+    if (!handle.m_timer)
+        return;
+    ASSERT(m_timers.contains(*handle.m_timer));
+    handle.m_timer->didChangeAlignmentInterval();
+}
+
+void EventLoopTaskGroup::setTimerHasReachedMaxNestingLevel(EventLoopTimerHandle handle, bool value)
+{
+    if (!handle.m_timer)
+        return;
+    ASSERT(m_timers.contains(*handle.m_timer));
+    handle.m_timer->setHasReachedMaxNestingLevel(value);
+}
+
+void EventLoopTaskGroup::adjustTimerNextFireTime(EventLoopTimerHandle handle, Seconds delta)
+{
+    if (!handle.m_timer)
+        return;
+    ASSERT(m_timers.contains(*handle.m_timer));
+    handle.m_timer->adjustNextFireTime(delta);
+}
+
+void EventLoopTaskGroup::adjustTimerRepeatInterval(EventLoopTimerHandle handle, Seconds delta)
+{
+    if (!handle.m_timer)
+        return;
+    ASSERT(m_timers.contains(*handle.m_timer));
+    handle.m_timer->adjustRepeatInterval(delta);
 }
 
 void EventLoopTaskGroup::didAddTimer(EventLoopTimer& timer)

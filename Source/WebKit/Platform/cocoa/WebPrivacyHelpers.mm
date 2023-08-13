@@ -29,10 +29,10 @@
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 
 #import "Logging.h"
-#import "NWSPI.h"
 #import <WebCore/DNS.h>
 #import <WebCore/LinkDecorationFilteringData.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <pal/spi/cocoa/NetworkSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RobinHoodHashMap.h>

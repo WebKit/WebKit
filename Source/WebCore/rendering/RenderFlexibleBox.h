@@ -119,6 +119,8 @@ private:
     typedef Vector<LayoutRect, 8> ChildFrameRects;
 
     struct LineState;
+
+    using FlexLineStates = Vector<LineState>;
     
     bool mainAxisIsChildInlineAxis(const RenderBox&) const;
     bool isColumnFlow() const;
@@ -198,7 +200,7 @@ private:
     bool isChildEligibleForMarginTrim(MarginTrimType, const RenderBox&) const final;
     bool hasAutoMarginsInCrossAxis(const RenderBox& child) const;
     bool updateAutoMarginsInCrossAxis(RenderBox& child, LayoutUnit availableAlignmentSpace);
-    void repositionLogicalHeightDependentFlexItems(Vector<LineState>&, LayoutUnit gapBetweenLines);
+    void repositionLogicalHeightDependentFlexItems(FlexLineStates&, LayoutUnit gapBetweenLines);
     
     LayoutUnit availableAlignmentSpaceForChild(LayoutUnit lineCrossAxisExtent, const RenderBox& child);
     LayoutUnit marginBoxAscentForChild(const RenderBox& child);
@@ -216,14 +218,14 @@ private:
     void resetAutoMarginsAndLogicalTopInCrossAxis(RenderBox& child);
     void setOverridingMainSizeForChild(RenderBox&, LayoutUnit);
     void prepareChildForPositionedLayout(RenderBox& child);
-    void layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vector<FlexItem>&, LayoutUnit availableFreeSpace, bool relayoutChildren, Vector<LineState>&, LayoutUnit gapBetweenItems);
+    void layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vector<FlexItem>&, LayoutUnit availableFreeSpace, bool relayoutChildren, FlexLineStates&, LayoutUnit gapBetweenItems);
     void layoutColumnReverse(const Vector<FlexItem>&, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace, LayoutUnit gapBetweenItems);
-    void alignFlexLines(Vector<LineState>&, LayoutUnit gapBetweenLines);
-    void alignChildren(Vector<LineState>&);
+    void alignFlexLines(FlexLineStates&, LayoutUnit gapBetweenLines);
+    void alignChildren(FlexLineStates&);
     void applyStretchAlignmentToChild(RenderBox& child, LayoutUnit lineCrossAxisExtent);
     void performBaselineAlignment(LineState&);
-    void flipForRightToLeftColumn(const Vector<LineState>& linesState);
-    void flipForWrapReverse(const Vector<LineState>&, LayoutUnit crossAxisStartEdge);
+    void flipForRightToLeftColumn(const FlexLineStates& linesState);
+    void flipForWrapReverse(const FlexLineStates&, LayoutUnit crossAxisStartEdge);
     
     void appendChildFrameRects(ChildFrameRects&);
     void repaintChildrenDuringLayoutIfMoved(const ChildFrameRects&);

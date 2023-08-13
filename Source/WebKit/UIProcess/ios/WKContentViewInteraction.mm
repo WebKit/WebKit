@@ -6083,7 +6083,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     case WebCore::AutofillFieldName::HonorificPrefix:
         return UITextContentTypeNamePrefix;
     case WebCore::AutofillFieldName::GivenName:
-        return UITextContentTypeMiddleName;
+        return UITextContentTypeGivenName;
     case WebCore::AutofillFieldName::AdditionalName:
         return UITextContentTypeMiddleName;
     case WebCore::AutofillFieldName::FamilyName:

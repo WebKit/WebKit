@@ -35,11 +35,14 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
         this._isRegexCheckbox = null;
         this._isPassthroughCheckbox = null;
         this._requestURLCodeMirror = null;
+        this._mappedDirectorySubpathCodeMirror = null;
+        this._mappedDirectoryPathValueElement = null;
         this._methodSelectElement = null;
         this._mimeTypeCodeMirror = null;
         this._statusCodeCodeMirror = null;
         this._statusTextCodeMirror = null;
         this._headersDataGrid = null;
+        this._mappedFilePathValueElement = null;
         this._skipNetworkCheckbox = null;
 
         this._originalRequestURL = null;
@@ -57,12 +60,15 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
 
         // COMPATIBILITY (iOS 13.4): `Network.addInterception` did not exist yet.
         let data = {
-            type: this._skipNetworkCheckbox?.checked ? WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork : this._typeSelectElement.value,
+            type: this._typeSelectElement.value,
             url: this._urlCodeMirror.getValue(),
             isCaseSensitive: !this._isCaseSensitiveCheckbox || this._isCaseSensitiveCheckbox.checked,
             isRegex: !!this._isRegexCheckbox?.checked,
             isPassthrough: this._isPassthroughCheckbox.checked,
         };
+
+        if (data.type === WI.LocalResourceOverride.InterceptType.Response && this._skipNetworkCheckbox?.checked)
+            data.type = WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork;
 
         if (!data.url)
             return null;
@@ -115,6 +121,19 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
                 return null;
 
             data.responseHeaders = headers;
+
+            data.mappedFilePath = this._mappedFilePathValueElement.textContent;
+            break;
+
+        case WI.LocalResourceOverride.InterceptType.ResponseMappedDirectory:
+            data.requestURL = this._mappedDirectorySubpathCodeMirror.getValue();
+            if (!data.requestURL)
+                return null;
+
+            data.mappedFilePath = this._mappedDirectoryPathValueElement.textContent;
+            if (!data.mappedFilePath)
+                return null;
+
             break;
         }
 
@@ -156,6 +175,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
             placeholderData.mimeType = valueData.mimeType = localResource.mimeType;
             placeholderData.statusCode = valueData.statusCode = String(localResource.statusCode);
             placeholderData.statusText = valueData.statusText = localResource.statusText;
+            placeholderData.mappedFilePath = valueData.mappedFilePath = localResource.mappedFilePath;
         }
 
         placeholderData.url ||= this._defaultURL();
@@ -181,6 +201,10 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
 
         let table = popoverContentElement.appendChild(document.createElement("table"));
 
+        function createEditorId(id) {
+            return `local-resource-override-popover-${id}-input-field`;
+        }
+
         let createRow = (label, id, value, placeholder) => {
             let row = table.appendChild(document.createElement("tr"));
             let headerElement = row.appendChild(document.createElement("th"));
@@ -194,21 +218,37 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
 
             let codeMirror = this._createEditor(editorElement, {value, placeholder});
             let inputField = codeMirror.getInputField();
-            inputField.id = `local-resource-override-popover-${id}-input-field`;
+            inputField.id = createEditorId(id);
             labelElement.setAttribute("for", inputField.id);
 
             return {element: row, dataElement, codeMirror};
         };
 
         this._typeSelectElement = document.createElement("select");
-        for (let type of [WI.LocalResourceOverride.InterceptType.Request, WI.LocalResourceOverride.InterceptType.Response, WI.LocalResourceOverride.InterceptType.Block]) {
-            let optionElement = this._typeSelectElement.appendChild(document.createElement("option"));
-            optionElement.textContent = WI.LocalResourceOverride.displayNameForType(type);
-            optionElement.value = type;
-        }
-        this._typeSelectElement.value = localResourceOverride?.type ?? WI.LocalResourceOverride.InterceptType.Request;
 
-        if (!localResourceOverride && WI.NetworkManager.supportsOverridingRequests()) {
+        let createOption = (type, label) => {
+            let optionElement = document.createElement("option");
+            optionElement.textContent = label ?? WI.LocalResourceOverride.displayNameForType(type);
+            optionElement.value = type;
+            return optionElement;
+        };
+        if (WI.NetworkManager.supportsOverridingRequests())
+            this._typeSelectElement.appendChild(createOption(WI.LocalResourceOverride.InterceptType.Request));
+        if (WI.LocalResource.canMapToFile()) {
+            let optionGroupElement = this._typeSelectElement.appendChild(document.createElement("optgroup"));
+            optionGroupElement.label = WI.LocalResourceOverride.displayNameForType(WI.LocalResourceOverride.InterceptType.Response);
+            optionGroupElement.appendChild(createOption(WI.LocalResourceOverride.InterceptType.Response, WI.UIString("File", "File @ Local Override Type", "Option for creating a local override for a single file.")));
+            optionGroupElement.appendChild(createOption(WI.LocalResourceOverride.InterceptType.ResponseMappedDirectory, WI.UIString("Directory", "Directory @ Local Override Type", "Option for creating a local override for an entire directory.")));
+        } else
+            this._typeSelectElement.appendChild(createOption(WI.LocalResourceOverride.InterceptType.Response));
+        if (WI.NetworkManager.supportsBlockingRequests())
+            this._typeSelectElement.appendChild(createOption(WI.LocalResourceOverride.InterceptType.Block));
+
+        this._typeSelectElement.value = localResourceOverride?.type ?? this._typeSelectElement.options[0].value;
+        if (localResourceOverride?.type === WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork)
+            this._typeSelectElement.value = WI.LocalResourceOverride.InterceptType.Response;
+
+        if (!localResourceOverride && this._typeSelectElement.options.length > 1) {
             let typeRowElement = table.appendChild(document.createElement("tr"));
 
             let typeHeaderElement = typeRowElement.appendChild(document.createElement("th"));
@@ -318,6 +358,49 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
             methodLabelElement.setAttribute("for", this._methodSelectElement.id);
         }
 
+        let mappedDirectorySubpathRow = null;
+        let mappedDirectoryPathRowElement = null;
+        if (WI.NetworkManager.supportsOverridingResponses() && WI.LocalResource.canMapToFile()) {
+            const mappedDirectorySubpathLabel = WI.UIString("Subpath", "Subpath @ Local Override Popover", "Label for the input of where to find the corresponding file within the mapped directory on disk.");
+            mappedDirectorySubpathRow = createRow(mappedDirectorySubpathLabel, "mapped-directory-subpath", valueData.requestURL || "", placeholderData.requestURL !== placeholderData.url ? placeholderData.requestURL : "$1");
+            this._mappedDirectorySubpathCodeMirror = mappedDirectorySubpathRow.codeMirror;
+
+            mappedDirectoryPathRowElement = table.appendChild(document.createElement("tr"));
+            let mappedDirectoryPathHeaderElement = mappedDirectoryPathRowElement.appendChild(document.createElement("th"));
+            let mappedDirectoryPathDataElement = mappedDirectoryPathRowElement.appendChild(document.createElement("td"));
+
+            let mappedDirectoryPathLabelElement = mappedDirectoryPathHeaderElement.appendChild(document.createElement("label"));
+            mappedDirectoryPathLabelElement.textContent = WI.UIString("Directory", "Directory @ Local Override Popopver", "Label for the input used for mapping the local override to a directory on disk.");
+
+            // Simulate the UI of a `<input type="file">`, as there's no way to provide an initial value to an actual `<input type="file">`.
+
+            let mappedDirectoryPathEditorElement = mappedDirectoryPathDataElement.appendChild(document.createElement("div"));
+            mappedDirectoryPathEditorElement.classList.add("mapped-directory-path");
+
+            let mappedDirectoryPathButtonElement = mappedDirectoryPathEditorElement.appendChild(document.createElement("button"));
+            mappedDirectoryPathButtonElement.textContent = WI.UIString("Choose Directory", "Choose Directory @ Local Override Popover", "Text of button that shows native UI to pick a directory on disk.");
+
+            this._mappedDirectoryPathValueElement = mappedDirectoryPathEditorElement.appendChild(document.createElement("span"));
+            this._mappedDirectoryPathValueElement.classList.add("value");
+            this._mappedDirectoryPathValueElement.textContent = valueData.mappedFilePath;
+
+            let mappedDirectoryPathPlaceholderElement = mappedDirectoryPathEditorElement.appendChild(document.createElement("span"));
+            mappedDirectoryPathPlaceholderElement.classList.add("placeholder");
+            mappedDirectoryPathPlaceholderElement.textContent = WI.UIString("no directory selected", "no directory selected @ Local Override Popover", "Placeholder text indicating that no directory has been selected.");
+
+            mappedDirectoryPathEditorElement.title = this._mappedDirectoryPathValueElement.textContent;
+
+            let updateMappedDirectoryPath = async () => {
+                WI.FileUtilities.import((files) => {
+                    this._mappedDirectoryPathValueElement.textContent = WI.FileUtilities.longestCommonPrefix(files, {directory: true});
+
+                    mappedDirectoryPathEditorElement.title = this._mappedDirectoryPathValueElement.textContent;
+                }, {directory: true});
+            };
+            mappedDirectoryPathLabelElement.addEventListener("click", updateMappedDirectoryPath);
+            mappedDirectoryPathEditorElement.addEventListener("click", updateMappedDirectoryPath);
+        }
+
         let mimeTypeRow = createRow(WI.UIString("MIME Type", "MIME Type @ Local Override Popover", "Label for MIME type input for the local override currently being edited."), "mime", valueData.mimeType || "", placeholderData.mimeType);
         this._mimeTypeCodeMirror = mimeTypeRow.codeMirror;
 
@@ -392,6 +475,45 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
             this.update();
             this._headersDataGrid.startEditingNode(newNode);
         });
+
+        let mappedFilePathRowElement = null;
+        if (WI.LocalResource.canMapToFile()) {
+            mappedFilePathRowElement = table.appendChild(document.createElement("tr"));
+            let mappedFilePathHeaderElement = mappedFilePathRowElement.appendChild(document.createElement("th"));
+            let mappedFilePathDataElement = mappedFilePathRowElement.appendChild(document.createElement("td"));
+
+            let mappedFilePathLabelElement = mappedFilePathHeaderElement.appendChild(document.createElement("label"));
+            mappedFilePathLabelElement.textContent = WI.UIString("File", "File @ Local Override Popopver", "Label for the input used for mapping the local override to a file on disk.");
+
+            // Simulate the UI of a `<input type="file">`, as there's no way to provide an initial value to an actual `<input type="file">`.
+
+            let mappedFilePathEditorElement = mappedFilePathDataElement.appendChild(document.createElement("div"));
+            mappedFilePathEditorElement.classList.add("mapped-file-path");
+
+            let mappedFilePathButtonElement = mappedFilePathEditorElement.appendChild(document.createElement("button"));
+            mappedFilePathButtonElement.textContent = WI.UIString("Choose File", "Choose File @ Local Override Popover", "Text of button that shows native UI to pick a file on disk.");
+
+            this._mappedFilePathValueElement = mappedFilePathEditorElement.appendChild(document.createElement("span"));
+            this._mappedFilePathValueElement.classList.add("value");
+            this._mappedFilePathValueElement.textContent = valueData.mappedFilePath;
+
+            let mappedFilePathPlaceholderElement = mappedFilePathEditorElement.appendChild(document.createElement("span"));
+            mappedFilePathPlaceholderElement.classList.add("placeholder");
+            mappedFilePathPlaceholderElement.textContent = WI.UIString("no file selected", "no file selected @ Local Override Popover", "Placeholder text indicating that no file has been selected.");
+
+            mappedFilePathEditorElement.title = this._mappedFilePathValueElement.textContent;
+
+            let updateMappedFilePath = async () => {
+                WI.FileUtilities.import((files) => {
+                    console.assert(files.length === 1);
+                    this._mappedFilePathValueElement.textContent = WI.FileUtilities.longestCommonPrefix(files);
+
+                    mappedFilePathEditorElement.title = this._mappedFilePathValueElement.textContent;
+                });
+            };
+            mappedFilePathLabelElement.addEventListener("click", updateMappedFilePath);
+            mappedFilePathEditorElement.addEventListener("click", updateMappedFilePath);
+        }
 
         let optionsRowElement = table.appendChild(document.createElement("tr"));
         optionsRowElement.className = "options";
@@ -517,12 +639,14 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
             let isBlock = this._typeSelectElement.value === WI.LocalResourceOverride.InterceptType.Block;
             let isRequest = this._typeSelectElement.value === WI.LocalResourceOverride.InterceptType.Request;
             let isResponse = this._typeSelectElement.value === WI.LocalResourceOverride.InterceptType.Response || this._typeSelectElement.value === WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork;
+            let isResponseMappedDirectory = this._typeSelectElement.value === WI.LocalResourceOverride.InterceptType.ResponseMappedDirectory;
 
             popoverContentElement.classList.toggle("block", isBlock);
             popoverContentElement.classList.toggle("request", isRequest);
             popoverContentElement.classList.toggle("response", isResponse);
+            popoverContentElement.classList.toggle("response-mapped-directory", isResponseMappedDirectory);
 
-            initializeHeaders &&= !isBlock;
+            initializeHeaders &&= isRequest || isResponse;
             if (initializeHeaders) {
                 let headers = isRequest ? requestHeaders : responseHeaders;
                 for (let name in headers) {
@@ -536,17 +660,25 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
                 }
             }
 
+            this._isRegexCheckbox.disabled = isResponseMappedDirectory;
             if (requestURLRow)
-                requestURLRow.element.hidden = isResponse || isBlock;
+                requestURLRow.element.hidden = !isRequest;
+            if (mappedDirectorySubpathRow)
+                mappedDirectorySubpathRow.element.hidden = !isResponseMappedDirectory;
+            if (mappedDirectoryPathRowElement)
+                mappedDirectoryPathRowElement.hidden = !isResponseMappedDirectory;
             if (methodRowElement)
-                methodRowElement.hidden = isResponse || isBlock;
-            mimeTypeRow.element.hidden = isRequest || isBlock;
-            statusCodeRow.element.hidden = isRequest || isBlock;
-            headersRow.hidden = isBlock;
+                methodRowElement.hidden = !isRequest;
+            mimeTypeRow.element.hidden = !isResponse;
+            statusCodeRow.element.hidden = !isResponse;
+            headersRow.hidden = !isRequest && !isResponse;
+            if (mappedFilePathRowElement)
+                mappedFilePathRowElement.hidden = !isResponse;
 
-            isPassthroughLabel.hidden = isBlock;
+            isPassthroughLabel.hidden = !isRequest && !isResponse && !isResponseMappedDirectory;
+            this._isPassthroughCheckbox.disabled = isResponseMappedDirectory;
             if (skipNetworkLabel)
-                skipNetworkLabel.hidden = isRequest || isBlock;
+                skipNetworkLabel.hidden = !isResponse;
             optionsRowElement.hidden = isPassthroughLabel.hidden && (skipNetworkLabel?.hidden ?? true);
 
             if (isRequest) {
@@ -565,6 +697,14 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
                     this._headersDataGrid.insertChild(contentTypeDataGridNode, 0);
 
                 isPassthroughLabelText.textContent = WI.UIString("Include original response data");
+            } else if (isResponseMappedDirectory) {
+                this._isRegexCheckbox.checked = true;
+                this._mappedDirectorySubpathCodeMirror.refresh();
+                this._isPassthroughCheckbox.checked = true;
+
+                isPassthroughLabelText.textContent = WI.UIString("Include original response data");
+
+                updateURLCodeMirrorMode();
             }
 
             toggleHeadersDataGridVisibility();
@@ -572,6 +712,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
         toggleInputsForType(true);
 
         this._originalRequestURL = localResource?.url ?? null;
+        this._originalMappedFilePath = localResource?.mappedFilePath ?? null;
         this._serializedDataWhenShown = this.serializedData;
 
         this.content = popoverContentElement;
@@ -581,6 +722,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
         setTimeout(() => {
             this._urlCodeMirror.refresh();
             this._requestURLCodeMirror?.refresh();
+            this._mappedDirectorySubpathCodeMirror?.refresh();
             this._mimeTypeCodeMirror.refresh();
             this._statusCodeCodeMirror.refresh();
             this._statusTextCodeMirror.refresh();

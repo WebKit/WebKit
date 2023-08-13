@@ -30,6 +30,7 @@
 #include "SameSiteInfo.h"
 #include <optional>
 #include <wtf/Forward.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -46,7 +47,7 @@ class NetworkStorageSession;
 class StorageSessionProvider;
 struct SameSiteInfo;
 
-class WEBCORE_EXPORT CookieJar : public RefCounted<CookieJar> {
+class WEBCORE_EXPORT CookieJar : public RefCounted<CookieJar>, public CanMakeWeakPtr<CookieJar> {
 public:
     static Ref<CookieJar> create(Ref<StorageSessionProvider>&&);
     

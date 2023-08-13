@@ -98,6 +98,33 @@ int32_t applyMemoryUsageHeuristicsAndConvertToInt(int32_t value, CodeBlock* code
     return static_cast<int32_t>(doubleResult);
 }
 
+int32_t maximumExecutionCountsBetweenCheckpoints(CountingVariant countingVariant, CodeBlock* codeBlock)
+{
+    switch (countingVariant) {
+    case CountingForBaseline: {
+        int32_t threshold = Options::maximumExecutionCountsBetweenCheckpointsForBaseline();
+        UNUSED_PARAM(codeBlock);
+#if ENABLE(JIT)
+        if (codeBlock) {
+            // If the CodeBlock becomes particularly mega sized, then updating profiles become huge cost.
+            // We would like to avoid updating profiles repeatedly for that function, so we relax checkpoint period longer.
+            // We do not need to make checkpoint period longer for CountingForUpperTiers since they do not update profiles.
+            if (static_cast<int32_t>(codeBlock->bytecodeCost()) >= Options::highCostBaselineProfilingFunctionBytecodeCost()) {
+                double factor = std::max(std::sqrt(codeBlock->optimizationThresholdScalingFactor()), 1.0);
+                return toInt32(threshold * factor);
+            }
+        }
+#endif
+        return threshold;
+    }
+    case CountingForUpperTiers:
+        return Options::maximumExecutionCountsBetweenCheckpointsForUpperTiers();
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
+
 template<CountingVariant countingVariant>
 bool ExecutionCounter<countingVariant>::hasCrossedThreshold(CodeBlock* codeBlock) const
 {
@@ -123,7 +150,7 @@ bool ExecutionCounter<countingVariant>::hasCrossedThreshold(CodeBlock* codeBlock
     
     double actualCount = static_cast<double>(m_totalCount) + m_counter;
     double desiredCount = modifiedThreshold - static_cast<double>(
-        std::min(m_activeThreshold, maximumExecutionCountsBetweenCheckpoints())) / 2;
+        std::min(m_activeThreshold, maximumExecutionCountsBetweenCheckpoints(countingVariant, codeBlock))) / 2;
     
     bool result = actualCount >= desiredCount;
     
@@ -159,7 +186,7 @@ bool ExecutionCounter<countingVariant>::setThreshold(CodeBlock* codeBlock)
         return true;
     }
 
-    threshold = clippedThreshold(threshold);
+    threshold = clippedThreshold(codeBlock, threshold);
     
     m_counter = static_cast<int32_t>(-threshold);
         

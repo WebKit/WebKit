@@ -95,12 +95,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static Color& customFocusRingColor()
-{
-    static NeverDestroyed<Color> color;
-    return color;
-}
-
 RenderTheme::RenderTheme()
 {
 }
@@ -2086,16 +2080,8 @@ Color RenderTheme::documentMarkerLineColor(const RenderText& renderer, DocumentM
     return Color::transparentBlack;
 }
 
-void RenderTheme::setCustomFocusRingColor(const Color& color)
-{
-    customFocusRingColor() = color;
-}
-
 Color RenderTheme::focusRingColor(OptionSet<StyleColorOptions> options) const
 {
-    if (customFocusRingColor().isValid())
-        return customFocusRingColor();
-
     auto& cache = colorCache(options);
     if (!cache.systemFocusRingColor.isValid())
         cache.systemFocusRingColor = platformFocusRingColor(options);

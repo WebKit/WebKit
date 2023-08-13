@@ -31,6 +31,10 @@
 #import "Device.h"
 #import <pal/spi/ios/UIKitSPI.h>
 
+#if PLATFORM(VISION)
+#import <xr/RuntimeSupport.h>
+#endif
+
 #import <pal/ios/UIKitSoftLink.h>
 
 namespace PAL {
@@ -44,11 +48,19 @@ bool currentUserInterfaceIdiomIsSmallScreen()
     return s_currentUserInterfaceIdiom.load() == UserInterfaceIdiom::SmallScreen;
 }
 
-bool currentUserInterfaceIdiomIsVision()
+bool currentUserInterfaceIdiomIsVisionOrVisionLegacy()
 {
     if (!s_currentUserInterfaceIdiom.load())
         updateCurrentUserInterfaceIdiom();
-    return s_currentUserInterfaceIdiom.load() == UserInterfaceIdiom::Vision;
+    auto idiom = *s_currentUserInterfaceIdiom.load();
+    return idiom == UserInterfaceIdiom::Vision || idiom == UserInterfaceIdiom::VisionLegacy;
+}
+
+bool currentUserInterfaceIdiomIsVisionLegacy()
+{
+    if (!s_currentUserInterfaceIdiom.load())
+        updateCurrentUserInterfaceIdiom();
+    return s_currentUserInterfaceIdiom.load() == UserInterfaceIdiom::VisionLegacy;
 }
 
 UserInterfaceIdiom currentUserInterfaceIdiom()
@@ -63,6 +75,15 @@ void setCurrentUserInterfaceIdiom(UserInterfaceIdiom idiom)
     s_currentUserInterfaceIdiom = idiom;
 }
 
+static UserInterfaceIdiom determineVisionSubidiom()
+{
+#if PLATFORM(VISION)
+    if (!_RSCurrentProcessUsesNewPointsPerMeter())
+        return UserInterfaceIdiom::VisionLegacy;
+#endif
+    return UserInterfaceIdiom::Vision;
+}
+
 bool updateCurrentUserInterfaceIdiom()
 {
     UserInterfaceIdiom oldIdiom = s_currentUserInterfaceIdiom.load().value_or(UserInterfaceIdiom::Default);
@@ -75,21 +96,19 @@ bool updateCurrentUserInterfaceIdiom()
             if (PAL::deviceClassIsSmallScreen())
                 return UserInterfaceIdiom::SmallScreen;
             if (PAL::deviceClassIsVision())
-                return UserInterfaceIdiom::Vision;
+                return determineVisionSubidiom();
         } else {
             auto idiom = [[PAL::getUIDeviceClass() currentDevice] userInterfaceIdiom];
             if (idiom == UIUserInterfaceIdiomPhone || idiom == UIUserInterfaceIdiomWatch)
                 return UserInterfaceIdiom::SmallScreen;
-#if PLATFORM(VISION)
             if (idiom == UIUserInterfaceIdiomVision)
-                return UserInterfaceIdiom::Vision;
-#endif
+                return determineVisionSubidiom();
         }
 
         return UserInterfaceIdiom::Default;
     }();
 
-    if (oldIdiom == newIdiom)
+    if (s_currentUserInterfaceIdiom.load() && oldIdiom == newIdiom)
         return false;
 
     setCurrentUserInterfaceIdiom(newIdiom);

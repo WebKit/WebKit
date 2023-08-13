@@ -779,25 +779,25 @@ auto SectionParser::parseFunctionType(uint32_t position, RefPtr<TypeDefinition>&
     uint32_t argumentCount;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(argumentCount), "can't get Type's argument count at index ", position);
     WASM_PARSER_FAIL_IF(argumentCount > maxFunctionParams, "argument count of Type at index ", position, " is too big ", argumentCount, " maximum ", maxFunctionParams);
-    Vector<Type> argumentTypes;
+    Vector<Type, 16> argumentTypes;
     WASM_PARSER_FAIL_IF(!argumentTypes.tryReserveCapacity(argumentCount), "can't allocate enough memory for Type section's ", position, "th signature");
 
     for (unsigned i = 0; i < argumentCount; ++i) {
         Type argumentType;
         WASM_PARSER_FAIL_IF(!parseValueType(m_info, argumentType), "can't get ", i, "th argument Type");
-        argumentTypes.append(argumentType);
+        argumentTypes.uncheckedAppend(argumentType);
     }
 
     uint32_t returnCount;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(returnCount), "can't get Type's return count at index ", position);
     WASM_PARSER_FAIL_IF(returnCount > maxFunctionReturns, "return count of Type at index ", position, " is too big ", returnCount, " maximum ", maxFunctionReturns);
 
-    Vector<Type, 1> returnTypes;
+    Vector<Type, 16> returnTypes;
     WASM_PARSER_FAIL_IF(!returnTypes.tryReserveCapacity(returnCount), "can't allocate enough memory for Type section's ", position, "th signature");
     for (unsigned i = 0; i < returnCount; ++i) {
         Type value;
         WASM_PARSER_FAIL_IF(!parseValueType(m_info, value), "can't get ", i, "th Type's return value");
-        returnTypes.append(value);
+        returnTypes.uncheckedAppend(value);
     }
 
     functionSignature = TypeInformation::typeDefinitionForFunction(returnTypes, argumentTypes);

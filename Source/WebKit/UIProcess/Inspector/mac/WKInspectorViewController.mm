@@ -199,6 +199,7 @@ static NSString * const WKInspectorResourceScheme = @"inspector-resource";
 {
     NSOpenPanel *openPanel = [NSOpenPanel openPanel];
     openPanel.allowsMultipleSelection = parameters.allowsMultipleSelection;
+    openPanel.canChooseDirectories = parameters.allowsDirectories;
 
     auto reportSelectedFiles = ^(NSInteger result) {
         if (result == NSModalResponseOK)

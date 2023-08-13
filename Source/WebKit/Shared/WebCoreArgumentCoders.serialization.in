@@ -2542,7 +2542,6 @@ struct WebCore::GraphicsContextGLAttributes {
     bool failIfMajorPerformanceCaveat;
     WebCore::GraphicsContextGLPowerPreference powerPreference;
     bool shareResources;
-    bool noExtensions;
     float devicePixelRatio;
     WebCore::GraphicsContextGLPowerPreference initialPowerPreference;
     WebCore::GraphicsContextGLWebGLVersion webGLVersion;
@@ -2557,7 +2556,7 @@ struct WebCore::GraphicsContextGLAttributes {
     bool xrCompatible;
 #endif
     bool failPlatformContextCreationForTesting;
-    [NotSerialized] unsigned remoteIPCBufferSizeLog2ForTesting;
+    [NotSerialized] WebCore::GraphicsContextGLSimulatedCreationFailure failContextCreationForTesting;
 };
 #endif // ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 

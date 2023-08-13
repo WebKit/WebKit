@@ -894,6 +894,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
         [webView setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
         [webView setFrame:[_window bounds]];
         [webView _setMinimumEffectiveDeviceWidth:0];
+        [webView _setViewScale:1.f];
         [webView _overrideLayoutParametersWithMinimumLayoutSize:[_window bounds].size maximumUnobscuredSizeOverride:[_window bounds].size];
         [_window insertSubview:webView.get() atIndex:0];
         [webView setNeedsLayout];

@@ -40,6 +40,7 @@ enum CountingVariant {
 
 double applyMemoryUsageHeuristics(int32_t value, CodeBlock*);
 int32_t applyMemoryUsageHeuristicsAndConvertToInt(int32_t value, CodeBlock*);
+int32_t maximumExecutionCountsBetweenCheckpoints(CountingVariant, CodeBlock*);
 
 inline int32_t formattedTotalExecutionCount(float value)
 {
@@ -72,23 +73,10 @@ public:
         m_totalCount = memoryUsageAdjustedThreshold;
     }
 
-    static int32_t maximumExecutionCountsBetweenCheckpoints()
-    {
-        switch (countingVariant) {
-        case CountingForBaseline:
-            return Options::maximumExecutionCountsBetweenCheckpointsForBaseline();
-        case CountingForUpperTiers:
-            return Options::maximumExecutionCountsBetweenCheckpointsForUpperTiers();
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            return 0;
-        }
-    }
-    
     template<typename T>
-    static T clippedThreshold(T threshold)
+    static T clippedThreshold(CodeBlock* codeBlock, T threshold)
     {
-        int32_t maxThreshold = maximumExecutionCountsBetweenCheckpoints();
+        int32_t maxThreshold = maximumExecutionCountsBetweenCheckpoints(countingVariant, codeBlock);
         if (threshold > maxThreshold)
             threshold = maxThreshold;
         return threshold;

@@ -384,10 +384,17 @@ static inline FontSelectionValue cssWeightOfSystemFontDescriptor(CTFontDescripto
 static CTFontTextStylePlatform fontPlatform()
 {
 #if PLATFORM(VISION)
-    if (!PAL::currentUserInterfaceIdiomIsVision())
-        return kCTFontTextStylePlatformPhone;
-#endif
+    // FIXME (rdar://113714083): Adopt the real versions of these when they're in the SDK.
+    static constexpr CTFontTextStylePlatform WKCTFontTextStylePlatformVision = (CTFontTextStylePlatform)5;
+    static constexpr CTFontTextStylePlatform WKCTFontTextStylePlatformVisionLegacy = (CTFontTextStylePlatform)6;
+    if (PAL::currentUserInterfaceIdiomIsVisionLegacy())
+        return WKCTFontTextStylePlatformVisionLegacy;
+    if (PAL::currentUserInterfaceIdiomIsVisionOrVisionLegacy())
+        return WKCTFontTextStylePlatformVision;
+    return kCTFontTextStylePlatformPhone;
+#else
     return kCTFontTextStylePlatformDefault;
+#endif
 }
 
 auto SystemFontDatabase::platformSystemFontShorthandInfo(FontShorthand fontShorthand) -> SystemFontShorthandInfo
