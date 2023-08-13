@@ -27,17 +27,21 @@
 #include "CookieStore.h"
 
 #include "Cookie.h"
+#include "CookieChangeEvent.h"
+#include "CookieChangeEventInit.h"
 #include "CookieInit.h"
 #include "CookieJar.h"
 #include "CookieListItem.h"
 #include "CookieStoreDeleteOptions.h"
 #include "CookieStoreGetOptions.h"
 #include "Document.h"
+#include "EventNames.h"
 #include "JSCookieListItem.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Page.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include "TaskSource.h"
 #include <optional>
 #include <wtf/CompletionHandler.h>
 #include <wtf/IsoMallocInlines.h>
@@ -62,6 +66,15 @@ Ref<CookieStore> CookieStore::create(Document* document)
 CookieStore::CookieStore(Document* document)
     : ActiveDOMObject(document)
 {
+    if (!document)
+        return;
+
+    auto* page = document->page();
+    if (!page)
+        return;
+
+    m_cookieJar = page->cookieJar();
+    m_host = document->url().host().toString();
 }
 
 CookieStore::~CookieStore() = default;
@@ -90,15 +103,12 @@ void CookieStore::get(CookieStoreGetOptions&& options, Ref<DeferredPromise>&& pr
         return;
     }
 
-    auto& document = *downcast<Document>(context);
-    auto* page = document.page();
-    if (!page) {
+    if (!m_cookieJar) {
         promise->reject(SecurityError);
         return;
     }
 
-    auto& url = document.url();
-    auto& cookieJar = page->cookieJar();
+    auto& document = *downcast<Document>(context);
     auto completionHandler = [promise = WTFMove(promise)] (std::optional<Vector<Cookie>>&& cookies) {
         if (!cookies) {
             promise->reject(TypeError);
@@ -114,7 +124,7 @@ void CookieStore::get(CookieStoreGetOptions&& options, Ref<DeferredPromise>&& pr
         promise->resolve<IDLDictionary<CookieListItem>>(CookieListItem(WTFMove(cookiesVector[0])));
     };
 
-    cookieJar.getCookiesAsync(document, url, options, WTFMove(completionHandler));
+    m_cookieJar->getCookiesAsync(document, document.url(), options, WTFMove(completionHandler));
 }
 
 void CookieStore::getAll(String&& name, Ref<DeferredPromise>&& promise)
@@ -141,14 +151,14 @@ void CookieStore::getAll(CookieStoreGetOptions&& options, Ref<DeferredPromise>&&
         return;
     }
 
-    auto& document = *downcast<Document>(context);
-    auto* page = document.page();
-    if (!page) {
+    if (!m_cookieJar) {
         promise->reject(SecurityError);
         return;
     }
 
+    auto& document = *downcast<Document>(context);
     auto url = document.url();
+
     if (!options.url.isNull()) {
         auto parsed = document.completeURL(options.url);
         if (scriptExecutionContext()->isDocument() && parsed != url) {
@@ -162,7 +172,6 @@ void CookieStore::getAll(CookieStoreGetOptions&& options, Ref<DeferredPromise>&&
         url = WTFMove(parsed);
     }
 
-    auto& cookieJar = page->cookieJar();
     auto completionHandler = [promise = WTFMove(promise)] (std::optional<Vector<Cookie>>&& cookies) {
         if (!cookies) {
             promise->reject(TypeError);
@@ -174,7 +183,7 @@ void CookieStore::getAll(CookieStoreGetOptions&& options, Ref<DeferredPromise>&&
         }));
     };
 
-    cookieJar.getCookiesAsync(document, url, options, WTFMove(completionHandler));
+    m_cookieJar->getCookiesAsync(document, url, options, WTFMove(completionHandler));
 }
 
 void CookieStore::set(String&& name, String&& value, Ref<DeferredPromise>&& promise)
@@ -201,14 +210,12 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
         return;
     }
 
-    auto& document = *downcast<Document>(context);
-    auto& url = document.url();
-    auto* page = document.page();
-    if (!page) {
+    if (!m_cookieJar) {
         promise->reject(SecurityError);
         return;
     }
 
+    auto& document = *downcast<Document>(context);
     // The maximum attribute value size is specified at https://wicg.github.io/cookie-store/#cookie-maximum-attribute-value-size.
     static constexpr auto maximumAttributeValueSize = 1024;
 
@@ -224,8 +231,7 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
             return;
         }
 
-        auto host = url.host();
-        if (!host.endsWith(cookie.domain) || (host.length() > cookie.domain.length() && !StringView(host).substring(0, host.length() - cookie.domain.length()).endsWith('.'))) {
+        if (!m_host.endsWith(cookie.domain) || (m_host.length() > cookie.domain.length() && !StringView(m_host).substring(0, m_host.length() - cookie.domain.length()).endsWith('.'))) {
             promise->reject(Exception { TypeError, "The domain must be a part of the current host"_s });
             return;
         }
@@ -269,7 +275,6 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
         break;
     }
 
-    auto& cookieJar = page->cookieJar();
     auto completionHandler = [promise = WTFMove(promise)] (bool setSuccessfully) {
         if (!setSuccessfully)
             promise->reject(TypeError);
@@ -277,7 +282,7 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
             promise->resolve();
     };
 
-    cookieJar.setCookieAsync(document, url, cookie, WTFMove(completionHandler));
+    m_cookieJar->setCookieAsync(document, document.url(), cookie, WTFMove(completionHandler));
 }
 
 void CookieStore::remove(String&& name, Ref<DeferredPromise>&& promise)
@@ -314,9 +319,65 @@ void CookieStore::remove(CookieStoreDeleteOptions&& options, Ref<DeferredPromise
     set(WTFMove(initOptions), WTFMove(promise));
 }
 
+void CookieStore::cookiesAdded(const String& host, const Vector<Cookie>& cookies)
+{
+    ASSERT_UNUSED(host, host == m_host);
+    ASSERT(m_hasChangeEventListener);
+
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    CookieChangeEventInit eventInit;
+    auto currentTime = WallTime::now().secondsSinceEpoch().milliseconds();
+    for (auto cookie : cookies) {
+        if (cookie.expires && *cookie.expires < currentTime) {
+            cookie.value = nullString();
+            eventInit.deleted.append(CookieListItem { WTFMove(cookie) });
+        } else
+            eventInit.changed.append(CookieListItem { WTFMove(cookie) });
+    }
+
+    queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, CookieChangeEvent::create(eventNames().changeEvent, WTFMove(eventInit), CookieChangeEvent::IsTrusted::Yes));
+}
+
+void CookieStore::cookiesDeleted(const String& host, const Vector<Cookie>& cookies)
+{
+    ASSERT_UNUSED(host, host == m_host);
+    ASSERT(m_hasChangeEventListener);
+
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    CookieChangeEventInit eventInit;
+    eventInit.deleted = cookies.map([](auto cookie) {
+        cookie.value = nullString();
+        return CookieListItem { WTFMove(cookie) };
+    });
+
+    queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, CookieChangeEvent::create(eventNames().changeEvent, WTFMove(eventInit), CookieChangeEvent::IsTrusted::Yes));
+}
+
 const char* CookieStore::activeDOMObjectName() const
 {
     return "CookieStore";
+}
+
+void CookieStore::stop()
+{
+    if (!m_hasChangeEventListener || !m_cookieJar)
+        return;
+
+#if HAVE(COOKIE_CHANGE_LISTENER_API)
+    m_cookieJar->removeChangeListener(m_host, *this);
+#endif
+    m_hasChangeEventListener = false;
+}
+
+bool CookieStore::virtualHasPendingActivity() const
+{
+    return m_hasChangeEventListener;
 }
 
 EventTargetInterface CookieStore::eventTargetInterface() const
@@ -327,6 +388,22 @@ EventTargetInterface CookieStore::eventTargetInterface() const
 ScriptExecutionContext* CookieStore::scriptExecutionContext() const
 {
     return ActiveDOMObject::scriptExecutionContext();
+}
+
+void CookieStore::eventListenersDidChange()
+{
+    bool hadChangeEventListener = m_hasChangeEventListener;
+    m_hasChangeEventListener = hasEventListeners(eventNames().changeEvent);
+
+    if (hadChangeEventListener == m_hasChangeEventListener || !m_cookieJar)
+        return;
+
+#if HAVE(COOKIE_CHANGE_LISTENER_API)
+    if (m_hasChangeEventListener)
+        m_cookieJar->addChangeListener(m_host, *this);
+    else
+        m_cookieJar->removeChangeListener(m_host, *this);
+#endif
 }
 
 }

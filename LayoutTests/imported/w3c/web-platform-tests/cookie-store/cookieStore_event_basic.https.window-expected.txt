@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT cookieStore fires change event for cookie set by cookieStore.set() Test timed out
+PASS cookieStore fires change event for cookie set by cookieStore.set()
 

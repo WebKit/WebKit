@@ -37,14 +37,13 @@ struct CookieListItem {
     CookieListItem() = default;
 
     CookieListItem(Cookie&& cookie)
+        : name(WTFMove(cookie.name))
+        , value(WTFMove(cookie.value))
+        , domain(WTFMove(cookie.domain))
+        , path(WTFMove(cookie.path))
+        , expires(cookie.expires)
+        , secure(cookie.secure)
     {
-        name = WTFMove(cookie.name);
-        value = WTFMove(cookie.value);
-        domain = WTFMove(cookie.domain);
-        path = WTFMove(cookie.path);
-        expires = cookie.expires.has_value() ? std::optional { *cookie.expires } : std::nullopt;
-        secure = cookie.secure;
-
         switch (cookie.sameSite) {
         case Cookie::SameSitePolicy::Strict:
             sameSite = CookieSameSite::Strict;

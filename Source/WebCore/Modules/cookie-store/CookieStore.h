@@ -26,9 +26,12 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
+#include "CookieChangeListener.h"
+#include "CookieJar.h"
 #include "EventTarget.h"
 #include <wtf/Forward.h>
 #include <wtf/IsoMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -38,7 +41,7 @@ struct CookieStoreGetOptions;
 class Document;
 class DeferredPromise;
 
-class CookieStore final : public RefCounted<CookieStore>, public EventTarget, public ActiveDOMObject {
+class CookieStore final : public RefCounted<CookieStore>, public EventTarget, public ActiveDOMObject, public CookieChangeListener {
     WTF_MAKE_ISO_ALLOCATED(CookieStore);
 public:
     static Ref<CookieStore> create(Document*);
@@ -62,14 +65,25 @@ public:
 private:
     explicit CookieStore(Document*);
 
+    // CookieChangeListener
+    void cookiesAdded(const String& host, const Vector<Cookie>&) final;
+    void cookiesDeleted(const String& host, const Vector<Cookie>&) final;
+
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
+    void stop() final;
+    bool virtualHasPendingActivity() const final;
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final;
     ScriptExecutionContext* scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
+    void eventListenersDidChange() final;
+
+    std::atomic<bool> m_hasChangeEventListener;
+    WeakPtr<CookieJar> m_cookieJar;
+    String m_host;
 };
 
 }
