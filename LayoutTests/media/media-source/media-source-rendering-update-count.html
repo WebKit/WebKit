@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-rendering-update-count</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var collectedLog = '';
+
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+    
+    // override consoleWrite() to collect logs rather than create DOM nodes.
+    function consoleWrite(text) { collectedLog += text + '<br/>'; }
+
+    async function waitForRenderingUpdateCountToSettle()
+    {
+        let renderingUpdateCount = 0;
+        do {
+            renderingUpdateCount = internals.renderingUpdateCount();
+            await sleepFor(32);
+        } while(internals.renderingUpdateCount() != renderingUpdateCount)
+
+        // Zero the count.
+        internals.startTrackingRenderingUpdates();
+    }
+
+    const maxUpdatesCausedByMediaSizeChangeLayout = 2;
+    let initialRenderingUpdateCount = 0;
+
+    async function runTest() {
+        findMediaElement();
+
+        run('internals.setSpeculativeTilingDelayDisabledForTesting(true)');
+
+        loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+        await loaderPromise(loader);
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        waitFor(video, 'error').then(failTest);
+
+        run('sourceBuffer = source.addSourceBuffer(loader.type())');
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+        await waitFor(sourceBuffer, 'update');
+
+        consoleWrite('<br>Wait for the rendering count to settle down');
+        await waitForRenderingUpdateCountToSettle();
+        initialRenderingUpdateCount = internals.renderingUpdateCount();
+
+        consoleWrite('<br>Append first media segment')
+        run(`sourceBuffer.appendBuffer(loader.mediaSegment(0))`);
+
+        await Promise.all([
+            waitFor(video, 'progress'),
+            waitFor(sourceBuffer, 'update')
+            ]);
+
+        await testExpectedEventually('internals.renderingUpdateCount()', initialRenderingUpdateCount, '>');
+        initialRenderingUpdateCount = internals.renderingUpdateCount();
+
+        consoleWrite('<br>Append second media segment')
+        run(`sourceBuffer.appendBuffer(loader.mediaSegment(1))`);
+
+        await Promise.all([
+            waitFor(video, 'progress'),
+            waitFor(sourceBuffer, 'update')
+            ]);
+
+        testExpected('Math.abs(internals.renderingUpdateCount() - initialRenderingUpdateCount) <= maxUpdatesCausedByMediaSizeChangeLayout', true,);
+
+        consoleWrite('<br>Append third media segment')
+        run(`sourceBuffer.appendBuffer(loader.mediaSegment(2))`);
+
+        await Promise.all([
+            waitFor(video, 'progress'),
+            waitFor(sourceBuffer, 'update')
+            ]);
+
+        testExpected('Math.abs(internals.renderingUpdateCount() - initialRenderingUpdateCount) <= maxUpdatesCausedByMediaSizeChangeLayout', true);
+    }
+    
+    window.addEventListener('load', event => {
+        runTest().then(() => {
+            logConsole().innerHTML = collectedLog;
+            endTest();
+        }).catch((e) => {
+            consoleWrite('Exception: ' + e);
+            logConsole().innerHTML = collectedLog;
+            failTest();
+        });
+    });
+    
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

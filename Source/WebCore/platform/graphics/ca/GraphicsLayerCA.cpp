@@ -1319,10 +1319,14 @@ void GraphicsLayerCA::setContentsToVideoElement(HTMLVideoElement& videoElement, 
 {
 #if HAVE(AVKIT)
     if (auto hostingContextID = videoElement.layerHostingContextID()) {
-        if (hostingContextID != m_layerHostingContextID) {
-            m_contentsLayer = createPlatformVideoLayer(videoElement, this);
-            m_layerHostingContextID = hostingContextID;
+        if (m_contentsLayer && !m_contentsDisplayDelegate
+            && m_layerHostingContextID == hostingContextID
+            && m_contentsLayerPurpose == purpose) {
+                return;
         }
+
+        m_contentsLayer = createPlatformVideoLayer(videoElement, this);
+        m_layerHostingContextID = hostingContextID;
         m_contentsLayerPurpose = purpose;
         m_contentsDisplayDelegate = nullptr;
         updateVideoGravity();
