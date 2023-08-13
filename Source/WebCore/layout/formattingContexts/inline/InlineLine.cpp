@@ -49,10 +49,6 @@ Line::Line(const InlineFormattingContext& inlineFormattingContext)
 {
 }
 
-Line::~Line()
-{
-}
-
 void Line::initialize(const Vector<InlineItem>& lineSpanningInlineBoxes, bool isFirstFormattedLine)
 {
     m_isFirstFormattedLine = isFirstFormattedLine;
@@ -93,6 +89,19 @@ void Line::resetTrailingContent()
     m_trimmableTrailingContent.reset();
     m_hangingContent.resetTrailingContent();
     m_trailingSoftHyphenWidth = { };
+}
+
+Line::Result Line::close()
+{
+    auto contentLogicalRight = this->contentLogicalRight();
+    return { WTFMove(m_runs)
+        , contentLogicalWidth()
+        , contentLogicalRight
+        , !!m_hangingContent.trailingWhitespaceLength()
+        , m_hangingContent.trailingWidth()
+        , m_hasNonDefaultBidiLevelRun
+        , m_nonSpanningInlineLevelBoxCount
+    };
 }
 
 void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)

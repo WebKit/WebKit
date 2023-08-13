@@ -294,7 +294,7 @@ InlineLayoutUnit InlineFormattingGeometry::contentLeftAfterLastLine(const Constr
         lineBoxWidth -= floatOffset;
     }
     lineBoxLeft += textIndent;
-    auto rootInlineBoxLeft = horizontalAlignmentOffset(lineBoxWidth, IsLastLineOrAfterLineBreak::Yes);
+    auto rootInlineBoxLeft = horizontalAlignmentOffset(formattingContext().root().style(), lineBoxWidth, IsLastLineOrAfterLineBreak::Yes);
     return lineBoxLeft + rootInlineBoxLeft;
 }
 
@@ -394,12 +394,11 @@ FloatingContext::Constraints InlineFormattingGeometry::floatConstraintsForLine(I
     return floatingContext.constraints(logicalTopCandidate, logicalBottomCandidate, FloatingContext::MayBeAboveLastFloat::Yes);
 }
 
-InlineLayoutUnit InlineFormattingGeometry::horizontalAlignmentOffset(InlineLayoutUnit horizontalAvailableSpace, IsLastLineOrAfterLineBreak isLastLineOrAfterLineBreak, std::optional<TextDirection> inlineBaseDirectionOverride) const
+InlineLayoutUnit InlineFormattingGeometry::horizontalAlignmentOffset(const RenderStyle& rootStyle, InlineLayoutUnit horizontalAvailableSpace, IsLastLineOrAfterLineBreak isLastLineOrAfterLineBreak, std::optional<TextDirection> inlineBaseDirectionOverride)
 {
     if (horizontalAvailableSpace <= 0)
         return { };
 
-    auto& rootStyle = formattingContext().root().style();
     auto isLeftToRightDirection = inlineBaseDirectionOverride.value_or(rootStyle.direction()) == TextDirection::LTR;
 
     auto computedHorizontalAlignment = [&] {

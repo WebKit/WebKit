@@ -60,12 +60,8 @@ static inline StringBuilder toString(const Line::RunList& runs)
     return lineContentBuilder;
 }
 
-static inline Vector<int32_t> computedVisualOrder(const Line& line)
+static inline Vector<int32_t> computedVisualOrder(const Line::RunList& lineRuns, Vector<int32_t>& visualOrderList)
 {
-    if (!line.contentNeedsBidiReordering())
-        return { };
-
-    auto& lineRuns = line.runs();
     Vector<UBiDiLevel> runLevels;
     runLevels.reserveInitialCapacity(lineRuns.size());
 
@@ -90,7 +86,7 @@ static inline Vector<int32_t> computedVisualOrder(const Line& line)
         runIndexOffsetMap.uncheckedAppend(accumulatedOffset);
     }
 
-    Vector<int32_t> visualOrderList(runLevels.size());
+    visualOrderList.resizeToFit(runLevels.size());
     ubidi_reorderVisual(runLevels.data(), runLevels.size(), visualOrderList.data());
     if (hasOpaqueRun) {
         ASSERT(visualOrderList.size() == runIndexOffsetMap.size());
@@ -98,6 +94,59 @@ static inline Vector<int32_t> computedVisualOrder(const Line& line)
             visualOrderList[i] += runIndexOffsetMap[visualOrderList[i]];
     }
     return visualOrderList;
+}
+
+static InlineLayoutUnit horizontalAlignmentOffset(const RenderStyle& rootStyle, bool isLastLine, const Line::RunList& runs, InlineLayoutUnit contentLogicalRight, InlineLayoutUnit lineLogicalRight, InlineLayoutUnit hangingTrailingWidth, TextDirection inlineBaseDirectionForLineContent)
+{
+    if (runs.isEmpty())
+        return { };
+
+    // Depending on the line’s alignment/justification, the hanging glyph can be placed outside the line box.
+    if (hangingTrailingWidth) {
+        ASSERT(!runs.isEmpty());
+        // If white-space is set to pre-wrap, the UA must (unconditionally) hang this sequence, unless the sequence is followed
+        // by a forced line break, in which case it must conditionally hang the sequence is instead.
+        // Note that end of last line in a paragraph is considered a forced break.
+        auto isConditionalHanging = runs.last().isLineBreak() || isLastLine;
+        // In some cases, a glyph at the end of a line can conditionally hang: it hangs only if it does not otherwise fit in the line prior to justification.
+        if (isConditionalHanging) {
+            // FIXME: Conditional hanging needs partial overflow trimming at glyph boundary, one by one until they fit.
+            contentLogicalRight = std::min(contentLogicalRight, lineLogicalRight);
+        } else
+            contentLogicalRight -= hangingTrailingWidth;
+    }
+    auto isLastLineOrAfterLineBreak = isLastLine || (!runs.isEmpty() && runs.last().isLineBreak()) ? InlineFormattingGeometry::IsLastLineOrAfterLineBreak::Yes : InlineFormattingGeometry::IsLastLineOrAfterLineBreak::No;
+    return InlineFormattingGeometry::horizontalAlignmentOffset(rootStyle, lineLogicalRight - contentLogicalRight, isLastLineOrAfterLineBreak, inlineBaseDirectionForLineContent);
+}
+
+static bool isLastLineWithInlineContent(const InlineItemRange& lineRange, const InlineItems& inlineItems, size_t lastInlineItemIndex, bool hasPartialTrailingContent)
+{
+    if (hasPartialTrailingContent)
+        return false;
+    if (lineRange.endIndex() == lastInlineItemIndex) {
+        // We must have only committed trailing (overconstraining) floats on the line when the range is empty.
+        return !lineRange.isEmpty();
+    }
+    // Omit floats to see if this is the last line with inline content.
+    for (auto i = lastInlineItemIndex; i--;) {
+        if (!inlineItems[i].isFloat())
+            return i == lineRange.endIndex() - 1;
+    }
+    // There has to be at least one non-float item.
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+static TextDirection inlineBaseDirectionForLineContent(const Line::RunList& runs, const RenderStyle& rootStyle, std::optional<PreviousLine> previousLine)
+{
+    ASSERT(!runs.isEmpty());
+    auto shouldUseBlockDirection = rootStyle.unicodeBidi() != UnicodeBidi::Plaintext;
+    if (shouldUseBlockDirection)
+        return rootStyle.direction();
+    // A previous line ending with a line break (<br> or preserved \n) introduces a new unicode paragraph with its own direction.
+    if (previousLine && !previousLine->endsWithLineBreak)
+        return previousLine->inlineBaseDirection;
+    return TextUtil::directionForTextContent(toString(runs));
 }
 
 static inline bool endsWithSoftWrapOpportunity(const InlineTextItem& currentTextItem, const InlineTextItem& nextInlineTextItem)
@@ -318,29 +367,33 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
     auto previousLineEndsWithLineBreak = !previousLine ? std::nullopt : std::make_optional(previousLine->endsWithLineBreak);
     initialize(lineInput.initialLogicalRect, initialConstraintsForLine(lineInput.initialLogicalRect, previousLineEndsWithLineBreak), lineInput.needsLayoutRange, previousLine);
     auto lineContent = placeInlineAndFloatContent(lineInput.needsLayoutRange);
+    auto result = m_line.close();
 
     if (isInIntrinsicWidthMode()) {
         return { lineContent.range
-            , m_line.runs()
+            , WTFMove(result.runs)
             , { WTFMove(m_placedFloats), WTFMove(m_suspendedFloats), { } }
-            , { { }, m_line.contentLogicalWidth(), { }, lineContent.overflowLogicalWidth }
+            , { { }, result.contentLogicalWidth, { }, lineContent.overflowLogicalWidth }
             , { m_lineLogicalRect.topLeft(), { }, { }, { } }
         };
     }
 
-    auto isLastLine = isLastLineWithInlineContent(lineContent.range, lineInput.needsLayoutRange.endIndex(), lineContent.partialTrailingContentLength);
-    auto inlineBaseDirection = m_line.runs().isEmpty() ? TextDirection::LTR : inlineBaseDirectionForLineContent();
-    auto contentLogicalLeft = horizontalAlignmentOffset(isLastLine);
+    auto isLastLine = isLastLineWithInlineContent(lineContent.range, m_inlineItems, lineInput.needsLayoutRange.endIndex(), lineContent.partialTrailingContentLength);
+    auto inlineBaseDirection = result.runs.isEmpty() ? TextDirection::LTR : inlineBaseDirectionForLineContent(result.runs, rootStyle(), m_previousLine);
+    auto contentLogicalLeft = horizontalAlignmentOffset(rootStyle(), isLastLine, result.runs, result.contentLogicalRight, m_lineLogicalRect.width(), result.hangingTrailingContentWidth, inlineBaseDirection);
+    Vector<int32_t> visualOrderList;
+    if (result.contentNeedsBidiReordering)
+        computedVisualOrder(result.runs, visualOrderList);
 
     return { lineContent.range
-        , m_line.runs()
+        , WTFMove(result.runs)
         , { WTFMove(m_placedFloats), WTFMove(m_suspendedFloats), m_lineIsConstrainedByFloat }
-        , { contentLogicalLeft, m_line.contentLogicalWidth(), contentLogicalLeft + m_line.contentLogicalRight(), lineContent.overflowLogicalWidth }
+        , { contentLogicalLeft, result.contentLogicalWidth, contentLogicalLeft + result.contentLogicalRight, lineContent.overflowLogicalWidth }
         , { m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), m_lineInitialLogicalRect.left() + m_initialIntrusiveFloatsWidth, m_initialLetterClearGap }
-        , { !m_line.isHangingTrailingContentWhitespace(), m_line.hangingTrailingContentWidth() }
-        , { computedVisualOrder(m_line), inlineBaseDirection }
+        , { !result.isHangingTrailingContentWhitespace, result.hangingTrailingContentWidth }
+        , { WTFMove(visualOrderList), inlineBaseDirection }
         , { isFirstFormattedLine() ? LineLayoutResult::IsFirstLast::FirstFormattedLine::WithinIFC : LineLayoutResult::IsFirstLast::FirstFormattedLine::No, isLastLine }
-        , m_line.nonSpanningInlineLevelBoxCount()
+        , result.nonSpanningInlineLevelBoxCount
         , lineContent.range.isEmpty() ? std::make_optional(m_lineLogicalRect.top() + m_candidateInlineContentEnclosingHeight) : std::nullopt
     };
 }
@@ -522,7 +575,7 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
     ASSERT(lineContent.range.endIndex() <= needsLayoutRange.endIndex());
 
     auto handleLineEnding = [&] {
-        auto isLastLine = isLastLineWithInlineContent(lineContent.range, needsLayoutRange.endIndex(), lineContent.partialTrailingContentLength);
+        auto isLastLine = isLastLineWithInlineContent(lineContent.range, m_inlineItems, needsLayoutRange.endIndex(), lineContent.partialTrailingContentLength);
         auto horizontalAvailableSpace = m_lineLogicalRect.width();
         auto& rootStyle = this->rootStyle();
 
@@ -1344,63 +1397,6 @@ size_t LineBuilder::rebuildLineForTrailingSoftHyphen(const InlineItemRange& layo
     if (auto trailingSoftHyphenWidth = m_line.trailingSoftHyphenWidth())
         m_line.addTrailingHyphen(*trailingSoftHyphenWidth);
     return committedCount;
-}
-
-bool LineBuilder::isLastLineWithInlineContent(const InlineItemRange& lineRange, size_t lastInlineItemIndex, bool hasPartialTrailingContent) const
-{
-    if (hasPartialTrailingContent)
-        return false;
-    if (lineRange.endIndex() == lastInlineItemIndex) {
-        // We must have only committed trailing (overconstraining) floats on the line when the range is empty.
-        return !lineRange.isEmpty();
-    }
-    // Omit floats to see if this is the last line with inline content.
-    for (auto i = lastInlineItemIndex; i--;) {
-        if (!m_inlineItems[i].isFloat())
-            return i == lineRange.endIndex() - 1;
-    }
-    // There has to be at least one non-float item.
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-TextDirection LineBuilder::inlineBaseDirectionForLineContent() const
-{
-    ASSERT(!m_line.runs().isEmpty());
-    auto shouldUseBlockDirection = rootStyle().unicodeBidi() != UnicodeBidi::Plaintext;
-    if (shouldUseBlockDirection)
-        return rootStyle().direction();
-    // A previous line ending with a line break (<br> or preserved \n) introduces a new unicode paragraph with its own direction.
-    if (m_previousLine && !m_previousLine->endsWithLineBreak)
-        return m_previousLine->inlineBaseDirection;
-    return TextUtil::directionForTextContent(toString(m_line.runs()));
-}
-
-InlineLayoutUnit LineBuilder::horizontalAlignmentOffset(bool isLastLine) const
-{
-    if (m_line.runs().isEmpty())
-        return { };
-
-    // Depending on the line’s alignment/justification, the hanging glyph can be placed outside the line box.
-    auto& runs = m_line.runs();
-    auto contentLogicalRight = m_line.contentLogicalRight();
-    auto lineLogicalRight = m_lineLogicalRect.width();
-
-    if (auto hangingTrailingWidth = m_line.hangingTrailingContentWidth()) {
-        ASSERT(!runs.isEmpty());
-        // If white-space is set to pre-wrap, the UA must (unconditionally) hang this sequence, unless the sequence is followed
-        // by a forced line break, in which case it must conditionally hang the sequence is instead.
-        // Note that end of last line in a paragraph is considered a forced break.
-        auto isConditionalHanging = runs.last().isLineBreak() || isLastLine;
-        // In some cases, a glyph at the end of a line can conditionally hang: it hangs only if it does not otherwise fit in the line prior to justification.
-        if (isConditionalHanging) {
-            // FIXME: Conditional hanging needs partial overflow trimming at glyph boundary, one by one until they fit.
-            contentLogicalRight = std::min(contentLogicalRight, lineLogicalRight);
-        } else
-            contentLogicalRight -= hangingTrailingWidth;
-    }
-    auto isLastLineOrAfterLineBreak = isLastLine || (!runs.isEmpty() && runs.last().isLineBreak()) ? InlineFormattingGeometry::IsLastLineOrAfterLineBreak::Yes : InlineFormattingGeometry::IsLastLineOrAfterLineBreak::No;
-    return formattingContext().formattingGeometry().horizontalAlignmentOffset(lineLogicalRight - contentLogicalRight, isLastLineOrAfterLineBreak, inlineBaseDirectionForLineContent());
 }
 
 const ElementBox& LineBuilder::root() const

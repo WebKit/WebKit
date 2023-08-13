@@ -50,7 +50,6 @@ private:
     TextOnlyLineBreakResult handleInlineTextContent(const InlineContentBreaker::ContinuousContent&, const InlineItemRange&);
     void initialize(const InlineItemRange&, const InlineRect& initialLogicalRect, const std::optional<PreviousLine>&);
     void handleLineEnding(InlineItemPosition, size_t layoutRangeEndIndex);
-    InlineLayoutUnit horizontalAlignmentOffset(bool isLastLine) const;
     size_t rebuildLine(const InlineItemRange&, const InlineTextItem&);
 
     bool isFirstFormattedLine() const { return !m_previousLine.has_value(); }

@@ -40,7 +40,7 @@ enum class IntrinsicWidthMode;
 class Line {
 public:
     Line(const InlineFormattingContext&);
-    ~Line();
+    ~Line() = default;
 
     void initialize(const Vector<InlineItem>& lineSpanningInlineBoxes, bool isFirstFormattedLine);
 
@@ -51,17 +51,17 @@ public:
     bool hasContent() const;
     bool hasContentOrListMarker() const;
 
-    bool contentNeedsBidiReordering() const { return m_hasNonDefaultBidiLevelRun; }
-
     InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
     InlineLayoutUnit contentLogicalRight() const { return lastRunLogicalRight() + m_clonedEndDecorationWidthForInlineBoxRuns; }
+
+    bool contentNeedsBidiReordering() const { return m_hasNonDefaultBidiLevelRun; }
     size_t nonSpanningInlineLevelBoxCount() const { return m_nonSpanningInlineLevelBoxCount; }
+    InlineLayoutUnit hangingTrailingContentWidth() const { return m_hangingContent.trailingWidth(); }
+    bool isHangingTrailingContentWhitespace() const { return !!m_hangingContent.trailingWhitespaceLength(); }
+
 
     InlineLayoutUnit trimmableTrailingWidth() const { return m_trimmableTrailingContent.width(); }
     bool isTrailingRunFullyTrimmable() const { return m_trimmableTrailingContent.isTrailingRunFullyTrimmable(); }
-
-    InlineLayoutUnit hangingTrailingContentWidth() const { return m_hangingContent.trailingWidth(); }
-    bool isHangingTrailingContentWhitespace() const { return !!m_hangingContent.trailingWhitespaceLength(); }
 
     std::optional<InlineLayoutUnit> trailingSoftHyphenWidth() const { return m_trailingSoftHyphenWidth; }
     void addTrailingHyphen(InlineLayoutUnit hyphenLogicalWidth);
@@ -185,6 +185,17 @@ public:
     const RunList& runs() const { return m_runs; }
     using InlineBoxListWithClonedDecorationEnd = HashMap<const Box*, InlineLayoutUnit>;
     const InlineBoxListWithClonedDecorationEnd& inlineBoxListWithClonedDecorationEnd() const { return m_inlineBoxListWithClonedDecorationEnd; }
+
+    struct Result {
+        RunList runs;
+        InlineLayoutUnit contentLogicalWidth { 0.f };
+        InlineLayoutUnit contentLogicalRight { 0.f };
+        bool isHangingTrailingContentWhitespace { false };
+        InlineLayoutUnit hangingTrailingContentWidth { 0.f };
+        bool contentNeedsBidiReordering { false };
+        size_t nonSpanningInlineLevelBoxCount { 0 };
+    };
+    Result close();
 
 private:
     InlineLayoutUnit lastRunLogicalRight() const { return m_runs.isEmpty() ? 0.0f : m_runs.last().logicalRight(); }

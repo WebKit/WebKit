@@ -86,10 +86,6 @@ private:
     std::optional<InitialLetterOffsets> adjustLineRectForInitialLetterIfApplicable(const Box& floatBox);
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft) const;
-    bool isLastLineWithInlineContent(const InlineItemRange& lineRange, size_t lastInlineItemIndex, bool hasPartialTrailingContent) const;
-
-    TextDirection inlineBaseDirectionForLineContent() const;
-    InlineLayoutUnit horizontalAlignmentOffset(bool isLastLine) const;
 
     bool isFloatLayoutSuspended() const { return !m_suspendedFloats.isEmpty(); }
     bool shouldTryToPlaceFloatBox(const Box& floatBox, LayoutUnit floatBoxMarginBoxWidth, MayOverConstrainLine) const;

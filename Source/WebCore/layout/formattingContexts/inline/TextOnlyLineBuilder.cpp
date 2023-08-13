@@ -87,6 +87,25 @@ static inline bool consumeTrailingLineBreakIfApplicable(const TextOnlyLineBreakR
     return true;
 }
 
+static InlineLayoutUnit horizontalAlignmentOffset(const RenderStyle& rootStyle, bool isLastLine, const Line::RunList& runs, InlineLayoutUnit contentLogicalRight, InlineLayoutUnit lineLogicalRight, InlineLayoutUnit hangingTrailingWidth)
+{
+    // Depending on the line’s alignment/justification, the hanging glyph can be placed outside the line box.
+    if (hangingTrailingWidth) {
+        // If white-space is set to pre-wrap, the UA must (unconditionally) hang this sequence, unless the sequence is followed
+        // by a forced line break, in which case it must conditionally hang the sequence is instead.
+        // Note that end of last line in a paragraph is considered a forced break.
+        auto isConditionalHanging = runs.last().isLineBreak() || isLastLine;
+        // In some cases, a glyph at the end of a line can conditionally hang: it hangs only if it does not otherwise fit in the line prior to justification.
+        if (isConditionalHanging) {
+            // FIXME: Conditional hanging needs partial overflow trimming at glyph boundary, one by one until they fit.
+            contentLogicalRight = std::min(contentLogicalRight, lineLogicalRight);
+        } else
+            contentLogicalRight -= hangingTrailingWidth;
+    }
+    auto isLastLineOrAfterLineBreak = isLastLine || (!runs.isEmpty() && runs.last().isLineBreak()) ? InlineFormattingGeometry::IsLastLineOrAfterLineBreak::Yes : InlineFormattingGeometry::IsLastLineOrAfterLineBreak::No;
+    return InlineFormattingGeometry::horizontalAlignmentOffset(rootStyle, lineLogicalRight - contentLogicalRight, isLastLineOrAfterLineBreak, TextDirection::LTR);
+}
+
 TextOnlyLineBuilder::TextOnlyLineBuilder(const InlineFormattingContext& inlineFormattingContext, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_rootHorizontalConstraints(rootHorizontalConstraints)
@@ -99,15 +118,18 @@ LineLayoutResult TextOnlyLineBuilder::layoutInlineContent(const LineInput& lineI
 {
     initialize(lineInput.needsLayoutRange, lineInput.initialLogicalRect, previousLine);
     auto placedContentEnd = TextUtil::isWrappingAllowed(root().style()) ? placeInlineTextContent(lineInput.needsLayoutRange) : placeNonWrappingInlineTextContent(lineInput.needsLayoutRange);
+    auto result = m_line.close();
+
     auto isLastLine = isLastLineWithInlineContent(placedContentEnd, lineInput.needsLayoutRange.endIndex());
-    auto contentLogicalLeft = horizontalAlignmentOffset(isLastLine);
+    auto& rootStyle = isFirstFormattedLine() ? root().firstLineStyle() : root().style();
+    auto contentLogicalLeft = horizontalAlignmentOffset(rootStyle, isLastLine, result.runs, result.contentLogicalRight, m_lineLogicalRect.width(), result.hangingTrailingContentWidth);
 
     return { { lineInput.needsLayoutRange.start, placedContentEnd }
-        , m_line.runs()
+        , WTFMove(result.runs)
         , { }
-        , { contentLogicalLeft, m_line.contentLogicalWidth(), contentLogicalLeft + m_line.contentLogicalRight(), { } }
+        , { contentLogicalLeft, result.contentLogicalWidth, contentLogicalLeft + result.contentLogicalRight, { } }
         , { m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), m_lineLogicalRect.left()  }
-        , { !m_line.isHangingTrailingContentWhitespace(), m_line.hangingTrailingContentWidth() }
+        , { !result.isHangingTrailingContentWhitespace, result.hangingTrailingContentWidth }
         , { }
         , { isFirstFormattedLine() ? LineLayoutResult::IsFirstLast::FirstFormattedLine::WithinIFC : LineLayoutResult::IsFirstLast::FirstFormattedLine::No, isLastLine }
     };
@@ -290,29 +312,6 @@ void TextOnlyLineBuilder::handleLineEnding(InlineItemPosition placedContentEnd, 
 
     auto isLastLine = isLastLineWithInlineContent(placedContentEnd, layoutRangeEndIndex);
     m_line.handleTrailingHangingContent(intrinsicWidthMode(), horizontalAvailableSpace, isLastLine);
-}
-
-InlineLayoutUnit TextOnlyLineBuilder::horizontalAlignmentOffset(bool isLastLine) const
-{
-    // Depending on the line’s alignment/justification, the hanging glyph can be placed outside the line box.
-    auto& runs = m_line.runs();
-    auto contentLogicalRight = m_line.contentLogicalRight();
-    auto lineLogicalRight = m_lineLogicalRect.width();
-
-    if (auto hangingTrailingWidth = m_line.hangingTrailingContentWidth()) {
-        // If white-space is set to pre-wrap, the UA must (unconditionally) hang this sequence, unless the sequence is followed
-        // by a forced line break, in which case it must conditionally hang the sequence is instead.
-        // Note that end of last line in a paragraph is considered a forced break.
-        auto isConditionalHanging = runs.last().isLineBreak() || isLastLine;
-        // In some cases, a glyph at the end of a line can conditionally hang: it hangs only if it does not otherwise fit in the line prior to justification.
-        if (isConditionalHanging) {
-            // FIXME: Conditional hanging needs partial overflow trimming at glyph boundary, one by one until they fit.
-            contentLogicalRight = std::min(contentLogicalRight, lineLogicalRight);
-        } else
-            contentLogicalRight -= hangingTrailingWidth;
-    }
-    auto isLastLineOrAfterLineBreak = isLastLine || (!runs.isEmpty() && runs.last().isLineBreak()) ? InlineFormattingGeometry::IsLastLineOrAfterLineBreak::Yes : InlineFormattingGeometry::IsLastLineOrAfterLineBreak::No;
-    return formattingContext().formattingGeometry().horizontalAlignmentOffset(lineLogicalRight - contentLogicalRight, isLastLineOrAfterLineBreak, TextDirection::LTR);
 }
 
 size_t TextOnlyLineBuilder::rebuildLine(const InlineItemRange& layoutRange, const InlineTextItem& trailingInlineItem)
