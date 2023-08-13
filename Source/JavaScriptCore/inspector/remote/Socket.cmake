@@ -22,6 +22,10 @@ list(APPEND JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     inspector/remote/socket/RemoteInspectorServer.h
     inspector/remote/socket/RemoteInspectorSocket.h
     inspector/remote/socket/RemoteInspectorSocketEndpoint.h
+
+    inspector/augmentable/AlternateDispatchableAgent.h
+    inspector/augmentable/AugmentableInspectorController.h
+    inspector/augmentable/AugmentableInspectorControllerClient.h
 )
 
 if (UNIX)
