@@ -23,10 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
-{
-    constructor(delegate)
-    {
+WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel {
+    constructor(delegate) {
         const className = "font";
         const identifier = "font";
         const label = WI.UIString("Font", "Font @ Font Details Sidebar Title", "Title for the Font details sidebar.");
@@ -35,18 +33,23 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
         this._fontStyles = null;
         this._fontVariationRowsMap = new Map;
         this._basicPropertyRowsMap = new Map;
+        this._fontPropertyRowsMap = new Map;
         this._basicPropertyNames = ["font-size", "font-style", "font-weight", "font-stretch"];
 
         this._abortController = new AbortController;
-        this._throttledUpdate = new Throttler(() => { this.update() }, 100);
-        this._debouncedUpdate = new Debouncer(() => { this._skipNextUpdate = false; this.update(); });
+        this._throttledUpdate = new Throttler(() => {
+            this.update()
+        }, 100);
+        this._debouncedUpdate = new Debouncer(() => {
+            this._skipNextUpdate = false;
+            this.update();
+        });
         this._skipNextUpdate = false;
     }
 
     // Public
 
-    refresh(significantChange)
-    {
+    refresh(significantChange) {
         super.refresh(significantChange);
 
         if (!this._fontStyles || this._fontStyles.significantChangeSinceLastRefresh) {
@@ -57,8 +60,7 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
         this._throttledUpdate.fire();
     }
 
-    update()
-    {
+    update() {
         if (this._skipNextUpdate)
             return;
 
@@ -220,6 +222,13 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
 
         let fontVariationPropertiesSection = new WI.DetailsSection("font-variation-properties", WI.UIString("Variation Properties", "Variation Properties @ Font Details Sidebar Section", "Section title for font variation properties."), [this._fontVariationsGroup]);
         this.element.appendChild(fontVariationPropertiesSection.element);
+
+        // Font Properties
+        let allFontsRow = new WI.DetailsSectionSimpleRow(WI.UIString("All Fonts", "All Fonts @ Font Details Sidebar Property", "Property title for all fonts used."));
+
+        this._allFontsGroup = new WI.DetailsSectionGroup([allFontsRow]);
+        let allFontsSection = new WI.DetailsSection("font-all-fonts-used", "All Fonts", [this._allFontsGroup]);
+        this.element.appendChild(allFontsSection.element);
     }
 
     // Private
