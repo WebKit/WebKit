@@ -112,6 +112,8 @@ public:
     bool canContainRangeEndPoint() const override { return false; }
     bool shouldSaveAndRestoreFormControlState() const final { return true; }
 
+    bool isDevolvableWidget() const override { return true; }
+
 protected:
     HTMLSelectElement(const QualifiedName&, Document&, HTMLFormElement*);
 

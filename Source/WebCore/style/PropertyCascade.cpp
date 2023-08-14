@@ -102,11 +102,18 @@ void PropertyCascade::setPropertyInternal(Property& property, CSSPropertyID id, 
     property.fromStyleAttribute = matchedProperties.fromStyleAttribute;
 
     if (matchedProperties.linkMatchType == SelectorChecker::MatchAll) {
-        property.cssValue[0] = &cssValue;
+        property.cascadeLevels[SelectorChecker::MatchDefault] = cascadeLevel;
+        property.cssValue[SelectorChecker::MatchDefault] = &cssValue;
+
+        property.cascadeLevels[SelectorChecker::MatchLink] = cascadeLevel;
         property.cssValue[SelectorChecker::MatchLink] = &cssValue;
+
+        property.cascadeLevels[SelectorChecker::MatchVisited] = cascadeLevel;
         property.cssValue[SelectorChecker::MatchVisited] = &cssValue;
-    } else
+    } else {
+        property.cascadeLevels[matchedProperties.linkMatchType] = cascadeLevel;
         property.cssValue[matchedProperties.linkMatchType] = &cssValue;
+    }
 }
 
 void PropertyCascade::set(CSSPropertyID id, CSSValue& cssValue, const MatchedProperties& matchedProperties, CascadeLevel cascadeLevel)

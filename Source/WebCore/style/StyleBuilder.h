@@ -60,7 +60,7 @@ private:
     void applyPropertiesImpl(int firstProperty, int lastProperty);
     void applyCascadeProperty(const PropertyCascade::Property&);
     void applyRollbackCascadeProperty(const PropertyCascade::Property&, SelectorChecker::LinkMatchMask);
-    void applyProperty(CSSPropertyID, CSSValue&, SelectorChecker::LinkMatchMask);
+    void applyProperty(CSSPropertyID, CSSValue&, SelectorChecker::LinkMatchMask, CascadeLevel);
 
     Ref<CSSValue> resolveVariableReferences(CSSPropertyID, CSSValue&);
     RefPtr<CSSCustomPropertyValue> resolveCustomPropertyValueWithVariableReferences(CSSCustomPropertyValue&);

@@ -60,6 +60,7 @@ public:
         CascadeLayerPriority cascadeLayerPriority;
         FromStyleAttribute fromStyleAttribute;
         std::array<CSSValue*, 3> cssValue; // Values for link match states MatchDefault, MatchLink and MatchVisited
+        std::array<CascadeLevel, 3> cascadeLevels;
     };
 
     bool isEmpty() const { return m_propertyIsPresent.none() && !m_seenDeferredPropertyCount; }

@@ -43,6 +43,8 @@ public:
 
     double position() const;
 
+    bool isDevolvableWidget() const override { return true; }
+
 private:
     constexpr static auto CreateHTMLProgressElement = CreateHTMLElement | NodeFlag::HasCustomStyleResolveCallbacks;
     HTMLProgressElement(const QualifiedName&, Document&);

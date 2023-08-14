@@ -211,7 +211,7 @@ void Builder::applyCustomProperty(const AtomString& name)
 
     SetForScope levelScope(m_state.m_currentProperty, &property);
     SetForScope scopedLinkMatchMutation(m_state.m_linkMatch, SelectorChecker::MatchDefault);
-    applyProperty(CSSPropertyCustom, *resolvedValue, SelectorChecker::MatchDefault);
+    applyProperty(CSSPropertyCustom, *resolvedValue, SelectorChecker::MatchDefault, property.cascadeLevel);
 
     m_state.m_inProgressCustomProperties.remove(name);
     m_state.m_appliedCustomProperties.add(name);
@@ -225,7 +225,7 @@ inline void Builder::applyCascadeProperty(const PropertyCascade::Property& prope
     auto applyWithLinkMatch = [&](SelectorChecker::LinkMatchMask linkMatch) {
         if (property.cssValue[linkMatch]) {
             SetForScope scopedLinkMatchMutation(m_state.m_linkMatch, linkMatch);
-            applyProperty(property.id, *property.cssValue[linkMatch], linkMatch);
+            applyProperty(property.id, *property.cssValue[linkMatch], linkMatch, property.cascadeLevels[linkMatch]);
         }
     };
 
@@ -248,10 +248,10 @@ void Builder::applyRollbackCascadeProperty(const PropertyCascade::Property& prop
 
     SetForScope levelScope(m_state.m_currentProperty, &property);
 
-    applyProperty(property.id, *value, linkMatchMask);
+    applyProperty(property.id, *value, linkMatchMask, property.cascadeLevel);
 }
 
-void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::LinkMatchMask linkMatchMask)
+void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::LinkMatchMask linkMatchMask, CascadeLevel cascadeLevel)
 {
     ASSERT_WITH_MESSAGE(!isShorthand(id), "Shorthand property id = %d wasn't expanded at parsing time", id);
 
@@ -261,7 +261,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     if (CSSProperty::isDirectionAwareProperty(id)) {
         CSSPropertyID newId = CSSProperty::resolveDirectionAwareProperty(id, style.direction(), style.writingMode());
         ASSERT(newId != id);
-        return applyProperty(newId, valueToApply.get(), linkMatchMask);
+        return applyProperty(newId, valueToApply.get(), linkMatchMask, cascadeLevel);
     }
 
     auto valueID = WebCore::valueID(valueToApply.get());
@@ -351,6 +351,9 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
         }
     }
 #endif
+
+    if (!isUnset && cascadeLevel == CascadeLevel::Author && CSSProperty::disablesNativeAppearance(id) && m_state.applyPropertyToRegularStyle())
+        style.setIsNativeAppearanceDisabled(true);
 
     BuilderGenerated::applyProperty(id, m_state, valueToApply.get(), isInitial, isInherit, registeredCustomProperty);
 }

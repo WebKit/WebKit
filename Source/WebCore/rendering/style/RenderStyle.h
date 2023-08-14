@@ -1314,6 +1314,9 @@ public:
     PrintColorAdjust printColorAdjust() const { return static_cast<PrintColorAdjust>(m_inheritedFlags.printColorAdjust); }
     void setPrintColorAdjust(PrintColorAdjust value) { m_inheritedFlags.printColorAdjust = static_cast<unsigned>(value); }
 
+    bool isNativeAppearanceDisabled() { return m_nonInheritedFlags.isNativeAppearanceDisabled; }
+    void setIsNativeAppearanceDisabled(bool isNativeAppearanceDisabled) { m_nonInheritedFlags.isNativeAppearanceDisabled = isNativeAppearanceDisabled; }
+
     inline int specifiedZIndex() const;
     inline bool hasAutoSpecifiedZIndex() const;
     inline void setSpecifiedZIndex(int);
@@ -2168,6 +2171,8 @@ private:
 
         unsigned styleType : 4; // PseudoId
         unsigned pseudoBits : PublicPseudoIDBits;
+
+        unsigned isNativeAppearanceDisabled : 1;
 
         // If you add more style bits here, you will also need to update RenderStyle::NonInheritedFlags::copyNonInheritedFrom().
     };

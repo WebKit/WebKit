@@ -53,6 +53,8 @@ public:
 
     bool shouldSaveAndRestoreFormControlState() const final { return true; }
 
+    bool isDevolvableWidget() const override { return true; }
+
 private:
     HTMLTextAreaElement(Document&, HTMLFormElement*);
 
