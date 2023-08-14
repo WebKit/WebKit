@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ runSingly=true ] -->
+<html>
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+html {
+    font-size: 16px;
+}
+
+canvas {
+    width: 20px;
+    height: 20px;
+    opacity: 0;
+}
+
+#swatch {
+    width: 160px;
+    height: 100px;
+    line-height: 100px;
+    color: white;
+    text-align: center;
+}
+</style>
+</head>
+<body>
+<p>
+    <!-- To manually run this test, set a non-default system accent color, open this test page, and
+        verify that the accent color isn't directly revealed to the page by checking the output in
+        the color swatch below -->
+    Your system accent color should not be directly exposed:
+    <div id="swatch"></div>
+</p>
+<canvas width="40" height="40" style="border: 1px solid lightgray;">
+    <button tabindex="0"></button>
+</canvas>
+<script src="./resources/do-not-expose-non-default-focus-ring-color.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+(async function () {
+    if (window.testRunner)
+        await UIHelper.setAppAccentColor(255, 100, 50);
+
+    paintIntoSwatch();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
+</script>
+</body>
+</html>

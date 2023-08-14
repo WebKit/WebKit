@@ -45,6 +45,7 @@
 #include "InstanceMethodSwizzler.h"
 #endif
 
+OBJC_CLASS NSColor;
 OBJC_CLASS NSString;
 OBJC_CLASS UIKeyboardInputMode;
 OBJC_CLASS UIPasteboardConsistencyEnforcer;
@@ -704,6 +705,10 @@ private:
 #if PLATFORM(IOS_FAMILY)
     WKRetainPtr<WKDataRef> m_openPanelFileURLsMediaIcon;
     bool m_didLockOrientation { false };
+#endif
+
+#if PLATFORM(MAC)
+    RetainPtr<NSColor> m_defaultAppAccentColor;
 #endif
 
     std::unique_ptr<EventSenderProxy> m_eventSenderProxy;

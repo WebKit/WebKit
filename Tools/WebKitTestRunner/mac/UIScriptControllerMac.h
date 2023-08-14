@@ -60,6 +60,7 @@ private:
     NSView *platformContentView() const override;
     void clearAllCallbacks() override;
     void copyText(JSStringRef) override;
+    void setAppAccentColor(unsigned short red, unsigned short green, unsigned short blue) final;
 
     void chooseMenuAction(JSStringRef, JSValueRef) override;
 
