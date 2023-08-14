@@ -4461,6 +4461,7 @@
             "status": "experimental"
         },
         "math-style": {
+            "inherited": true,
             "values": [
                 "normal",
                 "compact"
