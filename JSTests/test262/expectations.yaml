@@ -1744,12 +1744,6 @@ test/intl402/NumberFormat/prototype/format/useGrouping-extended-en-IN.js:
 test/intl402/NumberFormat/prototype/format/value-decimal-string.js:
   default: 'Test262Error: Expected SameValue(«1», «1.0000000000000001») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1», «1.0000000000000001») to be true'
-test/intl402/NumberFormat/throws-for-maximumFractionDigits-over-limit.js:
-  default: 'RangeError: maximumFractionDigits is out of range'
-  strict mode: 'RangeError: maximumFractionDigits is out of range'
-test/intl402/NumberFormat/throws-for-minimumFractionDigits-over-limit.js:
-  default: 'RangeError: minimumFractionDigits is out of range'
-  strict mode: 'RangeError: minimumFractionDigits is out of range'
 test/intl402/Temporal/Duration/compare/relativeto-sub-minute-offset.js:
   default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
