@@ -3416,6 +3416,12 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
 void RenderLayer::paintLayerByApplyingTransform(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags, const LayoutSize& translationOffset)
 {
+    auto localPaintFlags = paintFlags;
+    if (m_renderer.isDocumentElementRenderer()) {
+        paintLayerContentsAndReflection(context, paintingInfo, paintFlags | PaintLayerFlag::PaintingRootBackgroundOnly | PaintLayerFlag::TemporaryClipRects);
+        localPaintFlags.add(PaintLayerFlag::PaintingSkipRootBackground);
+    }
+
     // This involves subtracting out the position of the layer in our current coordinate space, but preserving
     // the accumulated error for sub-pixel layout.
     // Note: The pixel-snapping logic is disabled for the whole SVG render tree, except the outermost <svg>.
@@ -3450,7 +3456,7 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext& context, const 
     transformedPaintingInfo.rootLayer = this;
     transformedPaintingInfo.paintDirtyRect = LayoutRect(encloseRectToDevicePixels(valueOrDefault(transform.inverse()).mapRect(paintingInfo.paintDirtyRect), deviceScaleFactor));
     transformedPaintingInfo.subpixelOffset = adjustedSubpixelOffset;
-    paintLayerContentsAndReflection(context, transformedPaintingInfo, paintFlags);
+    paintLayerContentsAndReflection(context, transformedPaintingInfo, localPaintFlags);
 
     if (paintingInfo.regionContext)
         paintingInfo.regionContext->popTransform();
