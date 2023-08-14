@@ -1877,6 +1877,17 @@
    },
    {
       "emails" : [
+         "destra@apple.com"
+      ],
+      "github" : "danae404",
+      "name" : "Dana Estra",
+      "nicks" : [
+         "destra"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "danakj@chromium.org"
       ],
       "name" : "Dana Jansens",
