@@ -65,6 +65,8 @@ static String agentClusterKeyOrNullIfUnique(const SecurityOrigin& origin)
     return key;
 }
 
+static constexpr auto IdleCallbackDurationExpectation = 4_ms;
+
 Ref<WindowEventLoop> WindowEventLoop::eventLoopForSecurityOrigin(const SecurityOrigin& origin)
 {
     auto key = agentClusterKeyOrNullIfUnique(origin);
@@ -158,21 +160,51 @@ bool WindowEventLoop::shouldEndIdlePeriod()
 
 MonotonicTime WindowEventLoop::computeIdleDeadline()
 {
+    auto minTime = m_lastIdlePeriodStartTime + 50_ms;
+
+    auto timerTime = nextTimerFireTime();
+    if (timerTime && *timerTime < minTime)
+        minTime = *timerTime;
+
     if (!m_pagesWithRenderingOpportunity.isEmptyIgnoringNullReferences()) {
-        MonotonicTime minRenderingUpdateTime = MonotonicTime::infinity();
         for (auto it : m_pagesWithRenderingOpportunity) {
-            if (it.value < minRenderingUpdateTime)
-                minRenderingUpdateTime = it.value;
+            if (it.value < minTime)
+                minTime = it.value;
         }
-        return minRenderingUpdateTime;
     }
-    return m_lastIdlePeriodStartTime + 50_ms;
+
+    return minTime;
 }
 
 void WindowEventLoop::didReachTimeToRun()
 {
     Ref protectedThis { *this }; // Executing tasks may remove the last reference to this WindowEventLoop.
     run();
+
+    if (hasTasksForFullyActiveDocument() || !microtaskQueue().isEmpty())
+        return;
+
+    auto hasIdleCallbacks = findMatchingAssociatedContext([&](ScriptExecutionContext& context) {
+        RefPtr document = dynamicDowncast<Document>(context);
+        if (!document)
+            return false;
+        auto* idleCallbackController = document->idleCallbackController();
+        if (!idleCallbackController)
+            return false;
+        return !idleCallbackController->isEmpty();
+    });
+    if (!hasIdleCallbacks)
+        return;
+
+    auto now = MonotonicTime::now();
+
+    auto timerTime = nextTimerFireTime();
+    if (timerTime && *timerTime <= now + IdleCallbackDurationExpectation) {
+        scheduleToRunIfNeeded();
+        return;
+    }
+
+    opportunisticallyRunIdleCallbacks();
 }
 
 void WindowEventLoop::queueMutationObserverCompoundMicrotask()

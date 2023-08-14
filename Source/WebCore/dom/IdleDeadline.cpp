@@ -38,9 +38,9 @@ DOMHighResTimeStamp IdleDeadline::timeRemaining(Document& document) const
     RefPtr window { document.domWindow() };
     if (!window || m_didTimeout == DidTimeout::Yes)
         return 0;
-    auto deadline = document.windowEventLoop().computeIdleDeadline();
-    auto remainingTime = window->performance().relativeTimeFromTimeOriginInReducedResolution(deadline) - window->performance().now();
-    return remainingTime < 0 ? 0 : remainingTime;
+    auto duration = document.windowEventLoop().computeIdleDeadline() - MonotonicTime::now();
+    auto remainingTime = window->performance().reduceTimeResolution(duration);
+    return remainingTime < 0_s ? 0 : remainingTime.milliseconds();
 }
 
 } // namespace WebCore

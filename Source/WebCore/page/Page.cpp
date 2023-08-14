@@ -1689,8 +1689,12 @@ void Page::scheduleRenderingUpdateInternal()
     if (!chrome().client().scheduleRenderingUpdate())
         renderingUpdateScheduler().scheduleRenderingUpdate();
 
+    auto now = MonotonicTime::now();
     forEachWindowEventLoop([&](WindowEventLoop& windowEventLoop) {
-        windowEventLoop.didScheduleRenderingUpdate(*this, m_lastRenderingUpdateTimestamp + preferredRenderingUpdateInterval());
+        auto nextRenderingUpdateTime = m_lastRenderingUpdateTimestamp + preferredRenderingUpdateInterval();
+        if (nextRenderingUpdateTime < now)
+            nextRenderingUpdateTime = now + preferredRenderingUpdateInterval();
+        windowEventLoop.didScheduleRenderingUpdate(*this, nextRenderingUpdateTime);
     });
 }
 
