@@ -294,7 +294,7 @@ InlineLayoutUnit InlineFormattingGeometry::contentLeftAfterLastLine(const Constr
         lineBoxWidth -= floatOffset;
     }
     lineBoxLeft += textIndent;
-    auto rootInlineBoxLeft = horizontalAlignmentOffset(formattingContext().root().style(), lineBoxWidth, IsLastLineOrAfterLineBreak::Yes);
+    auto rootInlineBoxLeft = horizontalAlignmentOffset(formattingContext().root().style(), { }, lineBoxWidth, { }, { }, true);
     return lineBoxLeft + rootInlineBoxLeft;
 }
 
@@ -394,8 +394,25 @@ FloatingContext::Constraints InlineFormattingGeometry::floatConstraintsForLine(I
     return floatingContext.constraints(logicalTopCandidate, logicalBottomCandidate, FloatingContext::MayBeAboveLastFloat::Yes);
 }
 
-InlineLayoutUnit InlineFormattingGeometry::horizontalAlignmentOffset(const RenderStyle& rootStyle, InlineLayoutUnit horizontalAvailableSpace, IsLastLineOrAfterLineBreak isLastLineOrAfterLineBreak, std::optional<TextDirection> inlineBaseDirectionOverride)
+InlineLayoutUnit InlineFormattingGeometry::horizontalAlignmentOffset(const RenderStyle& rootStyle, InlineLayoutUnit contentLogicalRight, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit hangingTrailingWidth, const Line::RunList& runs, bool isLastLine, std::optional<TextDirection> inlineBaseDirectionOverride)
 {
+    // Depending on the line’s alignment/justification, the hanging glyph can be placed outside the line box.
+    if (hangingTrailingWidth) {
+        // If white-space is set to pre-wrap, the UA must (unconditionally) hang this sequence, unless the sequence is followed
+        // by a forced line break, in which case it must conditionally hang the sequence is instead.
+        // Note that end of last line in a paragraph is considered a forced break.
+        auto isConditionalHanging = runs.last().isLineBreak() || isLastLine;
+        // In some cases, a glyph at the end of a line can conditionally hang: it hangs only if it does not otherwise fit in the line prior to justification.
+        if (isConditionalHanging) {
+            // FIXME: Conditional hanging needs partial overflow trimming at glyph boundary, one by one until they fit.
+            contentLogicalRight = std::min(contentLogicalRight, lineLogicalWidth);
+        } else
+            contentLogicalRight -= hangingTrailingWidth;
+    }
+
+    auto isLastLineOrAfterLineBreak = isLastLine || (!runs.isEmpty() && runs.last().isLineBreak());
+    auto horizontalAvailableSpace = lineLogicalWidth - contentLogicalRight;
+
     if (horizontalAvailableSpace <= 0)
         return { };
 
@@ -403,7 +420,7 @@ InlineLayoutUnit InlineFormattingGeometry::horizontalAlignmentOffset(const Rende
 
     auto computedHorizontalAlignment = [&] {
         auto textAlign = rootStyle.textAlign();
-        if (isLastLineOrAfterLineBreak == IsLastLineOrAfterLineBreak::No)
+        if (!isLastLineOrAfterLineBreak)
             return textAlign;
         // The last line before a forced break or the end of the block is aligned according to text-align-last.
         switch (rootStyle.textAlignLast()) {

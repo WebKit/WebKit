@@ -85,6 +85,7 @@ LineLayout::LineLayout(RenderBlockFlow& flow)
     , m_layoutState(flow.view().layoutState())
     , m_blockFormattingState(layoutState().ensureBlockFormattingState(rootLayoutBox()))
     , m_inlineFormattingState(layoutState().ensureInlineFormattingState(rootLayoutBox()))
+    , m_inlineFormattingContext(rootLayoutBox(), m_inlineFormattingState)
 {
 }
 
@@ -527,9 +528,7 @@ void LineLayout::updateOverflow()
 
 std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()
 {
-    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState, m_lineDamage.get() };
-    auto constraints = inlineFormattingContext.computedIntrinsicWidthConstraints();
-
+    auto constraints = m_inlineFormattingContext.computedIntrinsicSizes(m_lineDamage.get());
     return { constraints.minimum, constraints.maximum };
 }
 
@@ -589,9 +588,8 @@ std::optional<LayoutRect> LineLayout::layout()
     }();
     auto parentBlockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState(), lineClamp(flow()), textBoxTrim(flow()), intrusiveInitialLetterBottom() };
     auto inlineLayoutState = Layout::InlineLayoutState { parentBlockLayoutState, WTFMove(m_nestedListMarkerOffsets) };
-    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState, m_lineDamage.get() };
-    auto layoutResult = inlineFormattingContext.layoutInFlowAndFloatContent(inlineContentConstraints, inlineLayoutState);
-    inlineFormattingContext.layoutOutOfFlowContent(inlineContentConstraints, inlineLayoutState, layoutResult.displayContent);
+    auto layoutResult = m_inlineFormattingContext.layoutInFlowAndFloatContent(inlineContentConstraints, inlineLayoutState, m_lineDamage.get());
+    m_inlineFormattingContext.layoutOutOfFlowContent(inlineContentConstraints, inlineLayoutState, layoutResult.displayContent);
 
     auto repaintRect = LayoutRect { constructContent(inlineLayoutState, WTFMove(layoutResult)) };
 

@@ -175,6 +175,7 @@ private:
     Layout::BlockFormattingState& m_blockFormattingState;
     Layout::InlineFormattingState& m_inlineFormattingState;
     std::optional<Layout::ConstraintsForInlineContent> m_inlineContentConstraints;
+    Layout::InlineFormattingContext m_inlineFormattingContext;
     // FIXME: This should be part of LayoutState.
     std::unique_ptr<Layout::InlineDamage> m_lineDamage;
     std::unique_ptr<InlineContent> m_inlineContent;
