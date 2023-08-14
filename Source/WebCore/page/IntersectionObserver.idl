@@ -35,7 +35,7 @@
 
     readonly attribute Node? root;
     readonly attribute DOMString rootMargin;
-    readonly attribute sequence<double> thresholds;
+    readonly attribute FrozenArray<double> thresholds;
 
     undefined observe(Element target);
     undefined unobserve(Element target);
