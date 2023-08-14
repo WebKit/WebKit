@@ -1700,7 +1700,7 @@ TEST(WKWebsiteDataStore, MigrateServiceWorkerRegistrationToGeneralStorageDirecto
     EXPECT_FALSE([fileManager fileExistsAtPath:serviceWorkerDatabaseFile.path]);
 }
 
-TEST(WKWebsiteDataStore, RemoveServiceWorkerData)
+static RetainPtr<WKWebsiteDataStore> createCustomWebsiteDataStoreForServiceWorker(TestWebKitAPI::HTTPServer* server)
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
     auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
@@ -1714,11 +1714,6 @@ TEST(WKWebsiteDataStore, RemoveServiceWorkerData)
     }];
     TestWebKitAPI::Util::run(&done);
 
-    TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainBytes } },
-        { "/migratetest/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
-    });
-
     // Ensure web view is closed, so ServiceWorker directory is not in use and can be removed.
     @autoreleasepool {
         auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1726,7 +1721,7 @@ TEST(WKWebsiteDataStore, RemoveServiceWorkerData)
         auto messageHandler = adoptNS([[WebsiteDataStoreCustomPathsMessageHandler alloc] init]);
         [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-        [webView loadRequest:server.request()];
+        [webView loadRequest:server->request()];
         EXPECT_WK_STREQ("Message from ServiceWorker: Hello", getNextMessage().body);
 
         // Ensure data is stored to disk.
@@ -1737,20 +1732,83 @@ TEST(WKWebsiteDataStore, RemoveServiceWorkerData)
         TestWebKitAPI::Util::run(&done);
     }
 
+    return websiteDataStore;
+}
+
+TEST(WKWebsiteDataStore, RemoveServiceWorkerData)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { mainBytes } },
+        { "/migratetest/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
+    });
+
+    auto websiteDataStore = createCustomWebsiteDataStoreForServiceWorker(&server);
     __block NSString *serviceWorkerDirectoryString = nil;
     auto url = [server.request() URL];
     done = false;
-    [websiteDataStore _originDirectoryForTesting:url topOrigin:url type:WKWebsiteDataTypeServiceWorkerRegistrations completionHandler:^(NSString *result) {
+    [websiteDataStore.get() _originDirectoryForTesting:url topOrigin:url type:WKWebsiteDataTypeServiceWorkerRegistrations completionHandler:^(NSString *result) {
         serviceWorkerDirectoryString = result;
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:serviceWorkerDirectoryString]);
 
+    auto dataTypes = [NSSet setWithObjects:WKWebsiteDataTypeServiceWorkerRegistrations, nil];
     done = false;
-    [websiteDataStore removeDataOfTypes:[NSSet setWithObjects:WKWebsiteDataTypeServiceWorkerRegistrations, nil] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [websiteDataStore removeDataOfTypes:dataTypes modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:serviceWorkerDirectoryString]);
+
+    done = false;
+    [websiteDataStore fetchDataRecordsOfTypes:dataTypes completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
+        EXPECT_EQ([records count], 0u);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(WKWebsiteDataStore, RemoveServiceWorkerDataByOrigin)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { mainBytes } },
+        { "/migratetest/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
+    });
+    auto websiteDataStore = createCustomWebsiteDataStoreForServiceWorker(&server);
+
+    // Fetch origin record.
+    auto dataTypes = [NSSet setWithObjects:WKWebsiteDataTypeServiceWorkerRegistrations, nil];
+    __block RetainPtr<NSArray<WKWebsiteDataRecord *>> records;
+    done = false;
+    [websiteDataStore fetchDataRecordsOfTypes:dataTypes completionHandler:^(NSArray<WKWebsiteDataRecord *> * dataRecords) {
+        records = dataRecords;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_EQ([records count], 1u);
+    EXPECT_WK_STREQ([[records firstObject] displayName], @"127.0.0.1");
+
+    // Delete data by origin.
+    done = false;
+    [websiteDataStore removeDataOfTypes:dataTypes forDataRecords:records.get() completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    // Kill network process to ensure data is read from disk.
+    pid_t networkProcessIdentifier = [websiteDataStore _networkProcessIdentifier];
+    EXPECT_NE(networkProcessIdentifier, 0);
+    kill(networkProcessIdentifier, SIGKILL);
+    while (!kill(networkProcessIdentifier, 0))
+        TestWebKitAPI::Util::spinRunLoop();
+
+    // Verify record is deleted.
+    done = false;
+    [websiteDataStore fetchDataRecordsOfTypes:dataTypes completionHandler:^(NSArray<WKWebsiteDataRecord *> * dataRecords) {
+        records = dataRecords;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_EQ([records count], 0u);
 }
