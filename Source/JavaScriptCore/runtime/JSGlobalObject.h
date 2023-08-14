@@ -28,7 +28,7 @@
 #include "StructureCache.h"
 #include "Watchpoint.h"
 #include "WeakGCSet.h"
-#if USE(JSC_BUN_ADDITIONS)
+#if USE(BUN_JSC_ADDITIONS)
 #include "InternalFieldTuple.h"
 #endif
 #include <wtf/FixedVector.h>
@@ -304,7 +304,7 @@ public:
 
     WriteBarrierStructureID m_objectStructureForObjectConstructor;
 
-#if USE(JSC_BUN_ADDITIONS)
+#if USE(BUN_JSC_ADDITIONS)
     WriteBarrierStructureID m_internalFieldTupleStructure;
 #endif
 
@@ -408,7 +408,7 @@ public:
 
     Strong<JSObject> m_unhandledRejectionCallback;
 
-#if USE(JSC_BUN_ADDITIONS)
+#if USE(BUN_JSC_ADDITIONS)
     bool m_isAsyncContextTrackingEnabled { false };
     WriteBarrier<InternalFieldTuple> m_asyncContextData;
 #endif
@@ -606,7 +606,7 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-#if USE(JSC_BUN_ADDITIONS)
+#if USE(BUN_JSC_ADDITIONS)
     bool isAsyncContextTrackingEnabled() const { return m_isAsyncContextTrackingEnabled; }
     void setAsyncContextTrackingEnabled(bool isEnabled) { m_isAsyncContextTrackingEnabled = isEnabled; }
 #endif
@@ -871,7 +871,7 @@ public:
     Structure* plainTimeStructure() { return m_plainTimeStructure.get(this); }
     Structure* timeZoneStructure() { return m_timeZoneStructure.get(this); }
 
-#if USE(JSC_BUN_ADDITIONS)
+#if USE(BUN_JSC_ADDITIONS)
     Structure* internalFieldTupleStructure() const { return m_internalFieldTupleStructure.get(); }
 #endif
 

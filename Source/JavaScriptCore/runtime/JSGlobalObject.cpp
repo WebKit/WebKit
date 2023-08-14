@@ -1681,7 +1681,7 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
         init.set(init.vm.emptyPropertyNameEnumerator());
     });
 
-#if USE(JSC_BUN_ADDITIONS)
+#if USE(BUN_JSC_ADDITIONS)
     // Link Time Constant would be faster, but it seems OpGetInternalField does not expect having a linkTimeConstant,
     // so `@getInternalField(@asyncContext, 0)` will crash. If we can read/write to the internal field from JS in a better way, that could improve perf.
     // m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::asyncContext)].initLater([](const Initializer<JSCell>& init) {
@@ -2361,7 +2361,7 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
     visitor.append(thisObject->m_globalThis);
 
-#if USE(JSC_BUN_ADDITIONS)
+#if USE(BUN_JSC_ADDITIONS)
     visitor.append(thisObject->m_asyncContextData);
     visitor.append(thisObject->m_internalFieldTupleStructure);
 #endif
