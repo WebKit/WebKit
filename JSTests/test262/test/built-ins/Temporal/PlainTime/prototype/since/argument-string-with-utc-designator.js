@@ -10,6 +10,8 @@ features: [Temporal, arrow-function]
 const invalidStrings = [
   "2019-10-01T09:00:00Z",
   "2019-10-01T09:00:00Z[UTC]",
+  "09:00:00Z[UTC]",
+  "09:00:00Z",
 ];
 const instance = new Temporal.PlainTime(12, 34, 56, 987, 654, 321);
 invalidStrings.forEach((arg) => {

@@ -57,6 +57,4 @@ private:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
-JSC_DECLARE_HOST_FUNCTION(dateProtoFuncGetTime);
-
 } // namespace JSC

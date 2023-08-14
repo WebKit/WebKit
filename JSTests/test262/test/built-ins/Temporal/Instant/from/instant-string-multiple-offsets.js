@@ -7,7 +7,7 @@ description: Instant strings with UTC offset fractional part are not confused wi
 features: [Temporal]
 ---*/
 
-const str = "1970-01-01T00:02:00.000000000+00:02[+00:01:30.987654321]";
+const str = "1970-01-01T00:02:00.000000000+00:02[+01:30]";
 
 const result = Temporal.Instant.from(str);
 assert.sameValue(result.epochNanoseconds, 0n, "UTC offset determined from offset part of string");

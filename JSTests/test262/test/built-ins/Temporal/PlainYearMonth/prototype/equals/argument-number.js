@@ -3,27 +3,23 @@
 
 /*---
 esid: sec-temporal.plainyearmonth.prototype.equals
-description: A number is converted to a string, then to Temporal.PlainYearMonth
+description: A number is invalid in place of an ISO string for Temporal.PlainYearMonth
 features: [Temporal]
 ---*/
 
 const instance = new Temporal.PlainYearMonth(2019, 6);
 
-const arg = 201906;
-
-const result = instance.equals(arg);
-assert.sameValue(result, true, "201906 is a valid ISO string for PlainYearMonth");
-
 const numbers = [
   1,
+  201906,
   -201906,
   1234567,
 ];
 
 for (const arg of numbers) {
   assert.throws(
-    RangeError,
+    TypeError,
     () => instance.equals(arg),
-    `Number ${arg} does not convert to a valid ISO string for PlainYearMonth`
+    "A number is not a valid ISO string for PlainYearMonth"
   );
 }

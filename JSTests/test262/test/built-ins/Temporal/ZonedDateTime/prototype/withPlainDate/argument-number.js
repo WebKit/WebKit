@@ -3,27 +3,23 @@
 
 /*---
 esid: sec-temporal.zoneddatetime.prototype.withplaindate
-description: A number is converted to a string, then to Temporal.PlainDate
+description: A number cannot be used in place of a Temporal.PlainDate
 features: [Temporal]
 ---*/
 
 const instance = new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, "UTC");
 
-const arg = 19761118;
-
-const result = instance.withPlainDate(arg);
-assert.sameValue(result.epochNanoseconds, 217_129_600_000_000_000n, "19761118 is a valid ISO string for PlainDate");
-
 const numbers = [
   1,
+  19761118,
   -19761118,
   1234567890,
 ];
 
 for (const arg of numbers) {
   assert.throws(
-    RangeError,
+    TypeError,
     () => instance.withPlainDate(arg),
-    `Number ${arg} does not convert to a valid ISO string for PlainDate`
+    'Numbers cannot be used in place of an ISO string for PlainDate'
   );
 }

@@ -58,7 +58,7 @@ const expected = [
     { type: "integer", value: "456", unit: "microsecond" },
     { type: "literal", value: " ", unit: "microsecond" },
     { type: "unit", value: "microseconds", unit: "microsecond" },
-    { type: "literal", value: " and " },
+    { type: "literal", value: ", " },
     { type: "integer", value: "789", unit: "nanosecond" },
     { type: "literal", value: " ", unit: "nanosecond" },
     { type: "unit", value: "nanoseconds", unit: "nanosecond" },

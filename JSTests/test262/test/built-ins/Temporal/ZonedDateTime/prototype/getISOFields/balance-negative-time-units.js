@@ -24,13 +24,14 @@ info: |
       3. Set _result_ to ? BalanceISODateTime(_result_.[[Year]], _result_.[[Month]], _result_.[[Day]], _result_.[[Hour]], _result_.[[Minute]], _result_.[[Second]], _result_.[[Millisecond]], _result_.[[Microsecond]], _result_.[[Nanosecond]] + _offsetNanoseconds_).
     sec-get-temporal.zoneddatetime.prototype.getisofields step 7:
       7. Let _dateTime_ be ? BuiltinTimeZoneGetPlainDateTimeFor(_timeZone_, _instant_, _calendar_).
+includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
 // This code path is encountered if the time zone offset is negative and its
 // absolute value in nanoseconds is greater than the nanosecond field of the
 // ZonedDateTime
-const tz = new Temporal.TimeZone("-00:00:00.000000002");
+const tz = TemporalHelpers.specificOffsetTimeZone(-2);
 const datetime = new Temporal.ZonedDateTime(1001n, tz);
 
 const fields = datetime.getISOFields();

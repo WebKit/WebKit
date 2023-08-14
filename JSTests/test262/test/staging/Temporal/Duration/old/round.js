@@ -194,11 +194,11 @@ assert.sameValue(`${ hours25.round({
   }
 }) }`, "P1DT1H");
 
-// accepts datetime string equivalents or fields for relativeTo
+// accepts datetime strings or fields for relativeTo
 [
   "2020-01-01",
+  "20200101",
   "2020-01-01T00:00:00.000000000",
-  20200101n,
   {
     year: 2020,
     month: 1,
@@ -211,28 +211,22 @@ assert.sameValue(`${ hours25.round({
   }) }`, "P5Y5M5W5DT5H5M5S");
 });
 
+// does not accept non-string primitives for relativeTo
+[
+  20200101,
+  20200101n,
+  null,
+  true,
+].forEach(relativeTo => {
+  assert.throws(
+    TypeError, () => d.round({ smallestUnit: "seconds", relativeTo})
+  );
+});
+
 // throws on wrong offset for ZonedDateTime relativeTo string
 assert.throws(RangeError, () => d.round({
   smallestUnit: "seconds",
   relativeTo: "1971-01-01T00:00+02:00[-00:44:30]"
-}));
-
-// does not throw on HH:MM rounded offset for ZonedDateTime relativeTo string
-assert.sameValue(`${ d.round({
-  smallestUnit: "seconds",
-  relativeTo: "1971-01-01T00:00-00:45[-00:44:30]"
-}) }`, "P5Y5M5W5DT5H5M5S");
-
-// throws on HH:MM rounded offset for ZonedDateTime relativeTo property bag
-assert.throws(RangeError, () => d.round({
-  smallestUnit: "seconds",
-  relativeTo: {
-    year: 1971,
-    month: 1,
-    day: 1,
-    offset: "-00:45",
-    timeZone: "-00:44:30"
-  }
 }));
 
 // relativeTo object must contain at least the required correctly-spelled properties

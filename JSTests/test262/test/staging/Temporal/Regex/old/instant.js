@@ -32,10 +32,6 @@ function generateTest(dateTimeString, zoneString, components) {
   "+01:00",
   "+01",
   "+0100",
-  "+01:00:00",
-  "+010000",
-  "+01:00:00.000000000",
-  "+010000.0"
 ].forEach(zoneString => {
   generateTest("1976-11-18T15:23", `${ zoneString }[Europe/Vienna]`, [
     1976,

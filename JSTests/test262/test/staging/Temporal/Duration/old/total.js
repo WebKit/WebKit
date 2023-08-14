@@ -35,11 +35,11 @@ var s = Temporal.Duration.from({
 }).total({ unit: "seconds" });
 assert.sameValue(s, 0.002031);
 
-// accepts datetime string equivalents or fields for relativeTo
+// accepts datetime strings or fields for relativeTo
 [
   "2020-01-01",
+  "20200101",
   "2020-01-01T00:00:00.000000000",
-  20200101n,
   {
     year: 2020,
     month: 1,
@@ -58,29 +58,22 @@ assert.sameValue(s, 0.002031);
   assert.sameValue(total.toPrecision(15), totalMonths.toPrecision(15));
 });
 
+// does not accept non-string primitives for relativeTo
+[
+  20200101,
+  20200101n,
+  null,
+  true,
+].forEach(relativeTo => {
+  assert.throws(
+    TypeError, () => d.total({ unit: "months", relativeTo})
+  );
+});
+
 // throws on wrong offset for ZonedDateTime relativeTo string
 assert.throws(RangeError, () => d.total({
   unit: "months",
   relativeTo: "1971-01-01T00:00+02:00[-00:44:30]"
-}));
-
-// does not throw on HH:MM rounded offset for ZonedDateTime relativeTo string
-var oneMonth = Temporal.Duration.from({ months: 1 });
-assert.sameValue(oneMonth.total({
-  unit: "months",
-  relativeTo: "1971-01-01T00:00-00:45[-00:44:30]"
-}), 1);
-
-// throws on HH:MM rounded offset for ZonedDateTime relativeTo property bag
-assert.throws(RangeError, () => d.total({
-  unit: "months",
-  relativeTo: {
-    year: 1971,
-    month: 1,
-    day: 1,
-    offset: "-00:45",
-    timeZone: "-00:44:30"
-  }
 }));
 
 // relativeTo object must contain at least the required correctly-spelled properties

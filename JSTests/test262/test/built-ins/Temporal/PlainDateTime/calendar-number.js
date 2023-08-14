@@ -3,25 +3,21 @@
 
 /*---
 esid: sec-temporal.plaindatetime
-description: A number is converted to a string, then to Temporal.Calendar
+description: A number is not allowed to be a calendar
 features: [Temporal]
 ---*/
-
-const arg = 19761118;
-
-const result = new Temporal.PlainDateTime(2000, 5, 2, 15, 23, 30, 987, 654, 321, arg);
-assert.sameValue(result.calendarId, "iso8601", "19761118 is a valid ISO string for Calendar");
 
 const numbers = [
   1,
   -19761118,
+  19761118,
   1234567890,
 ];
 
 for (const arg of numbers) {
   assert.throws(
-    RangeError,
+    TypeError,
     () => new Temporal.PlainDateTime(2000, 5, 2, 15, 23, 30, 987, 654, 321, arg),
-    `Number ${arg} does not convert to a valid ISO string for Calendar`
+    "A number is not a valid ISO string for Calendar"
   );
 }

@@ -13,6 +13,40 @@ let timeZone = "2021-08-19T17:30";
 assert.throws(RangeError, () => Temporal.ZonedDateTime.compare({ year: 2000, month: 5, day: 2, timeZone }, instance), "bare date-time string is not a time zone (arg 1)");
 assert.throws(RangeError, () => Temporal.ZonedDateTime.compare(instance, { year: 2000, month: 5, day: 2, timeZone }), "bare date-time string is not a time zone (arg 2)");
 
+[
+  "2021-08-19T17:30-07:00:01",
+  "2021-08-19T17:30-07:00:00",
+  "2021-08-19T17:30-07:00:00.1",
+  "2021-08-19T17:30-07:00:00.0",
+  "2021-08-19T17:30-07:00:00.01",
+  "2021-08-19T17:30-07:00:00.00",
+  "2021-08-19T17:30-07:00:00.001",
+  "2021-08-19T17:30-07:00:00.000",
+  "2021-08-19T17:30-07:00:00.0001",
+  "2021-08-19T17:30-07:00:00.0000",
+  "2021-08-19T17:30-07:00:00.00001",
+  "2021-08-19T17:30-07:00:00.00000",
+  "2021-08-19T17:30-07:00:00.000001",
+  "2021-08-19T17:30-07:00:00.000000",
+  "2021-08-19T17:30-07:00:00.0000001",
+  "2021-08-19T17:30-07:00:00.0000000",
+  "2021-08-19T17:30-07:00:00.00000001",
+  "2021-08-19T17:30-07:00:00.00000000",
+  "2021-08-19T17:30-07:00:00.000000001",
+  "2021-08-19T17:30-07:00:00.000000000",
+].forEach((timeZone) => {
+  assert.throws(
+    RangeError,
+    () => Temporal.ZonedDateTime.compare({ year: 2000, month: 5, day: 2, timeZone }, instance),
+    `ISO string ${timeZone} with a sub-minute offset is not a valid time zone (arg 1)`
+  );
+  assert.throws(
+    RangeError,
+    () => Temporal.ZonedDateTime.compare(instance, { year: 2000, month: 5, day: 2, timeZone }),
+    `ISO string ${timeZone} with a sub-minute offset is not a valid time zone (arg 2)`
+  );
+});
+
 // The following are all valid strings so should not throw:
 
 [

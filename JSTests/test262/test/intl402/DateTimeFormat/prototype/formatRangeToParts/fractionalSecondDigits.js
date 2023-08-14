@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-initializedatetimeformat
+esid: sec-createdatetimeformat
 description: Checks basic handling of fractionalSecondDigits.
 features: [Intl.DateTimeFormat-fractionalSecondDigits, Intl.DateTimeFormat-formatRange]
 locale: [en-US]

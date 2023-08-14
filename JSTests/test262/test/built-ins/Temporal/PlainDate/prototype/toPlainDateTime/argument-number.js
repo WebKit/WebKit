@@ -3,17 +3,11 @@
 
 /*---
 esid: sec-temporal.plaindate.prototype.toplaindatetime
-description: A number is converted to a string, then to Temporal.PlainTime
-includes: [temporalHelpers.js]
+description: A number is invalid in place of an ISO string for Temporal.PlainTime
 features: [Temporal]
 ---*/
 
 const instance = new Temporal.PlainDate(2000, 5, 2);
-
-const arg = 123456.987654321;
-
-const result = instance.toPlainDateTime(arg);
-TemporalHelpers.assertPlainDateTime(result, 2000, 5, "M05", 2, 12, 34, 56, 987, 654, 321, "123456.987654321 is a valid ISO string for PlainTime");
 
 const numbers = [
   1,
@@ -24,8 +18,8 @@ const numbers = [
 
 for (const arg of numbers) {
   assert.throws(
-    RangeError,
+    TypeError,
     () => instance.toPlainDateTime(arg),
-    `Number ${arg} does not convert to a valid ISO string for PlainTime`
+    "A number is not a valid ISO string for PlainTime"
   );
 }

@@ -2,14 +2,20 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-initializedatetimeformat
+esid: sec-createdatetimeformat
 description: Checks the order of getting options of 'dayPeriod' for the DateTimeFormat constructor.
 info: |
-    ToDateTimeOptions ( options, required, defaults )
-    4. If required is "date" or "any", then
-      a. For each of the property names "weekday", "year", "month", "day", "dayPeriod" do
-    5. If required is "time" or "any", then
-      a. For each of the property names "hour", "minute", "second", do
+  CreateDateTimeFormat ( newTarget, locales, options, required, defaults )
+  ...
+  36. For each row of Table 7, except the header row, in table order, do
+    a. Let prop be the name given in the Property column of the row.
+    b. If prop is "fractionalSecondDigits", then
+      i. Let value be ? GetNumberOption(options, "fractionalSecondDigits", 1, 3, undefined).
+    c. Else,
+      i. Let values be a List whose elements are the strings given in the Values column of the row.
+      ii. Let value be ? GetOption(options, prop, string, values, undefined).
+    d. Set formatOptions.[[<prop>]] to value.
+  ...
 includes: [compareArray.js]
 features: [Intl.DateTimeFormat-dayPeriod]
 
@@ -17,11 +23,7 @@ features: [Intl.DateTimeFormat-dayPeriod]
 
 // Just need to ensure dayPeriod are get between day and hour.
 const expected = [
-  // ToDateTimeOptions step 4.
-  "day", "dayPeriod",
-  // ToDateTimeOptions step 5.
-  "hour",
-  // InitializeDateTimeFormat step 22.
+  // CreateDateTimeFormat step 36.
   "day",
   "dayPeriod",
   "hour"

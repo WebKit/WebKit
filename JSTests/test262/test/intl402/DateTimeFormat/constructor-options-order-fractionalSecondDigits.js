@@ -3,38 +3,37 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-initializedatetimeformat
+esid: sec-createdatetimeformat
 description: Checks the order of getting options of 'fractionalSecondDigits' for the DateTimeFormat constructor.
 info: |
-  ToDateTimeOptions ( options, required, defaults )
-  5. If required is "time" or "any", then
-    a. For each of the property names "hour", "minute", "second", "fractionalSecondDigits", do
-
-  InitializeDateTimeFormat ( dateTimeFormat, locales, options )
-  2. Let options be ? ToDateTimeOptions(options, "any", "date").
+  CreateDateTimeFormat ( newTarget, locales, options, required, defaults )
+  ...
   4. Let matcher be ? GetOption(options, "localeMatcher", "string", «  "lookup", "best fit" », "best fit").
-  22. For each row of Table 5, except the header row, do
-    a. Let value be ? GetOption(options, prop, "string", « the strings given in the Values column of the row », undefined).
-  23. Let _opt_.[[FractionalSecondDigits]] be ? GetNumberOption(_options_, `"fractionalSecondDigits"`, 0, 3, 0).
-  26. Let matcher be ? GetOption(options, "formatMatcher", "string", «  "basic", "best fit" », "best fit").
+  ...
+  36. For each row of Table 7, except the header row, in table order, do
+    a. Let prop be the name given in the Property column of the row.
+    b. If prop is "fractionalSecondDigits", then
+      i. Let value be ? GetNumberOption(options, "fractionalSecondDigits", 1, 3, undefined).
+    c. Else,
+      i. Let values be a List whose elements are the strings given in the Values column of the row.
+      ii. Let value be ? GetOption(options, prop, string, values, undefined).
+    d. Set formatOptions.[[<prop>]] to value.
+  37. Let matcher be ? GetOption(options, "formatMatcher", "string", «  "basic", "best fit" », "best fit").
+  ...
 includes: [compareArray.js]
 features: [Intl.DateTimeFormat-fractionalSecondDigits]
 ---*/
 
 // Just need to ensure fractionalSecondDigits are get
-// between second and localeMatcher the first time and
-// between timeZoneName and formatMatcher the second time.
+// between "second" and "timeZoneName".
 const expected = [
-  // InitializeDateTimeFormat step 2.
-  //  ToDateTimeOptions step 5.
-  "second", "fractionalSecondDigits",
-  // InitializeDateTimeFormat step 4.
+  // CreateDateTimeFormat step 4.
   "localeMatcher",
-  // InitializeDateTimeFormat step 22.
+  // CreateDateTimeFormat step 36.
   "second",
   "fractionalSecondDigits",
   "timeZoneName",
-  // InitializeDateTimeFormat step 26.
+  // CreateDateTimeFormat step 37.
   "formatMatcher",
 ];
 

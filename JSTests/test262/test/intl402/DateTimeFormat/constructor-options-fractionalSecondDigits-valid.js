@@ -2,12 +2,16 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-initializedatetimeformat
+esid: sec-createdatetimeformat
 description: >
     Checks handling of the options argument to the DateTimeFormat constructor.
 info: |
-    InitializeDateTimeFormat ( dateTimeFormat, locales, options )
-    23. Let _opt_.[[FractionalSecondDigits]] be ? GetNumberOption(_options_, `"fractionalSecondDigits"`, 0, 3, 0).
+    CreateDateTimeFormat ( dateTimeFormat, locales, options, required, defaults )
+    ...
+    37. For each row of Table 7, except the header row, in table order, do
+      a. Let prop be the name given in the Property column of the row.
+      b. If prop is "fractionalSecondDigits", then
+        i. Let value be ? GetNumberOption(options, "fractionalSecondDigits", 1, 3, undefined).
 features: [Intl.DateTimeFormat-fractionalSecondDigits]
 ---*/
 

@@ -9,25 +9,31 @@ description: >
 features: [BigInt, Symbol, Temporal]
 ---*/
 
-const rangeErrorTests = [
-  [undefined, "undefined"],
-  [null, "null"],
-  [true, "boolean"],
-  ["", "empty string"],
+const primitiveTests = [
+  [undefined, 'undefined'],
+  [null, 'null'],
+  [true, 'boolean'],
+  ['', 'empty string'],
   [1, "number that doesn't convert to a valid ISO string"],
-  [19761118, "number that would convert to a valid ISO string in other contexts"],
-  [1n, "bigint"],
-  [{}, "plain object"],
-  [Temporal.Instant, "Temporal.Instant, object"],
+  [19761118, 'number that would convert to a valid ISO string in other contexts'],
+  [1n, 'bigint'],
+  [{}, 'plain object'],
+  [Temporal.Instant, 'Temporal.Instant, object']
 ];
 
-for (const [arg, description] of rangeErrorTests) {
-  assert.throws(RangeError, () => Temporal.Instant.from(arg), `${description} does not convert to a valid ISO string`);
+for (const [arg, description] of primitiveTests) {
+  assert.throws(
+    typeof arg === 'string' || (typeof arg === 'object' && arg !== null) || typeof arg === 'function'
+      ? RangeError
+      : TypeError,
+    () => Temporal.Instant.from(arg),
+    `${description} does not convert to a valid ISO string`
+  );
 }
 
 const typeErrorTests = [
-  [Symbol(), "symbol"],
-  [Temporal.Instant.prototype, "Temporal.Instant.prototype, object"],  // fails brand check in toString()
+  [Symbol(), 'symbol'],
+  [Temporal.Instant.prototype, 'Temporal.Instant.prototype, object'] // fails brand check in toString()
 ];
 
 for (const [arg, description] of typeErrorTests) {

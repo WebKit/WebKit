@@ -2,14 +2,13 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-initializedatetimeformat
+esid: sec-createdatetimeformat
 description: >
     Checks error cases for the options argument to the DateTimeFormat constructor.
 info: |
-    InitializeDateTimeFormat ( dateTimeFormat, locales, options )
-
+    CreateDateTimeFormat ( dateTimeFormat, locales, options, required, defaults )
     ...
-    10. If numberingSystem is not undefined, then
+    27. If numberingSystem is not undefined, then
         a. If numberingSystem does not match the Unicode Locale Identifier type nonterminal, throw a RangeError exception.
 ---*/
 
