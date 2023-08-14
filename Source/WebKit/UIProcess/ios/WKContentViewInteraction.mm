@@ -4216,9 +4216,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_keyboardDidRequestDismissal:(NSNotification *)notification
 {
-    if (![self isFirstResponder])
-        return;
-    _keyboardDidRequestDismissal = YES;
+    if (_isEditable && [self isFirstResponder])
+        _keyboardDidRequestDismissal = YES;
 }
 
 - (void)copyForWebView:(id)sender
