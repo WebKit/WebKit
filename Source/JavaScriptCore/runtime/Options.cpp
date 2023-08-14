@@ -664,7 +664,7 @@ void Options::notifyOptionsChanged()
         if (Options::forceAllFunctionsToUseSIMD() && !Options::useWebAssemblySIMD())
             Options::forceAllFunctionsToUseSIMD() = false;
 
-        if (Options::useWebAssemblySIMD() && !Options::useWasmLLInt()) {
+        if (Options::useWebAssemblySIMD() && !(Options::useWasmLLInt() || Options::useWasmIPInt())) {
             // The LLInt is responsible for discovering if functions use SIMD.
             // If we can't run using it, then we should be conservative.
             Options::forceAllFunctionsToUseSIMD() = true;

@@ -196,7 +196,7 @@ public:
 
     // SIMD
 
-    void notifyFunctionUsesSIMD() { }
+    void notifyFunctionUsesSIMD() { ASSERT(Options::useWebAssemblySIMD()); m_usesSIMD = true; }
     PartialResult WARN_UNUSED_RETURN addSIMDLoad(ExpressionType, uint32_t, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addSIMDStore(ExpressionType, ExpressionType, uint32_t);
     PartialResult WARN_UNUSED_RETURN addSIMDSplat(SIMDLane, ExpressionType, ExpressionType&);
@@ -456,7 +456,7 @@ public:
     PartialResult WARN_UNUSED_RETURN endBlock(ControlEntry&, Stack&);
     PartialResult WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&, Stack&);
 
-    PartialResult WARN_UNUSED_RETURN endTopLevel(BlockSignature, const Stack&) { return { }; }
+    PartialResult WARN_UNUSED_RETURN endTopLevel(BlockSignature, const Stack&);
 
     // Calls
 
@@ -486,6 +486,8 @@ private:
     FunctionParser<IPIntGenerator>* m_parser { nullptr };
     ModuleInformation& m_info;
     std::unique_ptr<FunctionIPIntMetadataGenerator> m_metadata;
+
+    bool m_usesSIMD { false };
 };
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addDrop(ExpressionType) { return { }; }
@@ -964,7 +966,7 @@ inline void IPIntGenerator::condenseControlFlowInstructions()
 {
     // Peek at the next instruction: if it's not a block or loop, go through and resolve all the metadata entries
     auto nextOpcode = m_metadata->m_bytecode[m_parser->offset()];
-    if (nextOpcode != OpType::Block && nextOpcode != OpType::Loop) {
+    if (nextOpcode != OpType::Block) {
         // next PC (to skip type signature)
         for (auto offset : m_metadata->m_repeatedControlFlowInstructionMetadataOffsets) {
             WRITE_TO_METADATA(m_metadata->m_metadata.data() + offset, m_parser->offset() - m_metadata->m_bytecodeOffset, uint32_t);
@@ -986,21 +988,36 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addBlock(BlockSignature signatu
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addLoop(BlockSignature signature, Stack& oldStack, ControlType& block, Stack& newStack, uint32_t)
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addLoop(BlockSignature signature, Stack& oldStack, ControlType& block, Stack& newStack, uint32_t loopIndex)
 {
     splitStack(signature, oldStack, newStack);
     block = ControlType(signature, BlockType::Loop);
     block.m_pendingOffset = -1; // no need to update!
 
     // Allocate space in metadata
-    m_metadata->m_repeatedControlFlowInstructionMetadataOffsets.append(m_metadata->m_metadata.size());
-    m_metadata->addBlankSpace(8);
-    condenseControlFlowInstructions();
-
+    auto size = m_metadata->m_metadata.size();
+    m_metadata->addBlankSpace(1);
+    WRITE_TO_METADATA(m_metadata->m_metadata.data() + size, getCurrentInstructionLength(), uint8_t);
     // No -1 because we can just have it directly go to the instruction after
     // No point running `loop` since in IPInt it's just a nop
     block.m_pc = m_parser->offset() - m_metadata->m_bytecodeOffset;
     block.m_mc = m_metadata->m_metadata.size();
+
+    // Loop OSR
+
+    // We don't care what we're putting in as long as we put in something to represent a value
+    // Will get everything off the stack
+    int numOSREntryDataValues = m_metadata->m_numLocals;
+    for (unsigned controlIndex = 0; controlIndex < m_parser->controlStack().size(); ++controlIndex) {
+        Stack& expressionStack = m_parser->controlStack()[controlIndex].enclosedExpressionStack;
+        numOSREntryDataValues += expressionStack.size();
+    }
+    numOSREntryDataValues += oldStack.size();
+    numOSREntryDataValues += newStack.size();
+    Vector<VirtualRegister> osrEntryData(numOSREntryDataValues);
+    // Note the +1: we do this to avoid having 0 as a key in the map, since the current map can't handle 0 as a key
+    m_metadata->tierUpCounter().add(m_parser->currentOpcodeStartingOffset() - m_metadata->m_bytecodeOffset + 1, LLIntTierUpCounter::OSREntryData { loopIndex, osrEntryData });
+
     return { };
 }
 
@@ -1199,6 +1216,15 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addEndToUnreachable(ControlEntr
         m_metadata->m_repeatedControlFlowInstructionMetadataOffsets.clear();
     }
 
+    return { };
+}
+
+auto IPIntGenerator::endTopLevel(BlockSignature signature, const Stack& expressionStack) -> PartialResult
+{
+    if (m_usesSIMD)
+        m_info.markUsesSIMD(m_metadata->functionIndex());
+    RELEASE_ASSERT(expressionStack.size() == signature->as<FunctionSignature>()->returnCount());
+    m_info.doneSeeingFunction(m_metadata->m_functionIndex);
     return { };
 }
 

@@ -603,6 +603,8 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 #define OFFLINE_ASM_OPCODE_DEBUG_LABEL(label)
 #endif
 
+#include "WasmCallee.h"
+
 // This works around a bug in GDB where, if the compilation unit
 // doesn't have any address range information, its line table won't
 // even be consulted. Emit {before,after}_llint_asm so that the code

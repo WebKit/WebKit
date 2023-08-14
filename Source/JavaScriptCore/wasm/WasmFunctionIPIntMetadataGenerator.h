@@ -79,6 +79,8 @@ public:
     const uint8_t* getBytecode() const { return m_bytecode; }
     const uint8_t* getMetadata() const { return m_metadata.data(); }
 
+    HashMap<WasmInstructionStream::Offset, LLIntTierUpCounter::OSREntryData>& tierUpCounter() { return m_tierUpCounter; }
+
     unsigned addSignature(const TypeDefinition&);
 
 private:
@@ -107,6 +109,7 @@ private:
     Vector<uint8_t, 16> m_argumINTBytecode { };
 
     Vector<const TypeDefinition*> m_signatures;
+    HashMap<WasmInstructionStream::Offset, LLIntTierUpCounter::OSREntryData> m_tierUpCounter;
 
     // Optimization to skip large numbers of blocks
 

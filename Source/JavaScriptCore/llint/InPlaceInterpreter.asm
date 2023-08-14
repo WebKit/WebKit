@@ -108,7 +108,7 @@ macro saveIPIntRegisters()
     subp 2*CalleeSaveSpaceStackAligned, sp
     if ARM64 or ARM64E
         storepairq wasmInstance, PB, -16[cfr]
-        storep PM, -24[cfr]
+        storeq PM, -24[cfr]
     elsif X86_64 or RISCV64
         storep PB, -0x8[cfr]
         storep wasmInstance, -0x10[cfr]
@@ -120,7 +120,7 @@ end
 macro restoreIPIntRegisters()
     if ARM64 or ARM64E
         loadpairq -16[cfr], wasmInstance, PB
-        loadp -24[cfr], PM
+        loadq -24[cfr], PM
     elsif X86_64 or RISCV64
         loadp -0x8[cfr], PB
         loadp -0x10[cfr], wasmInstance
@@ -384,6 +384,115 @@ macro ipintException(exception)
     jmp _wasm_throw_from_slow_path_trampoline
 end
 
+# OSR
+
+macro ipintPrologueOSR(increment)
+    loadp WasmCodeBlock[cfr], ws0
+    baddis increment, Wasm::IPIntCallee::m_tierUpCounter + Wasm::LLIntTierUpCounter::m_counter[ws0], .continue
+
+    subq (NumberOfWasmArgumentJSRs + NumberOfWasmArgumentFPRs) * 8, sp
+if ARM64 or ARM64E
+    forEachArgumentJSR(macro (offset, gpr1, gpr2)
+        storepairq gpr2, gpr1, offset[sp]
+    end)
+elsif JSVALUE64
+    forEachArgumentJSR(macro (offset, gpr)
+        storeq gpr, offset[sp]
+    end)
+else
+    forEachArgumentJSR(macro (offset, gprMsw, gpLsw)
+        store2ia gpLsw, gprMsw, offset[sp]
+    end)
+end
+if ARM64 or ARM64E
+    forEachArgumentFPR(macro (offset, fpr1, fpr2)
+        storepaird fpr2, fpr1, offset[sp]
+    end)
+else
+    forEachArgumentFPR(macro (offset, fpr)
+        stored fpr, offset[sp]
+    end)
+end
+
+    ipintReloadMemory()
+    push memoryBase, boundsCheckingSize
+
+    move cfr, a1
+    operationCall(macro() cCall2(_ipint_extern_prologue_osr) end)
+    move r0, ws0
+
+    pop boundsCheckingSize, memoryBase
+
+if ARM64 or ARM64E
+    forEachArgumentFPR(macro (offset, fpr1, fpr2)
+        loadpaird offset[sp], fpr2, fpr1
+    end)
+else
+    forEachArgumentFPR(macro (offset, fpr)
+        loadd offset[sp], fpr
+    end)
+end
+
+if ARM64 or ARM64E
+    forEachArgumentJSR(macro (offset, gpr1, gpr2)
+        loadpairq offset[sp], gpr2, gpr1
+    end)
+elsif JSVALUE64
+    forEachArgumentJSR(macro (offset, gpr)
+        loadq offset[sp], gpr
+    end)
+else
+    forEachArgumentJSR(macro (offset, gprMsw, gpLsw)
+        load2ia offset[sp], gpLsw, gpMsw
+    end)
+end
+    addq (NumberOfWasmArgumentJSRs + NumberOfWasmArgumentFPRs) * 8, sp
+
+    btpz ws0, .recover
+
+    restoreIPIntRegisters()
+    restoreCallerPCAndCFR()
+
+    if ARM64E
+        leap _g_config, ws1
+        jmp JSCConfigGateMapOffset + (constexpr Gate::wasmOSREntry) * PtrSize[ws1], NativeToJITGatePtrTag # WasmEntryPtrTag
+    else
+        jmp ws0, WasmEntryPtrTag
+    end
+
+.recover:
+    loadp WasmCodeBlock[cfr], ws0
+.continue:
+end
+
+macro ipintLoopOSR(increment)
+    loadp WasmCodeBlock[cfr], ws0
+    baddis increment, Wasm::IPIntCallee::m_tierUpCounter + Wasm::LLIntTierUpCounter::m_counter[ws0], .continue
+
+    move cfr, a1
+    move PC, a2
+    # Add 1 to the index due to WTF::HashMap not supporting 0 as a key
+    addq 1, a2
+    move PL, a3
+    operationCall(macro() cCall4(_ipint_extern_loop_osr) end)
+    btpz r1, .recover
+    restoreIPIntRegisters()
+    restoreCallerPCAndCFR()
+    move r0, a0
+
+    if ARM64E
+        move r1, ws0
+        leap _g_config, ws1
+        jmp JSCConfigGateMapOffset + (constexpr Gate::wasmOSREntry) * PtrSize[ws1], NativeToJITGatePtrTag # WasmEntryPtrTag
+    else
+        jmp r1, WasmEntryPtrTag
+    end
+
+.recover:
+    loadp WasmCodeBlock[cfr], ws0
+.continue:
+end
+
 ########################
 # In-Place Interpreter #
 ########################
@@ -421,7 +530,10 @@ if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
     mulq LocalSize, csr0
     move sp, csr3
     subq csr0, sp
+    move sp, csr4
     loadp Wasm::IPIntCallee::m_argumINTBytecodePointer[ws0], PM
+
+    push csr0, csr1, csr2, csr3
 
     # PM = location in argumINT bytecode
     # csr0 = tmp
@@ -430,22 +542,29 @@ if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
     # csr3 = end
     # csr4 = for dispatch
 
-    move sp, csr1
-    leap FirstArgumentOffset[cfr], csr2
+const argumINTDest = csr1
+const argumINTSrc = csr2
+    move csr4, argumINTDest
+    leap FirstArgumentOffset[cfr], argumINTSrc
 
     argumINTDispatch()
 
 .ipint_entry_end_local:
     # zero out remaining locals
-    bqeq csr1, csr3, .ipint_entry_finish_zero
-    storeq 0, [csr1]
-    addq 8, csr1
+    bqeq argumINTDest, csr3, .ipint_entry_finish_zero
+    storeq 0, [argumINTDest]
+    addq 8, argumINTDest
+
     jmp .ipint_entry_end_local
 .ipint_entry_finish_zero:
+    pop csr3, csr2, csr1, csr0
+
+    loadp CodeBlock[cfr], wasmInstance
+    # OSR Check
+    ipintPrologueOSR(5)
 
     move sp, PL
 
-    loadp CodeBlock[cfr], wasmInstance
     if ARM64 or ARM64E
         pcrtoaddr _ipint_unreachable, IB
     end
@@ -464,8 +583,9 @@ if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
     # Will use PM as a temp because we don't want to use the actual temps.
     move PL, sp
     loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], PM
-    mulq SlotSize, PM
+    mulq LocalSize, PM
     addq PM, sp
+    ipintReloadMemory()
 
     restoreIPIntRegisters()
     restoreCallerPCAndCFR()
@@ -498,8 +618,10 @@ instructionLabel(_block)
 
 instructionLabel(_loop)
     # loop
-    loadi [PM, MC], PC
-    loadi 4[PM, MC], MC
+    ipintLoopOSR(1)
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
     nextIPIntInstruction()
 
 instructionLabel(_if)
@@ -536,22 +658,27 @@ macro uintAlign()
 end
 
 macro uintDispatch()
-    loadb [PM], csr3
+if ARM64 or ARM64E
+    loadb [PM], ws2
     addq 1, PM
-    bilt csr3, 5, .safe
+    bilt ws2, 5, .safe
     break
 .safe:
-    lshiftq 6, csr3
-if ARM64 or ARM64E
-    pcrtoaddr _uint_r0, csr4
-    addq csr3, csr4
-    # csr4 = x23
-    emit "br x23"
+    lshiftq 6, ws2
+    pcrtoaddr _uint_r0, ws3
+    addq ws2, ws3
+    # ws3 = x12
+    emit "br x12"
 elsif X86_64
-    leap (_uint_r0), csr4
-    addq csr3, csr4
-    # csr4 = r13
-    emit "jmp *(%r13)"
+    loadb [PM], r1
+    addq 1, PM
+    bilt r1, 5, .safe
+    break
+.safe:
+    lshiftq 6, r1
+    leap (_uint_r0), t0
+    addq r1, t0
+    emit "jmp *(%rax)"
 end
 end
 
@@ -880,7 +1007,6 @@ reservedOpcode(0x27)
 macro ipintCheckMemoryBound(mem, size)
     leap size - 1[mem], t2
     bpb t2, boundsCheckingSize, .continuation
-    break
     ipintException(OutOfBoundsMemoryAccess)
 .continuation:
     nop
@@ -3550,6 +3676,12 @@ _mint_call:
 
     # Swap instances
     move ipintCallNewInstance, wasmInstance
+
+    # Set up memory
+    push t2, t3
+    ipintReloadMemory()
+    pop t3, t2
+
     # Make the call
     call ipintCallSavedEntrypoint, JSEntrySlowPathPtrTag
 
@@ -3724,8 +3856,8 @@ _uint_ret:
 # csr3
 # csr4 = for dispatch
 
-const argumINTDest = csr1
-const argumINTSrc = csr2
+# const argumINTDest = csr3
+# const argumINTSrc = PB
 
 argumINTAlign()
 _argumINT_a0:

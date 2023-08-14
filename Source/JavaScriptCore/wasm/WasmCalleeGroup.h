@@ -102,6 +102,8 @@ public:
         if (!m_bbqCallees.isEmpty() && m_bbqCallees[calleeIndex])
             return *m_bbqCallees[calleeIndex].get();
 #endif
+        if (Options::useWasmIPInt())
+            return m_ipintCallees->at(calleeIndex).get();
         return m_llintCallees->at(calleeIndex).get();
     }
 
