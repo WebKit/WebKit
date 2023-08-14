@@ -29,6 +29,7 @@
 #include "CallGraph.h"
 #include "ConstantRewriter.h"
 #include "EntryPointRewriter.h"
+#include "GlobalSorting.h"
 #include "GlobalVariableRewriter.h"
 #include "MangleNames.h"
 #include "Metal/MetalCodeGenerator.h"
@@ -76,12 +77,15 @@ std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const
     }
 
     // FIXME: add more validation
-    auto maybeFailure = typeCheck(shaderModule);
-    if (maybeFailure.has_value())
+    dumpASTBetweenEachPassIfNeeded(shaderModule, "AST before reorderGlobals");
+    if (auto maybeFailure = reorderGlobals(shaderModule))
         return *maybeFailure;
 
-    maybeFailure = rewriteConstants(shaderModule);
-    if (maybeFailure.has_value())
+    dumpASTBetweenEachPassIfNeeded(shaderModule, "AST before typeCheck");
+    if (auto maybeFailure = typeCheck(shaderModule))
+        return *maybeFailure;
+
+    if (auto maybeFailure = rewriteConstants(shaderModule))
         return *maybeFailure;
 
     Vector<Warning> warnings { };
