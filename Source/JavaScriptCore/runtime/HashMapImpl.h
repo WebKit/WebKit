@@ -177,6 +177,11 @@ public:
         return OBJECT_OFFSETOF(HashMapBucket, m_next);
     }
 
+    static ptrdiff_t offsetOfPrev()
+    {
+        return OBJECT_OFFSETOF(HashMapBucket, m_prev);
+    }
+
     ALWAYS_INLINE static JSValue extractValue(const HashMapBucket& bucket)
     {
         if constexpr (std::is_same_v<Data, HashMapBucketDataKeyValue>)
@@ -319,9 +324,24 @@ public:
         return OBJECT_OFFSETOF(HashMapImpl<HashMapBucketType>, m_head);
     }
 
+    static ptrdiff_t offsetOfTail()
+    {
+        return OBJECT_OFFSETOF(HashMapImpl<HashMapBucketType>, m_tail);
+    }
+
     static ptrdiff_t offsetOfBuffer()
     {
         return OBJECT_OFFSETOF(HashMapImpl<HashMapBucketType>, m_buffer);
+    }
+
+    static ptrdiff_t offsetOfKeyCount()
+    {
+        return OBJECT_OFFSETOF(HashMapImpl<HashMapBucketType>, m_keyCount);
+    }
+
+    static ptrdiff_t offsetOfDeleteCount()
+    {
+        return OBJECT_OFFSETOF(HashMapImpl<HashMapBucketType>, m_deleteCount);
     }
 
     static ptrdiff_t offsetOfCapacity()

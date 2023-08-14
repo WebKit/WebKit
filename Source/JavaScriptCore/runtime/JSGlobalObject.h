@@ -902,6 +902,7 @@ public:
 
 #define DEFINE_ACCESSORS_FOR_LAZY_TYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase, featureFlag) \
     Structure* properName ## Structure() { return m_ ## properName ## Structure.get(this); } \
+    Structure* properName ## StructureConcurrently() { return m_ ## properName ## Structure.getConcurrently(); } \
     JSObject* properName ## Constructor() { return m_ ## properName ## Structure.constructor(this); }
 
     FOR_EACH_LAZY_BUILTIN_TYPE(DEFINE_ACCESSORS_FOR_LAZY_TYPE)

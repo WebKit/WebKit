@@ -2251,6 +2251,8 @@ public:
         case NewAsyncGenerator:
         case NewInternalFieldObject:
         case NewStringObject:
+        case NewMap:
+        case NewSet:
             return true;
         default:
             return false;

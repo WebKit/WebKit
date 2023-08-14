@@ -3079,6 +3079,8 @@ private:
         case NewAsyncGenerator:
         case NewInternalFieldObject:
         case NewRegexp:
+        case NewMap:
+        case NewSet:
         case IsTypedArrayView:
         case IsEmpty:
         case TypeOfIsUndefined:

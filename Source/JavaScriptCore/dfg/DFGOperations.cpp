@@ -4051,6 +4051,22 @@ JSC_DEFINE_JIT_OPERATION(operationMapDelete, size_t, (JSGlobalObject* globalObje
     return jsCast<JSMap*>(map)->removeNormalized(globalObject, JSValue::decode(key), hash);
 }
 
+JSC_DEFINE_JIT_OPERATION(operationNewMap, JSMap*, (VM* vmPointer, Structure* structure))
+{
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    return JSMap::create(vm, structure);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationNewSet, JSSet*, (VM* vmPointer, Structure* structure))
+{
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    return JSSet::create(vm, structure);
+}
+
 JSC_DEFINE_JIT_OPERATION(operationWeakSetAdd, void, (JSGlobalObject* globalObject, JSCell* set, JSCell* key, int32_t hash))
 {
     VM& vm = globalObject->vm();
