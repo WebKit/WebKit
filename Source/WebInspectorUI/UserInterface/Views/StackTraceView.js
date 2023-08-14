@@ -32,11 +32,7 @@ WI.StackTraceView = class StackTraceView
         var element = this._element = document.createElement("div");
         element.classList.add("stack-trace");
 
-<<<<<<< HEAD
         WI.StackTraceTreeController.groupBlackboxedStackTrace(element, stackTrace);
-=======
-        WI.CallFrameTreeController.groupBlackboxedStackTrace(element, stackTrace);
->>>>>>> 5e1e19d91e6f (Web Inspector: should always send Console.StackTrace instead of an array of Console.CallFrame)
 
         return element;
     }

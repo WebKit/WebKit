@@ -86,11 +86,7 @@ WI.Canvas = class Canvas extends WI.Object
             console.error("Invalid canvas context type", payload.contextType);
         }
 
-<<<<<<< HEAD
         // COMPATIBILITY (macOS 13.0, iOS 16.0): `backtrace` was renamed to `stackTrace`.
-=======
-        // COMPATIBILITY (iOS 16): `backtrace` was renamed to `stackTrace`.
->>>>>>> 5e1e19d91e6f (Web Inspector: should always send Console.StackTrace instead of an array of Console.CallFrame)
         if (payload.backtrace)
             payload.stackTrace = {callFrames: payload.backtrace};
 

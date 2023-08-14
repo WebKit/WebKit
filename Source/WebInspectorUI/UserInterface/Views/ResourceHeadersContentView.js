@@ -298,11 +298,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
                     const selectable = false;
                     let callFramesTreeOutline = new WI.TreeOutline(selectable);
                     callFramesTreeOutline.disclosureButtons = false;
-<<<<<<< HEAD
                     let callFrameTreeController = new WI.StackTraceTreeController(callFramesTreeOutline);
-=======
-                    let callFrameTreeController = new WI.CallFrameTreeController(callFramesTreeOutline);
->>>>>>> 5e1e19d91e6f (Web Inspector: should always send Console.StackTrace instead of an array of Console.CallFrame)
                     callFrameTreeController.stackTrace = this._resource.initiatorStackTrace;
 
                     let popoverContent = document.createElement("div");
