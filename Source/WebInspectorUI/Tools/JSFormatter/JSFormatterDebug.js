@@ -2,7 +2,8 @@ JSFormatterDebug = class JSFormatterDebug
 {
     constructor(sourceText, sourceType)
     {
-        let tree = esprima.parse(sourceText, {attachComment: true, range: true, tokens: true, sourceType});
+        const parseFn = sourceType === "module" ? esprima.parseModule : esprima.parse;
+        let tree = parseFn(sourceText, {attachComment: true, range: true, tokens: true, sourceType});
         let walker = new ESTreeWalker(this._before.bind(this), this._after.bind(this));
 
         this._statistics = {
