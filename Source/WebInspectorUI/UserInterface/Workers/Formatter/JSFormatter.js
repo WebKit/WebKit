@@ -36,7 +36,7 @@ JSFormatter = class JSFormatter
 
         let tree = (function() {
             try {
-                return parseFn(sourceText, {attachComment: true, range: true, tokens: true, sourceType});
+                return parseFn(sourceText, {attachComment: true, range: true, tokens: true, sourceType, ecmaVersion: "latest"});
             } catch(error) {
                 console.error(`Failed to parse source text of type "${sourceType}".`, error);
                 return null;
