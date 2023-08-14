@@ -57,6 +57,15 @@ public:
 #endif
     }
 
+    bool isMac() const
+    {
+#if PLATFORM(MAC)
+        return true;
+#else
+        return false;
+#endif
+    }
+
     bool isKeyboardImmediatelyAvailable()
     {
 #if PLATFORM(VISION)

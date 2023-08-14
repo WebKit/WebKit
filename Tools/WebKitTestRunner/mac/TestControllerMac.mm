@@ -43,6 +43,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <mach-o/dyld.h>
+#import <pal/spi/mac/NSApplicationSPI.h>
 
 @interface NSMenu ()
 - (id)_menuImpl;
@@ -132,6 +133,9 @@ void TestController::platformInitialize(const Options& options)
     
     cocoaPlatformInitialize(options);
 
+    if (!m_defaultAppAccentColor)
+        m_defaultAppAccentColor = NSApp._effectiveAccentColor;
+
     [NSSound _setAlertType:0];
 
     Method keyWindowMethod = class_getInstanceMethod(objc_getClass("NSApplication"), @selector(keyWindow));
@@ -172,6 +176,9 @@ void TestController::initializeTestPluginDirectory()
 bool TestController::platformResetStateToConsistentValues(const TestOptions& options)
 {
     cocoaResetStateToConsistentValues(options);
+
+    if (m_defaultAppAccentColor && ![NSApp._effectiveAccentColor isEqual:m_defaultAppAccentColor.get()])
+        NSApp._accentColor = m_defaultAppAccentColor.get();
 
     while ([NSApp nextEventMatchingMask:NSEventMaskGesture | NSEventMaskScrollWheel untilDate:nil inMode:NSDefaultRunLoopMode dequeue:YES]) {
         // Clear out (and ignore) any pending gesture and scroll wheel events.

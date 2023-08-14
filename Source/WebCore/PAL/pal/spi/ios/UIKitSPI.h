@@ -188,7 +188,6 @@ typedef NS_ENUM(NSInteger, _UIDataOwner) {
 #endif // USE(APPLE_INTERNAL_SDK)
 
 @interface UIColor (IPI)
-+ (UIColor *)keyboardFocusIndicatorColor;
 + (UIColor *)tableCellDefaultSelectionTintColor;
 @end
 

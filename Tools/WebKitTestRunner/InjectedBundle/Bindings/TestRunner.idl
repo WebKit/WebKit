@@ -26,6 +26,7 @@
 interface TestRunner {
     readonly attribute boolean isWebKit2;
     readonly attribute boolean isIOSFamily;
+    readonly attribute boolean isMac;
     readonly attribute boolean isKeyboardImmediatelyAvailable;
 
     // The basics.
