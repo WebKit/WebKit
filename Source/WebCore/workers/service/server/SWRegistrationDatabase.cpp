@@ -433,7 +433,7 @@ std::optional<Vector<ServiceWorkerScripts>> SWRegistrationDatabase::updateRegist
 
     for (auto& registration : registrationsToDelete) {
         auto statement = cachedStatement(StatementType::DeleteRecord);
-        if (!statement || !statement->bindText(1, registration.toDatabaseKey()) || statement->step() != SQLITE_DONE) {
+        if (!statement || statement->bindText(1, registration.toDatabaseKey()) != SQLITE_OK || statement->step() != SQLITE_DONE) {
             RELEASE_LOG_ERROR(Storage, "SWRegistrationDatabase::updateRegistrations failed to delete record (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
             return std::nullopt;
         }
