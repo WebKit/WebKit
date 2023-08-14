@@ -5202,14 +5202,14 @@ void WebPageProxy::forceRepaint(CompletionHandler<void()>&& callback)
 
     m_drawingArea->waitForBackingStoreUpdateOnNextPaint();
 
-    sendWithAsyncReply(Messages::WebPage::ForceRepaint(), [weakThis = WeakPtr { *this }, callback = WTFMove(callback)] () mutable {
-        if (weakThis) {
-            weakThis->callAfterNextPresentationUpdate([callback = WTFMove(callback)] () mutable {
-                callback();
-            });
-        } else
-            callback();
+    auto aggregator = CallbackAggregator::create([weakThis = WeakPtr { *this }, callback = WTFMove(callback)] () mutable {
+        if (!weakThis)
+            return callback();
+        weakThis->callAfterNextPresentationUpdate(WTFMove(callback));
     });
+    sendWithAsyncReply(Messages::WebPage::ForceRepaint(), [aggregator] { });
+    for (auto& remotePageProxy : internals().domainToRemotePageProxyMap.values())
+        remotePageProxy->sendWithAsyncReply(Messages::WebPage::ForceRepaint(), [aggregator] { });
 }
 
 void WebPageProxy::preferencesDidChange()
