@@ -32,6 +32,7 @@ cmake \
     -DCMAKE_CXX_COMPILER="$CMAKE_CXX_COMPILER" \
     -DCMAKE_C_FLAGS="$CMAKE_C_FLAGS" \
     -DCMAKE_CXX_FLAGS="$CMAKE_CXX_FLAGS" \
+    -DUSE_JSC_BUN_ADDITIONS=ON \
     -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=lld" \
     -DCMAKE_AR=$(which llvm-ar) \
     -DCMAKE_RANLIB=$(which llvm-ranlib) \

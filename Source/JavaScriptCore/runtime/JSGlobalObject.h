@@ -28,7 +28,9 @@
 #include "StructureCache.h"
 #include "Watchpoint.h"
 #include "WeakGCSet.h"
+#if USE(JSC_BUN_ADDITIONS)
 #include "InternalFieldTuple.h"
+#endif
 #include <wtf/FixedVector.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
@@ -196,7 +198,6 @@ public:
     template<typename T> using Initializer = typename LazyProperty<JSGlobalObject, T>::Initializer;
 
     WriteBarrier<JSObject> m_globalThis;
-    WriteBarrier<InternalFieldTuple> m_asyncContextData;
 
     WriteBarrier<JSGlobalLexicalEnvironment> m_globalLexicalEnvironment;
     WriteBarrier<JSScope> m_globalScopeExtension;
@@ -303,7 +304,9 @@ public:
 
     WriteBarrierStructureID m_objectStructureForObjectConstructor;
 
+#if USE(JSC_BUN_ADDITIONS)
     WriteBarrierStructureID m_internalFieldTupleStructure;
+#endif
 
     // Lists the actual structures used for having these particular indexing shapes.
     WriteBarrierStructureID m_originalArrayStructureForIndexingShape[NumberOfArrayIndexingModes];
@@ -404,6 +407,11 @@ public:
     String m_name;
 
     Strong<JSObject> m_unhandledRejectionCallback;
+
+#if USE(JSC_BUN_ADDITIONS)
+    bool m_isAsyncContextTrackingEnabled { false };
+    WriteBarrier<InternalFieldTuple> m_asyncContextData;
+#endif
 
     Debugger* m_debugger;
 
@@ -597,6 +605,11 @@ public:
     JS_EXPORT_PRIVATE static JSGlobalObject* createWithCustomMethodTable(VM&, Structure*, const GlobalObjectMethodTable*);
 
     DECLARE_EXPORT_INFO;
+
+#if USE(JSC_BUN_ADDITIONS)
+    bool isAsyncContextTrackingEnabled() const { return m_isAsyncContextTrackingEnabled; }
+    void setAsyncContextTrackingEnabled(bool isEnabled) { m_isAsyncContextTrackingEnabled = isEnabled; }
+#endif
 
     bool hasDebugger() const { return m_debugger; }
     bool hasInteractiveDebugger() const;
@@ -857,7 +870,10 @@ public:
     Structure* plainDateTimeStructure() { return m_plainDateTimeStructure.get(this); }
     Structure* plainTimeStructure() { return m_plainTimeStructure.get(this); }
     Structure* timeZoneStructure() { return m_timeZoneStructure.get(this); }
+
+#if USE(JSC_BUN_ADDITIONS)
     Structure* internalFieldTupleStructure() const { return m_internalFieldTupleStructure.get(); }
+#endif
 
     JS_EXPORT_PRIVATE void setInspectable(bool);
     JS_EXPORT_PRIVATE bool inspectable() const;
