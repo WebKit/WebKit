@@ -2151,11 +2151,6 @@ void TestRunner::injectUserScript(JSStringRef script)
     postSynchronousMessage("InjectUserScript", toWK(script));
 }
 
-void TestRunner::sendDisplayConfigurationChangedMessageForTesting()
-{
-    postSynchronousMessage("SendDisplayConfigurationChangedMessageForTesting");
-}
-
 void TestRunner::setServiceWorkerFetchTimeout(double seconds)
 {
     postSynchronousMessage("SetServiceWorkerFetchTimeout", seconds);

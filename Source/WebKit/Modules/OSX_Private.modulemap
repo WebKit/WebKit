@@ -714,11 +714,6 @@ framework module WebKit_Private [system] {
     export *
   }
 
-  explicit module WKMockDisplay {
-    header "WKMockDisplay.h"
-    export *
-  }
-
   explicit module WKMockMediaDevice {
     header "WKMockMediaDevice.h"
     export *

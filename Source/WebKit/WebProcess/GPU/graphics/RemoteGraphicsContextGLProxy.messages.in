@@ -25,7 +25,6 @@
 messages -> RemoteGraphicsContextGLProxy NotRefCounted {
     void WasCreated(IPC::Semaphore streamWakeUpSemaphore, IPC::Semaphore streamClientWaitSemaphore, std::optional<WebKit::RemoteGraphicsContextGLInitializationState> initializationState)
     void WasLost()
-    void WasChanged()
 }
 
 #endif

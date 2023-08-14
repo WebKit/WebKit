@@ -408,7 +408,6 @@ private:
     // Messages to be received.
     void wasCreated(IPC::Semaphore&&, IPC::Semaphore&&, std::optional<RemoteGraphicsContextGLInitializationState>&&);
     void wasLost();
-    void wasChanged();
 
     void readPixelsSharedMemory(WebCore::IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data);
 

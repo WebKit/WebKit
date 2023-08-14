@@ -1244,9 +1244,6 @@ fast/forms/file/entries-api/pages-jpeg-open-panel.html [ Skip ]
 fast/forms/file/entries-api/pdf-jpeg-open-panel.html [ Skip ]
 fast/forms/file/entries-api/png-raw-open-panel.html [ Skip ]
 
-# This test is currently only relevant on mac-wk2
-fast/canvas/webgl/context-update-on-display-configuration.html [ Skip ]
-
 fast/misc/valid-primary-screen-displayID.html [ Skip ]
 
 fast/events/detect-caps-lock.html [ Skip ]

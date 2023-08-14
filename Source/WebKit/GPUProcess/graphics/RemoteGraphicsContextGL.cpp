@@ -166,12 +166,6 @@ void RemoteGraphicsContextGL::forceContextLost()
     send(Messages::RemoteGraphicsContextGLProxy::WasLost());
 }
 
-void RemoteGraphicsContextGL::dispatchContextChangedNotification()
-{
-    assertIsCurrent(workQueue());
-    send(Messages::RemoteGraphicsContextGLProxy::WasChanged());
-}
-
 void RemoteGraphicsContextGL::createAndBindEGLImage(GCGLenum target, WebCore::GraphicsContextGL::EGLImageSource source, CompletionHandler<void(uint64_t handle, WebCore::IntSize size)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
@@ -300,15 +294,6 @@ void RemoteGraphicsContextGL::simulateEventForTesting(WebCore::GraphicsContextGL
             if (auto connectionToWeb = gpuConnectionToWebProcess.get())
                 connectionToWeb->releaseGraphicsContextGLForTesting(identifier);
         });
-        return;
-    }
-    if (event == WebCore::GraphicsContextGL::SimulatedEventForTesting::ContextChange) {
-#if PLATFORM(MAC)
-        callOnMainRunLoop([weakConnection = m_gpuConnectionToWebProcess]() {
-            if (auto connection = weakConnection.get())
-                connection->dispatchDisplayWasReconfiguredForTesting();
-        });
-#endif
         return;
     }
     m_context->simulateEventForTesting(event);

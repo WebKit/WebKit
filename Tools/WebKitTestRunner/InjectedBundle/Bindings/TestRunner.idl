@@ -425,8 +425,6 @@ interface TestRunner {
     undefined injectUserScript(DOMString string);
     readonly attribute unsigned long userScriptInjectedCount;
 
-    undefined sendDisplayConfigurationChangedMessageForTesting();
-
     undefined setServiceWorkerFetchTimeout(double seconds);
 
     // WebAuthn

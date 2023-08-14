@@ -1955,7 +1955,6 @@ fast/canvas/webgl/webgl-compressed-texture-astc.html [ Failure ]
 fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
 fast/canvas/webgl/webgl-depth-texture.html [ Failure ]
 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Failure ]
-fast/canvas/webgl/webglcontextchangedevent.html [ Skip ] # Timeout
 fast/css-grid-layout/grid-align-baseline-vertical.html [ Failure ]
 fast/css/font-face-multiple-faces.html [ Failure Pass ]
 fast/css/font-face-synthetic-bold-italic.html [ Failure ]

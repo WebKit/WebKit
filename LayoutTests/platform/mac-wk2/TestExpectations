@@ -108,8 +108,6 @@ webkit.org/b/187183 http/tests/security/pasteboard-file-url.html [ Pass ]
 
 webkit.org/b/231328 http/tests/preload/onload_event.html [ Pass Failure ]
 
-fast/canvas/webgl/context-update-on-display-configuration.html [ Pass ]
-
 fast/misc/valid-primary-screen-displayID.html [ Pass ]
 
 ipc/webpageproxy-correctionpanel-no-crash.html [ Pass ]

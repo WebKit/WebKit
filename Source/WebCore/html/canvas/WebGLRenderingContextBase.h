@@ -475,7 +475,6 @@ public:
 
     // GraphicsContextGL::Client
     void forceContextLost() override;
-    void dispatchContextChangedNotification() override;
 
     void recycleContext();
 

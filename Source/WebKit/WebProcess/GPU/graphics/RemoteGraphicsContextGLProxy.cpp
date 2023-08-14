@@ -489,13 +489,6 @@ void RemoteGraphicsContextGLProxy::wasLost()
 
 }
 
-void RemoteGraphicsContextGLProxy::wasChanged()
-{
-    if (isContextLost())
-        return;
-    dispatchContextChangedNotification();
-}
-
 void RemoteGraphicsContextGLProxy::markContextLost()
 {
     disconnectGpuProcessIfNeeded();
@@ -511,8 +504,7 @@ bool RemoteGraphicsContextGLProxy::handleMessageToRemovedDestination(IPC::Connec
     //    time, it might be in the message delivery callback.
     // When adding new messages to RemoteGraphicsContextGLProxy, add them to this list.
     ASSERT(decoder.messageName() == Messages::RemoteGraphicsContextGLProxy::WasCreated::name()
-        || decoder.messageName() == Messages::RemoteGraphicsContextGLProxy::WasLost::name()
-        || decoder.messageName() == Messages::RemoteGraphicsContextGLProxy::WasChanged::name());
+        || decoder.messageName() == Messages::RemoteGraphicsContextGLProxy::WasLost::name());
     return true;
 }
 

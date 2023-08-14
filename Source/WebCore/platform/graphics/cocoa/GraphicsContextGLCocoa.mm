@@ -552,7 +552,6 @@ void GraphicsContextGLCocoa::updateContextOnDisplayReconfiguration()
 {
     if (m_switchesGPUOnDisplayReconfiguration)
         EGL_HandleGPUSwitchANGLE(m_displayObj);
-    dispatchContextChangedNotification();
 }
 #endif
 

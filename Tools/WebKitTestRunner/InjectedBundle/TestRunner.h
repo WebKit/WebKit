@@ -543,8 +543,6 @@ public:
     size_t userScriptInjectedCount() const;
     void injectUserScript(JSStringRef);
 
-    void sendDisplayConfigurationChangedMessageForTesting();
-
     void setServiceWorkerFetchTimeout(double seconds);
 
     // FIXME(189876)

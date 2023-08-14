@@ -101,7 +101,6 @@ enum TreeType {
 };
 
 [Conditional=WEBGL] enum SimulatedWebGLContextEvent {
-    "ContextChange",
     "GPUStatusFailure",
     "Timeout"
 };
