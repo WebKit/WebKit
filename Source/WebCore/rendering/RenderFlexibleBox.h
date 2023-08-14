@@ -121,7 +121,8 @@ private:
     struct LineState;
 
     using FlexLineStates = Vector<LineState>;
-    
+    using FlexItems = Vector<FlexItem>;
+
     bool mainAxisIsChildInlineAxis(const RenderBox&) const;
     bool isColumnFlow() const;
     bool isColumnOrRowReverse() const;
@@ -183,7 +184,7 @@ private:
     bool useChildOverridingMainSizeForPercentageResolution(const RenderBox&);
 
     void layoutFlexItems(bool relayoutChildren);
-    LayoutUnit autoMarginOffsetInMainAxis(const Vector<FlexItem>&, LayoutUnit& availableFreeSpace);
+    LayoutUnit autoMarginOffsetInMainAxis(const FlexItems&, LayoutUnit& availableFreeSpace);
     void updateAutoMarginsInMainAxis(RenderBox& child, LayoutUnit autoMarginOffset);
     void initializeMarginTrimState(); 
     // Start margin parallel with the cross axis
@@ -211,15 +212,15 @@ private:
     LayoutUnit adjustChildSizeForAspectRatioCrossAxisMinAndMax(const RenderBox& child, LayoutUnit childSize);
     FlexItem constructFlexItem(RenderBox&, bool relayoutChildren);
     
-    void freezeInflexibleItems(FlexSign, Vector<FlexItem>& children, LayoutUnit& remainingFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink);
-    bool resolveFlexibleLengths(FlexSign, Vector<FlexItem>&, LayoutUnit initialFreeSpace, LayoutUnit& remainingFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink);
+    void freezeInflexibleItems(FlexSign, FlexItems&, LayoutUnit& remainingFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink);
+    bool resolveFlexibleLengths(FlexSign, FlexItems&, LayoutUnit initialFreeSpace, LayoutUnit& remainingFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink);
     void freezeViolations(Vector<FlexItem*>&, LayoutUnit& availableFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink);
     
     void resetAutoMarginsAndLogicalTopInCrossAxis(RenderBox& child);
     void setOverridingMainSizeForChild(RenderBox&, LayoutUnit);
     void prepareChildForPositionedLayout(RenderBox& child);
-    void layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vector<FlexItem>&, LayoutUnit availableFreeSpace, bool relayoutChildren, FlexLineStates&, LayoutUnit gapBetweenItems);
-    void layoutColumnReverse(const Vector<FlexItem>&, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace, LayoutUnit gapBetweenItems);
+    void layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, FlexItems&, LayoutUnit availableFreeSpace, bool relayoutChildren, FlexLineStates&, LayoutUnit gapBetweenItems);
+    void layoutColumnReverse(const FlexItems&, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace, LayoutUnit gapBetweenItems);
     void alignFlexLines(FlexLineStates&, LayoutUnit gapBetweenLines);
     void alignChildren(FlexLineStates&);
     void applyStretchAlignmentToChild(RenderBox& child, LayoutUnit lineCrossAxisExtent);
