@@ -31,6 +31,7 @@
 #include "CatchScope.h"
 #include "CommonIdentifiers.h"
 #include "CallFrame.h"
+#include "Debugger.h"
 #include "FunctionExecutableInlines.h"
 #include "GeneratorPrototype.h"
 #include "JSBoundFunction.h"
@@ -42,6 +43,7 @@
 #include "PropertyNameArray.h"
 #include "StackVisitor.h"
 #include "TypeError.h"
+#include "VMInlines.h"
 #include "VMTrapsInlines.h"
 
 namespace JSC {
@@ -389,6 +391,12 @@ bool JSFunction::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName pr
 
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
 
+    if (propertyName == vm.propertyNames->displayName) {
+        vm.forEachDebugger([&] (Debugger& debugger) {
+            debugger.willChangeDisplayName(thisObject);
+        });
+    }
+
     if (propertyName == vm.propertyNames->length || propertyName == vm.propertyNames->name) {
         FunctionRareData* rareData = thisObject->ensureRareData(vm);
         if (propertyName == vm.propertyNames->length)
@@ -416,7 +424,16 @@ bool JSFunction::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName pr
     RETURN_IF_EXCEPTION(scope, false);
     if (isLazy(propertyType))
         slot.disableCaching();
-    RELEASE_AND_RETURN(scope, Base::put(thisObject, globalObject, propertyName, value, slot));
+    scope.release();
+    auto result = Base::put(thisObject, globalObject, propertyName, value, slot);
+
+    if (propertyName == vm.propertyNames->displayName) {
+        vm.forEachDebugger([&] (Debugger& debugger) {
+            debugger.didChangeDisplayName(thisObject);
+        });
+    }
+
+    return result;
 }
 
 bool JSFunction::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
@@ -424,6 +441,12 @@ bool JSFunction::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Prop
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
+
+    if (propertyName == vm.propertyNames->displayName) {
+        vm.forEachDebugger([&] (Debugger& debugger) {
+            debugger.willChangeDisplayName(thisObject);
+        });
+    }
 
     if (propertyName == vm.propertyNames->length || propertyName == vm.propertyNames->name) {
         FunctionRareData* rareData = thisObject->ensureRareData(vm);
@@ -436,7 +459,16 @@ bool JSFunction::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Prop
     thisObject->reifyLazyPropertyIfNeeded(vm, globalObject, propertyName);
     RETURN_IF_EXCEPTION(scope, false);
     
-    RELEASE_AND_RETURN(scope, Base::deleteProperty(thisObject, globalObject, propertyName, slot));
+    scope.release();
+    auto result = Base::deleteProperty(thisObject, globalObject, propertyName, slot);
+
+    if (propertyName == vm.propertyNames->displayName) {
+        vm.forEachDebugger([&] (Debugger& debugger) {
+            debugger.didChangeDisplayName(thisObject);
+        });
+    }
+
+    return result;
 }
 
 bool JSFunction::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, const PropertyDescriptor& descriptor, bool throwException)
@@ -445,6 +477,12 @@ bool JSFunction::defineOwnProperty(JSObject* object, JSGlobalObject* globalObjec
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSFunction* thisObject = jsCast<JSFunction*>(object);
+
+    if (propertyName == vm.propertyNames->displayName) {
+        vm.forEachDebugger([&] (Debugger& debugger) {
+            debugger.willChangeDisplayName(thisObject);
+        });
+    }
 
     if (propertyName == vm.propertyNames->length || propertyName == vm.propertyNames->name) {
         FunctionRareData* rareData = thisObject->ensureRareData(vm);
@@ -471,7 +509,16 @@ bool JSFunction::defineOwnProperty(JSObject* object, JSGlobalObject* globalObjec
         RETURN_IF_EXCEPTION(scope, false);
     }
 
-    RELEASE_AND_RETURN(scope, Base::defineOwnProperty(object, globalObject, propertyName, descriptor, throwException));
+    scope.release();
+    auto result = Base::defineOwnProperty(object, globalObject, propertyName, descriptor, throwException);
+
+    if (propertyName == vm.propertyNames->displayName) {
+        vm.forEachDebugger([&] (Debugger& debugger) {
+            debugger.didChangeDisplayName(thisObject);
+        });
+    }
+
+    return result;
 }
 
 // ECMA 13.2.2 [[Construct]]

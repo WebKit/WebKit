@@ -35,6 +35,7 @@
 #include "Debugger.h"
 #include "DebuggerScope.h"
 #include "DeferGC.h"
+#include "FunctionCodeBlock.h"
 #include "HeapIterationScope.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
@@ -665,38 +666,60 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::removeBreakpoint(const Pro
     return { };
 }
 
-static String functionName(JSC::NativeExecutable& nativeExecutable)
+static HashSet<String> functionNames(JSC::VM&, JSC::NativeExecutable& nativeExecutable)
 {
-    return nativeExecutable.name();
+    HashSet<String> names;
+
+    if (const auto& name = nativeExecutable.name(); !name.isEmpty())
+        names.add(name);
+
+    return names;
 }
 
-static String functionName(JSC::FunctionExecutable& functionExecutable)
+static HashSet<String> functionNames(JSC::VM& vm, JSC::FunctionExecutable& functionExecutable)
 {
-    return functionExecutable.ecmaName().string();
-}
+    HashSet<String> names;
 
-static String functionName(JSC::CodeBlock& codeBlock)
-{
-    if (auto* functionExecutable = JSC::jsDynamicCast<JSC::FunctionExecutable*>(codeBlock.ownerExecutable()))
-        return functionName(*functionExecutable);
+    if (const auto& ecmaName = functionExecutable.ecmaName().string(); !ecmaName.isEmpty())
+        names.add(ecmaName);
 
-    return nullString();
-}
-
-static String functionName(JSC::CallFrame* callFrame)
-{
-    if (callFrame->isWasmFrame())
-        return nullString();
-
-    if (auto* codeBlock = callFrame->codeBlock())
-        return functionName(*codeBlock);
-
-    if (auto* jsFunction = JSC::jsDynamicCast<JSC::JSFunction*>(callFrame->jsCallee())) {
-        if (auto* nativeExecutable = JSC::jsDynamicCast<JSC::NativeExecutable*>(jsFunction->executable()))
-            return functionName(*nativeExecutable);
+    if (auto* jsFunction = functionExecutable.singleton().inferredValue()) {
+        if (const auto& displayName = jsFunction->displayName(vm); !displayName.isEmpty())
+            names.add(displayName);
     }
 
-    return nullString();
+    return names;
+}
+
+static HashSet<String> functionNames(JSC::VM& vm, JSC::CodeBlock& codeBlock)
+{
+    HashSet<String> names;
+
+    if (auto* functionExecutable = JSC::jsDynamicCast<JSC::FunctionExecutable*>(codeBlock.ownerExecutable()))
+        names.formUnion(functionNames(vm, *functionExecutable));
+
+    return names;
+}
+
+static HashSet<String> functionNames(JSC::VM& vm, JSC::CallFrame* callFrame)
+{
+    if (callFrame->isWasmFrame())
+        return { };
+
+    HashSet<String> names;
+
+    if (auto* codeBlock = callFrame->codeBlock())
+        names.formUnion(functionNames(vm, *codeBlock));
+
+    if (auto* jsFunction = JSC::jsDynamicCast<JSC::JSFunction*>(callFrame->jsCallee())) {
+        if (auto* functionExecutable = JSC::jsDynamicCast<JSC::FunctionExecutable*>(jsFunction->executable()))
+            names.formUnion(functionNames(vm, *functionExecutable));
+
+        if (auto* nativeExecutable = JSC::jsDynamicCast<JSC::NativeExecutable*>(jsFunction->executable()))
+            names.formUnion(functionNames(vm, *nativeExecutable));
+    }
+
+    return names;
 }
 
 #if ENABLE(JIT)
@@ -769,6 +792,8 @@ static Vector<Box<ReplacedThunk>>& replacedThunks() WTF_REQUIRES_LOCK(s_replaced
 
 Protocol::ErrorStringOr<void> InspectorDebuggerAgent::addSymbolicBreakpoint(const String& symbol, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, RefPtr<JSON::Object>&& options)
 {
+    auto& vm = m_debugger.vm();
+
     Protocol::ErrorString errorString;
 
     auto breakpoint = debuggerBreakpointFromPayload(errorString, WTFMove(options));
@@ -791,25 +816,25 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::addSymbolicBreakpoint(cons
     auto& symbolicBreakpoint = m_symbolicBreakpoints.last();
 
     {
-        JSC::JSLockHolder locker(m_debugger.vm());
+        JSC::JSLockHolder locker(vm);
 
         m_debugger.forEachRegisteredCodeBlock([&] (JSC::CodeBlock* codeBlock) {
-            if (symbolicBreakpoint.matches(functionName(*codeBlock)))
+            if (symbolicBreakpoint.matches(functionNames(vm, *codeBlock)))
                 codeBlock->addBreakpoint(1);
         });
     }
 
 #if ENABLE(JIT)
     {
-        JSC::DeferGCForAWhile deferGC(m_debugger.vm());
+        JSC::DeferGCForAWhile deferGC(vm);
 
         Vector<JSC::NativeExecutable*> newNativeExecutables;
         {
             Locker locker { s_replacedThunksLock };
             auto& existingReplacedThunks = replacedThunks();
 
-            JSC::HeapIterationScope iterationScope(m_debugger.vm().heap);
-            m_debugger.vm().heap.objectSpace().forEachLiveCell(iterationScope, [&] (JSC::HeapCell* cell, JSC::HeapCell::Kind kind) {
+            JSC::HeapIterationScope iterationScope(vm.heap);
+            vm.heap.objectSpace().forEachLiveCell(iterationScope, [&] (JSC::HeapCell* cell, JSC::HeapCell::Kind kind) {
                 if (isJSCellKind(kind)) {
                     if (auto* nativeExecutable = JSC::jsDynamicCast<JSC::NativeExecutable*>(static_cast<JSC::JSCell*>(cell))) {
                         if (auto existingIndex = existingReplacedThunks.find(nativeExecutable); existingIndex != notFound)
@@ -835,6 +860,8 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::addSymbolicBreakpoint(cons
 
 Protocol::ErrorStringOr<void> InspectorDebuggerAgent::removeSymbolicBreakpoint(const String& symbol, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex)
 {
+    auto& vm = m_debugger.vm();
+
     SymbolicBreakpoint symbolicBreakpoint;
     symbolicBreakpoint.symbol = symbol;
     if (caseSensitive)
@@ -846,10 +873,10 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::removeSymbolicBreakpoint(c
         return makeUnexpected("Missing symbolic breakpoint for given symbol, given caseSensitive, and given isRegex"_s);
 
     {
-        JSC::JSLockHolder locker(m_debugger.vm());
+        JSC::JSLockHolder locker(vm);
 
         m_debugger.forEachRegisteredCodeBlock([&] (JSC::CodeBlock* codeBlock) {
-            if (symbolicBreakpoint.matches(functionName(*codeBlock)))
+            if (symbolicBreakpoint.matches(functionNames(vm, *codeBlock)))
                 codeBlock->removeBreakpoint(1);
         });
     }
@@ -862,10 +889,10 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::removeSymbolicBreakpoint(c
             if (!replacedThunk->nativeExecutable)
                 return true;
 
-            if (&replacedThunk->nativeExecutable->vm() != &m_debugger.vm())
+            if (&replacedThunk->nativeExecutable->vm() != &vm)
                 return false;
 
-            if (symbolicBreakpoint.matches(functionName(*replacedThunk->nativeExecutable))) {
+            if (symbolicBreakpoint.matches(functionNames(vm, *replacedThunk->nativeExecutable))) {
                 ASSERT(replacedThunk->matchCount);
                 if (!--replacedThunk->matchCount)
                     return true;
@@ -1401,13 +1428,13 @@ void InspectorDebuggerAgent::didCreateNativeExecutable(JSC::NativeExecutable& na
     if (m_symbolicBreakpoints.isEmpty())
         return;
 
-    auto symbol = functionName(nativeExecutable);
-    if (symbol.isEmpty())
+    auto symbols = functionNames(vm, nativeExecutable);
+    if (symbols.isEmpty())
         return;
 
     size_t matchCount = 0;
     for (auto& symbolicBreakpoint : m_symbolicBreakpoints) {
-        if (symbolicBreakpoint.matches(symbol))
+        if (symbolicBreakpoint.matches(symbols))
             ++matchCount;
     }
     if (!matchCount)
@@ -1490,28 +1517,85 @@ void InspectorDebuggerAgent::didCreateNativeExecutable(JSC::NativeExecutable& na
 
 void InspectorDebuggerAgent::willCallNativeExecutable(JSC::CallFrame* callFrame)
 {
+    auto& vm = m_debugger.vm();
+
     if (!breakpointsActive())
         return;
 
     if (m_symbolicBreakpoints.isEmpty())
         return;
 
-    auto symbol = functionName(callFrame);
-    if (symbol.isEmpty())
+    auto symbols = functionNames(vm, callFrame);
+    if (symbols.isEmpty())
         return;
 
-    auto index = m_symbolicBreakpoints.findIf([&] (const auto& symbolicBreakpoint) {
-        return symbolicBreakpoint.knownMatchingSymbols.contains(symbol);
-    });
-    if (index == notFound)
-        return;
+    for (auto& symbolicBreakpoint : m_symbolicBreakpoints) {
+        for (const auto& symbol : symbols) {
+            if (symbolicBreakpoint.matches(symbol)) {
+                ASSERT(symbolicBreakpoint.specialBreakpoint);
 
-    ASSERT(m_symbolicBreakpoints[index].specialBreakpoint);
+                auto pauseData = JSON::Object::create();
+                pauseData->setString("name"_s, symbol);
 
-    auto pauseData = JSON::Object::create();
-    pauseData->setString("name"_s, symbol);
+                breakProgram(DebuggerFrontendDispatcher::Reason::FunctionCall, WTFMove(pauseData), symbolicBreakpoint.specialBreakpoint.copyRef());
+                return;
+            }
+        }
+    }
+}
 
-    breakProgram(DebuggerFrontendDispatcher::Reason::FunctionCall, WTFMove(pauseData), m_symbolicBreakpoints[index].specialBreakpoint.copyRef());
+void InspectorDebuggerAgent::willChangeDisplayName(JSC::JSFunction* jsFunction)
+{
+    auto& vm = m_debugger.vm();
+    ASSERT(&jsFunction->vm() == &vm);
+
+    if (auto* functionExecutable = JSC::jsDynamicCast<JSC::FunctionExecutable*>(jsFunction->executable())) {
+        if (auto symbols = functionNames(vm, *functionExecutable); !symbols.isEmpty()) {
+            for (auto& symbolicBreakpoint : m_symbolicBreakpoints) {
+                if (!symbolicBreakpoint.matches(symbols))
+                    continue;
+
+                if (auto* codeBlockForCall = functionExecutable->codeBlockFor(JSC::CodeForCall)) {
+                    ASSERT(codeBlockForCall->ownerExecutable() == functionExecutable);
+                    ASSERT(symbols.symmetricDifferenceWith(functionNames(vm, *codeBlockForCall)).isEmpty());
+                    codeBlockForCall->removeBreakpoint(1);
+                }
+
+                if (auto* codeBlockForConstruct = functionExecutable->codeBlockFor(JSC::CodeForConstruct)) {
+                    ASSERT(codeBlockForConstruct->ownerExecutable() == functionExecutable);
+                    ASSERT(symbols.symmetricDifferenceWith(functionNames(vm, *codeBlockForConstruct)).isEmpty());
+                    codeBlockForConstruct->removeBreakpoint(1);
+                }
+            }
+        }
+    }
+}
+
+void InspectorDebuggerAgent::didChangeDisplayName(JSC::JSFunction* jsFunction)
+{
+    auto& vm = m_debugger.vm();
+    ASSERT(&jsFunction->vm() == &vm);
+
+    if (auto* functionExecutable = JSC::jsDynamicCast<JSC::FunctionExecutable*>(jsFunction->executable())) {
+        if (auto symbols = functionNames(vm, *functionExecutable); !symbols.isEmpty()) {
+            for (auto& symbolicBreakpoint : m_symbolicBreakpoints) {
+                if (!symbolicBreakpoint.matches(symbols))
+                    continue;
+
+                if (auto* codeBlockForCall = functionExecutable->codeBlockFor(JSC::CodeForCall)) {
+                    ASSERT(codeBlockForCall->ownerExecutable() == functionExecutable);
+                    ASSERT(symbols.symmetricDifferenceWith(functionNames(vm, *codeBlockForCall)).isEmpty());
+                    codeBlockForCall->addBreakpoint(1);
+                }
+
+                if (auto* codeBlockForConstruct = functionExecutable->codeBlockFor(JSC::CodeForConstruct)) {
+                    ASSERT(codeBlockForConstruct->ownerExecutable() == functionExecutable);
+                    ASSERT(symbols.symmetricDifferenceWith(functionNames(vm, *codeBlockForConstruct)).isEmpty());
+                    codeBlockForConstruct->addBreakpoint(1);
+                }
+            }
+        }
+    }
 }
 
 bool InspectorDebuggerAgent::isInspectorDebuggerAgent() const
@@ -1577,28 +1661,31 @@ void InspectorDebuggerAgent::failedToParseSource(const String& url, const String
 
 void InspectorDebuggerAgent::willEnter(JSC::CallFrame* callFrame)
 {
+    auto& vm = m_debugger.vm();
+
     if (!breakpointsActive())
         return;
 
     if (m_symbolicBreakpoints.isEmpty())
         return;
 
-    auto symbol = functionName(callFrame);
-    if (symbol.isEmpty())
+    auto symbols = functionNames(vm, callFrame);
+    if (symbols.isEmpty())
         return;
 
-    auto index = m_symbolicBreakpoints.findIf([&] (const auto& symbolicBreakpoint) {
-        return symbolicBreakpoint.knownMatchingSymbols.contains(symbol);
-    });
-    if (index == notFound)
-        return;
+    for (auto& symbolicBreakpoint : m_symbolicBreakpoints) {
+        for (const auto& symbol : symbols) {
+            if (symbolicBreakpoint.matches(symbol)) {
+                ASSERT(symbolicBreakpoint.specialBreakpoint);
 
-    ASSERT(m_symbolicBreakpoints[index].specialBreakpoint);
+                auto pauseData = JSON::Object::create();
+                pauseData->setString("name"_s, symbol);
 
-    auto pauseData = JSON::Object::create();
-    pauseData->setString("name"_s, symbol);
-
-    schedulePauseForSpecialBreakpoint(*m_symbolicBreakpoints[index].specialBreakpoint, DebuggerFrontendDispatcher::Reason::FunctionCall, WTFMove(pauseData));
+                schedulePauseForSpecialBreakpoint(*symbolicBreakpoint.specialBreakpoint, DebuggerFrontendDispatcher::Reason::FunctionCall, WTFMove(pauseData));
+                return;
+            }
+        }
+    }
 }
 
 void InspectorDebuggerAgent::didQueueMicrotask(JSC::JSGlobalObject* globalObject, JSC::MicrotaskIdentifier identifier)
@@ -1725,15 +1812,18 @@ void InspectorDebuggerAgent::didPause(JSC::JSGlobalObject* globalObject, JSC::De
 
 void InspectorDebuggerAgent::applyBreakpoints(JSC::CodeBlock* codeBlock)
 {
+    auto& vm = m_debugger.vm();
+    ASSERT(&codeBlock->vm() == &vm);
+
     if (m_symbolicBreakpoints.isEmpty())
         return;
 
-    auto symbol = functionName(*codeBlock);
-    if (symbol.isEmpty())
+    auto symbols = functionNames(vm, *codeBlock);
+    if (symbols.isEmpty())
         return;
 
     for (auto& symbolicBreakpoint : m_symbolicBreakpoints) {
-        if (symbolicBreakpoint.matches(symbol))
+        if (symbolicBreakpoint.matches(symbols))
             codeBlock->addBreakpoint(1);
     }
 }
@@ -1805,6 +1895,8 @@ void InspectorDebuggerAgent::clearInspectorBreakpointState()
     m_pauseOnMicrotasksBreakpoint = nullptr;
 
 #if ENABLE(JIT)
+    auto& vm = m_debugger.vm();
+
     {
         Locker locker { s_replacedThunksLock };
 
@@ -1812,11 +1904,11 @@ void InspectorDebuggerAgent::clearInspectorBreakpointState()
             if (!replacedThunk->nativeExecutable)
                 return true;
 
-            if (&replacedThunk->nativeExecutable->vm() != &m_debugger.vm())
+            if (&replacedThunk->nativeExecutable->vm() != &vm)
                 return false;
 
             for (auto& symbolicBreakpoint : m_symbolicBreakpoints) {
-                if (symbolicBreakpoint.matches(functionName(*replacedThunk->nativeExecutable))) {
+                if (symbolicBreakpoint.matches(functionNames(vm, *replacedThunk->nativeExecutable))) {
                     ASSERT(replacedThunk->matchCount);
                     if (!--replacedThunk->matchCount)
                         return true;
@@ -1908,7 +2000,7 @@ bool InspectorDebuggerAgent::SymbolicBreakpoint::matches(const String& symbol)
     if (symbol.isEmpty())
         return false;
 
-    if (knownMatchingSymbols.contains(symbol))
+    if (m_knownMatchingSymbols.contains(symbol))
         return true;
 
     if (!m_symbolMatchRegex) {
@@ -1918,8 +2010,17 @@ bool InspectorDebuggerAgent::SymbolicBreakpoint::matches(const String& symbol)
     if (m_symbolMatchRegex->match(symbol) == -1)
         return false;
 
-    knownMatchingSymbols.add(symbol);
+    m_knownMatchingSymbols.add(symbol);
     return true;
+}
+
+bool InspectorDebuggerAgent::SymbolicBreakpoint::matches(const HashSet<String>& symbols)
+{
+    for (const auto& symbol : symbols) {
+        if (matches(symbol))
+            return true;
+    }
+    return false;
 }
 
 } // namespace Inspector

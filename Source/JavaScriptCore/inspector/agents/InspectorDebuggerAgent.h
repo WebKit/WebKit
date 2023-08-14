@@ -109,6 +109,8 @@ public:
     void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) final;
     void didCreateNativeExecutable(JSC::NativeExecutable&) final;
     void willCallNativeExecutable(JSC::CallFrame*) final;
+    void willChangeDisplayName(JSC::JSFunction*) final;
+    void didChangeDisplayName(JSC::JSFunction*) final;
     void willEnter(JSC::CallFrame*) final;
     void didQueueMicrotask(JSC::JSGlobalObject*, JSC::MicrotaskIdentifier) final;
     void willRunMicrotask(JSC::JSGlobalObject*, JSC::MicrotaskIdentifier) final;
@@ -299,9 +301,6 @@ private:
         // This is only used for the breakpoint configuration (i.e. it's irrelevant when comparing).
         RefPtr<JSC::Breakpoint> specialBreakpoint;
 
-        // Avoid having to (re)match the regex each time a function as called.
-        HashSet<String> knownMatchingSymbols;
-
         inline bool operator==(const SymbolicBreakpoint& other) const
         {
             return symbol == other.symbol
@@ -310,9 +309,14 @@ private:
         }
 
         bool matches(const String&);
+        bool matches(const HashSet<String>&);
 
     private:
+        // Avoid having to (re)compute the regex each time a function as called.
         std::optional<JSC::Yarr::RegularExpression> m_symbolMatchRegex;
+
+        // Avoid having to (re)match the regex each time a function as called.
+        HashSet<String> m_knownMatchingSymbols;
     };
     Vector<SymbolicBreakpoint> m_symbolicBreakpoints;
 

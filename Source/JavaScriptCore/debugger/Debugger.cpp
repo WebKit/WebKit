@@ -265,6 +265,20 @@ void Debugger::willCallNativeExecutable(CallFrame* callFrame)
     });
 }
 
+void Debugger::willChangeDisplayName(JSFunction* jsFunction)
+{
+    dispatchFunctionToObservers([&] (Observer& observer) {
+        observer.willChangeDisplayName(jsFunction);
+    });
+}
+
+void Debugger::didChangeDisplayName(JSFunction* jsFunction)
+{
+    dispatchFunctionToObservers([&] (Observer& observer) {
+        observer.didChangeDisplayName(jsFunction);
+    });
+}
+
 void Debugger::setClient(Client* client)
 {
     ASSERT(!!m_client != !!client);
