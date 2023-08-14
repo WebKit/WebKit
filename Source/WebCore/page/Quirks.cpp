@@ -376,7 +376,6 @@ bool Quirks::isGoogleMaps() const
 
 // rdar://49124313
 // desmos.com rdar://47068176
-// msn.com rdar://49403260
 // flipkart.com rdar://49648520
 // soundcloud.com rdar://52915981
 // naver.com rdar://48068610
@@ -410,8 +409,6 @@ bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
         if (host == "trello.com"_s || host.endsWith(".trello.com"_s))
             return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "airtable.com"_s || host.endsWith(".airtable.com"_s))
-            return ShouldDispatchSimulatedMouseEvents::Yes;
-        if (host == "msn.com"_s || host.endsWith(".msn.com"_s))
             return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "flipkart.com"_s || host.endsWith(".flipkart.com"_s))
             return ShouldDispatchSimulatedMouseEvents::Yes;
