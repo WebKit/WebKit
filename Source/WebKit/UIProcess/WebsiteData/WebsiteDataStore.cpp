@@ -2394,6 +2394,7 @@ void WebsiteDataStore::download(const DownloadProxy& downloadProxy, const String
 {
     std::optional<NavigatingToAppBoundDomain> isAppBound = NavigatingToAppBoundDomain::No;
     WebCore::ResourceRequest updatedRequest(downloadProxy.request());
+    std::optional<WebCore::SecurityOriginData> topOrigin;
     // Request's firstPartyForCookies will be used as Original URL of the download request.
     // We set the value to top level document's URL.
     if (auto* initiatingPage = downloadProxy.originatingPage()) {
@@ -2404,6 +2405,7 @@ void WebsiteDataStore::download(const DownloadProxy& downloadProxy, const String
         URL initiatingPageURL = URL { initiatingPage->pageLoadState().url() };
         updatedRequest.setFirstPartyForCookies(initiatingPageURL);
         updatedRequest.setIsSameSite(WebCore::areRegistrableDomainsEqual(initiatingPageURL, downloadProxy.request().url()));
+        topOrigin = initiatingPage->pageLoadState().origin();
         if (!updatedRequest.hasHTTPHeaderField(WebCore::HTTPHeaderName::UserAgent))
             updatedRequest.setHTTPUserAgent(initiatingPage->userAgentForURL(downloadProxy.request().url()));
     } else {
@@ -2413,7 +2415,7 @@ void WebsiteDataStore::download(const DownloadProxy& downloadProxy, const String
             updatedRequest.setHTTPUserAgent(WebPageProxy::standardUserAgent());
     }
     updatedRequest.setIsTopSite(false);
-    networkProcess().send(Messages::NetworkProcess::DownloadRequest(m_sessionID, downloadProxy.downloadID(), updatedRequest, isAppBound, suggestedFilename), 0);
+    networkProcess().send(Messages::NetworkProcess::DownloadRequest(m_sessionID, downloadProxy.downloadID(), updatedRequest, topOrigin, isAppBound, suggestedFilename), 0);
 }
 
 void WebsiteDataStore::resumeDownload(const DownloadProxy& downloadProxy, const API::Data& resumeData, const String& path, CallDownloadDidStart callDownloadDidStart)

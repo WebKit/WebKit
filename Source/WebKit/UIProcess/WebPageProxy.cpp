@@ -5732,7 +5732,8 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
     bool markPageInsecure = hasInsecureContent == HasInsecureContent::Yes;
 
     if (frame->isMainFrame()) {
-        internals().pageLoadState.didCommitLoad(transaction, certificateInfo, markPageInsecure, usedLegacyTLS, wasPrivateRelayed);
+        auto frameOrigin = navigation ? navigation->destinationFrameSecurityOrigin() : SecurityOriginData { };
+        internals().pageLoadState.didCommitLoad(transaction, certificateInfo, markPageInsecure, usedLegacyTLS, wasPrivateRelayed, frameOrigin);
         m_shouldSuppressNextAutomaticNavigationSnapshot = false;
     } else if (markPageInsecure)
         internals().pageLoadState.didDisplayOrRunInsecureContent(transaction);
