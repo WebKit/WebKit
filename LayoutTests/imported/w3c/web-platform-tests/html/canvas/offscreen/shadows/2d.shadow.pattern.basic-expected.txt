@@ -3,5 +3,5 @@
 Shadows are drawn for fill patterns
 
 
-FAIL Shadows are drawn for fill patterns promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Shadows are drawn for fill patterns
 
