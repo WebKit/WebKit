@@ -52,10 +52,11 @@ void DisplayRefreshMonitorClient::fireDisplayRefreshIfNeeded(const DisplayUpdate
     if (!m_scheduled)
         return;
 
+    m_scheduled = false;
+
     if (!displayUpdate.relevantForUpdateFrequency(m_preferredFramesPerSecond))
         return;
 
-    m_scheduled = false;
     displayRefreshFired();
 }
 
