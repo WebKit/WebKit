@@ -1528,21 +1528,6 @@ bool Quirks::shouldDisablePushStateFilePathRestrictions() const
 #endif
 }
 
-#if PLATFORM(COCOA)
-bool Quirks::shouldAdvertiseSupportForHLSSubtitleTypes() const
-{
-    if (!needsQuirks())
-        return false;
-
-    if (!m_shouldAdvertiseSupportForHLSSubtitleTypes) {
-        auto domain = RegistrableDomain(m_document->url()).string();
-        m_shouldAdvertiseSupportForHLSSubtitleTypes = domain == "hulu.com"_s;
-    }
-
-    return *m_shouldAdvertiseSupportForHLSSubtitleTypes;
-}
-#endif
-
 // apple-console.lrn.com (rdar://106779034)
 bool Quirks::shouldDisablePopoverAttributeQuirk() const
 {
