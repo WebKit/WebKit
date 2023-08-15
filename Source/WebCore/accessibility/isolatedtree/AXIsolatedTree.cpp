@@ -611,6 +611,9 @@ void AXIsolatedTree::updateNodeAndDependentProperties(AccessibilityObject& axObj
 
     updateNode(axObject);
 
+    if (RefPtr correspondingControl = axObject.isLabel() ? axObject.correspondingControlForLabelElement() : nullptr)
+        updateNode(*correspondingControl);
+
     // When a row gains or loses cells, the column count of the table can change.
     bool updateTableAncestorColumns = is<AccessibilityTableRow>(axObject);
     for (auto* ancestor = axObject.parentObject(); ancestor; ancestor = ancestor->parentObject()) {

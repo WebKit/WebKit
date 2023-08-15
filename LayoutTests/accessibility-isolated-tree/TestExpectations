@@ -9,9 +9,6 @@ accessibility/frame-disconnect-textmarker-cache-crash.html [ Timeout ]
 accessibility/mac/combobox-activedescendant-notifications.html [ Timeout ]
 accessibility/mac/relationships-in-frames.html [ Timeout ]
 
-# Times out because `innerText` changes on linked <label>s don't update cached AXTitle value.
-accessibility/multiple-label-input.html [ Timeout ]
-
 # Text failures
 accessibility/dialog-showModal.html [ Failure ]
 accessibility/dynamically-ignored-canvas.html [ Failure ]

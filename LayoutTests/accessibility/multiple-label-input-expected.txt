@@ -12,8 +12,12 @@ document.getElementById('label3').innerText = 'choice';
 	AXTitle: Enter choice
 	AXDescription:
 	AXHelp:
+document.getElementById('label3').innerHTML = 'decision';
+	AXTitle: Enter decision
+	AXDescription:
+	AXHelp:
 
 PASS successfullyParsed is true
 
 TEST COMPLETE
- Enter choice
+ Enter decision
