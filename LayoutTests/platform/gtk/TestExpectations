@@ -2167,8 +2167,6 @@ webkit.org/b/163829 svg/W3C-SVG-1.1/fonts-desc-02-t.svg [ Failure ]
 
 webkit.org/b/168188 fast/events/ime-compositionend-on-selection-change.html [ Failure ]
 
-webkit.org/b/168164 fast/picture/viewport-resize.html [ Failure ]
-
 webkit.org/b/168427 fast/scrolling/rtl-scrollbars-listbox.html [ ImageOnlyFailure ]
 webkit.org/b/168427 fast/scrolling/rtl-scrollbars-overflow-contents.html [ ImageOnlyFailure ]
 

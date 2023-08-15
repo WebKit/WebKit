@@ -54,5 +54,5 @@ function resizeTest(sizes, testFunction)
 
 function standardResizeTest(testFunction)
 {
-    resizeTest([[800, 600], [1200, 600]], testFunction);
+    resizeTest([[800, 600], [900, 600]], testFunction);
 }
