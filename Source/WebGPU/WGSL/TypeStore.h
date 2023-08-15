@@ -30,6 +30,7 @@
 #include <wtf/FixedVector.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 
 namespace WGSL {
 
@@ -56,7 +57,7 @@ public:
     const Type* samplerType() const { return m_sampler; }
     const Type* textureExternalType() const { return m_textureExternal; }
 
-    const Type* structType(AST::Structure&);
+    const Type* structType(AST::Structure&, HashMap<String, const Type*>&& = { });
     const Type* arrayType(const Type*, std::optional<unsigned>);
     const Type* vectorType(const Type*, uint8_t);
     const Type* matrixType(const Type*, uint8_t columns, uint8_t rows);
