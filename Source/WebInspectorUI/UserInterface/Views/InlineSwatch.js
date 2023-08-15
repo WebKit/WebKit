@@ -328,7 +328,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             break;
 
         case WI.InlineSwatch.Type.Color:
-            this._valueEditor = new WI.ColorPicker({preventChangingColorFormats: this._preventChangingColorFormats, colorVariables: this._delegate?.inlineSwatchGetColorVariables?.(this)});
+            this._valueEditor = new WI.ColorPicker({preventChangingColorFormats: this._preventChangingColorFormats, colorVariables: this._delegate?.inlineSwatchGetColorVariables?.(this), contrastObject: this._delegate?.inlineSwatchGetContrastObject?.(this)});
             this._valueEditor.addEventListener(WI.ColorPicker.Event.ColorChanged, this._valueEditorValueDidChange, this);
             break;
 

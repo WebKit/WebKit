@@ -25,7 +25,7 @@
 
 WI.ColorPicker = class ColorPicker extends WI.Object
 {
-    constructor({preventChangingColorFormats, colorVariables} = {})
+    constructor({preventChangingColorFormats, colorVariables, contrastObject} = {})
     {
         super();
 
@@ -88,6 +88,46 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         this._opacityPattern = "url(Images/Checkers.svg)";
 
         this.color = WI.Color.fromString("white");
+        this._contrastObject = contrastObject || null;
+        this._activeSwatch = null;
+        this._contrastScore = null;
+
+        if (this._contrastObject) {
+            let contrastAccessibilityContainer = this._element.appendChild(document.createElement("div"));
+            contrastAccessibilityContainer.classList.add("contrast-accessibility-container");
+
+            let backgroundSwatch = new WI.InlineSwatch(WI.InlineSwatch.Type.Color, this._contrastObject.propertyBackgroundColor, {readOnly: true});
+            let foregroundSwatch = new WI.InlineSwatch(WI.InlineSwatch.Type.Color, this._contrastObject.propertyForegroundColor, {readOnly: true});
+
+            if (this._contrastObject.active === "color")
+                this._activeSwatch = foregroundSwatch;
+
+            if (this._contrastObject.active === "background-color")
+                this._activeSwatch = backgroundSwatch;
+            
+            let contrastRating = contrastAccessibilityContainer.appendChild(document.createElement("div"));
+            contrastRating.classList.add("contrast-rating");
+
+            let swatchesWrapper = contrastRating.appendChild(document.createElement("div"));
+            swatchesWrapper.classList.add("swatches-wrapper");
+
+            swatchesWrapper.appendChild(foregroundSwatch.element);
+            swatchesWrapper.appendChild(backgroundSwatch.element);
+
+            this._contrastScore = contrastRating.appendChild(document.createElement("p"));
+            this._contrastScore.classList.add("contrast-score");
+            
+            this._updateColorContrast();
+
+            let documentationLink = document.createElement("a");
+            documentationLink.href = "https://developer.mozilla.org/en-US/docs/Web/Accessibility/Understanding_WCAG/Perceivable/Color_contrast";
+
+            let documentationButton = document.createElement("div");
+            documentationButton.classList.add("css-documentation-button");
+
+            documentationLink.appendChild(documentationButton);
+            contrastAccessibilityContainer.appendChild(documentationLink);
+        }
 
         if (colorVariables?.length) {
             let variableColorSwatchesContainer = this._element.appendChild(document.createElement("div"));
@@ -171,6 +211,24 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         });
     }
 
+    // Static
+    static accessabilityContrast(color1, color2)
+    {
+        function getLuminance(color)
+        {
+            let RsRGB = color[0] / 255;
+            let GsRGB = color[1] / 255;
+            let BsRGB = color[2] / 255;
+            let R = RsRGB <= 0.03928 ? RsRGB / 12.92 : ((RsRGB + 0.055) / 1.055) ** 2.4;
+            let G = GsRGB <= 0.03928 ? GsRGB / 12.92 : ((GsRGB + 0.055) / 1.055) ** 2.4;
+            let B = BsRGB <= 0.03928 ? BsRGB / 12.92 : ((BsRGB + 0.055) / 1.055) ** 2.4;
+            return 0.2126 * R + 0.7152 * G + 0.0722 * B;
+        }
+        let L1 = getLuminance(color1.rgb);
+        let L2 = getLuminance(color2.rgb);
+        return (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05);
+    }
+
     // Public
 
     get element() { return this._element; }
@@ -204,6 +262,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
 
         this._opacitySlider.value = this._color.alpha;
         this._updateOpacitySlider();
+        this._updateColorContrast(color);
 
         this._showColorComponentInputs();
         this._updateColorGamut();
@@ -259,6 +318,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
 
         this._color = new WI.Color(format, components, gamut);
 
+        this._updateColorContrast(this._color);
         this._showColorComponentInputs();
 
         this.dispatchEventToListeners(WI.ColorPicker.Event.ColorChanged, {color: this._color});
@@ -400,6 +460,34 @@ WI.ColorPicker = class ColorPicker extends WI.Object
     {
         this.color = resolvedColor;
         this.dispatchEventToListeners(WI.ColorPicker.Event.ColorChanged, {color: this._color, variableName});
+    }
+
+    _updateColorContrast(color)
+    {
+        if (this._activeSwatch && color) {
+            this._activeSwatch.value = color;
+            this._activeSwatch.element.style.backgroundColor = color;
+            if (this._contrastObject.active === "background-color")
+                this._contrastObject.propertyBackgroundColor = color;
+            else
+                this._contrastObject.propertyForegroundColor = color;
+        }
+
+        if (this._contrastScore) {
+            let contrast = WI.ColorPicker.accessabilityContrast(this._contrastObject.propertyBackgroundColor, this._contrastObject.propertyForegroundColor);
+            contrast = Math.ceil(contrast * 100) / 100;
+            let contrastStatus = `Color Contrast: ${contrast} | `;
+            if (contrast >= 7) {
+                contrastStatus += "AAA";
+            } else if (contrast >= 4.5) {
+                contrastStatus += "AA (large text)";
+            } else if (contrast >= 3) {
+                contrastStatus += "AA (regular text)";
+            } else {
+                contrastStatus += "Fail";
+            }
+            this._contrastScore.innerHTML = contrastStatus;
+        }
     }
 };
 
