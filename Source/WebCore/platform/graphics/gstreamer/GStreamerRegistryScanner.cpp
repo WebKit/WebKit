@@ -655,6 +655,12 @@ void GStreamerRegistryScanner::initializeEncoders(const GStreamerRegistryScanner
         m_encoderCodecMap.add(AtomString("mp4v*"_s), h264EncoderAvailable);
     }
 
+    auto h265EncoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoEncoder, "video/x-h265, profile=(string){ main, high }", ElementFactories::CheckHardwareClassifier::Yes);
+    if (h265EncoderAvailable) {
+        m_encoderCodecMap.add(AtomString("hev1*"_s), h265EncoderAvailable);
+        m_encoderCodecMap.add(AtomString("hvc1*"_s), h265EncoderAvailable);
+    }
+
     if (factories.hasElementForMediaType(ElementFactories::Type::Muxer, "video/quicktime")) {
         if (opusSupported)
             m_encoderMimeTypeSet.add(AtomString("audio/opus"_s));

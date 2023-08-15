@@ -7378,8 +7378,10 @@ WebCodecsHEVCEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "USE(GSTREAMER)": true
       default: false
     WebCore:
+      "USE(GSTREAMER)": true
       default: false
 
 WebCryptoSafeCurvesEnabled:
