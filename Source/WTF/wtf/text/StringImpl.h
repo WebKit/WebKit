@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2005-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -38,7 +38,7 @@
 #include <wtf/text/ConversionMode.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringCommon.h>
-#include <wtf/text/StringHasher.h>
+#include <wtf/text/StringHasherInlines.h>
 #include <wtf/text/UTF8ConversionError.h>
 #include <wtf/unicode/UTF8Conversion.h>
 
