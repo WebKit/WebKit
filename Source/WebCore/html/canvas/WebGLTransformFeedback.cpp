@@ -38,9 +38,14 @@
 
 namespace WebCore {
 
-Ref<WebGLTransformFeedback> WebGLTransformFeedback::create(WebGL2RenderingContext& ctx)
+RefPtr<WebGLTransformFeedback> WebGLTransformFeedback::create(WebGL2RenderingContext& context)
 {
-    return adoptRef(*new WebGLTransformFeedback(ctx));
+    auto glObject = context.graphicsContextGL()->createTransformFeedback();
+    if (!glObject)
+        return nullptr;
+    auto instance = adoptRef(*new WebGLTransformFeedback(context));
+    instance->setObject(glObject);
+    return instance;
 }
 
 WebGLTransformFeedback::~WebGLTransformFeedback()
@@ -54,7 +59,6 @@ WebGLTransformFeedback::~WebGLTransformFeedback()
 WebGLTransformFeedback::WebGLTransformFeedback(WebGL2RenderingContext& ctx)
     : WebGLSharedObject(ctx)
 {
-    setObject(ctx.graphicsContextGL()->createTransformFeedback());
     m_boundIndexedTransformFeedbackBuffers.resize(ctx.maxTransformFeedbackSeparateAttribs());
 }
 

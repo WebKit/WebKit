@@ -1,0 +1,27 @@
+This test tests that WebGL context creation can lose context and it doesn't crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+TEST COMPLETE: 13 PASS, 0 FAIL
+
+
+PASS glWorks is non-null.
+PASS glWorks.getParameter(glWorks.MAX_COMBINED_TEXTURE_IMAGE_UNITS) is >= 8
+PASS "failContextCreationForTesting" in glWorks.getContextAttributes() is true
+Subtest contextType: webgl, failType: IPCBufferOOM
+PASS Received context creation error for canvasFails
+PASS Failed to create context glFails
+Subtest contextType: webgl, failType: CreationTimeout
+PASS glFails.getParameter(glFails.MAX_COMBINED_TEXTURE_IMAGE_UNITS) is null
+PASS Received context lost error for canvasFails
+Subtest contextType: webgl2, failType: IPCBufferOOM
+PASS Received context creation error for canvasFails
+PASS Failed to create context glFails
+Subtest contextType: webgl2, failType: CreationTimeout
+PASS glFails.getParameter(glFails.MAX_COMBINED_TEXTURE_IMAGE_UNITS) is null
+PASS Received context lost error for canvasFails
+PASS glWorks.NO_ERROR is glWorks.getError()
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
