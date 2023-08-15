@@ -2623,16 +2623,17 @@ public:
 
             if (matchDirection == Forward)
                 countToCheck = minimumSize - parenthesesInputCountAlreadyChecked;
-            else if (minimumSize > parenthesesInputCountAlreadyChecked)
+            else if (minimumSize > parenthesesInputCountAlreadyChecked) {
                 countToCheck = minimumSize - parenthesesInputCountAlreadyChecked;
+                haveCheckedInput(minimumSize);
+            } else if (minimumSize > disjunction->m_minimumSize) {
+                countToCheck = minimumSize - disjunction->m_minimumSize;
+                haveCheckedInput(currentCountAlreadyChecked);
+            }
 
             if (countToCheck) {
                 if (matchDirection == Forward)
                     checkInput(countToCheck);
-                else {
-                    // Check that we have enough input for this alternative.
-                    haveCheckedInput(minimumSize);
-                }
 
                 currentCountAlreadyChecked += countToCheck;
                 if (currentCountAlreadyChecked.hasOverflowed())
