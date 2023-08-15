@@ -137,10 +137,10 @@ static IntlDurationFormat::UnitData intlDurationUnitOptions(JSGlobalObject* glob
 }
 
 static constexpr IntlDurationFormat::UnitStyle digitalDefaults[numberOfTemporalUnits] = {
-    IntlDurationFormat::UnitStyle::Narrow,
-    IntlDurationFormat::UnitStyle::Narrow,
-    IntlDurationFormat::UnitStyle::Narrow,
-    IntlDurationFormat::UnitStyle::Narrow,
+    IntlDurationFormat::UnitStyle::Short,
+    IntlDurationFormat::UnitStyle::Short,
+    IntlDurationFormat::UnitStyle::Short,
+    IntlDurationFormat::UnitStyle::Short,
     IntlDurationFormat::UnitStyle::Numeric,
     IntlDurationFormat::UnitStyle::Numeric,
     IntlDurationFormat::UnitStyle::Numeric,
