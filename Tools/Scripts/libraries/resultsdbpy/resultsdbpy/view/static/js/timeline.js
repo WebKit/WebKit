@@ -464,6 +464,13 @@ class TimelineFromEndpoint {
                 response.json().then(json => {
                     if (myDispatch !== this.latestDispatch)
                         return;
+                    else if (json.length === 0) {
+                        this.ref.setState({
+                            error: "No results found for the requested test under the selected configuration.",
+                            description: "This could be because the selected configuration is not tested (check test expectations), no builds were completed, or the test does not exist."
+                        });
+                        return;
+                    }
 
                     let oldestUuid = Date.now() / 10;
                     let newestUuid = 0;
