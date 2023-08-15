@@ -1031,6 +1031,12 @@ void configureVideoDecoderForHarnessing(const GRefPtr<GstElement>& element)
 
     if (gstObjectHasProperty(element.get(), "max-errors"))
         g_object_set(element.get(), "max-errors", 0, nullptr);
+
+    if (gstObjectHasProperty(element.get(), "std-compliance"))
+        gst_util_set_object_arg(G_OBJECT(element.get()), "std-compliance", "strict");
+
+    if (gstObjectHasProperty(element.get(), "output-corrupt"))
+        g_object_set(element.get(), "output-corrupt", FALSE, nullptr);
 }
 
 static bool gstObjectHasProperty(GstObject* gstObject, const char* name)
@@ -1046,6 +1052,20 @@ bool gstObjectHasProperty(GstElement* element, const char* name)
 bool gstObjectHasProperty(GstPad* pad, const char* name)
 {
     return gstObjectHasProperty(GST_OBJECT_CAST(pad), name);
+}
+
+GRefPtr<GstBuffer> wrapSpanData(const std::span<const uint8_t>& span)
+{
+    if (span.empty())
+        return nullptr;
+
+    Vector<uint8_t> data { span };
+    auto bufferSize = data.size();
+    auto bufferData = data.data();
+    auto buffer = adoptGRef(gst_buffer_new_wrapped_full(GST_MEMORY_FLAG_READONLY, bufferData, bufferSize, 0, bufferSize, new Vector<uint8_t>(WTFMove(data)), [](gpointer data) {
+        delete static_cast<Vector<uint8_t>*>(data);
+    }));
+    return buffer;
 }
 
 #undef GST_CAT_DEFAULT

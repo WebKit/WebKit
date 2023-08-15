@@ -334,6 +334,8 @@ void configureVideoDecoderForHarnessing(const GRefPtr<GstElement>&);
 bool gstObjectHasProperty(GstElement*, const char* name);
 bool gstObjectHasProperty(GstPad*, const char* name);
 
+GRefPtr<GstBuffer> wrapSpanData(const std::span<const uint8_t>&);
+
 } // namespace WebCore
 
 #ifndef GST_BUFFER_DTS_OR_PTS
