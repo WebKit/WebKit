@@ -651,7 +651,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     };
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-    [UIPasteboard generalPasteboard].items = @[ representations ];
+    [UIPasteboard _performAsDataOwner:[_webView _effectiveDataOwner:self._dataOwnerForCopy] block:^{
+        UIPasteboard.generalPasteboard.items = @[ representations ];
+    }];
 }
 
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant openElementAtLocation:(CGPoint)location

@@ -38,7 +38,6 @@
 #import "RemoteScrollingCoordinatorProxyIOS.h"
 #import "ScrollingTreeScrollingNodeDelegateIOS.h"
 #import "TapHandlingResult.h"
-#import "UIKitSPI.h"
 #import "UIKitUtilities.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "ViewGestureController.h"
@@ -66,6 +65,8 @@
 #import <WebCore/IOSurfacePool.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/UserInterfaceLayoutDirection.h>
+#import <pal/ios/ManagedConfigurationSoftLink.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <wtf/BlockPtr.h>
@@ -3211,6 +3212,28 @@ static bool isLockdownModeWarningNeeded()
 {
 }
 #endif
+
+- (_UIDataOwner)_effectiveDataOwner:(_UIDataOwner)clientSuppliedDataOwner
+{
+    auto isCurrentURLManaged = [&] {
+#if PLATFORM(MACCATALYST)
+        return NO;
+#else
+        return [[PAL::getMCProfileConnectionClass() sharedConnection] isURLManaged:self.URL];
+#endif
+    };
+
+    switch (clientSuppliedDataOwner) {
+    case _UIDataOwnerUndefined:
+        return isCurrentURLManaged() ? _UIDataOwnerEnterprise : _UIDataOwnerUser;
+    case _UIDataOwnerUser:
+    case _UIDataOwnerEnterprise:
+    case _UIDataOwnerShared:
+        return clientSuppliedDataOwner;
+    }
+    ASSERT_NOT_REACHED();
+    return _UIDataOwnerUndefined;
+}
 
 @end
 
