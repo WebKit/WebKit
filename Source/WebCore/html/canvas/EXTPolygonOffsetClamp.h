@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class EXTPolygonOffsetClamp final : public WebGLExtension {
+class EXTPolygonOffsetClamp final : public RefCounted<EXTPolygonOffsetClamp>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(EXTPolygonOffsetClamp);
 public:
     explicit EXTPolygonOffsetClamp(WebGLRenderingContextBase&);
-    virtual ~EXTPolygonOffsetClamp();
-
-    ExtensionName getName() const override;
+    ~EXTPolygonOffsetClamp();
 
     static bool supported(GraphicsContextGL&);
 

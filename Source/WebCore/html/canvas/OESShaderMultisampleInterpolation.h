@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class OESShaderMultisampleInterpolation final : public WebGLExtension {
+class OESShaderMultisampleInterpolation final : public RefCounted<OESShaderMultisampleInterpolation>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(OESShaderMultisampleInterpolation);
 public:
     explicit OESShaderMultisampleInterpolation(WebGLRenderingContextBase&);
-    virtual ~OESShaderMultisampleInterpolation();
-
-    ExtensionName getName() const override;
+    ~OESShaderMultisampleInterpolation();
 
     static bool supported(GraphicsContextGL&);
 };

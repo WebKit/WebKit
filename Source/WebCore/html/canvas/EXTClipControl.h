@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class EXTClipControl final : public WebGLExtension {
+class EXTClipControl final : public RefCounted<EXTClipControl>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(EXTClipControl);
 public:
     explicit EXTClipControl(WebGLRenderingContextBase&);
-    virtual ~EXTClipControl();
-
-    ExtensionName getName() const override;
+    ~EXTClipControl();
 
     static bool supported(GraphicsContextGL&);
 

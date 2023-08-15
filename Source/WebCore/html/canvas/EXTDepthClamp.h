@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class EXTDepthClamp final : public WebGLExtension {
+class EXTDepthClamp final : public RefCounted<EXTDepthClamp>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(EXTDepthClamp);
 public:
     explicit EXTDepthClamp(WebGLRenderingContextBase&);
-    virtual ~EXTDepthClamp();
-
-    ExtensionName getName() const override;
+    ~EXTDepthClamp();
 
     static bool supported(GraphicsContextGL&);
 };

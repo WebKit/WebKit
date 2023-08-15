@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class EXTTextureMirrorClampToEdge final : public WebGLExtension {
+class EXTTextureMirrorClampToEdge final : public RefCounted<EXTTextureMirrorClampToEdge>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(EXTTextureMirrorClampToEdge);
 public:
     explicit EXTTextureMirrorClampToEdge(WebGLRenderingContextBase&);
-    virtual ~EXTTextureMirrorClampToEdge();
-
-    ExtensionName getName() const override;
+    ~EXTTextureMirrorClampToEdge();
 
     static bool supported(GraphicsContextGL&);
 };

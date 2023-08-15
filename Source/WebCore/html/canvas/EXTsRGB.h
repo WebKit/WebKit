@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class EXTsRGB final : public WebGLExtension {
+class EXTsRGB final : public RefCounted<EXTsRGB>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(EXTsRGB);
 public:
     explicit EXTsRGB(WebGLRenderingContextBase&);
-    virtual ~EXTsRGB();
-
-    ExtensionName getName() const override;
+    ~EXTsRGB();
 
     static bool supported(GraphicsContextGL&);
 };

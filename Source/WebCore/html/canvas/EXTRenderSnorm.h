@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class EXTRenderSnorm final : public WebGLExtension {
+class EXTRenderSnorm final : public RefCounted<EXTRenderSnorm>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(EXTRenderSnorm);
 public:
     explicit EXTRenderSnorm(WebGLRenderingContextBase&);
-    virtual ~EXTRenderSnorm();
-
-    ExtensionName getName() const override;
+    ~EXTRenderSnorm();
 
     static bool supported(GraphicsContextGL&);
 };

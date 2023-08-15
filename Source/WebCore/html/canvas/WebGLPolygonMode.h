@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class WebGLPolygonMode final : public WebGLExtension {
+class WebGLPolygonMode final : public RefCounted<WebGLPolygonMode>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(WebGLPolygonMode);
 public:
     explicit WebGLPolygonMode(WebGLRenderingContextBase&);
-    virtual ~WebGLPolygonMode();
-
-    ExtensionName getName() const override;
+    ~WebGLPolygonMode();
 
     static bool supported(GraphicsContextGL&);
 

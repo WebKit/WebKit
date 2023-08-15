@@ -37,17 +37,12 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLDrawInstancedBaseVertexBaseInstance);
 
 WebGLDrawInstancedBaseVertexBaseInstance::WebGLDrawInstancedBaseVertexBaseInstance(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLDrawInstancedBaseVertexBaseInstanceName)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_base_vertex_base_instance"_s);
 }
 
 WebGLDrawInstancedBaseVertexBaseInstance::~WebGLDrawInstancedBaseVertexBaseInstance() = default;
-
-WebGLExtension::ExtensionName WebGLDrawInstancedBaseVertexBaseInstance::getName() const
-{
-    return WebGLDrawInstancedBaseVertexBaseInstanceName;
-}
 
 bool WebGLDrawInstancedBaseVertexBaseInstance::supported(GraphicsContextGL& context)
 {

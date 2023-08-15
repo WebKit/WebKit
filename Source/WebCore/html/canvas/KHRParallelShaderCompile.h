@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class KHRParallelShaderCompile final : public WebGLExtension {
+class KHRParallelShaderCompile final : public RefCounted<KHRParallelShaderCompile>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(KHRParallelShaderCompile);
 public:
     explicit KHRParallelShaderCompile(WebGLRenderingContextBase&);
-    virtual ~KHRParallelShaderCompile();
-
-    ExtensionName getName() const override;
+    ~KHRParallelShaderCompile();
 
     static bool supported(GraphicsContextGL&);
 };

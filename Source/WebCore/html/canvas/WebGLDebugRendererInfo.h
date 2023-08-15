@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class WebGLDebugRendererInfo final : public WebGLExtension {
+class WebGLDebugRendererInfo final : public RefCounted<WebGLDebugRendererInfo>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(WebGLDebugRendererInfo);
 public:
     enum EnumType {
@@ -38,9 +38,7 @@ public:
     };
 
     explicit WebGLDebugRendererInfo(WebGLRenderingContextBase&);
-    virtual ~WebGLDebugRendererInfo();
-
-    ExtensionName getName() const override;
+    ~WebGLDebugRendererInfo();
 };
 
 } // namespace WebCore

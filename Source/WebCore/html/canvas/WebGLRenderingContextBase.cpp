@@ -5983,68 +5983,70 @@ bool WebGLRenderingContextBase::enableSupportedExtension(ASCIILiteral extensionN
     return true;
 }
 
+template<typename T> void loseExtension(RefPtr<T> extension)
+{
+    if (!extension)
+        return;
+    extension->loseParentContext();
+}
+
 void WebGLRenderingContextBase::loseExtensions(LostContextMode mode)
 {
-#define LOSE_EXTENSION(variable) \
-    if (variable) { \
-        variable->loseParentContext(mode); \
-        if (variable->isLostContext()) \
-            (void) variable.releaseNonNull(); \
-    }
+    loseExtension(WTFMove(m_angleInstancedArrays));
+    loseExtension(WTFMove(m_extBlendMinMax));
+    loseExtension(WTFMove(m_extClipControl));
+    loseExtension(WTFMove(m_extColorBufferFloat));
+    loseExtension(WTFMove(m_extColorBufferHalfFloat));
+    loseExtension(WTFMove(m_extConservativeDepth));
+    loseExtension(WTFMove(m_extDepthClamp));
+    loseExtension(WTFMove(m_extDisjointTimerQuery));
+    loseExtension(WTFMove(m_extDisjointTimerQueryWebGL2));
+    loseExtension(WTFMove(m_extFloatBlend));
+    loseExtension(WTFMove(m_extFragDepth));
+    loseExtension(WTFMove(m_extPolygonOffsetClamp));
+    loseExtension(WTFMove(m_extRenderSnorm));
+    loseExtension(WTFMove(m_extShaderTextureLOD));
+    loseExtension(WTFMove(m_extTextureCompressionBPTC));
+    loseExtension(WTFMove(m_extTextureCompressionRGTC));
+    loseExtension(WTFMove(m_extTextureFilterAnisotropic));
+    loseExtension(WTFMove(m_extTextureMirrorClampToEdge));
+    loseExtension(WTFMove(m_extTextureNorm16));
+    loseExtension(WTFMove(m_extsRGB));
+    loseExtension(WTFMove(m_khrParallelShaderCompile));
+    loseExtension(WTFMove(m_nvShaderNoperspectiveInterpolation));
+    loseExtension(WTFMove(m_oesDrawBuffersIndexed));
+    loseExtension(WTFMove(m_oesElementIndexUint));
+    loseExtension(WTFMove(m_oesFBORenderMipmap));
+    loseExtension(WTFMove(m_oesSampleVariables));
+    loseExtension(WTFMove(m_oesShaderMultisampleInterpolation));
+    loseExtension(WTFMove(m_oesStandardDerivatives));
+    loseExtension(WTFMove(m_oesTextureFloat));
+    loseExtension(WTFMove(m_oesTextureFloatLinear));
+    loseExtension(WTFMove(m_oesTextureHalfFloat));
+    loseExtension(WTFMove(m_oesTextureHalfFloatLinear));
+    loseExtension(WTFMove(m_oesVertexArrayObject));
+    loseExtension(WTFMove(m_webglClipCullDistance));
+    loseExtension(WTFMove(m_webglColorBufferFloat));
+    loseExtension(WTFMove(m_webglCompressedTextureASTC));
+    loseExtension(WTFMove(m_webglCompressedTextureETC));
+    loseExtension(WTFMove(m_webglCompressedTextureETC1));
+    loseExtension(WTFMove(m_webglCompressedTexturePVRTC));
+    loseExtension(WTFMove(m_webglCompressedTextureS3TC));
+    loseExtension(WTFMove(m_webglCompressedTextureS3TCsRGB));
+    loseExtension(WTFMove(m_webglDebugRendererInfo));
+    loseExtension(WTFMove(m_webglDebugShaders));
+    loseExtension(WTFMove(m_webglDepthTexture));
+    loseExtension(WTFMove(m_webglDrawBuffers));
+    loseExtension(WTFMove(m_webglDrawInstancedBaseVertexBaseInstance));
+    loseExtension(WTFMove(m_webglMultiDraw));
+    loseExtension(WTFMove(m_webglMultiDrawInstancedBaseVertexBaseInstance));
+    loseExtension(WTFMove(m_webglPolygonMode));
+    loseExtension(WTFMove(m_webglProvokingVertex));
+    loseExtension(WTFMove(m_webglRenderSharedExponent));
+    loseExtension(WTFMove(m_webglStencilTexturing));
 
-    LOSE_EXTENSION(m_angleInstancedArrays);
-    LOSE_EXTENSION(m_extBlendMinMax);
-    LOSE_EXTENSION(m_extClipControl);
-    LOSE_EXTENSION(m_extColorBufferFloat);
-    LOSE_EXTENSION(m_extColorBufferHalfFloat);
-    LOSE_EXTENSION(m_extConservativeDepth);
-    LOSE_EXTENSION(m_extDepthClamp);
-    LOSE_EXTENSION(m_extDisjointTimerQuery);
-    LOSE_EXTENSION(m_extDisjointTimerQueryWebGL2);
-    LOSE_EXTENSION(m_extFloatBlend);
-    LOSE_EXTENSION(m_extFragDepth);
-    LOSE_EXTENSION(m_extPolygonOffsetClamp);
-    LOSE_EXTENSION(m_extRenderSnorm);
-    LOSE_EXTENSION(m_extShaderTextureLOD);
-    LOSE_EXTENSION(m_extTextureCompressionBPTC);
-    LOSE_EXTENSION(m_extTextureCompressionRGTC);
-    LOSE_EXTENSION(m_extTextureFilterAnisotropic);
-    LOSE_EXTENSION(m_extTextureMirrorClampToEdge);
-    LOSE_EXTENSION(m_extTextureNorm16);
-    LOSE_EXTENSION(m_extsRGB);
-    LOSE_EXTENSION(m_khrParallelShaderCompile);
-    LOSE_EXTENSION(m_nvShaderNoperspectiveInterpolation);
-    LOSE_EXTENSION(m_oesDrawBuffersIndexed);
-    LOSE_EXTENSION(m_oesElementIndexUint);
-    LOSE_EXTENSION(m_oesFBORenderMipmap);
-    LOSE_EXTENSION(m_oesSampleVariables);
-    LOSE_EXTENSION(m_oesShaderMultisampleInterpolation);
-    LOSE_EXTENSION(m_oesStandardDerivatives);
-    LOSE_EXTENSION(m_oesTextureFloat);
-    LOSE_EXTENSION(m_oesTextureFloatLinear);
-    LOSE_EXTENSION(m_oesTextureHalfFloat);
-    LOSE_EXTENSION(m_oesTextureHalfFloatLinear);
-    LOSE_EXTENSION(m_oesVertexArrayObject);
-    LOSE_EXTENSION(m_webglClipCullDistance);
-    LOSE_EXTENSION(m_webglColorBufferFloat);
-    LOSE_EXTENSION(m_webglCompressedTextureASTC);
-    LOSE_EXTENSION(m_webglCompressedTextureETC);
-    LOSE_EXTENSION(m_webglCompressedTextureETC1);
-    LOSE_EXTENSION(m_webglCompressedTexturePVRTC);
-    LOSE_EXTENSION(m_webglCompressedTextureS3TC);
-    LOSE_EXTENSION(m_webglCompressedTextureS3TCsRGB);
-    LOSE_EXTENSION(m_webglDebugRendererInfo);
-    LOSE_EXTENSION(m_webglDebugShaders);
-    LOSE_EXTENSION(m_webglDepthTexture);
-    LOSE_EXTENSION(m_webglDrawBuffers);
-    LOSE_EXTENSION(m_webglDrawInstancedBaseVertexBaseInstance);
-    LOSE_EXTENSION(m_webglLoseContext);
-    LOSE_EXTENSION(m_webglMultiDraw);
-    LOSE_EXTENSION(m_webglMultiDrawInstancedBaseVertexBaseInstance);
-    LOSE_EXTENSION(m_webglPolygonMode);
-    LOSE_EXTENSION(m_webglProvokingVertex);
-    LOSE_EXTENSION(m_webglRenderSharedExponent);
-    LOSE_EXTENSION(m_webglStencilTexturing);
+    if (mode == LostContextMode::RealLostContext)
+        loseExtension(WTFMove(m_webglLoseContext));
 }
 
 void WebGLRenderingContextBase::activityStateDidChange(OptionSet<ActivityState> oldActivityState, OptionSet<ActivityState> newActivityState)

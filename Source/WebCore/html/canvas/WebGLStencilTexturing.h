@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class WebGLStencilTexturing final : public WebGLExtension {
+class WebGLStencilTexturing final : public RefCounted<WebGLStencilTexturing>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(WebGLStencilTexturing);
 public:
     explicit WebGLStencilTexturing(WebGLRenderingContextBase&);
-    virtual ~WebGLStencilTexturing();
-
-    ExtensionName getName() const override;
+    ~WebGLStencilTexturing();
 
     static bool supported(GraphicsContextGL&);
 };

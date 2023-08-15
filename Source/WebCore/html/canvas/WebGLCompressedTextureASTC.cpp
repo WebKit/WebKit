@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLCompressedTextureASTC);
 
 WebGLCompressedTextureASTC::WebGLCompressedTextureASTC(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLCompressedTextureASTCName)
     , m_isHDRSupported(context.graphicsContextGL()->supportsExtension("GL_KHR_texture_compression_astc_hdr"_s))
     , m_isLDRSupported(context.graphicsContextGL()->supportsExtension("GL_KHR_texture_compression_astc_ldr"_s))
 {
@@ -74,11 +74,6 @@ WebGLCompressedTextureASTC::WebGLCompressedTextureASTC(WebGLRenderingContextBase
 }
 
 WebGLCompressedTextureASTC::~WebGLCompressedTextureASTC() = default;
-
-WebGLExtension::ExtensionName WebGLCompressedTextureASTC::getName() const
-{
-    return WebGLCompressedTextureASTCName;
-}
     
 Vector<String> WebGLCompressedTextureASTC::getSupportedProfiles()
 {

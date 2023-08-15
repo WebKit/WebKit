@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class EXTTextureCompressionRGTC final : public WebGLExtension {
+class EXTTextureCompressionRGTC final : public RefCounted<EXTTextureCompressionRGTC>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(EXTTextureCompressionRGTC);
 public:
     explicit EXTTextureCompressionRGTC(WebGLRenderingContextBase&);
-    virtual ~EXTTextureCompressionRGTC();
-
-    ExtensionName getName() const override;
+    ~EXTTextureCompressionRGTC();
 
     static bool supported(GraphicsContextGL&);
 };

@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLColorBufferFloat);
 
 WebGLColorBufferFloat::WebGLColorBufferFloat(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLColorBufferFloatName)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_CHROMIUM_color_buffer_float_rgba"_s);
     // Optimistically enable RGB floating-point render targets also, if possible.
@@ -48,11 +48,6 @@ WebGLColorBufferFloat::WebGLColorBufferFloat(WebGLRenderingContextBase& context)
 }
 
 WebGLColorBufferFloat::~WebGLColorBufferFloat() = default;
-
-WebGLExtension::ExtensionName WebGLColorBufferFloat::getName() const
-{
-    return WebGLColorBufferFloatName;
-}
 
 bool WebGLColorBufferFloat::supported(GraphicsContextGL& context)
 {

@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class OESElementIndexUint final : public WebGLExtension {
+class OESElementIndexUint final : public RefCounted<OESElementIndexUint>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(OESElementIndexUint);
 public:
     explicit OESElementIndexUint(WebGLRenderingContextBase&);
-    virtual ~OESElementIndexUint();
-
-    ExtensionName getName() const override;
+    ~OESElementIndexUint();
 
     static bool supported(GraphicsContextGL&);
 };

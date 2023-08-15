@@ -35,17 +35,12 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLStencilTexturing);
 
 WebGLStencilTexturing::WebGLStencilTexturing(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLStencilTexturingName)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_stencil_texturing"_s);
 }
 
 WebGLStencilTexturing::~WebGLStencilTexturing() = default;
-
-WebGLExtension::ExtensionName WebGLStencilTexturing::getName() const
-{
-    return WebGLStencilTexturingName;
-}
 
 bool WebGLStencilTexturing::supported(GraphicsContextGL& context)
 {

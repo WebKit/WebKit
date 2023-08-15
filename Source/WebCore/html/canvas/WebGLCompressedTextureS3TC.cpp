@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLCompressedTextureS3TC);
 
 WebGLCompressedTextureS3TC::WebGLCompressedTextureS3TC(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLCompressedTextureS3TCName)
 {
     auto* gcgl = context.graphicsContextGL();
     gcgl->ensureExtensionEnabled("GL_EXT_texture_compression_dxt1"_s);
@@ -49,11 +49,6 @@ WebGLCompressedTextureS3TC::WebGLCompressedTextureS3TC(WebGLRenderingContextBase
 }
 
 WebGLCompressedTextureS3TC::~WebGLCompressedTextureS3TC() = default;
-
-WebGLExtension::ExtensionName WebGLCompressedTextureS3TC::getName() const
-{
-    return WebGLCompressedTextureS3TCName;
-}
 
 bool WebGLCompressedTextureS3TC::supported(GraphicsContextGL& context)
 {

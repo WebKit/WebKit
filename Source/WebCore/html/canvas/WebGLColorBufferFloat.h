@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class WebGLColorBufferFloat final : public WebGLExtension {
+class WebGLColorBufferFloat final : public RefCounted<WebGLColorBufferFloat>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(WebGLColorBufferFloat);
 public:
     explicit WebGLColorBufferFloat(WebGLRenderingContextBase&);
-    virtual ~WebGLColorBufferFloat();
-
-    ExtensionName getName() const override;
+    ~WebGLColorBufferFloat();
 
     static bool supported(GraphicsContextGL&);
 };

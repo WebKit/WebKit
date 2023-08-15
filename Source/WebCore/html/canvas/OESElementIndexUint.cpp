@@ -35,17 +35,12 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(OESElementIndexUint);
 
 OESElementIndexUint::OESElementIndexUint(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, OESElementIndexUintName)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_OES_element_index_uint"_s);
 }
 
 OESElementIndexUint::~OESElementIndexUint() = default;
-
-WebGLExtension::ExtensionName OESElementIndexUint::getName() const
-{
-    return OESElementIndexUintName;
-}
 
 bool OESElementIndexUint::supported(GraphicsContextGL& context)
 {

@@ -35,17 +35,12 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(EXTClipControl);
 
 EXTClipControl::EXTClipControl(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, EXTClipControlName)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_clip_control"_s);
 }
 
 EXTClipControl::~EXTClipControl() = default;
-
-WebGLExtension::ExtensionName EXTClipControl::getName() const
-{
-    return EXTClipControlName;
-}
 
 bool EXTClipControl::supported(GraphicsContextGL& context)
 {

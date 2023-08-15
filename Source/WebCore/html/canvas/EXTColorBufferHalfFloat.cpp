@@ -35,17 +35,12 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(EXTColorBufferHalfFloat);
 
 EXTColorBufferHalfFloat::EXTColorBufferHalfFloat(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, EXTColorBufferHalfFloatName)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_color_buffer_half_float"_s);
 }
 
 EXTColorBufferHalfFloat::~EXTColorBufferHalfFloat() = default;
-
-WebGLExtension::ExtensionName EXTColorBufferHalfFloat::getName() const
-{
-    return EXTColorBufferHalfFloatName;
-}
 
 bool EXTColorBufferHalfFloat::supported(GraphicsContextGL& context)
 {

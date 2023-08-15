@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class EXTConservativeDepth final : public WebGLExtension {
+class EXTConservativeDepth final : public RefCounted<EXTConservativeDepth>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(EXTConservativeDepth);
 public:
     explicit EXTConservativeDepth(WebGLRenderingContextBase&);
-    virtual ~EXTConservativeDepth();
-
-    ExtensionName getName() const override;
+    ~EXTConservativeDepth();
 
     static bool supported(GraphicsContextGL&);
 };

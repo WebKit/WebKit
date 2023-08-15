@@ -31,13 +31,11 @@ namespace WebCore {
 
 class WebGLShader;
 
-class WebGLDebugShaders final : public WebGLExtension {
+class WebGLDebugShaders final : public RefCounted<WebGLDebugShaders>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(WebGLDebugShaders);
 public:
     explicit WebGLDebugShaders(WebGLRenderingContextBase&);
-    virtual ~WebGLDebugShaders();
-
-    ExtensionName getName() const override;
+    ~WebGLDebugShaders();
 
     static bool supported(GraphicsContextGL&);
 

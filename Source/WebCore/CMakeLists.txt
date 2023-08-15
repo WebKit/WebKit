@@ -1970,7 +1970,6 @@ if (ENABLE_WEBGL)
         html/canvas/WebGLDepthTexture.cpp
         html/canvas/WebGLDrawBuffers.cpp
         html/canvas/WebGLDrawInstancedBaseVertexBaseInstance.cpp
-        html/canvas/WebGLExtension.cpp
         html/canvas/WebGLFramebuffer.cpp
         html/canvas/WebGLLoseContext.cpp
         html/canvas/WebGLMultiDraw.cpp

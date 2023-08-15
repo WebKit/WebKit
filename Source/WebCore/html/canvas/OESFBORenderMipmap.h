@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class OESFBORenderMipmap final : public WebGLExtension {
+class OESFBORenderMipmap final : public RefCounted<OESFBORenderMipmap>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(OESFBORenderMipmap);
 public:
     explicit OESFBORenderMipmap(WebGLRenderingContextBase&);
-    virtual ~OESFBORenderMipmap();
-
-    ExtensionName getName() const override;
+    ~OESFBORenderMipmap();
 
     static bool supported(GraphicsContextGL&);
 };

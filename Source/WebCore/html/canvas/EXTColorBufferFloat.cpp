@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(EXTColorBufferFloat);
 
 EXTColorBufferFloat::EXTColorBufferFloat(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, EXTColorBufferFloatName)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_color_buffer_float"_s);
 
@@ -46,11 +46,6 @@ EXTColorBufferFloat::EXTColorBufferFloat(WebGLRenderingContextBase& context)
 }
 
 EXTColorBufferFloat::~EXTColorBufferFloat() = default;
-
-WebGLExtension::ExtensionName EXTColorBufferFloat::getName() const
-{
-    return EXTColorBufferFloatName;
-}
 
 bool EXTColorBufferFloat::supported(GraphicsContextGL& context)
 {

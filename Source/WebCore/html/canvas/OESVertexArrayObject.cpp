@@ -39,17 +39,12 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(OESVertexArrayObject);
 
 OESVertexArrayObject::OESVertexArrayObject(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, OESVertexArrayObjectName)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_OES_vertex_array_object"_s);
 }
 
 OESVertexArrayObject::~OESVertexArrayObject() = default;
-
-WebGLExtension::ExtensionName OESVertexArrayObject::getName() const
-{
-    return OESVertexArrayObjectName;
-}
 
 bool OESVertexArrayObject::supported(GraphicsContextGL& context)
 {

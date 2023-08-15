@@ -38,17 +38,12 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(EXTDisjointTimerQueryWebGL2);
 
 EXTDisjointTimerQueryWebGL2::EXTDisjointTimerQueryWebGL2(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, EXTDisjointTimerQueryWebGL2Name)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_disjoint_timer_query"_s);
 }
 
 EXTDisjointTimerQueryWebGL2::~EXTDisjointTimerQueryWebGL2() = default;
-
-WebGLExtension::ExtensionName EXTDisjointTimerQueryWebGL2::getName() const
-{
-    return EXTDisjointTimerQueryWebGL2Name;
-}
 
 bool EXTDisjointTimerQueryWebGL2::supported(GraphicsContextGL& context)
 {

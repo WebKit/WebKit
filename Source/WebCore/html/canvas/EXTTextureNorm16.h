@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class EXTTextureNorm16 final : public WebGLExtension {
+class EXTTextureNorm16 final : public RefCounted<EXTTextureNorm16>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(EXTTextureNorm16);
 public:
     explicit EXTTextureNorm16(WebGLRenderingContextBase&);
-    virtual ~EXTTextureNorm16();
-
-    ExtensionName getName() const override;
+    ~EXTTextureNorm16();
 
     static bool supported(GraphicsContextGL&);
 };

@@ -37,7 +37,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLMultiDrawInstancedBaseVertexBaseInstance);
 
 WebGLMultiDrawInstancedBaseVertexBaseInstance::WebGLMultiDrawInstancedBaseVertexBaseInstance(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLMultiDrawInstancedBaseVertexBaseInstanceName)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_base_vertex_base_instance"_s);
 
@@ -47,11 +47,6 @@ WebGLMultiDrawInstancedBaseVertexBaseInstance::WebGLMultiDrawInstancedBaseVertex
 }
 
 WebGLMultiDrawInstancedBaseVertexBaseInstance::~WebGLMultiDrawInstancedBaseVertexBaseInstance() = default;
-
-WebGLExtension::ExtensionName WebGLMultiDrawInstancedBaseVertexBaseInstance::getName() const
-{
-    return WebGLMultiDrawInstancedBaseVertexBaseInstanceName;
-}
 
 bool WebGLMultiDrawInstancedBaseVertexBaseInstance::supported(GraphicsContextGL& context)
 {

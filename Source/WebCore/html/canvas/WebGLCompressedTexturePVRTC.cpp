@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLCompressedTexturePVRTC);
 
 WebGLCompressedTexturePVRTC::WebGLCompressedTexturePVRTC(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLCompressedTexturePVRTCName)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_IMG_texture_compression_pvrtc"_s);
 
@@ -46,11 +46,6 @@ WebGLCompressedTexturePVRTC::WebGLCompressedTexturePVRTC(WebGLRenderingContextBa
 }
 
 WebGLCompressedTexturePVRTC::~WebGLCompressedTexturePVRTC() = default;
-
-WebGLExtension::ExtensionName WebGLCompressedTexturePVRTC::getName() const
-{
-    return WebGLCompressedTexturePVRTCName;
-}
 
 bool WebGLCompressedTexturePVRTC::supported(GraphicsContextGL& context)
 {

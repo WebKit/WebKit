@@ -35,17 +35,12 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(OESSampleVariables);
 
 OESSampleVariables::OESSampleVariables(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, OESSampleVariablesName)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_OES_sample_variables"_s);
 }
 
 OESSampleVariables::~OESSampleVariables() = default;
-
-WebGLExtension::ExtensionName OESSampleVariables::getName() const
-{
-    return OESSampleVariablesName;
-}
 
 bool OESSampleVariables::supported(GraphicsContextGL& context)
 {
