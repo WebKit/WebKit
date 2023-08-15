@@ -996,12 +996,10 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addLoop(BlockSignature signatur
 
     // Allocate space in metadata
     auto size = m_metadata->m_metadata.size();
+    block.m_pc = m_parser->currentOpcodeStartingOffset() - m_metadata->m_bytecodeOffset;
+    block.m_mc = size;
     m_metadata->addBlankSpace(1);
     WRITE_TO_METADATA(m_metadata->m_metadata.data() + size, getCurrentInstructionLength(), uint8_t);
-    // No -1 because we can just have it directly go to the instruction after
-    // No point running `loop` since in IPInt it's just a nop
-    block.m_pc = m_parser->offset() - m_metadata->m_bytecodeOffset;
-    block.m_mc = m_metadata->m_metadata.size();
 
     // Loop OSR
 

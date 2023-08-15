@@ -598,6 +598,23 @@ WASM_SLOW_PATH_DECL(epilogue_osr)
     WASM_END_IMPL();
 }
 
+WASM_IPINT_EXTERN_CPP_DECL(epilogue_osr, CallFrame* callFrame)
+{
+    Wasm::IPIntCallee* callee = IPINT_CALLEE();
+
+    if (!shouldJIT(callee)) {
+        callee->tierUpCounter().deferIndefinitely();
+        WASM_RETURN_TWO(nullptr, nullptr);
+    }
+    if (!Options::useWasmIPIntEpilogueOSR())
+        WASM_RETURN_TWO(nullptr, nullptr);
+
+    dataLogLnIf(Options::verboseOSR(), *callee, ": Entered epilogue_osr with tierUpCounter = ", callee->tierUpCounter());
+
+    jitCompileAndSetHeuristics(callee, instance);
+    WASM_RETURN_TWO(nullptr, nullptr);
+}
+
 WASM_SLOW_PATH_DECL(simd_go_straight_to_bbq_osr)
 {
     UNUSED_PARAM(pc);

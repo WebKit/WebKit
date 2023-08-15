@@ -493,6 +493,15 @@ macro ipintLoopOSR(increment)
 .continue:
 end
 
+macro ipintEpilogueOSR(increment)
+    loadp WasmCodeBlock[cfr], ws0
+    baddis increment, Wasm::IPIntCallee::m_tierUpCounter + Wasm::LLIntTierUpCounter::m_counter[ws0], .continue
+
+    move cfr, a1
+    operationCall(macro() cCall2(_ipint_extern_epilogue_osr) end)
+.continue:
+end
+
 ########################
 # In-Place Interpreter #
 ########################
@@ -689,6 +698,7 @@ instructionLabel(_end)
     advancePC(1)
     nextIPIntInstruction()
 .ipint_end_ret:
+    ipintEpilogueOSR(10)
     addq MC, PM
     uintDispatch()
 

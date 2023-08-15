@@ -588,9 +588,10 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useWebAssemblyTailCalls, false, Normal, "Allow the new instructions from the wasm tail calls spec.") \
     v(Bool, useWasmIPInt, false, Normal, "Use the in-place interpereter for WASM instead of LLInt.") \
     v(Bool, useWasmIPIntPrologueOSR, true, Normal, "Allow IPInt to tier up during function prologues") \
-    v(Bool, useWasmIPIntLoopOSR, true, Normal, "Allow IPInt to tier up during function prologues") \
+    v(Bool, useWasmIPIntLoopOSR, true, Normal, "Allow IPInt to tier up during loop iterations") \
+    v(Bool, useWasmIPIntEpilogueOSR, true, Normal, "Allow IPInt to tier up during function epilogues") \
     v(Bool, wasmIPIntTiersUpToBBQ, true, Normal, "Allow IPInt to tier up to BBQ") \
-    v(Bool, wasmIPIntTiersUpToOMG, false, Normal, "Allow IPInt to tier up to OMG")
+    v(Bool, wasmIPIntTiersUpToOMG, true, Normal, "Allow IPInt to tier up to OMG")
 
 
 enum OptionEquivalence {
