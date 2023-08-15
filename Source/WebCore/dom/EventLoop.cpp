@@ -295,7 +295,7 @@ void EventLoop::scheduleToRunIfNeeded()
     scheduleToRun();
 }
 
-void EventLoop::run()
+void EventLoop::run(std::optional<ApproximateTime> deadline)
 {
     m_isScheduledToRun = false;
     bool didPerformMicrotaskCheckpoint = false;
@@ -304,12 +304,14 @@ void EventLoop::run()
         auto tasks = std::exchange(m_tasks, { });
         m_groupsWithSuspendedTasks.clear();
         Vector<std::unique_ptr<EventLoopTask>> remainingTasks;
+        bool hasReachedDeadline = false;
         for (auto& task : tasks) {
             auto* group = task->group();
             if (!group || group->isStoppedPermanently())
                 continue;
 
-            if (group->isSuspended()) {
+            hasReachedDeadline = hasReachedDeadline || (deadline && ApproximateTime::now() > *deadline);
+            if (group->isSuspended() || hasReachedDeadline) {
                 m_groupsWithSuspendedTasks.add(*group);
                 remainingTasks.append(WTFMove(task));
                 continue;
@@ -322,6 +324,9 @@ void EventLoop::run()
         for (auto& task : m_tasks)
             remainingTasks.append(WTFMove(task));
         m_tasks = WTFMove(remainingTasks);
+
+        if (!m_tasks.isEmpty() && hasReachedDeadline)
+            scheduleToRunIfNeeded();
     }
 
     // FIXME: Remove this once everything is integrated with the event loop.

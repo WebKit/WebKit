@@ -36,6 +36,7 @@
 #include "Page.h"
 #include "SecurityOrigin.h"
 #include "ThreadGlobalData.h"
+#include "ThreadTimers.h"
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/RunLoop.h>
 
@@ -179,7 +180,8 @@ MonotonicTime WindowEventLoop::computeIdleDeadline()
 void WindowEventLoop::didReachTimeToRun()
 {
     Ref protectedThis { *this }; // Executing tasks may remove the last reference to this WindowEventLoop.
-    run();
+    auto deadline = ApproximateTime::now() + ThreadTimers::maxDurationOfFiringTimers;
+    run(deadline);
 
     if (hasTasksForFullyActiveDocument() || !microtaskQueue().isEmpty())
         return;

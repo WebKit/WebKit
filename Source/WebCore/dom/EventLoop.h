@@ -26,6 +26,8 @@
 #pragma once
 
 #include "TaskSource.h"
+#include <optional>
+#include <wtf/ApproximateTime.h>
 #include <wtf/Function.h>
 #include <wtf/Markable.h>
 #include <wtf/MonotonicTime.h>
@@ -128,7 +130,7 @@ public:
 protected:
     EventLoop();
     void scheduleToRunIfNeeded();
-    void run();
+    void run(std::optional<ApproximateTime> deadline = std::nullopt);
     void clearAllTasks();
 
     // FIXME: Account for fully-activeness of each document.
