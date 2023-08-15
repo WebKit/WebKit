@@ -99,9 +99,7 @@
                                     </ul>
                                 </li>
                                 <li>
-                                    <label>System frame rate: <input type="number" id="system-frame-rate" value="60"> FPS</label><br>
-                                    <label>Target frame rate: <input type="number" id="frame-rate" value="50"> FPS</label><br>
-                                    (Guide: should be about 5/6th of the system frame rate)
+                                    <label>Target frame rate: <input type="number" id="frame-rate" value="50"> FPS</label>
                                 </li>
                                 <li>
                                     <h3>Time measurement method:</h3>
@@ -115,14 +113,7 @@
                         </form>
                     </div>
                 </div>
-                <p>
-                    For accurate results, please take the browser window full screen, or rotate the device to landscape orientation. Also,
-                    ensure that the target frame rate matches your system frame rate. Results cannot be compared between devices that
-                    use different frame rates.
-                </p>
-                <p id="frame-rate-detection">
-                    Attempting to detect system frame rate: <span>0</span> FPS (in progress).
-                </p>
+                <p>For accurate results, please take the browser window full screen, or rotate the device to landscape orientation.</p>
                 <div class="start-benchmark">
                     <p class="hidden">Please rotate the device to orientation before starting.</p>
                     <button id="run-benchmark" onclick="benchmarkController.startBenchmark()">Run benchmark</button>

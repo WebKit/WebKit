@@ -553,8 +553,6 @@ Utilities.extendObject(window.benchmarkController, {
         suitesManager.updateUIFromLocalStorage();
         suitesManager.updateEditsElementsState();
 
-        benchmarkController.detectSystemFrameRate();
-
         var dropTarget = document.getElementById("drop-target");
         function stopEvent(e) {
             e.stopPropagation();
@@ -666,9 +664,8 @@ Utilities.extendObject(window.benchmarkController, {
         var score = dashboard.score;
         var confidence = ((dashboard.scoreLowerBound / score - 1) * 100).toFixed(2) +
             "% / +" + ((dashboard.scoreUpperBound / score - 1) * 100).toFixed(2) + "%";
-        var fps = dashboard._systemFrameRate;
         sectionsManager.setSectionVersion("results", dashboard.version);
-        sectionsManager.setSectionScore("results", score.toFixed(2), confidence, fps);
+        sectionsManager.setSectionScore("results", score.toFixed(2), confidence);
         sectionsManager.populateTable("results-header", Headers.testName, dashboard);
         sectionsManager.populateTable("results-score", Headers.score, dashboard);
         sectionsManager.populateTable("results-data", Headers.details, dashboard);
@@ -682,47 +679,5 @@ Utilities.extendObject(window.benchmarkController, {
         sectionsManager.setSectionHeader("test-graph", testName);
         sectionsManager.showSection("test-graph", true);
         this.updateGraphData(testResult, testData, benchmarkRunnerClient.results.options);
-    },
-    detectSystemFrameRate: function()
-    {
-        let last = 0;
-        let average = 0;
-        let count = 0;
-
-        const finish = function()
-        {
-            const commonFrameRates = [15, 30, 45, 60, 90, 120, 144];
-            const distanceFromFrameRates = commonFrameRates.map(rate => {
-                return Math.abs(Math.round(rate - average));
-            });
-            let shortestDistance = Number.MAX_VALUE;
-            let targetFrameRate = undefined;
-            for (let i = 0; i < commonFrameRates.length; i++) {
-                if (distanceFromFrameRates[i] < shortestDistance) {
-                    targetFrameRate = commonFrameRates[i];
-                    shortestDistance = distanceFromFrameRates[i];
-                }
-            }
-            targetFrameRate = targetFrameRate || 60;
-            document.getElementById("frame-rate-detection").textContent = `Detected system frame rate as ${targetFrameRate} FPS`;
-            document.getElementById("system-frame-rate").value = targetFrameRate;
-            document.getElementById("frame-rate").value = Math.round(targetFrameRate * 5 / 6);
-        }
-
-        const tick = function(timestamp)
-        {
-            average -= average / 30;
-            average += 1000. / (timestamp - last) / 30;
-            document.querySelector("#frame-rate-detection span").textContent = Math.round(average);
-            last = timestamp;
-            count++;
-            if (count < 300)
-                requestAnimationFrame(tick);
-            else
-                finish();
-        }
-
-        requestAnimationFrame(tick);
     }
-
 });

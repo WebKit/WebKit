@@ -145,7 +145,6 @@ section .body {
 section .body p {
     margin: 1em 0;
     line-height: 1.5em;
-    max-width: 60vw;
 
     -webkit-user-select: text;
     cursor: text;
