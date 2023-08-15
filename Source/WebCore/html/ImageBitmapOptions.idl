@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum ImageOrientation { "none", "flipY" };
+enum ImageOrientation { "from-image", "flipY", "none" };
 enum PremultiplyAlpha { "none", "premultiply", "default" };
 enum ColorSpaceConversion { "none", "default" };
 enum ResizeQuality { "pixelated", "low", "medium", "high" };
 
 dictionary ImageBitmapOptions {
-    [ImplementedAs=orientation] ImageOrientation imageOrientation = "none";
+    [ImplementedAs=orientation] ImageOrientation imageOrientation = "from-image";
     PremultiplyAlpha premultiplyAlpha = "default";
     ColorSpaceConversion colorSpaceConversion = "default";
     [EnforceRange] unsigned long resizeWidth;
