@@ -238,7 +238,7 @@ if (ENABLE_SPEECH_SYNTHESIS)
 endif ()
 
 if (USE_JPEGXL)
-    find_package(JPEGXL)
+    find_package(JPEGXL 0.7.0)
     if (NOT JPEGXL_FOUND)
         message(FATAL_ERROR "libjxl is required for USE_JPEGXL")
     endif ()
