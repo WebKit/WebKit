@@ -1091,13 +1091,6 @@ static bool isStorageAccessQuirkDomainAndElement(const URL& url, const Element& 
         || element.classNames().contains("mectrl_headertext"_s)
         || element.classNames().contains("mectrl_header"_s));
     }
-    // Skype case.
-    // FIXME(220105): Remove this quirk once Skype under outlook.live.com completes their login flow redesign.
-    if (url.host() == "outlook.live.com"_s) {
-        return element.hasClass()
-        && (element.classNames().contains("_3ioEp2RGR5vb0gqRDsaFPa"_s)
-        || element.classNames().contains("_2Am2jvTaBz17UJ8XnfxFOy"_s));
-    }
     // Sony Network Entertainment login case.
     // FIXME(218760): Remove this quirk once playstation.com completes their login flow redesign.
     if (url.host() == "www.playstation.com"_s || url.host() == "my.playstation.com"_s) {
