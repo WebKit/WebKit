@@ -4427,6 +4427,11 @@ void Internals::setSelectionWithoutValidation(Ref<Node> baseNode, unsigned baseO
         VisiblePosition { makeDeprecatedLegacyPosition(extentNode.get(), extentOffset) });
 }
 
+void Internals::setSelectionFromNone()
+{
+    contextDocument()->frame()->selection().setSelectionFromNone();
+}
+
 ExceptionOr<bool> Internals::isPluginUnavailabilityIndicatorObscured(Element& element)
 {
     if (!is<HTMLPlugInElement>(element))
