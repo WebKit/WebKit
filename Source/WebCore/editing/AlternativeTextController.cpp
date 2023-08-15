@@ -269,8 +269,10 @@ void AlternativeTextController::timerFired()
         m_originalText = plainText(*m_rangeWithAlternative);
         auto boundingBox = rootViewRectForRange(*m_rangeWithAlternative);
         if (!boundingBox.isEmpty()) {
-            if (AlternativeTextClient* client = alternativeTextClient())
+            if (AlternativeTextClient* client = alternativeTextClient()) {
+                removeMarkers(*m_rangeWithAlternative, { DocumentMarker::CorrectionIndicator });
                 client->showCorrectionAlternative(m_type, boundingBox, m_originalText, replacementString, { });
+            }
         }
     }
         break;
