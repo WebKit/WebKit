@@ -364,7 +364,10 @@ RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails&)
 
 #if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
 @interface WKWebView (FullScreenAPI_Internal)
--(WKFullScreenWindowController *)fullScreenWindowController;
+- (WKFullScreenWindowController *)fullScreenWindowController;
+#if PLATFORM(VISION)
+- (UIMenu *)fullScreenWindowSceneDimmingAction;
+#endif
 @end
 #endif
 

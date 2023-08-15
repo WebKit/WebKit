@@ -842,7 +842,6 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     [_fullscreenViewController setDelegate:self];
     _fullscreenViewController.get().view.frame = _rootViewController.get().view.bounds;
 #if PLATFORM(VISION)
-    [_fullscreenViewController setSceneDimmed:[self _prefersSceneDimming]];
     [_fullscreenViewController hideCustomControls:manager->isVideoElement()];
 #endif
     [self _updateLocationInfo];
@@ -1652,7 +1651,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     return YES;
 }
 
-- (BOOL)_prefersSceneDimming
+- (BOOL)prefersSceneDimming
 {
     if (![self _sceneDimmingEnabled])
         return NO;
@@ -1718,9 +1717,10 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 
     inWindow.transform3D = CATransform3DTranslate(originalState.transform3D, 0, 0, kIncomingWindowZOffset);
 
-    if ([self _prefersSceneDimming]) {
+    MRUIStage *stage = UIApplication.sharedApplication.mrui_activeStage;
+    if (self.prefersSceneDimming
+        || (!enter && stage.preferredDarkness != originalState.preferredDarkness)) {
         [UIView animateWithDuration:kDarknessAnimationDuration animations:^{
-            MRUIStage *stage = UIApplication.sharedApplication.mrui_activeStage;
             stage.preferredDarkness = enter ? MRUIDarknessPreferenceVeryDark : originalState.preferredDarkness;
         } completion:nil];
     }
@@ -1787,15 +1787,16 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     } completion:completion.get()];
 }
 
-- (void)toggleDimming
+- (void)toggleSceneDimming
 {
-    BOOL updatedPrefersSceneDimming = ![self _prefersSceneDimming];
+    BOOL updatedPrefersSceneDimming = !self.prefersSceneDimming;
 
     [[NSUserDefaults standardUserDefaults] setBool:updatedPrefersSceneDimming forKey:kPrefersFullScreenDimmingKey];
-    [_fullscreenViewController setSceneDimmed:updatedPrefersSceneDimming];
 
-    MRUIStage *stage = UIApplication.sharedApplication.mrui_activeStage;
-    stage.preferredDarkness = updatedPrefersSceneDimming ? MRUIDarknessPreferenceVeryDark : [_parentWindowState preferredDarkness];
+    if (self.isFullScreen) {
+        MRUIStage *stage = UIApplication.sharedApplication.mrui_activeStage;
+        stage.preferredDarkness = updatedPrefersSceneDimming ? MRUIDarknessPreferenceVeryDark : [_parentWindowState preferredDarkness];
+    }
 }
 
 #endif // PLATFORM(VISION)

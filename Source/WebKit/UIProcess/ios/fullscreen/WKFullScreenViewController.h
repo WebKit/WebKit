@@ -35,9 +35,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)requestExitFullScreen;
 - (void)showUI;
 - (void)hideUI;
-#if PLATFORM(VISION)
-- (void)toggleDimming;
-#endif
 @end
 
 @interface WKFullScreenViewController : UIViewController
@@ -60,7 +57,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setSupportedOrientations:(UIInterfaceOrientationMask)supportedOrientations;
 - (void)resetSupportedOrientations;
 #if PLATFORM(VISION)
-- (void)setSceneDimmed:(BOOL)dimmed;
 - (void)hideCustomControls:(BOOL)hidden;
 #endif
 @end

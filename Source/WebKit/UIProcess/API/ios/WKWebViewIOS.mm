@@ -4219,6 +4219,34 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return _fullScreenWindowController.get();
 }
 
+#if PLATFORM(VISION)
+
+- (UIMenu *)fullScreenWindowSceneDimmingAction
+{
+    UIDeferredMenuElement *deferredMenu = [UIDeferredMenuElement elementWithUncachedProvider:[weakSelf = WeakObjCPtr<WKWebView>(self)] (void (^completion)(NSArray<UIMenuElement *> *)) {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf) {
+            completion(@[ ]);
+            return;
+        }
+
+        UIAction *dimmingAction = [UIAction actionWithTitle:WEB_UI_STRING("Auto Dimming", "Menu item label to toggle automatic scene dimming in fullscreen") image:[UIImage _systemImageNamed:@"circle.lefthalf.dotted.inset.half.filled"] identifier:nil handler:[weakSelf] (UIAction *) {
+            auto strongSelf = weakSelf.get();
+            if (!strongSelf)
+                return;
+
+            [strongSelf->_fullScreenWindowController toggleSceneDimming];
+        }];
+        dimmingAction.state = [strongSelf->_fullScreenWindowController prefersSceneDimming] ? UIMenuElementStateOn : UIMenuElementStateOff;
+
+        completion(@[ dimmingAction ]);
+    }];
+
+    return [UIMenu menuWithTitle:@"" image:nil identifier:nil options:UIMenuOptionsDisplayInline children:@[ deferredMenu ]];
+}
+
+#endif // PLATFORM(VISION)
+
 @end
 
 #endif // ENABLE(FULLSCREEN_API)

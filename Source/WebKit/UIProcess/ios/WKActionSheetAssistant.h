@@ -93,6 +93,7 @@ typedef NS_ENUM(NSInteger, _WKElementActionType);
 - (BOOL)_allowAnimationControls;
 - (void)_actionSheetAssistant:(WKActionSheetAssistant *)assistant performAction:(WebKit::SheetAction)action onElements:(Vector<WebCore::ElementContext>&&)elements;
 #endif
+- (NSArray<UIMenuElement *> *)additionalMediaControlsContextMenuItemsForActionSheetAssistant:(WKActionSheetAssistant *)assistant;
 @end
 
 #if USE(UICONTEXTMENU)
