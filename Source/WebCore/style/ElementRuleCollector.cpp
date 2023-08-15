@@ -96,7 +96,7 @@ ElementRuleCollector::ElementRuleCollector(const Element& element, const ScopeRu
     , m_userStyle(ruleSets.userStyle())
     , m_userAgentMediaQueryStyle(ruleSets.userAgentMediaQueryStyle())
     , m_selectorMatchingState(selectorMatchingState)
-    , m_result(makeUnique<MatchResult>())
+    , m_result(makeUnique<MatchResult>(element.isLink()))
 {
     ASSERT(!m_selectorMatchingState || m_selectorMatchingState->selectorFilter.parentStackIsConsistent(element.parentNode()));
 }
@@ -105,7 +105,7 @@ ElementRuleCollector::ElementRuleCollector(const Element& element, const RuleSet
     : m_element(element)
     , m_authorStyle(authorStyle)
     , m_selectorMatchingState(selectorMatchingState)
-    , m_result(makeUnique<MatchResult>())
+    , m_result(makeUnique<MatchResult>(element.isLink()))
 {
     ASSERT(!m_selectorMatchingState || m_selectorMatchingState->selectorFilter.parentStackIsConsistent(element.parentNode()));
 }

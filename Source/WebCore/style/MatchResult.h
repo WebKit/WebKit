@@ -46,7 +46,11 @@ struct MatchedProperties {
 
 struct MatchResult {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    MatchResult(bool isForLink = false)
+        : isForLink(isForLink)
+    { }
 
+    bool isForLink { false };
     bool isCacheable { true };
     Vector<MatchedProperties> userAgentDeclarations;
     Vector<MatchedProperties> userDeclarations;
@@ -57,7 +61,8 @@ struct MatchResult {
 
 inline bool operator==(const MatchResult& a, const MatchResult& b)
 {
-    return a.isCacheable == b.isCacheable
+    return a.isForLink == b.isForLink
+        && a.isCacheable == b.isCacheable
         && a.userAgentDeclarations == b.userAgentDeclarations
         && a.userDeclarations == b.userDeclarations
         && a.authorDeclarations == b.authorDeclarations;
@@ -87,7 +92,7 @@ inline void add(Hasher& hasher, const MatchedProperties& matchedProperties)
 
 inline void add(Hasher& hasher, const MatchResult& matchResult)
 {
-    add(hasher, matchResult.userAgentDeclarations, matchResult.userDeclarations, matchResult.authorDeclarations);
+    add(hasher, matchResult.isForLink, matchResult.userAgentDeclarations, matchResult.userDeclarations, matchResult.authorDeclarations);
 }
 
 }

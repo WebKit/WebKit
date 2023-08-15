@@ -32,7 +32,7 @@
 namespace WebCore {
 
 class Attr;
-class MutableStyleProperties;
+class ImmutableStyleProperties;
 class ShareableElementData;
 class StyleProperties;
 class UniqueElementData;
@@ -93,7 +93,7 @@ public:
     void setIdForStyleResolution(const AtomString& newId) const { m_idForStyleResolution = newId; }
 
     const StyleProperties* inlineStyle() const { return m_inlineStyle.get(); }
-    const MutableStyleProperties* presentationalHintStyle() const;
+    const ImmutableStyleProperties* presentationalHintStyle() const;
 
     unsigned length() const;
     bool isEmpty() const { return !length(); }
@@ -221,7 +221,7 @@ public:
 
     static ptrdiff_t attributeVectorMemoryOffset() { return OBJECT_OFFSETOF(UniqueElementData, m_attributeVector); }
 
-    mutable RefPtr<MutableStyleProperties> m_presentationalHintStyle;
+    mutable RefPtr<ImmutableStyleProperties> m_presentationalHintStyle;
     typedef Vector<Attribute, 4> AttributeVector;
     AttributeVector m_attributeVector;
 };
@@ -247,7 +247,7 @@ inline const Attribute* ElementData::attributeBase() const
     return downcast<ShareableElementData>(*this).m_attributeArray;
 }
 
-inline const MutableStyleProperties* ElementData::presentationalHintStyle() const
+inline const ImmutableStyleProperties* ElementData::presentationalHintStyle() const
 {
     if (!is<UniqueElementData>(*this))
         return nullptr;
