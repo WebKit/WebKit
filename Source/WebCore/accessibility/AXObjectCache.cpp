@@ -504,6 +504,9 @@ AccessibilityObject* AXObjectCache::focusedObjectForNode(Node* focusedNode)
         if (auto* descendant = focus->activeDescendant())
             return descendant;
     }
+
+    if (focus->accessibilityIsIgnored())
+        return focus->parentObjectUnignored();
     return focus;
 }
 
