@@ -443,12 +443,6 @@ void AcceleratedBackingStoreDMABuf::frame()
     if (m_committedSource) {
         m_committedSource->frame();
         gtk_widget_queue_draw(m_webPage.viewWidget());
-    } else {
-        if (m_isSoftwareRast)
-            std::swap(m_surface.frontBitmap, m_surface.displayBitmap);
-        else
-            std::swap(m_surface.frontFD, m_surface.displayFD);
-        frameDone();
     }
 }
 
@@ -479,7 +473,7 @@ void AcceleratedBackingStoreDMABuf::realize()
         return;
 
     m_committedSource = createSource();
-    if (m_committedSource->prepareForRendering())
+    if (m_frameCompletionHandler || m_committedSource->prepareForRendering())
         gtk_widget_queue_draw(m_webPage.viewWidget());
 }
 
@@ -533,7 +527,10 @@ void AcceleratedBackingStoreDMABuf::update(const LayerTreeContext& context)
         return;
 
     if (m_surface.id) {
-        frameDone();
+        if (m_frameCompletionHandler) {
+            willDisplayFrame();
+            frameDone();
+        }
         m_webPage.process().removeMessageReceiver(Messages::AcceleratedBackingStoreDMABuf::messageReceiverName(), m_surface.id);
     }
 
@@ -545,14 +542,13 @@ void AcceleratedBackingStoreDMABuf::update(const LayerTreeContext& context)
 #if USE(GTK4)
 void AcceleratedBackingStoreDMABuf::snapshot(GtkSnapshot* gtkSnapshot)
 {
-    if (m_frameCompletionHandler)
-        willDisplayFrame();
-
     if (!m_committedSource)
         return;
 
-    if (m_frameCompletionHandler)
+    if (m_frameCompletionHandler) {
+        willDisplayFrame();
         m_committedSource->prepareForRendering();
+    }
 
     m_committedSource->snapshot(gtkSnapshot);
     frameDone();
@@ -560,14 +556,13 @@ void AcceleratedBackingStoreDMABuf::snapshot(GtkSnapshot* gtkSnapshot)
 #else
 bool AcceleratedBackingStoreDMABuf::paint(cairo_t* cr, const WebCore::IntRect& clipRect)
 {
-    if (m_frameCompletionHandler)
-        willDisplayFrame();
-
     if (!m_committedSource)
         return false;
 
-    if (m_frameCompletionHandler)
+    if (m_frameCompletionHandler) {
+        willDisplayFrame();
         m_committedSource->prepareForRendering();
+    }
 
     m_committedSource->paint(m_webPage.viewWidget(), cr, clipRect);
     frameDone();
