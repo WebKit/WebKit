@@ -153,7 +153,6 @@ bool Quirks::needsPerDocumentAutoplayBehavior() const
 #endif
 }
 
-// bing.com https://bugs.webkit.org/show_bug.cgi?id=213118
 // zoom.com https://bugs.webkit.org/show_bug.cgi?id=223180
 bool Quirks::shouldAutoplayWebAudioForArbitraryUserGesture() const
 {
@@ -161,7 +160,7 @@ bool Quirks::shouldAutoplayWebAudioForArbitraryUserGesture() const
         return false;
 
     auto host = m_document->topDocument().url().host();
-    return equalLettersIgnoringASCIICase(host, "www.bing.com"_s) || host.endsWithIgnoringASCIICase(".zoom.us"_s);
+    return host.endsWithIgnoringASCIICase(".zoom.us"_s);
 }
 
 // hulu.com starz.com https://bugs.webkit.org/show_bug.cgi?id=190051
