@@ -147,14 +147,22 @@ AXTextMarker::operator CharacterOffset() const
     if (isIgnored() || isNull())
         return { };
 
-    setNodeIfNeeded();
+    WeakPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(m_data.axTreeID());
+    if (!cache)
+        return { };
+
+    if (m_data.node) {
+        // Make sure that this node is still in cache->m_textMarkerNodes. Since this method can be called as a result of a dispatch from the AX thread, the Node may have gone away in a previous main loop cycle.
+        if (!cache->isNodeInUse(m_data.node))
+            return { };
+    } else
+        setNodeIfNeeded();
+
     CharacterOffset result(m_data.node, m_data.characterStart, m_data.characterOffset);
     // When we are at a line wrap and the VisiblePosition is upstream, it means the text marker is at the end of the previous line.
     // We use the previous CharacterOffset so that it will match the Range.
-    if (m_data.affinity == Affinity::Upstream) {
-        if (WeakPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(m_data.axTreeID()))
-            return cache->previousCharacterOffset(result, false);
-    }
+    if (m_data.affinity == Affinity::Upstream)
+        return cache->previousCharacterOffset(result, false);
     return result;
 }
 
