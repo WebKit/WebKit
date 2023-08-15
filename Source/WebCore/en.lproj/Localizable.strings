@@ -241,6 +241,9 @@
 /* Menu item label for automatic track selection behavior. */
 "Auto (Recommended) (text track)" = "Auto (Recommended)";
 
+/* Menu item label to toggle automatic scene dimming in fullscreen (visionOS only). */
+"Auto Dimming" = "Auto Dimming";
+
 /* Automatically Resize context menu item */
 "Automatically Resize" = "Automatically Resize";
 

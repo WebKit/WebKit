@@ -2756,11 +2756,11 @@ FullscreenSceneDimmingEnabled:
   condition: PLATFORM(VISION)
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 GStreamerEnabled:
   type: bool

@@ -92,11 +92,20 @@ private:
 
 #pragma mark - _WKExtrinsicButton
 
+@class _WKExtrinsicButton;
+
+@protocol _WKExtrinsicButtonDelegate <NSObject>
+- (void)_wkExtrinsicButtonWillDisplayMenu:(_WKExtrinsicButton *)button;
+- (void)_wkExtrinsicButtonWillDismissMenu:(_WKExtrinsicButton *)button;
+@end
+
 @interface _WKExtrinsicButton : UIButton
-@property (assign, nonatomic) CGSize extrinsicContentSize;
+@property (nonatomic, assign) CGSize extrinsicContentSize;
+@property (nonatomic, weak) id<_WKExtrinsicButtonDelegate> delegate;
 @end
 
 @implementation _WKExtrinsicButton
+
 - (void)setExtrinsicContentSize:(CGSize)size
 {
     _extrinsicContentSize = size;
@@ -107,6 +116,19 @@ private:
 {
     return _extrinsicContentSize;
 }
+
+- (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willDisplayMenuForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id<UIContextMenuInteractionAnimating>)animator
+{
+    [super contextMenuInteraction:interaction willDisplayMenuForConfiguration:configuration animator:animator];
+    [_delegate _wkExtrinsicButtonWillDisplayMenu:self];
+}
+
+- (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willEndForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id<UIContextMenuInteractionAnimating>)animator
+{
+    [super contextMenuInteraction:interaction willEndForConfiguration:configuration animator:animator];
+    [_delegate _wkExtrinsicButtonWillDismissMenu:self];
+}
+
 @end
 
 #pragma mark - _WKInsetLabel
@@ -132,7 +154,7 @@ private:
 
 #pragma mark - WKFullScreenViewController
 
-@interface WKFullScreenViewController () <UIGestureRecognizerDelegate, UIToolbarDelegate>
+@interface WKFullScreenViewController () <UIGestureRecognizerDelegate, UIToolbarDelegate, _WKExtrinsicButtonDelegate>
 @property (weak, nonatomic) WKWebView *_webView; // Cannot be retained, see <rdar://problem/14884666>.
 @property (readonly, nonatomic) WebKit::WebFullScreenManagerProxy* _manager;
 @property (readonly, nonatomic) WebCore::FloatBoxExtent _effectiveFullscreenInsets;
@@ -158,8 +180,9 @@ private:
     WKFullScreenViewControllerPlaybackSessionModelClient _playbackClient;
     CGFloat _nonZeroStatusBarHeight;
     std::optional<UIInterfaceOrientationMask> _supportedOrientations;
+    BOOL _isShowingMenu;
 #if PLATFORM(VISION)
-    RetainPtr<_WKExtrinsicButton> _dimmingButton;
+    RetainPtr<_WKExtrinsicButton> _moreActionsButton;
     BOOL m_shouldHideCustomControls;
 #endif
 }
@@ -184,6 +207,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     _playbackClient.setParent(self);
     _valid = YES;
+    _isShowingMenu = NO;
 #if PLATFORM(VISION)
     m_shouldHideCustomControls = NO;
 #endif
@@ -270,6 +294,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     ASSERT(_valid);
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideUI) object:nil];
+
+    if (_isShowingMenu)
+        return;
+
     [UIView animateWithDuration:showHideAnimationDuration animations:^{
         [[self delegate] hideUI];
         if (_topConstraint)
@@ -342,7 +370,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     bool isDimmingEnabled = false;
     if (auto page = [self._webView _page])
         isDimmingEnabled = page->preferences().fullscreenSceneDimmingEnabled();
-    [_dimmingButton setHidden:m_shouldHideCustomControls || !isDimmingEnabled];
+    [_moreActionsButton setHidden:m_shouldHideCustomControls || !isDimmingEnabled];
 
     isPiPEnabled = !m_shouldHideCustomControls && isPiPEnabled;
 #endif
@@ -412,23 +440,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _pictureInPictureActive = active;
     [_pipButton setSelected:active];
 }
-
-#if PLATFORM(VISION)
-
-- (void)setSceneDimmed:(BOOL)dimmed
-{
-    ASSERT(_valid);
-
-    NSString *symbolName = nil;
-    if (dimmed)
-        symbolName = @"light.max";
-    else
-        symbolName = @"light.min";
-
-    [_dimmingButton setImage:[[UIImage systemImageNamed:symbolName] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
-}
-
-#endif // PLATFORM(VISION)
 
 - (void)setAnimating:(BOOL)animating
 {
@@ -506,16 +517,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [_cancelButton setConfiguration:cancelButtonConfiguration];
 
 #if PLATFORM(VISION)
-        _dimmingButton = [self _createButtonWithExtrinsicContentSize:buttonSize];
-        [_dimmingButton addTarget:self action:@selector(_toggleDimmingAction:) forControlEvents:UIControlEventTouchUpInside];
-        [_dimmingButton setConfiguration:cancelButtonConfiguration];
+        _moreActionsButton = [self _createButtonWithExtrinsicContentSize:buttonSize];
+        [_moreActionsButton setConfiguration:cancelButtonConfiguration];
+        [_moreActionsButton setMenu:self._webView.fullScreenWindowSceneDimmingAction];
+        [_moreActionsButton setShowsMenuAsPrimaryAction:YES];
+        [_moreActionsButton setImage:[[UIImage systemImageNamed:@"ellipsis"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
 #endif
 
         _stackView = adoptNS([[UIStackView alloc] init]);
         [_stackView addArrangedSubview:_cancelButton.get()];
         [_stackView addArrangedSubview:_pipButton.get()];
 #if PLATFORM(VISION)
-        [_stackView addArrangedSubview:_dimmingButton.get()];
+        [_stackView addArrangedSubview:_moreActionsButton.get()];
 #endif
         [_stackView setSpacing:24.0];
     } else {
@@ -710,16 +723,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     playbackSessionModel->togglePictureInPicture();
 }
 
-#if PLATFORM(VISION)
-
-- (void)_toggleDimmingAction:(id)sender
-{
-    ASSERT(_valid);
-    [[self delegate] toggleDimming];
-}
-
-#endif // PLATFORM(VISION)
-
 - (void)_touchDetected:(id)sender
 {
     ASSERT(_valid);
@@ -788,6 +791,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (_WKExtrinsicButton *)_createButtonWithExtrinsicContentSize:(CGSize)size
 {
     _WKExtrinsicButton *button = [_WKExtrinsicButton buttonWithType:UIButtonTypeSystem];
+    [button setDelegate:self];
     [button setTranslatesAutoresizingMaskIntoConstraints:NO];
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [button setAdjustsImageWhenHighlighted:NO];
@@ -795,6 +799,20 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [button setExtrinsicContentSize:size];
     [button setTintColor:[UIColor whiteColor]];
     return button;
+}
+
+- (void)_wkExtrinsicButtonWillDisplayMenu:(_WKExtrinsicButton *)button
+{
+    _isShowingMenu = YES;
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideUI) object:nil];
+}
+
+- (void)_wkExtrinsicButtonWillDismissMenu:(_WKExtrinsicButton *)button
+{
+    _isShowingMenu = NO;
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideUI) object:nil];
+    if (_playing)
+        [self performSelector:@selector(hideUI) withObject:nil afterDelay:autoHideDelay];
 }
 
 @end
