@@ -35,14 +35,9 @@
 
 namespace WebCore {
     
-RefPtr<WebGLVertexArrayObject> WebGLVertexArrayObject::create(WebGLRenderingContextBase& context, Type type)
+Ref<WebGLVertexArrayObject> WebGLVertexArrayObject::create(WebGLRenderingContextBase& context, Type type)
 {
-    auto glObject = context.graphicsContextGL()->createVertexArray();
-    if (!glObject)
-        return nullptr;
-    auto instance = adoptRef(*new WebGLVertexArrayObject(context, type));
-    instance->setObject(glObject);
-    return instance;
+    return adoptRef(*new WebGLVertexArrayObject(context, type));
 }
 
 WebGLVertexArrayObject::~WebGLVertexArrayObject()
@@ -56,6 +51,7 @@ WebGLVertexArrayObject::~WebGLVertexArrayObject()
 WebGLVertexArrayObject::WebGLVertexArrayObject(WebGLRenderingContextBase& context, Type type)
     : WebGLVertexArrayObjectBase(context, type)
 {
+    setObject(this->context()->graphicsContextGL()->createVertexArray());
 }
 
 void WebGLVertexArrayObject::deleteObjectImpl(const AbstractLocker& locker, GraphicsContextGL* context3d, PlatformGLObject object)

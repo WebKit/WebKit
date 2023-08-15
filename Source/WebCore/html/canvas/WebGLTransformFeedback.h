@@ -49,7 +49,7 @@ class WebGLTransformFeedback final : public WebGLSharedObject {
 public:
     virtual ~WebGLTransformFeedback();
 
-    static RefPtr<WebGLTransformFeedback> create(WebGL2RenderingContext&);
+    static Ref<WebGLTransformFeedback> create(WebGL2RenderingContext&);
     
     bool isActive() const { return m_active; }
     bool isPaused() const { return m_paused; }
