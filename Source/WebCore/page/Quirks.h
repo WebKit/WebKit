@@ -159,10 +159,6 @@ public:
     bool shouldDisableFetchMetadata() const;
     bool shouldDisablePushStateFilePathRestrictions() const;
 
-#if PLATFORM(COCOA)
-    bool shouldAdvertiseSupportForHLSSubtitleTypes() const;
-#endif
-
     bool shouldDisablePopoverAttributeQuirk() const;
 
     void setNeedsConfigurableIndexedPropertiesQuirk() { m_needsConfigurableIndexedPropertiesQuirk = true; }
@@ -234,9 +230,6 @@ private:
     mutable std::optional<bool> m_shouldNavigatorPluginsBeEmpty;
 #endif
     mutable std::optional<bool> m_shouldDisableLazyIframeLoadingQuirk;
-#if PLATFORM(COCOA)
-    mutable std::optional<bool> m_shouldAdvertiseSupportForHLSSubtitleTypes;
-#endif
     bool m_needsConfigurableIndexedPropertiesQuirk { false };
     bool m_needsToCopyUserSelectNoneQuirk { false };
 };
