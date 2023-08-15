@@ -228,34 +228,33 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const BoxGeo
 
     // Find the top most position where the float box fits.
     ASSERT(!isEmpty());
+    auto clearPosition = [&]() -> std::optional<LayoutUnit> {
+        if (!layoutBox.hasFloatClear())
+            return { };
+        // The vertical position candidate needs to clear the existing floats in this context.
+        switch (clearInFloatingState(layoutBox)) {
+        case Clear::Left:
+            return leftBottom();
+        case Clear::Right:
+            return rightBottom();
+        case Clear::Both:
+            return bottom();
+        default:
+            ASSERT_NOT_REACHED();
+        }
+        return { };
+    };
+
     auto absoluteCoordinates = this->absoluteCoordinates(layoutBox, borderBoxTopLeft);
     auto absoluteTopLeft = absoluteCoordinates.topLeft;
     auto verticalPositionCandidate = absoluteTopLeft.y();
+    // Incoming float cannot be placed higher than existing floats (margin box of the last float).
+    // Take the static position (where the box would go if it wasn't floating) and adjust it with the last float.
+    auto lastFloatAbsoluteTop = floatingState().floats().last().absoluteRectWithMargin().top();
+    auto lastOrClearedFloatPosition = std::max(clearPosition().value_or(lastFloatAbsoluteTop), lastFloatAbsoluteTop);
+    if (verticalPositionCandidate - boxGeometry.marginBefore() < lastOrClearedFloatPosition)
+        verticalPositionCandidate = lastOrClearedFloatPosition + boxGeometry.marginBefore();
 
-    if (layoutBox.hasFloatClear()) {
-        // The vertical position candidate needs to clear the existing floats in this context.
-        auto floatBottom = [&]() -> std::optional<LayoutUnit> {
-            switch (clearInFloatingState(layoutBox)) {
-            case Clear::Left:
-                return leftBottom();
-            case Clear::Right:
-                return rightBottom();
-            case Clear::Both:
-                return bottom();
-            default:
-                ASSERT_NOT_REACHED();
-            }
-            return { };
-        };
-        if (auto bottomWithClear = floatBottom())
-            verticalPositionCandidate = std::max(borderBoxTopLeft.y(), *bottomWithClear) + boxGeometry.marginBefore();
-    } else {
-        // Incoming float cannot be placed higher than existing floats (margin box of the last float).
-        // Take the static position (where the box would go if it wasn't floating) and adjust it with the last float.
-        auto previousFloatAbsoluteTop = floatingState().floats().last().absoluteRectWithMargin().top();
-        if (verticalPositionCandidate - boxGeometry.marginBefore() < previousFloatAbsoluteTop)
-            verticalPositionCandidate = previousFloatAbsoluteTop + boxGeometry.marginBefore();
-    }
     absoluteTopLeft.setY(verticalPositionCandidate);
     auto margins = Edges { { boxGeometry.marginStart(), boxGeometry.marginEnd() }, { boxGeometry.marginBefore(), boxGeometry.marginAfter() } };
     auto floatBox = FloatAvoider { absoluteTopLeft, boxGeometry.borderBoxWidth(), margins, absoluteCoordinates.containingBlockContentBox, true, isFloatingCandidateLeftPositionedInFloatingState(layoutBox) };
@@ -357,8 +356,7 @@ std::optional<LayoutUnit> FloatingContext::bottom(Clear type) const
     // Cache the value if we end up calling it more frequently (and update it at append/remove).
     auto bottom = std::optional<LayoutUnit> { };
     for (auto& floatItem : floatingState().floats()) {
-        if ((type == Clear::Left && !floatItem.isLeftPositioned())
-            || (type == Clear::Right && floatItem.isLeftPositioned()))
+        if ((type == Clear::Left && !floatItem.isLeftPositioned()) || (type == Clear::Right && floatItem.isLeftPositioned()))
             continue;
         bottom = !bottom ? floatItem.absoluteRectWithMargin().bottom() : std::max(*bottom, floatItem.absoluteRectWithMargin().bottom());
     }
