@@ -6546,7 +6546,7 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFi
 imported/w3c/web-platform-tests/html/canvas/offscreen/text/fontVariantCaps-1.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/text/fontVariantCaps-3.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/text/fontVariantCaps-4.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/canvas/element/text/parent-style-relative-units.html [ Crash ]
+webkit.org/b/260220 imported/w3c/web-platform-tests/html/canvas/element/text/parent-style-relative-units.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.dropShadow.tentative.w.html [ Timeout ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.transform.infinity.worker.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.transform.infinity.html [ Skip ]
