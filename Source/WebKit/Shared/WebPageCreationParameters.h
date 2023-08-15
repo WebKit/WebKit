@@ -144,8 +144,6 @@ struct WebPageCreationParameters {
     // correctly handle enums inside Optionals when encoding and decoding. 
     std::optional<uint32_t> scrollbarOverlayStyle;
 
-    bool backgroundExtendsBeyondPage;
-
     LayerHostingMode layerHostingMode;
 
     bool hasResourceLoadClient { false };

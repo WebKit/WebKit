@@ -63,7 +63,6 @@ private:
     RefPtr<Nicosia::CompositionLayer> m_rootContentsLayer;
     RefPtr<Nicosia::CompositionLayer> m_counterScrollingLayer;
     RefPtr<Nicosia::CompositionLayer> m_insetClipLayer;
-    RefPtr<Nicosia::CompositionLayer> m_contentShadowLayer;
     RefPtr<Nicosia::CompositionLayer> m_headerLayer;
     RefPtr<Nicosia::CompositionLayer> m_footerLayer;
 };

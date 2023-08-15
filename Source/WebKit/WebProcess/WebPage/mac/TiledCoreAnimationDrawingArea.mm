@@ -660,33 +660,6 @@ PlatformCALayer* TiledCoreAnimationDrawingArea::layerForTransientZoom() const
     return scaledLayer->platformCALayer();
 }
 
-PlatformCALayer* TiledCoreAnimationDrawingArea::shadowLayerForTransientZoom() const
-{
-    auto* shadowLayer = dynamicDowncast<GraphicsLayerCA>(m_webPage.localMainFrameView()->graphicsLayerForTransientZoomShadow());
-    if (!shadowLayer)
-        return nullptr;
-
-    return shadowLayer->platformCALayer();
-}
-    
-static FloatPoint shadowLayerPositionForFrame(LocalFrameView& frameView, FloatPoint origin)
-{
-    // FIXME: correct for b-t documents?
-    FloatPoint position = frameView.positionForRootContentLayer();
-    return position + origin.expandedTo(FloatPoint());
-}
-
-static FloatRect shadowLayerBoundsForFrame(LocalFrameView& frameView, float transientScale)
-{
-    FloatRect clipLayerFrame(frameView.renderView()->documentRect());
-    FloatRect shadowLayerFrame = clipLayerFrame;
-    
-    shadowLayerFrame.scale(transientScale / frameView.frame().page()->pageScaleFactor());
-    shadowLayerFrame.intersect(clipLayerFrame);
-    
-    return shadowLayerFrame;
-}
-
 void TiledCoreAnimationDrawingArea::applyTransientZoomToLayers(double scale, FloatPoint origin)
 {
     // FIXME: Scrollbars should stay in-place and change height while zooming.
@@ -706,12 +679,6 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToLayers(double scale, Flo
     zoomLayer->setAnchorPoint(FloatPoint3D());
     zoomLayer->setPosition(FloatPoint3D());
     
-    if (PlatformCALayer* shadowLayer = shadowLayerForTransientZoom()) {
-        auto& frameView = *m_webPage.localMainFrameView();
-        shadowLayer->setBounds(shadowLayerBoundsForFrame(frameView, scale));
-        shadowLayer->setPosition(shadowLayerPositionForFrame(frameView, origin));
-    }
-
     m_transientZoomScale = scale;
     m_transientZoomOrigin = origin;
 }
@@ -768,40 +735,18 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
     auto renderViewAnimation = PlatformCAAnimationCocoa::create(renderViewAnimationCA.get());
     renderViewAnimation->setToValue(transform);
 
-    RetainPtr<CALayer> shadowCALayer;
-    if (PlatformCALayer* shadowLayer = shadowLayerForTransientZoom())
-        shadowCALayer = shadowLayer->platformLayer();
-
     RefPtr<PlatformCALayer> zoomLayer = layerForTransientZoom();
     RefPtr<WebPage> page = &m_webPage;
 
     [CATransaction begin];
-    [CATransaction setCompletionBlock:[zoomLayer, shadowCALayer, page, scale, origin] () {
+    [CATransaction setCompletionBlock:[zoomLayer, page, scale, origin] () {
         zoomLayer->removeAnimationForKey("transientZoomCommit"_s);
-        if (shadowCALayer)
-            [shadowCALayer removeAllAnimations];
 
         if (TiledCoreAnimationDrawingArea* drawingArea = static_cast<TiledCoreAnimationDrawingArea*>(page->drawingArea()))
             drawingArea->applyTransientZoomToPage(scale, origin);
     }];
 
     zoomLayer->addAnimationForKey("transientZoomCommit"_s, renderViewAnimation.get());
-
-    if (shadowCALayer) {
-        FloatRect shadowBounds = shadowLayerBoundsForFrame(frameView, scale);
-        RetainPtr<CGPathRef> shadowPath = adoptCF(CGPathCreateWithRect(shadowBounds, NULL));
-
-        RetainPtr<CABasicAnimation> shadowBoundsAnimation = DrawingArea::transientZoomSnapAnimationForKeyPath("bounds"_s);
-        [shadowBoundsAnimation setToValue:[NSValue valueWithRect:shadowBounds]];
-        RetainPtr<CABasicAnimation> shadowPositionAnimation = DrawingArea::transientZoomSnapAnimationForKeyPath("position"_s);
-        [shadowPositionAnimation setToValue:[NSValue valueWithPoint:shadowLayerPositionForFrame(frameView, constrainedOrigin)]];
-        RetainPtr<CABasicAnimation> shadowPathAnimation = DrawingArea::transientZoomSnapAnimationForKeyPath("shadowPath"_s);
-        [shadowPathAnimation setToValue:(__bridge id)shadowPath.get()];
-
-        [shadowCALayer addAnimation:shadowBoundsAnimation.get() forKey:@"transientZoomCommitShadowBounds"];
-        [shadowCALayer addAnimation:shadowPositionAnimation.get() forKey:@"transientZoomCommitShadowPosition"];
-        [shadowCALayer addAnimation:shadowPathAnimation.get() forKey:@"transientZoomCommitShadowPath"];
-    }
 
     [CATransaction commit];
 }
@@ -818,11 +763,6 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToPage(double scale, Float
     layerForTransientZoom()->setTransform(finalTransform);
     
     auto& frameView = *m_webPage.localMainFrameView();
-
-    if (PlatformCALayer* shadowLayer = shadowLayerForTransientZoom()) {
-        shadowLayer->setBounds(shadowLayerBoundsForFrame(frameView, 1));
-        shadowLayer->setPosition(shadowLayerPositionForFrame(frameView, FloatPoint()));
-    }
 
     FloatPoint unscrolledOrigin(origin);
     FloatRect unobscuredContentRect = frameView.unobscuredContentRectIncludingScrollbars();

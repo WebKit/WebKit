@@ -331,7 +331,6 @@ public:
     GraphicsLayer* layerForScrollCorner() const { return m_layerForScrollCorner.get(); }
 #if HAVE(RUBBER_BANDING)
     GraphicsLayer* layerForOverhangAreas() const { return m_layerForOverhangAreas.get(); }
-    GraphicsLayer* layerForContentShadow() const { return m_contentShadowLayer.get(); }
 
     GraphicsLayer* updateLayerForTopOverhangArea(bool wantsLayer);
     GraphicsLayer* updateLayerForBottomOverhangArea(bool wantsLayer);
@@ -544,7 +543,6 @@ private:
     bool requiresScrollCornerLayer() const;
 #if HAVE(RUBBER_BANDING)
     bool requiresOverhangAreasLayer() const;
-    bool requiresContentShadowLayer() const;
 #endif
 
     // True if the FrameView uses a ScrollingCoordinator.
@@ -610,7 +608,6 @@ private:
     RefPtr<GraphicsLayer> m_layerForScrollCorner;
 #if HAVE(RUBBER_BANDING)
     RefPtr<GraphicsLayer> m_layerForOverhangAreas;
-    RefPtr<GraphicsLayer> m_contentShadowLayer;
     RefPtr<GraphicsLayer> m_layerForTopOverhangArea;
     RefPtr<GraphicsLayer> m_layerForBottomOverhangArea;
     RefPtr<GraphicsLayer> m_layerForHeader;

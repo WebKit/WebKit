@@ -72,9 +72,6 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(const Scrolli
     if (hasChangedProperty(Property::InsetClipLayer))
         setInsetClipLayer(stateNode.insetClipLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
 
-    if (hasChangedProperty(Property::ContentShadowLayer))
-        setContentShadowLayer(stateNode.contentShadowLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
-
     if (hasChangedProperty(Property::HeaderLayer))
         setHeaderLayer(stateNode.headerLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
 
@@ -97,7 +94,6 @@ OptionSet<ScrollingStateNode::Property> ScrollingStateFrameScrollingNode::applic
         Property::RootContentsLayer,
         Property::CounterScrollingLayer,
         Property::InsetClipLayer,
-        Property::ContentShadowLayer,
         Property::HeaderHeight,
         Property::FooterHeight,
         Property::HeaderLayer,
@@ -239,15 +235,6 @@ void ScrollingStateFrameScrollingNode::setInsetClipLayer(const LayerRepresentati
     setPropertyChanged(Property::InsetClipLayer);
 }
 
-void ScrollingStateFrameScrollingNode::setContentShadowLayer(const LayerRepresentation& layerRepresentation)
-{
-    if (layerRepresentation == m_contentShadowLayer)
-        return;
-    
-    m_contentShadowLayer = layerRepresentation;
-    setPropertyChanged(Property::ContentShadowLayer);
-}
-
 void ScrollingStateFrameScrollingNode::setHeaderLayer(const LayerRepresentation& layerRepresentation)
 {
     if (layerRepresentation == m_headerLayer)
@@ -331,8 +318,6 @@ void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, OptionSet<
             ts.dumpProperty("counter scrolling layer ID", m_counterScrollingLayer.layerID());
         if (m_insetClipLayer.layerID())
             ts.dumpProperty("inset clip layer ID", m_insetClipLayer.layerID());
-        if (m_contentShadowLayer.layerID())
-            ts.dumpProperty("content shadow layer ID", m_contentShadowLayer.layerID());
         if (m_headerLayer.layerID())
             ts.dumpProperty("header layer ID", m_headerLayer.layerID());
         if (m_footerLayer.layerID())

@@ -173,9 +173,6 @@ public:
     WEBCORE_EXPORT GraphicsLayer* graphicsLayerForPlatformWidget(PlatformWidget);
     WEBCORE_EXPORT GraphicsLayer* graphicsLayerForPageScale();
     WEBCORE_EXPORT GraphicsLayer* graphicsLayerForScrolledContents();
-#if HAVE(RUBBER_BANDING)
-    WEBCORE_EXPORT GraphicsLayer* graphicsLayerForTransientZoomShadow();
-#endif
 
     WEBCORE_EXPORT TiledBacking* tiledBacking() const;
 

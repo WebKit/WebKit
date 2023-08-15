@@ -212,9 +212,6 @@ void ArgumentCoder<ScrollingStateFrameScrollingNode>::encode(Encoder& encoder, c
     if (node.hasChangedProperty(ScrollingStateNode::Property::InsetClipLayer))
         encoder << node.insetClipLayer().layerIDForEncoding();
 
-    if (node.hasChangedProperty(ScrollingStateNode::Property::ContentShadowLayer))
-        encoder << node.contentShadowLayer().layerIDForEncoding();
-
     if (node.hasChangedProperty(ScrollingStateNode::Property::RootContentsLayer))
         encoder << node.rootContentsLayer().layerIDForEncoding();
 }
@@ -378,13 +375,6 @@ bool ArgumentCoder<ScrollingStateFrameScrollingNode>::decode(Decoder& decoder, S
         if (!decoder.decode(layerID))
             return false;
         node.setInsetClipLayer(layerID.value_or(PlatformLayerIdentifier { }));
-    }
-
-    if (node.hasChangedProperty(ScrollingStateNode::Property::ContentShadowLayer)) {
-        std::optional<PlatformLayerIdentifier> layerID;
-        if (!decoder.decode(layerID))
-            return false;
-        node.setContentShadowLayer(layerID.value_or(PlatformLayerIdentifier { }));
     }
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::RootContentsLayer)) {
@@ -779,9 +769,6 @@ static void dump(TextStream& ts, const ScrollingStateFrameScrollingNode& node, b
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::InsetClipLayer))
         ts.dumpProperty("clip-inset-layer", static_cast<PlatformLayerIdentifier>(node.insetClipLayer()));
-
-    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::ContentShadowLayer))
-        ts.dumpProperty("content-shadow-layer", static_cast<PlatformLayerIdentifier>(node.contentShadowLayer()));
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::HeaderLayer))
         ts.dumpProperty("header-layer", static_cast<PlatformLayerIdentifier>(node.headerLayer()));

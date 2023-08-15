@@ -148,7 +148,6 @@ protected:
     void usesBackForwardCacheChanged();
     void dnsPrefetchingEnabledChanged();
     void storageBlockingPolicyChanged();
-    void backgroundShouldExtendBeyondPageChanged();
     void scrollingPerformanceTestingEnabledChanged();
     void hiddenPageDOMTimerThrottlingStateChanged();
     void hiddenPageCSSAnimationSuspensionEnabledChanged();

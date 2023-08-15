@@ -259,7 +259,6 @@ void AsyncScrollingCoordinator::frameViewRootLayerDidChange(LocalFrameView& fram
     node->setRootContentsLayer(rootContentsLayerForFrameView(frameView));
     node->setCounterScrollingLayer(counterScrollingLayerForFrameView(frameView));
     node->setInsetClipLayer(insetClipLayerForFrameView(frameView));
-    node->setContentShadowLayer(contentShadowLayerForFrameView(frameView));
     node->setHeaderLayer(headerLayerForFrameView(frameView));
     node->setFooterLayer(footerLayerForFrameView(frameView));
     node->setScrollBehaviorForFixedElements(frameView.scrollBehaviorForFixedElements());
@@ -693,7 +692,6 @@ void AsyncScrollingCoordinator::reconcileScrollingState(LocalFrameView& frameVie
 
     auto* counterScrollingLayer = counterScrollingLayerForFrameView(frameView);
     auto* insetClipLayer = insetClipLayerForFrameView(frameView);
-    auto* contentShadowLayer = contentShadowLayerForFrameView(frameView);
     auto* rootContentsLayer = rootContentsLayerForFrameView(frameView);
     auto* headerLayer = headerLayerForFrameView(frameView);
     auto* footerLayer = footerLayerForFrameView(frameView);
@@ -718,8 +716,6 @@ void AsyncScrollingCoordinator::reconcileScrollingState(LocalFrameView& frameVie
             counterScrollingLayer->setPosition(scrollPositionForFixed);
         if (insetClipLayer)
             insetClipLayer->setPosition(positionForInsetClipLayer);
-        if (contentShadowLayer)
-            contentShadowLayer->setPosition(positionForContentsLayer);
         if (rootContentsLayer)
             rootContentsLayer->setPosition(positionForContentsLayer);
         if (headerLayer)
@@ -733,8 +729,6 @@ void AsyncScrollingCoordinator::reconcileScrollingState(LocalFrameView& frameVie
             counterScrollingLayer->syncPosition(scrollPositionForFixed);
         if (insetClipLayer)
             insetClipLayer->syncPosition(positionForInsetClipLayer);
-        if (contentShadowLayer)
-            contentShadowLayer->syncPosition(positionForContentsLayer);
         if (rootContentsLayer)
             rootContentsLayer->syncPosition(positionForContentsLayer);
         if (headerLayer)

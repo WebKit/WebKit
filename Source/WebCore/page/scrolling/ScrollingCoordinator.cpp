@@ -270,20 +270,6 @@ GraphicsLayer* ScrollingCoordinator::insetClipLayerForFrameView(LocalFrameView& 
     return nullptr;
 }
 
-GraphicsLayer* ScrollingCoordinator::contentShadowLayerForFrameView(LocalFrameView& frameView)
-{
-#if HAVE(RUBBER_BANDING)
-    auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame());
-    if (auto* renderView = localFrame ? localFrame->contentRenderer() : nullptr)
-        return renderView->compositor().layerForContentShadow();
-    
-    return nullptr;
-#else
-    UNUSED_PARAM(frameView);
-    return nullptr;
-#endif
-}
-
 GraphicsLayer* ScrollingCoordinator::rootContentsLayerForFrameView(LocalFrameView& frameView)
 {
     auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame());

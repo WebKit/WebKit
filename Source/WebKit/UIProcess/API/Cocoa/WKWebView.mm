@@ -3812,13 +3812,12 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (void)_setBackgroundExtendsBeyondPage:(BOOL)backgroundExtends
 {
-    THROW_IF_SUSPENDED;
-    _page->setBackgroundExtendsBeyondPage(backgroundExtends);
+    UNUSED_PARAM(backgroundExtends);
 }
 
 - (BOOL)_backgroundExtendsBeyondPage
 {
-    return _page->backgroundExtendsBeyondPage();
+    return YES;
 }
 
 - (CGFloat)_viewScale

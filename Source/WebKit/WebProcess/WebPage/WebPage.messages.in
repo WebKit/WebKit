@@ -314,8 +314,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetEnableVerticalRubberBanding(bool enableVerticalRubberBanding)
     SetEnableHorizontalRubberBanding(bool enableHorizontalRubberBanding)
 
-    SetBackgroundExtendsBeyondPage(bool backgroundExtendsBeyondPage)
-
     SetPaginationMode(uint32_t mode)
     SetPaginationBehavesLikeColumns(bool behavesLikeColumns)
     SetPageLength(double pageLength)
