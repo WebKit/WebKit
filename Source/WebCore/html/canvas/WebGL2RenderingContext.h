@@ -45,6 +45,7 @@ class WebGLVertexArrayObject;
 class WebGL2RenderingContext final : public WebGLRenderingContextBase {
     WTF_MAKE_ISO_ALLOCATED(WebGL2RenderingContext);
 public:
+    static std::unique_ptr<WebGL2RenderingContext> create(CanvasBase&, GraphicsContextGLAttributes);
     static std::unique_ptr<WebGL2RenderingContext> create(CanvasBase&, Ref<GraphicsContextGL>&&, GraphicsContextGLAttributes);
 
     ~WebGL2RenderingContext();
@@ -272,6 +273,7 @@ public:
     bool isTransformFeedbackActiveAndNotPaused();
 
 private:
+    WebGL2RenderingContext(CanvasBase&, GraphicsContextGLAttributes);
     WebGL2RenderingContext(CanvasBase&, Ref<GraphicsContextGL>&&, GraphicsContextGLAttributes);
 
     bool isWebGL2() const final { return true; }

@@ -97,6 +97,16 @@ const GCGLuint64 MaxClientWaitTimeout = 0u;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGL2RenderingContext);
 
+std::unique_ptr<WebGL2RenderingContext> WebGL2RenderingContext::create(CanvasBase& canvas, GraphicsContextGLAttributes attributes)
+{
+    auto renderingContext = std::unique_ptr<WebGL2RenderingContext>(new WebGL2RenderingContext(canvas, attributes));
+    // This context is pending policy resolution, so don't call initializeNewContext on it yet.
+
+    InspectorInstrumentation::didCreateCanvasRenderingContext(*renderingContext);
+
+    return renderingContext;
+}
+
 std::unique_ptr<WebGL2RenderingContext> WebGL2RenderingContext::create(CanvasBase& canvas, Ref<GraphicsContextGL>&& context, GraphicsContextGLAttributes attributes)
 {
     auto renderingContext = std::unique_ptr<WebGL2RenderingContext>(new WebGL2RenderingContext(canvas, WTFMove(context), attributes));
@@ -108,9 +118,16 @@ std::unique_ptr<WebGL2RenderingContext> WebGL2RenderingContext::create(CanvasBas
     return renderingContext;
 }
 
+WebGL2RenderingContext::WebGL2RenderingContext(CanvasBase& canvas, GraphicsContextGLAttributes attributes)
+    : WebGLRenderingContextBase(canvas, attributes)
+{
+}
+
 WebGL2RenderingContext::WebGL2RenderingContext(CanvasBase& canvas, Ref<GraphicsContextGL>&& context, GraphicsContextGLAttributes attributes)
     : WebGLRenderingContextBase(canvas, WTFMove(context), attributes)
 {
+    if (isContextLost())
+        return;
 }
 
 WebGL2RenderingContext::~WebGL2RenderingContext()
