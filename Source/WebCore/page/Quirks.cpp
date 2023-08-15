@@ -879,6 +879,7 @@ bool Quirks::shouldBypassBackForwardCache() const
 
     auto topURL = m_document->topDocument().url();
     auto host = topURL.host();
+    RegistrableDomain registrableDomain { topURL };
 
     // Vimeo.com used to bypass the back/forward cache by serving "Cache-Control: no-store" over HTTPS.
     // We started caching such content in r250437 but the vimeo.com content unfortunately is not currently compatible
@@ -887,6 +888,18 @@ bool Quirks::shouldBypassBackForwardCache() const
     if (topURL.protocolIs("https"_s) && equalLettersIgnoringASCIICase(host, "vimeo.com"_s)) {
         if (auto* documentLoader = m_document->frame() ? m_document->frame()->loader().documentLoader() : nullptr)
             return documentLoader->response().cacheControlContainsNoStore();
+    }
+
+    // Login issue on bankofamerica.com (rdar://104938789).
+    if (registrableDomain == "bankofamerica.com"_s) {
+        if (auto* window = m_document->domWindow()) {
+            if (window->hasEventListeners(eventNames().unloadEvent)) {
+                static MainThreadNeverDestroyed<const AtomString> signInId("signIn"_s);
+                static MainThreadNeverDestroyed<const AtomString> loadingClass("loading"_s);
+                RefPtr signinButton = m_document->getElementById(signInId.get());
+                return signinButton && signinButton->classNames().contains(loadingClass.get());
+            }
+        }
     }
 
     // Google Docs used to bypass the back/forward cache by serving "Cache-Control: no-store" over HTTPS.
