@@ -75,7 +75,7 @@ private:
     PartialResult WARN_UNUSED_RETURN parseStructType(uint32_t position, RefPtr<TypeDefinition>&);
     PartialResult WARN_UNUSED_RETURN parseArrayType(uint32_t position, RefPtr<TypeDefinition>&);
     PartialResult WARN_UNUSED_RETURN parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition>&);
-    PartialResult WARN_UNUSED_RETURN parseSubtype(uint32_t position, RefPtr<TypeDefinition>&, Vector<TypeIndex>&);
+    PartialResult WARN_UNUSED_RETURN parseSubtype(uint32_t position, RefPtr<TypeDefinition>&, Vector<TypeIndex>&, bool);
 
     PartialResult WARN_UNUSED_RETURN validateElementTableIdx(uint32_t, TableElementType);
     PartialResult WARN_UNUSED_RETURN parseI32InitExprForElementSection(std::optional<I32InitExpr>&);
@@ -87,7 +87,7 @@ private:
     PartialResult WARN_UNUSED_RETURN parseI32InitExprForDataSection(std::optional<I32InitExpr>&);
 
     static bool checkStructuralSubtype(const TypeDefinition&, const TypeDefinition&);
-    static bool checkSubtypeValidity(const TypeDefinition&, const TypeDefinition&);
+    PartialResult WARN_UNUSED_RETURN checkSubtypeValidity(const TypeDefinition&, RefPtr<const TypeDefinition>);
 
     size_t m_offsetInSource;
     Ref<ModuleInformation> m_info;

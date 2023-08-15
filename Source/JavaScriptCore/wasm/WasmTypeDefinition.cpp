@@ -182,8 +182,10 @@ void Subtype::dump(PrintStream& out) const
 {
     out.print("(");
     CommaPrinter comma;
-    TypeInformation::get(superType()).dump(out);
-    out.print(comma);
+    if (supertypeCount() > 0) {
+        TypeInformation::get(firstSuperType()).dump(out);
+        out.print(comma);
+    }
     TypeInformation::get(underlyingType()).dump(out);
     out.print(")");
 }
@@ -211,7 +213,8 @@ void TypeDefinition::cleanup()
 
 void Subtype::cleanup()
 {
-    TypeInformation::get(superType()).deref();
+    if (supertypeCount() > 0)
+        TypeInformation::get(firstSuperType()).deref();
     TypeInformation::get(underlyingType()).deref();
 }
 
@@ -277,11 +280,13 @@ static unsigned computeProjectionHash(TypeIndex recursionGroup, ProjectionIndex 
     return accumulator;
 }
 
-static unsigned computeSubtypeHash(TypeIndex superType, TypeIndex underlyingType)
+static unsigned computeSubtypeHash(SupertypeCount supertypeCount, const TypeIndex* superTypes, TypeIndex underlyingType, bool isFinal)
 {
     unsigned accumulator = 0x3efa01b9;
-    accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<TypeIndex>::hash(superType));
+    if (supertypeCount > 0)
+        accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<TypeIndex>::hash(superTypes[0]));
     accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<TypeIndex>::hash(underlyingType));
+    accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<TypeIndex>::hash(isFinal));
     return accumulator;
 }
 
@@ -314,7 +319,7 @@ unsigned TypeDefinition::hash() const
 
     ASSERT(is<Subtype>());
     const Subtype* subtype = as<Subtype>();
-    return computeSubtypeHash(subtype->superType(), subtype->underlyingType());
+    return computeSubtypeHash(subtype->supertypeCount(), subtype->storage(1), subtype->underlyingType(), subtype->isFinal());
 }
 
 RefPtr<TypeDefinition> TypeDefinition::tryCreateFunctionSignature(FunctionArgCount returnCount, FunctionArgCount argumentCount)
@@ -372,14 +377,14 @@ RefPtr<TypeDefinition> TypeDefinition::tryCreateProjection()
     return adoptRef(signature);
 }
 
-RefPtr<TypeDefinition> TypeDefinition::tryCreateSubtype()
+RefPtr<TypeDefinition> TypeDefinition::tryCreateSubtype(SupertypeCount count, bool isFinal)
 {
     // We use WTF_MAKE_FAST_ALLOCATED for this class.
     auto result = tryFastMalloc(allocatedSubtypeSize());
     void* memory = nullptr;
     if (!result.getValue(memory))
         return nullptr;
-    TypeDefinition* signature = new (NotNull, memory) TypeDefinition(TypeDefinitionKind::Subtype);
+    TypeDefinition* signature = new (NotNull, memory) TypeDefinition(TypeDefinitionKind::Subtype, count, isFinal);
     return adoptRef(signature);
 }
 
@@ -439,7 +444,7 @@ const TypeDefinition& TypeDefinition::replacePlaceholders(TypeIndex projectee) c
     if (is<StructType>()) {
         const StructType* structType = as<StructType>();
         Vector<FieldType> newFields;
-        newFields.tryReserveCapacity(structType->fieldCount());
+        newFields.reserveInitialCapacity(structType->fieldCount());
         for (unsigned i = 0; i < structType->fieldCount(); i++) {
             FieldType field = structType->field(i);
             StorageType substituted = field.type.is<PackedType>() ? field.type : StorageType(substitute(field.type.as<Type>(), projectee));
@@ -460,8 +465,12 @@ const TypeDefinition& TypeDefinition::replacePlaceholders(TypeIndex projectee) c
 
     if (is<Subtype>()) {
         const Subtype* subtype = as<Subtype>();
+        Vector<TypeIndex> supertypes;
+        supertypes.reserveInitialCapacity(subtype->supertypeCount());
         const TypeDefinition& newUnderlyingType = TypeInformation::get(subtype->underlyingType()).replacePlaceholders(projectee);
-        RefPtr<TypeDefinition> def = TypeInformation::typeDefinitionForSubtype(substituteParent(subtype->superType(), projectee), newUnderlyingType.index());
+        for (SupertypeCount i = 0; i < subtype->supertypeCount(); i++)
+            supertypes.uncheckedAppend(substituteParent(subtype->superType(i), projectee));
+        RefPtr<TypeDefinition> def = TypeInformation::typeDefinitionForSubtype(supertypes, newUnderlyingType.index(), subtype->isFinal());
         return *def;
     }
 
@@ -524,9 +533,13 @@ bool TypeDefinition::hasRecursiveReference() const
         return as<ArrayType>()->hasRecursiveReference();
 
     ASSERT(is<Subtype>());
-    const TypeDefinition& supertype = TypeInformation::get(as<Subtype>()->superType());
-    const bool hasRecGroupSupertype = supertype.is<Projection>() && supertype.as<Projection>()->isPlaceholder();
-    return hasRecGroupSupertype || TypeInformation::get(as<Subtype>()->underlyingType()).hasRecursiveReference();
+    if (as<Subtype>()->supertypeCount() > 0) {
+        const TypeDefinition& supertype = TypeInformation::get(as<Subtype>()->firstSuperType());
+        const bool hasRecGroupSupertype = supertype.is<Projection>() && supertype.as<Projection>()->isPlaceholder();
+        return hasRecGroupSupertype || TypeInformation::get(as<Subtype>()->underlyingType()).hasRecursiveReference();
+    }
+
+    return TypeInformation::get(as<Subtype>()->underlyingType()).hasRecursiveReference();
 }
 
 RefPtr<RTT> RTT::tryCreateRTT(RTTKind kind, DisplayCount displaySize)
@@ -576,7 +589,7 @@ const TypeDefinition& TypeInformation::signatureForLLIntBuiltin(LLIntBuiltin bui
         return *singleton().m_Ref_RefI32I32;
     case LLIntBuiltin::ArrayNewData:
     case LLIntBuiltin::ArrayNewElem:
-        return *singleton().m_Ref_I32I32I32I32;
+        return *singleton().m_Arrayref_I32I32I32I32;
     case LLIntBuiltin::ExternInternalize:
         return *singleton().m_Anyref_Externref;
     }
@@ -791,12 +804,13 @@ struct ProjectionParameterTypes {
 };
 
 struct SubtypeParameterTypes {
-    TypeIndex superType;
+    const Vector<TypeIndex>& superTypes;
     TypeIndex underlyingType;
+    bool isFinal;
 
     static unsigned hash(const SubtypeParameterTypes& params)
     {
-        return computeSubtypeHash(params.superType, params.underlyingType);
+        return computeSubtypeHash(params.superTypes.size(), params.superTypes.data(), params.underlyingType, params.isFinal);
     }
 
     static bool equal(const TypeHash& sig, const SubtypeParameterTypes& params)
@@ -805,8 +819,13 @@ struct SubtypeParameterTypes {
             return false;
 
         const Subtype* subtype = sig.key->as<Subtype>();
-        if (subtype->superType() != params.superType)
+        if (subtype->supertypeCount() != params.superTypes.size())
             return false;
+
+        for (SupertypeCount i = 0; i < params.superTypes.size(); i++) {
+            if (subtype->superType(i) != params.superTypes[i])
+                return false;
+        }
 
         if (subtype->underlyingType() != params.underlyingType)
             return false;
@@ -816,14 +835,15 @@ struct SubtypeParameterTypes {
 
     static void translate(TypeHash& entry, const SubtypeParameterTypes& params, unsigned)
     {
-        RefPtr<TypeDefinition> signature = TypeDefinition::tryCreateSubtype();
+        RefPtr<TypeDefinition> signature = TypeDefinition::tryCreateSubtype(params.superTypes.size(), params.isFinal);
         RELEASE_ASSERT(signature);
 
         Subtype* subtype = signature->as<Subtype>();
-        subtype->getSuperType() = params.superType;
+        if (params.superTypes.size() > 0) {
+            subtype->getSuperType(0) = params.superTypes[0];
+            TypeInformation::get(params.superTypes[0]).ref();
+        }
         subtype->getUnderlyingType() = params.underlyingType;
-
-        TypeInformation::get(params.superType).ref();
         TypeInformation::get(params.underlyingType).ref();
 
         entry.key = WTFMove(signature);
@@ -865,7 +885,7 @@ TypeInformation::TypeInformation()
     m_I32_RefI32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Types::I32 }, { anyrefType(), Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
     m_Ref_RefI32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { anyrefType() }, { anyrefType(), Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
     m_I32_RefI32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Types::I32 }, { Wasm::Type { Wasm::TypeKind::Ref, static_cast<TypeIndex>(Wasm::TypeKind::Externref) }, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
-    m_Ref_I32I32I32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { arrayrefType() }, { Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
+    m_Arrayref_I32I32I32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { arrayrefType(false) }, { Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
     m_Anyref_Externref = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { anyrefType() }, { externrefType() } }).iterator->key;
 }
 
@@ -918,12 +938,12 @@ RefPtr<TypeDefinition> TypeInformation::typeDefinitionForProjection(TypeIndex re
     return addResult.iterator->key;
 }
 
-RefPtr<TypeDefinition> TypeInformation::typeDefinitionForSubtype(TypeIndex superType, TypeIndex underlyingType)
+RefPtr<TypeDefinition> TypeInformation::typeDefinitionForSubtype(const Vector<TypeIndex>& superTypes, TypeIndex underlyingType, bool isFinal)
 {
     TypeInformation& info = singleton();
     Locker locker { info.m_lock };
 
-    auto addResult = info.m_typeSet.template add<SubtypeParameterTypes>(SubtypeParameterTypes { superType, underlyingType });
+    auto addResult = info.m_typeSet.template add<SubtypeParameterTypes>(SubtypeParameterTypes { superTypes, underlyingType, isFinal });
     return addResult.iterator->key;
 }
 
@@ -974,8 +994,8 @@ RefPtr<RTT> TypeInformation::canonicalRTTForType(TypeIndex type)
     else
         kind = RTTKind::Struct;
 
-    if (signature.is<Subtype>()) {
-        auto superRTT = TypeInformation::tryGetCanonicalRTT(signature.as<Subtype>()->superType());
+    if (signature.is<Subtype>() && signature.as<Subtype>()->supertypeCount() > 0) {
+        auto superRTT = TypeInformation::tryGetCanonicalRTT(signature.as<Subtype>()->firstSuperType());
         ASSERT(superRTT.has_value());
         DisplayCount displaySize = superRTT.value()->displaySize() + 1;
 

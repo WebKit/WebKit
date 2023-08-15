@@ -84,12 +84,13 @@ auto SectionParser::parseType() -> PartialResult
             WASM_FAIL_IF_HELPER_FAILS(parseRecursionGroup(i, signature));
             break;
         }
-        case TypeKind::Sub: {
+        case TypeKind::Sub:
+        case TypeKind::Subfinal: {
             if (!Options::useWebAssemblyGC())
                 return fail(i, "th type failed to parse because sub types are not enabled");
 
             Vector<TypeIndex> empty;
-            WASM_FAIL_IF_HELPER_FAILS(parseSubtype(i, signature, empty));
+            WASM_FAIL_IF_HELPER_FAILS(parseSubtype(i, signature, empty, static_cast<TypeKind>(typeKind) == TypeKind::Subfinal));
             break;
         }
         default:
@@ -116,13 +117,13 @@ auto SectionParser::parseType() -> PartialResult
                     TypeInformation::registerCanonicalRTTForType(projection->index());
                     m_info->rtts.uncheckedAppend(TypeInformation::getCanonicalRTT(projection->index()));
                     if (signature->is<Subtype>())
-                        WASM_PARSER_FAIL_IF(!checkSubtypeValidity(projection->unroll(), *group), "structural type is not a subtype of the specified supertype");
+                        WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(projection->unroll(), group));
                     m_info->typeSignatures.uncheckedAppend(projection.releaseNonNull());
                 } else {
                     TypeInformation::registerCanonicalRTTForType(signature->index());
                     m_info->rtts.uncheckedAppend(TypeInformation::getCanonicalRTT(signature->index()));
                     if (signature->is<Subtype>())
-                        WASM_PARSER_FAIL_IF(!checkStructuralSubtype(signature->expand(), TypeInformation::get(signature->as<Subtype>()->superType())), "structural type is not a subtype of the specified supertype");
+                        WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(signature->unroll(), { }));
                     m_info->typeSignatures.uncheckedAppend(signature.releaseNonNull());
                 }
             }
@@ -910,8 +911,9 @@ auto SectionParser::parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition
             WASM_FAIL_IF_HELPER_FAILS(parseArrayType(i, signature));
             break;
         }
-        case TypeKind::Sub: {
-            WASM_FAIL_IF_HELPER_FAILS(parseSubtype(i, signature, types));
+        case TypeKind::Sub:
+        case TypeKind::Subfinal: {
+            WASM_FAIL_IF_HELPER_FAILS(parseSubtype(i, signature, types, static_cast<TypeKind>(typeKind) == TypeKind::Subfinal));
             break;
         }
         default:
@@ -944,12 +946,14 @@ auto SectionParser::parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition
         for (uint32_t i = 0; i < typeCount; ++i) {
             const TypeDefinition& def = m_info->typeSignatures[i].get().unroll();
             if (def.is<Subtype>())
-                WASM_PARSER_FAIL_IF(!checkSubtypeValidity(def, *recursionGroup), "structural type is not a subtype of the specified supertype");
+                WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(def, recursionGroup));
         }
     } else {
         if (!firstSignature->hasRecursiveReference()) {
             TypeInformation::registerCanonicalRTTForType(firstSignature->index());
             m_info->rtts.uncheckedAppend(TypeInformation::getCanonicalRTT(firstSignature->index()));
+            if (firstSignature->is<Subtype>())
+                WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(*firstSignature, { }));
             m_info->typeSignatures.uncheckedAppend(firstSignature.releaseNonNull());
         } else {
             RefPtr<TypeDefinition> projection = TypeInformation::typeDefinitionForProjection(recursionGroup->index(), 0);
@@ -957,7 +961,7 @@ auto SectionParser::parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition
             TypeInformation::registerCanonicalRTTForType(projection->index());
             m_info->rtts.uncheckedAppend(TypeInformation::getCanonicalRTT(projection->index()));
             if (firstSignature->is<Subtype>())
-                WASM_PARSER_FAIL_IF(!checkSubtypeValidity(projection->unroll(), *recursionGroup), "structural type is not a subtype of the specified supertype");
+                WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(projection->unroll(), recursionGroup));
             m_info->typeSignatures.uncheckedAppend(projection.releaseNonNull());
         }
     }
@@ -1022,21 +1026,32 @@ bool SectionParser::checkStructuralSubtype(const TypeDefinition& subtype, const 
     return false;
 }
 
-bool SectionParser::checkSubtypeValidity(const TypeDefinition& subtype, const TypeDefinition& recursionGroup)
+auto SectionParser::checkSubtypeValidity(const TypeDefinition& subtype, RefPtr<const TypeDefinition> recursionGroup) -> PartialResult
 {
     ASSERT(subtype.is<Subtype>());
-    ASSERT(recursionGroup.is<RecursionGroup>());
-    TypeIndex superIndex = subtype.as<Subtype>()->superType();
-    for (RecursionGroupCount i = 0; i < recursionGroup.as<RecursionGroup>()->typeCount(); i++) {
-        if (recursionGroup.as<RecursionGroup>()->type(i) == superIndex) {
-            superIndex = TypeInformation::typeDefinitionForProjection(recursionGroup.index(), i)->index();
-            break;
+    ASSERT(!recursionGroup || recursionGroup->is<RecursionGroup>());
+
+    if (subtype.as<Subtype>()->supertypeCount() < 1)
+        return { };
+    TypeIndex superIndex = subtype.as<Subtype>()->firstSuperType();
+
+    if (recursionGroup) {
+        for (RecursionGroupCount i = 0; i < recursionGroup->as<RecursionGroup>()->typeCount(); i++) {
+            if (recursionGroup->as<RecursionGroup>()->type(i) == superIndex) {
+                superIndex = TypeInformation::typeDefinitionForProjection(recursionGroup->index(), i)->index();
+                break;
+            }
         }
     }
-    return checkStructuralSubtype(TypeInformation::get(subtype.as<Subtype>()->underlyingType()), TypeInformation::get(superIndex));
+
+    const TypeDefinition& supertype = TypeInformation::get(superIndex).unroll();
+    WASM_PARSER_FAIL_IF(!supertype.is<Subtype>() || supertype.as<Subtype>()->isFinal(), "cannot declare subtype of final supertype");
+    WASM_PARSER_FAIL_IF(!checkStructuralSubtype(TypeInformation::get(subtype.as<Subtype>()->underlyingType()), supertype), "structural type is not a subtype of the specified supertype");
+
+    return { };
 }
 
-auto SectionParser::parseSubtype(uint32_t position, RefPtr<TypeDefinition>& subtype, Vector<TypeIndex>& recursionGroupTypes) -> PartialResult
+auto SectionParser::parseSubtype(uint32_t position, RefPtr<TypeDefinition>& subtype, Vector<TypeIndex>& recursionGroupTypes, bool isFinal) -> PartialResult
 {
     ASSERT(Options::useWebAssemblyGC());
 
@@ -1079,15 +1094,18 @@ auto SectionParser::parseSubtype(uint32_t position, RefPtr<TypeDefinition>& subt
         return fail("invalid structural type definition for subtype ", typeKind);
     }
 
-    // When no supertypes are specified, we will normalize type definitions to
-    // not have the subtype. This ensures that type shorthands and the full
-    // subtype form are represented in the same way.
-    if (!supertypeCount) {
+    // When no supertypes are specified and the type is not final, we will normalize
+    // type definitions to not have the subtype. This ensures that type shorthands
+    // and the full subtype form are represented in the same way.
+    if (!supertypeCount && isFinal) {
         subtype = underlyingType;
         return { };
     }
 
-    subtype = TypeInformation::typeDefinitionForSubtype(supertypeIndex, TypeInformation::get(*underlyingType));
+    if (supertypeCount > 0)
+        subtype = TypeInformation::typeDefinitionForSubtype({ supertypeIndex }, TypeInformation::get(*underlyingType), isFinal);
+    else
+        subtype = TypeInformation::typeDefinitionForSubtype({ }, TypeInformation::get(*underlyingType), isFinal);
 
     return { };
 }
