@@ -29,7 +29,6 @@
 
 #include "WebGLRenderbuffer.h"
 
-#include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
@@ -43,14 +42,14 @@ Ref<WebGLRenderbuffer> WebGLRenderbuffer::create(WebGLRenderingContextBase& ctx)
 
 WebGLRenderbuffer::~WebGLRenderbuffer()
 {
-    if (!hasGroupOrContext())
+    if (!m_context)
         return;
 
     runDestructor();
 }
 
 WebGLRenderbuffer::WebGLRenderbuffer(WebGLRenderingContextBase& ctx)
-    : WebGLSharedObject(ctx)
+    : WebGLObject(ctx)
     , m_internalFormat(GraphicsContextGL::RGBA4)
     , m_initialized(false)
     , m_width(0)

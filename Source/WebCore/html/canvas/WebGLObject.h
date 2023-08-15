@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -30,23 +30,25 @@
 #include "GraphicsTypesGL.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class GraphicsContextGL;
 class WebCoreOpaqueRoot;
-class WebGLContextGroup;
 class WebGLRenderingContextBase;
 
 class WebGLObject : public RefCounted<WebGLObject> {
 public:
     virtual ~WebGLObject() = default;
 
+    WebGLRenderingContextBase* context() const { return m_context.get(); }
+    GraphicsContextGL* graphicsContextGL() const;
+
     PlatformGLObject object() const { return m_object; }
 
     // deleteObject may not always delete the OpenGL resource.  For programs and
     // shaders, deletion is delayed until they are no longer attached.
-    // FIXME: revisit this when resource sharing between contexts are implemented.
     // The AbstractLocker argument enforces at compile time that the objectGraphLock
     // is held. This isn't necessary for all object types, but enough of them that
     // it's done for all of them.
@@ -60,18 +62,16 @@ public:
     // object()==0 indicates the OpenGL resource is deleted.
     bool isDeleted() { return m_deleted; }
 
-    // True if this object belongs to the group or context.
-    virtual bool validate(const WebGLContextGroup*, const WebGLRenderingContextBase&) const = 0;
+    // True if this object belongs to the context.
+    bool validate(const WebGLRenderingContextBase& context) const { return &context == m_context; }
 
-    // Returns the object graph lock associated with the context most
-    // closely associated with this object. Since the
-    // WEBGL_shared_objects extension specification never shipped (and
-    // is unlikely to), this basically returns the same result for
-    // both context objects and shared objects.
-    virtual Lock& objectGraphLockForContext() = 0;
+    Lock& objectGraphLockForContext();
+
+    virtual bool isRenderbuffer() const { return false; }
+    virtual bool isTexture() const { return false; }
 
 protected:
-    WebGLObject() = default;
+    WebGLObject(WebGLRenderingContextBase&);
 
     // setObject should be only called once right after creating a WebGLObject.
     void setObject(PlatformGLObject);
@@ -81,12 +81,9 @@ protected:
     // deleteObjectImpl should be only called once to delete the OpenGL resource.
     virtual void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) = 0;
 
-    virtual bool hasGroupOrContext() const = 0;
-
     virtual void detach();
 
-    virtual GraphicsContextGL* getAGraphicsContextGL() const = 0;
-
+    WeakPtr<WebGLRenderingContextBase> m_context;
 private:
     PlatformGLObject m_object { 0 };
     unsigned m_attachmentCount { 0 };

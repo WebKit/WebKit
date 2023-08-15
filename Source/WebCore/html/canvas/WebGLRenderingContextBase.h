@@ -85,15 +85,15 @@ class EXTDisjointTimerQuery;
 class EXTDisjointTimerQueryWebGL2;
 class EXTFloatBlend;
 class EXTFragDepth;
-class EXTShaderTextureLOD;
 class EXTPolygonOffsetClamp;
 class EXTRenderSnorm;
+class EXTShaderTextureLOD;
+class EXTsRGB;
 class EXTTextureCompressionBPTC;
 class EXTTextureCompressionRGTC;
 class EXTTextureFilterAnisotropic;
 class EXTTextureMirrorClampToEdge;
 class EXTTextureNorm16;
-class EXTsRGB;
 class HTMLImageElement;
 class ImageData;
 class IntSize;
@@ -121,8 +121,6 @@ class WebGLCompressedTextureETC1;
 class WebGLCompressedTexturePVRTC;
 class WebGLCompressedTextureS3TC;
 class WebGLCompressedTextureS3TCsRGB;
-class WebGLContextGroup;
-class WebGLContextObject;
 class WebGLDebugRendererInfo;
 class WebGLDebugShaders;
 class WebGLDepthTexture;
@@ -138,7 +136,6 @@ class WebGLProvokingVertex;
 class WebGLRenderSharedExponent;
 class WebGLShader;
 class WebGLShaderPrecisionFormat;
-class WebGLSharedObject;
 class WebGLStencilTexturing;
 class WebGLUniformLocation;
 
@@ -444,12 +441,10 @@ public:
     };
     void forceLostContext(LostContextMode);
     void forceRestoreContext();
-    void loseContextImpl(LostContextMode);
     using SimulatedEventForTesting = GraphicsContextGL::SimulatedEventForTesting;
     WEBCORE_EXPORT void simulateEventForTesting(SimulatedEventForTesting);
 
     GraphicsContextGL* graphicsContextGL() const { return m_context.get(); }
-    WebGLContextGroup* contextGroup() const { return m_contextGroup.get(); }
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
 
     void reshape(int width, int height) override;
@@ -461,8 +456,8 @@ public:
     RefPtr<VideoFrame> paintCompositedResultsToVideoFrame();
 #endif
 
-    void removeSharedObject(WebGLSharedObject&);
-    void removeContextObject(WebGLContextObject&);
+    void removeSharedObject(WebGLObject&);
+    void removeContextObject(WebGLObject&);
 
     unsigned getMaxVertexAttribs() const { return m_maxVertexAttribs; }
 
@@ -502,6 +497,7 @@ public:
     const PixelStoreParameters& pixelStorePackParameters() const { return m_packParameters; }
     const PixelStoreParameters& unpackPixelStoreParameters() const { return m_unpackParameters; };
 
+    WeakPtr<WebGLRenderingContextBase> createRefForContextObject();
 protected:
     WebGLRenderingContextBase(CanvasBase&, WebGLContextAttributes);
 
@@ -544,8 +540,6 @@ protected:
     void suspend(ReasonForSuspension) override;
     void resume() override;
 
-    void addSharedObject(WebGLSharedObject&);
-    void addContextObject(WebGLContextObject&);
     void detachAndRemoveAllObjects();
 
     void destroyGraphicsContextGL();
@@ -614,14 +608,12 @@ protected:
     };
 
     RefPtr<GraphicsContextGL> m_context;
-    RefPtr<WebGLContextGroup> m_contextGroup;
     Lock m_objectGraphLock;
 
     EventLoopTimerHandle m_restoreTimer;
     GCGLErrorCodeSet m_errors;
     bool m_needsUpdate;
     bool m_markedCanvasDirty;
-    HashSet<WebGLContextObject*> m_contextObjects;
 
     // List of bound VBO's. Used to maintain info about sizes for ARRAY_BUFFER and stored values for ELEMENT_ARRAY_BUFFER
     RefPtr<WebGLBuffer> m_boundArrayBuffer;
@@ -1123,6 +1115,7 @@ private:
 #endif
     // The ordinal number of when the context was last active (drew, read pixels).
     uint64_t m_activeOrdinal { 0 };
+    WeakPtrFactory<WebGLRenderingContextBase> m_contextObjectWeakPtrFactory;
 };
 
 WebCoreOpaqueRoot root(WebGLRenderingContextBase*);

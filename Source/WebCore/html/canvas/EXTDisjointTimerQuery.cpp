@@ -59,9 +59,7 @@ RefPtr<WebGLTimerQueryEXT> EXTDisjointTimerQuery::createQueryEXT()
     if (context.isLost())
         return nullptr;
 
-    auto query = WebGLTimerQueryEXT::create(*context);
-    context->addContextObject(query.get());
-    return query;
+    return WebGLTimerQueryEXT::create(*context);
 }
 
 void EXTDisjointTimerQuery::deleteQueryEXT(WebGLTimerQueryEXT* query)
@@ -75,7 +73,7 @@ void EXTDisjointTimerQuery::deleteQueryEXT(WebGLTimerQueryEXT* query)
     if (!query)
         return;
 
-    if (!query->validate(context->contextGroup(), *context)) {
+    if (!query->validate(*context)) {
         context->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "delete", "object does not belong to this context");
         return;
     }
@@ -98,7 +96,7 @@ GCGLboolean EXTDisjointTimerQuery::isQueryEXT(WebGLTimerQueryEXT* query)
     if (context.isLost())
         return false;
 
-    if (!query || !query->validate(context->contextGroup(), *context))
+    if (!query || !query->validate(*context))
         return false;
 
     if (query->isDeleted())

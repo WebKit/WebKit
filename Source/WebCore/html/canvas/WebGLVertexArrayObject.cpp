@@ -29,7 +29,6 @@
 #if ENABLE(WEBGL)
 
 #include "WebGL2RenderingContext.h"
-#include "WebGLContextGroup.h"
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
 

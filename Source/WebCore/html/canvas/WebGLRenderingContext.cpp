@@ -109,7 +109,6 @@ void WebGLRenderingContext::initializeVertexArrayObjects()
 {
     m_defaultVertexArrayObject = WebGLVertexArrayObjectOES::createDefault(*this);
     m_boundVertexArrayObject = m_defaultVertexArrayObject;
-    addContextObject(*m_defaultVertexArrayObject);
 }
 
 WebGLExtension* WebGLRenderingContext::getExtension(const String& name)

@@ -28,7 +28,6 @@
 
 #if ENABLE(WEBGL)
 
-#include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/Lock.h>
@@ -42,14 +41,14 @@ Ref<WebGLBuffer> WebGLBuffer::create(WebGLRenderingContextBase& ctx)
 }
 
 WebGLBuffer::WebGLBuffer(WebGLRenderingContextBase& ctx)
-    : WebGLSharedObject(ctx)
+    : WebGLObject(ctx)
 {
     setObject(ctx.graphicsContextGL()->createBuffer());
 }
 
 WebGLBuffer::~WebGLBuffer()
 {
-    if (!hasGroupOrContext())
+    if (!m_context)
         return;
 
     runDestructor();

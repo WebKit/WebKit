@@ -28,7 +28,7 @@
 #if ENABLE(WEBGL)
 
 #include "ContextDestructionObserver.h"
-#include "WebGLSharedObject.h"
+#include "WebGLObject.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/Lock.h>
@@ -48,7 +48,7 @@ class ScriptExecutionContext;
 class WebGLRenderingContextBase;
 class WebGLShader;
 
-class WebGLProgram final : public WebGLSharedObject, public ContextDestructionObserver {
+class WebGLProgram final : public WebGLObject, public ContextDestructionObserver {
 public:
     static Ref<WebGLProgram> create(WebGLRenderingContextBase&);
     virtual ~WebGLProgram();

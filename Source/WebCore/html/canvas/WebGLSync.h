@@ -28,11 +28,11 @@
 #if ENABLE(WEBGL)
 
 #include "GraphicsContextGL.h"
-#include "WebGLSharedObject.h"
+#include "WebGLObject.h"
 
 namespace WebCore {
 
-class WebGLSync final : public WebGLSharedObject {
+class WebGLSync final : public WebGLObject {
 public:
     virtual ~WebGLSync();
 

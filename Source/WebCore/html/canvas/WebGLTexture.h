@@ -27,12 +27,12 @@
 
 #if ENABLE(WEBGL)
 
-#include "WebGLSharedObject.h"
+#include "WebGLObject.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class WebGLTexture final : public WebGLSharedObject {
+class WebGLTexture final : public WebGLObject {
 public:
 
     enum TextureExtensionFlag {

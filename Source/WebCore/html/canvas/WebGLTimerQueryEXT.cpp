@@ -46,7 +46,7 @@ WebGLTimerQueryEXT::~WebGLTimerQueryEXT()
 }
 
 WebGLTimerQueryEXT::WebGLTimerQueryEXT(WebGLRenderingContextBase& context)
-    : WebGLContextObject(context)
+    : WebGLObject(context)
 {
     setObject(context.graphicsContextGL()->createQueryEXT());
 }

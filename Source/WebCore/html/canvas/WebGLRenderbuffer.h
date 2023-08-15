@@ -27,11 +27,11 @@
 
 #if ENABLE(WEBGL)
 
-#include "WebGLSharedObject.h"
+#include "WebGLObject.h"
 
 namespace WebCore {
 
-class WebGLRenderbuffer final : public WebGLSharedObject {
+class WebGLRenderbuffer final : public WebGLObject {
 public:
     virtual ~WebGLRenderbuffer();
 

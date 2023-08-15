@@ -28,7 +28,6 @@
 #if ENABLE(WEBGL)
 #include "WebGLSampler.h"
 
-#include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
@@ -42,14 +41,14 @@ Ref<WebGLSampler> WebGLSampler::create(WebGLRenderingContextBase& ctx)
 
 WebGLSampler::~WebGLSampler()
 {
-    if (!hasGroupOrContext())
+    if (!m_context)
         return;
 
     runDestructor();
 }
 
 WebGLSampler::WebGLSampler(WebGLRenderingContextBase& ctx)
-    : WebGLSharedObject(ctx)
+    : WebGLObject(ctx)
 {
     setObject(ctx.graphicsContextGL()->createSampler());
 }

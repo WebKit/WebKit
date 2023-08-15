@@ -29,7 +29,6 @@
 
 #include "WebGLTexture.h"
 
-#include "WebGLContextGroup.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLRenderingContextBase.h"
 
@@ -41,7 +40,7 @@ Ref<WebGLTexture> WebGLTexture::create(WebGLRenderingContextBase& ctx)
 }
 
 WebGLTexture::WebGLTexture(WebGLRenderingContextBase& ctx)
-    : WebGLSharedObject(ctx)
+    : WebGLObject(ctx)
     , m_target(0)
 {
     setObject(ctx.graphicsContextGL()->createTexture());
@@ -49,7 +48,7 @@ WebGLTexture::WebGLTexture(WebGLRenderingContextBase& ctx)
 
 WebGLTexture::~WebGLTexture()
 {
-    if (!hasGroupOrContext())
+    if (!m_context)
         return;
 
     runDestructor();

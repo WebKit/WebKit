@@ -27,12 +27,12 @@
 
 #if ENABLE(WEBGL)
 
-#include "WebGLSharedObject.h"
+#include "WebGLObject.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class WebGLShader final : public WebGLSharedObject {
+class WebGLShader final : public WebGLObject {
 public:
     static Ref<WebGLShader> create(WebGLRenderingContextBase&, GCGLenum);
     virtual ~WebGLShader();

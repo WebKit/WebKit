@@ -108,7 +108,6 @@
 #include "WebGLCompressedTextureS3TCsRGB.h"
 #include "WebGLContextAttributes.h"
 #include "WebGLContextEvent.h"
-#include "WebGLContextGroup.h"
 #include "WebGLDebugRendererInfo.h"
 #include "WebGLDebugShaders.h"
 #include "WebGLDepthTexture.h"
@@ -599,8 +598,6 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
 
     // FIXME: Should we try get the devicePixelRatio for workers for the page that created
     // the worker? What if it's a shared worker, and there's multiple answers?
-
-    attributes.shareResources = false;
     attributes.initialPowerPreference = attributes.powerPreference;
     attributes.webGLVersion = type;
 #if PLATFORM(MAC)
@@ -646,9 +643,6 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, WebGLCo
     , m_isXRCompatible(attributes.xrCompatible)
 #endif
 {
-    m_contextGroup = WebGLContextGroup::create();
-    m_contextGroup->addContext(*this);
-
     registerWithWebGLStateTracker();
     if (auto* canvas = htmlCanvas()) {
         m_checkForContextLossHandlingTimer.startOneShot(checkContextLossHandlingDelay);
@@ -865,7 +859,6 @@ WebGLRenderingContextBase::~WebGLRenderingContextBase()
     detachAndRemoveAllObjects();
     loseExtensions(LostContextMode::RealLostContext);
     destroyGraphicsContextGL();
-    m_contextGroup->removeContext(*this);
 
     {
         Locker locker { WebGLProgram::instancesLock() };
@@ -1594,27 +1587,21 @@ RefPtr<WebGLBuffer> WebGLRenderingContextBase::createBuffer()
 {
     if (isContextLost())
         return nullptr;
-    auto buffer = WebGLBuffer::create(*this);
-    addSharedObject(buffer.get());
-    return buffer;
+    return WebGLBuffer::create(*this);
 }
 
 RefPtr<WebGLFramebuffer> WebGLRenderingContextBase::createFramebuffer()
 {
     if (isContextLost())
         return nullptr;
-    auto buffer = WebGLFramebuffer::create(*this);
-    addContextObject(buffer.get());
-    return buffer;
+    return WebGLFramebuffer::create(*this);
 }
 
 RefPtr<WebGLTexture> WebGLRenderingContextBase::createTexture()
 {
     if (isContextLost())
         return nullptr;
-    auto texture = WebGLTexture::create(*this);
-    addSharedObject(texture.get());
-    return texture;
+    return WebGLTexture::create(*this);
 }
 
 RefPtr<WebGLProgram> WebGLRenderingContextBase::createProgram()
@@ -1622,10 +1609,7 @@ RefPtr<WebGLProgram> WebGLRenderingContextBase::createProgram()
     if (isContextLost())
         return nullptr;
     auto program = WebGLProgram::create(*this);
-    addSharedObject(program.get());
-
     InspectorInstrumentation::didCreateWebGLProgram(*this, program.get());
-
     return program;
 }
 
@@ -1633,9 +1617,7 @@ RefPtr<WebGLRenderbuffer> WebGLRenderingContextBase::createRenderbuffer()
 {
     if (isContextLost())
         return nullptr;
-    auto buffer = WebGLRenderbuffer::create(*this);
-    addSharedObject(buffer.get());
-    return buffer;
+    return WebGLRenderbuffer::create(*this);
 }
 
 RefPtr<WebGLShader> WebGLRenderingContextBase::createShader(GCGLenum type)
@@ -1647,9 +1629,7 @@ RefPtr<WebGLShader> WebGLRenderingContextBase::createShader(GCGLenum type)
         return nullptr;
     }
 
-    auto shader = WebGLShader::create(*this, type);
-    addSharedObject(shader.get());
-    return shader;
+    return WebGLShader::create(*this, type);
 }
 
 void WebGLRenderingContextBase::cullFace(GCGLenum mode)
@@ -1663,7 +1643,7 @@ bool WebGLRenderingContextBase::deleteObject(const AbstractLocker& locker, WebGL
 {
     if (isContextLost() || !object)
         return false;
-    if (!object->validate(contextGroup(), *this)) {
+    if (!object->validate(*this)) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "delete", "object does not belong to this context");
         return false;
     }
@@ -1870,7 +1850,7 @@ bool WebGLRenderingContextBase::validateWebGLObject(const char* functionName, We
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "attempt to use a deleted object");
         return false;
     }
-    if (!object->validate(contextGroup(), *this)) {
+    if (!object->validate(*this)) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "object does not belong to this context");
         return false;
     }
@@ -1898,7 +1878,7 @@ bool WebGLRenderingContextBase::validateWebGLProgramOrShader(const char* functio
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "attempt to use a deleted program or shader");
         return false;
     }
-    if (!object->validate(contextGroup(), *this)) {
+    if (!object->validate(*this)) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "object does not belong to this context");
         return false;
     }
@@ -3098,7 +3078,7 @@ void WebGLRenderingContextBase::hint(GCGLenum target, GCGLenum mode)
 
 GCGLboolean WebGLRenderingContextBase::isBuffer(WebGLBuffer* buffer)
 {
-    if (!buffer || isContextLost() || !buffer->validate(contextGroup(), *this))
+    if (!buffer || isContextLost() || !buffer->validate(*this))
         return 0;
 
     if (!buffer->hasEverBeenBound())
@@ -3125,7 +3105,7 @@ GCGLboolean WebGLRenderingContextBase::isEnabled(GCGLenum cap)
 
 GCGLboolean WebGLRenderingContextBase::isFramebuffer(WebGLFramebuffer* framebuffer)
 {
-    if (!framebuffer || isContextLost() || !framebuffer->validate(contextGroup(), *this))
+    if (!framebuffer || isContextLost() || !framebuffer->validate(*this))
         return 0;
 
     if (!framebuffer->hasEverBeenBound())
@@ -3138,7 +3118,7 @@ GCGLboolean WebGLRenderingContextBase::isFramebuffer(WebGLFramebuffer* framebuff
 
 GCGLboolean WebGLRenderingContextBase::isProgram(WebGLProgram* program)
 {
-    if (!program || isContextLost() || !program->validate(contextGroup(), *this))
+    if (!program || isContextLost() || !program->validate(*this))
         return 0;
 
     // OpenGL ES special-cases the behavior of program objects; if they're deleted
@@ -3150,7 +3130,7 @@ GCGLboolean WebGLRenderingContextBase::isProgram(WebGLProgram* program)
 
 GCGLboolean WebGLRenderingContextBase::isRenderbuffer(WebGLRenderbuffer* renderbuffer)
 {
-    if (!renderbuffer || isContextLost() || !renderbuffer->validate(contextGroup(), *this))
+    if (!renderbuffer || isContextLost() || !renderbuffer->validate(*this))
         return 0;
 
     if (!renderbuffer->hasEverBeenBound())
@@ -3163,7 +3143,7 @@ GCGLboolean WebGLRenderingContextBase::isRenderbuffer(WebGLRenderbuffer* renderb
 
 GCGLboolean WebGLRenderingContextBase::isShader(WebGLShader* shader)
 {
-    if (!shader || isContextLost() || !shader->validate(contextGroup(), *this))
+    if (!shader || isContextLost() || !shader->validate(*this))
         return 0;
 
     // OpenGL ES special-cases the behavior of shader objects; if they're deleted
@@ -3175,7 +3155,7 @@ GCGLboolean WebGLRenderingContextBase::isShader(WebGLShader* shader)
 
 GCGLboolean WebGLRenderingContextBase::isTexture(WebGLTexture* texture)
 {
-    if (!texture || isContextLost() || !texture->validate(contextGroup(), *this))
+    if (!texture || isContextLost() || !texture->validate(*this))
         return 0;
 
     if (!texture->hasEverBeenBound())
@@ -5026,14 +5006,6 @@ void WebGLRenderingContextBase::forceLostContext(WebGLRenderingContextBase::Lost
         synthesizeLostContextGLError(GraphicsContextGL::INVALID_OPERATION, "loseContext", "context already lost");
         return;
     }
-
-    m_contextGroup->loseContextGroup(mode);
-}
-
-void WebGLRenderingContextBase::loseContextImpl(WebGLRenderingContextBase::LostContextMode mode)
-{
-    if (isContextLost())
-        return;
     if (mode == RealLostContext)
         printToConsole(MessageLevel::Error, "WebGL: context lost."_s);
 
@@ -5077,34 +5049,15 @@ RefPtr<GraphicsLayerContentsDisplayDelegate> WebGLRenderingContextBase::layerCon
     return m_context->layerContentsDisplayDelegate();
 }
 
-void WebGLRenderingContextBase::removeSharedObject(WebGLSharedObject& object)
+WeakPtr<WebGLRenderingContextBase> WebGLRenderingContextBase::createRefForContextObject()
 {
-    m_contextGroup->removeObject(object);
-}
-
-void WebGLRenderingContextBase::addSharedObject(WebGLSharedObject& object)
-{
-    m_contextGroup->addObject(object);
-}
-
-void WebGLRenderingContextBase::removeContextObject(WebGLContextObject& object)
-{
-    m_contextObjects.remove(&object);
-}
-
-void WebGLRenderingContextBase::addContextObject(WebGLContextObject& object)
-{
-    m_contextObjects.add(&object);
+    return m_contextObjectWeakPtrFactory.createWeakPtr(*this);
 }
 
 void WebGLRenderingContextBase::detachAndRemoveAllObjects()
 {
     Locker locker { objectGraphLock() };
-
-    while (m_contextObjects.size() > 0) {
-        HashSet<WebGLContextObject*>::iterator it = m_contextObjects.begin();
-        (*it)->detachContext(locker);
-    }
+    m_contextObjectWeakPtrFactory.revokeAll();
 }
 
 void WebGLRenderingContextBase::stop()
@@ -5768,7 +5721,6 @@ void WebGLRenderingContextBase::maybeRestoreContext()
         }
         // Remove the possible objects added during the initialization.
         detachAndRemoveAllObjects();
-        m_contextGroup->detachAndRemoveAllObjects();
     }
 
     // Either we failed to create context or the context was lost during initialization.

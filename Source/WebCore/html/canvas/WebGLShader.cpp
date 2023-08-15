@@ -29,7 +29,6 @@
 
 #include "WebGLShader.h"
 
-#include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
@@ -42,7 +41,7 @@ Ref<WebGLShader> WebGLShader::create(WebGLRenderingContextBase& ctx, GCGLenum ty
 }
 
 WebGLShader::WebGLShader(WebGLRenderingContextBase& ctx, GCGLenum type)
-    : WebGLSharedObject(ctx)
+    : WebGLObject(ctx)
     , m_type(type)
     , m_source(emptyString())
 {
@@ -51,7 +50,7 @@ WebGLShader::WebGLShader(WebGLRenderingContextBase& ctx, GCGLenum type)
 
 WebGLShader::~WebGLShader()
 {
-    if (!hasGroupOrContext())
+    if (!m_context)
         return;
 
     runDestructor();

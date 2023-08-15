@@ -28,7 +28,6 @@
 #if ENABLE(WEBGL)
 #include "WebGLQuery.h"
 
-#include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
@@ -42,14 +41,14 @@ Ref<WebGLQuery> WebGLQuery::create(WebGLRenderingContextBase& ctx)
 
 WebGLQuery::~WebGLQuery()
 {
-    if (!contextGroup())
+    if (!m_context)
         return;
 
     runDestructor();
 }
 
 WebGLQuery::WebGLQuery(WebGLRenderingContextBase& ctx)
-    : WebGLSharedObject(ctx)
+    : WebGLObject(ctx)
 {
     setObject(ctx.graphicsContextGL()->createQuery());
 }
