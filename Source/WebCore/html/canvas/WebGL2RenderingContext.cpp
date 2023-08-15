@@ -97,20 +97,9 @@ const GCGLuint64 MaxClientWaitTimeout = 0u;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGL2RenderingContext);
 
-std::unique_ptr<WebGL2RenderingContext> WebGL2RenderingContext::create(CanvasBase& canvas, Ref<GraphicsContextGL>&& context, GraphicsContextGLAttributes attributes)
+std::unique_ptr<WebGL2RenderingContext> WebGL2RenderingContext::create(CanvasBase& canvas, GraphicsContextGLAttributes attributes)
 {
-    auto renderingContext = std::unique_ptr<WebGL2RenderingContext>(new WebGL2RenderingContext(canvas, WTFMove(context), attributes));
-    // This is virtual and can't be called in the constructor.
-    renderingContext->initializeNewContext();
-
-    InspectorInstrumentation::didCreateCanvasRenderingContext(*renderingContext);
-
-    return renderingContext;
-}
-
-WebGL2RenderingContext::WebGL2RenderingContext(CanvasBase& canvas, Ref<GraphicsContextGL>&& context, GraphicsContextGLAttributes attributes)
-    : WebGLRenderingContextBase(canvas, WTFMove(context), attributes)
-{
+    return std::unique_ptr<WebGL2RenderingContext>(new WebGL2RenderingContext(canvas, attributes));
 }
 
 WebGL2RenderingContext::~WebGL2RenderingContext()
@@ -126,10 +115,9 @@ WebGL2RenderingContext::~WebGL2RenderingContext()
         activeQuery = nullptr;
 }
 
-void WebGL2RenderingContext::initializeNewContext()
+void WebGL2RenderingContext::initializeContextState()
 {
-    // FIXME: NEEDS_PORT
-    ASSERT(!isContextLost());
+    WebGLRenderingContextBase::initializeContextState();
 
     m_readFramebufferBinding = nullptr;
 
@@ -142,24 +130,22 @@ void WebGL2RenderingContext::initializeNewContext()
 
     // NEEDS_PORT: boolean occlusion query, transform feedback primitives written query, elapsed query
 
-    m_maxTransformFeedbackSeparateAttribs = getUnsignedIntParameter(GraphicsContextGL::MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS);
-    ASSERT(m_maxTransformFeedbackSeparateAttribs >= 4);
+    m_maxTransformFeedbackSeparateAttribs = m_context->getInteger(GraphicsContextGL::MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS);
 
-    m_defaultTransformFeedback = createTransformFeedback();
-    m_context->bindTransformFeedback(GraphicsContextGL::TRANSFORM_FEEDBACK, m_defaultTransformFeedback->object());
+    m_defaultTransformFeedback = WebGLTransformFeedback::create(*this);
     m_boundTransformFeedback = m_defaultTransformFeedback;
+    if (m_defaultTransformFeedback) {
+        addSharedObject(*m_defaultTransformFeedback);
+        m_context->bindTransformFeedback(GraphicsContextGL::TRANSFORM_FEEDBACK, m_defaultTransformFeedback->object());
+    }
 
-    m_boundIndexedUniformBuffers.resize(getIntParameter(GraphicsContextGL::MAX_UNIFORM_BUFFER_BINDINGS));
-    m_uniformBufferOffsetAlignment = getIntParameter(GraphicsContextGL::UNIFORM_BUFFER_OFFSET_ALIGNMENT);
+    m_boundIndexedUniformBuffers.resize(m_context->getInteger(GraphicsContextGL::MAX_UNIFORM_BUFFER_BINDINGS));
+    m_uniformBufferOffsetAlignment = m_context->getInteger(GraphicsContextGL::UNIFORM_BUFFER_OFFSET_ALIGNMENT);
 
     m_max3DTextureSize = m_context->getInteger(GraphicsContextGL::MAX_3D_TEXTURE_SIZE);
     m_max3DTextureLevel = WebGLTexture::computeLevelCount(m_max3DTextureSize, m_max3DTextureSize);
     m_maxArrayTextureLayers = m_context->getInteger(GraphicsContextGL::MAX_ARRAY_TEXTURE_LAYERS);
 
-    WebGLRenderingContextBase::initializeNewContext();
-
-    // These rely on initialization done in the superclass.
-    ASSERT(m_textureUnits.size() >= 8);
     m_boundSamplers.clear();
     m_boundSamplers.resize(m_textureUnits.size());
 }
@@ -172,8 +158,12 @@ long long WebGL2RenderingContext::getInt64Parameter(GCGLenum pname)
 void WebGL2RenderingContext::initializeVertexArrayObjects()
 {
     m_defaultVertexArrayObject = WebGLVertexArrayObject::create(*this, WebGLVertexArrayObject::Type::Default);
+    m_boundVertexArrayObject = m_defaultVertexArrayObject;
+    if (!m_defaultVertexArrayObject)
+        return;
     addContextObject(*m_defaultVertexArrayObject);
-    bindVertexArray(nullptr); // The default VAO was removed in OpenGL 3.3 but not from WebGL 2; bind the default for WebGL to use.
+    // The default VAO was removed in OpenGL 3.3 but not from WebGL 2; bind the default for WebGL to use.
+    m_context->bindVertexArray(m_defaultVertexArrayObject->object());
 }
 
 bool WebGL2RenderingContext::validateBufferTarget(const char* functionName, GCGLenum target)
@@ -2059,7 +2049,9 @@ RefPtr<WebGLTransformFeedback> WebGL2RenderingContext::createTransformFeedback()
         return nullptr;
 
     auto transformFeedback = WebGLTransformFeedback::create(*this);
-    addSharedObject(transformFeedback.get());
+    if (!transformFeedback)
+        return nullptr;
+    addSharedObject(*transformFeedback);
     return transformFeedback;
 }
 
@@ -2488,7 +2480,9 @@ RefPtr<WebGLVertexArrayObject> WebGL2RenderingContext::createVertexArray()
         return nullptr;
 
     auto object = WebGLVertexArrayObject::create(*this, WebGLVertexArrayObject::Type::User);
-    addContextObject(object.get());
+    if (!object)
+        return nullptr;
+    addContextObject(*object);
     return object;
 }
 
