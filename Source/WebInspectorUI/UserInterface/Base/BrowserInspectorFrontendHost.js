@@ -93,14 +93,25 @@ if (!window.InspectorFrontendHost) {
             let url = "ws" in queryParams ? "ws://" + queryParams.ws : null;
             if (!url) {
                 url = location.pathname.slice(1);
-                if (!url.startsWith("ws://") && !url.startsWith("ws://")) {
+                if (url && (!url.startsWith("ws://") && !url.startsWith("ws://"))) {
                     url = "ws://" + url;
                 }
             }
-            if (!url)
+            if (!url) {
+                if (typeof window.onFailToLoad === "function") {
+                    window.onFailToLoad(null);
+                }
                 return;
+            }
 
-            const socket = new WebSocket(url);
+            try {
+                var socket = new WebSocket(url);
+            } catch (e) {
+                if (typeof window.onFailToLoad === "function") {
+                    window.onFailToLoad(url);
+                }
+                throw new Error(`Could not connect to "${url}"`, {cause: e});
+            }
             socket.addEventListener("message", message => InspectorBackend.dispatch(message.data));
             socket.addEventListener("error", console.error);
             socket.addEventListener("open", () => { this._socket = socket; });
