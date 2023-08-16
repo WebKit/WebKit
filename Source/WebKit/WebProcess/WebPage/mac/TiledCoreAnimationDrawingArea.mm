@@ -145,12 +145,12 @@ void TiledCoreAnimationDrawingArea::sendEnterAcceleratedCompositingModeIfNeeded(
 
 void TiledCoreAnimationDrawingArea::registerScrollingTree()
 {
-    WebProcess::singleton().eventDispatcher().addScrollingTreeForPage(m_webPage);
+    WebProcess::singleton().eventDispatcher().addScrollingTreeForPage(Ref { m_webPage });
 }
 
 void TiledCoreAnimationDrawingArea::unregisterScrollingTree()
 {
-    WebProcess::singleton().eventDispatcher().removeScrollingTreeForPage(m_webPage);
+    WebProcess::singleton().eventDispatcher().removeScrollingTreeForPage(Ref { m_webPage });
 }
 
 void TiledCoreAnimationDrawingArea::setNeedsDisplay()

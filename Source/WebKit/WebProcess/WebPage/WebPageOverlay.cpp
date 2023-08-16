@@ -86,12 +86,14 @@ void WebPageOverlay::clear()
 
 void WebPageOverlay::willMoveToPage(PageOverlay&, Page* page)
 {
-    m_client->willMoveToPage(*this, page ? WebPage::fromCorePage(*page) : nullptr);
+    RefPtr webPage = page ? WebPage::fromCorePage(*page) : nullptr;
+    m_client->willMoveToPage(*this, webPage.get());
 }
 
 void WebPageOverlay::didMoveToPage(PageOverlay&, Page* page)
 {
-    m_client->didMoveToPage(*this, page ? WebPage::fromCorePage(*page) : nullptr);
+    RefPtr webPage = page ? WebPage::fromCorePage(*page) : nullptr;
+    m_client->didMoveToPage(*this, webPage.get());
 }
 
 void WebPageOverlay::drawRect(PageOverlay&, GraphicsContext& context, const IntRect& dirtyRect)
@@ -106,7 +108,8 @@ bool WebPageOverlay::mouseEvent(PageOverlay&, const PlatformMouseEvent& event)
 
 void WebPageOverlay::didScrollFrame(PageOverlay&, LocalFrame& frame)
 {
-    m_client->didScrollFrame(*this, WebFrame::fromCoreFrame(frame));
+    RefPtr webFrame = WebFrame::fromCoreFrame(frame);
+    m_client->didScrollFrame(*this, webFrame.get());
 }
 
 #if PLATFORM(MAC)
