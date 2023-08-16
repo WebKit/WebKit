@@ -77,6 +77,7 @@ public:
 
 private:
     SpeechSynthesis(ScriptExecutionContext&);
+    void clearUtteranceQueue();
 
     // PlatformSpeechSynthesizerClient override methods.
     void voicesDidChange() override;
