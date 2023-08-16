@@ -3748,12 +3748,6 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
     _page->replaceSelectedText(text, word);
 }
 
-- (void)selectWordBackward
-{
-    _autocorrectionContextNeedsUpdate = YES;
-    _page->selectWordBackward();
-}
-
 - (void)_promptForReplaceForWebView:(id)sender
 {
     if (!_page->editorState().postLayoutData)
@@ -4771,42 +4765,26 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)requestPreferredArrowDirectionForEditMenuWithCompletionHandler:(void(^)(UIEditMenuArrowDirection))completion
 {
-    [self _requestEvasionRectsAboveSelectionIfNeeded:[completion = makeBlockPtr(completion)](const Vector<WebCore::FloatRect>& rects) {
-        completion(rects.isEmpty() ? UIEditMenuArrowDirectionAutomatic : UIEditMenuArrowDirectionUp);
-    }];
-}
-
-#endif
-
-- (void)requestRectsToEvadeForSelectionCommandsWithCompletionHandler:(void(^)(NSArray<NSValue *> *rects))completion
-{
-    [self _requestEvasionRectsAboveSelectionIfNeeded:[completion = makeBlockPtr(completion)](const Vector<WebCore::FloatRect>& rects) {
-        completion(createNSArray(rects).get());
-    }];
-}
-
-- (void)_requestEvasionRectsAboveSelectionIfNeeded:(CompletionHandler<void(const Vector<WebCore::FloatRect>&)>&&)completion
-{
     if ([self _shouldSuppressSelectionCommands]) {
-        completion({ });
+        completion(UIEditMenuArrowDirectionAutomatic);
         return;
     }
 
-    auto requestRectsToEvadeIfNeeded = [startTime = ApproximateTime::now(), weakSelf = WeakObjCPtr<WKContentView>(self), completion = WTFMove(completion)]() mutable {
+    auto requestRectsToEvadeIfNeeded = [startTime = ApproximateTime::now(), weakSelf = WeakObjCPtr<WKContentView>(self), completion = makeBlockPtr(completion)]() mutable {
         auto strongSelf = weakSelf.get();
         if (!strongSelf) {
-            completion({ });
+            completion(UIEditMenuArrowDirectionAutomatic);
             return;
         }
 
         if ([strongSelf webView]._editable) {
-            completion({ });
+            completion(UIEditMenuArrowDirectionAutomatic);
             return;
         }
 
         auto focusedElementType = strongSelf->_focusedElementInformation.elementType;
         if (focusedElementType != WebKit::InputType::ContentEditable && focusedElementType != WebKit::InputType::TextArea) {
-            completion({ });
+            completion(UIEditMenuArrowDirectionAutomatic);
             return;
         }
 
@@ -4815,16 +4793,18 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         WorkQueue::main().dispatchAfter(delayBeforeShowingEditMenu, [completion = WTFMove(completion), weakSelf]() mutable {
             auto strongSelf = weakSelf.get();
             if (!strongSelf) {
-                completion({ });
+                completion(UIEditMenuArrowDirectionAutomatic);
                 return;
             }
 
             if (!strongSelf->_page) {
-                completion({ });
+                completion(UIEditMenuArrowDirectionAutomatic);
                 return;
             }
 
-            strongSelf->_page->requestEvasionRectsAboveSelection(WTFMove(completion));
+            strongSelf->_page->requestEvasionRectsAboveSelection([completion = WTFMove(completion)](auto& rects) mutable {
+                completion(rects.isEmpty() ? UIEditMenuArrowDirectionAutomatic : UIEditMenuArrowDirectionUp);
+            });
         });
     };
 
@@ -4834,6 +4814,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     requestRectsToEvadeIfNeeded();
 #endif
 }
+
+#endif // HAVE(UI_EDIT_MENU_INTERACTION)
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
@@ -11753,6 +11735,12 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 @end
 
 @implementation WKContentView (WKTesting)
+
+- (void)selectWordBackwardForTesting
+{
+    _autocorrectionContextNeedsUpdate = YES;
+    _page->selectWordBackward();
+}
 
 - (void)_doAfterReceivingEditDragSnapshotForTesting:(dispatch_block_t)action
 {

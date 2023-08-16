@@ -857,7 +857,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (void)insertTextPlaceholderWithSize:(CGSize)size completionHandler:(void (^)(UITextPlaceholder *))completionHandler;
 - (void)removeTextPlaceholder:(UITextPlaceholder *)placeholder willInsertText:(BOOL)willInsertText completionHandler:(void (^)(void))completionHandler;
 
-- (void)clearSelection;
 - (void)replaceDictatedText:(NSString *)oldText withText:(NSString *)newText;
 - (void)requestDictationContext:(void (^)(NSString *selectedText, NSString *prefixText, NSString *postfixText))completionHandler;
 - (BOOL)pointIsNearMarkedText:(CGPoint)point;
@@ -866,7 +865,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (void)replaceText:(NSString *)text withText:(NSString *)word;
 - (void)selectWordForReplacement;
 - (BOOL)isReplaceAllowed;
-- (void)selectWordBackward;
 - (UIView *)unscaledView;
 - (CGFloat)inverseScale;
 - (CGRect)unobscuredContentRect;

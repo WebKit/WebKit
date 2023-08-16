@@ -364,7 +364,7 @@ TEST(DocumentEditingContext, RequestMarkedText)
     [webView evaluateJavaScript:@"document.body.focus()" completionHandler:nil];
     [webView _synchronouslyExecuteEditCommand:@"InsertText" argument:@"Hello world"];
 
-    [contentView selectWordBackward];
+    [webView selectWordBackwardForTesting];
     [contentView setMarkedText:@"world" selectedRange:NSMakeRange(0, 5)];
     [webView waitForNextPresentationUpdate];
     {
@@ -461,7 +461,7 @@ TEST(DocumentEditingContext, RequestMarkedTextRectsAndTextOnly)
     [webView _synchronouslyExecuteEditCommand:@"InsertText" argument:@"Hello world"];
 
     auto *contentView = [webView textInputContentView];
-    [contentView selectWordBackward];
+    [webView selectWordBackwardForTesting];
     [contentView setMarkedText:@"world" selectedRange:NSMakeRange(0, 5)];
     [webView collapseToEnd];
 

@@ -87,6 +87,11 @@ static void dumpSeparatedLayerProperties(TextStream&, CALayer *) { }
     [_contentView _willBeginTextInteractionInTextInputContext:context];
 }
 
+- (void)selectWordBackwardForTesting
+{
+    [_contentView selectWordBackwardForTesting];
+}
+
 - (void)_didFinishTextInteractionInTextInputContext:(_WKTextInputContext *)context
 {
     [_contentView _didFinishTextInteractionInTextInputContext:context];
