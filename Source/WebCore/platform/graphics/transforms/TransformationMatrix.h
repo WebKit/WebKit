@@ -311,15 +311,20 @@ public:
     struct Decomposed2Type {
         double scaleX, scaleY;
         double translateX, translateY;
-        double angle;
-        double m11, m12, m21, m22;
-        
+        Quaternion quaternion;
+        double skewXY;
+
         bool operator==(const Decomposed2Type& other) const
         {
             return scaleX == other.scaleX && scaleY == other.scaleY
                 && translateX == other.translateX && translateY == other.translateY
-                && angle == other.angle
-                && m11 == other.m11 && m12 == other.m12 && m21 == other.m21 && m22 == other.m22;
+                && quaternion == other.quaternion
+                && skewXY == other.skewXY;
+        }
+
+        bool hasRotation()
+        {
+            return (quaternion.x || quaternion.y || quaternion.z) && quaternion.w;
         }
     };
 

@@ -2297,7 +2297,7 @@ bool KeyframeEffect::computeTransformedExtentViaTransformList(const FloatRect& r
             if (operation->type() == TransformOperation::Type::Matrix || operation->type() == TransformOperation::Type::Matrix3D) {
                 TransformationMatrix::Decomposed2Type toDecomp;
                 // Any rotation prevents us from using a simple start/end rect union.
-                if (!transform.decompose2(toDecomp) || toDecomp.angle)
+                if (!transform.decompose2(toDecomp) || toDecomp.hasRotation())
                     return false;
             }
 
@@ -2321,7 +2321,7 @@ bool KeyframeEffect::computeTransformedExtentViaMatrix(const FloatRect& renderer
 
     TransformationMatrix::Decomposed2Type fromDecomp;
     // Any rotation prevents us from using a simple start/end rect union.
-    if (!transform.decompose2(fromDecomp) || fromDecomp.angle)
+    if (!transform.decompose2(fromDecomp) || fromDecomp.hasRotation())
         return false;
 
     bounds = LayoutRect(transform.mapRect(bounds));
