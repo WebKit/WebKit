@@ -2401,7 +2401,7 @@ accessibility/ax-object-destroyed-on-reload.html [ Skip ]
 fast/mediastream/captureInGPUProcess.html [ Skip ]
 fast/mediastream/video-rotation-gpu-process-crash.html [ Skip ]
 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable-gpuprocess.html [ Skip ]
-webgl/webgl-fail-after-context-creation-no-crash.html [ Skip ]
+webgl/webgl-fail-remote-context-ipc-buffer-allocation-no-crash.html [ Skip ]
 
 # Payment Request
 imported/w3c/web-platform-tests/payment-request [ Skip ]

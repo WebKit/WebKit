@@ -488,7 +488,7 @@ public:
     const PixelStoreParameters& unpackPixelStoreParameters() const { return m_unpackParameters; };
 
 protected:
-    WebGLRenderingContextBase(CanvasBase&, WebGLContextAttributes);
+    WebGLRenderingContextBase(CanvasBase&, Ref<GraphicsContextGL>&&, WebGLContextAttributes);
 
     friend class EXTDisjointTimerQuery;
     friend class EXTDisjointTimerQueryWebGL2;
@@ -519,8 +519,7 @@ protected:
     // Implementation helpers.
     friend class InspectorScopedShaderProgramHighlight;
 
-    void initializeNewContext(Ref<GraphicsContextGL>);
-    virtual void initializeContextState();
+    virtual void initializeNewContext();
     virtual void initializeVertexArrayObjects() = 0;
     void setupFlags();
 
@@ -534,6 +533,7 @@ protected:
     void addContextObject(WebGLContextObject&);
     void detachAndRemoveAllObjects();
 
+    void setGraphicsContextGL(Ref<GraphicsContextGL>&&);
     void destroyGraphicsContextGL();
 
     enum CallerType {

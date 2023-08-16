@@ -79,8 +79,8 @@ RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(IPC::C
 {
     constexpr unsigned defaultConnectionBufferSizeLog2 = 21;
     unsigned connectionBufferSizeLog2 = defaultConnectionBufferSizeLog2;
-    if (attributes.failContextCreationForTesting == WebCore::GraphicsContextGLAttributes::SimulatedCreationFailure::IPCBufferOOM)
-        connectionBufferSizeLog2 = 50; // Expect this to fail.
+    if (attributes.remoteIPCBufferSizeLog2ForTesting)
+        connectionBufferSizeLog2 = attributes.remoteIPCBufferSizeLog2ForTesting;
     auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(connectionBufferSizeLog2);
     if (!clientConnection)
         return nullptr;
@@ -90,11 +90,6 @@ RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(IPC::C
 #endif
     );
     instance->initializeIPC(WTFMove(serverConnectionHandle), renderingBackend);
-    if (attributes.failContextCreationForTesting == WebCore::GraphicsContextGLAttributes::SimulatedCreationFailure::CreationTimeout)
-        instance->markContextLost();
-    // TODO: We must wait until initialized, because at the moment we cannot receive IPC messages
-    // during wait while in synchronous stream send. Should be fixed as part of https://bugs.webkit.org/show_bug.cgi?id=217211.
-    instance->waitUntilInitialized();
     return instance;
 }
 
@@ -117,6 +112,9 @@ void RemoteGraphicsContextGLProxy::initializeIPC(IPC::StreamServerConnection::Ha
 {
     m_connection->send(Messages::GPUConnectionToWebProcess::CreateGraphicsContextGL(contextAttributes(), m_graphicsContextGLIdentifier, renderingBackend.ensureBackendCreated(), WTFMove(serverConnectionHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
     m_streamConnection->open(*this, renderingBackend.dispatcher());
+    // TODO: We must wait until initialized, because at the moment we cannot receive IPC messages
+    // during wait while in synchronous stream send. Should be fixed as part of https://bugs.webkit.org/show_bug.cgi?id=217211.
+    waitUntilInitialized();
 }
 
 RemoteGraphicsContextGLProxy::~RemoteGraphicsContextGLProxy()

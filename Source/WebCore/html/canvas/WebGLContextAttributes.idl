@@ -33,12 +33,6 @@ enum WebGLPowerPreference {
     "high-performance"
 };
 
-[Conditional=WEBGL] enum WebGLContextSimulatedCreationFailure {
-    "None",
-    "IPCBufferOOM",
-    "CreationTimeout"
-};
-
 [
     Conditional=WEBGL,
     JSGenerateToJSObject
@@ -53,6 +47,6 @@ enum WebGLPowerPreference {
     GLboolean failIfMajorPerformanceCaveat = false;
     [Conditional=WEBXR, EnabledBySetting=WebXREnabled] boolean xrCompatible = false;
     [EnabledBySetting=DOMTestingAPIsEnabled] GLboolean failPlatformContextCreationForTesting = false;
-    [EnabledBySetting=DOMTestingAPIsEnabled] WebGLContextSimulatedCreationFailure failContextCreationForTesting = "None";
+    [EnabledBySetting=DOMTestingAPIsEnabled] unsigned long remoteIPCBufferSizeLog2ForTesting = 0;
 
 };

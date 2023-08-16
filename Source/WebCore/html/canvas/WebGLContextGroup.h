@@ -49,10 +49,10 @@ public:
 
     void loseContextGroup(WebGLRenderingContextBase::LostContextMode);
 
-    void detachAndRemoveAllObjects();
-
 private:
     WebGLContextGroup() = default;
+
+    void detachAndRemoveAllObjects();
 
     HashSet<WebGLRenderingContextBase*> m_contexts;
     HashSet<WebGLSharedObject*> m_groupObjects;

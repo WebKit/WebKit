@@ -62,10 +62,8 @@ RefPtr<WebGLVertexArrayObjectOES> OESVertexArrayObject::createVertexArrayOES()
     if (context.isLost())
         return nullptr;
 
-    auto object = WebGLVertexArrayObjectOES::createUser(*context);
-    if (!object)
-        return nullptr;
-    context->addContextObject(*object);
+    auto object = WebGLVertexArrayObjectOES::create(*context, WebGLVertexArrayObjectOES::Type::User);
+    context->addContextObject(object.get());
     return object;
 }
 
