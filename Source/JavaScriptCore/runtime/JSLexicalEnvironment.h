@@ -114,7 +114,7 @@ public:
 
     DECLARE_INFO;
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject) { return Structure::create(vm, globalObject, jsNull(), TypeInfo(LexicalEnvironmentType, StructureFlags), info()); }
+    inline static Structure* createStructure(VM&, JSGlobalObject*);
 
 protected:
     JSLexicalEnvironment(VM&, Structure*, JSScope*, SymbolTable*, JSValue initialValue);

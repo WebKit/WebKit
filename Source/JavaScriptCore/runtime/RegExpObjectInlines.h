@@ -33,6 +33,11 @@
 
 namespace JSC {
 
+inline Structure* RegExpObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(RegExpObjectType, StructureFlags), info());
+}
+
 ALWAYS_INLINE unsigned getRegExpObjectLastIndexAsUnsigned(
     JSGlobalObject* globalObject, RegExpObject* regExpObject, const String& input)
 {

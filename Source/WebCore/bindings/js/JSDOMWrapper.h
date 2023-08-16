@@ -24,6 +24,7 @@
 #include "JSDOMGlobalObject.h"
 #include "NodeConstants.h"
 #include <JavaScriptCore/JSDestructibleObject.h>
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/SignedPtr.h>
 
 namespace WebCore {

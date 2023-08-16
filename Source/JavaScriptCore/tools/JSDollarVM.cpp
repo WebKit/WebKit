@@ -42,6 +42,7 @@
 #include "JITSizeStatistics.h"
 #include "JSArray.h"
 #include "JSCInlines.h"
+#include "JSGlobalProxyInlines.h"
 #include "JSONObject.h"
 #include "JSPromise.h"
 #include "JSString.h"

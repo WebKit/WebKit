@@ -37,7 +37,9 @@
 #include "JSWeakObjectMapRefInternal.h"
 #include "LinkTimeConstant.h"
 #include "ObjectPrototype.h"
+#include "ParserModes.h"
 #include "StrongInlines.h"
+#include "StructureInlines.h"
 #include <wtf/Hasher.h>
 
 namespace JSC {

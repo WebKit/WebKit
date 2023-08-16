@@ -57,11 +57,7 @@ public:
         return sizeof(JSGeneratorFunction);
     }
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        ASSERT(globalObject);
-        return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
-    }
+    inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
 private:
     JSGeneratorFunction(VM&, FunctionExecutable*, JSScope*, Structure*);

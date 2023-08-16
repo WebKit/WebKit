@@ -243,4 +243,9 @@ inline void unshift(JSGlobalObject* globalObject, JSObject* thisObj, uint64_t he
     }
 }
 
+inline Structure* ArrayPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(DerivedArrayType, StructureFlags), info(), ArrayClass);
+}
+
 } // namespace JSC

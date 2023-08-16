@@ -27,7 +27,7 @@
 #include "ShadowRealmConstructor.h"
 
 #include "JSCInlines.h"
-#include "ShadowRealmObject.h"
+#include "ShadowRealmObjectInlines.h"
 
 namespace JSC {
 

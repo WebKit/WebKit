@@ -30,6 +30,7 @@
 #include "JSArrayBufferView.h"
 #include "JSCJSValueInlines.h"
 #include "JSGlobalObject.h"
+#include "JSObjectInlines.h"
 #include "PropertyTable.h"
 #include "StringPrototype.h"
 #include "Structure.h"
@@ -40,32 +41,6 @@
 #include <wtf/Threading.h>
 
 namespace JSC {
-
-class DeferredStructureTransitionWatchpointFire final : public DeferredWatchpointFire {
-    WTF_MAKE_NONCOPYABLE(DeferredStructureTransitionWatchpointFire);
-public:
-    DeferredStructureTransitionWatchpointFire(VM& vm, Structure* structure)
-        : DeferredWatchpointFire()
-        , m_vm(vm)
-        , m_structure(structure)
-    {
-    }
-
-    ~DeferredStructureTransitionWatchpointFire()
-    {
-        if (watchpointsToFire().state() == IsWatched)
-            fireAllSlow();
-    }
-
-    const Structure* structure() const { return m_structure; }
-
-
-private:
-    JS_EXPORT_PRIVATE void fireAllSlow();
-
-    VM& m_vm;
-    const Structure* m_structure;
-};
 
 inline Structure* Structure::create(VM& vm, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingModeIncludingHistory, unsigned inlineCapacity)
 {

@@ -29,6 +29,11 @@
 
 namespace JSC {
 
+inline Structure* ObjectConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
+}
+
 ALWAYS_INLINE bool canPerformFastPropertyNameEnumerationForJSONStringifyWithSideEffect(Structure* structure)
 {
     // We do not check GetterSetter, CustomGetterSetter. GetterSetter and CustomGetterSetter will be invoked, and we fall back to the a bit more generic mode when we detect structure transition.

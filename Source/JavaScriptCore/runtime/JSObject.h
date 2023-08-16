@@ -1017,10 +1017,7 @@ protected:
     }
 #endif
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
-    }
+    inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     // To instantiate objects you likely want JSFinalObject, below.
     // To create derived types you likely want JSNonFinalObject, below.
@@ -1203,10 +1200,7 @@ class JSNonFinalObject : public JSObject {
 public:
     typedef JSObject Base;
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
-    }
+    inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
 protected:
     explicit JSNonFinalObject(VM& vm, Structure* structure, Butterfly* butterfly = nullptr)
@@ -1257,10 +1251,7 @@ public:
 
     static JSFinalObject* create(VM&, Structure*);
     static JSFinalObject* createWithButterfly(VM&, Structure*, Butterfly*);
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, unsigned inlineCapacity)
-    {
-        return Structure::create(vm, globalObject, prototype, typeInfo(), info(), defaultIndexingType, inlineCapacity);
-    }
+    inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue, unsigned);
 
     static JSFinalObject* createDefaultEmptyObject(JSGlobalObject*);
 
