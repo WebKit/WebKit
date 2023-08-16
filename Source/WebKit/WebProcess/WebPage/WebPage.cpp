@@ -6702,13 +6702,13 @@ static RefPtr<LocalFrame> targetFrameForEditing(WebPage& page)
 
 void WebPage::cancelComposition(const String& compositionString)
 {
-    if (auto targetFrame = targetFrameForEditing(*this))
+    if (RefPtr targetFrame = targetFrameForEditing(*this))
         targetFrame->editor().confirmComposition(compositionString);
 }
 
 void WebPage::deleteSurrounding(int64_t offset, unsigned characterCount)
 {
-    auto targetFrame = targetFrameForEditing(*this);
+    RefPtr targetFrame = targetFrameForEditing(*this);
     if (!targetFrame)
         return;
 

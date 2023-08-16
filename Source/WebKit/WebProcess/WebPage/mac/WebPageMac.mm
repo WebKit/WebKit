@@ -851,14 +851,14 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
     if (!localMainFrame)
         return;
 
-    Ref mainFrame = *localMainFrame;
-    if (!mainFrame->view() || !mainFrame->view()->renderView()) {
+    auto& mainFrame = *localMainFrame;
+    if (!mainFrame.view() || !mainFrame.view()->renderView()) {
         send(Messages::WebPageProxy::DidPerformImmediateActionHitTest(WebHitTestResultData(), false, UserData()));
         return;
     }
 
-    auto locationInContentCoordinates = mainFrame->view()->rootViewToContents(roundedIntPoint(locationInViewCoordinates));
-    auto hitTestResult = mainFrame->eventHandler().hitTestResultAtPoint(locationInContentCoordinates, {
+    auto locationInContentCoordinates = mainFrame.view()->rootViewToContents(roundedIntPoint(locationInViewCoordinates));
+    auto hitTestResult = mainFrame.eventHandler().hitTestResultAtPoint(locationInContentCoordinates, {
         HitTestRequest::Type::ReadOnly,
         HitTestRequest::Type::Active,
         HitTestRequest::Type::DisallowUserAgentShadowContentExceptForImageOverlays,
@@ -868,7 +868,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
     bool immediateActionHitTestPreventsDefault = false;
     RefPtr element = hitTestResult.targetElement();
 
-    mainFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::PerformedHitTest);
+    mainFrame.eventHandler().setImmediateActionStage(ImmediateActionStage::PerformedHitTest);
     if (element)
         immediateActionHitTestPreventsDefault = element->dispatchMouseForceWillBegin();
 
