@@ -144,7 +144,7 @@ InlineItemPosition TextOnlyLineBuilder::placeInlineTextContent(const InlineItemR
 {
     auto candidateContent = InlineContentBreaker::ContinuousContent { };
     auto isFirstFormattedLine = this->isFirstFormattedLine();
-    auto hasWrapOpportunityBeforeWhitespace = root().style().whiteSpaceCollapse() != WhiteSpaceCollapse::BreakSpaces;
+    auto hasWrapOpportunityBeforeWhitespace = root().style().whiteSpaceCollapse() != WhiteSpaceCollapse::BreakSpaces && root().style().lineBreak() != LineBreak::AfterWhiteSpace;
     size_t placedInlineItemCount = 0;
 
     auto result = TextOnlyLineBreakResult { };
@@ -310,12 +310,14 @@ TextOnlyLineBreakResult TextOnlyLineBuilder::handleInlineTextContent(const Inlin
 void TextOnlyLineBuilder::handleLineEnding(InlineItemPosition placedContentEnd, size_t layoutRangeEndIndex)
 {
     auto horizontalAvailableSpace = m_lineLogicalRect.width();
-
-    m_line.handleTrailingTrimmableContent(Line::TrailingContentAction::Remove);
-    if (formattingContext().formattingQuirks().trailingNonBreakingSpaceNeedsAdjustment(isInIntrinsicWidthMode(), horizontalAvailableSpace < m_line.contentLogicalWidth()))
-        m_line.handleOverflowingNonBreakingSpace(Line::TrailingContentAction::Remove, m_line.contentLogicalWidth() - horizontalAvailableSpace);
-
     auto isLastLine = isLastLineWithInlineContent(placedContentEnd, layoutRangeEndIndex);
+    auto shouldPreserveTrailingWhitespace = [&] {
+        return root().style().lineBreak() == LineBreak::AfterWhiteSpace && (!isLastLine || horizontalAvailableSpace < m_line.contentLogicalWidth());
+    };
+    m_line.handleTrailingTrimmableContent(shouldPreserveTrailingWhitespace() ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove);
+    if (formattingContext().formattingQuirks().trailingNonBreakingSpaceNeedsAdjustment(isInIntrinsicWidthMode(), horizontalAvailableSpace < m_line.contentLogicalWidth()))
+        m_line.handleOverflowingNonBreakingSpace(shouldPreserveTrailingWhitespace() ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove, m_line.contentLogicalWidth() - horizontalAvailableSpace);
+
     m_line.handleTrailingHangingContent(intrinsicWidthMode(), horizontalAvailableSpace, isLastLine);
 }
 
@@ -364,8 +366,6 @@ bool TextOnlyLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(const Elem
     if (rootStyle.textIndent() != RenderStyle::initialTextIndent())
         return false;
     if (rootStyle.textAlignLast() == TextAlignLast::Justify || rootStyle.textAlign() == TextAlignMode::Justify)
-        return false;
-    if (rootStyle.lineBreak() == LineBreak::AfterWhiteSpace)
         return false;
     if (rootStyle.boxDecorationBreak() == BoxDecorationBreak::Clone)
         return false;
