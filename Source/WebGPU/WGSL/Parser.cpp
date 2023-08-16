@@ -298,17 +298,17 @@ static AST::UnaryOperation toUnaryOperation(const Token& token)
 }
 
 template<typename Lexer>
-std::optional<Error> parse(ShaderModule& shaderModule)
+std::optional<FailedCheck> parse(ShaderModule& shaderModule)
 {
     Lexer lexer(shaderModule.source());
     Parser parser(shaderModule, lexer);
     auto result = parser.parseShader();
     if (!result.has_value())
-        return result.error();
+        return FailedCheck { { result.error() }, { /* warnings */ } };
     return std::nullopt;
 }
 
-std::optional<Error> parse(ShaderModule& shaderModule)
+std::optional<FailedCheck> parse(ShaderModule& shaderModule)
 {
     if (shaderModule.source().is8Bit())
         return parse<Lexer<LChar>>(shaderModule);
