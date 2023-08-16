@@ -41,7 +41,7 @@
 //
 // When the wrapped function is actually called, it will be given the most recent set of arguments.
 
-class Throttler
+Throttler = class Throttler
 {
     constructor(callback, delay)
     {
