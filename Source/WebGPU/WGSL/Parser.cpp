@@ -31,6 +31,7 @@
 #include "ParserPrivate.h"
 #include "WGSLShaderModule.h"
 
+#include <wtf/HashSet.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WGSL {
@@ -519,8 +520,12 @@ Result<AST::Structure::Ref> Parser<Lexer>::parseStructure(AST::Attribute::List&&
     CONSUME_TYPE(BraceLeft);
 
     AST::StructureMember::List members;
+    HashSet<String> seenMembers;
     while (current().type != TokenType::BraceRight) {
         PARSE(member, StructureMember);
+        auto result = seenMembers.add(member.get().name());
+        if (!result.isNewEntry)
+            FAIL(makeString("duplicate member '", member.get().name(), "' in struct '", name, "'"));
         members.append(member);
         if (current().type == TokenType::Comma)
             consume();
