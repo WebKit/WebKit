@@ -65,12 +65,12 @@ namespace WebKit {
 
 class WebFileSystemStorageConnection final : public WebCore::FileSystemStorageConnection {
 public:
-    static Ref<WebFileSystemStorageConnection> create(IPC::Connection&);
+    static Ref<WebFileSystemStorageConnection> create(Ref<IPC::Connection>&&);
     void connectionClosed();
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
 private:
-    explicit WebFileSystemStorageConnection(IPC::Connection&);
+    explicit WebFileSystemStorageConnection(Ref<IPC::Connection>&&);
 
     // FileSystemStorageConnection
     void closeHandle(WebCore::FileSystemHandleIdentifier) final;
