@@ -39,12 +39,18 @@
 
 body[dir=ltr] .slider > img {
     left: 2px;
-    transform: translateY(var(--translate-y, 0px)) rotate(270deg);
 }
 
 body[dir=rtl] .slider > img {
     left: -6px;
-    transform: translateY(var(--translate-y, 0px)) rotate(90deg);
+}
+
+.slider img {
+    transform: translateY(var(--translate-y, 0px));
+}
+
+.slider img.horizontal{
+    transform: translateX(var(--translate-x, 0px));
 }
 
 .slider > img.dragging {
