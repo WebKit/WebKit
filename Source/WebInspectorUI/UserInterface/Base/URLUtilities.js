@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function removeURLFragment(url)
+removeURLFragment = function removeURLFragment(url)
 {
     var hashIndex = url.indexOf("#");
     if (hashIndex >= 0)
@@ -31,7 +31,7 @@ function removeURLFragment(url)
     return url;
 }
 
-function relativePath(path, basePath)
+relativePath = function relativePath(path, basePath)
 {
     console.assert(path.charAt(0) === "/");
     console.assert(basePath.charAt(0) === "/");
@@ -55,7 +55,7 @@ function relativePath(path, basePath)
     return finalComponents.join("/");
 }
 
-function parseSecurityOrigin(securityOrigin)
+parseSecurityOrigin = function parseSecurityOrigin(securityOrigin)
 {
     securityOrigin = securityOrigin ? securityOrigin.trim() : "";
 
@@ -70,7 +70,7 @@ function parseSecurityOrigin(securityOrigin)
     return {scheme, host, port};
 }
 
-function parseDataURL(url)
+parseDataURL = function parseDataURL(url)
 {
     if (!url.startsWith("data:"))
         return null;
@@ -89,7 +89,7 @@ function parseDataURL(url)
     return {scheme, mimeType, charset, base64, data};
 }
 
-function parseURL(url)
+parseURL = function parseURL(url)
 {
     let result = {
         scheme: null,
@@ -162,7 +162,7 @@ function parseURL(url)
     return result;
 }
 
-function absoluteURL(partialURL, baseURL)
+absoluteURL = function absoluteURL(partialURL, baseURL)
 {
     partialURL = partialURL ? partialURL.trim() : "";
 
@@ -214,7 +214,7 @@ function absoluteURL(partialURL, baseURL)
     return baseURLPrefix + resolveDotsInPath(basePath + partialURL);
 }
 
-function parseQueryString(queryString, arrayResult)
+parseQueryString = function parseQueryString(queryString, arrayResult)
 {
     if (!queryString)
         return arrayResult ? [] : {};

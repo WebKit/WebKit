@@ -41,7 +41,7 @@
 //
 // When the wrapped function is actually called, it will be given the most recent set of arguments.
 
-class Debouncer
+Debouncer = class Debouncer
 {
     constructor(callback)
     {

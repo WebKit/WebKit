@@ -23,21 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var emDash = "\u2014";
-var enDash = "\u2013";
-var figureDash = "\u2012";
-var ellipsis = "\u2026";
-var zeroWidthSpace = "\u200b";
-var multiplicationSign = "\u00d7";
+emDash = "\u2014";
+enDash = "\u2013";
+figureDash = "\u2012";
+ellipsis = "\u2026";
+zeroWidthSpace = "\u200b";
+multiplicationSign = "\u00d7";
 
-function xor(a, b)
+xor = function xor(a, b)
 {
     if (a)
         return b ? false : a;
     return b || false;
 }
 
-function nullish(value)
+nullish = function nullish(value)
 {
     return value === null || value === undefined;
 }
@@ -1538,20 +1538,20 @@ Object.defineProperty(Uint32Array, "isLittleEndian",
     }
 });
 
-function isEmptyObject(object)
+isEmptyObject = function isEmptyObject(object)
 {
     for (var property in object)
         return false;
     return true;
 }
 
-function isEnterKey(event)
+isEnterKey = function isEnterKey(event)
 {
     // Check if this is an IME event.
     return event.keyCode !== 229 && event.keyIdentifier === "Enter";
 }
 
-function resolveDotsInPath(path)
+resolveDotsInPath = function resolveDotsInPath(path)
 {
     if (!path)
         return path;
@@ -1585,7 +1585,7 @@ function resolveDotsInPath(path)
     return result.join("/");
 }
 
-function parseMIMEType(fullMimeType)
+parseMIMEType = function parseMIMEType(fullMimeType)
 {
     if (!fullMimeType)
         return {type: fullMimeType, boundary: null, encoding: null};
@@ -1611,7 +1611,7 @@ function parseMIMEType(fullMimeType)
     return {type, boundary: boundary || null, encoding: encoding || null};
 }
 
-function simpleGlobStringToRegExp(globString, regExpFlags)
+simpleGlobStringToRegExp = function simpleGlobStringToRegExp(globString, regExpFlags)
 {
     // Only supports "*" globs.
 
@@ -1757,41 +1757,41 @@ Object.defineProperty(Promise, "delay",
     }
 });
 
-function appendWebInspectorSourceURL(string)
+appendWebInspectorSourceURL = function appendWebInspectorSourceURL(string)
 {
     if (string.includes("//# sourceURL"))
         return string;
     return "\n//# sourceURL=__WebInspectorInternal__\n" + string;
 }
 
-function appendWebInspectorConsoleEvaluationSourceURL(string)
+appendWebInspectorConsoleEvaluationSourceURL = function appendWebInspectorConsoleEvaluationSourceURL(string)
 {
     if (string.includes("//# sourceURL"))
         return string;
     return "\n//# sourceURL=__WebInspectorConsoleEvaluation__\n" + string;
 }
 
-function isWebInspectorBootstrapScript(url)
+isWebInspectorBootstrapScript = function isWebInspectorBootstrapScript(url)
 {
     return url === WI.NetworkManager.bootstrapScriptURL;
 }
 
-function isWebInspectorInternalScript(url)
+isWebInspectorInternalScript = function isWebInspectorInternalScript(url)
 {
     return url === "__WebInspectorInternal__";
 }
 
-function isWebInspectorConsoleEvaluationScript(url)
+isWebInspectorConsoleEvaluationScript = function isWebInspectorConsoleEvaluationScript(url)
 {
     return url === "__WebInspectorConsoleEvaluation__";
 }
 
-function isWebKitInjectedScript(url)
+isWebKitInjectedScript = function isWebKitInjectedScript(url)
 {
     return url && url.startsWith("__InjectedScript_") && url.endsWith(".js");
 }
 
-function isWebKitInternalScript(url)
+isWebKitInternalScript = function isWebKitInternalScript(url)
 {
     if (isWebInspectorConsoleEvaluationScript(url))
         return false;
@@ -1802,12 +1802,12 @@ function isWebKitInternalScript(url)
     return url && url.startsWith("__Web") && url.endsWith("__");
 }
 
-function isFunctionStringNativeCode(str)
+isFunctionStringNativeCode = function isFunctionStringNativeCode(str)
 {
     return str.endsWith("{\n    [native code]\n}");
 }
 
-function whitespaceRatio(content, start, end)
+whitespaceRatio = function whitespaceRatio(content, start, end)
 {
     let whitespaceScore = 0;
     let size = end - start;
@@ -1826,7 +1826,7 @@ function whitespaceRatio(content, start, end)
     return ratio;
 }
 
-function isTextLikelyMinified(content)
+isTextLikelyMinified = function isTextLikelyMinified(content)
 {
     const autoFormatMaxCharactersToCheck = 2500;
     const autoFormatWhitespaceRatio = 0.2;
@@ -1847,12 +1847,12 @@ function isTextLikelyMinified(content)
     return false;
 }
 
-function doubleQuotedString(str)
+doubleQuotedString = function doubleQuotedString(str)
 {
     return JSON.stringify(str);
 }
 
-function insertionIndexForObjectInListSortedByFunction(object, list, comparator, insertionIndexAfter)
+insertionIndexForObjectInListSortedByFunction = function insertionIndexForObjectInListSortedByFunction(object, list, comparator, insertionIndexAfter)
 {
     if (insertionIndexAfter) {
         return list.upperBound(object, comparator);
@@ -1861,7 +1861,7 @@ function insertionIndexForObjectInListSortedByFunction(object, list, comparator,
     }
 }
 
-function insertObjectIntoSortedArray(object, array, comparator)
+insertObjectIntoSortedArray = function insertObjectIntoSortedArray(object, array, comparator)
 {
     array.splice(insertionIndexForObjectInListSortedByFunction(object, array, comparator), 0, object);
 }

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Multimap
+Multimap = class Multimap
 {
     constructor(items = [])
     {
