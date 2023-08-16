@@ -622,6 +622,23 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     return renderingContext;
 }
 
+WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, WebGLContextAttributes attributes)
+    : GPUBasedCanvasRenderingContext(canvas)
+    , m_restoreTimer(canvas.scriptExecutionContext(), *this, &WebGLRenderingContextBase::maybeRestoreContext)
+    , m_attributes(attributes)
+    , m_numGLErrorsToConsoleAllowed(maxGLErrorsAllowedToConsole)
+    , m_checkForContextLossHandlingTimer(*this, &WebGLRenderingContextBase::checkForContextLossHandling)
+#if ENABLE(WEBXR)
+    , m_isXRCompatible(attributes.xrCompatible)
+#endif
+{
+    m_restoreTimer.suspendIfNeeded();
+
+    registerWithWebGLStateTracker();
+    if (canvas.isHTMLCanvasElement())
+        m_checkForContextLossHandlingTimer.startOneShot(checkContextLossHandlingDelay);
+}
+
 WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, Ref<GraphicsContextGL>&& context, WebGLContextAttributes attributes)
     : GPUBasedCanvasRenderingContext(canvas)
     , m_restoreTimer(canvas.scriptExecutionContext(), *this, &WebGLRenderingContextBase::maybeRestoreContext)
