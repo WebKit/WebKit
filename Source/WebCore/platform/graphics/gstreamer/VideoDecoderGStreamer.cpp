@@ -214,9 +214,8 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
 void GStreamerInternalVideoDecoder::decode(std::span<const uint8_t> frameData, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration, VideoDecoder::DecodeCallback&& callback)
 {
     GST_DEBUG_OBJECT(m_harness->element(), "Decoding%s frame", isKeyFrame ? " key" : "");
-
-    Vector<uint8_t> data { frameData };
-    if (data.isEmpty()) {
+    auto buffer = wrapSpanData(frameData);
+    if (!buffer) {
         m_postTaskCallback([protectedThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
             if (protectedThis->m_isClosed)
                 return;
@@ -226,12 +225,6 @@ void GStreamerInternalVideoDecoder::decode(std::span<const uint8_t> frameData, b
         });
         return;
     }
-
-    auto bufferSize = data.size();
-    auto bufferData = data.data();
-    auto buffer = adoptGRef(gst_buffer_new_wrapped_full(GST_MEMORY_FLAG_READONLY, bufferData, bufferSize, 0, bufferSize, new Vector<uint8_t>(WTFMove(data)), [](gpointer data) {
-        delete static_cast<Vector<uint8_t>*>(data);
-    }));
 
     GST_BUFFER_DTS(buffer.get()) = GST_BUFFER_PTS(buffer.get()) = timestamp;
     if (duration)
