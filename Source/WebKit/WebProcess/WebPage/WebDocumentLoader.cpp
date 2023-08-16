@@ -53,9 +53,9 @@ void WebDocumentLoader::setNavigationID(uint64_t navigationID)
     m_navigationID = navigationID;
 }
 
-WebDocumentLoader* WebDocumentLoader::loaderForWebsitePolicies(const LocalFrame& frame, CanIncludeCurrentDocumentLoader canIncludeCurrentDocumentLoader)
+RefPtr<WebDocumentLoader> WebDocumentLoader::loaderForWebsitePolicies(const LocalFrame& frame, CanIncludeCurrentDocumentLoader canIncludeCurrentDocumentLoader)
 {
-    auto* loader = static_cast<WebDocumentLoader*>(frame.loader().policyDocumentLoader());
+    RefPtr loader = static_cast<WebDocumentLoader*>(frame.loader().policyDocumentLoader());
     if (!loader)
         loader = static_cast<WebDocumentLoader*>(frame.loader().provisionalDocumentLoader());
     if (!loader && canIncludeCurrentDocumentLoader == CanIncludeCurrentDocumentLoader::Yes)

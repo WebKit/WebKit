@@ -154,17 +154,18 @@ void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, bool fl
     IntSize size = viewSize;
     IntSize contentSize = IntSize(-1, -1);
 
-    if (!m_webPage.minimumSizeForAutoLayout().width() || m_webPage.autoSizingShouldExpandToViewHeight() || (!m_webPage.sizeToContentAutoSizeMaximumSize().width() && !m_webPage.sizeToContentAutoSizeMaximumSize().height()))
-        m_webPage.setSize(size);
+    Ref webPage = m_webPage;
+    if (!webPage->minimumSizeForAutoLayout().width() || webPage->autoSizingShouldExpandToViewHeight() || (!webPage->sizeToContentAutoSizeMaximumSize().width() && !webPage->sizeToContentAutoSizeMaximumSize().height()))
+        webPage->setSize(size);
 
-    auto* frameView = m_webPage.localMainFrameView();
+    RefPtr frameView = webPage->localMainFrameView();
 
-    if (m_webPage.autoSizingShouldExpandToViewHeight() && frameView)
+    if (webPage->autoSizingShouldExpandToViewHeight() && frameView)
         frameView->setAutoSizeFixedMinimumHeight(viewSize.height());
 
-    m_webPage.layoutIfNeeded();
+    webPage->layoutIfNeeded();
 
-    if (frameView && (m_webPage.minimumSizeForAutoLayout().width() || (m_webPage.sizeToContentAutoSizeMaximumSize().width() && m_webPage.sizeToContentAutoSizeMaximumSize().height()))) {
+    if (frameView && (webPage->minimumSizeForAutoLayout().width() || (webPage->sizeToContentAutoSizeMaximumSize().width() && webPage->sizeToContentAutoSizeMaximumSize().height()))) {
         contentSize = frameView->autoSizingIntrinsicContentSize();
         size = contentSize;
     }
@@ -204,7 +205,7 @@ void RemoteLayerTreeDrawingArea::forceRepaintAsync(WebPage& page, CompletionHand
 
 void RemoteLayerTreeDrawingArea::setDeviceScaleFactor(float deviceScaleFactor)
 {
-    m_webPage.setDeviceScaleFactor(deviceScaleFactor);
+    Ref { m_webPage }->setDeviceScaleFactor(deviceScaleFactor);
 }
 
 DelegatedScrollingMode RemoteLayerTreeDrawingArea::delegatedScrollingMode() const
@@ -250,13 +251,13 @@ void RemoteLayerTreeDrawingArea::setViewExposedRect(std::optional<WebCore::Float
 {
     m_viewExposedRect = viewExposedRect;
 
-    if (auto* frameView = m_webPage.localMainFrameView())
+    if (RefPtr frameView = m_webPage.localMainFrameView())
         frameView->setViewExposedRect(m_viewExposedRect);
 }
 
 WebCore::FloatRect RemoteLayerTreeDrawingArea::exposedContentRect() const
 {
-    auto* frameView = m_webPage.localMainFrameView();
+    RefPtr frameView = m_webPage.localMainFrameView();
     if (!frameView)
         return FloatRect();
 
@@ -265,7 +266,7 @@ WebCore::FloatRect RemoteLayerTreeDrawingArea::exposedContentRect() const
 
 void RemoteLayerTreeDrawingArea::setExposedContentRect(const FloatRect& exposedContentRect)
 {
-    auto* frameView = m_webPage.localMainFrameView();
+    RefPtr frameView = m_webPage.localMainFrameView();
     if (!frameView)
         return;
     if (frameView->exposedContentRect() == exposedContentRect)
@@ -324,7 +325,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
 
     auto size = m_webPage.size();
     FloatRect visibleRect(FloatPoint(), size);
-    if (auto* mainFrameView = m_webPage.localMainFrameView()) {
+    if (RefPtr mainFrameView = m_webPage.localMainFrameView()) {
         if (auto exposedRect = mainFrameView->viewExposedRect())
             visibleRect.intersect(*exposedRect);
     }
@@ -388,7 +389,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     for (auto& transactions : transactions)
         flushers.appendVector(backingStoreCollection.didFlushLayers(transactions.first));
     bool haveFlushers = flushers.size();
-    RefPtr<BackingStoreFlusher> backingStoreFlusher = BackingStoreFlusher::create(WebProcess::singleton().parentProcessConnection(), WTFMove(commitEncoder), WTFMove(flushers));
+    RefPtr<BackingStoreFlusher> backingStoreFlusher = BackingStoreFlusher::create(RefPtr { WebProcess::singleton().parentProcessConnection() }, WTFMove(commitEncoder), WTFMove(flushers));
     m_pendingBackingStoreFlusher = backingStoreFlusher;
 
     if (haveFlushers)
@@ -459,13 +460,13 @@ void RemoteLayerTreeDrawingArea::tryMarkLayersVolatile(CompletionHandler<void(bo
     m_remoteLayerTreeContext->backingStoreCollection().tryMarkAllBackingStoreVolatile(WTFMove(completionFunction));
 }
 
-Ref<RemoteLayerTreeDrawingArea::BackingStoreFlusher> RemoteLayerTreeDrawingArea::BackingStoreFlusher::create(IPC::Connection* connection, UniqueRef<IPC::Encoder>&& encoder, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers)
+Ref<RemoteLayerTreeDrawingArea::BackingStoreFlusher> RemoteLayerTreeDrawingArea::BackingStoreFlusher::create(RefPtr<IPC::Connection>&& connection, UniqueRef<IPC::Encoder>&& encoder, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers)
 {
-    return adoptRef(*new RemoteLayerTreeDrawingArea::BackingStoreFlusher(connection, WTFMove(encoder), WTFMove(flushers)));
+    return adoptRef(*new RemoteLayerTreeDrawingArea::BackingStoreFlusher(WTFMove(connection), WTFMove(encoder), WTFMove(flushers)));
 }
 
-RemoteLayerTreeDrawingArea::BackingStoreFlusher::BackingStoreFlusher(IPC::Connection* connection, UniqueRef<IPC::Encoder>&& encoder, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers)
-    : m_connection(connection)
+RemoteLayerTreeDrawingArea::BackingStoreFlusher::BackingStoreFlusher(RefPtr<IPC::Connection>&& connection, UniqueRef<IPC::Encoder>&& encoder, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers)
+    : m_connection(WTFMove(connection))
     , m_commitEncoder(encoder.moveToUniquePtr())
     , m_flushers(WTFMove(flushers))
     , m_hasFlushed(false)
