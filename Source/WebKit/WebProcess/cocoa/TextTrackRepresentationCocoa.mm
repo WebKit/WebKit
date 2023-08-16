@@ -50,7 +50,7 @@ void WebTextTrackRepresentationCocoa::update()
 {
     if (!m_page)
         return;
-    auto& fullscreenManager = m_page->videoFullscreenManager();
+    Ref fullscreenManager = m_page->videoFullscreenManager();
     if (!m_mediaElement || !is<WebCore::HTMLVideoElement>(m_mediaElement))
         return;
     
@@ -71,7 +71,8 @@ void WebTextTrackRepresentationCocoa::update()
     auto handle = bitmap->createHandle();
     if (!handle)
         return;
-    fullscreenManager.updateTextTrackRepresentationForVideoElement(downcast<WebCore::HTMLVideoElement>(*m_mediaElement), WTFMove(*handle));
+    Ref videoElement = downcast<WebCore::HTMLVideoElement>(*m_mediaElement);
+    fullscreenManager->updateTextTrackRepresentationForVideoElement(videoElement, WTFMove(*handle));
 }
 
 void WebTextTrackRepresentationCocoa::setContentScale(float scale)
@@ -79,10 +80,11 @@ void WebTextTrackRepresentationCocoa::setContentScale(float scale)
     WebCore::TextTrackRepresentationCocoa::setContentScale(scale);
     if (!m_page)
         return;
-    auto& fullscreenManager = m_page->videoFullscreenManager();
+    Ref fullscreenManager = m_page->videoFullscreenManager();
     if (!m_mediaElement || !is<WebCore::HTMLVideoElement>(m_mediaElement))
         return;
-    fullscreenManager.setTextTrackRepresentationContentScaleForVideoElement(downcast<WebCore::HTMLVideoElement>(*m_mediaElement), scale);
+    Ref videoElement = downcast<WebCore::HTMLVideoElement>(*m_mediaElement);
+    fullscreenManager->setTextTrackRepresentationContentScaleForVideoElement(videoElement, scale);
 }
 
 void WebTextTrackRepresentationCocoa::setHidden(bool hidden) const
@@ -90,10 +92,11 @@ void WebTextTrackRepresentationCocoa::setHidden(bool hidden) const
     WebCore::TextTrackRepresentationCocoa::setHidden(hidden);
     if (!m_page)
         return;
-    auto& fullscreenManager = m_page->videoFullscreenManager();
+    Ref fullscreenManager = m_page->videoFullscreenManager();
     if (!m_mediaElement || !is<WebCore::HTMLVideoElement>(m_mediaElement))
         return;
-    fullscreenManager.setTextTrackRepresentationIsHiddenForVideoElement(downcast<WebCore::HTMLVideoElement>(*m_mediaElement), hidden);
+    Ref videoElement = downcast<WebCore::HTMLVideoElement>(*m_mediaElement);
+    fullscreenManager->setTextTrackRepresentationIsHiddenForVideoElement(videoElement, hidden);
 }
 
 } // namespace WebKit
