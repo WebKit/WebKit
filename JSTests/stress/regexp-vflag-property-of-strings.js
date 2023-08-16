@@ -506,3 +506,11 @@ testRegExp(/[a&&[\q{a|ab}]]/v, "ab", ["a"]);
 testRegExp(/[a--[\q{ab}]]/v, "ab", ["a"]);
 testRegExp(/[[\q{a|ab}]&&a]/v, "ab", ["a"]);
 testRegExp(/[[\q{a|ab}]--a]/v, "ab", ["ab"]);
+testRegExp(/[\q{}]/v, "", [""]);
+
+// Test 251
+testRegExp(/[\q{}]*/v, "", [""]);
+testRegExp(/[\q{}]+/v, "", [""]);
+testRegExp(/[\q{}]*/v, "1234", [""]);
+testRegExp(/[\q{|34||12}]*/v, "1234", ["1234"]);
+testRegExp(/[\q{|34||12}]*/v, "3412", ["3412"]);
