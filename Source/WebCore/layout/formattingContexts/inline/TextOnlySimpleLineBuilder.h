@@ -37,9 +37,9 @@ namespace Layout {
 class InlineContentBreaker;
 struct TextOnlyLineBreakResult;
 
-class TextOnlyLineBuilder : public AbstractLineBuilder {
+class TextOnlySimpleLineBuilder : public AbstractLineBuilder {
 public:
-    TextOnlyLineBuilder(const InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&);
+    TextOnlySimpleLineBuilder(const InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&);
     LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&) final;
 
     static bool isEligibleForSimplifiedTextOnlyInlineLayout(const ElementBox& root, const InlineFormattingState&, const FloatingState* = nullptr);

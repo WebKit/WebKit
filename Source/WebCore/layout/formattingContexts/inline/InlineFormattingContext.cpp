@@ -47,7 +47,7 @@
 #include "LayoutState.h"
 #include "Logging.h"
 #include "RenderStyleInlines.h"
-#include "TextOnlyLineBuilder.h"
+#include "TextOnlySimpleLineBuilder.h"
 #include "TextUtil.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/TextStream.h>
@@ -96,8 +96,8 @@ InlineLayoutResult InlineFormattingContext::layoutInFlowAndFloatContent(const Co
         return PreviousLine { lastLineIndex, { }, { }, { }, { } };
     };
 
-    if (TextOnlyLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), formattingState(), &floatingState)) {
-        auto simplifiedLineBuilder = TextOnlyLineBuilder { *this, constraints.horizontal(), inlineItems };
+    if (TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), formattingState(), &floatingState)) {
+        auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { *this, constraints.horizontal(), inlineItems };
         return lineLayout(simplifiedLineBuilder, inlineItems, needsLayoutRange, previousLine(), constraints, inlineLayoutState, lineDamage);
     }
     auto lineBuilder = LineBuilder { *this, inlineLayoutState, floatingState, constraints.horizontal(), inlineItems };
@@ -130,8 +130,8 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicSizes(const 
     };
 
     auto intrinsicSizes = IntrinsicWidthConstraints { };
-    if (TextOnlyLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineFormattingState)) {
-        auto simplifiedLineBuilder = TextOnlyLineBuilder { *this, { }, inlineFormattingState.inlineItems() };
+    if (TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineFormattingState)) {
+        auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { *this, { }, inlineFormattingState.inlineItems() };
         intrinsicSizes = { computedIntrinsicValue(IntrinsicWidthMode::Minimum, simplifiedLineBuilder), computedIntrinsicValue(IntrinsicWidthMode::Maximum, simplifiedLineBuilder, MayCacheLayoutResult::Yes) };
     } else {
         auto floatingState = FloatingState { root() };

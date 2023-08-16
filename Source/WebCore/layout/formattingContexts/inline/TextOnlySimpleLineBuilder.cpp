@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "TextOnlyLineBuilder.h"
+#include "TextOnlySimpleLineBuilder.h"
 
 namespace WebCore {
 namespace Layout {
@@ -87,7 +87,7 @@ static inline bool consumeTrailingLineBreakIfApplicable(const TextOnlyLineBreakR
     return true;
 }
 
-TextOnlyLineBuilder::TextOnlyLineBuilder(const InlineFormattingContext& inlineFormattingContext, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems)
+TextOnlySimpleLineBuilder::TextOnlySimpleLineBuilder(const InlineFormattingContext& inlineFormattingContext, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_rootHorizontalConstraints(rootHorizontalConstraints)
     , m_line(inlineFormattingContext)
@@ -95,7 +95,7 @@ TextOnlyLineBuilder::TextOnlyLineBuilder(const InlineFormattingContext& inlineFo
 {
 }
 
-LineLayoutResult TextOnlyLineBuilder::layoutInlineContent(const LineInput& lineInput, const std::optional<PreviousLine>& previousLine)
+LineLayoutResult TextOnlySimpleLineBuilder::layoutInlineContent(const LineInput& lineInput, const std::optional<PreviousLine>& previousLine)
 {
     initialize(lineInput.needsLayoutRange, lineInput.initialLogicalRect, previousLine);
     auto placedContentEnd = TextUtil::isWrappingAllowed(root().style()) ? placeInlineTextContent(lineInput.needsLayoutRange) : placeNonWrappingInlineTextContent(lineInput.needsLayoutRange);
@@ -116,7 +116,7 @@ LineLayoutResult TextOnlyLineBuilder::layoutInlineContent(const LineInput& lineI
     };
 }
 
-void TextOnlyLineBuilder::initialize(const InlineItemRange& layoutRange, const InlineRect& initialLogicalRect, const std::optional<PreviousLine>& previousLine)
+void TextOnlySimpleLineBuilder::initialize(const InlineItemRange& layoutRange, const InlineRect& initialLogicalRect, const std::optional<PreviousLine>& previousLine)
 {
     ASSERT(!layoutRange.isEmpty() || (previousLine && !previousLine->suspendedFloats.isEmpty()));
     auto partialLeadingTextItem = [&]() -> std::optional<InlineTextItem> {
@@ -140,7 +140,7 @@ void TextOnlyLineBuilder::initialize(const InlineItemRange& layoutRange, const I
     m_wrapOpportunityList = { };
 }
 
-InlineItemPosition TextOnlyLineBuilder::placeInlineTextContent(const InlineItemRange& layoutRange)
+InlineItemPosition TextOnlySimpleLineBuilder::placeInlineTextContent(const InlineItemRange& layoutRange)
 {
     auto candidateContent = InlineContentBreaker::ContinuousContent { };
     auto isFirstFormattedLine = this->isFirstFormattedLine();
@@ -194,7 +194,7 @@ InlineItemPosition TextOnlyLineBuilder::placeInlineTextContent(const InlineItemR
     return placedContentEnd;
 }
 
-InlineItemPosition TextOnlyLineBuilder::placeNonWrappingInlineTextContent(const InlineItemRange& layoutRange)
+InlineItemPosition TextOnlySimpleLineBuilder::placeNonWrappingInlineTextContent(const InlineItemRange& layoutRange)
 {
     ASSERT(!TextUtil::isWrappingAllowed(root().style()));
 
@@ -236,7 +236,7 @@ InlineItemPosition TextOnlyLineBuilder::placeNonWrappingInlineTextContent(const 
     return placedContentEnd;
 }
 
-TextOnlyLineBreakResult TextOnlyLineBuilder::handleInlineTextContent(const InlineContentBreaker::ContinuousContent& candidateContent, const InlineItemRange& layoutRange)
+TextOnlyLineBreakResult TextOnlySimpleLineBuilder::handleInlineTextContent(const InlineContentBreaker::ContinuousContent& candidateContent, const InlineItemRange& layoutRange)
 {
     auto availableWidth = (m_lineLogicalRect.width() + LayoutUnit::epsilon()) - m_line.contentLogicalRight();
     auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidth, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), m_line.hasContentOrListMarker(), !m_wrapOpportunityList.isEmpty() };
@@ -307,7 +307,7 @@ TextOnlyLineBreakResult TextOnlyLineBuilder::handleInlineTextContent(const Inlin
     return { InlineContentBreaker::IsEndOfLine::Yes };
 }
 
-void TextOnlyLineBuilder::handleLineEnding(InlineItemPosition placedContentEnd, size_t layoutRangeEndIndex)
+void TextOnlySimpleLineBuilder::handleLineEnding(InlineItemPosition placedContentEnd, size_t layoutRangeEndIndex)
 {
     auto horizontalAvailableSpace = m_lineLogicalRect.width();
     auto isLastLine = isLastLineWithInlineContent(placedContentEnd, layoutRangeEndIndex);
@@ -321,7 +321,7 @@ void TextOnlyLineBuilder::handleLineEnding(InlineItemPosition placedContentEnd, 
     m_line.handleTrailingHangingContent(intrinsicWidthMode(), horizontalAvailableSpace, isLastLine);
 }
 
-size_t TextOnlyLineBuilder::rebuildLine(const InlineItemRange& layoutRange, const InlineTextItem& trailingInlineItem)
+size_t TextOnlySimpleLineBuilder::rebuildLine(const InlineItemRange& layoutRange, const InlineTextItem& trailingInlineItem)
 {
     auto isFirstFormattedLine = this->isFirstFormattedLine();
     m_line.initialize({ }, isFirstFormattedLine);
@@ -344,12 +344,12 @@ size_t TextOnlyLineBuilder::rebuildLine(const InlineItemRange& layoutRange, cons
     return { };
 }
 
-const ElementBox& TextOnlyLineBuilder::root() const
+const ElementBox& TextOnlySimpleLineBuilder::root() const
 {
     return formattingContext().root();
 }
 
-bool TextOnlyLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(const ElementBox& rootBox, const InlineFormattingState& inlineFormattingState, const FloatingState* floatingState)
+bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(const ElementBox& rootBox, const InlineFormattingState& inlineFormattingState, const FloatingState* floatingState)
 {
     if (floatingState && !floatingState->isEmpty())
         return false;
