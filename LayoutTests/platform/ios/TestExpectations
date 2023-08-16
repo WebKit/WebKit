@@ -4574,8 +4574,6 @@ imported/w3c/web-platform-tests/html/semantics/popovers/popover-hover-hide-toggl
 # rdar://111127781 (REGRESSION(iOS17): [ iOS17 ] platform/ios/mediastream/video-muted-in-background-tab.html is a constant crash)
 platform/ios/mediastream/video-muted-in-background-tab.html [ Crash ]
 
-imported/w3c/web-platform-tests/css/css-text/word-break/auto [ Pass ]
-
 editing/selection/ios/show-grammar-replacements-on-tap.html [ Pass ]
 
 # Failures from WPT import
