@@ -244,7 +244,7 @@ void StorageAreaMap::dispatchSessionStorageEvent(const std::optional<StorageArea
 {
     // Namespace IDs for session storage namespaces are equivalent to web page IDs
     // so we can get the right page here.
-    auto* webPage = WebProcess::singleton().webPage(m_namespace.sessionStoragePageID());
+    RefPtr webPage = WebProcess::singleton().webPage(m_namespace.sessionStoragePageID());
     if (!webPage)
         return;
 
@@ -285,13 +285,13 @@ WebCore::ClientOrigin StorageAreaMap::clientOrigin() const
 void StorageAreaMap::sendConnectMessage(SendMode mode)
 {
     m_isWaitingForConnectReply = true;
-    auto& ipcConnection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    Ref ipcConnection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
     auto namespaceIdentifier = m_namespace.storageNamespaceID();
     auto origin = clientOrigin();
     auto type = computeStorageType();
 
     if (mode == SendMode::Sync) {
-        auto sendResult = ipcConnection.sendSync(Messages::NetworkStorageManager::ConnectToStorageAreaSync(type, m_identifier, namespaceIdentifier, origin), 0);
+        auto sendResult = ipcConnection->sendSync(Messages::NetworkStorageManager::ConnectToStorageAreaSync(type, m_identifier, namespaceIdentifier, origin), 0);
         auto [remoteAreaIdentifier, items, messageIdentifier] = sendResult.takeReplyOr(StorageAreaIdentifier { }, HashMap<String, String> { }, 0);
         didConnect(remoteAreaIdentifier, WTFMove(items), messageIdentifier);
         return;
@@ -302,7 +302,7 @@ void StorageAreaMap::sendConnectMessage(SendMode mode)
             return didConnect(remoteAreaIdentifier, WTFMove(items), messageIdentifier);
     };
 
-    ipcConnection.sendWithAsyncReply(Messages::NetworkStorageManager::ConnectToStorageArea(type, m_identifier, namespaceIdentifier, origin), WTFMove(completionHandler));
+    ipcConnection->sendWithAsyncReply(Messages::NetworkStorageManager::ConnectToStorageArea(type, m_identifier, namespaceIdentifier, origin), WTFMove(completionHandler));
 }
 
 void StorageAreaMap::connectSync()

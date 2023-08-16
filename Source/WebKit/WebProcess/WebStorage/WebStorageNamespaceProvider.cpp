@@ -123,10 +123,10 @@ void WebStorageNamespaceProvider::copySessionStorageNamespace(WebCore::Page& src
 {
     ASSERT(sessionStorageQuota() != WebCore::StorageMap::noQuota);
 
-    const auto& srcWebPage = *WebPage::fromCorePage(srcPage);
-    const auto& dstWebPage = *WebPage::fromCorePage(dstPage);
+    Ref srcWebPage = *WebPage::fromCorePage(srcPage);
+    Ref dstWebPage = *WebPage::fromCorePage(dstPage);
 
-    auto srcNamespacesIt = m_sessionStorageNamespaces.find(srcWebPage.sessionStorageNamespaceIdentifier());
+    auto srcNamespacesIt = m_sessionStorageNamespaces.find(srcWebPage->sessionStorageNamespaceIdentifier());
     if (srcNamespacesIt == m_sessionStorageNamespaces.end())
         return;
 
@@ -135,13 +135,13 @@ void WebStorageNamespaceProvider::copySessionStorageNamespace(WebCore::Page& src
     auto& srcNamespacesMap = srcNamespacesIt->value.map;
 
     auto& dstSessionStorageNamespaces = static_cast<WebStorageNamespaceProvider&>(dstPage.storageNamespaceProvider()).m_sessionStorageNamespaces;
-    auto dstNamespacesIt = dstSessionStorageNamespaces.find(dstWebPage.sessionStorageNamespaceIdentifier());
+    auto dstNamespacesIt = dstSessionStorageNamespaces.find(dstWebPage->sessionStorageNamespaceIdentifier());
     ASSERT(dstNamespacesIt != dstSessionStorageNamespaces.end());
     ASSERT(dstNamespacesIt->value.useCount == 1);
     auto& dstNamespacesMap = dstNamespacesIt->value.map;
 
     if (auto networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection())
-        networkProcessConnection->connection().send(Messages::NetworkStorageManager::CloneSessionStorageNamespace(srcWebPage.sessionStorageNamespaceIdentifier(), dstWebPage.sessionStorageNamespaceIdentifier()), 0);
+        networkProcessConnection->connection().send(Messages::NetworkStorageManager::CloneSessionStorageNamespace(srcWebPage->sessionStorageNamespaceIdentifier(), dstWebPage->sessionStorageNamespaceIdentifier()), 0);
 
     for (auto& [origin, srcNamespace] : srcNamespacesMap)
         dstNamespacesMap.set(origin, srcNamespace->copy(dstPage));
