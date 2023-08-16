@@ -52,7 +52,7 @@ if (!window.InspectorFrontendHost) {
         get debuggableInfo()
         {
             return {
-                debuggableType: "web-page",
+                debuggableType: "javascript",
                 targetPlatformName: undefined,
                 targetBuildVersion: undefined,
                 targetProductVersion: undefined,
@@ -91,6 +91,12 @@ if (!window.InspectorFrontendHost) {
         {
             const queryParams = parseQueryString(window.location.search.substring(1));
             let url = "ws" in queryParams ? "ws://" + queryParams.ws : null;
+            if (!url) {
+                [, url] = location.pathname.split("/inspect/");
+                if (!url.startsWith("ws://") && !url.startsWith("ws://")) {
+                    url = "ws://" + url;
+                }
+            }
             if (!url)
                 return;
 
