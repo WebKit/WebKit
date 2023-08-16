@@ -43,12 +43,12 @@ public:
 private:
     void initialize();
 
-    std::optional<Vector<LayoutUnit>> balanceRangeWithLineRequirement(InlineItemRange, InlineLayoutUnit idealLineWidth, size_t numberOfLines);
-    std::optional<Vector<LayoutUnit>> balanceRangeWithNoLineRequirement(InlineItemRange, InlineLayoutUnit idealLineWidth);
+    std::optional<Vector<LayoutUnit>> balanceRangeWithLineRequirement(InlineItemRange, InlineLayoutUnit idealLineWidth, size_t numberOfLines, bool isFirstChunk);
+    std::optional<Vector<LayoutUnit>> balanceRangeWithNoLineRequirement(InlineItemRange, InlineLayoutUnit idealLineWidth, bool isFirstChunk);
 
-    InlineLayoutUnit inlineItemWidth(size_t inlineItemIndex) const;
-    bool shouldTrimLeading(size_t inlineItemIndex) const;
-    bool shouldTrimTrailing(size_t inlineItemIndex) const;
+    InlineLayoutUnit inlineItemWidth(size_t inlineItemIndex, bool useFirstLineStyle) const;
+    bool shouldTrimLeading(size_t inlineItemIndex, bool useFirstLineStyle, bool isFirstLineInChunk) const;
+    bool shouldTrimTrailing(size_t inlineItemIndex, bool useFirstLineStyle) const;
 
     const InlineFormattingContext& m_inlineFormattingContext;
     const InlineLayoutState& m_inlineLayoutState;
@@ -59,13 +59,14 @@ private:
     Vector<float> m_originalLineWidths;
     Vector<bool> m_originalLineEndsWithForcedBreak;
     Vector<InlineLayoutUnit> m_inlineItemWidths;
+    Vector<InlineLayoutUnit> m_firstLineStyleInlineItemWidths;
     size_t m_numberOfLinesInOriginalLayout { 0 };
     size_t m_numberOfInlineItems { 0 };
     double m_maximumLineWidth { 0 };
     bool m_cannotBalanceContent { false };
 
     struct SlidingWidth {
-        SlidingWidth(const InlineContentBalancer&, const InlineItems&, size_t start, size_t end);
+        SlidingWidth(const InlineContentBalancer&, const InlineItems&, size_t start, size_t end, bool useFirstLineStyle, bool isFirstLineInChunk);
         InlineLayoutUnit width();
         void advanceStart();
         void advanceStartTo(size_t newStart);
@@ -77,6 +78,8 @@ private:
         const InlineItems& m_inlineItems;
         size_t m_start { 0 };
         size_t m_end { 0 };
+        bool m_useFirstLineStyle { false };
+        bool m_isFirstLineInChunk { false };
         InlineLayoutUnit m_totalWidth { 0 };
         InlineLayoutUnit m_leadingTrimmableWidth { 0 };
         InlineLayoutUnit m_trailingTrimmableWidth { 0 };
