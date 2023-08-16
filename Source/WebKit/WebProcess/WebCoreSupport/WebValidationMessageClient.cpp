@@ -62,27 +62,29 @@ void WebValidationMessageClient::showValidationMessage(const Element& anchor, co
 
     m_currentAnchor = &anchor;
     m_currentAnchorRect = anchor.boundingBoxInRootViewCoordinates();
-    m_page.send(Messages::WebPageProxy::ShowValidationMessage(m_currentAnchorRect, message));
+    Ref { *m_page }->send(Messages::WebPageProxy::ShowValidationMessage(m_currentAnchorRect, message));
 }
 
 void WebValidationMessageClient::hideValidationMessage(const Element& anchor)
 {
-    if (!isValidationMessageVisible(anchor))
+    RefPtr page = m_page.get();
+    if (!isValidationMessageVisible(anchor) || !page)
         return;
 
     m_currentAnchor = nullptr;
     m_currentAnchorRect = { };
-    m_page.send(Messages::WebPageProxy::HideValidationMessage());
+    page->send(Messages::WebPageProxy::HideValidationMessage());
 }
 
 void WebValidationMessageClient::hideAnyValidationMessage()
 {
-    if (!m_currentAnchor)
+    RefPtr page = m_page.get();
+    if (!m_currentAnchor || !page)
         return;
 
     m_currentAnchor = nullptr;
     m_currentAnchorRect = { };
-    m_page.send(Messages::WebPageProxy::HideValidationMessage());
+    page->send(Messages::WebPageProxy::HideValidationMessage());
 }
 
 bool WebValidationMessageClient::isValidationMessageVisible(const Element& anchor)

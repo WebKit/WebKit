@@ -27,6 +27,7 @@
 
 #include <WebCore/IntRect.h>
 #include <WebCore/ValidationMessageClient.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
@@ -46,7 +47,7 @@ public:
     void updateValidationBubbleStateIfNeeded() final;
 
 private:
-    WebPage& m_page;
+    WeakPtr<WebPage> m_page;
     const WebCore::Element* m_currentAnchor { nullptr };
     WebCore::IntRect m_currentAnchorRect;
 };
