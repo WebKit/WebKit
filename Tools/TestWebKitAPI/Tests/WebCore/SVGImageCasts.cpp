@@ -36,14 +36,6 @@ using namespace WebCore;
 
 class TestImageObserver : public ImageObserver {
 public:
-    static Ref<TestImageObserver> create()
-    {
-        return adoptRef(*new TestImageObserver);
-    }
-
-private:
-    TestImageObserver() = default;
-
     URL sourceUrl() const final
     {
         return URL();
@@ -87,7 +79,7 @@ private:
 
 TEST(SVGImageCasts, SVGImageForContainerIsNotSVGImage)
 {
-    auto imageObserver = TestImageObserver::create();
+    TestImageObserver imageObserver;
     auto svgImage = SVGImage::create(imageObserver);
     Image& svgImageBase = svgImage.get();
     EXPECT_TRUE(is<SVGImage>(svgImageBase));

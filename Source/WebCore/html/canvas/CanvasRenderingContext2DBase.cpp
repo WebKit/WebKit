@@ -1579,7 +1579,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
     if (!image)
         return { };
 
-    auto observer = image->imageObserver();
+    ImageObserver* observer = image->imageObserver();
 
     if (image->drawsSVGImage()) {
         image->setImageObserver(nullptr);
@@ -1615,7 +1615,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
     didDraw(repaintEntireCanvas, normalizedDstRect);
 
     if (image->drawsSVGImage())
-        image->setImageObserver(WTFMove(observer));
+        image->setImageObserver(observer);
 
     return { };
 }

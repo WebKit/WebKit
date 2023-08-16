@@ -139,7 +139,7 @@ private:
     // For compatibility, images keep loading even if there are HTTP errors.
     bool shouldIgnoreHTTPStatusCodeErrors() const override { return true; }
 
-    class CachedImageObserver final : public ImageObserver {
+    class CachedImageObserver final : public RefCounted<CachedImageObserver>, public ImageObserver {
     public:
         static Ref<CachedImageObserver> create(CachedImage& image) { return adoptRef(*new CachedImageObserver(image)); }
         HashSet<CachedImage*>& cachedImages() { return m_cachedImages; }

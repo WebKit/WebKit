@@ -57,16 +57,6 @@ Image::Image(ImageObserver* observer)
 
 Image::~Image() = default;
 
-RefPtr<ImageObserver> Image::imageObserver() const
-{
-    return m_imageObserver.get();
-}
-
-void Image::setImageObserver(RefPtr<ImageObserver>&& observer)
-{
-    m_imageObserver = observer.get();
-}
-
 Image& Image::nullImage()
 {
     ASSERT(isMainThread());
@@ -163,8 +153,8 @@ void Image::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, const 
 
     ctxt.drawPattern(*tileImage, destRect, tileRect, patternTransform, phase, spacing, options);
 
-    if (auto observer = imageObserver())
-        observer->didDraw(*this);
+    if (imageObserver())
+        imageObserver()->didDraw(*this);
 }
 
 ImageDrawResult Image::drawCachedSubimage(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)

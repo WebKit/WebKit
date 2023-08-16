@@ -188,9 +188,7 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Float
     if (!m_page)
         return ImageDrawResult::DidNothing;
 
-    LayoutDisallowedScope::AllowedScope layoutAllowedScope; // Allow layout in the SVG document for this image.
-
-    auto observer = imageObserver();
+    ImageObserver* observer = imageObserver();
     ASSERT(observer);
 
     // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
@@ -211,7 +209,7 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Float
 
     ImageDrawResult result = draw(context, dstRect, scaledSrc, options);
 
-    setImageObserver(WTFMove(observer));
+    setImageObserver(observer);
     return result;
 }
 
@@ -232,13 +230,13 @@ RefPtr<NativeImage> SVGImage::nativeImage(const DestinationColorSpace& colorSpac
     if (!imageBuffer)
         return nullptr;
 
-    auto observer = imageObserver();
+    ImageObserver* observer = imageObserver();
     setImageObserver(nullptr);
     setContainerSize(size());
 
     imageBuffer->context().drawImage(*this, FloatPoint(0, 0));
 
-    setImageObserver(WTFMove(observer));
+    setImageObserver(observer);
     return ImageBuffer::sinkIntoNativeImage(WTFMove(imageBuffer));
 }
 
@@ -327,8 +325,8 @@ ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRec
 
     stateSaver.restore();
 
-    if (auto observer = imageObserver())
-        observer->didDraw(*this);
+    if (imageObserver())
+        imageObserver()->didDraw(*this);
 
     return ImageDrawResult::DidDraw;
 }
@@ -474,7 +472,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
         m_page->settings().setShouldAllowUserInstalledFonts(false);
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-        if (auto observer = imageObserver())
+        if (auto* observer = imageObserver())
             m_page->settings().setLayerBasedSVGEngineEnabled(observer->layerBasedSVGEngineEnabled());
 #endif
 

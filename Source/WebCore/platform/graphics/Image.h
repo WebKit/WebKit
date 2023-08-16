@@ -77,7 +77,7 @@ struct Length;
 // This class gets notified when an image creates or destroys decoded frames and when it advances animation frames.
 class ImageObserver;
 
-class Image : public RefCounted<Image>, public CanMakeWeakPtr<Image> {
+class Image : public RefCounted<Image> {
     friend class CachedSubimage;
     friend class GraphicsContext;
 public:
@@ -153,8 +153,8 @@ public:
     void setAllowsAnimation(std::optional<bool> allowsAnimation) { m_allowsAnimation = allowsAnimation; }
 
     // Typically the CachedImage that owns us.
-    RefPtr<ImageObserver> imageObserver() const;
-    void setImageObserver(RefPtr<ImageObserver>&&);
+    ImageObserver* imageObserver() const { return m_imageObserver; }
+    void setImageObserver(ImageObserver* observer) { m_imageObserver = observer; }
     URL sourceURL() const;
     WEBCORE_EXPORT String mimeType() const;
     long long expectedContentLength() const;
@@ -220,7 +220,7 @@ protected:
 
 private:
     RefPtr<FragmentedSharedBuffer> m_encodedImageData;
-    WeakPtr<ImageObserver> m_imageObserver;
+    ImageObserver* m_imageObserver;
 
     // A value of true or false will override the default Page::imageAnimationEnabled state.
     std::optional<bool> m_allowsAnimation { std::nullopt };

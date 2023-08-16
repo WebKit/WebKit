@@ -658,7 +658,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     promise.resolve(WTFMove(imageBitmap));
 }
 
-class ImageBitmapImageObserver final : public ImageObserver {
+class ImageBitmapImageObserver final : public RefCounted<ImageBitmapImageObserver>, public ImageObserver {
 public:
     static Ref<ImageBitmapImageObserver> create(String mimeType, long long expectedContentLength, const URL& sourceUrl)
     {
