@@ -112,7 +112,7 @@ public:
     typedef ModuleNameNode* ModuleName;
     typedef ImportSpecifierNode* ImportSpecifier;
     typedef ImportSpecifierListNode* ImportSpecifierList;
-    typedef ImportAssertionListNode* ImportAssertionList;
+    typedef ImportAttributesListNode* ImportAttributesList;
     typedef ExportSpecifierNode* ExportSpecifier;
     typedef ExportSpecifierListNode* ExportSpecifierList;
     typedef StatementNode* Statement;
@@ -822,24 +822,24 @@ public:
         specifierList->append(specifier);
     }
 
-    ImportAssertionListNode* createImportAssertionList()
+    ImportAttributesListNode* createImportAttributesList()
     {
-        return new (m_parserArena) ImportAssertionListNode();
+        return new (m_parserArena) ImportAttributesListNode();
     }
 
-    void appendImportAssertion(ImportAssertionListNode* assertionList, const Identifier& key, const Identifier& value)
+    void appendImportAttribute(ImportAttributesListNode* attributesList, const Identifier& key, const Identifier& value)
     {
-        assertionList->append(key, value);
+        attributesList->append(key, value);
     }
 
-    StatementNode* createImportDeclaration(const JSTokenLocation& location, ImportSpecifierListNode* importSpecifierList, ModuleNameNode* moduleName, ImportAssertionListNode* importAssertionList)
+    StatementNode* createImportDeclaration(const JSTokenLocation& location, ImportSpecifierListNode* importSpecifierList, ModuleNameNode* moduleName, ImportAttributesListNode* importAttributesList)
     {
-        return new (m_parserArena) ImportDeclarationNode(location, importSpecifierList, moduleName, importAssertionList);
+        return new (m_parserArena) ImportDeclarationNode(location, importSpecifierList, moduleName, importAttributesList);
     }
 
-    StatementNode* createExportAllDeclaration(const JSTokenLocation& location, ModuleNameNode* moduleName, ImportAssertionListNode* importAssertionList)
+    StatementNode* createExportAllDeclaration(const JSTokenLocation& location, ModuleNameNode* moduleName, ImportAttributesListNode* importAttributesList)
     {
-        return new (m_parserArena) ExportAllDeclarationNode(location, moduleName, importAssertionList);
+        return new (m_parserArena) ExportAllDeclarationNode(location, moduleName, importAttributesList);
     }
 
     StatementNode* createExportDefaultDeclaration(const JSTokenLocation& location, StatementNode* declaration, const Identifier& localName)
@@ -852,9 +852,9 @@ public:
         return new (m_parserArena) ExportLocalDeclarationNode(location, declaration);
     }
 
-    StatementNode* createExportNamedDeclaration(const JSTokenLocation& location, ExportSpecifierListNode* exportSpecifierList, ModuleNameNode* moduleName, ImportAssertionListNode* importAssertionList)
+    StatementNode* createExportNamedDeclaration(const JSTokenLocation& location, ExportSpecifierListNode* exportSpecifierList, ModuleNameNode* moduleName, ImportAttributesListNode* importAttributesList)
     {
-        return new (m_parserArena) ExportNamedDeclarationNode(location, exportSpecifierList, moduleName, importAssertionList);
+        return new (m_parserArena) ExportNamedDeclarationNode(location, exportSpecifierList, moduleName, importAttributesList);
     }
 
     ExportSpecifierNode* createExportSpecifier(const JSTokenLocation& location, const Identifier& localName, const Identifier& exportedName)

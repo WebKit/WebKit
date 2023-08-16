@@ -1,1 +1,1 @@
-import("./resources/empty.js", { assert: { type: "<invalid>" } }).then($vm.abort, function () {});
+import("./resources/empty.js", { with: { type: "<invalid>" } }).then($vm.abort, function () {});

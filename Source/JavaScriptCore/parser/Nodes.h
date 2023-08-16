@@ -2093,19 +2093,19 @@ namespace JSC {
         Specifiers m_specifiers;
     };
 
-    class ImportAssertionListNode final : public ParserArenaDeletable {
-        JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(ImportAssertionListNode);
+    class ImportAttributesListNode final : public ParserArenaDeletable {
+        JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(ImportAttributesListNode);
     public:
-        using Assertions = Vector<std::tuple<const Identifier*, const Identifier*>, 3>;
+        using Attributes = Vector<std::tuple<const Identifier*, const Identifier*>, 3>;
 
-        const Assertions& assertions() const { return m_assertions; }
+        const Attributes& attributes() const { return m_attributes; }
         void append(const Identifier& key, const Identifier& value)
         {
-            m_assertions.append(std::tuple { &key, &value });
+            m_attributes.append(std::tuple { &key, &value });
         }
 
     private:
-        Assertions m_assertions;
+        Attributes m_attributes;
     };
 
     class ModuleDeclarationNode : public StatementNode {
@@ -2120,11 +2120,11 @@ namespace JSC {
 
     class ImportDeclarationNode final : public ModuleDeclarationNode {
     public:
-        ImportDeclarationNode(const JSTokenLocation&, ImportSpecifierListNode*, ModuleNameNode*, ImportAssertionListNode*);
+        ImportDeclarationNode(const JSTokenLocation&, ImportSpecifierListNode*, ModuleNameNode*, ImportAttributesListNode*);
 
         ImportSpecifierListNode* specifierList() const { return m_specifierList; }
         ModuleNameNode* moduleName() const { return m_moduleName; }
-        ImportAssertionListNode* assertionList() const { return m_assertionList; }
+        ImportAttributesListNode* attributesList() const { return m_attributesList; }
 
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
@@ -2132,22 +2132,22 @@ namespace JSC {
 
         ImportSpecifierListNode* m_specifierList;
         ModuleNameNode* m_moduleName;
-        ImportAssertionListNode* m_assertionList;
+        ImportAttributesListNode* m_attributesList;
     };
 
     class ExportAllDeclarationNode final : public ModuleDeclarationNode {
     public:
-        ExportAllDeclarationNode(const JSTokenLocation&, ModuleNameNode*, ImportAssertionListNode*);
+        ExportAllDeclarationNode(const JSTokenLocation&, ModuleNameNode*, ImportAttributesListNode*);
 
         ModuleNameNode* moduleName() const { return m_moduleName; }
-        ImportAssertionListNode* assertionList() const { return m_assertionList; }
+        ImportAttributesListNode* attributesList() const { return m_attributesList; }
 
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
         bool analyzeModule(ModuleAnalyzer&) final;
 
         ModuleNameNode* m_moduleName;
-        ImportAssertionListNode* m_assertionList;
+        ImportAttributesListNode* m_attributesList;
     };
 
     class ExportDefaultDeclarationNode final : public ModuleDeclarationNode {
@@ -2205,18 +2205,18 @@ namespace JSC {
 
     class ExportNamedDeclarationNode final : public ModuleDeclarationNode {
     public:
-        ExportNamedDeclarationNode(const JSTokenLocation&, ExportSpecifierListNode*, ModuleNameNode*, ImportAssertionListNode*);
+        ExportNamedDeclarationNode(const JSTokenLocation&, ExportSpecifierListNode*, ModuleNameNode*, ImportAttributesListNode*);
 
         ExportSpecifierListNode* specifierList() const { return m_specifierList; }
         ModuleNameNode* moduleName() const { return m_moduleName; }
-        ImportAssertionListNode* assertionList() const { return m_assertionList; }
+        ImportAttributesListNode* attributesList() const { return m_attributesList; }
 
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
         bool analyzeModule(ModuleAnalyzer&) final;
         ExportSpecifierListNode* m_specifierList;
         ModuleNameNode* m_moduleName { nullptr };
-        ImportAssertionListNode* m_assertionList { nullptr };
+        ImportAttributesListNode* m_attributesList { nullptr };
     };
 
     class FunctionMetadataNode final : public ParserArenaDeletable, public Node {

@@ -1,4 +1,8 @@
+CONSOLE MESSAGE: Cannot load script http://localhost:8800/html/semantics/scripting-1/the-script-element/json-module/integrity-matches.js. Failed integrity metadata check. Content length: 119, Expected content length: -1, Expected metadata: sha384-VmQQfGzBiLKdyzw4FA4kL4ohu4tyujV68ddgW1aN/1v3cBZNNBn2gDFdVQxfL7+a
+CONSOLE MESSAGE: TypeError: Cannot load script due to integrity mismatch
+CONSOLE MESSAGE: Cannot load script http://localhost:8800/html/semantics/scripting-1/the-script-element/json-module/integrity-mismatches.js. Failed integrity metadata check. Content length: 120, Expected content length: -1, Expected metadata: sha384-doesnotmatch
+CONSOLE MESSAGE: TypeError: Cannot load script due to integrity mismatch
 
-PASS The integrity attribute must be verified on the top-level of a module loading a JSON module and allow it to execute when it matches
+FAIL The integrity attribute must be verified on the top-level of a module loading a JSON module and allow it to execute when it matches assert_array_equals: The module and its dependency must have executed lengths differ, expected array ["integrity-matches,json:42"] length 1, got [] length 0
 PASS The integrity attribute must be verified on the top-level of a module loading a JSON module and not allow it to execute when there's a mismatch
 

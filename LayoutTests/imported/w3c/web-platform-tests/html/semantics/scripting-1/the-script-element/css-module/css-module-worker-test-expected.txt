@@ -1,5 +1,5 @@
 
-FAIL A static import CSS Module within a web worker should not load and should not attempt to fetch the module. assert_equals: Shouldn't have tried fetching CSS module in worker expected 0 but got 1
+PASS A static import CSS Module within a web worker should not load and should not attempt to fetch the module.
 FAIL A dynamic import CSS Module within a web worker should not load and should not attempt to fetch the module. assert_equals: Shouldn't have tried fetching CSS module in worker expected 0 but got 1
 PASS An attempt to load a CSS module as a worker should fail.
 

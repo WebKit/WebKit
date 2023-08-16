@@ -1,4 +1,4 @@
-//@requireOptions("--useImportAssertion=true")
+//@requireOptions("--useImportAttributes=true")
 
 var list = [
     String.raw`import v from "mod"`,
@@ -33,9 +33,8 @@ var list = [
 ];
 
 for (let entry of list) {
-    checkModuleSyntax(entry + ` assert { }`);
-    checkModuleSyntax(entry + ` assert { type: "json" }`);
-    checkModuleSyntax(entry + ` assert { "type": "json" }`);
-    checkModuleSyntax(entry + ` assert { "type": "json", }`);
-    checkModuleSyntax(entry + ` assert { type: "json", hello: "world" }`);
+    checkModuleSyntax(entry + ` with { }`);
+    checkModuleSyntax(entry + ` with { type: "json" }`);
+    checkModuleSyntax(entry + ` with { "type": "json" }`);
+    checkModuleSyntax(entry + ` with { "type": "json", }`);
 }
