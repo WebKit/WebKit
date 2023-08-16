@@ -335,7 +335,7 @@ bool TextOnlyLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(const Elem
         return false;
     if (!rootStyle.isLeftToRightDirection())
         return false;
-    if (rootStyle.wordBreak() == WordBreak::BreakWord || rootStyle.wordBreak() == WordBreak::Auto || rootStyle.overflowWrap() == OverflowWrap::BreakWord || rootStyle.overflowWrap() == OverflowWrap::Anywhere)
+    if (rootStyle.wordBreak() == WordBreak::Auto || rootStyle.overflowWrap() == OverflowWrap::BreakWord)
         return false;
     if (rootStyle.textIndent() != RenderStyle::initialTextIndent())
         return false;
