@@ -2641,3 +2641,7 @@ imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visib
 
 # rdar://111398769 (REGRESSION (265250@main): [ macOS ] fast/mediastream/device-change-event-2.html is a consistent failure)
 [ Sonoma+ ] fast/mediastream/device-change-event-2.html [ Failure ]
+
+webkit.org/b/260360 inspector/timeline/timeline-event-TimerFire.html [ Failure ]
+webkit.org/b/260360 inspector/timeline/timeline-event-TimerInstall.html [ Failure ]
+webkit.org/b/260360 inspector/timeline/timeline-event-TimerRemove.html [ Failure ]
