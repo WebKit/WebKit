@@ -90,6 +90,8 @@ typedef void (^MRUIWindowSceneResizeRequestCompletion)(CGSize grantedSize, NSErr
 
 @interface MRUIPlatterOrnament : NSObject
 @property (nonatomic, assign, getter=_depthDisplacement, setter=_setDepthDisplacement:) CGFloat depthDisplacement;
+@property (nonatomic, assign) CGPoint offset2D;
+@property (nonatomic, assign) CGPoint sceneAnchorPoint;
 @property (nonatomic, readwrite, strong) UIViewController *viewController;
 @end
 

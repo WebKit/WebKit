@@ -496,6 +496,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 
 @property (nonatomic, readonly) CGFloat depthDisplacement;
 @property (nonatomic, readonly) CGFloat windowAlpha;
+@property (nonatomic, readonly) CGPoint offset2D;
 
 - (instancetype)initWithOrnament:(MRUIPlatterOrnament *)ornament;
 
@@ -510,6 +511,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 
     _depthDisplacement = ornament._depthDisplacement;
     _windowAlpha = ornament.viewController.view.window.alpha;
+    _offset2D = ornament.offset2D;
 
     return self;
 }
@@ -520,6 +522,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 
 @property (nonatomic, readonly) CATransform3D transform3D;
 @property (nonatomic, readonly) Class windowClass;
+@property (nonatomic, readonly) CGSize sceneSize;
 @property (nonatomic, readonly) CGSize sceneMinimumSize;
 @property (nonatomic, readonly) RSSSceneChromeOptions sceneChromeOptions;
 @property (nonatomic, readonly) MRUISceneResizingBehavior sceneResizingBehavior;
@@ -545,6 +548,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     _preferredDarkness = UIApplication.sharedApplication.mrui_activeStage.preferredDarkness;
 
     UIWindowScene *windowScene = window.windowScene;
+    _sceneSize = windowScene.coordinateSpace.bounds.size;
     _sceneMinimumSize = windowScene.sizeRestrictions.minimumSize;
     _sceneChromeOptions = windowScene.mrui_placement.preferredChromeOptions;
     _sceneResizingBehavior = windowScene.mrui_placement.preferredResizingBehavior;
@@ -1692,7 +1696,31 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
         OBJC_ALWAYS_LOG(logIdentifier, "resize completed");
         [_lastKnownParentWindow setFrame:adjustedOriginalWindowFrame];
         [_window setFrame:adjustedFullscreenWindowFrame];
+
+        [self _updateOrnamentOffsetsForTemporarySceneSize:[_window windowScene].coordinateSpace.bounds.size];
     });
+}
+
+- (void)_updateOrnamentOffsetsForTemporarySceneSize:(CGSize)newSceneSize
+{
+    CGSize originalSceneSize = [_parentWindowState sceneSize];
+
+    CGFloat sceneWidthDifference = newSceneSize.width - originalSceneSize.width;
+    CGFloat sceneHeightDifference = newSceneSize.height - originalSceneSize.height;
+
+    // The temporary scene size will always be greater than or equal to the original scene size,
+    // and the position of the original scene will always be centered relative to the new size.
+
+    ASSERT(sceneWidthDifference >= 0);
+    ASSERT(sceneHeightDifference >= 0);
+
+    for (MRUIPlatterOrnament *ornament in [_parentWindowState ornamentProperties]) {
+        CGPoint originalOffset2D = [[[_parentWindowState ornamentProperties] objectForKey:ornament] offset2D];
+        ornament.offset2D = CGPointMake(
+            originalOffset2D.x + sceneWidthDifference * (0.5 - ornament.sceneAnchorPoint.x),
+            originalOffset2D.y + sceneHeightDifference * (0.5 - ornament.sceneAnchorPoint.y)
+        );
+    }
 }
 
 - (void)_setOrnamentsHidden:(BOOL)hidden
@@ -1770,6 +1798,9 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
                 scene.mrui_placement.preferredResizingBehavior = [originalState sceneResizingBehavior];
                 if (auto delegate = dynamic_objc_cast<WKFullscreenWindowSceneDelegate>(scene.delegate))
                     scene.delegate = [delegate originalDelegate];
+
+                for (MRUIPlatterOrnament *ornament in [originalState ornamentProperties])
+                    ornament.offset2D = [[[originalState ornamentProperties] objectForKey:ornament] offset2D];
             }
 
             scene.mrui_placement.preferredChromeOptions = [originalState sceneChromeOptions];
