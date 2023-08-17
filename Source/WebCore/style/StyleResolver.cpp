@@ -99,10 +99,6 @@ public:
         : m_element(&element)
         , m_parentStyle(parentStyle)
     {
-        bool resetStyleInheritance = hasShadowRootParent(element) && downcast<ShadowRoot>(element.parentNode())->resetStyleInheritance();
-        if (resetStyleInheritance)
-            m_parentStyle = nullptr;
-
         auto& document = element.document();
         auto* documentElement = document.documentElement();
         if (!documentElement || documentElement == &element)
