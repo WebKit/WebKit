@@ -1366,6 +1366,8 @@ public:
                     bool mustProveNonNegative = false;
                     bool mustProveLength = false;
 
+                    auto [originalMinValueOfSignificantValue, originalMaxValueOfSignificantValue] = provenBounds(significantValue);
+
                     for (uint64_t i = 0; i < data.checks.size(); ++i) {
                         Node* expr = data.checks[i].expr.node();
                         Node* bounds = data.checks[i].bounds.node();
@@ -1397,6 +1399,19 @@ public:
                                     data.checks[i].alreadyLessThanLength = true;
                             }
                         });
+
+                        if (!data.checks[i].alreadyNonNegative) {
+                            int32_t minValue = evaluateMonotonicPureNode(expr, significantValue, originalMinValueOfSignificantValue);
+                            if (minValue >= 0 && minValue != badPureValue)
+                                data.checks[i].alreadyNonNegative = true;
+                        }
+
+                        if (!data.checks[i].alreadyLessThanLength) {
+                            int32_t maxValue = evaluateMonotonicPureNode(expr, significantValue, originalMaxValueOfSignificantValue);
+                            auto [minLengthValue, __] = provenBounds(bounds); // inclusive
+                            if (minLengthValue != badPureValue && minLengthValue >= 0 && maxValue != badPureValue && maxValue <= minLengthValue)
+                                data.checks[i].alreadyLessThanLength = true;
+                        }
 
                         if (!data.checks[i].alreadyNonNegative)
                             mustProveNonNegative = true;

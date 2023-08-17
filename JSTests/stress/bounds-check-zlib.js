@@ -64,7 +64,7 @@ function provableRedundantBitshift(b, d) {
     return sum
 }
 noInline(provableRedundantBitshift)
-tests.push({ fn: provableRedundantBitshift, before: 11, after: 2 })
+tests.push({ fn: provableRedundantBitshift, before: 11, after: 1 })
 
 function provableRedundantBitshiftNegative(b, d) {
     "use strict";
@@ -129,7 +129,7 @@ function provableRedundantBitshiftReversed(b, d) {
     return sum
 }
 noInline(provableRedundantBitshiftReversed)
-tests.push({ fn: provableRedundantBitshiftReversed, before: 11, after: 2 })
+tests.push({ fn: provableRedundantBitshiftReversed, before: 11, after: 1 })
 
 function main() {
     for (test of tests) {
