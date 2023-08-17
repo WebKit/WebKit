@@ -379,6 +379,11 @@ bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(cons
     return true;
 }
 
+bool TextOnlySimpleLineBuilder::hasIntrinsicWidthSpecificStyle(const RenderStyle& rootStyle)
+{
+    return rootStyle.lineBreak() == LineBreak::AfterWhiteSpace;
+}
+
 }
 }
 

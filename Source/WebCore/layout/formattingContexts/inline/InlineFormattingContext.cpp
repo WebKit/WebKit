@@ -141,7 +141,7 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicSizes(const 
     auto intrinsicSizes = IntrinsicWidthConstraints { };
     if (TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineFormattingState)) {
         auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { *this, { }, inlineFormattingState.inlineItems() };
-        intrinsicSizes = { computedIntrinsicValue(IntrinsicWidthMode::Minimum, simplifiedLineBuilder), computedIntrinsicValue(IntrinsicWidthMode::Maximum, simplifiedLineBuilder, MayCacheLayoutResult::Yes) };
+        intrinsicSizes = { computedIntrinsicValue(IntrinsicWidthMode::Minimum, simplifiedLineBuilder), computedIntrinsicValue(IntrinsicWidthMode::Maximum, simplifiedLineBuilder, TextOnlySimpleLineBuilder::hasIntrinsicWidthSpecificStyle(root().style()) ? MayCacheLayoutResult::No : MayCacheLayoutResult::Yes) };
     } else {
         auto floatingState = FloatingState { root() };
         auto parentBlockLayoutState = BlockLayoutState { floatingState, { } };
