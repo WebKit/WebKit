@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,7 +26,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 #include <wtf/text/AtomString.h>
-#include <wtf/text/SuperFastHash.h>
+#include <wtf/text/StringHasher.h>
 
 namespace WTF {
 
@@ -67,7 +67,7 @@ public:
     }
 
 private:
-    SuperFastHash m_underlyingHasher;
+    StringHasher m_underlyingHasher;
 };
 
 template<typename UnsignedInteger> std::enable_if_t<std::is_unsigned<UnsignedInteger>::value && sizeof(UnsignedInteger) == sizeof(uint64_t), void> add(Hasher& hasher, UnsignedInteger integer)
