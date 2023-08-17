@@ -1361,143 +1361,66 @@ public:
 
                 case MultiCheckInBounds: {
                     auto& data = m_graph.m_multiCheckInBoundsData[node->multiCheckInBoundsData()];
-                    RELEASE_ASSERT(data.size() % 2 == 1);
-                    Node* significantValue = data[0].node();
+                    Node* significantValue = data.significantValue;
 
-                    {
-                        // Our goal: place these bounds in the order that is most likely to make later checks redundant.
-                        // We calculate all of the bounds first, then order them after.
-                        struct CheckData {
-                            int32_t lowerBound;
-                            int32_t upperBound;
-                            Edge expr;
-                            Edge bounds;
-                        };
-                        Vector<struct CheckData, 2> sortedChecks;
+                    bool mustProveNonNegative = false;
+                    bool mustProveLength = false;
 
-                        int32_t significantValueOverallMinimum = std::numeric_limits<int32_t>::min();
-                        bool mustProveNonNegative = false;
+                    for (uint64_t i = 0; i < data.checks.size(); ++i) {
+                        Node* expr = data.checks[i].expr.node();
+                        Node* bounds = data.checks[i].bounds.node();
 
-                        for (uint64_t i = 0; i < (data.size() - 1) / 2; ++i) {
-                            Node* expr = data[1 + i * 2].node();
-                            Node* bounds = data[1 + i * 2 + 1].node();
+                        // Consider a case where we can't prove that significantValue is positive yet:
+                        // A: CheckThatProvesPositive()
+                        // B: Check()
+                        // If we enforced monotonicity, we would say that nothing could satisfy B
+                        if (auto [minLength, _] = provenBounds(bounds); minLength >= 0)
+                            data.checks[i].neededUpperBound = unevaluateMonotonicPureNode(expr, significantValue, minLength, /* enforceMonotonic = */ false);
+                        
+                        if (auto bound = unevaluateMonotonicPureNode(expr, significantValue, 0); bound != badPureValue)
+                            data.checks[i].neededLowerBound = bound;
 
-                            if (!expr && !bounds)
-                                continue;
-                            ASSERT(expr);
-                            ASSERT(bounds);
-
-                            bool nonNegative = provenBounds(expr).first >= 0;
-
-                            if (!nonNegative)
-                                mustProveNonNegative = true;
-
-                            int32_t significantValueMaximum = badPureValue;
-                            // These are not the real, proven maximum/minimum because we don't check if the operations are actually monotonic.
-                            // Consider a case where we can't prove that significantValue is positive yet.
-                            //
-                            // A: CheckThatProvesPositive()
-                            // B: Check()
-                            // If we enforced monotonicity, we would say that A proves nothing, and so we should sort it last.
-                            if (auto [minLength, _] = provenBounds(bounds); minLength >= 0)
-                                significantValueMaximum = unevaluateMonotonicPureNode(expr, significantValue, minLength, /* enforceMonotonic = */ false);
-                            int32_t significantValueMinimum = unevaluateMonotonicPureNode(expr, significantValue, 0);
-
-                            sortedChecks.append({
-                                significantValueMinimum, significantValueMaximum, data[1 + i * 2], data[1 + i * 2 + 1]
-                            });
-
-                            data[1 + i * 2] = Edge();
-                            data[1 + i * 2 + 1] = Edge();
-
-                            significantValueOverallMinimum = std::max(significantValueOverallMinimum, significantValueMinimum);
-                        }
-
-                        if (!sortedChecks.size())
-                            continue;
-
-                        if (DFGIntegerRangeOptimizationPhaseInternal::verbose) {
-                            dataLogLn("Before sorting MultiCheckInBounds: ", node, " trying to prove non negative: ", mustProveNonNegative);
-                            for (auto& i : sortedChecks)
-                                dataLog(i.lowerBound, " ", i.upperBound, " ", i.expr.node(), ", ");
-                            dataLogLn();
-                        }
-
-                        std::sort(sortedChecks.begin(), sortedChecks.end(), [](const CheckData& a, const CheckData& b)
-                        {
-                            {
-                                int aRange = a.upperBound - a.lowerBound;
-                                int bRange = b.upperBound - b.lowerBound;
-
-                                if (a.upperBound == badPureValue || a.lowerBound == badPureValue)
-                                    aRange = badPureValue;
-                                if (b.upperBound == badPureValue || b.lowerBound == badPureValue)
-                                    bRange = badPureValue;
-
-                                if (aRange != bRange)
-                                    return aRange < bRange;
-                            }
-
-                            if (a.upperBound != b.upperBound)
-                                return a.upperBound < b.upperBound;
-                            if (a.lowerBound != b.lowerBound)
-                                return a.lowerBound > b.lowerBound;
-
-                            return false;
-                        });
-
-                        if (significantValueOverallMinimum != std::numeric_limits<int32_t>::min() && sortedChecks.size() >= 2 && mustProveNonNegative) {
-                            for (size_t i = 0; i < sortedChecks.size(); ++i) {
-                                if (sortedChecks[i].lowerBound == significantValueOverallMinimum) {
-                                    std::swap(sortedChecks[0], sortedChecks[i]);
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (DFGIntegerRangeOptimizationPhaseInternal::verbose) {
-                            dataLogLn("After sorting MultiCheckInBounds: ", node, " overall min for ", significantValue, ": ", significantValueOverallMinimum);
-                            for (auto& i : sortedChecks)
-                                dataLog(i.lowerBound, " ", i.upperBound, " ", i.expr.node(), ", ");
-                            dataLogLn();
-                        }
-
-                        for (uint64_t i = 0; i < sortedChecks.size(); ++i) {
-                            data[1 + i * 2] = sortedChecks[i].expr;
-                            data[1 + i * 2 + 1] = sortedChecks[i].bounds;
-                        }
-                    }
- 
-                    for (uint64_t i = 0; i < (data.size() - 1) / 2; ++i) {
-                        auto& exprEdge = data[1 + i * 2];
-                        auto& boundsEdge = data[1 + i * 2 + 1];
-                        auto* expr = exprEdge.node();
-                        auto* bounds = boundsEdge.node();
-
-                        if (!expr && !bounds)
-                            continue;
-                        ASSERT(expr);
-                        ASSERT(bounds);
-
-                        bool nonNegative = false;
-                        bool lessThanLength = false;
+                        data.assertedLowerBound = std::max(data.assertedLowerBound, data.checks[i].neededLowerBound);
+                        data.assertedUpperBound = std::min(data.assertedUpperBound, data.checks[i].neededUpperBound);
 
                         forEachRelationship(expr, [&](auto relationship) {
                             if (relationship.minValueOfLeft() >= 0)
-                                nonNegative = true;
+                                data.checks[i].alreadyNonNegative = true;
 
                             if (relationship.right() == bounds) {
                                 if (relationship.kind() == Relationship::Equal
                                     && relationship.offset() < 0)
-                                    lessThanLength = true;
+                                    data.checks[i].alreadyLessThanLength = true;
 
                                 if (relationship.kind() == Relationship::LessThan
                                     && relationship.offset() <= 0)
-                                    lessThanLength = true;
+                                    data.checks[i].alreadyLessThanLength = true;
                             }
                         });
 
-                        dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "MultiCheckInBounds ", node, ".", expr, "/", bounds, " has: ", nonNegative, " ", lessThanLength);
+                        if (!data.checks[i].alreadyNonNegative)
+                            mustProveNonNegative = true;
+                        if (!data.checks[i].alreadyLessThanLength)
+                            mustProveLength = true;
+                    }
+
+                    if ((mustProveNonNegative && data.assertedLowerBound > std::numeric_limits<int32_t>::min())
+                        || (mustProveLength && data.assertedUpperBound < std::numeric_limits<int32_t>::max()))
+                        data.doesAssert = true;
+
+                    Vector<MultiCheckInBoundsCheckData> commitedChecks;
+
+                    if (data.doesAssert && data.assertedLowerBound > std::numeric_limits<int32_t>::min())
+                        setRelationship(Relationship::safeCreate(significantValue, m_zero, Relationship::GreaterThan, data.assertedLowerBound));
+                    if (data.doesAssert && data.assertedUpperBound < std::numeric_limits<int32_t>::max())
+                        setRelationship(Relationship::safeCreate(significantValue, m_zero, Relationship::LessThan, data.assertedUpperBound));
+ 
+                    for (uint64_t i = 0; i < data.checks.size(); ++i) {
+                        Node* expr = data.checks[i].expr.node();
+                        Node* bounds = data.checks[i].bounds.node();
+
+                        if (data.checks[i].alreadyNonNegative && data.checks[i].alreadyLessThanLength)
+                            continue;
 
                         auto [minValueOfSignificantValue, maxValueOfSignificantValue] = provenBounds(significantValue);
 
@@ -1505,19 +1428,16 @@ public:
                         int32_t minValue = evaluateMonotonicPureNode(expr, significantValue, minValueOfSignificantValue);
 
                         if (minValue >= 0 && minValue != badPureValue)
-                            nonNegative = true;
+                            data.checks[i].alreadyNonNegative = true;
 
                         auto [minLengthValue, __] = provenBounds(bounds); // inclusive
                         if (minLengthValue != badPureValue && minLengthValue >= 0 && maxValue != badPureValue && maxValue <= minLengthValue)
-                            lessThanLength = true;
+                            data.checks[i].alreadyLessThanLength = true;
 
-                        dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "MultiCheckInBounds ", node, " has (after): ", nonNegative, " ", lessThanLength, " ", minValue, " ", maxValue, " (significant value ", significantValue, " bounds: ", minValueOfSignificantValue, " ", maxValueOfSignificantValue, ") (length has min value: )", minLengthValue);
+                        dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "MultiCheckInBounds ", node, ".", expr, "/", bounds, " was not automatically removed, has: ", data.checks[i].alreadyNonNegative, " ", data.checks[i].alreadyLessThanLength, "; bounds: ", minValue, " ", maxValue, "; significant value ", significantValue, " has bounds: ", minValueOfSignificantValue, " ", maxValueOfSignificantValue, ", length has min value: ", minLengthValue);
 
-                        if (nonNegative && lessThanLength) {
-                            // This case will never get "evaluatedNode"-ed, but this should be fine.
-                            exprEdge = Edge();
-                            boundsEdge = Edge();
-                        }
+                        if (data.checks[i].alreadyNonNegative && data.checks[i].alreadyLessThanLength)
+                            continue;
 
                         // Now execute this check, since we are committed to keeping it.
                         setRelationship(Relationship::safeCreate(expr, bounds, Relationship::LessThan));
@@ -1537,7 +1457,10 @@ public:
                             dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, " Updated pure op after check (inline), ", significantValue, " gets lower bound ", significantValueMinimum);
                             setRelationship(Relationship::safeCreate(significantValue, m_zero, Relationship::GreaterThan, significantValueMinimum - 1));
                         }
+
+                        commitedChecks.append(data.checks[i]);
                     }
+                    data.checks = WTFMove(commitedChecks);
 
                     break;
                 }
@@ -1708,39 +1631,19 @@ private:
 
         case MultiCheckInBounds: {
             auto& data = m_graph.m_multiCheckInBoundsData[node->multiCheckInBoundsData()];
-            RELEASE_ASSERT(data.size() % 2 == 1);
-            Node* significantValue = data[0].node();
+            Node* significantValue = data.significantValue;
 
-            for (uint64_t i = 0; i < (data.size() - 1) / 2; ++i) {
-                Node* expr = data[1 + i * 2].node();
-                Node* bounds = data[1 + i * 2 + 1].node();
+            if (data.doesAssert && data.assertedLowerBound > std::numeric_limits<int32_t>::min())
+                setRelationship(Relationship::safeCreate(significantValue, m_zero, Relationship::GreaterThan, data.assertedLowerBound - 1));
+            if (data.doesAssert && data.assertedUpperBound < std::numeric_limits<int32_t>::max())
+                setRelationship(Relationship::safeCreate(significantValue, m_zero, Relationship::LessThan, data.assertedUpperBound + 1));
 
-                if (!expr && !bounds)
-                    continue;
-                ASSERT(expr);
-                ASSERT(bounds);
+            for (uint64_t i = 0; i < data.checks.size(); ++i) {
+                Node* expr = data.checks[i].expr.node();
+                Node* bounds = data.checks[i].bounds.node();
 
-                Vector<Relationship, 4> toAdd;
-
-                toAdd.append(Relationship::safeCreate(expr, bounds, Relationship::LessThan));
-                toAdd.append(Relationship::safeCreate(expr, m_zero, Relationship::GreaterThan, -1));
-
-                if (auto [minLength, _] = provenBounds(bounds); minLength >= 0) {
-                    int32_t significantValueMaximum = unevaluateMonotonicPureNode(expr, significantValue, minLength);
-                    if (significantValueMaximum != badPureValue) {
-                        dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, " Updated pure op after check, ", significantValue, " gets upper bound ", significantValueMaximum);
-                        toAdd.append(Relationship::safeCreate(significantValue, m_zero, Relationship::LessThan, significantValueMaximum + 1));
-                    }
-                }
-
-                int32_t significantValueMinimum = unevaluateMonotonicPureNode(expr, significantValue, 0, /* enforceMonotonic = */ true, /* commitNewRelationships = */true);
-                if (significantValueMinimum != badPureValue) {
-                    dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, " Updated pure op after check, ", significantValue, " gets lower bound ", significantValueMinimum);
-                    toAdd.append(Relationship::safeCreate(significantValue, m_zero, Relationship::GreaterThan, significantValueMinimum - 1));
-                }
-
-                for (auto& r : toAdd)
-                    setRelationship(WTFMove(r));
+                setRelationship(Relationship::safeCreate(expr, bounds, Relationship::LessThan));
+                setRelationship(Relationship::safeCreate(expr, m_zero, Relationship::GreaterThan, -1));
             }
 
             break;
@@ -2451,17 +2354,20 @@ public:
                 }
 
                 if (!multiCheck) {
-                    m_graph.m_multiCheckInBoundsData.append({ Edge(value, Int32Use) });
+                    m_graph.m_multiCheckInBoundsData.append({ });
                     multiCheck = m_insertionSet.insertNode(nodeIndex, SpecNone, MultiCheckInBounds, node->origin);
                     multiCheck->setMultiCheckInBoundsData(m_graph.m_multiCheckInBoundsData.size() - 1);
                     multiChecks.add(value, multiCheck);
                     changed = true;
 
                     auto& data = m_graph.m_multiCheckInBoundsData[multiCheck->multiCheckInBoundsData()];
-
-                    // No hoisting is needed.
-                    data.append(Edge(node->child1().node(), node->child1().useKind() == KnownInt32Use ? KnownInt32Use : Int32Use));
-                    data.append(Edge(node->child2().node(), node->child2().useKind() == KnownInt32Use ? KnownInt32Use : Int32Use));
+                    data.significantValue = value;
+                    
+                    data.checks.append({
+                        // No hoisting is needed.
+                        Edge(node->child1().node(), node->child1().useKind() == KnownInt32Use ? KnownInt32Use : Int32Use),
+                        Edge(node->child2().node(), node->child2().useKind() == KnownInt32Use ? KnownInt32Use : Int32Use)
+                    });
 
                     // TODO preserve getbyval data edges
                     node->convertToIdentityOn(node->child1().node());
@@ -2469,9 +2375,7 @@ public:
                 }
 
                 RELEASE_ASSERT(checkIndex != checkBlock->numNodes());
-
                 auto& data = m_graph.m_multiCheckInBoundsData[multiCheck->multiCheckInBoundsData()];
-                RELEASE_ASSERT(data.size() % 2 == 1);
 
                 // Hoist the pure value to just below the significant value
                 std::function<Node*(Node*)> hoist = [&] (Node* n) -> Node* {
@@ -2494,8 +2398,10 @@ public:
                     return n;
                 };
 
-                data.append(Edge(hoist(node->child1().node()), node->child1().useKind() == KnownInt32Use ? KnownInt32Use : Int32Use));
-                data.append(Edge(node->child2().node(), node->child2().useKind() == KnownInt32Use ? KnownInt32Use : Int32Use));
+                data.checks.append({
+                    Edge(hoist(node->child1().node()), node->child1().useKind() == KnownInt32Use ? KnownInt32Use : Int32Use),
+                    Edge(node->child2().node(), node->child2().useKind() == KnownInt32Use ? KnownInt32Use : Int32Use)
+                });
 
                 // TODO preserve getbyval data edges
                 node->convertToIdentityOn(node->child1().node());
@@ -2577,21 +2483,26 @@ public:
             switch (node->op()) {
             case MultiCheckInBounds: {
                 auto& data = m_graph.m_multiCheckInBoundsData[node->multiCheckInBoundsData()];
-                RELEASE_ASSERT(data.size() % 2 == 1);
 
-                for (uint64_t i = 0; i < (data.size() - 1) / 2; ++i) {
-                    auto expr = data[1 + i * 2];
-                    auto bounds = data[1 + i * 2 + 1];
-                    if (!expr && !bounds)
-                        continue;
-                    ASSERT(expr);
-                    ASSERT(bounds);
+                if (data.doesAssert) {
+                    bool assertMin = data.assertedLowerBound > std::numeric_limits<int32_t>::min();
+                    bool assertMax = data.assertedUpperBound < std::numeric_limits<int32_t>::max();
+                    RELEASE_ASSERT(assertMax || assertMin);
+                    if (assertMax || assertMin) {
+                        m_insertionSet.insertNode(nodeIndex, SpecNone, CheckInBounds, node->origin,
+                            Edge(data.significantValue, Int32Use),
+                            Edge(m_insertionSet.insertConstant(nodeIndex, node->origin, jsNumber(data.assertedUpperBound)), Int32Use));
+                        // TODO
+                    }
+                }
+
+                for (uint64_t i = 0; i < data.checks.size(); ++i) {
                     m_insertionSet.insertNode(nodeIndex, SpecNone, CheckInBounds, node->origin,
-                        expr, bounds);
+                        data.checks[i].expr, data.checks[i].bounds);
                 }
 
                 // TODO re-establish relationships
-                node->convertToIdentityOn(data[0].node());
+                node->convertToIdentityOn(data.significantValue);
                 changed = true;
                 break;
             }

@@ -154,6 +154,30 @@ private:
     bool m_enabled { true };
 };
 
+class MultiCheckInBoundsCheckData final {
+public:
+    int32_t neededLowerBound = std::numeric_limits<int32_t>::min();
+    int32_t neededUpperBound = std::numeric_limits<int32_t>::max();
+    bool alreadyNonNegative = false;
+    bool alreadyLessThanLength = false;
+    Edge expr = Edge();
+    Edge bounds = Edge();
+
+    MultiCheckInBoundsCheckData(Edge expr, Edge bounds)
+        : expr(expr)
+        , bounds(bounds)
+    {}
+};
+
+class MultiCheckInBoundsData final {
+public:
+    int32_t assertedLowerBound = std::numeric_limits<int32_t>::min();
+    int32_t assertedUpperBound = std::numeric_limits<int32_t>::max();
+    bool doesAssert = false;
+    Node* significantValue = nullptr;
+    Vector<MultiCheckInBoundsCheckData> checks;
+};
+
 //
 // === Graph ===
 //
@@ -1293,7 +1317,7 @@ public:
     HashSet<Node*> m_slowGetByVal;
     HashSet<Node*> m_slowPutByVal;
 
-    Vector<Vector<Edge>> m_multiCheckInBoundsData;
+    Vector<MultiCheckInBoundsData> m_multiCheckInBoundsData;
 
 private:
     template<typename Visitor> void visitChildrenImpl(Visitor&);
