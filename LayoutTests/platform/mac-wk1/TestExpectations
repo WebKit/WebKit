@@ -2605,3 +2605,39 @@ imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-content-box-
 imported/w3c/web-platform-tests/css/selectors/invalidation/nth-last-child-in-shadow-root.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/content-security-policy/reporting/report-original-url-on-mixed-content-frame.https.sub.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-085.html [ ImageOnlyFailure ]
+
+# rdar://105177062 (REGRESSION ( Sonoma ): [ Sonoma wk1 ] css3/filters/backdrop/add-remove-add-backdrop-filter.html is a consistent image failure)
+[ Sonoma+ ] css3/filters/backdrop/add-remove-add-backdrop-filter.html [ Pass ImageOnlyFailure ]
+
+# rdar://105178122 (REGRESSION ( Sonoma ): [ Sonoma wk1 ] css3/filters/filter-mask-clip-order.html is a consistent image failure)
+[ Sonoma+ ] css3/filters/filter-mask-clip-order.html [ ImageOnlyFailure ]
+
+# rdar://105178880 (REGRESSION ( Sonoma ): [ Sonoma wk1 ] css3/masking/mask-base64.html is a consistent image failure)
+[ Sonoma+ ] css3/masking/mask-base64.html [ ImageOnlyFailure ]
+
+# rdar://105179850 (REGRESSION ( Sonoma ): [  Sonoma wk1 ] css3/masking/mask-repeat-space-content.html is a consistent image failure)
+[ Sonoma+ ] css3/masking/mask-repeat-space-content.html [ Pass ImageOnlyFailure ]
+
+# rdar://105915702 (REGRESSION ( Sonoma ): [ Sonoma wk1 ] Nine imported/w3c/web-platform-tests/css/css tests are a consistent failure)
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3f.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3g.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-4a.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-4b.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-image-hash.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-image.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-size-cover.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-transforms/subpixel-transform-changes-001.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-transforms/subpixel-transform-changes-002.html [ ImageOnlyFailure ]
+
+#rdar://106031213 (REGRESSION ( Sonoma ): [ Sonoma wk1 ] Two media/track/track-webvtt-snap-to-lines tests are a consistent failure)
+[ Sonoma+ ] media/track/track-webvtt-snap-to-lines-inline-style.html [ ImageOnlyFailure ]
+[ Sonoma+ ] media/track/track-webvtt-snap-to-lines-left-right.html [ ImageOnlyFailure ]
+
+# rdar://108816571 ([ Sonoma wk1 ] compositing/backing/solid-color-with-paints-into-ancestor.html is a flaky failure)
+[ Sonoma+ ] compositing/backing/solid-color-with-paints-into-ancestor.html [ Pass ImageOnlyFailure ]
+
+# rdar://111577613 (REGRESSION ( Sonoma ): [ Sonoma ] fast/forms/password-scrolled-after-caps-lock-toggled.html is a consistent failure)
+[ Sonoma+ ] fast/forms/password-scrolled-after-caps-lock-toggled.html [ Timeout ]
+
+# rdar://111398769 (REGRESSION (265250@main): [ macOS ] fast/mediastream/device-change-event-2.html is a consistent failure)
+[ Sonoma+ ] fast/mediastream/device-change-event-2.html [ Failure ]
