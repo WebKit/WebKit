@@ -92,7 +92,7 @@ if (!window.InspectorFrontendHost) {
             const queryParams = parseQueryString(window.location.search.substring(1));
             let url = "ws" in queryParams ? "ws://" + queryParams.ws : null;
             if (!url) {
-                url = location.pathname.slice(1);
+                url = location.hash.slice(1);
                 if (url && (!url.startsWith("ws://") && !url.startsWith("ws://"))) {
                     url = "ws://" + url;
                 }
@@ -108,7 +108,8 @@ if (!window.InspectorFrontendHost) {
                 var socket = new WebSocket(url);
             } catch (e) {
                 if (typeof window.onFailToLoad === "function") {
-                    window.onFailToLoad(url);
+                    window.onFailToLoad(e, url);
+                    return;
                 }
                 throw new Error(`Could not connect to "${url}"`, {cause: e});
             }
