@@ -56,9 +56,9 @@ public:
     CustomElementQueue& backupElementQueue();
 
     void didScheduleRenderingUpdate(Page&, MonotonicTime);
-    void didFinishRenderingUpdate(Page&);
+    void didStartRenderingUpdate(Page&);
     void opportunisticallyRunIdleCallbacks();
-    bool shouldEndIdlePeriod();
+    bool shouldEndIdlePeriod(MonotonicTime);
     MonotonicTime computeIdleDeadline();
 
     WEBCORE_EXPORT static void breakToAllowRenderingUpdate();
@@ -71,6 +71,7 @@ private:
     bool isContextThread() const final;
     MicrotaskQueue& microtaskQueue() final;
 
+    std::optional<MonotonicTime> nextRenderingTime() const;
     void didReachTimeToRun();
 
     String m_agentClusterKey;

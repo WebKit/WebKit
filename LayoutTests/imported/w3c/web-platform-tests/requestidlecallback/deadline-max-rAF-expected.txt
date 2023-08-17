@@ -3,5 +3,5 @@ Test of requestIdleCallback deadline behavior
 The test can pass accidentally as idle deadlines have a maximum but they can always be shorter. It runs multiple times to expose potential failures.
 
 
-FAIL Check that the deadline is less than 16ms when there is a pending animation frame. assert_less_than_equal: expected a number less than or equal to 16.666666666666668 but got 115
+PASS Check that the deadline is less than 16ms when there is a pending animation frame.
 
