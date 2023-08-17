@@ -443,6 +443,14 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setPageIsVisible(bool visible)
     m_visible = visible;
     if (m_visible)
         acceleratedRenderingStateChanged();
+
+#if PLATFORM(VISION)
+    if (!visible) {
+        AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
+        [m_sampleBufferDisplayLayer sampleBufferRenderer].STSLabel = session.spatialTrackingLabel;
+    } else
+        [m_sampleBufferDisplayLayer sampleBufferRenderer].STSLabel = nil;
+#endif
 }
 
 MediaTime MediaPlayerPrivateMediaSourceAVFObjC::durationMediaTime() const

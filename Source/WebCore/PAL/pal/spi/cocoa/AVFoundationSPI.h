@@ -497,3 +497,10 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 #endif
 
+#if __has_include(<AVFoundation/AVSampleBufferVideoRenderer_Private.h>)
+#import <AVFoundation/AVSampleBufferVideoRenderer_Private.h>
+#elif PLATFORM(VISION)
+@interface AVSampleBufferVideoRenderer (AVSampleBufferVideoRendererWebKitPrivate)
+@property (nonatomic, copy, nullable, getter=_STSLabel) NSString *STSLabel SPI_AVAILABLE(ios(15.0)) API_UNAVAILABLE(macos, tvos, watchos);
+@end
+#endif
