@@ -1155,15 +1155,6 @@ String HTMLMediaElement::canPlayType(const String& mimeType) const
     MediaEngineSupportParameters parameters;
     ContentType contentType(mimeType);
 
-#if PLATFORM(COCOA)
-    if (document().quirks().shouldAdvertiseSupportForHLSSubtitleTypes()
-        && contentType.containerType() == "application/vnd.apple.mpegurl"_s
-        && (contentType.codecs().contains("stpp.ttml.im1t"_s) || contentType.codecs().contains("wvtt"_s))) {
-        ALWAYS_LOG(LOGIDENTIFIER, "Quirk, ", mimeType, ": probably");
-        return "probably"_s;
-    }
-#endif
-
     parameters.type = contentType;
     parameters.contentTypesRequiringHardwareSupport = mediaContentTypesRequiringHardwareSupport();
     parameters.allowedMediaContainerTypes = allowedMediaContainerTypes();
@@ -6768,7 +6759,12 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
     m_changingVideoFullscreenMode = true;
 
 #if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
-    if (document().settings().fullScreenEnabled() && mode == VideoFullscreenModeStandard) {
+#if PLATFORM(IOS_FAMILY)
+    bool videoUsesElementFullscreen = document().settings().videoFullscreenRequiresElementFullscreen();
+#else
+    constexpr bool videoUsesElementFullscreen = true;
+#endif
+    if (videoUsesElementFullscreen && document().settings().fullScreenEnabled() && mode == VideoFullscreenModeStandard) {
         m_temporarilyAllowingInlinePlaybackAfterFullscreen = false;
         m_waitingToEnterFullscreen = true;
         document().fullscreenManager().requestFullscreenForElement(*this, nullptr, FullscreenManager::ExemptIFrameAllowFullscreenRequirement);

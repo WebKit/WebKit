@@ -1296,12 +1296,13 @@ Ref<JSON::ArrayOf<Protocol::CSS::RuleMatch>> InspectorCSSAgent::buildArrayForMat
 
 RefPtr<Protocol::CSS::CSSStyle> InspectorCSSAgent::buildObjectForAttributesStyle(StyledElement& element)
 {
-    // FIXME: Ugliness below.
-    auto* attributeStyle = const_cast<MutableStyleProperties*>(element.presentationalHintStyle());
-    if (!attributeStyle)
+    auto* presentationalHintStyle = element.presentationalHintStyle();
+    if (!presentationalHintStyle)
         return nullptr;
 
-    auto inspectorStyle = InspectorStyle::create(InspectorCSSId(), attributeStyle->ensureCSSStyleDeclaration(), nullptr);
+    auto mutableStyle = presentationalHintStyle->mutableCopy();
+
+    auto inspectorStyle = InspectorStyle::create(InspectorCSSId(), mutableStyle->ensureCSSStyleDeclaration(), nullptr);
     return inspectorStyle->buildObjectForStyle();
 }
 

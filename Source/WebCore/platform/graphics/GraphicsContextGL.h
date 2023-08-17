@@ -1185,7 +1185,6 @@ public:
         WEBCORE_EXPORT Client();
         WEBCORE_EXPORT virtual ~Client();
         virtual void forceContextLost() = 0;
-        virtual void dispatchContextChangedNotification() = 0;
     };
 
     WEBCORE_EXPORT GraphicsContextGL(GraphicsContextGLAttributes);
@@ -1711,7 +1710,6 @@ public:
     bool isContextLost() const { return m_contextLost; }
 protected:
     WEBCORE_EXPORT virtual void forceContextLost();
-    WEBCORE_EXPORT void dispatchContextChangedNotification();
 
     int m_currentWidth { 0 };
     int m_currentHeight { 0 };

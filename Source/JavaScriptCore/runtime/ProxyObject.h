@@ -73,16 +73,7 @@ public:
         return proxy;
     }
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, bool isCallable)
-    {
-        unsigned flags = StructureFlags;
-        if (isCallable)
-            flags |= (ImplementsHasInstance | ImplementsDefaultHasInstance);
-        Structure* result = Structure::create(vm, globalObject, prototype, TypeInfo(ProxyObjectType, flags), info(), NonArray | MayHaveIndexedAccessors);
-        RELEASE_ASSERT(!result->canAccessPropertiesQuicklyForEnumeration());
-        RELEASE_ASSERT(!result->canCachePropertyNameEnumerator(vm));
-        return result;
-    }
+    inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue, bool);
 
     DECLARE_EXPORT_INFO;
 

@@ -3,14 +3,21 @@
 
 /*---
 esid: sec-temporal.zoneddatetime.prototype.until
-description: ZonedDateTime strings with UTC offset fractional part are not confused with time fractional part
+description: Sub-minute offset trailing zeroes allowed in ISO string but not in bracketed offset
 includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const timeZone = new Temporal.TimeZone("+00:01:30.987654321");
+const timeZone = new Temporal.TimeZone("+01:35");
 const instance = new Temporal.ZonedDateTime(0n, timeZone);
-const str = "1970-01-01T00:02:00.000000000+00:02[+00:01:30.987654321]";
+let str = "1970-01-01T01:35:30+01:35:00.000000000[+01:35]";
 
 const result = instance.until(str);
-TemporalHelpers.assertDuration(result, 0, 0, 0, 0, 0, 0, 29, 12, 345, 679, "Time zone determined from bracket name");
+TemporalHelpers.assertDuration(result, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, "ISO offset, sub-minute offset trailing-zeroes");
+
+str = "1970-01-01T01:35:30+01:35:00.000000000[+01:35:00.000000000]";
+assert.throws(
+  RangeError,
+  () => instance.until(str),
+  "Trailing zeroes not allowed for sub-minute time zone identifiers"
+);

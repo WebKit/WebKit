@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: TypeError: Import attribute type "notARealType" is not valid
+CONSOLE MESSAGE: TypeError: Import attribute type "" is not valid
+CONSOLE MESSAGE: TypeError: Import attribute type "js" is not valid
+CONSOLE MESSAGE: TypeError: Import attribute type "javascript" is not valid
+
+PASS Test that invalid module type attribute leads to TypeError on window.
+

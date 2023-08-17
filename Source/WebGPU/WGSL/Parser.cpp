@@ -31,6 +31,7 @@
 #include "ParserPrivate.h"
 #include "WGSLShaderModule.h"
 
+#include <wtf/HashSet.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WGSL {
@@ -297,17 +298,17 @@ static AST::UnaryOperation toUnaryOperation(const Token& token)
 }
 
 template<typename Lexer>
-std::optional<Error> parse(ShaderModule& shaderModule)
+std::optional<FailedCheck> parse(ShaderModule& shaderModule)
 {
     Lexer lexer(shaderModule.source());
     Parser parser(shaderModule, lexer);
     auto result = parser.parseShader();
     if (!result.has_value())
-        return result.error();
+        return FailedCheck { { result.error() }, { /* warnings */ } };
     return std::nullopt;
 }
 
-std::optional<Error> parse(ShaderModule& shaderModule)
+std::optional<FailedCheck> parse(ShaderModule& shaderModule)
 {
     if (shaderModule.source().is8Bit())
         return parse<Lexer<LChar>>(shaderModule);
@@ -519,8 +520,12 @@ Result<AST::Structure::Ref> Parser<Lexer>::parseStructure(AST::Attribute::List&&
     CONSUME_TYPE(BraceLeft);
 
     AST::StructureMember::List members;
+    HashSet<String> seenMembers;
     while (current().type != TokenType::BraceRight) {
         PARSE(member, StructureMember);
+        auto result = seenMembers.add(member.get().name());
+        if (!result.isNewEntry)
+            FAIL(makeString("duplicate member '", member.get().name(), "' in struct '", name, "'"));
         members.append(member);
         if (current().type == TokenType::Comma)
             consume();

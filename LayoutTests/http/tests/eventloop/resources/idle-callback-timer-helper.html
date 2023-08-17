@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+onmessage = (event) => {
+    for (let timeout of event.data.timeouts) {
+        setTimeout(() => {
+            let now = performance.now();
+            while (performance.now() < now + 10);
+            top.postMessage({'step': 'timerFired', 'timeout': timeout}, '*');
+        }, timeout);
+    }
+    top.postMessage({'step': 'scheduledTimers'}, '*');
+};
+</script>
+</body>
+</html>

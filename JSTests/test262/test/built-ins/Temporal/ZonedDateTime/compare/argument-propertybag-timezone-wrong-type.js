@@ -11,7 +11,7 @@ features: [BigInt, Symbol, Temporal]
 
 const datetime = new Temporal.ZonedDateTime(0n, new Temporal.TimeZone("UTC"));
 
-const rangeErrorTests = [
+const primitiveTests = [
   [null, "null"],
   [true, "boolean"],
   ["", "empty string"],
@@ -20,9 +20,17 @@ const rangeErrorTests = [
   [1n, "bigint"],
 ];
 
-for (const [timeZone, description] of rangeErrorTests) {
-  assert.throws(RangeError, () => Temporal.ZonedDateTime.compare({ year: 2020, month: 5, day: 2, timeZone }, datetime), `${description} does not convert to a valid ISO string (first argument)`);
-  assert.throws(RangeError, () => Temporal.ZonedDateTime.compare(datetime, { year: 2020, month: 5, day: 2, timeZone }), `${description} does not convert to a valid ISO string (second argument)`);
+for (const [timeZone, description] of primitiveTests) {
+  assert.throws(
+    typeof timeZone === 'string' ? RangeError : TypeError,
+    () => Temporal.ZonedDateTime.compare({ year: 2020, month: 5, day: 2, timeZone }, datetime),
+    `${description} does not convert to a valid ISO string (first argument)`
+  );
+  assert.throws(
+    typeof timeZone === 'string' ? RangeError : TypeError,
+    () => Temporal.ZonedDateTime.compare(datetime, { year: 2020, month: 5, day: 2, timeZone }),
+    `${description} does not convert to a valid ISO string (second argument)`
+  );
 }
 
 const typeErrorTests = [

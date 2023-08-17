@@ -29,6 +29,7 @@
 #include "CallGraph.h"
 #include "ConstantRewriter.h"
 #include "EntryPointRewriter.h"
+#include "GlobalSorting.h"
 #include "GlobalVariableRewriter.h"
 #include "MangleNames.h"
 #include "Metal/MetalCodeGenerator.h"
@@ -39,18 +40,14 @@
 
 namespace WGSL {
 
-#define CHECK_PASS(name, pass, ...) \
-    dumpASTBetweenEachPassIfNeeded(ast, "AST before " # pass); \
-    auto name##Expected = [&]() { \
+#define CHECK_PASS(pass) \
+    dumpASTBetweenEachPassIfNeeded(shaderModule, "AST before " # pass); \
+    auto maybe##pass##Failure = [&]() { \
         PhaseTimer phaseTimer(#pass, phaseTimes); \
-        return pass(__VA_ARGS__); \
+        return pass(shaderModule); \
     }(); \
-    if (!name##Expected) { \
-        if (dumpPassFailure) \
-            dataLogLn("failed pass: " # pass, toString(name##Expected.error())); \
-        return makeUnexpected(name##Expected.error()); \
-    } \
-    auto& name = *name##Expected; \
+    if (maybe##pass##Failure) \
+        return *maybe##pass##Failure;
 
 #define RUN_PASS(pass, ...) \
     do { \
@@ -68,21 +65,14 @@ namespace WGSL {
 
 std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const std::optional<SourceMap>&, const Configuration& configuration)
 {
+    PhaseTimes phaseTimes;
     auto shaderModule = makeUniqueRef<ShaderModule>(wgsl, configuration);
-    std::optional<Error> error = parse(shaderModule);
-    if (error.has_value()) {
-        // FIXME: Add support for returning multiple errors from the parser.
-        return FailedCheck { { *error }, { /* warnings */ } };
-    }
 
     // FIXME: add more validation
-    auto maybeFailure = typeCheck(shaderModule);
-    if (maybeFailure.has_value())
-        return *maybeFailure;
-
-    maybeFailure = rewriteConstants(shaderModule);
-    if (maybeFailure.has_value())
-        return *maybeFailure;
+    CHECK_PASS(parse);
+    CHECK_PASS(reorderGlobals);
+    CHECK_PASS(typeCheck);
+    CHECK_PASS(rewriteConstants);
 
     Vector<Warning> warnings { };
     return std::variant<SuccessfulCheck, FailedCheck>(std::in_place_type<SuccessfulCheck>, WTFMove(warnings), WTFMove(shaderModule));

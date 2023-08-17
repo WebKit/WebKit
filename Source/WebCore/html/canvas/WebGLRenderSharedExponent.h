@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class WebGLRenderSharedExponent final : public WebGLExtension {
+class WebGLRenderSharedExponent final : public RefCounted<WebGLRenderSharedExponent>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(WebGLRenderSharedExponent);
 public:
     explicit WebGLRenderSharedExponent(WebGLRenderingContextBase&);
-    virtual ~WebGLRenderSharedExponent();
-
-    ExtensionName getName() const override;
+    ~WebGLRenderSharedExponent();
 
     static bool supported(GraphicsContextGL&);
 };

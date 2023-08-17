@@ -168,6 +168,7 @@ void PageLoadState::reset(const Transaction::Token& token)
     m_uncommittedState.pendingAPIRequest = { };
     m_uncommittedState.provisionalURL = String();
     m_uncommittedState.url = String();
+    m_uncommittedState.origin = { };
 
     m_uncommittedState.unreachableURL = String();
     m_lastUnreachableURL = String();
@@ -329,7 +330,7 @@ void PageLoadState::didFailProvisionalLoad(const Transaction::Token& token)
     m_uncommittedState.unreachableURL = m_lastUnreachableURL;
 }
 
-void PageLoadState::didCommitLoad(const Transaction::Token& token, const WebCore::CertificateInfo& certificateInfo, bool hasInsecureContent, bool usedLegacyTLS, bool wasPrivateRelayed)
+void PageLoadState::didCommitLoad(const Transaction::Token& token, const WebCore::CertificateInfo& certificateInfo, bool hasInsecureContent, bool usedLegacyTLS, bool wasPrivateRelayed, const SecurityOriginData& origin)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
     ASSERT(m_uncommittedState.state == State::Provisional);
@@ -342,6 +343,7 @@ void PageLoadState::didCommitLoad(const Transaction::Token& token, const WebCore
     m_uncommittedState.provisionalURL = String();
     m_uncommittedState.negotiatedLegacyTLS = usedLegacyTLS;
     m_uncommittedState.wasPrivateRelayed = wasPrivateRelayed;
+    m_uncommittedState.origin = origin;
 
     m_uncommittedState.title = String();
     m_uncommittedState.titleFromSafeBrowsingWarning = { };

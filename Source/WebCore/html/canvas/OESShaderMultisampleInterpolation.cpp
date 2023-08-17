@@ -35,17 +35,12 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(OESShaderMultisampleInterpolation);
 
 OESShaderMultisampleInterpolation::OESShaderMultisampleInterpolation(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, OESShaderMultisampleInterpolationName)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_OES_shader_multisample_interpolation"_s);
 }
 
 OESShaderMultisampleInterpolation::~OESShaderMultisampleInterpolation() = default;
-
-WebGLExtension::ExtensionName OESShaderMultisampleInterpolation::getName() const
-{
-    return OESShaderMultisampleInterpolationName;
-}
 
 bool OESShaderMultisampleInterpolation::supported(GraphicsContextGL& context)
 {

@@ -35,17 +35,12 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLDrawBuffers);
 
 WebGLDrawBuffers::WebGLDrawBuffers(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLDrawBuffersName)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_draw_buffers"_s);
 }
 
 WebGLDrawBuffers::~WebGLDrawBuffers() = default;
-
-WebGLExtension::ExtensionName WebGLDrawBuffers::getName() const
-{
-    return WebGLExtension::WebGLDrawBuffersName;
-}
 
 bool WebGLDrawBuffers::supported(WebGLRenderingContextBase& context)
 {

@@ -329,6 +329,7 @@ public:
         return adoptRef(*new IPIntCallee(generator, index, WTFMove(name)));
     }
 
+    uint32_t functionIndex() const { return m_functionIndex; }
     void setEntrypoint(CodePtr<WasmEntryPtrTag>);
     const uint8_t* getBytecode() const { return m_bytecode; }
     const uint8_t* getMetadata() const { return m_metadata; }
@@ -337,6 +338,22 @@ public:
     {
         return *m_signatures[index];
     }
+
+    LLIntTierUpCounter& tierUpCounter() { return m_tierUpCounter; }
+
+#if ENABLE(WEBASSEMBLY_B3JIT)
+    JITCallee* replacement(MemoryMode mode) { return m_replacements[static_cast<uint8_t>(mode)].get(); }
+    void setReplacement(Ref<OptimizingJITCallee>&& replacement, MemoryMode mode)
+    {
+        m_replacements[static_cast<uint8_t>(mode)] = WTFMove(replacement);
+    }
+
+    OSREntryCallee* osrEntryCallee(MemoryMode mode) { return m_osrEntryCallees[static_cast<uint8_t>(mode)].get(); }
+    void setOSREntryCallee(Ref<OSREntryCallee>&& osrEntryCallee, MemoryMode mode)
+    {
+        m_osrEntryCallees[static_cast<uint8_t>(mode)] = WTFMove(osrEntryCallee);
+    }
+#endif
 
     using OutOfLineJumpTargets = HashMap<WasmInstructionStream::Offset, int>;
 
@@ -347,6 +364,7 @@ private:
     std::tuple<void*, void*> rangeImpl() const { return { nullptr, nullptr }; };
     JS_EXPORT_PRIVATE RegisterAtOffsetList* calleeSaveRegistersImpl();
 
+    uint32_t m_functionIndex { 0 };
 #if ENABLE(WEBASSEMBLY_B3JIT)
     RefPtr<OptimizingJITCallee> m_replacements[numberOfMemoryModes];
     RefPtr<OSREntryCallee> m_osrEntryCallees[numberOfMemoryModes];
@@ -367,6 +385,8 @@ public:
     unsigned m_localSizeToAlloc;
     unsigned m_numLocals;
     unsigned m_numArgumentsOnStack;
+
+    LLIntTierUpCounter m_tierUpCounter;
 };
 
 class LLIntCallee final : public Callee {

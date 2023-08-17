@@ -7,9 +7,9 @@ flags:
   Temporal: useTemporal
   array-grouping: useArrayGroupMethod
   ShadowRealm: useShadowRealm
-  import-assertions: useImportAssertion
-  json-modules: useImportAssertion
   resizable-arraybuffer: useArrayBufferTransfer
+  import-assertions: useImportAttributes
+  json-modules: useImportAttributes
 skip:
   features:
     - callable-boundary-realms

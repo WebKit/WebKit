@@ -233,12 +233,12 @@ inline Type anyrefType(bool isNullable = true)
     return Wasm::Type { isNullable ? Wasm::TypeKind::RefNull : Wasm::TypeKind::Ref, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Anyref) };
 }
 
-inline Type arrayrefType()
+inline Type arrayrefType(bool isNullable = true)
 {
     ASSERT(Options::useWebAssemblyGC());
     // Returns a non-null ref type, since this is used for the return types of array operations
     // that are guaranteed to return a non-null array reference
-    return Wasm::Type { Wasm::TypeKind::Ref, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Arrayref) };
+    return Wasm::Type { isNullable ? Wasm::TypeKind::RefNull : Wasm::TypeKind::Ref, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Arrayref) };
 }
 
 inline bool isRefWithTypeIndex(Type type)

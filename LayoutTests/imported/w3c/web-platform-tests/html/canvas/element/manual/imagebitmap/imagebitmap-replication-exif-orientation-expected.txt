@@ -7,5 +7,5 @@ FAIL ImageBitmap from file with EXIF rotation, loaded via <img> in DOM, imageOri
 PASS ImageBitmap from file with EXIF rotation, duplicated via createImageBitmap
 PASS ImageBitmap from file with EXIF rotation, duplicated via worker serialization round-trip
 PASS ImageBitmap from file with EXIF rotation, duplicated via worker transfer round-trip
-FAIL ImageBitmap from file with EXIF rotation, duplicated via worker transfer round-trip, while referenced by a CanvasPattern promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS ImageBitmap from file with EXIF rotation, duplicated via worker transfer round-trip, while referenced by a CanvasPattern
 

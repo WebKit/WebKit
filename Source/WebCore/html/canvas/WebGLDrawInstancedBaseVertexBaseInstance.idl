@@ -26,7 +26,7 @@
 [
     LegacyNoInterfaceObject,
     Conditional=WEBGL,
-    GenerateIsReachable=ImplWebGLRenderingContext,
+    GenerateIsReachable,
 ] interface WebGLDrawInstancedBaseVertexBaseInstance {
   undefined drawArraysInstancedBaseInstanceWEBGL(unsigned long mode, long first, long count, long instanceCount, unsigned long baseInstance);
   undefined drawElementsInstancedBaseVertexBaseInstanceWEBGL(unsigned long mode, long count, unsigned long type, long long offset, long instanceCount, long baseVertex, unsigned long baseInstance);

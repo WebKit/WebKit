@@ -3,28 +3,23 @@
 
 /*---
 esid: sec-temporal.plaindate.prototype.since
-description: A number is converted to a string, then to Temporal.PlainDate
-includes: [temporalHelpers.js]
+description: A number cannot be used in place of a Temporal.PlainDate
 features: [Temporal]
 ---*/
 
 const instance = new Temporal.PlainDate(1976, 11, 18);
 
-const arg = 19761118;
-
-const result = instance.since(arg);
-TemporalHelpers.assertDuration(result, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "19761118 is a valid ISO string for PlainDate");
-
 const numbers = [
   1,
+  19761118,
   -19761118,
   1234567890,
 ];
 
 for (const arg of numbers) {
   assert.throws(
-    RangeError,
+    TypeError,
     () => instance.since(arg),
-    `Number ${arg} does not convert to a valid ISO string for PlainDate`
+    'Numbers cannot be used in place of an ISO string for PlainDate'
   );
 }

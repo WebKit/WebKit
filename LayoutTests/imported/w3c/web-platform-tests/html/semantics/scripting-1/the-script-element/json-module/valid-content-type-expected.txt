@@ -1,10 +1,8 @@
-CONSOLE MESSAGE: TypeError: 'text/html json' is not a valid JavaScript MIME type.
-CONSOLE MESSAGE: TypeError: 'image/svg json' is not a valid JavaScript MIME type.
 
 PASS text/json
 PASS application/json
-FAIL text/html+json assert_unreached: [object Event] Reached unreachable code
-FAIL image/svg+json assert_unreached: [object Event] Reached unreachable code
+PASS text/html+json
+PASS image/svg+json
 PASS text/json;boundary=something
 PASS text/json;foo=bar
 

@@ -2425,7 +2425,6 @@ EventHandlerDrivenSmoothKeyboardScrollingEnabled:
       default: false
     WebKit:
       "PLATFORM(MAC)": WebKit::defaultScrollAnimatorEnabled()
-      "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
     WebCore:
       default: false
@@ -2784,11 +2783,11 @@ FullscreenSceneDimmingEnabled:
   condition: PLATFORM(VISION)
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 GStreamerEnabled:
   type: bool
@@ -7396,8 +7395,10 @@ WebCodecsHEVCEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "USE(GSTREAMER)": true
       default: false
     WebCore:
+      "USE(GSTREAMER)": true
       default: false
 
 WebCryptoSafeCurvesEnabled:

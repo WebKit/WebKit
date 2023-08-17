@@ -26,7 +26,7 @@
 [
     LegacyNoInterfaceObject,
     Conditional=WEBGL,
-    GenerateIsReachable=ImplWebGLRenderingContext,
+    GenerateIsReachable,
 ] interface EXTDepthClamp {
     const unsigned long DEPTH_CLAMP_EXT = 0x864F;
 };

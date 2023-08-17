@@ -166,6 +166,7 @@ WasmToJSCallee::WasmToJSCallee()
 
 IPIntCallee::IPIntCallee(FunctionIPIntMetadataGenerator& generator, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
     : Callee(Wasm::CompilationMode::IPIntMode, index, WTFMove(name))
+    , m_functionIndex(generator.m_functionIndex)
     , m_signatures(WTFMove(generator.m_signatures))
     , m_bytecode(generator.m_bytecode + generator.m_bytecodeOffset)
     , m_bytecodeLength(generator.m_bytecodeLength - generator.m_bytecodeOffset)
@@ -177,6 +178,7 @@ IPIntCallee::IPIntCallee(FunctionIPIntMetadataGenerator& generator, size_t index
     , m_localSizeToAlloc(roundUpToMultipleOf(2, generator.m_numLocals))
     , m_numLocals(generator.m_numLocals)
     , m_numArgumentsOnStack(generator.m_numArgumentsOnStack)
+    , m_tierUpCounter(WTFMove(generator.m_tierUpCounter))
 {
 }
 

@@ -26,7 +26,7 @@
 #pragma once
 
 #include "CallFrame.h"
-#include "JSCallee.h"
+#include "JSCalleeInlines.h"
 #include "RegisterInlines.h"
 
 namespace JSC {

@@ -965,7 +965,7 @@ bool HTMLCanvasElement::virtualHasPendingActivity() const
 {
 #if ENABLE(WEBGL)
     if (is<WebGLRenderingContextBase>(m_context)) {
-        // WebGL rendering context may fire contextlost / contextchange / contextrestored events at any point.
+        // WebGL rendering context may fire contextlost / contextrestored events at any point.
         return m_hasRelevantWebGLEventListener && !downcast<WebGLRenderingContextBase>(*m_context).isContextUnrecoverablyLost();
     }
 #endif
@@ -977,8 +977,7 @@ void HTMLCanvasElement::eventListenersDidChange()
 {
 #if ENABLE(WEBGL)
     auto& eventNames = WebCore::eventNames();
-    m_hasRelevantWebGLEventListener = hasEventListeners(eventNames.webglcontextchangedEvent)
-        || hasEventListeners(eventNames.webglcontextlostEvent)
+    m_hasRelevantWebGLEventListener = hasEventListeners(eventNames.webglcontextlostEvent)
         || hasEventListeners(eventNames.webglcontextrestoredEvent);
 #endif
 }

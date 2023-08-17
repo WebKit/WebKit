@@ -498,8 +498,7 @@ void PlaybackSessionManager::selectLegibleMediaOption(PlaybackSessionContextIden
 
 void PlaybackSessionManager::handleControlledElementIDRequest(PlaybackSessionContextIdentifier contextId)
 {
-    auto element = ensureModel(contextId).mediaElement();
-    if (element)
+    if (RefPtr element = ensureModel(contextId).mediaElement())
         m_page->send(Messages::PlaybackSessionManagerProxy::HandleControlledElementIDResponse(contextId, element->getIdAttribute()));
 }
 

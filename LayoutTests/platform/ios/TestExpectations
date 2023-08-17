@@ -2186,6 +2186,7 @@ accessibility/display-contents/element-roles.html [ Pass ]
 accessibility/display-contents/object-ordering.html [ Pass ]
 accessibility/display-contents/table.html [ Pass ]
 accessibility/dynamically-ignored-canvas.html [ Pass ]
+accessibility/editable-webpage-focused-ui-element.html [ Pass ]
 accessibility/element-haspopup.html [ Pass ]
 accessibility/empty-text-under-element-cached.html [ Pass ]
 accessibility/heading-level.html [ Pass ]
@@ -2646,7 +2647,6 @@ webkit.org/b/171617 perf/object-keys.html [ Pass Failure ]
 fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Failure ]
 fast/canvas/webgl/read-pixels-test.html [ Skip ]
-fast/canvas/webgl/webglcontextchangedevent.html [ Skip ]
 
 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Skip ]
 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Skip ]
@@ -4574,10 +4574,11 @@ imported/w3c/web-platform-tests/html/semantics/popovers/popover-hover-hide-toggl
 # rdar://111127781 (REGRESSION(iOS17): [ iOS17 ] platform/ios/mediastream/video-muted-in-background-tab.html is a constant crash)
 platform/ios/mediastream/video-muted-in-background-tab.html [ Crash ]
 
-imported/w3c/web-platform-tests/css/css-text/word-break/auto [ Pass ]
-
 editing/selection/ios/show-grammar-replacements-on-tap.html [ Pass ]
 
 # Failures from WPT import
 imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-fillStyle-opacity.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-globalAlpha.html [ ImageOnlyFailure ]
+
+webkit.org/b/260310 imported/w3c/web-platform-tests/css/cssom-view/scrollIntoView-sideways-rl-writing-mode.html [ Failure ]
+webkit.org/b/260310 imported/w3c/web-platform-tests/css/cssom-view/scrollIntoView-sideways-rl-writing-mode-and-rtl-direction.html [ Failure ]

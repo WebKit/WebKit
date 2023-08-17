@@ -5121,6 +5121,8 @@ class SetBuildSummary(buildstep.BuildStep):
         previous_build_summary = self.getProperty('build_summary', '')
         if RunWebKitTestsInStressMode.FAILURE_MSG_IN_STRESS_MODE in previous_build_summary:
             self.build.results = FAILURE
+        elif 'Committed ' in previous_build_summary and '@' in previous_build_summary:
+            self.build.results = SUCCESS
         self.build.buildFinished([build_summary], self.build.results)
         return defer.succeed(None)
 

@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class WebGLProvokingVertex final : public WebGLExtension {
+class WebGLProvokingVertex final : public RefCounted<WebGLProvokingVertex>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(WebGLProvokingVertex);
 public:
     explicit WebGLProvokingVertex(WebGLRenderingContextBase&);
-    virtual ~WebGLProvokingVertex();
-
-    ExtensionName getName() const override;
+    ~WebGLProvokingVertex();
 
     static bool supported(GraphicsContextGL&);
 

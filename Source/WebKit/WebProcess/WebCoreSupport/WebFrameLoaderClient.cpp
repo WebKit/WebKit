@@ -168,6 +168,9 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
 
     ASSERT(policyDecisionMode == PolicyDecisionMode::Asynchronous);
     webPage->sendWithAsyncReply(Messages::WebPageProxy::DecidePolicyForNavigationActionAsync(m_frame->info(), documentLoader ? documentLoader->navigationID() : 0, navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.resourceRequest(), request, IPC::FormDataReference { request.httpBody() }), [thisPointerForLog = this, frame = m_frame, listenerID, requestIdentifier] (PolicyDecision&& policyDecision) {
+#if RELEASE_LOG_DISABLED
+        UNUSED_PARAM(thisPointerForLog);
+#endif
         RELEASE_LOG(Network, WebFrameLoaderClient_PREFIX_PARAMETERS "dispatchDecidePolicyForNavigationAction: Got policyAction %u from async IPC", thisPointerForLog, frame.ptr(), frame->frameID().object().toUInt64(), frame->page(), frame->page() ? frame->page()->identifier().toUInt64() : 0, (unsigned)policyDecision.policyAction);
 
         frame->didReceivePolicyDecision(listenerID, requestIdentifier, WTFMove(policyDecision));

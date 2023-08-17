@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBGL)
 
-#include "WebGLSharedObject.h"
+#include "WebGLObject.h"
 
 namespace WTF {
 class AbstractLocker;
@@ -35,7 +35,7 @@ class AbstractLocker;
 
 namespace WebCore {
 
-class WebGLQuery final : public WebGLSharedObject {
+class WebGLQuery final : public WebGLObject {
 public:
     static Ref<WebGLQuery> create(WebGLRenderingContextBase&);
     virtual ~WebGLQuery();

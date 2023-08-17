@@ -516,7 +516,7 @@ function testStructCasts() {
 function testSubtypeCasts() {
   instantiate(`
     (module
-      (type (array i32))
+      (type (sub (array i32)))
       (type (sub 0 (array i32)))
       (start 1)
       (func (param arrayref)
@@ -528,7 +528,7 @@ function testSubtypeCasts() {
   assert.eq(
     instantiate(`
       (module
-        (type (array i32))
+        (type (sub (array i32)))
         (type (sub 0 (array i32)))
         (func (param arrayref) (result i32)
           (ref.test (ref 0) (local.get 0)))
@@ -540,7 +540,7 @@ function testSubtypeCasts() {
 
   instantiate(`
     (module
-      (type (struct (field i32)))
+      (type (sub (struct (field i32))))
       (type (sub 0 (struct (field i32) (field i64))))
       (start 1)
       (func (param structref)
@@ -552,7 +552,7 @@ function testSubtypeCasts() {
   assert.eq(
     instantiate(`
       (module
-        (type (struct (field i32)))
+        (type (sub (struct (field i32))))
         (type (sub 0 (struct (field i32) (field i64))))
         (func (param structref) (result i32)
           (ref.test (ref 0) (local.get 0)))
@@ -564,7 +564,7 @@ function testSubtypeCasts() {
 
   instantiate(`
     (module
-      (type (func (result i32)))
+      (type (sub (func (result i32))))
       (type (sub 0 (func (result i32))))
       (elem declare funcref (ref.func 0))
       (start 2)
@@ -578,7 +578,7 @@ function testSubtypeCasts() {
   assert.eq(
     instantiate(`
       (module
-        (type (func (result i32)))
+        (type (sub (func (result i32))))
         (type (sub 0 (func (result i32))))
         (elem declare funcref (ref.func 0))
         (func (type 1) (i32.const 42))
@@ -593,7 +593,7 @@ function testSubtypeCasts() {
   assert.throws(
     () => instantiate(`
       (module
-        (type (array i32))
+        (type (sub (array i32)))
         (type (sub 0 (array i32)))
         (start 1)
         (func (param arrayref)
@@ -608,7 +608,7 @@ function testSubtypeCasts() {
   assert.eq(
     instantiate(`
       (module
-        (type (array i32))
+        (type (sub (array i32)))
         (type (sub 0 (array i32)))
         (func (param arrayref) (result i32)
           (ref.test (ref 1) (local.get 0)))
@@ -621,7 +621,7 @@ function testSubtypeCasts() {
   assert.throws(
     () => instantiate(`
       (module
-        (type (func (result i32)))
+        (type (sub (func (result i32))))
         (type (sub 0 (func (result i32))))
         (elem declare funcref (ref.func 0))
         (start 2)
@@ -638,7 +638,7 @@ function testSubtypeCasts() {
   assert.eq(
     instantiate(`
       (module
-        (type (func (result i32)))
+        (type (sub (func (result i32))))
         (type (sub 0 (func (result i32))))
         (elem declare funcref (ref.func 0))
         (func (type 0) (i32.const 42))

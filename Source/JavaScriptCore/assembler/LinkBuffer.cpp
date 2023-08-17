@@ -142,7 +142,7 @@ static std::once_flag flag;
     return *threadSpecificBranchCompactionLinkBufferPtr;
 }
 
-DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BranchCompactionLinkBuffer);
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER_AND_EXPORT(BranchCompactionLinkBuffer, WTF_INTERNAL);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BranchCompactionLinkBuffer);
 
 class BranchCompactionLinkBuffer {

@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class NVShaderNoperspectiveInterpolation final : public WebGLExtension {
+class NVShaderNoperspectiveInterpolation final : public RefCounted<NVShaderNoperspectiveInterpolation>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(NVShaderNoperspectiveInterpolation);
 public:
     explicit NVShaderNoperspectiveInterpolation(WebGLRenderingContextBase&);
-    virtual ~NVShaderNoperspectiveInterpolation();
-
-    ExtensionName getName() const override;
+    ~NVShaderNoperspectiveInterpolation();
 
     static bool supported(GraphicsContextGL&);
 };

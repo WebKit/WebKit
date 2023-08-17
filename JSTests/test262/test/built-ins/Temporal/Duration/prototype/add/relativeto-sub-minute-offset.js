@@ -3,20 +3,23 @@
 
 /*---
 esid: sec-temporal.duration.prototype.add
-description: relativeTo string accepts an inexact UTC offset rounded to hours and minutes
+description: relativeTo string accepts trailing zeroes in sub-minute UTC offset
 includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
 const instance = new Temporal.Duration(1, 0, 0, 1);
+let result;
+let relativeTo;
+const action = (relativeTo) => instance.add(new Temporal.Duration(0, 0, 0, 0, -24), { relativeTo });
 
-let relativeTo = "2000-01-01T00:00+00:45[+00:44:30.123456789]";
-const result = instance.add(new Temporal.Duration(0, 0, 0, 0, -24), { relativeTo });
-TemporalHelpers.assertDuration(result, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, "rounded HH:MM is accepted in string");
+relativeTo = "1970-01-01T00:00-00:45:00[-00:45]";
+result = action(relativeTo);
+TemporalHelpers.assertDateDuration(result, 1, 0, 0, 0, "ISO string offset accepted with zero seconds (string)");
 
-relativeTo = "2000-01-01T00:00+00:44:30[+00:44:30.123456789]";
-assert.throws(RangeError, () => instance.add(new Temporal.Duration(0, 0, 0, 0, -24), { relativeTo }), "no other rounding is accepted for offset");
+relativeTo = { year: 1970, month: 1, day: 1, offset: "+00:45:00.000000000", timeZone: "+00:45" };
+result = action(relativeTo);
+TemporalHelpers.assertDateDuration(result, 1, 0, 0, 0, "ISO string offset accepted with zero seconds (property bag)");
 
-const timeZone = new Temporal.TimeZone("+00:44:30.123456789");
-relativeTo = { year: 2000, month: 1, day: 1, offset: "+00:45", timeZone };
-assert.throws(RangeError, () => instance.add(new Temporal.Duration(0, 0, 0, 0, -24), { relativeTo }), "rounded HH:MM not accepted as offset in property bag");
+relativeTo = "1970-01-01T00:00+00:44:30.123456789[+00:45]";
+assert.throws(RangeError, () => action(relativeTo), "rounding is not accepted between ISO offset and time zone");

@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class OESVertexArrayObject final : public WebGLExtension {
+class OESVertexArrayObject final : public RefCounted<OESVertexArrayObject>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(OESVertexArrayObject);
 public:
     explicit OESVertexArrayObject(WebGLRenderingContextBase&);
-    virtual ~OESVertexArrayObject();
-
-    ExtensionName getName() const override;
+    ~OESVertexArrayObject();
 
     static bool supported(GraphicsContextGL&);
 

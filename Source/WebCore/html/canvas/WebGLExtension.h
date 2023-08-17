@@ -27,7 +27,9 @@
 
 #if ENABLE(WEBGL)
 
+#include "WebCoreOpaqueRootInlines.h"
 #include "WebGLRenderingContextBase.h"
+#include <atomic>
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
@@ -52,11 +54,10 @@ private:
     WebGLRenderingContextBase* m_context;
 };
 
-class WebGLExtension : public RefCounted<WebGLExtension> {
-    WTF_MAKE_ISO_ALLOCATED(WebGLExtension);
+class WebGLExtension {
 public:
     // Extension names are needed to properly wrap instances in JavaScript objects.
-    enum ExtensionName {
+    enum ExtensionName : uint8_t {
         ANGLEInstancedArraysName,
         EXTBlendMinMaxName,
         EXTClipControlName,
@@ -112,25 +113,33 @@ public:
         WebGLStencilTexturingName,
     };
 
-    WebGLRenderingContextBase* context() { return m_context; }
-
-    virtual ~WebGLExtension();
-    virtual ExtensionName getName() const = 0;
-
-    // Lose the parent WebGL context. The context loss mode changes
-    // the behavior specifically of WEBGL_lose_context, which does not
-    // lose its connection to its parent context when it forces a
-    // context loss. However, all extensions must be lost when
-    // destroying their WebGLRenderingContextBase.
-    virtual void loseParentContext(WebGLRenderingContextBase::LostContextMode);
-    bool isLostContext() { return !m_context; }
+    WebGLRenderingContextBase* context() const { return m_context.load(std::memory_order::relaxed); }
+    void loseParentContext() { m_context = nullptr; }
+    bool isLostContext() const { return !context(); }
+    ExtensionName name() const { return m_name; }
 
 protected:
-    WebGLExtension(WebGLRenderingContextBase&);
+    WebGLExtension(WebGLRenderingContextBase& context, ExtensionName name)
+        : m_context(&context)
+        , m_name(name)
+    {
+    }
 
 private:
-    WebGLRenderingContextBase* m_context;
+    std::atomic<WebGLRenderingContextBase*> m_context;
+    const ExtensionName m_name;
+    friend WebCoreOpaqueRoot root(const WebGLExtension*);
 };
+
+inline WebGLExtensionScopedContext::WebGLExtensionScopedContext(WebGLExtension* extension)
+    : m_context(extension->context())
+{
+}
+
+inline WebCoreOpaqueRoot root(const WebGLExtension* extension)
+{
+    return WebCoreOpaqueRoot { extension->m_context.load() };
+}
 
 } // namespace WebCore
 

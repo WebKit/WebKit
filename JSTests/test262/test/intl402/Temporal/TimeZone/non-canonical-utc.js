@@ -8,20 +8,20 @@ description: >
 features: [Temporal]
 ---*/
 
-const testCases = {
-  "Etc/GMT": "UTC",
-  "Etc/GMT+0": "UTC",
-  "Etc/GMT-0": "UTC",
-  "Etc/GMT0": "UTC",
-  "Etc/Greenwich": "UTC",
-  "Etc/UCT": "UTC",
-  "Etc/UTC": "UTC",
-  "Etc/Universal": "UTC",
-  "Etc/Zulu": "UTC",
-};
+const testCases = [
+  "Etc/GMT",
+  "Etc/GMT+0",
+  "Etc/GMT-0",
+  "Etc/GMT0",
+  "Etc/Greenwich",
+  "Etc/UCT",
+  "Etc/UTC",
+  "Etc/Universal",
+  "Etc/Zulu",
+];
 
-for (let [id, canonical] of Object.entries(testCases)) {
+for (let id of testCases) {
   let tz = new Temporal.TimeZone(id);
 
-  assert.sameValue(tz.id, canonical);
+  assert.sameValue(tz.id, id);
 }

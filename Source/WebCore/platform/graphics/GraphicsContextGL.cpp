@@ -645,12 +645,6 @@ void GraphicsContextGL::forceContextLost()
         m_client->forceContextLost();
 }
 
-void GraphicsContextGL::dispatchContextChangedNotification()
-{
-    if (m_client)
-        m_client->dispatchContextChangedNotification();
-}
-
 #if ENABLE(VIDEO)
 RefPtr<Image> GraphicsContextGL::videoFrameToImage(VideoFrame& frame)
 {

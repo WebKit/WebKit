@@ -1353,7 +1353,7 @@ static std::optional<Color>& cachedInsertionPointColor()
 Color RenderThemeIOS::systemFocusRingColor()
 {
     if (!cachedFocusRingColor().has_value()) {
-        // FIXME: Should be using -keyboardFocusIndicatorColor. For now, work around <rdar://problem/50838886>.
+        // FIXME: Should be using +keyboardFocusIndicatorColor. For now, work around <rdar://problem/50838886>.
         cachedFocusRingColor() = colorFromCocoaColor([PAL::getUIColorClass() systemBlueColor]);
     }
     return *cachedFocusRingColor();

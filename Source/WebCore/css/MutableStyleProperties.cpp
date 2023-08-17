@@ -29,6 +29,7 @@
 #include "CSSCustomPropertyValue.h"
 #include "CSSParser.h"
 #include "CSSValuePool.h"
+#include "ImmutableStyleProperties.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StylePropertiesInlines.h"
 #include "StylePropertyShorthand.h"
@@ -80,6 +81,11 @@ Ref<MutableStyleProperties> MutableStyleProperties::create(Vector<CSSProperty>&&
 Ref<MutableStyleProperties> MutableStyleProperties::createEmpty()
 {
     return adoptRef(*new MutableStyleProperties({ }));
+}
+
+Ref<ImmutableStyleProperties> MutableStyleProperties::immutableCopy() const
+{
+    return ImmutableStyleProperties::createDeduplicating(m_propertyVector.data(), m_propertyVector.size(), cssParserMode());
 }
 
 // FIXME: Change StylePropertyShorthand::properties to return a Span and delete this.

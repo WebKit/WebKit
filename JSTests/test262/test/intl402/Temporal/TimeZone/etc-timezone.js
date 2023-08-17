@@ -9,13 +9,7 @@ features: [Temporal]
 
 // "Etc/GMT-0" through "Etc/GMT-14" are OK
 
-assert.sameValue(
-  (new Temporal.TimeZone("Etc/GMT-0")).toString(),
-  "UTC", // if the offset is -0, we say "UTC" rather than "GMT"
-  "Etc/GMT-0 is a valid timezone"
-);
-
-[1,2,3,4,5,6,7,8,9,10,11,12,13,14].forEach((n) => {
+[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14].forEach((n) => {
   let tz = "Etc/GMT-" + n;
   let instance = new Temporal.TimeZone(tz);
   assert.sameValue(
@@ -54,14 +48,7 @@ assert.throws(
 
 // Etc/GMT+0" through "Etc/GMT+12" are OK
 
-// zero is handled in its own way (say "UTC" rather than "GMT"):
-assert.sameValue(
-  (new Temporal.TimeZone("Etc/GMT+0")).toString(),
-  "UTC", // if the offset is +0, we say "UTC" rather than "GMT"
-  "Etc/GMT+0 is a valid timezone"
-);
-
-[1,2,3,4,5,6,7,8,9,10,11,12].forEach((n) => {
+[0,1,2,3,4,5,6,7,8,9,10,11,12].forEach((n) => {
   let tz = "Etc/GMT+" + n;
   let instance = new Temporal.TimeZone(tz);
   assert.sameValue(

@@ -921,10 +921,10 @@ JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject* global
     if (!referrer.protocolIsFile())
         RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, makeString("Could not resolve the referrer's path '"_s, referrer.string(), "', while trying to resolve module '"_s, specifier, "'."_s))));
 
-    auto assertions = JSC::retrieveAssertionsFromDynamicImportOptions(globalObject, parameters, { vm.propertyNames->type.impl() });
+    auto attributes = JSC::retrieveImportAttributesFromDynamicImportOptions(globalObject, parameters, { vm.propertyNames->type.impl() });
     RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
 
-    auto type = JSC::retrieveTypeAssertion(globalObject, assertions);
+    auto type = JSC::retrieveTypeImportAttribute(globalObject, attributes);
     RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
 
     parameters = jsUndefined();
@@ -1253,7 +1253,7 @@ static bool fetchModuleFromLocalFileSystem(const URL& fileURL, Vector& buffer)
     return result;
 }
 
-JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, JSModuleLoader*, JSValue key, JSValue assertionsValue, JSValue)
+JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, JSModuleLoader*, JSValue key, JSValue attributesValue, JSValue)
 {
     VM& vm = globalObject->vm();
     JSInternalPromise* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
@@ -1273,9 +1273,9 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
     // Strip the URI from our key so Errors print canonical system paths.
     moduleKey = moduleURL.fileSystemPath();
 
-    RefPtr<ScriptFetchParameters> assertions;
-    if (auto* value = jsDynamicCast<JSScriptFetchParameters*>(assertionsValue))
-        assertions = &value->parameters();
+    RefPtr<ScriptFetchParameters> attributes;
+    if (auto* value = jsDynamicCast<JSScriptFetchParameters*>(attributesValue))
+        attributes = &value->parameters();
 
     Vector<uint8_t> buffer;
     if (!fetchModuleFromLocalFileSystem(moduleURL, buffer))
@@ -1283,7 +1283,7 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
 
 #if ENABLE(WEBASSEMBLY)
     // FileSystem does not have mime-type header. The JSC shell recognizes WebAssembly's magic header.
-    if ((buffer.size() >= 4 && buffer[0] == '\0' && buffer[1] == 'a' && buffer[2] == 's' && buffer[3] == 'm') || (assertions && assertions->type() == ScriptFetchParameters::Type::WebAssembly)) {
+    if ((buffer.size() >= 4 && buffer[0] == '\0' && buffer[1] == 'a' && buffer[2] == 's' && buffer[3] == 'm') || (attributes && attributes->type() == ScriptFetchParameters::Type::WebAssembly)) {
         auto source = SourceCode(WebAssemblySourceProvider::create(WTFMove(buffer), SourceOrigin { moduleURL }, WTFMove(moduleKey)));
         auto sourceCode = JSSourceCode::create(vm, WTFMove(source));
         scope.release();
@@ -1292,7 +1292,7 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
     }
 #endif
 
-    if (assertions && assertions->type() == ScriptFetchParameters::Type::JSON) {
+    if (attributes && attributes->type() == ScriptFetchParameters::Type::JSON) {
         auto source = SourceCode(StringSourceProvider::create(stringFromUTF(buffer), SourceOrigin { moduleURL }, WTFMove(moduleKey), TextPosition(), SourceProviderSourceType::JSON));
         auto sourceCode = JSSourceCode::create(vm, WTFMove(source));
         scope.release();

@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
+
+PASS Test that invalid module attribute leads to SyntaxError on window.
+

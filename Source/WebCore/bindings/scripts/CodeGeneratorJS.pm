@@ -5222,10 +5222,6 @@ sub GenerateImplementation
                 $rootString  = "    ${implType}* owner = &js${interfaceName}->wrapped();\n";
                 $rootString .= "    if (UNLIKELY(reason))\n";
                 $rootString .= "        *reason = \"Reachable from ${interfaceName}\";\n";
-            } elsif (GetGenerateIsReachable($interface) eq "ImplWebGLRenderingContext") {
-                $rootString  = "    WebGLRenderingContextBase* owner = WTF::getPtr(js${interfaceName}->wrapped().context());\n";
-                $rootString .= "    if (UNLIKELY(reason))\n";
-                $rootString .= "        *reason = \"Reachable from ${interfaceName}\";\n";
             } elsif (GetGenerateIsReachable($interface) eq "ReachableFromDOMWindow") {
                 $rootString  = "    auto* owner = WTF::getPtr(js${interfaceName}->wrapped().window());\n";
                 $rootString .= "    if (!owner)\n";

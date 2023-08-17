@@ -54,16 +54,12 @@ template <typename Data>
 class HashMapBucket final : public JSCell {
     using Base = JSCell;
 
-    template <typename T = Data>
-    static typename std::enable_if<std::is_same<T, HashMapBucketDataKey>::value, Structure*>::type selectStructure(VM& vm)
+    static Structure* selectStructure(VM& vm)
     {
-        return vm.hashMapBucketSetStructure.get();
-    }
-
-    template <typename T = Data>
-    static typename std::enable_if<std::is_same<T, HashMapBucketDataKeyValue>::value, Structure*>::type selectStructure(VM& vm)
-    {
-        return vm.hashMapBucketMapStructure.get();
+        if constexpr (std::is_same_v<Data, HashMapBucketDataKeyValue>)
+            return vm.hashMapBucketMapStructure.get();
+        else
+            return vm.hashMapBucketSetStructure.get();
     }
 
 public:
@@ -87,10 +83,7 @@ public:
             return getHashMapBucketKeyValueClassInfo();
     }
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
-    }
+    inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     static HashMapBucket* create(VM& vm)
     {
@@ -124,19 +117,25 @@ public:
     {
         m_prev.set(vm, this, bucket);
     }
+    ALWAYS_INLINE void clearNext()
+    {
+        m_next.clear();
+    }
 
     ALWAYS_INLINE void setKey(VM& vm, JSValue key)
     {
         m_data.key.set(vm, this, key);
     }
 
-    template <typename T = Data>
-    ALWAYS_INLINE typename std::enable_if<std::is_same<T, HashMapBucketDataKeyValue>::value>::type setValue(VM& vm, JSValue value)
+    ALWAYS_INLINE void setValue(VM& vm, JSValue value)
     {
-        m_data.value.set(vm, this, value);
+        if constexpr (std::is_same_v<Data, HashMapBucketDataKeyValue>)
+            m_data.value.set(vm, this, value);
+        else {
+            UNUSED_PARAM(vm);
+            UNUSED_PARAM(value);
+        }
     }
-    template <typename T = Data>
-    ALWAYS_INLINE typename std::enable_if<std::is_same<T, HashMapBucketDataKey>::value>::type setValue(VM&, JSValue) { }
 
     ALWAYS_INLINE JSValue key() const { return m_data.key.get(); }
 
@@ -152,10 +151,11 @@ public:
     ALWAYS_INLINE HashMapBucket* prev() const { return m_prev.get(); }
 
     ALWAYS_INLINE bool deleted() const { return !key(); }
-    ALWAYS_INLINE void makeDeleted(VM& vm)
+    ALWAYS_INLINE void makeDeleted()
     {
-        setKey(vm, JSValue());
-        setValue(vm, JSValue());
+        m_data.key.clear();
+        if constexpr (std::is_same_v<Data, HashMapBucketDataKeyValue>)
+            m_data.value.clear();
     }
 
     static ptrdiff_t offsetOfKey()
@@ -174,16 +174,19 @@ public:
         return OBJECT_OFFSETOF(HashMapBucket, m_next);
     }
 
-    template <typename T = Data>
-    ALWAYS_INLINE static typename std::enable_if<std::is_same<T, HashMapBucketDataKeyValue>::value, JSValue>::type extractValue(const HashMapBucket& bucket)
+    static ptrdiff_t offsetOfPrev()
     {
-        return bucket.value();
+        return OBJECT_OFFSETOF(HashMapBucket, m_prev);
     }
 
-    template <typename T = Data>
-    ALWAYS_INLINE static typename std::enable_if<std::is_same<T, HashMapBucketDataKey>::value, JSValue>::type extractValue(const HashMapBucket&)
+    ALWAYS_INLINE static JSValue extractValue(const HashMapBucket& bucket)
     {
-        return JSValue();
+        if constexpr (std::is_same_v<Data, HashMapBucketDataKeyValue>)
+            return bucket.value();
+        else {
+            UNUSED_PARAM(bucket);
+            return JSValue();
+        }
     }
 
 private:
@@ -318,9 +321,24 @@ public:
         return OBJECT_OFFSETOF(HashMapImpl<HashMapBucketType>, m_head);
     }
 
+    static ptrdiff_t offsetOfTail()
+    {
+        return OBJECT_OFFSETOF(HashMapImpl<HashMapBucketType>, m_tail);
+    }
+
     static ptrdiff_t offsetOfBuffer()
     {
         return OBJECT_OFFSETOF(HashMapImpl<HashMapBucketType>, m_buffer);
+    }
+
+    static ptrdiff_t offsetOfKeyCount()
+    {
+        return OBJECT_OFFSETOF(HashMapImpl<HashMapBucketType>, m_keyCount);
+    }
+
+    static ptrdiff_t offsetOfDeleteCount()
+    {
+        return OBJECT_OFFSETOF(HashMapImpl<HashMapBucketType>, m_deleteCount);
     }
 
     static ptrdiff_t offsetOfCapacity()

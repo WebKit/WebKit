@@ -38,6 +38,7 @@
 #include "JSBigInt.h"
 #include "JSCast.h"
 #include "JSDestructibleObject.h"
+#include "JSFunction.h"
 #include "JSObject.h"
 #include "JSString.h"
 #include "LocalAllocatorInlines.h"

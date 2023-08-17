@@ -66,7 +66,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFlexibleBox);
 
 struct RenderFlexibleBox::LineState {
-    LineState(LayoutUnit crossAxisOffset, LayoutUnit crossAxisExtent, std::optional<BaselineAlignmentState> baselineAlignmentState, Vector<FlexItem>&& flexItems)
+    LineState(LayoutUnit crossAxisOffset, LayoutUnit crossAxisExtent, std::optional<BaselineAlignmentState> baselineAlignmentState, FlexItems&& flexItems)
         : crossAxisOffset(crossAxisOffset)
         , crossAxisExtent(crossAxisExtent)
         , baselineAlignmentState(baselineAlignmentState)
@@ -77,7 +77,7 @@ struct RenderFlexibleBox::LineState {
     LayoutUnit crossAxisOffset;
     LayoutUnit crossAxisExtent;
     std::optional<BaselineAlignmentState> baselineAlignmentState;
-    Vector<FlexItem> flexItems;
+    FlexItems flexItems;
 };
 
 RenderFlexibleBox::RenderFlexibleBox(Element& element, RenderStyle&& style)
@@ -1292,7 +1292,7 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
     // Set up our master list of flex items. All of the rest of the algorithm
     // should work off this list of a subset.
     // TODO(cbiesinger): That second part is not yet true.
-    Vector<FlexItem> allItems;
+    FlexItems allItems;
     m_orderIterator.first();
     for (RenderBox* child = m_orderIterator.currentChild(); child; child = m_orderIterator.next()) {
         if (m_orderIterator.shouldSkipChild(*child)) {
@@ -1311,7 +1311,7 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
     LayoutUnit gapBetweenLines = computeGap(GapType::BetweenLines);
     FlexLayoutAlgorithm flexAlgorithm(*this, lineBreakLength, allItems, gapBetweenItems, gapBetweenLines);
     LayoutUnit crossAxisOffset = flowAwareBorderBefore() + flowAwarePaddingBefore();
-    Vector<FlexItem> lineItems;
+    FlexItems lineItems;
     size_t nextIndex = 0;
     size_t numLines = 0;
     InspectorInstrumentation::flexibleBoxRendererBeganLayout(*this);
@@ -1376,15 +1376,15 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
     repositionLogicalHeightDependentFlexItems(lineStates, gapBetweenLines);
 }
 
-LayoutUnit RenderFlexibleBox::autoMarginOffsetInMainAxis(const Vector<FlexItem>& children, LayoutUnit& availableFreeSpace)
+LayoutUnit RenderFlexibleBox::autoMarginOffsetInMainAxis(const FlexItems& flexItems, LayoutUnit& availableFreeSpace)
 {
     if (availableFreeSpace <= 0_lu)
         return 0_lu;
     
     int numberOfAutoMargins = 0;
     bool isHorizontal = isHorizontalFlow();
-    for (size_t i = 0; i < children.size(); ++i) {
-        const auto& child = children[i].box;
+    for (size_t i = 0; i < flexItems.size(); ++i) {
+        const auto& child = flexItems[i].box;
         ASSERT(!child.isOutOfFlowPositioned());
         if (isHorizontal) {
             if (child.style().marginLeft().isAuto())
@@ -1717,14 +1717,14 @@ void RenderFlexibleBox::freezeViolations(Vector<FlexItem*>& violations, LayoutUn
     }
 }
     
-void RenderFlexibleBox::freezeInflexibleItems(FlexSign flexSign, Vector<FlexItem>& children, LayoutUnit& remainingFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink)
+void RenderFlexibleBox::freezeInflexibleItems(FlexSign flexSign, FlexItems& flexItems, LayoutUnit& remainingFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink)
 {
     // Per https://drafts.csswg.org/css-flexbox/#resolve-flexible-lengths step 2,
     // we freeze all items with a flex factor of 0 as well as those with a min/max
     // size violation.
     Vector<FlexItem*> newInflexibleItems;
-    for (size_t i = 0; i < children.size(); ++i) {
-        FlexItem& flexItem = children[i];
+    for (size_t i = 0; i < flexItems.size(); ++i) {
+        FlexItem& flexItem = flexItems[i];
         const auto& child = flexItem.box;
         ASSERT(!flexItem.box.isOutOfFlowPositioned());
         ASSERT(!flexItem.frozen);
@@ -1738,7 +1738,7 @@ void RenderFlexibleBox::freezeInflexibleItems(FlexSign flexSign, Vector<FlexItem
 }
 
 // Returns true if we successfully ran the algorithm and sized the flex items.
-bool RenderFlexibleBox::resolveFlexibleLengths(FlexSign flexSign, Vector<FlexItem>& children, LayoutUnit initialFreeSpace, LayoutUnit& remainingFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink)
+bool RenderFlexibleBox::resolveFlexibleLengths(FlexSign flexSign, FlexItems& flexItems, LayoutUnit initialFreeSpace, LayoutUnit& remainingFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink)
 {
     LayoutUnit totalViolation;
     LayoutUnit usedFreeSpace;
@@ -1752,8 +1752,8 @@ bool RenderFlexibleBox::resolveFlexibleLengths(FlexSign flexSign, Vector<FlexIte
             remainingFreeSpace = fractional;
     }
 
-    for (size_t i = 0; i < children.size(); ++i) {
-        FlexItem& flexItem = children[i];
+    for (size_t i = 0; i < flexItems.size(); ++i) {
+        FlexItem& flexItem = flexItems[i];
         auto& child = flexItem.box;
         
         // This check also covers out-of-flow children.
@@ -2163,11 +2163,11 @@ bool RenderFlexibleBox::childHasPercentHeightDescendants(const RenderBox& render
     return false;
 }
 
-void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vector<FlexItem>& children, LayoutUnit availableFreeSpace, bool relayoutChildren, FlexLineStates& lineStates, LayoutUnit gapBetweenItems)
+void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, FlexItems& flexItems, LayoutUnit availableFreeSpace, bool relayoutChildren, FlexLineStates& lineStates, LayoutUnit gapBetweenItems)
 {
-    LayoutUnit autoMarginOffset = autoMarginOffsetInMainAxis(children, availableFreeSpace);
+    LayoutUnit autoMarginOffset = autoMarginOffsetInMainAxis(flexItems, availableFreeSpace);
     LayoutUnit mainAxisOffset = flowAwareBorderStart() + flowAwarePaddingStart();
-    mainAxisOffset += initialJustifyContentOffset(style(), availableFreeSpace, children.size(), isColumnOrRowReverse());
+    mainAxisOffset += initialJustifyContentOffset(style(), availableFreeSpace, flexItems.size(), isColumnOrRowReverse());
     if (style().flexDirection() == FlexDirection::RowReverse)
         mainAxisOffset += isHorizontalFlow() ? verticalScrollbarWidth() : horizontalScrollbarHeight();
 
@@ -2177,8 +2177,8 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vect
     LayoutUnit maxChildCrossAxisExtent;
     ContentDistribution distribution = style().resolvedJustifyContentDistribution(contentAlignmentNormalBehavior());
     bool shouldFlipMainAxis = !isColumnFlow() && !isLeftToRightFlow();
-    for (size_t i = 0; i < children.size(); ++i) {
-        const auto& flexItem = children[i];
+    for (size_t i = 0; i < flexItems.size(); ++i) {
+        const auto& flexItem = flexItems[i];
         auto& child = flexItem.box;
 
         ASSERT(!flexItem.box.isOutOfFlowPositioned());
@@ -2254,9 +2254,9 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vect
         setFlowAwareLocationForChild(child, childLocation);
         mainAxisOffset += childMainExtent + flowAwareMarginEndForChild(child);
 
-        if (i != children.size() - 1) {
+        if (i != flexItems.size() - 1) {
             // The last item does not get extra space added.
-            mainAxisOffset += justifyContentSpaceBetweenChildren(availableFreeSpace, distribution, children.size()) + gapBetweenItems;
+            mainAxisOffset += justifyContentSpaceBetweenChildren(availableFreeSpace, distribution, flexItems.size()) + gapBetweenItems;
         }
 
         // FIXME: Deal with pagination.
@@ -2270,38 +2270,38 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vect
         // items since the start depends on the height of the flexbox, which we
         // only know after we've positioned all the flex items.
         updateLogicalHeight();
-        layoutColumnReverse(children, crossAxisOffset, availableFreeSpace, gapBetweenItems);
+        layoutColumnReverse(flexItems, crossAxisOffset, availableFreeSpace, gapBetweenItems);
     }
 
-    auto numberOfItemsOnLine = children.size();
+    auto numberOfItemsOnLine = flexItems.size();
     if (!m_numberOfInFlowChildrenOnFirstLine)
         m_numberOfInFlowChildrenOnFirstLine = numberOfItemsOnLine;
     m_numberOfInFlowChildrenOnLastLine = numberOfItemsOnLine;
-    lineStates.append(LineState(crossAxisOffset, maxChildCrossAxisExtent, baselineAlignmentState, WTFMove(children)));
+    lineStates.append(LineState(crossAxisOffset, maxChildCrossAxisExtent, baselineAlignmentState, WTFMove(flexItems)));
     crossAxisOffset += maxChildCrossAxisExtent;
 }
 
-void RenderFlexibleBox::layoutColumnReverse(const Vector<FlexItem>& children, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace, LayoutUnit gapBetweenItems)
+void RenderFlexibleBox::layoutColumnReverse(const FlexItems& flexItems, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace, LayoutUnit gapBetweenItems)
 {
     // This is similar to the logic in layoutAndPlaceChildren, except we place
     // the children starting from the end of the flexbox. We also don't need to
     // layout anything since we're just moving the children to a new position.
     LayoutUnit mainAxisOffset = logicalHeight() - flowAwareBorderEnd() - flowAwarePaddingEnd();
-    mainAxisOffset -= initialJustifyContentOffset(style(), availableFreeSpace, children.size(), isColumnOrRowReverse());
+    mainAxisOffset -= initialJustifyContentOffset(style(), availableFreeSpace, flexItems.size(), isColumnOrRowReverse());
     mainAxisOffset -= isHorizontalFlow() ? verticalScrollbarWidth() : horizontalScrollbarHeight();
 
     ContentDistribution distribution = style().resolvedJustifyContentDistribution(contentAlignmentNormalBehavior());
 
-    for (size_t i = 0; i < children.size(); ++i) {
-        auto& child = children[i].box;
+    for (size_t i = 0; i < flexItems.size(); ++i) {
+        auto& child = flexItems[i].box;
         ASSERT(!child.isOutOfFlowPositioned());
         mainAxisOffset -= mainAxisExtentForChild(child) + flowAwareMarginEndForChild(child);
         setFlowAwareLocationForChild(child, LayoutPoint(mainAxisOffset, crossAxisOffset + flowAwareMarginBeforeForChild(child)));
         mainAxisOffset -= flowAwareMarginStartForChild(child);
         
-        if (i != children.size() - 1) {
+        if (i != flexItems.size() - 1) {
             // The last item does not get extra space added.
-            mainAxisOffset -= justifyContentSpaceBetweenChildren(availableFreeSpace, distribution, children.size()) + gapBetweenItems;
+            mainAxisOffset -= justifyContentSpaceBetweenChildren(availableFreeSpace, distribution, flexItems.size()) + gapBetweenItems;
         }
     }
 }

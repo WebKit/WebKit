@@ -65,7 +65,6 @@ struct GraphicsContextGLAttributes {
     PowerPreference powerPreference { PowerPreference::Default };
 
     // Additional attributes.
-    bool shareResources { true };
     float devicePixelRatio { 1 };
     PowerPreference initialPowerPreference { PowerPreference::Default };
     using WebGLVersion = GraphicsContextGLWebGLVersion;

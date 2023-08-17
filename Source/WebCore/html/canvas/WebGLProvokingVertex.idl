@@ -26,7 +26,7 @@
 [
     LegacyNoInterfaceObject,
     Conditional=WEBGL,
-    GenerateIsReachable=ImplWebGLRenderingContext,
+    GenerateIsReachable,
 ] interface WebGLProvokingVertex {
     const unsigned long FIRST_VERTEX_CONVENTION_WEBGL = 0x8E4D;
     const unsigned long LAST_VERTEX_CONVENTION_WEBGL  = 0x8E4E;

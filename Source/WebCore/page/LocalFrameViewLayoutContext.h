@@ -165,7 +165,6 @@ private:
     // These functions may only be accessed by LayoutStateMaintainer or LayoutStateDisabler.
     void disablePaintOffsetCache() { m_paintOffsetCacheDisableCount++; }
     void enablePaintOffsetCache() { ASSERT(m_paintOffsetCacheDisableCount > 0); m_paintOffsetCacheDisableCount--; }
-    void layoutUsingFormattingContext();
 
     LocalFrame& frame() const;
     LocalFrameView& view() const;

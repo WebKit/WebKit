@@ -1683,6 +1683,12 @@ private:
         case NewRegexp:
             compileNewRegexp();
             break;
+        case NewMap:
+            compileNewMap();
+            break;
+        case NewSet:
+            compileNewSet();
+            break;
         case SetFunctionName:
             compileSetFunctionName();
             break;
@@ -16164,6 +16170,95 @@ IGNORE_CLANG_WARNINGS_END
                     operationNewRegexpWithLastIndex, locations[0].directGPR(), CCallHelpers::TrustedImmPtr(globalObject),
                     CCallHelpers::TrustedImmPtr(regexpCell), locations[1].directGPR());
             }, lastIndex);
+        ValueFromBlock slowResult = m_out.anchor(slowResultValue);
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(pointerType(), fastResult, slowResult));
+    }
+
+    void compileNewMap()
+    {
+        RegisteredStructure structure = m_node->structure();
+
+        LBasicBlock slowCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowCase);
+
+        ASSERT(JSValue::encode(JSValue()) == 0);
+        Allocator allocator = allocatorForConcurrently<JSMap::BucketType>(vm(), sizeof(JSMap::BucketType), AllocatorForMode::AllocatorIfExists);
+        LValue head = allocateCell(m_out.constIntPtr(allocator.localAllocator()), vm().hashMapBucketMapStructure.get(), slowCase);
+        m_out.store64(m_out.intPtrZero, head, m_heaps.HashMapBucket_next);
+        m_out.store64(m_out.intPtrZero, head, m_heaps.HashMapBucket_prev);
+        m_out.store64(m_out.intPtrZero, head, m_heaps.HashMapBucket_key);
+        m_out.store64(m_out.intPtrZero, head, m_heaps.HashMapBucket_value);
+        mutatorFence();
+
+        LValue fastResultValue = allocateObject<JSMap>(structure, m_out.intPtrZero, slowCase);
+        m_out.store64(head, fastResultValue, m_heaps.HashMapImpl_head);
+        m_out.store64(head, fastResultValue, m_heaps.HashMapImpl_tail);
+        m_out.store64(m_out.intPtrZero, fastResultValue, m_heaps.HashMapImpl_buffer);
+        m_out.store32(m_out.int32Zero, fastResultValue, m_heaps.HashMapImpl_keyCount);
+        m_out.store32(m_out.int32Zero, fastResultValue, m_heaps.HashMapImpl_deleteCount);
+        m_out.store32(m_out.int32Zero, fastResultValue, m_heaps.HashMapImpl_capacity);
+        mutatorFence();
+        ValueFromBlock fastResult = m_out.anchor(fastResultValue);
+        m_out.jump(continuation);
+
+        m_out.appendTo(slowCase, continuation);
+        VM& vm = this->vm();
+        LValue slowResultValue = lazySlowPath(
+            [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                return createLazyCallGenerator(vm,
+                    operationNewMap, locations[0].directGPR(), locations[1].directGPR(),
+                    CCallHelpers::TrustedImmPtr(structure.get()));
+            },
+            m_vmValue);
+        ValueFromBlock slowResult = m_out.anchor(slowResultValue);
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(pointerType(), fastResult, slowResult));
+    }
+
+    void compileNewSet()
+    {
+        RegisteredStructure structure = m_node->structure();
+
+        LBasicBlock slowCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowCase);
+
+        ASSERT(JSValue::encode(JSValue()) == 0);
+        Allocator allocator = allocatorForConcurrently<JSSet::BucketType>(vm(), sizeof(JSSet::BucketType), AllocatorForMode::AllocatorIfExists);
+        LValue head = allocateCell(m_out.constIntPtr(allocator.localAllocator()), vm().hashMapBucketSetStructure.get(), slowCase);
+        m_out.store64(m_out.intPtrZero, head, m_heaps.HashMapBucket_next);
+        m_out.store64(m_out.intPtrZero, head, m_heaps.HashMapBucket_prev);
+        m_out.store64(m_out.intPtrZero, head, m_heaps.HashMapBucket_key);
+        mutatorFence();
+
+        LValue fastResultValue = allocateObject<JSSet>(structure, m_out.intPtrZero, slowCase);
+        m_out.store64(head, fastResultValue, m_heaps.HashMapImpl_head);
+        m_out.store64(head, fastResultValue, m_heaps.HashMapImpl_tail);
+        m_out.store64(m_out.intPtrZero, fastResultValue, m_heaps.HashMapImpl_buffer);
+        m_out.store32(m_out.int32Zero, fastResultValue, m_heaps.HashMapImpl_keyCount);
+        m_out.store32(m_out.int32Zero, fastResultValue, m_heaps.HashMapImpl_deleteCount);
+        m_out.store32(m_out.int32Zero, fastResultValue, m_heaps.HashMapImpl_capacity);
+        mutatorFence();
+        ValueFromBlock fastResult = m_out.anchor(fastResultValue);
+        m_out.jump(continuation);
+
+        m_out.appendTo(slowCase, continuation);
+        VM& vm = this->vm();
+        LValue slowResultValue = lazySlowPath(
+            [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                return createLazyCallGenerator(vm,
+                    operationNewSet, locations[0].directGPR(), locations[1].directGPR(),
+                    CCallHelpers::TrustedImmPtr(structure.get()));
+            },
+            m_vmValue);
         ValueFromBlock slowResult = m_out.anchor(slowResultValue);
         m_out.jump(continuation);
 

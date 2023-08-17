@@ -203,7 +203,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (void)pasteWithCompletionHandler:(void (^)(void))completionHandler;
 - (void)requestAutocorrectionRectsForString:(NSString *)input withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForInput))completionHandler;
 - (void)requestAutocorrectionContextWithCompletionHandler:(void (^)(UIWKAutocorrectionContext *autocorrectionContext))completionHandler;
-- (void)selectWordBackward;
 - (void)selectPositionAtPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler;
 - (void)selectTextWithGranularity:(UITextGranularity)granularity atPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler;
 - (void)updateSelectionWithExtentPoint:(CGPoint)point completionHandler:(void (^)(BOOL selectionEndIsMoving))completionHandler;

@@ -96,7 +96,7 @@ ElementRuleCollector::ElementRuleCollector(const Element& element, const ScopeRu
     , m_userStyle(ruleSets.userStyle())
     , m_userAgentMediaQueryStyle(ruleSets.userAgentMediaQueryStyle())
     , m_selectorMatchingState(selectorMatchingState)
-    , m_result(makeUnique<MatchResult>())
+    , m_result(makeUnique<MatchResult>(element.isLink()))
 {
     ASSERT(!m_selectorMatchingState || m_selectorMatchingState->selectorFilter.parentStackIsConsistent(element.parentNode()));
 }
@@ -105,7 +105,7 @@ ElementRuleCollector::ElementRuleCollector(const Element& element, const RuleSet
     : m_element(element)
     , m_authorStyle(authorStyle)
     , m_selectorMatchingState(selectorMatchingState)
-    , m_result(makeUnique<MatchResult>())
+    , m_result(makeUnique<MatchResult>(element.isLink()))
 {
     ASSERT(!m_selectorMatchingState || m_selectorMatchingState->selectorFilter.parentStackIsConsistent(element.parentNode()));
 }
@@ -671,12 +671,7 @@ void ElementRuleCollector::addMatchedProperties(MatchedProperties&& matchedPrope
             if (current.isInherited())
                 continue;
 
-            // If the property value is explicitly inherited, we need to apply further non-inherited properties
-            // as they might override the value inherited here. For this reason we don't allow declarations with
-            // explicitly inherited properties to be cached.
             auto& value = *current.value();
-            if (isValueID(value, CSSValueInherit))
-                return false;
 
             // The value currentColor has implicitely the same side effect. It depends on the value of color,
             // which is an inherited value, making the non-inherited property implicitly inherited.

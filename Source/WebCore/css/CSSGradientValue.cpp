@@ -50,10 +50,7 @@ static inline std::optional<StyleColor> computeStyleColor(const RefPtr<CSSPrimit
     if (!color)
         return std::nullopt;
 
-    // FIXME: This should call state.colorFromPrimitiveValue(*color) instead, but doing so is
-    // blocked on fixing an issue where we don't respect ::first-line in StyleImage correctly.
-    // See https://webkit.org/b/247127.
-    return StyleColor { state.colorFromPrimitiveValueWithResolvedCurrentColor(*color) };
+    return state.colorFromPrimitiveValue(*color);
 }
 
 static decltype(auto) computeStops(const CSSGradientColorStopList& stops, Style::BuilderState& state)

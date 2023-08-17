@@ -50,10 +50,7 @@ public:
 
     DECLARE_INFO;
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject)
-    {
-        return Structure::create(vm, globalObject, jsNull(), TypeInfo(ModuleEnvironmentType, StructureFlags), info());
-    }
+    inline static Structure* createStructure(VM&, JSGlobalObject*);
 
     static size_t offsetOfModuleRecord(SymbolTable* symbolTable)
     {

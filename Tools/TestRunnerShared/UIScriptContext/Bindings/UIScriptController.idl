@@ -368,6 +368,8 @@ interface UIScriptController {
 
     undefined setSafeAreaInsets(double top, double right, double bottom, double left);
 
+    undefined setAppAccentColor(unsigned short red, unsigned short green, unsigned short blue);
+
     undefined firstResponderSuppressionForWebView(boolean shouldSuppress);
     undefined makeWindowContentViewFirstResponder();
     readonly attribute boolean isWindowContentViewFirstResponder;

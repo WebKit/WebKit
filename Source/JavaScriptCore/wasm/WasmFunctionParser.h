@@ -1495,17 +1495,18 @@ auto FunctionParser<Context>::parseArrayTypeDefinition(const char* operation, bo
     WASM_VALIDATOR_FAIL_IF(typeIndex >= m_info.typeCount(), operation, " index ", typeIndex, " is out of bounds");
 
     // Get the corresponding type definition
-    const TypeDefinition& typeDefinition = m_info.typeSignatures[typeIndex].get().expand();
+    const TypeDefinition& typeDefinition = m_info.typeSignatures[typeIndex].get();
+    const TypeDefinition& expanded = typeDefinition.expand();
 
     // Check that it's an array type
-    WASM_VALIDATOR_FAIL_IF(!typeDefinition.is<ArrayType>(), operation, " index ", typeIndex, " does not reference an array definition");
+    WASM_VALIDATOR_FAIL_IF(!expanded.is<ArrayType>(), operation, " index ", typeIndex, " does not reference an array definition");
 
     // Extract the field type
-    elementType = typeDefinition.as<ArrayType>()->elementType();
+    elementType = expanded.as<ArrayType>()->elementType();
 
-    // Construct the reference type for references to this array
-    auto typeInfo = TypeInformation::get(typeDefinition);
-    arrayRefType = Type { isNullable ? TypeKind::RefNull : TypeKind::Ref, typeInfo };
+    // Construct the reference type for references to this array, it's important that the
+    // index is for the un-expanded original type definition.
+    arrayRefType = Type { isNullable ? TypeKind::RefNull : TypeKind::Ref, typeDefinition.index() };
 
     return { };
 }

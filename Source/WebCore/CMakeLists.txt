@@ -1963,14 +1963,11 @@ if (ENABLE_WEBGL)
         html/canvas/WebGLCompressedTextureS3TC.cpp
         html/canvas/WebGLCompressedTextureS3TCsRGB.cpp
         html/canvas/WebGLContextEvent.cpp
-        html/canvas/WebGLContextGroup.cpp
-        html/canvas/WebGLContextObject.cpp
         html/canvas/WebGLDebugRendererInfo.cpp
         html/canvas/WebGLDebugShaders.cpp
         html/canvas/WebGLDepthTexture.cpp
         html/canvas/WebGLDrawBuffers.cpp
         html/canvas/WebGLDrawInstancedBaseVertexBaseInstance.cpp
-        html/canvas/WebGLExtension.cpp
         html/canvas/WebGLFramebuffer.cpp
         html/canvas/WebGLLoseContext.cpp
         html/canvas/WebGLMultiDraw.cpp
@@ -1987,7 +1984,6 @@ if (ENABLE_WEBGL)
         html/canvas/WebGLSampler.cpp
         html/canvas/WebGLShader.cpp
         html/canvas/WebGLShaderPrecisionFormat.cpp
-        html/canvas/WebGLSharedObject.cpp
         html/canvas/WebGLStencilTexturing.cpp
         html/canvas/WebGLSync.cpp
         html/canvas/WebGLTexture.cpp

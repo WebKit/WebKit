@@ -534,10 +534,12 @@ SpeculatedType speculationFromClassInfoInheritance(const ClassInfo* classInfo)
     return SpecCellOther;
 }
 
-using SpeculationMapping = std::array<SpeculatedType, static_cast<unsigned>(UINT8_MAX) + 1>;
-static const SpeculationMapping speculatedTypeMapping = ([]() -> SpeculationMapping {
+static constexpr unsigned SpeculationMappingSize { static_cast<unsigned>(UINT8_MAX) + 1 };
+using SpeculationMapping = std::array<SpeculatedType, SpeculationMappingSize>;
+static constexpr SpeculationMapping speculatedTypeMapping = ([]() -> SpeculationMapping {
     SpeculationMapping result { };
-    result.fill(SpecObjectOther);
+    for (unsigned i = 0; i < SpeculationMappingSize; ++i)
+        result[i] = SpecObjectOther;
 #define JSC_DEFINE_JS_TYPE(type, speculatedType) result[type] = speculatedType;
     FOR_EACH_JS_TYPE(JSC_DEFINE_JS_TYPE)
 #undef JSC_DEFINE_JS_TYPE

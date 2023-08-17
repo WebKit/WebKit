@@ -90,7 +90,6 @@ std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create
         return nullptr;
 
     CGContextClearRect(cgContext.get(), FloatRect(FloatPoint::zero(), backendSize));
-    CGContextFlush(cgContext.get());
 
     return makeUnique<ImageBufferIOSurfaceBackend>(parameters, WTFMove(surface), WTFMove(cgContext), displayID, creationContext.surfacePool);
 }
@@ -130,10 +129,10 @@ void ImageBufferIOSurfaceBackend::flushContext()
 
 bool ImageBufferIOSurfaceBackend::flushContextDraws()
 {
-    if (!m_context)
+    bool contextNeedsFlush = m_context && m_context->consumeHasDrawn();
+    if (!contextNeedsFlush && !m_needsFirstFlush)
         return false;
-    if (!m_context->consumeHasDrawn())
-        return false;
+    m_needsFirstFlush = false;
     CGContextFlush(ensurePlatformContext());
     return true;
 }

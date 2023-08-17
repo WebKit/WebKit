@@ -154,9 +154,9 @@ TypeStore::TypeStore()
     allocateConstructor(&TypeStore::textureType, AST::ParameterizedTypeName::Base::TextureStorage3d, Texture::Kind::TextureStorage3d);
 }
 
-const Type* TypeStore::structType(AST::Structure& structure)
+const Type* TypeStore::structType(AST::Structure& structure, HashMap<String, const Type*>&& fields)
 {
-    return allocateType<Struct>(structure);
+    return allocateType<Struct>(structure, fields);
 }
 
 const Type* TypeStore::constructType(AST::ParameterizedTypeName::Base base, const Type* elementType)

@@ -94,9 +94,9 @@ void setNumberFormatDigitOptions(JSGlobalObject* globalObject, IntlType* intlIns
     if (needFd) {
         if (hasFd) {
             constexpr unsigned undefinedValue = UINT32_MAX;
-            unsigned minimumFractionDigits = intlDefaultNumberOption(globalObject, minimumFractionDigitsValue, vm.propertyNames->minimumFractionDigits, 0, 20, undefinedValue);
+            unsigned minimumFractionDigits = intlDefaultNumberOption(globalObject, minimumFractionDigitsValue, vm.propertyNames->minimumFractionDigits, 0, 100, undefinedValue);
             RETURN_IF_EXCEPTION(scope, void());
-            unsigned maximumFractionDigits = intlDefaultNumberOption(globalObject, maximumFractionDigitsValue, vm.propertyNames->maximumFractionDigits, 0, 20, undefinedValue);
+            unsigned maximumFractionDigits = intlDefaultNumberOption(globalObject, maximumFractionDigitsValue, vm.propertyNames->maximumFractionDigits, 0, 100, undefinedValue);
             RETURN_IF_EXCEPTION(scope, void());
 
             if (minimumFractionDigits == undefinedValue)

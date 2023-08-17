@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class EXTDisjointTimerQuery final : public WebGLExtension {
+class EXTDisjointTimerQuery final : public RefCounted<EXTDisjointTimerQuery>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(EXTDisjointTimerQuery);
 public:
     explicit EXTDisjointTimerQuery(WebGLRenderingContextBase&);
-    virtual ~EXTDisjointTimerQuery();
-
-    ExtensionName getName() const override;
+    ~EXTDisjointTimerQuery();
 
     static bool supported(GraphicsContextGL&);
 

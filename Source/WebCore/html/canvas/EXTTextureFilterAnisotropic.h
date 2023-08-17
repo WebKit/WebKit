@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class EXTTextureFilterAnisotropic final : public WebGLExtension {
+class EXTTextureFilterAnisotropic final : public RefCounted<EXTTextureFilterAnisotropic>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(EXTTextureFilterAnisotropic);
 public:
     explicit EXTTextureFilterAnisotropic(WebGLRenderingContextBase&);
-    virtual ~EXTTextureFilterAnisotropic();
-
-    ExtensionName getName() const override;
+    ~EXTTextureFilterAnisotropic();
 
     static bool supported(GraphicsContextGL&);
 };

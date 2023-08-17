@@ -221,9 +221,8 @@ typedef enum {
 #endif
 
 @interface CALayer ()
-#if HAVE(CALAYER_USES_WEBKIT_BEHAVIOR)
 @property BOOL usesWebKitBehavior;
-#endif
+@property BOOL sortsSublayers;
 @property CGRect contentsDirtyRect;
 @end
 

@@ -26,7 +26,7 @@
 [
     LegacyNoInterfaceObject,
     Conditional=WEBGL,
-    GenerateIsReachable=ImplWebGLRenderingContext,
+    GenerateIsReachable,
 ] interface EXTTextureMirrorClampToEdge {
     const unsigned long MIRROR_CLAMP_TO_EDGE_EXT = 0x8743;
 };

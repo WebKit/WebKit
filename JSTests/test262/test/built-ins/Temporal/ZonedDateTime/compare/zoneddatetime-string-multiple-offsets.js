@@ -3,12 +3,32 @@
 
 /*---
 esid: sec-temporal.zoneddatetime.compare
-description: ZonedDateTime strings with UTC offset fractional part are not confused with time fractional part
+description: Sub-minute offset trailing zeroes allowed in ISO string but not in bracketed offset
 features: [Temporal]
 ---*/
 
-const datetime = new Temporal.ZonedDateTime(29_012_345_679n, "+00:01:30.987654321");
-const str = "1970-01-01T00:02:00.000000000+00:02[+00:01:30.987654321]";
+const datetime = new Temporal.ZonedDateTime(30_000_000_000n, "+01:35");
+let str = "1970-01-01T01:35:30+01:35:00.000000000[+01:35]";
 
-assert.sameValue(Temporal.ZonedDateTime.compare(str, datetime), 0, "Time zone determined from bracket name (first argument)");
-assert.sameValue(Temporal.ZonedDateTime.compare(datetime, str), 0, "Time zone determined from bracket name (second argument)");
+assert.sameValue(
+  Temporal.ZonedDateTime.compare(str, datetime),
+  0,
+  "Time zone determined from bracket name (first argument)"
+);
+assert.sameValue(
+  Temporal.ZonedDateTime.compare(datetime, str),
+  0,
+  "Time zone determined from bracket name (second argument)"
+);
+
+str = "1970-01-01T01:35:30+01:35:00.000000000[+01:35:00.000000000]";
+assert.throws(
+  RangeError,
+  () => Temporal.ZonedDateTime.compare(str, datetime),
+  "Trailing zeroes not allowed for sub-minute time zone identifiers (first argument)"
+);
+assert.throws(
+  RangeError,
+  () => Temporal.ZonedDateTime.compare(datetime, str),
+  "Trailing zeroes not allowed for sub-minute time zone identifiers (second argument)"
+);

@@ -57,11 +57,11 @@ struct InlineLayoutResult {
 class InlineFormattingContext final : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingContext);
 public:
-    InlineFormattingContext(const ElementBox& formattingContextRoot, InlineFormattingState&, const InlineDamage* = nullptr);
+    InlineFormattingContext(const ElementBox& formattingContextRoot, InlineFormattingState&);
 
-    InlineLayoutResult layoutInFlowAndFloatContent(const ConstraintsForInlineContent&, InlineLayoutState&);
+    InlineLayoutResult layoutInFlowAndFloatContent(const ConstraintsForInlineContent&, InlineLayoutState&, const InlineDamage* = nullptr);
     void layoutOutOfFlowContent(const ConstraintsForInlineContent&, InlineLayoutState&, const InlineDisplay::Content&);
-    IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
+    IntrinsicWidthConstraints computedIntrinsicSizes(const InlineDamage*);
     LayoutUnit maximumContentSize();
 
     const InlineFormattingGeometry& formattingGeometry() const final { return m_inlineFormattingGeometry; }
@@ -69,21 +69,27 @@ public:
     const InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
 
 private:
-    InlineLayoutResult lineLayout(AbstractLineBuilder&, const InlineItems&, InlineItemRange, std::optional<PreviousLine>, const ConstraintsForInlineContent&, InlineLayoutState&);
+    InlineLayoutResult lineLayout(AbstractLineBuilder&, const InlineItems&, InlineItemRange, std::optional<PreviousLine>, const ConstraintsForInlineContent&, InlineLayoutState&, const InlineDamage* = nullptr);
     void layoutFloatContentOnly(const ConstraintsForInlineContent&, FloatingState&);
     void computeStaticPositionForOutOfFlowContent(const FormattingState::OutOfFlowBoxList&, const ConstraintsForInFlowContent&, const InlineDisplay::Content&, const FloatingState&);
 
-    InlineLayoutUnit computedIntrinsicWidthForConstraint(IntrinsicWidthMode, AbstractLineBuilder&) const;
+    enum class MayCacheLayoutResult : bool { No, Yes };
+    InlineLayoutUnit computedIntrinsicWidthForConstraint(IntrinsicWidthMode, AbstractLineBuilder&, MayCacheLayoutResult = MayCacheLayoutResult::No);
 
     void collectContentIfNeeded();
     InlineRect createDisplayContentForLine(size_t lineIndex, const LineLayoutResult&, const ConstraintsForInlineContent&, const InlineLayoutState&, InlineDisplay::Content&);
     void resetGeometryForClampedContent(const InlineItemRange& needsDisplayContentRange, const LineLayoutResult::SuspendedFloatList& suspendedFloats, LayoutPoint topleft);
+    bool createDisplayContentForLineFromCachedContent(const ConstraintsForInlineContent&, const InlineLayoutState&, InlineLayoutResult&);
 
     InlineFormattingState& formattingState() { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
 
-    const InlineDamage* m_lineDamage { nullptr };
     const InlineFormattingGeometry m_inlineFormattingGeometry;
     const InlineFormattingQuirks m_inlineFormattingQuirks;
+    struct LineBreakingResultForConstraint {
+        InlineLayoutUnit constraint;
+        LineLayoutResult result;
+    };
+    std::optional<LineBreakingResultForConstraint> m_maximumIntrinsicWidthResultForSingleLine { };
 };
 
 }

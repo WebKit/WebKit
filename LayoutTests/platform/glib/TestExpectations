@@ -507,6 +507,8 @@ accessibility/dynamically-changing-iframe-remains-accessible.html [ Skip ]
 accessibility/ignore-modals-without-any-content.html [ Skip ]
 accessibility/iframe-with-role.html [ Skip ]
 
+accessibility/editable-webpage-focused-ui-element.html [ Skip ]
+
 # Missing `AccessibilityUIElement::stringDescriptionOfAttributeValue` implementation.
 accessibility/visible-character-range-basic.html [ Skip ]
 accessibility/visible-character-range-height-changes.html [ Skip ]
@@ -819,6 +821,7 @@ webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/perspecti
 webkit.org/b/245862 imported/w3c/web-platform-tests/css/css-transforms/perspective-transforms-equivalence.html [ ImageOnlyFailure ]
 
 webkit.org/b/245716 imported/w3c/web-platform-tests/css/css-transforms/transform3d-rotatex-perspective-003.html [ ImageOnlyFailure ]
+webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform3d-sorting-006.html [ ImageOnlyFailure ]
 
 webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-018.html [ ImageOnlyFailure ]
 webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-025.html [ ImageOnlyFailure ]
@@ -1130,14 +1133,14 @@ imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?v
 imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?vp9 [ Failure ]
 
 # HEVC support
-imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h265_annexb [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h265_hevc [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?h265_annexb [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?h265_hevc [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?h265_annexb [ Skip ]
-imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?h265_hevc [ Skip ]
-imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.worker.html?h265_annexb [ Skip ]
-imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.worker.html?h265_hevc [ Skip ]
+imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h265_annexb [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h265_hevc [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?h265_annexb [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?h265_hevc [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?h265_annexb [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?h265_hevc [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.worker.html?h265_annexb [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.worker.html?h265_hevc [ Pass ]
 
 imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.worker.html [ Pass ]
 
@@ -3377,28 +3380,18 @@ imported/w3c/web-platform-tests/preload/preload-time-to-fetch.https.html [ DumpJ
 imported/w3c/web-platform-tests/preload/preload-type-match.html [ DumpJSConsoleLogInStdErr ]
 
 # Tests crashing in Debug only.
-[ Debug ] css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-block.html [ Crash ]
-[ Debug ] css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.html [ Crash ]
-[ Debug ] css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html [ Crash ]
-[ Debug ] css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html [ Crash ]
 [ Debug ] editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Crash ]
 [ Debug ] fast/backgrounds/gradient-background-leakage-hidpi.html [ Crash ]
 [ Debug ] fast/canvas/2d.backingStorePixelRatio.html [ Crash ]
 [ Debug ] fast/canvas/canvas-as-image-hidpi.html [ Crash ]
 [ Debug ] fast/canvas/canvas-resize-reset-pixelRatio.html [ Crash ]
 [ Debug ] fast/css-custom-paint/simple-hidpi.html [ Crash ]
-[ Debug ] fast/css-grid-layout/flex-content-sized-columns-resize.html [ Crash ]
 [ Debug ] fast/dom/HTMLImageElement/sizes/image-sizes-2x.html [ Crash ]
 [ Debug ] fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html [ Crash ]
 [ Debug ] fast/dom/HTMLImageElement/sizes/image-sizes-js-innerhtml.html [ Crash ]
-[ Debug ] fast/dom/Window/window-resize-contents.html [ Crash ]
-[ Debug ] fast/dom/Window/window-resize-update-scrollbars.html [ Crash ]
-[ Debug ] fast/dynamic/window-resize-scrollbars-test.html [ Crash ]
-[ Debug ] fast/fixed-layout/fixed-layout.html [ Crash ]
 [ Debug ] fast/forms/textarea-node-removed-from-document-crash.html [ Crash ]
 [ Debug ] fast/history/page-cache-closed-audiocontext.html [ Crash ]
 [ Debug ] fast/media/mq-resolution.html [ Crash ]
-[ Debug ] fast/picture/viewport-resize.html [ Crash ]
 [ Debug ] http/tests/loading/sizes/preload-image-sizes-2x.html [ Crash ]
 [ Debug ] http/wpt/dom-ranges-live-range/Range-mutations-deleteData.html [ Crash ]
 [ Debug ] http/wpt/dom-ranges-live-range/Range-mutations-insertData.html [ Crash ]

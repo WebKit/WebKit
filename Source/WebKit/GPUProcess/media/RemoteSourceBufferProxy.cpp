@@ -64,8 +64,16 @@ RemoteSourceBufferProxy::RemoteSourceBufferProxy(GPUConnectionToWebProcess& conn
 RemoteSourceBufferProxy::~RemoteSourceBufferProxy()
 {
     m_sourceBufferPrivate->detach();
-    if (m_connectionToWebProcess)
-        m_connectionToWebProcess->messageReceiverMap().removeMessageReceiver(Messages::RemoteSourceBufferProxy::messageReceiverName(), m_identifier.toUInt64());
+    disconnect();
+}
+
+void RemoteSourceBufferProxy::disconnect()
+{
+    if (!m_connectionToWebProcess)
+        return;
+
+    m_connectionToWebProcess->messageReceiverMap().removeMessageReceiver(Messages::RemoteSourceBufferProxy::messageReceiverName(), m_identifier.toUInt64());
+    m_connectionToWebProcess = nullptr;
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&& segment, CompletionHandler<void(ReceiveResult)>&& completionHandler)

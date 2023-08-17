@@ -78,8 +78,9 @@ void SpeechSynthesis::setPlatformSynthesizer(Ref<PlatformSpeechSynthesizer>&& sy
 {
     m_platformSpeechSynthesizer = synthesizer.ptr();
     m_voiceList.clear();
-    m_currentSpeechUtterance = nullptr;
-    m_utteranceQueue.clear();
+    clearUtteranceQueue();
+    // Finish current utterance.
+    speakingErrorOccurred();
     m_isPaused = false;
     m_speechSynthesisClient = nullptr;
 }
@@ -151,6 +152,7 @@ void SpeechSynthesis::speak(SpeechSynthesisUtterance& utterance)
         return;
 #endif
 
+    utterance.setIsActiveForEventDispatch(true);
     m_utteranceQueue.append(utterance);
     // If the queue was empty, speak this immediately and add it to the queue.
     if (m_utteranceQueue.size() == 1)
@@ -162,7 +164,7 @@ void SpeechSynthesis::cancel()
     // Remove all the items from the utterance queue.
     // Hold on to the current utterance so the platform synthesizer can have a chance to clean up.
     RefPtr<SpeechSynthesisUtterance> current = m_currentSpeechUtterance;
-    m_utteranceQueue.clear();
+    clearUtteranceQueue();
     if (m_speechSynthesisClient) {
         m_speechSynthesisClient->cancel();
         // If we wait for cancel to callback speakingErrorOccurred, then m_currentSpeechUtterance will be null
@@ -314,6 +316,14 @@ void SpeechSynthesis::speakingErrorOccurred(PlatformSpeechSynthesisUtterance& ut
 {
     if (utterance.client())
         handleSpeakingCompleted(static_cast<SpeechSynthesisUtterance&>(*utterance.client()), true);
+}
+
+void SpeechSynthesis::clearUtteranceQueue()
+{
+    while (!m_utteranceQueue.isEmpty()) {
+        auto utterance = m_utteranceQueue.takeFirst();
+        utterance->setIsActiveForEventDispatch(false);
+    }
 }
 
 } // namespace WebCore

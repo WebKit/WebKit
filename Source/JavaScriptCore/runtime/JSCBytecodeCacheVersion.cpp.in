@@ -2,6 +2,6 @@
 #include "JSCBytecodeCacheVersion.h"
 
 #include "config.h"
-#include <wtf/text/StringHasher.h>
+#include <wtf/text/SuperFastHash.h>
 
-const uint32_t JSCBytecodeCacheVersion = StringHasher::computeHash(CACHED_TYPES_CKSUM);
+const uint32_t JSCBytecodeCacheVersion = SuperFastHash::computeHash(CACHED_TYPES_CKSUM);

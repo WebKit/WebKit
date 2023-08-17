@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class WebGLMultiDraw final : public WebGLExtension {
+class WebGLMultiDraw final : public RefCounted<WebGLMultiDraw>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(WebGLMultiDraw);
 
 public:
@@ -39,7 +39,6 @@ public:
     explicit WebGLMultiDraw(WebGLRenderingContextBase&);
     virtual ~WebGLMultiDraw();
 
-    ExtensionName getName() const override;
 
     static bool supported(GraphicsContextGL&);
 

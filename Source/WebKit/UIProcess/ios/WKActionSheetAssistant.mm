@@ -869,12 +869,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     } else
         itemsToPresent = WTFMove(items);
 
-    if (![_view window] || itemsToPresent.isEmpty()) {
+    NSArray<UIMenuElement *> *additionalItems = nil;
+    if ([_delegate respondsToSelector:@selector(additionalMediaControlsContextMenuItemsForActionSheetAssistant:)])
+        additionalItems = [_delegate additionalMediaControlsContextMenuItemsForActionSheetAssistant:self];
+
+    if (![_view window] || (itemsToPresent.isEmpty() && !additionalItems.count)) {
         completionHandler(WebCore::MediaControlsContextMenuItem::invalidID);
         return;
     }
 
-    _mediaControlsContextMenu = [UIMenu menuWithTitle:WTFMove(menuTitle) children:[self _uiMenuElementsForMediaControlContextMenuItems:WTFMove(itemsToPresent)]];
+    NSArray<UIMenuElement *> *menuItems = [self _uiMenuElementsForMediaControlContextMenuItems:WTFMove(itemsToPresent)];
+    menuItems = [menuItems arrayByAddingObjectsFromArray:additionalItems];
+
+    _mediaControlsContextMenu = [UIMenu menuWithTitle:WTFMove(menuTitle) children:menuItems];
     _mediaControlsContextMenuTargetFrame = WTFMove(targetFrame);
     _mediaControlsContextMenuCallback = WTFMove(completionHandler);
 

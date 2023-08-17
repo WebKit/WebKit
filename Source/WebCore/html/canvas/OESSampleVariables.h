@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class OESSampleVariables final : public WebGLExtension {
+class OESSampleVariables final : public RefCounted<OESSampleVariables>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(OESSampleVariables);
 public:
     explicit OESSampleVariables(WebGLRenderingContextBase&);
-    virtual ~OESSampleVariables();
-
-    ExtensionName getName() const override;
+    ~OESSampleVariables();
 
     static bool supported(GraphicsContextGL&);
 };

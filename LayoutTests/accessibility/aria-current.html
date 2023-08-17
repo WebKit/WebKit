@@ -30,28 +30,26 @@
     <ul><li><a data-expected="step" href="/" id="a16" aria-current="  step ">Nav16</a></li></ul>
 </nav>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
-    description("This tests that aria-current causes the right attribute to be returned.");
+var output = "This tests that aria-current causes the right attribute to be returned.\n\n";
 
-    function verify(value, expectation, element) {
-      if (value === expectation)
-        debug("PASS: AXARIACurrent is " + value);
-      else
-        debug("FAIL: AXARIACurrent is " + value + ". Expected: " + expectation + ". " + (element ? element.outerHTML : ""));
-    }
+function verify(value, expectation, element) {
+  if (value === expectation)
+    output += `PASS: AXARIACurrent is ${value}\n`;
+  else
+    output += `FAIL: AXARIACurrent is ${value}. Expected: ${expectation}. ${element ? element.outerHTML : ""} \n`;
+}
 
-    if (window.accessibilityController) {
-        var examples = document.querySelectorAll("a");
-        for (var i = 0, c = examples.length; i < c; i++) {
-            var el = examples[i];
-            var expectation = el.getAttribute("data-expected");
-            var value = accessibilityController.accessibleElementById(el.id).currentStateValue;
-            verify(value, expectation, el);
-        }
+if (window.accessibilityController) {
+    let examples = document.querySelectorAll("a");
+    for (let i = 0; i < examples.length; i++) {
+        let el = examples[i];
+        let expectation = el.getAttribute("data-expected");
+        let value = accessibilityController.accessibleElementById(el.id).currentStateValue;
+        verify(value, expectation, el);
     }
+    debug(output)
+}
 </script>
 <script src="../resources/js-test-post.js"></script>
 </body>

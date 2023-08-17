@@ -35,17 +35,12 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLPolygonMode);
 
 WebGLPolygonMode::WebGLPolygonMode(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLPolygonModeName)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_polygon_mode"_s);
 }
 
 WebGLPolygonMode::~WebGLPolygonMode() = default;
-
-WebGLExtension::ExtensionName WebGLPolygonMode::getName() const
-{
-    return WebGLPolygonModeName;
-}
 
 bool WebGLPolygonMode::supported(GraphicsContextGL& context)
 {

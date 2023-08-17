@@ -77,7 +77,7 @@ public:
     virtual bool imageHasNaturalDimensions() const { return true; }
 
     // Image.
-    virtual RefPtr<Image> image(const RenderElement*, const FloatSize&) const = 0;
+    virtual RefPtr<Image> image(const RenderElement*, const FloatSize&, bool isForFirstLine = false) const = 0;
     virtual StyleImage* selectedImage() { return this; }
     virtual const StyleImage* selectedImage() const { return this; }
     virtual CachedImage* cachedImage() const { return nullptr; }

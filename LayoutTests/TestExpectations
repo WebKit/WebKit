@@ -33,6 +33,7 @@ tiled-drawing [ Skip ]
 fast/attachment/cocoa [ Skip ]
 fast/attachment/mac [ Skip ]
 fast/css/ios [ Skip ]
+fast/css/mac [ Skip ]
 fast/css/watchos [ Skip ]
 fast/dom/Orientation/no-orientation-change-event-when-unparenting-view.html [ Skip ]
 fast/forms/date/date-editable-components [ Skip ]
@@ -947,6 +948,9 @@ imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/comb
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-un.https.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/058.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/repeated-imports.any.sharedworker.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/import-attributes/dynamic-import-with-attributes-argument.any.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/import-attributes/dynamic-import-with-attributes-argument.any.worker.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/import-attributes/dynamic-import-with-attributes-argument.any.sharedworker.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/evaluation-order-1.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/rendering/widgets/baseline-alignment-and-overflow.tentative.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source.html [ Failure Pass ]
@@ -1232,6 +1236,7 @@ http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Skip ]
 # Only supported on CF (Apple) WebKit2 ports for now.
 requestidlecallback [ Skip ]
 imported/w3c/web-platform-tests/requestidlecallback [ Skip ]
+http/tests/eventloop/idle-callback-not-affected-by-timers-in-cross-origin.html [ Skip ]
 
 # Only supported in WebKit2.
 http/wpt/cross-origin-resource-policy/ [ Skip ]
@@ -1243,9 +1248,6 @@ fast/forms/file/entries-api/image-no-transcode-open-panel.html [ Skip ]
 fast/forms/file/entries-api/pages-jpeg-open-panel.html [ Skip ]
 fast/forms/file/entries-api/pdf-jpeg-open-panel.html [ Skip ]
 fast/forms/file/entries-api/png-raw-open-panel.html [ Skip ]
-
-# This test is currently only relevant on mac-wk2
-fast/canvas/webgl/context-update-on-display-configuration.html [ Skip ]
 
 fast/misc/valid-primary-screen-displayID.html [ Skip ]
 
@@ -2893,7 +2895,7 @@ webkit.org/b/257049 imported/w3c/web-platform-tests/css/css-text/white-space/pre
 webkit.org/b/257049 imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-018.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/257049 imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-019.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/257049 imported/w3c/web-platform-tests/css/css-text/white-space/tab-bidi-001.html [ ImageOnlyFailure ]
-webkit.org/b/257049 imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-002.html [ ImageOnlyFailure ]
+webkit.org/b/257049 imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-line-clamp-001.html [ ImageOnlyFailure ]
 webkit.org/b/257049 imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-text-indent-001.html [ ImageOnlyFailure ]
 webkit.org/b/257049 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-ideographic-space-005.html [ ImageOnlyFailure ]
 webkit.org/b/257049 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-ideographic-space-006.html [ ImageOnlyFailure ]
@@ -4272,7 +4274,6 @@ webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform
 webkit.org/b/235063 [ Debug ] fast/layers/top-layer-ancestor-opacity-and-transform-crash.html [ Skip ]
 
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/3d-scene-with-iframe-001.html [ ImageOnlyFailure ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/3d-rendering-context-and-z-ordering-001.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/3dtransform-and-position-sticky-001.html [ ImageOnlyFailure Pass ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/animation/rotate-transform-equivalent.html [ ImageOnlyFailure Pass ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-perspective.html [ ImageOnlyFailure ]
@@ -4282,7 +4283,6 @@ webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/backface-
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/backface-visibility-hidden-animated-002.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/change-scale-wide-range.html [ Pass ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/huge-length-tiny-scale.html [ ImageOnlyFailure ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/preserve3d-and-filter-no-perspective.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/rotateY-180deg-with-overflow-scroll.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/scale-transform-overlap.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-background-007.html [ ImageOnlyFailure ]
@@ -4295,9 +4295,6 @@ webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform3d-matrix3d-001.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-010.html [ Pass ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-013.html [ ImageOnlyFailure ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform3d-scale-004.html [ ImageOnlyFailure ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform3d-sorting-003.html [ ImageOnlyFailure ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform3d-sorting-006.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/individual-transform/animation/individual-transform-ordering.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-fixed-bg-008.tentative.html [ ImageOnlyFailure ]
 
@@ -6262,12 +6259,7 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/cs
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/import-assertions/empty-assertion-clause.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/import-assertions/invalid-type-assertion-error.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/import-assertions/unsupported-assertion.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/charset.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/integrity.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/json-module-service-worker-test.https.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/load-error-events.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/module.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/valid-content-type.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/integrity.html [ Pass Failure ]
 
 webkit.org/b/252183 imported/w3c/web-platform-tests/css/css-box/margin-trim/block-container-overflowing-float-margins-tirmmed-at-final-position-block-layout.html [ ImageOnlyFailure ]
 webkit.org/b/253055 imported/w3c/web-platform-tests/css/css-box/margin-trim/block-container-floats-adjacent-to-containing-block-should-be-trimmed-only.html [ ImageOnlyFailure ]
@@ -6547,7 +6539,7 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFi
 imported/w3c/web-platform-tests/html/canvas/offscreen/text/fontVariantCaps-1.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/text/fontVariantCaps-3.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/text/fontVariantCaps-4.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/canvas/element/text/parent-style-relative-units.html [ Crash ]
+webkit.org/b/260220 imported/w3c/web-platform-tests/html/canvas/element/text/parent-style-relative-units.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.dropShadow.tentative.w.html [ Timeout ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.transform.infinity.worker.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.transform.infinity.html [ Skip ]
@@ -6557,3 +6549,6 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.
 webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.state.clip.html [ ImageOnlyFailure ]
 webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.state.clip.html [ ImageOnlyFailure ]
 webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.state.clip.w.html [ Timeout ]
+
+# We only support import-attributes and do not support import-assertions.
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/import-assertions

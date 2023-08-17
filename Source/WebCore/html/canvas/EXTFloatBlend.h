@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class EXTFloatBlend final : public WebGLExtension {
+class EXTFloatBlend final : public RefCounted<EXTFloatBlend>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(EXTFloatBlend);
 public:
     explicit EXTFloatBlend(WebGLRenderingContextBase&);
-    virtual ~EXTFloatBlend();
-
-    ExtensionName getName() const override;
+    ~EXTFloatBlend();
 
     static bool supported(GraphicsContextGL&);
 };

@@ -30,13 +30,29 @@
 
 #include "WebCoreOpaqueRoot.h"
 #include "WebGLCompressedTextureS3TC.h"
-#include "WebGLContextGroup.h"
 #include "WebGLDebugRendererInfo.h"
 #include "WebGLDebugShaders.h"
 #include "WebGLLoseContext.h"
 #include "WebGLRenderingContextBase.h"
 
 namespace WebCore {
+
+WebGLObject::WebGLObject(WebGLRenderingContextBase& context)
+    : m_context(context.createRefForContextObject())
+{
+}
+
+Lock& WebGLObject::objectGraphLockForContext()
+{
+    // Should not call this if the object or context has been deleted.
+    ASSERT(m_context);
+    return m_context->objectGraphLock();
+}
+
+GraphicsContextGL* WebGLObject::graphicsContextGL() const
+{
+    return m_context ? m_context->graphicsContextGL() : nullptr;
+}
 
 void WebGLObject::setObject(PlatformGLObject object)
 {
@@ -65,12 +81,12 @@ void WebGLObject::deleteObject(const AbstractLocker& locker, GraphicsContextGL* 
     if (!m_object)
         return;
 
-    if (!hasGroupOrContext())
+    if (!m_context)
         return;
 
     if (!m_attachmentCount) {
         if (!context3d)
-            context3d = getAGraphicsContextGL();
+            context3d = graphicsContextGL();
 
         if (context3d)
             deleteObjectImpl(locker, context3d, m_object);

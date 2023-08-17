@@ -42,6 +42,8 @@ class JSBigInt;
 class JSBoundFunction;
 class JSPropertyNameEnumerator;
 class JSRopeString;
+class JSMap;
+class JSSet;
 class JSWeakMap;
 class JSWeakSet;
 class NativeExecutable;
@@ -293,6 +295,8 @@ JSC_DECLARE_JIT_OPERATION(operationMapHash, UCPUStrictInt32, (JSGlobalObject*, E
 JSC_DECLARE_JIT_OPERATION(operationMapHashHeapBigInt, UCPUStrictInt32, (VM*, JSBigInt*));
 JSC_DECLARE_JIT_OPERATION(operationJSMapFindBucket, JSCell*, (JSGlobalObject*, JSCell*, EncodedJSValue, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationJSSetFindBucket, JSCell*, (JSGlobalObject*, JSCell*, EncodedJSValue, int32_t));
+JSC_DECLARE_JIT_OPERATION(operationNewMap, JSMap*, (VM*, Structure*));
+JSC_DECLARE_JIT_OPERATION(operationNewSet, JSSet*, (VM*, Structure*));
 
 JSC_DECLARE_JIT_OPERATION(operationParseIntDoubleNoRadix, EncodedJSValue, (JSGlobalObject*, double));
 JSC_DECLARE_JIT_OPERATION(operationParseIntStringNoRadix, EncodedJSValue, (JSGlobalObject*, JSString*));

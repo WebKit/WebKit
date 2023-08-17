@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class WebGLDrawInstancedBaseVertexBaseInstance final : public WebGLExtension {
+class WebGLDrawInstancedBaseVertexBaseInstance final : public RefCounted<WebGLDrawInstancedBaseVertexBaseInstance>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(WebGLDrawInstancedBaseVertexBaseInstance);
 public:
     explicit WebGLDrawInstancedBaseVertexBaseInstance(WebGLRenderingContextBase&);
-    virtual ~WebGLDrawInstancedBaseVertexBaseInstance();
-
-    ExtensionName getName() const override;
+    ~WebGLDrawInstancedBaseVertexBaseInstance();
 
     static bool supported(GraphicsContextGL&);
 

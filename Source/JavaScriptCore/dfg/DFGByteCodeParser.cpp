@@ -37,6 +37,7 @@
 #include "BytecodeOperandsForCheckpoint.h"
 #include "CacheableIdentifierInlines.h"
 #include "CallLinkStatus.h"
+#include "CallVariantInlines.h"
 #include "CheckPrivateBrandStatus.h"
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
@@ -69,6 +70,7 @@
 #include "JSModuleNamespaceObject.h"
 #include "JSPromiseConstructor.h"
 #include "JSSetIterator.h"
+#include "MapConstructor.h"
 #include "NullSetterFunction.h"
 #include "NumberConstructor.h"
 #include "ObjectConstructor.h"
@@ -78,6 +80,7 @@
 #include "PutByIdFlags.h"
 #include "PutByStatus.h"
 #include "RegExpPrototype.h"
+#include "SetConstructor.h"
 #include "SetPrivateBrandStatus.h"
 #include "StackAlignment.h"
 #include "StringConstructor.h"
@@ -4641,6 +4644,26 @@ bool ByteCodeParser::handleConstantFunction(
         
         set(result, resultNode);
         return true;
+    }
+
+    if (function->classInfo() == MapConstructor::info() && kind == CodeForConstruct) {
+        auto* structure = function->globalObject()->mapStructureConcurrently();
+        if (argumentCountIncludingThis <= 1 && structure) {
+            insertChecks();
+            Node* resultNode = addToGraph(NewMap, OpInfo(m_graph.registerStructure(structure)));
+            set(result, resultNode);
+            return true;
+        }
+    }
+
+    if (function->classInfo() == SetConstructor::info() && kind == CodeForConstruct) {
+        auto* structure = function->globalObject()->setStructureConcurrently();
+        if (argumentCountIncludingThis <= 1 && structure) {
+            insertChecks();
+            Node* resultNode = addToGraph(NewSet, OpInfo(m_graph.registerStructure(structure)));
+            set(result, resultNode);
+            return true;
+        }
     }
 
     if (function->classInfo() == SymbolConstructor::info() && kind == CodeForCall) {

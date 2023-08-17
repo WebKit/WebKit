@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ExecutableBaseInlines.h"
+#include "ExecutableBase.h"
 #include "FunctionExecutable.h"
 #include "JSCast.h"
 #include "JSFunction.h"
@@ -110,12 +110,7 @@ public:
         return m_callee;
     }
     
-    Intrinsic intrinsicFor(CodeSpecializationKind kind) const
-    {
-        if (ExecutableBase* executable = this->executable())
-            return executable->intrinsicFor(kind);
-        return NoIntrinsic;
-    }
+    inline Intrinsic intrinsicFor(CodeSpecializationKind) const;
     
     FunctionExecutable* functionExecutable() const
     {

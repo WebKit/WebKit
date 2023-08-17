@@ -1817,7 +1817,7 @@ private:
     enum class ImportSpecifierType { NamespaceImport, NamedImport, DefaultImport };
     template <class TreeBuilder> typename TreeBuilder::ImportSpecifier parseImportClauseItem(TreeBuilder&, ImportSpecifierType);
     template <class TreeBuilder> typename TreeBuilder::ModuleName parseModuleName(TreeBuilder&);
-    template <class TreeBuilder> typename TreeBuilder::ImportAssertionList parseImportAssertions(TreeBuilder&);
+    template <class TreeBuilder> typename TreeBuilder::ImportAttributesList parseImportAttributes(TreeBuilder&);
     template <class TreeBuilder> TreeStatement parseImportDeclaration(TreeBuilder&);
     template <class TreeBuilder> typename TreeBuilder::ExportSpecifier parseExportSpecifier(TreeBuilder& context, Vector<std::pair<const Identifier*, const Identifier*>>& maybeExportedLocalNames, bool& hasKeywordForLocalBindings, bool& hasReferencedModuleExportNames);
     template <class TreeBuilder> TreeStatement parseExportDeclaration(TreeBuilder&);

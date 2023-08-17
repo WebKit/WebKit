@@ -80,7 +80,6 @@ class JSGlobalObject;
     v(hostPromiseRejectionTracker, nullptr) \
     v(Set, nullptr) \
     v(Map, nullptr) \
-    v(thisTimeValue, nullptr) \
     v(importMapStatus, nullptr) \
     v(importInRealm, nullptr) \
     v(evalInRealm, nullptr) \
@@ -111,7 +110,6 @@ class JSGlobalObject;
     v(handleNegativeProxyHasTrapResult, nullptr) \
     v(handlePositiveProxySetTrapResult, nullptr) \
     v(handleProxyGetTrapResult, nullptr) \
-    v(dateTimeFormat, nullptr) \
     v(webAssemblyCompileStreamingInternal, nullptr) \
     v(webAssemblyInstantiateStreamingInternal, nullptr) \
     v(Object, nullptr) \

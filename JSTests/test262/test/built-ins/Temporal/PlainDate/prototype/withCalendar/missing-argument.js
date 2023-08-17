@@ -3,10 +3,10 @@
 
 /*---
 esid: sec-temporal.plaindate.prototype.withcalendar
-description: RangeError thrown when calendar argument not given
+description: TypeError thrown when calendar argument not given
 features: [Temporal]
 ---*/
 
 const plainDate = Temporal.PlainDate.from("1976-11-18");
-assert.throws(RangeError, () => plainDate.withCalendar(), "missing argument");
-assert.throws(RangeError, () => plainDate.withCalendar(undefined), "undefined argument");
+assert.throws(TypeError, () => plainDate.withCalendar(), "missing argument");
+assert.throws(TypeError, () => plainDate.withCalendar(undefined), "undefined argument");

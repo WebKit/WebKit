@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class WebGLCompressedTextureASTC final : public WebGLExtension {
+class WebGLCompressedTextureASTC final : public RefCounted<WebGLCompressedTextureASTC>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(WebGLCompressedTextureASTC);
 public:
     explicit WebGLCompressedTextureASTC(WebGLRenderingContextBase&);
-    virtual ~WebGLCompressedTextureASTC();
-
-    ExtensionName getName() const override;
+    ~WebGLCompressedTextureASTC();
 
     static bool supported(GraphicsContextGL&);
 

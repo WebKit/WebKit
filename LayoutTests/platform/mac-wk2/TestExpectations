@@ -10,6 +10,7 @@ editing/undo-manager [ Pass ]
 editing/pasteboard/dom-paste [ Pass ]
 fast/attachment/cocoa [ Pass ]
 fast/attachment/mac [ Pass ]
+fast/css/mac [ Pass ]
 fast/events/cursors [ Pass ]
 fast/forms/date/date-editable-components [ Pass ]
 fast/forms/datetimelocal/datetimelocal-editable-components [ Pass ]
@@ -108,8 +109,6 @@ webkit.org/b/187183 http/tests/security/pasteboard-file-url.html [ Pass ]
 
 webkit.org/b/231328 http/tests/preload/onload_event.html [ Pass Failure ]
 
-fast/canvas/webgl/context-update-on-display-configuration.html [ Pass ]
-
 fast/misc/valid-primary-screen-displayID.html [ Pass ]
 
 ipc/webpageproxy-correctionpanel-no-crash.html [ Pass ]
@@ -152,10 +151,8 @@ storage/filesystemaccess/ [ Pass ]
 
 requestidlecallback [ Pass ]
 imported/w3c/web-platform-tests/requestidlecallback [ Pass ]
-imported/w3c/web-platform-tests/requestidlecallback/deadline-max-rAF-dynamic.html [ Pass Failure ]
 imported/w3c/web-platform-tests/requestidlecallback/deadline-max-rAF.html [ Pass Failure ]
-imported/w3c/web-platform-tests/requestidlecallback/deadline-max-timeout-dynamic.html [ Pass Failure ]
-imported/w3c/web-platform-tests/requestidlecallback/deadline-max.html [ Pass Failure ]
+http/tests/eventloop/idle-callback-not-affected-by-timers-in-cross-origin.html [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
@@ -1679,8 +1676,6 @@ webkit.org/b/245727 [ Monterey ] imported/w3c/web-platform-tests/notifications/i
 
 webkit.org/b/248734 media/video-inaccurate-duration-ended.html [ Crash ]
 
-webkit.org/b/257154 [ Debug ] imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-line-clamp-001.html [ Skip ]
-
 webkit.org/b/254778 [ Ventura Debug arm64 ] fast/images/avif-image-decoding.html [ Pass Crash ]
 
 webkit.org/b/255407 [ Monterey x86_64 ] imported/w3c/web-platform-tests/html/semantics/popovers/light-dismiss-event-ordering.html [ Pass Failure ]
@@ -1846,3 +1841,17 @@ webkit.org/b/259712 media/media-source/media-source-paint-after-display-none.htm
 webkit.org/b/259740 [ Ventura Release arm64 ] css3/color-filters/color-filter-outline.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/260113 [ arm64 ] http/wpt/webauthn/ctap-hid-failure.https.html [ Pass Failure ]
+
+webkit.org/b/260185 media/media-source/media-source-fastseek.html [ Pass Failure ]
+
+webkit.org/b/260225 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-GC.https.html [ Pass Failure ]
+
+webkit.org/b/260224 [ Debug ] compositing/geometry/clipped-out-perspective.html [ ImageOnlyFailure ]
+webkit.org/b/260224 [ Debug ] compositing/overlap-blending/opacity-and-infinity.html [ ImageOnlyFailure ]
+webkit.org/b/260224 [ Debug ] imported/w3c/web-platform-tests/css/css-transforms/perspective-split-by-zero-w.html [ ImageOnlyFailure ]
+webkit.org/b/260224 [ Debug ] imported/w3c/web-platform-tests/css/css-transforms/preserve3d-and-filter-with-perspective.html [ ImageOnlyFailure ]
+webkit.org/b/260224 [ Debug ] imported/w3c/web-platform-tests/css/css-transforms/preserve3d-pseudo-element.html [ ImageOnlyFailure ]
+webkit.org/b/260224 [ Debug ] imported/w3c/web-platform-tests/css/css-transforms/transform-table-009.html [ ImageOnlyFailure ]
+webkit.org/b/260224 [ Debug ] imported/w3c/web-platform-tests/css/css-transforms/transform-table-010.html [ ImageOnlyFailure ]
+webkit.org/b/260224 [ Debug ] imported/w3c/web-platform-tests/css/css-transforms/transform-table-011.html [ ImageOnlyFailure ]
+webkit.org/b/260224 [ Debug ] imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-011.html [ ImageOnlyFailure ]

@@ -504,6 +504,9 @@ AccessibilityObject* AXObjectCache::focusedObjectForNode(Node* focusedNode)
         if (auto* descendant = focus->activeDescendant())
             return descendant;
     }
+
+    if (focus->accessibilityIsIgnored())
+        return focus->parentObjectUnignored();
     return focus;
 }
 
@@ -4080,10 +4083,16 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         case AXPressedStateChanged:
         case AXRowSpanChanged:
         case AXSelectedChildrenChanged:
-        case AXTextChanged:
         case AXTextSecurityChanged:
         case AXValueChanged:
             updateNode(notification.first);
+            break;
+        case AXTextChanged:
+            updateNode(notification.first);
+            if (RefPtr axParent = notification.first->parentObject(); axParent && axParent->isLabel()) {
+                if (RefPtr correspondingControl = axParent->correspondingControlForLabelElement())
+                    updateNode(correspondingControl.get());
+            }
             break;
         case AXLanguageChanged:
         case AXRowCountChanged:

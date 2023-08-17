@@ -389,6 +389,7 @@ public:
         case TypeKind::RefNull:
         case TypeKind::Rec:
         case TypeKind::Sub:
+        case TypeKind::Subfinal:
         case TypeKind::Struct:
         case TypeKind::Structref:
         case TypeKind::Externref:
@@ -422,6 +423,7 @@ public:
         case TypeKind::RefNull:
         case TypeKind::Rec:
         case TypeKind::Sub:
+        case TypeKind::Subfinal:
         case TypeKind::Struct:
         case TypeKind::Structref:
         case TypeKind::Externref:
@@ -1716,6 +1718,7 @@ public:
             case TypeKind::RefNull:
             case TypeKind::Rec:
             case TypeKind::Sub:
+            case TypeKind::Subfinal:
             case TypeKind::Struct:
             case TypeKind::Structref:
             case TypeKind::Externref:
@@ -1833,6 +1836,7 @@ public:
             case TypeKind::RefNull:
             case TypeKind::Rec:
             case TypeKind::Sub:
+            case TypeKind::Subfinal:
             case TypeKind::Struct:
             case TypeKind::Structref:
             case TypeKind::Externref:
@@ -6823,6 +6827,7 @@ public:
             case TypeKind::Func:
             case TypeKind::Array:
             case TypeKind::Sub:
+            case TypeKind::Subfinal:
             case TypeKind::V128:
                 clear(ClearMode::Zero, type, m_locals[i]);
                 break;
@@ -7191,6 +7196,7 @@ public:
                 case TypeKind::Nullexternref:
                 case TypeKind::Rec:
                 case TypeKind::Sub:
+                case TypeKind::Subfinal:
                 case TypeKind::Array:
                 case TypeKind::Struct:
                 case TypeKind::Func: {
@@ -7863,6 +7869,7 @@ public:
         case TypeKind::Nullexternref:
         case TypeKind::Rec:
         case TypeKind::Sub:
+        case TypeKind::Subfinal:
         case TypeKind::Array:
         case TypeKind::Struct:
         case TypeKind::Func: {

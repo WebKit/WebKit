@@ -591,7 +591,6 @@ template <> struct EnumTraits<WebCore::CDMInstance::HDCPStatus> {
 template <> struct EnumTraits<WebCore::GraphicsContextGLSimulatedEventForTesting> {
     using values = EnumValues<
     WebCore::GraphicsContextGLSimulatedEventForTesting,
-    WebCore::GraphicsContextGLSimulatedEventForTesting::ContextChange,
     WebCore::GraphicsContextGLSimulatedEventForTesting::GPUStatusFailure,
     WebCore::GraphicsContextGLSimulatedEventForTesting::Timeout
     >;

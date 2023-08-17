@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class WebGLCompressedTextureS3TC final : public WebGLExtension {
+class WebGLCompressedTextureS3TC final : public RefCounted<WebGLCompressedTextureS3TC>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(WebGLCompressedTextureS3TC);
 public:
     explicit WebGLCompressedTextureS3TC(WebGLRenderingContextBase&);
-    virtual ~WebGLCompressedTextureS3TC();
-
-    ExtensionName getName() const override;
+    ~WebGLCompressedTextureS3TC();
 
     static bool supported(GraphicsContextGL&);
 };

@@ -28,12 +28,17 @@
 
 #include "WGSL.h"
 #include <wtf/Assertions.h>
+#include <wtf/StringPrintStream.h>
 
 namespace TestWGSLAPI {
 
-void logCompilationError(WGSL::CompilationMessage& error)
+void logCompilationError(WGSL::FailedCheck& failedCheck)
 {
-    WTFLogAlways("%u:%u length:%u %s", error.lineNumber(), error.lineOffset(), error.length(), error.message().utf8().data());
+    StringPrintStream message;
+    message.print(String::number(failedCheck.errors.size()), " error", failedCheck.errors.size() != 1 ? "s" : "", " generated while compiling the shader:"_s);
+    for (const auto& error : failedCheck.errors)
+        message.print("\n"_s, error);
+    WTFLogAlways("%s", message.toString().utf8().data());
     GTEST_FAIL();
 }
 

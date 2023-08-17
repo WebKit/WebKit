@@ -213,8 +213,12 @@ String GStreamerInternalVideoEncoder::initialize(const VideoEncoder::Config& con
     } else if (m_codecName.startsWith("av01"_s)) {
         // FIXME: parse codec parameters.
         encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-av1"));
+    } else if (m_codecName.startsWith("hvc1"_s) || m_codecName.startsWith("hev1"_s)) {
+        encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-h265"));
+        if (const char* profile = GStreamerCodecUtilities::parseHEVCProfile(m_codecName))
+            gst_caps_set_simple(encoderCaps.get(), "profile", G_TYPE_STRING, profile, nullptr);
     } else
-        return makeString("Unsupported outgoing video encoding: ", m_codecName);
+        return makeString("Unsupported outgoing video encoding: "_s, m_codecName);
 
     if (config.width)
         gst_caps_set_simple(encoderCaps.get(), "width", G_TYPE_INT, static_cast<int>(config.width), nullptr);

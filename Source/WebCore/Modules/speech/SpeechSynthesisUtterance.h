@@ -27,7 +27,7 @@
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
-#include "ContextDestructionObserver.h"
+#include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "PlatformSpeechSynthesisUtterance.h"
 #include "SpeechSynthesisErrorCode.h"
@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-class WEBCORE_EXPORT SpeechSynthesisUtterance final : public PlatformSpeechSynthesisUtteranceClient, public RefCounted<SpeechSynthesisUtterance>, public EventTarget {
+class WEBCORE_EXPORT SpeechSynthesisUtterance final : public PlatformSpeechSynthesisUtteranceClient, public RefCounted<SpeechSynthesisUtterance>, public ActiveDOMObject, public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(SpeechSynthesisUtterance);
 public:
     using UtteranceCompletionHandler = Function<void(const SpeechSynthesisUtterance&)>;
@@ -76,19 +76,26 @@ public:
 
     void eventOccurred(const AtomString& type, unsigned long charIndex, unsigned long charLength, const String& name);
     void errorEventOccurred(const AtomString& type, SpeechSynthesisErrorCode);
+    void setIsActiveForEventDispatch(bool);
 
 private:
     SpeechSynthesisUtterance(ScriptExecutionContext&, const String&, UtteranceCompletionHandler&&);
+    void dispatchEventAndUpdateState(Event&);
 
-    ScriptExecutionContext* scriptExecutionContext() const final { return m_scriptExecutionContext.get(); }
+    // ActiveDOMObject
+    const char* activeDOMObjectName() const final;
+    bool virtualHasPendingActivity() const final;
+
+    // EventTarget
+    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     EventTargetInterface eventTargetInterface() const final { return SpeechSynthesisUtteranceEventTargetInterfaceType; }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
     RefPtr<PlatformSpeechSynthesisUtterance> m_platformUtterance;
     RefPtr<SpeechSynthesisVoice> m_voice;
-    WeakPtr<ScriptExecutionContext> m_scriptExecutionContext;
     UtteranceCompletionHandler m_completionHandler;
+    bool m_isActiveForEventDispatch { false };
 };
 
 } // namespace WebCore

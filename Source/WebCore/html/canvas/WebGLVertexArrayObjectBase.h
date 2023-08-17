@@ -29,7 +29,7 @@
 
 #include "GraphicsContextGL.h"
 #include "WebGLBuffer.h"
-#include "WebGLContextObject.h"
+#include "WebGLObject.h"
 #include <optional>
 
 namespace JSC {
@@ -44,7 +44,7 @@ namespace WebCore {
 
 class WebCoreOpaqueRoot;
 
-class WebGLVertexArrayObjectBase : public WebGLContextObject {
+class WebGLVertexArrayObjectBase : public WebGLObject {
 public:
     enum class Type { Default, User };
 

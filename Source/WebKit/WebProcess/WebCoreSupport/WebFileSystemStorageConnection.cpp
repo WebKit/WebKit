@@ -37,13 +37,13 @@
 
 namespace WebKit {
 
-Ref<WebFileSystemStorageConnection> WebFileSystemStorageConnection::create(IPC::Connection& connection)
+Ref<WebFileSystemStorageConnection> WebFileSystemStorageConnection::create(Ref<IPC::Connection>&& connection)
 {
-    return adoptRef(*new WebFileSystemStorageConnection(connection));
+    return adoptRef(*new WebFileSystemStorageConnection(WTFMove(connection)));
 }
 
-WebFileSystemStorageConnection::WebFileSystemStorageConnection(IPC::Connection& connection)
-    : m_connection(&connection)
+WebFileSystemStorageConnection::WebFileSystemStorageConnection(Ref<IPC::Connection>&& connection)
+    : m_connection(WTFMove(connection))
 {
 }
 

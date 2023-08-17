@@ -12,6 +12,35 @@ const instance = new Temporal.PlainTime();
 let timeZone = "2021-08-19T17:30";
 assert.throws(RangeError, () => instance.toZonedDateTime({ plainDate: new Temporal.PlainDate(2000, 5, 2), timeZone }), "bare date-time string is not a time zone");
 
+[
+  "2021-08-19T17:30-07:00:01",
+  "2021-08-19T17:30-07:00:00",
+  "2021-08-19T17:30-07:00:00.1",
+  "2021-08-19T17:30-07:00:00.0",
+  "2021-08-19T17:30-07:00:00.01",
+  "2021-08-19T17:30-07:00:00.00",
+  "2021-08-19T17:30-07:00:00.001",
+  "2021-08-19T17:30-07:00:00.000",
+  "2021-08-19T17:30-07:00:00.0001",
+  "2021-08-19T17:30-07:00:00.0000",
+  "2021-08-19T17:30-07:00:00.00001",
+  "2021-08-19T17:30-07:00:00.00000",
+  "2021-08-19T17:30-07:00:00.000001",
+  "2021-08-19T17:30-07:00:00.000000",
+  "2021-08-19T17:30-07:00:00.0000001",
+  "2021-08-19T17:30-07:00:00.0000000",
+  "2021-08-19T17:30-07:00:00.00000001",
+  "2021-08-19T17:30-07:00:00.00000000",
+  "2021-08-19T17:30-07:00:00.000000001",
+  "2021-08-19T17:30-07:00:00.000000000",
+].forEach((timeZone) => {
+  assert.throws(
+    RangeError,
+    () => instance.toZonedDateTime({ plainDate: new Temporal.PlainDate(2000, 5, 2), timeZone }),
+    `ISO string ${timeZone} with a sub-minute offset is not a valid time zone`
+  );
+});
+
 timeZone = "2021-08-19T17:30Z";
 const result1 = instance.toZonedDateTime({ plainDate: new Temporal.PlainDate(2000, 5, 2), timeZone });
 assert.sameValue(result1.timeZoneId, "UTC", "date-time + Z is UTC time zone");

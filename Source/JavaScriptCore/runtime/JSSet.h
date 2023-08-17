@@ -42,10 +42,13 @@ public:
         return vm.setSpace<mode>();
     }
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    static size_t allocationSize(Checked<size_t> inlineCapacity)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(JSSetType, StructureFlags), info());
+        ASSERT_UNUSED(inlineCapacity, !inlineCapacity);
+        return sizeof(JSSet);
     }
+
+    inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     static JSSet* create(VM& vm, Structure* structure)
     {

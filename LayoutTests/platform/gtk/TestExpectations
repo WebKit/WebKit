@@ -2167,8 +2167,6 @@ webkit.org/b/163829 svg/W3C-SVG-1.1/fonts-desc-02-t.svg [ Failure ]
 
 webkit.org/b/168188 fast/events/ime-compositionend-on-selection-change.html [ Failure ]
 
-webkit.org/b/168164 fast/picture/viewport-resize.html [ Failure ]
-
 webkit.org/b/168427 fast/scrolling/rtl-scrollbars-listbox.html [ ImageOnlyFailure ]
 webkit.org/b/168427 fast/scrolling/rtl-scrollbars-overflow-contents.html [ ImageOnlyFailure ]
 
@@ -2444,9 +2442,12 @@ webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/
 
 # mime-type is different due to different networking implementation.
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/content-type-checking.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/credentials.sub.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/integrity.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/invalid-content-type.any.sharedworker.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/invalid-content-type.any.worker.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/valid-content-type.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/credentials.sub.html [ Pass Failure ]
 
 # fails even with specific expectation.
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-048.html [ Pass Failure ]
@@ -2464,6 +2465,7 @@ webkit.org/b/256768 fast/mediastream/captureStream/canvas3d.html [ Failure ]
 webkit.org/b/249477 media/audioSession/audioSessionType.html [ Skip ]
 webkit.org/b/253832 media/media-source/media-source-webm-configuration-change.html [ Failure ]
 webkit.org/b/253832 media/media-source/media-source-webm-configuration-vp9-header-color.html [ Failure ]
+media/media-source/media-source-rendering-update-count.html [ Skip ]
 
 # Tests failing while still having the right values in expected related to the import in webkit.org/b/252516
 imported/w3c/web-platform-tests/css/css-tables/table-model-fixup-2.html [ Failure ]

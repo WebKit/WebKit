@@ -1383,11 +1383,6 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "SendDisplayConfigurationChangedMessageForTesting")) {
-        TestController::singleton().sendDisplayConfigurationChangedMessageForTesting();
-        return nullptr;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "SetServiceWorkerFetchTimeout")) {
         TestController::singleton().setServiceWorkerFetchTimeoutForTesting(doubleValue(messageBody));
         return nullptr;

@@ -31,12 +31,12 @@
 namespace WebCore {
 
 struct ImageBitmapOptions {
-    enum class Orientation { None, FlipY };
+    enum class Orientation { FromImage, FlipY,  None };
     enum class PremultiplyAlpha { None, Premultiply, Default };
     enum class ColorSpaceConversion { None, Default };
     enum class ResizeQuality { Pixelated, Low, Medium, High };
 
-    Orientation orientation { Orientation::None };
+    Orientation orientation { Orientation::FromImage };
     PremultiplyAlpha premultiplyAlpha { PremultiplyAlpha::Default };
     ColorSpaceConversion colorSpaceConversion { ColorSpaceConversion::Default };
     std::optional<unsigned> resizeWidth;

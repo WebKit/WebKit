@@ -37,17 +37,12 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLDebugShaders);
 
 WebGLDebugShaders::WebGLDebugShaders(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLDebugShadersName)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_translated_shader_source"_s);
 }
 
 WebGLDebugShaders::~WebGLDebugShaders() = default;
-
-WebGLExtension::ExtensionName WebGLDebugShaders::getName() const
-{
-    return WebGLDebugShadersName;
-}
 
 bool WebGLDebugShaders::supported(GraphicsContextGL& context)
 {

@@ -1316,6 +1316,8 @@ public:
     void compileNumberToStringWithValidRadixConstant(Node*, int32_t radix);
     void compileNewStringObject(Node*);
     void compileNewSymbol(Node*);
+    void compileNewMap(Node*);
+    void compileNewSet(Node*);
 
     void emitNewTypedArrayWithSizeInRegister(Node*, TypedArrayType, RegisteredStructure, GPRReg sizeGPR);
     void compileNewTypedArrayWithSize(Node*);

@@ -39,6 +39,7 @@ public:
 
     Type type() const { return m_type; }
     EventLoopTaskGroup* group() const { return m_task ? m_task->group() : nullptr; }
+    bool isSuspended() const { return m_suspended; }
 
     void stop()
     {
@@ -199,6 +200,7 @@ EventLoopTimerHandle EventLoop::scheduleTask(Seconds timeout, std::unique_ptr<Ev
 
     EventLoopTimerHandle handle { timer };
     m_scheduledTasks.add(timer);
+    invalidateNextTimerFireTimeCache();
     return handle;
 }
 
@@ -206,6 +208,7 @@ void EventLoop::removeScheduledTimer(EventLoopTimer& timer)
 {
     ASSERT(timer.type() == EventLoopTimer::Type::OneShot);
     m_scheduledTasks.remove(timer);
+    invalidateNextTimerFireTimeCache();
 }
 
 EventLoopTimerHandle EventLoop::scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, std::unique_ptr<EventLoopTask>&& action)
@@ -220,6 +223,7 @@ EventLoopTimerHandle EventLoop::scheduleRepeatingTask(Seconds nextTimeout, Secon
 
     EventLoopTimerHandle handle { timer };
     m_repeatingTasks.add(timer);
+    invalidateNextTimerFireTimeCache();
     return handle;
 }
 
@@ -227,6 +231,7 @@ void EventLoop::removeRepeatingTimer(EventLoopTimer& timer)
 {
     ASSERT(timer.type() == EventLoopTimer::Type::Repeating);
     m_repeatingTasks.remove(timer);
+    invalidateNextTimerFireTimeCache();
 }
 
 void EventLoop::queueMicrotask(std::unique_ptr<EventLoopTask>&& microtask)
@@ -290,7 +295,7 @@ void EventLoop::scheduleToRunIfNeeded()
     scheduleToRun();
 }
 
-void EventLoop::run()
+void EventLoop::run(std::optional<ApproximateTime> deadline)
 {
     m_isScheduledToRun = false;
     bool didPerformMicrotaskCheckpoint = false;
@@ -299,12 +304,14 @@ void EventLoop::run()
         auto tasks = std::exchange(m_tasks, { });
         m_groupsWithSuspendedTasks.clear();
         Vector<std::unique_ptr<EventLoopTask>> remainingTasks;
+        bool hasReachedDeadline = false;
         for (auto& task : tasks) {
             auto* group = task->group();
             if (!group || group->isStoppedPermanently())
                 continue;
 
-            if (group->isSuspended()) {
+            hasReachedDeadline = hasReachedDeadline || (deadline && ApproximateTime::now() > *deadline);
+            if (group->isSuspended() || hasReachedDeadline) {
                 m_groupsWithSuspendedTasks.add(*group);
                 remainingTasks.append(WTFMove(task));
                 continue;
@@ -317,6 +324,9 @@ void EventLoop::run()
         for (auto& task : m_tasks)
             remainingTasks.append(WTFMove(task));
         m_tasks = WTFMove(remainingTasks);
+
+        if (!m_tasks.isEmpty() && hasReachedDeadline)
+            scheduleToRunIfNeeded();
     }
 
     // FIXME: Remove this once everything is integrated with the event loop.
@@ -328,6 +338,49 @@ void EventLoop::clearAllTasks()
 {
     m_tasks.clear();
     m_groupsWithSuspendedTasks.clear();
+}
+
+void EventLoop::forEachAssociatedContext(const Function<void(ScriptExecutionContext&)>& apply)
+{
+    m_associatedContexts.forEach(apply);
+}
+
+bool EventLoop::findMatchingAssociatedContext(const Function<bool(ScriptExecutionContext&)>& predicate)
+{
+    for (auto& context : m_associatedContexts) {
+        if (predicate(context))
+            return true;
+    }
+    return false;
+}
+
+void EventLoop::addAssociatedContext(ScriptExecutionContext& context)
+{
+    m_associatedContexts.add(context);
+}
+
+void EventLoop::removeAssociatedContext(ScriptExecutionContext& context)
+{
+    m_associatedContexts.remove(context);
+}
+
+Markable<MonotonicTime> EventLoop::nextTimerFireTime() const
+{
+    if (!m_nextTimerFireTimeCache) {
+        Markable<MonotonicTime> nextFireTime;
+        auto updateResult = [&](auto& tasks) {
+            for (auto& timer : tasks) {
+                if (timer.isSuspended())
+                    continue;
+                if (!nextFireTime || timer.nextFireTime() < *nextFireTime)
+                    nextFireTime = timer.nextFireTime();
+            }
+        };
+        updateResult(m_scheduledTasks);
+        updateResult(m_repeatingTasks);
+        m_nextTimerFireTimeCache = nextFireTime;
+    }
+    return m_nextTimerFireTimeCache;
 }
 
 void EventLoopTaskGroup::markAsReadyToStop()
@@ -360,6 +413,8 @@ void EventLoopTaskGroup::suspend()
     // EventLoop::run checks whether each task's group is suspended or not.
     for (auto& timer : m_timers)
         timer.suspend();
+    if (RefPtr eventLoop = m_eventLoop.get())
+        m_eventLoop->invalidateNextTimerFireTimeCache();
 }
 
 void EventLoopTaskGroup::resume()
@@ -367,8 +422,10 @@ void EventLoopTaskGroup::resume()
     ASSERT(!isStoppedPermanently());
     ASSERT(!isReadyToStop());
     m_state = State::Running;
-    if (auto* eventLoop = m_eventLoop.get())
+    if (RefPtr eventLoop = m_eventLoop.get()) {
         eventLoop->resumeGroup(*this);
+        eventLoop->invalidateNextTimerFireTimeCache();
+    }
     for (auto& timer : m_timers)
         timer.resume();
 }
@@ -457,6 +514,8 @@ void EventLoopTaskGroup::setTimerAlignment(EventLoopTimerHandle handle, TimerAli
         return;
     ASSERT(m_timers.contains(*handle.m_timer));
     handle.m_timer->setTimerAlignment(timerAlignment);
+    if (RefPtr eventLoop = m_eventLoop.get())
+        eventLoop->invalidateNextTimerFireTimeCache();
 }
 
 void EventLoopTaskGroup::didChangeTimerAlignmentInterval(EventLoopTimerHandle handle)
@@ -465,6 +524,8 @@ void EventLoopTaskGroup::didChangeTimerAlignmentInterval(EventLoopTimerHandle ha
         return;
     ASSERT(m_timers.contains(*handle.m_timer));
     handle.m_timer->didChangeAlignmentInterval();
+    if (RefPtr eventLoop = m_eventLoop.get())
+        eventLoop->invalidateNextTimerFireTimeCache();
 }
 
 void EventLoopTaskGroup::setTimerHasReachedMaxNestingLevel(EventLoopTimerHandle handle, bool value)
@@ -473,6 +534,8 @@ void EventLoopTaskGroup::setTimerHasReachedMaxNestingLevel(EventLoopTimerHandle 
         return;
     ASSERT(m_timers.contains(*handle.m_timer));
     handle.m_timer->setHasReachedMaxNestingLevel(value);
+    if (RefPtr eventLoop = m_eventLoop.get())
+        eventLoop->invalidateNextTimerFireTimeCache();
 }
 
 void EventLoopTaskGroup::adjustTimerNextFireTime(EventLoopTimerHandle handle, Seconds delta)
@@ -481,6 +544,8 @@ void EventLoopTaskGroup::adjustTimerNextFireTime(EventLoopTimerHandle handle, Se
         return;
     ASSERT(m_timers.contains(*handle.m_timer));
     handle.m_timer->adjustNextFireTime(delta);
+    if (RefPtr eventLoop = m_eventLoop.get())
+        eventLoop->invalidateNextTimerFireTimeCache();
 }
 
 void EventLoopTaskGroup::adjustTimerRepeatInterval(EventLoopTimerHandle handle, Seconds delta)
@@ -489,6 +554,8 @@ void EventLoopTaskGroup::adjustTimerRepeatInterval(EventLoopTimerHandle handle, 
         return;
     ASSERT(m_timers.contains(*handle.m_timer));
     handle.m_timer->adjustRepeatInterval(delta);
+    if (RefPtr eventLoop = m_eventLoop.get())
+        eventLoop->invalidateNextTimerFireTimeCache();
 }
 
 void EventLoopTaskGroup::didAddTimer(EventLoopTimer& timer)
@@ -501,21 +568,6 @@ void EventLoopTaskGroup::didRemoveTimer(EventLoopTimer& timer)
 {
     auto didRemove = m_timers.remove(timer);
     ASSERT_UNUSED(didRemove, didRemove);
-}
-
-void EventLoop::forEachAssociatedContext(const Function<void(ScriptExecutionContext&)>& apply)
-{
-    m_associatedContexts.forEach(apply);
-}
-
-void EventLoop::addAssociatedContext(ScriptExecutionContext& context)
-{
-    m_associatedContexts.add(context);
-}
-
-void EventLoop::removeAssociatedContext(ScriptExecutionContext& context)
-{
-    m_associatedContexts.remove(context);
 }
 
 } // namespace WebCore

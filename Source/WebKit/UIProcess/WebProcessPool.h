@@ -463,7 +463,6 @@ public:
     void setMockMediaDeviceIsEphemeral(const String&, bool);
     void resetMockMediaDevices();
 
-    void sendDisplayConfigurationChangedMessageForTesting();
     void clearCurrentModifierStateForTesting();
 
 #if ENABLE(TRACKING_PREVENTION)

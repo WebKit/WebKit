@@ -371,7 +371,7 @@ WebPaymentCoordinator* WebPage::paymentCoordinator()
 
 void WebPage::getContentsAsAttributedString(CompletionHandler<void(const WebCore::AttributedString&)>&& completionHandler)
 {
-    completionHandler(is<LocalFrame>(m_page->mainFrame()) ? attributedString(makeRangeSelectingNodeContents(*downcast<LocalFrame>(m_page->mainFrame()).document())) : AttributedString());
+    completionHandler(is<LocalFrame>(m_page->mainFrame()) ? attributedString(makeRangeSelectingNodeContents(Ref { *downcast<LocalFrame>(m_page->mainFrame()).document() })) : AttributedString());
 }
 
 void WebPage::setRemoteObjectRegistry(WebRemoteObjectRegistry* registry)
@@ -386,18 +386,18 @@ WebRemoteObjectRegistry* WebPage::remoteObjectRegistry()
 
 void WebPage::updateMockAccessibilityElementAfterCommittingLoad()
 {
-    auto* mainFrame = dynamicDowncast<WebCore::LocalFrame>(this->mainFrame());
-    auto* document = mainFrame ? mainFrame->document() : nullptr;
+    RefPtr mainFrame = dynamicDowncast<WebCore::LocalFrame>(this->mainFrame());
+    RefPtr document = mainFrame ? mainFrame->document() : nullptr;
     [m_mockAccessibilityElement setHasMainFramePlugin:document ? document->isPluginDocument() : false];
 }
 
 RetainPtr<CFDataRef> WebPage::pdfSnapshotAtSize(IntRect rect, IntSize bitmapSize, SnapshotOptions options)
 {
-    auto* coreFrame = m_mainFrame->coreLocalFrame();
+    RefPtr coreFrame = m_mainFrame->coreLocalFrame();
     if (!coreFrame)
         return nullptr;
 
-    auto* frameView = coreFrame->view();
+    RefPtr frameView = coreFrame->view();
     if (!frameView)
         return nullptr;
 
@@ -523,7 +523,7 @@ void WebPage::getPlatformEditorStateCommon(const LocalFrame& frame, EditorState&
             }
         }
 
-        if (auto* enclosingListElement = enclosingList(selection.start().containerNode())) {
+        if (RefPtr enclosingListElement = enclosingList(selection.start().containerNode())) {
             if (is<HTMLUListElement>(*enclosingListElement))
                 postLayoutData.enclosingListType = ListType::UnorderedList;
             else if (is<HTMLOListElement>(*enclosingListElement))
@@ -549,7 +549,7 @@ void WebPage::getPDFFirstPageSize(WebCore::FrameIdentifier frameID, CompletionHa
 #if !ENABLE(PDFKIT_PLUGIN)
     return completionHandler({ });
 #else
-    auto* webFrame = WebProcess::singleton().webFrame(frameID);
+    RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
     if (!webFrame)
         return completionHandler({ });
 
@@ -674,10 +674,10 @@ void WebPage::replaceSelectionWithPasteboardData(const Vector<String>& types, co
 
 void WebPage::readSelectionFromPasteboard(const String& pasteboardName, CompletionHandler<void(bool&&)>&& completionHandler)
 {
-    auto& frame = m_page->focusController().focusedOrMainFrame();
-    if (frame.selection().isNone())
+    Ref frame = m_page->focusController().focusedOrMainFrame();
+    if (frame->selection().isNone())
         return completionHandler(false);
-    frame.editor().readSelectionFromPasteboard(pasteboardName);
+    frame->editor().readSelectionFromPasteboard(pasteboardName);
     completionHandler(true);
 }
 
@@ -701,13 +701,13 @@ URL WebPage::applyLinkDecorationFiltering(const URL& url, LinkDecorationFilterin
     };
 
     bool shouldApplyLinkDecorationFiltering = [&] {
-        if (isLinkDecorationFilteringEnabled(mainFrame->loader().documentLoader()))
+        if (isLinkDecorationFilteringEnabled(RefPtr { mainFrame->loader().documentLoader() }.get()))
             return true;
 
-        if (isLinkDecorationFilteringEnabled(mainFrame->loader().provisionalDocumentLoader()))
+        if (isLinkDecorationFilteringEnabled(RefPtr { mainFrame->loader().provisionalDocumentLoader() }.get()))
             return true;
 
-        return isLinkDecorationFilteringEnabled(mainFrame->loader().policyDocumentLoader());
+        return isLinkDecorationFilteringEnabled(RefPtr { mainFrame->loader().policyDocumentLoader() }.get());
     }();
 
     if (!shouldApplyLinkDecorationFiltering)

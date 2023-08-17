@@ -52,7 +52,7 @@ namespace IDBServer {
 class IDBServer : public UniqueIDBDatabaseManager {
 public:
     using StorageQuotaManagerSpaceRequester = Function<StorageQuotaManager::Decision(const ClientOrigin&, uint64_t spaceRequested)>;
-    WEBCORE_EXPORT IDBServer(PAL::SessionID, const String& databaseDirectoryPath, StorageQuotaManagerSpaceRequester&&, Lock&);
+    WEBCORE_EXPORT IDBServer(const String& databaseDirectoryPath, StorageQuotaManagerSpaceRequester&&, Lock&);
     WEBCORE_EXPORT ~IDBServer();
 
     WEBCORE_EXPORT void registerConnection(IDBConnectionToClient&);
@@ -104,9 +104,6 @@ public:
 
     WEBCORE_EXPORT static uint64_t diskUsage(const String& rootDirectory, const ClientOrigin&);
 
-    WEBCORE_EXPORT bool hasDatabaseActivitiesOnMainThread() const;
-    WEBCORE_EXPORT void stopDatabaseActivitiesOnMainThread();
-
 private:
     UniqueIDBDatabase& getOrCreateUniqueIDBDatabase(const IDBDatabaseIdentifier&);
 
@@ -115,7 +112,6 @@ private:
     void removeDatabasesModifiedSinceForVersion(WallTime, const String&);
     void removeDatabasesWithOriginsForVersion(const Vector<SecurityOriginData>&, const String&);
 
-    PAL::SessionID m_sessionID;
     HashMap<IDBConnectionIdentifier, RefPtr<IDBConnectionToClient>> m_connectionMap;
     HashMap<IDBDatabaseIdentifier, std::unique_ptr<UniqueIDBDatabase>> m_uniqueIDBDatabaseMap;
 

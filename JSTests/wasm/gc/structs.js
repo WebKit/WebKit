@@ -193,7 +193,7 @@ function testStructNew() {
   instantiate(`
     (module
       ;; Also test with subtype.
-      (type (struct))
+      (type (sub (struct)))
       (type $Empty (sub 0 (struct)))
       (func (export "main")
         (drop
@@ -296,7 +296,7 @@ function testStructNewDefault() {
   instantiate(`
     (module
       ;; Also test with subtype.
-      (type (struct))
+      (type (sub (struct)))
       (type $Empty (sub 0 (struct)))
       (func (export "main")
         (drop
@@ -412,7 +412,7 @@ function testStructGet() {
     let main = instantiate(`
       (module
         ;; Test subtype case as well.
-        (type (struct (field i32)))
+        (type (sub (struct (field i32))))
         (type $Point (sub 0 (struct (field $x i32))))
          (func (export "main") (result i32)
            (struct.get $Point $x
@@ -799,7 +799,7 @@ function testStructSet() {
     let main = instantiate(`
       (module
         ;; Test subtype case as well.
-        (type (struct (field (mut i32))))
+        (type (sub (struct (field (mut i32)))))
         (type $Point (sub 0 (struct (field $x (mut i32)))))
         (func $doTest (param $p (ref $Point)) (result i32)
           (struct.set $Point $x
@@ -825,7 +825,7 @@ function testStructSet() {
   {
     let main = instantiate(`
       (module
-        (type $Point (struct (field $x (mut i32))))
+        (type $Point (sub (struct (field $x (mut i32)))))
         (type $Sub (sub 0 (struct (field (mut i32) (mut i32)))))
         (func $doTest (result i32) (local $p (ref null $Sub))
           (local.set $p (struct.new $Sub (i32.const 0) (i32.const 1)))

@@ -68,10 +68,6 @@ static NSString * const kDateFormatString = @"yyyy-MM-dd"; // "2011-01-27".
 static NSString * const kMonthFormatString = @"yyyy-MM"; // "2011-01".
 static NSString * const kTimeFormatString = @"HH:mm"; // "13:45".
 static NSString * const kDateTimeFormatString = @"yyyy-MM-dd'T'HH:mm"; // "2011-01-27T13:45"
-static const NSTimeInterval kMillisecondsPerSecond = 1000;
-
-static const CGFloat kDateTimePickerControlMargin = 6;
-static const CGFloat kDateTimePickerToolbarHeight = 44;
 
 - (id)initWithView:(WKContentView *)view datePickerMode:(UIDatePickerMode)mode
 {
@@ -117,7 +113,8 @@ static const CGFloat kDateTimePickerToolbarHeight = 44;
     _isDismissingDatePicker = NO;
 
     _accessoryView = adoptNS([[UIToolbar alloc] init]);
-    [[_accessoryView heightAnchor] constraintEqualToConstant:kDateTimePickerToolbarHeight].active = YES;
+    CGSize accessorySize = [_accessoryView sizeThatFits:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
+    [[_accessoryView heightAnchor] constraintEqualToConstant:accessorySize.height].active = YES;
 
 #if HAVE(UITOOLBAR_STANDARD_APPEARANCE)
     auto toolbarAppearance = adoptNS([[UIToolbarAppearance alloc] init]);

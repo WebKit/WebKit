@@ -3748,12 +3748,6 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
     _page->replaceSelectedText(text, word);
 }
 
-- (void)selectWordBackward
-{
-    _autocorrectionContextNeedsUpdate = YES;
-    _page->selectWordBackward();
-}
-
 - (void)_promptForReplaceForWebView:(id)sender
 {
     if (!_page->editorState().postLayoutData)
@@ -4204,9 +4198,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_keyboardDidRequestDismissal:(NSNotification *)notification
 {
-    if (![self isFirstResponder])
-        return;
-    _keyboardDidRequestDismissal = YES;
+    if (_isEditable && [self isFirstResponder])
+        _keyboardDidRequestDismissal = YES;
 }
 
 - (void)copyForWebView:(id)sender
@@ -4772,42 +4765,26 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)requestPreferredArrowDirectionForEditMenuWithCompletionHandler:(void(^)(UIEditMenuArrowDirection))completion
 {
-    [self _requestEvasionRectsAboveSelectionIfNeeded:[completion = makeBlockPtr(completion)](const Vector<WebCore::FloatRect>& rects) {
-        completion(rects.isEmpty() ? UIEditMenuArrowDirectionAutomatic : UIEditMenuArrowDirectionUp);
-    }];
-}
-
-#endif
-
-- (void)requestRectsToEvadeForSelectionCommandsWithCompletionHandler:(void(^)(NSArray<NSValue *> *rects))completion
-{
-    [self _requestEvasionRectsAboveSelectionIfNeeded:[completion = makeBlockPtr(completion)](const Vector<WebCore::FloatRect>& rects) {
-        completion(createNSArray(rects).get());
-    }];
-}
-
-- (void)_requestEvasionRectsAboveSelectionIfNeeded:(CompletionHandler<void(const Vector<WebCore::FloatRect>&)>&&)completion
-{
     if ([self _shouldSuppressSelectionCommands]) {
-        completion({ });
+        completion(UIEditMenuArrowDirectionAutomatic);
         return;
     }
 
-    auto requestRectsToEvadeIfNeeded = [startTime = ApproximateTime::now(), weakSelf = WeakObjCPtr<WKContentView>(self), completion = WTFMove(completion)]() mutable {
+    auto requestRectsToEvadeIfNeeded = [startTime = ApproximateTime::now(), weakSelf = WeakObjCPtr<WKContentView>(self), completion = makeBlockPtr(completion)]() mutable {
         auto strongSelf = weakSelf.get();
         if (!strongSelf) {
-            completion({ });
+            completion(UIEditMenuArrowDirectionAutomatic);
             return;
         }
 
         if ([strongSelf webView]._editable) {
-            completion({ });
+            completion(UIEditMenuArrowDirectionAutomatic);
             return;
         }
 
         auto focusedElementType = strongSelf->_focusedElementInformation.elementType;
         if (focusedElementType != WebKit::InputType::ContentEditable && focusedElementType != WebKit::InputType::TextArea) {
-            completion({ });
+            completion(UIEditMenuArrowDirectionAutomatic);
             return;
         }
 
@@ -4816,16 +4793,18 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         WorkQueue::main().dispatchAfter(delayBeforeShowingEditMenu, [completion = WTFMove(completion), weakSelf]() mutable {
             auto strongSelf = weakSelf.get();
             if (!strongSelf) {
-                completion({ });
+                completion(UIEditMenuArrowDirectionAutomatic);
                 return;
             }
 
             if (!strongSelf->_page) {
-                completion({ });
+                completion(UIEditMenuArrowDirectionAutomatic);
                 return;
             }
 
-            strongSelf->_page->requestEvasionRectsAboveSelection(WTFMove(completion));
+            strongSelf->_page->requestEvasionRectsAboveSelection([completion = WTFMove(completion)](auto& rects) mutable {
+                completion(rects.isEmpty() ? UIEditMenuArrowDirectionAutomatic : UIEditMenuArrowDirectionUp);
+            });
         });
     };
 
@@ -4835,6 +4814,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     requestRectsToEvadeIfNeeded();
 #endif
 }
+
+#endif // HAVE(UI_EDIT_MENU_INTERACTION)
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
@@ -8549,6 +8530,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         completion(nil, nil);
 }
 
+- (NSArray<UIMenuElement *> *)additionalMediaControlsContextMenuItemsForActionSheetAssistant:(WKActionSheetAssistant *)assistant
+{
+#if PLATFORM(VISION)
+    if (self.webView.fullscreenState == WKFullscreenStateInFullscreen)
+        return @[ [self.webView fullScreenWindowSceneDimmingAction] ];
+#endif
+    return @[ ];
+}
+
 #if USE(UICONTEXTMENU)
 
 - (UITargetedPreview *)createTargetedContextMenuHintForActionSheetAssistant:(WKActionSheetAssistant *)assistant
@@ -8646,26 +8636,8 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 
 - (WebCore::DataOwnerType)_dataOwnerForPasteboard:(WebKit::PasteboardAccessIntent)intent
 {
-    auto specifiedType = [&] {
-        if (intent == WebKit::PasteboardAccessIntent::Read)
-            return coreDataOwnerType(self._dataOwnerForPaste);
-
-        if (intent == WebKit::PasteboardAccessIntent::Write)
-            return coreDataOwnerType(self._dataOwnerForCopy);
-
-        ASSERT_NOT_REACHED();
-        return WebCore::DataOwnerType::Undefined;
-    }();
-
-    if (specifiedType != WebCore::DataOwnerType::Undefined)
-        return specifiedType;
-
-#if !PLATFORM(MACCATALYST)
-    if ([[PAL::getMCProfileConnectionClass() sharedConnection] isURLManaged:[_webView URL]])
-        return WebCore::DataOwnerType::Enterprise;
-#endif
-
-    return WebCore::DataOwnerType::Undefined;
+    auto clientSuppliedDataOwner = intent == WebKit::PasteboardAccessIntent::Read ? self._dataOwnerForPaste : self._dataOwnerForCopy;
+    return coreDataOwnerType([_webView _effectiveDataOwner:clientSuppliedDataOwner]);
 }
 
 - (RetainPtr<WKTargetedPreviewContainer>)_createPreviewContainerWithLayerName:(NSString *)layerName
@@ -10724,8 +10696,13 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 - (void)_writePromisedAttachmentToPasteboard:(WebCore::PromisedAttachmentInfo&&)info
 {
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-    if (auto item = createItemProvider(*_page, WTFMove(info)))
+    auto item = createItemProvider(*_page, WTFMove(info));
+    if (!item)
+        return;
+
+    [UIPasteboard _performAsDataOwner:[_webView _effectiveDataOwner:self._dataOwnerForCopy] block:^{
         UIPasteboard.generalPasteboard.itemProviders = @[ item.get() ];
+    }];
 #else
     UNUSED_PARAM(info);
 #endif
@@ -11758,6 +11735,12 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 @end
 
 @implementation WKContentView (WKTesting)
+
+- (void)selectWordBackwardForTesting
+{
+    _autocorrectionContextNeedsUpdate = YES;
+    _page->selectWordBackward();
+}
 
 - (void)_doAfterReceivingEditDragSnapshotForTesting:(dispatch_block_t)action
 {

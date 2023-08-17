@@ -475,3 +475,47 @@ Inspector::AugmentableInspectorController* JSGlobalContextGetAugmentableInspecto
     return &globalObject->inspectorController();
 }
 #endif
+
+bool JSContextGroupEnableSamplingProfiler(JSContextGroupRef group)
+{
+    VM& vm = *toJS(group);
+    JSLockHolder locker(&vm);
+
+#if ENABLE(SAMPLING_PROFILER)
+    vm.enableSamplingProfiler();
+    return true;
+#else
+    return false;
+#endif
+}
+
+void JSContextGroupDisableSamplingProfiler(JSContextGroupRef group)
+{
+    VM& vm = *toJS(group);
+    JSLockHolder locker(&vm);
+
+#if ENABLE(SAMPLING_PROFILER)
+    vm.disableSamplingProfiler();
+#endif
+}
+
+JSStringRef JSContextGroupTakeSamplesFromSamplingProfiler(JSContextGroupRef group)
+{
+    VM& vm = *toJS(group);
+    JSLockHolder locker(&vm);
+
+#if ENABLE(SAMPLING_PROFILER)
+    auto json = vm.takeSamplingProfilerSamplesAsJSON();
+    if (UNLIKELY(!json))
+        return nullptr;
+
+    auto jsonData = json->toJSONString();
+    if (UNLIKELY(jsonData.isNull()))
+        return nullptr;
+
+    return OpaqueJSString::tryCreate(WTFMove(jsonData)).leakRef();
+#else
+    return nullptr;
+#endif
+}
+

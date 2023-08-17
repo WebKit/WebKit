@@ -2595,3 +2595,13 @@ webkit.org/b/260070 fast/selectors/style-invalidation-hover-change-siblings.html
 
 webkit.org/b/260107 [ Debug ] http/wpt/workers/modules/dedicated-worker-import-csp.html [ Skip ]
 webkit.org/b/260111 [ Ventura Release ] http/wpt/workers/modules/dedicated-worker-import-csp.html [ Failure ]
+
+webkit.org/b/260280 fullscreen/fullscreen-no-scrollbars-on-ancestor-root.html [ ImageOnlyFailure ]
+
+# webkit.org/b/260320 Mark expectations for multiple Mac wk1 tests slowing down EWS
+imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-reload.html [ ImageOnlyFailure Pass ]
+imported/w3c/web-platform-tests/css/selectors/invalidation/nth-child-in-shadow-root.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-content-box-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/selectors/invalidation/nth-last-child-in-shadow-root.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/content-security-policy/reporting/report-original-url-on-mixed-content-frame.https.sub.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-085.html [ ImageOnlyFailure ]

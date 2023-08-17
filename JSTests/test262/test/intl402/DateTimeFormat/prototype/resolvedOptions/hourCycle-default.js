@@ -9,7 +9,7 @@ description: >
 info: |
   12.4.5 Intl.DateTimeFormat.prototype.resolvedOptions()
 
-  12.1.1 InitializeDateTimeFormat ( dateTimeFormat, locales, options )
+  11.1.2 CreateDateTimeFormat ( dateTimeFormat, locales, options, required, defaults )
    29. If dateTimeFormat.[[Hour]] is not undefined, then
      a. Let hcDefault be dataLocaleData.[[hourCycle]].
      b. Let hc be dateTimeFormat.[[HourCycle]].

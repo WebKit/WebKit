@@ -1,5 +1,5 @@
 2d.pattern.repeat.empty
 
 
-FAIL OffscreenCanvas test: 2d.pattern.repeat.empty promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS OffscreenCanvas test: 2d.pattern.repeat.empty
 

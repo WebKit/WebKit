@@ -203,7 +203,7 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
 
 void WebPage::handleAcceptedCandidate(WebCore::TextCheckingResult acceptedCandidate)
 {
-    auto* frame = m_page->focusController().focusedFrame();
+    RefPtr frame = m_page->focusController().focusedFrame();
     if (!frame)
         return;
 
@@ -269,28 +269,28 @@ static LocalFrame* frameForEvent(KeyboardEvent* event)
 
 bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressCommand>& commands, KeyboardEvent* event)
 {
-    auto& frame = event ? *frameForEvent(event) : m_page->focusController().focusedOrMainFrame();
-    ASSERT(frame.page() == corePage());
+    Ref frame = event ? *frameForEvent(event) : m_page->focusController().focusedOrMainFrame();
+    ASSERT(frame->page() == corePage());
 
     bool eventWasHandled = false;
     for (size_t i = 0; i < commands.size(); ++i) {
         if (commands[i].commandName == "insertText:"_s) {
-            if (frame.editor().hasComposition()) {
+            if (frame->editor().hasComposition()) {
                 eventWasHandled = true;
-                frame.editor().confirmComposition(commands[i].text);
+                frame->editor().confirmComposition(commands[i].text);
             } else {
-                if (!frame.editor().canEdit())
+                if (!frame->editor().canEdit())
                     continue;
 
                 // An insertText: might be handled by other responders in the chain if we don't handle it.
                 // One example is space bar that results in scrolling down the page.
-                eventWasHandled |= frame.editor().insertText(commands[i].text, event);
+                eventWasHandled |= frame->editor().insertText(commands[i].text, event);
             }
         } else {
             if (commands[i].commandName == "scrollPageDown:"_s || commands[i].commandName == "scrollPageUp:"_s)
-                frame.eventHandler().setProcessingKeyRepeatForPotentialScroll(event && event->repeat());
+                frame->eventHandler().setProcessingKeyRepeatForPotentialScroll(event && event->repeat());
 
-            Editor::Command command = frame.editor().command(commandNameForSelectorName(commands[i].commandName));
+            Editor::Command command = frame->editor().command(commandNameForSelectorName(commands[i].commandName));
             if (command.isSupported()) {
                 bool commandExecutedByEditor = command.execute(event);
                 eventWasHandled |= commandExecutedByEditor;
@@ -310,7 +310,7 @@ bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressComm
 
 bool WebPage::handleEditingKeyboardEvent(KeyboardEvent& event)
 {
-    auto* frame = frameForEvent(&event);
+    RefPtr frame = frameForEvent(&event);
     
     auto* platformEvent = event.underlyingPlatformEvent();
     if (!platformEvent)
@@ -349,9 +349,9 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent& event)
 
 void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& editingRange, CompletionHandler<void(const WebCore::AttributedString&, const EditingRange&)>&& completionHandler)
 {
-    auto& frame = m_page->focusController().focusedOrMainFrame();
+    Ref frame = m_page->focusController().focusedOrMainFrame();
 
-    const VisibleSelection& selection = frame.selection().selection();
+    const VisibleSelection& selection = frame->selection().selection();
     if (selection.isNone() || !selection.isContentEditable() || selection.isInPasswordField()) {
         completionHandler({ }, { });
         return;
@@ -441,7 +441,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForSelectionInPDFPlugin(PDFSelec
 bool WebPage::performNonEditingBehaviorForSelector(const String& selector, KeyboardEvent* event)
 {
     // First give accessibility a chance to handle the event.
-    auto* frame = frameForEvent(event);
+    RefPtr frame = frameForEvent(event);
     frame->eventHandler().handleKeyboardSelectionMovementForAccessibility(*event);
     if (event->defaultHandled())
         return true;
@@ -498,7 +498,7 @@ void WebPage::registerUIProcessAccessibilityTokens(const IPC::DataReference& ele
 
 void WebPage::getStringSelectionForPasteboard(CompletionHandler<void(String&&)>&& completionHandler)
 {
-    auto& frame = m_page->focusController().focusedOrMainFrame();
+    Ref frame = m_page->focusController().focusedOrMainFrame();
 
     if (auto* pluginView = focusedPluginViewForFrame(frame)) {
         String selection = pluginView->getSelectionString();
@@ -506,19 +506,19 @@ void WebPage::getStringSelectionForPasteboard(CompletionHandler<void(String&&)>&
             return completionHandler(WTFMove(selection));
     }
 
-    if (frame.selection().isNone())
+    if (frame->selection().isNone())
         return completionHandler({ });
 
-    completionHandler(frame.editor().stringSelectionForPasteboard());
+    completionHandler(frame->editor().stringSelectionForPasteboard());
 }
 
 void WebPage::getDataSelectionForPasteboard(const String pasteboardType, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler)
 {
-    auto& frame = m_page->focusController().focusedOrMainFrame();
-    if (frame.selection().isNone())
+    Ref frame = m_page->focusController().focusedOrMainFrame();
+    if (frame->selection().isNone())
         return completionHandler({ });
 
-    auto buffer = frame.editor().dataSelectionForPasteboard(pasteboardType);
+    auto buffer = frame->editor().dataSelectionForPasteboard(pasteboardType);
     if (!buffer)
         return completionHandler({ });
     completionHandler(buffer.releaseNonNull());
@@ -557,14 +557,14 @@ bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest& request)
 
 void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent& event, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto& frame = m_page->focusController().focusedOrMainFrame();
+    Ref frame = m_page->focusController().focusedOrMainFrame();
 
     bool result = false;
 #if ENABLE(DRAG_SUPPORT)
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent };
-    HitTestResult hitResult = frame.eventHandler().hitTestResultAtPoint(frame.view()->windowToContents(event.position()), hitType);
+    HitTestResult hitResult = frame->eventHandler().hitTestResultAtPoint(frame->view()->windowToContents(event.position()), hitType);
     if (hitResult.isSelected())
-        result = frame.eventHandler().eventMayStartDrag(platform(event));
+        result = frame->eventHandler().eventMayStartDrag(platform(event));
 #endif
     completionHandler(result);
 }
@@ -578,15 +578,15 @@ void WebPage::requestAcceptsFirstMouse(int eventNumber, const WebKit::WebMouseEv
         return;
     }
 
-    auto& frame = m_page->focusController().focusedOrMainFrame();
+    Ref frame = m_page->focusController().focusedOrMainFrame();
 
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent };
-    HitTestResult hitResult = frame.eventHandler().hitTestResultAtPoint(frame.view()->windowToContents(event.position()), hitType);
-    frame.eventHandler().setActivationEventNumber(eventNumber);
+    HitTestResult hitResult = frame->eventHandler().hitTestResultAtPoint(frame->view()->windowToContents(event.position()), hitType);
+    frame->eventHandler().setActivationEventNumber(eventNumber);
     bool result = false;
 #if ENABLE(DRAG_SUPPORT)
     if (hitResult.isSelected())
-        result = frame.eventHandler().eventMayStartDrag(platform(event));
+        result = frame->eventHandler().eventMayStartDrag(platform(event));
     else
 #endif
         result = !!hitResult.scrollbar();
@@ -596,7 +596,7 @@ void WebPage::requestAcceptsFirstMouse(int eventNumber, const WebKit::WebMouseEv
 
 void WebPage::setTopOverhangImage(WebImage* image)
 {
-    auto* frameView = m_mainFrame->coreLocalFrame()->view();
+    RefPtr frameView = m_mainFrame->coreLocalFrame()->view();
     if (!frameView)
         return;
 
@@ -615,7 +615,7 @@ void WebPage::setTopOverhangImage(WebImage* image)
 
 void WebPage::setBottomOverhangImage(WebImage* image)
 {
-    auto* frameView = m_mainFrame->coreLocalFrame()->view();
+    RefPtr frameView = m_mainFrame->coreLocalFrame()->view();
     if (!frameView)
         return;
 
@@ -653,9 +653,9 @@ void WebPage::updateHeaderAndFooterLayersForDeviceScaleChange(float scaleFactor)
 void WebPage::computePagesForPrintingPDFDocument(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, Vector<IntRect>& resultPageRects)
 {
     ASSERT(resultPageRects.isEmpty());
-    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
-    auto* coreFrame = frame ? frame->coreLocalFrame() : nullptr;
-    RetainPtr<PDFDocument> pdfDocument = coreFrame ? pdfDocumentForPrintingFrame(coreFrame) : 0;
+    RefPtr frame = WebProcess::singleton().webFrame(frameID);
+    RefPtr coreFrame = frame ? frame->coreLocalFrame() : nullptr;
+    RetainPtr<PDFDocument> pdfDocument = coreFrame ? pdfDocumentForPrintingFrame(coreFrame.get()) : 0;
     if ([pdfDocument allowsPrinting]) {
         NSUInteger pageCount = [pdfDocument pageCount];
         IntRect pageRect(0, 0, ceilf(printInfo.availablePaperWidth), ceilf(printInfo.availablePaperHeight));
@@ -847,7 +847,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
 {
     layoutIfNeeded();
 
-    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame());
+    RefPtr localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame());
     if (!localMainFrame)
         return;
 
@@ -866,7 +866,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
     });
 
     bool immediateActionHitTestPreventsDefault = false;
-    Element* element = hitTestResult.targetElement();
+    RefPtr element = hitTestResult.targetElement();
 
     mainFrame.eventHandler().setImmediateActionStage(ImmediateActionStage::PerformedHitTest);
     if (element)
@@ -900,7 +900,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
 
     bool pageOverlayDidOverrideDataDetectors = false;
     for (auto& overlay : corePage()->pageOverlayController().pageOverlays()) {
-        auto webOverlay = WebPageOverlay::fromCoreOverlay(*overlay);
+        RefPtr webOverlay = WebPageOverlay::fromCoreOverlay(*overlay);
         if (!webOverlay)
             continue;
 
@@ -933,14 +933,14 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
 
 #if ENABLE(PDFKIT_PLUGIN)
     if (is<HTMLPlugInImageElement>(element)) {
-        if (auto* pluginView = static_cast<PluginView*>(downcast<HTMLPlugInImageElement>(*element).pluginWidget())) {
+        if (RefPtr pluginView = static_cast<PluginView*>(downcast<HTMLPlugInImageElement>(*element).pluginWidget())) {
             // FIXME: We don't have API to identify images inside PDFs based on position.
             auto lookupResult = pluginView->lookupTextAtLocation(locationInViewCoordinates, immediateActionResult);
             if (auto lookupText = std::get<String>(lookupResult); !lookupText.isEmpty()) {
                 // FIXME (144030): Focus does not seem to get set to the PDF when invoking the menu.
-                auto& document = element->document();
+                Ref document = element->document();
                 if (is<PluginDocument>(document))
-                    downcast<PluginDocument>(document).setFocusedElement(element);
+                    downcast<PluginDocument>(document).setFocusedElement(element.get());
 
                 auto selection = std::get<PDFSelection *>(lookupResult);
                 auto options = std::get<NSDictionary *>(lookupResult);
@@ -962,7 +962,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
 
 std::optional<std::tuple<WebCore::SimpleRange, NSDictionary *>> WebPage::lookupTextAtLocation(FloatPoint locationInViewCoordinates)
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
     if (!localMainFrame || !localMainFrame->view() || !localMainFrame->view()->renderView())
         return std::nullopt;
 
@@ -976,13 +976,13 @@ std::optional<std::tuple<WebCore::SimpleRange, NSDictionary *>> WebPage::lookupT
 
 void WebPage::immediateActionDidUpdate()
 {
-    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
+    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
         localMainFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionUpdated);
 }
 
 void WebPage::immediateActionDidCancel()
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
     if (!localMainFrame)
         return;
     ImmediateActionStage lastStage = localMainFrame->eventHandler().immediateActionStage();
@@ -994,7 +994,7 @@ void WebPage::immediateActionDidCancel()
 
 void WebPage::immediateActionDidComplete()
 {
-    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
+    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
         localMainFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCompleted);
 }
 
@@ -1022,7 +1022,7 @@ void WebPage::dataDetectorsDidChangeUI(PageOverlay::PageOverlayID overlayID)
 
 void WebPage::dataDetectorsDidHideUI(PageOverlay::PageOverlayID overlayID)
 {
-    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame());
+    RefPtr localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame());
     if (!localMainFrame)
         return;
     // Dispatching a fake mouse event will allow clients to display any UI that is normally displayed on hover.
@@ -1077,7 +1077,7 @@ void WebPage::playbackTargetPickerWasDismissed(PlaybackTargetClientContextIdenti
 void WebPage::didEndMagnificationGesture()
 {
 #if ENABLE(MAC_GESTURE_EVENTS)
-    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
+    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
         localMainFrame->eventHandler().didEndMagnificationGesture();
 #endif
 }

@@ -3688,26 +3688,26 @@ template <class TreeBuilder> typename TreeBuilder::ImportSpecifier Parser<LexerT
 }
 
 template <typename LexerType>
-template <class TreeBuilder> typename TreeBuilder::ImportAssertionList Parser<LexerType>::parseImportAssertions(TreeBuilder& context)
+template <class TreeBuilder> typename TreeBuilder::ImportAttributesList Parser<LexerType>::parseImportAttributes(TreeBuilder& context)
 {
     HashSet<UniquedStringImpl*> keys;
-    auto assertionList = context.createImportAssertionList();
-    consumeOrFail(OPENBRACE, "Expected opening '{' at the start of import assertion");
+    auto attributesList = context.createImportAttributesList();
+    consumeOrFail(OPENBRACE, "Expected opening '{' at the start of import attribute");
     while (!match(CLOSEBRACE)) {
-        failIfFalse(matchIdentifierOrKeyword() || match(STRING), "Expected an assertion key");
+        failIfFalse(matchIdentifierOrKeyword() || match(STRING), "Expected an attribute key");
         auto key = m_token.m_data.ident;
-        failIfFalse(keys.add(key->impl()).isNewEntry, "A duplicate key for import assertions '", key->impl(), "'");
+        failIfFalse(keys.add(key->impl()).isNewEntry, "A duplicate key for import attributes '", key->impl(), "'");
         next();
-        consumeOrFail(COLON, "Expected ':' after assertion key");
-        failIfFalse(match(STRING), "Expected an assertion value");
+        consumeOrFail(COLON, "Expected ':' after attribute key");
+        failIfFalse(match(STRING), "Expected an attribute value");
         auto value = m_token.m_data.ident;
         next();
-        context.appendImportAssertion(assertionList, *key, *value);
+        context.appendImportAttribute(attributesList, *key, *value);
         if (!consume(COMMA))
             break;
     }
-    handleProductionOrFail2(CLOSEBRACE, "}", "end", "import assertion");
-    return assertionList;
+    handleProductionOrFail2(CLOSEBRACE, "}", "end", "import attribute");
+    return attributesList;
 }
 
 template <typename LexerType>
@@ -3722,19 +3722,19 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseImportDeclara
 
     if (match(STRING)) {
         // import ModuleSpecifier ;
-        // import ModuleSpecifier [no LineTerminator here] AssertClause ;
+        // import ModuleSpecifier [no LineTerminator here] WithClause ;
         auto moduleName = parseModuleName(context);
         failIfFalse(moduleName, "Cannot parse the module name");
 
-        typename TreeBuilder::ImportAssertionList assertionList = 0;
-        if (Options::useImportAssertion() && !m_lexer->hasLineTerminatorBeforeToken() && matchContextualKeyword(m_vm.propertyNames->builtinNames().assertPublicName())) {
+        typename TreeBuilder::ImportAttributesList attributesList = 0;
+        if (Options::useImportAttributes() && !m_lexer->hasLineTerminatorBeforeToken() && match(WITH)) {
             next();
-            assertionList = parseImportAssertions(context);
-            failIfFalse(assertionList, "Unable to parse import assertion");
+            attributesList = parseImportAttributes(context);
+            failIfFalse(attributesList, "Unable to parse import attributes");
         }
 
         failIfFalse(autoSemiColon(), "Expected a ';' following a targeted import declaration");
-        return context.createImportDeclaration(importLocation, specifierList, moduleName, assertionList);
+        return context.createImportDeclaration(importLocation, specifierList, moduleName, attributesList);
     }
 
     bool isFinishedParsingImport = false;
@@ -3785,17 +3785,17 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseImportDeclara
     auto moduleName = parseModuleName(context);
     failIfFalse(moduleName, "Cannot parse the module name");
 
-    // [no LineTerminator here] AssertClause ;
-    typename TreeBuilder::ImportAssertionList assertionList = 0;
-    if (Options::useImportAssertion() && !m_lexer->hasLineTerminatorBeforeToken() && matchContextualKeyword(m_vm.propertyNames->builtinNames().assertPublicName())) {
+    // [no LineTerminator here] WithClause ;
+    typename TreeBuilder::ImportAttributesList attributesList = 0;
+    if (Options::useImportAttributes() && !m_lexer->hasLineTerminatorBeforeToken() && match(WITH)) {
         next();
-        assertionList = parseImportAssertions(context);
-        failIfFalse(assertionList, "Unable to parse import assertion");
+        attributesList = parseImportAttributes(context);
+        failIfFalse(attributesList, "Unable to parse import attributes");
     }
 
     failIfFalse(autoSemiColon(), "Expected a ';' following a targeted import declaration");
 
-    return context.createImportDeclaration(importLocation, specifierList, moduleName, assertionList);
+    return context.createImportDeclaration(importLocation, specifierList, moduleName, attributesList);
 }
 
 template <typename LexerType>
@@ -3868,12 +3868,12 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
         auto moduleName = parseModuleName(context);
         failIfFalse(moduleName, "Cannot parse the 'from' clause");
 
-        // [no LineTerminator here] AssertClause ;
-        typename TreeBuilder::ImportAssertionList assertionList = 0;
-        if (Options::useImportAssertion() && !m_lexer->hasLineTerminatorBeforeToken() && matchContextualKeyword(m_vm.propertyNames->builtinNames().assertPublicName())) {
+        // [no LineTerminator here] WithClause ;
+        typename TreeBuilder::ImportAttributesList attributesList = 0;
+        if (Options::useImportAttributes() && !m_lexer->hasLineTerminatorBeforeToken() && match(WITH)) {
             next();
-            assertionList = parseImportAssertions(context);
-            failIfFalse(assertionList, "Unable to parse import assertion");
+            attributesList = parseImportAttributes(context);
+            failIfFalse(attributesList, "Unable to parse import attributes");
         }
 
         failIfFalse(autoSemiColon(), "Expected a ';' following a targeted export declaration");
@@ -3884,10 +3884,10 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
             auto localName = &m_vm.propertyNames->starNamespacePrivateName;
             auto specifier = context.createExportSpecifier(specifierLocation, *localName, *exportedName);
             context.appendExportSpecifier(specifierList, specifier);
-            return context.createExportNamedDeclaration(exportLocation, specifierList, moduleName, assertionList);
+            return context.createExportNamedDeclaration(exportLocation, specifierList, moduleName, attributesList);
         }
 
-        return context.createExportAllDeclaration(exportLocation, moduleName, assertionList);
+        return context.createExportAllDeclaration(exportLocation, moduleName, attributesList);
     }
 
     case DEFAULT: {
@@ -4010,17 +4010,17 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
         handleProductionOrFail2(CLOSEBRACE, "}", "end", "export list");
 
         typename TreeBuilder::ModuleName moduleName = 0;
-        typename TreeBuilder::ImportAssertionList assertionList = 0;
+        typename TreeBuilder::ImportAttributesList attributesList = 0;
         if (matchContextualKeyword(m_vm.propertyNames->from)) {
             next();
             moduleName = parseModuleName(context);
             failIfFalse(moduleName, "Cannot parse the 'from' clause");
 
-            // [no LineTerminator here] AssertClause ;
-            if (Options::useImportAssertion() && !m_lexer->hasLineTerminatorBeforeToken() && matchContextualKeyword(m_vm.propertyNames->builtinNames().assertPublicName())) {
+            // [no LineTerminator here] WithClause ;
+            if (Options::useImportAttributes() && !m_lexer->hasLineTerminatorBeforeToken() && match(WITH)) {
                 next();
-                assertionList = parseImportAssertions(context);
-                failIfFalse(assertionList, "Unable to parse import assertion");
+                attributesList = parseImportAttributes(context);
+                failIfFalse(attributesList, "Unable to parse import attributes");
             }
         } else
             semanticFailIfTrue(hasReferencedModuleExportNames, "Cannot use module export names if they reference variable names in the current module");
@@ -4043,7 +4043,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
             }
         }
 
-        return context.createExportNamedDeclaration(exportLocation, specifierList, moduleName, assertionList);
+        return context.createExportNamedDeclaration(exportLocation, specifierList, moduleName, attributesList);
     }
 
     default: {

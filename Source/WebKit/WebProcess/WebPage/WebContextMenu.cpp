@@ -53,10 +53,10 @@ WebContextMenu::~WebContextMenu()
 void WebContextMenu::show()
 {
     ContextMenuController& controller = m_page->corePage()->contextMenuController();
-    auto* frame = controller.hitTestResult().innerNodeFrame();
+    RefPtr frame = controller.hitTestResult().innerNodeFrame();
     if (!frame)
         return;
-    auto* view = frame->view();
+    RefPtr view = frame->view();
     if (!view)
         return;
 

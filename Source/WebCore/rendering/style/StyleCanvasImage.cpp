@@ -71,7 +71,7 @@ void StyleCanvasImage::load(CachedResourceLoader&, const ResourceLoaderOptions&)
 {
 }
 
-RefPtr<Image> StyleCanvasImage::image(const RenderElement* renderer, const FloatSize&) const
+RefPtr<Image> StyleCanvasImage::image(const RenderElement* renderer, const FloatSize&, bool) const
 {
     if (!renderer)
         return &Image::nullImage();

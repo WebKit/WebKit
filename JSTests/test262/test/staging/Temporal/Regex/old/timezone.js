@@ -19,11 +19,7 @@ function generateTest(dateTimeString, zoneString, expectedName) {
 [
   "+00:00",
   "+00",
-  "+0000",
-  "+00:00:00",
-  "+000000",
-  "+00:00:00.000000000",
-  "+000000.0"
+  "+0000"
 ].forEach(zoneString => {
   generateTest("1976-11-18T15:23", `${ zoneString }[UTC]`, "UTC");
   generateTest("1976-11-18T15:23", `+00:00[${ zoneString }]`, "+00:00");
@@ -31,11 +27,7 @@ function generateTest(dateTimeString, zoneString, expectedName) {
 [
   "-04:00",
   "-04",
-  "-0400",
-  "-04:00:00",
-  "-040000",
-  "-04:00:00.000000000",
-  "-040000.0"
+  "-0400"
 ].forEach(zoneString => generateTest("1976-11-18T15:23", zoneString, "-04:00"));
 [
   "1",
@@ -48,11 +40,9 @@ function generateTest(dateTimeString, zoneString, expectedName) {
   "12345678"
 ].forEach(decimals => {
   test(`1976-11-18T15:23:30.${ decimals }Z`, "UTC");
-  test(`1976-11-18T15:23+01:00[+01:00:00.${ decimals }]`, `+01:00:00.${ decimals }`);
 });
 generateTest("1976-11-18T15:23", "z", "UTC");
 test("1976-11-18T15:23:30,1234Z", "UTC");
-test("1976-11-18T15:23-04:00:00,000000000", "-04:00");
 test("1976-11-18T15:23+000000,0[UTC]", "UTC");
 [
   "\u221204:00",
@@ -92,9 +82,6 @@ test("\u221200", "+00:00");
 test("\u22120300", "-03:00");
 test("\u221203:00", "-03:00");
 test("\u221203", "-03:00");
-test("+030000.0", "+03:00");
-test("-03:00:00", "-03:00");
-test("-03:00:00.000000000", "-03:00");
 test("1976-11-18T15:23:30.123456789Z[u-ca=iso8601]", "UTC");
 test("1976-11-18T15:23:30.123456789-04:00[u-ca=iso8601]", "-04:00");
 test("1976-11-18T15:23:30.123456789[UTC][u-ca=iso8601]", "UTC");

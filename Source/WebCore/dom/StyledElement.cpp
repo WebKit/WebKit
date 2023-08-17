@@ -276,6 +276,15 @@ void StyledElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
     });
 }
 
+const ImmutableStyleProperties* StyledElement::presentationalHintStyle() const
+{
+    if (!elementData())
+        return nullptr;
+    if (elementData()->presentationalHintStyleIsDirty())
+        const_cast<StyledElement&>(*this).rebuildPresentationalHintStyle();
+    return elementData()->presentationalHintStyle();
+}
+
 void StyledElement::rebuildPresentationalHintStyle()
 {
     auto style = MutableStyleProperties::create(isSVGElement() ? SVGAttributeMode : HTMLQuirksMode);
@@ -292,7 +301,7 @@ void StyledElement::rebuildPresentationalHintStyle()
     if (style->isEmpty())
         elementData.m_presentationalHintStyle = nullptr;
     else
-        elementData.m_presentationalHintStyle = WTFMove(style);
+        elementData.m_presentationalHintStyle = style->immutableCopy();
 }
 
 void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties& style, CSSPropertyID propertyID, CSSValueID identifier)

@@ -34,7 +34,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ShareableBitmap);
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER_AND_EXPORT(ShareableBitmap, WTF_INTERNAL);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ShareableBitmap);
 
 ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, std::optional<DestinationColorSpace> colorSpace, bool isOpaque)

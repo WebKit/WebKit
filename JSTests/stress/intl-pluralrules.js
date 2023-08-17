@@ -259,13 +259,13 @@ shouldBe(new Intl.PluralRules('en', {minimumFractionDigits: 0}).resolvedOptions(
 shouldBe(new Intl.PluralRules('en', {minimumFractionDigits: 6}).resolvedOptions().minimumFractionDigits, 6);
 shouldBe(new Intl.PluralRules('en', {minimumFractionDigits: 6}).resolvedOptions().maximumFractionDigits, 6);
 shouldThrow(() => new Intl.PluralRules('en', {minimumFractionDigits: -1}), RangeError);
-shouldThrow(() => new Intl.PluralRules('en', {minimumFractionDigits: 21}), RangeError);
+shouldThrow(() => new Intl.PluralRules('en', {minimumFractionDigits: 101}), RangeError);
 
 // The option maximumFractionDigits is processed correctly.
 shouldBe(new Intl.PluralRules('en', {maximumFractionDigits: 6}).resolvedOptions().maximumFractionDigits, 6);
 shouldThrow(() => new Intl.PluralRules('en', {minimumFractionDigits: 7, maximumFractionDigits: 6}), RangeError);
 shouldThrow(() => new Intl.PluralRules('en', {maximumFractionDigits: -1}), RangeError);
-shouldThrow(() => new Intl.PluralRules('en', {maximumFractionDigits: 21}), RangeError);
+shouldThrow(() => new Intl.PluralRules('en', {maximumFractionDigits: 101}), RangeError);
 
 // The option minimumSignificantDigits is processed correctly.
 shouldBe(new Intl.PluralRules('en', {minimumSignificantDigits: 6}).resolvedOptions().minimumSignificantDigits, 6);

@@ -49,7 +49,6 @@
 #include <WebKit/WKIconDatabase.h>
 #include <WebKit/WKMediaKeySystemPermissionCallback.h>
 #include <WebKit/WKMessageListener.h>
-#include <WebKit/WKMockDisplay.h>
 #include <WebKit/WKMockMediaDevice.h>
 #include <WebKit/WKNavigationActionRef.h>
 #include <WebKit/WKNavigationResponseRef.h>
@@ -4079,11 +4078,6 @@ WKRetainPtr<WKStringRef> TestController::takeViewPortSnapshot()
     return adoptWK(WKStringCreateWithUTF8CString("not implemented"));
 }
 #endif
-
-void TestController::sendDisplayConfigurationChangedMessageForTesting()
-{
-    WKSendDisplayConfigurationChangedMessageForTesting(platformContext());
-}
 
 void TestController::setServiceWorkerFetchTimeoutForTesting(double seconds)
 {

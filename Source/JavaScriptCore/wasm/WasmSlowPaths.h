@@ -66,8 +66,11 @@ namespace LLInt {
 
 #if ENABLE(WEBASSEMBLY_B3JIT)
 WASM_SLOW_PATH_HIDDEN_DECL(prologue_osr);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(prologue_osr, CallFrame* callFrame);
 WASM_SLOW_PATH_HIDDEN_DECL(loop_osr);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(loop_osr, CallFrame* callFrame, uint32_t pc, uint64_t* pl);
 WASM_SLOW_PATH_HIDDEN_DECL(epilogue_osr);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(epilogue_osr, CallFrame* callFrame);
 WASM_SLOW_PATH_HIDDEN_DECL(simd_go_straight_to_bbq_osr);
 #endif
 

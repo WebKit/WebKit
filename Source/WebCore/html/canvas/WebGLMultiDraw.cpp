@@ -37,7 +37,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLMultiDraw);
 
 WebGLMultiDraw::WebGLMultiDraw(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLMultiDrawName)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_multi_draw"_s);
 
@@ -48,11 +48,6 @@ WebGLMultiDraw::WebGLMultiDraw(WebGLRenderingContextBase& context)
 }
 
 WebGLMultiDraw::~WebGLMultiDraw() = default;
-
-WebGLExtension::ExtensionName WebGLMultiDraw::getName() const
-{
-    return WebGLMultiDrawName;
-}
 
 bool WebGLMultiDraw::supported(GraphicsContextGL& context)
 {

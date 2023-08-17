@@ -157,7 +157,6 @@ bool Quirks::needsPerDocumentAutoplayBehavior() const
 #endif
 }
 
-// bing.com https://bugs.webkit.org/show_bug.cgi?id=213118
 // zoom.com https://bugs.webkit.org/show_bug.cgi?id=223180
 bool Quirks::shouldAutoplayWebAudioForArbitraryUserGesture() const
 {
@@ -165,7 +164,7 @@ bool Quirks::shouldAutoplayWebAudioForArbitraryUserGesture() const
         return false;
 
     auto host = m_document->topDocument().url().host();
-    return equalLettersIgnoringASCIICase(host, "www.bing.com"_s) || host.endsWithIgnoringASCIICase(".zoom.us"_s);
+    return host.endsWithIgnoringASCIICase(".zoom.us"_s);
 }
 
 // hulu.com starz.com https://bugs.webkit.org/show_bug.cgi?id=190051
@@ -376,7 +375,6 @@ bool Quirks::isGoogleMaps() const
 
 // rdar://49124313
 // desmos.com rdar://47068176
-// msn.com rdar://49403260
 // flipkart.com rdar://49648520
 // soundcloud.com rdar://52915981
 // naver.com rdar://48068610
@@ -410,8 +408,6 @@ bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
         if (host == "trello.com"_s || host.endsWith(".trello.com"_s))
             return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "airtable.com"_s || host.endsWith(".airtable.com"_s))
-            return ShouldDispatchSimulatedMouseEvents::Yes;
-        if (host == "msn.com"_s || host.endsWith(".msn.com"_s))
             return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "flipkart.com"_s || host.endsWith(".flipkart.com"_s))
             return ShouldDispatchSimulatedMouseEvents::Yes;
@@ -880,6 +876,7 @@ bool Quirks::shouldBypassBackForwardCache() const
 
     auto topURL = m_document->topDocument().url();
     auto host = topURL.host();
+    RegistrableDomain registrableDomain { topURL };
 
     // Vimeo.com used to bypass the back/forward cache by serving "Cache-Control: no-store" over HTTPS.
     // We started caching such content in r250437 but the vimeo.com content unfortunately is not currently compatible
@@ -888,6 +885,18 @@ bool Quirks::shouldBypassBackForwardCache() const
     if (topURL.protocolIs("https"_s) && equalLettersIgnoringASCIICase(host, "vimeo.com"_s)) {
         if (auto* documentLoader = m_document->frame() ? m_document->frame()->loader().documentLoader() : nullptr)
             return documentLoader->response().cacheControlContainsNoStore();
+    }
+
+    // Login issue on bankofamerica.com (rdar://104938789).
+    if (registrableDomain == "bankofamerica.com"_s) {
+        if (auto* window = m_document->domWindow()) {
+            if (window->hasEventListeners(eventNames().unloadEvent)) {
+                static MainThreadNeverDestroyed<const AtomString> signInId("signIn"_s);
+                static MainThreadNeverDestroyed<const AtomString> loadingClass("loading"_s);
+                RefPtr signinButton = m_document->getElementById(signInId.get());
+                return signinButton && signinButton->classNames().contains(loadingClass.get());
+            }
+        }
     }
 
     // Google Docs used to bypass the back/forward cache by serving "Cache-Control: no-store" over HTTPS.
@@ -1080,13 +1089,6 @@ static bool isStorageAccessQuirkDomainAndElement(const URL& url, const Element& 
         && (element.classNames().contains("glyph_signIn_circle"_s)
         || element.classNames().contains("mectrl_headertext"_s)
         || element.classNames().contains("mectrl_header"_s));
-    }
-    // Skype case.
-    // FIXME(220105): Remove this quirk once Skype under outlook.live.com completes their login flow redesign.
-    if (url.host() == "outlook.live.com"_s) {
-        return element.hasClass()
-        && (element.classNames().contains("_3ioEp2RGR5vb0gqRDsaFPa"_s)
-        || element.classNames().contains("_2Am2jvTaBz17UJ8XnfxFOy"_s));
     }
     // Sony Network Entertainment login case.
     // FIXME(218760): Remove this quirk once playstation.com completes their login flow redesign.
@@ -1524,21 +1526,6 @@ bool Quirks::shouldDisablePushStateFilePathRestrictions() const
     return false;
 #endif
 }
-
-#if PLATFORM(COCOA)
-bool Quirks::shouldAdvertiseSupportForHLSSubtitleTypes() const
-{
-    if (!needsQuirks())
-        return false;
-
-    if (!m_shouldAdvertiseSupportForHLSSubtitleTypes) {
-        auto domain = RegistrableDomain(m_document->url()).string();
-        m_shouldAdvertiseSupportForHLSSubtitleTypes = domain == "hulu.com"_s;
-    }
-
-    return *m_shouldAdvertiseSupportForHLSSubtitleTypes;
-}
-#endif
 
 // apple-console.lrn.com (rdar://106779034)
 bool Quirks::shouldDisablePopoverAttributeQuirk() const

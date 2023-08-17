@@ -26,7 +26,7 @@
 [
     LegacyNoInterfaceObject,
     Conditional=WEBGL,
-    GenerateIsReachable=ImplWebGLRenderingContext,
+    GenerateIsReachable,
 ] interface WebGLStencilTexturing {
     const unsigned long DEPTH_STENCIL_TEXTURE_MODE_WEBGL = 0x90EA;
     const unsigned long STENCIL_INDEX_WEBGL              = 0x1901;

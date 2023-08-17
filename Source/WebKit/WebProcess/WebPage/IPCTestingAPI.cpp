@@ -1059,11 +1059,11 @@ JSValueRef JSIPCStreamClientConnection::sendMessage(JSContextRef context, JSObje
 
     auto [destinationID, messageName, timeout] = *info;
     auto& streamConnection = jsStreamConnection->connection();
-    auto& connection = streamConnection.connectionForTesting();
+    Ref connection = streamConnection.connectionForTesting();
 
     auto encoder = makeUniqueRef<IPC::Encoder>(messageName, destinationID);
     if (prepareToSendOutOfStreamMessage(context, argumentCount, arguments, *jsStreamConnection->m_jsIPC, streamConnection, encoder.get(), destinationID, timeout, exception))
-        connection.sendMessage(WTFMove(encoder), IPC::SendOption::IPCTestingMessage);
+        connection->sendMessage(WTFMove(encoder), IPC::SendOption::IPCTestingMessage);
 
     return returnValue;
 }
@@ -1173,7 +1173,8 @@ JSValueRef JSIPCStreamClientConnection::waitForMessage(JSContextRef context, JSO
         *exception = createTypeError(context, "Must specify the destination ID and message ID as the first two arguments"_s);
         return JSValueMakeUndefined(context);
     }
-    return waitForMessageWithJSArguments(self->m_streamConnection->connectionForTesting(), context, argumentCount, arguments, exception);
+    Ref connection = self->m_streamConnection->connectionForTesting();
+    return waitForMessageWithJSArguments(connection, context, argumentCount, arguments, exception);
 }
 
 JSObjectRef JSIPCStreamConnectionBuffer::createJSWrapper(JSContextRef context)

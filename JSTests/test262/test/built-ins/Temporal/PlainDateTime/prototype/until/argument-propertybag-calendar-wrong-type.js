@@ -12,7 +12,7 @@ features: [BigInt, Symbol, Temporal]
 const timeZone = new Temporal.TimeZone("UTC");
 const instance = new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321);
 
-const rangeErrorTests = [
+const primitiveTests = [
   [null, "null"],
   [true, "boolean"],
   ["", "empty string"],
@@ -20,9 +20,13 @@ const rangeErrorTests = [
   [1n, "bigint"],
 ];
 
-for (const [calendar, description] of rangeErrorTests) {
+for (const [calendar, description] of primitiveTests) {
   const arg = { year: 2019, monthCode: "M11", day: 1, calendar };
-  assert.throws(RangeError, () => instance.until(arg), `${description} does not convert to a valid ISO string`);
+  assert.throws(
+    typeof calendar === 'string' ? RangeError : TypeError,
+    () => instance.until(arg),
+    `${description} does not convert to a valid ISO string`
+  );
 }
 
 const typeErrorTests = [

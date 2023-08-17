@@ -4453,6 +4453,11 @@ void Internals::setSelectionWithoutValidation(Ref<Node> baseNode, unsigned baseO
         VisiblePosition { makeDeprecatedLegacyPosition(extentNode.get(), extentOffset) });
 }
 
+void Internals::setSelectionFromNone()
+{
+    contextDocument()->frame()->selection().setSelectionFromNone();
+}
+
 ExceptionOr<bool> Internals::isPluginUnavailabilityIndicatorObscured(Element& element)
 {
     if (!is<HTMLPlugInElement>(element))
@@ -5692,9 +5697,6 @@ void Internals::simulateEventForWebGLContext(SimulatedWebGLContextEvent event, W
 {
     WebGLRenderingContext::SimulatedEventForTesting contextEvent;
     switch (event) {
-    case SimulatedWebGLContextEvent::ContextChange:
-        contextEvent = WebGLRenderingContext::SimulatedEventForTesting::ContextChange;
-        break;
     case SimulatedWebGLContextEvent::GPUStatusFailure:
         contextEvent = WebGLRenderingContext::SimulatedEventForTesting::GPUStatusFailure;
         break;
@@ -6753,7 +6755,7 @@ bool Internals::supportsPictureInPicture()
 
 String Internals::focusRingColor()
 {
-    return serializationForCSS(RenderTheme::singleton().focusRingColor({ }));
+    return serializationForCSS(RenderTheme::singleton().focusRingColor(StyleColorOptions::UseSystemAppearance));
 }
 
 ExceptionOr<unsigned> Internals::createSleepDisabler(const String& reason, bool display)

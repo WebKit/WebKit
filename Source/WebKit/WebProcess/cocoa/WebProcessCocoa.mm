@@ -236,7 +236,7 @@ id WebProcess::accessibilityFocusedUIElement()
     }
 #endif
 
-    WebPage* page = WebProcess::singleton().focusedWebPage();
+    RefPtr page = WebProcess::singleton().focusedWebPage();
     if (!page || !page->accessibilityRemoteObject())
         return nil;
     return [page->accessibilityRemoteObject() accessibilityFocusedUIElement];
@@ -904,9 +904,9 @@ void WebProcess::initializeSandbox(const AuxiliaryProcessInitializationParameter
 
 static NSURL *origin(WebPage& page)
 {
-    auto& mainFrame = page.mainWebFrame();
+    Ref mainFrame = page.mainWebFrame();
 
-    URL mainFrameURL = mainFrame.url();
+    URL mainFrameURL = mainFrame->url();
     Ref<SecurityOrigin> mainFrameOrigin = SecurityOrigin::create(mainFrameURL);
     String mainFrameOriginString;
     if (!mainFrameOrigin->isOpaque())
@@ -1064,8 +1064,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            if (auto* wrapper = dynamic_objc_cast<WKTypeRefWrapper>(object))
-                return adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(WebProcess::singleton().transformHandlesToObjects(toImpl(wrapper.object)).get())]);
+            if (auto* wrapper = dynamic_objc_cast<WKTypeRefWrapper>(object)) {
+                RefPtr impl = toImpl(wrapper.object);
+                return adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(WebProcess::singleton().transformHandlesToObjects(impl.get()).get())]);
+            }
+
 ALLOW_DEPRECATED_DECLARATIONS_END
             return object;
         }
@@ -1095,8 +1098,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 return controller.handle;
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            if (auto* wrapper = dynamic_objc_cast<WKTypeRefWrapper>(object))
-                return adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(transformObjectsToHandles(toImpl(wrapper.object)).get())]);
+            if (auto* wrapper = dynamic_objc_cast<WKTypeRefWrapper>(object)) {
+                RefPtr impl = toImpl(wrapper.object);
+                return adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(transformObjectsToHandles(impl.get()).get())]);
+            }
 ALLOW_DEPRECATED_DECLARATIONS_END
             return object;
         }

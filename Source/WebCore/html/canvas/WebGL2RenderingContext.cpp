@@ -145,10 +145,8 @@ void WebGL2RenderingContext::initializeContextState()
 
     m_defaultTransformFeedback = WebGLTransformFeedback::create(*this);
     m_boundTransformFeedback = m_defaultTransformFeedback;
-    if (m_defaultTransformFeedback) {
-        addSharedObject(*m_defaultTransformFeedback);
+    if (m_defaultTransformFeedback)
         m_context->bindTransformFeedback(GraphicsContextGL::TRANSFORM_FEEDBACK, m_defaultTransformFeedback->object());
-    }
 
     m_boundIndexedUniformBuffers.resize(m_context->getInteger(GraphicsContextGL::MAX_UNIFORM_BUFFER_BINDINGS));
     m_uniformBufferOffsetAlignment = m_context->getInteger(GraphicsContextGL::UNIFORM_BUFFER_OFFSET_ALIGNMENT);
@@ -172,7 +170,6 @@ void WebGL2RenderingContext::initializeVertexArrayObjects()
     m_boundVertexArrayObject = m_defaultVertexArrayObject;
     if (!m_defaultVertexArrayObject)
         return;
-    addContextObject(*m_defaultVertexArrayObject);
     // The default VAO was removed in OpenGL 3.3 but not from WebGL 2; bind the default for WebGL to use.
     m_context->bindVertexArray(m_defaultVertexArrayObject->object());
 }
@@ -1708,9 +1705,7 @@ RefPtr<WebGLQuery> WebGL2RenderingContext::createQuery()
     if (isContextLost())
         return nullptr;
 
-    auto query = WebGLQuery::create(*this);
-    addSharedObject(query.get());
-    return query;
+    return WebGLQuery::create(*this);
 }
 
 void WebGL2RenderingContext::deleteQuery(WebGLQuery* query)
@@ -1733,7 +1728,7 @@ void WebGL2RenderingContext::deleteQuery(WebGLQuery* query)
 
 GCGLboolean WebGL2RenderingContext::isQuery(WebGLQuery* query)
 {
-    if (isContextLost() || !query || !query->validate(contextGroup(), *this))
+    if (isContextLost() || !query || !query->validate(*this))
         return false;
 
     if (query->isDeleted())
@@ -1872,10 +1867,7 @@ RefPtr<WebGLSampler> WebGL2RenderingContext::createSampler()
 {
     if (isContextLost())
         return nullptr;
-
-    auto sampler = WebGLSampler::create(*this);
-    addSharedObject(sampler.get());
-    return sampler;
+    return WebGLSampler::create(*this);
 }
 
 void WebGL2RenderingContext::deleteSampler(WebGLSampler* sampler)
@@ -1896,7 +1888,7 @@ void WebGL2RenderingContext::deleteSampler(WebGLSampler* sampler)
 
 GCGLboolean WebGL2RenderingContext::isSampler(WebGLSampler* sampler)
 {
-    if (isContextLost() || !sampler || !sampler->validate(contextGroup(), *this) || sampler->isDeleted())
+    if (isContextLost() || !sampler || !sampler->validate(*this) || sampler->isDeleted())
         return false;
 
     return m_context->isSampler(sampler->object());
@@ -1981,13 +1973,12 @@ RefPtr<WebGLSync> WebGL2RenderingContext::fenceSync(GCGLenum condition, GCGLbitf
     }
     auto sync = WebGLSync::create(*this);
     sync->scheduleAllowCacheUpdate(*this);
-    addSharedObject(sync.get());
     return sync;
 }
 
 GCGLboolean WebGL2RenderingContext::isSync(WebGLSync* sync)
 {
-    if (isContextLost() || !sync || !sync->validate(contextGroup(), *this))
+    if (isContextLost() || !sync || !sync->validate(*this))
         return false;
 
     if (sync->isDeleted())
@@ -2064,11 +2055,7 @@ RefPtr<WebGLTransformFeedback> WebGL2RenderingContext::createTransformFeedback()
     if (isContextLost())
         return nullptr;
 
-    auto transformFeedback = WebGLTransformFeedback::create(*this);
-    if (!transformFeedback)
-        return nullptr;
-    addSharedObject(*transformFeedback);
-    return transformFeedback;
+    return WebGLTransformFeedback::create(*this);
 }
 
 void WebGL2RenderingContext::deleteTransformFeedback(WebGLTransformFeedback* feedbackObject)
@@ -2080,7 +2067,7 @@ void WebGL2RenderingContext::deleteTransformFeedback(WebGLTransformFeedback* fee
     if (isContextLost() || !feedbackObject)
         return;
 
-    if (!feedbackObject->validate(contextGroup(), *this)) {
+    if (!feedbackObject->validate(*this)) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "delete", "object does not belong to this context");
         return;
     }
@@ -2104,7 +2091,7 @@ void WebGL2RenderingContext::deleteTransformFeedback(WebGLTransformFeedback* fee
 
 GCGLboolean WebGL2RenderingContext::isTransformFeedback(WebGLTransformFeedback* feedbackObject)
 {
-    if (isContextLost() || !feedbackObject || !feedbackObject->validate(contextGroup(), *this))
+    if (isContextLost() || !feedbackObject || !feedbackObject->validate(*this))
         return false;
 
     if (!feedbackObject->hasEverBeenBound())
@@ -2495,11 +2482,7 @@ RefPtr<WebGLVertexArrayObject> WebGL2RenderingContext::createVertexArray()
     if (isContextLost())
         return nullptr;
 
-    auto object = WebGLVertexArrayObject::create(*this, WebGLVertexArrayObject::Type::User);
-    if (!object)
-        return nullptr;
-    addContextObject(*object);
-    return object;
+    return WebGLVertexArrayObject::create(*this, WebGLVertexArrayObject::Type::User);
 }
 
 void WebGL2RenderingContext::deleteVertexArray(WebGLVertexArrayObject* arrayObject)
@@ -2511,7 +2494,7 @@ void WebGL2RenderingContext::deleteVertexArray(WebGLVertexArrayObject* arrayObje
     if (isContextLost() || !arrayObject)
         return;
 
-    if (!arrayObject->validate(contextGroup(), *this)) {
+    if (!arrayObject->validate(*this)) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "delete", "object does not belong to this context");
         return;
     }
@@ -2530,7 +2513,7 @@ void WebGL2RenderingContext::deleteVertexArray(WebGLVertexArrayObject* arrayObje
 
 GCGLboolean WebGL2RenderingContext::isVertexArray(WebGLVertexArrayObject* arrayObject)
 {
-    if (isContextLost() || !arrayObject || !arrayObject->validate(contextGroup(), *this))
+    if (isContextLost() || !arrayObject || !arrayObject->validate(*this))
         return false;
 
     if (!arrayObject->hasEverBeenBound())
@@ -2751,7 +2734,7 @@ WebGLAny WebGL2RenderingContext::getFramebufferAttachmentParameter(GCGLenum targ
     if (!validateNonDefaultFramebufferAttachment(functionName, attachment))
         return nullptr;
 
-    RefPtr<WebGLSharedObject> attachmentObject;
+    RefPtr<WebGLObject> attachmentObject;
     if (attachment == GraphicsContextGL::DEPTH_STENCIL_ATTACHMENT) {
         attachmentObject = targetFramebuffer->getAttachmentObject(GraphicsContextGL::DEPTH_ATTACHMENT);
         RefPtr stencilAttachment = targetFramebuffer->getAttachmentObject(GraphicsContextGL::STENCIL_ATTACHMENT);

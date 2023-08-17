@@ -89,6 +89,8 @@ def are_simulators_booted():
         ))
     except json.decoder.JSONDecodeError:
         return False
+    except subprocess.CalledProcessError:
+        return False
     for runtime, devices in simctl_output.get('devices', {}).items():
         for device in devices:
             state = device.get('state', '(unavailable)')

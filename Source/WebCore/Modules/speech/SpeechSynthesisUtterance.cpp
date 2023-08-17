@@ -40,17 +40,21 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SpeechSynthesisUtterance);
     
 Ref<SpeechSynthesisUtterance> SpeechSynthesisUtterance::create(ScriptExecutionContext& context, const String& text)
 {
-    return adoptRef(*new SpeechSynthesisUtterance(context, text, { }));
+    auto utterance = adoptRef(*new SpeechSynthesisUtterance(context, text, { }));
+    utterance->suspendIfNeeded();
+    return utterance;
 }
 
 Ref<SpeechSynthesisUtterance> SpeechSynthesisUtterance::create(ScriptExecutionContext& context, const String& text, SpeechSynthesisUtterance::UtteranceCompletionHandler&& completion)
 {
-    return adoptRef(*new SpeechSynthesisUtterance(context, text, WTFMove(completion)));
+    auto utterance = adoptRef(*new SpeechSynthesisUtterance(context, text, WTFMove(completion)));
+    utterance->suspendIfNeeded();
+    return utterance;
 }
 
 SpeechSynthesisUtterance::SpeechSynthesisUtterance(ScriptExecutionContext& context, const String& text, UtteranceCompletionHandler&& completion)
-    : m_platformUtterance(PlatformSpeechSynthesisUtterance::create(*this))
-    , m_scriptExecutionContext(context)
+    : ActiveDOMObject(&context)
+    , m_platformUtterance(PlatformSpeechSynthesisUtterance::create(*this))
     , m_completionHandler(WTFMove(completion))
 {
     m_platformUtterance->setText(text);
@@ -88,7 +92,7 @@ void SpeechSynthesisUtterance::eventOccurred(const AtomString& type, unsigned lo
         return;
     }
 
-    dispatchEvent(SpeechSynthesisEvent::create(type, { this, charIndex, charLength, static_cast<float>((MonotonicTime::now() - startTime()).seconds()), name }));
+    dispatchEventAndUpdateState(SpeechSynthesisEvent::create(type, { this, charIndex, charLength, static_cast<float>((MonotonicTime::now() - startTime()).seconds()), name }));
 }
 
 void SpeechSynthesisUtterance::errorEventOccurred(const AtomString& type, SpeechSynthesisErrorCode errorCode)
@@ -98,7 +102,34 @@ void SpeechSynthesisUtterance::errorEventOccurred(const AtomString& type, Speech
         return;
     }
 
-    dispatchEvent(SpeechSynthesisErrorEvent::create(type, { { this, 0, 0, static_cast<float>((MonotonicTime::now() - startTime()).seconds()), { } }, errorCode }));
+    dispatchEventAndUpdateState(SpeechSynthesisErrorEvent::create(type, { { this, 0, 0, static_cast<float>((MonotonicTime::now() - startTime()).seconds()), { } }, errorCode }));
+}
+
+void SpeechSynthesisUtterance::dispatchEventAndUpdateState(Event& event)
+{
+    dispatchEvent(event);
+
+    if (event.type() == eventNames().endEvent || event.type() == eventNames().errorEvent)
+        setIsActiveForEventDispatch(false);
+}
+
+void SpeechSynthesisUtterance::setIsActiveForEventDispatch(bool isActiveForEventDispatch)
+{
+    // When completionHandler is set, event will be passed to it instead of being dispatched.
+    if (m_completionHandler)
+        return;
+
+    m_isActiveForEventDispatch = isActiveForEventDispatch;
+}
+
+const char* SpeechSynthesisUtterance::activeDOMObjectName() const
+{
+    return "SpeechSynthesisUtterance";
+}
+
+bool SpeechSynthesisUtterance::virtualHasPendingActivity() const
+{
+    return m_isActiveForEventDispatch && hasEventListeners();
 }
 
 

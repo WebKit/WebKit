@@ -44,7 +44,8 @@ RealtimeOutgoingAudioSourceGStreamer::RealtimeOutgoingAudioSourceGStreamer(const
     gst_element_set_name(m_bin.get(), makeString("outgoing-audio-source-", sourceCounter.exchangeAdd(1)).ascii().data());
     m_audioconvert = makeGStreamerElement("audioconvert", nullptr);
     m_audioresample = makeGStreamerElement("audioresample", nullptr);
-    gst_bin_add_many(GST_BIN_CAST(m_bin.get()), m_audioconvert.get(), m_audioresample.get(), nullptr);
+    m_inputCapsFilter = gst_element_factory_make("capsfilter", nullptr);
+    gst_bin_add_many(GST_BIN_CAST(m_bin.get()), m_audioconvert.get(), m_audioresample.get(), m_inputCapsFilter.get(), nullptr);
 }
 
 RTCRtpCapabilities RealtimeOutgoingAudioSourceGStreamer::rtpCapabilities() const
@@ -70,6 +71,8 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
         return false;
     }
 
+    m_inputCaps = adoptGRef(gst_caps_new_any());
+
     if (encoding == "opus"_s) {
         m_encoder = makeGStreamerElement("opusenc", nullptr);
         if (!m_encoder)
@@ -78,10 +81,14 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
         // FIXME: Enable dtx too?
         gst_util_set_object_arg(G_OBJECT(m_encoder.get()), "audio-type", "voice");
 
-        if (const char* useInbandFec = gst_structure_get_string(structure, "useinbandfec")) {
-            if (!strcmp(useInbandFec, "1"))
-                g_object_set(m_encoder.get(), "inband-fec", true, nullptr);
-        }
+        const char* useInbandFec = gst_structure_get_string(structure, "useinbandfec");
+        if (!g_strcmp0(useInbandFec, "1"))
+            g_object_set(m_encoder.get(), "inband-fec", true, nullptr);
+
+        const char* isStereo = gst_structure_get_string(structure, "stereo");
+        if (!g_strcmp0(isStereo, "1"))
+            m_inputCaps = adoptGRef(gst_caps_new_simple("audio/x-raw", "channels", G_TYPE_INT, 2, nullptr));
+
     } else if (encoding == "g722"_s)
         m_encoder = makeGStreamerElement("avenc_g722", nullptr);
     else if (encoding == "pcma"_s)
@@ -112,13 +119,14 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
     if (gst_structure_get_int(structure, "payload", &payloadType))
         g_object_set(m_payloader.get(), "pt", payloadType, nullptr);
 
+    g_object_set(m_inputCapsFilter.get(), "caps", m_inputCaps.get(), nullptr);
     g_object_set(m_capsFilter.get(), "caps", caps.get(), nullptr);
 
     gst_bin_add_many(GST_BIN_CAST(m_bin.get()), m_payloader.get(), m_encoder.get(), nullptr);
 
     auto preEncoderSinkPad = adoptGRef(gst_element_get_static_pad(m_preEncoderQueue.get(), "sink"));
     if (!gst_pad_is_linked(preEncoderSinkPad.get())) {
-        if (!gst_element_link_many(m_outgoingSource.get(), m_inputSelector.get(), m_audioconvert.get(), m_audioresample.get(), m_preEncoderQueue.get(), nullptr)) {
+        if (!gst_element_link_many(m_outgoingSource.get(), m_inputSelector.get(), m_audioconvert.get(), m_audioresample.get(), m_inputCapsFilter.get(), m_preEncoderQueue.get(), nullptr)) {
             GST_ERROR_OBJECT(m_bin.get(), "Unable to link outgoing source to pre-encoder queue");
             return false;
         }

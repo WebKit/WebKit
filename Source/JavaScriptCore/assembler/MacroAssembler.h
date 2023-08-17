@@ -852,6 +852,11 @@ public:
         storePair32(src1, src2, dest, offset);
     }
 
+    void storePairPtr(RegisterID src1, RegisterID src2, Address dest)
+    {
+        storePair32(src1, src2, dest);
+    }
+
     Jump branchPtr(RelationalCondition cond, RegisterID left, RegisterID right)
     {
         return branch32(cond, left, right);
@@ -1198,6 +1203,11 @@ public:
     void storePairPtr(RegisterID src1, RegisterID src2, RegisterID dest, TrustedImm32 offset)
     {
         storePair64(src1, src2, dest, offset);
+    }
+
+    void storePairPtr(RegisterID src1, RegisterID src2, Address dest)
+    {
+        storePair64(src1, src2, dest);
     }
 
     void comparePtr(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID dest)

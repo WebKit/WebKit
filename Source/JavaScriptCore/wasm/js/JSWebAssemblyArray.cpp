@@ -38,6 +38,11 @@ namespace JSC {
 
 const ClassInfo JSWebAssemblyArray::s_info = { "WebAssembly.Array"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyArray) };
 
+Structure* JSWebAssemblyArray::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(WebAssemblyGCObjectType, StructureFlags), info());
+}
+
 JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<uint8_t>&& payload, RefPtr<const Wasm::RTT> rtt)
     : Base(vm, structure, rtt)
     , m_elementType(elementType)

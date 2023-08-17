@@ -3,16 +3,11 @@
 
 /*---
 esid: sec-temporal.zoneddatetime.prototype.withplaintime
-description: A number is converted to a string, then to Temporal.PlainTime
+description: A number is invalid in place of an ISO string for Temporal.PlainTime
 features: [Temporal]
 ---*/
 
 const instance = new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, "UTC");
-
-const arg = 123456.987654321;
-
-const result = instance.withPlainTime(arg);
-assert.sameValue(result.epochNanoseconds, 1000038896_987_654_321n, "123456.987654321 is a valid ISO string for PlainTime");
 
 const numbers = [
   1,
@@ -23,8 +18,8 @@ const numbers = [
 
 for (const arg of numbers) {
   assert.throws(
-    RangeError,
+    TypeError,
     () => instance.withPlainTime(arg),
-    `Number ${arg} does not convert to a valid ISO string for PlainTime`
+    "A number is not a valid ISO string for PlainTime"
   );
 }

@@ -29,13 +29,11 @@
 
 namespace WebCore {
 
-class OESTextureFloatLinear final : public WebGLExtension {
+class OESTextureFloatLinear final : public RefCounted<OESTextureFloatLinear>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(OESTextureFloatLinear);
 public:
     explicit OESTextureFloatLinear(WebGLRenderingContextBase&);
-    virtual ~OESTextureFloatLinear();
-
-    ExtensionName getName() const override;
+    ~OESTextureFloatLinear();
 
     static bool supported(GraphicsContextGL&);
 };

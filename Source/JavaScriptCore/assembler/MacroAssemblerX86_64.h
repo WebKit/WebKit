@@ -1126,6 +1126,11 @@ public:
         }
     }
 
+    void loadPair64(Address src, RegisterID dest1, RegisterID dest2)
+    {
+        loadPair64(src.base, TrustedImm32(src.offset), dest1, dest2);
+    }
+
     DataLabel32 load64WithAddressOffsetPatch(Address address, RegisterID dest)
     {
         padBeforePatch();
@@ -1218,6 +1223,11 @@ public:
     {
         store64(src1, Address(dest, offset.m_value));
         store64(src2, Address(dest, offset.m_value + 8));
+    }
+
+    void storePair64(RegisterID src1, RegisterID src2, Address dest)
+    {
+        storePair64(src1, src2, dest.base, TrustedImm32(dest.offset));
     }
 
     void transfer32(Address src, Address dest)

@@ -1,3 +1,3 @@
 
-FAIL 2d promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS 2d
 

@@ -31,7 +31,6 @@
 #include "InspectorInstrumentation.h"
 #include "ScriptExecutionContext.h"
 #include "WebCoreOpaqueRootInlines.h"
-#include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
 #include "WebGLShader.h"
 #include <JavaScriptCore/SlotVisitor.h>
@@ -61,7 +60,7 @@ Ref<WebGLProgram> WebGLProgram::create(WebGLRenderingContextBase& ctx)
 }
 
 WebGLProgram::WebGLProgram(WebGLRenderingContextBase& ctx)
-    : WebGLSharedObject(ctx)
+    : WebGLObject(ctx)
     , ContextDestructionObserver(ctx.scriptExecutionContext())
 {
     ASSERT(scriptExecutionContext());
@@ -84,7 +83,7 @@ WebGLProgram::~WebGLProgram()
         instances().remove(this);
     }
 
-    if (!hasGroupOrContext())
+    if (!m_context)
         return;
 
     runDestructor();
@@ -231,7 +230,7 @@ void WebGLProgram::cacheInfoIfNeeded()
     if (!object())
         return;
 
-    GraphicsContextGL* context = getAGraphicsContextGL();
+    GraphicsContextGL* context = graphicsContextGL();
     if (!context)
         return;
     GCGLint linkStatus = context->getProgrami(object(), GraphicsContextGL::LINK_STATUS);

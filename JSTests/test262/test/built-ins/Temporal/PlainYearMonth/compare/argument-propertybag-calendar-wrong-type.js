@@ -9,7 +9,7 @@ description: >
 features: [BigInt, Symbol, Temporal]
 ---*/
 
-const rangeErrorTests = [
+const primitiveTests = [
   [null, "null"],
   [true, "boolean"],
   ["", "empty string"],
@@ -17,10 +17,18 @@ const rangeErrorTests = [
   [1n, "bigint"],
 ];
 
-for (const [calendar, description] of rangeErrorTests) {
+for (const [calendar, description] of primitiveTests) {
   const arg = { year: 2019, monthCode: "M11", day: 1, calendar };
-  assert.throws(RangeError, () => Temporal.PlainYearMonth.compare(arg, new Temporal.PlainYearMonth(2019, 6)), `${description} does not convert to a valid ISO string (first argument)`);
-  assert.throws(RangeError, () => Temporal.PlainYearMonth.compare(new Temporal.PlainYearMonth(2019, 6), arg), `${description} does not convert to a valid ISO string (second argument)`);
+  assert.throws(
+    typeof calendar === "string" ? RangeError : TypeError,
+    () => Temporal.PlainYearMonth.compare(arg, new Temporal.PlainYearMonth(2019, 6)),
+    `${description} does not convert to a valid ISO string (first argument)`
+  );
+  assert.throws(
+    typeof calendar === "string" ? RangeError : TypeError,
+    () => Temporal.PlainYearMonth.compare(new Temporal.PlainYearMonth(2019, 6), arg),
+    `${description} does not convert to a valid ISO string (second argument)`
+  );
 }
 
 const typeErrorTests = [

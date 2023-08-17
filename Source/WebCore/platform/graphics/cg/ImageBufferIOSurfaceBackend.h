@@ -95,6 +95,7 @@ protected:
     bool m_mayHaveOutstandingBackingStoreReferences { false };
     VolatilityState m_volatilityState { VolatilityState::NonVolatile };
     RefPtr<IOSurfacePool> m_ioSurfacePool;
+    bool m_needsFirstFlush { true };
 };
 
 } // namespace WebCore

@@ -101,8 +101,10 @@ bool updateCurrentUserInterfaceIdiom()
             auto idiom = [[PAL::getUIDeviceClass() currentDevice] userInterfaceIdiom];
             if (idiom == UIUserInterfaceIdiomPhone || idiom == UIUserInterfaceIdiomWatch)
                 return UserInterfaceIdiom::SmallScreen;
+#if HAVE(UI_USER_INTERFACE_IDIOM_VISION)
             if (idiom == UIUserInterfaceIdiomVision)
                 return determineVisionSubidiom();
+#endif
         }
 
         return UserInterfaceIdiom::Default;

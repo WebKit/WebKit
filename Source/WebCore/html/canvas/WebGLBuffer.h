@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBGL)
 
-#include "WebGLSharedObject.h"
+#include "WebGLObject.h"
 #include <wtf/RefPtr.h>
 
 namespace JSC {
@@ -37,7 +37,7 @@ class ArrayBufferView;
 
 namespace WebCore {
 
-class WebGLBuffer final : public WebGLSharedObject {
+class WebGLBuffer final : public WebGLObject {
 public:
     static Ref<WebGLBuffer> create(WebGLRenderingContextBase&);
     virtual ~WebGLBuffer();

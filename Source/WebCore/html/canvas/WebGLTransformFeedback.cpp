@@ -31,7 +31,6 @@
 #include "WebCoreOpaqueRootInlines.h"
 #include "WebGL2RenderingContext.h"
 #include "WebGLBuffer.h"
-#include "WebGLContextGroup.h"
 #include <JavaScriptCore/AbstractSlotVisitorInlines.h>
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
@@ -50,14 +49,14 @@ RefPtr<WebGLTransformFeedback> WebGLTransformFeedback::create(WebGL2RenderingCon
 
 WebGLTransformFeedback::~WebGLTransformFeedback()
 {
-    if (!hasGroupOrContext())
+    if (!m_context)
         return;
 
     runDestructor();
 }
 
 WebGLTransformFeedback::WebGLTransformFeedback(WebGL2RenderingContext& ctx)
-    : WebGLSharedObject(ctx)
+    : WebGLObject(ctx)
 {
     m_boundIndexedTransformFeedbackBuffers.resize(ctx.maxTransformFeedbackSeparateAttribs());
 }

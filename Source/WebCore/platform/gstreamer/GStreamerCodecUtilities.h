@@ -28,6 +28,7 @@ namespace WebCore {
 namespace GStreamerCodecUtilities {
 
 std::pair<const char*, const char*> parseH264ProfileAndLevel(const String& codec);
+const char* parseHEVCProfile(const String& codec);
 uint8_t parseVP9Profile(const String& codec);
 
 } // namespace GStreamerCodecUtilities

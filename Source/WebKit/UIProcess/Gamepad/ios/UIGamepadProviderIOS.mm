@@ -30,6 +30,7 @@
 
 #import "UIKitSPI.h"
 #import "WKWebViewInternal.h"
+#import "WebPageProxy.h"
 
 namespace WebKit {
 

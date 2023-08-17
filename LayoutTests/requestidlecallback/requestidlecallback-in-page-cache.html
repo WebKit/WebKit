@@ -30,13 +30,13 @@ window.addEventListener("pageshow", function(event) {
     shouldBe('logsB.length', '0');
     iframe.contentWindow.requestIdleCallback(() => logsB.push('B3'));
     requestIdleCallback(() => logsA.push('A4'));
-    requestIdleCallback(() => {
+    setTimeout(() => {
         shouldBe('logsA.length', '4');
         shouldBeEqualToString('logsA.join(", ")', 'A1, A2, A3, A4');
         shouldBe('logsB.length', '3');
         shouldBeEqualToString('logsB.join(", ")', 'B1, B2, B3');
         finishJSTest();
-    });
+    }, 100);
 });
 
 window.addEventListener("pagehide", function(event) {

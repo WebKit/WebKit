@@ -5,5 +5,5 @@ This test validates that deadlines returned for requestIdleCallback are less tha
 The test can pass accidentally as idle deadlines have a maximum but they can always be shorter. It runs multiple times to expose potential failures.
 
 
-FAIL Check that the deadline is less than 50ms. assert_less_than_equal: expected a number less than or equal to 50 but got 93
+PASS Check that the deadline is less than 50ms.
 

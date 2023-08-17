@@ -1423,6 +1423,11 @@ public:
         }
     }
 
+    void loadPair32(Address src, RegisterID dest1, RegisterID dest2)
+    {
+        loadPair32(src.base, TrustedImm32(src.offset), dest1, dest2);
+    }
+
     void zeroExtend16To32(RegisterID src, RegisterID dest)
     {
         m_assembler.movzwl_rr(src, dest);
@@ -1474,6 +1479,11 @@ public:
     {
         store32(src1, Address(dest, offset.m_value));
         store32(src2, Address(dest, offset.m_value + 4));
+    }
+
+    void storePair32(RegisterID src1, RegisterID src2, Address dest)
+    {
+        storePair32(src1, src2, dest.base, TrustedImm32(dest.offset));
     }
 
     static ALWAYS_INLINE RegisterID getUnusedRegister(BaseIndex address)

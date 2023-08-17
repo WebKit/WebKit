@@ -81,20 +81,6 @@ assert.sameValue(`${ oneDay.subtract(hours24, {
 // throws on wrong offset for ZonedDateTime relativeTo string
 assert.throws(RangeError, () => oneDay.subtract(hours24, { relativeTo: "1971-01-01T00:00+02:00[-00:44:30]" }));
 
-// does not throw on HH:MM rounded offset for ZonedDateTime relativeTo string
-assert.sameValue(`${ oneDay.subtract(hours24, { relativeTo: "1971-01-01T00:00-00:45[-00:44:30]" }) }`, "PT0S");
-
-// throws on HH:MM rounded offset for ZonedDateTime relativeTo property bag
-assert.throws(RangeError, () => oneDay.subtract(hours24, {
-  relativeTo: {
-    year: 1971,
-    month: 1,
-    day: 1,
-    offset: "-00:45",
-    timeZone: "-00:44:30"
-  }
-}));
-
 // at least the required properties must be present in relativeTo
 assert.throws(TypeError, () => oneDay.subtract(hours24, {
   relativeTo: {

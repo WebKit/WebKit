@@ -44,9 +44,8 @@
 namespace WebCore {
 namespace IDBServer {
 
-IDBServer::IDBServer(PAL::SessionID sessionID, const String& databaseDirectoryPath, StorageQuotaManagerSpaceRequester&& spaceRequester, Lock& lock)
-    : m_sessionID(sessionID)
-    , m_spaceRequester(WTFMove(spaceRequester))
+IDBServer::IDBServer(const String& databaseDirectoryPath, StorageQuotaManagerSpaceRequester&& spaceRequester, Lock& lock)
+    : m_spaceRequester(WTFMove(spaceRequester))
     , m_lock(lock)
 {
     ASSERT(!isMainThread());
@@ -130,7 +129,6 @@ std::unique_ptr<IDBBackingStore> IDBServer::createBackingStore(const IDBDatabase
     if (m_databaseDirectoryPath.isEmpty())
         return makeUnique<MemoryIDBBackingStore>(identifier);
 
-    ASSERT(!m_sessionID.isEphemeral());
     if (identifier.isTransient())
         return makeUnique<MemoryIDBBackingStore>(identifier);
 
@@ -789,38 +787,6 @@ String IDBServer::upgradedDatabaseDirectory(const WebCore::IDBDatabaseIdentifier
     }
 
     return newDatabaseDirectory;
-}
-
-bool IDBServer::hasDatabaseActivitiesOnMainThread() const
-{
-    ASSERT(isMainThread());
-    ASSERT(m_lock.isHeld());
-
-    if (m_sessionID.isEphemeral())
-        return false;
-
-    for (auto& database : m_uniqueIDBDatabaseMap.values()) {
-        if (!database->identifier().isTransient() && database->hasActiveTransactions())
-            return true;
-    }
-    
-    return false;
-}
-
-void IDBServer::stopDatabaseActivitiesOnMainThread()
-{
-    ASSERT(isMainThread());
-    ASSERT(m_lock.isHeld());
-
-    // Only stop non-ephemeral IDBServer that can hold database file lock.
-    if (m_sessionID.isEphemeral())
-        return;
-
-    for (auto& database : m_uniqueIDBDatabaseMap.values()) {
-        // Only stop databases with non-ephemeral backing store that can hold database file lock.
-        if (!database->identifier().isTransient())
-            database->abortActiveTransactions();
-    }
 }
 
 } // namespace IDBServer

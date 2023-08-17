@@ -29,7 +29,6 @@
 #include "WebGLSync.h"
 
 #include "HTMLCanvasElement.h"
-#include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
@@ -43,14 +42,14 @@ Ref<WebGLSync> WebGLSync::create(WebGLRenderingContextBase& ctx)
 
 WebGLSync::~WebGLSync()
 {
-    if (!hasGroupOrContext())
+    if (!m_context)
         return;
 
     runDestructor();
 }
 
 WebGLSync::WebGLSync(WebGLRenderingContextBase& ctx)
-    : WebGLSharedObject(ctx)
+    : WebGLObject(ctx)
     , m_sync(ctx.graphicsContextGL()->fenceSync(GraphicsContextGL::SYNC_GPU_COMMANDS_COMPLETE, 0))
 {
     // This value is unused because the sync object is a pointer type, but it needs to be non-zero

@@ -331,7 +331,7 @@ void Connection::EventListener::open(Function<void()>&& handler)
 
     BOOL result;
     result = ::RegisterWaitForSingleObject(&m_waitHandle, m_state.hEvent, callback, this, INFINITE, WT_EXECUTEDEFAULT);
-    ASSERT(result);
+    ASSERT_UNUSED(result, result);
 }
 
 void Connection::EventListener::callback(void* data, BOOLEAN timerOrWaitFired)

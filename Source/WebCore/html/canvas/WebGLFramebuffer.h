@@ -27,8 +27,7 @@
 
 #if ENABLE(WEBGL)
 
-#include "WebGLContextObject.h"
-#include "WebGLSharedObject.h"
+#include "WebGLObject.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -46,14 +45,14 @@ namespace WebCore {
 class WebGLRenderbuffer;
 class WebGLTexture;
 
-class WebGLFramebuffer final : public WebGLContextObject {
+class WebGLFramebuffer final : public WebGLObject {
 public:
     class WebGLAttachment : public RefCounted<WebGLAttachment> {
     public:
         virtual ~WebGLAttachment();
 
-        virtual WebGLSharedObject* getObject() const = 0;
-        virtual bool isSharedObject(WebGLSharedObject*) const = 0;
+        virtual WebGLObject* getObject() const = 0;
+        virtual bool isSharedObject(WebGLObject*) const = 0;
         virtual bool isValid() const = 0;
         virtual bool isInitialized() const = 0;
         virtual void setInitialized() = 0;
@@ -76,10 +75,10 @@ public:
     void setAttachmentForBoundFramebuffer(GCGLenum target, GCGLenum attachment, GCGLenum texTarget, WebGLTexture*, GCGLint level, GCGLint layer);
     void setAttachmentForBoundFramebuffer(GCGLenum target, GCGLenum attachment, WebGLRenderbuffer*);
     // If an object is attached to the currently bound framebuffer, remove it.
-    void removeAttachmentFromBoundFramebuffer(const AbstractLocker&, GCGLenum target, WebGLSharedObject*);
+    void removeAttachmentFromBoundFramebuffer(const AbstractLocker&, GCGLenum target, WebGLObject*);
     // If a given attachment point for the currently bound framebuffer is not null, remove the attached object.
     void removeAttachmentFromBoundFramebuffer(const AbstractLocker&, GCGLenum target, GCGLenum attachment);
-    WebGLSharedObject* getAttachmentObject(GCGLenum) const;
+    WebGLObject* getAttachmentObject(GCGLenum) const;
 
     bool hasEverBeenBound() const { return object() && m_hasEverBeenBound; }
 

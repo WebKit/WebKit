@@ -90,59 +90,67 @@ fn testModulo() {
    _ = vec2(0.0, 0.0) % vec2(1.0, 1.0);
 }
 
+var s: sampler;
+
+var t1d: texture_1d<f32>;
+var t1di: texture_1d<i32>;
+var t1du: texture_1d<u32>;
+
+var t2d: texture_2d<f32>;
+var t2di: texture_2d<i32>;
+var t2du: texture_2d<u32>;
+
+var t2da: texture_2d_array<f32>;
+var t2dai: texture_2d_array<i32>;
+var t2dau: texture_2d_array<u32>;
+
+var t3d: texture_3d<f32>;
+var t3di: texture_3d<i32>;
+var t3du: texture_3d<u32>;
+
+var tm2d: texture_multisampled_2d<f32>;
+var tm2di: texture_multisampled_2d<i32>;
+var tm2du: texture_multisampled_2d<u32>;
+
+var te: texture_external;
+var tc: texture_cube<f32>;
+var tca: texture_cube_array<f32>;
+
 fn testTextureSample() {
   {
-    let t: texture_1d<f32>;
-    let s: sampler;
-    _ = textureSample(t, s, 1);
+    _ = textureSample(t1d, s, 1);
   }
 
   {
-    let t: texture_2d<f32>;
-    let s: sampler;
-    _ = textureSample(t, s, vec2<f32>(0, 0));
+    _ = textureSample(t2d, s, vec2<f32>(0, 0));
   }
 
   {
-    let t: texture_2d<f32>;
-    let s: sampler;
-    _ = textureSample(t, s, vec2<f32>(0, 0), vec2<i32>(1, 1));
+    _ = textureSample(t2d, s, vec2<f32>(0, 0), vec2<i32>(1, 1));
   }
 
   {
-    let t: texture_2d_array<f32>;
-    let s: sampler;
-    _ = textureSample(t, s, vec2<f32>(0, 0), 0);
+    _ = textureSample(t2da, s, vec2<f32>(0, 0), 0);
   }
 
   {
-    let t: texture_2d_array<f32>;
-    let s: sampler;
-    _ = textureSample(t, s, vec2<f32>(0, 0), 0, vec2<i32>(1, 1));
+    _ = textureSample(t2da, s, vec2<f32>(0, 0), 0, vec2<i32>(1, 1));
   }
 
   {
-    let t: texture_3d<f32>;
-    let s: sampler;
-    _ = textureSample(t, s, vec3<f32>(0, 0, 0));
+    _ = textureSample(t3d, s, vec3<f32>(0, 0, 0));
   }
 
   {
-    let t: texture_cube<f32>;
-    let s: sampler;
-    _ = textureSample(t, s, vec3<f32>(0, 0, 0));
+    _ = textureSample(tc, s, vec3<f32>(0, 0, 0));
   }
 
   {
-    let t: texture_3d<f32>;
-    let s: sampler;
-    _ = textureSample(t, s, vec3<f32>(0, 0, 0), vec3<i32>(0, 0, 0));
+    _ = textureSample(t3d, s, vec3<f32>(0, 0, 0), vec3<i32>(0, 0, 0));
   }
 
   {
-    let t: texture_cube_array<f32>;
-    let s: sampler;
-    _ = textureSample(t, s, vec3<f32>(0, 0, 0), 0);
+    _ = textureSample(tca, s, vec3<f32>(0, 0, 0), 0);
   }
 }
 
@@ -151,119 +159,103 @@ fn testTextureLoad()
     // [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture1d], T, U) => Vector[S, 4],
     {
         {
-            let t: texture_1d<f32>;
-            _ = textureLoad(t, 0, 0);
-            _ = textureLoad(t, 0i, 0u);
-            _ = textureLoad(t, 0u, 0i);
+            _ = textureLoad(t1d, 0, 0);
+            _ = textureLoad(t1d, 0i, 0u);
+            _ = textureLoad(t1d, 0u, 0i);
         }
         {
-            let t: texture_1d<i32>;
-            _ = textureLoad(t, 0, 0);
-            _ = textureLoad(t, 0i, 0u);
-            _ = textureLoad(t, 0u, 0i);
+            _ = textureLoad(t1di, 0, 0);
+            _ = textureLoad(t1di, 0i, 0u);
+            _ = textureLoad(t1di, 0u, 0i);
         }
         {
-            let t: texture_1d<u32>;
-            _ = textureLoad(t, 0, 0);
-            _ = textureLoad(t, 0i, 0u);
-            _ = textureLoad(t, 0u, 0i);
+            _ = textureLoad(t1du, 0, 0);
+            _ = textureLoad(t1du, 0i, 0u);
+            _ = textureLoad(t1du, 0u, 0i);
         }
     }
 
     // [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture2d], Vector[T, 2], U) => Vector[S, 4],
     {
         {
-            let t: texture_2d<f32>;
-            _ = textureLoad(t, vec2(0), 0);
-            _ = textureLoad(t, vec2(0i), 0u);
-            _ = textureLoad(t, vec2(0u), 0i);
+            _ = textureLoad(t2d, vec2(0), 0);
+            _ = textureLoad(t2d, vec2(0i), 0u);
+            _ = textureLoad(t2d, vec2(0u), 0i);
         }
         {
-            let t: texture_2d<i32>;
-            _ = textureLoad(t, vec2(0), 0);
-            _ = textureLoad(t, vec2(0i), 0u);
-            _ = textureLoad(t, vec2(0u), 0i);
+            _ = textureLoad(t2di, vec2(0), 0);
+            _ = textureLoad(t2di, vec2(0i), 0u);
+            _ = textureLoad(t2di, vec2(0u), 0i);
         }
         {
-            let t: texture_2d<u32>;
-            _ = textureLoad(t, vec2(0), 0);
-            _ = textureLoad(t, vec2(0i), 0u);
-            _ = textureLoad(t, vec2(0u), 0i);
+            _ = textureLoad(t2du, vec2(0), 0);
+            _ = textureLoad(t2du, vec2(0i), 0u);
+            _ = textureLoad(t2du, vec2(0u), 0i);
         }
     }
 
     // [T < ConcreteInteger, V < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture2dArray], Vector[T, 2], V, U) => Vector[S, 4],
     {
         {
-            let t: texture_2d_array<f32>;
-            _ = textureLoad(t, vec2(0), 0, 0);
-            _ = textureLoad(t, vec2(0i), 0u, 0i);
-            _ = textureLoad(t, vec2(0u), 0i, 0u);
+            _ = textureLoad(t2da, vec2(0), 0, 0);
+            _ = textureLoad(t2da, vec2(0i), 0u, 0i);
+            _ = textureLoad(t2da, vec2(0u), 0i, 0u);
         }
         {
-            let t: texture_2d_array<i32>;
-            _ = textureLoad(t, vec2(0), 0, 0);
-            _ = textureLoad(t, vec2(0i), 0u, 0i);
-            _ = textureLoad(t, vec2(0u), 0i, 0u);
+            _ = textureLoad(t2dai, vec2(0), 0, 0);
+            _ = textureLoad(t2dai, vec2(0i), 0u, 0i);
+            _ = textureLoad(t2dai, vec2(0u), 0i, 0u);
         }
         {
-            let t: texture_2d_array<u32>;
-            _ = textureLoad(t, vec2(0), 0, 0);
-            _ = textureLoad(t, vec2(0i), 0u, 0i);
-            _ = textureLoad(t, vec2(0u), 0i, 0u);
+            _ = textureLoad(t2dau, vec2(0), 0, 0);
+            _ = textureLoad(t2dau, vec2(0i), 0u, 0i);
+            _ = textureLoad(t2dau, vec2(0u), 0i, 0u);
         }
     }
 
     // [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture3d], Vector[T, 3], U) => Vector[S, 4],
     {
         {
-            let t: texture_3d<f32>;
-            _ = textureLoad(t, vec3(0), 0);
-            _ = textureLoad(t, vec3(0i), 0u);
-            _ = textureLoad(t, vec3(0u), 0i);
+            _ = textureLoad(t3d, vec3(0), 0);
+            _ = textureLoad(t3d, vec3(0i), 0u);
+            _ = textureLoad(t3d, vec3(0u), 0i);
         }
         {
-            let t: texture_3d<i32>;
-            _ = textureLoad(t, vec3(0), 0);
-            _ = textureLoad(t, vec3(0i), 0u);
-            _ = textureLoad(t, vec3(0u), 0i);
+            _ = textureLoad(t3di, vec3(0), 0);
+            _ = textureLoad(t3di, vec3(0i), 0u);
+            _ = textureLoad(t3di, vec3(0u), 0i);
         }
         {
-            let t: texture_3d<u32>;
-            _ = textureLoad(t, vec3(0), 0);
-            _ = textureLoad(t, vec3(0i), 0u);
-            _ = textureLoad(t, vec3(0u), 0i);
+            _ = textureLoad(t3du, vec3(0), 0);
+            _ = textureLoad(t3du, vec3(0i), 0u);
+            _ = textureLoad(t3du, vec3(0u), 0i);
         }
     }
 
     // [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, TextureMultisampled2d], Vector[T, 2], U) => Vector[S, 4],
     {
         {
-            let t: texture_multisampled_2d<f32>;
-            _ = textureLoad(t, vec2(0), 0);
-            _ = textureLoad(t, vec2(0i), 0u);
-            _ = textureLoad(t, vec2(0u), 0i);
+            _ = textureLoad(tm2d, vec2(0), 0);
+            _ = textureLoad(tm2d, vec2(0i), 0u);
+            _ = textureLoad(tm2d, vec2(0u), 0i);
         }
         {
-            let t: texture_multisampled_2d<i32>;
-            _ = textureLoad(t, vec2(0), 0);
-            _ = textureLoad(t, vec2(0i), 0u);
-            _ = textureLoad(t, vec2(0u), 0i);
+            _ = textureLoad(tm2di, vec2(0), 0);
+            _ = textureLoad(tm2di, vec2(0i), 0u);
+            _ = textureLoad(tm2di, vec2(0u), 0i);
         }
         {
-            let t: texture_multisampled_2d<u32>;
-            _ = textureLoad(t, vec2(0), 0);
-            _ = textureLoad(t, vec2(0i), 0u);
-            _ = textureLoad(t, vec2(0u), 0i);
+            _ = textureLoad(tm2du, vec2(0), 0);
+            _ = textureLoad(tm2du, vec2(0i), 0u);
+            _ = textureLoad(tm2du, vec2(0u), 0i);
         }
     }
 
     // [T < ConcreteInteger].(TextureExternal, Vector[T, 2]) => Vector[F32, 4],
     {
-        let t: texture_external;
-        _ = textureLoad(t, vec2(0));
-        _ = textureLoad(t, vec2(0i));
-        _ = textureLoad(t, vec2(0u));
+        _ = textureLoad(te, vec2(0));
+        _ = textureLoad(te, vec2(0i));
+        _ = textureLoad(te, vec2(0u));
     }
 }
 
@@ -363,34 +355,7 @@ fn testComparison() {
   }
 }
 
-fn testBitwise()
-{
-  {
-    _ = ~0;
-    _ = ~0i;
-    _ = ~0u;
-  }
-
-  {
-    _ = 0 & 1;
-    _ = 0i & 1i;
-    _ = 0u & 1u;
-  }
-
-  {
-    _ = 0 | 1;
-    _ = 0i | 1i;
-    _ = 0u | 1u;
-  }
-
-  {
-    _ = 0 ^ 1;
-    _ = 0i ^ 1i;
-    _ = 0u ^ 1u;
-  }
-}
-
-// 7.6. Logical Expressions (https://gpuweb.github.io/gpuweb/wgsl/#logical-expr)
+// 8.6. Logical Expressions (https://gpuweb.github.io/gpuweb/wgsl/#logical-expr)
 
 fn testLogicalNegation()
 {
@@ -469,6 +434,47 @@ fn testLogicalAnd()
     _ = vec4( true) & vec4(false);
     _ = vec4(false) & vec4( true);
     _ = vec4( true) & vec4( true);
+}
+
+// 8.9. Bit Expressions (https://www.w3.org/TR/WGSL/#bit-expr)
+
+fn testBitwise()
+{
+  {
+    _ = ~0;
+    _ = ~0i;
+    _ = ~0u;
+  }
+
+  {
+    _ = 0 & 1;
+    _ = 0i & 1i;
+    _ = 0u & 1u;
+  }
+
+  {
+    _ = 0 | 1;
+    _ = 0i | 1i;
+    _ = 0u | 1u;
+  }
+
+  {
+    _ = 0 ^ 1;
+    _ = 0i ^ 1i;
+    _ = 0u ^ 1u;
+  }
+
+  {
+    _ = 1  << 2;
+    _ = 1i << 2i;
+    _ = 1u << 2u;
+  }
+
+  {
+    _ = 1  >> 2;
+    _ = 1i >> 2i;
+    _ = 1u >> 2u;
+  }
 }
 
 // 16.1. Constructor Built-in Functions

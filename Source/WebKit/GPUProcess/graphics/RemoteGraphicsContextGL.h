@@ -105,7 +105,6 @@ protected:
 
     // GraphicsContextGL::Client overrides.
     void forceContextLost() final;
-    void dispatchContextChangedNotification() final;
 
     // Messages to be received.
     void ensureExtensionEnabled(String&&);

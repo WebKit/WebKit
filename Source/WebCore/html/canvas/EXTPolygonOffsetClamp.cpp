@@ -35,17 +35,12 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(EXTPolygonOffsetClamp);
 
 EXTPolygonOffsetClamp::EXTPolygonOffsetClamp(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, EXTPolygonOffsetClampName)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_polygon_offset_clamp"_s);
 }
 
 EXTPolygonOffsetClamp::~EXTPolygonOffsetClamp() = default;
-
-WebGLExtension::ExtensionName EXTPolygonOffsetClamp::getName() const
-{
-    return EXTPolygonOffsetClampName;
-}
 
 bool EXTPolygonOffsetClamp::supported(GraphicsContextGL& context)
 {

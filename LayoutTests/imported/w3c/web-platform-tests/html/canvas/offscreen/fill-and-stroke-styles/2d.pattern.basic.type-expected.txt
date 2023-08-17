@@ -1,5 +1,5 @@
 2d.pattern.basic.type
 
 
-FAIL OffscreenCanvas test: 2d.pattern.basic.type promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS OffscreenCanvas test: 2d.pattern.basic.type
 

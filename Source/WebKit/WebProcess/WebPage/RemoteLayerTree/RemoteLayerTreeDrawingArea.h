@@ -56,12 +56,23 @@ public:
     TransactionID nextTransactionID() const { return m_currentTransactionID.next(); }
     TransactionID lastCommittedTransactionID() const { return m_currentTransactionID; }
 
-    bool displayDidRefreshIsPending() const { return m_waitingForBackingStoreSwap; }
-
 protected:
-    void updateRendering();
+    enum class ScheduleRenderingUrgency {
+        // FIXME: There are many consumers of this (and triggerRenderingUpdate), do they all actually need the ASAP behaviour?
+        AsSoonAsPossible,
+        NextSuitableTime,
+    };
+    void scheduleRenderingUpdate(ScheduleRenderingUrgency);
 
 private:
+    enum class State {
+        Idle,
+        WaitingForDisplayDidRefresh,
+        WaitingForUpdateRenderingTimer,
+        WaitingForCallOnMainRunLoop,
+        WaitingForScheduleRenderingTimer,
+    };
+
     // DrawingArea
     void setNeedsDisplay() override;
     void setNeedsDisplayInRect(const WebCore::IntRect&) override;
@@ -71,8 +82,11 @@ private:
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) override;
     void addRootFrame(WebCore::FrameIdentifier) final;
-    void triggerRenderingUpdate() override;
+    void triggerRenderingUpdate() final;
     bool scheduleRenderingUpdate() final;
+
+    void updateRendering();
+
     void renderingUpdateFramesPerSecondChanged() final;
     void attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, WebCore::GraphicsLayer*) override;
 
@@ -133,13 +147,13 @@ private:
 
     class BackingStoreFlusher : public ThreadSafeRefCounted<BackingStoreFlusher> {
     public:
-        static Ref<BackingStoreFlusher> create(IPC::Connection*, UniqueRef<IPC::Encoder>&&, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>>);
+        static Ref<BackingStoreFlusher> create(RefPtr<IPC::Connection>&&, UniqueRef<IPC::Encoder>&&, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>>);
 
         void flush();
         bool hasFlushed() const { return m_hasFlushed; }
 
     private:
-        BackingStoreFlusher(IPC::Connection*, UniqueRef<IPC::Encoder>&&, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>>);
+        BackingStoreFlusher(RefPtr<IPC::Connection>&&, UniqueRef<IPC::Encoder>&&, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>>);
 
         RefPtr<IPC::Connection> m_connection;
         std::unique_ptr<IPC::Encoder> m_commitEncoder;
@@ -162,13 +176,12 @@ private:
 
     std::optional<WebCore::FloatRect> m_viewExposedRect;
 
+    State m_state { State::Idle };
+
     WebCore::Timer m_updateRenderingTimer;
     bool m_isRenderingSuspended { false };
     bool m_hasDeferredRenderingUpdate { false };
     bool m_inUpdateRendering { false };
-
-    bool m_waitingForBackingStoreSwap { false };
-    bool m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap { false };
 
     OSObjectPtr<dispatch_queue_t> m_commitQueue;
     RefPtr<BackingStoreFlusher> m_pendingBackingStoreFlusher;
@@ -182,7 +195,8 @@ private:
     WebCore::Timer m_scheduleRenderingTimer;
     std::optional<WebCore::FramesPerSecond> m_preferredFramesPerSecond;
     Seconds m_preferredRenderingUpdateInterval;
-    bool m_isScheduled { false };
+
+    bool m_updateRenderingIsPending { false };
 };
 
 inline bool RemoteLayerTreeDrawingArea::addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone> paintMilestones)

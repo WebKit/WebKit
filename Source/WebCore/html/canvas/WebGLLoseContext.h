@@ -29,16 +29,11 @@
 
 namespace WebCore {
 
-class WebGLLoseContext final : public WebGLExtension {
+class WebGLLoseContext final : public RefCounted<WebGLLoseContext>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(WebGLLoseContext);
 public:
     explicit WebGLLoseContext(WebGLRenderingContextBase&);
-    virtual ~WebGLLoseContext();
-
-    ExtensionName getName() const override;
-
-    void loseParentContext(WebGLRenderingContextBase::LostContextMode) override;
-
+    ~WebGLLoseContext();
     void loseContext();
     void restoreContext();
 };

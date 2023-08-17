@@ -1,5 +1,5 @@
 2d.pattern.paint.norepeat.coord2
 
 
-FAIL OffscreenCanvas test: 2d.pattern.paint.norepeat.coord2 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS OffscreenCanvas test: 2d.pattern.paint.norepeat.coord2
 

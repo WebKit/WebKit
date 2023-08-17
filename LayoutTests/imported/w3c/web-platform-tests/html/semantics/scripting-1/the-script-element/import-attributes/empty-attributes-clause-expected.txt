@@ -1,0 +1,3 @@
+
+PASS Test that no error occurs when an empty import attributes clause is provided.
+

@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBGL)
 
-#include "WebGLSharedObject.h"
+#include "WebGLObject.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -45,7 +45,7 @@ class WebGL2RenderingContext;
 class WebGLBuffer;
 class WebGLProgram;
 
-class WebGLTransformFeedback final : public WebGLSharedObject {
+class WebGLTransformFeedback final : public WebGLObject {
 public:
     virtual ~WebGLTransformFeedback();
 

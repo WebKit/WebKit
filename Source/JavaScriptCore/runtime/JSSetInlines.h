@@ -27,3 +27,12 @@
 
 #include "HashMapImplInlines.h"
 #include "JSSet.h"
+
+namespace JSC {
+
+inline Structure* JSSet::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSSetType, StructureFlags), info());
+}
+
+}

@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBGL)
 
-#include "WebGLContextObject.h"
+#include "WebGLObject.h"
 
 namespace WTF {
 class AbstractLocker;
@@ -35,7 +35,7 @@ class AbstractLocker;
 
 namespace WebCore {
 
-class WebGLTimerQueryEXT final : public WebGLContextObject {
+class WebGLTimerQueryEXT final : public WebGLObject {
 public:
     static Ref<WebGLTimerQueryEXT> create(WebGLRenderingContextBase&);
     virtual ~WebGLTimerQueryEXT();

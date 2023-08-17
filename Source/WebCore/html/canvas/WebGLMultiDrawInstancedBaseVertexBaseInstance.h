@@ -30,16 +30,14 @@
 
 namespace WebCore {
 
-class WebGLMultiDrawInstancedBaseVertexBaseInstance final : public WebGLExtension {
+class WebGLMultiDrawInstancedBaseVertexBaseInstance final : public RefCounted<WebGLMultiDrawInstancedBaseVertexBaseInstance>, public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(WebGLMultiDrawInstancedBaseVertexBaseInstance);
 public:
     using Int32List = WebGLRenderingContextBase::TypedList<Int32Array, int32_t>;
     using Uint32List = WebGLRenderingContextBase::TypedList<Uint32Array, uint32_t>;
 
     explicit WebGLMultiDrawInstancedBaseVertexBaseInstance(WebGLRenderingContextBase&);
-    virtual ~WebGLMultiDrawInstancedBaseVertexBaseInstance();
-
-    ExtensionName getName() const override;
+    ~WebGLMultiDrawInstancedBaseVertexBaseInstance();
 
     static bool supported(GraphicsContextGL&);
 

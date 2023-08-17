@@ -45,11 +45,7 @@ public:
         return vm.customGetterFunctionSpace<mode>();
     }
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        ASSERT(globalObject);
-        return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
-    }
+    inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     JS_EXPORT_PRIVATE static JSCustomGetterFunction* create(VM&, JSGlobalObject*, const PropertyName&, CustomFunctionPointer, std::optional<DOMAttributeAnnotation> = std::nullopt);
 

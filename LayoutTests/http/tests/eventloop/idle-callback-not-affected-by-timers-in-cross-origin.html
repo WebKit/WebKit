@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test-pre.js"></script>
+<script>
+
+description('This tests requestIdleCallback is not affected by timers scheduled in other origins.');
+
+jsTestIsAsync = true;
+logs = [];
+
+didRunIdleCallback = false;
+function runTest() {
+    frame.contentWindow.postMessage({'timeouts': [10, 20, 30, 40, 50, 60, 70, 80, 90, 100,
+        110, 120, 130, 140, 150, 160, 170, 180, 190, 200]}, '*');
+}
+
+let retryCount = 0;
+let shouldRetry = false;
+onmessage = (event) => {
+    if (event.data.step == 'scheduledTimers') {
+        requestIdleCallback(() => {
+            didRunIdleCallback = true;
+            if (shouldRetry) {
+                didRunIdleCallback = false;
+                setTimeout(runTest, 0);
+            }
+        });        
+    } else if (event.data.step == 'timerFired' && event.data.timeout == 200) {
+        if (didRunIdleCallback) {
+            shouldBeTrue('didRunIdleCallback');
+            finishJSTest();
+        } else {
+            ++retryCount;
+            if (retryCount < 5)
+                shouldRetry = true;
+            else {
+                shouldBeTrue('didRunIdleCallback');
+                finishJSTest();
+            }
+        }
+    }
+}
+
+window.frame = document.createElement('iframe');
+frame.src = 'http://localhost:8000/eventloop/resources/idle-callback-timer-helper.html';
+frame.addEventListener('load', runTest);
+document.body.appendChild(frame);
+
+successfullyParsed = true;
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

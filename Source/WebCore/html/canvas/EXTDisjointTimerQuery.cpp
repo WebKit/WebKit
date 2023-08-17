@@ -41,17 +41,12 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(EXTDisjointTimerQuery);
 
 EXTDisjointTimerQuery::EXTDisjointTimerQuery(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, EXTDisjointTimerQueryName)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_disjoint_timer_query"_s);
 }
 
 EXTDisjointTimerQuery::~EXTDisjointTimerQuery() = default;
-
-WebGLExtension::ExtensionName EXTDisjointTimerQuery::getName() const
-{
-    return EXTDisjointTimerQueryName;
-}
 
 bool EXTDisjointTimerQuery::supported(GraphicsContextGL& context)
 {
@@ -64,9 +59,7 @@ RefPtr<WebGLTimerQueryEXT> EXTDisjointTimerQuery::createQueryEXT()
     if (context.isLost())
         return nullptr;
 
-    auto query = WebGLTimerQueryEXT::create(*context);
-    context->addContextObject(query.get());
-    return query;
+    return WebGLTimerQueryEXT::create(*context);
 }
 
 void EXTDisjointTimerQuery::deleteQueryEXT(WebGLTimerQueryEXT* query)
@@ -80,7 +73,7 @@ void EXTDisjointTimerQuery::deleteQueryEXT(WebGLTimerQueryEXT* query)
     if (!query)
         return;
 
-    if (!query->validate(context->contextGroup(), *context)) {
+    if (!query->validate(*context)) {
         context->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "delete", "object does not belong to this context");
         return;
     }
@@ -103,7 +96,7 @@ GCGLboolean EXTDisjointTimerQuery::isQueryEXT(WebGLTimerQueryEXT* query)
     if (context.isLost())
         return false;
 
-    if (!query || !query->validate(context->contextGroup(), *context))
+    if (!query || !query->validate(*context))
         return false;
 
     if (query->isDeleted())

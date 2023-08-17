@@ -38,6 +38,11 @@ namespace JSC {
 
 const ClassInfo JSWebAssemblyStruct::s_info = { "WebAssembly.Struct"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyStruct) };
 
+Structure* JSWebAssemblyStruct::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(WebAssemblyGCObjectType, StructureFlags), info());
+}
+
 JSWebAssemblyStruct::JSWebAssemblyStruct(VM& vm, Structure* structure, Ref<const Wasm::TypeDefinition>&& type, RefPtr<const Wasm::RTT> rtt)
     : Base(vm, structure, rtt)
     , m_type(WTFMove(type))
@@ -147,6 +152,7 @@ void JSWebAssemblyStruct::set(JSGlobalObject* globalObject, uint32_t fieldIndex,
     case TypeKind::Array:
     case TypeKind::Void:
     case TypeKind::Sub:
+    case TypeKind::Subfinal:
     case TypeKind::Rec:
     case TypeKind::Eqref:
     case TypeKind::Anyref:
