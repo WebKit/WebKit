@@ -26,6 +26,6 @@
 [
     LegacyNoInterfaceObject,
     Conditional=WEBGL,
-    GenerateIsReachable=ImplWebGLRenderingContext,
+    GenerateIsReachable,
 ] interface OESTextureHalfFloatLinear {
 };

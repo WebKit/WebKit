@@ -27,7 +27,9 @@
 
 #if ENABLE(WEBGL)
 
+#include "WebCoreOpaqueRootInlines.h"
 #include "WebGLRenderingContextBase.h"
+#include <atomic>
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
@@ -111,9 +113,9 @@ public:
         WebGLStencilTexturingName,
     };
 
-    WebGLRenderingContextBase* context() { return m_context; }
+    WebGLRenderingContextBase* context() const { return m_context.load(std::memory_order::relaxed); }
     void loseParentContext() { m_context = nullptr; }
-    bool isLostContext() const { return !m_context; }
+    bool isLostContext() const { return !context(); }
     ExtensionName name() const { return m_name; }
 
 protected:
@@ -124,13 +126,19 @@ protected:
     }
 
 private:
-    WebGLRenderingContextBase* m_context;
+    std::atomic<WebGLRenderingContextBase*> m_context;
     const ExtensionName m_name;
+    friend WebCoreOpaqueRoot root(const WebGLExtension*);
 };
 
 inline WebGLExtensionScopedContext::WebGLExtensionScopedContext(WebGLExtension* extension)
     : m_context(extension->context())
 {
+}
+
+inline WebCoreOpaqueRoot root(const WebGLExtension* extension)
+{
+    return WebCoreOpaqueRoot { extension->m_context.load() };
 }
 
 } // namespace WebCore

@@ -25,7 +25,7 @@
 
 [
     Conditional=WEBGL,
-    GenerateIsReachable=ImplWebGLRenderingContext,
+    GenerateIsReachable,
     LegacyNoInterfaceObject,
 ] interface EXTTextureNorm16 {
     const unsigned long R16_EXT = 0x822A;

@@ -25,7 +25,7 @@
 
 [
     Conditional=WEBGL,
-    GenerateIsReachable=ImplWebGLRenderingContext,
+    GenerateIsReachable,
     LegacyNoInterfaceObject,
 ] interface WebGLCompressedTexturePVRTC {
     const unsigned long COMPRESSED_RGB_PVRTC_4BPPV1_IMG = 0x8C00;
