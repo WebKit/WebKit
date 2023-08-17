@@ -152,6 +152,7 @@ void SpeechSynthesis::speak(SpeechSynthesisUtterance& utterance)
         return;
 #endif
 
+    utterance.setIsActiveForEventDispatch(true);
     m_utteranceQueue.append(utterance);
     // If the queue was empty, speak this immediately and add it to the queue.
     if (m_utteranceQueue.size() == 1)

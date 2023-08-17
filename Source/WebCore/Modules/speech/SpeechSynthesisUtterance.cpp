@@ -40,12 +40,16 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SpeechSynthesisUtterance);
     
 Ref<SpeechSynthesisUtterance> SpeechSynthesisUtterance::create(ScriptExecutionContext& context, const String& text)
 {
-    return adoptRef(*new SpeechSynthesisUtterance(context, text, { }));
+    auto utterance = adoptRef(*new SpeechSynthesisUtterance(context, text, { }));
+    utterance->suspendIfNeeded();
+    return utterance;
 }
 
 Ref<SpeechSynthesisUtterance> SpeechSynthesisUtterance::create(ScriptExecutionContext& context, const String& text, SpeechSynthesisUtterance::UtteranceCompletionHandler&& completion)
 {
-    return adoptRef(*new SpeechSynthesisUtterance(context, text, WTFMove(completion)));
+    auto utterance = adoptRef(*new SpeechSynthesisUtterance(context, text, WTFMove(completion)));
+    utterance->suspendIfNeeded();
+    return utterance;
 }
 
 SpeechSynthesisUtterance::SpeechSynthesisUtterance(ScriptExecutionContext& context, const String& text, UtteranceCompletionHandler&& completion)
@@ -111,6 +115,10 @@ void SpeechSynthesisUtterance::dispatchEventAndUpdateState(Event& event)
 
 void SpeechSynthesisUtterance::setIsActiveForEventDispatch(bool isActiveForEventDispatch)
 {
+    // When completionHandler is set, event will be passed to it instead of being dispatched.
+    if (m_completionHandler)
+        return;
+
     m_isActiveForEventDispatch = isActiveForEventDispatch;
 }
 
