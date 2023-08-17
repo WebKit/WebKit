@@ -37,7 +37,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nesting-basic-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nesting-basic-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nesting-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nesting-layer.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nesting-type-selector-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nesting-type-selector.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/pseudo-part-crash.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/serialize-group-rules-with-decls.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/serialize-group-rules-with-decls.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/supports-is-consistent-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/supports-is-consistent-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/supports-is-consistent.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/top-level-is-scope.html
