@@ -39,7 +39,6 @@
 #include "MacroAssemblerCodeRef.h"
 #include <wtf/DataLog.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/Noncopyable.h>
 
 namespace JSC {
 
