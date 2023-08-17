@@ -59,6 +59,26 @@ namespace Inspector {
 
 using namespace JSC;
 
+#if USE(BUN_JSC_ADDITIONS)
+JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObject& globalObject, Ref<InjectedScriptHost>&& host)
+    : m_globalObject(globalObject)
+    , m_injectedScriptManager(makeUnique<InjectedScriptManager>(*this, WTFMove(host)))
+    , m_executionStopwatch(Stopwatch::create())
+    , m_frontendRouter(FrontendRouter::create())
+    , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
+{
+    auto context = jsAgentContext();
+
+    auto consoleAgent = makeUnique<InspectorConsoleAgent>(context);
+    m_consoleAgent = consoleAgent.get();
+    m_agents.append(WTFMove(consoleAgent));
+
+    m_consoleClient = makeUnique<JSGlobalObjectConsoleClient>(m_consoleAgent);
+
+    m_executionStopwatch->start();
+}
+#endif
+
 JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObject& globalObject)
     : m_globalObject(globalObject)
     , m_injectedScriptManager(makeUnique<InjectedScriptManager>(*this, InjectedScriptHost::create()))
