@@ -166,6 +166,9 @@ void DrawingAreaCoordinatedGraphics::scroll(const IntRect& scrollRect, const Int
 
 void DrawingAreaCoordinatedGraphics::forceRepaint()
 {
+    if (m_inUpdateGeometry)
+        return;
+
     if (!m_layerTreeHost) {
         m_isWaitingForDidUpdate = false;
         m_dirtyRegion = m_webPage.bounds();
