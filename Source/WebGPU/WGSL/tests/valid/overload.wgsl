@@ -355,34 +355,7 @@ fn testComparison() {
   }
 }
 
-fn testBitwise()
-{
-  {
-    _ = ~0;
-    _ = ~0i;
-    _ = ~0u;
-  }
-
-  {
-    _ = 0 & 1;
-    _ = 0i & 1i;
-    _ = 0u & 1u;
-  }
-
-  {
-    _ = 0 | 1;
-    _ = 0i | 1i;
-    _ = 0u | 1u;
-  }
-
-  {
-    _ = 0 ^ 1;
-    _ = 0i ^ 1i;
-    _ = 0u ^ 1u;
-  }
-}
-
-// 7.6. Logical Expressions (https://gpuweb.github.io/gpuweb/wgsl/#logical-expr)
+// 8.6. Logical Expressions (https://gpuweb.github.io/gpuweb/wgsl/#logical-expr)
 
 fn testLogicalNegation()
 {
@@ -461,6 +434,47 @@ fn testLogicalAnd()
     _ = vec4( true) & vec4(false);
     _ = vec4(false) & vec4( true);
     _ = vec4( true) & vec4( true);
+}
+
+// 8.9. Bit Expressions (https://www.w3.org/TR/WGSL/#bit-expr)
+
+fn testBitwise()
+{
+  {
+    _ = ~0;
+    _ = ~0i;
+    _ = ~0u;
+  }
+
+  {
+    _ = 0 & 1;
+    _ = 0i & 1i;
+    _ = 0u & 1u;
+  }
+
+  {
+    _ = 0 | 1;
+    _ = 0i | 1i;
+    _ = 0u | 1u;
+  }
+
+  {
+    _ = 0 ^ 1;
+    _ = 0i ^ 1i;
+    _ = 0u ^ 1u;
+  }
+
+  {
+    _ = 1  << 2;
+    _ = 1i << 2i;
+    _ = 1u << 2u;
+  }
+
+  {
+    _ = 1  >> 2;
+    _ = 1i >> 2i;
+    _ = 1u >> 2u;
+  }
 }
 
 // 16.1. Constructor Built-in Functions

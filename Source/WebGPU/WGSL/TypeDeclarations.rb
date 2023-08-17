@@ -72,19 +72,6 @@ end
     }
 end
 
-# Bitwise operations
-operator :~, {
-    [T < Integer].(T) => T,
-    [T < Integer, N].(Vector[T, N]) => Vector[T, N]
-}
-
-["|", "&", "^"].each do |op|
-    operator :"#{op}", {
-        [T < Integer].(T, T) => T,
-        [T < Integer, N].(Vector[T, N], Vector[T, N]) => Vector[T, N]
-    }
-end
-
 operator :textureSample, {
     [].(Texture[F32, Texture1d], Sampler, F32) => Vector[F32, 4],
     [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2]) => Vector[F32, 4],
@@ -104,6 +91,45 @@ operator :textureSampleBaseClampToEdge, {
   [].(TextureExternal, Sampler, Vector[F32, 2]) => Vector[F32, 4],
   [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2]) => Vector[F32, 4],
 }
+
+# 8.6. Logical Expressions (https://gpuweb.github.io/gpuweb/wgsl/#logical-expr)
+
+operator :!, {
+    [].(Bool) => Bool,
+    [N].(Vector[Bool, N]) => Vector[Bool, N],
+}
+
+operator :'||', {
+    [].(Bool, Bool) => Bool,
+}
+
+operator :'&&', {
+    [].(Bool, Bool) => Bool,
+}
+
+operator :'|', {
+    [].(Bool, Bool) => Bool,
+    [N].(Vector[Bool, N], Vector[Bool, N]) => Vector[Bool, N],
+}
+
+operator :'&', {
+    [].(Bool, Bool) => Bool,
+    [N].(Vector[Bool, N], Vector[Bool, N]) => Vector[Bool, N],
+}
+
+# 8.9. Bit Expressions (https://www.w3.org/TR/WGSL/#bit-expr)
+
+operator :~, {
+    [T < Integer].(T) => T,
+    [T < Integer, N].(Vector[T, N]) => Vector[T, N]
+}
+
+["|", "&", "^", "<<", ">>"].each do |op|
+    operator :"#{op}", {
+        [T < Integer].(T, T) => T,
+        [T < Integer, N].(Vector[T, N], Vector[T, N]) => Vector[T, N]
+    }
+end
 
 # 16.1. Constructor Built-in Functions
 
@@ -213,31 +239,6 @@ operator :vec4, {
     [T < Scalar].(Vector[T, 3], T) => Vector[T, 4],
     [T < Scalar].(T, Vector[T, 3]) => Vector[T, 4],
     [].() => Vector[AbstractInt, 4],
-}
-
-# 7.6. Logical Expressions (https://gpuweb.github.io/gpuweb/wgsl/#logical-expr)
-
-operator :!, {
-    [].(Bool) => Bool,
-    [N].(Vector[Bool, N]) => Vector[Bool, N],
-}
-
-operator :'||', {
-    [].(Bool, Bool) => Bool,
-}
-
-operator :'&&', {
-    [].(Bool, Bool) => Bool,
-}
-
-operator :'|', {
-    [].(Bool, Bool) => Bool,
-    [N].(Vector[Bool, N], Vector[Bool, N]) => Vector[Bool, N],
-}
-
-operator :'&', {
-    [].(Bool, Bool) => Bool,
-    [N].(Vector[Bool, N], Vector[Bool, N]) => Vector[Bool, N],
 }
 
 # 17.3. Logical Built-in Functions (https://www.w3.org/TR/WGSL/#logical-builtin-functions)
