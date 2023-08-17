@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
-import wkbuild
+from . import wkbuild
 
 
 class ShouldBuildTest(unittest.TestCase):

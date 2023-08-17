@@ -37,7 +37,7 @@ from twisted.internet import defer, error, reactor
 from twisted.python import failure, log
 from twisted.trial import unittest
 
-from steps import *
+from .steps import *
 
 CURRENT_HOSTNAME = socket.gethostname().strip()
 
@@ -178,7 +178,7 @@ class BuildStepMixinAdditions(BuildStepMixin, TestReactorMixin):
 
 class TestStepNameShouldBeValidIdentifier(BuildStepMixinAdditions, unittest.TestCase):
     def test_step_names_are_valid(self):
-        import steps
+        from . import steps
         build_step_classes = inspect.getmembers(steps, inspect.isclass)
         for build_step in build_step_classes:
             if 'name' in vars(build_step[1]):

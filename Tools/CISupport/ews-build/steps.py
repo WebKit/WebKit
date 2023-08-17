@@ -31,11 +31,11 @@ from datetime import date
 
 from twisted.internet import defer, reactor, task
 
-from layout_test_failures import LayoutTestFailures
-from send_email import send_email_to_patch_author, send_email_to_bot_watchers, send_email_to_github_admin, FROM_EMAIL
-from results_db import ResultsDatabase
-from twisted_additions import TwistedAdditions
-from utils import load_password
+from .layout_test_failures import LayoutTestFailures
+from .send_email import send_email_to_patch_author, send_email_to_bot_watchers, send_email_to_github_admin, FROM_EMAIL
+from .results_db import ResultsDatabase
+from .twisted_additions import TwistedAdditions
+from .utils import load_password
 
 import json
 import mock

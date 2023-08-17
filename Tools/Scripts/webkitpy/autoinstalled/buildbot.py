@@ -32,9 +32,9 @@ AutoInstall.install(Package('dateutil', Version(2, 8, 1), pypi_name='python-date
 AutoInstall.install(Package('future', Version(0, 18, 2)))
 AutoInstall.install(Package('jinja2', Version(2, 11, 3), pypi_name='Jinja2'))
 AutoInstall.install(Package('pbr', Version(5, 9, 0)))
+AutoInstall.install(Package('lz4', Version(4, 3, 2)))
 AutoInstall.install(Package('PyJWT', Version(1, 7, 1), pypi_name='PyJWT', aliases=['jwt']))
 AutoInstall.install(Package('pyyaml', Version(5, 3, 1), pypi_name='PyYAML'))
-AutoInstall.install(Package('Tempita', Version(0, 4, 0)))
 
 AutoInstall.install('markupsafe')
 
@@ -47,6 +47,7 @@ if sys.version_info >= (3, 0):
     AutoInstall.install(Package('sqlalchemy-migrate', Version(0, 13, 0)))
     AutoInstall.install(Package('sqlparse', Version(0, 4, 2)))
     AutoInstall.install(Package('txaio', Version(20, 4, 1)))
+    AutoInstall.install(Package('Tempita', Version(0, 5, 2)))
 
     AutoInstall.install(Package('buildbot', Version(2, 10, 5)))
     AutoInstall.install(Package('buildbot-worker', Version(2, 10, 5)))
@@ -59,6 +60,7 @@ else:
     AutoInstall.install(Package('sqlalchemy-migrate', Version(0, 11, 0)))
     AutoInstall.install(Package('sqlparse', Version(0, 2, 3)))
     AutoInstall.install(Package('txaio', Version(2, 8, 1)))
+    AutoInstall.install(Package('Tempita', Version(0, 4, 0)))
 
     AutoInstall.install(Package('buildbot', Version(1, 1, 1)))
     AutoInstall.install(Package('buildbot-worker', Version(1, 1, 1)))
