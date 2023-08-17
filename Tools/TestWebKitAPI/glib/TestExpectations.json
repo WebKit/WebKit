@@ -97,7 +97,6 @@
         "subtests": {
             "/webkit/WebKitWebProcessExtension/document-loaded-signal": {
                 "expected": {
-                    "wpe@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/219980"},
                     "gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/254002"}
                 }
             },
