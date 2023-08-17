@@ -92,6 +92,7 @@ private:
     void waitForSeekCompleted();
     void seekCompleted();
     void setTimeFudgeFactor(const MediaTime&);
+    void disconnect();
 
     WeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
     RemoteMediaSourceIdentifier m_identifier;
