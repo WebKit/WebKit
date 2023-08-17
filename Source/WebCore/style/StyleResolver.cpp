@@ -227,11 +227,6 @@ void Resolver::addKeyframeStyle(Ref<StyleRuleKeyframes>&& rule)
     document().keyframesRuleDidChange(animationName);
 }
 
-static inline bool isAtShadowBoundary(const Element& element)
-{
-    return is<ShadowRoot>(element.parentNode());
-}
-
 BuilderContext Resolver::builderContext(const State& state)
 {
     return {
@@ -621,7 +616,7 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
         style.copyNonInheritedFrom(*cacheEntry->renderStyle);
 
         bool hasExplicitlyInherited = cacheEntry->renderStyle->hasExplicitlyInheritedProperties();
-        bool inheritedStyleEqual = parentStyle.inheritedEqual(*cacheEntry->parentRenderStyle) && !isAtShadowBoundary(element);
+        bool inheritedStyleEqual = parentStyle.inheritedEqual(*cacheEntry->parentRenderStyle);
 
         if (inheritedStyleEqual && !hasExplicitlyInherited) {
             InsideLink linkStatus = state.style()->insideLink();
