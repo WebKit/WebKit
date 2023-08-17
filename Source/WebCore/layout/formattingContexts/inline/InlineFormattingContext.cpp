@@ -26,8 +26,10 @@
 #include "config.h"
 #include "InlineFormattingContext.h"
 
+#include "AvailableLineWidthOverride.h"
 #include "FloatingContext.h"
 #include "FontCascade.h"
+#include "InlineContentBalancer.h"
 #include "InlineDamage.h"
 #include "InlineDisplayBox.h"
 #include "InlineDisplayContentBuilder.h"
@@ -95,6 +97,13 @@ InlineLayoutResult InlineFormattingContext::layoutInFlowAndFloatContent(const Co
         // FIXME: We should be able to extract the last line information and provide it to layout as "previous line" (ends in line break and inline direction).
         return PreviousLine { lastLineIndex, { }, { }, { }, { } };
     };
+
+    if (root().style().textWrap() == TextWrap::Balance) {
+        auto balancer = InlineContentBalancer { *this, inlineLayoutState, inlineItems, constraints.horizontal() };
+        auto balancedLineWidths = balancer.computeBalanceConstraints();
+        if (balancedLineWidths)
+            inlineLayoutState.setAvailableLineWidthOverride({ *balancedLineWidths });
+    }
 
     if (TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), formattingState(), &floatingState)) {
         auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { *this, constraints.horizontal(), inlineItems };

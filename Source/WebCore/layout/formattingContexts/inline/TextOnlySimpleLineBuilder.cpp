@@ -373,6 +373,8 @@ bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(cons
         return false;
     if (rootStyle.hyphenationLimitLines() != RenderStyle::initialHyphenationLimitLines())
         return false;
+    if (rootStyle.textWrap() == TextWrap::Balance)
+        return false;
 
     return true;
 }

@@ -1676,8 +1676,6 @@ webkit.org/b/245727 [ Monterey ] imported/w3c/web-platform-tests/notifications/i
 
 webkit.org/b/248734 media/video-inaccurate-duration-ended.html [ Crash ]
 
-webkit.org/b/257154 [ Debug ] imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-line-clamp-001.html [ Skip ]
-
 webkit.org/b/254778 [ Ventura Debug arm64 ] fast/images/avif-image-decoding.html [ Pass Crash ]
 
 webkit.org/b/255407 [ Monterey x86_64 ] imported/w3c/web-platform-tests/html/semantics/popovers/light-dismiss-event-ordering.html [ Pass Failure ]
