@@ -86,6 +86,7 @@
     macro(calendar) \
     macro(callee) \
     macro(caller) \
+    macro(captureStackTrace) \
     macro(caseFirst) \
     macro(cause) \
     macro(clear) \

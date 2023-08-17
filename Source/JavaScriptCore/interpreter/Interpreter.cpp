@@ -436,7 +436,7 @@ private:
     mutable size_t m_framesToSkip;
 };
 
-void Interpreter::getStackTrace(JSCell* owner, Vector<StackFrame>& results, size_t framesToSkip, size_t maxStackSize)
+void Interpreter::getStackTrace(JSCell* owner, Vector<StackFrame>& results, size_t framesToSkip, size_t maxStackSize, JSCell* caller)
 {
     DisallowGC disallowGC;
     VM& vm = this->vm();
@@ -446,9 +446,19 @@ void Interpreter::getStackTrace(JSCell* owner, Vector<StackFrame>& results, size
 
     size_t skippedFrames = 0;
     size_t visitedFrames = 0;
+    bool foundCaller = !caller;
     StackVisitor::visit(callFrame, vm, [&] (StackVisitor& visitor) -> IterationStatus {
-        if (++skippedFrames <= framesToSkip)
+        if (skippedFrames < framesToSkip) {
+            skippedFrames++;
             return IterationStatus::Continue;
+        }
+
+        if (!foundCaller) {
+            if (!visitor->callee().isWasm() && visitor->callee().asCell() == caller)
+                foundCaller = true;
+            skippedFrames++;
+            return IterationStatus::Continue;
+        }
 
         if (visitor->isImplementationVisibilityPrivate())
             return IterationStatus::Continue;
@@ -461,7 +471,7 @@ void Interpreter::getStackTrace(JSCell* owner, Vector<StackFrame>& results, size
     if (!visitedFrames)
         return;
 
-    GetStackTraceFunctor functor(vm, owner, results, framesToSkip, visitedFrames);
+    GetStackTraceFunctor functor(vm, owner, results, skippedFrames, visitedFrames);
     StackVisitor::visit(callFrame, vm, functor);
     ASSERT(results.size() == results.capacity());
 }
