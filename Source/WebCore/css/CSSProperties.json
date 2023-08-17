@@ -5218,6 +5218,7 @@
             }
         },
         "paint-order": {
+            "inherited": true,
             "codegen-properties": {
                 "converter": "PaintOrder",
                 "parser-function": "consumePaintOrder",
