@@ -4,10 +4,12 @@
 <script src="../../resources/testharnessreport.js"></script>
 <body>
 <script>
-
-if (window.IPC) {
-    buf = new Uint8Array();
-    IPC.sendMessage('Networking',IPC.webPageProxyID,IPC.messages.NotificationManagerMessageHandler_PageWasNotifiedOfNotificationPermission.name,[]);
-}
+    if (window.IPC) {
+        buf = new Uint8Array();
+        IPC.sendMessage('Networking',IPC.webPageProxyID,IPC.messages.NotificationManagerMessageHandler_PageWasNotifiedOfNotificationPermission.name,[]);
+        setTimeout(()=>{console.log("Should Have Crashed!"); testRunner.notifyDone();}, 100)
+    } else {
+		testRunner.notifyDone();
+	}
 </script>
 </body>

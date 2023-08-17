@@ -3041,6 +3041,19 @@ IPCTestingAPIEnabled:
     WebKit:
       default: false
 
+IgnoreInvalidMessageWhenIPCTestingAPIEnabled:
+  type: bool
+  status: internal
+  category: security
+  humanReadableName: "Ignore Invalid IPC Messages For Testing"
+  humanReadableDescription: "Prevents invalid IPC messages from terminating the caller"
+  webcoreBinding: none
+  condition: ENABLE(IPC_TESTING_API)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: true
+
 ImageAnalysisDuringFindInPageEnabled:
   type: bool
   status: unstable

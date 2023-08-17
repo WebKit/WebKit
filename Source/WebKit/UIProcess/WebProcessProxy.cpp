@@ -755,7 +755,7 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
     updateRegistrationWithDataStore();
     updateBackgroundResponsivenessTimer();
     updateBlobRegistryPartitioningState();
-    updateWebGPUEnabledStateInGPUProcess();
+    updatePreferencesEnabledStateInGPUProcess();
     updateDOMRenderingStateInGPUProcess();
 
     // If this was previously a standalone worker process with no pages we need to call didChangeThrottleState()
@@ -795,7 +795,7 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
     updateAudibleMediaAssertions();
     updateMediaStreamingActivity();
     updateBackgroundResponsivenessTimer();
-    updateWebGPUEnabledStateInGPUProcess();
+    updatePreferencesEnabledStateInGPUProcess();
     updateDOMRenderingStateInGPUProcess();
     updateBlobRegistryPartitioningState();
 
@@ -1967,12 +1967,16 @@ void WebProcessProxy::updateDOMRenderingStateInGPUProcess()
 #endif
 }
 
-void WebProcessProxy::updateWebGPUEnabledStateInGPUProcess()
+void WebProcessProxy::updatePreferencesEnabledStateInGPUProcess()
 {
 #if ENABLE(GPU_PROCESS)
     if (auto* process = processPool().gpuProcess()) {
         process->updateWebGPUEnabled(*this, WTF::anyOf(pages(), [](const auto& page) {
             return page->preferences().webGPUEnabled();
+        }));
+
+        process->updateWebGLEnabled(*this, WTF::anyOf(pages(), [](const auto& page) {
+            return page->preferences().webGLEnabled();
         }));
     }
 #endif

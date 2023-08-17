@@ -77,6 +77,7 @@ public:
 
     void createGPUProcessConnection(WebProcessProxy&, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&);
     void updateWebGPUEnabled(WebProcessProxy&, bool webGPUEnabled);
+    void updateWebGLEnabled(WebProcessProxy&, bool webGLEnabled);
     void updateDOMRenderingEnabled(WebProcessProxy&, bool isDOMRenderingEnabled);
 
     ProcessThrottler& throttler() final { return m_throttler; }

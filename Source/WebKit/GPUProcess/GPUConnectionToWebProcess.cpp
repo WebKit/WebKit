@@ -278,6 +278,7 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
     , m_routingArbitrator(LocalAudioSessionRoutingArbitrator::create(*this))
 #endif
     , m_webGPUEnabled(parameters.isWebGPUEnabled)
+    , m_webGLEnabled(parameters.isWebGLEnabled)
 {
     RELEASE_ASSERT(RunLoop::isMain());
 

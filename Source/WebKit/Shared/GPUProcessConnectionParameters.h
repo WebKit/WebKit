@@ -38,6 +38,7 @@ struct GPUProcessConnectionParameters {
     bool isDOMRenderingEnabled { false };
     bool isLockdownModeEnabled { false };
     bool isWebGPUEnabled { false };
+    bool isWebGLEnabled { false };
 #if ENABLE(IPC_TESTING_API)
     bool ignoreInvalidMessageForTesting { false };
 #endif

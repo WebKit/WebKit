@@ -518,6 +518,9 @@ void WebProcessPool::createGPUProcessConnection(WebProcessProxy& webProcessProxy
     parameters.isWebGPUEnabled = WTF::anyOf(webProcessProxy.pages(), [](const auto& page) {
         return page->preferences().webGPUEnabled();
     });
+    parameters.isWebGLEnabled = WTF::anyOf(webProcessProxy.pages(), [](const auto& page) {
+        return page->preferences().webGLEnabled();
+    });
     parameters.isDOMRenderingEnabled = WTF::anyOf(webProcessProxy.pages(), [](const auto& page) {
         return page->preferences().useGPUProcessForDOMRenderingEnabled();
     });

@@ -20,25 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE(GPU_PROCESS)
-
-[RValue] struct WebKit::GPUProcessConnectionParameters {
-    WebCore::ProcessIdentity webProcessIdentity;
-    bool isDOMRenderingEnabled;
-    bool isLockdownModeEnabled;
-    bool isWebGPUEnabled;
-    bool isWebGLEnabled;
-#if ENABLE(IPC_TESTING_API)
-    bool ignoreInvalidMessageForTesting;
-#endif
-    bool allowTestOnlyIPC;
-#if HAVE(AUDIT_TOKEN)
-    std::optional<audit_token_t> presentingApplicationAuditToken;
-#endif
-#if ENABLE(VP9)
-    std::optional<bool> hasVP9HardwareDecoder;
-    std::optional<bool> hasVP9ExtensionSupport;
-#endif
-};
-
-#endif
+messages -> TestWithEnabledIf {
+    AlwaysEnabled(String url)
+    [EnabledIf='featureEnabled()'] OnlyEnabledIfFeatureEnabled(String url)
+}
