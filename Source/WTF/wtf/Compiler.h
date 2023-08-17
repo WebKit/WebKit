@@ -257,7 +257,7 @@
 
 /* NO_RETURN */
 
-#if !defined(NO_RETURN) && COMPILER(GCC_COMPATIBLE)
+#if !defined(NO_RETURN) && (COMPILER(GCC) || COMPILER(CLANG))
 #define NO_RETURN __attribute((__noreturn__))
 #endif
 
@@ -304,7 +304,7 @@
 
 /* NO_RETURN_WITH_VALUE */
 
-#if !defined(NO_RETURN_WITH_VALUE) && !COMPILER(MSVC)
+#if !defined(NO_RETURN_WITH_VALUE) && (COMPILER(GCC) || COMPILER(CLANG))
 #define NO_RETURN_WITH_VALUE NO_RETURN
 #endif
 
@@ -356,7 +356,7 @@
 
 /* UNUSED_FUNCTION */
 
-#if !defined(UNUSED_FUNCTION) && COMPILER(GCC_COMPATIBLE)
+#if !defined(UNUSED_FUNCTION) && (COMPILER(GCC) || COMPILER(CLANG))
 #define UNUSED_FUNCTION __attribute__((unused))
 #endif
 
