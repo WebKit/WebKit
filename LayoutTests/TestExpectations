@@ -4274,7 +4274,6 @@ webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform
 webkit.org/b/235063 [ Debug ] fast/layers/top-layer-ancestor-opacity-and-transform-crash.html [ Skip ]
 
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/3d-scene-with-iframe-001.html [ ImageOnlyFailure ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/3d-rendering-context-and-z-ordering-001.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/3dtransform-and-position-sticky-001.html [ ImageOnlyFailure Pass ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/animation/rotate-transform-equivalent.html [ ImageOnlyFailure Pass ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-perspective.html [ ImageOnlyFailure ]
@@ -4284,7 +4283,6 @@ webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/backface-
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/backface-visibility-hidden-animated-002.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/change-scale-wide-range.html [ Pass ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/huge-length-tiny-scale.html [ ImageOnlyFailure ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/preserve3d-and-filter-no-perspective.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/rotateY-180deg-with-overflow-scroll.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/scale-transform-overlap.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-background-007.html [ ImageOnlyFailure ]
@@ -4297,9 +4295,6 @@ webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform3d-matrix3d-001.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-010.html [ Pass ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-013.html [ ImageOnlyFailure ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform3d-scale-004.html [ ImageOnlyFailure ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform3d-sorting-003.html [ ImageOnlyFailure ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform3d-sorting-006.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/individual-transform/animation/individual-transform-ordering.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-fixed-bg-008.tentative.html [ ImageOnlyFailure ]
 

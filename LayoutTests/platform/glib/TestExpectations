@@ -821,6 +821,7 @@ webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/perspecti
 webkit.org/b/245862 imported/w3c/web-platform-tests/css/css-transforms/perspective-transforms-equivalence.html [ ImageOnlyFailure ]
 
 webkit.org/b/245716 imported/w3c/web-platform-tests/css/css-transforms/transform3d-rotatex-perspective-003.html [ ImageOnlyFailure ]
+webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform3d-sorting-006.html [ ImageOnlyFailure ]
 
 webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-018.html [ ImageOnlyFailure ]
 webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-025.html [ ImageOnlyFailure ]

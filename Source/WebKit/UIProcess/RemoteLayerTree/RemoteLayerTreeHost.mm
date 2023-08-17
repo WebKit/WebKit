@@ -363,7 +363,6 @@ void RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCre
 
     auto node = makeNode(properties);
 
-#if HAVE(CALAYER_USES_WEBKIT_BEHAVIOR)
     if (css3DTransformInteroperabilityEnabled() && [node->layer() respondsToSelector:@selector(setUsesWebKitBehavior:)]) {
         [node->layer() setUsesWebKitBehavior:YES];
         if ([node->layer() isKindOfClass:[CATransformLayer class]])
@@ -371,7 +370,6 @@ void RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCre
         else
             [node->layer() setSortsSublayers:NO];
     }
-#endif
 
     if (auto* hostIdentifier = std::get_if<WebCore::LayerHostingContextIdentifier>(&properties.additionalData)) {
         m_hostingLayers.set(*hostIdentifier, properties.layerID);

@@ -319,7 +319,6 @@ void PlatformCALayerCocoa::commonInit()
         m_customSublayers = makeUnique<PlatformCALayerList>(tileController->containerLayers());
     }
 
-#if HAVE(CALAYER_USES_WEBKIT_BEHAVIOR)
     if (m_owner && m_owner->platformCALayerUseCSS3DTransformInteroperability() && [m_layer respondsToSelector:@selector(setUsesWebKitBehavior:)]) {
         [m_layer setUsesWebKitBehavior:YES];
         if (m_layerType == LayerTypeTransformLayer) {
@@ -327,7 +326,6 @@ void PlatformCALayerCocoa::commonInit()
         } else
             [m_layer setSortsSublayers:NO];
     }
-#endif
 
     END_BLOCK_OBJC_EXCEPTIONS
 }

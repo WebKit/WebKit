@@ -2478,3 +2478,13 @@ webkit.org/b/259132 imported/w3c/web-platform-tests/html/semantics/disabled-elem
 webkit.org/b/259524 media/audioSession/audioSessionState.html [ Pass Failure ]
 
 webkit.org/b/260225 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-GC.https.html [ Pass Failure ]
+
+webkit.org/b/260224 compositing/geometry/clipped-out-perspective.html [ ImageOnlyFailure ]
+webkit.org/b/260224 compositing/overlap-blending/opacity-and-infinity.html [ ImageOnlyFailure ]
+webkit.org/b/260224 imported/w3c/web-platform-tests/css/css-transforms/perspective-split-by-zero-w.html [ ImageOnlyFailure ]
+webkit.org/b/260224 imported/w3c/web-platform-tests/css/css-transforms/preserve3d-and-filter-with-perspective.html [ ImageOnlyFailure ]
+webkit.org/b/260224 imported/w3c/web-platform-tests/css/css-transforms/preserve3d-pseudo-element.html [ ImageOnlyFailure ]
+webkit.org/b/260224 imported/w3c/web-platform-tests/css/css-transforms/transform-table-009.html [ ImageOnlyFailure ]
+webkit.org/b/260224 imported/w3c/web-platform-tests/css/css-transforms/transform-table-010.html [ ImageOnlyFailure ]
+webkit.org/b/260224 imported/w3c/web-platform-tests/css/css-transforms/transform-table-011.html [ ImageOnlyFailure ]
+webkit.org/b/260224 imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-011.html [ ImageOnlyFailure ]
