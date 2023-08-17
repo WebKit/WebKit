@@ -30,7 +30,7 @@ import unittest
 from datetime import datetime, timedelta, timezone
 from twisted.internet import defer
 
-import loadConfig
+from . import loadConfig
 
 
 class ConfigDotJSONTest(unittest.TestCase):

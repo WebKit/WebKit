@@ -218,12 +218,6 @@ bool ShadowRoot::childTypeAllowed(NodeType type) const
     }
 }
 
-void ShadowRoot::setResetStyleInheritance(bool value)
-{
-    // If this was ever changed after initialization, child styles would need to be invalidated here.
-    m_resetStyleInheritance = value;
-}
-
 Ref<Node> ShadowRoot::cloneNodeInternal(Document& targetDocument, CloningOperation type)
 {
     RELEASE_ASSERT(m_mode != ShadowRootMode::UserAgent);

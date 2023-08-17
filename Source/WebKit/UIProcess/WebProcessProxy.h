@@ -566,7 +566,7 @@ private:
 
     void updateBlobRegistryPartitioningState() const;
 
-    void updateWebGPUEnabledStateInGPUProcess();
+    void updatePreferencesEnabledStateInGPUProcess();
     void updateDOMRenderingStateInGPUProcess();
 
     void processDidTerminateOrFailedToLaunch(ProcessTerminationReason);

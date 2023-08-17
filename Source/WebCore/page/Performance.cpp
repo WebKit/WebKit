@@ -104,6 +104,11 @@ void Performance::allowHighPrecisionTime()
     timePrecision = highTimePrecision;
 }
 
+Seconds Performance::timeResolution()
+{
+    return timePrecision;
+}
+
 DOMHighResTimeStamp Performance::relativeTimeFromTimeOriginInReducedResolution(MonotonicTime timestamp) const
 {
     Seconds seconds = timestamp - m_timeOrigin;

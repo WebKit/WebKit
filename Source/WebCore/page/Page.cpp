@@ -1691,9 +1691,10 @@ void Page::scheduleRenderingUpdateInternal()
 
     auto now = MonotonicTime::now();
     forEachWindowEventLoop([&](WindowEventLoop& windowEventLoop) {
-        auto nextRenderingUpdateTime = m_lastRenderingUpdateTimestamp + preferredRenderingUpdateInterval();
+        auto interval = preferredRenderingUpdateInterval();
+        auto nextRenderingUpdateTime = m_lastRenderingUpdateTimestamp + interval;
         if (nextRenderingUpdateTime < now)
-            nextRenderingUpdateTime = now + preferredRenderingUpdateInterval();
+            nextRenderingUpdateTime = now + interval;
         windowEventLoop.didScheduleRenderingUpdate(*this, nextRenderingUpdateTime);
     });
 }
@@ -1751,6 +1752,10 @@ void Page::updateRendering()
     }
 
     m_lastRenderingUpdateTimestamp = MonotonicTime::now();
+
+    forEachWindowEventLoop([&](WindowEventLoop& eventLoop) {
+        eventLoop.didStartRenderingUpdate(*this);
+    });
 
     bool isSVGImagePage = chrome().client().isSVGImageChromeClient();
     if (!isSVGImagePage)
@@ -2044,9 +2049,6 @@ void Page::renderingUpdateCompleted()
 
     if (!isUtilityPage()) {
         auto nextRenderingUpdate = m_lastRenderingUpdateTimestamp + preferredRenderingUpdateInterval();
-        forEachWindowEventLoop([&](WindowEventLoop& eventLoop) {
-            eventLoop.didFinishRenderingUpdate(*this);
-        });
         m_opportunisticTaskScheduler->reschedule(nextRenderingUpdate);
     }
 }

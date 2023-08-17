@@ -5726,3 +5726,94 @@ struct WebCore::CookieStoreGetOptions {
     String mimeType()
     URL url()
 }
+
+#if PLATFORM(IOS_FAMILY)
+[Nested] enum class WebCore::InspectorOverlayLabel::Arrow::Direction : uint8_t {
+    None,
+    Down,
+    Up,
+    Left,
+    Right
+};
+
+[Nested] enum class WebCore::InspectorOverlayLabel::Arrow::Alignment : uint8_t {
+    None,
+    Leading,
+    Middle,
+    Trailing,
+};
+
+[Nested] enum class WebCore::InspectorOverlayLabel::Content::Decoration::Type : uint8_t {
+    None,
+    Bordered
+};
+
+[Nested] struct WebCore::InspectorOverlayLabel::Content::Decoration {
+    WebCore::InspectorOverlayLabel::Content::Decoration::Type type;
+    WebCore::Color color;
+};
+
+[Nested] struct WebCore::InspectorOverlayLabel::Content {
+    String text;
+    WebCore::Color textColor;
+    WebCore::InspectorOverlayLabel::Content::Decoration decoration;
+};
+
+[Nested] struct WebCore::InspectorOverlayLabel::Arrow {
+    WebCore::InspectorOverlayLabel::Arrow::Direction direction;
+    WebCore::InspectorOverlayLabel::Arrow::Alignment alignment
+};
+
+class WebCore::InspectorOverlayLabel {
+    Vector<WebCore::InspectorOverlayLabel::Content> m_contents;
+    WebCore::FloatPoint m_location;
+    WebCore::Color m_backgroundColor;
+    WebCore::InspectorOverlayLabel::Arrow m_arrow;
+};
+
+[Nested] struct WebCore::InspectorOverlayHighlight::FlexHighlightOverlay {
+        WebCore::Color color;
+        WebCore::FloatQuad containerBounds;
+        Vector<WebCore::FloatQuad> itemBounds;
+        Vector<WebCore::FloatQuad> mainAxisGaps;
+        Vector<WebCore::FloatQuad> mainAxisSpaceBetweenItemsAndGaps;
+        Vector<WebCore::FloatQuad> spaceBetweenItemsAndCrossAxisSpace;
+        Vector<WebCore::FloatQuad> crossAxisGaps;
+        Vector<WebCore::InspectorOverlayLabel> labels;
+};
+
+[Nested] struct WebCore::InspectorOverlayHighlight::GridHighlightOverlay::Area {
+    String name;
+    WebCore::FloatQuad quad;
+};
+
+[Nested] struct WebCore::InspectorOverlayHighlight::GridHighlightOverlay {
+    WebCore::Color color;
+    Vector<WebCore::FloatLine> gridLines;
+    Vector<WebCore::FloatQuad> gaps;
+    Vector<WebCore::InspectorOverlayHighlight::GridHighlightOverlay::Area> areas;
+    Vector<WebCore::InspectorOverlayLabel> labels;
+};
+
+[Nested] enum class WebCore::InspectorOverlayHighlight::Type : uint8_t {
+    None,
+    Node,
+    NodeList,
+    Rects,
+};
+
+header: <WebCore/InspectorOverlay.h>
+[CustomHeader] struct WebCore::InspectorOverlayHighlight {
+    WebCore::Color contentColor;
+    WebCore::Color contentOutlineColor;
+    WebCore::Color paddingColor;
+    WebCore::Color borderColor;
+    WebCore::Color marginColor;
+    WebCore::InspectorOverlayHighlight::Type type;
+    Vector<WebCore::FloatQuad> quads;
+    Vector<WebCore::InspectorOverlayHighlight::GridHighlightOverlay> gridHighlightOverlays;
+    Vector<WebCore::InspectorOverlayHighlight::FlexHighlightOverlay> flexHighlightOverlays;
+    bool usePageCoordinates;
+};
+
+#endif

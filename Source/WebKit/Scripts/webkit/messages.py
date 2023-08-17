@@ -557,7 +557,10 @@ def async_message_statement(receiver, message):
         connection = 'connection.connection()'
 
     result = []
-    result.append('    if (decoder.messageName() == Messages::%s::%s::name())\n' % (receiver.name, message.name))
+    if message.runtime_enablement:
+        result.append('    if (decoder.messageName() == Messages::%s::%s::name() && %s)\n' % (receiver.name, message.name, message.runtime_enablement))
+    else:
+        result.append('    if (decoder.messageName() == Messages::%s::%s::name())\n' % (receiver.name, message.name))
     result.append('        return IPC::%s<Messages::%s::%s>(%s, %s);\n' % (dispatch_function, receiver.name, message.name, connection, ', '.join(dispatch_function_args)))
     return result
 
@@ -576,7 +579,10 @@ def sync_message_statement(receiver, message):
         maybe_reply_encoder = ', replyEncoder'
 
     result = []
-    result.append('    if (decoder.messageName() == Messages::%s::%s::name())\n' % (receiver.name, message.name))
+    if message.runtime_enablement:
+        result.append('    if (decoder.messageName() == Messages::%s::%s::name() && %s)\n' % (receiver.name, message.name, message.runtime_enablement))
+    else:
+        result.append('    if (decoder.messageName() == Messages::%s::%s::name())\n' % (receiver.name, message.name))
     result.append('        return IPC::%s<Messages::%s::%s>(connection, decoder%s, this, &%s);\n' % (dispatch_function, receiver.name, message.name, maybe_reply_encoder, handler_function(receiver, message)))
     return result
 

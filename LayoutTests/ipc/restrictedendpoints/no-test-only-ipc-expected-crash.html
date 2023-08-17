@@ -4,13 +4,13 @@
 <script src="../../resources/testharnessreport.js"></script>
 <body>
 <script>
+    testRunner.dumpAsText();
 
-promise_test(async t => {
     if (!window.internals)
-        return;
+        throw 'window.internals are not available';
 
     internals.beginAudioSessionInterruption();
-}, "Send beginAudioSessionInterruption without AllowTestOnlyIPC being set");
 
+    setTimeout(()=>{testRunner.notifyDone();}, 100)
 </script>
 </body>

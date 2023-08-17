@@ -11,6 +11,7 @@ TESTS = \
     TestWithStreamBuffer \
     TestWithCVPixelBuffer \
     TestWithStreamServerConnectionHandle \
+    TestWithEnabledIf \
 #
 
 all:

@@ -136,6 +136,7 @@
 #include "TestWithStreamBufferMessages.h" // NOLINT
 #include "TestWithCVPixelBufferMessages.h" // NOLINT
 #include "TestWithStreamServerConnectionHandleMessages.h" // NOLINT
+#include "TestWithEnabledIfMessages.h" // NOLINT
 
 namespace IPC {
 
@@ -324,6 +325,10 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
 #endif
     case MessageName::TestWithStreamServerConnectionHandle_SendStreamServerConnection:
         return jsValueForDecodedMessage<MessageName::TestWithStreamServerConnectionHandle_SendStreamServerConnection>(globalObject, decoder);
+    case MessageName::TestWithEnabledIf_AlwaysEnabled:
+        return jsValueForDecodedMessage<MessageName::TestWithEnabledIf_AlwaysEnabled>(globalObject, decoder);
+    case MessageName::TestWithEnabledIf_OnlyEnabledIfFeatureEnabled:
+        return jsValueForDecodedMessage<MessageName::TestWithEnabledIf_OnlyEnabledIfFeatureEnabled>(globalObject, decoder);
     default:
         break;
     }
@@ -924,6 +929,14 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
     case MessageName::TestWithStreamServerConnectionHandle_SendStreamServerConnection:
         return Vector<ArgumentDescription> {
             { "handle", "IPC::StreamServerConnection::Handle", nullptr, false },
+        };
+    case MessageName::TestWithEnabledIf_AlwaysEnabled:
+        return Vector<ArgumentDescription> {
+            { "url", "String", nullptr, false },
+        };
+    case MessageName::TestWithEnabledIf_OnlyEnabledIfFeatureEnabled:
+        return Vector<ArgumentDescription> {
+            { "url", "String", nullptr, false },
         };
     default:
         break;

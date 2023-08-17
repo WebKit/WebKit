@@ -1,0 +1,36 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=false AttachmentElementEnabled=false ] -->
+<title>Test that calling into attachmentElement specific methods, like RegisterAttachmentIdentifier, is disabled if AttachmentElementEnabled is false</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<body>
+<script>
+	testRunner.dumpAsText();
+
+	if (window.IPC) {
+
+		function randomID() {
+			return Math.floor(Math.random() * 10000) + 1;
+		}
+
+		function sleep(ms) {
+			return new Promise(resolve => setTimeout(resolve, ms));
+		}
+
+		IPC.sendMessage(
+		'UI',
+		IPC.webPageProxyID,
+		IPC.messages.WebPageProxy_RegisterAttachmentIdentifier.name,
+		[
+			{
+			type: 'String',
+			value: 'Some UUID'
+			}
+		]
+		);
+
+		setTimeout(()=>{console.log("Should Have Crashed!"); testRunner.notifyDone();}, 100)
+	} else {
+		testRunner.notifyDone();
+	}
+</script>
+</body>

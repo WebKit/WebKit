@@ -2896,7 +2896,6 @@ webkit.org/b/257049 imported/w3c/web-platform-tests/css/css-text/white-space/seg
 webkit.org/b/257049 imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-019.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/257049 imported/w3c/web-platform-tests/css/css-text/white-space/tab-bidi-001.html [ ImageOnlyFailure ]
 webkit.org/b/257049 imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-line-clamp-001.html [ ImageOnlyFailure ]
-webkit.org/b/257049 imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-text-indent-001.html [ ImageOnlyFailure ]
 webkit.org/b/257049 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-ideographic-space-005.html [ ImageOnlyFailure ]
 webkit.org/b/257049 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-ideographic-space-006.html [ ImageOnlyFailure ]
 webkit.org/b/257049 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-ideographic-space-008.html [ ImageOnlyFailure ]
@@ -6271,10 +6270,12 @@ imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing/text
 imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing [ Skip ]
 
 # This test is checking that WebContent is terminated when performing an invalid IPC operation
-ipc/restrictedendpoints/no-test-only-ipc-expected-crash.html [ Crash ]
-ipc/restrictedendpoints/deny-access-updateQuotaBasedOnSpaceUsageForTesting.html [ Crash ]
+[ Debug ] ipc/restrictedendpoints/no-test-only-ipc-expected-crash.html [ Crash ]
+[ Debug ] ipc/restrictedendpoints/deny-access-webGPU.html [ Crash ]
+[ Debug ] ipc/restrictedendpoints/deny-access-modelElement.html [ Crash ]
+[ Debug ] ipc/restrictedendpoints/deny-access-attachmentElement.html [ Crash ]
 [ Debug ] ipc/restrictedendpoints/deny-access-webPush.html [ Crash ]
-[ Release ] ipc/restrictedendpoints/deny-access-webPush.html [ Skip ]
+[ Debug ] ipc/restrictedendpoints/deny-access-updateQuotaBasedOnSpaceUsageForTesting.html [ Crash ]
 
 # Early hints require network callbacks that are only present in macOS 12 / iOS 15 or greater.
 http/wpt/loading/early-hints [ Skip ]
@@ -6496,6 +6497,9 @@ imported/w3c/web-platform-tests/css/css-overflow/scrollable-overflow-input-002.h
 imported/w3c/web-platform-tests/css/css-overflow/scrollable-overflow-padding.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-029.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-block-in-inline-001.html [ Skip ]
+
+# CSS nesting relaxed syntax
+imported/w3c/web-platform-tests/css/css-nesting/nesting-type-selector.html [ ImageOnlyFailure ]
 
 # These tests have been flaky since their import.
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox-top-navigation-child-special-cases.tentative.sub.window.html [ DumpJSConsoleLogInStdErr Pass Failure ]

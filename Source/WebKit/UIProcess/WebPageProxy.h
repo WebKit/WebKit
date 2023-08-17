@@ -2280,6 +2280,9 @@ private:
     void notifyProcessPoolToPrewarm();
     bool shouldUseBackForwardCache() const;
 
+    bool attachmentElementEnabled();
+    bool modelElementEnabled();
+
     void forEachWebContentProcess(Function<void(WebProcessProxy&)>&&);
 
     bool shouldForceForegroundPriorityForClientNavigation() const;

@@ -71,9 +71,6 @@ public:
     WEBCORE_EXPORT Style::Scope& styleScope();
     StyleSheetList& styleSheets();
 
-    bool resetStyleInheritance() const { return m_resetStyleInheritance; }
-    void setResetStyleInheritance(bool);
-
     bool delegatesFocus() const { return m_delegatesFocus; }
     bool containsFocusedElement() const { return m_containsFocusedElement; }
     void setContainsFocusedElement(bool flag) { m_containsFocusedElement = flag; }
@@ -144,7 +141,6 @@ private:
 
     void childrenChanged(const ChildChange&) override;
 
-    bool m_resetStyleInheritance : 1 { false };
     bool m_hasBegunDeletingDetachedChildren : 1 { false };
     bool m_delegatesFocus : 1 { false };
     bool m_isCloneable : 1 { false };

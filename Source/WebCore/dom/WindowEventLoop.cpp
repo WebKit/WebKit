@@ -125,17 +125,18 @@ void WindowEventLoop::didScheduleRenderingUpdate(Page& page, MonotonicTime nextR
     m_pagesWithRenderingOpportunity.set(page, nextRenderingUpdate);
 }
 
-void WindowEventLoop::didFinishRenderingUpdate(Page& page)
+void WindowEventLoop::didStartRenderingUpdate(Page& page)
 {
     m_pagesWithRenderingOpportunity.remove(page);
 }
 
 void WindowEventLoop::opportunisticallyRunIdleCallbacks()
 {
-    if (shouldEndIdlePeriod())
+    auto now = MonotonicTime::now();
+    if (shouldEndIdlePeriod(now))
         return;
 
-    m_lastIdlePeriodStartTime = MonotonicTime::now();
+    m_lastIdlePeriodStartTime = now;
 
     forEachAssociatedContext([&](ScriptExecutionContext& context) {
         RefPtr document = dynamicDowncast<Document>(context);
@@ -148,13 +149,14 @@ void WindowEventLoop::opportunisticallyRunIdleCallbacks()
     });
 }
 
-bool WindowEventLoop::shouldEndIdlePeriod()
+bool WindowEventLoop::shouldEndIdlePeriod(MonotonicTime now)
 {
     if (hasTasksForFullyActiveDocument())
         return true;
     if (!microtaskQueue().isEmpty())
         return true;
-    if (!m_pagesWithRenderingOpportunity.isEmptyIgnoringNullReferences())
+    auto renderingTime = nextRenderingTime();
+    if (renderingTime && *renderingTime < now + IdleCallbackDurationExpectation)
         return true;
     return false;
 }
@@ -167,14 +169,21 @@ MonotonicTime WindowEventLoop::computeIdleDeadline()
     if (timerTime && *timerTime < minTime)
         minTime = *timerTime;
 
-    if (!m_pagesWithRenderingOpportunity.isEmptyIgnoringNullReferences()) {
-        for (auto it : m_pagesWithRenderingOpportunity) {
-            if (it.value < minTime)
-                minTime = it.value;
-        }
-    }
+    auto renderingTime = nextRenderingTime();
+    if (renderingTime && *renderingTime < minTime)
+        minTime = *renderingTime;
 
     return minTime;
+}
+
+std::optional<MonotonicTime> WindowEventLoop::nextRenderingTime() const
+{
+    std::optional<MonotonicTime> result;
+    for (auto it : m_pagesWithRenderingOpportunity) {
+        if (!result || it.value < *result)
+            result = it.value;
+    }
+    return result;
 }
 
 void WindowEventLoop::didReachTimeToRun()

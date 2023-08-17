@@ -131,7 +131,10 @@ public:
     static Ref<GPUConnectionToWebProcess> create(GPUProcess&, WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&);
     virtual ~GPUConnectionToWebProcess();
 
+    bool isWebGPUEnabled() { return m_webGPUEnabled; }
     void updateWebGPUEnabled(bool webGPUEnabled) { m_webGPUEnabled = webGPUEnabled; }
+    bool isWebGLEnabled() { return m_webGLEnabled; }
+    void updateWebGLEnabled(bool webGLEnabled) { m_webGLEnabled = webGLEnabled; }
     void updateDOMRenderingEnabled(bool isDOMRenderingEnabled) { m_isDOMRenderingEnabled = isDOMRenderingEnabled; }
 
     using WebCore::NowPlayingManager::Client::weakPtrFactory;
@@ -416,6 +419,7 @@ private:
     IPCTester m_ipcTester;
 #endif
     bool m_webGPUEnabled { false };
+    bool m_webGLEnabled { false };
 };
 
 } // namespace WebKit

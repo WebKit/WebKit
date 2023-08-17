@@ -69,15 +69,21 @@ def parse(file):
             elif line.startswith('#else') or line.startswith('#elif'):
                 raise Exception("ERROR: '%s' is not supported in the *.in files" % line)
             continue
-        match = re.search(r'([A-Za-z_0-9]+)\((.*?)\)(?:(?:\s+->\s+)\((.*?)\))?(?:\s+(.*))?', line)
+        match = re.search(r'(?:\[(.*)\] (?:.* )?)?([A-Za-z_0-9]+)\((.*?)\)(?:(?:\s+->\s+)\((.*?)\))?(?:\s+(.*))?', line)
         if match:
-            name, parameters_string, reply_parameters_string, attributes_string = match.groups()
+            options_string, name, parameters_string, reply_parameters_string, attributes_string = match.groups()
             if parameters_string:
                 parameters = parse_parameters_string(parameters_string)
                 for parameter in parameters:
                     parameter.condition = combine_condition(conditions)
             else:
                 parameters = []
+
+            runtime_enablement = None
+            if options_string:
+                match = re.search(r"(?:(?:, |^)+(?:EnabledIf='(.*)'))(?:, |$)?", options_string)
+                if match:
+                    runtime_enablement = match.groups()[0]
 
             attributes = parse_attributes_string(attributes_string)
 
@@ -90,7 +96,7 @@ def parse(file):
             else:
                 reply_parameters = None
 
-            messages.append(model.Message(name, parameters, reply_parameters, attributes, combine_condition(conditions)))
+            messages.append(model.Message(name, parameters, reply_parameters, attributes, combine_condition(conditions), runtime_enablement))
     return model.MessageReceiver(destination, superclass, receiver_attributes, messages, combine_condition(master_condition))
 
 

@@ -538,47 +538,25 @@ InlineLayoutUnit InlineFormattingGeometry::inlineItemWidth(const InlineItem& inl
     return boxGeometry.marginBoxWidth();
 }
 
-static inline bool endsWithSoftWrapOpportunity(const InlineTextItem& currentTextItem, const InlineTextItem& nextInlineTextItem)
+static inline bool endsWithSoftWrapOpportunity(const InlineTextItem& previousInlineTextItem, const InlineTextItem& nextInlineTextItem)
 {
     ASSERT(!nextInlineTextItem.isWhitespace());
     // We are at the position after a whitespace.
-    if (currentTextItem.isWhitespace())
+    if (previousInlineTextItem.isWhitespace())
         return true;
     // When both these non-whitespace runs belong to the same layout box with the same bidi level, it's guaranteed that
     // they are split at a soft breaking opportunity. See InlineItemsBuilder::moveToNextBreakablePosition.
-    if (&currentTextItem.inlineTextBox() == &nextInlineTextItem.inlineTextBox()) {
-        if (currentTextItem.bidiLevel() == nextInlineTextItem.bidiLevel())
+    if (&previousInlineTextItem.inlineTextBox() == &nextInlineTextItem.inlineTextBox()) {
+        if (previousInlineTextItem.bidiLevel() == nextInlineTextItem.bidiLevel())
             return true;
         // The bidi boundary may or may not be the reason for splitting the inline text box content.
         // FIXME: We could add a "reason flag" to InlineTextItem to tell why the split happened.
-        auto& style = currentTextItem.style();
-        auto lineBreakIteratorFactory = CachedLineBreakIteratorFactory { currentTextItem.inlineTextBox().content(), style.computedLocale(), TextUtil::lineBreakIteratorMode(style.lineBreak()), TextUtil::contentAnalysis(style.wordBreak()) };
+        auto& style = previousInlineTextItem.style();
+        auto lineBreakIteratorFactory = CachedLineBreakIteratorFactory { previousInlineTextItem.inlineTextBox().content(), style.computedLocale(), TextUtil::lineBreakIteratorMode(style.lineBreak()), TextUtil::contentAnalysis(style.wordBreak()) };
         auto softWrapOpportunityCandidate = nextInlineTextItem.start();
         return TextUtil::findNextBreakablePosition(lineBreakIteratorFactory, softWrapOpportunityCandidate, style) == softWrapOpportunityCandidate;
     }
-    // Now we need to collect at least 3 adjacent characters to be able to make a decision whether the previous text item ends with breaking opportunity.
-    // [ex-][ample] <- second to last[x] last[-] current[a]
-    // We need at least 1 character in the current inline text item and 2 more from previous inline items.
-    auto previousContent = currentTextItem.inlineTextBox().content();
-    auto currentContent = nextInlineTextItem.inlineTextBox().content();
-    if (!previousContent.is8Bit()) {
-        // FIXME: Remove this workaround when we move over to a better way of handling prior-context with Unicode.
-        // See the templated CharacterType in nextBreakablePosition for last and lastlast characters.
-        currentContent.convertTo16Bit();
-    }
-    auto& style = nextInlineTextItem.style();
-    auto lineBreakIteratorFactory = CachedLineBreakIteratorFactory { currentContent, style.computedLocale(), TextUtil::lineBreakIteratorMode(style.lineBreak()), TextUtil::contentAnalysis(style.wordBreak()) };
-    auto previousContentLength = previousContent.length();
-    // FIXME: We should look into the entire uncommitted content for more text context.
-    UChar lastCharacter = previousContentLength ? previousContent[previousContentLength - 1] : 0;
-    if (lastCharacter == softHyphen && currentTextItem.style().hyphens() == Hyphens::None)
-        return false;
-    UChar secondToLastCharacter = previousContentLength > 1 ? previousContent[previousContentLength - 2] : 0;
-    lineBreakIteratorFactory.priorContext().set({ secondToLastCharacter, lastCharacter });
-    // Now check if we can break right at the inline item boundary.
-    // With the [ex-ample], findNextBreakablePosition should return the startPosition (0).
-    // FIXME: Check if there's a more correct way of finding breaking opportunities.
-    return !TextUtil::findNextBreakablePosition(lineBreakIteratorFactory, 0, style);
+    return TextUtil::mayBreakInBetween(previousInlineTextItem, nextInlineTextItem);
 }
 
 static inline bool isAtSoftWrapOpportunity(const InlineItem& current, const InlineItem& next)

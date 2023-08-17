@@ -51,7 +51,8 @@ private:
     TextOnlyLineBreakResult handleInlineTextContent(const InlineContentBreaker::ContinuousContent&, const InlineItemRange&);
     void initialize(const InlineItemRange&, const InlineRect& initialLogicalRect, const std::optional<PreviousLine>&);
     void handleLineEnding(InlineItemPosition, size_t layoutRangeEndIndex);
-    size_t rebuildLine(const InlineItemRange&, const InlineTextItem&);
+    size_t revertToTrailingItem(const InlineItemRange&, const InlineTextItem&);
+    size_t revertToLastNonOverflowingItem(const InlineItemRange&);
 
     bool isFirstFormattedLine() const { return !m_previousLine.has_value(); }
 

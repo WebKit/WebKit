@@ -32,6 +32,8 @@ const MessageDescription messageDescriptions[static_cast<size_t>(MessageName::Co
     { "TestWithCVPixelBuffer_ReceiveCVPixelBuffer", ReceiverName::TestWithCVPixelBuffer, false, false },
     { "TestWithCVPixelBuffer_SendCVPixelBuffer", ReceiverName::TestWithCVPixelBuffer, false, false },
 #endif
+    { "TestWithEnabledIf_AlwaysEnabled", ReceiverName::TestWithEnabledIf, false, false },
+    { "TestWithEnabledIf_OnlyEnabledIfFeatureEnabled", ReceiverName::TestWithEnabledIf, false, false },
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     { "TestWithIfMessage_LoadURL", ReceiverName::TestWithIfMessage, false, false },
 #endif

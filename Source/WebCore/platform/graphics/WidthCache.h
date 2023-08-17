@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,7 +60,7 @@ private:
         {
             ASSERT(length <= s_capacity);
 
-            SuperFastHash hasher;
+            StringHasher hasher;
 
             bool remainder = length & 1;
             length >>= 1;

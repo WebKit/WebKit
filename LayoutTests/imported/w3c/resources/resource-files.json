@@ -2703,6 +2703,7 @@
         "web-platform-tests/css/css-nesting/implicit-nesting-ref.html",
         "web-platform-tests/css/css-nesting/nest-containing-forgiving-ref.html",
         "web-platform-tests/css/css-nesting/nesting-basic-ref.html",
+        "web-platform-tests/css/css-nesting/supports-is-consistent-ref.html",
         "web-platform-tests/css/css-overflow/clip-001-ref.html",
         "web-platform-tests/css/css-overflow/clip-002-ref.html",
         "web-platform-tests/css/css-overflow/clip-003-ref.html",

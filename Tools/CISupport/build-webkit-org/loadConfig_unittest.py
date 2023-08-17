@@ -27,7 +27,7 @@ import json
 import os
 import unittest
 
-import loadConfig
+from . import loadConfig
 
 
 class ConfigDotJSONTest(unittest.TestCase):

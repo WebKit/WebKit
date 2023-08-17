@@ -27,11 +27,11 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
     void ReleaseRenderingBackend(WebKit::RenderingBackendIdentifier renderingBackendIdentifier) AllowedWhenWaitingForSyncReply
     void ReleaseSerializedImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer)
 #if ENABLE(WEBGL)
-    void CreateGraphicsContextGL(struct WebCore::GraphicsContextGLAttributes attributes, WebKit::GraphicsContextGLIdentifier graphicsContextGLIdentifier, WebKit::RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle serverConnection) AllowedWhenWaitingForSyncReply
-    void ReleaseGraphicsContextGL(WebKit::GraphicsContextGLIdentifier graphicsContextGLIdentifier) AllowedWhenWaitingForSyncReply
+    [EnabledIf='isWebGLEnabled()'] void CreateGraphicsContextGL(struct WebCore::GraphicsContextGLAttributes attributes, WebKit::GraphicsContextGLIdentifier graphicsContextGLIdentifier, WebKit::RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle serverConnection) AllowedWhenWaitingForSyncReply
+    [EnabledIf='isWebGLEnabled()'] void ReleaseGraphicsContextGL(WebKit::GraphicsContextGLIdentifier graphicsContextGLIdentifier) AllowedWhenWaitingForSyncReply
 #endif
-    void CreateRemoteGPU(WebKit::WebGPUIdentifier identifier, WebKit::RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle serverConnection) AllowedWhenWaitingForSyncReply
-    void ReleaseRemoteGPU(WebKit::WebGPUIdentifier identifier) AllowedWhenWaitingForSyncReply
+    [EnabledIf='isWebGPUEnabled()'] void CreateRemoteGPU(WebKit::WebGPUIdentifier identifier, WebKit::RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle serverConnection) AllowedWhenWaitingForSyncReply
+    [EnabledIf='isWebGPUEnabled()'] void ReleaseRemoteGPU(WebKit::WebGPUIdentifier identifier) AllowedWhenWaitingForSyncReply
     void ClearNowPlayingInfo()
     void SetNowPlayingInfo(struct WebCore::NowPlayingInfo nowPlayingInfo)
 #if USE(AUDIO_SESSION)

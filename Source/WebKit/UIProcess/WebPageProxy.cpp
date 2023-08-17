@@ -686,7 +686,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     m_inspectorController->init();
 
 #if ENABLE(IPC_TESTING_API)
-    if (m_preferences->ipcTestingAPIEnabled())
+    if (m_preferences->ipcTestingAPIEnabled() && m_preferences->ignoreInvalidMessageWhenIPCTestingAPIEnabled())
         process.setIgnoreInvalidMessageForTesting();
 #endif
 
@@ -766,6 +766,16 @@ void WebPageProxy::removeAllMessageReceivers()
 WebPageProxyMessageReceiverRegistration& WebPageProxy::messageReceiverRegistration()
 {
     return internals().messageReceiverRegistration;
+}
+
+bool WebPageProxy::attachmentElementEnabled()
+{
+    return preferences().attachmentElementEnabled();
+}
+
+bool WebPageProxy::modelElementEnabled()
+{
+    return preferences().modelElementEnabled();
 }
 
 // FIXME: Should return a const PageClient& and add a separate non-const
@@ -1025,7 +1035,7 @@ void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain, Pro
     addAllMessageReceivers();
 
 #if ENABLE(IPC_TESTING_API)
-    if (m_preferences->store().getBoolValueForKey(WebPreferencesKey::ipcTestingAPIEnabledKey()))
+    if (m_preferences->store().getBoolValueForKey(WebPreferencesKey::ipcTestingAPIEnabledKey()) && m_preferences->store().getBoolValueForKey(WebPreferencesKey::ignoreInvalidMessageWhenIPCTestingAPIEnabledKey()))
         m_process->setIgnoreInvalidMessageForTesting();
 #endif
     

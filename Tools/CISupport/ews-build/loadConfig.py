@@ -34,7 +34,7 @@ from buildbot.changes.filter import ChangeFilter
 from datetime import datetime, timezone
 from twisted.internet import defer
 
-from factories import (APITestsFactory, BindingsFactory, BuildFactory, CommitQueueFactory, Factory, GTKBuildFactory,
+from .factories import (APITestsFactory, BindingsFactory, BuildFactory, CommitQueueFactory, Factory, GTKBuildFactory,
                        GTKTestsFactory, JSCBuildFactory, JSCBuildAndTestsFactory, JSCTestsFactory, MergeQueueFactory, StressTestFactory,
                        StyleFactory, TestFactory, tvOSBuildFactory, WPEBuildFactory, WPETestsFactory, WebKitPerlFactory, WebKitPyFactory,
                        WinCairoFactory, iOSBuildFactory, iOSEmbeddedBuildFactory, iOSTestsFactory, macOSBuildFactory, macOSBuildOnlyFactory,
@@ -44,7 +44,7 @@ BUILDER_NAME_LENGTH_LIMIT = 70
 STEP_NAME_LENGTH_LIMIT = 50
 
 
-def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
+def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path=os.path.dirname(os.path.abspath(__file__))):
     with open(os.path.join(master_prefix_path, 'config.json')) as config_json:
         config = json.load(config_json)
     if is_test_mode_enabled:

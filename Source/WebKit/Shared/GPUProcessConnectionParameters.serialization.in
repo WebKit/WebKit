@@ -27,6 +27,7 @@
     bool isDOMRenderingEnabled;
     bool isLockdownModeEnabled;
     bool isWebGPUEnabled;
+    bool isWebGLEnabled;
 #if ENABLE(IPC_TESTING_API)
     bool ignoreInvalidMessageForTesting;
 #endif

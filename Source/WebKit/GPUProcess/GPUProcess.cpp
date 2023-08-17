@@ -126,6 +126,12 @@ void GPUProcess::updateWebGPUEnabled(WebCore::ProcessIdentifier processIdentifie
         connection->updateWebGPUEnabled(webGPUEnabled);
 }
 
+void GPUProcess::updateWebGLEnabled(WebCore::ProcessIdentifier processIdentifier, bool webGLEnabled)
+{
+    if (auto* connection = m_webProcessConnections.get(processIdentifier))
+        connection->updateWebGLEnabled(webGLEnabled);
+}
+
 void GPUProcess::updateDOMRenderingEnabled(WebCore::ProcessIdentifier processIdentifier, bool isDOMRenderingEnabled)
 {
     if (auto* connection = m_webProcessConnections.get(processIdentifier))

@@ -85,6 +85,8 @@ private:
     void beginInterruptionRemote();
     void endInterruptionRemote(WebCore::AudioSession::MayResume);
 
+    bool allowTestOnlyIPC();
+
     RemoteAudioSessionProxyManager& audioSessionManager();
     IPC::Connection& connection();
 

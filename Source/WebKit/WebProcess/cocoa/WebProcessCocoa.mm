@@ -757,7 +757,12 @@ static void registerLogHook()
     if (os_trace_get_mode() != OS_TRACE_MODE_DISABLE && os_trace_get_mode() != OS_TRACE_MODE_OFF)
         return;
 
-    os_log_set_hook(OS_LOG_TYPE_DEFAULT, ^(os_log_type_t type, os_log_message_t msg) {
+    static os_log_hook_t prevHook = nullptr;
+
+    prevHook = os_log_set_hook(OS_LOG_TYPE_DEFAULT, ^(os_log_type_t type, os_log_message_t msg) {
+        if (prevHook)
+            prevHook(type, msg);
+
         if (msg->buffer_sz > 1024)
             return;
 
