@@ -361,7 +361,7 @@ bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(cons
         return false;
     if (!rootStyle.isLeftToRightDirection())
         return false;
-    if (rootStyle.wordBreak() == WordBreak::Auto || rootStyle.overflowWrap() == OverflowWrap::BreakWord)
+    if (rootStyle.wordBreak() == WordBreak::Auto)
         return false;
     if (rootStyle.textIndent() != RenderStyle::initialTextIndent())
         return false;
