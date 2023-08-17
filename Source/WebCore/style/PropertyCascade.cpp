@@ -221,27 +221,33 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
 
             if (m_includedProperties.containsAll(allProperties()))
                 return true;
-            if (m_includedProperties.contains(PropertyType::Inherited) && current.isInherited())
-                return true;
-            if (m_includedProperties.contains(PropertyType::NonInherited) && !current.isInherited())
-                return true;
 
             // If we have applied this property for some reason already we must apply anything that overrides it.
             if (hasProperty(propertyID, *current.value()))
                 return true;
 
-            if (m_includedProperties.contains(PropertyType::VariableReference)) {
-                if (current.value()->hasVariableReferences())
-                    return true;
-                // Apply all deferred properties if we have applied any. They may override the ones we already applied.
-                if (propertyID >= firstDeferredProperty && m_lastIndexForDeferred)
-                    return true;
-            }
             if (m_includedProperties.containsAny({ PropertyType::AfterAnimation, PropertyType::AfterTransition })) {
                 if (shouldApplyAfterAnimation(current)) {
                     m_animationLayer->overriddenProperties.add(propertyID);
                     return true;
                 }
+                return false;
+            }
+
+            if (m_includedProperties.contains(PropertyType::Inherited) && current.isInherited())
+                return true;
+            if (m_includedProperties.contains(PropertyType::ExplicitlyInherited) && isValueID(*current.value(), CSSValueInherit))
+                return true;
+            if (m_includedProperties.contains(PropertyType::NonInherited) && !current.isInherited())
+                return true;
+
+            // Apply all deferred properties if we have applied any. They may override the ones we already applied.
+            if (propertyID >= firstDeferredProperty && m_lastIndexForDeferred)
+                return true;
+
+            if (m_includedProperties.contains(PropertyType::VariableReference)) {
+                if (current.value()->hasVariableReferences())
+                    return true;
             }
 
             return false;
