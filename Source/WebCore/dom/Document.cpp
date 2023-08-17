@@ -191,6 +191,7 @@
 #include "PointerLockController.h"
 #include "PolicyChecker.h"
 #include "PopStateEvent.h"
+#include "Position.h"
 #include "ProcessingInstruction.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "PublicSuffix.h"
@@ -3011,6 +3012,17 @@ void Document::collectRangeDataFromRegister(Vector<WeakPtr<HighlightRangeData>>&
     }
 }
 
+static void repaintRange(const AbstractRange& range)
+{
+    auto sortedRange = makeSimpleRange(range);
+    if (is_gt(treeOrder<ComposedTree>(sortedRange.start, sortedRange.end)))
+        std::swap(sortedRange.start, sortedRange.end);
+    for (auto& node : intersectingNodes(sortedRange)) {
+        if (auto renderer = node.renderer())
+            renderer->repaint();
+    }
+}
+
 void Document::updateHighlightPositions()
 {
     Vector<WeakPtr<HighlightRangeData>> rangesData;
@@ -3030,10 +3042,16 @@ void Document::updateHighlightPositions()
             auto endPosition = visibleSelection.visibleEnd().deepEquivalent();
             if (!weakRangeData.get())
                 continue;
+
+            if (auto simpleRange = makeSimpleRange(rangeData->startPosition(), rangeData->endPosition()))
+                repaintRange(StaticRange::create(*simpleRange));
+
             if (!startPosition.isNull())
                 rangeData->setStartPosition(WTFMove(startPosition));
             if (!endPosition.isNull())
                 rangeData->setEndPosition(WTFMove(endPosition));
+
+            repaintRange(rangeData->range());
         }
     }
 }
