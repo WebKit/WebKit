@@ -54,13 +54,6 @@ BackForwardCacheExpirationInterval:
     WebCore:
       default: 30_min
 
-BackgroundShouldExtendBeyondPage:
-  type: bool
-  webcoreOnChange: backgroundShouldExtendBeyondPageChanged
-  defaultValue:
-    WebCore:
-      default: false
-
 ClientCoordinatesRelativeToLayoutViewport:
   type: bool
   webcoreOnChange: setNeedsRecalcStyleInAllFrames

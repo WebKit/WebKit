@@ -3512,7 +3512,6 @@ header: <WebCore/ScrollingStateNode.h>
     RootContentsLayer
     CounterScrollingLayer
     InsetClipLayer
-    ContentShadowLayer
     HeaderHeight
     FooterHeight
     HeaderLayer

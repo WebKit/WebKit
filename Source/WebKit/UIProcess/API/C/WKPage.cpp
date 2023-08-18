@@ -800,13 +800,13 @@ void WKPageSetEnableHorizontalRubberBanding(WKPageRef pageRef, bool enableHorizo
 
 void WKPageSetBackgroundExtendsBeyondPage(WKPageRef pageRef, bool backgroundExtendsBeyondPage)
 {
-    CRASH_IF_SUSPENDED;
-    toImpl(pageRef)->setBackgroundExtendsBeyondPage(backgroundExtendsBeyondPage);
+    UNUSED_PARAM(pageRef);
+    UNUSED_PARAM(backgroundExtendsBeyondPage);
 }
 
 bool WKPageBackgroundExtendsBeyondPage(WKPageRef pageRef)
 {
-    return toImpl(pageRef)->backgroundExtendsBeyondPage();
+    return true;
 }
 
 void WKPageSetPaginationMode(WKPageRef pageRef, WKPaginationMode paginationMode)

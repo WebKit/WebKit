@@ -89,9 +89,6 @@ bool ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren(const Scrolli
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::InsetClipLayer))
         m_insetClipLayer = static_cast<CALayer*>(scrollingStateNode.insetClipLayer());
 
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ContentShadowLayer))
-        m_contentShadowLayer = static_cast<CALayer*>(scrollingStateNode.contentShadowLayer());
-
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::HeaderLayer))
         m_headerLayer = static_cast<CALayer*>(scrollingStateNode.headerLayer());
 
@@ -198,8 +195,6 @@ void ScrollingTreeFrameScrollingNodeMac::repositionRelatedLayers()
     if (m_insetClipLayer && m_rootContentsLayer) {
         m_insetClipLayer.get().position = FloatPoint(m_insetClipLayer.get().position.x, LocalFrameView::yPositionForInsetClipLayer(scrollPosition, topContentInset));
         m_rootContentsLayer.get().position = LocalFrameView::positionForRootContentLayer(scrollPosition, scrollOrigin(), topContentInset, headerHeight());
-        if (m_contentShadowLayer)
-            m_contentShadowLayer.get().position = m_rootContentsLayer.get().position;
     }
 
     if (m_headerLayer || m_footerLayer) {

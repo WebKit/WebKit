@@ -1248,9 +1248,6 @@ public:
     void setEnableHorizontalRubberBanding(bool);
     bool horizontalRubberBandingIsEnabled() const;
         
-    void setBackgroundExtendsBeyondPage(bool);
-    bool backgroundExtendsBeyondPage() const;
-
     void setPaginationMode(WebCore::PaginationMode);
     WebCore::PaginationMode paginationMode() const { return m_paginationMode; }
     void setPaginationBehavesLikeColumns(bool);
@@ -3114,8 +3111,6 @@ private:
         
     bool m_enableVerticalRubberBanding { true };
     bool m_enableHorizontalRubberBanding { true };
-
-    bool m_backgroundExtendsBeyondPage { true };
 
     bool m_shouldRecordNavigationSnapshots { false };
     bool m_isShowingNavigationGestureSnapshot { false };

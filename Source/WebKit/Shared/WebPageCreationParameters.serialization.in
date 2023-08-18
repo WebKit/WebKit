@@ -88,8 +88,6 @@ struct WebKit::WebPageCreationParameters {
 
     std::optional<uint32_t> scrollbarOverlayStyle;
 
-    bool backgroundExtendsBeyondPage;
-
     WebKit::LayerHostingMode layerHostingMode;
 
     bool hasResourceLoadClient;

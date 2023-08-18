@@ -473,13 +473,12 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
     // if there is a transform on the <html>, or if there is a page scale factor less than 1.
     // Only fill with a background color (typically white) if we're the root document, 
     // since iframes/frames with no background in the child document should show the parent's background.
-    // We use the base background color unless the backgroundShouldExtendBeyondPage setting is set,
-    // in which case we use the document's background color.
+    // We use the the document's background color.
     if (frameView().isTransparent()) // FIXME: This needs to be dynamic. We should be able to go back to blitting if we ever stop being transparent.
         frameView().setCannotBlitToWindow(); // The parent must show behind the child.
     else {
         const Color& documentBackgroundColor = frameView().documentBackgroundColor();
-        const Color& backgroundColor = (shouldPropagateBackgroundPaintingToInitialContainingBlock && settings().backgroundShouldExtendBeyondPage() && documentBackgroundColor.isValid()) ? documentBackgroundColor : frameView().baseBackgroundColor();
+        const Color& backgroundColor = (shouldPropagateBackgroundPaintingToInitialContainingBlock && documentBackgroundColor.isValid()) ? documentBackgroundColor : frameView().baseBackgroundColor();
         if (backgroundColor.isVisible()) {
             CompositeOperator previousOperator = paintInfo.context().compositeOperation();
             paintInfo.context().setCompositeOperation(CompositeOperator::Copy);

@@ -832,7 +832,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     m_drawingArea->updatePreferences(parameters.store);
 
-    setBackgroundExtendsBeyondPage(parameters.backgroundExtendsBeyondPage);
     setPageAndTextZoomFactors(parameters.pageZoomFactor, parameters.textZoomFactor);
 
     // FIXME: These should use makeUnique and makeUniqueRef instead of new.
@@ -2733,12 +2732,6 @@ void WebPage::setEnableHorizontalRubberBanding(bool enableHorizontalRubberBandin
     m_page->setHorizontalScrollElasticity(enableHorizontalRubberBanding ? ScrollElasticity::Allowed : ScrollElasticity::None);
 }
 
-void WebPage::setBackgroundExtendsBeyondPage(bool backgroundExtendsBeyondPage)
-{
-    if (m_page->settings().backgroundShouldExtendBeyondPage() != backgroundExtendsBeyondPage)
-        m_page->settings().setBackgroundShouldExtendBeyondPage(backgroundExtendsBeyondPage);
-}
-
 void WebPage::setPaginationMode(uint32_t mode)
 {
     Pagination pagination = m_page->pagination();
@@ -2928,7 +2921,7 @@ void WebPage::paintSnapshotAtSize(const IntRect& rect, const IntSize& bitmapSize
         frameView.setBaseBackgroundColor(backgroundColor);
     } else {
         Color documentBackgroundColor = frameView.documentBackgroundColor();
-        backgroundColor = (frame.settings().backgroundShouldExtendBeyondPage() && documentBackgroundColor.isValid()) ? documentBackgroundColor : frameView.baseBackgroundColor();
+        backgroundColor = documentBackgroundColor.isValid() ? documentBackgroundColor : frameView.baseBackgroundColor();
     }
     graphicsContext.fillRect(IntRect(IntPoint(), bitmapSize), backgroundColor);
 

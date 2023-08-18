@@ -89,9 +89,6 @@ public:
     const LayerRepresentation& insetClipLayer() const { return m_insetClipLayer; }
     WEBCORE_EXPORT void setInsetClipLayer(const LayerRepresentation&);
 
-    const LayerRepresentation& contentShadowLayer() const { return m_contentShadowLayer; }
-    WEBCORE_EXPORT void setContentShadowLayer(const LayerRepresentation&);
-
     // The header and footer layers scroll vertically with the page, they should remain fixed when scrolling horizontally.
     const LayerRepresentation& headerLayer() const { return m_headerLayer; }
     WEBCORE_EXPORT void setHeaderLayer(const LayerRepresentation&);
@@ -131,7 +128,6 @@ private:
     LayerRepresentation m_rootContentsLayer;
     LayerRepresentation m_counterScrollingLayer;
     LayerRepresentation m_insetClipLayer;
-    LayerRepresentation m_contentShadowLayer;
     LayerRepresentation m_headerLayer;
     LayerRepresentation m_footerLayer;
 

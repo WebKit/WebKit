@@ -493,7 +493,6 @@ RenderLayerCompositor::~RenderLayerCompositor()
 
 #if HAVE(RUBBER_BANDING)
     GraphicsLayer::unparentAndClear(m_layerForOverhangAreas);
-    GraphicsLayer::unparentAndClear(m_contentShadowLayer);
     GraphicsLayer::unparentAndClear(m_layerForTopOverhangArea);
     GraphicsLayer::unparentAndClear(m_layerForBottomOverhangArea);
     GraphicsLayer::unparentAndClear(m_layerForHeader);
@@ -1909,7 +1908,7 @@ static RenderLayerModelObject& rendererForCompositingTests(const RenderLayer& la
 
 void RenderLayerCompositor::updateRootContentLayerClipping()
 {
-    m_rootContentsLayer->setMasksToBounds(!m_renderView.settings().backgroundShouldExtendBeyondPage());
+    m_rootContentsLayer->setMasksToBounds(false);
 }
 
 bool RenderLayerCompositor::updateBacking(RenderLayer& layer, RequiresCompositingData& queryData, BackingSharingState* backingSharingState, BackingRequired backingRequired)
@@ -2689,11 +2688,6 @@ void RenderLayerCompositor::updateRootLayerPosition()
     updateScrollLayerClipping();
 
 #if HAVE(RUBBER_BANDING)
-    if (m_contentShadowLayer && m_rootContentsLayer) {
-        m_contentShadowLayer->setPosition(m_rootContentsLayer->position());
-        m_contentShadowLayer->setSize(m_rootContentsLayer->size());
-    }
-
     updateLayerForTopOverhangArea(m_layerForTopOverhangArea != nullptr);
     updateLayerForBottomOverhangArea(m_layerForBottomOverhangArea != nullptr);
     updateLayerForHeader(m_layerForHeader != nullptr);
@@ -4007,27 +4001,6 @@ bool RenderLayerCompositor::requiresOverhangAreasLayer() const
     return false;
 }
 
-bool RenderLayerCompositor::requiresContentShadowLayer() const
-{
-    if (!isRootFrameCompositor())
-        return false;
-
-#if PLATFORM(COCOA)
-    if (viewHasTransparentBackground())
-        return false;
-
-    // If the background is going to extend, then it doesn't make sense to have a shadow layer.
-    if (m_renderView.settings().backgroundShouldExtendBeyondPage())
-        return false;
-
-    // On Mac, we want a content shadow layer if we're using tiled drawing and can scroll.
-    if (documentUsesTiledBacking() && !m_renderView.frameView().prohibitsScrolling())
-        return true;
-#endif
-
-    return false;
-}
-
 GraphicsLayer* RenderLayerCompositor::updateLayerForTopOverhangArea(bool wantsLayer)
 {
     if (!isRootFrameCompositor())
@@ -4148,15 +4121,13 @@ void RenderLayerCompositor::updateLayerForOverhangAreasBackgroundColor()
 
     Color backgroundColor;
 
-    if (m_renderView.settings().backgroundShouldExtendBeyondPage()) {
-        backgroundColor = ([&] {
-            if (auto underPageBackgroundColorOverride = page().underPageBackgroundColorOverride(); underPageBackgroundColorOverride.isValid())
-                return underPageBackgroundColorOverride;
+    backgroundColor = ([&] {
+        if (auto underPageBackgroundColorOverride = page().underPageBackgroundColorOverride(); underPageBackgroundColorOverride.isValid())
+            return underPageBackgroundColorOverride;
 
-            return m_rootExtendedBackgroundColor;
-        })();
-        m_layerForOverhangAreas->setBackgroundColor(backgroundColor);
-    }
+        return m_rootExtendedBackgroundColor;
+    })();
+    m_layerForOverhangAreas->setBackgroundColor(backgroundColor);
 }
 
 #endif // HAVE(RUBBER_BANDING)
@@ -4221,11 +4192,9 @@ void RenderLayerCompositor::rootBackgroundColorOrTransparencyChanged()
     Color backgroundColor;
     bool isTransparent = viewHasTransparentBackground(&backgroundColor);
     
-    Color extendedBackgroundColor = m_renderView.settings().backgroundShouldExtendBeyondPage() ? backgroundColor : Color();
-    
     bool transparencyChanged = m_viewBackgroundIsTransparent != isTransparent;
     bool backgroundColorChanged = m_viewBackgroundColor != backgroundColor;
-    bool extendedBackgroundColorChanged = m_rootExtendedBackgroundColor != extendedBackgroundColor;
+    bool extendedBackgroundColorChanged = m_rootExtendedBackgroundColor != backgroundColor;
 
     if (!transparencyChanged && !backgroundColorChanged && !extendedBackgroundColorChanged)
         return;
@@ -4234,7 +4203,7 @@ void RenderLayerCompositor::rootBackgroundColorOrTransparencyChanged()
 
     m_viewBackgroundIsTransparent = isTransparent;
     m_viewBackgroundColor = backgroundColor;
-    m_rootExtendedBackgroundColor = extendedBackgroundColor;
+    m_rootExtendedBackgroundColor = backgroundColor;
     
     if (extendedBackgroundColorChanged) {
         page().chrome().client().pageExtendedBackgroundColorDidChange();
@@ -4270,20 +4239,6 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
         }
     } else
         GraphicsLayer::unparentAndClear(m_layerForOverhangAreas);
-
-    if (requiresContentShadowLayer()) {
-        if (!m_contentShadowLayer) {
-            m_contentShadowLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
-            m_contentShadowLayer->setName(MAKE_STATIC_STRING_IMPL("content shadow"));
-            m_contentShadowLayer->setSize(m_rootContentsLayer->size());
-            m_contentShadowLayer->setPosition(m_rootContentsLayer->position());
-            m_contentShadowLayer->setAnchorPoint(FloatPoint3D());
-            m_contentShadowLayer->setCustomAppearance(GraphicsLayer::CustomAppearance::ScrollingShadow);
-
-            m_scrolledContentsLayer->addChildBelow(*m_contentShadowLayer, m_rootContentsLayer.get());
-        }
-    } else
-        GraphicsLayer::unparentAndClear(m_contentShadowLayer);
 #endif
 
     if (requiresHorizontalScrollbarLayer()) {

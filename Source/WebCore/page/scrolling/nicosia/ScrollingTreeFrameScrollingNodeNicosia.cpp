@@ -80,10 +80,6 @@ bool ScrollingTreeFrameScrollingNodeNicosia::commitStateBeforeChildren(const Scr
         auto* layer = static_cast<Nicosia::PlatformLayer*>(scrollingStateNode.insetClipLayer());
         m_insetClipLayer = downcast<Nicosia::CompositionLayer>(layer);
     }
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ContentShadowLayer)) {
-        auto* layer = static_cast<Nicosia::PlatformLayer*>(scrollingStateNode.contentShadowLayer());
-        m_contentShadowLayer = downcast<Nicosia::CompositionLayer>(layer);
-    }
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::HeaderLayer)) {
         auto* layer = static_cast<Nicosia::PlatformLayer*>(scrollingStateNode.headerLayer());
         m_headerLayer = downcast<Nicosia::CompositionLayer>(layer);
@@ -162,8 +158,6 @@ void ScrollingTreeFrameScrollingNodeNicosia::repositionRelatedLayers()
 
         auto rootContentsPosition = LocalFrameView::positionForRootContentLayer(scrollPosition, scrollOrigin(), topContentInset, headerHeight());
         applyLayerPosition(*m_rootContentsLayer, rootContentsPosition);
-        if (m_contentShadowLayer)
-            applyLayerPosition(*m_contentShadowLayer, rootContentsPosition);
     }
 
     if (m_headerLayer || m_footerLayer) {

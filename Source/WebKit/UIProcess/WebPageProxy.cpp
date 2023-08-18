@@ -4829,23 +4829,6 @@ bool WebPageProxy::horizontalRubberBandingIsEnabled() const
     return m_enableHorizontalRubberBanding;
 }
 
-void WebPageProxy::setBackgroundExtendsBeyondPage(bool backgroundExtendsBeyondPage)
-{
-    if (backgroundExtendsBeyondPage == m_backgroundExtendsBeyondPage)
-        return;
-
-    m_backgroundExtendsBeyondPage = backgroundExtendsBeyondPage;
-
-    if (!hasRunningProcess())
-        return;
-    send(Messages::WebPage::SetBackgroundExtendsBeyondPage(backgroundExtendsBeyondPage));
-}
-
-bool WebPageProxy::backgroundExtendsBeyondPage() const
-{
-    return m_backgroundExtendsBeyondPage;
-}
-
 void WebPageProxy::setPaginationMode(WebCore::Pagination::Mode mode)
 {
     if (mode == m_paginationMode)
@@ -9332,7 +9315,6 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
         parameters.scrollbarOverlayStyle = m_scrollbarOverlayStyle.value();
     else
         parameters.scrollbarOverlayStyle = std::nullopt;
-    parameters.backgroundExtendsBeyondPage = m_backgroundExtendsBeyondPage;
     parameters.layerHostingMode = internals().layerHostingMode;
     parameters.controlledByAutomation = m_controlledByAutomation;
     parameters.useDarkAppearance = useDarkAppearance();

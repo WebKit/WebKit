@@ -478,13 +478,6 @@ void SettingsBase::storageBlockingPolicyChanged()
         m_page->storageBlockingStateChanged();
 }
 
-void SettingsBase::backgroundShouldExtendBeyondPageChanged()
-{
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    if (m_page && localMainFrame)
-        localMainFrame->view()->updateExtendBackgroundIfNecessary();
-}
-
 void SettingsBase::scrollingPerformanceTestingEnabledChanged()
 {
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());

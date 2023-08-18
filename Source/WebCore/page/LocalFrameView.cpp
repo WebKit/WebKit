@@ -1064,26 +1064,6 @@ GraphicsLayer* LocalFrameView::graphicsLayerForScrolledContents()
     return nullptr;
 }
 
-#if HAVE(RUBBER_BANDING)
-GraphicsLayer* LocalFrameView::graphicsLayerForTransientZoomShadow()
-{
-    auto* page = m_frame->page();
-    if (!page)
-        return nullptr;
-
-    if (page->delegatesScaling()) {
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
-
-    auto* renderView = this->renderView();
-    if (!renderView)
-        return nullptr;
-
-    return renderView->compositor().layerForContentShadow();
-}
-#endif
-
 LayoutRect LocalFrameView::fixedScrollableAreaBoundsInflatedForScrolling(const LayoutRect& uninflatedBounds) const
 {
     LayoutPoint scrollPosition;
@@ -3526,14 +3506,11 @@ LocalFrameView::ExtendedBackgroundMode LocalFrameView::calculateExtendedBackgrou
     // <rdar://problem/16201373>
     return ExtendedBackgroundModeNone;
 #else
-    if (!m_frame->settings().backgroundShouldExtendBeyondPage())
-        return ExtendedBackgroundModeNone;
-
-    // Just because Settings::backgroundShouldExtendBeyondPage() is true does not necessarily mean
-    // that the background rect needs to be extended for painting. Simple backgrounds can be extended
-    // just with RenderLayerCompositor's rootExtendedBackgroundColor. More complicated backgrounds,
-    // such as images, require extending the background rect to continue painting into the extended
-    // region. This function finds out if it is necessary to extend the background rect for painting.
+    // The background rect does not necessarily need to be extended for painting. Simple backgrounds
+    // can be extended just with RenderLayerCompositor's rootExtendedBackgroundColor. More complicated
+    // backgrounds, such as images, require extending the background rect to continue painting into the
+    // extended region. This function finds out if it is necessary to extend the background rect for
+    // painting.
 
     if (!m_frame->isMainFrame())
         return ExtendedBackgroundModeNone;
@@ -5963,7 +5940,7 @@ void LocalFrameView::setScrollPinningBehavior(ScrollPinningBehavior pinning)
 
 ScrollBehaviorForFixedElements LocalFrameView::scrollBehaviorForFixedElements() const
 {
-    return m_frame->settings().backgroundShouldExtendBeyondPage() ? StickToViewportBounds : StickToDocumentBounds;
+    return StickToViewportBounds;
 }
 
 Frame& LocalFrameView::frame() const

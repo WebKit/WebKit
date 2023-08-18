@@ -201,9 +201,10 @@ WK_EXPORT bool WKPageVerticalRubberBandingIsEnabled(WKPageRef);
 WK_EXPORT void WKPageSetEnableVerticalRubberBanding(WKPageRef, bool enableVerticalRubberBanding);
 WK_EXPORT bool WKPageHorizontalRubberBandingIsEnabled(WKPageRef);
 WK_EXPORT void WKPageSetEnableHorizontalRubberBanding(WKPageRef, bool enableHorizontalRubberBanding);
-    
-WK_EXPORT void WKPageSetBackgroundExtendsBeyondPage(WKPageRef, bool backgroundExtendsBeyondPage);
-WK_EXPORT bool WKPageBackgroundExtendsBeyondPage(WKPageRef);
+
+// Background now always extends beyond page. Setting this no longer has any effect.
+WK_EXPORT void WKPageSetBackgroundExtendsBeyondPage(WKPageRef, bool backgroundExtendsBeyondPage) WK_C_API_DEPRECATED;
+WK_EXPORT bool WKPageBackgroundExtendsBeyondPage(WKPageRef) WK_C_API_DEPRECATED;
 
 WK_EXPORT bool WKPageCanDelete(WKPageRef page);
 WK_EXPORT bool WKPageHasSelectedRange(WKPageRef page);
