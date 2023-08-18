@@ -212,8 +212,8 @@ public:
     };
 
     bool isDeferringTermination() const { return m_deferTerminationCount; }
-    void deferTermination(DeferAction);
-    void undoDeferTermination(DeferAction);
+    inline void deferTermination(DeferAction);
+    inline void undoDeferTermination(DeferAction);
 
     void notifyGrabAllLocks()
     {
@@ -246,7 +246,7 @@ public:
 #endif
 
 private:
-    VM& vm() const;
+    ALWAYS_INLINE VM& vm() const;
 
     JS_EXPORT_PRIVATE void deferTerminationSlow(DeferAction);
     JS_EXPORT_PRIVATE void undoDeferTerminationSlow(DeferAction);
@@ -287,8 +287,8 @@ private:
 
 class DeferTraps {
 public:
-    DeferTraps(VM&);
-    ~DeferTraps();
+    ALWAYS_INLINE DeferTraps(VM&);
+    ALWAYS_INLINE ~DeferTraps();
 private:
     VMTraps& m_traps;
     bool m_isActive;

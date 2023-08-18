@@ -94,7 +94,7 @@ void WeakMapImpl<WeakMapBucket>::finalizeUnconditionally(VM& vm, CollectionScope
 }
 
 template<typename WeakMapBucket>
-void WeakMapImpl<WeakMapBucket>::rehash(RehashMode mode)
+inline void WeakMapImpl<WeakMapBucket>::rehash(RehashMode mode)
 {
     // Since shrinking is done just after GC runs (finalizeUnconditionally), WeakMapImpl::rehash()
     // function must not touch any GC related features. This is why we do not allocate WeakMapBuffer

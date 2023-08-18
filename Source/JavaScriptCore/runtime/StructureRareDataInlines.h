@@ -63,8 +63,8 @@ public:
         , m_structureRareData(nullptr)
     { }
 
-    void install(StructureRareData*, Structure*);
-    void fireInternal(VM&, const FireDetail&);
+    inline void install(StructureRareData*, Structure*);
+    inline void fireInternal(VM&, const FireDetail&);
 
 private:
     PackedCellPtr<StructureRareData> m_structureRareData;

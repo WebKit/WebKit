@@ -370,7 +370,7 @@ private:
     }
 
     enum class RehashMode { Normal, RemoveBatching };
-    void rehash(RehashMode = RehashMode::Normal);
+    inline void rehash(RehashMode = RehashMode::Normal);
 
     ALWAYS_INLINE void checkConsistency() const
     {

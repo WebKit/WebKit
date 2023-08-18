@@ -85,21 +85,21 @@ public:
     {
         return m_previous.get();
     }
-    void setPreviousID(VM&, Structure*);
+    inline void setPreviousID(VM&, Structure*);
     void clearPreviousID();
 
     JSValue cachedSpecialProperty(CachedSpecialPropertyKey) const;
-    void cacheSpecialProperty(JSGlobalObject*, VM&, Structure* baseStructure, JSValue, CachedSpecialPropertyKey, const PropertySlot&);
+    inline void cacheSpecialProperty(JSGlobalObject*, VM&, Structure* baseStructure, JSValue, CachedSpecialPropertyKey, const PropertySlot&);
 
-    JSPropertyNameEnumerator* cachedPropertyNameEnumerator() const;
-    uintptr_t cachedPropertyNameEnumeratorAndFlag() const;
-    void setCachedPropertyNameEnumerator(VM&, Structure*, JSPropertyNameEnumerator*, StructureChain*);
-    void clearCachedPropertyNameEnumerator();
+    inline JSPropertyNameEnumerator* cachedPropertyNameEnumerator() const;
+    inline uintptr_t cachedPropertyNameEnumeratorAndFlag() const;
+    inline void setCachedPropertyNameEnumerator(VM&, Structure*, JSPropertyNameEnumerator*, StructureChain*);
+    inline void clearCachedPropertyNameEnumerator();
 
-    JSImmutableButterfly* cachedPropertyNames(CachedPropertyNamesKind) const;
-    JSImmutableButterfly* cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind) const;
-    JSImmutableButterfly* cachedPropertyNamesConcurrently(CachedPropertyNamesKind) const;
-    void setCachedPropertyNames(VM&, CachedPropertyNamesKind, JSImmutableButterfly*);
+    inline JSImmutableButterfly* cachedPropertyNames(CachedPropertyNamesKind) const;
+    inline JSImmutableButterfly* cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind) const;
+    inline JSImmutableButterfly* cachedPropertyNamesConcurrently(CachedPropertyNamesKind) const;
+    inline void setCachedPropertyNames(VM&, CachedPropertyNamesKind, JSImmutableButterfly*);
 
     Box<InlineWatchpointSet> copySharedPolyProtoWatchpoint() const { return m_polyProtoWatchpoint; }
     const Box<InlineWatchpointSet>& sharedPolyProtoWatchpoint() const { return m_polyProtoWatchpoint; }
@@ -156,12 +156,12 @@ private:
     void clearCachedSpecialProperty(CachedSpecialPropertyKey);
     void cacheSpecialPropertySlow(JSGlobalObject*, VM&, Structure* baseStructure, JSValue, CachedSpecialPropertyKey, const PropertySlot&);
 
-    SpecialPropertyCache& ensureSpecialPropertyCache();
+    inline SpecialPropertyCache& ensureSpecialPropertyCache();
     SpecialPropertyCache& ensureSpecialPropertyCacheSlow();
-    bool canCacheSpecialProperty(CachedSpecialPropertyKey);
+    inline bool canCacheSpecialProperty(CachedSpecialPropertyKey);
     void giveUpOnSpecialPropertyCache(CachedSpecialPropertyKey);
 
-    bool tryCachePropertyNameEnumeratorViaWatchpoint(VM&, Structure*, StructureChain*);
+    inline bool tryCachePropertyNameEnumeratorViaWatchpoint(VM&, Structure*, StructureChain*);
 
     // FIXME: We should have some story for clearing these property names caches in GC.
     // https://bugs.webkit.org/show_bug.cgi?id=192659

@@ -114,8 +114,8 @@ public:
     
     // These methods are not standalone in the sense that they cannot be
     // used on a copy of the IndexingHeader.
-    size_t preCapacity(Structure*);
-    size_t indexingPayloadSizeInBytes(Structure*);
+    inline size_t preCapacity(Structure*);
+    inline size_t indexingPayloadSizeInBytes(Structure*);
     
 private:
     friend class LLIntOffsetsExtractor;

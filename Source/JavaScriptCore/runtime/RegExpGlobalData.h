@@ -38,7 +38,7 @@ public:
     void setMultiline(bool multiline) { m_multiline = multiline; }
     bool multiline() const { return m_multiline; }
 
-    void setInput(JSGlobalObject*, JSString*);
+    inline void setInput(JSGlobalObject*, JSString*);
     JSString* input() { return m_cachedResult.input(); }
 
     DECLARE_VISIT_AGGREGATE;
@@ -48,15 +48,15 @@ public:
     JSValue getLeftContext(JSGlobalObject*);
     JSValue getRightContext(JSGlobalObject*);
 
-    MatchResult performMatch(JSGlobalObject*, RegExp*, JSString*, const String&, int startOffset, int** ovector);
-    MatchResult performMatch(JSGlobalObject*, RegExp*, JSString*, const String&, int startOffset);
-    void recordMatch(VM&, JSGlobalObject*, RegExp*, JSString*, const MatchResult&);
+    ALWAYS_INLINE MatchResult performMatch(JSGlobalObject*, RegExp*, JSString*, const String&, int startOffset, int** ovector);
+    ALWAYS_INLINE MatchResult performMatch(JSGlobalObject*, RegExp*, JSString*, const String&, int startOffset);
+    ALWAYS_INLINE void recordMatch(VM&, JSGlobalObject*, RegExp*, JSString*, const MatchResult&);
 
     static ptrdiff_t offsetOfCachedResult() { return OBJECT_OFFSETOF(RegExpGlobalData, m_cachedResult); }
 
     const Vector<int>& ovector() const { return m_ovector; }
 
-    void resetResultFromCache(JSGlobalObject* owner, RegExp*, JSString*, Vector<int>&&);
+    inline void resetResultFromCache(JSGlobalObject* owner, RegExp*, JSString*, Vector<int>&&);
 
 private:
     RegExpCachedResult m_cachedResult;

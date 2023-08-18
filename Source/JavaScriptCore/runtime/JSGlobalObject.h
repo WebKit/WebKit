@@ -518,14 +518,14 @@ public:
     InlineWatchpointSet& typedArrayConstructorSpeciesWatchpointSet() { return m_typedArrayConstructorSpeciesWatchpointSet; }
     InlineWatchpointSet& typedArrayPrototypeIteratorProtocolWatchpointSet() { return m_typedArrayPrototypeIteratorProtocolWatchpointSet; }
 
-    bool isArrayPrototypeIteratorProtocolFastAndNonObservable();
-    bool isTypedArrayPrototypeIteratorProtocolFastAndNonObservable(TypedArrayType);
-    bool isMapPrototypeIteratorProtocolFastAndNonObservable();
-    bool isSetPrototypeIteratorProtocolFastAndNonObservable();
-    bool isStringPrototypeIteratorProtocolFastAndNonObservable();
-    bool isMapPrototypeSetFastAndNonObservable();
-    bool isSetPrototypeAddFastAndNonObservable();
-    bool isArgumentsPrototypeIteratorProtocolFastAndNonObservable();
+    ALWAYS_INLINE bool isArrayPrototypeIteratorProtocolFastAndNonObservable();
+    ALWAYS_INLINE bool isTypedArrayPrototypeIteratorProtocolFastAndNonObservable(TypedArrayType);
+    ALWAYS_INLINE bool isMapPrototypeIteratorProtocolFastAndNonObservable();
+    ALWAYS_INLINE bool isSetPrototypeIteratorProtocolFastAndNonObservable();
+    ALWAYS_INLINE bool isStringPrototypeIteratorProtocolFastAndNonObservable();
+    ALWAYS_INLINE bool isMapPrototypeSetFastAndNonObservable();
+    ALWAYS_INLINE bool isSetPrototypeAddFastAndNonObservable();
+    ALWAYS_INLINE bool isArgumentsPrototypeIteratorProtocolFastAndNonObservable();
 
 #if ENABLE(DFG_JIT)
     using ReferencedGlobalPropertyWatchpointSets = HashMap<RefPtr<UniquedStringImpl>, Ref<WatchpointSet>, IdentifierRepHash>;
@@ -545,9 +545,9 @@ public:
 
     template<typename T>
     struct WeakCustomGetterOrSetterHash {
-        static unsigned hash(const Weak<T>&);
-        static bool equal(const Weak<T>&, const Weak<T>&);
-        static unsigned hash(const PropertyName&, typename T::CustomFunctionPointer, const ClassInfo*);
+        inline static unsigned hash(const Weak<T>&);
+        inline static bool equal(const Weak<T>&, const Weak<T>&);
+        inline static unsigned hash(const PropertyName&, typename T::CustomFunctionPointer, const ClassInfo*);
 
         static constexpr bool safeToCompareToEmptyOrDeleted = false;
     };
@@ -650,38 +650,38 @@ public:
     JSFunction* parseFloatFunction() const { return m_parseFloatFunction.get(this); }
 
     JSFunction* evalFunction() const { return m_evalFunction.get(this); }
-    JSFunction* throwTypeErrorFunction() const;
+    inline JSFunction* throwTypeErrorFunction() const;
     JSFunction* objectProtoToStringFunction() const { return m_objectProtoToStringFunction.get(this); }
     JSFunction* objectProtoToStringFunctionConcurrently() const { return m_objectProtoToStringFunction.getConcurrently(); }
     JSFunction* arrayProtoToStringFunction() const { return m_arrayProtoToStringFunction.get(this); }
     JSFunction* arrayProtoValuesFunction() const { return m_arrayProtoValuesFunction.get(this); }
     JSFunction* arrayProtoValuesFunctionConcurrently() const { return m_arrayProtoValuesFunction.getConcurrently(); }
-    JSFunction* iteratorProtocolFunction() const;
-    JSFunction* newPromiseCapabilityFunction() const;
+    inline JSFunction* iteratorProtocolFunction() const;
+    inline JSFunction* newPromiseCapabilityFunction() const;
     JSFunction* promiseResolveFunction() const { return m_promiseResolveFunction.get(this); }
-    JSFunction* resolvePromiseFunction() const;
-    JSFunction* rejectPromiseFunction() const;
-    JSFunction* promiseProtoThenFunction() const;
-    JSFunction* performPromiseThenFunction() const;
+    inline JSFunction* resolvePromiseFunction() const;
+    inline JSFunction* rejectPromiseFunction() const;
+    inline JSFunction* promiseProtoThenFunction() const;
+    inline JSFunction* performPromiseThenFunction() const;
     JSFunction* objectProtoValueOfFunction() const { return m_objectProtoValueOfFunction.get(); }
     JSFunction* numberProtoToStringFunction() const { return m_numberProtoToStringFunction.getInitializedOnMainThread(this); }
     JSFunction* functionProtoHasInstanceSymbolFunction() const { return m_functionProtoHasInstanceSymbolFunction.get(); }
-    JSFunction* regExpProtoExecFunction() const;
+    inline JSFunction* regExpProtoExecFunction() const;
     JSFunction* typedArrayProtoSort() const { return m_typedArrayProtoSort.get(this); }
-    JSFunction* stringProtoSubstringFunction() const;
-    JSFunction* performProxyObjectHasFunction() const;
-    JSFunction* performProxyObjectGetFunction() const;
-    JSFunction* performProxyObjectGetFunctionConcurrently() const;
-    JSFunction* performProxyObjectGetByValFunction() const;
-    JSFunction* performProxyObjectGetByValFunctionConcurrently() const;
-    JSFunction* performProxyObjectSetSloppyFunction() const;
-    JSFunction* performProxyObjectSetSloppyFunctionConcurrently() const;
-    JSFunction* performProxyObjectSetStrictFunction() const;
-    JSFunction* performProxyObjectSetStrictFunctionConcurrently() const;
+    inline JSFunction* stringProtoSubstringFunction() const;
+    inline JSFunction* performProxyObjectHasFunction() const;
+    inline JSFunction* performProxyObjectGetFunction() const;
+    inline JSFunction* performProxyObjectGetFunctionConcurrently() const;
+    inline JSFunction* performProxyObjectGetByValFunction() const;
+    inline JSFunction* performProxyObjectGetByValFunctionConcurrently() const;
+    inline JSFunction* performProxyObjectSetSloppyFunction() const;
+    inline JSFunction* performProxyObjectSetSloppyFunctionConcurrently() const;
+    inline JSFunction* performProxyObjectSetStrictFunction() const;
+    inline JSFunction* performProxyObjectSetStrictFunctionConcurrently() const;
     JSObject* regExpProtoSymbolReplaceFunction() const { return m_regExpProtoSymbolReplace.get(); }
-    GetterSetter* regExpProtoGlobalGetter() const;
-    GetterSetter* regExpProtoUnicodeGetter() const;
-    GetterSetter* regExpProtoUnicodeSetsGetter() const;
+    inline GetterSetter* regExpProtoGlobalGetter() const;
+    inline GetterSetter* regExpProtoUnicodeGetter() const;
+    inline GetterSetter* regExpProtoUnicodeSetsGetter() const;
     GetterSetter* throwTypeErrorArgumentsCalleeGetterSetter() const { return m_throwTypeErrorArgumentsCalleeGetterSetter.get(this); }
     
     JSModuleLoader* moduleLoader() const { return m_moduleLoader.get(this); }
@@ -728,7 +728,7 @@ public:
         ASSERT(indexingType & IsArray);
         return m_originalArrayStructureForIndexingShape[arrayIndexFromIndexingType(indexingType)].get();
     }
-    Structure* arrayStructureForIndexingTypeDuringAllocation(IndexingType indexingType) const
+    ALWAYS_INLINE Structure* arrayStructureForIndexingTypeDuringAllocation(IndexingType indexingType) const
     {
         ASSERT(indexingType & IsArray);
         return m_arrayStructureForIndexingShapeDuringAllocation[arrayIndexFromIndexingType(indexingType)].get();
@@ -940,12 +940,12 @@ public:
     void haveABadTime(VM&);
     void clearStructureCache(VM&);
         
-    static bool objectPrototypeIsSaneConcurrently(Structure* objectPrototypeStructure);
-    bool arrayPrototypeChainIsSaneConcurrently(Structure* arrayPrototypeStructure, Structure* objectPrototypeStructure);
-    bool stringPrototypeChainIsSaneConcurrently(Structure* stringPrototypeStructure, Structure* objectPrototypeStructure);
-    bool objectPrototypeChainIsSane();
-    bool arrayPrototypeChainIsSane();
-    bool stringPrototypeChainIsSane();
+    ALWAYS_INLINE static bool objectPrototypeIsSaneConcurrently(Structure* objectPrototypeStructure);
+    ALWAYS_INLINE bool arrayPrototypeChainIsSaneConcurrently(Structure* arrayPrototypeStructure, Structure* objectPrototypeStructure);
+    ALWAYS_INLINE bool stringPrototypeChainIsSaneConcurrently(Structure* stringPrototypeStructure, Structure* objectPrototypeStructure);
+    ALWAYS_INLINE bool objectPrototypeChainIsSane();
+    ALWAYS_INLINE bool arrayPrototypeChainIsSane();
+    ALWAYS_INLINE bool stringPrototypeChainIsSane();
 
     bool isRegExpRecompiled() const
     {
@@ -962,7 +962,7 @@ public:
 
     static bool supportsRichSourceInfo(const JSGlobalObject*) { return true; }
 
-    static JSGlobalObject* deriveShadowRealmGlobalObject(JSGlobalObject*);
+    inline static JSGlobalObject* deriveShadowRealmGlobalObject(JSGlobalObject*);
 
     static bool shouldInterruptScript(const JSGlobalObject*) { return true; }
     static bool shouldInterruptScriptBeforeTimeout(const JSGlobalObject*) { return false; }
@@ -998,7 +998,7 @@ public:
     VM& vm() const { return *m_vm; }
     JSObject* globalThis() const;
     WriteBarrier<JSObject>* addressOfGlobalThis() { return &m_globalThis; }
-    OptionSet<CodeGenerationMode> defaultCodeGenerationMode() const;
+    inline OptionSet<CodeGenerationMode> defaultCodeGenerationMode() const;
 
     static inline Structure* createStructure(VM&, JSValue prototype);
     static inline Structure* createStructureForShadowRealm(VM&, JSValue prototype);

@@ -246,11 +246,11 @@ public:
 
     void add(VM&, JSCell* owner, Structure*);
     bool contains(UniquedStringImpl*, unsigned attributes, TransitionKind) const;
-    Structure* get(UniquedStringImpl*, unsigned attributes, TransitionKind) const;
+    inline Structure* get(UniquedStringImpl*, unsigned attributes, TransitionKind) const;
 
-    Structure* trySingleTransition() const;
+    inline Structure* trySingleTransition() const;
 
-    void finalizeUnconditionally(VM&, CollectionScope);
+    inline void finalizeUnconditionally(VM&, CollectionScope);
 
 private:
     friend class SingleSlotTransitionWeakOwner;

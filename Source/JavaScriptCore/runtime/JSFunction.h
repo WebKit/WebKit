@@ -82,7 +82,7 @@ public:
 
     JS_EXPORT_PRIVATE static JSFunction* create(VM&, JSGlobalObject*, unsigned length, const String& name, NativeFunction, ImplementationVisibility, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor, const DOMJIT::Signature* = nullptr);
     
-    static JSFunction* createWithInvalidatedReallocationWatchpoint(VM&, FunctionExecutable*, JSScope*);
+    inline static JSFunction* createWithInvalidatedReallocationWatchpoint(VM&, FunctionExecutable*, JSScope*);
 
     JS_EXPORT_PRIVATE static JSFunction* create(VM&, FunctionExecutable*, JSScope*);
     static JSFunction* create(VM&, FunctionExecutable*, JSScope*, Structure*);
@@ -94,7 +94,7 @@ public:
 
     String nameWithoutGC(VM&);
 
-    JSString* asStringConcurrently() const;
+    inline JSString* asStringConcurrently() const;
 
     ExecutableBase* executable() const
     {
@@ -105,9 +105,9 @@ public:
     }
 
     // To call any of these methods include JSFunctionInlines.h
-    bool isHostFunction() const;
-    FunctionExecutable* jsExecutable() const;
-    Intrinsic intrinsic() const;
+    inline bool isHostFunction() const;
+    inline FunctionExecutable* jsExecutable() const;
+    inline Intrinsic intrinsic() const;
 
     JS_EXPORT_PRIVATE const SourceCode* sourceCode() const;
 
@@ -115,8 +115,8 @@ public:
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    TaggedNativeFunction nativeFunction();
-    TaggedNativeFunction nativeConstructor();
+    inline TaggedNativeFunction nativeFunction();
+    inline TaggedNativeFunction nativeConstructor();
 
     JS_EXPORT_PRIVATE static CallData getConstructData(JSCell*);
     JS_EXPORT_PRIVATE static CallData getCallData(JSCell*);
@@ -134,7 +134,7 @@ public:
         return bitwise_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag);
     }
 
-    FunctionRareData* ensureRareDataAndAllocationProfile(JSGlobalObject*, unsigned inlineCapacity);
+    inline FunctionRareData* ensureRareDataAndAllocationProfile(JSGlobalObject*, unsigned inlineCapacity);
 
     FunctionRareData* rareData() const
     {
@@ -144,18 +144,18 @@ public:
         return nullptr;
     }
 
-    bool isHostOrBuiltinFunction() const;
-    bool isBuiltinFunction() const;
+    inline bool isHostOrBuiltinFunction() const;
+    inline bool isBuiltinFunction() const;
     JS_EXPORT_PRIVATE bool isHostFunctionNonInline() const;
-    bool isClassConstructorFunction() const;
-    bool isRemoteFunction() const;
+    inline bool isClassConstructorFunction() const;
+    inline bool isRemoteFunction() const;
 
     void setFunctionName(JSGlobalObject*, JSValue name);
 
     // Returns the __proto__ for the |this| value if this JSFunction were to be constructed.
     JSObject* prototypeForConstruction(VM&, JSGlobalObject*);
 
-    bool canUseAllocationProfile();
+    inline bool canUseAllocationProfile();
     bool canUseAllocationProfileNonInline();
 
     enum class PropertyStatus {
@@ -165,11 +165,11 @@ public:
     };
     PropertyStatus reifyLazyPropertyIfNeeded(VM&, JSGlobalObject*, PropertyName);
 
-    bool canAssumeNameAndLengthAreOriginal(VM&);
-    double originalLength(VM&);
-    JSString* originalName(JSGlobalObject*);
+    inline bool canAssumeNameAndLengthAreOriginal(VM&);
+    inline double originalLength(VM&);
+    inline JSString* originalName(JSGlobalObject*);
 
-    bool mayHaveNonReifiedPrototype();
+    inline bool mayHaveNonReifiedPrototype();
 
 protected:
     JS_EXPORT_PRIVATE JSFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*);
@@ -205,8 +205,8 @@ private:
     FunctionRareData* allocateAndInitializeRareData(JSGlobalObject*, size_t inlineCapacity);
     FunctionRareData* initializeRareData(JSGlobalObject*, size_t inlineCapacity);
 
-    bool hasReifiedLength() const;
-    bool hasReifiedName() const;
+    inline bool hasReifiedLength() const;
+    inline bool hasReifiedName() const;
     void reifyLength(VM&);
     PropertyStatus reifyName(VM&, JSGlobalObject*);
     PropertyStatus reifyName(VM&, JSGlobalObject*, String name);

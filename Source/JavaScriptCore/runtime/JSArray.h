@@ -100,18 +100,18 @@ public:
     // OK to use on new arrays, but not if it might be a RegExpMatchArray or RuntimeArray.
     JS_EXPORT_PRIVATE bool setLength(JSGlobalObject*, unsigned, bool throwException = false);
 
-    void pushInline(JSGlobalObject*, JSValue);
+    ALWAYS_INLINE void pushInline(JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE void push(JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE JSValue pop(JSGlobalObject*);
 
     static JSArray* fastSlice(JSGlobalObject*, JSObject* source, uint64_t startIndex, uint64_t count);
 
-    bool holesMustForwardToPrototype() const;
-    bool canFastCopy(JSArray* otherArray) const;
-    bool canFastAppend(JSArray* otherArray) const;
-    bool canDoFastIndexedAccess() const;
+    ALWAYS_INLINE bool holesMustForwardToPrototype() const;
+    inline bool canFastCopy(JSArray* otherArray) const;
+    inline bool canFastAppend(JSArray* otherArray) const;
+    inline bool canDoFastIndexedAccess() const;
     // This function returns NonArray if the indexing types are not compatable for copying.
-    IndexingType mergeIndexingTypeForCopying(IndexingType other, bool allowPromotion);
+    inline IndexingType mergeIndexingTypeForCopying(IndexingType other, bool allowPromotion);
     bool appendMemcpy(JSGlobalObject*, VM&, unsigned startIndex, JSArray* otherArray);
 
     enum ShiftCountMode {

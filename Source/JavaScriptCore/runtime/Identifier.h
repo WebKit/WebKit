@@ -112,18 +112,18 @@ public:
 
     static Identifier fromString(VM&, ASCIILiteral);
     static Identifier fromString(VM&, const LChar*, int length);
-    static Identifier fromString(VM&, const UChar*, int length);
-    static Identifier fromString(VM&, const String&);
-    static Identifier fromString(VM&, AtomStringImpl*);
+    inline static Identifier fromString(VM&, const UChar*, int length);
+    inline static Identifier fromString(VM&, const String&);
+    inline static Identifier fromString(VM&, AtomStringImpl*);
     static Identifier fromString(VM&, Ref<AtomStringImpl>&&);
     static Identifier fromString(VM&, const AtomString&);
-    static Identifier fromString(VM& vm, SymbolImpl*);
-    static Identifier fromString(VM& vm, const Vector<LChar>& characters) { return fromString(vm, characters.data(), characters.size()); }
-    static Identifier fromLatin1(VM&, const char*);
+    inline static Identifier fromString(VM&, SymbolImpl*);
+    inline static Identifier fromString(VM& vm, const Vector<LChar>& characters) { return fromString(vm, characters.data(), characters.size()); }
+    inline static Identifier fromLatin1(VM&, const char*);
 
     static Identifier fromUid(VM&, UniquedStringImpl* uid);
-    static Identifier fromUid(const PrivateName&);
-    static Identifier fromUid(SymbolImpl&);
+    inline static Identifier fromUid(const PrivateName&);
+    inline static Identifier fromUid(SymbolImpl&);
 
     static Identifier createLCharFromUChar(VM& vm, const UChar* s, int length) { return Identifier(vm, add8(vm, s, length)); }
 
@@ -161,8 +161,8 @@ private:
     Identifier(VM& vm, const LChar* s, int length) : m_string(add(vm, s, length)) { ASSERT(m_string.impl()->isAtom()); }
     Identifier(VM& vm, const UChar* s, int length) : m_string(add(vm, s, length)) { ASSERT(m_string.impl()->isAtom()); }
     ALWAYS_INLINE Identifier(VM& vm, ASCIILiteral literal) : m_string(add(vm, literal)) { ASSERT(m_string.impl()->isAtom()); }
-    Identifier(VM&, AtomStringImpl*);
-    Identifier(VM&, const AtomString&);
+    inline Identifier(VM&, AtomStringImpl*);
+    inline Identifier(VM&, const AtomString&);
     Identifier(VM& vm, const String& string) : m_string(add(vm, string.impl())) { ASSERT(m_string.impl()->isAtom()); }
     Identifier(VM& vm, StringImpl* rep) : m_string(add(vm, rep)) { ASSERT(m_string.impl()->isAtom()); }
 
@@ -266,10 +266,10 @@ ALWAYS_INLINE std::optional<uint32_t> parseIndex(const Identifier& identifier)
     return parseIndex(*uid);
 }
 
-JSValue identifierToJSValue(VM&, const Identifier&);
+inline JSValue identifierToJSValue(VM&, const Identifier&);
 // This will stringify private symbols. When leaking JSValues to
 // non-internal code, make sure to use this function and not the above one.
-JSValue identifierToSafePublicJSValue(VM&, const Identifier&);
+inline JSValue identifierToSafePublicJSValue(VM&, const Identifier&);
 
 // FIXME: It may be better for this to just be a typedef for PtrHash, since PtrHash may be cheaper to
 // compute than loading the StringImpl's hash from memory. That change would also reduce the likelihood of

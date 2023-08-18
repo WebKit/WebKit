@@ -157,14 +157,14 @@ public:
     T getAs(JSGlobalObject*, PropertyNameType) const;
 
     template<bool checkNullStructure = false>
-    bool getPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&);
+    ALWAYS_INLINE bool getPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&);
     bool getPropertySlot(JSGlobalObject*, unsigned propertyName, PropertySlot&);
-    bool getPropertySlot(JSGlobalObject*, uint64_t propertyName, PropertySlot&);
-    template<typename CallbackWhenNoException> typename std::invoke_result<CallbackWhenNoException, bool, PropertySlot&>::type getPropertySlot(JSGlobalObject*, PropertyName, CallbackWhenNoException) const;
-    template<typename CallbackWhenNoException> typename std::invoke_result<CallbackWhenNoException, bool, PropertySlot&>::type getPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&, CallbackWhenNoException) const;
+    ALWAYS_INLINE bool getPropertySlot(JSGlobalObject*, uint64_t propertyName, PropertySlot&);
+    template<typename CallbackWhenNoException> ALWAYS_INLINE typename std::invoke_result<CallbackWhenNoException, bool, PropertySlot&>::type getPropertySlot(JSGlobalObject*, PropertyName, CallbackWhenNoException) const;
+    template<typename CallbackWhenNoException> ALWAYS_INLINE typename std::invoke_result<CallbackWhenNoException, bool, PropertySlot&>::type getPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&, CallbackWhenNoException) const;
 
-    template<typename PropertyNameType> JSValue getIfPropertyExists(JSGlobalObject*, const PropertyNameType&);
-    bool noSideEffectMayHaveNonIndexProperty(VM&, PropertyName);
+    template<typename PropertyNameType> inline JSValue getIfPropertyExists(JSGlobalObject*, const PropertyNameType&);
+    inline bool noSideEffectMayHaveNonIndexProperty(VM&, PropertyName);
 
 private:
     static bool getOwnPropertySlotImpl(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
@@ -172,14 +172,14 @@ public:
     JS_EXPORT_PRIVATE_IF_ASSERT_ENABLED static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
 
     JS_EXPORT_PRIVATE static bool getOwnPropertySlotByIndex(JSObject*, JSGlobalObject*, unsigned propertyName, PropertySlot&);
-    bool getOwnPropertySlotInline(JSGlobalObject*, PropertyName, PropertySlot&);
+    inline bool getOwnPropertySlotInline(JSGlobalObject*, PropertyName, PropertySlot&);
 
     // The key difference between this and getOwnPropertySlot is that getOwnPropertySlot
     // currently returns incorrect results for the DOM window (with non-own properties)
     // being returned. Once this is fixed we should migrate code & remove this method.
     JS_EXPORT_PRIVATE bool getOwnPropertyDescriptor(JSGlobalObject*, PropertyName, PropertyDescriptor&);
 
-    static bool getPrivateFieldSlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
+    ALWAYS_INLINE static bool getPrivateFieldSlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     inline bool hasPrivateField(JSGlobalObject*, PropertyName);
     inline bool getPrivateField(JSGlobalObject*, PropertyName, PropertySlot&);
     inline void setPrivateField(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
@@ -202,7 +202,7 @@ public:
         return m_butterfly->vectorLength();
     }
     
-    static bool putInlineForJSObject(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    ALWAYS_INLINE static bool putInlineForJSObject(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     
     JS_EXPORT_PRIVATE static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     static bool mightBeSpecialProperty(VM&, JSType, UniquedStringImpl*);
@@ -678,7 +678,7 @@ public:
     bool putDirect(VM&, PropertyName, JSValue, unsigned attributes = 0);
     bool putDirect(VM&, PropertyName, JSValue, unsigned attributes, PutPropertySlot&);
     bool putDirect(VM&, PropertyName, JSValue, PutPropertySlot&);
-    void putDirectWithoutTransition(VM&, PropertyName, JSValue, unsigned attributes = 0);
+    inline void putDirectWithoutTransition(VM&, PropertyName, JSValue, unsigned attributes = 0);
     bool putDirectNonIndexAccessor(VM&, PropertyName, GetterSetter*, unsigned attributes);
     void putDirectNonIndexAccessorWithoutTransition(VM&, PropertyName, GetterSetter*, unsigned attributes);
     bool putDirectAccessor(JSGlobalObject*, PropertyName, GetterSetter*, unsigned attributes);
@@ -693,15 +693,15 @@ public:
     bool hasProperty(JSGlobalObject*, uint64_t propertyName) const;
     bool hasEnumerableProperty(JSGlobalObject*, PropertyName) const;
     bool hasEnumerableProperty(JSGlobalObject*, unsigned propertyName) const;
-    bool hasOwnProperty(JSGlobalObject*, PropertyName, PropertySlot&) const;
-    bool hasOwnProperty(JSGlobalObject*, PropertyName) const;
-    bool hasOwnProperty(JSGlobalObject*, unsigned) const;
+    ALWAYS_INLINE bool hasOwnProperty(JSGlobalObject*, PropertyName, PropertySlot&) const;
+    ALWAYS_INLINE bool hasOwnProperty(JSGlobalObject*, PropertyName) const;
+    ALWAYS_INLINE bool hasOwnProperty(JSGlobalObject*, unsigned) const;
 
     JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
     JS_EXPORT_PRIVATE static bool deletePropertyByIndex(JSCell*, JSGlobalObject*, unsigned propertyName);
-    bool deleteProperty(JSGlobalObject*, PropertyName);
-    bool deleteProperty(JSGlobalObject*, uint32_t propertyName);
-    bool deleteProperty(JSGlobalObject*, uint64_t propertyName);
+    inline bool deleteProperty(JSGlobalObject*, PropertyName);
+    inline bool deleteProperty(JSGlobalObject*, uint32_t propertyName);
+    inline bool deleteProperty(JSGlobalObject*, uint64_t propertyName);
 
     JSValue ordinaryToPrimitive(JSGlobalObject*, PreferredPrimitiveType) const;
 
@@ -715,7 +715,7 @@ public:
     JS_EXPORT_PRIVATE static void getOwnSpecialPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, DontEnumPropertiesMode);
     JS_EXPORT_PRIVATE void getOwnIndexedPropertyNames(JSGlobalObject*, PropertyNameArray&, DontEnumPropertiesMode);
     JS_EXPORT_PRIVATE void getOwnNonIndexPropertyNames(JSGlobalObject*, PropertyNameArray&, DontEnumPropertiesMode);
-    void getNonReifiedStaticPropertyNames(VM&, PropertyNameArray&, DontEnumPropertiesMode);
+    ALWAYS_INLINE void getNonReifiedStaticPropertyNames(VM&, PropertyNameArray&, DontEnumPropertiesMode);
 
     JS_EXPORT_PRIVATE uint32_t getEnumerableLength();
 
@@ -814,12 +814,12 @@ public:
     //  - provides no special handling for __proto__
     //  - does not walk the prototype chain (to check for accessors or non-writable properties).
     // This is used by JSLexicalEnvironment.
-    bool putOwnDataProperty(VM&, PropertyName, JSValue, PutPropertySlot&);
-    bool putOwnDataPropertyMayBeIndex(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    inline bool putOwnDataProperty(VM&, PropertyName, JSValue, PutPropertySlot&);
+    inline bool putOwnDataPropertyMayBeIndex(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
 
     void putOwnDataPropertyBatching(VM&, const RefPtr<UniquedStringImpl>*, const EncodedJSValue*, unsigned size);
 private:
-    void validatePutOwnDataProperty(VM&, PropertyName, JSValue);
+    inline void validatePutOwnDataProperty(VM&, PropertyName, JSValue);
 public:
 
     // Fast access to known property offsets.
@@ -839,7 +839,7 @@ public:
     JSFunction* putDirectBuiltinFunctionWithoutTransition(VM&, JSGlobalObject*, const PropertyName&, FunctionExecutable*, unsigned attributes);
 
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
-    bool createDataProperty(JSGlobalObject*, PropertyName, JSValue, bool shouldThrow);
+    ALWAYS_INLINE bool createDataProperty(JSGlobalObject*, PropertyName, JSValue, bool shouldThrow);
 
     bool isEnvironment() const;
     bool isGlobalObject() const;
@@ -985,11 +985,11 @@ public:
 
     JS_EXPORT_PRIVATE JSValue getMethod(JSGlobalObject*, CallData&, const Identifier&, const String& errorMessage);
 
-    bool canPerformFastPutInline(VM&, PropertyName);
-    bool canPerformFastPutInlineExcludingProto();
+    ALWAYS_INLINE bool canPerformFastPutInline(VM&, PropertyName);
+    ALWAYS_INLINE bool canPerformFastPutInlineExcludingProto();
 
-    bool mayBePrototype() const;
-    void didBecomePrototype(VM&);
+    inline bool mayBePrototype() const;
+    inline void didBecomePrototype(VM&);
 
     std::optional<Structure::PropertyHashEntry> findPropertyHashEntry(PropertyName) const;
 
@@ -1003,7 +1003,7 @@ public:
 
     JS_EXPORT_PRIVATE NEVER_INLINE bool putInlineSlow(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     JS_EXPORT_PRIVATE NEVER_INLINE bool putInlineFastReplacingStaticPropertyIfNeeded(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
-    bool putInlineFast(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    ALWAYS_INLINE bool putInlineFast(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
 
 protected:
 #if ASSERT_ENABLED
@@ -1183,7 +1183,7 @@ private:
     ContiguousJSValues tryMakeWritableContiguousSlow(VM&);
     JS_EXPORT_PRIVATE ArrayStorage* ensureArrayStorageSlow(VM&);
 
-    PropertyOffset prepareToPutDirectWithoutTransition(VM&, PropertyName, unsigned attributes, StructureID, Structure*);
+    ALWAYS_INLINE PropertyOffset prepareToPutDirectWithoutTransition(VM&, PropertyName, unsigned attributes, StructureID, Structure*);
 
     AuxiliaryBarrier<Butterfly*> m_butterfly;
 #if CPU(ADDRESS32)

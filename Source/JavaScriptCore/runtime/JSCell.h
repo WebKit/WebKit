@@ -109,7 +109,7 @@ public:
     static JSCell* seenMultipleCalleeObjects() { return bitwise_cast<JSCell*>(static_cast<uintptr_t>(1)); }
 
     enum CreatingEarlyCellTag { CreatingEarlyCell };
-    JSCell(CreatingEarlyCellTag);
+    inline JSCell(CreatingEarlyCellTag);
     enum CreatingWellDefinedBuiltinCellTag { CreatingWellDefinedBuiltinCell };
     JSCell(CreatingWellDefinedBuiltinCellTag, StructureID, int32_t typeInfoBlob);
 
@@ -122,19 +122,19 @@ public:
     // Querying the type.
     bool isString() const;
     bool isHeapBigInt() const;
-    bool isSymbol() const;
+    inline bool isSymbol() const;
     bool isObject() const;
-    bool isGetterSetter() const;
-    bool isCustomGetterSetter() const;
-    bool isProxy() const;
-    bool isCallable();
-    bool isConstructor();
-    template<Concurrency> TriState isCallableWithConcurrency();
-    template<Concurrency> TriState isConstructorWithConcurrency();
+    inline bool isGetterSetter() const;
+    inline bool isCustomGetterSetter() const;
+    inline bool isProxy() const;
+    ALWAYS_INLINE bool isCallable();
+    ALWAYS_INLINE bool isConstructor();
+    template<Concurrency> ALWAYS_INLINE TriState isCallableWithConcurrency();
+    template<Concurrency> inline TriState isConstructorWithConcurrency();
     bool inherits(const ClassInfo*) const;
     template<typename Target> bool inherits() const;
     JS_EXPORT_PRIVATE bool isValidCallee() const;
-    bool isAPIValueWrapper() const;
+    inline bool isAPIValueWrapper() const;
     
     // Each cell has a built-in lock. Currently it's simply available for use if you need it. It's
     // a full-blown WTF::Lock. Note that this lock is currently used in JSArray and that lock's
@@ -146,7 +146,7 @@ public:
     JSCellLock& cellLock() const { return *reinterpret_cast<JSCellLock*>(const_cast<JSCell*>(this)); }
     
     JSType type() const;
-    IndexingType indexingTypeAndMisc() const;
+    inline IndexingType indexingTypeAndMisc() const;
     IndexingType indexingMode() const;
     IndexingType indexingType() const;
     StructureID structureID() const { return m_structureID; }
@@ -176,12 +176,12 @@ public:
 
     // Basic conversions.
     JS_EXPORT_PRIVATE JSValue toPrimitive(JSGlobalObject*, PreferredPrimitiveType) const;
-    bool toBoolean(JSGlobalObject*) const;
-    TriState pureToBoolean() const;
+    inline bool toBoolean(JSGlobalObject*) const;
+    inline TriState pureToBoolean() const;
     JS_EXPORT_PRIVATE double toNumber(JSGlobalObject*) const;
-    JSObject* toObject(JSGlobalObject*) const;
+    inline JSObject* toObject(JSGlobalObject*) const;
 
-    JSString* toStringInline(JSGlobalObject*) const;
+    ALWAYS_INLINE JSString* toStringInline(JSGlobalObject*) const;
     JS_EXPORT_PRIVATE JSString* toStringSlowCase(JSGlobalObject*) const;
 
     void dump(PrintStream&) const;
@@ -200,14 +200,14 @@ public:
     const MethodTable* methodTable() const;
     static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     static bool putByIndex(JSCell*, JSGlobalObject*, unsigned propertyName, JSValue, bool shouldThrow);
-    bool putInline(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    ALWAYS_INLINE bool putInline(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
         
     static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
     JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName);
     static bool deletePropertyByIndex(JSCell*, JSGlobalObject*, unsigned propertyName);
 
-    static bool canUseFastGetOwnProperty(const Structure&);
-    JSValue fastGetOwnProperty(VM&, Structure&, PropertyName);
+    inline static bool canUseFastGetOwnProperty(const Structure&);
+    ALWAYS_INLINE JSValue fastGetOwnProperty(VM&, Structure&, PropertyName);
 
     // The recommended idiom for using cellState() is to switch on it or perform an == comparison on it
     // directly. We deliberately avoid helpers for this, because we want transparency about how the various
@@ -256,8 +256,8 @@ public:
     
     static constexpr TypedArrayType TypedArrayStorageType = NotTypedArray;
 
-    void setPerCellBit(bool);
-    bool perCellBit() const;
+    inline void setPerCellBit(bool);
+    inline bool perCellBit() const;
 protected:
 
     void finishCreation(VM&);
@@ -292,10 +292,10 @@ private:
 
 class JSCellLock : public JSCell {
 public:
-    void lock();
-    bool tryLock();
-    void unlock();
-    bool isLocked() const;
+    inline void lock();
+    inline bool tryLock();
+    inline void unlock();
+    inline bool isLocked() const;
 private:
     JS_EXPORT_PRIVATE void lockSlow();
     JS_EXPORT_PRIVATE void unlockSlow();

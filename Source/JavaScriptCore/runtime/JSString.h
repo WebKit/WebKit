@@ -110,7 +110,7 @@ public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | StructureIsImmortal | OverridesPut;
 
     static constexpr bool needsDestruction = true;
-    static void destroy(JSCell*);
+    ALWAYS_INLINE static void destroy(JSCell*);
 
     // We specialize the string subspace to get the fastest possible sweep. This wouldn't be
     // necessary if JSString didn't have a destructor.
@@ -305,7 +305,7 @@ private:
 class JSRopeString final : public JSString {
     friend class JSString;
 public:
-    static void destroy(JSCell*);
+    ALWAYS_INLINE static void destroy(JSCell*);
 
     template<typename, SubspaceAccess>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
@@ -500,7 +500,7 @@ public:
 private:
     friend class LLIntOffsetsExtractor;
 
-    void convertToNonRope(String&&) const;
+    inline void convertToNonRope(String&&) const;
 
     void initializeIs8Bit(bool flag) const
     {
@@ -594,7 +594,7 @@ public:
     JS_EXPORT_PRIVATE const String& resolveRope(JSGlobalObject* nullOrGlobalObjectForOOM) const;
 
     template<typename CharacterType>
-    static void resolveToBuffer(JSString*, JSString*, JSString*, CharacterType* buffer, unsigned length, uint8_t* stackLimit);
+    inline static void resolveToBuffer(JSString*, JSString*, JSString*, CharacterType* buffer, unsigned length, uint8_t* stackLimit);
 
 private:
     template<typename CharacterType>

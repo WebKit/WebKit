@@ -51,8 +51,8 @@ public:
         Vector<int> m_lastMatch { };
     };
 
-    Entry* get(const String& subject, RegExp*);
-    void set(const String& subject, RegExp*, JSImmutableButterfly*, const Vector<int>&);
+    inline Entry* get(const String& subject, RegExp*);
+    inline void set(const String& subject, RegExp*, JSImmutableButterfly*, const Vector<int>&);
 
     void clear()
     {

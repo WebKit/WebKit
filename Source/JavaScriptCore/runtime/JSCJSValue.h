@@ -124,7 +124,7 @@ enum WhichValueWord {
 };
 
 int64_t tryConvertToInt52(double);
-bool isInt52(double);
+inline bool isInt52(double);
 
 enum class SourceCodeRepresentation : uint8_t {
     Other,
@@ -217,18 +217,18 @@ public:
     bool operator==(const JSValue&) const;
 
     bool isInt32() const;
-    bool isUInt32() const;
+    inline bool isUInt32() const;
     bool isDouble() const;
-    bool isTrue() const;
-    bool isFalse() const;
+    inline bool isTrue() const;
+    inline bool isFalse() const;
 
     int32_t asInt32() const;
-    uint32_t asUInt32() const;
-    std::optional<uint32_t> tryGetAsUint32Index();
-    std::optional<int32_t> tryGetAsInt32();
-    int64_t asAnyInt() const;
-    uint32_t asUInt32AsAnyInt() const;
-    int32_t asInt32AsAnyInt() const;
+    inline uint32_t asUInt32() const;
+    inline std::optional<uint32_t> tryGetAsUint32Index();
+    inline std::optional<int32_t> tryGetAsInt32();
+    inline int64_t asAnyInt() const;
+    inline uint32_t asUInt32AsAnyInt() const;
+    inline int32_t asInt32AsAnyInt() const;
     double asDouble() const;
     bool asBoolean() const;
     double asNumber() const;
@@ -236,123 +236,123 @@ public:
     int32_t bigInt32AsInt32() const; // must only be called on a BigInt32
 #endif
     
-    int32_t asInt32ForArithmetic() const; // Boolean becomes an int, but otherwise like asInt32().
+    inline int32_t asInt32ForArithmetic() const; // Boolean becomes an int, but otherwise like asInt32().
 
     // Querying the type.
     bool isEmpty() const;
-    bool isCallable() const;
-    template<Concurrency> TriState isCallableWithConcurrency() const;
-    bool isConstructor() const;
-    template<Concurrency> TriState isConstructorWithConcurrency() const;
-    bool isUndefined() const;
+    inline bool isCallable() const;
+    template<Concurrency> inline TriState isCallableWithConcurrency() const;
+    inline bool isConstructor() const;
+    template<Concurrency> inline TriState isConstructorWithConcurrency() const;
+    inline bool isUndefined() const;
     bool isNull() const;
     bool isUndefinedOrNull() const;
     bool isBoolean() const;
-    bool isAnyInt() const;
-    bool isUInt32AsAnyInt() const;
-    bool isInt32AsAnyInt() const;
+    inline bool isAnyInt() const;
+    inline bool isUInt32AsAnyInt() const;
+    inline bool isInt32AsAnyInt() const;
     bool isNumber() const;
-    bool isString() const;
+    inline bool isString() const;
     bool isBigInt() const;
     bool isHeapBigInt() const;
-    bool isBigInt32() const;
-    bool isSymbol() const;
-    bool isPrimitive() const;
+    inline bool isBigInt32() const;
+    inline bool isSymbol() const;
+    inline bool isPrimitive() const;
     bool isGetterSetter() const;
     bool isCustomGetterSetter() const;
     bool isObject() const;
-    bool inherits(const ClassInfo*) const;
-    template<typename Target> bool inherits() const;
-    const ClassInfo* classInfoOrNull() const;
+    inline bool inherits(const ClassInfo*) const;
+    template<typename Target> inline bool inherits() const;
+    inline const ClassInfo* classInfoOrNull() const;
 
     // Extracting the value.
-    bool getString(JSGlobalObject*, WTF::String&) const;
-    WTF::String getString(JSGlobalObject*) const; // null string if not a string
+    inline bool getString(JSGlobalObject*, WTF::String&) const;
+    inline WTF::String getString(JSGlobalObject*) const; // null string if not a string
     JSObject* getObject() const; // 0 if not an object
 
     // Extracting integer values.
-    bool getUInt32(uint32_t&) const;
+    ALWAYS_INLINE bool getUInt32(uint32_t&) const;
         
     // Basic conversions.
-    JSValue toPrimitive(JSGlobalObject*, PreferredPrimitiveType = NoPreference) const;
-    bool toBoolean(JSGlobalObject*) const;
-    TriState pureToBoolean() const;
+    inline JSValue toPrimitive(JSGlobalObject*, PreferredPrimitiveType = NoPreference) const;
+    inline bool toBoolean(JSGlobalObject*) const;
+    inline TriState pureToBoolean() const;
 
     // toNumber conversion is expected to be side effect free if an exception has
     // been set in the CallFrame already.
     double toNumber(JSGlobalObject*) const;
 
-    JSValue toNumeric(JSGlobalObject*) const;
-    JSValue toBigIntOrInt32(JSGlobalObject*) const;
+    ALWAYS_INLINE JSValue toNumeric(JSGlobalObject*) const;
+    ALWAYS_INLINE JSValue toBigIntOrInt32(JSGlobalObject*) const;
     JSBigInt* asHeapBigInt() const;
 
     // toNumber conversion if it can be done without side effects.
     std::optional<double> toNumberFromPrimitive() const;
 
-    JSString* toString(JSGlobalObject*) const; // On exception, this returns the empty string.
-    JSString* toStringOrNull(JSGlobalObject*) const; // On exception, this returns null, to make exception checks faster.
-    Identifier toPropertyKey(JSGlobalObject*) const;
-    JSValue toPropertyKeyValue(JSGlobalObject*) const;
+    inline JSString* toString(JSGlobalObject*) const; // On exception, this returns the empty string.
+    inline JSString* toStringOrNull(JSGlobalObject*) const; // On exception, this returns null, to make exception checks faster.
+    ALWAYS_INLINE Identifier toPropertyKey(JSGlobalObject*) const;
+    ALWAYS_INLINE JSValue toPropertyKeyValue(JSGlobalObject*) const;
     WTF::String toWTFString(JSGlobalObject*) const;
     JS_EXPORT_PRIVATE WTF::String toWTFStringForConsole(JSGlobalObject*) const;
     JSObject* toObject(JSGlobalObject*) const;
 
     // Integer conversions.
     JS_EXPORT_PRIVATE double toIntegerPreserveNaN(JSGlobalObject*) const;
-    double toIntegerWithoutRounding(JSGlobalObject*) const;
-    double toIntegerOrInfinity(JSGlobalObject*) const;
-    int32_t toInt32(JSGlobalObject*) const;
-    uint32_t toUInt32(JSGlobalObject*) const;
-    uint32_t toIndex(JSGlobalObject*, const char* errorName) const;
-    size_t toTypedArrayIndex(JSGlobalObject*, ASCIILiteral) const;
+    inline double toIntegerWithoutRounding(JSGlobalObject*) const;
+    inline double toIntegerOrInfinity(JSGlobalObject*) const;
+    ALWAYS_INLINE int32_t toInt32(JSGlobalObject*) const;
+    inline uint32_t toUInt32(JSGlobalObject*) const;
+    inline uint32_t toIndex(JSGlobalObject*, const char* errorName) const;
+    inline size_t toTypedArrayIndex(JSGlobalObject*, ASCIILiteral) const;
     uint64_t toLength(JSGlobalObject*) const;
 
     JS_EXPORT_PRIVATE JSValue toBigInt(JSGlobalObject*) const;
     int64_t toBigInt64(JSGlobalObject*) const;
     JS_EXPORT_PRIVATE uint64_t toBigUInt64(JSGlobalObject*) const;
 
-    std::optional<uint32_t> toUInt32AfterToNumeric(JSGlobalObject*) const;
+    ALWAYS_INLINE std::optional<uint32_t> toUInt32AfterToNumeric(JSGlobalObject*) const;
 
     // Floating point conversions (this is a convenience function for WebCore;
     // single precision float is not a representation used in JS or JSC).
     float toFloat(JSGlobalObject* globalObject) const { return static_cast<float>(toNumber(globalObject)); }
 
     // Object operations, with the toObject operation included.
-    JSValue get(JSGlobalObject*, PropertyName) const;
-    JSValue get(JSGlobalObject*, PropertyName, PropertySlot&) const;
+    ALWAYS_INLINE JSValue get(JSGlobalObject*, PropertyName) const;
+    ALWAYS_INLINE JSValue get(JSGlobalObject*, PropertyName, PropertySlot&) const;
     JSValue get(JSGlobalObject*, unsigned propertyName) const;
     JSValue get(JSGlobalObject*, unsigned propertyName, PropertySlot&) const;
     JSValue get(JSGlobalObject*, uint64_t propertyName) const;
 
     template<typename T, typename PropertyNameType>
-    T getAs(JSGlobalObject*, PropertyNameType) const;
+    ALWAYS_INLINE T getAs(JSGlobalObject*, PropertyNameType) const;
 
-    bool getPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&) const;
-    template<typename CallbackWhenNoException> typename std::invoke_result<CallbackWhenNoException, bool, PropertySlot&>::type getPropertySlot(JSGlobalObject*, PropertyName, CallbackWhenNoException) const;
-    template<typename CallbackWhenNoException> typename std::invoke_result<CallbackWhenNoException, bool, PropertySlot&>::type getPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&, CallbackWhenNoException) const;
+    ALWAYS_INLINE bool getPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&) const;
+    template<typename CallbackWhenNoException> ALWAYS_INLINE typename std::invoke_result<CallbackWhenNoException, bool, PropertySlot&>::type getPropertySlot(JSGlobalObject*, PropertyName, CallbackWhenNoException) const;
+    template<typename CallbackWhenNoException> ALWAYS_INLINE typename std::invoke_result<CallbackWhenNoException, bool, PropertySlot&>::type getPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&, CallbackWhenNoException) const;
 
-    bool getOwnPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&) const;
+    ALWAYS_INLINE bool getOwnPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&) const;
 
-    bool put(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
-    bool putInline(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    inline bool put(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    ALWAYS_INLINE bool putInline(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     JS_EXPORT_PRIVATE bool putToPrimitive(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     JS_EXPORT_PRIVATE bool putToPrimitiveByIndex(JSGlobalObject*, unsigned propertyName, JSValue, bool shouldThrow);
-    bool putByIndex(JSGlobalObject*, unsigned propertyName, JSValue, bool shouldThrow);
+    inline bool putByIndex(JSGlobalObject*, unsigned propertyName, JSValue, bool shouldThrow);
 
-    JSValue getPrototype(JSGlobalObject*) const;
-    JSValue toThis(JSGlobalObject*, ECMAMode) const;
+    ALWAYS_INLINE JSValue getPrototype(JSGlobalObject*) const;
+    inline JSValue toThis(JSGlobalObject*, ECMAMode) const;
 
-    static bool equal(JSGlobalObject*, JSValue v1, JSValue v2);
+    inline static bool equal(JSGlobalObject*, JSValue v1, JSValue v2);
     static bool equalSlowCase(JSGlobalObject*, JSValue v1, JSValue v2);
     static bool equalSlowCaseInline(JSGlobalObject*, JSValue v1, JSValue v2);
-    static bool strictEqual(JSGlobalObject*, JSValue v1, JSValue v2);
-    static bool strictEqualForCells(JSGlobalObject*, JSCell* v1, JSCell* v2);
-    static TriState pureStrictEqual(JSValue v1, JSValue v2);
+    inline static bool strictEqual(JSGlobalObject*, JSValue v1, JSValue v2);
+    ALWAYS_INLINE static bool strictEqualForCells(JSGlobalObject*, JSCell* v1, JSCell* v2);
+    inline static TriState pureStrictEqual(JSValue v1, JSValue v2);
 
     bool isCell() const;
     JSCell* asCell() const;
 
-    Structure* structureOrNull() const;
+    inline Structure* structureOrNull() const;
 
     JS_EXPORT_PRIVATE void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;
@@ -360,7 +360,7 @@ public:
     void dumpForBacktrace(PrintStream&) const;
 
     JS_EXPORT_PRIVATE JSObject* synthesizePrototype(JSGlobalObject*) const;
-    bool requireObjectCoercible(JSGlobalObject*) const;
+    ALWAYS_INLINE bool requireObjectCoercible(JSGlobalObject*) const;
 
     // Constants used for Int52. Int52 isn't part of JSValue right now, but JSValues may be
     // converted to Int52s and back again.
@@ -390,7 +390,7 @@ public:
      * cell, integer and bool values the lower 32 bits (the 'payload') contain the pointer
      * integer or boolean value; in the case of all other tags the payload is 0.
      */
-    uint32_t tag() const;
+    inline uint32_t tag() const;
     int32_t payload() const;
 
     // This should only be used by the LLInt C Loop interpreter and OSRExit code who needs

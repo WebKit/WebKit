@@ -205,7 +205,7 @@ public:
         
     inline Intrinsic intrinsicFor(CodeSpecializationKind) const;
 
-    ImplementationVisibility implementationVisibility() const;
+    inline ImplementationVisibility implementationVisibility() const;
 
     CodePtr<JSEntryPtrTag> swapGeneratedJITCodeWithArityCheckForDebugger(CodeSpecializationKind kind, CodePtr<JSEntryPtrTag> jitCodeWithArityCheck)
     {

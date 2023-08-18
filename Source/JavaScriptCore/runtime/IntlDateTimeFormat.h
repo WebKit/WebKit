@@ -82,7 +82,7 @@ public:
     JSBoundFunction* boundFormat() const { return m_boundFormat.get(); }
     void setBoundFormat(VM&, JSBoundFunction*);
 
-    static IntlDateTimeFormat* unwrapForOldFunctions(JSGlobalObject*, JSValue);
+    inline static IntlDateTimeFormat* unwrapForOldFunctions(JSGlobalObject*, JSValue);
 
     enum class HourCycle : uint8_t { None, H11, H12, H23, H24 };
     static HourCycle hourCycleFromPattern(const Vector<UChar, 32>&);

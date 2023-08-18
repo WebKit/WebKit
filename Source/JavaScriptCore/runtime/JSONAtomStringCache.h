@@ -52,11 +52,11 @@ public:
             cache(static_cast<Type>(i)).fill({ });
     }
 
-    VM& vm() const;
+    ALWAYS_INLINE VM& vm() const;
 
 private:
     template<typename CharacterType>
-    Ref<AtomStringImpl> make(Type, const CharacterType*, unsigned length);
+    ALWAYS_INLINE Ref<AtomStringImpl> make(Type, const CharacterType*, unsigned length);
 
     ALWAYS_INLINE RefPtr<AtomStringImpl>& cacheSlot(Type type, UChar firstCharacter, UChar lastCharacter, UChar length)
     {

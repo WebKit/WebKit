@@ -101,10 +101,10 @@ public:
 
     inline bool contains(const KeyType& key) const;
 
-    void pruneStaleEntries() final;
+    NEVER_INLINE void pruneStaleEntries() final;
 
     template<typename Func>
-    void forEach(Func);
+    inline void forEach(Func);
 
 private:
     HashMapType m_map;

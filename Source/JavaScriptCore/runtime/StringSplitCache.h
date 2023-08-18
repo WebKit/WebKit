@@ -49,8 +49,8 @@ public:
         JSImmutableButterfly* m_butterfly { nullptr };
     };
 
-    JSImmutableButterfly* get(const String& subject, const String& separator);
-    void set(const String& subject, const String& separator, JSImmutableButterfly*);
+    inline JSImmutableButterfly* get(const String& subject, const String& separator);
+    inline void set(const String& subject, const String& separator, JSImmutableButterfly*);
 
     void clear()
     {

@@ -73,7 +73,7 @@ public:
     CacheableIdentifier& operator=(CacheableIdentifier&&) = default;
 
     bool operator==(const CacheableIdentifier&) const;
-    bool operator==(const Identifier&) const;
+    inline bool operator==(const Identifier&) const;
 
     static inline bool isCacheableIdentifierCell(JSCell*);
     static inline bool isCacheableIdentifierCell(JSValue);

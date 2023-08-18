@@ -281,8 +281,8 @@ struct ScratchBuffer {
 
 class ActiveScratchBufferScope {
 public:
-    ActiveScratchBufferScope(ScratchBuffer*, size_t activeScratchBufferSizeInJSValues);
-    ~ActiveScratchBufferScope();
+    inline ActiveScratchBufferScope(ScratchBuffer*, size_t activeScratchBufferSizeInJSValues);
+    inline ~ActiveScratchBufferScope();
 
 private:
     ScratchBuffer* m_scratchBuffer;
@@ -340,7 +340,7 @@ public:
 #endif
 
     FuzzerAgent* fuzzerAgent() const { return m_fuzzerAgent.get(); }
-    void setFuzzerAgent(std::unique_ptr<FuzzerAgent>&&);
+    inline void setFuzzerAgent(std::unique_ptr<FuzzerAgent>&&);
 
     VMIdentifier identifier() const { return m_identifier; }
     bool isEntered() const { return !!entryScope; }
@@ -994,7 +994,7 @@ public:
     void addDebugger(Debugger&);
     void removeDebugger(Debugger&);
     template<typename Func>
-    void forEachDebugger(const Func&);
+    inline void forEachDebugger(const Func&);
 
     Ref<Waiter> syncWaiter();
 

@@ -81,7 +81,7 @@ template <typename T, typename Traits> class WriteBarrierBase {
     using StorageType = typename Traits::StorageType;
 
 public:
-    void set(VM&, const JSCell* owner, T* value);
+    inline void set(VM&, const JSCell* owner, T* value);
     
     // This is meant to be used like operator=, but is called copyFrom instead, in
     // order to kindly inform the C++ compiler that its advice is not appreciated.
@@ -91,11 +91,11 @@ public:
         Traits::exchange(m_cell, other.m_cell);
     }
 
-    void setMayBeNull(VM&, const JSCell* owner, T* value);
+    inline void setMayBeNull(VM&, const JSCell* owner, T* value);
 
     // Should only be used by JSCell during early initialisation
     // when some basic types aren't yet completely instantiated
-    void setEarlyValue(VM&, const JSCell* owner, T* value);
+    inline void setEarlyValue(VM&, const JSCell* owner, T* value);
     
     T* get() const
     {
@@ -300,7 +300,7 @@ public:
 
     // Should only be used by JSCell during early initialisation
     // when some basic types aren't yet completely instantiated
-    void setEarlyValue(VM&, const JSCell* owner, Structure* value);
+    inline void setEarlyValue(VM&, const JSCell* owner, Structure* value);
 
     Structure* get() const
     {

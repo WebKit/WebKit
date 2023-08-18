@@ -146,7 +146,7 @@ protected:
     static void runConstraint(const ConcurrentJSLocker&, Visitor&, CodeBlock*);
     template<typename Visitor>
     static void visitCodeBlockEdge(Visitor&, CodeBlock*);
-    void finalizeCodeBlockEdge(VM&, WriteBarrier<CodeBlock>&);
+    inline void finalizeCodeBlockEdge(VM&, WriteBarrier<CodeBlock>&);
 
     SourceCode m_source;
     Intrinsic m_intrinsic { NoIntrinsic };

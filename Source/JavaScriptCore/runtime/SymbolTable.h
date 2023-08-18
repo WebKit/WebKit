@@ -747,7 +747,7 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    void finalizeUnconditionally(VM&, CollectionScope);
+    inline void finalizeUnconditionally(VM&, CollectionScope);
     void dump(PrintStream&) const;
 
     struct SymbolTableRareData {

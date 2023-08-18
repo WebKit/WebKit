@@ -86,9 +86,9 @@ public:
 
     // Call these versions of the match functions if you're desperate for performance.
     template<typename VectorType, Yarr::MatchFrom thread = Yarr::MatchFrom::VMThread>
-    int matchInline(JSGlobalObject* nullOrGlobalObject, VM&, const String&, unsigned startOffset, VectorType& ovector);
+    ALWAYS_INLINE int matchInline(JSGlobalObject* nullOrGlobalObject, VM&, const String&, unsigned startOffset, VectorType& ovector);
     template<Yarr::MatchFrom thread = Yarr::MatchFrom::VMThread>
-    MatchResult matchInline(JSGlobalObject* nullOrGlobalObject, VM&, const String&, unsigned startOffset);
+    ALWAYS_INLINE MatchResult matchInline(JSGlobalObject* nullOrGlobalObject, VM&, const String&, unsigned startOffset);
     
     unsigned numSubpatterns() const { return m_numSubpatterns; }
 
@@ -136,8 +136,8 @@ public:
         return m_state == JITCode || m_state == ByteCode;
     }
 
-    bool hasCodeFor(Yarr::CharSize);
-    bool hasMatchOnlyCodeFor(Yarr::CharSize);
+    ALWAYS_INLINE bool hasCodeFor(Yarr::CharSize);
+    ALWAYS_INLINE bool hasMatchOnlyCodeFor(Yarr::CharSize);
 
     void deleteCode();
 
@@ -182,10 +182,10 @@ private:
     void byteCodeCompileIfNecessary(VM*);
 
     void compile(VM*, Yarr::CharSize, std::optional<StringView> sampleString);
-    void compileIfNecessary(VM&, Yarr::CharSize, std::optional<StringView> sampleString);
+    ALWAYS_INLINE void compileIfNecessary(VM&, Yarr::CharSize, std::optional<StringView> sampleString);
 
     void compileMatchOnly(VM*, Yarr::CharSize, std::optional<StringView> sampleString);
-    void compileIfNecessaryMatchOnly(VM&, Yarr::CharSize, std::optional<StringView> sampleString);
+    ALWAYS_INLINE void compileIfNecessaryMatchOnly(VM&, Yarr::CharSize, std::optional<StringView> sampleString);
 
 #if ENABLE(YARR_JIT_DEBUG)
     void matchCompareWithInterpreter(const String&, int startOffset, int* offsetVector, int jitResult);
