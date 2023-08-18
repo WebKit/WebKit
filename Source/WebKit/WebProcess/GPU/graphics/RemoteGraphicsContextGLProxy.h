@@ -76,7 +76,6 @@ public:
     std::tuple<GCGLenum, GCGLenum> externalImageTextureBindingPoint() final;
     void reshape(int width, int height) final;
     void setContextVisibility(bool) final;
-    bool isGLES2Compliant() const final;
     void markContextChanged() final;
     bool supportsExtension(const String&) final;
     void ensureExtensionEnabled(const String&) final;

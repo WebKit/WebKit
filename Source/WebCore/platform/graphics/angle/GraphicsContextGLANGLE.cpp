@@ -3177,11 +3177,6 @@ void GraphicsContextGLANGLE::simulateEventForTesting(SimulatedEventForTesting ev
     }
 }
 
-bool GraphicsContextGLANGLE::isGLES2Compliant() const
-{
-    return m_isForWebGL2;
-}
-
 void GraphicsContextGLANGLE::paintRenderingResultsToCanvas(ImageBuffer& imageBuffer)
 {
     withDrawingBufferAsNativeImage([&](NativeImage& image) {

@@ -127,11 +127,6 @@ void RemoteGraphicsContextGLProxy::setContextVisibility(bool)
     notImplemented();
 }
 
-bool RemoteGraphicsContextGLProxy::isGLES2Compliant() const
-{
-    return contextAttributes().webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
-}
-
 void RemoteGraphicsContextGLProxy::markContextChanged()
 {
     // FIXME: The caller should track this state.

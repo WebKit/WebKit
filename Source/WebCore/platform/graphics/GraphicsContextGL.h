@@ -1585,8 +1585,6 @@ public:
 
     WEBCORE_EXPORT virtual void setDrawingBufferColorSpace(const DestinationColorSpace&);
 
-    virtual bool isGLES2Compliant() const = 0;
-
     virtual void prepareForDisplay() = 0;
 
     // FIXME: should be removed, caller should keep track of changed state.
