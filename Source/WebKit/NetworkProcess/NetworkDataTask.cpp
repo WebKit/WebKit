@@ -112,8 +112,7 @@ NetworkDataTask::~NetworkDataTask()
     ASSERT(RunLoop::isMain());
     ASSERT(!m_client);
 
-    if (m_session)
-        m_session->unregisterNetworkDataTask(*this);
+    m_session->unregisterNetworkDataTask(*this);
 }
 
 void NetworkDataTask::scheduleFailure(FailureType type)
