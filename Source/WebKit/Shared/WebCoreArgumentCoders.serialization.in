@@ -2050,6 +2050,10 @@ header: <WebCore/ScreenProperties.h>
     WebCore::PlatformGPUID gpuID;
     WebCore::DynamicRangeMode preferredDynamicRangeMode;
 #endif
+#if PLATFORM(GTK)
+    WebCore::IntSize screenSize;
+    double dpi;
+#endif
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
     float scaleFactor;
 #endif

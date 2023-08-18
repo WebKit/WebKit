@@ -74,7 +74,6 @@ bool screenHasInvertedColors();
 
 #if USE(GLIB)
 double screenDPI();
-void setScreenDPIObserverHandler(Function<void()>&&, void*);
 #endif
 
 FloatRect screenRect(Widget*);

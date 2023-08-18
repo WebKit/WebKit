@@ -585,9 +585,11 @@ private:
     void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
 #endif
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK)
     void setScreenProperties(const WebCore::ScreenProperties&);
+#endif
 
+#if PLATFORM(COCOA)
     enum class IsInProcessInitialization : bool { No, Yes };
     void updateProcessName(IsInProcessInitialization);
 #endif

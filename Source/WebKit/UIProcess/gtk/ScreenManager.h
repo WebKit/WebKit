@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Purism SPC
+ * Copyright (C) 2023 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,45 +25,35 @@
 
 #pragma once
 
-#include "GtkSettingsState.h"
-#include <gtk/gtk.h>
-#include <wtf/Function.h>
+#include <WebCore/ScreenProperties.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Vector.h>
+#include <wtf/glib/GRefPtr.h>
+
+typedef struct _GdkMonitor GdkMonitor;
 
 namespace WebKit {
 
-class GtkSettingsManager {
-    WTF_MAKE_NONCOPYABLE(GtkSettingsManager);
-    friend NeverDestroyed<GtkSettingsManager>;
+using PlatformDisplayID = uint32_t;
+
+class ScreenManager {
+    WTF_MAKE_NONCOPYABLE(ScreenManager);
+    friend NeverDestroyed<ScreenManager>;
 public:
-    static GtkSettingsManager& singleton();
+    static ScreenManager& singleton();
 
-    const GtkSettingsState& settingsState() const { return m_settingsState; }
+    WebCore::ScreenProperties collectScreenProperties() const;
 
-    void addObserver(Function<void(const GtkSettingsState&)>&&, void* context);
-    void removeObserver(void* context);
 private:
-    GtkSettingsManager();
+    ScreenManager();
 
-    void settingsDidChange();
+    void addMonitor(GdkMonitor*);
+    void removeMonitor(GdkMonitor*);
+    void propertiesDidChange() const;
 
-    String themeName() const;
-    String fontName() const;
-    int xftAntialias() const;
-    int xftHinting() const;
-    String xftHintStyle() const;
-    String xftRGBA() const;
-    int xftDPI() const;
-    bool cursorBlink() const;
-    int cursorBlinkTime() const;
-    bool primaryButtonWarpsSlider() const;
-    bool overlayScrolling() const;
-    bool enableAnimations() const;
-
-    GtkSettings* m_settings;
-    GtkSettingsState m_settingsState;
-    HashMap<void*, Function<void(const GtkSettingsState&)>> m_observers;
+    Vector<GRefPtr<GdkMonitor>, 1> m_monitors;
+    HashMap<GdkMonitor*, PlatformDisplayID> m_monitorToDisplayIDMap;
 };
 
 } // namespace WebKit
