@@ -2,12 +2,6 @@ two
 lines
 hello
 
-FAIL #target > div 1 assert_equals:
-<div class="inner" data-offset-x="146">
-    <div>two<br>lines</div>
-  </div>
-offsetLeft expected 146 but got 21
-FAIL #target > div 2 assert_equals:
-<div data-offset-x="191">hello</div>
-offsetLeft expected 191 but got 66
+PASS #target > div 1
+PASS #target > div 2
 

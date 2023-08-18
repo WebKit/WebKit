@@ -2,16 +2,6 @@ two
 lines
 hello
 
-FAIL #target > * 1 assert_equals:
-<table class="inner" data-offset-x="140">
-    <tbody><tr>
-      <td style="vertical-align: baseline;">
-        <div>two<br>lines</div>
-      </td>
-    </tr>
-  </tbody></table>
-offsetLeft expected 140 but got 21
-FAIL #target > * 2 assert_equals:
-<div data-offset-x="188">hello</div>
-offsetLeft expected 188 but got 69
+PASS #target > * 1
+PASS #target > * 2
 

@@ -2409,34 +2409,72 @@ void RenderFlexibleBox::performBaselineAlignment(LineState& lineState)
 {
     ASSERT(lineState.baselineAlignmentState);
 
-    LayoutUnit minMarginAfterBaseline = LayoutUnit::max();
     auto lineCrossAxisExtent = lineState.crossAxisExtent;
     bool containerHasWrapReverse = style().flexWrap() == FlexWrap::Reverse;
-    auto shouldAdjustItemTowardsCrossAxis = [containerHasWrapReverse](ItemPosition alignment) {
-        return (containerHasWrapReverse && alignment == ItemPosition::Baseline) || (alignment == ItemPosition::LastBaseline && !containerHasWrapReverse);
+
+    auto flexItemWritingModeForBaselineAlignment = [&](const RenderBox& flexItem) {
+        if (mainAxisIsChildInlineAxis(flexItem))
+            return flexItem.style().writingMode();
+
+        // css-align-3: 9.1. Determining the Baselines of a Box
+        // In general, the writing mode of the box, shape, or other object being aligned is used to determine
+        // the line-under and line-over edges for synthesis. However, when that writing mode’s block flow direction
+        // is parallel to the axis of the alignment context, an axis-compatible writing mode must be assumed:
+
+        // If the box establishing the alignment context has a block flow direction that is orthogonal to the
+        // axis of the alignment context, use its writing mode.
+        if (style().isRowFlexDirection())
+            return style().writingMode();
+
+        //   Otherwise:
+        //
+        // If the box’s own writing mode is vertical, assume horizontal-tb.
+        // If the box’s own writing mode is horizontal, assume vertical-lr if
+        // direction is ltr and vertical-rl if direction is rtl.
+        if (!flexItem.isHorizontalWritingMode())
+            return WritingMode::HorizontalTb;
+        return style().direction() == TextDirection::LTR ? WritingMode::VerticalLr : WritingMode::VerticalRl;
+    };
+
+    auto shouldAdjustItemTowardsCrossAxisEnd = [&](const BlockFlowDirection& flexItemBlockFlowDirection, ItemPosition alignment) {
+        ASSERT(alignment == ItemPosition::Baseline || alignment == ItemPosition::LastBaseline);
+
+        // The direction in which we are aligning (i.e. direction of the cross axis) must be parallel with the direction of the flex item's used writing mode
+        ASSERT_IMPLIES(crossAxisDirection() == RenderFlexibleBox::Direction::TopToBottom || crossAxisDirection() == RenderFlexibleBox::Direction::BottomToTop, flexItemBlockFlowDirection == RenderFlexibleBox::Direction::TopToBottom || flexItemBlockFlowDirection == RenderFlexibleBox::Direction::BottomToTop);
+        ASSERT_IMPLIES(crossAxisDirection() == RenderFlexibleBox::Direction::LeftToRight || crossAxisDirection() == RenderFlexibleBox::Direction::RightToLeft, flexItemBlockFlowDirection == RenderFlexibleBox::Direction::LeftToRight || flexItemBlockFlowDirection == RenderFlexibleBox::Direction::RightToLeft);
+
+        // For first baseline aligned items, if its block direction is the opposite of
+        // the cross axis direction, then that means its fallback alignment (safe self-start)
+        // is in the direction of the end of the cross axis
+        //
+        // For last baseline aligned items, if its block direction is in the same direction as
+        // the cross axis direction, then that means its fallback alignment (safe self-end) is
+        // in the direction of the end of the cross axis
+        if (alignment == ItemPosition::Baseline)
+            return crossAxisDirection() != flexItemBlockFlowDirection;
+        return crossAxisDirection() == flexItemBlockFlowDirection;
     };
 
     for (auto& baselineSharingGroup : lineState.baselineAlignmentState.value().sharedGroups()) {
+        LayoutUnit minMarginAfterBaseline = LayoutUnit::max();
         for (auto& flexItem : baselineSharingGroup) {
             auto position = alignmentForChild(flexItem);
             ASSERT(position == ItemPosition::Baseline || position == ItemPosition::LastBaseline);
             auto offset = alignmentOffset(availableAlignmentSpaceForChild(lineCrossAxisExtent, flexItem), position, marginBoxAscentForChild(flexItem), baselineSharingGroup.maxAscent(), containerHasWrapReverse);
             adjustAlignmentForChild(flexItem, offset);
 
-            if (shouldAdjustItemTowardsCrossAxis(position)) 
+            if (shouldAdjustItemTowardsCrossAxisEnd(writingModeToBlockFlowDirection(flexItemWritingModeForBaselineAlignment(flexItem)), position))
                 minMarginAfterBaseline = std::min(minMarginAfterBaseline, availableAlignmentSpaceForChild(lineCrossAxisExtent, flexItem) - offset);
         }
-    }
-
-    // wrap-reverse flips the cross axis start and end. For baseline alignment,
-    // this means we need to align the after edge of baseline elements with the
-    // after edge of the flex line. We can also use the same logic for last
-    // baseline alignment since those items must be pushed towards the cross
-    // start as well.
-    if (minMarginAfterBaseline) {
-        for (const auto& flexItem : lineState.flexItems) {
-            if (shouldAdjustItemTowardsCrossAxis(alignmentForChild(flexItem.box)) && !hasAutoMarginsInCrossAxis(flexItem.box))
-                adjustAlignmentForChild(flexItem.box, minMarginAfterBaseline);
+        // css-align-3 9.3 part 3:
+        // Position the aligned baseline-sharing group within the alignment container according to its
+        // fallback alignment. The fallback alignment of a baseline-sharing group is the fallback alignment
+        // of its items as resolved to physical directions.
+        if (minMarginAfterBaseline) {
+            for (auto& flexItem : baselineSharingGroup) {
+                if (shouldAdjustItemTowardsCrossAxisEnd(writingModeToBlockFlowDirection(flexItemWritingModeForBaselineAlignment(flexItem)), alignmentForChild(flexItem)) && !hasAutoMarginsInCrossAxis(flexItem))
+                    adjustAlignmentForChild(flexItem, minMarginAfterBaseline);
+            }
         }
     }
 }
