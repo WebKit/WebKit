@@ -188,8 +188,6 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Float
     if (!m_page)
         return ImageDrawResult::DidNothing;
 
-    LayoutDisallowedScope::AllowedScope layoutAllowedScope; // Allow layout in the SVG document for this image.
-
     auto observer = imageObserver();
     ASSERT(observer);
 
