@@ -703,10 +703,10 @@ void VideoFullscreenManager::didCleanupFullscreen(PlaybackSessionContextIdentifi
 
 void VideoFullscreenManager::setVideoLayerGravityEnum(PlaybackSessionContextIdentifier contextId, unsigned gravity)
 {
-    auto& model = ensureModel(contextId);
-    INFO_LOG(LOGIDENTIFIER, model.logIdentifier(), gravity);
+    Ref model = ensureModel(contextId);
+    INFO_LOG(LOGIDENTIFIER, model->logIdentifier(), gravity);
 
-    model.setVideoLayerGravity((MediaPlayerEnums::VideoGravity)gravity);
+    model->setVideoLayerGravity((MediaPlayerEnums::VideoGravity)gravity);
 }
 
 void VideoFullscreenManager::fullscreenMayReturnToInline(PlaybackSessionContextIdentifier contextId, bool isPageVisible)

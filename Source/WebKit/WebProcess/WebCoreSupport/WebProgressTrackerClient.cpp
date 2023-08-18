@@ -67,13 +67,13 @@ void WebProgressTrackerClient::progressFinished(LocalFrame& originatingProgressF
     if (!originatingProgressFrame.isMainFrame())
         return;
 
-    Ref page = *m_webPage;
-    page->setMainFrameProgressCompleted(true);
+    Ref webPage = *m_webPage;
+    webPage->setMainFrameProgressCompleted(true);
 
     // Notify the bundle client.
-    page->injectedBundleLoaderClient().didFinishProgress(page);
+    webPage->injectedBundleLoaderClient().didFinishProgress(webPage);
 
-    page->send(Messages::WebPageProxy::DidFinishProgress());
+    webPage->send(Messages::WebPageProxy::DidFinishProgress());
 }
 
 } // namespace WebKit
