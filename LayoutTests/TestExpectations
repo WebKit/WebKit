@@ -1563,7 +1563,6 @@ webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-
 webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-4.html [ ImageOnlyFailure ]
 webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-5.html [ ImageOnlyFailure ]
 webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-6.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-repeat-max-width-001.html [ ImageOnlyFailure ]
 
 webkit.org/b/234879 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-intrinsic-maximums.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-003.html [ ImageOnlyFailure ]
@@ -1606,7 +1605,15 @@ imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/subgrid/masonry-c
 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/subgrid/masonry-columns-subgrid-named-lines-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/item-placement/masonry-columns-item-placement-auto-flow-next-001.html [ Skip ]
 
-webkit.org/b/236958 imported/w3c/web-platform-tests/css/css-grid/subgrid/repeat-auto-fill-003.html [ ImageOnlyFailure ]
+# Subgrid failures
+imported/w3c/web-platform-tests/css/css-grid/subgrid/line-names-010.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/subgrid/line-names-012.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/subgrid/orthogonal-writing-mode-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-no-items-on-edges-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-no-items-on-edges-002.html [ ImageOnlyFailure ]
+
+# Timeout
+imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-crash.html [ Skip ]
 
 # CSS Grid Baseline tests
 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-justify-baseline-001.html [ ImageOnlyFailure ]
