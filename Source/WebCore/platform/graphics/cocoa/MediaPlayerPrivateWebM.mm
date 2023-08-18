@@ -1278,12 +1278,11 @@ void MediaPlayerPrivateWebM::ensureLayer()
         setNetworkState(MediaPlayer::NetworkState::DecodeError);
         return;
     }
-    
-    if ([m_displayLayer respondsToSelector:@selector(setPreventsDisplaySleepDuringVideoPlayback:)])
-        m_displayLayer.get().preventsDisplaySleepDuringVideoPlayback = NO;
+
+    [m_displayLayer setPreventsDisplaySleepDuringVideoPlayback:NO];
 
     if ([m_displayLayer respondsToSelector:@selector(setPreventsAutomaticBackgroundingDuringVideoPlayback:)])
-        m_displayLayer.get().preventsAutomaticBackgroundingDuringVideoPlayback = NO;
+        [m_displayLayer setPreventsAutomaticBackgroundingDuringVideoPlayback:NO];
 
     @try {
         [m_synchronizer addRenderer:m_displayLayer.get()];
