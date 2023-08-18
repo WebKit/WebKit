@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Google Inc. All rights reserved.
  * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -327,8 +327,7 @@ ExceptionOr<void> TextTrack::addCue(Ref<TextTrackCue>&& cue)
 
     INFO_LOG(LOGIDENTIFIER, cue.get());
 
-    // TODO(93143): Add spec-compliant behavior for negative time values.
-    if (!cue->startMediaTime().isValid() || !cue->endMediaTime().isValid() || cue->startMediaTime() < MediaTime::zeroTime() || cue->endMediaTime() < MediaTime::zeroTime())
+    if (!cue->startMediaTime().isValid() || !cue->endMediaTime().isValid())
         return { };
 
     // 4.8.10.12.5 Text track API
