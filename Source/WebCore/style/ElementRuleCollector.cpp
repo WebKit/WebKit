@@ -655,33 +655,6 @@ bool ElementRuleCollector::hasAnyMatchingRules(const RuleSet& ruleSet)
 
 void ElementRuleCollector::addMatchedProperties(MatchedProperties&& matchedProperties, DeclarationOrigin declarationOrigin)
 {
-    // FIXME: This should be moved to the matched properties cache code.
-    auto computeIsCacheable = [&] {
-        if (!m_result->isCacheable)
-            return false;
-
-        for (auto current : matchedProperties.properties.get()) {
-            // Currently the property cache only copy the non-inherited values and resolve
-            // the inherited ones.
-            // Here we define some exception were we have to resolve some properties that are not inherited
-            // by default. If those exceptions become too common on the web, it should be possible
-            // to build a list of exception to resolve instead of completely disabling the cache.
-            if (current.isInherited())
-                continue;
-
-            auto& value = *current.value();
-
-            // The value currentColor has implicitely the same side effect. It depends on the value of color,
-            // which is an inherited value, making the non-inherited property implicitly inherited.
-            if (is<CSSPrimitiveValue>(value) && StyleColor::containsCurrentColor(downcast<CSSPrimitiveValue>(value)))
-                return false;
-        }
-
-        return true;
-    };
-
-    m_result->isCacheable = computeIsCacheable();
-
     declarationsForOrigin(declarationOrigin).append(WTFMove(matchedProperties));
 }
 
