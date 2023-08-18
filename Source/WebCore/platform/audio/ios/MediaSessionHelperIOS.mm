@@ -53,11 +53,7 @@ WEBCORE_EXPORT NSString *WebUIApplicationDidEnterBackgroundNotification = @"WebU
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(Celestial)
 SOFT_LINK_CLASS_OPTIONAL(Celestial, AVSystemController)
 SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_PIDToInheritApplicationStateFrom, NSString *)
-SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_CarPlayIsConnectedAttribute, NSString *)
-SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_CarPlayIsConnectedDidChangeNotification, NSString *)
-SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_CarPlayIsConnectedNotificationParameter, NSString *)
 SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_ServerConnectionDiedNotification, NSString *)
-SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_SubscribeToNotificationsAttribute, NSString *)
 #endif
 
 using namespace WebCore;
@@ -93,9 +89,9 @@ public:
     MediaSessionHelperIOS();
 
     void externalOutputDeviceAvailableDidChange();
+    void updateCarPlayIsConnected();
 #if HAVE(CELESTIAL)
     void mediaServerConnectionDied();
-    void updateCarPlayIsConnected(std::optional<bool>&&);
 #endif
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
     void activeAudioRouteDidChange(bool);
@@ -235,9 +231,7 @@ MediaSessionHelperIOS::MediaSessionHelperIOS()
     setIsExternalOutputDeviceAvailable([m_objcObserver hasWirelessTargetsAvailable]);
     END_BLOCK_OBJC_EXCEPTIONS
 
-#if HAVE(CELESTIAL)
-    updateCarPlayIsConnected(std::nullopt);
-#endif
+    updateCarPlayIsConnected();
 }
 
 void MediaSessionHelperIOS::providePresentingApplicationPID(int pid, ShouldOverride shouldOverride)
@@ -282,12 +276,6 @@ void MediaSessionHelperIOS::stopMonitoringWirelessRoutesInternal()
 #if HAVE(CELESTIAL)
 void MediaSessionHelperIOS::mediaServerConnectionDied()
 {
-    updateCarPlayIsConnected(std::nullopt);
-
-    // FIXME: Remove these once rdar://27662716 lands
-    if (canLoadAVSystemController_CarPlayIsConnectedDidChangeNotification() && canLoadAVSystemController_SubscribeToNotificationsAttribute())
-        [[getAVSystemControllerClass() sharedAVSystemController] setAttribute:@[getAVSystemController_CarPlayIsConnectedDidChangeNotification()] forKey:getAVSystemController_SubscribeToNotificationsAttribute() error:nil];
-
     if (m_presentedApplicationPID) {
         auto presentedApplicationPID = std::exchange(m_presentedApplicationPID, { });
         callOnMainRunLoop([presentedApplicationPID] {
@@ -295,27 +283,27 @@ void MediaSessionHelperIOS::mediaServerConnectionDied()
         });
     }
 }
+#endif // HAVE(CELESTIAL)
 
-void MediaSessionHelperIOS::updateCarPlayIsConnected(std::optional<bool>&& carPlayIsConnected)
+void MediaSessionHelperIOS::updateCarPlayIsConnected()
 {
-    if (carPlayIsConnected) {
-        setIsPlayingToAutomotiveHeadUnit(carPlayIsConnected.value());
-        return;
+#if HAVE(AVAUDIOSESSION)
+    AVAudioSession *audioSession = [PAL::getAVAudioSessionClass() sharedInstance];
+    for (AVAudioSessionPortDescription *output in audioSession.currentRoute.outputs) {
+        if ([output.portType isEqualToString:AVAudioSessionPortCarAudio]) {
+            setIsPlayingToAutomotiveHeadUnit(true);
+            return;
+        }
     }
+#endif // HAVE(AVAUDIOSESSION)
 
-    if (!canLoadAVSystemController_CarPlayIsConnectedAttribute()) {
-        setIsPlayingToAutomotiveHeadUnit(false);
-        return;
-    }
-
-    setIsPlayingToAutomotiveHeadUnit([[[getAVSystemControllerClass() sharedAVSystemController] attributeForKey:getAVSystemController_CarPlayIsConnectedAttribute()] boolValue]);
+    setIsPlayingToAutomotiveHeadUnit(false);
 }
 
 void MediaSessionHelperIOS::setIsPlayingToAutomotiveHeadUnit(bool isPlaying)
 {
     isPlayingToAutomotiveHeadUnitDidChange(isPlaying ? PlayingToAutomotiveHeadUnit::Yes : PlayingToAutomotiveHeadUnit::No);
 }
-#endif // HAVE(CELESTIAL)
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
 void MediaSessionHelperIOS::activeAudioRouteDidChange(bool shouldPause)
@@ -361,17 +349,11 @@ void MediaSessionHelperIOS::externalOutputDeviceAvailableDidChange()
     [center addObserver:self selector:@selector(applicationWillResignActive:) name:WebUIApplicationWillResignActiveNotification object:nil];
     [center addObserver:self selector:@selector(applicationDidEnterBackground:) name:PAL::get_UIKit_UIApplicationDidEnterBackgroundNotification() object:nil];
     [center addObserver:self selector:@selector(applicationDidEnterBackground:) name:WebUIApplicationDidEnterBackgroundNotification object:nil];
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
     [center addObserver:self selector:@selector(activeOutputDeviceDidChange:) name:PAL::get_AVFoundation_AVAudioSessionRouteChangeNotification() object:nil];
-#endif
 
 #if HAVE(CELESTIAL)
     if (canLoadAVSystemController_ServerConnectionDiedNotification())
         [center addObserver:self selector:@selector(mediaServerConnectionDied:) name:getAVSystemController_ServerConnectionDiedNotification() object:nil];
-    if (canLoadAVSystemController_CarPlayIsConnectedDidChangeNotification())
-        [center addObserver:self selector:@selector(carPlayIsConnectedDidChange:) name:getAVSystemController_CarPlayIsConnectedDidChangeNotification() object:nil];
-    if (canLoadAVSystemController_CarPlayIsConnectedDidChangeNotification() && canLoadAVSystemController_SubscribeToNotificationsAttribute())
-        [[getAVSystemControllerClass() sharedAVSystemController] setAttribute:@[getAVSystemController_CarPlayIsConnectedDidChangeNotification()] forKey:getAVSystemController_SubscribeToNotificationsAttribute() error:nil];
 #endif
 
     // Now playing won't work unless we turn on the delivery of remote control events.
@@ -540,35 +522,25 @@ void MediaSessionHelperIOS::externalOutputDeviceAvailableDidChange()
             callback->mediaServerConnectionDied();
     });
 }
-
-- (void)carPlayIsConnectedDidChange:(NSNotification *)notification
-{
-    std::optional<bool> carPlayIsConnected;
-    if (notification && canLoadAVSystemController_CarPlayIsConnectedNotificationParameter()) {
-        NSNumber *nsCarPlayIsConnected = [[notification userInfo] valueForKey:getAVSystemController_CarPlayIsConnectedNotificationParameter()];
-        if (nsCarPlayIsConnected)
-            carPlayIsConnected = [nsCarPlayIsConnected boolValue];
-    }
-
-    callOnWebThreadOrDispatchAsyncOnMainThread([self, protectedSelf = retainPtr(self), carPlayIsConnected = WTFMove(carPlayIsConnected)]() mutable {
-        if (auto callback = _callback.get())
-            callback->updateCarPlayIsConnected(WTFMove(carPlayIsConnected));
-    });
-}
 #endif // HAVE(CELESTIAL)
 
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
 - (void)activeOutputDeviceDidChange:(NSNotification *)notification
 {
-    bool shouldPause = [[notification.userInfo objectForKey:PAL::get_AVFoundation_AVAudioSessionRouteChangeReasonKey()] unsignedIntegerValue] == AVAudioSessionRouteChangeReasonOldDeviceUnavailable;
+    LOG(Media, "-[WebMediaSessionHelper activeOutputDeviceDidChange:]");
+
+    bool shouldPause = [[notification.userInfo objectForKey:AVAudioSessionRouteChangeReasonKey] unsignedIntegerValue] == AVAudioSessionRouteChangeReasonOldDeviceUnavailable;
     callOnWebThreadOrDispatchAsyncOnMainThread([self, protectedSelf = retainPtr(self), shouldPause]() {
         if (auto callback = _callback.get()) {
+            callback->updateCarPlayIsConnected();
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
             callback->activeAudioRouteDidChange(shouldPause);
             callback->activeVideoRouteDidChange();
+#else
+            UNUSED_PARAM(shouldPause);
+#endif
         }
     });
 }
-#endif
 
 @end
 
