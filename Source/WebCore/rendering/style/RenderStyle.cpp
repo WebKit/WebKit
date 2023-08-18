@@ -1215,7 +1215,8 @@ static bool rareDataChangeRequiresRepaint(const StyleRareNonInheritedData& first
 
 static bool rareInheritedDataChangeRequiresRepaint(const StyleRareInheritedData& first, const StyleRareInheritedData& second)
 {
-    return first.userModify != second.userModify
+    return first.effectiveInert != second.effectiveInert
+        || first.userModify != second.userModify
         || first.userSelect != second.userSelect
         || first.appleColorFilter != second.appleColorFilter
         || first.imageRendering != second.imageRendering
@@ -1359,6 +1360,9 @@ bool RenderStyle::changeRequiresRecompositeLayer(const RenderStyle& other, Optio
             || m_nonInheritedData->rareData->overscrollBehaviorY != other.m_nonInheritedData->rareData->overscrollBehaviorY)
             return true;
     }
+
+    if (m_rareInheritedData.ptr() != other.m_rareInheritedData.ptr() && m_rareInheritedData->effectiveInert != other.m_rareInheritedData->effectiveInert)
+        return true;
 
     return false;
 }
