@@ -640,6 +640,7 @@ void GraphicsContextGL::paintToCanvas(const GraphicsContextGLAttributes& sourceC
 
 void GraphicsContextGL::forceContextLost()
 {
+    m_contextLost = true;
     if (m_client)
         m_client->forceContextLost();
 }
