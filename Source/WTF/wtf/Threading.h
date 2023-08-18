@@ -333,6 +333,7 @@ protected:
 
     // These functions are only called from ThreadGroup.
     ThreadGroupAddResult addToThreadGroup(const AbstractLocker& threadGroupLocker, ThreadGroup&);
+    void removeFromThreadGroup(const AbstractLocker& threadGroupLocker, ThreadGroup&);
 
     // For pthread, the Thread instance is ref'ed and held in thread-specific storage. It will be deref'ed by destructTLS at thread destruction time.
     // It employs pthreads-specific 2-pass destruction to reliably remove Thread.
@@ -369,7 +370,7 @@ protected:
     // Use WordLock since WordLock does not depend on ThreadSpecific and this "Thread".
     WordLock m_mutex;
     StackBounds m_stack { StackBounds::emptyBounds() };
-    ThreadSafeWeakHashSet<ThreadGroup> m_threadGroups;
+    HashMap<ThreadGroup*, std::weak_ptr<ThreadGroup>> m_threadGroupMap;
     PlatformThreadHandle m_handle;
     uint32_t m_uid { ++s_uid };
 #if OS(WINDOWS)
