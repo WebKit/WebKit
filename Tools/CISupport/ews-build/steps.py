@@ -1655,6 +1655,7 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         verifyMergeQueue=False,
         verifyNoDraftForMergeQueue=False,
         enableSkipEWSLabel=True,
+        branches=None,
     ):
         self.verifyObsolete = verifyObsolete
         self.verifyBugClosed = verifyBugClosed
@@ -1664,6 +1665,10 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         self.verifyNoDraftForMergeQueue = verifyNoDraftForMergeQueue
         self.enableSkipEWSLabel = enableSkipEWSLabel
         self.addURLs = addURLs
+
+        branches = branches or [r'.+']
+        self.branches = [branch if isinstance(branch, re.Pattern) else re.compile(branch) for branch in branches]
+
         super().__init__()
 
     def getResultSummary(self):
@@ -1694,6 +1699,11 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
     def run(self):
         patch_id = self.getProperty('patch_id', '')
         pr_number = self.getProperty('github.number', '')
+        branch = self.getProperty('github.base.ref', DEFAULT_BRANCH)
+
+        if not any(candidate.match(branch) for candidate in self.branches):
+            rc = yield self.skip_build(f"Changes to '{branch}' are not tested")
+            return defer.returnValue(rc)
 
         if not patch_id and not pr_number:
             yield self._addToLog('stdio', 'No patch_id or pr_number found. Unable to proceed without one of them.\n')
