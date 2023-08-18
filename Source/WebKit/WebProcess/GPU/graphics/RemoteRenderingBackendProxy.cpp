@@ -291,11 +291,11 @@ void RemoteRenderingBackendProxy::cacheFilter(Ref<Filter>&& filter)
     send(Messages::RemoteRenderingBackend::CacheFilter(WTFMove(filter), renderingResourceIdentifier));
 }
 
-void RemoteRenderingBackendProxy::releaseAllRemoteResources()
+void RemoteRenderingBackendProxy::releaseAllDrawingResources()
 {
     if (!m_streamConnection)
         return;
-    send(Messages::RemoteRenderingBackend::ReleaseAllResources());
+    send(Messages::RemoteRenderingBackend::ReleaseAllDrawingResources());
 }
 
 void RemoteRenderingBackendProxy::releaseRenderingResource(RenderingResourceIdentifier renderingResourceIdentifier)

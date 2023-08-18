@@ -104,7 +104,7 @@ public:
     void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&);
     void cacheGradient(Ref<WebCore::Gradient>&&);
     void cacheFilter(Ref<WebCore::Filter>&&);
-    void releaseAllRemoteResources();
+    void releaseAllDrawingResources();
     void releaseAllImageResources();
     void releaseRenderingResource(WebCore::RenderingResourceIdentifier);
     void markSurfacesVolatile(Vector<WebCore::RenderingResourceIdentifier>&&, CompletionHandler<void(bool madeAllVolatile)>&&);
@@ -114,13 +114,13 @@ public:
         RefPtr<WebCore::ImageBuffer> back;
         RefPtr<WebCore::ImageBuffer> secondaryBack;
     };
-    
+
     struct LayerPrepareBuffersData {
         BufferSet buffers;
         bool supportsPartialRepaint { true };
         bool hasEmptyDirtyRegion { false };
     };
-    
+
 #if PLATFORM(COCOA)
     struct SwapBuffersResult {
         BufferSet buffers;

@@ -128,7 +128,7 @@ private:
 
     static bool shouldDumpForFlags(OptionSet<AsTextFlag>, ItemHandle);
 
-    LocalResourceHeap m_resourceHeap;
+    ResourceHeap m_resourceHeap;
     std::unique_ptr<ItemBuffer> m_items;
 };
 
