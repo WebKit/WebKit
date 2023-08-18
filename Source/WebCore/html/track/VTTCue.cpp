@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011, 2013 Google Inc.  All rights reserved.
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -412,7 +412,7 @@ void VTTCue::setPositionAlign(PositionAlignSetting positionAlignment)
     didChange();
 }
 
-ExceptionOr<void> VTTCue::setSize(int size)
+ExceptionOr<void> VTTCue::setSize(double size)
 {
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-size
     // On setting, if the new value is negative or greater than 100, then throw an IndexSizeError
