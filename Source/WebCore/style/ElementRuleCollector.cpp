@@ -636,10 +636,8 @@ void ElementRuleCollector::addElementInlineStyleProperties(bool includeSMILPrope
     if (!is<StyledElement>(element()))
         return;
 
-    if (auto* inlineStyle = downcast<StyledElement>(element()).inlineStyle()) {
-        bool isInlineStyleCacheable = !inlineStyle->isMutable();
-        addElementStyleProperties(inlineStyle, RuleSet::cascadeLayerPriorityForUnlayered, isInlineStyleCacheable, FromStyleAttribute::Yes);
-    }
+    if (auto* inlineStyle = downcast<StyledElement>(element()).inlineStyleForStyleResolution())
+        addElementStyleProperties(inlineStyle, RuleSet::cascadeLayerPriorityForUnlayered, true, FromStyleAttribute::Yes);
 
     if (includeSMILProperties && is<SVGElement>(element()))
         addElementStyleProperties(downcast<SVGElement>(element()).animatedSMILStyleProperties(), RuleSet::cascadeLayerPriorityForUnlayered, false /* isCacheable */);
