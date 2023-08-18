@@ -280,6 +280,7 @@ UIProcess/gtk/KeyBindingTranslator.cpp
 UIProcess/gtk/PointerLockManager.cpp @no-unify
 UIProcess/gtk/PointerLockManagerWayland.cpp @no-unify
 UIProcess/gtk/PointerLockManagerX11.cpp @no-unify
+UIProcess/gtk/ScreenManager.cpp @no-unify
 UIProcess/gtk/TextCheckerGtk.cpp @no-unify
 UIProcess/gtk/ViewSnapshotStoreGtk3.cpp @no-unify
 UIProcess/gtk/ViewSnapshotStoreGtk4.cpp @no-unify

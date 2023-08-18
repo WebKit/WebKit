@@ -616,6 +616,23 @@ void TypeChecker::visit(AST::CallExpression& call)
                     inferred(targetBinding->type);
                     return;
                 }
+
+                if (auto* vectorType = std::get_if<Types::Vector>(targetBinding->type)) {
+                    typeArguments.append(vectorType->element);
+                    switch (vectorType->size) {
+                    case 2:
+                        targetName = "vec2"_s;
+                        break;
+                    case 3:
+                        targetName = "vec3"_s;
+                        break;
+                    case 4:
+                        targetName = "vec4"_s;
+                        break;
+                    default:
+                        RELEASE_ASSERT_NOT_REACHED();
+                    }
+                }
             }
 
             if (targetBinding->kind == Binding::Value) {

@@ -1,4 +1,17 @@
 # FIXME: add all the missing type declarations here
+
+suffixes = {
+  f: F32,
+  i: I32,
+  u: U32,
+}
+
+[2, 3, 4].each do |n|
+  suffixes.each do |suffix, type|
+    type_alias :"vec#{n}#{suffix}", Vector[type, n]
+  end
+end
+
 operator :+, {
     [T < Number].(T, T) => T,
 

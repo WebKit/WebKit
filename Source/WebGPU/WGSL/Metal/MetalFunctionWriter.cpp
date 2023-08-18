@@ -877,7 +877,16 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
         static constexpr std::pair<ComparableASCIILiteral, ASCIILiteral> baseTypesMappings[] {
             { "f32", "float"_s },
             { "i32", "int"_s },
-            { "u32", "unsigned"_s }
+            { "u32", "uint"_s },
+            { "vec2f", "float2"_s },
+            { "vec2i", "int2"_s },
+            { "vec2u", "uint2"_s },
+            { "vec3f", "float3"_s },
+            { "vec3i", "int3"_s },
+            { "vec3u", "uint3"_s },
+            { "vec4f", "float4"_s },
+            { "vec4i", "int4"_s },
+            { "vec4u", "uint4"_s }
         };
         static constexpr SortedArrayMap baseTypes { baseTypesMappings };
 

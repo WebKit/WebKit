@@ -26,10 +26,14 @@
 #pragma once
 
 #include "WebGLExtension.h"
+#include "WebGLRenderingContextBase.h"
+#include <wtf/IsoMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class EXTDepthClamp final : public RefCounted<EXTDepthClamp>, public WebGLExtension {
+class EXTDepthClamp final : public RefCounted<EXTDepthClamp>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(EXTDepthClamp);
 public:
     explicit EXTDepthClamp(WebGLRenderingContextBase&);

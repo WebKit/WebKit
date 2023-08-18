@@ -83,7 +83,7 @@ struct IDLIDBValue;
 
 #if ENABLE(WEBGL)
 struct IDLWebGLAny;
-struct IDLWebGLExtension;
+struct IDLWebGLExtensionAny;
 #endif
 
 }

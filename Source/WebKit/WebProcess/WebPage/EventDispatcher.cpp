@@ -80,10 +80,10 @@ void EventDispatcher::addScrollingTreeForPage(WebPage& webPage)
     ASSERT(webPage.scrollingCoordinator());
     ASSERT(!m_scrollingTrees.contains(webPage.identifier()));
 
-    auto& scrollingCoordinator = downcast<AsyncScrollingCoordinator>(*webPage.scrollingCoordinator());
-    auto* scrollingTree = dynamicDowncast<ThreadedScrollingTree>(scrollingCoordinator.scrollingTree());
+    Ref scrollingCoordinator = downcast<AsyncScrollingCoordinator>(*webPage.scrollingCoordinator());
+    RefPtr scrollingTree = dynamicDowncast<ThreadedScrollingTree>(scrollingCoordinator->scrollingTree());
     ASSERT(scrollingTree);
-    m_scrollingTrees.set(webPage.identifier(), scrollingTree);
+    m_scrollingTrees.set(webPage.identifier(), WTFMove(scrollingTree));
 }
 
 void EventDispatcher::removeScrollingTreeForPage(WebPage& webPage)
@@ -105,7 +105,7 @@ void EventDispatcher::internalWheelEvent(PageIdentifier pageID, const WebWheelEv
     auto processingSteps = OptionSet<WebCore::WheelEventProcessingSteps> { WheelEventProcessingSteps::SynchronousScrolling, WheelEventProcessingSteps::BlockingDOMEventDispatch };
 
     ensureOnMainRunLoop([pageID] {
-        if (auto* webPage = WebProcess::singleton().webPage(pageID)) {
+        if (RefPtr webPage = WebProcess::singleton().webPage(pageID)) {
             if (auto* corePage = webPage->corePage()) {
                 if (auto* keyboardScrollingAnimator = corePage->currentKeyboardScrollingAnimator())
                     keyboardScrollingAnimator->stopScrollingImmediately();
@@ -250,7 +250,7 @@ void EventDispatcher::dispatchTouchEvents()
     }
 
     for (auto& slot : localCopy) {
-        if (auto* webPage = WebProcess::singleton().webPage(slot.key))
+        if (RefPtr webPage = WebProcess::singleton().webPage(slot.key))
             webPage->dispatchAsynchronousTouchEvents(WTFMove(slot.value));
     }
 }
@@ -268,7 +268,7 @@ void EventDispatcher::dispatchWheelEvent(PageIdentifier pageID, const WebWheelEv
 {
     ASSERT(RunLoop::isMain());
 
-    WebPage* webPage = WebProcess::singleton().webPage(pageID);
+    RefPtr webPage = WebProcess::singleton().webPage(pageID);
     if (!webPage)
         return;
 
@@ -283,7 +283,7 @@ void EventDispatcher::dispatchGestureEvent(PageIdentifier pageID, const WebGestu
 {
     ASSERT(RunLoop::isMain());
 
-    WebPage* webPage = WebProcess::singleton().webPage(pageID);
+    RefPtr webPage = WebProcess::singleton().webPage(pageID);
     if (!webPage)
         return;
 

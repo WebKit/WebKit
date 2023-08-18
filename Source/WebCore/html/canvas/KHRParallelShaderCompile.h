@@ -26,10 +26,14 @@
 #pragma once
 
 #include "WebGLExtension.h"
+#include "WebGLRenderingContextBase.h"
+#include <wtf/IsoMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class KHRParallelShaderCompile final : public RefCounted<KHRParallelShaderCompile>, public WebGLExtension {
+class KHRParallelShaderCompile final : public RefCounted<KHRParallelShaderCompile>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(KHRParallelShaderCompile);
 public:
     explicit KHRParallelShaderCompile(WebGLRenderingContextBase&);

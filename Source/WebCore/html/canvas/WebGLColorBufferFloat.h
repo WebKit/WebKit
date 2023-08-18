@@ -26,10 +26,14 @@
 #pragma once
 
 #include "WebGLExtension.h"
+#include "WebGLRenderingContextBase.h"
+#include <wtf/IsoMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class WebGLColorBufferFloat final : public RefCounted<WebGLColorBufferFloat>, public WebGLExtension {
+class WebGLColorBufferFloat final : public RefCounted<WebGLColorBufferFloat>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(WebGLColorBufferFloat);
 public:
     explicit WebGLColorBufferFloat(WebGLRenderingContextBase&);

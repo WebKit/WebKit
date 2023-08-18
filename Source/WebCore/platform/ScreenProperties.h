@@ -50,6 +50,10 @@ struct ScreenData {
     PlatformGPUID gpuID { 0 };
     DynamicRangeMode preferredDynamicRangeMode { DynamicRangeMode::Standard };
 #endif
+#if PLATFORM(GTK)
+    IntSize screenSize; // In millimeters.
+    double dpi;
+#endif
 
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
     float scaleFactor { 1 };

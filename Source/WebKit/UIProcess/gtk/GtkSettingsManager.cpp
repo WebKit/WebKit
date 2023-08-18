@@ -184,6 +184,9 @@ void GtkSettingsManager::settingsDidChange()
     if (m_settingsState.enableAnimations != enableAnimations)
         m_settingsState.enableAnimations = state.enableAnimations = enableAnimations;
 
+    for (const auto& observer : m_observers.values())
+        observer(state);
+
     for (auto& processPool : WebProcessPool::allProcessPools())
         processPool->sendToAllProcesses(Messages::GtkSettingsManagerProxy::SettingsDidChange(state));
 }
@@ -220,6 +223,16 @@ GtkSettingsManager::GtkSettingsManager()
     g_signal_connect_swapped(m_settings, "notify::gtk-primary-button-warps-slider", G_CALLBACK(settingsChangedCallback), this);
     g_signal_connect_swapped(m_settings, "notify::gtk-overlay-scrolling", G_CALLBACK(settingsChangedCallback), this);
     g_signal_connect_swapped(m_settings, "notify::gtk-enable-animations", G_CALLBACK(settingsChangedCallback), this);
+}
+
+void GtkSettingsManager::addObserver(Function<void(const GtkSettingsState&)>&& handler, void* context)
+{
+    m_observers.add(context, WTFMove(handler));
+}
+
+void GtkSettingsManager::removeObserver(void* context)
+{
+    m_observers.remove(context);
 }
 
 } // namespace WebKit

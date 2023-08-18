@@ -73,7 +73,6 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/JSDOMExceptionHandling.h>
-#include <WebCore/PlatformScreen.h>
 #include <WebCore/RefPtrCairo.h>
 #include <WebCore/RunJavaScriptParameters.h>
 #include <WebCore/SharedBuffer.h>
@@ -89,6 +88,7 @@
 #include <wtf/text/StringBuilder.h>
 
 #if PLATFORM(GTK)
+#include "GtkSettingsManager.h"
 #include "WebKitFaviconDatabasePrivate.h"
 #include "WebKitInputMethodContextImplGtk.h"
 #include "WebKitPointerLockPermissionRequest.h"
@@ -867,14 +867,21 @@ static void webkitWebViewConstructed(GObject* object)
     priv->backForwardList = adoptGRef(webkitBackForwardListCreate(&getPage(webView).backForwardList()));
     priv->windowProperties = adoptGRef(webkitWindowPropertiesCreate());
 
-    priv->textScaleFactor = WebCore::screenDPI() / 96.;
+#if PLATFORM(GTK)
+    double dpi = GtkSettingsManager::singleton().settingsState().xftDPI.value() / 1024.0;
+    priv->textScaleFactor = dpi / 96.;
     getPage(webView).setTextZoomFactor(priv->textScaleFactor);
-    WebCore::setScreenDPIObserverHandler([webView] {
+    GtkSettingsManager::singleton().addObserver([webView](const GtkSettingsState& state) {
+        if (!state.xftDPI)
+            return;
+
+        double dpi = state.xftDPI.value() / 1024.0;
         auto& page = getPage(webView);
         auto zoomFactor = page.textZoomFactor() / webView->priv->textScaleFactor;
-        webView->priv->textScaleFactor = WebCore::screenDPI() / 96.;
+        webView->priv->textScaleFactor = dpi / 96.;
         page.setTextZoomFactor(zoomFactor * webView->priv->textScaleFactor);
     }, webView);
+#endif
 
     priv->isWebProcessResponsive = true;
 }
@@ -1088,7 +1095,9 @@ static void webkitWebViewDispose(GObject* object)
     webView->priv->view->close();
 #endif
 
-    WebCore::setScreenDPIObserverHandler(nullptr, webView);
+#if PLATFORM(GTK)
+    GtkSettingsManager::singleton().removeObserver(webView);
+#endif
 
     G_OBJECT_CLASS(webkit_web_view_parent_class)->dispose(object);
 }

@@ -8,7 +8,7 @@ PASS Computed 'content' for non-list-item ::marker, variant default
 PASS Computed 'content' for non-list-item ::marker, variant normal
 PASS Computed 'content' for non-list-item ::marker, variant string
 PASS Computed 'content' for non-list-item ::marker, variant image
-FAIL Computed 'content' for non-list-item ::marker, variant none assert_equals: expected "none" but got "normal"
+PASS Computed 'content' for non-list-item ::marker, variant none
 item
 item
 item

@@ -210,7 +210,7 @@ void WindowEventLoop::didReachTimeToRun()
     auto now = MonotonicTime::now();
 
     auto timerTime = nextTimerFireTime();
-    if (timerTime && *timerTime <= now + IdleCallbackDurationExpectation) {
+    if (timerTime && *timerTime < now + IdleCallbackDurationExpectation) {
         scheduleToRunIfNeeded();
         return;
     }

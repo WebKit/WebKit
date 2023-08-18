@@ -157,6 +157,7 @@
 		BCC997A411D3C8F60017BCA2 /* InjectedBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC997A011D3C8F60017BCA2 /* InjectedBundle.cpp */; };
 		BCC997A511D3C8F60017BCA2 /* InjectedBundlePage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC997A211D3C8F60017BCA2 /* InjectedBundlePage.cpp */; };
 		C0CE720B1247C93300BC0EC4 /* TestRunnerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0CE720A1247C93300BC0EC4 /* TestRunnerMac.mm */; };
+		DD4671AE2A6B136200E49DBD /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD4671AD2A6B136200E49DBD /* WebCore.framework */; };
 		E132AA3A17CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = E132AA3817CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm */; };
 		E132AA3D17CE776F00611DF0 /* WebKitTestRunnerEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = E132AA3B17CE776F00611DF0 /* WebKitTestRunnerEvent.mm */; };
 		E1C642C617CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1C642C417CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm */; };
@@ -430,6 +431,7 @@
 		BCD7D2F711921278006DB7EE /* TestInvocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestInvocation.cpp; sourceTree = "<group>"; };
 		BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0CE720A1247C93300BC0EC4 /* TestRunnerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestRunnerMac.mm; path = mac/TestRunnerMac.mm; sourceTree = "<group>"; };
+		DD4671AD2A6B136200E49DBD /* WebCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E132AA3817CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitTestRunnerDraggingInfo.mm; sourceTree = "<group>"; };
 		E132AA3917CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitTestRunnerDraggingInfo.h; sourceTree = "<group>"; };
 		E132AA3B17CE776F00611DF0 /* WebKitTestRunnerEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitTestRunnerEvent.mm; sourceTree = "<group>"; };
@@ -467,6 +469,7 @@
 			files = (
 				51058AD51D678820009A538C /* libWebCoreTestSupport.dylib in Frameworks */,
 				57A0062E22976EEB00AD08BD /* Security.framework in Frameworks */,
+				DD4671AE2A6B136200E49DBD /* WebCore.framework in Frameworks */,
 				51058AD61D678825009A538C /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -730,6 +733,7 @@
 				2EE52CE21890A9A80010ED21 /* Foundation.framework */,
 				0F73B5571BA7929E004B3EF4 /* JavaScriptCore.framework */,
 				570E75A42152DA2C00324B6E /* Security.framework */,
+				DD4671AD2A6B136200E49DBD /* WebCore.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

@@ -1784,10 +1784,10 @@ webkit.org/b/238749 imported/w3c/web-platform-tests/html/semantics/interactive-e
 
 webkit.org/b/258325 [ Debug ] media/modern-media-controls/pip-support/pip-support-click.html [ Crash ]
 
-# webkit.org/b/258328 Umbrella Bug: Batch mark expectations slowing down EWS (258328) 
+# webkit.org/b/258328 Umbrella Bug: Batch mark expectations slowing down EWS (258328)
 [ Debug ] imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.crossOriginSource.sub.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-035.html [ Pass ImageOnlyFailure ] 
-fast/forms/file/entries-api/image-no-transcode-open-panel.html [ Pass Crash ] 
+imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-035.html [ Pass ImageOnlyFailure ]
+fast/forms/file/entries-api/image-no-transcode-open-panel.html [ Pass Crash ]
 [ Debug Ventura arm64 ] http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broadcast.html [ Pass Crash ]
 [ Debug arm64 ] media/track/track-css-visible-stroke.html [ Pass Crash ]
 [ Ventura Debug arm64 ] http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click.html [ Pass Crash ]
@@ -1831,8 +1831,6 @@ webkit.org/b/259496 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/tempora
 
 webkit.org/b/259183 fast/attachment/mac/wide-attachment-image-controls-basic.html [ Pass Failure ]
 
-webkit.org/b/259699 media/media-source/media-source-duplicate-seeked.html [ Pass Failure ]
-
 webkit.org/b/259708 fast/mediastream/video-rotation-gpu-process-crash.html [ Pass Crash Failure Timeout ]
 
 webkit.org/b/259712 media/media-source/media-source-paint-after-display-none.html [ Pass Crash Failure Timeout ]
@@ -1844,16 +1842,6 @@ webkit.org/b/260113 [ arm64 ] http/wpt/webauthn/ctap-hid-failure.https.html [ Pa
 webkit.org/b/260185 media/media-source/media-source-fastseek.html [ Pass Failure ]
 
 webkit.org/b/260225 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-GC.https.html [ Pass Failure ]
-
-webkit.org/b/260224 [ Debug ] compositing/geometry/clipped-out-perspective.html [ ImageOnlyFailure ]
-webkit.org/b/260224 [ Debug ] compositing/overlap-blending/opacity-and-infinity.html [ ImageOnlyFailure ]
-webkit.org/b/260224 [ Debug ] imported/w3c/web-platform-tests/css/css-transforms/perspective-split-by-zero-w.html [ ImageOnlyFailure ]
-webkit.org/b/260224 [ Debug ] imported/w3c/web-platform-tests/css/css-transforms/preserve3d-and-filter-with-perspective.html [ ImageOnlyFailure ]
-webkit.org/b/260224 [ Debug ] imported/w3c/web-platform-tests/css/css-transforms/preserve3d-pseudo-element.html [ ImageOnlyFailure ]
-webkit.org/b/260224 [ Debug ] imported/w3c/web-platform-tests/css/css-transforms/transform-table-009.html [ ImageOnlyFailure ]
-webkit.org/b/260224 [ Debug ] imported/w3c/web-platform-tests/css/css-transforms/transform-table-010.html [ ImageOnlyFailure ]
-webkit.org/b/260224 [ Debug ] imported/w3c/web-platform-tests/css/css-transforms/transform-table-011.html [ ImageOnlyFailure ]
-webkit.org/b/260224 [ Debug ] imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-011.html [ ImageOnlyFailure ]
 
 # rdar://102425691 ([ New Test ](256068@main): [ Ventura+ ] http/wpt/webcodecs/videoFrame-colorSpace.html is a consistent failure)
 [ Ventura+ ] http/wpt/webcodecs/videoFrame-colorSpace.html [ Pass Failure ]

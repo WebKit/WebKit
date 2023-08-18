@@ -502,6 +502,7 @@ inline Length RenderStyle::initialWordSpacing() { return zeroLength(); }
 constexpr WritingMode RenderStyle::initialWritingMode() { return WritingMode::HorizontalTb; }
 inline InputSecurity RenderStyle::inputSecurity() const { return static_cast<InputSecurity>(m_nonInheritedData->rareData->inputSecurity); }
 inline bool RenderStyle::isColumnFlexDirection() const { return flexDirection() == FlexDirection::Column || flexDirection() == FlexDirection::ColumnReverse; }
+inline bool RenderStyle::isRowFlexDirection() const { return flexDirection() == FlexDirection::Row || flexDirection() == FlexDirection::RowReverse; }
 constexpr bool RenderStyle::isDisplayBlockLevel() const { return isDisplayBlockType(display()); }
 constexpr bool RenderStyle::isDisplayDeprecatedFlexibleBox(DisplayType display) { return display == DisplayType::Box || display == DisplayType::InlineBox; }
 constexpr bool RenderStyle::isDisplayFlexibleBox(DisplayType display) { return display == DisplayType::Flex || display == DisplayType::InlineFlex; }
@@ -833,12 +834,12 @@ inline bool RenderStyle::NonInheritedFlags::operator==(const NonInheritedFlags& 
         && usesContainerUnits == other.usesContainerUnits
         && hasExplicitlyInheritedProperties == other.hasExplicitlyInheritedProperties
         && disallowsFastPathInheritance == other.disallowsFastPathInheritance
+        && hasContentNone == other.hasContentNone
         && isUnique == other.isUnique
         && emptyState == other.emptyState
         && firstChildState == other.firstChildState
         && lastChildState == other.lastChildState
         && isLink == other.isLink
-        && hasContentNone == other.hasContentNone
         && styleType == other.styleType
         && pseudoBits == other.pseudoBits;
 }

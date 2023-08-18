@@ -26,10 +26,14 @@
 #pragma once
 
 #include "WebGLExtension.h"
+#include "WebGLRenderingContextBase.h"
+#include <wtf/IsoMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class EXTConservativeDepth final : public RefCounted<EXTConservativeDepth>, public WebGLExtension {
+class EXTConservativeDepth final : public RefCounted<EXTConservativeDepth>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(EXTConservativeDepth);
 public:
     explicit EXTConservativeDepth(WebGLRenderingContextBase&);

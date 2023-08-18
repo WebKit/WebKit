@@ -254,7 +254,7 @@ public:
     GCGLboolean isVertexArray(WebGLVertexArrayObject* vertexArray);
     void bindVertexArray(WebGLVertexArrayObject* vertexArray);
     
-    WebGLExtension* getExtension(const String&) final;
+    std::optional<WebGLExtensionAny> getExtension(const String&) final;
     std::optional<Vector<String>> getSupportedExtensions() final;
     WebGLAny getParameter(GCGLenum pname) final;
 

@@ -219,12 +219,12 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
     m_nonInheritedFlags.usesContainerUnits = false;
     m_nonInheritedFlags.hasExplicitlyInheritedProperties = false;
     m_nonInheritedFlags.disallowsFastPathInheritance = false;
+    m_nonInheritedFlags.hasContentNone = false;
     m_nonInheritedFlags.isUnique = false;
     m_nonInheritedFlags.emptyState = false;
     m_nonInheritedFlags.firstChildState = false;
     m_nonInheritedFlags.lastChildState = false;
     m_nonInheritedFlags.isLink = false;
-    m_nonInheritedFlags.hasContentNone = false;
     m_nonInheritedFlags.styleType = static_cast<unsigned>(PseudoId::None);
     m_nonInheritedFlags.pseudoBits = static_cast<unsigned>(PseudoId::None);
 
@@ -385,21 +385,28 @@ void RenderStyle::fastPathInheritFrom(const RenderStyle& inheritParent)
 inline void RenderStyle::NonInheritedFlags::copyNonInheritedFrom(const NonInheritedFlags& other)
 {
     // Only some flags are copied because NonInheritedFlags contains things that are not actually style data.
-    clear = other.clear;
-    disallowsFastPathInheritance = other.disallowsFastPathInheritance;
     effectiveDisplay = other.effectiveDisplay;
-    floating = other.floating;
-    hasExplicitlyInheritedProperties = other.hasExplicitlyInheritedProperties;
     originalDisplay = other.originalDisplay;
     overflowX = other.overflowX;
     overflowY = other.overflowY;
+    verticalAlign = other.verticalAlign;
+    clear = other.clear;
     position = other.position;
+    unicodeBidi = other.unicodeBidi;
+    floating = other.floating;
     tableLayout = other.tableLayout;
     textDecorationLine = other.textDecorationLine;
-    unicodeBidi = other.unicodeBidi;
-    usesContainerUnits = other.usesContainerUnits;
+    hasExplicitlySetDirection = other.hasExplicitlySetDirection;
+    hasExplicitlySetWritingMode = other.hasExplicitlySetWritingMode;
+#if ENABLE(DARK_MODE_CSS)
+    hasExplicitlySetColorScheme = other.hasExplicitlySetColorScheme;
+#endif
     usesViewportUnits = other.usesViewportUnits;
-    verticalAlign = other.verticalAlign;
+    usesContainerUnits = other.usesContainerUnits;
+    hasExplicitlyInheritedProperties = other.hasExplicitlyInheritedProperties;
+    disallowsFastPathInheritance = other.disallowsFastPathInheritance;
+    hasContentNone = other.hasContentNone;
+    isUnique = other.isUnique;
 }
 
 void RenderStyle::copyNonInheritedFrom(const RenderStyle& other)
@@ -1216,7 +1223,8 @@ static bool rareDataChangeRequiresRepaint(const StyleRareNonInheritedData& first
 
 static bool rareInheritedDataChangeRequiresRepaint(const StyleRareInheritedData& first, const StyleRareInheritedData& second)
 {
-    return first.userModify != second.userModify
+    return first.effectiveInert != second.effectiveInert
+        || first.userModify != second.userModify
         || first.userSelect != second.userSelect
         || first.appleColorFilter != second.appleColorFilter
         || first.imageRendering != second.imageRendering
@@ -1360,6 +1368,9 @@ bool RenderStyle::changeRequiresRecompositeLayer(const RenderStyle& other, Optio
             || m_nonInheritedData->rareData->overscrollBehaviorY != other.m_nonInheritedData->rareData->overscrollBehaviorY)
             return true;
     }
+
+    if (m_rareInheritedData.ptr() != other.m_rareInheritedData.ptr() && m_rareInheritedData->effectiveInert != other.m_rareInheritedData->effectiveInert)
+        return true;
 
     return false;
 }

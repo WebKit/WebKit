@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLCompressedTextureASTC);
 
 WebGLCompressedTextureASTC::WebGLCompressedTextureASTC(WebGLRenderingContextBase& context)
-    : WebGLExtension(context, WebGLCompressedTextureASTCName)
+    : WebGLExtension(context)
     , m_isHDRSupported(context.graphicsContextGL()->supportsExtension("GL_KHR_texture_compression_astc_hdr"_s))
     , m_isLDRSupported(context.graphicsContextGL()->supportsExtension("GL_KHR_texture_compression_astc_ldr"_s))
 {

@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(EXTFloatBlend);
 
 EXTFloatBlend::EXTFloatBlend(WebGLRenderingContextBase& context)
-    : WebGLExtension(context, EXTFloatBlendName)
+    : WebGLExtension(context)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_float_blend"_s);
 }

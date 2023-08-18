@@ -4382,6 +4382,11 @@ void AXObjectCache::addRelation(Element* origin, Element* target, AXRelationType
     addRelation(getOrCreate(origin), getOrCreate(target), relationType);
 }
 
+static bool canHaveRelations(Element& element)
+{
+    return !(element.hasTagName(metaTag) || element.hasTagName(headTag) || element.hasTagName(scriptTag) || element.hasTagName(htmlTag) || element.hasTagName(styleTag));
+}
+
 static bool relationCausesCycle(AccessibilityObject* origin, AccessibilityObject* target, AXRelationType relationType)
 {
     // Validate that we're not creating an aria-owns cycle.
@@ -4498,7 +4503,7 @@ void AXObjectCache::updateRelationsForTree(ContainerNode& rootNode)
 {
     ASSERT(!rootNode.parentNode());
     for (auto& element : descendantsOfType<Element>(rootNode)) {
-        if (element.hasTagName(metaTag) || element.hasTagName(headTag) || element.hasTagName(scriptTag) || element.hasTagName(htmlTag) || element.hasTagName(styleTag))
+        if (!canHaveRelations(element))
             continue;
 
         if (RefPtr shadowRoot = element.shadowRoot(); shadowRoot && shadowRoot->mode() != ShadowRootMode::UserAgent)
@@ -4551,7 +4556,7 @@ void AXObjectCache::addRelations(Element& origin, const QualifiedName& attribute
 
 void AXObjectCache::updateRelations(Element& origin, const QualifiedName& attribute)
 {
-    if (origin.hasTagName(metaTag) || origin.hasTagName(headTag) || origin.hasTagName(scriptTag))
+    if (!canHaveRelations(origin))
         return;
 
     auto relationType = attributeToRelationType(attribute);

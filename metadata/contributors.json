@@ -1990,6 +1990,18 @@
    },
    {
       "emails" : [
+         "david_choi5@apple.com",
+         "djchoi@andrew.cmu.edu"
+      ],
+      "expertise" : "WebCore",
+      "github" : "RWDavid",
+      "name" : "David Choi",
+      "nicks" : [
+         "RWDavid"
+      ]
+   },
+   {
+      "emails" : [
          "d_degazio@apple.com"
       ],
       "github" : "ddegazio",
@@ -3843,7 +3855,8 @@
       "name" : "Jessica Cheung",
       "nicks" : [
          "jesxilin"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [

@@ -26,13 +26,17 @@
 #pragma once
 
 #include "WebGLExtension.h"
+#include "WebGLRenderingContext.h"
+#include <wtf/IsoMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class OESVertexArrayObject final : public RefCounted<OESVertexArrayObject>, public WebGLExtension {
+class OESVertexArrayObject final : public RefCounted<OESVertexArrayObject>, public WebGLExtension<WebGLRenderingContext> {
     WTF_MAKE_ISO_ALLOCATED(OESVertexArrayObject);
 public:
-    explicit OESVertexArrayObject(WebGLRenderingContextBase&);
+    explicit OESVertexArrayObject(WebGLRenderingContext&);
     ~OESVertexArrayObject();
 
     static bool supported(GraphicsContextGL&);

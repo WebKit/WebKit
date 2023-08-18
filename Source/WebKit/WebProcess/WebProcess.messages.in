@@ -108,7 +108,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     MarkIsNoLongerPrewarmed()
     GetActivePagesOriginsForTesting() -> (Vector<String> activeOrigins)
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK)
     SetScreenProperties(struct WebCore::ScreenProperties screenProperties)
 #endif
 #if PLATFORM(MAC)

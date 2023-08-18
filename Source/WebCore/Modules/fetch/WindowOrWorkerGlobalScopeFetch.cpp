@@ -51,7 +51,12 @@ static void doFetch(ScriptExecutionContext& scope, FetchRequest::Info&& input, F
 
     auto request = requestOrException.releaseReturnValue();
     if (request->signal().aborted()) {
-        promise.reject(Exception { AbortError, "Request signal is aborted"_s });
+        auto reason = request->signal().reason().getValue();
+        if (reason.isUndefined())
+            promise.reject(Exception { AbortError, "Request signal is aborted"_s });
+        else
+            promise.rejectType<IDLAny>(reason);
+
         return;
     }
 

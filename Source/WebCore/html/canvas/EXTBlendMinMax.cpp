@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(EXTBlendMinMax);
 
 EXTBlendMinMax::EXTBlendMinMax(WebGLRenderingContextBase& context)
-    : WebGLExtension(context, EXTBlendMinMaxName)
+    : WebGLExtension(context)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_blend_minmax"_s);
 }

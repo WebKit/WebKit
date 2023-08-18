@@ -316,6 +316,7 @@ struct _WebKitWebViewBasePrivate {
     unsigned long toplevelIsActiveID { 0 };
     unsigned long toplevelWindowStateChangedID { 0 };
     unsigned long toplevelWindowUnrealizedID { 0 };
+    GdkToplevelState toplevelWindowState;
 #else
     unsigned long toplevelFocusInEventID { 0 };
     unsigned long toplevelFocusOutEventID { 0 };
@@ -417,13 +418,15 @@ static gboolean toplevelWindowStateEvent(GtkWidget*, GdkEventWindowState* event,
         return FALSE;
 
     bool visible = !(event->new_window_state & GDK_WINDOW_STATE_ICONIFIED);
-    if ((visible && priv->activityState & ActivityState::IsVisible) || (!visible && !(priv->activityState & ActivityState::IsVisible)))
-        return FALSE;
-
-    if (visible)
+    if (visible) {
+        if (priv->activityState & ActivityState::IsVisible || !gtk_widget_get_mapped(GTK_WIDGET(webViewBase)))
+            return FALSE;
         priv->activityState.add(ActivityState::IsVisible);
-    else
+    } else {
+        if (!(priv->activityState & ActivityState::IsVisible))
+            return FALSE;
         priv->activityState.remove(ActivityState::IsVisible);
+    }
     webkitWebViewBaseScheduleUpdateActivityState(webViewBase, ActivityState::IsVisible);
 
     return FALSE;
@@ -840,6 +843,14 @@ static void webkitWebViewBaseChildAllocate(GtkWidget* child, gpointer userData)
 }
 #endif
 
+static void webkitWebViewBaseSetSize(WebKitWebViewBase* webViewBase, const IntSize& size)
+{
+    auto* priv = webViewBase->priv;
+    priv->viewSize = size;
+    if (auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(priv->pageProxy->drawingArea()))
+        drawingArea->setSize(priv->viewSize);
+}
+
 #if USE(GTK4)
 static void webkitWebViewBaseSizeAllocate(GtkWidget* widget, int width, int height, int baseline)
 #else
@@ -899,10 +910,7 @@ static void webkitWebViewBaseSizeAllocate(GtkWidget* widget, GtkAllocation* allo
     }
 #endif
 
-    priv->viewSize = viewRect.size();
-
-    if (auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(priv->pageProxy->drawingArea()))
-        drawingArea->setSize(priv->viewSize);
+    webkitWebViewBaseSetSize(webViewBase, viewRect.size());
 }
 
 #if USE(GTK4)
@@ -942,6 +950,11 @@ static void webkitWebViewBaseMap(GtkWidget* widget)
 
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    if (priv->viewSize.isEmpty()) {
+        auto size = webkitWebViewBaseGetViewSize(webViewBase);
+        if (!size.isEmpty())
+            webkitWebViewBaseSetSize(webViewBase, size);
+    }
     OptionSet<ActivityState> flagsToUpdate;
     if (!(priv->activityState & ActivityState::IsVisible))
         flagsToUpdate.add(ActivityState::IsVisible);
@@ -1918,11 +1931,16 @@ static void toplevelWindowIsActiveChanged(GtkWindow* window, GParamSpec*, WebKit
 
 static void toplevelWindowStateChanged(GdkSurface* surface, GParamSpec*, WebKitWebViewBase* webViewBase)
 {
-    auto state = gdk_toplevel_get_state(GDK_TOPLEVEL(surface));
-    bool visible = !(state & GDK_TOPLEVEL_STATE_MINIMIZED);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    auto state = gdk_toplevel_get_state(GDK_TOPLEVEL(surface));
+    auto changedMask = priv->toplevelWindowState ^ state;
+    priv->toplevelWindowState = state;
+    if (!(changedMask & GDK_TOPLEVEL_STATE_MINIMIZED))
+        return;
+
+    bool visible = !(state & GDK_TOPLEVEL_STATE_MINIMIZED);
     if (visible) {
-        if (priv->activityState & ActivityState::IsVisible)
+        if (priv->activityState & ActivityState::IsVisible || !gtk_widget_get_mapped(GTK_WIDGET(webViewBase)))
             return;
         priv->activityState.add(ActivityState::IsVisible);
     } else {
@@ -1937,8 +1955,10 @@ static void toplevelWindowRealized(WebKitWebViewBase* webViewBase)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     g_clear_signal_handler(&priv->toplevelWindowRealizedID, priv->toplevelOnScreenWindow);
+    auto* surface = gtk_native_get_surface(GTK_NATIVE(priv->toplevelOnScreenWindow));
+    priv->toplevelWindowState = gdk_toplevel_get_state(GDK_TOPLEVEL(surface));
     priv->toplevelWindowStateChangedID =
-        g_signal_connect(gtk_native_get_surface(GTK_NATIVE(priv->toplevelOnScreenWindow)), "notify::state", G_CALLBACK(toplevelWindowStateChanged), webViewBase);
+        g_signal_connect(surface, "notify::state", G_CALLBACK(toplevelWindowStateChanged), webViewBase);
 }
 
 static void toplevelWindowUnrealized(WebKitWebViewBase* webViewBase)
@@ -1971,8 +1991,10 @@ static void webkitWebViewBaseRoot(GtkWidget* widget)
     priv->toplevelIsActiveID =
         g_signal_connect(priv->toplevelOnScreenWindow, "notify::is-active", G_CALLBACK(toplevelWindowIsActiveChanged), widget);
     if (gtk_widget_get_realized(GTK_WIDGET(priv->toplevelOnScreenWindow))) {
+        auto* surface = gtk_native_get_surface(GTK_NATIVE(priv->toplevelOnScreenWindow));
+        priv->toplevelWindowState = gdk_toplevel_get_state(GDK_TOPLEVEL(surface));
         priv->toplevelWindowStateChangedID =
-            g_signal_connect(gtk_native_get_surface(GTK_NATIVE(priv->toplevelOnScreenWindow)), "notify::state", G_CALLBACK(toplevelWindowStateChanged), widget);
+            g_signal_connect(surface, "notify::state", G_CALLBACK(toplevelWindowStateChanged), widget);
     } else {
         priv->toplevelWindowRealizedID =
             g_signal_connect_swapped(priv->toplevelOnScreenWindow, "realize", G_CALLBACK(toplevelWindowRealized), widget);

@@ -57,6 +57,50 @@ static float computeCost(InlineLayoutUnit candidateLineWidth, InlineLayoutUnit i
     return difference * difference;
 };
 
+static bool containsTrailingSoftHyphen(const InlineItem& inlineItem)
+{
+    if (inlineItem.style().hyphens() == Hyphens::None)
+        return false;
+    if (!inlineItem.isText())
+        return false;
+    return downcast<InlineTextItem>(inlineItem).hasTrailingSoftHyphen();
+}
+
+static bool containsPreservedTab(const InlineItem& inlineItem)
+{
+    if (!inlineItem.isText())
+        return false;
+    const auto& textItem = downcast<InlineTextItem>(inlineItem);
+    if (!textItem.isWhitespace())
+        return false;
+    const auto& textBox = textItem.inlineTextBox();
+    if (!TextUtil::shouldPreserveSpacesAndTabs(textBox))
+        return false;
+    auto start = textItem.start();
+    auto length = textItem.length();
+    const auto& textContent = textBox.content();
+    for (size_t index = start; index < start + length; index++) {
+        if (textContent[index] == tabCharacter)
+            return true;
+    }
+    return false;
+}
+
+static bool cannotBalanceInlineItem(const InlineItem& inlineItem)
+{
+    if (!inlineItem.layoutBox().isInlineLevelBox())
+        return true;
+    if (containsTrailingSoftHyphen(inlineItem))
+        return true;
+    if (containsPreservedTab(inlineItem))
+        return true;
+#if ENABLE(CSS_BOX_DECORATION_BREAK)
+    if (inlineItem.style().boxDecorationBreak() == BoxDecorationBreak::Clone)
+        return true;
+#endif
+    return false;
+}
+
 InlineContentBalancer::InlineContentBalancer(const InlineFormattingContext& inlineFormattingContext, const InlineLayoutState& inlineLayoutState, const InlineItems& inlineItems, const HorizontalConstraints& horizontalConstraints)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_inlineLayoutState(inlineLayoutState)
@@ -80,7 +124,7 @@ void InlineContentBalancer::initialize()
     m_inlineItemWidths.reserveCapacity(m_numberOfInlineItems);
     for (size_t i = 0; i < m_numberOfInlineItems; i++) {
         const auto& item = m_inlineItems[i];
-        if (!item.layoutBox().isInlineLevelBox()) {
+        if (cannotBalanceInlineItem(item)) {
             m_cannotBalanceContent = true;
             return;
         }

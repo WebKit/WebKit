@@ -1,0 +1,38 @@
+<!DOCTYPE html><!-- webkit-test-runner [ RequestIdleCallbackEnabled=true ] -->
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+
+description('This tests that scheduling an idle callback would not delay the firing of a timer.');
+
+jsTestIsAsync = true;
+
+function synchronouslyWait(milliseconds) {
+    let start = performance.now();
+    while (performance.now() - start < milliseconds);
+}
+
+let didRunIdleCallback = false;
+let didFireTimer = false;
+onload = () => {
+    requestIdleCallback((idleDeadline) => {
+        shouldBeTrue('didFireTimer');
+        window.idleDeadline = idleDeadline;
+        shouldBeTrue('idleDeadline.timeRemaining() > 0');
+        synchronouslyWait(50);
+        shouldBe('idleDeadline.timeRemaining()', '0');
+        didRunIdleCallback = true;
+    });
+    setTimeout(() => {
+        didFireTimer = true;
+    }, 0);
+    setTimeout(() => {
+        shouldBeTrue('didRunIdleCallback');
+        finishJSTest();
+    }, 100);
+}
+
+</script>
+</body>
+</html>

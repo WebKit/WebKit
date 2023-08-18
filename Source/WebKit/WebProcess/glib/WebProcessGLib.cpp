@@ -201,6 +201,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
 #if PLATFORM(GTK)
     GtkSettingsManagerProxy::singleton().applySettings(WTFMove(parameters.gtkSettings));
+    WebCore::setScreenProperties(parameters.screenProperties);
 #endif
 }
 
@@ -252,6 +253,15 @@ void WebProcess::releaseSystemMallocMemory()
 #endif
 #endif
 }
+
+#if PLATFORM(GTK)
+void WebProcess::setScreenProperties(const WebCore::ScreenProperties& properties)
+{
+    WebCore::setScreenProperties(properties);
+    for (auto& page : m_pageMap.values())
+        page->screenPropertiesDidChange();
+}
+#endif
 
 } // namespace WebKit
 

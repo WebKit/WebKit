@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLClipCullDistance);
 
 WebGLClipCullDistance::WebGLClipCullDistance(WebGLRenderingContextBase& context)
-    : WebGLExtension(context, WebGLClipCullDistanceName)
+    : WebGLExtension(context)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_clip_cull_distance"_s);
 }
