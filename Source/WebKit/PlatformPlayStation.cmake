@@ -89,6 +89,7 @@ list(APPEND WebKit_SOURCES
     UIProcess/WebMemoryPressureHandler.cpp
     UIProcess/WebViewportAttributes.cpp
 
+    UIProcess/API/C/WKUserScriptRef.cpp
     UIProcess/API/C/WKViewportAttributes.cpp
 
     UIProcess/API/C/curl/WKProtectionSpaceCurl.cpp
