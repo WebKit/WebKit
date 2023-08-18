@@ -121,7 +121,7 @@ private:
     template<typename Message> bool sendToClient(Message&&);
 
     WeakPtr<WebSWServerConnection> m_swServerConnection;
-    NetworkResourceLoader& m_loader;
+    WeakPtr<NetworkResourceLoader> m_loader;
     WeakPtr<WebSWServerToContextConnection> m_serviceWorkerConnection;
     WebCore::FetchIdentifier m_fetchIdentifier;
     WebCore::SWServerConnectionIdentifier m_serverConnectionIdentifier;

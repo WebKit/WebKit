@@ -63,7 +63,7 @@
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
 {
-    auto* connection = [self connection];
+    RefPtr connection = [self connection];
     if (!connection)
         return completionHandler(NSURLSessionAuthChallengeRejectProtectionSpace, nil);
     connection->sendWithAsyncReply(Messages::NetworkProcessProxy::DataTaskReceivedChallenge(_identifier, challenge), [completionHandler = makeBlockPtr(completionHandler)](WebKit::AuthenticationChallengeDisposition disposition, WebCore::Credential&& credential) {
@@ -73,7 +73,7 @@
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task willPerformHTTPRedirection:(NSHTTPURLResponse *)response newRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLRequest *))completionHandler
 {
-    auto* connection = [self connection];
+    RefPtr connection = [self connection];
     if (!connection)
         return completionHandler(nil);
     connection->sendWithAsyncReply(Messages::NetworkProcessProxy::DataTaskWillPerformHTTPRedirection(_identifier, response, request), [completionHandler = makeBlockPtr(completionHandler), request = RetainPtr { request }] (bool allowed) {
@@ -83,7 +83,7 @@
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {
-    auto* connection = [self connection];
+    RefPtr connection = [self connection];
     if (!connection)
         return completionHandler(NSURLSessionResponseCancel);
     connection->sendWithAsyncReply(Messages::NetworkProcessProxy::DataTaskDidReceiveResponse(_identifier, response), [completionHandler = makeBlockPtr(completionHandler)] (bool allowed) {
@@ -93,7 +93,7 @@
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data
 {
-    auto* connection = [self connection];
+    RefPtr connection = [self connection];
     if (!connection)
         return;
     connection->send(Messages::NetworkProcessProxy::DataTaskDidReceiveData(_identifier, { reinterpret_cast<const uint8_t*>(data.bytes), data.length }), 0);
@@ -101,7 +101,7 @@
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
 {
-    auto* connection = [self connection];
+    RefPtr connection = [self connection];
     if (!connection)
         return;
     connection->send(Messages::NetworkProcessProxy::DataTaskDidCompleteWithError(_identifier, error), 0);
