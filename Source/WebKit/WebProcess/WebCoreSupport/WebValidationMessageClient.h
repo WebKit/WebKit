@@ -29,6 +29,13 @@
 #include <WebCore/ValidationMessageClient.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebCore {
+
+class Element;
+class WeakPtrImplWithEventTargetData;
+
+}
+
 namespace WebKit {
 
 class WebPage;
@@ -48,7 +55,7 @@ public:
 
 private:
     WeakPtr<WebPage> m_page;
-    const WebCore::Element* m_currentAnchor { nullptr };
+    WeakPtr<const WebCore::Element, WebCore::WeakPtrImplWithEventTargetData> m_currentAnchor;
     WebCore::IntRect m_currentAnchorRect;
 };
 

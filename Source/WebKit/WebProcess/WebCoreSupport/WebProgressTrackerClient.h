@@ -42,7 +42,7 @@ private:
     void progressEstimateChanged(WebCore::LocalFrame& originatingProgressFrame) override;
     void progressFinished(WebCore::LocalFrame& originatingProgressFrame) override;
 
-    WebPage& m_webPage;
+    WeakPtr<WebPage> m_webPage;
 };
 
 } // namespace WebKit
