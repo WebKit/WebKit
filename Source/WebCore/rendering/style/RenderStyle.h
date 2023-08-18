@@ -2160,13 +2160,14 @@ private:
         unsigned usesContainerUnits : 1;
         unsigned hasExplicitlyInheritedProperties : 1; // Explicitly inherits a non-inherited property.
         unsigned disallowsFastPathInheritance : 1;
+        unsigned hasContentNone : 1;
         unsigned isUnique : 1; // Style cannot be shared.
+
+        // Non-property related state bits.
         unsigned emptyState : 1;
         unsigned firstChildState : 1;
         unsigned lastChildState : 1;
         unsigned isLink : 1;
-        unsigned hasContentNone : 1;
-
         unsigned styleType : 4; // PseudoId
         unsigned pseudoBits : PublicPseudoIDBits;
 

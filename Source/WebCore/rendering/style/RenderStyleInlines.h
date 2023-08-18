@@ -834,12 +834,12 @@ inline bool RenderStyle::NonInheritedFlags::operator==(const NonInheritedFlags& 
         && usesContainerUnits == other.usesContainerUnits
         && hasExplicitlyInheritedProperties == other.hasExplicitlyInheritedProperties
         && disallowsFastPathInheritance == other.disallowsFastPathInheritance
+        && hasContentNone == other.hasContentNone
         && isUnique == other.isUnique
         && emptyState == other.emptyState
         && firstChildState == other.firstChildState
         && lastChildState == other.lastChildState
         && isLink == other.isLink
-        && hasContentNone == other.hasContentNone
         && styleType == other.styleType
         && pseudoBits == other.pseudoBits;
 }
