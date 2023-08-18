@@ -31,11 +31,10 @@
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, WebPrivacy)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, WPNetworkAddressRange)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, WPResourceRequestOptions)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, WPResources)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, WPLinkFilteringData)
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, WebPrivacy, WPNotificationUserInfoResourceTypeKey, NSString *)
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, WebPrivacy, WPResourceDataChangedNotificationName, NSNotificationName)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, WebPrivacy, WPNotificationUserInfoResourceTypeKey, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, WebPrivacy, WPResourceDataChangedNotificationName, NSNotificationName)
 
 #endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
