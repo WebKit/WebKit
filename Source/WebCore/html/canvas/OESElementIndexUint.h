@@ -26,10 +26,14 @@
 #pragma once
 
 #include "WebGLExtension.h"
+#include "WebGLRenderingContextBase.h"
+#include <wtf/IsoMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class OESElementIndexUint final : public RefCounted<OESElementIndexUint>, public WebGLExtension {
+class OESElementIndexUint final : public RefCounted<OESElementIndexUint>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(OESElementIndexUint);
 public:
     explicit OESElementIndexUint(WebGLRenderingContextBase&);

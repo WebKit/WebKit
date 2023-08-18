@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(EXTTextureNorm16);
 
 EXTTextureNorm16::EXTTextureNorm16(WebGLRenderingContextBase& context)
-    : WebGLExtension(context, EXTTextureNorm16Name)
+    : WebGLExtension(context)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_texture_norm16"_s);
 }

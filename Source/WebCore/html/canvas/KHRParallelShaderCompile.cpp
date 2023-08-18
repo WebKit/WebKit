@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(KHRParallelShaderCompile);
 
 KHRParallelShaderCompile::KHRParallelShaderCompile(WebGLRenderingContextBase& context)
-    : WebGLExtension(context, KHRParallelShaderCompileName)
+    : WebGLExtension(context)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_KHR_parallel_shader_compile"_s);
 }

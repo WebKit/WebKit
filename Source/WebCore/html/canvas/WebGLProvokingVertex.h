@@ -26,10 +26,14 @@
 #pragma once
 
 #include "WebGLExtension.h"
+#include "WebGLRenderingContextBase.h"
+#include <wtf/IsoMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class WebGLProvokingVertex final : public RefCounted<WebGLProvokingVertex>, public WebGLExtension {
+class WebGLProvokingVertex final : public RefCounted<WebGLProvokingVertex>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(WebGLProvokingVertex);
 public:
     explicit WebGLProvokingVertex(WebGLRenderingContextBase&);

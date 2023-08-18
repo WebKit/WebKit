@@ -38,6 +38,8 @@
 #include "WebGLAny.h"
 #include "WebGLBuffer.h"
 #include "WebGLContextAttributes.h"
+#include "WebGLExtension.h"
+#include "WebGLExtensionAny.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLProgram.h"
 #include "WebGLQuery.h"
@@ -74,69 +76,16 @@ class AbstractLocker;
 
 namespace WebCore {
 
-class ANGLEInstancedArrays;
-class EXTBlendMinMax;
-class EXTClipControl;
-class EXTColorBufferFloat;
-class EXTColorBufferHalfFloat;
-class EXTConservativeDepth;
-class EXTDepthClamp;
-class EXTDisjointTimerQuery;
-class EXTDisjointTimerQueryWebGL2;
-class EXTFloatBlend;
-class EXTFragDepth;
-class EXTPolygonOffsetClamp;
-class EXTRenderSnorm;
-class EXTShaderTextureLOD;
-class EXTsRGB;
-class EXTTextureCompressionBPTC;
-class EXTTextureCompressionRGTC;
-class EXTTextureFilterAnisotropic;
-class EXTTextureMirrorClampToEdge;
-class EXTTextureNorm16;
 class HTMLImageElement;
 class ImageData;
 class IntSize;
-class KHRParallelShaderCompile;
-class NVShaderNoperspectiveInterpolation;
-class OESDrawBuffersIndexed;
-class OESElementIndexUint;
-class OESFBORenderMipmap;
-class OESSampleVariables;
-class OESShaderMultisampleInterpolation;
-class OESStandardDerivatives;
-class OESTextureFloat;
-class OESTextureFloatLinear;
-class OESTextureHalfFloat;
-class OESTextureHalfFloatLinear;
-class OESVertexArrayObject;
 class WebCodecsVideoFrame;
 class WebCoreOpaqueRoot;
 class WebGLActiveInfo;
-class WebGLClipCullDistance;
-class WebGLColorBufferFloat;
-class WebGLCompressedTextureASTC;
-class WebGLCompressedTextureETC;
-class WebGLCompressedTextureETC1;
-class WebGLCompressedTexturePVRTC;
-class WebGLCompressedTextureS3TC;
-class WebGLCompressedTextureS3TCsRGB;
-class WebGLDebugRendererInfo;
-class WebGLDebugShaders;
-class WebGLDepthTexture;
-class WebGLDrawBuffers;
-class WebGLDrawInstancedBaseVertexBaseInstance;
-class WebGLExtension;
-class WebGLLoseContext;
-class WebGLMultiDraw;
-class WebGLMultiDrawInstancedBaseVertexBaseInstance;
 class WebGLObject;
 class WebGLPolygonMode;
-class WebGLProvokingVertex;
-class WebGLRenderSharedExponent;
 class WebGLShader;
 class WebGLShaderPrecisionFormat;
-class WebGLStencilTexturing;
 class WebGLUniformLocation;
 
 #if ENABLE(VIDEO)
@@ -273,7 +222,7 @@ public:
     WebGLAny getBufferParameter(GCGLenum target, GCGLenum pname);
     WEBCORE_EXPORT std::optional<WebGLContextAttributes> getContextAttributes();
     GCGLenum getError();
-    virtual WebGLExtension* getExtension(const String& name) = 0;
+    virtual std::optional<WebGLExtensionAny> getExtension(const String& name) = 0;
     virtual WebGLAny getFramebufferAttachmentParameter(GCGLenum target, GCGLenum attachment, GCGLenum pname) = 0;
     virtual WebGLAny getParameter(GCGLenum pname);
     WebGLAny getProgramParameter(WebGLProgram&, GCGLenum pname);
@@ -1119,6 +1068,8 @@ private:
 };
 
 WebCoreOpaqueRoot root(WebGLRenderingContextBase*);
+
+WebCoreOpaqueRoot root(const WebGLExtension<WebGLRenderingContextBase>*);
 
 } // namespace WebCore
 

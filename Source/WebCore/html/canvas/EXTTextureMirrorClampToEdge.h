@@ -26,10 +26,14 @@
 #pragma once
 
 #include "WebGLExtension.h"
+#include "WebGLRenderingContextBase.h"
+#include <wtf/IsoMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class EXTTextureMirrorClampToEdge final : public RefCounted<EXTTextureMirrorClampToEdge>, public WebGLExtension {
+class EXTTextureMirrorClampToEdge final : public RefCounted<EXTTextureMirrorClampToEdge>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(EXTTextureMirrorClampToEdge);
 public:
     explicit EXTTextureMirrorClampToEdge(WebGLRenderingContextBase&);

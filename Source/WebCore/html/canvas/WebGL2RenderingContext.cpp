@@ -29,20 +29,6 @@
 #if ENABLE(WEBGL)
 
 #include "CachedImage.h"
-#include "EXTClipControl.h"
-#include "EXTColorBufferFloat.h"
-#include "EXTColorBufferHalfFloat.h"
-#include "EXTConservativeDepth.h"
-#include "EXTDepthClamp.h"
-#include "EXTDisjointTimerQueryWebGL2.h"
-#include "EXTFloatBlend.h"
-#include "EXTPolygonOffsetClamp.h"
-#include "EXTRenderSnorm.h"
-#include "EXTTextureCompressionBPTC.h"
-#include "EXTTextureCompressionRGTC.h"
-#include "EXTTextureFilterAnisotropic.h"
-#include "EXTTextureMirrorClampToEdge.h"
-#include "EXTTextureNorm16.h"
 #include "EventLoop.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
@@ -50,41 +36,19 @@
 #include "ImageBitmap.h"
 #include "ImageData.h"
 #include "InspectorInstrumentation.h"
-#include "KHRParallelShaderCompile.h"
 #include "Logging.h"
-#include "NVShaderNoperspectiveInterpolation.h"
-#include "OESDrawBuffersIndexed.h"
-#include "OESSampleVariables.h"
-#include "OESShaderMultisampleInterpolation.h"
-#include "OESTextureFloatLinear.h"
 #include "OffscreenCanvas.h"
 #include "RenderBox.h"
 #include "WebCodecsVideoFrame.h"
 #include "WebCoreOpaqueRootInlines.h"
 #include "WebGLActiveInfo.h"
 #include "WebGLBuffer.h"
-#include "WebGLClipCullDistance.h"
-#include "WebGLCompressedTextureASTC.h"
-#include "WebGLCompressedTextureETC.h"
-#include "WebGLCompressedTextureETC1.h"
-#include "WebGLCompressedTexturePVRTC.h"
-#include "WebGLCompressedTextureS3TC.h"
-#include "WebGLCompressedTextureS3TCsRGB.h"
-#include "WebGLDebugRendererInfo.h"
-#include "WebGLDebugShaders.h"
-#include "WebGLDrawInstancedBaseVertexBaseInstance.h"
+#include "WebGLExtensionAnyInlines.h"
 #include "WebGLFramebuffer.h"
-#include "WebGLLoseContext.h"
-#include "WebGLMultiDraw.h"
-#include "WebGLMultiDrawInstancedBaseVertexBaseInstance.h"
-#include "WebGLPolygonMode.h"
 #include "WebGLProgram.h"
-#include "WebGLProvokingVertex.h"
 #include "WebGLQuery.h"
-#include "WebGLRenderSharedExponent.h"
 #include "WebGLRenderbuffer.h"
 #include "WebGLSampler.h"
-#include "WebGLStencilTexturing.h"
 #include "WebGLSync.h"
 #include "WebGLTexture.h"
 #include "WebGLTransformFeedback.h"
@@ -2542,22 +2506,23 @@ void WebGL2RenderingContext::bindVertexArray(WebGLVertexArrayObject* arrayObject
     }
 }
 
-WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
+std::optional<WebGLExtensionAny> WebGL2RenderingContext::getExtension(const String& name)
 {
     if (isContextLost())
-        return nullptr;
+        return std::nullopt;
 
     // When adding extensions that use enableDraftExtensions, add them to the webgl-draft-extensions-flag.js test.
     const bool enableDraftExtensions = scriptExecutionContext()->settingsValues().webGLDraftExtensionsEnabled;
 
 #define ENABLE_IF_REQUESTED(type, variable, nameLiteral, canEnable) \
     if (equalIgnoringASCIICase(name, nameLiteral)) { \
+        if (!(canEnable)) \
+            return std::nullopt; \
         if (!variable) { \
-            variable = (canEnable) ? adoptRef(new type(*this)) : nullptr; \
-            if (variable != nullptr) \
-                InspectorInstrumentation::didEnableExtension(*this, name); \
+            variable = adoptRef(new type(*this)); \
+            InspectorInstrumentation::didEnableExtension(*this, name); \
         } \
-        return variable.get(); \
+        return *variable; \
     }
 
     ENABLE_IF_REQUESTED(EXTClipControl, m_extClipControl, "EXT_clip_control"_s, EXTClipControl::supported(*m_context) && enableDraftExtensions);
@@ -2598,7 +2563,7 @@ WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
     ENABLE_IF_REQUESTED(WebGLProvokingVertex, m_webglProvokingVertex, "WEBGL_provoking_vertex"_s, WebGLProvokingVertex::supported(*m_context));
     ENABLE_IF_REQUESTED(WebGLRenderSharedExponent, m_webglRenderSharedExponent, "WEBGL_render_shared_exponent"_s, WebGLRenderSharedExponent::supported(*m_context) && enableDraftExtensions);
     ENABLE_IF_REQUESTED(WebGLStencilTexturing, m_webglStencilTexturing, "WEBGL_stencil_texturing"_s, WebGLStencilTexturing::supported(*m_context) && enableDraftExtensions);
-    return nullptr;
+    return std::nullopt;
 }
 
 std::optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()

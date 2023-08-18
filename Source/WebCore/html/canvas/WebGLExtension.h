@@ -27,119 +27,38 @@
 
 #if ENABLE(WEBGL)
 
-#include "WebCoreOpaqueRootInlines.h"
-#include "WebGLRenderingContextBase.h"
 #include <atomic>
-#include <wtf/ForbidHeapAllocation.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
-#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
-class WebGLExtensionScopedContext final {
-    WTF_FORBID_HEAP_ALLOCATION;
-    WTF_MAKE_NONCOPYABLE(WebGLExtensionScopedContext);
-public:
-    explicit WebGLExtensionScopedContext(WebGLExtension*);
+class WebCoreOpaqueRoot;
 
-    template<typename T>
-    constexpr T* downcast() const { return WTF::downcast<T>(m_context); }
-    constexpr bool isLost() const { return !m_context; }
-
-    constexpr WebGLRenderingContextBase& operator*() const { ASSERT(!isLost()); return *m_context; }
-    constexpr WebGLRenderingContextBase* operator->() const { ASSERT(!isLost()); return m_context; }
-
-private:
-    WebGLRenderingContextBase* m_context;
-};
-
+// Mixin class for WebGL extension implementations.
+// All functions should start with preamble:
+// if (isContextLost())
+//     return;
+// auto& context = this->context();
+// context.drawSomething(...);
+template<typename T>
 class WebGLExtension {
 public:
-    // Extension names are needed to properly wrap instances in JavaScript objects.
-    enum ExtensionName : uint8_t {
-        ANGLEInstancedArraysName,
-        EXTBlendMinMaxName,
-        EXTClipControlName,
-        EXTColorBufferFloatName,
-        EXTColorBufferHalfFloatName,
-        EXTConservativeDepthName,
-        EXTDepthClampName,
-        EXTDisjointTimerQueryName,
-        EXTDisjointTimerQueryWebGL2Name,
-        EXTFloatBlendName,
-        EXTFragDepthName,
-        EXTPolygonOffsetClampName,
-        EXTRenderSnormName,
-        EXTShaderTextureLODName,
-        EXTTextureCompressionBPTCName,
-        EXTTextureCompressionRGTCName,
-        EXTTextureFilterAnisotropicName,
-        EXTTextureMirrorClampToEdgeName,
-        EXTTextureNorm16Name,
-        EXTsRGBName,
-        KHRParallelShaderCompileName,
-        NVShaderNoperspectiveInterpolationName,
-        OESDrawBuffersIndexedName,
-        OESElementIndexUintName,
-        OESFBORenderMipmapName,
-        OESSampleVariablesName,
-        OESShaderMultisampleInterpolationName,
-        OESStandardDerivativesName,
-        OESTextureFloatName,
-        OESTextureFloatLinearName,
-        OESTextureHalfFloatName,
-        OESTextureHalfFloatLinearName,
-        OESVertexArrayObjectName,
-        WebGLClipCullDistanceName,
-        WebGLColorBufferFloatName,
-        WebGLCompressedTextureASTCName,
-        WebGLCompressedTextureETCName,
-        WebGLCompressedTextureETC1Name,
-        WebGLCompressedTexturePVRTCName,
-        WebGLCompressedTextureS3TCName,
-        WebGLCompressedTextureS3TCsRGBName,
-        WebGLDebugRendererInfoName,
-        WebGLDebugShadersName,
-        WebGLDepthTextureName,
-        WebGLDrawBuffersName,
-        WebGLDrawInstancedBaseVertexBaseInstanceName,
-        WebGLLoseContextName,
-        WebGLMultiDrawName,
-        WebGLMultiDrawInstancedBaseVertexBaseInstanceName,
-        WebGLPolygonModeName,
-        WebGLProvokingVertexName,
-        WebGLRenderSharedExponentName,
-        WebGLStencilTexturingName,
-    };
-
-    WebGLRenderingContextBase* context() const { return m_context.load(std::memory_order::relaxed); }
     void loseParentContext() { m_context = nullptr; }
-    bool isLostContext() const { return !context(); }
-    ExtensionName name() const { return m_name; }
+    T& context() { ASSERT(!isContextLost()); return *m_context.load(std::memory_order::relaxed); }
+
+    // Only to be used by friend WebCoreOpaqueRoot root(const WebGLExtension<T>*) that cannot be a friend
+    // due to C++ warning on some compilers.
+    T* opaqueRoot() const { return m_context.load(); }
 
 protected:
-    WebGLExtension(WebGLRenderingContextBase& context, ExtensionName name)
+    WebGLExtension(T& context)
         : m_context(&context)
-        , m_name(name)
     {
     }
+    bool isContextLost() const { return !m_context.load(std::memory_order::relaxed); }
 
 private:
-    std::atomic<WebGLRenderingContextBase*> m_context;
-    const ExtensionName m_name;
-    friend WebCoreOpaqueRoot root(const WebGLExtension*);
+    std::atomic<T*> m_context;
 };
-
-inline WebGLExtensionScopedContext::WebGLExtensionScopedContext(WebGLExtension* extension)
-    : m_context(extension->context())
-{
-}
-
-inline WebCoreOpaqueRoot root(const WebGLExtension* extension)
-{
-    return WebCoreOpaqueRoot { extension->m_context.load() };
-}
 
 } // namespace WebCore
 

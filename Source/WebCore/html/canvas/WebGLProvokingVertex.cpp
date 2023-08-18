@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLProvokingVertex);
 
 WebGLProvokingVertex::WebGLProvokingVertex(WebGLRenderingContextBase& context)
-    : WebGLExtension(context, WebGLProvokingVertexName)
+    : WebGLExtension(context)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_provoking_vertex"_s);
 }
@@ -49,11 +49,10 @@ bool WebGLProvokingVertex::supported(GraphicsContextGL& context)
 
 void WebGLProvokingVertex::provokingVertexWEBGL(GCGLenum provokeMode)
 {
-    auto context = WebGLExtensionScopedContext(this);
-    if (context.isLost())
+    if (isContextLost())
         return;
-
-    context->graphicsContextGL()->provokingVertexANGLE(provokeMode);
+    auto& context = this->context();
+    context.graphicsContextGL()->provokingVertexANGLE(provokeMode);
 }
 
 } // namespace WebCore

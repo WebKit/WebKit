@@ -37,6 +37,7 @@
 
 #if ENABLE(WEBGL)
 #include "WebGLAny.h"
+#include "WebGLExtensionAny.h"
 #endif
 
 namespace JSC {
@@ -55,10 +56,6 @@ class IDBValue;
 class JSWindowProxy;
 class DOMPromise;
 class ScheduledAction;
-
-#if ENABLE(WEBGL)
-class WebGLExtension;
-#endif
 
 template<typename T>
 struct IDLType {
@@ -301,7 +298,7 @@ struct IDLIDBValue : IDLWrapper<IDBValue> { };
 
 #if ENABLE(WEBGL)
 struct IDLWebGLAny : IDLType<WebGLAny> { };
-struct IDLWebGLExtension : IDLWrapper<WebGLExtension> { };
+struct IDLWebGLExtensionAny : IDLType<WebGLExtensionAny> { };
 #endif
 
 // Helper predicates

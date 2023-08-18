@@ -41,7 +41,7 @@ public:
 
     bool isWebGL1() const final { return true; }
 
-    WebGLExtension* getExtension(const String&) final;
+    std::optional<WebGLExtensionAny> getExtension(const String&) final;
     std::optional<Vector<String>> getSupportedExtensions() final;
 
     WebGLAny getFramebufferAttachmentParameter(GCGLenum target, GCGLenum attachment, GCGLenum pname) final;
@@ -63,6 +63,8 @@ protected:
 private:
     using WebGLRenderingContextBase::WebGLRenderingContextBase;
 };
+
+WebCoreOpaqueRoot root(const WebGLExtension<WebGLRenderingContext>*);
 
 } // namespace WebCore
 

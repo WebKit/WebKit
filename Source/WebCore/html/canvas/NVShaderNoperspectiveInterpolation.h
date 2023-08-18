@@ -26,10 +26,14 @@
 #pragma once
 
 #include "WebGLExtension.h"
+#include "WebGLRenderingContextBase.h"
+#include <wtf/IsoMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class NVShaderNoperspectiveInterpolation final : public RefCounted<NVShaderNoperspectiveInterpolation>, public WebGLExtension {
+class NVShaderNoperspectiveInterpolation final : public RefCounted<NVShaderNoperspectiveInterpolation>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(NVShaderNoperspectiveInterpolation);
 public:
     explicit NVShaderNoperspectiveInterpolation(WebGLRenderingContextBase&);

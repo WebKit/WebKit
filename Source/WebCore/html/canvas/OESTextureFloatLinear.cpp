@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(OESTextureFloatLinear);
 
 OESTextureFloatLinear::OESTextureFloatLinear(WebGLRenderingContextBase& context)
-    : WebGLExtension(context, OESTextureFloatLinearName)
+    : WebGLExtension(context)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_OES_texture_float_linear"_s);
 }

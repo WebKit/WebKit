@@ -28,6 +28,7 @@
 #if ENABLE(WEBGL)
 #include "WebGLColorBufferFloat.h"
 
+#include "WebGLExtensionAnyInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -35,7 +36,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLColorBufferFloat);
 
 WebGLColorBufferFloat::WebGLColorBufferFloat(WebGLRenderingContextBase& context)
-    : WebGLExtension(context, WebGLColorBufferFloatName)
+    : WebGLExtension(context)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_CHROMIUM_color_buffer_float_rgba"_s);
     // Optimistically enable RGB floating-point render targets also, if possible.

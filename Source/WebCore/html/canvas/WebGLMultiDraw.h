@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class WebGLMultiDraw final : public RefCounted<WebGLMultiDraw>, public WebGLExtension {
+class WebGLMultiDraw final : public RefCounted<WebGLMultiDraw>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(WebGLMultiDraw);
 
 public:
@@ -38,7 +38,6 @@ public:
 
     explicit WebGLMultiDraw(WebGLRenderingContextBase&);
     virtual ~WebGLMultiDraw();
-
 
     static bool supported(GraphicsContextGL&);
 
@@ -51,8 +50,8 @@ public:
     void multiDrawElementsInstancedWEBGL(GCGLenum mode, Int32List&& countsList, GCGLuint countsOffset, GCGLenum type, Int32List&& offsetsList, GCGLuint offsetsOffset, Int32List&& instanceCountsList, GCGLuint instanceCountsOffset, GCGLsizei drawcount);
 
 private:
-    bool validateDrawcount(WebGLExtensionScopedContext&, const char* functionName, GCGLsizei drawcount);
-    bool validateOffset(WebGLExtensionScopedContext&, const char* functionName, const char* outOfBoundsDescription, GCGLsizei, GCGLuint offset, GCGLsizei drawcount);
+    bool validateDrawcount(WebGLRenderingContextBase&, const char* functionName, GCGLsizei drawcount);
+    bool validateOffset(WebGLRenderingContextBase&, const char* functionName, const char* outOfBoundsDescription, GCGLsizei, GCGLuint offset, GCGLsizei drawcount);
 };
 
 } // namespace WebCore

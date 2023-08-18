@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(OESStandardDerivatives);
 
 OESStandardDerivatives::OESStandardDerivatives(WebGLRenderingContextBase& context)
-    : WebGLExtension(context, OESStandardDerivativesName)
+    : WebGLExtension(context)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_OES_standard_derivatives"_s);
 }

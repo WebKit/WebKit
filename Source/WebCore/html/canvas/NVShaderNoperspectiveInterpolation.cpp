@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(NVShaderNoperspectiveInterpolation);
 
 NVShaderNoperspectiveInterpolation::NVShaderNoperspectiveInterpolation(WebGLRenderingContextBase& context)
-    : WebGLExtension(context, NVShaderNoperspectiveInterpolationName)
+    : WebGLExtension(context)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_NV_shader_noperspective_interpolation"_s);
 }

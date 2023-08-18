@@ -6088,6 +6088,11 @@ WebCoreOpaqueRoot root(WebGLRenderingContextBase* context)
     return WebCoreOpaqueRoot { context };
 }
 
+WebCoreOpaqueRoot root(const WebGLExtension<WebGLRenderingContextBase>* extension)
+{
+    return WebCoreOpaqueRoot { extension->opaqueRoot() };
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

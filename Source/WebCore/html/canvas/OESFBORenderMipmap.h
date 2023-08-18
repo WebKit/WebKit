@@ -26,10 +26,14 @@
 #pragma once
 
 #include "WebGLExtension.h"
+#include "WebGLRenderingContextBase.h"
+#include <wtf/IsoMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class OESFBORenderMipmap final : public RefCounted<OESFBORenderMipmap>, public WebGLExtension {
+class OESFBORenderMipmap final : public RefCounted<OESFBORenderMipmap>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(OESFBORenderMipmap);
 public:
     explicit OESFBORenderMipmap(WebGLRenderingContextBase&);

@@ -111,22 +111,23 @@ void WebGLRenderingContext::initializeVertexArrayObjects()
     m_boundVertexArrayObject = m_defaultVertexArrayObject;
 }
 
-WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
+std::optional<WebGLExtensionAny> WebGLRenderingContext::getExtension(const String& name)
 {
     if (isContextLost())
-        return nullptr;
+        return std::nullopt;
 
     // When adding extensions that use enableDraftExtensions, add them to the webgl-draft-extensions-flag.js test.
     const bool enableDraftExtensions = scriptExecutionContext()->settingsValues().webGLDraftExtensionsEnabled;
 
 #define ENABLE_IF_REQUESTED(type, variable, nameLiteral, canEnable) \
     if (equalIgnoringASCIICase(name, nameLiteral ## _s)) { \
+        if (!(canEnable)) \
+            return std::nullopt; \
         if (!variable) { \
-            variable = (canEnable) ? adoptRef(new type(*this)) : nullptr; \
-            if (variable != nullptr) \
-                InspectorInstrumentation::didEnableExtension(*this, name); \
+            variable = adoptRef(new type(*this)); \
+            InspectorInstrumentation::didEnableExtension(*this, name); \
         } \
-        return variable.get(); \
+        return *variable; \
     }
 
     ENABLE_IF_REQUESTED(ANGLEInstancedArrays, m_angleInstancedArrays, "ANGLE_instanced_arrays", ANGLEInstancedArrays::supported(*m_context));
@@ -168,7 +169,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
     ENABLE_IF_REQUESTED(WebGLLoseContext, m_webglLoseContext, "WEBGL_lose_context", true);
     ENABLE_IF_REQUESTED(WebGLMultiDraw, m_webglMultiDraw, "WEBGL_multi_draw", WebGLMultiDraw::supported(*m_context));
     ENABLE_IF_REQUESTED(WebGLPolygonMode, m_webglPolygonMode, "WEBGL_polygon_mode", WebGLPolygonMode::supported(*m_context) && enableDraftExtensions);
-    return nullptr;
+    return std::nullopt;
 }
 
 std::optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
@@ -346,6 +347,11 @@ void WebGLRenderingContext::addMembersToOpaqueRoots(JSC::AbstractSlotVisitor& vi
 
     Locker locker { objectGraphLock() };
     addWebCoreOpaqueRoot(visitor, m_activeQuery.get());
+}
+
+WebCoreOpaqueRoot root(const WebGLExtension<WebGLRenderingContext>* extension)
+{
+    return WebCoreOpaqueRoot { extension->opaqueRoot() };
 }
 
 } // namespace WebCore

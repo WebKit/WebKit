@@ -38,7 +38,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(EXTDisjointTimerQueryWebGL2);
 
 EXTDisjointTimerQueryWebGL2::EXTDisjointTimerQueryWebGL2(WebGLRenderingContextBase& context)
-    : WebGLExtension(context, EXTDisjointTimerQueryWebGL2Name)
+    : WebGLExtension(context)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_disjoint_timer_query"_s);
 }
@@ -52,29 +52,31 @@ bool EXTDisjointTimerQueryWebGL2::supported(GraphicsContextGL& context)
 
 void EXTDisjointTimerQueryWebGL2::queryCounterEXT(WebGLQuery& query, GCGLenum target)
 {
-    auto context = WebGLExtensionScopedContext(this);
-    if (context.isLost() || !context->scriptExecutionContext())
+    if (isContextLost())
+        return;
+    auto& context = this->context();
+    if (!context.scriptExecutionContext())
         return;
 
-    if (!context->validateWebGLObject("queryCounterEXT", &query))
+    if (!context.validateWebGLObject("queryCounterEXT", &query))
         return;
 
     if (target != GraphicsContextGL::TIMESTAMP_EXT) {
-        context->synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "queryCounterEXT", "invalid target");
+        context.synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "queryCounterEXT", "invalid target");
         return;
     }
 
     if (query.target() && query.target() != target) {
-        context->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "queryCounterEXT", "query type does not match target");
+        context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "queryCounterEXT", "query type does not match target");
         return;
     }
 
     query.setTarget(target);
 
-    context->graphicsContextGL()->queryCounterEXT(query.object(), target);
+    context.graphicsContextGL()->queryCounterEXT(query.object(), target);
 
     // A query's result must not be made available until control has returned to the user agent's main loop.
-    context->scriptExecutionContext()->eventLoop().queueMicrotask([&] {
+    context.scriptExecutionContext()->eventLoop().queueMicrotask([&] {
         query.makeResultAvailable();
     });
 }

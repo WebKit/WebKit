@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class WebGLMultiDrawInstancedBaseVertexBaseInstance final : public RefCounted<WebGLMultiDrawInstancedBaseVertexBaseInstance>, public WebGLExtension {
+class WebGLMultiDrawInstancedBaseVertexBaseInstance final : public RefCounted<WebGLMultiDrawInstancedBaseVertexBaseInstance>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(WebGLMultiDrawInstancedBaseVertexBaseInstance);
 public:
     using Int32List = WebGLRenderingContextBase::TypedList<Int32Array, int32_t>;
@@ -46,8 +46,8 @@ public:
     void multiDrawElementsInstancedBaseVertexBaseInstanceWEBGL(GCGLenum mode, Int32List&& countsList, GCGLuint countsOffset, GCGLenum type, Int32List&& offsetsList, GCGLuint offsetsOffset, Int32List&& instanceCountsList, GCGLuint instanceCountsOffset, Int32List&& baseVerticesList, GCGLuint baseVerticesOffset, Uint32List&& baseInstancesList, GCGLuint baseInstancesOffset, GCGLsizei drawcount);
 
 private:
-    bool validateDrawcount(WebGLExtensionScopedContext&, const char* functionName, GCGLsizei drawcount);
-    bool validateOffset(WebGLExtensionScopedContext&, const char* functionName, const char* outOfBoundsDescription, GCGLsizei, GCGLuint offset, GCGLsizei drawcount);
+    bool validateDrawcount(WebGLRenderingContextBase&, const char* functionName, GCGLsizei drawcount);
+    bool validateOffset(WebGLRenderingContextBase&, const char* functionName, const char* outOfBoundsDescription, GCGLsizei, GCGLuint offset, GCGLsizei drawcount);
 };
 
 } // namespace WebCore
