@@ -1845,16 +1845,6 @@ webkit.org/b/260185 media/media-source/media-source-fastseek.html [ Pass Failure
 
 webkit.org/b/260225 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-GC.https.html [ Pass Failure ]
 
-webkit.org/b/260224 [ Debug ] compositing/geometry/clipped-out-perspective.html [ ImageOnlyFailure ]
-webkit.org/b/260224 [ Debug ] compositing/overlap-blending/opacity-and-infinity.html [ ImageOnlyFailure ]
-webkit.org/b/260224 [ Debug ] imported/w3c/web-platform-tests/css/css-transforms/perspective-split-by-zero-w.html [ ImageOnlyFailure ]
-webkit.org/b/260224 [ Debug ] imported/w3c/web-platform-tests/css/css-transforms/preserve3d-and-filter-with-perspective.html [ ImageOnlyFailure ]
-webkit.org/b/260224 [ Debug ] imported/w3c/web-platform-tests/css/css-transforms/preserve3d-pseudo-element.html [ ImageOnlyFailure ]
-webkit.org/b/260224 [ Debug ] imported/w3c/web-platform-tests/css/css-transforms/transform-table-009.html [ ImageOnlyFailure ]
-webkit.org/b/260224 [ Debug ] imported/w3c/web-platform-tests/css/css-transforms/transform-table-010.html [ ImageOnlyFailure ]
-webkit.org/b/260224 [ Debug ] imported/w3c/web-platform-tests/css/css-transforms/transform-table-011.html [ ImageOnlyFailure ]
-webkit.org/b/260224 [ Debug ] imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-011.html [ ImageOnlyFailure ]
-
 # rdar://102425691 ([ New Test ](256068@main): [ Ventura+ ] http/wpt/webcodecs/videoFrame-colorSpace.html is a consistent failure)
 [ Ventura+ ] http/wpt/webcodecs/videoFrame-colorSpace.html [ Pass Failure ]
 
