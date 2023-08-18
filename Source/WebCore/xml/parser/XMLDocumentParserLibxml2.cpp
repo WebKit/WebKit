@@ -450,7 +450,7 @@ static bool shouldAllowExternalLoad(const URL& url)
     // route and allow same-origin requests only.
     if (!XMLDocumentParserScope::currentCachedResourceLoader || !XMLDocumentParserScope::currentCachedResourceLoader->document())
         return false;
-    if (!XMLDocumentParserScope::currentCachedResourceLoader->document()->securityOrigin().canRequest(url, OriginAccessPatternsForWebProcess::singleton())) {
+    if (!XMLDocumentParserScope::currentCachedResourceLoader->document()->securityOrigin().canRequest(url)) {
         XMLDocumentParserScope::currentCachedResourceLoader->printAccessDeniedMessage(url);
         return false;
     }
