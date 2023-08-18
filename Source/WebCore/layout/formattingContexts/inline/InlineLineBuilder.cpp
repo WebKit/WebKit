@@ -954,31 +954,11 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
         ASSERT(inlineContent.trailingLineBreak() || inlineContent.trailingWordBreakOpportunity());
         return { inlineContent.trailingLineBreak() ? InlineContentBreaker::IsEndOfLine::Yes : InlineContentBreaker::IsEndOfLine::No };
     }
-    m_inlineContentBreaker.setHyphenationDisabled(shouldDisableHyphenation(root().style(), m_successiveHyphenatedLineCount));
-    m_inlineContentBreaker.setIsInIntrinsicWidthMode(isInIntrinsicWidthMode());
 
     // While the floats are not considered to be on the line, they make the line contentful for line breaking.
     auto [lineRectAdjutedWithCandidateContent, candidateContentIsConstrainedByFloat] = adjustedLineRectWithCandidateInlineContent(lineCandidate);
     // Note that adjusted line height never shrinks.
     m_candidateInlineContentEnclosingHeight = lineRectAdjutedWithCandidateContent.height();
-
-    // If width constraint overrides exist, modify the available width accordingly.
-    auto lineIndex = m_previousLine ? (m_previousLine->lineIndex + 1) : 0lu;
-    const auto& availableLineWidthOverride = m_inlineLayoutState.availableLineWidthOverride();
-    auto widthOverride = availableLineWidthOverride.availableLineWidthOverrideForLine(lineIndex);
-    auto availableTotalWidthForContent = widthOverride ? InlineLayoutUnit { widthOverride.value() } - m_lineMarginStart : lineRectAdjutedWithCandidateContent.width();
-
-    auto availableWidthForCandidateContent = availableWidth(inlineContent, m_line, availableTotalWidthForContent);
-    auto lineIsConsideredContentful = m_line.hasContentOrListMarker() || m_lineIsConstrainedByFloat || candidateContentIsConstrainedByFloat;
-    auto lineStatus = InlineContentBreaker::LineStatus {
-        m_line.contentLogicalRight(),
-        availableWidthForCandidateContent,
-        m_line.trimmableTrailingWidth(),
-        m_line.trailingSoftHyphenWidth(),
-        m_line.isTrailingRunFullyTrimmable(),
-        lineIsConsideredContentful,
-        !m_wrapOpportunityList.isEmpty()
-    };
     auto toLineBuilderResult = [&](auto& lineBreakingResult) -> LineBuilder::Result {
         auto& candidateRuns = continuousInlineContent.runs();
     
@@ -1068,7 +1048,29 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
         return { InlineContentBreaker::IsEndOfLine::No };
     };
 
-    auto lineBreakingResult = m_inlineContentBreaker.processInlineContent(continuousInlineContent, lineStatus);
+    // If width constraint overrides exist, modify the available width accordingly.
+    auto lineIndex = m_previousLine ? (m_previousLine->lineIndex + 1) : 0lu;
+    const auto& availableLineWidthOverride = m_inlineLayoutState.availableLineWidthOverride();
+    auto widthOverride = availableLineWidthOverride.availableLineWidthOverrideForLine(lineIndex);
+    auto availableTotalWidthForContent = widthOverride ? InlineLayoutUnit { widthOverride.value() } - m_lineMarginStart : lineRectAdjutedWithCandidateContent.width();
+    auto availableWidthForCandidateContent = availableWidth(inlineContent, m_line, availableTotalWidthForContent);
+
+    auto lineBreakingResult = InlineContentBreaker::Result { InlineContentBreaker::Result::Action::Keep, InlineContentBreaker::IsEndOfLine::No, { }, { } };
+    if (continuousInlineContent.logicalWidth() > availableWidthForCandidateContent) {
+        auto lineIsConsideredContentful = m_line.hasContentOrListMarker() || m_lineIsConstrainedByFloat || candidateContentIsConstrainedByFloat;
+        auto lineStatus = InlineContentBreaker::LineStatus {
+            m_line.contentLogicalRight(),
+            availableWidthForCandidateContent,
+            m_line.trimmableTrailingWidth(),
+            m_line.trailingSoftHyphenWidth(),
+            m_line.isTrailingRunFullyTrimmable(),
+            lineIsConsideredContentful,
+            !m_wrapOpportunityList.isEmpty()
+        };
+        m_inlineContentBreaker.setHyphenationDisabled(shouldDisableHyphenation(root().style(), m_successiveHyphenatedLineCount));
+        m_inlineContentBreaker.setIsInIntrinsicWidthMode(isInIntrinsicWidthMode());
+        lineBreakingResult = m_inlineContentBreaker.processInlineContent(continuousInlineContent, lineStatus);
+    }
     auto lineGainsNewContent = lineBreakingResult.action == InlineContentBreaker::Result::Action::Keep || lineBreakingResult.action == InlineContentBreaker::Result::Action::Break; 
     if (lineGainsNewContent) {
         // Sometimes in order to put this content on the line, we have to avoid additional float boxes (when the new content is taller than any previous content and we have vertically stacked floats on this line)

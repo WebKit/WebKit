@@ -111,13 +111,8 @@ static inline std::optional<size_t> firstTextRunIndex(const InlineContentBreaker
 InlineContentBreaker::Result InlineContentBreaker::processInlineContent(const ContinuousContent& candidateContent, const LineStatus& lineStatus)
 {
     ASSERT(!std::isnan(lineStatus.availableWidth));
-    auto processCandidateContent = [&] {
-        if (candidateContent.logicalWidth() <= lineStatus.availableWidth)
-            return Result { Result::Action::Keep };
-        return processOverflowingContent(candidateContent, lineStatus);
-    };
-
-    auto result = processCandidateContent();
+    ASSERT(candidateContent.logicalWidth() > lineStatus.availableWidth);
+    auto result = processOverflowingContent(candidateContent, lineStatus);
     if (result.action == Result::Action::Wrap && lineStatus.trailingSoftHyphenWidth && hasLeadingTextContent(candidateContent)) {
         // A trailing soft hyphen with a wrapped text content turns into a visible hyphen.
         // Let's check if there's enough space for the hyphen character.
