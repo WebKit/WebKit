@@ -316,7 +316,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
     addTableRow(displayObject, "Depth"_s, String::number(screenDepth(nullptr)));
     addTableRow(displayObject, "Bits per color component"_s, String::number(screenDepthPerComponent(nullptr)));
     addTableRow(displayObject, "DPI"_s, String::number(screenDPI()));
-#if USE(GBM)
+#if USE(LIBDRM)
     if (strcmp(policy, "never")) {
         auto deviceFile = PlatformDisplay::sharedDisplay().drmDeviceFile();
         if (!deviceFile.isEmpty())
