@@ -456,6 +456,14 @@
             ]
         },
         {
+            "name": "getLoadedFonts",
+            "description": "Returns all loaded fonts (system and custom).",
+            "targetTypes": ["page"],
+            "returns": [
+             { "name": "fontFamilyNames", "type": "array", "items": { "type": "string" }, "description": "Loaded font families." }
+            ]
+        },
+        {
             "name": "forcePseudoState",
             "description": "Ensures that the given node will have specified pseudo-classes whenever its style is computed by the browser.",
             "targetTypes": ["page"],

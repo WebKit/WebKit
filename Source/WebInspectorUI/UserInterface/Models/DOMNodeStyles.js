@@ -49,6 +49,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         this._propertyNameToEffectivePropertyMap = {};
         this._usedCSSVariables = new Set;
         this._allCSSVariables = new Set;
+        this._usedFonts = [];
 
         this._pendingRefreshTask = null;
         this.refresh();
@@ -124,16 +125,28 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
     // Public
 
     get node() { return this._node; }
+
     get matchedRules() { return this._matchedRules; }
+
     get inheritedRules() { return this._inheritedRules; }
+
     get inlineStyle() { return this._inlineStyle; }
+
     get attributesStyle() { return this._attributesStyle; }
+
     get pseudoElements() { return this._pseudoElements; }
+
     get computedStyle() { return this._computedStyle; }
+
     get orderedStyles() { return this._orderedStyles; }
+
     get computedPrimaryFont() { return this._computedPrimaryFont; }
+
     get usedCSSVariables() { return this._usedCSSVariables; }
+
     get allCSSVariables() { return this._allCSSVariables; }
+
+    get usedFonts() { return this._usedFonts; }
 
     set ignoreNextContentDidChangeForStyleSheet(ignoreNextContentDidChangeForStyleSheet) { this._ignoreNextContentDidChangeForStyleSheet = ignoreNextContentDidChangeForStyleSheet; }
 
@@ -339,6 +352,15 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         target.CSSAgent.getMatchedStylesForNode.invoke({nodeId: this._node.id, includePseudo: true, includeInherited: true}, wrap.call(this, fetchedMatchedStyles, fetchedMatchedStylesPromise));
         target.CSSAgent.getInlineStylesForNode.invoke({nodeId: this._node.id}, wrap.call(this, fetchedInlineStyles, fetchedInlineStylesPromise));
         target.CSSAgent.getComputedStyleForNode.invoke({nodeId: this._node.id}, wrap.call(this, fetchedComputedStyle, fetchedComputedStylesPromise));
+
+        if (InspectorBackend.hasCommand("CSS.getLoadedFonts")) {
+            target.CSSAgent.getLoadedFonts((error, fontFamilyNames) =>{
+                if (error)
+                    return;
+                this._usedFonts = fontFamilyNames;
+                console.log(fontFamilyNames);
+            });
+        }
 
         // COMPATIBILITY (iOS 14.0): `CSS.getFontDataForNode` did not exist yet.
         if (InspectorBackend.hasCommand("CSS.getFontDataForNode"))

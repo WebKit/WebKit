@@ -47,6 +47,8 @@
 #include "Font.h"
 #include "FontCache.h"
 #include "FontCascade.h"
+#include "FontFace.h"
+#include "FontFaceSet.h"
 #include "FontPlatformData.h"
 #include "HTMLHeadElement.h"
 #include "HTMLHtmlElement.h"
@@ -896,6 +898,23 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> InspectorCSSAgent::getSuppor
     Vector<String> systemFontFamilies = FontCache::forCurrentThread().systemFontFamilies();
     for (const auto& familyName : systemFontFamilies)
         fontFamilyNames->addItem(familyName);
+
+    return fontFamilyNames;
+}
+
+Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> InspectorCSSAgent::getLoadedFonts()
+{
+    auto fontFamilyNames = JSON::ArrayOf<String>::create();
+    auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
+
+    for (auto* document : domAgent->documents()) {
+        auto iterator = document->fonts().get().createIterator(document->scriptExecutionContext());
+
+        while (auto font = iterator.next()) {
+            if (font->status() == FontFace::LoadStatus::Loaded)
+                fontFamilyNames->addItem(font.get()->family());
+        }
+    }
 
     return fontFamilyNames;
 }
