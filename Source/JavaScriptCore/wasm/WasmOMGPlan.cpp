@@ -30,9 +30,9 @@
 
 #include "JITCompilation.h"
 #include "LinkBuffer.h"
+#include "NativeCalleeRegistry.h"
 #include "WasmB3IRGenerator.h"
 #include "WasmCallee.h"
-#include "WasmCalleeRegistry.h"
 #include "WasmIRGeneratorHelpers.h"
 #include "WasmNameSection.h"
 #include "WasmTypeDefinitionInlines.h"
@@ -150,7 +150,7 @@ void OMGPlan::work(CompilationEffort)
         entrypoint = callee->entrypoint();
 
         if (context.pcToCodeOriginMap)
-            CalleeRegistry::singleton().addPCToCodeOriginMap(callee.ptr(), WTFMove(context.pcToCodeOriginMap));
+            NativeCalleeRegistry::singleton().addPCToCodeOriginMap(callee.ptr(), WTFMove(context.pcToCodeOriginMap));
 
         // We want to make sure we publish our callee at the same time as we link our callsites. This enables us to ensure we
         // always call the fastest code. Any function linked after us will see our new code and the new callsites, which they

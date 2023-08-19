@@ -925,7 +925,7 @@ static inline void buildEntryBufferForCatch32(Probe::Context& context)
     unsigned valueSize = (savedFPWidth == SavedFPWidth::SaveVectors) ? 2 : 1;
     CallFrame* callFrame = context.fp<CallFrame*>();
     CallSiteIndex callSiteIndex = callFrame->callSiteIndex();
-    OptimizingJITCallee* callee = bitwise_cast<OptimizingJITCallee*>(callFrame->callee().asWasmCallee());
+    OptimizingJITCallee* callee = bitwise_cast<OptimizingJITCallee*>(callFrame->callee().asNativeCallee());
     const StackMap& stackmap = callee->stackmap(callSiteIndex);
     VM* vm = context.gpr<VM*>(GPRInfo::regT0);
     uint64_t* buffer = vm->wasmContext.scratchBufferForSize(stackmap.size() * valueSize * 8);
@@ -941,7 +941,7 @@ static inline void emitCatchPrologueShared(B3::Air::Code& code, CCallHelpers& ji
 {
     JIT_COMMENT(jit, "shared catch prologue");
     jit.loadPtr(CCallHelpers::tagFor(CallFrameSlot::callee), GPRInfo::regT0);
-    auto isWasmCallee = jit.branch32(CCallHelpers::Equal, GPRInfo::regT0, CCallHelpers::TrustedImm32(JSValue::WasmTag));
+    auto isWasmCallee = jit.branch32(CCallHelpers::Equal, GPRInfo::regT0, CCallHelpers::TrustedImm32(JSValue::NativeCalleeTag));
     jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT0);
     CCallHelpers::JumpList doneCases;
     {

@@ -60,6 +60,7 @@
 #include "LLIntThunks.h"
 #include "LiteralParser.h"
 #include "ModuleProgramCodeBlock.h"
+#include "NativeCallee.h"
 #include "ProgramCodeBlock.h"
 #include "ProtoCallFrameInlines.h"
 #include "Register.h"
@@ -415,8 +416,17 @@ public:
             return IterationStatus::Continue;
 
         if (m_results.size() < m_results.capacity()) {
-            if (visitor->isWasmFrame()) {
-                m_results.uncheckedAppend(StackFrame(visitor->wasmFunctionIndexOrName()));
+            if (visitor->isNativeCalleeFrame()) {
+                auto* nativeCallee = visitor->callee().asNativeCallee();
+                switch (nativeCallee->category()) {
+                case NativeCallee::Category::Wasm: {
+                    m_results.uncheckedAppend(StackFrame(visitor->wasmFunctionIndexOrName()));
+                    break;
+                }
+                case NativeCallee::Category::InlineCache: {
+                    break;
+                }
+                }
             } else if (!!visitor->codeBlock() && !visitor->codeBlock()->unlinkedCodeBlock()->isBuiltinFunction()) {
                 m_results.uncheckedAppend(
                     StackFrame(m_vm, m_owner, visitor->callee().asCell(), visitor->codeBlock(), visitor->bytecodeIndex()));
@@ -454,7 +464,7 @@ void Interpreter::getStackTrace(JSCell* owner, Vector<StackFrame>& results, size
         }
 
         if (!foundCaller) {
-            if (!visitor->callee().isWasm() && visitor->callee().asCell() == caller)
+            if (!visitor->callee().isNativeCallee() && visitor->callee().asCell() == caller)
                 foundCaller = true;
             skippedFrames++;
             return IterationStatus::Continue;
@@ -614,21 +624,32 @@ public:
             }
         }
 
-#if ENABLE(WEBASSEMBLY)
         CalleeBits callee = visitor->callee();
-        if (m_catchableFromWasm && callee.isWasm()) {
-            Wasm::Callee* wasmCallee = callee.asWasmCallee();
-            if (wasmCallee->hasExceptionHandlers()) {
-                Wasm::Instance* instance = m_callFrame->wasmInstance();
-                unsigned exceptionHandlerIndex = m_callFrame->callSiteIndex().bits();
-                m_handler = { wasmCallee->handlerForIndex(*instance, exceptionHandlerIndex, m_wasmTag), wasmCallee };
-                if (m_handler.m_valid)
-                    return IterationStatus::Done;
+        if (callee.isNativeCallee()) {
+            NativeCallee* nativeCallee = callee.asNativeCallee();
+            switch (nativeCallee->category()) {
+            case NativeCallee::Category::Wasm: {
+#if ENABLE(WEBASSEMBLY)
+                if (m_catchableFromWasm) {
+                    auto* wasmCallee = static_cast<Wasm::Callee*>(nativeCallee);
+                    if (wasmCallee->hasExceptionHandlers()) {
+                        Wasm::Instance* instance = m_callFrame->wasmInstance();
+                        unsigned exceptionHandlerIndex = m_callFrame->callSiteIndex().bits();
+                        m_handler = { wasmCallee->handlerForIndex(*instance, exceptionHandlerIndex, m_wasmTag), wasmCallee };
+                        if (m_handler.m_valid)
+                            return IterationStatus::Done;
+                    }
+                }
+#endif
+                break;
+            }
+            case NativeCallee::Category::InlineCache: {
+                break;
+            }
             }
         }
-#endif
 
-        if (!m_callFrame->isWasmFrame() && JSC::isRemoteFunction(m_callFrame->jsCallee()) && !m_isTermination) {
+        if (!m_callFrame->isNativeCalleeFrame() && JSC::isRemoteFunction(m_callFrame->jsCallee()) && !m_isTermination) {
             // Continue searching for a handler, but mark that a marshalling function was on the stack so that we can
             // translate the exception before jumping to the handler.
             m_seenRemoteFunction = jsCast<JSRemoteFunction*>(m_callFrame->jsCallee());
@@ -702,7 +723,7 @@ private:
         auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
         SuspendExceptionScope scope(vm);
-        if (callFrame->isWasmFrame()
+        if (callFrame->isNativeCalleeFrame()
             || (callFrame->callee().isCell() && callFrame->callee().asCell()->inherits<JSFunction>()))
             debugger->unwindEvent(callFrame);
         else
@@ -779,7 +800,7 @@ NEVER_INLINE CatchInfo Interpreter::unwind(VM& vm, CallFrame*& callFrame, Except
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     ASSERT(reinterpret_cast<void*>(callFrame) != vm.topEntryFrame);
-    CodeBlock* codeBlock = callFrame->isWasmFrame() ? nullptr : callFrame->codeBlock();
+    CodeBlock* codeBlock = callFrame->isNativeCalleeFrame() ? nullptr : callFrame->codeBlock();
 
     JSValue exceptionValue = exception->value();
     ASSERT(!exceptionValue.isEmpty());

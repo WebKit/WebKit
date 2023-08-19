@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,52 +25,53 @@
 
 #pragma once
 
-#if ENABLE(WEBASSEMBLY)
-
 #include "PCToCodeOriginMap.h"
 #include <wtf/Box.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 
-namespace JSC { namespace Wasm {
+namespace JSC {
 
-class Callee;
+class NativeCallee;
 
-class CalleeRegistry {
+class NativeCalleeRegistry {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(CalleeRegistry);
+    WTF_MAKE_NONCOPYABLE(NativeCalleeRegistry);
 public:
     static void initialize();
-    static CalleeRegistry& singleton();
+    static NativeCalleeRegistry& singleton();
 
     Lock& getLock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
 
-    void registerCallee(Callee* callee)
+    void registerCallee(NativeCallee* callee)
     {
         Locker locker { m_lock };
         m_calleeSet.add(callee);
     }
 
-    void unregisterCallee(Callee* callee)
+    void unregisterCallee(NativeCallee* callee)
     {
         Locker locker { m_lock };
         m_calleeSet.remove(callee);
+#if ENABLE(JIT)
         m_pcToCodeOriginMaps.remove(callee);
+#endif
     }
 
-    const HashSet<Callee*>& allCallees() WTF_REQUIRES_LOCK(m_lock)
+    const HashSet<NativeCallee*>& allCallees() WTF_REQUIRES_LOCK(m_lock)
     {
         return m_calleeSet;
     }
 
-    bool isValidCallee(Callee* callee)  WTF_REQUIRES_LOCK(m_lock)
+    bool isValidCallee(NativeCallee* callee)  WTF_REQUIRES_LOCK(m_lock)
     {
-        if (!HashSet<Callee*>::isValidValue(callee))
+        if (!HashSet<NativeCallee*>::isValidValue(callee))
             return false;
         return m_calleeSet.contains(callee);
     }
 
-    void addPCToCodeOriginMap(Callee* callee, Box<PCToCodeOriginMap> originMap)
+#if ENABLE(JIT)
+    void addPCToCodeOriginMap(NativeCallee* callee, Box<PCToCodeOriginMap> originMap)
     {
         Locker locker { m_lock };
         ASSERT(isValidCallee(callee));
@@ -78,7 +79,7 @@ public:
         RELEASE_ASSERT(addResult.isNewEntry);
     }
 
-    Box<PCToCodeOriginMap> codeOriginMap(Callee* callee)  WTF_REQUIRES_LOCK(m_lock)
+    Box<PCToCodeOriginMap> codeOriginMap(NativeCallee* callee)  WTF_REQUIRES_LOCK(m_lock)
     {
         ASSERT(isValidCallee(callee));
         auto iter = m_pcToCodeOriginMaps.find(callee);
@@ -86,15 +87,16 @@ public:
             return iter->value;
         return nullptr;
     }
+#endif
 
-    CalleeRegistry() = default;
+    NativeCalleeRegistry() = default;
 
 private:
     Lock m_lock;
-    HashSet<Callee*> m_calleeSet WTF_GUARDED_BY_LOCK(m_lock);
-    HashMap<Callee*, Box<PCToCodeOriginMap>> m_pcToCodeOriginMaps WTF_GUARDED_BY_LOCK(m_lock);
+    HashSet<NativeCallee*> m_calleeSet WTF_GUARDED_BY_LOCK(m_lock);
+#if ENABLE(JIT)
+    HashMap<NativeCallee*, Box<PCToCodeOriginMap>> m_pcToCodeOriginMaps WTF_GUARDED_BY_LOCK(m_lock);
+#endif
 };
 
-} } // namespace JSC::Wasm
-
-#endif // ENABLE(WEBASSEMBLY)
+} // namespace JSC

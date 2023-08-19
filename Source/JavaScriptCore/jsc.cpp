@@ -65,6 +65,7 @@
 #include "JSWebAssemblyMemory.h"
 #include "LLIntThunks.h"
 #include "LinkBuffer.h"
+#include "NativeCallee.h"
 #include "ObjectConstructor.h"
 #include "ParserError.h"
 #include "ProfilerDatabase.h"
@@ -2066,16 +2067,16 @@ JSC_DEFINE_HOST_FUNCTION(functionCallerIsBBQOrOMGCompiled, (JSGlobalObject* glob
 
     CallerFunctor wasmToJSFrame;
     StackVisitor::visit(callFrame, vm, wasmToJSFrame);
-    if (!wasmToJSFrame.callerFrame() || !wasmToJSFrame.callerFrame()->isWasmFrame())
+    if (!wasmToJSFrame.callerFrame() || !wasmToJSFrame.callerFrame()->isNativeCalleeFrame() || wasmToJSFrame.callerFrame()->callee().asNativeCallee()->category() != NativeCallee::Category::Wasm)
         return throwVMError(globalObject, scope, "caller is not a wasm->js import function"_s);
 
     // We have a wrapper frame that we generate for imports. If we ever can direct call from wasm we would need to change this.
-    ASSERT(wasmToJSFrame.callerFrame()->callee().isWasm());
+    ASSERT(wasmToJSFrame.callerFrame()->callee().isNativeCallee());
     CallerFunctor wasmFrame;
     StackVisitor::visit(wasmToJSFrame.callerFrame(), vm, wasmFrame);
-    ASSERT(wasmFrame.callerFrame()->callee().isWasm());
+    ASSERT(wasmFrame.callerFrame()->callee().isNativeCallee());
 #if ENABLE(WEBASSEMBLY)
-    auto mode = wasmFrame.callerFrame()->callee().asWasmCallee()->compilationMode();
+    auto mode = static_cast<Wasm::Callee*>(wasmFrame.callerFrame()->callee().asNativeCallee())->compilationMode();
     return JSValue::encode(jsBoolean(isAnyBBQ(mode) || isAnyOMG(mode)));
 #endif
     RELEASE_ASSERT_NOT_REACHED();

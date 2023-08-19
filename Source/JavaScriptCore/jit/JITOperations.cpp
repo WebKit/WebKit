@@ -4063,7 +4063,7 @@ JSC_DEFINE_JIT_OPERATION(operationValueSubProfiledNoOptimize, EncodedJSValue, (J
 
 JSC_DEFINE_JIT_OPERATION(operationDebuggerWillCallNativeExecutable, void, (CallFrame* callFrame))
 {
-    ASSERT(!callFrame->isWasmFrame());
+    ASSERT(!callFrame->isNativeCalleeFrame());
 
     auto* globalObject = callFrame->jsCallee()->globalObject();
     if (!globalObject)

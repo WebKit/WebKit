@@ -85,8 +85,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> catchInWasmThunkGenerator(const AbstractLo
 
     jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT0);
     jit.move(GPRInfo::regT0, GPRInfo::regT3);
-    jit.and64(CCallHelpers::TrustedImm64(JSValue::WasmMask), GPRInfo::regT3);
-    auto isWasmCallee = jit.branch64(CCallHelpers::Equal, GPRInfo::regT3, CCallHelpers::TrustedImm32(JSValue::WasmTag));
+    jit.and64(CCallHelpers::TrustedImm64(JSValue::NativeCalleeMask), GPRInfo::regT3);
+    auto isWasmCallee = jit.branch64(CCallHelpers::Equal, GPRInfo::regT3, CCallHelpers::TrustedImm32(JSValue::NativeCalleeTag));
     CCallHelpers::JumpList doneCases;
     {
         // FIXME: Handling precise allocations in WasmB3IRGenerator catch entrypoints might be unnecessary

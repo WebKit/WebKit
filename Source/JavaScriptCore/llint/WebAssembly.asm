@@ -371,7 +371,7 @@ macro wasmPrologue()
     storep wasmInstance, CodeBlock[cfr]
     loadp Callee[cfr], ws0
 if JSVALUE64
-    andp ~(constexpr JSValue::WasmTag), ws0
+    andp ~(constexpr JSValue::NativeCalleeTag), ws0
 end
     leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, ws1
     loadp [ws1], ws1
@@ -465,7 +465,7 @@ if WEBASSEMBLY_B3JIT and not ARMv7
     storep wasmInstance, CodeBlock[cfr]
     loadp Callee[cfr], ws0
 if JSVALUE64
-    andp ~(constexpr JSValue::WasmTag), ws0
+    andp ~(constexpr JSValue::NativeCalleeTag), ws0
 end
     leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, ws1
     loadp [ws1], ws1

@@ -1530,11 +1530,11 @@ if WEBASSEMBLY
         if JSVALUE64
             loadq Callee[cfr], vm
             move vm, scratch
-            andq (constexpr JSValue::WasmMask), scratch
-            bqeq scratch, (constexpr JSValue::WasmTag), .isWasmCallee
+            andq (constexpr JSValue::NativeCalleeMask), scratch
+            bqeq scratch, (constexpr JSValue::NativeCalleeTag), .isWasmCallee
         else
             loadi Callee + TagOffset[cfr], scratch
-            bieq scratch, (constexpr JSValue::WasmTag), .isWasmCallee
+            bieq scratch, (constexpr JSValue::NativeCalleeTag), .isWasmCallee
             loadp Callee + PayloadOffset[cfr], vm
         end
         convertJSCalleeToVM(vm)
