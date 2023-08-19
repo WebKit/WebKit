@@ -1,7 +1,15 @@
 
 PASS e.style['counter-increment'] = "none chapter" should not set the property value
+PASS e.style['counter-increment'] = "reversed(none)" should not set the property value
+PASS e.style['counter-increment'] = "reversed(chapter)" should not set the property value
 PASS e.style['counter-increment'] = "3" should not set the property value
 PASS e.style['counter-increment'] = "99 imagenum" should not set the property value
 PASS e.style['counter-increment'] = "section -1, imagenum 99" should not set the property value
 PASS e.style['counter-increment'] = "section 3.14" should not set the property value
+PASS e.style['counter-increment'] = "inherit 1" should not set the property value
+PASS e.style['counter-increment'] = "initial 1" should not set the property value
+PASS e.style['counter-increment'] = "unset 1" should not set the property value
+PASS e.style['counter-increment'] = "default 1" should not set the property value
+PASS e.style['counter-increment'] = "revert 1" should not set the property value
+PASS e.style['counter-increment'] = "revert-layer 1" should not set the property value
 

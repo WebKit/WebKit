@@ -1,7 +1,7 @@
 
-PASS Property list-style value 'none'
-PASS Property list-style value 'inside'
-PASS Property list-style value 'url("https://localhost/")'
-PASS Property list-style value 'square'
+FAIL Property list-style value 'outside none none' assert_equals: expected "none" but got "outside none none"
+FAIL Property list-style value 'inside none disc' assert_equals: expected "inside" but got "inside none disc"
+FAIL Property list-style value 'outside url("https://localhost/") disc' assert_equals: expected "url(\"https://localhost/\")" but got "outside url(\"https://localhost/\") disc"
+FAIL Property list-style value 'outside none square' assert_equals: expected "square" but got "outside none square"
 PASS Property list-style value 'inside url("https://localhost/") square'
 
