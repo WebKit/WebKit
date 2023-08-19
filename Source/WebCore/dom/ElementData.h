@@ -222,7 +222,6 @@ public:
     static ptrdiff_t attributeVectorMemoryOffset() { return OBJECT_OFFSETOF(UniqueElementData, m_attributeVector); }
 
     mutable RefPtr<ImmutableStyleProperties> m_presentationalHintStyle;
-    mutable RefPtr<ImmutableStyleProperties> m_inlineStyleForStyleResolution;
     typedef Vector<Attribute, 4> AttributeVector;
     AttributeVector m_attributeVector;
 };

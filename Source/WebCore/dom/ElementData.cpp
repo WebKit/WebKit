@@ -136,7 +136,6 @@ UniqueElementData::UniqueElementData()
 UniqueElementData::UniqueElementData(const UniqueElementData& other)
     : ElementData(other, true)
     , m_presentationalHintStyle(other.m_presentationalHintStyle)
-    , m_inlineStyleForStyleResolution(other.m_inlineStyleForStyleResolution)
     , m_attributeVector(other.m_attributeVector)
 {
     if (other.m_inlineStyle)
@@ -150,7 +149,6 @@ UniqueElementData::UniqueElementData(const ShareableElementData& other)
     // An ShareableElementData should never have a mutable inline StyleProperties attached.
     ASSERT(!other.m_inlineStyle || !other.m_inlineStyle->isMutable());
     m_inlineStyle = other.m_inlineStyle;
-    m_inlineStyleForStyleResolution = downcast<ImmutableStyleProperties>(other.m_inlineStyle);
 }
 
 Ref<UniqueElementData> ElementData::makeUniqueCopy() const
