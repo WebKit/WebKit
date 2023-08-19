@@ -1,0 +1,7 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-tvos, arm64e-tvos]
+install-name: /System/Library/Frameworks/LocalAuthentication.framework/LocalAuthentication
+current-version: 1132.120.8
+exports: []
+...

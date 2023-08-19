@@ -1,10 +1,8 @@
---- !tapi-tbd-v3
-archs:           [ x86_64, arm64 ]
-install-name:    '/System/Library/PrivateFrameworks/CorePrediction.framework/CorePrediction'
-objc-constraint: none
-platform: tvos
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-tvos, arm64e-tvos]
+install-name: /System/Library/PrivateFrameworks/CorePrediction.framework/CorePrediction
 exports:
-  -
-    archs:           [ x86_64, arm64 ]
-    symbols:         [ _svm_load_model, _svm_predict_values ]
+-       targets: [arm64-tvos, arm64e-tvos]
+        symbols: [_svm_load_model, _svm_predict_values]
 ...

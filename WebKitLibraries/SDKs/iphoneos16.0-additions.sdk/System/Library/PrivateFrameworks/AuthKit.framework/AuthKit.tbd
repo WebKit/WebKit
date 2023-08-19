@@ -1,8 +1,8 @@
---- !tapi-tbd-v3
-archs:           [ x86_64, arm64, arm64e ]
-install-name:    '/System/Library/PrivateFrameworks/AuthKit.framework/AuthKit'
-platform: ios
+--- !tapi-tbd
+tbd-version: 4
+targets: [armv7-ios, armv7s-ios, arm64-ios, arm64e-ios]
+install-name: /System/Library/PrivateFrameworks/AuthKit.framework/AuthKit
 exports:
-  - archs:           [ x86_64, arm64, arm64e ]
-    objc-classes:    [ AKAuthorizationController ]
+-       targets: [armv7-ios, armv7s-ios, arm64-ios, arm64e-ios]
+        objc-classes: [AKAuthorizationController]
 ...

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -3594,6 +3594,7 @@
 			buildConfigurationList = 5D247B6614689B8600E78B76 /* Build configuration list for PBXNativeTarget "WTF" */;
 			buildPhases = (
 				DDE99316278D08B900F60D26 /* Product Dependencies */,
+				DD07DF4C2A7DB6640091EACE /* Symlink public SDK headers */,
 				DD3DC85D27A4BF87007E5B61 /* Headers */,
 				5D247B5E14689B8600E78B76 /* Sources */,
 				5D247B5F14689B8600E78B76 /* Frameworks */,
@@ -3664,6 +3665,28 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		DD07DF4C2A7DB6640091EACE /* Symlink public SDK headers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"$(SDK_DIR_WebKitSDKAdditions:default=Scripts)/SymlinkedHeaders.xcfilelist",
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/symlink-public-sdk-headers-for-embedded-platforms",
+			);
+			name = "Symlink public SDK headers";
+			outputFileListPaths = (
+				"$(SDK_DIR_WebKitSDKAdditions:default=Scripts)/SymlinkedHeaders-output.xcfilelist",
+			);
+			outputPaths = (
+				"$(WK_DERIVED_SDK_HEADERS_DIR)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SCRIPT_INPUT_FILE_0}\"\n";
+		};
 		DDA35E4929CA74D4006C1018 /* Generate TAPI filelist */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

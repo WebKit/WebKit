@@ -1,10 +1,8 @@
---- !tapi-tbd-v3
-archs:           [ x86_64, arm64, arm64e ]
-install-name:    '/System/Library/PrivateFrameworks/CorePrediction.framework/CorePrediction'
-objc-constraint: none
-platform: ios
+--- !tapi-tbd
+tbd-version: 4
+targets: [armv7-ios, armv7s-ios, arm64-ios, arm64e-ios]
+install-name: /System/Library/PrivateFrameworks/CorePrediction.framework/CorePrediction
 exports:
-  -
-    archs:           [ x86_64, arm64, arm64e ]
-    symbols:         [ _svm_load_model, _svm_predict_values ]
+-       targets: [armv7-ios, armv7s-ios, arm64-ios, arm64e-ios]
+        symbols: [_svm_load_model, _svm_predict_values]
 ...

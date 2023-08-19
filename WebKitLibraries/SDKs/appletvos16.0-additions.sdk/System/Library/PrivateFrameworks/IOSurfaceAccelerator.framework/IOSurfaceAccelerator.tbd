@@ -1,18 +1,9 @@
---- !tapi-tbd-v2
-archs:
-  - arm64
-  - x86_64
-exports:
-  -
-    archs:
-      - arm64
-      - x86_64
-    symbols:
-      - _IOSurfaceAcceleratorCreate
-      - _IOSurfaceAcceleratorGetRunLoopSource
-      - _IOSurfaceAcceleratorTransformSurface
-      - _kIOSurfaceAcceleratorUnwireSurfaceKey
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-tvos, arm64e-tvos]
 install-name: /System/Library/PrivateFrameworks/IOSurfaceAccelerator.framework/IOSurfaceAccelerator
-objc-constraint: none
-platform: tvos
+exports:
+-       targets: [arm64-tvos, arm64e-tvos]
+        symbols: [_IOSurfaceAcceleratorCreate, _IOSurfaceAcceleratorGetRunLoopSource, _IOSurfaceAcceleratorTransformSurface,
+                _kIOSurfaceAcceleratorUnwireSurfaceKey]
 ...

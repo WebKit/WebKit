@@ -1,0 +1,7 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [i386-watchos-simulator, x86_64-watchos-simulator, arm64-watchos-simulator]
+install-name: /System/Library/PrivateFrameworks/URLFormatting.framework/URLFormatting
+current-version: 213.13
+exports: []
+...

@@ -847,6 +847,7 @@
 			filePatterns = "*.h";
 			fileType = pattern.proxy;
 			inputFiles = (
+				"$(WK_DERIVED_SDK_HEADERS_DIR)",
 			);
 			isEditable = 1;
 			outputFiles = (
