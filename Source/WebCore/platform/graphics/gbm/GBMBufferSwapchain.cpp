@@ -111,7 +111,7 @@ RefPtr<GBMBufferSwapchain::Buffer> GBMBufferSwapchain::getBuffer(const BufferDes
                 buffer->m_planes[i].height = description.format.planeHeight(i, description.height);
             }
 
-            uint32_t boFlags = 0;
+            uint32_t boFlags = GBM_BO_USE_RENDERING;
             if (description.flags & BufferDescription::LinearStorage)
                 boFlags |= GBM_BO_USE_LINEAR;
 
