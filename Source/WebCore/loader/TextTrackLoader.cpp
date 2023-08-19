@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2011-2017 Google Inc.  All rights reserved.
  * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -124,16 +124,16 @@ void TextTrackLoader::notifyFinished(CachedResource& resource, const NetworkLoad
     if (m_resource->resourceError().isAccessControl())
         corsPolicyPreventedLoad();
 
+    if (m_cueParser)
+        m_cueParser->flush();
+
     if (m_state != Failed) {
         processNewCueData(*m_resource);
-        if (m_cueParser)
-            m_cueParser->fileFinished();
-        if (m_state != Failed)
-            m_state = m_resource->errorOccurred() ? Failed : Finished;
+        if (m_resource->errorOccurred() || !m_cueParser)
+            m_state = Failed;
+        else
+            m_state = Finished;
     }
-
-    if (m_state == Finished && m_cueParser)
-        m_cueParser->flush();
 
     if (!m_cueLoadTimer.isActive())
         m_cueLoadTimer.startOneShot(0_s);
