@@ -49,7 +49,7 @@ RemoteBarcodeDetector::~RemoteBarcodeDetector() = default;
 
 void RemoteBarcodeDetector::detect(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedBarcode>&&)>&& completionHandler)
 {
-    auto imageBuffer = m_remoteResourceCache.cachedImageBuffer({ renderingResourceIdentifier, m_webProcessIdentifier });
+    auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier);
     if (!imageBuffer) {
         completionHandler({ });
         return;

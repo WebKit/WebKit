@@ -1,0 +1,7 @@
+Pass condition: orange square is vertically centered in the black box.
+Chrome 112 and Safari 16.4 fail. Firefox 111 passes.
+
+FAIL .flexitem + .flexitem 1 assert_equals:
+<div class="flexitem" style="background: orange; height: 100px;" data-offset-y="50"></div>
+offsetTop expected 50 but got 0
+

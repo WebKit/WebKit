@@ -245,13 +245,16 @@ InlineItemPosition TextOnlySimpleLineBuilder::placeNonWrappingInlineTextContent(
 
 TextOnlyLineBreakResult TextOnlySimpleLineBuilder::handleInlineTextContent(const InlineContentBreaker::ContinuousContent& candidateContent, const InlineItemRange& layoutRange)
 {
+    ASSERT(!candidateContent.runs().isEmpty());
+
     auto contentLogicalRight = m_line.contentLogicalRight();
     auto availableWidth = (m_lineLogicalRect.width() + LayoutUnit::epsilon()) - (!std::isnan(contentLogicalRight) ? contentLogicalRight : 0.f);
-    auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidth, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), m_line.hasContentOrListMarker(), !m_wrapOpportunityList.isEmpty() };
-    m_inlineContentBreaker.setIsInIntrinsicWidthMode(isInIntrinsicWidthMode());
-    auto lineBreakingResult = m_inlineContentBreaker.processInlineContent(candidateContent, lineStatus);
-
-    ASSERT(!candidateContent.runs().isEmpty());
+    auto lineBreakingResult = InlineContentBreaker::Result { InlineContentBreaker::Result::Action::Keep, InlineContentBreaker::IsEndOfLine::No, { }, { } };
+    if (candidateContent.logicalWidth() > availableWidth) {
+        auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidth, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), m_line.hasContentOrListMarker(), !m_wrapOpportunityList.isEmpty() };
+        m_inlineContentBreaker.setIsInIntrinsicWidthMode(isInIntrinsicWidthMode());
+        lineBreakingResult = m_inlineContentBreaker.processInlineContent(candidateContent, lineStatus);
+    }
 
     if (lineBreakingResult.action == InlineContentBreaker::Result::Action::Keep) {
         auto& committedRuns = candidateContent.runs();

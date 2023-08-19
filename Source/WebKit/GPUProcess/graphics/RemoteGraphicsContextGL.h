@@ -30,7 +30,6 @@
 #include "Connection.h"
 #include "GPUConnectionToWebProcess.h"
 #include "GraphicsContextGLIdentifier.h"
-#include "QualifiedRenderingResourceIdentifier.h"
 #include "RemoteRenderingBackend.h"
 #include "ScopedWebGLRenderingResourcesRequest.h"
 #include "SharedVideoFrame.h"
@@ -39,6 +38,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PixelBuffer.h>
 #include <WebCore/ProcessIdentity.h>
+#include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/ThreadAssertions.h>
 #include <wtf/WeakPtr.h>
 
@@ -147,9 +147,9 @@ protected:
 #include "RemoteGraphicsContextGLFunctionsGenerated.h" // NOLINT
 
 private:
-    void paintRenderingResultsToCanvasWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier);
-    void paintCompositedResultsToCanvasWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier);
-    void paintNativeImageToImageBuffer(WebCore::NativeImage&, QualifiedRenderingResourceIdentifier);
+    void paintRenderingResultsToCanvasWithQualifiedIdentifier(WebCore::RenderingResourceIdentifier);
+    void paintCompositedResultsToCanvasWithQualifiedIdentifier(WebCore::RenderingResourceIdentifier);
+    void paintNativeImageToImageBuffer(WebCore::NativeImage&, WebCore::RenderingResourceIdentifier);
 
 protected:
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;

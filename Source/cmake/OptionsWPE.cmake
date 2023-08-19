@@ -96,8 +96,9 @@ WEBKIT_OPTION_DEFINE(ENABLE_INTROSPECTION "Whether to enable GObject introspecti
 WEBKIT_OPTION_DEFINE(ENABLE_JOURNALD_LOG "Whether to enable journald logging" PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_WPE_QT_API "Whether to enable support for the Qt5/QML plugin" PUBLIC ${ENABLE_DEVELOPER_MODE})
 WEBKIT_OPTION_DEFINE(ENABLE_WPE_1_1_API "Whether to build WPE 1.1 instead of WPE 2.0" PUBLIC OFF)
-WEBKIT_OPTION_DEFINE(USE_GBM "Whether to enable usage of GBM and libdrm." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(USE_GBM "Whether to enable usage of GBM." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_LCMS "Whether to enable support for image color management using libcms2." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(USE_LIBDRM "Whether to enable usage of libdrm." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_OPENJPEG "Whether to enable support for JPEG2000 images." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_SOUP2 "Whether to enable usage of Soup 2 instead of Soup 3." PUBLIC OFF)
 WEBKIT_OPTION_DEFINE(USE_WOFF2 "Whether to enable support for WOFF2 Web Fonts." PUBLIC ON)
@@ -136,6 +137,7 @@ if (ENABLE_DEVELOPER_MODE)
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_COG PRIVATE ON)
 endif ()
 
+WEBKIT_OPTION_DEPEND(USE_GBM USE_LIBDRM)
 WEBKIT_OPTION_DEPEND(USE_GSTREAMER_HOLEPUNCH ENABLE_VIDEO)
 WEBKIT_OPTION_DEPEND(USE_EXTERNAL_HOLEPUNCH ENABLE_VIDEO)
 WEBKIT_OPTION_DEPEND(USE_WESTEROS_SINK ENABLE_VIDEO)
@@ -375,19 +377,17 @@ SET_AND_EXPOSE_TO_BUILD(USE_ANGLE ${ENABLE_WEBGL})
 SET_AND_EXPOSE_TO_BUILD(USE_THEME_ADWAITA TRUE)
 SET_AND_EXPOSE_TO_BUILD(HAVE_OS_DARK_MODE_SUPPORT 1)
 
+if (USE_LIBDRM)
+    find_package(LibDRM)
+    if (NOT LIBDRM_FOUND)
+        message(FATAL_ERROR "libdrm is required for USE_LIBDRM")
+    endif ()
+endif ()
+
 if (USE_GBM)
-    # ANGLE-backed WebGL depends on DMABuf support, which at the moment is leveraged
-    # through libgbm and libdrm dependencies. When libgbm is enabled, make
-    # libdrm a requirement and define the USE_LIBGBM and USE_TEXTURE_MAPPER_DMABUF
-    # macros. When not available, ANGLE will be used in slower software-rasterization mode.
     find_package(GBM)
     if (NOT GBM_FOUND)
         message(FATAL_ERROR "GBM is required for USE_GBM")
-    endif ()
-
-    find_package(LibDRM)
-    if (NOT LIBDRM_FOUND)
-        message(FATAL_ERROR "libdrm is required for USE_GBM")
     endif ()
 
     SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER_DMABUF TRUE)

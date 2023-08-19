@@ -63,7 +63,7 @@ PingLoad::PingLoad(NetworkConnectionToWebProcess& connection, NetworkResourceLoa
             file->prepareForFileAccess();
     }
 
-    initialize(connection.networkProcess());
+    initialize(Ref { connection.networkProcess() });
 }
 
 void PingLoad::initialize(NetworkProcess& networkProcess)

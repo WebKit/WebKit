@@ -213,7 +213,7 @@ ResourceError NetworkLoadChecker::validateResponse(const ResourceRequest& reques
 
     if (m_options.mode == FetchOptions::Mode::Navigate || m_isSameOriginRequest) {
         if (m_options.mode == FetchOptions::Mode::Navigate && m_parentOrigin) {
-            if (auto error = performCORPCheck(m_parentCrossOriginEmbedderPolicy, *m_parentOrigin, m_url, response, ForNavigation::Yes, m_networkResourceLoader.get(), originAccessPatterns()))
+            if (auto error = performCORPCheck(m_parentCrossOriginEmbedderPolicy, *m_parentOrigin, m_url, response, ForNavigation::Yes, RefPtr { m_networkResourceLoader.get() }.get(), originAccessPatterns()))
                 return WTFMove(*error);
         }
         response.setTainting(ResourceResponse::Tainting::Basic);
@@ -224,7 +224,7 @@ ResourceError NetworkLoadChecker::validateResponse(const ResourceRequest& reques
         response.setAsRangeRequested();
 
     if (m_options.mode == FetchOptions::Mode::NoCors) {
-        if (auto error = performCORPCheck(m_crossOriginEmbedderPolicy, *m_origin, m_url, response, ForNavigation::No, m_networkResourceLoader.get(), originAccessPatterns()))
+        if (auto error = performCORPCheck(m_crossOriginEmbedderPolicy, *m_origin, m_url, response, ForNavigation::No, RefPtr { m_networkResourceLoader.get() }.get(), originAccessPatterns()))
             return WTFMove(*error);
 
         response.setTainting(ResourceResponse::Tainting::Opaque);

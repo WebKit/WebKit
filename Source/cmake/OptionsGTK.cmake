@@ -51,9 +51,10 @@ WEBKIT_OPTION_DEFINE(ENABLE_JOURNALD_LOG "Whether to enable journald logging" PU
 WEBKIT_OPTION_DEFINE(ENABLE_QUARTZ_TARGET "Whether to enable support for the Quartz windowing target." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_WAYLAND_TARGET "Whether to enable support for the Wayland windowing target." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_X11_TARGET "Whether to enable support for the X11 windowing target." PUBLIC ON)
-WEBKIT_OPTION_DEFINE(USE_GBM "Whether to enable usage of GBM and libdrm." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(USE_GBM "Whether to enable usage of GBM." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_GTK4 "Whether to enable usage of GTK4 instead of GTK3." PUBLIC OFF)
 WEBKIT_OPTION_DEFINE(USE_LCMS "Whether to enable support for image color management using libcms2." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(USE_LIBDRM "Whether to enable usage of libdrm." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_LIBHYPHEN "Whether to enable the default automatic hyphenation implementation." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_LIBSECRET "Whether to enable the persistent credential storage using libsecret." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_OPENGL_OR_ES "Whether to use OpenGL or ES." PUBLIC ON)
@@ -66,6 +67,7 @@ WEBKIT_OPTION_DEPEND(ENABLE_3D_TRANSFORMS USE_OPENGL_OR_ES)
 WEBKIT_OPTION_DEPEND(ENABLE_ASYNC_SCROLLING USE_OPENGL_OR_ES)
 WEBKIT_OPTION_DEPEND(ENABLE_WEBGL USE_OPENGL_OR_ES)
 WEBKIT_OPTION_DEPEND(USE_GBM USE_OPENGL_OR_ES)
+WEBKIT_OPTION_DEPEND(USE_GBM USE_LIBDRM)
 WEBKIT_OPTION_DEPEND(USE_GSTREAMER_GL USE_OPENGL_OR_ES)
 
 WEBKIT_OPTION_CONFLICT(USE_GTK4 USE_SOUP2)
@@ -331,6 +333,13 @@ endif ()
 
 SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER TRUE)
 
+if (USE_LIBDRM)
+    find_package(LibDRM)
+    if (NOT LIBDRM_FOUND)
+        message(FATAL_ERROR "libdrm is required for USE_LIBDRM")
+    endif ()
+endif ()
+
 if (USE_OPENGL_OR_ES)
 
     SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER_GL ON)
@@ -354,18 +363,9 @@ if (USE_OPENGL_OR_ES)
     endif ()
 
     if (USE_GBM)
-        # ANGLE-backed WebGL depends on DMABuf support, which at the moment is leveraged
-        # through libgbm and libdrm dependencies. When libgbm is enabled, make
-        # libdrm a requirement and define USE_TEXTURE_MAPPER_DMABUF macros.
-        # When not available, ANGLE will be used in slower software-rasterization mode.
         find_package(GBM)
         if (NOT GBM_FOUND)
             message(FATAL_ERROR "GBM is required for USE_GBM")
-        endif ()
-
-        find_package(LibDRM)
-        if (NOT LIBDRM_FOUND)
-            message(FATAL_ERROR "libdrm is required for USE_GBM")
         endif ()
 
         SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER_DMABUF ON)

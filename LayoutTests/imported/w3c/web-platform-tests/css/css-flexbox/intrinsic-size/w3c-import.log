@@ -14,6 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/auto-min-size-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/auto-min-size-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-002-expected.xht
@@ -32,6 +34,23 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-008.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-009-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-011-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-012-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-012.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-013-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-013.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-014-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-014.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-015-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-015.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-016-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-016.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-017-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-017.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-018.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-019.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-002-expected.xht
@@ -46,4 +65,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-007-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-compat-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-use-cases-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-wrap-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-wrap-002.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-wrap-002.tentative.html

@@ -80,7 +80,7 @@
 #include <wtf/NeverDestroyed.h>
 #endif
 
-#if USE(EGL) && USE(GBM)
+#if USE(EGL) && USE(LIBDRM)
 #include "GBMDevice.h"
 #include <xf86drm.h>
 #ifndef EGL_DRM_RENDER_NODE_FILE_EXT
@@ -426,7 +426,7 @@ bool PlatformDisplay::destroyEGLImage(EGLImage image) const
 #endif
 }
 
-#if USE(GBM)
+#if USE(LIBDRM)
 EGLDeviceEXT PlatformDisplay::eglDevice()
 {
     if (!GLContext::isExtensionSupported(eglQueryString(nullptr, EGL_EXTENSIONS), "EGL_EXT_device_query"))
@@ -532,7 +532,9 @@ const String& PlatformDisplay::drmRenderNodeFile()
 
     return m_drmRenderNodeFile.value();
 }
+#endif // USE(LIBDRM)
 
+#if USE(GBM)
 struct gbm_device* PlatformDisplay::gbmDevice()
 {
     auto& device = GBMDevice::singleton();

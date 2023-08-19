@@ -523,7 +523,7 @@ void WebPage::getPlatformEditorStateCommon(const LocalFrame& frame, EditorState&
             }
         }
 
-        if (RefPtr enclosingListElement = enclosingList(selection.start().containerNode())) {
+        if (RefPtr enclosingListElement = enclosingList(RefPtr { selection.start().containerNode() }.get())) {
             if (is<HTMLUListElement>(*enclosingListElement))
                 postLayoutData.enclosingListType = ListType::UnorderedList;
             else if (is<HTMLOListElement>(*enclosingListElement))

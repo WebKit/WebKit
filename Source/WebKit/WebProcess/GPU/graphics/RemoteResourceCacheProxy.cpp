@@ -349,7 +349,7 @@ void RemoteResourceCacheProxy::releaseMemory()
     clearFontMap();
     clearFontCustomPlatformDataMap();
 
-    m_remoteRenderingBackendProxy.releaseAllRemoteResources();
+    m_remoteRenderingBackendProxy.releaseAllDrawingResources();
 }
 
 void RemoteResourceCacheProxy::releaseAllImageResources()

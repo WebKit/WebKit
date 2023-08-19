@@ -27,9 +27,8 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "QualifiedRenderingResourceIdentifier.h"
-#include "QualifiedResourceHeap.h"
-#include <WebCore/ProcessIdentifier.h>
+#include <WebCore/DisplayListResourceHeap.h>
+#include <WebCore/RenderingResourceIdentifier.h>
 
 namespace WebKit {
 
@@ -38,33 +37,34 @@ class RemoteRenderingBackend;
 
 class RemoteResourceCache {
 public:
-    RemoteResourceCache(WebCore::ProcessIdentifier webProcessIdentifier);
+    RemoteResourceCache() = default;
 
-    void cacheImageBuffer(Ref<RemoteImageBuffer>&&, QualifiedRenderingResourceIdentifier);
-    void cacheNativeImage(Ref<WebCore::NativeImage>&&, QualifiedRenderingResourceIdentifier);
-    void cacheFont(Ref<WebCore::Font>&&, QualifiedRenderingResourceIdentifier);
-    void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&, QualifiedRenderingResourceIdentifier);
-    void cacheGradient(Ref<WebCore::Gradient>&&, QualifiedRenderingResourceIdentifier);
-    void cacheFilter(Ref<WebCore::Filter>&&, QualifiedRenderingResourceIdentifier);
-    void cacheFontCustomPlatformData(Ref<WebCore::FontCustomPlatformData>&&, QualifiedRenderingResourceIdentifier);
+    void cacheImageBuffer(Ref<RemoteImageBuffer>&&, WebCore::RenderingResourceIdentifier);
+    void cacheNativeImage(Ref<WebCore::NativeImage>&&, WebCore::RenderingResourceIdentifier);
+    void cacheFont(Ref<WebCore::Font>&&, WebCore::RenderingResourceIdentifier);
+    void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&, WebCore::RenderingResourceIdentifier);
+    void cacheGradient(Ref<WebCore::Gradient>&&, WebCore::RenderingResourceIdentifier);
+    void cacheFilter(Ref<WebCore::Filter>&&, WebCore::RenderingResourceIdentifier);
+    void cacheFontCustomPlatformData(Ref<WebCore::FontCustomPlatformData>&&, WebCore::RenderingResourceIdentifier);
 
-    RemoteImageBuffer* cachedImageBuffer(QualifiedRenderingResourceIdentifier) const;
-    RefPtr<RemoteImageBuffer> takeImageBuffer(QualifiedRenderingResourceIdentifier);
-    WebCore::NativeImage* cachedNativeImage(QualifiedRenderingResourceIdentifier) const;
-    WebCore::Font* cachedFont(QualifiedRenderingResourceIdentifier) const;
-    WebCore::DecomposedGlyphs* cachedDecomposedGlyphs(QualifiedRenderingResourceIdentifier) const;
-    WebCore::Gradient* cachedGradient(QualifiedRenderingResourceIdentifier) const;
-    WebCore::Filter* cachedFilter(QualifiedRenderingResourceIdentifier) const;
-    WebCore::FontCustomPlatformData* cachedFontCustomPlatformData(QualifiedRenderingResourceIdentifier) const;
+    RemoteImageBuffer* cachedImageBuffer(WebCore::RenderingResourceIdentifier) const;
+    RefPtr<RemoteImageBuffer> takeImageBuffer(WebCore::RenderingResourceIdentifier);
+    WebCore::NativeImage* cachedNativeImage(WebCore::RenderingResourceIdentifier) const;
+    WebCore::Font* cachedFont(WebCore::RenderingResourceIdentifier) const;
+    WebCore::DecomposedGlyphs* cachedDecomposedGlyphs(WebCore::RenderingResourceIdentifier) const;
+    WebCore::Gradient* cachedGradient(WebCore::RenderingResourceIdentifier) const;
+    WebCore::Filter* cachedFilter(WebCore::RenderingResourceIdentifier) const;
+    WebCore::FontCustomPlatformData* cachedFontCustomPlatformData(WebCore::RenderingResourceIdentifier) const;
 
-    std::optional<WebCore::SourceImage> cachedSourceImage(QualifiedRenderingResourceIdentifier) const;
+    std::optional<WebCore::SourceImage> cachedSourceImage(WebCore::RenderingResourceIdentifier) const;
 
     void releaseAllResources();
+    void releaseAllDrawingResources();
     void releaseAllImageResources();
-    bool releaseRenderingResource(QualifiedRenderingResourceIdentifier);
+    bool releaseRenderingResource(WebCore::RenderingResourceIdentifier);
 
 private:
-    QualifiedResourceHeap m_resourceHeap;
+    WebCore::DisplayList::ResourceHeap m_resourceHeap;
 };
 
 } // namespace WebKit

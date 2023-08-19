@@ -405,11 +405,12 @@ WebCore::Document* WebFoundTextRangeController::documentForFoundTextRange(const 
 std::optional<WebCore::SimpleRange> WebFoundTextRangeController::simpleRangeFromFoundTextRange(WebFoundTextRange range)
 {
     return m_cachedFoundRanges.ensure(range, [&] () -> std::optional<WebCore::SimpleRange> {
-        auto* document = documentForFoundTextRange(range);
+        RefPtr document = documentForFoundTextRange(range);
         if (!document)
             return std::nullopt;
 
-        return resolveCharacterRange(makeRangeSelectingNodeContents(*document->documentElement()), { range.location, range.length }, WebCore::findIteratorOptions());
+        Ref documentElement = *document->documentElement();
+        return resolveCharacterRange(makeRangeSelectingNodeContents(documentElement), { range.location, range.length }, WebCore::findIteratorOptions());
     }).iterator->value;
 }
 

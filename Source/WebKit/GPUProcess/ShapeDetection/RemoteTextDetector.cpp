@@ -49,7 +49,7 @@ RemoteTextDetector::~RemoteTextDetector() = default;
 
 void RemoteTextDetector::detect(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedText>&&)>&& completionHandler)
 {
-    auto imageBuffer = m_remoteResourceCache.cachedImageBuffer({ renderingResourceIdentifier, m_webProcessIdentifier });
+    auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier);
     if (!imageBuffer) {
         completionHandler({ });
         return;

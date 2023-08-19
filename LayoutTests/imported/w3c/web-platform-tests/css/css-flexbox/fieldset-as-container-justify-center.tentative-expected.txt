@@ -1,0 +1,9 @@
+Pass Condition: orange square is at top of black square.
+Safari 16.4 and Firefox 111 fail -- orange box is vertically centered as if the anonymous fieldset content box and the fieldset were the same box.
+
+
+
+FAIL .item 1 assert_equals:
+<div class="item" data-offset-y="0"></div>
+offsetTop expected 0 but got 50
+

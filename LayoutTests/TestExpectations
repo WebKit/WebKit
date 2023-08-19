@@ -1499,7 +1499,6 @@ webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-safe
 webkit.org/b/210243 imported/w3c/web-platform-tests/css/css-flexbox/percentage-size-quirks-002.html [ Failure ]
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/scrollbars-no-margin.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/fieldset-baseline-alignment.html [ ImageOnlyFailure ]
-webkit.org/b/116117 imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-001.html [ ImageOnlyFailure ]
 webkit.org/b/116117 imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-002.html [ ImageOnlyFailure ]
 webkit.org/b/116117 imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-003.html [ ImageOnlyFailure ]
 webkit.org/b/116117 imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-004.html [ ImageOnlyFailure ]
@@ -1563,7 +1562,6 @@ webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-
 webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-4.html [ ImageOnlyFailure ]
 webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-5.html [ ImageOnlyFailure ]
 webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-6.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-repeat-max-width-001.html [ ImageOnlyFailure ]
 
 webkit.org/b/234879 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-intrinsic-maximums.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-003.html [ ImageOnlyFailure ]
@@ -1606,7 +1604,15 @@ imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/subgrid/masonry-c
 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/subgrid/masonry-columns-subgrid-named-lines-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/item-placement/masonry-columns-item-placement-auto-flow-next-001.html [ Skip ]
 
-webkit.org/b/236958 imported/w3c/web-platform-tests/css/css-grid/subgrid/repeat-auto-fill-003.html [ ImageOnlyFailure ]
+# Subgrid failures
+imported/w3c/web-platform-tests/css/css-grid/subgrid/line-names-010.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/subgrid/line-names-012.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/subgrid/orthogonal-writing-mode-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-no-items-on-edges-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-no-items-on-edges-002.html [ ImageOnlyFailure ]
+
+# Timeout
+imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-crash.html [ Skip ]
 
 # CSS Grid Baseline tests
 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-justify-baseline-001.html [ ImageOnlyFailure ]
@@ -3412,18 +3418,6 @@ fast/mediacapturefromelement/CanvasCaptureMediaStream-imagebitmaprenderingcontex
 fast/mediacapturefromelement/CanvasCaptureMediaStream-framerate-0.html [ Skip ]
 fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-element.html [ Skip ]
 
-imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-circle.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-disc.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-greek.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-latin.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-square.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-lists/list-marker-with-lineheight-and-overflow-hidden-001.html [ ImageOnlyFailure ]
-webkit.org/b/202849 imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-005a.html [ ImageOnlyFailure ]
-webkit.org/b/202849 imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-005b.html [ ImageOnlyFailure ]
-webkit.org/b/202849 imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-006.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-lists/list-with-image-display-changed-001.html [ ImageOnlyFailure ]
-webkit.org/b/249918 imported/w3c/web-platform-tests/css/css-lists/list-marker-symbol-bidi.html [ ImageOnlyFailure ]
-
 webkit.org/b/196274 imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm [ Pass Failure ]
 
 # If requestAnimationFrame is invoked before ResizeObserver timer fired, it would pass, otherwise it would fail same as eventloop-expected.txt
@@ -4451,6 +4445,14 @@ webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/percentage-h
 webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/scrollbars-auto.html [ ImageOnlyFailure ]
 webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/scrollbars.html [ ImageOnlyFailure ]
 
+imported/w3c/web-platform-tests/css/css-flexbox/dynamic-orthogonal-flex-item.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/gap-019.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/grid-flex-item-007.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/inline-flexbox-vertical-rl-image-flexitem-crash-print.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-013.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-014.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-flexbox/percentage-padding-003.html [ ImageOnlyFailure ]
+
 # text-combine-upright bugs
 webkit.org/b/234704 imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-layout-rules-001.html [ ImageOnlyFailure ]
 webkit.org/b/164510 imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-line-breaking-rules-001.html [ ImageOnlyFailure ]
@@ -4675,8 +4677,8 @@ webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/tiled-conic-g
 
 webkit.org/b/149828 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-mask-image.html [ ImageOnlyFailure ]
 
+# Untriaged counter failures
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/change-list-descendant-display.html [ ImageOnlyFailure ]
-webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/counter-set-001.html [ ImageOnlyFailure ]
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/inline-block-list.html [ ImageOnlyFailure ]
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/inline-block-list-marker.html [ ImageOnlyFailure ]
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/inline-list.html [ ImageOnlyFailure ]
@@ -4685,9 +4687,67 @@ webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/inline-list-wi
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/li-list-item-counter.html [ ImageOnlyFailure ]
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/list-item-definition.html [ ImageOnlyFailure ]
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/li-value-counter-reset-001.html [ ImageOnlyFailure ]
-webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-003.html [ ImageOnlyFailure ]
-webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-004.html [ ImageOnlyFailure ]
-webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/counter-list-item-2.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/counter-list-item-slot-order.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/counter-list-item.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/counter-order-display-contents.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/counter-slot-order-scoping.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/counter-slot-order.html [ ImageOnlyFailure ]
+
+# Need support for counter-set
+webkit.org/b/97337 imported/w3c/web-platform-tests/css/css-lists/counter-set-001.html [ ImageOnlyFailure ]
+
+# No support for reversed(<counter-name>) syntax
+imported/w3c/web-platform-tests/css/css-lists/counter-reset-reversed-list-item-start.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/counter-reset-reversed-list-item.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/counter-reset-reversed-not-list-item-start.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/counter-reset-reversed-not-list-item.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/foo-counter-reversed-006a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/foo-counter-reversed-006b.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/foo-counter-reversed-006c.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/foo-counter-reversed-006d.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/foo-counter-reversed-006e.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/foo-counter-reversed-007a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/foo-counter-reversed-007b.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/foo-counter-reversed-008a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/foo-counter-reversed-008b.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/foo-counter-reversed-009a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/foo-counter-reversed-009b.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-006a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-006b.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-006c.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-006d.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-006e.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-007a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-007b.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-008a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-008b.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-009a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-009b.html [ ImageOnlyFailure ]
+
+# list-style
+imported/w3c/web-platform-tests/css/css-lists/list-style-type-decimal-line-height.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/list-style-type-decimal-vertical-lr.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/list-style-type-decimal-vertical-rl.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/marker-webkit-text-fill-color.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/list-marker-with-lineheight-and-overflow-hidden-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/list-with-image-display-changed-001.html [ ImageOnlyFailure ]
+
+# list-style bidi support
+webkit.org/b/202849 imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-005a.html [ ImageOnlyFailure ]
+webkit.org/b/202849 imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-005b.html [ ImageOnlyFailure ]
+webkit.org/b/202849 imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-006.html [ ImageOnlyFailure ]
+webkit.org/b/249918 imported/w3c/web-platform-tests/css/css-lists/list-marker-symbol-bidi.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-circle.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-greek.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-latin.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-square.html [ ImageOnlyFailure ]
 
 webkit.org/b/214458 imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-balance-003.html [ ImageOnlyFailure ]
 webkit.org/b/214458 imported/w3c/web-platform-tests/css/css-multicol/multicol-list-item-002.html [ ImageOnlyFailure ]

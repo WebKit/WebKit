@@ -77,7 +77,7 @@ void DisplayList::clear()
 {
     if (m_items)
         m_items->clear();
-    m_resourceHeap.clear();
+    m_resourceHeap.clearAllResources();
 }
 
 bool DisplayList::shouldDumpForFlags(OptionSet<AsTextFlag> flags, ItemHandle item)
