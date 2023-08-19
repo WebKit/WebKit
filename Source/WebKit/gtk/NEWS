@@ -1,4 +1,17 @@
 =================
+WebKitGTK 2.41.91
+=================
+
+What's new in WebKitGTK 2.41.91?
+
+  - Properly handle toplevel window state changes in GTK4.
+  - Do not keep processing frames while the view is unrealized when using DMA-BUF renderer.
+  - Fallback to first render node returned by DRM when failing to get using EGLDevice.
+  - Fix the build with libjxl < 0.7.0.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Turkish.
+
+=================
 WebKitGTK 2.41.90
 =================
 
