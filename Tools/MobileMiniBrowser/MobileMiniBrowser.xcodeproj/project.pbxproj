@@ -44,7 +44,8 @@
 		CDC2792D2935418400151088 /* looping2s.html in Resources */ = {isa = PBXBuildFile; fileRef = CDC279292935417100151088 /* looping2s.html */; };
 		CDC2792E2935418400151088 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = CDC279262935417100151088 /* index.html */; };
 		DD403C5828500FE300D899FC /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD1DAFC11D70E12D00017CF0 /* WebKit.framework */; };
-		DD954C952A90280800C6843C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD954C942A90280800C6843C /* UIKit.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		DDC9E8CC2A91DEDE00B015C1 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD954C942A90280800C6843C /* UIKit.framework */; };
+		DDC9E8CD2A91E0F400B015C1 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD954C942A90280800C6843C /* UIKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -124,7 +125,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD498B421D76348000681FA7 /* MobileMiniBrowser.framework in Frameworks */,
-				DD954C952A90280800C6843C /* UIKit.framework in Frameworks */,
+				DDC9E8CD2A91E0F400B015C1 /* UIKit.framework in Frameworks */,
 				4484520429424D840059B0FE /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -140,6 +141,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DDC9E8CC2A91DEDE00B015C1 /* UIKit.framework in Frameworks */,
 				DD403C5828500FE300D899FC /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
