@@ -125,23 +125,20 @@ private:
     WeakPtr<MediaPlayerPrivateMediaSourceAVFObjC> m_client;
 };
 
-static void CMTimebaseEffectiveRateChangedCallback(CMNotificationCenterRef, const void *listener, CFStringRef, const void *, CFTypeRef)
+static void timebaseEffectiveRateChangedCallback(CFNotificationCenterRef, void* observer, CFNotificationName, const void*, CFDictionaryRef)
 {
-    auto* effectiveRateChangedListener = (EffectiveRateChangedListener*)const_cast<void*>(listener);
-    effectiveRateChangedListener->effectiveRateChanged();
+    static_cast<EffectiveRateChangedListener*>(observer)->effectiveRateChanged();
 }
 
 void EffectiveRateChangedListener::stop(CMTimebaseRef timebase)
 {
-    CMNotificationCenterRef nc = PAL::CMNotificationCenterGetDefaultLocalCenter();
-    PAL::CMNotificationCenterRemoveListener(nc, this, CMTimebaseEffectiveRateChangedCallback, PAL::kCMTimebaseNotification_EffectiveRateChanged, timebase);
+    CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), this, kCMTimebaseNotification_EffectiveRateChanged, timebase);
 }
 
 EffectiveRateChangedListener::EffectiveRateChangedListener(MediaPlayerPrivateMediaSourceAVFObjC& client, CMTimebaseRef timebase)
     : m_client(client)
 {
-    CMNotificationCenterRef nc = PAL::CMNotificationCenterGetDefaultLocalCenter();
-    PAL::CMNotificationCenterAddListener(nc, this, CMTimebaseEffectiveRateChangedCallback, PAL::kCMTimebaseNotification_EffectiveRateChanged, timebase, 0);
+    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, timebaseEffectiveRateChangedCallback, kCMTimebaseNotification_EffectiveRateChanged, timebase, static_cast<CFNotificationSuspensionBehavior>(0));
 }
 
 MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(MediaPlayer* player)

@@ -353,6 +353,7 @@ NS_ASSUME_NONNULL_END
 NS_ASSUME_NONNULL_BEGIN
 @interface AVSampleBufferDisplayLayer (VideoPerformanceMetrics)
 - (AVVideoPerformanceMetrics *)videoPerformanceMetrics;
+- (void)prerollDecodeWithCompletionHandler:(void (^)(BOOL success))block;
 @end
 NS_ASSUME_NONNULL_END
 #else
@@ -372,6 +373,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)requestMediaDataWhenReadyOnQueue:(dispatch_queue_t)queue usingBlock:(void (^)(void))block;
 - (void)stopRequestingMediaData;
 - (AVVideoPerformanceMetrics *)videoPerformanceMetrics;
+- (void)prerollDecodeWithCompletionHandler:(void (^)(BOOL success))block;
 @end
 NS_ASSUME_NONNULL_END
 #endif // __has_include(<AVFoundation/AVSampleBufferDisplayLayer.h>)

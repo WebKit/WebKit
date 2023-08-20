@@ -68,7 +68,6 @@
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 @interface AVSampleBufferDisplayLayer (WebCoreAVSampleBufferDisplayLayerQueueManagementPrivate)
-- (void)prerollDecodeWithCompletionHandler:(void (^)(BOOL success))block;
 - (void)expectMinimumUpcomingSampleBufferPresentationTime: (CMTime)minimumUpcomingPresentationTime;
 - (void)resetUpcomingSampleBufferPresentationTimeExpectations;
 @end

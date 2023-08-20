@@ -1141,7 +1141,7 @@ void WebProcessPool::registerDisplayConfigurationCallback()
         });
 }
 
-static void webProcessPoolHighDynamicRangeDidChangeCallback(CMNotificationCenterRef, const void*, CFStringRef notificationName, const void*, CFTypeRef)
+static void webProcessPoolHighDynamicRangeDidChangeCallback(CFNotificationCenterRef, void*, CFNotificationName, const void*, CFDictionaryRef)
 {
     RunLoop::main().dispatch([] {
         auto properties = WebCore::collectScreenProperties();
@@ -1162,14 +1162,7 @@ void WebProcessPool::registerHighDynamicRangeChangeCallback()
             || !PAL::canLoad_MediaToolbox_kMTSupportNotification_ShouldPlayHDRVideoChanged())
             return;
 
-        auto center = PAL::softLink_CoreMedia_CMNotificationCenterGetDefaultLocalCenter();
-        auto notification = PAL::get_MediaToolbox_kMTSupportNotification_ShouldPlayHDRVideoChanged();
-        auto object = PAL::softLinkMediaToolboxMT_GetShouldPlayHDRVideoNotificationSingleton();
-
-        // Note: CMNotificationCenterAddListener requires a non-null listener pointer. Just use the singleton
-        // object itself as the "listener", since the notification method is a static global and doesn't need
-        // the listener pointer at all.
-        PAL::softLink_CoreMedia_CMNotificationCenterAddListener(center, object, webProcessPoolHighDynamicRangeDidChangeCallback, notification, object, 0);
+        CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), nullptr, webProcessPoolHighDynamicRangeDidChangeCallback, kMTSupportNotification_ShouldPlayHDRVideoChanged, MT_GetShouldPlayHDRVideoNotificationSingleton(), static_cast<CFNotificationSuspensionBehavior>(0));
     });
 }
 
