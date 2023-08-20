@@ -36,6 +36,7 @@
 #include "ShadowRoot.h"
 #include "SlotAssignment.h"
 #include "Text.h"
+#include "ToggleEvent.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -130,6 +131,21 @@ bool HTMLDetailsElement::isActiveSummary(const HTMLSummaryElement& summary) cons
     return slot == m_summarySlot.get();
 }
 
+void HTMLDetailsElement::queueDetailsToggleEventTask(DetailsState oldState, DetailsState newState)
+{
+    setQueuedToggleEventData({ oldState, newState });
+    queueTaskKeepingThisNodeAlive(TaskSource::DOMManipulation, [this, newState] {
+        auto queuedEventData = queuedToggleEventData();
+        if (!queuedEventData || queuedEventData->newState != newState)
+            return;
+        clearQueuedToggleEventData();
+        auto stringForState = [](DetailsState state) {
+            return state == DetailsState::Closed ? "closed"_s : "open"_s;
+        };
+        dispatchEvent(ToggleEvent::create(eventNames().toggleEvent, { EventInit { }, stringForState(queuedEventData->oldState), stringForState(queuedEventData->newState) }, Event::IsCancelable::No));
+    });
+}
+
 void HTMLDetailsElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == openAttr) {
@@ -138,20 +154,13 @@ void HTMLDetailsElement::attributeChanged(const QualifiedName& name, const AtomS
         if (oldValue != m_isOpen) {
             RefPtr root = shadowRoot();
             ASSERT(root);
-            if (m_isOpen)
+            if (m_isOpen) {
                 root->appendChild(*m_defaultSlot);
-            else
+                queueDetailsToggleEventTask(DetailsState::Closed, DetailsState::Open);
+            } else {
                 root->removeChild(*m_defaultSlot);
-
-            // https://html.spec.whatwg.org/#details-notification-task-steps
-            if (m_isToggleEventTaskQueued)
-                return;
-
-            queueTaskKeepingThisNodeAlive(TaskSource::DOMManipulation, [this] {
-                dispatchEvent(Event::create(eventNames().toggleEvent, Event::CanBubble::No, Event::IsCancelable::No));
-                m_isToggleEventTaskQueued = false;
-            });
-            m_isToggleEventTaskQueued = true;
+                queueDetailsToggleEventTask(DetailsState::Open, DetailsState::Closed);
+            }
         }
     } else
         HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
