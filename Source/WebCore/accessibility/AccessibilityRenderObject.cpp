@@ -2222,11 +2222,7 @@ AccessibilitySVGRoot* AccessibilityRenderObject::remoteSVGRootElement(CreationCh
     if (!frameView)
         return nullptr;
 
-    auto* localFrame = dynamicDowncast<LocalFrame>(frameView->frame());
-    if (!localFrame)
-        return nullptr;
-
-    auto* document = localFrame->document();
+    auto* document = frameView->frame().document();
     if (!is<SVGDocument>(document))
         return nullptr;
 

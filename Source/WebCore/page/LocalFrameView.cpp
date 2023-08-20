@@ -2664,8 +2664,7 @@ bool LocalFrameView::scrollRectToVisible(const LayoutRect& absoluteRect, const R
 static ScrollPositionChangeOptions scrollPositionChangeOptionsForElement(const LocalFrameView& frameView, Element* element, const ScrollRectToVisibleOptions& options)
 {
     auto scrollPositionOptions = ScrollPositionChangeOptions::createProgrammatic();
-    if (is<LocalFrame>(frameView.frame())
-        && !downcast<LocalFrame>(frameView.frame()).eventHandler().autoscrollInProgress()
+    if (!frameView.frame().eventHandler().autoscrollInProgress()
         && element
         && useSmoothScrolling(options.behavior, element))
         scrollPositionOptions.animated = ScrollIsAnimated::Yes;
@@ -3319,8 +3318,7 @@ void LocalFrameView::adjustTiledBackingCoverage()
 
 static bool shouldEnableSpeculativeTilingDuringLoading(const LocalFrameView& view)
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(view.frame());
-    auto* page = localFrame ? localFrame->page() : nullptr;
+    auto* page = view.frame().page();
     return page && view.isVisuallyNonEmpty() && !page->progress().isMainLoadProgressing();
 }
 
@@ -5966,7 +5964,7 @@ ScrollBehaviorForFixedElements LocalFrameView::scrollBehaviorForFixedElements() 
     return m_frame->settings().backgroundShouldExtendBeyondPage() ? StickToViewportBounds : StickToDocumentBounds;
 }
 
-Frame& LocalFrameView::frame() const
+LocalFrame& LocalFrameView::frame() const
 {
     return m_frame;
 }
@@ -6383,10 +6381,7 @@ float LocalFrameView::deviceScaleFactor() const
 
 void LocalFrameView::writeRenderTreeAsText(TextStream& ts, OptionSet<RenderAsTextFlag> behavior)
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(frame());
-    if (!localFrame)
-        return;
-    externalRepresentationForLocalFrame(ts, *localFrame, behavior);
+    externalRepresentationForLocalFrame(ts, frame(), behavior);
 }
 
 } // namespace WebCore

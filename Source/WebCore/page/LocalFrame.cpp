@@ -749,7 +749,7 @@ LocalFrame* LocalFrame::frameForWidget(const Widget& widget)
 
     // Assume all widgets are either a FrameView or owned by a RenderWidget.
     // FIXME: That assumption is not right for scroll bars!
-    return dynamicDowncast<LocalFrame>(downcast<LocalFrameView>(widget).frame());
+    return &downcast<LocalFrameView>(widget).frame();
 }
 
 void LocalFrame::clearTimers(LocalFrameView *view, Document *document)
@@ -759,8 +759,7 @@ void LocalFrame::clearTimers(LocalFrameView *view, Document *document)
     view->layoutContext().unscheduleLayout();
     if (auto* timelines = document->timelinesController())
         timelines->suspendAnimations();
-    if (auto* localFrame = dynamicDowncast<LocalFrame>(view->frame()))
-        localFrame->eventHandler().stopAutoscrollTimer();
+    view->frame().eventHandler().stopAutoscrollTimer();
 }
 
 void LocalFrame::clearTimers()

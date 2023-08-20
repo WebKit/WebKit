@@ -2187,9 +2187,10 @@ void Document::resolveStyle(ResolveStyleType type)
         // As a result of the style recalculation, the currently hovered element might have been
         // detached (for example, by setting display:none in the :hover style), schedule another mouseMove event
         // to check if any other elements ended up under the mouse pointer due to re-layout.
-        if (m_hoveredElement && !m_hoveredElement->renderer() && is<LocalFrame>(frameView.frame()))
-            if (auto* localMainFrame = dynamicDowncast<LocalFrame>(downcast<LocalFrame>(frameView.frame()).mainFrame()))
+        if (m_hoveredElement && !m_hoveredElement->renderer()) {
+            if (auto* localMainFrame = dynamicDowncast<LocalFrame>(frameView.frame().mainFrame()))
                 localMainFrame->eventHandler().dispatchFakeMouseMoveEventSoon();
+        }
 
         ++m_styleRecalcCount;
         // FIXME: Assert ASSERT(!needsStyleRecalc()) here. fast/events/media-element-focus-tab.html hits this assertion.
@@ -2627,7 +2628,7 @@ void Document::attachToCachedFrame(CachedFrameBase& cachedFrame)
     RELEASE_ASSERT(cachedFrame.document() == this);
     ASSERT(cachedFrame.view());
     ASSERT(m_backForwardCacheState == Document::InBackForwardCache);
-    observeFrame(dynamicDowncast<LocalFrame>(cachedFrame.view()->frame()));
+    observeFrame(&cachedFrame.view()->frame());
 }
 
 void Document::detachFromCachedFrame(CachedFrameBase& cachedFrame)

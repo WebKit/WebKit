@@ -4362,8 +4362,7 @@ void RenderLayerCompositor::ensureRootLayer()
 
 #if PLATFORM(IOS_FAMILY)
         // Page scale is applied above this on iOS, so we'll just say that our root layer applies it.
-        auto* frame = dynamicDowncast<LocalFrame>(m_renderView.frameView().frame());
-        if (frame && frame->isMainFrame())
+        if (m_renderView.frameView().frame().isMainFrame())
             m_rootContentsLayer->setAppliesPageScale();
 #endif
 
@@ -4488,8 +4487,7 @@ void RenderLayerCompositor::attachRootLayer(RootLayerAttachment attachment)
             ASSERT_NOT_REACHED();
             break;
         case RootLayerAttachedViaChromeClient: {
-            if (auto* frame = dynamicDowncast<LocalFrame>(m_renderView.frameView().frame()))
-                page().chrome().client().attachRootGraphicsLayer(*frame, rootGraphicsLayer());
+            page().chrome().client().attachRootGraphicsLayer(m_renderView.frameView().frame(), rootGraphicsLayer());
             break;
         }
         case RootLayerAttachedViaEnclosingFrame: {
@@ -4539,11 +4537,9 @@ void RenderLayerCompositor::detachRootLayer()
         break;
     }
     case RootLayerAttachedViaChromeClient: {
-        if (auto* frame = dynamicDowncast<LocalFrame>(m_renderView.frameView().frame())) {
-            if (auto* scrollingCoordinator = this->scrollingCoordinator())
-                scrollingCoordinator->frameViewWillBeDetached(m_renderView.frameView());
-            page().chrome().client().attachRootGraphicsLayer(*frame, nullptr);
-        }
+        if (auto* scrollingCoordinator = this->scrollingCoordinator())
+            scrollingCoordinator->frameViewWillBeDetached(m_renderView.frameView());
+        page().chrome().client().attachRootGraphicsLayer(m_renderView.frameView().frame(), nullptr);
     }
     break;
     case RootLayerUnattached:
@@ -4573,7 +4569,7 @@ void RenderLayerCompositor::rootLayerAttachmentChanged()
     if (auto* backing = layer ? layer->backing() : nullptr)
         backing->updateDrawsContent();
 
-    if (auto* frame = dynamicDowncast<LocalFrame>(m_renderView.frameView().frame()); !frame || !frame->isMainFrame())
+    if (!m_renderView.frameView().frame().isMainFrame())
         return;
 
     Ref<GraphicsLayer> overlayHost = page().pageOverlayController().layerWithDocumentOverlays();

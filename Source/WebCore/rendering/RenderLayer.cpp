@@ -3908,8 +3908,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
         if (settings.visualViewportEnabled() && settings.clientCoordinatesRelativeToLayoutViewport()) {
             auto& frameView = renderer().view().frameView();
             LayoutRect absoluteLayoutViewportRect = frameView.layoutViewportRect();
-            auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame());
-            auto scaleFactor = localFrame ? localFrame->frameScaleFactor() : 1.0f;
+            auto scaleFactor = frameView.frame().frameScaleFactor();
             if (scaleFactor > 1)
                 absoluteLayoutViewportRect.scale(scaleFactor);
             hitTestArea.intersect(absoluteLayoutViewportRect);

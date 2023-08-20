@@ -259,9 +259,8 @@ LayoutUnit RenderView::pageOrViewLogicalHeight() const
 LayoutUnit RenderView::clientLogicalWidthForFixedPosition() const
 {
     // FIXME: If the FrameView's fixedVisibleContentRect() is not empty, perhaps it should be consulted here too?
-    auto* localFrame = dynamicDowncast<LocalFrame>(frameView().frame());
-    if (localFrame && frameView().fixedElementsLayoutRelativeToFrame())
-        return LayoutUnit((isHorizontalWritingMode() ? frameView().visibleWidth() : frameView().visibleHeight()) / localFrame->frameScaleFactor());
+    if (frameView().fixedElementsLayoutRelativeToFrame())
+        return LayoutUnit((isHorizontalWritingMode() ? frameView().visibleWidth() : frameView().visibleHeight()) / frameView().frame().frameScaleFactor());
 
 #if PLATFORM(IOS_FAMILY)
     if (frameView().useCustomFixedPositionLayoutRect())
@@ -277,9 +276,8 @@ LayoutUnit RenderView::clientLogicalWidthForFixedPosition() const
 LayoutUnit RenderView::clientLogicalHeightForFixedPosition() const
 {
     // FIXME: If the FrameView's fixedVisibleContentRect() is not empty, perhaps it should be consulted here too?
-    auto* localFrame = dynamicDowncast<LocalFrame>(frameView().frame());
-    if (localFrame && frameView().fixedElementsLayoutRelativeToFrame())
-        return LayoutUnit((isHorizontalWritingMode() ? frameView().visibleHeight() : frameView().visibleWidth()) / localFrame->frameScaleFactor());
+    if (frameView().fixedElementsLayoutRelativeToFrame())
+        return LayoutUnit((isHorizontalWritingMode() ? frameView().visibleHeight() : frameView().visibleWidth()) / frameView().frame().frameScaleFactor());
 
 #if PLATFORM(IOS_FAMILY)
     if (frameView().useCustomFixedPositionLayoutRect())
@@ -632,10 +630,7 @@ bool RenderView::shouldUsePrintingLayout() const
 {
     if (!printing())
         return false;
-    auto* localFrame = dynamicDowncast<LocalFrame>(frameView().frame());
-    if (!localFrame)
-        return false;
-    return localFrame->shouldUsePrintingLayout();
+    return frameView().frame().shouldUsePrintingLayout();
 }
 
 LayoutRect RenderView::viewRect() const
@@ -758,10 +753,7 @@ void RenderView::setPageLogicalSize(LayoutSize size)
 
 float RenderView::zoomFactor() const
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(frameView().frame());
-    if (!localFrame)
-        return 1.0f;
-    return localFrame->pageZoomFactor();
+    return frameView().frame().pageZoomFactor();
 }
 
 FloatSize RenderView::sizeForCSSSmallViewportUnits() const

@@ -1405,7 +1405,7 @@ RefPtr<LocalFrame> EventHandler::subframeForTargetNode(Node* node)
     if (!is<LocalFrameView>(widget))
         return nullptr;
 
-    return dynamicDowncast<LocalFrame>(downcast<LocalFrameView>(*widget).frame());
+    return &downcast<LocalFrameView>(*widget).frame();
 }
 
 static bool isSubmitImage(Node* node)
@@ -5074,11 +5074,8 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& event, Widge
     auto* frameView = dynamicDowncast<LocalFrameView>(widget);
     if (!frameView)
         return false;
-    RefPtr localFrame = dynamicDowncast<LocalFrame>(frameView->frame());
-    if (!localFrame)
-        return false;
 
-    return localFrame->eventHandler().handleWheelEvent(event, processingSteps);
+    return frameView->frame().eventHandler().handleWheelEvent(event, processingSteps);
 }
 
 bool EventHandler::tabsToAllFormControls(KeyboardEvent*) const

@@ -187,13 +187,10 @@ void InspectorInstrumentation::didChangeRendererForDOMNodeImpl(InstrumentingAgen
 
 void InspectorInstrumentation::didAddOrRemoveScrollbarsImpl(InstrumentingAgents& instrumentingAgents, LocalFrameView& frameView)
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame());
-    if (!localFrame)
-        return;
     auto* cssAgent = instrumentingAgents.enabledCSSAgent();
     if (!cssAgent)
         return;
-    auto* document = localFrame->document();
+    auto* document = frameView.frame().document();
     if (!document)
         return;
     auto* documentElement = document->documentElement();

@@ -228,8 +228,7 @@ void AsyncScrollingCoordinator::frameViewEventTrackingRegionsChanged(LocalFrameV
         return;
 
     setEventTrackingRegionsDirty();
-    if (auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame()))
-        DebugPageOverlays::didChangeEventHandlers(*localFrame);
+    DebugPageOverlays::didChangeEventHandlers(frameView.frame());
 }
 
 void AsyncScrollingCoordinator::frameViewRootLayerDidChange(LocalFrameView& frameView)
@@ -320,8 +319,7 @@ bool AsyncScrollingCoordinator::requestScrollToPosition(ScrollableArea& scrollab
 
     setScrollingNodeScrollableAreaGeometry(scrollingNodeID, scrollableArea);
 
-    auto* localFrame = dynamicDowncast<LocalFrame>(frameView->frame());
-    bool inBackForwardCache = localFrame && localFrame->document()->backForwardCacheState() != Document::NotInBackForwardCache;
+    bool inBackForwardCache = frameView->frame().document()->backForwardCacheState() != Document::NotInBackForwardCache;
     bool isSnapshotting = m_page->isTakingSnapshotsForApplicationSuspension();
     bool inProgrammaticScroll = scrollableArea.currentScrollType() == ScrollType::Programmatic;
 
@@ -628,8 +626,7 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
 
     auto& frameView = *frameViewPtr;
 
-    auto* localFrame = dynamicDowncast<LocalFrame>(frameViewPtr->frame());
-    if (localFrame && !localFrame->isMainFrame()) {
+    if (!frameViewPtr->frame().isMainFrame()) {
         if (scrollingLayerPositionAction == ScrollingLayerPositionAction::Set)
             m_page->editorClient().subFrameScrollPositionChanged();
     }
@@ -864,7 +861,7 @@ void AsyncScrollingCoordinator::ensureRootStateNodeForFrameView(LocalFrameView& 
 
     // For non-main frames, it is only possible to arrive in this function from
     // RenderLayerCompositor::updateBacking where the node has already been created.
-    ASSERT(is<LocalFrame>(frameView.frame()) && downcast<LocalFrame>(frameView.frame()).isMainFrame());
+    ASSERT(frameView.frame().isMainFrame());
     insertNode(ScrollingNodeType::MainFrame, frameView.scrollingNodeID(), 0, 0);
 }
 
@@ -907,8 +904,7 @@ void AsyncScrollingCoordinator::setFrameScrollingNodeState(ScrollingNodeID nodeI
     auto& settings = localMainFrame->settings();
     auto& frameScrollingNode = downcast<ScrollingStateFrameScrollingNode>(*stateNode);
 
-    if (auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame()))
-        frameScrollingNode.setFrameScaleFactor(localFrame->frameScaleFactor());
+    frameScrollingNode.setFrameScaleFactor(frameView.frame().frameScaleFactor());
     frameScrollingNode.setHeaderHeight(frameView.headerHeight());
     frameScrollingNode.setFooterHeight(frameView.footerHeight());
     frameScrollingNode.setTopContentInset(frameView.topContentInset());
