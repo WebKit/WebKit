@@ -382,7 +382,7 @@ if (!window.InspectorFrontendHost) {
 
         engineeringSettingsAllowed()
         {
-            return false;
+            return true;
         }
 
         // Private
