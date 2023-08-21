@@ -58,7 +58,7 @@ enum class ImmediateActionState {
 @private
     CheckedPtr<WebKit::WebPageProxy> _page;
     NSView *_view;
-    WeakPtr<WebKit::WebViewImpl> _viewImpl;
+    CheckedPtr<WebKit::WebViewImpl> _viewImpl;
 
     WebKit::ImmediateActionState _state;
     WebKit::WebHitTestResultData _hitTestResultData;

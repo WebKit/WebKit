@@ -111,7 +111,7 @@
 - (void)_clearImmediateActionState
 {
     if (_page)
-        _page->clearTextIndicator();
+        CheckedPtr { _page }->clearTextIndicator();
 
     if (_currentActionContext && _hasActivatedActionContext) {
         _hasActivatedActionContext = NO;
@@ -148,7 +148,7 @@
 
 - (void)dismissContentRelativeChildWindows
 {
-    _page->setMaintainsInactiveSelection(false);
+    CheckedPtr { _page }->setMaintainsInactiveSelection(false);
     [_currentQLPreviewMenuItem close];
 }
 
@@ -164,16 +164,16 @@
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    _viewImpl->prepareForImmediateActionAnimation();
+    CheckedPtr { _viewImpl }->prepareForImmediateActionAnimation();
 
-    _viewImpl->dismissContentRelativeChildWindowsWithAnimation(true);
+    CheckedPtr { _viewImpl }->dismissContentRelativeChildWindowsWithAnimation(true);
 
-    _page->setMaintainsInactiveSelection(true);
+    CheckedPtr { _page }->setMaintainsInactiveSelection(true);
 
     _state = WebKit::ImmediateActionState::Pending;
     immediateActionRecognizer.animationController = nil;
 
-    _page->performImmediateActionHitTestAtLocation([immediateActionRecognizer locationInView:immediateActionRecognizer.view]);
+    CheckedPtr { _page }->performImmediateActionHitTestAtLocation([immediateActionRecognizer locationInView:immediateActionRecognizer.view]);
 }
 
 - (void)immediateActionRecognizerWillBeginAnimation:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
@@ -189,8 +189,8 @@
     // FIXME: We need to be able to cancel this if the gesture recognizer is cancelled.
     // FIXME: Connection can be null if the process is closed; we should clean up better in that case.
     if (_state == WebKit::ImmediateActionState::Pending) {
-        if (auto* connection = _page->process().connection()) {
-            bool receivedReply = connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidPerformImmediateActionHitTest>(_page->webPageID(), 500_ms) == IPC::Error::NoError;
+        if (auto* connection = CheckedPtr { _page }->process().connection()) {
+            bool receivedReply = connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidPerformImmediateActionHitTest>(CheckedPtr { _page }->webPageID(), 500_ms) == IPC::Error::NoError;
             if (!receivedReply)
                 _state = WebKit::ImmediateActionState::TimedOut;
         }
@@ -215,11 +215,11 @@
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    _page->immediateActionDidUpdate();
+    CheckedPtr { _page }->immediateActionDidUpdate();
     if (_contentPreventsDefault)
         return;
 
-    _page->setTextIndicatorAnimationProgress([immediateActionRecognizer animationProgress]);
+    CheckedPtr { _page }->setTextIndicatorAnimationProgress([immediateActionRecognizer animationProgress]);
 }
 
 - (void)immediateActionRecognizerDidCancelAnimation:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
@@ -227,13 +227,13 @@
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    _page->immediateActionDidCancel();
+    CheckedPtr { _page }->immediateActionDidCancel();
 
-    _viewImpl->cancelImmediateActionAnimation();
+    CheckedPtr { _viewImpl }->cancelImmediateActionAnimation();
 
-    _page->setTextIndicatorAnimationProgress(0);
+    CheckedPtr { _page }->setTextIndicatorAnimationProgress(0);
     [self _clearImmediateActionState];
-    _page->setMaintainsInactiveSelection(false);
+    CheckedPtr { _page }->setMaintainsInactiveSelection(false);
 }
 
 - (void)immediateActionRecognizerDidCompleteAnimation:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
@@ -241,11 +241,11 @@
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    _page->immediateActionDidComplete();
+    CheckedPtr { _page }->immediateActionDidComplete();
 
-    _viewImpl->completeImmediateActionAnimation();
+    CheckedPtr { _viewImpl }->completeImmediateActionAnimation();
 
-    _page->setTextIndicatorAnimationProgress(1);
+    CheckedPtr { _page }->setTextIndicatorAnimationProgress(1);
 }
 
 - (RefPtr<API::HitTestResult>)_webHitTestResult
@@ -254,7 +254,7 @@
     if (_state == WebKit::ImmediateActionState::Ready)
         hitTestResult = API::HitTestResult::create(_hitTestResultData);
     else
-        hitTestResult = _page->lastMouseMoveHitTestResult();
+        hitTestResult = CheckedPtr { _page }->lastMouseMoveHitTestResult();
 
     return hitTestResult;
 }
@@ -297,7 +297,7 @@
             _currentQLPreviewMenuItem = item;
 
             if (auto textIndicator = _hitTestResultData.linkTextIndicator.get())
-                _page->setTextIndicator(textIndicator->data());
+                CheckedPtr { _page }->setTextIndicator(textIndicator->data());
 
             return (id<NSImmediateActionAnimationController>)item;
         }
@@ -335,7 +335,7 @@
         return;
     }
 
-    id customClientAnimationController = _page->immediateActionAnimationControllerForHitTestResult(hitTestResult, _type, _userData);
+    id customClientAnimationController = CheckedPtr { _page }->immediateActionAnimationControllerForHitTestResult(hitTestResult, _type, _userData);
     if (customClientAnimationController == [NSNull null]) {
         [self _cancelImmediateAction];
         return;
@@ -487,12 +487,12 @@
     if (!dictionaryPopupInfo.platformData.attributedString.nsAttributedString())
         return nil;
 
-    RetainPtr { _viewImpl.get() }->prepareForDictionaryLookup();
+    CheckedPtr { _viewImpl }->prepareForDictionaryLookup();
 
     return WebCore::DictionaryLookup::animationControllerForPopup(dictionaryPopupInfo, _view, [self](WebCore::TextIndicator& textIndicator) {
-        RetainPtr { _viewImpl.get() }->setTextIndicator(textIndicator, WebCore::TextIndicatorLifetime::Permanent);
+        CheckedPtr { _viewImpl }->setTextIndicator(textIndicator, WebCore::TextIndicatorLifetime::Permanent);
     }, nullptr, [self]() {
-        RetainPtr { _viewImpl.get() }->clearTextIndicatorWithAnimation(WebCore::TextIndicatorDismissalAnimation::None);
+        CheckedPtr { _viewImpl }->clearTextIndicatorWithAnimation(WebCore::TextIndicatorDismissalAnimation::None);
     });
 }
 
