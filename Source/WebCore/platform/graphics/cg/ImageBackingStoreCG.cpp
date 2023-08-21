@@ -28,12 +28,6 @@
 
 namespace WebCore {
 
-static void dataProviderReleaseCallback(void* info, const void*, size_t)
-{
-    auto* pixels = static_cast<FragmentedSharedBuffer::DataSegment*>(info);
-    pixels->deref(); // Balanced below in ImageBackingStore::image().
-}
-
 PlatformImagePtr ImageBackingStore::image() const
 {
     static const size_t bytesPerPixel = 4;
@@ -43,12 +37,7 @@ PlatformImagePtr ImageBackingStore::image() const
     size_t bytesPerRow = bytesPerPixel * width;
 
     auto colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
-    auto dataProvider = adoptCF(CGDataProviderCreateWithData(m_pixels.get(), m_pixelsPtr, height * bytesPerRow, dataProviderReleaseCallback));
-
-    if (!dataProvider)
-        return nullptr;
-
-    m_pixels->ref(); // Balanced above in dataProviderReleaseCallback().
+    auto dataProvider = adoptCF(CGDataProviderCreateWithData(nullptr, m_pixelsPtr, height * bytesPerRow, nullptr));
     return adoptCF(CGImageCreate(width, height, bitsPerComponent, bytesPerPixel * 8, bytesPerRow, colorSpace.get(), (m_premultiplyAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaFirst) | kCGImageByteOrder32Little, dataProvider.get(), nullptr, true, kCGRenderingIntentDefault));
 }
 
