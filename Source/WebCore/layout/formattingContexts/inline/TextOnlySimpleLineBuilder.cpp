@@ -71,16 +71,6 @@ static inline bool isLastLineWithInlineContent(InlineItemPosition placedContentE
     return placedContentEnd.index == layoutRangeEndIndex && !placedContentEnd.offset;
 }
 
-static inline void appendInlineTextItem(const InlineTextItem& inlineTextItem, const RenderStyle& style, const Line& line, InlineContentBreaker::ContinuousContent& candidateContent)
-{
-    auto textContentlWidth = [&] {
-        if (auto textWidth = inlineTextItem.width())
-            return *textWidth;
-        return measuredInlineTextItem(inlineTextItem, style, line.contentLogicalRight() + candidateContent.logicalWidth());
-    };
-    candidateContent.appendTextContent(inlineTextItem, style, textContentlWidth());
-}
-
 static inline bool consumeTrailingLineBreakIfApplicable(const TextOnlyLineBreakResult& result, size_t trailingInlineItemIndex, size_t layoutRangeEnd, Line& line, const InlineItems& inlineItems)
 {
     // Trailing forced line break should be consumed after fully placed content.
@@ -220,35 +210,36 @@ InlineItemPosition TextOnlySimpleLineBuilder::placeInlineTextContent(const Inlin
 InlineItemPosition TextOnlySimpleLineBuilder::placeNonWrappingInlineTextContent(const InlineItemRange& layoutRange)
 {
     ASSERT(!TextUtil::isWrappingAllowed(root().style()));
+    ASSERT(!m_partialLeadingTextItem);
 
-    auto candidateContent = InlineContentBreaker::ContinuousContent { };
+    auto candidateContent = CandidateTextContent { layoutRange.startIndex(), layoutRange.startIndex(), { } };
     auto& rootStyle = !isFirstFormattedLine() ? root().style() : root().firstLineStyle();
     auto isEndOfLine = false;
     auto trailingLineBreakIndex = std::optional<size_t> { };
     auto nextItemIndex = layoutRange.startIndex();
 
-    if (m_partialLeadingTextItem) {
-        appendInlineTextItem(*m_partialLeadingTextItem, rootStyle, m_line, candidateContent);
-        ++nextItemIndex;
-        isEndOfLine = nextItemIndex >= layoutRange.endIndex();
-    }
     while (!isEndOfLine) {
         auto& inlineItem = m_inlineItems[nextItemIndex];
         ASSERT(inlineItem.isText() || inlineItem.isLineBreak());
-        if (inlineItem.isText())
-            appendInlineTextItem(downcast<InlineTextItem>(inlineItem), rootStyle, m_line, candidateContent);
-        else if (inlineItem.isLineBreak())
+        if (inlineItem.isText()) {
+            auto contentWidth = [&] {
+                if (auto logicalWidth = downcast<InlineTextItem>(inlineItem).width())
+                    return *logicalWidth;
+                return measuredInlineTextItem(downcast<InlineTextItem>(inlineItem), rootStyle, candidateContent.logicalWidth);
+            };
+            candidateContent.append(contentWidth());
+        } else if (inlineItem.isLineBreak())
             trailingLineBreakIndex = nextItemIndex;
         ++nextItemIndex;
         isEndOfLine = nextItemIndex >= layoutRange.endIndex() || trailingLineBreakIndex.has_value();
     }
 
-    if (trailingLineBreakIndex && candidateContent.runs().isEmpty()) {
+    if (trailingLineBreakIndex && candidateContent.startIndex == candidateContent.endIndex) {
         m_line.append(m_inlineItems[*trailingLineBreakIndex], m_inlineItems[*trailingLineBreakIndex].style(), { });
         return { *trailingLineBreakIndex + 1, { } };
     }
 
-    auto result = handleOverflowingTextContent(candidateContent, layoutRange);
+    auto result = commitCandidateContent(candidateContent, layoutRange);
     nextItemIndex = layoutRange.startIndex() + result.committedCount;
     if (consumeTrailingLineBreakIfApplicable(result, nextItemIndex, layoutRange.endIndex(), m_line, m_inlineItems))
         ++nextItemIndex;
@@ -263,17 +254,18 @@ TextOnlyLineBreakResult TextOnlySimpleLineBuilder::commitCandidateContent(const 
 {
     auto& rootStyle = !isFirstFormattedLine() ? root().style() : root().firstLineStyle();
     auto hasLeadingPartiaContent = m_partialLeadingTextItem && candidateContent.startIndex == layoutRange.startIndex();
+    auto contentWidth = [&] (auto& inlineTextItem, InlineLayoutUnit contentOffset) {
+        if (auto logicalWidth = inlineTextItem.width())
+            return *logicalWidth;
+        return measuredInlineTextItem(inlineTextItem, rootStyle, m_line.contentLogicalRight() + contentOffset);
+    };
 
     if (candidateContent.logicalWidth <= availableWidth() && !hasLeadingPartiaContent) {
         for (auto index = candidateContent.startIndex; index < candidateContent.endIndex; ++index) {
             auto& inlineTextItem = downcast<InlineTextItem>(m_inlineItems[index]);
-            auto contentWidth = [&] {
-                if (auto logicalWidth = inlineTextItem.width())
-                    return *logicalWidth;
-                return measuredInlineTextItem(inlineTextItem, rootStyle, m_line.contentLogicalRight());
-            };
-            m_line.appendTextFast(inlineTextItem, rootStyle, contentWidth());
+            m_line.appendTextFast(inlineTextItem, rootStyle, contentWidth(inlineTextItem, { }));
         }
+
         if (m_line.hasContentOrListMarker())
             m_wrapOpportunityList.append(&downcast<InlineTextItem>(m_inlineItems[candidateContent.endIndex - 1]));
         return { InlineContentBreaker::IsEndOfLine::No, candidateContent.endIndex - candidateContent.startIndex };
@@ -281,12 +273,15 @@ TextOnlyLineBreakResult TextOnlySimpleLineBuilder::commitCandidateContent(const 
 
     auto candidateContentForLineBreaking = InlineContentBreaker::ContinuousContent { };
     auto startIndex = candidateContent.startIndex;
+
     if (hasLeadingPartiaContent) {
-        appendInlineTextItem(*m_partialLeadingTextItem, rootStyle, m_line, candidateContentForLineBreaking);
+        candidateContentForLineBreaking.appendTextContent(*m_partialLeadingTextItem, rootStyle, contentWidth(*m_partialLeadingTextItem, { }));
         ++startIndex;
     }
-    for (auto index = startIndex; index < candidateContent.endIndex; ++index)
-        appendInlineTextItem(downcast<InlineTextItem>(m_inlineItems[index]), rootStyle, m_line, candidateContentForLineBreaking);
+    for (auto index = startIndex; index < candidateContent.endIndex; ++index) {
+        auto& inlineTextItem = downcast<InlineTextItem>(m_inlineItems[index]);
+        candidateContentForLineBreaking.appendTextContent(inlineTextItem, rootStyle, contentWidth(inlineTextItem, candidateContentForLineBreaking.logicalWidth()));
+    }
     return handleOverflowingTextContent(candidateContentForLineBreaking, layoutRange);
 }
 
