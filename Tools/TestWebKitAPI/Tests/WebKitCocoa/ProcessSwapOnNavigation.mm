@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "DeprecatedGlobalValues.h"
+#import "FrameTreeChecks.h"
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -7232,6 +7233,15 @@ TEST(ProcessSwap, DISABLED_SameSiteWindowWithOpenerNavigateToFile)
     auto pid3 = [createdWebView _webProcessIdentifier];
     EXPECT_TRUE(!!pid3);
     EXPECT_NE(pid2, pid3);
+
+    using namespace TestWebKitAPI;
+    checkFrameTreesInProcesses(webView.get(), {
+        { "pson://www.webkit.org"_s }, { RemoteFrame }
+    });
+
+    checkFrameTreesInProcesses(createdWebView.get(), {
+        { RemoteFrame }, { "file://"_s }
+    });
 
     [createdWebView goBack];
     TestWebKitAPI::Util::run(&done);

@@ -24,6 +24,7 @@
  */
 
 #import "config.h"
+#import "FrameTreeChecks.h"
 #import "HTTPServer.h"
 #import "TestNavigationDelegate.h"
 #import "Utilities.h"
@@ -58,12 +59,6 @@ static void enableWindowOpenPSON(WKWebViewConfiguration *configuration)
         }
     }
 }
-
-enum RemoteFrameTag { RemoteFrame };
-struct ExpectedFrameTree {
-    std::variant<RemoteFrameTag, String> remoteOrOrigin;
-    Vector<ExpectedFrameTree> children { };
-};
 
 static bool frameTreesMatch(_WKFrameTreeNode *actualRoot, const ExpectedFrameTree& expectedRoot)
 {
@@ -119,7 +114,7 @@ static void checkFrameTreesInProcesses(NSSet<_WKFrameTreeNode *> *actualTrees, V
     EXPECT_TRUE(frameTreesMatch(actualTrees, WTFMove(expectedFrameTrees)));
 }
 
-static void checkFrameTreesInProcesses(WKWebView *webView, Vector<ExpectedFrameTree>&& expectedFrameTrees)
+void checkFrameTreesInProcesses(WKWebView *webView, Vector<ExpectedFrameTree>&& expectedFrameTrees)
 {
     checkFrameTreesInProcesses(frameTrees(webView).get(), WTFMove(expectedFrameTrees));
 }

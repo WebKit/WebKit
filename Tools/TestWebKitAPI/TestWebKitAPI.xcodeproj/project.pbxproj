@@ -2603,6 +2603,7 @@
 		57F1C91025DDD51900E8F6EA /* PrivateClickMeasurementCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PrivateClickMeasurementCocoa.mm; sourceTree = "<group>"; };
 		57F56A5B1C7F8A4000F31D7E /* IsNavigationActionTrusted.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = IsNavigationActionTrusted.html; sourceTree = "<group>"; };
 		5C0160C021A132320077FA32 /* JITEnabled.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JITEnabled.mm; sourceTree = "<group>"; };
+		5C050D542A8ADBC7004A2BA4 /* FrameTreeChecks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameTreeChecks.h; sourceTree = "<group>"; };
 		5C0BF88C1DD5957400B00328 /* MemoryPressureHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryPressureHandler.mm; sourceTree = "<group>"; };
 		5C0BF88F1DD5999B00B00328 /* WebViewCanPasteZeroPng.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewCanPasteZeroPng.mm; sourceTree = "<group>"; };
 		5C121E8C2410703200486F9B /* ContentWorldPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContentWorldPlugIn.mm; sourceTree = "<group>"; };
@@ -3981,6 +3982,7 @@
 				2E92B8F8216490EA005B64F0 /* FontAttributes.mm */,
 				F4FA282924CD012700618A46 /* FormValidation.mm */,
 				5CB5B3BD1FFC517E00C27BB0 /* FrameHandleSerialization.mm */,
+				5C050D542A8ADBC7004A2BA4 /* FrameTreeChecks.h */,
 				51819F2926EAC98200E47375 /* FTP.mm */,
 				CDCF78A7244A2EDB00480311 /* FullscreenAlert.mm */,
 				CD78E11A1DB7EA360014A2DE /* FullscreenDelegate.mm */,
