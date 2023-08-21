@@ -4582,3 +4582,7 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-global
 
 webkit.org/b/260310 imported/w3c/web-platform-tests/css/cssom-view/scrollIntoView-sideways-rl-writing-mode.html [ Failure ]
 webkit.org/b/260310 imported/w3c/web-platform-tests/css/cssom-view/scrollIntoView-sideways-rl-writing-mode-and-rtl-direction.html [ Failure ]
+
+#webkit.org/b/260490 [iOS] 2 imported/w3c/web-platform-tests/css/css-lists/* tests are constant failures
+imported/w3c/web-platform-tests/css/css-lists/list-style-image-gradients-dynamic.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-lists/list-style-image-gradients.html [ Skip ]
