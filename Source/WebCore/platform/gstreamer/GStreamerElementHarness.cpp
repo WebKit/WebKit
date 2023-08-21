@@ -172,7 +172,7 @@ GStreamerElementHarness::~GStreamerElementHarness()
     gst_element_set_state(m_element.get(), GST_STATE_NULL);
 }
 
-void GStreamerElementHarness::start(GRefPtr<GstCaps>&& inputCaps)
+void GStreamerElementHarness::start(GRefPtr<GstCaps>&& inputCaps, std::optional<const GstSegment*>&& segment)
 {
     if (m_playing.load())
         return;
@@ -185,39 +185,45 @@ void GStreamerElementHarness::start(GRefPtr<GstCaps>&& inputCaps)
     auto streamId = makeString(GST_OBJECT_NAME(m_element.get()), '-', uniqueStreamId.exchangeAdd(1));
     pushEvent(adoptGRef(gst_event_new_stream_start(streamId.ascii().data())));
 
-    pushStickyEvents(WTFMove(inputCaps));
+    pushStickyEvents(WTFMove(inputCaps), WTFMove(segment));
     m_playing.store(true);
 }
 
-void GStreamerElementHarness::pushStickyEvents(GRefPtr<GstCaps>&& inputCaps)
+void GStreamerElementHarness::pushStickyEvents(GRefPtr<GstCaps>&& inputCaps, std::optional<const GstSegment*>&& segment)
 {
-    if (!m_inputCaps || !gst_caps_is_equal(inputCaps.get(), m_inputCaps.get())) {
+    if (!m_capsEventSent.load() || !m_inputCaps || !gst_caps_is_equal(inputCaps.get(), m_inputCaps.get())) {
         m_inputCaps = WTFMove(inputCaps);
         GST_DEBUG_OBJECT(m_element.get(), "Signaling downstream with caps %" GST_PTR_FORMAT, m_inputCaps.get());
         pushEvent(adoptGRef(gst_event_new_caps(m_inputCaps.get())));
-    } else if (m_stickyEventsSent.load()) {
-        GST_DEBUG_OBJECT(m_element.get(), "Input caps have not changed, not pushing sticky events again");
-        return;
+        m_capsEventSent.store(true);
     }
 
-    GstSegment segment;
-    gst_segment_init(&segment, GST_FORMAT_TIME);
-    pushEvent(adoptGRef(gst_event_new_segment(&segment)));
+    pushSegmentEvent(WTFMove(segment));
+}
 
-    m_stickyEventsSent.store(true);
+void GStreamerElementHarness::pushSegmentEvent(std::optional<const GstSegment*>&& segment)
+{
+    if (m_segmentEventSent.load())
+        return;
+
+    GstSegment timeSegment;
+    gst_segment_init(&timeSegment, GST_FORMAT_TIME);
+    pushEvent(adoptGRef(gst_event_new_segment(segment.value_or(&timeSegment))));
+    m_segmentEventSent.store(true);
 }
 
 bool GStreamerElementHarness::pushSample(GRefPtr<GstSample>&& sample)
 {
     GRefPtr<GstCaps> caps = gst_sample_get_caps(sample.get());
+    auto segment = gst_sample_get_segment(sample.get());
     GST_TRACE_OBJECT(m_element.get(), "Pushing sample with caps %" GST_PTR_FORMAT, caps.get());
     if (!m_playing.load())
-        start(WTFMove(caps));
+        start(WTFMove(caps), segment);
     else {
         auto currentCaps = adoptGRef(gst_pad_get_current_caps(m_srcPad.get()));
         GST_TRACE_OBJECT(m_element.get(), "Current caps: %" GST_PTR_FORMAT, currentCaps.get());
-        if (!currentCaps || gst_pad_needs_reconfigure(m_srcPad.get()))
-            pushStickyEvents(WTFMove(caps));
+        if (!currentCaps || gst_pad_needs_reconfigure(m_srcPad.get()) || !m_segmentEventSent.load())
+            pushStickyEvents(WTFMove(caps), segment);
     }
     GRefPtr<GstBuffer> buffer = gst_sample_get_buffer(sample.get());
     return pushBuffer(WTFMove(buffer));
@@ -225,8 +231,13 @@ bool GStreamerElementHarness::pushSample(GRefPtr<GstSample>&& sample)
 
 bool GStreamerElementHarness::pushBuffer(GRefPtr<GstBuffer>&& buffer)
 {
-    if (!m_stickyEventsSent.load())
+    if (!m_capsEventSent.load())
         return false;
+
+    // The segment event might have been cleared after flush-stop, so push another one if necessary.
+    // At this level we don't know what was the previous segment format, so assume the default,
+    // time.
+    pushSegmentEvent();
 
     auto result = pushBufferFull(WTFMove(buffer));
     return result == GST_FLOW_OK || result == GST_FLOW_EOS;
@@ -389,7 +400,8 @@ void GStreamerElementHarness::flush()
         return;
 
     m_inputCaps.clear();
-    m_stickyEventsSent.store(false);
+    m_capsEventSent.store(false);
+    m_segmentEventSent.store(false);
     GST_DEBUG_OBJECT(element(), "Flushing done, input caps and sticky events cleared");
 }
 
@@ -405,6 +417,7 @@ bool GStreamerElementHarness::flushBuffers()
 
     pushEvent(adoptGRef(gst_event_new_flush_start()));
     pushEvent(adoptGRef(gst_event_new_flush_stop(FALSE)));
+    m_segmentEventSent.store(false);
 
     for (auto& stream : m_outputStreams) {
         bool flushReceived = false;
