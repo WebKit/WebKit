@@ -7422,6 +7422,12 @@ PlatformXRSystem* WebPageProxy::xrSystem() const
 {
     return internals().xrSystem.get();
 }
+
+void WebPageProxy::restartXRSessionActivityOnProcessResumeIfNeeded()
+{
+    if (xrSystem() && xrSystem()->hasActiveSession())
+        xrSystem()->ensureImmersiveSessionActivity();
+}
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)

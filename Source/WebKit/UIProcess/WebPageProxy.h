@@ -2256,6 +2256,7 @@ public:
 
 #if ENABLE(WEBXR) && !USE(OPENXR)
     PlatformXRSystem* xrSystem() const;
+    void restartXRSessionActivityOnProcessResumeIfNeeded();
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
