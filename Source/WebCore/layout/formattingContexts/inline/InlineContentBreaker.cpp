@@ -48,17 +48,6 @@ static inline bool hasLeadingTextContent(const InlineContentBreaker::ContinuousC
     return false;
 }
 
-static inline bool hasTextRun(const InlineContentBreaker::ContinuousContent& continuousContent)
-{
-    // <span>text</span> is considered a text run even with the [inline box start][inline box end] inline items.
-    // Based on standards commit boundary rules it would be enough to check the first inline item.
-    for (auto& run : continuousContent.runs()) {
-        if (run.inlineItem.isText())
-            return true;
-    }
-    return false;
-}
-
 static inline std::optional<size_t> nextTextRunIndex(const InlineContentBreaker::ContinuousContent::RunList& runs, size_t startIndex)
 {
     for (auto index = startIndex + 1; index < runs.size(); ++index) {
@@ -111,7 +100,11 @@ static inline std::optional<size_t> firstTextRunIndex(const InlineContentBreaker
 InlineContentBreaker::Result InlineContentBreaker::processInlineContent(const ContinuousContent& candidateContent, const LineStatus& lineStatus)
 {
     ASSERT(!std::isnan(lineStatus.availableWidth));
-    ASSERT(candidateContent.logicalWidth() > lineStatus.availableWidth);
+    ASSERT(isMinimumInIntrinsicWidthMode() || candidateContent.logicalWidth() > lineStatus.availableWidth);
+
+    if (auto result = simplifiedMinimumInstrinsicWidthBreak(candidateContent, lineStatus))
+        return *result;
+
     auto result = processOverflowingContent(candidateContent, lineStatus);
     if (result.action == Result::Action::Wrap && lineStatus.trailingSoftHyphenWidth && hasLeadingTextContent(candidateContent)) {
         // A trailing soft hyphen with a wrapped text content turns into a visible hyphen.
@@ -123,9 +116,8 @@ InlineContentBreaker::Result InlineContentBreaker::processInlineContent(const Co
     return result;
 }
 
-InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(const ContinuousContent& overflowContent, const LineStatus& lineStatus) const
+InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(const ContinuousContent& continuousContent, const LineStatus& lineStatus) const
 {
-    auto continuousContent = ContinuousContent { overflowContent };
     ASSERT(!continuousContent.runs().isEmpty());
 
     ASSERT(continuousContent.logicalWidth() > lineStatus.availableWidth);
@@ -166,7 +158,7 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
         return *result;
 
     size_t overflowingRunIndex = 0;
-    if (hasTextRun(continuousContent)) {
+    if (continuousContent.hasTextContent()) {
         auto tryBreakingContentWithText = [&]() -> std::optional<Result> {
             // 1. This text content is not breakable.
             // 2. This breakable text content does not fit at all. Not even the first glyph. This is a very special case.
@@ -252,6 +244,33 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
     if (lineStatus.hasWrapOpportunityAtPreviousPosition)
         return { Result::Action::RevertToLastWrapOpportunity, IsEndOfLine::Yes };
     return { Result::Action::Keep, IsEndOfLine::No };
+}
+
+std::optional<InlineContentBreaker::Result> InlineContentBreaker::simplifiedMinimumInstrinsicWidthBreak(const ContinuousContent& candidateContent, const LineStatus& lineStatus) const
+{
+    if (!isMinimumInIntrinsicWidthMode() || !candidateContent.isTextOnlyContent())
+        return { };
+
+    auto& leadingInlineTextItem = downcast<InlineTextItem>(candidateContent.runs().first().inlineItem);
+    auto& style = leadingInlineTextItem.style();
+    if (!TextUtil::isWrappingAllowed(style))
+        return Result { Result::Action::Keep, IsEndOfLine::No };
+
+    if (!lineStatus.hasContent) {
+        auto breakBehavior = wordBreakBehavior(style, { });
+        if (breakBehavior.isEmpty())
+            return Result { Result::Action::Keep, IsEndOfLine::No };
+
+        if (breakBehavior.containsAny({ WordBreakRule::AtArbitraryPositionWithinWords, WordBreakRule::AtArbitraryPosition })) {
+            auto firstCharacterLength = TextUtil::firstUserPerceivedCharacterLength(leadingInlineTextItem);
+            if (leadingInlineTextItem.length() == firstCharacterLength)
+                return Result { Result::Action::Keep, IsEndOfLine::Yes };
+            auto firstCharacterWidth = TextUtil::width(leadingInlineTextItem, style.fontCascade(), leadingInlineTextItem.start(), leadingInlineTextItem.start() + firstCharacterLength, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No);
+            return Result { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { { }, PartialRun { firstCharacterLength, firstCharacterWidth }, { } } };
+        }
+        return { };
+    }
+    return Result { !lineStatus.trailingSoftHyphenWidth ? Result::Action::Wrap : Result::Action::RevertToLastNonOverflowingWrapOpportunity, IsEndOfLine::Yes };
 }
 
 static std::optional<size_t> findTrailingRunIndex(const InlineContentBreaker::ContinuousContent::RunList& runs, size_t breakableRunIndex)
@@ -768,7 +787,7 @@ OptionSet<InlineContentBreaker::WordBreakRule> InlineContentBreaker::wordBreakBe
     // OverflowWrap::BreakWord/Anywhere An otherwise unbreakable sequence of characters may be broken at an arbitrary point if there are no otherwise-acceptable break points in the line.
     // Note that this applies to content where CSS properties (e.g. WordBreak::KeepAll) make it unbreakable. 
     // Soft wrap opportunities introduced by overflow-wrap/word-wrap: break-word are not considered when calculating min-content intrinsic sizes.
-    auto overflowWrapBreakWordIsApplicable = !isInIntrinsicWidthMode();
+    auto overflowWrapBreakWordIsApplicable = !isMinimumInIntrinsicWidthMode();
     if (((overflowWrapBreakWordIsApplicable && style.overflowWrap() == OverflowWrap::BreakWord) || style.overflowWrap() == OverflowWrap::Anywhere) && !hasWrapOpportunityAtPreviousPosition)
         return includeHyphenationIfAllowed(WordBreakRule::AtArbitraryPosition);
     // Breaking is forbidden within “words”.
@@ -793,6 +812,7 @@ void InlineContentBreaker::ContinuousContent::resetTrailingTrimmableContent()
 void InlineContentBreaker::ContinuousContent::append(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
     ASSERT(inlineItem.isBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd());
+    m_isTextOnlyContent = false;
     appendToRunList(inlineItem, style, logicalWidth);
     if (inlineItem.isBox()) {
         // Inline boxes (whitespace-> <span></span>) do not prevent the trailing content from getting trimmed/hung
@@ -803,6 +823,7 @@ void InlineContentBreaker::ContinuousContent::append(const InlineItem& inlineIte
 
 void InlineContentBreaker::ContinuousContent::appendTextContent(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
+    m_hasTextContent = true;
     // https://www.w3.org/TR/css-text-4/#white-space-phase-2
     auto isTrailingHangingContent = inlineTextItem.isWhitespace() && TextUtil::shouldTrailingWhitespaceHang(style);
     if (isTrailingHangingContent)
@@ -839,6 +860,8 @@ void InlineContentBreaker::ContinuousContent::reset()
     m_trailingTrimmableWidth = { };
     m_hangingContentWidth = { };
     m_runs.clear();
+    m_hasTextContent = false;
+    m_isTextOnlyContent = true;
 }
 
 }

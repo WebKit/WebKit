@@ -90,7 +90,7 @@ InlineLayoutUnit TextUtil::width(const InlineTextItem& inlineTextItem, const Fon
     return TextUtil::width(inlineTextItem, fontCascade, inlineTextItem.start(), inlineTextItem.end(), contentLogicalLeft);
 }
 
-InlineLayoutUnit TextUtil::width(const InlineTextItem& inlineTextItem, const FontCascade& fontCascade, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft)
+InlineLayoutUnit TextUtil::width(const InlineTextItem& inlineTextItem, const FontCascade& fontCascade, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft, UseTrailingWhitespaceMeasuringOptimization useTrailingWhitespaceMeasuringOptimization)
 {
     RELEASE_ASSERT(from >= inlineTextItem.start());
     RELEASE_ASSERT(to <= inlineTextItem.end());
@@ -106,7 +106,7 @@ InlineLayoutUnit TextUtil::width(const InlineTextItem& inlineTextItem, const Fon
             return std::isnan(width) ? 0.0f : std::isinf(width) ? maxInlineLayoutUnit() : width;
         }
     }
-    return width(inlineTextItem.inlineTextBox(), fontCascade, from, to, contentLogicalLeft);
+    return width(inlineTextItem.inlineTextBox(), fontCascade, from, to, contentLogicalLeft, useTrailingWhitespaceMeasuringOptimization);
 }
 
 InlineLayoutUnit TextUtil::trailingWhitespaceWidth(const InlineTextBox& inlineTextBox, const FontCascade& fontCascade, size_t startPosition, size_t endPosition)

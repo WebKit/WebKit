@@ -1068,7 +1068,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
             !m_wrapOpportunityList.isEmpty()
         };
         m_inlineContentBreaker.setHyphenationDisabled(shouldDisableHyphenation(root().style(), m_successiveHyphenatedLineCount));
-        m_inlineContentBreaker.setIsInIntrinsicWidthMode(isInIntrinsicWidthMode());
+        m_inlineContentBreaker.setIsMinimumInIntrinsicWidthMode(intrinsicWidthMode() == IntrinsicWidthMode::Minimum);
         lineBreakingResult = m_inlineContentBreaker.processInlineContent(continuousInlineContent, lineStatus);
     }
     auto lineGainsNewContent = lineBreakingResult.action == InlineContentBreaker::Result::Action::Keep || lineBreakingResult.action == InlineContentBreaker::Result::Action::Break; 

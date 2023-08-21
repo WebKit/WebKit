@@ -293,7 +293,7 @@ TextOnlyLineBreakResult TextOnlySimpleLineBuilder::handleOverflowingTextContent(
     auto lineBreakingResult = InlineContentBreaker::Result { InlineContentBreaker::Result::Action::Keep, InlineContentBreaker::IsEndOfLine::No, { }, { } };
     if (candidateContent.logicalWidth() > availableWidth) {
         auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidth, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), m_line.hasContentOrListMarker(), !m_wrapOpportunityList.isEmpty() };
-        m_inlineContentBreaker.setIsInIntrinsicWidthMode(isInIntrinsicWidthMode());
+        m_inlineContentBreaker.setIsMinimumInIntrinsicWidthMode(intrinsicWidthMode() == IntrinsicWidthMode::Minimum);
         lineBreakingResult = m_inlineContentBreaker.processInlineContent(candidateContent, lineStatus);
     }
 
