@@ -27,6 +27,8 @@
 
 #if ENABLE(UI_SIDE_COMPOSITING)
 
+#include <wtf/ArgumentCoder.h>
+
 namespace IPC {
 class Decoder;
 class Encoder;
@@ -47,9 +49,7 @@ public:
     ~RemoteScrollingCoordinatorTransaction();
 
     std::unique_ptr<WebCore::ScrollingStateTree>& scrollingStateTree() { return m_scrollingStateTree; }
-
-    void encode(IPC::Encoder&) const;
-    static std::optional<RemoteScrollingCoordinatorTransaction> decode(IPC::Decoder&);
+    const std::unique_ptr<WebCore::ScrollingStateTree>& scrollingStateTree() const { return m_scrollingStateTree; }
 
     bool clearScrollLatching() const { return m_clearScrollLatching; }
 
@@ -67,5 +67,12 @@ private:
 };
 
 } // namespace WebKit
+
+namespace IPC {
+template<> struct ArgumentCoder<WebCore::ScrollingStateTree> {
+    static void encode(Encoder&, const WebCore::ScrollingStateTree&);
+    static std::optional<WebCore::ScrollingStateTree> decode(Decoder&);
+};
+}
 
 #endif // ENABLE(UI_SIDE_COMPOSITING)
