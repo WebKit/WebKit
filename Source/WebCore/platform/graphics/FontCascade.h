@@ -365,4 +365,7 @@ inline float FontCascade::tabWidth(const Font& font, const TabSize& tabSize, flo
     return result - (syntheticBoldInclusion == Font::SyntheticBoldInclusion::Exclude ? font.syntheticBoldOffset() : 0);
 }
 
+bool shouldSynthesizeSmallCaps(bool, const Font*, UChar32, std::optional<UChar32>, FontVariantCaps, bool);
+std::optional<UChar32> capitalized(UChar32);
+
 } // namespace WebCore

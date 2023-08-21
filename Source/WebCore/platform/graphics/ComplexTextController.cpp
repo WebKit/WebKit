@@ -294,32 +294,6 @@ bool ComplexTextController::advanceByCombiningCharacterSequence(const CachedText
     return true;
 }
 
-// FIXME: Capitalization is language-dependent and context-dependent and should operate on grapheme clusters instead of codepoints.
-static inline std::optional<UChar32> capitalized(UChar32 baseCharacter)
-{
-    if (U_GET_GC_MASK(baseCharacter) & U_GC_M_MASK)
-        return std::nullopt;
-
-    UChar32 uppercaseCharacter = u_toupper(baseCharacter);
-    ASSERT(uppercaseCharacter == baseCharacter || (U_IS_BMP(baseCharacter) == U_IS_BMP(uppercaseCharacter)));
-    if (uppercaseCharacter != baseCharacter)
-        return uppercaseCharacter;
-    return std::nullopt;
-}
-
-static bool shouldSynthesize(bool dontSynthesizeSmallCaps, const Font* nextFont, UChar32 baseCharacter, std::optional<UChar32> capitalizedBase, FontVariantCaps fontVariantCaps, bool engageAllSmallCapsProcessing)
-{
-    if (dontSynthesizeSmallCaps)
-        return false;
-    if (!nextFont || nextFont == Font::systemFallback())
-        return false;
-    if (engageAllSmallCapsProcessing && isUnicodeCompatibleASCIIWhitespace(baseCharacter))
-        return false;
-    if (!engageAllSmallCapsProcessing && !capitalizedBase)
-        return false;
-    return !nextFont->variantCapsSupportedForSynthesis(fontVariantCaps);
-}
-
 void ComplexTextController::collectComplexTextRuns()
 {
     if (!m_end || !m_font.size())
@@ -370,7 +344,7 @@ void ComplexTextController::collectComplexTextRuns()
     bool nextIsSmallCaps = false;
 
     auto capitalizedBase = capitalized(baseCharacter);
-    if (shouldSynthesize(dontSynthesizeSmallCaps, nextFont, baseCharacter, capitalizedBase, fontVariantCaps, engageAllSmallCapsProcessing)) {
+    if (shouldSynthesizeSmallCaps(dontSynthesizeSmallCaps, nextFont, baseCharacter, capitalizedBase, fontVariantCaps, engageAllSmallCapsProcessing)) {
         synthesizedFont = &nextFont->noSynthesizableFeaturesFont();
         smallSynthesizedFont = synthesizedFont->smallCapsFont(m_font.fontDescription());
         UChar32 characterToWrite = capitalizedBase ? capitalizedBase.value() : baseOfString[0];
@@ -408,7 +382,7 @@ void ComplexTextController::collectComplexTextRuns()
         nextFont = m_font.fontForCombiningCharacterSequence(baseOfString + previousIndex, currentIndex - previousIndex);
 
         capitalizedBase = capitalized(baseCharacter);
-        if (!synthesizedFont && shouldSynthesize(dontSynthesizeSmallCaps, nextFont, baseCharacter, capitalizedBase, fontVariantCaps, engageAllSmallCapsProcessing)) {
+        if (!synthesizedFont && shouldSynthesizeSmallCaps(dontSynthesizeSmallCaps, nextFont, baseCharacter, capitalizedBase, fontVariantCaps, engageAllSmallCapsProcessing)) {
             // Rather than synthesize each character individually, we should synthesize the entire "run" if any character requires synthesis.
             synthesizedFont = &nextFont->noSynthesizableFeaturesFont();
             smallSynthesizedFont = synthesizedFont->smallCapsFont(m_font.fontDescription());

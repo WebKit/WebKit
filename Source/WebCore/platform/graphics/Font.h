@@ -107,9 +107,6 @@ public:
 
     const Font* variantFont(const FontDescription& description, FontVariant variant) const
     {
-#if USE(FONT_VARIANT_VIA_FEATURES)
-        ASSERT(variant != SmallCapsVariant);
-#endif
         switch (variant) {
         case SmallCapsVariant:
             return smallCapsFont(description);
