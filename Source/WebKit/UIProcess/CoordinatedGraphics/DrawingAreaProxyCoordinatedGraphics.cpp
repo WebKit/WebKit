@@ -104,11 +104,6 @@ void DrawingAreaProxyCoordinatedGraphics::deviceScaleFactorDidChange()
     m_webPageProxy.send(Messages::DrawingArea::SetDeviceScaleFactor(m_webPageProxy.deviceScaleFactor()), m_identifier);
 }
 
-void DrawingAreaProxyCoordinatedGraphics::waitForBackingStoreUpdateOnNextPaint()
-{
-    m_hasReceivedFirstUpdate = true;
-}
-
 void DrawingAreaProxyCoordinatedGraphics::setBackingStoreIsDiscardable(bool isBackingStoreDiscardable)
 {
 #if !PLATFORM(WPE)
