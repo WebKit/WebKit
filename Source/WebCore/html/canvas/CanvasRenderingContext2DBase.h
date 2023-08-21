@@ -352,11 +352,11 @@ private:
     template<typename RectProvider> void didDraw(bool entireCanvas, RectProvider);
 
     bool is2dBase() const final { return true; }
+    void prepareForDisplayWithPaint() override;
     void paintRenderingResultsToCanvas() override;
     bool needsPreparationForDisplay() const final;
     void prepareForDisplay() final;
 
-    void clearAccumulatedDirtyRect() final;
     bool isEntireBackingStoreDirty() const;
     FloatRect backingStoreBounds() const { return FloatRect { { }, FloatSize { canvasBase().size() } }; }
 

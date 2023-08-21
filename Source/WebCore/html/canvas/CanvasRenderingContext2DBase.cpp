@@ -2237,11 +2237,6 @@ void CanvasRenderingContext2DBase::didDraw(bool entireCanvas, RectProvider rectP
         didDraw(rectProvider());
 }
 
-void CanvasRenderingContext2DBase::clearAccumulatedDirtyRect()
-{
-    m_dirtyRect = { };
-}
-
 bool CanvasRenderingContext2DBase::isEntireBackingStoreDirty() const
 {
     return m_dirtyRect == backingStoreBounds();
@@ -2251,6 +2246,12 @@ const Vector<CanvasRenderingContext2DBase::State, 1>& CanvasRenderingContext2DBa
 {
     realizeSaves();
     return m_stateStack;
+}
+
+void CanvasRenderingContext2DBase::prepareForDisplayWithPaint()
+{
+    CanvasRenderingContext::prepareForDisplayWithPaint();
+    m_dirtyRect = { }; // Note: might have been already cleared in prepare phase.
 }
 
 void CanvasRenderingContext2DBase::paintRenderingResultsToCanvas()
@@ -2282,6 +2283,7 @@ GraphicsContext* CanvasRenderingContext2DBase::drawingContext() const
 
 void CanvasRenderingContext2DBase::prepareForDisplay()
 {
+    m_dirtyRect = { };
     if (auto buffer = canvasBase().buffer())
         buffer->flushDrawingContextAsync();
 }
