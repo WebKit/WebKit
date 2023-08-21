@@ -1938,7 +1938,8 @@
       ],
       "expertise" : "JavaScriptCore",
       "github" : "danlliu",
-      "name" : "Daniel Liu"
+      "name" : "Daniel Liu",
+      "status" : "committer"
    },
    {
       "emails" : [
