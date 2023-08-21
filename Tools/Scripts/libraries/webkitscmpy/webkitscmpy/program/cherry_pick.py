@@ -45,7 +45,7 @@ class CherryPick(Command):
         )
         parser.add_argument(
             '--use-original', '--no-original',
-            dest='original', default=True,
+            dest='original', default=None,
             help='When cherry-picking a cherry-pick, use the original commit instead of a double cherry-pick.',
             action=arguments.NoAction,
         )
