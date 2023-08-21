@@ -1285,6 +1285,11 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
             // Do not let any ancestor of an editable object update its children.
             shouldUpdateParent = false;
         }
+
+        if (auto objects = parent->labelForObjects(); objects.size()) {
+            for (const auto& axObject : objects)
+                postNotification(dynamicDowncast<AccessibilityObject>(axObject.get()), axObject->document(), AXValueChanged);
+        }
     }
 
     // The role of list objects is dependent on their children, so we'll need to re-compute it here.
