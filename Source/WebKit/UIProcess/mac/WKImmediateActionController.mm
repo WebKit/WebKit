@@ -487,12 +487,12 @@
     if (!dictionaryPopupInfo.platformData.attributedString.nsAttributedString())
         return nil;
 
-    _viewImpl->prepareForDictionaryLookup();
+    RetainPtr { _viewImpl.get() }->prepareForDictionaryLookup();
 
     return WebCore::DictionaryLookup::animationControllerForPopup(dictionaryPopupInfo, _view, [self](WebCore::TextIndicator& textIndicator) {
-        _viewImpl->setTextIndicator(textIndicator, WebCore::TextIndicatorLifetime::Permanent);
+        RetainPtr { _viewImpl.get() }->setTextIndicator(textIndicator, WebCore::TextIndicatorLifetime::Permanent);
     }, nullptr, [self]() {
-        _viewImpl->clearTextIndicatorWithAnimation(WebCore::TextIndicatorDismissalAnimation::None);
+        RetainPtr { _viewImpl.get() }->clearTextIndicatorWithAnimation(WebCore::TextIndicatorDismissalAnimation::None);
     });
 }
 

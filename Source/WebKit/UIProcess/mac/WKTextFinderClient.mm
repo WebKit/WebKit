@@ -37,6 +37,7 @@
 #import <algorithm>
 #import <pal/spi/mac/NSTextFinderSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/CheckedPtr.h>
 #import <wtf/Deque.h>
 #import <wtf/NakedPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -155,7 +156,7 @@ private:
 @end
 
 @implementation WKTextFinderClient {
-    NakedPtr<WebKit::WebPageProxy> _page;
+    CheckedPtr<WebKit::WebPageProxy> _page;
     NSView *_view;
     Deque<WTF::Function<void(NSArray *, bool didWrap)>> _findReplyCallbacks;
     Deque<WTF::Function<void(NSImage *)>> _imageReplyCallbacks;
