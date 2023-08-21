@@ -125,8 +125,6 @@
 #import <UIKit/UIDragPreview_Private.h>
 #import <UIKit/UIDragSession.h>
 #import <UIKit/UIDropInteraction.h>
-#import <UIKit/UIPreviewInteraction.h>
-#import <UIKit/UIURLDragPreviewView.h>
 #import <UIKit/_UITextDragCaretView.h>
 #endif
 
@@ -1101,10 +1099,6 @@ WTF_EXTERN_C_END
 -(void)insertAtPosition:(UITextPosition *)position;
 -(void)updateToPosition:(UITextPosition *)position;
 -(void)remove;
-@end
-
-@interface UIURLDragPreviewView : UIView
-+ (instancetype)viewWithTitle:(NSString *)title URL:(NSURL *)url;
 @end
 
 @interface _UIParallaxTransitionPanGestureRecognizer : UIScreenEdgePanGestureRecognizer

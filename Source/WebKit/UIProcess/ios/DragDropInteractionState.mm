@@ -351,7 +351,6 @@ void DragDropInteractionState::stageDragItem(const DragItem& item, UIImage *drag
     m_adjustedPositionForDragEnd = item.eventPositionInContentCoordinates;
     m_stagedDragSource = {{
         item.sourceAction,
-        item.eventPositionInContentCoordinates,
         item.dragPreviewFrameInRootViewCoordinates,
         dragImage,
         item.image.indicatorData(),
@@ -403,15 +402,20 @@ void DragDropInteractionState::updatePreviewsForActiveDragSources()
             continue;
 
         if (source.action.contains(DragSourceAction::Link)) {
-            dragItem.previewProvider = [title = retainPtr((NSString *)source.linkTitle), url = retainPtr((NSURL *)source.linkURL), center = source.adjustedOrigin] () -> UIDragPreview * {
-                UIURLDragPreviewView *previewView = [UIURLDragPreviewView viewWithTitle:title.get() URL:url.get()];
-                previewView.center = center;
-                auto parameters = adoptNS([[UIDragPreviewParameters alloc] initWithTextLineRects:@[ [NSValue valueWithCGRect:previewView.bounds] ]]);
-                [parameters setBackgroundColor:[UIColor colorWithDynamicProvider:[] (UITraitCollection *traitCollection) -> UIColor * {
+            dragItem.previewProvider = [title = retainPtr((NSString *)source.linkTitle), url = retainPtr((NSURL *)source.linkURL)] () -> UIDragPreview * {
+                RetainPtr preview = [UIDragPreview previewForURL:url.get() title:title.get()];
+#if PLATFORM(VISION)
+                // FIXME: This is a slightly unfortunate since we end up copying the preview parameters,
+                // and also create an extra `UIDragPreview` on visionOS. We can remove this workaround
+                // once UIKit addresses <rdar://114204432>.
+                auto adjustedParameters = [preview parameters];
+                adjustedParameters.backgroundColor = [UIColor colorWithDynamicProvider:[] (UITraitCollection *traitCollection) -> UIColor * {
                     WebCore::LocalCurrentTraitCollection localCurrentTraitCollection(traitCollection);
                     return [UIColor.systemBackgroundColor resolvedColorWithTraitCollection:UITraitCollection.currentTraitCollection];
                 }]];
-                return adoptNS([[UIDragPreview alloc] initWithView:previewView parameters:parameters.get()]).autorelease();
+                preview = adoptNS([[UIDragPreview alloc] initWithView:[preview view] parameters:adjustedParameters]);
+#endif // PLATFORM(VISION)
+                return preview.autorelease();
             };
         }
 #if ENABLE(INPUT_TYPE_COLOR)
