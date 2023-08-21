@@ -36,28 +36,28 @@ NS_ASSUME_NONNULL_BEGIN
 /*!
  @abstract Constants used by @link WKWebExtensionController @/link to indicate tab changes.
  @constant WKWebExtensionTabChangedPropertiesNone  Indicates nothing changed.
- @constant WKWebExtensionTabChangedPropertiesLoading  Indicates the loading state changed.
- @constant WKWebExtensionTabChangedPropertiesTitle  Indicates the title changed.
- @constant WKWebExtensionTabChangedPropertiesURL  Indicates the URL changed.
- @constant WKWebExtensionTabChangedPropertiesSize  Indicates the size changed.
- @constant WKWebExtensionTabChangedPropertiesZoomFactor  Indicates the zoom factor changed.
  @constant WKWebExtensionTabChangedPropertiesAudible  Indicates the audible state changed.
+ @constant WKWebExtensionTabChangedPropertiesLoading  Indicates the loading state changed.
  @constant WKWebExtensionTabChangedPropertiesMuted  Indicates the muted state changed.
  @constant WKWebExtensionTabChangedPropertiesPinned  Indicates the pinned state changed.
  @constant WKWebExtensionTabChangedPropertiesReaderMode  Indicates the reader mode state changed.
+ @constant WKWebExtensionTabChangedPropertiesSize  Indicates the size changed.
+ @constant WKWebExtensionTabChangedPropertiesTitle  Indicates the title changed.
+ @constant WKWebExtensionTabChangedPropertiesURL  Indicates the URL changed.
+ @constant WKWebExtensionTabChangedPropertiesZoomFactor  Indicates the zoom factor changed.
  @constant WKWebExtensionTabChangedPropertiesAll  Indicates all properties changed.
  */
 typedef NS_OPTIONS(NSUInteger, _WKWebExtensionTabChangedProperties) {
     _WKWebExtensionTabChangedPropertiesNone       = 0,
-    _WKWebExtensionTabChangedPropertiesLoading    = 1 << 1,
-    _WKWebExtensionTabChangedPropertiesTitle      = 1 << 2,
-    _WKWebExtensionTabChangedPropertiesURL        = 1 << 3,
-    _WKWebExtensionTabChangedPropertiesSize       = 1 << 4,
-    _WKWebExtensionTabChangedPropertiesZoomFactor = 1 << 5,
-    _WKWebExtensionTabChangedPropertiesAudible    = 1 << 6,
-    _WKWebExtensionTabChangedPropertiesMuted      = 1 << 7,
-    _WKWebExtensionTabChangedPropertiesPinned     = 1 << 8,
-    _WKWebExtensionTabChangedPropertiesReaderMode = 1 << 9,
+    _WKWebExtensionTabChangedPropertiesAudible    = 1 << 1,
+    _WKWebExtensionTabChangedPropertiesLoading    = 1 << 2,
+    _WKWebExtensionTabChangedPropertiesMuted      = 1 << 3,
+    _WKWebExtensionTabChangedPropertiesPinned     = 1 << 4,
+    _WKWebExtensionTabChangedPropertiesReaderMode = 1 << 5,
+    _WKWebExtensionTabChangedPropertiesSize       = 1 << 6,
+    _WKWebExtensionTabChangedPropertiesTitle      = 1 << 7,
+    _WKWebExtensionTabChangedPropertiesURL        = 1 << 8,
+    _WKWebExtensionTabChangedPropertiesZoomFactor = 1 << 9,
     _WKWebExtensionTabChangedPropertiesAll        = NSUIntegerMax,
 } WK_API_AVAILABLE(macos(13.3), ios(16.4));
 
@@ -66,34 +66,34 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
 @optional
 
 /*!
- @abstract Called when the parent tab for the tab is needed.
- @param context The context in which the web extension is running.
- @return The parent tab of the tab, if the tab was opened from another tab.
- @discussion Defaults to `nil` if not implemented.
- */
-- (id <_WKWebExtensionTab>)parentTabForWebExtensionContext:(_WKWebExtensionContext *)context;
-
-/*!
  @abstract Called when the window containing the tab is needed.
  @param context The context in which the web extension is running.
  @return The window containing the tab.
  @discussion Defaults to `nil` if not implemented.
  */
-- (id <_WKWebExtensionWindow>)windowForWebExtensionContext:(_WKWebExtensionContext *)context;
+- (nullable id <_WKWebExtensionWindow>)windowForWebExtensionContext:(_WKWebExtensionContext *)context;
 
 /*!
- @abstract Called when the main web view for the window is needed.
+ @abstract Called when the parent tab for the tab is needed.
+ @param context The context in which the web extension is running.
+ @return The parent tab of the tab, if the tab was opened from another tab.
+ @discussion Defaults to `nil` if not implemented.
+ */
+- (nullable id <_WKWebExtensionTab>)parentTabForWebExtensionContext:(_WKWebExtensionContext *)context;
+
+/*!
+ @abstract Called when the main web view for the tab is needed.
  @param context The context in which the web extension is running.
  @return The main web view for the tab.
  @discussion Defaults to `nil` if not implemented.
  */
-- (WKWebView *)mainWebViewForWebExtensionContext:(_WKWebExtensionContext *)context;
+- (nullable WKWebView *)mainWebViewForWebExtensionContext:(_WKWebExtensionContext *)context;
 
 /*!
- @abstract Called when the web views for the window are needed.
+ @abstract Called when the web views for the tab are needed.
  @param context The context in which the web extension is running.
  @return An array of web views for the tab.
- @discussion Defaults to an empty array if not implemented.
+ @discussion Defaults to an array containing the main web view if not implemented.
  */
 - (NSArray<WKWebView *> *)webViewsForWebExtensionContext:(_WKWebExtensionContext *)context;
 
@@ -101,9 +101,9 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @abstract Called when the title of the tab is needed.
  @param context The context in which the web extension is running.
  @return The title of the tab.
- @discussion Defaults to an empty string if not implemented.
+ @discussion Defaults to the title of the main web view if not implemented.
  */
-- (NSString *)tabTitleForWebExtensionContext:(_WKWebExtensionContext *)context;
+- (nullable NSString *)tabTitleForWebExtensionContext:(_WKWebExtensionContext *)context;
 
 /*!
  @abstract Called when the selected state of the tab is needed.
@@ -183,10 +183,10 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
 - (void)unmuteForWebExtensionContext:(_WKWebExtensionContext *)context;
 
 /*!
- @abstract Called when the size of the tab in the window is needed.
+ @abstract Called when the size of the tab is needed.
  @param context The context in which the web extension is running.
  @return The size of the tab.
- @discussion Defaults to `CGSizeZero` if not implemented.
+ @discussion Defaults to size of the main web view if not implemented.
  */
 - (CGSize)sizeForWebExtensionContext:(_WKWebExtensionContext *)context;
 
@@ -194,7 +194,7 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @abstract Called when the zoom factor of the tab is needed.
  @param context The context in which the web extension is running.
  @return The zoom factor of the tab.
- @discussion Defaults to `1.0` if not implemented.
+ @discussion Defaults to zoom factor of the main web view if not implemented.
  */
 - (double)zoomFactorForWebExtensionContext:(_WKWebExtensionContext *)context;
 
@@ -202,9 +202,9 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @abstract Called when the URL of the tab is needed.
  @param context The context in which the web extension is running.
  @return The URL of the tab.
- @discussion Defaults to `nil` if not implemented.
+ @discussion Defaults to the URL of the main web view if not implemented.
  */
-- (NSURL *)urlForWebExtensionContext:(_WKWebExtensionContext *)context;
+- (nullable NSURL *)urlForWebExtensionContext:(_WKWebExtensionContext *)context;
 
 /*!
  @abstract Called when the pending URL of the tab is needed.
@@ -213,13 +213,13 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @discussion The pending URL is the URL of a page that is in the process of loading. If there is no pending URL, return `nil`.
  Defaults to `nil` if not implemented.
  */
-- (NSURL *)pendingURLForWebExtensionContext:(_WKWebExtensionContext *)context;
+- (nullable NSURL *)pendingURLForWebExtensionContext:(_WKWebExtensionContext *)context;
 
 /*!
  @abstract Called to check if the tab has finished loading.
  @param context The context in which the web extension is running.
  @return `YES` if the tab has finished loading, `NO` otherwise.
- @discussion Defaults to `YES` if not implemented.
+ @discussion Defaults to the loading state of the main web view if not implemented.
  */
 - (BOOL)isLoadingCompleteForWebExtensionContext:(_WKWebExtensionContext *)context;
 
@@ -227,8 +227,8 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @abstract Called to detect the locale of the webpage currently loaded in the tab.
  @param context The context in which the web extension is running.
  @param completionHandler A block to be called when the locale has been detected. The block takes a single argument, the
- detected locale, which may be `nil` if no locale could be detected.
- @discussion No language detection is performed if not implemented.
+ detected locale, which may be \c nil if no locale could be detected.
+ @discussion Defaults to calling the `completionHandler` with `nil` if not implemented.
  */
 - (void)detectWebpageLocaleForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSLocale * _Nullable locale))completionHandler;
 

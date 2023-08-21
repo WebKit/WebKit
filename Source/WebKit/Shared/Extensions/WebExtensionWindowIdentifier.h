@@ -23,23 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(WK_WEB_EXTENSIONS)
+#pragma once
 
-#import <WebKit/WebKit.h>
+#include <wtf/ObjectIdentifier.h>
 
-#import <WebKit/_WKWebExtensionControllerDelegate.h>
-#import <WebKit/_WKWebExtensionMatchPattern.h>
-#import <WebKit/_WKWebExtensionPermission.h>
-#import <WebKit/_WKWebExtensionTab.h>
+namespace WebKit {
 
-@interface TestWebExtensionsDelegate : NSObject <_WKWebExtensionControllerDelegate>
+struct WebExtensionWindowIdentifierType;
+using WebExtensionWindowIdentifier = ObjectIdentifier<WebExtensionWindowIdentifierType>;
 
-@property (nonatomic, copy) NSArray<id <_WKWebExtensionWindow>> *(^openWindows)(_WKWebExtensionContext *);
-@property (nonatomic, copy) id <_WKWebExtensionWindow> (^focusedWindow)(_WKWebExtensionContext *);
-
-@property (nonatomic, copy) void (^promptForPermissions)(id <_WKWebExtensionTab>, NSSet<NSString *> *, void (^)(NSSet<_WKWebExtensionPermission> *));
-@property (nonatomic, copy) void (^promptForPermissionMatchPatterns)(id <_WKWebExtensionTab>, NSSet<_WKWebExtensionMatchPattern *> *, void (^)(NSSet<_WKWebExtensionMatchPattern *> *));
-
-@end
-
-#endif // ENABLE(WK_WEB_EXTENSIONS)
+}

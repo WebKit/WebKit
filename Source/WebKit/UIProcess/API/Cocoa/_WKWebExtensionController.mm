@@ -100,7 +100,7 @@
 }
 
 template<typename T>
-static inline NSSet *toAPI(const T& inputSet)
+static inline NSSet *toAPI(const HashSet<Ref<T>>& inputSet)
 {
     if (inputSet.isEmpty())
         return [NSSet set];
@@ -115,13 +115,88 @@ static inline NSSet *toAPI(const T& inputSet)
 
 - (NSSet<_WKWebExtension *> *)extensions
 {
-    auto extensions = _webExtensionController->extensions();
-    return toAPI(extensions);
+    return toAPI(_webExtensionController->extensions());
 }
 
 - (NSSet<_WKWebExtensionContext *> *)extensionContexts
 {
     return toAPI(_webExtensionController->extensionContexts());
+}
+
+- (void)didOpenWindow:(id<_WKWebExtensionWindow>)newWindow
+{
+    NSParameterAssert([newWindow conformsToProtocol:@protocol(_WKWebExtensionWindow)]);
+
+    for (auto& context : _webExtensionController->extensionContexts())
+        [context->wrapper() didOpenWindow:newWindow];
+}
+
+- (void)didCloseWindow:(id<_WKWebExtensionWindow>)closedWindow
+{
+    NSParameterAssert([closedWindow conformsToProtocol:@protocol(_WKWebExtensionWindow)]);
+
+    for (auto& context : _webExtensionController->extensionContexts())
+        [context->wrapper() didCloseWindow:closedWindow];
+}
+
+- (void)didFocusWindow:(id<_WKWebExtensionWindow>)focusedWindow
+{
+    if (focusedWindow)
+        NSParameterAssert([focusedWindow conformsToProtocol:@protocol(_WKWebExtensionWindow)]);
+
+    for (auto& context : _webExtensionController->extensionContexts())
+        [context->wrapper() didFocusWindow:focusedWindow];
+}
+
+- (void)didOpenTab:(id<_WKWebExtensionTab>)newTab
+{
+    NSParameterAssert([newTab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
+
+    for (auto& context : _webExtensionController->extensionContexts())
+        [context->wrapper() didOpenTab:newTab];
+}
+
+- (void)didCloseTab:(id<_WKWebExtensionTab>)closedTab windowIsClosing:(BOOL)windowIsClosing
+{
+    NSParameterAssert([closedTab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
+
+    for (auto& context : _webExtensionController->extensionContexts())
+        [context->wrapper() didCloseTab:closedTab windowIsClosing:windowIsClosing];
+}
+
+- (void)didSelectTabs:(NSSet<id<_WKWebExtensionTab>> *)selectedTabs
+{
+    NSParameterAssert([selectedTabs isKindOfClass:NSSet.class]);
+
+    for (auto& context : _webExtensionController->extensionContexts())
+        [context->wrapper() didSelectTabs:selectedTabs];
+}
+
+- (void)didMoveTab:(id<_WKWebExtensionTab>)movedTab fromIndex:(NSUInteger)index inWindow:(id<_WKWebExtensionWindow>)oldWindow
+{
+    NSParameterAssert([movedTab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
+    if (oldWindow)
+        NSParameterAssert([oldWindow conformsToProtocol:@protocol(_WKWebExtensionWindow)]);
+
+    for (auto& context : _webExtensionController->extensionContexts())
+        [context->wrapper() didMoveTab:movedTab fromIndex:index inWindow:oldWindow];
+}
+
+- (void)didReplaceTab:(id<_WKWebExtensionTab>)oldTab withTab:(id<_WKWebExtensionTab>)newTab
+{
+    NSParameterAssert([oldTab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
+    NSParameterAssert([newTab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
+
+    for (auto& context : _webExtensionController->extensionContexts())
+        [context->wrapper() didReplaceTab:oldTab withTab:newTab];
+}
+
+- (void)didChangeTabProperties:(_WKWebExtensionTabChangedProperties)properties forTab:(id<_WKWebExtensionTab>)changedTab
+{
+    NSParameterAssert([changedTab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
+
+    for (auto& context : _webExtensionController->extensionContexts())
+        [context->wrapper() didChangeTabProperties:properties forTab:changedTab];
 }
 
 #pragma mark WKObject protocol implementation
@@ -176,6 +251,42 @@ static inline NSSet *toAPI(const T& inputSet)
 - (NSSet<_WKWebExtensionContext *> *)extensionContexts
 {
     return nil;
+}
+
+- (void)didOpenWindow:(id<_WKWebExtensionWindow>)newWindow
+{
+}
+
+- (void)didCloseWindow:(id<_WKWebExtensionWindow>)closedWindow
+{
+}
+
+- (void)didFocusWindow:(id<_WKWebExtensionWindow>)focusedWindow
+{
+}
+
+- (void)didOpenTab:(id<_WKWebExtensionTab>)newTab
+{
+}
+
+- (void)didCloseTab:(id<_WKWebExtensionTab>)closedTab windowIsClosing:(BOOL)windowIsClosing
+{
+}
+
+- (void)didSelectTabs:(NSSet<id<_WKWebExtensionTab>> *)selectedTabs
+{
+}
+
+- (void)didMoveTab:(id<_WKWebExtensionTab>)movedTab fromIndex:(NSUInteger)index inWindow:(id<_WKWebExtensionWindow>)oldWindow
+{
+}
+
+- (void)didReplaceTab:(id<_WKWebExtensionTab>)oldTab withTab:(id<_WKWebExtensionTab>)newTab
+{
+}
+
+- (void)didChangeTabProperties:(_WKWebExtensionTabChangedProperties)properties forTab:(id<_WKWebExtensionTab>)changedTab
+{
 }
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

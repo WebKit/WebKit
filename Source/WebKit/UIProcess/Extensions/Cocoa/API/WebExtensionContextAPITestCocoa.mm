@@ -43,7 +43,7 @@ void WebExtensionContext::testResult(bool result, String message, String sourceU
     if (!isLoaded())
         return;
 
-    auto delegate = (id<_WKWebExtensionControllerDelegatePrivate>)extensionController()->wrapper().delegate;
+    auto delegate = extensionController()->delegate();
     if ([delegate respondsToSelector:@selector(_webExtensionController:recordTestAssertionResult:withMessage:andSourceURL:lineNumber:forExtensionContext:)]) {
         [delegate _webExtensionController:extensionController()->wrapper() recordTestAssertionResult:result withMessage:message andSourceURL:sourceURL lineNumber:lineNumber forExtensionContext:wrapper()];
         return;
@@ -63,7 +63,7 @@ void WebExtensionContext::testEqual(bool result, String expectedValue, String ac
     if (!isLoaded())
         return;
 
-    auto delegate = (id<_WKWebExtensionControllerDelegatePrivate>)extensionController()->wrapper().delegate;
+    auto delegate = extensionController()->delegate();
     if ([delegate respondsToSelector:@selector(_webExtensionController:recordTestEqualityResult:expectedValue:actualValue:withMessage:andSourceURL:lineNumber:forExtensionContext:)]) {
         [delegate _webExtensionController:extensionController()->wrapper() recordTestEqualityResult:result expectedValue:expectedValue actualValue:actualValue withMessage:message andSourceURL:sourceURL lineNumber:lineNumber forExtensionContext:wrapper()];
         return;
@@ -83,7 +83,7 @@ void WebExtensionContext::testMessage(String message, String sourceURL, unsigned
     if (!isLoaded())
         return;
 
-    auto delegate = (id<_WKWebExtensionControllerDelegatePrivate>)extensionController()->wrapper().delegate;
+    auto delegate = extensionController()->delegate();
     if ([delegate respondsToSelector:@selector(_webExtensionController:recordTestMessage:andSourceURL:lineNumber:forExtensionContext:)]) {
         [delegate _webExtensionController:extensionController()->wrapper() recordTestMessage:message andSourceURL:sourceURL lineNumber:lineNumber forExtensionContext:wrapper()];
         return;
@@ -100,7 +100,7 @@ void WebExtensionContext::testYielded(String message, String sourceURL, unsigned
     if (!isLoaded())
         return;
 
-    auto delegate = (id<_WKWebExtensionControllerDelegatePrivate>)extensionController()->wrapper().delegate;
+    auto delegate = extensionController()->delegate();
     if ([delegate respondsToSelector:@selector(_webExtensionController:recordTestYieldedWithMessage:andSourceURL:lineNumber:forExtensionContext:)]) {
         [delegate _webExtensionController:extensionController()->wrapper() recordTestYieldedWithMessage:message andSourceURL:sourceURL lineNumber:lineNumber forExtensionContext:wrapper()];
         return;
@@ -117,7 +117,7 @@ void WebExtensionContext::testFinished(bool result, String message, String sourc
     if (!isLoaded())
         return;
 
-    auto delegate = (id<_WKWebExtensionControllerDelegatePrivate>)extensionController()->wrapper().delegate;
+    auto delegate = extensionController()->delegate();
     if ([delegate respondsToSelector:@selector(_webExtensionController:recordTestFinishedWithResult:message:andSourceURL:lineNumber:forExtensionContext:)]) {
         [delegate _webExtensionController:extensionController()->wrapper() recordTestFinishedWithResult:result message:message andSourceURL:sourceURL lineNumber:lineNumber forExtensionContext:wrapper()];
         return;

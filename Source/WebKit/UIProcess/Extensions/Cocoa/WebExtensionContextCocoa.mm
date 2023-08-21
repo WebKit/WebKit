@@ -40,13 +40,18 @@
 #import "WKUIDelegatePrivate.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewInternal.h"
+#import "WebExtensionTab.h"
 #import "WebExtensionURLSchemeHandler.h"
+#import "WebExtensionWindow.h"
 #import "WebPageProxy.h"
 #import "WebUserContentControllerProxy.h"
 #import "_WKWebExtensionContextInternal.h"
+#import "_WKWebExtensionControllerDelegatePrivate.h"
+#import "_WKWebExtensionControllerInternal.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
 #import "_WKWebExtensionPermission.h"
 #import "_WKWebExtensionTab.h"
+#import "_WKWebExtensionWindow.h"
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/UserScript.h>
 #import <pal/spi/cocoa/NSKeyedUnarchiverSPI.h>
@@ -198,6 +203,8 @@ bool WebExtensionContext::load(WebExtensionController& controller, String storag
 
     readStateFromStorage();
     writeStateToStorage();
+
+    populateWindowsAndTabs();
 
     // FIXME: <https://webkit.org/b/248430> Move local storage (if base URL changed).
 
@@ -1131,6 +1138,271 @@ bool WebExtensionContext::hasAccessToAllHosts()
     return false;
 }
 
+Ref<WebExtensionWindow> WebExtensionContext::getOrCreateWindow(_WKWebExtensionWindow *delegate)
+{
+    ASSERT(delegate);
+
+    for (auto& window : m_windowMap.values()) {
+        if (window->delegate() == delegate)
+            return window;
+    }
+
+    auto window = adoptRef(new WebExtensionWindow(*this, delegate));
+    m_windowMap.set(window->identifier(), *window);
+
+    RELEASE_LOG_DEBUG(Extensions, "Window with identifier %{public}llu was created", window->identifier().toUInt64());
+
+    return window.releaseNonNull();
+}
+
+RefPtr<WebExtensionWindow> WebExtensionContext::getWindow(WebExtensionWindowIdentifier identifier)
+{
+    auto* window = m_windowMap.get(identifier);
+    if (!window) {
+        RELEASE_LOG_ERROR(Extensions, "Window with identifier %{public}llu was not found", identifier.toUInt64());
+        return nullptr;
+    }
+
+    if (!window->isValid()) {
+        RELEASE_LOG_ERROR(Extensions, "Window with identifier %{public}llu has nil delegate; reference not removed via didCloseWindow: before release", identifier.toUInt64());
+        m_windowMap.remove(identifier);
+        return nullptr;
+    }
+
+    return window;
+}
+
+Ref<WebExtensionTab> WebExtensionContext::getOrCreateTab(_WKWebExtensionTab *delegate)
+{
+    ASSERT(delegate);
+
+    for (auto& tab : m_tabMap.values()) {
+        if (tab->delegate() == delegate)
+            return tab;
+    }
+
+    auto tab = adoptRef(new WebExtensionTab(*this, delegate));
+    m_tabMap.set(tab->identifier(), *tab);
+
+    RELEASE_LOG_DEBUG(Extensions, "Tab with identifier %{public}llu was created", tab->identifier().toUInt64());
+
+    return tab.releaseNonNull();
+}
+
+RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebExtensionTabIdentifier identifier)
+{
+    auto* tab = m_tabMap.get(identifier);
+    if (!tab) {
+        RELEASE_LOG_ERROR(Extensions, "Tab with identifier %{public}llu was not found", identifier.toUInt64());
+        return nullptr;
+    }
+
+    if (!tab->isValid()) {
+        RELEASE_LOG_ERROR(Extensions, "Tab with identifier %{public}llu has nil delegate; reference not removed via didCloseTab: before release", identifier.toUInt64());
+        m_tabMap.remove(identifier);
+        return nullptr;
+    }
+
+    return tab;
+}
+
+void WebExtensionContext::populateWindowsAndTabs()
+{
+    ASSERT(isLoaded());
+
+    auto delegate = m_extensionController->delegate();
+
+    if ([delegate respondsToSelector:@selector(webExtensionController:openWindowsForExtensionContext:)]) {
+        auto *openWindows = [delegate webExtensionController:extensionController()->wrapper() openWindowsForExtensionContext:wrapper()];
+        THROW_UNLESS([openWindows isKindOfClass:NSArray.class], @"Object returned by webExtensionController:openWindowsForExtensionContext: is not an array");
+
+        for (id<_WKWebExtensionWindow> windowDelegate in openWindows) {
+            THROW_UNLESS([windowDelegate conformsToProtocol:@protocol(_WKWebExtensionWindow)], @"Object in array returned by webExtensionController:openWindowsForExtensionContext: does not conform to the _WKWebExtensionWindow protocol");
+
+            auto window = getOrCreateWindow(windowDelegate);
+            m_openWindowIdentifiers.append(window->identifier());
+
+            // Request the tabs here so they will be registered and populate openTabs().
+            window->tabs();
+        }
+    }
+
+    if ([delegate respondsToSelector:@selector(webExtensionController:focusedWindowForExtensionContext:)]) {
+        id<_WKWebExtensionWindow> focusedWindow = [delegate webExtensionController:extensionController()->wrapper() focusedWindowForExtensionContext:wrapper()];
+        THROW_UNLESS(!focusedWindow || [focusedWindow conformsToProtocol:@protocol(_WKWebExtensionWindow)], @"Object returned by webExtensionController:focusedWindowForExtensionContext: does not conform to the _WKWebExtensionWindow protocol");
+
+        m_focusedWindowIdentifier = focusedWindow ? std::optional(getOrCreateWindow(focusedWindow)->identifier()) : std::nullopt;
+    } else
+        m_focusedWindowIdentifier = !m_openWindowIdentifiers.isEmpty() ? std::optional(m_openWindowIdentifiers.first()) : std::nullopt;
+}
+
+WebExtensionContext::WindowVector WebExtensionContext::openWindows()
+{
+    WindowVector result;
+    result.reserveInitialCapacity(m_windowMap.size());
+
+    for (auto& identifer : m_openWindowIdentifiers) {
+        if (auto window = getWindow(identifer))
+            result.uncheckedAppend(*window);
+    }
+
+    return result;
+}
+
+WebExtensionContext::TabSet WebExtensionContext::openTabs()
+{
+    TabSet result;
+    result.reserveInitialCapacity(m_tabMap.size());
+
+    for (auto& tab : m_tabMap.values()) {
+        if (tab->isValid())
+            result.addVoid(tab);
+    }
+
+    return result;
+}
+
+RefPtr<WebExtensionWindow> WebExtensionContext::focusedWindow()
+{
+    if (m_focusedWindowIdentifier)
+        return getWindow(m_focusedWindowIdentifier.value());
+    return nullptr;
+}
+
+void WebExtensionContext::didOpenWindow(const WebExtensionWindow& window)
+{
+    ASSERT(window.extensionContext() == this);
+    ASSERT(m_windowMap.contains(window.identifier()));
+    ASSERT(m_windowMap.get(window.identifier()) == &window);
+
+    m_focusedWindowIdentifier = window.identifier();
+
+    m_openWindowIdentifiers.removeAll(window.identifier());
+    m_openWindowIdentifiers.insert(0, window.identifier());
+
+    // Request the tabs here so they will be registered and populate openTabs().
+    window.tabs();
+
+    if (!isLoaded())
+        return;
+
+    // FIXME: Fire event here.
+}
+
+void WebExtensionContext::didCloseWindow(const WebExtensionWindow& window)
+{
+    ASSERT(window.extensionContext() == this);
+    ASSERT(m_windowMap.contains(window.identifier()));
+    ASSERT(m_windowMap.get(window.identifier()) == &window);
+
+    Ref protectedWindow { window };
+
+    if (m_focusedWindowIdentifier == window.identifier())
+        m_focusedWindowIdentifier = std::nullopt;
+
+    m_openWindowIdentifiers.removeAll(window.identifier());
+    m_windowMap.remove(window.identifier());
+
+    for (auto& tab : window.tabs())
+        didCloseTab(tab, WindowIsClosing::Yes);
+
+    if (!isLoaded())
+        return;
+
+    // FIXME: Fire event here.
+}
+
+void WebExtensionContext::didFocusWindow(WebExtensionWindow* window)
+{
+    ASSERT(!window || window && window->extensionContext() == this);
+
+    m_focusedWindowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
+
+    if (window) {
+        ASSERT(m_openWindowIdentifiers.contains(window->identifier()));
+        m_openWindowIdentifiers.removeAll(window->identifier());
+        m_openWindowIdentifiers.insert(0, window->identifier());
+    }
+
+    if (!isLoaded())
+        return;
+
+    // FIXME: Fire event here.
+}
+
+void WebExtensionContext::didOpenTab(const WebExtensionTab& tab)
+{
+    ASSERT(tab.extensionContext() == this);
+    ASSERT(m_tabMap.contains(tab.identifier()));
+    ASSERT(m_tabMap.get(tab.identifier()) == &tab);
+
+    if (!isLoaded())
+        return;
+
+    // FIXME: Fire event here.
+}
+
+void WebExtensionContext::didCloseTab(const WebExtensionTab& tab, WindowIsClosing windowIsClosing)
+{
+    ASSERT(tab.extensionContext() == this);
+    ASSERT(m_tabMap.contains(tab.identifier()));
+    ASSERT(m_tabMap.get(tab.identifier()) == &tab);
+
+    Ref protectedTab { tab };
+
+    m_tabMap.remove(tab.identifier());
+
+    if (!isLoaded())
+        return;
+
+    // FIXME: Fire event here.
+}
+
+void WebExtensionContext::didSelectTabs(const TabSet& tabs)
+{
+#ifndef NDEBUG
+    for (auto& tab : tabs)
+        ASSERT(tab->extensionContext() == this);
+#endif
+
+    if (!isLoaded())
+        return;
+
+    // FIXME: Fire event here.
+}
+
+void WebExtensionContext::didMoveTab(const WebExtensionTab& tab, uint64_t index, WebExtensionWindow* oldWindow)
+{
+    ASSERT(tab.extensionContext() == this);
+    ASSERT(!oldWindow || oldWindow && oldWindow->extensionContext() == this);
+
+    if (!isLoaded())
+        return;
+
+    // FIXME: Fire event here.
+}
+
+void WebExtensionContext::didReplaceTab(const WebExtensionTab& oldTab, const WebExtensionTab& newTab)
+{
+    ASSERT(oldTab.extensionContext() == this);
+    ASSERT(newTab.extensionContext() == this);
+
+    if (!isLoaded())
+        return;
+
+    // FIXME: Fire event here.
+}
+
+void WebExtensionContext::didChangeTabProperties(const WebExtensionTab& tab, OptionSet<WebExtensionTab::ChangedProperties> properties)
+{
+    ASSERT(tab.extensionContext() == this);
+
+    if (!isLoaded())
+        return;
+
+    // FIXME: Fire event here.
+}
+
 void WebExtensionContext::userGesturePerformed(_WKWebExtensionTab *tab)
 {
     ASSERT(tab);
@@ -1204,7 +1476,7 @@ WKWebViewConfiguration *WebExtensionContext::webViewConfiguration()
     WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
 
     // Use the weak property to avoid a reference cycle while an extension web view is being held by the context.
-    configuration._weakWebExtensionController = m_extensionController->wrapper();
+    configuration._weakWebExtensionController = extensionController()->wrapper();
 
     configuration._processDisplayName = extension().webProcessDisplayName();
 

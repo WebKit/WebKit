@@ -33,12 +33,39 @@
 @class _WKWebExtensionMatchPattern;
 @class _WKWebExtensionController;
 @protocol _WKWebExtensionTab;
+@protocol _WKWebExtensionWindow;
 
 NS_ASSUME_NONNULL_BEGIN
 
 WK_API_AVAILABLE(macos(13.3), ios(16.4))
 @protocol _WKWebExtensionControllerDelegate <NSObject>
 @optional
+
+/*!
+ @abstract Called when an extension context requests the list of ordered open windows.
+ @param controller The web extension controller that is managing the extension.
+ @param extensionContext The context in which the web extension is running.
+ @return The array of ordered open windows.
+ @discussion This method should be implemented by the app to provide the extension with a list of ordered open windows. Depending on your
+ app's requirements, you may return different windows for each extension or the same windows for all extensions. The first window in the returned
+ windows must correspond to the focused window and match the result of `webExtensionController:focusedWindowForExtensionContext:`.
+ If `webExtensionController:focusedWindowForExtensionContext:` returns `nil`, indicating that no window has focus or the focused
+ window is not visible the extension, the first window in the list returned by this method will be considered the presumed focused window. An empty result
+ indicates no open windows are available for the extension. Defaults to empty array if not implemented.
+ @seealso webExtensionController:focusedWindowForExtensionContext:
+ */
+- (NSArray<id <_WKWebExtensionWindow>> *)webExtensionController:(_WKWebExtensionController *)controller openWindowsForExtensionContext:(_WKWebExtensionContext *)extensionContext NS_SWIFT_NAME(webExtensionController(_:windowsFor:));
+
+/*!
+ @abstract Called when an extension context requests the currently focused window.
+ @param controller The web extension controller that is managing the extension.
+ @param extensionContext The context in which the web extension is running.
+ @return The window that has focus, or \c nil if no window has focus or a window has focus that is not visible to the extension.
+ @discussion This method can be optionally implemented by the app to designate the window currently in focus to the extension.
+ If not implemented, the first window in the result of `webExtensionController:openWindowsForExtensionContext:` is used.
+ @seealso webExtensionController:openWindowsForExtensionContext:
+ */
+- (nullable id <_WKWebExtensionWindow>)webExtensionController:(_WKWebExtensionController *)controller focusedWindowForExtensionContext:(_WKWebExtensionContext *)extensionContext NS_SWIFT_NAME(webExtensionController(_:focusedWindowFor:));
 
 /*!
  @abstract Called when an extension context requests permissions.
@@ -48,8 +75,8 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @param extensionContext The context in which the web extension is running.
  @param completionHandler A block to be called with the set of allowed permissions.
  @discussion This method should be implemented by the app to prompt the user for permission and call the completion block with the
- set of permissions that were granted. If the completion block is not called within a reasonable amount of time, the request
- is assumed to have been denied.
+ set of permissions that were granted. If not implemented or the completion block is not called within a reasonable amount of time, the
+ request is assumed to have been denied.
  */
 - (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissions:(NSSet<_WKWebExtensionPermission> *)permissions inTab:(nullable id <_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<_WKWebExtensionPermission> *allowedPermissions))completionHandler NS_SWIFT_NAME(webExtensionController(_:promptForPermissions:in:for:completionHandler:));
 
@@ -61,8 +88,8 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @param extensionContext The context in which the web extension is running.
  @param completionHandler A block to be called with the set of allowed URLs.
  @discussion This method should be implemented by the app to prompt the user for permission and call the completion block with the
- set of URLs that were granted access to. If the completion block is not called within a reasonable amount of time, the request
- is assumed to have been denied.
+ set of URLs that were granted access to. If not implemented or the completion block is not called within a reasonable amount of time, the
+ request is assumed to have been denied.
  */
 - (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissionToAccessURLs:(NSSet<NSURL *> *)urls inTab:(nullable id <_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<NSURL *> *allowedURLs))completionHandler NS_SWIFT_NAME(webExtensionController(_:promptForPermissionToAccess:in:for:completionHandler:));
 
@@ -74,8 +101,8 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @param extensionContext The context in which the web extension is running.
  @param completionHandler A block to be called with the set of allowed match patterns.
  @discussion This method should be implemented by the app to prompt the user for permission and call the completion block with the
- set of match patterns that were granted access to. If the completion block is not called within a reasonable amount of time, the request
- is assumed to have been denied.
+ set of match patterns that were granted access to. If not implemented or the completion block is not called within a reasonable amount of time,
+ the request is assumed to have been denied.
  */
 - (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissionMatchPatterns:(NSSet<_WKWebExtensionMatchPattern *> *)matchPatterns inTab:(nullable id <_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<_WKWebExtensionMatchPattern *> *allowedMatchPatterns))completionHandler NS_SWIFT_NAME(webExtensionController(_:promptForPermissionMatchPatterns:in:for:completionHandler:));
 

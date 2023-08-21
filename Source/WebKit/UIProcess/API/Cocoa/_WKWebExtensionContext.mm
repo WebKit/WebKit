@@ -248,6 +248,9 @@ static inline WebKit::WebExtensionContext::PermissionMatchPatternsMap toImpl(NSD
 
 static inline NSSet<_WKWebExtensionPermission> *toAPI(const WebKit::WebExtensionContext::PermissionsMap::KeysConstIteratorRange& permissions)
 {
+    if (!permissions.size())
+        return [NSSet set];
+
     NSMutableSet<_WKWebExtensionPermission> *result = [NSMutableSet setWithCapacity:permissions.size()];
 
     for (auto& permission : permissions)
@@ -258,6 +261,9 @@ static inline NSSet<_WKWebExtensionPermission> *toAPI(const WebKit::WebExtension
 
 static inline NSSet<_WKWebExtensionMatchPattern *> *toAPI(const WebKit::WebExtensionContext::PermissionMatchPatternsMap::KeysConstIteratorRange& permissionMatchPatterns)
 {
+    if (!permissionMatchPatterns.size())
+        return [NSSet set];
+
     NSMutableSet<_WKWebExtensionMatchPattern *> *result = [NSMutableSet setWithCapacity:permissionMatchPatterns.size()];
 
     for (auto& origin : permissionMatchPatterns)
@@ -342,6 +348,9 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
     case _WKWebExtensionContextPermissionStatusGrantedExplicitly:
         return WebKit::WebExtensionContext::PermissionState::GrantedExplicitly;
     }
+
+    ASSERT_NOT_REACHED();
+    return WebKit::WebExtensionContext::PermissionState::Unknown;
 }
 
 - (_WKWebExtensionContextPermissionStatus)permissionStatusForPermission:(_WKWebExtensionPermission)permission
@@ -454,6 +463,186 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
     NSParameterAssert(tab);
 
     return _webExtensionContext->hasActiveUserGesture(tab);
+}
+
+static inline id<_WKWebExtensionWindow> toAPI(const RefPtr<WebKit::WebExtensionWindow>& window)
+{
+    return window ? window->delegate() : nil;
+}
+
+static inline NSArray *toAPI(const Vector<Ref<WebKit::WebExtensionWindow>>& windows)
+{
+    if (windows.isEmpty())
+        return [NSArray array];
+
+    NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:windows.size()];
+
+    for (auto& window : windows) {
+        if (auto delegate = window->delegate())
+            [result addObject:delegate];
+    }
+
+    return [result copy];
+}
+
+- (NSArray<id<_WKWebExtensionWindow>> *)openWindows
+{
+    return toAPI(_webExtensionContext->openWindows());
+}
+
+- (id<_WKWebExtensionWindow>)focusedWindow
+{
+    return toAPI(_webExtensionContext->focusedWindow());
+}
+
+static inline NSSet *toAPI(const HashSet<Ref<WebKit::WebExtensionTab>>& tabs)
+{
+    if (tabs.isEmpty())
+        return [NSSet set];
+
+    NSMutableSet *result = [[NSMutableSet alloc] initWithCapacity:tabs.size()];
+
+    for (auto& tab : tabs) {
+        if (auto delegate = tab->delegate())
+            [result addObject:delegate];
+    }
+
+    return [result copy];
+}
+
+- (NSSet<id<_WKWebExtensionTab>> *)openTabs
+{
+    return toAPI(_webExtensionContext->openTabs());
+}
+
+static inline Ref<WebKit::WebExtensionWindow> toImpl(id<_WKWebExtensionWindow> window, WebKit::WebExtensionContext& context)
+{
+    return context.getOrCreateWindow(window);
+}
+
+- (void)didOpenWindow:(id<_WKWebExtensionWindow>)newWindow
+{
+    NSParameterAssert([newWindow conformsToProtocol:@protocol(_WKWebExtensionWindow)]);
+
+    _webExtensionContext->didOpenWindow(toImpl(newWindow, *_webExtensionContext));
+}
+
+- (void)didCloseWindow:(id<_WKWebExtensionWindow>)closedWindow
+{
+    NSParameterAssert([closedWindow conformsToProtocol:@protocol(_WKWebExtensionWindow)]);
+
+    _webExtensionContext->didCloseWindow(toImpl(closedWindow, *_webExtensionContext));
+}
+
+- (void)didFocusWindow:(id<_WKWebExtensionWindow>)focusedWindow
+{
+    if (focusedWindow)
+        NSParameterAssert([focusedWindow conformsToProtocol:@protocol(_WKWebExtensionWindow)]);
+
+    _webExtensionContext->didFocusWindow(focusedWindow ? toImpl(focusedWindow, *_webExtensionContext).ptr() : nullptr);
+}
+
+static inline Ref<WebKit::WebExtensionTab> toImpl(id<_WKWebExtensionTab> tab, WebKit::WebExtensionContext& context)
+{
+    return context.getOrCreateTab(tab);
+}
+
+static inline WebKit::WebExtensionContext::TabSet toImpl(NSSet<id<_WKWebExtensionTab>> *tabs, WebKit::WebExtensionContext& context)
+{
+    WebKit::WebExtensionContext::TabSet result;
+    result.reserveInitialCapacity(tabs.count);
+
+    for (id<_WKWebExtensionTab> tab in tabs) {
+        NSCParameterAssert([tab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
+        result.addVoid(context.getOrCreateTab(tab));
+    }
+
+    return result;
+}
+
+- (void)didOpenTab:(id<_WKWebExtensionTab>)newTab
+{
+    NSParameterAssert([newTab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
+
+    _webExtensionContext->didOpenTab(toImpl(newTab, *_webExtensionContext));
+}
+
+- (void)didCloseTab:(id<_WKWebExtensionTab>)closedTab windowIsClosing:(BOOL)windowIsClosing
+{
+    NSParameterAssert([closedTab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
+
+    _webExtensionContext->didCloseTab(toImpl(closedTab, *_webExtensionContext), windowIsClosing ? WebKit::WebExtensionContext::WindowIsClosing::Yes : WebKit::WebExtensionContext::WindowIsClosing::No);
+}
+
+- (void)didSelectTabs:(NSSet<id<_WKWebExtensionTab>> *)selectedTabs
+{
+    NSParameterAssert([selectedTabs isKindOfClass:NSSet.class]);
+
+    _webExtensionContext->didSelectTabs(toImpl(selectedTabs, *_webExtensionContext));
+}
+
+- (void)didMoveTab:(id<_WKWebExtensionTab>)movedTab fromIndex:(NSUInteger)index inWindow:(id<_WKWebExtensionWindow>)oldWindow
+{
+    NSParameterAssert([movedTab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
+    if (oldWindow)
+        NSParameterAssert([oldWindow conformsToProtocol:@protocol(_WKWebExtensionWindow)]);
+
+    _webExtensionContext->didMoveTab(toImpl(movedTab, *_webExtensionContext), index, oldWindow ? toImpl(oldWindow, *_webExtensionContext).ptr() : nullptr);
+}
+
+- (void)didReplaceTab:(id<_WKWebExtensionTab>)oldTab withTab:(id<_WKWebExtensionTab>)newTab
+{
+    NSParameterAssert([oldTab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
+    NSParameterAssert([newTab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
+
+    _webExtensionContext->didReplaceTab(toImpl(oldTab, *_webExtensionContext), toImpl(newTab, *_webExtensionContext));
+}
+
+static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWebExtensionTabChangedProperties properties)
+{
+    OptionSet<WebKit::WebExtensionTab::ChangedProperties> result;
+
+    if (properties & _WKWebExtensionTabChangedPropertiesNone)
+        result.add(WebKit::WebExtensionTab::ChangedProperties::None);
+
+    if (properties & _WKWebExtensionTabChangedPropertiesAudible)
+        result.add(WebKit::WebExtensionTab::ChangedProperties::Audible);
+
+    if (properties & _WKWebExtensionTabChangedPropertiesLoading)
+        result.add(WebKit::WebExtensionTab::ChangedProperties::Loading);
+
+    if (properties & _WKWebExtensionTabChangedPropertiesMuted)
+        result.add(WebKit::WebExtensionTab::ChangedProperties::Muted);
+
+    if (properties & _WKWebExtensionTabChangedPropertiesPinned)
+        result.add(WebKit::WebExtensionTab::ChangedProperties::Pinned);
+
+    if (properties & _WKWebExtensionTabChangedPropertiesReaderMode)
+        result.add(WebKit::WebExtensionTab::ChangedProperties::ReaderMode);
+
+    if (properties & _WKWebExtensionTabChangedPropertiesSize)
+        result.add(WebKit::WebExtensionTab::ChangedProperties::Size);
+
+    if (properties & _WKWebExtensionTabChangedPropertiesTitle)
+        result.add(WebKit::WebExtensionTab::ChangedProperties::Title);
+
+    if (properties & _WKWebExtensionTabChangedPropertiesURL)
+        result.add(WebKit::WebExtensionTab::ChangedProperties::URL);
+
+    if (properties & _WKWebExtensionTabChangedPropertiesZoomFactor)
+        result.add(WebKit::WebExtensionTab::ChangedProperties::ZoomFactor);
+
+    if (properties & _WKWebExtensionTabChangedPropertiesAll)
+        result.add(WebKit::WebExtensionTab::ChangedProperties::All);
+
+    return result;
+}
+
+- (void)didChangeTabProperties:(_WKWebExtensionTabChangedProperties)properties forTab:(id<_WKWebExtensionTab>)changedTab
+{
+    NSParameterAssert([changedTab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
+
+    _webExtensionContext->didChangeTabProperties(toImpl(changedTab, *_webExtensionContext), toImpl(properties));
 }
 
 - (BOOL)_inTestingMode
@@ -689,6 +878,57 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
 - (BOOL)hasActiveUserGestureInTab:(id<_WKWebExtensionTab>)tab
 {
     return NO;
+}
+
+- (NSArray<id<_WKWebExtensionWindow>> *)openWindows
+{
+    return nil;
+}
+
+- (id<_WKWebExtensionWindow>)focusedWindow
+{
+    return nil;
+}
+
+- (NSSet<id<_WKWebExtensionTab>> *)openTabs
+{
+    return nil;
+}
+
+- (void)didOpenWindow:(id<_WKWebExtensionWindow>)newWindow
+{
+}
+
+- (void)didCloseWindow:(id<_WKWebExtensionWindow>)closedWindow
+{
+}
+
+- (void)didFocusWindow:(id<_WKWebExtensionWindow>)focusedWindow
+{
+}
+
+- (void)didOpenTab:(id<_WKWebExtensionTab>)newTab
+{
+}
+
+- (void)didCloseTab:(id<_WKWebExtensionTab>)closedTab windowIsClosing:(BOOL)windowIsClosing
+{
+}
+
+- (void)didSelectTabs:(NSSet<id<_WKWebExtensionTab>> *)selectedTabs
+{
+}
+
+- (void)didMoveTab:(id<_WKWebExtensionTab>)movedTab fromIndex:(NSUInteger)index inWindow:(id<_WKWebExtensionWindow>)oldWindow
+{
+}
+
+- (void)didReplaceTab:(id<_WKWebExtensionTab>)oldTab withTab:(id<_WKWebExtensionTab>)newTab
+{
+}
+
+- (void)didChangeTabProperties:(_WKWebExtensionTabChangedProperties)properties forTab:(id<_WKWebExtensionTab>)changedTab
+{
 }
 
 - (BOOL)_inTestingMode

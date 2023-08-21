@@ -2070,6 +2070,8 @@
 		1C46169E26BA510700F8C9F6 /* TextStreamCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextStreamCocoa.mm; sourceTree = "<group>"; };
 		1C4616A626BB172F00F8C9F6 /* TextStreamCocoa.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextStreamCocoa.cpp; sourceTree = "<group>"; };
 		1C51534B261596BD00FBC4FE /* UserInstalledAhem.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = UserInstalledAhem.html; sourceTree = "<group>"; };
+		1C66BDE32A8D838A009D4452 /* WKWebExtensionWindow.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionWindow.mm; sourceTree = "<group>"; };
+		1C66BDEB2A8E81CB009D4452 /* WKWebExtensionTab.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionTab.mm; sourceTree = "<group>"; };
 		1C734B5220788C4800F430EA /* SystemColors.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemColors.mm; sourceTree = "<group>"; };
 		1C79201B234BDD9B001EAF23 /* CopyRTF.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CopyRTF.mm; sourceTree = "<group>"; };
 		1C7FEB1F207C0F2D00D23278 /* BackgroundColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BackgroundColor.mm; sourceTree = "<group>"; };
@@ -4198,7 +4200,9 @@
 				1CAB9B7128F5E08900E6C77E /* WKWebExtensionController.mm */,
 				1C1549DA293A6D7F001B9E5B /* WKWebExtensionControllerConfiguration.mm */,
 				1CFAA40928974405009F894D /* WKWebExtensionMatchPattern.mm */,
+				1C66BDEB2A8E81CB009D4452 /* WKWebExtensionTab.mm */,
 				339B4338294BA9A10050A7CF /* WKWebExtensionUtilities.mm */,
+				1C66BDE32A8D838A009D4452 /* WKWebExtensionWindow.mm */,
 				5C7148942123A40700FDE3C5 /* WKWebsiteDatastore.mm */,
 				371195AA1FE5797700A1FB92 /* WKWebViewAlwaysShowsScroller.mm */,
 				2EFF06D61D8AF34A0004BB30 /* WKWebViewCandidateTests.mm */,

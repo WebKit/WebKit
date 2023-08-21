@@ -147,7 +147,7 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 @property (nonatomic, readonly, strong) _WKWebExtension *webExtension;
 
 /*! @abstract The extension controller this context is loaded in, otherwise `nil` if it isn't loaded. */
-@property (nonatomic, readonly, weak) _WKWebExtensionController *webExtensionController;
+@property (nonatomic, readonly, weak, nullable) _WKWebExtensionController *webExtensionController;
 
 /*! @abstract A Boolean value indicating if this context is loaded in an extension controller. */
 @property (nonatomic, readonly, getter=isLoaded) BOOL loaded;
@@ -452,6 +452,119 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  @param tab The tab in which to return the user gesture status.
 */
 - (BOOL)hasActiveUserGestureInTab:(id <_WKWebExtensionTab>)tab NS_SWIFT_NAME(hasActiveUserGesture(in:));
+
+/*!
+ @abstract An array of open windows that are exposed to this extension.
+ @discussion This property holds an array of window objects that are open and visible to the extension, as updated by the `didOpenWindow:` and `didCloseWindow:` methods.
+ Initially populated by the windows returned by the extension controller delegate method `webExtensionController:openWindowsForExtensionContext:`.
+ @seealso didOpenWindow:
+ @seealso didCloseWindow:
+ */
+@property (nonatomic, readonly, copy) NSArray<id <_WKWebExtensionWindow>> *openWindows;
+
+/*!
+ @abstract The window that currently has focus.
+ @discussion This property holds the window object that currently has focus, as set by the `didFocusWindow:` method.
+ It will be \c nil if no window has focus or if a window has focus that is not visible to the extension.  Initially populated by the window
+ returned by the extension controller delegate method `webExtensionController:focusedWindowForExtensionContext:`.
+ @seealso didFocusWindow:
+ */
+@property (nonatomic, readonly, weak, nullable) id <_WKWebExtensionWindow> focusedWindow;
+
+/*!
+ @abstract A set of open tabs in all open windows that are exposed to this extension.
+ @discussion This property holds a set of tabs in all open windows that are visible to the extension, as updated by the `didOpenTab:` and `didCloseTab:` methods.
+ Initially populated by the tabs in the windows returned by the extension controller delegate method `webExtensionController:openWindowsForExtensionContext:`.
+ @seealso didOpenTab:
+ @seealso didCloseTab:
+ */
+@property (nonatomic, readonly, copy) NSSet<id <_WKWebExtensionTab>> *openTabs;
+
+/*!
+ @abstract Should be called by the app when a new window is opened to fire appropriate events with only this extension.
+ @param newWindow The newly opened window.
+ @discussion This method informs only the specific extension of the opening of a new window. If the intention is to inform all loaded
+ extensions consistently, you should use the respective method on the extension controller instead.
+ @seealso didCloseWindow:
+ @seealso openWindows
+ */
+- (void)didOpenWindow:(id <_WKWebExtensionWindow>)newWindow;
+
+/*!
+ @abstract Should be called by the app when a window is closed to fire appropriate events with only this extension.
+ @param newWindow The window that was closed.
+ @discussion This method informs only the specific extension of the closure of a window. If the intention is to inform all loaded 
+ extensions consistently, you should use the respective method on the extension controller instead.
+ @seealso didOpenWindow:
+ @seealso openWindows
+ */
+- (void)didCloseWindow:(id <_WKWebExtensionWindow>)closedWindow;
+
+/*!
+ @abstract Should be called by the app when a window gains focus to fire appropriate events with only this extension.
+ @param focusedWindow The window that gained focus, or \c nil if no window has focus or a window has focus that is not visible to this extension.
+ @discussion This method informs only the specific extension that a window has gained focus. If the intention is to inform all loaded
+ extensions consistently, you should use the respective method on the extension controller instead.
+ */
+- (void)didFocusWindow:(nullable id <_WKWebExtensionWindow>)focusedWindow;
+
+/*!
+ @abstract Should be called by the app when a new tab is opened to fire appropriate events with only this extension.
+ @param newTab The newly opened tab.
+ @discussion This method informs only the specific extension of the opening of a new tab. If the intention is to inform all loaded
+ extensions consistently, you should use the respective method on the extension controller instead.
+ @seealso didCloseTab:
+ @seealso openTabs
+ */
+- (void)didOpenTab:(id <_WKWebExtensionTab>)newTab;
+
+/*!
+ @abstract Should be called by the app when a tab is closed to fire appropriate events with only this extension.
+ @param closedTab The tab that was closed.
+ @param windowIsClosing A boolean value indicating whether the window containing the tab is also closing.
+ @discussion This method informs only the specific extension of the closure of a tab. If the intention is to inform all loaded 
+ extensions consistently, you should use the respective method on the extension controller instead.
+ @seealso didOpenTab:
+ @seealso openTabs
+ */
+- (void)didCloseTab:(id <_WKWebExtensionTab>)closedTab windowIsClosing:(BOOL)windowIsClosing;
+
+/*!
+ @abstract Should be called by the app when tabs are selected to fire appropriate events with only this extension.
+ @param selectedTabs The set of tabs that were selected. An empty set indicates that no tabs are currently selected or that the
+ selected tabs are not visible to this extension.
+ @discussion This method informs only the specific extension that tabs have been selected. If the intention is to inform all loaded
+ extensions consistently, you should use the respective method on the extension controller instead.
+ */
+- (void)didSelectTabs:(NSSet<id <_WKWebExtensionTab>> *)selectedTabs;
+
+/*!
+ @abstract Should be called by the app when a tab is moved to fire appropriate events with only this extension.
+ @param movedTab The tab that was moved.
+ @param index The old index of the tab within the window.
+ @param oldWindow The window that the tab was moved from, or \c nil if the window stayed the same.
+ @discussion This method informs only the specific extension that a tab has been moved. If the intention is to inform all loaded 
+ extensions consistently, you should use the respective method on the extension controller instead.
+ */
+- (void)didMoveTab:(id <_WKWebExtensionTab>)movedTab fromIndex:(NSUInteger)index inWindow:(nullable id <_WKWebExtensionWindow>)oldWindow NS_SWIFT_NAME(didMoveTab(_:from:in:));
+
+/*!
+ @abstract Should be called by the app when a tab is replaced by another tab to fire appropriate events with only this extension.
+ @param oldTab The tab that was replaced.
+ @param newTab The tab that replaced the old tab.
+ @discussion This method informs only the specific extension that a tab has been replaced. If the intention is to inform all loaded 
+ extensions consistently, you should use the respective method on the extension controller instead.
+ */
+- (void)didReplaceTab:(id <_WKWebExtensionTab>)oldTab withTab:(id <_WKWebExtensionTab>)newTab NS_SWIFT_NAME(didReplaceTab(_:with:));
+
+/*!
+ @abstract Should be called by the app when the properties of a tab are changed to fire appropriate events with only this extension.
+ @param properties The properties of the tab that were changed.
+ @param changedTab The tab whose properties were changed.
+ @discussion This method informs only the specific extension of the changes to a tab's properties. If the intention is to inform all loaded 
+ extensions consistently, you should use the respective method on the extension controller instead.
+ */
+- (void)didChangeTabProperties:(_WKWebExtensionTabChangedProperties)properties forTab:(id <_WKWebExtensionTab>)changedTab NS_SWIFT_NAME(didChangeTabProperties(_:for:));
 
 @end
 

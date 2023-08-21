@@ -38,6 +38,10 @@
 #include "WebExtensionController.h"
 #include "WebExtensionEventListenerType.h"
 #include "WebExtensionMatchPattern.h"
+#include "WebExtensionTab.h"
+#include "WebExtensionTabIdentifier.h"
+#include "WebExtensionWindow.h"
+#include "WebExtensionWindowIdentifier.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebProcessProxy.h"
 #include <wtf/CompletionHandler.h>
@@ -67,6 +71,7 @@ OBJC_CLASS WKWebViewConfiguration;
 OBJC_CLASS _WKWebExtensionContext;
 OBJC_CLASS _WKWebExtensionContextDelegate;
 OBJC_PROTOCOL(_WKWebExtensionTab);
+OBJC_PROTOCOL(_WKWebExtensionWindow);
 
 namespace WebKit {
 
@@ -107,7 +112,11 @@ public:
     using EventListenerTypeSet = HashSet<WebExtensionEventListenerType, WTF::IntHash<WebKit::WebExtensionEventListenerType>, WTF::StrongEnumHashTraits<WebKit::WebExtensionEventListenerType>>;
     using VoidCompletionHandlerVector = Vector<CompletionHandler<void()>>;
 
+    using WindowVector = Vector<Ref<WebExtensionWindow>>;
+    using TabSet = HashSet<Ref<WebExtensionTab>>;
+
     enum class EqualityOnly : bool { No, Yes };
+    enum class WindowIsClosing : bool { No, Yes };
 
     enum class Error : uint8_t {
         Unknown = 1,
@@ -212,6 +221,29 @@ public:
 
     void clearCachedPermissionStates();
 
+    Ref<WebExtensionWindow> getOrCreateWindow(_WKWebExtensionWindow *);
+    RefPtr<WebExtensionWindow> getWindow(WebExtensionWindowIdentifier);
+
+    Ref<WebExtensionTab> getOrCreateTab(_WKWebExtensionTab *);
+    RefPtr<WebExtensionTab> getTab(WebExtensionTabIdentifier);
+
+    WindowVector openWindows();
+    TabSet openTabs();
+
+    RefPtr<WebExtensionWindow> focusedWindow();
+
+    void didOpenWindow(const WebExtensionWindow&);
+    void didCloseWindow(const WebExtensionWindow&);
+    void didFocusWindow(WebExtensionWindow*);
+
+    void didOpenTab(const WebExtensionTab&);
+    void didCloseTab(const WebExtensionTab&, WindowIsClosing = WindowIsClosing::No);
+    void didSelectTabs(const TabSet&);
+
+    void didMoveTab(const WebExtensionTab&, uint64_t index, WebExtensionWindow* oldWindow = nullptr);
+    void didReplaceTab(const WebExtensionTab& oldTab, const WebExtensionTab& newTab);
+    void didChangeTabProperties(const WebExtensionTab&, OptionSet<WebExtensionTab::ChangedProperties> = { });
+
     void userGesturePerformed(_WKWebExtensionTab *);
     bool hasActiveUserGesture(_WKWebExtensionTab *) const;
     void cancelUserGesture(_WKWebExtensionTab *);
@@ -257,6 +289,8 @@ private:
     PermissionMatchPatternsMap& removeExpired(PermissionMatchPatternsMap&, WallTime& nextExpirationDate, NSString *notificationName = nil);
 
     WKWebViewConfiguration *webViewConfiguration();
+
+    void populateWindowsAndTabs();
 
     void loadBackgroundWebViewDuringLoad();
     void loadBackgroundWebView();
@@ -369,6 +403,12 @@ private:
     HashMap<Ref<WebExtensionMatchPattern>, UserStyleSheetVector> m_injectedStyleSheetsPerPatternMap;
 
     HashMap<String, Ref<WebExtensionAlarm>> m_alarmMap;
+
+    HashMap<WebExtensionWindowIdentifier, Ref<WebExtensionWindow>> m_windowMap;
+    Vector<WebExtensionWindowIdentifier> m_openWindowIdentifiers;
+    std::optional<WebExtensionWindowIdentifier> m_focusedWindowIdentifier;
+
+    HashMap<WebExtensionTabIdentifier, Ref<WebExtensionTab>> m_tabMap;
 };
 
 template<typename T>
