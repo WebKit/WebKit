@@ -418,7 +418,7 @@ class PullRequest(Command):
         radar_issue = next(iter(filter(lambda issue: isinstance(issue.tracker, radar.Tracker), issues)), None)
         not_radar = next(iter(filter(lambda issue: not isinstance(issue.tracker, radar.Tracker), issues)), None)
         radar_cc_default = repository.config().get('webkitscmpy.cc-radar', 'true') == 'true'
-        if radar_issue and not_radar and radar_issue.tracker.radarclient() and (args.cc_radar or (radar_cc_default and args.cc_radar is not False)):
+        if update_issue and radar_issue and not_radar and radar_issue.tracker.radarclient() and (args.cc_radar or (radar_cc_default and args.cc_radar is not False)):
             not_radar.cc_radar(radar=radar_issue)
 
         redaction_exemption = None
