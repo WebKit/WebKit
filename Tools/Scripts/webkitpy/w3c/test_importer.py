@@ -181,7 +181,6 @@ class TestImporter(object):
         self._potential_test_resource_files = []
 
         self.import_list = []
-        self._importing_downloaded_tests = self.source_directory is None
 
         self._test_resource_files_json_path = self.filesystem.join(self.layout_tests_w3c_path, "resources", "resource-files.json")
         self._test_resource_files = json.loads(self.filesystem.read_text_file(self._test_resource_files_json_path)) if self.filesystem.exists(self._test_resource_files_json_path) else None
@@ -202,10 +201,9 @@ class TestImporter(object):
     def do_import(self):
         if not self.source_directory:
             _log.info('Downloading W3C test repositories')
-            self.source_directory = self.filesystem.join(self.tests_download_path, 'to-be-imported')
             self.filesystem.maybe_make_directory(self.tests_download_path)
-            self.filesystem.maybe_make_directory(self.source_directory)
-            self.test_downloader().download_tests(self.source_directory, self.test_paths, self.options.use_tip_of_tree)
+            self.test_downloader().download_tests(self.options.use_tip_of_tree)
+            self.source_directory = self.tests_download_path
 
         for test_path in self.test_paths:
             if test_path != "web-platform-tests" and not test_path.startswith(
@@ -243,8 +241,7 @@ class TestImporter(object):
         for test_path in test_paths:
             self.remove_dangling_expectations(test_path)
 
-        if self._importing_downloaded_tests:
-            self.generate_git_submodules_description_for_all_repositories()
+        self.generate_git_submodules_description_for_all_repositories()
 
         self.test_downloader().update_import_expectations(self.test_paths)
 
@@ -323,16 +320,8 @@ class TestImporter(object):
                 return source_directory
 
     def find_importable_tests(self, directory):
-        def should_keep_subdir(filesystem, path):
-            if self._importing_downloaded_tests:
-                return True
-            subdir = path[len(directory):]
-            DIRS_TO_SKIP = ('work-in-progress', 'tools', 'support')
-            should_skip = filesystem.basename(subdir).startswith('.') or (subdir in DIRS_TO_SKIP)
-            return not should_skip
-
         source_root_directory = self._source_root_directory_for_path(directory)
-        directories = self.filesystem.dirs_under(directory, should_keep_subdir)
+        directories = self.filesystem.dirs_under(directory)
         for root in directories:
             _log.info('Scanning ' + root + '...')
             total_tests = 0

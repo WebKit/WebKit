@@ -110,67 +110,6 @@ class TestDownloader(object):
             import_lines[path.rstrip(self._filesystem.sep)] = 'import'
         self._filesystem.write_text_file(self.import_expectations_path, json.dumps(import_lines, sort_keys=True, indent=4, separators=(',', ': ')))
 
-    def _add_test_suite_paths(self, test_paths, directory, webkit_path):
-        for name in self._filesystem.listdir(directory):
-            original_path = self._filesystem.join(webkit_path, name)
-            if not name.startswith('.'):
-                test_paths.append(original_path)
-
-    def _empty_directory(self, directory):
-        if self._filesystem.exists(directory):
-            self._filesystem.rmtree(directory)
-        self._filesystem.maybe_make_directory(directory)
-
-    def copy_tests(self, destination_directory, test_paths):
-        for test_repository in self.test_repositories:
-            self._empty_directory(self._filesystem.join(destination_directory, test_repository['name']))
-
-        copy_paths = []
-        if test_paths:
-            for path in test_paths:
-                copy_paths.append(path)
-            for path in self.paths_to_import:
-                copy_paths.append(path)
-        else:
-            for test_repository in self.test_repositories:
-                self._add_test_suite_paths(copy_paths, self._filesystem.join(self.repository_directory, test_repository['name']), test_repository['name'])
-            # Handling of tests marked as [ Pass ] in expectations file.
-            for path in self.paths_to_import:
-                if not path in copy_paths:
-                    copy_paths.append(path)
-
-        def longest_path(filesystem, paths):
-            longest_matching_path = ""
-            for path in paths:
-                if path.startswith(longest_matching_path):
-                    longest_matching_path = path
-            return longest_matching_path
-
-        def should_copy_dir(filesystem, directory):
-            relative_path = self._filesystem.relpath(directory, self.repository_directory)
-            if relative_path == ".":
-                return True
-
-            if any(relative_path.startswith(copy_directory) for copy_directory in copy_paths):
-                return True
-
-            return False
-
-        # Compute directories for which we should copy direct children
-        directories_to_copy = self._filesystem.dirs_under(self.repository_directory, should_copy_dir)
-
-        def should_copy_file(filesystem, dirname, filename):
-            full_path = filesystem.join(dirname, filename)
-            relative_path = self._filesystem.relpath(full_path, self.repository_directory)
-            if relative_path in copy_paths:
-                return True
-            return dirname in directories_to_copy
-
-        for source_path in self._filesystem.files_under(self.repository_directory, file_filter=should_copy_file):
-            destination_path = self._filesystem.join(destination_directory, self._filesystem.relpath(source_path, self.repository_directory))
-            self._filesystem.maybe_make_directory(self._filesystem.dirname(destination_path))
-            self._filesystem.copyfile(source_path, destination_path)
-
     def _git_submodules_description(self, test_repository):
         directory = self._filesystem.join(self.repository_directory, test_repository['name'])
 
@@ -214,6 +153,5 @@ class TestDownloader(object):
         for test_repository in self.test_repositories:
             self.checkout_test_repository(test_repository['revision'] if not use_tip_of_tree else 'origin/master', test_repository['url'], self._filesystem.join(self.repository_directory, test_repository['name']))
 
-    def download_tests(self, destination_directory, test_paths=[], use_tip_of_tree=False):
+    def download_tests(self, use_tip_of_tree=False):
         self.clone_tests(use_tip_of_tree)
-        self.copy_tests(destination_directory, test_paths)

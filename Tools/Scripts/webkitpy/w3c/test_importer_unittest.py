@@ -276,6 +276,32 @@ class TestImporterTest(unittest.TestCase):
         self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/dir-to-skip/dir-to-not-import/test-to-not-import.html'))
         self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/dir-to-skip/test-to-skip.html'))
 
+    def test_no_implicit_skip_with_download(self):
+        FAKE_FILES = {
+            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/css/css-images/tools/test1.html': MINIMAL_TESTHARNESS,
+            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/css/css-images/support/test2.html': MINIMAL_TESTHARNESS,
+            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/css/css-images/work-in-progress/test3.html': MINIMAL_TESTHARNESS,
+        }
+        FAKE_FILES.update(FAKE_REPOSITORIES)
+
+        fs = self.import_directory(['-d', '/mock-checkout/LayoutTests/w3c/web-platform-tests'], FAKE_FILES, ['web-platform-tests/css/css-images'])
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/web-platform-tests/css/css-images/tools/test1.html'))
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/web-platform-tests/css/css-images/support/test2.html'))
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/web-platform-tests/css/css-images/work-in-progress/test3.html'))
+
+    def test_no_implicit_skip_with_source(self):
+        FAKE_FILES = {
+            '/home/user/wpt/web-platform-tests/css/css-images/tools/test1.html': MINIMAL_TESTHARNESS,
+            '/home/user/wpt/web-platform-tests/css/css-images/support/test2.html': MINIMAL_TESTHARNESS,
+            '/home/user/wpt/web-platform-tests/css/css-images/work-in-progress/test3.html': MINIMAL_TESTHARNESS,
+        }
+        FAKE_FILES.update(FAKE_REPOSITORIES)
+
+        fs = self.import_directory(['-s', '/home/user/wpt', '-d', '/mock-checkout/LayoutTests/w3c/web-platform-tests'], FAKE_FILES, ['web-platform-tests/css/css-images'])
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/web-platform-tests/css/css-images/tools/test1.html'))
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/web-platform-tests/css/css-images/support/test2.html'))
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/web-platform-tests/css/css-images/work-in-progress/test3.html'))
+
     def test_checkout_directory(self):
         FAKE_FILES = {
             '/mock-checkout/WebKitBuild2/w3c-tests/web-platform-tests/existing-test.html': '',
@@ -578,28 +604,18 @@ class TestImporterTest(unittest.TestCase):
 
         fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
         # test1
-        self.assertTrue(fs.exists('/mock-checkout/WebKitBuild/w3c-tests/to-be-imported/csswg-tests/t/test1.html'))
-        self.assertTrue(fs.exists('/mock-checkout/WebKitBuild/w3c-tests/to-be-imported/csswg-tests/t/test1-ref.html'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/csswg-tests/t/test1.html'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/csswg-tests/t/test1-expected.html'))
         # test2
-        self.assertTrue(fs.exists('/mock-checkout/WebKitBuild/w3c-tests/to-be-imported/csswg-tests/t/test2.html'))
-        self.assertTrue(fs.exists('/mock-checkout/WebKitBuild/w3c-tests/to-be-imported/csswg-tests/some/directory/in/csswg-root/test2-ref.html'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/csswg-tests/t/test2.html'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/csswg-tests/t/test2-expected.html'))
         # test3
-        self.assertTrue(fs.exists('/mock-checkout/WebKitBuild/w3c-tests/to-be-imported/web-platform-tests/css/css-images/test3.html'))
-        self.assertTrue(fs.exists('/mock-checkout/WebKitBuild/w3c-tests/to-be-imported/web-platform-tests/css/css-images/test3-ref.html'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/css/css-images/test3.html'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/css/css-images/test3-expected.html'))
         # test4
-        self.assertTrue(fs.exists('/mock-checkout/WebKitBuild/w3c-tests/to-be-imported/web-platform-tests/css/css-images/test4.html'))
-        self.assertTrue(fs.exists('/mock-checkout/WebKitBuild/w3c-tests/to-be-imported/web-platform-tests/some/directory/in/wpt-root/test4-ref.html'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/css/css-images/test4.html'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/css/css-images/test4-expected.html'))
         # test5
-        self.assertTrue(fs.exists('/mock-checkout/WebKitBuild/w3c-tests/to-be-imported/web-platform-tests/css/css-images/test5.html'))
-        self.assertTrue(fs.exists('/mock-checkout/WebKitBuild/w3c-tests/to-be-imported/web-platform-tests/some/directory/in/wpt-root/test5-ref.html'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/css/css-images/test5.html'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/css/css-images/test5-expected.html'))
 
