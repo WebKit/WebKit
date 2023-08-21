@@ -184,6 +184,9 @@ public:
 
     void resetMinMaxWidth();
 
+    void setCanUseSimplifiedTextMeasuring(bool canUseSimplifiedTextMeasuring) { m_canUseSimplifiedTextMeasuring = canUseSimplifiedTextMeasuring; }
+    std::optional<bool> canUseSimplifiedTextMeasuring() const { return m_canUseSimplifiedTextMeasuring; }
+
 protected:
     virtual void computePreferredLogicalWidths(float leadWidth, bool forcedMinMaxWidthComputation = false);
     void willBeDestroyed() override;
@@ -252,6 +255,7 @@ private:
 #endif
     std::optional<float> m_minWidth;
     std::optional<float> m_maxWidth;
+    std::optional<bool> m_canUseSimplifiedTextMeasuring { };
     float m_beginMinWidth { 0 };
     float m_endMinWidth { 0 };
 
