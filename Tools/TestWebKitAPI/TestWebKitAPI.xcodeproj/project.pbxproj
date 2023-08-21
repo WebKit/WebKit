@@ -652,7 +652,6 @@
 		7C83DF631D0A590C00FEBCF3 /* WTFString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 265AF54F15D1E48A00B0CB4A /* WTFString.cpp */; };
 		7C83DFA21D0A5AE400FEBCF3 /* mainIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E7765CC16C4D80A00BA2BB1 /* mainIOS.mm */; };
 		7C83DFAD1D0A5AE400FEBCF3 /* mainMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E7765CE16C4D81100BA2BB1 /* mainMac.mm */; };
-		7C83E02A1D0A5CDF00FEBCF3 /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C83E0291D0A5CDF00FEBCF3 /* libWTF.a */; };
 		7C83E03A1D0A602700FEBCF3 /* UtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C83E0391D0A602700FEBCF3 /* UtilitiesCocoa.mm */; };
 		7C83E03B1D0A602700FEBCF3 /* UtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C83E0391D0A602700FEBCF3 /* UtilitiesCocoa.mm */; };
 		7C83E03C1D0A60D600FEBCF3 /* UtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C83E0391D0A602700FEBCF3 /* UtilitiesCocoa.mm */; };
@@ -1069,6 +1068,7 @@
 		DDADB22628FA094400918467 /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3FC3EE213678B7300126A65 /* libgtest.a */; };
 		DDB3724628ECE32F00A2F32D /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDB3724528ECE32F00A2F32D /* libbmalloc.a */; };
 		DDD2187627A21750002B7025 /* WebKit.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = C081224813FC1B0300DC39AE /* WebKit.framework */; };
+		DDFBE4AC2A90556700CA7023 /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C83E0291D0A5CDF00FEBCF3 /* libWTF.a */; };
 		DF1C7CE927F5161D00D8145C /* BundlePageConsoleMessageWithDetails.mm in Sources */ = {isa = PBXBuildFile; fileRef = DF1C7CE827F5161D00D8145C /* BundlePageConsoleMessageWithDetails.mm */; };
 		DF1C7CEC27F5309700D8145C /* console-message-with-details.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = DF1C7CEB27F5305A00D8145C /* console-message-with-details.html */; };
 		DF6580942722168900B3F1C1 /* ASN1Utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF6580922722168900B3F1C1 /* ASN1Utilities.cpp */; };
@@ -3641,7 +3641,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7C83E02A1D0A5CDF00FEBCF3 /* libWTF.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3652,6 +3651,7 @@
 				DD403D4A28EB932F009B4684 /* libbmalloc.a in Frameworks */,
 				93F56DA71E5F9174003EDE84 /* libicucore.dylib in Frameworks */,
 				DDAA0E2129E63FED003ECAE2 /* libpas.a in Frameworks */,
+				DDFBE4AC2A90556700CA7023 /* libWTF.a in Frameworks */,
 				143DDE9820C9018B007F76FA /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
