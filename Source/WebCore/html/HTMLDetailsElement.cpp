@@ -133,6 +133,8 @@ bool HTMLDetailsElement::isActiveSummary(const HTMLSummaryElement& summary) cons
 
 void HTMLDetailsElement::queueDetailsToggleEventTask(DetailsState oldState, DetailsState newState)
 {
+    if (auto queuedEventData = queuedToggleEventData())
+        oldState = queuedEventData->oldState;
     setQueuedToggleEventData({ oldState, newState });
     queueTaskKeepingThisNodeAlive(TaskSource::DOMManipulation, [this, newState] {
         auto queuedEventData = queuedToggleEventData();
