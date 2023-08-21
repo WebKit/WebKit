@@ -210,7 +210,7 @@ class TestImporterTest(unittest.TestCase):
         # FIXME: Mock-up of git cannot use submodule command, hence the json file is empty, but still it should be created
         #self.assertTrue('https://github.com/w3c/testharness.js/archive/db4d391a69877d4a1eaaf51d1725c99a5b8ed84.tar.gz' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/resources/web-platform-tests-modules.json'))
 
-    def test_skip_test_import(self):
+    def test_skip_test_import_download(self):
         FAKE_FILES = {
             '/mock-checkout/WebKitBuild/w3c-tests/streams-api/reference-implementation/web-platform-tests/test.html': MINIMAL_TESTHARNESS,
             '/mock-checkout/LayoutTests/imported/w3c/resources/TestRepositories': '''
@@ -237,6 +237,39 @@ class TestImporterTest(unittest.TestCase):
         }
 
         fs = self.import_downloaded_tests(['--no-fetch', '-d', 'w3c'], FAKE_FILES)
+
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/dir-to-skip/file-to-import.html'))
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/dir-to-skip/dir-to-import/test-to-import.html'))
+        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/dir-to-skip/dir-to-not-import/test-to-not-import.html'))
+        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/dir-to-skip/test-to-skip.html'))
+
+    def test_skip_test_import_source(self):
+        FAKE_FILES = {
+            '/home/user/wpt/streams-api/reference-implementation/web-platform-tests/test.html': MINIMAL_TESTHARNESS,
+            '/mock-checkout/LayoutTests/imported/w3c/resources/TestRepositories': '''
+[
+    {
+        "name": "web-platform-tests",
+        "url": "https://github.com/myrepo",
+        "revision": "7cc96dd",
+        "paths_to_skip": [],
+        "paths_to_import": [],
+        "import_options": []
+     }
+]''',
+            '/mock-checkout/LayoutTests/imported/w3c/resources/import-expectations.json': '''
+{
+"web-platform-tests/dir-to-skip": "skip",
+"web-platform-tests/dir-to-skip/dir-to-import": "import",
+"web-platform-tests/dir-to-skip/file-to-import.html": "import"
+}''',
+            '/home/user/wpt/web-platform-tests/dir-to-skip/test-to-skip.html': 'to be skipped',
+            '/home/user/wpt/web-platform-tests/dir-to-skip/dir-to-import/test-to-import.html': 'to be imported',
+            '/home/user/wpt/web-platform-tests/dir-to-skip/dir-to-not-import/test-to-not-import.html': 'to be skipped',
+            '/home/user/wpt/web-platform-tests/dir-to-skip/file-to-import.html': 'to be imported',
+        }
+
+        fs = self.import_downloaded_tests(['-s', '/home/user/wpt', '--no-fetch', '-d', 'w3c'], FAKE_FILES)
 
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/dir-to-skip/file-to-import.html'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/dir-to-skip/dir-to-import/test-to-import.html'))

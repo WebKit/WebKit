@@ -67,9 +67,15 @@
 """
 
 import argparse
+import itertools
 import json
 import logging
 import mimetypes
+
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 
 from webkitpy.common.host import Host
 from webkitpy.common.system.filesystem import FileSystem
@@ -264,12 +270,25 @@ class TestImporter(object):
             self._test_downloader = TestDownloader(self.tests_download_path, self.host, download_options)
         return self._test_downloader
 
-    def should_skip_file(self, filename):
-        # For some reason the w3c repo contains random perl scripts we don't care about.
-        if filename.endswith('.pl'):
+    def should_skip_path(self, path):
+        rel_path = Path(path).relative_to(self.source_directory)
+        if rel_path.suffix == ".pl":
             return True
-        if filename.startswith('.'):
-            return not filename == '.htaccess'
+
+        if rel_path.name.startswith(".") and rel_path.name != ".htaccess":
+            return True
+
+        downloader = self.test_downloader()
+        paths_to_skip = {Path(p) for p in downloader.paths_to_skip}
+        paths_to_import = {Path(p) for p in downloader.paths_to_import}
+
+        for parent in itertools.chain([rel_path], rel_path.parents):
+            if parent in paths_to_skip:
+                return True
+
+            if parent in paths_to_import:
+                return False
+
         return False
 
     def _is_baseline(self, filesystem, dirname, filename):
@@ -328,10 +347,10 @@ class TestImporter(object):
                     continue
                 # FIXME: This block should really be a separate function, but the early-continues make that difficult.
 
-                if self.should_skip_file(filename):
-                    continue
-
                 fullpath = self.filesystem.join(root, filename)
+
+                if self.should_skip_path(fullpath):
+                    continue
 
                 mimetype = mimetypes.guess_type(fullpath)
                 if not 'html' in str(mimetype[0]) and not 'application/xhtml+xml' in str(mimetype[0]) and not 'application/xml' in str(mimetype[0]):

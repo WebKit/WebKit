@@ -113,7 +113,7 @@ class TestDownloader(object):
     def _add_test_suite_paths(self, test_paths, directory, webkit_path):
         for name in self._filesystem.listdir(directory):
             original_path = self._filesystem.join(webkit_path, name)
-            if not name.startswith('.') and not original_path in self.paths_to_skip:
+            if not name.startswith('.'):
                 test_paths.append(original_path)
 
     def _empty_directory(self, directory):
@@ -151,17 +151,10 @@ class TestDownloader(object):
             if relative_path == ".":
                 return True
 
-            potential_copy_paths = [copy_directory for copy_directory in copy_paths if relative_path.startswith(copy_directory)]
-            if (not potential_copy_paths):
-                return False
-
-            potential_skip_paths = [skip_directory for skip_directory in self.paths_to_skip if relative_path.startswith(skip_directory)]
-            if (not potential_skip_paths):
+            if any(relative_path.startswith(copy_directory) for copy_directory in copy_paths):
                 return True
 
-            longest_copy_path = longest_path(filesystem, potential_copy_paths)
-            longest_skip_path = longest_path(filesystem, potential_skip_paths)
-            return longest_copy_path.startswith(longest_skip_path)
+            return False
 
         # Compute directories for which we should copy direct children
         directories_to_copy = self._filesystem.dirs_under(self.repository_directory, should_copy_dir)
@@ -171,8 +164,6 @@ class TestDownloader(object):
             relative_path = self._filesystem.relpath(full_path, self.repository_directory)
             if relative_path in copy_paths:
                 return True
-            if relative_path in self.paths_to_skip:
-                return False
             return dirname in directories_to_copy
 
         for source_path in self._filesystem.files_under(self.repository_directory, file_filter=should_copy_file):
