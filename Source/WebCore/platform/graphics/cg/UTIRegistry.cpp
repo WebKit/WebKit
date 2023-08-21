@@ -31,6 +31,7 @@
 #include "MIMETypeRegistry.h"
 #include "UTIUtilities.h"
 #include <ImageIO/ImageIO.h>
+#include <wtf/FixedVector.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
@@ -42,27 +43,27 @@
 
 namespace WebCore {
 
-const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedImageTypes()
+static const HashMap<String, HashSet<String>>& defaultSupportedImageFormats()
 {
-    static NeverDestroyed defaultSupportedImageTypes = [] {
-        static constexpr std::array defaultSupportedImageTypes = {
-            "com.compuserve.gif"_s,
-            "com.microsoft.bmp"_s,
-            "com.microsoft.cur"_s,
-            "com.microsoft.ico"_s,
-            "public.jpeg"_s,
-            "public.png"_s,
-            "public.tiff"_s,
-            "public.jpeg-2000"_s,
-            "public.mpo-image"_s,
+    static NeverDestroyed defaultSupportedImageFormats = [] {
+        HashMap<String, HashSet<String>> defaultSupportedImageFormats = {
+            { "com.compuserve.gif"_s,   { "image/gif"_s } },
+            { "com.microsoft.bmp"_s,    { "image/bmp"_s } },
+            { "com.microsoft.cur"_s,    { } },
+            { "com.microsoft.ico"_s,    { "image/vnd.microsoft.icon"_s } },
+            { "public.jpeg"_s,          { "image/jpeg"_s, "image/jpg"_s } },
+            { "public.png"_s,           { "image/png"_s, "image/apng"_s } },
+            { "public.tiff"_s,          { "image/tiff"_s } },
+            { "public.jpeg-2000"_s,     { "image/jp2"_s } },
+            { "public.mpo-image"_s,     { } },
 #if HAVE(WEBP)
-            "public.webp"_s,
-            "com.google.webp"_s,
-            "org.webmproject.webp"_s,
+            { "public.webp"_s,          { "image/webp"_s } },
+            { "com.google.webp"_s,      { "image/webp"_s } },
+            { "org.webmproject.webp"_s, { "image/webp"_s } },
 #endif
 #if HAVE(AVIF)
-            "public.avif"_s,
-            "public.avis"_s,
+            { "public.avif"_s,          { "image/avif"_s } },
+            { "public.avis"_s,          { "image/avif"_s } },
 #endif
 #if HAVE(JPEGXL)
             "public.jxl"_s,
@@ -85,36 +86,53 @@ const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedImageType
             static_cast<HashSet<String>*>(context)->add(imageType);
         }, &systemSupportedImageTypes);
 
-        MemoryCompactLookupOnlyRobinHoodHashSet<String> filtered;
-        for (auto& imageType : defaultSupportedImageTypes) {
-            if (systemSupportedImageTypes.contains(imageType))
-                filtered.add(imageType);
+        HashMap<String, HashSet<String>> filtered;
+        for (auto& imageFormat : defaultSupportedImageFormats) {
+            if (systemSupportedImageTypes.contains(imageFormat.key))
+                filtered.add(imageFormat.key, imageFormat.value);
         }
+
         // rdar://104940377 Workaround for CGImageSourceCopyTypeIdentifiers not returning AVIF for iOS simulator
 #if HAVE(CG_IMAGE_SOURCE_AVIF_IMAGE_TYPES_BUG)
-        filtered.add("public.avif"_s);
-        filtered.add("public.avis"_s);
+        filtered.add("public.avif"_s, HashSet<String> { "image/avif"_s });
+        filtered.add("public.avis"_s, HashSet<String> { "image/avif"_s });
 #endif
         return filtered;
     }();
 
-    return defaultSupportedImageTypes;
+#if ASSERT_ENABLED
+    // Ensure MIMETypeRegistry::supportedImageMIMETypes() matches defaultSupportedImageTypes.
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        for (auto& imageFormat : defaultSupportedImageFormats.get()) {
+            for (auto& mimeType : imageFormat.value) {
+                if (mimeType.isEmpty())
+                    continue;
+                ASSERT(MIMETypeRegistry::supportedImageMIMETypes().contains(mimeType));
+            }
+        }
+    });
+#endif
+
+    return defaultSupportedImageFormats;
 }
 
-MemoryCompactRobinHoodHashSet<String>& additionalSupportedImageTypes()
+static HashMap<String, HashSet<String>>& additionalSupportedImageFormats()
 {
-    static NeverDestroyed<MemoryCompactRobinHoodHashSet<String>> additionalSupportedImageTypes;
-    return additionalSupportedImageTypes;
+    static NeverDestroyed<HashMap<String, HashSet<String>>> additionalSupportedImageFormats;
+    return additionalSupportedImageFormats;
 }
 
 void setAdditionalSupportedImageTypes(const Vector<String>& imageTypes)
 {
     MIMETypeRegistry::additionalSupportedImageMIMETypes().clear();
     for (const auto& imageType : imageTypes) {
-        additionalSupportedImageTypes().add(imageType);
-        auto mimeType = MIMETypeForImageType(imageType);
-        if (!mimeType.isEmpty())
+        auto mimeType = MIMETypeFromUTI(imageType);
+        if (!mimeType.isEmpty()) {
             MIMETypeRegistry::additionalSupportedImageMIMETypes().add(mimeType);
+            additionalSupportedImageFormats().add(imageType, HashSet<String> { mimeType });
+        } else
+            additionalSupportedImageFormats().add(imageType, HashSet<String> { });
     }
 }
 
@@ -127,7 +145,7 @@ bool isSupportedImageType(const String& imageType)
 {
     if (imageType.isEmpty())
         return false;
-    return defaultSupportedImageTypes().contains(imageType) || additionalSupportedImageTypes().contains(imageType);
+    return defaultSupportedImageFormats().contains(imageType) || additionalSupportedImageFormats().contains(imageType);
 }
 
 bool isGIFImageType(StringView imageType)
@@ -135,9 +153,21 @@ bool isGIFImageType(StringView imageType)
     return imageType == "com.compuserve.gif"_s;
 }
 
-String MIMETypeForImageType(const String& uti)
+String imageTypeForMIMEType(const String& mimeType)
 {
-    return MIMETypeFromUTI(uti);
+    auto imageTypeForMIMEType = [](auto& imageFormats, auto& mimeType) -> String {
+        for (auto& imageFormat : imageFormats) {
+            if (imageFormat.value.contains(mimeType))
+                return imageFormat.key;
+        }
+        return { };
+    };
+
+    auto imageType = imageTypeForMIMEType(defaultSupportedImageFormats(), mimeType);
+    if (!imageType.isEmpty())
+        return imageType;
+
+    return imageTypeForMIMEType(additionalSupportedImageFormats(), mimeType);
 }
 
 String preferredExtensionForImageType(const String& uti)
@@ -147,6 +177,6 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
-}
+} // namespace WebCore
 
-#endif
+#endif // USE(CG)

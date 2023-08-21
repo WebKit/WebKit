@@ -25,18 +25,21 @@
 
 #pragma once
 
-#include <wtf/RobinHoodHashSet.h>
+#if USE(CG)
+
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedImageTypes();
-MemoryCompactRobinHoodHashSet<String>& additionalSupportedImageTypes();
 WEBCORE_EXPORT void setAdditionalSupportedImageTypes(const Vector<String>&);
 WEBCORE_EXPORT void setAdditionalSupportedImageTypesForTesting(const String&);
+
 WEBCORE_EXPORT bool isSupportedImageType(const String&);
 bool isGIFImageType(StringView);
-String preferredExtensionForImageType(const String& type);
-String MIMETypeForImageType(const String& type);
 
-}
+String imageTypeForMIMEType(const String& mimeType);
+String preferredExtensionForImageType(const String&);
+
+} // namespace WebCore
+
+#endif // USE(CG)

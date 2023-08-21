@@ -414,21 +414,12 @@ bool MIMETypeRegistry::isSupportedImageMIMEType(const String& mimeType)
 {
     if (mimeType.isEmpty())
         return false;
-    static constexpr SortedArraySet supportedImageMIMETypeSet { supportedImageMIMETypeArray };
-#if USE(CG) && ASSERT_ENABLED
-    // Ensure supportedImageMIMETypeArray matches defaultSupportedImageTypes().
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        for (auto& imageType : defaultSupportedImageTypes()) {
-            auto mimeType = MIMETypeForImageType(imageType);
-            ASSERT_IMPLIES(!mimeType.isEmpty(), supportedImageMIMETypeSet.contains(mimeType));
-        }
-    });
-#endif
 
+    static constexpr SortedArraySet supportedImageMIMETypeSet { supportedImageMIMETypeArray };
     String normalizedMIMEType = normalizedImageMIMEType(mimeType);
     if (supportedImageMIMETypeSet.contains(normalizedMIMEType))
         return true;
+
     return additionalSupportedImageMIMETypes().contains(normalizedMIMEType);
 }
 
@@ -460,7 +451,7 @@ std::unique_ptr<MIMETypeRegistryThreadGlobalData> MIMETypeRegistry::createMIMETy
         CFStringRef supportedType = reinterpret_cast<CFStringRef>(CFArrayGetValueAtIndex(supportedTypes.get(), i));
         if (!isSupportedImageType(supportedType))
             continue;
-        String mimeType = MIMETypeForImageType(supportedType);
+        String mimeType = MIMETypeFromUTI(supportedType);
         if (mimeType.isEmpty())
             continue;
         supportedImageMIMETypesForEncoding.add(mimeType);
@@ -834,14 +825,7 @@ Vector<String> MIMETypeRegistry::allowedFileExtensions(const Vector<String>& mim
 
 bool MIMETypeRegistry::isJPEGMIMEType(const String& mimeType)
 {
-#if USE(CG)
-    auto destinationUTI = utiFromImageBufferMIMEType(mimeType);
-    if (!destinationUTI)
-        return false;
-    return CFEqual(destinationUTI.get(), jpegUTI());
-#else
     return mimeType == "image/jpeg"_s || mimeType == "image/jpg"_s;
-#endif
 }
 
 } // namespace WebCore
