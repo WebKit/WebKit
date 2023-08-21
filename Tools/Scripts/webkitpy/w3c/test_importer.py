@@ -298,8 +298,6 @@ class TestImporter(object):
                 self.filesystem.remove(path)
 
     def _source_root_directory_for_path(self, path):
-        if not self._importing_downloaded_tests:
-            return self.source_directory
         for test_repository in self.test_downloader().load_test_repositories(self.filesystem):
             source_directory = self.filesystem.join(self.source_directory, test_repository['name'])
             if path.startswith(source_directory):

@@ -572,12 +572,15 @@ class TestImporterTest(unittest.TestCase):
 
     def test_webkit_test_runner_import_reftests_with_absolute_paths_from_source_dir(self):
         FAKE_FILES = {
-            '/home/user/wpt/web-platform-tests/css/css-images/test1.html': '<html><head><link rel=match href=/web-platform-tests/css/css-images/test1-ref.html></head></html>',
+            '/home/user/wpt/web-platform-tests/css/css-images/test1.html': '<html><head><link rel=match href=/css/css-images/test1-ref.html></head></html>',
             '/home/user/wpt/web-platform-tests/css/css-images/test1-ref.html': '<html></html>',
             '/home/user/wpt/web-platform-tests/css/css-images/test2.html': '<html><head><link rel=match href=/some/directory/in/wpt-root/test2-ref.html></head></html>',
             '/home/user/wpt/some/directory/in/wpt-root/test2-ref.html': '<html></html>',
             '/home/user/wpt/web-platform-tests/css/css-images/test3.html': '<html><head><link rel=match href="             /some/directory/in/wpt-root/test3-ref.html    "></head></html>',
             '/home/user/wpt/some/directory/in/wpt-root/test3-ref.html': '<html></html>',
+            '/home/user/wpt/web-platform-tests/css/css-images/test4.html': '<html><head><link rel=match href=/web-platform-tests/css/css-images/test1-ref.html></head></html>',
+            '/home/user/wpt/web-platform-tests/css/css-images/test4-ref.html': '<html></html>',
+
         }
         FAKE_FILES.update(FAKE_REPOSITORIES)
 
@@ -587,10 +590,13 @@ class TestImporterTest(unittest.TestCase):
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/web-platform-tests/css/css-images/test1-expected.html'))
         # test2
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/web-platform-tests/css/css-images/test2.html'))
-        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/web-platform-tests/css/css-images/test2-expected.html'))
+        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/web-platform-tests/css/css-images/test2-expected.html'))
         # test3
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/web-platform-tests/css/css-images/test3.html'))
-        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/web-platform-tests/css/css-images/test3-expected.html'))
+        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/web-platform-tests/css/css-images/test3-expected.html'))
+        # test4
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/web-platform-tests/css/css-images/test4.html'))
+        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/web-platform-tests/css/css-images/test4-expected.html'))
 
     def test_template_test(self):
         FAKE_FILES = {
