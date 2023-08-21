@@ -4494,8 +4494,13 @@ class TestGenerateS3URL(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to generate S3 URL')
-        with current_hostname(EWS_BUILD_HOSTNAME):
-            return self.runStep()
+
+        try:
+            with current_hostname(EWS_BUILD_HOSTNAME), open(os.devnull, 'w') as null:
+                sys.stdout = null
+                return self.runStep()
+        finally:
+            sys.stdout = sys.__stdout__
 
     def test_skipped(self):
         self.configureStep()
