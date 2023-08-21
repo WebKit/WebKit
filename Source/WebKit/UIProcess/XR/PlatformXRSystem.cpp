@@ -54,6 +54,14 @@ void PlatformXRSystem::invalidate()
         xrCoordinator()->endSessionIfExists(m_page);
 }
 
+void PlatformXRSystem::ensureImmersiveSessionActivity()
+{
+    if (m_immersiveSessionActivity && m_immersiveSessionActivity->isValid())
+        return;
+
+    m_immersiveSessionActivity = m_page.process().throttler().foregroundActivity("XR immersive session"_s).moveToUniquePtr();
+}
+
 void PlatformXRSystem::enumerateImmersiveXRDevices(CompletionHandler<void(Vector<XRDeviceInfo>&&)>&& completionHandler)
 {
     auto* xrCoordinator = PlatformXRSystem::xrCoordinator();
@@ -91,7 +99,7 @@ void PlatformXRSystem::initializeTrackingAndRendering(const WebCore::SecurityOri
     if (!xrCoordinator)
         return;
 
-    m_immersiveSessionActivity = m_page.process().throttler().foregroundActivity("XR immersive session"_s).moveToUniquePtr();
+    ensureImmersiveSessionActivity();
 
     WeakPtr weakThis { *this };
     xrCoordinator->startSession(m_page, weakThis, securityOriginData, mode, requestedFeatures);
