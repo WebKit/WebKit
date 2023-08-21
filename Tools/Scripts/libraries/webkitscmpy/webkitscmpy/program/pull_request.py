@@ -25,12 +25,13 @@ import re
 import sys
 
 from .command import Command
+from .commit import Commit
 from .branch import Branch
 from .install_hooks import InstallHooks
 from .squash import Squash
 
 from webkitbugspy import Tracker, radar
-from webkitcorepy import arguments, run, Terminal, OutputCapture
+from webkitcorepy import arguments, run, string_utils, Terminal, OutputCapture
 from webkitscmpy import local, log, remote
 
 
@@ -272,9 +273,27 @@ class PullRequest(Command):
             ):
                 sys.stderr.write("Abandoning pushing pull-request because '{}' could not be created\n".format(args.issue))
                 return None
+
         elif args.issue and repository.branch != args.issue:
-            sys.stderr.write("Creating a pull-request for '{}' but we're on '{}'\n".format(args.issue, repository.branch))
-            return None
+            error = "Creating a pull-request for '{}' but we're on '{}'\n".format(args.issue, repository.branch)
+            if not repository.dev_branches.match(repository.branch):
+                sys.stderr.write(error)
+                return None
+
+            if string_utils.decode(args.issue).isnumeric():
+                issue = Tracker.instance().issue(int(args.issue))
+            else:
+                issue = Tracker.from_string(args.issue)
+            if not issue:
+                sys.stderr.write(error)
+                return None
+            if not repository.branch.endswith('/{}'.format(issue.id)) and not repository.branch.endswith('/{}'.format(Branch.to_branch_name(issue.title))):
+                sys.stderr.write(error)
+                return None
+
+            if not issue.tracker.hide_title:
+                args._title = issue.title
+            args._bug_urls = Commit.bug_urls(issue)
 
         if not repository.config().get('remote.{}.url'.format(source_remote)):
             sys.stderr.write("'{}' is not a remote in this repository\n".format(source_remote))
