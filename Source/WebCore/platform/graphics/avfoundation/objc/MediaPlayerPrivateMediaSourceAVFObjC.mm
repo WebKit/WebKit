@@ -47,8 +47,7 @@
 #import "VideoFrameCV.h"
 #import "VideoLayerManagerObjC.h"
 #import "WebCoreDecompressionSession.h"
-#import <AVFoundation/AVAsset.h>
-#import <AVFoundation/AVTime.h>
+#import <AVFoundation/AVFoundation.h>
 #import <CoreMedia/CMTime.h>
 #import <QuartzCore/CALayer.h>
 #import <objc_runtime.h>
@@ -964,9 +963,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::destroyLayer()
         return;
 
     CMTime currentTime = PAL::CMTimebaseGetTime([m_synchronizer timebase]);
-    [m_synchronizer removeRenderer:m_sampleBufferDisplayLayer.get() atTime:currentTime withCompletionHandler:^(BOOL){
-        // No-op.
-    }];
+    [m_synchronizer removeRenderer:m_sampleBufferDisplayLayer.get() atTime:currentTime completionHandler:nil];
 
     if (m_mediaSourcePrivate)
         m_mediaSourcePrivate->setVideoLayer(nullptr);
@@ -1370,9 +1367,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         return;
 
     CMTime currentTime = PAL::CMTimebaseGetTime([m_synchronizer timebase]);
-    [m_synchronizer removeRenderer:audioRenderer atTime:currentTime withCompletionHandler:^(BOOL){
-        // No-op.
-    }];
+    [m_synchronizer removeRenderer:audioRenderer atTime:currentTime completionHandler:nil];
 
     m_sampleBufferAudioRendererMap.remove(iter);
     if (auto player = m_player.get())
