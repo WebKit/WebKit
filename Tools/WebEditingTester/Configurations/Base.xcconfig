@@ -54,3 +54,4 @@ WARNING_CFLAGS = $(inherited) $(WK_FIXME_WARNING_CFLAGS);
 WK_FIXME_WARNING_CFLAGS = -Wno-unused-parameter;
 
 SDKROOT = macosx.internal;
+ADDITIONAL_SDKS = $(WK_ADDITIONAL_SDKS);

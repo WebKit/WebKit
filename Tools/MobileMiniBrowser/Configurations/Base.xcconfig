@@ -83,5 +83,6 @@ SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator
 SDKROOT = $(SDKROOT_$(USE_INTERNAL_SDK));
 SDKROOT_ = macosx;
 SDKROOT_YES = macosx.internal;
+ADDITIONAL_SDKS = $(WK_ADDITIONAL_SDKS);
 
 CODE_SIGN_IDENTITY = -;

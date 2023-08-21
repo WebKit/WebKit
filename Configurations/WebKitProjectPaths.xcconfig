@@ -73,14 +73,27 @@ UMBRELLA_FRAMEWORKS_DIR_OVERRIDE_YES = $(WK_OVERRIDE_FRAMEWORKS_DIR);
 WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH = $(BUILT_PRODUCTS_DIR)$(WK_LIBRARY_HEADERS_FOLDER_PATH)/WebKitAdditions;
 WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH[config=Production] = $(SDK_DIR)$(WK_LIBRARY_HEADERS_FOLDER_PATH)/WebKitAdditions;
 
+// The root directory of the workspace / WebKit repo is determined by how many directories up "Source" or "Tools" is from the SRCROOT.
+WK_WORKSPACE_DIR = $(WK_WORKSPACE_DIR_1_$(SRCROOT:dir:standardizepath:file):standardizepath)$(WK_WORKSPACE_DIR_2_$(SRCROOT:dir:standardizepath:dir:standardizepath:file):standardizepath)$(WK_WORKSPACE_DIR_3_$(SRCROOT:dir:standardizepath:dir:standardizepath:dir:standardizepath:file):standardizepath)$(WK_WORKSPACE_DIR_4_$(SRCROOT:dir:standardizepath:dir:standardizepath:dir:standardizepath:dir:standardizepath:file):standardizepath);
+WK_WORKSPACE_DIR_1_Source = $(SRCROOT)/../..;
+WK_WORKSPACE_DIR_1_Tools = $(SRCROOT)/../..;
+WK_WORKSPACE_DIR_2_Source = $(SRCROOT)/../../..;
+WK_WORKSPACE_DIR_2_Tools = $(SRCROOT)/../../..;
+WK_WORKSPACE_DIR_3_Source = $(SRCROOT)/../../../..;
+WK_WORKSPACE_DIR_4_Source = $(SRCROOT)/../../../../..;
+
 WK_PRIVATE_FRAMEWORK_STUBS_DIR = $(WK_PRIVATE_FRAMEWORK_STUBS_DIR_$(USE_INTERNAL_SDK));
-WK_PRIVATE_FRAMEWORK_STUBS_DIR_[sdk=macos*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/Mac/$(TARGET_MAC_OS_X_VERSION_MAJOR);
-WK_PRIVATE_FRAMEWORK_STUBS_DIR_[sdk=iphone*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/iOS/$(WK_TARGET_IOS_VERSION_MAJOR);
-WK_PRIVATE_FRAMEWORK_STUBS_DIR_[sdk=appletv*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/appletvos/$(WK_TARGET_TVOS_VERSION_MAJOR);
-WK_PRIVATE_FRAMEWORK_STUBS_DIR_[sdk=watch*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/watchos/$(WK_TARGET_WATCHOS_VERSION_MAJOR);
+WK_PRIVATE_FRAMEWORK_STUBS_DIR_[sdk=macos*] = $(WK_WORKSPACE_DIR)/WebKitLibraries/WebKitPrivateFrameworkStubs/Mac/$(TARGET_MAC_OS_X_VERSION_MAJOR);
+WK_PRIVATE_FRAMEWORK_STUBS_DIR_[sdk=iphone*] = $(WK_WORKSPACE_DIR)/WebKitLibraries/WebKitPrivateFrameworkStubs/iOS/$(WK_TARGET_IOS_VERSION_MAJOR);
+WK_PRIVATE_FRAMEWORK_STUBS_DIR_[sdk=appletv*] = $(WK_WORKSPACE_DIR)/WebKitLibraries/WebKitPrivateFrameworkStubs/appletvos/$(WK_TARGET_TVOS_VERSION_MAJOR);
+WK_PRIVATE_FRAMEWORK_STUBS_DIR_[sdk=watch*] = $(WK_WORKSPACE_DIR)/WebKitLibraries/WebKitPrivateFrameworkStubs/watchos/$(WK_TARGET_WATCHOS_VERSION_MAJOR);
 
 WK_DOWNLEVEL_FRAMEWORK_STUBS_DIR[sdk=macos*] = $(WK_DOWNLEVEL_FRAMEWORK_STUBS_DIR$(WK_MACOS_1400);
-WK_DOWNLEVEL_FRAMEWORK_STUBS_DIR_MACOS_BEFORE_1400 = $(PROJECT_DIR)/../../WebKitLibraries/DownlevelFrameworkStubs/$(TARGET_MAC_OS_X_VERSION_MAJOR);
+WK_DOWNLEVEL_FRAMEWORK_STUBS_DIR_MACOS_BEFORE_1400 = $(WK_WORKSPACE_DIR)/WebKitLibraries/DownlevelFrameworkStubs/$(TARGET_MAC_OS_X_VERSION_MAJOR);
+
+WK_VERSIONED_SDK_ADDITIONS_PATH = $(WK_VERSIONED_SDK_ADDITIONS_PATH_$(USE_INTERNAL_SDK));
+WK_VERSIONED_SDK_ADDITIONS_PATH_ = $(WK_WORKSPACE_DIR)/WebKitLibraries/SDKs/$(PLATFORM_NAME)$($(DEPLOYMENT_TARGET_SETTING_NAME):base).0-additions.sdk;
+WK_VERSIONED_SDK_ADDITIONS_PATH_YES = $(WK_WORKSPACE_DIR)/WebKitLibraries/SDKs/$(PLATFORM_NAME)$($(DEPLOYMENT_TARGET_SETTING_NAME):base).0.internal-additions.sdk;
 
 WTF_BUILD_SCRIPTS_DIR = $(WTF_BUILD_SCRIPTS_DIR_$(CONFIGURATION));
 WTF_BUILD_SCRIPTS_DIR_Release = $(WTF_BUILD_SCRIPTS_DIR_engineering);

@@ -26,6 +26,7 @@
 #include "Sanitizers.xcconfig"
 #include "SDKVariant.xcconfig"
 #include "WebKitProjectPaths.xcconfig"
+#include "SDKAdditions.xcconfig"
 
 // Prefix Definitions
 //
