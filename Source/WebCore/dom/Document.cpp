@@ -272,6 +272,7 @@
 #include "ValidationMessageClient.h"
 #include "ViolationReportType.h"
 #include "VisibilityChangeClient.h"
+#include "VisibilityState.h"
 #include "VisitedLinkState.h"
 #include "VisualViewport.h"
 #include "WakeLockManager.h"

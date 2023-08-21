@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "BadgeClient.h"
 #include "CacheStorageProvider.h"
 #include "DocumentLoader.h"
 #include "EventLoop.h"
