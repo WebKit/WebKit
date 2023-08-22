@@ -6488,28 +6488,55 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     return YES;
 }
 
-ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
-- (void)_handleKeyUIEvent:(::UIEvent *)event
+- (BOOL)_tryToHandlePressesEvent:(UIPressesEvent *)event
 {
     bool isHardwareKeyboardEvent = !!event._hidEvent;
     // We only want to handle key event from the hardware keyboard when we are
     // first responder and we are not interacting with editable content.
-    if ([self isFirstResponder] && isHardwareKeyboardEvent && (_inputPeripheral || !_page->editorState().isContentEditable)) {
+    if (self.isFirstResponder && isHardwareKeyboardEvent && (_inputPeripheral || !_page->editorState().isContentEditable)) {
         if ([_inputPeripheral respondsToSelector:@selector(handleKeyEvent:)]) {
             if ([_inputPeripheral handleKeyEvent:event])
-                return;
+                return YES;
         }
         if (!_seenHardwareKeyDownInNonEditableElement) {
             _seenHardwareKeyDownInNonEditableElement = YES;
             [self reloadInputViews];
         }
-        [super _handleKeyUIEvent:event];
-        return;
     }
-
-    [super _handleKeyUIEvent:event];
+    return NO;
 }
-ALLOW_DEPRECATED_IMPLEMENTATIONS_END
+
+- (void)pressesBegan:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event
+{
+    if ([self _tryToHandlePressesEvent:event])
+        return;
+
+    [super pressesBegan:presses withEvent:event];
+}
+
+- (void)pressesEnded:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event
+{
+    if ([self _tryToHandlePressesEvent:event])
+        return;
+
+    [super pressesEnded:presses withEvent:event];
+}
+
+- (void)pressesChanged:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event
+{
+    if ([self _tryToHandlePressesEvent:event])
+        return;
+
+    [super pressesChanged:presses withEvent:event];
+}
+
+- (void)pressesCancelled:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event
+{
+    if ([self _tryToHandlePressesEvent:event])
+        return;
+
+    [super pressesCancelled:presses withEvent:event];
+}
 
 - (void)generateSyntheticEditingCommand:(WebKit::SyntheticEditingCommandType)command
 {

@@ -62,6 +62,7 @@
 #import <UIKit/UIPickerView_Private.h>
 #import <UIKit/UIPopoverPresentationController_Private.h>
 #import <UIKit/UIPresentationController_Private.h>
+#import <UIKit/UIPress_Private.h>
 #import <UIKit/UIPrintPageRenderer_Private.h>
 #import <UIKit/UIResponder_Private.h>
 #import <UIKit/UIScene_Private.h>
@@ -213,6 +214,8 @@ typedef struct __IOHIDEvent* IOHIDEventRef;
 typedef struct __GSKeyboard* GSKeyboardRef;
 WTF_EXTERN_C_END
 
+@class UIPressInfo;
+
 @interface UIApplication ()
 - (UIInterfaceOrientation)interfaceOrientation;
 - (void)_cancelAllTouches;
@@ -220,7 +223,6 @@ WTF_EXTERN_C_END
 - (BOOL)isSuspendedUnderLock;
 - (void)_enqueueHIDEvent:(IOHIDEventRef)event;
 - (void)_handleHIDEvent:(IOHIDEventRef)event;
-- (void)handleKeyUIEvent:(UIEvent *)event;
 - (BOOL)_appAdoptsUISceneLifecycle;
 @end
 
@@ -498,7 +500,6 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 @end
 
 @interface UIResponder ()
-- (void)_handleKeyUIEvent:(UIEvent *)event;
 - (void)_wheelChangedWithEvent:(UIEvent *)event;
 - (void)_beginPinningInputViews;
 - (void)_endPinningInputViews;
@@ -1401,6 +1402,14 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 - (void)prepareKeyboardInputModeFromPreferences:(UIKeyboardInputMode *)lastUsedMode;
 - (void)syncInputManagerToAcceptedAutocorrection:(TIKeyboardCandidate *)autocorrection forInput:(TIKeyboardInput *)inputEvent;
 @property (nonatomic, readonly) UIKeyboardInputMode *currentInputModeInPreference;
+@end
+
+@interface UIApplication (IPI)
+- (UIPressInfo *)_pressInfoForPhysicalKeyboardEvent:(UIPhysicalKeyboardEvent *)physicalKeyboardEvent;
+@end
+
+@interface UIPress (IPI)
+- (void)_loadStateFromPressInfo:(UIPressInfo *)pressInfo;
 @end
 
 @class CALayerHost;

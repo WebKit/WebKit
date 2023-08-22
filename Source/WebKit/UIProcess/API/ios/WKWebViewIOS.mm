@@ -535,22 +535,51 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
     _page->didLayoutForCustomContentProvider();
 }
 
-ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
-- (void)_handleKeyUIEvent:(::UIEvent *)event
+- (BOOL)_tryToHandleKeyEventInCustomContentView:(UIPressesEvent *)event
 {
     // We only want to handle key events from the hardware keyboard when we are
     // first responder and a custom content view is installed; otherwise,
     // WKContentView will be the first responder and expects to get key events directly.
-    if ([self isFirstResponder] && event._hidEvent) {
+    if (self.isFirstResponder && event._hidEvent) {
         if ([_customContentView respondsToSelector:@selector(web_handleKeyEvent:)]) {
             if ([_customContentView web_handleKeyEvent:event])
-                return;
+                return YES;
         }
     }
-
-    [super _handleKeyUIEvent:event];
+    return NO;
 }
-ALLOW_DEPRECATED_IMPLEMENTATIONS_END
+
+- (void)pressesBegan:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event
+{
+    if ([self _tryToHandleKeyEventInCustomContentView:event])
+        return;
+
+    [super pressesBegan:presses withEvent:event];
+}
+
+- (void)pressesChanged:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event
+{
+    if ([self _tryToHandleKeyEventInCustomContentView:event])
+        return;
+
+    [super pressesChanged:presses withEvent:event];
+}
+
+- (void)pressesEnded:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event
+{
+    if ([self _tryToHandleKeyEventInCustomContentView:event])
+        return;
+
+    [super pressesEnded:presses withEvent:event];
+}
+
+- (void)pressesCancelled:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event
+{
+    if ([self _tryToHandleKeyEventInCustomContentView:event])
+        return;
+
+    [super pressesCancelled:presses withEvent:event];
+}
 
 - (void)_willInvokeUIScrollViewDelegateCallback
 {

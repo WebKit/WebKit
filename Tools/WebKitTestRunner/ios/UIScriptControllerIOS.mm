@@ -605,11 +605,13 @@ static void setModifierFlagsForUIPhysicalKeyboardEvent(UIPhysicalKeyboardEvent *
         keyboardEvent._modifierFlags = modifierFlags;
 }
 
-static UIPhysicalKeyboardEvent *createUIPhysicalKeyboardEvent(NSString *hidInputString, NSString *uiEventInputString, UIKeyModifierFlags modifierFlags, UIKeyboardInputFlags inputFlags, bool isKeyDown)
+enum class IsKeyDown : bool { No, Yes };
+
+static UIPhysicalKeyboardEvent *createUIPhysicalKeyboardEvent(NSString *hidInputString, NSString *uiEventInputString, UIKeyModifierFlags modifierFlags, UIKeyboardInputFlags inputFlags, IsKeyDown isKeyDown)
 {
     auto* keyboardEvent = [getUIPhysicalKeyboardEventClass() _eventWithInput:uiEventInputString inputFlags:inputFlags];
     setModifierFlagsForUIPhysicalKeyboardEvent(keyboardEvent, modifierFlags);
-    auto hidEvent = createHIDKeyEvent(hidInputString, keyboardEvent.timestamp, isKeyDown);
+    auto hidEvent = createHIDKeyEvent(hidInputString, keyboardEvent.timestamp, isKeyDown == IsKeyDown::Yes);
     [keyboardEvent _setHIDEvent:hidEvent.get() keyboard:nullptr];
     return keyboardEvent;
 }
@@ -1356,9 +1358,15 @@ void UIScriptControllerIOS::setKeyboardInputModeIdentifier(JSStringRef identifie
 void UIScriptControllerIOS::toggleCapsLock(JSValueRef callback)
 {
     m_capsLockOn = !m_capsLockOn;
-    auto *keyboardEvent = createUIPhysicalKeyboardEvent(@"capsLock", [NSString string], m_capsLockOn ? UIKeyModifierAlphaShift : 0,
-        kUIKeyboardInputModifierFlagsChanged, m_capsLockOn);
-    [[UIApplication sharedApplication] handleKeyUIEvent:keyboardEvent];
+    auto uiKeyModifierFlag = m_capsLockOn ? UIKeyModifierAlphaShift : 0;
+    auto *keyboardEventDown = createUIPhysicalKeyboardEvent(@"capsLock", @"", uiKeyModifierFlag, kUIKeyboardInputModifierFlagsChanged, IsKeyDown::Yes);
+    auto *keyboardEventUp = createUIPhysicalKeyboardEvent(@"capsLock", @"", uiKeyModifierFlag, kUIKeyboardInputModifierFlagsChanged, IsKeyDown::No);
+    auto *pressInfo = [[UIApplication sharedApplication] _pressInfoForPhysicalKeyboardEvent:keyboardEventDown];
+    auto press = adoptNS([[UIPress alloc] init]);
+    [press _loadStateFromPressInfo:pressInfo];
+    auto *presses = [NSSet setWithObject:press.get()];
+    [platformContentView() pressesBegan:presses withEvent:keyboardEventDown];
+    [platformContentView() pressesEnded:presses withEvent:keyboardEventUp];
     doAsyncTask(callback);
 }
 
