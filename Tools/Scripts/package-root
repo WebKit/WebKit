@@ -42,13 +42,15 @@ sub usage()
 {
     my $usage = <<EOF;
     Bundles up products created with build-webkit into a zip suitable for sharing as a root.
-    The archive is created in the top level webkit directory.
+    The archive is created in the build directory for the chosen platform and SDK.
 
     Usage: $programName [configuration options]
       --help                            Show this help message
       --sdk                             Specifies SDK for which the roots are staged
                                         (Default: currently installed Base SDK)
       --ios-device                      Use "iphoneos.internal" SDK if installed, else "iphoneos" SDK (iOS only)
+      --tvos-device                     Use "appletvos.internal" SDK if installed, else "appletvos" SDK (tvOS only)
+      --watchos-device                  Use "watchos.internal" SDK if installed, else "watchos" SDK (watchOS only)
       --device                          DEPRECATED alias of --ios-device
       --ios-simulator                   Use "iphonesimulator.internal" SDK if installed, else "iphonesimulator" SDK (iOS only)
       --simulator                       DEPRECATED alias of --ios-simulator
@@ -74,8 +76,10 @@ setConfiguration();
 
 my @privateFrameworks = qw(WebCore WebGPU WebKitLegacy);
 my @publicFrameworks = qw(JavaScriptCore WebKit);
-my $privateInstallPath = "/System/Library/PrivateFrameworks";
-my $publicInstallPath = "/System/Library/Frameworks";
+my $packagedRootBasePath = usesCryptexPath() ? "/System/Cryptexes/OS/" : "/";
+$packagedRootBasePath = "$packagedRootBasePath" . "System/iOSSupport/" if isMacCatalystWebKit();
+my $privateInstallPath = "$packagedRootBasePath" . "System/Library/PrivateFrameworks";
+my $publicInstallPath = "$packagedRootBasePath" . "System/Library/Frameworks";
 
 my $configuration = configuration();
 my $platform = xcodeSDKPlatformName();
@@ -102,7 +106,7 @@ foreach my $framework (@publicFrameworks) {
     die "Check to see that you have built $framework for $configuration-$platform" if $?;
 }
 
-system 'ditto', "$productDir/usr", "$stagingRoot/usr";
+system 'ditto', "$productDir/usr", "$stagingRoot" . "$packagedRootBasePath" . "usr";
 
 chdir $stagingRoot;
 print "Creating compressed archive ...\n";

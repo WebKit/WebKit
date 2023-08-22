@@ -131,6 +131,7 @@ BEGIN {
        &isInspectorFrontend
        &isJSCOnly
        &isLinux
+       &isMacCatalystWebKit
        &isPlayStation
        &isWPE
        &isWinCairo
@@ -193,6 +194,7 @@ BEGIN {
        &splitVersionString
        &tsanIsEnabled
        &ubsanIsEnabled
+       &usesCryptexPath
        &willUseAppleTVDeviceSDK
        &willUseAppleTVSimulatorSDK
        &willUseIOSDeviceSDK
@@ -1865,6 +1867,11 @@ sub isMacCatalystWebKit()
 sub isAppleCocoaWebKit()
 {
     return isAppleMacWebKit() || isEmbeddedWebKit() || isMacCatalystWebKit();
+}
+
+sub usesCryptexPath
+{
+    return isAppleMacWebKit() || isMacCatalystWebKit() || isIOSWebKit();
 }
 
 sub simulatorDeviceFromJSON
