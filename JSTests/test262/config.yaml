@@ -79,6 +79,11 @@ skip:
     - test/intl402/Locale/constructor-non-iana-canon.js
     - test/intl402/Locale/likely-subtags.js
 
+    # ICU 72~ is required
+    - test/intl402/NumberFormat/prototype/format/format-rounding-priority-less-precision.js
+    - test/intl402/NumberFormat/prototype/format/format-rounding-priority-more-precision.js
+    - test/intl402/NumberFormat/test-option-roundingPriority-mixed-options.js
+
     # ICU canonicalization bug
     # https://unicode-org.atlassian.net/browse/ICU-21367
     - test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-yes-to-true.js
