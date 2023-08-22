@@ -4027,6 +4027,7 @@ enum class WebCore::ServiceWorkerClientFrameType : uint8_t {
     None
 };
 
+enum class WebCore::ServiceWorkerIsInspectable : bool
 enum class WebCore::ShouldNotifyWhenResolved : bool
 
 enum class WebCore::ServiceWorkerUpdateViaCache : uint8_t {

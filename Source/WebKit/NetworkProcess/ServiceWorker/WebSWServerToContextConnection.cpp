@@ -108,7 +108,7 @@ void WebSWServerToContextConnection::close()
 
 void WebSWServerToContextConnection::installServiceWorkerContext(const ServiceWorkerContextData& contextData, const ServiceWorkerData& workerData, const String& userAgent, WorkerThreadMode workerThreadMode)
 {
-    send(Messages::WebSWContextManagerConnection::InstallServiceWorker { contextData, workerData, userAgent, workerThreadMode });
+    send(Messages::WebSWContextManagerConnection::InstallServiceWorker { contextData, workerData, userAgent, workerThreadMode, m_isInspectable });
 }
 
 void WebSWServerToContextConnection::updateAppInitiatedValue(ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::LastNavigationWasAppInitiated lastNavigationWasAppInitiated)
@@ -373,6 +373,15 @@ void WebSWServerToContextConnection::navigate(ScriptExecutionContextIdentifier c
         });
         callback(WTFMove(clientData));
     }, 0);
+}
+
+void WebSWServerToContextConnection::setInspectable(ServiceWorkerIsInspectable inspectable)
+{
+    if (m_isInspectable == inspectable)
+        return;
+
+    m_isInspectable = inspectable;
+    send(Messages::WebSWContextManagerConnection::SetInspectable { inspectable });
 }
 
 } // namespace WebKit

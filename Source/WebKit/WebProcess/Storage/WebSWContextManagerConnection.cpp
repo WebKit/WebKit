@@ -152,11 +152,11 @@ void WebSWContextManagerConnection::updateAppInitiatedValue(ServiceWorkerIdentif
         serviceWorkerThreadProxy->setLastNavigationWasAppInitiated(lastNavigationWasAppInitiated == WebCore::LastNavigationWasAppInitiated::Yes);
 }
 
-void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, String&& userAgent, WorkerThreadMode workerThreadMode)
+void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, String&& userAgent, WorkerThreadMode workerThreadMode, ServiceWorkerIsInspectable inspectable)
 {
     assertIsCurrent(m_queue.get());
 
-    callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, contextData = WTFMove(contextData).isolatedCopy(), workerData = WTFMove(workerData).isolatedCopy(), userAgent = WTFMove(userAgent).isolatedCopy(), workerThreadMode]() mutable {
+    callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, contextData = WTFMove(contextData).isolatedCopy(), workerData = WTFMove(workerData).isolatedCopy(), userAgent = WTFMove(userAgent).isolatedCopy(), workerThreadMode, inspectable]() mutable {
         auto pageConfiguration = pageConfigurationWithEmptyClients(m_pageID, WebProcess::singleton().sessionID());
         pageConfiguration.badgeClient = WebBadgeClient::create();
         pageConfiguration.databaseProvider = WebDatabaseProvider::getOrCreate(m_pageGroupID);
@@ -189,6 +189,7 @@ void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextDat
             page->settings().setStorageBlockingPolicy(static_cast<StorageBlockingPolicy>(m_preferencesStore->getUInt32ValueForKey(WebPreferencesKey::storageBlockingPolicyKey())));
         }
         page->setupForRemoteWorker(contextData.scriptURL, contextData.registration.key.topOrigin(), contextData.referrerPolicy);
+        page->setInspectable(inspectable == ServiceWorkerIsInspectable::Yes);
 
         std::unique_ptr<WebCore::NotificationClient> notificationClient;
 #if ENABLE(NOTIFICATIONS)
@@ -527,6 +528,15 @@ void WebSWContextManagerConnection::setThrottleState(bool isThrottleable)
         RELEASE_LOG(ServiceWorker, "Service worker throttleable state is set to %d", isThrottleable);
         protectedThis->m_isThrottleable = isThrottleable;
         WebProcess::singleton().setProcessSuppressionEnabled(isThrottleable);
+    });
+}
+
+void WebSWContextManagerConnection::setInspectable(ServiceWorkerIsInspectable inspectable)
+{
+    assertIsCurrent(m_queue.get());
+
+    callOnMainRunLoop([inspectable] {
+        SWContextManager::singleton().setInspectable(inspectable == ServiceWorkerIsInspectable::Yes);
     });
 }
 

@@ -423,6 +423,7 @@ public:
 
 #if ENABLE(SERVICE_WORKER)
     void requestBackgroundFetchPermission(PAL::SessionID, const WebCore::ClientOrigin&, CompletionHandler<void(bool)>&&);
+    void setInspectionForServiceWorkersAllowed(PAL::SessionID, bool);
 #endif
 
 private:

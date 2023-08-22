@@ -2995,4 +2995,14 @@ void NetworkProcess::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
 }
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+
+void NetworkProcess::setInspectionForServiceWorkersAllowed(PAL::SessionID sessionID, bool inspectable)
+{
+    if (auto* session = networkSession(sessionID))
+        session->setInspectionForServiceWorkersAllowed(inspectable);
+}
+
+#endif // ENABLE(SERVICE_WORKER)
+
 } // namespace WebKit

@@ -98,6 +98,8 @@ public:
     virtual void connectionIsNoLongerNeeded() = 0;
     virtual void terminateDueToUnresponsiveness() = 0;
 
+    virtual void setInspectable(ServiceWorkerIsInspectable) = 0;
+
 protected:
     WEBCORE_EXPORT SWServerToContextConnection(SWServer&, RegistrableDomain&&, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier);
 

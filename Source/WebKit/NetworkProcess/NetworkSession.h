@@ -276,6 +276,10 @@ public:
     virtual void clearProxyConfigData() { }
     virtual void setProxyConfigData(Vector<std::pair<Vector<uint8_t>, WTF::UUID>>&&) { };
 #endif
+
+#if ENABLE(SERVICE_WORKER)
+    void setInspectionForServiceWorkersAllowed(bool);
+#endif
                                     
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
@@ -361,6 +365,7 @@ protected:
     std::optional<ServiceWorkerInfo> m_serviceWorkerInfo;
     std::unique_ptr<WebCore::SWServer> m_swServer;
     RefPtr<BackgroundFetchStoreImpl> m_backgroundFetchStore;
+    bool m_inspectionForServiceWorkersAllowed { true };
 #endif
     std::unique_ptr<WebSharedWorkerServer> m_sharedWorkerServer;
 
