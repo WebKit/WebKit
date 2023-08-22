@@ -77,7 +77,7 @@ public:
 
 private:
     SpeechSynthesis(ScriptExecutionContext&);
-    void clearUtteranceQueue();
+    RefPtr<SpeechSynthesisUtterance> protectedCurrentSpeechUtterance();
 
     // PlatformSpeechSynthesizerClient override methods.
     void voicesDidChange() override;
@@ -109,7 +109,7 @@ private:
     
     RefPtr<PlatformSpeechSynthesizer> m_platformSpeechSynthesizer;
     Vector<Ref<SpeechSynthesisVoice>> m_voiceList;
-    RefPtr<SpeechSynthesisUtterance> m_currentSpeechUtterance;
+    std::unique_ptr<SpeechSynthesisUtteranceActivity> m_currentSpeechUtterance;
     Deque<Ref<SpeechSynthesisUtterance>> m_utteranceQueue;
     bool m_isPaused;
     BehaviorRestrictions m_restrictions;

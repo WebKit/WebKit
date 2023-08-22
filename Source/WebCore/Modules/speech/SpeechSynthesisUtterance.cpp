@@ -92,7 +92,7 @@ void SpeechSynthesisUtterance::eventOccurred(const AtomString& type, unsigned lo
         return;
     }
 
-    dispatchEventAndUpdateState(SpeechSynthesisEvent::create(type, { this, charIndex, charLength, static_cast<float>((MonotonicTime::now() - startTime()).seconds()), name }));
+    dispatchEvent(SpeechSynthesisEvent::create(type, { this, charIndex, charLength, static_cast<float>((MonotonicTime::now() - startTime()).seconds()), name }));
 }
 
 void SpeechSynthesisUtterance::errorEventOccurred(const AtomString& type, SpeechSynthesisErrorCode errorCode)
@@ -102,24 +102,17 @@ void SpeechSynthesisUtterance::errorEventOccurred(const AtomString& type, Speech
         return;
     }
 
-    dispatchEventAndUpdateState(SpeechSynthesisErrorEvent::create(type, { { this, 0, 0, static_cast<float>((MonotonicTime::now() - startTime()).seconds()), { } }, errorCode }));
+    dispatchEvent(SpeechSynthesisErrorEvent::create(type, { { this, 0, 0, static_cast<float>((MonotonicTime::now() - startTime()).seconds()), { } }, errorCode }));
 }
 
-void SpeechSynthesisUtterance::dispatchEventAndUpdateState(Event& event)
+void SpeechSynthesisUtterance::incrementActivityCountForEventDispatch()
 {
-    dispatchEvent(event);
-
-    if (event.type() == eventNames().endEvent || event.type() == eventNames().errorEvent)
-        setIsActiveForEventDispatch(false);
+    ++m_activityCountForEventDispatch;
 }
 
-void SpeechSynthesisUtterance::setIsActiveForEventDispatch(bool isActiveForEventDispatch)
+void SpeechSynthesisUtterance::decrementActivityCountForEventDispatch()
 {
-    // When completionHandler is set, event will be passed to it instead of being dispatched.
-    if (m_completionHandler)
-        return;
-
-    m_isActiveForEventDispatch = isActiveForEventDispatch;
+    --m_activityCountForEventDispatch;
 }
 
 const char* SpeechSynthesisUtterance::activeDOMObjectName() const
@@ -129,7 +122,7 @@ const char* SpeechSynthesisUtterance::activeDOMObjectName() const
 
 bool SpeechSynthesisUtterance::virtualHasPendingActivity() const
 {
-    return m_isActiveForEventDispatch && hasEventListeners();
+    return m_activityCountForEventDispatch && hasEventListeners();
 }
 
 

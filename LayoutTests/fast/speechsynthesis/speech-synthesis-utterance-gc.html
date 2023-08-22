@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    description("This tests speaking an utterance multiple times will not crash due to garbage collection.");
+
+    if (window.internals)
+        window.internals.enableMockSpeechSynthesizer();
+
+    window.jsTestIsAsync = true;
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    var utterance = new SpeechSynthesisUtterance("this is a test");
+    count = 10;
+    utterance.onend = function(event) {
+        if (--count == 0) 
+            finishJSTest();
+    }
+
+    for (let i = 0; i < count; ++i)
+        speechSynthesis.speak(utterance);
+
+    utterance = null;
+    gc();
+    // For mock speech synthesizer, speaking each utterance takes 100ms to complete,
+    // so we make gc happen after first speaking.
+    setTimeout(() => { gc(); }, 150);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>

@@ -81,6 +81,8 @@ public:
 private:
     SpeechSynthesisUtterance(ScriptExecutionContext&, const String&, UtteranceCompletionHandler&&);
     void dispatchEventAndUpdateState(Event&);
+    void incrementActivityCountForEventDispatch();
+    void decrementActivityCountForEventDispatch();
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
@@ -92,10 +94,31 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
+    friend class SpeechSynthesisUtteranceActivity;
     RefPtr<PlatformSpeechSynthesisUtterance> m_platformUtterance;
     RefPtr<SpeechSynthesisVoice> m_voice;
     UtteranceCompletionHandler m_completionHandler;
-    bool m_isActiveForEventDispatch { false };
+    unsigned m_activityCountForEventDispatch { 0 };
+};
+
+class SpeechSynthesisUtteranceActivity {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    SpeechSynthesisUtteranceActivity(Ref<SpeechSynthesisUtterance>&& utterance)
+        : m_utterance(utterance)
+    {
+        m_utterance->incrementActivityCountForEventDispatch();
+    }
+
+    ~SpeechSynthesisUtteranceActivity()
+    {
+        m_utterance->decrementActivityCountForEventDispatch();
+    }
+
+    SpeechSynthesisUtterance& utterance() { return m_utterance.get(); }
+
+private:
+    Ref<SpeechSynthesisUtterance> m_utterance;
 };
 
 } // namespace WebCore
