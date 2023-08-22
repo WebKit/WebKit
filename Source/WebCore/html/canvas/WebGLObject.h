@@ -108,7 +108,7 @@ public:
     bool isDeleted() const { return m_deleted; }
 
     // True if this object belongs to the context.
-    bool validate(const WebGLRenderingContextBase& context) const { return &context == m_context; }
+    bool validate(const WebGLRenderingContextBase&) const;
 
     Lock& objectGraphLockForContext();
 

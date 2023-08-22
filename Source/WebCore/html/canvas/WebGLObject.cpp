@@ -114,6 +114,11 @@ void WebGLObject::onDetached(const AbstractLocker& locker, GraphicsContextGL* co
         deleteObject(locker, context3d);
 }
 
+bool WebGLObject::validate(const WebGLRenderingContextBase& context) const
+{
+    return &context == m_context;
+}
+
 WebCoreOpaqueRoot root(WebGLObject* object)
 {
     return WebCoreOpaqueRoot { object };
