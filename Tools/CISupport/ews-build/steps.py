@@ -1667,7 +1667,7 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         self.addURLs = addURLs
 
         branches = branches or [r'.+']
-        self.branches = [branch if isinstance(branch, re.Pattern) else re.compile(branch) for branch in branches]
+        self.branches = [re.compile(branch) if isinstance(branch, str) else branch for branch in branches]
 
         super().__init__()
 
