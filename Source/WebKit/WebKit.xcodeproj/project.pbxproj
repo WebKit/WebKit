@@ -7281,7 +7281,6 @@
 		FA9CD6342A01B21700EA5CAC /* NetworkOriginAccessPatterns.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkOriginAccessPatterns.h; sourceTree = "<group>"; };
 		FAA4E2FE2A1575A3003F5E50 /* WebFrameLoaderClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFrameLoaderClient.cpp; sourceTree = "<group>"; };
 		FAA4E2FF2A1575A4003F5E50 /* WebFrameLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameLoaderClient.h; sourceTree = "<group>"; };
-		FAC3C3BA2A93E561001E2EB8 /* RemoteScrollingCoordinatorTransaction.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteScrollingCoordinatorTransaction.serialization.in; sourceTree = "<group>"; };
 		FED3C1DA1B447AE800E0EB7F /* APISerializedScriptValueCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = APISerializedScriptValueCocoa.mm; sourceTree = "<group>"; };
 		FEDBDCD41E68D19C00A59F8F /* WebInspectorInterruptDispatcherMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorInterruptDispatcherMessageReceiver.cpp; sourceTree = "<group>"; };
 		FEDBDCD51E68D19C00A59F8F /* WebInspectorInterruptDispatcherMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorInterruptDispatcherMessages.h; sourceTree = "<group>"; };
@@ -9233,7 +9232,6 @@
 				0F80264627AB4AEF00EC6ED7 /* RemoteLayerWithRemoteRenderingBackingStoreCollection.mm */,
 				0F5947A1187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.cpp */,
 				0F5947A2187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.h */,
-				FAC3C3BA2A93E561001E2EB8 /* RemoteScrollingCoordinatorTransaction.serialization.in */,
 				0FCD094E24C79F5B000C6D39 /* RemoteScrollingUIState.cpp */,
 				0FCD094F24C79F5B000C6D39 /* RemoteScrollingUIState.h */,
 				0F65956727DB1D5800EE874B /* SwapBuffersDisplayRequirement.h */,
