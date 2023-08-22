@@ -1947,6 +1947,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     networkSessionParameters.serviceWorkerRegistrationDirectory = resolvedServiceWorkerRegistrationDirectory();
     createHandleFromResolvedPathIfPossible(networkSessionParameters.serviceWorkerRegistrationDirectory, networkSessionParameters.serviceWorkerRegistrationDirectoryExtensionHandle);
     networkSessionParameters.serviceWorkerProcessTerminationDelayEnabled = m_configuration->serviceWorkerProcessTerminationDelayEnabled();
+    networkSessionParameters.inspectionForServiceWorkersAllowed = m_inspectionForServiceWorkersAllowed;
 #endif
     parameters.networkSessionParameters = WTFMove(networkSessionParameters);
 #if ENABLE(TRACKING_PREVENTION)
@@ -2454,6 +2455,49 @@ void WebsiteDataStore::setCompletionHandlerForRemovalFromNetworkProcess(Completi
         m_completionHandlerForRemovalFromNetworkProcess("New completion handler is set"_s);
 
     m_completionHandlerForRemovalFromNetworkProcess = WTFMove(completionHandler);
+}
+
+#if ENABLE(SERVICE_WORKER)
+
+void WebsiteDataStore::updateServiceWorkerInspectability()
+{
+    if (!m_pages.computeSize())
+        return;
+
+    bool wasInspectable = m_inspectionForServiceWorkersAllowed;
+    m_inspectionForServiceWorkersAllowed = [&] {
+        for (auto& page : m_pages) {
+            if (page.inspectable())
+                return true;
+        }
+        return false;
+    }();
+
+    if (wasInspectable == m_inspectionForServiceWorkersAllowed)
+        return;
+
+    if (RefPtr networkProcess = networkProcessIfExists())
+        networkProcess->send(Messages::NetworkProcess::SetInspectionForServiceWorkersAllowed(m_sessionID, m_inspectionForServiceWorkersAllowed), 0);
+}
+
+#endif // ENABLE(SERVICE_WORKER)
+
+void WebsiteDataStore::addPage(WebPageProxy& page)
+{
+    m_pages.add(page);
+
+#if ENABLE(SERVICE_WORKER)
+    updateServiceWorkerInspectability();
+#endif
+}
+
+void WebsiteDataStore::removePage(WebPageProxy& page)
+{
+    m_pages.remove(page);
+
+#if ENABLE(SERVICE_WORKER)
+    updateServiceWorkerInspectability();
+#endif
 }
 
 }

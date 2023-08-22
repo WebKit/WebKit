@@ -126,6 +126,7 @@ public:
     static constexpr Seconds syncWorkerTerminationTimeout { 100_ms }; // Only used by layout tests.
 
     WEBCORE_EXPORT void setAsInspected(ServiceWorkerIdentifier, bool);
+    WEBCORE_EXPORT void setInspectable(bool);
 
 private:
     SWContextManager() = default;

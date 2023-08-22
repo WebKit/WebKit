@@ -64,6 +64,7 @@ enum class ServiceWorkerClientFrameType : uint8_t {
     None
 };
 
+enum class ServiceWorkerIsInspectable : bool { No, Yes };
 enum class ShouldNotifyWhenResolved : bool { No, Yes };
 
 enum ServiceWorkerRegistrationIdentifierType { };
