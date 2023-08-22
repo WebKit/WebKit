@@ -84,7 +84,7 @@ static void broadcastDebugMessage(const String& message)
     WebPushDaemon::singleton().broadcastDebugMessage(makeString("ICAppBundle: ", message));
 }
 
-ICAppBundle::ICAppBundle(ClientConnection& clientConnection, const String& originString, PushAppBundleClient& client)
+ICAppBundle::ICAppBundle(PushClientConnection& clientConnection, const String& originString, PushAppBundleClient& client)
     : PushAppBundle(client)
     , m_originString(originString)
     , m_clientConnection(&clientConnection)
@@ -146,7 +146,7 @@ static String bundleNameForOriginStringAndHostAppIdentifier(const String& origin
     return makeString(bundlePrefixForHostAppIdentifier(hostAppIdentifier), encodeOriginStringForBundleIdentifier(originString));
 }
 
-void ICAppBundle::getOriginsWithRegistrations(ClientConnection& connection, CompletionHandler<void(const Vector<String>&)>&& completionHandler)
+void ICAppBundle::getOriginsWithRegistrations(PushClientConnection& connection, CompletionHandler<void(const Vector<String>&)>&& completionHandler)
 {
     Vector<String> results;
 

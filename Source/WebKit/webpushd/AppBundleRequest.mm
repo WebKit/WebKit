@@ -33,7 +33,7 @@
 
 namespace WebPushD {
 
-AppBundleRequest::AppBundleRequest(ClientConnection& connection, const String& originString)
+AppBundleRequest::AppBundleRequest(PushClientConnection& connection, const String& originString)
     : m_connection(connection)
     , m_originString(originString)
 {

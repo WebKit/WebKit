@@ -35,7 +35,7 @@
 namespace WebPushD {
 
 class PushAppBundle;
-class ClientConnection;
+class PushClientConnection;
 
 class AppBundleRequest : public PushAppBundleClient {
     WTF_MAKE_FAST_ALLOCATED;
@@ -48,11 +48,11 @@ public:
     void cancel();
 
 protected:
-    AppBundleRequest(ClientConnection&, const String& originString);
+    AppBundleRequest(PushClientConnection&, const String& originString);
 
     void cleanupAfterCompletionHandler();
 
-    WeakPtr<ClientConnection> m_connection;
+    WeakPtr<PushClientConnection> m_connection;
     String m_originString;
     RefPtr<PushAppBundle> m_appBundle;
     OSObjectPtr<os_transaction_t> m_transaction;
@@ -64,7 +64,7 @@ private:
 template<typename CompletionType>
 class AppBundleRequestImpl : public AppBundleRequest {
 protected:
-    AppBundleRequestImpl(ClientConnection& connection, const String& originString, CompletionHandler<void(CompletionType)>&& completionHandler)
+    AppBundleRequestImpl(PushClientConnection& connection, const String& originString, CompletionHandler<void(CompletionType)>&& completionHandler)
         : AppBundleRequest(connection, originString)
         , m_completionHandler(WTFMove(completionHandler))
     {
@@ -92,7 +92,7 @@ private:
 
 class AppBundlePermissionsRequest : public AppBundleRequestImpl<bool> {
 public:
-    AppBundlePermissionsRequest(ClientConnection& connection, const String& originString, CompletionHandler<void(bool)>&& completionHandler)
+    AppBundlePermissionsRequest(PushClientConnection& connection, const String& originString, CompletionHandler<void(bool)>&& completionHandler)
         : AppBundleRequestImpl(connection, originString, WTFMove(completionHandler))
     {
     }
@@ -108,7 +108,7 @@ private:
 
 class AppBundleDeletionRequest : public AppBundleRequestImpl<const String&> {
 public:
-    AppBundleDeletionRequest(ClientConnection& connection, const String& originString, CompletionHandler<void(const String&)>&& completionHandler)
+    AppBundleDeletionRequest(PushClientConnection& connection, const String& originString, CompletionHandler<void(const String&)>&& completionHandler)
         : AppBundleRequestImpl(connection, originString,  WTFMove(completionHandler))
     {
     }

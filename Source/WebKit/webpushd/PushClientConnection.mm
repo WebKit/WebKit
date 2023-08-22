@@ -47,17 +47,17 @@ using WebKit::Daemon::Encoder;
 
 namespace WebPushD {
 
-Ref<ClientConnection> ClientConnection::create(xpc_connection_t connection)
+Ref<PushClientConnection> PushClientConnection::create(xpc_connection_t connection)
 {
-    return adoptRef(*new ClientConnection(connection));
+    return adoptRef(*new PushClientConnection(connection));
 }
 
-ClientConnection::ClientConnection(xpc_connection_t connection)
+PushClientConnection::PushClientConnection(xpc_connection_t connection)
     : m_xpcConnection(connection)
 {
 }
 
-void ClientConnection::updateConnectionConfiguration(const WebPushDaemonConnectionConfiguration& configuration)
+void PushClientConnection::updateConnectionConfiguration(const WebPushDaemonConnectionConfiguration& configuration)
 {
     if (configuration.hostAppAuditTokenData)
         setHostAppAuditTokenData(*configuration.hostAppAuditTokenData);
@@ -67,7 +67,7 @@ void ClientConnection::updateConnectionConfiguration(const WebPushDaemonConnecti
     m_useMockBundlesForTesting = configuration.useMockBundlesForTesting;
 }
 
-void ClientConnection::setHostAppAuditTokenData(const Vector<uint8_t>& tokenData)
+void PushClientConnection::setHostAppAuditTokenData(const Vector<uint8_t>& tokenData)
 {
     audit_token_t token;
     if (tokenData.size() != sizeof(token)) {
@@ -88,7 +88,7 @@ void ClientConnection::setHostAppAuditTokenData(const Vector<uint8_t>& tokenData
     WebPushDaemon::singleton().broadcastAllConnectionIdentities();
 }
 
-WebCore::PushSubscriptionSetIdentifier ClientConnection::subscriptionSetIdentifier()
+WebCore::PushSubscriptionSetIdentifier PushClientConnection::subscriptionSetIdentifier()
 {
     return {
         hostAppCodeSigningIdentifier(),
@@ -97,7 +97,7 @@ WebCore::PushSubscriptionSetIdentifier ClientConnection::subscriptionSetIdentifi
     };
 }
 
-const String& ClientConnection::hostAppCodeSigningIdentifier()
+const String& PushClientConnection::hostAppCodeSigningIdentifier()
 {
     if (!m_hostAppCodeSigningIdentifier) {
 #if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK)
@@ -114,7 +114,7 @@ const String& ClientConnection::hostAppCodeSigningIdentifier()
     return *m_hostAppCodeSigningIdentifier;
 }
 
-String ClientConnection::bundleIdentifierFromAuditToken(audit_token_t audit_token)
+String PushClientConnection::bundleIdentifierFromAuditToken(audit_token_t audit_token)
 {
 #if PLATFORM(MAC)
     LSSessionID sessionID = (LSSessionID)audit_token_to_asid(audit_token);
@@ -133,7 +133,7 @@ String ClientConnection::bundleIdentifierFromAuditToken(audit_token_t audit_toke
     return WebKit::codeSigningIdentifier(audit_token);
 }
 
-bool ClientConnection::hostAppHasPushEntitlement()
+bool PushClientConnection::hostAppHasPushEntitlement()
 {
     if (!m_hostAppHasPushEntitlement)
         m_hostAppHasPushEntitlement = hostHasEntitlement("com.apple.private.webkit.webpush"_s);
@@ -141,12 +141,12 @@ bool ClientConnection::hostAppHasPushEntitlement()
     return *m_hostAppHasPushEntitlement;
 }
 
-bool ClientConnection::hostAppHasPushInjectEntitlement()
+bool PushClientConnection::hostAppHasPushInjectEntitlement()
 {
     return hostHasEntitlement("com.apple.private.webkit.webpush.inject"_s);
 }
 
-bool ClientConnection::hostHasEntitlement(ASCIILiteral entitlement)
+bool PushClientConnection::hostHasEntitlement(ASCIILiteral entitlement)
 {
     if (!m_hostAppAuditToken)
         return false;
@@ -157,7 +157,7 @@ bool ClientConnection::hostHasEntitlement(ASCIILiteral entitlement)
 #endif
 }
 
-void ClientConnection::setDebugModeIsEnabled(bool enabled)
+void PushClientConnection::setDebugModeIsEnabled(bool enabled)
 {
     if (enabled == m_debugModeEnabled)
         return;
@@ -166,7 +166,7 @@ void ClientConnection::setDebugModeIsEnabled(bool enabled)
     broadcastDebugMessage(makeString("Turned Debug Mode ", m_debugModeEnabled ? "on" : "off"));
 }
 
-void ClientConnection::broadcastDebugMessage(const String& message)
+void PushClientConnection::broadcastDebugMessage(const String& message)
 {
     String messageIdentifier;
     auto signingIdentifier = hostAppCodeSigningIdentifier();
@@ -178,7 +178,7 @@ void ClientConnection::broadcastDebugMessage(const String& message)
     WebPushDaemon::singleton().broadcastDebugMessage(makeString(messageIdentifier, message));
 }
 
-void ClientConnection::sendDebugMessage(const String& message)
+void PushClientConnection::sendDebugMessage(const String& message)
 {
     // FIXME: We currently send the debug message twice.
     // After getting all debug message clients onto the encoder/decoder mechanism, remove the old style message.
@@ -190,14 +190,14 @@ void ClientConnection::sendDebugMessage(const String& message)
     sendDaemonMessage<DaemonMessageType::DebugMessage>(message);
 }
 
-void ClientConnection::enqueueAppBundleRequest(std::unique_ptr<AppBundleRequest>&& request)
+void PushClientConnection::enqueueAppBundleRequest(std::unique_ptr<AppBundleRequest>&& request)
 {
     RELEASE_ASSERT(m_xpcConnection);
     m_pendingBundleRequests.append(WTFMove(request));
     maybeStartNextAppBundleRequest();
 }
 
-void ClientConnection::maybeStartNextAppBundleRequest()
+void PushClientConnection::maybeStartNextAppBundleRequest()
 {
     RELEASE_ASSERT(m_xpcConnection);
 
@@ -208,7 +208,7 @@ void ClientConnection::maybeStartNextAppBundleRequest()
     m_currentBundleRequest->start();
 }
 
-void ClientConnection::didCompleteAppBundleRequest(AppBundleRequest& request)
+void PushClientConnection::didCompleteAppBundleRequest(AppBundleRequest& request)
 {
     // If our connection was closed there should be no in-progress bundle requests.
     RELEASE_ASSERT(m_xpcConnection);
@@ -219,7 +219,7 @@ void ClientConnection::didCompleteAppBundleRequest(AppBundleRequest& request)
     maybeStartNextAppBundleRequest();
 }
 
-void ClientConnection::connectionClosed()
+void PushClientConnection::connectionClosed()
 {
     broadcastDebugMessage("Connection closed"_s);
 
@@ -238,7 +238,7 @@ void ClientConnection::connectionClosed()
 }
 
 template<DaemonMessageType messageType, typename... Args>
-void ClientConnection::sendDaemonMessage(Args&&... args) const
+void PushClientConnection::sendDaemonMessage(Args&&... args) const
 {
     if (!m_xpcConnection)
         return;

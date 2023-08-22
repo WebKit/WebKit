@@ -50,10 +50,10 @@ namespace WebPushD {
 
 class AppBundleRequest;
 
-class ClientConnection : public RefCounted<ClientConnection>, public CanMakeWeakPtr<ClientConnection>, public Identified<ClientConnection> {
+class PushClientConnection : public RefCounted<PushClientConnection>, public CanMakeWeakPtr<PushClientConnection>, public Identified<PushClientConnection> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<ClientConnection> create(xpc_connection_t);
+    static Ref<PushClientConnection> create(xpc_connection_t);
 
     void updateConnectionConfiguration(const WebPushDaemonConnectionConfiguration&);
 
@@ -82,7 +82,7 @@ public:
     void sendDebugMessage(const String&);
 
 private:
-    ClientConnection(xpc_connection_t);
+    PushClientConnection(xpc_connection_t);
 
     void maybeStartNextAppBundleRequest();
     void setHostAppAuditTokenData(const Vector<uint8_t>&);

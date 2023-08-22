@@ -36,12 +36,12 @@
 
 namespace WebPushD {
 
-class ClientConnection;
+class PushClientConnection;
 
 class ICAppBundle : public PushAppBundle, public CanMakeWeakPtr<ICAppBundle> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<ICAppBundle> create(ClientConnection& connection, const String& originString, PushAppBundleClient& client)
+    static Ref<ICAppBundle> create(PushClientConnection& connection, const String& originString, PushAppBundleClient& client)
     {
         return adoptRef(*new ICAppBundle(connection, originString, client));
     }
@@ -49,10 +49,10 @@ public:
     void bundleCreationSucceeded();
     void bundleCreationFailed(NSError *);
 
-    static void getOriginsWithRegistrations(ClientConnection&, CompletionHandler<void(const Vector<String>&)>&&);
+    static void getOriginsWithRegistrations(PushClientConnection&, CompletionHandler<void(const Vector<String>&)>&&);
 
 private:
-    ICAppBundle(ClientConnection&, const String& originString, PushAppBundleClient&);
+    ICAppBundle(PushClientConnection&, const String& originString, PushAppBundleClient&);
 
     const String& getBundleIdentifier();
 
@@ -67,7 +67,7 @@ private:
     RetainPtr<_WKAppInstallCoordinatorObserver> m_appInstallObserver;
 
     String m_originString;
-    RefPtr<ClientConnection> m_clientConnection;
+    RefPtr<PushClientConnection> m_clientConnection;
 
     String m_bundleIdentifier;
 };
