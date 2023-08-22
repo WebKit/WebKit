@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+    <head>
+        <title>WebVTT multiline cues with vertical writing direction should wrap</title>
+        <script src="../../../../resources/js-test-pre.js"></script>
+        <script src="../../media-resources/video-test.js"></script>
+        <script src="../../media-resources/media-file.js"></script>
+        <script>
+            async function runTest()
+            {
+                video = document.getElementById('video');
+                video.src = findMediaFile('video', '../resources/test');
+                await waitFor(video, 'canplay');
+                let track = document.createElement('track');
+                track.src = '../resources/hls/subtitles/verticalrl.vtt';
+                video.appendChild(track)
+
+                await waitFor(video.textTracks, 'addtrack');
+                testExpected("video.textTracks.length", 1);
+                run("video.textTracks[0].mode = 'showing'");
+
+                run("video.currentTime = 1");
+                await waitFor(video, 'seeked');
+
+                window.internals.ensureUserAgentShadowRoot(video);
+                await testExpectedEventually("window.internals.shadowRoot(video).querySelector('span[pseudo=cue]')", null, "!=", 1000);
+                await testExpected("video.offsetHeight >= window.internals.shadowRoot(video).querySelector('span[pseudo=cue]').offsetHeight", true);
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <video id="video" muted></video>
+    </body>
+</html>
