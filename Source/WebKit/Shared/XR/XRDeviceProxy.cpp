@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,8 +77,9 @@ void XRDeviceProxy::initializeTrackingAndRendering(const WebCore::SecurityOrigin
     // This is called from the constructor of WebXRSession. Since sessionDidInitializeInputSources()
     // ends up calling queueTaskKeepingObjectAlive() which refs the WebXRSession object, we
     // should delay this call after the WebXRSession has finished construction.
-    callOnMainRunLoop([this, weakThis = WeakPtr { *this }]() {
-        if (!weakThis)
+    callOnMainRunLoop([this, weakThis = ThreadSafeWeakPtr { *this }]() {
+        auto strongThis = weakThis.get();
+        if (!strongThis)
             return;
 
         if (trackingAndRenderingClient())

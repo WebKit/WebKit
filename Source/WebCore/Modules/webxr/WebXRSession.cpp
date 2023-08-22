@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2020 Igalia S.L. All rights reserved.
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,18 +68,19 @@ WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMod
     , m_timeOrigin(MonotonicTime::now())
     , m_views(device.views(mode))
 {
-    m_device->setTrackingAndRenderingClient(*this);
-    m_device->initializeTrackingAndRendering(document.securityOrigin().data(), mode, m_requestedFeatures);
+    device.setTrackingAndRenderingClient(*this);
+    device.initializeTrackingAndRendering(document.securityOrigin().data(), mode, m_requestedFeatures);
 
     // https://immersive-web.github.io/webxr/#ref-for-dom-xrreferencespacetype-viewer%E2%91%A2
     // Every session MUST support viewer XRReferenceSpaces.
-    m_device->initializeReferenceSpace(XRReferenceSpaceType::Viewer);
+    device.initializeReferenceSpace(XRReferenceSpaceType::Viewer);
 }
 
 WebXRSession::~WebXRSession()
 {
-    if (!m_ended && m_device)
-        m_device->shutDownTrackingAndRendering();
+    auto device = m_device.get();
+    if (!m_ended && device)
+        device->shutDownTrackingAndRendering();
 }
 
 XREnvironmentBlendMode WebXRSession::environmentBlendMode() const
@@ -183,7 +184,8 @@ bool WebXRSession::referenceSpaceIsSupported(XRReferenceSpaceType type) const
             return true;
 
         // 4. If type is local or local-floor, and the XR device supports reporting orientation data, return true.
-        if (m_device->supportsOrientationTracking())
+        auto device = m_device.get();
+        if (device && device->supportsOrientationTracking())
             return true;
     }
 
@@ -226,7 +228,8 @@ void WebXRSession::requestReferenceSpace(XRReferenceSpaceType type, RequestRefer
             return;
         }
         // 2.2. Set up any platform resources required to track reference spaces of type type.
-        m_device->initializeReferenceSpace(type);
+        if (auto device = m_device.get())
+            device->initializeReferenceSpace(type);
 
         // 2.3. Queue a task to run the following steps:
         queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [this, type, promise = WTFMove(promise)]() mutable {
@@ -306,16 +309,18 @@ IntSize WebXRSession::nativeWebGLFramebufferResolution() const
 // https://immersive-web.github.io/webxr/#recommended-webgl-framebuffer-resolution
 IntSize WebXRSession::recommendedWebGLFramebufferResolution() const
 {
-    ASSERT(m_device);
-    return m_device->recommendedResolution(m_mode);
+    auto device = m_device.get();
+    ASSERT(device);
+    return device ? device->recommendedResolution(m_mode) : IntSize { };
 }
 
 // https://immersive-web.github.io/webxr/#view-viewport-modifiable
 bool WebXRSession::supportsViewportScaling() const
 {
-    ASSERT(m_device);
+    auto device = m_device.get();
+    ASSERT(device);
     // Only immersive sessions support viewport scaling.
-    return m_mode == XRSessionMode::ImmersiveVr && m_device->supportsViewportScaling();
+    return m_mode == XRSessionMode::ImmersiveVr && device && device->supportsViewportScaling();
 }
 
 bool WebXRSession::isPositionEmulated() const
@@ -362,19 +367,20 @@ void WebXRSession::shutdown(InitiatedBySystem initiatedBySystem)
     //  6.1. Releasing exclusive access to the XR device if session is an immersive session.
     //  6.2. Deallocating any graphics resources acquired by session for presentation to the XR device.
     //  6.3. Putting the XR device in a state such that a different source may be able to initiate a session with the same device if session is an immersive session.
-    if (m_device)
-        m_device->shutDownTrackingAndRendering();
+    auto device = m_device.get();
+    if (device)
+        device->shutDownTrackingAndRendering();
 
     // If device will not report shutdown completion via the TrackingAndRenderingClient,
     // complete the shutdown cleanup here.
-    if (!m_device || !m_device->supportsSessionShutdownNotification())
+    if (!device || !device->supportsSessionShutdownNotification())
         didCompleteShutdown();
 }
 
 void WebXRSession::didCompleteShutdown()
 {
-    if (m_device)
-        m_device->setTrackingAndRenderingClient(nullptr);
+    if (auto device = m_device.get())
+        device->setTrackingAndRenderingClient(nullptr);
 
     // Resolve end promise from XRSession::end()
     if (m_endPromise) {
@@ -535,8 +541,11 @@ void WebXRSession::requestFrameIfNeeded()
     if (m_callbacks.isEmpty() || m_isDeviceFrameRequestPending)
         return;
 
+    auto device = m_device.get();
+    if (!device)
+        return;
     m_isDeviceFrameRequestPending = true;
-    m_device->requestFrame([this, protectedThis = Ref { *this }](auto&& frameData) {
+    device->requestFrame([this, protectedThis = Ref { *this }](auto&& frameData) {
         m_isDeviceFrameRequestPending = false;
         onFrame(WTFMove(frameData));
     });
@@ -622,7 +631,8 @@ void WebXRSession::onFrame(PlatformXR::Device::FrameData&& frameData)
             if (m_mode == XRSessionMode::ImmersiveVr && m_activeRenderState->baseLayer())
                 frameLayers.append(m_activeRenderState->baseLayer()->endFrame());
 
-            m_device->submitFrame(WTFMove(frameLayers));
+            if (auto device = m_device.get())
+                device->submitFrame(WTFMove(frameLayers));
         }
 
         requestFrameIfNeeded();
