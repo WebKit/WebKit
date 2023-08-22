@@ -700,7 +700,7 @@ public:
 
     inline ContentVisibility contentVisibility() const;
 
-    inline bool effectiveSkippedContent() const;
+    inline std::optional<ContentVisibility> skippedContentReason() const;
 
     inline ContainIntrinsicSizeType containIntrinsicWidthType() const;
     inline ContainIntrinsicSizeType containIntrinsicHeightType() const;
@@ -1278,7 +1278,7 @@ public:
 
     inline void setContentVisibility(ContentVisibility);
 
-    inline void setEffectiveSkippedContent(bool);
+    inline void setSkippedContentReason(ContentVisibility);
 
     inline void setListStyleType(ListStyleType);
     void setListStyleImage(RefPtr<StyleImage>&&);

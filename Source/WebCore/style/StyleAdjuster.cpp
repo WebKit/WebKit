@@ -616,9 +616,8 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             adjustForTextAutosizing(style, *m_element);
 #endif
     }
-
-    if (isSkippedContentRoot(style, m_element))
-        style.setEffectiveSkippedContent(true);
+    if (isSkippedContentRoot(style, m_element) && m_parentStyle.contentVisibility() != ContentVisibility::Hidden)
+        style.setSkippedContentReason(style.contentVisibility());
 
     adjustForSiteSpecificQuirks(style);
 }
