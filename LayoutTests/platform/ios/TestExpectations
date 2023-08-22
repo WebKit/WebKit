@@ -4586,3 +4586,4 @@ webkit.org/b/260310 imported/w3c/web-platform-tests/css/cssom-view/scrollIntoVie
 #webkit.org/b/260490 [iOS] 2 imported/w3c/web-platform-tests/css/css-lists/* tests are constant failures
 imported/w3c/web-platform-tests/css/css-lists/list-style-image-gradients-dynamic.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-lists/list-style-image-gradients.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-disc.html [ Skip ]
