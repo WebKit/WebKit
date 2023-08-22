@@ -7522,6 +7522,11 @@ bool isSelfPositionOrLeftOrRightKeyword(CSSValueID id)
     return isSelfPositionKeyword(id) || isLeftOrRightKeyword(id);
 }
 
+bool isGridBreadthIdent(CSSValueID id)
+{
+    return identMatches<CSSValueMinContent, CSSValueWebkitMinContent, CSSValueMaxContent, CSSValueWebkitMaxContent, CSSValueAuto>(id);
+}
+
 RefPtr<CSSValue> consumeSelfPositionOverflowPosition(CSSParserTokenRange& range, IsPositionKeyword isPositionKeyword)
 {
     ASSERT(isPositionKeyword);
@@ -7747,7 +7752,7 @@ bool parseGridTemplateAreasRow(StringView gridRowNames, NamedGridAreaMap& gridAr
 static RefPtr<CSSPrimitiveValue> consumeGridBreadth(CSSParserTokenRange& range, CSSParserMode mode)
 {
     const CSSParserToken& token = range.peek();
-    if (identMatches<CSSValueMinContent, CSSValueWebkitMinContent, CSSValueMaxContent, CSSValueWebkitMaxContent, CSSValueAuto>(token.id()))
+    if (isGridBreadthIdent(token.id()))
         return consumeIdent(range);
     if (token.type() == DimensionToken && token.unitType() == CSSUnitType::CSS_FR) {
         if (range.peek().numericValue() < 0)
