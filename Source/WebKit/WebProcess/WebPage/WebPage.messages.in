@@ -182,7 +182,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ScrollBy(uint32_t scrollDirection, enum:uint8_t WebCore::ScrollGranularity scrollGranularity)
     CenterSelectionInVisibleArea()
 
-    GoToBackForwardItem(uint64_t navigationID, WebCore::BackForwardItemIdentifier backForwardItemID, enum:uint8_t WebCore::FrameLoadType backForwardType, enum:uint8_t WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<WebKit::WebsitePoliciesData> websitePolicies, bool lastNavigationWasAppInitiated, std::optional<WebKit::NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume, std::optional<String> topPrivatelyControlledDomain)
+    GoToBackForwardItem(struct WebKit::GoToBackForwardItemParameters parameters)
+    GoToBackForwardItemWaitingForProcessLaunch(struct WebKit::GoToBackForwardItemParameters parameters, WebKit::WebPageProxyIdentifier pageID)
     TryRestoreScrollPosition()
 
     LoadURLInFrame(URL url, String referrer, WebCore::FrameIdentifier frameID)
