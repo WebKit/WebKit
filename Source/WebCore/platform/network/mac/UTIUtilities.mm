@@ -46,6 +46,20 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
+HashSet<String> RequiredMIMETypesFromUTI(const String& uti)
+{
+    HashSet<String> mimeTypes;
+
+    auto mainMIMEType = MIMETypeFromUTI(uti);
+    if (!mainMIMEType.isEmpty())
+        mimeTypes.add(mainMIMEType);
+
+    if (equalLettersIgnoringASCIICase(uti, "com.adobe.photoshop-image"_s))
+        mimeTypes.add("application/x-photoshop"_s);
+
+    return mimeTypes;
+}
+
 RetainPtr<CFStringRef> mimeTypeFromUTITree(CFStringRef uti)
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
