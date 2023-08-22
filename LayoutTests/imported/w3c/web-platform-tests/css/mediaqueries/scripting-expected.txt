@@ -11,4 +11,5 @@ PASS Should be parseable: '(scripting: invalid)'
 PASS Should be unknown: '(scripting: invalid)'
 PASS Check that scripting currently matches 'enabled'
 PASS Check that scripting currently evaluates to true in the boolean context
+PASS Check that 'initial-only' never matches
 

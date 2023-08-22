@@ -23,4 +23,10 @@ test(() => {
   let booleanContext = window.matchMedia("(scripting)");
   assert_true(booleanContext.matches);
 }, "Check that scripting currently evaluates to true in the boolean context");
+
+test(() => {
+  let match_initialonly = window.matchMedia("(scripting: initial-only)");
+  assert_false(match_initialonly.matches);
+}, "Check that 'initial-only' never matches");
+
 </script>
