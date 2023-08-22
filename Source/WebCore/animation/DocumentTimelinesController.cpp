@@ -41,6 +41,7 @@
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DocumentTimelinesController);
 
 DocumentTimelinesController::DocumentTimelinesController(Document& document)
     : m_document(document)

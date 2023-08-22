@@ -32,8 +32,9 @@
 
 namespace WebCore {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FrameRateAligner);
 class FrameRateAligner {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FrameRateAligner);
 public:
     FrameRateAligner();
     ~FrameRateAligner();

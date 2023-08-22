@@ -40,8 +40,9 @@ class Document;
 class DocumentTimeline;
 class WebAnimation;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DocumentTimelinesController);
 class DocumentTimelinesController {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DocumentTimelinesController);
 public:
     explicit DocumentTimelinesController(Document&);
     ~DocumentTimelinesController();
