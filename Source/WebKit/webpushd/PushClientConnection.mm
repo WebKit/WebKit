@@ -85,7 +85,7 @@ void ClientConnection::setHostAppAuditTokenData(const Vector<uint8_t>& tokenData
     }
 
     m_hostAppAuditToken = WTFMove(token);
-    Daemon::singleton().broadcastAllConnectionIdentities();
+    WebPushDaemon::singleton().broadcastAllConnectionIdentities();
 }
 
 WebCore::PushSubscriptionSetIdentifier ClientConnection::subscriptionSetIdentifier()
@@ -175,7 +175,7 @@ void ClientConnection::broadcastDebugMessage(const String& message)
     else
         messageIdentifier = makeString("[", signingIdentifier, " (", String::number(identifier()), ")] ");
 
-    Daemon::singleton().broadcastDebugMessage(makeString(messageIdentifier, message));
+    WebPushDaemon::singleton().broadcastDebugMessage(makeString(messageIdentifier, message));
 }
 
 void ClientConnection::sendDebugMessage(const String& message)

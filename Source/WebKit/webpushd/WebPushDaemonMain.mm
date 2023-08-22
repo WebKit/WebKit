@@ -44,7 +44,7 @@
 #import <wtf/spi/darwin/XPCSPI.h>
 
 using WebKit::Daemon::EncodedMessage;
-using WebPushD::Daemon;
+using WebPushD::WebPushDaemon;
 
 static const ASCIILiteral entitlementName = "com.apple.private.webkit.webpush"_s;
 static const ASCIILiteral defaultMachServiceName = "com.apple.webkit.webpushd.service"_s;
@@ -54,17 +54,17 @@ namespace WebPushD {
 
 static void connectionEventHandler(xpc_object_t request)
 {
-    Daemon::singleton().connectionEventHandler(request);
+    WebPushDaemon::singleton().connectionEventHandler(request);
 }
 
 static void connectionAdded(xpc_connection_t connection)
 {
-    Daemon::singleton().connectionAdded(connection);
+    WebPushDaemon::singleton().connectionAdded(connection);
 }
 
 static void connectionRemoved(xpc_connection_t connection)
 {
-    Daemon::singleton().connectionRemoved(connection);
+    WebPushDaemon::singleton().connectionRemoved(connection);
 }
 
 } // namespace WebPushD
@@ -140,11 +140,11 @@ int WebPushDaemonMain(int argc, char** argv)
         WebKit::startListeningForMachServiceConnections(machServiceName, entitlementName, connectionAdded, connectionRemoved, connectionEventHandler);
 
         if (useMockPushService)
-            ::WebPushD::Daemon::singleton().startMockPushService();
+            ::WebPushD::WebPushDaemon::singleton().startMockPushService();
         else {
             String libraryPath = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES)[0];
             String pushDatabasePath = FileSystem::pathByAppendingComponents(libraryPath, { "WebKit"_s, "WebPush"_s, "PushDatabase.db"_s });
-            ::WebPushD::Daemon::singleton().startPushService(String::fromLatin1(incomingPushServiceName), pushDatabasePath);
+            ::WebPushD::WebPushDaemon::singleton().startPushService(String::fromLatin1(incomingPushServiceName), pushDatabasePath);
         }
     }
     CFRunLoopRun();

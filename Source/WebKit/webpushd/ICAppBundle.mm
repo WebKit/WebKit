@@ -81,7 +81,7 @@ namespace WebPushD {
 
 static void broadcastDebugMessage(const String& message)
 {
-    Daemon::singleton().broadcastDebugMessage(makeString("ICAppBundle: ", message));
+    WebPushDaemon::singleton().broadcastDebugMessage(makeString("ICAppBundle: ", message));
 }
 
 ICAppBundle::ICAppBundle(ClientConnection& clientConnection, const String& originString, PushAppBundleClient& client)

@@ -58,10 +58,10 @@ namespace WebPushD {
 
 using EncodedMessage = Vector<uint8_t>;
 
-class Daemon {
-    friend class WTF::NeverDestroyed<Daemon>;
+class WebPushDaemon {
+    friend class WTF::NeverDestroyed<WebPushDaemon>;
 public:
-    static Daemon& singleton();
+    static WebPushDaemon& singleton();
 
     void connectionEventHandler(xpc_object_t);
     void connectionAdded(xpc_connection_t);
@@ -96,7 +96,7 @@ public:
     void broadcastAllConnectionIdentities();
 
 private:
-    Daemon();
+    WebPushDaemon();
 
     CompletionHandler<void(EncodedMessage&&)> createReplySender(WebKit::WebPushD::MessageType, OSObjectPtr<xpc_object_t>&& request);
     void decodeAndHandleRawXPCMessage(WebKit::WebPushD::RawXPCMessageType, OSObjectPtr<xpc_object_t>&&);
