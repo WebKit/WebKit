@@ -35,6 +35,7 @@ namespace WebCore {
 
 class EXTBlendMinMax final : public RefCounted<EXTBlendMinMax>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(EXTBlendMinMax);
+    WTF_MAKE_NONCOPYABLE(EXTBlendMinMax);
 public:
     explicit EXTBlendMinMax(WebGLRenderingContextBase&);
     ~EXTBlendMinMax();

@@ -35,6 +35,7 @@ namespace WebCore {
 
 class WebGLStencilTexturing final : public RefCounted<WebGLStencilTexturing>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(WebGLStencilTexturing);
+    WTF_MAKE_NONCOPYABLE(WebGLStencilTexturing);
 public:
     explicit WebGLStencilTexturing(WebGLRenderingContextBase&);
     ~WebGLStencilTexturing();

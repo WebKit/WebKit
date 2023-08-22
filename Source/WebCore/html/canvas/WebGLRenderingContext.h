@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+class WebGLTimerQueryEXT;
+
 class WebGLRenderingContext final : public WebGLRenderingContextBase {
     WTF_MAKE_ISO_ALLOCATED(WebGLRenderingContext);
 public:

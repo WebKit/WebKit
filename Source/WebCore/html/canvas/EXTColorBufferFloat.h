@@ -35,6 +35,7 @@ namespace WebCore {
 
 class EXTColorBufferFloat final : public RefCounted<EXTColorBufferFloat>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(EXTColorBufferFloat);
+    WTF_MAKE_NONCOPYABLE(EXTColorBufferFloat);
 public:
     explicit EXTColorBufferFloat(WebGLRenderingContextBase&);
     ~EXTColorBufferFloat();

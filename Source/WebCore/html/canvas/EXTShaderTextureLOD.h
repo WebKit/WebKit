@@ -35,6 +35,7 @@ namespace WebCore {
 
 class EXTShaderTextureLOD final : public RefCounted<EXTShaderTextureLOD>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(EXTShaderTextureLOD);
+    WTF_MAKE_NONCOPYABLE(EXTShaderTextureLOD);
 public:
     explicit EXTShaderTextureLOD(WebGLRenderingContextBase&);
     ~EXTShaderTextureLOD();

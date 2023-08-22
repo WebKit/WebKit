@@ -35,6 +35,7 @@ namespace WebCore {
 
 class EXTDepthClamp final : public RefCounted<EXTDepthClamp>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(EXTDepthClamp);
+    WTF_MAKE_NONCOPYABLE(EXTDepthClamp);
 public:
     explicit EXTDepthClamp(WebGLRenderingContextBase&);
     ~EXTDepthClamp();

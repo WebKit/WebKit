@@ -35,6 +35,7 @@ namespace WebCore {
 
 class EXTClipControl final : public RefCounted<EXTClipControl>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(EXTClipControl);
+    WTF_MAKE_NONCOPYABLE(EXTClipControl);
 public:
     explicit EXTClipControl(WebGLRenderingContextBase&);
     ~EXTClipControl();

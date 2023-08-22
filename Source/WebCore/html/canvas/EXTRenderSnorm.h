@@ -35,6 +35,7 @@ namespace WebCore {
 
 class EXTRenderSnorm final : public RefCounted<EXTRenderSnorm>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(EXTRenderSnorm);
+    WTF_MAKE_NONCOPYABLE(EXTRenderSnorm);
 public:
     explicit EXTRenderSnorm(WebGLRenderingContextBase&);
     ~EXTRenderSnorm();

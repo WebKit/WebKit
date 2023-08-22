@@ -35,6 +35,7 @@ namespace WebCore {
 
 class WebGLPolygonMode final : public RefCounted<WebGLPolygonMode>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(WebGLPolygonMode);
+    WTF_MAKE_NONCOPYABLE(WebGLPolygonMode);
 public:
     explicit WebGLPolygonMode(WebGLRenderingContextBase&);
     ~WebGLPolygonMode();

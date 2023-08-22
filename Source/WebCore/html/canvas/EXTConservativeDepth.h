@@ -35,6 +35,7 @@ namespace WebCore {
 
 class EXTConservativeDepth final : public RefCounted<EXTConservativeDepth>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(EXTConservativeDepth);
+    WTF_MAKE_NONCOPYABLE(EXTConservativeDepth);
 public:
     explicit EXTConservativeDepth(WebGLRenderingContextBase&);
     ~EXTConservativeDepth();

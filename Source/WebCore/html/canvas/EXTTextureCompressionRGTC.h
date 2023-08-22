@@ -35,6 +35,7 @@ namespace WebCore {
 
 class EXTTextureCompressionRGTC final : public RefCounted<EXTTextureCompressionRGTC>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(EXTTextureCompressionRGTC);
+    WTF_MAKE_NONCOPYABLE(EXTTextureCompressionRGTC);
 public:
     explicit EXTTextureCompressionRGTC(WebGLRenderingContextBase&);
     ~EXTTextureCompressionRGTC();

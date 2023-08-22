@@ -35,6 +35,7 @@ namespace WebCore {
 
 class EXTTextureMirrorClampToEdge final : public RefCounted<EXTTextureMirrorClampToEdge>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(EXTTextureMirrorClampToEdge);
+    WTF_MAKE_NONCOPYABLE(EXTTextureMirrorClampToEdge);
 public:
     explicit EXTTextureMirrorClampToEdge(WebGLRenderingContextBase&);
     ~EXTTextureMirrorClampToEdge();
