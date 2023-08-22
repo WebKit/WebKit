@@ -41,7 +41,6 @@ Ref<WebGLTexture> WebGLTexture::create(WebGLRenderingContextBase& ctx)
 
 WebGLTexture::WebGLTexture(WebGLRenderingContextBase& ctx)
     : WebGLObject(ctx)
-    , m_target(0)
 {
     setObject(ctx.graphicsContextGL()->createTexture());
 }
@@ -54,7 +53,7 @@ WebGLTexture::~WebGLTexture()
     runDestructor();
 }
 
-void WebGLTexture::setTarget(GCGLenum target)
+void WebGLTexture::didBind(GCGLenum target)
 {
     if (!object())
         return;

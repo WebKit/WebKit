@@ -335,17 +335,17 @@ private:
     };
     void updateBuffersToAutoClear(ClearBufferCaller, GCGLenum buffer, GCGLint drawbuffer);
 
-    RefPtr<WebGLFramebuffer> m_readFramebufferBinding;
-    RefPtr<WebGLTransformFeedback> m_boundTransformFeedback;
+    WebGLBindingPoint<WebGLFramebuffer> m_readFramebufferBinding;
+    WebGLBindingPoint<WebGLTransformFeedback> m_boundTransformFeedback;
     RefPtr<WebGLTransformFeedback> m_defaultTransformFeedback;
 
-    RefPtr<WebGLBuffer> m_boundCopyReadBuffer;
-    RefPtr<WebGLBuffer> m_boundCopyWriteBuffer;
-    RefPtr<WebGLBuffer> m_boundPixelPackBuffer;
-    RefPtr<WebGLBuffer> m_boundPixelUnpackBuffer;
-    RefPtr<WebGLBuffer> m_boundTransformFeedbackBuffer;
-    RefPtr<WebGLBuffer> m_boundUniformBuffer;
-    Vector<RefPtr<WebGLBuffer>> m_boundIndexedUniformBuffers;
+    WebGLBindingPoint<WebGLBuffer, GraphicsContextGL::COPY_READ_BUFFER> m_boundCopyReadBuffer;
+    WebGLBindingPoint<WebGLBuffer, GraphicsContextGL::COPY_WRITE_BUFFER> m_boundCopyWriteBuffer;
+    WebGLBindingPoint<WebGLBuffer, GraphicsContextGL::PIXEL_PACK_BUFFER> m_boundPixelPackBuffer;
+    WebGLBindingPoint<WebGLBuffer, GraphicsContextGL::PIXEL_UNPACK_BUFFER> m_boundPixelUnpackBuffer;
+    WebGLBindingPoint<WebGLBuffer, GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER> m_boundTransformFeedbackBuffer;
+    WebGLBindingPoint<WebGLBuffer, GraphicsContextGL::UNIFORM_BUFFER> m_boundUniformBuffer;
+    Vector<WebGLBindingPoint<WebGLBuffer, GraphicsContextGL::UNIFORM_BUFFER>> m_boundIndexedUniformBuffers;
 
     RefPtr<WebGLQuery> m_activeQueries[ActiveQueryKey::NumKeys];
 

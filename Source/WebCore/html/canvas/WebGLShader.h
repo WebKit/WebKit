@@ -42,6 +42,8 @@ public:
 
     void setSource(const String& source) { m_source = source; }
 
+    bool isUsable() const { return object(); }
+    bool isInitialized() const { return true; }
 private:
     WebGLShader(WebGLRenderingContextBase&, GCGLenum);
 

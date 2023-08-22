@@ -45,12 +45,13 @@ public:
 
     static Ref<WebGLTexture> create(WebGLRenderingContextBase&);
 
-    void setTarget(GCGLenum);
+    void didBind(GCGLenum);
     GCGLenum getTarget() const { return m_target; }
 
-    bool hasEverBeenBound() const { return object() && m_target; }
-
     static GCGLint computeLevelCount(GCGLsizei width, GCGLsizei height);
+
+    bool isUsable() const { return object() && !isDeleted(); }
+    bool isInitialized() const { return m_target; }
 
 private:
     WebGLTexture(WebGLRenderingContextBase&);
@@ -60,7 +61,7 @@ private:
     bool isTexture() const override { return true; }
 
     int mapTargetToIndex(GCGLenum) const;
-    GCGLenum m_target;
+    GCGLenum m_target { 0 };
 };
 
 } // namespace WebCore

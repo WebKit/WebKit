@@ -29,6 +29,7 @@
 
 #include "GraphicsTypesGL.h"
 #include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
@@ -37,6 +38,50 @@ namespace WebCore {
 class GraphicsContextGL;
 class WebCoreOpaqueRoot;
 class WebGLRenderingContextBase;
+
+template<typename T, unsigned target = 0>
+class WebGLBindingPoint {
+    WTF_MAKE_NONCOPYABLE(WebGLBindingPoint);
+public:
+    WebGLBindingPoint() = default;
+    explicit WebGLBindingPoint(RefPtr<T> object)
+        : m_object(WTFMove(object))
+    {
+        if (m_object)
+            didBind(*m_object);
+    }
+    WebGLBindingPoint(WebGLBindingPoint&&) = default;
+    ~WebGLBindingPoint() = default;
+    WebGLBindingPoint& operator=(WebGLBindingPoint&&) = default;
+
+    WebGLBindingPoint& operator=(RefPtr<T> object)
+    {
+        if (m_object == object)
+            return *this;
+        m_object = WTFMove(object);
+        if (m_object)
+            didBind(*m_object);
+        return *this;
+    }
+    bool operator==(const T* a) const { return a == m_object; }
+    bool operator==(const RefPtr<T>& a) const { return a == m_object; }
+    explicit operator bool() const { return m_object; }
+    T* get() const { return m_object.get(); }
+    T* operator->() const { return m_object.get(); }
+    T& operator*() const { return *m_object; }
+    operator RefPtr<T>() const { return m_object; }
+
+private:
+    void didBind(T& object)
+    {
+        if constexpr(!target)
+            object.didBind();
+        else
+            object.didBind(target);
+    }
+
+    RefPtr<T> m_object;
+};
 
 class WebGLObject : public RefCounted<WebGLObject> {
 public:
@@ -60,7 +105,7 @@ public:
     // This indicates whether the client side issue a delete call already, not
     // whether the OpenGL resource is deleted.
     // object()==0 indicates the OpenGL resource is deleted.
-    bool isDeleted() { return m_deleted; }
+    bool isDeleted() const { return m_deleted; }
 
     // True if this object belongs to the context.
     bool validate(const WebGLRenderingContextBase& context) const { return &context == m_context; }
@@ -90,7 +135,8 @@ private:
     bool m_deleted { false };
 };
 
-inline PlatformGLObject objectOrZero(WebGLObject* object)
+template<typename T>
+PlatformGLObject objectOrZero(const T& object)
 {
     return object ? object->object() : 0;
 }

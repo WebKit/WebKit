@@ -43,6 +43,8 @@ public:
     bool isSignaled() const;
     void scheduleAllowCacheUpdate(WebGLRenderingContextBase&);
 
+    bool isUsable() const { return object() && !isDeleted(); }
+    bool isInitialized() const { return true; }
 private:
     WebGLSync(WebGLRenderingContextBase&);
 

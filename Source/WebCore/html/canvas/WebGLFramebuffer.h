@@ -54,8 +54,6 @@ public:
         virtual WebGLObject* getObject() const = 0;
         virtual bool isSharedObject(WebGLObject*) const = 0;
         virtual bool isValid() const = 0;
-        virtual bool isInitialized() const = 0;
-        virtual void setInitialized() = 0;
         virtual void onDetached(const AbstractLocker&, GraphicsContextGL*) = 0;
         virtual void attach(GraphicsContextGL*, GCGLenum target, GCGLenum attachment) = 0;
         virtual void unattach(GraphicsContextGL*, GCGLenum target, GCGLenum attachment) = 0;
@@ -80,10 +78,7 @@ public:
     void removeAttachmentFromBoundFramebuffer(const AbstractLocker&, GCGLenum target, GCGLenum attachment);
     WebGLObject* getAttachmentObject(GCGLenum) const;
 
-    bool hasEverBeenBound() const { return object() && m_hasEverBeenBound; }
-
-    void setHasEverBeenBound() { m_hasEverBeenBound = true; }
-
+    void didBind() { m_hasEverBeenBound = true; }
     bool hasStencilBuffer() const;
 
     // Wrapper for drawBuffersEXT/drawBuffersARB to work around a driver bug.
@@ -97,6 +92,9 @@ public:
     bool isOpaque() const { return m_opaque; }
     void setOpaqueActive(bool active) { m_opaqueActive = active; }
 #endif
+
+    bool isUsable() const { return object() && !isDeleted(); }
+    bool isInitialized() const { return m_hasEverBeenBound; }
 
 private:
     WebGLFramebuffer(WebGLRenderingContextBase&);
@@ -124,7 +122,7 @@ private:
 
     AttachmentMap m_attachments;
 
-    bool m_hasEverBeenBound;
+    bool m_hasEverBeenBound { false };
 
     Vector<GCGLenum> m_drawBuffers;
     Vector<GCGLenum> m_filteredDrawBuffers;

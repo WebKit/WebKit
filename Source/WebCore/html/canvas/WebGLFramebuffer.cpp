@@ -49,8 +49,6 @@ namespace {
         WebGLObject* getObject() const override;
         bool isSharedObject(WebGLObject*) const override;
         bool isValid() const override;
-        bool isInitialized() const override;
-        void setInitialized() override;
         void onDetached(const AbstractLocker&, GraphicsContextGL*) override;
         void attach(GraphicsContextGL*, GCGLenum target, GCGLenum attachment) override;
         void unattach(GraphicsContextGL*, GCGLenum target, GCGLenum attachment) override;
@@ -87,17 +85,6 @@ namespace {
         return m_renderbuffer->object();
     }
 
-    bool WebGLRenderbufferAttachment::isInitialized() const
-    {
-        return m_renderbuffer->object() && m_renderbuffer->isInitialized();
-    }
-
-    void WebGLRenderbufferAttachment::setInitialized()
-    {
-        if (m_renderbuffer->object())
-            m_renderbuffer->setInitialized();
-    }
-
     void WebGLRenderbufferAttachment::onDetached(const AbstractLocker& locker, GraphicsContextGL* context)
     {
         m_renderbuffer->onDetached(locker, context);
@@ -128,8 +115,6 @@ namespace {
         WebGLObject* getObject() const override;
         bool isSharedObject(WebGLObject*) const override;
         bool isValid() const override;
-        bool isInitialized() const override;
-        void setInitialized() override;
         void onDetached(const AbstractLocker&, GraphicsContextGL*) override;
         void attach(GraphicsContextGL*, GCGLenum target, GCGLenum attachment) override;
         void unattach(GraphicsContextGL*, GCGLenum target, GCGLenum attachment) override;
@@ -169,17 +154,6 @@ namespace {
     bool WebGLTextureAttachment::isValid() const
     {
         return m_texture->object();
-    }
-
-    bool WebGLTextureAttachment::isInitialized() const
-    {
-        // Textures are assumed to be initialized.
-        return true;
-    }
-
-    void WebGLTextureAttachment::setInitialized()
-    {
-        // Textures are assumed to be initialized.
     }
 
     void WebGLTextureAttachment::onDetached(const AbstractLocker& locker, GraphicsContextGL* context)
@@ -234,7 +208,6 @@ Ref<WebGLFramebuffer> WebGLFramebuffer::createOpaque(WebGLRenderingContextBase& 
 
 WebGLFramebuffer::WebGLFramebuffer(WebGLRenderingContextBase& ctx)
     : WebGLObject(ctx)
-    , m_hasEverBeenBound(false)
 {
     setObject(ctx.graphicsContextGL()->createFramebuffer());
 }

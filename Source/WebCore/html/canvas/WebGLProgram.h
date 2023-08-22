@@ -90,6 +90,9 @@ public:
 
     void addMembersToOpaqueRoots(const AbstractLocker&, JSC::AbstractSlotVisitor&);
 
+    bool isUsable() const { return object(); }
+    bool isInitialized() const { return true; }
+
 private:
     WebGLProgram(WebGLRenderingContextBase&);
 

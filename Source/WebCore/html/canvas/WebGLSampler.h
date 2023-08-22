@@ -39,7 +39,9 @@ class WebGLSampler final : public WebGLObject {
 public:
     static Ref<WebGLSampler> create(WebGLRenderingContextBase&);
     virtual ~WebGLSampler();
-
+    void didBind() { }
+    bool isUsable() const { return object() && !isDeleted(); }
+    bool isInitialized() const { return true; }
 private:
     explicit WebGLSampler(WebGLRenderingContextBase&);
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) final;

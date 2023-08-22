@@ -97,7 +97,7 @@ bool InspectorShaderProgram::updateShader(Inspector::Protocol::Canvas::ShaderTyp
     if (!std::holds_alternative<bool>(compileStatus))
         return false;
     if (std::get<bool>(compileStatus))
-        context->linkProgramWithoutInvalidatingAttribLocations(&m_program);
+        context->linkProgramWithoutInvalidatingAttribLocations(m_program);
     else {
         auto errors = context->getShaderInfoLog(*shader);
         auto* scriptContext = m_canvas.scriptExecutionContext();

@@ -58,7 +58,7 @@ public:
 protected:
     friend class EXTDisjointTimerQuery;
 
-    RefPtr<WebGLTimerQueryEXT> m_activeQuery;
+    WebGLBindingPoint<WebGLTimerQueryEXT, GraphicsContextGL::TIME_ELAPSED_EXT> m_activeQuery;
 
 private:
     using WebGLRenderingContextBase::WebGLRenderingContextBase;

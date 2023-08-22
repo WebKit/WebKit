@@ -50,12 +50,6 @@ WebGLRenderbuffer::~WebGLRenderbuffer()
 
 WebGLRenderbuffer::WebGLRenderbuffer(WebGLRenderingContextBase& ctx)
     : WebGLObject(ctx)
-    , m_internalFormat(GraphicsContextGL::RGBA4)
-    , m_initialized(false)
-    , m_width(0)
-    , m_height(0)
-    , m_isValid(true)
-    , m_hasEverBeenBound(false)
 {
     setObject(ctx.graphicsContextGL()->createRenderbuffer());
 }

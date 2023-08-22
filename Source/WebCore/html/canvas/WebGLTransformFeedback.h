@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -50,44 +50,46 @@ public:
     virtual ~WebGLTransformFeedback();
 
     static RefPtr<WebGLTransformFeedback> create(WebGL2RenderingContext&);
-    
+
     bool isActive() const { return m_active; }
     bool isPaused() const { return m_paused; }
-    
+
     void setActive(bool active) { m_active = active; }
     void setPaused(bool paused) { m_paused = paused; }
-    
+
     // These are the indexed bind points for transform feedback buffers.
     // Returns false if index is out of range and the caller should
     // synthesize a GL error.
     void setBoundIndexedTransformFeedbackBuffer(const AbstractLocker&, GCGLuint index, WebGLBuffer*);
     bool getBoundIndexedTransformFeedbackBuffer(GCGLuint index, WebGLBuffer** outBuffer);
     bool hasBoundIndexedTransformFeedbackBuffer(const WebGLBuffer* buffer) { return m_boundIndexedTransformFeedbackBuffers.contains(buffer); }
-    
+
     bool validateProgramForResume(WebGLProgram*) const;
 
-    bool hasEverBeenBound() const { return object() && m_hasEverBeenBound; }
-    void setHasEverBeenBound() { m_hasEverBeenBound = true; }
-    
+    void didBind() { m_hasEverBeenBound = true; }
+
     WebGLProgram* program() const { return m_program.get(); }
     void setProgram(const AbstractLocker&, WebGLProgram&);
-    
+
     void unbindBuffer(const AbstractLocker&, WebGLBuffer&);
-    
+
     bool hasEnoughBuffers(GCGLuint numRequired) const;
 
     void addMembersToOpaqueRoots(const AbstractLocker&, JSC::AbstractSlotVisitor&);
+
+    bool isUsable() const { return object() && !isDeleted(); }
+    bool isInitialized() const { return m_hasEverBeenBound; }
 
 private:
     WebGLTransformFeedback(WebGL2RenderingContext&);
 
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
-    
+
     bool m_active { false };
     bool m_paused { false };
     bool m_hasEverBeenBound { false };
     unsigned m_programLinkCount { 0 };
-    Vector<RefPtr<WebGLBuffer>> m_boundIndexedTransformFeedbackBuffers;
+    Vector<WebGLBindingPoint<WebGLBuffer, GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER>> m_boundIndexedTransformFeedbackBuffers;
     RefPtr<WebGLProgram> m_program;
 };
 

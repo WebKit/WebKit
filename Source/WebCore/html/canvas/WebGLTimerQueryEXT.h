@@ -45,6 +45,9 @@ public:
 
     void setTarget(GCGLenum target) { m_target = target; }
     GCGLenum target() const { return m_target; }
+    void didBind(GCGLenum target) { setTarget(target); }
+    bool isUsable() const { return object() && !isDeleted(); }
+    bool isInitialized() const { return true; }
 
 private:
     explicit WebGLTimerQueryEXT(WebGLRenderingContextBase&);

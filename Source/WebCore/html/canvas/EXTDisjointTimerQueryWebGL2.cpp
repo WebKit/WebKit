@@ -58,7 +58,7 @@ void EXTDisjointTimerQueryWebGL2::queryCounterEXT(WebGLQuery& query, GCGLenum ta
     if (!context.scriptExecutionContext())
         return;
 
-    if (!context.validateWebGLObject("queryCounterEXT", &query))
+    if (!context.validateWebGLObject("queryCounterEXT", query))
         return;
 
     if (target != GraphicsContextGL::TIMESTAMP_EXT) {
