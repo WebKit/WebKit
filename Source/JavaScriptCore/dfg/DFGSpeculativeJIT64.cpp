@@ -6599,7 +6599,7 @@ void SpeculativeJIT::compileDateSet(Node* node)
     loadDouble(TrustedImmPtr(&max), scratch3FPR);
     loadDouble(TrustedImmPtr(&NaN), scratch4FPR);
     absDouble(timeFPR, scratch2FPR);
-    moveDoubleConditionallyDouble(DoubleGreaterThanAndOrdered, scratch2FPR, scratch3FPR, scratch4FPR, scratch1FPR, scratch1FPR);
+    moveDoubleConditionallyDouble(DoubleGreaterThanOrUnordered, scratch2FPR, scratch3FPR, scratch4FPR, scratch1FPR, scratch1FPR);
 
     storeDouble(scratch1FPR, Address(baseGPR, DateInstance::offsetOfInternalNumber()));
     doubleResult(scratch1FPR, node);
