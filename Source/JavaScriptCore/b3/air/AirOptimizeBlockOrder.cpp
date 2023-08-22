@@ -31,7 +31,7 @@
 #include "AirBlockWorklist.h"
 #include "AirCode.h"
 #include "AirPhaseScope.h"
-#include <wtf/BubbleSort.h>
+#include <wtf/InsertionSort.h>
 
 namespace JSC { namespace B3 { namespace Air {
 
@@ -52,7 +52,7 @@ public:
     {
         // We prefer a stable sort, and we don't want it to go off the rails if we see NaN. Also, the number
         // of successors is bounded. In fact, it currently cannot be more than 2. :-)
-        bubbleSort(
+        insertionSort(
             m_successors.begin(), m_successors.end(),
             [] (BasicBlock* left, BasicBlock* right) {
                 return left->frequency() < right->frequency();

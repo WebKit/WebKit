@@ -29,8 +29,8 @@
 
 #include "PureNaN.h"
 #include <climits>
-#include <wtf/BubbleSort.h>
 #include <wtf/Insertion.h>
+#include <wtf/InsertionSort.h>
 #include <wtf/Vector.h>
 
 namespace JSC { namespace B3 {
@@ -82,9 +82,9 @@ public:
         
         // We allow insertions to be given to us in any order. So, we need to sort them before
         // running WTF::executeInsertions. We strongly prefer a stable sort and we want it to be
-        // fast, so we use bubble sort.
-        bubbleSort(m_insertions.begin(), m_insertions.end());
-        
+        // fast, so we use insertion sort.
+        insertionSort(m_insertions.begin(), m_insertions.end());
+
         executeInsertions(m_blocks, m_insertions);
         
         // Prune out empty entries. This isn't strictly necessary but it's

@@ -118,7 +118,7 @@ function removeAllMatching(array, func)
     array.length = dstIndex;
 }
 
-function bubbleSort(array, lessThan)
+function insertionSort(array, lessThan)
 {
     function swap(i, j)
     {
@@ -129,43 +129,23 @@ function bubbleSort(array, lessThan)
     
     let begin = 0;
     let end = array.length;
-    for (;;) {
-        let changed = false;
-        
-        function bubble(i, j)
-        {
-            if (lessThan(array[i], array[j])) {
-                swap(i, j);
-                changed = true;
-            }
+
+    if (end < begin)
+        throw new Error("Begin and end are messed up");
+
+    let limit = end - begin;
+
+    for (let i = 1; i < limit; i++) {
+        let key = array[i];
+        var j = i;
+
+        while (lessThan(key, array[j - 1])) {
+            begin[j] = array[j - 1];
+            j = j - 1;
+            if (j == 0)
+                break;
         }
-    
-        if (end < begin)
-            throw new Error("Begin and end are messed up");
-        
-        let limit = end - begin;
-        for (let i = limit; i-- > 1;)
-            bubble(begin + i, begin + i - 1);
-        if (!changed)
-            return;
-        
-        // After one run, the first element in the list is guaranteed to be the smallest.
-        begin++;
-        
-        // Now go in the other direction. This eliminates most sorting pathologies.
-        changed = false;
-        
-        if (end < begin)
-            throw new Error("Begin and end are messed up");
-        
-        limit = end - begin;
-        for (let i = 1; i < limit; ++i)
-            bubble(begin + i, begin + i - 1);
-        if (!changed)
-            return;
-        
-        // Now the last element is guaranteed to be the largest.
-        end--;
+        begin[j] = key;
     }
 }
 

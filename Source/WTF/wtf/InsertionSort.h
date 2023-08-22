@@ -20,14 +20,14 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
 namespace WTF {
 
-// Why would you want to use bubble sort? When you know that your input is already mostly
+// When would you want to use insertion sort? When you know that your input is already mostly
 // sorted! This sort is guaranteed stable (it won't reorder elements that were equal), it
 // doesn't require any scratch memory, and is the fastest available sorting algorithm if your
 // input already happens to be sorted. This sort is also likely to have competetive performance
@@ -49,44 +49,28 @@ namespace WTF {
 // are unsorted it's usually because of a few out-of-place elements.
 
 template<typename IteratorType, typename LessThan>
-void bubbleSort(IteratorType begin, IteratorType end, const LessThan& lessThan)
+void insertionSort(IteratorType begin, IteratorType end, const LessThan& lessThan)
 {
-    for (;;) {
-        bool changed = false;
-        ASSERT(end >= begin);
-        size_t limit = end - begin;
-        for (size_t i = limit; i-- > 1;) {
-            if (lessThan(begin[i], begin[i - 1])) {
-                std::swap(begin[i], begin[i - 1]);
-                changed = true;
-            }
-        }
-        if (!changed)
-            return;
-        // After one run, the first element in the list is guaranteed to be the smallest.
-        begin++;
+    ASSERT(end >= begin);
+    size_t limit = end - begin;
+    for (size_t i = 1; i < limit; i++) {
+        auto key = WTFMove(begin[i]);
+        size_t j = i;
 
-        // Now go in the other direction. This eliminates most sorting pathologies.
-        changed = false;
-        ASSERT(end >= begin);
-        limit = end - begin;
-        for (size_t i = 1; i < limit; ++i) {
-            if (lessThan(begin[i], begin[i - 1])) {
-                std::swap(begin[i], begin[i - 1]);
-                changed = true;
-            }
+        while (lessThan(key, begin[j - 1])) {
+            begin[j] = WTFMove(begin[j - 1]);
+            j--;
+            if (!j)
+                break;
         }
-        if (!changed)
-            return;
-        // Now the last element is guaranteed to be the largest.
-        end--;
+        begin[j] = WTFMove(key);
     }
 }
 
 template<typename IteratorType>
-void bubbleSort(IteratorType begin, IteratorType end)
+void insertionSort(IteratorType begin, IteratorType end)
 {
-    bubbleSort(
+    insertionSort(
         begin, end,
         [](auto& left, auto& right) {
             return left < right;
@@ -95,4 +79,4 @@ void bubbleSort(IteratorType begin, IteratorType end)
 
 } // namespace WTF
 
-using WTF::bubbleSort;
+using WTF::insertionSort;

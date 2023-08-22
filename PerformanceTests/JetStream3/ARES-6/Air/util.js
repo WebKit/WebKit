@@ -118,7 +118,7 @@ function removeAllMatching(array, func)
     array.length = dstIndex;
 }
 
-function bubbleSort(array, lessThan)
+function insertionSort(array, lessThan)
 {
     function swap(i, j)
     {

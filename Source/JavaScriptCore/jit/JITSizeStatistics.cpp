@@ -30,7 +30,7 @@
 
 #include "CCallHelpers.h"
 #include "LinkBuffer.h"
-#include <wtf/BubbleSort.h>
+#include <wtf/InsertionSort.h>
 
 namespace JSC {
 

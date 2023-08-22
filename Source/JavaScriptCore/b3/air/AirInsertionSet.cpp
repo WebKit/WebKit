@@ -29,7 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirBasicBlock.h"
-#include <wtf/BubbleSort.h>
+#include <wtf/InsertionSort.h>
 
 namespace JSC { namespace B3 { namespace Air {
 
@@ -41,7 +41,7 @@ void InsertionSet::insertInsts(size_t index, Vector<Inst>&& insts)
 
 void InsertionSet::execute(BasicBlock* block)
 {
-    bubbleSort(m_insertions.begin(), m_insertions.end());
+    insertionSort(m_insertions.begin(), m_insertions.end());
     executeInsertions(block->m_insts, m_insertions);
 }
 

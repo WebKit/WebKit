@@ -22,7 +22,6 @@ set(WTF_PUBLIC_HEADERS
     Box.h
     BoxPtr.h
     Brigand.h
-    BubbleSort.h
     BumpPointerAllocator.h
     ByteOrder.h
     CPUTime.h
@@ -117,6 +116,7 @@ set(WTF_PUBLIC_HEADERS
     IndexedContainerIterator.h
     InlineASM.h
     Insertion.h
+    InsertionSort.h
     InstanceCounted.h
     Int128.h
     InterferenceGraph.h

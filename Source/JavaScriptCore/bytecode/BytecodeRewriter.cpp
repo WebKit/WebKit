@@ -29,7 +29,7 @@
 
 #include "JSCJSValueInlines.h"
 #include "PreciseJumpTargetsInlines.h"
-#include <wtf/BubbleSort.h>
+#include <wtf/InsertionSort.h>
 
 namespace JSC {
 
@@ -52,7 +52,7 @@ void BytecodeRewriter::applyModification()
 
 void BytecodeRewriter::execute()
 {
-    WTF::bubbleSort(m_insertions.begin(), m_insertions.end(), [] (const Insertion& lhs, const Insertion& rhs) {
+    WTF::insertionSort(m_insertions.begin(), m_insertions.end(), [] (const Insertion& lhs, const Insertion& rhs) {
         return lhs.index < rhs.index;
     });
 

@@ -58,7 +58,7 @@ class InsertionSet {
     
     execute(target)
     {
-        // We bubble-sort because that's what the C++ code, and for the same reason as we do it:
+        // We do insertion-sort because that's what the C++ code, and for the same reason as we do it:
         // the stdlib doesn't have a stable sort and mergesort is slower in the common case of the
         // array usually being sorted. This array is usually sorted.
         bubbleSort(this._insertions, (a, b) => (a.lessThan(b)));

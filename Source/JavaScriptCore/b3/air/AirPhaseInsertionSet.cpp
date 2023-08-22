@@ -29,13 +29,13 @@
 #if ENABLE(B3_JIT)
 
 #include "AirBasicBlock.h"
-#include <wtf/BubbleSort.h>
+#include <wtf/InsertionSort.h>
 
 namespace JSC { namespace B3 { namespace Air {
 
 void PhaseInsertionSet::execute(BasicBlock* block)
 {
-    bubbleSort(m_insertions.begin(), m_insertions.end());
+    insertionSort(m_insertions.begin(), m_insertions.end());
     executeInsertions(block->m_insts, m_insertions);
 }
 

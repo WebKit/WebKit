@@ -31,7 +31,7 @@
 #include "B3BasicBlock.h"
 #include "B3Procedure.h"
 #include "B3Value.h"
-#include <wtf/BubbleSort.h>
+#include <wtf/InsertionSort.h>
 
 namespace JSC { namespace B3 {
 
@@ -69,7 +69,7 @@ void InsertionSet::execute(BasicBlock* block)
 {
     for (Insertion& insertion : m_insertions)
         insertion.element()->owner = block;
-    bubbleSort(m_insertions.begin(), m_insertions.end());
+    insertionSort(m_insertions.begin(), m_insertions.end());
     executeInsertions(block->m_values, m_insertions);
     m_bottomForType = TypeMap<Value*>();
 }

@@ -205,7 +205,7 @@
 		DD3DC86627A4BF8E007E5B61 /* CheckedArithmetic.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4726A151A825A004123FF /* CheckedArithmetic.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC86727A4BF8E007E5B61 /* SynchronizedFixedQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 5597F82C1D94B9970066BC21 /* SynchronizedFixedQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC86827A4BF8E007E5B61 /* OrderMaker.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9495831C571CC900413A48 /* OrderMaker.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DD3DC86927A4BF8E007E5B61 /* BubbleSort.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4570441BE834410062A629 /* BubbleSort.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DD3DC86927A4BF8E007E5B61 /* InsertionSort.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4570441BE834410062A629 /* InsertionSort.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC86A27A4BF8E007E5B61 /* Unexpected.h in Headers */ = {isa = PBXBuildFile; fileRef = E360C7652127B85C00C90F0E /* Unexpected.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC86B27A4BF8E007E5B61 /* IteratorRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CDD7FF9186D2A54007433CD /* IteratorRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC86C27A4BF8E007E5B61 /* NumberOfCores.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472D6151A825B004123FF /* NumberOfCores.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -969,7 +969,7 @@
 		0F43D8EF1DB5ADDC00108FB6 /* AutomaticThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutomaticThread.cpp; sourceTree = "<group>"; };
 		0F43D8F01DB5ADDC00108FB6 /* AutomaticThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutomaticThread.h; sourceTree = "<group>"; };
 		0F4570421BE5B58F0062A629 /* Dominators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Dominators.h; sourceTree = "<group>"; };
-		0F4570441BE834410062A629 /* BubbleSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BubbleSort.h; sourceTree = "<group>"; };
+		0F4570441BE834410062A629 /* InsertionSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InsertionSort.h; sourceTree = "<group>"; };
 		0F4D8C711FC1E7CE001D32AC /* SinglyLinkedListWithTail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SinglyLinkedListWithTail.h; sourceTree = "<group>"; };
 		0F5BF1651F2317830029D91D /* NaturalLoops.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NaturalLoops.h; sourceTree = "<group>"; };
 		0F5BF1741F23D49A0029D91D /* Gigacage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Gigacage.cpp; sourceTree = "<group>"; };
@@ -2011,7 +2011,6 @@
 				0F93274A1C17F4B700CF6564 /* Box.h */,
 				0F93274A1C17F4B700CF6566 /* BoxPtr.h */,
 				7C3F72391D78811900674E26 /* Brigand.h */,
-				0F4570441BE834410062A629 /* BubbleSort.h */,
 				A8A47267151A825A004123FF /* BumpPointerAllocator.h */,
 				EB95E1EF161A72410089A2F5 /* ByteOrder.h */,
 				0FEC3C4F1F323C6800F59B6C /* CagedPtr.h */,
@@ -2135,6 +2134,7 @@
 				2684D4351C000D400081D663 /* IndexSparseSet.h */,
 				A8A472BC151A825A004123FF /* InlineASM.h */,
 				A70DA0821799F04D00529A9B /* Insertion.h */,
+				0F4570441BE834410062A629 /* InsertionSort.h */,
 				5182C22C1F2BC7E60059BA7C /* InstanceCounted.h */,
 				E33667492722550900259122 /* Int128.cpp */,
 				F6D67D3226F90142006E0349 /* Int128.h */,
@@ -2980,7 +2980,6 @@
 				DD3DC91B27A4BF8E007E5B61 /* Box.h in Headers */,
 				DD3DC92927A4BF8E007E5B61 /* BoxPtr.h in Headers */,
 				DD3DC91C27A4BF8E007E5B61 /* Brigand.h in Headers */,
-				DD3DC86927A4BF8E007E5B61 /* BubbleSort.h in Headers */,
 				DD3DC87E27A4BF8E007E5B61 /* BumpPointerAllocator.h in Headers */,
 				DD3DC87127A4BF8E007E5B61 /* ByteOrder.h in Headers */,
 				DDF307B027C086CD006A526F /* cached-powers.h in Headers */,
@@ -3114,6 +3113,7 @@
 				DD3DC96627A4BF8E007E5B61 /* IndexSparseSet.h in Headers */,
 				DD3DC97227A4BF8E007E5B61 /* InlineASM.h in Headers */,
 				DD3DC91327A4BF8E007E5B61 /* Insertion.h in Headers */,
+				DD3DC86927A4BF8E007E5B61 /* InsertionSort.h in Headers */,
 				DD3DC98B27A4BF8E007E5B61 /* InstanceCounted.h in Headers */,
 				DD3DC86227A4BF8E007E5B61 /* Int128.h in Headers */,
 				DDF307E627C086DF006A526F /* IntegerToStringConversion.h in Headers */,
