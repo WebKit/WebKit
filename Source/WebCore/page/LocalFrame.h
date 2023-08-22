@@ -93,6 +93,7 @@ class RenderView;
 class RenderWidget;
 class ScriptController;
 class SecurityOrigin;
+class UserInputBridge;
 class VisiblePosition;
 class Widget;
 
@@ -285,6 +286,8 @@ public:
 
     WEBCORE_EXPORT bool arePluginsEnabled();
 
+    UserInputBridge& userInputBridge() { return m_userInputBridge.get(); }
+
 private:
     friend class NavigationDisabler;
 
@@ -342,6 +345,7 @@ private:
     FloatSize m_overrideScreenSize;
 
     UniqueRef<EventHandler> m_eventHandler;
+    UniqueRef<UserInputBridge> m_userInputBridge;
 };
 
 inline LocalFrameView* LocalFrame::view() const
