@@ -1335,11 +1335,26 @@ void RenderLayer::updateTransformFromStyle(TransformationMatrix& transform, cons
     makeMatrixRenderable(transform, canRender3DTransforms());
 }
 
+static FloatPoint offsetFromContainer(const RenderObject& renderer, const FloatRect& referenceRect)
+{
+    auto offsetFromContainingBlock = renderer.localToContainerPoint(FloatPoint(), renderer.containingBlock());
+    auto offset = offsetFromContainingBlock - referenceRect.location();
+    return { offset.width(), offset.height() };
+}
+
 void RenderLayer::setReferenceBoxForPathOperations()
 {
     auto pathOperation = renderer().style().offsetPath();
     if (!pathOperation)
         return;
+
+    auto startingPositionForOffsetPosition = [&](const LengthPoint& offsetPosition, const FloatRect& referenceRect) -> FloatPoint {
+        // FIXME: Implement offset-position: normal.
+        // If offset-position is auto, use top / left corner of the box.
+        if (offsetPosition.x().isAuto() && offsetPosition.y().isAuto())
+            return offsetFromContainer(renderer(), referenceRect);
+        return floatPointForLengthPoint(offsetPosition, referenceRect.size());
+    };
     if (is<BoxPathOperation>(pathOperation)) {
         auto& boxPathOperation = downcast<BoxPathOperation>(*pathOperation);
         auto pathReferenceBoxRect = snapRectToDevicePixelsIfNeeded(renderer().referenceBoxRect(boxPathOperation.referenceBox()), renderer());
@@ -1353,9 +1368,15 @@ void RenderLayer::setReferenceBoxForPathOperations()
             if (!pathReferenceBoxRect.height())
                 pathReferenceBoxRect.setHeight(pathReferenceBoxRect.width());
             rayPathOperation.setContainingBlockReferenceRect(pathReferenceBoxRect);
-            auto left = renderer().style().left();
-            auto top = renderer().style().top();
-            rayPathOperation.setStartingPosition(FloatPoint(left.isPercent() ? left.value() / 100 * pathReferenceBoxRect.width() : left.value(), top.isPercent() ? top.value() / 100 * pathReferenceBoxRect.height() : top.value()));
+
+            auto offsetPosition = renderer().style().offsetPosition();
+            auto startingPosition = rayPathOperation.startingPosition();
+
+            auto usedStartingPosition = startingPosition.x().isAuto() ? startingPositionForOffsetPosition(offsetPosition, pathReferenceBoxRect) : floatPointForLengthPoint(startingPosition, pathReferenceBoxRect.size());
+            ALWAYS_LOG_WITH_STREAM(stream << "startingPosition: " << startingPosition << ", pathReferenceBoxRect: " << pathReferenceBoxRect);
+            rayPathOperation.setUsedStartingPosition(usedStartingPosition);
+            rayPathOperation.setOffsetFromContainer(offsetFromContainer(renderer(), pathReferenceBoxRect));
+            ALWAYS_LOG_WITH_STREAM(stream << "usedStartingPosition: " << rayPathOperation.usedStartingPosition());
         }
     }
 }

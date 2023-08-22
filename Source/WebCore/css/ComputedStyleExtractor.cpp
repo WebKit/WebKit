@@ -1729,10 +1729,13 @@ static Ref<CSSValue> valueForPathOperation(const RenderStyle& style, const PathO
 
     case PathOperation::Ray: {
         auto& ray = downcast<RayPathOperation>(*operation);
-
         auto angle = CSSPrimitiveValue::create(ray.angle(), CSSUnitType::CSS_DEG);
-
-        return CSSRayValue::create(WTFMove(angle), valueIDForRaySize(ray.size()), ray.isContaining());
+        auto optionalPositionComponent = [&](const Length& length) -> RefPtr<CSSValue> {
+            if (length.isAuto())
+                return nullptr;
+            return zoomAdjustedPixelValueForLength(length, style);
+        };
+        return CSSRayValue::create(WTFMove(angle), valueIDForRaySize(ray.size()), ray.isContaining(), optionalPositionComponent(ray.startingPosition().x()), optionalPositionComponent(ray.startingPosition().y()));
     }
     }
 

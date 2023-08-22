@@ -34,12 +34,17 @@ namespace WebCore {
 String CSSRayValue::customCSSText() const
 {
     bool isNonDefaultSize = m_size != CSSValueClosestSide;
+    bool hasPosition = m_positionX;
 
     return makeString(
         "ray("_s, m_angle->cssText(),
         isNonDefaultSize ? " "_s : ""_s,
         isNonDefaultSize ? nameLiteral(m_size) : ""_s,
         m_isContaining ? " contain"_s : ""_s,
+        hasPosition ? " at "_s : ""_s,
+        hasPosition ? m_positionX->cssText() : ""_s,
+        hasPosition ? " "_s : ""_s,
+        hasPosition ? m_positionY->cssText() : ""_s,
         ')'
     );
 }
@@ -48,7 +53,9 @@ bool CSSRayValue::equals(const CSSRayValue& other) const
 {
     return compareCSSValue(m_angle, other.m_angle)
         && m_size == other.m_size
-        && m_isContaining == other.m_isContaining;
+        && m_isContaining == other.m_isContaining
+        && compareCSSValuePtr(m_positionX, other.m_positionX)
+        && compareCSSValuePtr(m_positionY, other.m_positionY);
 }
 
 }

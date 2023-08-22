@@ -241,13 +241,19 @@ public:
         return adoptRef(*new RayPathOperation(angle, size, isContaining));
     }
 
-    WEBCORE_EXPORT static Ref<RayPathOperation> create(float angle, Size, bool isContaining, FloatRect&& containingBlockBoundingRect, FloatPoint&& position);
+    static Ref<RayPathOperation> create(float angle, Size size, bool isContaining, LengthPoint&& startingPosition)
+    {
+        return adoptRef(*new RayPathOperation(angle, size, isContaining, WTFMove(startingPosition)));
+    }
+
+    WEBCORE_EXPORT static Ref<RayPathOperation> create(float angle, Size, bool isContaining, LengthPoint&& startingPosition, FloatRect&& containingBlockBoundingRect, FloatPoint&& usedStartingPosition, FloatPoint&& offsetFromParentContainer);
 
     Ref<PathOperation> clone() const final;
 
     float angle() const { return m_angle; }
     Size size() const { return m_size; }
     bool isContaining() const { return m_isContaining; }
+    const LengthPoint& startingPosition() const { return m_startingPosition; }
 
     bool canBlend(const PathOperation&) const final;
     WEBCORE_EXPORT RefPtr<PathOperation> blend(const PathOperation*, const BlendingContext&) const final;
@@ -259,14 +265,21 @@ public:
     {
         m_containingBlockBoundingRect = boundingRect;
     }
-    void setStartingPosition(const FloatPoint& position)
+    void setUsedStartingPosition(const FloatPoint& position)
     {
-        m_position = position;
+        m_usedStartingPosition = position;
     }
+    void setOffsetFromContainer(const FloatPoint& position)
+    {
+        m_offsetFromContainer = position;
+    }
+
+    FloatPoint currentOffset() const;
     const std::optional<Path> getPath(const FloatRect& referenceRect = { }) const final;
 
     const FloatRect& containingBlockBoundingRect() const { return m_containingBlockBoundingRect; }
-    const FloatPoint& position() const { return m_position; }
+    const FloatPoint& usedStartingPosition() const { return m_usedStartingPosition; }
+    const FloatPoint& offsetFromContainer() const { return m_offsetFromContainer; }
 
 private:
     bool operator==(const PathOperation& other) const override
@@ -277,7 +290,8 @@ private:
         auto& otherCasted = downcast<RayPathOperation>(other);
         return m_angle == otherCasted.m_angle
             && m_size == otherCasted.m_size
-            && m_isContaining == otherCasted.m_isContaining;
+            && m_isContaining == otherCasted.m_isContaining
+            && m_startingPosition == otherCasted.m_startingPosition;
     }
 
     RayPathOperation(float angle, Size size, bool isContaining)
@@ -288,21 +302,34 @@ private:
     {
     }
 
-    RayPathOperation(float angle, Size size, bool isContaining, FloatRect&& containingBlockBoundingRect, FloatPoint&& position)
+    RayPathOperation(float angle, Size size, bool isContaining, LengthPoint&& startingPosition)
         : PathOperation(Ray)
         , m_angle(angle)
         , m_size(size)
         , m_isContaining(isContaining)
+        , m_startingPosition(WTFMove(startingPosition))
+    {
+    }
+
+    RayPathOperation(float angle, Size size, bool isContaining, LengthPoint&& startingPosition, FloatRect&& containingBlockBoundingRect, FloatPoint&& usedStartingPosition, FloatPoint&& offsetFromContainer)
+        : PathOperation(Ray)
+        , m_angle(angle)
+        , m_size(size)
+        , m_isContaining(isContaining)
+        , m_startingPosition(WTFMove(startingPosition))
         , m_containingBlockBoundingRect(WTFMove(containingBlockBoundingRect))
-        , m_position(WTFMove(position))
+        , m_usedStartingPosition(WTFMove(usedStartingPosition))
+        , m_offsetFromContainer(WTFMove(offsetFromContainer))
     {
     }
 
     float m_angle { 0 };
     Size m_size;
     bool m_isContaining { false };
+    LengthPoint m_startingPosition { Length(LengthType::Auto), Length(LengthType::Auto) };
     FloatRect m_containingBlockBoundingRect;
-    FloatPoint m_position;
+    FloatPoint m_usedStartingPosition { 0.0, 0.0 };
+    FloatPoint m_offsetFromContainer { 0.0, 0.0 };
 };
 
 } // namespace WebCore

@@ -7,11 +7,11 @@ PASS Property offset-path value 'ray(200grad farthest-side)'
 PASS Property offset-path value 'ray(270deg farthest-corner contain)'
 PASS Property offset-path value 'ray(-720deg sides)'
 PASS Property offset-path value 'ray(calc(180deg - 45deg) farthest-side)'
-FAIL Property offset-path value 'ray(0deg at 100px 100px)' assert_true: 'ray(0deg at 100px 100px)' is a supported value for offset-path. expected true got false
-FAIL Property offset-path value 'ray(0deg sides at center center)' assert_true: 'ray(0deg sides at center center)' is a supported value for offset-path. expected true got false
-FAIL Property offset-path value 'ray(0deg at center center sides)' assert_true: 'ray(0deg at center center sides)' is a supported value for offset-path. expected true got false
-FAIL Property offset-path value 'ray(0deg at center center contain)' assert_true: 'ray(0deg at center center contain)' is a supported value for offset-path. expected true got false
-FAIL Property offset-path value 'ray(at 10px 10px 0deg contain)' assert_true: 'ray(at 10px 10px 0deg contain)' is a supported value for offset-path. expected true got false
+PASS Property offset-path value 'ray(0deg at 100px 100px)'
+PASS Property offset-path value 'ray(0deg sides at center center)'
+PASS Property offset-path value 'ray(0deg at center center sides)'
+PASS Property offset-path value 'ray(0deg at center center contain)'
+PASS Property offset-path value 'ray(at 10px 10px 0deg contain)'
 PASS Property offset-path value 'path("m 20 0 h -100")'
 PASS Property offset-path value 'path("M 0 0 L 100 100 M 100 200 L 200 200 Z L 300 300 Z")'
 PASS Property offset-path value 'path("m 10 20 q 30 60 40 50 q 100 70 90 80")'

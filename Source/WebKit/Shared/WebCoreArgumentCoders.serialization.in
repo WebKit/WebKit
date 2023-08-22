@@ -2691,8 +2691,10 @@ header: <WebCore/PathOperation.h>
     float angle();
     WebCore::RayPathOperation::Size size();
     bool isContaining();
+    WebCore::LengthPoint startingPosition();
     WebCore::FloatRect containingBlockBoundingRect();
-    WebCore::FloatPoint position();
+    WebCore::FloatPoint usedStartingPosition();
+    WebCore::FloatPoint offsetFromContainer();
 }
 
 [RefCounted] class WebCore::PathOperation subclasses {

@@ -75,16 +75,18 @@ const SVGElement* ReferencePathOperation::element() const
     return m_element.get();
 }
 
-Ref<RayPathOperation> RayPathOperation::create(float angle, Size size, bool isContaining, FloatRect&& containingBlockBoundingRect, FloatPoint&& position)
+Ref<RayPathOperation> RayPathOperation::create(float angle, Size size, bool isContaining, LengthPoint&& startingPosition, FloatRect&& containingBlockBoundingRect, FloatPoint&& usedStartingPosition, FloatPoint&& offsetFromContainer)
 {
-    return adoptRef(*new RayPathOperation(angle, size, isContaining, WTFMove(containingBlockBoundingRect), WTFMove(position)));
+    return adoptRef(*new RayPathOperation(angle, size, isContaining, WTFMove(startingPosition), WTFMove(containingBlockBoundingRect), WTFMove(usedStartingPosition), WTFMove(offsetFromContainer)));
 }
 
 Ref<PathOperation> RayPathOperation::clone() const
 {
+    auto startingPosition = m_startingPosition;
     auto containingBlockBoundingRect = m_containingBlockBoundingRect;
-    auto position = m_position;
-    return adoptRef(*new RayPathOperation(m_angle, m_size, m_isContaining, WTFMove(containingBlockBoundingRect), WTFMove(position)));
+    auto usedStartingPosition = m_usedStartingPosition;
+    auto offsetFromContainer = m_offsetFromContainer;
+    return adoptRef(*new RayPathOperation(m_angle, m_size, m_isContaining, WTFMove(startingPosition), WTFMove(containingBlockBoundingRect), WTFMove(usedStartingPosition), WTFMove(offsetFromContainer)));
 }
 
 bool RayPathOperation::canBlend(const PathOperation& to) const
@@ -98,13 +100,18 @@ RefPtr<PathOperation> RayPathOperation::blend(const PathOperation* to, const Ble
 {
     ASSERT(is<RayPathOperation>(to));
     auto& toRayPathOperation = downcast<RayPathOperation>(*to);
-    return RayPathOperation::create(WebCore::blend(m_angle, toRayPathOperation.angle(), context), m_size, m_isContaining);
+    return RayPathOperation::create(WebCore::blend(m_angle, toRayPathOperation.angle(), context), m_size, m_isContaining, WebCore::blend(m_startingPosition, toRayPathOperation.startingPosition(), context));
+}
+
+FloatPoint RayPathOperation::currentOffset() const
+{
+    return FloatPoint(m_usedStartingPosition - m_offsetFromContainer);
 }
 
 double RayPathOperation::lengthForPath() const
 {
     auto boundingBox = m_containingBlockBoundingRect;
-    auto distances = distanceOfPointToSidesOfRect(boundingBox, m_position);
+    auto distances = distanceOfPointToSidesOfRect(boundingBox, m_usedStartingPosition);
     
     switch (m_size) {
     case Size::ClosestSide:
@@ -116,7 +123,7 @@ double RayPathOperation::lengthForPath() const
     case Size::ClosestCorner:
         return std::sqrt(std::pow(std::min(distances.left(), distances.right()), 2) + std::pow(std::min(distances.top(), distances.bottom()), 2));
     case Size::Sides:
-        return lengthOfRayIntersectionWithBoundingBox(boundingBox, std::make_pair(m_position, m_angle));
+        return lengthOfRayIntersectionWithBoundingBox(boundingBox, std::make_pair(m_usedStartingPosition, m_angle));
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -139,7 +146,8 @@ const std::optional<Path> RayPathOperation::getPath(const FloatRect& referenceRe
     auto point = FloatPoint(std::cos(radians) * length, std::sin(radians) * length);
 
     Path path;
-    path.addLineTo(point);
+    path.moveTo(currentOffset());
+    path.addLineTo(currentOffset() + point);
     return path;
 }
 
