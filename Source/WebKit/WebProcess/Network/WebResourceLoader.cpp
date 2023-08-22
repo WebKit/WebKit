@@ -112,7 +112,7 @@ MainFrameMainResource WebResourceLoader::mainFrameMainResource() const
     return MainFrameMainResource::Yes;
 }
 
-void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, IPC::FormDataReference&& proposedRequestBody, ResourceResponse&& redirectResponse, CompletionHandler<void(ResourceRequest&&, bool)>&& completionHandler)
+void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, IPC::FormDataReference&& proposedRequestBody, ResourceResponse&& redirectResponse)
 {
     Ref<WebResourceLoader> protectedThis(*this);
 
@@ -124,7 +124,7 @@ void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, IPC::
 
     if (m_coreLoader->documentLoader()->applicationCacheHost().maybeLoadFallbackForRedirect(m_coreLoader.get(), proposedRequest, redirectResponse)) {
         WEBRESOURCELOADER_RELEASE_LOG("willSendRequest: exiting early because maybeLoadFallbackForRedirect returned false");
-        return completionHandler({ }, false);
+        return;
     }
     
     if (auto* frame = m_coreLoader->frame()) {
@@ -134,14 +134,14 @@ void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, IPC::
         }
     }
 
-    m_coreLoader->willSendRequest(WTFMove(proposedRequest), redirectResponse, [this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request) mutable {
+    m_coreLoader->willSendRequest(WTFMove(proposedRequest), redirectResponse, [this, protectedThis = WTFMove(protectedThis)](ResourceRequest&& request) {
         if (!m_coreLoader || !m_coreLoader->identifier()) {
             WEBRESOURCELOADER_RELEASE_LOG("willSendRequest: exiting early because no coreloader or identifier");
-            return completionHandler({ }, false);
+            return;
         }
 
         WEBRESOURCELOADER_RELEASE_LOG("willSendRequest: returning ContinueWillSendRequest");
-        completionHandler(WTFMove(request), m_coreLoader->isAllowedToAskUserForCredentials());
+        send(Messages::NetworkResourceLoader::ContinueWillSendRequest(request, m_coreLoader->isAllowedToAskUserForCredentials()));
     });
 }
 

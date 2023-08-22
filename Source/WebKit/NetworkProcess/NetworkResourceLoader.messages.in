@@ -21,5 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> NetworkResourceLoader LegacyReceiver {
+
+    ContinueWillSendRequest(WebCore::ResourceRequest request, bool isAllowedToAskUserForCredentials)
     ContinueDidReceiveResponse()
 }

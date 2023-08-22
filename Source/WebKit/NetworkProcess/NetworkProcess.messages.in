@@ -59,6 +59,8 @@ messages -> NetworkProcess LegacyReceiver {
     ApplicationDidEnterBackground()
     ApplicationWillEnterForeground()
 
+    ContinueWillSendRequest(WebKit::DownloadID downloadID, WebCore::ResourceRequest request)
+
     SetAllowsAnySSLCertificateForWebSocket(bool enabled) -> () Synchronous
 
     FlushCookies(PAL::SessionID sessionID) -> ()
