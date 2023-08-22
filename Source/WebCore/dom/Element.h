@@ -106,7 +106,7 @@ using ElementName = NodeName;
 using ExplicitlySetAttrElementsMap = HashMap<QualifiedName, Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>>;
 
 // https://drafts.csswg.org/css-contain/#relevant-to-the-user
-enum class ContentRelevancyStatus : uint8_t {
+enum class ContentRelevancy : uint8_t {
     OnScreen = 1 << 0,
     Focused = 1 << 1,
     IsInTopLayer = 1 << 2,
@@ -739,8 +739,8 @@ public:
 
     void contentVisibilityViewportChange(bool);
 
-    OptionSet<ContentRelevancyStatus> contentRelevancyStatus() const;
-    void setContentRelevancyStatus(OptionSet<ContentRelevancyStatus>);
+    OptionSet<ContentRelevancy> contentRelevancy() const;
+    void setContentRelevancy(OptionSet<ContentRelevancy>);
 
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);

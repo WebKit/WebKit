@@ -1067,7 +1067,7 @@ static std::optional<std::pair<RenderElement*, LayoutRect>> listBoxElementScroll
 
 void Element::scrollIntoView(std::optional<std::variant<bool, ScrollIntoViewOptions>>&& arg)
 {
-    document().contentVisibilityDocumentState().updateContentRelevancyStatusForScrollIfNeeded(*this);
+    document().updateContentRelevancyForScrollIfNeeded(*this);
 
     document().updateLayoutIgnorePendingStylesheets();
 
@@ -1134,7 +1134,7 @@ void Element::scrollIntoView(bool alignToTop)
 
 void Element::scrollIntoViewIfNeeded(bool centerIfNeeded)
 {
-    document().contentVisibilityDocumentState().updateContentRelevancyStatusForScrollIfNeeded(*this);
+    document().updateContentRelevancyForScrollIfNeeded(*this);
 
     document().updateLayoutIgnorePendingStylesheets();
 
@@ -3526,7 +3526,7 @@ void Element::focus(const FocusOptions& options)
         return;
     }
 
-    document->contentVisibilityDocumentState().updateContentRelevancyStatusForScrollIfNeeded(*this);
+    document->updateContentRelevancyForScrollIfNeeded(*this);
 
     RefPtr<Element> newTarget = this;
 
@@ -3868,7 +3868,7 @@ void Element::addToTopLayer()
     document().addTopLayerElement(*this);
     setNodeFlag(NodeFlag::IsInTopLayer);
 
-    document().scheduleContentRelevancyUpdate(ContentRelevancyStatus::IsInTopLayer);
+    document().scheduleContentRelevancyUpdate(ContentRelevancy::IsInTopLayer);
 
     // Invalidate inert state
     invalidateStyleInternal();
@@ -3902,7 +3902,7 @@ void Element::removeFromTopLayer()
     document().removeTopLayerElement(*this);
     clearNodeFlag(NodeFlag::IsInTopLayer);
 
-    document().scheduleContentRelevancyUpdate(ContentRelevancyStatus::IsInTopLayer);
+    document().scheduleContentRelevancyUpdate(ContentRelevancy::IsInTopLayer);
 
     // Invalidate inert state
     invalidateStyleInternal();
@@ -5378,25 +5378,25 @@ bool Element::isPopoverShowing() const
 // https://drafts.csswg.org/css-contain/#relevant-to-the-user
 bool Element::isRelevantToUser() const
 {
-    return hasRareData() && elementRareData()->contentRelevancyStatus();
+    return !contentRelevancy().isEmpty();
 }
 
-OptionSet<ContentRelevancyStatus> Element::contentRelevancyStatus() const
+OptionSet<ContentRelevancy> Element::contentRelevancy() const
 {
     if (!hasRareData())
         return { };
-    return elementRareData()->contentRelevancyStatus();
+    return elementRareData()->contentRelevancy();
 }
 
-void Element::setContentRelevancyStatus(OptionSet<ContentRelevancyStatus> contentRelvancyStatus)
+void Element::setContentRelevancy(OptionSet<ContentRelevancy> contentRelevancy)
 {
-    ensureElementRareData().setContentRelevancyStatus(contentRelvancyStatus);
+    ensureElementRareData().setContentRelevancy(contentRelevancy);
 }
 
 void Element::contentVisibilityViewportChange(bool)
 {
     ASSERT(renderStyle() && renderStyle()->contentVisibility() == ContentVisibility::Auto);
-    document().scheduleContentRelevancyUpdate(ContentRelevancyStatus::OnScreen);
+    document().scheduleContentRelevancyUpdate(ContentRelevancy::OnScreen);
 }
 
 } // namespace WebCore

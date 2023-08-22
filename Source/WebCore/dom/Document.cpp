@@ -4930,7 +4930,7 @@ bool Document::setFocusedElement(Element* element, const FocusOptions& options)
         oldFocusedElement->setFocus(false);
         setFocusNavigationStartingNode(nullptr);
 
-        scheduleContentRelevancyUpdate(ContentRelevancyStatus::Focused);
+        scheduleContentRelevancyUpdate(ContentRelevancy::Focused);
 
         if (options.removalEventsMode == FocusRemovalEventsMode::Dispatch) {
             // Dispatch a change event for form control elements that have been edited.
@@ -5011,7 +5011,7 @@ bool Document::setFocusedElement(Element* element, const FocusOptions& options)
         if (options.trigger != FocusTrigger::Bindings)
             m_latestFocusTrigger = options.trigger;
 
-        scheduleContentRelevancyUpdate(ContentRelevancyStatus::Focused);
+        scheduleContentRelevancyUpdate(ContentRelevancy::Focused);
 
         // The setFocus call triggers a blur and a focus event. Event handlers could cause the focused element to be cleared.
         if (m_focusedElement != newFocusedElement) {
@@ -9598,16 +9598,25 @@ void Document::updateRelevancyOfContentVisibilityElements()
 {
     if (!isObservingContentVisibilityTargets())
         return;
-    if (m_contentVisibilityDocumentState->updateRelevancyOfContentVisibilityElements(m_contentRelevancyStatusUpdate))
+    if (m_contentVisibilityDocumentState->updateRelevancyOfContentVisibilityElements(m_contentRelevancyUpdate) == DidUpdateAnyContentRelevancy::Yes)
         updateLayoutIgnorePendingStylesheets();
-    m_contentRelevancyStatusUpdate = { };
+    m_contentRelevancyUpdate = { };
 }
 
-void Document::scheduleContentRelevancyUpdate(ContentRelevancyStatus status)
+void Document::scheduleContentRelevancyUpdate(ContentRelevancy contentRelevancy)
 {
     if (!isObservingContentVisibilityTargets())
         return;
-    m_contentRelevancyStatusUpdate.add(status);
+    m_contentRelevancyUpdate.add(contentRelevancy);
+    scheduleRenderingUpdate(RenderingUpdateStep::UpdateContentRelevancy);
+}
+
+// FIXME: remove when scroll anchoring is implemented (https://bugs.webkit.org/show_bug.cgi?id=259269).
+void Document::updateContentRelevancyForScrollIfNeeded(const Element& scrollAnchor)
+{
+    if (!m_contentVisibilityDocumentState)
+        return;
+    return m_contentVisibilityDocumentState->updateContentRelevancyForScrollIfNeeded(scrollAnchor);
 }
 
 } // namespace WebCore

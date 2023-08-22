@@ -145,8 +145,8 @@ public:
     PopoverData* popoverData() { return m_popoverData.get(); }
     void setPopoverData(std::unique_ptr<PopoverData>&& popoverData) { m_popoverData = WTFMove(popoverData); }
 
-    const OptionSet<ContentRelevancyStatus>& contentRelevancyStatus() const { return m_contentRelevancyStatus; }
-    void setContentRelevancyStatus(OptionSet<ContentRelevancyStatus>& contentRelevancyStatus) { m_contentRelevancyStatus = contentRelevancyStatus; }
+    const OptionSet<ContentRelevancy>& contentRelevancy() const { return m_contentRelevancy; }
+    void setContentRelevancy(OptionSet<ContentRelevancy>& contentRelevancy) { m_contentRelevancy = contentRelevancy; }
 
 #if DUMP_NODE_STATISTICS
     OptionSet<UseType> useTypes() const
@@ -206,7 +206,7 @@ private:
     unsigned short m_childIndex { 0 }; // Keep on top for better bit packing with NodeRareData.
     int m_unusualTabIndex { 0 }; // Keep on top for better bit packing with NodeRareData.
 
-    OptionSet<ContentRelevancyStatus> m_contentRelevancyStatus;
+    OptionSet<ContentRelevancy> m_contentRelevancy;
 
     IntPoint m_savedLayerScrollPosition;
     std::unique_ptr<RenderStyle> m_computedStyle;
