@@ -42,6 +42,11 @@ WebGLObject::WebGLObject(WebGLRenderingContextBase& context)
 {
 }
 
+WebGLRenderingContextBase* WebGLObject::context() const
+{
+    return m_context.get();
+}
+
 Lock& WebGLObject::objectGraphLockForContext()
 {
     // Should not call this if the object or context has been deleted.
