@@ -218,7 +218,7 @@ void VTTCueBox::applyCSSProperties()
 
     // the 'height' property must be set to height
     std::visit(WTF::makeVisitor([&] (double height) {
-        setInlineStyleProperty(CSSPropertyHeight, height, CSSUnitType::CSS_CQW);
+        setInlineStyleProperty(CSSPropertyHeight, height, CSSUnitType::CSS_CQH);
     }, [&] (auto) {
         setInlineStyleProperty(CSSPropertyHeight, CSSValueAuto);
     }), cue->height());
