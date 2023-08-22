@@ -56,7 +56,7 @@ class VM;
 
 static constexpr double minECMAScriptTime = -8.64E15;
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(BUN_JSC_ADDITIONS)
 extern JS_EXPORT_PRIVATE std::atomic<uint64_t> lastTimeZoneID;
 #endif
 
@@ -86,7 +86,7 @@ public:
 
     bool hasTimeZoneChange()
     {
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(BUN_JSC_ADDITIONS)
         return m_cachedTimezoneID != lastTimeZoneID;
 #else
         return true; // always force a time zone check.
@@ -95,7 +95,7 @@ public:
 
     void resetIfNecessary()
     {
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(BUN_JSC_ADDITIONS)
         if (LIKELY(!hasTimeZoneChange()))
             return;
         m_cachedTimezoneID = lastTimeZoneID;
@@ -114,7 +114,11 @@ public:
     double localTimeToMS(double milliseconds, WTF::TimeType);
     JS_EXPORT_PRIVATE double parseDate(JSGlobalObject*, VM&, const WTF::String&);
 
+#if USE(BUN_JSC_ADDITIONS)
+    static void timeZoneChanged() { ++lastTimeZoneID; }
+#else
     static void timeZoneChanged();
+#endif
 
 private:
     class DSTCache {

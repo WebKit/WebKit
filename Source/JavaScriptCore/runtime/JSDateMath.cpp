@@ -104,7 +104,7 @@ namespace JSDateMathInternal {
 static constexpr bool verbose = false;
 }
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(BUN_JSC_ADDITIONS)
 std::atomic<uint64_t> lastTimeZoneID { 1 };
 #endif
 
