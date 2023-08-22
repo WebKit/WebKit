@@ -29,6 +29,8 @@ static void testWebKitDOMElementAutoFill(WebViewTest* test, gconstpointer)
 
 void beforeAll()
 {
+    Test::shouldInitializeWebProcessExtensions = true;
+
     WebViewTest::add("WebKitDOMElement", "auto-fill", testWebKitDOMElementAutoFill);
 }
 

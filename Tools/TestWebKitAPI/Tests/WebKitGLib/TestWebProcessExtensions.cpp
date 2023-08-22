@@ -781,6 +781,8 @@ static void testWebProcessExtensionWindowObjectCleared(UserMessageTest* test, gc
 
 void beforeAll()
 {
+    Test::shouldInitializeWebProcessExtensions = true;
+
     WebViewTest::add("WebKitWebProcessExtension", "dom-document-title", testWebProcessExtensionGetTitle);
 #if PLATFORM(GTK)
     WebViewTest::add("WebKitWebProcessExtension", "dom-input-element-is-user-edited", testWebProcessExtensionInputElementIsUserEdited);

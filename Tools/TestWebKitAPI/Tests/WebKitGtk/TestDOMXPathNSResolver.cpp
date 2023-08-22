@@ -42,6 +42,8 @@ static void testWebKitDOMXPathNSResolverCustom(WebViewTest* test, gconstpointer)
 
 void beforeAll()
 {
+    Test::shouldInitializeWebProcessExtensions = true;
+
     WebViewTest::add("WebKitDOMXPathNSResolver", "native", testWebKitDOMXPathNSResolverNative);
     WebViewTest::add("WebKitDOMXPathNSResolver", "custom", testWebKitDOMXPathNSResolverCustom);
 }

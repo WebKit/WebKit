@@ -69,6 +69,8 @@ static void testWebKitDOMObjectCache(WebViewTest* test, gconstpointer)
 
 void beforeAll()
 {
+    Test::shouldInitializeWebProcessExtensions = true;
+
     WebViewTest::add("WebKitDOMNode", "hierarchy-navigation", testWebKitDOMNodeHierarchyNavigation);
     WebViewTest::add("WebKitDOMNode", "insertion", testWebKitDOMNodeInsertion);
     WebViewTest::add("WebKitDOMNode", "tag-names-node-list", testWebKitDOMNodeTagNamesNodeList);

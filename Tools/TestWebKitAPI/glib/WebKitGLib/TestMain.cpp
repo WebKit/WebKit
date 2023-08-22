@@ -27,6 +27,8 @@
 #include <gtk/gtk.h>
 #endif
 
+bool Test::shouldInitializeWebProcessExtensions = false;
+
 GRefPtr<GDBusServer> Test::s_dbusServer;
 Vector<GRefPtr<GDBusConnection>> Test::s_dbusConnections;
 HashMap<uint64_t, GDBusConnection*> Test::s_dbusConnectionPageMap;
