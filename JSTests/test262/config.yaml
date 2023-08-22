@@ -64,7 +64,6 @@ skip:
     # Slightly different formatting. We should update test262 side.
     - test/intl402/DateTimeFormat/prototype/formatRangeToParts/en-US.js
     - test/intl402/DateTimeFormat/prototype/formatRangeToParts/fractionalSecondDigits.js
-    - test/intl402/NumberFormat/test-option-roundingPriority-mixed-options.js
     - test/intl402/NumberFormat/prototype/format/unit-ja-JP.js
     - test/intl402/NumberFormat/prototype/format/unit-zh-TW.js
     - test/intl402/NumberFormat/prototype/formatToParts/unit-ja-JP.js
