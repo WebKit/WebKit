@@ -214,6 +214,7 @@ bool isContentPositionKeyword(CSSValueID);
 bool isContentPositionOrLeftOrRightKeyword(CSSValueID);
 bool isSelfPositionKeyword(CSSValueID);
 bool isSelfPositionOrLeftOrRightKeyword(CSSValueID);
+bool isGridBreadthIdent(CSSValueID);
 
 RefPtr<CSSValueList> consumeAlignTracks(CSSParserTokenRange&);
 RefPtr<CSSValueList> consumeJustifyTracks(CSSParserTokenRange&);
