@@ -2860,3 +2860,5 @@ webkit.org/b/260224 [ Ventura+ ] imported/w3c/web-platform-tests/css/css-transfo
 webkit.org/b/260224 [ Ventura+ ] imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-011.html [ ImageOnlyFailure ]
 
 webkit.org/b/130490 media/video-remote-control-playpause.html [ Pass Timeout Crash ]
+
+webkit.org/b/260529 [ Ventura+ x86_64 ] animations/suspend-resume-animation-events.html [ Pass Failure ]
