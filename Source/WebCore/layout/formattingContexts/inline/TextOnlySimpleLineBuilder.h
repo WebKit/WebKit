@@ -56,6 +56,7 @@ private:
     size_t revertToTrailingItem(const InlineItemRange&, const InlineTextItem&);
     size_t revertToLastNonOverflowingItem(const InlineItemRange&);
     InlineLayoutUnit availableWidth() const;
+    bool isWrappingAllowed() const { return m_isWrappingAllowed; }
 
     bool isFirstFormattedLine() const { return !m_previousLine.has_value(); }
 
@@ -73,6 +74,7 @@ private:
     InlineRect m_lineLogicalRect;
     const InlineItems& m_inlineItems;
     Vector<const InlineTextItem*> m_wrapOpportunityList;
+    bool m_isWrappingAllowed { false };
 
     std::optional<InlineTextItem> m_partialLeadingTextItem;
 };

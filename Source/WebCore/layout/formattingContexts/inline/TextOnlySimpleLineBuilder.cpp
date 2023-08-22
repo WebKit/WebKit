@@ -92,13 +92,14 @@ TextOnlySimpleLineBuilder::TextOnlySimpleLineBuilder(const InlineFormattingConte
     , m_rootHorizontalConstraints(rootHorizontalConstraints)
     , m_line(inlineFormattingContext)
     , m_inlineItems(inlineItems)
+    , m_isWrappingAllowed(TextUtil::isWrappingAllowed(root().style()))
 {
 }
 
 LineLayoutResult TextOnlySimpleLineBuilder::layoutInlineContent(const LineInput& lineInput, const std::optional<PreviousLine>& previousLine)
 {
     initialize(lineInput.needsLayoutRange, lineInput.initialLogicalRect, previousLine);
-    auto placedContentEnd = TextUtil::isWrappingAllowed(root().style()) ? placeInlineTextContent(lineInput.needsLayoutRange) : placeNonWrappingInlineTextContent(lineInput.needsLayoutRange);
+    auto placedContentEnd = isWrappingAllowed() ? placeInlineTextContent(lineInput.needsLayoutRange) : placeNonWrappingInlineTextContent(lineInput.needsLayoutRange);
     auto result = m_line.close();
 
     auto isLastLine = isLastLineWithInlineContent(placedContentEnd, lineInput.needsLayoutRange.endIndex());
