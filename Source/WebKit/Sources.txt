@@ -236,8 +236,6 @@ Shared/ShareableResource.cpp
 Shared/SharedStringHashStore.cpp
 Shared/SharedStringHashTableReadOnly.cpp
 Shared/SharedStringHashTable.cpp
-Shared/TouchBarMenuData.cpp
-Shared/TouchBarMenuItemData.cpp
 Shared/URLSchemeTaskParameters.cpp
 Shared/UserData.cpp
 Shared/UserContentControllerParameters.cpp

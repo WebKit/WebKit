@@ -591,11 +591,6 @@ public:
     virtual void shouldAllowDeviceOrientationAndMotionAccess(LocalFrame&, bool /* mayPrompt */, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& callback) { callback(DeviceOrientationOrMotionPermissionState::Denied); }
 #endif
 
-    virtual void didInsertMenuElement(HTMLMenuElement&) { }
-    virtual void didRemoveMenuElement(HTMLMenuElement&) { }
-    virtual void didInsertMenuItemElement(HTMLMenuItemElement&) { }
-    virtual void didRemoveMenuItemElement(HTMLMenuItemElement&) { }
-
     virtual void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel) { }
 
     virtual bool userIsInteracting() const { return false; }

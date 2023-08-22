@@ -1559,12 +1559,11 @@ bool WKPreferencesGetIntersectionObserverEnabled(WKPreferencesRef preferencesRef
 
 void WKPreferencesSetMenuItemElementEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
-    return toImpl(preferencesRef)->setMenuItemElementEnabled(flag);
 }
 
 bool WKPreferencesGetMenuItemElementEnabled(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->menuItemElementEnabled();
+    return false;
 }
 
 void WKPreferencesSetPaintTimingEnabled(WKPreferencesRef preferencesRef, bool flag)

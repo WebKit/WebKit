@@ -264,10 +264,6 @@
 #include <WebCore/UTIUtilities.h>
 #endif
 
-#if HAVE(TOUCH_BAR)
-#include "TouchBarMenuItemData.h"
-#endif
-
 #if PLATFORM(COCOA) || PLATFORM(GTK)
 #include "ViewSnapshotStore.h"
 #endif
@@ -11427,25 +11423,6 @@ void WebPageProxy::effectiveAppearanceDidChange()
 
     send(Messages::WebPage::EffectiveAppearanceDidChange(useDarkAppearance(), useElevatedUserInterfaceLevel()));
 }
-
-#if HAVE(TOUCH_BAR)
-
-void WebPageProxy::touchBarMenuDataChanged(const TouchBarMenuData& touchBarMenuData)
-{
-    internals().touchBarMenuData = touchBarMenuData;
-}
-
-void WebPageProxy::touchBarMenuItemDataAdded(const TouchBarMenuItemData& touchBarMenuItemData)
-{
-    internals().touchBarMenuData.addMenuItem(touchBarMenuItemData);
-}
-
-void WebPageProxy::touchBarMenuItemDataRemoved(const TouchBarMenuItemData& touchBarMenuItemData)
-{
-    internals().touchBarMenuData.removeMenuItem(touchBarMenuItemData);
-}
-
-#endif
 
 DataOwnerType WebPageProxy::dataOwnerForPasteboard(PasteboardAccessIntent intent) const
 {

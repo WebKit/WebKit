@@ -2664,16 +2664,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitCSSOMViewScrollingAPIEnabledPreferenceKey];
 }
 
-- (BOOL)menuItemElementEnabled
-{
-    return [self _boolValueForKey:WebKitMenuItemElementEnabledPreferenceKey];
-}
-
-- (void)setMenuItemElementEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitMenuItemElementEnabledPreferenceKey];
-}
-
 - (BOOL)mediaUserGestureInheritsFromDocument
 {
     return [self _boolValueForKey:WebKitMediaUserGestureInheritsFromDocument];

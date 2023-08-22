@@ -51,11 +51,6 @@ public:
     WebPage& page() const { return m_page; }
 
 private:
-    void didInsertMenuElement(WebCore::HTMLMenuElement&) final;
-    void didRemoveMenuElement(WebCore::HTMLMenuElement&) final;
-    void didInsertMenuItemElement(WebCore::HTMLMenuItemElement&) final;
-    void didRemoveMenuItemElement(WebCore::HTMLMenuItemElement&) final;
-
     void chromeDestroyed() final;
     
     void setWindowRect(const WebCore::FloatRect&) final;

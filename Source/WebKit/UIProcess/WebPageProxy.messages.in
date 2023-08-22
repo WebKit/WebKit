@@ -347,12 +347,6 @@ messages -> WebPageProxy {
     SearchTheWeb(String string)
 #endif
 
-#if HAVE(TOUCH_BAR)
-    TouchBarMenuDataChanged(WebKit::TouchBarMenuData touchBarMenuData)
-    TouchBarMenuItemDataAdded(struct WebKit::TouchBarMenuItemData touchBarMenuItemData)
-    TouchBarMenuItemDataRemoved(struct WebKit::TouchBarMenuItemData touchBarMenuItemData)
-#endif
-
 #if USE(APPKIT)
     SubstitutionsPanelIsShowing() -> (bool isShowing) Synchronous
 #endif

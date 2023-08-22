@@ -61,9 +61,9 @@
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/DisabledAdaptations.h>
 #include <WebCore/DragActions.h>
+#include <WebCore/FocusOptions.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/FrameLoaderTypes.h>
-#include <WebCore/HTMLMenuItemElement.h>
 #include <WebCore/HighlightVisibility.h>
 #include <WebCore/IntSizeHash.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
@@ -205,8 +205,6 @@ class FrameSelection;
 class GraphicsContext;
 class HTMLElement;
 class HTMLImageElement;
-class HTMLMenuElement;
-class HTMLMenuItemElement;
 class HTMLPlugInElement;
 class HTMLVideoElement;
 class IgnoreSelectionChangeForScope;
@@ -529,11 +527,6 @@ public:
     bool hoverSupportedByAnyAvailablePointingDevice() const;
     std::optional<WebCore::PointerCharacteristics> pointerCharacteristicsOfPrimaryPointingDevice() const;
     OptionSet<WebCore::PointerCharacteristics> pointerCharacteristicsOfAllAvailablePointingDevices() const;
-
-    void didInsertMenuElement(WebCore::HTMLMenuElement&);
-    void didRemoveMenuElement(WebCore::HTMLMenuElement&);
-    void didInsertMenuItemElement(WebCore::HTMLMenuItemElement&);
-    void didRemoveMenuItemElement(WebCore::HTMLMenuItemElement&);
 
     void animationDidFinishForElement(const WebCore::Element&);
 
@@ -1685,13 +1678,6 @@ private:
     void sendEditorStateUpdate();
 
     void getPlatformEditorStateCommon(const WebCore::LocalFrame&, EditorState&) const;
-
-#if HAVE(TOUCH_BAR)
-    void sendTouchBarMenuDataAddedUpdate(WebCore::HTMLMenuElement&);
-    void sendTouchBarMenuDataRemovedUpdate(WebCore::HTMLMenuElement&);
-    void sendTouchBarMenuItemDataAddedUpdate(WebCore::HTMLMenuItemElement&);
-    void sendTouchBarMenuItemDataRemovedUpdate(WebCore::HTMLMenuItemElement&);
-#endif
 
     bool didReceiveSyncWebPageMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 

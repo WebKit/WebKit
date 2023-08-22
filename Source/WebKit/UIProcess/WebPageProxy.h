@@ -360,7 +360,6 @@ class SharedMemoryHandle;
 class SpeechRecognitionPermissionManager;
 class SuspendedPageProxy;
 class SystemPreviewController;
-class TouchBarMenuData;
 class UserData;
 class UserMediaPermissionRequestManagerProxy;
 class UserMediaPermissionRequestProxy;
@@ -435,7 +434,6 @@ struct ResourceLoadInfo;
 struct SessionState;
 struct TapIdentifierType;
 struct TextCheckerRequestType;
-struct TouchBarMenuItemData;
 struct TransactionIDType;
 struct URLSchemeTaskParameters;
 struct UserMessage;
@@ -837,10 +835,6 @@ public:
     void changeListType();
 
     void setBaseWritingDirection(WebCore::WritingDirection);
-
-#if HAVE(TOUCH_BAR)
-    const TouchBarMenuData& touchBarMenuData() const;
-#endif
 
     bool maintainsInactiveSelection() const;
     void setMaintainsInactiveSelection(bool);
@@ -1814,13 +1808,6 @@ public:
     bool updateEditorState(const EditorState& newEditorState, ShouldMergeVisualEditorState = ShouldMergeVisualEditorState::Default);
     void scheduleFullEditorStateUpdate();
     void dispatchDidUpdateEditorState();
-
-#if HAVE(TOUCH_BAR)
-    void touchBarMenuDataRemoved();
-    void touchBarMenuDataChanged(const TouchBarMenuData&);
-    void touchBarMenuItemDataAdded(const TouchBarMenuItemData&);
-    void touchBarMenuItemDataRemoved(const TouchBarMenuItemData&);
-#endif
 
 #if ENABLE(TRACKING_PREVENTION)
     void requestStorageAccessConfirm(const WebCore::RegistrableDomain& subFrameDomain, const WebCore::RegistrableDomain& topFrameDomain, WebCore::FrameIdentifier, CompletionHandler<void(bool)>&&);

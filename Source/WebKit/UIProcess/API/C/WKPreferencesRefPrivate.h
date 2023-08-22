@@ -417,10 +417,6 @@ WK_EXPORT void WKPreferencesSetIntersectionObserverEnabled(WKPreferencesRef, boo
 WK_EXPORT bool WKPreferencesGetIntersectionObserverEnabled(WKPreferencesRef);
 
 // Defaults to false
-WK_EXPORT void WKPreferencesSetMenuItemElementEnabled(WKPreferencesRef, bool flag);
-WK_EXPORT bool WKPreferencesGetMenuItemElementEnabled(WKPreferencesRef);
-        
-// Defaults to false
 WK_EXPORT void WKPreferencesSetDataTransferItemsEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetDataTransferItemsEnabled(WKPreferencesRef);
 
@@ -553,6 +549,8 @@ WK_EXPORT void WKPreferencesSetSubpixelAntialiasedLayerTextEnabled(WKPreferences
 WK_EXPORT bool WKPreferencesGetSubpixelAntialiasedLayerTextEnabled(WKPreferencesRef) WK_C_API_DEPRECATED;
 WK_EXPORT void WKPreferencesSetPaginateDuringLayoutEnabled(WKPreferencesRef, bool) WK_C_API_DEPRECATED;
 WK_EXPORT bool WKPreferencesGetPaginateDuringLayoutEnabled(WKPreferencesRef) WK_C_API_DEPRECATED;
+WK_EXPORT void WKPreferencesSetMenuItemElementEnabled(WKPreferencesRef, bool flag) WK_C_API_DEPRECATED;
+WK_EXPORT bool WKPreferencesGetMenuItemElementEnabled(WKPreferencesRef) WK_C_API_DEPRECATED;
 
 
 #ifdef __cplusplus

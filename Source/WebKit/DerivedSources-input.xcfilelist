@@ -221,7 +221,6 @@ $(PROJECT_DIR)/Shared/ShareableBitmap.serialization.in
 $(PROJECT_DIR)/Shared/Shared/EditorState.serialization.in
 $(PROJECT_DIR)/Shared/TextFlags.serialization.in
 $(PROJECT_DIR)/Shared/TextRecognitionResult.serialization.in
-$(PROJECT_DIR)/Shared/TouchBarMenuItemData.serialization.in
 $(PROJECT_DIR)/Shared/UpdateInfo.serialization.in
 $(PROJECT_DIR)/Shared/UserInterfaceIdiom.serialization.in
 $(PROJECT_DIR)/Shared/WTFArgumentCoders.serialization.in

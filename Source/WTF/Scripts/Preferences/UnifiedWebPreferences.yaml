@@ -4465,17 +4465,6 @@ MediaVideoCodecIDsAllowedInLockdownMode:
     WebKit:
       default: '"avc1,zavc,qavc,cavc"'
 
-MenuItemElementEnabled:
-  type: bool
-  status: embedder
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 MinimumFontSize:
   type: double
   status: embedder
