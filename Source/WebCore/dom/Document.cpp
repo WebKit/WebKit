@@ -8452,12 +8452,15 @@ void Document::updateResizeObservations(Page& page)
     // We need layout the whole frame tree here. Because ResizeObserver could observe element in other frame,
     // and it could change other frame in deliverResizeObservations().
     page.layoutIfNeeded();
+    size_t resizeObserverDepth = 0;
+    while (true) {
+        // Start check resize observers;
+        if (!resizeObserverDepth && gatherResizeObservationsForContainIntrinsicSize() != ResizeObserver::maxElementDepth())
+            deliverResizeObservations();
 
-    // Start check resize observers;
-    if (gatherResizeObservationsForContainIntrinsicSize() != ResizeObserver::maxElementDepth())
-        deliverResizeObservations();
-
-    for (size_t depth = gatherResizeObservations(0); depth != ResizeObserver::maxElementDepth(); depth = gatherResizeObservations(depth)) {
+        resizeObserverDepth = gatherResizeObservations(resizeObserverDepth);
+        if (resizeObserverDepth == ResizeObserver::maxElementDepth())
+            break;
         deliverResizeObservations();
         page.layoutIfNeeded();
     }
