@@ -94,6 +94,7 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Content);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterIncrement);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterReset);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterSet);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Cursor);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Fill);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontFamily);
@@ -170,7 +171,7 @@ private:
     template <CSSPropertyID id>
     static void applyTextOrBoxShadowValue(BuilderState&, CSSValue&);
 
-    enum CounterBehavior {Increment = 0, Reset};
+    enum CounterBehavior { Increment, Reset, Set };
     template <CounterBehavior counterBehavior>
     static void applyInheritCounter(BuilderState&);
     template <CounterBehavior counterBehavior>
@@ -1219,8 +1220,10 @@ inline void BuilderCustom::applyInheritCounter(BuilderState& builderState)
         auto& directives = map.add(keyValue.key, CounterDirectives { }).iterator->value;
         if (counterBehavior == Reset)
             directives.resetValue = keyValue.value.resetValue;
-        else
+        else if (counterBehavior == Increment)
             directives.incrementValue = keyValue.value.incrementValue;
+        else
+            directives.setValue = keyValue.value.setValue;
     }
 }
 
@@ -1236,8 +1239,10 @@ inline void BuilderCustom::applyValueCounter(BuilderState& builderState, CSSValu
     for (auto& keyValue : map) {
         if (counterBehavior == Reset)
             keyValue.value.resetValue = std::nullopt;
-        else
+        else if (counterBehavior == Increment)
             keyValue.value.incrementValue = std::nullopt;
+        else
+            keyValue.value.setValue = std::nullopt;
     }
 
     if (setCounterIncrementToNone)
@@ -1249,8 +1254,10 @@ inline void BuilderCustom::applyValueCounter(BuilderState& builderState, CSSValu
         auto& directives = map.add(identifier, CounterDirectives { }).iterator->value;
         if (counterBehavior == Reset)
             directives.resetValue = value;
-        else
+        else if (counterBehavior == Increment)
             directives.incrementValue = saturatedSum(directives.incrementValue.value_or(0), value);
+        else
+            directives.setValue = value;
     }
 }
 
@@ -1280,6 +1287,20 @@ inline void BuilderCustom::applyInheritCounterReset(BuilderState& builderState)
 inline void BuilderCustom::applyValueCounterReset(BuilderState& builderState, CSSValue& value)
 {
     applyValueCounter<Reset>(builderState, value);
+}
+
+inline void BuilderCustom::applyInitialCounterSet(BuilderState&)
+{
+}
+
+inline void BuilderCustom::applyInheritCounterSet(BuilderState& builderState)
+{
+    applyInheritCounter<Set>(builderState);
+}
+
+inline void BuilderCustom::applyValueCounterSet(BuilderState& builderState, CSSValue& value)
+{
+    applyValueCounter<Set>(builderState, value);
 }
 
 inline void BuilderCustom::applyInitialCursor(BuilderState& builderState)

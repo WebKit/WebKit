@@ -5552,6 +5552,11 @@ RefPtr<CSSValue> consumeCounterReset(CSSParserTokenRange& range)
     return consumeCounter(range, 0);
 }
 
+RefPtr<CSSValue> consumeCounterSet(CSSParserTokenRange& range)
+{
+    return consumeCounter(range, 0);
+}
+
 static RefPtr<CSSValue> consumePageSize(CSSParserTokenRange& range)
 {
     return consumeIdent<CSSValueA3, CSSValueA4, CSSValueA5, CSSValueB4, CSSValueB5, CSSValueLedger, CSSValueLegal, CSSValueLetter>(range);

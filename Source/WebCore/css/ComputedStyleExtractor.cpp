@@ -2106,7 +2106,20 @@ static Ref<CSSValue> counterToCSSValue(const RenderStyle& style, CSSPropertyID p
 
     CSSValueListBuilder list;
     for (auto& keyValue : map) {
-        if (auto number = (propertyID == CSSPropertyCounterIncrement ? keyValue.value.incrementValue : keyValue.value.resetValue)) {
+        auto number = [&]() -> std::optional<int> {
+            switch (propertyID) {
+            case CSSPropertyCounterIncrement:
+                return keyValue.value.incrementValue;
+            case CSSPropertyCounterReset:
+                return keyValue.value.resetValue;
+            case CSSPropertyCounterSet:
+                return keyValue.value.setValue;
+            default:
+                ASSERT_NOT_REACHED();
+                return std::nullopt;
+            }
+        }();
+        if (number) {
             list.append(CSSPrimitiveValue::createCustomIdent(keyValue.key));
             list.append(CSSPrimitiveValue::createInteger(*number));
         }
@@ -4065,6 +4078,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyCounterIncrement:
         return counterToCSSValue(style, propertyID);
     case CSSPropertyCounterReset:
+        return counterToCSSValue(style, propertyID);
+    case CSSPropertyCounterSet:
         return counterToCSSValue(style, propertyID);
     case CSSPropertyClipPath:
         return valueForPathOperation(style, style.clipPath());

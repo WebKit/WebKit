@@ -3119,7 +3119,7 @@ public:
     CounterWrapper(CSSPropertyID property)
         : AnimationPropertyWrapperBase(property)
     {
-        ASSERT(property == CSSPropertyCounterIncrement || property == CSSPropertyCounterReset);
+        ASSERT(property == CSSPropertyCounterIncrement || property == CSSPropertyCounterReset || property == CSSPropertyCounterSet);
     }
 
     bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const override { return false; }
@@ -3136,7 +3136,8 @@ public:
                 return false;
             auto& bDirective = it->value;
             if ((property() == CSSPropertyCounterIncrement && aDirective.incrementValue != bDirective.incrementValue)
-                || (property() == CSSPropertyCounterReset && aDirective.resetValue != bDirective.resetValue))
+                || (property() == CSSPropertyCounterReset && aDirective.resetValue != bDirective.resetValue)
+                || (property() == CSSPropertyCounterSet && aDirective.setValue != bDirective.setValue))
                 return false;
         }
         return true;
@@ -3158,8 +3159,10 @@ public:
         for (auto& [key, directive] : destination.accessCounterDirectives().map) {
             if (property() == CSSPropertyCounterIncrement)
                 directive.incrementValue = std::nullopt;
-            else
+            else if (property() == CSSPropertyCounterReset)
                 directive.resetValue = std::nullopt;
+            else
+                directive.setValue = std::nullopt;
         }
 
         auto& style = context.progress ? to : from;
@@ -3168,8 +3171,10 @@ public:
             auto updateDirective = [&](CounterDirectives& target, const CounterDirectives& source) {
                 if (property() == CSSPropertyCounterIncrement)
                     target.incrementValue = source.incrementValue;
-                else
+                else if (property() == CSSPropertyCounterReset)
                     target.resetValue = source.resetValue;
+                else
+                    target.setValue = source.setValue;
             };
             auto it = targetDirectives.find(key);
             if (it == targetDirectives.end())
@@ -3742,6 +3747,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscreteSVGPropertyWrapper<DominantBaseline>(CSSPropertyDominantBaseline, &SVGRenderStyle::dominantBaseline, &SVGRenderStyle::setDominantBaseline),
         new CounterWrapper(CSSPropertyCounterIncrement),
         new CounterWrapper(CSSPropertyCounterReset),
+        new CounterWrapper(CSSPropertyCounterSet),
         new DiscreteSVGPropertyWrapper<WindRule>(CSSPropertyFillRule, &SVGRenderStyle::fillRule, &SVGRenderStyle::setFillRule),
         new DiscreteFontDescriptionTypedWrapper<FontSynthesisLonghandValue>(CSSPropertyFontSynthesisWeight, &FontCascadeDescription::fontSynthesisWeight, &FontCascadeDescription::setFontSynthesisWeight),
         new DiscreteFontDescriptionTypedWrapper<FontSynthesisLonghandValue>(CSSPropertyFontSynthesisStyle, &FontCascadeDescription::fontSynthesisStyle, &FontCascadeDescription::setFontSynthesisStyle),

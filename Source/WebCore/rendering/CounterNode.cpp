@@ -31,8 +31,8 @@
 
 namespace WebCore {
 
-CounterNode::CounterNode(RenderElement& owner, bool hasResetType, int value)
-    : m_hasResetType(hasResetType)
+CounterNode::CounterNode(RenderElement& owner, OptionSet<CounterNode::Type> type, int value)
+    : m_type(type)
     , m_value(value)
     , m_owner(owner)
 {
@@ -86,9 +86,9 @@ CounterNode::~CounterNode()
     resetRenderers();
 }
 
-Ref<CounterNode> CounterNode::create(RenderElement& owner, bool hasResetType, int value)
+Ref<CounterNode> CounterNode::create(RenderElement& owner, OptionSet<CounterNode::Type> type, int value)
 {
-    return adoptRef(*new CounterNode(owner, hasResetType, value));
+    return adoptRef(*new CounterNode(owner, type, value));
 }
 
 CounterNode* CounterNode::nextInPreOrderAfterChildren(const CounterNode* stayWithin) const
@@ -140,6 +140,9 @@ CounterNode* CounterNode::previousInPreOrder() const
 
 int CounterNode::computeCountInParent() const
 {
+    if (hasSetType())
+        return m_value;
+
     int increment = actsAsReset() ? 0 : m_value;
     // In case the sum overflows we need to ignore the operation instead
     // of just clamping the result, as per spec resolution.
@@ -224,7 +227,7 @@ void CounterNode::insertAfter(CounterNode& newChild, CounterNode* beforeChild, c
     if (beforeChild && beforeChild->m_parent != this)
         return;
 
-    if (newChild.m_hasResetType) {
+    if (newChild.hasResetType()) {
         while (m_lastChild != beforeChild)
             RenderCounter::destroyCounterNode(m_lastChild->owner(), identifier);
     }
@@ -251,7 +254,7 @@ void CounterNode::insertAfter(CounterNode& newChild, CounterNode* beforeChild, c
         m_lastChild = &newChild;
     }
 
-    if (!newChild.m_firstChild || newChild.m_hasResetType) {
+    if (!newChild.m_firstChild || newChild.hasResetType()) {
         newChild.m_countInParent = newChild.computeCountInParent();
         newChild.resetThisAndDescendantsRenderers();
         if (next)
