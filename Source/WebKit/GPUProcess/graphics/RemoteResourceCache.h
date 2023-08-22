@@ -39,13 +39,13 @@ class RemoteResourceCache {
 public:
     RemoteResourceCache() = default;
 
-    void cacheImageBuffer(Ref<RemoteImageBuffer>&&, WebCore::RenderingResourceIdentifier);
-    void cacheNativeImage(Ref<WebCore::NativeImage>&&, WebCore::RenderingResourceIdentifier);
-    void cacheFont(Ref<WebCore::Font>&&, WebCore::RenderingResourceIdentifier);
-    void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&, WebCore::RenderingResourceIdentifier);
-    void cacheGradient(Ref<WebCore::Gradient>&&, WebCore::RenderingResourceIdentifier);
-    void cacheFilter(Ref<WebCore::Filter>&&, WebCore::RenderingResourceIdentifier);
-    void cacheFontCustomPlatformData(Ref<WebCore::FontCustomPlatformData>&&, WebCore::RenderingResourceIdentifier);
+    void cacheImageBuffer(Ref<RemoteImageBuffer>&&);
+    void cacheNativeImage(Ref<WebCore::NativeImage>&&);
+    void cacheFont(Ref<WebCore::Font>&&);
+    void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&);
+    void cacheGradient(Ref<WebCore::Gradient>&&);
+    void cacheFilter(Ref<WebCore::Filter>&&);
+    void cacheFontCustomPlatformData(Ref<WebCore::FontCustomPlatformData>&&);
 
     RemoteImageBuffer* cachedImageBuffer(WebCore::RenderingResourceIdentifier) const;
     RefPtr<RemoteImageBuffer> takeImageBuffer(WebCore::RenderingResourceIdentifier);

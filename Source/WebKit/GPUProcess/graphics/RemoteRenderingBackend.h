@@ -93,7 +93,7 @@ public:
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
-    void didCreateImageBuffer(Ref<RemoteImageBuffer>, WebCore::RenderingResourceIdentifier);
+    void didCreateImageBuffer(Ref<RemoteImageBuffer>);
 
     // Runs Function in RemoteRenderingBackend task queue.
     void dispatch(Function<void()>&&);
@@ -132,8 +132,8 @@ private:
     void getFilteredImageForImageBuffer(WebCore::RenderingResourceIdentifier, Ref<WebCore::Filter>, CompletionHandler<void(ShareableBitmap::Handle&&)>&&);
     void cacheNativeImage(ShareableBitmap::Handle&&, WebCore::RenderingResourceIdentifier);
     void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&);
-    void cacheGradient(Ref<WebCore::Gradient>&&, WebCore::RenderingResourceIdentifier);
-    void cacheFilter(Ref<WebCore::Filter>&&, WebCore::RenderingResourceIdentifier);
+    void cacheGradient(Ref<WebCore::Gradient>&&);
+    void cacheFilter(Ref<WebCore::Filter>&&);
     void cacheFont(const WebCore::Font::Attributes&, WebCore::FontPlatformData::Attributes, std::optional<WebCore::RenderingResourceIdentifier>);
     void cacheFontCustomPlatformData(Ref<WebCore::FontCustomPlatformData>&&);
     void releaseAllDrawingResources();
