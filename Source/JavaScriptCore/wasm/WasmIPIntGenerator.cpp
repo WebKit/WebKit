@@ -1026,9 +1026,10 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addIf(ExpressionType, BlockSign
     block.m_pendingOffset = m_metadata->m_metadata.size();
     // 4B PC of else
     // 4B MC of else
-    m_metadata->addBlankSpace(8);
-    // 8B PC of if (skip type signature)
-    m_metadata->addRawValue(m_parser->offset() - m_metadata->m_bytecodeOffset);
+    auto length = m_metadata->m_metadata.size();
+    m_metadata->addBlankSpace(9);
+    // 1B instruction length
+    WRITE_TO_METADATA(m_metadata->m_metadata.data() + length + 8, getCurrentInstructionLength(), uint8_t);
     return { };
 }
 
@@ -1112,10 +1113,10 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addBranch(ControlType& block, E
 {
     auto size = m_metadata->m_metadata.size();
     block.m_awaitingUpdate.append(size);
-    m_metadata->addBlankSpace(16);
+    m_metadata->addBlankSpace(13);
     WRITE_TO_METADATA(m_metadata->m_metadata.data() + size + 8, stack.size() - block.branchTargetArity(), uint16_t);
     WRITE_TO_METADATA(m_metadata->m_metadata.data() + size + 10, block.branchTargetArity(), uint16_t);
-    WRITE_TO_METADATA(m_metadata->m_metadata.data() + size + 12, m_parser->offset() - m_metadata->m_bytecodeOffset, uint32_t);
+    WRITE_TO_METADATA(m_metadata->m_metadata.data() + size + 12, getCurrentInstructionLength(), uint8_t);
     return { };
 }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSwitch(ExpressionType, const Vector<ControlType*>& jumps, ControlType& defaultJump, const Stack& stack)
@@ -1124,7 +1125,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSwitch(ExpressionType, const
     // Metadata layout
     // 0 - 3     number of jump targets (including end)
     // 8 - 15    4B PC for t0, 4B MC for t0
-    // 16 - 19   2B pop, 2B keep, 4B empty
+    // 16 - 19   2B pop, 2B keep
     // 20 and on repeat for each branch target
     m_metadata->addBlankSpace(4);
     WRITE_TO_METADATA(m_metadata->m_metadata.data() + size, jumps.size() + 1, uint32_t);

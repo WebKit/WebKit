@@ -642,8 +642,9 @@ instructionLabel(_if)
     nextIPIntInstruction()
 .ipint_if_taken:
     # Skip LEB128
-    loadq 8[PM, MC], PC
-    advanceMC(16)
+    loadb 8[PM, MC], t0
+    advanceMC(9)
+    advancePCByReg(t0)
     nextIPIntInstruction()
 
 instructionLabel(_else)
@@ -742,8 +743,9 @@ instructionLabel(_br_if)
     # pop i32
     popInt32(t0, t2)
     bineq t0, 0, _ipint_br
-    loadi 12[PM, MC], PC
-    advanceMC(16)
+    loadb 12[PM, MC], t0
+    advanceMC(13)
+    advancePCByReg(t0)
     nextIPIntInstruction()
 
 instructionLabel(_br_table)
@@ -3490,7 +3492,7 @@ _ipint_call_impl:
     # Get function data
     move t0, a1
     move wasmInstance, a0
-    cCall2(_ipint_extern_call)
+    operationCall(macro() cCall2(_ipint_extern_call) end)
 
 # FIXME: switch offlineasm unalignedglobal to take alignment and optionally pad with breakpoint instructions (rdar://113594783)
 macro mintAlign()
