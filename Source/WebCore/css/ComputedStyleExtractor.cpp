@@ -1532,11 +1532,11 @@ static Ref<CSSPrimitiveValue> valueForAnimationPlayState(AnimationPlayState play
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static Ref<CSSPrimitiveValue> valueForAnimationName(const Animation::Name& name)
+static Ref<CSSPrimitiveValue> valueForScopedName(const Style::ScopedName& scopedName)
 {
-    if (name.isIdentifier)
-        return CSSPrimitiveValue::createCustomIdent(name.string);
-    return CSSPrimitiveValue::create(name.string);
+    if (scopedName.isIdentifier)
+        return CSSPrimitiveValue::createCustomIdent(scopedName.name);
+    return CSSPrimitiveValue::create(scopedName.name);
 }
 
 static Ref<CSSValue> valueForAnimationTimingFunction(const TimingFunction& timingFunction)
@@ -1605,7 +1605,7 @@ void ComputedStyleExtractor::addValueForAnimationPropertyToList(CSSValueListBuil
         if (!animation || !animation->isPlayStateFilled())
             list.append(valueForAnimationPlayState(animation ? animation->playState() : Animation::initialPlayState()));
     } else if (property == CSSPropertyAnimationName)
-        list.append(valueForAnimationName(animation ? animation->name() : Animation::initialName()));
+        list.append(valueForScopedName(animation ? animation->name() : Animation::initialName()));
     else if (property == CSSPropertyAnimationComposition) {
         if (!animation || !animation->isCompositeOperationFilled())
             list.append(valueForAnimationComposition(animation ? animation->compositeOperation() : Animation::initialCompositeOperation()));
