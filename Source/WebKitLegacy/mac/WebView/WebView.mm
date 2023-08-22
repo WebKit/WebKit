@@ -744,19 +744,19 @@ OptionSet<WebCore::LayoutMilestone> coreLayoutMilestones(WebLayoutMilestones mil
 {
     OptionSet<WebCore::LayoutMilestone> layoutMilestone;
     if (milestones & WebDidFirstLayout)
-        layoutMilestone.add(WebCore::DidFirstLayout);
+        layoutMilestone.add(WebCore::LayoutMilestone::DidFirstLayout);
     if (milestones & WebDidFirstVisuallyNonEmptyLayout)
-        layoutMilestone.add(WebCore::DidFirstVisuallyNonEmptyLayout);
+        layoutMilestone.add(WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout);
     if (milestones & WebDidHitRelevantRepaintedObjectsAreaThreshold)
-        layoutMilestone.add(WebCore::DidHitRelevantRepaintedObjectsAreaThreshold);
+        layoutMilestone.add(WebCore::LayoutMilestone::DidHitRelevantRepaintedObjectsAreaThreshold);
     return layoutMilestone;
 }
 
 WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone> milestones)
 {
-    return (milestones & WebCore::DidFirstLayout ? WebDidFirstLayout : 0)
-        | (milestones & WebCore::DidFirstVisuallyNonEmptyLayout ? WebDidFirstVisuallyNonEmptyLayout : 0)
-        | (milestones & WebCore::DidHitRelevantRepaintedObjectsAreaThreshold ? WebDidHitRelevantRepaintedObjectsAreaThreshold : 0);
+    return (milestones & WebCore::LayoutMilestone::DidFirstLayout ? WebDidFirstLayout : 0)
+        | (milestones & WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout ? WebDidFirstVisuallyNonEmptyLayout : 0)
+        | (milestones & WebCore::LayoutMilestone::DidHitRelevantRepaintedObjectsAreaThreshold ? WebDidHitRelevantRepaintedObjectsAreaThreshold : 0);
 }
 
 static WebPageVisibilityState kit(WebCore::VisibilityState visibilityState)
@@ -3057,12 +3057,12 @@ static inline IMP getMethod(id o, SEL s)
     // for backwards compatibility.
     auto* page = core(self);
     if (page) {
-        OptionSet<WebCore::LayoutMilestone> milestones { WebCore::DidFirstLayout };
+        OptionSet<WebCore::LayoutMilestone> milestones { WebCore::LayoutMilestone::DidFirstLayout };
 #if PLATFORM(IOS_FAMILY)
-        milestones.add(WebCore::DidFirstVisuallyNonEmptyLayout);
+        milestones.add(WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout);
 #else
         if (cache->didFirstVisuallyNonEmptyLayoutInFrameFunc)
-            milestones.add(WebCore::DidFirstVisuallyNonEmptyLayout);
+            milestones.add(WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout);
 #endif
         page->addLayoutMilestones(milestones);
     }

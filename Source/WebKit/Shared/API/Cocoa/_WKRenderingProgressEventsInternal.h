@@ -31,28 +31,28 @@ static inline _WKRenderingProgressEvents renderingProgressEvents(OptionSet<WebCo
 {
     _WKRenderingProgressEvents events = 0;
 
-    if (milestones & WebCore::DidFirstLayout)
+    if (milestones & WebCore::LayoutMilestone::DidFirstLayout)
         events |= _WKRenderingProgressEventFirstLayout;
 
-    if (milestones & WebCore::DidFirstVisuallyNonEmptyLayout)
+    if (milestones & WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout)
         events |= _WKRenderingProgressEventFirstVisuallyNonEmptyLayout;
 
-    if (milestones & WebCore::DidHitRelevantRepaintedObjectsAreaThreshold)
+    if (milestones & WebCore::LayoutMilestone::DidHitRelevantRepaintedObjectsAreaThreshold)
         events |= _WKRenderingProgressEventFirstPaintWithSignificantArea;
 
-    if (milestones & WebCore::ReachedSessionRestorationRenderTreeSizeThreshold)
+    if (milestones & WebCore::LayoutMilestone::ReachedSessionRestorationRenderTreeSizeThreshold)
         events |= _WKRenderingProgressEventReachedSessionRestorationRenderTreeSizeThreshold;
 
-    if (milestones & WebCore::DidFirstLayoutAfterSuppressedIncrementalRendering)
+    if (milestones & WebCore::LayoutMilestone::DidFirstLayoutAfterSuppressedIncrementalRendering)
         events |= _WKRenderingProgressEventFirstLayoutAfterSuppressedIncrementalRendering;
 
-    if (milestones & WebCore::DidFirstPaintAfterSuppressedIncrementalRendering)
+    if (milestones & WebCore::LayoutMilestone::DidFirstPaintAfterSuppressedIncrementalRendering)
         events |= _WKRenderingProgressEventFirstPaintAfterSuppressedIncrementalRendering;
 
-    if (milestones & WebCore::DidRenderSignificantAmountOfText)
+    if (milestones & WebCore::LayoutMilestone::DidRenderSignificantAmountOfText)
         events |= _WKRenderingProgressEventDidRenderSignificantAmountOfText;
 
-    if (milestones & WebCore::DidFirstMeaningfulPaint)
+    if (milestones & WebCore::LayoutMilestone::DidFirstMeaningfulPaint)
         events |= _WKRenderingProgressEventFirstMeaningfulPaint;
 
     return events;

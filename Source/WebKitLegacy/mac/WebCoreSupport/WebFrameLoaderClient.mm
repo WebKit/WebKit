@@ -781,7 +781,7 @@ void WebFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCore::La
         CallFrameLoadDelegate(implementations->didLayoutFunc, webView, @selector(webView:didLayout:), kitLayoutMilestones(milestones));
 #endif
 
-    if (milestones & WebCore::DidFirstLayout) {
+    if (milestones & WebCore::LayoutMilestone::DidFirstLayout) {
         // FIXME: We should consider removing the old didFirstLayout API since this is doing double duty with the
         // new didLayout API.
         if (implementations->didFirstLayoutInFrameFunc)
@@ -801,7 +801,7 @@ void WebFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCore::La
 #endif
     }
 
-    if (milestones & WebCore::DidFirstVisuallyNonEmptyLayout) {
+    if (milestones & WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout) {
         // FIXME: We should consider removing the old didFirstVisuallyNonEmptyLayoutForFrame API since this is doing
         // double duty with the new didLayout API.
         if (implementations->didFirstVisuallyNonEmptyLayoutInFrameFunc)

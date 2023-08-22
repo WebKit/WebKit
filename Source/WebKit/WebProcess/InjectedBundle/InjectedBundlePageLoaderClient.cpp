@@ -360,9 +360,9 @@ OptionSet<WebCore::LayoutMilestone> InjectedBundlePageLoaderClient::layoutMilest
     
     OptionSet<WebCore::LayoutMilestone> milestones;
     if (m_client.didFirstLayoutForFrame)
-        milestones.add(WebCore::DidFirstLayout);
+        milestones.add(WebCore::LayoutMilestone::DidFirstLayout);
     if (m_client.didFirstVisuallyNonEmptyLayoutForFrame)
-        milestones.add(WebCore::DidFirstVisuallyNonEmptyLayout);
+        milestones.add(WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout);
     return milestones;
 }
 

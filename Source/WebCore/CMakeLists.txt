@@ -2714,6 +2714,16 @@ WEBKIT_COMPUTE_SOURCES(WebCore)
 
 target_precompile_headers(WebCore PRIVATE WebCorePrefix.h)
 
+list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    page/ActivityState.serialization.in
+    page/DragActions.serialization.in
+    page/LayoutMilestones.serialization.in
+
+    platform/PlatformScreen.serialization.in
+
+    platform/graphics/InbandTextTrackPrivate.serialization.in
+)
+
 WEBKIT_COPY_FILES(WebCore_CopyPrivateHeaders
     DESTINATION ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore
     FILES ${WebCore_PRIVATE_FRAMEWORK_HEADERS}

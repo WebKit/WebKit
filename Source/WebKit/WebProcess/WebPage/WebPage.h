@@ -234,7 +234,7 @@ class SubstituteData;
 class TextCheckingRequest;
 class VisiblePosition;
 
-enum LayoutMilestone : uint16_t;
+enum class LayoutMilestone : uint16_t;
 
 enum class ActivityState : uint16_t;
 enum class COEPDisposition : bool;
