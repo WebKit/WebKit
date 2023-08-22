@@ -62,14 +62,14 @@ _WKWebExtensionContextNotificationUserInfoKey const _WKWebExtensionContextNotifi
 
 + (instancetype)contextForExtension:(_WKWebExtension *)extension
 {
-    NSParameterAssert(extension);
+    NSParameterAssert([extension isKindOfClass:_WKWebExtension.class]);
 
     return [[self alloc] initForExtension:extension];
 }
 
 - (instancetype)initForExtension:(_WKWebExtension *)extension
 {
-    NSParameterAssert(extension);
+    NSParameterAssert([extension isKindOfClass:_WKWebExtension.class]);
 
     if (!(self = [super init]))
         return nil;
@@ -109,7 +109,7 @@ _WKWebExtensionContextNotificationUserInfoKey const _WKWebExtensionContextNotifi
 
 - (void)setBaseURL:(NSURL *)baseURL
 {
-    NSParameterAssert(baseURL);
+    NSParameterAssert([baseURL isKindOfClass:NSURL.class]);
     NSAssert1(WTF::URLParser::maybeCanonicalizeScheme(String(baseURL.scheme)), @"Invalid parameter: '%@' is not a valid URL scheme", baseURL.scheme);
     NSAssert1(![WKWebView handlesURLScheme:baseURL.scheme], @"Invalid parameter: '%@' is a URL scheme that WKWebView handles natively and cannot be used for extensions", baseURL.scheme);
     NSAssert(!baseURL.path.length || [baseURL.path isEqualToString:@"/"], @"Invalid parameter: a URL with a path cannot be used");
@@ -124,7 +124,7 @@ _WKWebExtensionContextNotificationUserInfoKey const _WKWebExtensionContextNotifi
 
 - (void)setUniqueIdentifier:(NSString *)uniqueIdentifier
 {
-    NSParameterAssert(uniqueIdentifier);
+    NSParameterAssert([uniqueIdentifier isKindOfClass:NSString.class]);
 
     _webExtensionContext->setUniqueIdentifier(uniqueIdentifier);
 }
@@ -141,6 +141,7 @@ _WKWebExtensionContextNotificationUserInfoKey const _WKWebExtensionContextNotifi
 
 static inline WallTime toImpl(NSDate *date)
 {
+    NSCParameterAssert(!date || [date isKindOfClass:NSDate.class]);
     return date ? WebKit::toImpl(date) : WebKit::toImpl(NSDate.distantFuture);
 }
 
@@ -170,6 +171,8 @@ static inline WebKit::WebExtensionContext::PermissionsMap toImpl(NSDictionary<_W
     result.reserveInitialCapacity(permissions.count);
 
     [permissions enumerateKeysAndObjectsUsingBlock:^(_WKWebExtensionPermission permission, NSDate *date, BOOL *) {
+        NSCParameterAssert([permission isKindOfClass:NSString.class]);
+        NSCParameterAssert([date isKindOfClass:NSDate.class]);
         result.set(permission, toImpl(date));
     }];
 
@@ -182,6 +185,8 @@ static inline WebKit::WebExtensionContext::PermissionMatchPatternsMap toImpl(NSD
     result.reserveInitialCapacity(permissionMatchPatterns.count);
 
     [permissionMatchPatterns enumerateKeysAndObjectsUsingBlock:^(_WKWebExtensionMatchPattern *origin, NSDate *date, BOOL *) {
+        NSCParameterAssert([origin isKindOfClass:_WKWebExtensionMatchPattern.class]);
+        NSCParameterAssert([date isKindOfClass:NSDate.class]);
         result.set(origin._webExtensionMatchPattern, toImpl(date));
     }];
 
@@ -195,7 +200,7 @@ static inline WebKit::WebExtensionContext::PermissionMatchPatternsMap toImpl(NSD
 
 - (void)setGrantedPermissions:(NSDictionary<_WKWebExtensionPermission, NSDate *> *)grantedPermissions
 {
-    NSParameterAssert(grantedPermissions);
+    NSParameterAssert([grantedPermissions isKindOfClass:NSDictionary.class]);
 
     _webExtensionContext->setGrantedPermissions(toImpl(grantedPermissions));
 }
@@ -207,7 +212,7 @@ static inline WebKit::WebExtensionContext::PermissionMatchPatternsMap toImpl(NSD
 
 - (void)setGrantedPermissionMatchPatterns:(NSDictionary<_WKWebExtensionMatchPattern *, NSDate *> *)grantedPermissionMatchPatterns
 {
-    NSParameterAssert(grantedPermissionMatchPatterns);
+    NSParameterAssert([grantedPermissionMatchPatterns isKindOfClass:NSDictionary.class]);
 
     _webExtensionContext->setGrantedPermissionMatchPatterns(toImpl(grantedPermissionMatchPatterns));
 }
@@ -219,7 +224,7 @@ static inline WebKit::WebExtensionContext::PermissionMatchPatternsMap toImpl(NSD
 
 - (void)setDeniedPermissions:(NSDictionary<_WKWebExtensionPermission, NSDate *> *)deniedPermissions
 {
-    NSParameterAssert(deniedPermissions);
+    NSParameterAssert([deniedPermissions isKindOfClass:NSDictionary.class]);
 
     _webExtensionContext->setDeniedPermissions(toImpl(deniedPermissions));
 }
@@ -231,7 +236,7 @@ static inline WebKit::WebExtensionContext::PermissionMatchPatternsMap toImpl(NSD
 
 - (void)setDeniedPermissionMatchPatterns:(NSDictionary<_WKWebExtensionMatchPattern *, NSDate *> *)deniedPermissionMatchPatterns
 {
-    NSParameterAssert(deniedPermissionMatchPatterns);
+    NSParameterAssert([deniedPermissionMatchPatterns isKindOfClass:NSDictionary.class]);
 
     _webExtensionContext->setDeniedPermissionMatchPatterns(toImpl(deniedPermissionMatchPatterns));
 }
@@ -284,28 +289,28 @@ static inline NSSet<_WKWebExtensionMatchPattern *> *toAPI(const WebKit::WebExten
 
 - (BOOL)hasPermission:(_WKWebExtensionPermission)permission
 {
-    NSParameterAssert(permission);
+    NSParameterAssert([permission isKindOfClass:NSString.class]);
 
     return [self hasPermission:permission inTab:nil];
 }
 
 - (BOOL)hasPermission:(_WKWebExtensionPermission)permission inTab:(id<_WKWebExtensionTab>)tab
 {
-    NSParameterAssert(permission);
+    NSParameterAssert([permission isKindOfClass:NSString.class]);
 
     return _webExtensionContext->hasPermission(permission, tab);
 }
 
 - (BOOL)hasAccessToURL:(NSURL *)url
 {
-    NSParameterAssert(url);
+    NSParameterAssert([url isKindOfClass:NSURL.class]);
 
     return [self hasAccessToURL:url inTab:nil];
 }
 
 - (BOOL)hasAccessToURL:(NSURL *)url inTab:(id<_WKWebExtensionTab>)tab
 {
-    NSParameterAssert(url);
+    NSParameterAssert([url isKindOfClass:NSURL.class]);
 
     return _webExtensionContext->hasPermission(url, tab);
 }
@@ -355,14 +360,14 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
 
 - (_WKWebExtensionContextPermissionStatus)permissionStatusForPermission:(_WKWebExtensionPermission)permission
 {
-    NSParameterAssert(permission);
+    NSParameterAssert([permission isKindOfClass:NSString.class]);
 
     return [self permissionStatusForPermission:permission inTab:nil];
 }
 
 - (_WKWebExtensionContextPermissionStatus)permissionStatusForPermission:(_WKWebExtensionPermission)permission inTab:(id<_WKWebExtensionTab>)tab
 {
-    NSParameterAssert(permission);
+    NSParameterAssert([permission isKindOfClass:NSString.class]);
 
     return toAPI(_webExtensionContext->permissionState(permission, tab));
 }
@@ -370,7 +375,7 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
 - (void)setPermissionStatus:(_WKWebExtensionContextPermissionStatus)status forPermission:(_WKWebExtensionPermission)permission
 {
     NSParameterAssert(status == _WKWebExtensionContextPermissionStatusDeniedExplicitly || status == _WKWebExtensionContextPermissionStatusUnknown || status == _WKWebExtensionContextPermissionStatusGrantedExplicitly);
-    NSParameterAssert(permission);
+    NSParameterAssert([permission isKindOfClass:NSString.class]);
 
     [self setPermissionStatus:status forPermission:permission expirationDate:nil];
 }
@@ -378,21 +383,21 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
 - (void)setPermissionStatus:(_WKWebExtensionContextPermissionStatus)status forPermission:(_WKWebExtensionPermission)permission expirationDate:(NSDate *)expirationDate
 {
     NSParameterAssert(status == _WKWebExtensionContextPermissionStatusDeniedExplicitly || status == _WKWebExtensionContextPermissionStatusUnknown || status == _WKWebExtensionContextPermissionStatusGrantedExplicitly);
-    NSParameterAssert(permission);
+    NSParameterAssert([permission isKindOfClass:NSString.class]);
 
     _webExtensionContext->setPermissionState(toImpl(status), permission, toImpl(expirationDate));
 }
 
 - (_WKWebExtensionContextPermissionStatus)permissionStatusForURL:(NSURL *)url
 {
-    NSParameterAssert(url);
+    NSParameterAssert([url isKindOfClass:NSURL.class]);
 
     return [self permissionStatusForURL:url inTab:nil];
 }
 
 - (_WKWebExtensionContextPermissionStatus)permissionStatusForURL:(NSURL *)url inTab:(id<_WKWebExtensionTab>)tab
 {
-    NSParameterAssert(url);
+    NSParameterAssert([url isKindOfClass:NSURL.class]);
 
     return toAPI(_webExtensionContext->permissionState(url, tab));
 }
@@ -400,7 +405,7 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
 - (void)setPermissionStatus:(_WKWebExtensionContextPermissionStatus)status forURL:(NSURL *)url
 {
     NSParameterAssert(status == _WKWebExtensionContextPermissionStatusDeniedExplicitly || status == _WKWebExtensionContextPermissionStatusUnknown || status == _WKWebExtensionContextPermissionStatusGrantedExplicitly);
-    NSParameterAssert(url);
+    NSParameterAssert([url isKindOfClass:NSURL.class]);
 
     [self setPermissionStatus:status forURL:url expirationDate:nil];
 }
@@ -408,21 +413,21 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
 - (void)setPermissionStatus:(_WKWebExtensionContextPermissionStatus)status forURL:(NSURL *)url expirationDate:(NSDate *)expirationDate
 {
     NSParameterAssert(status == _WKWebExtensionContextPermissionStatusDeniedExplicitly || status == _WKWebExtensionContextPermissionStatusUnknown || status == _WKWebExtensionContextPermissionStatusGrantedExplicitly);
-    NSParameterAssert(url);
+    NSParameterAssert([url isKindOfClass:NSURL.class]);
 
     _webExtensionContext->setPermissionState(toImpl(status), url, toImpl(expirationDate));
 }
 
 - (_WKWebExtensionContextPermissionStatus)permissionStatusForMatchPattern:(_WKWebExtensionMatchPattern *)pattern
 {
-    NSParameterAssert(pattern);
+    NSParameterAssert([pattern isKindOfClass:_WKWebExtensionMatchPattern.class]);
 
     return [self permissionStatusForMatchPattern:pattern inTab:nil];
 }
 
 - (_WKWebExtensionContextPermissionStatus)permissionStatusForMatchPattern:(_WKWebExtensionMatchPattern *)pattern inTab:(id<_WKWebExtensionTab>)tab
 {
-    NSParameterAssert(pattern);
+    NSParameterAssert([pattern isKindOfClass:_WKWebExtensionMatchPattern.class]);
 
     return toAPI(_webExtensionContext->permissionState(pattern._webExtensionMatchPattern, tab));
 }
@@ -430,7 +435,7 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
 - (void)setPermissionStatus:(_WKWebExtensionContextPermissionStatus)status forMatchPattern:(_WKWebExtensionMatchPattern *)pattern
 {
     NSParameterAssert(status == _WKWebExtensionContextPermissionStatusDeniedExplicitly || status == _WKWebExtensionContextPermissionStatusUnknown || status == _WKWebExtensionContextPermissionStatusGrantedExplicitly);
-    NSParameterAssert(pattern);
+    NSParameterAssert([pattern isKindOfClass:_WKWebExtensionMatchPattern.class]);
 
     [self setPermissionStatus:status forMatchPattern:pattern expirationDate:nil];
 }
@@ -438,7 +443,7 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
 - (void)setPermissionStatus:(_WKWebExtensionContextPermissionStatus)status forMatchPattern:(_WKWebExtensionMatchPattern *)pattern expirationDate:(NSDate *)expirationDate
 {
     NSParameterAssert(status == _WKWebExtensionContextPermissionStatusDeniedExplicitly || status == _WKWebExtensionContextPermissionStatusUnknown || status == _WKWebExtensionContextPermissionStatusGrantedExplicitly);
-    NSParameterAssert(pattern);
+    NSParameterAssert([pattern isKindOfClass:_WKWebExtensionMatchPattern.class]);
 
     _webExtensionContext->setPermissionState(toImpl(status), pattern._webExtensionMatchPattern, toImpl(expirationDate));
 }
@@ -455,12 +460,14 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
 
 - (BOOL)hasInjectedContentForURL:(NSURL *)url
 {
+    NSParameterAssert([url isKindOfClass:NSURL.class]);
+
     return _webExtensionContext->hasInjectedContentForURL(url);
 }
 
 - (BOOL)hasActiveUserGestureInTab:(id<_WKWebExtensionTab>)tab
 {
-    NSParameterAssert(tab);
+    NSParameterAssert([tab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
 
     return _webExtensionContext->hasActiveUserGesture(tab);
 }

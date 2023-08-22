@@ -34,6 +34,7 @@
 
 #import "CocoaHelpers.h"
 #import "InjectUserScriptImmediately.h"
+#import "Logging.h"
 #import "WKNavigationActionPrivate.h"
 #import "WKNavigationDelegatePrivate.h"
 #import "WKPreferencesPrivate.h"
@@ -192,6 +193,7 @@ bool WebExtensionContext::load(WebExtensionController& controller, String storag
         *outError = nil;
 
     if (isLoaded()) {
+        RELEASE_LOG_ERROR(Extensions, "Extension context already loaded");
         if (outError)
             *outError = createError(Error::AlreadyLoaded);
         return false;
@@ -225,6 +227,7 @@ bool WebExtensionContext::unload(NSError **outError)
         *outError = nil;
 
     if (!isLoaded()) {
+        RELEASE_LOG_ERROR(Extensions, "Extension context not loaded");
         if (outError)
             *outError = createError(Error::NotLoaded);
         return false;
@@ -274,7 +277,7 @@ NSDictionary *WebExtensionContext::readStateFromStorage()
     }];
 
     if (coordinatorError)
-        RELEASE_LOG(Extensions, "Failed to coordinate reading extension state %{public}@", coordinatorError.debugDescription);
+        RELEASE_LOG_ERROR(Extensions, "Failed to coordinate reading extension state: %{private}@", coordinatorError);
 
     m_state = savedState;
 
@@ -292,11 +295,11 @@ void WebExtensionContext::writeStateToStorage() const
     [fileCoordinator coordinateWritingItemAtURL:[NSURL fileURLWithPath:stateFilePath()] options:NSFileCoordinatorWritingForReplacing error:&coordinatorError byAccessor:^(NSURL *fileURL) {
         NSError *error;
         if (![currentState() writeToURL:fileURL error:&error])
-            RELEASE_LOG(Extensions, "Unable to save extension state: %{public}@", error.debugDescription);
+            RELEASE_LOG_ERROR(Extensions, "Unable to save extension state: %{private}@", error);
     }];
 
     if (coordinatorError)
-        RELEASE_LOG(Extensions, "Failed to coordinate writing extension state %{public}@", coordinatorError.debugDescription);
+        RELEASE_LOG_ERROR(Extensions, "Failed to coordinate writing extension state: %{private}@", coordinatorError);
 }
 
 void WebExtensionContext::setBaseURL(URL&& url)

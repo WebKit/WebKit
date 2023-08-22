@@ -34,6 +34,7 @@
 
 #import "CocoaHelpers.h"
 #import "JSWebExtensionWrappable.h"
+#import "Logging.h"
 #import "WebExtensionAPIRuntime.h"
 #import <JavaScriptCore/JSObjectRef.h>
 
@@ -107,6 +108,8 @@ void WebExtensionCallbackHandler::reportError(NSString *message)
 
     if (!m_rejectFunction)
         return;
+
+    RELEASE_LOG_ERROR(Extensions, "Promise rejected: %{public}@", message);
 
     JSValue *error = [JSValue valueWithNewErrorFromMessage:message inContext:[JSContext contextWithJSGlobalContextRef:m_globalContext.get()]];
 

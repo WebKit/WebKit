@@ -53,7 +53,7 @@
 
 - (instancetype)initWithConfiguration:(_WKWebExtensionControllerConfiguration *)configuration
 {
-    NSParameterAssert(configuration);
+    NSParameterAssert([configuration isKindOfClass:_WKWebExtensionControllerConfiguration.class]);
 
     if (!(self = [super init]))
         return nil;
@@ -78,21 +78,21 @@
 
 - (BOOL)loadExtensionContext:(_WKWebExtensionContext *)extensionContext error:(NSError **)outError
 {
-    NSParameterAssert(extensionContext);
+    NSParameterAssert([extensionContext isKindOfClass:_WKWebExtensionContext.class]);
 
     return _webExtensionController->load(extensionContext._webExtensionContext, outError);
 }
 
 - (BOOL)unloadExtensionContext:(_WKWebExtensionContext *)extensionContext error:(NSError **)outError
 {
-    NSParameterAssert(extensionContext);
+    NSParameterAssert([extensionContext isKindOfClass:_WKWebExtensionContext.class]);
 
     return _webExtensionController->unload(extensionContext._webExtensionContext, outError);
 }
 
 - (_WKWebExtensionContext *)extensionContextForExtension:(_WKWebExtension *)extension
 {
-    NSParameterAssert(extension);
+    NSParameterAssert([extension isKindOfClass:_WKWebExtension.class]);
 
     if (auto extensionContext = _webExtensionController->extensionContext(extension._webExtension))
         return extensionContext->wrapper();

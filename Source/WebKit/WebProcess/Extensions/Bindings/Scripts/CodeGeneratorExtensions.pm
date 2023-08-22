@@ -313,6 +313,7 @@ EOF
     $contentsIncludes{"\"${implementationClassName}.h\""} = 1;
 
     push(@contents, <<EOF);
+#include "Logging.h"
 #include <wtf/GetPtr.h>
 
 namespace WebKit {
@@ -443,6 +444,7 @@ EOF
             push(@contents, "\n");
 
             my $functionSignature = "JSValueRef ${className}::@{[$function->name]}(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)";
+            my $call = _callString($idlType, $function, 1);
 
             my $defaultEarlyReturnValue = "JSValueMakeUndefined(context)";
             my $defaultReturnValue = $defaultEarlyReturnValue;
@@ -474,6 +476,8 @@ EOF
             push(@contents, <<EOF);
 
 {
+    RELEASE_LOG_DEBUG(Extensions, "Called function: ${call} (%{public}lu %{public}s)", argumentCount, argumentCount == 1 ? "argument" : "arguments");
+
     ${implementationClassName}* impl = to${implementationClassName}(context, thisObject);
     if (${functionEarlyReturnCondition})
         return ${defaultEarlyReturnValue};
@@ -508,11 +512,11 @@ EOF
             my $requiredArgumentCount = scalar @specifiedParameters - $optionalArgumentCount;
 
             if ($requiredArgumentCount) {
-                my $call = _callString($idlType, $function, 1);
                 push(@contents, <<EOF);
     const size_t requiredArgumentCount = ${requiredArgumentCount};
     if (argumentCount < requiredArgumentCount) {
         NSString *requiredArgumentsMissingExceptionString = @"Invalid call to ${call}. A required argument is missing.";
+        RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", requiredArgumentsMissingExceptionString);
         *exception = toJSError(context, requiredArgumentsMissingExceptionString);
         return ${defaultEarlyReturnValue};
     }
@@ -669,6 +673,7 @@ EOF
     JSValueRef result = ${returnExpression};
 
     if (exceptionString) {
+        RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", exceptionString);
         *exception = toJSError(context, exceptionString);
         return ${defaultReturnValue};
     }
@@ -681,8 +686,10 @@ EOF
     NSString *exceptionString = nil;
     ${functionCall};
 
-    if (exceptionString)
+    if (exceptionString) {
+        RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", exceptionString);
         *exception = toJSError(context, exceptionString);
+    }
 
     return ${defaultReturnValue};
 }
@@ -756,6 +763,7 @@ EOF
             $self->_includeHeaders(\%contentsIncludes, $attribute->type, $attribute);
 
             my $getterName = $self->_getterName($attribute);
+            my $call = _callString($idlType, $attribute, 0);
 
             my @methodSignatureNames = ();
             my @parameters = ();
@@ -790,6 +798,8 @@ EOF
             push(@contents, "    UNUSED_PARAM(propertyName);\n\n");
 
             push(@contents, <<EOF);
+    RELEASE_LOG_DEBUG(Extensions, "Called getter: ${call}");
+
     ${implementationClassName}* impl = to${implementationClassName}(context, object);
     if (${getterEarlyReturnCondition})
         return JSValueMakeUndefined(context);
@@ -813,6 +823,8 @@ EOF
                 push(@contents, "    UNUSED_PARAM(propertyName);\n\n");
 
                 push(@contents, <<EOF);
+    RELEASE_LOG_DEBUG(Extensions, "Called setter: ${call}");
+
     ${implementationClassName}* impl = to${implementationClassName}(context, object);
     if (${setterEarlyReturnCondition})
         return false;
@@ -914,10 +926,9 @@ sub _callString
     # those are represented with empty strings, and it excludes
     # the call path in the output.
     my %specialCases = (
-        action => "browserAction",
         event => "",
         localization => "i18n",
-        namespace => "",
+        namespace => "browser",
         webNavigationEvent => "",
         webRequestEvent => "",
         windowEvent => "",
@@ -957,6 +968,7 @@ EOF
 
     if (!$variable) {
         NSString *mustBeAStringString = @"Invalid '${variableLabel}' value passed to ${call}. Expected a string.";
+        RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", mustBeAStringString);
         *exception = toJSError(context, mustBeAStringString);
         return ${result};
     }
@@ -970,6 +982,7 @@ EOF
 
     if (isnan($variable)) {
         NSString *mustBeANumberString = @"Invalid '${variableLabel}' value passed to ${call}. Expected a number.";
+        RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", mustBeANumberString);
         *exception = toJSError(context, mustBeANumberString);
         return ${result};
     }
@@ -983,6 +996,7 @@ EOF
 
     if (!$variable) {
         NSString *mustBeAnObjectString = @"Invalid '${variableLabel}' value passed to ${call}. Expected an object.";
+        RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", mustBeAnObjectString);
         *exception = toJSError(context, mustBeAnObjectString);
         return ${result};
     }
@@ -996,6 +1010,7 @@ EOF
 
     if ($variable && !$variable.isObject) {
         NSString *mustBeAnObjectString = @"Invalid '${variableLabel}' value passed to ${call}. Expected an object.";
+        RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", mustBeAnObjectString);
         *exception = toJSError(context, mustBeAnObjectString);
         return ${result};
     }
@@ -1009,6 +1024,7 @@ EOF
 
     if (!$variable) {
         NSString *mustBeAnArrayString = @"Invalid '${variableLabel}' value passed to ${call}. Expected an array.";
+        RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", mustBeAnArrayString);
         *exception = toJSError(context, mustBeAnArrayString);
         return ${result};
     }
@@ -1029,6 +1045,7 @@ EOF
 
     if (${isEmptyCheck}) {
         NSString *cannotBeEmptyExceptionString = @"Invalid '${variableLabel}' value passed to ${call}. Cannot be empty.";
+        RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", cannotBeEmptyExceptionString);
         *exception = toJSError(context, cannotBeEmptyExceptionString);
         return ${result};
     }
@@ -1045,6 +1062,7 @@ EOF
 
     if (${variable}.isFileURL) {
         NSString *cannotBeAccessedExceptionString = @"Invalid '${variableLabel}' value passed to ${call}. Cannot be a local file URL.";
+        RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", cannotBeAccessedExceptionString);
         *exception = toJSError(context, cannotBeAccessedExceptionString);
         return ${result};
     }
@@ -1058,6 +1076,7 @@ EOF
 
     if ($variable && !JSObjectIsFunction(context, $variable)) {
         NSString *mustBeAFunctionString = @"Invalid '${variableLabel}' value passed to ${call}. Expected a function.";
+        RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", mustBeAFunctionString);
         *exception = toJSError(context, mustBeAFunctionString);
         return ${result};
     }
@@ -1071,6 +1090,7 @@ EOF
 
     if (!$variable) {
         NSString *mustBeAFunctionString = @"Invalid '${variableLabel}' value passed to ${call}. Expected a function.";
+        RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", mustBeAFunctionString);
         *exception = toJSError(context, mustBeAFunctionString);
         return ${result};
     }

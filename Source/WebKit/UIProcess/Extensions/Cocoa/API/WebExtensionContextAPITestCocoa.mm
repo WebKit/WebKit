@@ -32,6 +32,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "Logging.h"
 #import "WebExtensionController.h"
 #import "_WKWebExtensionControllerDelegatePrivate.h"
 #import "_WKWebExtensionControllerInternal.h"
@@ -49,13 +50,15 @@ void WebExtensionContext::testResult(bool result, String message, String sourceU
         return;
     }
 
-    if (result)
-        return;
-
     if (message.isEmpty())
         message = "(no message)"_s;
 
-    NSLog(@"EXTENSION TEST ASSERTION FAILED: %@ (%@:%u)", (NSString *)message, (NSString *)sourceURL, lineNumber);
+    if (result) {
+        RELEASE_LOG_INFO(Extensions, "Test assertion passed: %{public}@ (%{public}@:%{public}u)", (NSString *)message, (NSString *)sourceURL, lineNumber);
+        return;
+    }
+
+    RELEASE_LOG_ERROR(Extensions, "Test assertion failed: %{public}@ (%{public}@:%{public}u)", (NSString *)message, (NSString *)sourceURL, lineNumber);
 }
 
 void WebExtensionContext::testEqual(bool result, String expectedValue, String actualValue, String message, String sourceURL, unsigned lineNumber)
@@ -69,13 +72,15 @@ void WebExtensionContext::testEqual(bool result, String expectedValue, String ac
         return;
     }
 
-    if (result)
-        return;
-
     if (message.isEmpty())
         message = "Expected equality of these values"_s;
 
-    NSLog(@"EXTENSION TEST EQUALITY FAILED: %@: %@ !== %@ (%@:%u)", (NSString *)message, (NSString *)expectedValue, (NSString *)actualValue, (NSString *)sourceURL, lineNumber);
+    if (result) {
+        RELEASE_LOG_INFO(Extensions, "Test equality passed: %{public}@: %{public}@ === %{public}@ (%{public}@:%{public}u)", (NSString *)message, (NSString *)expectedValue, (NSString *)actualValue, (NSString *)sourceURL, lineNumber);
+        return;
+    }
+
+    RELEASE_LOG_ERROR(Extensions, "Test equality failed: %{public}@: %{public}@ !== %{public}@ (%{public}@:%{public}u)", (NSString *)message, (NSString *)expectedValue, (NSString *)actualValue, (NSString *)sourceURL, lineNumber);
 }
 
 void WebExtensionContext::testMessage(String message, String sourceURL, unsigned lineNumber)
@@ -92,7 +97,7 @@ void WebExtensionContext::testMessage(String message, String sourceURL, unsigned
     if (message.isEmpty())
         message = "(no message)"_s;
 
-    NSLog(@"EXTENSION TEST MESSAGE: %@ (%@:%u)", (NSString *)message, (NSString *)sourceURL, lineNumber);
+    RELEASE_LOG_INFO(Extensions, "Test message: %{public}@ (%{public}@:%{public}u)", (NSString *)message, (NSString *)sourceURL, lineNumber);
 }
 
 void WebExtensionContext::testYielded(String message, String sourceURL, unsigned lineNumber)
@@ -109,7 +114,7 @@ void WebExtensionContext::testYielded(String message, String sourceURL, unsigned
     if (message.isEmpty())
         message = "(no message)"_s;
 
-    NSLog(@"EXTENSION TEST YIELDED: %@ (%@:%u)", (NSString *)message, (NSString *)sourceURL, lineNumber);
+    RELEASE_LOG_INFO(Extensions, "Test yielded: %{public}@ (%{public}@:%{public}u)", (NSString *)message, (NSString *)sourceURL, lineNumber);
 }
 
 void WebExtensionContext::testFinished(bool result, String message, String sourceURL, unsigned lineNumber)
@@ -123,13 +128,15 @@ void WebExtensionContext::testFinished(bool result, String message, String sourc
         return;
     }
 
-    if (result)
-        return;
-
     if (message.isEmpty())
         message = "(no message)"_s;
 
-    NSLog(@"EXTENSION TEST FAILED: %@ (%@:%u)", (NSString *)message, (NSString *)sourceURL, lineNumber);
+    if (result) {
+        RELEASE_LOG_INFO(Extensions, "Test passed: %{public}@ (%{public}@:%{public}u)", (NSString *)message, (NSString *)sourceURL, lineNumber);
+        return;
+    }
+
+    RELEASE_LOG_ERROR(Extensions, "Test failed: %{public}@ (%{public}@:%{public}u)", (NSString *)message, (NSString *)sourceURL, lineNumber);
 }
 
 } // namespace WebKit

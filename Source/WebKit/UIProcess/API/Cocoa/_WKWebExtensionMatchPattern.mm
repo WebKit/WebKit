@@ -47,14 +47,14 @@ NSErrorDomain const _WKWebExtensionMatchPatternErrorDomain = @"_WKWebExtensionMa
 
 - (instancetype)initWithCoder:(NSCoder *)coder
 {
-    NSParameterAssert(coder);
+    NSParameterAssert([coder isKindOfClass:NSCoder.class]);
 
     return [self initWithString:[coder decodeObjectOfClass:[NSString class] forKey:stringCodingKey] error:nullptr];
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder
 {
-    NSParameterAssert(coder);
+    NSParameterAssert([coder isKindOfClass:NSCoder.class]);
 
     [coder encodeObject:self.string forKey:stringCodingKey];
 }
@@ -69,6 +69,7 @@ NSErrorDomain const _WKWebExtensionMatchPatternErrorDomain = @"_WKWebExtensionMa
 
 + (void)registerCustomURLScheme:(NSString *)urlScheme
 {
+    NSParameterAssert([urlScheme isKindOfClass:NSString.class]);
     NSAssert1(WTF::URLParser::maybeCanonicalizeScheme(String(urlScheme)), @"Invalid parameter: '%@' is not a valid URL scheme", urlScheme);
 
     WebKit::WebExtensionMatchPattern::registerCustomURLScheme(urlScheme);
@@ -86,23 +87,23 @@ NSErrorDomain const _WKWebExtensionMatchPatternErrorDomain = @"_WKWebExtensionMa
 
 + (instancetype)matchPatternWithString:(NSString *)patternString
 {
-    NSParameterAssert(patternString);
+    NSParameterAssert([patternString isKindOfClass:NSString.class]);
 
     return WebKit::wrapper(WebKit::WebExtensionMatchPattern::getOrCreate(patternString));
 }
 
 + (instancetype)matchPatternWithScheme:(NSString *)scheme host:(NSString *)host path:(NSString *)path
 {
-    NSParameterAssert(scheme);
-    NSParameterAssert(host);
-    NSParameterAssert(path);
+    NSParameterAssert([scheme isKindOfClass:NSString.class]);
+    NSParameterAssert([host isKindOfClass:NSString.class]);
+    NSParameterAssert([path isKindOfClass:NSString.class]);
 
     return WebKit::wrapper(WebKit::WebExtensionMatchPattern::getOrCreate(scheme, host, path));
 }
 
 - (instancetype)initWithString:(NSString *)string error:(NSError **)error
 {
-    NSParameterAssert(string);
+    NSParameterAssert([string isKindOfClass:NSString.class]);
 
     if (!error) {
         // Balance the destructor in dealloc with the empty constructor.
@@ -119,9 +120,9 @@ NSErrorDomain const _WKWebExtensionMatchPatternErrorDomain = @"_WKWebExtensionMa
 
 - (instancetype)initWithScheme:(NSString *)scheme host:(NSString *)host path:(NSString *)path error:(NSError **)error
 {
-    NSParameterAssert(scheme);
-    NSParameterAssert(host);
-    NSParameterAssert(path);
+    NSParameterAssert([scheme isKindOfClass:NSString.class]);
+    NSParameterAssert([host isKindOfClass:NSString.class]);
+    NSParameterAssert([path isKindOfClass:NSString.class]);
 
     if (!error) {
         // Balance the destructor in dealloc with the empty constructor.
@@ -232,6 +233,7 @@ static OptionSet<WebKit::WebExtensionMatchPattern::Options> toImpl(_WKWebExtensi
 
 - (BOOL)matchesURL:(NSURL *)urlToMatch options:(_WKWebExtensionMatchPatternOptions)options
 {
+    NSParameterAssert([urlToMatch isKindOfClass:NSURL.class]);
     NSAssert(!(options & _WKWebExtensionMatchPatternOptionsMatchBidirectionally), @"Invalid parameter: WKWebExtensionMatchPatternOptionsMatchBidirectionally is not valid when matching a URL");
 
     return _webExtensionMatchPattern->matchesURL(urlToMatch, toImpl(options));
@@ -246,6 +248,9 @@ static OptionSet<WebKit::WebExtensionMatchPattern::Options> toImpl(_WKWebExtensi
 {
     if (!patternToMatch)
         return NO;
+
+    NSParameterAssert([patternToMatch isKindOfClass:_WKWebExtensionMatchPattern.class]);
+
     return _webExtensionMatchPattern->matchesPattern(patternToMatch._webExtensionMatchPattern, toImpl(options));
 }
 

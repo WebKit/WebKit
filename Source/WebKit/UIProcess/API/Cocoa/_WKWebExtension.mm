@@ -44,6 +44,8 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 
 + (instancetype)extensionWithAppExtensionBundle:(NSBundle *)appExtensionBundle
 {
+    NSParameterAssert([appExtensionBundle isKindOfClass:NSBundle.class]);
+
     NSError * __autoreleasing internalError;
     auto result = WebKit::WebExtension::create(appExtensionBundle, &internalError);
 
@@ -55,6 +57,10 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 
 + (instancetype)extensionWithResourceBaseURL:(NSURL *)resourceBaseURL
 {
+    NSParameterAssert([resourceBaseURL isKindOfClass:NSURL.class]);
+    NSParameterAssert([resourceBaseURL isFileURL]);
+    NSParameterAssert([resourceBaseURL hasDirectoryPath]);
+
     NSError * __autoreleasing internalError;
     auto result = WebKit::WebExtension::create(resourceBaseURL, &internalError);
 
@@ -66,7 +72,7 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 
 - (instancetype)initWithAppExtensionBundle:(NSBundle *)appExtensionBundle error:(NSError **)error
 {
-    NSParameterAssert(appExtensionBundle);
+    NSParameterAssert([appExtensionBundle isKindOfClass:NSBundle.class]);
 
     if (error)
         *error = nil;
@@ -88,7 +94,7 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 
 - (instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
 {
-    NSParameterAssert(resourceBaseURL);
+    NSParameterAssert([resourceBaseURL isKindOfClass:NSURL.class]);
     NSParameterAssert([resourceBaseURL isFileURL]);
     NSParameterAssert([resourceBaseURL hasDirectoryPath]);
 
@@ -112,14 +118,14 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 
 - (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest
 {
-    NSParameterAssert(manifest);
+    NSParameterAssert([manifest isKindOfClass:NSDictionary.class]);
 
     return [self _initWithManifestDictionary:manifest resources:nil];
 }
 
 - (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest resources:(NSDictionary<NSString *, id> *)resources
 {
-    NSParameterAssert(manifest);
+    NSParameterAssert([manifest isKindOfClass:NSDictionary.class]);
 
     if (!(self = [super init]))
         return nil;
@@ -131,7 +137,7 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 
 - (instancetype)_initWithResources:(NSDictionary<NSString *, id> *)resources
 {
-    NSParameterAssert(resources);
+    NSParameterAssert([resources isKindOfClass:NSDictionary.class]);
 
     if (!(self = [super init]))
         return nil;
@@ -262,7 +268,7 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 
 - (BOOL)_hasStaticInjectedContentForURL:(NSURL *)url
 {
-    NSParameterAssert(url);
+    NSParameterAssert([url isKindOfClass:NSURL.class]);
 
     return _webExtension->hasStaticInjectedContentForURL(url);
 }

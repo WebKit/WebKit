@@ -147,7 +147,7 @@ public:
 
     NSError *createError(Error, NSString *customLocalizedDescription = nil, NSError *underlyingError = nil);
 
-    bool storageIsPersistent() const { return hasCustomUniqueIdentifier(); }
+    bool storageIsPersistent() const { return hasCustomUniqueIdentifier() && !m_storageDirectory.isEmpty(); }
 
     bool load(WebExtensionController&, String storageDirectory, NSError ** = nullptr);
     bool unload(NSError ** = nullptr);
