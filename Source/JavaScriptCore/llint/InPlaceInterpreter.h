@@ -28,6 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 extern "C" void ipint_entry();
+extern "C" void ipint_entry_simd();
 
 #define IPINT_VALIDATE_DEFINE_FUNCTION(opcode, name) \
     extern "C" void ipint_ ## name ## _validate() REFERENCED_FROM_ASM WTF_INTERNAL;
