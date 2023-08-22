@@ -578,6 +578,11 @@ public:
         emitInst(0x4620000d | (fd << OP_SH_FD) | (fs << OP_SH_FS));
     }
 
+    void roundwd(FPRegisterID fd, FPRegisterID fs)
+    {
+        emitInst(0x4620000c | (fd << OP_SH_FD) | (fs << OP_SH_FS));
+    }
+
     void cvtdw(FPRegisterID fd, FPRegisterID fs)
     {
         emitInst(0x46800021 | (fd << OP_SH_FD) | (fs << OP_SH_FS));

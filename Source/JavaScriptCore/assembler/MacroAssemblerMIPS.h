@@ -904,6 +904,16 @@ public:
         CRASH();
     }
 
+    // this is provided (unlike the other rounding instructions) since it is
+    // used in a more limited fashion (for Uint8ClampedArray)--its range is
+    // limited to doubles that round to a 32-bit signed int--otherwise, it will
+    // saturate (and signal an FP exception [which is non-trapping])
+    void roundTowardNearestIntDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        m_assembler.roundwd(dest, src);
+        m_assembler.cvtdw(dest, dest);
+    }
+
     ConvertibleLoadLabel convertibleLoadPtr(Address address, RegisterID dest)
     {
         ConvertibleLoadLabel result(this);
