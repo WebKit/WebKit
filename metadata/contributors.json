@@ -3334,6 +3334,19 @@
    },
    {
       "emails" : [
+         "hysu@apple.com",
+         "hysu.xiong@gmail.com"
+      ],
+      "expertise" : "Performance Testing, Tools",
+      "github" : "xw",
+      "name" : "Hysu Xiong",
+      "nicks" : [
+         "hysu"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "hyungwook.lee@navercorp.com"
       ],
       "expertise" : "Loader, Graphics, The EFLWebKit port, WebKit on Windows",
@@ -7474,18 +7487,6 @@
       "nicks" : [
          "seumas"
       ]
-   },
-   {
-      "emails" : [
-         "wdx@apple.com",
-         "w_xiong@apple.com"
-      ],
-      "github" : "xw",
-      "name" : "W.D. Xiong",
-      "nicks" : [
-         "wdx"
-      ],
-      "status" : "committer"
    },
    {
       "emails" : [
