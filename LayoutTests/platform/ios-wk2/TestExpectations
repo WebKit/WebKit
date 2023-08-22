@@ -664,7 +664,7 @@ fast/dom/frame-loading-via-document-write.html # Timeout
 # CSS transform tests that fail:
 transforms/2d/transform-fixed-container.html [ Failure ]
 
-webkit.org/b/228718 [ Release ] editing/inserting/insert-paragraph-separator-with-html-elements-crash.html [ Pass Failure ]
+webkit.org/b/260555 editing/inserting/insert-paragraph-separator-with-html-elements-crash.html [ Failure ]
 
 # Editing tests that fail:
 editing/inserting/caret-position.html [ Failure ]
