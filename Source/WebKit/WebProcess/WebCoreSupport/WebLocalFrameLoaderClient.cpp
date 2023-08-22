@@ -1295,6 +1295,10 @@ ResourceError WebLocalFrameLoaderClient::httpsUpgradeRedirectLoopError(const Res
     return WebKit::httpsUpgradeRedirectLoopError(request);
 }
 
+ResourceError WebLocalFrameLoaderClient::httpNavigationWithHTTPSOnlyError(const ResourceRequest& request) const
+{
+    return WebKit::httpNavigationWithHTTPSOnlyError(request);
+}
 
 ResourceError WebLocalFrameLoaderClient::pluginWillHandleLoadError(const ResourceResponse& response) const
 {

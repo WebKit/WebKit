@@ -917,6 +917,11 @@ ResourceError EmptyFrameLoaderClient::httpsUpgradeRedirectLoopError(const Resour
     return { };
 }
 
+ResourceError EmptyFrameLoaderClient::httpNavigationWithHTTPSOnlyError(const ResourceRequest&) const
+{
+    return { };
+}
+
 ResourceError EmptyFrameLoaderClient::pluginWillHandleLoadError(const ResourceResponse&) const
 {
     return { };

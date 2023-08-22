@@ -598,6 +598,9 @@
 /* WebKitErrorHTTPSUpgradeRedirectLoop description */
 "HTTPS Upgrade redirect loop detected" = "HTTPS Upgrade redirect loop detected";
 
+/* WebKitErrorHTTPNavigationWithHTTPSOnly description */
+"Navigation failed because the request was for an HTTP URL with HTTPS-Only enabled" = "Navigation failed because the request was for an HTTP URL with HTTPS-Only enabled";
+
 /* Title of the Hide button for zoomed form controls. */
 "Hide" = "Hide";
 

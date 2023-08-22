@@ -1149,6 +1149,11 @@ WebCore::ResourceError WebFrameLoaderClient::httpsUpgradeRedirectLoopError(const
     RELEASE_ASSERT_NOT_REACHED(); // This error should never be created in WebKit1 because HTTPSOnly/First aren't available.
 }
 
+WebCore::ResourceError WebFrameLoaderClient::httpNavigationWithHTTPSOnlyError(const WebCore::ResourceRequest& request) const
+{
+    RELEASE_ASSERT_NOT_REACHED(); // This error should never be created in WebKit1 because HTTPSOnly/First aren't available.
+}
+
 WebCore::ResourceError WebFrameLoaderClient::pluginWillHandleLoadError(const WebCore::ResourceResponse& response) const
 {
     return adoptNS([[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInWillHandleLoad

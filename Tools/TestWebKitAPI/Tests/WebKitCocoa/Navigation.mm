@@ -1311,10 +1311,10 @@ TEST(WKNavigation, HTTPSOnlyInitialLoad)
 {
     using namespace TestWebKitAPI;
     HTTPServer httpsServer({
-        { "/secure"_s, { { }, "hi"_s } }
+        { "/secure"_s, { { }, "secure page"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
     HTTPServer httpServer({
-        { "http://site.example/secure"_s, { { }, "hi: not secure"_s } },
+        { "http://site.example/notsecure"_s, { { }, "not secure page"_s } },
     }, HTTPServer::Protocol::Http);
 
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
@@ -1333,12 +1333,14 @@ TEST(WKNavigation, HTTPSOnlyInitialLoad)
     __block int errorCode { 0 };
     __block bool finishedSuccessfully { false };
     __block int loadCount { 0 };
+    __block bool didReceiveAuthenticationChallenge { false };
     auto delegate = adoptNS([TestNavigationDelegate new]);
     delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
         ++loadCount;
         completionHandler(WKNavigationActionPolicyAllow);
     };
     delegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        didReceiveAuthenticationChallenge = true;
         completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
     };
 
@@ -1351,26 +1353,18 @@ TEST(WKNavigation, HTTPSOnlyInitialLoad)
         finishedSuccessfully = true;
     };
     [webView setNavigationDelegate:delegate.get()];
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site.example/secure"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site.example/notsecure"]]];
 
     while (!errorCode && !finishedSuccessfully)
         TestWebKitAPI::Util::spinRunLoop(5);
 
-    EXPECT_EQ(errorCode, 0);
-    EXPECT_TRUE(finishedSuccessfully);
+    EXPECT_EQ(errorCode, _WKErrorCodeHTTPNavigationWithHTTPSOnly);
+    EXPECT_FALSE(finishedSuccessfully);
+    EXPECT_FALSE(didReceiveAuthenticationChallenge);
     EXPECT_EQ(loadCount, 1);
 
     [webView waitForNextPresentationUpdate];
-
-    __block bool doneEvaluatingJavaScript { false };
-    [webView evaluateJavaScript:@"window.location.href" completionHandler:^(id value, NSError *error) {
-        EXPECT_NULL(error);
-        EXPECT_TRUE([value isKindOfClass:[NSString class]]);
-        EXPECT_WK_STREQ(@"https://site.example/secure", (NSString *)value);
-        doneEvaluatingJavaScript = true;
-    }];
-    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
-    EXPECT_WK_STREQ(@"https://site.example/secure", [webView _mainFrameURL].absoluteString);
+    EXPECT_WK_STREQ(@"", [webView _mainFrameURL].absoluteString);
 }
 
 TEST(WKNavigation, HTTPSOnlyHTTPFallback)
@@ -1434,7 +1428,7 @@ TEST(WKNavigation, HTTPSOnlyHTTPFallback)
     EXPECT_WK_STREQ(@"", [webView _mainFrameURL].absoluteString);
 }
 
-TEST(WKNavigation, HTTPSOnlyHTTPFallbackBypassEnabled)
+TEST(WKNavigation, HTTPSOnlyHTTPFallbackBypassEnabledCertificateError)
 {
     using namespace TestWebKitAPI;
     HTTPServer httpsServer({

@@ -49,6 +49,7 @@ WebCore::ResourceError blockedByContentFilterError(const WebCore::ResourceReques
 WebCore::ResourceError cannotShowMIMETypeError(const WebCore::ResourceResponse&);
 WebCore::ResourceError fileDoesNotExistError(const WebCore::ResourceResponse&);
 WebCore::ResourceError httpsUpgradeRedirectLoopError(const WebCore::ResourceRequest&);
+WebCore::ResourceError httpNavigationWithHTTPSOnlyError(const WebCore::ResourceRequest&);
 WebCore::ResourceError pluginWillHandleLoadError(const WebCore::ResourceResponse&);
 
 #if USE(SOUP)
