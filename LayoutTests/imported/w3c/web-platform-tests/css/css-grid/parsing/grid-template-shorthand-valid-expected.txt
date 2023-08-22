@@ -27,6 +27,7 @@ PASS e.style['grid-template'] = "\"a\" [a] [b] \"b\"" should set the property va
 PASS e.style['grid-template'] = "\"a\" [a] \"b\"" should set the property value
 PASS e.style['grid-template'] = "\"a\" / 0" should set the property value
 PASS e.style['grid-template'] = "\"a\" 10px / 10px" should set the property value
+PASS e.style['grid-template'] = "\"a\" calc(100% - 10px) / calc(10px)" should set the property value
 PASS e.style['grid-template'] = "\"a\" [a] \"b\" 10px" should set the property value
 PASS e.style['grid-template'] = "\"a\" [a] \"b\" 10px [a]" should set the property value
 PASS e.style['grid-template'] = "\"a\" [a] [a] \"b\" 10px" should set the property value
