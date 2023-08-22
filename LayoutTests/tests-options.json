@@ -3383,6 +3383,9 @@
     "imported/w3c/web-platform-tests/html/browsers/windows/clear-window-name.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/browsers/windows/dangling-markup-window-name.tentative.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-window-name.html": [
         "slow"
     ],

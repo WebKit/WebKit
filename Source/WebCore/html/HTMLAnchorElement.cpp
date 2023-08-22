@@ -649,7 +649,7 @@ AtomString HTMLAnchorElement::effectiveTarget() const
     auto effectiveTarget = target();
     if (effectiveTarget.isEmpty())
         effectiveTarget = document().baseTarget();
-    return effectiveTarget;
+    return makeTargetBlankIfHasDanglingMarkup(effectiveTarget);
 }
 
 HTMLAnchorElement::EventType HTMLAnchorElement::eventType(Event& event)

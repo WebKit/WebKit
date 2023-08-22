@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-window.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/browsing-context.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/clear-window-name.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/dangling-markup-window-name.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/document-domain-nested-navigate.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/document-domain-nested-set.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/document-domain-nested.window.js

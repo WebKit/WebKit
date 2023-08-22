@@ -5399,4 +5399,11 @@ void Element::contentVisibilityViewportChange(bool)
     document().scheduleContentRelevancyUpdate(ContentRelevancy::OnScreen);
 }
 
+AtomString Element::makeTargetBlankIfHasDanglingMarkup(const AtomString& target)
+{
+    if ((target.contains('\n') || target.contains('\r') || target.contains('\t')) && target.contains('<'))
+        return "_blank"_s;
+    return target;
+}
+
 } // namespace WebCore

@@ -229,6 +229,7 @@
     "web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.sub.html": "skip",
     "web-platform-tests/html/browsers/sandboxing": "skip",
     "web-platform-tests/html/browsers/the-window-object": "import",
+    "web-platform-tests/html/browsers/windows": "import",
     "web-platform-tests/html/browsers/windows/auxiliary-browsing-contexts": "import",
     "web-platform-tests/html/browsers/windows/browsing-context-first-created.xhtml": "skip",
     "web-platform-tests/html/browsers/windows/browsing-context-names": "import",
