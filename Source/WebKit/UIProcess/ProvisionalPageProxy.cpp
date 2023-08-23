@@ -30,6 +30,7 @@
 #include "APIWebsitePolicies.h"
 #include "DrawingAreaProxy.h"
 #include "FormDataReference.h"
+#include "GoToBackForwardItemParameters.h"
 #include "HandleMessage.h"
 #include "LocalFrameCreationParameters.h"
 #include "Logging.h"
@@ -248,7 +249,17 @@ void ProvisionalPageProxy::goToBackForwardItem(API::Navigation& navigation, WebB
 #endif
 
     send(Messages::WebPage::UpdateBackForwardListForReattach(WTFMove(itemStates)));
-    send(Messages::WebPage::GoToBackForwardItem(navigation.navigationID(), item.itemID(), *navigation.backForwardFrameLoadType(), shouldTreatAsContinuingLoad, WTFMove(websitePoliciesData), m_page->lastNavigationWasAppInitiated(), existingNetworkResourceLoadIdentifierToResume, topPrivatelyControlledDomain));
+
+    SandboxExtension::Handle sandboxExtensionHandle;
+    URL itemURL { item.url() };
+    m_page->maybeInitializeSandboxExtensionHandle(m_process.get(), itemURL, item.resourceDirectoryURL(), sandboxExtensionHandle);
+
+    GoToBackForwardItemParameters parameters { navigation.navigationID(), item.itemID(), *navigation.backForwardFrameLoadType(), shouldTreatAsContinuingLoad, WTFMove(websitePoliciesData), m_page->lastNavigationWasAppInitiated(), existingNetworkResourceLoadIdentifierToResume, topPrivatelyControlledDomain, WTFMove(sandboxExtensionHandle) };
+    if (!m_process->isLaunching() || !itemURL.protocolIsFile())
+        send(Messages::WebPage::GoToBackForwardItem(parameters));
+    else
+        send(Messages::WebPage::GoToBackForwardItemWaitingForProcessLaunch(parameters, m_page->identifier()));
+
     m_process->startResponsivenessTimer();
 }
 

@@ -32,6 +32,7 @@
 #include "AuthenticatorManager.h"
 #include "DataReference.h"
 #include "DownloadProxyMap.h"
+#include "GoToBackForwardItemParameters.h"
 #include "LoadParameters.h"
 #include "Logging.h"
 #include "NetworkProcessConnectionInfo.h"
@@ -554,6 +555,28 @@ bool WebProcessProxy::shouldSendPendingMessage(const PendingMessage& message)
             }
         } else
             ASSERT_NOT_REACHED();
+        return false;
+    } else if (message.encoder->messageName() == IPC::MessageName::WebPage_GoToBackForwardItemWaitingForProcessLaunch) {
+        auto buffer = message.encoder->buffer();
+        auto bufferSize = message.encoder->bufferSize();
+        auto decoder = IPC::Decoder::create(buffer, bufferSize, { });
+        ASSERT(decoder);
+        if (!decoder)
+            return false;
+
+        std::optional<GoToBackForwardItemParameters> parameters;
+        *decoder >> parameters;
+        if (!parameters)
+            return false;
+        WebPageProxyIdentifier pageID;
+        if (!decoder->decode(pageID))
+            return false;
+
+        if (auto page = WebProcessProxy::webPage(pageID)) {
+            if (auto* item = WebBackForwardListItem::itemForID(parameters->backForwardItemID))
+                page->maybeInitializeSandboxExtensionHandle(static_cast<WebProcessProxy&>(*this), URL { item->url() }, item->resourceDirectoryURL(), parameters->sandboxExtensionHandle);
+        }
+        send(Messages::WebPage::GoToBackForwardItem(*parameters), decoder->destinationID());
         return false;
     }
     return true;
