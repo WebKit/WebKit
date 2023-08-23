@@ -39,6 +39,7 @@
 #include "FragmentScriptingPermission.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLBRElement.h"
+#include "HTMLBodyElement.h"
 #include "HTMLButtonElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLEntityParser.h"
@@ -134,6 +135,7 @@ template<typename T> static bool insertInUniquedSortedVector(Vector<T>& vector, 
 #define FOR_EACH_SUPPORTED_TAG(APPLY) \
     APPLY(a, A)                       \
     APPLY(b, B)                       \
+    APPLY(body, Body)                 \
     APPLY(br, Br)                     \
     APPLY(button, Button)             \
     APPLY(div, Div)                   \
@@ -349,6 +351,11 @@ private:
         struct Div : ContainerTag<HTMLDivElement, PermittedParents::FlowContent> {
             static constexpr ElementName tagName = ElementNames::HTML::div;
             static constexpr CharacterType tagNameCharacters[] = { 'd', 'i', 'v' };
+        };
+
+        struct Body : ContainerTag<HTMLBodyElement, PermittedParents::Special> {
+            static constexpr ElementName tagName = ElementNames::HTML::body;
+            static constexpr CharacterType tagNameCharacters[] = { 'b', 'o', 'd', 'y' };
         };
 
         struct Footer : ContainerTag<HTMLElement, PermittedParents::FlowContent> {
