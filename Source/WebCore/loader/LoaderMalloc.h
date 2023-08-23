@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,23 +25,8 @@
 
 #pragma once
 
-#include "LoaderMalloc.h"
+#include <wtf/FastMalloc.h>
 
 namespace WebCore {
-
-class LocalFrame;
-
-class ProgressTrackerClient {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
-public:
-    virtual ~ProgressTrackerClient() = default;
-
-    virtual void willChangeEstimatedProgress() { }
-    virtual void didChangeEstimatedProgress() { }
-
-    virtual void progressStarted(LocalFrame& originatingProgressFrame) = 0;
-    virtual void progressEstimateChanged(LocalFrame& originatingProgressFrame) = 0;
-    virtual void progressFinished(LocalFrame& originatingProgressFrame) = 0;
-};
-
-} // namespace WebCore
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Loader);
+}

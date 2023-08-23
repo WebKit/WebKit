@@ -43,7 +43,7 @@ struct StringWithDirection;
 
 class FrameLoader::HistoryController {
     WTF_MAKE_NONCOPYABLE(HistoryController);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:
     enum HistoryUpdateType { UpdateAll, UpdateAllExceptBackForwardList };
 

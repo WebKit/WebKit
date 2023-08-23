@@ -51,7 +51,7 @@ enum ApplicationCacheUpdateOption {
 
 class ApplicationCacheGroup : public CanMakeWeakPtr<ApplicationCacheGroup> {
     WTF_MAKE_NONCOPYABLE(ApplicationCacheGroup);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:
     explicit ApplicationCacheGroup(Ref<ApplicationCacheStorage>&&, const URL& manifestURL);
     virtual ~ApplicationCacheGroup();

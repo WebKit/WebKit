@@ -32,6 +32,7 @@
 #include "FrameLoaderClient.h"
 #include "LayoutMilestone.h"
 #include "LinkIcon.h"
+#include "LoaderMalloc.h"
 #include "RegistrableDomain.h"
 #include "ResourceLoaderIdentifier.h"
 #include <wtf/Expected.h>
@@ -102,7 +103,7 @@ enum class WasPrivateRelayed : bool;
 struct StringWithDirection;
 
 class WEBCORE_EXPORT LocalFrameLoaderClient : public FrameLoaderClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:
     // An inline function cannot be the first non-abstract virtual function declared
     // in the class as it results in the vtable being generated as a weak symbol.

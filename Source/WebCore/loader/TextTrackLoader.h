@@ -29,6 +29,7 @@
 
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
+#include "LoaderMalloc.h"
 #include "Timer.h"
 #include "WebVTTParser.h"
 #include <memory>
@@ -53,7 +54,7 @@ public:
 
 class TextTrackLoader final : public CachedResourceClient, private WebVTTParserClient {
     WTF_MAKE_NONCOPYABLE(TextTrackLoader); 
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:
     TextTrackLoader(TextTrackLoaderClient&, Document&);
     virtual ~TextTrackLoader();
