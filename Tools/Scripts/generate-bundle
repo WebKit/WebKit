@@ -536,10 +536,10 @@ class BundleCreator(object):
         pipewire_spa_plugins = self._list_files_directory(spa_plugin_dir, list_inside_subdirs=True, filter_suffix='.so')
         return spa_plugin_dir, pipewire_spa_plugins
 
-    def _add_object_or_get_sysdep(self, object, object_type):
+    def _add_object_or_get_sysdep(self, object, object_type, binary_interpreter_relativepath=None):
         provided_by_system_package = None
         if self._syslibs == 'bundle-all':
-            self._bundler.copy_and_maybe_strip_patchelf(object, type=object_type, strip=self._should_strip_objects, patchelf_removerpath=True, patchelf_nodefaultlib=True)
+            self._bundler.copy_and_maybe_strip_patchelf(object, type=object_type, strip=self._should_strip_objects, patchelf_removerpath=True, patchelf_nodefaultlib=True, patchelf_setinterpreter_relativepath=binary_interpreter_relativepath)
         else:
             provided_by_system_package = self._get_system_package_name(object)
             if not provided_by_system_package:
@@ -638,12 +638,23 @@ class BundleCreator(object):
         if (not os.path.isfile(cafile_path)) or (os.path.getsize(cafile_path) < 100):
             raise RuntimeError('Failed to generate or copy the system TLS CAFile with the certificates.')
 
+    def _get_libs_for_object_and_and_copy_interpreter_if_needed(self, object, previous_interpreter):
+        libraries, current_interpreter = self._shared_object_resolver.get_libs_and_interpreter(object)
+        if current_interpreter is None:
+            raise RuntimeError('Could not determine interpreter for binary %s' % object)
+        if previous_interpreter is None:
+            if self._syslibs == 'bundle-all':
+                self._bundler.copy_and_maybe_strip_patchelf(current_interpreter, type='interpreter', strip=self._should_strip_objects, patchelf_removerpath=True, patchelf_nodefaultlib=True)
+        elif previous_interpreter != current_interpreter:
+            raise RuntimeError('Detected binaries with different interpreters: %s != %s' %(copied_interpreter, interpreter))
+        return libraries, current_interpreter
+
     def _create_bundle(self, bundle_binary):
         main_binary_path = os.path.join(self._buildpath, 'bin', bundle_binary)
         if not os.path.isfile(main_binary_path) or not os.access(main_binary_path, os.X_OK):
             raise ValueError('Cannot find binary for %s at %s' % (bundle_binary, main_binary_path) )
 
-        copied_interpreter = None
+        interpreter = None
         needs_to_create_wpe_backend_symlink = False
         gio_modules = []
         gtk_print_modules = []
@@ -655,7 +666,6 @@ class BundleCreator(object):
         egl_icd_mesa_config_file = None
         libraries_checked = set()
         system_packages_needed = set()
-        binaries_to_copy = set()
         objects_to_copy = [ main_binary_path ]
         # We only want to separate the libraries in lib and sys/lib for MiniBrowser and 'all' bundles
         self._bundler.set_use_sys_lib_directory('MiniBrowser' in self._bundle_binaries)
@@ -670,18 +680,18 @@ class BundleCreator(object):
             objects_to_copy.extend(gio_modules)
             gstreamer_modules = self._get_gstreamer_modules()
             objects_to_copy.extend(gstreamer_modules)
+            # graphics drivers
+            mesa_dri_drivers = self._get_mesa_dri_drivers()
+            objects_to_copy.extend(mesa_dri_drivers)
+            objects_to_copy.extend(self._get_mesa_libraries())
             if self._syslibs == 'bundle-all':
+                egl_icd_mesa_config_file = self._discover_egl_mesa_config_file()
+                objects_to_copy.append(self._get_mesa_egl_icd_driver_path(egl_icd_mesa_config_file))
                 # need to ship a copy of gst pluging scanner
                 objects_to_copy.append(self._get_gstreamer_plugin_scanner())
                 # pipewire spa plugins
                 pipewire_spa_plugin_basedir, pipewire_spa_plugins = self._get_pipewire_spa_basedir_and_plugins()
                 objects_to_copy.extend(pipewire_spa_plugins)
-                # graphics drivers
-                mesa_dri_drivers = self._get_mesa_dri_drivers()
-                objects_to_copy.extend(mesa_dri_drivers)
-                objects_to_copy.extend(self._get_mesa_libraries())
-                egl_icd_mesa_config_file = self._discover_egl_mesa_config_file()
-                objects_to_copy.append(self._get_mesa_egl_icd_driver_path(egl_icd_mesa_config_file))
                 # system extra libraries
                 objects_to_copy.extend(self._get_libc_libraries())
                 # gtk modules
@@ -725,9 +735,11 @@ class BundleCreator(object):
             elif '.so' in object:
                 if 'libwpebackend' in object.lower():
                     needs_to_create_wpe_backend_symlink = True
-                self._bundler.copy_and_maybe_strip_patchelf(object, type='lib', strip=self._should_strip_objects, patchelf_removerpath=True, patchelf_nodefaultlib=self._syslibs=='bundle-all')
+                system_package = self._add_object_or_get_sysdep(object, 'lib')
             else:
-                binaries_to_copy.add(object)
+                _, interpreter = self._get_libs_for_object_and_and_copy_interpreter_if_needed(object, interpreter)
+                system_package = self._add_object_or_get_sysdep(object, 'bin', interpreter)
+
             # There is no need to examine the libraries linked with objects coming from a system package,
             # because system packages already declare dependencies between them.
             # However, if we are running with self._syslibs == 'bundle-all' then system_package will be None,
@@ -735,15 +747,8 @@ class BundleCreator(object):
             if system_package:
                 system_packages_needed.add(system_package)
             else:
-                libraries, interpreter = self._shared_object_resolver.get_libs_and_interpreter(object)
-                if interpreter is None:
-                    raise RuntimeError('Could not determine interpreter for binary %s' % object)
-                if copied_interpreter is None:
-                    if self._syslibs == 'bundle-all':
-                        self._bundler.copy_and_maybe_strip_patchelf(interpreter, type='interpreter', strip=self._should_strip_objects, patchelf_removerpath=self._syslibs=='bundle-all', patchelf_nodefaultlib=self._syslibs=='bundle-all')
-                    copied_interpreter = interpreter
-                elif copied_interpreter != interpreter:
-                    raise RuntimeError('Detected binaries with different interpreters: %s != %s' %(copied_interpreter, interpreter))
+                # get_libs_for_object gets all libraries recursively with 'ldd' for the object.
+                libraries, interpreter = self._get_libs_for_object_and_and_copy_interpreter_if_needed(object, interpreter)
                 for library in libraries:
                     if library in libraries_checked:
                         _log.debug('Skip already checked [lib]: %s' % library)
@@ -756,11 +761,6 @@ class BundleCreator(object):
                         needs_to_create_wpe_backend_symlink = True
         if needs_to_create_wpe_backend_symlink:
             self._ensure_wpe_backend_symlink()
-        for binary in binaries_to_copy:
-            if self._syslibs == 'bundle-all':
-                self._bundler.copy_and_maybe_strip_patchelf(binary, type='bin', strip=self._should_strip_objects, patchelf_removerpath=True, patchelf_nodefaultlib=True, patchelf_setinterpreter_relativepath=interpreter)
-            else:
-                self._bundler.copy_and_maybe_strip_patchelf(binary, type='bin', strip=self._should_strip_objects, patchelf_removerpath=True, patchelf_nodefaultlib=False)
 
         # Now copy data files to share dir (only needed when bunding all for MiniBrowser).
         # We assume that the system uses standard paths at /usr/share and /etc for this resources
@@ -848,9 +848,6 @@ class BundleCreator(object):
         # Clean remaining stuff
         if bundle_binary == 'MiniBrowser' and self._syslibs == 'bundle-all':
             self._dlopenwrap_make('clean')
-
-
-
 
 
 def configure_logging(selected_log_level='info'):
