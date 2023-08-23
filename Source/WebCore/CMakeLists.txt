@@ -1141,7 +1141,6 @@ set(WebCore_NON_SVG_IDL_FILES
     html/HTMLMediaElement+AudioOutput.idl
     html/HTMLMediaElement.idl
     html/HTMLMenuElement.idl
-    html/HTMLMenuItemElement.idl
     html/HTMLMetaElement.idl
     html/HTMLMeterElement.idl
     html/HTMLModElement.idl
@@ -2713,6 +2712,16 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/Namespace.cpp)
 WEBKIT_COMPUTE_SOURCES(WebCore)
 
 target_precompile_headers(WebCore PRIVATE WebCorePrefix.h)
+
+list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    page/ActivityState.serialization.in
+    page/DragActions.serialization.in
+    page/LayoutMilestones.serialization.in
+
+    platform/PlatformScreen.serialization.in
+
+    platform/graphics/InbandTextTrackPrivate.serialization.in
+)
 
 WEBKIT_COPY_FILES(WebCore_CopyPrivateHeaders
     DESTINATION ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore

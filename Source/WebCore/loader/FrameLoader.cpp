@@ -434,17 +434,22 @@ void FrameLoader::checkContentPolicy(const ResourceResponse& response, PolicyChe
     client().dispatchDecidePolicyForResponse(response, activeDocumentLoader()->request(), identifier, activeDocumentLoader()->downloadAttribute(), WTFMove(function));
 }
 
-bool FrameLoader::upgradeRequestforHTTPSOnlyIfNeeded(const URL& originalURL, ResourceRequest& request) const
+bool FrameLoader::shouldUpgradeRequestforHTTPSOnly(const URL& originalURL, ResourceRequest& request) const
 {
     auto& documentLoader = m_provisionalDocumentLoader ? m_provisionalDocumentLoader : m_documentLoader;
     auto& newURL = request.url();
     const auto& isSameSiteBypassEnabled = (originalURL.isEmpty()
-        || (originalURL.protocolIs("http"_s) && RegistrableDomain(newURL) == RegistrableDomain(originalURL)))
-        && documentLoader->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnlyExplicitlyBypassedForDomain);
+        || RegistrableDomain(newURL) == RegistrableDomain(originalURL))
+        && documentLoader && documentLoader->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnlyExplicitlyBypassedForDomain);
 
-    if (documentLoader && documentLoader->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnly)
+    return documentLoader && documentLoader->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnly)
         && newURL.protocolIs("http"_s)
-        && !isSameSiteBypassEnabled) {
+        && !isSameSiteBypassEnabled;
+}
+
+bool FrameLoader::upgradeRequestforHTTPSOnlyIfNeeded(const URL& originalURL, ResourceRequest& request) const
+{
+    if (shouldUpgradeRequestforHTTPSOnly(originalURL, request)) {
         FRAMELOADER_RELEASE_LOG(ResourceLoading, "upgradeRequestforHTTPSOnlyIfNeeded: upgrading navigation request");
         request.upgradeToHTTPS();
         // FIXME: Make this timeout adaptive based on network conditions
@@ -1441,6 +1446,11 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
 
         // https://html.spec.whatwg.org/#the-rules-for-choosing-a-browsing-context-given-a-browsing-context-name (Step 8.2)
         if (frameLoadRequest.requester().shouldForceNoOpenerBasedOnCOOP()) {
+            effectiveFrameName = blankTargetFrameName();
+            openerPolicy = NewFrameOpenerPolicy::Suppress;
+        }
+
+        if (m_frame.document()->settingsValues().blobRegistryTopOriginPartitioningEnabled && frameLoadRequest.resourceRequest().url().protocolIsBlob() && !m_frame.document()->securityOrigin().isSameOriginAs(m_frame.document()->topOrigin())) {
             effectiveFrameName = blankTargetFrameName();
             openerPolicy = NewFrameOpenerPolicy::Suppress;
         }
@@ -3262,6 +3272,11 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
             openerPolicy = NewFrameOpenerPolicy::Suppress;
         }
 
+        if (m_frame.document()->settingsValues().blobRegistryTopOriginPartitioningEnabled && request.resourceRequest().url().protocolIsBlob() && !m_frame.document()->securityOrigin().isSameOriginAs(m_frame.document()->topOrigin())) {
+            frameName = blankTargetFrameName();
+            openerPolicy = NewFrameOpenerPolicy::Suppress;
+        }
+
         policyChecker().checkNewWindowPolicy(WTFMove(action), WTFMove(workingResourceRequest), WTFMove(formState), frameName, [this, allowNavigationToInvalidURL, openerPolicy, completionHandler = WTFMove(completionHandler)] (const ResourceRequest& request, WeakPtr<FormState>&& formState, const AtomString& frameName, const NavigationAction& action, ShouldContinuePolicyCheck shouldContinue) mutable {
             continueLoadAfterNewWindowPolicy(request, formState.get(), frameName, action, shouldContinue, allowNavigationToInvalidURL, openerPolicy);
             completionHandler();
@@ -4372,6 +4387,11 @@ RefPtr<LocalFrame> createWindow(LocalFrame& openerFrame, LocalFrame& lookupFrame
 
     // https://html.spec.whatwg.org/#the-rules-for-choosing-a-browsing-context-given-a-browsing-context-name (Step 8.2)
     if (openerFrame.document()->shouldForceNoOpenerBasedOnCOOP()) {
+        request.setFrameName(blankTargetFrameName());
+        features.noopener = true;
+    }
+
+    if (openerFrame.document()->settingsValues().blobRegistryTopOriginPartitioningEnabled && request.resourceRequest().url().protocolIsBlob() && !openerFrame.document()->securityOrigin().isSameOriginAs(openerFrame.document()->topOrigin())) {
         request.setFrameName(blankTargetFrameName());
         features.noopener = true;
     }

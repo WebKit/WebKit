@@ -1,0 +1,8 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [x86_64-tvos-simulator, arm64-tvos-simulator]
+install-name: /System/Library/PrivateFrameworks/CorePrediction.framework/CorePrediction
+exports:
+-       targets: [x86_64-tvos-simulator, arm64-tvos-simulator]
+        symbols: [_svm_load_model, _svm_predict_values]
+...

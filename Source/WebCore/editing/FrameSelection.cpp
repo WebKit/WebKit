@@ -1855,8 +1855,7 @@ bool FrameSelection::recomputeCaretRect()
 bool CaretBase::shouldRepaintCaret(const RenderView* view, bool isContentEditable) const
 {
     ASSERT(view);
-    auto* frame = dynamicDowncast<LocalFrame>(view->frameView().frame()); // The frame where the selection started.
-    bool caretBrowsing = frame && frame->settings().caretBrowsingEnabled();
+    bool caretBrowsing = view->frameView().frame().settings().caretBrowsingEnabled(); // The frame where the selection started.
     return (caretBrowsing || isContentEditable);
 }
 

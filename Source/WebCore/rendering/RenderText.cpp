@@ -92,6 +92,7 @@ struct SameSizeAsRenderText : public RenderObject {
     float widths[2];
     std::optional<float> minWidth;
     std::optional<float> maxWidth;
+    std::optional<bool> canUseSimplifiedTextMeasuring;
     String text;
 };
 
@@ -328,6 +329,8 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     const RenderStyle& newStyle = style();
     if (!oldStyle)
         initiateFontLoadingByAccessingGlyphDataIfApplicable(m_text, newStyle.fontCascade());
+    if (oldStyle && oldStyle->fontCascade() != newStyle.fontCascade())
+        m_canUseSimplifiedTextMeasuring = { };
 
     bool needsResetText = false;
     if (!oldStyle) {
@@ -1583,7 +1586,8 @@ void RenderText::setRenderedText(const String& newText)
 
     m_containsOnlyASCII = text().containsOnlyASCII();
     m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
-    
+    m_canUseSimplifiedTextMeasuring = { };
+
     if (m_text != originalText) {
         originalTextMap().set(this, originalText);
         m_originalTextDiffersFromRendered = true;

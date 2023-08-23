@@ -42,6 +42,7 @@
 #include <wtf/MonotonicTime.h>
 
 namespace WebCore {
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AcceleratedTimeline);
 
 AcceleratedTimeline::AcceleratedTimeline(Document& document)
 {

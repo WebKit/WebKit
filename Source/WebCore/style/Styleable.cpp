@@ -271,7 +271,7 @@ void Styleable::cancelDeclarativeAnimations() const
 
 static bool keyframesRuleExistsForAnimation(Element& element, const Animation& animation, const String& animationName)
 {
-    auto* styleScope = Style::Scope::forOrdinal(element, animation.nameStyleScopeOrdinal());
+    auto* styleScope = Style::Scope::forOrdinal(element, animation.name().scopeOrdinal);
     return styleScope && styleScope->resolver().isAnimationNameValid(animationName);
 }
 
@@ -282,7 +282,7 @@ bool Styleable::animationListContainsNewlyValidAnimation(const AnimationList& an
         return false;
 
     for (auto& animation : animations) {
-        auto& name = animation->name().string;
+        auto& name = animation->name().name;
         if (name != noneAtom() && !name.isEmpty() && keyframeEffectStack.containsInvalidCSSAnimationName(name) && keyframesRuleExistsForAnimation(element, animation.get(), name))
             return true;
     }
@@ -327,7 +327,7 @@ void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const Rende
             if (!currentAnimation->isValidAnimation())
                 continue;
 
-            auto& animationName = currentAnimation->name().string;
+            auto& animationName = currentAnimation->name().name;
             if (animationName == noneAtom() || animationName.isEmpty())
                 continue;
 

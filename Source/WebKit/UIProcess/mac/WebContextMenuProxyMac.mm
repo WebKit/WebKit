@@ -311,7 +311,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 void WebContextMenuProxyMac::appendRemoveBackgroundItemToControlledImageMenuIfNeeded()
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    auto* page = this->page();
+    RefPtr page = this->page();
     if (!page || !page->preferences().removeBackgroundEnabled())
         return;
 
@@ -842,7 +842,7 @@ void WebContextMenuProxyMac::showContextMenuWithItems(Vector<Ref<WebContextMenuI
 #endif
 
     if (page()->contextMenuClient().canShowContextMenu()) {
-        page()->contextMenuClient().showContextMenu(*page(), m_context.menuLocation(), items);
+        page()->contextMenuClient().showContextMenu(Ref { *page() }, m_context.menuLocation(), items);
         return;
     }
 
@@ -890,7 +890,8 @@ void WebContextMenuProxyMac::useContextMenuItems(Vector<Ref<WebContextMenuItem>>
         }
         
         ASSERT(m_context.webHitTestResultData());
-        page()->contextMenuClient().menuFromProposedMenu(*page(), menu, m_context, m_userData.object(), WTFMove(menuFromProposedMenu));
+        Ref page = *this->page();
+        page->contextMenuClient().menuFromProposedMenu(page, menu, m_context, m_userData.object(), WTFMove(menuFromProposedMenu));
     });
 }
 

@@ -42,7 +42,7 @@ public:
     static RefPtr<WebGLVertexArrayObject> create(WebGLRenderingContextBase&, Type);
     virtual ~WebGLVertexArrayObject();
 private:
-    WebGLVertexArrayObject(WebGLRenderingContextBase&, Type);
+    WebGLVertexArrayObject(WebGLRenderingContextBase&, PlatformGLObject, Type);
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) final;
 };
 

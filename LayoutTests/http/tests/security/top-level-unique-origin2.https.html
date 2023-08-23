@@ -15,6 +15,6 @@
         if (window.testRunner)
             testRunner.notifyDone();
     }, 10000);
+    window.open("data:text/html,<script>console.log('data URL frame loaded'); const blob = new Blob(['<'+ 'script>console.log(\"blob popup loaded\"); window.opener.postMessage(window.isSecureContext, \"*\"); console.log(\"blob popup message posted\"); <' + '/script>'], {type: 'text/html'}); const popup = window.open(URL.createObjectURL(blob)); onmessage = (event) => { opener.postMessage(event.data, '*'); popup.close(); }; console.log('blob popup opened'); <" + "/script>");
 </script>
-<iframe src="data:text/html,<script>console.log('data URL frame loaded'); const blob = new Blob(['<'+ 'script>console.log(\'blob popup loaded\'); window.opener.postMessage(window.isSecureContext, \'*\'); console.log(\'blob popup message posted\'); <' + '/script>'], {type: 'text/html'}); const popup = window.open(URL.createObjectURL(blob)); onmessage = (event) => { parent.postMessage(event.data, '*'); popup.close(); }; console.log('blob popup opened'); </script>"></iframe>
 </body>

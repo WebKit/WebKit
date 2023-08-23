@@ -54,6 +54,7 @@
 #import "VideoTrackPrivateWebM.h"
 #import "WebCoreDecompressionSession.h"
 #import "WebMResourceClient.h"
+#import <AVFoundation/AVFoundation.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/MainThread.h>
@@ -68,7 +69,6 @@
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 @interface AVSampleBufferDisplayLayer (WebCoreAVSampleBufferDisplayLayerQueueManagementPrivate)
-- (void)prerollDecodeWithCompletionHandler:(void (^)(BOOL success))block;
 - (void)expectMinimumUpcomingSampleBufferPresentationTime: (CMTime)minimumUpcomingPresentationTime;
 - (void)resetUpcomingSampleBufferPresentationTimeExpectations;
 @end
@@ -1399,9 +1399,7 @@ void MediaPlayerPrivateWebM::destroyLayer()
         return;
 
     CMTime currentTime = PAL::CMTimebaseGetTime([m_synchronizer timebase]);
-    [m_synchronizer removeRenderer:m_displayLayer.get() atTime:currentTime withCompletionHandler:^(BOOL){
-        // No-op.
-    }];
+    [m_synchronizer removeRenderer:m_displayLayer.get() atTime:currentTime completionHandler:nil];
 
     m_videoLayerManager->didDestroyVideoLayer();
     [m_displayLayer flush];
@@ -1426,9 +1424,7 @@ void MediaPlayerPrivateWebM::destroyDecompressionSession()
 void MediaPlayerPrivateWebM::destroyAudioRenderer(RetainPtr<AVSampleBufferAudioRenderer> renderer)
 {
     CMTime currentTime = PAL::CMTimebaseGetTime([m_synchronizer timebase]);
-    [m_synchronizer removeRenderer:renderer.get() atTime:currentTime withCompletionHandler:^(BOOL){
-        // No-op.
-    }];
+    [m_synchronizer removeRenderer:renderer.get() atTime:currentTime completionHandler:nil];
 
     [renderer flush];
     [renderer stopRequestingMediaData];

@@ -133,7 +133,7 @@ public:
         if (!m_foundStartCallFrame)
             return IterationStatus::Continue;
 
-        if (visitor->isWasmFrame())
+        if (visitor->isNativeCalleeFrame())
             return IterationStatus::Continue;
 
         if (visitor->isImplementationVisibilityPrivate())

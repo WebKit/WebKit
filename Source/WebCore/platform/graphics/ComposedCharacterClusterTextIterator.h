@@ -65,6 +65,14 @@ public:
 
     unsigned currentIndex() const { return m_currentIndex; }
 
+    void reset(unsigned index)
+    {
+        ASSERT(index >= m_originalIndex);
+        if (index >= m_lastIndex)
+            return;
+        m_currentIndex = index;
+    }
+
 private:
     CachedTextBreakIterator m_iterator;
     const UChar* m_characters;

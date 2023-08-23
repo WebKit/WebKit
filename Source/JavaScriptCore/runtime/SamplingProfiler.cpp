@@ -38,11 +38,12 @@
 #include "MachineContext.h"
 #include "MarkedBlockInlines.h"
 #include "MarkedBlockSet.h"
+#include "NativeCallee.h"
+#include "NativeCalleeRegistry.h"
 #include "NativeExecutable.h"
 #include "VM.h"
 #include "VMTrapsInlines.h"
 #include "WasmCallee.h"
-#include "WasmCalleeRegistry.h"
 #include "WasmCapabilities.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/FilePrintStream.h>
@@ -116,28 +117,38 @@ protected:
         CallSiteIndex callSiteIndex;
         CalleeBits unsafeCallee = m_callFrame->unsafeCallee();
         CodeBlock* codeBlock = m_callFrame->unsafeCodeBlock();
-        if (unsafeCallee.isWasm())
+        if (unsafeCallee.isNativeCallee())
             codeBlock = nullptr;
         if (codeBlock) {
             ASSERT(isValidCodeBlock(codeBlock));
             callSiteIndex = m_callFrame->unsafeCallSiteIndex();
         }
         stackTrace[m_depth] = UnprocessedStackFrame(codeBlock, unsafeCallee, callSiteIndex);
+        if (unsafeCallee.isNativeCallee()) {
+            assertIsHeld(NativeCalleeRegistry::singleton().getLock());
+            auto* nativeCallee = unsafeCallee.asNativeCallee();
+            if (NativeCalleeRegistry::singleton().isValidCallee(nativeCallee)) {
+                stackTrace[m_depth].nativeCalleeCategory = nativeCallee->category();
+                switch (nativeCallee->category()) {
+                case NativeCallee::Category::Wasm: {
 #if ENABLE(WEBASSEMBLY)
-        if (Wasm::isSupported() && unsafeCallee.isWasm()) {
-            assertIsHeld(Wasm::CalleeRegistry::singleton().getLock());
-            auto* wasmCallee = unsafeCallee.asWasmCallee();
-            if (Wasm::CalleeRegistry::singleton().isValidCallee(wasmCallee)) {
-                // At this point, Wasm::Callee would be dying (ref count is 0), but its fields are still live.
-                // And we can safely copy Wasm::IndexOrName even when any lock is held by suspended threads.
-                stackTrace[m_depth].wasmIndexOrName = wasmCallee->indexOrName();
-                stackTrace[m_depth].wasmCompilationMode = wasmCallee->compilationMode();
+                    // At this point, Wasm::Callee would be dying (ref count is 0), but its fields are still live.
+                    // And we can safely copy Wasm::IndexOrName even when any lock is held by suspended threads.
+                    auto* wasmCallee = static_cast<Wasm::Callee*>(nativeCallee);
+                    stackTrace[m_depth].wasmIndexOrName = wasmCallee->indexOrName();
+                    stackTrace[m_depth].wasmCompilationMode = wasmCallee->compilationMode();
 #if ENABLE(JIT)
-                stackTrace[m_depth].wasmPCMap = Wasm::CalleeRegistry::singleton().codeOriginMap(wasmCallee);
+                    stackTrace[m_depth].wasmPCMap = NativeCalleeRegistry::singleton().codeOriginMap(wasmCallee);
 #endif
+#endif
+                    break;
+                }
+                case NativeCallee::Category::InlineCache: {
+                    break;
+                }
+                }
             }
         }
-#endif
         m_depth++;
     }
 
@@ -167,7 +178,7 @@ protected:
         }
 
         CodeBlock* codeBlock = m_callFrame->unsafeCodeBlock();
-        if (!codeBlock || m_callFrame->unsafeCallee().isWasm())
+        if (!codeBlock || m_callFrame->unsafeCallee().isNativeCallee())
             return;
 
         if (!isValidCodeBlock(codeBlock)) {
@@ -363,7 +374,7 @@ void SamplingProfiler::takeSample(Seconds& stackTraceProcessingTime)
         std::optional<LockHolder> wasmCalleesLocker;
 #if ENABLE(WEBASSEMBLY)
         if (Wasm::isSupported())
-            wasmCalleesLocker.emplace(Wasm::CalleeRegistry::singleton().getLock());
+            wasmCalleesLocker.emplace(NativeCalleeRegistry::singleton().getLock());
 #endif
 
         ThreadSuspendLocker threadSuspendLocker;
@@ -508,7 +519,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
 #if ENABLE(WEBASSEMBLY)
         auto storeWasmCalleeIntoLastFrame = [&] (UnprocessedStackFrame& unprocessedStackFrame, void* pc) {
             CalleeBits calleeBits = unprocessedStackFrame.unverifiedCallee;
-            ASSERT_UNUSED(calleeBits, calleeBits.isWasm());
+            ASSERT_UNUSED(calleeBits, calleeBits.isNativeCallee());
             StackFrame& stackFrame = stackTrace.frames.last();
             stackFrame.frameType = FrameType::Wasm;
             stackFrame.wasmIndexOrName = unprocessedStackFrame.wasmIndexOrName;
@@ -530,12 +541,21 @@ void SamplingProfiler::processUnverifiedStackTraces()
             CalleeBits calleeBits = unprocessedStackFrame.unverifiedCallee;
             StackFrame& stackFrame = stackTrace.frames.last();
             bool alreadyHasExecutable = !!stackFrame.executable;
+            if (calleeBits.isNativeCallee()) {
+                switch (unprocessedStackFrame.nativeCalleeCategory) {
+                case NativeCallee::Category::Wasm: {
 #if ENABLE(WEBASSEMBLY)
-            if (calleeBits.isWasm()) {
-                storeWasmCalleeIntoLastFrame(unprocessedStackFrame, nullptr);
+                    storeWasmCalleeIntoLastFrame(unprocessedStackFrame, nullptr);
+#endif
+                    return;
+                }
+                case NativeCallee::Category::InlineCache: {
+                    stackFrame.frameType = FrameType::Unknown;
+                    return;
+                }
+                }
                 return;
             }
-#endif
 
             JSValue callee = calleeBits.asCell();
             if (!HeapUtil::isValueGCObject(m_vm.heap, filter, callee)) {
@@ -658,7 +678,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
             }
         }
 #if ENABLE(WEBASSEMBLY)
-        else if (!unprocessedStackTrace.frames.isEmpty() && unprocessedStackTrace.frames[0].unverifiedCallee.isWasm()) {
+        else if (!unprocessedStackTrace.frames.isEmpty() && unprocessedStackTrace.frames[0].unverifiedCallee.isNativeCallee() && unprocessedStackTrace.frames[0].nativeCalleeCategory == NativeCallee::Category::Wasm) {
             appendEmptyFrame();
             storeWasmCalleeIntoLastFrame(unprocessedStackTrace.frames[0], unprocessedStackTrace.topPC);
             startIndex = 1;

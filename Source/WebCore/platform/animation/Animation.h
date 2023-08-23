@@ -27,7 +27,7 @@
 #include "CSSPropertyNames.h"
 #include "CompositeOperation.h"
 #include "RenderStyleConstants.h"
-#include "StyleScopeOrdinal.h"
+#include "ScopedName.h"
 #include "TimingFunction.h"
 #include "WebAnimationTypes.h"
 
@@ -56,7 +56,7 @@ public:
 
     // We can make placeholder Animation objects to keep the comma-separated lists
     // of properties in sync. isValidAnimation means this is not a placeholder.
-    bool isValidAnimation() const { return !m_isNone && !m_name.string.isEmpty(); }
+    bool isValidAnimation() const { return !m_isNone && !m_name.name.isEmpty(); }
 
     bool isEmpty() const
     {
@@ -125,15 +125,9 @@ public:
     double duration() const { return m_duration; }
     double playbackRate() const { return m_playbackRate; }
 
-    struct Name {
-        String string;
-        bool isIdentifier { false };
-    };
-
     static constexpr double IterationCountInfinite = -1;
     double iterationCount() const { return m_iterationCount; }
-    const Name& name() const { return m_name; }
-    Style::ScopeOrdinal nameStyleScopeOrdinal() const { return m_nameStyleScopeOrdinal; }
+    const Style::ScopedName& name() const { return m_name; }
     AnimationPlayState playState() const { return static_cast<AnimationPlayState>(m_playState); }
     TransitionProperty property() const { return m_property; }
     TimingFunction* timingFunction() const { return m_timingFunction.get(); }
@@ -145,10 +139,9 @@ public:
     void setPlaybackRate(double d) { m_playbackRate = d; }
     void setFillMode(AnimationFillMode f) { m_fillMode = static_cast<unsigned>(f); m_fillModeSet = true; }
     void setIterationCount(double c) { m_iterationCount = c; m_iterationCountSet = true; }
-    void setName(const Name& name, Style::ScopeOrdinal scope = Style::ScopeOrdinal::Element)
+    void setName(const Style::ScopedName& name)
     {
         m_name = name;
-        m_nameStyleScopeOrdinal = scope;
         m_nameSet = true;
     }
     void setPlayState(AnimationPlayState d) { m_playState = static_cast<unsigned>(d); m_playStateSet = true; }
@@ -197,15 +190,13 @@ private:
     // Packs with m_refCount from the base class.
     TransitionProperty m_property { TransitionMode::All, CSSPropertyInvalid };
 
-    Name m_name;
+    Style::ScopedName m_name;
     double m_iterationCount;
     double m_delay;
     double m_duration;
     double m_playbackRate { 1 };
     RefPtr<TimingFunction> m_timingFunction;
     RefPtr<TimingFunction> m_defaultTimingFunctionForKeyframes;
-
-    Style::ScopeOrdinal m_nameStyleScopeOrdinal { Style::ScopeOrdinal::Element };
 
     unsigned m_direction : 2; // Direction
     unsigned m_fillMode : 2; // AnimationFillMode
@@ -241,7 +232,7 @@ public:
     static double initialDuration() { return 0; }
     static AnimationFillMode initialFillMode() { return AnimationFillMode::None; }
     static double initialIterationCount() { return 1.0; }
-    static const Name& initialName();
+    static const Style::ScopedName& initialName();
     static AnimationPlayState initialPlayState() { return AnimationPlayState::Playing; }
     static CompositeOperation initialCompositeOperation() { return CompositeOperation::Replace; }
     static TransitionProperty initialProperty() { return { TransitionMode::All, CSSPropertyInvalid }; }

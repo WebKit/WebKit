@@ -65,6 +65,42 @@ void setNumberFormatDigitOptions(JSGlobalObject* globalObject, IntlType* intlIns
     IntlRoundingPriority roundingPriority = intlOption<IntlRoundingPriority>(globalObject, options, vm.propertyNames->roundingPriority, { { "auto"_s, IntlRoundingPriority::Auto }, { "morePrecision"_s, IntlRoundingPriority::MorePrecision }, { "lessPrecision"_s, IntlRoundingPriority::LessPrecision } }, "roundingPriority must be either \"auto\", \"morePrecision\", or \"lessPrecision\""_s, IntlRoundingPriority::Auto);
     RETURN_IF_EXCEPTION(scope, void());
 
+    unsigned roundingIncrement = intlNumberOption(globalObject, options, vm.propertyNames->roundingIncrement, 1, 5000, 1);
+    RETURN_IF_EXCEPTION(scope, void());
+    static constexpr const unsigned roundingIncrementCandidates[] = {
+        1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000
+    };
+    if (std::none_of(roundingIncrementCandidates, roundingIncrementCandidates + std::size(roundingIncrementCandidates),
+        [&](unsigned candidate) {
+            return candidate == roundingIncrement;
+        })) {
+        throwRangeError(globalObject, scope, "roundingIncrement must be one of 1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000"_s);
+        return;
+    }
+
+    RoundingMode roundingMode = intlOption<RoundingMode>(globalObject, options, vm.propertyNames->roundingMode, {
+            { "ceil"_s, RoundingMode::Ceil },
+            { "floor"_s, RoundingMode::Floor },
+            { "expand"_s, RoundingMode::Expand },
+            { "trunc"_s, RoundingMode::Trunc },
+            { "halfCeil"_s, RoundingMode::HalfCeil },
+            { "halfFloor"_s, RoundingMode::HalfFloor },
+            { "halfExpand"_s, RoundingMode::HalfExpand },
+            { "halfTrunc"_s, RoundingMode::HalfTrunc },
+            { "halfEven"_s, RoundingMode::HalfEven }
+        }, "roundingMode must be either \"ceil\", \"floor\", \"expand\", \"trunc\", \"halfCeil\", \"halfFloor\", \"halfExpand\", \"halfTrunc\", or \"halfEven\""_s, RoundingMode::HalfExpand);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    IntlTrailingZeroDisplay trailingZeroDisplay = intlOption<IntlTrailingZeroDisplay>(globalObject, options, vm.propertyNames->trailingZeroDisplay, { { "auto"_s, IntlTrailingZeroDisplay::Auto }, { "stripIfInteger"_s, IntlTrailingZeroDisplay::StripIfInteger } }, "trailingZeroDisplay must be either \"auto\" or \"stripIfInteger\""_s, IntlTrailingZeroDisplay::Auto);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    if (roundingIncrement != 1)
+        maximumFractionDigitsDefault = minimumFractionDigitsDefault;
+
+    intlInstance->m_roundingIncrement = roundingIncrement;
+    intlInstance->m_roundingMode = roundingMode;
+    intlInstance->m_trailingZeroDisplay = trailingZeroDisplay;
+
     bool hasSd = !minimumSignificantDigitsValue.isUndefined() || !maximumSignificantDigitsValue.isUndefined();
     bool hasFd = !minimumFractionDigitsValue.isUndefined() || !maximumFractionDigitsValue.isUndefined();
 
@@ -132,11 +168,64 @@ void setNumberFormatDigitOptions(JSGlobalObject* globalObject, IntlType* intlIns
         intlInstance->m_minimumSignificantDigits = 1;
         intlInstance->m_maximumSignificantDigits = 2;
     }
+
+    if (roundingIncrement != 1) {
+        if (intlInstance->m_roundingType != IntlRoundingType::FractionDigits) {
+            throwTypeError(globalObject, scope, "rounding type is not fraction-digits while roundingIncrement is specified"_s);
+            return;
+        }
+        if (intlInstance->m_maximumFractionDigits != intlInstance->m_minimumFractionDigits) {
+            throwRangeError(globalObject, scope, "maximumFractionDigits and minimumFractionDigits are different while roundingIncrement is specified"_s);
+            return;
+        }
+    }
 }
 
 template<typename IntlType>
 void appendNumberFormatDigitOptionsToSkeleton(IntlType* intlInstance, StringBuilder& skeletonBuilder)
 {
+    switch (intlInstance->m_roundingMode) {
+    case RoundingMode::Ceil:
+        skeletonBuilder.append(" rounding-mode-ceiling");
+        break;
+    case RoundingMode::Floor:
+        skeletonBuilder.append(" rounding-mode-floor");
+        break;
+    case RoundingMode::Expand:
+        skeletonBuilder.append(" rounding-mode-up");
+        break;
+    case RoundingMode::Trunc:
+        skeletonBuilder.append(" rounding-mode-down");
+        break;
+    case RoundingMode::HalfCeil: {
+        // Only ICU69~ supports half-ceiling. Ignore this option if linked ICU does not support it.
+        // https://github.com/unicode-org/icu/commit/e8dfea9bb6bb27596731173b352759e44ad06b21
+        if (WTF::ICU::majorVersion() >= 69)
+            skeletonBuilder.append(" rounding-mode-half-ceiling");
+        else
+            skeletonBuilder.append(" rounding-mode-half-up"); // Default option.
+        break;
+    }
+    case RoundingMode::HalfFloor: {
+        // Only ICU69~ supports half-flooring. Ignore this option if linked ICU does not support it.
+        // https://github.com/unicode-org/icu/commit/e8dfea9bb6bb27596731173b352759e44ad06b21
+        if (WTF::ICU::majorVersion() >= 69)
+            skeletonBuilder.append(" rounding-mode-half-floor");
+        else
+            skeletonBuilder.append(" rounding-mode-half-up"); // Default option.
+        break;
+    }
+    case RoundingMode::HalfExpand:
+        skeletonBuilder.append(" rounding-mode-half-up");
+        break;
+    case RoundingMode::HalfTrunc:
+        skeletonBuilder.append(" rounding-mode-half-down");
+        break;
+    case RoundingMode::HalfEven:
+        skeletonBuilder.append(" rounding-mode-half-even");
+        break;
+    }
+
     // https://github.com/unicode-org/icu/blob/master/docs/userguide/format_parse/numbers/skeletons.md#integer-width
     skeletonBuilder.append(" integer-width/", WTF::ICU::majorVersion() >= 67 ? '*' : '+'); // Prior to ICU 67, use the symbol + instead of *.
     for (unsigned i = 0; i < intlInstance->m_minimumIntegerDigits; ++i)
@@ -197,6 +286,19 @@ void appendNumberFormatDigitOptionsToSkeleton(IntlType* intlInstance, StringBuil
             }
             break;
         }
+    }
+
+    // Configure this just after precision.
+    // https://github.com/unicode-org/icu/blob/main/docs/userguide/format_parse/numbers/skeletons.md#trailing-zero-display
+    switch (intlInstance->m_trailingZeroDisplay) {
+    case IntlTrailingZeroDisplay::Auto:
+        break;
+    case IntlTrailingZeroDisplay::StripIfInteger:
+        // Only ICU69~ supports trailing zero display. Ignore this option if linked ICU does not support it.
+        // https://github.com/unicode-org/icu/commit/b79c299f90d4023ac237db3d0335d568bf21cd36
+        if (WTF::ICU::majorVersion() >= 69)
+            skeletonBuilder.append("/w");
+        break;
     }
 }
 

@@ -155,6 +155,8 @@ private:
     void installTapGestureOnWindow(JSValueRef) override;
     void setScrollViewKeyboardAvoidanceEnabled(bool) override;
 
+    bool isZoomingOrScrolling() const final;
+
     bool mayContainEditableElementsInRect(unsigned x, unsigned y, unsigned width, unsigned height) override;
 
     void setDidStartFormControlInteractionCallback(JSValueRef) override;

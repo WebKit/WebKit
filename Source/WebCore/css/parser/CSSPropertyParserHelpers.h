@@ -214,6 +214,7 @@ bool isContentPositionKeyword(CSSValueID);
 bool isContentPositionOrLeftOrRightKeyword(CSSValueID);
 bool isSelfPositionKeyword(CSSValueID);
 bool isSelfPositionOrLeftOrRightKeyword(CSSValueID);
+bool isGridBreadthIdent(CSSValueID);
 
 RefPtr<CSSValueList> consumeAlignTracks(CSSParserTokenRange&);
 RefPtr<CSSValueList> consumeJustifyTracks(CSSParserTokenRange&);
@@ -230,6 +231,7 @@ RefPtr<CSSValue> consumeFamilyName(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeFontFamily(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeCounterIncrement(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeCounterReset(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeCounterSet(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeSize(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeTextIndent(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeTextTransform(CSSParserTokenRange&);

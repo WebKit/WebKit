@@ -544,11 +544,8 @@ static void encodeNodeAndDescendants(IPC::Encoder& encoder, const ScrollingState
         break;
     }
 
-    if (!stateNode.children())
-        return;
-
-    for (const auto& child : *stateNode.children())
-        encodeNodeAndDescendants(encoder, *child.get(), encodedNodeCount);
+    for (const auto& child : stateNode.children())
+        encodeNodeAndDescendants(encoder, child.get(), encodedNodeCount);
 }
 
 void RemoteScrollingCoordinatorTransaction::encode(IPC::Encoder& encoder) const
@@ -861,12 +858,12 @@ static void recursiveDumpNodes(TextStream& ts, const ScrollingStateNode& node, b
     ts << "node " << node.scrollingNodeID();
     dump(ts, node, changedPropertiesOnly);
 
-    if (node.children()) {
+    if (!node.children().isEmpty()) {
         TextStream::GroupScope group(ts);
         ts << "children";
 
-        for (auto& childNode : *node.children())
-            recursiveDumpNodes(ts, *childNode, changedPropertiesOnly);
+        for (auto& childNode : node.children())
+            recursiveDumpNodes(ts, childNode, changedPropertiesOnly);
     }
 }
 

@@ -59,7 +59,7 @@ TEST(WKWebExtensionController, Configuration)
 
 TEST(WKWebExtensionController, LoadingAndUnloadingContexts)
 {
-    _WKWebExtensionController *testController = [[_WKWebExtensionController alloc] init];
+    _WKWebExtensionController *testController = [[_WKWebExtensionController alloc] initWithConfiguration:_WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
 
     EXPECT_EQ(testController.extensions.count, 0ul);
     EXPECT_EQ(testController.extensionContexts.count, 0ul);
@@ -146,7 +146,7 @@ TEST(WKWebExtensionController, BackgroundPageLoading)
 
     _WKWebExtension *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources];
     _WKWebExtensionContext *testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
-    _WKWebExtensionController *testController = [[_WKWebExtensionController alloc] init];
+    _WKWebExtensionController *testController = [[_WKWebExtensionController alloc] initWithConfiguration:_WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
 
     EXPECT_EQ(testExtension.errors.count, 0ul);;
 
@@ -214,7 +214,7 @@ TEST(WKWebExtensionController, BackgroundPageWithModulesLoading)
 
     _WKWebExtension *testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources];
     _WKWebExtensionContext *testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
-    _WKWebExtensionController *testController = [[_WKWebExtensionController alloc] init];
+    _WKWebExtensionController *testController = [[_WKWebExtensionController alloc] initWithConfiguration:_WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
 
     EXPECT_EQ(testExtension.errors.count, 0ul);;
 

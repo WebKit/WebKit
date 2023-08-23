@@ -152,10 +152,9 @@ void ServiceWorkerNavigationPreloader::loadFromNetwork()
     m_networkLoad->start();
 }
 
-void ServiceWorkerNavigationPreloader::willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&&, ResourceResponse&& response, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
+void ServiceWorkerNavigationPreloader::willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&&, ResourceResponse&& response)
 {
-    didReceiveResponse(WTFMove(response), PrivateRelayed::No, [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](auto) mutable {
-        completionHandler({ });
+    didReceiveResponse(WTFMove(response), PrivateRelayed::No, [weakThis = WeakPtr { *this }](auto) {
         if (weakThis)
             weakThis->didComplete();
     });

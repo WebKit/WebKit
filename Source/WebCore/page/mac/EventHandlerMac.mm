@@ -486,10 +486,7 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, 
         auto* frameView = dynamicDowncast<LocalFrameView>(widget);
         if (!frameView)
             return false;
-        auto* localFrame = dynamicDowncast<LocalFrame>(frameView->frame());
-        if (!localFrame)
-            return false;
-        return localFrame->eventHandler().handleWheelEvent(wheelEvent, processingSteps);
+        return frameView->frame().eventHandler().handleWheelEvent(wheelEvent, processingSteps);
     }
 
     if ([currentNSEvent() type] != NSEventTypeScrollWheel || m_sendingEventToSubview)

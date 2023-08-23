@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ BlobRegistryTopOriginPartitioningEnabled=true BroadcastChannelOriginPartitioningEnabled=true ] -->
+<html>
+<head>
+<script src="../../../../resources/testharness.js"></script>
+<script src="../../../../resources/testharnessreport.js"></script>
+<script src="../../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+var test = async_test("Test for creating blob in iframe and then navigating to it from same-origin iframe and cross-origin main frames.");
+
+let blobURL = "";
+let step = 0;
+let timeoutId;
+let handle;
+
+function openBlobCreatingFrame(origin, step)
+{
+    debug(`Opening ${origin} as main frame with iframe origin https://localhost:8443 creating blob`);
+    handle = open(`${origin}/local/blob/resources/main-frame-with-iframe-creating-or-navigating-to-blob.html`, "test-main-frame-create-blob");
+    assert_true(!!handle, `Opening ${origin} main frame for blob creation in step ${step} failed`);
+    timeoutId = setTimeout(() => window.postMessage({ "status": "donefail", "message": `step ${step} timed out.` }, '*'), 2000);
+}
+
+function handleMessage(e, nextOrigin)
+{
+    let shouldStep = false;
+    if (e.data.status) {
+        if (e.data.status == "pass" || e.data.status == "done")
+            testPassed(`${e.data.message}`);
+        else if (e.data.status == "fail" || e.data.status == "donefail")
+            testFailed(`${e.data.message}`);
+        else
+            testfailed(`Unexpected status: ${e.data.status}`);
+        if (e.data.status == "done" || e.data.status == "donefail") {
+            assert_true(e.data.url && e.data.url !== "", `Blob URL is not defined in step ${step}, status: ${e.data.status}, message: ${e.data.message}`);
+            blobURL = encodeURI(e.data.url);
+            shouldStep = true;
+        }
+    } else {
+        testFailed(`Unexpected message: ${e.data.message}`);
+        shouldStep = true;
+    }
+
+    if (shouldStep) {
+        if (handle) {
+            handle.close();
+            handle = undefined;
+        }
+        step = step + 1;
+        if (step == 4) {
+            // Load main frame from 127.0.0.1, iframe is loaded from localhost, create blob that is partitioned as https://localhost:8443 under http://127.0.0.1:8000.
+            openBlobCreatingFrame(nextOrigin, step);
+        } else if (!nextOrigin)
+            return;
+        else {
+            debug(`Opening ${nextOrigin} as main frame with iframe origin https://localhost:8443`);
+            assert_true(blobURL && blobURL !== "");
+            handle = open(`${nextOrigin}/local/blob/resources/main-frame-with-iframe-creating-or-navigating-to-blob.html?url=${blobURL}`, "test-main-frame");
+            assert_true(!!handle, `Opening ${origin} main frame for blob navigation in step ${step} failed`);
+            timeoutId = setTimeout(() => window.postMessage({ "status": "donefail", "message": `step ${step} timed out.`, "url": blobURL }, '*'), 2000);
+        }
+    }
+}
+
+window.onload = () => {
+    // Load main frame from localhost, iframe is loaded from localhost, blob is partitioned as https://localhost:8443 under https://localhost:8443. Blob is accessible from https://localhost:8443.
+    openBlobCreatingFrame(`https://localhost:8443`, step);
+}
+
+window.addEventListener("message", (e) => {
+    if (timeoutId) {
+        clearTimeout(timeoutId);
+        timeoutId = undefined;
+        handle = undefined;
+    } else if (handle == e.source) {
+        // If the timeout callback was already called, then don't handle this message, it's too late.
+        return;
+    }
+
+    if (step == 0) {
+        // On next step, load main frame from 127.0.0.1, iframe is loaded from localhost. Blob is not accessible from http://127.0.0.1:8000 iframe.
+        handleMessage(e, "http://127.0.0.1:8000");
+    } else if (step == 1) {
+        // On next step, load main frame from http://localhost, iframe is loaded from https://localhost. Blob is not accessible from http://localhost:8000 iframe.
+        handleMessage(e, "http://localhost:8000");
+    } else if (step == 2) {
+        // On next step, load main frame from https://localhost, iframe is loaded from https://localhost. Blob is accessible from https://localhost:8443 iframe.
+        handleMessage(e, "https://localhost:8443");
+    } else if (step == 3) {
+        // On next step, load main frame from http://127.0.0.1, iframe is loaded from https://localhost. Blob is not accessible from https://localhost:8443 iframe.
+        handleMessage(e, "http://127.0.0.1:8000");
+    } else if (step == 4) {
+        // On next step, load main frame from https://localhost, iframe is loaded from https://localhost. Blob is not accessible from https://localhost iframe.
+        handleMessage(e, "https://localhost:8443");
+    } else if (step == 5) {
+        // On next step, load main frame from http://localhost, iframe is loaded from https://localhost. Blob is not accessible from http://localhost:8000 iframe.
+        handleMessage(e, "http://localhost:8000");
+    } else if (step == 6) {
+        // On next step, load main frame from http://127.0.0.1, iframe is loaded from https://localhost. Blob is accessible from http://localhost:8000 iframe.
+        handleMessage(e, "http://127.0.0.1:8000");
+    } else if (step == 7) {
+        handleMessage(e);
+        if (step == 8 && e.data.status) {
+            if (e.data.status == "done" || e.data.status == "donefail")
+                test.done();
+        }
+    } else {
+        testFailed(`Unexpected step: ${step}, ${e.data.message}`);
+    }
+});
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

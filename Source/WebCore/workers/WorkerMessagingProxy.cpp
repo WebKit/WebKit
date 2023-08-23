@@ -28,6 +28,7 @@
 #include "config.h"
 #include "WorkerMessagingProxy.h"
 
+#include "BadgeClient.h"
 #include "CacheStorageProvider.h"
 #include "Chrome.h"
 #include "ContentSecurityPolicy.h"

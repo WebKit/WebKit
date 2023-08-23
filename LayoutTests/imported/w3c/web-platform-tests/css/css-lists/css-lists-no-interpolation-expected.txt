@@ -83,34 +83,34 @@ PASS Web Animations: property <counter-reset> from [initial] to [add 123] at (0.
 PASS Web Animations: property <counter-reset> from [initial] to [add 123] at (0.6) should be [add 123]
 PASS Web Animations: property <counter-reset> from [initial] to [add 123] at (1) should be [add 123]
 PASS Web Animations: property <counter-reset> from [initial] to [add 123] at (1.5) should be [add 123]
-FAIL CSS Transitions: property <counter-set> from [initial] to [add 123] at (-0.3) should be [add 123] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <counter-set> from [initial] to [add 123] at (0) should be [add 123] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <counter-set> from [initial] to [add 123] at (0.3) should be [add 123] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <counter-set> from [initial] to [add 123] at (0.5) should be [add 123] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <counter-set> from [initial] to [add 123] at (0.6) should be [add 123] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <counter-set> from [initial] to [add 123] at (1) should be [add 123] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <counter-set> from [initial] to [add 123] at (1.5) should be [add 123] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <counter-set> from [initial] to [add 123] at (-0.3) should be [add 123] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <counter-set> from [initial] to [add 123] at (0) should be [add 123] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <counter-set> from [initial] to [add 123] at (0.3) should be [add 123] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <counter-set> from [initial] to [add 123] at (0.5) should be [add 123] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <counter-set> from [initial] to [add 123] at (0.6) should be [add 123] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <counter-set> from [initial] to [add 123] at (1) should be [add 123] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <counter-set> from [initial] to [add 123] at (1.5) should be [add 123] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <counter-set> from [initial] to [add 123] at (-0.3) should be [initial] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <counter-set> from [initial] to [add 123] at (0) should be [initial] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <counter-set> from [initial] to [add 123] at (0.3) should be [initial] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <counter-set> from [initial] to [add 123] at (0.5) should be [add 123] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <counter-set> from [initial] to [add 123] at (0.6) should be [add 123] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <counter-set> from [initial] to [add 123] at (1) should be [add 123] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <counter-set> from [initial] to [add 123] at (1.5) should be [add 123] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <counter-set> from [initial] to [add 123] at (-0.3) should be [initial] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <counter-set> from [initial] to [add 123] at (0) should be [initial] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <counter-set> from [initial] to [add 123] at (0.3) should be [initial] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <counter-set> from [initial] to [add 123] at (0.5) should be [add 123] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <counter-set> from [initial] to [add 123] at (0.6) should be [add 123] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <counter-set> from [initial] to [add 123] at (1) should be [add 123] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <counter-set> from [initial] to [add 123] at (1.5) should be [add 123] assert_true: 'from' value should be supported expected true got false
+PASS CSS Transitions: property <counter-set> from [initial] to [add 123] at (-0.3) should be [add 123]
+PASS CSS Transitions: property <counter-set> from [initial] to [add 123] at (0) should be [add 123]
+PASS CSS Transitions: property <counter-set> from [initial] to [add 123] at (0.3) should be [add 123]
+PASS CSS Transitions: property <counter-set> from [initial] to [add 123] at (0.5) should be [add 123]
+PASS CSS Transitions: property <counter-set> from [initial] to [add 123] at (0.6) should be [add 123]
+PASS CSS Transitions: property <counter-set> from [initial] to [add 123] at (1) should be [add 123]
+PASS CSS Transitions: property <counter-set> from [initial] to [add 123] at (1.5) should be [add 123]
+PASS CSS Transitions with transition: all: property <counter-set> from [initial] to [add 123] at (-0.3) should be [add 123]
+PASS CSS Transitions with transition: all: property <counter-set> from [initial] to [add 123] at (0) should be [add 123]
+PASS CSS Transitions with transition: all: property <counter-set> from [initial] to [add 123] at (0.3) should be [add 123]
+PASS CSS Transitions with transition: all: property <counter-set> from [initial] to [add 123] at (0.5) should be [add 123]
+PASS CSS Transitions with transition: all: property <counter-set> from [initial] to [add 123] at (0.6) should be [add 123]
+PASS CSS Transitions with transition: all: property <counter-set> from [initial] to [add 123] at (1) should be [add 123]
+PASS CSS Transitions with transition: all: property <counter-set> from [initial] to [add 123] at (1.5) should be [add 123]
+PASS CSS Animations: property <counter-set> from [initial] to [add 123] at (-0.3) should be [initial]
+PASS CSS Animations: property <counter-set> from [initial] to [add 123] at (0) should be [initial]
+PASS CSS Animations: property <counter-set> from [initial] to [add 123] at (0.3) should be [initial]
+PASS CSS Animations: property <counter-set> from [initial] to [add 123] at (0.5) should be [add 123]
+PASS CSS Animations: property <counter-set> from [initial] to [add 123] at (0.6) should be [add 123]
+PASS CSS Animations: property <counter-set> from [initial] to [add 123] at (1) should be [add 123]
+PASS CSS Animations: property <counter-set> from [initial] to [add 123] at (1.5) should be [add 123]
+PASS Web Animations: property <counter-set> from [initial] to [add 123] at (-0.3) should be [initial]
+PASS Web Animations: property <counter-set> from [initial] to [add 123] at (0) should be [initial]
+PASS Web Animations: property <counter-set> from [initial] to [add 123] at (0.3) should be [initial]
+PASS Web Animations: property <counter-set> from [initial] to [add 123] at (0.5) should be [add 123]
+PASS Web Animations: property <counter-set> from [initial] to [add 123] at (0.6) should be [add 123]
+PASS Web Animations: property <counter-set> from [initial] to [add 123] at (1) should be [add 123]
+PASS Web Animations: property <counter-set> from [initial] to [add 123] at (1.5) should be [add 123]
 PASS CSS Transitions: property <list-style-position> from [initial] to [inside] at (-0.3) should be [inside]
 PASS CSS Transitions: property <list-style-position> from [initial] to [inside] at (0) should be [inside]
 PASS CSS Transitions: property <list-style-position> from [initial] to [inside] at (0.3) should be [inside]

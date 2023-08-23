@@ -78,7 +78,7 @@ void ContentVisibilityDocumentState::unobserve(Element& element)
         intersectionObserver->unobserve(element);
         state.updateOnScreenObservationTarget(element, false);
     }
-    element.setContentRelevancyStatus({ });
+    element.setContentRelevancy({ });
 }
 
 IntersectionObserver* ContentVisibilityDocumentState::intersectionObserver(Document& document)
@@ -94,24 +94,24 @@ IntersectionObserver* ContentVisibilityDocumentState::intersectionObserver(Docum
     return m_observer.get();
 }
 
-bool ContentVisibilityDocumentState::updateRelevancyOfContentVisibilityElements(const OptionSet<ContentRelevancyStatus>& relevancyToCheck)
+DidUpdateAnyContentRelevancy ContentVisibilityDocumentState::updateRelevancyOfContentVisibilityElements(const OptionSet<ContentRelevancy>& relevancyToCheck)
 {
-    bool didUpdateAnyContentRelevancy = false;
+    auto didUpdateAnyContentRelevancy = DidUpdateAnyContentRelevancy::No;
     for (auto target : m_observer->observationTargets()) {
         if (target) {
-            auto oldRelevancy = target->contentRelevancyStatus();
+            auto oldRelevancy = target->contentRelevancy();
             auto newRelevancy = oldRelevancy;
-            auto setRelevancyValue = [&](ContentRelevancyStatus reason, bool value) {
+            auto setRelevancyValue = [&](ContentRelevancy reason, bool value) {
                 if (value)
                     newRelevancy.add(reason);
                 else
                     newRelevancy.remove(reason);
             };
-            if (relevancyToCheck.contains(ContentRelevancyStatus::OnScreen))
-                setRelevancyValue(ContentRelevancyStatus::OnScreen, m_onScreenObservationTargets.contains(*target));
+            if (relevancyToCheck.contains(ContentRelevancy::OnScreen))
+                setRelevancyValue(ContentRelevancy::OnScreen, m_onScreenObservationTargets.contains(*target));
 
-            if (relevancyToCheck.contains(ContentRelevancyStatus::Focused))
-                setRelevancyValue(ContentRelevancyStatus::Focused, target->hasFocusWithin());
+            if (relevancyToCheck.contains(ContentRelevancy::Focused))
+                setRelevancyValue(ContentRelevancy::Focused, target->hasFocusWithin());
 
             auto hasTopLayerinSubtree = [](const Element& target) {
                 for (auto& element : target.document().topLayerElements()) {
@@ -120,14 +120,14 @@ bool ContentVisibilityDocumentState::updateRelevancyOfContentVisibilityElements(
                 }
                 return false;
             };
-            if (relevancyToCheck.contains(ContentRelevancyStatus::IsInTopLayer))
-                setRelevancyValue(ContentRelevancyStatus::IsInTopLayer, hasTopLayerinSubtree(*target));
+            if (relevancyToCheck.contains(ContentRelevancy::IsInTopLayer))
+                setRelevancyValue(ContentRelevancy::IsInTopLayer, hasTopLayerinSubtree(*target));
 
             if (oldRelevancy == newRelevancy)
                 continue;
-            target->setContentRelevancyStatus(newRelevancy);
+            target->setContentRelevancy(newRelevancy);
             target->invalidateStyle();
-            didUpdateAnyContentRelevancy = true;
+            didUpdateAnyContentRelevancy = DidUpdateAnyContentRelevancy::Yes;
         }
     }
     return didUpdateAnyContentRelevancy;
@@ -136,8 +136,8 @@ bool ContentVisibilityDocumentState::updateRelevancyOfContentVisibilityElements(
 // Workaround for lack of support for scroll anchoring. We make sure any content-visibility: auto elements
 // above the one to be scrolled to are already hidden, so the scroll position will not need to be adjusted
 // later.
-// FIXME: remove when scroll anchoring is implemented.
-void ContentVisibilityDocumentState::updateContentRelevancyStatusForScrollIfNeeded(const Element& scrollAnchor)
+// FIXME: remove when scroll anchoring is implemented (https://bugs.webkit.org/show_bug.cgi?id=259269).
+void ContentVisibilityDocumentState::updateContentRelevancyForScrollIfNeeded(const Element& scrollAnchor)
 {
     if (!m_observer)
         return;
@@ -160,7 +160,7 @@ void ContentVisibilityDocumentState::updateContentRelevancyStatusForScrollIfNeed
             }
         }
         updateOnScreenObservationTarget(*scrollAnchorRoot, true);
-        scrollAnchorRoot->document().scheduleContentRelevancyUpdate(ContentRelevancyStatus::OnScreen);
+        scrollAnchorRoot->document().scheduleContentRelevancyUpdate(ContentRelevancy::OnScreen);
         scrollAnchorRoot->document().updateRelevancyOfContentVisibilityElements();
     }
 }

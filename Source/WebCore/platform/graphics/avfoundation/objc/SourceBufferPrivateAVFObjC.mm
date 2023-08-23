@@ -72,7 +72,6 @@
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 @interface AVSampleBufferDisplayLayer (WebCoreAVSampleBufferDisplayLayerQueueManagementPrivate)
-- (void)prerollDecodeWithCompletionHandler:(void (^)(BOOL success))block;
 - (void)expectMinimumUpcomingSampleBufferPresentationTime: (CMTime)minimumUpcomingPresentationTime;
 - (void)resetUpcomingSampleBufferPresentationTimeExpectations;
 @end
@@ -289,28 +288,6 @@ static bool sampleBufferRenderersSupportKeySession()
     return supports;
 }
 
-static void bufferWasConsumedCallback(CMNotificationCenterRef, const void* listener, CFStringRef notificationName, const void*, CFTypeRef)
-{
-    if (!CFEqual(PAL::kCMSampleBufferConsumerNotification_BufferConsumed, notificationName))
-        return;
-
-    if (!isMainThread()) {
-        callOnMainThread([notificationName, listener] {
-            bufferWasConsumedCallback(nullptr, listener, notificationName, nullptr, nullptr);
-        });
-        return;
-    }
-
-    uint64_t mapID = reinterpret_cast<uint64_t>(listener);
-    if (!mapID) {
-        RELEASE_LOG(MediaSource, "bufferWasConsumedCallback - ERROR: didn't find ID %llu in map", mapID);
-        return;
-    }
-
-    if (auto sourceBuffer = sourceBufferMap().get(mapID).get())
-        sourceBuffer->bufferWasConsumed();
-}
-
 Ref<SourceBufferPrivateAVFObjC> SourceBufferPrivateAVFObjC::create(MediaSourcePrivateAVFObjC* parent, Ref<SourceBufferParser>&& parser)
 {
     return adoptRef(*new SourceBufferPrivateAVFObjC(parent, WTFMove(parser)));
@@ -332,9 +309,6 @@ SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    if (![PAL::getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(prerollDecodeWithCompletionHandler:)])
-        PAL::CMNotificationCenterAddListener(PAL::CMNotificationCenterGetDefaultLocalCenter(), reinterpret_cast<void*>(m_mapID), bufferWasConsumedCallback, PAL::kCMSampleBufferConsumerNotification_BufferConsumed, nullptr, 0);
-
 #if !RELEASE_LOG_DISABLED
     m_parser->setLogger(m_logger.get(), m_logIdentifier);
 #endif
@@ -350,9 +324,6 @@ SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC()
     destroyStreamDataParser();
     destroyRenderers();
     clearTracks();
-
-    if (![PAL::getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(prerollDecodeWithCompletionHandler:)])
-        PAL::CMNotificationCenterRemoveListener(PAL::CMNotificationCenterGetDefaultLocalCenter(), this, bufferWasConsumedCallback, PAL::kCMSampleBufferConsumerNotification_BufferConsumed, nullptr);
 
     abort();
 }
@@ -1295,34 +1266,20 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSampleAVFObjC>&& sample,
         if (player && !player->hasAvailableVideoFrame() && !sample->isNonDisplaying()) {
             DEBUG_LOG(logSiteIdentifier, "adding buffer attachment");
 
-            bool havePrerollDecodeWithCompletionHandler = [PAL::getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(prerollDecodeWithCompletionHandler:)];
+            [m_displayLayer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
+            [m_displayLayer prerollDecodeWithCompletionHandler:[this, logSiteIdentifier, weakThis = WeakPtr { *this }] (BOOL success) mutable {
+                callOnMainThread([this, logSiteIdentifier, weakThis = WTFMove(weakThis), success] () {
+                    if (!weakThis)
+                        return;
 
-            if (!havePrerollDecodeWithCompletionHandler) {
-                CMSampleBufferRef rawSampleCopy;
-                PAL::CMSampleBufferCreateCopy(kCFAllocatorDefault, platformSample.sample.cmSampleBuffer, &rawSampleCopy);
-                auto sampleCopy = adoptCF(rawSampleCopy);
-                PAL::CMSetAttachment(sampleCopy.get(), PAL::kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed, (__bridge CFDictionaryRef)@{ (__bridge NSString *)PAL::kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed : @YES }, kCMAttachmentMode_ShouldNotPropagate);
-                [m_displayLayer enqueueSampleBuffer:sampleCopy.get()];
-#if PLATFORM(IOS_FAMILY)
-                player->setHasAvailableVideoFrame(true);
-#endif
-            } else {
+                    if (!success) {
+                        ERROR_LOG(logSiteIdentifier, "prerollDecodeWithCompletionHandler failed");
+                        return;
+                    }
 
-                [m_displayLayer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
-                [m_displayLayer prerollDecodeWithCompletionHandler:[this, logSiteIdentifier, weakThis = WeakPtr { *this }] (BOOL success) mutable {
-                    callOnMainThread([this, logSiteIdentifier, weakThis = WTFMove(weakThis), success] () {
-                        if (!weakThis)
-                            return;
-
-                        if (!success) {
-                            ERROR_LOG(logSiteIdentifier, "prerollDecodeWithCompletionHandler failed");
-                            return;
-                        }
-
-                        weakThis->bufferWasConsumed();
-                    });
-                }];
-            }
+                    weakThis->bufferWasConsumed();
+                });
+            }];
         } else
             [m_displayLayer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
 

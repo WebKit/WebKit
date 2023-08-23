@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "BadgeClient.h"
 #include "CacheStorageProvider.h"
 #include "DocumentLoader.h"
 #include "EventLoop.h"
@@ -83,7 +84,7 @@ ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(UniqueRef<Page>&& page, Servi
     allServiceWorkerThreadProxies().add(this);
 
 #if ENABLE(REMOTE_INSPECTOR)
-    m_remoteDebuggable->setInspectable(true);
+    m_remoteDebuggable->setInspectable(m_page->inspectable());
     m_remoteDebuggable->init();
 #endif
 }
@@ -474,6 +475,13 @@ void ServiceWorkerThreadProxy::setAppBadge(std::optional<uint64_t> badge)
     callOnMainRunLoop([badge = WTFMove(badge), this, protectedThis = Ref { *this }] {
         m_page->badgeClient().setAppBadge(nullptr, SecurityOriginData::fromURL(scriptURL()), badge);
     });
+}
+
+void ServiceWorkerThreadProxy::setInspectable(bool inspectable)
+{
+    ASSERT(isMainThread());
+    m_page->setInspectable(inspectable);
+    m_remoteDebuggable->setInspectable(inspectable);
 }
 
 } // namespace WebCore

@@ -507,14 +507,9 @@ FontCascade::CodePath FontCascade::codePath(const TextRun& run, std::optional<un
     UNUSED_PARAM(to);
 #endif
 
-#if USE(FONT_VARIANT_VIA_FEATURES) || USE(FREETYPE)
-    // Because Font::applyTransforms() doesn't know which features to enable/disable in the simple code path, it can't properly handle feature or variant settings.
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=150791: @font-face features should also cause this to be complex.
-    if (m_fontDescription.featureSettings().size() > 0 || !m_fontDescription.variantSettings().isAllNormal())
-        return CodePath::Complex;
 
-#else
-
+#if (!USE(FONT_VARIANT_VIA_FEATURES) && !USE(FREETYPE))
     if (run.length() > 1 && (enableKerning() || requiresShaping()))
         return CodePath::Complex;
 #endif
@@ -1717,6 +1712,35 @@ DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const 
         }
     }
     return result;
+}
+
+bool shouldSynthesizeSmallCaps(bool dontSynthesizeSmallCaps, const Font* nextFont, UChar32 baseCharacter, std::optional<UChar32> capitalizedBase, FontVariantCaps fontVariantCaps, bool engageAllSmallCapsProcessing)
+{
+    if (fontVariantCaps == FontVariantCaps::Normal)
+        return false;
+
+    if (dontSynthesizeSmallCaps)
+        return false;
+    if (!nextFont || nextFont == Font::systemFallback())
+        return false;
+    if (engageAllSmallCapsProcessing && isUnicodeCompatibleASCIIWhitespace(baseCharacter))
+        return false;
+    if (!engageAllSmallCapsProcessing && !capitalizedBase)
+        return false;
+    return !nextFont->variantCapsSupportedForSynthesis(fontVariantCaps);
+}
+
+// FIXME: Capitalization is language-dependent and context-dependent and should operate on grapheme clusters instead of codepoints.
+std::optional<UChar32> capitalized(UChar32 baseCharacter)
+{
+    if (U_GET_GC_MASK(baseCharacter) & U_GC_M_MASK)
+        return std::nullopt;
+
+    UChar32 uppercaseCharacter = u_toupper(baseCharacter);
+    ASSERT(uppercaseCharacter == baseCharacter || (U_IS_BMP(baseCharacter) == U_IS_BMP(uppercaseCharacter)));
+    if (uppercaseCharacter != baseCharacter)
+        return uppercaseCharacter;
+    return std::nullopt;
 }
 
 }

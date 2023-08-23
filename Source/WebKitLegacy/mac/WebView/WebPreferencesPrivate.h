@@ -231,7 +231,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL mediaDataLoadsAutomatically;
 @property (nonatomic) BOOL attachmentElementEnabled;
 @property (nonatomic) BOOL allowsInlineMediaPlaybackAfterFullscreen;
-@property (nonatomic) BOOL menuItemElementEnabled;
 @property (nonatomic) BOOL linkPreloadEnabled;
 @property (nonatomic) BOOL mediaUserGestureInheritsFromDocument;
 @property (nonatomic) BOOL isSecureContextAttributeEnabled;

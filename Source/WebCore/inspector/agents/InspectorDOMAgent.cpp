@@ -1957,7 +1957,7 @@ Ref<Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* node, int d
     auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
     if (pageAgent) {
         if (auto* frameView = node->document().view())
-            value->setFrameId(pageAgent->frameId(dynamicDowncast<LocalFrame>(frameView->frame())));
+            value->setFrameId(pageAgent->frameId(&frameView->frame()));
     }
 
     if (is<Element>(*node)) {

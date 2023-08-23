@@ -50,38 +50,45 @@ public:
         Ref<FontCustomPlatformData>
     >;
 
-    void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<ImageBuffer>&& imageBuffer)
+    void add(Ref<ImageBuffer>&& imageBuffer)
     {
+        auto renderingResourceIdentifier = imageBuffer->renderingResourceIdentifier();
         add<ImageBuffer>(renderingResourceIdentifier, WTFMove(imageBuffer), m_imageBufferCount);
     }
 
-    void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<NativeImage>&& image)
+    void add(Ref<NativeImage>&& image)
     {
+        auto renderingResourceIdentifier = image->renderingResourceIdentifier();
         add<RenderingResource>(renderingResourceIdentifier, WTFMove(image), m_renderingResourceCount);
     }
 
-    void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<DecomposedGlyphs>&& decomposedGlyphs)
+    void add(Ref<DecomposedGlyphs>&& decomposedGlyphs)
     {
+        auto renderingResourceIdentifier = decomposedGlyphs->renderingResourceIdentifier();
         add<RenderingResource>(renderingResourceIdentifier, WTFMove(decomposedGlyphs), m_renderingResourceCount);
     }
 
-    void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<Gradient>&& gradient)
+    void add(Ref<Gradient>&& gradient)
     {
+        auto renderingResourceIdentifier = gradient->renderingResourceIdentifier();
         add<RenderingResource>(renderingResourceIdentifier, WTFMove(gradient), m_renderingResourceCount);
     }
 
-    void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<Filter>&& filter)
+    void add(Ref<Filter>&& filter)
     {
+        auto renderingResourceIdentifier = filter->renderingResourceIdentifier();
         add<RenderingResource>(renderingResourceIdentifier, WTFMove(filter), m_renderingResourceCount);
     }
 
-    void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<Font>&& font)
+    void add(Ref<Font>&& font)
     {
+        auto renderingResourceIdentifier = font->renderingResourceIdentifier();
         add<Font>(renderingResourceIdentifier, WTFMove(font), m_fontCount);
     }
 
-    void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<FontCustomPlatformData>&& customPlatformData)
+    void add(Ref<FontCustomPlatformData>&& customPlatformData)
     {
+        auto renderingResourceIdentifier = customPlatformData->m_renderingResourceIdentifier;
         add<FontCustomPlatformData>(renderingResourceIdentifier, WTFMove(customPlatformData), m_customPlatformDataCount);
     }
 

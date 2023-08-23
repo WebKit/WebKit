@@ -316,36 +316,6 @@ NS_ASSUME_NONNULL_END
 #import <CoreMedia/CMSampleBuffer.h>
 #import <CoreMedia/CMSync.h>
 
-#if __has_include(<AVFoundation/AVSampleBufferRenderSynchronizer.h>)
-#import <AVFoundation/AVSampleBufferRenderSynchronizer.h>
-
-NS_ASSUME_NONNULL_BEGIN
-@interface AVSampleBufferRenderSynchronizer (AVSampleBufferRenderSynchronizerPrivate)
-- (void)removeRenderer:(id)renderer atTime:(CMTime)time withCompletionHandler:(void (^)(BOOL didRemoveRenderer))completionHandler;
-@end
-NS_ASSUME_NONNULL_END
-
-#else
-
-NS_ASSUME_NONNULL_BEGIN
-
-@interface AVSampleBufferRenderSynchronizer : NSObject
-- (CMTimebaseRef)timebase;
-- (float)rate;
-- (void)setRate:(float)rate;
-- (void)setRate:(float)rate time:(CMTime)time;
-- (NSArray *)renderers;
-- (void)addRenderer:(id)renderer;
-- (void)removeRenderer:(id)renderer atTime:(CMTime)time withCompletionHandler:(void (^)(BOOL didRemoveRenderer))completionHandler;
-- (id)addPeriodicTimeObserverForInterval:(CMTime)interval queue:(dispatch_queue_t)queue usingBlock:(void (^)(CMTime time))block;
-- (id)addBoundaryTimeObserverForTimes:(NSArray *)times queue:(dispatch_queue_t)queue usingBlock:(void (^)(void))block;
-- (void)removeTimeObserver:(id)observer;
-@end
-
-NS_ASSUME_NONNULL_END
-
-#endif // __has_include(<AVFoundation/AVSampleBufferRenderSynchronizer.h>)
-
 #if __has_include(<AVFoundation/AVSampleBufferDisplayLayer_Private.h>)
 #import <AVFoundation/AVSampleBufferDisplayLayer_Private.h>
 #elif __has_include(<AVFoundation/AVSampleBufferDisplayLayer.h>)
@@ -353,6 +323,7 @@ NS_ASSUME_NONNULL_END
 NS_ASSUME_NONNULL_BEGIN
 @interface AVSampleBufferDisplayLayer (VideoPerformanceMetrics)
 - (AVVideoPerformanceMetrics *)videoPerformanceMetrics;
+- (void)prerollDecodeWithCompletionHandler:(void (^)(BOOL success))block;
 @end
 NS_ASSUME_NONNULL_END
 #else
@@ -372,6 +343,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)requestMediaDataWhenReadyOnQueue:(dispatch_queue_t)queue usingBlock:(void (^)(void))block;
 - (void)stopRequestingMediaData;
 - (AVVideoPerformanceMetrics *)videoPerformanceMetrics;
+- (void)prerollDecodeWithCompletionHandler:(void (^)(BOOL success))block;
 @end
 NS_ASSUME_NONNULL_END
 #endif // __has_include(<AVFoundation/AVSampleBufferDisplayLayer.h>)

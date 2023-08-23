@@ -926,19 +926,19 @@ inline WKLayoutMilestones toWKLayoutMilestones(OptionSet<WebCore::LayoutMileston
 {
     unsigned wkMilestones = 0;
 
-    if (milestones & WebCore::DidFirstLayout)
+    if (milestones & WebCore::LayoutMilestone::DidFirstLayout)
         wkMilestones |= kWKDidFirstLayout;
-    if (milestones & WebCore::DidFirstVisuallyNonEmptyLayout)
+    if (milestones & WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout)
         wkMilestones |= kWKDidFirstVisuallyNonEmptyLayout;
-    if (milestones & WebCore::DidHitRelevantRepaintedObjectsAreaThreshold)
+    if (milestones & WebCore::LayoutMilestone::DidHitRelevantRepaintedObjectsAreaThreshold)
         wkMilestones |= kWKDidHitRelevantRepaintedObjectsAreaThreshold;
-    if (milestones & WebCore::DidFirstLayoutAfterSuppressedIncrementalRendering)
+    if (milestones & WebCore::LayoutMilestone::DidFirstLayoutAfterSuppressedIncrementalRendering)
         wkMilestones |= kWKDidFirstLayoutAfterSuppressedIncrementalRendering;
-    if (milestones & WebCore::DidFirstPaintAfterSuppressedIncrementalRendering)
+    if (milestones & WebCore::LayoutMilestone::DidFirstPaintAfterSuppressedIncrementalRendering)
         wkMilestones |= kWKDidFirstPaintAfterSuppressedIncrementalRendering;
-    if (milestones & WebCore::DidRenderSignificantAmountOfText)
+    if (milestones & WebCore::LayoutMilestone::DidRenderSignificantAmountOfText)
         wkMilestones |= kWKDidRenderSignificantAmountOfText;
-    if (milestones & WebCore::DidFirstMeaningfulPaint)
+    if (milestones & WebCore::LayoutMilestone::DidFirstMeaningfulPaint)
         wkMilestones |= kWKDidFirstMeaningfulPaint;
 
     return wkMilestones;
@@ -949,19 +949,19 @@ inline OptionSet<WebCore::LayoutMilestone> toLayoutMilestones(WKLayoutMilestones
     OptionSet<WebCore::LayoutMilestone> milestones;
 
     if (wkMilestones & kWKDidFirstLayout)
-        milestones.add(WebCore::DidFirstLayout);
+        milestones.add(WebCore::LayoutMilestone::DidFirstLayout);
     if (wkMilestones & kWKDidFirstVisuallyNonEmptyLayout)
-        milestones.add(WebCore::DidFirstVisuallyNonEmptyLayout);
+        milestones.add(WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout);
     if (wkMilestones & kWKDidHitRelevantRepaintedObjectsAreaThreshold)
-        milestones.add(WebCore::DidHitRelevantRepaintedObjectsAreaThreshold);
+        milestones.add(WebCore::LayoutMilestone::DidHitRelevantRepaintedObjectsAreaThreshold);
     if (wkMilestones & kWKDidFirstLayoutAfterSuppressedIncrementalRendering)
-        milestones.add(WebCore::DidFirstLayoutAfterSuppressedIncrementalRendering);
+        milestones.add(WebCore::LayoutMilestone::DidFirstLayoutAfterSuppressedIncrementalRendering);
     if (wkMilestones & kWKDidFirstPaintAfterSuppressedIncrementalRendering)
-        milestones.add(WebCore::DidFirstPaintAfterSuppressedIncrementalRendering);
+        milestones.add(WebCore::LayoutMilestone::DidFirstPaintAfterSuppressedIncrementalRendering);
     if (wkMilestones & kWKDidRenderSignificantAmountOfText)
-        milestones.add(WebCore::DidRenderSignificantAmountOfText);
+        milestones.add(WebCore::LayoutMilestone::DidRenderSignificantAmountOfText);
     if (wkMilestones & kWKDidFirstMeaningfulPaint)
-        milestones.add(WebCore::DidFirstMeaningfulPaint);
+        milestones.add(WebCore::LayoutMilestone::DidFirstMeaningfulPaint);
     
     return milestones;
 }

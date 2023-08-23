@@ -213,8 +213,6 @@
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HTMLImageElement.h>
 #include <WebCore/HTMLInputElement.h>
-#include <WebCore/HTMLMenuElement.h>
-#include <WebCore/HTMLMenuItemElement.h>
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/HTMLSelectElement.h>
 #include <WebCore/HTMLTextFormControlElement.h>
@@ -337,11 +335,6 @@
 #include <pal/spi/cg/ImageIOSPI.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/spi/darwin/SandboxSPI.h>
-#endif
-
-#if HAVE(TOUCH_BAR)
-#include "TouchBarMenuData.h"
-#include "TouchBarMenuItemData.h"
 #endif
 
 #if PLATFORM(GTK)
@@ -927,7 +920,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     setMuted(parameters.muted, [] { });
 
     // We use the DidFirstVisuallyNonEmptyLayout milestone to determine when to unfreeze the layer tree.
-    m_page->addLayoutMilestones({ DidFirstLayout, DidFirstVisuallyNonEmptyLayout });
+    m_page->addLayoutMilestones({ WebCore::LayoutMilestone::DidFirstLayout, WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout });
 
     auto& webProcess = WebProcess::singleton();
     webProcess.addMessageReceiver(Messages::WebPage::messageReceiverName(), m_identifier, *this);
@@ -3352,44 +3345,44 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page)
     PlatformMouseEvent platformMouseEvent = platform(mouseEvent);
 
     switch (platformMouseEvent.type()) {
-        case PlatformEvent::Type::MousePressed: {
+    case PlatformEvent::Type::MousePressed: {
 #if ENABLE(CONTEXT_MENUS)
-            if (isContextClick(platformMouseEvent))
-                page->corePage()->contextMenuController().clearContextMenu();
+        if (isContextClick(platformMouseEvent))
+            page->corePage()->contextMenuController().clearContextMenu();
 #endif
 
-            bool handled = page->corePage()->userInputBridge().handleMousePressEvent(platformMouseEvent);
+        bool handled = page->corePage()->userInputBridge().handleMousePressEvent(platformMouseEvent);
 #if ENABLE(CONTEXT_MENU_EVENT)
-            if (isContextClick(platformMouseEvent))
-                handled = handleContextMenuEvent(platformMouseEvent, page);
+        if (isContextClick(platformMouseEvent))
+            handled = handleContextMenuEvent(platformMouseEvent, page);
 #endif
-            return handled;
-        }
-        case PlatformEvent::Type::MouseReleased:
-            if (mouseEvent.gestureWasCancelled() == GestureWasCancelled::Yes)
-                localMainFrame->eventHandler().invalidateClick();
-            return page->corePage()->userInputBridge().handleMouseReleaseEvent(platformMouseEvent);
+        return handled;
+    }
+    case PlatformEvent::Type::MouseReleased:
+        if (mouseEvent.gestureWasCancelled() == GestureWasCancelled::Yes)
+            localMainFrame->eventHandler().invalidateClick();
+        return page->corePage()->userInputBridge().handleMouseReleaseEvent(platformMouseEvent);
 
-        case PlatformEvent::Type::MouseMoved:
+    case PlatformEvent::Type::MouseMoved:
 #if PLATFORM(COCOA)
-            // We need to do a full, normal hit test during this mouse event if the page is active or if a mouse
-            // button is currently pressed. It is possible that neither of those things will be true since on
-            // Lion when legacy scrollbars are enabled, WebKit receives mouse events all the time. If it is one
-            // of those cases where the page is not active and the mouse is not pressed, then we can fire a more
-            // efficient scrollbars-only version of the event.
-            if (!(page->corePage()->focusController().isActive() || (mouseEvent.button() != WebMouseEventButton::NoButton)))
-                return page->corePage()->userInputBridge().handleMouseMoveOnScrollbarEvent(platformMouseEvent);
+        // We need to do a full, normal hit test during this mouse event if the page is active or if a mouse
+        // button is currently pressed. It is possible that neither of those things will be true since on
+        // Lion when legacy scrollbars are enabled, WebKit receives mouse events all the time. If it is one
+        // of those cases where the page is not active and the mouse is not pressed, then we can fire a more
+        // efficient scrollbars-only version of the event.
+        if (!(page->corePage()->focusController().isActive() || (mouseEvent.button() != WebMouseEventButton::NoButton)))
+            return page->corePage()->userInputBridge().handleMouseMoveOnScrollbarEvent(platformMouseEvent);
 #endif
-            return page->corePage()->userInputBridge().handleMouseMoveEvent(platformMouseEvent);
+        return page->corePage()->userInputBridge().handleMouseMoveEvent(platformMouseEvent);
 
-        case PlatformEvent::Type::MouseForceChanged:
-        case PlatformEvent::Type::MouseForceDown:
-        case PlatformEvent::Type::MouseForceUp:
-            return page->corePage()->userInputBridge().handleMouseForceEvent(platformMouseEvent);
+    case PlatformEvent::Type::MouseForceChanged:
+    case PlatformEvent::Type::MouseForceDown:
+    case PlatformEvent::Type::MouseForceUp:
+        return page->corePage()->userInputBridge().handleMouseForceEvent(platformMouseEvent);
 
-        default:
-            ASSERT_NOT_REACHED();
-            return false;
+    default:
+        ASSERT_NOT_REACHED();
+        return false;
     }
 }
 
@@ -7346,42 +7339,6 @@ void WebPage::didFinishLoad(WebFrame& frame)
 #endif
 }
 
-void WebPage::didInsertMenuElement(HTMLMenuElement& element)
-{
-#if HAVE(TOUCH_BAR)
-    sendTouchBarMenuDataAddedUpdate(element);
-#else
-    UNUSED_PARAM(element);
-#endif
-}
-
-void WebPage::didRemoveMenuElement(HTMLMenuElement& element)
-{
-#if HAVE(TOUCH_BAR)
-    sendTouchBarMenuDataRemovedUpdate(element);
-#else
-    UNUSED_PARAM(element);
-#endif
-}
-
-void WebPage::didInsertMenuItemElement(HTMLMenuItemElement& element)
-{
-#if HAVE(TOUCH_BAR)
-    sendTouchBarMenuItemDataAddedUpdate(element);
-#else
-    UNUSED_PARAM(element);
-#endif
-}
-
-void WebPage::didRemoveMenuItemElement(HTMLMenuItemElement& element)
-{
-#if HAVE(TOUCH_BAR)
-    sendTouchBarMenuItemDataRemovedUpdate(element);
-#else
-    UNUSED_PARAM(element);
-#endif
-}
-
 void WebPage::testProcessIncomingSyncMessagesWhenWaitingForSyncReply(CompletionHandler<void(bool)>&& reply)
 {
     RELEASE_ASSERT(IPC::UnboundedSynchronousIPCScope::hasOngoingUnboundedSyncIPC());
@@ -7439,28 +7396,6 @@ void WebPage::scheduleFullEditorStateUpdate()
 
     m_page->scheduleRenderingUpdate(RenderingUpdateStep::LayerFlush);
 }
-
-#if HAVE(TOUCH_BAR)
-void WebPage::sendTouchBarMenuDataRemovedUpdate(HTMLMenuElement& element)
-{
-    send(Messages::WebPageProxy::TouchBarMenuDataChanged(TouchBarMenuData { }));
-}
-
-void WebPage::sendTouchBarMenuDataAddedUpdate(HTMLMenuElement& element)
-{
-    send(Messages::WebPageProxy::TouchBarMenuDataChanged(TouchBarMenuData {element}));
-}
-
-void WebPage::sendTouchBarMenuItemDataAddedUpdate(HTMLMenuItemElement& element)
-{
-    send(Messages::WebPageProxy::TouchBarMenuItemDataAdded(TouchBarMenuItemData {element}));
-}
-
-void WebPage::sendTouchBarMenuItemDataRemovedUpdate(HTMLMenuItemElement& element)
-{
-    send(Messages::WebPageProxy::TouchBarMenuItemDataRemoved(TouchBarMenuItemData {element}));
-}
-#endif
 
 void WebPage::flushPendingThemeColorChange()
 {
@@ -7747,12 +7682,12 @@ void WebPage::dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone
 
     // The drawing area might want to defer dispatch of didLayout to the UI process.
     if (m_drawingArea) {
-        static auto paintMilestones = OptionSet<WebCore::LayoutMilestone> { DidHitRelevantRepaintedObjectsAreaThreshold, DidFirstPaintAfterSuppressedIncrementalRendering, DidRenderSignificantAmountOfText, DidFirstMeaningfulPaint };
+        static auto paintMilestones = OptionSet<WebCore::LayoutMilestone> { WebCore::LayoutMilestone::DidHitRelevantRepaintedObjectsAreaThreshold, WebCore::LayoutMilestone::DidFirstPaintAfterSuppressedIncrementalRendering, WebCore::LayoutMilestone::DidRenderSignificantAmountOfText, WebCore::LayoutMilestone::DidFirstMeaningfulPaint };
         auto drawingAreaRelatedMilestones = milestones & paintMilestones;
         if (drawingAreaRelatedMilestones && m_drawingArea->addMilestonesToDispatch(drawingAreaRelatedMilestones))
             milestones.remove(drawingAreaRelatedMilestones);
     }
-    if (milestones.contains(DidFirstLayout) && localMainFrameView()) {
+    if (milestones.contains(WebCore::LayoutMilestone::DidFirstLayout) && localMainFrameView()) {
         // Ensure we never send DidFirstLayout milestone without updating the intrinsic size.
         updateIntrinsicContentSizeIfNeeded(localMainFrameView()->autoSizingIntrinsicContentSize());
     }

@@ -248,7 +248,11 @@ bool SWRegistrationDatabase::prepareDatabase(ShouldCreateIfNotExists shouldCreat
 
     m_database = makeUnique<SQLiteDatabase>();
     FileSystem::makeAllDirectories(m_directory);
+#if PLATFORM(MAC)
+    auto openResult  = m_database->open(databasePath, SQLiteDatabase::OpenMode::ReadWriteCreate, SQLiteDatabase::OpenOptions::CanSuspendWhileLocked);
+#else
     auto openResult  = m_database->open(databasePath);
+#endif
     if (!openResult) {
         auto lastError = m_database->lastError();
         if (lastError == SQLITE_CORRUPT && lastError == SQLITE_NOTADB) {

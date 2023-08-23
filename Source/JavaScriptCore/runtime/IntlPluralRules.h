@@ -102,6 +102,8 @@ private:
     unsigned m_minimumSignificantDigits { 0 };
     unsigned m_maximumSignificantDigits { 0 };
     unsigned m_roundingIncrement { 1 };
+    IntlTrailingZeroDisplay m_trailingZeroDisplay { IntlTrailingZeroDisplay::Auto };
+    RoundingMode m_roundingMode { RoundingMode::HalfExpand };
     IntlRoundingType m_roundingType { IntlRoundingType::FractionDigits };
     Type m_type { Type::Cardinal };
 };

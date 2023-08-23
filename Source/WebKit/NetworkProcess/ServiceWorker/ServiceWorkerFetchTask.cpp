@@ -541,7 +541,7 @@ bool ServiceWorkerFetchTask::convertToDownload(DownloadManager& manager, Downloa
 
     // FIXME: We might want to keep the service worker alive until the download ends.
     RefPtr<ServiceWorkerDownloadTask> serviceWorkerDownloadTask;
-    auto serviceWorkerDownloadLoad = makeUnique<NetworkLoad>(*m_loader, *session, [&](auto& client) {
+    auto serviceWorkerDownloadLoad = makeUnique<NetworkLoad>(*protectedLoader(), *session, [&](auto& client) {
         serviceWorkerDownloadTask =  ServiceWorkerDownloadTask::create(*session, client, *m_serviceWorkerConnection, m_serviceWorkerIdentifier, m_serverConnectionIdentifier, m_fetchIdentifier, request, downloadID);
         return serviceWorkerDownloadTask.copyRef();
     });
@@ -561,6 +561,11 @@ bool ServiceWorkerFetchTask::convertToDownload(DownloadManager& manager, Downloa
 MonotonicTime ServiceWorkerFetchTask::startTime() const
 {
     return m_preloader ? m_preloader->startTime() : MonotonicTime { };
+}
+
+RefPtr<NetworkResourceLoader> ServiceWorkerFetchTask::protectedLoader() const
+{
+    return m_loader.get();
 }
 
 } // namespace WebKit

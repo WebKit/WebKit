@@ -1,0 +1,16 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Summary
+
+Harness status: OK
+
+Found 1 tests
+
+1 Pass
+Details
+
+Result	Test Name	Message
+Pass	Test for creating blob in iframe and then transferring it cross-origin.	
+Asserts run

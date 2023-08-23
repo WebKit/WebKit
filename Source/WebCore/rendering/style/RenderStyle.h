@@ -267,6 +267,7 @@ using LayoutBoxExtent = RectEdges<LayoutUnit>;
 
 namespace Style {
 class CustomPropertyRegistry;
+struct ScopedName;
 }
 
 constexpr auto PublicPseudoIDBits = 9;
@@ -696,11 +697,11 @@ public:
     inline bool containsPaint() const;
     inline bool containsLayoutOrPaint() const;
     inline ContainerType containerType() const;
-    inline const Vector<AtomString>& containerNames() const;
+    inline const Vector<Style::ScopedName>& containerNames() const;
 
     inline ContentVisibility contentVisibility() const;
 
-    inline bool effectiveSkippedContent() const;
+    inline std::optional<ContentVisibility> skippedContentReason() const;
 
     inline ContainIntrinsicSizeType containIntrinsicWidthType() const;
     inline ContainIntrinsicSizeType containIntrinsicHeightType() const;
@@ -710,6 +711,8 @@ public:
     inline bool containIntrinsicHeightHasAuto() const;
     inline bool containIntrinsicLogicalWidthHasAuto() const;
     inline bool containIntrinsicLogicalHeightHasAuto() const;
+    inline void containIntrinsicWidthAddAuto();
+    inline void containIntrinsicHeightAddAuto();
     inline std::optional<Length> containIntrinsicWidth() const;
     inline std::optional<Length> containIntrinsicHeight() const;
     inline bool hasAutoLengthContainIntrinsicSize() const;
@@ -1269,7 +1272,7 @@ public:
 
     inline void setContain(OptionSet<Containment>);
     inline void setContainerType(ContainerType);
-    inline void setContainerNames(const Vector<AtomString>&);
+    inline void setContainerNames(const Vector<Style::ScopedName>&);
 
     inline void setContainIntrinsicWidthType(ContainIntrinsicSizeType);
     inline void setContainIntrinsicHeightType(ContainIntrinsicSizeType);
@@ -1278,7 +1281,7 @@ public:
 
     inline void setContentVisibility(ContentVisibility);
 
-    inline void setEffectiveSkippedContent(bool);
+    inline void setSkippedContentReason(ContentVisibility);
 
     inline void setListStyleType(ListStyleType);
     void setListStyleImage(RefPtr<StyleImage>&&);
@@ -1883,7 +1886,7 @@ public:
     static constexpr OptionSet<Containment> contentContainment();
     static constexpr ContainerType initialContainerType();
     static constexpr ContentVisibility initialContentVisibility();
-    static Vector<AtomString> initialContainerNames();
+    static Vector<Style::ScopedName> initialContainerNames();
     static double initialAspectRatioWidth() { return 1.0; }
     static double initialAspectRatioHeight() { return 1.0; }
 

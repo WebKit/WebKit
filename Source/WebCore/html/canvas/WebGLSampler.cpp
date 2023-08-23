@@ -34,9 +34,12 @@
 
 namespace WebCore {
 
-Ref<WebGLSampler> WebGLSampler::create(WebGLRenderingContextBase& ctx)
+RefPtr<WebGLSampler> WebGLSampler::create(WebGLRenderingContextBase& context)
 {
-    return adoptRef(*new WebGLSampler(ctx));
+    auto object = context.graphicsContextGL()->createSampler();
+    if (!object)
+        return nullptr;
+    return adoptRef(*new WebGLSampler { context, object });
 }
 
 WebGLSampler::~WebGLSampler()
@@ -47,10 +50,9 @@ WebGLSampler::~WebGLSampler()
     runDestructor();
 }
 
-WebGLSampler::WebGLSampler(WebGLRenderingContextBase& ctx)
-    : WebGLObject(ctx)
+WebGLSampler::WebGLSampler(WebGLRenderingContextBase& context, PlatformGLObject object)
+    : WebGLObject(context, object)
 {
-    setObject(ctx.graphicsContextGL()->createSampler());
 }
 
 void WebGLSampler::deleteObjectImpl(const AbstractLocker&, GraphicsContextGL* context3d, PlatformGLObject object)

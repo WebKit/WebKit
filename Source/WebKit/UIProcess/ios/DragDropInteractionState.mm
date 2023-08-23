@@ -38,6 +38,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+enum class AddPreviewViewToContainer : bool { No, Yes };
+
 static UIDragItem *dragItemMatchingIdentifier(id <UIDragSession> session, NSInteger identifier)
 {
     for (UIDragItem *item in session.items) {
@@ -48,7 +50,7 @@ static UIDragItem *dragItemMatchingIdentifier(id <UIDragSession> session, NSInte
     return nil;
 }
 
-static RetainPtr<UITargetedDragPreview> createTargetedDragPreview(UIImage *image, UIView *rootView, UIView *previewContainer, const FloatRect& frameInRootViewCoordinates, const Vector<FloatRect>& clippingRectsInFrameCoordinates, UIColor *backgroundColor, UIBezierPath *visiblePath)
+static RetainPtr<UITargetedDragPreview> createTargetedDragPreview(UIImage *image, UIView *rootView, UIView *previewContainer, const FloatRect& frameInRootViewCoordinates, const Vector<FloatRect>& clippingRectsInFrameCoordinates, UIColor *backgroundColor, UIBezierPath *visiblePath, AddPreviewViewToContainer addPreviewViewToContainer)
 {
     if (frameInRootViewCoordinates.isEmpty() || !image || !previewContainer.window)
         return nullptr;
@@ -77,6 +79,9 @@ static RetainPtr<UITargetedDragPreview> createTargetedDragPreview(UIImage *image
 
     if (visiblePath)
         [parameters setVisiblePath:visiblePath];
+
+    if (addPreviewViewToContainer == AddPreviewViewToContainer::Yes)
+        [previewContainer addSubview:imageView.get()];
 
     CGPoint centerInContainerCoordinates = { CGRectGetMidX(frameInContainerCoordinates), CGRectGetMidY(frameInContainerCoordinates) };
     auto target = adoptNS([[UIDragPreviewTarget alloc] initWithContainer:previewContainer center:centerInContainerCoordinates]);
@@ -229,7 +234,7 @@ void DragDropInteractionState::deliverDelayedDropPreview(UIView *contentView, UI
         return;
 
     auto textIndicatorImage = uiImageForImage(indicator.contentImage.get());
-    auto preview = createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, cocoaColor(indicator.estimatedBackgroundColor).get(), nil);
+    auto preview = createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, cocoaColor(indicator.estimatedBackgroundColor).get(), nil, AddPreviewViewToContainer::No);
     for (auto& itemAndPreviewProvider : m_delayedItemPreviewProviders)
         itemAndPreviewProvider.provider(preview.get());
     m_delayedItemPreviewProviders.clear();
@@ -297,7 +302,19 @@ void DragDropInteractionState::clearAllDelayedItemPreviewProviders()
     m_delayedItemPreviewProviders.clear();
 }
 
-UITargetedDragPreview *DragDropInteractionState::previewForDragItem(UIDragItem *item, UIView *contentView, UIView *previewContainer) const
+UITargetedDragPreview *DragDropInteractionState::previewForLifting(UIDragItem *item, UIView *contentView, UIView *previewContainer) const
+{
+    return createDragPreviewInternal(item, contentView, previewContainer, AddPreviewViewToContainer::No).autorelease();
+}
+
+UITargetedDragPreview *DragDropInteractionState::previewForCancelling(UIDragItem *item, UIView *contentView, UIView *previewContainer)
+{
+    auto preview = createDragPreviewInternal(item, contentView, previewContainer, AddPreviewViewToContainer::Yes);
+    m_previewViewForDragCancel = [preview view];
+    return preview.autorelease();
+}
+
+RetainPtr<UITargetedDragPreview> DragDropInteractionState::createDragPreviewInternal(UIDragItem *item, UIView *contentView, UIView *previewContainer, AddPreviewViewToContainer addPreviewViewToContainer) const
 {
     auto foundSource = activeDragSourceForItem(item);
     if (!foundSource)
@@ -308,23 +325,18 @@ UITargetedDragPreview *DragDropInteractionState::previewForDragItem(UIDragItem *
         if (shouldUseVisiblePathToCreatePreviewForDragSource(source)) {
             auto path = source.visiblePath.value();
             UIBezierPath *visiblePath = [UIBezierPath bezierPathWithCGPath:path.platformPath()];
-            return createTargetedDragPreview(source.image.get(), contentView, previewContainer, source.dragPreviewFrameInRootViewCoordinates, { }, nil, visiblePath).autorelease();
+            return createTargetedDragPreview(source.image.get(), contentView, previewContainer, source.dragPreviewFrameInRootViewCoordinates, { }, nil, visiblePath, addPreviewViewToContainer).autorelease();
         }
-        return createTargetedDragPreview(source.image.get(), contentView, previewContainer, source.dragPreviewFrameInRootViewCoordinates, { }, nil, nil).autorelease();
+        return createTargetedDragPreview(source.image.get(), contentView, previewContainer, source.dragPreviewFrameInRootViewCoordinates, { }, nil, nil, addPreviewViewToContainer).autorelease();
     }
 
     if (shouldUseTextIndicatorToCreatePreviewForDragSource(source)) {
         auto indicator = source.indicatorData.value();
         auto textIndicatorImage = uiImageForImage(indicator.contentImage.get());
-        return createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, cocoaColor(indicator.estimatedBackgroundColor).get(), nil).autorelease();
+        return createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, cocoaColor(indicator.estimatedBackgroundColor).get(), nil, addPreviewViewToContainer).autorelease();
     }
 
     return nil;
-}
-
-void DragDropInteractionState::dragSessionWillDelaySetDownAnimation(dispatch_block_t completion)
-{
-    m_dragCancelSetDownBlock = completion;
 }
 
 bool DragDropInteractionState::shouldRequestAdditionalItemForDragSession(id <UIDragSession> session) const
@@ -351,7 +363,6 @@ void DragDropInteractionState::stageDragItem(const DragItem& item, UIImage *drag
     m_adjustedPositionForDragEnd = item.eventPositionInContentCoordinates;
     m_stagedDragSource = {{
         item.sourceAction,
-        item.eventPositionInContentCoordinates,
         item.dragPreviewFrameInRootViewCoordinates,
         dragImage,
         item.image.indicatorData(),
@@ -380,11 +391,11 @@ void DragDropInteractionState::dragAndDropSessionsDidEnd()
 {
     clearAllDelayedItemPreviewProviders();
 
+    if (auto previewView = takePreviewViewForDragCancel())
+        [previewView removeFromSuperview];
+
     // If any of UIKit's completion blocks are still in-flight when the drag interaction ends, we need to ensure that they are still invoked
     // to prevent UIKit from getting into an inconsistent state.
-    if (auto completionBlock = takeDragCancelSetDownBlock())
-        completionBlock();
-
     if (auto completionBlock = takeAddDragItemCompletionBlock())
         completionBlock(@[ ]);
 
@@ -403,15 +414,20 @@ void DragDropInteractionState::updatePreviewsForActiveDragSources()
             continue;
 
         if (source.action.contains(DragSourceAction::Link)) {
-            dragItem.previewProvider = [title = retainPtr((NSString *)source.linkTitle), url = retainPtr((NSURL *)source.linkURL), center = source.adjustedOrigin] () -> UIDragPreview * {
-                UIURLDragPreviewView *previewView = [UIURLDragPreviewView viewWithTitle:title.get() URL:url.get()];
-                previewView.center = center;
-                auto parameters = adoptNS([[UIDragPreviewParameters alloc] initWithTextLineRects:@[ [NSValue valueWithCGRect:previewView.bounds] ]]);
-                [parameters setBackgroundColor:[UIColor colorWithDynamicProvider:[] (UITraitCollection *traitCollection) -> UIColor * {
+            dragItem.previewProvider = [title = retainPtr((NSString *)source.linkTitle), url = retainPtr((NSURL *)source.linkURL)] () -> UIDragPreview * {
+                RetainPtr preview = [UIDragPreview previewForURL:url.get() title:title.get()];
+#if PLATFORM(VISION)
+                // FIXME: This is a slightly unfortunate since we end up copying the preview parameters,
+                // and also create an extra `UIDragPreview` on visionOS. We can remove this workaround
+                // once UIKit addresses <rdar://114204432>.
+                auto adjustedParameters = [preview parameters];
+                adjustedParameters.backgroundColor = [UIColor colorWithDynamicProvider:[] (UITraitCollection *traitCollection) -> UIColor * {
                     WebCore::LocalCurrentTraitCollection localCurrentTraitCollection(traitCollection);
                     return [UIColor.systemBackgroundColor resolvedColorWithTraitCollection:UITraitCollection.currentTraitCollection];
-                }]];
-                return adoptNS([[UIDragPreview alloc] initWithView:previewView parameters:parameters.get()]).autorelease();
+                }];
+                preview = adoptNS([[UIDragPreview alloc] initWithView:[preview view] parameters:adjustedParameters]);
+#endif // PLATFORM(VISION)
+                return preview.autorelease();
             };
         }
 #if ENABLE(INPUT_TYPE_COLOR)

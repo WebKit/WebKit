@@ -2113,6 +2113,11 @@ void NetworkProcess::publishDownloadProgress(DownloadID downloadID, const URL& u
 }
 #endif
 
+void NetworkProcess::continueWillSendRequest(DownloadID downloadID, WebCore::ResourceRequest&& request)
+{
+    downloadManager().continueWillSendRequest(downloadID, WTFMove(request));
+}
+
 void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTask, ResponseCompletionHandler&& completionHandler, const ResourceResponse& response)
 {
     uint64_t destinationID = networkDataTask.pendingDownloadID().toUInt64();
@@ -2565,17 +2570,6 @@ void NetworkProcess::deletePushAndNotificationRegistration(PAL::SessionID sessio
     callback("Cannot find network session"_s);
 }
 
-void NetworkProcess::getOriginsWithPushAndNotificationPermissions(PAL::SessionID sessionID, CompletionHandler<void(const Vector<WebCore::SecurityOriginData>&)>&& callback)
-{
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
-    if (auto* session = networkSession(sessionID)) {
-        session->notificationManager().getOriginsWithPushAndNotificationPermissions(WTFMove(callback));
-        return;
-    }
-#endif
-    callback({ });
-}
-
 void NetworkProcess::hasPushSubscriptionForTesting(PAL::SessionID sessionID, URL&& scopeURL, CompletionHandler<void(bool)>&& callback)
 {
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
@@ -2994,5 +2988,15 @@ void NetworkProcess::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
 #endif
 }
 #endif
+
+#if ENABLE(SERVICE_WORKER)
+
+void NetworkProcess::setInspectionForServiceWorkersAllowed(PAL::SessionID sessionID, bool inspectable)
+{
+    if (auto* session = networkSession(sessionID))
+        session->setInspectionForServiceWorkersAllowed(inspectable);
+}
+
+#endif // ENABLE(SERVICE_WORKER)
 
 } // namespace WebKit

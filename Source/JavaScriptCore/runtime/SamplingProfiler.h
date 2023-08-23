@@ -31,6 +31,7 @@
 #include "CodeBlockHash.h"
 #include "JITCode.h"
 #include "MachineStackMarker.h"
+#include "NativeCallee.h"
 #include "PCToCodeOriginMap.h"
 #include "WasmCompilationMode.h"
 #include "WasmIndexOrName.h"
@@ -67,6 +68,7 @@ public:
         CalleeBits unverifiedCallee;
         CodeBlock* verifiedCodeBlock { nullptr };
         CallSiteIndex callSiteIndex;
+        NativeCallee::Category nativeCalleeCategory { NativeCallee::Category::InlineCache };
 #if ENABLE(WEBASSEMBLY)
         std::optional<Wasm::IndexOrName> wasmIndexOrName;
 #endif

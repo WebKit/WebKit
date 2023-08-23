@@ -33,17 +33,18 @@ namespace WebCore {
 class Document;
 class Element;
 
+enum class DidUpdateAnyContentRelevancy : bool { No, Yes };
+
 class ContentVisibilityDocumentState {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static void observe(Element&);
     static void unobserve(Element&);
 
-    void updateContentRelevancyStatusForScrollIfNeeded(const Element& scrollAnchor);
+    void updateContentRelevancyForScrollIfNeeded(const Element& scrollAnchor);
 
     bool hasObservationTargets() const { return m_observer && m_observer->hasObservationTargets(); }
-
-    bool updateRelevancyOfContentVisibilityElements(const OptionSet<ContentRelevancyStatus>&);
+    DidUpdateAnyContentRelevancy updateRelevancyOfContentVisibilityElements(const OptionSet<ContentRelevancy>&);
 
     void updateOnScreenObservationTarget(const Element&, bool);
 

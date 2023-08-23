@@ -163,11 +163,6 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connectio
 {
     for (auto& transaction : transactions)
         commitLayerTreeTransaction(connection, transaction.first, transaction.second);
-
-    if (std::exchange(m_commitLayerTreeMessageState, NeedsDisplayDidRefresh) == MissedCommit)
-        didRefreshDisplay();
-
-    scheduleDisplayRefreshCallbacks();
 }
 
 void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection& connection, const RemoteLayerTreeTransaction& layerTreeTransaction, const RemoteScrollingCoordinatorTransaction& scrollingTreeTransaction)
@@ -250,6 +245,13 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
     }
 
     m_webPageProxy.layerTreeCommitComplete();
+
+    if (!layerTreeTransaction.isMainFrameProcessTransaction())
+        connection.send(Messages::DrawingArea::DisplayDidRefresh(), m_identifier);
+    else if (std::exchange(m_commitLayerTreeMessageState, NeedsDisplayDidRefresh) == MissedCommit)
+        didRefreshDisplay();
+
+    scheduleDisplayRefreshCallbacks();
 
     if (didUpdateEditorState)
         m_webPageProxy.dispatchDidUpdateEditorState();

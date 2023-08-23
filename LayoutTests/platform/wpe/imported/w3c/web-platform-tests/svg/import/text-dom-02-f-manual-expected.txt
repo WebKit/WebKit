@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (16,30) size 683x320
+      RenderSVGText {text} at (10,18) size 410x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 410x15
+          chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 65 width 409.32: "Test that SVGTextContentElement methods work on UTF-16 code units"
+      RenderSVGText {text} at (10,50) size 148x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 148x13
+          chunk 1 text run 1 at (10.00,60.00) startOffset 0 endOffset 29 width 147.60: "Methods independent of layout"
+      RenderSVGText {text} at (50,40) size 12x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 12x12
+          chunk 1 text run 1 at (50.00,50.00) startOffset 0 endOffset 1 width 1.20: "a"
+          chunk 1 text run 2 at (51.20,50.00) startOffset 1 endOffset 3 width 1.80: "\x{D800}\x{DC00}"
+          chunk 1 text run 3 at (53.00,50.00) startOffset 3 endOffset 4 width 4.20: "b"
+      RenderSVGRect {rect} at (16,233) size 51x51 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=140.00] [width=30.00] [height=30.00]
+      RenderSVGText {text} at (50,143) size 158x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 158x21
+          chunk 1 text run 1 at (50.00,160.00) startOffset 0 endOffset 16 width 157.20: "getNumberOfChars"
+      RenderSVGRect {rect} at (16,300) size 51x50 [fill={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=180.00] [width=30.00] [height=30.00]
+      RenderSVGText {text} at (50,183) size 161x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 161x21
+          chunk 1 text run 1 at (50.00,200.00) startOffset 0 endOffset 18 width 160.80: "getSubStringLength"
+    RenderSVGContainer {g} at (16,518) size 418x60
+      RenderSVGText {text} at (10,311) size 251x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 251x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 250.20: "$Revision: 1.10 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -535,22 +535,51 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
     _page->didLayoutForCustomContentProvider();
 }
 
-ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
-- (void)_handleKeyUIEvent:(::UIEvent *)event
+- (BOOL)_tryToHandleKeyEventInCustomContentView:(UIPressesEvent *)event
 {
     // We only want to handle key events from the hardware keyboard when we are
     // first responder and a custom content view is installed; otherwise,
     // WKContentView will be the first responder and expects to get key events directly.
-    if ([self isFirstResponder] && event._hidEvent) {
+    if (self.isFirstResponder && event._hidEvent) {
         if ([_customContentView respondsToSelector:@selector(web_handleKeyEvent:)]) {
             if ([_customContentView web_handleKeyEvent:event])
-                return;
+                return YES;
         }
     }
-
-    [super _handleKeyUIEvent:event];
+    return NO;
 }
-ALLOW_DEPRECATED_IMPLEMENTATIONS_END
+
+- (void)pressesBegan:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event
+{
+    if ([self _tryToHandleKeyEventInCustomContentView:event])
+        return;
+
+    [super pressesBegan:presses withEvent:event];
+}
+
+- (void)pressesChanged:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event
+{
+    if ([self _tryToHandleKeyEventInCustomContentView:event])
+        return;
+
+    [super pressesChanged:presses withEvent:event];
+}
+
+- (void)pressesEnded:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event
+{
+    if ([self _tryToHandleKeyEventInCustomContentView:event])
+        return;
+
+    [super pressesEnded:presses withEvent:event];
+}
+
+- (void)pressesCancelled:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event
+{
+    if ([self _tryToHandleKeyEventInCustomContentView:event])
+        return;
+
+    [super pressesCancelled:presses withEvent:event];
+}
 
 - (void)_willInvokeUIScrollViewDelegateCallback
 {
@@ -1238,25 +1267,37 @@ static void addOverlayEventRegions(WebCore::PlatformLayerIdentifier layerID, con
 #endif
 }
 
-- (void)_zoomToPoint:(WebCore::FloatPoint)point atScale:(double)scale animated:(BOOL)animated
+- (void)_zoomToCenter:(WebCore::FloatPoint)center atScale:(double)scale animated:(BOOL)animated honorScrollability:(BOOL)honorScrollability
 {
-    CFTimeInterval duration = 0;
     CGFloat zoomScale = contentZoomScale(self);
 
-    if (animated) {
-        const double maximumZoomDuration = 0.4;
-        const double minimumZoomDuration = 0.1;
-        const double zoomDurationFactor = 0.3;
-
-        duration = std::min(std::abs(log(zoomScale) - log(scale)) * zoomDurationFactor + minimumZoomDuration, maximumZoomDuration);
-    }
-
-    if (scale != zoomScale)
+    auto scaleIsChanging = !WTF::areEssentiallyEqual<CGFloat>(scale, zoomScale);
+    if (scaleIsChanging)
         _page->willStartUserTriggeredZooming();
 
-    LOG_WITH_STREAM(VisibleRects, stream << "_zoomToPoint:" << point << " scale: " << scale << " duration:" << duration);
+    if (honorScrollability && !scaleIsChanging && ![_scrollView isScrollEnabled])
+        return;
 
-    [_scrollView _zoomToCenter:point scale:scale duration:duration];
+    LOG_WITH_STREAM(VisibleRects, stream << "_zoomToCenter:" << center << " scale: " << scale << " animated:" << animated);
+
+    auto bounds = [_scrollView bounds];
+    auto targetWidth = CGRectGetWidth(bounds) / scale;
+    auto targetHeight = CGRectGetHeight(bounds) / scale;
+    auto targetRect = CGRectMake(center.x() - targetWidth / 2, center.y() - targetHeight / 2, targetWidth, targetHeight);
+    if (!animated) {
+        [_scrollView zoomToRect:targetRect animated:NO];
+        return;
+    }
+
+    if (scaleIsChanging) {
+        [_scrollView zoomToRect:targetRect animated:YES];
+        return;
+    }
+
+    constexpr auto defaultAnimationDurationAtSameScale = 0.25;
+    [UIView animateWithDuration:defaultAnimationDurationAtSameScale animations:^{
+        [_scrollView zoomToRect:targetRect animated:NO];
+    }];
 }
 
 - (void)_zoomToRect:(WebCore::FloatRect)targetRect atScale:(double)scale origin:(WebCore::FloatPoint)origin animated:(BOOL)animated
@@ -1285,7 +1326,7 @@ static void addOverlayEventRegions(WebCore::PlatformLayerIdentifier layerID, con
     visibleRectAfterZoom.move(-topLeftObscuredInsetAfterZoom);
     visibleRectAfterZoom.expand(topLeftObscuredInsetAfterZoom + bottomRightObscuredInsetAfterZoom);
 
-    [self _zoomToPoint:visibleRectAfterZoom.center() atScale:scale animated:animated];
+    [self _zoomToCenter:visibleRectAfterZoom.center() atScale:scale animated:animated honorScrollability:YES];
 }
 
 static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOffset, WebCore::FloatSize contentSize, WebCore::FloatSize unobscuredContentSize)
@@ -1423,13 +1464,13 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)_zoomOutWithOrigin:(WebCore::FloatPoint)origin animated:(BOOL)animated
 {
-    [self _zoomToPoint:origin atScale:[_scrollView minimumZoomScale] animated:animated];
+    [self _zoomToCenter:origin atScale:[_scrollView minimumZoomScale] animated:animated honorScrollability:YES];
 }
 
 - (void)_zoomToInitialScaleWithOrigin:(WebCore::FloatPoint)origin animated:(BOOL)animated
 {
     ASSERT(_perProcessState.initialScaleFactor > 0);
-    [self _zoomToPoint:origin atScale:_perProcessState.initialScaleFactor animated:animated];
+    [self _zoomToCenter:origin atScale:_perProcessState.initialScaleFactor animated:animated honorScrollability:YES];
 }
 
 - (BOOL)_selectionRectIsFullyVisibleAndNonEmpty
@@ -1479,7 +1520,6 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     LOG_WITH_STREAM(VisibleRects, stream << "_zoomToFocusRect:" << focusedElementRectInDocumentCoordinates << " selectionRect:" << selectionRectInDocumentCoordinates);
 
     const double minimumHeightToShowContentAboveKeyboard = 106;
-    const CFTimeInterval formControlZoomAnimationDuration = 0.25;
     const double caretOffsetFromWindowEdge = 8;
 
     UIWindow *window = [_scrollView window];
@@ -1637,7 +1677,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     // The newCenter has been computed in the new scale, but _zoomToCenter expected the center to be in the original scale.
     newCenter.scale(1 / scale);
-    [_scrollView _zoomToCenter:newCenter scale:scale duration:formControlZoomAnimationDuration force:YES];
+    [self _zoomToCenter:newCenter atScale:scale animated:YES honorScrollability:NO];
 }
 
 - (double)_initialScaleFactor

@@ -467,7 +467,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmLoopOSREnterBBQJIT, void, (Probe::Context&
 
     // We just populated the callee in the frame before we entered this operation, so let's use it.
     CalleeBits calleeBits = *bitwise_cast<CalleeBits*>(bitwise_cast<uint8_t*>(context.fp()) + (unsigned)CallFrameSlot::callee * sizeof(Register));
-    BBQCallee& callee = *bitwise_cast<BBQCallee*>(calleeBits.asWasmCallee());
+    BBQCallee& callee = *bitwise_cast<BBQCallee*>(calleeBits.asNativeCallee());
 
     OSREntryData& entryData = tierUp.osrEntryData(loopIndex);
     RELEASE_ASSERT(entryData.loopIndex() == loopIndex);

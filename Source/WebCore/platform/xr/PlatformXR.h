@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 Igalia, S.L.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,6 +29,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -199,11 +201,15 @@ enum class HandJoint : unsigned {
 
 class TrackingAndRenderingClient;
 
-class Device : public ThreadSafeRefCounted<Device>, public CanMakeWeakPtr<Device> {
+class Device : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(Device);
 public:
     virtual ~Device() = default;
+
+    void ref() const { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device>::ref(); }
+    void deref() const { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device>::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device>::controlBlock(); }
 
     using FeatureList = Vector<SessionFeature>;
     bool supports(SessionMode mode) const { return m_supportedFeaturesMap.contains(mode); }
@@ -224,7 +230,6 @@ public:
     // to yield the device's max framebuffer resolution. This resolution can be larger than
     // the native resolution if the device supports supersampling.
     virtual double maxFramebufferScalingFactor() const { return nativeFramebufferScalingFactor(); }
-
 
     virtual void initializeTrackingAndRendering(const WebCore::SecurityOriginData&, SessionMode, const FeatureList&) = 0;
     virtual void shutDownTrackingAndRendering() = 0;

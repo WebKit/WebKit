@@ -780,7 +780,7 @@ void WebLocalFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCor
 
     RefPtr<API::Object> userData;
 
-    if (milestones & DidFirstLayout) {
+    if (milestones & WebCore::LayoutMilestone::DidFirstLayout) {
         WebLocalFrameLoaderClient_RELEASE_LOG(Layout, "dispatchDidReachLayoutMilestone: dispatching DidFirstLayoutForFrame");
 
         // FIXME: We should consider removing the old didFirstLayout API since this is doing double duty with the
@@ -804,14 +804,14 @@ void WebLocalFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCor
         }
     };
 
-    addIfSet(DidFirstLayout, "DidFirstLayout"_s);
-    addIfSet(DidFirstVisuallyNonEmptyLayout, "DidFirstVisuallyNonEmptyLayout"_s);
-    addIfSet(DidHitRelevantRepaintedObjectsAreaThreshold, "DidHitRelevantRepaintedObjectsAreaThreshold"_s);
-    addIfSet(DidFirstLayoutAfterSuppressedIncrementalRendering, "DidFirstLayoutAfterSuppressedIncrementalRendering"_s);
-    addIfSet(DidFirstPaintAfterSuppressedIncrementalRendering, "DidFirstPaintAfterSuppressedIncrementalRendering"_s);
-    addIfSet(ReachedSessionRestorationRenderTreeSizeThreshold, "ReachedSessionRestorationRenderTreeSizeThreshold"_s);
-    addIfSet(DidRenderSignificantAmountOfText, "DidRenderSignificantAmountOfText"_s);
-    addIfSet(DidFirstMeaningfulPaint, "DidFirstMeaningfulPaint"_s);
+    addIfSet(WebCore::LayoutMilestone::DidFirstLayout, "DidFirstLayout"_s);
+    addIfSet(WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout, "DidFirstVisuallyNonEmptyLayout"_s);
+    addIfSet(WebCore::LayoutMilestone::DidHitRelevantRepaintedObjectsAreaThreshold, "DidHitRelevantRepaintedObjectsAreaThreshold"_s);
+    addIfSet(WebCore::LayoutMilestone::DidFirstLayoutAfterSuppressedIncrementalRendering, "DidFirstLayoutAfterSuppressedIncrementalRendering"_s);
+    addIfSet(WebCore::LayoutMilestone::DidFirstPaintAfterSuppressedIncrementalRendering, "DidFirstPaintAfterSuppressedIncrementalRendering"_s);
+    addIfSet(WebCore::LayoutMilestone::ReachedSessionRestorationRenderTreeSizeThreshold, "ReachedSessionRestorationRenderTreeSizeThreshold"_s);
+    addIfSet(WebCore::LayoutMilestone::DidRenderSignificantAmountOfText, "DidRenderSignificantAmountOfText"_s);
+    addIfSet(WebCore::LayoutMilestone::DidFirstMeaningfulPaint, "DidFirstMeaningfulPaint"_s);
 
     WebLocalFrameLoaderClient_RELEASE_LOG(Layout, "dispatchDidReachLayoutMilestone: dispatching DidReachLayoutMilestone (milestones=%" PUBLIC_LOG_STRING ")", builder.toString().utf8().data());
 #endif
@@ -819,7 +819,7 @@ void WebLocalFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCor
     // Send this after DidFirstLayout-specific calls since some clients expect to get those messages first.
     webPage->dispatchDidReachLayoutMilestone(milestones);
 
-    if (milestones & DidFirstVisuallyNonEmptyLayout) {
+    if (milestones & WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout) {
         ASSERT(!m_frame->isMainFrame() || webPage->corePage()->settings().suppressesIncrementalRendering() || m_didCompletePageTransition);
         // FIXME: We should consider removing the old didFirstVisuallyNonEmptyLayoutForFrame API since this is doing double duty with the new didLayout API.
         WebLocalFrameLoaderClient_RELEASE_LOG(Layout, "dispatchDidReachLayoutMilestone: dispatching DidFirstVisuallyNonEmptyLayoutForFrame");
@@ -1295,6 +1295,10 @@ ResourceError WebLocalFrameLoaderClient::httpsUpgradeRedirectLoopError(const Res
     return WebKit::httpsUpgradeRedirectLoopError(request);
 }
 
+ResourceError WebLocalFrameLoaderClient::httpNavigationWithHTTPSOnlyError(const ResourceRequest& request) const
+{
+    return WebKit::httpNavigationWithHTTPSOnlyError(request);
+}
 
 ResourceError WebLocalFrameLoaderClient::pluginWillHandleLoadError(const ResourceResponse& response) const
 {

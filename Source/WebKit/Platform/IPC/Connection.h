@@ -735,6 +735,7 @@ template<typename T> Connection::SendSyncResult<T> Connection::sendSync(T&& mess
 
 template<typename T> Error Connection::waitForAndDispatchImmediately(uint64_t destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)
 {
+    static_assert(T::canDispatchOutOfOrder, "Can only use waitForAndDispatchImmediately on messages declared with CanDispatchOutOfOrder");
     auto decoderOrError = waitForMessage(T::name(), destinationID, timeout, waitForOptions);
     if (!decoderOrError.decoder)
         return decoderOrError.error;
@@ -749,6 +750,7 @@ template<typename T> Error Connection::waitForAndDispatchImmediately(uint64_t de
 
 template<typename T> Error Connection::waitForAsyncReplyAndDispatchImmediately(AsyncReplyID replyID, Timeout timeout)
 {
+    static_assert(T::replyCanDispatchOutOfOrder, "Can only use waitForAsyncReplyAndDispatchImmediately on messages declared with ReplyCanDispatchOutOfOrder");
     auto decoderOrError = waitForMessage(T::asyncMessageReplyName(), replyID.toUInt64(), timeout, { });
     if (!decoderOrError.decoder)
         return decoderOrError.error;

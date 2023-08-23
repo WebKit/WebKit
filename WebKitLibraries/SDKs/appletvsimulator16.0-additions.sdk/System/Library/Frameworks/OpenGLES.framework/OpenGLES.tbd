@@ -1,0 +1,6 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [x86_64-tvos-simulator, arm64-tvos-simulator]
+install-name: /System/Library/Frameworks/OpenGLES.framework/OpenGLES
+exports: []
+...

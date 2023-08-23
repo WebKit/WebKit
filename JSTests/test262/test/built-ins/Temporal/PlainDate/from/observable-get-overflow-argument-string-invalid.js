@@ -4,27 +4,18 @@
 /*---
 esid: sec-temporal.plaindate.from
 description: overflow property is extracted with ISO-invalid string argument.
-info: |
-    1. Perform ? ToTemporalOverflow(_options_).
-
-    1. If ! IsValidISODate(year, month, day) is false, throw a RangeError exception.
 includes: [compareArray.js, temporalHelpers.js]
 features: [Temporal]
 ---*/
 
 const expected = [
-  "get overflow",
-  "get overflow.toString",
-  "call overflow.toString",
+  "ownKeys options",
+  "getOwnPropertyDescriptor options.overflow",
+  "get options.overflow",
 ];
 
 let actual = [];
-const object = {
-  get overflow() {
-    actual.push("get overflow");
-    return TemporalHelpers.toPrimitiveObserver(actual, "constrain", "overflow");
-  }
-};
+const options = TemporalHelpers.propertyBagObserver(actual, { overflow: "constrain" }, "options");
 
-assert.throws(RangeError, () => Temporal.PlainDate.from("2020-13-34", object));
+assert.throws(RangeError, () => Temporal.PlainDate.from("2020-13-34", options));
 assert.compareArray(actual, expected);

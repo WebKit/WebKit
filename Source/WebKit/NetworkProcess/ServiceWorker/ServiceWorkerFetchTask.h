@@ -120,6 +120,8 @@ private:
     template<typename Message> bool sendToServiceWorker(Message&&);
     template<typename Message> bool sendToClient(Message&&);
 
+    RefPtr<NetworkResourceLoader> protectedLoader() const;
+
     WeakPtr<WebSWServerConnection> m_swServerConnection;
     WeakPtr<NetworkResourceLoader> m_loader;
     WeakPtr<WebSWServerToContextConnection> m_serviceWorkerConnection;

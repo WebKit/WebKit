@@ -194,6 +194,23 @@
 #define ALWAYS_INLINE_EXCEPT_MSVC ALWAYS_INLINE
 #endif
 
+
+/* ALWAYS_INLINE_LAMBDA */
+
+/* In GCC functions marked with no_sanitize_address cannot call functions that are marked with always_inline and not marked with no_sanitize_address.
+ * Therefore we need to give up on the enforcement of ALWAYS_INLINE_LAMBDA when bulding with ASAN. https://gcc.gnu.org/bugzilla/show_bug.cgi?id=67368 */
+#if !defined(ALWAYS_INLINE_LAMBDA) && COMPILER(GCC_COMPATIBLE) && defined(NDEBUG) && !COMPILER(MINGW) && !(COMPILER(GCC) && ASAN_ENABLED)
+#define ALWAYS_INLINE_LAMBDA __attribute__((__always_inline__))
+#endif
+
+#if !defined(ALWAYS_INLINE_LAMBDA) && COMPILER(MSVC) && defined(NDEBUG)
+#define ALWAYS_INLINE_LAMBDA [[msvc::forceinline]]
+#endif
+
+#if !defined(ALWAYS_INLINE_LAMBDA)
+#define ALWAYS_INLINE_LAMBDA
+#endif
+
 /* WTF_EXTERN_C_{BEGIN, END} */
 
 #ifdef __cplusplus

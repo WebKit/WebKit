@@ -43,6 +43,7 @@
 
 OBJC_CLASS AVSampleBufferAudioRenderer;
 OBJC_CLASS AVSampleBufferDisplayLayer;
+OBJC_CLASS AVSampleBufferRenderSynchronizer;
 
 typedef struct __CVBuffer *CVPixelBufferRef;
 

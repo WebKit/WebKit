@@ -35,6 +35,7 @@ namespace WebCore {
 
 class ANGLEInstancedArrays final : public RefCounted<ANGLEInstancedArrays>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(ANGLEInstancedArrays);
+    WTF_MAKE_NONCOPYABLE(ANGLEInstancedArrays);
 public:
     explicit ANGLEInstancedArrays(WebGLRenderingContextBase&);
     ~ANGLEInstancedArrays();

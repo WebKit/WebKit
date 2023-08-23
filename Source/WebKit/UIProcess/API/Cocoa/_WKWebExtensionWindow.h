@@ -75,7 +75,7 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @return The active tab in the window.
  @discussion Defaults to `nil` if not implemented.
  */
-- (id <_WKWebExtensionTab>)activeTabForWebExtensionContext:(_WKWebExtensionContext *)context;
+- (nullable id <_WKWebExtensionTab>)activeTabForWebExtensionContext:(_WKWebExtensionContext *)context;
 
 /*!
  @abstract Called when the type of the window is needed.
@@ -92,14 +92,6 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @discussion Defaults to`WKWebExtensionWindowStateNormal` if not implemented.
  */
 - (_WKWebExtensionWindowState)windowStateForWebExtensionContext:(_WKWebExtensionContext *)context;
-
-/*!
- @abstract Called when the focused state of the window is needed.
- @param context The context in which the web extension is running.
- @return `YES` if the window is focused, `NO` otherwise.
- @discussion Defaults to `NO` if not implemented.
- */
-- (BOOL)isFocusedForWebExtensionContext:(_WKWebExtensionContext *)context;
 
 /*!
  @abstract Called when the ephemeral state of the window is needed.

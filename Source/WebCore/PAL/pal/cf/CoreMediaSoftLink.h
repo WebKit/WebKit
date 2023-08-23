@@ -192,13 +192,6 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMFormatDescriptionGetMediaSubType
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMFormatDescriptionGetMediaType, CMMediaType, (CMFormatDescriptionRef desc), (desc))
 #define CMFormatDescriptionGetMediaType softLink_CoreMedia_CMFormatDescriptionGetMediaType
 
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMNotificationCenterGetDefaultLocalCenter, CMNotificationCenterRef, (void), ())
-#define CMNotificationCenterGetDefaultLocalCenter softLink_CoreMedia_CMNotificationCenterGetDefaultLocalCenter
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMNotificationCenterAddListener, OSStatus, (CMNotificationCenterRef center, const void* listener, CMNotificationCallback callback, CFStringRef notification, const void* object, UInt32 flags), (center, listener, callback, notification, object, flags))
-#define CMNotificationCenterAddListener softLink_CoreMedia_CMNotificationCenterAddListener
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMNotificationCenterRemoveListener, OSStatus, (CMNotificationCenterRef center, const void* listener, CMNotificationCallback callback, CFStringRef notification, const void* object), (center, listener, callback, notification, object))
-#define CMNotificationCenterRemoveListener softLink_CoreMedia_CMNotificationCenterRemoveListener
-
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferCreate, OSStatus, (CFAllocatorRef allocator, CMBlockBufferRef dataBuffer, Boolean dataReady, CMSampleBufferMakeDataReadyCallback makeDataReadyCallback, void* makeDataReadyRefcon, CMFormatDescriptionRef formatDescription, CMItemCount numSamples, CMItemCount numSampleTimingEntries, const CMSampleTimingInfo* sampleTimingArray, CMItemCount numSampleSizeEntries, const size_t* sampleSizeArray, CMSampleBufferRef* sBufOut), (allocator, dataBuffer, dataReady, makeDataReadyCallback, makeDataReadyRefcon, formatDescription, numSamples, numSampleTimingEntries, sampleTimingArray, numSampleSizeEntries, sampleSizeArray, sBufOut))
 #define CMSampleBufferCreate softLink_CoreMedia_CMSampleBufferCreate
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferCreateCopy, OSStatus, (CFAllocatorRef allocator, CMSampleBufferRef sbuf, CMSampleBufferRef* sbufCopyOut), (allocator, sbuf, sbufCopyOut))
@@ -320,8 +313,6 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMSampleAttachmentKey_DisplayImme
 #define kCMSampleAttachmentKey_DisplayImmediately get_CoreMedia_kCMSampleAttachmentKey_DisplayImmediately()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMSampleAttachmentKey_IsDependedOnByOthers, CFStringRef)
 #define kCMSampleAttachmentKey_IsDependedOnByOthers get_CoreMedia_kCMSampleAttachmentKey_IsDependedOnByOthers()
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMSampleBufferConsumerNotification_BufferConsumed, CFStringRef)
-#define kCMSampleBufferConsumerNotification_BufferConsumed get_CoreMedia_kCMSampleBufferConsumerNotification_BufferConsumed()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMSampleBufferAttachmentKey_EndsPreviousSampleDuration, CFStringRef)
 #define kCMSampleBufferAttachmentKey_EndsPreviousSampleDuration get_CoreMedia_kCMSampleBufferAttachmentKey_EndsPreviousSampleDuration()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMSampleBufferAttachmentKey_GradualDecoderRefresh, CFStringRef)
@@ -332,7 +323,7 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMSampleBufferAttachmentKey_FillD
 #define kCMSampleBufferAttachmentKey_FillDiscontinuitiesWithSilence get_CoreMedia_kCMSampleBufferAttachmentKey_FillDiscontinuitiesWithSilence()
 
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMTimebaseNotification_EffectiveRateChanged, CFStringRef)
-#define kCMTimebaseNotification_EffectiveRateChanged get_CoreMedia_kCMTimebaseNotification_EffectiveRateChanged()
+#define kCMTimebaseNotification_EffectiveRateChanged PAL::get_CoreMedia_kCMTimebaseNotification_EffectiveRateChanged()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMTimebaseNotification_TimeJumped, CFStringRef)
 #define kCMTimebaseNotification_TimeJumped get_CoreMedia_kCMTimebaseNotification_TimeJumped()
 

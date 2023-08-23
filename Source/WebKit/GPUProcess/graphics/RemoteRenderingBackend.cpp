@@ -181,14 +181,15 @@ uint64_t RemoteRenderingBackend::messageSenderDestinationID() const
     return m_renderingBackendIdentifier.toUInt64();
 }
 
-void RemoteRenderingBackend::didCreateImageBuffer(Ref<RemoteImageBuffer> imageBuffer, RenderingResourceIdentifier imageBufferIdentifier)
+void RemoteRenderingBackend::didCreateImageBuffer(Ref<RemoteImageBuffer> imageBuffer)
 {
     assertIsCurrent(workQueue());
+    auto imageBufferIdentifier = imageBuffer->renderingResourceIdentifier();
     auto remoteDisplayList = RemoteDisplayListRecorder::create(imageBuffer.get(), imageBufferIdentifier, *this);
     m_remoteDisplayLists.add(imageBufferIdentifier, WTFMove(remoteDisplayList));
     auto* sharing = imageBuffer->backend()->toBackendSharing();
     auto handle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
-    m_remoteResourceCache.cacheImageBuffer(WTFMove(imageBuffer), imageBufferIdentifier);
+    m_remoteResourceCache.cacheImageBuffer(WTFMove(imageBuffer));
     send(Messages::RemoteImageBufferProxy::DidCreateBackend(WTFMove(handle)), imageBufferIdentifier);
 }
 
@@ -215,13 +216,15 @@ void RemoteRenderingBackend::moveToImageBuffer(RenderingResourceIdentifier image
         return;
     }
 
+    ASSERT(imageBufferIdentifier == imageBuffer->renderingResourceIdentifier());
+
     ImageBufferCreationContext creationContext { nullptr };
 #if HAVE(IOSURFACE)
     creationContext.surfacePool = &ioSurfacePool();
 #endif
     creationContext.resourceOwner = m_resourceOwner;
     imageBuffer->backend()->transferToNewContext(creationContext);
-    didCreateImageBuffer(imageBuffer.releaseNonNull(), imageBufferIdentifier);
+    didCreateImageBuffer(imageBuffer.releaseNonNull());
 }
 
 void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingResourceIdentifier imageBufferIdentifier)
@@ -250,7 +253,7 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
         ASSERT_NOT_REACHED();
         return;
     }
-    didCreateImageBuffer(imageBuffer.releaseNonNull(), imageBufferIdentifier);
+    didCreateImageBuffer(imageBuffer.releaseNonNull());
 }
 
 void RemoteRenderingBackend::getPixelBufferForImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, PixelBufferFormat&& destinationFormat, IntRect&& srcRect, CompletionHandler<void()>&& completionHandler)
@@ -352,7 +355,7 @@ void RemoteRenderingBackend::cacheNativeImage(ShareableBitmap::Handle&& handle, 
     if (!image)
         return;
 
-    m_remoteResourceCache.cacheNativeImage(image.releaseNonNull(), nativeImageIdentifier);
+    m_remoteResourceCache.cacheNativeImage(image.releaseNonNull());
 }
 
 void RemoteRenderingBackend::cacheFont(const Font::Attributes& fontAttributes, FontPlatformData::Attributes platformData, std::optional<RenderingResourceIdentifier> fontCustomPlatformDataIdentifier)
@@ -369,31 +372,31 @@ void RemoteRenderingBackend::cacheFont(const Font::Attributes& fontAttributes, F
 
     Ref<Font> font = Font::create(platform, fontAttributes.origin, fontAttributes.isInterstitial, fontAttributes.visibility, fontAttributes.isTextOrientationFallback, fontAttributes.renderingResourceIdentifier);
 
-    m_remoteResourceCache.cacheFont(WTFMove(font), font->renderingResourceIdentifier());
+    m_remoteResourceCache.cacheFont(WTFMove(font));
 }
 
 void RemoteRenderingBackend::cacheFontCustomPlatformData(Ref<FontCustomPlatformData>&& customPlatformData)
 {
     ASSERT(!RunLoop::isMain());
-    m_remoteResourceCache.cacheFontCustomPlatformData(WTFMove(customPlatformData), customPlatformData->m_renderingResourceIdentifier);
+    m_remoteResourceCache.cacheFontCustomPlatformData(WTFMove(customPlatformData));
 }
 
 void RemoteRenderingBackend::cacheDecomposedGlyphs(Ref<DecomposedGlyphs>&& decomposedGlyphs)
 {
     ASSERT(!RunLoop::isMain());
-    m_remoteResourceCache.cacheDecomposedGlyphs(WTFMove(decomposedGlyphs), decomposedGlyphs->renderingResourceIdentifier());
+    m_remoteResourceCache.cacheDecomposedGlyphs(WTFMove(decomposedGlyphs));
 }
 
-void RemoteRenderingBackend::cacheGradient(Ref<Gradient>&& gradient, RenderingResourceIdentifier gradientIdentifier)
+void RemoteRenderingBackend::cacheGradient(Ref<Gradient>&& gradient)
 {
     ASSERT(!RunLoop::isMain());
-    m_remoteResourceCache.cacheGradient(WTFMove(gradient), gradientIdentifier);
+    m_remoteResourceCache.cacheGradient(WTFMove(gradient));
 }
 
-void RemoteRenderingBackend::cacheFilter(Ref<Filter>&& filter, RenderingResourceIdentifier filterIdentifier)
+void RemoteRenderingBackend::cacheFilter(Ref<Filter>&& filter)
 {
     ASSERT(!RunLoop::isMain());
-    m_remoteResourceCache.cacheFilter(WTFMove(filter), filterIdentifier);
+    m_remoteResourceCache.cacheFilter(WTFMove(filter));
 }
 
 void RemoteRenderingBackend::releaseAllDrawingResources()
@@ -444,11 +447,11 @@ void RemoteRenderingBackend::prepareBuffersForDisplay(Vector<PrepareBackingStore
 // This is the GPU Process version of RemoteLayerBackingStore::prepareBuffers().
 void RemoteRenderingBackend::prepareLayerBuffersForDisplay(const PrepareBackingStoreBuffersInputData& inputData, PrepareBackingStoreBuffersOutputData& outputData)
 {
-    auto fetchBuffer = [&](std::optional<RenderingResourceIdentifier> identifier) -> ImageBuffer* {
+    auto fetchBuffer = [&](std::optional<RenderingResourceIdentifier> identifier) -> RefPtr<ImageBuffer> {
         return identifier ? m_remoteResourceCache.cachedImageBuffer(*identifier) : nullptr;
     };
 
-    auto bufferIdentifier = [](ImageBuffer* buffer) -> std::optional<RenderingResourceIdentifier> {
+    auto bufferIdentifier = [](RefPtr<WebCore::ImageBuffer> buffer) -> std::optional<RenderingResourceIdentifier> {
         if (!buffer)
             return std::nullopt;
         return buffer->renderingResourceIdentifier();

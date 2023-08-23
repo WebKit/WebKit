@@ -37,9 +37,9 @@ class IntSize;
 
 class ImageGStreamer : public RefCounted<ImageGStreamer> {
 public:
-    static RefPtr<ImageGStreamer> createImage(GRefPtr<GstSample>&& sample)
+    static Ref<ImageGStreamer> createImage(GRefPtr<GstSample>&& sample)
     {
-        return adoptRef(new ImageGStreamer(WTFMove(sample)));
+        return adoptRef(*new ImageGStreamer(WTFMove(sample)));
     }
     ~ImageGStreamer();
 

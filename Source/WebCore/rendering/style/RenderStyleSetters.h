@@ -149,12 +149,11 @@ inline void RenderStyle::setContainIntrinsicHeight(std::optional<Length> height)
 inline void RenderStyle::setContainIntrinsicHeightType(ContainIntrinsicSizeType containIntrinsicHeightType) { SET_NESTED(m_nonInheritedData, rareData, containIntrinsicHeightType, static_cast<unsigned>(containIntrinsicHeightType)); }
 inline void RenderStyle::setContainIntrinsicWidth(std::optional<Length> width) { SET_NESTED(m_nonInheritedData, rareData, containIntrinsicWidth, width); }
 inline void RenderStyle::setContainIntrinsicWidthType(ContainIntrinsicSizeType containIntrinsicWidthType) { SET_NESTED(m_nonInheritedData, rareData, containIntrinsicWidthType, static_cast<unsigned>(containIntrinsicWidthType)); }
-inline void RenderStyle::setContainerNames(const Vector<AtomString>& names) { SET_NESTED(m_nonInheritedData, rareData, containerNames, names); }
+inline void RenderStyle::setContainerNames(const Vector<Style::ScopedName>& names) { SET_NESTED(m_nonInheritedData, rareData, containerNames, names); }
 inline void RenderStyle::setContainerType(ContainerType type) { SET_NESTED(m_nonInheritedData, rareData, containerType, static_cast<unsigned>(type)); }
 inline void RenderStyle::setContentVisibility(ContentVisibility value) { SET_NESTED(m_nonInheritedData, rareData, contentVisibility, static_cast<unsigned>(value)); }
 inline void RenderStyle::setEffectiveAppearance(StyleAppearance a) { SET_NESTED(m_nonInheritedData, miscData, effectiveAppearance, static_cast<unsigned>(a)); }
 inline void RenderStyle::setEffectiveInert(bool effectiveInert) { SET(m_rareInheritedData, effectiveInert, effectiveInert); }
-inline void RenderStyle::setEffectiveSkippedContent(bool effectiveSkippedContent) { SET(m_rareInheritedData, effectiveSkippedContent, effectiveSkippedContent); }
 inline void RenderStyle::setEffectiveTouchActions(OptionSet<TouchAction> touchActions) { SET(m_rareInheritedData, effectiveTouchActions, touchActions); }
 inline void RenderStyle::setEventListenerRegionTypes(OptionSet<EventListenerRegionType> eventListenerTypes) { SET(m_rareInheritedData, eventListenerRegionTypes, eventListenerTypes); }
 inline void RenderStyle::setFilter(const FilterOperations& ops) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, filter, operations, ops); }
@@ -277,6 +276,7 @@ inline void RenderStyle::setScrollbarColor(const std::optional<ScrollbarColor>& 
 inline void RenderStyle::setScrollbarThumbColor(const StyleColor& color) { m_rareInheritedData.access().scrollbarColor->thumbColor = color; }
 inline void RenderStyle::setScrollbarTrackColor(const StyleColor& color) { m_rareInheritedData.access().scrollbarColor->trackColor = color; }
 inline void RenderStyle::setShapeMargin(Length&& margin) { SET_NESTED(m_nonInheritedData, rareData, shapeMargin, WTFMove(margin)); }
+inline void RenderStyle::setSkippedContentReason(ContentVisibility effectiveSkippedContent) { SET(m_rareInheritedData, effectiveSkippedContent, static_cast<unsigned>(effectiveSkippedContent)); }
 inline void RenderStyle::setSpeakAs(OptionSet<SpeakAs> style) { SET(m_rareInheritedData, speakAs, style.toRaw()); }
 inline void RenderStyle::setSpecifiedZIndex(int value) { SET_NESTED_PAIR(m_nonInheritedData, boxData, m_hasAutoSpecifiedZIndex, false, m_specifiedZIndex, value); }
 inline void RenderStyle::setStrokeColor(const StyleColor& color) { SET(m_rareInheritedData, strokeColor, color); }
@@ -554,6 +554,22 @@ inline bool RenderStyle::setZoom(float zoomLevel)
         return false;
     m_nonInheritedData.access().rareData.access().zoom = zoomLevel;
     return true;
+}
+
+inline void RenderStyle::containIntrinsicWidthAddAuto()
+{
+    if (containIntrinsicWidthType() == ContainIntrinsicSizeType::None)
+        setContainIntrinsicWidthType(ContainIntrinsicSizeType::AutoAndNone);
+    else if (containIntrinsicWidthType() == ContainIntrinsicSizeType::Length)
+        setContainIntrinsicWidthType(ContainIntrinsicSizeType::AutoAndLength);
+}
+
+inline void RenderStyle::containIntrinsicHeightAddAuto()
+{
+    if (containIntrinsicHeightType() == ContainIntrinsicSizeType::None)
+        setContainIntrinsicHeightType(ContainIntrinsicSizeType::AutoAndNone);
+    else if (containIntrinsicHeightType() == ContainIntrinsicSizeType::Length)
+        setContainIntrinsicHeightType(ContainIntrinsicSizeType::AutoAndLength);
 }
 
 #if ENABLE(CSS_COMPOSITING)

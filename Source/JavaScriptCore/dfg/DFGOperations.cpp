@@ -1468,14 +1468,14 @@ JSC_DEFINE_JIT_OPERATION(operationRegExpMatchFastGlobalString, EncodedJSValue, (
         unsigned stringLength = s.length();
         RELEASE_AND_RETURN(scope, JSValue::encode(collectMatches(
             vm, globalObject, string, s, regExp,
-            [&] (size_t end) -> size_t {
+            [&](size_t end) ALWAYS_INLINE_LAMBDA {
                 return advanceStringUnicode(s, stringLength, end);
             })));
     }
 
     RELEASE_AND_RETURN(scope, JSValue::encode(collectMatches(
         vm, globalObject, string, s, regExp,
-        [&] (size_t end) -> size_t {
+        [](size_t end) ALWAYS_INLINE_LAMBDA {
             return end + 1;
         })));
 }

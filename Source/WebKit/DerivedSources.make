@@ -518,7 +518,6 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/ShareableBitmap.serialization.in \
 	Shared/TextFlags.serialization.in \
 	Shared/TextRecognitionResult.serialization.in \
-	Shared/TouchBarMenuItemData.serialization.in \
 	Shared/UserInterfaceIdiom.serialization.in \
 	Shared/WTFArgumentCoders.serialization.in \
 	Shared/WebCoreArgumentCoders.serialization.in \
@@ -620,6 +619,11 @@ SERIALIZATION_DESCRIPTION_FILES = \
 
 WEBCORE_SERIALIZATION_DESCRIPTION_FILES = \
 	HTTPHeaderNames.serialization.in \
+	ActivityState.serialization.in \
+	DragActions.serialization.in \
+	InbandTextTrackPrivate.serialization.in \
+	LayoutMilestones.serialization.in \
+	PlatformScreen.serialization.in \
 #
 
 WEBCORE_SERIALIZATION_DESCRIPTION_FILES_FULLPATH := $(foreach I,$(WEBCORE_SERIALIZATION_DESCRIPTION_FILES),$(WebCorePrivateHeaders)/$I)

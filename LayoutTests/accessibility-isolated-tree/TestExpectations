@@ -49,9 +49,6 @@ accessibility/mac/grid-selected-cells.html [ Failure ]
 accessibility/table-cells.html [ Failure ]
 accessibility/mac/document-links.html [ Failure ]
 
-# Fails because aria-labelledby text changes don't update in isolated tree mode
-accessibility/aria-labelledby-on-password-input.html [ Failure ]
-
 accessibility/aria-selected-menu-items.html [ Failure ]
 accessibility/aria-owns-hierarchy-remap.html [ Failure ]
 accessibility/element-reflection-ariaactivedescendant.html [ Failure ]

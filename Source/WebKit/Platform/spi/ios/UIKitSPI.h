@@ -62,6 +62,7 @@
 #import <UIKit/UIPickerView_Private.h>
 #import <UIKit/UIPopoverPresentationController_Private.h>
 #import <UIKit/UIPresentationController_Private.h>
+#import <UIKit/UIPress_Private.h>
 #import <UIKit/UIPrintPageRenderer_Private.h>
 #import <UIKit/UIResponder_Private.h>
 #import <UIKit/UIScene_Private.h>
@@ -125,8 +126,6 @@
 #import <UIKit/UIDragPreview_Private.h>
 #import <UIKit/UIDragSession.h>
 #import <UIKit/UIDropInteraction.h>
-#import <UIKit/UIPreviewInteraction.h>
-#import <UIKit/UIURLDragPreviewView.h>
 #import <UIKit/_UITextDragCaretView.h>
 #endif
 
@@ -215,6 +214,8 @@ typedef struct __IOHIDEvent* IOHIDEventRef;
 typedef struct __GSKeyboard* GSKeyboardRef;
 WTF_EXTERN_C_END
 
+@class UIPressInfo;
+
 @interface UIApplication ()
 - (UIInterfaceOrientation)interfaceOrientation;
 - (void)_cancelAllTouches;
@@ -222,7 +223,6 @@ WTF_EXTERN_C_END
 - (BOOL)isSuspendedUnderLock;
 - (void)_enqueueHIDEvent:(IOHIDEventRef)event;
 - (void)_handleHIDEvent:(IOHIDEventRef)event;
-- (void)handleKeyUIEvent:(UIEvent *)event;
 - (BOOL)_appAdoptsUISceneLifecycle;
 @end
 
@@ -500,7 +500,6 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 @end
 
 @interface UIResponder ()
-- (void)_handleKeyUIEvent:(UIEvent *)event;
 - (void)_wheelChangedWithEvent:(UIEvent *)event;
 - (void)_beginPinningInputViews;
 - (void)_endPinningInputViews;
@@ -525,8 +524,6 @@ typedef enum {
 
 @interface UIScrollView ()
 - (void)_stopScrollingAndZoomingAnimations;
-- (void)_zoomToCenter:(CGPoint)center scale:(CGFloat)scale duration:(CFTimeInterval)duration force:(BOOL)force;
-- (void)_zoomToCenter:(CGPoint)center scale:(CGFloat)scale duration:(CFTimeInterval)duration;
 - (double)_horizontalVelocity;
 - (double)_verticalVelocity;
 - (void)_flashScrollIndicatorsForAxes:(UIAxis)axes persistingPreviousFlashes:(BOOL)persisting;
@@ -1103,10 +1100,6 @@ WTF_EXTERN_C_END
 -(void)remove;
 @end
 
-@interface UIURLDragPreviewView : UIView
-+ (instancetype)viewWithTitle:(NSString *)title URL:(NSURL *)url;
-@end
-
 @interface _UIParallaxTransitionPanGestureRecognizer : UIScreenEdgePanGestureRecognizer
 @end
 
@@ -1407,6 +1400,14 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 - (void)prepareKeyboardInputModeFromPreferences:(UIKeyboardInputMode *)lastUsedMode;
 - (void)syncInputManagerToAcceptedAutocorrection:(TIKeyboardCandidate *)autocorrection forInput:(TIKeyboardInput *)inputEvent;
 @property (nonatomic, readonly) UIKeyboardInputMode *currentInputModeInPreference;
+@end
+
+@interface UIApplication (IPI)
+- (UIPressInfo *)_pressInfoForPhysicalKeyboardEvent:(UIPhysicalKeyboardEvent *)physicalKeyboardEvent;
+@end
+
+@interface UIPress (IPI)
+- (void)_loadStateFromPressInfo:(UIPressInfo *)pressInfo;
 @end
 
 @class CALayerHost;

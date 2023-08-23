@@ -33,25 +33,25 @@ static inline WKPageRenderingProgressEvents pageRenderingProgressEvents(OptionSe
 {
     WKPageRenderingProgressEvents events = 0;
     
-    if (milestones & WebCore::DidFirstLayout)
+    if (milestones & WebCore::LayoutMilestone::DidFirstLayout)
         events |= WKPageRenderingProgressEventFirstLayout;
     
-    if (milestones & WebCore::DidFirstVisuallyNonEmptyLayout)
+    if (milestones & WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout)
         events |= WKPageRenderingProgressEventFirstVisuallyNonEmptyLayout;
     
-    if (milestones & WebCore::DidHitRelevantRepaintedObjectsAreaThreshold)
+    if (milestones & WebCore::LayoutMilestone::DidHitRelevantRepaintedObjectsAreaThreshold)
         events |= WKPageRenderingProgressEventFirstPaintWithSignificantArea;
     
-    if (milestones & WebCore::ReachedSessionRestorationRenderTreeSizeThreshold)
+    if (milestones & WebCore::LayoutMilestone::ReachedSessionRestorationRenderTreeSizeThreshold)
         events |= WKPageRenderingProgressEventReachedSessionRestorationRenderTreeSizeThreshold;
     
-    if (milestones & WebCore::DidFirstLayoutAfterSuppressedIncrementalRendering)
+    if (milestones & WebCore::LayoutMilestone::DidFirstLayoutAfterSuppressedIncrementalRendering)
         events |= WKPageRenderingProgressEventFirstLayoutAfterSuppressedIncrementalRendering;
 
-    if (milestones & WebCore::DidFirstPaintAfterSuppressedIncrementalRendering)
+    if (milestones & WebCore::LayoutMilestone::DidFirstPaintAfterSuppressedIncrementalRendering)
         events |= WKPageRenderingProgressEventFirstPaintAfterSuppressedIncrementalRendering;
 
-    if (milestones & WebCore::DidFirstMeaningfulPaint)
+    if (milestones & WebCore::LayoutMilestone::DidFirstMeaningfulPaint)
         events |= WKPageRenderingProgressEventFirstMeaningfulPaint;
 
     return events;

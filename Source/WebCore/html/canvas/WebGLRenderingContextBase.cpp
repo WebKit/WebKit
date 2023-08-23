@@ -997,7 +997,7 @@ bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::Cal
 
     restoreStateAfterClear();
     if (m_framebufferBinding)
-        m_context->bindFramebuffer(bindingPoint, objectOrZero(m_framebufferBinding.get()));
+        m_context->bindFramebuffer(bindingPoint, m_framebufferBinding->object());
     m_layerCleared = true;
 
     return combinedClear;
@@ -1115,7 +1115,7 @@ void WebGLRenderingContextBase::reshape(int width, int height)
     m_context->bindTexture(GraphicsContextGL::TEXTURE_2D, objectOrZero(textureUnit.texture2DBinding.get()));
     m_context->bindRenderbuffer(GraphicsContextGL::RENDERBUFFER, objectOrZero(m_renderbufferBinding.get()));
     if (m_framebufferBinding)
-        m_context->bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, objectOrZero(m_framebufferBinding.get()));
+        m_context->bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_framebufferBinding->object());
 }
 
 int WebGLRenderingContextBase::drawingBufferWidth() const
@@ -1188,9 +1188,10 @@ void WebGLRenderingContextBase::activeTexture(GCGLenum texture)
 
 void WebGLRenderingContextBase::attachShader(WebGLProgram& program, WebGLShader& shader)
 {
+    if (isContextLost())
+        return;
     Locker locker { objectGraphLock() };
-
-    if (!validateWebGLProgramOrShader("attachShader", &program) || !validateWebGLProgramOrShader("attachShader", &shader))
+    if (!validateWebGLObject("attachShader", program) || !validateWebGLObject("attachShader", shader))
         return;
     if (!program.attachShader(locker, &shader)) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "attachShader", "shader attachment already has shader");
@@ -1202,7 +1203,9 @@ void WebGLRenderingContextBase::attachShader(WebGLProgram& program, WebGLShader&
 
 void WebGLRenderingContextBase::bindAttribLocation(WebGLProgram& program, GCGLuint index, const String& name)
 {
-    if (!validateWebGLProgramOrShader("bindAttribLocation", &program))
+    if (isContextLost())
+        return;
+    if (!validateWebGLObject("bindAttribLocation", program))
         return;
     if (!validateLocationLength("bindAttribLocation", name))
         return;
@@ -1217,18 +1220,6 @@ void WebGLRenderingContextBase::bindAttribLocation(WebGLProgram& program, GCGLui
         return;
     }
     m_context->bindAttribLocation(program.object(), index, name);
-}
-
-bool WebGLRenderingContextBase::validateNullableWebGLObject(const char* functionName, WebGLObject* object)
-{
-    if (isContextLost())
-        return false;
-    if (!object) {
-        // This differs in behavior to ValidateWebGLObject; null objects are allowed
-        // in these entry points.
-        return true;
-    }
-    return validateWebGLObject(functionName, object);
 }
 
 bool WebGLRenderingContextBase::validateBufferTarget(const char* functionName, GCGLenum target)
@@ -1281,15 +1272,14 @@ bool WebGLRenderingContextBase::validateAndCacheBufferBinding(const AbstractLock
         m_boundVertexArrayObject->setElementArrayBuffer(locker, buffer);
     }
 
-    if (buffer && !buffer->getTarget())
-        buffer->setTarget(target);
     return true;
 }
 
 void WebGLRenderingContextBase::bindBuffer(GCGLenum target, WebGLBuffer* buffer)
 {
+    if (isContextLost())
+        return;
     Locker locker { objectGraphLock() };
-
     if (!validateNullableWebGLObject("bindBuffer", buffer))
         return;
 
@@ -1301,8 +1291,9 @@ void WebGLRenderingContextBase::bindBuffer(GCGLenum target, WebGLBuffer* buffer)
 
 void WebGLRenderingContextBase::bindFramebuffer(GCGLenum target, WebGLFramebuffer* buffer)
 {
+    if (isContextLost())
+        return;
     Locker locker { objectGraphLock() };
-
     if (!validateNullableWebGLObject("bindFramebuffer", buffer))
         return;
 
@@ -1316,8 +1307,9 @@ void WebGLRenderingContextBase::bindFramebuffer(GCGLenum target, WebGLFramebuffe
 
 void WebGLRenderingContextBase::bindRenderbuffer(GCGLenum target, WebGLRenderbuffer* renderBuffer)
 {
+    if (isContextLost())
+        return;
     Locker locker { objectGraphLock() };
-
     if (!validateNullableWebGLObject("bindRenderbuffer", renderBuffer))
         return;
     if (target != GraphicsContextGL::RENDERBUFFER) {
@@ -1326,14 +1318,13 @@ void WebGLRenderingContextBase::bindRenderbuffer(GCGLenum target, WebGLRenderbuf
     }
     m_renderbufferBinding = renderBuffer;
     m_context->bindRenderbuffer(target, objectOrZero(renderBuffer));
-    if (renderBuffer)
-        renderBuffer->setHasEverBeenBound();
 }
 
 void WebGLRenderingContextBase::bindTexture(GCGLenum target, WebGLTexture* texture)
 {
+    if (isContextLost())
+        return;
     Locker locker { objectGraphLock() };
-
     if (!validateNullableWebGLObject("bindTexture", texture))
         return;
     if (texture && texture->getTarget() && texture->getTarget() != target) {
@@ -1354,8 +1345,6 @@ void WebGLRenderingContextBase::bindTexture(GCGLenum target, WebGLTexture* textu
         return;
     }
     m_context->bindTexture(target, objectOrZero(texture));
-    if (texture)
-        texture->setTarget(target);
 
     // Note: previously we used to automatically set the TEXTURE_WRAP_R
     // repeat mode to CLAMP_TO_EDGE for cube map textures, because OpenGL
@@ -1525,7 +1514,9 @@ void WebGLRenderingContextBase::colorMask(GCGLboolean red, GCGLboolean green, GC
 
 void WebGLRenderingContextBase::compileShader(WebGLShader& shader)
 {
-    if (!validateWebGLProgramOrShader("compileShader", &shader))
+    if (isContextLost())
+        return;
+    if (!validateWebGLObject("compileShader", shader))
         return;
     m_context->compileShader(shader.object());
 }
@@ -1609,7 +1600,9 @@ RefPtr<WebGLProgram> WebGLRenderingContextBase::createProgram()
     if (isContextLost())
         return nullptr;
     auto program = WebGLProgram::create(*this);
-    InspectorInstrumentation::didCreateWebGLProgram(*this, program.get());
+    if (!program)
+        return nullptr;
+    InspectorInstrumentation::didCreateWebGLProgram(*this, *program);
     return program;
 }
 
@@ -1792,9 +1785,10 @@ void WebGLRenderingContextBase::depthRange(GCGLfloat zNear, GCGLfloat zFar)
 
 void WebGLRenderingContextBase::detachShader(WebGLProgram& program, WebGLShader& shader)
 {
+    if (isContextLost())
+        return;
     Locker locker { objectGraphLock() };
-
-    if (!validateWebGLProgramOrShader("detachShader", &program) || !validateWebGLProgramOrShader("detachShader", &shader))
+    if (!validateWebGLObject("detachShader", program) || !validateWebGLObject("detachShader", shader))
         return;
     if (!program.detachShader(locker, &shader)) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "detachShader", "shader not attached");
@@ -1833,53 +1827,6 @@ bool WebGLRenderingContextBase::validateVertexArrayObject(const char* functionNa
 {
     if (!m_boundVertexArrayObject->areAllEnabledAttribBuffersBound()) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "no buffer is bound to enabled attribute");
-        return false;
-    }
-    return true;
-}
-
-bool WebGLRenderingContextBase::validateWebGLObject(const char* functionName, WebGLObject* object)
-{
-    if (isContextLost())
-        return false;
-    if (!object) {
-        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "object is null");
-        return false;
-    }
-    if (object->isDeleted()) {
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "attempt to use a deleted object");
-        return false;
-    }
-    if (!object->validate(*this)) {
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "object does not belong to this context");
-        return false;
-    }
-    return true;
-}
-
-bool WebGLRenderingContextBase::validateWebGLProgramOrShader(const char* functionName, WebGLObject* object)
-{
-    if (isContextLost())
-        return false;
-    if (!object) {
-        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "program or shader is null");
-        return false;
-    }
-    // OpenGL ES 3.0.5 p. 45:
-    // "Commands that accept shader or program object names will generate the
-    // error INVALID_VALUE if the provided name is not the name of either a shader
-    // or program object and INVALID_OPERATION if the provided name identifies an
-    // object that is not the expected type."
-    //
-    // Programs and shaders also have slightly different lifetime rules than other
-    // objects in the API; they continue to be usable after being marked for
-    // deletion.
-    if (!object->object()) {
-        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "attempt to use a deleted program or shader");
-        return false;
-    }
-    if (!object->validate(*this)) {
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "object does not belong to this context");
         return false;
     }
     return true;
@@ -2046,7 +1993,9 @@ void WebGLRenderingContextBase::generateMipmap(GCGLenum target)
 
 RefPtr<WebGLActiveInfo> WebGLRenderingContextBase::getActiveAttrib(WebGLProgram& program, GCGLuint index)
 {
-    if (!validateWebGLProgramOrShader("getActiveAttrib", &program))
+    if (isContextLost())
+        return nullptr;
+    if (!validateWebGLObject("getActiveAttrib", program))
         return nullptr;
     GraphicsContextGLActiveInfo info;
     if (!m_context->getActiveAttrib(program.object(), index, info))
@@ -2056,7 +2005,9 @@ RefPtr<WebGLActiveInfo> WebGLRenderingContextBase::getActiveAttrib(WebGLProgram&
 
 RefPtr<WebGLActiveInfo> WebGLRenderingContextBase::getActiveUniform(WebGLProgram& program, GCGLuint index)
 {
-    if (!validateWebGLProgramOrShader("getActiveUniform", &program))
+    if (isContextLost())
+        return nullptr;
+    if (!validateWebGLObject("getActiveUniform", program))
         return nullptr;
     GraphicsContextGLActiveInfo info;
     if (!m_context->getActiveUniform(program.object(), index, info))
@@ -2071,7 +2022,9 @@ RefPtr<WebGLActiveInfo> WebGLRenderingContextBase::getActiveUniform(WebGLProgram
 
 std::optional<Vector<RefPtr<WebGLShader>>> WebGLRenderingContextBase::getAttachedShaders(WebGLProgram& program)
 {
-    if (!validateWebGLProgramOrShader("getAttachedShaders", &program))
+    if (isContextLost())
+        return std::nullopt;
+    if (!validateWebGLObject("getAttachedShaders", program))
         return std::nullopt;
 
     const GCGLenum shaderTypes[] = {
@@ -2088,7 +2041,9 @@ std::optional<Vector<RefPtr<WebGLShader>>> WebGLRenderingContextBase::getAttache
 
 GCGLint WebGLRenderingContextBase::getAttribLocation(WebGLProgram& program, const String& name)
 {
-    if (!validateWebGLProgramOrShader("getAttribLocation", &program))
+    if (isContextLost())
+        return -1;
+    if (!validateWebGLObject("getAttribLocation", program))
         return -1;
     if (!validateLocationLength("getAttribLocation", name))
         return -1;
@@ -2418,7 +2373,7 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
         if (m_oesVertexArrayObject) {
             if (m_boundVertexArrayObject->isDefaultObject())
                 return nullptr;
-            return static_pointer_cast<WebGLVertexArrayObjectOES>(m_boundVertexArrayObject);
+            return RefPtr { static_cast<WebGLVertexArrayObjectOES*>(m_boundVertexArrayObject.get()) };
         }
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, OES_vertex_array_object not enabled");
         return nullptr;
@@ -2496,7 +2451,7 @@ WebGLAny WebGLRenderingContextBase::getProgramParameter(WebGLProgram& program, G
             return true;
         return nullptr;
     }
-    if (!validateWebGLProgramOrShader("getProgramParameter", &program))
+    if (!validateWebGLObject("getProgramParameter", program))
         return nullptr;
 
     switch (pname) {
@@ -2534,7 +2489,9 @@ WebGLAny WebGLRenderingContextBase::getProgramParameter(WebGLProgram& program, G
 
 String WebGLRenderingContextBase::getProgramInfoLog(WebGLProgram& program)
 {
-    if (!validateWebGLProgramOrShader("getProgramInfoLog", &program))
+    if (isContextLost())
+        return String { };
+    if (!validateWebGLObject("getProgramInfoLog", program))
         return String();
     return ensureNotNull(m_context->getProgramInfoLog(program.object()));
 }
@@ -2617,7 +2574,7 @@ WebGLAny WebGLRenderingContextBase::getShaderParameter(WebGLShader& shader, GCGL
             return true;
         return nullptr;
     }
-    if (!validateWebGLProgramOrShader("getShaderParameter", &shader))
+    if (!validateWebGLObject("getShaderParameter", shader))
         return nullptr;
 
     switch (pname) {
@@ -2640,7 +2597,9 @@ WebGLAny WebGLRenderingContextBase::getShaderParameter(WebGLShader& shader, GCGL
 
 String WebGLRenderingContextBase::getShaderInfoLog(WebGLShader& shader)
 {
-    if (!validateWebGLProgramOrShader("getShaderInfoLog", &shader))
+    if (isContextLost())
+        return String { };
+    if (!validateWebGLObject("getShaderInfoLog", shader))
         return String();
     return ensureNotNull(m_context->getShaderInfoLog(shader.object()));
 }
@@ -2678,7 +2637,9 @@ RefPtr<WebGLShaderPrecisionFormat> WebGLRenderingContextBase::getShaderPrecision
 
 String WebGLRenderingContextBase::getShaderSource(WebGLShader& shader)
 {
-    if (!validateWebGLProgramOrShader("getShaderSource", &shader))
+    if (isContextLost())
+        return String { };
+    if (!validateWebGLObject("getShaderSource", shader))
         return String();
     return ensureNotNull(shader.getSource());
 }
@@ -2709,7 +2670,9 @@ WebGLAny WebGLRenderingContextBase::getTexParameter(GCGLenum target, GCGLenum pn
 
 WebGLAny WebGLRenderingContextBase::getUniform(WebGLProgram& program, const WebGLUniformLocation& uniformLocation)
 {
-    if (!validateWebGLProgramOrShader("getUniform", &program))
+    if (isContextLost())
+        return nullptr;
+    if (!validateWebGLObject("getUniform", program))
         return nullptr;
     if (uniformLocation.program() != &program) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "getUniform", "no uniformlocation or not valid for this program");
@@ -2898,7 +2861,9 @@ WebGLAny WebGLRenderingContextBase::getUniform(WebGLProgram& program, const WebG
 
 RefPtr<WebGLUniformLocation> WebGLRenderingContextBase::getUniformLocation(WebGLProgram& program, const String& name)
 {
-    if (!validateWebGLProgramOrShader("getUniformLocation", &program))
+    if (isContextLost())
+        return nullptr;
+    if (!validateWebGLObject("getUniformLocation", program))
         return nullptr;
     if (!validateLocationLength("getUniformLocation", name))
         return nullptr;
@@ -3078,14 +3043,10 @@ void WebGLRenderingContextBase::hint(GCGLenum target, GCGLenum mode)
 
 GCGLboolean WebGLRenderingContextBase::isBuffer(WebGLBuffer* buffer)
 {
-    if (!buffer || isContextLost() || !buffer->validate(*this))
-        return 0;
-
-    if (!buffer->hasEverBeenBound())
-        return 0;
-    if (buffer->isDeleted())
-        return 0;
-
+    if (isContextLost())
+        return false;
+    if (!validateIsWebGLObject(buffer))
+        return false;
     return m_context->isBuffer(buffer->object());
 }
 
@@ -3105,64 +3066,46 @@ GCGLboolean WebGLRenderingContextBase::isEnabled(GCGLenum cap)
 
 GCGLboolean WebGLRenderingContextBase::isFramebuffer(WebGLFramebuffer* framebuffer)
 {
-    if (!framebuffer || isContextLost() || !framebuffer->validate(*this))
-        return 0;
-
-    if (!framebuffer->hasEverBeenBound())
-        return 0;
-    if (framebuffer->isDeleted())
-        return 0;
-
+    if (isContextLost())
+        return false;
+    if (!validateIsWebGLObject(framebuffer))
+        return false;
     return m_context->isFramebuffer(framebuffer->object());
 }
 
 GCGLboolean WebGLRenderingContextBase::isProgram(WebGLProgram* program)
 {
-    if (!program || isContextLost() || !program->validate(*this))
-        return 0;
-
-    // OpenGL ES special-cases the behavior of program objects; if they're deleted
-    // while attached to the current context state, glIsProgram is supposed to
-    // still return true. For this reason, isDeleted is not checked here.
-
+    if (isContextLost())
+        return false;
+    if (!validateIsWebGLObject(program))
+        return false;
     return m_context->isProgram(program->object());
 }
 
 GCGLboolean WebGLRenderingContextBase::isRenderbuffer(WebGLRenderbuffer* renderbuffer)
 {
-    if (!renderbuffer || isContextLost() || !renderbuffer->validate(*this))
-        return 0;
-
-    if (!renderbuffer->hasEverBeenBound())
-        return 0;
-    if (renderbuffer->isDeleted())
-        return 0;
-
+    if (isContextLost())
+        return false;
+    if (!validateIsWebGLObject(renderbuffer))
+        return false;
     return m_context->isRenderbuffer(renderbuffer->object());
 }
 
 GCGLboolean WebGLRenderingContextBase::isShader(WebGLShader* shader)
 {
-    if (!shader || isContextLost() || !shader->validate(*this))
+    if (isContextLost())
         return 0;
-
-    // OpenGL ES special-cases the behavior of shader objects; if they're deleted
-    // while attached to a program, glIsShader is supposed to still return true.
-    // For this reason, isDeleted is not checked here.
-
+    if (!validateIsWebGLObject(shader))
+        return false;
     return m_context->isShader(shader->object());
 }
 
 GCGLboolean WebGLRenderingContextBase::isTexture(WebGLTexture* texture)
 {
-    if (!texture || isContextLost() || !texture->validate(*this))
-        return 0;
-
-    if (!texture->hasEverBeenBound())
-        return 0;
-    if (texture->isDeleted())
-        return 0;
-
+    if (isContextLost())
+        return false;
+    if (!validateIsWebGLObject(texture))
+        return false;
     return m_context->isTexture(texture->object());
 }
 
@@ -3175,17 +3118,19 @@ void WebGLRenderingContextBase::lineWidth(GCGLfloat width)
 
 void WebGLRenderingContextBase::linkProgram(WebGLProgram& program)
 {
-    if (!linkProgramWithoutInvalidatingAttribLocations(&program))
+    if (!linkProgramWithoutInvalidatingAttribLocations(program))
         return;
 
     program.increaseLinkCount();
 }
 
-bool WebGLRenderingContextBase::linkProgramWithoutInvalidatingAttribLocations(WebGLProgram* program)
+bool WebGLRenderingContextBase::linkProgramWithoutInvalidatingAttribLocations(WebGLProgram& program)
 {
-    if (!validateWebGLProgramOrShader("linkProgram", program))
+    if (isContextLost())
         return false;
-    m_context->linkProgram(objectOrZero(program));
+    if (!validateWebGLObject("linkProgram", program))
+        return false;
+    m_context->linkProgram(program.object());
     return true;
 }
 
@@ -3420,7 +3365,9 @@ void WebGLRenderingContextBase::scissor(GCGLint x, GCGLint y, GCGLsizei width, G
 
 void WebGLRenderingContextBase::shaderSource(WebGLShader& shader, const String& string)
 {
-    if (!validateWebGLProgramOrShader("shaderSource", &shader))
+    if (isContextLost())
+        return;
+    if (!validateWebGLObject("shaderSource", shader))
         return;
     m_context->shaderSource(shader.object(), string);
     shader.setSource(string);
@@ -4845,8 +4792,9 @@ void WebGLRenderingContextBase::uniformMatrix4fv(const WebGLUniformLocation* loc
 
 void WebGLRenderingContextBase::useProgram(WebGLProgram* program)
 {
+    if (isContextLost())
+        return;
     Locker locker { objectGraphLock() };
-
     if (!validateNullableWebGLObject("useProgram", program))
         return;
     if (program && !program->getLinkStatus()) {
@@ -4876,7 +4824,9 @@ void WebGLRenderingContextBase::useProgram(WebGLProgram* program)
 
 void WebGLRenderingContextBase::validateProgram(WebGLProgram& program)
 {
-    if (!validateWebGLProgramOrShader("validateProgram", &program))
+    if (isContextLost())
+        return;
+    if (!validateWebGLObject("validateProgram", program))
         return;
     m_context->validateProgram(program.object());
 }
@@ -5841,9 +5791,6 @@ void WebGLRenderingContextBase::setBackDrawBuffer(GCGLenum buf)
 
 void WebGLRenderingContextBase::setFramebuffer(const AbstractLocker&, GCGLenum target, WebGLFramebuffer* buffer)
 {
-    if (buffer)
-        buffer->setHasEverBeenBound();
-
     if (target == GraphicsContextGL::FRAMEBUFFER || target == GraphicsContextGL::DRAW_FRAMEBUFFER)
         m_framebufferBinding = buffer;
     m_context->bindFramebuffer(target, objectOrZero(buffer));

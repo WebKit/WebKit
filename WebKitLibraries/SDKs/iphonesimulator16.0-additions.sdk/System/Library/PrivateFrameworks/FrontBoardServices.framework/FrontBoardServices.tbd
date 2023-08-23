@@ -1,0 +1,27 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator]
+install-name: /System/Library/PrivateFrameworks/FrontBoardServices.framework/FrontBoardServices
+current-version: 0
+reexported-libraries:
+-       targets: [i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator]
+        libraries: [/System/Library/PrivateFrameworks/BaseBoard.framework/BaseBoard, /System/Library/PrivateFrameworks/BoardServices.framework/BoardServices]
+exports:
+-       targets: [i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator]
+        symbols: [_FBSActivateForEventOptionTypeBackgroundContentFetching, _FBSOpenApplicationOptionKeyActivateForEvent, _FBSOpenApplicationOptionKeyPayloadOptions,
+                _FBSOpenApplicationOptionKeyPayloadURL]
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator]
+install-name: /System/Library/PrivateFrameworks/BaseBoard.framework/BaseBoard
+current-version: 0
+exports: []
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator]
+install-name: /System/Library/PrivateFrameworks/BoardServices.framework/BoardServices
+current-version: 0
+exports: []
+...

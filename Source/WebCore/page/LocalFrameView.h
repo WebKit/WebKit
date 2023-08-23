@@ -109,8 +109,7 @@ public:
     Type viewType() const final { return Type::Local; }
     void writeRenderTreeAsText(TextStream&, OptionSet<RenderAsTextFlag>) override;
 
-    // FIXME: This should return Frame. If it were a RemoteFrame, we would have a RemoteFrameView.
-    WEBCORE_EXPORT Frame& frame() const;
+    WEBCORE_EXPORT LocalFrame& frame() const;
 
     WEBCORE_EXPORT RenderView* renderView() const;
 

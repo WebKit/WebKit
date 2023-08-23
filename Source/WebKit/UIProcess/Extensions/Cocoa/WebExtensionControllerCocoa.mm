@@ -33,6 +33,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
+#import "Logging.h"
 #import "SandboxUtilities.h"
 #import "WebExtensionContext.h"
 #import "WebExtensionContextMessages.h"
@@ -64,12 +65,14 @@ bool WebExtensionController::load(WebExtensionContext& extensionContext, NSError
         *outError = nil;
 
     if (!m_extensionContexts.add(extensionContext)) {
+        RELEASE_LOG_ERROR(Extensions, "Extension context already loaded");
         if (outError)
             *outError = extensionContext.createError(WebExtensionContext::Error::AlreadyLoaded);
         return false;
     }
 
     if (!m_extensionContextBaseURLMap.add(extensionContext.baseURL(), extensionContext)) {
+        RELEASE_LOG_ERROR(Extensions, "Extension context already loaded with same base URL: %{private}@", (NSURL *)extensionContext.baseURL());
         m_extensionContexts.remove(extensionContext);
         if (outError)
             *outError = extensionContext.createError(WebExtensionContext::Error::BaseURLAlreadyInUse);
@@ -91,7 +94,7 @@ bool WebExtensionController::load(WebExtensionContext& extensionContext, NSError
 
     auto extensionDirectory = storageDirectory(extensionContext);
     if (!!extensionDirectory && !FileSystem::makeAllDirectories(extensionDirectory))
-        RELEASE_LOG(Extensions, "Failed to create directory %{public}s", extensionDirectory.utf8().data());
+        RELEASE_LOG_ERROR(Extensions, "Failed to create directory: %{private}@", (NSString *)extensionDirectory);
 
     if (!extensionContext.load(*this, extensionDirectory, outError)) {
         m_extensionContexts.remove(extensionContext);
@@ -116,6 +119,7 @@ bool WebExtensionController::unload(WebExtensionContext& extensionContext, NSErr
     Ref protectedExtensionContext = extensionContext;
 
     if (!m_extensionContexts.remove(extensionContext)) {
+        RELEASE_LOG_ERROR(Extensions, "Extension context not loaded");
         if (outError)
             *outError = extensionContext.createError(WebExtensionContext::Error::NotLoaded);
         return false;

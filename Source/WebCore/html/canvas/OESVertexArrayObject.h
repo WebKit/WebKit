@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+class WebGLVertexArrayObjectOES;
+
 class OESVertexArrayObject final : public RefCounted<OESVertexArrayObject>, public WebGLExtension<WebGLRenderingContext> {
     WTF_MAKE_ISO_ALLOCATED(OESVertexArrayObject);
 public:

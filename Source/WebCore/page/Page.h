@@ -22,13 +22,8 @@
 
 #include "ActivityState.h"
 #include "AnimationFrameRate.h"
-#include "BadgeClient.h"
 #include "Color.h"
 #include "ContentSecurityPolicy.h"
-#include "DisabledAdaptations.h"
-#include "Document.h"
-#include "EventTrackingRegions.h"
-#include "FilterRenderingMode.h"
 #include "FindOptions.h"
 #include "FrameLoaderTypes.h"
 #include "IntRectHash.h"
@@ -47,12 +42,10 @@
 #include "RegistrableDomain.h"
 #include "ScrollTypes.h"
 #include "ShouldRelaxThirdPartyCookieBlocking.h"
-#include "SpeechRecognitionConnection.h"
 #include "Supplementable.h"
 #include "Timer.h"
 #include "UserInterfaceLayoutDirection.h"
 #include "ViewportArguments.h"
-#include "VisibilityState.h"
 #include <memory>
 #include <pal/SessionID.h>
 #include <wtf/Assertions.h>
@@ -69,20 +62,8 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(COCOA)
-#include <wtf/SchedulePair.h>
-#endif
-
 #if ENABLE(APPLICATION_MANIFEST)
 #include "ApplicationManifest.h"
-#endif
-
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-#include "MediaPlaybackTargetContext.h"
-#endif
-
-#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
-#include "DeviceOrientationUpdateProvider.h"
 #endif
 
 namespace JSC {
@@ -94,7 +75,10 @@ class HysteresisActivity;
 }
 
 namespace WTF {
+class SchedulePair;
 class TextStream;
+struct SchedulePairHash;
+using SchedulePairHashSet = HashSet<RefPtr<SchedulePair>, SchedulePairHash>;
 }
 
 namespace WebCore {
@@ -111,6 +95,7 @@ class ApplicationCacheStorage;
 class AttachmentElementClient;
 class AuthenticatorCoordinator;
 class BackForwardController;
+class BadgeClient;
 class BroadcastChannelRegistry;
 class CacheStorageProvider;
 class Chrome;
@@ -118,6 +103,7 @@ class ContextMenuController;
 class CookieJar;
 class DOMRectList;
 class DatabaseProvider;
+class DeviceOrientationUpdateProvider;
 class DiagnosticLoggingClient;
 class DragCaretController;
 class DragController;
@@ -168,6 +154,7 @@ class Settings;
 class SocketProvider;
 class SpeechRecognitionProvider;
 class SpeechSynthesisClient;
+class SpeechRecognitionConnection;
 class StorageNamespace;
 class StorageNamespaceProvider;
 class StorageProvider;
@@ -192,13 +179,19 @@ struct TextRecognitionResult;
 using PlatformDisplayID = uint32_t;
 using SharedStringHash = uint32_t;
 
+enum class ActivityState : uint16_t;
 enum class CanWrap : bool;
 enum class DidWrap : bool;
+enum class DisabledAdaptations : uint8_t;
+enum class EventTrackingRegionsEventType : uint8_t;
+enum class FilterRenderingMode : uint8_t;
 enum class RouteSharingPolicy : uint8_t;
 enum class ShouldTreatAsContinuingLoad : uint8_t;
+enum class MediaPlaybackTargetContextMockState : uint8_t;
 enum class MediaProducerMediaState : uint32_t;
 enum class MediaProducerMediaCaptureKind : uint8_t;
 enum class MediaProducerMutedState : uint8_t;
+enum class VisibilityState : bool;
 
 using MediaProducerMediaStateFlags = OptionSet<MediaProducerMediaState>;
 using MediaProducerMutedStateFlags = OptionSet<MediaProducerMutedState>;
@@ -225,27 +218,27 @@ enum class RenderingUpdateStep : uint32_t {
     Animations                      = 1 << 3,
     Fullscreen                      = 1 << 4,
     AnimationFrameCallbacks         = 1 << 5,
-    IntersectionObservations        = 1 << 6,
-    ResizeObservations              = 1 << 7,
-    Images                          = 1 << 8,
-    WheelEventMonitorCallbacks      = 1 << 9,
-    CursorUpdate                    = 1 << 10,
-    EventRegionUpdate               = 1 << 11,
-    LayerFlush                      = 1 << 12,
+    UpdateContentRelevancy          = 1 << 6,
+    IntersectionObservations        = 1 << 7,
+    ResizeObservations              = 1 << 8,
+    Images                          = 1 << 9,
+    WheelEventMonitorCallbacks      = 1 << 10,
+    CursorUpdate                    = 1 << 11,
+    EventRegionUpdate               = 1 << 12,
+    LayerFlush                      = 1 << 13,
 #if ENABLE(ASYNC_SCROLLING)
-    ScrollingTreeUpdate             = 1 << 13,
+    ScrollingTreeUpdate             = 1 << 14,
 #endif
-    FlushAutofocusCandidates        = 1 << 14,
-    VideoFrameCallbacks             = 1 << 15,
-    PrepareCanvasesForDisplay       = 1 << 16,
-    CaretAnimation                  = 1 << 17,
-    FocusFixup                      = 1 << 18,
-    UpdateValidationMessagePositions= 1 << 19,
+    FlushAutofocusCandidates        = 1 << 15,
+    VideoFrameCallbacks             = 1 << 16,
+    PrepareCanvasesForDisplay       = 1 << 17,
+    CaretAnimation                  = 1 << 18,
+    FocusFixup                      = 1 << 19,
+    UpdateValidationMessagePositions= 1 << 20,
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    AccessibilityRegionUpdate       = 1 << 20,
+    AccessibilityRegionUpdate       = 1 << 21,
 #endif
-    RestoreScrollPositionAndViewState = 1 << 21,
-    UpdateContentRelevancy          = 1 << 22,
+    RestoreScrollPositionAndViewState = 1 << 22,
 };
 
 enum class LinkDecorationFilteringTrigger : uint8_t {
@@ -409,7 +402,7 @@ public:
     WEBCORE_EXPORT String synchronousScrollingReasonsAsText();
     WEBCORE_EXPORT Ref<DOMRectList> nonFastScrollableRectsForTesting();
 
-    WEBCORE_EXPORT Ref<DOMRectList> touchEventRectsForEventForTesting(EventTrackingRegions::EventType);
+    WEBCORE_EXPORT Ref<DOMRectList> touchEventRectsForEventForTesting(EventTrackingRegionsEventType);
     WEBCORE_EXPORT Ref<DOMRectList> passiveTouchEventListenerRectsForTesting();
 
     WEBCORE_EXPORT void settingsDidChange();
@@ -456,11 +449,11 @@ public:
 
 #if PLATFORM(COCOA)
     void platformInitialize();
-    WEBCORE_EXPORT void addSchedulePair(Ref<SchedulePair>&&);
-    WEBCORE_EXPORT void removeSchedulePair(Ref<SchedulePair>&&);
-    SchedulePairHashSet* scheduledRunLoopPairs() { return m_scheduledRunLoopPairs.get(); }
+    WEBCORE_EXPORT void addSchedulePair(Ref<WTF::SchedulePair>&&);
+    WEBCORE_EXPORT void removeSchedulePair(Ref<WTF::SchedulePair>&&);
+    WTF::SchedulePairHashSet* scheduledRunLoopPairs() { return m_scheduledRunLoopPairs.get(); }
 
-    std::unique_ptr<SchedulePairHashSet> m_scheduledRunLoopPairs;
+    std::unique_ptr<WTF::SchedulePairHashSet> m_scheduledRunLoopPairs;
 #endif
 
     WEBCORE_EXPORT const VisibleSelection& selection() const;
@@ -890,7 +883,7 @@ public:
     void showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier, const IntPoint&, bool, RouteSharingPolicy, const String&);
     void playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier, MediaProducerMediaStateFlags);
     WEBCORE_EXPORT void setMockMediaPlaybackTargetPickerEnabled(bool);
-    WEBCORE_EXPORT void setMockMediaPlaybackTargetPickerState(const String&, MediaPlaybackTargetContext::MockState);
+    WEBCORE_EXPORT void setMockMediaPlaybackTargetPickerState(const String&, MediaPlaybackTargetContextMockState);
     WEBCORE_EXPORT void mockMediaPlaybackTargetPickerDismissPopup();
 
     WEBCORE_EXPORT void setPlaybackTarget(PlaybackTargetClientContextIdentifier, Ref<MediaPlaybackTarget>&&);

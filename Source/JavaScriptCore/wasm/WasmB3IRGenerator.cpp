@@ -1101,7 +1101,7 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, OptimizingJITCallee&
         AllowMacroScratchRegisterUsage allowScratch(jit);
         code.emitDefaultPrologue(jit);
         GPRReg scratchGPR = wasmCallingConvention().prologueScratchGPRs[0];
-        jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxWasm(m_callee)), scratchGPR);
+        jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(m_callee)), scratchGPR);
         static_assert(CallFrameSlot::codeBlock + 1 == CallFrameSlot::callee);
         jit.storePairPtr(GPRInfo::wasmContextInstancePointer, scratchGPR, GPRInfo::callFrameRegister, CCallHelpers::TrustedImm32(CallFrameSlot::codeBlock * sizeof(Register)));
     });

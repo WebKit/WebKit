@@ -35,17 +35,19 @@
 
 namespace WebCore {
 
-Ref<WebGLShader> WebGLShader::create(WebGLRenderingContextBase& ctx, GCGLenum type)
+RefPtr<WebGLShader> WebGLShader::create(WebGLRenderingContextBase& context, GCGLenum type)
 {
-    return adoptRef(*new WebGLShader(ctx, type));
+    auto object = context.graphicsContextGL()->createShader(type);
+    if (!object)
+        return nullptr;
+    return adoptRef(*new WebGLShader(context, object, type));
 }
 
-WebGLShader::WebGLShader(WebGLRenderingContextBase& ctx, GCGLenum type)
-    : WebGLObject(ctx)
+WebGLShader::WebGLShader(WebGLRenderingContextBase& context, PlatformGLObject object, GCGLenum type)
+    : WebGLObject(context, object)
     , m_type(type)
     , m_source(emptyString())
 {
-    setObject(ctx.graphicsContextGL()->createShader(type));
 }
 
 WebGLShader::~WebGLShader()

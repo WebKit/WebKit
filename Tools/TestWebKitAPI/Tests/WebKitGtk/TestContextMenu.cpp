@@ -1167,6 +1167,8 @@ void beforeAll()
     kServer = new WebKitTestServer();
     kServer->run(serverCallback);
 
+    Test::shouldInitializeWebProcessExtensions = true;
+
     ContextMenuDefaultTest::add("WebKitWebView", "default-menu", testContextMenuDefaultMenu);
     ContextMenuDefaultTest::add("WebKitWebView", "context-menu-key", testContextMenuKey);
     ContextMenuDefaultTest::add("WebKitWebView", "popup-event-signal", testPopupEventSignal);

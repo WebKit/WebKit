@@ -1529,4 +1529,9 @@ class RebootWithUpdatedCrossTargetImage(shell.ShellCommandNewStyle):
     @defer.inlineCallbacks
     def run(self):
         rc = yield super().run()
-        defer.returnValue(FAILURE)
+        # The command reboot return success when it instructs the machine to reboot,
+        # but the machine can still take a while to stop services and actually reboot.
+        # Retry the build if reboot end sucesfully before the connection is lost.
+        if rc == SUCCESS:
+            self.build.buildFinished(['Rebooting with updated image, retrying build'], RETRY)
+        defer.returnValue(rc)

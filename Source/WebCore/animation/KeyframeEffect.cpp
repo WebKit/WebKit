@@ -680,7 +680,7 @@ auto KeyframeEffect::getKeyframes(Document& document) -> Vector<ComputedKeyframe
             return { };
 
         auto& backingAnimation = downcast<CSSAnimation>(*animation()).backingAnimation();
-        auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.nameStyleScopeOrdinal());
+        auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.name().scopeOrdinal);
         if (!styleScope)
             return { };
 
@@ -1072,8 +1072,8 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& una
 
     auto& backingAnimation = downcast<CSSAnimation>(*animation()).backingAnimation();
 
-    KeyframeList keyframeList(AtomString { backingAnimation.name().string });
-    if (auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.nameStyleScopeOrdinal()))
+    KeyframeList keyframeList(AtomString { backingAnimation.name().name });
+    if (auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.name().scopeOrdinal))
         styleScope->resolver().keyframeStylesForAnimation(*m_target, unanimatedStyle, resolutionContext, keyframeList);
 
     // Ensure resource loads for all the frames.

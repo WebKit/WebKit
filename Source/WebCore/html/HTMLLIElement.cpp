@@ -58,7 +58,7 @@ Ref<HTMLLIElement> HTMLLIElement::create(const QualifiedName& tagName, Document&
 
 bool HTMLLIElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
-    if (name == typeAttr)
+    if (name == typeAttr || name == valueAttr)
         return true;
     return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
@@ -89,17 +89,11 @@ void HTMLLIElement::collectPresentationalHintsForAttribute(const QualifiedName& 
             else if (valueLowerCase == "none"_s)
                 addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, CSSValueNone);
         }
+    } else if (name == valueAttr) {
+        if (auto parsedValue = parseHTMLInteger(value))
+            addPropertyToPresentationalHintStyle(style, CSSPropertyCounterSet, makeString("list-item "_s, *parsedValue));
     } else
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
-}
-
-void HTMLLIElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
-{
-    if (name == valueAttr) {
-        if (renderer() && renderer()->isListItem())
-            parseValue(newValue);
-    } else
-        HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void HTMLLIElement::didAttachRenderers()
@@ -121,17 +115,6 @@ void HTMLLIElement::didAttachRenderers()
     // We don't want to change our style to say "inside" since that would affect nested nodes.
     if (!isInList)
         listItemRenderer.setNotInList(true);
-
-    parseValue(attributeWithoutSynchronization(valueAttr));
-}
-
-inline void HTMLLIElement::parseValue(const AtomString& value)
-{
-    ASSERT(renderer());
-    std::optional<int> explicitValue;
-    if (auto parsedValue = parseHTMLInteger(value))
-        explicitValue = *parsedValue;
-    downcast<RenderListItem>(*renderer()).setExplicitValue(explicitValue);
 }
 
 }

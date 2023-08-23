@@ -135,7 +135,7 @@ end
 macro getIPIntCallee()
     loadp Callee[cfr], ws0
 if JSVALUE64
-    andp ~(constexpr JSValue::WasmTag), ws0
+    andp ~(constexpr JSValue::NativeCalleeTag), ws0
 end
     leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, ws1
     loadp [ws1], ws1
@@ -204,6 +204,60 @@ macro popQuad(reg, scratch)
         pop reg, scratch
     else
         pop reg
+    end
+end
+
+macro pushVectorReg0()
+    if ARM64 or ARM64E
+        emit "str q0, [sp, #-16]!"
+    else
+        emit "sub $16, %esp"
+        emit "movdqu %xmm0, (%esp)"
+    end
+end
+
+macro pushVectorReg1()
+    if ARM64 or ARM64E
+        emit "str q1, [sp, #-16]!"
+    else
+        emit "sub $16, %esp"
+        emit "movdqu %xmm1, (%esp)"
+    end
+end
+
+macro pushVectorReg2()
+    if ARM64 or ARM64E
+        emit "str q2, [sp, #-16]!"
+    else
+        emit "sub $16, %esp"
+        emit "movdqu %xmm2, (%esp)"
+    end
+end
+
+macro popVectorReg0()
+    if ARM64 or ARM64E
+        emit "ldr q0, [sp], #16"
+    elsif X86_64
+        emit "movdqu (%esp), %xmm0"
+        emit "add $16, %esp"
+    end
+end
+
+macro popVectorReg1()
+    if ARM64 or ARM64E
+        emit "ldr q1, [sp], #16"
+    elsif X86_64
+        emit "movdqu (%esp), %xmm1"
+        emit "add $16, %esp"
+    end
+end
+
+macro popVectorReg2()
+    if ARM64 or ARM64E
+        emit "ldr q2, [sp], #16"
+    elsif X86_64
+        emit "movdqu (%esp), %xmm2"
+        emit "add $16, %esp"
     end
 end
 
@@ -590,15 +644,78 @@ const argumINTSrc = csr2
     # Clean up locals
     # Don't overwrite the return registers
     # Will use PM as a temp because we don't want to use the actual temps.
-    move PL, sp
-    loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], PM
-    mulq LocalSize, PM
-    addq PM, sp
+    # move PL, sp
+    # loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], PM
+    # mulq LocalSize, PM
+    # addq PM, sp
     ipintReloadMemory()
 
     restoreIPIntRegisters()
     restoreCallerPCAndCFR()
     ret
+else
+    ret
+end
+
+global _ipint_entry_simd
+_ipint_entry_simd:
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
+    preserveCallerPCAndCFR()
+    saveIPIntRegisters()
+    storep wasmInstance, CodeBlock[cfr]
+    getIPIntCallee()
+
+    # Allocate space for locals
+    loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], csr0
+    mulq LocalSize, csr0
+    move sp, csr3
+    subq csr0, sp
+    move sp, csr4
+    loadp Wasm::IPIntCallee::m_argumINTBytecodePointer[ws0], PM
+
+    push csr0, csr1, csr2, csr3
+
+    # PM = location in argumINT bytecode
+    # csr0 = tmp
+    # csr1 = dst
+    # csr2 = src
+    # csr3 = end
+    # csr4 = for dispatch
+
+const argumINTDest = csr1
+const argumINTSrc = csr2
+    move csr4, argumINTDest
+    leap FirstArgumentOffset[cfr], argumINTSrc
+
+    argumINTDispatch()
+
+.ipint_entry_end_local_simd:
+    # zero out remaining locals
+    bqeq argumINTDest, csr3, .ipint_entry_finish_zero_simd
+    storeq 0, [argumINTDest]
+    addq 8, argumINTDest
+
+    jmp .ipint_entry_end_local_simd
+.ipint_entry_finish_zero_simd:
+    pop csr3, csr2, csr1, csr0
+
+    loadp CodeBlock[cfr], wasmInstance
+    # OSR Check
+    ipintPrologueOSR(5)
+
+    move sp, PL
+
+    if ARM64 or ARM64E
+        pcrtoaddr _ipint_unreachable, IB
+    end
+    loadp Wasm::IPIntCallee::m_bytecode[ws0], PB
+    move 0, PC
+    loadp Wasm::IPIntCallee::m_metadata[ws0], PM
+    move 0, MC
+    # Load memory
+    ipintReloadMemory()
+
+    nextIPIntInstruction()
 else
     ret
 end
@@ -642,8 +759,9 @@ instructionLabel(_if)
     nextIPIntInstruction()
 .ipint_if_taken:
     # Skip LEB128
-    loadq 8[PM, MC], PC
-    advanceMC(16)
+    loadb 8[PM, MC], t0
+    advanceMC(9)
+    advancePCByReg(t0)
     nextIPIntInstruction()
 
 instructionLabel(_else)
@@ -742,8 +860,9 @@ instructionLabel(_br_if)
     # pop i32
     popInt32(t0, t2)
     bineq t0, 0, _ipint_br
-    loadi 12[PM, MC], PC
-    advanceMC(16)
+    loadb 12[PM, MC], t0
+    advanceMC(13)
+    advancePCByReg(t0)
     nextIPIntInstruction()
 
 instructionLabel(_br_table)
@@ -3100,7 +3219,21 @@ instructionLabel(_fc_block)
 .ipint_fc_nonexistent:
     ipintException(Unreachable)
 
-unimplementedInstruction(_simd)
+instructionLabel(_simd)
+    # TODO: for relaxed SIMD, handle parsing the value.
+    # Metadata? Could just hardcode loading two bytes though
+    loadb 1[PB, PC], t0
+    if ARM64 or ARM64E
+        pcrtoaddr _ipint_simd_v128_load_mem, t1
+        emit "add x0, x1, x0, lsl 8"
+        emit "br x0"
+    elsif X86_64
+        lshifti 4, t0
+        leap (_ipint_simd_v128_load_mem), t1
+        addq t1, t0
+        emit "jmp *(%eax)"
+    end
+
 reservedOpcode(0xfe)
 reservedOpcode(0xff)
 
@@ -3470,6 +3603,364 @@ instructionLabel(_table_fill)
     advanceMC(5)
     nextIPIntInstruction()
 
+    #######################
+    ## SIMD Instructions ##
+    #######################
+
+# 0xFD 0x00 - 0xFD 0x0B: memory
+unimplementedInstruction(_simd_v128_load_mem)
+unimplementedInstruction(_simd_v128_load_8x8s_mem)
+unimplementedInstruction(_simd_v128_load_8x8u_mem)
+unimplementedInstruction(_simd_v128_load_16x4s_mem)
+unimplementedInstruction(_simd_v128_load_16x4u_mem)
+unimplementedInstruction(_simd_v128_load_32x2s_mem)
+unimplementedInstruction(_simd_v128_load_32x2u_mem)
+unimplementedInstruction(_simd_v128_load8_splat_mem)
+unimplementedInstruction(_simd_v128_load16_splat_mem)
+unimplementedInstruction(_simd_v128_load32_splat_mem)
+unimplementedInstruction(_simd_v128_load64_splat_mem)
+unimplementedInstruction(_simd_v128_store_mem)
+
+# 0xFD 0x0C: v128.const
+instructionLabel(_simd_v128_const)
+    # v128.const
+    leap [PM, MC], t0
+    if ARM64 or ARM64E
+        emit "ldr q0, [x0, #1]"
+    else
+        emit "movdqu 1(%eax), %xmm1"
+    end
+    loadb [t0], t0
+    pushVectorReg0()
+    advancePCByReg(t0)
+    advanceMC(17)
+    nextIPIntInstruction()
+
+# 0xFD 0x0D - 0xFD 0x14: splat (+ shuffle/swizzle)
+unimplementedInstruction(_simd_i8x16_shuffle)
+unimplementedInstruction(_simd_i8x16_swizzle)
+unimplementedInstruction(_simd_i8x16_splat)
+unimplementedInstruction(_simd_i16x8_splat)
+unimplementedInstruction(_simd_i32x4_splat)
+unimplementedInstruction(_simd_i64x2_splat)
+unimplementedInstruction(_simd_f32x4_splat)
+unimplementedInstruction(_simd_f64x2_splat)
+
+# 0xFD 0x15 - 0xFD 0x22: extract and replace lanes
+unimplementedInstruction(_simd_i8x16_extract_lane_s)
+unimplementedInstruction(_simd_i8x16_extract_lane_u)
+unimplementedInstruction(_simd_i8x16_replace_lane)
+unimplementedInstruction(_simd_i16x8_extract_lane_s)
+unimplementedInstruction(_simd_i16x8_extract_lane_u)
+unimplementedInstruction(_simd_i16x8_replace_lane)
+
+instructionLabel(_simd_i32x4_extract_lane)
+    # i32x4.extract_lane (lane)
+    loadb 2[PB, PC], t0  # lane index
+    popVectorReg0()
+    if ARM64 or ARM64E
+        pcrtoaddr _simd_i32x4_extract_lane_0, t1
+        leap [t1, t0, 8], t0
+        _simd_i32x4_extract_lane_0:
+        emit "smov x0, v0.s[0]"
+        jmp _simd_i32x4_extract_lane_end
+        emit "smov x0, v0.s[1]"
+        jmp _simd_i32x4_extract_lane_end
+        emit "smov x0, v0.s[2]"
+        jmp _simd_i32x4_extract_lane_end
+        emit "smov x0, v0.s[3]"
+        jmp _simd_i32x4_extract_lane_end
+    elsif X86_64
+    end
+_simd_i32x4_extract_lane_end:
+    pushInt32(t0)
+    advancePC(3)
+    nextIPIntInstruction()
+
+unimplementedInstruction(_simd_i32x4_replace_lane)
+unimplementedInstruction(_simd_i64x2_extract_lane)
+unimplementedInstruction(_simd_i64x2_replace_lane)
+unimplementedInstruction(_simd_f32x4_extract_lane)
+unimplementedInstruction(_simd_f32x4_replace_lane)
+unimplementedInstruction(_simd_f64x2_extract_lane)
+unimplementedInstruction(_simd_f64x2_replace_lane)
+
+# 0xFD 0x23 - 0xFD 0x2C: i8x16 operations
+unimplementedInstruction(_simd_i8x16_eq)
+unimplementedInstruction(_simd_i8x16_ne)
+unimplementedInstruction(_simd_i8x16_lt_s)
+unimplementedInstruction(_simd_i8x16_lt_u)
+unimplementedInstruction(_simd_i8x16_gt_s)
+unimplementedInstruction(_simd_i8x16_gt_u)
+unimplementedInstruction(_simd_i8x16_le_s)
+unimplementedInstruction(_simd_i8x16_le_u)
+unimplementedInstruction(_simd_i8x16_ge_s)
+unimplementedInstruction(_simd_i8x16_ge_u)
+
+# 0xFD 0x2D - 0xFD 0x36: i8x16 operations
+unimplementedInstruction(_simd_i16x8_eq)
+unimplementedInstruction(_simd_i16x8_ne)
+unimplementedInstruction(_simd_i16x8_lt_s)
+unimplementedInstruction(_simd_i16x8_lt_u)
+unimplementedInstruction(_simd_i16x8_gt_s)
+unimplementedInstruction(_simd_i16x8_gt_u)
+unimplementedInstruction(_simd_i16x8_le_s)
+unimplementedInstruction(_simd_i16x8_le_u)
+unimplementedInstruction(_simd_i16x8_ge_s)
+unimplementedInstruction(_simd_i16x8_ge_u)
+
+# 0xFD 0x37 - 0xFD 0x40: i32x4 operations
+unimplementedInstruction(_simd_i32x4_eq)
+unimplementedInstruction(_simd_i32x4_ne)
+unimplementedInstruction(_simd_i32x4_lt_s)
+unimplementedInstruction(_simd_i32x4_lt_u)
+unimplementedInstruction(_simd_i32x4_gt_s)
+unimplementedInstruction(_simd_i32x4_gt_u)
+unimplementedInstruction(_simd_i32x4_le_s)
+unimplementedInstruction(_simd_i32x4_le_u)
+unimplementedInstruction(_simd_i32x4_ge_s)
+unimplementedInstruction(_simd_i32x4_ge_u)
+
+# 0xFD 0x41 - 0xFD 0x46: f32x4 operations
+unimplementedInstruction(_simd_f32x4_eq)
+unimplementedInstruction(_simd_f32x4_ne)
+unimplementedInstruction(_simd_f32x4_lt)
+unimplementedInstruction(_simd_f32x4_gt)
+unimplementedInstruction(_simd_f32x4_le)
+unimplementedInstruction(_simd_f32x4_ge)
+
+# 0xFD 0x47 - 0xFD 0x4c: f64x2 operations
+unimplementedInstruction(_simd_f64x2_eq)
+unimplementedInstruction(_simd_f64x2_ne)
+unimplementedInstruction(_simd_f64x2_lt)
+unimplementedInstruction(_simd_f64x2_gt)
+unimplementedInstruction(_simd_f64x2_le)
+unimplementedInstruction(_simd_f64x2_ge)
+
+# 0xFD 0x4D - 0xFD 0x53: v128 operations
+unimplementedInstruction(_simd_v128_not)
+unimplementedInstruction(_simd_v128_and)
+unimplementedInstruction(_simd_v128_andnot)
+unimplementedInstruction(_simd_v128_or)
+unimplementedInstruction(_simd_v128_xor)
+unimplementedInstruction(_simd_v128_bitselect)
+unimplementedInstruction(_simd_v128_any_true)
+
+# 0xFD 0x54 - 0xFD 0x5D: v128 load/store lane
+unimplementedInstruction(_simd_v128_load8_lane_mem)
+unimplementedInstruction(_simd_v128_load16_lane_mem)
+unimplementedInstruction(_simd_v128_load32_lane_mem)
+unimplementedInstruction(_simd_v128_load64_lane_mem)
+unimplementedInstruction(_simd_v128_store8_lane_mem)
+unimplementedInstruction(_simd_v128_store16_lane_mem)
+unimplementedInstruction(_simd_v128_store32_lane_mem)
+unimplementedInstruction(_simd_v128_store64_lane_mem)
+unimplementedInstruction(_simd_v128_load32_zero_mem)
+unimplementedInstruction(_simd_v128_load64_zero_mem)
+
+# 0xFD 0x5E - 0xFD 0x5F: f32x4/f64x2 conversion
+unimplementedInstruction(_simd_f32x4_demote_f64x2_zero)
+unimplementedInstruction(_simd_f64x2_promote_low_f32x4)
+
+# 0xFD 0x60 - 0x66: i8x16 operations
+unimplementedInstruction(_simd_i8x16_abs)
+unimplementedInstruction(_simd_i8x16_neg)
+unimplementedInstruction(_simd_i8x16_popcnt)
+unimplementedInstruction(_simd_i8x16_all_true)
+unimplementedInstruction(_simd_i8x16_bitmask)
+unimplementedInstruction(_simd_i8x16_narrow_i16x8_s)
+unimplementedInstruction(_simd_i8x16_narrow_i16x8_u)
+
+# 0xFD 0x67 - 0xFD 0x6A: f32x4 operations
+unimplementedInstruction(_simd_f32x4_ceil)
+unimplementedInstruction(_simd_f32x4_floor)
+unimplementedInstruction(_simd_f32x4_trunc)
+unimplementedInstruction(_simd_f32x4_nearest)
+
+# 0xFD 0x6B - 0xFD 0x73: i8x16 binary operations
+unimplementedInstruction(_simd_i8x16_shl)
+unimplementedInstruction(_simd_i8x16_shr_s)
+unimplementedInstruction(_simd_i8x16_shr_u)
+unimplementedInstruction(_simd_i8x16_add)
+unimplementedInstruction(_simd_i8x16_add_sat_s)
+unimplementedInstruction(_simd_i8x16_add_sat_u)
+unimplementedInstruction(_simd_i8x16_sub)
+unimplementedInstruction(_simd_i8x16_sub_sat_s)
+unimplementedInstruction(_simd_i8x16_sub_sat_u)
+
+# 0xFD 0x74 - 0xFD 0x75: f64x2 operations
+unimplementedInstruction(_simd_f64x2_ceil)
+unimplementedInstruction(_simd_f64x2_floor)
+
+# 0xFD 0x76 - 0xFD 0x79: i8x16 binary operations
+unimplementedInstruction(_simd_i8x16_min_s)
+unimplementedInstruction(_simd_i8x16_min_u)
+unimplementedInstruction(_simd_i8x16_max_s)
+unimplementedInstruction(_simd_i8x16_max_u)
+
+# 0xFD 0x7A: f64x2 trunc
+unimplementedInstruction(_simd_f64x2_trunc)
+
+# 0xFD 0x7B: i8x16 avgr_u
+unimplementedInstruction(_simd_i8x16_avgr_u)
+
+# 0xFD 0x7C - 0xFD 0x7F: extadd_pairwise
+unimplementedInstruction(_simd_i16x8_extadd_pairwise_i8x16_s)
+unimplementedInstruction(_simd_i16x8_extadd_pairwise_i8x16_u)
+unimplementedInstruction(_simd_i32x4_extadd_pairwise_i16x8_s)
+unimplementedInstruction(_simd_i32x4_extadd_pairwise_i16x8_u)
+
+# 0xFD 0x80 0x01 - 0xFD 0x93 0x01: i16x8 operations
+
+unimplementedInstruction(_simd_i16x8_abs)
+unimplementedInstruction(_simd_i16x8_neg)
+unimplementedInstruction(_simd_i16x8_q15mulr_sat_s)
+unimplementedInstruction(_simd_i16x8_all_true)
+unimplementedInstruction(_simd_i16x8_bitmask)
+unimplementedInstruction(_simd_i16x8_narrow_i32x4_s)
+unimplementedInstruction(_simd_i16x8_narrow_i32x4_u)
+unimplementedInstruction(_simd_i16x8_extend_low_i8x16_s)
+unimplementedInstruction(_simd_i16x8_extend_high_i8x16_s)
+unimplementedInstruction(_simd_i16x8_extend_low_i8x16_u)
+unimplementedInstruction(_simd_i16x8_extend_high_i8x16_u)
+unimplementedInstruction(_simd_i16x8_shl)
+unimplementedInstruction(_simd_i16x8_shr_s)
+unimplementedInstruction(_simd_i16x8_shr_u)
+unimplementedInstruction(_simd_i16x8_add)
+unimplementedInstruction(_simd_i16x8_add_sat_s)
+unimplementedInstruction(_simd_i16x8_add_sat_u)
+unimplementedInstruction(_simd_i16x8_sub)
+unimplementedInstruction(_simd_i16x8_sub_sat_s)
+unimplementedInstruction(_simd_i16x8_sub_sat_u)
+
+# 0xFD 0x94 0x01: f64x2.nearest
+
+unimplementedInstruction(_simd_f64x2_nearest)
+
+# 0xFD 0x95 0x01 - 0xFD 0x9F 0x01: i16x8 operations
+
+unimplementedInstruction(_simd_i16x8_mul)
+unimplementedInstruction(_simd_i16x8_min_s)
+unimplementedInstruction(_simd_i16x8_min_u)
+unimplementedInstruction(_simd_i16x8_max_s)
+unimplementedInstruction(_simd_i16x8_max_u)
+unimplementedInstruction(_simd_i16x8_avgr_u)
+unimplementedInstruction(_simd_i16x8_extmul_low_i8x16_s)
+unimplementedInstruction(_simd_i16x8_extmul_high_i8x16_s)
+unimplementedInstruction(_simd_i16x8_extmul_low_i8x16_u)
+unimplementedInstruction(_simd_i16x8_extmul_high_i8x16_u)
+
+# 0xFD 0xA0 0x01 - 0xFD 0xBF 0x01: i32x4 operations
+
+unimplementedInstruction(_simd_i32x4_abs)
+unimplementedInstruction(_simd_i32x4_neg)
+reservedOpcode(0xFDA201)
+unimplementedInstruction(_simd_i32x4_all_true)
+unimplementedInstruction(_simd_i32x4_bitmask)
+reservedOpcode(0xFDA501)
+reservedOpcode(0xFDA601)
+unimplementedInstruction(_simd_i32x4_extend_low_i16x8_s)
+unimplementedInstruction(_simd_i32x4_extend_high_i16x8_s)
+unimplementedInstruction(_simd_i32x4_extend_low_i16x8_u)
+unimplementedInstruction(_simd_i32x4_extend_high_i16x8_u)
+unimplementedInstruction(_simd_i32x4_shl)
+unimplementedInstruction(_simd_i32x4_shr_s)
+unimplementedInstruction(_simd_i32x4_shr_u)
+unimplementedInstruction(_simd_i32x4_add)
+reservedOpcode(0xFDAF01)
+reservedOpcode(0xFDB001)
+unimplementedInstruction(_simd_i32x4_sub)
+reservedOpcode(0xFDB201)
+reservedOpcode(0xFDB301)
+reservedOpcode(0xFDB401)
+unimplementedInstruction(_simd_i32x4_mul)
+unimplementedInstruction(_simd_i32x4_min_s)
+unimplementedInstruction(_simd_i32x4_min_u)
+unimplementedInstruction(_simd_i32x4_max_s)
+unimplementedInstruction(_simd_i32x4_max_u)
+unimplementedInstruction(_simd_i32x4_dot_i16x8_s)
+reservedOpcode(0xFDBB01)
+unimplementedInstruction(_simd_i32x4_extmul_low_i16x8_s)
+unimplementedInstruction(_simd_i32x4_extmul_high_i16x8_s)
+unimplementedInstruction(_simd_i32x4_extmul_low_i16x8_u)
+unimplementedInstruction(_simd_i32x4_extmul_high_i16x8_u)
+
+# 0xFD 0xC0 0x01 - 0xFD 0xDF 0x01: i64x2 operations
+
+unimplementedInstruction(_simd_i64x2_abs)
+unimplementedInstruction(_simd_i64x2_neg)
+reservedOpcode(0xFDC201)
+unimplementedInstruction(_simd_i64x2_all_true)
+unimplementedInstruction(_simd_i64x2_bitmask)
+reservedOpcode(0xFDC501)
+reservedOpcode(0xFDC601)
+unimplementedInstruction(_simd_i64x2_extend_low_i32x4_s)
+unimplementedInstruction(_simd_i64x2_extend_high_i32x4_s)
+unimplementedInstruction(_simd_i64x2_extend_low_i32x4_u)
+unimplementedInstruction(_simd_i64x2_extend_high_i32x4_u)
+unimplementedInstruction(_simd_i64x2_shl)
+unimplementedInstruction(_simd_i64x2_shr_s)
+unimplementedInstruction(_simd_i64x2_shr_u)
+unimplementedInstruction(_simd_i64x2_add)
+reservedOpcode(0xFDCF01)
+reservedOpcode(0xFDD001)
+unimplementedInstruction(_simd_i64x2_sub)
+reservedOpcode(0xFDD201)
+reservedOpcode(0xFDD301)
+reservedOpcode(0xFDD401)
+unimplementedInstruction(_simd_i64x2_mul)
+unimplementedInstruction(_simd_i64x2_eq)
+unimplementedInstruction(_simd_i64x2_ne)
+unimplementedInstruction(_simd_i64x2_lt_s)
+unimplementedInstruction(_simd_i64x2_gt_s)
+unimplementedInstruction(_simd_i64x2_le_s)
+unimplementedInstruction(_simd_i64x2_ge_s)
+unimplementedInstruction(_simd_i64x2_extmul_low_i32x4_s)
+unimplementedInstruction(_simd_i64x2_extmul_high_i32x4_s)
+unimplementedInstruction(_simd_i64x2_extmul_low_i32x4_u)
+unimplementedInstruction(_simd_i64x2_extmul_high_i32x4_u)
+
+# 0xFD 0xE0 0x01 - 0xFD 0xEB 0x01: f32x4 operations
+
+unimplementedInstruction(_simd_f32x4_abs)
+unimplementedInstruction(_simd_f32x4_neg)
+reservedOpcode(0xFDC201)
+unimplementedInstruction(_simd_f32x4_sqrt)
+unimplementedInstruction(_simd_f32x4_add)
+unimplementedInstruction(_simd_f32x4_sub)
+unimplementedInstruction(_simd_f32x4_mul)
+unimplementedInstruction(_simd_f32x4_div)
+unimplementedInstruction(_simd_f32x4_min)
+unimplementedInstruction(_simd_f32x4_max)
+unimplementedInstruction(_simd_f32x4_pmin)
+unimplementedInstruction(_simd_f32x4_pmax)
+
+# 0xFD 0xEC 0x01 - 0xFD 0xF7 0x01: f64x2 operations
+
+unimplementedInstruction(_simd_f64x2_abs)
+unimplementedInstruction(_simd_f64x2_neg)
+reservedOpcode(0xFDEE01)
+unimplementedInstruction(_simd_f64x2_sqrt)
+unimplementedInstruction(_simd_f64x2_add)
+unimplementedInstruction(_simd_f64x2_sub)
+unimplementedInstruction(_simd_f64x2_mul)
+unimplementedInstruction(_simd_f64x2_div)
+unimplementedInstruction(_simd_f64x2_min)
+unimplementedInstruction(_simd_f64x2_max)
+unimplementedInstruction(_simd_f64x2_pmin)
+unimplementedInstruction(_simd_f64x2_pmax)
+
+# 0xFD 0xF8 0x01 - 0xFD 0xFF 0x01: trunc/convert
+
+unimplementedInstruction(_simd_i32x4_trunc_sat_f32x4_s)
+unimplementedInstruction(_simd_i32x4_trunc_sat_f32x4_u)
+unimplementedInstruction(_simd_f32x4_convert_i32x4_s)
+unimplementedInstruction(_simd_f32x4_convert_i32x4_u)
+unimplementedInstruction(_simd_i32x4_trunc_sat_f64x2_s_zero)
+unimplementedInstruction(_simd_i32x4_trunc_sat_f64x2_u_zero)
+unimplementedInstruction(_simd_f64x2_convert_low_i32x4_s)
+unimplementedInstruction(_simd_f64x2_convert_low_i32x4_u)
+
     ##################################
     ## "Out of line" logic for call ##
     ##################################
@@ -3490,7 +3981,7 @@ _ipint_call_impl:
     # Get function data
     move t0, a1
     move wasmInstance, a0
-    cCall2(_ipint_extern_call)
+    operationCall(macro() cCall2(_ipint_extern_call) end)
 
 # FIXME: switch offlineasm unalignedglobal to take alignment and optionally pad with breakpoint instructions (rdar://113594783)
 macro mintAlign()

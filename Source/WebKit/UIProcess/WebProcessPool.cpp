@@ -1199,15 +1199,16 @@ void WebProcessPool::updateRemoteWorkerUserAgent(const String& userAgent)
         workerProcess.setRemoteWorkerUserAgent(m_remoteWorkerUserAgent);
 }
 
-void WebProcessPool::pageBeginUsingWebsiteDataStore(WebPageProxyIdentifier pageID, WebsiteDataStore& dataStore)
+void WebProcessPool::pageBeginUsingWebsiteDataStore(WebPageProxy& page, WebsiteDataStore& dataStore)
 {
     RELEASE_ASSERT(RunLoop::isMain());
     RELEASE_ASSERT(m_sessionToPageIDsMap.isValidKey(dataStore.sessionID()));
-    auto result = m_sessionToPageIDsMap.add(dataStore.sessionID(), HashSet<WebPageProxyIdentifier>()).iterator->value.add(pageID);
+    auto result = m_sessionToPageIDsMap.add(dataStore.sessionID(), HashSet<WebPageProxyIdentifier>()).iterator->value.add(page.identifier());
     ASSERT_UNUSED(result, result.isNewEntry);
+    dataStore.addPage(page);
 }
 
-void WebProcessPool::pageEndUsingWebsiteDataStore(WebPageProxyIdentifier pageID, WebsiteDataStore& dataStore)
+void WebProcessPool::pageEndUsingWebsiteDataStore(WebPageProxy& page, WebsiteDataStore& dataStore)
 {
     RELEASE_ASSERT(RunLoop::isMain());
     auto sessionID = dataStore.sessionID();
@@ -1215,6 +1216,7 @@ void WebProcessPool::pageEndUsingWebsiteDataStore(WebPageProxyIdentifier pageID,
     auto iterator = m_sessionToPageIDsMap.find(sessionID);
     RELEASE_ASSERT(iterator != m_sessionToPageIDsMap.end());
 
+    auto pageID = page.identifier();
     auto takenPageID = iterator->value.take(pageID);
     ASSERT_UNUSED(takenPageID, takenPageID == pageID);
 
@@ -1224,6 +1226,7 @@ void WebProcessPool::pageEndUsingWebsiteDataStore(WebPageProxyIdentifier pageID,
         if (sessionID.isEphemeral())
             m_webProcessCache->clearAllProcessesForSession(sessionID);
     }
+    dataStore.removePage(page);
 }
 
 bool WebProcessPool::hasPagesUsingWebsiteDataStore(WebsiteDataStore& dataStore) const

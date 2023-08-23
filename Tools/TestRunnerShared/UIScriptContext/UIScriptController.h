@@ -141,6 +141,8 @@ public:
     virtual bool scrollUpdatesDisabled() const { notImplemented(); return false; }
     virtual void setScrollUpdatesDisabled(bool) { notImplemented(); }
 
+    virtual bool isZoomingOrScrolling() const { notImplemented(); return false; }
+
     virtual void scrollToOffset(long, long, ScrollToOptions*) { notImplemented(); }
 
     virtual void immediateScrollToOffset(long, long, ScrollToOptions*) { notImplemented(); }

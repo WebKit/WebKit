@@ -123,10 +123,6 @@ SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, CMFormatDescriptionGet
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, CMBlockBufferAssureBlockMemory, OSStatus, (CMBlockBufferRef theBuffer), (theBuffer), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, CMBlockBufferGetDataPointer, OSStatus, (CMBlockBufferRef theBuffer, size_t offset, size_t* lengthAtOffsetOut, size_t* totalLengthOut, char** dataPointerOut), (theBuffer, offset, lengthAtOffsetOut, totalLengthOut, dataPointerOut), PAL_EXPORT)
 
-SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, CMNotificationCenterGetDefaultLocalCenter, CMNotificationCenterRef, (void), (), PAL_EXPORT)
-SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, CMNotificationCenterAddListener, OSStatus, (CMNotificationCenterRef center, const void* listener, CMNotificationCallback callback, CFStringRef notification, const void* object, UInt32 flags), (center, listener, callback, notification, object, flags), PAL_EXPORT)
-SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, CMNotificationCenterRemoveListener, OSStatus, (CMNotificationCenterRef center, const void* listener, CMNotificationCallback callback, CFStringRef notification, const void* object), (center, listener, callback, notification, object), PAL_EXPORT)
-
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, CMSampleBufferCreateReady, OSStatus, (CFAllocatorRef allocator, CMBlockBufferRef dataBuffer, CMFormatDescriptionRef formatDescription, CMItemCount numSamples, CMItemCount numSampleTimingEntries, const CMSampleTimingInfo* sampleTimingArray, CMItemCount numSampleSizeEntries, const size_t* sampleSizeArray, CMSampleBufferRef* sampleBufferOut), (allocator, dataBuffer, formatDescription, numSamples, numSampleTimingEntries, sampleTimingArray, numSampleSizeEntries, sampleSizeArray, sampleBufferOut), PAL_EXPORT)
 
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, CMSampleBufferCreate, OSStatus, (CFAllocatorRef allocator, CMBlockBufferRef dataBuffer, Boolean dataReady, CMSampleBufferMakeDataReadyCallback makeDataReadyCallback, void* makeDataReadyRefcon, CMFormatDescriptionRef formatDescription, CMItemCount numSamples, CMItemCount numSampleTimingEntries, const CMSampleTimingInfo* sampleTimingArray, CMItemCount numSampleSizeEntries, const size_t* sampleSizeArray, CMSampleBufferRef* sBufOut), (allocator, dataBuffer, dataReady, makeDataReadyCallback, makeDataReadyRefcon, formatDescription, numSamples, numSampleTimingEntries, sampleTimingArray, numSampleSizeEntries, sampleSizeArray, sBufOut), PAL_EXPORT)
@@ -191,7 +187,6 @@ SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, kCMSampleBufferAttachm
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, kCMSampleBufferAttachmentKey_SampleReferenceURL, CFStringRef, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, kCMSampleAttachmentKey_DisplayImmediately, CFStringRef, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, kCMSampleAttachmentKey_IsDependedOnByOthers, CFStringRef, PAL_EXPORT)
-SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, kCMSampleBufferConsumerNotification_BufferConsumed, CFStringRef, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, kCMSampleBufferAttachmentKey_EndsPreviousSampleDuration, CFStringRef, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, kCMSampleBufferAttachmentKey_GradualDecoderRefresh, CFStringRef, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, kCMSampleBufferAttachmentKey_TrimDurationAtStart, CFStringRef, PAL_EXPORT)

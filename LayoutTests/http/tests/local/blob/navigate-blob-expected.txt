@@ -1,0 +1,48 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Opening https://localhost:8443 as main frame with iframe origin https://localhost:8443 creating blob
+PASS iframe: created blob
+PASS main frame: Fetched Blob
+PASS main frame: open() succeeded. Received message from blob: successfully navigated, have opener: true
+Opening http://127.0.0.1:8000 as main frame with iframe origin https://localhost:8443
+FAIL iframe: Fetching blob failed: Load failed
+FAIL iframe: WindowProxy handle is null (probably opened blob url with noopener)
+FAIL iframe: Could not open blob url, timed out
+FAIL main frame: Fetching blob failed: Load failed
+FAIL main frame: Could not open blob url, timed out
+Opening http://localhost:8000 as main frame with iframe origin https://localhost:8443
+FAIL iframe: Fetching blob failed: Load failed
+FAIL iframe: WindowProxy handle is null (probably opened blob url with noopener)
+FAIL iframe: Could not open blob url, timed out
+FAIL main frame: Fetching blob failed: Load failed
+FAIL main frame: Could not open blob url, timed out
+Opening https://localhost:8443 as main frame with iframe origin https://localhost:8443
+PASS iframe: Fetched Blob
+PASS iframe: open() succeeded. Received message from blob: successfully navigated, have opener: true
+PASS main frame: Fetched Blob
+PASS main frame: open() succeeded. Received message from blob: successfully navigated, have opener: true
+Opening http://127.0.0.1:8000 as main frame with iframe origin https://localhost:8443 creating blob
+PASS iframe: created blob
+FAIL main frame: Fetching blob failed: Load failed
+FAIL main frame: Could not open blob url, timed out
+Opening https://localhost:8443 as main frame with iframe origin https://localhost:8443
+FAIL iframe: Fetching blob failed: Load failed
+FAIL iframe: Could not open blob url, timed out
+FAIL main frame: Fetching blob failed: Load failed
+FAIL main frame: Could not open blob url, timed out
+Opening http://localhost:8000 as main frame with iframe origin https://localhost:8443
+FAIL iframe: Fetching blob failed: Load failed
+FAIL iframe: WindowProxy handle is null (probably opened blob url with noopener)
+FAIL iframe: Could not open blob url, timed out
+FAIL main frame: Fetching blob failed: Load failed
+FAIL main frame: Could not open blob url, timed out
+Opening http://127.0.0.1:8000 as main frame with iframe origin https://localhost:8443
+PASS iframe: Fetched Blob
+FAIL iframe: WindowProxy handle is null (probably opened blob url with noopener)
+PASS iframe: open() succeeded. Received message from blob: successfully navigated, have opener: false
+FAIL main frame: Fetching blob failed: Load failed
+FAIL main frame: Could not open blob url, timed out
+
+PASS Test for creating blob in iframe and then navigating to it from same-origin iframe and cross-origin main frames.
+

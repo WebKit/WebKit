@@ -1363,7 +1363,6 @@ html/HTMLMapElement.cpp
 html/HTMLMarqueeElement.cpp
 html/HTMLMediaElement.cpp
 html/HTMLMenuElement.cpp
-html/HTMLMenuItemElement.cpp
 html/HTMLMetaElement.cpp
 html/HTMLMeterElement.cpp
 html/HTMLModElement.cpp
@@ -1714,6 +1713,7 @@ layout/formattingContexts/inline/InlineLineBoxBuilder.cpp
 layout/formattingContexts/inline/InlineLineBuilder.cpp
 layout/formattingContexts/inline/InlineLineBoxVerticalAligner.cpp
 layout/formattingContexts/inline/InlineTextItem.cpp
+layout/formattingContexts/inline/IntrinsicWidthHandler.cpp
 layout/formattingContexts/inline/TextOnlySimpleLineBuilder.cpp
 layout/formattingContexts/inline/display/InlineDisplayContent.cpp
 layout/formattingContexts/inline/display/InlineDisplayContentBuilder.cpp
@@ -3658,7 +3658,6 @@ JSHTMLMapElement.cpp
 JSHTMLMarqueeElement.cpp
 JSHTMLMediaElement.cpp
 JSHTMLMenuElement.cpp
-JSHTMLMenuItemElement.cpp
 JSHTMLMetaElement.cpp
 JSHTMLMeterElement.cpp
 JSHTMLModElement.cpp

@@ -1048,12 +1048,12 @@ AirIRGeneratorBase<Derived, ExpressionType>::AirIRGeneratorBase(const ModuleInfo
 
         {
             GPRReg scratchGPR = wasmCallingConvention().prologueScratchGPRs[0];
-            jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxWasm(&m_callee)), scratchGPR);
+            jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(&m_callee)), scratchGPR);
             static_assert(CallFrameSlot::codeBlock + 1 == CallFrameSlot::callee);
             if constexpr (is32Bit()) {
                 CCallHelpers::Address calleeSlot { GPRInfo::callFrameRegister, CallFrameSlot::callee * sizeof(Register) };
                 jit.storePtr(scratchGPR, calleeSlot.withOffset(PayloadOffset));
-                jit.store32(CCallHelpers::TrustedImm32(JSValue::WasmTag), calleeSlot.withOffset(TagOffset));
+                jit.store32(CCallHelpers::TrustedImm32(JSValue::NativeCalleeTag), calleeSlot.withOffset(TagOffset));
                 jit.storePtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::addressFor(CallFrameSlot::codeBlock));
             } else
                 jit.storePairPtr(GPRInfo::wasmContextInstancePointer, scratchGPR, GPRInfo::callFrameRegister, CCallHelpers::TrustedImm32(CallFrameSlot::codeBlock * sizeof(Register)));

@@ -1054,8 +1054,8 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
             return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "Resource blocked by content blocker"_s, ResourceError::Type::AccessControl });
         }
 #endif
-        if (!madeHTTPS && type == CachedResource::Type::MainResource)
-            madeHTTPS = frame.loader().upgradeRequestforHTTPSOnlyIfNeeded(frame.document() ? frame.document()->url() : URL { }, request.resourceRequest());
+        if (!madeHTTPS && type == CachedResource::Type::MainResource && frame.loader().shouldUpgradeRequestforHTTPSOnly(frame.document() ? frame.document()->url() : URL { }, request.resourceRequest()) && m_documentLoader->frameLoader())
+            return makeUnexpected(m_documentLoader->frameLoader()->client().httpNavigationWithHTTPSOnlyError(request.resourceRequest()));
 
         if (madeHTTPS
             && type == CachedResource::Type::MainResource

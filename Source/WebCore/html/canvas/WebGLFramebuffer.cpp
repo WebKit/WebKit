@@ -49,8 +49,6 @@ namespace {
         WebGLObject* getObject() const override;
         bool isSharedObject(WebGLObject*) const override;
         bool isValid() const override;
-        bool isInitialized() const override;
-        void setInitialized() override;
         void onDetached(const AbstractLocker&, GraphicsContextGL*) override;
         void attach(GraphicsContextGL*, GCGLenum target, GCGLenum attachment) override;
         void unattach(GraphicsContextGL*, GCGLenum target, GCGLenum attachment) override;
@@ -87,17 +85,6 @@ namespace {
         return m_renderbuffer->object();
     }
 
-    bool WebGLRenderbufferAttachment::isInitialized() const
-    {
-        return m_renderbuffer->object() && m_renderbuffer->isInitialized();
-    }
-
-    void WebGLRenderbufferAttachment::setInitialized()
-    {
-        if (m_renderbuffer->object())
-            m_renderbuffer->setInitialized();
-    }
-
     void WebGLRenderbufferAttachment::onDetached(const AbstractLocker& locker, GraphicsContextGL* context)
     {
         m_renderbuffer->onDetached(locker, context);
@@ -128,8 +115,6 @@ namespace {
         WebGLObject* getObject() const override;
         bool isSharedObject(WebGLObject*) const override;
         bool isValid() const override;
-        bool isInitialized() const override;
-        void setInitialized() override;
         void onDetached(const AbstractLocker&, GraphicsContextGL*) override;
         void attach(GraphicsContextGL*, GCGLenum target, GCGLenum attachment) override;
         void unattach(GraphicsContextGL*, GCGLenum target, GCGLenum attachment) override;
@@ -171,17 +156,6 @@ namespace {
         return m_texture->object();
     }
 
-    bool WebGLTextureAttachment::isInitialized() const
-    {
-        // Textures are assumed to be initialized.
-        return true;
-    }
-
-    void WebGLTextureAttachment::setInitialized()
-    {
-        // Textures are assumed to be initialized.
-    }
-
     void WebGLTextureAttachment::onDetached(const AbstractLocker& locker, GraphicsContextGL* context)
     {
         m_texture->onDetached(locker, context);
@@ -216,27 +190,31 @@ WebGLFramebuffer::WebGLAttachment::WebGLAttachment() = default;
 
 WebGLFramebuffer::WebGLAttachment::~WebGLAttachment() = default;
 
-Ref<WebGLFramebuffer> WebGLFramebuffer::create(WebGLRenderingContextBase& ctx)
+RefPtr<WebGLFramebuffer> WebGLFramebuffer::create(WebGLRenderingContextBase& context)
 {
-    return adoptRef(*new WebGLFramebuffer(ctx));
+    auto object = context.graphicsContextGL()->createFramebuffer();
+    if (!object)
+        return nullptr;
+    return adoptRef(*new WebGLFramebuffer { context, object, Type::Plain });
 }
 
 #if ENABLE(WEBXR)
-
-Ref<WebGLFramebuffer> WebGLFramebuffer::createOpaque(WebGLRenderingContextBase& ctx)
+RefPtr<WebGLFramebuffer> WebGLFramebuffer::createOpaque(WebGLRenderingContextBase& context)
 {
-    auto framebuffer = adoptRef(*new WebGLFramebuffer(ctx));
-    framebuffer->m_opaque = true;
-    return framebuffer;
+    auto object = context.graphicsContextGL()->createFramebuffer();
+    if (!object)
+        return nullptr;
+    return adoptRef(*new WebGLFramebuffer { context, object, Type::Opaque });
 }
-
 #endif
 
-WebGLFramebuffer::WebGLFramebuffer(WebGLRenderingContextBase& ctx)
-    : WebGLObject(ctx)
-    , m_hasEverBeenBound(false)
+WebGLFramebuffer::WebGLFramebuffer(WebGLRenderingContextBase& context, PlatformGLObject object, Type type)
+    : WebGLObject(context, object)
+#if ENABLE(WEBXR)
+    , m_isOpaque(type == Type::Opaque)
+#endif
 {
-    setObject(ctx.graphicsContextGL()->createFramebuffer());
+    UNUSED_PARAM(type);
 }
 
 WebGLFramebuffer::~WebGLFramebuffer()

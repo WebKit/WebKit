@@ -88,7 +88,7 @@ void SpeculativeLoad::cancel()
     m_completionHandler(nullptr);
 }
 
-void SpeculativeLoad::willSendRedirectedRequest(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
+void SpeculativeLoad::willSendRedirectedRequest(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse)
 {
     LOG(NetworkCacheSpeculativePreloading, "Speculative redirect %s -> %s", request.url().string().utf8().data(), redirectRequest.url().string().utf8().data());
 
@@ -103,7 +103,6 @@ void SpeculativeLoad::willSendRedirectedRequest(ResourceRequest&& request, Resou
         m_cacheEntry = m_cache->makeRedirectEntry(request, redirectResponse, redirectRequest);
 
     // Don't follow the redirect. The redirect target will be registered for speculative load when it is loaded.
-    completionHandler({ });
     didComplete();
 }
 

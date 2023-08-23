@@ -93,7 +93,7 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessPro
     m_websiteDataStore = m_process->websiteDataStore();
     ASSERT(m_websiteDataStore);
     if (m_websiteDataStore && m_websiteDataStore != &m_page->websiteDataStore())
-        m_process->processPool().pageBeginUsingWebsiteDataStore(m_page->identifier(), *m_websiteDataStore);
+        m_process->processPool().pageBeginUsingWebsiteDataStore(m_page.get(), *m_websiteDataStore);
 
     // If we are reattaching to a SuspendedPage, then the WebProcess' WebPage already exists and
     // WebPageProxy::didCreateMainFrame() will not be called to initialize m_mainFrame. In such
@@ -123,7 +123,7 @@ ProvisionalPageProxy::~ProvisionalPageProxy()
 
         auto dataStore = m_process->websiteDataStore();
         if (dataStore && dataStore!= &m_page->websiteDataStore())
-            m_process->processPool().pageEndUsingWebsiteDataStore(m_page->identifier(), *dataStore);
+            m_process->processPool().pageEndUsingWebsiteDataStore(m_page.get(), *dataStore);
 
         if (m_process->hasConnection())
             send(Messages::WebPage::Close());

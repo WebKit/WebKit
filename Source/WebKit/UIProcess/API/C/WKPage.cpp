@@ -1310,9 +1310,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     // for backwards compatibility.
     OptionSet<WebCore::LayoutMilestone> milestones;
     if (loaderClient->client().didFirstLayoutForFrame)
-        milestones.add(WebCore::DidFirstLayout);
+        milestones.add(WebCore::LayoutMilestone::DidFirstLayout);
     if (loaderClient->client().didFirstVisuallyNonEmptyLayoutForFrame)
-        milestones.add(WebCore::DidFirstVisuallyNonEmptyLayout);
+        milestones.add(WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout);
 
     if (milestones)
         webPageProxy->send(Messages::WebPage::ListenForLayoutMilestones(milestones));

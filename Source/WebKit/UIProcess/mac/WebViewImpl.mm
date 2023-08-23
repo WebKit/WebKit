@@ -1930,7 +1930,7 @@ bool WebViewImpl::supportsArbitraryLayoutModes() const
     if ([m_fullScreenWindowController isFullScreen])
         return false;
 
-    WebFrameProxy* frame = m_page->mainFrame();
+    RefPtr frame = m_page->mainFrame();
     if (!frame)
         return true;
 

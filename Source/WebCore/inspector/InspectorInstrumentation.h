@@ -621,8 +621,7 @@ inline void InspectorInstrumentation::didChangeRendererForDOMNode(Node& node)
 inline void InspectorInstrumentation::didAddOrRemoveScrollbars(LocalFrameView& frameView)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame());
-    if (auto* agents = localFrame ? instrumentingAgents(localFrame->document()) : nullptr)
+    if (auto* agents = instrumentingAgents(frameView.frame().document()))
         didAddOrRemoveScrollbarsImpl(*agents, frameView);
 }
 

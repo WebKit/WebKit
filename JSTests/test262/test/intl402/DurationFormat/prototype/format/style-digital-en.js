@@ -1,4 +1,5 @@
 // Copyright 2022 Igalia, S.L. All rights reserved.
+// Copyright 2023 Apple Inc. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
@@ -9,7 +10,7 @@ features: [Intl.DurationFormat]
 ---*/
 
 const style = "digital";
-const expected = "1 yr 2 mths 3 wks 3 days 4:05:06";
+const expected = "1 yr, 2 mths, 3 wks, 3 days, 4:05:06";
 
 const duration = {
   years: 1,

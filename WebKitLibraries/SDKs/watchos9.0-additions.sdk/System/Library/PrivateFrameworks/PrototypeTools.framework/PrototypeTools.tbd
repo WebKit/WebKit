@@ -1,9 +1,6 @@
---- !tapi-tbd-v3
-archs:           [ i386, x86_64, arm64, arm64e, arm64_32, armv7k ]
-install-name:    '/System/Library/PrivateFrameworks/PrototypeTools.framework/PrototypeTools'
-objc-constraint: none
-platform: watchos
-exports:
-  - archs:           [ i386, x86_64, arm64, arm64e, arm64_32, armv7k ]
-    objc-classes:    [ PTButtonRow, PTDomain, PTEditFloatRow, PTModule, PTRestoreDefaultSettingsRowAction, PTRow, PTRowAction, PTSection, PTSettings, PTSliderRow, PTSRow, PTSwitchRow ]
+--- !tapi-tbd
+tbd-version: 4
+targets: [armv7k-watchos, arm64-watchos, arm64e-watchos, arm64_32-watchos]
+install-name: /System/Library/PrivateFrameworks/PrototypeTools.framework/PrototypeTools
+exports: []
 ...

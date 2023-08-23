@@ -646,9 +646,7 @@ void TiledCoreAnimationDrawingArea::updateDebugInfoLayer(bool showLayer)
 
 bool TiledCoreAnimationDrawingArea::shouldUseTiledBackingForFrameView(const LocalFrameView& frameView) const
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame());
-    return (localFrame && localFrame->isMainFrame())
-        || m_webPage.corePage()->settings().asyncFrameScrollingEnabled();
+    return frameView.frame().isMainFrame() || m_webPage.corePage()->settings().asyncFrameScrollingEnabled();
 }
 
 PlatformCALayer* TiledCoreAnimationDrawingArea::layerForTransientZoom() const

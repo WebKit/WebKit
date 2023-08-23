@@ -903,6 +903,8 @@ void beforeAll()
     kServer = new WebKitTestServer(WebKitTestServer::ServerOptions::ServerRunInThread);
     kServer->run(serverCallback);
 
+    Test::shouldInitializeWebProcessExtensions = true;
+
     ResourcesTest::add("WebKitWebView", "resources", testWebViewResources);
     SingleResourceLoadTest::add("WebKitWebResource", "loading", testWebResourceLoading);
     SingleResourceLoadTest::add("WebKitWebResource", "response", testWebResourceResponse);

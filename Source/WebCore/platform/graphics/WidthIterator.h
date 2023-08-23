@@ -30,11 +30,14 @@
 namespace WebCore {
 
 class FontCascade;
+class FontCascadeDescription;
 class Font;
 class TextRun;
 struct GlyphData;
 struct GlyphIndexRange;
 struct OriginalAdvancesForCharacterTreatedAsSpace;
+struct AdvanceInternalState;
+struct SmallCapsState;
 
 using CharactersTreatedAsSpace = Vector<OriginalAdvancesForCharacterTreatedAsSpace, 64>;
 
@@ -70,7 +73,8 @@ private:
         GlyphBufferAdvance initialAdvance;
     };
     ApplyFontTransformsResult applyFontTransforms(GlyphBuffer&, unsigned lastGlyphCount, const Font&, CharactersTreatedAsSpace&);
-    void commitCurrentFontRange(GlyphBuffer&, unsigned& lastGlyphCount, unsigned currentCharacterIndex, const Font*&, const Font& newFont, const Font& primaryFont, UChar32 character, float& widthOfCurrentFontRange, float nextCharacterWidth, CharactersTreatedAsSpace&);
+    void commitCurrentFontRange(AdvanceInternalState&);
+    void startNewFontRangeIfNeeded(AdvanceInternalState&, SmallCapsState&, const FontCascadeDescription&);
     void applyInitialAdvance(GlyphBuffer&, GlyphBufferAdvance initialAdvance, unsigned lastGlyphCount);
 
     bool hasExtraSpacing() const;

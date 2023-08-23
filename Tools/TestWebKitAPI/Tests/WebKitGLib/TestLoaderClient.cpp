@@ -828,6 +828,8 @@ void beforeAll()
     kServer = new WebKitTestServer();
     kServer->run(serverCallback);
 
+    Test::shouldInitializeWebProcessExtensions = true;
+
     LoadTrackingTest::add("WebKitWebView", "loading-status", testLoadingStatus);
     LoadTrackingTest::add("WebKitWebView", "loading-error", testLoadingError);
     LoadTrackingTest::add("WebKitWebView", "load-html", testLoadHtml);

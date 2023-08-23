@@ -41,6 +41,7 @@
 #include "InlineLineBoxBuilder.h"
 #include "InlineLineTypes.h"
 #include "InlineTextItem.h"
+#include "IntrinsicWidthHandler.h"
 #include "LayoutBox.h"
 #include "LayoutContext.h"
 #include "LayoutElementBox.h"
@@ -133,22 +134,10 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicSizes(const 
     if (needsInlineItemsUpdate)
         InlineItemsBuilder { root(), inlineFormattingState }.build(needsLayoutStartPosition);
 
-    auto computedIntrinsicValue = [&](auto intrinsicWidthMode, auto& inlineBuilder, MayCacheLayoutResult mayCacheLayoutResult = MayCacheLayoutResult::No) {
-        inlineBuilder.setIntrinsicWidthMode(intrinsicWidthMode);
-        return ceiledLayoutUnit(computedIntrinsicWidthForConstraint(intrinsicWidthMode, inlineBuilder, mayCacheLayoutResult));
-    };
+    auto intrinsicWidthHandler = IntrinsicWidthHandler { *this };
+    auto intrinsicSizes = intrinsicWidthHandler.computedIntrinsicSizes();
+    m_maximumIntrinsicWidthResultForSingleLine = intrinsicWidthHandler.maximumIntrinsicWidthResult();
 
-    auto intrinsicSizes = IntrinsicWidthConstraints { };
-    if (TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineFormattingState)) {
-        auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { *this, { }, inlineFormattingState.inlineItems() };
-        intrinsicSizes = { computedIntrinsicValue(IntrinsicWidthMode::Minimum, simplifiedLineBuilder), computedIntrinsicValue(IntrinsicWidthMode::Maximum, simplifiedLineBuilder, TextOnlySimpleLineBuilder::hasIntrinsicWidthSpecificStyle(root().style()) ? MayCacheLayoutResult::No : MayCacheLayoutResult::Yes) };
-    } else {
-        auto floatingState = FloatingState { root() };
-        auto parentBlockLayoutState = BlockLayoutState { floatingState, { } };
-        auto inlineLayoutState = InlineLayoutState { parentBlockLayoutState, { } };
-        auto lineBuilder = LineBuilder { *this, inlineLayoutState, floatingState, { }, inlineFormattingState.inlineItems() };
-        intrinsicSizes = { computedIntrinsicValue(IntrinsicWidthMode::Minimum, lineBuilder), computedIntrinsicValue(IntrinsicWidthMode::Maximum, lineBuilder) };
-    }
     formattingState().setIntrinsicWidthConstraints(intrinsicSizes);
     return intrinsicSizes;
 }
@@ -159,16 +148,7 @@ LayoutUnit InlineFormattingContext::maximumContentSize()
     if (auto intrinsicWidthConstraints = inlineFormattingState.intrinsicWidthConstraints())
         return intrinsicWidthConstraints->maximum;
 
-    if (inlineFormattingState.inlineItems().isEmpty())
-        InlineItemsBuilder { root(), inlineFormattingState }.build({ });
-
-    auto floatingState = FloatingState { root() };
-    auto parentBlockLayoutState = BlockLayoutState { floatingState, { } };
-    auto inlineLayoutState = InlineLayoutState { parentBlockLayoutState, { } };
-    auto lineBuilder = LineBuilder { *this, inlineLayoutState, floatingState, { }, inlineFormattingState.inlineItems() };
-    lineBuilder.setIntrinsicWidthMode(IntrinsicWidthMode::Maximum);
-
-    return ceiledLayoutUnit(computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Maximum, lineBuilder));
+    return IntrinsicWidthHandler { *this }.maximumContentSize();
 }
 
 static bool mayExitFromPartialLayout(const InlineDamage& lineDamage, size_t lineIndex, const InlineDisplay::Boxes& newContent)
@@ -281,49 +261,6 @@ void InlineFormattingContext::computeStaticPositionForOutOfFlowContent(const For
         }
         formattingState.boxGeometry(outOfFlowBox).setLogicalTopLeft(formattingGeometry.staticPositionForOutOfFlowBlockLevelBox(outOfFlowBox, constraints, displayContent));
     }
-}
-
-InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(IntrinsicWidthMode intrinsicWidthMode, AbstractLineBuilder& lineBuilder, MayCacheLayoutResult mayCacheLayoutResult)
-{
-    auto horizontalConstraints = HorizontalConstraints { };
-    if (intrinsicWidthMode == IntrinsicWidthMode::Maximum)
-        horizontalConstraints.logicalWidth = maxInlineLayoutUnit();
-    auto& inlineItems = formattingState().inlineItems();
-    auto layoutRange = InlineItemRange { 0 , inlineItems.size() };
-    auto maximumContentWidth = InlineLayoutUnit { };
-    auto previousLineEnd = std::optional<InlineItemPosition> { };
-    auto previousLine = std::optional<PreviousLine> { };
-    auto lineIndex = 0lu;
-
-    while (true) {
-        auto lineLayoutResult = lineBuilder.layoutInlineContent({ layoutRange, { 0.f, 0.f, horizontalConstraints.logicalWidth, 0.f } }, previousLine);
-        auto floatContentWidth = [&] {
-            auto leftWidth = LayoutUnit { };
-            auto rightWidth = LayoutUnit { };
-            for (auto& floatItem : lineLayoutResult.floatContent.placedFloats) {
-                mayCacheLayoutResult = MayCacheLayoutResult::No;
-                auto marginBoxRect = BoxGeometry::marginBoxRect(floatItem.boxGeometry());
-                if (floatItem.isLeftPositioned())
-                    leftWidth = std::max(leftWidth, marginBoxRect.right());
-                else
-                    rightWidth = std::max(rightWidth, horizontalConstraints.logicalWidth - marginBoxRect.left());
-            }
-            return InlineLayoutUnit { leftWidth + rightWidth };
-        };
-        maximumContentWidth = std::max(maximumContentWidth, lineLayoutResult.lineGeometry.logicalTopLeft.x() + lineLayoutResult.contentGeometry.logicalWidth + floatContentWidth());
-
-        layoutRange.start = InlineFormattingGeometry::leadingInlineItemPositionForNextLine(lineLayoutResult.inlineItemRange.end, previousLineEnd, layoutRange.end);
-        if (layoutRange.isEmpty()) {
-            auto shouldCacheLineBreakingResultForSubsequentLayout = !lineIndex && mayCacheLayoutResult == MayCacheLayoutResult::Yes;
-            if (shouldCacheLineBreakingResultForSubsequentLayout)
-                m_maximumIntrinsicWidthResultForSingleLine = LineBreakingResultForConstraint { ceiledLayoutUnit(maximumContentWidth), WTFMove(lineLayoutResult) };
-            break;
-        }
-
-        previousLineEnd = layoutRange.start;
-        previousLine = PreviousLine { lineIndex++, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, { }, { }, WTFMove(lineLayoutResult.floatContent.suspendedFloats) };
-    }
-    return maximumContentWidth;
 }
 
 static LineEndingEllipsisPolicy lineEndingEllipsisPolicy(const RenderStyle& rootStyle, size_t numberOfLines, std::optional<size_t> numberOfVisibleLinesAllowed)

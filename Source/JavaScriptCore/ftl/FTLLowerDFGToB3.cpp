@@ -20019,6 +20019,15 @@ IGNORE_CLANG_WARNINGS_END
                     unsure(continuation), unsure(withinRange));
                             
                 m_out.appendTo(withinRange, continuation);
+                if (isClamped) {
+                    PatchpointValue* patchpoint = m_out.patchpoint(Double);
+                    patchpoint->append(ConstrainedValue(doubleValue, B3::ValueRep::SomeRegister));
+                    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                        jit.roundTowardNearestIntDouble(params[1].fpr(), params[0].fpr());
+                    });
+                    patchpoint->effects = Effects::none();
+                    doubleValue = patchpoint;
+                }
                 intValues.append(m_out.anchor(m_out.doubleToInt(doubleValue)));
                 m_out.jump(continuation);
                             

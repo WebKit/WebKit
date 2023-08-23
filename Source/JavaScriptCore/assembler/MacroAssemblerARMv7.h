@@ -1686,10 +1686,14 @@ public:
         CRASH();
     }
 
-    NO_RETURN_DUE_TO_CRASH void roundTowardNearestIntDouble(FPRegisterID, FPRegisterID)
+    // this is provided (unlike the other rounding instructions) since it is
+    // used in a more limited fashion (for Uint8ClampedArray)--its range is
+    // limited to doubles that round to a 32-bit signed int--otherwise, it will
+    // saturate (and signal an FP exception [which is non-trapping])
+    void roundTowardNearestIntDouble(FPRegisterID src, FPRegisterID dest)
     {
-        ASSERT(!supportsFloatingPointRounding());
-        CRASH();
+        m_assembler.vcvt_floatingPointToSignedNearest(asSingle(dest), src);
+        m_assembler.vcvt_signedToFloatingPoint(dest, asSingle(dest));
     }
 
     void convertInt32ToFloat(RegisterID src, FPRegisterID dest)

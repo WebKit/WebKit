@@ -17,7 +17,7 @@ info: |
   a. Set next to ? IteratorStep(iteratorRecord).
   b. If next is not false, then
   i. Let nextValue be ? IteratorValue(next).
-  iv. If nextValue is not one of "year", "month", "monthCode", "day", "hour", "minute", "second", "millisecond", "microsecond", "nanosecond", then
+  iv. If nextValue is not one of "year", "month", "monthCode", or "day", then
   1. Let completion be ThrowCompletion(a newly created RangeError object).
   2. Return ? IteratorClose(iteratorRecord, completion).
 features: [Symbol, Symbol.iterator, Temporal, computed-property-names, generators]
@@ -38,7 +38,7 @@ const fields = {
       // The following three lines should not be reached if the implemention
       // correctly check the previous line.
       i++;
-      yield "hour";
+      yield "day";
       i++;
   }
 }

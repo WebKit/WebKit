@@ -37,9 +37,15 @@
 
 namespace WebCore {
 
-WebGLObject::WebGLObject(WebGLRenderingContextBase& context)
+WebGLObject::WebGLObject(WebGLRenderingContextBase& context, PlatformGLObject object)
     : m_context(context.createRefForContextObject())
+    , m_object(object)
 {
+}
+
+WebGLRenderingContextBase* WebGLObject::context() const
+{
+    return m_context.get();
 }
 
 Lock& WebGLObject::objectGraphLockForContext()
@@ -52,13 +58,6 @@ Lock& WebGLObject::objectGraphLockForContext()
 GraphicsContextGL* WebGLObject::graphicsContextGL() const
 {
     return m_context ? m_context->graphicsContextGL() : nullptr;
-}
-
-void WebGLObject::setObject(PlatformGLObject object)
-{
-    ASSERT(!m_object);
-    ASSERT(!m_deleted);
-    m_object = object;
 }
 
 void WebGLObject::runDestructor()
@@ -107,6 +106,11 @@ void WebGLObject::onDetached(const AbstractLocker& locker, GraphicsContextGL* co
         --m_attachmentCount;
     if (m_deleted)
         deleteObject(locker, context3d);
+}
+
+bool WebGLObject::validate(const WebGLRenderingContextBase& context) const
+{
+    return &context == m_context;
 }
 
 WebCoreOpaqueRoot root(WebGLObject* object)

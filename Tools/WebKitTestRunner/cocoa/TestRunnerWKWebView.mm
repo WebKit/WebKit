@@ -65,7 +65,7 @@ struct CustomMenuActionInfo {
     , UIGestureRecognizerDelegate
 #endif
 > {
-    RetainPtr<NSNumber> m_stableStateOverride;
+    RetainPtr<NSNumber> _stableStateOverride;
     BOOL _isInteractingWithFormControl;
     BOOL _scrollingUpdatesDisabled;
     RetainPtr<NSArray<NSString *>> _allowedMenuActions;
@@ -367,6 +367,28 @@ IGNORE_WARNINGS_END
     }
 }
 
+- (BOOL)isZoomingOrScrolling
+{
+    auto scroller = self.scrollView;
+    if (scroller.isZooming || scroller.isAnimatingZoom || scroller.isAnimatingScroll
+        || scroller.isVerticalBouncing || scroller.isHorizontalBouncing || scroller.isZoomBouncing)
+        return YES;
+
+    static NeverDestroyed<RetainPtr<NSSet>> animationKeyNames = [NSSet setWithArray:@[
+        @"bounds.size",
+        @"bounds.origin",
+        @"bounds",
+        @"transform"
+    ]];
+
+    for (NSString *key in scroller.layer.animationKeys) {
+        if ([animationKeyNames.get() containsObject:key])
+            return YES;
+    }
+
+    return NO;
+}
+
 - (void)_didFinishScrolling:(UIScrollView *)scrollView
 {
     [super _didFinishScrolling:scrollView];
@@ -377,12 +399,12 @@ IGNORE_WARNINGS_END
 
 - (NSNumber *)_stableStateOverride
 {
-    return m_stableStateOverride.get();
+    return _stableStateOverride.get();
 }
 
 - (void)_setStableStateOverride:(NSNumber *)overrideBoolean
 {
-    m_stableStateOverride = overrideBoolean;
+    _stableStateOverride = overrideBoolean;
     [self _scheduleVisibleContentRectUpdate];
 }
 

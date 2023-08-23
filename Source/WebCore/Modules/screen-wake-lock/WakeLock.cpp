@@ -37,6 +37,7 @@
 #include "PermissionController.h"
 #include "PermissionQuerySource.h"
 #include "PermissionState.h"
+#include "VisibilityState.h"
 #include "WakeLockManager.h"
 #include "WakeLockSentinel.h"
 

@@ -42,6 +42,7 @@
 #include <WebKit/_WKOverlayScrollbarStyle.h>
 #include <pal/spi/cocoa/AVKitSPI.h>
 #include <wtf/BlockPtr.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakObjCPtr.h>
@@ -181,7 +182,7 @@ typedef id <NSValidatedUserInterfaceItem> ValidationItem;
 typedef Vector<RetainPtr<ValidationItem>> ValidationVector;
 typedef HashMap<String, ValidationVector> ValidationMap;
 
-class WebViewImpl : public CanMakeWeakPtr<WebViewImpl> {
+class WebViewImpl : public CanMakeWeakPtr<WebViewImpl>, public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WebViewImpl);
 public:

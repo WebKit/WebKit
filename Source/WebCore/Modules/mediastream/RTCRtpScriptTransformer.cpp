@@ -30,9 +30,11 @@
 
 #include "DedicatedWorkerGlobalScope.h"
 #include "EventLoop.h"
+#include "FrameRateMonitor.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSRTCEncodedAudioFrame.h"
 #include "JSRTCEncodedVideoFrame.h"
+#include "Logging.h"
 #include "MessageWithMessagePorts.h"
 #include "RTCRtpTransformableFrame.h"
 #include "ReadableStream.h"
@@ -70,6 +72,10 @@ RTCRtpScriptTransformer::RTCRtpScriptTransformer(ScriptExecutionContext& context
     , m_ports(WTFMove(ports))
     , m_readableSource(WTFMove(readableSource))
     , m_readable(WTFMove(readable))
+#if !RELEASE_LOG_DISABLED
+    , m_enableAdditionalLogging(context.settingsValues().webRTCMediaPipelineAdditionalLoggingEnabled)
+    , m_identifier(RTCRtpScriptTransformerIdentifier::generate())
+#endif
 {
 }
 
@@ -109,8 +115,19 @@ ExceptionOr<Ref<WritableStream>> RTCRtpScriptTransformer::writable()
             });
 
             // If no data, skip the frame since there is nothing to packetize or decode.
-            if (rtcFrame->data().data())
+            if (rtcFrame->data().data()) {
+#if !RELEASE_LOG_DISABLED
+                if (transformer->m_enableAdditionalLogging && transformer->m_backend->mediaType() == RTCRtpTransformBackend::MediaType::Video) {
+                    if (!transformer->m_writableFrameRateMonitor) {
+                        transformer->m_writableFrameRateMonitor = makeUnique<FrameRateMonitor>([identifier = transformer->m_identifier](auto info) {
+                            RELEASE_LOG(WebRTC, "RTCRtpScriptTransformer writable %" PRIu64 ", frame at %f, previous frame was at %f, observed frame rate is %f, delay since last frame is %f ms, frame count is %lu", identifier.toUInt64(), info.frameTime.secondsSinceEpoch().value(), info.lastFrameTime.secondsSinceEpoch().value(), info.observedFrameRate, ((info.frameTime - info.lastFrameTime) * 1000).value(), info.frameCount);
+                        });
+                    }
+                    transformer->m_writableFrameRateMonitor->update();
+                }
+#endif
                 transformer->m_backend->processTransformedFrame(rtcFrame.get());
+            }
             return { };
         }));
         if (writableOrException.hasException())
@@ -158,6 +175,17 @@ void RTCRtpScriptTransformer::enqueueFrame(ScriptExecutionContext& context, Ref<
         for (auto& promise : std::exchange(m_pendingKeyFramePromises, { }))
             promise->resolve();
     }
+
+#if !RELEASE_LOG_DISABLED
+    if (m_enableAdditionalLogging && isVideo) {
+        if (!m_readableFrameRateMonitor) {
+            m_readableFrameRateMonitor = makeUnique<FrameRateMonitor>([identifier = m_identifier](auto info) {
+                RELEASE_LOG(WebRTC, "RTCRtpScriptTransformer readable %" PRIu64 ", frame at %f, previous frame was at %f, observed frame rate is %f, delay since last frame is %f ms, frame count is %lu", identifier.toUInt64(), info.frameTime.secondsSinceEpoch().value(), info.lastFrameTime.secondsSinceEpoch().value(), info.observedFrameRate, ((info.frameTime - info.lastFrameTime) * 1000).value(), info.frameCount);
+            });
+        }
+        m_readableFrameRateMonitor->update();
+    }
+#endif
 
     auto value = isVideo ? toJS(globalObject, globalObject, RTCEncodedVideoFrame::create(WTFMove(frame))) : toJS(globalObject, globalObject, RTCEncodedAudioFrame::create(WTFMove(frame)));
     m_readableSource->enqueue(value);

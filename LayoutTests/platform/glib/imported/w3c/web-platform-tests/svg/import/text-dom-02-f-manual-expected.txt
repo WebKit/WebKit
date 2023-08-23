@@ -10,11 +10,11 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (10,50) size 148x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 148x13
           chunk 1 text run 1 at (10.00,60.00) startOffset 0 endOffset 29 width 147.60: "Methods independent of layout"
-      RenderSVGText {text} at (50,40) size 12x13 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 12x12
+      RenderSVGText {text} at (50,40) size 20x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 20x14
           chunk 1 text run 1 at (50.00,50.00) startOffset 0 endOffset 1 width 1.20: "a"
-          chunk 1 text run 2 at (51.20,50.00) startOffset 1 endOffset 3 width 1.80: "\x{D800}\x{DC00}"
-          chunk 1 text run 3 at (53.00,50.00) startOffset 3 endOffset 4 width 4.20: "b"
+          chunk 1 text run 2 at (51.20,50.00) startOffset 1 endOffset 3 width 9.60: "\x{D800}\x{DC00}"
+          chunk 1 text run 3 at (60.80,50.00) startOffset 3 endOffset 4 width 4.20: "b"
       RenderSVGRect {rect} at (16,233) size 51x51 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=140.00] [width=30.00] [height=30.00]
       RenderSVGText {text} at (50,143) size 158x21 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 158x21

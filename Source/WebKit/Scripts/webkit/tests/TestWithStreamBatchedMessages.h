@@ -46,6 +46,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithStreamBatched_SendString; }
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isStreamBatched = true;
 

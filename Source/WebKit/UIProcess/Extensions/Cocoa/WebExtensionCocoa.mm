@@ -35,6 +35,7 @@
 #import "APIData.h"
 #import "CocoaHelpers.h"
 #import "FoundationSPI.h"
+#import "Logging.h"
 #import "_WKWebExtensionInternal.h"
 #import "_WKWebExtensionPermission.h"
 #import <CoreFoundation/CFBundle.h>
@@ -281,8 +282,10 @@ NSURL *WebExtension::resourceFileURLForPath(NSString *path)
     NSURL *resourceURL = [NSURL fileURLWithPath:path.stringByRemovingPercentEncoding isDirectory:NO relativeToURL:m_resourceBaseURL.get()].URLByStandardizingPath;
 
     // Don't allow escaping the base URL with "../".
-    if (![resourceURL.absoluteString hasPrefix:m_resourceBaseURL.get().absoluteString])
+    if (![resourceURL.absoluteString hasPrefix:m_resourceBaseURL.get().absoluteString]) {
+        RELEASE_LOG_ERROR(Extensions, "Resource URL path escape attempt: %{private}@", resourceURL);
         return nil;
+    }
 
     return resourceURL;
 }
@@ -554,6 +557,8 @@ void WebExtension::recordError(NSError *error, SuppressNotification suppressNoti
 
     if (!m_errors)
         m_errors = [NSMutableArray array];
+
+    RELEASE_LOG_ERROR(Extensions, "Error recorded: %{private}@", error);
 
     [m_errors addObject:error];
 

@@ -27,6 +27,8 @@
 
 #if ENABLE(UI_SIDE_COMPOSITING)
 
+#include <wtf/text/WTFString.h>
+
 namespace IPC {
 class Decoder;
 class Encoder;

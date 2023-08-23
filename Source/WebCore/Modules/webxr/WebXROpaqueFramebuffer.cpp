@@ -89,8 +89,9 @@ static GL::EGLImageSource makeEGLImageSource(const std::tuple<WTF::MachSendRight
 std::unique_ptr<WebXROpaqueFramebuffer> WebXROpaqueFramebuffer::create(PlatformXR::LayerHandle handle, WebGLRenderingContextBase& context, Attributes&& attributes, IntSize framebufferSize)
 {
     auto framebuffer = WebGLFramebuffer::createOpaque(context);
-    auto opaque = std::unique_ptr<WebXROpaqueFramebuffer>(new WebXROpaqueFramebuffer(handle, WTFMove(framebuffer), context, WTFMove(attributes), framebufferSize));
-    return opaque;
+    if (!framebuffer)
+        return nullptr;
+    return std::unique_ptr<WebXROpaqueFramebuffer>(new WebXROpaqueFramebuffer(handle, framebuffer.releaseNonNull(), context, WTFMove(attributes), framebufferSize));
 }
 
 WebXROpaqueFramebuffer::WebXROpaqueFramebuffer(PlatformXR::LayerHandle handle, Ref<WebGLFramebuffer>&& framebuffer, WebGLRenderingContextBase& context, Attributes&& attributes, IntSize framebufferSize)
@@ -131,8 +132,6 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
     auto& gl = *m_context.graphicsContextGL();
 
     auto [textureTarget, textureTargetBinding] = gl.externalImageTextureBindingPoint();
-
-    m_framebuffer->setOpaqueActive(true);
 
     GCGLint boundFBO = gl.getInteger(GL::FRAMEBUFFER_BINDING);
     GCGLint boundRenderbuffer = gl.getInteger(GL::RENDERBUFFER_BINDING);
@@ -198,8 +197,6 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
 
 void WebXROpaqueFramebuffer::endFrame()
 {
-    m_framebuffer->setOpaqueActive(false);
-
     if (!m_context.graphicsContextGL())
         return;
 

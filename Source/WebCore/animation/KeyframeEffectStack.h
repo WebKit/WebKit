@@ -41,8 +41,9 @@ namespace Style {
 struct ResolutionContext;
 }
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(KeyframeEffectStack);
 class KeyframeEffectStack {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(KeyframeEffectStack);
 public:
     explicit KeyframeEffectStack();
     ~KeyframeEffectStack();

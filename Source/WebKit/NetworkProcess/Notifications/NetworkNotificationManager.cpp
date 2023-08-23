@@ -57,12 +57,6 @@ NetworkNotificationManager::NetworkNotificationManager(NetworkSession& networkSe
     }
 }
 
-void NetworkNotificationManager::requestSystemNotificationPermission(const String& originString, CompletionHandler<void(bool)>&& completionHandler)
-{
-    LOG(Push, "Network process passing permission request to webpushd");
-    sendMessageWithReply<WebPushD::MessageType::RequestSystemNotificationPermission>(WTFMove(completionHandler), originString);
-}
-
 void NetworkNotificationManager::setPushAndNotificationsEnabledForOrigin(const SecurityOriginData& origin, bool enabled, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_connection) {
@@ -81,18 +75,6 @@ void NetworkNotificationManager::deletePushAndNotificationRegistration(const Sec
     }
 
     sendMessageWithReply<WebPushD::MessageType::DeletePushAndNotificationRegistration>(WTFMove(completionHandler), origin.toString());
-}
-
-void NetworkNotificationManager::getOriginsWithPushAndNotificationPermissions(CompletionHandler<void(const Vector<SecurityOriginData>&)>&& completionHandler)
-{
-    CompletionHandler<void(Vector<String>&&)> replyHandler = [completionHandler = WTFMove(completionHandler)] (Vector<String> originStrings) mutable {
-        auto origins = originStrings.map([](auto& originString) {
-            return SecurityOriginData::fromURL({ { }, originString });
-        });
-        completionHandler(WTFMove(origins));
-    };
-
-    sendMessageWithReply<WebPushD::MessageType::GetOriginsWithPushAndNotificationPermissions>(WTFMove(replyHandler));
 }
 
 void NetworkNotificationManager::getPendingPushMessages(CompletionHandler<void(const Vector<WebPushMessage>&)>&& completionHandler)

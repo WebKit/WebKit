@@ -66,6 +66,7 @@
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "ExtensionStyleSheets.h"
+#include "FilterRenderingMode.h"
 #include "FocusController.h"
 #include "FontCache.h"
 #include "FrameLoader.h"
@@ -165,6 +166,7 @@
 #include "UserScript.h"
 #include "UserStyleSheet.h"
 #include "ValidationMessageClient.h"
+#include "VisibilityState.h"
 #include "VisitedLinkState.h"
 #include "VisitedLinkStore.h"
 #include "VoidCallback.h"
@@ -3070,7 +3072,7 @@ static const double gMaximumUnpaintedAreaRatio = 0.04;
 
 bool Page::isCountingRelevantRepaintedObjects() const
 {
-    return m_isCountingRelevantRepaintedObjects && m_requestedLayoutMilestones.contains(DidHitRelevantRepaintedObjectsAreaThreshold);
+    return m_isCountingRelevantRepaintedObjects && m_requestedLayoutMilestones.contains(LayoutMilestone::DidHitRelevantRepaintedObjectsAreaThreshold);
 }
 
 void Page::startCountingRelevantRepaintedObjects()
@@ -3170,7 +3172,7 @@ void Page::addRelevantRepaintedObject(RenderObject* object, const LayoutRect& ob
         m_isCountingRelevantRepaintedObjects = false;
         resetRelevantPaintedObjectCounter();
         if (auto* frame = dynamicDowncast<LocalFrame>(mainFrame()))
-            frame->loader().didReachLayoutMilestone(DidHitRelevantRepaintedObjectsAreaThreshold);
+            frame->loader().didReachLayoutMilestone(LayoutMilestone::DidHitRelevantRepaintedObjectsAreaThreshold);
     }
 }
 

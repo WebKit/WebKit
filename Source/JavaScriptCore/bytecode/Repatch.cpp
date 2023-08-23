@@ -89,18 +89,6 @@ static void linkSlowFor(VM& vm, CallLinkInfo& callLinkInfo)
     linkSlowPathTo(vm, callLinkInfo, virtualThunk);
 }
 
-static JSCell* webAssemblyOwner(CallFrame* callFrame)
-{
-#if ENABLE(WEBASSEMBLY)
-    // Each WebAssembly.Instance shares the stubs from their WebAssembly.Module, which are therefore the appropriate owner.
-    return jsCast<JSWebAssemblyInstance*>(callFrame->wasmInstance()->owner())->module();
-#else
-    UNUSED_PARAM(callFrame);
-    RELEASE_ASSERT_NOT_REACHED();
-    return nullptr;
-#endif // ENABLE(WEBASSEMBLY)
-}
-
 void linkMonomorphicCall(
     VM& vm, CallFrame* callFrame, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock,
     JSObject* callee, CodePtr<JSEntryPtrTag> codePtr)
@@ -109,18 +97,8 @@ void linkMonomorphicCall(
 
     CallFrame* callerFrame = callFrame->callerFrame();
 
-    // WebAssembly -> JS stubs don't have a valid CodeBlock.
-    CodeBlock* callerCodeBlock = nullptr;
-    JSCell* owner = nullptr;
-    if (callerFrame->isWasmFrame()) {
-        // When calling this from Wasm, callee is Wasm::Callee.
-        owner = webAssemblyOwner(callerFrame);
-    } else {
-        // Our caller must have a cell for a callee.
-        ASSERT(callerFrame->callee().isCell());
-        callerCodeBlock = callerFrame->codeBlock();
-        owner = callerCodeBlock;
-    }
+    JSCell* owner = callerFrame->codeOwnerCell();
+    CodeBlock* callerCodeBlock = jsDynamicCast<CodeBlock*>(owner); // WebAssembly -> JS stubs don't have a valid CodeBlock.
     ASSERT(owner);
 
     ASSERT(!callLinkInfo.isLinked());
@@ -1711,10 +1689,8 @@ static void linkVirtualFor(VM& vm, CallFrame* callFrame, CallLinkInfo& callLinkI
 {
     CallFrame* callerFrame = callFrame->callerFrame();
 
-    // WebAssembly -> JS stubs don't have a valid CodeBlock.
-    CodeBlock* callerCodeBlock = nullptr;
-    if (!callerFrame->isWasmFrame())
-        callerCodeBlock = callerFrame->codeBlock();
+    JSCell* owner = callerFrame->codeOwnerCell();
+    CodeBlock* callerCodeBlock = jsDynamicCast<CodeBlock*>(owner); // WebAssembly -> JS stubs don't have a valid CodeBlock.
 
     dataLogLnIf(shouldDumpDisassemblyFor(callerCodeBlock),
         "Linking virtual call at ", FullCodeOrigin(callerCodeBlock, callerCodeBlock ? callerFrame->codeOrigin() : CodeOrigin { }));
@@ -1747,19 +1723,14 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
         return;
     }
 
-    // WebAssembly -> JS stubs don't have a valid CodeBlock.
-    CodeBlock* callerCodeBlock = nullptr;
-    JSCell* owner = nullptr;
-    bool isWebAssembly = callerFrame->isWasmFrame();
-    if (isWebAssembly) {
-        // When calling this from Wasm, callee is Wasm::Callee.
-        owner = webAssemblyOwner(callerFrame);
-    } else {
-        // Our caller must have a cell for a callee.
-        callerCodeBlock = callerFrame->codeBlock();
-        owner = callerCodeBlock;
-    }
+    JSCell* owner = callerFrame->codeOwnerCell();
+    CodeBlock* callerCodeBlock = jsDynamicCast<CodeBlock*>(owner); // WebAssembly -> JS stubs don't have a valid CodeBlock.
     ASSERT(owner);
+#if ENABLE(WEBASSEMBLY)
+    bool isWebAssembly = owner->inherits<JSWebAssemblyModule>();
+#else
+    bool isWebAssembly = false;
+#endif
 
     CallVariantList list;
     if (PolymorphicCallStubRoutine* stub = callLinkInfo.stub())

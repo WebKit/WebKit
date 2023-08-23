@@ -572,10 +572,7 @@ static void appendAccessibilityObject(RefPtr<AXCoreObject> object, Accessibility
         auto* frameView = dynamicDowncast<LocalFrameView>(widget);
         if (!frameView)
             return;
-        auto* localFrame = dynamicDowncast<LocalFrame>(frameView->frame());
-        if (!localFrame)
-            return;
-        auto* document = localFrame->document();
+        auto* document = frameView->frame().document();
         if (!document || !document->hasLivingRenderTree())
             return;
         
@@ -1410,10 +1407,7 @@ VisiblePosition AccessibilityObject::visiblePositionForPoint(const IntPoint& poi
         auto* frameView = dynamicDowncast<LocalFrameView>(widget);
         if (!frameView)
             break;
-        auto* localFrame = dynamicDowncast<LocalFrame>(frameView->frame());
-        if (!localFrame)
-            break;
-        auto* document = localFrame->document();
+        auto* document = frameView->frame().document();
         if (!document)
             break;
 
@@ -2044,11 +2038,7 @@ Document* AccessibilityObject::document() const
     if (!frameView)
         return nullptr;
 
-    auto* localFrame = dynamicDowncast<LocalFrame>(frameView->frame());
-    if (!localFrame)
-        return nullptr;
-
-    return localFrame->document();
+    return frameView->frame().document();
 }
     
 Page* AccessibilityObject::page() const

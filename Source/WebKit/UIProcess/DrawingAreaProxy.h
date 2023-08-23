@@ -83,8 +83,6 @@ public:
     // FIXME: These should be pure virtual.
     virtual void setBackingStoreIsDiscardable(bool) { }
 
-    virtual void waitForBackingStoreUpdateOnNextPaint() { }
-
     const WebCore::IntSize& size() const { return m_size; }
     bool setSize(const WebCore::IntSize&, const WebCore::IntSize& scrollOffset = { });
 

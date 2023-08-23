@@ -46,8 +46,6 @@ static NSString *originsKey = @"origins";
 
 void WebExtensionAPIPermissions::getAll(Ref<WebExtensionCallbackHandler>&& callback)
 {
-    RELEASE_LOG(Extensions, "permissions.getAll()");
-
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::PermissionsGetAll(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Vector<String> permissions, Vector<String> origins) {
         callback->call(@{
             permissionsKey: createNSArray(permissions).get(),
@@ -58,8 +56,6 @@ void WebExtensionAPIPermissions::getAll(Ref<WebExtensionCallbackHandler>&& callb
 
 void WebExtensionAPIPermissions::contains(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    RELEASE_LOG(Extensions, "permissions.contains()");
-
     HashSet<String> permissions, origins;
     WebExtension::MatchPatternSet matchPatterns;
     parseDetailsDictionary(details, permissions, origins);
@@ -74,8 +70,6 @@ void WebExtensionAPIPermissions::contains(NSDictionary *details, Ref<WebExtensio
 
 void WebExtensionAPIPermissions::request(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **)
 {
-    RELEASE_LOG(Extensions, "permissions.request()");
-
     HashSet<String> permissions, origins;
     parseDetailsDictionary(details, permissions, origins);
 
@@ -108,8 +102,6 @@ void WebExtensionAPIPermissions::request(NSDictionary *details, Ref<WebExtension
 
 void WebExtensionAPIPermissions::remove(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **)
 {
-    RELEASE_LOG(Extensions, "permissions.remove()");
-
     HashSet<String> permissions, origins;
     parseDetailsDictionary(details, permissions, origins);
 

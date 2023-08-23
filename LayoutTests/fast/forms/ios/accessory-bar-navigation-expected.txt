@@ -3,14 +3,13 @@ Tests zooming into a text input on tap.
 
 After focus first field
 
-tap location	{ x: 38.000, y: 446.000 }
-scale	0.749
-visibleRect	{ left: 0.000, top: 110.753, width: 427.000, height: 731.237 }
+scale	0.750
+visibleRect	{ left: 0, top: 0, width: 520, height: 1063 }
 After move to second field
 
-scale	0.749
-visibleRect	{ left: 0.000, top: 932.061, width: 427.000, height: 731.237 }
+scale	0.750
+visibleRect	{ left: 0, top: 766, width: 520, height: 1063 }
 After move to first field
 
-scale	0.749
-visibleRect	{ left: 0.000, top: 110.753, width: 427.000, height: 731.237 }
+scale	0.750
+visibleRect	{ left: 0, top: 0, width: 520, height: 1063 }

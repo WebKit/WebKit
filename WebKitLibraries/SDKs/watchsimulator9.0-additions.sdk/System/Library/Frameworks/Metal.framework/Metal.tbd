@@ -1,0 +1,15 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [i386-watchos-simulator, x86_64-watchos-simulator, arm64-watchos-simulator]
+install-name: /System/Library/Frameworks/Metal.framework/Metal
+current-version: 306.6.4
+exports:
+-       targets: [i386-watchos-simulator, x86_64-watchos-simulator, arm64-watchos-simulator]
+        symbols: [_MTLCommonCounterSetStatistic, _MTLCommonCounterSetTimestamp, _MTLCreateSystemDefaultDevice]
+        objc-classes: [MTLArgumentDescriptor, MTLBlitPassDescriptor, MTLCaptureDescriptor, MTLCaptureManager, MTLCommandBufferDescriptor,
+                MTLCompileOptions, MTLComputePassDescriptor, MTLComputePipelineDescriptor, MTLCounterSampleBufferDescriptor,
+                MTLDepthStencilDescriptor, MTLFunctionConstantValues, MTLFunctionDescriptor, MTLIndirectCommandBufferDescriptor,
+                MTLRenderPassDescriptor, MTLRenderPipelineColorAttachmentDescriptor, MTLRenderPipelineDescriptor, MTLSamplerDescriptor,
+                MTLSharedEventListener, MTLStencilDescriptor, MTLTextureDescriptor, MTLVertexAttributeDescriptor, MTLVertexBufferLayoutDescriptor,
+                MTLVertexDescriptor]
+...

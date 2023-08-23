@@ -1997,6 +1997,7 @@
 		E367062A2A2705DB00CF892F /* StringSplitCacheInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E36706282A2705DB00CF892F /* StringSplitCacheInlines.h */; };
 		E367062B2A2705DB00CF892F /* StringSplitCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E36706292A2705DB00CF892F /* StringSplitCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E36CC9472086314F0051FFD6 /* WasmCreationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = E36CC9462086314F0051FFD6 /* WasmCreationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E36D2BB82A8D9E5C001CF154 /* NativeCalleeRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = E36D2BB62A8D9E5B001CF154 /* NativeCalleeRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E36EDCE524F0975700E60DA2 /* Concurrency.h in Headers */ = {isa = PBXBuildFile; fileRef = E36EDCE424F0975700E60DA2 /* Concurrency.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3711992253FA87F00BA69A0 /* Gate.h in Headers */ = {isa = PBXBuildFile; fileRef = E3711991253FA87E00BA69A0 /* Gate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E374166E26912BC700C80789 /* ObjectConstructorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E374166D26912BC700C80789 /* ObjectConstructorInlines.h */; };
@@ -2072,7 +2073,7 @@
 		E3F23A811ECF13FA00978D99 /* SnippetParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F23A7C1ECF13E500978D99 /* SnippetParams.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3F23A821ECF13FE00978D99 /* Snippet.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F23A7B1ECF13E500978D99 /* Snippet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3F429BD2A41742F00C5FEFF /* AirOptimizePairedLoadStore.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F429BB2A41742700C5FEFF /* AirOptimizePairedLoadStore.h */; };
-		E3FB853A22F3667B008F90ED /* WasmCalleeRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FB853822F36674008F90ED /* WasmCalleeRegistry.h */; };
+		E3F52B2B2A8D9BB70080E92D /* NativeCallee.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F52B292A8D9BB60080E92D /* NativeCallee.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3FCCB642310A90D00238E72 /* ConstructorKind.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FCCB632310A90D00238E72 /* ConstructorKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3FF75331D9CEA1800C7E16D /* DOMJITGetterSetter.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FF752F1D9CEA1200C7E16D /* DOMJITGetterSetter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E49DC16C12EF294E00184A1F /* SourceProviderCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E49DC15112EF272200184A1F /* SourceProviderCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5617,6 +5618,8 @@
 		E36706292A2705DB00CF892F /* StringSplitCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringSplitCache.h; sourceTree = "<group>"; };
 		E36B480123E9573800E4A66E /* UnlinkedCodeBlockGenerator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnlinkedCodeBlockGenerator.cpp; sourceTree = "<group>"; };
 		E36CC9462086314F0051FFD6 /* WasmCreationMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmCreationMode.h; sourceTree = "<group>"; };
+		E36D2BB62A8D9E5B001CF154 /* NativeCalleeRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeCalleeRegistry.h; sourceTree = "<group>"; };
+		E36D2BB72A8D9E5B001CF154 /* NativeCalleeRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NativeCalleeRegistry.cpp; sourceTree = "<group>"; };
 		E36EDCE424F0975700E60DA2 /* Concurrency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Concurrency.h; sourceTree = "<group>"; };
 		E3711991253FA87E00BA69A0 /* Gate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Gate.h; sourceTree = "<group>"; };
 		E374166D26912BC700C80789 /* ObjectConstructorInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectConstructorInlines.h; sourceTree = "<group>"; };
@@ -5744,8 +5747,8 @@
 		E3F23A7E1ECF13E500978D99 /* SnippetSlowPathCalls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnippetSlowPathCalls.h; sourceTree = "<group>"; };
 		E3F429BB2A41742700C5FEFF /* AirOptimizePairedLoadStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AirOptimizePairedLoadStore.h; path = b3/air/AirOptimizePairedLoadStore.h; sourceTree = "<group>"; };
 		E3F429BC2A41742700C5FEFF /* AirOptimizePairedLoadStore.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AirOptimizePairedLoadStore.cpp; path = b3/air/AirOptimizePairedLoadStore.cpp; sourceTree = "<group>"; };
-		E3FB853822F36674008F90ED /* WasmCalleeRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmCalleeRegistry.h; sourceTree = "<group>"; };
-		E3FB853922F36674008F90ED /* WasmCalleeRegistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmCalleeRegistry.cpp; sourceTree = "<group>"; };
+		E3F52B292A8D9BB60080E92D /* NativeCallee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeCallee.h; sourceTree = "<group>"; };
+		E3F52B2A2A8D9BB70080E92D /* NativeCallee.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NativeCallee.cpp; sourceTree = "<group>"; };
 		E3FC25102256ECF400583518 /* DoublePredictionFuzzerAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DoublePredictionFuzzerAgent.cpp; sourceTree = "<group>"; };
 		E3FC25112256ECF400583518 /* DoublePredictionFuzzerAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DoublePredictionFuzzerAgent.h; sourceTree = "<group>"; };
 		E3FCCB632310A90D00238E72 /* ConstructorKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstructorKind.h; sourceTree = "<group>"; };
@@ -7621,8 +7624,6 @@
 				525C0DD81E935847002184CD /* WasmCallee.h */,
 				526AC4B41E977C5D003500E1 /* WasmCalleeGroup.cpp */,
 				526AC4B51E977C5D003500E1 /* WasmCalleeGroup.h */,
-				E3FB853922F36674008F90ED /* WasmCalleeRegistry.cpp */,
-				E3FB853822F36674008F90ED /* WasmCalleeRegistry.h */,
 				53FD04D11D7AB187003287D3 /* WasmCallingConvention.cpp */,
 				53FD04D21D7AB187003287D3 /* WasmCallingConvention.h */,
 				E35C88C42984F411005A3CDA /* WasmCallsiteCollection.cpp */,
@@ -8438,6 +8439,10 @@
 				276B39052A71D2B300252F4E /* ModuleProgramExecutableInlines.h */,
 				CE27A3D723759BAC0089605E /* NarrowingNumberPredictionFuzzerAgent.cpp */,
 				CE27A3D823759BAC0089605E /* NarrowingNumberPredictionFuzzerAgent.h */,
+				E3F52B2A2A8D9BB70080E92D /* NativeCallee.cpp */,
+				E3F52B292A8D9BB60080E92D /* NativeCallee.h */,
+				E36D2BB72A8D9E5B001CF154 /* NativeCalleeRegistry.cpp */,
+				E36D2BB62A8D9E5B001CF154 /* NativeCalleeRegistry.h */,
 				BC02E9080E1839DB000F9297 /* NativeErrorConstructor.cpp */,
 				BC02E9090E1839DB000F9297 /* NativeErrorConstructor.h */,
 				276B38FD2A71D2B200252F4E /* NativeErrorConstructorInlines.h */,
@@ -11329,6 +11334,8 @@
 				A79D3ED9C5064DD0A8466A3A /* ModuleScopeData.h in Headers */,
 				0F1FB3991E1F65FB00A9BE50 /* MutatorScheduler.h in Headers */,
 				0FA762071DB9243300B7A2FD /* MutatorState.h in Headers */,
+				E3F52B2B2A8D9BB70080E92D /* NativeCallee.h in Headers */,
+				E36D2BB82A8D9E5C001CF154 /* NativeCalleeRegistry.h in Headers */,
 				BC02E9110E1839DB000F9297 /* NativeErrorConstructor.h in Headers */,
 				276B39152A71D2B600252F4E /* NativeErrorConstructorInlines.h in Headers */,
 				BC02E9130E1839DB000F9297 /* NativeErrorPrototype.h in Headers */,
@@ -11706,7 +11713,6 @@
 				37AAC093279F1BFC00D64842 /* WasmBranchHintsSectionParser.h in Headers */,
 				525C0DDA1E935847002184CD /* WasmCallee.h in Headers */,
 				526AC4B71E977C5D003500E1 /* WasmCalleeGroup.h in Headers */,
-				E3FB853A22F3667B008F90ED /* WasmCalleeRegistry.h in Headers */,
 				53FD04D41D7AB291003287D3 /* WasmCallingConvention.h in Headers */,
 				E34D4FAA2984F25B00CE5F9F /* WasmCallsiteCollection.h in Headers */,
 				E337B967224324EA0093A820 /* WasmCapabilities.h in Headers */,

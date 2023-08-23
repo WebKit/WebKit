@@ -59,6 +59,8 @@ messages -> NetworkProcess LegacyReceiver {
     ApplicationDidEnterBackground()
     ApplicationWillEnterForeground()
 
+    ContinueWillSendRequest(WebKit::DownloadID downloadID, WebCore::ResourceRequest request)
+
     SetAllowsAnySSLCertificateForWebSocket(bool enabled) -> () Synchronous
 
     FlushCookies(PAL::SessionID sessionID) -> ()
@@ -78,6 +80,10 @@ messages -> NetworkProcess LegacyReceiver {
     NotifyMediaStreamingActivity(bool activity)
 
     PreconnectTo(PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::ResourceRequest request, enum:uint8_t WebCore::StoredCredentialsPolicy storedCredentialsPolicy, std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain);
+
+#if ENABLE(SERVICE_WORKER)
+    SetInspectionForServiceWorkersAllowed(PAL::SessionID sessionID, bool inspectable)
+#endif
 
 #if ENABLE(TRACKING_PREVENTION)
     ClearPrevalentResource(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> ()
@@ -233,7 +239,6 @@ messages -> NetworkProcess LegacyReceiver {
 #endif
     SetPushAndNotificationsEnabledForOrigin(PAL::SessionID sessionID, WebCore::SecurityOriginData origin, bool enabled) -> ()
     DeletePushAndNotificationRegistration(PAL::SessionID sessionID, WebCore::SecurityOriginData origin) -> (String errorMessage)
-    GetOriginsWithPushAndNotificationPermissions(PAL::SessionID sessionID) -> (Vector<WebCore::SecurityOriginData> origins)
     HasPushSubscriptionForTesting(PAL::SessionID sessionID, URL scopeURL) -> (bool hasSubscription)
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)

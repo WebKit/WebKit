@@ -735,12 +735,12 @@ AtomString HTMLFormElement::effectiveTarget(const Event* event, HTMLFormControlE
     if (RefPtr submitter = overrideSubmitter ? overrideSubmitter : findSubmitter(event)) {
         auto& targetValue = submitter->attributeWithoutSynchronization(formtargetAttr);
         if (!targetValue.isNull())
-            return targetValue;
+            return makeTargetBlankIfHasDanglingMarkup(targetValue);
     }
 
     auto targetValue = target();
     if (!targetValue.isNull())
-        return targetValue;
+        return makeTargetBlankIfHasDanglingMarkup(targetValue);
 
     return document().baseTarget();
 }

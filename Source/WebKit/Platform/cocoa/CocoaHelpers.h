@@ -36,6 +36,10 @@ OBJC_CLASS NSSet;
 OBJC_CLASS NSString;
 OBJC_CLASS NSUUID;
 
+#define THROW_UNLESS(condition, message) \
+    if (UNLIKELY(!(condition))) \
+        [NSException raise:NSInternalInconsistencyException format:message]
+
 namespace WebKit {
 
 template<typename T> T *filterObjects(T *container, bool NS_NOESCAPE (^block)(__kindof id key, __kindof id value));

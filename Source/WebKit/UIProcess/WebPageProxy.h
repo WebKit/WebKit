@@ -127,7 +127,7 @@ class SubstituteData;
 class TextCheckingRequestData;
 class ValidationBubble;
 
-enum LayoutMilestone : uint16_t;
+enum class LayoutMilestone : uint16_t;
 enum PaginationMode : uint8_t;
 enum ScrollDirection : uint8_t;
 enum ScrollbarOverlayStyle : uint8_t;
@@ -360,7 +360,6 @@ class SharedMemoryHandle;
 class SpeechRecognitionPermissionManager;
 class SuspendedPageProxy;
 class SystemPreviewController;
-class TouchBarMenuData;
 class UserData;
 class UserMediaPermissionRequestManagerProxy;
 class UserMediaPermissionRequestProxy;
@@ -435,7 +434,6 @@ struct ResourceLoadInfo;
 struct SessionState;
 struct TapIdentifierType;
 struct TextCheckerRequestType;
-struct TouchBarMenuItemData;
 struct TransactionIDType;
 struct URLSchemeTaskParameters;
 struct UserMessage;
@@ -837,10 +835,6 @@ public:
     void changeListType();
 
     void setBaseWritingDirection(WebCore::WritingDirection);
-
-#if HAVE(TOUCH_BAR)
-    const TouchBarMenuData& touchBarMenuData() const;
-#endif
 
     bool maintainsInactiveSelection() const;
     void setMaintainsInactiveSelection(bool);
@@ -1815,13 +1809,6 @@ public:
     void scheduleFullEditorStateUpdate();
     void dispatchDidUpdateEditorState();
 
-#if HAVE(TOUCH_BAR)
-    void touchBarMenuDataRemoved();
-    void touchBarMenuDataChanged(const TouchBarMenuData&);
-    void touchBarMenuItemDataAdded(const TouchBarMenuItemData&);
-    void touchBarMenuItemDataRemoved(const TouchBarMenuItemData&);
-#endif
-
 #if ENABLE(TRACKING_PREVENTION)
     void requestStorageAccessConfirm(const WebCore::RegistrableDomain& subFrameDomain, const WebCore::RegistrableDomain& topFrameDomain, WebCore::FrameIdentifier, CompletionHandler<void(bool)>&&);
     void didCommitCrossSiteLoadWithDataTransferFromPrevalentResource();
@@ -2256,6 +2243,7 @@ public:
 
 #if ENABLE(WEBXR) && !USE(OPENXR)
     PlatformXRSystem* xrSystem() const;
+    void restartXRSessionActivityOnProcessResumeIfNeeded();
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)

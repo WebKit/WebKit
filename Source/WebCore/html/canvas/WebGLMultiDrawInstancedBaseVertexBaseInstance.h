@@ -26,12 +26,17 @@
 #pragma once
 
 #include "WebGLExtension.h"
+#include "WebGLRenderingContextBase.h"
 #include <JavaScriptCore/TypedArrays.h>
+#include <wtf/IsoMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class WebGLMultiDrawInstancedBaseVertexBaseInstance final : public RefCounted<WebGLMultiDrawInstancedBaseVertexBaseInstance>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(WebGLMultiDrawInstancedBaseVertexBaseInstance);
+    WTF_MAKE_NONCOPYABLE(WebGLMultiDrawInstancedBaseVertexBaseInstance);
 public:
     using Int32List = WebGLRenderingContextBase::TypedList<Int32Array, int32_t>;
     using Uint32List = WebGLRenderingContextBase::TypedList<Uint32Array, uint32_t>;

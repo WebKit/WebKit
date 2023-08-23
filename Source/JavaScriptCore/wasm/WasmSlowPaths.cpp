@@ -78,9 +78,9 @@ namespace JSC { namespace LLInt {
     } while (false)
 
 #define CALLEE() \
-    static_cast<Wasm::LLIntCallee*>(callFrame->callee().asWasmCallee())
+    static_cast<Wasm::LLIntCallee*>(callFrame->callee().asNativeCallee())
 #define IPINT_CALLEE() \
-    static_cast<Wasm::IPIntCallee*>(callFrame->callee().asWasmCallee())
+    static_cast<Wasm::IPIntCallee*>(callFrame->callee().asNativeCallee())
 
 #define READ(virtualRegister) \
     (virtualRegister.isConstant() \
@@ -1096,7 +1096,7 @@ WASM_IPINT_EXTERN_CPP_DECL(call_indirect, CallFrame* callFrame, unsigned functio
     if (function.m_function.typeIndex == Wasm::TypeDefinition::invalidIndex)
         WASM_THROW(Wasm::ExceptionType::NullTableEntry);
 
-    const auto& callSignature = static_cast<Wasm::IPIntCallee*>(callFrame->callee().asWasmCallee())->signature(typeIndex);
+    const auto& callSignature = static_cast<Wasm::IPIntCallee*>(callFrame->callee().asNativeCallee())->signature(typeIndex);
     if (callSignature.index() != function.m_function.typeIndex)
         WASM_THROW(Wasm::ExceptionType::BadSignature);
 

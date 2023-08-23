@@ -1458,7 +1458,6 @@ $(PROJECT_DIR)/html/HTMLMediaElement+AudioOutput.idl
 $(PROJECT_DIR)/html/HTMLMediaElement+RequestVideoFrameCallback.idl
 $(PROJECT_DIR)/html/HTMLMediaElement.idl
 $(PROJECT_DIR)/html/HTMLMenuElement.idl
-$(PROJECT_DIR)/html/HTMLMenuItemElement.idl
 $(PROJECT_DIR)/html/HTMLMetaElement.idl
 $(PROJECT_DIR)/html/HTMLMeterElement.idl
 $(PROJECT_DIR)/html/HTMLModElement.idl

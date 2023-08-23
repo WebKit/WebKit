@@ -2500,6 +2500,7 @@ class WebCore::TransformOperations {
     WebCore::ColorInterpolationMethod colorInterpolationMethod();
     WebCore::GradientSpreadMethod spreadMethod();
     WebCore::GradientColorStops stops();
+    std::optional<WebCore::RenderingResourceIdentifier> renderingResourceIdentifierIfExists();
 }
 
 [Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Pattern::Parameters {
@@ -4428,6 +4429,7 @@ enum class WebCore::ServiceWorkerClientFrameType : uint8_t {
     None
 };
 
+enum class WebCore::ServiceWorkerIsInspectable : bool
 enum class WebCore::ShouldNotifyWhenResolved : bool
 
 enum class WebCore::ServiceWorkerUpdateViaCache : uint8_t {

@@ -16,8 +16,14 @@ features: [Temporal]
 
 const cal = new Temporal.Calendar("iso8601");
 
-let result = cal.monthDayFromFields({ year: 2021, monthCode: "M02", day: 29 });
-TemporalHelpers.assertPlainMonthDay(result, "M02", 29, "year is ignored and reference year should be a leap year if monthCode is given");
+let result = cal.monthDayFromFields({ year: 2021, monthCode: "M02", day: 29} , { overflow: "constrain" });
+TemporalHelpers.assertPlainMonthDay(result, "M02", 28, "year should not be ignored when monthCode is given (overflow constrain");
+
+assert.throws(
+  RangeError, 
+  () => cal.monthDayFromFields({ year: 2021, monthCode: "M02", day: 29 }, {overflow: "reject"}), 
+  "year should not be ignored when monthCode is given (overflow reject)"
+);
 
 result = cal.monthDayFromFields({ year: 2021, month: 2, day: 29 }, { overflow: "constrain" });
 TemporalHelpers.assertPlainMonthDay(result, "M02", 28, "year should not be ignored if monthCode is not given (overflow constrain)");

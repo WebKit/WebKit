@@ -35,6 +35,7 @@ namespace WebCore {
 
 class EXTPolygonOffsetClamp final : public RefCounted<EXTPolygonOffsetClamp>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(EXTPolygonOffsetClamp);
+    WTF_MAKE_NONCOPYABLE(EXTPolygonOffsetClamp);
 public:
     explicit EXTPolygonOffsetClamp(WebGLRenderingContextBase&);
     ~EXTPolygonOffsetClamp();

@@ -396,7 +396,7 @@ void CSSToStyleMap::mapAnimationName(Animation& layer, const CSSValue& value)
     if (primitiveValue.valueID() == CSSValueNone)
         layer.setIsNoneAnimation(true);
     else
-        layer.setName({ primitiveValue.stringValue(), primitiveValue.isCustomIdent() }, m_builderState.styleScopeOrdinal());
+        layer.setName({ AtomString { primitiveValue.stringValue() }, m_builderState.styleScopeOrdinal(), primitiveValue.isCustomIdent() });
 }
 
 void CSSToStyleMap::mapAnimationPlayState(Animation& layer, const CSSValue& value)

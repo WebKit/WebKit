@@ -17,86 +17,29 @@
     </style>
     
     <script src="resources/zooming-test-utils.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
     <script>
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
-
-    function getMoveUIScript(nextOrPrevious)
-    {
-        return `
-            (function() {
-                uiController.didEndZoomingCallback = function() {
-                    var result = {
-                        'scale' : uiController.zoomScale,
-                        'visibleRect' : uiController.contentVisibleRect
-                    };
-
-                    var result = JSON.stringify(result, function(key, value) {
-                          if (typeof value === "number")
-                              return value.toFixed(3);
-                        return value;
-                    });
-
-                    uiController.uiScriptComplete(result);
-                };
-                uiController.keyboardAccessoryBar${nextOrPrevious}();
-            })();`
-    }
-    
-    function moveToNextField()
-    {
-        var uiScript = getMoveUIScript('Next');
-        testRunner.runUIScript(uiScript, function(result) {
-            var header = document.createElement('h1');
-            header.textContent = 'After move to second field';
-            document.body.appendChild(header);
-
-            var results = tableFromJSON(result);
-            document.body.appendChild(results);
-            
-            moveToPreviousField();
-        });
-    }
-
-    function moveToPreviousField()
-    {
-        var uiScript = getMoveUIScript('Previous');
-        testRunner.runUIScript(uiScript, function(result) {
-            var header = document.createElement('h1');
-            header.textContent = 'After move to first field';
-            document.body.appendChild(header);
-
-            var results = tableFromJSON(result);
-            document.body.appendChild(results);
-            testRunner.notifyDone();
-        });
-    }
-    
-    function tapOnElement(targetElement, xOffset, yOffset)
-    {
-        var point = getPointInsideElement(targetElement, xOffset, yOffset);
-
-        var uiScript = zoomAfterSingleTapUIScript(point.x, point.y);
-        testRunner.runUIScript(uiScript, function(result) {
-            var header = document.createElement('h1');
-            header.textContent = 'After focus first field';
-            document.body.appendChild(header);
-
-            var results = tableFromJSON(result);
-            document.body.appendChild(results);
-            
-            moveToNextField();
-        });
-    }
-    
-    function doTest()
+    async function doTest()
     {
         if (!window.testRunner || !testRunner.runUIScript)
             return;
 
-        tapOnElement(document.getElementById('input'), 10, 10);
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+
+        await UIHelper.activateElementAndWaitForInputSession(document.getElementById('input'));
+        await UIHelper.waitForZoomingOrScrollingToEnd();
+        await dumpScaleAndVisibleRect('After focus first field');
+
+        await UIHelper.moveToNextByKeyboardAccessoryBar();
+        await UIHelper.waitForZoomingOrScrollingToEnd();
+        await dumpScaleAndVisibleRect('After move to second field');
+
+        await UIHelper.moveToPreviousByKeyboardAccessoryBar();
+        await UIHelper.waitForZoomingOrScrollingToEnd();
+        await dumpScaleAndVisibleRect('After move to first field');
+
+        testRunner.notifyDone();
     }
 
     window.addEventListener('load', doTest, false);

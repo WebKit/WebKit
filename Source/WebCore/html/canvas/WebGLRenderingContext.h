@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+class WebGLTimerQueryEXT;
+
 class WebGLRenderingContext final : public WebGLRenderingContextBase {
     WTF_MAKE_ISO_ALLOCATED(WebGLRenderingContext);
 public:
@@ -58,7 +60,7 @@ public:
 protected:
     friend class EXTDisjointTimerQuery;
 
-    RefPtr<WebGLTimerQueryEXT> m_activeQuery;
+    WebGLBindingPoint<WebGLTimerQueryEXT, GraphicsContextGL::TIME_ELAPSED_EXT> m_activeQuery;
 
 private:
     using WebGLRenderingContextBase::WebGLRenderingContextBase;

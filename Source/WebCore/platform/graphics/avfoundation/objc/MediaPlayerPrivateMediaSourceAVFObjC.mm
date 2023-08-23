@@ -47,8 +47,7 @@
 #import "VideoFrameCV.h"
 #import "VideoLayerManagerObjC.h"
 #import "WebCoreDecompressionSession.h"
-#import <AVFoundation/AVAsset.h>
-#import <AVFoundation/AVTime.h>
+#import <AVFoundation/AVFoundation.h>
 #import <CoreMedia/CMTime.h>
 #import <QuartzCore/CALayer.h>
 #import <objc_runtime.h>
@@ -125,23 +124,20 @@ private:
     WeakPtr<MediaPlayerPrivateMediaSourceAVFObjC> m_client;
 };
 
-static void CMTimebaseEffectiveRateChangedCallback(CMNotificationCenterRef, const void *listener, CFStringRef, const void *, CFTypeRef)
+static void timebaseEffectiveRateChangedCallback(CFNotificationCenterRef, void* observer, CFNotificationName, const void*, CFDictionaryRef)
 {
-    auto* effectiveRateChangedListener = (EffectiveRateChangedListener*)const_cast<void*>(listener);
-    effectiveRateChangedListener->effectiveRateChanged();
+    static_cast<EffectiveRateChangedListener*>(observer)->effectiveRateChanged();
 }
 
 void EffectiveRateChangedListener::stop(CMTimebaseRef timebase)
 {
-    CMNotificationCenterRef nc = PAL::CMNotificationCenterGetDefaultLocalCenter();
-    PAL::CMNotificationCenterRemoveListener(nc, this, CMTimebaseEffectiveRateChangedCallback, PAL::kCMTimebaseNotification_EffectiveRateChanged, timebase);
+    CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), this, kCMTimebaseNotification_EffectiveRateChanged, timebase);
 }
 
 EffectiveRateChangedListener::EffectiveRateChangedListener(MediaPlayerPrivateMediaSourceAVFObjC& client, CMTimebaseRef timebase)
     : m_client(client)
 {
-    CMNotificationCenterRef nc = PAL::CMNotificationCenterGetDefaultLocalCenter();
-    PAL::CMNotificationCenterAddListener(nc, this, CMTimebaseEffectiveRateChangedCallback, PAL::kCMTimebaseNotification_EffectiveRateChanged, timebase, 0);
+    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, timebaseEffectiveRateChangedCallback, kCMTimebaseNotification_EffectiveRateChanged, timebase, static_cast<CFNotificationSuspensionBehavior>(0));
 }
 
 MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(MediaPlayer* player)
@@ -967,9 +963,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::destroyLayer()
         return;
 
     CMTime currentTime = PAL::CMTimebaseGetTime([m_synchronizer timebase]);
-    [m_synchronizer removeRenderer:m_sampleBufferDisplayLayer.get() atTime:currentTime withCompletionHandler:^(BOOL){
-        // No-op.
-    }];
+    [m_synchronizer removeRenderer:m_sampleBufferDisplayLayer.get() atTime:currentTime completionHandler:nil];
 
     if (m_mediaSourcePrivate)
         m_mediaSourcePrivate->setVideoLayer(nullptr);
@@ -1373,9 +1367,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         return;
 
     CMTime currentTime = PAL::CMTimebaseGetTime([m_synchronizer timebase]);
-    [m_synchronizer removeRenderer:audioRenderer atTime:currentTime withCompletionHandler:^(BOOL){
-        // No-op.
-    }];
+    [m_synchronizer removeRenderer:audioRenderer atTime:currentTime completionHandler:nil];
 
     m_sampleBufferAudioRendererMap.remove(iter);
     if (auto player = m_player.get())

@@ -57,23 +57,3 @@ enum class ActivityStateForCPUSampling : uint8_t {
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, OptionSet<ActivityState>);
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ActivityState> {
-    using values = EnumValues<
-        WebCore::ActivityState,
-        WebCore::ActivityState::WindowIsActive,
-        WebCore::ActivityState::IsFocused,
-        WebCore::ActivityState::IsVisible,
-        WebCore::ActivityState::IsVisibleOrOccluded,
-        WebCore::ActivityState::IsInWindow,
-        WebCore::ActivityState::IsVisuallyIdle,
-        WebCore::ActivityState::IsAudible,
-        WebCore::ActivityState::IsLoading,
-        WebCore::ActivityState::IsCapturingMedia,
-        WebCore::ActivityState::IsConnectedToHardwareConsole
-    >;
-};
-
-} // namespace WTF

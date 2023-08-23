@@ -183,18 +183,18 @@ PASS Bad key length: importKey(jwk (public) , {name: Ed25519}, true, [verify])
 PASS Bad key length: importKey(jwk (public) , {name: Ed25519}, false, [verify])
 PASS Bad key length: importKey(jwk (public) , {name: Ed25519}, true, [verify, verify])
 PASS Bad key length: importKey(jwk (public) , {name: Ed25519}, false, [verify, verify])
-FAIL Missing JWK 'x' parameter: importKey(jwk(private), {name: Ed25519}, true, [sign]) assert_equals: Operation succeeded, but should not have. expected (undefined) undefined but got (object) object "[object CryptoKey]"
-FAIL Missing JWK 'x' parameter: importKey(jwk(private), {name: Ed25519}, false, [sign]) assert_equals: Operation succeeded, but should not have. expected (undefined) undefined but got (object) object "[object CryptoKey]"
-FAIL Missing JWK 'x' parameter: importKey(jwk(private), {name: Ed25519}, true, [sign, sign]) assert_equals: Operation succeeded, but should not have. expected (undefined) undefined but got (object) object "[object CryptoKey]"
-FAIL Missing JWK 'x' parameter: importKey(jwk(private), {name: Ed25519}, false, [sign, sign]) assert_equals: Operation succeeded, but should not have. expected (undefined) undefined but got (object) object "[object CryptoKey]"
-FAIL Missing JWK 'kty' parameter: importKey(jwk(private), {name: Ed25519}, true, [sign]) assert_equals: Missing JWK 'kty' parameter not supported. expected "DataError" but got "TypeError"
-FAIL Missing JWK 'kty' parameter: importKey(jwk(private), {name: Ed25519}, false, [sign]) assert_equals: Missing JWK 'kty' parameter not supported. expected "DataError" but got "TypeError"
-FAIL Missing JWK 'kty' parameter: importKey(jwk(private), {name: Ed25519}, true, [sign, sign]) assert_equals: Missing JWK 'kty' parameter not supported. expected "DataError" but got "TypeError"
-FAIL Missing JWK 'kty' parameter: importKey(jwk(private), {name: Ed25519}, false, [sign, sign]) assert_equals: Missing JWK 'kty' parameter not supported. expected "DataError" but got "TypeError"
+PASS Missing JWK 'x' parameter: importKey(jwk(private), {name: Ed25519}, true, [sign])
+PASS Missing JWK 'x' parameter: importKey(jwk(private), {name: Ed25519}, false, [sign])
+PASS Missing JWK 'x' parameter: importKey(jwk(private), {name: Ed25519}, true, [sign, sign])
+PASS Missing JWK 'x' parameter: importKey(jwk(private), {name: Ed25519}, false, [sign, sign])
+PASS Missing JWK 'kty' parameter: importKey(jwk(private), {name: Ed25519}, true, [sign])
+PASS Missing JWK 'kty' parameter: importKey(jwk(private), {name: Ed25519}, false, [sign])
+PASS Missing JWK 'kty' parameter: importKey(jwk(private), {name: Ed25519}, true, [sign, sign])
+PASS Missing JWK 'kty' parameter: importKey(jwk(private), {name: Ed25519}, false, [sign, sign])
 PASS Missing JWK 'crv' parameter: importKey(jwk (public) , {name: Ed25519}, true, [verify])
 PASS Missing JWK 'crv' parameter: importKey(jwk (public) , {name: Ed25519}, false, [verify])
 PASS Missing JWK 'crv' parameter: importKey(jwk (public) , {name: Ed25519}, true, [verify, verify])
 PASS Missing JWK 'crv' parameter: importKey(jwk (public) , {name: Ed25519}, false, [verify, verify])
-FAIL Invalid key pair: importKey(jwk(private), {name: Ed25519}, true, [sign]) assert_equals: Operation succeeded, but should not have. expected (undefined) undefined but got (object) object "[object CryptoKey]"
-FAIL Invalid key pair: importKey(jwk(private), {name: Ed25519}, true, [sign, sign]) assert_equals: Operation succeeded, but should not have. expected (undefined) undefined but got (object) object "[object CryptoKey]"
+PASS Invalid key pair: importKey(jwk(private), {name: Ed25519}, true, [sign])
+PASS Invalid key pair: importKey(jwk(private), {name: Ed25519}, true, [sign, sign])
 

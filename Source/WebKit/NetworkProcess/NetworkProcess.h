@@ -127,7 +127,7 @@ class Cache;
 enum class CacheOption : uint8_t;
 }
 
-class NetworkProcess : public AuxiliaryProcess, private DownloadManager::Client, public ThreadSafeRefCounted<NetworkProcess>, public CanMakeCheckedPtr
+class NetworkProcess : public AuxiliaryProcess, private DownloadManager::Client, public ThreadSafeRefCounted<NetworkProcess>, public CanMakeThreadSafeCheckedPtr
 {
     WTF_MAKE_NONCOPYABLE(NetworkProcess);
 public:
@@ -142,6 +142,9 @@ public:
     using NavigatedToDomain = WebCore::RegistrableDomain;
     using DomainInNeedOfStorageAccess = WebCore::RegistrableDomain;
     using OpenerDomain = WebCore::RegistrableDomain;
+
+    using CanMakeThreadSafeCheckedPtr::incrementPtrCount;
+    using CanMakeThreadSafeCheckedPtr::decrementPtrCount;
 
     NetworkProcess(AuxiliaryProcessInitializationParameters&&);
     ~NetworkProcess();
@@ -406,7 +409,6 @@ public:
 
     void setPushAndNotificationsEnabledForOrigin(PAL::SessionID, const WebCore::SecurityOriginData&, bool, CompletionHandler<void()>&&);
     void deletePushAndNotificationRegistration(PAL::SessionID, const WebCore::SecurityOriginData&, CompletionHandler<void(const String&)>&&);
-    void getOriginsWithPushAndNotificationPermissions(PAL::SessionID, CompletionHandler<void(const Vector<WebCore::SecurityOriginData>&)>&&);
     void hasPushSubscriptionForTesting(PAL::SessionID, URL&&, CompletionHandler<void(bool)>&&);
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
@@ -423,6 +425,7 @@ public:
 
 #if ENABLE(SERVICE_WORKER)
     void requestBackgroundFetchPermission(PAL::SessionID, const WebCore::ClientOrigin&, CompletionHandler<void(bool)>&&);
+    void setInspectionForServiceWorkersAllowed(PAL::SessionID, bool);
 #endif
 
 private:
@@ -471,6 +474,7 @@ private:
 #if PLATFORM(COCOA)
     void publishDownloadProgress(DownloadID, const URL&, SandboxExtensionHandle&&);
 #endif
+    void continueWillSendRequest(DownloadID, WebCore::ResourceRequest&&);
     void dataTaskWithRequest(WebPageProxyIdentifier, PAL::SessionID, WebCore::ResourceRequest&&, const std::optional<WebCore::SecurityOriginData>& topOrigin, IPC::FormDataReference&&, CompletionHandler<void(DataTaskIdentifier)>&&);
     void cancelDataTask(DataTaskIdentifier, PAL::SessionID);
     void applicationDidEnterBackground();

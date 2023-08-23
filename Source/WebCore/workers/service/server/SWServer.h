@@ -67,8 +67,6 @@ class SWServerToContextConnection;
 class Timer;
 
 enum class NotificationEventType : bool;
-enum class ServiceWorkerRegistrationState : uint8_t;
-enum class ServiceWorkerState : uint8_t;
 
 struct BackgroundFetchInformation;
 struct BackgroundFetchOptions;
@@ -157,12 +155,14 @@ public:
         Vector<RegistrationReadyRequest> m_registrationReadyRequests;
     };
 
-    WEBCORE_EXPORT SWServer(SWServerDelegate&, UniqueRef<SWOriginStore>&&, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID, bool shouldRunServiceWorkersOnMainThreadForTesting, bool hasServiceWorkerEntitlement, std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue);
+    WEBCORE_EXPORT SWServer(SWServerDelegate&, UniqueRef<SWOriginStore>&&, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID, bool shouldRunServiceWorkersOnMainThreadForTesting, bool hasServiceWorkerEntitlement, std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue, ServiceWorkerIsInspectable);
     WEBCORE_EXPORT ~SWServer();
 
     WEBCORE_EXPORT void clearAll(CompletionHandler<void()>&&);
     WEBCORE_EXPORT void clear(const SecurityOriginData&, CompletionHandler<void()>&&);
     WEBCORE_EXPORT void clear(const ClientOrigin&, CompletionHandler<void()>&&);
+
+    WEBCORE_EXPORT void setInspectable(ServiceWorkerIsInspectable);
 
     SWServerRegistration* getRegistration(ServiceWorkerRegistrationIdentifier identifier) { return m_registrations.get(identifier); }
     WEBCORE_EXPORT SWServerRegistration* getRegistration(const ServiceWorkerRegistrationKey&);
@@ -369,6 +369,7 @@ private:
     unsigned m_uniqueRegistrationCount { 0 };
     std::optional<unsigned> m_overrideServiceWorkerRegistrationCountTestingValue;
     uint64_t m_focusOrder { 0 };
+    ServiceWorkerIsInspectable m_isInspectable { ServiceWorkerIsInspectable::Yes };
 
     std::unique_ptr<BackgroundFetchEngine> m_backgroundFetchEngine;
 };

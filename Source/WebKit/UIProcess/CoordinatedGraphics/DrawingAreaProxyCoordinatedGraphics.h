@@ -56,7 +56,6 @@ private:
     // DrawingAreaProxy
     void sizeDidChange() override;
     void deviceScaleFactorDidChange() override;
-    void waitForBackingStoreUpdateOnNextPaint() override;
     void setBackingStoreIsDiscardable(bool) override;
 
 #if PLATFORM(GTK)
@@ -114,9 +113,6 @@ private:
 
     // The current layer tree context.
     LayerTreeContext m_layerTreeContext;
-
-    // For a new Drawing Area don't draw anything until the WebProcess has sent over the first content.
-    bool m_hasReceivedFirstUpdate { false };
 
     // Whether we're waiting for a DidUpdateGeometry message from the web process.
     bool m_isWaitingForDidUpdateGeometry { false };

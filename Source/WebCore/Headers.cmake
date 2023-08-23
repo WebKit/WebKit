@@ -1179,7 +1179,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/HTMLMediaElementEnums.h
     html/HTMLMediaElementIdentifier.h
     html/HTMLMenuElement.h
-    html/HTMLMenuItemElement.h
     html/HTMLMetaElement.h
     html/HTMLModElement.h
     html/HTMLOListElement.h
@@ -2399,6 +2398,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     storage/StorageType.h
     storage/StorageUtilities.h
 
+    style/ScopedName.h
     style/StyleAppearance.h
     style/StyleChange.h
     style/StyleScope.h

@@ -76,14 +76,6 @@ static inline bool isBlobURLContainingNullOrigin(const URL& url)
     return StringView(url.string()).substring(startIndex, endIndex - startIndex - 1) == "null"_s;
 }
 
-#if ASSERT_ENABLED
-static inline bool isInternalBlobURL(const URL& url)
-{
-    constexpr auto prefix = "blob:blobinternal://"_s;
-    return url.string().startsWith(prefix);
-}
-#endif
-
 // If the blob URL contains null origin, as in the context with unique security origin or file URL, save the mapping between url and origin so that the origin can be retrived when doing security origin check.
 static void addToOriginMapIfNecessary(const URL& url, RefPtr<SecurityOrigin>&& origin)
 {
@@ -97,7 +89,7 @@ static void addToOriginMapIfNecessary(const URL& url, RefPtr<SecurityOrigin>&& o
 
 void ThreadableBlobRegistry::registerInternalFileBlobURL(const URL& url, const String& path, const String& replacementPath, const String& contentType)
 {
-    ASSERT(isInternalBlobURL(url));
+    ASSERT(BlobURL::isInternalURL(url));
     String effectivePath = !replacementPath.isNull() ? replacementPath : path;
 
     if (isMainThread()) {
@@ -112,7 +104,7 @@ void ThreadableBlobRegistry::registerInternalFileBlobURL(const URL& url, const S
 
 void ThreadableBlobRegistry::registerInternalBlobURL(const URL& url, Vector<BlobPart>&& blobParts, const String& contentType)
 {
-    ASSERT(isInternalBlobURL(url));
+    ASSERT(BlobURL::isInternalURL(url));
     if (isMainThread()) {
         blobRegistry().registerInternalBlobURL(url, WTFMove(blobParts), contentType);
         return;
@@ -160,7 +152,7 @@ void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, PolicyConta
 
 void ThreadableBlobRegistry::registerInternalBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, const String& fileBackedPath, const String& contentType)
 {
-    ASSERT(isInternalBlobURL(url));
+    ASSERT(BlobURL::isInternalURL(url));
     if (isMainThread()) {
         blobRegistry().registerInternalBlobURLOptionallyFileBacked(url, srcURL, BlobDataFileReference::create(fileBackedPath), contentType);
         return;
@@ -172,7 +164,7 @@ void ThreadableBlobRegistry::registerInternalBlobURLOptionallyFileBacked(const U
 
 void ThreadableBlobRegistry::registerInternalBlobURLForSlice(const URL& newURL, const URL& srcURL, long long start, long long end, const String& contentType)
 {
-    ASSERT(isInternalBlobURL(newURL));
+    ASSERT(BlobURL::isInternalURL(newURL));
     if (isMainThread()) {
         blobRegistry().registerInternalBlobURLForSlice(newURL, srcURL, start, end, contentType);
         return;

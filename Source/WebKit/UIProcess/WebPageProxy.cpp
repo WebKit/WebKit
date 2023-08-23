@@ -264,10 +264,6 @@
 #include <WebCore/UTIUtilities.h>
 #endif
 
-#if HAVE(TOUCH_BAR)
-#include "TouchBarMenuItemData.h"
-#endif
-
 #if PLATFORM(COCOA) || PLATFORM(GTK)
 #include "ViewSnapshotStore.h"
 #endif
@@ -1206,8 +1202,6 @@ void WebPageProxy::finishAttachingToWebProcess(ProcessLaunchReason reason)
 
     pageClient().didRelaunchProcess();
     internals().pageLoadState.didSwapWebProcesses();
-    if (reason != ProcessLaunchReason::InitialProcess)
-        m_drawingArea->waitForBackingStoreUpdateOnNextPaint();
 }
 
 void WebPageProxy::didAttachToRunningProcess()
@@ -2197,8 +2191,14 @@ bool WebPageProxy::inspectable() const
 
 void WebPageProxy::setInspectable(bool inspectable)
 {
-    if (m_inspectorDebuggable)
-        m_inspectorDebuggable->setInspectable(inspectable);
+    if (!m_inspectorDebuggable || m_inspectorDebuggable->inspectable() == inspectable)
+        return;
+
+    m_inspectorDebuggable->setInspectable(inspectable);
+
+#if ENABLE(SERVICE_WORKER)
+    websiteDataStore().updateServiceWorkerInspectability();
+#endif
 }
 
 String WebPageProxy::remoteInspectionNameOverride() const
@@ -3512,7 +3512,7 @@ bool WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
 {
     if (!hasRunningProcess())
         return false;
-    
+
     LOG_WITH_STREAM(KeyHandling, stream << "WebPageProxy::handleKeyboardEvent: " << event.type());
 
     internals().keyEventQueue.append(event);
@@ -5210,8 +5210,6 @@ void WebPageProxy::forceRepaint(CompletionHandler<void()>&& callback)
     if (!hasRunningProcess())
         return callback();
 
-    m_drawingArea->waitForBackingStoreUpdateOnNextPaint();
-
     auto aggregator = CallbackAggregator::create([weakThis = WeakPtr { *this }, callback = WTFMove(callback)] () mutable {
         if (!weakThis)
             return callback();
@@ -6185,14 +6183,14 @@ void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(FrameIdentifier frameI
 
 void WebPageProxy::didLayoutForCustomContentProvider()
 {
-    didReachLayoutMilestone({ DidFirstLayout, DidFirstVisuallyNonEmptyLayout, DidHitRelevantRepaintedObjectsAreaThreshold });
+    didReachLayoutMilestone({ WebCore::LayoutMilestone::DidFirstLayout, WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout, WebCore::LayoutMilestone::DidHitRelevantRepaintedObjectsAreaThreshold });
 }
 
 void WebPageProxy::didReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone> layoutMilestones)
 {
     PageClientProtector protector(pageClient());
 
-    if (layoutMilestones.contains(DidFirstVisuallyNonEmptyLayout))
+    if (layoutMilestones.contains(WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout))
         pageClient().clearSafeBrowsingWarningIfForMainFrameNavigation();
     
     if (m_loaderClient)
@@ -7421,6 +7419,12 @@ void WebPageProxy::didChangeIntrinsicContentSize(const IntSize& intrinsicContent
 PlatformXRSystem* WebPageProxy::xrSystem() const
 {
     return internals().xrSystem.get();
+}
+
+void WebPageProxy::restartXRSessionActivityOnProcessResumeIfNeeded()
+{
+    if (xrSystem() && xrSystem()->hasActiveSession())
+        xrSystem()->ensureImmersiveSessionActivity();
 }
 #endif
 
@@ -11404,25 +11408,6 @@ void WebPageProxy::effectiveAppearanceDidChange()
 
     send(Messages::WebPage::EffectiveAppearanceDidChange(useDarkAppearance(), useElevatedUserInterfaceLevel()));
 }
-
-#if HAVE(TOUCH_BAR)
-
-void WebPageProxy::touchBarMenuDataChanged(const TouchBarMenuData& touchBarMenuData)
-{
-    internals().touchBarMenuData = touchBarMenuData;
-}
-
-void WebPageProxy::touchBarMenuItemDataAdded(const TouchBarMenuItemData& touchBarMenuItemData)
-{
-    internals().touchBarMenuData.addMenuItem(touchBarMenuItemData);
-}
-
-void WebPageProxy::touchBarMenuItemDataRemoved(const TouchBarMenuItemData& touchBarMenuItemData)
-{
-    internals().touchBarMenuData.removeMenuItem(touchBarMenuItemData);
-}
-
-#endif
 
 DataOwnerType WebPageProxy::dataOwnerForPasteboard(PasteboardAccessIntent intent) const
 {

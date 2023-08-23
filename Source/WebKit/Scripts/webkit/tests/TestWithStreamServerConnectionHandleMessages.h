@@ -46,6 +46,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithStreamServerConnectionHandle_SendStreamServerConnection; }
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     explicit SendStreamServerConnection(IPC::StreamServerConnection::Handle&& handle)
         : m_arguments(WTFMove(handle))

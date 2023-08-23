@@ -61,7 +61,7 @@ void DownloadManager::startDownload(PAL::SessionID sessionID, DownloadID downloa
     }
     parameters.storedCredentialsPolicy = sessionID.isEphemeral() ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use;
 
-    m_pendingDownloads.add(downloadID, makeUnique<PendingDownload>(m_client.parentProcessConnectionForDownloads(), WTFMove(parameters), downloadID, *networkSession, suggestedName));
+    m_pendingDownloads.add(downloadID, makeUnique<PendingDownload>(m_client->parentProcessConnectionForDownloads(), WTFMove(parameters), downloadID, *networkSession, suggestedName));
 }
 
 void DownloadManager::dataTaskBecameDownloadTask(DownloadID downloadID, std::unique_ptr<Download>&& download)
@@ -77,10 +77,18 @@ void DownloadManager::dataTaskBecameDownloadTask(DownloadID downloadID, std::uni
     m_downloads.add(downloadID, WTFMove(download));
 }
 
+void DownloadManager::continueWillSendRequest(DownloadID downloadID, WebCore::ResourceRequest&& request)
+{
+    auto* pendingDownload = m_pendingDownloads.get(downloadID);
+    ASSERT(pendingDownload);
+    if (pendingDownload)
+        pendingDownload->continueWillSendRequest(WTFMove(request));
+}
+
 void DownloadManager::convertNetworkLoadToDownload(DownloadID downloadID, std::unique_ptr<NetworkLoad>&& networkLoad, ResponseCompletionHandler&& completionHandler, Vector<RefPtr<WebCore::BlobDataFileReference>>&& blobFileReferences, const ResourceRequest& request, const ResourceResponse& response)
 {
     ASSERT(!m_pendingDownloads.contains(downloadID));
-    m_pendingDownloads.add(downloadID, makeUnique<PendingDownload>(m_client.parentProcessConnectionForDownloads(), WTFMove(networkLoad), WTFMove(completionHandler), downloadID, request, response));
+    m_pendingDownloads.add(downloadID, makeUnique<PendingDownload>(m_client->parentProcessConnectionForDownloads(), WTFMove(networkLoad), WTFMove(completionHandler), downloadID, request, response));
 }
 
 void DownloadManager::downloadDestinationDecided(DownloadID downloadID, Ref<NetworkDataTask>&& networkDataTask)
@@ -94,7 +102,7 @@ void DownloadManager::resumeDownload(PAL::SessionID sessionID, DownloadID downlo
 #if !PLATFORM(COCOA)
     notImplemented();
 #else
-    auto* networkSession = m_client.networkSession(sessionID);
+    auto* networkSession = m_client->networkSession(sessionID);
     if (!networkSession)
         return;
     auto download = makeUnique<Download>(*this, downloadID, nullptr, *networkSession);
@@ -143,22 +151,22 @@ void DownloadManager::downloadFinished(Download& download)
 
 void DownloadManager::didCreateDownload()
 {
-    m_client.didCreateDownload();
+    m_client->didCreateDownload();
 }
 
 void DownloadManager::didDestroyDownload()
 {
-    m_client.didDestroyDownload();
+    m_client->didDestroyDownload();
 }
 
 IPC::Connection* DownloadManager::downloadProxyConnection()
 {
-    return m_client.downloadProxyConnection();
+    return m_client->downloadProxyConnection();
 }
 
 AuthenticationManager& DownloadManager::downloadsAuthenticationManager()
 {
-    return m_client.downloadsAuthenticationManager();
+    return m_client->downloadsAuthenticationManager();
 }
 
 void DownloadManager::applicationDidEnterBackground()

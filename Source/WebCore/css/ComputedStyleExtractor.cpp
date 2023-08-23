@@ -1532,11 +1532,11 @@ static Ref<CSSPrimitiveValue> valueForAnimationPlayState(AnimationPlayState play
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static Ref<CSSPrimitiveValue> valueForAnimationName(const Animation::Name& name)
+static Ref<CSSPrimitiveValue> valueForScopedName(const Style::ScopedName& scopedName)
 {
-    if (name.isIdentifier)
-        return CSSPrimitiveValue::createCustomIdent(name.string);
-    return CSSPrimitiveValue::create(name.string);
+    if (scopedName.isIdentifier)
+        return CSSPrimitiveValue::createCustomIdent(scopedName.name);
+    return CSSPrimitiveValue::create(scopedName.name);
 }
 
 static Ref<CSSValue> valueForAnimationTimingFunction(const TimingFunction& timingFunction)
@@ -1605,7 +1605,7 @@ void ComputedStyleExtractor::addValueForAnimationPropertyToList(CSSValueListBuil
         if (!animation || !animation->isPlayStateFilled())
             list.append(valueForAnimationPlayState(animation ? animation->playState() : Animation::initialPlayState()));
     } else if (property == CSSPropertyAnimationName)
-        list.append(valueForAnimationName(animation ? animation->name() : Animation::initialName()));
+        list.append(valueForScopedName(animation ? animation->name() : Animation::initialName()));
     else if (property == CSSPropertyAnimationComposition) {
         if (!animation || !animation->isCompositeOperationFilled())
             list.append(valueForAnimationComposition(animation ? animation->compositeOperation() : Animation::initialCompositeOperation()));
@@ -2106,7 +2106,20 @@ static Ref<CSSValue> counterToCSSValue(const RenderStyle& style, CSSPropertyID p
 
     CSSValueListBuilder list;
     for (auto& keyValue : map) {
-        if (auto number = (propertyID == CSSPropertyCounterIncrement ? keyValue.value.incrementValue : keyValue.value.resetValue)) {
+        auto number = [&]() -> std::optional<int> {
+            switch (propertyID) {
+            case CSSPropertyCounterIncrement:
+                return keyValue.value.incrementValue;
+            case CSSPropertyCounterReset:
+                return keyValue.value.resetValue;
+            case CSSPropertyCounterSet:
+                return keyValue.value.setValue;
+            default:
+                ASSERT_NOT_REACHED();
+                return std::nullopt;
+            }
+        }();
+        if (number) {
             list.append(CSSPrimitiveValue::createCustomIdent(keyValue.key));
             list.append(CSSPrimitiveValue::createInteger(*number));
         }
@@ -3876,7 +3889,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return CSSPrimitiveValue::create(CSSValueNone);
         CSSValueListBuilder list;
         for (auto& name : style.containerNames())
-            list.append(CSSPrimitiveValue::createCustomIdent(name));
+            list.append(valueForScopedName(name));
         return CSSValueList::createSpaceSeparated(WTFMove(list));
     }
     case CSSPropertyContainIntrinsicSize:
@@ -4065,6 +4078,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyCounterIncrement:
         return counterToCSSValue(style, propertyID);
     case CSSPropertyCounterReset:
+        return counterToCSSValue(style, propertyID);
+    case CSSPropertyCounterSet:
         return counterToCSSValue(style, propertyID);
     case CSSPropertyClipPath:
         return valueForPathOperation(style, style.clipPath());

@@ -98,32 +98,32 @@ private:
 
     void cacheImageBuffer(WebCore::ImageBuffer& imageBuffer)
     {
-        m_resourceHeap.add(imageBuffer.renderingResourceIdentifier(), Ref { imageBuffer });
+        m_resourceHeap.add(Ref { imageBuffer });
     }
 
     void cacheNativeImage(NativeImage& image)
     {
-        m_resourceHeap.add(image.renderingResourceIdentifier(), Ref { image });
+        m_resourceHeap.add(Ref { image });
     }
 
     void cacheFont(Font& font)
     {
-        m_resourceHeap.add(font.renderingResourceIdentifier(), Ref { font });
+        m_resourceHeap.add(Ref { font });
     }
 
     void cacheDecomposedGlyphs(DecomposedGlyphs& decomposedGlyphs)
     {
-        m_resourceHeap.add(decomposedGlyphs.renderingResourceIdentifier(), Ref { decomposedGlyphs });
+        m_resourceHeap.add(Ref { decomposedGlyphs });
     }
 
     void cacheGradient(Gradient& gradient)
     {
-        m_resourceHeap.add(gradient.renderingResourceIdentifier(), Ref { gradient });
+        m_resourceHeap.add(Ref { gradient });
     }
 
     void cacheFilter(Filter& filter)
     {
-        m_resourceHeap.add(filter.renderingResourceIdentifier(), Ref { filter });
+        m_resourceHeap.add(Ref { filter });
     }
 
     static bool shouldDumpForFlags(OptionSet<AsTextFlag>, ItemHandle);

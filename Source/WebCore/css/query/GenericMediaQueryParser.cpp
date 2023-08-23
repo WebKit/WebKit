@@ -250,7 +250,7 @@ bool GenericMediaQueryParserBase::validateFeatureAgainstSchema(Feature& feature,
             return primitiveValue->isLength();
 
         case FeatureSchema::ValueType::Resolution:
-            return primitiveValue && primitiveValue->isResolution() && primitiveValue->doubleValue() >= 0;
+            return primitiveValue && primitiveValue->isResolution();
 
         case FeatureSchema::ValueType::Identifier:
             return primitiveValue && primitiveValue->isValueID() && schema.valueIdentifiers.contains(primitiveValue->valueID());

@@ -43,9 +43,7 @@ constexpr const char* protocolMessageTypeKey { "message type" };
 
 enum class MessageType : uint8_t {
     EchoTwice = 1,
-    RequestSystemNotificationPermission,
     DeletePushAndNotificationRegistration,
-    GetOriginsWithPushAndNotificationPermissions,
     SetDebugModeIsEnabled,
     UpdateConnectionConfiguration,
     InjectPushMessageForTesting,
@@ -70,9 +68,7 @@ inline bool messageTypeSendsReply(MessageType messageType)
 {
     switch (messageType) {
     case MessageType::EchoTwice:
-    case MessageType::GetOriginsWithPushAndNotificationPermissions:
     case MessageType::DeletePushAndNotificationRegistration:
-    case MessageType::RequestSystemNotificationPermission:
     case MessageType::GetPendingPushMessages:
     case MessageType::InjectPushMessageForTesting:
     case MessageType::InjectEncryptedPushMessageForTesting:

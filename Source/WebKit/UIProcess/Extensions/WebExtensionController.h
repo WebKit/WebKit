@@ -42,7 +42,11 @@
 #include <wtf/WeakHashSet.h>
 
 OBJC_CLASS NSError;
-OBJC_CLASS _WKWebExtensionController;
+OBJC_PROTOCOL(_WKWebExtensionControllerDelegatePrivate);
+
+#ifdef __OBJC__
+#import "_WKWebExtensionController.h"
+#endif
 
 namespace WebKit {
 
@@ -107,6 +111,7 @@ public:
 
 #ifdef __OBJC__
     _WKWebExtensionController *wrapper() const { return (_WKWebExtensionController *)API::ObjectImpl<API::Object::Type::WebExtensionController>::wrapper(); }
+    _WKWebExtensionControllerDelegatePrivate *delegate() const { return (_WKWebExtensionControllerDelegatePrivate *)wrapper().delegate; }
 #endif
 
 private:

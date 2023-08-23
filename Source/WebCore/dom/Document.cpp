@@ -272,6 +272,7 @@
 #include "ValidationMessageClient.h"
 #include "ViolationReportType.h"
 #include "VisibilityChangeClient.h"
+#include "VisibilityState.h"
 #include "VisitedLinkState.h"
 #include "VisualViewport.h"
 #include "WakeLockManager.h"
@@ -1492,9 +1493,9 @@ void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
 
     if (Page* page = this->page()) {
         if (frame()->isMainFrame()) {
-            frameView->addPaintPendingMilestones(DidFirstPaintAfterSuppressedIncrementalRendering);
-            if (page->requestedLayoutMilestones() & DidFirstLayoutAfterSuppressedIncrementalRendering)
-                frame()->loader().didReachLayoutMilestone(DidFirstLayoutAfterSuppressedIncrementalRendering);
+            frameView->addPaintPendingMilestones(LayoutMilestone::DidFirstPaintAfterSuppressedIncrementalRendering);
+            if (page->requestedLayoutMilestones() & LayoutMilestone::DidFirstLayoutAfterSuppressedIncrementalRendering)
+                frame()->loader().didReachLayoutMilestone(LayoutMilestone::DidFirstLayoutAfterSuppressedIncrementalRendering);
         }
     }
 
@@ -2187,9 +2188,10 @@ void Document::resolveStyle(ResolveStyleType type)
         // As a result of the style recalculation, the currently hovered element might have been
         // detached (for example, by setting display:none in the :hover style), schedule another mouseMove event
         // to check if any other elements ended up under the mouse pointer due to re-layout.
-        if (m_hoveredElement && !m_hoveredElement->renderer() && is<LocalFrame>(frameView.frame()))
-            if (auto* localMainFrame = dynamicDowncast<LocalFrame>(downcast<LocalFrame>(frameView.frame()).mainFrame()))
+        if (m_hoveredElement && !m_hoveredElement->renderer()) {
+            if (auto* localMainFrame = dynamicDowncast<LocalFrame>(frameView.frame().mainFrame()))
                 localMainFrame->eventHandler().dispatchFakeMouseMoveEventSoon();
+        }
 
         ++m_styleRecalcCount;
         // FIXME: Assert ASSERT(!needsStyleRecalc()) here. fast/events/media-element-focus-tab.html hits this assertion.
@@ -2627,7 +2629,7 @@ void Document::attachToCachedFrame(CachedFrameBase& cachedFrame)
     RELEASE_ASSERT(cachedFrame.document() == this);
     ASSERT(cachedFrame.view());
     ASSERT(m_backForwardCacheState == Document::InBackForwardCache);
-    observeFrame(dynamicDowncast<LocalFrame>(cachedFrame.view()->frame()));
+    observeFrame(&cachedFrame.view()->frame());
 }
 
 void Document::detachFromCachedFrame(CachedFrameBase& cachedFrame)
@@ -4928,7 +4930,7 @@ bool Document::setFocusedElement(Element* element, const FocusOptions& options)
         oldFocusedElement->setFocus(false);
         setFocusNavigationStartingNode(nullptr);
 
-        scheduleContentRelevancyUpdate(ContentRelevancyStatus::Focused);
+        scheduleContentRelevancyUpdate(ContentRelevancy::Focused);
 
         if (options.removalEventsMode == FocusRemovalEventsMode::Dispatch) {
             // Dispatch a change event for form control elements that have been edited.
@@ -5009,7 +5011,7 @@ bool Document::setFocusedElement(Element* element, const FocusOptions& options)
         if (options.trigger != FocusTrigger::Bindings)
             m_latestFocusTrigger = options.trigger;
 
-        scheduleContentRelevancyUpdate(ContentRelevancyStatus::Focused);
+        scheduleContentRelevancyUpdate(ContentRelevancy::Focused);
 
         // The setFocus call triggers a blur and a focus event. Event handlers could cause the focused element to be cleared.
         if (m_focusedElement != newFocusedElement) {
@@ -8450,12 +8452,15 @@ void Document::updateResizeObservations(Page& page)
     // We need layout the whole frame tree here. Because ResizeObserver could observe element in other frame,
     // and it could change other frame in deliverResizeObservations().
     page.layoutIfNeeded();
+    size_t resizeObserverDepth = 0;
+    while (true) {
+        // Start check resize observers;
+        if (!resizeObserverDepth && gatherResizeObservationsForContainIntrinsicSize() != ResizeObserver::maxElementDepth())
+            deliverResizeObservations();
 
-    // Start check resize observers;
-    if (gatherResizeObservationsForContainIntrinsicSize() != ResizeObserver::maxElementDepth())
-        deliverResizeObservations();
-
-    for (size_t depth = gatherResizeObservations(0); depth != ResizeObserver::maxElementDepth(); depth = gatherResizeObservations(depth)) {
+        resizeObserverDepth = gatherResizeObservations(resizeObserverDepth);
+        if (resizeObserverDepth == ResizeObserver::maxElementDepth())
+            break;
         deliverResizeObservations();
         page.layoutIfNeeded();
     }
@@ -8637,7 +8642,7 @@ void Document::unregisterArticleElement(Element& article)
 
 void Document::updateMainArticleElementAfterLayout()
 {
-    ASSERT(page() && page()->requestedLayoutMilestones().contains(DidRenderSignificantAmountOfText));
+    ASSERT(page() && page()->requestedLayoutMilestones().contains(LayoutMilestone::DidRenderSignificantAmountOfText));
 
     // If there are too many article elements on the page, don't consider any one of them to be "main content".
     const unsigned maxNumberOfArticlesBeforeIgnoringMainContentArticle = 10;
@@ -9593,16 +9598,25 @@ void Document::updateRelevancyOfContentVisibilityElements()
 {
     if (!isObservingContentVisibilityTargets())
         return;
-    if (m_contentVisibilityDocumentState->updateRelevancyOfContentVisibilityElements(m_contentRelevancyStatusUpdate))
+    if (m_contentVisibilityDocumentState->updateRelevancyOfContentVisibilityElements(m_contentRelevancyUpdate) == DidUpdateAnyContentRelevancy::Yes)
         updateLayoutIgnorePendingStylesheets();
-    m_contentRelevancyStatusUpdate = { };
+    m_contentRelevancyUpdate = { };
 }
 
-void Document::scheduleContentRelevancyUpdate(ContentRelevancyStatus status)
+void Document::scheduleContentRelevancyUpdate(ContentRelevancy contentRelevancy)
 {
     if (!isObservingContentVisibilityTargets())
         return;
-    m_contentRelevancyStatusUpdate.add(status);
+    m_contentRelevancyUpdate.add(contentRelevancy);
+    scheduleRenderingUpdate(RenderingUpdateStep::UpdateContentRelevancy);
+}
+
+// FIXME: remove when scroll anchoring is implemented (https://bugs.webkit.org/show_bug.cgi?id=259269).
+void Document::updateContentRelevancyForScrollIfNeeded(const Element& scrollAnchor)
+{
+    if (!m_contentVisibilityDocumentState)
+        return;
+    return m_contentVisibilityDocumentState->updateContentRelevancyForScrollIfNeeded(scrollAnchor);
 }
 
 } // namespace WebCore

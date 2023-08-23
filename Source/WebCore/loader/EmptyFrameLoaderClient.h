@@ -132,6 +132,7 @@ private:
     ResourceError cannotShowMIMETypeError(const ResourceResponse&) const final;
     ResourceError fileDoesNotExistError(const ResourceResponse&) const final;
     ResourceError httpsUpgradeRedirectLoopError(const ResourceRequest&) const final;
+    ResourceError httpNavigationWithHTTPSOnlyError(const ResourceRequest&) const final;
     ResourceError pluginWillHandleLoadError(const ResourceResponse&) const final;
 
     bool shouldFallBack(const ResourceError&) const final;

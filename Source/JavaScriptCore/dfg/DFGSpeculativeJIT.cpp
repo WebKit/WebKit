@@ -3777,12 +3777,11 @@ void SpeculativeJIT::compileValueRep(Node* node)
 
 static double clampDoubleToByte(double d)
 {
-    d += 0.5;
     if (!(d > 0))
         d = 0;
     else if (d > 255)
         d = 255;
-    return d;
+    return std::nearbyint(d);
 }
 
 static void compileClampIntegerToByte(JITCompiler& jit, GPRReg result)
@@ -3801,16 +3800,12 @@ static void compileClampDoubleToByte(JITCompiler& jit, GPRReg result, FPRReg sou
 {
     // Unordered compare so we pick up NaN
     static constexpr double byteMax = 255;
-    static constexpr double half = 0.5;
     jit.moveZeroToDouble(scratch);
     MacroAssembler::Jump tooSmall = jit.branchDouble(MacroAssembler::DoubleLessThanOrEqualOrUnordered, source, scratch);
     jit.loadDouble(SpeculativeJIT::TrustedImmPtr(&byteMax), scratch);
     MacroAssembler::Jump tooBig = jit.branchDouble(MacroAssembler::DoubleGreaterThanAndOrdered, source, scratch);
     
-    jit.loadDouble(SpeculativeJIT::TrustedImmPtr(&half), scratch);
-    // FIXME: This should probably just use a floating point round!
-    // https://bugs.webkit.org/show_bug.cgi?id=72054
-    jit.addDouble(source, scratch);
+    jit.roundTowardNearestIntDouble(source, scratch);
     jit.truncateDoubleToInt32(scratch, result);   
     MacroAssembler::Jump truncatedInt = jit.jump();
     

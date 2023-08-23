@@ -34,8 +34,8 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
     CacheFont(WebCore::Font::Attributes data, WebCore::FontPlatformData::Attributes platformData, std::optional<WebCore::RenderingResourceIdentifier> renderingResourceIdentifier) NotStreamEncodable
     CacheFontCustomPlatformData(Ref<WebCore::FontCustomPlatformData> customPlatformData) NotStreamEncodable
     CacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs> decomposedGlyphs) NotStreamEncodable
-    CacheGradient(Ref<WebCore::Gradient> gradient, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
-    CacheFilter(Ref<WebCore::Filter> filter, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
+    CacheGradient(Ref<WebCore::Gradient> gradient) NotStreamEncodable
+    CacheFilter(Ref<WebCore::Filter> filter) NotStreamEncodable
     ReleaseAllDrawingResources()
     ReleaseAllImageResources()
     ReleaseRenderingResource(WebCore::RenderingResourceIdentifier renderingResourceIdentifier)

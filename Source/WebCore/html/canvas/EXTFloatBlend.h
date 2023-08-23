@@ -35,6 +35,7 @@ namespace WebCore {
 
 class EXTFloatBlend final : public RefCounted<EXTFloatBlend>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(EXTFloatBlend);
+    WTF_MAKE_NONCOPYABLE(EXTFloatBlend);
 public:
     explicit EXTFloatBlend(WebGLRenderingContextBase&);
     ~EXTFloatBlend();

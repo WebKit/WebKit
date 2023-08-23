@@ -74,6 +74,23 @@ std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmI
     return CryptoKeyPair { WTFMove(publicKey), WTFMove(privateKey) };
 }
 
+bool CryptoKeyOKP::platformCheckPairedKeys(CryptoAlgorithmIdentifier, NamedCurve namedCurve, Vector<uint8_t>&& privateKey, Vector<uint8_t>&& publicKey)
+{
+    // FIXME: Implement the same check for X25519
+    if (namedCurve != NamedCurve::Ed25519)
+        return true;
+
+    if (privateKey.size() != 32 || publicKey.size() != 32)
+        return false;
+
+    ccec25519pubkey ccPublicKey;
+    static_assert(sizeof(ccPublicKey) == 32);
+
+    auto* di = ccsha512_di();
+    cced25519_make_pub(di, ccPublicKey, privateKey.data());
+    return !std::memcmp(ccPublicKey, publicKey.data(), sizeof(ccPublicKey));
+}
+
 // Per https://www.ietf.org/rfc/rfc5280.txt
 // SubjectPublicKeyInfo ::= SEQUENCE { algorithm AlgorithmIdentifier, subjectPublicKey BIT STRING }
 // AlgorithmIdentifier  ::= SEQUENCE { algorithm OBJECT IDENTIFIER, parameters ANY DEFINED BY algorithm OPTIONAL }

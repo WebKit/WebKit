@@ -150,10 +150,10 @@ void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& 
     pageClient().didCommitLayerTree(layerTreeTransaction);
 
     // FIXME: Remove this special mechanism and fold it into the transaction's layout milestones.
-    if (internals().observedLayoutMilestones.contains(WebCore::ReachedSessionRestorationRenderTreeSizeThreshold) && !m_hitRenderTreeSizeThreshold
+    if (internals().observedLayoutMilestones.contains(WebCore::LayoutMilestone::ReachedSessionRestorationRenderTreeSizeThreshold) && !m_hitRenderTreeSizeThreshold
         && exceedsRenderTreeSizeSizeThreshold(m_sessionRestorationRenderTreeSize, layerTreeTransaction.renderTreeSize())) {
         m_hitRenderTreeSizeThreshold = true;
-        didReachLayoutMilestone(WebCore::ReachedSessionRestorationRenderTreeSizeThreshold);
+        didReachLayoutMilestone(WebCore::LayoutMilestone::ReachedSessionRestorationRenderTreeSizeThreshold);
     }
 }
 

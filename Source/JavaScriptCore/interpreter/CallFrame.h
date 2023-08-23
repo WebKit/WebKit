@@ -223,11 +223,12 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
         Wasm::Instance* wasmInstance() const;
 #endif
 
+        JSCell* codeOwnerCell() const;
+
     private:
         unsigned callSiteBitsAsBytecodeOffset() const;
-#if ENABLE(WEBASSEMBLY)
-        JS_EXPORT_PRIVATE JSGlobalObject* lexicalGlobalObjectFromWasmCallee(VM&) const;
-#endif
+        JS_EXPORT_PRIVATE JSGlobalObject* lexicalGlobalObjectFromNativeCallee(VM&) const;
+        JS_EXPORT_PRIVATE JSCell* codeOwnerCellSlow() const;
     public:
 
         // This will try to get you the bytecode offset, but you should be aware that
@@ -316,7 +317,7 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
 
         void convertToStackOverflowFrame(VM&, CodeBlock* codeBlockToKeepAliveUntilFrameIsUnwound);
         bool isStackOverflowFrame() const;
-        bool isWasmFrame() const;
+        bool isNativeCalleeFrame() const;
 
         void setArgumentCountIncludingThis(int count) { static_cast<Register*>(this)[static_cast<int>(CallFrameSlot::argumentCountIncludingThis)].payload() = count; }
         inline void setCallee(JSObject*);

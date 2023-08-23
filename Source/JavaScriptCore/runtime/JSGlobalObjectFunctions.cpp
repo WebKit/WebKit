@@ -881,7 +881,7 @@ static CodeBlock* getCallerCodeBlock(CallFrame* callFrame)
     CodeOrigin codeOrigin = callerFrame->codeOrigin();
     if (codeOrigin && codeOrigin.inlineCallFrame())
         return baselineCodeBlockForInlineCallFrame(codeOrigin.inlineCallFrame());
-    if (callerFrame->isWasmFrame())
+    if (callerFrame->isNativeCalleeFrame())
         return nullptr;
     return callerFrame->codeBlock();
 }

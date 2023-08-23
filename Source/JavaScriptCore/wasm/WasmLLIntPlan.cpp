@@ -131,9 +131,9 @@ void LLIntPlan::didCompleteCompilation()
                 JIT_COMMENT(jit, "SIMD function entrypoint");
             JIT_COMMENT(jit, "Entrypoint for function[", i, "]");
             CCallHelpers::Address calleeSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register)) - prologueStackPointerDelta());
-            jit.storePtr(CCallHelpers::TrustedImmPtr(CalleeBits::boxWasm(m_calleesVector[i].ptr())), calleeSlot.withOffset(PayloadOffset));
+            jit.storePtr(CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(m_calleesVector[i].ptr())), calleeSlot.withOffset(PayloadOffset));
 #if USE(JSVALUE32_64)
-            jit.store32(CCallHelpers::TrustedImm32(JSValue::WasmTag), calleeSlot.withOffset(TagOffset));
+            jit.store32(CCallHelpers::TrustedImm32(JSValue::NativeCalleeTag), calleeSlot.withOffset(TagOffset));
 #endif
             jumps[i] = jit.jump();
         }

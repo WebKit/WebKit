@@ -87,14 +87,8 @@ GCGLboolean OESVertexArrayObject::isVertexArrayOES(WebGLVertexArrayObjectOES* ar
     if (isContextLost())
         return false;
     auto& context = this->context();
-    if (!arrayObject || !arrayObject->validate(context))
+    if (!context.validateIsWebGLObject(arrayObject))
         return false;
-
-    if (!arrayObject->hasEverBeenBound())
-        return false;
-    if (arrayObject->isDeleted())
-        return false;
-
     return context.graphicsContextGL()->isVertexArray(arrayObject->object());
 }
 
@@ -112,7 +106,6 @@ void OESVertexArrayObject::bindVertexArrayOES(WebGLVertexArrayObjectOES* arrayOb
     auto* contextGL = context.graphicsContextGL();
     if (arrayObject && !arrayObject->isDefaultObject() && arrayObject->object()) {
         contextGL->bindVertexArray(arrayObject->object());
-        arrayObject->setHasEverBeenBound();
         context.setBoundVertexArrayObject(locker, arrayObject);
     } else {
         contextGL->bindVertexArray(0);

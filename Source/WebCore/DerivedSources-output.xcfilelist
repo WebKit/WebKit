@@ -1477,8 +1477,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMediaElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMediaElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMenuElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMenuElement.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMenuItemElement.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMenuItemElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMetaElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMetaElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMeterElement.cpp

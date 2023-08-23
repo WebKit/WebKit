@@ -165,7 +165,7 @@ public:
 
     unsigned isInSubtreeWithBlendMode : 1;
 
-    unsigned effectiveSkippedContent : 1;
+    unsigned effectiveSkippedContent : 2; // ContentVisibility
 
     OptionSet<TouchAction> effectiveTouchActions;
     OptionSet<EventListenerRegionType> eventListenerRegionTypes;

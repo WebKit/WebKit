@@ -38,39 +38,6 @@ from xml.etree import ElementTree as ET
 # We always want the real system version
 os.environ['SYSTEM_VERSION_COMPAT'] = '0'
 
-MISSING_HEADERS = [
-    "usr/include/libxslt",
-    "usr/include/mach/mach.h",
-    "usr/include/mach/mach_error.h",
-    "usr/include/mach/mach_types.defs",
-    "usr/include/mach/machine/machine_types.defs",
-    "usr/include/mach/std_types.defs",
-    "usr/include/mach/task.h",
-    "usr/include/objc/Protocol.h",
-    "usr/include/objc/objc-class.h",
-    "usr/include/objc/objc-runtime.h",
-    "usr/include/readline/history.h",
-    "usr/include/readline/readline.h",
-]
-
-MISSING_FRAMEWORKS = [
-    ("AVKit.framework", True),
-    ("AudioToolbox.framework", True),
-    ("AudioUnit.framework", False),
-    ("CFNetwork.framework", True),
-    ("CoreImage.framework", False),
-    ("IOKit.framework", True),
-    ("IOSurface.framework", True),
-    ("LocalAuthentication.framework", False),
-    ("MediaAccessibility.framework", True),
-    ("MediaToolbox.framework", False),
-    ("Metal.framework", True),
-    ("OpenGLES.framework", True),
-    ("QuartzCore.framework", True),
-    ("UIKit.framework", True),
-    ("VideoToolbox.framework", False),
-]
-
 xcode_version = subprocess.run(['/usr/bin/xcodebuild', '-version'], capture_output=True, encoding='ascii').stdout.splitlines()[0].split(' ')[1]
 if tuple(int(n) for n in xcode_version.split('.')) >= (13, 3):
     mac_xcspec_location = f'Platforms/MacOSX.platform/Developer/Library/Xcode/PrivatePlugIns/IDEOSXSupportCore.xcplugindata/Contents/Resources'
@@ -139,15 +106,6 @@ XCSPEC_INFO = [dict(
 ''',
 )]
 
-SDKS_TO_UPDATE = [
-    ("iphoneos", ("armv7-ios", "armv7s-ios", "arm64-ios", "arm64e-ios")),
-    ("iphonesimulator", ("i386-ios-simulator", "x86_64-ios-simulator", "arm64-ios-simulator")),
-    ("appletvos", ("arm64-tvos", "arm64e-tvos")),
-    ("appletvsimulator", ("x86_64-tvos-simulator", "arm64-tvos-simulator")),
-    ("watchos", ("armv7k-watchos", "arm64-watchos", "arm64e-watchos", "arm64_32-watchos")),
-    ("watchsimulator", ("i386-watchos-simulator", "x86_64-watchos-simulator", "arm64-watchos-simulator")),
-]
-
 PLIST_BUDDY_PATH = pathlib.Path("/usr/libexec/PlistBuddy")
 
 
@@ -157,93 +115,6 @@ def xcode_developer_dir():
         capture_output=True, encoding="utf-8", check=True,
     )
     return pathlib.Path(result.stdout.strip())
-
-
-def sdk_directory(sdk):
-    result = subprocess.run(
-        ["xcrun", "--sdk", sdk, "--show-sdk-path"],
-        capture_output=True, encoding="utf-8", check=True,
-    )
-    return pathlib.Path(result.stdout.strip())
-
-
-def get_and_check_sdk_directories(source_sdk, dest_sdk):
-    source_sdk_path = sdk_directory(source_sdk)
-    dest_sdk_path = sdk_directory(dest_sdk)
-
-    if not source_sdk_path:
-        raise RuntimeError(f"Could not find SDK: {source_sdk}")
-
-    if not dest_sdk_path:
-        raise RuntimeError(f"Could not find SDK: {dest_sdk}")
-
-    print(source_sdk_path)
-    print(dest_sdk_path)
-    return source_sdk_path, dest_sdk_path
-
-
-def do_copy(source_path, dest_path):
-
-    def ensure_parent_exists(path):
-        os.makedirs(path.parent, exist_ok=True)
-
-    def copy_file(source_path, dest_path):
-        print(f"Copying file")
-        print(f"From: {source_path}")
-        print(f"To:   {dest_path}")
-        if dest_path.exists():
-            dest_path.unlink()
-        ensure_parent_exists(dest_path)
-        shutil.copy2(source_path, dest_path)
-
-    def copy_directory(source_path, dest_path):
-        print(f"Copying directory")
-        print(f"From: {source_path}")
-        print(f"To:   {dest_path}")
-        if dest_path.exists():
-            shutil.rmtree(dest_path)
-        ensure_parent_exists(dest_path)
-        try:
-            shutil.copytree(source_path, dest_path)
-        except:
-            print('Unable to copy needed files. When running this script, please temporarily allow Terminal to update other applications in System Settings > Privacy & Security > App Management.')
-            exit(1)
-
-    if source_path.is_file():
-        copy_file(source_path, dest_path)
-        return
-
-    if source_path.is_dir():
-        copy_directory(source_path, dest_path)
-        return
-
-    raise RuntimeError(f"{source_path} does not exist")
-
-
-# .tbd files contain information about how to link a product to a
-# library/framework. This information includes the architecture that the
-# library is built for. If we're copying from an SDK that supports one set of
-# architectures to an SDK that supports another set of architectures, we need
-# to adjust that information in the .tbd file.
-#
-# Note that we don't need to be too particular about this. We only need to
-# link; we don't need to run. This allows us to simply specify the full set of
-# architectures for which WebKit is built, regardless of whether the associated
-# library/framework was actually built for all those architectures.
-
-def patch_tbd_architecture(framework_path, targets):
-    for tbd_path in framework_path.glob("*.tbd"):
-        with open(tbd_path, "r") as f:
-            lines = f.readlines()
-
-        modified_lines = []
-        for line in lines:
-            if re.match(".*targets: +\[.*\]", line) is not None:
-                line = re.sub("\[.*\]", f"[ {', '.join(targets)} ]", line)
-            modified_lines.append(line)
-
-        with open(tbd_path, "w") as f:
-            f.writelines(modified_lines)
 
 
 # Xcode is driven by .xcspec files. These describe many aspects of the system,
@@ -292,37 +163,11 @@ def update_xcspec_files():
             subprocess.run([PLIST_BUDDY_PATH, '-c', f'merge {temp.name} 0', dest_spec_path], capture_output=True, check=True)
 
 
-def copy_missing_headers(source_sdk, dest_sdk):
-    if source_sdk == dest_sdk:
-        return
-    source_sdk_path, dest_sdk_path = get_and_check_sdk_directories(source_sdk, dest_sdk)
-    for missing_header in MISSING_HEADERS:
-        do_copy(source_sdk_path / missing_header, dest_sdk_path / missing_header)
-
-
-def copy_missing_frameworks(source_sdk, dest_sdk, targets):
-    if source_sdk == dest_sdk:
-        return
-    source_sdk_path, dest_sdk_path = get_and_check_sdk_directories(source_sdk, dest_sdk)
-    source_frameworks_path = source_sdk_path / "System" / "Library" / "Frameworks"
-    dest_frameworks_path = dest_sdk_path / "System" / "Library" / "Frameworks"
-    for missing_framework, force in MISSING_FRAMEWORKS:
-        source_framework_path = source_frameworks_path / missing_framework
-        dest_framework_path = dest_frameworks_path / missing_framework
-        if force or not dest_framework_path.exists():
-            do_copy(source_framework_path, dest_framework_path)
-            patch_tbd_architecture(dest_framework_path, targets)
-
-
 def main():
     if not os.geteuid() == 0 and not os.access(xcode_developer_dir(), os.R_OK | os.W_OK | os.X_OK, effective_ids=True):
         raise RuntimeError(f"{__file__} must be run as root")
 
     update_xcspec_files()
-
-    for sdk, targets in SDKS_TO_UPDATE:
-        copy_missing_headers("macosx", sdk)
-        copy_missing_frameworks("iphoneos", sdk, targets)
     return 0
 
 

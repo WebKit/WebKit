@@ -31,7 +31,7 @@
 #include "InlineFormattingConstraints.h"
 #include "InlineFormattingGeometry.h"
 #include "InlineFormattingQuirks.h"
-#include "InlineLineBuilder.h"
+#include "IntrinsicWidthHandler.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -73,9 +73,6 @@ private:
     void layoutFloatContentOnly(const ConstraintsForInlineContent&, FloatingState&);
     void computeStaticPositionForOutOfFlowContent(const FormattingState::OutOfFlowBoxList&, const ConstraintsForInFlowContent&, const InlineDisplay::Content&, const FloatingState&);
 
-    enum class MayCacheLayoutResult : bool { No, Yes };
-    InlineLayoutUnit computedIntrinsicWidthForConstraint(IntrinsicWidthMode, AbstractLineBuilder&, MayCacheLayoutResult = MayCacheLayoutResult::No);
-
     void collectContentIfNeeded();
     InlineRect createDisplayContentForLine(size_t lineIndex, const LineLayoutResult&, const ConstraintsForInlineContent&, const InlineLayoutState&, InlineDisplay::Content&);
     void resetGeometryForClampedContent(const InlineItemRange& needsDisplayContentRange, const LineLayoutResult::SuspendedFloatList& suspendedFloats, LayoutPoint topleft);
@@ -85,11 +82,7 @@ private:
 
     const InlineFormattingGeometry m_inlineFormattingGeometry;
     const InlineFormattingQuirks m_inlineFormattingQuirks;
-    struct LineBreakingResultForConstraint {
-        InlineLayoutUnit constraint;
-        LineLayoutResult result;
-    };
-    std::optional<LineBreakingResultForConstraint> m_maximumIntrinsicWidthResultForSingleLine { };
+    std::optional<IntrinsicWidthHandler::LineBreakingResult> m_maximumIntrinsicWidthResultForSingleLine { };
 };
 
 }

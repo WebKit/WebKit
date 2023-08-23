@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SharedWorkerThreadProxy.h"
 
+#include "BadgeClient.h"
 #include "CacheStorageProvider.h"
 #include "Chrome.h"
 #include "ErrorEvent.h"

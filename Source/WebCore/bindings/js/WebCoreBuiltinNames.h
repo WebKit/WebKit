@@ -242,7 +242,6 @@ namespace WebCore {
     macro(HTMLDialogElement) \
     macro(HTMLDataListElement) \
     macro(HTMLEmbedElement) \
-    macro(HTMLMenuItemElement) \
     macro(HTMLModelElement) \
     macro(Headers) \
     macro(IDBCursor) \

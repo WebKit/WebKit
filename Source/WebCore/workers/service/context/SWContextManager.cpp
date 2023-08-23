@@ -270,6 +270,17 @@ void SWContextManager::setAsInspected(ServiceWorkerIdentifier identifier, bool i
         m_connection->setAsInspected(identifier, isInspected);
 }
 
+void SWContextManager::setInspectable(bool inspectable)
+{
+    Vector<Ref<ServiceWorkerThreadProxy>> workers;
+    {
+        Locker locker { m_workerMapLock };
+        workers = copyToVector(m_workerMap.values());
+    }
+    for (auto& serviceWorker : workers)
+        serviceWorker->setInspectable(inspectable);
+}
+
 } // namespace WebCore
 
 #endif

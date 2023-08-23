@@ -70,7 +70,6 @@ Animation::Animation(const Animation& o)
     , m_delay(o.m_delay)
     , m_duration(o.m_duration)
     , m_timingFunction(o.m_timingFunction)
-    , m_nameStyleScopeOrdinal(o.m_nameStyleScopeOrdinal)
     , m_direction(o.m_direction)
     , m_fillMode(o.m_fillMode)
     , m_playState(o.m_playState)
@@ -102,7 +101,7 @@ Animation::~Animation() = default;
 
 bool Animation::animationsMatch(const Animation& other, bool matchProperties) const
 {
-    bool result = m_name.string == other.m_name.string
+    bool result = m_name == other.m_name
         && m_playState == other.m_playState
         && m_compositeOperation == other.m_compositeOperation
         && m_playStateSet == other.m_playStateSet
@@ -110,7 +109,6 @@ bool Animation::animationsMatch(const Animation& other, bool matchProperties) co
         && m_delay == other.m_delay
         && m_duration == other.m_duration
         && *(m_timingFunction.get()) == *(other.m_timingFunction.get())
-        && m_nameStyleScopeOrdinal == other.m_nameStyleScopeOrdinal
         && m_direction == other.m_direction
         && m_fillMode == other.m_fillMode
         && m_delaySet == other.m_delaySet
@@ -129,9 +127,9 @@ bool Animation::animationsMatch(const Animation& other, bool matchProperties) co
     return !matchProperties || (m_property.mode == other.m_property.mode && m_property.animatableProperty == other.m_property.animatableProperty && m_propertySet == other.m_propertySet);
 }
 
-auto Animation::initialName() -> const Name&
+auto Animation::initialName() -> const Style::ScopedName&
 {
-    static NeverDestroyed<Name> initialValue { Name { noneAtom(), true } };
+    static NeverDestroyed<Style::ScopedName> initialValue { Style::ScopedName { noneAtom() } };
     return initialValue;
 }
 
@@ -160,7 +158,7 @@ TextStream& operator<<(TextStream& ts, Animation::Direction direction)
 TextStream& operator<<(TextStream& ts, const Animation& animation)
 {
     ts.dumpProperty("property", animation.property());
-    ts.dumpProperty("name", animation.name().string);
+    ts.dumpProperty("name", animation.name().name);
     ts.dumpProperty("iteration count", animation.iterationCount());
     ts.dumpProperty("delay", animation.iterationCount());
     ts.dumpProperty("duration", animation.duration());

@@ -1938,7 +1938,8 @@
       ],
       "expertise" : "JavaScriptCore",
       "github" : "danlliu",
-      "name" : "Daniel Liu"
+      "name" : "Daniel Liu",
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -3330,6 +3331,19 @@
       "nicks" : [
          "hyowon"
       ]
+   },
+   {
+      "emails" : [
+         "hysu@apple.com",
+         "hysu.xiong@gmail.com"
+      ],
+      "expertise" : "Performance Testing, Tools",
+      "github" : "xw",
+      "name" : "Hysu Xiong",
+      "nicks" : [
+         "hysu"
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -7473,18 +7487,6 @@
       "nicks" : [
          "seumas"
       ]
-   },
-   {
-      "emails" : [
-         "wdx@apple.com",
-         "w_xiong@apple.com"
-      ],
-      "github" : "xw",
-      "name" : "W.D. Xiong",
-      "nicks" : [
-         "wdx"
-      ],
-      "status" : "committer"
    },
    {
       "emails" : [

@@ -106,7 +106,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << cacheStorageDirectory << cacheStorageDirectoryExtensionHandle;
     encoder << generalStorageDirectory << generalStorageDirectoryHandle;
 #if ENABLE(SERVICE_WORKER)
-    encoder << serviceWorkerRegistrationDirectory << serviceWorkerRegistrationDirectoryExtensionHandle << serviceWorkerProcessTerminationDelayEnabled;
+    encoder << serviceWorkerRegistrationDirectory << serviceWorkerRegistrationDirectoryExtensionHandle << serviceWorkerProcessTerminationDelayEnabled << inspectionForServiceWorkersAllowed;
 #endif
     encoder << resourceLoadStatisticsParameters;
 }
@@ -447,6 +447,11 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
     decoder >> serviceWorkerProcessTerminationDelayEnabled;
     if (!serviceWorkerProcessTerminationDelayEnabled)
         return std::nullopt;
+
+    std::optional<bool> inspectionForServiceWorkersAllowed;
+    decoder >> inspectionForServiceWorkersAllowed;
+    if (!inspectionForServiceWorkersAllowed)
+        return std::nullopt;
 #endif
 
     std::optional<ResourceLoadStatisticsParameters> resourceLoadStatisticsParameters;
@@ -531,6 +536,7 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
         , WTFMove(*serviceWorkerRegistrationDirectory)
         , WTFMove(*serviceWorkerRegistrationDirectoryExtensionHandle)
         , *serviceWorkerProcessTerminationDelayEnabled
+        , *inspectionForServiceWorkersAllowed
 #endif
         , WTFMove(*resourceLoadStatisticsParameters)
     }};
