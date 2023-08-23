@@ -185,7 +185,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #endif
 
 #if PLATFORM(COCOA)
-    DidWriteToPasteboardAsynchronously(String pasteboardName);
+    DidWriteToPasteboardAsynchronously(String pasteboardName) CanDispatchOutOfOrder
 #endif
 
 #if HAVE(CVDISPLAYLINK)

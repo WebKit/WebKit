@@ -46,6 +46,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithEnabledIf_AlwaysEnabled; }
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     explicit AlwaysEnabled(const String& url)
         : m_arguments(url)
@@ -67,6 +69,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithEnabledIf_OnlyEnabledIfFeatureEnabled; }
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     explicit OnlyEnabledIfFeatureEnabled(const String& url)
         : m_arguments(url)

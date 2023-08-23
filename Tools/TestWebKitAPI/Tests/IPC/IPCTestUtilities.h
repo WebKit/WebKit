@@ -48,12 +48,16 @@ struct MessageInfo {
 
 struct MockTestMessage1 {
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = true;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr IPC::MessageName name()  { return static_cast<IPC::MessageName>(123); }
     std::tuple<> arguments() { return { }; }
 };
 
 struct MockTestMessageWithAsyncReply1 {
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr IPC::MessageName name()  { return static_cast<IPC::MessageName>(124); }
     // Just using WebPage_GetBytecodeProfileReply as something that is async message name.
     // If WebPage_GetBytecodeProfileReply is removed, just use another one.

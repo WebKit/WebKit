@@ -68,6 +68,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_LoadURL; }
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     explicit LoadURL(const String& url)
         : m_arguments(url)
@@ -90,6 +92,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_LoadSomething; }
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     explicit LoadSomething(const String& url)
         : m_arguments(url)
@@ -113,6 +117,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_TouchEvent; }
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     explicit TouchEvent(const WebKit::WebTouchEvent& event)
         : m_arguments(event)
@@ -136,6 +142,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_AddEvent; }
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     explicit AddEvent(const WebKit::WebTouchEvent& event)
         : m_arguments(event)
@@ -159,6 +167,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_LoadSomethingElse; }
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     explicit LoadSomethingElse(const String& url)
         : m_arguments(url)
@@ -181,6 +191,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_DidReceivePolicyDecision; }
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction)
         : m_arguments(frameID, listenerID, policyAction)
@@ -202,6 +214,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_Close; }
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     auto&& arguments()
     {
@@ -218,6 +232,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_PreferencesDidChange; }
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     explicit PreferencesDidChange(const WebKit::WebPreferencesStore& store)
         : m_arguments(store)
@@ -239,6 +255,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_SendDoubleAndFloat; }
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     SendDoubleAndFloat(double d, float f)
         : m_arguments(d, f)
@@ -260,6 +278,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_SendInts; }
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     SendInts(const Vector<uint64_t>& ints, const Vector<Vector<uint64_t>>& intVectors)
         : m_arguments(ints, intVectors)
@@ -281,6 +301,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_CreatePlugin; }
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutAttributes_CreatePluginReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
@@ -305,6 +327,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_RunJavaScriptAlert; }
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutAttributes_RunJavaScriptAlertReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
@@ -329,6 +353,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_GetPlugins; }
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutAttributes_GetPluginsReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
@@ -353,6 +379,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_GetPluginProcessConnection; }
     static constexpr bool isSync = true;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<IPC::Connection::Handle>;
@@ -376,6 +404,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_TestMultipleAttributes; }
     static constexpr bool isSync = true;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
@@ -394,6 +424,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_TestParameterAttributes; }
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     TestParameterAttributes(uint64_t foo, double bar, double baz)
         : m_arguments(foo, bar, baz)
@@ -415,6 +447,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_TemplateTest; }
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     explicit TemplateTest(const HashMap<String, std::pair<String, uint64_t>>& a)
         : m_arguments(a)
@@ -436,6 +470,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_SetVideoLayerID; }
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     explicit SetVideoLayerID(const WebCore::PlatformLayerIdentifier& videoLayerID)
         : m_arguments(videoLayerID)
@@ -458,6 +494,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_DidCreateWebProcessConnection; }
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     DidCreateWebProcessConnection(MachSendRight&& connectionIdentifier, const OptionSet<WebKit::SelectionFlags>& flags)
         : m_arguments(WTFMove(connectionIdentifier), flags)
@@ -481,6 +519,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_InterpretKeyEvent; }
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutAttributes_InterpretKeyEventReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
@@ -507,6 +547,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_DeprecatedOperation; }
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     explicit DeprecatedOperation(const IPC::DummyType& dummy)
         : m_arguments(dummy)
@@ -530,6 +572,8 @@ public:
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_ExperimentalOperation; }
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
 
     explicit ExperimentalOperation(const IPC::DummyType& dummy)
         : m_arguments(dummy)
