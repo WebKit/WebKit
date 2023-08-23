@@ -149,6 +149,10 @@
 #import <UIKit/_UIInvalidatable.h>
 #endif
 
+#if PLATFORM(VISION)
+#import <UIKit/UIView+SpatialComputing.h>
+#endif
+
 // FIXME: STAGING for rdar://75546704 Remove later.
 #define UIWKSelectionFlipped 2
 
@@ -739,6 +743,20 @@ typedef NS_ENUM (NSInteger, _UIBackdropMaskViewFlags) {
 - (UIColor *)_inheritedInteractionTintColor;
 - (NSString *)recursiveDescription;
 @end
+
+#if PLATFORM(VISION)
+
+typedef NS_ENUM(NSInteger, _UIPlatterGroundingShadowVisibility) {
+    _UIPlatterGroundingShadowVisibilityAutomatic = 0,
+    _UIPlatterGroundingShadowVisibilityVisible = 1,
+    _UIPlatterGroundingShadowVisibilityHidden = 2
+};
+
+@interface UIView (SpatialComputing)
+@property (nonatomic, setter=_setPreferredGroundingShadowVisibility:) _UIPlatterGroundingShadowVisibility _preferredGroundingShadowVisibility;
+@end
+
+#endif
 
 typedef NS_ENUM(NSInteger, UIWKSelectionTouch) {
     UIWKSelectionTouchStarted = 0,
