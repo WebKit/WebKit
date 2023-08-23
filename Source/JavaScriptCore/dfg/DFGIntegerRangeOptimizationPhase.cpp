@@ -42,8 +42,8 @@ namespace JSC { namespace DFG {
 namespace {
 
 namespace DFGIntegerRangeOptimizationPhaseInternal {
-static constexpr bool verbose = true;
-static constexpr bool verboseCounting = true;
+static constexpr bool verbose = false;
+static constexpr bool verboseCounting = false;
 
 static bool shouldRecordCheckInBoundsCounts = false;
 static uint64_t checkInBoundsCountBeforeIRO = 0;
