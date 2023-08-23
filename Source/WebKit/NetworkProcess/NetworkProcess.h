@@ -127,7 +127,7 @@ class Cache;
 enum class CacheOption : uint8_t;
 }
 
-class NetworkProcess : public AuxiliaryProcess, private DownloadManager::Client, public ThreadSafeRefCounted<NetworkProcess>, public CanMakeCheckedPtr
+class NetworkProcess : public AuxiliaryProcess, private DownloadManager::Client, public ThreadSafeRefCounted<NetworkProcess>, public CanMakeThreadSafeCheckedPtr
 {
     WTF_MAKE_NONCOPYABLE(NetworkProcess);
 public:
@@ -142,6 +142,9 @@ public:
     using NavigatedToDomain = WebCore::RegistrableDomain;
     using DomainInNeedOfStorageAccess = WebCore::RegistrableDomain;
     using OpenerDomain = WebCore::RegistrableDomain;
+
+    using CanMakeThreadSafeCheckedPtr::incrementPtrCount;
+    using CanMakeThreadSafeCheckedPtr::decrementPtrCount;
 
     NetworkProcess(AuxiliaryProcessInitializationParameters&&);
     ~NetworkProcess();

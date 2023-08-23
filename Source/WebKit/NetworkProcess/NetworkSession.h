@@ -231,6 +231,7 @@ public:
     WebSharedWorkerServer& ensureSharedWorkerServer();
 
     NetworkStorageManager& storageManager() { return m_storageManager.get(); }
+    Ref<NetworkStorageManager> protectedStorageManager();
     CacheStorage::Engine& ensureCacheEngine();
     void clearCacheEngine();
 

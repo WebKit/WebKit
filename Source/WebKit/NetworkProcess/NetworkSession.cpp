@@ -703,6 +703,11 @@ WebSharedWorkerServer& NetworkSession::ensureSharedWorkerServer()
     return *m_sharedWorkerServer;
 }
 
+Ref<NetworkStorageManager> NetworkSession::protectedStorageManager()
+{
+    return m_storageManager.copyRef();
+}
+
 CacheStorage::Engine& NetworkSession::ensureCacheEngine()
 {
     if (!m_cacheEngine)

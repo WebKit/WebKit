@@ -33,6 +33,7 @@
 #include "PolicyDecision.h"
 #include "SandboxExtension.h"
 #include <WebCore/NotImplemented.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -65,7 +66,7 @@ class DownloadManager {
     WTF_MAKE_NONCOPYABLE(DownloadManager);
 
 public:
-    class Client {
+    class Client : public CanMakeCheckedPtr {
     public:
         virtual ~Client() { }
 
@@ -111,7 +112,7 @@ public:
     Client& client() { return m_client; }
 
 private:
-    Client& m_client;
+    CheckedRef<Client> m_client;
     HashMap<DownloadID, std::unique_ptr<PendingDownload>> m_pendingDownloads;
     HashMap<DownloadID, RefPtr<NetworkDataTask>> m_downloadsAfterDestinationDecided;
     DownloadMap m_downloads;
