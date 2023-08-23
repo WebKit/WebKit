@@ -149,9 +149,6 @@
 #import <UIKit/_UIInvalidatable.h>
 #endif
 
-// FIXME: STAGING for rdar://75546704 Remove later.
-#define UIWKSelectionFlipped 2
-
 #else // USE(APPLE_INTERNAL_SDK)
 
 #if ENABLE(DRAG_SUPPORT)
