@@ -2582,17 +2582,17 @@ FetchMetadataEnabled:
 
 FetchPriorityEnabled:
   type: bool
-  status: testable
+  status: stable
   category: networking
   humanReadableName: "Fetch Priority"
   humanReadableDescription: "Enable Fetch Priority support"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 FileReaderAPIEnabled:
   type: bool
