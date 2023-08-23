@@ -35,9 +35,10 @@ namespace WebCore {
 
 constexpr LChar kEndOfFileMarker = 0;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSTokenizerInputStream);
 class CSSTokenizerInputStream {
     WTF_MAKE_NONCOPYABLE(CSSTokenizerInputStream);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSTokenizerInputStream);
 public:
     explicit CSSTokenizerInputStream(const String& input);
 

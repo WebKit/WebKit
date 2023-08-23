@@ -39,6 +39,7 @@
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSVariableData);
 
 template<typename CharacterType> void CSSVariableData::updateTokens(const CSSParserTokenRange& range)
 {

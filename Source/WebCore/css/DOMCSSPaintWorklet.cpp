@@ -36,6 +36,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DOMCSSPaintWorklet);
 
 PaintWorklet& DOMCSSPaintWorklet::ensurePaintWorklet(Document& document)
 {

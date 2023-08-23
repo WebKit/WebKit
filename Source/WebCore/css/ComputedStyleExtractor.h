@@ -51,8 +51,9 @@ enum class SVGPaintType : uint8_t;
 
 using CSSValueListBuilder = Vector<Ref<CSSValue>, 4>;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ComputedStyleExtractor);
 class ComputedStyleExtractor {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ComputedStyleExtractor);
 public:
     ComputedStyleExtractor(Node*, bool allowVisitedStyle = false);
     ComputedStyleExtractor(Node*, bool allowVisitedStyle, PseudoId);

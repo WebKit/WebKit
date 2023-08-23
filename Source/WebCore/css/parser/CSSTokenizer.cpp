@@ -40,6 +40,7 @@
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSTokenizer);
 
 // https://drafts.csswg.org/css-syntax/#input-preprocessing
 String CSSTokenizer::preprocessString(const String& string)

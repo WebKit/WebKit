@@ -31,8 +31,9 @@
 
 namespace WebCore {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSCalcOperationNode);
 class CSSCalcOperationNode final : public CSSCalcExpressionNode {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSCalcOperationNode);
 public:
     enum class IsRoot : bool { No, Yes };
     
