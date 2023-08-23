@@ -424,7 +424,7 @@ void DragDropInteractionState::updatePreviewsForActiveDragSources()
                 adjustedParameters.backgroundColor = [UIColor colorWithDynamicProvider:[] (UITraitCollection *traitCollection) -> UIColor * {
                     WebCore::LocalCurrentTraitCollection localCurrentTraitCollection(traitCollection);
                     return [UIColor.systemBackgroundColor resolvedColorWithTraitCollection:UITraitCollection.currentTraitCollection];
-                }]];
+                }];
                 preview = adoptNS([[UIDragPreview alloc] initWithView:[preview view] parameters:adjustedParameters]);
 #endif // PLATFORM(VISION)
                 return preview.autorelease();
