@@ -17,7 +17,7 @@ info: |
   a. Set next to ? IteratorStep(iteratorRecord).
   b. If next is not false, then
   i. Let nextValue be ? IteratorValue(next).
-  iv. If nextValue is not one of "year", "month", "monthCode", "day", "hour", "minute", "second", "millisecond", "microsecond", "nanosecond", then
+  iv. If nextValue is not one of "year", "month", "monthCode", or "day", then
   1. Let completion be ThrowCompletion(a newly created RangeError object).
   2. Return ? IteratorClose(iteratorRecord, completion).
 features: [Symbol, Symbol.iterator, Temporal, computed-property-names, generators]
@@ -26,12 +26,6 @@ includes: [compareArray.js]
 let cal = new Temporal.Calendar("iso8601")
 const fields = {
   *[Symbol.iterator]() {
-     yield "nanosecond";
-     yield "microsecond";
-     yield "millisecond";
-     yield "second";
-     yield "minute";
-     yield "hour";
      yield "day";
      yield "monthCode";
      yield "month";

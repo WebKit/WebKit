@@ -24,8 +24,6 @@ const expected = [
   "has options.timeZone.id",
   "get options.timeZone.getOffsetNanosecondsFor",
   "call options.timeZone.getOffsetNanosecondsFor",
-  "get options.timeZone.getOffsetNanosecondsFor",
-  "call options.timeZone.getOffsetNanosecondsFor",
 ];
 const actual = [];
 

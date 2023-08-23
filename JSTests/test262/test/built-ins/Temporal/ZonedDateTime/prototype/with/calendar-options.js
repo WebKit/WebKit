@@ -2,11 +2,10 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-temporal.plaindatetime.prototype.with
+esid: sec-temporal.zoneddatetime.prototype.with
 description: >
   The options argument is copied and the copy is passed to
   Calendar#dateFromFields.
-includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
@@ -27,7 +26,7 @@ class Calendar extends Temporal.Calendar {
   }
 };
 const calendar = new Calendar();
-const plaindatetime = new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321, calendar);
-const result = plaindatetime.with({ year: 2005 }, options);
-TemporalHelpers.assertPlainDateTime(result, 2005, 5, "M05", 2, 12, 34, 56, 987, 654, 321);
+const datetime = new Temporal.ZonedDateTime(0n, "UTC", calendar);
+const result = datetime.with({ year: 1971 }, options);
+assert.sameValue(result.epochNanoseconds, 365n * 86400_000_000_000n, "year changed from 1970 to 1971")
 assert.sameValue(calledDateFromFields, 1, "should have called overridden dateFromFields once");

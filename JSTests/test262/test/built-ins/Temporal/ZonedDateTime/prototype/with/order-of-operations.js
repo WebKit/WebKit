@@ -12,38 +12,29 @@ const expected = [
   // RejectObjectWithCalendarOrTimeZone
   "get fields.calendar",
   "get fields.timeZone",
+  // CopyDataProperties
+  "ownKeys options",
+  "getOwnPropertyDescriptor options.overflow",
+  "get options.overflow",
+  "getOwnPropertyDescriptor options.disambiguation",
+  "get options.disambiguation",
+  "getOwnPropertyDescriptor options.offset",
+  "get options.offset",
+  "getOwnPropertyDescriptor options.extra",
+  "get options.extra",
+  // GetOffsetNanosecondsFor on receiver
+  "get this.timeZone.getOffsetNanosecondsFor",
+  "call this.timeZone.getOffsetNanosecondsFor",
   // CalendarFields
   "get this.calendar.fields",
   "call this.calendar.fields",
   // PrepareTemporalFields on receiver
-  "get this.timeZone.getOffsetNanosecondsFor",
-  "call this.timeZone.getOffsetNanosecondsFor",
   "get this.calendar.day",
   "call this.calendar.day",
-  "get this.timeZone.getOffsetNanosecondsFor",  // ZonedDateTime.p.hour
-  "call this.timeZone.getOffsetNanosecondsFor",
-  "get this.timeZone.getOffsetNanosecondsFor",  // ZonedDateTime.p.microsecond
-  "call this.timeZone.getOffsetNanosecondsFor",
-  "get this.timeZone.getOffsetNanosecondsFor",  // ZonedDateTime.p.millisecond
-  "call this.timeZone.getOffsetNanosecondsFor",
-  "get this.timeZone.getOffsetNanosecondsFor",  // ZonedDateTime.p.minute
-  "call this.timeZone.getOffsetNanosecondsFor",
-  "get this.timeZone.getOffsetNanosecondsFor",
-  "call this.timeZone.getOffsetNanosecondsFor",
   "get this.calendar.month",
   "call this.calendar.month",
-  "get this.timeZone.getOffsetNanosecondsFor",
-  "call this.timeZone.getOffsetNanosecondsFor",
   "get this.calendar.monthCode",
   "call this.calendar.monthCode",
-  "get this.timeZone.getOffsetNanosecondsFor",  // ZonedDateTime.p.nanosecond
-  "call this.timeZone.getOffsetNanosecondsFor",
-  "get this.timeZone.getOffsetNanosecondsFor",  // ZonedDateTime.p.offset
-  "call this.timeZone.getOffsetNanosecondsFor",
-  "get this.timeZone.getOffsetNanosecondsFor",  // ZonedDateTime.p.second
-  "call this.timeZone.getOffsetNanosecondsFor",
-  "get this.timeZone.getOffsetNanosecondsFor",
-  "call this.timeZone.getOffsetNanosecondsFor",
   "get this.calendar.year",
   "call this.calendar.year",
   // PrepareTemporalFields on argument
@@ -84,21 +75,14 @@ const expected = [
   "get this.calendar.mergeFields",
   "call this.calendar.mergeFields",
   // InterpretTemporalDateTimeFields
-  "get options.disambiguation",
   "get options.disambiguation.toString",
   "call options.disambiguation.toString",
-  "get options.offset",
   "get options.offset.toString",
   "call options.offset.toString",
-  "get options.overflow",
   "get options.overflow.toString",
   "call options.overflow.toString",
   "get this.calendar.dateFromFields",
   "call this.calendar.dateFromFields",
-  // Calendar.p.dateFromFields
-  "get options.overflow",
-  "get options.overflow.toString",
-  "call options.overflow.toString",
   // InterpretISODateTimeOffset
   "get this.timeZone.getPossibleInstantsFor",
   "call this.timeZone.getPossibleInstantsFor",
@@ -131,6 +115,7 @@ const options = TemporalHelpers.propertyBagObserver(actual, {
   overflow: "constrain",
   disambiguation: "compatible",
   offset: "prefer",
+  extra: "property",
 }, "options");
 
 instance.with(fields, options);

@@ -31,9 +31,6 @@ const expected = [
   "call this.calendar.dateAdd",
   "get this.timeZone.getPossibleInstantsFor",
   "call this.timeZone.getPossibleInstantsFor",
-  // GetOffsetNanosecondsFor
-  "get this.timeZone.getOffsetNanosecondsFor",
-  "call this.timeZone.getOffsetNanosecondsFor",
   // InterpretISODateTimeOffset
   "get this.timeZone.getPossibleInstantsFor",
   "call this.timeZone.getPossibleInstantsFor",

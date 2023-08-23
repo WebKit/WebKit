@@ -12,6 +12,12 @@ const expected = [
   // RejectObjectWithCalendarOrTimeZone
   "get fields.calendar",
   "get fields.timeZone",
+  // CopyDataProperties
+  "ownKeys options",
+  "getOwnPropertyDescriptor options.overflow",
+  "get options.overflow",
+  "getOwnPropertyDescriptor options.extra",
+  "get options.extra",
   // CalendarFields
   "get this.calendar.fields",
   "call this.calendar.fields",
@@ -44,7 +50,6 @@ const expected = [
   "get this.calendar.dateFromFields",
   "call this.calendar.dateFromFields",
   // inside Calendar.p.dateFromFields
-  "get options.overflow",
   "get options.overflow.toString",
   "call options.overflow.toString",
 ];
@@ -64,6 +69,7 @@ const fields = TemporalHelpers.propertyBagObserver(actual, {
 
 const options = TemporalHelpers.propertyBagObserver(actual, {
   overflow: "constrain",
+  extra: "property",
 }, "options");
 
 instance.with(fields, options);

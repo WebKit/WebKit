@@ -68,11 +68,7 @@ skip:
     - test/intl402/NumberFormat/prototype/format/unit-zh-TW.js
     - test/intl402/NumberFormat/prototype/formatToParts/unit-ja-JP.js
     - test/intl402/NumberFormat/prototype/formatToParts/unit-zh-TW.js
-    - test/intl402/DurationFormat/prototype/format/style-digital-en.js
     - test/intl402/DurationFormat/prototype/format/style-narrow-en.js
-    - test/intl402/DurationFormat/prototype/formatToParts/formatToParts-style-default-en.js
-    - test/intl402/DurationFormat/prototype/formatToParts/formatToParts-style-long-en.js
-    - test/intl402/DurationFormat/prototype/formatToParts/formatToParts-style-short-en.js
 
     # New ICU (66~) raises a different failure
     - test/intl402/Locale/constructor-apply-options-canonicalizes-twice.js
