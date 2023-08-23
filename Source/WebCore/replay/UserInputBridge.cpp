@@ -41,117 +41,123 @@
 
 namespace WebCore {
 
-UserInputBridge::UserInputBridge(LocalFrame& frame)
-    : m_frame(frame)
+UserInputBridge::UserInputBridge(Page& page)
+    : m_page(page)
 {
 }
 
 #if ENABLE(CONTEXT_MENU_EVENT)
-bool UserInputBridge::handleContextMenuEvent(const PlatformMouseEvent& mouseEvent, InputSource)
+bool UserInputBridge::handleContextMenuEvent(const PlatformMouseEvent& mouseEvent, LocalFrame& frame, InputSource)
 {
-    return m_frame.eventHandler().sendContextMenuEvent(mouseEvent);
+    return frame.eventHandler().sendContextMenuEvent(mouseEvent);
 }
 #endif
 
 bool UserInputBridge::handleMousePressEvent(const PlatformMouseEvent& mouseEvent, InputSource)
 {
-    return m_frame.eventHandler().handleMousePressEvent(mouseEvent);
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return false;
+    return Ref(*localMainFrame)->eventHandler().handleMousePressEvent(mouseEvent);
 }
 
 bool UserInputBridge::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent, InputSource)
 {
-    return m_frame.eventHandler().handleMouseReleaseEvent(mouseEvent);
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return false;
+    return Ref(*localMainFrame)->eventHandler().handleMouseReleaseEvent(mouseEvent);
 }
 
 bool UserInputBridge::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, InputSource)
 {
-    return m_frame.eventHandler().mouseMoved(mouseEvent);
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return false;
+    return Ref(*localMainFrame)->eventHandler().mouseMoved(mouseEvent);
 }
 
 bool UserInputBridge::handleMouseMoveOnScrollbarEvent(const PlatformMouseEvent& mouseEvent, InputSource)
 {
-    return m_frame.eventHandler().passMouseMovedEventToScrollbars(mouseEvent);
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return false;
+    return Ref(*localMainFrame)->eventHandler().passMouseMovedEventToScrollbars(mouseEvent);
 }
 
 bool UserInputBridge::handleMouseForceEvent(const PlatformMouseEvent& mouseEvent, InputSource)
 {
-    return m_frame.eventHandler().handleMouseForceEvent(mouseEvent);
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return false;
+    return Ref(*localMainFrame)->eventHandler().handleMouseForceEvent(mouseEvent);
 }
 
 bool UserInputBridge::handleKeyEvent(const PlatformKeyboardEvent& keyEvent, InputSource)
 {
-    return m_frame.eventHandler().keyEvent(keyEvent);
+    return Ref(m_page.focusController().focusedOrMainFrame())->eventHandler().keyEvent(keyEvent);
 }
 
 bool UserInputBridge::handleAccessKeyEvent(const PlatformKeyboardEvent& keyEvent, InputSource)
 {
-    return m_frame.eventHandler().handleAccessKey(keyEvent);
+    return Ref(m_page.focusController().focusedOrMainFrame())->eventHandler().handleAccessKey(keyEvent);
 }
 
 bool UserInputBridge::handleWheelEvent(const PlatformWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps, InputSource)
 {
-    return m_frame.eventHandler().handleWheelEvent(wheelEvent, processingSteps);
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return false;
+    return Ref(*localMainFrame)->eventHandler().handleWheelEvent(wheelEvent, processingSteps);
 }
 
 void UserInputBridge::focusSetActive(bool active, InputSource)
 {
-    auto* page = m_frame.page();
-    if (!page)
-        return;
-    page->focusController().setActive(active);
+    m_page.focusController().setActive(active);
 }
 
 void UserInputBridge::focusSetFocused(bool focused, InputSource)
 {
-    auto* page = m_frame.page();
-    if (!page)
-        return;
-    page->focusController().setFocused(focused);
+    m_page.focusController().setFocused(focused);
 }
 
 bool UserInputBridge::scrollRecursively(ScrollDirection direction, ScrollGranularity granularity, InputSource)
 {
-    return Ref(m_frame)->eventHandler().scrollRecursively(direction, granularity, nullptr);
+    return Ref(m_page.focusController().focusedOrMainFrame())->eventHandler().scrollRecursively(direction, granularity, nullptr);
 }
 
 bool UserInputBridge::logicalScrollRecursively(ScrollLogicalDirection direction, ScrollGranularity granularity, InputSource)
 {
-    return Ref(m_frame)->eventHandler().logicalScrollRecursively(direction, granularity, nullptr);
+    return Ref(m_page.focusController().focusedOrMainFrame())->eventHandler().logicalScrollRecursively(direction, granularity, nullptr);
 }
 
 void UserInputBridge::loadRequest(FrameLoadRequest&& request, InputSource)
 {
-    auto* page = m_frame.page();
-    if (!page)
-        return;
 #if ENABLE(WEB_AUTHN)
-    page->authenticatorCoordinator().resetUserGestureRequirement();
+    m_page.authenticatorCoordinator().resetUserGestureRequirement();
 #endif
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_frame.mainFrame());
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
     if (!localMainFrame)
         return;
     Ref(*localMainFrame)->loader().load(WTFMove(request));
 }
 
-void UserInputBridge::reloadFrame(OptionSet<ReloadOption> options, InputSource)
+void UserInputBridge::reloadFrame(LocalFrame& frame, OptionSet<ReloadOption> options, InputSource)
 {
 #if ENABLE(WEB_AUTHN)
-    auto page = m_frame.page();
-    if (!page)
-        return;
-    page->authenticatorCoordinator().resetUserGestureRequirement();
+    m_page.authenticatorCoordinator().resetUserGestureRequirement();
 #endif
-    m_frame.loader().reload(options);
+    frame.loader().reload(options);
 }
 
-void UserInputBridge::stopLoadingFrame(InputSource)
+void UserInputBridge::stopLoadingFrame(LocalFrame& frame, InputSource)
 {
-    m_frame.loader().stopForUserCancel();
+    frame.loader().stopForUserCancel();
 }
 
 bool UserInputBridge::tryClosePage(InputSource)
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_frame.mainFrame());
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
     if (!localMainFrame)
         return false;
     return Ref(*localMainFrame)->loader().shouldClose();

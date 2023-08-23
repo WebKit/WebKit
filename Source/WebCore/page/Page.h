@@ -160,6 +160,7 @@ class StorageNamespaceProvider;
 class StorageProvider;
 class UserContentProvider;
 class UserContentURLPattern;
+class UserInputBridge;
 class UserScript;
 class UserStyleSheet;
 class ValidationMessageClient;
@@ -375,6 +376,7 @@ public:
     ContextMenuController& contextMenuController() { return m_contextMenuController.get(); }
     const ContextMenuController& contextMenuController() const { return m_contextMenuController.get(); }
 #endif
+    UserInputBridge& userInputBridge() { return m_userInputBridge.get(); }
     InspectorController& inspectorController() { return m_inspectorController.get(); }
     PointerCaptureController& pointerCaptureController() { return m_pointerCaptureController.get(); }
 #if ENABLE(POINTER_LOCK)
@@ -1117,6 +1119,7 @@ private:
 #if ENABLE(CONTEXT_MENUS)
     UniqueRef<ContextMenuController> m_contextMenuController;
 #endif
+    UniqueRef<UserInputBridge> m_userInputBridge;
     UniqueRef<InspectorController> m_inspectorController;
     UniqueRef<PointerCaptureController> m_pointerCaptureController;
 #if ENABLE(POINTER_LOCK)

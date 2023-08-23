@@ -98,7 +98,6 @@
 #include "UserContentController.h"
 #include "UserContentURLPattern.h"
 #include "UserGestureIndicator.h"
-#include "UserInputBridge.h"
 #include "UserScript.h"
 #include "UserTypingGestureIndicator.h"
 #include "VisibleUnits.h"
@@ -156,7 +155,6 @@ LocalFrame::LocalFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& frameLoad
     , m_pageZoomFactor(parentPageZoomFactor(this))
     , m_textZoomFactor(parentTextZoomFactor(this))
     , m_eventHandler(makeUniqueRef<EventHandler>(*this))
-    , m_userInputBridge(makeUniqueRef<UserInputBridge>(*this))
 {
     ProcessWarming::initializeNames();
     StaticCSSValuePool::init();

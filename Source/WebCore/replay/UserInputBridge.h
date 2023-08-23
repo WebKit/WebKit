@@ -37,6 +37,7 @@ namespace WebCore {
 
 class FrameLoadRequest;
 class LocalFrame;
+class Page;
 class PlatformKeyboardEvent;
 class PlatformMouseEvent;
 class PlatformWheelEvent;
@@ -54,11 +55,11 @@ class UserInputBridge {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(UserInputBridge);
 public:
-    UserInputBridge(LocalFrame&);
+    UserInputBridge(Page&);
 
     // User input APIs.
 #if ENABLE(CONTEXT_MENU_EVENT)
-    WEBCORE_EXPORT bool handleContextMenuEvent(const PlatformMouseEvent&, InputSource = InputSource::User);
+    WEBCORE_EXPORT bool handleContextMenuEvent(const PlatformMouseEvent&, LocalFrame&, InputSource = InputSource::User);
 #endif
     WEBCORE_EXPORT bool handleMousePressEvent(const PlatformMouseEvent&, InputSource = InputSource::User);
     WEBCORE_EXPORT bool handleMouseReleaseEvent(const PlatformMouseEvent&, InputSource = InputSource::User);
@@ -75,12 +76,12 @@ public:
 
     // Navigation APIs.
     WEBCORE_EXPORT void loadRequest(FrameLoadRequest&&, InputSource = InputSource::User);
-    WEBCORE_EXPORT void reloadFrame(OptionSet<ReloadOption>, InputSource = InputSource::User);
-    WEBCORE_EXPORT void stopLoadingFrame(InputSource = InputSource::User);
+    WEBCORE_EXPORT void reloadFrame(LocalFrame&, OptionSet<ReloadOption>, InputSource = InputSource::User);
+    WEBCORE_EXPORT void stopLoadingFrame(LocalFrame&, InputSource = InputSource::User);
     WEBCORE_EXPORT bool tryClosePage(InputSource = InputSource::User);
 
 private:
-    LocalFrame& m_frame;
+    Page& m_page;
 };
 
 } // namespace WebCore
