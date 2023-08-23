@@ -556,6 +556,22 @@ inline bool RenderStyle::setZoom(float zoomLevel)
     return true;
 }
 
+inline void RenderStyle::containIntrinsicWidthAddAuto()
+{
+    if (containIntrinsicWidthType() == ContainIntrinsicSizeType::None)
+        setContainIntrinsicWidthType(ContainIntrinsicSizeType::AutoAndNone);
+    else if (containIntrinsicWidthType() == ContainIntrinsicSizeType::Length)
+        setContainIntrinsicWidthType(ContainIntrinsicSizeType::AutoAndLength);
+}
+
+inline void RenderStyle::containIntrinsicHeightAddAuto()
+{
+    if (containIntrinsicHeightType() == ContainIntrinsicSizeType::None)
+        setContainIntrinsicHeightType(ContainIntrinsicSizeType::AutoAndNone);
+    else if (containIntrinsicHeightType() == ContainIntrinsicSizeType::Length)
+        setContainIntrinsicHeightType(ContainIntrinsicSizeType::AutoAndLength);
+}
+
 #if ENABLE(CSS_COMPOSITING)
 
 inline void RenderStyle::setBlendMode(BlendMode mode)

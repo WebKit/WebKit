@@ -619,6 +619,11 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     if (isSkippedContentRoot(style, m_element) && m_parentStyle.contentVisibility() != ContentVisibility::Hidden)
         style.setSkippedContentReason(style.contentVisibility());
 
+    if (style.contentVisibility() == ContentVisibility::Auto) {
+        style.containIntrinsicWidthAddAuto();
+        style.containIntrinsicHeightAddAuto();
+    }
+
     adjustForSiteSpecificQuirks(style);
 }
 

@@ -711,6 +711,8 @@ public:
     inline bool containIntrinsicHeightHasAuto() const;
     inline bool containIntrinsicLogicalWidthHasAuto() const;
     inline bool containIntrinsicLogicalHeightHasAuto() const;
+    inline void containIntrinsicWidthAddAuto();
+    inline void containIntrinsicHeightAddAuto();
     inline std::optional<Length> containIntrinsicWidth() const;
     inline std::optional<Length> containIntrinsicHeight() const;
     inline bool hasAutoLengthContainIntrinsicSize() const;
