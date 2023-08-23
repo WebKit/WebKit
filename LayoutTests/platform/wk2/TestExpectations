@@ -869,3 +869,5 @@ webkit.org/b/253533 imported/w3c/web-platform-tests/xhr/status.h2.window.html [ 
 webkit.org/b/259409 imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html [ Pass Failure ]
 
 webkit.org/b/259482 fast/media/managed-media-source-open-crash.html [ Pass Failure ]
+
+webkit.org/b/260632 http/tests/security/referrer-policy-header.html [ Pass Failure Crash ]
