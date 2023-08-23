@@ -447,11 +447,11 @@ void RemoteRenderingBackend::prepareBuffersForDisplay(Vector<PrepareBackingStore
 // This is the GPU Process version of RemoteLayerBackingStore::prepareBuffers().
 void RemoteRenderingBackend::prepareLayerBuffersForDisplay(const PrepareBackingStoreBuffersInputData& inputData, PrepareBackingStoreBuffersOutputData& outputData)
 {
-    auto fetchBuffer = [&](std::optional<RenderingResourceIdentifier> identifier) -> ImageBuffer* {
+    auto fetchBuffer = [&](std::optional<RenderingResourceIdentifier> identifier) -> RefPtr<ImageBuffer> {
         return identifier ? m_remoteResourceCache.cachedImageBuffer(*identifier) : nullptr;
     };
 
-    auto bufferIdentifier = [](ImageBuffer* buffer) -> std::optional<RenderingResourceIdentifier> {
+    auto bufferIdentifier = [](RefPtr<WebCore::ImageBuffer> buffer) -> std::optional<RenderingResourceIdentifier> {
         if (!buffer)
             return std::nullopt;
         return buffer->renderingResourceIdentifier();

@@ -47,7 +47,7 @@ public:
     void cacheFilter(Ref<WebCore::Filter>&&);
     void cacheFontCustomPlatformData(Ref<WebCore::FontCustomPlatformData>&&);
 
-    RemoteImageBuffer* cachedImageBuffer(WebCore::RenderingResourceIdentifier) const;
+    RefPtr<RemoteImageBuffer> cachedImageBuffer(WebCore::RenderingResourceIdentifier) const;
     RefPtr<RemoteImageBuffer> takeImageBuffer(WebCore::RenderingResourceIdentifier);
     WebCore::NativeImage* cachedNativeImage(WebCore::RenderingResourceIdentifier) const;
     WebCore::Font* cachedFont(WebCore::RenderingResourceIdentifier) const;

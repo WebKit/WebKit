@@ -39,9 +39,9 @@ void RemoteResourceCache::cacheImageBuffer(Ref<RemoteImageBuffer>&& imageBuffer)
     m_resourceHeap.add(WTFMove(buffer));
 }
 
-RemoteImageBuffer* RemoteResourceCache::cachedImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier) const
+RefPtr<RemoteImageBuffer> RemoteResourceCache::cachedImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier) const
 {
-    return static_cast<RemoteImageBuffer*>(m_resourceHeap.getImageBuffer(renderingResourceIdentifier)); 
+    return static_pointer_cast<RemoteImageBuffer>(std::forward<RefPtr<ImageBuffer>>(m_resourceHeap.getImageBuffer(renderingResourceIdentifier)));
 }
 
 RefPtr<RemoteImageBuffer> RemoteResourceCache::takeImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
