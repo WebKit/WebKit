@@ -3889,7 +3889,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return CSSPrimitiveValue::create(CSSValueNone);
         CSSValueListBuilder list;
         for (auto& name : style.containerNames())
-            list.append(CSSPrimitiveValue::createCustomIdent(name));
+            list.append(valueForScopedName(name));
         return CSSValueList::createSpaceSeparated(WTFMove(list));
     }
     case CSSPropertyContainIntrinsicSize:

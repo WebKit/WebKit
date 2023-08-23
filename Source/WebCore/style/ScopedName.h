@@ -32,8 +32,8 @@ namespace Style {
 
 struct ScopedName {
     AtomString name;
-    bool isIdentifier { true };
     ScopeOrdinal scopeOrdinal { ScopeOrdinal::Element };
+    bool isIdentifier { true };
 
     bool operator==(const ScopedName&) const = default;
 };
