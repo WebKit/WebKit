@@ -825,6 +825,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
         [_window setAlpha:0];
         [_window setClipsToBounds:YES];
         [_window _setContinuousCornerRadius:kFullScreenWindowCornerRadius];
+        [_window _setPreferredGroundingShadowVisibility:_UIPlatterGroundingShadowVisibilityVisible];
         [_window setNeedsLayout];
         [_window layoutIfNeeded];
     }
