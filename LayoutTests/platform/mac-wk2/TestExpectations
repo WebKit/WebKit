@@ -1711,7 +1711,7 @@ webkit.org/b/255407 [ Monterey x86_64 ] imported/w3c/web-platform-tests/html/sem
 [ Ventura+ ]  http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js.html [ Failure ]
 [ Monterey+ ] http/tests/media/video-webm-stall.html  [ Failure ]
 [ Monterey+ ] streams/readable-stream-default-controller-error.html [ Pass Crash ]
-[ Monterey+ ] fast/repaint/fixed-move-after-keyboard-scroll.html [ Pass Failure ]
+[ Monterey+ ] fast/repaint/fixed-move-after-keyboard-scroll.html [ Pass Failure Timeout ]
 [ Monterey+ x86_64 ] http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html [ Pass Failure ]
 [ Monterey+ x86_64 ] http/tests/websocket/tests/hybi/handshake-ok-with-legacy-websocket-response-headers.html [ Pass Failure ]
 [ Monterey+ x86_64 ] http/wpt/mediarecorder/pause-recording.html [ Pass Failure ]
