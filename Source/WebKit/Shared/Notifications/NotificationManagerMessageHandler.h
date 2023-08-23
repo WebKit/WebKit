@@ -41,7 +41,6 @@ class NotificationManagerMessageHandler : public IPC::MessageReceiver {
 public:
     virtual ~NotificationManagerMessageHandler() = default;
 
-    virtual void requestSystemNotificationPermission(const String& securityOrigin, CompletionHandler<void(bool)>&&) = 0;
     virtual void showNotification(IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&, CompletionHandler<void()>&&) = 0;
     virtual void cancelNotification(const WTF::UUID& notificationID) = 0;
     virtual void clearNotifications(const Vector<WTF::UUID>& notificationIDs) = 0;

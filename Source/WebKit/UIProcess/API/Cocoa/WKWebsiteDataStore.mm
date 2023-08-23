@@ -1193,31 +1193,6 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #endif
 }
 
--(void)_deletePushAndNotificationRegistration:(WKSecurityOrigin *)securityOrigin completionHandler:(void(^)(NSError *))completionHandler
-{
-    auto completionHandlerCopy = makeBlockPtr(completionHandler);
-    _websiteDataStore->networkProcess().deletePushAndNotificationRegistration(_websiteDataStore->sessionID(), securityOrigin->_securityOrigin->securityOrigin(), [completionHandlerCopy](const String& errorString) {
-        if (errorString.isEmpty()) {
-            completionHandlerCopy(nil);
-            return;
-        }
-        completionHandlerCopy([NSError errorWithDomain:@"WKWebSiteDataStore" code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey:(NSString *)errorString }]);
-    });
-}
-
--(void)_getOriginsWithPushAndNotificationPermissions:(void(^)(NSSet<WKSecurityOrigin *> *))completionHandler
-{
-    auto completionHandlerCopy = makeBlockPtr(completionHandler);
-    _websiteDataStore->networkProcess().getOriginsWithPushAndNotificationPermissions(_websiteDataStore->sessionID(), [completionHandlerCopy](const Vector<WebCore::SecurityOriginData>& origins) {
-        auto set = adoptNS([[NSMutableSet alloc] initWithCapacity:origins.size()]);
-        for (auto& origin : origins) {
-            auto apiOrigin = API::SecurityOrigin::create(origin);
-            [set addObject:wrapper(apiOrigin.get())];
-        }
-        completionHandlerCopy(set.get());
-    });
-}
-
 -(void)_scopeURL:(NSURL *)scopeURL hasPushSubscriptionForTesting:(void(^)(BOOL))completionHandler
 {
     auto completionHandlerCopy = makeBlockPtr(completionHandler);

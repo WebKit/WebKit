@@ -26,14 +26,12 @@
 #import "config.h"
 #import "WebPushDaemon.h"
 
-#import "AppBundleRequest.h"
 #import "DaemonDecoder.h"
 #import "DaemonEncoder.h"
 #import "DaemonUtilities.h"
 #import "FrontBoardServicesSPI.h"
 #import "HandleMessage.h"
-#import "ICAppBundle.h"
-#import "MockAppBundleRegistry.h"
+#import "LaunchServicesSPI.h"
 
 #import <WebCore/PushPermissionState.h>
 #import <WebCore/SecurityOriginData.h>
@@ -70,11 +68,6 @@ ARGUMENTS(String)
 REPLY(String)
 END
 
-FUNCTION(getOriginsWithPushAndNotificationPermissions)
-ARGUMENTS()
-REPLY(const Vector<String>&)
-END
-
 FUNCTION(setPushAndNotificationsEnabledForOrigin)
 ARGUMENTS(String, bool)
 REPLY()
@@ -83,11 +76,6 @@ END
 FUNCTION(deletePushAndNotificationRegistration)
 ARGUMENTS(String)
 REPLY(String)
-END
-
-FUNCTION(requestSystemNotificationPermission)
-ARGUMENTS(String)
-REPLY(bool)
 END
 
 FUNCTION(getPendingPushMessages)
@@ -171,21 +159,7 @@ WebPushD::EncodedMessage echoTwice::encodeReply(String reply)
     return encoder.takeBuffer();
 }
 
-WebPushD::EncodedMessage getOriginsWithPushAndNotificationPermissions::encodeReply(const Vector<String>& reply)
-{
-    WebKit::Daemon::Encoder encoder;
-    encoder << reply;
-    return encoder.takeBuffer();
-}
-
 WebPushD::EncodedMessage deletePushAndNotificationRegistration::encodeReply(String reply)
-{
-    WebKit::Daemon::Encoder encoder;
-    encoder << reply;
-    return encoder.takeBuffer();
-}
-
-WebPushD::EncodedMessage requestSystemNotificationPermission::encodeReply(bool reply)
 {
     WebKit::Daemon::Encoder encoder;
     encoder << reply;
@@ -466,17 +440,11 @@ void WebPushDaemon::decodeAndHandleMessage(xpc_connection_t connection, MessageT
     case MessageType::EchoTwice:
         handleWebPushDMessageWithReply<MessageInfo::echoTwice>(clientConnection, encodedMessage, WTFMove(replySender));
         break;
-    case MessageType::GetOriginsWithPushAndNotificationPermissions:
-        handleWebPushDMessageWithReply<MessageInfo::getOriginsWithPushAndNotificationPermissions>(clientConnection, encodedMessage, WTFMove(replySender));
-        break;
     case MessageType::SetPushAndNotificationsEnabledForOrigin:
         handleWebPushDMessageWithReply<MessageInfo::setPushAndNotificationsEnabledForOrigin>(clientConnection, encodedMessage, WTFMove(replySender));
         break;
     case MessageType::DeletePushAndNotificationRegistration:
         handleWebPushDMessageWithReply<MessageInfo::deletePushAndNotificationRegistration>(clientConnection, encodedMessage, WTFMove(replySender));
-        break;
-    case MessageType::RequestSystemNotificationPermission:
-        handleWebPushDMessageWithReply<MessageInfo::requestSystemNotificationPermission>(clientConnection, encodedMessage, WTFMove(replySender));
         break;
     case MessageType::SetDebugModeIsEnabled:
         handleWebPushDMessage<MessageInfo::setDebugModeIsEnabled>(clientConnection, encodedMessage);
@@ -535,35 +503,6 @@ bool WebPushDaemon::canRegisterForNotifications(PushClientConnection& connection
     return true;
 }
 
-void WebPushDaemon::requestSystemNotificationPermission(PushClientConnection* connection, const String& originString, CompletionHandler<void(bool)>&& replySender)
-{
-    if (!canRegisterForNotifications(*connection)) {
-        replySender(false);
-        return;
-    }
-
-    connection->enqueueAppBundleRequest(makeUnique<AppBundlePermissionsRequest>(*connection, originString, WTFMove(replySender)));
-}
-
-void WebPushDaemon::getOriginsWithPushAndNotificationPermissions(PushClientConnection* connection, CompletionHandler<void(const Vector<String>&)>&& replySender)
-{
-    if (!canRegisterForNotifications(*connection)) {
-        replySender({ });
-        return;
-    }
-
-    if (connection->useMockBundlesForTesting()) {
-        replySender(MockAppBundleRegistry::singleton().getOriginsWithRegistrations(connection->hostAppCodeSigningIdentifier()));
-        return;
-    }
-
-#if ENABLE(INSTALL_COORDINATION_BUNDLES)
-    ICAppBundle::getOriginsWithRegistrations(*connection, WTFMove(replySender));
-#else
-    RELEASE_ASSERT_NOT_REACHED();
-#endif
-}
-
 void WebPushDaemon::deletePushRegistration(const PushSubscriptionSetIdentifier& identifier, const String& originString, CompletionHandler<void()>&& callback)
 {
     runAfterStartingPushService([this, identifier, originString, callback = WTFMove(callback)]() mutable {
@@ -602,17 +541,9 @@ void WebPushDaemon::deletePushAndNotificationRegistration(PushClientConnection* 
         return;
     }
 
-#if ENABLE(INSTALL_COORDINATION_BUNDLES)
-    connection->enqueueAppBundleRequest(makeUnique<AppBundleDeletionRequest>(*connection, originString, [this, subscriptionSetIdentifier = connection->subscriptionSetIdentifier(), originString = String { originString }, replySender = WTFMove(replySender)](auto result) mutable {
-        deletePushRegistration(subscriptionSetIdentifier, originString, [replySender = WTFMove(replySender)]() mutable {
-            replySender(emptyString());
-        });
-    }));
-#else
     deletePushRegistration(connection->subscriptionSetIdentifier(), originString, [replySender = WTFMove(replySender)]() mutable {
         replySender(emptyString());
     });
-#endif
 }
 
 void WebPushDaemon::setDebugModeIsEnabled(PushClientConnection* clientConnection, bool enabled)

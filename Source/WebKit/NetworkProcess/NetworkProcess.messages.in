@@ -239,7 +239,6 @@ messages -> NetworkProcess LegacyReceiver {
 #endif
     SetPushAndNotificationsEnabledForOrigin(PAL::SessionID sessionID, WebCore::SecurityOriginData origin, bool enabled) -> ()
     DeletePushAndNotificationRegistration(PAL::SessionID sessionID, WebCore::SecurityOriginData origin) -> (String errorMessage)
-    GetOriginsWithPushAndNotificationPermissions(PAL::SessionID sessionID) -> (Vector<WebCore::SecurityOriginData> origins)
     HasPushSubscriptionForTesting(PAL::SessionID sessionID, URL scopeURL) -> (bool hasSubscription)
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)

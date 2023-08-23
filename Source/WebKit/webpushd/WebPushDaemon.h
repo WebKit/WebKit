@@ -73,8 +73,6 @@ public:
 
     // Message handlers
     void echoTwice(PushClientConnection*, const String&, CompletionHandler<void(const String&)>&& replySender);
-    void requestSystemNotificationPermission(PushClientConnection*, const String&, CompletionHandler<void(bool)>&& replySender);
-    void getOriginsWithPushAndNotificationPermissions(PushClientConnection*, CompletionHandler<void(const Vector<String>&)>&& replySender);
     void setPushAndNotificationsEnabledForOrigin(PushClientConnection*, const String& originString, bool, CompletionHandler<void()>&& replySender);
     void deletePushAndNotificationRegistration(PushClientConnection*, const String& originString, CompletionHandler<void(const String&)>&& replySender);
     void setDebugModeIsEnabled(PushClientConnection*, bool);

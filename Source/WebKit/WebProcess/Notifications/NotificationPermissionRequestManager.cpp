@@ -92,12 +92,6 @@ void NotificationPermissionRequestManager::startRequest(const SecurityOriginData
             callPermissionHandlersWith(permissionHandlers, allowed ? Permission::Granted : Permission::Denied);
         };
 
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
-        if (WebCore::DeprecatedGlobalSettings::builtInNotificationsEnabled() && allowed) {
-            WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NotificationManagerMessageHandler::RequestSystemNotificationPermission(securityOrigin.toString()), WTFMove(innerPermissionHandler), m_page->sessionID().toUInt64());
-            return;
-        }
-#endif
         innerPermissionHandler(allowed);
     });
 }

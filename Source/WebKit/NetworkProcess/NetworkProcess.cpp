@@ -2570,17 +2570,6 @@ void NetworkProcess::deletePushAndNotificationRegistration(PAL::SessionID sessio
     callback("Cannot find network session"_s);
 }
 
-void NetworkProcess::getOriginsWithPushAndNotificationPermissions(PAL::SessionID sessionID, CompletionHandler<void(const Vector<WebCore::SecurityOriginData>&)>&& callback)
-{
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
-    if (auto* session = networkSession(sessionID)) {
-        session->notificationManager().getOriginsWithPushAndNotificationPermissions(WTFMove(callback));
-        return;
-    }
-#endif
-    callback({ });
-}
-
 void NetworkProcess::hasPushSubscriptionForTesting(PAL::SessionID sessionID, URL&& scopeURL, CompletionHandler<void(bool)>&& callback)
 {
 #if ENABLE(BUILT_IN_NOTIFICATIONS)

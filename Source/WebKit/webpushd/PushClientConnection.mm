@@ -26,7 +26,6 @@
 #import "config.h"
 #import "PushClientConnection.h"
 
-#import "AppBundleRequest.h"
 #import "CodeSigning.h"
 #import "DaemonEncoder.h"
 #import "DaemonUtilities.h"
@@ -190,51 +189,12 @@ void PushClientConnection::sendDebugMessage(const String& message)
     sendDaemonMessage<DaemonMessageType::DebugMessage>(message);
 }
 
-void PushClientConnection::enqueueAppBundleRequest(std::unique_ptr<AppBundleRequest>&& request)
-{
-    RELEASE_ASSERT(m_xpcConnection);
-    m_pendingBundleRequests.append(WTFMove(request));
-    maybeStartNextAppBundleRequest();
-}
-
-void PushClientConnection::maybeStartNextAppBundleRequest()
-{
-    RELEASE_ASSERT(m_xpcConnection);
-
-    if (m_currentBundleRequest || m_pendingBundleRequests.isEmpty())
-        return;
-
-    m_currentBundleRequest = m_pendingBundleRequests.takeFirst();
-    m_currentBundleRequest->start();
-}
-
-void PushClientConnection::didCompleteAppBundleRequest(AppBundleRequest& request)
-{
-    // If our connection was closed there should be no in-progress bundle requests.
-    RELEASE_ASSERT(m_xpcConnection);
-
-    ASSERT(m_currentBundleRequest.get() == &request);
-    m_currentBundleRequest = nullptr;
-
-    maybeStartNextAppBundleRequest();
-}
-
 void PushClientConnection::connectionClosed()
 {
     broadcastDebugMessage("Connection closed"_s);
 
     RELEASE_ASSERT(m_xpcConnection);
     m_xpcConnection = nullptr;
-
-    if (m_currentBundleRequest) {
-        m_currentBundleRequest->cancel();
-        m_currentBundleRequest = nullptr;
-    }
-
-    Deque<std::unique_ptr<AppBundleRequest>> pendingBundleRequests;
-    pendingBundleRequests.swap(m_pendingBundleRequests);
-    for (auto& requst : pendingBundleRequests)
-        requst->cancel();
 }
 
 template<DaemonMessageType messageType, typename... Args>

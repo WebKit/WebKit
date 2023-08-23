@@ -57,7 +57,6 @@ public:
 
     void setPushAndNotificationsEnabledForOrigin(const WebCore::SecurityOriginData&, bool, CompletionHandler<void()>&&);
     void deletePushAndNotificationRegistration(const WebCore::SecurityOriginData&, CompletionHandler<void(const String&)>&&);
-    void getOriginsWithPushAndNotificationPermissions(CompletionHandler<void(const Vector<WebCore::SecurityOriginData>&)>&&);
     void getPendingPushMessages(CompletionHandler<void(const Vector<WebPushMessage>&)>&&);
 
     void subscribeToPushService(URL&& scopeURL, Vector<uint8_t>&& applicationServerKey, CompletionHandler<void(Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&&)>&&);
@@ -71,7 +70,6 @@ public:
 private:
     NetworkNotificationManager(NetworkSession&, const String& webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&&);
 
-    void requestSystemNotificationPermission(const String& originString, CompletionHandler<void(bool)>&&) final;
     void showNotification(IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&, CompletionHandler<void()>&&) final;
     void cancelNotification(const WTF::UUID& notificationID) final;
     void clearNotifications(const Vector<WTF::UUID>& notificationIDs) final;

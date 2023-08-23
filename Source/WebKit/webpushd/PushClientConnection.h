@@ -48,8 +48,6 @@ using WebKit::WebPushD::WebPushDaemonConnectionConfiguration;
 
 namespace WebPushD {
 
-class AppBundleRequest;
-
 class PushClientConnection : public RefCounted<PushClientConnection>, public CanMakeWeakPtr<PushClientConnection>, public Identified<PushClientConnection> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -73,9 +71,6 @@ public:
 
     bool useMockBundlesForTesting() const { return m_useMockBundlesForTesting; }
 
-    void enqueueAppBundleRequest(std::unique_ptr<AppBundleRequest>&&);
-    void didCompleteAppBundleRequest(AppBundleRequest&);
-
     void connectionClosed();
 
     void broadcastDebugMessage(const String&);
@@ -84,7 +79,6 @@ public:
 private:
     PushClientConnection(xpc_connection_t);
 
-    void maybeStartNextAppBundleRequest();
     void setHostAppAuditTokenData(const Vector<uint8_t>&);
 
     String bundleIdentifierFromAuditToken(audit_token_t);
@@ -101,9 +95,6 @@ private:
 
     String m_pushPartitionString;
     Markable<WTF::UUID> m_dataStoreIdentifier;
-
-    Deque<std::unique_ptr<AppBundleRequest>> m_pendingBundleRequests;
-    std::unique_ptr<AppBundleRequest> m_currentBundleRequest;
 
     bool m_debugModeEnabled { false };
     bool m_useMockBundlesForTesting { false };

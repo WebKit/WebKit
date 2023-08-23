@@ -1086,16 +1086,8 @@
 		517B5F79275E97A1002DC22D /* WebPushDaemonMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C157A0B2717CA1C00ED5280 /* WebPushDaemonMain.mm */; };
 		517B5F7A275E97A4002DC22D /* WebPushDaemon.mm in Sources */ = {isa = PBXBuildFile; fileRef = 512CD69E2723393A00F7F8EC /* WebPushDaemon.mm */; };
 		517B5F7B275E97A9002DC22D /* PushClientConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51F7BB7A2744C50700C45A72 /* PushClientConnection.mm */; };
-		517B5F7C275E97B6002DC22D /* MockAppBundleForTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F7BB75274498BB00C45A72 /* MockAppBundleForTesting.h */; };
 		517B5F7D275E97B6002DC22D /* PushClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F7BB792744C50700C45A72 /* PushClientConnection.h */; };
-		517B5F7E275E97B6002DC22D /* AppBundleRequest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5160E953274B887100567388 /* AppBundleRequest.mm */; };
 		517B5F7F275E97B6002DC22D /* WebPushDaemon.h in Headers */ = {isa = PBXBuildFile; fileRef = 512CD69D2723393A00F7F8EC /* WebPushDaemon.h */; };
-		517B5F80275E97B6002DC22D /* MockAppBundleRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 5160E95C274C2A0300567388 /* MockAppBundleRegistry.h */; };
-		517B5F81275E97B6002DC22D /* PushAppBundle.h in Headers */ = {isa = PBXBuildFile; fileRef = 5160E957274C0D8800567388 /* PushAppBundle.h */; };
-		517B5F82275E97B6002DC22D /* PushAppBundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5160E958274C0D8800567388 /* PushAppBundle.mm */; };
-		517B5F84275E97B6002DC22D /* MockAppBundleForTesting.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51F7BB74274498BA00C45A72 /* MockAppBundleForTesting.mm */; };
-		517B5F85275E97B6002DC22D /* AppBundleRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 5160E954274B887100567388 /* AppBundleRequest.h */; };
-		517B5F86275E97B6002DC22D /* MockAppBundleRegistry.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5160E95F274C2A3F00567388 /* MockAppBundleRegistry.mm */; };
 		517B5F95275EBA63002DC22D /* PushMessageForTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = 517B5F94275EBA62002DC22D /* PushMessageForTesting.h */; };
 		517B5F97275EC5E5002DC22D /* WebPushMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 517B5F96275EC5E5002DC22D /* WebPushMessage.h */; };
 		517B5F99275EC601002DC22D /* WebPushMessageCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517B5F98275EC600002DC22D /* WebPushMessageCocoa.mm */; };
@@ -1135,12 +1127,8 @@
 		51DD9F2816367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51DD9F2616367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp */; };
 		51DD9F2916367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DD9F2716367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h */; };
 		51E351CB180F2CCC00E53BE9 /* IDBUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E351C9180F2CCC00E53BE9 /* IDBUtilities.h */; };
-		51E9049527BCB3C900929E7E /* ICAppBundle.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E9049327BCB3C600929E7E /* ICAppBundle.h */; };
-		51E9049727BCB3D900929E7E /* ICAppBundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E9049427BCB3C800929E7E /* ICAppBundle.mm */; };
 		51E9049A27BCB9D400929E7E /* LaunchServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E9049827BCB9D100929E7E /* LaunchServicesSPI.h */; };
 		51E9049B27BCB9D400929E7E /* LaunchServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E9049827BCB9D100929E7E /* LaunchServicesSPI.h */; };
-		51E9049C27BCB9D400929E7E /* InstallCoordinationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E9049927BCB9D300929E7E /* InstallCoordinationSPI.h */; };
-		51E9049D27BCB9D400929E7E /* InstallCoordinationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E9049927BCB9D300929E7E /* InstallCoordinationSPI.h */; };
 		51EFC1CF1524E62500C9A938 /* WKBundleDOMWindowExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FA2D541521118600C1BA0B /* WKBundleDOMWindowExtension.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51F060E01654317F00F3281B /* WebResourceLoaderMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F060DE1654317500F3281B /* WebResourceLoaderMessages.h */; };
 		51F060E11654318500F3281B /* WebResourceLoaderMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F060DD1654317500F3281B /* WebResourceLoaderMessageReceiver.cpp */; };
@@ -4921,12 +4909,6 @@
 		515C415A207D74E000726E02 /* SuspendedPageProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SuspendedPageProxy.cpp; sourceTree = "<group>"; };
 		515C415B207D74E100726E02 /* SuspendedPageProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SuspendedPageProxy.h; sourceTree = "<group>"; };
 		5160BFE013381DF900918999 /* LoggingFoundation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoggingFoundation.mm; sourceTree = "<group>"; };
-		5160E953274B887100567388 /* AppBundleRequest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppBundleRequest.mm; sourceTree = "<group>"; };
-		5160E954274B887100567388 /* AppBundleRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppBundleRequest.h; sourceTree = "<group>"; };
-		5160E957274C0D8800567388 /* PushAppBundle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushAppBundle.h; sourceTree = "<group>"; };
-		5160E958274C0D8800567388 /* PushAppBundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PushAppBundle.mm; sourceTree = "<group>"; };
-		5160E95C274C2A0300567388 /* MockAppBundleRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockAppBundleRegistry.h; sourceTree = "<group>"; };
-		5160E95F274C2A3F00567388 /* MockAppBundleRegistry.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MockAppBundleRegistry.mm; sourceTree = "<group>"; };
 		5164657E27A9C76500E1F2BA /* ServiceWorkerNotificationHandler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerNotificationHandler.cpp; sourceTree = "<group>"; };
 		5164657F27A9C76700E1F2BA /* ServiceWorkerNotificationHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerNotificationHandler.h; sourceTree = "<group>"; };
 		5164C0941B05B757004F102A /* AuxiliaryProcess.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AuxiliaryProcess.messages.in; sourceTree = "<group>"; };
@@ -5037,10 +5019,7 @@
 		51E351C9180F2CCC00E53BE9 /* IDBUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBUtilities.h; sourceTree = "<group>"; };
 		51E399051D6F54C5009C8831 /* UIGamepadProviderCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIGamepadProviderCocoa.mm; sourceTree = "<group>"; };
 		51E8B68D1E712873001B7132 /* WebURLSchemeTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebURLSchemeTask.cpp; sourceTree = "<group>"; };
-		51E9049327BCB3C600929E7E /* ICAppBundle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ICAppBundle.h; sourceTree = "<group>"; };
-		51E9049427BCB3C800929E7E /* ICAppBundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ICAppBundle.mm; sourceTree = "<group>"; };
 		51E9049827BCB9D100929E7E /* LaunchServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LaunchServicesSPI.h; sourceTree = "<group>"; };
-		51E9049927BCB9D300929E7E /* InstallCoordinationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InstallCoordinationSPI.h; sourceTree = "<group>"; };
 		51E949961D761CC700EC9EB9 /* UIGamepadProviderIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIGamepadProviderIOS.mm; sourceTree = "<group>"; };
 		51F060DD1654317500F3281B /* WebResourceLoaderMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebResourceLoaderMessageReceiver.cpp; sourceTree = "<group>"; };
 		51F060DD1654317500F3281C /* LibWebRTCNetworkMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LibWebRTCNetworkMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -5050,8 +5029,6 @@
 		51F060DD1654317500F3282E /* NetworkRTCProviderMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkRTCProviderMessageReceiver.cpp; sourceTree = "<group>"; };
 		51F060DD1654317500F3283F /* NetworkMDNSRegisterMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkMDNSRegisterMessageReceiver.cpp; sourceTree = "<group>"; };
 		51F060DE1654317500F3281B /* WebResourceLoaderMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebResourceLoaderMessages.h; sourceTree = "<group>"; };
-		51F7BB74274498BA00C45A72 /* MockAppBundleForTesting.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MockAppBundleForTesting.mm; sourceTree = "<group>"; };
-		51F7BB75274498BB00C45A72 /* MockAppBundleForTesting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockAppBundleForTesting.h; sourceTree = "<group>"; };
 		51F7BB792744C50700C45A72 /* PushClientConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushClientConnection.h; sourceTree = "<group>"; };
 		51F7BB7A2744C50700C45A72 /* PushClientConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PushClientConnection.mm; sourceTree = "<group>"; };
 		51F7BB7E274564A100C45A72 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -11263,24 +11240,13 @@
 			children = (
 				EB7D252827B316A6009CB586 /* mac */,
 				517B5F63275A8D5C002DC22D /* webpushtool */,
-				5160E954274B887100567388 /* AppBundleRequest.h */,
-				5160E953274B887100567388 /* AppBundleRequest.mm */,
 				EBA8D3AE27A5E33F00CB7900 /* ApplePushServiceConnection.h */,
 				EBA8D3AC27A5E33E00CB7900 /* ApplePushServiceConnection.mm */,
 				EB0D312E275AE13300863D8F /* com.apple.webkit.webpushd.ios.plist */,
 				EB0D312D275AE13300863D8F /* com.apple.webkit.webpushd.mac.plist */,
-				51E9049327BCB3C600929E7E /* ICAppBundle.h */,
-				51E9049427BCB3C800929E7E /* ICAppBundle.mm */,
-				51E9049927BCB9D300929E7E /* InstallCoordinationSPI.h */,
 				51E9049827BCB9D100929E7E /* LaunchServicesSPI.h */,
-				51F7BB75274498BB00C45A72 /* MockAppBundleForTesting.h */,
-				51F7BB74274498BA00C45A72 /* MockAppBundleForTesting.mm */,
-				5160E95C274C2A0300567388 /* MockAppBundleRegistry.h */,
-				5160E95F274C2A3F00567388 /* MockAppBundleRegistry.mm */,
 				EBA8D3AD27A5E33E00CB7900 /* MockPushServiceConnection.h */,
 				EBA8D3B027A5E33F00CB7900 /* MockPushServiceConnection.mm */,
-				5160E957274C0D8800567388 /* PushAppBundle.h */,
-				5160E958274C0D8800567388 /* PushAppBundle.mm */,
 				51F7BB792744C50700C45A72 /* PushClientConnection.h */,
 				51F7BB7A2744C50700C45A72 /* PushClientConnection.mm */,
 				EB36B16627A7B4500050E00D /* PushService.h */,
@@ -13952,8 +13918,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				51E9049527BCB3C900929E7E /* ICAppBundle.h in Headers */,
-				51E9049D27BCB9D400929E7E /* InstallCoordinationSPI.h in Headers */,
 				51E9049B27BCB9D400929E7E /* LaunchServicesSPI.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -14228,7 +14192,6 @@
 				1A6563E51B7A8C50009CF787 /* APIWindowFeatures.h in Headers */,
 				572EBBDB2538F6B6000552B3 /* AppAttestInternalSoftLink.h in Headers */,
 				572EBBDD25392181000552B3 /* AppAttestSPI.h in Headers */,
-				517B5F85275E97B6002DC22D /* AppBundleRequest.h in Headers */,
 				074879B92373A90900F5678E /* AppKitSoftLink.h in Headers */,
 				F48D2A8521583A7E00C6752B /* AppKitSPI.h in Headers */,
 				9565083926D87A2B00E15CB7 /* AppleMediaServicesSPI.h in Headers */,
@@ -14410,7 +14373,6 @@
 				9197940523DBC4BB00257892 /* InspectorBrowserAgent.h in Headers */,
 				996B2B9D25E257FF00719379 /* InspectorExtensionDelegate.h in Headers */,
 				A5E391FD2183C1F800C8FB31 /* InspectorTargetProxy.h in Headers */,
-				51E9049C27BCB9D400929E7E /* InstallCoordinationSPI.h in Headers */,
 				C5BCE5DF1C50766A00CDE3FA /* InteractionInformationAtPosition.h in Headers */,
 				2D4D2C811DF60BF3002EB10C /* InteractionInformationRequest.h in Headers */,
 				7BBA63E0280E93D600B04823 /* IPCConnectionTester.h in Headers */,
@@ -14479,8 +14441,6 @@
 				1AAB037A185A7C6A00EDF501 /* MessageSender.h in Headers */,
 				93A67B6429C2DDF300991D09 /* MessageSenderInlines.h in Headers */,
 				A13B3DA2207F39DE0090C58D /* MobileWiFiSPI.h in Headers */,
-				517B5F7C275E97B6002DC22D /* MockAppBundleForTesting.h in Headers */,
-				517B5F80275E97B6002DC22D /* MockAppBundleRegistry.h in Headers */,
 				57DCEDCB214F4E420016B847 /* MockAuthenticatorManager.h in Headers */,
 				57DCEDC7214F18300016B847 /* MockLocalConnection.h in Headers */,
 				57DCEDC3214F114C0016B847 /* MockLocalService.h in Headers */,
@@ -14608,7 +14568,6 @@
 				86E67A251910B9D100004AB7 /* ProcessThrottler.h in Headers */,
 				83048AE61ACA45DC0082C832 /* ProcessThrottlerClient.h in Headers */,
 				2D279E1926955768004B3EEB /* PrototypeToolsSPI.h in Headers */,
-				517B5F81275E97B6002DC22D /* PushAppBundle.h in Headers */,
 				517B5F7D275E97B6002DC22D /* PushClientConnection.h in Headers */,
 				517B5F95275EBA63002DC22D /* PushMessageForTesting.h in Headers */,
 				EB36B16827A7B4500050E00D /* PushService.h in Headers */,
@@ -17000,7 +16959,6 @@
 				337822432947F679002106BB /* _WKWebExtensionWebNavigationURLFilter.mm in Sources */,
 				07E4BDC82A3A7089000D5509 /* _WKWebViewTextInputNotifications.mm in Sources */,
 				572EBBDA2538F6B4000552B3 /* AppAttestInternalSoftLink.mm in Sources */,
-				517B5F7E275E97B6002DC22D /* AppBundleRequest.mm in Sources */,
 				EBA8D3B227A5E33F00CB7900 /* ApplePushServiceConnection.mm in Sources */,
 				2DEB1D2E2127473600933906 /* ArgumentCodersCF.cpp in Sources */,
 				CD4570D424411D0F00A3DCEB /* AudioSessionRoutingArbitrator.cpp in Sources */,
@@ -17031,7 +16989,6 @@
 				C1A152D724E5A29A00978C8B /* HandleXPCEndpointMessages.mm in Sources */,
 				522F792A28D50EC60069B45B /* HidConnection.mm in Sources */,
 				522F792928D50EBB0069B45B /* HidService.mm in Sources */,
-				51E9049727BCB3D900929E7E /* ICAppBundle.mm in Sources */,
 				2749F6442146561B008380BF /* InjectedBundleNodeHandle.cpp in Sources */,
 				2749F6452146561E008380BF /* InjectedBundleRangeHandle.cpp in Sources */,
 				1C2B4D4B2A819D0D00C528A1 /* JSWebExtensionAPIAlarms.mm in Sources */,
@@ -17054,8 +17011,6 @@
 				07E19EFB23D401F10094FFB4 /* MediaPlayerPrivateRemoteMessageReceiver.cpp in Sources */,
 				1DF29E64257F37A3003C28AF /* MediaSourcePrivateRemoteMessageReceiver.cpp in Sources */,
 				9B4790912531563200EC11AB /* MessageArgumentDescriptions.cpp in Sources */,
-				517B5F84275E97B6002DC22D /* MockAppBundleForTesting.mm in Sources */,
-				517B5F86275E97B6002DC22D /* MockAppBundleRegistry.mm in Sources */,
 				EBA8D3B627A5E33F00CB7900 /* MockPushServiceConnection.mm in Sources */,
 				57B826452304F14000B72EB0 /* NearFieldSoftLink.mm in Sources */,
 				C1C1B30F2540F50D00D9100B /* NetworkConnectionToWebProcessMac.mm in Sources */,
@@ -17077,7 +17032,6 @@
 				CDA29A2A1CBEB67A00901CCF /* PlaybackSessionManagerProxyMessageReceiver.cpp in Sources */,
 				C15CBB3723F37ECB00300CC7 /* PreferenceObserver.mm in Sources */,
 				2D54C31B212F4DA60049C174 /* ProcessLauncher.cpp in Sources */,
-				517B5F82275E97B6002DC22D /* PushAppBundle.mm in Sources */,
 				517B5F7B275E97A9002DC22D /* PushClientConnection.mm in Sources */,
 				EB36B16927A7B4500050E00D /* PushService.mm in Sources */,
 				EBA8D3B727A5E33F00CB7900 /* PushServiceConnection.mm in Sources */,

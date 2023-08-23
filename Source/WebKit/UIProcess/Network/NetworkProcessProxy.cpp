@@ -1880,11 +1880,6 @@ void NetworkProcessProxy::deletePushAndNotificationRegistration(PAL::SessionID s
     sendWithAsyncReply(Messages::NetworkProcess::DeletePushAndNotificationRegistration { sessionID, origin }, WTFMove(callback));
 }
 
-void NetworkProcessProxy::getOriginsWithPushAndNotificationPermissions(PAL::SessionID sessionID, CompletionHandler<void(const Vector<SecurityOriginData>&)>&& callback)
-{
-    sendWithAsyncReply(Messages::NetworkProcess::GetOriginsWithPushAndNotificationPermissions { sessionID }, WTFMove(callback));
-}
-
 void NetworkProcessProxy::hasPushSubscriptionForTesting(PAL::SessionID sessionID, const URL& scopeURL, CompletionHandler<void(bool)>&& callback)
 {
     sendWithAsyncReply(Messages::NetworkProcess::HasPushSubscriptionForTesting { sessionID, scopeURL }, WTFMove(callback));
