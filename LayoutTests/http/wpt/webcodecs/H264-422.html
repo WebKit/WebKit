@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<header>
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+</header>
+<body>
+<script>
+promise_test(async t => {
+    const result = await VideoEncoder.isConfigSupported({
+        codec: "avc1.7A1032",
+        width: 1920,
+        height: 1280,
+        avc: { format: "avc" },
+    });
+    assert_false(result.supported);
+}, 'Test H264 4.2.2 is not supported');
+</script>
+</body>
+</html>
