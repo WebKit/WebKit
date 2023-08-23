@@ -96,6 +96,7 @@ public:
     }
 
 private:
+    friend class CachedTextBreakIterator;
     friend class TextBreakIteratorCache;
 
     using Backing = std::variant<TextBreakIteratorICU, TextBreakIteratorPlatform>;
@@ -151,6 +152,7 @@ private:
 
     TextBreakIterator take(StringView string, const UChar* priorContext, unsigned priorContextLength, TextBreakIterator::Mode mode, TextBreakIterator::ContentAnalysis contentAnalysis, const AtomString& locale)
     {
+        ASSERT(isMainThread());
         auto iter = std::find_if(m_unused.begin(), m_unused.end(), [&](TextBreakIterator& candidate) {
             return candidate.mode() == mode && candidate.contentAnalysis() == contentAnalysis && candidate.locale() == locale;
         });
@@ -164,6 +166,7 @@ private:
 
     void put(TextBreakIterator&& iterator)
     {
+        ASSERT(isMainThread());
         m_unused.append(WTFMove(iterator));
         if (m_unused.size() > capacity)
             m_unused.remove(0);
@@ -181,13 +184,13 @@ class CachedTextBreakIterator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     CachedTextBreakIterator(StringView string, const UChar* priorContext, unsigned priorContextLength, TextBreakIterator::Mode mode, const AtomString& locale, TextBreakIterator::ContentAnalysis contentAnalysis = TextBreakIterator::ContentAnalysis::Mechanical)
-        : m_backing(TextBreakIteratorCache::singleton().take(string, priorContext, priorContextLength, mode, contentAnalysis, locale))
+        : m_backing(isMainThread() ? TextBreakIteratorCache::singleton().take(string, priorContext, priorContextLength, mode, contentAnalysis, locale) : TextBreakIterator(string, priorContext, priorContextLength, mode, contentAnalysis, locale))
     {
     }
 
     ~CachedTextBreakIterator()
     {
-        if (m_backing)
+        if (m_backing && isMainThread())
             TextBreakIteratorCache::singleton().put(WTFMove(*m_backing));
     }
 
