@@ -905,10 +905,20 @@ TEST(AdvancedPrivacyProtections, VerifyHashFromNoisyCanvas2DAPI)
 
     auto scriptToRun = @"return fullCanvasHash()";
     auto values = std::pair {
-        [webView1 callAsyncJavaScriptAndWait:scriptToRun],
-        [webView2 callAsyncJavaScriptAndWait:scriptToRun]
+        (NSString*)[webView1 callAsyncJavaScriptAndWait:scriptToRun],
+        (NSString*)[webView2 callAsyncJavaScriptAndWait:scriptToRun]
     };
     EXPECT_TRUE([values.first isEqualToString:values.second]);
+    if (![values.first isEqualToString:values.second]) {
+        auto length = values.first.length > values.second.length ? values.second.length : values.first.length;
+        for (size_t i = 0; i < length; ++i) {
+            if ([values.first characterAtIndex:i] == [values.second characterAtIndex:i])
+                continue;
+            EXPECT_EQ([values.first characterAtIndex:i], [values.second characterAtIndex:i]);
+            EXPECT_EQ(i, 0u);
+            break;
+        }
+    }
 
     values = std::pair {
         [webView1 callAsyncJavaScriptAndWait:scriptToRun],
