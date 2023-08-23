@@ -116,10 +116,7 @@ public:
     virtual bool isTexture() const { return false; }
 
 protected:
-    WebGLObject(WebGLRenderingContextBase&);
-
-    // setObject should be only called once right after creating a WebGLObject.
-    void setObject(PlatformGLObject);
+    WebGLObject(WebGLRenderingContextBase&, PlatformGLObject);
 
     void runDestructor();
 

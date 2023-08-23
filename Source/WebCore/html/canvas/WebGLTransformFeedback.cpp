@@ -39,12 +39,10 @@ namespace WebCore {
 
 RefPtr<WebGLTransformFeedback> WebGLTransformFeedback::create(WebGL2RenderingContext& context)
 {
-    auto glObject = context.graphicsContextGL()->createTransformFeedback();
-    if (!glObject)
+    auto object = context.graphicsContextGL()->createTransformFeedback();
+    if (!object)
         return nullptr;
-    auto instance = adoptRef(*new WebGLTransformFeedback(context));
-    instance->setObject(glObject);
-    return instance;
+    return adoptRef(*new WebGLTransformFeedback { context, object });
 }
 
 WebGLTransformFeedback::~WebGLTransformFeedback()
@@ -55,10 +53,10 @@ WebGLTransformFeedback::~WebGLTransformFeedback()
     runDestructor();
 }
 
-WebGLTransformFeedback::WebGLTransformFeedback(WebGL2RenderingContext& ctx)
-    : WebGLObject(ctx)
+WebGLTransformFeedback::WebGLTransformFeedback(WebGL2RenderingContext& context, PlatformGLObject object)
+    : WebGLObject(context, object)
 {
-    m_boundIndexedTransformFeedbackBuffers.resize(ctx.maxTransformFeedbackSeparateAttribs());
+    m_boundIndexedTransformFeedbackBuffers.resize(context.maxTransformFeedbackSeparateAttribs());
 }
 
 void WebGLTransformFeedback::deleteObjectImpl(const AbstractLocker&, GraphicsContextGL* context3d, PlatformGLObject object)

@@ -1600,7 +1600,9 @@ RefPtr<WebGLProgram> WebGLRenderingContextBase::createProgram()
     if (isContextLost())
         return nullptr;
     auto program = WebGLProgram::create(*this);
-    InspectorInstrumentation::didCreateWebGLProgram(*this, program.get());
+    if (!program)
+        return nullptr;
+    InspectorInstrumentation::didCreateWebGLProgram(*this, *program);
     return program;
 }
 

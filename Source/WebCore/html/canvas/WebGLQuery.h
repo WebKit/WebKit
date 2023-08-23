@@ -37,7 +37,7 @@ namespace WebCore {
 
 class WebGLQuery final : public WebGLObject {
 public:
-    static Ref<WebGLQuery> create(WebGLRenderingContextBase&);
+    static RefPtr<WebGLQuery> create(WebGLRenderingContextBase&);
     virtual ~WebGLQuery();
 
     bool isResultAvailable() const { return m_isResultAvailable; }
@@ -49,7 +49,7 @@ public:
     bool isUsable() const { return object() && !isDeleted(); }
     bool isInitialized() const { return true; }
 private:
-    explicit WebGLQuery(WebGLRenderingContextBase&);
+    WebGLQuery(WebGLRenderingContextBase&, PlatformGLObject);
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
 
     bool m_isResultAvailable { false };

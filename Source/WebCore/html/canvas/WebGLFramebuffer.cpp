@@ -190,26 +190,31 @@ WebGLFramebuffer::WebGLAttachment::WebGLAttachment() = default;
 
 WebGLFramebuffer::WebGLAttachment::~WebGLAttachment() = default;
 
-Ref<WebGLFramebuffer> WebGLFramebuffer::create(WebGLRenderingContextBase& ctx)
+RefPtr<WebGLFramebuffer> WebGLFramebuffer::create(WebGLRenderingContextBase& context)
 {
-    return adoptRef(*new WebGLFramebuffer(ctx));
+    auto object = context.graphicsContextGL()->createFramebuffer();
+    if (!object)
+        return nullptr;
+    return adoptRef(*new WebGLFramebuffer { context, object, Type::Plain });
 }
 
 #if ENABLE(WEBXR)
-
-Ref<WebGLFramebuffer> WebGLFramebuffer::createOpaque(WebGLRenderingContextBase& ctx)
+RefPtr<WebGLFramebuffer> WebGLFramebuffer::createOpaque(WebGLRenderingContextBase& context)
 {
-    auto framebuffer = adoptRef(*new WebGLFramebuffer(ctx));
-    framebuffer->m_opaque = true;
-    return framebuffer;
+    auto object = context.graphicsContextGL()->createFramebuffer();
+    if (!object)
+        return nullptr;
+    return adoptRef(*new WebGLFramebuffer { context, object, Type::Opaque });
 }
-
 #endif
 
-WebGLFramebuffer::WebGLFramebuffer(WebGLRenderingContextBase& ctx)
-    : WebGLObject(ctx)
+WebGLFramebuffer::WebGLFramebuffer(WebGLRenderingContextBase& context, PlatformGLObject object, Type type)
+    : WebGLObject(context, object)
+#if ENABLE(WEBXR)
+    , m_isOpaque(type == Type::Opaque)
+#endif
 {
-    setObject(ctx.graphicsContextGL()->createFramebuffer());
+    UNUSED_PARAM(type);
 }
 
 WebGLFramebuffer::~WebGLFramebuffer()

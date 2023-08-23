@@ -35,9 +35,12 @@
 
 namespace WebCore {
 
-Ref<WebGLRenderbuffer> WebGLRenderbuffer::create(WebGLRenderingContextBase& ctx)
+RefPtr<WebGLRenderbuffer> WebGLRenderbuffer::create(WebGLRenderingContextBase& context)
 {
-    return adoptRef(*new WebGLRenderbuffer(ctx));
+    auto object = context.graphicsContextGL()->createRenderbuffer();
+    if (!object)
+        return nullptr;
+    return adoptRef(*new WebGLRenderbuffer { context, object });
 }
 
 WebGLRenderbuffer::~WebGLRenderbuffer()
@@ -48,10 +51,9 @@ WebGLRenderbuffer::~WebGLRenderbuffer()
     runDestructor();
 }
 
-WebGLRenderbuffer::WebGLRenderbuffer(WebGLRenderingContextBase& ctx)
-    : WebGLObject(ctx)
+WebGLRenderbuffer::WebGLRenderbuffer(WebGLRenderingContextBase& context, PlatformGLObject object)
+    : WebGLObject(context, object)
 {
-    setObject(ctx.graphicsContextGL()->createRenderbuffer());
 }
 
 void WebGLRenderbuffer::deleteObjectImpl(const AbstractLocker&, GraphicsContextGL* context3d, PlatformGLObject object)

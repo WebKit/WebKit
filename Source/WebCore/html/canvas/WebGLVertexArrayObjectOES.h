@@ -37,7 +37,7 @@ public:
     static RefPtr<WebGLVertexArrayObjectOES> createUser(WebGLRenderingContextBase&);
     virtual ~WebGLVertexArrayObjectOES();
 private:
-    WebGLVertexArrayObjectOES(WebGLRenderingContextBase&, Type);
+    WebGLVertexArrayObjectOES(WebGLRenderingContextBase&, PlatformGLObject, Type);
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) final;
 };
 

@@ -43,7 +43,7 @@ public:
 
     virtual ~WebGLTexture();
 
-    static Ref<WebGLTexture> create(WebGLRenderingContextBase&);
+    static RefPtr<WebGLTexture> create(WebGLRenderingContextBase&);
 
     void didBind(GCGLenum);
     GCGLenum getTarget() const { return m_target; }
@@ -54,13 +54,11 @@ public:
     bool isInitialized() const { return m_target; }
 
 private:
-    WebGLTexture(WebGLRenderingContextBase&);
-
+    WebGLTexture(WebGLRenderingContextBase&, PlatformGLObject);
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
-
     bool isTexture() const override { return true; }
-
     int mapTargetToIndex(GCGLenum) const;
+
     GCGLenum m_target { 0 };
 };
 

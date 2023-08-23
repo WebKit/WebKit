@@ -89,7 +89,7 @@ public:
     bool isInitialized() const { return m_hasEverBeenBound; }
 
 protected:
-    WebGLVertexArrayObjectBase(WebGLRenderingContextBase&, Type);
+    WebGLVertexArrayObjectBase(WebGLRenderingContextBase&, PlatformGLObject, Type);
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override = 0;
 
     Type m_type;

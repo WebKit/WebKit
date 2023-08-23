@@ -65,9 +65,9 @@ public:
 
     virtual ~WebGLFramebuffer();
 
-    static Ref<WebGLFramebuffer> create(WebGLRenderingContextBase&);
+    static RefPtr<WebGLFramebuffer> create(WebGLRenderingContextBase&);
 #if ENABLE(WEBXR)
-    static Ref<WebGLFramebuffer> createOpaque(WebGLRenderingContextBase&);
+    static RefPtr<WebGLFramebuffer> createOpaque(WebGLRenderingContextBase&);
 #endif
 
     void setAttachmentForBoundFramebuffer(GCGLenum target, GCGLenum attachment, GCGLenum texTarget, WebGLTexture*, GCGLint level, GCGLint layer);
@@ -89,15 +89,20 @@ public:
     void addMembersToOpaqueRoots(const AbstractLocker&, JSC::AbstractSlotVisitor&);
 
 #if ENABLE(WEBXR)
-    bool isOpaque() const { return m_opaque; }
-    void setOpaqueActive(bool active) { m_opaqueActive = active; }
+    bool isOpaque() const { return m_isOpaque; }
 #endif
 
     bool isUsable() const { return object() && !isDeleted(); }
     bool isInitialized() const { return m_hasEverBeenBound; }
 
 private:
-    WebGLFramebuffer(WebGLRenderingContextBase&);
+    enum class Type : bool {
+        Plain,
+#if ENABLE(WEBXR)
+        Opaque
+#endif
+    };
+    WebGLFramebuffer(WebGLRenderingContextBase&, PlatformGLObject, Type);
 
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
 
@@ -119,17 +124,12 @@ private:
     void removeAttachmentInternal(const AbstractLocker&, GCGLenum attachment);
 
     typedef HashMap<GCGLenum, RefPtr<WebGLAttachment>> AttachmentMap;
-
     AttachmentMap m_attachments;
-
     bool m_hasEverBeenBound { false };
-
     Vector<GCGLenum> m_drawBuffers;
     Vector<GCGLenum> m_filteredDrawBuffers;
-
 #if ENABLE(WEBXR)
-    bool m_opaque { false };
-    bool m_opaqueActive { false };
+    const bool m_isOpaque;
 #endif
 };
 

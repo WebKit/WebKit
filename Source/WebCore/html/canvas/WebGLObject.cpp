@@ -37,8 +37,9 @@
 
 namespace WebCore {
 
-WebGLObject::WebGLObject(WebGLRenderingContextBase& context)
+WebGLObject::WebGLObject(WebGLRenderingContextBase& context, PlatformGLObject object)
     : m_context(context.createRefForContextObject())
+    , m_object(object)
 {
 }
 
@@ -57,13 +58,6 @@ Lock& WebGLObject::objectGraphLockForContext()
 GraphicsContextGL* WebGLObject::graphicsContextGL() const
 {
     return m_context ? m_context->graphicsContextGL() : nullptr;
-}
-
-void WebGLObject::setObject(PlatformGLObject object)
-{
-    ASSERT(!m_object);
-    ASSERT(!m_deleted);
-    m_object = object;
 }
 
 void WebGLObject::runDestructor()

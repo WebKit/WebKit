@@ -1946,6 +1946,8 @@ RefPtr<WebGLSync> WebGL2RenderingContext::fenceSync(GCGLenum condition, GCGLbitf
         return nullptr;
     }
     auto sync = WebGLSync::create(*this);
+    if (!sync)
+        return nullptr;
     sync->scheduleAllowCacheUpdate(*this);
     return sync;
 }

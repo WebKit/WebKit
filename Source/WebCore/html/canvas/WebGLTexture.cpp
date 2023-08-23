@@ -34,15 +34,17 @@
 
 namespace WebCore {
 
-Ref<WebGLTexture> WebGLTexture::create(WebGLRenderingContextBase& ctx)
+RefPtr<WebGLTexture> WebGLTexture::create(WebGLRenderingContextBase& context)
 {
-    return adoptRef(*new WebGLTexture(ctx));
+    auto object = context.graphicsContextGL()->createTexture();
+    if (!object)
+        return nullptr;
+    return adoptRef(*new WebGLTexture { context, object });
 }
 
-WebGLTexture::WebGLTexture(WebGLRenderingContextBase& ctx)
-    : WebGLObject(ctx)
+WebGLTexture::WebGLTexture(WebGLRenderingContextBase& context, PlatformGLObject object)
+    : WebGLObject(context, object)
 {
-    setObject(ctx.graphicsContextGL()->createTexture());
 }
 
 WebGLTexture::~WebGLTexture()

@@ -81,7 +81,7 @@ public:
     bool isInitialized() const { return m_hasEverBeenBound; }
 
 private:
-    WebGLTransformFeedback(WebGL2RenderingContext&);
+    WebGLTransformFeedback(WebGL2RenderingContext&, PlatformGLObject);
 
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
 
