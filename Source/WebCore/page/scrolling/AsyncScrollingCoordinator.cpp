@@ -837,11 +837,7 @@ Vector<ScrollingNodeID> AsyncScrollingCoordinator::childrenOfNode(ScrollingNodeI
     if (!scrollingNode)
         return { };
 
-    auto children = scrollingNode->children();
-    if (!children || children->isEmpty())
-        return { };
-
-    return children->map([](auto& child) {
+    return scrollingNode->children().map([](auto& child) {
         return child->scrollingNodeID();
     });
 }

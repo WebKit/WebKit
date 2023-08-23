@@ -312,8 +312,9 @@ public:
     void setParent(RefPtr<ScrollingStateNode>&& parent) { m_parent = parent; }
     ScrollingNodeID parentNodeID() const;
 
-    Vector<RefPtr<ScrollingStateNode>>* children() const { return m_children.get(); }
-    std::unique_ptr<Vector<RefPtr<ScrollingStateNode>>> takeChildren() { return WTFMove(m_children); }
+    Vector<Ref<ScrollingStateNode>>& children() { return m_children; }
+    const Vector<Ref<ScrollingStateNode>>& children() const { return m_children; }
+    Vector<Ref<ScrollingStateNode>> takeChildren() { return std::exchange(m_children, { }); }
 
     void appendChild(Ref<ScrollingStateNode>&&);
     void insertChild(Ref<ScrollingStateNode>&&, size_t index);
@@ -347,7 +348,7 @@ private:
     ScrollingStateTree& m_scrollingStateTree;
 
     ThreadSafeWeakPtr<ScrollingStateNode> m_parent;
-    std::unique_ptr<Vector<RefPtr<ScrollingStateNode>>> m_children;
+    Vector<Ref<ScrollingStateNode>> m_children;
 
     LayerRepresentation m_layer;
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
