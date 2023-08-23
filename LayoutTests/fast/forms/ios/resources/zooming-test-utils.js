@@ -74,3 +74,31 @@ function tableFromJSON(value)
     
     return table;
 }
+
+async function dumpScaleAndVisibleRect(headerDescription)
+{
+    const result = await new Promise((resolve) => {
+        testRunner.runUIScript(`(() => {
+            let result = {
+                scale : uiController.zoomScale,
+                visibleRect : uiController.contentVisibleRect
+            };
+            uiController.uiScriptComplete(JSON.stringify(result, (key, value) => {
+                if (typeof value !== "number")
+                    return value;
+                if (key === "scale")
+                    return value.toFixed(3);
+                return Math.round(value);
+            }));
+        })();`, resolve);
+    });
+
+    if (headerDescription !== undefined) {
+        const header = document.createElement('h1');
+        header.textContent = headerDescription;
+        document.body.appendChild(header);
+    }
+
+    const results = tableFromJSON(result);
+    document.body.appendChild(results);
+}

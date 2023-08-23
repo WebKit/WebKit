@@ -81,6 +81,7 @@
 @property (nonatomic, copy) void (^didShowContextMenuCallback)(void);
 @property (nonatomic, copy) void (^didDismissContextMenuCallback)(void);
 @property (nonatomic, readonly, getter=isShowingMenu) BOOL showingMenu;
+@property (nonatomic, readonly, getter=isZoomingOrScrolling) BOOL zoomingOrScrolling;
 @property (nonatomic, copy) void (^didShowMenuCallback)(void);
 @property (nonatomic, copy) void (^didHideMenuCallback)(void);
 @property (nonatomic, readonly, getter=isShowingContactPicker) BOOL showingContactPicker;

@@ -2079,7 +2079,6 @@ fast/events/ios/viewport-no-width-value-allows-double-tap.html [ Skip ]
 fast/visual-viewport/ios/stable-update-with-keyboard.html [ Skip ]
 media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html [ Skip ]
 media/modern-media-controls/media-documents/media-document-video-iphone-sizing.html [ Skip ]
-fast/forms/ios/scroll-to-reveal-focused-select.html [ Failure ]
 fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-1.html [ Failure ]
 
 # This test "fails" on iPhone 12 simulator because it supports P3, may need to rebaseline this reftest

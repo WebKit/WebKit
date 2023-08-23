@@ -11,22 +11,28 @@
             display: block;
         }
     </style>
-    
+
     <script src="resources/zooming-test-utils.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
     <script>
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
-    
     function buttonClicked()
     {
         document.getElementById('input').focus();
     }
 
-    function doTest()
+    async function doTest()
     {
-        testZoomAfterTap(document.getElementById('target'), 10, 10);
+        if (!window.testRunner || !testRunner.runUIScript)
+            return;
+
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+
+        await UIHelper.activateElementAndWaitForInputSession(document.getElementById('target'));
+        await UIHelper.waitForZoomingOrScrollingToEnd();
+        await dumpScaleAndVisibleRect();
+
+        testRunner.notifyDone();
     }
 
     window.addEventListener('load', doTest, false);

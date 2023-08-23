@@ -731,6 +731,20 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static isZoomingOrScrolling()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript("uiController.isZoomingOrScrolling", result => resolve(result === "true"));
+        });
+    }
+
+    static async waitForZoomingOrScrollingToEnd()
+    {
+        do {
+            await this.ensureStablePresentationUpdate();
+        } while (await this.isZoomingOrScrolling());
+    }
+
     static deactivateFormControl(element)
     {
         if (!this.isWebKit2() || !this.isIOSFamily()) {
@@ -1917,7 +1931,7 @@ window.UIHelper = class UIHelper {
         });
     }
 
-    static moveToPrevByKeyboardAccessoryBar()
+    static moveToPreviousByKeyboardAccessoryBar()
     {
         return new Promise((resolve) => {
             testRunner.runUIScript(`

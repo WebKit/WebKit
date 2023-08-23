@@ -267,6 +267,11 @@ double UIScriptControllerIOS::zoomScale() const
     return webView().scrollView.zoomScale;
 }
 
+bool UIScriptControllerIOS::isZoomingOrScrolling() const
+{
+    return webView().zoomingOrScrolling;
+}
+
 static CGPoint globalToContentCoordinates(TestRunnerWKWebView *webView, long x, long y)
 {
     CGPoint point = CGPointMake(x, y);
