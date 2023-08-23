@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: data URL frame loaded
-CONSOLE MESSAGE: blob popup opened
-CONSOLE MESSAGE: blob popup loadednull
-CONSOLE MESSAGE: blob popup message posted
+CONSOLE MESSAGE: blob iframe opened
+CONSOLE MESSAGE: blob iframe loadednull
+CONSOLE MESSAGE: blob iframe message posted
 PASS

@@ -1450,6 +1450,11 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
             openerPolicy = NewFrameOpenerPolicy::Suppress;
         }
 
+        if (m_frame.document()->settingsValues().blobRegistryTopOriginPartitioningEnabled && frameLoadRequest.resourceRequest().url().protocolIsBlob() && !m_frame.document()->securityOrigin().isSameOriginAs(m_frame.document()->topOrigin())) {
+            effectiveFrameName = blankTargetFrameName();
+            openerPolicy = NewFrameOpenerPolicy::Suppress;
+        }
+
         policyChecker().checkNewWindowPolicy(WTFMove(action), WTFMove(request), WTFMove(formState), effectiveFrameName, [this, allowNavigationToInvalidURL, openerPolicy, completionHandler = completionHandlerCaller.release()] (const ResourceRequest& request, WeakPtr<FormState>&& formState, const AtomString& frameName, const NavigationAction& action, ShouldContinuePolicyCheck shouldContinue) mutable {
             continueLoadAfterNewWindowPolicy(request, formState.get(), frameName, action, shouldContinue, allowNavigationToInvalidURL, openerPolicy);
             completionHandler();
@@ -3267,6 +3272,11 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
             openerPolicy = NewFrameOpenerPolicy::Suppress;
         }
 
+        if (m_frame.document()->settingsValues().blobRegistryTopOriginPartitioningEnabled && request.resourceRequest().url().protocolIsBlob() && !m_frame.document()->securityOrigin().isSameOriginAs(m_frame.document()->topOrigin())) {
+            frameName = blankTargetFrameName();
+            openerPolicy = NewFrameOpenerPolicy::Suppress;
+        }
+
         policyChecker().checkNewWindowPolicy(WTFMove(action), WTFMove(workingResourceRequest), WTFMove(formState), frameName, [this, allowNavigationToInvalidURL, openerPolicy, completionHandler = WTFMove(completionHandler)] (const ResourceRequest& request, WeakPtr<FormState>&& formState, const AtomString& frameName, const NavigationAction& action, ShouldContinuePolicyCheck shouldContinue) mutable {
             continueLoadAfterNewWindowPolicy(request, formState.get(), frameName, action, shouldContinue, allowNavigationToInvalidURL, openerPolicy);
             completionHandler();
@@ -4377,6 +4387,11 @@ RefPtr<LocalFrame> createWindow(LocalFrame& openerFrame, LocalFrame& lookupFrame
 
     // https://html.spec.whatwg.org/#the-rules-for-choosing-a-browsing-context-given-a-browsing-context-name (Step 8.2)
     if (openerFrame.document()->shouldForceNoOpenerBasedOnCOOP()) {
+        request.setFrameName(blankTargetFrameName());
+        features.noopener = true;
+    }
+
+    if (openerFrame.document()->settingsValues().blobRegistryTopOriginPartitioningEnabled && request.resourceRequest().url().protocolIsBlob() && !openerFrame.document()->securityOrigin().isSameOriginAs(openerFrame.document()->topOrigin())) {
         request.setFrameName(blankTargetFrameName());
         features.noopener = true;
     }

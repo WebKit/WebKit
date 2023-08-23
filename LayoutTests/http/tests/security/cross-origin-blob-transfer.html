@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ BlobRegistryTopOriginPartitioningEnabled=true ] -->
+<html>
+<head>
+<script src="../../../../resources/testharness.js"></script>
+<script src="../../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+if (self.testRunner)
+    testRunner.waitUntilDone();
+
+var test = async_test("Test for creating blob in iframe and then transferring it cross-origin.");
+
+window.addEventListener("message", (e) => {
+    e.data.text().then(t => {
+        assert_equals(t, "Blob content")
+        test.done();
+        if (self.testRunner)
+            testRunner.notifyDone();
+    });
+});
+
+assert_equals(window.location.origin, "http://127.0.0.1:8000");
+var successfullyParsed = true;
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+<iframe src="http://localhost:8000/security/resources/iframe-cross-origin-blob-transfer.html">
+</body>
+</html>

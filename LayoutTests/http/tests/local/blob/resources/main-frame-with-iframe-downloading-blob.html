@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<body>
+<script>
+const iframeURL ="https://localhost:8443/local/blob/resources/iframe-creating-or-downloading-blob.html";
+let publicURL = "";
+let handle;
+let iframe = document.createElement("iframe");
+if (window.location.search) {
+    let params = new URLSearchParams(document.location.search);
+    let blobURL = params.get("url");
+    iframe.src = `${iframeURL}?url=${blobURL}`;
+} else
+    iframe.src = iframeURL;
+document.body.appendChild(iframe);
+
+window.opener.postMessage({ "status": "pass", "message": "Opened window" }, '*');
+
+window.addEventListener('message', (e) => {
+    window.opener.postMessage(e.data, '*');
+});
+</script>
+</body>
+</html>

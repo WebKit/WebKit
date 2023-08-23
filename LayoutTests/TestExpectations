@@ -5046,6 +5046,7 @@ webkit.org/b/227086 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_construct
 # Extra logging that needs to be silenced:
 imported/w3c/web-platform-tests/webxr/webxr_availability.http.sub.html [ DumpJSConsoleLogInStdErr ]
 
+http/tests/local/blob/navigate-blob.html [ DumpJSConsoleLogInStdErr ]
 
 # "Opacity on an inline element should apply on float child".
 webkit.org/b/234690 imported/w3c/web-platform-tests/css/css-color/inline-opacity-float-child.html [ ImageOnlyFailure ]
