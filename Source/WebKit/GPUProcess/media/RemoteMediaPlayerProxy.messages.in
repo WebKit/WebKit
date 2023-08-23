@@ -67,7 +67,7 @@ messages -> RemoteMediaPlayerProxy {
     SetPresentationSize(WebCore::IntSize size)
 
 #if PLATFORM(COCOA)
-    SetVideoInlineSizeFenced(WebCore::FloatSize size, MachSendRight machSendRight)
+    SetVideoLayerSizeFenced(WebCore::FloatSize size, MachSendRight machSendRight)
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

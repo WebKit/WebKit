@@ -174,7 +174,7 @@ std::unique_ptr<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRem
     proxyConfiguration.documentSecurityOrigin = documentSecurityOrigin;
 
     proxyConfiguration.presentationSize = player->presentationSize();
-    proxyConfiguration.videoInlineSize = player->videoInlineSize();
+    proxyConfiguration.videoLayerSize = player->videoLayerSize();
 
     proxyConfiguration.allowedMediaContainerTypes = player->allowedMediaContainerTypes();
     proxyConfiguration.allowedMediaCodecTypes = player->allowedMediaCodecTypes();

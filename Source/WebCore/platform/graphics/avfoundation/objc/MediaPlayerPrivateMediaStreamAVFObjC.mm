@@ -373,7 +373,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
     if (!player)
         return;
 
-    auto size = IntSize { player->videoInlineSize() } ;
+    auto size = IntSize { player->videoLayerSize() };
     if (size.isEmpty())
         size = player->presentationSize();
     if (size.isEmpty() || m_intrinsicSize.isEmpty())
@@ -1189,7 +1189,7 @@ LayerHostingContextID MediaPlayerPrivateMediaStreamAVFObjC::hostingContextID() c
     return m_sampleBufferDisplayLayer ? m_sampleBufferDisplayLayer->hostingContextID() : 0;
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::setVideoInlineSizeFenced(const FloatSize& size, WTF::MachSendRight&& fence)
+void MediaPlayerPrivateMediaStreamAVFObjC::setVideoLayerSizeFenced(const FloatSize& size, WTF::MachSendRight&& fence)
 {
     if (!m_sampleBufferDisplayLayer || size.isEmpty())
         return;

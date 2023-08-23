@@ -92,7 +92,7 @@ void MediaPlayerPrivateRemote::layerHostingContextIdChanged(std::optional<WebKit
         return;
     }
     setLayerHostingContextID(inlineLayerHostingContextId.value());
-    m_videoInlineSize = presentationSize;
+    m_videoLayerSize = presentationSize;
 }
 
 } // namespace WebKit

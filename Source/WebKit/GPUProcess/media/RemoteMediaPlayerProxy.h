@@ -171,7 +171,7 @@ public:
     void setPresentationSize(const WebCore::IntSize&);
 
 #if PLATFORM(COCOA)
-    void setVideoInlineSizeFenced(const WebCore::FloatSize&, WTF::MachSendRight&&);
+    void setVideoLayerSizeFenced(const WebCore::FloatSize&, WTF::MachSendRight&&);
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -345,8 +345,8 @@ private:
     void currentTimeChanged(const MediaTime&);
 
 #if PLATFORM(COCOA)
-    WebCore::FloatSize mediaPlayerVideoInlineSize() const final { return m_configuration.videoInlineSize; }
-    void setVideoInlineSizeIfPossible(const WebCore::FloatSize&);
+    WebCore::FloatSize mediaPlayerVideoLayerSize() const final { return m_configuration.videoLayerSize; }
+    void setVideoLayerSizeIfPossible(const WebCore::FloatSize&);
     void nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::DestinationColorSpace)>&&);
     void colorSpace(CompletionHandler<void(WebCore::DestinationColorSpace)>&&);
 #if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)

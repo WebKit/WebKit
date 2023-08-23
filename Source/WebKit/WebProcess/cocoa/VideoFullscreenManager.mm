@@ -342,7 +342,7 @@ void VideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElemen
     auto videoRect = inlineVideoFrame(videoElement);
     FloatRect videoLayerFrame = FloatRect(0, 0, videoRect.width(), videoRect.height());
 
-    FloatSize initialSize = videoElement.videoInlineSize();
+    FloatSize initialSize = videoElement.videoLayerSize();
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
     if (allowLayeredFullscreenVideos)

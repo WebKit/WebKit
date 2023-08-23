@@ -918,14 +918,14 @@ bool MediaPlayer::isVideoFullscreenStandby() const
 
 #endif
 
-FloatSize MediaPlayer::videoInlineSize() const
+FloatSize MediaPlayer::videoLayerSize() const
 {
-    return client().mediaPlayerVideoInlineSize();
+    return client().mediaPlayerVideoLayerSize();
 }
 
-void MediaPlayer::setVideoInlineSizeFenced(const FloatSize& size, WTF::MachSendRight&& fence)
+void MediaPlayer::setVideoLayerSizeFenced(const FloatSize& size, WTF::MachSendRight&& fence)
 {
-    m_private->setVideoInlineSizeFenced(size, WTFMove(fence));
+    m_private->setVideoLayerSizeFenced(size, WTFMove(fence));
 }
 
 #if PLATFORM(IOS_FAMILY)
