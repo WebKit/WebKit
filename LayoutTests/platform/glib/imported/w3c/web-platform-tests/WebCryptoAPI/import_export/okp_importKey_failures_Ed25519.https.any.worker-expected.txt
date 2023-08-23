@@ -195,6 +195,6 @@ PASS Missing JWK 'crv' parameter: importKey(jwk (public) , {name: Ed25519}, true
 PASS Missing JWK 'crv' parameter: importKey(jwk (public) , {name: Ed25519}, false, [verify])
 PASS Missing JWK 'crv' parameter: importKey(jwk (public) , {name: Ed25519}, true, [verify, verify])
 PASS Missing JWK 'crv' parameter: importKey(jwk (public) , {name: Ed25519}, false, [verify, verify])
-PASS Invalid key pair: importKey(jwk(private), {name: Ed25519}, true, [sign])
-PASS Invalid key pair: importKey(jwk(private), {name: Ed25519}, true, [sign, sign])
+FAIL Invalid key pair: importKey(jwk(private), {name: Ed25519}, true, [sign]) assert_equals: Operation succeeded, but should not have. expected (undefined) undefined but got (object) object "[object CryptoKey]"
+FAIL Invalid key pair: importKey(jwk(private), {name: Ed25519}, true, [sign, sign]) assert_equals: Operation succeeded, but should not have. expected (undefined) undefined but got (object) object "[object CryptoKey]"
 

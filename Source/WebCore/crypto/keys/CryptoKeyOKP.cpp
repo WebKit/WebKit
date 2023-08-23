@@ -116,20 +116,20 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importJwk(CryptoAlgorithmIdentifier identifie
         break;
     }
 
-    if (!keyData.d.isNull()) {
-        // FIXME: Validate keyData.x is paired with keyData.d
-        auto d = base64URLDecode(keyData.d);
-        if (!d)
-            return nullptr;
-        return create(identifier, namedCurve, CryptoKeyType::Private, WTFMove(*d), extractable, usages);
-    }
-
     if (keyData.x.isNull())
         return nullptr;
 
     auto x = base64URLDecode(keyData.x);
     if (!x)
         return nullptr;
+
+    if (!keyData.d.isNull()) {
+        auto d = base64URLDecode(keyData.d);
+        if (!d || !platformCheckPairedKeys(identifier, namedCurve, WTFMove(*d), WTFMove(*x)))
+            return nullptr;
+        return create(identifier, namedCurve, CryptoKeyType::Private, WTFMove(*d), extractable, usages);
+    }
+
     return create(identifier, namedCurve, CryptoKeyType::Public, WTFMove(*x), extractable, usages);
 }
 
@@ -198,7 +198,14 @@ auto CryptoKeyOKP::algorithm() const -> KeyAlgorithm
     return CryptoKeyAlgorithm { CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier()) };
 }
 
-#if !PLATFORM(COCOA) && !USE(GCRYPT)
+#if !PLATFORM(COCOA)
+
+bool CryptoKeyOKP::platformCheckPairedKeys(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&&, Vector<uint8_t>&&)
+{
+    return true;
+}
+
+#if !USE(GCRYPT)
 bool CryptoKeyOKP::isPlatformSupportedCurve(NamedCurve)
 {
     return false;
@@ -246,6 +253,7 @@ Vector<uint8_t> CryptoKeyOKP::platformExportRaw() const
     return { };
 }
 
+#endif
 #endif
 
 } // namespace WebCore
