@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<style>
+    :root {
+        color: green;
+    }
+    @media (scripting: initial-only) {
+        :root {
+            color: red;
+        }
+    }
+</style>
+<p>This text should be green when printing.</p>
+<script>
+if (window.internals)
+    internals.settings.setMediaTypeOverride("print");
+</script>
+</html>
