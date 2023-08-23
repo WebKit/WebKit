@@ -162,7 +162,7 @@ JSValue collectMatches(VM& vm, JSGlobalObject* globalObject, JSString* string, c
 
     bool hasException = false;
     unsigned arrayIndex = 0;
-    auto iterate = [&] () {
+    auto iterate = [&]() ALWAYS_INLINE_LAMBDA {
         size_t end = result.end;
         size_t length = end - result.start;
         array->putDirectIndex(globalObject, arrayIndex++, jsSubstringOfResolved(vm, string, result.start, length));
