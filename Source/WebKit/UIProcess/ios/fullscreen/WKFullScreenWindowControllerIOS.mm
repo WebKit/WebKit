@@ -1655,7 +1655,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     return YES;
 }
 
-- (BOOL)_prefersSceneDimming
+- (BOOL)prefersSceneDimming
 {
     if (![self _sceneDimmingEnabled])
         return NO;
