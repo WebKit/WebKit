@@ -386,7 +386,7 @@ std::optional<Vector<CDMMediaCapability>> CDMPrivate::getSupportedCapabilitiesFo
             return std::nullopt;
 
         // 3.4. If content type is an invalid or unrecognized MIME type, continue to the next iteration.
-        std::optional<ParsedContentType> contentType = ParsedContentType::create(requestedCapability.contentType, Mode::Rfc2045);
+        std::optional<ParsedContentType> contentType = ParsedContentType::create(requestedCapability.contentType);
         if (!contentType)
             continue;
 
