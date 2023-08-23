@@ -787,17 +787,15 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
         if (!element)
             return { };
 
-        // FIXME: Use cached query containers when available.
-        auto* container = Style::ContainerQueryEvaluator::selectContainer(physicalAxis, nullString(), *element);
-        if (!container)
-            return { };
-
-        auto* containerRenderer = dynamicDowncast<RenderBox>(container->renderer());
-        if (!containerRenderer)
-            return { };
-
-        auto widthOrHeight = physicalAxis == CQ::Axis::Width ? containerRenderer->contentWidth() : containerRenderer->contentHeight();
-        return widthOrHeight * value / 100;
+        // "The query container for each axis is the nearest ancestor container that accepts container size queries on that axis."
+        while ((element = Style::ContainerQueryEvaluator::selectContainer(physicalAxis, nullString(), *element))) {
+            auto* containerRenderer = dynamicDowncast<RenderBox>(element->renderer());
+            if (containerRenderer && containerRenderer->hasEligibleContainmentForSizeQuery()) {
+                auto widthOrHeight = physicalAxis == CQ::Axis::Width ? containerRenderer->contentWidth() : containerRenderer->contentHeight();
+                return widthOrHeight * value / 100;
+            }
+        }
+        return { };
     };
 
     switch (primitiveType) {

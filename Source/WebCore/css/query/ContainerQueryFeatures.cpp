@@ -50,21 +50,7 @@ struct SizeFeatureSchema : public FeatureSchema {
 
         auto& renderer = downcast<RenderBox>(*context.renderer);
 
-        auto hasEligibleContainment = [&] {
-            if (!renderer.shouldApplyLayoutContainment())
-                return false;
-            switch (renderer.style().containerType()) {
-            case ContainerType::InlineSize:
-                return renderer.shouldApplyInlineSizeContainment();
-            case ContainerType::Size:
-                return renderer.shouldApplySizeContainment();
-            case ContainerType::Normal:
-                return true;
-            }
-            RELEASE_ASSERT_NOT_REACHED();
-        };
-
-        if (!hasEligibleContainment())
+        if (!renderer.hasEligibleContainmentForSizeQuery())
             return MQ::EvaluationResult::Unknown;
 
         return evaluate(feature, renderer, context.conversionData);
