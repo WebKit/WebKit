@@ -69,6 +69,8 @@ struct ItemAndPreviewProvider {
     BlockPtr<void(UITargetedDragPreview *)> provider;
 };
 
+enum class AddPreviewViewToContainer : bool;
+
 class DragDropInteractionState {
 public:
     bool anyActiveDragSourceContainsSelection() const;
@@ -81,7 +83,8 @@ public:
     const DragSourceState& stagedDragSource() const { return m_stagedDragSource.value(); }
     enum class DidBecomeActive : bool { No, Yes };
     void clearStagedDragSource(DidBecomeActive = DidBecomeActive::No);
-    UITargetedDragPreview *previewForDragItem(UIDragItem *, UIView *contentView, UIView *previewContainer) const;
+    UITargetedDragPreview *previewForLifting(UIDragItem *, UIView *contentView, UIView *previewContainer) const;
+    UITargetedDragPreview *previewForCancelling(UIDragItem *, UIView *contentView, UIView *previewContainer);
     void dragSessionWillDelaySetDownAnimation(dispatch_block_t completion);
     bool shouldRequestAdditionalItemForDragSession(id <UIDragSession>) const;
     void dragSessionWillRequestAdditionalItem(void (^completion)(NSArray <UIDragItem *> *));
@@ -100,8 +103,8 @@ public:
     id<UIDragSession> dragSession() const { return m_dragSession.get(); }
     id<UIDropSession> dropSession() const { return m_dropSession.get(); }
     BlockPtr<void()> takeDragStartCompletionBlock() { return WTFMove(m_dragStartCompletionBlock); }
-    BlockPtr<void()> takeDragCancelSetDownBlock() { return WTFMove(m_dragCancelSetDownBlock); }
     BlockPtr<void(NSArray<UIDragItem *> *)> takeAddDragItemCompletionBlock() { return WTFMove(m_addDragItemCompletionBlock); }
+    RetainPtr<UIView> takePreviewViewForDragCancel() { return std::exchange(m_previewViewForDragCancel, { }); }
 
     void setDefaultDropPreview(UIDragItem *, UITargetedDragPreview *);
     void prepareForDelayedDropPreview(UIDragItem *, void(^provider)(UITargetedDragPreview *preview));
@@ -115,6 +118,8 @@ private:
     UITargetedDragPreview *defaultDropPreview(UIDragItem *) const;
     BlockPtr<void(UITargetedDragPreview *)> dropPreviewProvider(UIDragItem *);
 
+    RetainPtr<UITargetedDragPreview> createDragPreviewInternal(UIDragItem *, UIView *contentView, UIView *previewContainer, AddPreviewViewToContainer) const;
+
     CGPoint m_lastGlobalPosition { CGPointZero };
     CGPoint m_adjustedPositionForDragEnd { CGPointZero };
     bool m_didBeginDragging { false };
@@ -122,8 +127,8 @@ private:
     RetainPtr<id <UIDragSession>> m_dragSession;
     RetainPtr<id <UIDropSession>> m_dropSession;
     BlockPtr<void()> m_dragStartCompletionBlock;
-    BlockPtr<void()> m_dragCancelSetDownBlock;
     BlockPtr<void(NSArray<UIDragItem *> *)> m_addDragItemCompletionBlock;
+    RetainPtr<UIView> m_previewViewForDragCancel;
 
     std::optional<DragSourceState> m_stagedDragSource;
     Vector<DragSourceState> m_activeDragSources;

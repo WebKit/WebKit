@@ -9849,7 +9849,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
         if (overriddenPreview)
             return overriddenPreview;
     }
-    return _dragDropInteractionState.previewForDragItem(item, self, self.containerForDragPreviews);
+    return _dragDropInteractionState.previewForLifting(item, self, self.containerForDragPreviews);
 }
 
 - (void)dragInteraction:(UIDragInteraction *)interaction willAnimateLiftWithAnimator:(id <UIDragAnimating>)animator session:(id <UIDragSession>)session
@@ -9920,28 +9920,23 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
         if (overriddenPreview)
             return overriddenPreview;
     }
-    return _dragDropInteractionState.previewForDragItem(item, self, self.unscaledView);
-}
-
-- (BOOL)_dragInteraction:(UIDragInteraction *)interaction item:(UIDragItem *)item shouldDelaySetDownAnimationWithCompletion:(void(^)(void))completion
-{
-    _dragDropInteractionState.dragSessionWillDelaySetDownAnimation(completion);
-    return YES;
+    return _dragDropInteractionState.previewForCancelling(item, self, self.unscaledView);
 }
 
 - (void)dragInteraction:(UIDragInteraction *)interaction item:(UIDragItem *)item willAnimateCancelWithAnimator:(id <UIDragAnimating>)animator
 {
     _isAnimatingDragCancel = YES;
     RELEASE_LOG(DragAndDrop, "Drag interaction willAnimateCancelWithAnimator");
-    [animator addCompletion:[protectedSelf = retainPtr(self), page = _page] (UIViewAnimatingPosition finalPosition) {
+    auto previewView = _dragDropInteractionState.takePreviewViewForDragCancel();
+    [previewView setAlpha:0];
+    [animator addCompletion:[protectedSelf = retainPtr(self), previewView = WTFMove(previewView), page = _page] (UIViewAnimatingPosition finalPosition) {
         RELEASE_LOG(DragAndDrop, "Drag interaction willAnimateCancelWithAnimator (animation completion block fired)");
+        [previewView setAlpha:1];
         page->dragCancelled();
-        if (auto completion = protectedSelf->_dragDropInteractionState.takeDragCancelSetDownBlock()) {
-            page->callAfterNextPresentationUpdate([completion, protectedSelf] {
-                completion();
-                protectedSelf->_isAnimatingDragCancel = NO;
-            });
-        }
+        page->callAfterNextPresentationUpdate([previewView = WTFMove(previewView), protectedSelf = WTFMove(protectedSelf)] {
+            [previewView removeFromSuperview];
+            protectedSelf->_isAnimatingDragCancel = NO;
+        });
     }];
 }
 
