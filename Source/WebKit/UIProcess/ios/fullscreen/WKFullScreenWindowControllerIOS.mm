@@ -1792,8 +1792,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
             [inWindow setFrame:scene.coordinateSpace.bounds];
 
             if (enter) {
-                if ([controller _sceneAspectRatioLockingEnabled])
-                    scene.mrui_placement.preferredResizingBehavior = MRUISceneResizingBehaviorUniform;
+                scene.mrui_placement.preferredResizingBehavior = MRUISceneResizingBehaviorUniform;
                 scene.delegate = adoptNS([[WKFullscreenWindowSceneDelegate alloc] initWithController:controller.get() originalDelegate:scene.delegate]).get();
             } else {
                 scene.sizeRestrictions.minimumSize = [originalState sceneMinimumSize];
