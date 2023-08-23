@@ -742,6 +742,13 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
     updateNodeAndDependentProperties(*axAncestor);
 }
 
+void AXIsolatedTree::updateChildrenForObjects(const ListHashSet<RefPtr<AccessibilityObject>>& axObjects)
+{
+    // FIXME: optimize this method to avoid updating the same object or subtree.
+    for (auto& axObject : axObjects)
+        updateChildren(*axObject);
+}
+
 void AXIsolatedTree::setPageActivityState(OptionSet<ActivityState> state)
 {
     ASSERT(isMainThread());
