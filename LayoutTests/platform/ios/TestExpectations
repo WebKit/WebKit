@@ -1075,6 +1075,7 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/defaultVa
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/email-set-value.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/maxlength-number.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-double-activate-pseudo.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/details-keyboard-activation.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-ui/user-select-none-on-input.html [ Skip ]
 imported/w3c/web-platform-tests/shadow-dom/accesskey.tentative.html [ Skip ]
 

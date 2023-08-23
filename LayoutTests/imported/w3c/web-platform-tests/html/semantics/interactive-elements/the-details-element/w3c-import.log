@@ -23,9 +23,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/details-add-summary.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/details-cq-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/details-findstring-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/details-keyboard-activation.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/details.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/display-table-with-rt-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/modified-details-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/name-attribute.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/nested-details-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/nested-top-layer-elements-in-details-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/toggleEvent.html

@@ -1,0 +1,16 @@
+
+FAIL basic handling of mutually exclusive details assert_false: expected false got true
+FAIL more complex handling of mutually exclusive details assert_array_equals: mutation closes multiple open elements expected property 0 to be false but got true (expected array [false, true, false] got [true, true, true])
+FAIL mutually exclusive details across multiple names and multiple tree scopes assert_array_equals: after mutation in shadow tree expected property 5 to be 0 but got 1 (expected array [0, 1, 0, 0, 1, 0, 0, 0] got [0, 1, 0, 0, 1, 1, 0, 0])
+FAIL mutation event and toggle event order matches tree order assert_array_equals: removal events received in tree order, followed by addition event lengths differ, expected array ["e0", "e2", "e3", "e1"] length 4, got ["e1"] length 1
+FAIL interaction of open attribute changes with mutation events assert_array_equals: removal events received in tree order, followed by addition event, despite changes to name during mutation event lengths differ, expected array ["e0", "e2", "e1"] length 3, got ["e1"] length 1
+PASS empty and missing name attributes do not create groups
+FAIL exclusivity enforcement with attachment scenario connected assert_array_equals: state after toggle enforces exclusivity expected property 0 to be 0 but got 1 (expected array [0, 1] got [1, 1])
+FAIL exclusivity enforcement with attachment scenario disconnected assert_array_equals: state after toggle enforces exclusivity expected property 0 to be 0 but got 1 (expected array [0, 1] got [1, 1])
+FAIL exclusivity enforcement with attachment scenario shadow assert_array_equals: state after toggle enforces exclusivity expected property 0 to be 0 but got 1 (expected array [0, 1] got [1, 1])
+FAIL exclusivity enforcement with attachment scenario shadow-in-disconnected assert_array_equals: state after toggle enforces exclusivity expected property 0 to be 0 but got 1 (expected array [0, 1] got [1, 1])
+FAIL exclusivity enforcement with attachment scenario template-in-disconnected assert_array_equals: state after toggle enforces exclusivity expected property 0 to be 0 but got 1 (expected array [0, 1] got [1, 1])
+FAIL exclusivity enforcement with attachment scenario connected-in-xhr-response assert_array_equals: state after toggle enforces exclusivity expected property 0 to be 0 but got 1 (expected array [0, 1] got [1, 1])
+FAIL exclusivity enforcement with attachment scenario connected-in-implementation-create-document assert_array_equals: state after toggle enforces exclusivity expected property 0 to be 0 but got 1 (expected array [0, 1] got [1, 1])
+FAIL exclusivity enforcement with attachment scenario connected-in-template assert_array_equals: state after toggle enforces exclusivity expected property 0 to be 0 but got 1 (expected array [0, 1] got [1, 1])
+

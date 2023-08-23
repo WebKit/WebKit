@@ -6522,6 +6522,7 @@
         "web-platform-tests/html/semantics/grouping-content/the-pre-element/grouping-pre-reftest-001-ref.html",
         "web-platform-tests/html/semantics/grouping-content/the-pre-element/pre-newline-bidi-ref.html",
         "web-platform-tests/html/semantics/interactive-elements/the-details-element/details-add-summary-ref.html",
+        "web-platform-tests/html/semantics/interactive-elements/the-details-element/support/empty-html-document.html",
         "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-descendant-selector-ref.html",
         "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-does-not-inherit-ref.html",
         "web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-dynamic-display-none-ref.html",
