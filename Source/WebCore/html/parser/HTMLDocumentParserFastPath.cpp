@@ -235,6 +235,7 @@ private:
 
     HTMLFastPathResult m_parseResult { HTMLFastPathResult::Succeeded };
     bool m_insideOfTagA { false };
+    bool m_insideOfTagLi { false };
     // Used to limit how deep a hierarchy can be created. Also note that
     // HTMLConstructionSite ends up flattening when this depth is reached.
     unsigned m_elementDepth { 0 };
@@ -388,7 +389,7 @@ private:
             }
         };
 
-        struct Li : ContainerTag<HTMLLIElement, PermittedParents::Special> {
+        struct Li : ContainerTag<HTMLLIElement, PermittedParents::FlowContent> {
             static constexpr ElementName tagName = ElementNames::HTML::li;
             static constexpr CharacterType tagNameCharacters[] = { 'l', 'i' };
         };
@@ -776,22 +777,47 @@ private:
         // Similarly, we disallow nesting <a> tags. But tables for example have
         // complex re-parenting rules that cannot be captured in this way, so we
         // cannot support them.
-        switch (tagName) {
-#define TAG_CASE(TagName, TagClassName)                                                              \
-        case ElementNames::HTML::TagName:                                                            \
-            if constexpr (std::is_same_v<typename TagInfo::A, typename TagInfo::TagClassName>) {     \
-                /* <a> tags must not be nested, because HTML parsing would auto-close */             \
-                /* the outer one when encountering a nested one. */                                  \
-                if (!m_insideOfTagA) {                                                               \
-                    if constexpr (phrasingContent == PhrasingContent::No)                            \
-                        return parseElementAfterTagName<typename TagInfo::A>();                      \
-                    else                                                                             \
-                        return parseElementAfterTagName<typename TagInfo::AWithPhrasingContent>();   \
-                }                                                                                    \
-            } else if constexpr (phrasingContent == PhrasingContent::No ? TagInfo::TagClassName::allowedInFlowContent() : TagInfo::TagClassName::allowedInPhrasingOrFlowContent()) \
-                return parseElementAfterTagName<typename TagInfo::TagClassName>();                   \
+#define TAG_CASE(TagName, TagClassName)                                            \
+        case ElementNames::HTML::TagName:                                          \
+        if constexpr (phrasingContent == PhrasingContent::No ? TagInfo::TagClassName::allowedInFlowContent() : TagInfo::TagClassName::allowedInPhrasingOrFlowContent()) \
+                return parseElementAfterTagName<typename TagInfo::TagClassName>(); \
             break;
-        FOR_EACH_SUPPORTED_TAG(TAG_CASE)
+
+        switch (tagName) {
+        case ElementNames::HTML::a:
+            // <a> tags must not be nested, because HTML parsing would auto-close
+            // the outer one when encountering a nested one.
+            if (!m_insideOfTagA)
+                return phrasingContent == PhrasingContent::No ? parseElementAfterTagName<typename TagInfo::A>() : parseElementAfterTagName<typename TagInfo::AWithPhrasingContent>();
+            break;
+            TAG_CASE(b, B)
+            TAG_CASE(br, Br)
+            TAG_CASE(button, Button)
+            TAG_CASE(div, Div)
+            TAG_CASE(footer, Footer)
+            TAG_CASE(i, I)
+            TAG_CASE(input, Input)
+            case ElementNames::HTML::li:
+                if constexpr (phrasingContent == PhrasingContent::No ? TagInfo::Li::allowedInFlowContent() : TagInfo::Li::allowedInPhrasingOrFlowContent()) {
+                    // <li>s autoclose when multiple are encountered. For example,
+                    // <li><li></li></li> results in sibling <li>s, not nested <li>s. Fail
+                    // in such a case.
+                    if (!m_insideOfTagLi) {
+                        m_insideOfTagLi = true;
+                        auto result = parseElementAfterTagName<typename TagInfo::Li>();
+                        m_insideOfTagLi = false;
+                        return result;
+                    }
+                }
+                break;
+            TAG_CASE(label, Label)
+            TAG_CASE(option, Option)
+            TAG_CASE(ol, Ol)
+            TAG_CASE(p, P)
+            TAG_CASE(select, Select)
+            TAG_CASE(span, Span)
+            TAG_CASE(strong, Strong)
+            TAG_CASE(ul, Ul)
 #undef TAG_CASE
         default:
             break;
