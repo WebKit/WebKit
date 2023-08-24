@@ -44,7 +44,6 @@ public:
     LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&) final;
 
     static bool isEligibleForSimplifiedTextOnlyInlineLayout(const ElementBox& root, const InlineFormattingState&, const FloatingState* = nullptr);
-    static bool hasIntrinsicWidthSpecificStyle(const RenderStyle& rootStyle);
 
 private:
     InlineItemPosition placeInlineTextContent(const InlineItemRange&);
@@ -75,6 +74,7 @@ private:
     const InlineItems& m_inlineItems;
     Vector<const InlineTextItem*> m_wrapOpportunityList;
     bool m_isWrappingAllowed { false };
+    InlineLayoutUnit m_trimmedTrailingWhitespaceWidth { 0.f };
 
     std::optional<InlineTextItem> m_partialLeadingTextItem;
 };

@@ -114,6 +114,8 @@ LineLayoutResult TextOnlySimpleLineBuilder::layoutInlineContent(const LineInput&
         , { !result.isHangingTrailingContentWhitespace, result.hangingTrailingContentWidth }
         , { }
         , { isFirstFormattedLine() ? LineLayoutResult::IsFirstLast::FirstFormattedLine::WithinIFC : LineLayoutResult::IsFirstLast::FirstFormattedLine::No, isLastLine }
+        , { }
+        , m_trimmedTrailingWhitespaceWidth
     };
 }
 
@@ -139,6 +141,7 @@ void TextOnlySimpleLineBuilder::initialize(const InlineItemRange& layoutRange, c
     m_previousLine = previousLine;
     m_lineLogicalRect = initialLogicalRect;
     m_wrapOpportunityList = { };
+    m_trimmedTrailingWhitespaceWidth = { };
 }
 
 InlineItemPosition TextOnlySimpleLineBuilder::placeInlineTextContent(const InlineItemRange& layoutRange)
@@ -374,7 +377,7 @@ void TextOnlySimpleLineBuilder::handleLineEnding(InlineItemPosition placedConten
     auto shouldPreserveTrailingWhitespace = [&] {
         return root().style().lineBreak() == LineBreak::AfterWhiteSpace && intrinsicWidthMode() != IntrinsicWidthMode::Minimum && (!isLastLine || horizontalAvailableSpace < m_line.contentLogicalWidth());
     };
-    m_line.handleTrailingTrimmableContent(shouldPreserveTrailingWhitespace() ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove);
+    m_trimmedTrailingWhitespaceWidth = m_line.handleTrailingTrimmableContent(shouldPreserveTrailingWhitespace() ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove);
     if (formattingContext().formattingQuirks().trailingNonBreakingSpaceNeedsAdjustment(isInIntrinsicWidthMode(), horizontalAvailableSpace < m_line.contentLogicalWidth()))
         m_line.handleOverflowingNonBreakingSpace(shouldPreserveTrailingWhitespace() ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove, m_line.contentLogicalWidth() - horizontalAvailableSpace);
 
@@ -466,11 +469,6 @@ bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(cons
         return false;
 
     return true;
-}
-
-bool TextOnlySimpleLineBuilder::hasIntrinsicWidthSpecificStyle(const RenderStyle& rootStyle)
-{
-    return rootStyle.lineBreak() == LineBreak::AfterWhiteSpace;
 }
 
 }

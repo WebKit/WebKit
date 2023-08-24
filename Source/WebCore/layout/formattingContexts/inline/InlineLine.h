@@ -67,7 +67,7 @@ public:
     void addTrailingHyphen(InlineLayoutUnit hyphenLogicalWidth);
 
     enum class TrailingContentAction : uint8_t { Remove, Preserve };
-    void handleTrailingTrimmableContent(TrailingContentAction);
+    InlineLayoutUnit handleTrailingTrimmableContent(TrailingContentAction);
     void handleTrailingHangingContent(std::optional<IntrinsicWidthMode>, InlineLayoutUnit horizontalAvailableSpace, bool isLastFormattedLine);
     void handleOverflowingNonBreakingSpace(TrailingContentAction, InlineLayoutUnit overflowingWidth);
     void resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel);
@@ -196,6 +196,8 @@ public:
         size_t nonSpanningInlineLevelBoxCount { 0 };
     };
     Result close();
+
+    static bool restoreTrimmedTrailingWhitespace(InlineLayoutUnit trimmedTrailingWhitespaceWidth, RunList&);
 
 private:
     InlineLayoutUnit lastRunLogicalRight() const { return m_runs.isEmpty() ? 0.0f : m_runs.last().logicalRight(); }
