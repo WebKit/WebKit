@@ -675,30 +675,34 @@ static double lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis logicalA
     return lengthOfViewportPhysicalAxisForLogicalAxis(logicalAxis, size, rootElement->renderStyle());
 }
 
-double CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(CSSUnitType primitiveType, double value, CSSPropertyID propertyToCompute, const FontMetrics* fontMetrics, const FontCascadeDescription* fontDescription, const FontCascadeDescription* rootFontDescription, const RenderView* renderView)
+double CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(CSSUnitType primitiveType, double value, CSSPropertyID propertyToCompute, const FontCascade* fontCascadeForUnit, const RenderView* renderView)
 {
+    // FIXME: Figure out where we don't initialize the root style in BuilderContext and check if this matters.
+    if (isRootFontRelativeLength(primitiveType) && !fontCascadeForUnit)
+        return value;
+
     switch (primitiveType) {
     case CSSUnitType::CSS_EMS:
     case CSSUnitType::CSS_QUIRKY_EMS:
-        ASSERT(fontDescription);
-        return ((propertyToCompute == CSSPropertyFontSize) ? fontDescription->specifiedSize() : fontDescription->computedSize()) * value;
-    case CSSUnitType::CSS_EXS:
-        ASSERT(fontMetrics);
-        if (fontMetrics->hasXHeight())
-            return fontMetrics->xHeight() * value;
-        ASSERT(fontDescription);
-        return ((propertyToCompute == CSSPropertyFontSize) ? fontDescription->specifiedSize() : fontDescription->computedSize()) / 2.0 * value;
-    case CSSUnitType::CSS_REMS:
-        if (!rootFontDescription)
-            return value;
-        return ((propertyToCompute == CSSPropertyFontSize) ? rootFontDescription->specifiedSize() : rootFontDescription->computedSize()) * value;
+    case CSSUnitType::CSS_REMS: {
+        ASSERT(fontCascadeForUnit);
+        auto& fontDescription = fontCascadeForUnit->fontDescription();
+        return ((propertyToCompute == CSSPropertyFontSize) ? fontDescription.specifiedSize() : fontDescription.computedSize()) * value;
+    }
+    case CSSUnitType::CSS_EXS: {
+        ASSERT(fontCascadeForUnit);
+        auto& fontMetrics = fontCascadeForUnit->metricsOfPrimaryFont();
+        if (fontMetrics.hasXHeight())
+            return fontMetrics.xHeight() * value;
+        auto& fontDescription = fontCascadeForUnit->fontDescription();
+        return ((propertyToCompute == CSSPropertyFontSize) ? fontDescription.specifiedSize() : fontDescription.computedSize()) / 2.0 * value;
+    }
     case CSSUnitType::CSS_CHS:
-        ASSERT(fontMetrics);
-        ASSERT(fontDescription);
-        return fontMetrics->zeroWidth().value_or(fontDescription->computedSize() / 2) * value;
+        ASSERT(fontCascadeForUnit);
+        return fontCascadeForUnit->metricsOfPrimaryFont().zeroWidth().value_or(fontCascadeForUnit->fontDescription().computedSize() / 2) * value;
     case CSSUnitType::CSS_IC:
-        ASSERT(fontMetrics);
-        return fontMetrics->ideogramWidth() * value;
+        ASSERT(fontCascadeForUnit);
+        return fontCascadeForUnit->metricsOfPrimaryFont().ideogramWidth() * value;
     case CSSUnitType::CSS_PX:
         return value;
     case CSSUnitType::CSS_CM:
@@ -807,23 +811,17 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
     switch (primitiveType) {
     case CSSUnitType::CSS_EMS:
     case CSSUnitType::CSS_QUIRKY_EMS:
-        value = computeUnzoomedNonCalcLengthDouble(primitiveType, value, conversionData.propertyToCompute(), nullptr, &conversionData.fontCascadeForFontUnits().fontDescription());
-        break;
-
     case CSSUnitType::CSS_EXS:
+    case CSSUnitType::CSS_CHS:
+    case CSSUnitType::CSS_IC:
         // FIXME: We have a bug right now where the zoom will be applied twice to EX units.
         // We really need to compute EX using fontMetrics for the original specifiedSize and not use
         // our actual constructed rendering font.
-        value = computeUnzoomedNonCalcLengthDouble(primitiveType, value, conversionData.propertyToCompute(), &conversionData.fontCascadeForFontUnits().metricsOfPrimaryFont(), &conversionData.fontCascadeForFontUnits().fontDescription());
+        value = computeUnzoomedNonCalcLengthDouble(primitiveType, value, conversionData.propertyToCompute(), &conversionData.fontCascadeForFontUnits());
         break;
 
     case CSSUnitType::CSS_REMS:
-        value = computeUnzoomedNonCalcLengthDouble(primitiveType, value, conversionData.propertyToCompute(), nullptr, nullptr, conversionData.rootStyle() ? &conversionData.rootStyle()->fontDescription() : nullptr);
-        break;
-
-    case CSSUnitType::CSS_CHS:
-    case CSSUnitType::CSS_IC:
-        value = computeUnzoomedNonCalcLengthDouble(primitiveType, value, conversionData.propertyToCompute(), &conversionData.fontCascadeForFontUnits().metricsOfPrimaryFont(), &conversionData.fontCascadeForFontUnits().fontDescription());
+        value = computeUnzoomedNonCalcLengthDouble(primitiveType, value, conversionData.propertyToCompute(), conversionData.rootStyle() ? &conversionData.rootStyle()->fontCascade() : nullptr);
         break;
 
     case CSSUnitType::CSS_PX:
