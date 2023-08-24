@@ -65,7 +65,7 @@ using namespace WebKit;
         return nil;
 
     bool exists;
-    API::Object* value = _dictionary->get((NSString *)key, exists);
+    RefPtr value = _dictionary->get((NSString *)key, exists);
     if (!exists)
         return nil;
 

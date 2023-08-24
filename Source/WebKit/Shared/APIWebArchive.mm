@@ -67,7 +67,7 @@ WebArchive::WebArchive(WebArchiveResource* mainResource, RefPtr<API::Array>&& su
     Vector<Ref<ArchiveResource>> coreArchiveResources;
     coreArchiveResources.reserveInitialCapacity(m_cachedSubresources->size());
     for (size_t i = 0; i < m_cachedSubresources->size(); ++i) {
-        auto resource = m_cachedSubresources->at<WebArchiveResource>(i);
+        RefPtr resource = m_cachedSubresources->at<WebArchiveResource>(i);
         ASSERT(resource);
         ASSERT(resource->coreArchiveResource());
         coreArchiveResources.uncheckedAppend(*resource->coreArchiveResource());
@@ -76,7 +76,7 @@ WebArchive::WebArchive(WebArchiveResource* mainResource, RefPtr<API::Array>&& su
     Vector<Ref<LegacyWebArchive>> coreSubframeLegacyWebArchives;
     coreSubframeLegacyWebArchives.reserveInitialCapacity(m_cachedSubframeArchives->size());
     for (size_t i = 0; i < m_cachedSubframeArchives->size(); ++i) {
-        auto subframeWebArchive = m_cachedSubframeArchives->at<WebArchive>(i);
+        RefPtr subframeWebArchive = m_cachedSubframeArchives->at<WebArchive>(i);
         ASSERT(subframeWebArchive);
         ASSERT(subframeWebArchive->coreLegacyWebArchive());
         coreSubframeLegacyWebArchives.uncheckedAppend(*subframeWebArchive->coreLegacyWebArchive());

@@ -51,7 +51,7 @@
 
 - (id)objectAtIndex:(NSUInteger)i
 {
-    API::Object* object = _array->at(i);
+    RefPtr object = _array->at(i);
     return object ? (id)object->wrapper() : [NSNull null];
 }
 

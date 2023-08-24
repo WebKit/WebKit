@@ -31,6 +31,7 @@
 
 #include "APIArray.h"
 #include <WebCore/ContextMenuItem.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 
@@ -56,8 +57,8 @@ Ref<WebContextMenuItem> WebContextMenuItem::create(const String& title, bool ena
 
 WebContextMenuItem* WebContextMenuItem::separatorItem()
 {
-    static WebContextMenuItem* separatorItem = new WebContextMenuItem(WebContextMenuItemData(WebCore::SeparatorType, WebCore::ContextMenuItemTagNoAction, String(), true, false));
-    return separatorItem;
+    static NeverDestroyed<Ref<WebContextMenuItem>> separatorItem = adoptRef(*new WebContextMenuItem(WebContextMenuItemData(WebCore::SeparatorType, WebCore::ContextMenuItemTagNoAction, String(), true, false)));
+    return separatorItem->ptr();
 }
 
 Ref<API::Array> WebContextMenuItem::submenuItemsAsAPIArray() const

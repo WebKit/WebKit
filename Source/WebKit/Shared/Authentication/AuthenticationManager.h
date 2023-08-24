@@ -34,6 +34,7 @@
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -68,6 +69,7 @@ class AuthenticationManager : public NetworkProcessSupplement, public IPC::Messa
     WTF_MAKE_NONCOPYABLE(AuthenticationManager);
 public:
     explicit AuthenticationManager(NetworkProcess&);
+    ~AuthenticationManager();
 
     static const char* supplementName();
 
@@ -79,6 +81,7 @@ public:
     void negotiatedLegacyTLS(WebPageProxyIdentifier) const;
 
 private:
+    CheckedRef<NetworkProcess> checkedProcess() const;
     struct Challenge {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
         Challenge(WebPageProxyIdentifier pageID, const WebCore::AuthenticationChallenge& challenge, ChallengeCompletionHandler&& completionHandler)
@@ -104,7 +107,7 @@ private:
 
     Vector<AuthenticationChallengeIdentifier> coalesceChallengesMatching(AuthenticationChallengeIdentifier) const;
 
-    NetworkProcess& m_process;
+    CheckedRef<NetworkProcess> m_process;
 
     HashMap<AuthenticationChallengeIdentifier, UniqueRef<Challenge>> m_challenges;
 };

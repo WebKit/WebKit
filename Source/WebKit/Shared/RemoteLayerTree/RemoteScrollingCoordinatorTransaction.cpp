@@ -873,7 +873,7 @@ static void dump(TextStream& ts, const ScrollingStateTree& stateTree, bool chang
     ts.dumpProperty("has new root node", stateTree.hasNewRootStateNode());
 
     if (stateTree.rootStateNode())
-        recursiveDumpNodes(ts, *stateTree.rootStateNode(), changedPropertiesOnly);
+        recursiveDumpNodes(ts, Ref { *stateTree.rootStateNode() }, changedPropertiesOnly);
 }
 
 String RemoteScrollingCoordinatorTransaction::description() const
