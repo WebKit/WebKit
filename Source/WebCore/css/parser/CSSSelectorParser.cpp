@@ -61,14 +61,6 @@ CSSSelectorParserContext::CSSSelectorParserContext(const Document& document)
 {
 }
 
-bool CSSSelectorParserContext::operator==(const CSSSelectorParserContext& other) const
-{
-    return mode == other.mode
-        || cssNestingEnabled == other.cssNestingEnabled
-        || focusVisibleEnabled == other.focusVisibleEnabled
-        || hasPseudoClassEnabled == other.hasPseudoClassEnabled;
-}
-
 void add(Hasher& hasher, const CSSSelectorParserContext& context)
 {
     add(hasher,

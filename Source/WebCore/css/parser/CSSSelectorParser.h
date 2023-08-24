@@ -57,7 +57,7 @@ struct CSSSelectorParserContext {
     CSSSelectorParserContext(const CSSParserContext&);
     explicit CSSSelectorParserContext(const Document&);
 
-    bool operator==(const CSSSelectorParserContext&) const;
+    bool operator==(const CSSSelectorParserContext&) const = default;
 };
 
 class CSSSelectorParser {
