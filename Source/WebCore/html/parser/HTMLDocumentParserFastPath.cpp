@@ -33,7 +33,6 @@
 #include "HTMLDocumentParserFastPath.h"
 
 #include "Document.h"
-#include "DocumentFragment.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementTraversal.h"
 #include "FragmentScriptingPermission.h"
@@ -193,9 +192,9 @@ class HTMLFastPathParser {
     static_assert(std::is_same_v<CharacterType, UChar> || std::is_same_v<CharacterType, LChar>);
 
 public:
-    HTMLFastPathParser(CharacterSpan source, Document& document, DocumentFragment& fragment)
+    HTMLFastPathParser(CharacterSpan source, Document& document, ContainerNode& destinationParent)
         : m_document(document)
-        , m_fragment(fragment)
+        , m_destinationParent(destinationParent)
         , m_parsingBuffer(source.data(), source.size())
     {
     }
@@ -229,7 +228,7 @@ public:
 
 private:
     Document& m_document;
-    DocumentFragment& m_fragment;
+    ContainerNode& m_destinationParent;
 
     StringParsingBuffer<CharacterType> m_parsingBuffer;
 
@@ -463,7 +462,7 @@ private:
 
     template<typename ParentTag> void parseCompleteInput()
     {
-        parseChildren<ParentTag>(m_fragment);
+        parseChildren<ParentTag>(m_destinationParent);
         if (m_parsingBuffer.hasCharactersRemaining())
             didFail(HTMLFastPathResult::FailedDidntReachEndOfInput);
     }
@@ -888,23 +887,20 @@ static bool canUseFastPath(Element& contextElement, OptionSet<ParserContentPolic
 }
 
 template<typename CharacterType>
-static bool tryFastParsingHTMLFragmentImpl(const std::span<const CharacterType>& source, Document& document, DocumentFragment& fragment, Element& contextElement)
+static bool tryFastParsingHTMLFragmentImpl(const std::span<const CharacterType>& source, Document& document, ContainerNode& destinationParent, Element& contextElement)
 {
-    HTMLFastPathParser parser { source, document, fragment };
-    bool success = parser.parse(contextElement);
-    if (!success && fragment.hasChildNodes())
-        fragment.removeChildren();
-    return success;
+    HTMLFastPathParser parser { source, document, destinationParent };
+    return parser.parse(contextElement);
 }
 
-bool tryFastParsingHTMLFragment(const String& source, Document& document, DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> policy)
+bool tryFastParsingHTMLFragment(const String& source, Document& document, ContainerNode& destinationParent, Element& contextElement, OptionSet<ParserContentPolicy> policy)
 {
     if (!canUseFastPath(contextElement, policy))
         return false;
 
     if (source.is8Bit())
-        return tryFastParsingHTMLFragmentImpl(source.span8(), document, fragment, contextElement);
-    return tryFastParsingHTMLFragmentImpl(source.span16(), document, fragment, contextElement);
+        return tryFastParsingHTMLFragmentImpl(source.span8(), document, destinationParent, contextElement);
+    return tryFastParsingHTMLFragmentImpl(source.span16(), document, destinationParent, contextElement);
 }
 
 #undef FOR_EACH_SUPPORTED_TAG

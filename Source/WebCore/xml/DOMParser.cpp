@@ -59,18 +59,14 @@ ExceptionOr<Ref<Document>> DOMParser::parseFromString(const String& string, cons
     document->setParserContentPolicy(parsingOptions);
     bool usedFastPath = false;
     if (contentType == "text/html"_s) {
-        auto fragment = DocumentFragment::create(document);
         auto body = HTMLBodyElement::create(document);
-        usedFastPath = tryFastParsingHTMLFragment(string, document, fragment, body, parsingOptions);
+        usedFastPath = tryFastParsingHTMLFragment(string, document, body, body, parsingOptions);
         if (LIKELY(usedFastPath)) {
             auto html = HTMLHtmlElement::create(document);
             document->appendChild(html);
             auto head = HTMLHeadElement::create(document);
             html->appendChild(head);
             html->appendChild(body);
-            auto result = body->appendChild(fragment);
-            if (UNLIKELY(result.hasException()))
-                return result.releaseException();
         }
     }
     if (!usedFastPath)
