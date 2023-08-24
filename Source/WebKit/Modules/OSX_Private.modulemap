@@ -2184,6 +2184,11 @@ framework module WebKit_Private [system] {
     export *
   }
 
+  explicit module _WKWebExtensionTabCreationOptions {
+    header "_WKWebExtensionTabCreationOptions.h"
+    export *
+  }
+
   explicit module _WKWebExtensionUtilities {
     header "_WKWebExtensionUtilities.h"
     export *
@@ -2196,6 +2201,11 @@ framework module WebKit_Private [system] {
 
   explicit module _WKWebExtensionWindow {
     header "_WKWebExtensionWindow.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionWindowCreationOptions {
+    header "_WKWebExtensionWindowCreationOptions.h"
     export *
   }
 

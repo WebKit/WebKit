@@ -30,8 +30,10 @@
 #import <WebKit/_WKWebExtensionPermission.h>
 
 @class _WKWebExtensionContext;
-@class _WKWebExtensionMatchPattern;
 @class _WKWebExtensionController;
+@class _WKWebExtensionMatchPattern;
+@class _WKWebExtensionTabCreationOptions;
+@class _WKWebExtensionWindowCreationOptions;
 @protocol _WKWebExtensionTab;
 @protocol _WKWebExtensionWindow;
 
@@ -66,6 +68,34 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @seealso webExtensionController:openWindowsForExtensionContext:
  */
 - (nullable id <_WKWebExtensionWindow>)webExtensionController:(_WKWebExtensionController *)controller focusedWindowForExtensionContext:(_WKWebExtensionContext *)extensionContext NS_SWIFT_NAME(webExtensionController(_:focusedWindowFor:));
+
+/*!
+ @abstract Called when an extension context requests a new window to be opened.
+ @param controller The web extension controller that is managing the extension.
+ @param options The set of options specifying how the new window should be created.
+ @param extensionContext The context in which the web extension is running.
+ @param completionHandler A block to be called with the newly created window or \c nil if the window wasn't created. An error should be
+ provided if any errors occured.
+ @discussion This method should be implemented by the app to handle requests to open new windows. The app can decide how to handle
+ the creation based on the provided options and existing windows. Once handled, the app should call the completion block with the created window
+ or `nil` if the creation was declined or failed. If not implemented or the completion block is not called within a reasonable amount of time, the
+ request is assumed to have been denied.
+ */
+- (void)webExtensionController:(_WKWebExtensionController *)controller openNewWindowWithOptions:(_WKWebExtensionWindowCreationOptions *)options forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(id <_WKWebExtensionWindow> _Nullable newWindow, NSError * _Nullable error))completionHandler NS_SWIFT_NAME(webExtensionController(_:openNewWindowWithOptions:for:completionHandler:));
+
+/*!
+ @abstract Called when an extension context requests a new tab to be opened.
+ @param controller The web extension controller that is managing the extension.
+ @param options The set of options specifying how the new tab should be created.
+ @param extensionContext The context in which the web extension is running.
+ @param completionHandler A block to be called with the newly created tab or \c nil if the tab wasn't created. An error should be
+ provided if any errors occured.
+ @discussion This method should be implemented by the app to handle requests to open new tabs. The app can decide how to handle
+ the creation based on the provided options and existing tabs. Once handled, the app should call the completion block with the created tab
+ or `nil` if the creation was declined or failed. If not implemented or the completion block is not called within a reasonable amount of time,
+ the request is assumed to have been denied.
+ */
+- (void)webExtensionController:(_WKWebExtensionController *)controller openNewTabWithOptions:(_WKWebExtensionTabCreationOptions *)options forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(id <_WKWebExtensionTab> _Nullable newTab, NSError * _Nullable error))completionHandler NS_SWIFT_NAME(webExtensionController(_:openNewTabWithOptions:for:completionHandler:));
 
 /*!
  @abstract Called when an extension context requests permissions.

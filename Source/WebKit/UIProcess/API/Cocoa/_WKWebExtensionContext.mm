@@ -581,6 +581,13 @@ static inline WebKit::WebExtensionContext::TabSet toImpl(NSSet<id<_WKWebExtensio
     _webExtensionContext->didCloseTab(toImpl(closedTab, *_webExtensionContext), windowIsClosing ? WebKit::WebExtensionContext::WindowIsClosing::Yes : WebKit::WebExtensionContext::WindowIsClosing::No);
 }
 
+- (void)didActivateTab:(id<_WKWebExtensionTab>)activatedTab
+{
+    NSParameterAssert([activatedTab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
+
+    _webExtensionContext->didActivateTab(toImpl(activatedTab, *_webExtensionContext));
+}
+
 - (void)didSelectTabs:(NSSet<id<_WKWebExtensionTab>> *)selectedTabs
 {
     NSParameterAssert([selectedTabs isKindOfClass:NSSet.class]);
@@ -609,8 +616,13 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
 {
     OptionSet<WebKit::WebExtensionTab::ChangedProperties> result;
 
-    if (properties & _WKWebExtensionTabChangedPropertiesNone)
-        result.add(WebKit::WebExtensionTab::ChangedProperties::None);
+    if (properties == _WKWebExtensionTabChangedPropertiesNone)
+        return result;
+
+    if (properties == _WKWebExtensionTabChangedPropertiesAll) {
+        result.add(WebKit::WebExtensionTab::ChangedProperties::All);
+        return result;
+    }
 
     if (properties & _WKWebExtensionTabChangedPropertiesAudible)
         result.add(WebKit::WebExtensionTab::ChangedProperties::Audible);
@@ -638,9 +650,6 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
 
     if (properties & _WKWebExtensionTabChangedPropertiesZoomFactor)
         result.add(WebKit::WebExtensionTab::ChangedProperties::ZoomFactor);
-
-    if (properties & _WKWebExtensionTabChangedPropertiesAll)
-        result.add(WebKit::WebExtensionTab::ChangedProperties::All);
 
     return result;
 }
@@ -919,6 +928,10 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
 }
 
 - (void)didCloseTab:(id<_WKWebExtensionTab>)closedTab windowIsClosing:(BOOL)windowIsClosing
+{
+}
+
+- (void)didActivateTab:(id<_WKWebExtensionTab>)activatedTab
 {
 }
 

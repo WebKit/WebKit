@@ -94,20 +94,49 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
 - (_WKWebExtensionWindowState)windowStateForWebExtensionContext:(_WKWebExtensionContext *)context;
 
 /*!
- @abstract Called when the ephemeral state of the window is needed.
+ @abstract Called to set the state of the window.
  @param context The context in which the web extension is running.
- @return `YES` if the window is ephemeral, `NO` otherwise.
- @discussion Used to indicated "private browsing" windows. Defaults to `NO` if not implemented.
+ @param state The new state of the window.
+ @param completionHandler A block that must be called upon completion. It takes a single error argument,
+ which should be provided if any errors occurred.
+ @discussion No action is performed if not implemented.
  */
-- (BOOL)isEphemeralForWebExtensionContext:(_WKWebExtensionContext *)context;
+- (void)setWindowState:(_WKWebExtensionWindowState)state forWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+
+/*!
+ @abstract Called when the private browsing state of the window is needed.
+ @param context The context in which the web extension is running.
+ @return `YES` if the window is private, `NO` otherwise.
+ @discussion Defaults to `NO` if not implemented.
+ */
+- (BOOL)isUsingPrivateBrowsingForWebExtensionContext:(_WKWebExtensionContext *)context;
 
 /*!
  @abstract Called when the frame of the window is needed.
  @param context The context in which the web extension is running.
- @return The frame of the window.
- @discussion The frame is the bounding rectangle of the window, in screen coordinates. Defaults to `CGRectZero` if not implemented.
+ @return The frame of the window, in screen coordinates
+ @discussion Defaults to `CGRectZero` if not implemented.
  */
 - (CGRect)frameForWebExtensionContext:(_WKWebExtensionContext *)context;
+
+/*!
+ @abstract Called to set the frame of the window.
+ @param context The context in which the web extension is running.
+ @param frame The new frame of the window, in screen coordinates.
+ @param completionHandler A block that must be called upon completion. It takes a single error argument,
+ which should be provided if any errors occurred.
+ @discussion No action is performed if not implemented.
+ */
+- (void)setFrame:(CGRect)frame forWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+
+/*!
+ @abstract Called to close the window.
+ @param context The context in which the web extension is running.
+ @param completionHandler A block that must be called upon completion. It takes a single error argument,
+ which should be provided if any errors occurred.
+ @discussion No action is performed if not implemented.
+ */
+- (void)closeForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
 
 @end
 

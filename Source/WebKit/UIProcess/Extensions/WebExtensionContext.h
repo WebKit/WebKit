@@ -238,6 +238,7 @@ public:
 
     void didOpenTab(const WebExtensionTab&);
     void didCloseTab(const WebExtensionTab&, WindowIsClosing = WindowIsClosing::No);
+    void didActivateTab(const WebExtensionTab&);
     void didSelectTabs(const TabSet&);
 
     void didMoveTab(const WebExtensionTab&, uint64_t index, WebExtensionWindow* oldWindow = nullptr);

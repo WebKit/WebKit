@@ -164,6 +164,14 @@ static inline NSSet *toAPI(const HashSet<Ref<T>>& inputSet)
         [context->wrapper() didCloseTab:closedTab windowIsClosing:windowIsClosing];
 }
 
+- (void)didActivateTab:(id<_WKWebExtensionTab>)activatedTab
+{
+    NSParameterAssert([activatedTab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
+
+    for (auto& context : _webExtensionController->extensionContexts())
+        [context->wrapper() didActivateTab:activatedTab];
+}
+
 - (void)didSelectTabs:(NSSet<id<_WKWebExtensionTab>> *)selectedTabs
 {
     NSParameterAssert([selectedTabs isKindOfClass:NSSet.class]);
@@ -270,6 +278,10 @@ static inline NSSet *toAPI(const HashSet<Ref<T>>& inputSet)
 }
 
 - (void)didCloseTab:(id<_WKWebExtensionTab>)closedTab windowIsClosing:(BOOL)windowIsClosing
+{
+}
+
+- (void)didActivateTab:(id<_WKWebExtensionTab>)activatedTab
 {
 }
 

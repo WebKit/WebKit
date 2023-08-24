@@ -158,6 +158,14 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 - (void)didCloseTab:(id <_WKWebExtensionTab>)closedTab windowIsClosing:(BOOL)windowIsClosing;
 
 /*!
+ @abstract Should be called by the app when a tab is activated to notify all loaded web extensions.
+ @param activatedTab The activated tab.
+ @discussion This method informs all loaded extensions of the tab activation, ensuring consistent state awareness across extensions.
+ If the intention is to inform only a specific extension, use the respective method on that extension's context instead.
+ */
+- (void)didActivateTab:(id <_WKWebExtensionTab>)activatedTab;
+
+/*!
  @abstract Should be called by the app when tabs are selected to fire appropriate events with all loaded web extensions.
  @param selectedTabs The set of tabs that were selected. An empty set indicates that no tabs are currently selected or that the
  selected tabs are not visible to extensions.

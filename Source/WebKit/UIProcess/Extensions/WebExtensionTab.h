@@ -68,12 +68,18 @@ public:
         All        = Audible | Loading | Muted | Pinned | ReaderMode | Size | Title | URL | ZoomFactor,
     };
 
+    enum class ExtendSelection : bool { No, Yes };
+
+    using Error = std::optional<String>;
+
     WebExtensionTabIdentifier identifier() const { return m_identifier; }
     WebExtensionContext* extensionContext() const { return m_extensionContext.get(); }
 
     bool operator==(const WebExtensionTab&) const;
 
     RefPtr<WebExtensionWindow> window() const;
+    size_t index() const;
+
     RefPtr<WebExtensionTab> parentTab() const;
 
     WKWebView *mainWebView() const;
@@ -83,38 +89,45 @@ public:
 
     bool isSelected() const;
     bool isPinned() const;
+    bool isPrivate() const;
 
-    void toggleReaderMode();
+    void toggleReaderMode(CompletionHandler<void(Error)>&&);
 
     bool isReaderModeAvailable() const;
     bool isShowingReaderMode() const;
 
-    void mute();
-    void unmute();
+    void mute(CompletionHandler<void(Error)>&&);
+    void unmute(CompletionHandler<void(Error)>&&);
 
     bool isAudible() const;
     bool isMuted() const;
 
     CGSize size() const;
+
     double zoomFactor() const;
+    void setZoomFactor(double, CompletionHandler<void(Error)>&&);
 
     URL url() const;
     URL pendingURL() const;
 
     bool isLoadingComplete() const;
 
-    void detectWebpageLocale(CompletionHandler<void(NSLocale *)>&&);
+    void detectWebpageLocale(CompletionHandler<void(NSLocale *, Error)>&&);
 
-    void loadURL(URL);
+    void loadURL(URL, CompletionHandler<void(Error)>&&);
 
-    void reload();
-    void reloadFromOrigin();
+    void reload(CompletionHandler<void(Error)>&&);
+    void reloadFromOrigin(CompletionHandler<void(Error)>&&);
 
-    void goBack();
-    void goForward();
+    void goBack(CompletionHandler<void(Error)>&&);
+    void goForward(CompletionHandler<void(Error)>&&);
 
-    void close();
-    void select();
+    void activate(CompletionHandler<void(Error)>&&);
+    void select(ExtendSelection, CompletionHandler<void(Error)>&&);
+
+    void duplicate(CompletionHandler<void(RefPtr<WebExtensionTab>, Error)>&&);
+
+    void close(CompletionHandler<void(Error)>&&);
 
 #ifdef __OBJC__
     _WKWebExtensionTab *delegate() const { return m_delegate.getAutoreleased(); }
@@ -133,7 +146,6 @@ private:
     bool m_respondsToTabTitle : 1 { false };
     bool m_respondsToIsSelected : 1 { false };
     bool m_respondsToIsPinned : 1 { false };
-    bool m_respondsToIsEphemeral : 1 { false };
     bool m_respondsToIsReaderModeAvailable : 1 { false };
     bool m_respondsToIsShowingReaderMode : 1 { false };
     bool m_respondsToToggleReaderMode : 1 { false };
@@ -143,6 +155,7 @@ private:
     bool m_respondsToUnmute : 1 { false };
     bool m_respondsToSize : 1 { false };
     bool m_respondsToZoomFactor : 1 { false };
+    bool m_respondsToSetZoomFactor : 1 { false };
     bool m_respondsToURL : 1 { false };
     bool m_respondsToPendingURL : 1 { false };
     bool m_respondsToIsLoadingComplete : 1 { false };
@@ -152,8 +165,10 @@ private:
     bool m_respondsToReloadFromOrigin : 1 { false };
     bool m_respondsToGoBack : 1 { false };
     bool m_respondsToGoForward : 1 { false };
-    bool m_respondsToClose : 1 { false };
+    bool m_respondsToActivate : 1 { false };
     bool m_respondsToSelect : 1 { false };
+    bool m_respondsToDuplicate : 1 { false };
+    bool m_respondsToClose : 1 { false };
 };
 
 } // namespace WebKit
