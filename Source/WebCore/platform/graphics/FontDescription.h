@@ -29,6 +29,7 @@
 #include "FontSizeAdjust.h"
 #include "FontTaggedSettings.h"
 #include "TextFlags.h"
+#include "TextSpacing.h"
 #include "WebKitFontFamilyNames.h"
 #include <unicode/uscript.h>
 #include <wtf/MathExtras.h>
@@ -51,6 +52,8 @@ public:
     FontSelectionValue weight() const { return m_fontSelectionRequest.weight; }
     FontSelectionRequest fontSelectionRequest() const { return m_fontSelectionRequest; }
     TextRenderingMode textRenderingMode() const { return static_cast<TextRenderingMode>(m_textRendering); }
+    TextSpacingTrim textSpacingTrim() const { return m_textSpacingTrim; }
+    TextAutospace textAutospace() const { return m_textAutospace; }
     UScriptCode script() const { return static_cast<UScriptCode>(m_script); }
     const AtomString& computedLocale() const { return m_locale; } // This is what you should be using for things like text shaping and font fallback
     const AtomString& specifiedLocale() const { return m_specifiedLocale; } // This is what you should be using for web-exposed things like -webkit-locale
@@ -107,6 +110,8 @@ public:
     FontSizeAdjust fontSizeAdjust() const { return m_sizeAdjust; }
 
     void setComputedSize(float s) { m_computedSize = clampToFloat(s); }
+    void setTextSpacingTrim(TextSpacingTrim v) { m_textSpacingTrim = v; }
+    void setTextAutospace(TextAutospace v) { m_textAutospace = v; }
     void setItalic(std::optional<FontSelectionValue> italic) { m_fontSelectionRequest.slope = italic; }
     void setStretch(FontSelectionValue stretch) { m_fontSelectionRequest.width = stretch; }
     void setIsItalic(bool isItalic) { setItalic(isItalic ? std::optional<FontSelectionValue> { italicValue() } : std::optional<FontSelectionValue> { }); }
@@ -162,6 +167,8 @@ private:
     AtomString m_specifiedLocale;
 
     FontSelectionRequest m_fontSelectionRequest;
+    TextSpacingTrim m_textSpacingTrim;
+    TextAutospace m_textAutospace;
     float m_computedSize { 0 }; // Computed size adjusted for the minimum font size and the zoom factor.
     unsigned m_orientation : 1; // FontOrientation - Whether the font is rendering on a horizontal line or a vertical line.
     unsigned m_nonCJKGlyphOrientation : 1; // NonCJKGlyphOrientation - Only used by vertical text. Determines the default orientation for non-ideograph glyphs.
@@ -225,7 +232,9 @@ inline bool FontDescription::operator==(const FontDescription& other) const
         && m_shouldAllowUserInstalledFonts == other.m_shouldAllowUserInstalledFonts
         && m_shouldDisableLigaturesForSpacing == other.m_shouldDisableLigaturesForSpacing
         && m_fontPalette == other.m_fontPalette
-        && m_sizeAdjust == other.m_sizeAdjust;
+        && m_sizeAdjust == other.m_sizeAdjust
+        && m_textSpacingTrim == other.m_textSpacingTrim
+        && m_textAutospace == other.m_textAutospace;
 }
 
 template<class Encoder>
@@ -266,6 +275,8 @@ void FontDescription::encode(Encoder& encoder) const
     encoder << shouldDisableLigaturesForSpacing();
     encoder << fontPalette();
     encoder << fontSizeAdjust();
+    encoder << textAutospace();
+    encoder << textSpacingTrim();
 }
 
 template<class Decoder>
@@ -447,6 +458,16 @@ std::optional<FontDescription> FontDescription::decode(Decoder& decoder)
     if (!fontPalette)
         return std::nullopt;
 
+    std::optional<TextSpacingTrim> textSpacingTrim;
+    decoder >> textSpacingTrim;
+    if (!textSpacingTrim)
+        return std::nullopt;
+
+    std::optional<TextAutospace> textAutospace;
+    decoder >> textAutospace;
+    if (!textAutospace)
+        return std::nullopt;
+
     fontDescription.setFeatureSettings(WTFMove(*featureSettings));
     fontDescription.setVariationSettings(WTFMove(*variationSettings));
     fontDescription.setSpecifiedLocale(*locale);
@@ -482,6 +503,8 @@ std::optional<FontDescription> FontDescription::decode(Decoder& decoder)
     fontDescription.setShouldDisableLigaturesForSpacing(*shouldDisableLigaturesForSpacing);
     fontDescription.setFontPalette(*fontPalette);
     fontDescription.setFontSizeAdjust(*sizeAdjust);
+    fontDescription.setTextAutospace(*textAutospace);
+    fontDescription.setTextSpacingTrim(*textSpacingTrim);
 
     return fontDescription;
 }

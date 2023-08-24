@@ -48,6 +48,8 @@ struct SameSizeAsFontCascadeDescription {
     AtomString string2;
     int16_t fontSelectionRequest[3];
     float size;
+    TextSpacingTrim textSpacingTrim;
+    TextAutospace textAutospace;
     unsigned bitfields1;
     unsigned bitfields2 : 22;
     void* array;
