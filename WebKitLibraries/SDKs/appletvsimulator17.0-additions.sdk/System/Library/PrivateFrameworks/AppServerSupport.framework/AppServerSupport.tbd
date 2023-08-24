@@ -1,0 +1,7 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [x86_64-tvos-simulator, arm64-tvos-simulator]
+install-name: /System/Library/PrivateFrameworks/AppServerSupport.framework/AppServerSupport
+current-version: 2679.0.25
+exports: []
+...
