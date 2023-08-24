@@ -18,7 +18,6 @@ $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/CFNetwork.framework
 $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/CoreImage.framework
 $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/IOKit.framework
 $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/IOSurface.framework
-$(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/LocalAuthentication.framework
 $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/MediaAccessibility.framework
 $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/MediaToolbox.framework
 $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/Metal.framework

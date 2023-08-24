@@ -18,7 +18,6 @@ $(SDK_DIR_iphoneos)/System/Library/Frameworks/CFNetwork.framework
 $(SDK_DIR_iphoneos)/System/Library/Frameworks/CoreImage.framework
 $(SDK_DIR_iphoneos)/System/Library/Frameworks/IOKit.framework
 $(SDK_DIR_iphoneos)/System/Library/Frameworks/IOSurface.framework
-$(SDK_DIR_iphoneos)/System/Library/Frameworks/LocalAuthentication.framework
 $(SDK_DIR_iphoneos)/System/Library/Frameworks/MediaAccessibility.framework
 $(SDK_DIR_iphoneos)/System/Library/Frameworks/MediaToolbox.framework
 $(SDK_DIR_iphoneos)/System/Library/Frameworks/Metal.framework

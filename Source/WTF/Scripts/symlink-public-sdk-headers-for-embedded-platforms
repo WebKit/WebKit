@@ -18,6 +18,15 @@ def ln_sfh(src, dst):
     os.symlink(src, f'{dst}.new')
     os.replace(f'{dst}.new', dst)
 
+
+def framework_copied_by_c_x_f_e_d(src, dst):
+    def diff(dcmp):
+        return dcmp.left_only or dcmp.right_only or \
+            any(not file.endswith('.tbd') for file in dcmp.diff_files) or \
+            any(diff(subdcmp) for subdcmp in dcmp.subdirs.values())
+    return not diff(filecmp.dircmp(src, dst))
+
+
 for src, dst in zip(srcs, dsts):
     src = src.rstrip()
     dst = dst.rstrip()
@@ -42,12 +51,8 @@ for src, dst in zip(srcs, dsts):
             src = sdkroot_dst
         ln_sfh(src, dst)
     else:
-        if os.path.exists(sdkroot_dst):
-            dcmp = filecmp.dircmp(src, sdkroot_dst)
-            if all(file.endswith('.tbd') for file in dcmp.diff_files):
-                # If the only differing files are TBDs (or there are no
-                # differences), the headers in SDKROOT were copied over.
-                src = sdkroot_dst
+        if os.path.exists(sdkroot_dst) and framework_copied_by_c_x_f_e_d(src, sdkroot_dst):
+            src = sdkroot_dst
 
         # The build system is not tracking the contents of the tree, so delete
         # it first to remove any stale files.
