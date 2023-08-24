@@ -2073,6 +2073,7 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListItem
     if (!m_backForwardList->currentItem()->itemIsInSameDocument(item))
         navigation = m_navigationState->createBackForwardNavigation(process().coreProcessIdentifier(), item, m_backForwardList->currentItem(), frameLoadType);
 
+
     auto transaction = internals().pageLoadState.transaction();
     internals().pageLoadState.setPendingAPIRequest(transaction, { navigation ? navigation->navigationID() : 0, item.url() });
 
@@ -6342,6 +6343,9 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
         }
         if (!navigation)
             navigation = m_navigationState->createLoadRequestNavigation(process->coreProcessIdentifier(), ResourceRequest(request), m_backForwardList->currentItem());
+
+        if (fromAPI && !navigationID && !internals().pageLoadState.pendingAPIRequestURL().isNull())
+            internals().pageLoadState.setPendingAPIRequest(transaction, { navigation->navigationID(), internals().pageLoadState.pendingAPIRequestURL() });
     }
 
     navigationID = navigation->navigationID();
