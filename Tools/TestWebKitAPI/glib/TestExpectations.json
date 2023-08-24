@@ -103,9 +103,6 @@
             },
             "/webkit/WebKitWebView/fullscreen": {
                 "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/248203"}}
-            },
-            "/webkit/WebKitWebView/zoom-level": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/260535"}}
             }
         }
     },
