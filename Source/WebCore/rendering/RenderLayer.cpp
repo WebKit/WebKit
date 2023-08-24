@@ -886,11 +886,6 @@ bool RenderLayer::paintsWithFilters() const
     if (!hasFilter())
         return false;
 
-    // The SVG rendering codepath should've already applied the filter to the SVG root,
-    // so do not apply the filter again.
-    if (renderer().isSVGRootOrLegacySVGRoot())
-        return false;
-
     if (RenderLayerFilters::isIdentity(renderer()))
         return false;
 
@@ -5584,8 +5579,9 @@ void RenderLayer::updateFiltersAfterStyleChange(StyleDifference diff, const Rend
         return;
     }
 
-    // Add the filter as a client to this renderer.
-    if (renderer().style().filter().hasReferenceFilter()) {
+    // Add the filter as a client to this renderer, unless we are a RenderLayer accommodating
+    // an SVG. In that case it takes care of its own resource management for filters.
+    if (renderer().style().filter().hasReferenceFilter() && !renderer().isSVGRootOrLegacySVGRoot()) {
         ensureLayerFilters();
         m_filters->updateReferenceFilterClients(renderer().style().filter());
     } else if (m_filters)
