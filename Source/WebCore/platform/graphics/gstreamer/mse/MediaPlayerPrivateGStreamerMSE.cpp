@@ -82,7 +82,7 @@ private:
         return makeUnique<MediaPlayerPrivateGStreamerMSE>(player);
     }
 
-    void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types) const final
+    void getSupportedTypes(HashSet<String>& types) const final
     {
         return MediaPlayerPrivateGStreamerMSE::getSupportedTypes(types);
     }
@@ -351,7 +351,7 @@ void MediaPlayerPrivateGStreamerMSE::startSource(const Vector<RefPtr<MediaSource
     webKitMediaSrcEmitStreams(WEBKIT_MEDIA_SRC(m_source.get()), tracks);
 }
 
-void MediaPlayerPrivateGStreamerMSE::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
+void MediaPlayerPrivateGStreamerMSE::getSupportedTypes(HashSet<String>& types)
 {
     GStreamerRegistryScannerMSE::getSupportedDecodingTypes(types);
 }

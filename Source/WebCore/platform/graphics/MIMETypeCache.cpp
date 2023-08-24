@@ -30,10 +30,10 @@
 
 namespace WebCore {
 
-HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeCache::supportedTypes()
+HashSet<String>& MIMETypeCache::supportedTypes()
 {
     if (!m_supportedTypes) {
-        m_supportedTypes = HashSet<String, ASCIICaseInsensitiveHash> { };
+        m_supportedTypes = HashSet<String> { };
         initializeCache(*m_supportedTypes);
     }
 
@@ -88,7 +88,7 @@ MediaPlayerEnums::SupportsType MIMETypeCache::canDecodeType(const String& mimeTy
     } while (0);
 
     if (!m_cachedResults)
-        m_cachedResults = HashMap<String, MediaPlayerEnums::SupportsType, ASCIICaseInsensitiveHash>();
+        m_cachedResults = HashMap<String, MediaPlayerEnums::SupportsType>();
     m_cachedResults->add(mimeType, result);
 
     return result;
@@ -97,7 +97,7 @@ MediaPlayerEnums::SupportsType MIMETypeCache::canDecodeType(const String& mimeTy
 void MIMETypeCache::addSupportedTypes(const Vector<String>& newTypes)
 {
     if (!m_supportedTypes)
-        m_supportedTypes = HashSet<String, ASCIICaseInsensitiveHash> { };
+        m_supportedTypes = HashSet<String> { };
 
     for (auto& type : newTypes)
         m_supportedTypes->add(type);
@@ -123,7 +123,7 @@ bool MIMETypeCache::isEmpty() const
     return m_supportedTypes && m_supportedTypes->isEmpty();
 }
 
-void MIMETypeCache::initializeCache(HashSet<String, ASCIICaseInsensitiveHash>&)
+void MIMETypeCache::initializeCache(HashSet<String>&)
 {
 }
 

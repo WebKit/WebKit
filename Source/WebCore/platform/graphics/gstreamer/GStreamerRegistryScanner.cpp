@@ -120,7 +120,7 @@ GStreamerRegistryScanner& GStreamerRegistryScanner::singleton()
     return sharedInstance;
 }
 
-void GStreamerRegistryScanner::getSupportedDecodingTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
+void GStreamerRegistryScanner::getSupportedDecodingTypes(HashSet<String>& types)
 {
     if (isInWebProcess())
         types = singleton().mimeTypeSet(GStreamerRegistryScanner::Configuration::Decoding);
@@ -356,7 +356,7 @@ void GStreamerRegistryScanner::refresh()
 #endif
 }
 
-const HashSet<String, ASCIICaseInsensitiveHash>& GStreamerRegistryScanner::mimeTypeSet(Configuration configuration) const
+const HashSet<String>& GStreamerRegistryScanner::mimeTypeSet(Configuration configuration) const
 {
     switch (configuration) {
     case Configuration::Decoding:

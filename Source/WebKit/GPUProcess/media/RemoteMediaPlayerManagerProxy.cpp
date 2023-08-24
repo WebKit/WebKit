@@ -97,7 +97,7 @@ void RemoteMediaPlayerManagerProxy::getSupportedTypes(MediaPlayerEnums::MediaEng
         return;
     }
 
-    HashSet<String, ASCIICaseInsensitiveHash> engineTypes;
+    HashSet<String> engineTypes;
     engine->getSupportedTypes(engineTypes);
 
     auto result = WTF::map(engineTypes, [] (auto& type) {

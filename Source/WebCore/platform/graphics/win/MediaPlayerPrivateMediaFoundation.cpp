@@ -134,7 +134,7 @@ private:
         return makeUnique<MediaPlayerPrivateMediaFoundation>(player);
     }
 
-    void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types) const final
+    void getSupportedTypes(HashSet<String>& types) const final
     {
         return MediaPlayerPrivateMediaFoundation::getSupportedTypes(types);
     }
@@ -157,9 +157,9 @@ bool MediaPlayerPrivateMediaFoundation::isAvailable()
     return isMediaFoundationAvailable;
 }
 
-static const HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeCache()
+static const HashSet<String>& mimeTypeCache()
 {
-    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> cachedTypes;
+    static NeverDestroyed<HashSet<String>> cachedTypes;
 
     if (cachedTypes.get().size() > 0)
         return cachedTypes;
@@ -182,7 +182,7 @@ static const HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeCache()
     return cachedTypes;
 }
 
-void MediaPlayerPrivateMediaFoundation::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
+void MediaPlayerPrivateMediaFoundation::getSupportedTypes(HashSet<String>& types)
 {
     types = mimeTypeCache();
 }

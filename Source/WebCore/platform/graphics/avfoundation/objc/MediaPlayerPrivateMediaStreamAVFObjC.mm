@@ -198,7 +198,7 @@ private:
         return makeUnique<MediaPlayerPrivateMediaStreamAVFObjC>(player);
     }
 
-    void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types) const final
+    void getSupportedTypes(HashSet<String>& types) const final
     {
         return MediaPlayerPrivateMediaStreamAVFObjC::getSupportedTypes(types);
     }
@@ -222,7 +222,7 @@ bool MediaPlayerPrivateMediaStreamAVFObjC::isAvailable()
     return PAL::isAVFoundationFrameworkAvailable() && PAL::isCoreMediaFrameworkAvailable() && PAL::getAVSampleBufferDisplayLayerClass();
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
+void MediaPlayerPrivateMediaStreamAVFObjC::getSupportedTypes(HashSet<String>& types)
 {
     // FIXME: Is it really correct to list no supported types?
     types.clear();

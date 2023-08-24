@@ -232,7 +232,7 @@ private:
         return makeUnique<MediaPlayerPrivateMediaSourceAVFObjC>(player);
     }
 
-    void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types) const final
+    void getSupportedTypes(HashSet<String>& types) const final
     {
         return MediaPlayerPrivateMediaSourceAVFObjC::getSupportedTypes(types);
     }
@@ -263,7 +263,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::isAvailable()
         && class_getInstanceMethod(PAL::getAVSampleBufferAudioRendererClass(), @selector(setMuted:));
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
+void MediaPlayerPrivateMediaSourceAVFObjC::getSupportedTypes(HashSet<String>& types)
 {
     types = AVStreamDataParserMIMETypeCache::singleton().supportedTypes();
 }

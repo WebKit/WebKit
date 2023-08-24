@@ -264,7 +264,7 @@ private:
         return makeUnique<MediaPlayerPrivateGStreamer>(player);
     }
 
-    void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types) const final
+    void getSupportedTypes(HashSet<String>& types) const final
     {
         return MediaPlayerPrivateGStreamer::getSupportedTypes(types);
     }
@@ -2758,7 +2758,7 @@ void MediaPlayerPrivateGStreamer::didEnd()
     timeChanged();
 }
 
-void MediaPlayerPrivateGStreamer::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
+void MediaPlayerPrivateGStreamer::getSupportedTypes(HashSet<String>& types)
 {
     GStreamerRegistryScanner::getSupportedDecodingTypes(types);
 }
