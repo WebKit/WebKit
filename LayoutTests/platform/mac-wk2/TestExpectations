@@ -1727,7 +1727,6 @@ webkit.org/b/255407 [ Monterey x86_64 ] imported/w3c/web-platform-tests/html/sem
 [ Monterey+ x86_64 ] media/restricted-audio-playback-with-multiple-settimeouts.html [ Pass Failure ]
 [ Monterey+ ] imported/w3c/web-platform-tests/workers/SharedWorker_dataUrl.html [ Pass Failure ]
 [ Monterey+ x86_64 ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Pass Failure ]
-[ Monterey+ Debug x86_64 ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-so.https.html [ Pass Failure ]
 [ Ventura+ Debug x86_64 ] webrtc/datachannel/bufferedAmountLowThreshold-default.html [ Pass Failure ]
 [ Ventura Debug x86_64 ] editing/caret/color-span-inside-editable-background.html [ Pass ImageOnlyFailure ]
 [ Ventura+ x86_64 ] fast/css/text-overflow-input-focus-placeholder.html [ Pass ImageOnlyFailure ]
