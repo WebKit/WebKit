@@ -145,7 +145,7 @@ private:
     // engine support
     class Factory;
     static bool isAvailable();
-    static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types);
+    static void getSupportedTypes(HashSet<String>& types);
     static MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters&);
     static bool supportsKeySystem(const String& keySystem, const String& mimeType);
     static HashSet<SecurityOriginData> originsInMediaCache(const String&);

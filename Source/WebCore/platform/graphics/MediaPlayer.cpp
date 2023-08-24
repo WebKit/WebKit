@@ -1185,10 +1185,10 @@ MediaPlayer::SupportsType MediaPlayer::supportsType(const MediaEngineSupportPara
     return engine->supportsTypeAndCodecs(parameters);
 }
 
-void MediaPlayer::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
+void MediaPlayer::getSupportedTypes(HashSet<String>& types)
 {
     for (auto& engine : installedMediaEngines()) {
-        HashSet<String, ASCIICaseInsensitiveHash> engineTypes;
+        HashSet<String> engineTypes;
         engine->getSupportedTypes(engineTypes);
         types.add(engineTypes.begin(), engineTypes.end());
     }

@@ -42,14 +42,14 @@ public:
 
     bool isAvailable() const final;
     MediaPlayerEnums::SupportsType canDecodeType(const String&) final;
-    HashSet<String, ASCIICaseInsensitiveHash>& supportedTypes() final;
+    HashSet<String>& supportedTypes() final;
 
 private:
     friend NeverDestroyed<AVStreamDataParserMIMETypeCache>;
     AVStreamDataParserMIMETypeCache() = default;
 
     bool canDecodeExtendedType(const ContentType&) final;
-    void initializeCache(HashSet<String, ASCIICaseInsensitiveHash>&) final;
+    void initializeCache(HashSet<String>&) final;
 };
 
 }

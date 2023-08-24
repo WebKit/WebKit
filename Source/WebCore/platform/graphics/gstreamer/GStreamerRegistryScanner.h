@@ -40,7 +40,7 @@ class GStreamerRegistryScanner {
 public:
     static bool singletonNeedsInitialization();
     static GStreamerRegistryScanner& singleton();
-    static void getSupportedDecodingTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
+    static void getSupportedDecodingTypes(HashSet<String>&);
 
     explicit GStreamerRegistryScanner(bool isMediaSource = false);
     ~GStreamerRegistryScanner() = default;
@@ -52,7 +52,7 @@ public:
         Encoding
     };
 
-    const HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeSet(Configuration) const;
+    const HashSet<String>& mimeTypeSet(Configuration) const;
     bool isContainerTypeSupported(Configuration, const String& containerType) const;
 
     struct RegistryLookupResult {
@@ -197,9 +197,9 @@ private:
 #endif
 
     bool m_isMediaSource { false };
-    HashSet<String, ASCIICaseInsensitiveHash> m_decoderMimeTypeSet;
+    HashSet<String> m_decoderMimeTypeSet;
     HashMap<AtomString, RegistryLookupResult> m_decoderCodecMap;
-    HashSet<String, ASCIICaseInsensitiveHash> m_encoderMimeTypeSet;
+    HashSet<String> m_encoderMimeTypeSet;
     HashMap<AtomString, RegistryLookupResult> m_encoderCodecMap;
 };
 

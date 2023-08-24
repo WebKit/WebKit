@@ -44,7 +44,7 @@ private:
 
     std::unique_ptr<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final { return makeUnique<MockMediaPlayerMediaSource>(player); }
 
-    void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types) const final
+    void getSupportedTypes(HashSet<String>& types) const final
     {
         return MockMediaPlayerMediaSource::getSupportedTypes(types);
     }
@@ -62,16 +62,16 @@ void MockMediaPlayerMediaSource::registerMediaEngine(MediaEngineRegistrar regist
 }
 
 // FIXME: What does the word "cache" mean here?
-static const HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeCache()
+static const HashSet<String>& mimeTypeCache()
 {
-    static NeverDestroyed cache = HashSet<String, ASCIICaseInsensitiveHash> {
+    static NeverDestroyed cache = HashSet<String> {
         "video/mock"_s,
         "audio/mock"_s,
     };
     return cache;
 }
 
-void MockMediaPlayerMediaSource::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& supportedTypes)
+void MockMediaPlayerMediaSource::getSupportedTypes(HashSet<String>& supportedTypes)
 {
     supportedTypes = mimeTypeCache();
 }
@@ -81,7 +81,7 @@ MediaPlayer::SupportsType MockMediaPlayerMediaSource::supportsType(const MediaEn
     if (!parameters.isMediaSource)
         return MediaPlayer::SupportsType::IsNotSupported;
 
-    auto containerType = parameters.type.containerType();
+    auto containerType = parameters.type.containerType().convertToASCIILowercase();
     if (containerType.isEmpty() || !mimeTypeCache().contains(containerType))
         return MediaPlayer::SupportsType::IsNotSupported;
 

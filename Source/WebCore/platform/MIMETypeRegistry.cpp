@@ -231,10 +231,10 @@ HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::supportedNonImageMI
     return types;
 }
 
-const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::supportedMediaMIMETypes()
+const HashSet<String>& MIMETypeRegistry::supportedMediaMIMETypes()
 {
     static NeverDestroyed types = [] {
-        HashSet<String, ASCIICaseInsensitiveHash> types;
+        HashSet<String> types;
 #if ENABLE(VIDEO)
         MediaPlayer::getSupportedTypes(types);
 #endif

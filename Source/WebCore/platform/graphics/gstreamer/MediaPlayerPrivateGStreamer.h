@@ -442,7 +442,7 @@ private:
     bool isMediaStreamPlayer() const;
 
     friend class MediaPlayerFactoryGStreamer;
-    static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
+    static void getSupportedTypes(HashSet<String>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
     void syncOnClock(bool sync);

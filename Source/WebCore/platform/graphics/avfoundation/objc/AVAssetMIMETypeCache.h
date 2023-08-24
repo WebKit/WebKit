@@ -51,7 +51,7 @@ private:
     bool isStaticContainerType(StringView) final;
     bool isUnsupportedContainerType(const String&) final;
     bool canDecodeExtendedType(const ContentType&) final;
-    void initializeCache(HashSet<String, ASCIICaseInsensitiveHash>&) final;
+    void initializeCache(HashSet<String>&) final;
 
     CacheMIMETypesCallback m_cacheTypeCallback;
 };

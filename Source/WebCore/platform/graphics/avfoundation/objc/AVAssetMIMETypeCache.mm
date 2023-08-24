@@ -92,8 +92,9 @@ static bool isMultichannelOpusAvailable()
 }
 #endif
 
-bool AVAssetMIMETypeCache::canDecodeExtendedType(const ContentType& type)
+bool AVAssetMIMETypeCache::canDecodeExtendedType(const ContentType& typeParameter)
 {
+    ContentType type = typeParameter;
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 #if ENABLE(OPUS)
     // Disclaim support for 'opus' if multi-channel decode is not available.
@@ -101,6 +102,12 @@ bool AVAssetMIMETypeCache::canDecodeExtendedType(const ContentType& type)
         && type.codecs().contains("opus"_s) && !isMultichannelOpusAvailable())
         return false;
 #endif
+
+    // Some platforms will disclaim support for 'flac', and only support the MP4RA registered `fLaC`
+    // codec string for flac, so convert the former to the latter before querying.
+    if ((type.containerType() == "video/mp4"_s || type.containerType() == "audio/mp4"_s)
+        && type.codecs().contains("flac"_s))
+        type = ContentType(makeStringByReplacingAll(type.raw(), "flac"_s, "fLaC"_s));
 
     ASSERT(isAvailable());
 
@@ -188,7 +195,7 @@ void AVAssetMIMETypeCache::addSupportedTypes(const Vector<String>& types)
         m_cacheTypeCallback(types);
 }
 
-void AVAssetMIMETypeCache::initializeCache(HashSet<String, ASCIICaseInsensitiveHash>& cache)
+void AVAssetMIMETypeCache::initializeCache(HashSet<String>& cache)
 {
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
     if (!isAvailable())

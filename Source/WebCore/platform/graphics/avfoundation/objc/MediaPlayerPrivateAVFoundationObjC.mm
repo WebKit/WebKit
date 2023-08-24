@@ -288,7 +288,7 @@ private:
         return makeUnique<MediaPlayerPrivateAVFoundationObjC>(player);
     }
 
-    void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types) const final
+    void getSupportedTypes(HashSet<String>& types) const final
     {
         return MediaPlayerPrivateAVFoundationObjC::getSupportedTypes(types);
     }
@@ -2048,7 +2048,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return image;
 }
 
-void MediaPlayerPrivateAVFoundationObjC::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& supportedTypes)
+void MediaPlayerPrivateAVFoundationObjC::getSupportedTypes(HashSet<String>& supportedTypes)
 {
     supportedTypes = AVAssetMIMETypeCache::singleton().supportedTypes();
 }

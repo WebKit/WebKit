@@ -132,7 +132,7 @@ public:
     WEBCORE_EXPORT static FixedVector<ASCIILiteral> supportedImageMIMETypes();
     static HashSet<String, ASCIICaseInsensitiveHash>& additionalSupportedImageMIMETypes();
     WEBCORE_EXPORT static HashSet<String, ASCIICaseInsensitiveHash>& supportedNonImageMIMETypes();
-    WEBCORE_EXPORT static const HashSet<String, ASCIICaseInsensitiveHash>& supportedMediaMIMETypes();
+    WEBCORE_EXPORT static const HashSet<String>& supportedMediaMIMETypes();
     WEBCORE_EXPORT static FixedVector<ASCIILiteral> pdfMIMETypes();
     WEBCORE_EXPORT static FixedVector<ASCIILiteral> unsupportedTextMIMETypes();
     WEBCORE_EXPORT static FixedVector<ASCIILiteral> usdMIMETypes();

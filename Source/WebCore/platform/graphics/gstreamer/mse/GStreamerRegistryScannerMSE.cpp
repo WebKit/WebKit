@@ -32,7 +32,7 @@ GStreamerRegistryScannerMSE& GStreamerRegistryScannerMSE::singleton()
     return sharedInstance;
 }
 
-void GStreamerRegistryScannerMSE::getSupportedDecodingTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
+void GStreamerRegistryScannerMSE::getSupportedDecodingTypes(HashSet<String>& types)
 {
     if (isInWebProcess())
         types = singleton().mimeTypeSet(GStreamerRegistryScanner::Configuration::Decoding);
