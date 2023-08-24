@@ -3423,6 +3423,8 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/text/fontVariantCaps-1.htm
 imported/w3c/web-platform-tests/html/canvas/offscreen/text/fontVariantCaps-3.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/text/fontVariantCaps-4.html [ ImageOnlyFailure ]
 
+webkit.org/b/260625 media/media-can-play-case-sensitive-flac.html [ Failure ]
+webkit.org/b/260625 media/media-can-play-type-case-sensitive.html [ Failure ]
 
 # End: Common failures between GTK and WPE.
 

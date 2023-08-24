@@ -295,7 +295,7 @@ public:
 
     virtual bool mediaPlayerShouldDisableHDR() const { return false; }
 
-    virtual FloatSize mediaPlayerVideoInlineSize() const { return { }; }
+    virtual FloatSize mediaPlayerVideoLayerSize() const { return { }; }
 
 #if !RELEASE_LOG_DISABLED
     virtual const void* mediaPlayerLogIdentifier() { return nullptr; }
@@ -316,7 +316,7 @@ public:
     using MediaPlayerEnums::SupportsType;
     static const MediaPlayerFactory* mediaEngine(MediaPlayerEnums::MediaEngineIdentifier);
     static SupportsType supportsType(const MediaEngineSupportParameters&);
-    static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
+    static void getSupportedTypes(HashSet<String>&);
     static bool isAvailable();
     static HashSet<SecurityOriginData> originsInMediaCache(const String& path);
     static void clearMediaCache(const String& path, WallTime modifiedSince);
@@ -350,8 +350,8 @@ public:
     using LayerHostingContextIDCallback = CompletionHandler<void(LayerHostingContextID)>;
     void requestHostingContextID(LayerHostingContextIDCallback&&);
     LayerHostingContextID hostingContextID() const;
-    FloatSize videoInlineSize() const;
-    void setVideoInlineSizeFenced(const FloatSize&, WTF::MachSendRight&&);
+    FloatSize videoLayerSize() const;
+    void setVideoLayerSizeFenced(const FloatSize&, WTF::MachSendRight&&);
 
 #if PLATFORM(IOS_FAMILY)
     NSArray *timedMetadata() const;
@@ -781,7 +781,7 @@ public:
 
     virtual MediaPlayerEnums::MediaEngineIdentifier identifier() const  = 0;
     virtual std::unique_ptr<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer*) const = 0;
-    virtual void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&) const = 0;
+    virtual void getSupportedTypes(HashSet<String>&) const = 0;
     virtual MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters&) const = 0;
 
     virtual HashSet<SecurityOriginData> originsInMediaCache(const String&) const { return { }; }

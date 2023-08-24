@@ -28,6 +28,7 @@
 #if ENABLE(CONTENT_FILTERING)
 
 #include "CachedResourceHandle.h"
+#include "LoaderMalloc.h"
 #include "PlatformContentFilter.h"
 #include "ResourceError.h"
 #include <functional>
@@ -44,7 +45,7 @@ class ResourceResponse;
 class SubstituteData;
 
 class ContentFilter {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
     WTF_MAKE_NONCOPYABLE(ContentFilter);
 
 public:

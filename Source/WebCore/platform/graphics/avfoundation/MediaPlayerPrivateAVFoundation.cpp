@@ -1115,9 +1115,9 @@ WTFLogChannel& MediaPlayerPrivateAVFoundation::logChannel() const
 }
 #endif
 
-const HashSet<String, ASCIICaseInsensitiveHash>& MediaPlayerPrivateAVFoundation::staticMIMETypeList()
+const HashSet<String>& MediaPlayerPrivateAVFoundation::staticMIMETypeList()
 {
-    static NeverDestroyed cache = HashSet<String, ASCIICaseInsensitiveHash> {
+    static NeverDestroyed cache = HashSet<String> {
         "application/vnd.apple.mpegurl"_s,
         "application/x-mpegurl"_s,
         "audio/3gpp"_s,

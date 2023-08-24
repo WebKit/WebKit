@@ -493,7 +493,7 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 /*!
  @abstract Should be called by the app when a window is closed to fire appropriate events with only this extension.
  @param newWindow The window that was closed.
- @discussion This method informs only the specific extension of the closure of a window. If the intention is to inform all loaded 
+ @discussion This method informs only the specific extension of the closure of a window. If the intention is to inform all loaded
  extensions consistently, you should use the respective method on the extension controller instead.
  @seealso didOpenWindow:
  @seealso openWindows
@@ -522,12 +522,20 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  @abstract Should be called by the app when a tab is closed to fire appropriate events with only this extension.
  @param closedTab The tab that was closed.
  @param windowIsClosing A boolean value indicating whether the window containing the tab is also closing.
- @discussion This method informs only the specific extension of the closure of a tab. If the intention is to inform all loaded 
+ @discussion This method informs only the specific extension of the closure of a tab. If the intention is to inform all loaded
  extensions consistently, you should use the respective method on the extension controller instead.
  @seealso didOpenTab:
  @seealso openTabs
  */
 - (void)didCloseTab:(id <_WKWebExtensionTab>)closedTab windowIsClosing:(BOOL)windowIsClosing;
+
+/*!
+ @abstract Should be called by the app when a tab is activated to notify only this specific extension.
+ @param activatedTab The activated tab.
+ @discussion This method informs only the specific extension of the tab activation. If the intention is to inform all loaded
+ extensions consistently, you should use the respective method on the extension controller instead.
+ */
+- (void)didActivateTab:(id <_WKWebExtensionTab>)activatedTab;
 
 /*!
  @abstract Should be called by the app when tabs are selected to fire appropriate events with only this extension.
@@ -543,7 +551,7 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  @param movedTab The tab that was moved.
  @param index The old index of the tab within the window.
  @param oldWindow The window that the tab was moved from, or \c nil if the window stayed the same.
- @discussion This method informs only the specific extension that a tab has been moved. If the intention is to inform all loaded 
+ @discussion This method informs only the specific extension that a tab has been moved. If the intention is to inform all loaded
  extensions consistently, you should use the respective method on the extension controller instead.
  */
 - (void)didMoveTab:(id <_WKWebExtensionTab>)movedTab fromIndex:(NSUInteger)index inWindow:(nullable id <_WKWebExtensionWindow>)oldWindow NS_SWIFT_NAME(didMoveTab(_:from:in:));
@@ -552,7 +560,7 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  @abstract Should be called by the app when a tab is replaced by another tab to fire appropriate events with only this extension.
  @param oldTab The tab that was replaced.
  @param newTab The tab that replaced the old tab.
- @discussion This method informs only the specific extension that a tab has been replaced. If the intention is to inform all loaded 
+ @discussion This method informs only the specific extension that a tab has been replaced. If the intention is to inform all loaded
  extensions consistently, you should use the respective method on the extension controller instead.
  */
 - (void)didReplaceTab:(id <_WKWebExtensionTab>)oldTab withTab:(id <_WKWebExtensionTab>)newTab NS_SWIFT_NAME(didReplaceTab(_:with:));
@@ -561,7 +569,7 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  @abstract Should be called by the app when the properties of a tab are changed to fire appropriate events with only this extension.
  @param properties The properties of the tab that were changed.
  @param changedTab The tab whose properties were changed.
- @discussion This method informs only the specific extension of the changes to a tab's properties. If the intention is to inform all loaded 
+ @discussion This method informs only the specific extension of the changes to a tab's properties. If the intention is to inform all loaded
  extensions consistently, you should use the respective method on the extension controller instead.
  */
 - (void)didChangeTabProperties:(_WKWebExtensionTabChangedProperties)properties forTab:(id <_WKWebExtensionTab>)changedTab NS_SWIFT_NAME(didChangeTabProperties(_:for:));

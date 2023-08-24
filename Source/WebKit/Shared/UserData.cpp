@@ -87,7 +87,7 @@ static bool shouldTransform(const API::Object& object, const UserData::Transform
             if (!keyValuePair.value)
                 continue;
 
-            if (shouldTransform(*keyValuePair.value, transformer))
+            if (shouldTransform(Ref { *keyValuePair.value }, transformer))
                 return true;
         }
     }
@@ -113,10 +113,11 @@ static RefPtr<API::Object> transformGraph(API::Object& object, const UserData::T
 
         API::Dictionary::MapType map;
         for (const auto& keyValuePair : dictionary.map()) {
-            if (!keyValuePair.value)
+            RefPtr value = keyValuePair.value;
+            if (!value)
                 map.add(keyValuePair.key, nullptr);
             else
-                map.add(keyValuePair.key, transformGraph(*keyValuePair.value, transformer));
+                map.add(keyValuePair.key, transformGraph(*value, transformer));
         }
         return API::Dictionary::create(WTFMove(map));
     }
@@ -165,7 +166,7 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
         auto& array = static_cast<const API::Array&>(object);
         encoder << static_cast<uint64_t>(array.size());
         for (size_t i = 0; i < array.size(); ++i)
-            encode(encoder, array.at(i));
+            encode(encoder, RefPtr { array.at(i) }.get());
         break;
     }
 

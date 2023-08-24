@@ -232,7 +232,7 @@ private:
         return makeUnique<MediaPlayerPrivateMediaSourceAVFObjC>(player);
     }
 
-    void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types) const final
+    void getSupportedTypes(HashSet<String>& types) const final
     {
         return MediaPlayerPrivateMediaSourceAVFObjC::getSupportedTypes(types);
     }
@@ -263,7 +263,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::isAvailable()
         && class_getInstanceMethod(PAL::getAVSampleBufferAudioRendererClass(), @selector(setMuted:));
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
+void MediaPlayerPrivateMediaSourceAVFObjC::getSupportedTypes(HashSet<String>& types)
 {
     types = AVStreamDataParserMIMETypeCache::singleton().supportedTypes();
 }
@@ -806,7 +806,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::shouldEnsureLayer() const
             return false;
         if (m_sampleBufferDisplayLayer)
             return !CGRectIsEmpty([m_sampleBufferDisplayLayer bounds]);
-        if (player && !player->videoInlineSize().isEmpty())
+        if (player && !player->videoLayerSize().isEmpty())
             return true;
         if (player && !player->playerContentBoxRect().isEmpty())
             return true;
@@ -823,7 +823,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setPresentationSize(const IntSize& ne
         updateDisplayLayerAndDecompressionSession();
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::setVideoInlineSizeFenced(const FloatSize& newSize, WTF::MachSendRight&&)
+void MediaPlayerPrivateMediaSourceAVFObjC::setVideoLayerSizeFenced(const FloatSize& newSize, WTF::MachSendRight&&)
 {
     if (!m_sampleBufferDisplayLayer && !newSize.isEmpty())
         updateDisplayLayerAndDecompressionSession();
@@ -952,7 +952,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer()
     if (m_mediaSourcePrivate)
         m_mediaSourcePrivate->setVideoLayer(m_sampleBufferDisplayLayer.get());
     if (player) {
-        m_videoLayerManager->setVideoLayer(m_sampleBufferDisplayLayer.get(), player->videoInlineSize());
+        m_videoLayerManager->setVideoLayer(m_sampleBufferDisplayLayer.get(), player->presentationSize());
         player->renderingModeChanged();
     }
 }

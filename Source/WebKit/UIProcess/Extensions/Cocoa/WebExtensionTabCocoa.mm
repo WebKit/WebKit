@@ -33,10 +33,12 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
+#import "Logging.h"
 #import "WKWebView.h"
 #import "WKWebViewConfigurationPrivate.h"
 #import "WebExtensionContext.h"
 #import "_WKWebExtensionTab.h"
+#import "_WKWebExtensionTabCreationOptionsInternal.h"
 
 namespace WebKit {
 
@@ -51,27 +53,29 @@ WebExtensionTab::WebExtensionTab(const WebExtensionContext& context, _WKWebExten
     , m_respondsToTabTitle([delegate respondsToSelector:@selector(tabTitleForWebExtensionContext:)])
     , m_respondsToIsSelected([delegate respondsToSelector:@selector(isSelectedForWebExtensionContext:)])
     , m_respondsToIsPinned([delegate respondsToSelector:@selector(isPinnedForWebExtensionContext:)])
-    , m_respondsToIsEphemeral([delegate respondsToSelector:@selector(isEphemeralForWebExtensionContext:)])
     , m_respondsToIsReaderModeAvailable([delegate respondsToSelector:@selector(isReaderModeAvailableForWebExtensionContext:)])
     , m_respondsToIsShowingReaderMode([delegate respondsToSelector:@selector(isShowingReaderModeForWebExtensionContext:)])
-    , m_respondsToToggleReaderMode([delegate respondsToSelector:@selector(toggleReaderModeForWebExtensionContext:)])
+    , m_respondsToToggleReaderMode([delegate respondsToSelector:@selector(toggleReaderModeForWebExtensionContext:completionHandler:)])
     , m_respondsToIsAudible([delegate respondsToSelector:@selector(isAudibleForWebExtensionContext:)])
     , m_respondsToIsMuted([delegate respondsToSelector:@selector(isMutedForWebExtensionContext:)])
-    , m_respondsToMute([delegate respondsToSelector:@selector(muteForWebExtensionContext:)])
-    , m_respondsToUnmute([delegate respondsToSelector:@selector(unmuteForWebExtensionContext:)])
+    , m_respondsToMute([delegate respondsToSelector:@selector(muteForWebExtensionContext:completionHandler:)])
+    , m_respondsToUnmute([delegate respondsToSelector:@selector(unmuteForWebExtensionContext:completionHandler:)])
     , m_respondsToSize([delegate respondsToSelector:@selector(sizeForWebExtensionContext:)])
     , m_respondsToZoomFactor([delegate respondsToSelector:@selector(zoomFactorForWebExtensionContext:)])
+    , m_respondsToSetZoomFactor([delegate respondsToSelector:@selector(setZoomFactor:forWebExtensionContext:completionHandler:)])
     , m_respondsToURL([delegate respondsToSelector:@selector(urlForWebExtensionContext:)])
     , m_respondsToPendingURL([delegate respondsToSelector:@selector(pendingURLForWebExtensionContext:)])
     , m_respondsToIsLoadingComplete([delegate respondsToSelector:@selector(isLoadingCompleteForWebExtensionContext:)])
     , m_respondsToDetectWebpageLocale([delegate respondsToSelector:@selector(detectWebpageLocaleForWebExtensionContext:completionHandler:)])
-    , m_respondsToLoadURL([delegate respondsToSelector:@selector(loadURL:forWebExtensionContext:)])
-    , m_respondsToReload([delegate respondsToSelector:@selector(reloadForWebExtensionContext:)])
-    , m_respondsToReloadFromOrigin([delegate respondsToSelector:@selector(reloadFromOriginForWebExtensionContext:)])
-    , m_respondsToGoBack([delegate respondsToSelector:@selector(goBackForWebExtensionContext:)])
-    , m_respondsToGoForward([delegate respondsToSelector:@selector(goForwardForWebExtensionContext:)])
-    , m_respondsToClose([delegate respondsToSelector:@selector(closeForWebExtensionContext:)])
-    , m_respondsToSelect([delegate respondsToSelector:@selector(selectForWebExtensionContext:)])
+    , m_respondsToLoadURL([delegate respondsToSelector:@selector(loadURL:forWebExtensionContext:completionHandler:)])
+    , m_respondsToReload([delegate respondsToSelector:@selector(reloadForWebExtensionContext:completionHandler:)])
+    , m_respondsToReloadFromOrigin([delegate respondsToSelector:@selector(reloadFromOriginForWebExtensionContext:completionHandler:)])
+    , m_respondsToGoBack([delegate respondsToSelector:@selector(goBackForWebExtensionContext:completionHandler:)])
+    , m_respondsToGoForward([delegate respondsToSelector:@selector(goForwardForWebExtensionContext:completionHandler:)])
+    , m_respondsToActivate([delegate respondsToSelector:@selector(activateForWebExtensionContext:completionHandler:)])
+    , m_respondsToSelect([delegate respondsToSelector:@selector(selectForWebExtensionContext:extendSelection:completionHandler:)])
+    , m_respondsToDuplicate([delegate respondsToSelector:@selector(duplicateForWebExtensionContext:withOptions:completionHandler:)])
+    , m_respondsToClose([delegate respondsToSelector:@selector(closeForWebExtensionContext:completionHandler:)])
 {
     ASSERT([delegate conformsToProtocol:@protocol(_WKWebExtensionTab)]);
 }
@@ -91,9 +95,24 @@ RefPtr<WebExtensionWindow> WebExtensionTab::window() const
         return nullptr;
 
     THROW_UNLESS([window conformsToProtocol:@protocol(_WKWebExtensionWindow)], @"Object returned by windowForWebExtensionContext: does not conform to the _WKWebExtensionWindow protocol");
-    auto result = m_extensionContext->getOrCreateWindow(window);
 
+    auto result = m_extensionContext->getOrCreateWindow(window);
     THROW_UNLESS(result->tabs().contains(*this), @"Window returned by windowForWebExtensionContext: does not contain the tab");
+
+    return result;
+}
+
+size_t WebExtensionTab::index() const
+{
+    if (!isValid() || !m_respondsToWindow)
+        return notFound;
+
+    auto window = this->window();
+    if (!window)
+        return notFound;
+
+    auto result = window->tabs().find(*this);
+    THROW_UNLESS(result != notFound, @"Window returned by windowForWebExtensionContext: does not contain the tab");
 
     return result;
 }
@@ -180,12 +199,29 @@ bool WebExtensionTab::isPinned() const
     return [m_delegate isPinnedForWebExtensionContext:m_extensionContext->wrapper()];
 }
 
-void WebExtensionTab::toggleReaderMode()
+bool WebExtensionTab::isPrivate() const
+{
+    if (!isValid())
+        return false;
+
+    auto window = this->window();
+    return window ? window->isPrivate() : false;
+}
+
+void WebExtensionTab::toggleReaderMode(CompletionHandler<void(Error)>&& completionHandler)
 {
     if (!isValid() || !m_respondsToToggleReaderMode)
         return;
 
-    [m_delegate toggleReaderModeForWebExtensionContext:m_extensionContext->wrapper()];
+    [m_delegate toggleReaderModeForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+        if (error) {
+            RELEASE_LOG_ERROR(Extensions, "Error for toggleReaderMode: %{private}@", error);
+            completionHandler(error.localizedDescription);
+            return;
+        }
+
+        completionHandler(std::nullopt);
+    }];
 }
 
 bool WebExtensionTab::isReaderModeAvailable() const
@@ -204,20 +240,36 @@ bool WebExtensionTab::isShowingReaderMode() const
     return [m_delegate isShowingReaderModeForWebExtensionContext:m_extensionContext->wrapper()];
 }
 
-void WebExtensionTab::mute()
+void WebExtensionTab::mute(CompletionHandler<void(Error)>&& completionHandler)
 {
     if (!isValid() || !m_respondsToMute)
         return;
 
-    [m_delegate muteForWebExtensionContext:m_extensionContext->wrapper()];
+    [m_delegate muteForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+        if (error) {
+            RELEASE_LOG_ERROR(Extensions, "Error for mute: %{private}@", error);
+            completionHandler(error.localizedDescription);
+            return;
+        }
+
+        completionHandler(std::nullopt);
+    }];
 }
 
-void WebExtensionTab::unmute()
+void WebExtensionTab::unmute(CompletionHandler<void(Error)>&& completionHandler)
 {
     if (!isValid() || !m_respondsToUnmute)
         return;
 
-    [m_delegate unmuteForWebExtensionContext:m_extensionContext->wrapper()];
+    [m_delegate unmuteForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+        if (error) {
+            RELEASE_LOG_ERROR(Extensions, "Error for unmute: %{private}@", error);
+            completionHandler(error.localizedDescription);
+            return;
+        }
+
+        completionHandler(std::nullopt);
+    }];
 }
 
 bool WebExtensionTab::isAudible() const
@@ -252,6 +304,24 @@ double WebExtensionTab::zoomFactor() const
     return [m_delegate zoomFactorForWebExtensionContext:m_extensionContext->wrapper()];
 }
 
+void WebExtensionTab::setZoomFactor(double zoomFactor, CompletionHandler<void(Error)>&& completionHandler)
+{
+    if (!isValid() || !m_respondsToSetZoomFactor) {
+        mainWebView().pageZoom = zoomFactor;
+        return;
+    }
+
+    [m_delegate setZoomFactor:zoomFactor forWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+        if (error) {
+            RELEASE_LOG_ERROR(Extensions, "Error for setZoomFactor: %{private}@", error);
+            completionHandler(error.localizedDescription);
+            return;
+        }
+
+        completionHandler(std::nullopt);
+    }];
+}
+
 URL WebExtensionTab::url() const
 {
     if (!isValid() || !m_respondsToURL)
@@ -282,83 +352,192 @@ bool WebExtensionTab::isLoadingComplete() const
     return [m_delegate isLoadingCompleteForWebExtensionContext:m_extensionContext->wrapper()];
 }
 
-void WebExtensionTab::detectWebpageLocale(CompletionHandler<void(NSLocale *)>&& completionHandler)
+void WebExtensionTab::detectWebpageLocale(CompletionHandler<void(NSLocale *, Error)>&& completionHandler)
 {
     if (!isValid() || !m_respondsToDetectWebpageLocale) {
-        completionHandler(nil);
+        completionHandler(nil, std::nullopt);
         return;
     }
 
-    [m_delegate detectWebpageLocaleForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSLocale *locale) {
+    [m_delegate detectWebpageLocaleForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSLocale *locale, NSError *error) {
+        if (error) {
+            RELEASE_LOG_ERROR(Extensions, "Error for detectWebpageLocale: %{private}@", error);
+            completionHandler(nil, error.localizedDescription);
+            return;
+        }
+
         THROW_UNLESS(!locale || [locale isKindOfClass:NSLocale.class], @"Object passed to completionHandler of detectWebpageLocaleForWebExtensionContext:completionHandler: is not an NSLocale");
-        completionHandler(locale);
+        completionHandler(locale, std::nullopt);
     }];
 }
 
-void WebExtensionTab::loadURL(URL url)
+void WebExtensionTab::loadURL(URL url, CompletionHandler<void(Error)>&& completionHandler)
 {
     if (!isValid() || !m_respondsToLoadURL) {
         [mainWebView() loadRequest:[NSURLRequest requestWithURL:url]];
         return;
     }
 
-    [m_delegate loadURL:url forWebExtensionContext:m_extensionContext->wrapper()];
+    [m_delegate loadURL:url forWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+        if (error) {
+            RELEASE_LOG_ERROR(Extensions, "Error for loadURL: %{private}@", error);
+            completionHandler(error.localizedDescription);
+            return;
+        }
+
+        completionHandler(std::nullopt);
+    }];
 }
 
-void WebExtensionTab::reload()
+void WebExtensionTab::reload(CompletionHandler<void(Error)>&& completionHandler)
 {
     if (!isValid() || !m_respondsToReload) {
         [mainWebView() reload];
         return;
     }
 
-    [m_delegate reloadForWebExtensionContext:m_extensionContext->wrapper()];
+    [m_delegate reloadForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+        if (error) {
+            RELEASE_LOG_ERROR(Extensions, "Error for reload: %{private}@", error);
+            completionHandler(error.localizedDescription);
+            return;
+        }
+
+        completionHandler(std::nullopt);
+    }];
 }
 
-void WebExtensionTab::reloadFromOrigin()
+void WebExtensionTab::reloadFromOrigin(CompletionHandler<void(Error)>&& completionHandler)
 {
     if (!isValid() || !m_respondsToReloadFromOrigin) {
         [mainWebView() reloadFromOrigin];
         return;
     }
 
-    [m_delegate reloadFromOriginForWebExtensionContext:m_extensionContext->wrapper()];
+    [m_delegate reloadFromOriginForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+        if (error) {
+            RELEASE_LOG_ERROR(Extensions, "Error for reloadFromOrigin: %{private}@", error);
+            completionHandler(error.localizedDescription);
+            return;
+        }
+
+        completionHandler(std::nullopt);
+    }];
 }
 
-void WebExtensionTab::goBack()
+void WebExtensionTab::goBack(CompletionHandler<void(Error)>&& completionHandler)
 {
     if (!isValid() || !m_respondsToGoBack) {
         [mainWebView() goBack];
         return;
     }
 
-    [m_delegate goBackForWebExtensionContext:m_extensionContext->wrapper()];
+    [m_delegate goBackForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+        if (error) {
+            RELEASE_LOG_ERROR(Extensions, "Error for goBack: %{private}@", error);
+            completionHandler(error.localizedDescription);
+            return;
+        }
+
+        completionHandler(std::nullopt);
+    }];
 }
 
-void WebExtensionTab::goForward()
+void WebExtensionTab::goForward(CompletionHandler<void(Error)>&& completionHandler)
 {
     if (!isValid() || !m_respondsToGoForward) {
         [mainWebView() goForward];
         return;
     }
 
-    [m_delegate goForwardForWebExtensionContext:m_extensionContext->wrapper()];
+    [m_delegate goForwardForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+        if (error) {
+            RELEASE_LOG_ERROR(Extensions, "Error for goForward: %{private}@", error);
+            completionHandler(error.localizedDescription);
+            return;
+        }
+
+        completionHandler(std::nullopt);
+    }];
 }
 
-void WebExtensionTab::close()
+void WebExtensionTab::activate(CompletionHandler<void(Error)>&& completionHandler)
 {
-    if (!isValid() || !m_respondsToClose)
+    if (!isValid() || !m_respondsToActivate)
         return;
 
-    [m_delegate closeForWebExtensionContext:m_extensionContext->wrapper()];
+    [m_delegate activateForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+        if (error) {
+            RELEASE_LOG_ERROR(Extensions, "Error for activate: %{private}@", error);
+            completionHandler(error.localizedDescription);
+            return;
+        }
+
+        completionHandler(std::nullopt);
+    }];
 }
 
-void WebExtensionTab::select()
+void WebExtensionTab::select(ExtendSelection extend, CompletionHandler<void(Error)>&& completionHandler)
 {
     if (!isValid() || !m_respondsToSelect)
         return;
 
-    [m_delegate selectForWebExtensionContext:m_extensionContext->wrapper()];
+    [m_delegate selectForWebExtensionContext:m_extensionContext->wrapper() extendSelection:(extend == ExtendSelection::Yes) completionHandler:^(NSError *error) {
+        if (error) {
+            RELEASE_LOG_ERROR(Extensions, "Error for select: %{private}@", error);
+            completionHandler(error.localizedDescription);
+            return;
+        }
+
+        completionHandler(std::nullopt);
+    }];
+}
+
+void WebExtensionTab::duplicate(CompletionHandler<void(RefPtr<WebExtensionTab>, Error)>&& completionHandler)
+{
+    if (!isValid() || !m_respondsToDuplicate) {
+        completionHandler(nullptr, std::nullopt);
+        return;
+    }
+
+    auto window = this->window();
+    auto index = this->index();
+
+    _WKWebExtensionTabCreationOptions *options = [[_WKWebExtensionTabCreationOptions alloc] _init];
+    options.desiredWindow = window ? window->delegate() : nil;
+    options.desiredIndex = index != notFound ? index + 1 : 0;
+
+    [m_delegate duplicateForWebExtensionContext:m_extensionContext->wrapper() withOptions:options completionHandler:^(id<_WKWebExtensionTab> duplicatedTab, NSError *error) {
+        if (error) {
+            RELEASE_LOG_ERROR(Extensions, "Error for duplicate: %{private}@", error);
+            completionHandler(nullptr, error.localizedDescription);
+            return;
+        }
+
+        if (!duplicatedTab) {
+            completionHandler(nullptr, std::nullopt);
+            return;
+        }
+
+        THROW_UNLESS([duplicatedTab conformsToProtocol:@protocol(_WKWebExtensionTab)], @"Object passed to completionHandler of duplicateForWebExtensionContext:withOptions:completionHandler: does not conform to the _WKWebExtensionTab protocol");
+        completionHandler(m_extensionContext->getOrCreateTab(duplicatedTab), std::nullopt);
+    }];
+}
+
+void WebExtensionTab::close(CompletionHandler<void(Error)>&& completionHandler)
+{
+    if (!isValid() || !m_respondsToClose)
+        return;
+
+    [m_delegate closeForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+        if (error) {
+            RELEASE_LOG_ERROR(Extensions, "Error for tab close: %{private}@", error);
+            completionHandler(error.localizedDescription);
+            return;
+        }
+
+        completionHandler(std::nullopt);
+    }];
 }
 
 } // namespace WebKit

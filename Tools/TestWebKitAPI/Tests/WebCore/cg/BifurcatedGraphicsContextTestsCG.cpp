@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,12 +31,10 @@
 #include <WebCore/DestinationColorSpace.h>
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListItems.h>
-#include <WebCore/DisplayListIterator.h>
 #include <WebCore/DisplayListRecorderImpl.h>
 #include <WebCore/FontCascade.h>
 #include <WebCore/GradientImage.h>
 #include <WebCore/GraphicsContextCG.h>
-#include <WebCore/InMemoryDisplayList.h>
 
 namespace TestWebKitAPI {
 using namespace WebCore;
@@ -53,7 +51,7 @@ TEST(BifurcatedGraphicsContextTests, Basic)
 
     GraphicsContextCG primaryContext(primaryCGContext.get());
 
-    InMemoryDisplayList displayList;
+    DisplayList displayList;
     RecorderImpl secondaryContext(displayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
 
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
@@ -70,29 +68,24 @@ TEST(BifurcatedGraphicsContextTests, Basic)
     // The secondary context should have a red FillRectWithColor.
     EXPECT_FALSE(displayList.isEmpty());
     bool sawFillRect = false;
-    for (auto displayListItem : displayList) {
-        auto handle = displayListItem->item;
-        if (handle.type() != ItemType::FillRectWithColor)
-            continue;
 
-        EXPECT_TRUE(handle.isDrawingItem());
-        EXPECT_TRUE(handle.is<FillRectWithColor>());
-        sawFillRect = true;
-        auto& item = handle.get<FillRectWithColor>();
-        EXPECT_EQ(item.rect(), FloatRect(0, 0, contextWidth, contextHeight));
-        EXPECT_EQ(item.color(), Color::red);
+    for (auto& item : displayList.items()) {
+        if (auto* fillRect = std::get_if<FillRectWithColor>(&item)) {
+            sawFillRect = true;
+            EXPECT_EQ(fillRect->rect(), FloatRect(0, 0, contextWidth, contextHeight));
+            EXPECT_EQ(fillRect->color(), Color::red);
+        }
     }
 
-    EXPECT_GT(displayList.sizeInBytes(), 0U);
     EXPECT_TRUE(sawFillRect);
 }
 
 TEST(BifurcatedGraphicsContextTests, Text)
 {
-    InMemoryDisplayList primaryDisplayList;
+    DisplayList primaryDisplayList;
     RecorderImpl primaryContext(primaryDisplayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
 
-    InMemoryDisplayList secondaryDisplayList;
+    DisplayList secondaryDisplayList;
     RecorderImpl secondaryContext(secondaryDisplayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
 
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
@@ -107,20 +100,14 @@ TEST(BifurcatedGraphicsContextTests, Text)
     TextRun run(string);
     ctx.drawText(font, run, { });
 
-    auto runTest = [&] (InMemoryDisplayList& displayList) {
+    auto runTest = [&] (DisplayList& displayList) {
         EXPECT_FALSE(displayList.isEmpty());
         bool sawDrawGlyphs = false;
-        for (auto displayListItem : displayList) {
-            auto handle = displayListItem->item;
-            if (handle.type() != ItemType::DrawGlyphs)
-                continue;
-
-            EXPECT_TRUE(handle.isDrawingItem());
-            EXPECT_TRUE(handle.is<DrawGlyphs>());
-            sawDrawGlyphs = true;
+        for (auto& displayListItem : displayList.items()) {
+            if (auto* item = std::get_if<DrawGlyphs>(&displayListItem))
+                sawDrawGlyphs = true;
         }
 
-        EXPECT_GT(displayList.sizeInBytes(), 0U);
         EXPECT_TRUE(sawDrawGlyphs);
     };
 
@@ -200,7 +187,7 @@ TEST(BifurcatedGraphicsContextTests, Borders)
 
     GraphicsContextCG primaryContext(primaryCGContext.get());
 
-    InMemoryDisplayList displayList;
+    DisplayList displayList;
     RecorderImpl secondaryContext(displayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
 
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
@@ -227,7 +214,7 @@ TEST(BifurcatedGraphicsContextTests, TransformedClip)
     GraphicsContextCG primaryContextCG(primaryCGContext.get());
     GraphicsContext& primaryContext = primaryContextCG;
 
-    InMemoryDisplayList displayList;
+    DisplayList displayList;
     RecorderImpl secondaryContextDL(displayList, { }, FloatRect(0, 0, 100, 100), { });
     GraphicsContext& secondaryContext = secondaryContextDL;
 
@@ -286,7 +273,7 @@ TEST(BifurcatedGraphicsContextTests, ApplyDeviceScaleFactor)
     GraphicsContextCG primaryContextCG(primaryCGContext.get());
     GraphicsContext& primaryContext = primaryContextCG;
 
-    InMemoryDisplayList displayList;
+    DisplayList displayList;
     RecorderImpl secondaryContextDL(displayList, { }, FloatRect(0, 0, 100, 100), { });
     GraphicsContext& secondaryContext = secondaryContextDL;
 
@@ -306,10 +293,10 @@ TEST(BifurcatedGraphicsContextTests, ApplyDeviceScaleFactor)
 
 TEST(BifurcatedGraphicsContextTests, ClipToImageBuffer)
 {
-    InMemoryDisplayList primaryDisplayList;
+    DisplayList primaryDisplayList;
     RecorderImpl primaryContext(primaryDisplayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
 
-    InMemoryDisplayList secondaryDisplayList;
+    DisplayList secondaryDisplayList;
     RecorderImpl secondaryContext(secondaryDisplayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
 
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
@@ -317,17 +304,15 @@ TEST(BifurcatedGraphicsContextTests, ClipToImageBuffer)
     auto imageBuffer = ImageBuffer::create({ 100, 100 }, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     ctx.clipToImageBuffer(*imageBuffer, { 0, 0, 100, 100 });
 
-    auto runTest = [&] (InMemoryDisplayList& displayList) {
+    auto runTest = [&] (DisplayList& displayList) {
         EXPECT_FALSE(displayList.isEmpty());
         bool sawClipToImageBuffer = false;
-        for (auto displayListItem : displayList) {
-            auto handle = displayListItem->item;
-            if (handle.type() != ItemType::ClipToImageBuffer)
-                continue;
-            sawClipToImageBuffer = true;
+
+        for (auto& item : displayList.items()) {
+            if (std::holds_alternative<ClipToImageBuffer>(item))
+                sawClipToImageBuffer = true;
         }
 
-        EXPECT_GT(displayList.sizeInBytes(), 0U);
         EXPECT_TRUE(sawClipToImageBuffer);
     };
 

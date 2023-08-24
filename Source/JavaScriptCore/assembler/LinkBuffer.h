@@ -431,19 +431,10 @@ private:
     static size_t s_profileCummulativeLinkedCounts[numberOfProfiles];
 };
 
-#if OS(LINUX)
 #define FINALIZE_CODE_IF(condition, linkBufferReference, resultPtrTag, ...) \
-    (UNLIKELY((condition) || JSC::Options::logJIT()) \
-        ? (linkBufferReference).finalizeCodeWithDisassembly<resultPtrTag>((condition), __VA_ARGS__) \
-        : (UNLIKELY(JSC::Options::logJITCodeForPerf()) \
-            ? (linkBufferReference).finalizeCodeWithDisassembly<resultPtrTag>(false, __VA_ARGS__) \
-            : (linkBufferReference).finalizeCodeWithoutDisassembly<resultPtrTag>()))
-#else
-#define FINALIZE_CODE_IF(condition, linkBufferReference, resultPtrTag, ...) \
-    (UNLIKELY((condition) || JSC::Options::logJIT()) \
+    (UNLIKELY((condition) || JSC::Options::logJIT() || JSC::Options::logJITCodeForPerf()) \
         ? (linkBufferReference).finalizeCodeWithDisassembly<resultPtrTag>((condition), __VA_ARGS__) \
         : (linkBufferReference).finalizeCodeWithoutDisassembly<resultPtrTag>())
-#endif
 
 #define FINALIZE_CODE_FOR(codeBlock, linkBufferReference, resultPtrTag, ...)  \
     FINALIZE_CODE_IF((shouldDumpDisassemblyFor(codeBlock) || Options::asyncDisassembly()), linkBufferReference, resultPtrTag, __VA_ARGS__)

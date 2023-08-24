@@ -221,7 +221,7 @@ void VideoFullscreenModelVideoElement::setVideoSizeFenced(const FloatSize& size,
         return;
 
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, size);
-    m_videoElement->setVideoInlineSizeFenced(size, WTFMove(fence));
+    m_videoElement->setVideoLayerSizeFenced(size, WTFMove(fence));
     m_videoElement->setVideoFullscreenFrame({ { }, size });
 
 }

@@ -58,7 +58,7 @@ WorkerModuleScriptLoader::~WorkerModuleScriptLoader()
     m_scriptLoader->cancel();
 }
 
-bool WorkerModuleScriptLoader::load(ScriptExecutionContext& context, URL&& sourceURL)
+void WorkerModuleScriptLoader::load(ScriptExecutionContext& context, URL&& sourceURL)
 {
     m_sourceURL = WTFMove(sourceURL);
 
@@ -70,7 +70,7 @@ bool WorkerModuleScriptLoader::load(ScriptExecutionContext& context, URL&& sourc
             m_responseMIMEType = scriptResource->mimeType;
             m_retrievedFromServiceWorkerCache = true;
             notifyClientFinished();
-            return true;
+            return;
         }
     }
 #endif
@@ -84,7 +84,27 @@ bool WorkerModuleScriptLoader::load(ScriptExecutionContext& context, URL&& sourc
     fetchOptions.credentials = static_cast<WorkerScriptFetcher&>(scriptFetcher()).credentials();
     fetchOptions.destination = static_cast<WorkerScriptFetcher&>(scriptFetcher()).destination();
     fetchOptions.referrerPolicy = static_cast<WorkerScriptFetcher&>(scriptFetcher()).referrerPolicy();
-    auto contentSecurityPolicyEnforcement = context.shouldBypassMainWorldContentSecurityPolicy() ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceWorkerSrcDirective;
+
+    bool cspCheckFailed = false;
+    ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
+    if (!context.shouldBypassMainWorldContentSecurityPolicy()) {
+        auto* contentSecurityPolicy = context.contentSecurityPolicy();
+        if (fetchOptions.destination == FetchOptions::Destination::Script) {
+            cspCheckFailed = contentSecurityPolicy && !contentSecurityPolicy->allowScriptFromSource(m_sourceURL);
+            contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::EnforceScriptSrcDirective;
+        } else {
+            cspCheckFailed = contentSecurityPolicy && !contentSecurityPolicy->allowWorkerFromSource(m_sourceURL);
+            contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::EnforceWorkerSrcDirective;
+        }
+    }
+
+    if (cspCheckFailed) {
+        m_scriptLoader->notifyError();
+        ASSERT(!m_failed);
+        notifyFinished();
+        ASSERT(m_failed);
+        return;
+    }
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
     // If destination is "worker" or "sharedworker" and the top-level module fetch flag is set, then set request's mode to "same-origin".
@@ -94,7 +114,6 @@ bool WorkerModuleScriptLoader::load(ScriptExecutionContext& context, URL&& sourc
     }
 
     m_scriptLoader->loadAsynchronously(context, WTFMove(request), WorkerScriptLoader::Source::ModuleScript, WTFMove(fetchOptions), contentSecurityPolicyEnforcement, ServiceWorkersMode::All, *this, taskMode());
-    return true;
 }
 
 ReferrerPolicy WorkerModuleScriptLoader::referrerPolicy()

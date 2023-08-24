@@ -28,6 +28,7 @@
 #include "CookieChangeEventInit.h"
 #include "Event.h"
 #include <wtf/IsoMalloc.h>
+#include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

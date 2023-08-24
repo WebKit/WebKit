@@ -198,7 +198,7 @@ private:
         return makeUnique<MediaPlayerPrivateMediaStreamAVFObjC>(player);
     }
 
-    void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types) const final
+    void getSupportedTypes(HashSet<String>& types) const final
     {
         return MediaPlayerPrivateMediaStreamAVFObjC::getSupportedTypes(types);
     }
@@ -222,7 +222,7 @@ bool MediaPlayerPrivateMediaStreamAVFObjC::isAvailable()
     return PAL::isAVFoundationFrameworkAvailable() && PAL::isCoreMediaFrameworkAvailable() && PAL::getAVSampleBufferDisplayLayerClass();
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
+void MediaPlayerPrivateMediaStreamAVFObjC::getSupportedTypes(HashSet<String>& types)
 {
     // FIXME: Is it really correct to list no supported types?
     types.clear();
@@ -373,7 +373,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
     if (!player)
         return;
 
-    auto size = IntSize { player->videoInlineSize() } ;
+    auto size = IntSize { player->videoLayerSize() };
     if (size.isEmpty())
         size = player->presentationSize();
     if (size.isEmpty() || m_intrinsicSize.isEmpty())
@@ -1189,7 +1189,7 @@ LayerHostingContextID MediaPlayerPrivateMediaStreamAVFObjC::hostingContextID() c
     return m_sampleBufferDisplayLayer ? m_sampleBufferDisplayLayer->hostingContextID() : 0;
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::setVideoInlineSizeFenced(const FloatSize& size, WTF::MachSendRight&& fence)
+void MediaPlayerPrivateMediaStreamAVFObjC::setVideoLayerSizeFenced(const FloatSize& size, WTF::MachSendRight&& fence)
 {
     if (!m_sampleBufferDisplayLayer || size.isEmpty())
         return;

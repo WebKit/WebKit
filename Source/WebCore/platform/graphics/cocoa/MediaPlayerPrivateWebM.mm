@@ -127,9 +127,9 @@ static bool isCopyDisplayedPixelBufferAvailable()
 
 #endif // HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
 
-static HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeCache()
+static HashSet<String>& mimeTypeCache()
 {
-    static NeverDestroyed cache = HashSet<String, ASCIICaseInsensitiveHash>();
+    static NeverDestroyed cache = HashSet<String>();
     if (cache->isEmpty()) {
         auto types = SourceBufferParserWebM::supportedMIMETypes();
         cache->add(types.begin(), types.end());
@@ -137,7 +137,7 @@ static HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeCache()
     return cache;
 }
 
-void MediaPlayerPrivateWebM::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
+void MediaPlayerPrivateWebM::getSupportedTypes(HashSet<String>& types)
 {
     types = mimeTypeCache();
 }
@@ -1535,7 +1535,7 @@ private:
         return makeUnique<MediaPlayerPrivateWebM>(player);
     }
 
-    void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types) const final
+    void getSupportedTypes(HashSet<String>& types) const final
     {
         return MediaPlayerPrivateWebM::getSupportedTypes(types);
     }

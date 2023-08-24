@@ -32,10 +32,7 @@
 #include "Disassembler.h"
 #include "JITCode.h"
 #include "Options.h"
-
-#if OS(LINUX)
 #include "PerfLog.h"
-#endif
 
 namespace JSC {
 
@@ -57,17 +54,19 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImp
 {
     CodeRef<LinkBufferPtrTag> result = finalizeCodeWithoutDisassemblyImpl();
 
-#if OS(LINUX)
+#if OS(LINUX) || OS(DARWIN)
     if (Options::logJITCodeForPerf()) {
         StringPrintStream out;
         va_list argList;
-        va_start(argList, format);
         va_start(argList, format);
         out.vprintf(format, argList);
         va_end(argList);
         PerfLog::log(out.toCString(), result.code().untaggedPtr<const uint8_t*>(), result.size());
     }
 #endif
+
+    if (!dumpDisassembly && !Options::logJIT())
+        return result;
 
     bool justDumpingHeader = !dumpDisassembly || m_alreadyDisassembled;
 

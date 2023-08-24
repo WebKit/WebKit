@@ -34,8 +34,9 @@ namespace WebCore {
 class Document;
 class DOMCSSNamespace;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DOMCSSRegisterCustomProperty);
 class DOMCSSRegisterCustomProperty final : public Supplement<DOMCSSNamespace> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DOMCSSRegisterCustomProperty);
 public:
     explicit DOMCSSRegisterCustomProperty(DOMCSSNamespace&) { }
 

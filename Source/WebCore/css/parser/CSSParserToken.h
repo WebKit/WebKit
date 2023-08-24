@@ -88,8 +88,9 @@ enum HashTokenType {
     HashTokenUnrestricted,
 };
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSParserToken);
 class CSSParserToken {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSParserToken);
 public:
     enum BlockType {
         NotBlock,

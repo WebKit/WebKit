@@ -161,6 +161,7 @@ namespace WebCore {
     macro(CSSVariableReferenceValue) \
     macro(CookieChangeEvent) \
     macro(CookieStore) \
+    macro(CookieStoreManager) \
     macro(CustomElementRegistry) \
     macro(CustomEffect) \
     macro(Database) \
@@ -175,6 +176,7 @@ namespace WebCore {
     macro(DynamicsCompressorNode) \
     macro(ElementInternals) \
     macro(EncodedVideoChunk) \
+    macro(ExtendableCookieChangeEvent) \
     macro(ExtendableEvent) \
     macro(ExtendableMessageEvent) \
     macro(FakeXRDevice) \
@@ -575,6 +577,7 @@ namespace WebCore {
     macro(onbackgroundfetchfail) \
     macro(onbackgroundfetchabort) \
     macro(onbackgroundfetchclick) \
+    macro(oncookiechange) \
     macro(onnotificationclick) \
     macro(onnotificationclose) \
     macro(onpush) \

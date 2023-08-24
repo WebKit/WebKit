@@ -41,7 +41,7 @@
 namespace WebCore {
 
 namespace DisplayList {
-class InMemoryDisplayList;
+class DisplayList;
 }
 
 class FloatRoundedRect;
@@ -677,7 +677,7 @@ private:
 
     Vector<FloatRect> m_dirtyRects;
 
-    std::unique_ptr<DisplayList::InMemoryDisplayList> m_displayList;
+    std::unique_ptr<DisplayList::DisplayList> m_displayList;
 
     float m_contentsScaleLimitingFactor { 1 };
     float m_rootRelativeScaleFactor { 1.0f };

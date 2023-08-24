@@ -205,8 +205,8 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
     if (m_contentsBufferHandle) {
         ASSERT(m_parameters.type == Type::IOSurface);
         handle = MachSendRight { *m_contentsBufferHandle };
-    } else if (m_frontBuffer.imageBuffer)
-        handle = handleFromBuffer(*m_frontBuffer.imageBuffer);
+    } else if (RefPtr protectedBuffer = m_frontBuffer.imageBuffer)
+        handle = handleFromBuffer(*protectedBuffer);
 
     // It would be nice to ASSERT(handle && hasValue(*handle)) here, but when we hit the timeout in RemoteImageBufferProxy::ensureBackendCreated(), we don't have a handle.
 #if !LOG_DISABLED
@@ -608,15 +608,15 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, WTF::Funct
     }
 
     IntRect layerBounds(IntPoint(), expandedIntSize(m_parameters.size));
-    if (!m_dirtyRegion.contains(layerBounds) && m_backBuffer.imageBuffer) {
+    if (RefPtr imageBuffer = m_backBuffer.imageBuffer; !m_dirtyRegion.contains(layerBounds) && imageBuffer) {
         if (!m_previouslyPaintedRect)
-            context.drawImageBuffer(*m_backBuffer.imageBuffer, { 0, 0 }, { CompositeOperator::Copy });
+            context.drawImageBuffer(*imageBuffer, { 0, 0 }, { CompositeOperator::Copy });
         else {
             Region copyRegion(*m_previouslyPaintedRect);
             copyRegion.subtract(m_dirtyRegion);
             IntRect copyRect = copyRegion.bounds();
             if (!copyRect.isEmpty())
-                context.drawImageBuffer(*m_backBuffer.imageBuffer, copyRect, copyRect, { CompositeOperator::Copy });
+                context.drawImageBuffer(*imageBuffer, copyRect, copyRect, { CompositeOperator::Copy });
         }
     }
 

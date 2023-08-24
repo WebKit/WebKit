@@ -235,6 +235,14 @@ void ServiceWorkerGlobalScope::addConsoleMessage(MessageSource source, MessageLe
     WorkerGlobalScope::addConsoleMessage(source, level, message, requestIdentifier);
 }
 
+CookieStore& ServiceWorkerGlobalScope::cookieStore()
+{
+    // FIXME: Should not pass nullptr. Should instead add service worker supported context.
+    if (!m_cookieStore)
+        m_cookieStore = CookieStore::create(nullptr);
+    return *m_cookieStore;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

@@ -40,8 +40,10 @@ class AccessibilityObjectAtspi;
 class AccessibilityRootAtspi;
 enum class AccessibilityRole;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessibilityAtspi);
 class AccessibilityAtspi {
-    WTF_MAKE_NONCOPYABLE(AccessibilityAtspi); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AccessibilityAtspi);
+    WTF_MAKE_NONCOPYABLE(AccessibilityAtspi);
     friend NeverDestroyed<AccessibilityAtspi>;
 public:
     WEBCORE_EXPORT static AccessibilityAtspi& singleton();

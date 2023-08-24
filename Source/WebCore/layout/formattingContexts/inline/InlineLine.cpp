@@ -195,15 +195,19 @@ void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
     m_contentLogicalWidth += accumulatedExpansion;
 }
 
-void Line::handleTrailingTrimmableContent(TrailingContentAction trailingTrimmableContentAction)
+InlineLayoutUnit Line::handleTrailingTrimmableContent(TrailingContentAction trailingTrimmableContentAction)
 {
     if (m_trimmableTrailingContent.isEmpty() || m_runs.isEmpty())
-        return;
+        return { };
 
-    if (trailingTrimmableContentAction == TrailingContentAction::Preserve)
-        return m_trimmableTrailingContent.reset();
+    if (trailingTrimmableContentAction == TrailingContentAction::Preserve) {
+        m_trimmableTrailingContent.reset();
+        return { };
+    }
 
-    m_contentLogicalWidth -= m_trimmableTrailingContent.remove();
+    auto trimmedWidth = m_trimmableTrailingContent.remove();
+    m_contentLogicalWidth -= trimmedWidth;
+    return trimmedWidth;
 }
 
 void Line::handleOverflowingNonBreakingSpace(TrailingContentAction trailingContentAction, InlineLayoutUnit overflowingWidth)
@@ -719,6 +723,24 @@ bool Line::lineHasVisuallyNonEmptyContent() const
             return true;
     }
     return false;
+}
+
+bool Line::restoreTrimmedTrailingWhitespace(InlineLayoutUnit trimmedTrailingWhitespaceWidth, RunList& runs)
+{
+    auto& lastRun = runs.last();
+    if (!lastRun.isText()) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    auto& layoutBox = downcast<InlineTextBox>(lastRun.layoutBox());
+    if (lastRun.m_textContent->start + lastRun.m_textContent->length == layoutBox.content().length()) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    lastRun.m_logicalWidth += trimmedTrailingWhitespaceWidth;
+    // This must be collapsed whitespace.
+    lastRun.m_textContent->length += 1;
+    return true;
 }
 
 const InlineFormattingContext& Line::formattingContext() const

@@ -131,10 +131,9 @@ private:
     bool recordResourceUse(Gradient&) final;
     bool recordResourceUse(Filter&) final;
 
-    template<typename T, class... Args>
-    void append(Args&&... args)
+    void append(DisplayListItem&& item)
     {
-        m_displayList.append<T>(std::forward<Args>(args)...);
+        m_displayList.append(WTFMove(item));
     }
 
     DisplayList& m_displayList;

@@ -36,6 +36,10 @@
 
     [MainWorldOnly] readonly attribute WebExtensionAPIPermissions permissions;
 
+    [MainWorldOnly] readonly attribute WebExtensionAPITabs tabs;
+
+    [MainWorldOnly] readonly attribute WebExtensionAPIWindows windows;
+
     [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIWebNavigation webNavigation;
 
     [Dynamic] readonly attribute WebExtensionAPITest test;

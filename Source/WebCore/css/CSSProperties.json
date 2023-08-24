@@ -1204,6 +1204,9 @@
             ],
             "codegen-properties": {
                 "settings-flag": "cssTextSpacingEnabled",
+                "font-property": true,
+                "high-priority": true,
+                "sink-priority": true,
                 "converter": "TextSpacingTrim",
                 "parser-function": "consumeTextSpacingTrim",
                 "parser-grammar-unused": "auto | space-all | trim-all | [ allow-end || space-first ]",
@@ -1223,6 +1226,9 @@
             ],
             "codegen-properties": {
                 "settings-flag": "cssTextSpacingEnabled",
+                "font-property": true,
+                "high-priority": true,
+                "sink-priority": true,
                 "converter": "TextAutospace",
                 "parser-function": "consumeTextAutospace",
                 "parser-grammar-unused": "normal | auto | no-autospace | [ [ ideograph-alpha || ideograph-numeric || punctuation ] || [ insert | replace ] ]",

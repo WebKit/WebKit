@@ -73,7 +73,7 @@ public:
 
     // MediaPlayer Factory Methods
     static bool isAvailable();
-    static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types);
+    static void getSupportedTypes(HashSet<String>& types);
     static MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters&);
 
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
@@ -239,7 +239,7 @@ private:
     void notifyActiveSourceBuffersChanged() override;
 
     void setPresentationSize(const IntSize&) final;
-    void setVideoInlineSizeFenced(const FloatSize&, WTF::MachSendRight&&) final;
+    void setVideoLayerSizeFenced(const FloatSize&, WTF::MachSendRight&&) final;
 
     void updateDisplayLayerAndDecompressionSession();
 

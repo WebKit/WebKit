@@ -1361,6 +1361,18 @@ void WebExtensionContext::didCloseTab(const WebExtensionTab& tab, WindowIsClosin
     // FIXME: Fire event here.
 }
 
+void WebExtensionContext::didActivateTab(const WebExtensionTab& tab)
+{
+    ASSERT(tab.extensionContext() == this);
+    ASSERT(m_tabMap.contains(tab.identifier()));
+    ASSERT(m_tabMap.get(tab.identifier()) == &tab);
+
+    if (!isLoaded())
+        return;
+
+    // FIXME: Fire event here.
+}
+
 void WebExtensionContext::didSelectTabs(const TabSet& tabs)
 {
 #ifndef NDEBUG

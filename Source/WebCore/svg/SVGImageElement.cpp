@@ -64,20 +64,7 @@ Ref<SVGImageElement> SVGImageElement::create(const QualifiedName& tagName, Docum
 
 CachedImage* SVGImageElement::cachedImage() const
 {
-    const RenderImageResource* resource = nullptr;
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (auto* renderer = dynamicDowncast<RenderSVGImage>(this->renderer()); renderer && renderer->imageResource().cachedImage())
-        resource = &renderer->imageResource();
-#endif
-    if (!resource) {
-        if (auto* renderer = dynamicDowncast<LegacyRenderSVGImage>(this->renderer()); renderer && renderer->imageResource().cachedImage())
-            resource = &renderer->imageResource();
-    }
-
-    if (!resource)
-        return nullptr;
-
-    return resource->cachedImage();
+    return m_imageLoader.image();
 }
 
 bool SVGImageElement::renderingTaintsOrigin() const

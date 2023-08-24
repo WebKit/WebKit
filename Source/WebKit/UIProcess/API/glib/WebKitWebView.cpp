@@ -881,6 +881,8 @@ static void webkitWebViewConstructed(GObject* object)
         webView->priv->textScaleFactor = dpi / 96.;
         page.setTextZoomFactor(zoomFactor * webView->priv->textScaleFactor);
     }, webView);
+#else
+    priv->textScaleFactor = 1;
 #endif
 
     priv->isWebProcessResponsive = true;

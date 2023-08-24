@@ -293,7 +293,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     float borderRadius = 0;
     OptionSet<InteractionRegion::CornerMask> maskedCorners;
 
-    if (auto* renderBox = dynamicDowncast<RenderBox>(regionRenderer)) {
+    if (const auto& renderBox = dynamicDowncast<RenderBox>(regionRenderer)) {
         auto borderRadii = renderBox->borderRadii();
         auto minRadius = borderRadii.minimumRadius();
         auto maxRadius = borderRadii.maximumRadius();
@@ -312,14 +312,6 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
         } else {
             // We default to the minimum radius applied uniformly to all corners.
             borderRadius = minRadius;
-        }
-
-        auto* input = dynamicDowncast<HTMLInputElement>(matchedElement);
-        if (input && input->containerElement()) {
-            auto borderBoxRect = renderBox->borderBoxRect();
-            auto contentBoxRect = renderBox->contentBoxRect();
-            bounds.move(IntSize(borderBoxRect.location() - contentBoxRect.location()));
-            bounds.expand(IntSize(borderBoxRect.size() - contentBoxRect.size()));
         }
     }
 

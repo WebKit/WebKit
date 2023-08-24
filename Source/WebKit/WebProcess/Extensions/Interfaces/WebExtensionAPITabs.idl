@@ -1,0 +1,76 @@
+/*
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+[
+    Conditional=WK_WEB_EXTENSIONS,
+    MainWorldOnly,
+    ReturnsPromiseWhenCallbackIsOmitted,
+] interface WebExtensionAPITabs {
+
+    [RaisesException, ImplementedAs=createTab] void create([NSDictionary] any properties, [Optional, CallbackHandler] function callback);
+
+    [RaisesException] void query([NSDictionary] any queryInfo, [Optional, CallbackHandler] function callback);
+
+    [RaisesException] void get(double tabID, [Optional, CallbackHandler] function callback);
+    void getCurrent([Optional, CallbackHandler] function callback);
+    [RaisesException, Dynamic] void getSelected([Optional] double windowID, [Optional, CallbackHandler] function callback);
+
+    [RaisesException] void duplicate(double tabID, [Optional, CallbackHandler] function callback);
+    [RaisesException] void update([Optional] double tabID, [NSDictionary] any updateProperties, [Optional, CallbackHandler] function callback);
+    [RaisesException] void remove([NSObject] any tabIDs, [Optional, CallbackHandler] function callback);
+
+    [RaisesException] void reload([Optional] double tabID, [Optional, NSDictionary] any reloadProperties, [Optional, CallbackHandler] function callback);
+    [RaisesException] void goBack([Optional] double tabID, [Optional, CallbackHandler] function callback);
+    [RaisesException] void goForward([Optional] double tabID, [Optional, CallbackHandler] function callback);
+
+    [RaisesException] void getZoom([Optional] double tabID, [Optional, CallbackHandler] function callback);
+    [RaisesException] void setZoom([Optional] double tabID, double zoomFactor, [Optional, CallbackHandler] function callback);
+
+    [RaisesException] void detectLanguage([Optional] double tabID, [Optional, CallbackHandler] function callback);
+
+    [RaisesException] void toggleReaderMode([Optional] double tabID, [Optional, CallbackHandler] function callback);
+
+    // [RaisesException] void captureVisibleTab([Optional] double windowID, [Optional, NSDictionary] any options, [Optional, CallbackHandler] function callback);
+
+    // [RaisesException, Dynamic] void executeScript([Optional] double tabID, [NSDictionary] any details, [Optional, CallbackHandler] function callback);
+    // [RaisesException, Dynamic] void insertCSS([Optional] double tabID, [NSDictionary] any details, [Optional, CallbackHandler] function callback);
+    // [RaisesException, Dynamic] void removeCSS([Optional] double tabID, [NSDictionary] any details, [Optional, CallbackHandler] function callback);
+
+    // [ProcessArgumentsLeftToRight, RaisesException, NeedsFrame] void sendMessage(double tabID, [Serialization=JSON] any message, [Optional, NSDictionary] any options, [Optional, CallbackHandler] function callback);
+    // [NeedsFrame] WebExtensionAPIPort connect(double tabID, [Optional, NSDictionary] any connectInfo);
+
+    [ImplementedAs=tabIdentifierNone] readonly attribute double TAB_ID_NONE;
+
+    readonly attribute WebExtensionAPIEvent onActivated;
+    readonly attribute WebExtensionAPIEvent onAttached;
+    readonly attribute WebExtensionAPIEvent onCreated;
+    readonly attribute WebExtensionAPIEvent onDetached;
+    readonly attribute WebExtensionAPIEvent onHighlighted;
+    readonly attribute WebExtensionAPIEvent onMoved;
+    readonly attribute WebExtensionAPIEvent onRemoved;
+    readonly attribute WebExtensionAPIEvent onReplaced;
+    readonly attribute WebExtensionAPIEvent onUpdated;
+
+};

@@ -334,7 +334,8 @@ bool InlineFormattingContext::createDisplayContentForLineFromCachedContent(const
 {
     if (!m_maximumIntrinsicWidthResultForSingleLine)
         return false;
-    if (m_maximumIntrinsicWidthResultForSingleLine->constraint > constraints.horizontal().logicalWidth) {
+    auto horizontalAvailableSpace = constraints.horizontal().logicalWidth;
+    if (m_maximumIntrinsicWidthResultForSingleLine->constraint > horizontalAvailableSpace) {
         m_maximumIntrinsicWidthResultForSingleLine = { };
         return false;
     }
@@ -342,7 +343,24 @@ bool InlineFormattingContext::createDisplayContentForLineFromCachedContent(const
         m_maximumIntrinsicWidthResultForSingleLine = { };
         return false;
     }
+
     auto& lineBreakingResult = m_maximumIntrinsicWidthResultForSingleLine->result;
+    auto restoreTrimmedTrailingWhitespaceIfApplicable = [&] {
+        if (root().style().lineBreak() != LineBreak::AfterWhiteSpace || !lineBreakingResult.trimmedTrailingWhitespaceWidth)
+            return;
+        if (ceiledLayoutUnit(lineBreakingResult.contentGeometry.logicalWidth) + LayoutUnit::epsilon() <= horizontalAvailableSpace)
+            return;
+        if (!Line::restoreTrimmedTrailingWhitespace(lineBreakingResult.trimmedTrailingWhitespaceWidth, lineBreakingResult.inlineContent)) {
+            ASSERT_NOT_REACHED();
+            m_maximumIntrinsicWidthResultForSingleLine = { };
+            return;
+        }
+        lineBreakingResult.contentGeometry.logicalWidth += lineBreakingResult.trimmedTrailingWhitespaceWidth;
+        lineBreakingResult.contentGeometry.logicalRightIncludingNegativeMargin += lineBreakingResult.trimmedTrailingWhitespaceWidth;
+        lineBreakingResult.trimmedTrailingWhitespaceWidth = { };
+    };
+    restoreTrimmedTrailingWhitespaceIfApplicable();
+
     lineBreakingResult.lineGeometry.logicalTopLeft = { constraints.horizontal().logicalLeft, constraints.logicalTop() };
     lineBreakingResult.lineGeometry.logicalWidth = constraints.horizontal().logicalWidth;
     lineBreakingResult.contentGeometry.logicalLeft = InlineFormattingGeometry::horizontalAlignmentOffset(root().style(), lineBreakingResult.contentGeometry.logicalWidth, lineBreakingResult.lineGeometry.logicalWidth, lineBreakingResult.hangingContent.logicalWidth, lineBreakingResult.inlineContent, true);

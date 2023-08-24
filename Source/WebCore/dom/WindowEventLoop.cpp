@@ -197,7 +197,7 @@ void WindowEventLoop::didReachTimeToRun()
 
     auto hasIdleCallbacks = findMatchingAssociatedContext([&](ScriptExecutionContext& context) {
         RefPtr document = dynamicDowncast<Document>(context);
-        if (!document)
+        if (!document || document->activeDOMObjectsAreSuspended() || document->activeDOMObjectsAreStopped())
             return false;
         auto* idleCallbackController = document->idleCallbackController();
         if (!idleCallbackController)

@@ -398,12 +398,12 @@ void RealtimeMediaSource::stop()
 
 void RealtimeMediaSource::requestToEnd(Observer& callingObserver)
 {
-    bool hasObserverPreventingStopping = false;
+    bool hasObserverPreventingEnding = false;
     forEachObserver([&](auto& observer) {
-        if (observer.preventSourceFromStopping())
-            hasObserverPreventingStopping = true;
+        if (observer.preventSourceFromEnding())
+            hasObserverPreventingEnding = true;
     });
-    if (hasObserverPreventingStopping)
+    if (hasObserverPreventingEnding)
         return;
 
     ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER);

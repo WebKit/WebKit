@@ -2269,4 +2269,22 @@ bool RenderElement::isSkippedContentRoot() const
     return WebCore::isSkippedContentRoot(style(), element());
 }
 
+bool RenderElement::hasEligibleContainmentForSizeQuery() const
+{
+    if (!shouldApplyLayoutContainment())
+        return false;
+
+    switch (style().containerType()) {
+    case ContainerType::InlineSize:
+        return shouldApplyInlineSizeContainment();
+    case ContainerType::Size:
+        return shouldApplySizeContainment();
+    case ContainerType::Normal:
+        return true;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+
 }

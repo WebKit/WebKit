@@ -2061,12 +2061,12 @@ float RenderStyle::letterSpacing() const
 
 TextSpacingTrim RenderStyle::textSpacingTrim() const
 {
-    return m_rareInheritedData->textSpacingTrim;
+    return fontDescription().textSpacingTrim();
 }
 
 TextAutospace RenderStyle::textAutospace() const
 {
-    return m_rareInheritedData->textAutospace;
+    return fontDescription().textAutospace();
 }
 
 bool RenderStyle::setFontDescription(FontCascadeDescription&& description)
@@ -2181,6 +2181,26 @@ void RenderStyle::setLetterSpacing(float letterSpacing)
     fontCascade().update(selector);
 
     setLetterSpacingWithoutUpdatingFontDescription(letterSpacing);
+}
+
+void RenderStyle::setTextSpacingTrim(TextSpacingTrim value)
+{
+    auto selector = fontCascade().fontSelector();
+    auto description = fontDescription();
+    description.setTextSpacingTrim(value);
+
+    setFontDescription(WTFMove(description));
+    fontCascade().update(selector);
+}
+
+void RenderStyle::setTextAutospace(TextAutospace value)
+{
+    auto selector = fontCascade().fontSelector();
+    auto description = fontDescription();
+    description.setTextAutospace(value);
+
+    setFontDescription(WTFMove(description));
+    fontCascade().update(selector);
 }
 
 void RenderStyle::setLetterSpacingWithoutUpdatingFontDescription(float letterSpacing)

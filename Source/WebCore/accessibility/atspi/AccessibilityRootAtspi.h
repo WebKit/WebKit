@@ -33,8 +33,9 @@ namespace WebCore {
 class AccessibilityObjectAtspi;
 class Page;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessibilityRootAtspi);
 class AccessibilityRootAtspi final : public RefCounted<AccessibilityRootAtspi> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AccessibilityRootAtspi);
 public:
     static Ref<AccessibilityRootAtspi> create(Page&);
     ~AccessibilityRootAtspi() = default;

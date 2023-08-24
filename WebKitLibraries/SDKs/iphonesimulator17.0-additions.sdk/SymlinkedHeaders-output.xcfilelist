@@ -13,16 +13,11 @@ $(WK_DERIVED_SDK_HEADERS_DIR)/usr/include/readline/history.h
 $(WK_DERIVED_SDK_HEADERS_DIR)/usr/include/readline/readline.h
 $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/AVKit.framework
 $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/AudioToolbox.framework
-$(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/AudioUnit.framework
 $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/CFNetwork.framework
-$(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/CoreImage.framework
 $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/IOKit.framework
 $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/IOSurface.framework
-$(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/LocalAuthentication.framework
 $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/MediaAccessibility.framework
-$(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/MediaToolbox.framework
 $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/Metal.framework
 $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/OpenGLES.framework
 $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/QuartzCore.framework
 $(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/UIKit.framework
-$(WK_DERIVED_SDK_HEADERS_DIR)/System/Library/Frameworks/VideoToolbox.framework

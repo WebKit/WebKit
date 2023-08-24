@@ -233,7 +233,7 @@ void LibWebRTCCodecsProxy::doDecoderTask(VideoDecoderIdentifier identifier, Func
     task(iterator->value);
 }
 
-void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, VideoCodecType codecType, const Vector<std::pair<String, String>>& parameters, bool useLowLatency, bool useAnnexB)
+void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, VideoCodecType codecType, const Vector<std::pair<String, String>>& parameters, bool useLowLatency, bool useAnnexB, CompletionHandler<void(bool)>&& callback)
 {
     assertIsCurrent(workQueue());
     std::map<std::string, std::string> rtcParameters;
@@ -253,20 +253,25 @@ void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, Vide
     });
 
     auto* encoder = webrtc::createLocalEncoder(webrtc::SdpVideoFormat { codecType == VideoCodecType::H264 ? "H264" : "H265", rtcParameters }, useAnnexB, newFrameBlock.get(), newConfigurationBlock.get());
+    if (!encoder) {
+        callback(false);
+        return;
+    }
+
     webrtc::setLocalEncoderLowLatency(encoder, useLowLatency);
     auto result = m_encoders.add(identifier, Encoder { encoder, makeUnique<SharedVideoFrameReader>(Ref { m_videoFrameObjectHeap }, m_resourceOwner) });
     ASSERT_UNUSED(result, result.isNewEntry || IPC::isTestingIPC());
     m_hasEncodersOrDecoders = true;
+    callback(true);
 }
 
 void LibWebRTCCodecsProxy::releaseEncoder(VideoEncoderIdentifier identifier)
 {
     assertIsCurrent(workQueue());
     auto encoder = m_encoders.take(identifier);
-    if (!encoder.webrtcEncoder) {
-        ASSERT_IS_TESTING_IPC();
+    if (!encoder.webrtcEncoder)
         return;
-    }
+
     webrtc::releaseLocalEncoder(encoder.webrtcEncoder);
     m_hasEncodersOrDecoders = !m_encoders.isEmpty() || !m_decoders.isEmpty();
 }
@@ -275,10 +280,9 @@ void LibWebRTCCodecsProxy::initializeEncoder(VideoEncoderIdentifier identifier, 
 {
     assertIsCurrent(workQueue());
     auto* encoder = findEncoder(identifier);
-    if (!encoder) {
-        ASSERT_IS_TESTING_IPC();
+    if (!encoder)
         return;
-    }
+
     webrtc::initializeLocalEncoder(encoder->webrtcEncoder, width, height, startBitrate, maxBitrate, minBitrate, maxFramerate);
 }
 
@@ -311,7 +315,6 @@ void LibWebRTCCodecsProxy::encodeFrame(VideoEncoderIdentifier identifier, Shared
     assertIsCurrent(workQueue());
     auto* encoder = findEncoder(identifier);
     if (!encoder) {
-        ASSERT_IS_TESTING_IPC();
         // Make sure to read RemoteVideoFrameReadReference to prevent memory leaks.
         if (std::holds_alternative<RemoteVideoFrameReadReference>(sharedVideoFrame.buffer))
             m_videoFrameObjectHeap->get(WTFMove(std::get<RemoteVideoFrameReadReference>(sharedVideoFrame.buffer)));
@@ -340,10 +343,8 @@ void LibWebRTCCodecsProxy::flushEncoder(VideoEncoderIdentifier identifier)
 {
     assertIsCurrent(workQueue());
     auto* encoder = findEncoder(identifier);
-    if (!encoder) {
-        ASSERT_IS_TESTING_IPC();
+    if (!encoder)
         return;
-    }
 
     webrtc::flushLocalEncoder(encoder->webrtcEncoder);
     m_connection->send(Messages::LibWebRTCCodecs::FlushEncoderCompleted { identifier }, 0);
@@ -353,10 +354,8 @@ void LibWebRTCCodecsProxy::setEncodeRates(VideoEncoderIdentifier identifier, uin
 {
     assertIsCurrent(workQueue());
     auto* encoder = findEncoder(identifier);
-    if (!encoder) {
-        ASSERT_IS_TESTING_IPC();
+    if (!encoder)
         return;
-    }
 
     webrtc::setLocalEncoderRates(encoder->webrtcEncoder, bitRate, frameRate);
 }
@@ -365,10 +364,8 @@ void LibWebRTCCodecsProxy::setSharedVideoFrameSemaphore(VideoEncoderIdentifier i
 {
     assertIsCurrent(workQueue());
     auto* encoder = findEncoder(identifier);
-    if (!encoder) {
-        ASSERT_IS_TESTING_IPC();
+    if (!encoder)
         return;
-    }
 
     encoder->frameReader->setSemaphore(WTFMove(semaphore));
 }
@@ -377,10 +374,8 @@ void LibWebRTCCodecsProxy::setSharedVideoFrameMemory(VideoEncoderIdentifier iden
 {
     assertIsCurrent(workQueue());
     auto* encoder = findEncoder(identifier);
-    if (!encoder) {
-        ASSERT_IS_TESTING_IPC();
+    if (!encoder)
         return;
-    }
 
     encoder->frameReader->setSharedMemory(WTFMove(handle));
 }

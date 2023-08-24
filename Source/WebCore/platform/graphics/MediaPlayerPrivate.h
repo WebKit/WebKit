@@ -85,8 +85,8 @@ public:
     using LayerHostingContextIDCallback = CompletionHandler<void(LayerHostingContextID)>;
     virtual void requestHostingContextID(LayerHostingContextIDCallback&& completionHandler) { completionHandler({ }); }
     virtual LayerHostingContextID hostingContextID() const { return 0; }
-    virtual FloatSize videoInlineSize() const { return { }; }
-    virtual void setVideoInlineSizeFenced(const FloatSize&, WTF::MachSendRight&&) { }
+    virtual FloatSize videoLayerSize() const { return { }; }
+    virtual void setVideoLayerSizeFenced(const FloatSize&, WTF::MachSendRight&&) { }
 
 #if PLATFORM(IOS_FAMILY)
     virtual NSArray *timedMetadata() const { return nil; }

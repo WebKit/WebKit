@@ -36,8 +36,7 @@ namespace WebCore {
 class CSSCalcValue;
 class CSSToLengthConversionData;
 class Color;
-class FontCascadeDescription;
-class FontMetrics;
+class FontCascade;
 class RenderStyle;
 class RenderView;
 
@@ -76,7 +75,8 @@ public:
     bool isAngle() const { return unitCategory(primitiveType()) == CSSUnitCategory::Angle; }
     bool isFontIndependentLength() const { return isFontIndependentLength(primitiveUnitType()); }
     bool isFontRelativeLength() const { return isFontRelativeLength(primitiveUnitType()); }
-    bool isParentFontRelativeLength() const { return isPercentage() || (isFontRelativeLength() && primitiveType() != CSSUnitType::CSS_REMS && primitiveType() != CSSUnitType::CSS_RLHS); }
+    bool isParentFontRelativeLength() const { return isPercentage() || (isFontRelativeLength() && !isRootFontRelativeLength()); }
+    bool isRootFontRelativeLength() const { return isRootFontRelativeLength(primitiveUnitType()); }
     bool isQuirkyEms() const { return primitiveType() == CSSUnitType::CSS_QUIRKY_EMS; }
     bool isLength() const { return isLength(static_cast<CSSUnitType>(primitiveType())); }
     bool isNumber() const { return primitiveType() == CSSUnitType::CSS_NUMBER; }
@@ -185,7 +185,7 @@ public:
     static std::optional<double> conversionToCanonicalUnitsScaleFactor(CSSUnitType);
     static ASCIILiteral unitTypeString(CSSUnitType);
 
-    static double computeUnzoomedNonCalcLengthDouble(CSSUnitType, double value, CSSPropertyID, const FontMetrics* = nullptr, const FontCascadeDescription* = nullptr, const FontCascadeDescription* rootFontDescription = nullptr, const RenderView* = nullptr);
+    static double computeUnzoomedNonCalcLengthDouble(CSSUnitType, double value, CSSPropertyID, const FontCascade* = nullptr, const RenderView* = nullptr);
     static double computeNonCalcLengthDouble(const CSSToLengthConversionData&, CSSUnitType, double value);
     // True if computeNonCalcLengthDouble would produce identical results when resolved against both these styles.
     static bool equalForLengthResolution(const RenderStyle&, const RenderStyle&);
@@ -227,6 +227,7 @@ private:
     NEVER_INLINE String formatIntegerValue(ASCIILiteral suffix) const;
     static constexpr bool isFontIndependentLength(CSSUnitType);
     static constexpr bool isFontRelativeLength(CSSUnitType);
+    static constexpr bool isRootFontRelativeLength(CSSUnitType);
     static constexpr bool isViewportPercentageLength(CSSUnitType);
 
     union {
@@ -250,6 +251,12 @@ constexpr bool CSSPrimitiveValue::isFontIndependentLength(CSSUnitType type)
         || type == CSSUnitType::CSS_IN
         || type == CSSUnitType::CSS_PT
         || type == CSSUnitType::CSS_PC;
+}
+
+constexpr bool CSSPrimitiveValue::isRootFontRelativeLength(CSSUnitType type)
+{
+    return type == CSSUnitType::CSS_RLHS
+        || type == CSSUnitType::CSS_REMS;
 }
 
 constexpr bool CSSPrimitiveValue::isFontRelativeLength(CSSUnitType type)

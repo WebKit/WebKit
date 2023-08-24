@@ -252,7 +252,7 @@ private:
 
     friend class MediaPlayerFactoryWebM;
     static bool isAvailable();
-    static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
+    static void getSupportedTypes(HashSet<String>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
     ThreadSafeWeakPtr<MediaPlayer> m_player;

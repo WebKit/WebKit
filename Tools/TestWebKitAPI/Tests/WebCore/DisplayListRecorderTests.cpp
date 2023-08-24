@@ -28,10 +28,10 @@
 #include "Test.h"
 #include "WebCoreTestUtilities.h"
 #include <WebCore/DestinationColorSpace.h>
+#include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListDrawingContext.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBuffer.h>
-#include <WebCore/InMemoryDisplayList.h>
 #include <wtf/MathExtras.h>
 #if PLATFORM(COCOA)
 #include <WebCore/GraphicsContextCG.h>
@@ -85,16 +85,8 @@ class TestDrawingContext : public WebCore::DisplayList::DrawingContext {
 public:
     TestDrawingContext(WebCore::FloatSize logicalSize)
         : WebCore::DisplayList::DrawingContext { logicalSize }
-        , m_writingClient { makeUnique<WebCore::DisplayList::InMemoryDisplayList::WritingClient>() }
-        , m_readingClient { makeUnique<WebCore::DisplayList::InMemoryDisplayList::ReadingClient>() }
     {
-        displayList().setItemBufferWritingClient(m_writingClient.get());
-        displayList().setItemBufferReadingClient(m_readingClient.get());
     }
-
-private:
-    std::unique_ptr<WebCore::DisplayList::InMemoryDisplayList::WritingClient> m_writingClient;
-    std::unique_ptr<WebCore::DisplayList::InMemoryDisplayList::ReadingClient> m_readingClient;
 };
 
 }

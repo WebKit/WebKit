@@ -59,7 +59,7 @@ IntrinsicWidthConstraints IntrinsicWidthHandler::computedIntrinsicSizes()
     if (TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineFormattingState)) {
         auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), { }, inlineFormattingState.inlineItems() };
         auto minimumWidth = isEligibleForNonLineBuilderProcess(rootStyle) ? ceiledLayoutUnit(simplifiedMinimumWidth()) : computedIntrinsicValue(IntrinsicWidthMode::Minimum, simplifiedLineBuilder);
-        return { minimumWidth, computedIntrinsicValue(IntrinsicWidthMode::Maximum, simplifiedLineBuilder, TextOnlySimpleLineBuilder::hasIntrinsicWidthSpecificStyle(rootStyle) ? MayCacheLayoutResult::No : MayCacheLayoutResult::Yes) };
+        return { minimumWidth, computedIntrinsicValue(IntrinsicWidthMode::Maximum, simplifiedLineBuilder, MayCacheLayoutResult::Yes) };
     }
 
     auto floatingState = FloatingState { root() };
@@ -112,12 +112,18 @@ InlineLayoutUnit IntrinsicWidthHandler::computedIntrinsicWidthForConstraint(Intr
 
         layoutRange.start = InlineFormattingGeometry::leadingInlineItemPositionForNextLine(lineLayoutResult.inlineItemRange.end, previousLineEnd, layoutRange.end);
         if (layoutRange.isEmpty()) {
-            auto shouldCacheLineBreakingResultForSubsequentLayout = !lineIndex && mayCacheLayoutResult == MayCacheLayoutResult::Yes;
-            if (shouldCacheLineBreakingResultForSubsequentLayout)
+            auto cacheLineBreakingResultForSubsequentLayoutIfApplicable = [&] {
+                m_maximumIntrinsicWidthResultForSingleLine = { };
+                if (mayCacheLayoutResult == MayCacheLayoutResult::No)
+                    return;
                 m_maximumIntrinsicWidthResultForSingleLine = LineBreakingResult { ceiledLayoutUnit(maximumContentWidth), WTFMove(lineLayoutResult) };
+            };
+            cacheLineBreakingResultForSubsequentLayoutIfApplicable();
             break;
         }
 
+        // Support single line only.
+        mayCacheLayoutResult = MayCacheLayoutResult::No;
         previousLineEnd = layoutRange.start;
         previousLine = PreviousLine { lineIndex++, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, { }, { }, WTFMove(lineLayoutResult.floatContent.suspendedFloats) };
     }

@@ -1,0 +1,18 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-tvos, arm64e-tvos]
+install-name: /System/Library/PrivateFrameworks/AppSupport.framework/AppSupport
+current-version: 29
+reexported-libraries:
+-       targets: [arm64-tvos, arm64e-tvos]
+        libraries: [/System/Library/PrivateFrameworks/CorePhoneNumbers.framework/CorePhoneNumbers]
+exports:
+-       targets: [arm64-tvos, arm64e-tvos]
+        objc-classes: [CPNetworkObserver]
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-tvos, arm64e-tvos]
+install-name: /System/Library/PrivateFrameworks/CorePhoneNumbers.framework/CorePhoneNumbers
+exports: []
+...

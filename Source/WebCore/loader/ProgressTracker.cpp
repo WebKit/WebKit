@@ -63,7 +63,7 @@ static const unsigned minumumBytesPerHeartbeatForProgress = 1024;
 static const Seconds progressNotificationTimeInterval { 200_ms };
 
 struct ProgressItem {
-    WTF_MAKE_NONCOPYABLE(ProgressItem); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(ProgressItem); WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:
     explicit ProgressItem(long long length)
         : bytesReceived(0)

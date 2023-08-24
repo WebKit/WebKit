@@ -195,6 +195,7 @@ $(PROJECT_DIR)/Shared/FrameTreeCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/FrameTreeNodeData.serialization.in
 $(PROJECT_DIR)/Shared/GPUProcessConnectionParameters.serialization.in
 $(PROJECT_DIR)/Shared/Gamepad/GamepadData.serialization.in
+$(PROJECT_DIR)/Shared/GoToBackForwardItemParameters.serialization.in
 $(PROJECT_DIR)/Shared/HTTPSUpgrade/HTTPSUpgradeList.txt
 $(PROJECT_DIR)/Shared/IPCConnectionTester.messages.in
 $(PROJECT_DIR)/Shared/IPCStreamTester.messages.in
@@ -374,9 +375,12 @@ $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIExtension.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPINamespace.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIPermissions.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIRuntime.idl
+$(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPITabs.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPITest.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIWebNavigation.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIWebNavigationEvent.idl
+$(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIWindows.idl
+$(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIWindowsEvent.idl
 $(PROJECT_DIR)/WebProcess/Extensions/WebExtensionContextProxy.messages.in
 $(PROJECT_DIR)/WebProcess/Extensions/WebExtensionControllerProxy.messages.in
 $(PROJECT_DIR)/WebProcess/FullScreen/WebFullScreenManager.messages.in

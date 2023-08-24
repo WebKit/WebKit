@@ -2544,6 +2544,8 @@ imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-margin
 imported/w3c/web-platform-tests/css/css-backgrounds/background-image-shared-stylesheet.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-margin-root.html [ ImageOnlyFailure ]
 
+webkit.org/b/260679 [ Monterey+ ] imported/w3c/web-platform-tests/css/css-backgrounds/bg-color-with-gradient.html [ ImageOnlyFailure ]
+
 webkit.org/b/255228 [ Monterey+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-display-none.html [ Failure ]
 webkit.org/b/255228 [ Monterey+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-quirks-mode.html [ Failure ]
 webkit.org/b/255228 [ Monterey+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-standards-mode.html [ Failure ]
@@ -2590,7 +2592,7 @@ webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visi
 webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-nested.html [ ImageOnlyFailure  ]
 webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-resize-observer-no-error.html [ ImageOnlyFailure ]
 
-webkit.org/b/259485 [ Ventura ] http/tests/media/hls/track-in-band-multiple-cues.html [ Crash ]
+webkit.org/b/259485 [ Ventura+ ] http/tests/media/hls/track-in-band-multiple-cues.html [ Crash ]
 
 webkit.org/b/259546 [ Debug ] media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Crash Timeout ]
 

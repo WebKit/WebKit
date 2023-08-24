@@ -137,6 +137,8 @@ public:
     static const AtomString& initialSpecifiedLocale() { return nullAtom(); }
     static FontPalette initialFontPalette() { return { FontPalette::Type::Normal, nullAtom() }; }
     static FontSizeAdjust initialFontSizeAdjust() { return { FontSizeAdjust::Metric::ExHeight }; }
+    static TextSpacingTrim initialTextSpacingTrim() { return { }; }
+    static TextAutospace initialTextAutospace() { return { }; }
 
 private:
     Ref<RefCountedFixedVector<AtomString>> m_families;

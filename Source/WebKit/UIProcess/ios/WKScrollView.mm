@@ -70,7 +70,7 @@
     if (!signature)
         signature = [(NSObject *)_internalDelegate methodSignatureForSelector:aSelector];
     if (!signature)
-        signature = [(NSObject *)externalDelegate methodSignatureForSelector:aSelector];
+        signature = [(NSObject *)externalDelegate.get() methodSignatureForSelector:aSelector];
     return signature;
 }
 

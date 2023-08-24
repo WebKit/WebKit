@@ -77,6 +77,14 @@ void FunctionIPIntMetadataGenerator::addCondensedLocalIndexAndLength(uint32_t in
 
 void FunctionIPIntMetadataGenerator::addLEB128ConstantAndLengthForType(Type type, uint64_t value, uint32_t length)
 {
+
+    // Metadata format:
+    //      0 1 2 3 4 5 6 7  8 9 A B C D E F
+    // I32: <value> <length>
+    // I64: <    value    >  <   length   >
+    // F32: <value> <blank>
+    // F64: <    value    >
+
     if (type.isI32()) {
         size_t size = m_metadata.size();
         if (length == 2) {
@@ -99,14 +107,6 @@ void FunctionIPIntMetadataGenerator::addLEB128ConstantAndLengthForType(Type type
         WRITE_TO_METADATA(m_metadata.data() + size + 1, static_cast<uint32_t>(value), uint32_t);
     } else if (!type.isF32() && !type.isF64())
         ASSERT_NOT_IMPLEMENTED_YET();
-}
-
-void FunctionIPIntMetadataGenerator::addLEB128V128Constant(v128_t value, uint32_t length)
-{
-    size_t size = m_metadata.size();
-    m_metadata.resize(size + 17);
-    WRITE_TO_METADATA(m_metadata.data() + size, static_cast<uint8_t>(length), uint8_t);
-    WRITE_TO_METADATA(m_metadata.data() + size + 1, value, v128_t);
 }
 
 void FunctionIPIntMetadataGenerator::addReturnData(const Vector<Type, 16>& types)

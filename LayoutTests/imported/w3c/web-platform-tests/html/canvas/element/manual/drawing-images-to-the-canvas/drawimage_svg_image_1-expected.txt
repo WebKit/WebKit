@@ -1,3 +1,3 @@
 
-FAIL Load a 100x100 image to a SVG image and draw it to a 100x100 canvas. assert_equals: Red channel of the pixel at (0, 0) expected 253 but got 255
+PASS Load a 100x100 image to a SVG image and draw it to a 100x100 canvas.
 

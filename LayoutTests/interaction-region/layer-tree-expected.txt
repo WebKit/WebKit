@@ -122,13 +122,13 @@
           (layer bounds [x: 0 y: 0 width: 0 height: 0])
           (layer anchorPoint [x: 0 y: 0]))
         (
-          (layer bounds [x: 0 y: 0 width: 800 height: 32])
+          (layer bounds [x: 0 y: 0 width: 800 height: 12])
           (layer position [x: 400 y: 400])
           (layer zPosition 1000)
           (layer opacity 0)
           (sublayers
             (
-              (layer bounds [x: 0 y: 0 width: 96 height: 32])
+              (layer bounds [x: 0 y: 0 width: 116 height: 32])
               (layer position [x: 400 y: 400]))
             (
               (layer bounds [x: 0 y: 0 width: 800 height: 12])
@@ -235,17 +235,17 @@
                       (layer opacity 0.15)
                       (layer cornerRadius 3))))))))
         (
-          (layer bounds [x: 0 y: 0 width: 32 height: 600])
+          (layer bounds [x: 0 y: 0 width: 12 height: 600])
           (layer position [x: 791 y: 791])
           (layer zPosition 1000)
           (layer opacity 0)
           (sublayers
             (
-              (layer bounds [x: 0 y: 0 width: 32 height: 96])
-              (layer position [x: 16 y: 16]))
+              (layer bounds [x: 0 y: 0 width: 32 height: 116])
+              (layer position [x: 6 y: 6]))
             (
               (layer bounds [x: 0 y: 0 width: 12 height: 600])
-              (layer position [x: 16 y: 16])
+              (layer position [x: 6 y: 6])
               (sublayers
                 (
                   (layer bounds [x: 0 y: 0 width: 12 height: 96])

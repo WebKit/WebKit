@@ -231,4 +231,44 @@ TEST(WebCoreHTMLParser, FastPathComplexHTMLEntityParsing)
     EXPECT_STREQ(testFastParser("food & water"_s).utf8().data(), String("food & water"_s).utf8().data());
 }
 
+TEST(WebCoreHTMLParser, FastPathHandlesLi)
+{
+    ProcessWarming::initializeNames();
+
+    auto settings = Settings::create(nullptr);
+    auto document = HTMLDocument::create(nullptr, settings.get(), aboutBlankURL());
+    auto documentElement = HTMLHtmlElement::create(document);
+    document->appendChild(documentElement);
+    auto body = HTMLBodyElement::create(document);
+    documentElement->appendChild(body);
+
+    auto div = HTMLDivElement::create(document);
+    document->body()->appendChild(div);
+
+    auto fragment = DocumentFragment::create(document);
+    bool result = tryFastParsingHTMLFragment("<div><li></li></div>"_s, document, fragment, div, { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
+    EXPECT_TRUE(result);
+    EXPECT_STREQ("DIV", fragment->firstChild()->nodeName().utf8().data());
+    EXPECT_STREQ("LI", fragment->firstChild()->firstChild()->nodeName().utf8().data());
+}
+
+TEST(WebCoreHTMLParser, FastPathFailsWithNestedLi)
+{
+    ProcessWarming::initializeNames();
+
+    auto settings = Settings::create(nullptr);
+    auto document = HTMLDocument::create(nullptr, settings.get(), aboutBlankURL());
+    auto documentElement = HTMLHtmlElement::create(document);
+    document->appendChild(documentElement);
+    auto body = HTMLBodyElement::create(document);
+    documentElement->appendChild(body);
+
+    auto div = HTMLDivElement::create(document);
+    document->body()->appendChild(div);
+
+    auto fragment = DocumentFragment::create(document);
+    bool result = tryFastParsingHTMLFragment("<li><li></li></li>"_s, document, fragment, div, { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
+    EXPECT_FALSE(result);
+}
+
 } // namespace TestWebKitAPI

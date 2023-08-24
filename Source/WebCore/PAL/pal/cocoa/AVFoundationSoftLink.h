@@ -377,4 +377,9 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAudioSessionPortCarAudio, NSS
 #define AVAudioSessionPortCarAudio PAL::get_AVFoundation_AVAudioSessionPortCarAudio()
 #endif // HAVE(AVAUDIOSESSION)
 
+#if HAVE(AVSPEECHSYNTHESIS_VOICES_CHANGE_NOTIFICATION)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVSpeechSynthesisAvailableVoicesDidChangeNotification, NSString *)
+#define AVSpeechSynthesisAvailableVoicesDidChangeNotification PAL::get_AVFoundation_AVSpeechSynthesisAvailableVoicesDidChangeNotification()
+#endif // HAVE(AVSPEECHSYNTHESIS_VOICES_CHANGE_NOTIFICATION)
+
 #endif // USE(AVFOUNDATION)

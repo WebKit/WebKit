@@ -277,7 +277,7 @@ struct ForbidSynchronousLoadsScope : public PageLevelForbidScope {
 };
 
 class FrameLoader::FrameProgressTracker {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:
     explicit FrameProgressTracker(LocalFrame& frame)
         : m_frame(frame)

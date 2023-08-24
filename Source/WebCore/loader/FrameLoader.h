@@ -35,6 +35,7 @@
 #include "FrameLoaderStateMachine.h"
 #include "FrameLoaderTypes.h"
 #include "LayoutMilestone.h"
+#include "LoaderMalloc.h"
 #include "PageIdentifier.h"
 #include "PrivateClickMeasurement.h"
 #include "ReferrerPolicy.h"
@@ -97,7 +98,7 @@ WEBCORE_EXPORT bool isReload(FrameLoadType);
 using ContentPolicyDecisionFunction = Function<void(PolicyAction, PolicyCheckIdentifier)>;
 
 class FrameLoader final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
     WTF_MAKE_NONCOPYABLE(FrameLoader);
 public:
     FrameLoader(LocalFrame&, UniqueRef<LocalFrameLoaderClient>&&);

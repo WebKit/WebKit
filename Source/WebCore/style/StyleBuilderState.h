@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class FilterOperations;
+class FontCascadeDescription;
 class RenderStyle;
 class StyleImage;
 class StyleResolver;

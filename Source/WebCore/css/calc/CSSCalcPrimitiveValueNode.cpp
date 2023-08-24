@@ -36,6 +36,7 @@
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSCalcPrimitiveValueNode);
 
 Ref<CSSCalcPrimitiveValueNode> CSSCalcPrimitiveValueNode::create(Ref<CSSPrimitiveValue>&& value)
 {

@@ -43,7 +43,7 @@ public:
 
     virtual bool isAvailable() const;
     virtual MediaPlayerEnums::SupportsType canDecodeType(const String&);
-    virtual HashSet<String, ASCIICaseInsensitiveHash>& supportedTypes();
+    virtual HashSet<String>& supportedTypes();
 
     bool isEmpty() const;
     bool supportsContainerType(const String&);
@@ -54,13 +54,13 @@ protected:
 private:
     virtual bool isStaticContainerType(StringView);
     virtual bool isUnsupportedContainerType(const String&);
-    virtual void initializeCache(HashSet<String, ASCIICaseInsensitiveHash>&);
+    virtual void initializeCache(HashSet<String>&);
     virtual bool canDecodeExtendedType(const ContentType&);
 
     bool shouldOverrideExtendedType(const ContentType&);
 
-    std::optional<HashSet<String, ASCIICaseInsensitiveHash>> m_supportedTypes;
-    std::optional<HashMap<String, MediaPlayerEnums::SupportsType, ASCIICaseInsensitiveHash>> m_cachedResults;
+    std::optional<HashSet<String>> m_supportedTypes;
+    std::optional<HashMap<String, MediaPlayerEnums::SupportsType>> m_cachedResults;
 };
 
 } // namespace WebCore

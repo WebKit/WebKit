@@ -63,6 +63,7 @@ public:
         Fullscreen,
     };
 
+    using Error = std::optional<String>;
     using TabVector = Vector<Ref<WebExtensionTab>>;
 
     WebExtensionWindowIdentifier identifier() const { return m_identifier; }
@@ -74,12 +75,17 @@ public:
     RefPtr<WebExtensionTab> activeTab() const;
 
     Type type() const;
+
     State state() const;
+    void setState(State, CompletionHandler<void(Error)>&&);
 
     bool isFocused() const;
-    bool isEphemeral() const;
+    bool isPrivate() const;
 
     CGRect frame() const;
+    void setFrame(CGRect, CompletionHandler<void(Error)>&&);
+
+    void close(CompletionHandler<void(Error)>&&);
 
 #ifdef __OBJC__
     _WKWebExtensionWindow *delegate() const { return m_delegate.getAutoreleased(); }
@@ -95,8 +101,11 @@ private:
     bool m_respondsToActiveTab : 1 { false };
     bool m_respondsToWindowType : 1 { false };
     bool m_respondsToWindowState : 1 { false };
-    bool m_respondsToIsEphemeral : 1 { false };
+    bool m_respondsToSetWindowState : 1 { false };
+    bool m_respondsToIsUsingPrivateBrowsing : 1 { false };
     bool m_respondsToFrame : 1 { false };
+    bool m_respondsToSetFrame : 1 { false };
+    bool m_respondsToClose : 1 { false };
 };
 
 } // namespace WebKit

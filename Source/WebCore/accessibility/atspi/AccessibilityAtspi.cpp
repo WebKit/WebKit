@@ -35,6 +35,7 @@
 #include <wtf/glib/RunLoopSourcePriority.h>
 
 namespace WebCore {
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessibilityAtspi);
 
 AccessibilityAtspi& AccessibilityAtspi::singleton()
 {

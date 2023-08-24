@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script>
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video:true });
+    const track = stream.getVideoTracks()[0];
+    const trackClone = track.clone();
+
+    const promise = new Promise(resolve => track.onmute = resolve);
+    if (window.internals) {
+        internals.setMediaStreamTrackMuted(track, true);
+        await promise;
+    }
+
+    const resultPromise = new Promise((resolve, reject) => {
+        setTimeout(resolve, 500);
+        track.onended = () => reject("track is ended");
+    });
+    trackClone.stop();
+
+    return resultPromise;
+}, "Stopping a muted clone should not mute the track");
+    </script>
+</head>
+<body>
+</body>
+</html>

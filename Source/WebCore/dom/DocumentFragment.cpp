@@ -95,7 +95,9 @@ void DocumentFragment::parseHTML(const String& source, Element& contextElement, 
         ASSERT(serializeFragment(*this, SerializedNodes::SubtreesOfChildren) == serializeFragment(referenceFragment, SerializedNodes::SubtreesOfChildren));
 #endif
         return;
-    }
+    } else if (hasChildNodes())
+        removeChildren();
+
     HTMLDocumentParser::parseDocumentFragment(source, *this, contextElement, parserContentPolicy);
 }
 

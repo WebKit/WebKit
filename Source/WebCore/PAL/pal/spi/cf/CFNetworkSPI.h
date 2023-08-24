@@ -97,11 +97,14 @@ typedef enum {
 #if OS_OBJECT_USE_OBJC
 OS_OBJECT_DECL(nw_context);
 OS_OBJECT_DECL(nw_endpoint);
+OS_OBJECT_DECL(nw_proxy_config);
 #else
 struct nw_context;
 typedef struct nw_context *nw_context_t;
 struct nw_endpoint;
 typedef struct nw_endpoint *nw_endpoint_t;
+struct nw_proxy_config;
+typedef struct nw_proxy_config *nw_proxy_config_t;
 #endif // OS_OBJECT_USE_OBJC
 
 typedef void (^nw_context_tracker_lookup_callback_t)(nw_endpoint_t endpoint, const char **tracker_name, const char **tracker_owner, bool *can_block);

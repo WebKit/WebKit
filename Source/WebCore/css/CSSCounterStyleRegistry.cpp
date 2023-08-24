@@ -33,6 +33,7 @@
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSCounterStyleRegistry);
 
 
 void CSSCounterStyleRegistry::resolveUserAgentReferences()

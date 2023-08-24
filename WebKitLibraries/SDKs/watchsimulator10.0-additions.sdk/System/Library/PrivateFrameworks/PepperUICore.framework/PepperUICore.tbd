@@ -1,0 +1,11 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [i386-watchos-simulator, x86_64-watchos-simulator, arm64-watchos-simulator]
+install-name: /System/Library/PrivateFrameworks/PepperUICore.framework/PepperUICore
+exports:
+-       targets: [i386-watchos-simulator, x86_64-watchos-simulator, arm64-watchos-simulator]
+        symbols: [_PUICButtonTypePill, _PUICStatusBarNavigationBackButtonPressedNotification, _PUICStatusBarTitleTappedNotification]
+        objc-classes: [PUICApplication, PUICCrownInputSequencer, PUICPickerView, PUICQuickboardController, PUICQuickboardListCollectionViewItemCell,
+                PUICQuickboardListItemCell, PUICQuickboardListTrayButton, PUICQuickboardListViewController, PUICQuickboardMessageViewController,
+                PUICQuickboardRemoteViewController, PUICQuickboardViewController, PUICResources, PUICTextInputContext]
+...

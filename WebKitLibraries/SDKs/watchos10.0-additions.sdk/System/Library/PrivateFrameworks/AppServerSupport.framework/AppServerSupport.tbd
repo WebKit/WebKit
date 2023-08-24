@@ -1,0 +1,7 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [armv7k-watchos, arm64-watchos, arm64e-watchos, arm64_32-watchos]
+install-name: /System/Library/PrivateFrameworks/AppServerSupport.framework/AppServerSupport
+current-version: 2679.0.25
+exports: []
+...

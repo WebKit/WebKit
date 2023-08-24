@@ -106,8 +106,10 @@ Modules/compression/DecompressionStreamDecoder.cpp
 Modules/contact-picker/ContactsManager.cpp
 Modules/contact-picker/NavigatorContacts.cpp
 Modules/cookie-consent/NavigatorCookieConsent.cpp
+Modules/cookie-store/ExtendableCookieChangeEvent.cpp
 Modules/cookie-store/CookieChangeEvent.cpp
 Modules/cookie-store/CookieStore.cpp
+Modules/cookie-store/CookieStoreManager.cpp
 Modules/credentialmanagement/BasicCredential.cpp
 Modules/credentialmanagement/CredentialsContainer.cpp
 Modules/credentialmanagement/NavigatorCredentials.cpp
@@ -1777,6 +1779,7 @@ loader/ImageLoader.cpp
 loader/LinkHeader.cpp
 loader/LinkLoader.cpp
 loader/LinkPreloadResourceClients.cpp
+loader/LoaderMalloc.cpp
 loader/LoaderStrategy.cpp
 loader/MediaResourceLoader.cpp
 loader/MixedContentChecker.cpp
@@ -2304,13 +2307,9 @@ platform/graphics/cpu/arm/filters/FEBlendNeonApplier.cpp
 platform/graphics/displaylists/DisplayList.cpp
 platform/graphics/displaylists/DisplayListDrawingContext.cpp
 platform/graphics/displaylists/DisplayListItems.cpp
-platform/graphics/displaylists/DisplayListItemBuffer.cpp
-platform/graphics/displaylists/DisplayListItemType.cpp
-platform/graphics/displaylists/DisplayListIterator.cpp
 platform/graphics/displaylists/DisplayListRecorder.cpp
 platform/graphics/displaylists/DisplayListRecorderImpl.cpp
 platform/graphics/displaylists/DisplayListReplayer.cpp
-platform/graphics/displaylists/InMemoryDisplayList.cpp
 platform/graphics/filters/DistantLightSource.cpp
 platform/graphics/filters/FEBlend.cpp
 platform/graphics/filters/FEColorMatrix.cpp
@@ -3295,6 +3294,7 @@ JSCookieSameSite.cpp
 JSCookieStore.cpp
 JSCookieStoreDeleteOptions.cpp
 JSCookieStoreGetOptions.cpp
+JSCookieStoreManager.cpp
 JSCountQueuingStrategy.cpp
 JSCredentialCreationOptions.cpp
 JSCredentialRequestOptions.cpp
@@ -3420,6 +3420,8 @@ JSEventListenerOptions.cpp
 JSEventModifierInit.cpp
 JSEventSource.cpp
 JSEventTarget.cpp
+JSExtendableCookieChangeEvent.cpp
+JSExtendableCookieChangeEventInit.cpp
 JSExtendableEvent.cpp
 JSExtendableEventInit.cpp
 JSExtendableMessageEvent.cpp

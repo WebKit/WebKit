@@ -40,6 +40,7 @@
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSCalcOperationNode);
 
 // This is the result of the "To add two types type1 and type2, perform the following steps:" rules.
 

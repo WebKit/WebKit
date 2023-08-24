@@ -25,12 +25,14 @@
 
 #pragma once
 
+#include "LoaderMalloc.h"
+
 namespace WebCore {
 
 class LocalFrame;
 
 class ProgressTrackerClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:
     virtual ~ProgressTrackerClient() = default;
 

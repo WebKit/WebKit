@@ -646,9 +646,9 @@ public:
     WEBCORE_EXPORT LayerHostingContextID layerHostingContextID();
     WEBCORE_EXPORT WebCore::FloatSize naturalSize();
 
-    FloatSize mediaPlayerVideoInlineSize() const override { return videoInlineSize(); }
-    WEBCORE_EXPORT WebCore::FloatSize videoInlineSize() const;
-    void setVideoInlineSizeFenced(const FloatSize&, WTF::MachSendRight&&);
+    FloatSize mediaPlayerVideoLayerSize() const override { return videoLayerSize(); }
+    WEBCORE_EXPORT WebCore::FloatSize videoLayerSize() const;
+    void setVideoLayerSizeFenced(const FloatSize&, WTF::MachSendRight&&);
     void updateMediaState();
 
 protected:
@@ -1322,7 +1322,7 @@ private:
     bool m_userPrefersExtendedDescriptions { false };
     bool m_changingSynthesisState { false };
 
-    FloatSize m_videoInlineSize { };
+    FloatSize m_videoLayerSize { };
 
 #if !RELEASE_LOG_DISABLED
     RefPtr<Logger> m_logger;

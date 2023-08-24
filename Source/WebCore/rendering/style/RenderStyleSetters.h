@@ -284,7 +284,6 @@ inline void RenderStyle::setStrokeMiterLimit(float value) { SET(m_rareInheritedD
 inline void RenderStyle::setStrokeWidth(Length&& width) { SET(m_rareInheritedData, strokeWidth, WTFMove(width)); }
 inline void RenderStyle::setTabSize(const TabSize& size) { SET(m_rareInheritedData, tabSize, size); }
 inline void RenderStyle::setTextAlignLast(TextAlignLast value) { SET(m_rareInheritedData, textAlignLast, static_cast<unsigned>(value)); }
-inline void RenderStyle::setTextAutospace(TextAutospace value) { SET(m_rareInheritedData, textAutospace, value); }
 inline void RenderStyle::setTextBoxTrim(TextBoxTrim value) { SET_NESTED(m_nonInheritedData, rareData, textBoxTrim, static_cast<unsigned>(value)); }
 inline void RenderStyle::setTextCombine(TextCombine value) { SET(m_rareInheritedData, textCombine, static_cast<unsigned>(value)); }
 inline void RenderStyle::setTextDecorationColor(const StyleColor& color) { SET_NESTED(m_nonInheritedData, rareData, textDecorationColor, color); }
@@ -307,7 +306,6 @@ inline void RenderStyle::setTextIndentType(TextIndentType value) { SET(m_rareInh
 inline void RenderStyle::setTextJustify(TextJustify value) { SET(m_rareInheritedData, textJustify, static_cast<unsigned>(value)); }
 inline void RenderStyle::setTextOverflow(TextOverflow overflow) { SET_NESTED(m_nonInheritedData, miscData, textOverflow, static_cast<unsigned>(overflow)); }
 inline void RenderStyle::setTextSecurity(TextSecurity security) { SET(m_rareInheritedData, textSecurity, static_cast<unsigned>(security)); }
-inline void RenderStyle::setTextSpacingTrim(TextSpacingTrim value) { SET(m_rareInheritedData, textSpacingTrim, value); }
 inline void RenderStyle::setTextStrokeColor(const StyleColor& c) { SET(m_rareInheritedData, textStrokeColor, c); }
 inline void RenderStyle::setTextStrokeWidth(float value) { SET(m_rareInheritedData, textStrokeWidth, value); }
 inline void RenderStyle::setTextTransform(OptionSet<TextTransform> value) { m_inheritedFlags.textTransform = value.toRaw(); }

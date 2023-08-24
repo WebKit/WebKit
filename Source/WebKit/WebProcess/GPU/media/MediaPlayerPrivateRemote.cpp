@@ -841,8 +841,8 @@ PlatformLayer* MediaPlayerPrivateRemote::platformLayer() const
 {
 #if PLATFORM(COCOA)
     if (!m_videoLayer && m_layerHostingContextID) {
-        m_videoLayer = createVideoLayerRemote(const_cast<MediaPlayerPrivateRemote*>(this), m_layerHostingContextID, m_videoFullscreenGravity, expandedIntSize(m_videoInlineSize));
-        m_videoLayerManager->setVideoLayer(m_videoLayer.get(), expandedIntSize(m_videoInlineSize));
+        m_videoLayer = createVideoLayerRemote(const_cast<MediaPlayerPrivateRemote*>(this), m_layerHostingContextID, m_videoFullscreenGravity, expandedIntSize(m_videoLayerSize));
+        m_videoLayerManager->setVideoLayer(m_videoLayer.get(), expandedIntSize(m_videoLayerSize));
     }
     return m_videoLayerManager->videoInlineLayer();
 #else
@@ -989,10 +989,10 @@ void MediaPlayerPrivateRemote::setPresentationSize(const IntSize& size)
 }
 
 #if PLATFORM(COCOA)
-void MediaPlayerPrivateRemote::setVideoInlineSizeFenced(const FloatSize& size, WTF::MachSendRight&& machSendRight)
+void MediaPlayerPrivateRemote::setVideoLayerSizeFenced(const FloatSize& size, WTF::MachSendRight&& machSendRight)
 {
-    connection().send(Messages::RemoteMediaPlayerProxy::SetVideoInlineSizeFenced(size, WTFMove(machSendRight)), m_id);
-    m_videoInlineSize = size;
+    connection().send(Messages::RemoteMediaPlayerProxy::SetVideoLayerSizeFenced(size, WTFMove(machSendRight)), m_id);
+    m_videoLayerSize = size;
 }
 #endif
 

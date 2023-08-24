@@ -30,6 +30,7 @@
 #include "ApplicationManifest.h"
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
+#include "LoaderMalloc.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/URL.h>
@@ -40,7 +41,7 @@ class CachedApplicationManifest;
 class DocumentLoader;
 
 class ApplicationManifestLoader final : private CachedRawResourceClient {
-WTF_MAKE_NONCOPYABLE(ApplicationManifestLoader); WTF_MAKE_FAST_ALLOCATED;
+WTF_MAKE_NONCOPYABLE(ApplicationManifestLoader); WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:
     typedef Function<void (CachedResourceHandle<CachedApplicationManifest>)> CompletionHandlerType;
 

@@ -40,7 +40,7 @@ class ResourceLoader;
 class ResourceResponse;
 
 class LegacyPreviewLoader final : private PreviewConverterClient, private PreviewConverterProvider {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
     WTF_MAKE_NONCOPYABLE(LegacyPreviewLoader);
 public:
     LegacyPreviewLoader(ResourceLoader&, const ResourceResponse&);

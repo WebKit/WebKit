@@ -37,8 +37,9 @@ namespace WebCore {
 class Document;
 class DOMCSSNamespace;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSNumericFactory);
 class CSSNumericFactory final : public Supplement<DOMCSSNamespace> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSNumericFactory);
 public:
     explicit CSSNumericFactory(DOMCSSNamespace&) { }
 

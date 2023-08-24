@@ -1,0 +1,10 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [armv7k-watchos, arm64-watchos, arm64e-watchos, arm64_32-watchos]
+install-name: /System/Library/PrivateFrameworks/GraphicsServices.framework/GraphicsServices
+current-version: 14
+exports:
+-       targets: [armv7k-watchos, arm64-watchos, arm64e-watchos, arm64_32-watchos]
+        symbols: [_GSCurrentEventTimestamp, _GSEventIsHardwareKeyboardAttached, _GSEventSetHardwareKeyboardAttached, _GSFontInitialize,
+                _GSFontPurgeFontCache, _GSInitialize, _GSKeyboardGetModifierState, _GSSystemRootDirectory, _kGSEventHardwareKeyboardAvailabilityChangedNotification]
+...
