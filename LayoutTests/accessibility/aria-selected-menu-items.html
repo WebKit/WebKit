@@ -30,7 +30,7 @@
 </div>
 
 <script>
-description("This tests that focused/active menu items are reported as selected children of the parent container.");
+testOutput = "This tests that focused/active menu items are reported as selected children of the parent container.\n";
 
 if (window.accessibilityController) {
     window.jsTestIsAsync = true;
@@ -38,29 +38,32 @@ if (window.accessibilityController) {
     document.getElementById("item2").focus();
     setTimeout(async () => {
         await focus("item2");
-        selectedChildInfo(window.accessibilityController.accessibleElementById("menu1"));
-        selectedChildInfo(window.accessibilityController.accessibleElementById("menu2"));
+        testOutput += await selectedChildInfo(accessibilityController.accessibleElementById("menu1"), "item2");
+        testOutput += await selectedChildInfo(accessibilityController.accessibleElementById("menu2"), "item5");
         await focus("item8");
-        selectedChildInfo(window.accessibilityController.accessibleElementById("menubar1"));
-        selectedChildInfo(window.accessibilityController.accessibleElementById("menubar2"));
+        testOutput += await selectedChildInfo(accessibilityController.accessibleElementById("menubar1"), "item8");
+        testOutput += await selectedChildInfo(accessibilityController.accessibleElementById("menubar2"), "item12");
         document.getElementById("content").style.visibility = "hidden";
 
+        debug(testOutput);
         finishJSTest();
     }, 0);
 }
 
-function selectedChildInfo(axElement) {
+async function selectedChildInfo(axElement, expectedChildId) {
+    result = ""
     if (!axElement)
-        debug("Element not exposed");
+        result += "Element not exposed";
 
     var count = axElement.selectedChildrenCount;
-    debug(platformValueForW3CName(axElement) + " has " + count + " selected child(ren)");
+    result += `${platformValueForW3CName(axElement)} has ${count} selected child(ren)\n`;
     for (var i = 0; i < count; i++) {
+        await waitFor(() => axElement.selectedChildAtIndex(i).domIdentifier == expectedChildId)
         var child = axElement.selectedChildAtIndex(i);
-        result = "\t" + platformValueForW3CName(child) + " (" + child.role + ")";
-        result += " isSelectable: " + child.isSelectable + " isSelected: " + child.isSelected;
-        debug(result);
+        result += `\t${platformValueForW3CName(child)} (${child.role})`;
+        result += ` isSelectable: ${child.isSelectable} isSelected: ${child.isSelected}\n`;
     }
+    return result;
 }
 
 async function focus(id) {

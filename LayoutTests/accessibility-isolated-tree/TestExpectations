@@ -49,6 +49,5 @@ accessibility/mac/grid-selected-cells.html [ Failure ]
 accessibility/table-cells.html [ Failure ]
 accessibility/mac/document-links.html [ Failure ]
 
-accessibility/aria-selected-menu-items.html [ Failure ]
 accessibility/aria-owns-hierarchy-remap.html [ Failure ]
 accessibility/element-reflection-ariaactivedescendant.html [ Failure ]

@@ -4031,6 +4031,16 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         case AXMaximumValueChanged:
             tree->updateNodeProperties(*notification.first, { AXPropertyName::MaxValueForRange, AXPropertyName::ValueForRange });
             break;
+        case AXMenuListItemSelected: {
+            RefPtr ancestor = Accessibility::findAncestor<AccessibilityObject>(*notification.first, false, [] (const auto& object) {
+                return object.isMenu() || object.isMenuBar();
+            });
+            if (ancestor) {
+                tree->updateNodeProperty(*ancestor, AXPropertyName::SelectedChildren);
+                tree->updateNodeProperty(*notification.first, AXPropertyName::IsSelected);
+            }
+            break;
+        }
         case AXMinimumValueChanged:
             tree->updateNodeProperties(*notification.first, { AXPropertyName::MinValueForRange, AXPropertyName::ValueForRange });
             break;

@@ -574,6 +574,9 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const Vector<A
             propertyMap.set(AXPropertyName::SupportsKeyShortcuts, axObject.supportsKeyShortcuts());
             propertyMap.set(AXPropertyName::KeyShortcuts, axObject.keyShortcuts().isolatedCopy());
             break;
+        case AXPropertyName::SelectedChildren:
+            propertyMap.set(AXPropertyName::SelectedChildren, axIDs(axObject.selectedChildren()));
+            break;
         case AXPropertyName::SupportsPosInSet:
             propertyMap.set(AXPropertyName::SupportsPosInSet, axObject.supportsPosInSet());
             break;
