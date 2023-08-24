@@ -88,6 +88,11 @@ protected:
         : m_anchorEdges(0)
     { }
 
+    ViewportConstraints(FloatSize&& alignmentOffset, AnchorEdges&& anchorEdges)
+        : m_alignmentOffset(WTFMove(alignmentOffset))
+        , m_anchorEdges(WTFMove(anchorEdges))
+    { }
+
     FloatSize m_alignmentOffset;
     AnchorEdges m_anchorEdges;
 };
@@ -96,6 +101,12 @@ class FixedPositionViewportConstraints : public ViewportConstraints {
 public:
     FixedPositionViewportConstraints()
         : ViewportConstraints()
+    { }
+
+    FixedPositionViewportConstraints(FloatSize&& alignmentOffset, AnchorEdges&& anchorEdges, FloatRect&& viewportRectAtLastLayout, FloatPoint&& layerPositionAtLastLayout)
+        : ViewportConstraints(WTFMove(alignmentOffset), WTFMove(anchorEdges))
+        , m_viewportRectAtLastLayout(WTFMove(viewportRectAtLastLayout))
+        , m_layerPositionAtLastLayout(WTFMove(layerPositionAtLastLayout))
     { }
     
     WEBCORE_EXPORT FloatPoint layerPositionForViewportRect(const FloatRect& viewportRect) const;
@@ -128,6 +139,19 @@ public:
         , m_rightOffset(0)
         , m_topOffset(0)
         , m_bottomOffset(0)
+    { }
+
+    StickyPositionViewportConstraints(FloatSize&& alignmentOffset, AnchorEdges&& anchorEdges, float leftOffset, float rightOffset, float topOffset, float bottomOffset, FloatRect&& constrainingRectAtLastLayout, FloatRect&& containingBlockRect, FloatRect&& stickyBoxRect, FloatSize&& stickyOffsetAtLastLayout, FloatPoint&& layerPositionAtLastLayout)
+        : ViewportConstraints(WTFMove(alignmentOffset), WTFMove(anchorEdges))
+        , m_leftOffset(leftOffset)
+        , m_rightOffset(rightOffset)
+        , m_topOffset(topOffset)
+        , m_bottomOffset(bottomOffset)
+        , m_constrainingRectAtLastLayout(WTFMove(constrainingRectAtLastLayout))
+        , m_containingBlockRect(WTFMove(containingBlockRect))
+        , m_stickyBoxRect(WTFMove(stickyBoxRect))
+        , m_stickyOffsetAtLastLayout(WTFMove(stickyOffsetAtLastLayout))
+        , m_layerPositionAtLastLayout(WTFMove(layerPositionAtLastLayout))
     { }
 
     FloatSize computeStickyOffset(const FloatRect& constrainingRect) const;

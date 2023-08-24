@@ -5823,3 +5823,32 @@ header: <WebCore/InspectorOverlay.h>
 };
 
 #endif
+
+header: <WebCore/DiagnosticLoggingClient.h>
+[CustomHeader] struct WebCore::DiagnosticLoggingDictionary {
+    HashMap<String, std::variant<String, uint64_t, int64_t, bool, double>> dictionary;
+};
+
+using WebCore::ViewportConstraints::AnchorEdges = unsigned;
+
+header: <WebCore/ScrollingConstraints.h>
+[CustomHeader] class WebCore::FixedPositionViewportConstraints : WebCore::ViewportConstraints {
+    WebCore::FloatSize alignmentOffset();
+    WebCore::ViewportConstraints::AnchorEdges anchorEdges();
+    WebCore::FloatRect viewportRectAtLastLayout();
+    WebCore::FloatPoint layerPositionAtLastLayout();
+};
+
+[CustomHeader] class WebCore::StickyPositionViewportConstraints : WebCore::ViewportConstraints {
+    WebCore::FloatSize alignmentOffset();
+    WebCore::ViewportConstraints::AnchorEdges anchorEdges();
+    float leftOffset();
+    float rightOffset();
+    float topOffset();
+    float bottomOffset();
+    WebCore::FloatRect constrainingRectAtLastLayout();
+    WebCore::FloatRect containingBlockRect();
+    WebCore::FloatRect stickyBoxRect();
+    WebCore::FloatSize stickyOffsetAtLastLayout();
+    WebCore::FloatPoint layerPositionAtLastLayout();
+};

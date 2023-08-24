@@ -132,7 +132,6 @@ class SystemImage;
 
 struct CompositionUnderline;
 struct DataDetectorElementInfo;
-struct DiagnosticLoggingDictionary;
 struct KeypressCommand;
 struct Length;
 struct SerializedAttachmentData;
@@ -183,11 +182,6 @@ template<> struct ArgumentCoder<WebCore::Credential> {
 template<> struct ArgumentCoder<WebCore::Cursor> {
     static void encode(Encoder&, const WebCore::Cursor&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::Cursor&);
-};
-
-template<> struct ArgumentCoder<WebCore::DiagnosticLoggingDictionary> {
-    static void encode(Encoder&, const WebCore::DiagnosticLoggingDictionary&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::DiagnosticLoggingDictionary&);
 };
 
 template<> struct ArgumentCoder<RefPtr<WebCore::Image>> {
@@ -263,17 +257,6 @@ template<> struct ArgumentCoder<WebCore::CurlProxySettings> {
     static std::optional<WebCore::CurlProxySettings> decode(Decoder&);
 };
 #endif
-
-
-template<> struct ArgumentCoder<WebCore::FixedPositionViewportConstraints> {
-    static void encode(Encoder&, const WebCore::FixedPositionViewportConstraints&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::FixedPositionViewportConstraints&);
-};
-
-template<> struct ArgumentCoder<WebCore::StickyPositionViewportConstraints> {
-    static void encode(Encoder&, const WebCore::StickyPositionViewportConstraints&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::StickyPositionViewportConstraints&);
-};
 
 #if !USE(COORDINATED_GRAPHICS)
 template<> struct ArgumentCoder<WebCore::FilterOperations> {
