@@ -24,6 +24,15 @@
  */
 
 #include "config.h"
+#include "Compiler.h"
+
+#if COMPILER(MSVC)
+#pragma fp_contract off
+#elif COMPILER(CLANG)
+#pragma clang fp contract(off)
+#else
+#endif
+
 #include "FastFloat.h"
 
 #include "fast_float/fast_float.h"
@@ -44,6 +53,22 @@ double parseDouble(const UChar* string, size_t length, size_t& parsedLength)
     auto result = fast_float::from_chars(reinterpret_cast<const char16_t*>(string), reinterpret_cast<const char16_t*>(string) + length, doubleValue);
     parsedLength = result.ptr - reinterpret_cast<const char16_t*>(string);
     return doubleValue;
+}
+
+float parseFloat(const LChar* string, size_t length, size_t& parsedLength)
+{
+    float floatValue = 0;
+    auto result = fast_float::from_chars(reinterpret_cast<const char*>(string), reinterpret_cast<const char*>(string) + length, floatValue);
+    parsedLength = result.ptr - reinterpret_cast<const char*>(string);
+    return floatValue;
+}
+
+float parseFloat(const UChar* string, size_t length, size_t& parsedLength)
+{
+    float floatValue = 0;
+    auto result = fast_float::from_chars(reinterpret_cast<const char16_t*>(string), reinterpret_cast<const char16_t*>(string) + length, floatValue);
+    parsedLength = result.ptr - reinterpret_cast<const char16_t*>(string);
+    return floatValue;
 }
 
 } // namespace WTF

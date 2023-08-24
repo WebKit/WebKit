@@ -27,6 +27,7 @@
 #include "FloatRect.h"
 #include <limits>
 #include <wtf/ASCIICType.h>
+#include <wtf/dtoa.h>
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/text/StringView.h>
 
@@ -41,98 +42,23 @@ template <typename FloatType> static inline bool isValidRange(const FloatType& x
 // We use this generic parseNumber function to allow the Path parsing code to work 
 // at a higher precision internally, without any unnecessary runtime cost or code
 // complexity.
-// FIXME: Can this be shared/replaced with number parsing in WTF?
-template <typename CharacterType, typename FloatType = float> static std::optional<FloatType> genericParseNumber(StringParsingBuffer<CharacterType>& buffer, SuffixSkippingPolicy skip = SuffixSkippingPolicy::Skip)
+template <typename CharacterType> static std::optional<float> genericParseNumber(StringParsingBuffer<CharacterType>& buffer, SuffixSkippingPolicy skip = SuffixSkippingPolicy::Skip)
 {
-    FloatType number = 0;
-    FloatType integer = 0;
-    FloatType decimal = 0;
-    FloatType frac = 1;
-    FloatType exponent = 0;
-    int sign = 1;
-    int expsign = 1;
-    auto start = buffer.position();
-
-    // read the sign
-    if (buffer.hasCharactersRemaining() && *buffer == '+')
-        ++buffer;
-    else if (buffer.hasCharactersRemaining() && *buffer == '-') {
-        ++buffer;
-        sign = -1;
-    } 
-    
-    if (buffer.atEnd() || (!isASCIIDigit(*buffer) && *buffer != '.'))
-        return std::nullopt;
-
-    // read the integer part, build right-to-left
-    auto ptrStartIntPart = buffer.position();
-    
-    // Advance to first non-digit.
-    skipWhile<isASCIIDigit>(buffer);
-
-    if (buffer.position() != ptrStartIntPart) {
-        auto ptrScanIntPart = buffer.position() - 1;
-        FloatType multiplier = 1;
-        while (ptrScanIntPart >= ptrStartIntPart) {
-            integer += multiplier * static_cast<FloatType>(*(ptrScanIntPart--) - '0');
-            multiplier *= 10;
-        }
-        // Bail out early if this overflows.
-        if (!isValidRange(integer))
-            return std::nullopt;
-    }
-
-    // read the decimals
-    if (buffer.hasCharactersRemaining() && *buffer == '.') {
-        ++buffer;
-        
-        // There must be a least one digit following the .
-        if (buffer.atEnd() || !isASCIIDigit(*buffer))
-            return std::nullopt;
-        
-        while (buffer.hasCharactersRemaining() && isASCIIDigit(*buffer))
-            decimal += (*(buffer++) - '0') * (frac *= static_cast<FloatType>(0.1));
-    }
-
-    // read the exponent part
-    if (buffer.position() != start && buffer.position() + 1 < buffer.end() && (*buffer == 'e' || *buffer == 'E')
-        && (buffer[1] != 'x' && buffer[1] != 'm')) {
-        ++buffer;
-
-        // read the sign of the exponent
-        if (*buffer == '+')
-            ++buffer;
-        else if (*buffer == '-') {
-            ++buffer;
-            expsign = -1;
-        }
-        
-        // There must be an exponent
-        if (buffer.atEnd() || !isASCIIDigit(*buffer))
-            return std::nullopt;
-
-        while (buffer.hasCharactersRemaining() && isASCIIDigit(*buffer)) {
-            exponent *= static_cast<FloatType>(10);
-            exponent += *buffer++ - '0';
-        }
-        // Make sure exponent is valid.
-        if (!isValidRange(exponent) || exponent > std::numeric_limits<FloatType>::max_exponent)
-            return std::nullopt;
-    }
-
-    number = integer + decimal;
-    number *= sign;
-
-    if (exponent)
-        number *= static_cast<FloatType>(pow(10.0, expsign * static_cast<int>(exponent)));
+    size_t parsedLength = 0;
+    float number = parseFloat(buffer.position(), buffer.lengthRemaining(), parsedLength);
 
     // Don't return Infinity() or NaN().
     if (!isValidRange(number))
         return std::nullopt;
 
-    if (start == buffer.position())
+    if (!parsedLength)
         return std::nullopt;
 
+    // If the number ends with '.', we treat it as an error.
+    if (buffer[parsedLength - 1] == '.')
+        return std::nullopt;
+
+    buffer.advanceBy(parsedLength);
     if (skip == SuffixSkippingPolicy::Skip)
         skipOptionalSVGSpacesOrDelimiter(buffer);
 
