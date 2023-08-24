@@ -31,7 +31,6 @@
 #include "HandlerInfo.h"
 #include "InstructionStream.h"
 #include "MacroAssemblerCodeRef.h"
-#include "SIMDInfo.h"
 #include "WasmHandlerInfo.h"
 #include "WasmIPIntGenerator.h"
 #include "WasmLLIntTierUpCounter.h"
@@ -91,7 +90,6 @@ private:
     void addLEB128ConstantInt32AndLength(uint32_t value, uint32_t length);
     void addCondensedLocalIndexAndLength(uint32_t index, uint32_t length);
     void addLEB128ConstantAndLengthForType(Type, uint64_t value, uint32_t length);
-    void addLEB128V128Constant(v128_t value, uint32_t length);
     void addReturnData(const Vector<Type, 16>& types);
 
     uint32_t m_functionIndex;
