@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,8 +41,6 @@ using namespace WebCore;
 using DisplayList::DisplayList;
 using namespace DisplayList;
 
-constexpr size_t globalItemBufferCapacity = 1 << 12;
-static uint8_t globalItemBuffer[globalItemBufferCapacity];
 constexpr CGFloat contextWidth = 100;
 constexpr CGFloat contextHeight = 100;
 
@@ -59,16 +57,15 @@ TEST(DisplayListTests, ReplayWithMissingResource)
 
     DisplayList list;
 
-    list.append<SetInlineFillColor>(Color::green);
-    list.append<FillRect>(contextBounds);
-    list.append<DrawImageBuffer>(imageBufferIdentifier, contextBounds, contextBounds, ImagePaintingOptions { });
-    list.append<SetInlineStrokeColor>(Color::red);
-    list.append<StrokeLine>(FloatPoint { 0, contextHeight }, FloatPoint { contextWidth, 0 });
+    list.append(SetInlineFillColor(Color::green));
+    list.append(FillRect(contextBounds));
+    list.append(DrawImageBuffer(imageBufferIdentifier, contextBounds, contextBounds, ImagePaintingOptions { }));
+    list.append(SetInlineStrokeColor(Color::red));
+    list.append(StrokeLine(FloatPoint { 0, contextHeight }, FloatPoint { contextWidth, 0 }));
 
     {
         Replayer replayer { context, list };
         auto result = replayer.replay();
-        EXPECT_LT(result.numberOfBytesRead, list.sizeInBytes());
         EXPECT_EQ(result.reasonForStopping, StopReplayReason::MissingCachedResource);
         EXPECT_EQ(result.missingCachedResourceIdentifier, imageBufferIdentifier);
     }
@@ -79,68 +76,12 @@ TEST(DisplayListTests, ReplayWithMissingResource)
 
         Replayer replayer { context, list, &resourceHeap };
         auto result = replayer.replay();
-        EXPECT_EQ(result.numberOfBytesRead, list.sizeInBytes());
         EXPECT_EQ(result.reasonForStopping, StopReplayReason::ReplayedAllItems);
         EXPECT_EQ(result.missingCachedResourceIdentifier, std::nullopt);
     }
 }
 
-static ItemBufferIdentifier globalBufferIdentifier = ItemBufferIdentifier::generate();
-
-class ReadingClient : public ItemBufferReadingClient {
-private:
-    std::optional<ItemHandle> WARN_UNUSED_RETURN decodeItem(const uint8_t*, size_t, ItemType type, uint8_t*) final
-    {
-        EXPECT_EQ(type, ItemType::FillPath);
-        return std::nullopt;
-    }
-};
-
-class WritingClient : public ItemBufferWritingClient {
-private:
-    ItemBufferHandle createItemBuffer(size_t capacity) final
-    {
-        EXPECT_LT(capacity, globalItemBufferCapacity);
-        return { globalBufferIdentifier, globalItemBuffer, globalItemBufferCapacity };
-    }
-
-    RefPtr<FragmentedSharedBuffer> encodeItemOutOfLine(const DisplayListItem&) const final
-    {
-        return SharedBuffer::create();
-    }
-};
-
-TEST(DisplayListTests, OutOfLineItemDecodingFailure)
-{
-    FloatRect contextBounds { 0, 0, contextWidth, contextHeight };
-
-    auto colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
-    auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.get(), kCGImageAlphaPremultipliedLast));
-    GraphicsContextCG context { cgContext.get() };
-
-    DisplayList originalList;
-    WritingClient writer;
-    originalList.setItemBufferWritingClient(&writer);
-
-    Path path;
-    path.moveTo({ 10., 10. });
-    path.addLineTo({ 50., 50. });
-    path.addLineTo({ 10., 10. });
-    originalList.append<SetInlineStrokeColor>(Color::blue);
-    originalList.append<FillPath>(WTFMove(path));
-
-    DisplayList shallowCopy {{ ItemBufferHandle { globalBufferIdentifier, globalItemBuffer, originalList.sizeInBytes() } }};
-    ReadingClient reader;
-    shallowCopy.setItemBufferReadingClient(&reader);
-
-    Replayer replayer { context, shallowCopy };
-    auto result = replayer.replay();
-    EXPECT_GT(result.numberOfBytesRead, 0U);
-    EXPECT_EQ(result.missingCachedResourceIdentifier, std::nullopt);
-    EXPECT_EQ(result.reasonForStopping, StopReplayReason::InvalidItemOrExtent);
-}
-
-TEST(DisplayListTests, InlineItemValidationFailure)
+TEST(DisplayListTests, ItemValidationFailure)
 {
     FloatRect contextBounds { 0, 0, contextWidth, contextHeight };
 
@@ -152,13 +93,10 @@ TEST(DisplayListTests, InlineItemValidationFailure)
         EXPECT_FALSE(identifier.isValid());
 
         DisplayList list;
-        ReadingClient reader;
-        list.setItemBufferReadingClient(&reader);
-        list.append<ClipToImageBuffer>(identifier, FloatRect { });
+        list.append(ClipToImageBuffer(identifier, FloatRect { }));
 
         Replayer replayer { context, list };
         auto result = replayer.replay();
-        EXPECT_EQ(result.numberOfBytesRead, 0U);
         EXPECT_EQ(result.missingCachedResourceIdentifier, std::nullopt);
         EXPECT_EQ(result.reasonForStopping, StopReplayReason::InvalidItemOrExtent);
     };

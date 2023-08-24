@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 #pragma once
 
 #include "GraphicsContext.h"
-#include "InMemoryDisplayList.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
@@ -36,6 +35,7 @@ class FloatRect;
 
 namespace DisplayList {
 
+class DisplayList;
 class ResourceHeap;
 
 enum class StopReplayReason : uint8_t {
@@ -46,8 +46,7 @@ enum class StopReplayReason : uint8_t {
 };
 
 struct ReplayResult {
-    std::unique_ptr<InMemoryDisplayList> trackedDisplayList;
-    size_t numberOfBytesRead { 0 };
+    std::unique_ptr<DisplayList> trackedDisplayList;
     std::optional<RenderingResourceIdentifier> missingCachedResourceIdentifier;
     StopReplayReason reasonForStopping { StopReplayReason::ReplayedAllItems };
 };
@@ -65,7 +64,7 @@ private:
         std::optional<StopReplayReason> stopReason;
         std::optional<RenderingResourceIdentifier> resourceIdentifier;
     };
-    ApplyItemResult applyItem(ItemHandle);
+    ApplyItemResult applyItem(const DisplayListItem&);
 
     GraphicsContext& m_context;
     const DisplayList& m_displayList;
