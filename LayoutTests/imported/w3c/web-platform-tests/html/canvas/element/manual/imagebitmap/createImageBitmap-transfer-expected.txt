@@ -4,8 +4,8 @@ PASS Transfer ImageBitmap created from an HTMLVideoElement
 PASS Transfer ImageBitmap created from an HTMLVideoElement from a data URL
 PASS Transfer ImageBitmap created from a bitmap HTMLImageElement
 PASS Transfer ImageBitmap created from a vector HTMLImageElement
-FAIL Transfer ImageBitmap created from a bitmap SVGImageElement promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Transfer ImageBitmap created from a vector SVGImageElement promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Transfer ImageBitmap created from a bitmap SVGImageElement
+PASS Transfer ImageBitmap created from a vector SVGImageElement
 PASS Transfer ImageBitmap created from an OffscreenCanvas
 PASS Transfer ImageBitmap created from an ImageData
 PASS Transfer ImageBitmap created from an ImageBitmap

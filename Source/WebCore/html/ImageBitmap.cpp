@@ -49,6 +49,7 @@
 #include "LayoutSize.h"
 #include "LocalFrameView.h"
 #include "RenderElement.h"
+#include "SVGImageElement.h"
 #include "SharedBuffer.h"
 #include "WebCodecsVideoFrame.h"
 #include "WorkerClient.h"
@@ -334,8 +335,25 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     // 2. If image is not completely available, then return a promise rejected with
     // an "InvalidStateError" DOMException and abort these steps.
 
-    auto* cachedImage = imageElement->cachedImage();
-    if (!cachedImage || !imageElement->complete()) {
+    if (!imageElement->complete()) {
+        completionHandler(Exception { InvalidStateError, "Cannot create ImageBitmap that is not completely available"_s });
+        return;
+    }
+
+    createCompletionHandler(scriptExecutionContext, imageElement->cachedImage(), imageElement->renderer(), WTFMove(options), rect, WTFMove(completionHandler));
+}
+
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, RefPtr<SVGImageElement>& imageElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
+{
+    createCompletionHandler(scriptExecutionContext, imageElement->cachedImage(), imageElement->renderer(), WTFMove(options), rect, WTFMove(completionHandler));
+}
+
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, CachedImage* cachedImage, RenderElement* renderer, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
+{
+    // 2. If image is not completely available, then return a promise rejected with
+    // an "InvalidStateError" DOMException and abort these steps.
+
+    if (!cachedImage) {
         completionHandler(Exception { InvalidStateError, "Cannot create ImageBitmap that is not completely available"_s });
         return;
     }
@@ -345,7 +363,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     //    resizeHeight options are not specified, then return a promise rejected with
     //    an "InvalidStateError" DOMException and abort these steps.
 
-    auto imageSize = cachedImage->imageSizeForRenderer(imageElement->renderer(), 1.0f);
+    auto imageSize = cachedImage->imageSizeForRenderer(renderer, 1.0f);
     if ((!imageSize.width() || !imageSize.height()) && (!options.resizeWidth || !options.resizeHeight)) {
         completionHandler(Exception { InvalidStateError, "Cannot create ImageBitmap from a source with no intrinsic size without providing resize dimensions"_s });
         return;
@@ -387,7 +405,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
         return;
     }
 
-    auto imageForRenderer = cachedImage->imageForRenderer(imageElement->renderer());
+    auto imageForRenderer = cachedImage->imageForRenderer(renderer);
     if (!imageForRenderer) {
         completionHandler(Exception { InvalidStateError, "Cannot create ImageBitmap from image that can't be rendered"_s });
         return;
