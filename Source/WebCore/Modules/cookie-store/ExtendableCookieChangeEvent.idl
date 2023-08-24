@@ -23,35 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+// https://wicg.github.io/cookie-store/#extendablecookiechangeevent
 
-#include "CookieChangeEventInit.h"
-#include "Event.h"
-#include <wtf/IsoMalloc.h>
-#include <wtf/Ref.h>
-#include <wtf/Vector.h>
-
-namespace WebCore {
-
-struct CookieListItem;
-
-class CookieChangeEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(CookieChangeEvent);
-public:
-    static Ref<CookieChangeEvent> create(const AtomString& type, CookieChangeEventInit&&, IsTrusted = IsTrusted::No);
-    ~CookieChangeEvent();
-
-    const Vector<CookieListItem>& changed() const { return m_changed; }
-    const Vector<CookieListItem>& deleted() const { return m_deleted; }
-
-private:
-    CookieChangeEvent(const AtomString& type, CookieChangeEventInit&&, IsTrusted);
-
-    // Event
-    EventInterface eventInterface() const final;
-
-    Vector<CookieListItem> m_changed;
-    Vector<CookieListItem> m_deleted;
+[
+    EnabledBySetting=CookieStoreAPIEnabled&CookieStoreAPIServiceWorkerEnabled,
+    Exposed=ServiceWorker
+] interface ExtendableCookieChangeEvent : ExtendableEvent {
+    constructor([AtomString] DOMString type, optional ExtendableCookieChangeEventInit eventInitDict = {});
+    [SameObject] readonly attribute FrozenArray<CookieListItem> changed;
+    [SameObject] readonly attribute FrozenArray<CookieListItem> deleted;
 };
-
-} // namespace WebCore

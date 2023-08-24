@@ -1804,6 +1804,20 @@ CookieStoreAPIExtendedAttributesEnabled:
     WebCore:
       default: false
 
+CookieStoreAPIServiceWorkerEnabled:
+  type: bool
+  category: dom
+  status: testable
+  humanReadableName: "Cookie Store API for Service Workers"
+  humanReadableDescription: "Enable Cookie Store API for Service Workers"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CoreMathMLEnabled:
   type: bool
   status: unstable

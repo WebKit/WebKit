@@ -23,35 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "CookieStoreManager.h"
 
-#include "CookieChangeEventInit.h"
-#include "Event.h"
-#include <wtf/IsoMalloc.h>
+#include "CookieStoreGetOptions.h"
+#include "JSDOMPromiseDeferred.h"
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-struct CookieListItem;
+Ref<CookieStoreManager> CookieStoreManager::create()
+{
+    return adoptRef(*new CookieStoreManager);
+}
 
-class CookieChangeEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(CookieChangeEvent);
-public:
-    static Ref<CookieChangeEvent> create(const AtomString& type, CookieChangeEventInit&&, IsTrusted = IsTrusted::No);
-    ~CookieChangeEvent();
+CookieStoreManager::CookieStoreManager() = default;
 
-    const Vector<CookieListItem>& changed() const { return m_changed; }
-    const Vector<CookieListItem>& deleted() const { return m_deleted; }
+CookieStoreManager::~CookieStoreManager() = default;
 
-private:
-    CookieChangeEvent(const AtomString& type, CookieChangeEventInit&&, IsTrusted);
+void CookieStoreManager::subscribe(Vector<CookieStoreGetOptions>&&, Ref<DeferredPromise>&& promise)
+{
+    promise->reject(NotSupportedError);
+}
 
-    // Event
-    EventInterface eventInterface() const final;
+void CookieStoreManager::getSubscriptions(Ref<DeferredPromise>&& promise)
+{
+    promise->reject(NotSupportedError);
+}
 
-    Vector<CookieListItem> m_changed;
-    Vector<CookieListItem> m_deleted;
-};
+void CookieStoreManager::unsubscribe(Vector<CookieStoreGetOptions>&&, Ref<DeferredPromise>&& promise)
+{
+    promise->reject(NotSupportedError);
+}
 
 } // namespace WebCore

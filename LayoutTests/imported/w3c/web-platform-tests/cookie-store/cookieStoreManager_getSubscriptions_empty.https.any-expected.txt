@@ -1,3 +1,3 @@
 
-FAIL getSubscriptions returns an empty array when there are no subscriptions promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.cookies.getSubscriptions')"
+FAIL getSubscriptions returns an empty array when there are no subscriptions promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 

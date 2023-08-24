@@ -25,33 +25,25 @@
 
 #pragma once
 
-#include "CookieChangeEventInit.h"
-#include "Event.h"
-#include <wtf/IsoMalloc.h>
-#include <wtf/Ref.h>
-#include <wtf/Vector.h>
+#include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-struct CookieListItem;
+struct CookieStoreGetOptions;
+class DeferredPromise;
 
-class CookieChangeEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(CookieChangeEvent);
+class CookieStoreManager : public RefCounted<CookieStoreManager> {
 public:
-    static Ref<CookieChangeEvent> create(const AtomString& type, CookieChangeEventInit&&, IsTrusted = IsTrusted::No);
-    ~CookieChangeEvent();
+    static Ref<CookieStoreManager> create();
+    ~CookieStoreManager();
 
-    const Vector<CookieListItem>& changed() const { return m_changed; }
-    const Vector<CookieListItem>& deleted() const { return m_deleted; }
+    void subscribe(Vector<CookieStoreGetOptions>&&, Ref<DeferredPromise>&&);
+    void getSubscriptions(Ref<DeferredPromise>&&);
+    void unsubscribe(Vector<CookieStoreGetOptions>&&, Ref<DeferredPromise>&&);
 
 private:
-    CookieChangeEvent(const AtomString& type, CookieChangeEventInit&&, IsTrusted);
-
-    // Event
-    EventInterface eventInterface() const final;
-
-    Vector<CookieListItem> m_changed;
-    Vector<CookieListItem> m_deleted;
+    CookieStoreManager();
 };
 
 } // namespace WebCore

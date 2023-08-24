@@ -1,16 +1,26 @@
 
-FAIL cookieStore.delete with positional name promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL cookieStore.delete with name in options promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL cookieStore.delete domain starts with "." promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL cookieStore.delete with domain that is not equal current host promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL cookieStore.delete with domain set to the current hostname promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL cookieStore.delete with domain set to a subdomain of the current hostname promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL cookieStore.delete with domain set to a non-domain-matching suffix of the current hostname promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL cookieStore.delete with path set to the current directory promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL cookieStore.delete with path set to subdirectory of the current directory promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL cookieStore.delete with missing / at the end of path promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL cookieStore.delete with path that does not start with / promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL cookieStore.delete with get result promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL cookieStore.delete with positional empty name promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL cookieStore.delete with empty name in options promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
+FAIL cookieStore.delete with positional name promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+FAIL cookieStore.delete with name in options promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+FAIL cookieStore.delete domain starts with "." promise_rejects_js: function "function() { throw e }" threw object "SecurityError: The operation is insecure." ("SecurityError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL cookieStore.delete with domain that is not equal current host promise_rejects_js: function "function() { throw e }" threw object "SecurityError: The operation is insecure." ("SecurityError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL cookieStore.delete with domain set to the current hostname promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+FAIL cookieStore.delete with domain set to a subdomain of the current hostname promise_rejects_js: function "function() { throw e }" threw object "SecurityError: The operation is insecure." ("SecurityError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL cookieStore.delete with domain set to a non-domain-matching suffix of the current hostname promise_rejects_js: function "function() { throw e }" threw object "SecurityError: The operation is insecure." ("SecurityError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL cookieStore.delete with path set to the current directory promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+FAIL cookieStore.delete with path set to subdirectory of the current directory promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+FAIL cookieStore.delete with missing / at the end of path promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+FAIL cookieStore.delete with path that does not start with / promise_rejects_js: function "function() { throw e }" threw object "SecurityError: The operation is insecure." ("SecurityError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL cookieStore.delete with get result promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+FAIL cookieStore.delete with positional empty name promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+FAIL cookieStore.delete with empty name in options promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
 

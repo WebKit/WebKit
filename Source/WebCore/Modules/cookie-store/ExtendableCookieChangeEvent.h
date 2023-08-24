@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CookieChangeEventInit.h"
-#include "Event.h"
+#include "ExtendableCookieChangeEventInit.h"
+#include "ExtendableEvent.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
@@ -35,19 +35,19 @@ namespace WebCore {
 
 struct CookieListItem;
 
-class CookieChangeEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(CookieChangeEvent);
+class ExtendableCookieChangeEvent final : public ExtendableEvent {
+    WTF_MAKE_ISO_ALLOCATED(ExtendableCookieChangeEvent);
 public:
-    static Ref<CookieChangeEvent> create(const AtomString& type, CookieChangeEventInit&&, IsTrusted = IsTrusted::No);
-    ~CookieChangeEvent();
+    static Ref<ExtendableCookieChangeEvent> create(const AtomString& type, ExtendableCookieChangeEventInit&&, IsTrusted = IsTrusted::No);
+    ~ExtendableCookieChangeEvent();
 
     const Vector<CookieListItem>& changed() const { return m_changed; }
     const Vector<CookieListItem>& deleted() const { return m_deleted; }
 
 private:
-    CookieChangeEvent(const AtomString& type, CookieChangeEventInit&&, IsTrusted);
+    ExtendableCookieChangeEvent(const AtomString& type, ExtendableCookieChangeEventInit&&, IsTrusted);
 
-    // Event
+    // ExtendableEvent
     EventInterface eventInterface() const final;
 
     Vector<CookieListItem> m_changed;

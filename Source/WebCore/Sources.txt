@@ -106,8 +106,10 @@ Modules/compression/DecompressionStreamDecoder.cpp
 Modules/contact-picker/ContactsManager.cpp
 Modules/contact-picker/NavigatorContacts.cpp
 Modules/cookie-consent/NavigatorCookieConsent.cpp
+Modules/cookie-store/ExtendableCookieChangeEvent.cpp
 Modules/cookie-store/CookieChangeEvent.cpp
 Modules/cookie-store/CookieStore.cpp
+Modules/cookie-store/CookieStoreManager.cpp
 Modules/credentialmanagement/BasicCredential.cpp
 Modules/credentialmanagement/CredentialsContainer.cpp
 Modules/credentialmanagement/NavigatorCredentials.cpp
@@ -3292,6 +3294,7 @@ JSCookieSameSite.cpp
 JSCookieStore.cpp
 JSCookieStoreDeleteOptions.cpp
 JSCookieStoreGetOptions.cpp
+JSCookieStoreManager.cpp
 JSCountQueuingStrategy.cpp
 JSCredentialCreationOptions.cpp
 JSCredentialRequestOptions.cpp
@@ -3417,6 +3420,8 @@ JSEventListenerOptions.cpp
 JSEventModifierInit.cpp
 JSEventSource.cpp
 JSEventTarget.cpp
+JSExtendableCookieChangeEvent.cpp
+JSExtendableCookieChangeEventInit.cpp
 JSExtendableEvent.cpp
 JSExtendableEventInit.cpp
 JSExtendableMessageEvent.cpp

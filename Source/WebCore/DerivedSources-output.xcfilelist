@@ -623,6 +623,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCookieStoreDeleteOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCookieStoreDeleteOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCookieStoreGetOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCookieStoreGetOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCookieStoreManager.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCookieStoreManager.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCountQueuingStrategy.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCountQueuingStrategy.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCredentialCreationOptions.cpp
@@ -953,6 +955,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEventSource.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEventSource.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEventTarget.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEventTarget.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSExtendableCookieChangeEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSExtendableCookieChangeEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSExtendableCookieChangeEventInit.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSExtendableCookieChangeEventInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSExtendableEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSExtendableEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSExtendableEventInit.cpp

@@ -23,35 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "ExtendableCookieChangeEvent.h"
 
-#include "CookieChangeEventInit.h"
-#include "Event.h"
-#include <wtf/IsoMalloc.h>
+#include "CookieListItem.h"
+#include "ExtendableCookieChangeEventInit.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-struct CookieListItem;
+WTF_MAKE_ISO_ALLOCATED_IMPL(ExtendableCookieChangeEvent);
 
-class CookieChangeEvent final : public Event {
-    WTF_MAKE_ISO_ALLOCATED(CookieChangeEvent);
-public:
-    static Ref<CookieChangeEvent> create(const AtomString& type, CookieChangeEventInit&&, IsTrusted = IsTrusted::No);
-    ~CookieChangeEvent();
+Ref<ExtendableCookieChangeEvent> ExtendableCookieChangeEvent::create(const AtomString& type, ExtendableCookieChangeEventInit&& eventInitDict, IsTrusted isTrusted)
+{
+    return adoptRef(*new ExtendableCookieChangeEvent(type, WTFMove(eventInitDict), isTrusted));
+}
 
-    const Vector<CookieListItem>& changed() const { return m_changed; }
-    const Vector<CookieListItem>& deleted() const { return m_deleted; }
+ExtendableCookieChangeEvent::ExtendableCookieChangeEvent(const AtomString& type, ExtendableCookieChangeEventInit&& eventInitDict, IsTrusted isTrusted)
+    : ExtendableEvent(type, eventInitDict, isTrusted)
+    , m_changed(WTFMove(eventInitDict.changed))
+    , m_deleted(WTFMove(eventInitDict.deleted))
+{ }
 
-private:
-    CookieChangeEvent(const AtomString& type, CookieChangeEventInit&&, IsTrusted);
+ExtendableCookieChangeEvent::~ExtendableCookieChangeEvent() = default;
 
-    // Event
-    EventInterface eventInterface() const final;
-
-    Vector<CookieListItem> m_changed;
-    Vector<CookieListItem> m_deleted;
-};
+EventInterface ExtendableCookieChangeEvent::eventInterface() const
+{
+    return ExtendableCookieChangeEventInterfaceType;
+}
 
 } // namespace WebCore

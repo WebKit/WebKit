@@ -1,6 +1,6 @@
 
-FAIL cookieStore.subscribe without url in option promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'self.registration.cookies.subscribe')"
-FAIL cookieStore.subscribe with invalid url path in option promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.cookies.subscribe')"
-FAIL cookieStore.subscribe is idempotent promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'self.registration.cookies.subscribe')"
-FAIL CookieStore.unsubscribe is idempotent promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'self.registration.cookies.subscribe')"
+FAIL cookieStore.subscribe without url in option promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS cookieStore.subscribe with invalid url path in option
+FAIL cookieStore.subscribe is idempotent promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL CookieStore.unsubscribe is idempotent promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 
