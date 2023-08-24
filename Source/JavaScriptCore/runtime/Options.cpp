@@ -240,7 +240,7 @@ bool Options::isAvailable(Options::ID id, Options::Availability availability)
     if (id == maxSingleAllocationSizeID)
         return true;
 #endif
-#if ENABLE(ASSEMBLER) && OS(LINUX)
+#if ENABLE(ASSEMBLER) && (OS(LINUX) || OS(DARWIN))
     if (id == logJITCodeForPerfID)
         return true;
 #endif
