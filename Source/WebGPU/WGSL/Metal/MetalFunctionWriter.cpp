@@ -970,9 +970,10 @@ void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
         break;
 
     case AST::BinaryOperation::LeftShift:
+        m_stringBuilder.append(" << ");
+        break;
     case AST::BinaryOperation::RightShift:
-        // FIXME: Implement these
-        RELEASE_ASSERT_NOT_REACHED();
+        m_stringBuilder.append(" >> ");
         break;
 
     case AST::BinaryOperation::Equal:
