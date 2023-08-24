@@ -485,6 +485,9 @@ void WebPushDaemon::decodeAndHandleMessage(xpc_connection_t connection, MessageT
     case MessageType::SetPublicTokenForTesting:
         handleWebPushDMessageWithReply<MessageInfo::setPublicTokenForTesting>(clientConnection, encodedMessage, WTFMove(replySender));
         break;
+    case MessageType::RequestSystemNotificationPermission_UNUSED:
+    case MessageType::GetOriginsWithPushAndNotificationPermissions_UNUSED:
+        break;
     }
 }
 
