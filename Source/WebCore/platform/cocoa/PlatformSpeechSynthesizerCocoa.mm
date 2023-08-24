@@ -90,8 +90,22 @@ static float getAVSpeechUtteranceMaximumSpeechRate()
         return nil;
 
     m_synthesizerObject = synthesizer;
+
+#if HAVE(AVSPEECHSYNTHESIS_VOICES_CHANGE_NOTIFICATION)
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(availableVoicesDidChange) name:AVSpeechSynthesisAvailableVoicesDidChangeNotification object:nil];
+#endif
+
     return self;
 }
+
+#if HAVE(AVSPEECHSYNTHESIS_VOICES_CHANGE_NOTIFICATION)
+
+- (void)availableVoicesDidChange
+{
+    m_synthesizerObject->voicesDidChange();
+}
+
+#endif
 
 - (float)mapSpeechRateToPlatformRate:(float)rate
 {

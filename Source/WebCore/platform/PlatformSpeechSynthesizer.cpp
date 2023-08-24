@@ -40,6 +40,21 @@ const Vector<RefPtr<PlatformSpeechSynthesisVoice>>& PlatformSpeechSynthesizer::v
     return m_voiceList;
 }
 
+void PlatformSpeechSynthesizer::resetVoiceList()
+{
+    if (!m_voiceListIsInitialized)
+        return;
+
+    m_voiceListIsInitialized = false;
+    m_voiceList.clear();
+}
+
+void PlatformSpeechSynthesizer::voicesDidChange()
+{
+    resetVoiceList();
+    m_speechSynthesizerClient.voicesDidChange();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SPEECH_SYNTHESIS)
