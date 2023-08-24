@@ -24,6 +24,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from functools import reduce
+
 
 def deepAppend(value1, value2, currentKey=None):
     if type(value1) != type(value2):
@@ -32,7 +34,7 @@ def deepAppend(value1, value2, currentKey=None):
         return value1 + value2
 
     result = {}
-    for key in (value1.keys() + value2.keys()):
+    for key in [*value1.keys(), *value2.keys()]:
         if key not in result:
             result[key] = deepAppend(value1[key], value2[key], key)
     return result
