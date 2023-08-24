@@ -56,8 +56,8 @@ public:
 
     explicit WebExtensionAPIEvent(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context, WebExtensionEventListenerType type)
         : WebExtensionAPIObject(forMainWorld, runtime, context)
+        , m_type(type)
     {
-        m_type = type;
     }
 
 private:

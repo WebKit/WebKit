@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,42 +28,65 @@
 #endif
 
 #import "config.h"
-#import "WebExtensionAPIWebNavigationEvent.h"
+#import "WebExtensionAPIWindowsEvent.h"
 
+#import "CocoaHelpers.h"
 #import "MessageSenderInlines.h"
 #import "WebExtensionContextMessages.h"
 #import "WebPageProxy.h"
 #import "WebProcess.h"
-#import "_WKWebExtensionWebNavigationURLFilter.h"
+#import "_WKWebExtensionUtilities.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+static NSString *windowTypesKey = @"windowTypes";
+static NSString *normalKey = @"normal";
+static NSString *popupKey = @"popup";
+
 namespace WebKit {
 
-void WebExtensionAPIWebNavigationEvent::invokeListenersWithArgument(id argument, NSURL *targetURL)
+void WebExtensionAPIWindowsEvent::invokeListenersWithArgument(id argument, WindowType windowType)
 {
     if (m_listeners.isEmpty())
         return;
 
     for (auto& listener : m_listeners) {
-        _WKWebExtensionWebNavigationURLFilter *filter = listener.second.get();
-        if (filter && ![filter matchesURL:targetURL])
+        if (!listener.second.contains(windowType))
             continue;
 
         listener.first->call(argument);
     }
 }
 
-void WebExtensionAPIWebNavigationEvent::addListener(WebPage* page, RefPtr<WebExtensionCallbackHandler> listener, NSDictionary *filter, NSString **outExceptionString)
+void WebExtensionAPIWindowsEvent::addListener(WebPage* page, RefPtr<WebExtensionCallbackHandler> listener, NSDictionary *filter, NSString **outExceptionString)
 {
-    _WKWebExtensionWebNavigationURLFilter *parsedFilter;
-    if (filter) {
-        parsedFilter = [[_WKWebExtensionWebNavigationURLFilter alloc] initWithDictionary:filter outErrorMessage:outExceptionString];
-        if (!parsedFilter)
-            return;
-    }
+    static NSArray<NSString *> *optionalKeys = @[
+        windowTypesKey,
+    ];
 
-    m_listeners.append({ listener, parsedFilter });
+    static NSDictionary<NSString *, id> *types = @{
+        windowTypesKey: @[ NSString.class ],
+    };
+
+    if (![_WKWebExtensionUtilities validateContentsOfDictionary:filter requiredKeys:nil optionalKeys:optionalKeys keyToExpectedValueType:types outExceptionString:outExceptionString])
+        return;
+
+    OptionSet<WindowType> windowTypeFilter;
+
+    if (NSArray<NSString *> *windowTypes = objectForKey<NSArray>(filter, windowTypesKey, false, NSString.class)) {
+        if ([windowTypes containsObject:normalKey])
+            windowTypeFilter.add(WindowType::Normal);
+        if ([windowTypes containsObject:popupKey])
+            windowTypeFilter.add(WindowType::Popup);
+
+        if (!windowTypeFilter) {
+            *outExceptionString = @"The 'windowTypes' array must contain 'normal' and/or 'popup'.";
+            return;
+        }
+    } else
+        windowTypeFilter = WindowType::All;
+
+    m_listeners.append({ listener, windowTypeFilter });
 
     if (!page)
         return;
@@ -71,7 +94,7 @@ void WebExtensionAPIWebNavigationEvent::addListener(WebPage* page, RefPtr<WebExt
     WebProcess::singleton().send(Messages::WebExtensionContext::AddListener(page->webPageProxyIdentifier(), m_type), extensionContext().identifier());
 }
 
-void WebExtensionAPIWebNavigationEvent::removeListener(WebPage* page, RefPtr<WebExtensionCallbackHandler> listener)
+void WebExtensionAPIWindowsEvent::removeListener(WebPage* page, RefPtr<WebExtensionCallbackHandler> listener)
 {
     m_listeners.removeAllMatching([&](auto& entry) {
         return entry.first->callbackFunction() == listener->callbackFunction();
@@ -83,7 +106,7 @@ void WebExtensionAPIWebNavigationEvent::removeListener(WebPage* page, RefPtr<Web
     WebProcess::singleton().send(Messages::WebExtensionContext::RemoveListener(page->webPageProxyIdentifier(), m_type), extensionContext().identifier());
 }
 
-bool WebExtensionAPIWebNavigationEvent::hasListener(RefPtr<WebExtensionCallbackHandler> listener)
+bool WebExtensionAPIWindowsEvent::hasListener(RefPtr<WebExtensionCallbackHandler> listener)
 {
     return m_listeners.containsIf([&](auto& entry) {
         return entry.first->callbackFunction() == listener->callbackFunction();

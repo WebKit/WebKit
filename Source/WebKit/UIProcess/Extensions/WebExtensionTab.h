@@ -65,7 +65,7 @@ public:
         Title      = 1 << 7,
         URL        = 1 << 8,
         ZoomFactor = 1 << 9,
-        All        = std::numeric_limits<uint16_t>::max(),
+        All        = Audible | Loading | Muted | Pinned | ReaderMode | Size | Title | URL | ZoomFactor,
     };
 
     WebExtensionTabIdentifier identifier() const { return m_identifier; }

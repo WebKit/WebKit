@@ -33,8 +33,10 @@
 #include "WebExtensionAPIObject.h"
 #include "WebExtensionAPIPermissions.h"
 #include "WebExtensionAPIRuntime.h"
+#include "WebExtensionAPITabs.h"
 #include "WebExtensionAPITest.h"
 #include "WebExtensionAPIWebNavigation.h"
+#include "WebExtensionAPIWindows.h"
 
 namespace WebKit {
 
@@ -53,6 +55,8 @@ public:
     WebExtensionAPIPermissions& permissions();
     WebExtensionAPIRuntime& runtime() final;
     WebExtensionAPITest& test();
+    WebExtensionAPITabs& tabs();
+    WebExtensionAPIWindows& windows();
     WebExtensionAPIWebNavigation& webNavigation();
 #endif
 
@@ -61,7 +65,9 @@ private:
     RefPtr<WebExtensionAPIExtension> m_extension;
     RefPtr<WebExtensionAPIPermissions> m_permissions;
     RefPtr<WebExtensionAPIRuntime> m_runtime;
+    RefPtr<WebExtensionAPITabs> m_tabs;
     RefPtr<WebExtensionAPITest> m_test;
+    RefPtr<WebExtensionAPIWindows> m_windows;
     RefPtr<WebExtensionAPIWebNavigation> m_webNavigation;
 };
 

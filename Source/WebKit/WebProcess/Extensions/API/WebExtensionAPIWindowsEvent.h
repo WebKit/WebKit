@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,28 +27,30 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include "JSWebExtensionAPIWebNavigationEvent.h"
-#include "JSWebExtensionWrappable.h"
+#include "JSWebExtensionAPIWindowsEvent.h"
+#include "WebExtensionAPIEvent.h"
 #include "WebExtensionAPIObject.h"
-#include "WebExtensionEventListenerType.h"
-#include "WebPage.h"
 
-OBJC_CLASS JSValue;
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSString;
-OBJC_CLASS NSURL;
-OBJC_CLASS _WKWebExtensionWebNavigationURLFilter;
 
 namespace WebKit {
 
-class WebExtensionAPIWebNavigationEvent : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIWebNavigationEvent, webNavigationEvent);
+class WebExtensionAPIWindowsEvent : public WebExtensionAPIObject, public JSWebExtensionWrappable {
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIWindowsEvent, windowsEvent);
 
 public:
-    using FilterAndCallbackPair = std::pair<RefPtr<WebExtensionCallbackHandler>, RetainPtr<_WKWebExtensionWebNavigationURLFilter>>;
+    enum class WindowType : uint8_t {
+        None   = 0,
+        Normal = 1 << 0,
+        Popup  = 1 << 1,
+        All    = Normal | Popup,
+    };
+
+    using FilterAndCallbackPair = std::pair<RefPtr<WebExtensionCallbackHandler>, OptionSet<WindowType>>;
     using ListenerVector = Vector<FilterAndCallbackPair>;
 
-    void invokeListenersWithArgument(id argument, NSURL *targetURL);
+    void invokeListenersWithArgument(id argument, WindowType);
 
     const ListenerVector& listeners() const { return m_listeners; }
 
@@ -57,7 +59,7 @@ public:
     bool hasListener(RefPtr<WebExtensionCallbackHandler>);
 
 private:
-    explicit WebExtensionAPIWebNavigationEvent(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context, WebExtensionEventListenerType type)
+    explicit WebExtensionAPIWindowsEvent(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context, WebExtensionEventListenerType type)
         : WebExtensionAPIObject(forMainWorld, runtime, context)
         , m_type(type)
     {
