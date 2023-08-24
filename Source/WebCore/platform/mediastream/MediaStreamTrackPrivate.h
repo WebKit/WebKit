@@ -135,7 +135,7 @@ private:
     void sourceMutedChanged() final;
     void sourceSettingsChanged() final;
     void sourceConfigurationChanged() final;
-    bool preventSourceFromStopping() final;
+    bool preventSourceFromEnding() final;
     void audioUnitWillStart() final;
     void hasStartedProducingData() final;
 
