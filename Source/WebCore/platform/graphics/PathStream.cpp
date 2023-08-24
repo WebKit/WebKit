@@ -269,6 +269,12 @@ bool PathStream::isClosed() const
 
 FloatPoint PathStream::currentPoint() const
 {
+    if (m_segmentsData->segments.isEmpty())
+        return { };
+
+    if (auto result = m_segmentsData->segments.last().tryGetEndPointWithoutContext())
+        return result.value();
+
     FloatPoint lastMoveToPoint;
     FloatPoint currentPoint;
 
