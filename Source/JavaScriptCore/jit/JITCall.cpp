@@ -467,7 +467,7 @@ void JIT::emit_op_iterator_open(const JSInstruction* instruction)
         CacheableIdentifier::createFromImmortalIdentifier(ident->impl()), baseJSR, resultJSR, stubInfoGPR, AccessType::GetById);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
 
-    gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
+    gen.generateBaselineDataICFastPath(*this, stubInfoIndex);
     resetSP(); // We might OSR exit here, so we need to conservatively reset SP
     addSlowCase();
     m_getByIds.append(gen);
@@ -576,7 +576,7 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
             CacheableIdentifier::createFromImmortalIdentifier(vm().propertyNames->done.impl()), returnValueJSR, doneJSR, stubInfoGPR, AccessType::GetById);
         gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
 
-        gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
+        gen.generateBaselineDataICFastPath(*this, stubInfoIndex);
         resetSP(); // We might OSR exit here, so we need to conservatively reset SP
         addSlowCase();
         m_getByIds.append(gen);
@@ -604,7 +604,7 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
             CacheableIdentifier::createFromImmortalIdentifier(vm().propertyNames->value.impl()), baseJSR, resultJSR, stubInfoGPR, AccessType::GetById);
         gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
 
-        gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
+        gen.generateBaselineDataICFastPath(*this, stubInfoIndex);
         resetSP(); // We might OSR exit here, so we need to conservatively reset SP
         addSlowCase();
         m_getByIds.append(gen);

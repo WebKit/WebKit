@@ -76,7 +76,7 @@ void JIT::emit_op_get_by_val(const JSInstruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
     emitArrayProfilingSiteWithCell(bytecode, baseJSR.payloadGPR(), scratchGPR);
 
-    gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
+    gen.generateBaselineDataICFastPath(*this, stubInfoIndex);
 
     addSlowCase();
     m_getByVals.append(gen);
@@ -177,7 +177,7 @@ void JIT::emit_op_get_private_name(const JSInstruction* currentInstruction)
         RegisterSetBuilder::stubUnavailableRegisters(), baseJSR, propertyJSR, resultJSR, stubInfoGPR);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
 
-    gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
+    gen.generateBaselineDataICFastPath(*this, stubInfoIndex);
     addSlowCase();
     m_getByVals.append(gen);
 
@@ -264,7 +264,7 @@ void JIT::emit_op_set_private_brand(const JSInstruction* currentInstruction)
         baseJSR, brandJSR, stubInfoGPR);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
 
-    gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
+    gen.generateBaselineDataICFastPath(*this, stubInfoIndex);
     addSlowCase();
     m_privateBrandAccesses.append(gen);
 
@@ -319,7 +319,7 @@ void JIT::emit_op_check_private_brand(const JSInstruction* currentInstruction)
         baseJSR, brandJSR, stubInfoGPR);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
 
-    gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
+    gen.generateBaselineDataICFastPath(*this, stubInfoIndex);
     addSlowCase();
     m_privateBrandAccesses.append(gen);
 }
@@ -380,7 +380,7 @@ void JIT::emit_op_put_by_val(const JSInstruction* currentInstruction)
         stubInfo->propertyIsInt32 = true;
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
 
-    gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
+    gen.generateBaselineDataICFastPath(*this, stubInfoIndex);
     resetSP(); // We might OSR exit here, so we need to conservatively reset SP
     addSlowCase();
     m_putByVals.append(gen);
@@ -493,7 +493,7 @@ void JIT::emit_op_put_private_name(const JSInstruction* currentInstruction)
         baseJSR, propertyJSR, valueJSR, InvalidGPRReg, stubInfoGPR, ECMAMode::sloppy());
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
 
-    gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
+    gen.generateBaselineDataICFastPath(*this, stubInfoIndex);
     addSlowCase();
     m_putByVals.append(gen);
 
@@ -653,7 +653,7 @@ void JIT::emit_op_del_by_id(const JSInstruction* currentInstruction)
         baseJSR, resultJSR, stubInfoGPR);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
 
-    gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
+    gen.generateBaselineDataICFastPath(*this, stubInfoIndex);
     addSlowCase();
     m_delByIds.append(gen);
 
@@ -759,7 +759,7 @@ void JIT::emit_op_del_by_val(const JSInstruction* currentInstruction)
         baseJSR, propertyJSR, resultJSR, stubInfoGPR);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
 
-    gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
+    gen.generateBaselineDataICFastPath(*this, stubInfoIndex);
     addSlowCase();
     m_delByVals.append(gen);
 
@@ -862,7 +862,7 @@ void JIT::emit_op_try_get_by_id(const JSInstruction* currentInstruction)
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident), baseJSR, resultJSR, stubInfoGPR, AccessType::TryGetById);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
 
-    gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
+    gen.generateBaselineDataICFastPath(*this, stubInfoIndex);
     addSlowCase();
     m_getByIds.append(gen);
 
@@ -918,7 +918,7 @@ void JIT::emit_op_get_by_id_direct(const JSInstruction* currentInstruction)
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident), baseJSR, resultJSR, stubInfoGPR, AccessType::GetByIdDirect);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
 
-    gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
+    gen.generateBaselineDataICFastPath(*this, stubInfoIndex);
     addSlowCase();
     m_getByIds.append(gen);
 
@@ -984,7 +984,7 @@ void JIT::emit_op_get_by_id(const JSInstruction* currentInstruction)
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident), baseJSR, resultJSR, stubInfoGPR, AccessType::GetById);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
 
-    gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
+    gen.generateBaselineDataICFastPath(*this, stubInfoIndex);
     resetSP(); // We might OSR exit here, so we need to conservatively reset SP
     addSlowCase();
     m_getByIds.append(gen);
@@ -1079,7 +1079,7 @@ void JIT::emit_op_get_by_id_with_this(const JSInstruction* currentInstruction)
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident), resultJSR, baseJSR, thisJSR, stubInfoGPR);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
 
-    gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
+    gen.generateBaselineDataICFastPath(*this, stubInfoIndex);
     resetSP(); // We might OSR exit here, so we need to conservatively reset SP
     addSlowCase();
     m_getByIdsWithThis.append(gen);
@@ -1180,7 +1180,7 @@ void JIT::emit_op_put_by_id(const JSInstruction* currentInstruction)
         baseJSR, valueJSR, stubInfoGPR, scratchGPR, ecmaMode, direct ? (ecmaMode.isStrict() ? AccessType::PutByIdDirectStrict : AccessType::PutByIdDirectSloppy) : (ecmaMode.isStrict() ? AccessType::PutByIdStrict : AccessType::PutByIdSloppy));
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
 
-    gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
+    gen.generateBaselineDataICFastPath(*this, stubInfoIndex);
     resetSP(); // We might OSR exit here, so we need to conservatively reset SP
     addSlowCase();
     m_putByIds.append(gen);
@@ -1273,7 +1273,7 @@ void JIT::emit_op_in_by_id(const JSInstruction* currentInstruction)
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident), baseJSR, resultJSR, stubInfoGPR);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
 
-    gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
+    gen.generateBaselineDataICFastPath(*this, stubInfoIndex);
     addSlowCase();
     m_inByIds.append(gen);
 
@@ -1333,7 +1333,7 @@ void JIT::emit_op_in_by_val(const JSInstruction* currentInstruction)
         baseJSR, propertyJSR, resultJSR, stubInfoGPR);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
 
-    gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
+    gen.generateBaselineDataICFastPath(*this, stubInfoIndex);
     addSlowCase();
     m_inByVals.append(gen);
 
@@ -1385,7 +1385,7 @@ void JIT::emitHasPrivate(VirtualRegister dst, VirtualRegister base, VirtualRegis
         baseJSR, propertyJSR, resultJSR, stubInfoGPR);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
 
-    gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
+    gen.generateBaselineDataICFastPath(*this, stubInfoIndex);
     addSlowCase();
     m_inByVals.append(gen);
 
@@ -2187,7 +2187,7 @@ void JIT::emit_op_get_by_val_with_this(const JSInstruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
     emitArrayProfilingSiteWithCell(bytecode, baseJSR.payloadGPR(), scratchGPR);
 
-    gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
+    gen.generateBaselineDataICFastPath(*this, stubInfoIndex);
 
     addSlowCase();
     m_getByValsWithThis.append(gen);
@@ -2374,10 +2374,10 @@ void JIT::emit_op_enumerator_get_by_val(const JSInstruction* currentInstruction)
     constexpr GPRReg resultGPR = BaselineJITRegisters::EnumeratorGetByVal::resultJSR.payloadGPR();
     constexpr GPRReg baseGPR = BaselineJITRegisters::EnumeratorGetByVal::baseJSR.payloadGPR();
     constexpr GPRReg propertyGPR = BaselineJITRegisters::EnumeratorGetByVal::propertyJSR.payloadGPR();
-    constexpr GPRReg stubInfoGPR = BaselineJITRegisters::EnumeratorGetByVal::stubInfoGPR;
-    constexpr GPRReg scratch1 = BaselineJITRegisters::EnumeratorGetByVal::scratch1;
-    constexpr GPRReg scratch2 = BaselineJITRegisters::EnumeratorGetByVal::scratch2;
-    constexpr GPRReg scratch3 = BaselineJITRegisters::EnumeratorGetByVal::scratch3;
+    using BaselineJITRegisters::EnumeratorGetByVal::stubInfoGPR;
+    using BaselineJITRegisters::EnumeratorGetByVal::scratch1;
+    using BaselineJITRegisters::EnumeratorGetByVal::scratch2;
+    using BaselineJITRegisters::EnumeratorGetByVal::scratch3;
 
     emitGetVirtualRegister(base, baseGPR);
     emitGetVirtualRegister(mode, scratch3);
@@ -2432,7 +2432,7 @@ void JIT::emit_op_enumerator_get_by_val(const JSInstruction* currentInstruction)
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
     stubInfo->isEnumerator = true;
 
-    gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
+    gen.generateBaselineDataICFastPath(*this, stubInfoIndex);
     resetSP(); // We might OSR exit here, so we need to conservatively reset SP
     addSlowCase();
     m_getByVals.append(gen);
@@ -2511,9 +2511,9 @@ void JIT::emit_op_enumerator_put_by_val(const JSInstruction* currentInstruction)
     constexpr GPRReg valueGPR = BaselineJITRegisters::EnumeratorPutByVal::valueJSR.payloadGPR();
     constexpr GPRReg baseGPR = BaselineJITRegisters::EnumeratorPutByVal::baseJSR.payloadGPR();
     constexpr GPRReg propertyGPR = BaselineJITRegisters::EnumeratorPutByVal::propertyJSR.payloadGPR();
-    constexpr GPRReg profileGPR = BaselineJITRegisters::EnumeratorPutByVal::profileGPR;
-    constexpr GPRReg stubInfoGPR = BaselineJITRegisters::EnumeratorPutByVal::stubInfoGPR;
-    constexpr GPRReg scratch1 = BaselineJITRegisters::EnumeratorPutByVal::scratch1;
+    using BaselineJITRegisters::EnumeratorPutByVal::profileGPR;
+    using BaselineJITRegisters::EnumeratorPutByVal::stubInfoGPR;
+    using BaselineJITRegisters::EnumeratorPutByVal::scratch1;
 
     // These four registers need to be set up before jumping to SlowPath code.
     emitGetVirtualRegister(base, baseGPR);
@@ -2578,7 +2578,7 @@ void JIT::emit_op_enumerator_put_by_val(const JSInstruction* currentInstruction)
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
     stubInfo->isEnumerator = true;
 
-    gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
+    gen.generateBaselineDataICFastPath(*this, stubInfoIndex);
     resetSP(); // We might OSR exit here, so we need to conservatively reset SP
     addSlowCase();
     m_putByVals.append(gen);
