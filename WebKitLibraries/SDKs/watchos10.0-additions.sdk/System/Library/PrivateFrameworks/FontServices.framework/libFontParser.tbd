@@ -1,0 +1,8 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [armv7k-watchos, arm64-watchos, arm64e-watchos, arm64_32-watchos]
+install-name: /System/Library/PrivateFrameworks/FontServices.framework/libFontParser.dylib
+exports:
+-       targets: [armv7k-watchos, arm64-watchos, arm64e-watchos, arm64_32-watchos]
+        symbols: [_FPFontCopyPostScriptName, _FPFontCopySFNTData, _FPFontCreateFontsFromData]
+...

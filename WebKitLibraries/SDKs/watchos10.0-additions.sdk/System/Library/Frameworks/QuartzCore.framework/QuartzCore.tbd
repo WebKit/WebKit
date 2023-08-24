@@ -1,0 +1,26 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [armv7k-watchos, arm64-watchos, arm64e-watchos, arm64_32-watchos]
+install-name: /System/Library/Frameworks/QuartzCore.framework/QuartzCore
+current-version: 1.11
+compatibility-version: 1.2
+exports:
+-       targets: [armv7k-watchos, arm64-watchos, arm64e-watchos, arm64_32-watchos]
+        symbols: [_CABackingStoreCollectBlocking, _CACurrentMediaTime, _CAMachPortCreate, _CAMachPortGetPort, _CAMachPortGetTypeID,
+                _CARenderServerRenderDisplayLayerWithTransformAndTimeOffset, _CARenderServerRenderLayerWithTransform, _CATransform3DGetAffineTransform,
+                _CATransform3DIdentity, _CATransform3DIsIdentity, _CATransform3DMakeScale, _CATransform3DMakeTranslation,
+                _CATransform3DTranslate, _kCAContentsFormatRGBA10XR, _kCAContextDisplayId, _kCAContextIgnoresHitTest, _kCAContextPortNumber,
+                _kCAContextSecure, _kCAFillModeBackwards, _kCAFillModeBoth, _kCAFillModeForwards, _kCAFillRuleEvenOdd, _kCAFillRuleNonZero,
+                _kCAFilterColorBurnBlendMode, _kCAFilterColorDodgeBlendMode, _kCAFilterColorHueRotate, _kCAFilterColorMatrix,
+                _kCAFilterColorMonochrome, _kCAFilterColorSaturate, _kCAFilterDarkenBlendMode, _kCAFilterDifferenceBlendMode,
+                _kCAFilterExclusionBlendMode, _kCAFilterGaussianBlur, _kCAFilterHardLightBlendMode, _kCAFilterLightenBlendMode,
+                _kCAFilterLinear, _kCAFilterMultiplyBlendMode, _kCAFilterNearest, _kCAFilterOverlayBlendMode, _kCAFilterPlusD,
+                _kCAFilterPlusL, _kCAFilterScreenBlendMode, _kCAFilterSoftLightBlendMode, _kCAFilterTrilinear, _kCAGravityBottom,
+                _kCAGravityCenter, _kCAGravityResizeAspect, _kCAGravityTopLeft, _kCAMediaTimingFunctionEaseInEaseOut, _kCAMediaTimingFunctionLinear,
+                _kCAValueFunctionRotateX, _kCAValueFunctionRotateY, _kCAValueFunctionRotateZ, _kCAValueFunctionScale, _kCAValueFunctionScaleX,
+                _kCAValueFunctionScaleY, _kCAValueFunctionScaleZ, _kCAValueFunctionTranslate, _kCAValueFunctionTranslateX,
+                _kCAValueFunctionTranslateY, _kCAValueFunctionTranslateZ]
+        objc-classes: [CAAnimationGroup, CABackdropLayer, CABasicAnimation, CAContext, CADisplayLink, CAEAGLLayer, CAFilter,
+                CAKeyframeAnimation, CALayer, CALayerHost, CAMediaTimingFunction, CAMetalLayer, CAPropertyAnimation, CAShapeLayer,
+                CASpringAnimation, CATiledLayer, CATransaction, CATransformLayer, CAValueFunction]
+...
