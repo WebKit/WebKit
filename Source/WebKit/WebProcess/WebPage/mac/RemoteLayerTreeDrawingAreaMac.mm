@@ -79,8 +79,8 @@ void RemoteLayerTreeDrawingAreaMac::applyTransientZoomToPage(double scale, Float
     auto unscrolledOrigin = origin;
     FloatRect unobscuredContentRect = frameView->unobscuredContentRectIncludingScrollbars();
     unscrolledOrigin.moveBy(-unobscuredContentRect.location());
-    webPage->scalePage(scale / webPage->viewScaleFactor(), roundedIntPoint(-unscrolledOrigin));
-    updateRendering();
+    m_webPage->scalePage(scale / m_webPage->viewScaleFactor(), roundedIntPoint(-unscrolledOrigin));
+    scheduleRenderingUpdate(ScheduleRenderingUrgency::AsSoonAsPossible);
 }
 
 void RemoteLayerTreeDrawingAreaMac::adjustTransientZoom(double scale, WebCore::FloatPoint origin)
