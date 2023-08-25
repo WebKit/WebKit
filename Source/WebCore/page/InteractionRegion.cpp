@@ -252,7 +252,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     // FIXME: Consider also allowing elements that only receive touch events.
     bool hasListener = renderer.style().eventListenerRegionTypes().contains(EventListenerRegionType::MouseClick);
     bool hasPointer = cursorTypeForElement(*matchedElement) == CursorType::Pointer || shouldAllowNonPointerCursorForElement(*matchedElement);
-    bool isTooBigForInteraction = checkedRegionArea.value() > frameViewArea / 2;
+    bool isTooBigForInteraction = checkedRegionArea.value() > frameViewArea / 3;
 
     auto elementIdentifier = matchedElement->identifier();
 
