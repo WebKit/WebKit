@@ -1385,6 +1385,17 @@ AbstractValue Graph::inferredValueForProperty(
     return AbstractValue::heapTop();
 }
 
+AbstractValue Graph::inferredValueForProperty(const AbstractValue& base, const RegisteredStructureSet& structureSet, PropertyOffset offset, StructureClobberState clobberState)
+{
+    if (JSValue value = tryGetConstantProperty(base.m_value, structureSet, offset)) {
+        AbstractValue result;
+        result.set(*this, *freeze(value), clobberState);
+        return result;
+    }
+
+    return AbstractValue::heapTop();
+}
+
 JSValue Graph::tryGetConstantClosureVar(JSValue base, ScopeOffset offset)
 {
     // This has an awesome concurrency story. See comment for GetGlobalVar in ByteCodeParser.
