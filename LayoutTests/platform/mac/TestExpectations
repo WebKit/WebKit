@@ -2770,3 +2770,98 @@ webkit.org/b/252322 [ X86_64 ] media/media-source/media-source-video-renders.htm
 
 # Requires Ventura or later
 [ BigSur Monterey ] media/media-source/media-source-paint-after-display-none.html [ Skip ]
+
+webkit.org/b/259489 [ Monterey+ ] http/tests/media/hls/track-in-band-multiple-cues.html [ Pass Failure ]
+
+webkit.org/b/259524 [ Monterey+ ] media/audioSession/audioSessionState.html [ Pass Failure ]
+
+# rdar://110876540 ASSERTION FAILED: firstChild(): [ macOS ] (258183)
+[ Debug ] media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Pass Crash ]
+
+webkit.org/b/259539 [ Debug ] storage/indexeddb/cursor-update.html [ Pass Failure Crash ]
+
+webkit.org/b/259190 http/tests/images/heic-as-heif.html [ Pass ImageOnlyFailure ]
+
+# webkit.org/b/259373 Migrate macOS Sonoma test expectations to OpenSource, add expectation files to Down-Levels
+[ Monterey ] css1/box_properties/acid_test.html [ Pass Failure ImageOnlyFailure ]
+[ Monterey ] css2.1/t09-c5526c-display-00-e.html [ Pass Failure ImageOnlyFailure ]
+[ Monterey ] fast/block/basic/011.html [ Pass Failure ImageOnlyFailure ]
+[ Monterey ] fast/block/basic/minheight.html [ Pass Failure ImageOnlyFailure ]
+[ Monterey ] fast/block/margin-collapse/103.html [ Pass Failure ImageOnlyFailure ]
+[ Monterey ] fast/css/002.html [ Pass Failure ImageOnlyFailure ]
+[ Monterey ] fast/invalid/008.html [ Pass Failure ImageOnlyFailure ]
+[ Monterey ] fast/overflow/003.xml [ Pass Failure ImageOnlyFailure ]
+[ Monterey ] fast/text/basic/generic-family-reset.html [ Pass Failure ImageOnlyFailure ]
+[ Monterey ] imported/w3c/web-platform-tests/fetch/content-length/api-and-duplicate-headers.any.html [ Pass Failure ]
+[ Monterey ] imported/w3c/web-platform-tests/fetch/content-length/api-and-duplicate-headers.any.worker.html [ Pass Failure ]
+[ Monterey ] imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/mrow-fallback.html [ Pass Failure ]
+[ Monterey ] imported/w3c/web-platform-tests/mathml/presentation-markup/tables/table-002.html [ Pass Failure ]
+[ Monterey ] imported/w3c/web-platform-tests/mathml/presentation-markup/tables/table-003.html [ Pass Failure ]
+[ Monterey ] imported/w3c/web-platform-tests/mathml/relations/css-styling/floats/not-floating-001.html [ Pass Failure ]
+[ Monterey ] imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001.html [ Pass Failure ]
+[ Monterey ] imported/w3c/web-platform-tests/mathml/relations/css-styling/width-height-001.html [ Pass Failure ]
+[ Monterey ] imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-002.html [ Pass Failure ]
+[ Monterey ] scrollbars/overflow-scrollbar-combinations.html  [ Pass ImageOnlyFailure ]
+[ Monterey ] svg/custom/svg-fonts-in-html.html [ Pass ImageOnlyFailure ]
+
+# rdar://102494267 ([ New Test ] (248203@main): [ Sonoma ] http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html is a consistent failure)
+[ Sonoma+ ] http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html [ Failure ]
+
+# rdar://103047570 (REGRESSION (Sonoma): fast/speechsynthesis/speech-synthesis-real-client-version.html is a consistent timeout)
+[ Sonoma+ ] fast/speechsynthesis/speech-synthesis-real-client-version.html [ Timeout ]
+
+# rdar://104460194 (REGRESSION (Sonoma ): [ Dawn Sonoma ] fast/box-shadow/inset-box-shadow-fractional-radius.html is a consistent image failure)
+[ Sonoma+ ] fast/box-shadow/inset-box-shadow-fractional-radius.html [ ImageOnlyFailure ]
+
+# rdar://105307989 (REGRESSION ( Sonoma ): [ Sonoma ] svg/custom/hidpi-masking-clipping.svg is a consistent failure)
+[ Sonoma+ ] svg/custom/hidpi-masking-clipping.svg [ Pass ImageOnlyFailure ]
+
+# rdar://110029481 (REGRESSION ( Sonoma ): [ Sonoma ] Two accessibility/mac/ tests are a consistent failure)
+[ Sonoma+ ] accessibility/mac/basic-embed-pdf-accessibility.html [ Timeout ]
+[ Sonoma+ ] accessibility/mac/iframe-pdf.html [ Timeout ]
+
+# rdar://111077813 (REGRESSION ( Sonoma ): [ Sonoma ] css3/color-filters/color-filter-caret-color.html is a consistent image failure)
+[ Sonoma+ ] css3/color-filters/color-filter-caret-color.html [ ImageOnlyFailure ]
+[ Sonoma+ ] fast/css/caret-color-fallback-to-color.html [ ImageOnlyFailure ]
+[ Sonoma+ ] fast/history/visited-link-caret-color.html [ ImageOnlyFailure ]
+[ Sonoma+ ] fast/css/caret-color-span-inside-editable-parent.html [ ImageOnlyFailure ]
+
+# rdar://111079967 (REGRESSION ( Sonoma ): [ Sonoma ] Two editing/caret/color-span-inside-editabl tests are constant image failures)
+[ Sonoma+ ] editing/caret/color-span-inside-editable-background.html [ ImageOnlyFailure ]
+[ Sonoma+ ] editing/caret/color-span-inside-editable.html [ ImageOnlyFailure ]
+
+# Caps lock indicator is disabled on Sonoma, as it is provided by the OS.
+[ Sonoma+ ] fast/forms/caps-lock-indicator-width.html [ Skip ]
+
+# rdar://111212638 (REGRESSION ( Sonoma ): [ Sonoma ] editing/input/composition-underline-color.html is a consistent image failure)
+[ Sonoma+ ] editing/input/composition-underline-color.html [ ImageOnlyFailure ]
+
+# rdar://111233922 (REGRESSION ( Sonoma ): [ Sonoma ] Two imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior tests are a consistent image failure)
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-009.html [ ImageOnlyFailure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-010.html [ ImageOnlyFailure ]
+
+# rdar://106116937 ([UI-side compositing] fast/scrolling/mac/scrollbars/very-wide-overlay-scrollbar.html times out)
+[ Sonoma+ ] fast/scrolling/mac/scrollbars/very-wide-overlay-scrollbar.html [ ImageOnlyFailure Timeout ]
+
+# rdar://111424377 (PROGRESSION (263656@main): [ Sonoma ] Three fast/scrolling/mac/scrollbars are a consistent failure or timeout)
+[ Sonoma+ ] fast/scrolling/mac/scrollbars/overlay-scrollbar-reveal.html [ Timeout ]
+[ Sonoma+ ] fast/scrolling/mac/scrollbars/scrollbar-state.html [ Timeout ]
+[ Sonoma+ ] fast/scrolling/mac/scrollbars/overlay-scrollbar-state.html [ Timeout ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-text/word-break/auto [ Pass ]
+
+webkit.org/b/260224 [ Ventura+ ] compositing/geometry/clipped-out-perspective.html [ ImageOnlyFailure ]
+webkit.org/b/260224 [ Ventura+ ] compositing/overlap-blending/opacity-and-infinity.html [ ImageOnlyFailure ]
+webkit.org/b/260224 [ Ventura+ ] imported/w3c/web-platform-tests/css/css-transforms/perspective-split-by-zero-w.html [ ImageOnlyFailure ]
+webkit.org/b/260224 [ Ventura+ ] imported/w3c/web-platform-tests/css/css-transforms/preserve3d-and-filter-with-perspective.html [ ImageOnlyFailure ]
+webkit.org/b/260224 [ Ventura+ ] imported/w3c/web-platform-tests/css/css-transforms/preserve3d-pseudo-element.html [ ImageOnlyFailure ]
+webkit.org/b/260224 [ Ventura+ ] imported/w3c/web-platform-tests/css/css-transforms/transform-table-009.html [ ImageOnlyFailure ]
+webkit.org/b/260224 [ Ventura+ ] imported/w3c/web-platform-tests/css/css-transforms/transform-table-010.html [ ImageOnlyFailure ]
+webkit.org/b/260224 [ Ventura+ ] imported/w3c/web-platform-tests/css/css-transforms/transform-table-011.html [ ImageOnlyFailure ]
+webkit.org/b/260224 [ Ventura+ ] imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-011.html [ ImageOnlyFailure ]
+
+webkit.org/b/130490 media/video-remote-control-playpause.html [ Pass Timeout Crash ]
+
+webkit.org/b/260529 [ Ventura+ x86_64 ] animations/suspend-resume-animation-events.html [ Pass Failure ]
+
+webkit.org/b/260742 [ Monterey+ Debug ] fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Crash ]
+webkit.org/b/260742 [ Monterey+ Debug ] fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Crash ]
