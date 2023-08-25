@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(SERVICE_WORKER)
+
 #include "ExtendableCookieChangeEventInit.h"
 #include "ExtendableEvent.h"
 #include <wtf/IsoMalloc.h>
@@ -55,3 +57,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(SERVICE_WORKER)

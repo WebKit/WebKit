@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(SERVICE_WORKER)
+
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
@@ -47,3 +49,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(SERVICE_WORKER)
