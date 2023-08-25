@@ -206,16 +206,25 @@ VideoFullscreenInterfaceContext& VideoFullscreenManager::ensureInterface(Playbac
 
 void VideoFullscreenManager::removeContext(PlaybackSessionContextIdentifier contextId)
 {
-    auto [model, interface] = ensureModelAndInterface(contextId);
-
     m_playbackSessionManager->removeClientForContext(contextId);
 
-    RefPtr<HTMLVideoElement> videoElement = model->videoElement();
-    model->setVideoElement(nullptr);
+    auto [model, interface] = m_contextMap.get(contextId);
+    ASSERT(model);
+    ASSERT(interface);
+    if (!model || !interface)
+        return;
+
     model->removeClient(*interface);
     interface->invalidate();
-    m_videoElements.remove(*videoElement);
     m_contextMap.remove(contextId);
+
+    RefPtr videoElement = model->videoElement();
+    ASSERT(videoElement);
+    if (!videoElement)
+        return;
+
+    model->setVideoElement(nullptr);
+    m_videoElements.remove(*videoElement);
 }
 
 void VideoFullscreenManager::addClientForContext(PlaybackSessionContextIdentifier contextId)

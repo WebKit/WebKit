@@ -231,15 +231,23 @@ PlaybackSessionInterfaceContext& PlaybackSessionManager::ensureInterface(Playbac
 
 void PlaybackSessionManager::removeContext(PlaybackSessionContextIdentifier contextId)
 {
-    auto& [model, interface] = ensureModelAndInterface(contextId);
+    auto [model, interface] = m_contextMap.get(contextId);
+    ASSERT(model);
+    ASSERT(interface);
+    if (!model || !interface)
+        return;
 
-    RefPtr<HTMLMediaElement> mediaElement = model->mediaElement();
-    model->setMediaElement(nullptr);
     model->removeClient(*interface);
     interface->invalidate();
-    if (mediaElement)
-        m_mediaElements.remove(*mediaElement);
     m_contextMap.remove(contextId);
+
+    RefPtr mediaElement = model->mediaElement();
+    ASSERT(mediaElement);
+    if (!mediaElement)
+        return;
+
+    model->setMediaElement(nullptr);
+    m_mediaElements.remove(*mediaElement);
 }
 
 void PlaybackSessionManager::addClientForContext(PlaybackSessionContextIdentifier contextId)
