@@ -184,12 +184,13 @@ protected:
 
     template<typename T> bool send(T&& message)
     {
-        return m_webPage.send(WTFMove(message), m_identifier.toUInt64(), { });
+        Ref webPage = m_webPage.get();
+        return webPage->send(WTFMove(message), m_identifier.toUInt64(), { });
     }
 
     const DrawingAreaType m_type;
     DrawingAreaIdentifier m_identifier;
-    WebPage& m_webPage;
+    CheckedRef<WebPage> m_webPage;
     WebCore::IntSize m_lastViewSizeForScaleToFit;
     WebCore::IntSize m_lastDocumentSizeForScaleToFit;
     bool m_isScalingViewToFitDocument { false };

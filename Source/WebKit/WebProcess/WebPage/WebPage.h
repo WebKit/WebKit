@@ -405,7 +405,7 @@ class PlatformXRSystemProxy;
 using SnapshotOptions = uint32_t;
 using WKEventModifiers = uint32_t;
 
-class WebPage : public API::ObjectImpl<API::Object::Type::BundlePage>, public IPC::MessageReceiver, public IPC::MessageSender {
+class WebPage : public API::ObjectImpl<API::Object::Type::BundlePage>, public IPC::MessageReceiver, public IPC::MessageSender, public CanMakeCheckedPtr {
 public:
     static Ref<WebPage> create(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
