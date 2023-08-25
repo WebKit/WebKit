@@ -437,8 +437,8 @@ void WebFrame::transitionToLocal(std::optional<WebCore::LayerHostingContextIdent
 
 void WebFrame::didFinishLoadInAnotherProcess()
 {
-    if (auto* remoteFrame = dynamicDowncast<WebCore::RemoteFrame>(m_coreFrame.get()))
-        remoteFrame->didFinishLoadInAnotherProcess();
+    if (m_coreFrame)
+        m_coreFrame->didFinishLoadInAnotherProcess();
 }
 
 void WebFrame::invalidatePolicyListeners()

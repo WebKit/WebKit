@@ -270,6 +270,7 @@ public:
     WEBCORE_EXPORT bool isComplete() const;
 
     void commitProvisionalLoad();
+    void provisionalLoadFailedInAnotherProcess();
 
     void setLoadsSynchronously(bool loadsSynchronously) { m_loadsSynchronously = loadsSynchronously; }
     bool loadsSynchronously() const { return m_loadsSynchronously; }

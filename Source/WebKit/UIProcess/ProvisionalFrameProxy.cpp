@@ -26,20 +26,23 @@
 #include "config.h"
 #include "ProvisionalFrameProxy.h"
 
+#include "RemotePageProxy.h"
 #include "VisitedLinkStore.h"
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 
 namespace WebKit {
 
-ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProcessProxy>&& process)
+ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, WebProcessProxy& process, RefPtr<RemotePageProxy>&& remotePageProxy)
     : m_frame(frame)
-    , m_process(WTFMove(process))
+    , m_process(process)
+    , m_remotePageProxy(WTFMove(remotePageProxy))
     , m_visitedLinkStore(frame.page()->visitedLinkStore())
-    , m_pageID(frame.page()->webPageID()) // FIXME: Generate a new one? This can conflict. And we probably want something like ProvisionalPageProxy to respond to messages anyways.
+    , m_pageID(frame.page()->webPageID())
     , m_webPageID(frame.page()->identifier())
     , m_layerHostingContextIdentifier(WebCore::LayerHostingContextIdentifier::generate())
 {
+    ASSERT(!m_remotePageProxy || m_remotePageProxy->process().coreProcessIdentifier() == process.coreProcessIdentifier());
     m_process->markProcessAsRecentlyUsed();
     m_process->addProvisionalFrameProxy(*this);
 }
@@ -47,6 +50,11 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProces
 ProvisionalFrameProxy::~ProvisionalFrameProxy()
 {
     m_process->removeProvisionalFrameProxy(*this);
+}
+
+RefPtr<RemotePageProxy> ProvisionalFrameProxy::takeRemotePageProxy()
+{
+    return std::exchange(m_remotePageProxy, nullptr);
 }
 
 }

@@ -296,6 +296,7 @@ private:
     bool preventsParentFromBeingComplete() const final;
     void changeLocation(FrameLoadRequest&&) final;
     void broadcastFrameRemovalToOtherProcesses() final;
+    void didFinishLoadInAnotherProcess() final;
 
     FrameView* virtualView() const final;
     DOMWindow* virtualWindow() const final;
