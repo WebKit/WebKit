@@ -549,6 +549,20 @@ AriaReflectionForElementReferencesEnabled:
     WebCore:
       default: true
 
+AriaTextRoleEnabled:
+  type: bool
+  status: preview
+  category: dom
+  humanReadableName: "Non-standard ARIA text role"
+  humanReadableDescription: "Enable support for non-standard ARIA text role"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 AspectRatioEnabled:
   type: bool
   status: mature
