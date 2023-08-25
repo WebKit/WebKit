@@ -4587,3 +4587,5 @@ webkit.org/b/260310 imported/w3c/web-platform-tests/css/cssom-view/scrollIntoVie
 imported/w3c/web-platform-tests/css/css-lists/list-style-image-gradients-dynamic.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-lists/list-style-image-gradients.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-disc.html [ Skip ]
+
+webkit.org/b/257904 http/tests/site-isolation/basic-iframe.html [ Skip ]
