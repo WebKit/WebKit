@@ -839,7 +839,7 @@ private:
 
     void seek(const MediaTime&);
     void seekInternal(const MediaTime&);
-    void seekWithTolerance(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance, bool fromDOM);
+    void seekWithTolerance(const SeekTarget&, bool fromDOM);
     void finishSeek();
     void clearSeeking();
     void addPlayedRange(const MediaTime& start, const MediaTime& end);
@@ -1081,17 +1081,13 @@ private:
 
     struct PendingSeek {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
-        PendingSeek(const MediaTime& now, const MediaTime& targetTime, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
+        PendingSeek(const MediaTime& now, const SeekTarget& inTarget)
             : now(now)
-            , targetTime(targetTime)
-            , negativeTolerance(negativeTolerance)
-            , positiveTolerance(positiveTolerance)
+            , target(inTarget)
         {
         }
         MediaTime now;
-        MediaTime targetTime;
-        MediaTime negativeTolerance;
-        MediaTime positiveTolerance;
+        SeekTarget target;
     };
     std::unique_ptr<PendingSeek> m_pendingSeek;
     SeekType m_pendingSeekType { NoSeek };

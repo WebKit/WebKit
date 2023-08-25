@@ -158,12 +158,12 @@ void MediaSourcePrivateGStreamer::setReadyState(MediaPlayer::ReadyState state)
     m_playerPrivate.setReadyState(state);
 }
 
-void MediaSourcePrivateGStreamer::seekCompleted()
+void MediaSourcePrivateGStreamer::seekToTarget(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
 {
-    // This call just informs us that the seek has been completed as far as MediaSource is concerned: that is,
-    // the samples for `currentTime` have been fed. This doesn't mean the seek is complete for the player, as
-    // they still have to be decoded and preroll has to occur before we let the "seeked" event happen.
-    // See MediaPlayerPrivateGStreamerMSE::asyncStateChangeDone().
+    if (m_mediaSource)
+        m_mediaSource->seekToTarget(target, WTFMove(completionHandler));
+    else
+        completionHandler(MediaTime::invalidTime());
 }
 
 MediaTime MediaSourcePrivateGStreamer::duration() const

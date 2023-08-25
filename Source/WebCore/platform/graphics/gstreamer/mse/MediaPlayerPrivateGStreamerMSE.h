@@ -55,8 +55,8 @@ public:
 
     void play() override;
     void pause() override;
-    void seek(const MediaTime&) override;
-    bool doSeek(const MediaTime&, float rate) override;
+    void seekToTarget(const SeekTarget&) override;
+    bool doSeek(const SeekTarget&, float rate) override;
 
     void updatePipelineState(GstState);
 

@@ -104,7 +104,7 @@ public:
     virtual void setTimestampOffset(const MediaTime& timestampOffset) { m_timestampOffset = timestampOffset; }
     virtual void setAppendWindowStart(const MediaTime& appendWindowStart) { m_appendWindowStart = appendWindowStart;}
     virtual void setAppendWindowEnd(const MediaTime& appendWindowEnd) { m_appendWindowEnd = appendWindowEnd; }
-    WEBCORE_EXPORT virtual void seekToTime(const MediaTime&);
+    WEBCORE_EXPORT virtual void seekToTarget(const SeekTarget&, CompletionHandler<void(const MediaTime&)>&&);
     WEBCORE_EXPORT virtual void updateTrackIds(Vector<std::pair<AtomString, AtomString>>&& trackIdPairs);
 
     WEBCORE_EXPORT void setClient(SourceBufferPrivateClient&);
@@ -130,7 +130,6 @@ public:
     WEBCORE_EXPORT virtual void enqueuedSamplesForTrackID(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&);
     virtual MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&) { return MediaTime::invalidTime(); }
     virtual void setMaximumQueueDepthForTrackID(const AtomString&, uint64_t) { }
-    WEBCORE_EXPORT MediaTime fastSeekTimeForMediaTime(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
 
 #if !RELEASE_LOG_DISABLED
     virtual const Logger& sourceBufferLogger() const = 0;
@@ -172,6 +171,7 @@ protected:
     virtual void allSamplesInTrackEnqueued(const AtomString&) { }
     virtual bool isReadyForMoreSamples(const AtomString&) { return false; }
     virtual void notifyClientWhenReadyForMoreSamples(const AtomString&) { }
+    WEBCORE_EXPORT virtual void seekToTime(const MediaTime&);
 
     virtual bool canSetMinimumUpcomingPresentationTime(const AtomString&) const { return false; }
     virtual void setMinimumUpcomingPresentationTime(const AtomString&, const MediaTime&) { }

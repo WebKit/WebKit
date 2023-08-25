@@ -789,6 +789,7 @@ def headers_for_type(type):
         'WebCore::ScrollPinningBehavior': ['<WebCore/ScrollTypes.h>'],
         'WebCore::ScrollbarOrientation': ['<WebCore/ScrollTypes.h>'],
         'WebCore::SecurityPolicyViolationEventInit': ['<WebCore/SecurityPolicyViolationEvent.h>'],
+        'WebCore::SeekTarget': ['<WebCore/MediaPlayer.h>'],
         'WebCore::SelectionDirection': ['<WebCore/VisibleSelection.h>'],
         'WebCore::SelectionGeometry': ['"EditorState.h"'],
         'WebCore::ServiceWorkerIsInspectable': ['<WebCore/ServiceWorkerTypes.h>'],

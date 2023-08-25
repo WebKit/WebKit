@@ -232,14 +232,9 @@ void RemoteMediaPlayerProxy::pause()
     sendCachedState();
 }
 
-void RemoteMediaPlayerProxy::seek(const MediaTime& time)
+void RemoteMediaPlayerProxy::seekToTarget(const WebCore::SeekTarget& target)
 {
-    m_player->seek(time);
-}
-
-void RemoteMediaPlayerProxy::seekWithTolerance(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
-{
-    m_player->seekWithTolerance(time, negativeTolerance, positiveTolerance);
+    m_player->seekToTarget(target);
 }
 
 void RemoteMediaPlayerProxy::setVolume(double volume)
@@ -973,6 +968,7 @@ void RemoteMediaPlayerProxy::updateCachedState(bool forceCurrentTimeUpdate)
         currentTimeChanged(m_player->currentTime());
 
     m_cachedState.paused = m_player->paused();
+    m_cachedState.seeking = m_player->seeking();
     maybeUpdateCachedVideoMetrics();
     if (m_bufferedChanged) {
         m_bufferedChanged = false;

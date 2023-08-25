@@ -266,13 +266,13 @@ bool MediaPlayerPrivateMediaFoundation::seeking() const
     return m_seeking;
 }
 
-void MediaPlayerPrivateMediaFoundation::seek(float time)
+void MediaPlayerPrivateMediaFoundation::seekToTarget(const SeekTarget& target)
 {
     PROPVARIANT propVariant;
     PropVariantInit(&propVariant);
     propVariant.vt = VT_I8;
-    propVariant.hVal.QuadPart = static_cast<__int64>(time * tenMegahertz);
-    
+    propVariant.hVal.QuadPart = static_cast<__int64>(target.time.toFloat() * tenMegahertz);
+
     HRESULT hr = m_mediaSession->Start(&GUID_NULL, &propVariant);
     ASSERT_UNUSED(hr, SUCCEEDED(hr));
     PropVariantClear(&propVariant);

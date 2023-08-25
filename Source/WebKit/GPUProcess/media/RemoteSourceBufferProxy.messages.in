@@ -51,7 +51,7 @@ messages -> RemoteSourceBufferProxy NotRefCounted {
     SetTimestampOffset(MediaTime timestampOffset)
     SetAppendWindowStart(MediaTime appendWindowStart)
     SetAppendWindowEnd(MediaTime appendWindowEnd)
-    SeekToTime(MediaTime mediaTime)
+    SeekToTarget(struct WebCore::SeekTarget target) -> (MediaTime seekedTime)
     UpdateTrackIds(Vector<std::pair<WebKit::TrackPrivateRemoteIdentifier, WebKit::TrackPrivateRemoteIdentifier>> identifierPairs)
     BufferedSamplesForTrackId(WebKit::TrackPrivateRemoteIdentifier remoteIdentifier) -> (Vector<String> samples)
     EnqueuedSamplesForTrackID(WebKit::TrackPrivateRemoteIdentifier remoteIdentifier) -> (Vector<String> samples)

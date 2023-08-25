@@ -142,7 +142,7 @@ public:
     bool paused() const final;
     bool ended() const final;
     bool seeking() const override { return m_isSeeking; }
-    void seek(const MediaTime&) override;
+    void seekToTarget(const SeekTarget&) override;
     void setRate(float) override;
     double rate() const final;
     void setPreservesPitch(bool) final;
@@ -164,8 +164,6 @@ public:
     double currentTimeDouble() const final { return currentMediaTime().toDouble(); }
     MediaTime currentMediaTime() const override;
     const PlatformTimeRanges& buffered() const override;
-    void seek(float time) final { seek(MediaTime::createWithFloat(time)); }
-    void seekDouble(double time) final { seek(MediaTime::createWithDouble(time)); }
     float maxTimeSeekable() const final { return maxMediaTimeSeekable().toFloat(); }
     MediaTime maxMediaTimeSeekable() const override;
     double minTimeSeekable() const final { return minMediaTimeSeekable().toFloat(); }
@@ -315,7 +313,7 @@ protected:
     void ensureAudioSourceProvider();
     void checkPlayingConsistency();
 
-    virtual bool doSeek(const MediaTime& position, float rate);
+    virtual bool doSeek(const SeekTarget& position, float rate);
     void invalidateCachedPosition() const;
     void ensureSeekFlags();
 
@@ -351,7 +349,7 @@ protected:
     bool m_shouldResetPipeline { false };
     bool m_isSeeking { false };
     bool m_isSeekPending { false };
-    MediaTime m_seekTime;
+    SeekTarget m_seekTarget;
     GRefPtr<GstElement> m_source { nullptr };
     bool m_areVolumeAndMuteInitialized { false };
 

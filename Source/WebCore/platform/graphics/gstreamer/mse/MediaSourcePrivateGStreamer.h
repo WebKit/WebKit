@@ -67,8 +67,7 @@ public:
     MediaPlayer::ReadyState readyState() const override;
     void setReadyState(MediaPlayer::ReadyState) override;
 
-    void waitForSeekCompleted() override { }
-    void seekCompleted() override;
+    void seekToTarget(const SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) final;
 
     MediaTime duration() const;
     MediaTime currentMediaTime() const;

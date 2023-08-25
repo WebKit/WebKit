@@ -212,7 +212,7 @@ private:
     double effectiveRate() const final;
     void setPreservesPitch(bool) final;
     void setPitchCorrectionAlgorithm(MediaPlayer::PitchCorrectionAlgorithm) final;
-    void seekToTime(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance) final;
+    void seekToTargetInternal(const SeekTarget&) final;
     unsigned long long totalBytes() const final;
     const PlatformTimeRanges& platformBufferedTimeRanges() const final;
     MediaTime platformMinTimeSeekable() const final;

@@ -162,34 +162,6 @@ void MediaSourcePrivateRemote::setReadyState(MediaPlayer::ReadyState readyState)
     gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::SetReadyState(readyState), m_identifier);
 }
 
-void MediaSourcePrivateRemote::setIsSeeking(bool isSeeking)
-{
-    auto gpuProcessConnection = m_gpuProcessConnection.get();
-    if (!isGPURunning())
-        return;
-
-    MediaSourcePrivate::setIsSeeking(isSeeking);
-    gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::SetIsSeeking(isSeeking), m_identifier);
-}
-
-void MediaSourcePrivateRemote::waitForSeekCompleted()
-{
-    auto gpuProcessConnection = m_gpuProcessConnection.get();
-    if (!isGPURunning())
-        return;
-
-    gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::WaitForSeekCompleted(), m_identifier);
-}
-
-void MediaSourcePrivateRemote::seekCompleted()
-{
-    auto gpuProcessConnection = m_gpuProcessConnection.get();
-    if (!isGPURunning())
-        return;
-
-    gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::SeekCompleted(), m_identifier);
-}
-
 void MediaSourcePrivateRemote::setTimeFudgeFactor(const MediaTime& fudgeFactor)
 {
     auto gpuProcessConnection = m_gpuProcessConnection.get();
@@ -200,10 +172,12 @@ void MediaSourcePrivateRemote::setTimeFudgeFactor(const MediaTime& fudgeFactor)
     gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::SetTimeFudgeFactor(fudgeFactor), m_identifier);
 }
 
-void MediaSourcePrivateRemote::seekToTime(const MediaTime& time)
+void MediaSourcePrivateRemote::seekToTarget(const WebCore::SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
 {
     if (m_client)
-        m_client->seekToTime(time);
+        m_client->seekToTarget(target, WTFMove(completionHandler));
+    else
+        completionHandler(MediaTime::invalidTime());
 }
 
 void MediaSourcePrivateRemote::mediaSourcePrivateShuttingDown(CompletionHandler<void()>&& completionHandler)

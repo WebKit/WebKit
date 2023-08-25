@@ -132,7 +132,7 @@ public:
     double durationDouble() const final { return 0; }
 
     double currentTimeDouble() const final { return 0; }
-    void seekDouble(double) final { }
+    void seekToTarget(const SeekTarget&) final { }
     bool seeking() const final { return false; }
 
     void setRateDouble(double) final { }
@@ -796,14 +796,14 @@ MediaTime MediaPlayer::getStartDate() const
     return m_private->getStartDate();
 }
 
-void MediaPlayer::seekWithTolerance(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
+void MediaPlayer::seekToTarget(const SeekTarget& target)
 {
-    m_private->seekWithTolerance(time, negativeTolerance, positiveTolerance);
+    m_private->seekToTarget(target);
 }
 
-void MediaPlayer::seek(const MediaTime& time)
+void MediaPlayer::seekToTime(const MediaTime& time)
 {
-    m_private->seek(time);
+    seekToTarget(SeekTarget { time });
 }
 
 void MediaPlayer::seekWhenPossible(const MediaTime& time)
@@ -811,7 +811,7 @@ void MediaPlayer::seekWhenPossible(const MediaTime& time)
     if (m_private->readyState() < MediaPlayer::ReadyState::HaveMetadata)
         m_pendingSeekRequest = time;
     else
-        seek(time);
+        seekToTime(time);
 }
 
 bool MediaPlayer::paused() const
@@ -1418,7 +1418,7 @@ void MediaPlayer::readyStateChanged()
 {
     client().mediaPlayerReadyStateChanged();
     if (m_pendingSeekRequest && m_private->readyState() == MediaPlayer::ReadyState::HaveMetadata)
-        seek(*std::exchange(m_pendingSeekRequest, std::nullopt));
+        seekToTime(*std::exchange(m_pendingSeekRequest, std::nullopt));
 }
 
 void MediaPlayer::volumeChanged(double newVolume)
@@ -2011,6 +2011,17 @@ String convertEnumerationToString(MediaPlayer::BufferingPolicy enumerationValue)
 String MediaPlayer::lastErrorMessage() const
 {
     return m_lastErrorMessage;
+}
+
+String SeekTarget::toString() const
+{
+    StringBuilder builder;
+    builder.append("[");
+    builder.append(WTF::LogArgument<MediaTime>::toString(time));
+    builder.append(WTF::LogArgument<MediaTime>::toString(negativeThreshold));
+    builder.append(WTF::LogArgument<MediaTime>::toString(positiveThreshold));
+    builder.append("]");
+    return builder.toString();
 }
 
 }
