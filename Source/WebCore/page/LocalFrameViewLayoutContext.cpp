@@ -240,7 +240,7 @@ void LocalFrameViewLayoutContext::performLayout()
 #endif
         clearSubtreeLayoutRoot();
 
-#if !LOG_DISABLED
+#if !LOG_DISABLED && ENABLE(TREE_DEBUGGING)
         auto layoutLogEnabled = [] {
             return LogLayout.state == WTFLogChannelState::On;
         };
