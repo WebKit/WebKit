@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<style>
+    section {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+
+        cursor: pointer;
+
+        background: gray;
+    }
+
+    div {
+        flex-grow: 1;
+
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        background: purple;
+    }
+
+    div > div {
+        background: blue;
+    }
+
+</style>
+<body>
+<section>
+    <div>
+        <div>
+        </div>
+        <div>
+        </div>
+    </div>
+    <div></div>
+</section>
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (window.internals)
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+};
+</script>
+</body>
+</html>
