@@ -118,7 +118,9 @@ if (!window.InspectorFrontendHost) {
             socket.addEventListener("open", () => { this._socket = socket; });
             socket.addEventListener("close", () => {
                 this._socket = null;
-                window.close();
+                document.body.style.filter = "grayscale(100%)";
+                console.trace("WebSocket connection has closed");
+                
             });
         }
 
