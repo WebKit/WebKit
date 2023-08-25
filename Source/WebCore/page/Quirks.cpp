@@ -292,14 +292,19 @@ bool Quirks::isNeverRichlyEditableForTouchBar() const
 }
 
 // docs.google.com rdar://49864669
-static bool shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasForHost(StringView host)
+// FIXME https://bugs.webkit.org/show_bug.cgi?id=260698
+bool Quirks::shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreas() const
 {
+
 #if PLATFORM(IOS_FAMILY)
-    return equalLettersIgnoringASCIICase(host, "docs.google.com"_s);
-#else
-    UNUSED_PARAM(host);
-    return false;
+    if (!needsQuirks())
+        return false;
+
+    auto host = m_document->topDocument().url().host();
+    if (equalLettersIgnoringASCIICase(host, "docs.google.com"_s))
+        return true;
 #endif
+    return false;
 }
 
 // weebly.com rdar://48003980
@@ -350,15 +355,6 @@ bool Quirks::shouldAvoidUsingIOS13ForGmail() const
 #else
     return false;
 #endif
-}
-
-// rdar://49864669
-bool Quirks::shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreas() const
-{
-    if (!needsQuirks())
-        return false;
-
-    return shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasForHost(m_document->topDocument().url().host());
 }
 
 #if ENABLE(TOUCH_EVENTS)
