@@ -25,5 +25,12 @@
  * SUCH DAMAGE.
  */
 
+// FIXME: CanvasFilterPrimitive taking a dictionary
+typedef DOMString CanvasFilterPrimitive;
+
+//typedef (CanvasFilterPrimitive or sequence<CanvasFilterPrimitive>) CanvasFilterInput;
+typedef CanvasFilterPrimitive CanvasFilterInput;
+
 dictionary BeginLayerOptions {
+    CanvasFilterInput? filter = null;
 };

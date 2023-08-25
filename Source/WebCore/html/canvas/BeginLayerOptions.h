@@ -27,7 +27,17 @@
 
 namespace WebCore {
 
+#include <optional>
+
+#include <wtf/text/WTFString.h>
+
+using CanvasFilterPrimitive = String;
+
+// using CanvasFilterInput = std::variant<CanvasFilterPrimitive, Vector<CanvasFilterPrimitive>>;
+using CanvasFilterInput = CanvasFilterPrimitive;
+
 struct BeginLayerOptions {
+    std::optional<CanvasFilterInput> filter;
 };
 
 }

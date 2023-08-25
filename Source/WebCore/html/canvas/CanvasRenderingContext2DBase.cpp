@@ -48,6 +48,7 @@
 #include "DisplayListDrawingContext.h"
 #include "DisplayListRecorder.h"
 #include "DisplayListReplayer.h"
+#include "FilterTargetSwitcher.h"
 #include "FloatQuad.h"
 #include "GeometryUtilities.h"
 #include "Gradient.h"
@@ -245,10 +246,11 @@ void CanvasRenderingContext2DBase::unwindStateStack()
     while (m_stateStack.size() > 1) {
         auto state = m_stateStack.takeLast();
 
-        if (state.isLayer) {
+        if (state.isBeginLayerState) {
             context->endTransparencyLayer();
-            ASSERT(m_layerCount);
-            m_layerCount--;
+
+            ASSERT(!m_layers.isEmpty());
+            m_layers.removeLast();
         }
 
         context->restore();
@@ -304,7 +306,7 @@ CanvasRenderingContext2DBase::State::State()
     , textAlign(StartTextAlign)
     , textBaseline(AlphabeticTextBaseline)
     , direction(Direction::Inherit)
-    , isLayer(false)
+    , isBeginLayerState(false)
     , unparsedFont(DefaultFont)
 {
 }
@@ -464,7 +466,7 @@ void CanvasRenderingContext2DBase::realizeSavesLoop()
 
         {
             State toBeSavedState = state();
-            toBeSavedState.isLayer = false;
+            toBeSavedState.isBeginLayerState = false;
             m_stateStack.append(WTFMove(toBeSavedState));
         }
 
@@ -484,7 +486,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::restore()
     if (m_stateStack.size() <= 1)
         return { };
 
-    if (state().isLayer)
+    if (state().isBeginLayerState)
         return Exception { InvalidStateError };
 
     m_path.transform(state().transform);
@@ -2303,13 +2305,20 @@ void CanvasRenderingContext2DBase::paintRenderingResultsToCanvas()
 
 GraphicsContext* CanvasRenderingContext2DBase::drawingContext() const
 {
+    GraphicsContext* ctx = canvasBase().drawingContext();
+
     if (UNLIKELY(m_usesDisplayListDrawing)) {
         if (!m_recordingContext)
             m_recordingContext = makeUnique<DisplayList::DrawingContext>(canvasBase().size());
-        return &m_recordingContext->context();
+        ctx = &m_recordingContext->context();
     }
 
-    return canvasBase().drawingContext();
+    ASSERT(ctx);
+
+    if (!m_layers.isEmpty())
+        return m_layers.last().filterTargetSwitcher->drawingContext(*ctx);
+
+    return ctx;
 }
 
 
@@ -2901,7 +2910,7 @@ DestinationColorSpace CanvasRenderingContext2DBase::colorSpace() const
     return toDestinationColorSpace(m_settings.colorSpace);
 }
 
-ExceptionOr<void> CanvasRenderingContext2DBase::beginLayer(const BeginLayerOptions&)
+ExceptionOr<void> CanvasRenderingContext2DBase::beginLayer(const BeginLayerOptions& options)
 {
     FloatRect boundingBox { { }, canvasBase().size() };
 
@@ -2920,9 +2929,26 @@ ExceptionOr<void> CanvasRenderingContext2DBase::beginLayer(const BeginLayerOptio
     setShadowOffsetY(0);
     setShadowBlur(0);
     setShadowColor("black"_s);
-    modifiableState().isLayer = true;
 
-    m_layerCount++;
+    modifiableState().isBeginLayerState = true;
+
+    if (options.filter && !options.filter->isEmpty()) {
+        auto maybeFilter = createFilter(*options.filter);
+        if (maybeFilter.hasException())
+            return maybeFilter.releaseException();
+
+        auto filter = maybeFilter.releaseReturnValue();
+
+        auto filterTargetSwitcher = FilterTargetSwitcher::create(*ctx, filter.get(), boundingBox, colorSpace(), nullptr);
+        if (!filterTargetSwitcher)
+            return Exception { InvalidStateError };
+        filterTargetSwitcher->beginClipAndDrawSourceImage(*ctx, boundingBox);
+
+        m_layers.append({
+            filter,
+            WTFMove(filterTargetSwitcher)
+        });
+    }
 
     return { };
 }
@@ -2936,15 +2962,16 @@ ExceptionOr<void> CanvasRenderingContext2DBase::endLayer()
     realizeSaves();
 
     ASSERT(!m_stateStack.isEmpty());
-    if (!state().isLayer)
+    if (!state().isBeginLayerState)
         return Exception { InvalidStateError };
+
+    LayerState layerState = m_layers.takeLast();
+    layerState.filterTargetSwitcher->endClipAndDrawSourceImage(*ctx);
 
     ctx->endTransparencyLayer();
 
-    modifiableState().isLayer = false;
+    modifiableState().isBeginLayerState = false;
     restore();
-
-    m_layerCount--;
 
     // FIXME: fix this so we only call didDraw() on the region affected by endLayer()
     didDrawEntireCanvas();

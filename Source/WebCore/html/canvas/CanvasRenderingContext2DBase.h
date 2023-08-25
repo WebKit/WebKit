@@ -38,6 +38,8 @@
 #include "CanvasTextAlign.h"
 #include "CanvasTextBaseline.h"
 #include "Color.h"
+#include "Filter.h"
+#include "FilterTargetSwitcher.h"
 #include "FloatSize.h"
 #include "FontCascade.h"
 #include "FontSelectorClient.h"
@@ -144,7 +146,7 @@ public:
     void save() { ++m_unrealizedSaveCount; }
     ExceptionOr<void> restore();
 
-    bool hasOpenLayers() const { return m_layerCount; }
+    bool hasOpenLayers() const { return !m_layers.isEmpty(); }
     ExceptionOr<void> beginLayer(const BeginLayerOptions&);
     ExceptionOr<void> endLayer();
 
@@ -269,6 +271,11 @@ public:
         FontCascade m_font;
     };
 
+    struct LayerState final {
+        Ref<Filter> filter;
+        std::shared_ptr<FilterTargetSwitcher> filterTargetSwitcher;
+    };
+
     struct State final {
         State();
 
@@ -296,7 +303,7 @@ public:
         TextBaseline textBaseline;
         Direction direction;
 
-        bool isLayer;
+        bool isBeginLayerState;
 
         String unparsedFont;
         FontProxy font;
@@ -331,6 +338,8 @@ protected:
     Ref<TextMetrics> measureTextInternal(const String& text);
 
     bool usesCSSCompatibilityParseMode() const { return m_usesCSSCompatibilityParseMode; }
+
+    virtual ExceptionOr<Ref<Filter>> createFilter(const String&) { return Exception { NotSupportedError }; };
 
 private:
     struct CachedImageData {
@@ -449,8 +458,8 @@ private:
     HashSet<uint32_t> m_suppliedColors;
     mutable std::optional<CachedImageData> m_cachedImageData;
     CanvasRenderingContext2DSettings m_settings;
-    // FIXME: limit number of layers?
-    uint32_t m_layerCount { 0 };
+
+    Vector<LayerState> m_layers;
 };
 
 } // namespace WebCore
