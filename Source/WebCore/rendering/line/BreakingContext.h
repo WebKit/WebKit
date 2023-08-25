@@ -540,10 +540,9 @@ ALWAYS_INLINE float textWidth(RenderText& text, unsigned from, unsigned len, con
 {
     const RenderStyle& style = text.style();
 
-    GlyphOverflow glyphOverflow;
     // FIXME: This is not the right level of abstraction for isFixedPitch. Font fallback may make it such that the fixed pitch font is never actually used!
     if (isFixedPitch || (!from && len == text.text().length()) || style.hasTextCombine())
-        return text.width(from, len, font, xPos, &fallbackFonts, &glyphOverflow);
+        return text.width(from, len, font, xPos, &fallbackFonts);
 
     if (layout)
         return FontCascade::width(*layout, from, len, &fallbackFonts);
@@ -552,7 +551,7 @@ ALWAYS_INLINE float textWidth(RenderText& text, unsigned from, unsigned len, con
     run.setCharacterScanForCodePath(!text.canUseSimpleFontCodePath());
     run.setTabSize(!collapseWhiteSpace, style.tabSize());
     run.setXPos(xPos);
-    return font.width(run, &fallbackFonts, &glyphOverflow);
+    return font.width(run, &fallbackFonts);
 }
 
 // Adding a pair of whitespace collapsing transitions before a character will split it out into a new line box.
