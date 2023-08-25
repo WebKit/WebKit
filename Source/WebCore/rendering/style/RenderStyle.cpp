@@ -2435,12 +2435,12 @@ Color RenderStyle::colorResolvingCurrentColor(CSSPropertyID colorProperty, bool 
         return visitedLink ? visitedLinkColor() : color();
     }
 
-    return colorResolvingCurrentColor(result);
+    return colorResolvingCurrentColor(result, visitedLink);
 }
 
-Color RenderStyle::colorResolvingCurrentColor(const StyleColor& color) const
+Color RenderStyle::colorResolvingCurrentColor(const StyleColor& color, bool visitedLink) const
 {
-    return color.resolveColor(this->color());
+    return color.resolveColor(visitedLink ? visitedLinkColor() : this->color());
 }
 
 Color RenderStyle::visitedDependentColor(CSSPropertyID colorProperty, OptionSet<PaintBehavior> paintBehavior) const

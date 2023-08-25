@@ -1741,7 +1741,7 @@ public:
     Color colorResolvingCurrentColor(CSSPropertyID colorProperty, bool visitedLink) const;
 
     // Resolves the currentColor keyword, but must not be used for the "color" property which has a different semantic.
-    WEBCORE_EXPORT Color colorResolvingCurrentColor(const StyleColor&) const;
+    WEBCORE_EXPORT Color colorResolvingCurrentColor(const StyleColor&, bool visitedLink = false) const;
 
     WEBCORE_EXPORT Color visitedDependentColor(CSSPropertyID, OptionSet<PaintBehavior> paintBehavior = { }) const;
     WEBCORE_EXPORT Color visitedDependentColorWithColorFilter(CSSPropertyID, OptionSet<PaintBehavior> paintBehavior = { }) const;
