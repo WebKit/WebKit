@@ -299,7 +299,7 @@
     "web-platform-tests/html/semantics/interactive-elements/the-summary-element": "skip",
     "web-platform-tests/html/semantics/links/downloading-resources": "import",
     "web-platform-tests/html/semantics/links/following-hyperlinks": "skip",
-    "web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements": "skip",
+    "web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements": "import",
     "web-platform-tests/html/semantics/popovers": "import",
     "web-platform-tests/html/semantics/scripting-1/the-script-element/css-module-assertions": "skip",
     "web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing": "skip",
