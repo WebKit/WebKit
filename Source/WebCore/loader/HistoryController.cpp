@@ -892,8 +892,8 @@ void FrameLoader::HistoryController::pushState(RefPtr<SerializedScriptValue>&& s
 
     auto* document = m_frame.document();
     if (document && !document->hasRecentUserInteractionForNavigationFromJS())
-        m_currentItem->setWasCreatedByJSWithoutUserInteraction(true);
-    
+        topItem->setWasCreatedByJSWithoutUserInteraction(true);
+
     // Override data in the current item (created by createItemTree) to reflect
     // the pushState() arguments.
     m_currentItem->setTitle(title);
