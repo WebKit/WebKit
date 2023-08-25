@@ -509,7 +509,7 @@ FontCascade::CodePath FontCascade::codePath(const TextRun& run, std::optional<un
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=150791: @font-face features should also cause this to be complex.
 
-#if (!USE(FONT_VARIANT_VIA_FEATURES) && !USE(FREETYPE))
+#if !USE(FONT_VARIANT_VIA_FEATURES) && !USE(FREETYPE)
     if (run.length() > 1 && (enableKerning() || requiresShaping()))
         return CodePath::Complex;
 #endif
