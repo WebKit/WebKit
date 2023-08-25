@@ -1583,4 +1583,16 @@ bool Quirks::needsResettingTransitionCancelsRunningTransitionQuirk() const
 #endif
 }
 
+bool Quirks::shouldStarBeFeaturePolicyDefaultValue() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (!m_shouldStarBeFeaturePolicyDefaultValueQuirk) {
+        auto domain = m_document->securityOrigin().domain().convertToASCIILowercase();
+        m_shouldStarBeFeaturePolicyDefaultValueQuirk = domain == "jsfiddle.net"_s;
+    }
+    return *m_shouldStarBeFeaturePolicyDefaultValueQuirk;
+}
+
 }

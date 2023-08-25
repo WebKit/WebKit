@@ -31,6 +31,7 @@
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
 #include "LocalDOMWindow.h"
+#include "Quirks.h"
 #include "SecurityOrigin.h"
 
 namespace WebCore {
@@ -164,8 +165,12 @@ static inline void processOriginItem(Document& document, const HTMLIFrameElement
 
 static inline void updateList(Document& document, const HTMLIFrameElement& iframe, FeaturePolicy::AllowRule& rule, StringView value)
 {
-    // We keep the empty string value equivalent to '*' for existing websites.
     if (value.isEmpty()) {
+        if (document.quirks().shouldStarBeFeaturePolicyDefaultValue()) {
+            rule.type = FeaturePolicy::AllowRule::Type::All;
+            return;
+        }
+
         // The allowlist for the features named in the attribute may be empty; in that case,
         // the default value for the allowlist is 'src', which represents the origin of the
         // URL in the iframe’s src attribute.
