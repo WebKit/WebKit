@@ -1,5 +1,5 @@
 <!DOCTYPE html> <!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=false ] -->
-<title>Test that calling updateQuotaBasedOnSpaceUsageForTesting (which should be blocked behind AllowTestOnlyIPC) kills the calling process if AllowTestOnlyIPC isn't set</title>
+<title>Test that calling a message which should be blocked behind AllowTestOnlyIPC kills the calling process if AllowTestOnlyIPC isn't set</title>
 <script src="../../resources/ipc.js"></script>
 <script src="../../resources/testharness.js"></script>
 <script src="../../resources/testharnessreport.js"></script>
@@ -7,11 +7,11 @@
 <script>
     testRunner.dumpAsText();
 
-    if (window.internals && window.IPC) {
-        window.internals.updateQuotaBasedOnSpaceUsage();
+    if (window.IPC) {
+        IPC.sendMessage('GPU', 0, IPC.messages.RemoteAudioSessionProxy_TriggerBeginInterruptionForTesting.name, [] );
 
-        asyncFlush('Networking').then(() => {
-            console.log("Should Have Crashed!");
+        asyncFlush('GPU').then(() => {
+            console.log("Should have crashed!");
         });
     } else {
         testRunner.notifyDone();

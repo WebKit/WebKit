@@ -1,0 +1,20 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=false allowTestOnlyIPC=true ] -->
+<title>Test that calling a message which should be blocked behind AllowTestOnlyIPC is allowed if AllowTestOnlyIPC is set</title>
+<script src="../../resources/ipc.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<body>
+<script>
+    testRunner.dumpAsText();
+
+    if (window.IPC) {
+        IPC.sendMessage('GPU', 0, IPC.messages.RemoteAudioSessionProxy_TriggerBeginInterruptionForTesting.name, [] );
+
+        asyncFlush('GPU').then(() => {
+            testRunner.notifyDone();
+        });
+    } else {
+        testRunner.notifyDone();
+    }
+</script>
+</body>
