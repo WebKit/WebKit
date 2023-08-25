@@ -428,6 +428,9 @@ static void testWebsiteDataEphemeral(WebViewTest* test, gconstpointer)
 static void testWebsiteDataCache(WebsiteDataTest* test, gconstpointer)
 {
     static const WebKitWebsiteDataTypes cacheTypes = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
+
+    test->clear(cacheTypes, 0);
+
     GList* dataList = test->fetch(cacheTypes);
     g_assert_null(dataList);
 

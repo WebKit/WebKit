@@ -89,7 +89,7 @@
     "TestWebsiteData": {
         "subtests": {
             "/webkit/WebKitWebsiteData/cache": {
-                "expected": {"wpe": {"status": ["FAIL", "CRASH", "PASS"], "bug": "webkit.org/b/260524"}}
+                "expected": {"wpe": {"status": ["CRASH", "PASS"], "bug": "webkit.org/b/260524"}}
             }
         }
     },
