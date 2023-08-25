@@ -157,6 +157,9 @@ static bool shouldAllowNonPointerCursorForElement(const Element& element)
     if (is<SliderThumbElement>(element))
         return true;
 
+    if (is<HTMLAnchorElement>(element))
+        return true;
+
     if (shouldAllowAccessibilityRoleAsPointerCursorReplacement(element))
         return true;
 
