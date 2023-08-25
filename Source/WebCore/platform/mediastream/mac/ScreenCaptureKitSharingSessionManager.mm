@@ -457,9 +457,9 @@ bool ScreenCaptureKitSharingSessionManager::promptWithSCContentSharingPicker(Dis
     }
 
     SCContentSharingPicker* picker = [PAL::getSCContentSharingPickerClass() sharedPicker];
-    picker.active = YES;
-    picker.maximumStreamCount = @(1);
     picker.defaultConfiguration = configuration.get();
+    picker.maximumStreamCount = @(std::numeric_limits<unsigned>::max());
+    picker.active = YES;
     [m_promptHelper startObservingPicker:picker];
 
     if (shareableContentStyle != SCShareableContentStyleNone && [picker respondsToSelector:@selector(presentPickerUsingContentStyle:)])
