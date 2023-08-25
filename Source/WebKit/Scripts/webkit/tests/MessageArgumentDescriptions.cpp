@@ -127,6 +127,7 @@
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
 #include "TestWithoutAttributesMessages.h" // NOLINT
 #endif
+#include "TestWithoutUsingIPCConnectionMessages.h" // NOLINT
 #include "TestWithIfMessageMessages.h" // NOLINT
 #include "TestWithSemaphoreMessages.h" // NOLINT
 #include "TestWithImageDataMessages.h" // NOLINT
@@ -280,6 +281,18 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
         return jsValueForDecodedMessage<MessageName::TestWithoutAttributes_ExperimentalOperation>(globalObject, decoder);
 #endif
 #endif
+    case MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgument:
+        return jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgument>(globalObject, decoder);
+    case MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReply:
+        return jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReply>(globalObject, decoder);
+    case MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgument:
+        return jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgument>(globalObject, decoder);
+    case MessageName::TestWithoutUsingIPCConnection_MessageWithArgument:
+        return jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithArgument>(globalObject, decoder);
+    case MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReply:
+        return jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReply>(globalObject, decoder);
+    case MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgument:
+        return jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgument>(globalObject, decoder);
 #if PLATFORM(COCOA)
     case MessageName::TestWithIfMessage_LoadURL:
         return jsValueForDecodedMessage<MessageName::TestWithIfMessage_LoadURL>(globalObject, decoder);
@@ -383,6 +396,14 @@ std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* global
         return jsValueForDecodedMessageReply<MessageName::TestWithoutAttributes_InterpretKeyEvent>(globalObject, decoder);
 #endif
 #endif
+    case MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReply:
+        return jsValueForDecodedMessageReply<MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReply>(globalObject, decoder);
+    case MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgument:
+        return jsValueForDecodedMessageReply<MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgument>(globalObject, decoder);
+    case MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReply:
+        return jsValueForDecodedMessageReply<MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReply>(globalObject, decoder);
+    case MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgument:
+        return jsValueForDecodedMessageReply<MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgument>(globalObject, decoder);
     case MessageName::TestWithSemaphore_ReceiveSemaphore:
         return jsValueForDecodedMessageReply<MessageName::TestWithSemaphore_ReceiveSemaphore>(globalObject, decoder);
     case MessageName::TestWithImageData_ReceiveImageData:
@@ -856,6 +877,24 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
         };
 #endif
 #endif
+    case MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgument:
+        return Vector<ArgumentDescription> { };
+    case MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReply:
+        return Vector<ArgumentDescription> { };
+    case MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgument:
+        return Vector<ArgumentDescription> { };
+    case MessageName::TestWithoutUsingIPCConnection_MessageWithArgument:
+        return Vector<ArgumentDescription> {
+            { "argument", "String", nullptr, false },
+        };
+    case MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReply:
+        return Vector<ArgumentDescription> {
+            { "argument", "String", nullptr, false },
+        };
+    case MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgument:
+        return Vector<ArgumentDescription> {
+            { "argument", "String", nullptr, false },
+        };
 #if PLATFORM(COCOA)
     case MessageName::TestWithIfMessage_LoadURL:
         return Vector<ArgumentDescription> {
@@ -1017,6 +1056,18 @@ std::optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(Mess
         };
 #endif
 #endif
+    case MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReply:
+        return Vector<ArgumentDescription> { };
+    case MessageName::TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgument:
+        return Vector<ArgumentDescription> {
+            { "reply", "String", nullptr, false },
+        };
+    case MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReply:
+        return Vector<ArgumentDescription> { };
+    case MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgument:
+        return Vector<ArgumentDescription> {
+            { "reply", "String", nullptr, false },
+        };
     case MessageName::TestWithSemaphore_ReceiveSemaphore:
         return Vector<ArgumentDescription> {
             { "r0", "IPC::Semaphore", nullptr, false },

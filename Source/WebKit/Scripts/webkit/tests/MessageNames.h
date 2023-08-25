@@ -42,9 +42,10 @@ enum class ReceiverName : uint8_t {
     , TestWithStreamServerConnectionHandle = 10
     , TestWithSuperclass = 11
     , TestWithoutAttributes = 12
-    , IPC = 13
-    , AsyncReply = 14
-    , Invalid = 15
+    , TestWithoutUsingIPCConnection = 13
+    , IPC = 14
+    , AsyncReply = 15
+    , Invalid = 16
 };
 
 enum class MessageName : uint16_t {
@@ -145,6 +146,12 @@ enum class MessageName : uint16_t {
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
     TestWithoutAttributes_TouchEvent,
 #endif
+    TestWithoutUsingIPCConnection_MessageWithArgument,
+    TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReply,
+    TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgument,
+    TestWithoutUsingIPCConnection_MessageWithoutArgument,
+    TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReply,
+    TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgument,
 #if PLATFORM(COCOA)
     InitializeConnection,
 #endif
@@ -177,6 +184,10 @@ enum class MessageName : uint16_t {
     TestWithoutAttributes_InterpretKeyEventReply,
 #endif
     TestWithoutAttributes_RunJavaScriptAlertReply,
+    TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReplyReply,
+    TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgumentReply,
+    TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReplyReply,
+    TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgumentReply,
     FirstSynchronous,
     LastAsynchronous = FirstSynchronous - 1,
     TestWithLegacyReceiver_GetPluginProcessConnection,

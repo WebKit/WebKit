@@ -49,9 +49,15 @@ def parse(file):
     conditions = []
     master_condition = None
     superclass = []
+    namespace = "WebKit"
     for line in file:
         line = line.strip()
-        match = re.search(r'messages -> (?P<destination>[A-Za-z_0-9]+) \s*(?::\s*(?P<superclass>.*?) \s*)?(?:(?P<attributes>.*?)\s+)?{', line)
+        match = re.search(r'messages -> (?P<namespace>[A-Za-z]+)::(?P<destination>[A-Za-z_0-9]+) \s*(?::\s*(?P<superclass>.*?) \s*)?(?:(?P<attributes>.*?)\s+)?{', line)
+        if not match:
+            match = re.search(r'messages -> (?P<destination>[A-Za-z_0-9]+) \s*(?::\s*(?P<superclass>.*?) \s*)?(?:(?P<attributes>.*?)\s+)?{', line)
+        else:
+            if match.group('namespace'):
+                namespace = match.group('namespace')
         if match:
             receiver_attributes = parse_attributes_string(match.group('attributes'))
             if match.group('superclass'):
@@ -97,7 +103,7 @@ def parse(file):
                 reply_parameters = None
 
             messages.append(model.Message(name, parameters, reply_parameters, attributes, combine_condition(conditions), runtime_enablement))
-    return model.MessageReceiver(destination, superclass, receiver_attributes, messages, combine_condition(master_condition))
+    return model.MessageReceiver(destination, superclass, receiver_attributes, messages, combine_condition(master_condition), namespace)
 
 
 def parse_attributes_string(attributes_string):

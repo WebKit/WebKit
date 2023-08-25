@@ -30,6 +30,7 @@
 namespace IPC {
 
 class Connection;
+class Decoder;
 class Encoder;
 class Timeout;
 enum class SendOption : uint8_t;
@@ -68,6 +69,12 @@ public:
     template<typename T, typename C> inline AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption>);
     template<typename T, typename C, typename U, typename V> inline AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID);
     template<typename T, typename C, typename U, typename V> inline AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID, OptionSet<SendOption>);
+
+    template<typename T> inline bool sendWithoutUsingIPCConnection(T&& message);
+    virtual bool performSendWithoutUsingIPCConnection(UniqueRef<Encoder>&&);
+
+    template<typename T, typename C> inline bool sendWithAsyncReplyWithoutUsingIPCConnection(T&& message, C&& completionHandler);
+    virtual bool performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<Encoder>&&, CompletionHandler<void(Decoder*)>);
 
     virtual bool sendMessage(UniqueRef<Encoder>&&, OptionSet<SendOption>);
 
