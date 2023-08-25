@@ -52,6 +52,7 @@ using PlatformDisplayID = uint32_t;
 namespace WebKit {
 
 class LayerTreeContext;
+class RemotePageDrawingAreaProxy;
 class WebPageProxy;
 class WebProcessProxy;
 
@@ -131,6 +132,9 @@ public:
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+
+    virtual void addRemotePageDrawingAreaProxy(RemotePageDrawingAreaProxy&) { }
+    virtual void removeRemotePageDrawingAreaProxy(RemotePageDrawingAreaProxy&) { }
 
 protected:
     DrawingAreaProxy(DrawingAreaType, WebPageProxy&);

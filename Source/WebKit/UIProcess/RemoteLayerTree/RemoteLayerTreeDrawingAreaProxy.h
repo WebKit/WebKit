@@ -32,11 +32,13 @@
 #include <WebCore/FloatPoint.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntSize.h>
+#include <wtf/WeakHashMap.h>
 
 namespace WebKit {
 
-class RemoteScrollingCoordinatorProxy;
 class RemoteLayerTreeTransaction;
+class RemotePageDrawingAreaProxy;
+class RemoteScrollingCoordinatorProxy;
 class RemoteScrollingCoordinatorProxy;
 class RemoteScrollingCoordinatorTransaction;
 
@@ -55,8 +57,9 @@ public:
     void acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier, const String& key, MonotonicTime startTime);
     void acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier, const String& key);
 
-    TransactionID nextLayerTreeTransactionID() const { return m_pendingLayerTreeTransactionID.next(); }
-    TransactionID lastCommittedLayerTreeTransactionID() const { return m_transactionIDForPendingCACommit; }
+    // FIXME(site-isolation): These always return the root's IDs. Is that ok?
+    TransactionID nextLayerTreeTransactionID() const { return m_webPageProxyProcessState.pendingLayerTreeTransactionID.next(); }
+    TransactionID lastCommittedLayerTreeTransactionID() const { return m_webPageProxyProcessState.transactionIDForPendingCACommit; }
 
     virtual void didRefreshDisplay();
     virtual void setDisplayLinkWantsFullSpeedUpdates(bool) { }
@@ -107,13 +110,25 @@ private:
     
     WebCore::FloatPoint indicatorLocation() const;
 
+    void addRemotePageDrawingAreaProxy(RemotePageDrawingAreaProxy&) final;
+    void removeRemotePageDrawingAreaProxy(RemotePageDrawingAreaProxy&) final;
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     // Message handlers
+    // FIXME(site-isolation): We really want a Connection parameter to all of these (including
+    // on the DrawingAreaProxy base class), and make sure we filter them
+    // appropriately. Can we enforce that?
+
+    // FIXME(site-isolation): We currently allow this from any subframe process and it overwrites
+    // the main frame's request. We should either ignore subframe requests, or
+    // properly track all the requested and filter displayDidRefresh callback rates
+    // per-frame.
     virtual void setPreferredFramesPerSecond(WebCore::FramesPerSecond) { }
-    void willCommitLayerTree(TransactionID);
-    void commitLayerTreeNotTriggered(TransactionID);
+
+    void willCommitLayerTree(IPC::Connection&, TransactionID);
+    void commitLayerTreeNotTriggered(IPC::Connection&, TransactionID);
     void commitLayerTree(IPC::Connection&, const Vector<std::pair<RemoteLayerTreeTransaction, RemoteScrollingCoordinatorTransaction>>&);
     void commitLayerTreeTransaction(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&);
     virtual void didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&) { }
@@ -130,7 +145,25 @@ private:
     // displayDidRefresh, otherwise we mark it as missed and send
     // it when commitLayerTree does arrive).
     enum CommitLayerTreeMessageState { CommitLayerTreePending, NeedsDisplayDidRefresh, MissedCommit, Idle };
-    CommitLayerTreeMessageState m_commitLayerTreeMessageState { Idle };
+    struct ProcessState {
+        CommitLayerTreeMessageState commitLayerTreeMessageState { Idle };
+        TransactionID lastLayerTreeTransactionID;
+        TransactionID pendingLayerTreeTransactionID;
+#if ASSERT_ENABLED
+        TransactionID lastVisibleTransactionID;
+#endif
+        TransactionID transactionIDForPendingCACommit;
+        TransactionID transactionIDForUnhidingContent;
+        ActivityStateChangeID activityStateChangeID { ActivityStateChangeAsynchronous };
+    };
+
+    ProcessState& processStateForConnection(IPC::Connection&);
+    void didRefreshDisplay(IPC::Connection*);
+    void didRefreshDisplay(ProcessState&, IPC::Connection&);
+    bool maybePauseDisplayRefreshCallbacks();
+
+    ProcessState m_webPageProxyProcessState;
+    WeakHashMap<RemotePageDrawingAreaProxy, ProcessState> m_remotePageProcessState;
 
     WebCore::IntSize m_lastSentSize;
     WebCore::IntSize m_lastSentMinimumSizeForAutoLayout;
@@ -139,15 +172,6 @@ private:
     std::unique_ptr<RemoteLayerTreeHost> m_debugIndicatorLayerTreeHost;
     RetainPtr<CALayer> m_tileMapHostLayer;
     RetainPtr<CALayer> m_exposedRectIndicatorLayer;
-
-    TransactionID m_pendingLayerTreeTransactionID;
-    TransactionID m_lastLayerTreeTransactionID;
-#if ASSERT_ENABLED
-    TransactionID m_lastVisibleTransactionID;
-#endif
-    TransactionID m_transactionIDForPendingCACommit;
-    TransactionID m_transactionIDForUnhidingContent;
-    ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };
     
     unsigned m_countOfTransactionsWithNonEmptyLayerChanges { 0 };
 };

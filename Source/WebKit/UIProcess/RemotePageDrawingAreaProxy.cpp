@@ -40,12 +40,15 @@ RemotePageDrawingAreaProxy::RemotePageDrawingAreaProxy(DrawingAreaProxy& drawing
 {
     for (auto& name : m_names)
         process.addMessageReceiver(name, m_identifier, *this);
+    drawingArea.addRemotePageDrawingAreaProxy(*this);
 }
 
 RemotePageDrawingAreaProxy::~RemotePageDrawingAreaProxy()
 {
     for (auto& name : m_names)
         m_process->removeMessageReceiver(name, m_identifier);
+    if (m_drawingArea)
+        m_drawingArea->removeRemotePageDrawingAreaProxy(*this);
 }
 
 void RemotePageDrawingAreaProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
