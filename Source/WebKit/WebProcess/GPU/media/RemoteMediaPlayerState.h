@@ -58,6 +58,7 @@ struct RemoteMediaPlayerState {
     std::optional<WebCore::VideoPlaybackQualityMetrics> videoMetrics;
     std::optional<bool> documentIsCrossOrigin { true };
     bool paused { true };
+    bool seeking { false };
     bool canSaveMediaData { false };
     bool hasAudio { false };
     bool hasVideo { false };

@@ -118,8 +118,8 @@ private:
     MediaTime startTime() const final { return MediaTime::zeroTime(); }
     MediaTime initialTime() const final { return MediaTime::zeroTime(); }
 
-    void seek(const MediaTime&) final;
-    bool seeking() const final { return m_seeking; }
+    void seekToTarget(const SeekTarget&) final;
+    bool seeking() const final { return false; }
 
     void setRateDouble(double) final;
     double rate() const final { return m_rate; }
@@ -308,7 +308,6 @@ private:
     bool m_hasAudio { false };
     bool m_hasVideo { false };
     bool m_hasAvailableVideoFrame { false };
-    bool m_seeking { false };
     bool m_visible { false };
     bool m_loadingProgressed { false };
     bool m_loadFinished { false };

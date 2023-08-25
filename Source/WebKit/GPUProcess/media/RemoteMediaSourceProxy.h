@@ -65,7 +65,7 @@ public:
     void setPrivateAndOpen(Ref<WebCore::MediaSourcePrivate>&&) final;
     MediaTime duration() const final;
     const WebCore::PlatformTimeRanges& buffered() const final;
-    void seekToTime(const MediaTime&) final;
+    void seekToTarget(const WebCore::SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) final;
     void monitorSourceBuffers() final;
 
 #if !RELEASE_LOG_DISABLED
@@ -88,9 +88,6 @@ private:
     void markEndOfStream(WebCore::MediaSourcePrivate::EndOfStreamStatus);
     void unmarkEndOfStream();
     void setReadyState(WebCore::MediaPlayerEnums::ReadyState);
-    void setIsSeeking(bool);
-    void waitForSeekCompleted();
-    void seekCompleted();
     void setTimeFudgeFactor(const MediaTime&);
 
     WeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;

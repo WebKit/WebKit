@@ -262,10 +262,8 @@ private:
 
     MediaTime getStartDate() const final;
 
-    void seek(const MediaTime&) final;
-    void seekWithTolerance(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance) final;
-
-    bool seeking() const final { return m_seeking; }
+    void seekToTarget(const WebCore::SeekTarget&) final;
+    bool seeking() const final;
 
     MediaTime startTime() const final;
 

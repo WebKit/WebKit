@@ -250,11 +250,6 @@ void SourceBufferPrivateGStreamer::appendParsingFailed()
     SourceBufferPrivate::appendCompleted(false, m_mediaSource ? m_mediaSource->isEnded() : true);
 }
 
-bool SourceBufferPrivateGStreamer::isSeeking() const
-{
-    return m_mediaSource && m_mediaSource->isSeeking();
-}
-
 MediaTime SourceBufferPrivateGStreamer::currentMediaTime() const
 {
     if (!m_mediaSource)

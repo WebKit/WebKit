@@ -3372,6 +3372,14 @@ header: <WebCore/MediaPlayer.h>
     std::optional<Vector<WebCore::FourCC>> allowedMediaAudioCodecIDs;
     std::optional<Vector<WebCore::FourCC>> allowedMediaCaptionFormatTypes;
 };
+
+header: <WebCore/MediaPlayer.h>
+[CustomHeader] struct WebCore::SeekTarget {
+    MediaTime time;
+    MediaTime negativeThreshold;
+    MediaTime positiveThreshold;
+};
+
 #endif
 
 enum class WebCore::MediaPlayerNetworkState : uint8_t {

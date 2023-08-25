@@ -43,6 +43,7 @@ struct WebKit::RemoteMediaPlayerState {
     std::optional<WebCore::VideoPlaybackQualityMetrics> videoMetrics;
     std::optional<bool> documentIsCrossOrigin;
     bool paused;
+    bool seeking;
     bool canSaveMediaData;
     bool hasAudio;
     bool hasVideo;

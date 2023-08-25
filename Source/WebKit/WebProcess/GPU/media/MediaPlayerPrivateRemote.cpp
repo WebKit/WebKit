@@ -284,18 +284,11 @@ MediaTime MediaPlayerPrivateRemote::currentMediaTime() const
     return std::min(std::max(calculatedCurrentTime, MediaTime::zeroTime()), durationMediaTime());
 }
 
-void MediaPlayerPrivateRemote::seek(const MediaTime& time)
+void MediaPlayerPrivateRemote::seekToTarget(const WebCore::SeekTarget& target)
 {
     m_seeking = true;
-    m_cachedMediaTime = time;
-    connection().send(Messages::RemoteMediaPlayerProxy::Seek(time), m_id);
-}
-
-void MediaPlayerPrivateRemote::seekWithTolerance(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
-{
-    m_seeking = true;
-    m_cachedMediaTime = time;
-    connection().send(Messages::RemoteMediaPlayerProxy::SeekWithTolerance(time, negativeTolerance, positiveTolerance), m_id);
+    m_cachedMediaTime = target.time;
+    connection().send(Messages::RemoteMediaPlayerProxy::SeekToTarget(target), m_id);
 }
 
 bool MediaPlayerPrivateRemote::didLoadingProgress() const
@@ -368,7 +361,8 @@ void MediaPlayerPrivateRemote::muteChanged(bool muted)
 
 void MediaPlayerPrivateRemote::timeChanged(RemoteMediaPlayerState&& state)
 {
-    m_seeking = false;
+    if (!state.seeking)
+        m_seeking = false;
     updateCachedState(WTFMove(state));
     if (auto player = m_player.get())
         player->timeChanged();
@@ -379,6 +373,11 @@ void MediaPlayerPrivateRemote::durationChanged(RemoteMediaPlayerState&& state)
     updateCachedState(WTFMove(state));
     if (auto player = m_player.get())
         player->durationChanged();
+}
+
+bool MediaPlayerPrivateRemote::seeking() const
+{
+    return m_seeking;
 }
 
 void MediaPlayerPrivateRemote::rateChanged(double rate)

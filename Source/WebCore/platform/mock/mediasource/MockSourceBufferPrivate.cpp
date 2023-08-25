@@ -272,11 +272,6 @@ bool MockSourceBufferPrivate::canSwitchToType(const ContentType& contentType)
     return MockMediaPlayerMediaSource::supportsType(parameters) != MediaPlayer::SupportsType::IsNotSupported;
 }
 
-bool MockSourceBufferPrivate::isSeeking() const
-{
-    return m_mediaSource && m_mediaSource->isSeeking();
-}
-
 MediaTime MockSourceBufferPrivate::currentMediaTime() const
 {
     if (!m_mediaSource)

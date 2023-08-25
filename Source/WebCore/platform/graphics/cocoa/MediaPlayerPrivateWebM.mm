@@ -242,7 +242,7 @@ void MediaPlayerPrivateWebM::play()
     [m_synchronizer setRate:m_rate];
 
     if (currentMediaTime() >= durationMediaTime())
-        seek(MediaTime::zeroTime());
+        seekToTarget(SeekTarget::zero());
 }
 
 void MediaPlayerPrivateWebM::pause()
@@ -275,17 +275,16 @@ MediaTime MediaPlayerPrivateWebM::currentMediaTime() const
     return synchronizerTime;
 }
 
-void MediaPlayerPrivateWebM::seek(const MediaTime& time)
+void MediaPlayerPrivateWebM::seekToTarget(const SeekTarget& target)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, "time = ", time);
-
-    [m_synchronizer setRate:0 time:PAL::toCMTime(time)];
+    ALWAYS_LOG(LOGIDENTIFIER, "target = ", target);
+    [m_synchronizer setRate:0 time:PAL::toCMTime(target.time)];
     for (auto& trackBufferPair : m_trackBufferMap) {
         TrackBuffer& trackBuffer = trackBufferPair.value;
         auto trackId = trackBufferPair.key;
 
         trackBuffer.setNeedsReenqueueing(true);
-        reenqueueMediaForTime(trackBuffer, trackId, time);
+        reenqueueMediaForTime(trackBuffer, trackId, target.time);
     }
     [m_synchronizer setRate:m_rate];
     if (auto player = m_player.get())

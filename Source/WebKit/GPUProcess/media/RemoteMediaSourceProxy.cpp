@@ -74,12 +74,14 @@ const PlatformTimeRanges& RemoteMediaSourceProxy::buffered() const
     return m_buffered;
 }
 
-void RemoteMediaSourceProxy::seekToTime(const MediaTime& time)
+void RemoteMediaSourceProxy::seekToTarget(const WebCore::SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
 {
-    if (!m_connectionToWebProcess)
+    if (!m_connectionToWebProcess) {
+        completionHandler(MediaTime::invalidTime());
         return;
+    }
 
-    m_connectionToWebProcess->connection().send(Messages::MediaSourcePrivateRemote::SeekToTime(time), m_identifier);
+    m_connectionToWebProcess->connection().sendWithAsyncReply(Messages::MediaSourcePrivateRemote::SeekToTarget(target), WTFMove(completionHandler), m_identifier);
 }
 
 void RemoteMediaSourceProxy::monitorSourceBuffers()
@@ -152,24 +154,6 @@ void RemoteMediaSourceProxy::setReadyState(WebCore::MediaPlayerEnums::ReadyState
 {
     if (m_private)
         m_private->setReadyState(readyState);
-}
-
-void RemoteMediaSourceProxy::setIsSeeking(bool isSeeking)
-{
-    if (m_private)
-        m_private->setIsSeeking(isSeeking);
-}
-
-void RemoteMediaSourceProxy::waitForSeekCompleted()
-{
-    if (m_private)
-        m_private->waitForSeekCompleted();
-}
-
-void RemoteMediaSourceProxy::seekCompleted()
-{
-    if (m_private)
-        m_private->seekCompleted();
 }
 
 void RemoteMediaSourceProxy::setTimeFudgeFactor(const MediaTime& fudgeFactor)

@@ -334,9 +334,9 @@ void RemoteSourceBufferProxy::setAppendWindowEnd(const MediaTime& appendWindowEn
     m_sourceBufferPrivate->setAppendWindowEnd(appendWindowEnd);
 }
 
-void RemoteSourceBufferProxy::seekToTime(const MediaTime& mediaTime)
+void RemoteSourceBufferProxy::seekToTarget(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
 {
-    m_sourceBufferPrivate->seekToTime(mediaTime);
+    m_sourceBufferPrivate->seekToTarget(target, WTFMove(completionHandler));
 }
 
 void RemoteSourceBufferProxy::updateTrackIds(Vector<std::pair<TrackPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier>>&& identifierPairs)

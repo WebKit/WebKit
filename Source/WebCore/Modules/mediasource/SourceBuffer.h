@@ -105,7 +105,7 @@ public:
 
     void abortIfUpdating();
     void removedFromMediaSource();
-    void seekToTime(const MediaTime&);
+    void seekToTarget(const SeekTarget&, CompletionHandler<void(const MediaTime&)>&&);
 
     bool canPlayThroughRange(const PlatformTimeRanges&);
 

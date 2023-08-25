@@ -1409,6 +1409,7 @@ void SourceBufferPrivateAVFObjC::seekToTime(const MediaTime& time)
     m_seeking = false;
     SourceBufferPrivate::seekToTime(time);
 }
+
 FloatSize SourceBufferPrivateAVFObjC::naturalSize()
 {
     return valueOrDefault(m_cachedSize);

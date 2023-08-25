@@ -75,7 +75,7 @@ public:
     void setPageIsVisible(bool) final;
 
     bool seeking() const final;
-    void seek(float) final;
+    void seekToTarget(const SeekTarget&) final;
 
     void setRate(float) final;
 

@@ -208,15 +208,16 @@ MediaTime MockMediaPlayerMediaSource::durationMediaTime() const
     return m_mediaSourcePrivate ? m_mediaSourcePrivate->duration() : MediaTime::zeroTime();
 }
 
-void MockMediaPlayerMediaSource::seekWithTolerance(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
+void MockMediaPlayerMediaSource::seekToTarget(const SeekTarget& target)
 {
-    if (!negativeTolerance && !positiveTolerance) {
-        m_currentTime = time;
-        m_mediaSourcePrivate->seekToTime(time);
-    } else
-        m_currentTime = m_mediaSourcePrivate->seekToTime(time, negativeTolerance, positiveTolerance);
+    m_seekCompleted = false;
+    m_mediaSourcePrivate->seekToTarget(target, [this, weakThis = WeakPtr { this }](const MediaTime& seekTime) {
+        if (!weakThis || !seekTime.isValid())
+            return;
 
-    if (m_seekCompleted) {
+        m_seekCompleted = true;
+        m_currentTime = seekTime;
+
         if (auto player = m_player.get())
             player->timeChanged();
 
@@ -226,7 +227,7 @@ void MockMediaPlayerMediaSource::seekWithTolerance(const MediaTime& time, const 
                     return;
                 advanceCurrentTime();
             });
-    }
+    });
 }
 
 void MockMediaPlayerMediaSource::advanceCurrentTime()
@@ -273,28 +274,6 @@ void MockMediaPlayerMediaSource::setNetworkState(MediaPlayer::NetworkState netwo
     m_networkState = networkState;
     if (auto player = m_player.get())
         player->networkStateChanged();
-}
-
-void MockMediaPlayerMediaSource::waitForSeekCompleted()
-{
-    m_seekCompleted = false;
-}
-
-void MockMediaPlayerMediaSource::seekCompleted()
-{
-    if (m_seekCompleted)
-        return;
-    m_seekCompleted = true;
-
-    if (auto player = m_player.get())
-        player->timeChanged();
-
-    if (m_playing)
-        callOnMainThread([this, weakThis = WeakPtr { *this }] {
-            if (!weakThis)
-                return;
-            advanceCurrentTime();
-        });
 }
 
 std::optional<VideoPlaybackQualityMetrics> MockMediaPlayerMediaSource::videoPlaybackQualityMetrics()
