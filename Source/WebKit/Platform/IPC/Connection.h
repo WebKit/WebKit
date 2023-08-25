@@ -684,7 +684,7 @@ template<typename T>
 Error Connection::send(UniqueID connectionID, T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> qos)
 {
     Locker locker { s_connectionMapLock };
-    auto* connection = connectionMap().get(connectionID);
+    RefPtr connection = connectionMap().get(connectionID);
     if (!connection)
         return Error::NoConnectionForIdentifier;
     return connection->send(WTFMove(message), destinationID, sendOptions, qos);
