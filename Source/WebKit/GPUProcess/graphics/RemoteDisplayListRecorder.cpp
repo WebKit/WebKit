@@ -144,7 +144,7 @@ void RemoteDisplayListRecorder::setState(DisplayList::SetState&& item)
         auto gradientIdentifier = brush.gradientIdentifier();
         if (!gradientIdentifier)
             return true;
-        auto gradient = resourceCache().cachedGradient(*gradientIdentifier);
+        RefPtr gradient = resourceCache().cachedGradient(*gradientIdentifier);
         if (!gradient) {
             ASSERT_NOT_REACHED();
             return false;
