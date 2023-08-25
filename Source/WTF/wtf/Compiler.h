@@ -401,6 +401,17 @@
 #define REFERENCED_FROM_ASM
 #endif
 
+/* NO_REORDER */
+
+#if !defined(NO_REORDER) && COMPILER(GCC)
+#define NO_REORDER \
+    __attribute__((__no_reorder__))
+#endif
+
+#if !defined(NO_REORDER)
+#define NO_REORDER
+#endif
+
 /* UNLIKELY */
 
 #if !defined(UNLIKELY) && COMPILER(GCC_COMPATIBLE)
