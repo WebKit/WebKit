@@ -39,10 +39,6 @@
 #include <wtf/ValueCheck.h>
 #include <wtf/VectorTraits.h>
 
-#if ASAN_ENABLED
-extern "C" void __sanitizer_annotate_contiguous_container(const void* begin, const void* end, const void* old_mid, const void* new_mid);
-#endif
-
 namespace JSC {
 class LLIntOffsetsExtractor;
 }
