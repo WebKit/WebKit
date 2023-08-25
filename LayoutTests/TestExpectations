@@ -6643,3 +6643,5 @@ webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/
 # We only support import-attributes and do not support import-assertions.
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/import-assertions
 
+# webkit.org/b/260546
+[ Debug ] imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/toggleEvent.html [ Pass Failure ]
