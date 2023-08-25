@@ -561,6 +561,45 @@ TEST(WKBackForwardList, BackForwardNavigationSkipsItemsWithoutUserGestureFragmen
     });
 }
 
+TEST(WKBackForwardList, BackForwardNavigationSkipsItemsWithoutUserGestureSubframe)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/source.html"_s, { "foo"_s } },
+        { "/destination.html"_s, { "<iframe src='iframe.html'></iframe>"_s } },
+        { "/iframe.html"_s, { "<script>onload = () => { setTimeout(() => { history.pushState(null, document.title, '#'); }, 0); };</script>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto webView = adoptNS([[WKWebView alloc] init]);
+
+    auto navigationDelegate = adoptNS([WKBackForwardNavigationDelegate new]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:server.request("/source.html"_s)];
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+
+    [webView loadRequest:server.request("/destination.html"_s)];
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+
+    // Wait for the subframe to call pushState().
+    while ([webView backForwardList].backList.count != 2)
+        TestWebKitAPI::Util::spinRunLoop();
+
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+
+    // We should be back to source.html since we would have ignored the history item
+    // added by the subframe without user interaction.
+    EXPECT_EQ([webView backForwardList].backList.count, 0U);
+    EXPECT_STREQ([webView URL].absoluteString.UTF8String, server.request("/source.html"_s).URL.absoluteString.UTF8String);
+
+    [webView goForward];
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+
+    EXPECT_EQ([webView backForwardList].backList.count, 2U);
+    EXPECT_EQ([webView backForwardList].forwardList.count, 0U);
+    EXPECT_STREQ([webView URL].absoluteString.UTF8String, server.request("/destination.html"_s).URL.absoluteString.UTF8String);
+}
+
 static void runBackForwardNavigationDoesNotSkipItemsWithUserGestureTest(Function<void(WKWebView *, ASCIILiteral fragment)>&& navigate)
 {
     auto webView = adoptNS([[WKWebView alloc] init]);
