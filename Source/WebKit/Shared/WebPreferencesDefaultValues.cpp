@@ -178,10 +178,7 @@ bool defaultManageCaptureStatusBarInGPUProcessEnabled()
 #if ENABLE(MANAGED_MEDIA_SOURCE) && ENABLE(MEDIA_SOURCE)
 bool defaultManagedMediaSourceEnabled()
 {
-#if PLATFORM(IOS_FAMILY)
-    // Enable everywhere that MediaSource is enabled
-    return defaultMediaSourceEnabled();
-#elif PLATFORM(MAC)
+#if PLATFORM(COCOA)
     return true;
 #else
     return false;
