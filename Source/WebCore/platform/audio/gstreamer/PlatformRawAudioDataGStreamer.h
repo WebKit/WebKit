@@ -21,7 +21,7 @@
 
 #include "PlatformRawAudioData.h"
 
-#if USE(GSTREAMER)
+#if ENABLE(WEB_CODECS) && USE(GSTREAMER)
 
 #include "GRefPtrGStreamer.h"
 #include <gst/audio/audio.h>
@@ -56,4 +56,4 @@ private:
 
 }
 
-#endif // USE(GSTREAMER)
+#endif // ENABLE(WEB_CODECS) && USE(GSTREAMER)

@@ -20,8 +20,9 @@
 #include "config.h"
 #include "PlatformRawAudioDataGStreamer.h"
 
-#if USE(GSTREAMER)
+#if ENABLE(WEB_CODECS) && USE(GSTREAMER)
 
+#include "AudioSampleFormat.h"
 #include "GStreamerCommon.h"
 #include "GUniquePtrGStreamer.h"
 #include "SharedBuffer.h"
@@ -230,4 +231,4 @@ void PlatformRawAudioData::copyTo(std::span<uint8_t> destination, AudioSampleFor
 
 #undef GST_CAT_DEFAULT
 
-#endif // USE(GSTREAMER)
+#endif // ENABLE(WEB_CODECS) && USE(GSTREAMER)
