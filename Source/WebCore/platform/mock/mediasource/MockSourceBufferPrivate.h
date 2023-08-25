@@ -61,7 +61,6 @@ private:
     void setMinimumUpcomingPresentationTime(const AtomString&, const MediaTime&) final;
     void clearMinimumUpcomingPresentationTime(const AtomString&) final;
     bool canSwitchToType(const ContentType&) final;
-    bool isSeeking() const final;
     MediaTime currentMediaTime() const final;
     MediaTime duration() const final;
 

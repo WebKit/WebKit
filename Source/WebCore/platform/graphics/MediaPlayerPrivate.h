@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -68,7 +68,7 @@ public:
         if (prepare)
             prepareForRendering();
     }
-    
+
     virtual void prepareToPlay() { }
     virtual PlatformLayer* platformLayer() const { return nullptr; }
 
@@ -96,7 +96,7 @@ public:
     virtual long platformErrorCode() const { return 0; }
 
     virtual void play() = 0;
-    virtual void pause() = 0;    
+    virtual void pause() = 0;
     virtual void setBufferingPolicy(MediaPlayer::BufferingPolicy) { }
 
     virtual bool supportsPictureInPicture() const { return false; }
@@ -129,11 +129,7 @@ public:
 
     virtual MediaTime getStartDate() const { return MediaTime::createWithDouble(std::numeric_limits<double>::quiet_NaN()); }
 
-    virtual void seek(float) { }
-    virtual void seekDouble(double time) { seek(time); }
-    virtual void seek(const MediaTime& time) { seekDouble(time.toDouble()); }
-    virtual void seekWithTolerance(const MediaTime& time, const MediaTime&, const MediaTime&) { seek(time); }
-
+    virtual void seekToTarget(const SeekTarget&) = 0;
     virtual bool seeking() const = 0;
 
     virtual MediaTime startTime() const { return MediaTime::zeroTime(); }
@@ -157,7 +153,7 @@ public:
 
     virtual void setMuted(bool) { }
 
-    virtual bool hasClosedCaptions() const { return false; }    
+    virtual bool hasClosedCaptions() const { return false; }
     virtual void setClosedCaptionsVisible(bool) { }
 
     virtual double maxFastForwardRate() const { return std::numeric_limits<double>::infinity(); }

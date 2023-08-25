@@ -34,6 +34,7 @@
 #include "CSSValueKeywords.h"
 #include "CSSValuePair.h"
 #include "CSSVariableReferenceValue.h"
+#include "ComputedStyleExtractor.h"
 #include "FontSelectionValueInlines.h"
 #include "Quad.h"
 #include "StylePropertiesInlines.h"
@@ -45,7 +46,7 @@ constexpr unsigned maxShorthandLength = 17; // FIXME: Generate this from CSSProp
 
 class ShorthandSerializer {
 public:
-    explicit ShorthandSerializer(const StyleProperties&, CSSPropertyID shorthandID);
+    template<typename PropertiesType> explicit ShorthandSerializer(const PropertiesType&, CSSPropertyID shorthandID);
     String serialize();
 
 private:
@@ -93,6 +94,7 @@ private:
 
     bool subsequentLonghandsHaveInitialValues(unsigned index) const;
 
+    bool commonSerializationChecks(const ComputedStyleExtractor&);
     bool commonSerializationChecks(const StyleProperties&);
 
     String serializeLonghands() const;
@@ -129,7 +131,8 @@ private:
     bool m_commonSerializationChecksSuppliedResult { false };
 };
 
-inline ShorthandSerializer::ShorthandSerializer(const StyleProperties& properties, CSSPropertyID shorthandID)
+template<typename PropertiesType>
+inline ShorthandSerializer::ShorthandSerializer(const PropertiesType& properties, CSSPropertyID shorthandID)
     : m_shorthand(shorthandForProperty(shorthandID))
     , m_commonSerializationChecksSuppliedResult(commonSerializationChecks(properties))
 {
@@ -180,6 +183,18 @@ bool ShorthandSerializer::subsequentLonghandsHaveInitialValues(unsigned startInd
             return false;
     }
     return true;
+}
+
+bool ShorthandSerializer::commonSerializationChecks(const ComputedStyleExtractor& properties)
+{
+    ASSERT(length() && length() <= maxShorthandLength);
+
+    ASSERT(m_shorthand.id() != CSSPropertyAll);
+
+    for (unsigned i = 0; i < length(); ++i)
+        m_longhandValues[i] = properties.propertyValue(longhandProperty(i));
+
+    return false;
 }
 
 bool ShorthandSerializer::commonSerializationChecks(const StyleProperties& properties)
@@ -1215,6 +1230,11 @@ String ShorthandSerializer::serializeWhiteSpace() const
 String serializeShorthandValue(const StyleProperties& properties, CSSPropertyID shorthand)
 {
     return ShorthandSerializer(properties, shorthand).serialize();
+}
+
+String serializeShorthandValue(const ComputedStyleExtractor& extractor, CSSPropertyID shorthand)
+{
+    return ShorthandSerializer(extractor, shorthand).serialize();
 }
 
 }

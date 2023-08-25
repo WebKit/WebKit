@@ -64,9 +64,9 @@ std::optional<AVCParameters> parseAVCCodecParameters(StringView codecString)
     auto profileFlagsAndLevel = parseInteger<uint32_t>(*nextElement, 16);
     if (!profileFlagsAndLevel)
         return std::nullopt;
-    parameters.profileIDC = (*profileFlagsAndLevel & 0xF00) >> 16;
-    parameters.constraintsFlags = (*profileFlagsAndLevel & 0xF0) >> 8;
-    parameters.levelIDC = *profileFlagsAndLevel & 0xF;
+    parameters.profileIDC = (*profileFlagsAndLevel >> 16) & 0xFF;
+    parameters.constraintsFlags = (*profileFlagsAndLevel >> 8) & 0xFF;
+    parameters.levelIDC = *profileFlagsAndLevel & 0xFF;
 
     return parameters;
 }

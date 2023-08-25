@@ -125,8 +125,13 @@ public:
     virtual void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) = 0;
     virtual void addRootFrame(WebCore::FrameIdentifier) { }
     // FIXME: Add a corresponding removeRootFrame.
+
+    // Cause a rendering update to happen as soon as possible.
     virtual void triggerRenderingUpdate() = 0;
+    // Cause a rendering update to happen at the next suitable time,
+    // as determined by the drawing area.
     virtual bool scheduleRenderingUpdate() { return false; }
+
     virtual void renderingUpdateFramesPerSecondChanged() { }
 
     virtual void willStartRenderingUpdateDisplay();
@@ -184,12 +189,13 @@ protected:
 
     template<typename T> bool send(T&& message)
     {
-        return m_webPage.send(WTFMove(message), m_identifier.toUInt64(), { });
+        Ref webPage = m_webPage.get();
+        return webPage->send(WTFMove(message), m_identifier.toUInt64(), { });
     }
 
     const DrawingAreaType m_type;
     DrawingAreaIdentifier m_identifier;
-    WebPage& m_webPage;
+    CheckedRef<WebPage> m_webPage;
     WebCore::IntSize m_lastViewSizeForScaleToFit;
     WebCore::IntSize m_lastDocumentSizeForScaleToFit;
     bool m_isScalingViewToFitDocument { false };

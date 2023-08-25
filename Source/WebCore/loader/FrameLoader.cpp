@@ -2089,6 +2089,13 @@ void FrameLoader::clearProvisionalLoad()
     setState(FrameState::Complete);
 }
 
+void FrameLoader::provisionalLoadFailedInAnotherProcess()
+{
+    m_provisionalLoadHappeningInAnotherProcess = false;
+    if (auto* localParent = dynamicDowncast<LocalFrame>(m_frame.tree().parent()))
+        localParent->loader().checkLoadComplete();
+}
+
 void FrameLoader::commitProvisionalLoad()
 {
     RefPtr<DocumentLoader> pdl = m_provisionalDocumentLoader;
@@ -3718,8 +3725,6 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
             // Don't call checkCompleted until RemoteFrame::didFinishLoadInAnotherProcess,
             // to prevent onload from happening until iframes finish loading in other processes.
             ASSERT(m_frame.settings().siteIsolationEnabled());
-            // FIXME: This needs to be set back to false if the provisional load in another process fails before it it committed.
-            // When the load is committed, this FrameLoader and its LocalFrame are replaced by a RemoteFrame.
             m_provisionalLoadHappeningInAnotherProcess = true;
         }
 

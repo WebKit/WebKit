@@ -1317,6 +1317,17 @@ struct WebCore::WebCodecsEncodedVideoChunkData {
 };
 #endif
 
+header: <WebCore/WebCodecsEncodedAudioChunk.h>
+#if ENABLE(WEB_CODECS)
+enum class WebCore::WebCodecsEncodedAudioChunkType : bool;
+struct WebCore::WebCodecsEncodedAudioChunkData {
+    WebCore::WebCodecsEncodedAudioChunkType type;
+    int64_t timestamp;
+    std::optional<uint64_t> duration;
+    Vector<uint8_t> buffer;
+};
+#endif
+
 struct WebCore::HTMLModelElementCamera {
     double pitch;
     double yaw;
@@ -3773,6 +3784,14 @@ header: <WebCore/MediaPlayer.h>
     std::optional<Vector<WebCore::FourCC>> allowedMediaAudioCodecIDs;
     std::optional<Vector<WebCore::FourCC>> allowedMediaCaptionFormatTypes;
 };
+
+header: <WebCore/MediaPlayer.h>
+[CustomHeader] struct WebCore::SeekTarget {
+    MediaTime time;
+    MediaTime negativeThreshold;
+    MediaTime positiveThreshold;
+};
+
 #endif
 
 enum class WebCore::MediaPlayerNetworkState : uint8_t {

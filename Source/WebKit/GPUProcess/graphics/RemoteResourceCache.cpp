@@ -72,7 +72,7 @@ void RemoteResourceCache::cacheFilter(Ref<Filter>&& filter)
     m_resourceHeap.add(WTFMove(filter));
 }
 
-NativeImage* RemoteResourceCache::cachedNativeImage(RenderingResourceIdentifier renderingResourceIdentifier) const
+RefPtr<NativeImage> RemoteResourceCache::cachedNativeImage(RenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_resourceHeap.getNativeImage(renderingResourceIdentifier);
 }
@@ -87,7 +87,7 @@ void RemoteResourceCache::cacheFont(Ref<Font>&& font)
     m_resourceHeap.add(WTFMove(font));
 }
 
-Font* RemoteResourceCache::cachedFont(RenderingResourceIdentifier renderingResourceIdentifier) const
+RefPtr<Font> RemoteResourceCache::cachedFont(RenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_resourceHeap.getFont(renderingResourceIdentifier);
 }
@@ -97,22 +97,22 @@ void RemoteResourceCache::cacheFontCustomPlatformData(Ref<FontCustomPlatformData
     m_resourceHeap.add(WTFMove(customPlatformData));
 }
 
-FontCustomPlatformData* RemoteResourceCache::cachedFontCustomPlatformData(RenderingResourceIdentifier renderingResourceIdentifier) const
+RefPtr<FontCustomPlatformData> RemoteResourceCache::cachedFontCustomPlatformData(RenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_resourceHeap.getFontCustomPlatformData(renderingResourceIdentifier);
 }
 
-DecomposedGlyphs* RemoteResourceCache::cachedDecomposedGlyphs(RenderingResourceIdentifier renderingResourceIdentifier) const
+RefPtr<DecomposedGlyphs> RemoteResourceCache::cachedDecomposedGlyphs(RenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_resourceHeap.getDecomposedGlyphs(renderingResourceIdentifier);
 }
 
-Gradient* RemoteResourceCache::cachedGradient(RenderingResourceIdentifier renderingResourceIdentifier) const
+RefPtr<Gradient> RemoteResourceCache::cachedGradient(RenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_resourceHeap.getGradient(renderingResourceIdentifier);
 }
 
-Filter* RemoteResourceCache::cachedFilter(RenderingResourceIdentifier renderingResourceIdentifier) const
+RefPtr<Filter> RemoteResourceCache::cachedFilter(RenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_resourceHeap.getFilter(renderingResourceIdentifier);
 }

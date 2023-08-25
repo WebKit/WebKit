@@ -345,6 +345,13 @@ String HTMLAnchorElement::origin() const
     return SecurityOrigin::create(url)->toString();
 }
 
+void HTMLAnchorElement::setProtocol(StringView value)
+{
+    if (auto url = href(); !url.isValid())
+        return;
+    URLDecomposition::setProtocol(value);
+}
+
 String HTMLAnchorElement::text()
 {
     return textContent();

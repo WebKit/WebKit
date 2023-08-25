@@ -66,15 +66,15 @@ public:
     const Vector<RefPtr<SourceBufferPrivateAVFObjC>>& sourceBuffers() const { return m_sourceBuffers; }
     const Vector<SourceBufferPrivateAVFObjC*>& activeSourceBuffers() const { return m_activeSourceBuffers; }
 
-    AddStatus addSourceBuffer(const ContentType&, bool webMParserEnabled, RefPtr<SourceBufferPrivate>&) override;
-    void durationChanged(const MediaTime&) override;
-    void markEndOfStream(EndOfStreamStatus) override;
-    void unmarkEndOfStream() override;
-    bool isEnded() const override { return m_isEnded; }
-    MediaPlayer::ReadyState readyState() const override;
-    void setReadyState(MediaPlayer::ReadyState) override;
-    void waitForSeekCompleted() override;
-    void seekCompleted() override;
+    AddStatus addSourceBuffer(const ContentType&, bool webMParserEnabled, RefPtr<SourceBufferPrivate>&) final;
+    void durationChanged(const MediaTime&) final;
+    void markEndOfStream(EndOfStreamStatus) final;
+    void unmarkEndOfStream() final;
+    bool isEnded() const final { return m_isEnded; }
+    MediaPlayer::ReadyState readyState() const final;
+    void setReadyState(MediaPlayer::ReadyState) final;
+
+    void seekToTarget(const SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) final;
 
     MediaTime duration() const;
     const PlatformTimeRanges& buffered();
@@ -85,8 +85,7 @@ public:
 
     MediaTime currentMediaTime() const;
     void willSeek();
-    void seekToTime(const MediaTime&);
-    MediaTime fastSeekTimeForMediaTime(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
+
     FloatSize naturalSize() const;
 
     void hasSelectedVideoChanged(SourceBufferPrivateAVFObjC&);
@@ -109,7 +108,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
-    const char* logClassName() const override { return "MediaSourcePrivateAVFObjC"; }
+    const char* logClassName() const final { return "MediaSourcePrivateAVFObjC"; }
     const void* logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
 

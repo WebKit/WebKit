@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DisplayListItems.h"
 #include "GraphicsContext.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>

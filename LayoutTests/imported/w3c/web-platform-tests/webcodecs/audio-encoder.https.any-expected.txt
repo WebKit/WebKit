@@ -1,7 +1,25 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: AudioData
-
-Harness Error (FAIL), message = ReferenceError: Can't find variable: AudioData
 
 FAIL Simple audio encoding promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
 FAIL Encode audio with negative timestamp promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL Channel number variation: 1 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL Channel number variation: 2 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL Sample rate variation: 3000 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL Sample rate variation: 13000 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL Sample rate variation: 23000 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL Sample rate variation: 33000 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL Sample rate variation: 43000 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL Sample rate variation: 53000 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL Sample rate variation: 63000 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL Sample rate variation: 73000 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL Sample rate variation: 83000 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL Sample rate variation: 93000 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL Encoding and decoding promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL Emit decoder config and extra data. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL encodeQueueSize test promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL Test encoding Opus with additional parameters: Empty Opus config promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL Test encoding Opus with additional parameters: Opus with frameDuration promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL Test encoding Opus with additional parameters: Opus with complexity promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL Test encoding Opus with additional parameters: Opus with useinbandfec promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL Test encoding Opus with additional parameters: Opus with usedtx promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL Test encoding Opus with additional parameters: Opus mixed parameters promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
 

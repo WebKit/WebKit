@@ -1834,8 +1834,6 @@ webkit.org/b/259740 [ Ventura Release arm64 ] css3/color-filters/color-filter-ou
 
 webkit.org/b/260113 [ arm64 ] http/wpt/webauthn/ctap-hid-failure.https.html [ Pass Failure ]
 
-webkit.org/b/260185 media/media-source/media-source-fastseek.html [ Pass Failure ]
-
 webkit.org/b/260225 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-GC.https.html [ Pass Failure ]
 
 # rdar://102425691 ([ New Test ](256068@main): [ Ventura+ ] http/wpt/webcodecs/videoFrame-colorSpace.html is a consistent failure)
@@ -2088,6 +2086,3 @@ webkit.org/b/260225 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-GC.
 
 # rdar://108846032 (REGRESSION (263506@main): [ Sonoma wk2 ] fast/layoutformattingcontext/horizontal-sizing-with-trailing-letter-spacing.html: WebCore::Layout::Line::TrimmableTrailingContent::remove)
 [ Sonoma+ ] fast/layoutformattingcontext/horizontal-sizing-with-trailing-letter-spacing.html [ Skip ]
-
-# rdar://114111914 (REGRESSION(267014@main?): [ macOS x86_64 Debug ] ipc/restrictedendpoints/test-only-ipc-allowed.html crashes constantly.)
-webkit.org/b/260411 [ Debug x86_64 ] ipc/restrictedendpoints/test-only-ipc-allowed.html [ Crash ]

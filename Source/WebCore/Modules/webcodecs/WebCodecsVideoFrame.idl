@@ -39,7 +39,7 @@ typedef (HTMLImageElement
 // FIXME: Support Serializable and Transferable.
 [
     Conditional=WEB_CODECS,
-    EnabledBySetting=WebCodecsEnabled,
+    EnabledBySetting=WebCodecsVideoEnabled,
     Exposed=(Window,DedicatedWorker),
     InterfaceName=VideoFrame,
     ReportExtraMemoryCost,

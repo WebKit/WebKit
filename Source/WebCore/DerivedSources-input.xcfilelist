@@ -967,6 +967,7 @@ $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialRequestOptions.idl
 $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialType.idl
 $(PROJECT_DIR)/Modules/webauthn/ResidentKeyRequirement.idl
 $(PROJECT_DIR)/Modules/webauthn/UserVerificationRequirement.idl
+$(PROJECT_DIR)/Modules/webcodecs/AudioSampleFormat.idl
 $(PROJECT_DIR)/Modules/webcodecs/AvcEncoderConfig.idl
 $(PROJECT_DIR)/Modules/webcodecs/BitrateMode.idl
 $(PROJECT_DIR)/Modules/webcodecs/HardwareAcceleration.idl
@@ -979,7 +980,14 @@ $(PROJECT_DIR)/Modules/webcodecs/VideoMatrixCoefficients.idl
 $(PROJECT_DIR)/Modules/webcodecs/VideoPixelFormat.idl
 $(PROJECT_DIR)/Modules/webcodecs/VideoTransferCharacteristics.idl
 $(PROJECT_DIR)/Modules/webcodecs/WebCodecsAlphaOption.idl
+$(PROJECT_DIR)/Modules/webcodecs/WebCodecsAudioData.idl
+$(PROJECT_DIR)/Modules/webcodecs/WebCodecsAudioDataOutputCallback.idl
+$(PROJECT_DIR)/Modules/webcodecs/WebCodecsAudioDecoder.idl
+$(PROJECT_DIR)/Modules/webcodecs/WebCodecsAudioDecoderConfig.idl
+$(PROJECT_DIR)/Modules/webcodecs/WebCodecsAudioDecoderSupport.idl
 $(PROJECT_DIR)/Modules/webcodecs/WebCodecsCodecState.idl
+$(PROJECT_DIR)/Modules/webcodecs/WebCodecsEncodedAudioChunk.idl
+$(PROJECT_DIR)/Modules/webcodecs/WebCodecsEncodedAudioChunkType.idl
 $(PROJECT_DIR)/Modules/webcodecs/WebCodecsEncodedVideoChunk.idl
 $(PROJECT_DIR)/Modules/webcodecs/WebCodecsEncodedVideoChunkMetadata.idl
 $(PROJECT_DIR)/Modules/webcodecs/WebCodecsEncodedVideoChunkOutputCallback.idl

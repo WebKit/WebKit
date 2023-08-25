@@ -17,5 +17,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/htmlanchorelement_attribute-getter-setter.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/htmlanchorelement_getter.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/htmlanchorelement_noopener.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/non-parsable-url-getter-setter.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/non-special-opaque-path-url-getter-setter.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/non-special-url-getter-setter.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener_base.html

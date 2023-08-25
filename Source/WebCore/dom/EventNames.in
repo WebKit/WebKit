@@ -19,7 +19,7 @@ CSSAnimationEvent
 CSSTransitionEvent
 CustomEvent
 DragEvent
-ExtendableCookieChangeEvent
+ExtendableCookieChangeEvent conditional=SERVICE_WORKER
 ExtendableEvent conditional=SERVICE_WORKER
 ExtendableMessageEvent conditional=SERVICE_WORKER
 ErrorEvent

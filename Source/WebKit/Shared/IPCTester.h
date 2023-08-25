@@ -71,6 +71,8 @@ private:
     void sendSameSemaphoreBack(IPC::Connection&, IPC::Semaphore&&);
     void sendSemaphoreBackAndSignalProtocol(IPC::Connection&, IPC::Semaphore&&);
     void sendAsyncMessageToReceiver(IPC::Connection&, uint32_t);
+    void asyncPing(IPC::Connection&, CompletionHandler<void()>&&);
+    void syncPing(IPC::Connection&, CompletionHandler<void()>&&);
 
     void stopIfNeeded();
 

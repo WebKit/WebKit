@@ -111,6 +111,11 @@ WebPageProxy* WebFrameProxy::page() const
     return m_page.get();
 }
 
+std::unique_ptr<ProvisionalFrameProxy> WebFrameProxy::takeProvisionalFrame()
+{
+    return std::exchange(m_provisionalFrame, nullptr);
+}
+
 void WebFrameProxy::webProcessWillShutDown()
 {
     for (auto& childFrame : std::exchange(m_childFrames, { }))
@@ -264,8 +269,6 @@ void WebFrameProxy::didFailLoad()
 
     if (m_navigateCallback)
         m_navigateCallback({ }, { });
-
-    // FIXME: Should we send DidFinishLoadInAnotherProcess here too?
 }
 
 void WebFrameProxy::didSameDocumentNavigation(const URL& url)
@@ -397,7 +400,16 @@ void WebFrameProxy::prepareForProvisionalNavigationInProcess(WebProcessProxy& pr
 
     if (!m_provisionalFrame || navigation.currentRequestIsCrossSiteRedirect()) {
         // FIXME: Main resource (of main or subframe) request redirects should go straight from the network to UI process so we don't need to make the processes for each domain in a redirect chain.
-        m_provisionalFrame = makeUnique<ProvisionalFrameProxy>(*this, Ref { process });
+        RegistrableDomain navigationDomain(navigation.currentRequest().url());
+        RefPtr remotePageProxy = m_page->remotePageProxyForRegistrableDomain(navigationDomain);
+        if (remotePageProxy)
+            ASSERT(remotePageProxy->process().coreProcessIdentifier() == process.coreProcessIdentifier());
+        else if (navigationDomain != RegistrableDomain(m_page->mainFrame()->url())) {
+            remotePageProxy = RemotePageProxy::create(*m_page, process, navigationDomain);
+            remotePageProxy->injectPageIntoNewProcess();
+        }
+
+        m_provisionalFrame = makeUnique<ProvisionalFrameProxy>(*this, process, WTFMove(remotePageProxy));
         // FIXME: This gives too much cookie access. This should be removed when a RemoteFrame is given a topOrigin member.
         auto giveAllCookieAccess = LoadedWebArchive::Yes;
         WebCore::RegistrableDomain domain { };
@@ -421,18 +433,11 @@ void WebFrameProxy::commitProvisionalFrame(FrameIdentifier frameID, FrameInfoDat
     if (m_provisionalFrame) {
         m_provisionalFrame->process().provisionalFrameCommitted(*this);
         m_process->send(Messages::WebPage::DidCommitLoadInAnotherProcess(frameID, m_provisionalFrame->layerHostingContextIdentifier()), m_page->webPageID());
-        m_process = std::exchange(m_provisionalFrame, nullptr)->process();
+        m_process = m_provisionalFrame->process();
+        m_remotePageProxy = m_provisionalFrame->takeRemotePageProxy();
         m_provisionalFrame = nullptr;
-
-        RegistrableDomain oldDomain(url());
-        m_remotePageProxy = m_page->remotePageProxyForRegistrableDomain(RegistrableDomain(request.url()));
     }
     m_page->didCommitLoadForFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData);
-}
-
-void WebFrameProxy::setRemotePageProxy(RemotePageProxy* remotePageProxy)
-{
-    m_remotePageProxy = remotePageProxy;
 }
 
 void WebFrameProxy::getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&& completionHandler)

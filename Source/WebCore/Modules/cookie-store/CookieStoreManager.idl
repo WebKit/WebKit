@@ -23,9 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
- // https://wicg.github.io/cookie-store/#cookiestoremanager
+// https://wicg.github.io/cookie-store/#cookiestoremanager
 
- [
+[
+    Conditional=SERVICE_WORKER,
     EnabledBySetting=CookieStoreAPIEnabled&CookieStoreAPIServiceWorkerEnabled,
     Exposed=(ServiceWorker,Window),
     SecureContext

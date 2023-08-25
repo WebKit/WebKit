@@ -54,8 +54,6 @@ public:
         m_currentIndex += advanceLength;
     }
 
-    unsigned currentIndex() const { return m_currentIndex; }
-
     void reset(unsigned index)
     {
         if (index >= m_lastIndex)
@@ -63,12 +61,21 @@ public:
         m_currentIndex = index;
     }
 
+    const UChar* remainingCharacters() const
+    {
+        auto relativeIndex = m_currentIndex - m_originalIndex;
+        return m_characters + relativeIndex;
+    }
+
+    unsigned currentIndex() const { return m_currentIndex; }
+    const UChar* characters() const { return m_characters; }
+
 private:
-    const UChar* m_characters { nullptr };
+    const UChar* const m_characters { nullptr };
     unsigned m_currentIndex { 0 };
-    unsigned m_originalIndex { 0 };
-    unsigned m_lastIndex { 0 };
-    unsigned m_endIndex { 0 };
+    const unsigned m_originalIndex { 0 };
+    const unsigned m_lastIndex { 0 };
+    const unsigned m_endIndex { 0 };
 };
 
-}
+} // namespace WebCore

@@ -172,6 +172,8 @@ public:
 
     bool needsResettingTransitionCancelsRunningTransitionQuirk() const;
 
+    bool shouldStarBeFeaturePolicyDefaultValue() const;
+
 private:
     bool needsQuirks() const;
 
@@ -231,6 +233,7 @@ private:
     mutable std::optional<bool> m_shouldDisableLazyIframeLoadingQuirk;
     bool m_needsConfigurableIndexedPropertiesQuirk { false };
     bool m_needsToCopyUserSelectNoneQuirk { false };
+    mutable std::optional<bool> m_shouldStarBeFeaturePolicyDefaultValueQuirk;
 };
 
 } // namespace WebCore

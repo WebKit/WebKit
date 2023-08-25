@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef Latin1TextIterator_h
-#define Latin1TextIterator_h
+#pragma once
 
 #include <wtf/text/WTFString.h>
 
@@ -61,16 +60,20 @@ public:
         m_currentIndex = index;
     }
 
+    const LChar* remainingCharacters() const
+    {
+        auto relativeIndex = m_currentIndex - m_originalIndex;
+        return m_characters + relativeIndex;
+    }
+
     unsigned currentIndex() const { return m_currentIndex; }
     const LChar* characters() const { return m_characters; }
 
 private:
-    const LChar* m_characters;
+    const LChar* const m_characters;
     unsigned m_currentIndex;
-    unsigned m_originalIndex;
-    unsigned m_lastIndex;
+    const unsigned m_originalIndex;
+    const unsigned m_lastIndex;
 };
 
-}
-
-#endif
+} // namespace WebCore

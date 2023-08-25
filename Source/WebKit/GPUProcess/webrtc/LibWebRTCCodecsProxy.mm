@@ -40,6 +40,7 @@
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/CVUtilities.h>
 #import <WebCore/FrameRateMonitor.h>
+#import <WebCore/HEVCUtilitiesCocoa.h>
 #import <WebCore/LibWebRTCProvider.h>
 #import <WebCore/PixelBufferConformerCV.h>
 #import <WebCore/VideoFrameCV.h>
@@ -153,12 +154,44 @@ std::unique_ptr<WebCore::WebRTCVideoDecoder> LibWebRTCCodecsProxy::createLocalDe
     return nullptr;
 }
 
-void LibWebRTCCodecsProxy::createDecoder(VideoDecoderIdentifier identifier, VideoCodecType codecType, bool useRemoteFrames, bool enableAdditionalLogging)
+static bool validateCodecString(VideoCodecType codecType, const String& codecString)
+{
+    // FIXME: Further tighten checks.
+    switch (codecType) {
+    case VideoCodecType::H264: {
+        auto parameters = parseAVCCodecParameters(codecString);
+        // Limit to High Profile, level 5.2.
+        return parameters && parameters->profileIDC <= 100 && parameters->levelIDC <= 52;
+    }
+    case VideoCodecType::H265: {
+        auto parameters = parseHEVCCodecParameters(codecString);
+        return parameters && validateHEVCParameters(*parameters, false, false);
+    }
+    case VideoCodecType::VP9:
+        ASSERT(codecString.startsWith("vp09.0"_s));
+        return true;
+    case VideoCodecType::AV1:
+        if (codecString.startsWith("av01."_s) && codecString.length() > 7)
+            return false;
+        auto profile = codecString[5];
+        return profile == '0' || profile == '1' || profile == '2';
+    }
+    ASSERT_NOT_REACHED();
+    return true;
+}
+
+void LibWebRTCCodecsProxy::createDecoder(VideoDecoderIdentifier identifier, VideoCodecType codecType, const String& codecString, bool useRemoteFrames, bool enableAdditionalLogging, CompletionHandler<void(bool)>&& callback)
 {
     assertIsCurrent(workQueue());
+
+    if (!codecString.isNull() && !validateCodecString(codecType, codecString)) {
+        callback(false);
+        return;
+    }
+
     auto decoder = createLocalDecoder(identifier, codecType, useRemoteFrames, enableAdditionalLogging);
     if (!decoder) {
-        ASSERT(IPC::isTestingIPC());
+        callback(false);
         return;
     }
 
@@ -176,16 +209,16 @@ void LibWebRTCCodecsProxy::createDecoder(VideoDecoderIdentifier identifier, Vide
     auto result = m_decoders.add(identifier,  Decoder { WTFMove(decoder), WTFMove(frameRateMonitor) });
     ASSERT_UNUSED(result, result.isNewEntry || IPC::isTestingIPC());
     m_hasEncodersOrDecoders = true;
+    callback(true);
 }
 
 void LibWebRTCCodecsProxy::releaseDecoder(VideoDecoderIdentifier identifier)
 {
     assertIsCurrent(workQueue());
     auto iterator = m_decoders.find(identifier);
-    if (iterator == m_decoders.end()) {
-        ASSERT_IS_TESTING_IPC();
+    if (iterator == m_decoders.end())
         return;
-    }
+
     m_decoders.remove(iterator);
     m_hasEncodersOrDecoders = !m_encoders.isEmpty() || !m_decoders.isEmpty();
 }
@@ -226,10 +259,9 @@ void LibWebRTCCodecsProxy::doDecoderTask(VideoDecoderIdentifier identifier, Func
 {
     assertIsCurrent(workQueue());
     auto iterator = m_decoders.find(identifier);
-    if (iterator == m_decoders.end()) {
-        ASSERT_IS_TESTING_IPC();
+    if (iterator == m_decoders.end())
         return;
-    }
+
     task(iterator->value);
 }
 

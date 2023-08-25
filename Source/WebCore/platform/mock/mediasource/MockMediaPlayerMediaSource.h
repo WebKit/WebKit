@@ -38,7 +38,7 @@ namespace WebCore {
 class MediaSource;
 class MockMediaSourcePrivate;
 
-class MockMediaPlayerMediaSource : public MediaPlayerPrivateInterface, public CanMakeWeakPtr<MockMediaPlayerMediaSource> {
+class MockMediaPlayerMediaSource final : public MediaPlayerPrivateInterface, public CanMakeWeakPtr<MockMediaPlayerMediaSource> {
 public:
     explicit MockMediaPlayerMediaSource(MediaPlayer*);
 
@@ -57,8 +57,6 @@ public:
     MediaPlayer::ReadyState readyState() const override;
     void setReadyState(MediaPlayer::ReadyState);
     void setNetworkState(MediaPlayer::NetworkState);
-    void waitForSeekCompleted();
-    void seekCompleted();
 
 #if !RELEASE_LOG_DISABLED
     const void* mediaPlayerLogIdentifier() { return m_player.get()->mediaPlayerLogIdentifier(); }
@@ -79,7 +77,8 @@ private:
     bool hasVideo() const override;
     bool hasAudio() const override;
     void setPageIsVisible(bool) final;
-    bool seeking() const override;
+    void seekToTarget(const SeekTarget&) final;
+    bool seeking() const final;
     bool paused() const override;
     MediaPlayer::NetworkState networkState() const override;
     MediaTime maxMediaTimeSeekable() const override;
@@ -88,7 +87,6 @@ private:
     void setPresentationSize(const IntSize&) override;
     void paint(GraphicsContext&, const FloatRect&) override;
     MediaTime durationMediaTime() const override;
-    void seekWithTolerance(const MediaTime&, const MediaTime&, const MediaTime&) override;
     std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() override;
     DestinationColorSpace colorSpace() override;
 

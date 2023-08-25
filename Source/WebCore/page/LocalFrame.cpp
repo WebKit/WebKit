@@ -330,6 +330,11 @@ void LocalFrame::broadcastFrameRemovalToOtherProcesses()
     loader().client().broadcastFrameRemovalToOtherProcesses();
 }
 
+void LocalFrame::didFinishLoadInAnotherProcess()
+{
+    loader().provisionalLoadFailedInAnotherProcess();
+}
+
 void LocalFrame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsReason reason)
 {
     if (!page() || !m_doc || !m_doc->renderView())

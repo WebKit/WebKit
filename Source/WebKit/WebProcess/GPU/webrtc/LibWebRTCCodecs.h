@@ -84,6 +84,7 @@ public:
     public:
         VideoDecoderIdentifier identifier;
         VideoCodecType type;
+        String codec;
         void* decodedImageCallback WTF_GUARDED_BY_LOCK(decodedImageCallbackLock) { nullptr };
         DecoderCallback decoderCallback;
         Lock decodedImageCallbackLock;
@@ -94,7 +95,7 @@ public:
     };
 
     Decoder* createDecoder(VideoCodecType);
-    void createDecoderAndWaitUntilReady(VideoCodecType, Function<void(Decoder&)>&&);
+    void createDecoderAndWaitUntilReady(VideoCodecType, const String& codec, Function<void(Decoder*)>&&);
 
     int32_t releaseDecoder(Decoder&);
     void flushDecoder(Decoder&, Function<void()>&&);
@@ -187,7 +188,7 @@ private:
     template<typename Buffer> bool copySharedVideoFrame(LibWebRTCCodecs::Encoder&, IPC::Connection&, Buffer&&);
     WorkQueue& workQueue() const { return m_queue; }
 
-    Decoder* createDecoderInternal(VideoCodecType, Function<void(Decoder&)>&&);
+    Decoder* createDecoderInternal(VideoCodecType, const String& codec, Function<void(Decoder(*))>&&);
     Encoder* createEncoderInternal(VideoCodecType, const std::map<std::string, std::string>&, bool isRealtime, bool useAnnexB, Function<void(Encoder*)>&&);
     template<typename Frame> int32_t encodeFrameInternal(Encoder&, const Frame&, bool shouldEncodeAsKeyFrame, WebCore::VideoFrameRotation, MediaTime, int64_t timestamp, std::optional<uint64_t> duration);
 

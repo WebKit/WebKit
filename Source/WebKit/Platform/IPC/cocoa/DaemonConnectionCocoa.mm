@@ -47,6 +47,8 @@ void Connection::send(xpc_object_t message) const
 void Connection::sendWithReply(xpc_object_t message, CompletionHandler<void(xpc_object_t)>&& completionHandler) const
 {
     ASSERT(RunLoop::isMain());
+    initializeConnectionIfNeeded();
+
     ASSERT(m_connection.get());
     ASSERT(xpc_get_type(message) == XPC_TYPE_DICTIONARY);
     xpc_connection_send_message_with_reply(m_connection.get(), message, dispatch_get_main_queue(), makeBlockPtr([completionHandler = WTFMove(completionHandler)] (xpc_object_t reply) mutable {
@@ -79,7 +81,7 @@ void ConnectionToMachService<Traits>::initializeConnectionIfNeeded() const
         weakThis->connectionReceivedEvent(event);
     });
     xpc_connection_activate(m_connection.get());
-    
+
     newConnectionWasInitialized();
 }
 

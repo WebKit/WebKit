@@ -549,6 +549,20 @@ AriaReflectionForElementReferencesEnabled:
     WebCore:
       default: true
 
+AriaTextRoleEnabled:
+  type: bool
+  status: preview
+  category: dom
+  humanReadableName: "Non-standard ARIA text role"
+  humanReadableDescription: "Enable support for non-standard ARIA text role"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 AspectRatioEnabled:
   type: bool
   status: mature
@@ -1807,6 +1821,7 @@ CookieStoreAPIExtendedAttributesEnabled:
 CookieStoreAPIServiceWorkerEnabled:
   type: bool
   category: dom
+  condition: ENABLE(SERVICE_WORKER)
   status: testable
   humanReadableName: "Cookie Store API for Service Workers"
   humanReadableDescription: "Enable Cookie Store API for Service Workers"
@@ -7384,22 +7399,20 @@ WebCodecsAV1Enabled:
       "USE(GSTREAMER)": true
       default: false
 
-WebCodecsEnabled:
+WebCodecsAudioEnabled:
   type: bool
-  status: stable
+  status: preview
   category: media
-  humanReadableName: "WebCodecs API"
-  humanReadableDescription: "Enable WebCodecs API"
+  humanReadableName: "WebCodecs Audio API"
+  humanReadableDescription: "Enable WebCodecs Audio API"
   condition: ENABLE(WEB_CODECS)
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(COCOA)": true
       "USE(GSTREAMER)": true
       default: false
     WebCore:
-      "PLATFORM(COCOA)": true
       "USE(GSTREAMER)": true
       default: false
 
@@ -7417,6 +7430,25 @@ WebCodecsHEVCEnabled:
       "USE(GSTREAMER)": true
       default: false
     WebCore:
+      "USE(GSTREAMER)": true
+      default: false
+
+WebCodecsVideoEnabled:
+  type: bool
+  status: stable
+  category: media
+  humanReadableName: "WebCodecs Video API"
+  humanReadableDescription: "Enable WebCodecs Video API"
+  condition: ENABLE(WEB_CODECS)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "PLATFORM(COCOA)": true
+      "USE(GSTREAMER)": true
+      default: false
+    WebCore:
+      "PLATFORM(COCOA)": true
       "USE(GSTREAMER)": true
       default: false
 

@@ -123,17 +123,17 @@ RefPtr<WebCore::DisplayRefreshMonitor> DrawingArea::createDisplayRefreshMonitor(
 
 void DrawingArea::willStartRenderingUpdateDisplay()
 {
-    m_webPage.willStartRenderingUpdateDisplay();
+    Ref { m_webPage.get() }->willStartRenderingUpdateDisplay();
 }
 
 void DrawingArea::didCompleteRenderingUpdateDisplay()
 {
-    m_webPage.didCompleteRenderingUpdateDisplay();
+    Ref { m_webPage.get() }->didCompleteRenderingUpdateDisplay();
 }
 
 void DrawingArea::didCompleteRenderingFrame()
 {
-    m_webPage.didCompleteRenderingFrame();
+    Ref { m_webPage.get() }->didCompleteRenderingFrame();
 }
 
 bool DrawingArea::supportsGPUProcessRendering(DrawingAreaType type)
@@ -161,14 +161,15 @@ bool DrawingArea::supportsGPUProcessRendering(DrawingAreaType type)
 
 WebCore::TiledBacking* DrawingArea::mainFrameTiledBacking() const
 {
-    auto* frameView = m_webPage.localMainFrameView();
+    RefPtr frameView = m_webPage->localMainFrameView();
     return frameView ? frameView->tiledBacking() : nullptr;
 }
 
 void DrawingArea::prepopulateRectForZoom(double scale, WebCore::FloatPoint origin)
 {
-    double currentPageScale = m_webPage.totalScaleFactor();
-    auto* frameView = m_webPage.localMainFrameView();
+    Ref webPage = m_webPage.get();
+    double currentPageScale = webPage->totalScaleFactor();
+    auto* frameView = webPage->localMainFrameView();
     if (!frameView)
         return;
 
@@ -189,13 +190,14 @@ void DrawingArea::scaleViewToFitDocumentIfNeeded()
         return;
 
     LOG(Resize, "DrawingArea %p scaleViewToFitDocumentIfNeeded", this);
-    m_webPage.layoutIfNeeded();
+    Ref webPage = m_webPage.get();
+    webPage->layoutIfNeeded();
 
-    if (!m_webPage.localMainFrameView() || !m_webPage.localMainFrameView()->renderView())
+    if (!webPage->localMainFrameView() || !webPage->localMainFrameView()->renderView())
         return;
 
-    int viewWidth = m_webPage.size().width();
-    int documentWidth = m_webPage.localMainFrameView()->renderView()->unscaledDocumentRect().width();
+    int viewWidth = webPage->size().width();
+    int documentWidth = webPage->localMainFrameView()->renderView()->unscaledDocumentRect().width();
 
     bool documentWidthChanged = m_lastDocumentSizeForScaleToFit.width() != documentWidth;
     bool viewWidthChanged = m_lastViewSizeForScaleToFit.width() != viewWidth;
@@ -213,21 +215,21 @@ void DrawingArea::scaleViewToFitDocumentIfNeeded()
     // Update the viewScale without doing an extra layout to re-determine the document width.
     if (m_isScalingViewToFitDocument) {
         if (!documentWidthChanged) {
-            m_lastViewSizeForScaleToFit = m_webPage.size();
+            m_lastViewSizeForScaleToFit = webPage->size();
             float viewScale = (float)viewWidth / (float)m_lastDocumentSizeForScaleToFit.width();
             if (viewScale < minimumViewScale) {
                 viewScale = minimumViewScale;
                 documentWidth = std::ceil(viewWidth / viewScale);
             }
-            IntSize fixedLayoutSize(documentWidth, std::ceil((m_webPage.size().height() - m_webPage.corePage()->topContentInset()) / viewScale));
-            m_webPage.setFixedLayoutSize(fixedLayoutSize);
-            m_webPage.scaleView(viewScale);
+            IntSize fixedLayoutSize(documentWidth, std::ceil((webPage->size().height() - webPage->corePage()->topContentInset()) / viewScale));
+            webPage->setFixedLayoutSize(fixedLayoutSize);
+            webPage->scaleView(viewScale);
 
             LOG(Resize, "  using fixed layout at %dx%d. document width %d unchanged, scaled to %.4f to fit view width %d", fixedLayoutSize.width(), fixedLayoutSize.height(), documentWidth, viewScale, viewWidth);
             return;
         }
     
-        IntSize fixedLayoutSize = m_webPage.fixedLayoutSize();
+        IntSize fixedLayoutSize = webPage->fixedLayoutSize();
         if (documentWidth > fixedLayoutSize.width()) {
             LOG(Resize, "  page laid out wider than fixed layout width. Not attempting to re-scale");
             return;
@@ -237,14 +239,14 @@ void DrawingArea::scaleViewToFitDocumentIfNeeded()
     LOG(Resize, "  doing unconstrained layout");
 
     // Lay out at the view size.
-    m_webPage.setUseFixedLayout(false);
-    m_webPage.layoutIfNeeded();
+    webPage->setUseFixedLayout(false);
+    webPage->layoutIfNeeded();
 
-    if (!m_webPage.localMainFrameView() || !m_webPage.localMainFrameView()->renderView())
+    if (!webPage->localMainFrameView() || !webPage->localMainFrameView()->renderView())
         return;
 
-    IntSize documentSize = m_webPage.localMainFrameView()->renderView()->unscaledDocumentRect().size();
-    m_lastViewSizeForScaleToFit = m_webPage.size();
+    IntSize documentSize = webPage->localMainFrameView()->renderView()->unscaledDocumentRect().size();
+    m_lastViewSizeForScaleToFit = webPage->size();
     m_lastDocumentSizeForScaleToFit = documentSize;
 
     documentWidth = documentSize.width();
@@ -258,19 +260,19 @@ void DrawingArea::scaleViewToFitDocumentIfNeeded()
     if (documentWidth && documentWidth < maximumDocumentWidthForScaling && viewWidth < documentWidth) {
         // If the document doesn't fit in the view, scale it down but lay out at the view size.
         m_isScalingViewToFitDocument = true;
-        m_webPage.setUseFixedLayout(true);
+        webPage->setUseFixedLayout(true);
         viewScale = (float)viewWidth / (float)documentWidth;
         if (viewScale < minimumViewScale) {
             viewScale = minimumViewScale;
             documentWidth = std::ceil(viewWidth / viewScale);
         }
-        IntSize fixedLayoutSize(documentWidth, std::ceil((m_webPage.size().height() - m_webPage.corePage()->topContentInset()) / viewScale));
-        m_webPage.setFixedLayoutSize(fixedLayoutSize);
+        IntSize fixedLayoutSize(documentWidth, std::ceil((webPage->size().height() - webPage->corePage()->topContentInset()) / viewScale));
+        webPage->setFixedLayoutSize(fixedLayoutSize);
 
         LOG(Resize, "  using fixed layout at %dx%d. document width %d, scaled to %.4f to fit view width %d", fixedLayoutSize.width(), fixedLayoutSize.height(), documentWidth, viewScale, viewWidth);
     }
 
-    m_webPage.scaleView(viewScale);
+    webPage->scaleView(viewScale);
 }
 
 void DrawingArea::setShouldScaleViewToFitDocument(bool shouldScaleView)

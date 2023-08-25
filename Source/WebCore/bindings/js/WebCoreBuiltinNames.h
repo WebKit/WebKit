@@ -76,6 +76,8 @@ namespace WebCore {
     macro(AudioBuffer) \
     macro(AudioBufferSourceNode) \
     macro(AudioContext) \
+    macro(AudioData) \
+    macro(AudioDecoder) \
     macro(AudioDestinationNode) \
     macro(AudioListener) \
     macro(AudioNode) \
@@ -175,6 +177,7 @@ namespace WebCore {
     macro(DocumentTimeline) \
     macro(DynamicsCompressorNode) \
     macro(ElementInternals) \
+    macro(EncodedAudioChunk) \
     macro(EncodedVideoChunk) \
     macro(ExtendableCookieChangeEvent) \
     macro(ExtendableEvent) \

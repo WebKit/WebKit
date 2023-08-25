@@ -3,6 +3,7 @@ TESTS = \
     TestWithSuperclass \
     TestWithLegacyReceiver \
     TestWithoutAttributes \
+    TestWithoutUsingIPCConnection \
     TestWithIfMessage \
     TestWithSemaphore \
     TestWithImageData \

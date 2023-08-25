@@ -362,13 +362,13 @@ void RemoteRenderingBackend::cacheFont(const Font::Attributes& fontAttributes, F
 {
     ASSERT(!RunLoop::isMain());
 
-    FontCustomPlatformData* customPlatformData = nullptr;
+    RefPtr<FontCustomPlatformData> customPlatformData = nullptr;
     if (fontCustomPlatformDataIdentifier) {
         customPlatformData = m_remoteResourceCache.cachedFontCustomPlatformData(*fontCustomPlatformDataIdentifier);
         MESSAGE_CHECK(customPlatformData, "CacheFont without caching custom data");
     }
 
-    FontPlatformData platform = FontPlatformData::create(platformData, customPlatformData);
+    FontPlatformData platform = FontPlatformData::create(platformData, customPlatformData.get());
 
     Ref<Font> font = Font::create(platform, fontAttributes.origin, fontAttributes.isInterstitial, fontAttributes.visibility, fontAttributes.isTextOrientationFallback, fontAttributes.renderingResourceIdentifier);
 

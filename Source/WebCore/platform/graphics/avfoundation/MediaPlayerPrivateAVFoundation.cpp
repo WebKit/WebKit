@@ -264,19 +264,12 @@ MediaTime MediaPlayerPrivateAVFoundation::durationMediaTime() const
     return m_cachedDuration;
 }
 
-void MediaPlayerPrivateAVFoundation::seek(const MediaTime& time)
+void MediaPlayerPrivateAVFoundation::seekToTarget(const SeekTarget& target)
 {
-    seekWithTolerance(time, MediaTime::zeroTime(), MediaTime::zeroTime());
-}
-
-void MediaPlayerPrivateAVFoundation::seekWithTolerance(const MediaTime& mediaTime, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
-{
-    MediaTime time = mediaTime;
-
     if (m_seeking) {
         ALWAYS_LOG(LOGIDENTIFIER, "saving pending seek");
-        m_pendingSeek = [this, time, negativeTolerance, positiveTolerance]() {
-            seekWithTolerance(time, negativeTolerance, positiveTolerance);
+        m_pendingSeek = [this, target]() {
+            seekToTarget(target);
         };
         return;
     }
@@ -285,15 +278,16 @@ void MediaPlayerPrivateAVFoundation::seekWithTolerance(const MediaTime& mediaTim
     if (!metaDataAvailable())
         return;
 
-    if (time > durationMediaTime())
-        time = durationMediaTime();
+    SeekTarget adjustedTarget = target;
+    if (target.time > durationMediaTime())
+        adjustedTarget.time = durationMediaTime();
 
     if (currentTextTrack())
         currentTextTrack()->beginSeeking();
 
-    ALWAYS_LOG(LOGIDENTIFIER, "seeking to  ", time);
+    ALWAYS_LOG(LOGIDENTIFIER, "seeking to ", adjustedTarget.time);
 
-    seekToTime(time, negativeTolerance, positiveTolerance);
+    seekToTargetInternal(adjustedTarget);
 }
 
 bool MediaPlayerPrivateAVFoundation::paused() const

@@ -44,6 +44,7 @@ _test_receiver_names = [
     'TestWithSuperclass',
     'TestWithLegacyReceiver',
     'TestWithoutAttributes',
+    'TestWithoutUsingIPCConnection',
     'TestWithIfMessage',
     'TestWithSemaphore',
     'TestWithImageData',

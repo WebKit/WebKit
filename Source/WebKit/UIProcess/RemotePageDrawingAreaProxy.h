@@ -40,6 +40,8 @@ public:
     RemotePageDrawingAreaProxy(DrawingAreaProxy&, WebProcessProxy&);
     ~RemotePageDrawingAreaProxy();
 
+    WebProcessProxy& process() { return m_process; }
+
 private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;

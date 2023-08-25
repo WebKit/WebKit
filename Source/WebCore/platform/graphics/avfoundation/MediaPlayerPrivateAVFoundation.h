@@ -183,9 +183,8 @@ protected:
     void setPageIsVisible(bool) final;
     MediaTime durationMediaTime() const override;
     MediaTime currentMediaTime() const override = 0;
-    void seek(const MediaTime&) override;
-    void seekWithTolerance(const MediaTime&, const MediaTime&, const MediaTime&) override;
-    bool seeking() const override;
+    void seekToTarget(const SeekTarget&) final;
+    bool seeking() const final;
     bool paused() const override;
     void setVolume(float) override = 0;
     bool hasClosedCaptions() const override { return m_cachedHasCaptions; }
@@ -214,6 +213,7 @@ protected:
     bool supportsScanning() const override { return true; }
     unsigned long long fileSize() const override { return totalBytes(); }
 
+protected:
     // Required interfaces for concrete derived classes.
     virtual void createAVAssetForURL(const URL&) = 0;
     virtual void createAVPlayer() = 0;
@@ -246,7 +246,7 @@ protected:
     virtual void platformPlay() = 0;
     virtual void platformPause() = 0;
     virtual bool platformPaused() const { return !rate(); }
-    virtual void seekToTime(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance) = 0;
+    virtual void seekToTargetInternal(const SeekTarget&) = 0;
     unsigned long long totalBytes() const override = 0;
     virtual const PlatformTimeRanges& platformBufferedTimeRanges() const = 0;
     virtual MediaTime platformMaxTimeSeekable() const = 0;

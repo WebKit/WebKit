@@ -84,7 +84,7 @@ static webrtc::WebKitVideoDecoder createVideoDecoder(const webrtc::SdpVideoForma
 
 std::optional<VideoCodecType> LibWebRTCCodecs::videoCodecTypeFromWebCodec(const String& codec)
 {
-    if (codec.startsWith("vp9.0"_s)) {
+    if (codec.startsWith("vp09.0"_s)) {
         if (!supportVP9VTB())
             return { };
         return VideoCodecType::VP9;
@@ -159,9 +159,9 @@ static inline VideoFrame::Rotation toVideoRotation(webrtc::VideoRotation rotatio
     return VideoFrame::Rotation::None;
 }
 
-static void createRemoteDecoder(LibWebRTCCodecs::Decoder& decoder, IPC::Connection& connection, bool useRemoteFrames, bool enableAdditionalLogging)
+static void createRemoteDecoder(LibWebRTCCodecs::Decoder& decoder, IPC::Connection& connection, bool useRemoteFrames, bool enableAdditionalLogging, Function<void(bool)>&& callback)
 {
-    connection.send(Messages::LibWebRTCCodecsProxy::CreateDecoder { decoder.identifier, decoder.type, useRemoteFrames, enableAdditionalLogging }, 0);
+    connection.sendWithAsyncReply(Messages::LibWebRTCCodecsProxy::CreateDecoder { decoder.identifier, decoder.type, decoder.codec, useRemoteFrames, enableAdditionalLogging }, WTFMove(callback), 0);
 }
 
 static int32_t encodeVideoFrame(webrtc::WebKitVideoEncoder encoder, const webrtc::VideoFrame& frame, bool shouldEncodeAsKeyFrame)
@@ -294,35 +294,46 @@ void LibWebRTCCodecs::setWebRTCMediaPipelineAdditionalLoggingEnabled(bool enable
 // May be called on any thread.
 LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoder(VideoCodecType type)
 {
-    return createDecoderInternal(type, [](auto&) { });
+    return createDecoderInternal(type, { }, [](auto*) { });
 }
 
-void LibWebRTCCodecs::createDecoderAndWaitUntilReady(VideoCodecType type, Function<void(Decoder&)>&& callback)
+void LibWebRTCCodecs::createDecoderAndWaitUntilReady(VideoCodecType type, const String& codec, Function<void(Decoder*)>&& callback)
 {
-    createDecoderInternal(type, WTFMove(callback));
+    createDecoderInternal(type, codec, WTFMove(callback));
 }
 
-LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoderInternal(VideoCodecType type, Function<void(Decoder&)>&& callback)
+LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoderInternal(VideoCodecType type, const String& codec, Function<void(Decoder*)>&& callback)
 {
     auto decoder = makeUnique<Decoder>();
     auto* result = decoder.get();
     decoder->identifier = VideoDecoderIdentifier::generate();
     decoder->type = type;
+    decoder->codec = codec.isolatedCopy();
 
     ensureGPUProcessConnectionAndDispatchToThread([this, decoder = WTFMove(decoder), callback = WTFMove(callback)]() mutable {
         assertIsCurrent(workQueue());
 
-        auto* decodePointer = decoder.get();
         {
             Locker locker { m_connectionLock };
-            createRemoteDecoder(*decoder, *m_connection, m_useRemoteFrames, m_enableAdditionalLogging);
+            createRemoteDecoder(*decoder, *m_connection, m_useRemoteFrames, m_enableAdditionalLogging, [identifier = decoder->identifier, callback = WTFMove(callback)](bool result) mutable {
+                WebProcess::singleton().libWebRTCCodecs().m_queue->dispatch([identifier, result, callback = WTFMove(callback)]() mutable {
+                    if (!result) {
+                        callback(nullptr);
+                        return;
+                    }
+
+                    auto& codecs = WebProcess::singleton().libWebRTCCodecs();
+                    assertIsCurrent(codecs.workQueue());
+                    callback(codecs.m_decoders.get(identifier));
+                });
+            });
+
             setDecoderConnection(*decoder, m_connection.get());
 
             auto decoderIdentifier = decoder->identifier;
             ASSERT(!m_decoders.contains(decoderIdentifier));
             m_decoders.add(decoderIdentifier, WTFMove(decoder));
         }
-        callback(*decodePointer);
     });
     return result;
 }
@@ -785,7 +796,7 @@ void LibWebRTCCodecs::gpuProcessConnectionDidClose(GPUProcessConnection&)
                     while (!decoder->flushCallbacks.isEmpty())
                         decoder->flushCallbacks.takeFirst()();
                 }
-                createRemoteDecoder(*decoder, *connection, m_useRemoteFrames, m_enableAdditionalLogging);
+                createRemoteDecoder(*decoder, *connection, m_useRemoteFrames, m_enableAdditionalLogging, [](auto) { });
                 setDecoderConnection(*decoder, connection.get());
             }
         }

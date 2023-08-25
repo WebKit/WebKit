@@ -71,22 +71,23 @@ void RemoteLayerTreeDrawingAreaMac::mainFrameContentSizeChanged(WebCore::FrameId
 
 void RemoteLayerTreeDrawingAreaMac::applyTransientZoomToPage(double scale, FloatPoint origin)
 {
-    auto* frameView = m_webPage.localMainFrameView();
+    Ref webPage = m_webPage.get();
+    RefPtr frameView = webPage->localMainFrameView();
     if (!frameView)
         return;
 
     auto unscrolledOrigin = origin;
     FloatRect unobscuredContentRect = frameView->unobscuredContentRectIncludingScrollbars();
     unscrolledOrigin.moveBy(-unobscuredContentRect.location());
-    m_webPage.scalePage(scale / m_webPage.viewScaleFactor(), roundedIntPoint(-unscrolledOrigin));
-    updateRendering();
+    m_webPage->scalePage(scale / m_webPage->viewScaleFactor(), roundedIntPoint(-unscrolledOrigin));
+    scheduleRenderingUpdate(ScheduleRenderingUrgency::AsSoonAsPossible);
 }
 
 void RemoteLayerTreeDrawingAreaMac::adjustTransientZoom(double scale, WebCore::FloatPoint origin)
 {
     LOG_WITH_STREAM(ViewGestures, stream << "RemoteLayerTreeDrawingAreaMac::adjustTransientZoom - scale " << scale << " origin " << origin);
 
-    auto totalScale = scale * m_webPage.viewScaleFactor();
+    auto totalScale = scale * m_webPage->viewScaleFactor();
 
     // FIXME: Need to trigger some re-rendering here to render at the new scale, so tiles update while zooming.
 
@@ -97,7 +98,7 @@ void RemoteLayerTreeDrawingAreaMac::commitTransientZoom(double scale, WebCore::F
 {
     LOG_WITH_STREAM(ViewGestures, stream << "RemoteLayerTreeDrawingAreaMac::commitTransientZoom - scale " << scale << " origin " << origin);
 
-    scale *= m_webPage.viewScaleFactor();
+    scale *= m_webPage->viewScaleFactor();
     
     applyTransientZoomToPage(scale, origin);
 }
@@ -105,7 +106,7 @@ void RemoteLayerTreeDrawingAreaMac::commitTransientZoom(double scale, WebCore::F
 void RemoteLayerTreeDrawingAreaMac::willCommitLayerTree(RemoteLayerTreeTransaction& transaction)
 {
     // FIXME: Probably need something here for PDF.
-    auto* frameView = m_webPage.localMainFrameView();
+    RefPtr frameView = m_webPage->localMainFrameView();
     if (!frameView)
         return;
 

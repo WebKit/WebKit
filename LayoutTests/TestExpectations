@@ -1605,7 +1605,6 @@ imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/subgrid/masonry-c
 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/item-placement/masonry-columns-item-placement-auto-flow-next-001.html [ Skip ]
 
 # Subgrid failures
-imported/w3c/web-platform-tests/css/css-grid/subgrid/line-names-010.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/subgrid/line-names-012.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/subgrid/orthogonal-writing-mode-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-no-items-on-edges-001.html [ ImageOnlyFailure ]
@@ -6273,6 +6272,31 @@ imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.https.any
 imported/w3c/web-platform-tests/webcodecs/video-encoder.https.any.worker.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/webcodecs/video-encoder.https.any.html [ DumpJSConsoleLogInStdErr ]
 
+# AudioDecoder and AudioData implementation missing.
+imported/w3c/web-platform-tests/webcodecs/audio-decoder.crossOriginIsolated.https.any.html [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audio-decoder.crossOriginIsolated.https.any.worker.html [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?adts_aac [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?mp4_aac [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?mp3 [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?opus [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?pcm_alaw [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?pcm_mulaw [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?adts_aac [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?mp4_aac [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?mp3 [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?opus [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?pcm_alaw [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?pcm_mulaw [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audio-data.any.html [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audio-data.any.worker.html [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audio-data-serialization.any.html [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audio-decoder.https.any.html [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audio-decoder.https.any.worker.html [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/encoded-audio-chunk.any.html [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/encoded-audio-chunk.any.worker.html [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/encoded-audio-chunk.crossOriginIsolated.https.any.html [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/encoded-audio-chunk.crossOriginIsolated.https.any.worker.html [ Failure ]
+
 webkit.org/b/258192 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?h264_avc [ Pass Failure ]
 
 # These tests crash in debug since their import.
@@ -6323,14 +6347,6 @@ imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing/text
 imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing/text-spacing-invalid.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing/text-spacing-valid.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing [ Skip ]
-
-# This test is checking that WebContent is terminated when performing an invalid IPC operation
-[ Debug ] ipc/restrictedendpoints/no-test-only-ipc-expected-crash.html [ Crash ]
-[ Debug ] ipc/restrictedendpoints/deny-access-webGPU.html [ Crash ]
-[ Debug ] ipc/restrictedendpoints/deny-access-modelElement.html [ Crash ]
-[ Debug ] ipc/restrictedendpoints/deny-access-attachmentElement.html [ Crash ]
-[ Debug ] ipc/restrictedendpoints/deny-access-webPush.html [ Crash ]
-[ Debug ] ipc/restrictedendpoints/deny-access-updateQuotaBasedOnSpaceUsageForTesting.html [ Crash ]
 
 # Early hints require network callbacks that are only present in macOS 12 / iOS 15 or greater.
 http/wpt/loading/early-hints [ Skip ]

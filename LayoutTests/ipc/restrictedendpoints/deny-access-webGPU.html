@@ -1,63 +1,66 @@
 <!DOCTYPE html> <!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=false WebGPUEnabled=false ] -->
 <title>Test that instantiating a remoteGPU is allowed if WebGPUEnabled</title>
+<script src="../../resources/ipc.js"></script>
 <script src="../../resources/testharness.js"></script>
 <script src="../../resources/testharnessreport.js"></script>
 <body>
 <script>
-	testRunner.dumpAsText();
+    testRunner.dumpAsText();
 
-	if (window.IPC) {
-		function randomID() {
-			return Math.floor(Math.random() * 10000) + 1;
-		}
+    if (window.IPC) {
+        function randomID() {
+            return Math.floor(Math.random() * 10000) + 1;
+        }
 
-		function sleep(ms) {
-			return new Promise(resolve => setTimeout(resolve, ms));
-		}
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
 
-		let renderingBackendID = randomID();
-		let webgpuID = randomID();
-		let semaphore = IPC.createSemaphore();
+        let renderingBackendID = randomID();
+        let webgpuID = randomID();
+        let semaphore = IPC.createSemaphore();
 
-		let connectionIdentifier = IPC.createSharedMemory(0x1000);
+        let connectionIdentifier = IPC.createSharedMemory(0x1000);
 
-		let connectionPair = IPC.createConnectionPair();
-		let streamConnection = IPC.createStreamClientConnection(16);
-		let webgpuStreamConnection = IPC.createStreamClientConnection(16);
-		console.log("HERE")
+        let connectionPair = IPC.createConnectionPair();
+        let streamConnection = IPC.createStreamClientConnection(16);
+        let webgpuStreamConnection = IPC.createStreamClientConnection(16);
+        console.log("HERE")
 
-		IPC.sendMessage(
-		'GPU',
-		IPC.webPageProxyID,
-		IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name,
-		[
-			{ // creationParameters
-			type: 'RemoteRenderingBackendCreationParameters',
-			identifier: renderingBackendID,
-			pageProxyID: IPC.webPageProxyID,
-			pageID: IPC.pageID,
-			},
-			{ // connectionIdentifier
-			type: 'StreamServerConnectionHandle',
-			value: streamConnection[1],
-			}
-		]
-		);
+        IPC.sendMessage(
+        'GPU',
+        IPC.webPageProxyID,
+        IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name,
+        [
+            { // creationParameters
+            type: 'RemoteRenderingBackendCreationParameters',
+            identifier: renderingBackendID,
+            pageProxyID: IPC.webPageProxyID,
+            pageID: IPC.pageID,
+            },
+            { // connectionIdentifier
+            type: 'StreamServerConnectionHandle',
+            value: streamConnection[1],
+            }
+        ]
+        );
 
-		var result = IPC.sendMessage(
-		'GPU',
-		IPC.webPageProxyID,
-		IPC.messages.GPUConnectionToWebProcess_CreateRemoteGPU.name,
-		[
-			{ type: 'uint64_t', value: webgpuID }, // identifier
-			{ type: 'uint64_t', value: renderingBackendID }, // renderingBackendIdentifier
-			{ type: 'StreamServerConnectionHandle', value: streamConnection[1] }, // stream
-		]
-		);
+        var result = IPC.sendMessage(
+        'GPU',
+        IPC.webPageProxyID,
+        IPC.messages.GPUConnectionToWebProcess_CreateRemoteGPU.name,
+        [
+            { type: 'uint64_t', value: webgpuID }, // identifier
+            { type: 'uint64_t', value: renderingBackendID }, // renderingBackendIdentifier
+            { type: 'StreamServerConnectionHandle', value: streamConnection[1] }, // stream
+        ]
+        );
 
-		setTimeout(()=>{console.log("Should Have Crashed!"); testRunner.notifyDone();}, 100)
-	} else {
-		testRunner.notifyDone();
-	}
+        asyncFlush('GPU').then(() => {
+            console.log("Should have crashed!");
+        });
+    } else {
+        testRunner.notifyDone();
+    }
 </script>
 </body>
