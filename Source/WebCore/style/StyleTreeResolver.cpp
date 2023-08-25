@@ -211,6 +211,13 @@ auto TreeResolver::computeDescendantsToResolve(Change change, Validity validity,
     return DescendantsToResolve::None;
 };
 
+static bool styleChangeAffectsRelativeUnits(const RenderStyle& style, const RenderStyle* existingStyle)
+{
+    if (!existingStyle)
+        return true;
+    return style.computedFontSize() != existingStyle->computedFontSize();
+}
+
 auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingStyle, ResolutionType resolutionType) -> std::pair<ElementUpdate, DescendantsToResolve>
 {
     if (m_didSeePendingStylesheet && !element.renderOrDisplayContentsStyle() && !m_document.isIgnoringPendingStylesheets()) {
@@ -233,7 +240,7 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
     auto descendantsToResolve = computeDescendantsToResolve(update.change, element.styleValidity(), parent().descendantsToResolve);
 
     if (&element == m_document.documentElement()) {
-        if (!existingStyle || existingStyle->computedFontSize() != update.style->computedFontSize()) {
+        if (styleChangeAffectsRelativeUnits(*update.style, existingStyle)) {
             // "rem" units are relative to the document element's font size so we need to recompute everything.
             scope().resolver->invalidateMatchedDeclarationsCache();
             descendantsToResolve = DescendantsToResolve::All;
@@ -858,7 +865,6 @@ void TreeResolver::resolveComposedTree()
 
         auto change = Change::None;
         auto descendantsToResolve = DescendantsToResolve::None;
-        auto previousContainerType = style ? style->containerType() : ContainerType::Normal;
 
         auto resolutionType = determineResolutionType(element, style, parent.descendantsToResolve, parent.change);
         if (resolutionType) {
@@ -889,7 +895,7 @@ void TreeResolver::resolveComposedTree()
         if (!style)
             resetStyleForNonRenderedDescendants(element);
 
-        auto queryContainerAction = updateStateForQueryContainer(element, style, previousContainerType, change, descendantsToResolve);
+        auto queryContainerAction = updateStateForQueryContainer(element, style, change, descendantsToResolve);
 
         bool shouldIterateChildren = [&] {
             // display::none, no need to resolve descendants.
@@ -937,7 +943,7 @@ const RenderStyle* TreeResolver::existingStyle(const Element& element)
     return style;
 }
 
-auto TreeResolver::updateStateForQueryContainer(Element& element, const RenderStyle* style, ContainerType previousContainerType, Change& change, DescendantsToResolve& descendantsToResolve) -> QueryContainerAction
+auto TreeResolver::updateStateForQueryContainer(Element& element, const RenderStyle* style, Change& change, DescendantsToResolve& descendantsToResolve) -> QueryContainerAction
 {
     if (!style)
         return QueryContainerAction::None;
@@ -955,7 +961,11 @@ auto TreeResolver::updateStateForQueryContainer(Element& element, const RenderSt
         return QueryContainerAction::Continue;
     }
 
-    if (style->containerType() != ContainerType::Normal || previousContainerType != ContainerType::Normal) {
+    auto* existingStyle = element.renderOrDisplayContentsStyle();
+    if (style->containerType() != ContainerType::Normal || (existingStyle && existingStyle->containerType() != ContainerType::Normal)) {
+        // If any of the queries use font-size relative units then a font size change may affect their evaluation.
+        if (styleChangeAffectsRelativeUnits(*style, existingStyle))
+            descendantsToResolve = DescendantsToResolve::All;
         m_queryContainerStates.add(element, QueryContainerState { change, descendantsToResolve });
         m_hasUnresolvedQueryContainers = true;
         return QueryContainerAction::Resolve;

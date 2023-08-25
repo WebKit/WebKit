@@ -70,7 +70,7 @@ private:
     enum class QueryContainerAction : uint8_t { None, Resolve, Continue };
     enum class DescendantsToResolve : uint8_t { None, ChildrenWithExplicitInherit, Children, All };
 
-    QueryContainerAction updateStateForQueryContainer(Element&, const RenderStyle*, ContainerType previousContainerType, Change&, DescendantsToResolve&);
+    QueryContainerAction updateStateForQueryContainer(Element&, const RenderStyle*, Change&, DescendantsToResolve&);
 
     std::pair<ElementUpdate, DescendantsToResolve> resolveElement(Element&, const RenderStyle* existingStyle, ResolutionType);
 
