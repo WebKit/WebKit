@@ -564,6 +564,14 @@ void TCPConnection::OnReadPacket(rtc::AsyncPacketSocket* socket,
                                  const rtc::SocketAddress& remote_addr,
                                  const int64_t& packet_time_us) {
   RTC_DCHECK_EQ(socket, socket_.get());
+
+#if defined(WEBRTC_WEBKIT_BUILD)
+  if (!port()) {
+    RTC_LOG(LS_WARNING) << "TCPConnection: Port has been deleted.";
+    return;
+  }
+#endif
+
   Connection::OnReadPacket(data, size, packet_time_us);
 }
 
