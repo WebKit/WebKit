@@ -507,6 +507,8 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
         { ElementFactories::Type::AudioDecoder, "audio/x-dts", { }, { } },
         { ElementFactories::Type::AudioDecoder, "audio/x-sbc", { }, { } },
         { ElementFactories::Type::AudioDecoder, "audio/x-sid", { }, { } },
+        { ElementFactories::Type::AudioDecoder, "audio/x-alaw", { }, { "alaw"_s } },
+        { ElementFactories::Type::AudioDecoder, "audio/x-mulaw", { }, { "ulaw"_s } },
         { ElementFactories::Type::AudioDecoder, "audio/x-speex", { "audio/speex"_s, "audio/x-speex"_s }, { } },
         { ElementFactories::Type::AudioDecoder, "audio/x-wavpack", { "audio/x-wavpack"_s }, { } },
         { ElementFactories::Type::VideoDecoder, "video/mpeg, mpegversion=(int){1,2}, systemstream=(boolean)false", { "video/mpeg"_s }, { "mpeg"_s } },

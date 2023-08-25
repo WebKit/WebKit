@@ -4479,7 +4479,7 @@ static void adjustSettingsForLockdownMode(Settings& settings, const WebPreferenc
         break;
     }
 #if ENABLE(WEB_CODECS)
-    settings.setWebCodecsEnabled(false);
+    settings.setWebCodecsVideoEnabled(false);
     settings.setWebCodecsAV1Enabled(false);
 #endif
 #if ENABLE(WEB_RTC)

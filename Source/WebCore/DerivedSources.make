@@ -717,6 +717,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialType.idl \
     $(WebCore)/Modules/webauthn/ResidentKeyRequirement.idl \
     $(WebCore)/Modules/webauthn/UserVerificationRequirement.idl \
+    $(WebCore)/Modules/webcodecs/AudioSampleFormat.idl \
     $(WebCore)/Modules/webcodecs/AvcEncoderConfig.idl \
     $(WebCore)/Modules/webcodecs/BitrateMode.idl \
     $(WebCore)/Modules/webcodecs/LatencyMode.idl \
@@ -729,6 +730,10 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webcodecs/VideoPixelFormat.idl \
     $(WebCore)/Modules/webcodecs/VideoTransferCharacteristics.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsAlphaOption.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioData.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioDataOutputCallback.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsEncodedAudioChunk.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsEncodedAudioChunkType.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunk.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunkMetadata.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunkOutputCallback.idl \
@@ -736,6 +741,10 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webcodecs/WebCodecsErrorCallback.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsCodecState.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsSvcOutputMetadata.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioData.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioDecoder.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioDecoderConfig.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioDecoderSupport.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoDecoder.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoDecoderConfig.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoDecoderSupport.idl \

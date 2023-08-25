@@ -1153,6 +1153,34 @@ imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.
 imported/w3c/web-platform-tests/webcodecs/video-decoder.https.any.html [ Skip ]
 imported/w3c/web-platform-tests/webcodecs/video-decoder.https.any.worker.html [ Skip ]
 
+# Our MP3 decoder is not yet spec-compliant.
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?mp3 [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?mp3 [ Failure ]
+
+# Failing for unknown reasons, only in the SDK runtime. To be re-evaluated after updating to 23.08.
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?adts_aac [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?mp4_aac [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?adts_aac [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?mp4_aac [ Failure ]
+
+imported/w3c/web-platform-tests/webcodecs/audio-data-serialization.any.html [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/audio-data.any.html [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/audio-data.any.worker.html [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/audio-decoder.crossOriginIsolated.https.any.html [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/audio-decoder.crossOriginIsolated.https.any.worker.html [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/audio-decoder.https.any.html [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/audio-decoder.https.any.worker.html [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?opus [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?pcm_alaw [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?pcm_mulaw [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?opus [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?pcm_alaw [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?pcm_mulaw [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/encoded-audio-chunk.any.html [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/encoded-audio-chunk.any.worker.html [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/encoded-audio-chunk.crossOriginIsolated.https.any.html [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/encoded-audio-chunk.crossOriginIsolated.https.any.worker.html [ Pass ]
+
 # This test is flaky crashing with the current GStreamer version of the SDK (1.22), raising a
 # critical warning in GStreamer, but the issue is not happening with GStreamer 1.23. So this test is
 # expected to pass again once we update to GStreamer 1.24.

@@ -607,6 +607,11 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     Modules/webcodecs/VideoColorSpaceInit.h
     Modules/webcodecs/WebCodecsAlphaOption.h
+    Modules/webcodecs/WebCodecsAudioData.h
+    Modules/webcodecs/WebCodecsAudioInternalData.h
+    Modules/webcodecs/WebCodecsEncodedAudioChunk.h
+    Modules/webcodecs/WebCodecsEncodedAudioChunkData.h
+    Modules/webcodecs/WebCodecsEncodedAudioChunkType.h
     Modules/webcodecs/WebCodecsEncodedVideoChunk.h
     Modules/webcodecs/WebCodecsEncodedVideoChunkData.h
     Modules/webcodecs/WebCodecsEncodedVideoChunkType.h
@@ -1595,6 +1600,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/scrolling/ThreadedScrollingTree.h
 
     platform/AbortableTaskQueue.h
+    platform/AudioSampleFormat.h
     platform/CaretAnimator.h
     platform/CPUMonitor.h
     platform/ColorChooser.h
@@ -1770,6 +1776,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/audio/PlatformAudioData.h
     platform/audio/PlatformMediaSession.h
     platform/audio/PlatformMediaSessionManager.h
+    platform/audio/PlatformRawAudioData.h
     platform/audio/PushPullFIFO.h
 
     platform/audio/gstreamer/AudioDestinationGStreamer.h
