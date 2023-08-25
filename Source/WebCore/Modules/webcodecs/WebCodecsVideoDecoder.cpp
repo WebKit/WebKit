@@ -38,6 +38,7 @@
 #include "WebCodecsErrorCallback.h"
 #include "WebCodecsVideoFrame.h"
 #include "WebCodecsVideoFrameOutputCallback.h"
+#include <wtf/ASCIICType.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -62,10 +63,17 @@ WebCodecsVideoDecoder::~WebCodecsVideoDecoder()
 {
 }
 
-static bool isValidDecoderConfig(const WebCodecsVideoDecoderConfig& config, const Settings::Values& settings)
+static bool isSupportedDecoderCodec(const String& codec, const Settings::Values& settings)
 {
-    // FIXME: Check codec more accurately.
-    if (!config.codec.startsWith("vp8"_s) && !config.codec.startsWith("vp09."_s) && !config.codec.startsWith("avc1."_s) && !(config.codec.startsWith("hev1."_s) && settings.webCodecsHEVCEnabled) && !(config.codec.startsWith("hvc1."_s) && settings.webCodecsHEVCEnabled) && !(config.codec.startsWith("av01."_s) && settings.webCodecsAV1Enabled))
+    return codec.startsWith("vp8"_s) || codec.startsWith("vp09.0"_s) || codec.startsWith("avc1."_s)
+        || (codec.startsWith("hev1."_s) && settings.webCodecsHEVCEnabled)
+        || (codec.startsWith("hvc1."_s) && settings.webCodecsHEVCEnabled)
+        || (codec.startsWith("av01.0"_s) && settings.webCodecsAV1Enabled);
+}
+
+static bool isValidDecoderConfig(const WebCodecsVideoDecoderConfig& config)
+{
+    if (StringView(config.codec).trim(isASCIIWhitespace<UChar>).isEmpty())
         return false;
 
     if (!!config.codedWidth != !!config.codedHeight)
@@ -108,7 +116,7 @@ static VideoDecoder::Config createVideoDecoderConfig(const WebCodecsVideoDecoder
 
 ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& context, WebCodecsVideoDecoderConfig&& config)
 {
-    if (!isValidDecoderConfig(config, context.settingsValues()))
+    if (!isValidDecoderConfig(config))
         return Exception { TypeError, "Config is not valid"_s };
 
     if (m_state == WebCodecsCodecState::Closed || !scriptExecutionContext())
@@ -117,7 +125,8 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
     m_state = WebCodecsCodecState::Configured;
     m_isKeyChunkRequired = true;
 
-    queueControlMessageAndProcess([this, config = WTFMove(config), identifier = scriptExecutionContext()->identifier()]() mutable {
+    bool isSupportedCodec = isSupportedDecoderCodec(config.codec, context.settingsValues());
+    queueControlMessageAndProcess([this, config = WTFMove(config), isSupportedCodec, identifier = scriptExecutionContext()->identifier()]() mutable {
         m_isMessageQueueBlocked = true;
         VideoDecoder::PostTaskCallback postTaskCallback = [identifier, weakThis = WeakPtr { *this }](auto&& task) {
             ScriptExecutionContext::postTaskTo(identifier, [weakThis, task = WTFMove(task)](auto&) mutable {
@@ -128,6 +137,11 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
                 });
             });
         };
+
+        if (!isSupportedCodec) {
+            closeDecoder(Exception { NotSupportedError, "Codec is not supported"_s });
+            return;
+        }
 
         VideoDecoder::create(config.codec, createVideoDecoderConfig(config), [this](auto&& result) {
             if (!result.has_value()) {
@@ -219,8 +233,13 @@ ExceptionOr<void> WebCodecsVideoDecoder::close()
 
 void WebCodecsVideoDecoder::isConfigSupported(ScriptExecutionContext& context, WebCodecsVideoDecoderConfig&& config, Ref<DeferredPromise>&& promise)
 {
-    if (!isValidDecoderConfig(config, context.settingsValues())) {
+    if (!isValidDecoderConfig(config)) {
         promise->reject(Exception { TypeError, "Config is not valid"_s });
+        return;
+    }
+
+    if (!isSupportedDecoderCodec(config.codec, context.settingsValues())) {
+        promise->template resolve<IDLDictionary<WebCodecsVideoDecoderSupport>>(WebCodecsVideoDecoderSupport { false, WTFMove(config) });
         return;
     }
 

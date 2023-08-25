@@ -1149,6 +1149,10 @@ imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.worke
 imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?av1 [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.worker.html?av1 [ Failure ]
 
+# Detection of bad HEVC codec string
+imported/w3c/web-platform-tests/webcodecs/video-decoder.https.any.html [ Skip ]
+imported/w3c/web-platform-tests/webcodecs/video-decoder.https.any.worker.html [ Skip ]
+
 # This test is flaky crashing with the current GStreamer version of the SDK (1.22), raising a
 # critical warning in GStreamer, but the issue is not happening with GStreamer 1.23. So this test is
 # expected to pass again once we update to GStreamer 1.24.

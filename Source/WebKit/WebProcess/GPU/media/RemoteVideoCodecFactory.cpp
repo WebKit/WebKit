@@ -135,12 +135,18 @@ void RemoteVideoCodecFactory::createDecoder(const String& codec, const VideoDeco
         VideoDecoder::createLocalDecoder(codec, config, WTFMove(createCallback), WTFMove(outputCallback), WTFMove(postTaskCallback));
         return;
     }
-    WebProcess::singleton().libWebRTCCodecs().createDecoderAndWaitUntilReady(*type, [width = config.width, height = config.height, description = Vector<uint8_t> { config.description }, createCallback = WTFMove(createCallback), outputCallback = WTFMove(outputCallback), postTaskCallback = WTFMove(postTaskCallback)](auto& internalDecoder) mutable {
+    WebProcess::singleton().libWebRTCCodecs().createDecoderAndWaitUntilReady(*type, codec, [width = config.width, height = config.height, description = Vector<uint8_t> { config.description }, createCallback = WTFMove(createCallback), outputCallback = WTFMove(outputCallback), postTaskCallback = WTFMove(postTaskCallback)](auto* internalDecoder) mutable {
+        if (!internalDecoder) {
+            postTaskCallback([createCallback = WTFMove(createCallback)]() mutable {
+                createCallback(makeUnexpected("Encoder creation failed"_s));
+            });
+            return;
+        }
         if (description.size())
-            WebProcess::singleton().libWebRTCCodecs().setDecoderFormatDescription(internalDecoder, description.data(), description.size(), width, height);
+            WebProcess::singleton().libWebRTCCodecs().setDecoderFormatDescription(*internalDecoder, description.data(), description.size(), width, height);
 
         auto callbacks = RemoteVideoDecoderCallbacks::create(WTFMove(outputCallback), WTFMove(postTaskCallback));
-        UniqueRef<VideoDecoder> decoder = makeUniqueRef<RemoteVideoDecoder>(internalDecoder, callbacks.copyRef(), width, height);
+        UniqueRef<VideoDecoder> decoder = makeUniqueRef<RemoteVideoDecoder>(*internalDecoder, callbacks.copyRef(), width, height);
         callbacks->postTask([createCallback = WTFMove(createCallback), decoder = WTFMove(decoder)]() mutable {
             createCallback(WTFMove(decoder));
         });
