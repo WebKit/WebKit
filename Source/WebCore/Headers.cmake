@@ -1779,8 +1779,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/audio/PlatformRawAudioData.h
     platform/audio/PushPullFIFO.h
 
-    platform/audio/gstreamer/AudioDestinationGStreamer.h
-
     platform/calc/CalcExpressionNode.h
     platform/calc/CalculationValue.h
 
@@ -2154,8 +2152,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/mediastream/VideoPreset.h
     platform/mediastream/WebAudioSourceProvider.h
     platform/mediastream/WebRTCProvider.h
-
-    platform/mediastream/gstreamer/GStreamerWebRTCProvider.h
 
     platform/mediastream/libwebrtc/LibWebRTCEnumTraits.h
     platform/mediastream/libwebrtc/LibWebRTCMacros.h
