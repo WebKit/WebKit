@@ -66,7 +66,7 @@ public:
     void isUserVerifyingPlatformAuthenticatorAvailable(const Document&, DOMPromiseDeferred<IDLBoolean>&&) const;
     void isConditionalMediationAvailable(const Document&, DOMPromiseDeferred<IDLBoolean>&&) const;
 
-    void resetUserGestureRequirement();
+    WEBCORE_EXPORT void resetUserGestureRequirement();
 
 private:
     AuthenticatorCoordinator() = default;

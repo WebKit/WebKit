@@ -2385,8 +2385,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/svg/SVGBoundingBoxComputation.h
     rendering/svg/SVGRenderSupport.h
 
-    replay/UserInputBridge.h
-
     storage/Storage.h
     storage/StorageArea.h
     storage/StorageEventDispatcher.h

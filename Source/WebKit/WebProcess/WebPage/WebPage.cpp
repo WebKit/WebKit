@@ -287,7 +287,6 @@
 #include <WebCore/TranslationContextMenuInfo.h>
 #include <WebCore/UserContentURLPattern.h>
 #include <WebCore/UserGestureIndicator.h>
-#include <WebCore/UserInputBridge.h>
 #include <WebCore/UserScript.h>
 #include <WebCore/UserStyleSheet.h>
 #include <WebCore/UserTypingGestureIndicator.h>
@@ -1804,8 +1803,12 @@ void WebPage::close()
 
 void WebPage::tryClose(CompletionHandler<void(bool)>&& completionHandler)
 {
-    bool shouldClose = corePage()->userInputBridge().tryClosePage();
-    completionHandler(shouldClose);
+    auto* coreFrame = m_mainFrame->coreLocalFrame();
+    if (!coreFrame) {
+        completionHandler(false);
+        return;
+    }
+    completionHandler(coreFrame->loader().shouldClose());
 }
 
 void WebPage::sendClose()
@@ -1933,9 +1936,12 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
             localMainFrame->loader().forceSandboxFlags(loadParameters.effectiveSandboxFlags);
     }
 
+#if ENABLE(WEB_AUTHN)
     if (frame.get() == m_mainFrame.ptr())
-        corePage()->userInputBridge().loadRequest(WTFMove(frameLoadRequest));
-    else
+        m_page->authenticatorCoordinator().resetUserGestureRequirement();
+#endif
+
+    if (frame->coreLocalFrame())
         frame->coreLocalFrame()->loader().load(WTFMove(frameLoadRequest));
 
     ASSERT(!m_pendingNavigationID);
@@ -2045,7 +2051,7 @@ void WebPage::stopLoading()
     SendStopResponsivenessTimer stopper;
 
     Ref coreFrame = *m_mainFrame->coreLocalFrame();
-    m_page->userInputBridge().stopLoadingFrame(coreFrame.get());
+    coreFrame->loader().stopForUserCancel();
     coreFrame->loader().completePageTransitionIfNeeded();
 }
 
@@ -2074,9 +2080,12 @@ void WebPage::reload(uint64_t navigationID, OptionSet<WebCore::ReloadOption> rel
 
     Ref mainFrame = m_mainFrame;
     m_sandboxExtensionTracker.beginReload(mainFrame.ptr(), WTFMove(sandboxExtensionHandle));
-    if (m_page && mainFrame->coreLocalFrame())
-        m_page->userInputBridge().reloadFrame(*mainFrame->coreLocalFrame(), reloadOptions);
-    else
+    if (m_page && mainFrame->coreLocalFrame()) {
+#if ENABLE(WEB_AUTHN)
+        m_page->authenticatorCoordinator().resetUserGestureRequirement();
+#endif
+        mainFrame->coreLocalFrame()->loader().reload(reloadOptions);
+    } else
         ASSERT_NOT_REACHED();
 
     if (m_pendingNavigationID) {
@@ -3086,19 +3095,19 @@ WebContextMenu& WebPage::contextMenu()
 
 WebContextMenu* WebPage::contextMenuAtPointInWindow(const IntPoint& point)
 {
+    auto* coreFrame = m_mainFrame->coreLocalFrame();
+    if (!coreFrame)
+        return nullptr;
+
     corePage()->contextMenuController().clearContextMenu();
 
     // Simulate a mouse click to generate the correct menu.
     PlatformMouseEvent mousePressEvent(point, point, RightButton, PlatformEvent::Type::MousePressed, 1, { }, WallTime::now(), WebCore::ForceAtClick, WebCore::SyntheticClickType::NoTap);
-    corePage()->userInputBridge().handleMousePressEvent(mousePressEvent);
-    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame());
-    if (!localMainFrame)
-        return nullptr;
-    Ref mainFrame = *localMainFrame;
-    bool handled = corePage()->userInputBridge().handleContextMenuEvent(mousePressEvent, mainFrame);
+    coreFrame->eventHandler().handleMousePressEvent(mousePressEvent);
+    bool handled = coreFrame->eventHandler().sendContextMenuEvent(mousePressEvent);
     auto* menu = handled ? &contextMenu() : nullptr;
     PlatformMouseEvent mouseReleaseEvent(point, point, RightButton, PlatformEvent::Type::MouseReleased, 1, { }, WallTime::now(), WebCore::ForceAtClick, WebCore::SyntheticClickType::NoTap);
-    corePage()->userInputBridge().handleMouseReleaseEvent(mouseReleaseEvent);
+    coreFrame->eventHandler().handleMouseReleaseEvent(mouseReleaseEvent);
 
     return menu;
 }
@@ -3317,7 +3326,7 @@ static bool handleContextMenuEvent(const PlatformMouseEvent& platformMouseEvent,
     if (result.innerNonSharedNode())
         frame = *result.innerNonSharedNode()->document().frame();
 
-    bool handled = page->corePage()->userInputBridge().handleContextMenuEvent(platformMouseEvent, frame);
+    bool handled = frame->eventHandler().sendContextMenuEvent(platformMouseEvent);
 #if ENABLE(CONTEXT_MENUS)
     if (handled)
         page->contextMenu().show();
@@ -3360,7 +3369,7 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page)
             page->corePage()->contextMenuController().clearContextMenu();
 #endif
 
-        bool handled = page->corePage()->userInputBridge().handleMousePressEvent(platformMouseEvent);
+        bool handled = localMainFrame->eventHandler().handleMousePressEvent(platformMouseEvent);
 #if ENABLE(CONTEXT_MENU_EVENT)
         if (isContextClick(platformMouseEvent))
             handled = handleContextMenuEvent(platformMouseEvent, page);
@@ -3370,7 +3379,7 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page)
     case PlatformEvent::Type::MouseReleased:
         if (mouseEvent.gestureWasCancelled() == GestureWasCancelled::Yes)
             localMainFrame->eventHandler().invalidateClick();
-        return page->corePage()->userInputBridge().handleMouseReleaseEvent(platformMouseEvent);
+        return localMainFrame->eventHandler().handleMouseReleaseEvent(platformMouseEvent);
 
     case PlatformEvent::Type::MouseMoved:
 #if PLATFORM(COCOA)
@@ -3380,14 +3389,14 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page)
         // of those cases where the page is not active and the mouse is not pressed, then we can fire a more
         // efficient scrollbars-only version of the event.
         if (!(page->corePage()->focusController().isActive() || (mouseEvent.button() != WebMouseEventButton::NoButton)))
-            return page->corePage()->userInputBridge().handleMouseMoveOnScrollbarEvent(platformMouseEvent);
+            return localMainFrame->eventHandler().passMouseMovedEventToScrollbars(platformMouseEvent);
 #endif
-        return page->corePage()->userInputBridge().handleMouseMoveEvent(platformMouseEvent);
+        return localMainFrame->eventHandler().mouseMoved(platformMouseEvent);
 
     case PlatformEvent::Type::MouseForceChanged:
     case PlatformEvent::Type::MouseForceDown:
     case PlatformEvent::Type::MouseForceUp:
-        return page->corePage()->userInputBridge().handleMouseForceEvent(platformMouseEvent);
+        return localMainFrame->eventHandler().handleMouseForceEvent(platformMouseEvent);
 
     default:
         ASSERT_NOT_REACHED();
@@ -3532,7 +3541,7 @@ bool WebPage::wheelEvent(const WebWheelEvent& wheelEvent, OptionSet<WheelEventPr
             return false;
 
         auto platformWheelEvent = platform(wheelEvent);
-        return m_page->userInputBridge().handleWheelEvent(platformWheelEvent, processingSteps);
+        return localMainFrame->eventHandler().handleWheelEvent(platformWheelEvent, processingSteps);
     };
 
     bool handled = dispatchWheelEvent(wheelEvent, processingSteps);
@@ -3566,8 +3575,8 @@ static bool handleKeyEvent(const WebKeyboardEvent& keyboardEvent, Page* page)
         return false;
 
     if (keyboardEvent.type() == WebEventType::Char && keyboardEvent.isSystemKey())
-        return page->userInputBridge().handleAccessKeyEvent(platform(keyboardEvent));
-    return page->userInputBridge().handleKeyEvent(platform(keyboardEvent));
+        return Ref(page->focusController().focusedOrMainFrame())->eventHandler().handleAccessKey(platform(keyboardEvent));
+    return Ref(page->focusController().focusedOrMainFrame())->eventHandler().keyEvent(platform(keyboardEvent));
 }
 
 void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
@@ -3786,12 +3795,12 @@ void WebPage::gestureEvent(const WebGestureEvent& gestureEvent)
 
 bool WebPage::scroll(Page* page, ScrollDirection direction, ScrollGranularity granularity)
 {
-    return page->userInputBridge().scrollRecursively(direction, granularity);
+    return Ref(page->focusController().focusedOrMainFrame())->eventHandler().scrollRecursively(direction, granularity);
 }
 
 bool WebPage::logicalScroll(Page* page, ScrollLogicalDirection direction, ScrollGranularity granularity)
 {
-    return page->userInputBridge().logicalScrollRecursively(direction, granularity);
+    return Ref(page->focusController().focusedOrMainFrame())->eventHandler().logicalScrollRecursively(direction, granularity);
 }
 
 bool WebPage::scrollBy(uint32_t scrollDirection, WebCore::ScrollGranularity scrollGranularity)
