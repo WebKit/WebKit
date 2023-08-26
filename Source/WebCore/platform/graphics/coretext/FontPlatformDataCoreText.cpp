@@ -181,21 +181,6 @@ CTFontRef FontPlatformData::ctFont() const
     return m_ctFont.get();
 }
 
-RetainPtr<CFTypeRef> FontPlatformData::objectForEqualityCheck(CTFontRef ctFont)
-{
-    auto fontDescriptor = adoptCF(CTFontCopyFontDescriptor(ctFont));
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=138683 This is a shallow pointer compare for web fonts
-    // because the URL contains the address of the font. This means we might erroneously get false negatives.
-    auto object = adoptCF(CTFontDescriptorCopyAttribute(fontDescriptor.get(), kCTFontReferenceURLAttribute));
-    ASSERT(!object || CFGetTypeID(object.get()) == CFURLGetTypeID());
-    return object;
-}
-
-RetainPtr<CFTypeRef> FontPlatformData::objectForEqualityCheck() const
-{
-    return objectForEqualityCheck(ctFont());
-}
-
 RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
 {
     if (RetainPtr<CFDataRef> data = adoptCF(CTFontCopyTable(ctFont(), table, kCTFontTableOptionNoOptions)))
