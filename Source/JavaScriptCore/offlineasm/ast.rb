@@ -698,6 +698,48 @@ class FPRegisterID < NoChildren
     end
 end
 
+class VecRegisterID < NoChildren
+    attr_reader :name
+    
+    def initialize(codeOrigin, name)
+        super(codeOrigin)
+        @name = name
+    end
+    
+    @@mapping = {}
+    
+    def self.forName(codeOrigin, name)
+        unless @@mapping[name]
+            @@mapping[name] = VecRegisterID.new(codeOrigin, name)
+        end
+        @@mapping[name]
+    end
+    
+    def dump
+        name
+    end
+    
+    def address?
+        false
+    end
+    
+    def label?
+        false
+    end
+    
+    def immediate?
+        false
+    end
+    
+    def immediateOperand?
+        false
+    end
+    
+    def register?
+        true
+    end
+end
+
 class SpecialRegister < NoChildren
     attr_reader :name
 

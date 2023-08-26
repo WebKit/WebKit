@@ -3625,13 +3625,9 @@ unimplementedInstruction(_simd_v128_store_mem)
 instructionLabel(_simd_v128_const)
     # v128.const
     leap [PM, MC], t0
-    if ARM64 or ARM64E
-        emit "ldr q0, [x0, #1]"
-    else
-        emit "movdqu 1(%eax), %xmm1"
-    end
+    loadv 1[t0], v0
     loadb [t0], t0
-    pushVectorReg0()
+    pushv v0
     advancePCByReg(t0)
     advanceMC(17)
     nextIPIntInstruction()
@@ -3657,20 +3653,21 @@ unimplementedInstruction(_simd_i16x8_replace_lane)
 instructionLabel(_simd_i32x4_extract_lane)
     # i32x4.extract_lane (lane)
     loadb 2[PB, PC], t0  # lane index
-    popVectorReg0()
+    popv v0
     if ARM64 or ARM64E
         pcrtoaddr _simd_i32x4_extract_lane_0, t1
         leap [t1, t0, 8], t0
         _simd_i32x4_extract_lane_0:
-        emit "smov x0, v0.s[0]"
+        umovi t0, v0_i, 0
         jmp _simd_i32x4_extract_lane_end
-        emit "smov x0, v0.s[1]"
+        umovi t0, v0_i, 1
         jmp _simd_i32x4_extract_lane_end
-        emit "smov x0, v0.s[2]"
+        umovi t0, v0_i, 2
         jmp _simd_i32x4_extract_lane_end
-        emit "smov x0, v0.s[3]"
+        umovi t0, v0_i, 3
         jmp _simd_i32x4_extract_lane_end
     elsif X86_64
+        # FIXME: implement SIMD instructions for x86 and finish this implementation!
     end
 _simd_i32x4_extract_lane_end:
     pushInt32(t0)

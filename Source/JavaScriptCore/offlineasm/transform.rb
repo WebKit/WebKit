@@ -679,6 +679,11 @@ class FPRegisterID
     end
 end
 
+class VecRegisterID
+    def validate
+    end
+end
+
 class Address
     def validate
         validateChildren
