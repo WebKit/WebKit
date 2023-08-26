@@ -11718,7 +11718,10 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 
 - (BOOL)_shouldAvoidSecurityHeuristicScoreUpdates
 {
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    // FIXME: The whole security heuristic thing should be a USE/HAVE.
+#if PLATFORM(VISION)
+    return YES;
+#elif ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     return [_imageAnalysisInteraction hasActiveTextSelection];
 #else
     return NO;
