@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AffineTransform.h"
+#include "BeginLayerOptions.h"
 #include "CanvasDirection.h"
 #include "CanvasFillRule.h"
 #include "CanvasLineCap.h"
@@ -141,7 +142,11 @@ public:
     void setGlobalCompositeOperation(const String&);
 
     void save() { ++m_unrealizedSaveCount; }
-    void restore();
+    ExceptionOr<void> restore();
+
+    bool hasOpenLayers() const { return m_layerCount; }
+    ExceptionOr<void> beginLayer(const BeginLayerOptions&);
+    ExceptionOr<void> endLayer();
 
     void scale(double sx, double sy);
     void rotate(double angleInRadians);
@@ -208,8 +213,8 @@ public:
     ExceptionOr<Ref<ImageData>> createImageData(ImageData&) const;
     ExceptionOr<Ref<ImageData>> createImageData(int width, int height, std::optional<ImageDataSettings>) const;
     ExceptionOr<Ref<ImageData>> getImageData(int sx, int sy, int sw, int sh, std::optional<ImageDataSettings>) const;
-    void putImageData(ImageData&, int dx, int dy);
-    void putImageData(ImageData&, int dx, int dy, int dirtyX, int dirtyY, int dirtyWidth, int dirtyHeight);
+    ExceptionOr<void> putImageData(ImageData&, int dx, int dy);
+    ExceptionOr<void> putImageData(ImageData&, int dx, int dy, int dirtyX, int dirtyY, int dirtyWidth, int dirtyHeight);
 
     static constexpr float webkitBackingStorePixelRatio() { return 1; }
 
@@ -290,6 +295,8 @@ public:
         TextAlign textAlign;
         TextBaseline textBaseline;
         Direction direction;
+
+        bool isLayer;
 
         String unparsedFont;
         FontProxy font;
@@ -442,6 +449,8 @@ private:
     HashSet<uint32_t> m_suppliedColors;
     mutable std::optional<CachedImageData> m_cachedImageData;
     CanvasRenderingContext2DSettings m_settings;
+    // FIXME: limit number of layers?
+    uint32_t m_layerCount { 0 };
 };
 
 } // namespace WebCore

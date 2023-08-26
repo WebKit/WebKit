@@ -1217,6 +1217,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/VoidCallback.idl \
     $(WebCore)/html/WebKitMediaKeyError.idl \
     $(WebCore)/html/canvas/ANGLEInstancedArrays.idl \
+    $(WebCore)/html/canvas/BeginLayerOptions.idl \
     $(WebCore)/html/canvas/CanvasCompositing.idl \
     $(WebCore)/html/canvas/CanvasDirection.idl \
     $(WebCore)/html/canvas/CanvasDrawImage.idl \
@@ -1227,6 +1228,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/canvas/CanvasGradient.idl \
     $(WebCore)/html/canvas/CanvasImageData.idl \
     $(WebCore)/html/canvas/CanvasImageSmoothing.idl \
+    $(WebCore)/html/canvas/CanvasLayers.idl \
     $(WebCore)/html/canvas/CanvasLineCap.idl \
     $(WebCore)/html/canvas/CanvasLineJoin.idl \
     $(WebCore)/html/canvas/CanvasPath.idl \

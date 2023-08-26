@@ -33,10 +33,12 @@
 #include "config.h"
 #include "CanvasRenderingContext2D.h"
 
+#include "CSSFilter.h"
 #include "CSSFontSelector.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSPropertyParserWorkerSafe.h"
+#include "Filter.h"
 #include "Gradient.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"

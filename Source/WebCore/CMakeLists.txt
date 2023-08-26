@@ -1209,6 +1209,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/VideoFrameRequestCallback.idl
     html/VoidCallback.idl
 
+    html/canvas/BeginLayerOptions.idl
     html/canvas/CanvasCompositing.idl
     html/canvas/CanvasDirection.idl
     html/canvas/CanvasDrawImage.idl
@@ -1219,6 +1220,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/canvas/CanvasGradient.idl
     html/canvas/CanvasImageData.idl
     html/canvas/CanvasImageSmoothing.idl
+    html/canvas/CanvasLayers.idl
     html/canvas/CanvasLineCap.idl
     html/canvas/CanvasLineJoin.idl
     html/canvas/CanvasPath.idl

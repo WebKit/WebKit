@@ -395,6 +395,10 @@ static std::optional<double> qualityFromDouble(double qualityNumber)
 
 void OffscreenCanvas::convertToBlob(ImageEncodeOptions&& options, Ref<DeferredPromise>&& promise)
 {
+    if (contextIs2DBaseWithUnclosedLayers()) {
+        promise->reject(InvalidStateError);
+        return;
+    }
     if (!originClean()) {
         promise->reject(SecurityError);
         return;
