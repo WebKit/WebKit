@@ -32,6 +32,8 @@
 
 namespace WebKit {
 
+static NSString * const privacyPreservingDescriptionKey = @"privacyPreservingDescription";
+
 template<>
 NSArray *filterObjects<NSArray>(NSArray *array, bool NS_NOESCAPE (^block)(__kindof id key, __kindof id value))
 {
@@ -186,6 +188,92 @@ NSSet *objectForKey<NSSet>(NSDictionary *dictionary, id key, bool nilIfEmpty, Cl
     });
 }
 
+// MARK: NSDictionary helper methods.
+
+NSDictionary *dictionaryWithLowercaseKeys(NSDictionary *dictionary)
+{
+    if (!dictionary.count)
+        return @{ };
+
+    NSMutableDictionary *newDictionary = [NSMutableDictionary dictionaryWithCapacity:dictionary.count];
+    for (NSString *key in dictionary.allKeys) {
+        if (![key isKindOfClass:NSString.class]) {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+
+        newDictionary[key.lowercaseString] = dictionary[key];
+    }
+
+    return [newDictionary copy];
+}
+
+NSDictionary *mergeDictionaries(NSDictionary *dictionaryA, NSDictionary *dictionaryB)
+{
+    if (!dictionaryB.count)
+        return dictionaryA;
+
+    if (!dictionaryA.count)
+        return dictionaryB;
+
+    NSMutableDictionary *mergedDictionary = [dictionaryA mutableCopy];
+
+    for (id key in dictionaryB.allKeys) {
+        if (!dictionaryA[key])
+            mergedDictionary[key] = dictionaryB[key];
+    }
+
+    return mergedDictionary;
+}
+
+NSDictionary *mergeDictionariesAndSetValues(NSDictionary *dictionaryA, NSDictionary *dictionaryB)
+{
+    if (!dictionaryB.count)
+        return dictionaryA;
+
+    if (!dictionaryA.count)
+        return dictionaryB;
+
+    NSMutableDictionary *newDictionary = [dictionaryA mutableCopy];
+
+    for (id key in dictionaryB.allKeys)
+        newDictionary[key] = dictionaryB[key];
+
+    return [newDictionary copy];
+}
+
+// MARK: NSLocale helper methods.
+
+NSString *localeStringInWebExtensionFormat(NSLocale *locale)
+{
+    if (!locale.languageCode)
+        return @"";
+
+    if (locale.countryCode.length)
+        return [NSString stringWithFormat:@"%@-%@", locale.languageCode, locale.countryCode];
+    return locale.languageCode;
+}
+
+// MARK: NSError helper methods
+
+NSString *privacyPreservingDescription(NSError *error)
+{
+    NSString *privacyPreservingDescription = objectForKey<NSString>(error.userInfo, privacyPreservingDescriptionKey);
+    if (!privacyPreservingDescription) {
+        NSString *domain = error.domain;
+        if (domain.length) {
+            id (^valueProvider)(NSError *err, NSString *userInfoKey) = [NSError userInfoValueProviderForDomain:domain];
+            if (valueProvider)
+                privacyPreservingDescription = valueProvider(error, privacyPreservingDescriptionKey);
+        }
+    }
+
+    if (privacyPreservingDescription)
+        return [NSString stringWithFormat:@"Error Domain=%@ Code=%ld \"%@\"", error.domain, (long)error.code, privacyPreservingDescription];
+
+    return [NSError errorWithDomain:error.domain ?: @"" code:error.code userInfo:nil].description;
+}
+
 NSString *escapeCharactersInString(NSString *string, NSString *charactersToEscape)
 {
     ASSERT(string);
@@ -251,6 +339,28 @@ NSArray *toAPIArray(HashSet<String>& set)
         [result addObject:static_cast<NSString *>(element)];
 
     return [result copy];
+}
+
+Vector<String> toImpl(NSArray *array)
+{
+    Vector<String> result;
+    result.reserveInitialCapacity(array.count);
+
+    for (NSString *element in array)
+        result.uncheckedAppend(element);
+
+    return result;
+}
+
+HashSet<String> toImplSet(NSArray *array)
+{
+    HashSet<String> result;
+    result.reserveInitialCapacity(array.count);
+
+    for (NSString *element in array)
+        result.addVoid(element);
+
+    return result;
 }
 
 } // namespace WebKit

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,22 +27,18 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include "APIData.h"
-#include "WebExtensionContextIdentifier.h"
-#include <wtf/URL.h>
+#include "JSWebExtensionAPILocalization.h"
+#include "WebExtensionAPIObject.h"
 
 namespace WebKit {
 
-struct WebExtensionContextParameters {
-    WebExtensionContextIdentifier identifier;
+class WebExtensionAPILocalization : public WebExtensionAPIObject, public JSWebExtensionWrappable {
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPILocalization, localization);
 
-    URL baseURL;
-    String uniqueIdentifier;
-    Ref<API::Data> manifestJSON;
-    double manifestVersion;
-    bool testingMode;
-
-    // FIXME: <https://webkit.org/b/246488> Add localized dictionary.
+public:
+    NSString *getMessage(NSString* messageName, id substitutions);
+    NSString *getUILanguage();
+    void getAcceptLanguages(Ref<WebExtensionCallbackHandler>&&);
 };
 
 } // namespace WebKit

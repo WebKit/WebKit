@@ -31,6 +31,7 @@
 #import "_WKWebExtensionUtilities.h"
 
 #import "CocoaHelpers.h"
+#import "Logging.h"
 
 @implementation _WKWebExtensionUtilities
 
@@ -84,7 +85,7 @@ static NSString *classToClassString(Class classType, BOOL plural = NO)
         ASSERT([key isKindOfClass:[NSString class]]);
 
         if (![requiredKeysSet containsObject:key] && ![optionalKeysSet containsObject:key]) {
-            // FIXME: Add logging here?
+            RELEASE_LOG_ERROR(Extensions, "Found unexpected key (%{private}@), not specified in required or optional keys.", key);
             return;
         }
 
@@ -137,6 +138,6 @@ static NSString *classToClassString(Class classType, BOOL plural = NO)
     return NO;
 }
 
-#endif // ENABLE(WEB_EXTENSIONS)
+#endif // !ENABLE(WK_WEB_EXTENSIONS)
 
 @end

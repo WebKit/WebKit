@@ -30,6 +30,7 @@
 #include "JSWebExtensionAPINamespace.h"
 #include "WebExtensionAPIAlarms.h"
 #include "WebExtensionAPIExtension.h"
+#include "WebExtensionAPILocalization.h"
 #include "WebExtensionAPIObject.h"
 #include "WebExtensionAPIPermissions.h"
 #include "WebExtensionAPIRuntime.h"
@@ -52,6 +53,7 @@ public:
 
     WebExtensionAPIAlarms& alarms();
     WebExtensionAPIExtension& extension();
+    WebExtensionAPILocalization& i18n();
     WebExtensionAPIPermissions& permissions();
     WebExtensionAPIRuntime& runtime() final;
     WebExtensionAPITest& test();
@@ -63,6 +65,7 @@ public:
 private:
     RefPtr<WebExtensionAPIAlarms> m_alarms;
     RefPtr<WebExtensionAPIExtension> m_extension;
+    RefPtr<WebExtensionAPILocalization> m_i18n;
     RefPtr<WebExtensionAPIPermissions> m_permissions;
     RefPtr<WebExtensionAPIRuntime> m_runtime;
     RefPtr<WebExtensionAPITabs> m_tabs;

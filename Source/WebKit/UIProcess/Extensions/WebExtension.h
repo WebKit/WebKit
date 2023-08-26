@@ -42,11 +42,13 @@ OBJC_CLASS NSBundle;
 OBJC_CLASS NSData;
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSError;
+OBJC_CLASS NSLocale;
 OBJC_CLASS NSMutableArray;
 OBJC_CLASS NSMutableDictionary;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
 OBJC_CLASS _WKWebExtension;
+OBJC_CLASS _WKWebExtensionLocalization;
 OBJC_CLASS _WKWebExtensionMatchPattern;
 
 #if PLATFORM(MAC)
@@ -161,6 +163,9 @@ public:
 
     NSString *webProcessDisplayName();
 
+    _WKWebExtensionLocalization *localization();
+    NSLocale *defaultLocale();
+
     NSString *displayName();
     NSString *displayShortName();
     NSString *displayVersion();
@@ -243,6 +248,9 @@ private:
     RetainPtr<NSURL> m_resourceBaseURL;
     RetainPtr<NSDictionary> m_manifest;
     RetainPtr<NSMutableDictionary> m_resources;
+
+    RetainPtr<NSLocale> m_defaultLocale;
+    RetainPtr<_WKWebExtensionLocalization> m_localization;
 
     RetainPtr<NSMutableArray> m_errors;
 

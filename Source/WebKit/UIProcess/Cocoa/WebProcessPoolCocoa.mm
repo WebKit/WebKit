@@ -785,7 +785,7 @@ void WebProcessPool::registerNotificationObservers()
     }
 #elif !PLATFORM(MACCATALYST)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    // FIXME: <https://webkit.org/b/246488> Adopt UIScreenBrightnessDidChangeNotification.
+    // FIXME: <https://webkit.org/b/255833> Adopt UIScreenBrightnessDidChangeNotification.
     addCFNotificationObserver(backlightLevelDidChangeCallback, (__bridge CFStringRef)UIBacklightLevelChangedNotification);
 ALLOW_DEPRECATED_DECLARATIONS_END
 #if PLATFORM(IOS) || PLATFORM(VISION)

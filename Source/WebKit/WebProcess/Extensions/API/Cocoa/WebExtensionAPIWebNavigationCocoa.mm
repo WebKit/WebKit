@@ -36,6 +36,8 @@ namespace WebKit {
 
 WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onBeforeNavigate()
 {
+    // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webNavigation/onBeforeNavigate
+
     if (!m_onBeforeNavigateEvent)
         m_onBeforeNavigateEvent = WebExtensionAPIWebNavigationEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WebNavigationOnBeforeNavigate);
     return *m_onBeforeNavigateEvent;
@@ -43,6 +45,8 @@ WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onBeforeNavigat
 
 WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onCommitted()
 {
+    // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webNavigation/onCommitted
+
     if (!m_onCommittedEvent)
         m_onCommittedEvent = WebExtensionAPIWebNavigationEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WebNavigationOnCommitted);
     return *m_onCommittedEvent;
@@ -50,6 +54,8 @@ WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onCommitted()
 
 WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onDOMContentLoaded()
 {
+    // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webNavigation/onDOMContentLoaded
+
     if (!m_onDOMContentLoadedEvent)
         m_onDOMContentLoadedEvent = WebExtensionAPIWebNavigationEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WebNavigationOnDOMContentLoaded);
     return *m_onDOMContentLoadedEvent;
@@ -57,6 +63,8 @@ WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onDOMContentLoa
 
 WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onCompleted()
 {
+    // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webNavigation/onCompleted
+
     if (!m_onCompletedEvent)
         m_onCompletedEvent = WebExtensionAPIWebNavigationEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WebNavigationOnCompleted);
     return *m_onCompletedEvent;
@@ -64,6 +72,8 @@ WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onCompleted()
 
 WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onErrorOccurred()
 {
+    // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webNavigation/onErrorOccurred
+
     if (!m_onErrorOccurredEvent)
         m_onErrorOccurredEvent = WebExtensionAPIWebNavigationEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WebNavigationOnErrorOccurred);
     return *m_onErrorOccurredEvent;
@@ -71,12 +81,16 @@ WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onErrorOccurred
 
 void WebExtensionAPIWebNavigation::getAllFrames(WebPage* webPage, NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **errorString)
 {
-    // FIXME: Implement this.
+    // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webNavigation/getAllFrames
+
+    // FIXME: <https://webkit.org/b/260160> Implement this.
 }
 
 void WebExtensionAPIWebNavigation::getFrame(WebPage* webPage, NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **errorString)
 {
-    // FIXME: Implement this.
+    // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webNavigation/getFrame
+
+    // FIXME: <https://webkit.org/b/260160> Implement this.
 }
 
 } // namespace WebKit
