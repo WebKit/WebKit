@@ -52,9 +52,10 @@ enum class MatchElement : uint8_t {
     HasSibling,
     HasSiblingDescendant,
     HasNonSubjectOrScopeBreaking, // FIXME: This is a catch-all for cases where :has() is in a non-subject position, or may break scope.
-    Host
+    Host,
+    HostChild
 };
-constexpr unsigned matchElementCount = static_cast<unsigned>(MatchElement::Host) + 1;
+constexpr unsigned matchElementCount = static_cast<unsigned>(MatchElement::HostChild) + 1;
 
 enum class IsNegation : bool { No, Yes };
 enum class CanBreakScope : bool { No, Yes }; // :is/not() inside scoped selector can be affected by things outside the scope.
