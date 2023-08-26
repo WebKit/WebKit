@@ -67,6 +67,13 @@ WebExtensionAPIExtension& WebExtensionAPINamespace::extension()
     return *m_extension;
 }
 
+WebExtensionAPILocalization& WebExtensionAPINamespace::i18n()
+{
+    if (!m_i18n)
+        m_i18n = WebExtensionAPILocalization::create(forMainWorld(), runtime(), extensionContext());
+    return *m_i18n;
+}
+
 WebExtensionAPIPermissions& WebExtensionAPINamespace::permissions()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/permissions

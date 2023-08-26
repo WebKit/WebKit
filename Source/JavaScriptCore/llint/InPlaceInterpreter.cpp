@@ -57,11 +57,21 @@ do { \
     RELEASE_ASSERT((char*)(untaggedPtr) - (char*)(untaggedBase) == opcode * 256); \
 } while (false);
 
+#define VALIDATE_IPINT_SIMD_OPCODE(opcode, name) \
+do { \
+    void* base = reinterpret_cast<void*>(ipint_simd_v128_load_mem_validate); \
+    void* ptr = reinterpret_cast<void*>(ipint_ ## name ## _validate); \
+    void* untaggedBase = CodePtr<CFunctionPtrTag>::fromTaggedPtr(base).template untaggedPtr(); \
+    void* untaggedPtr = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr(); \
+    RELEASE_ASSERT((char*)(untaggedPtr) - (char*)(untaggedBase) == opcode * 256); \
+} while (false);
+
 void initialize()
 {
 #if !ENABLE(C_LOOP) && CPU(ADDRESS64) && (CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS)))
     FOR_EACH_IPINT_OPCODE(VALIDATE_IPINT_OPCODE);
     FOR_EACH_IPINT_0xFC_TRUNC_OPCODE(VALIDATE_IPINT_0xFC_OPCODE);
+    FOR_EACH_IPINT_SIMD_OPCODE(VALIDATE_IPINT_SIMD_OPCODE);
 #else
     RELEASE_ASSERT_NOT_REACHED("IPInt only supports ARM64 and X86_64 (for now).");
 #endif

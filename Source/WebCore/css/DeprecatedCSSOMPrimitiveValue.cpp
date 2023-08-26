@@ -50,8 +50,8 @@ unsigned short DeprecatedCSSOMPrimitiveValue::primitiveType() const
     case CSSUnitType::CSS_CM:                           return CSS_CM;
     case CSSUnitType::CSS_DEG:                          return CSS_DEG;
     case CSSUnitType::CSS_DIMENSION:                    return CSS_DIMENSION;
-    case CSSUnitType::CSS_EMS:                          return CSS_EMS;
-    case CSSUnitType::CSS_EXS:                          return CSS_EXS;
+    case CSSUnitType::CSS_EM:                           return CSS_EMS;
+    case CSSUnitType::CSS_EX:                           return CSS_EXS;
     case CSSUnitType::CSS_FONT_FAMILY:                  return CSS_STRING;
     case CSSUnitType::CSS_GRAD:                         return CSS_GRAD;
     case CSSUnitType::CSS_HZ:                           return CSS_HZ;
@@ -87,8 +87,8 @@ ExceptionOr<float> DeprecatedCSSOMPrimitiveValue::getFloatValue(unsigned short u
         case CSS_CM:            return CSSUnitType::CSS_CM;
         case CSS_DEG:           return CSSUnitType::CSS_DEG;
         case CSS_DIMENSION:     return CSSUnitType::CSS_DIMENSION;
-        case CSS_EMS:           return CSSUnitType::CSS_EMS;
-        case CSS_EXS:           return CSSUnitType::CSS_EXS;
+        case CSS_EMS:           return CSSUnitType::CSS_EM;
+        case CSS_EXS:           return CSSUnitType::CSS_EX;
         case CSS_GRAD:          return CSSUnitType::CSS_GRAD;
         case CSS_HZ:            return CSSUnitType::CSS_HZ;
         case CSS_IN:            return CSSUnitType::CSS_IN;

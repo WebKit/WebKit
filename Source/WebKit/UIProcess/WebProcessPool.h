@@ -45,6 +45,7 @@
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/SharedStringHash.h>
 #include <pal/SessionID.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -137,6 +138,7 @@ enum class ProcessSwapRequestedByClient : bool;
 class WebProcessPool final
     : public API::ObjectImpl<API::Object::Type::ProcessPool>
     , public IPC::MessageReceiver
+    , public CanMakeCheckedPtr
 #if PLATFORM(MAC)
     , private PAL::SystemSleepListener::Client
 #endif

@@ -46,6 +46,8 @@ bool WebExtensionAPIExtension::isPropertyAllowed(String name, WebPage*)
 
 NSURL *WebExtensionAPIExtension::getURL(NSString *resourcePath, NSString **errorString)
 {
+    // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/extension/getURL
+
     URL baseURL = extensionContext().baseURL();
     return resourcePath.length ? URL { baseURL, resourcePath } : baseURL;
 }

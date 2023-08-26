@@ -32,6 +32,8 @@
 
     readonly attribute WebExtensionAPIExtension extension;
 
+    readonly attribute WebExtensionAPILocalization i18n;
+
     readonly attribute WebExtensionAPIRuntime runtime;
 
     [MainWorldOnly] readonly attribute WebExtensionAPIPermissions permissions;

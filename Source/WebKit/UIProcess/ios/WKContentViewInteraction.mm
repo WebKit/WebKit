@@ -10094,7 +10094,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
         return nil;
 
     UIView *textEffectsWindow = self.textEffectsWindow;
-    auto caretRectInWindowCoordinates = [self convertRect:caretRect toView:textEffectsWindow];
+    auto caretRectInWindowCoordinates = [self convertRect:caretRect toCoordinateSpace:textEffectsWindow];
     auto caretCenterInWindowCoordinates = CGPointMake(CGRectGetMidX(caretRectInWindowCoordinates), CGRectGetMidY(caretRectInWindowCoordinates));
     auto targetPreviewCenterInWindowCoordinates = CGPointMake(caretCenterInWindowCoordinates.x + defaultPreview.size.width / 2, caretCenterInWindowCoordinates.y + defaultPreview.size.height / 2);
     auto target = adoptNS([[UIDragPreviewTarget alloc] initWithContainer:textEffectsWindow center:targetPreviewCenterInWindowCoordinates transform:CGAffineTransformIdentity]);

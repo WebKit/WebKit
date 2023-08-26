@@ -78,6 +78,17 @@ require "risc"
 # q13  => csfr5                   (Only the lower 64 bits)
 # q14  => csfr6                   (Only the lower 64 bits)
 # q15  => csfr7                   (Only the lower 64 bits)
+#
+# Vector registers:
+# q16  => v0, v0_b, v0_h, v0_i, v0_q
+# q17  => v1, v1_b, v1_h, v1_i, v1_q
+# q18  => v2, v2_b, v2_h, v2_i, v2_q
+# q19  => v3, v3_b, v3_h, v3_i, v3_q
+# q20  => v4, v4_b, v4_h, v4_i, v4_q
+# q21  => v5, v5_b, v5_h, v5_i, v5_q
+# q22  => v6, v6_b, v6_h, v6_i, v6_q
+# q23  => v7, v7_b, v7_h, v7_i, v7_q
+# Shared for FPR/Vector
 # q31  => scratch
 
 def arm64GPRName(name, kind)
@@ -103,6 +114,18 @@ def arm64FPRName(name, kind)
         "d" + name[1..-1]
     when :float
         "s" + name[1..-1]
+    when :vector
+        "v" + name[1..-1]
+    when :vector_with_interpretation
+        "q" + name[1..-1]
+    else
+        raise "bad FPR kind #{kind}"
+    end
+end
+
+def arm64VecName(name, kind)
+    raise "bad vector name #{name}" unless name =~ /^v/
+    case kind
     when :vector
         "v" + name[1..-1]
     when :vector_with_interpretation
@@ -222,6 +245,94 @@ class FPRegisterID
             arm64FPRName('q14', kind)
         when 'csfr7'
             arm64FPRName('q15', kind)
+        else "Bad register name #{@name} at #{codeOriginString}"
+        end
+    end
+end
+
+class VecRegisterID
+    def arm64Operand(kind)
+        case @name
+        when 'v0'
+            arm64VecName('v16', kind)
+        when 'v0_b'
+            arm64VecName('v16.b', kind)
+        when 'v0_h'
+            arm64VecName('v16.h', kind)
+        when 'v0_i'
+            arm64VecName('v16.s', kind)
+        when 'v0_q'
+            arm64VecName('v16.d', kind)
+        when 'v1'
+            arm64VecName('v17', kind)
+        when 'v1_b'
+            arm64VecName('v17.b', kind)
+        when 'v1_h'
+            arm64VecName('v17.h', kind)
+        when 'v1_i'
+            arm64VecName('v17.s', kind)
+        when 'v1_q'
+            arm64VecName('v17.d', kind)
+        when 'v2'
+            arm64VecName('v18', kind)
+        when 'v2_b'
+            arm64VecName('v18.b', kind)
+        when 'v2_h'
+            arm64VecName('v18.h', kind)
+        when 'v2_i'
+            arm64VecName('v18.s', kind)
+        when 'v2_q'
+            arm64VecName('v18.d', kind)
+        when 'v3'
+            arm64VecName('v19', kind)
+        when 'v3_b'
+            arm64VecName('v19.b', kind)
+        when 'v3_h'
+            arm64VecName('v19.h', kind)
+        when 'v3_i'
+            arm64VecName('v19.s', kind)
+        when 'v3_q'
+            arm64VecName('v19.d', kind)
+        when 'v5'
+            arm64VecName('v20', kind)
+        when 'v4_b'
+            arm64VecName('v20.b', kind)
+        when 'v4_h'
+            arm64VecName('v20.h', kind)
+        when 'v4_i'
+            arm64VecName('v20.s', kind)
+        when 'v4_q'
+            arm64VecName('v20.d', kind)
+        when 'v5'
+            arm64VecName('v21', kind)
+        when 'v5_b'
+            arm64VecName('v21.b', kind)
+        when 'v5_h'
+            arm64VecName('v21.h', kind)
+        when 'v5_i'
+            arm64VecName('v21.s', kind)
+        when 'v5_q'
+            arm64VecName('v21.d', kind)
+        when 'v6'
+            arm64VecName('v22', kind)
+        when 'v6_b'
+            arm64VecName('v22.b', kind)
+        when 'v6_h'
+            arm64VecName('v22.h', kind)
+        when 'v6_i'
+            arm64VecName('v22.s', kind)
+        when 'v6_q'
+            arm64VecName('v22.d', kind)
+        when 'v7'
+            arm64VecName('v23', kind)
+        when 'v7_b'
+            arm64VecName('v23.b', kind)
+        when 'v7_h'
+            arm64VecName('v23.h', kind)
+        when 'v7_i'
+            arm64VecName('v23.s', kind)
+        when 'v7_q'
+            arm64VecName('v23.d', kind)
         else "Bad register name #{@name} at #{codeOriginString}"
         end
     end
@@ -991,10 +1102,20 @@ class Instruction
                 # instructions we need to flip flop the argument positions that were passed to us.
                 $asm.puts "ldp #{ops[1].arm64Operand(:quad)}, #{ops[0].arm64Operand(:quad)}, [sp], #16"
             }
+        when "popv"
+            operands.each { 
+                | op |
+                $asm.puts "ldr #{op.arm64Operand(:vector_with_interpretation)}, [sp], #16"
+            }
         when "push"
             operands.each_slice(2) {
                 | ops |
                 $asm.puts "stp #{ops[0].arm64Operand(:quad)}, #{ops[1].arm64Operand(:quad)}, [sp, #-16]!"
+            }
+        when "pushv"
+            operands.each { 
+                | op |
+                $asm.puts "str #{op.arm64Operand(:vector_with_interpretation)}, [sp, #-16]!"
             }
         when "move"
             if operands[0].immediate?
@@ -1523,6 +1644,20 @@ class Instruction
             $asm.puts "ldp #{operands[1].arm64Operand(:double)}, #{operands[2].arm64Operand(:double)}, #{operands[0].arm64PairAddressOperand(:double)}"
         when "storepaird"
             $asm.puts "stp #{operands[0].arm64Operand(:double)}, #{operands[1].arm64Operand(:double)}, #{operands[2].arm64PairAddressOperand(:double)}"
+
+        ########
+        # SIMD #
+        ########
+
+        when "umovb"
+            $asm.puts "umov #{operands[0].arm64Operand(:word)}, #{operands[1].arm64Operand(:vector)}[#{operands[2].value}]"
+        when "umovh"
+            $asm.puts "umov #{operands[0].arm64Operand(:word)}, #{operands[1].arm64Operand(:vector)}[#{operands[2].value}]"
+        when "umovi"
+            $asm.puts "umov #{operands[0].arm64Operand(:word)}, #{operands[1].arm64Operand(:vector)}[#{operands[2].value}]"
+        when "umovq"
+            $asm.puts "umov #{operands[0].arm64Operand(:quad)}, #{operands[1].arm64Operand(:vector)}[#{operands[2].value}]"
+
         else
             lowerDefault
         end

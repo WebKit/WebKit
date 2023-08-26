@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+ // https://html.spec.whatwg.org/#texttrack
+
 enum TextTrackMode { "disabled", "hidden", "showing" };
 enum TextTrackKind { "subtitles", "captions", "descriptions", "chapters", "metadata", "forced" };
 
@@ -35,10 +37,11 @@ enum TextTrackKind { "subtitles", "captions", "descriptions", "chapters", "metad
     SkipVTableValidation,
     Exposed=Window
 ] interface TextTrack : EventTarget {
-    readonly attribute DOMString id;
     [ImplementedAs=kindForBindings] attribute TextTrackKind kind;
     readonly attribute DOMString label;
     [EnabledConditionallyReadWriteBySetting=MediaSourceEnabled] attribute [AtomString] DOMString language;
+
+    readonly attribute DOMString id;
     readonly attribute DOMString inBandMetadataTrackDispatchType;
 
     attribute TextTrackMode mode;
@@ -51,6 +54,7 @@ enum TextTrackKind { "subtitles", "captions", "descriptions", "chapters", "metad
 
     attribute EventHandler oncuechange;
 
+    // FIXME: Remove 'non-standard'. See: https://bugs.webkit.org/show_bug.cgi?id=260767 
     readonly attribute VTTRegionList regions;
     undefined addRegion(VTTRegion region);
     undefined removeRegion(VTTRegion region);

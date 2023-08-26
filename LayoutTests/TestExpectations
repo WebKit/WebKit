@@ -3685,7 +3685,6 @@ webkit.org/b/203333 imported/w3c/web-platform-tests/css/css-values/ch-unit-010.h
 webkit.org/b/203338 imported/w3c/web-platform-tests/css/css-values/vh_not_refreshing_on_chrome.html [ ImageOnlyFailure ]
 webkit.org/b/242465 imported/w3c/web-platform-tests/css/css-values/calc-width-table-auto-1.html [ Skip ]
 webkit.org/b/242465 imported/w3c/web-platform-tests/css/css-values/calc-width-table-fixed-1.html [ Skip ]
-webkit.org/b/242466 imported/w3c/web-platform-tests/css/css-values/cap-unit-001.html [ ImageOnlyFailure ]
 webkit.org/b/259025 imported/w3c/web-platform-tests/css/css-values/ch-unit-018.html [ ImageOnlyFailure ]
 webkit.org/b/259025 imported/w3c/web-platform-tests/css/css-values/ic-unit-015.html [ ImageOnlyFailure ]
 webkit.org/b/214466 imported/w3c/web-platform-tests/css/css-values/ex-unit-004.html [ ImageOnlyFailure ]
@@ -6584,8 +6583,6 @@ imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrollbar-gutter-
 
 webkit.org/b/257336 imported/w3c/web-platform-tests/css/css-tables/visibility-collapse-row-003-dynamic.html [ Pass Failure ]
 
-webkit.org/b/257904 http/tests/site-isolation/basic-iframe.html [ Skip ]
-
 # Only some OSes have support for auto word breaking.
 imported/w3c/web-platform-tests/css/css-text/word-break/auto [ Pass Failure ImageOnlyFailure ]
 
@@ -6641,7 +6638,27 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.
 webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.state.clip.html [ ImageOnlyFailure ]
 webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.state.clip.html [ ImageOnlyFailure ]
 webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.state.clip.w.html [ Timeout ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.drop_shadow.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.global_composite_operation.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.line.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.misc.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.miter_limit.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.text.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.drop_shadow.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.drop_shadow.w.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.global_composite_operation.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.global_composite_operation.w.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.line.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.line.w.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.misc.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.misc.w.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.miter_limit.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.miter_limit.w.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.text.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.text.w.html [ ImageOnlyFailure ]
 
 # We only support import-attributes and do not support import-assertions.
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/import-assertions
 
+# webkit.org/b/260546
+[ Debug ] imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/toggleEvent.html [ Pass Failure ]

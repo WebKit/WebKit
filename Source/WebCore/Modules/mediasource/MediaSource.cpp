@@ -249,7 +249,7 @@ void MediaSource::completeSeek()
             , mediaSource(source)
             , completionHandler(WTFMove(completionHandler))
         {
-            ASSERT(completionHandler);
+            ASSERT(this->completionHandler);
         }
 
         ~SeeksCallbackAggregator()

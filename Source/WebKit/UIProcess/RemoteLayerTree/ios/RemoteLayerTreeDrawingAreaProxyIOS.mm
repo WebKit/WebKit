@@ -106,7 +106,7 @@ constexpr WebCore::FramesPerSecond DisplayLinkFramesPerSecond = 60;
 - (void)timerFired
 {
     ASSERT(isUIThread());
-    _drawingAreaProxy->didRefreshDisplay(nullptr);
+    _drawingAreaProxy->didRefreshDisplay();
 }
 #endif // ENABLE(TIMER_DRIVEN_DISPLAY_REFRESH_FOR_TESTING)
 

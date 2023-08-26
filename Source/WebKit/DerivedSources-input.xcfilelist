@@ -372,6 +372,7 @@ $(PROJECT_DIR)/WebProcess/Extensions/Bindings/Scripts/IDLAttributes.json
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIAlarms.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIEvent.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIExtension.idl
+$(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPILocalization.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPINamespace.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIPermissions.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIRuntime.idl

@@ -650,6 +650,7 @@ EXTENSION_INTERFACES = \
     WebExtensionAPIAlarms \
     WebExtensionAPIEvent \
     WebExtensionAPIExtension \
+    WebExtensionAPILocalization \
     WebExtensionAPINamespace \
     WebExtensionAPIPermissions \
     WebExtensionAPIRuntime \

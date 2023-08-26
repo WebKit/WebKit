@@ -240,7 +240,7 @@ inline Length BuilderConverter::convertLength(const BuilderState& builderState, 
 
     if (primitiveValue.isLength()) {
         Length length = primitiveValue.computeLength<Length>(conversionData);
-        length.setHasQuirk(primitiveValue.primitiveType() == CSSUnitType::CSS_QUIRKY_EMS);
+        length.setHasQuirk(primitiveValue.primitiveType() == CSSUnitType::CSS_QUIRKY_EM);
         return length;
     }
 
@@ -966,7 +966,7 @@ inline float BuilderConverter::convertTextStrokeWidth(BuilderState& builderState
             result *= 3;
         else if (primitiveValue.valueID() == CSSValueThick)
             result *= 5;
-        auto emsValue = CSSPrimitiveValue::create(result, CSSUnitType::CSS_EMS);
+        auto emsValue = CSSPrimitiveValue::create(result, CSSUnitType::CSS_EM);
         width = convertComputedLength<float>(builderState, emsValue);
         break;
     }

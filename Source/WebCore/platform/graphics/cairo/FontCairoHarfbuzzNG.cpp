@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
@@ -98,9 +98,9 @@ static bool characterSequenceIsEmoji(SurrogatePairAwareTextIterator& iterator, U
     return false;
 }
 
-const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* originalCharacters, size_t originalLength) const
+const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
 {
-    auto normalizedString = normalizedNFC(StringView { originalCharacters, static_cast<unsigned>(originalLength) });
+    auto normalizedString = normalizedNFC(stringView);
 
     // Code below relies on normalizedNFC never narrowing a 16-bit input string into an 8-bit output string.
     // At the time of this writing, the function never does this, but in theory a future version could, and
@@ -125,7 +125,7 @@ const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* original
 
     const Font* baseFont = glyphDataForCharacter(character, false, NormalVariant).font;
     if (baseFont
-        && (clusterLength == length || baseFont->canRenderCombiningCharacterSequence(characters, length))
+        && (clusterLength == length || baseFont->canRenderCombiningCharacterSequence(normalizedString.view))
         && (!preferColoredFont || baseFont->platformData().isColorBitmapFont()))
         return baseFont;
 
@@ -134,17 +134,17 @@ const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* original
         if (!fallbackFont || fallbackFont == baseFont)
             continue;
 
-        if (fallbackFont->canRenderCombiningCharacterSequence(characters, length) && (!preferColoredFont || fallbackFont->platformData().isColorBitmapFont()))
+        if (fallbackFont->canRenderCombiningCharacterSequence(normalizedString.view) && (!preferColoredFont || fallbackFont->platformData().isColorBitmapFont()))
             return fallbackFont;
     }
 
     const auto& originalFont = fallbackRangesAt(0).fontForFirstRange();
     if (auto systemFallback = FontCache::forCurrentThread().systemFallbackForCharacters(m_fontDescription, originalFont, IsForPlatformFont::No, preferColoredFont ? FontCache::PreferColoredFont::Yes : FontCache::PreferColoredFont::No, characters, length)) {
-        if (systemFallback->canRenderCombiningCharacterSequence(characters, length) && (!preferColoredFont || systemFallback->platformData().isColorBitmapFont()))
+        if (systemFallback->canRenderCombiningCharacterSequence(normalizedString.view) && (!preferColoredFont || systemFallback->platformData().isColorBitmapFont()))
             return systemFallback.get();
 
         // In case of emoji, if fallback font is colored try again without the variation selector character.
-        if (isEmoji && characters[length - 1] == 0xFE0F && systemFallback->platformData().isColorBitmapFont() && systemFallback->canRenderCombiningCharacterSequence(characters, length - 1))
+        if (isEmoji && characters[length - 1] == 0xFE0F && systemFallback->platformData().isColorBitmapFont() && systemFallback->canRenderCombiningCharacterSequence({ characters, length - 1 }))
             return systemFallback.get();
     }
 

@@ -1,4 +1,4 @@
-//@ runDefault("--maxPerThreadStackUsage=1572864", "--forceMiniVMMode=1", "--stealEmptyBlocksFromOtherAllocators=0", "--collectContinuously=1", "--watchdog=3000", "--watchdog-exception-ok")
+//@ runDefault("--maxPerThreadStackUsage=1572864", "--forceMiniVMMode=1", "--stealEmptyBlocksFromOtherAllocators=0", "--collectContinuously=1", "--watchdog=3000", "--watchdog-exception-ok", "--verboseHeapSnapshotLogging=0")
 // Reproducing the crash with this test is very hard. You should execute something like this.
 // while true; do for x in {0..4}; do DYLD_FRAMEWORK_PATH=$VM $VM/jsc --maxPerThreadStackUsage=1572864 --forceMiniVMMode=1 --stealEmptyBlocksFromOtherAllocators=0 --collectContinuously=1 collect-continuously-should-not-wake-concurrent-collector-after-prevent-collection-is-called.js --watchdog=3000&; done; wait; sleep 0.1; done
 

@@ -125,8 +125,8 @@ void IPIntPlan::didCompleteCompilation()
             m_calleesVector[i] = IPIntCallee::create(*m_wasmInternalFunctions[i], functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace));
             ASSERT(!m_calleesVector[i]->entrypoint());
             entrypoints[i] = jit.label();
-            // if (m_moduleInformation->usesSIMD(i))
-            //     JIT_COMMENT(jit, "SIMD function entrypoint");
+            if (m_moduleInformation->usesSIMD(i))
+                JIT_COMMENT(jit, "SIMD function entrypoint");
             JIT_COMMENT(jit, "Entrypoint for function[", i, "]");
             CCallHelpers::Address calleeSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register)) - prologueStackPointerDelta());
             jit.storePtr(CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(m_calleesVector[i].ptr())), calleeSlot.withOffset(PayloadOffset));
@@ -144,10 +144,10 @@ void IPIntPlan::didCompleteCompilation()
 
         for (unsigned i = 0; i < functionCount; ++i) {
             m_calleesVector[i]->setEntrypoint(linkBuffer.locationOf<WasmEntryPtrTag>(entrypoints[i]));
-        //     if (m_moduleInformation->usesSIMD(i))
-        //         linkBuffer.link<JITThunkPtrTag>(jumps[i], CodeLocationLabel<JITThunkPtrTag>(IPInt::wasmFunctionEntryThunkSIMD().code()));
-        //     else
-            linkBuffer.link<JITThunkPtrTag>(jumps[i], CodeLocationLabel<JITThunkPtrTag>(LLInt::inPlaceInterpreterEntryThunk().code()));
+            if (m_moduleInformation->usesSIMD(i))
+                linkBuffer.link<JITThunkPtrTag>(jumps[i], CodeLocationLabel<JITThunkPtrTag>(LLInt::inPlaceInterpreterEntryThunkSIMD().code()));
+            else
+                linkBuffer.link<JITThunkPtrTag>(jumps[i], CodeLocationLabel<JITThunkPtrTag>(LLInt::inPlaceInterpreterEntryThunk().code()));
         }
 
         m_entryThunks = FINALIZE_CODE(linkBuffer, JITCompilationPtrTag, "Wasm IPInt entry thunks");

@@ -37,8 +37,8 @@ CalculationCategory calcUnitCategory(CSSUnitType type)
     case CSSUnitType::CSS_NUMBER:
     case CSSUnitType::CSS_INTEGER:
         return CalculationCategory::Number;
-    case CSSUnitType::CSS_EMS:
-    case CSSUnitType::CSS_EXS:
+    case CSSUnitType::CSS_EM:
+    case CSSUnitType::CSS_EX:
     case CSSUnitType::CSS_PX:
     case CSSUnitType::CSS_CM:
     case CSSUnitType::CSS_MM:
@@ -46,11 +46,16 @@ CalculationCategory calcUnitCategory(CSSUnitType type)
     case CSSUnitType::CSS_PT:
     case CSSUnitType::CSS_PC:
     case CSSUnitType::CSS_Q:
-    case CSSUnitType::CSS_LHS:
-    case CSSUnitType::CSS_RLHS:
-    case CSSUnitType::CSS_REMS:
-    case CSSUnitType::CSS_CHS:
+    case CSSUnitType::CSS_LH:
+    case CSSUnitType::CSS_CAP:
+    case CSSUnitType::CSS_CH:
     case CSSUnitType::CSS_IC:
+    case CSSUnitType::CSS_RCAP:
+    case CSSUnitType::CSS_RCH:
+    case CSSUnitType::CSS_REM:
+    case CSSUnitType::CSS_REX:
+    case CSSUnitType::CSS_RIC:
+    case CSSUnitType::CSS_RLH:
     case CSSUnitType::CSS_VW:
     case CSSUnitType::CSS_VH:
     case CSSUnitType::CSS_VMIN:
@@ -137,13 +142,18 @@ CalculationCategory calculationCategoryForCombination(CSSUnitType type)
     case CSSUnitType::CSS_DPCM:
     case CSSUnitType::CSS_X:
         return CalculationCategory::Resolution;
-    case CSSUnitType::CSS_EMS:
-    case CSSUnitType::CSS_EXS:
-    case CSSUnitType::CSS_LHS:
-    case CSSUnitType::CSS_REMS:
-    case CSSUnitType::CSS_RLHS:
-    case CSSUnitType::CSS_CHS:
+    case CSSUnitType::CSS_EM:
+    case CSSUnitType::CSS_EX:
+    case CSSUnitType::CSS_LH:
+    case CSSUnitType::CSS_CAP:
+    case CSSUnitType::CSS_CH:
     case CSSUnitType::CSS_IC:
+    case CSSUnitType::CSS_RCAP:
+    case CSSUnitType::CSS_RCH:
+    case CSSUnitType::CSS_REM:
+    case CSSUnitType::CSS_REX:
+    case CSSUnitType::CSS_RIC:
+    case CSSUnitType::CSS_RLH:
     case CSSUnitType::CSS_VW:
     case CSSUnitType::CSS_VH:
     case CSSUnitType::CSS_VMIN:
@@ -204,11 +214,11 @@ bool hasDoubleValue(CSSUnitType type)
     case CSSUnitType::CSS_NUMBER:
     case CSSUnitType::CSS_INTEGER:
     case CSSUnitType::CSS_PERCENTAGE:
-    case CSSUnitType::CSS_EMS:
-    case CSSUnitType::CSS_EXS:
-    case CSSUnitType::CSS_CHS:
+    case CSSUnitType::CSS_EM:
+    case CSSUnitType::CSS_EX:
+    case CSSUnitType::CSS_CAP:
+    case CSSUnitType::CSS_CH:
     case CSSUnitType::CSS_IC:
-    case CSSUnitType::CSS_REMS:
     case CSSUnitType::CSS_PX:
     case CSSUnitType::CSS_CM:
     case CSSUnitType::CSS_MM:
@@ -254,8 +264,13 @@ bool hasDoubleValue(CSSUnitType type)
     case CSSUnitType::CSS_DPCM:
     case CSSUnitType::CSS_FR:
     case CSSUnitType::CSS_Q:
-    case CSSUnitType::CSS_LHS:
-    case CSSUnitType::CSS_RLHS:
+    case CSSUnitType::CSS_LH:
+    case CSSUnitType::CSS_RCAP:
+    case CSSUnitType::CSS_RCH:
+    case CSSUnitType::CSS_REM:
+    case CSSUnitType::CSS_REX:
+    case CSSUnitType::CSS_RIC:
+    case CSSUnitType::CSS_RLH:
     case CSSUnitType::CSS_CQW:
     case CSSUnitType::CSS_CQH:
     case CSSUnitType::CSS_CQI:
@@ -272,7 +287,7 @@ bool hasDoubleValue(CSSUnitType type)
     case CSSUnitType::CSS_ATTR:
     case CSSUnitType::CSS_RGBCOLOR:
     case CSSUnitType::CSS_COUNTER_NAME:
-    case CSSUnitType::CSS_QUIRKY_EMS:
+    case CSSUnitType::CSS_QUIRKY_EM:
     case CSSUnitType::CSS_CALC:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:

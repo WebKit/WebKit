@@ -509,7 +509,7 @@ FontCascade::CodePath FontCascade::codePath(const TextRun& run, std::optional<un
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=150791: @font-face features should also cause this to be complex.
 
-#if (!USE(FONT_VARIANT_VIA_FEATURES) && !USE(FREETYPE))
+#if !USE(FONT_VARIANT_VIA_FEATURES) && !USE(FREETYPE)
     if (run.length() > 1 && (enableKerning() || requiresShaping()))
         return CodePath::Complex;
 #endif
@@ -1536,11 +1536,10 @@ int FontCascade::offsetForPositionForComplexText(const TextRun& run, float x, bo
 
 #if !PLATFORM(COCOA) && !USE(HARFBUZZ)
 // FIXME: Unify this with the macOS and iOS implementation.
-const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characters, size_t length) const
+const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
 {
-    UChar32 baseCharacter;
-    size_t baseCharacterLength = 0;
-    U16_NEXT(characters, baseCharacterLength, length, baseCharacter);
+    ASSERT(stringView.length() > 0);
+    UChar32 baseCharacter = *stringView.codePoints().begin();
     GlyphData baseCharacterGlyphData = glyphDataForCharacter(baseCharacter, false, NormalVariant);
 
     if (!baseCharacterGlyphData.glyph)

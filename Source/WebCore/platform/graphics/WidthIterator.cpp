@@ -207,13 +207,7 @@ static void addToGlyphBuffer(GlyphBuffer& glyphBuffer, Glyph glyph, const Font& 
 }
 
 struct SmallCapsState {
-    SmallCapsState(const FontCascadeDescription& fontDescription)
-    {
-        fontVariantCaps = fontDescription.variantCaps();
-        dontSynthesizeSmallCaps = !fontDescription.hasAutoFontSynthesisSmallCaps();
-        engageAllSmallCapsProcessing = fontVariantCaps == FontVariantCaps::AllSmall || fontVariantCaps == FontVariantCaps::AllPetite;
-    }
-    const Font* font;
+    const Font* font { nullptr };
     const Font* synthesizedFont { nullptr };
     const Font* smallSynthesizedFont { nullptr };
     bool isSmallCaps { false };
@@ -224,6 +218,13 @@ struct SmallCapsState {
     bool dontSynthesizeSmallCaps { false };
     bool engageAllSmallCapsProcessing { false };
 
+    SmallCapsState(const FontCascadeDescription& fontDescription)
+    {
+        fontVariantCaps = fontDescription.variantCaps();
+        dontSynthesizeSmallCaps = !fontDescription.hasAutoFontSynthesisSmallCaps();
+        engageAllSmallCapsProcessing = fontVariantCaps == FontVariantCaps::AllSmall || fontVariantCaps == FontVariantCaps::AllPetite;
+    }
+
     void setSmallCapsData(const Font* font, bool isSmallCaps, const FontDescription& fontDescription)
     {
         ASSERT(font);
@@ -233,17 +234,20 @@ struct SmallCapsState {
         this->isLastSmallCaps = this->isSmallCaps;
         this->isSmallCaps = isSmallCaps;
     }
+
     void clear()
     {
         synthesizedFont = nullptr;
         smallSynthesizedFont = nullptr;
         isSmallCaps = false;
     }
+
     void setIsSmallCaps(bool isSmallCaps)
     {
         isLastSmallCaps = this->isSmallCaps;
         this->isSmallCaps = isSmallCaps;
     }
+
     bool skipSmallCapsProcessing() const
     {
         return fontVariantCaps == FontVariantCaps::Normal;
@@ -251,24 +255,24 @@ struct SmallCapsState {
 };
 
 struct AdvanceInternalState {
-    const Font* font;
-    const Font* lastFont;
+    const Font* font { nullptr };
+    const Font* lastFont { nullptr };
     // rangeFont and font are not necessarily the same, since small-caps might change the range fot for a synthesized font, or a small-caps-synthesized font.
-    const Font* rangeFont;
-    const Font* nextRangeFont;
+    const Font* rangeFont { nullptr };
+    const Font* nextRangeFont { nullptr };
     GlyphBuffer& glyphBuffer;
-    unsigned lastGlyphCount;
+    unsigned lastGlyphCount { 0 };
     const Font& primaryFont;
-    float widthOfCurrentFontRange { 0.0 };
+    float widthOfCurrentFontRange { 0 };
     CharactersTreatedAsSpace charactersTreatedAsSpace;
     unsigned currentCharacterIndex { 0 };
     unsigned indexOfFontTransition { 0 };
 
     AdvanceInternalState(GlyphBuffer& glyphBuffer, const Font& primaryFont, unsigned currentCharacterIndex)
-    : glyphBuffer { glyphBuffer }
-    , primaryFont { primaryFont }
-    , currentCharacterIndex { currentCharacterIndex }
-    , indexOfFontTransition { currentCharacterIndex }
+        : glyphBuffer { glyphBuffer }
+        , primaryFont { primaryFont }
+        , currentCharacterIndex { currentCharacterIndex }
+        , indexOfFontTransition { currentCharacterIndex }
     {
         lastGlyphCount = glyphBuffer.size();
         lastFont = &primaryFont;
@@ -276,10 +280,12 @@ struct AdvanceInternalState {
         rangeFont = &primaryFont;
         nextRangeFont = &primaryFont;
     }
+
     bool fontChanged() const
     {
         return font != lastFont;
     }
+
     void updateFont(const Font* font)
     {
         this->lastFont = this->font;
@@ -813,6 +819,7 @@ void WidthIterator::advance(unsigned offset, GlyphBuffer& glyphBuffer)
     applyCSSVisibilityRules(glyphBuffer, glyphBufferStartIndex);
 }
 
+// FIXME: It's pretty much never right to advance just one character.
 bool WidthIterator::advanceOneCharacter(float& width, GlyphBuffer& glyphBuffer)
 {
     unsigned oldSize = glyphBuffer.size();
@@ -824,4 +831,4 @@ bool WidthIterator::advanceOneCharacter(float& width, GlyphBuffer& glyphBuffer)
     return glyphBuffer.size() > oldSize;
 }
 
-}
+} // namespace WebCore

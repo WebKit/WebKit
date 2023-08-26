@@ -763,7 +763,7 @@ static void sanitizeRemoteFunctionException(VM& vm, JSRemoteFunction* remoteFunc
     else if (exceptionValue.asCell()->inherits<ErrorInstance>())
         exceptionString = static_cast<ErrorInstance*>(exceptionValue.asCell())->sanitizedMessageString(globalObject);
 
-    ASSERT(!scope.exception()); // We must not have entered JS at this point
+    EXCEPTION_ASSERT(!scope.exception()); // We must not have entered JS at this point
 
     if (exceptionString.length()) {
         throwVMTypeError(globalObject, scope, exceptionString);

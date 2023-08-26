@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Error: assert_not_equals: expect the capital height of Ahem and sans-serif to be different got disallowed value 784
 
-FAIL CSS Values and Units Test: cap invalidation Error: assert_not_equals: expect the capital height of Ahem and sans-serif to be different got disallowed value 784
+PASS CSS Values and Units Test: cap invalidation
 

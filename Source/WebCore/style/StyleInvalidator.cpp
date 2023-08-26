@@ -361,6 +361,12 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
     case MatchElement::Host:
         invalidateInShadowTreeIfNeeded(element);
         break;
+    case MatchElement::HostChild:
+        if (auto* host = element.shadowHost()) {
+            for (auto& hostChild : childrenOfType<Element>(*host))
+                invalidateIfNeeded(hostChild, nullptr);
+        }
+        break;
     }
 }
 

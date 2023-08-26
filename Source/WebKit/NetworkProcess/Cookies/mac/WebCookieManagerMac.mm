@@ -58,7 +58,7 @@ void WebCookieManager::platformSetHTTPCookieAcceptPolicy(PAL::SessionID sessionI
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 
-    auto* storageSession = m_process.storageSession(sessionID);
+    auto* storageSession = protectedProcess()->storageSession(sessionID);
     if (!storageSession)
         return completionHandler();
 

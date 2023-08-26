@@ -15,6 +15,24 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.basic.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.drop_shadow-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.drop_shadow-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.drop_shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.global_composite_operation-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.global_composite_operation-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.global_composite_operation.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.line-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.line-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.line.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.misc-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.misc-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.misc.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.miter_limit-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.miter_limit-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.miter_limit.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.text-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.text-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.text.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.state.clip-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.state.clip-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.state.clip.html

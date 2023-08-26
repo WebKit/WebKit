@@ -338,7 +338,7 @@ void ComplexTextController::collectComplexTextRuns()
     // We don't perform font fallback on the capitalized characters when small caps is synthesized.
     // We may want to change this code to do so in the future; if we do, then the logic in initiateFontLoadingByAccessingGlyphDataIfApplicable()
     // would need to be updated accordingly too.
-    nextFont = m_font.fontForCombiningCharacterSequence(baseOfString, currentIndex);
+    nextFont = m_font.fontForCombiningCharacterSequence({ baseOfString, currentIndex });
 
     bool isSmallCaps = false;
     bool nextIsSmallCaps = false;
@@ -379,7 +379,7 @@ void ComplexTextController::collectComplexTextRuns()
             }
         }
 
-        nextFont = m_font.fontForCombiningCharacterSequence(baseOfString + previousIndex, currentIndex - previousIndex);
+        nextFont = m_font.fontForCombiningCharacterSequence({ baseOfString + previousIndex, currentIndex - previousIndex });
 
         capitalizedBase = capitalized(baseCharacter);
         if (!synthesizedFont && shouldSynthesizeSmallCaps(dontSynthesizeSmallCaps, nextFont, baseCharacter, capitalizedBase, fontVariantCaps, engageAllSmallCapsProcessing)) {

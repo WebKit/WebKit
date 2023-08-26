@@ -172,8 +172,7 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 
 - (NSLocale *)defaultLocale
 {
-    // FIXME: <https://webkit.org/b/246488> Handle manifest localization.
-    return nil;
+    return _webExtension->defaultLocale();
 }
 
 - (NSString *)displayName
