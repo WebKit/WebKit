@@ -77,7 +77,7 @@ public:
 
     // For testing.
     unsigned countOfTransactionsWithNonEmptyLayerChanges() const { return m_countOfTransactionsWithNonEmptyLayerChanges; }
-    
+
 protected:
     void updateDebugIndicatorPosition();
 
