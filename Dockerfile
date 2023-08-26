@@ -13,7 +13,7 @@ RUN install_packages ca-certificates curl wget lsb-release software-properties-c
 
 RUN wget https://apt.llvm.org/llvm.sh && \
     chmod +x llvm.sh && \
-    ./llvm.sh 15
+    ./llvm.sh 16
 
 RUN install_packages \
     cmake \
@@ -34,8 +34,8 @@ RUN install_packages \
     bash tar gzip \
     libicu-dev
 
-ENV CXX=clang++-15
-ENV CC=clang-15
+ENV CXX=clang++-16
+ENV CC=clang-16
 
 
 ENV WEBKIT_OUT_DIR=/webkitbuild
@@ -69,8 +69,8 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     -DALLOW_LINE_AND_COLUMN_NUMBER_IN_BUILTINS=ON \
     -DENABLE_SINGLE_THREADED_VM_ENTRY_SCOPE=ON \
     -G Ninja \ 
-    -DCMAKE_CXX_COMPILER=$(which clang++-15) \
-    -DCMAKE_C_COMPILER=$(which clang-15) \
+    -DCMAKE_CXX_COMPILER=$(which clang++-16) \
+    -DCMAKE_C_COMPILER=$(which clang-16) \
     -DCMAKE_C_FLAGS="$CFLAGS" \
     -DCMAKE_CXX_FLAGS="$CXXFLAGS" \
     /webkit && \
