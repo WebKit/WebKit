@@ -77,7 +77,7 @@ public:
     bool isFontRelativeLength() const { return isFontRelativeLength(primitiveUnitType()); }
     bool isParentFontRelativeLength() const { return isPercentage() || (isFontRelativeLength() && !isRootFontRelativeLength()); }
     bool isRootFontRelativeLength() const { return isRootFontRelativeLength(primitiveUnitType()); }
-    bool isQuirkyEms() const { return primitiveType() == CSSUnitType::CSS_QUIRKY_EMS; }
+    bool isQuirkyEms() const { return primitiveType() == CSSUnitType::CSS_QUIRKY_EM; }
     bool isLength() const { return isLength(static_cast<CSSUnitType>(primitiveType())); }
     bool isNumber() const { return primitiveType() == CSSUnitType::CSS_NUMBER; }
     bool isInteger() const { return primitiveType() == CSSUnitType::CSS_INTEGER; }
@@ -255,40 +255,40 @@ constexpr bool CSSPrimitiveValue::isFontIndependentLength(CSSUnitType type)
 
 constexpr bool CSSPrimitiveValue::isRootFontRelativeLength(CSSUnitType type)
 {
-    return type == CSSUnitType::CSS_RLHS
-        || type == CSSUnitType::CSS_REMS;
+    return type == CSSUnitType::CSS_RLH
+        || type == CSSUnitType::CSS_REM;
 }
 
 constexpr bool CSSPrimitiveValue::isFontRelativeLength(CSSUnitType type)
 {
-    return type == CSSUnitType::CSS_EMS
-        || type == CSSUnitType::CSS_EXS
-        || type == CSSUnitType::CSS_LHS
-        || type == CSSUnitType::CSS_RLHS
-        || type == CSSUnitType::CSS_REMS
+    return type == CSSUnitType::CSS_EM
+        || type == CSSUnitType::CSS_EX
+        || type == CSSUnitType::CSS_LH
+        || type == CSSUnitType::CSS_RLH
+        || type == CSSUnitType::CSS_REM
         || type == CSSUnitType::CSS_CAP
-        || type == CSSUnitType::CSS_CHS
+        || type == CSSUnitType::CSS_CH
         || type == CSSUnitType::CSS_IC
-        || type == CSSUnitType::CSS_QUIRKY_EMS;
+        || type == CSSUnitType::CSS_QUIRKY_EM;
 }
 
 constexpr bool CSSPrimitiveValue::isLength(CSSUnitType type)
 {
-    return type == CSSUnitType::CSS_EMS
-        || type == CSSUnitType::CSS_EXS
+    return type == CSSUnitType::CSS_EM
+        || type == CSSUnitType::CSS_EX
         || type == CSSUnitType::CSS_PX
         || type == CSSUnitType::CSS_CM
         || type == CSSUnitType::CSS_MM
         || type == CSSUnitType::CSS_IN
         || type == CSSUnitType::CSS_PT
         || type == CSSUnitType::CSS_PC
-        || type == CSSUnitType::CSS_REMS
+        || type == CSSUnitType::CSS_REM
         || type == CSSUnitType::CSS_CAP
-        || type == CSSUnitType::CSS_CHS
+        || type == CSSUnitType::CSS_CH
         || type == CSSUnitType::CSS_IC
         || type == CSSUnitType::CSS_Q
-        || type == CSSUnitType::CSS_LHS
-        || type == CSSUnitType::CSS_RLHS
+        || type == CSSUnitType::CSS_LH
+        || type == CSSUnitType::CSS_RLH
         || type == CSSUnitType::CSS_CQW
         || type == CSSUnitType::CSS_CQH
         || type == CSSUnitType::CSS_CQI
@@ -296,12 +296,12 @@ constexpr bool CSSPrimitiveValue::isLength(CSSUnitType type)
         || type == CSSUnitType::CSS_CQMIN
         || type == CSSUnitType::CSS_CQMAX
         || isViewportPercentageLength(type)
-        || type == CSSUnitType::CSS_QUIRKY_EMS;
+        || type == CSSUnitType::CSS_QUIRKY_EM;
 }
 
 constexpr bool CSSPrimitiveValue::isViewportPercentageLength(CSSUnitType type)
 {
-    return type >= CSSUnitType::FirstViewportCSSUnitType && type <= CSSUnitType::LastViewporCSSUnitType;
+    return type >= CSSUnitType::FirstViewportCSSUnitType && type <= CSSUnitType::LastViewportCSSUnitType;
 }
 
 template<typename T, CSSPrimitiveValue::TimeUnit timeUnit> inline T CSSPrimitiveValue::computeTime() const

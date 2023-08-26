@@ -61,7 +61,7 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
         case 'c':
             switch (toASCIILower(data[1])) {
             case 'h':
-                return CSSUnitType::CSS_CHS;
+                return CSSUnitType::CSS_CH;
             case 'm':
                 return CSSUnitType::CSS_CM;
             }
@@ -69,9 +69,9 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
         case 'e':
             switch (toASCIILower(data[1])) {
             case 'm':
-                return CSSUnitType::CSS_EMS;
+                return CSSUnitType::CSS_EM;
             case 'x':
-                return CSSUnitType::CSS_EXS;
+                return CSSUnitType::CSS_EX;
             }
             break;
         case 'f':
@@ -92,7 +92,7 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
             break;
         case 'l':
             if (toASCIILower(data[1]) == 'h' && DeprecatedGlobalSettings::lineHeightUnitsEnabled())
-                return CSSUnitType::CSS_LHS;
+                return CSSUnitType::CSS_LH;
             break;
         case 'm':
             switch (toASCIILower(data[1])) {
@@ -196,11 +196,11 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
                 break;
             case 'e':
                 if (toASCIILower(data[2]) == 'm')
-                    return CSSUnitType::CSS_REMS;
+                    return CSSUnitType::CSS_REM;
                 break;
             case 'l':
                 if (toASCIILower(data[2]) == 'h' && DeprecatedGlobalSettings::lineHeightUnitsEnabled())
-                    return CSSUnitType::CSS_RLHS;
+                    return CSSUnitType::CSS_RLH;
                 break;
             }
             break;
@@ -268,7 +268,7 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
         switch (toASCIILower(data[0])) {
         case '_':
             if (toASCIILower(data[1]) == '_' && toASCIILower(data[2]) == 'q' && toASCIILower(data[3]) == 'e' && toASCIILower(data[4]) == 'm')
-                return CSSUnitType::CSS_QUIRKY_EMS;
+                return CSSUnitType::CSS_QUIRKY_EM;
             break;
         case 'c':
             if (toASCIILower(data[1]) == 'q' && toASCIILower(data[2]) == 'm') {

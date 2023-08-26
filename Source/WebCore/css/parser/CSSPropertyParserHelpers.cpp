@@ -539,18 +539,18 @@ struct LengthRawKnownTokenTypeDimensionConsumer {
 
         auto unitType = token.unitType();
         switch (unitType) {
-        case CSSUnitType::CSS_QUIRKY_EMS:
+        case CSSUnitType::CSS_QUIRKY_EM:
             if (parserMode != UASheetMode)
                 return std::nullopt;
             FALLTHROUGH;
-        case CSSUnitType::CSS_EMS:
-        case CSSUnitType::CSS_REMS:
-        case CSSUnitType::CSS_LHS:
-        case CSSUnitType::CSS_RLHS:
+        case CSSUnitType::CSS_EM:
+        case CSSUnitType::CSS_REM:
+        case CSSUnitType::CSS_LH:
+        case CSSUnitType::CSS_RLH:
         case CSSUnitType::CSS_CAP:
-        case CSSUnitType::CSS_CHS:
+        case CSSUnitType::CSS_CH:
         case CSSUnitType::CSS_IC:
-        case CSSUnitType::CSS_EXS:
+        case CSSUnitType::CSS_EX:
         case CSSUnitType::CSS_PX:
         case CSSUnitType::CSS_CM:
         case CSSUnitType::CSS_MM:

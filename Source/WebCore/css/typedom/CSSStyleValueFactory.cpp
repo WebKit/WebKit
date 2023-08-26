@@ -192,21 +192,21 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(const CSSValue&
             return Ref<CSSStyleValue> { CSSNumericFactory::number(primitiveValue->doubleValue()) };
         case CSSUnitType::CSS_PERCENTAGE:
             return Ref<CSSStyleValue> { CSSNumericFactory::percent(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_EMS:
+        case CSSUnitType::CSS_EM:
             return Ref<CSSStyleValue> { CSSNumericFactory::em(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_EXS:
+        case CSSUnitType::CSS_EX:
             return Ref<CSSStyleValue> { CSSNumericFactory::ex(primitiveValue->doubleValue()) };
         case CSSUnitType::CSS_CAP:
             return Ref<CSSStyleValue> { CSSNumericFactory::cap(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_CHS:
+        case CSSUnitType::CSS_CH:
             return Ref<CSSStyleValue> { CSSNumericFactory::ch(primitiveValue->doubleValue()) };
         case CSSUnitType::CSS_IC:
             return Ref<CSSStyleValue> { CSSNumericFactory::ic(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_REMS:
+        case CSSUnitType::CSS_REM:
             return Ref<CSSStyleValue> { CSSNumericFactory::rem(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_LHS:
+        case CSSUnitType::CSS_LH:
             return Ref<CSSStyleValue> { CSSNumericFactory::lh(primitiveValue->doubleValue()) };
-        case CSSUnitType::CSS_RLHS:
+        case CSSUnitType::CSS_RLH:
             return Ref<CSSStyleValue> { CSSNumericFactory::rlh(primitiveValue->doubleValue()) };
         case CSSUnitType::CSS_VW:
             return Ref<CSSStyleValue> { CSSNumericFactory::vw(primitiveValue->doubleValue()) };

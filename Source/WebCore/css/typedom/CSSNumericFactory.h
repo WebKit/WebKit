@@ -48,14 +48,14 @@ public:
 
 
     // <length>
-    static Ref<CSSUnitValue> em(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_EMS); }
-    static Ref<CSSUnitValue> ex(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_EXS); }
+    static Ref<CSSUnitValue> em(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_EM); }
+    static Ref<CSSUnitValue> ex(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_EX); }
     static Ref<CSSUnitValue> cap(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_CAP); }
-    static Ref<CSSUnitValue> ch(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_CHS); }
+    static Ref<CSSUnitValue> ch(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_CH); }
     static Ref<CSSUnitValue> ic(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_IC); }
-    static Ref<CSSUnitValue> rem(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_REMS); }
-    static Ref<CSSUnitValue> lh(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_LHS); }
-    static Ref<CSSUnitValue> rlh(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_RLHS); }
+    static Ref<CSSUnitValue> rem(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_REM); }
+    static Ref<CSSUnitValue> lh(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_LH); }
+    static Ref<CSSUnitValue> rlh(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_RLH); }
     static Ref<CSSUnitValue> vw(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_VW); }
     static Ref<CSSUnitValue> vh(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_VH); }
     static Ref<CSSUnitValue> vi(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_VI); }
