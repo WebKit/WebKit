@@ -39,6 +39,10 @@
 #include <wtf/ValueCheck.h>
 #include <wtf/VectorTraits.h>
 
+#if ASAN_ENABLED && __has_include(<sanitizer/asan_interface.h>)
+#include <sanitizer/asan_interface.h>
+#endif
+
 namespace JSC {
 class LLIntOffsetsExtractor;
 }
