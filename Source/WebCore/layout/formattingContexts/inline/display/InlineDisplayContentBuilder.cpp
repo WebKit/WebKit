@@ -496,6 +496,10 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
                 , boxes);
             continue;
         }
+        if (lineRun.isOpaque()) {
+            // Set geometry for this opaque box.
+            continue;
+        }
         ASSERT(lineRun.isInlineBoxEnd() || lineRun.isWordBreakOpportunity());
     }
 }
@@ -689,8 +693,8 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
             auto& lineRun = inlineContent[visualOrder];
             auto& layoutBox = lineRun.layoutBox();
 
-            auto needsDisplayBox = !lineRun.isWordBreakOpportunity() && !lineRun.isInlineBoxEnd();
-            if (!needsDisplayBox)
+            auto needsDisplayBoxOrGeometrySetting = !lineRun.isWordBreakOpportunity() && !lineRun.isInlineBoxEnd();
+            if (!needsDisplayBoxOrGeometrySetting)
                 continue;
 
             auto visualRectRelativeToRoot = [&](auto logicalRect) {
@@ -757,6 +761,10 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
                     appendInlineDisplayBoxAtBidiBoundary(layoutBox, boxes);
                     createdDisplayBoxNodeForElementBoxAndPushToAncestorStack(downcast<ElementBox>(layoutBox), boxes.size() - 1, parentDisplayBoxNodeIndex, displayBoxTree, ancestorStack);
                 }
+                continue;
+            }
+            if (lineRun.isOpaque()) {
+                // Set geometry for this opaque box.
                 continue;
             }
             ASSERT_NOT_REACHED();

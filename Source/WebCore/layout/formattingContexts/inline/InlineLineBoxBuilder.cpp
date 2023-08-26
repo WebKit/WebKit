@@ -339,7 +339,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             ASSERT(!lineHasContent);
             if (run.isContentful())
                 return true;
-            if (run.isText() || run.isWordBreakOpportunity())
+            if (run.isText() || run.isWordBreakOpportunity() || run.isOpaque())
                 return false;
 
             ASSERT(run.isInlineBox());
@@ -455,7 +455,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             lineBox.addInlineLevelBox(InlineLevelBox::createGenericInlineLevelBox(layoutBox, style, logicalLeft));
             continue;
         }
-        ASSERT_NOT_REACHED();
+        ASSERT(run.isOpaque());
     }
     lineBox.setHasContent(lineHasContent);
 }

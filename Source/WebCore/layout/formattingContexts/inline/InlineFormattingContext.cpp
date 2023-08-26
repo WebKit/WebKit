@@ -227,19 +227,26 @@ void InlineFormattingContext::layoutFloatContentOnly(const ConstraintsForInlineC
     InlineItemsBuilder { root(), inlineFormattingState }.build({ });
 
     for (auto& inlineItem : inlineFormattingState.inlineItems()) {
-        if (!inlineItem.isFloat()) {
-            ASSERT_NOT_REACHED();
+        if (inlineItem.isFloat()) {
+            auto& floatBox = inlineItem.layoutBox();
+            auto& floatBoxGeometry = inlineFormattingState.boxGeometry(floatBox);
+            auto staticPosition = LayoutPoint { constraints.horizontal().logicalLeft, constraints.logicalTop() };
+            staticPosition.move(floatBoxGeometry.marginStart(), floatBoxGeometry.marginBefore());
+            floatBoxGeometry.setLogicalTopLeft(staticPosition);
+
+            auto floatBoxTopLeft = floatingContext.positionForFloat(floatBox, floatBoxGeometry, constraints.horizontal());
+            floatBoxGeometry.setLogicalTopLeft(floatBoxTopLeft);
+            floatingState.append(floatingContext.toFloatItem(floatBox, floatBoxGeometry));
             continue;
         }
-        auto& floatBox = inlineItem.layoutBox();
-        auto& floatBoxGeometry = inlineFormattingState.boxGeometry(floatBox);
-        auto staticPosition = LayoutPoint { constraints.horizontal().logicalLeft, constraints.logicalTop() };
-        staticPosition.move(floatBoxGeometry.marginStart(), floatBoxGeometry.marginBefore());
-        floatBoxGeometry.setLogicalTopLeft(staticPosition);
-
-        auto floatBoxTopLeft = floatingContext.positionForFloat(floatBox, floatBoxGeometry, constraints.horizontal());
-        floatBoxGeometry.setLogicalTopLeft(floatBoxTopLeft);
-        floatingState.append(floatingContext.toFloatItem(floatBox, floatBoxGeometry));
+        if (inlineItem.isOpaque()) {
+            auto& opaqueBox = inlineItem.layoutBox();
+            if (opaqueBox.isOutOfFlowPositioned()) {
+                // FIXME: set the static position.
+                continue;
+            }
+        }
+        ASSERT_NOT_REACHED();
     }
 }
 

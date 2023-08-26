@@ -41,7 +41,7 @@ static inline bool hasLeadingTextContent(const InlineContentBreaker::ContinuousC
 {
     for (auto& run : continuousContent.runs()) {
         auto& inlineItem = run.inlineItem;
-        if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd())
+        if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque())
             continue;
         return inlineItem.isText();
     }
@@ -65,7 +65,7 @@ static inline bool isWhitespaceOnlyContent(const InlineContentBreaker::Continuou
     auto hasWhitespace = false;
     for (auto& run : continuousContent.runs()) {
         auto& inlineItem = run.inlineItem;
-        if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd())
+        if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque())
             continue;
         auto isWhitespace = inlineItem.isText() && downcast<InlineTextItem>(inlineItem).isWhitespace();
         if (!isWhitespace)
@@ -80,7 +80,7 @@ static inline bool isNonContentRunsOnly(const InlineContentBreaker::ContinuousCo
     // <span></span> <- non content runs.
     for (auto& run : continuousContent.runs()) {
         auto& inlineItem = run.inlineItem;
-        if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd())
+        if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque())
             continue;
         return false;
     }
@@ -190,10 +190,11 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
                         auto& runs = continuousContent.runs();
                         if (leadingTextRunIndex == runs.size() - 1)
                             return { };
-                        if (!runs[leadingTextRunIndex + 1].inlineItem.isInlineBoxEnd())
-                            return leadingTextRunIndex;
                         for (auto runIndex = leadingTextRunIndex + 1; runIndex < runs.size(); ++runIndex) {
-                            if (!runs[runIndex].inlineItem.isInlineBoxEnd())
+                            auto& inlineItem = runs[runIndex].inlineItem;
+                            if (inlineItem.isOpaque())
+                                continue;
+                            if (!inlineItem.isInlineBoxEnd())
                                 return runIndex - 1;
                         }
                         return { };
@@ -281,17 +282,24 @@ static std::optional<size_t> findTrailingRunIndex(const InlineContentBreaker::Co
     // Try not break content at inline box boundary
     // e.g. <span>fits</span><span>overflows</span>
     // when the text "overflows" completely overflows, let's break the content right before the '<span>'.
+    auto lastOpaqueItemIndex = std::optional<size_t> { };
     for (auto trailingCandidateIndex = breakableRunIndex; trailingCandidateIndex--;) {
-        auto isAtInlineBox = runs[trailingCandidateIndex].inlineItem.isInlineBoxStart();
+        auto& inlineItem = runs[trailingCandidateIndex].inlineItem;
+        if (inlineItem.isOpaque()) {
+            lastOpaqueItemIndex = trailingCandidateIndex;
+            continue;
+        }
+        auto isAtInlineBox = inlineItem.isInlineBoxStart();
         if (!isAtInlineBox)
-            return trailingCandidateIndex;
+            return lastOpaqueItemIndex.value_or(trailingCandidateIndex);
+        lastOpaqueItemIndex = { };
     }
     return { };
 }
 
-static bool isWrappableRun(const InlineContentBreaker::ContinuousContent::Run& run)
+static bool isBreakableRun(const InlineContentBreaker::ContinuousContent::Run& run)
 {
-    ASSERT(run.inlineItem.isText() || run.inlineItem.isInlineBoxStart() || run.inlineItem.isInlineBoxEnd() || run.inlineItem.layoutBox().isImage() || run.inlineItem.layoutBox().isListMarkerBox());
+    ASSERT(run.inlineItem.isText() || run.inlineItem.isInlineBoxStart() || run.inlineItem.isInlineBoxEnd() || run.inlineItem.isOpaque() || run.inlineItem.layoutBox().isImage() || run.inlineItem.layoutBox().isListMarkerBox());
     if (!run.inlineItem.isText()) {
         // Can't break horizontal spacing -> e.g. <span style="padding-right: 100px;">textcontent</span>, if the [inline box end] is the overflown inline item
         // we need to check if there's another inline item beyond the [inline box end] to split.
@@ -545,7 +553,8 @@ std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakin
 std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> InlineContentBreaker::tryBreakingOverflowingRun(const LineStatus& lineStatus, const ContinuousContent::RunList& runs, size_t overflowingRunIndex, InlineLayoutUnit nonOverflowingContentWidth) const
 {
     auto overflowingRun = runs[overflowingRunIndex];
-    if (!isWrappableRun(overflowingRun))
+    ASSERT(!overflowingRun.inlineItem.isOpaque());
+    if (!isBreakableRun(overflowingRun))
         return { };
 
     auto availableWidth = std::max(0.f, lineStatus.availableWidth - nonOverflowingContentWidth);
@@ -568,7 +577,7 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
     for (auto index = overflowingRunIndex; index--;) {
         auto& run = runs[index];
         previousContentWidth -= run.logicalWidth;
-        if (!isWrappableRun(run))
+        if (!isBreakableRun(run))
             continue;
         ASSERT(run.inlineItem.isText());
         auto availableWidth = std::max(0.f, lineStatus.availableWidth - previousContentWidth);
@@ -607,7 +616,7 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
     auto nextContentWidth = nonOverflowingContentWidth + runs[overflowingRunIndex].logicalWidth;
     for (auto index = overflowingRunIndex + 1; index < runs.size(); ++index) {
         auto& run = runs[index];
-        if (!isWrappableRun(run)) {
+        if (!isBreakableRun(run)) {
             nextContentWidth += run.logicalWidth;
             continue;
         }
@@ -811,7 +820,7 @@ void InlineContentBreaker::ContinuousContent::resetTrailingTrimmableContent()
 
 void InlineContentBreaker::ContinuousContent::append(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
-    ASSERT(inlineItem.isBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd());
+    ASSERT(inlineItem.isBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque());
     m_isTextOnlyContent = false;
     appendToRunList(inlineItem, style, logicalWidth);
     if (inlineItem.isBox()) {
