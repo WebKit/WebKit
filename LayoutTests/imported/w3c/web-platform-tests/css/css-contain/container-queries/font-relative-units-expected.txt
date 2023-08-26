@@ -9,6 +9,6 @@ PASS ic relative inline-size
 FAIL ric relative inline-size assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 PASS lh relative inline-size
 PASS rlh relative inline-size
-FAIL cap relative inline-size assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS cap relative inline-size
 FAIL rcap relative inline-size assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 

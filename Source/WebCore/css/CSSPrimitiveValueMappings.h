@@ -1963,6 +1963,7 @@ inline bool CSSPrimitiveValue::convertingToLengthRequiresNonNullStyle(int length
     switch (primitiveUnitType()) {
     case CSSUnitType::CSS_EMS:
     case CSSUnitType::CSS_EXS:
+    case CSSUnitType::CSS_CAP:
     case CSSUnitType::CSS_CHS:
     case CSSUnitType::CSS_IC:
     case CSSUnitType::CSS_LHS:

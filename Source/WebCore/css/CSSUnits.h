@@ -102,6 +102,7 @@ enum class CSSUnitType : uint8_t {
 
     CSS_TURN,
     CSS_REMS,
+    CSS_CAP,
     CSS_CHS,
     CSS_IC,
 

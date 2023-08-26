@@ -56,6 +56,7 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSUnitType unitType)
     case CSSUnitType::CSS_CALC:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
+    case CSSUnitType::CSS_CAP:
     case CSSUnitType::CSS_CHS:
     case CSSUnitType::CSS_IC:
     case CSSUnitType::CSS_CM:
@@ -154,6 +155,7 @@ static inline bool isStringType(CSSUnitType type)
     case CSSUnitType::CSS_CALC:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
+    case CSSUnitType::CSS_CAP:
     case CSSUnitType::CSS_CHS:
     case CSSUnitType::CSS_IC:
     case CSSUnitType::CSS_CM:
@@ -378,6 +380,7 @@ CSSPrimitiveValue::~CSSPrimitiveValue()
     case CSSUnitType::CSS_QUIRKY_EMS:
     case CSSUnitType::CSS_EXS:
     case CSSUnitType::CSS_REMS:
+    case CSSUnitType::CSS_CAP:
     case CSSUnitType::CSS_CHS:
     case CSSUnitType::CSS_IC:
     case CSSUnitType::CSS_PX:
@@ -697,6 +700,13 @@ double CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(CSSUnitType primiti
         auto& fontDescription = fontCascadeForUnit->fontDescription();
         return ((propertyToCompute == CSSPropertyFontSize) ? fontDescription.specifiedSize() : fontDescription.computedSize()) / 2.0 * value;
     }
+    case CSSUnitType::CSS_CAP: {
+        ASSERT(fontCascadeForUnit);
+        auto& fontMetrics = fontCascadeForUnit->metricsOfPrimaryFont();
+        if (fontMetrics.hasCapHeight())
+            return fontMetrics.floatCapHeight() * value;
+        return fontMetrics.ascent() * value;
+    }
     case CSSUnitType::CSS_CHS:
         ASSERT(fontCascadeForUnit);
         return fontCascadeForUnit->metricsOfPrimaryFont().zeroWidth().value_or(fontCascadeForUnit->fontDescription().computedSize() / 2) * value;
@@ -812,6 +822,7 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
     case CSSUnitType::CSS_EMS:
     case CSSUnitType::CSS_QUIRKY_EMS:
     case CSSUnitType::CSS_EXS:
+    case CSSUnitType::CSS_CAP:
     case CSSUnitType::CSS_CHS:
     case CSSUnitType::CSS_IC:
         // FIXME: We have a bug right now where the zoom will be applied twice to EX units.
@@ -1204,6 +1215,7 @@ NEVER_INLINE String CSSPrimitiveValue::formatIntegerValue(ASCIILiteral suffix) c
 ASCIILiteral CSSPrimitiveValue::unitTypeString(CSSUnitType unitType)
 {
     switch (unitType) {
+    case CSSUnitType::CSS_CAP: return "cap"_s;
     case CSSUnitType::CSS_CHS: return "ch"_s;
     case CSSUnitType::CSS_CM: return "cm"_s;
     case CSSUnitType::CSS_CQB: return "cqb"_s;
@@ -1292,6 +1304,7 @@ ALWAYS_INLINE String CSSPrimitiveValue::serializeInternal() const
 {
     auto type = primitiveUnitType();
     switch (type) {
+    case CSSUnitType::CSS_CAP:
     case CSSUnitType::CSS_CHS:
     case CSSUnitType::CSS_CM:
     case CSSUnitType::CSS_CQB:
@@ -1430,6 +1443,7 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
     case CSSUnitType::CSS_QUIRKY_EMS:
     case CSSUnitType::CSS_EXS:
     case CSSUnitType::CSS_REMS:
+    case CSSUnitType::CSS_CAP:
     case CSSUnitType::CSS_CHS:
     case CSSUnitType::CSS_IC:
     case CSSUnitType::CSS_PX:
@@ -1527,6 +1541,7 @@ bool CSSPrimitiveValue::addDerivedHash(Hasher& hasher) const
     case CSSUnitType::CSS_QUIRKY_EMS:
     case CSSUnitType::CSS_EXS:
     case CSSUnitType::CSS_REMS:
+    case CSSUnitType::CSS_CAP:
     case CSSUnitType::CSS_CHS:
     case CSSUnitType::CSS_IC:
     case CSSUnitType::CSS_PX:
@@ -1630,6 +1645,7 @@ void CSSPrimitiveValue::collectComputedStyleDependencies(ComputedStyleDependenci
     case CSSUnitType::CSS_EMS:
     case CSSUnitType::CSS_QUIRKY_EMS:
     case CSSUnitType::CSS_EXS:
+    case CSSUnitType::CSS_CAP:
     case CSSUnitType::CSS_CHS:
     case CSSUnitType::CSS_IC:
         dependencies.properties.appendIfNotContains(CSSPropertyFontSize);

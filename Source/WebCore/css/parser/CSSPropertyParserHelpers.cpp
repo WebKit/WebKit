@@ -547,6 +547,7 @@ struct LengthRawKnownTokenTypeDimensionConsumer {
         case CSSUnitType::CSS_REMS:
         case CSSUnitType::CSS_LHS:
         case CSSUnitType::CSS_RLHS:
+        case CSSUnitType::CSS_CAP:
         case CSSUnitType::CSS_CHS:
         case CSSUnitType::CSS_IC:
         case CSSUnitType::CSS_EXS:

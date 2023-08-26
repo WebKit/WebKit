@@ -196,9 +196,12 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(const CSSValue&
             return Ref<CSSStyleValue> { CSSNumericFactory::em(primitiveValue->doubleValue()) };
         case CSSUnitType::CSS_EXS:
             return Ref<CSSStyleValue> { CSSNumericFactory::ex(primitiveValue->doubleValue()) };
+        case CSSUnitType::CSS_CAP:
+            return Ref<CSSStyleValue> { CSSNumericFactory::cap(primitiveValue->doubleValue()) };
         case CSSUnitType::CSS_CHS:
             return Ref<CSSStyleValue> { CSSNumericFactory::ch(primitiveValue->doubleValue()) };
-        // FIXME: Add CSSNumericFactory::ic
+        case CSSUnitType::CSS_IC:
+            return Ref<CSSStyleValue> { CSSNumericFactory::ic(primitiveValue->doubleValue()) };
         case CSSUnitType::CSS_REMS:
             return Ref<CSSStyleValue> { CSSNumericFactory::rem(primitiveValue->doubleValue()) };
         case CSSUnitType::CSS_LHS:

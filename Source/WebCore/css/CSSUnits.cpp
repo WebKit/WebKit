@@ -46,6 +46,7 @@ CSSUnitCategory unitCategory(CSSUnitType type)
     case CSSUnitType::CSS_EMS:
     case CSSUnitType::CSS_REMS:
     case CSSUnitType::CSS_EXS:
+    case CSSUnitType::CSS_CAP:
     case CSSUnitType::CSS_CHS:
     case CSSUnitType::CSS_IC:
     case CSSUnitType::CSS_LHS:
@@ -247,9 +248,10 @@ TextStream& operator<<(TextStream& ts, CSSUnitType unitType)
     case CSSUnitType::CSS_CQMAX: ts << "cqmax"; break;
     case CSSUnitType::CSS_CQMIN: ts << "cqmin"; break;
     case CSSUnitType::CSS_TURN: ts << "turn"; break;
-    case CSSUnitType::CSS_REMS: ts << "rems"; break;
-    case CSSUnitType::CSS_CHS: ts << "chs"; break;
-    case CSSUnitType::CSS_IC: ts << "ics"; break;
+    case CSSUnitType::CSS_REMS: ts << "rem"; break;
+    case CSSUnitType::CSS_CAP: ts << "cap"; break;
+    case CSSUnitType::CSS_CHS: ts << "ch"; break;
+    case CSSUnitType::CSS_IC: ts << "ic"; break;
     case CSSUnitType::CSS_COUNTER_NAME: ts << "counter_name"; break;
     case CSSUnitType::CSS_CALC: ts << "calc"; break;
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER: ts << "calc_percentage_with_number"; break;

@@ -129,6 +129,10 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
     case 3:
         switch (toASCIILower(data[0])) {
         case 'c':
+            if (toASCIILower(data[1]) == 'a') {
+                if (toASCIILower(data[2]) == 'p')
+                    return CSSUnitType::CSS_CAP;
+            }
             if (toASCIILower(data[1]) == 'q') {
                 switch (toASCIILower(data[2])) {
                 case 'b':

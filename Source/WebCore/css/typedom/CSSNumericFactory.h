@@ -50,6 +50,7 @@ public:
     // <length>
     static Ref<CSSUnitValue> em(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_EMS); }
     static Ref<CSSUnitValue> ex(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_EXS); }
+    static Ref<CSSUnitValue> cap(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_CAP); }
     static Ref<CSSUnitValue> ch(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_CHS); }
     static Ref<CSSUnitValue> ic(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_IC); }
     static Ref<CSSUnitValue> rem(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_REMS); }
