@@ -79,8 +79,6 @@ inline void traverseRuleFeatures(Element& element, TraverseFunction&& function)
                 return true;
 #endif
         }
-        if (is<HTMLSlotElement>(element) && ruleSets.hasMatchingUserOrAuthorStyle([] (auto& style) { return !style.slottedPseudoElementRules().isEmpty(); }))
-            return true;
         return false;
     };
 

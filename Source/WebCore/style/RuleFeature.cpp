@@ -45,6 +45,7 @@ static bool isSiblingOrSubject(MatchElement matchElement)
     case MatchElement::AnySibling:
     case MatchElement::HasSibling:
     case MatchElement::Host:
+    case MatchElement::HostChild:
         return true;
     case MatchElement::Parent:
     case MatchElement::Ancestor:
@@ -121,8 +122,7 @@ static MatchElement computeNextMatchElement(MatchElement matchElement, CSSSelect
         case CSSSelector::RelationType::ShadowPartDescendant:
             return MatchElement::Host;
         case CSSSelector::RelationType::ShadowSlotted:
-            // FIXME: Implement accurate invalidation.
-            return matchElement;
+            return MatchElement::HostChild;
         };
     }
     switch (relation) {
@@ -138,8 +138,7 @@ static MatchElement computeNextMatchElement(MatchElement matchElement, CSSSelect
     case CSSSelector::RelationType::ShadowPartDescendant:
         return MatchElement::Host;
     case CSSSelector::RelationType::ShadowSlotted:
-        // FIXME: Implement accurate invalidation.
-        return matchElement;
+        return MatchElement::HostChild;
     };
     ASSERT_NOT_REACHED();
     return matchElement;
@@ -182,6 +181,7 @@ MatchElement computeHasPseudoClassMatchElement(const CSSSelector& hasSelector)
     case MatchElement::HasSiblingDescendant:
     case MatchElement::HasNonSubjectOrScopeBreaking:
     case MatchElement::Host:
+    case MatchElement::HostChild:
         ASSERT_NOT_REACHED();
         break;
     }
@@ -224,7 +224,7 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
             idsInRules.add(selector->value());
             if (matchElement == MatchElement::Parent || matchElement == MatchElement::Ancestor)
                 idsMatchingAncestorsInRules.add(selector->value());
-            else if (isHasPseudoClassMatchElement(matchElement) || matchElement == MatchElement::AnySibling)
+            else if (isHasPseudoClassMatchElement(matchElement) || matchElement == MatchElement::AnySibling || matchElement == MatchElement::HostChild)
                 selectorFeatures.ids.append({ selector, matchElement, isNegation });
         } else if (selector->match() == CSSSelector::Match::Class)
             selectorFeatures.classes.append({ selector, matchElement, isNegation });
