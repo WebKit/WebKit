@@ -186,7 +186,7 @@ public:
     const FontRanges& fallbackRangesAt(unsigned) const;
     GlyphData glyphDataForCharacter(UChar32, bool mirror, FontVariant = AutoVariant) const;
 
-    const Font* fontForCombiningCharacterSequence(const UChar*, size_t length) const;
+    const Font* fontForCombiningCharacterSequence(StringView) const;
 
     static bool isCJKIdeograph(UChar32);
     static bool isCJKIdeographOrSymbol(UChar32);

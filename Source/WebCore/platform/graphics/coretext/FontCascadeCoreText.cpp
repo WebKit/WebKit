@@ -401,18 +401,22 @@ bool FontCascade::primaryFontIsSystemFont() const
 }
 
 // FIXME: Use this on all ports.
-const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characters, size_t length) const
+const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
 {
-    UChar32 baseCharacter;
-    size_t baseCharacterLength = 0;
-    U16_NEXT(characters, baseCharacterLength, length, baseCharacter);
+    auto codePoints = stringView.codePoints();
+    auto codePointsIterator = codePoints.begin();
+
+    ASSERT(!stringView.isEmpty());
+    UChar32 baseCharacter = *codePointsIterator;
+    ++codePointsIterator;
+    bool isOnlySingleCodePoint = codePointsIterator == codePoints.end();
 
     GlyphData baseCharacterGlyphData = glyphDataForCharacter(baseCharacter, false, NormalVariant);
 
     if (!baseCharacterGlyphData.glyph)
         return nullptr;
 
-    if (length == baseCharacterLength)
+    if (isOnlySingleCodePoint)
         return baseCharacterGlyphData.font;
 
     bool triedBaseCharacterFont = false;
@@ -445,11 +449,11 @@ const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characte
         if (font == baseCharacterGlyphData.font)
             triedBaseCharacterFont = true;
 
-        if (font->canRenderCombiningCharacterSequence(characters, length))
+        if (font->canRenderCombiningCharacterSequence(stringView))
             return font;
     }
 
-    if (!triedBaseCharacterFont && baseCharacterGlyphData.font && baseCharacterGlyphData.font->canRenderCombiningCharacterSequence(characters, length))
+    if (!triedBaseCharacterFont && baseCharacterGlyphData.font && baseCharacterGlyphData.font->canRenderCombiningCharacterSequence(stringView))
         return baseCharacterGlyphData.font;
 
     return Font::systemFallback();

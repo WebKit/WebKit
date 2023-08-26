@@ -592,9 +592,9 @@ bool Font::supportsCodePoint(UChar32 character) const
     return glyphForCharacter(character);
 }
 
-bool Font::canRenderCombiningCharacterSequence(const UChar* characters, size_t length) const
+bool Font::canRenderCombiningCharacterSequence(StringView stringView) const
 {
-    auto codePoints = StringView(characters, length).codePoints();
+    auto codePoints = stringView.codePoints();
     auto it = codePoints.begin();
     auto end = codePoints.end();
     while (it != end) {
