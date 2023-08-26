@@ -240,12 +240,12 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     if (CMAKE_EXPORT_COMPILE_COMMANDS AND ENABLE_UNIFIED_BUILDS)
         add_custom_target(RewriteCompileCommands
             ALL
-            BYPRODUCTS webkit_compile_commands.json
+            BYPRODUCTS DeveloperTools/compile_commands.json
             DEPENDS "${CMAKE_BINARY_DIR}/compile_commands.json"
             COMMAND "${PYTHON_EXECUTABLE}"
                     "${CMAKE_SOURCE_DIR}/Tools/Scripts/rewrite-compile-commands"
                     "${CMAKE_BINARY_DIR}/compile_commands.json"
-                    "${CMAKE_BINARY_DIR}/webkit_compile_commands.json"
+                    "${CMAKE_BINARY_DIR}/DeveloperTools/compile_commands.json"
                     "${CMAKE_SOURCE_DIR}"
                     "${CMAKE_BINARY_DIR}"
         )

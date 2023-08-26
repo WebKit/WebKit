@@ -88,5 +88,9 @@ for entry in compile_commands:
             else:
                 print('Failed to find', include_path)
 
+output_directory = os.path.dirname(args.output_file)
+if not os.path.isdir(output_directory):
+    os.makedirs(output_directory)
+
 with open(args.output_file, 'w') as f:
     json.dump(generated_compile_commands, f, indent=2)
