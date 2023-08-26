@@ -44,12 +44,16 @@ CSSUnitCategory unitCategory(CSSUnitType type)
         return CSSUnitCategory::AbsoluteLength;
     // https://drafts.csswg.org/css-values-4/#font-relative-lengths
     case CSSUnitType::CSS_EM:
-    case CSSUnitType::CSS_REM:
     case CSSUnitType::CSS_EX:
     case CSSUnitType::CSS_CAP:
     case CSSUnitType::CSS_CH:
     case CSSUnitType::CSS_IC:
     case CSSUnitType::CSS_LH:
+    case CSSUnitType::CSS_RCAP:
+    case CSSUnitType::CSS_RCH:
+    case CSSUnitType::CSS_REM:
+    case CSSUnitType::CSS_REX:
+    case CSSUnitType::CSS_RIC:
     case CSSUnitType::CSS_RLH:
         return CSSUnitCategory::FontRelativeLength;
     // https://drafts.csswg.org/css-values-4/#viewport-relative-lengths
@@ -248,7 +252,11 @@ TextStream& operator<<(TextStream& ts, CSSUnitType unitType)
     case CSSUnitType::CSS_CQMAX: ts << "cqmax"; break;
     case CSSUnitType::CSS_CQMIN: ts << "cqmin"; break;
     case CSSUnitType::CSS_TURN: ts << "turn"; break;
+    case CSSUnitType::CSS_RCAP: ts << "rcap"; break;
+    case CSSUnitType::CSS_RCH: ts << "rch"; break;
     case CSSUnitType::CSS_REM: ts << "rem"; break;
+    case CSSUnitType::CSS_REX: ts << "rex"; break;
+    case CSSUnitType::CSS_RIC: ts << "ric"; break;
     case CSSUnitType::CSS_CAP: ts << "cap"; break;
     case CSSUnitType::CSS_CH: ts << "ch"; break;
     case CSSUnitType::CSS_IC: ts << "ic"; break;

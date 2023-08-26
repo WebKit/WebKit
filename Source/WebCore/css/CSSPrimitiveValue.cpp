@@ -94,7 +94,11 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSUnitType unitType)
     case CSSUnitType::CSS_RLH:
     case CSSUnitType::CSS_QUIRKY_EM:
     case CSSUnitType::CSS_RAD:
+    case CSSUnitType::CSS_RCAP:
+    case CSSUnitType::CSS_RCH:
     case CSSUnitType::CSS_REM:
+    case CSSUnitType::CSS_REX:
+    case CSSUnitType::CSS_RIC:
     case CSSUnitType::CSS_S:
     case CSSUnitType::CSS_SVB:
     case CSSUnitType::CSS_SVH:
@@ -199,7 +203,11 @@ static inline bool isStringType(CSSUnitType type)
     case CSSUnitType::CSS_RLH:
     case CSSUnitType::CSS_QUIRKY_EM:
     case CSSUnitType::CSS_RAD:
+    case CSSUnitType::CSS_RCAP:
+    case CSSUnitType::CSS_RCH:
     case CSSUnitType::CSS_REM:
+    case CSSUnitType::CSS_REX:
+    case CSSUnitType::CSS_RIC:
     case CSSUnitType::CSS_RGBCOLOR:
     case CSSUnitType::CSS_S:
     case CSSUnitType::CSS_SVB:
@@ -379,10 +387,14 @@ CSSPrimitiveValue::~CSSPrimitiveValue()
     case CSSUnitType::CSS_EM:
     case CSSUnitType::CSS_QUIRKY_EM:
     case CSSUnitType::CSS_EX:
-    case CSSUnitType::CSS_REM:
     case CSSUnitType::CSS_CAP:
     case CSSUnitType::CSS_CH:
     case CSSUnitType::CSS_IC:
+    case CSSUnitType::CSS_RCAP:
+    case CSSUnitType::CSS_RCH:
+    case CSSUnitType::CSS_REM:
+    case CSSUnitType::CSS_REX:
+    case CSSUnitType::CSS_RIC:
     case CSSUnitType::CSS_PX:
     case CSSUnitType::CSS_CM:
     case CSSUnitType::CSS_MM:
@@ -680,10 +692,6 @@ static double lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis logicalA
 
 double CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(CSSUnitType primitiveType, double value, CSSPropertyID propertyToCompute, const FontCascade* fontCascadeForUnit, const RenderView* renderView)
 {
-    // FIXME: Figure out where we don't initialize the root style in BuilderContext and check if this matters.
-    if (isRootFontRelativeLength(primitiveType) && !fontCascadeForUnit)
-        return value;
-
     switch (primitiveType) {
     case CSSUnitType::CSS_EM:
     case CSSUnitType::CSS_QUIRKY_EM:
@@ -692,7 +700,8 @@ double CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(CSSUnitType primiti
         auto& fontDescription = fontCascadeForUnit->fontDescription();
         return ((propertyToCompute == CSSPropertyFontSize) ? fontDescription.specifiedSize() : fontDescription.computedSize()) * value;
     }
-    case CSSUnitType::CSS_EX: {
+    case CSSUnitType::CSS_EX:
+    case CSSUnitType::CSS_REX: {
         ASSERT(fontCascadeForUnit);
         auto& fontMetrics = fontCascadeForUnit->metricsOfPrimaryFont();
         if (fontMetrics.hasXHeight())
@@ -700,7 +709,8 @@ double CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(CSSUnitType primiti
         auto& fontDescription = fontCascadeForUnit->fontDescription();
         return ((propertyToCompute == CSSPropertyFontSize) ? fontDescription.specifiedSize() : fontDescription.computedSize()) / 2.0 * value;
     }
-    case CSSUnitType::CSS_CAP: {
+    case CSSUnitType::CSS_CAP:
+    case CSSUnitType::CSS_RCAP: {
         ASSERT(fontCascadeForUnit);
         auto& fontMetrics = fontCascadeForUnit->metricsOfPrimaryFont();
         if (fontMetrics.hasCapHeight())
@@ -708,9 +718,11 @@ double CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(CSSUnitType primiti
         return fontMetrics.ascent() * value;
     }
     case CSSUnitType::CSS_CH:
+    case CSSUnitType::CSS_RCH:
         ASSERT(fontCascadeForUnit);
         return fontCascadeForUnit->metricsOfPrimaryFont().zeroWidth().value_or(fontCascadeForUnit->fontDescription().computedSize() / 2) * value;
     case CSSUnitType::CSS_IC:
+    case CSSUnitType::CSS_RIC:
         ASSERT(fontCascadeForUnit);
         return fontCascadeForUnit->metricsOfPrimaryFont().ideogramWidth() * value;
     case CSSUnitType::CSS_PX:
@@ -831,8 +843,12 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
         value = computeUnzoomedNonCalcLengthDouble(primitiveType, value, conversionData.propertyToCompute(), &conversionData.fontCascadeForFontUnits());
         break;
 
+    case CSSUnitType::CSS_RCAP:
+    case CSSUnitType::CSS_RCH:
     case CSSUnitType::CSS_REM:
-        value = computeUnzoomedNonCalcLengthDouble(primitiveType, value, conversionData.propertyToCompute(), conversionData.rootStyle() ? &conversionData.rootStyle()->fontCascade() : nullptr);
+    case CSSUnitType::CSS_REX:
+    case CSSUnitType::CSS_RIC:
+        value = computeUnzoomedNonCalcLengthDouble(primitiveType, value, conversionData.propertyToCompute(), conversionData.rootStyle() ? &conversionData.rootStyle()->fontCascade() : &conversionData.fontCascadeForFontUnits());
         break;
 
     case CSSUnitType::CSS_PX:
@@ -1257,7 +1273,11 @@ ASCIILiteral CSSPrimitiveValue::unitTypeString(CSSUnitType unitType)
     case CSSUnitType::CSS_PX: return "px"_s;
     case CSSUnitType::CSS_Q: return "q"_s;
     case CSSUnitType::CSS_RAD: return "rad"_s;
+    case CSSUnitType::CSS_RCAP: return "rcap"_s;
+    case CSSUnitType::CSS_RCH: return "rch"_s;
     case CSSUnitType::CSS_REM: return "rem"_s;
+    case CSSUnitType::CSS_REX: return "rex"_s;
+    case CSSUnitType::CSS_RIC: return "ric"_s;
     case CSSUnitType::CSS_RLH: return "rlh"_s;
     case CSSUnitType::CSS_S: return "s"_s;
     case CSSUnitType::CSS_SVB: return "svb"_s;
@@ -1347,7 +1367,11 @@ ALWAYS_INLINE String CSSPrimitiveValue::serializeInternal() const
     case CSSUnitType::CSS_PX:
     case CSSUnitType::CSS_Q:
     case CSSUnitType::CSS_RAD:
+    case CSSUnitType::CSS_RCAP:
+    case CSSUnitType::CSS_RCH:
     case CSSUnitType::CSS_REM:
+    case CSSUnitType::CSS_REX:
+    case CSSUnitType::CSS_RIC:
     case CSSUnitType::CSS_RLH:
     case CSSUnitType::CSS_S:
     case CSSUnitType::CSS_SVB:
@@ -1442,10 +1466,14 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
     case CSSUnitType::CSS_EM:
     case CSSUnitType::CSS_QUIRKY_EM:
     case CSSUnitType::CSS_EX:
-    case CSSUnitType::CSS_REM:
     case CSSUnitType::CSS_CAP:
     case CSSUnitType::CSS_CH:
     case CSSUnitType::CSS_IC:
+    case CSSUnitType::CSS_RCAP:
+    case CSSUnitType::CSS_RCH:
+    case CSSUnitType::CSS_REM:
+    case CSSUnitType::CSS_REX:
+    case CSSUnitType::CSS_RIC:
     case CSSUnitType::CSS_PX:
     case CSSUnitType::CSS_CM:
     case CSSUnitType::CSS_DPPX:
@@ -1540,10 +1568,14 @@ bool CSSPrimitiveValue::addDerivedHash(Hasher& hasher) const
     case CSSUnitType::CSS_EM:
     case CSSUnitType::CSS_QUIRKY_EM:
     case CSSUnitType::CSS_EX:
-    case CSSUnitType::CSS_REM:
     case CSSUnitType::CSS_CAP:
     case CSSUnitType::CSS_CH:
     case CSSUnitType::CSS_IC:
+    case CSSUnitType::CSS_RCAP:
+    case CSSUnitType::CSS_RCH:
+    case CSSUnitType::CSS_REM:
+    case CSSUnitType::CSS_REX:
+    case CSSUnitType::CSS_RIC:
     case CSSUnitType::CSS_PX:
     case CSSUnitType::CSS_CM:
     case CSSUnitType::CSS_DPPX:
@@ -1635,6 +1667,10 @@ bool CSSPrimitiveValue::addDerivedHash(Hasher& hasher) const
 void CSSPrimitiveValue::collectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const
 {
     switch (primitiveUnitType()) {
+    case CSSUnitType::CSS_RCAP:
+    case CSSUnitType::CSS_RCH:
+    case CSSUnitType::CSS_REX:
+    case CSSUnitType::CSS_RIC:
     case CSSUnitType::CSS_REM:
         dependencies.rootProperties.appendIfNotContains(CSSPropertyFontSize);
         break;

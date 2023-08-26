@@ -194,9 +194,19 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
                 if (toASCIILower(data[2]) == 'd')
                     return CSSUnitType::CSS_RAD;
                 break;
+            case 'c':
+                if (toASCIILower(data[2]) == 'h')
+                    return CSSUnitType::CSS_RCH;
+                break;
             case 'e':
                 if (toASCIILower(data[2]) == 'm')
                     return CSSUnitType::CSS_REM;
+                if (toASCIILower(data[2]) == 'x')
+                    return CSSUnitType::CSS_REX;
+                break;
+            case 'i':
+                if (toASCIILower(data[2]) == 'c')
+                    return CSSUnitType::CSS_RIC;
                 break;
             case 'l':
                 if (toASCIILower(data[2]) == 'h' && DeprecatedGlobalSettings::lineHeightUnitsEnabled())
@@ -241,6 +251,10 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
         case 'g':
             if (toASCIILower(data[1]) == 'r' && toASCIILower(data[2]) == 'a' && toASCIILower(data[3]) == 'd')
                 return CSSUnitType::CSS_GRAD;
+            break;
+        case 'r':
+            if (toASCIILower(data[1]) == 'c' && toASCIILower(data[2]) == 'a' && toASCIILower(data[3]) == 'p')
+                return CSSUnitType::CSS_RCAP;
             break;
         case 't':
             if (toASCIILower(data[1]) == 'u' && toASCIILower(data[2]) == 'r' && toASCIILower(data[3]) == 'n')

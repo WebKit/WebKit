@@ -215,7 +215,8 @@ static bool styleChangeAffectsRelativeUnits(const RenderStyle& style, const Rend
 {
     if (!existingStyle)
         return true;
-    return style.computedFontSize() != existingStyle->computedFontSize();
+    return existingStyle->fontCascade() != style.fontCascade()
+        || existingStyle->computedLineHeight() != style.computedLineHeight();
 }
 
 auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingStyle, ResolutionType resolutionType) -> std::pair<ElementUpdate, DescendantsToResolve>

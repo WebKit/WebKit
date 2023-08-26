@@ -255,8 +255,12 @@ constexpr bool CSSPrimitiveValue::isFontIndependentLength(CSSUnitType type)
 
 constexpr bool CSSPrimitiveValue::isRootFontRelativeLength(CSSUnitType type)
 {
-    return type == CSSUnitType::CSS_RLH
-        || type == CSSUnitType::CSS_REM;
+    return type == CSSUnitType::CSS_RCAP
+        || type == CSSUnitType::CSS_RCH
+        || type == CSSUnitType::CSS_REM
+        || type == CSSUnitType::CSS_REX
+        || type == CSSUnitType::CSS_RIC
+        || type == CSSUnitType::CSS_RLH;
 }
 
 constexpr bool CSSPrimitiveValue::isFontRelativeLength(CSSUnitType type)
@@ -264,12 +268,11 @@ constexpr bool CSSPrimitiveValue::isFontRelativeLength(CSSUnitType type)
     return type == CSSUnitType::CSS_EM
         || type == CSSUnitType::CSS_EX
         || type == CSSUnitType::CSS_LH
-        || type == CSSUnitType::CSS_RLH
-        || type == CSSUnitType::CSS_REM
         || type == CSSUnitType::CSS_CAP
         || type == CSSUnitType::CSS_CH
         || type == CSSUnitType::CSS_IC
-        || type == CSSUnitType::CSS_QUIRKY_EM;
+        || type == CSSUnitType::CSS_QUIRKY_EM
+        || isRootFontRelativeLength(type);
 }
 
 constexpr bool CSSPrimitiveValue::isLength(CSSUnitType type)
@@ -282,19 +285,14 @@ constexpr bool CSSPrimitiveValue::isLength(CSSUnitType type)
         || type == CSSUnitType::CSS_IN
         || type == CSSUnitType::CSS_PT
         || type == CSSUnitType::CSS_PC
-        || type == CSSUnitType::CSS_REM
-        || type == CSSUnitType::CSS_CAP
-        || type == CSSUnitType::CSS_CH
-        || type == CSSUnitType::CSS_IC
         || type == CSSUnitType::CSS_Q
-        || type == CSSUnitType::CSS_LH
-        || type == CSSUnitType::CSS_RLH
         || type == CSSUnitType::CSS_CQW
         || type == CSSUnitType::CSS_CQH
         || type == CSSUnitType::CSS_CQI
         || type == CSSUnitType::CSS_CQB
         || type == CSSUnitType::CSS_CQMIN
         || type == CSSUnitType::CSS_CQMAX
+        || isFontRelativeLength(type)
         || isViewportPercentageLength(type)
         || type == CSSUnitType::CSS_QUIRKY_EM;
 }
