@@ -1500,6 +1500,9 @@ imported/w3c/web-platform-tests/fetch/private-network-access/resources/xhr-sende
 imported/w3c/web-platform-tests/fetch/private-network-access/resources/iframed.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/private-network-access/resources/iframer.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/private-network-access/shared-worker.window.html [ DumpJSConsoleLogInStdErr ]
+webkit.org/b/260731 imported/w3c/web-platform-tests/loading/preloader-css-import-no-quote.tentative.html [ Failure ]
+webkit.org/b/260731 imported/w3c/web-platform-tests/loading/preloader-css-import-no-semicolon.tentative.html [ Failure ]
+webkit.org/b/260731 imported/w3c/web-platform-tests/loading/preloader-css-import-no-space.tentative.html [ Failure ]
 
 # The tests are crashing, timing out and passing. Mark as Skip for now.
 webkit.org/b/177940 workers/wasm-hashset-many-2.html [ Skip ]
