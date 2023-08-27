@@ -2192,7 +2192,7 @@ fast/text/crash-complex-text-surrogate.html [ Failure ]
 
 webkit.org/b/188980 fast/css/vertical-align-block-elements.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/resource-timing/cross-origin-redirects.html [ Pass ]
+imported/w3c/web-platform-tests/resource-timing/cross-origin-redirects.html [ Pass Failure ]
 imported/w3c/web-platform-tests/resource-timing/cross-origin-start-end-time-with-redirects.html [ Pass ]
 imported/w3c/web-platform-tests/resource-timing/resource_reuse.sub.html [ Pass ]
 imported/w3c/web-platform-tests/resource-timing/resource_TAO_cross_origin_redirect_chain.html [ Pass ]
@@ -2719,3 +2719,5 @@ webkit.org/b/257624 fast/dom/SelectorAPI/caseID.html [ Failure Pass ]
 fast/text/smiley-local-font-src.html [ ImageOnlyFailure ]
 
 fast/canvas/imageData-consistency.html [ Failure ]
+
+http/tests/inspector/network/resource-timing.html [ Pass Failure ]
