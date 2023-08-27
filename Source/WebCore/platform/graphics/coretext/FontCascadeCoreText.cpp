@@ -400,7 +400,6 @@ bool FontCascade::primaryFontIsSystemFont() const
     return isSystemFont(fontData.platformData().ctFont());
 }
 
-// FIXME: Use this on all ports.
 const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
 {
     auto codePoints = stringView.codePoints();

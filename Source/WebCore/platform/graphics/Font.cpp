@@ -551,9 +551,9 @@ GlyphBufferAdvance Font::applyTransforms(GlyphBuffer&, unsigned, unsigned, bool,
 }
 #endif
 
-RefPtr<Font> Font::systemFallbackFontForCharacter(UChar32 character, const FontDescription& description, ResolvedEmojiPolicy resolvedEmojiPolicy, IsForPlatformFont isForPlatformFont) const
+RefPtr<Font> Font::systemFallbackFontForCharacterCluster(StringView characterCluster, const FontDescription& description, ResolvedEmojiPolicy resolvedEmojiPolicy, IsForPlatformFont isForPlatformFont) const
 {
-    return SystemFallbackFontCache::forCurrentThread().systemFallbackFontForCharacter(this, character, description, resolvedEmojiPolicy, isForPlatformFont);
+    return SystemFallbackFontCache::forCurrentThread().systemFallbackFontForCharacterCluster(this, characterCluster, description, resolvedEmojiPolicy, isForPlatformFont);
 }
 
 #if !PLATFORM(COCOA) && !USE(FREETYPE)
