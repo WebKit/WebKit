@@ -27,8 +27,8 @@ PASS Compositing: property <clip-path> underlying [ellipse(10px 20px at 30px 40p
 PASS Compositing: property <clip-path> underlying [ellipse(10px 20px at 30px 40px)] from replace [ellipse(40px 30px at 20px 10px)] to add [ellipse(40px 30px at 20px 10px)] at (0.6) should be [ellipse(46px 42px at 38px 34px)]
 PASS Compositing: property <clip-path> underlying [ellipse(10px 20px at 30px 40px)] from replace [ellipse(40px 30px at 20px 10px)] to add [ellipse(40px 30px at 20px 10px)] at (1) should be [ellipse(50px 50px at 50px 50px)]
 PASS Compositing: property <clip-path> underlying [ellipse(10px 20px at 30px 40px)] from replace [ellipse(40px 30px at 20px 10px)] to add [ellipse(40px 30px at 20px 10px)] at (1.5) should be [ellipse(55px 60px at 65px 70px)]
-PASS Compositing: property <clip-path> underlying [ellipse(25px 75%)] from add [ellipse()] to add [ellipse(closest-side farthest-side)] at (0.25) should be [ellipse(at 50% 50%)]
-PASS Compositing: property <clip-path> underlying [ellipse(25px 75%)] from add [ellipse()] to add [ellipse(closest-side farthest-side)] at (0.75) should be [ellipse(closest-side farthest-side at 50% 50%)]
+PASS Compositing: property <clip-path> underlying [ellipse(25px 75%)] from add [ellipse()] to add [ellipse(closest-side farthest-side)] at (0.25) should be [ellipse()]
+PASS Compositing: property <clip-path> underlying [ellipse(25px 75%)] from add [ellipse()] to add [ellipse(closest-side farthest-side)] at (0.75) should be [ellipse(closest-side farthest-side)]
 PASS Compositing: property <clip-path> underlying [inset(20px)] from add [inset(20px)] to add [inset(40%)] at (-0.3) should be [inset(calc(46px + -12%))]
 FAIL Compositing: property <clip-path> underlying [inset(20px)] from add [inset(20px)] to add [inset(40%)] at (0) should be [inset(calc(40px + 0%))] assert_equals: expected "inset ( calc ( 0 % + 40px ) ) " but got "inset ( 40px ) "
 PASS Compositing: property <clip-path> underlying [inset(20px)] from add [inset(20px)] to add [inset(40%)] at (0.3) should be [inset(calc(34px + 12%))]

@@ -27,7 +27,15 @@ PASS e.style['clip-path'] = "ellipse(10% -20% at 30% 40%)" should not set the pr
 PASS e.style['clip-path'] = "ellipse(-50px 60px at 70% 80%)" should not set the property value
 PASS e.style['clip-path'] = "polygon(1%)" should not set the property value
 PASS e.style['clip-path'] = "unknown-box" should not set the property value
+FAIL e.style['clip-path'] = "path(\" \")" should not set the property value assert_equals: expected "" but got "path(\"\")"
+FAIL e.style['clip-path'] = "path(evenodd, \"\")" should not set the property value assert_equals: expected "" but got "path(evenodd, \"\")"
 PASS e.style['clip-path'] = "path(abc, \"m 20 0 h -100 z\")" should not set the property value
 PASS e.style['clip-path'] = "path(nonzero)" should not set the property value
 PASS e.style['clip-path'] = "path(\"m 20 0 h -100\", nonzero)" should not set the property value
+PASS e.style['clip-path'] = "xywh(0px)" should not set the property value
+PASS e.style['clip-path'] = "xywh(0px 1%)" should not set the property value
+PASS e.style['clip-path'] = "xywh(0px 1% 2em)" should not set the property value
+PASS e.style['clip-path'] = "rect(0px)" should not set the property value
+PASS e.style['clip-path'] = "rect(0px 1%)" should not set the property value
+PASS e.style['clip-path'] = "rect(0px 1% auto)" should not set the property value
 

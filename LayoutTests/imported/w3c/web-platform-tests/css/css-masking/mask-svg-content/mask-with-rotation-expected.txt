@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (49,50) size 101x101
+    RenderSVGContainer {g} at (0,0) size 0x0
+    RenderSVGResourceMasker {mask} [id="mask"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
+      RenderSVGRect {rect} at (50,50) size 100x100 [fill={[type=SOLID] [color=#FFFFFF]}] [x=50.00] [y=50.00] [width=100.00] [height=100.00]
+    RenderSVGContainer {g} at (49,50) size 101x101 [transform={m=((1.00,0.00)(-0.00,1.00)) t=(0.00,0.00)}]
+      [masker="mask"] RenderSVGResourceMasker {mask} at (50,50) size 100x100
+      RenderSVGRect {rect} at (0,0) size 200x201 [transform={m=((1.00,0.00)(-0.00,1.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]

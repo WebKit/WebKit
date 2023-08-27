@@ -10,5 +10,6 @@ PASS e.style['mask'] = "stroke-box no-clip view-box" should not set the property
 PASS e.style['mask'] = "border-box view-box padding-box" should not set the property value
 PASS e.style['mask'] = "no-clip border-box content-box" should not set the property value
 PASS e.style['mask'] = "content-box stroke-box no-clip" should not set the property value
+PASS e.style['mask'] = "margin-box" should not set the property value
 PASS e.style['mask'] = "add intersect" should not set the property value
 
