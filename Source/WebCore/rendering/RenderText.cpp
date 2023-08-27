@@ -311,8 +311,8 @@ static void initiateFontLoadingByAccessingGlyphDataIfApplicable(const String& te
         fontVariant = NormalVariant;
     }
 #endif
-    for (size_t i = 0; i < textContent.length(); ++i)
-        fontCascade.glyphDataForCharacter(textContent[i], false, fontVariant);
+    for (UChar32 character : StringView(textContent).codePoints())
+        fontCascade.glyphDataForCharacter(character, false, fontVariant);
 }
 
 void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
