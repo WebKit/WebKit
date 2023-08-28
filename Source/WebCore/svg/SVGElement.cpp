@@ -263,7 +263,7 @@ void SVGElement::reportAttributeParsingError(SVGParsingError error, const Qualif
 
 void SVGElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
-    if (removalType.disconnectedFromDocument)
+    if (removalType.disconnectedFromDocument && selfHasRelativeLengths())
         updateRelativeLengthsInformation(false, *this);
 
     StyledElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
@@ -977,7 +977,9 @@ void SVGElement::svgAttributeChanged(const QualifiedName& attrName)
 Node::InsertedIntoAncestorResult SVGElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     StyledElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
-    updateRelativeLengthsInformation();
+
+    if (insertionType.connectedToDocument && selfHasRelativeLengths())
+        updateRelativeLengthsInformation(true, *this);
 
     if (needsPendingResourceHandling() && insertionType.connectedToDocument && !isInShadowTree()) {
         if (treeScopeForSVGReferences().isIdOfPendingSVGResource(getIdAttribute()))
@@ -1052,10 +1054,6 @@ AffineTransform SVGElement::localCoordinateSpaceTransform(SVGLocatable::CTMScope
 
 void SVGElement::updateRelativeLengthsInformation(bool hasRelativeLengths, SVGElement& element)
 {
-    // If we're not yet in a document, this function will be called again from insertedIntoAncestor(). Do nothing now.
-    if (!isConnected())
-        return;
-
     // An element wants to notify us that its own relative lengths state changed.
     // Register it in the relative length map, and register us in the parent relative length map.
     // Register the parent in the grandparents map, etc. Repeat procedure until the root of the SVG tree.
@@ -1063,16 +1061,14 @@ void SVGElement::updateRelativeLengthsInformation(bool hasRelativeLengths, SVGEl
     if (hasRelativeLengths)
         m_elementsWithRelativeLengths.add(element);
     else {
-        bool neverRegistered = !m_elementsWithRelativeLengths.contains(element);
-        if (neverRegistered)
+        bool didRemove = m_elementsWithRelativeLengths.remove(element);
+        if (!didRemove)
             return;
-
-        m_elementsWithRelativeLengths.remove(element);
     }
 
     if (is<SVGGraphicsElement>(element)) {
-        if (RefPtr parent = parentNode(); is<SVGElement>(parent))
-            downcast<SVGElement>(*parent).updateRelativeLengthsInformation(hasRelativeLengths, *this);
+        if (RefPtr parent = dynamicDowncast<SVGElement>(parentNode()))
+            parent->updateRelativeLengthsInformation(hasRelativeLengths, *this);
     }
 }
 
