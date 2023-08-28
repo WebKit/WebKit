@@ -27,6 +27,7 @@
 #include "InspectorCanvas.h"
 
 #include "AffineTransform.h"
+#include "BeginLayerOptions.h"
 #include "CSSStyleImageValue.h"
 #include "CachedImage.h"
 #include "CanvasBase.h"
@@ -204,6 +205,12 @@ template<typename T> static Ref<JSON::ArrayOf<JSON::Value>> buildArrayForVector(
     for (auto& item : vector)
         array->addItem(item);
     return array;
+}
+
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(BeginLayerOptions)
+{
+    // FIXME(webkit.org/b/260749).
+    return std::nullopt;
 }
 
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(CanvasDirection argument)

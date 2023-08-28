@@ -6612,10 +6612,6 @@ webkit.org/b/255970 [ Debug ] fullscreen/exit-full-screen-video-crash.html [ Cra
 [ Debug ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin.https.html?7-8 [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin.https.html?9-last [ Skip ]
 
-# Canvas Layers API not supported yet.
-webkit.org/b/259784 imported/w3c/web-platform-tests/html/canvas/element/layers [ Skip ]
-webkit.org/b/259784 imported/w3c/web-platform-tests/html/canvas/offscreen/layers [ Skip ]
-
 # New failures after re-importing html/canvas
 imported/w3c/web-platform-tests/html/canvas/element/filters/2d.filter.canvasFilterObject.dropShadow.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-text-to-the-canvas/canvas.2d.disconnected-font-size-math.html [ ImageOnlyFailure ]
@@ -6669,3 +6665,34 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/im
 
 # webkit.org/b/260546
 [ Debug ] imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/toggleEvent.html [ Pass Failure ]
+
+# CanvasRenderingContext2D Layers tests that use dictionary filters, which we do not support.
+imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.global-states.filter.alpha.blending.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.global-states.filter.alpha.blending.shadow.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.global-states.filter.alpha.composite.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.global-states.filter.alpha.composite.shadow.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.global-states.filter.alpha.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.global-states.filter.alpha.shadow.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.global-states.filter.blending.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.global-states.filter.blending.shadow.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.global-states.filter.composite.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.global-states.filter.composite.shadow.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.global-states.filter.no-global-states.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.global-states.filter.shadow.html [ ImageOnlyFailure ]
+
+# CanvasRenderingContext2D Layers tests that rely on implicitly closing layers on canvas renders, which WebKit does not follow.
+imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.render-opportunities.createImageBitmap.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.render-opportunities.drawImage.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.render-opportunities.getImageData.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.render-opportunities.putImageData.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.render-opportunities.requestAnimationFrame.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.render-opportunities.toDataURL.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.unclosed-nested.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.unclosed.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.render-opportunities.toBlob.html [ ImageOnlyFailure Timeout ]
+
+# This relies on unimplemented CanvasRenderingContext2D.reset()
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.reset.html [ ImageOnlyFailure ]
+
+# Many failing tests on OffscreenCanvas
+webkit.org/b/260748 imported/w3c/web-platform-tests/html/canvas/offscreen/layers [ Skip ]

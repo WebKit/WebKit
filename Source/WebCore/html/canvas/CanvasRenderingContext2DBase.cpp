@@ -235,14 +235,23 @@ CanvasRenderingContext2DBase::CanvasRenderingContext2DBase(CanvasBase& canvas, C
 
 void CanvasRenderingContext2DBase::unwindStateStack()
 {
-    // Ensure that the state stack in the ImageBuffer's context
-    // is cleared before destruction, to avoid assertions in the
-    // GraphicsContext dtor.
-    if (size_t stackSize = m_stateStack.size()) {
-        if (auto* context = canvasBase().existingDrawingContext()) {
-            while (--stackSize)
-                context->restore();
+    // Ensure that the state stack in the drawing context is cleared and all transparency layers are closed
+    // before destruction, to avoid assertions in the GraphicsContext dtor.
+
+    auto* context = canvasBase().existingDrawingContext();
+    if (!context)
+        return;
+
+    while (m_stateStack.size() > 1) {
+        auto state = m_stateStack.takeLast();
+
+        if (state.isLayer) {
+            context->endTransparencyLayer();
+            ASSERT(m_layerCount);
+            m_layerCount--;
         }
+
+        context->restore();
     }
 }
 
@@ -266,8 +275,9 @@ bool CanvasRenderingContext2DBase::isAccelerated() const
 void CanvasRenderingContext2DBase::reset()
 {
     unwindStateStack();
-    m_stateStack.resize(1);
+
     m_stateStack.first() = State();
+
     m_path.clear();
     m_unrealizedSaveCount = 0;
     m_cachedImageData = std::nullopt;
@@ -294,6 +304,7 @@ CanvasRenderingContext2DBase::State::State()
     , textAlign(StartTextAlign)
     , textBaseline(AlphabeticTextBaseline)
     , direction(Direction::Inherit)
+    , isLayer(false)
     , unparsedFont(DefaultFont)
 {
 }
@@ -450,29 +461,40 @@ void CanvasRenderingContext2DBase::realizeSavesLoop()
     do {
         if (m_stateStack.size() > MaxSaveCount)
             break;
-        m_stateStack.append(state());
+
+        {
+            State toBeSavedState = state();
+            toBeSavedState.isLayer = false;
+            m_stateStack.append(WTFMove(toBeSavedState));
+        }
+
         if (context)
             context->save();
     } while (--m_unrealizedSaveCount);
 }
 
-void CanvasRenderingContext2DBase::restore()
+ExceptionOr<void> CanvasRenderingContext2DBase::restore()
 {
     if (m_unrealizedSaveCount) {
         --m_unrealizedSaveCount;
-        return;
+        return { };
     }
+
     ASSERT(m_stateStack.size() >= 1);
     if (m_stateStack.size() <= 1)
-        return;
+        return { };
+
+    if (state().isLayer)
+        return Exception { InvalidStateError };
+
     m_path.transform(state().transform);
     m_stateStack.removeLast();
     if (std::optional<AffineTransform> inverse = state().transform.inverse())
         m_path.transform(inverse.value());
-    GraphicsContext* c = drawingContext();
-    if (!c)
-        return;
-    c->restore();
+    if (auto* c = drawingContext())
+        c->restore();
+
+    return { };
 }
 
 void CanvasRenderingContext2DBase::setStrokeStyle(CanvasStyle style)
@@ -1255,6 +1277,7 @@ void CanvasRenderingContext2DBase::clearRect(double x, double y, double width, d
     context->clearRect(rect);
     if (saved)
         context->restore();
+
     didDraw(rect);
 }
 
@@ -1683,6 +1706,9 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
     FloatRect srcCanvasRect = FloatRect(FloatPoint(), sourceCanvas.size());
 
     if (!srcCanvasRect.width() || !srcCanvasRect.height())
+        return Exception { InvalidStateError };
+
+    if (sourceCanvas.contextIs2DBaseWithUnclosedLayers())
         return Exception { InvalidStateError };
 
     if (!srcRect.width() || !srcRect.height())
@@ -2114,8 +2140,12 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(S
 
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(CanvasBase& canvas, bool repeatX, bool repeatY)
 {
+    if (canvas.contextIs2DBaseWithUnclosedLayers())
+        return Exception { InvalidStateError };
+
     if (!canvas.width() || !canvas.height())
         return Exception { InvalidStateError };
+
     auto* copiedImage = canvas.copiedImage();
 
     if (!copiedImage)
@@ -2188,6 +2218,9 @@ void CanvasRenderingContext2DBase::didDrawEntireCanvas()
 
 void CanvasRenderingContext2DBase::didDraw(std::optional<FloatRect> rect, OptionSet<DidDrawOption> options)
 {
+    if (hasOpenLayers())
+        return;
+
     if (!options.contains(DidDrawOption::PreserveCachedImageData))
         m_cachedImageData = std::nullopt;
 
@@ -2419,6 +2452,9 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
     if (!sw || !sh)
         return Exception { IndexSizeError };
 
+    if (hasOpenLayers())
+        return Exception { InvalidStateError };
+
     if (!canvasBase().originClean()) {
         static NeverDestroyed<String> consoleMessage(MAKE_STATIC_STRING_IMPL("Unable to get image data from canvas because the canvas has been tainted by cross-origin data."));
         canvasBase().scriptExecutionContext()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage);
@@ -2465,19 +2501,22 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
     return { { ImageData::create(static_reference_cast<ByteArrayPixelBuffer>(pixelBuffer.releaseNonNull())) } };
 }
 
-void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy)
+ExceptionOr<void> CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy)
 {
-    putImageData(data, dx, dy, 0, 0, data.width(), data.height());
+    return putImageData(data, dx, dy, 0, 0, data.width(), data.height());
 }
 
-void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy, int dirtyX, int dirtyY, int dirtyWidth, int dirtyHeight)
+ExceptionOr<void> CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy, int dirtyX, int dirtyY, int dirtyWidth, int dirtyHeight)
 {
     ImageBuffer* buffer = canvasBase().buffer();
     if (!buffer)
-        return;
+        return { };
 
     if (data.data().isDetached())
-        return;
+        return { };
+
+    if (hasOpenLayers())
+        return Exception { InvalidStateError };
 
     if (dirtyWidth < 0) {
         dirtyX += dirtyWidth;
@@ -2504,6 +2543,8 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy,
         options.add(DidDrawOption::PreserveCachedImageData);
 
     didDraw(FloatRect { destRect }, options);
+
+    return { };
 }
 
 void CanvasRenderingContext2DBase::inflateStrokeRect(FloatRect& rect) const
@@ -2866,6 +2907,57 @@ PixelFormat CanvasRenderingContext2DBase::pixelFormat() const
 DestinationColorSpace CanvasRenderingContext2DBase::colorSpace() const
 {
     return toDestinationColorSpace(m_settings.colorSpace);
+}
+
+ExceptionOr<void> CanvasRenderingContext2DBase::beginLayer(const BeginLayerOptions&)
+{
+    FloatRect boundingBox { { }, canvasBase().size() };
+
+    auto* ctx = drawingContext();
+    if (!ctx)
+        return { };
+
+    save();
+    realizeSaves();
+
+    ctx->beginTransparencyLayer(state().globalAlpha);
+
+    setGlobalAlpha(1.0);
+    setGlobalCompositeOperation("source-over"_s);
+    setShadowOffsetX(0);
+    setShadowOffsetY(0);
+    setShadowBlur(0);
+    setShadowColor("black"_s);
+    modifiableState().isLayer = true;
+
+    m_layerCount++;
+
+    return { };
+}
+
+ExceptionOr<void> CanvasRenderingContext2DBase::endLayer()
+{
+    auto* ctx = drawingContext();
+    if (!ctx)
+        return { };
+
+    realizeSaves();
+
+    ASSERT(!m_stateStack.isEmpty());
+    if (!state().isLayer)
+        return Exception { InvalidStateError };
+
+    ctx->endTransparencyLayer();
+
+    modifiableState().isLayer = false;
+    restore();
+
+    m_layerCount--;
+
+    // FIXME: fix this so we only call didDraw() on the region affected by endLayer()
+    didDrawEntireCanvas();
+
+    return { };
 }
 
 } // namespace WebCore

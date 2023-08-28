@@ -3194,6 +3194,7 @@ JSBackgroundFetchUpdateUIEvent.cpp
 JSBarcodeDetector.cpp
 JSBarcodeDetectorOptions.cpp
 JSBarcodeFormat.cpp
+JSBeginLayerOptions.cpp
 JSImageResource.cpp
 JSBitrateMode.cpp
 JSBlob.cpp

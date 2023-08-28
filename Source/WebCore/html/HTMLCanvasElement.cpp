@@ -704,6 +704,9 @@ static std::optional<double> qualityFromJSValue(JSC::JSValue qualityValue)
 
 ExceptionOr<UncachedString> HTMLCanvasElement::toDataURL(const String& mimeType, JSC::JSValue qualityValue)
 {
+    if (contextIs2DBaseWithUnclosedLayers())
+        return Exception { InvalidStateError };
+
     if (!originClean())
         return Exception { SecurityError };
 
@@ -738,6 +741,9 @@ ExceptionOr<UncachedString> HTMLCanvasElement::toDataURL(const String& mimeType)
 
 ExceptionOr<void> HTMLCanvasElement::toBlob(Ref<BlobCallback>&& callback, const String& mimeType, JSC::JSValue qualityValue)
 {
+    if (contextIs2DBaseWithUnclosedLayers())
+        return Exception { InvalidStateError };
+
     if (!originClean())
         return Exception { SecurityError };
 
