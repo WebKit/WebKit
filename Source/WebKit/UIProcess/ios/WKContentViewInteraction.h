@@ -135,6 +135,7 @@ class WebPageProxy;
 #endif
 
 @class UIPointerInteraction;
+@class UIPointerRegion;
 @class UITargetedPreview;
 @class _UILookupGestureRecognizer;
 @class _UIHighlightView;
@@ -335,8 +336,8 @@ struct ImageAnalysisContextMenuActionData {
 
 #if HAVE(UI_POINTER_INTERACTION)
     RetainPtr<UIPointerInteraction> _pointerInteraction;
-    BOOL _hasOutstandingPointerInteractionRequest;
-    std::optional<std::pair<WebKit::InteractionInformationRequest, BlockPtr<void(UIPointerRegion *)>>> _deferredPointerInteractionRequest;
+    RetainPtr<UIPointerRegion> _lastPointerRegion;
+    BOOL _pointerInteractionRegionNeedsUpdate;
 #endif
 
     RetainPtr<UIWKTextInteractionAssistant> _textInteractionAssistant;

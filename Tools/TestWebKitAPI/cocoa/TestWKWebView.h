@@ -77,6 +77,8 @@
 - (id)objectByEvaluatingJavaScript:(NSString *)script;
 - (id)objectByCallingAsyncFunction:(NSString *)script withArguments:(NSDictionary *)arguments error:(NSError **)errorOut;
 - (unsigned)waitUntilClientWidthIs:(unsigned)expectedClientWidth;
+- (CGRect)elementRectFromSelector:(NSString *)selector;
+- (CGPoint)elementMidpointFromSelector:(NSString *)selector;
 @end
 
 @interface TestMessageHandler : NSObject <WKScriptMessageHandler>

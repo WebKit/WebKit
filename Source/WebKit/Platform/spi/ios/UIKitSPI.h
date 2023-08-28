@@ -141,7 +141,6 @@
 
 #if HAVE(UI_POINTER_INTERACTION)
 #import <UIKit/UIPointerInteraction_ForWebKitOnly.h>
-#import <UIKit/UIPointerStyle_Private.h>
 #endif
 
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
@@ -779,10 +778,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 @property (nonatomic, readonly, assign) UITapGestureRecognizer *singleTapGesture;
 @end
 
-@interface UITextInteraction ()
-@property (class, nonatomic, readonly) CGFloat _maximumBeamSnappingLength;
-@end
-
 @class UIWKDocumentRequest;
 @class UIWKDocumentContext;
 
@@ -1171,17 +1166,8 @@ typedef NS_ENUM(NSUInteger, UIMenuOptionsPrivate) {
 @property (readonly) BOOL isLowConfidence;
 @end
 
-@interface UIPointerStyle ()
-+ (instancetype)_systemPointerStyle;
-@end
-
 @interface UIPointerInteraction ()
 @property (nonatomic, assign, getter=_pausesPointerUpdatesWhilePanning, setter=_setPausesPointerUpdatesWhilePanning:) BOOL pausesPointerUpdatesWhilePanning;
-@end
-
-@protocol UIPointerInteractionDelegate_ForWebKitOnly <UIPointerInteractionDelegate>
-@optional
-- (void)_pointerInteraction:(UIPointerInteraction *)interaction regionForRequest:(UIPointerRegionRequest *)request defaultRegion:(UIPointerRegion *)defaultRegion completion:(void(^)(UIPointerRegion *region))completion;
 @end
 
 #if PLATFORM(WATCHOS)
