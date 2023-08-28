@@ -1218,6 +1218,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/ImageBitmap.h
     html/ImageBitmapBacking.h
     html/ImageData.h
+    html/ImageDataSettings.h
     html/ImageDocument.h
     html/InputMode.h
     html/LinkIconCollector.h
@@ -1241,6 +1242,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/VoidCallback.h
 
     html/canvas/ImageBitmapRenderingContextSettings.h
+    html/canvas/PredefinedColorSpace.h
     html/canvas/WebGLAny.h
     html/canvas/WebGLContextAttributes.h
     html/canvas/WebGLExtensionAny.h
