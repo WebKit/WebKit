@@ -344,14 +344,6 @@ bool HTMLImageElement::hasLazyLoadableAttributeValue(StringView attributeValue)
     return equalLettersIgnoringASCIICase(attributeValue, "lazy"_s);
 }
 
-enum CrossOriginState { NotSet, UseCredentials, Anonymous };
-static CrossOriginState parseCrossoriginState(const AtomString& crossoriginValue)
-{
-    if (crossoriginValue.isNull())
-        return NotSet;
-    return equalLettersIgnoringASCIICase(crossoriginValue, "use-credentials"_s) ? UseCredentials : Anonymous;
-}
-
 void HTMLImageElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
@@ -394,7 +386,7 @@ void HTMLImageElement::attributeChanged(const QualifiedName& name, const AtomStr
         }
         break;
     case AttributeNames::crossoriginAttr:
-        if (parseCrossoriginState(oldValue) != parseCrossoriginState(newValue))
+        if (parseCORSSettingsAttribute(oldValue) != parseCORSSettingsAttribute(newValue))
             m_imageLoader->updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
         break;
     case AttributeNames::nameAttr: {
