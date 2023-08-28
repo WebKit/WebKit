@@ -1149,10 +1149,6 @@ imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.worke
 imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?av1 [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.worker.html?av1 [ Failure ]
 
-# Detection of bad HEVC codec string
-imported/w3c/web-platform-tests/webcodecs/video-decoder.https.any.html [ Skip ]
-imported/w3c/web-platform-tests/webcodecs/video-decoder.https.any.worker.html [ Skip ]
-
 # Our MP3 decoder is not yet spec-compliant.
 imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?mp3 [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?mp3 [ Failure ]
