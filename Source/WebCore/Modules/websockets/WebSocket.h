@@ -90,7 +90,7 @@ public:
 
     enum class BinaryType : bool { Blob, Arraybuffer };
     BinaryType binaryType() const { return m_binaryType; }
-    ExceptionOr<void> setBinaryType(BinaryType);
+    void setBinaryType(BinaryType);
 
     ScriptExecutionContext* scriptExecutionContext() const final;
 
