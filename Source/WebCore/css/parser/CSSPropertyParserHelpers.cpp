@@ -266,7 +266,9 @@ struct IntegerTypeRawKnownTokenTypeFunctionConsumer {
         auto rangeCopy = range;
         if (auto value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Number, { }, ValueRange::All)) {
             range = rangeCopy;
-            return clampTo<IntType>(std::round(std::max(value->doubleValue(), computeMinimumValue(integerRange))));
+            // https://drafts.csswg.org/css-values-4/#integers
+            // Rounding to the nearest integer requires rounding in the direction of +∞ when the fractional portion is exactly 0.5.
+            return clampTo<IntType>(std::floor(std::max(value->doubleValue(), computeMinimumValue(integerRange)) + 0.5));
         }
 
         return std::nullopt;
