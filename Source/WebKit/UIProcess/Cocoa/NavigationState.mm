@@ -446,7 +446,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
         && !m_navigationState->m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionWithPreferencesDecisionHandler)) {
         auto completionHandler = [webPage = Ref { webPageProxy }, listener = WTFMove(listener), navigationAction, defaultWebsitePolicies] (bool interceptedNavigation) {
             if (interceptedNavigation) {
-                listener->ignore();
+                listener->ignore(WasNavigationIntercepted::Yes);
                 return;
             }
 
@@ -516,7 +516,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
             case _WKNavigationActionPolicyAllowInNewProcess:
                 tryInterceptNavigation(WTFMove(navigationAction), webPageProxy, [actionPolicy, localListener = WTFMove(localListener), websitePolicies = WTFMove(apiWebsitePolicies)](bool interceptedNavigation) mutable {
                     if (interceptedNavigation) {
-                        localListener->ignore();
+                        localListener->ignore(WasNavigationIntercepted::Yes);
                         return;
                     }
 
@@ -535,7 +535,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
             case _WKNavigationActionPolicyAllowWithoutTryingAppLink:
                 trySOAuthorization(WTFMove(navigationAction), webPageProxy, [localListener = WTFMove(localListener), websitePolicies = WTFMove(apiWebsitePolicies)] (bool optimizedLoad) {
                     if (optimizedLoad) {
-                        localListener->ignore();
+                        localListener->ignore(WasNavigationIntercepted::Yes);
                         return;
                     }
 
