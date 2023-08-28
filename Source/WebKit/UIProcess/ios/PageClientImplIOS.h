@@ -324,8 +324,6 @@ private:
     void didExitFullscreen() final;
 #endif
 
-    std::optional<WebKit::VisibleContentRectUpdateInfo> createVisibleContentRectUpdateInfo() override;
-
     RetainPtr<WKContentView> contentView() const { return m_contentView.get(); }
 
     WeakObjCPtr<WKContentView> m_contentView;

@@ -886,11 +886,6 @@ void PageClientImpl::didFailNavigation(API::Navigation* navigation)
     [webView() _didFailNavigation:navigation];
 }
 
-std::optional<WebKit::VisibleContentRectUpdateInfo> PageClientImpl::createVisibleContentRectUpdateInfo()
-{
-    return [webView() _createVisibleContentRectUpdateInfo];
-}
-
 void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType navigationType)
 {
     [webView() _didSameDocumentNavigationForMainFrame:navigationType];
