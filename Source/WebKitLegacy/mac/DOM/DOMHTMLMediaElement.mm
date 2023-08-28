@@ -261,13 +261,13 @@
 - (BOOL)webkitPreservesPitch
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->webkitPreservesPitch();
+    return IMPL->preservesPitch();
 }
 
 - (void)setWebkitPreservesPitch:(BOOL)newWebkitPreservesPitch
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setWebkitPreservesPitch(newWebkitPreservesPitch);
+    IMPL->setPreservesPitch(newWebkitPreservesPitch);
 }
 
 - (BOOL)webkitHasClosedCaptions

@@ -1613,7 +1613,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
 
     if (!autoplay() && !m_havePreparedToPlay)
         m_player->setPreload(mediaSession().effectivePreloadForElement());
-    m_player->setPreservesPitch(m_webkitPreservesPitch);
+    m_player->setPreservesPitch(m_preservesPitch);
     m_player->setPitchCorrectionAlgorithm(document().settings().pitchCorrectionAlgorithm());
 
     if (!m_explicitlyMuted) {
@@ -3912,16 +3912,16 @@ void HTMLMediaElement::updatePlaybackRate()
         m_player->setRate(requestedRate);
 }
 
-bool HTMLMediaElement::webkitPreservesPitch() const
+bool HTMLMediaElement::preservesPitch() const
 {
-    return m_webkitPreservesPitch;
+    return m_preservesPitch;
 }
 
-void HTMLMediaElement::setWebkitPreservesPitch(bool preservesPitch)
+void HTMLMediaElement::setPreservesPitch(bool preservesPitch)
 {
     INFO_LOG(LOGIDENTIFIER, preservesPitch);
 
-    m_webkitPreservesPitch = preservesPitch;
+    m_preservesPitch = preservesPitch;
 
     if (!m_player)
         return;
