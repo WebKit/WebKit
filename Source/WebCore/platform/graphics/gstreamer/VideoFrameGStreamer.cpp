@@ -312,11 +312,15 @@ VideoFrameGStreamer::VideoFrameGStreamer(GRefPtr<GstSample>&& sample, const Floa
 {
     ensureVideoFrameDebugCategoryInitialized();
     ASSERT(m_sample);
+
+    if (!metadata)
+        return;
+
     GstBuffer* buffer = gst_sample_get_buffer(m_sample.get());
     RELEASE_ASSERT(buffer);
-
-    if (metadata)
-        buffer = webkitGstBufferSetVideoFrameTimeMetadata(buffer, WTFMove(metadata));
+    buffer = webkitGstBufferSetVideoFrameTimeMetadata(buffer, WTFMove(metadata));
+    m_sample = adoptGRef(gst_sample_make_writable(m_sample.leakRef()));
+    gst_sample_set_buffer(m_sample.get(), buffer);
 }
 
 VideoFrameGStreamer::VideoFrameGStreamer(const GRefPtr<GstSample>& sample, const FloatSize& presentationSize, const MediaTime& presentationTime, Rotation videoRotation, PlatformVideoColorSpace&& colorSpace)
