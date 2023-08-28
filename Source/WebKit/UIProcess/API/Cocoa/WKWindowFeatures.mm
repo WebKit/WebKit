@@ -44,22 +44,34 @@
 
 - (NSNumber *)menuBarVisibility
 {
-    return @(_windowFeatures->windowFeatures().menuBarVisible);
+    if (auto menuBarVisible = _windowFeatures->windowFeatures().menuBarVisible)
+        return @(*menuBarVisible);
+
+    return nil;
 }
 
 - (NSNumber *)statusBarVisibility
 {
-    return @(_windowFeatures->windowFeatures().statusBarVisible);
+    if (auto statusBarVisible = _windowFeatures->windowFeatures().statusBarVisible)
+        return @(*statusBarVisible);
+
+    return nil;
 }
 
 - (NSNumber *)toolbarsVisibility
 {
-    return @(_windowFeatures->windowFeatures().toolBarVisible);
+    if (auto toolBarVisible = _windowFeatures->windowFeatures().toolBarVisible)
+        return @(*toolBarVisible);
+
+    return nil;
 }
 
 - (NSNumber *)allowsResizing
 {
-    return @(_windowFeatures->windowFeatures().resizable);
+    if (auto resizable = _windowFeatures->windowFeatures().resizable)
+        return @(*resizable);
+
+    return nil;
 }
 
 - (NSNumber *)x
@@ -105,24 +117,54 @@
 
 @implementation WKWindowFeatures (WKPrivate)
 
+- (BOOL)_wantsPopup
+{
+    return _windowFeatures->windowFeatures().wantsPopup();
+}
+
+- (BOOL)_hasAdditionalFeatures
+{
+    return _windowFeatures->windowFeatures().hasAdditionalFeatures;
+}
+
+- (NSNumber *)_popup
+{
+    if (auto popup = _windowFeatures->windowFeatures().popup)
+        return @(*popup);
+
+    return nil;
+}
+
 - (NSNumber *)_locationBarVisibility
 {
-    return @(_windowFeatures->windowFeatures().locationBarVisible);
+    if (auto locationBarVisible = _windowFeatures->windowFeatures().locationBarVisible)
+        return @(*locationBarVisible);
+
+    return nil;
 }
 
 - (NSNumber *)_scrollbarsVisibility
 {
-    return @(_windowFeatures->windowFeatures().scrollbarsVisible);
+    if (auto scrollbarsVisible = _windowFeatures->windowFeatures().scrollbarsVisible)
+        return @(*scrollbarsVisible);
+
+    return nil;
 }
 
 - (NSNumber *)_fullscreenDisplay
 {
-    return @(_windowFeatures->windowFeatures().fullscreen);
+    if (auto fullscreen = _windowFeatures->windowFeatures().fullscreen)
+        return @(*fullscreen);
+
+    return nil;
 }
 
 - (NSNumber *)_dialogDisplay
 {
-    return @(_windowFeatures->windowFeatures().dialog);
+    if (auto dialog = _windowFeatures->windowFeatures().dialog)
+        return @(*dialog);
+
+    return nil;
 }
 
 @end
