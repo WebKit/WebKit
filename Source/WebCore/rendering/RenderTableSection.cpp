@@ -76,7 +76,7 @@ static inline void updateLogicalHeightForCell(RenderTableSection::RowStruct& row
         Length cRowLogicalHeight = row.logicalHeight;
         switch (logicalHeight.type()) {
         case LengthType::Percent:
-            if (!cRowLogicalHeight.isPercent() || cRowLogicalHeight.percent() < logicalHeight.percent())
+            if (!cRowLogicalHeight.isPercentOrCalculated() || cRowLogicalHeight.percent() < logicalHeight.percent())
                 row.logicalHeight = logicalHeight;
             break;
         case LengthType::Fixed:
