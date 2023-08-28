@@ -295,14 +295,12 @@ public:
         };
 
         struct LayerData {
-#if USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+#if PLATFORM(COCOA)
             std::tuple<MachSendRight, bool> colorTexture = { MachSendRight(), false };
             std::tuple<MachSendRight, bool> depthStencilBuffer = { MachSendRight(), false };
+            std::tuple<MachSendRight, uint64_t> completionSyncEvent;
 #else
             PlatformGLObject opaqueTexture { 0 };
-#endif
-#if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
-            std::tuple<MachSendRight, uint64_t> completionSyncEvent;
 #endif
 
             template<class Encoder> void encode(Encoder&) const;
@@ -582,14 +580,12 @@ std::optional<Device::FrameData::StageParameters> Device::FrameData::StageParame
 template<class Encoder>
 void Device::FrameData::LayerData::encode(Encoder& encoder) const
 {
-#if USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+#if PLATFORM(COCOA)
     encoder << std::tuple(colorTexture);
     encoder << std::tuple(depthStencilBuffer);
+    encoder << std::tuple(completionSyncEvent);
 #else
     encoder << opaqueTexture;
-#endif
-#if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
-    encoder << std::tuple(completionSyncEvent);
 #endif
 }
 
@@ -597,17 +593,15 @@ template<class Decoder>
 std::optional<Device::FrameData::LayerData> Device::FrameData::LayerData::decode(Decoder& decoder)
 {
     PlatformXR::Device::FrameData::LayerData layerData;
-#if USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+#if PLATFORM(COCOA)
     if (!decoder.decode(layerData.colorTexture))
         return std::nullopt;
     if (!decoder.decode(layerData.depthStencilBuffer))
         return std::nullopt;
+    if (!decoder.decode(layerData.completionSyncEvent))
+        return std::nullopt;
 #else
     if (!decoder.decode(layerData.opaqueTexture))
-        return std::nullopt;
-#endif
-#if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
-    if (!decoder.decode(layerData.completionSyncEvent))
         return std::nullopt;
 #endif
     return layerData;

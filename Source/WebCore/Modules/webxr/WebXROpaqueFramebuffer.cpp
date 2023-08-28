@@ -36,7 +36,7 @@
 #include "WebGLRenderingContextBase.h"
 #include <wtf/Scope.h>
 
-#if USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+#if PLATFORM(COCOA)
 #include "GraphicsContextGLCocoa.h"
 #endif
 
@@ -44,7 +44,7 @@ namespace WebCore {
 
 using GL = GraphicsContextGL;
 
-#if USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+#if PLATFORM(COCOA)
 static std::optional<GL::EGLImageAttachResult> createAndBindCompositorTexture(GL& gl, GCGLenum target, GCGLOwnedTexture& texture, GL::EGLImageSource source)
 {
     texture.ensure(gl);
@@ -106,7 +106,7 @@ WebXROpaqueFramebuffer::WebXROpaqueFramebuffer(PlatformXR::LayerHandle handle, R
 WebXROpaqueFramebuffer::~WebXROpaqueFramebuffer()
 {
     if (auto gl = m_context.graphicsContextGL()) {
-#if USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+#if PLATFORM(COCOA)
         m_colorTexture.release(*gl);
 #endif
         m_depthStencilBuffer.release(*gl);
@@ -116,7 +116,7 @@ WebXROpaqueFramebuffer::~WebXROpaqueFramebuffer()
     } else {
         // The GraphicsContextGL is gone, so disarm the GCGLOwned objects so
         // their destructors don't assert.
-#if USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+#if PLATFORM(COCOA)
         m_colorTexture.release(*gl);
 #endif
         m_depthStencilBuffer.leakObject();
@@ -150,7 +150,7 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
     // FIXME: Actually do the clearing (not using invalidateFramebuffer). This will have to be done after we've attached
     // the textures/renderbuffers.
 
-#if USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+#if PLATFORM(COCOA)
     auto colorTextureSource = makeEGLImageSource(data.colorTexture);
     auto colorTextureAttachment = createAndBindCompositorTexture(gl, textureTarget, m_colorTexture, colorTextureSource);
 
@@ -184,14 +184,12 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
 
     // At this point the framebuffer should be "complete".
     ASSERT(gl.checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
+
+    m_completionSyncEvent = std::tuple(data.completionSyncEvent);
 #else
     m_colorTexture = data.opaqueTexture;
     if (!m_multisampleColorBuffer)
         gl.framebufferTexture2D(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, m_colorTexture, 0);
-#endif
-
-#if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
-    m_completionSyncEvent = std::tuple(data.completionSyncEvent);
 #endif
 }
 
@@ -232,7 +230,7 @@ void WebXROpaqueFramebuffer::endFrame()
         gl.blitFramebufferANGLE(0, 0, width(), height(), 0, 0, width(), height(), buffers, GL::NEAREST);
     }
 
-#if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
+#if PLATFORM(COCOA)
     if (std::get<MachSendRight>(m_completionSyncEvent)) {
         auto completionSync = gl.createEGLSync(m_completionSyncEvent);
         ASSERT(completionSync);
@@ -241,15 +239,7 @@ void WebXROpaqueFramebuffer::endFrame()
         gl.destroyEGLSync(completionSync);
     } else
         gl.finish();
-#else
-    // FIXME: We have to call finish rather than flush because we only want to disconnect
-    // the IOSurface and signal the DeviceProxy when we know the content has been rendered.
-    // It might be possible to set this up so the completion of the rendering triggers
-    // the endFrame call.
-    gl.finish();
-#endif
 
-#if USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
     if (m_colorImage) {
         gl.destroyEGLImage(m_colorImage);
         m_colorImage = nullptr;
@@ -258,6 +248,12 @@ void WebXROpaqueFramebuffer::endFrame()
         gl.destroyEGLImage(m_depthStencilImage);
         m_depthStencilImage = nullptr;
     }
+#else
+    // FIXME: We have to call finish rather than flush because we only want to disconnect
+    // the IOSurface and signal the DeviceProxy when we know the content has been rendered.
+    // It might be possible to set this up so the completion of the rendering triggers
+    // the endFrame call.
+    gl.finish();
 #endif
 }
 

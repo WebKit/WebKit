@@ -203,7 +203,7 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
         ASSERT(checkVolatileContextSupportIfDeviceExists(display, "EGL_ANGLE_platform_device_context_volatile_cgl", "EGL_ANGLE_device_cgl", EGL_CGL_CONTEXT_ANGLE));
     }
 
-#if ASSERT_ENABLED && USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
+#if ASSERT_ENABLED && ENABLE(WEBXR)
     const char* displayExtensions = EGL_QueryString(display, EGL_EXTENSIONS);
     ASSERT(strstr(displayExtensions, "EGL_ANGLE_metal_shared_event_sync"));
 #endif
