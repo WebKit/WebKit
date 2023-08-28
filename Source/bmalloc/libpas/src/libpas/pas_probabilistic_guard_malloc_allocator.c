@@ -259,7 +259,7 @@ void pas_probabilistic_guard_malloc_initialize_pgm(void)
     if (!pas_probabilistic_guard_malloc_is_initialized) {
         pas_probabilistic_guard_malloc_is_initialized = true;
 
-        if (PAS_LIKELY(pas_get_fast_random(1000) >= 1)) {
+        if (PAS_LIKELY(pas_get_fast_random(100) >= 1)) {
             pas_probabilistic_guard_malloc_can_use = false;
             return;
         }
