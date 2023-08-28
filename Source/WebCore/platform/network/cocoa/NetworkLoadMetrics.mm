@@ -38,7 +38,7 @@ static MonotonicTime dateToMonotonicTime(NSDate *date)
     return { };
 }
 
-static Box<NetworkLoadMetrics> packageTimingData(MonotonicTime redirectStart, NSDate *fetchStart, NSDate *domainLookupStart, NSDate *domainLookupEnd, NSDate *connectStart, NSDate *secureConnectionStart, NSDate *connectEnd, NSDate *requestStart, NSDate *responseStart, bool reusedTLSConnection, NSString *protocol, uint16_t redirectCount, bool failsTAOCheck, bool hasCrossOriginRedirect)
+static Box<NetworkLoadMetrics> packageTimingData(MonotonicTime redirectStart, NSDate *fetchStart, NSDate *domainLookupStart, NSDate *domainLookupEnd, NSDate *connectStart, NSDate *secureConnectionStart, NSDate *connectEnd, NSDate *requestStart, NSDate *responseStart, bool reusedTLSConnection, NSString *protocol, uint16_t redirectCount, uint16_t responseStatus, bool failsTAOCheck, bool hasCrossOriginRedirect)
 {
 
     auto timing = Box<NetworkLoadMetrics>::create();
@@ -57,6 +57,7 @@ static Box<NetworkLoadMetrics> packageTimingData(MonotonicTime redirectStart, NS
     // Sometimes, likely because of <rdar://90997689>, responseStart is before requestStart. If this happens, use the later of the two.
     timing->responseStart = std::max(timing->requestStart, dateToMonotonicTime(responseStart));
     timing->redirectCount = redirectCount;
+    timing->responseStatus = responseStatus;
     timing->failsTAOCheck = failsTAOCheck;
     timing->hasCrossOriginRedirect = hasCrossOriginRedirect;
 
@@ -82,12 +83,13 @@ Box<NetworkLoadMetrics> copyTimingData(NSURLSessionTaskMetrics *incompleteMetric
         metrics.reusedConnection,
         metrics.response.URL.scheme,
         incompleteMetrics.redirectCount,
+        [metrics.response isKindOfClass:NSHTTPURLResponse.class] ? [(NSHTTPURLResponse *)metrics.response statusCode] : 0,
         metricsFromTask.failsTAOCheck,
         metricsFromTask.hasCrossOriginRedirect
     );
 }
 
-Box<NetworkLoadMetrics> copyTimingData(NSURLConnection *connection, const ResourceHandle& handle)
+Box<NetworkLoadMetrics> copyTimingData(NSURLConnection *connection, NSURLResponse *response, const ResourceHandle& handle)
 {
     NSDictionary *timingData = [connection _timingData];
 
@@ -112,6 +114,7 @@ Box<NetworkLoadMetrics> copyTimingData(NSURLConnection *connection, const Resour
         timingValue(@"_kCFNTimingDataConnectionReused").get(),
         connection.currentRequest.URL.scheme,
         handle.redirectCount(),
+        [response isKindOfClass:NSHTTPURLResponse.class] ? [(NSHTTPURLResponse *)response statusCode] : 0,
         handle.failsTAOCheck(),
         handle.hasCrossOriginRedirect()
     );

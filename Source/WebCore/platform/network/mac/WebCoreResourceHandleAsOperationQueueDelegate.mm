@@ -265,7 +265,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         ResourceResponse resourceResponse(r.get());
         m_handle->checkTAO(resourceResponse);
 
-        auto metrics = copyTimingData(connection.get(), *m_handle);
+        auto metrics = copyTimingData(connection.get(), r.get(), *m_handle);
         resourceResponse.setSource(ResourceResponse::Source::Network);
         resourceResponse.setDeprecatedNetworkLoadMetrics(Box<NetworkLoadMetrics> { metrics });
 

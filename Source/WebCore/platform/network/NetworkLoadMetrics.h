@@ -33,6 +33,7 @@
 
 #if PLATFORM(COCOA)
 OBJC_CLASS NSURLConnection;
+OBJC_CLASS NSURLResponse;
 OBJC_CLASS NSURLSessionTaskMetrics;
 #endif
 
@@ -93,7 +94,8 @@ public:
     // ALPN Protocol ID: https://w3c.github.io/resource-timing/#bib-RFC7301
     String protocol;
 
-    uint16_t redirectCount { 0 };
+    uint16_t redirectCount : 5 { 0 }; // Limited to 20 by maxRedirectCount
+    uint16_t responseStatus : 10 { 0 }; // 0 - 999 according to https://fetch.spec.whatwg.org/#concept-status
 
     bool complete : 1 { false };
     bool cellular : 1 { false };
@@ -141,7 +143,7 @@ private:
 };
 
 #if PLATFORM(COCOA)
-Box<NetworkLoadMetrics> copyTimingData(NSURLConnection *, const ResourceHandle&);
+Box<NetworkLoadMetrics> copyTimingData(NSURLConnection *, NSURLResponse *, const ResourceHandle&);
 WEBCORE_EXPORT Box<NetworkLoadMetrics> copyTimingData(NSURLSessionTaskMetrics *incompleteMetrics, const NetworkLoadMetrics&);
 #endif
 
@@ -165,6 +167,7 @@ void NetworkLoadMetrics::encode(Encoder& encoder) const
     encoder << protocol;
 
     encoder << redirectCount;
+    encoder << responseStatus;
 
     encoder << complete;
     encoder << cellular;
@@ -271,6 +274,12 @@ std::optional<NetworkLoadMetrics> NetworkLoadMetrics::decode(Decoder& decoder)
     if (!redirectCount)
         return std::nullopt;
     metrics.redirectCount = WTFMove(*redirectCount);
+
+    std::optional<uint16_t> responseStatus;
+    decoder >> responseStatus;
+    if (!responseStatus)
+        return std::nullopt;
+    metrics.responseStatus = WTFMove(*responseStatus);
 
     std::optional<bool> complete;
     decoder >> complete;
