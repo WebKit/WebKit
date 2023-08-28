@@ -87,14 +87,6 @@ String toString(TokenType type)
         return "workgroup"_s;
     case TokenType::KeywordWrite:
         return "write"_s;
-    case TokenType::KeywordI32:
-        return "i32"_s;
-    case TokenType::KeywordU32:
-        return "u32"_s;
-    case TokenType::KeywordF32:
-        return "f32"_s;
-    case TokenType::KeywordBool:
-        return "bool"_s;
     case TokenType::KeywordBreak:
         return "break"_s;
     case TokenType::KeywordContinue:

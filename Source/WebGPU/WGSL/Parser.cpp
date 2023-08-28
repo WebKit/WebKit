@@ -558,22 +558,6 @@ Result<AST::TypeName::Ref> Parser<Lexer>::parseTypeName()
 
     if (current().type == TokenType::KeywordArray)
         return parseArrayType();
-    if (current().type == TokenType::KeywordI32) {
-        consume();
-        RETURN_ARENA_NODE(NamedTypeName, AST::Identifier::makeWithSpan(CURRENT_SOURCE_SPAN(), StringView { "i32"_s }));
-    }
-    if (current().type == TokenType::KeywordF32) {
-        consume();
-        RETURN_ARENA_NODE(NamedTypeName, AST::Identifier::makeWithSpan(CURRENT_SOURCE_SPAN(), StringView { "f32"_s }));
-    }
-    if (current().type == TokenType::KeywordU32) {
-        consume();
-        RETURN_ARENA_NODE(NamedTypeName, AST::Identifier::makeWithSpan(CURRENT_SOURCE_SPAN(), StringView { "u32"_s }));
-    }
-    if (current().type == TokenType::KeywordBool) {
-        consume();
-        RETURN_ARENA_NODE(NamedTypeName, AST::Identifier::makeWithSpan(CURRENT_SOURCE_SPAN(), StringView { "bool"_s }));
-    }
     if (current().type == TokenType::Identifier) {
         PARSE(name, Identifier);
         return parseTypeNameAfterIdentifier(WTFMove(name), _startOfElementPosition);
@@ -1280,14 +1264,6 @@ Result<AST::Expression::Ref> Parser<Lexer>::parsePrimaryExpression()
             RETURN_ARENA_NODE(CallExpression, WTFMove(type), WTFMove(arguments));
         }
         RETURN_ARENA_NODE(IdentifierExpression, WTFMove(ident));
-    }
-    case TokenType::KeywordI32:
-    case TokenType::KeywordU32:
-    case TokenType::KeywordF32:
-    case TokenType::KeywordBool: {
-        PARSE(type, TypeName);
-        PARSE(arguments, ArgumentExpressionList);
-        RETURN_ARENA_NODE(CallExpression, WTFMove(type), WTFMove(arguments));
     }
     case TokenType::KeywordArray: {
         PARSE(arrayType, ArrayType);
