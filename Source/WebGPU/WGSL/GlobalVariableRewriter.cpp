@@ -712,6 +712,8 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
         RELEASE_ASSERT_NOT_REACHED();
     }, [&](const Function&) -> BindGroupLayoutEntry::BindingMember {
         RELEASE_ASSERT_NOT_REACHED();
+    }, [&](const TypeConstructor&) -> BindGroupLayoutEntry::BindingMember {
+        RELEASE_ASSERT_NOT_REACHED();
     }, [&](const Bottom&) -> BindGroupLayoutEntry::BindingMember {
         RELEASE_ASSERT_NOT_REACHED();
     });

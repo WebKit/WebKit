@@ -417,7 +417,7 @@ void StringDumper::visit(NamedTypeName& type)
 
 void StringDumper::visit(ParameterizedTypeName& type)
 {
-    m_out.print(ParameterizedTypeName::baseToString(type.base()), "<");
+    m_out.print(type.base(), "<");
     visit(type.elementType());
     m_out.print(">");
 }

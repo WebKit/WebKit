@@ -100,150 +100,18 @@ class ParameterizedTypeName : public TypeName {
     WGSL_AST_BUILDER_NODE(ParameterizedTypeName);
 
 public:
-    enum class Base {
-        Vec2,
-        Vec3,
-        Vec4,
-        Mat2x2,
-        Mat2x3,
-        Mat2x4,
-        Mat3x2,
-        Mat3x3,
-        Mat3x4,
-        Mat4x2,
-        Mat4x3,
-        Mat4x4,
-        Texture1d,
-        Texture2d,
-        Texture2dArray,
-        Texture3d,
-        TextureCube,
-        TextureCubeArray,
-        TextureMultisampled2d,
-        TextureStorage1d,
-        TextureStorage2d,
-        TextureStorage2dArray,
-        TextureStorage3d,
-
-        LastEntry = TextureStorage3d,
-    };
-    static constexpr unsigned NumberOfBaseTypes = static_cast<unsigned>(Base::LastEntry) + 1;
-
-    static std::optional<Base> stringViewToKind(const StringView& view)
-    {
-        if (view == "vec2"_s)
-            return Base::Vec2;
-        if (view == "vec3"_s)
-            return Base::Vec3;
-        if (view == "vec4"_s)
-            return Base::Vec4;
-        if (view == "mat2x2"_s)
-            return Base::Mat2x2;
-        if (view == "mat2x3"_s)
-            return Base::Mat2x3;
-        if (view == "mat2x4"_s)
-            return Base::Mat2x4;
-        if (view == "mat3x2"_s)
-            return Base::Mat3x2;
-        if (view == "mat3x3"_s)
-            return Base::Mat3x3;
-        if (view == "mat3x4"_s)
-            return Base::Mat3x4;
-        if (view == "mat4x2"_s)
-            return Base::Mat4x2;
-        if (view == "mat4x3"_s)
-            return Base::Mat4x3;
-        if (view == "mat4x4"_s)
-            return Base::Mat4x4;
-        if (view == "texture_1d"_s)
-            return Base::Texture1d;
-        if (view == "texture_2d"_s)
-            return Base::Texture2d;
-        if (view == "texture_2d_array"_s)
-            return Base::Texture2dArray;
-        if (view == "texture_3d"_s)
-            return Base::Texture3d;
-        if (view == "texture_cube"_s)
-            return Base::TextureCube;
-        if (view == "texture_cube_array"_s)
-            return Base::TextureCubeArray;
-        if (view == "texture_multisampled_2d"_s)
-            return Base::TextureMultisampled2d;
-        if (view == "texture_storage_1d"_s)
-            return Base::TextureStorage1d;
-        if (view == "texture_storage_2d"_s)
-            return Base::TextureStorage2d;
-        if (view == "texture_storage_2d_array"_s)
-            return Base::TextureStorage2dArray;
-        if (view == "texture_storage_3d"_s)
-            return Base::TextureStorage3d;
-        return std::nullopt;
-    }
-
-    static ASCIILiteral baseToString(Base base)
-    {
-        switch (base) {
-        case Base::Vec2:
-            return "vec2"_s;
-        case Base::Vec3:
-            return "vec3"_s;
-        case Base::Vec4:
-            return "vec4"_s;
-        case Base::Mat2x2:
-            return "mat2x2"_s;
-        case Base::Mat2x3:
-            return "mat2x3"_s;
-        case Base::Mat2x4:
-            return "mat2x4"_s;
-        case Base::Mat3x2:
-            return "mat3x2"_s;
-        case Base::Mat3x3:
-            return "mat3x3"_s;
-        case Base::Mat3x4:
-            return "mat3x4"_s;
-        case Base::Mat4x2:
-            return "mat4x2"_s;
-        case Base::Mat4x3:
-            return "mat4x3"_s;
-        case Base::Mat4x4:
-            return "mat4x4"_s;
-        case Base::Texture1d:
-            return "texture_1d"_s;
-        case Base::Texture2d:
-            return "texture_2d"_s;
-        case Base::Texture2dArray:
-            return "texture_2d_array"_s;
-        case Base::Texture3d:
-            return "texture_3d"_s;
-        case Base::TextureCube:
-            return "texture_cube"_s;
-        case Base::TextureCubeArray:
-            return "texture_cube_array"_s;
-        case Base::TextureMultisampled2d:
-            return "texture_multisampled_2d"_s;
-        case Base::TextureStorage1d:
-            return "texture_storage_1d"_s;
-        case Base::TextureStorage2d:
-            return "texture_storage_2d"_s;
-        case Base::TextureStorage2dArray:
-            return "texture_storage_2d_array"_s;
-        case Base::TextureStorage3d:
-            return "texture_storage_3d"_s;
-        }
-    }
-
     NodeKind kind() const override;
-    Base base() const { return m_base; }
+    Identifier& base() { return m_base; }
     TypeName& elementType() { return m_elementType; }
 
 private:
-    ParameterizedTypeName(SourceSpan span, Base base, TypeName::Ref&& elementType)
+    ParameterizedTypeName(SourceSpan span, Identifier&& base, TypeName::Ref&& elementType)
         : TypeName(span)
-        , m_base(base)
+        , m_base(WTFMove(base))
         , m_elementType(WTFMove(elementType))
     { }
 
-    Base m_base;
+    Identifier m_base;
     TypeName::Ref m_elementType;
 };
 

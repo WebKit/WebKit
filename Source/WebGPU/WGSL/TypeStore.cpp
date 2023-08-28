@@ -115,7 +115,6 @@ void TypeStore::TypeCache::insert(const Key& key, const Type* type)
 }
 
 TypeStore::TypeStore()
-    : m_typeConstrutors(AST::ParameterizedTypeName::NumberOfBaseTypes)
 {
     m_bottom = allocateType<Bottom>();
     m_abstractInt = allocateType<Primitive>(Primitive::AbstractInt);
@@ -127,42 +126,11 @@ TypeStore::TypeStore()
     m_f32 = allocateType<Primitive>(Primitive::F32);
     m_sampler = allocateType<Primitive>(Primitive::Sampler);
     m_textureExternal = allocateType<Primitive>(Primitive::TextureExternal);
-
-    allocateConstructor(&TypeStore::vectorType, AST::ParameterizedTypeName::Base::Vec2, 2);
-    allocateConstructor(&TypeStore::vectorType, AST::ParameterizedTypeName::Base::Vec3, 3);
-    allocateConstructor(&TypeStore::vectorType, AST::ParameterizedTypeName::Base::Vec4, 4);
-    allocateConstructor(&TypeStore::matrixType, AST::ParameterizedTypeName::Base::Mat2x2, 2, 2);
-    allocateConstructor(&TypeStore::matrixType, AST::ParameterizedTypeName::Base::Mat2x3, 2, 3);
-    allocateConstructor(&TypeStore::matrixType, AST::ParameterizedTypeName::Base::Mat2x4, 2, 4);
-    allocateConstructor(&TypeStore::matrixType, AST::ParameterizedTypeName::Base::Mat3x2, 3, 2);
-    allocateConstructor(&TypeStore::matrixType, AST::ParameterizedTypeName::Base::Mat3x3, 3, 3);
-    allocateConstructor(&TypeStore::matrixType, AST::ParameterizedTypeName::Base::Mat3x4, 3, 4);
-    allocateConstructor(&TypeStore::matrixType, AST::ParameterizedTypeName::Base::Mat4x2, 4, 2);
-    allocateConstructor(&TypeStore::matrixType, AST::ParameterizedTypeName::Base::Mat4x3, 4, 3);
-    allocateConstructor(&TypeStore::matrixType, AST::ParameterizedTypeName::Base::Mat4x4, 4, 4);
-
-    allocateConstructor(&TypeStore::textureType, AST::ParameterizedTypeName::Base::Texture1d, Texture::Kind::Texture1d);
-    allocateConstructor(&TypeStore::textureType, AST::ParameterizedTypeName::Base::Texture2d, Texture::Kind::Texture2d);
-    allocateConstructor(&TypeStore::textureType, AST::ParameterizedTypeName::Base::Texture2dArray, Texture::Kind::Texture2dArray);
-    allocateConstructor(&TypeStore::textureType, AST::ParameterizedTypeName::Base::Texture3d, Texture::Kind::Texture3d);
-    allocateConstructor(&TypeStore::textureType, AST::ParameterizedTypeName::Base::TextureCube, Texture::Kind::TextureCube);
-    allocateConstructor(&TypeStore::textureType, AST::ParameterizedTypeName::Base::TextureCubeArray, Texture::Kind::TextureCubeArray);
-    allocateConstructor(&TypeStore::textureType, AST::ParameterizedTypeName::Base::TextureMultisampled2d, Texture::Kind::TextureMultisampled2d);
-    allocateConstructor(&TypeStore::textureType, AST::ParameterizedTypeName::Base::TextureStorage1d, Texture::Kind::TextureStorage1d);
-    allocateConstructor(&TypeStore::textureType, AST::ParameterizedTypeName::Base::TextureStorage2d, Texture::Kind::TextureStorage2d);
-    allocateConstructor(&TypeStore::textureType, AST::ParameterizedTypeName::Base::TextureStorage2dArray, Texture::Kind::TextureStorage2dArray);
-    allocateConstructor(&TypeStore::textureType, AST::ParameterizedTypeName::Base::TextureStorage3d, Texture::Kind::TextureStorage3d);
 }
 
 const Type* TypeStore::structType(AST::Structure& structure, HashMap<String, const Type*>&& fields)
 {
     return allocateType<Struct>(structure, fields);
-}
-
-const Type* TypeStore::constructType(AST::ParameterizedTypeName::Base base, const Type* elementType)
-{
-    auto& typeConstructor = m_typeConstrutors[WTF::enumToUnderlyingType(base)];
-    return typeConstructor.construct(elementType);
 }
 
 const Type* TypeStore::arrayType(const Type* elementType, std::optional<unsigned> size)
@@ -225,20 +193,16 @@ const Type* TypeStore::referenceType(AddressSpace addressSpace, const Type* elem
     return type;
 }
 
+const Type* TypeStore::typeConstructorType(ASCIILiteral name, std::function<const Type*(AST::ParameterizedTypeName&)>&& constructor)
+{
+    return allocateType<TypeConstructor>(name, WTFMove(constructor));
+}
+
 template<typename TypeKind, typename... Arguments>
 const Type* TypeStore::allocateType(Arguments&&... arguments)
 {
     m_types.append(std::unique_ptr<Type>(new Type(TypeKind { std::forward<Arguments>(arguments)... })));
     return m_types.last().get();
-}
-
-template<typename TargetConstructor, typename Base, typename... Arguments>
-void TypeStore::allocateConstructor(TargetConstructor constructor, Base base, Arguments&&... arguments)
-{
-    m_typeConstrutors[WTF::enumToUnderlyingType(base)] =
-        TypeConstructor { [this, constructor, arguments...](const Type* elementType) -> const Type* {
-            return (this->*constructor)(elementType, arguments...);
-        } };
 }
 
 } // namespace WGSL

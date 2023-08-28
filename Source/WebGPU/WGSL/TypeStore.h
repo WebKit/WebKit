@@ -64,8 +64,7 @@ public:
     const Type* textureType(const Type*, Types::Texture::Kind);
     const Type* functionType(Vector<const Type*>&&, const Type*);
     const Type* referenceType(AddressSpace, const Type*, AccessMode);
-
-    const Type* constructType(AST::ParameterizedTypeName::Base, const Type*);
+    const Type* typeConstructorType(ASCIILiteral, std::function<const Type*(AST::ParameterizedTypeName&)>&&);
 
 private:
     class TypeCache {
@@ -83,15 +82,7 @@ private:
     template<typename TypeKind, typename... Arguments>
     const Type* allocateType(Arguments&&...);
 
-    template<typename TargetConstructor, typename Base, typename... Arguments>
-    void allocateConstructor(TargetConstructor, Base, Arguments&&...);
-
-    struct TypeConstructor {
-        std::function<const Type*(const Type*)> construct;
-    };
-
     Vector<std::unique_ptr<const Type>> m_types;
-    FixedVector<TypeConstructor> m_typeConstrutors;
     TypeCache m_cache;
 
     const Type* m_bottom;
