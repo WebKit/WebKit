@@ -114,8 +114,6 @@ void ClassChangeInvalidation::computeInvalidation(const SpaceSplitString& oldCla
     if (shouldInvalidateCurrent)
         m_element.invalidateStyle();
 
-    auto& ruleSets = m_element.styleResolver().ruleSets();
-
     auto invalidateBeforeChange = [](ClassChangeType type, IsNegation isNegation, MatchElement matchElement) {
         if (matchElement == MatchElement::AnySibling || matchElement == MatchElement::HasNonSubjectOrScopeBreaking)
             return true;
@@ -128,16 +126,26 @@ void ClassChangeInvalidation::computeInvalidation(const SpaceSplitString& oldCla
         return type == ClassChangeType::Add ? isNegation == IsNegation::No : isNegation == IsNegation::Yes;
     };
 
-    for (auto& classChange : classChanges) {
-        if (auto* invalidationRuleSets = ruleSets.classInvalidationRuleSets(classChange.className)) {
-            for (auto& invalidationRuleSet : *invalidationRuleSets) {
-                if (invalidateBeforeChange(classChange.type, invalidationRuleSet.isNegation, invalidationRuleSet.matchElement))
-                    Invalidator::addToMatchElementRuleSets(m_beforeChangeRuleSets, invalidationRuleSet);
-                if (invalidateAfterChange(classChange.type, invalidationRuleSet.isNegation, invalidationRuleSet.matchElement))
-                    Invalidator::addToMatchElementRuleSets(m_afterChangeRuleSets, invalidationRuleSet);
+    auto collect = [&](auto& ruleSets, std::optional<MatchElement> onlyMatchElement = { }) {
+        for (auto& classChange : classChanges) {
+            if (auto* invalidationRuleSets = ruleSets.classInvalidationRuleSets(classChange.className)) {
+                for (auto& invalidationRuleSet : *invalidationRuleSets) {
+                    if (onlyMatchElement && invalidationRuleSet.matchElement != onlyMatchElement)
+                        continue;
+
+                    if (invalidateBeforeChange(classChange.type, invalidationRuleSet.isNegation, invalidationRuleSet.matchElement))
+                        Invalidator::addToMatchElementRuleSets(m_beforeChangeRuleSets, invalidationRuleSet);
+                    if (invalidateAfterChange(classChange.type, invalidationRuleSet.isNegation, invalidationRuleSet.matchElement))
+                        Invalidator::addToMatchElementRuleSets(m_afterChangeRuleSets, invalidationRuleSet);
+                }
             }
         }
-    }
+    };
+
+    collect(m_element.styleResolver().ruleSets());
+
+    if (auto* shadowRoot = m_element.shadowRoot())
+        collect(shadowRoot->styleScope().resolver().ruleSets(), MatchElement::Host);
 }
 
 void ClassChangeInvalidation::invalidateBeforeChange()
