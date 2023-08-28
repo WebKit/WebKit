@@ -4942,10 +4942,6 @@ imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visib
 # off-screen selection
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-070.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-071.html [ Skip ]
-# c-v: auto contentvisibilityautostatechanged event
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-state-changed.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-state-changed-first-observation.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-state-changed-removed.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-video.html [ ImageOnlyFailure ]
 
 # Style containment

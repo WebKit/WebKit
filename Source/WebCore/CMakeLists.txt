@@ -967,6 +967,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/ClipboardEvent.idl
     dom/Comment.idl
     dom/CompositionEvent.idl
+    dom/ContentVisibilityAutoStateChangeEvent.idl
     dom/CustomElementRegistry.idl
     dom/CustomEvent.idl
     dom/DOMException.idl

@@ -5378,13 +5378,15 @@ bool Element::isPopoverShowing() const
 // https://drafts.csswg.org/css-contain/#relevant-to-the-user
 bool Element::isRelevantToUser() const
 {
-    return !contentRelevancy().isEmpty();
+    if (auto relevancy = contentRelevancy())
+        return !relevancy->isEmpty();
+    return false;
 }
 
-OptionSet<ContentRelevancy> Element::contentRelevancy() const
+std::optional<OptionSet<ContentRelevancy>> Element::contentRelevancy() const
 {
     if (!hasRareData())
-        return { };
+        return std::nullopt;
     return elementRareData()->contentRelevancy();
 }
 

@@ -739,7 +739,7 @@ public:
 
     void contentVisibilityViewportChange(bool);
 
-    OptionSet<ContentRelevancy> contentRelevancy() const;
+    std::optional<OptionSet<ContentRelevancy>> contentRelevancy() const;
     void setContentRelevancy(OptionSet<ContentRelevancy>);
 
 protected:

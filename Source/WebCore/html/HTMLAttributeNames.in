@@ -223,6 +223,7 @@ oncanplaythrough
 onchange
 onclick
 onclose
+oncontentvisibilityautostatechange
 oncontextmenu
 oncopy
 oncuechange

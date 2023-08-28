@@ -1039,6 +1039,7 @@ dom/CompositionEvent.cpp
 dom/ConstantPropertyMap.cpp
 dom/ContainerNode.cpp
 dom/ContainerNodeAlgorithms.cpp
+dom/ContentVisibilityAutoStateChangeEvent.cpp
 dom/ContentVisibilityDocumentState.cpp
 dom/ContextDestructionObserver.cpp
 dom/CustomElementDefaultARIA.cpp
@@ -3290,6 +3291,7 @@ JSContactInfo.cpp
 JSContactProperty.cpp
 JSContactsManager.cpp
 JSContactsSelectOptions.cpp
+JSContentVisibilityAutoStateChangeEvent.cpp
 JSConvolverNode.cpp
 JSConvolverOptions.cpp
 JSCookieChangeEvent.cpp

@@ -26,7 +26,9 @@
 #include "config.h"
 #include "ContentVisibilityDocumentState.h"
 
+#include "ContentVisibilityAutoStateChangeEvent.h"
 #include "Element.h"
+#include "EventNames.h"
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverEntry.h"
 #include "NodeRenderStyle.h"
@@ -100,7 +102,9 @@ DidUpdateAnyContentRelevancy ContentVisibilityDocumentState::updateRelevancyOfCo
     for (auto target : m_observer->observationTargets()) {
         if (target) {
             auto oldRelevancy = target->contentRelevancy();
-            auto newRelevancy = oldRelevancy;
+            OptionSet<ContentRelevancy> newRelevancy;
+            if (oldRelevancy)
+                newRelevancy = *oldRelevancy;
             auto setRelevancyValue = [&](ContentRelevancy reason, bool value) {
                 if (value)
                     newRelevancy.add(reason);
@@ -123,10 +127,13 @@ DidUpdateAnyContentRelevancy ContentVisibilityDocumentState::updateRelevancyOfCo
             if (relevancyToCheck.contains(ContentRelevancy::IsInTopLayer))
                 setRelevancyValue(ContentRelevancy::IsInTopLayer, hasTopLayerinSubtree(*target));
 
-            if (oldRelevancy == newRelevancy)
+            if (oldRelevancy && oldRelevancy == newRelevancy)
                 continue;
             target->setContentRelevancy(newRelevancy);
             target->invalidateStyle();
+            ContentVisibilityAutoStateChangeEvent::Init init;
+            init.skipped = newRelevancy.isEmpty();
+            target->queueTaskToDispatchEvent(TaskSource::DOMManipulation, ContentVisibilityAutoStateChangeEvent::create(eventNames().contentvisibilityautostatechangeEvent, init));
             didUpdateAnyContentRelevancy = DidUpdateAnyContentRelevancy::Yes;
         }
     }

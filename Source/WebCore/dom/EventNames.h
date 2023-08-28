@@ -98,6 +98,7 @@ namespace WebCore {
     macro(connect) \
     macro(connectionstatechange) \
     macro(connecting) \
+    macro(contentvisibilityautostatechange) \
     macro(contextmenu) \
     macro(controllerchange) \
     macro(cookiechange) \
