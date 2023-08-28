@@ -11,7 +11,6 @@ accessibility/mac/relationships-in-frames.html [ Timeout ]
 
 # Text failures
 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Failure ]
-accessibility/dialog-showModal.html [ Failure ]
 accessibility/dynamically-ignored-canvas.html [ Failure ]
 accessibility/element-reflection-ariacontrols.html [ Failure ]
 accessibility/element-reflection-ariadetails.html [ Failure ]
