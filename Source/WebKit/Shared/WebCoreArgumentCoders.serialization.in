@@ -1458,22 +1458,25 @@ enum class WebCore::DiagnosticLoggingDomain : uint8_t {
 };
 
 struct WebCore::WindowFeatures {
+    bool hasAdditionalFeatures;
+
     std::optional<float> x;
     std::optional<float> y;
     std::optional<float> width;
     std::optional<float> height;
 
-    bool menuBarVisible;
-    bool statusBarVisible;
-    bool toolBarVisible;
-    bool locationBarVisible;
-    bool scrollbarsVisible;
-    bool resizable;
+    std::optional<bool> popup;
+    std::optional<bool> menuBarVisible;
+    std::optional<bool> statusBarVisible;
+    std::optional<bool> toolBarVisible;
+    std::optional<bool> locationBarVisible;
+    std::optional<bool> scrollbarsVisible;
+    std::optional<bool> resizable;
 
-    bool fullscreen;
-    bool dialog;
-    [NotSerialized] bool noopener;
-    [NotSerialized] bool noreferrer;
+    std::optional<bool> fullscreen;
+    std::optional<bool> dialog;
+    [NotSerialized] std::optional<bool> noopener;
+    [NotSerialized] std::optional<bool> noreferrer;
 
     [NotSerialized] Vector<String> additionalFeatures;
 };
