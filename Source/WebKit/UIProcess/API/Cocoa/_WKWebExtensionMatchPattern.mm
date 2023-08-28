@@ -233,8 +233,12 @@ static OptionSet<WebKit::WebExtensionMatchPattern::Options> toImpl(_WKWebExtensi
 
 - (BOOL)matchesURL:(NSURL *)urlToMatch options:(_WKWebExtensionMatchPatternOptions)options
 {
-    NSParameterAssert([urlToMatch isKindOfClass:NSURL.class]);
     NSAssert(!(options & _WKWebExtensionMatchPatternOptionsMatchBidirectionally), @"Invalid parameter: WKWebExtensionMatchPatternOptionsMatchBidirectionally is not valid when matching a URL");
+
+    if (!urlToMatch)
+        return NO;
+
+    NSParameterAssert([urlToMatch isKindOfClass:NSURL.class]);
 
     return _webExtensionMatchPattern->matchesURL(urlToMatch, toImpl(options));
 }
