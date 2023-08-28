@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CPU.h"
 #include "JSCConfig.h"
 #include "JSExportMacros.h"
 #include <stdint.h>
@@ -113,15 +114,13 @@ public:
     // (no spaces allowed) and set the specified option if appropriate.
     JS_EXPORT_PRIVATE static bool setOption(const char* arg, bool verify = true);
 
-    JS_EXPORT_PRIVATE static void dumpAllOptions(DumpLevel, const char* title = nullptr);
+    JS_EXPORT_PRIVATE static void executeDumpOptions();
     JS_EXPORT_PRIVATE static void dumpAllOptionsInALine(StringBuilder&);
 
     JS_EXPORT_PRIVATE static void assertOptionsAreCoherent();
     JS_EXPORT_PRIVATE static void notifyOptionsChanged();
 
 #define DECLARE_OPTION_ACCESSORS(type_, name_, defaultValue_, availability_, description_) \
-private: \
-    ALWAYS_INLINE static OptionsStorage::type_& name_##Default() { return g_jscConfig.options.name_##Default; } \
 public: \
     ALWAYS_INLINE static OptionsStorage::type_& name_() \
     { \
@@ -135,22 +134,13 @@ public: \
     static bool isAvailable(ID, Availability);
 
 private:
-    struct ConstMetaData {
-        const char* name;
-        const char* description;
-        Type type;
-        Availability availability;
-        uint16_t offsetOfOption;
-        uint16_t offsetOfOptionDefault;
-    };
-
     Options();
 
     enum DumpDefaultsOption {
         DontDumpDefaults,
         DumpDefaults
     };
-    static void dumpOptionsIfNeeded();
+    static void dumpAllOptions(DumpLevel, const char* title = nullptr);
     static void dumpAllOptions(StringBuilder&, DumpLevel, const char* title,
         const char* separator, const char* optionHeader, const char* optionFooter, DumpDefaultsOption);
     static void dumpOption(StringBuilder&, DumpLevel, ID,
@@ -162,12 +152,11 @@ private:
     static bool overrideAliasedOptionWithHeuristic(const char* name);
 #endif
 
-    inline static void* addressOfOption(Options::ID);
-    inline static void* addressOfOptionDefault(Options::ID);
-
-    static const ConstMetaData s_constMetaData[NumberOfOptions];
-
-    friend struct OptionReader;
+    static bool defaultTCSMValue();
+    static unsigned computeNumberOfGCMarkers(unsigned maxNumberOfGCMarkers);
+    static unsigned computeNumberOfWorkerThreads(int maxNumberOfWorkerThreads, int minimum = 1);
+    static int32_t computePriorityDeltaOfWorkerThreads(int32_t twoCorePriorityDelta, int32_t multiCorePriorityDelta);
+    static constexpr bool jitEnabledByDefault() { return is32Bit() || isAddress64Bit(); }
 };
 
 } // namespace JSC

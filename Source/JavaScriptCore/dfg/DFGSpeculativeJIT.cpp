@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "BinarySwitch.h"
+#include "CPUInlines.h"
 #include "CodeBlockWithJITType.h"
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGArrayifySlowPathGenerator.h"

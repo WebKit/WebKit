@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "Options.h"
 #include <wtf/NumberOfCores.h>
 #include <wtf/StdIntExtras.h>
 
@@ -178,30 +177,11 @@ constexpr bool isRegister32Bit()
     return registerSize() == 4;
 }
 
-inline bool optimizeForARMv7IDIVSupported()
-{
-    return isARMv7IDIVSupported() && Options::useArchitectureSpecificOptimizations();
-}
-
-inline bool optimizeForARM64()
-{
-    return isARM64() && Options::useArchitectureSpecificOptimizations();
-}
-
-inline bool optimizeForX86()
-{
-    return isX86() && Options::useArchitectureSpecificOptimizations();
-}
-
-inline bool optimizeForX86_64()
-{
-    return isX86_64() && Options::useArchitectureSpecificOptimizations();
-}
-
-inline bool hasSensibleDoubleToInt()
-{
-    return optimizeForX86();
-}
+inline bool optimizeForARMv7IDIVSupported();
+inline bool optimizeForARM64();
+inline bool optimizeForX86();
+inline bool optimizeForX86_64();
+inline bool hasSensibleDoubleToInt();
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 bool isKernOpenSource();

@@ -3649,8 +3649,7 @@ void CommandLine::parseArguments(int argc, char** argv)
     }
 
     int i = 1;
-    JSC::Options::DumpLevel dumpOptionsLevel = JSC::Options::DumpLevel::None;
-    bool needToExit = false;
+    bool optionsDumpRequested = false;
 
     bool hasBadJSCOptions = false;
     for (; i < argc; ++i) {
@@ -3726,12 +3725,12 @@ void CommandLine::parseArguments(int argc, char** argv)
             printUsageStatement(true);
 
         if (!strcmp(arg, "--options")) {
-            dumpOptionsLevel = JSC::Options::DumpLevel::Verbose;
-            needToExit = true;
+            JSC::Options::dumpOptions() = static_cast<unsigned>(JSC::Options::DumpLevel::Verbose);
+            optionsDumpRequested = true;
             continue;
         }
         if (!strcmp(arg, "--dumpOptions")) {
-            dumpOptionsLevel = JSC::Options::DumpLevel::Overridden;
+            JSC::Options::dumpOptions() = static_cast<unsigned>(JSC::Options::DumpLevel::Overridden);
             continue;
         }
         if (!strcmp(arg, "--sample")) {
@@ -3836,15 +3835,11 @@ void CommandLine::parseArguments(int argc, char** argv)
     for (; i < argc; ++i)
         m_arguments.append(String::fromLatin1(argv[i]));
 
-    if (dumpOptionsLevel != JSC::Options::DumpLevel::None) {
-        const char* optionsTitle = (dumpOptionsLevel == JSC::Options::DumpLevel::Overridden)
-            ? "Modified JSC runtime options:"
-            : "All JSC runtime options:";
-        JSC::Options::dumpAllOptions(dumpOptionsLevel, optionsTitle);
-    }
     JSC::Options::assertOptionsAreCoherent();
-    if (needToExit)
+    if (optionsDumpRequested) {
+        JSC::Options::executeDumpOptions();
         jscExit(EXIT_SUCCESS);
+    }
 }
 
 CommandLine::CommandLine(CommandLineForWorkersTag)

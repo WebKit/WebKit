@@ -38,6 +38,7 @@
 #include "B3StackmapGenerationParams.h"
 #include "B3ValueInlines.h"
 #include "ButterflyInlines.h"
+#include "CPUInlines.h"
 #include "CallFrameShuffler.h"
 #include "ClonedArguments.h"
 #include "DFGAbstractInterpreterInlines.h"
