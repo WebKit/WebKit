@@ -142,7 +142,7 @@ NS_SWIFT_NAME(_WKWebExtension.MatchPattern)
  @result A Boolean value indicating if pattern matches the specified URL.
  @seealso matchesURL:options:
  */
-- (BOOL)matchesURL:(NSURL *)url NS_SWIFT_UNAVAILABLE("Use options version with empty options set");
+- (BOOL)matchesURL:(nullable NSURL *)url NS_SWIFT_UNAVAILABLE("Use options version with empty options set");
 
 /*!
  @abstract Matches the reciever pattern against the specified URL with options.
@@ -151,7 +151,7 @@ NS_SWIFT_NAME(_WKWebExtension.MatchPattern)
  @result A Boolean value indicating if pattern matches the specified URL.
  @seealso matchesURL:
  */
-- (BOOL)matchesURL:(NSURL *)url options:(_WKWebExtensionMatchPatternOptions)options NS_SWIFT_NAME(matches(_:options:));
+- (BOOL)matchesURL:(nullable NSURL *)url options:(_WKWebExtensionMatchPatternOptions)options NS_SWIFT_NAME(matches(_:options:));
 
 /*!
  @abstract Matches the receiver pattern against the specified pattern.
@@ -159,7 +159,7 @@ NS_SWIFT_NAME(_WKWebExtension.MatchPattern)
  @result A Boolean value indicating if receiver pattern matches the specified pattern.
  @seealso matchesPattern:options:
  */
-- (BOOL)matchesPattern:(_WKWebExtensionMatchPattern *)pattern NS_SWIFT_UNAVAILABLE("Use options version with empty options set");
+- (BOOL)matchesPattern:(nullable _WKWebExtensionMatchPattern *)pattern NS_SWIFT_UNAVAILABLE("Use options version with empty options set");
 
 /*!
  @abstract Matches the receiver pattern against the specified pattern with options.
@@ -168,7 +168,7 @@ NS_SWIFT_NAME(_WKWebExtension.MatchPattern)
  @result A Boolean value indicating if receiver pattern matches the specified pattern.
  @seealso matchesPattern:
  */
-- (BOOL)matchesPattern:(_WKWebExtensionMatchPattern *)pattern options:(_WKWebExtensionMatchPatternOptions)options NS_SWIFT_NAME(matches(_:options:));
+- (BOOL)matchesPattern:(nullable _WKWebExtensionMatchPattern *)pattern options:(_WKWebExtensionMatchPatternOptions)options NS_SWIFT_NAME(matches(_:options:));
 
 @end
 
