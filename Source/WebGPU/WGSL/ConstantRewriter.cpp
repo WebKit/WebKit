@@ -184,49 +184,16 @@ void ConstantRewriter::visit(AST::CallExpression& call)
     bool isNamedType = is<AST::NamedTypeName>(target);
     bool isParameterizedType = !isNamedType && is<AST::ParameterizedTypeName>(target);
     if (isNamedType || isParameterizedType) {
-        std::optional<AST::ParameterizedTypeName::Base> base;
-        if (isParameterizedType)
-            base = downcast<AST::ParameterizedTypeName>(target).base();
-        else {
-            auto& targetName = downcast<AST::NamedTypeName>(target).name().id();
-            base = AST::ParameterizedTypeName::stringViewToKind(targetName);
-        }
+        AST::Identifier targetName = isParameterizedType
+            ? downcast<AST::ParameterizedTypeName>(target).base()
+            : downcast<AST::NamedTypeName>(target).name();
 
-        if (base) {
-            switch (*base) {
-            case AST::ParameterizedTypeName::Base::Vec2:
-            case AST::ParameterizedTypeName::Base::Vec3:
-            case AST::ParameterizedTypeName::Base::Vec4: {
-                evaluated(call, { call.inferredType(), ConstantVector(WTFMove(arguments)) });
-                return;
-            }
+        // FIXME: this implementation of the vector constructors is incorrect, so
+        // the ineffient comparison is irrelevant as it will be rewritten soon
+        if (targetName == "vec2"_s || targetName == "vec3"_s || targetName == "vec4"_s)
+            evaluated(call, { call.inferredType(), ConstantVector(WTFMove(arguments)) });
 
-            case AST::ParameterizedTypeName::Base::Mat2x2:
-            case AST::ParameterizedTypeName::Base::Mat2x3:
-            case AST::ParameterizedTypeName::Base::Mat2x4:
-            case AST::ParameterizedTypeName::Base::Mat3x2:
-            case AST::ParameterizedTypeName::Base::Mat3x3:
-            case AST::ParameterizedTypeName::Base::Mat3x4:
-            case AST::ParameterizedTypeName::Base::Mat4x2:
-            case AST::ParameterizedTypeName::Base::Mat4x3:
-            case AST::ParameterizedTypeName::Base::Mat4x4:
-            case AST::ParameterizedTypeName::Base::Texture1d:
-            case AST::ParameterizedTypeName::Base::Texture2d:
-            case AST::ParameterizedTypeName::Base::Texture2dArray:
-            case AST::ParameterizedTypeName::Base::Texture3d:
-            case AST::ParameterizedTypeName::Base::TextureCube:
-            case AST::ParameterizedTypeName::Base::TextureCubeArray:
-            case AST::ParameterizedTypeName::Base::TextureMultisampled2d:
-            case AST::ParameterizedTypeName::Base::TextureStorage1d:
-            case AST::ParameterizedTypeName::Base::TextureStorage2d:
-            case AST::ParameterizedTypeName::Base::TextureStorage2dArray:
-            case AST::ParameterizedTypeName::Base::TextureStorage3d:
-                return;
-            }
-        }
-
-        ASSERT(isNamedType);
-        auto it = m_constantFunctions.find(downcast<AST::NamedTypeName>(target).name().id());
+        auto it = m_constantFunctions.find(targetName);
         if (it != m_constantFunctions.end()) {
             materialize(call, it->value(arguments));
             return;
@@ -329,6 +296,9 @@ void ConstantRewriter::materialize(Node& expression, const ConstantValue& value)
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Texture&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const TypeConstructor&) {
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Bottom&) {

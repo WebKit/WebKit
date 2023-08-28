@@ -470,6 +470,13 @@ String FontCascade::normalizeSpaces(const UChar* characters, unsigned length)
     return normalizeSpacesInternal(characters, length);
 }
 
+String FontCascade::normalizeSpaces(StringView stringView)
+{
+    if (stringView.is8Bit())
+        return normalizeSpacesInternal(stringView.characters8(), stringView.length());
+    return normalizeSpacesInternal(stringView.characters16(), stringView.length());
+}
+
 static std::atomic<bool> disableFontSubpixelAntialiasingForTesting = false;
 
 void FontCascade::setDisableFontSubpixelAntialiasingForTesting(bool disable)

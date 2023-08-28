@@ -70,10 +70,6 @@ enum class TokenType: uint32_t {
     KeywordVar,
     KeywordWorkgroup,
     KeywordWrite,
-    KeywordI32,
-    KeywordU32,
-    KeywordF32,
-    KeywordBool,
     LiteralTrue,
     LiteralFalse,
     // FIXME: add all the other keywords: see #keyword-summary in the WGSL spec

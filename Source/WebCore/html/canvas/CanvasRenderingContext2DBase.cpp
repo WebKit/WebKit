@@ -2075,6 +2075,14 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(H
     if (cachedImage->status() == CachedResource::LoadError)
         return Exception { InvalidStateError };
 
+    // Image may have a zero-width or a zero-height.
+    Length intrinsicWidth;
+    Length intrinsicHeight;
+    FloatSize intrinsicRatio;
+    cachedImage->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
+    if (intrinsicWidth.isZero() || intrinsicHeight.isZero())
+        return nullptr;
+
     return createPattern(*cachedImage, imageElement.renderer(), repeatX, repeatY);
 }
 

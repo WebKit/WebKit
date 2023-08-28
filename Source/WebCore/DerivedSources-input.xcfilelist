@@ -1273,6 +1273,7 @@ $(PROJECT_DIR)/dom/ChildNode.idl
 $(PROJECT_DIR)/dom/ClipboardEvent.idl
 $(PROJECT_DIR)/dom/Comment.idl
 $(PROJECT_DIR)/dom/CompositionEvent.idl
+$(PROJECT_DIR)/dom/ContentVisibilityAutoStateChangeEvent.idl
 $(PROJECT_DIR)/dom/CustomElementRegistry.idl
 $(PROJECT_DIR)/dom/CustomEvent.idl
 $(PROJECT_DIR)/dom/DOMException.idl

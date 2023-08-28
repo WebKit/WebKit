@@ -493,7 +493,7 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
     Vector<GstCapsWebKitMapping> mseCompatibleMapping = {
         { ElementFactories::Type::AudioDecoder, "audio/x-ac3", { }, { "x-ac3"_s, "ac-3"_s, "ac3"_s } },
         { ElementFactories::Type::AudioDecoder, "audio/x-eac3", { "audio/x-ac3"_s },  { "x-eac3"_s, "ec3"_s, "ec-3"_s, "eac3"_s } },
-        { ElementFactories::Type::AudioDecoder, "audio/x-flac", { "audio/x-flac"_s, "audio/flac"_s }, {"x-flac"_s, "flac"_s } },
+        { ElementFactories::Type::AudioDecoder, "audio/x-flac", { "audio/x-flac"_s, "audio/flac"_s }, {"x-flac"_s, "flac"_s, "fLaC"_s } },
     };
     fillMimeTypeSetFromCapsMapping(factories, mseCompatibleMapping);
 
@@ -803,8 +803,7 @@ MediaPlayerEnums::SupportsType GStreamerRegistryScanner::isContentTypeSupported(
     if (codecs.isEmpty())
         return SupportsType::MayBeSupported;
 
-    for (const auto& item : codecs) {
-        auto codec = item.convertToASCIILowercase();
+    for (const auto& codec : codecs) {
         bool requiresHardwareSupport = contentTypesRequiringHardwareSupport
             .findIf([containerType, codec](auto& hardwareContentType) -> bool {
             auto hardwareContainer = hardwareContentType.containerType();

@@ -22,9 +22,12 @@
 
 #if ENABLE(WEB_CODECS) && USE(GSTREAMER)
 
+#include "GStreamerCodecUtilities.h"
 #include "GStreamerCommon.h"
 #include "GStreamerElementHarness.h"
 #include "GStreamerRegistryScanner.h"
+#include "HEVCUtilities.h"
+#include "VP9Utilities.h"
 #include "VideoFrameGStreamer.h"
 #include <wtf/WorkQueue.h>
 
@@ -48,7 +51,14 @@ public:
     {
         return adoptRef(*new GStreamerInternalVideoDecoder(codecName, config, WTFMove(outputCallback), WTFMove(postTaskCallback), WTFMove(element)));
     }
-    ~GStreamerInternalVideoDecoder() = default;
+    ~GStreamerInternalVideoDecoder()
+    {
+        if (isConfigured()) {
+            GST_DEBUG_OBJECT(harnessedElement(), "Disposing video decoder");
+            return;
+        }
+        GST_DEBUG("Disposing un-configured video decoder");
+    }
 
     void postTask(Function<void()>&& task) { m_postTaskCallback(WTFMove(task)); }
     void decode(std::span<const uint8_t>, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration,  VideoDecoder::DecodeCallback&&);
@@ -71,12 +81,40 @@ private:
     GRefPtr<GstCaps> m_inputCaps;
 };
 
+static bool validateCodecString(const StringView& codecString)
+{
+    if (codecString.startsWith("avc1"_s)) {
+        auto parameters = parseAVCCodecParameters(codecString);
+        // Limit to High Profile, level 5.2.
+        return parameters && parameters->profileIDC <= 100 && parameters->levelIDC <= 52;
+    }
+    if (codecString.startsWith("vp09"_s)) {
+        auto parameters = parseVPCodecParameters(codecString);
+        return parameters.has_value();
+    }
+    if (codecString.startsWith("hvc1"_s) || codecString.startsWith("hev1"_s))
+        return GStreamerCodecUtilities::parseHEVCProfile(codecString.toString());
+    if (codecString.startsWith("av01."_s)) {
+        auto components = codecString.split('.');
+        auto nextElement = components.begin();
+        ++nextElement;
+
+        auto profile = *nextElement;
+        return profile == "0"_s || profile == "1"_s || profile == "2"_s;
+    }
+
+    return true;
+}
+
 bool GStreamerVideoDecoder::create(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback, PostTaskCallback&& postTaskCallback)
 {
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkit_video_decoder_debug, "webkitvideodecoder", 0, "WebKit WebCodecs Video Decoder");
     });
+
+    if (!validateCodecString(codecName))
+        return false;
 
     auto& scanner = GStreamerRegistryScanner::singleton();
     auto lookupResult = scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, codecName);
@@ -110,7 +148,6 @@ GStreamerVideoDecoder::GStreamerVideoDecoder(const String& codecName, const Conf
 
 GStreamerVideoDecoder::~GStreamerVideoDecoder()
 {
-    GST_DEBUG_OBJECT(m_internalDecoder->harnessedElement(), "Disposing");
     close();
 }
 

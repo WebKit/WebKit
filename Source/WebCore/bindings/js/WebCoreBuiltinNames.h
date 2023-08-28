@@ -117,6 +117,7 @@ namespace WebCore {
     macro(CompressionStreamTransform) \
     macro(ConstantSourceNode) \
     macro(ContactsManager) \
+    macro(ContentVisibilityAutoStateChangeEvent) \
     macro(ConvolverNode) \
     macro(Credential) \
     macro(CredentialsContainer) \

@@ -78,6 +78,16 @@ const char* GStreamerCodecUtilities::parseHEVCProfile(const String& codec)
         return nullptr;
     }
 
+    if (parameters->generalProfileSpace > 3) {
+        GST_WARNING("Invalid general_profile_space: %u", parameters->generalProfileSpace);
+        return nullptr;
+    }
+
+    if (parameters->generalProfileIDC > 0x1F) {
+        GST_WARNING("Invalid general_profile_idc: %u", parameters->generalProfileIDC);
+        return nullptr;
+    }
+
     uint8_t profileTierLevel[11] = { 0, };
     memset(profileTierLevel, 0, 11);
     profileTierLevel[0] = parameters->generalProfileIDC;

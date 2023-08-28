@@ -85,6 +85,7 @@ typedef (
     readonly attribute boolean paused;
     attribute double defaultPlaybackRate;
     attribute double playbackRate;
+    [CEReactions=NotNeeded] attribute boolean preservesPitch;
     readonly attribute TimeRanges played;
     readonly attribute TimeRanges seekable;
     readonly attribute boolean ended;
@@ -99,9 +100,10 @@ typedef (
     attribute boolean muted;
     [CEReactions=NotNeeded, Reflect=muted] attribute boolean defaultMuted;
 
-    // WebKit extensions
-    [CEReactions=NotNeeded] attribute boolean webkitPreservesPitch;
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250871
+    [CEReactions=NotNeeded, ImplementedAs=preservesPitch] attribute boolean webkitPreservesPitch;
 
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250870
     readonly attribute boolean webkitHasClosedCaptions;
     attribute boolean webkitClosedCaptionsVisible;
 

@@ -19,8 +19,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/clip-absolute-positioned-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/clip-absolute-positioned-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/clip-filter-order-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/clip-filter-order-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/clip-filter-order.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/clip-fixed-pos-transform-descendant-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/clip-fixed-pos-transform-descendant-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/clip-fixed-pos-transform-descendant-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/clip-negative-values-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/clip-negative-values-001.html
@@ -35,6 +37,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/clip-no-clipping-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/clip-no-clipping-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/clip-no-stacking-context-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/clip-no-stacking-context-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/clip-no-stacking-context.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/clip-not-absolute-positioned-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip/clip-not-absolute-positioned-001.html

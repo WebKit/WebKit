@@ -266,6 +266,9 @@ public:
     void setDefaultPlaybackRate(double) override;
     WEBCORE_EXPORT double playbackRate() const override;
     void setPlaybackRate(double) override;
+    WEBCORE_EXPORT bool preservesPitch() const;
+    WEBCORE_EXPORT void setPreservesPitch(bool);
+
 
 // MediaTime versions of playback state
     MediaTime currentMediaTime() const;
@@ -274,8 +277,6 @@ public:
     WEBCORE_EXPORT void fastSeek(const MediaTime&);
 
     void updatePlaybackRate();
-    WEBCORE_EXPORT bool webkitPreservesPitch() const;
-    WEBCORE_EXPORT void setWebkitPreservesPitch(bool);
     Ref<TimeRanges> played() override;
     Ref<TimeRanges> seekable() const override;
     double seekableTimeRangesLastModifiedTime() const;
@@ -1070,7 +1071,7 @@ private:
     double m_requestedPlaybackRate { 1 };
     double m_reportedPlaybackRate { 1 };
     double m_defaultPlaybackRate { 1 };
-    bool m_webkitPreservesPitch { true };
+    bool m_preservesPitch { true };
     NetworkState m_networkState { NETWORK_EMPTY };
     ReadyState m_readyState { HAVE_NOTHING };
     ReadyState m_readyStateMaximum { HAVE_NOTHING };

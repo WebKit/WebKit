@@ -115,6 +115,9 @@ void Type::dump(PrintStream& out) const
         [&](const Reference& reference) {
             out.print("ref<", reference.addressSpace, ", ", *reference.element, ", ", reference.accessMode, ">");
         },
+        [&](const TypeConstructor& constructor) {
+            out.print(constructor.name);
+        },
         [&](const Bottom&) {
             // Bottom is an implementation detail and should never leak, but we
             // keep the ability to print it in debug to help when dumping types
@@ -265,6 +268,9 @@ unsigned Type::size() const
         [&](const Reference&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
+        [&](const TypeConstructor&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
         [&](const Bottom&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         });
@@ -316,6 +322,9 @@ unsigned Type::alignment() const
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Reference&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const TypeConstructor&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Bottom&) -> unsigned {

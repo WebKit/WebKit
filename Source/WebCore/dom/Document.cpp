@@ -9596,7 +9596,7 @@ bool Document::isObservingContentVisibilityTargets() const
 
 void Document::updateRelevancyOfContentVisibilityElements()
 {
-    if (!isObservingContentVisibilityTargets())
+    if (m_contentRelevancyUpdate.isEmpty() || !isObservingContentVisibilityTargets())
         return;
     if (m_contentVisibilityDocumentState->updateRelevancyOfContentVisibilityElements(m_contentRelevancyUpdate) == DidUpdateAnyContentRelevancy::Yes)
         updateLayoutIgnorePendingStylesheets();

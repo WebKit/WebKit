@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 200x200
+  RenderSVGRoot {svg} at (50,50) size 100x100
+    RenderSVGContainer {g} at (0,0) size 0x0
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceFilter {filter} [id="filter"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feGaussianBlur stdDeviation="0.00, 0.00"]
+          [SourceGraphic]
+      RenderSVGResourceMasker {mask} [id="maskFill"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
+        RenderSVGRect {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
+        RenderSVGRect {rect} at (48,48) size 4x4 [stroke={[type=SOLID] [color=#000000] [stroke width=100.00]}] [x=49.00] [y=49.00] [width=2.00] [height=2.00]
+          [filter="filter"] RenderSVGResourceFilter {filter} at (48.80,48.80) size 2.40x2.40
+    RenderSVGContainer {g} at (50,50) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,50.00)}]
+      RenderSVGRect {rect} at (50,50) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (50,50) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+        [masker="maskFill"] RenderSVGResourceMasker {mask} at (0,0) size 110x110

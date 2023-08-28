@@ -47,7 +47,6 @@
 #import "PaymentAuthorizationViewController.h"
 #import "PrintInfo.h"
 #import "ProvisionalPageProxy.h"
-#import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeHost.h"
 #import "RemoteLayerTreeNode.h"
 #import "RemoteLayerTreeTransaction.h"

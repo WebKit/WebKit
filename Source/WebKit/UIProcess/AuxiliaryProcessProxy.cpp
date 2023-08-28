@@ -58,8 +58,8 @@ AuxiliaryProcessProxy::AuxiliaryProcessProxy(bool alwaysRunsAtBackgroundPriority
 
 AuxiliaryProcessProxy::~AuxiliaryProcessProxy()
 {
-    if (m_connection)
-        m_connection->invalidate();
+    if (RefPtr connection = m_connection)
+        connection->invalidate();
 
     if (m_processLauncher) {
         m_processLauncher->invalidate();
@@ -300,11 +300,12 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection
     m_boostedJetsamAssertion = ProcessAssertion::create(xpc_connection_get_pid(connectionIdentifier.xpcConnection.get()), "Jetsam Boost"_s, ProcessAssertionType::BoostedJetsam);
 #endif
 
-    m_connection = IPC::Connection::createServerConnection(connectionIdentifier);
+    RefPtr connection = IPC::Connection::createServerConnection(connectionIdentifier);
+    m_connection = connection.copyRef();
 
-    connectionWillOpen(*m_connection);
-    m_connection->open(*this);
-    m_connection->setOutgoingMessageQueueIsGrowingLargeCallback([weakThis = WeakPtr { *this }] {
+    connectionWillOpen(*connection);
+    connection->open(*this);
+    connection->setOutgoingMessageQueueIsGrowingLargeCallback([weakThis = WeakPtr { *this }] {
         ensureOnMainRunLoop([weakThis] {
             if (weakThis)
                 weakThis->outgoingMessageQueueIsGrowingLarge();
@@ -315,9 +316,9 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection
         if (!shouldSendPendingMessage(pendingMessage))
             continue;
         if (pendingMessage.asyncReplyHandler)
-            m_connection->sendMessageWithAsyncReply(WTFMove(pendingMessage.encoder), WTFMove(*pendingMessage.asyncReplyHandler), pendingMessage.sendOptions);
+            connection->sendMessageWithAsyncReply(WTFMove(pendingMessage.encoder), WTFMove(*pendingMessage.asyncReplyHandler), pendingMessage.sendOptions);
         else
-            m_connection->sendMessage(WTFMove(pendingMessage.encoder), pendingMessage.sendOptions);
+            connection->sendMessage(WTFMove(pendingMessage.encoder), pendingMessage.sendOptions);
     }
 }
 
@@ -361,15 +362,16 @@ void AuxiliaryProcessProxy::shutDownProcess()
         return;
     }
 
-    if (!m_connection)
+    RefPtr connection = m_connection;
+    if (!connection)
         return;
 
-    processWillShutDown(*m_connection);
+    processWillShutDown(*connection);
 
     if (canSendMessage())
         send(Messages::AuxiliaryProcess::ShutDown(), 0);
 
-    m_connection->invalidate();
+    connection->invalidate();
     m_connection = nullptr;
     m_responsivenessTimer.invalidate();
 }

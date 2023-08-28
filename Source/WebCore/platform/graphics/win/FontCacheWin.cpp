@@ -164,9 +164,9 @@ static const Vector<DWORD, 4>& getCJKCodePageMasks(FontCache& fontCache)
     return codePageMasks;
 }
 
-static bool currentFontContainsCharacterNonBMP(HDC hdc, const UChar* str)
+static bool currentFontContainsCharacterNonBMP(HDC hdc, StringView stringView)
 {
-    ASSERT(U_IS_LEAD(str[0]) && U_IS_TRAIL(str[1]));
+    ASSERT(U_IS_LEAD(stringView[0]) && U_IS_TRAIL(stringView[1]));
 
     SCRIPT_CACHE sc = { };
     SCRIPT_FONTPROPERTIES fp = { };
@@ -179,7 +179,7 @@ static bool currentFontContainsCharacterNonBMP(HDC hdc, const UChar* str)
     gcpResults.lStructSize = sizeof gcpResults;
     gcpResults.nGlyphs = 2;
     gcpResults.lpGlyphs = glyphs;
-    GetCharacterPlacement(hdc, wcharFrom(str), 2, 0, &gcpResults, GCP_GLYPHSHAPE);
+    GetCharacterPlacement(hdc, wcharFrom(stringView.upconvertedCharacters()), 2, 0, &gcpResults, GCP_GLYPHSHAPE);
 
     if (gcpResults.nGlyphs != 1)
         return false;
@@ -187,12 +187,12 @@ static bool currentFontContainsCharacterNonBMP(HDC hdc, const UChar* str)
     return !(glyph == fp.wgBlank || glyph == fp.wgInvalid || glyph == fp.wgDefault);
 }
 
-static bool currentFontContainsCharacter(HDC hdc, const UChar* str, size_t length)
+static bool currentFontContainsCharacter(HDC hdc, StringView stringView)
 {
-    ASSERT(length <= 2);
-    if (length == 2)
-        return currentFontContainsCharacterNonBMP(hdc, str);
-    UChar character = str[0];
+    UChar32 utf32Character = *stringView.codePoints().begin();
+    if (U_IS_SUPPLEMENTARY(utf32Character))
+        return currentFontContainsCharacterNonBMP(hdc, stringView);
+    UChar character = utf32Character;
 
     static Vector<char, 512> glyphsetBuffer;
     glyphsetBuffer.resize(GetFontUnicodeRanges(hdc, 0));
@@ -220,7 +220,7 @@ static HFONT createMLangFont(IMLangFontLinkType* langFontLink, HDC hdc, DWORD co
     return hfont;
 }
 
-RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font& originalFontData, IsForPlatformFont, PreferColoredFont, const UChar* characters, unsigned length)
+RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription& description, const Font& originalFontData, IsForPlatformFont, PreferColoredFont, StringView stringView)
 {
     RefPtr<Font> fontData;
     HWndDC hdc(0);
@@ -229,8 +229,8 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     HFONT hfont = 0;
     IMLangFontLinkType* langFontLink = getFontLinkInterface();
 
-    if (length == 1 && langFontLink) {
-        UChar character = characters[0];
+    if (stringView.length() == 1 && langFontLink) {
+        UChar character = stringView[0];
         // Try MLang font linking first.
         DWORD codePages = 0;
         if (SUCCEEDED(langFontLink->GetCharCodePages(character, &codePages))) {
@@ -246,7 +246,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
                         // We asked about a code page that is not one of the code pages
                         // returned by MLang, so the font might not contain the character.
                         SelectObject(hdc, hfont);
-                        if (!currentFontContainsCharacter(hdc, characters, length)) {
+                        if (!currentFontContainsCharacter(hdc, stringView)) {
                             DeleteObject(hfont);
                             hfont = 0;
                         }
@@ -272,8 +272,8 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
 
         // FIXME: If length is greater than 1, we actually return the font for the last character.
         // This function should be renamed getFontDataForCharacter and take a single 32-bit character.
-        if (SUCCEEDED(ScriptStringAnalyse(metaFileDc, characters, length, 0, -1, SSA_METAFILE | SSA_FALLBACK | SSA_GLYPHS | SSA_LINK,
-            0, NULL, NULL, NULL, NULL, NULL, &ssa))) {
+        auto upconvertedCharacters = stringView.upconvertedCharacters();
+        if (SUCCEEDED(ScriptStringAnalyse(metaFileDc, upconvertedCharacters, stringView.length(), 0, -1, SSA_METAFILE | SSA_FALLBACK | SSA_GLYPHS | SSA_LINK, 0, nullptr, nullptr, nullptr, nullptr, nullptr, &ssa))) {
             scriptStringOutSucceeded = SUCCEEDED(ScriptStringOut(ssa, 0, 0, 0, NULL, 0, 0, FALSE));
             ScriptStringFree(&ssa);
         }
@@ -297,7 +297,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
         GetTextFace(hdc, LF_FACESIZE, name);
         familyName = String(name);
 
-        if (containsCharacter || currentFontContainsCharacter(hdc, characters, length))
+        if (containsCharacter || currentFontContainsCharacter(hdc, stringView))
             break;
 
         if (!linkedFonts)

@@ -1,14 +1,11 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: The operation is not supported.
 
-Harness Error (FAIL), message = Unhandled rejection: The operation is not supported.
-
-FAIL Test that preservesPitch is present and unprefixed. assert_true: expected true got false
+PASS Test that preservesPitch is present and unprefixed.
 PASS Test that preservesPitch is on by default
-FAIL Setup Audio element and AudioContext promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-TIMEOUT The default playbackRate should not affect pitch Test timed out
-NOTRUN The default playbackRate should not affect pitch, even with preservesPitch=false
-NOTRUN Speed-ups should not change the pitch when preservesPitch=true
-NOTRUN Slow-downs should not change the pitch when preservesPitch=true
-NOTRUN Speed-ups should change the pitch when preservesPitch=false
-NOTRUN Slow-downs should change the pitch when preservesPitch=false
+PASS Setup Audio element and AudioContext
+PASS The default playbackRate should not affect pitch
+PASS The default playbackRate should not affect pitch, even with preservesPitch=false
+PASS Speed-ups should not change the pitch when preservesPitch=true
+PASS Slow-downs should not change the pitch when preservesPitch=true
+FAIL Speed-ups should change the pitch when preservesPitch=false assert_approx_equals: The actual pitch should be close to the expected pitch. expected 880 +/- 21.55425219941349 but got 452.63929618768327
+FAIL Slow-downs should change the pitch when preservesPitch=false assert_approx_equals: The actual pitch should be close to the expected pitch. expected 220 +/- 21.55425219941349 but got 0
 

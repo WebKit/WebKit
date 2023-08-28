@@ -558,22 +558,6 @@ Result<AST::TypeName::Ref> Parser<Lexer>::parseTypeName()
 
     if (current().type == TokenType::KeywordArray)
         return parseArrayType();
-    if (current().type == TokenType::KeywordI32) {
-        consume();
-        RETURN_ARENA_NODE(NamedTypeName, AST::Identifier::makeWithSpan(CURRENT_SOURCE_SPAN(), StringView { "i32"_s }));
-    }
-    if (current().type == TokenType::KeywordF32) {
-        consume();
-        RETURN_ARENA_NODE(NamedTypeName, AST::Identifier::makeWithSpan(CURRENT_SOURCE_SPAN(), StringView { "f32"_s }));
-    }
-    if (current().type == TokenType::KeywordU32) {
-        consume();
-        RETURN_ARENA_NODE(NamedTypeName, AST::Identifier::makeWithSpan(CURRENT_SOURCE_SPAN(), StringView { "u32"_s }));
-    }
-    if (current().type == TokenType::KeywordBool) {
-        consume();
-        RETURN_ARENA_NODE(NamedTypeName, AST::Identifier::makeWithSpan(CURRENT_SOURCE_SPAN(), StringView { "bool"_s }));
-    }
     if (current().type == TokenType::Identifier) {
         PARSE(name, Identifier);
         return parseTypeNameAfterIdentifier(WTFMove(name), _startOfElementPosition);
@@ -585,12 +569,11 @@ Result<AST::TypeName::Ref> Parser<Lexer>::parseTypeName()
 template<typename Lexer>
 Result<AST::TypeName::Ref> Parser<Lexer>::parseTypeNameAfterIdentifier(AST::Identifier&& name, SourcePosition _startOfElementPosition) // NOLINT
 {
-    auto kind = AST::ParameterizedTypeName::stringViewToKind(name.id());
-    if (kind && current().type == TokenType::Lt) {
+    if (current().type == TokenType::Lt) {
         CONSUME_TYPE(Lt);
         PARSE(elementType, TypeName);
         CONSUME_TYPE(Gt);
-        RETURN_ARENA_NODE(ParameterizedTypeName, *kind, WTFMove(elementType));
+        RETURN_ARENA_NODE(ParameterizedTypeName, WTFMove(name), WTFMove(elementType));
     }
     RETURN_ARENA_NODE(NamedTypeName, WTFMove(name));
 }
@@ -1273,21 +1256,12 @@ Result<AST::Expression::Ref> Parser<Lexer>::parsePrimaryExpression()
         // use of < as either the less-than operator or the beginning of a
         // template-parameter list. Here we are checking for vector or matrix
         // type names. Alternatively, those names could be turned into keywords
-        auto typePrefix = AST::ParameterizedTypeName::stringViewToKind(ident.id());
-        if ((typePrefix && current().type == TokenType::Lt) || current().type == TokenType::ParenLeft) {
+        if (current().type == TokenType::Lt || current().type == TokenType::ParenLeft) {
             PARSE(type, TypeNameAfterIdentifier, WTFMove(ident), _startOfElementPosition);
             PARSE(arguments, ArgumentExpressionList);
             RETURN_ARENA_NODE(CallExpression, WTFMove(type), WTFMove(arguments));
         }
         RETURN_ARENA_NODE(IdentifierExpression, WTFMove(ident));
-    }
-    case TokenType::KeywordI32:
-    case TokenType::KeywordU32:
-    case TokenType::KeywordF32:
-    case TokenType::KeywordBool: {
-        PARSE(type, TypeName);
-        PARSE(arguments, ArgumentExpressionList);
-        RETURN_ARENA_NODE(CallExpression, WTFMove(type), WTFMove(arguments));
     }
     case TokenType::KeywordArray: {
         PARSE(arrayType, ArrayType);

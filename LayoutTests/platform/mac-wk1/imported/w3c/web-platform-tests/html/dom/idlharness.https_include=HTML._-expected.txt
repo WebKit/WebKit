@@ -1142,7 +1142,7 @@ PASS HTMLMediaElement interface: document.createElement("video") must inherit pr
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "paused" with the proper type
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "defaultPlaybackRate" with the proper type
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "playbackRate" with the proper type
-FAIL HTMLMediaElement interface: document.createElement("video") must inherit property "preservesPitch" with the proper type assert_inherits: property "preservesPitch" not found in prototype chain
+PASS HTMLMediaElement interface: document.createElement("video") must inherit property "preservesPitch" with the proper type
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "played" with the proper type
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "seekable" with the proper type
 PASS HTMLMediaElement interface: document.createElement("video") must inherit property "ended" with the proper type
@@ -1203,7 +1203,7 @@ PASS HTMLMediaElement interface: document.createElement("audio") must inherit pr
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "paused" with the proper type
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "defaultPlaybackRate" with the proper type
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "playbackRate" with the proper type
-FAIL HTMLMediaElement interface: document.createElement("audio") must inherit property "preservesPitch" with the proper type assert_inherits: property "preservesPitch" not found in prototype chain
+PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "preservesPitch" with the proper type
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "played" with the proper type
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "seekable" with the proper type
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "ended" with the proper type
@@ -1252,7 +1252,7 @@ PASS HTMLMediaElement interface: new Audio() must inherit property "getStartDate
 PASS HTMLMediaElement interface: new Audio() must inherit property "paused" with the proper type
 PASS HTMLMediaElement interface: new Audio() must inherit property "defaultPlaybackRate" with the proper type
 PASS HTMLMediaElement interface: new Audio() must inherit property "playbackRate" with the proper type
-FAIL HTMLMediaElement interface: new Audio() must inherit property "preservesPitch" with the proper type assert_inherits: property "preservesPitch" not found in prototype chain
+PASS HTMLMediaElement interface: new Audio() must inherit property "preservesPitch" with the proper type
 PASS HTMLMediaElement interface: new Audio() must inherit property "played" with the proper type
 PASS HTMLMediaElement interface: new Audio() must inherit property "seekable" with the proper type
 PASS HTMLMediaElement interface: new Audio() must inherit property "ended" with the proper type
@@ -1346,7 +1346,7 @@ PASS HTMLMediaElement interface: operation getStartDate()
 PASS HTMLMediaElement interface: attribute paused
 PASS HTMLMediaElement interface: attribute defaultPlaybackRate
 PASS HTMLMediaElement interface: attribute playbackRate
-FAIL HTMLMediaElement interface: attribute preservesPitch assert_true: The prototype object must have a property "preservesPitch" expected true got false
+PASS HTMLMediaElement interface: attribute preservesPitch
 PASS HTMLMediaElement interface: attribute played
 PASS HTMLMediaElement interface: attribute seekable
 PASS HTMLMediaElement interface: attribute ended

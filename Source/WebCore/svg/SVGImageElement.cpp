@@ -25,6 +25,7 @@
 #include "SVGImageElement.h"
 
 #include "CSSPropertyNames.h"
+#include "HTMLParserIdioms.h"
 #include "LegacyRenderSVGImage.h"
 #include "NodeName.h"
 #include "RenderImageResource.h"
@@ -104,6 +105,10 @@ void SVGImageElement::attributeChanged(const QualifiedName& name, const AtomStri
         break;
     case AttributeNames::heightAttr:
         m_height->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError, SVGLengthNegativeValuesMode::Forbid));
+        break;
+    case AttributeNames::crossoriginAttr:
+        if (parseCORSSettingsAttribute(oldValue) != parseCORSSettingsAttribute(newValue))
+            m_imageLoader.updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
         break;
     default:
         break;
@@ -192,6 +197,16 @@ Node::InsertedIntoAncestorResult SVGImageElement::insertedIntoAncestor(Insertion
 const AtomString& SVGImageElement::imageSourceURL() const
 {
     return getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr);
+}
+
+void SVGImageElement::setCrossOrigin(const AtomString& value)
+{
+    setAttributeWithoutSynchronization(HTMLNames::crossoriginAttr, value);
+}
+
+String SVGImageElement::crossOrigin() const
+{
+    return parseCORSSettingsAttribute(attributeWithoutSynchronization(HTMLNames::crossoriginAttr));
 }
 
 void SVGImageElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
