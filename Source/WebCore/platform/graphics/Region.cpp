@@ -414,7 +414,9 @@ IntRect Region::Shape::bounds() const
     ASSERT(minX <= maxX);
     ASSERT(minY <= maxY);
 
-    return IntRect(minX, minY, maxX - minX, maxY - minY);
+    CheckedInt32 width = checkedDifference<int32_t>(maxX, minX);
+    CheckedInt32 height = checkedDifference<int32_t>(maxY, minY);
+    return IntRect(minX, minY, width.hasOverflowed() ? std::numeric_limits<int32_t>::max() : width.value(), height.hasOverflowed() ? std::numeric_limits<int32_t>::max() : height.value());
 }
 
 void Region::Shape::translate(const IntSize& offset)
