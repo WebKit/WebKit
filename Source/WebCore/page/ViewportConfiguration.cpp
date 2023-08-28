@@ -55,6 +55,7 @@ static inline void adjustViewportArgumentsToAvoidExcessiveZooming(ViewportArgume
 }
 
 constexpr double defaultDesktopViewportWidth = 980;
+constexpr double minimumShrinkToFitWidthWhenPreferringHorizontalScrolling = 820;
 
 #if ASSERT_ENABLED
 static bool constraintsAreAllRelative(const ViewportConfiguration::Parameters& configuration)
@@ -305,7 +306,7 @@ double ViewportConfiguration::initialScaleFromSize(double width, double height, 
         else if (width > 0) {
             auto shrinkToFitWidth = m_viewLayoutSize.width();
             if (m_prefersHorizontalScrollingBelowDesktopViewportWidths)
-                shrinkToFitWidth = std::max<float>(shrinkToFitWidth, std::min(width, defaultDesktopViewportWidth));
+                shrinkToFitWidth = std::max<float>(shrinkToFitWidth, std::min(width, minimumShrinkToFitWidthWhenPreferringHorizontalScrolling));
             initialScale = shrinkToFitWidth / width;
         }
     }

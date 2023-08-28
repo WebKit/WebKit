@@ -1743,8 +1743,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (BOOL)_isWindowResizingEnabled
 {
-    UIWindowScene *scene = self.window.windowScene;
-    return [scene respondsToSelector:@selector(_enhancedWindowingEnabled)] && scene._enhancedWindowingEnabled;
+    return self.window.windowScene._enhancedWindowingEnabled;
 }
 
 #endif // HAVE(UIKIT_RESIZABLE_WINDOWS)

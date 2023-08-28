@@ -105,6 +105,15 @@ static void overridePresentMenuOrPopoverOrViewController()
 {
 }
 
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
+
+static BOOL overrideEnhancedWindowingEnabled()
+{
+    return YES;
+}
+
+#endif
+
 namespace WTR {
 
 static bool isDoneWaitingForKeyboardToStartDismissing = true;
@@ -254,6 +263,21 @@ void TestController::restorePortraitOrientationIfNeeded()
 bool TestController::platformResetStateToConsistentValues(const TestOptions& options)
 {
     cocoaResetStateToConsistentValues(options);
+
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
+    bool enhancedWindowingStateChanged = false;
+    if (options.enhancedWindowingEnabled() && !m_enhancedWindowingEnabledSwizzler) {
+        m_enhancedWindowingEnabledSwizzler = WTF::makeUnique<InstanceMethodSwizzler>(UIWindowScene.class, @selector(_enhancedWindowingEnabled), reinterpret_cast<IMP>(overrideEnhancedWindowingEnabled));
+        enhancedWindowingStateChanged = true;
+    } else if (!options.enhancedWindowingEnabled() && m_enhancedWindowingEnabledSwizzler) {
+        m_enhancedWindowingEnabledSwizzler = nullptr;
+        enhancedWindowingStateChanged = true;
+    }
+    if (enhancedWindowingStateChanged) {
+        if (auto webView = mainWebView())
+            [[NSNotificationCenter defaultCenter] postNotificationName:_UIWindowSceneEnhancedWindowingModeChanged object:webView->platformView().window.windowScene userInfo:nil];
+    }
+#endif // HAVE(UIKIT_RESIZABLE_WINDOWS)
 
     [UIKeyboardImpl.activeInstance setCorrectionLearningAllowed:NO];
     [pasteboardConsistencyEnforcer() clearPasteboard];
