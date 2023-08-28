@@ -157,12 +157,26 @@ template<> struct Coder<WTF::UUID> {
     template<typename Encoder>
     static void encode(Encoder& encoder, const WTF::UUID& instance)
     {
-        instance.encode(encoder);
+        encoder << static_cast<uint64_t>(instance.data() >> 64) << static_cast<uint64_t>(instance.data());
     }
     template<typename Decoder>
     static std::optional<WTF::UUID> decode(Decoder& decoder)
     {
-        return WTF::UUID::decode(decoder);
+        std::optional<uint64_t> high;
+        decoder >> high;
+        if (!high)
+            return std::nullopt;
+
+        std::optional<uint64_t> low;
+        decoder >> low;
+        if (!low)
+            return std::nullopt;
+
+        auto result = (static_cast<UInt128>(*high) << 64) | *low;
+        if (result == WTF::UUID::deletedValue)
+            return { };
+
+        return WTF::UUID { result };
     }
 };
 

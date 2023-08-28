@@ -41,6 +41,7 @@ $(PROJECT_DIR)/GPUProcess/graphics/PathSegment.serialization.in
 $(PROJECT_DIR)/GPUProcess/graphics/RemoteDisplayListRecorder.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/RemoteGraphicsContext.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/RemoteGraphicsContextGL.messages.in
+$(PROJECT_DIR)/GPUProcess/graphics/RemoteGraphicsContextGLInitializationState.serialization.in
 $(PROJECT_DIR)/GPUProcess/graphics/RemoteRenderingBackend.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/RemoteRenderingBackendCreationParameters.serialization.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteAdapter.messages.in
@@ -414,6 +415,7 @@ $(PROJECT_DIR)/WebProcess/GPU/webrtc/LibWebRTCRemoteCodecs.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxy.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/webrtc/SampleBufferDisplayLayer.messages.in
+$(PROJECT_DIR)/WebProcess/GPU/webrtc/SharedVideoFrame.serialization.in
 $(PROJECT_DIR)/WebProcess/Geolocation/WebGeolocationManager.messages.in
 $(PROJECT_DIR)/WebProcess/Inspector/RemoteWebInspectorUI.messages.in
 $(PROJECT_DIR)/WebProcess/Inspector/WebInspector.messages.in

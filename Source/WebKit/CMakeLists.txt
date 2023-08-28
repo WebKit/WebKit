@@ -342,6 +342,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     GPUProcess/GPUProcessSessionParameters.serialization.in
 
     GPUProcess/graphics/PathSegment.serialization.in
+    GPUProcess/graphics/RemoteGraphicsContextGLInitializationState.serialization.in
     GPUProcess/graphics/RemoteRenderingBackendCreationParameters.serialization.in
 
     GPUProcess/graphics/WebGPU/RemoteGPURequestAdapterResponse.serialization.in
@@ -492,6 +493,8 @@ set(WebKit_SERIALIZATION_IN_FILES
     WebProcess/GPU/media/RemoteCDMConfiguration.serialization.in
     WebProcess/GPU/media/RemoteMediaPlayerConfiguration.serialization.in
     WebProcess/GPU/media/RemoteMediaPlayerState.serialization.in
+
+    WebProcess/GPU/webrtc/SharedVideoFrame.serialization.in
 
     WebProcess/WebCoreSupport/WebSpeechSynthesisVoice.serialization.in
 )
