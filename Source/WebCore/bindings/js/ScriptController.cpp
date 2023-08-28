@@ -576,7 +576,7 @@ JSC::JSValue ScriptController::executeScriptIgnoringException(const String& scri
 
 JSC::JSValue ScriptController::executeScriptInWorldIgnoringException(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
 {
-    auto result = executeScriptInWorld(world, { script, URL { }, false, std::nullopt, forceUserGesture, RemoveTransientActivation::No });
+    auto result = executeScriptInWorld(world, { script, URL { }, false, std::nullopt, forceUserGesture, RemoveTransientActivation::Yes });
     return result ? result.value() : JSC::JSValue { };
 }
 

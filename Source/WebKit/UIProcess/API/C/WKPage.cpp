@@ -2604,7 +2604,7 @@ void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, vo
 #if PLATFORM(COCOA)
     auto removeTransientActivation = shouldEvaluateJavaScriptWithoutTransientActivation() ? RemoveTransientActivation::Yes : RemoveTransientActivation::No;
 #else
-    auto removeTransientActivation = RemoveTransientActivation::No;
+    auto removeTransientActivation = RemoveTransientActivation::Yes;
 #endif
 
     toImpl(pageRef)->runJavaScriptInMainFrame({ toImpl(scriptRef)->string(), URL { }, false, std::nullopt, true, removeTransientActivation }, [context, callback] (auto&& result) {
