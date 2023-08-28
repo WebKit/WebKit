@@ -53,6 +53,9 @@ public:
     void strokeText(const String& text, double x, double y, std::optional<double> maxWidth = std::nullopt);
     Ref<TextMetrics> measureText(const String& text);
 
+protected:
+    ExceptionOr<Ref<Filter>> createFilter(const String&) override;
+
 private:
     CanvasRenderingContext2D(CanvasBase&, CanvasRenderingContext2DSettings&&, bool usesCSSCompatibilityParseMode);
 

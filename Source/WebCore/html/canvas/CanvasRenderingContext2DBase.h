@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AffineTransform.h"
+#include "BeginLayerOptions.h"
 #include "CanvasDirection.h"
 #include "CanvasFillRule.h"
 #include "CanvasLineCap.h"
@@ -37,6 +38,8 @@
 #include "CanvasTextAlign.h"
 #include "CanvasTextBaseline.h"
 #include "Color.h"
+#include "Filter.h"
+#include "FilterTargetSwitcher.h"
 #include "FloatSize.h"
 #include "FontCascade.h"
 #include "FontSelectorClient.h"
@@ -141,7 +144,11 @@ public:
     void setGlobalCompositeOperation(const String&);
 
     void save() { ++m_unrealizedSaveCount; }
-    void restore();
+    ExceptionOr<void> restore();
+
+    bool hasOpenLayers() const { return !m_layers.isEmpty(); }
+    ExceptionOr<void> beginLayer(const BeginLayerOptions&);
+    ExceptionOr<void> endLayer();
 
     void scale(double sx, double sy);
     void rotate(double angleInRadians);
@@ -208,8 +215,8 @@ public:
     ExceptionOr<Ref<ImageData>> createImageData(ImageData&) const;
     ExceptionOr<Ref<ImageData>> createImageData(int width, int height, std::optional<ImageDataSettings>) const;
     ExceptionOr<Ref<ImageData>> getImageData(int sx, int sy, int sw, int sh, std::optional<ImageDataSettings>) const;
-    void putImageData(ImageData&, int dx, int dy);
-    void putImageData(ImageData&, int dx, int dy, int dirtyX, int dirtyY, int dirtyWidth, int dirtyHeight);
+    ExceptionOr<void> putImageData(ImageData&, int dx, int dy);
+    ExceptionOr<void> putImageData(ImageData&, int dx, int dy, int dirtyX, int dirtyY, int dirtyWidth, int dirtyHeight);
 
     static constexpr float webkitBackingStorePixelRatio() { return 1; }
 
@@ -264,6 +271,11 @@ public:
         FontCascade m_font;
     };
 
+    struct LayerState final {
+        Ref<Filter> filter;
+        std::shared_ptr<FilterTargetSwitcher> filterTargetSwitcher;
+    };
+
     struct State final {
         State();
 
@@ -290,6 +302,8 @@ public:
         TextAlign textAlign;
         TextBaseline textBaseline;
         Direction direction;
+
+        bool isBeginLayerState;
 
         String unparsedFont;
         FontProxy font;
@@ -324,6 +338,8 @@ protected:
     Ref<TextMetrics> measureTextInternal(const String& text);
 
     bool usesCSSCompatibilityParseMode() const { return m_usesCSSCompatibilityParseMode; }
+
+    virtual ExceptionOr<Ref<Filter>> createFilter(const String&) { return Exception { NotSupportedError }; };
 
 private:
     struct CachedImageData {
@@ -442,6 +458,8 @@ private:
     HashSet<uint32_t> m_suppliedColors;
     mutable std::optional<CachedImageData> m_cachedImageData;
     CanvasRenderingContext2DSettings m_settings;
+
+    Vector<LayerState> m_layers;
 };
 
 } // namespace WebCore

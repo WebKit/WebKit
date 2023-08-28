@@ -28,6 +28,7 @@
 
 #include "ByteArrayPixelBuffer.h"
 #include "CanvasRenderingContext.h"
+#include "CanvasRenderingContext2DBase.h"
 #include "Chrome.h"
 #include "Document.h"
 #include "Element.h"
@@ -380,6 +381,20 @@ void CanvasBase::resetGraphicsContextState() const
         m_contextStateSaver->save();
     }
 }
+
+bool CanvasBase::contextIs2DBaseWithUnclosedLayers() const
+{
+    if (!renderingContext())
+        return false;
+    const auto& context = *renderingContext();
+
+    if (!context.is2dBase())
+        return false;
+    const auto& context2DBase = downcast<CanvasRenderingContext2DBase>(context);
+
+    return context2DBase.hasOpenLayers();
+}
+
 
 WebCoreOpaqueRoot root(CanvasBase* canvas)
 {

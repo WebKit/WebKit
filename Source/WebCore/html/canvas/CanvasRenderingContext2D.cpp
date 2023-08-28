@@ -33,10 +33,12 @@
 #include "config.h"
 #include "CanvasRenderingContext2D.h"
 
+#include "CSSFilter.h"
 #include "CSSFontSelector.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSPropertyParserWorkerSafe.h"
+#include "Filter.h"
 #include "Gradient.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
@@ -245,5 +247,49 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, double x, do
     TextRun textRun(normalizedText, 0, 0, ExpansionBehavior::allowRightOnly(), direction, override, true);
     drawTextUnchecked(textRun, x, y, fill, maxWidth);
 }
+
+ExceptionOr<Ref<Filter>> CanvasRenderingContext2D::createFilter(const String& filterString)
+{
+    auto& document = canvas().document();
+    if (!document.settings().canvas2DLayersEnabled())
+        return Exception { NotSupportedError };
+
+    document.updateStyleIfNeeded();
+
+    const auto* style = canvas().computedStyle();
+    if (!style)
+        return Exception { InvalidStateError };
+
+    auto parserMode = strictToCSSParserMode(!usesCSSCompatibilityParseMode());
+    auto filterOps = CSSPropertyParserWorkerSafe::parseFilterString(document, const_cast<RenderStyle&>(*style), filterString, parserMode);
+    if (!filterOps)
+        return Exception { SyntaxError };
+
+    auto* context = drawingContext();
+    if (!context)
+        return Exception { InvalidStateError };
+
+    auto* renderer = canvas().renderer();
+    if (!renderer)
+        return Exception { InvalidStateError };
+
+    auto bounds = FloatRect({ }, canvas().size());
+    // FIXME: is this needed?
+    // if (bounds.isEmpty())
+    //    return nullptr;
+
+    auto preferredFilterRenderingModes = renderer->page().preferredFilterRenderingModes();
+    auto filter = CSSFilter::create(*renderer, *filterOps, preferredFilterRenderingModes, { 1, 1 }, bounds, *context);
+    if (!filter)
+        return Exception { UnknownError };
+
+    // TODO: what to do with this
+    auto outsets = CSSFilter::calculateOutsets(*renderer, *filterOps, bounds);
+    (void)(outsets);
+
+    filter->setFilterRegion(bounds);
+    return { filter.releaseNonNull() };
+}
+
 
 } // namespace WebCore

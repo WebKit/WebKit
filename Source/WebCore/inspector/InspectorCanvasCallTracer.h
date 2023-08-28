@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BeginLayerOptions.h"
 #include "CanvasRenderingContext2DBase.h"
 #include "WebGL2RenderingContext.h"
 #include "WebGLRenderingContextBase.h"
@@ -136,6 +137,7 @@ enum ImageSmoothingQuality;
 #endif // ENABLE(WEBGL)
 
 #define FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_ARGUMENT(macro) \
+    macro(BeginLayerOptions) \
     macro(CanvasDirection) \
     macro(CanvasFillRule) \
     macro(CanvasImageSource&) \

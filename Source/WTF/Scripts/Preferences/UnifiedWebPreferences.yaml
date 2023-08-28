@@ -1480,6 +1480,20 @@ CacheAPIEnabled:
     WebCore:
       default: false
 
+Canvas2DLayersEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "CanvasRenderingContext2D Layers API"
+  humanReadableDescription: "Enable support for layers API (beginLayer/endLayer) in CanvasRenderingContext2D"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CanvasColorSpaceEnabled:
   type: bool
   status: stable
