@@ -1882,6 +1882,11 @@ private:
         return true;
     }
 
+    void write(SerializableErrorType errorType)
+    {
+        write(enumToUnderlyingType(errorType));
+    }
+
     void write(SerializationTag tag)
     {
         writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(tag));
@@ -2249,11 +2254,6 @@ private:
             write(key.otherPrimeInfos()[i].factorCRTExponent);
             write(key.otherPrimeInfos()[i].factorCRTCoefficient);
         }
-    }
-
-    void write(SerializableErrorType errorType)
-    {
-        write(enumToUnderlyingType(errorType));
     }
 
     void write(const CryptoKey* key)
