@@ -1,0 +1,112 @@
+Tests most ARIA role definitions. See comments for more info.
+
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+
+PASS role: alert
+PASS role: alertdialog
+PASS role: application
+PASS role: article
+PASS role: banner
+PASS role: blockquote
+PASS role: button
+PASS role: caption
+PASS role: checkbox
+PASS role: code
+PASS role: combobox
+PASS role: complementary
+PASS role: contentinfo
+PASS role: definition
+PASS role: deletion
+PASS role: dialog
+PASS role: document
+FAIL role: emphasis assert_equals: <div role="emphasis">x</div> expected "emphasis" but got "generic"
+PASS role: feed
+PASS role: figure
+PASS role: generic
+PASS role: group
+PASS role: heading
+PASS role: insertion
+PASS role: link
+PASS role: log
+PASS role: main
+PASS role: marquee
+PASS role: math
+PASS role: meter
+PASS role: navigation
+PASS role: note
+PASS role: paragraph
+PASS role: progressbar
+PASS role: radio
+PASS role: radiogroup
+PASS role: scrollbar
+PASS role: search
+PASS role: searchbox
+PASS role: separator
+PASS role: slider
+PASS role: spinbutton
+PASS role: status
+FAIL role: strong assert_equals: <div role="strong">x</div> expected "strong" but got "generic"
+PASS role: subscript
+PASS role: suggestion
+PASS role: superscript
+PASS role: switch
+PASS role: term
+PASS role: textbox
+PASS role: time
+PASS role: timer
+PASS role: toolbar
+PASS role: tooltip
+

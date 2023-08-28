@@ -1,0 +1,7 @@
+Tests the #comp_hidden_not_referenced portions of the AccName Name Computation algorithm.
+
+heading label
+
+
+PASS heading with interior hidden node
+

@@ -1,0 +1,18 @@
+Tests listbox and related roles.
+
+x
+x x
+x
+x
+x
+x
+
+PASS div role is listbox
+PASS role is option (in div listbox)
+PASS role is group (in div listbox)
+PASS role is option (in group, in div listbox)
+PASS ul role is listbox
+PASS li role is option (in ul listbox)
+FAIL orphaned option outside the context of listbox assert_equals: <nav role="option" data-testname="orphaned option outside the context of listbox" data-expectedrole="navigation" class="ex">x
+</nav> expected "navigation" but got "option"
+

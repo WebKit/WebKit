@@ -493,3 +493,43 @@ window.test_driver_internal.set_window_rect = async function (rect, context=null
         testRunner.setPageVisibility("visible");
     });
 }
+
+function waitFor(condition)
+{
+    return new Promise((resolve, reject) => {
+        let interval = setInterval(() => {
+            if (condition()) {
+                clearInterval(interval);
+                resolve();
+            }
+        }, 0);
+    });
+}
+
+/**
+ *
+ * @param {Element} element
+ * @returns {Promise<string>}
+ */
+window.test_driver_internal.get_computed_label = async function (element, context=null) {
+    if (!element)
+        return "";
+    context = context ?? window;
+
+    await waitFor(() => context.internals.readyToRetrieveComputedRoleOrLabel(element));
+    return context.internals.getComputedLabel(element);
+}
+
+/**
+ *
+ * @param {Element} element
+ * @returns {Promise<string>}
+ */
+window.test_driver_internal.get_computed_role = async function (element, context=null) {
+    if (!element)
+        return "";
+    context = context ?? window;
+
+    await waitFor(() => context.internals.readyToRetrieveComputedRoleOrLabel(element));
+    return context.internals.getComputedRole(element);
+}

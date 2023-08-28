@@ -1,0 +1,9 @@
+Tests the #comp_text_node portions of the AccName Name Computation algorithm.
+
+headinglabel
+
+heading label
+
+
+PASS heading with text/comment/text nodes, with space
+

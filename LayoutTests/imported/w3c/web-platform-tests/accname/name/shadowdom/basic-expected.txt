@@ -1,0 +1,8 @@
+Tests the basic shadow DOM portions of the AccName Name Computation algorithm, coming in ARIA #167.
+
+
+
+
+PASS aria-labelledby reference to element with text content inside shadow DOM
+PASS aria-labelledby reference to element with aria-label inside shadow DOM
+

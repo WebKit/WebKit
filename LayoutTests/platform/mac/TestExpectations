@@ -2804,6 +2804,9 @@ webkit.org/b/259190 http/tests/images/heic-as-heif.html [ Pass ImageOnlyFailure 
 [ Monterey ] scrollbars/overflow-scrollbar-combinations.html  [ Pass ImageOnlyFailure ]
 [ Monterey ] svg/custom/svg-fonts-in-html.html [ Pass ImageOnlyFailure ]
 
+# Sonoma has one extra whitespace for some reason.
+[ Sonoma+ ] imported/w3c/web-platform-tests/accname/name/comp_host_language_label.html [ Failure ]
+
 # rdar://102494267 ([ New Test ] (248203@main): [ Sonoma ] http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html is a consistent failure)
 [ Sonoma+ ] http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html [ Failure ]
 

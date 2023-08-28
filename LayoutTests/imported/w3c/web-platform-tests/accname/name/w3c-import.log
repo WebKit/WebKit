@@ -1,0 +1,25 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/accname/name/ReadMe.md
+/LayoutTests/imported/w3c/web-platform-tests/accname/name/comp_embedded_control.html
+/LayoutTests/imported/w3c/web-platform-tests/accname/name/comp_hidden_not_referenced.html
+/LayoutTests/imported/w3c/web-platform-tests/accname/name/comp_host_language_label.html
+/LayoutTests/imported/w3c/web-platform-tests/accname/name/comp_label.html
+/LayoutTests/imported/w3c/web-platform-tests/accname/name/comp_labelledby.html
+/LayoutTests/imported/w3c/web-platform-tests/accname/name/comp_name_from_content.html
+/LayoutTests/imported/w3c/web-platform-tests/accname/name/comp_text_node.html
+/LayoutTests/imported/w3c/web-platform-tests/accname/name/comp_tooltip.html

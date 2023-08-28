@@ -1,0 +1,55 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/activedescendant-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/add-detached-node.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/aom-in-destroyed-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/append-image-using-illegal-map.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/aria-hidden-with-select.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/aria-owns-destroyed-by-content-replacement.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/aria-owns-fallback-content.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/aria-owns-reparent.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/aria-owns-select.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/bdo-table-cell.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/br-in-changed-subtree.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/computed-accessible-child-of-pseudo-element.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/computed-accessible-text-node.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/computed-node-checked.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/computed-node.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/content-visibility-generated-content-removal.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/delayed-ignored-change.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/displaylocked-serialize.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/hidden-textfield-with-combobox.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/iframe-owns-child.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/iframe-srcdoc.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/img-map-pseudo.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/in-page-link-with-aria-hidden.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/included-descendant-dom-removal.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/included-descendant-layout-removal.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/input-time-datalist.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/map-inside-map-2.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/map-inside-map.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/map-update-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/missing-parent.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/move-owned-inside-another-owned.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/multicol-with-text-change-role-relayout-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/object-with-unrendered-text-fallback.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/removed-from-flat-tree.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/serialize-with-no-document.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/slot-assignment-lockup.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/svg-mouse-listener.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/table-ignored-child.html
+/LayoutTests/imported/w3c/web-platform-tests/accessibility/crashtests/validation-message.html

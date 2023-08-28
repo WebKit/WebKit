@@ -1,0 +1,64 @@
+Tests tab and related roles.
+
+x
+x
+y
+x
+y
+z
+x
+y
+Tab one's stuff
+Tab two's stuff
+x
+y
+Tab one's stuff
+Tab one's stuff
+x
+x
+y
+Tab one's stuff
+Tab two's stuff
+x
+y
+Tab one's stuff
+Tab two's stuff
+
+PASS div role is tablist
+PASS role is tab (in div tablist)
+PASS role is tabpanel (with sibling div tablist)
+PASS div role is tablist (with selection)
+PASS role is tab and tab is selected
+PASS role is tab and tab is not selected
+PASS role is tabpanel (faux selected)
+PASS role is tabpanel (faux unselected)
+PASS div role is tablist (with selection, roving tabindex)
+PASS role is tab, tab is selected and in tab order
+PASS role is tab and tab is not selected, not tabbable
+PASS role is tab and tab is not selected, not tabbable (duplicate)
+PASS role is tabpanel with selection, roving tabindex
+PASS role is tabpanel with selection, roving tabindex (duplicate)
+PASS role is tabpanel with selection, roving tabindex (duplicate 2)
+PASS div role is tablist (with non-empty tabpanel)
+PASS role is tab and tab is selected (with non-empty tabpanel content)
+PASS role is tab and tab is not selected (with non-empty tabpanel content)
+PASS role is tabpanel with selection, non-empty content
+PASS role is tabpanel with selection, non-empty content (duplicate)
+PASS div role is tablist (with non-empty tabpanel and aria-controls)
+PASS role is tab, tab is selected (with aria-controls)
+PASS role is tab, tab is not selected (with aria-controls)
+PASS role is tabpanel with aria-controls and non-empty content
+PASS role is tabpanel with aria-controls and non-empty content (duplicate)
+PASS div role for button parent container is tablist
+PASS button role is tab (in div tablist)
+PASS ul role is tablist
+PASS role is tab (within li), tab is selected and in tab order
+PASS role is tab (within li), tab is not selected and in tab order
+PASS role is tabpanel as sibling to ul
+PASS role is tabpanel as sibling to ul (duplicate)
+PASS ul role is tablist (child li have role none)
+PASS role is tab (within li with role none), tab is selected and in tab order
+PASS role is tab (within li with role none), tab is not selected and in tab order
+PASS role is tabpanel as sibling to ul with child role none li elements
+PASS role is tabpanel as sibling to ul with child role none li elements (duplicate)
+

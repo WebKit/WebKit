@@ -1,0 +1,28 @@
+Tests Abstract Roles and related 9.1 Roles - handling author errors
+
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+
+PASS command role
+PASS composite role
+PASS input role
+PASS landmark role
+PASS range role
+PASS roletype role
+PASS section role
+PASS sectionhead role
+PASS select role
+PASS structure role
+PASS widget role
+PASS window role
+

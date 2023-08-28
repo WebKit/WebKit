@@ -7158,4 +7158,44 @@ bool Internals::isUsingUISideCompositing() const
     return page->chrome().client().isUsingUISideCompositing();
 }
 
+AccessibilityObject* Internals::axObjectForElement(Element& element) const
+{
+    auto* document = contextDocument();
+    if (!document)
+        return nullptr;
+    WebCore::AXObjectCache::enableAccessibility();
+
+    auto* cache = document->axObjectCache();
+    return cache ? cache->getOrCreate(&element) : nullptr;
+}
+
+String Internals::getComputedLabel(Element& element) const
+{
+    if (auto* axObject = axObjectForElement(element))
+        return axObject->computedLabel();
+    return ""_s;
+}
+
+String Internals::getComputedRole(Element& element) const
+{
+    if (auto* axObject = axObjectForElement(element))
+        return axObject->computedRoleString();
+    return ""_s;
+}
+
+bool Internals::readyToRetrieveComputedRoleOrLabel(Element& element) const
+{
+    // If the element has a renderer, it should be ready to go.
+    if (element.renderer())
+        return true;
+
+    auto* computedStyle = element.computedStyle();
+    // If we can't get computed style for some reason, assume we can query for computed role or label.
+    if (!computedStyle)
+        return true;
+
+    // If the element needs a renderer but doesn't have one yet, we aren't ready to query the computed accessibility role or label. Doing so before the renderer has been attached will yield incorrect results.
+    return !element.rendererIsNeeded(*computedStyle);
+}
+
 } // namespace WebCore
