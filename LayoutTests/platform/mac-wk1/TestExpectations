@@ -1819,8 +1819,6 @@ webkit.org/b/195098 pointerevents/mouse/pointer-events-before-mouse-events.html 
 
 webkit.org/b/244304 [ Monterey+ ] pointer-lock/pointermove-movement-delta.html [ Pass Timeout ]
 
-webkit.org/b/196915 [ Debug ] inspector/timeline/timeline-recording.html [ Pass Failure ]
-
 webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource.html [ Skip ]
 webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource-iframe.html [ Skip ]
 
@@ -2656,3 +2654,5 @@ imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visib
 webkit.org/b/260360 inspector/timeline/timeline-event-TimerFire.html [ Failure ]
 webkit.org/b/260360 inspector/timeline/timeline-event-TimerInstall.html [ Failure ]
 webkit.org/b/260360 inspector/timeline/timeline-event-TimerRemove.html [ Failure ]
+
+webkit.org/b/260883 [ Monterey+ ] inspector/timeline/timeline-recording.html [ Failure ]
