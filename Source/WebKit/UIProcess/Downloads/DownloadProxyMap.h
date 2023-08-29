@@ -67,10 +67,12 @@ public:
     void invalidate();
 
 private:
+    Ref<NetworkProcessProxy> protectedProcess();
+
     void platformCreate();
     void platformDestroy();
 
-    NetworkProcessProxy& m_process;
+    CheckedRef<NetworkProcessProxy> m_process;
     HashMap<DownloadID, RefPtr<DownloadProxy>> m_downloads;
 
     bool m_shouldTakeAssertion { false };

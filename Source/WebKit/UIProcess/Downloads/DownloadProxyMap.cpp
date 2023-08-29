@@ -59,6 +59,11 @@ DownloadProxyMap::~DownloadProxyMap()
     platformDestroy();
 }
 
+Ref<NetworkProcessProxy> DownloadProxyMap::protectedProcess()
+{
+    return m_process.get();
+}
+
 #if !PLATFORM(COCOA)
 void DownloadProxyMap::platformCreate()
 {
@@ -81,12 +86,12 @@ Ref<DownloadProxy> DownloadProxyMap::createDownloadProxy(WebsiteDataStore& dataS
         m_downloadUIAssertion = ProcessAssertion::create(getCurrentProcessID(), "WebKit downloads"_s, ProcessAssertionType::UnboundedNetworking);
 
         ASSERT(!m_downloadNetworkingAssertion);
-        m_downloadNetworkingAssertion = ProcessAssertion::create(m_process.processID(), "WebKit downloads"_s, ProcessAssertionType::UnboundedNetworking);
+        m_downloadNetworkingAssertion = ProcessAssertion::create(m_process->processID(), "WebKit downloads"_s, ProcessAssertionType::UnboundedNetworking);
 
         RELEASE_LOG(ProcessSuspension, "UIProcess took 'WebKit downloads' assertions for UIProcess and NetworkProcess");
     }
 
-    m_process.addMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID().toUInt64(), downloadProxy.get());
+    protectedProcess()->addMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID().toUInt64(), downloadProxy.get());
 
     return downloadProxy;
 }
@@ -99,7 +104,7 @@ void DownloadProxyMap::downloadFinished(DownloadProxy& downloadProxy)
 
     ASSERT(m_downloads.contains(downloadID));
 
-    m_process.removeMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadID.toUInt64());
+    protectedProcess()->removeMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadID.toUInt64());
     downloadProxy.invalidate();
     m_downloads.remove(downloadID);
 
@@ -118,7 +123,7 @@ void DownloadProxyMap::invalidate()
     for (const auto& download : m_downloads.values()) {
         download->processDidClose();
         download->invalidate();
-        m_process.removeMessageReceiver(Messages::DownloadProxy::messageReceiverName(), download->downloadID().toUInt64());
+        protectedProcess()->removeMessageReceiver(Messages::DownloadProxy::messageReceiverName(), download->downloadID().toUInt64());
     }
 
     m_downloads.clear();
