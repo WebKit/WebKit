@@ -9686,13 +9686,13 @@
         "@font-palette-values": {
             "font-family": {
                 "codegen-properties": {
-                    "parser-function": "consumeFamilyName",
-                    "parser-grammar-unused": "<family-name>",
+                    "parser-function": "consumeFamilyNameList",
+                    "parser-grammar-unused": "<family-name>#",
                     "parser-grammar-unused-reason": "Needs support for special 'family-name' processing."
                 },
                 "specification": {
                     "category": "css-fonts-4",
-                    "url": "https://www.w3.org/TR/css-fonts-4/#font-family-2-desc"
+                    "url": "https://drafts.csswg.org/css-fonts-4/#font-family-2-desc"
                 }
             },
             "base-palette": {

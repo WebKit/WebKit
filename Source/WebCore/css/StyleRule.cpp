@@ -411,15 +411,15 @@ Ref<StyleRuleFontFeatureValues> StyleRuleFontFeatureValues::create(const Vector<
     return adoptRef(*new StyleRuleFontFeatureValues(fontFamilies, WTFMove(values)));
 }
 
-Ref<StyleRuleFontPaletteValues> StyleRuleFontPaletteValues::create(const AtomString& name, const AtomString& fontFamily, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&& overrideColors)
+Ref<StyleRuleFontPaletteValues> StyleRuleFontPaletteValues::create(const AtomString& name, Vector<AtomString>&& fontFamilies, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&& overrideColors)
 {
-    return adoptRef(*new StyleRuleFontPaletteValues(name, fontFamily, basePalette, WTFMove(overrideColors)));
+    return adoptRef(*new StyleRuleFontPaletteValues(name, WTFMove(fontFamilies), basePalette, WTFMove(overrideColors)));
 }
 
-StyleRuleFontPaletteValues::StyleRuleFontPaletteValues(const AtomString& name, const AtomString& fontFamily, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&& overrideColors)
+StyleRuleFontPaletteValues::StyleRuleFontPaletteValues(const AtomString& name, Vector<AtomString>&& fontFamilies, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&& overrideColors)
     : StyleRuleBase(StyleRuleType::FontPaletteValues)
     , m_name(name)
-    , m_fontFamily(fontFamily)
+    , m_fontFamilies(WTFMove(fontFamilies))
     , m_fontPaletteValues(basePalette, WTFMove(overrideColors))
 {
 }

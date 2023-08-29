@@ -76,6 +76,7 @@
 #include "CSSTimingFunctionValue.h"
 #include "CSSTransformListValue.h"
 #include "CSSUnresolvedColor.h"
+#include "CSSValueKeywords.h"
 #include "CSSValuePair.h"
 #include "CSSValuePool.h"
 #include "CSSVariableData.h"
@@ -4884,7 +4885,7 @@ AtomString consumeFamilyNameRaw(CSSParserTokenRange& range)
     return concatenateFamilyName(range);
 }
 
-Vector<AtomString> consumeFamilyNameList(CSSParserTokenRange& range)
+Vector<AtomString> consumeFamilyNameListRaw(CSSParserTokenRange& range)
 {
     Vector<AtomString> result;
     do {
@@ -5516,6 +5517,13 @@ RefPtr<CSSValue> consumeFamilyName(CSSParserTokenRange& range)
     if (familyName.isNull())
         return nullptr;
     return CSSValuePool::singleton().createFontFamilyValue(familyName);
+}
+
+RefPtr<CSSValue> consumeFamilyNameList(CSSParserTokenRange& range)
+{
+    return consumeCommaSeparatedListWithoutSingleValueOptimization(range, [] (auto& range) {
+        return consumeFamilyName(range);
+    });
 }
 
 static RefPtr<CSSValue> consumeGenericFamily(CSSParserTokenRange& range)

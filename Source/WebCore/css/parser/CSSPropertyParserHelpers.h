@@ -198,7 +198,8 @@ std::optional<CSSValueID> consumeFontStretchKeywordValueRaw(CSSParserTokenRange&
 AtomString concatenateFamilyName(CSSParserTokenRange&);
 AtomString consumeFamilyNameRaw(CSSParserTokenRange&);
 // https://drafts.csswg.org/css-fonts-4/#family-name-value
-Vector<AtomString> consumeFamilyNameList(CSSParserTokenRange&);
+Vector<AtomString> consumeFamilyNameListRaw(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeFamilyNameList(CSSParserTokenRange&);
 std::optional<FontRaw> consumeFontRaw(CSSParserTokenRange&, CSSParserMode);
 const AtomString& genericFontFamily(CSSValueID);
 WebKitFontFamilyNames::FamilyNamesIndex genericFontFamilyIndex(CSSValueID);
