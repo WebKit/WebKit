@@ -683,6 +683,14 @@ set(WebCore_SERIALIZATION_IN_FILES
     PlatformScreen.serialization.in
 )
 
+set(WebKit_SERIALIZATION_DEPENDENCIES ${WebKit_SERIALIZATION_IN_FILES})
+foreach (in_file ${WebCore_GENERATED_SERIALIZATION_IN_FILES})
+    list(APPEND WebKit_SERIALIZATION_DEPENDENCIES "${WebCore_DERIVED_SOURCES_DIR}/${in_file}")
+endforeach ()
+foreach (in_file ${WebCore_SERIALIZATION_IN_FILES})
+    list(APPEND WebKit_SERIALIZATION_DEPENDENCIES "${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore/${in_file}")
+endforeach ()
+
 list(APPEND WebKit_DERIVED_SOURCES
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.h
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.cpp
@@ -698,7 +706,7 @@ add_custom_command(
         ${WebKit_DERIVED_SOURCES_DIR}/WebKitPlatformGeneratedSerializers.cpp
     MAIN_DEPENDENCY ${WEBKIT_DIR}/Scripts/generate-serializers.py
     DEPENDS
-        ${WebKit_SERIALIZATION_IN_FILES}
+        ${WebKit_SERIALIZATION_DEPENDENCIES}
     COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-serializers.py cpp DIRECTORY ${WEBKIT_DIR} ${WebKit_SERIALIZATION_IN_FILES} DIRECTORY ${WebCore_DERIVED_SOURCES_DIR} ${WebCore_GENERATED_SERIALIZATION_IN_FILES} DIRECTORY ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore ${WebCore_SERIALIZATION_IN_FILES}
     WORKING_DIRECTORY ${WebKit_DERIVED_SOURCES_DIR}
     VERBATIM
