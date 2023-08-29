@@ -75,16 +75,61 @@ void DrawingAreaProxyCoordinatedGraphics::paint(BackingStore::PlatformGraphicsCo
     if (isInAcceleratedCompositingMode())
         return;
 
-    if (!m_backingStore) {
-        if (!m_isWaitingForDidUpdateGeometry)
-            m_webPageProxy.send(Messages::DrawingArea::ForceUpdate(), m_identifier);
+    if (!m_backingStore && !forceUpdateIfNeeded())
         return;
-    }
 
     m_backingStore->paint(context, rect);
     unpaintedRegion.subtract(IntRect(IntPoint(), m_backingStore->size()));
 
     discardBackingStoreSoon();
+}
+
+bool DrawingAreaProxyCoordinatedGraphics::forceUpdateIfNeeded()
+{
+    ASSERT(!isInAcceleratedCompositingMode());
+
+    if (!m_webPageProxy.hasRunningProcess())
+        return false;
+
+    if (m_webPageProxy.process().state() == WebProcessProxy::State::Launching)
+        return false;
+
+    if (m_isWaitingForDidUpdateGeometry)
+        return false;
+
+    if (!m_webPageProxy.isViewVisible())
+        return false;
+
+    SetForScope inForceUpdate(m_inForceUpdate, true);
+    m_webPageProxy.send(Messages::DrawingArea::ForceUpdate(), m_identifier);
+    m_webPageProxy.process().connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::Update>(m_identifier, Seconds::fromMilliseconds(500));
+    return !!m_backingStore;
+}
+
+void DrawingAreaProxyCoordinatedGraphics::incorporateUpdate(UpdateInfo&& updateInfo)
+{
+    ASSERT(!isInAcceleratedCompositingMode());
+
+    if (updateInfo.updateRectBounds.isEmpty())
+        return;
+
+    if (!m_backingStore || m_backingStore->size() != updateInfo.viewSize || m_backingStore->deviceScaleFactor() != updateInfo.deviceScaleFactor)
+        m_backingStore = makeUnique<BackingStore>(updateInfo.viewSize, updateInfo.deviceScaleFactor, m_webPageProxy);
+
+    if (m_inForceUpdate) {
+        m_backingStore->incorporateUpdate(WTFMove(updateInfo));
+        return;
+    }
+
+    Region damageRegion;
+    if (updateInfo.scrollRect.isEmpty()) {
+        for (const auto& rect : updateInfo.updateRects)
+            damageRegion.unite(rect);
+    } else
+        damageRegion = IntRect(IntPoint(), m_webPageProxy.viewSize());
+
+    m_backingStore->incorporateUpdate(WTFMove(updateInfo));
+    m_webPageProxy.setViewNeedsDisplay(damageRegion);
 }
 #endif
 
@@ -175,30 +220,6 @@ void DrawingAreaProxyCoordinatedGraphics::targetRefreshRateDidChange(unsigned ra
     m_webPageProxy.send(Messages::DrawingArea::TargetRefreshRateDidChange(rate), m_identifier);
 }
 
-#if !PLATFORM(WPE)
-void DrawingAreaProxyCoordinatedGraphics::incorporateUpdate(UpdateInfo&& updateInfo)
-{
-    ASSERT(!isInAcceleratedCompositingMode());
-
-    if (updateInfo.updateRectBounds.isEmpty())
-        return;
-
-    if (!m_backingStore || m_backingStore->size() != updateInfo.viewSize || m_backingStore->deviceScaleFactor() != updateInfo.deviceScaleFactor)
-        m_backingStore = makeUnique<BackingStore>(updateInfo.viewSize, updateInfo.deviceScaleFactor, m_webPageProxy);
-
-    Region damageRegion;
-    if (updateInfo.scrollRect.isEmpty()) {
-        for (const auto& rect : updateInfo.updateRects)
-            damageRegion.unite(rect);
-    } else
-        damageRegion = IntRect(IntPoint(), m_webPageProxy.viewSize());
-
-    m_backingStore->incorporateUpdate(WTFMove(updateInfo));
-
-    m_webPageProxy.setViewNeedsDisplay(damageRegion);
-}
-#endif
-
 bool DrawingAreaProxyCoordinatedGraphics::alwaysUseCompositing() const
 {
     return m_webPageProxy.preferences().acceleratedCompositingEnabled() && m_webPageProxy.preferences().forceCompositingMode();
@@ -208,7 +229,7 @@ void DrawingAreaProxyCoordinatedGraphics::enterAcceleratedCompositingMode(const 
 {
     ASSERT(!isInAcceleratedCompositingMode());
 #if !PLATFORM(WPE)
-    discardBackingStore();
+    m_backingStore = nullptr;
 #endif
     m_layerTreeContext = layerTreeContext;
     m_webPageProxy.enterAcceleratedCompositingMode(layerTreeContext);
@@ -270,7 +291,11 @@ void DrawingAreaProxyCoordinatedGraphics::discardBackingStoreSoon()
 
 void DrawingAreaProxyCoordinatedGraphics::discardBackingStore()
 {
+    if (!m_backingStore)
+        return;
+
     m_backingStore = nullptr;
+    m_webPageProxy.send(Messages::DrawingArea::DidDiscardBackingStore(), m_identifier);
 }
 #endif
 

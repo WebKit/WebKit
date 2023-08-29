@@ -73,10 +73,6 @@ private:
 
     bool shouldSendWheelEventsToEventDispatcher() const override { return true; }
 
-#if !PLATFORM(WPE)
-    void incorporateUpdate(UpdateInfo&&);
-#endif
-
     bool alwaysUseCompositing() const;
     void enterAcceleratedCompositingMode(const LayerTreeContext&);
     void exitAcceleratedCompositingMode();
@@ -86,6 +82,8 @@ private:
     void didUpdateGeometry();
 
 #if !PLATFORM(WPE)
+    bool forceUpdateIfNeeded();
+    void incorporateUpdate(UpdateInfo&&);
     void discardBackingStoreSoon();
     void discardBackingStore();
 #endif
@@ -127,6 +125,7 @@ private:
 
 #if !PLATFORM(WPE)
     bool m_isBackingStoreDiscardable { true };
+    bool m_inForceUpdate { false };
     std::unique_ptr<BackingStore> m_backingStore;
     RunLoop::Timer m_discardBackingStoreTimer;
 #endif
