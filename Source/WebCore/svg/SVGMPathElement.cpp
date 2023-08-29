@@ -67,7 +67,10 @@ void SVGMPathElement::buildPendingResource()
             treeScope.addPendingSVGResource(target.identifier, *this);
             ASSERT(hasPendingResources());
         }
-    } else if (is<SVGElement>(*target.element))
+        return;
+    }
+    treeScopeForSVGReferences().addResolvedSVGReference(target.identifier, *this);
+    if (is<SVGElement>(*target.element))
         downcast<SVGElement>(*target.element).addReferencingElement(*this);
 
     targetPathChanged();

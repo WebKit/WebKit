@@ -157,7 +157,10 @@ void SVGTextPathElement::buildPendingResource()
             treeScope.addPendingSVGResource(target.identifier, *this);
             ASSERT(hasPendingResources());
         }
-    } else if (target.element->hasTagName(SVGNames::pathTag))
+        return;
+    }
+    treeScopeForSVGReferences().addResolvedSVGReference(target.identifier, *this);
+    if (target.element->hasTagName(SVGNames::pathTag))
         downcast<SVGElement>(*target.element).addReferencingElement(*this);
 }
 

@@ -237,9 +237,10 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
                 if (filterOperation.type() == FilterOperation::Type::Reference) {
                     const auto& referenceFilterOperation = downcast<ReferenceFilterOperation>(filterOperation);
                     AtomString id = SVGURIReference::fragmentIdentifierFromIRIString(referenceFilterOperation.url(), element.document());
-                    if (setFilter(getRenderSVGResourceById<RenderSVGResourceFilter>(treeScope, id)))
+                    if (setFilter(getRenderSVGResourceById<RenderSVGResourceFilter>(treeScope, id))) {
                         foundResources = true;
-                    else
+                        treeScope.addResolvedSVGReference(id, element);
+                    } else
                         treeScope.addPendingSVGResource(id, element);
                 }
             }
@@ -250,9 +251,10 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
             auto* maskImage = style.maskImage();
             if (is<StyleCachedImage>(maskImage)) {
                 auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(downcast<StyleCachedImage>(*maskImage).reresolvedURL(document).string(), document);
-                if (setMasker(getRenderSVGResourceById<RenderSVGResourceMasker>(treeScope, resourceID)))
+                if (setMasker(getRenderSVGResourceById<RenderSVGResourceMasker>(treeScope, resourceID))) {
                     foundResources = true;
-                else
+                    treeScope.addResolvedSVGReference(resourceID, element);
+                } else
                     treeScope.addPendingSVGResource(resourceID, element);
             }
         }
@@ -261,9 +263,10 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
     if (markerTags().contains(tagName) && svgStyle.hasMarkers()) {
         auto buildCachedMarkerResource = [&](const String& markerResource, bool (SVGResources::*setMarker)(RenderSVGResourceMarker*)) {
             auto markerId = SVGURIReference::fragmentIdentifierFromIRIString(markerResource, document);
-            if ((this->*setMarker)(getRenderSVGResourceById<RenderSVGResourceMarker>(treeScope, markerId)))
+            if ((this->*setMarker)(getRenderSVGResourceById<RenderSVGResourceMarker>(treeScope, markerId))) {
                 foundResources = true;
-            else
+                treeScope.addResolvedSVGReference(markerId, element);
+            } else
                 treeScope.addPendingSVGResource(markerId, element);
         };
         buildCachedMarkerResource(svgStyle.markerStartResource(), &SVGResources::setMarkerStart);
@@ -275,18 +278,20 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
         if (svgStyle.hasFill()) {
             bool hasPendingResource = false;
             AtomString id;
-            if (setFill(paintingResourceFromSVGPaint(treeScope, svgStyle.fillPaintType(), svgStyle.fillPaintUri(), id, hasPendingResource)))
+            if (setFill(paintingResourceFromSVGPaint(treeScope, svgStyle.fillPaintType(), svgStyle.fillPaintUri(), id, hasPendingResource))) {
                 foundResources = true;
-            else if (hasPendingResource)
+                treeScope.addResolvedSVGReference(id, element);
+            } else if (hasPendingResource)
                 treeScope.addPendingSVGResource(id, element);
         }
 
         if (svgStyle.hasStroke()) {
             bool hasPendingResource = false;
             AtomString id;
-            if (setStroke(paintingResourceFromSVGPaint(treeScope, svgStyle.strokePaintType(), svgStyle.strokePaintUri(), id, hasPendingResource)))
+            if (setStroke(paintingResourceFromSVGPaint(treeScope, svgStyle.strokePaintType(), svgStyle.strokePaintUri(), id, hasPendingResource))) {
                 foundResources = true;
-            else if (hasPendingResource)
+                treeScope.addResolvedSVGReference(id, element);
+            } else if (hasPendingResource)
                 treeScope.addPendingSVGResource(id, element);
         }
     }
@@ -299,6 +304,7 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
         else if (isChainableResource(element, linkedResource->element())) {
             setLinkedResource(linkedResource);
             foundResources = true;
+            treeScope.addResolvedSVGReference(id, element);
         }
     }
 

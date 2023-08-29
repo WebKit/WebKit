@@ -140,8 +140,9 @@ public:
     void clearHasPendingSVGResourcesIfPossible(SVGElement&);
     void removeElementFromPendingSVGResources(SVGElement&);
     WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData> removePendingSVGResource(const AtomString&);
-    void markPendingSVGResourcesForRemoval(const AtomString&);
-    RefPtr<SVGElement> takeElementFromPendingSVGResourcesForRemovalMap(const AtomString&);
+    void addResolvedSVGReferences(const AtomString&, WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>&&);
+    void addResolvedSVGReference(const AtomString&, SVGElement&);
+    const WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>* resolvedSVGReferences(const AtomString&);
 
 protected:
     TreeScope(ShadowRoot&, Document&);

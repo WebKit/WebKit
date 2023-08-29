@@ -582,8 +582,8 @@ struct SVGResourcesMap {
     SVGResourcesMap() = default;
 
     MemoryCompactRobinHoodHashMap<AtomString, WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>> pendingResources;
-    MemoryCompactRobinHoodHashMap<AtomString, WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>> pendingResourcesForRemoval;
     MemoryCompactRobinHoodHashMap<AtomString, RenderSVGResourceContainer*> resources;
+    MemoryCompactRobinHoodHashMap<AtomString, WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>> resolvedResources;
 };
 
 SVGResourcesMap& TreeScope::svgResourcesMap() const
@@ -682,20 +682,6 @@ void TreeScope::removeElementFromPendingSVGResources(SVGElement& element)
         for (auto& resource : toBeRemoved)
             removePendingSVGResource(resource);
     }
-
-    if (!svgResourcesMap().pendingResourcesForRemoval.isEmpty()) {
-        Vector<AtomString> toBeRemoved;
-        for (auto& resource : svgResourcesMap().pendingResourcesForRemoval) {
-            auto& elements = resource.value;
-            elements.remove(element);
-            if (elements.isEmptyIgnoringNullReferences())
-                toBeRemoved.append(resource.key);
-        }
-
-        // We use m_pendingResourcesForRemoval here because it deals with set lifetime correctly.
-        for (auto& resource : toBeRemoved)
-            svgResourcesMap().pendingResourcesForRemoval.remove(resource);
-    }
 }
 
 WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData> TreeScope::removePendingSVGResource(const AtomString& id)
@@ -703,38 +689,36 @@ WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData> TreeScope::removePending
     return svgResourcesMap().pendingResources.take(id);
 }
 
-void TreeScope::markPendingSVGResourcesForRemoval(const AtomString& id)
+void TreeScope::addResolvedSVGReferences(const AtomString& id, WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>&& set)
 {
     if (id.isEmpty())
         return;
-
-    ASSERT(!svgResourcesMap().pendingResourcesForRemoval.contains(id));
-
-    auto existing = svgResourcesMap().pendingResources.take(id);
-    if (!existing.isEmptyIgnoringNullReferences())
-        svgResourcesMap().pendingResourcesForRemoval.add(id, WTFMove(existing));
+    auto result = svgResourcesMap().resolvedResources.add(id, WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData> { });
+    if (result.isNewEntry)
+        result.iterator->value = WTFMove(set);
+    else {
+        for (auto& element : set)
+            result.iterator->value.add(element);
+    }
 }
 
-RefPtr<SVGElement> TreeScope::takeElementFromPendingSVGResourcesForRemovalMap(const AtomString& id)
+void TreeScope::addResolvedSVGReference(const AtomString& id, SVGElement& element)
+{
+    if (id.isEmpty())
+        return;
+    auto result = svgResourcesMap().resolvedResources.add(id, WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData> { });
+    result.iterator->value.add(element);
+}
+
+const WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>* TreeScope::resolvedSVGReferences(const AtomString& id)
 {
     if (id.isEmpty())
         return nullptr;
-
-    auto it = svgResourcesMap().pendingResourcesForRemoval.find(id);
-    if (it == svgResourcesMap().pendingResourcesForRemoval.end())
+    auto& map = svgResourcesMap().resolvedResources;
+    auto it = map.find(id);
+    if (it == map.end())
         return nullptr;
-
-    auto& resourceSet = it->value;
-    RefPtr firstElement = resourceSet.begin().get();
-    if (!firstElement)
-        return nullptr;
-
-    resourceSet.remove(*firstElement);
-
-    if (resourceSet.isEmptyIgnoringNullReferences())
-        svgResourcesMap().pendingResourcesForRemoval.remove(id);
-
-    return firstElement;
+    return &it->value;
 }
 
 } // namespace WebCore

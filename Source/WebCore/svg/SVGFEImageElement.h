@@ -61,6 +61,7 @@ private:
     void requestImageResource();
 
     void buildPendingResource() override;
+    void rebuildResourceReference() override;
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
     void removedFromAncestor(RemovalType, ContainerNode&) override;
 

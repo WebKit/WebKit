@@ -108,10 +108,19 @@ void SVGFEImageElement::buildPendingResource()
             treeScopeForSVGReferences().addPendingSVGResource(target.identifier, *this);
             ASSERT(hasPendingResources());
         }
-    } else if (is<SVGElement>(*target.element))
+        return;
+    }
+    treeScopeForSVGReferences().addResolvedSVGReference(target.identifier, *this);
+    if (is<SVGElement>(*target.element))
         downcast<SVGElement>(*target.element).addReferencingElement(*this);
 
     updateSVGRendererForElementChange();
+}
+
+void SVGFEImageElement::rebuildResourceReference()
+{
+    buildPendingResource();
+    markFilterEffectForRebuild();
 }
 
 void SVGFEImageElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

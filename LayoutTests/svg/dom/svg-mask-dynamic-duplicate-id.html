@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function doTest() {
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            const mask1 = document.getElementById('mask1');
+            mask1.getBoundingClientRect();
+            const mask2 = mask1.cloneNode(true);
+            mask2.querySelector('rect').setAttribute('fill', 'white');
+            mask1.before(mask2);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+    });
+}
+
+</script>
+</head>
+<body onload="doTest()">
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <mask id="mask1"><rect x="0" y="0" width="100" height="100" fill="black" /></mask>
+    <rect x="0" y="0" width="100" height="100" fill="green" mask="url(#mask1)"/>
+</svg>
+</body>
+</html>

@@ -41,6 +41,7 @@ public:
     struct TargetElementResult {
         RefPtr<Element> element;
         AtomString identifier;
+        bool isExternal { false };
     };
     static TargetElementResult targetElementFromIRIString(const String&, const TreeScope&, RefPtr<Document> externalDocument = nullptr);
 
