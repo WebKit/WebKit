@@ -47,8 +47,8 @@ messages -> WebPage LegacyReceiver {
     ViewWillEndLiveResize()
 
     ExecuteEditCommandWithCallback(String name, String argument) -> ()
-    KeyEvent(WebKit::WebKeyboardEvent event)
-    MouseEvent(WebKit::WebMouseEvent event, std::optional<Vector<WebKit::SandboxExtension::Handle>> sandboxExtensions)
+    KeyEvent(WebCore::FrameIdentifier frameID, WebKit::WebKeyboardEvent event)
+    MouseEvent(WebCore::FrameIdentifier frameID, WebKit::WebMouseEvent event, std::optional<Vector<WebKit::SandboxExtension::Handle>> sandboxExtensions)
 
 #if ENABLE(NOTIFICATIONS)
     ClearNotificationPermissionState()
@@ -687,9 +687,9 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetAppHighlightsVisibility(enum:bool WebCore::HighlightVisibility highlightVisibility)
 #endif
 
-    HandleWheelEvent(WebKit::WebWheelEvent event, OptionSet<WebCore::WheelEventProcessingSteps> processingSteps, std::optional<bool> willStartSwipe) -> (uint64_t scrollingNodeID, std::optional<WebCore::WheelScrollGestureState> gestureState, bool handled)
+    HandleWheelEvent(WebCore::FrameIdentifier frameID, WebKit::WebWheelEvent event, OptionSet<WebCore::WheelEventProcessingSteps> processingSteps, std::optional<bool> willStartSwipe) -> (uint64_t scrollingNodeID, std::optional<WebCore::WheelScrollGestureState> gestureState, bool handled)
 #if PLATFORM(IOS_FAMILY)
-    DispatchWheelEventWithoutScrolling(WebKit::WebWheelEvent event) -> (bool handled)
+    DispatchWheelEventWithoutScrolling(WebCore::FrameIdentifier frameID, WebKit::WebWheelEvent event) -> (bool handled)
 #endif
 
     LastNavigationWasAppInitiated() -> (bool wasAppBound)

@@ -58,6 +58,7 @@ class HTMLFrameOwnerElement;
 class IntPoint;
 class IntRect;
 class LocalFrame;
+class PlatformMouseEvent;
 class RemoteFrame;
 struct GlobalWindowIdentifier;
 }
@@ -69,7 +70,9 @@ class InjectedBundleHitTestResult;
 class InjectedBundleNodeHandle;
 class InjectedBundleRangeHandle;
 class InjectedBundleScriptWorld;
+class WebKeyboardEvent;
 class WebImage;
+class WebMouseEvent;
 class WebPage;
 struct FrameInfoData;
 struct FrameTreeNodeData;
@@ -224,6 +227,10 @@ public:
 
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections() const;
     OptionSet<WebCore::AdvancedPrivacyProtections> originatorAdvancedPrivacyProtections() const;
+
+    bool handleContextMenuEvent(const WebCore::PlatformMouseEvent&);
+    bool handleMouseEvent(const WebMouseEvent&);
+    bool handleKeyEvent(const WebKeyboardEvent&);
 private:
     WebFrame(WebPage&, WebCore::FrameIdentifier);
 
