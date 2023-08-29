@@ -86,13 +86,6 @@
             }
         }
     },
-    "TestWebsiteData": {
-        "subtests": {
-            "/webkit/WebKitWebsiteData/cache": {
-                "expected": {"wpe": {"status": ["CRASH", "PASS"], "bug": "webkit.org/b/260524"}}
-            }
-        }
-    },
     "TestWebKitWebView": {
         "subtests": {
             "/webkit/WebKitWebView/is-web-process-responsive": {
