@@ -43,14 +43,14 @@ class DisplayList {
 public:
     DisplayList() = default;
 
-    WEBCORE_EXPORT void append(DisplayListItem&&);
+    WEBCORE_EXPORT void append(Item&&);
     void shrinkToFit();
 
     WEBCORE_EXPORT void clear();
     WEBCORE_EXPORT bool isEmpty() const;
 
-    const Vector<DisplayListItem>& items() const { return m_items; }
-    Vector<DisplayListItem>& items() { return m_items; }
+    const Vector<Item>& items() const { return m_items; }
+    Vector<Item>& items() { return m_items; }
     const ResourceHeap& resourceHeap() const { return m_resourceHeap; }
 
     void cacheImageBuffer(ImageBuffer&);
@@ -64,7 +64,7 @@ public:
     void dump(WTF::TextStream&) const;
 
 private:
-    Vector<DisplayListItem> m_items;
+    Vector<Item> m_items;
     ResourceHeap m_resourceHeap;
 };
 

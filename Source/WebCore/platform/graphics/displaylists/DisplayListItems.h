@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AlphaPremultiplication.h"
+#include "DisplayListItem.h"
 #include "FloatRoundedRect.h"
 #include "Font.h"
 #include "GlyphBuffer.h"
@@ -37,7 +38,6 @@
 #include "RenderingResourceIdentifier.h"
 #include "SharedBuffer.h"
 #include "SystemImage.h"
-#include <variant>
 #include <wtf/TypeCasts.h>
 
 namespace WTF {
@@ -50,11 +50,6 @@ class MediaPlayer;
 struct ImagePaintingOptions;
 
 namespace DisplayList {
-
-enum class AsTextFlag : uint8_t {
-    IncludePlatformOperations      = 1 << 0,
-    IncludeResourceIdentifiers     = 1 << 1,
-};
 
 class Save {
 public:
@@ -1404,109 +1399,6 @@ public:
 private:
     float m_scaleFactor { 1 };
 };
-
-using DisplayListItem = std::variant
-    < ApplyDeviceScaleFactor
-    , BeginTransparencyLayer
-    , ClearRect
-    , ClearShadow
-    , Clip
-    , ClipRoundedRect
-    , ClipOut
-    , ClipOutRoundedRect
-    , ClipOutToPath
-    , ClipPath
-    , ClipToImageBuffer
-    , ConcatenateCTM
-    , DrawControlPart
-    , DrawDotsForDocumentMarker
-    , DrawEllipse
-    , DrawFilteredImageBuffer
-    , DrawFocusRingPath
-    , DrawFocusRingRects
-    , DrawGlyphs
-    , DrawDecomposedGlyphs
-    , DrawImageBuffer
-    , DrawLine
-    , DrawLinesForText
-    , DrawNativeImage
-    , DrawPath
-    , DrawPattern
-    , DrawRect
-    , DrawSystemImage
-    , EndTransparencyLayer
-    , FillCompositedRect
-    , FillEllipse
-    , FillPathSegment
-    , FillPath
-    , FillRect
-    , FillRectWithColor
-    , FillRectWithGradient
-    , FillRectWithRoundedHole
-    , FillRoundedRect
-    , ResetClip
-    , Restore
-    , Rotate
-    , Save
-    , Scale
-    , SetCTM
-    , SetInlineFillColor
-    , SetInlineStrokeColor
-    , SetLineCap
-    , SetLineDash
-    , SetLineJoin
-    , SetMiterLimit
-    , SetState
-    , SetStrokeThickness
-    , StrokeEllipse
-    , StrokeLine
-    , StrokePathSegment
-    , StrokePath
-    , StrokeRect
-    , Translate
-#if ENABLE(INLINE_PATH_DATA)
-    , FillLine
-    , FillArc
-    , FillQuadCurve
-    , FillBezierCurve
-    , StrokeArc
-    , StrokeQuadCurve
-    , StrokeBezierCurve
-#endif
-#if ENABLE(VIDEO)
-    , PaintFrameForMedia
-#endif
-#if USE(CG)
-    , ApplyFillPattern
-    , ApplyStrokePattern
-#endif
->;
-
-template<typename, typename = void> inline constexpr bool HasIsValid = false;
-template<typename T> inline constexpr bool HasIsValid<T, std::void_t<decltype(std::declval<T>().isValid())>> = true;
-
-static inline bool isValid(const DisplayListItem& item)
-{
-    return WTF::switchOn(item, [&](const auto& item) {
-        using T = std::decay_t<decltype(item)>;
-        if constexpr (HasIsValid<T>)
-            return item.isValid();
-        else {
-            UNUSED_PARAM(item);
-            return true;
-        }
-    });
-}
-
-WEBCORE_EXPORT void dumpDisplayListItem(TextStream&, const DisplayListItem&, OptionSet<AsTextFlag>);
-
-bool shouldDumpDisplayListItem(const DisplayListItem&, OptionSet<AsTextFlag>);
-
-inline TextStream& operator<<(TextStream& ts, const DisplayListItem& item)
-{
-    dumpDisplayListItem(ts, item, { AsTextFlag::IncludePlatformOperations, AsTextFlag::IncludeResourceIdentifiers });
-    return ts;
-}
 
 } // namespace DisplayList
 } // namespace WebCore

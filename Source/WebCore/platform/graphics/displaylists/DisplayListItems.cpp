@@ -846,33 +846,5 @@ void ApplyDeviceScaleFactor::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("scale-factor", scaleFactor());
 }
 
-bool shouldDumpDisplayListItem(const DisplayListItem& item, OptionSet<AsTextFlag> flags)
-{
-    return WTF::switchOn(item,
-        [&](const SetState& item) -> bool {
-            if (!flags.contains(AsTextFlag::IncludePlatformOperations))
-                return true;
-            // FIXME: for now, only drop the item if the only state-change flags are platform-specific.
-            return item.state().changes() != GraphicsContextState::Change::ShouldSubpixelQuantizeFonts;
-#if USE(CG)
-        }, [&](const ApplyFillPattern&) -> bool {
-            return !flags.contains(AsTextFlag::IncludePlatformOperations);
-        }, [&](const ApplyStrokePattern&) -> bool {
-            return !flags.contains(AsTextFlag::IncludePlatformOperations);
-#endif
-        }, [&](const auto&) -> bool {
-            return true;
-        }
-    );
-}
-
-void dumpDisplayListItem(TextStream& ts, const DisplayListItem& item, OptionSet<AsTextFlag> flags)
-{
-    WTF::switchOn(item, [&](const auto& item) {
-        ts << std::decay_t<decltype(item)>::name;
-        item.dump(ts, flags);
-    });
-}
-
 } // namespace DisplayList
 } // namespace WebCore

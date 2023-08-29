@@ -131,7 +131,7 @@ private:
     bool recordResourceUse(Gradient&) final;
     bool recordResourceUse(Filter&) final;
 
-    void append(DisplayListItem&& item)
+    void append(Item&& item)
     {
         m_displayList.append(WTFMove(item));
     }
