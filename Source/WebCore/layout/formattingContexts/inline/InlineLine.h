@@ -109,6 +109,7 @@ public:
 
         bool isContentful() const { return (isText() && textContent()->length) || isBox() || isLineBreak() || isListMarker(); }
         bool isGenerated() const { return isListMarker(); }
+        static bool isContentfulOrHasDecoration(const Run&, const InlineFormattingContext&);
 
         const Box& layoutBox() const { return *m_layoutBox; }
         struct Text {

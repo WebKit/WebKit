@@ -715,10 +715,9 @@ void Line::addTrailingHyphen(InlineLayoutUnit hyphenLogicalWidth)
 
 bool Line::lineHasVisuallyNonEmptyContent() const
 {
+    auto& formattingContext = this->formattingContext();
     for (auto& run : makeReversedRange(m_runs)) {
-        if (run.isContentful() || run.isGenerated())
-            return true;
-        if (run.isInlineBox() && formattingContext().geometryForBox(run.layoutBox()).hasMarginBorderOrPadding())
+        if (Line::Run::isContentfulOrHasDecoration(run, formattingContext))
             return true;
     }
     return false;
@@ -1000,6 +999,28 @@ InlineLayoutUnit Line::Run::removeTrailingWhitespace()
     m_trailingWhitespace = { };
     shrinkHorizontally(trimmedWidth);
     return trimmedWidth;
+}
+
+bool Line::Run::isContentfulOrHasDecoration(const Run& run, const InlineFormattingContext& formattingContext)
+{
+    if (run.isContentful())
+        return true;
+    if (run.isInlineBox()) {
+        if (run.logicalWidth())
+            return true;
+        // Even negative horizontal margin makes the line "contentful".
+        auto& inlineBoxGeometry = formattingContext.geometryForBox(run.layoutBox());
+        if (run.isInlineBoxStart())
+            return inlineBoxGeometry.marginStart() || inlineBoxGeometry.borderStart() || inlineBoxGeometry.paddingStart().value_or(0_lu);
+        if (run.isInlineBoxEnd())
+            return inlineBoxGeometry.marginEnd() || inlineBoxGeometry.borderEnd() || inlineBoxGeometry.paddingEnd().value_or(0_lu);
+        if (run.isLineSpanningInlineBoxStart()) {
+            if (run.style().boxDecorationBreak() != BoxDecorationBreak::Clone)
+                return false;
+            return inlineBoxGeometry.borderStart() || inlineBoxGeometry.paddingStart().value_or(0_lu);
+        }
+    }
+    return false;
 }
 
 }
