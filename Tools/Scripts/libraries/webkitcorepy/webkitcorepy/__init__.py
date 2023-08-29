@@ -83,7 +83,7 @@ else:
 
 AutoInstall.register(Package('pyparsing', Version(2, 4, 7)))
 
-if sys.version_info > (3, 7):
+if sys.version_info >= (3, 12):
     AutoInstall.register(Package('requests', Version(2, 31, 0)))
 else:
     AutoInstall.register(Package('requests', Version(2, 24)))
@@ -93,7 +93,7 @@ AutoInstall.register(Package('socks', Version(1, 7, 1), pypi_name='PySocks'))
 AutoInstall.register(Package('six', Version(1, 15, 0)))
 AutoInstall.register(Package('tblib', Version(1, 7, 0)))
 
-if sys.version_info > (3, 7):
+if sys.version_info >= (3, 12):
     AutoInstall.register(Package('urllib3', Version(2, 0, 4)))
 else:
     AutoInstall.register(Package('urllib3', Version(1, 25, 10)))
