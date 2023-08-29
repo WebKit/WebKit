@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 
@@ -253,6 +253,20 @@ size_t pas_probabilistic_guard_malloc_get_free_wasted_memory(void)
  * PGM being enabled in the heap config does not mean it will be enabled at runtime.
  * This function will be run once for all heaps (ISO, bmalloc, JIT, etc...), but only those with
  * pgm_enabled config will ultimately be called.
+ *
+ * PGM has two layers before an allocation is called. The first layer is the activation check, which is called once on process initialization.
+ * This will determine if PGM will be enabled while the process is alive. This is currently set to 1 in 1000, but
+ * from benchmarking turning this on 100% of the time will not cause any noticeable memory or performance degradation.
+ * If the activation check fails then PGM will never be enabled during the process' lifetime.
+ *
+ * The second layer is the probability check, which is set to perform a PGM allocation between every 1 in 4000 to 1 in 5000 times.
+ * The probability check will be performed every time an allocation is made. The implementation is a simple counter, which is incremented
+ * every allocation. Once it hits the calculated probability randomly generated number we will perform a PGM allocation. Having a slight variation
+ * in how often we call PGM will hopefully help to catch issues more quickly.
+ *
+ * These numbers are set to correlate with macOS's system malloc, but these can be tuned as needed. Just to note that
+ * increasing these numbers may increase the number of duplicate crashes seen. On the other hand, decreasing the probability
+ * may result in issues being missed.
  */
 void pas_probabilistic_guard_malloc_initialize_pgm(void)
 {
@@ -264,7 +278,6 @@ void pas_probabilistic_guard_malloc_initialize_pgm(void)
             return;
         }
 
-        /* PGM will be called between every 4,000 to 5,000 times an allocation is tried. */
         pas_probabilistic_guard_malloc_random = pas_get_secure_random(1000) + 4000;
     }
 }
