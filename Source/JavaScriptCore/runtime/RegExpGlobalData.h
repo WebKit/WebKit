@@ -56,7 +56,8 @@ public:
 
     const Vector<int>& ovector() const { return m_ovector; }
 
-    void resetResultFromCache(JSGlobalObject* owner, RegExp*, JSString*, Vector<int>&&);
+    inline MatchResult matchResult() const;
+    void resetResultFromCache(JSGlobalObject* owner, RegExp*, JSString*, MatchResult, Vector<int>&&);
 
 private:
     RegExpCachedResult m_cachedResult;
