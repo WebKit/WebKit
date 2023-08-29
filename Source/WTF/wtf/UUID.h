@@ -88,7 +88,7 @@ public:
         return std::span<const uint8_t, 16> { reinterpret_cast<const uint8_t*>(&m_data), 16 };
     }
 
-    bool operator==(const UUID& other) const { return m_data == other.m_data; }
+    friend bool operator==(const UUID&, const UUID&) = default;
 
     explicit constexpr UUID(HashTableDeletedValueType)
         : m_data(deletedValue)

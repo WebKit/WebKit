@@ -117,7 +117,7 @@ public:
 
         Iterator& operator++(int) = delete;
 
-        bool operator==(const Iterator& other) const { return m_value == other.m_value; }
+        friend bool operator==(const Iterator&, const Iterator&) = default;
 
     private:
         Iterator(StorageType value) : m_value(value) { }
@@ -205,10 +205,7 @@ public:
         return hasExactlyOneBitSet() ? std::optional<E>(static_cast<E>(m_storage)) : std::nullopt;
     }
 
-    constexpr friend bool operator==(OptionSet lhs, OptionSet rhs)
-    {
-        return lhs.m_storage == rhs.m_storage;
-    }
+    friend constexpr bool operator==(const OptionSet&, const OptionSet&) = default;
 
     constexpr friend OptionSet operator|(OptionSet lhs, OptionSet rhs)
     {
