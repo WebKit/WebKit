@@ -393,7 +393,7 @@
 
 /* REFERENCED_FROM_ASM */
 
-#if !defined(REFERENCED_FROM_ASM) && COMPILER(GCC_COMPATIBLE)
+#if !defined(REFERENCED_FROM_ASM) && (COMPILER(GCC) || COMPILER(CLANG))
 #define REFERENCED_FROM_ASM __attribute__((__used__))
 #endif
 
