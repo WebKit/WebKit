@@ -657,7 +657,7 @@ wasmOp(i64_trunc_u_f32, WasmI64TruncUF32, macro (ctx)
     fi2f t0, ft1
     bfgtequn ft0, ft1, .outOfBoundsTrunc
 
-    truncatef2q ft0, t0
+    truncatef2q ft0, t0, tmp0
     returnq(ctx, t0)
 
 .outOfBoundsTrunc:
@@ -693,7 +693,7 @@ wasmOp(i64_trunc_u_f64, WasmI64TruncUF64, macro (ctx)
     fq2d t0, ft1
     bdgtequn ft0, ft1, .outOfBoundsTrunc
 
-    truncated2q ft0, t0
+    truncated2q ft0, t0, tmp0
     returnq(ctx, t0)
 
 .outOfBoundsTrunc:
@@ -790,7 +790,7 @@ wasmOp(i64_trunc_sat_f32_u, WasmI64TruncSatF32U, macro (ctx)
     fi2f t0, ft1
     bfgtequn ft0, ft1, .outOfBoundsTruncSatMax
 
-    truncatef2q ft0, t0
+    truncatef2q ft0, t0, tmp0
     returnq(ctx, t0)
 
 .outOfBoundsTruncSatMin:
@@ -841,7 +841,7 @@ wasmOp(i64_trunc_sat_f64_u, WasmI64TruncSatF64U, macro (ctx)
     fq2d t0, ft1
     bdgtequn ft0, ft1, .outOfBoundsTruncSatMax
 
-    truncated2q ft0, t0
+    truncated2q ft0, t0, tmp0
     returnq(ctx, t0)
 
 .outOfBoundsTruncSatMin:

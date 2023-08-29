@@ -1481,7 +1481,7 @@ end)
 wasmI64ToFOp(f32_convert_u_i64, WasmF32ConvertUI64, macro (ctx)
     mloadq(ctx, m_operand, t0)
     if X86_64
-        cq2f t0, t1, ft0
+        cq2f t0, t1, ft0, tmp0
     else
         cq2f t0, ft0
     end
@@ -1491,7 +1491,7 @@ end)
 wasmI64ToFOp(f64_convert_u_i64, WasmF64ConvertUI64, macro (ctx)
     mloadq(ctx, m_operand, t0)
     if X86_64
-        cq2d t0, t1, ft0
+        cq2d t0, t1, ft0, tmp0
     else
         cq2d t0, ft0
     end
@@ -1808,13 +1808,13 @@ end)
 
 wasmOp(f32_abs, WasmF32Abs, macro(ctx)
     mloadf(ctx, m_operand, ft0)
-    absf ft0, ft1
+    absf ft0, ft1, tmp0
     returnf(ctx, ft1)
 end)
 
 wasmOp(f32_neg, WasmF32Neg, macro(ctx)
     mloadf(ctx, m_operand, ft0)
-    negf ft0, ft1
+    negf ft0, ft1, tmp0
     returnf(ctx, ft1)
 end)
 
@@ -1908,13 +1908,13 @@ end)
 
 wasmOp(f64_abs, WasmF64Abs, macro(ctx)
     mloadd(ctx, m_operand, ft0)
-    absd ft0, ft1
+    absd ft0, ft1, tmp0
     returnd(ctx, ft1)
 end)
 
 wasmOp(f64_neg, WasmF64Neg, macro(ctx)
     mloadd(ctx, m_operand, ft0)
-    negd ft0, ft1
+    negd ft0, ft1, tmp0
     returnd(ctx, ft1)
 end)
 

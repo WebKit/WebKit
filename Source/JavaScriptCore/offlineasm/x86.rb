@@ -58,7 +58,7 @@ require "config"
 # r15 =>             csr4 (callee-save, tagMask)
 # rsp => sp
 # rbp => cfr
-# r11 =>                  (scratch)
+# r11 => tmp0             (scratch)
 #
 # On x86-64 windows
 # Arguments need to be push/pop'd on the stack in addition to being stored in
@@ -79,7 +79,7 @@ require "config"
 # r15 =>             csr6 (callee-save, notCellMask)
 # rsp => sp
 # rbp => cfr
-# r11 =>                  (scratch)
+# r11 => tmp0             (scratch)
 
 def isX64
     case $activeBackend
@@ -167,31 +167,6 @@ def getSizeString(kind)
     return size + " " + "ptr" + " ";
 end
 
-class SpecialRegister < NoChildren
-    def x86Operand(kind)
-        raise unless @name =~ /^r/
-        raise unless isX64
-        case kind
-        when :half
-            register(@name + "w")
-        when :int
-            register(@name + "d")
-        when :ptr
-            register(@name)
-        when :quad
-            register(@name)
-        else
-            raise codeOriginString
-        end
-    end
-    def x86CallOperand(kind)
-        # Call operands are not allowed to be partial registers.
-        "#{callPrefix}#{x86Operand(:quad)}"
-    end
-end
-
-X64_SCRATCH_REGISTER = SpecialRegister.new("r11")
-
 def x86GPRName(name, kind)
     case name
     when "eax", "ebx", "ecx", "edx"
@@ -204,7 +179,7 @@ def x86GPRName(name, kind)
         raise "bad GPR name #{name} in 32-bit X86" unless isX64
         name8 = name[1] + 'l'
         name16 = name[1..2]
-    when "r8", "r9", "r10", "r12", "r13", "r14", "r15"
+    when "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15"
         raise "bad GPR name #{name} in 32-bit X86" unless isX64
         case kind
         when :half
@@ -295,6 +270,8 @@ class RegisterID
                 "ebp"
             when "sp"
                 "esp"
+            when "tmp0"
+                "r11"
             else
                 raise "cannot use register #{name} on X86"
             end
@@ -564,9 +541,11 @@ class Sequence
                             if usedScratch
                                 raise "Attempt to use scratch register twice at #{operand.codeOriginString}"
                             end
-                            newList << Instruction.new(operand.codeOrigin, "move", [operand, X64_SCRATCH_REGISTER])
+                            # This isn't ideal, because it's a hidden use of tmp0 that the programmer can't easily see
+                            scratch = RegisterID.new(operand.codeOrigin, "tmp0")
+                            newList << Instruction.new(operand.codeOrigin, "move", [operand, scratch])
                             usedScratch = true
-                            X64_SCRATCH_REGISTER
+                            scratch
                         else
                             operand
                         end
@@ -1073,7 +1052,7 @@ class Instruction
         dst = operands[1]
         slow = LocalLabel.unique("slow")
         done = LocalLabel.unique("done")
-        gprScratch = X64_SCRATCH_REGISTER
+        gprScratch = operands[2]
         fprScratch = FPRegisterID.forName(codeOrigin, "wfa7")
         int64SignBit = Immediate.new(codeOrigin, 0x8000000000000000)
         case kind
@@ -1116,7 +1095,7 @@ class Instruction
         dst = operands[2]
         slow = LocalLabel.unique("slow")
         done = LocalLabel.unique("done")
-        scratch2 = X64_SCRATCH_REGISTER
+        scratch2 = operands[3]
         one = Immediate.new(codeOrigin, 0x1)
 
         case kind
@@ -1918,20 +1897,20 @@ class Instruction
                 $asm.puts "lock; orl $0, (#{sp.x86Operand(:ptr)})"
             end
         when "absf"
-            $asm.puts "movl #{orderOperands("$0x80000000", X64_SCRATCH_REGISTER.x86Operand(:int))}"
-            $asm.puts "movd #{orderOperands(X64_SCRATCH_REGISTER.x86Operand(:int), operands[1].x86Operand(:float))}"
+            $asm.puts "movl #{orderOperands("$0x80000000", operands[2].x86Operand(:int))}"
+            $asm.puts "movd #{orderOperands(operands[2].x86Operand(:int), operands[1].x86Operand(:float))}"
             $asm.puts "andnps #{orderOperands(operands[0].x86Operand(:float), operands[1].x86Operand(:float))}"
         when "absd"
-            $asm.puts "movq #{orderOperands("$0x8000000000000000", X64_SCRATCH_REGISTER.x86Operand(:quad))}"
-            $asm.puts "movd #{orderOperands(X64_SCRATCH_REGISTER.x86Operand(:quad), operands[1].x86Operand(:double))}"
+            $asm.puts "movq #{orderOperands("$0x8000000000000000", operands[2].x86Operand(:quad))}"
+            $asm.puts "movd #{orderOperands(operands[2].x86Operand(:quad), operands[1].x86Operand(:double))}"
             $asm.puts "andnps #{orderOperands(operands[0].x86Operand(:double), operands[1].x86Operand(:double))}"
         when "negf"
-            $asm.puts "movl #{orderOperands("$0x80000000", X64_SCRATCH_REGISTER.x86Operand(:int))}"
-            $asm.puts "movd #{orderOperands(X64_SCRATCH_REGISTER.x86Operand(:int), operands[1].x86Operand(:float))}"
+            $asm.puts "movl #{orderOperands("$0x80000000", operands[2].x86Operand(:int))}"
+            $asm.puts "movd #{orderOperands(operands[2].x86Operand(:int), operands[1].x86Operand(:float))}"
             $asm.puts "xorps #{orderOperands(operands[0].x86Operand(:float), operands[1].x86Operand(:float))}"
         when "negd"
-            $asm.puts "movq #{orderOperands("$0x8000000000000000", X64_SCRATCH_REGISTER.x86Operand(:quad))}"
-            $asm.puts "movd #{orderOperands(X64_SCRATCH_REGISTER.x86Operand(:quad), operands[1].x86Operand(:double))}"
+            $asm.puts "movq #{orderOperands("$0x8000000000000000", operands[2].x86Operand(:quad))}"
+            $asm.puts "movd #{orderOperands(operands[2].x86Operand(:quad), operands[1].x86Operand(:double))}"
             $asm.puts "xorpd #{orderOperands(operands[0].x86Operand(:double), operands[1].x86Operand(:double))}"
         when "tls_loadp"
             raise "tls_loadp is only supported on x64" unless isX64
