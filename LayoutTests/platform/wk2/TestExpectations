@@ -879,3 +879,5 @@ webkit.org/b/259409 imported/w3c/web-platform-tests/cookies/partitioned-cookies/
 webkit.org/b/259482 fast/media/managed-media-source-open-crash.html [ Pass Failure ]
 
 webkit.org/b/260640 [ Release arm64 ] editing/execCommand/apply-inline-style-to-element-with-no-renderer-crash.html [ Pass Failure ]
+
+webkit.org/b/260834 imported/w3c/web-platform-tests/webcodecs/videoFrame-canvasImageSource.html [ Pass Failure ]
