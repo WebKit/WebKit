@@ -127,8 +127,12 @@ const Element* ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> axes
 
     auto findOriginatingElement = [&]() -> const Element* {
         // ::part() selectors can query its originating host, but not internal query containers inside the shadow tree.
-        if (scopeOrdinal <= ScopeOrdinal::ContainingHost)
-            return hostForScopeOrdinal(element, scopeOrdinal);
+        if (selectionMode == SelectionMode::PartPseudoElement) {
+            if (scopeOrdinal <= ScopeOrdinal::ContainingHost)
+                return hostForScopeOrdinal(element, scopeOrdinal);
+            ASSERT(scopeOrdinal == ScopeOrdinal::Element);
+            return element.shadowHost();
+        }
         // ::slotted() selectors can query containers inside the shadow tree, including the slot itself.
         if (scopeOrdinal >= ScopeOrdinal::FirstSlot && scopeOrdinal <= ScopeOrdinal::SlotLimit)
             return assignedSlotForScopeOrdinal(element, scopeOrdinal);
