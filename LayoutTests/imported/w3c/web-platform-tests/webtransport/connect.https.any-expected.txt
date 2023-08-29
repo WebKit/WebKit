@@ -1,0 +1,9 @@
+
+FAIL WebTransport session is established with status code 200 promise_test: Unhandled rejection with value: null
+FAIL WebTransport session is established with status code 204 promise_test: Unhandled rejection with value: null
+FAIL WebTransport session establishment fails with status code 301 assert_true: expected true got false
+FAIL WebTransport session establishment with status code 401 assert_true: expected true got false
+FAIL WebTransport session establishment fails with status code 404 assert_true: expected true got false
+FAIL Echo back request headers promise_test: Unhandled rejection with value: null
+FAIL Cookie header is not echoed back promise_test: Unhandled rejection with value: null
+

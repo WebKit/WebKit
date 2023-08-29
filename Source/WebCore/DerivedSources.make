@@ -768,6 +768,24 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webdriver/Navigator+WebDriver.idl \
     $(WebCore)/Modules/websockets/CloseEvent.idl \
     $(WebCore)/Modules/websockets/WebSocket.idl \
+    $(WebCore)/Modules/webtransport/WebTransport.idl \
+    $(WebCore)/Modules/webtransport/WebTransportBidirectionalStream.idl \
+    $(WebCore)/Modules/webtransport/WebTransportCloseInfo.idl \
+    $(WebCore)/Modules/webtransport/WebTransportCongestionControl.idl \
+    $(WebCore)/Modules/webtransport/WebTransportDatagramDuplexStream.idl \
+    $(WebCore)/Modules/webtransport/WebTransportDatagramStats.idl \
+    $(WebCore)/Modules/webtransport/WebTransportError.idl \
+    $(WebCore)/Modules/webtransport/WebTransportErrorOptions.idl \
+    $(WebCore)/Modules/webtransport/WebTransportErrorSource.idl \
+    $(WebCore)/Modules/webtransport/WebTransportHash.idl \
+    $(WebCore)/Modules/webtransport/WebTransportOptions.idl \
+    $(WebCore)/Modules/webtransport/WebTransportReceiveStream.idl \
+    $(WebCore)/Modules/webtransport/WebTransportReceiveStreamStats.idl \
+    $(WebCore)/Modules/webtransport/WebTransportReliabilityMode.idl \
+    $(WebCore)/Modules/webtransport/WebTransportSendStream.idl \
+    $(WebCore)/Modules/webtransport/WebTransportSendStreamOptions.idl \
+    $(WebCore)/Modules/webtransport/WebTransportSendStreamStats.idl \
+    $(WebCore)/Modules/webtransport/WebTransportStats.idl \
     $(WebCore)/Modules/webxr/Navigator+WebXR.idl \
     $(WebCore)/Modules/webxr/WebXRBoundedReferenceSpace.idl \
     $(WebCore)/Modules/webxr/WebXRFrame+HandInput.idl \

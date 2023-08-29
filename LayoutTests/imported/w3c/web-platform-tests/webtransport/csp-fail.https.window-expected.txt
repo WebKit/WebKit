@@ -1,0 +1,3 @@
+
+FAIL WebTransport connection should fail when CSP connect-src is set to none and reject the promises promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'e.name')"
+
