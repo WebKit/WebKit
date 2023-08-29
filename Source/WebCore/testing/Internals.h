@@ -687,6 +687,7 @@ public:
     void enableMockMediaCapabilities();
 
 #if ENABLE(SPEECH_SYNTHESIS)
+    void simulateSpeechSynthesizerVoiceListChange();
     void enableMockSpeechSynthesizer();
     void enableMockSpeechSynthesizerForMediaElement(HTMLMediaElement&);
     ExceptionOr<void> setSpeechUtteranceDuration(double);

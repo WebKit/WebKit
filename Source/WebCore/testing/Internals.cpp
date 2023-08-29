@@ -1571,6 +1571,20 @@ ExceptionOr<void> Internals::setFormControlStateOfPreviousHistoryItem(const Vect
 }
 
 #if ENABLE(SPEECH_SYNTHESIS)
+void Internals::simulateSpeechSynthesizerVoiceListChange()
+{
+    if (m_platformSpeechSynthesizer) {
+        m_platformSpeechSynthesizer->client().voicesDidChange();
+        return;
+    }
+
+    RefPtr document = contextDocument();
+    if (!document || !document->domWindow())
+        return;
+
+    if (RefPtr synthesis = LocalDOMWindowSpeechSynthesis::speechSynthesis(*document->domWindow()))
+        synthesis->simulateVoicesListChange();
+}
 
 void Internals::enableMockSpeechSynthesizer()
 {
