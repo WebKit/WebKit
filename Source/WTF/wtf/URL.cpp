@@ -398,16 +398,13 @@ StringView URL::path() const
 
 bool URL::setProtocol(StringView newProtocol)
 {
+    ASSERT(m_isValid);
+
     // Firefox and IE remove everything after the first ':'.
     auto newProtocolPrefix = newProtocol.left(newProtocol.find(':'));
     auto newProtocolCanonicalized = URLParser::maybeCanonicalizeScheme(newProtocolPrefix);
     if (!newProtocolCanonicalized)
         return false;
-
-    if (!m_isValid) {
-        parse(makeString(*newProtocolCanonicalized, ':', m_string));
-        return true;
-    }
 
     if ((m_passwordEnd != m_userStart || port()) && *newProtocolCanonicalized == "file"_s)
         return true;
