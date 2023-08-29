@@ -680,6 +680,11 @@ set(WebCore_SERIALIZATION_IN_FILES
     DragActions.serialization.in
     InbandTextTrackPrivate.serialization.in
     LayoutMilestones.serialization.in
+    MDNSRegisterError.serialization.in
+    MediaPlaybackTargetContext.serialization.in
+    MediaProducer.serialization.in
+    PlatformEvent.serialization.in
+    PlatformMediaSession.serialization.in
     PlatformScreen.serialization.in
 )
 

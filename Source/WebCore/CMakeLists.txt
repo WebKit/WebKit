@@ -2729,10 +2729,18 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/ActivityState.serialization.in
     page/DragActions.serialization.in
     page/LayoutMilestones.serialization.in
+    page/MediaProducer.serialization.in
 
+    platform/PlatformEvent.serialization.in
     platform/PlatformScreen.serialization.in
 
+    platform/audio/PlatformMediaSession.serialization.in
+
+    platform/graphics/cocoa/MediaPlaybackTargetContext.serialization.in
+
     platform/graphics/InbandTextTrackPrivate.serialization.in
+
+    platform/mediastream/MDNSRegisterError.serialization.in
 )
 
 WEBKIT_COPY_FILES(WebCore_CopyPrivateHeaders

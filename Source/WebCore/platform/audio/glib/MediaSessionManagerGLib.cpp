@@ -322,7 +322,7 @@ void MediaSessionManagerGLib::updateNowPlayingInfo()
 
 void MediaSessionManagerGLib::dispatch(PlatformMediaSession::RemoteControlCommandType platformCommand, PlatformMediaSession::RemoteCommandArgument argument)
 {
-    m_isSeeking = platformCommand == PlatformMediaSession::SeekToPlaybackPositionCommand;
+    m_isSeeking = platformCommand == PlatformMediaSession::RemoteControlCommandType::SeekToPlaybackPositionCommand;
     m_nowPlayingManager->didReceiveRemoteControlCommand(platformCommand, argument);
 }
 

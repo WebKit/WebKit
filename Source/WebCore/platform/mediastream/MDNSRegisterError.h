@@ -25,25 +25,14 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
-
 namespace WebCore {
 
-enum class MDNSRegisterError { NotImplemented, BadParameter, DNSSD, Internal, Timeout };
-
-}
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::MDNSRegisterError> {
-    using values = EnumValues<
-        WebCore::MDNSRegisterError,
-        WebCore::MDNSRegisterError::NotImplemented,
-        WebCore::MDNSRegisterError::BadParameter,
-        WebCore::MDNSRegisterError::DNSSD,
-        WebCore::MDNSRegisterError::Internal,
-        WebCore::MDNSRegisterError::Timeout
-    >;
+enum class MDNSRegisterError : uint8_t {
+    NotImplemented,
+    BadParameter,
+    DNSSD, // NOLINT
+    Internal,
+    Timeout
 };
 
 }
