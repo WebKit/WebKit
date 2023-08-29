@@ -96,7 +96,7 @@ class XvfbDriverTest(unittest.TestCase):
         failing_print_screen_size_process = MockProcess(returncode=1)
         driver = self.make_driver(print_screen_size_process=failing_print_screen_size_process)
         with OutputCapture(level=logging.INFO) as captured:
-            self.assertRaisesRegexp(RuntimeError, 'Unable to start Xvfb display server', driver.start, False, [])
+            self.assertRaisesRegex(RuntimeError, 'Unable to start Xvfb display server', driver.start, False, [])
             captured_log = captured.root.log.getvalue()
             for retry in [1, 2, 3, 5, 6, 8, 9]:
                 self.assertTrue('Failed to check that the Xvfb display server is replying, retrying check [ {} of 9 ].'.format(retry) in captured_log)

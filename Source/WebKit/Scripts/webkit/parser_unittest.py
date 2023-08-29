@@ -348,9 +348,9 @@ class ParsingTest(unittest.TestCase):
 
 class UnsupportedPrecompilerDirectiveTest(unittest.TestCase):
     def test_error_at_else(self):
-        with self.assertRaisesRegexp(Exception, r"ERROR: '#else.*' is not supported in the \*\.in files"):
+        with self.assertRaisesRegex(Exception, r"ERROR: '#else.*' is not supported in the \*\.in files"):
             parser.parse(StringIO("asd\n#else bla\nfoo"))
 
     def test_error_at_elif(self):
-        with self.assertRaisesRegexp(Exception, r"ERROR: '#elif.*' is not supported in the \*\.in files"):
+        with self.assertRaisesRegex(Exception, r"ERROR: '#elif.*' is not supported in the \*\.in files"):
             parser.parse(StringIO("asd\n#elif bla\nfoo"))
