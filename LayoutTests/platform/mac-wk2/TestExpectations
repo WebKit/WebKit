@@ -2089,3 +2089,5 @@ webkit.org/b/260225 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-GC.
 
 webkit.org/b/260833 [ Monterey+ ] imported/w3c/web-platform-tests/media-source/mediasource-play-then-seek-back.html [ Pass Failure ]
 webkit.org/b/260867 [ Monterey+ ] fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Pass Failure ]
+
+webkit.org/b/239627 [ arm64 ] fast/scrolling/mac/adjust-scroll-snap-during-gesture.html [ Pass Failure ]
