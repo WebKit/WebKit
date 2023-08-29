@@ -2419,22 +2419,6 @@ StyleColor RenderStyle::unresolvedColorForProperty(CSSPropertyID colorProperty, 
 Color RenderStyle::colorResolvingCurrentColor(CSSPropertyID colorProperty, bool visitedLink) const
 {
     auto result = unresolvedColorForProperty(colorProperty, visitedLink);
-
-    if (result.isCurrentColor()) {
-        if (colorProperty == CSSPropertyTextDecorationColor) {
-            if (hasPositiveStrokeWidth()) {
-                // Prefer stroke color if possible but not if it's fully transparent.
-                auto strokeColor = colorResolvingCurrentColor(effectiveStrokeColorProperty(), visitedLink);
-                if (strokeColor.isVisible())
-                    return strokeColor;
-            }
-
-            return colorResolvingCurrentColor(CSSPropertyWebkitTextFillColor, visitedLink);
-        }
-
-        return visitedLink ? visitedLinkColor() : color();
-    }
-
     return colorResolvingCurrentColor(result, visitedLink);
 }
 
