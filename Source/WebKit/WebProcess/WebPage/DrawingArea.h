@@ -213,6 +213,7 @@ private:
     virtual void targetRefreshRateDidChange(unsigned /*rate*/) { }
     virtual void setDeviceScaleFactor(float) { }
     virtual void forceUpdate() { }
+    virtual void didDiscardBackingStore() { }
 #endif
     virtual void displayDidRefresh() { }
 

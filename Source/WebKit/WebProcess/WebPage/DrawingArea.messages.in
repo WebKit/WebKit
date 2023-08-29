@@ -26,6 +26,7 @@ messages -> DrawingArea NotRefCounted {
     TargetRefreshRateDidChange(unsigned rate)
     SetDeviceScaleFactor(float deviceScaleFactor)
     ForceUpdate()
+    DidDiscardBackingStore()
 #endif
 
     DisplayDidRefresh()
