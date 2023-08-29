@@ -95,13 +95,9 @@ void WebGLObject::deleteObject(const AbstractLocker& locker, GraphicsContextGL* 
         m_object = 0;
 }
 
-void WebGLObject::detach()
-{
-    m_attachmentCount = 0; // Make sure OpenGL resource is deleted.
-}
-
 void WebGLObject::onDetached(const AbstractLocker& locker, GraphicsContextGL* context3d)
 {
+    ASSERT(m_attachmentCount); // FIXME: handle attachment with WebGLAttachmentPoint RAII object and remove the ifs.
     if (m_attachmentCount)
         --m_attachmentCount;
     if (m_deleted)

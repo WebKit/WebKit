@@ -123,8 +123,6 @@ protected:
     // deleteObjectImpl should be only called once to delete the OpenGL resource.
     virtual void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) = 0;
 
-    virtual void detach();
-
     WeakPtr<WebGLRenderingContextBase> m_context;
 private:
     PlatformGLObject m_object { 0 };
