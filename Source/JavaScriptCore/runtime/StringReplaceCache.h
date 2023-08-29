@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "MatchResult.h"
 #include <array>
 
 namespace JSC {
@@ -47,11 +48,12 @@ public:
         RefPtr<AtomStringImpl> m_subject { nullptr };
         RegExp* m_regExp { nullptr };
         JSImmutableButterfly* m_result { nullptr }; // We use JSImmutableButterfly since we would like to keep all entries alive while repeatedly calling a JS function.
+        MatchResult m_matchResult { };
         Vector<int> m_lastMatch { };
     };
 
     Entry* get(const String& subject, RegExp*);
-    void set(const String& subject, RegExp*, JSImmutableButterfly*, const Vector<int>&);
+    void set(const String& subject, RegExp*, JSImmutableButterfly*, MatchResult, const Vector<int>&);
 
     void clear()
     {

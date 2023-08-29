@@ -68,6 +68,8 @@ public:
     static ptrdiff_t offsetOfResult() { return OBJECT_OFFSETOF(RegExpCachedResult, m_result); }
     static ptrdiff_t offsetOfReified() { return OBJECT_OFFSETOF(RegExpCachedResult, m_reified); }
 
+    MatchResult result() const { return m_result; }
+
 private:
     MatchResult m_result { 0, 0 };
     bool m_reified { false };
