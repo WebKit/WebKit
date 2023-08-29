@@ -108,20 +108,22 @@ NavigationState::NavigationState(WKWebView *webView)
     , m_releaseNetworkActivityTimer(RunLoop::current(), this, &NavigationState::releaseNetworkActivityAfterLoadCompletion)
 #endif
 {
-    ASSERT(webView->_page);
-    ASSERT(!navigationStates().contains(*webView->_page));
+    RefPtr page = webView->_page;
+    ASSERT(page);
+    ASSERT(!navigationStates().contains(*page));
 
-    navigationStates().add(*webView->_page, *this);
-    webView->_page->pageLoadState().addObserver(*this);
+    navigationStates().add(*page, *this);
+    page->pageLoadState().addObserver(*this);
 }
 
 NavigationState::~NavigationState()
 {
     if (auto webView = this->webView()) {
-        ASSERT(navigationStates().get(*webView->_page).get() == this);
+        RefPtr page = webView->_page;
+        ASSERT(navigationStates().get(*page).get() == this);
 
-        navigationStates().remove(*webView->_page);
-        webView->_page->pageLoadState().removeObserver(*this);
+        navigationStates().remove(*page);
+        page->pageLoadState().removeObserver(*this);
     }
 }
 

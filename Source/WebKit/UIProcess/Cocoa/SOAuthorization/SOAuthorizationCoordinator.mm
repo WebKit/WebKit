@@ -74,7 +74,7 @@ void SOAuthorizationCoordinator::tryAuthorize(Ref<API::NavigationAction>&& navig
     }
 
     // SubFrameSOAuthorizationSession should only be allowed for Apple first parties.
-    auto* targetFrame = navigationAction->targetFrame();
+    RefPtr targetFrame = navigationAction->targetFrame();
     bool subframeNavigation = targetFrame && !targetFrame->isMainFrame();
     if (subframeNavigation && (!page.mainFrame() || ![AKAuthorizationController isURLFromAppleOwnedDomain:page.mainFrame()->url()])) {
         AUTHORIZATIONCOORDINATOR_RELEASE_LOG_ERROR("tryAuthorize: Attempting to perform subframe navigation for non-Apple authorization URL.");

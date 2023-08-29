@@ -616,7 +616,7 @@ void VideoFullscreenManagerProxy::forEachSession(Function<void(VideoFullscreenMo
 
 void VideoFullscreenManagerProxy::requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier identifier, CompletionHandler<void(ShareableBitmap::Handle&&)>&& completionHandler)
 {
-    auto* gpuProcess = GPUProcessProxy::singletonIfCreated();
+    RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated();
     if (!gpuProcess) {
         completionHandler({ });
         return;
@@ -646,7 +646,8 @@ void VideoFullscreenManagerProxy::addVideoInPictureInPictureDidChangeObserver(co
 void VideoFullscreenManagerProxy::hasVideoInPictureInPictureDidChange(bool value)
 {
     ALWAYS_LOG(LOGIDENTIFIER, value);
-    m_page->uiClient().hasVideoInPictureInPictureDidChange(m_page, value);
+    RefPtr page = m_page;
+    page->uiClient().hasVideoInPictureInPictureDidChange(page.get(), value);
     m_pipChangeObservers.forEach([value] (auto& observer) { observer(value); });
 }
 

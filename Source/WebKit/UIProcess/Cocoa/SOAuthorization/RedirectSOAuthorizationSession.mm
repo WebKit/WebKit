@@ -64,9 +64,9 @@ void RedirectSOAuthorizationSession::completeInternal(const ResourceResponse& re
 {
     AUTHORIZATIONSESSION_RELEASE_LOG("completeInternal: httpState=%d, navigationAction=%p", response.httpStatusCode(), navigationAction());
 
-    auto* navigationAction = this->navigationAction();
+    RefPtr navigationAction = this->navigationAction();
     ASSERT(navigationAction);
-    auto* page = this->page();
+    RefPtr page = this->page();
     // FIXME: Enable the useRedirectionForCurrentNavigation code path for all redirections.
     if ((response.httpStatusCode() != 302 && response.httpStatusCode() != 200 && !(response.httpStatusCode() == 307 && navigationAction->request().httpMethod() == "POST"_s)) || !page) {
         AUTHORIZATIONSESSION_RELEASE_LOG("completeInternal: httpState=%d page=%d, so falling back to web path.", response.httpStatusCode(), !!page);
