@@ -588,6 +588,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useWebAssemblySIMD, true, Normal, "Allow the new simd instructions and types from the wasm simd spec.") \
     v(Bool, useWebAssemblyRelaxedSIMD, false, Normal, "Allow the relaxed simd instructions and types from the wasm relaxed simd spec.") \
     v(Bool, useWebAssemblyTailCalls, false, Normal, "Allow the new instructions from the wasm tail calls spec.") \
+    v(Bool, useWebAssemblyExtendedConstantExpressions, false, Normal, "Allow the use of global, element, and data init expressions from the extended constant expressions proposal.") \
     v(Bool, useWasmIPInt, false, Normal, "Use the in-place interpereter for WASM instead of LLInt.") \
     v(Bool, useWasmIPIntPrologueOSR, true, Normal, "Allow IPInt to tier up during function prologues") \
     v(Bool, useWasmIPIntLoopOSR, true, Normal, "Allow IPInt to tier up during loop iterations") \

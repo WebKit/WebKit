@@ -65,6 +65,8 @@
   cmd: if 'arm' == $architecture; skip; else runWebAssemblyThreadsSpecTest :normal; end
 - path: wasm/tail-call-spec-tests
   cmd: if $architecture == 'arm'; skip; else runWebAssemblyTailCallSpecTest :normal; end
+- path: wasm/extended-const-spec-tests
+  cmd: runWebAssemblyExtendedConstSpecTest :normal
 
 - path: wasm/modules/run-from-wasm.wasm
   cmd: runWebAssembly
