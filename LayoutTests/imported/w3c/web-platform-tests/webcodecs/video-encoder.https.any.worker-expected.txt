@@ -1,10 +1,12 @@
 
 PASS Test VideoEncoder construction
-PASS Test VideoEncoder.configure()
+FAIL Test VideoEncoder.configure() assert_throws_dom: bogus function "() => {
+      codec.configure(config);
+    }" threw object "TypeError: Config is invalid" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
 PASS Test successful configure(), encode(), and flush()
 PASS encodeQueueSize test
 PASS Test successful reset() and re-confiugre()
-PASS Test successful encode() after re-configure().
+FAIL Test successful encode() after re-configure(). assert_throws_dom: function "() => encoder.configure(badConfig)" threw object "TypeError: Config is invalid" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
 PASS Verify closed VideoEncoder operations
 PASS Verify unconfigured VideoEncoder operations
 PASS Verify encoding closed frames throws.
