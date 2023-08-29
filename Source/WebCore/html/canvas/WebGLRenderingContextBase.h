@@ -932,8 +932,6 @@ protected:
     // Get the framebuffer bound to the given target.
     virtual WebGLFramebuffer* getFramebufferBinding(GCGLenum target);
 
-    virtual WebGLFramebuffer* getReadFramebufferBinding();
-
     // Helper function to validate input parameters for framebuffer functions.
     // Generate GL error if parameters are illegal.
     bool validateFramebufferFuncParameters(const char* functionName, GCGLenum target, GCGLenum attachment);
@@ -994,11 +992,6 @@ protected:
     void synthesizeGLError(GCGLenum, const char* functionName, const char* description);
     void synthesizeLostContextGLError(GCGLenum, const char* functionName, const char* description);
 
-    String ensureNotNull(const String&) const;
-
-    // Helper for enabling or disabling a capability.
-    void enableOrDisable(GCGLenum capability, bool enable);
-
     // Clamp the width and height to GL_MAX_VIEWPORT_DIMS.
     IntSize clampedCanvasSize();
 
@@ -1007,9 +1000,6 @@ protected:
 
     void setBackDrawBuffer(GCGLenum);
     void setFramebuffer(const AbstractLocker&, GCGLenum, WebGLFramebuffer*);
-
-    virtual void restoreCurrentFramebuffer();
-    void restoreCurrentTexture2D();
 
     // Check if EXT_draw_buffers extension is supported and if it satisfies the WebGL requirements.
     bool supportsDrawBuffers();

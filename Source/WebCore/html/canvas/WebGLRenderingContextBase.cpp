@@ -559,6 +559,13 @@ static constexpr GCGLenum errorCodeToGLenum(GCGLErrorCode error)
     return GraphicsContextGL::INVALID_OPERATION;
 }
 
+static String ensureNotNull(const String& text)
+{
+    if (text.isNull())
+        return emptyString();
+    return text;
+}
+
 std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(CanvasBase& canvas, WebGLContextAttributes& attributes, WebGLVersion type)
 {
     auto scriptExecutionContext = canvas.scriptExecutionContext();
@@ -5337,11 +5344,6 @@ WebGLFramebuffer* WebGLRenderingContextBase::getFramebufferBinding(GCGLenum targ
     return nullptr;
 }
 
-WebGLFramebuffer* WebGLRenderingContextBase::getReadFramebufferBinding()
-{
-    return m_framebufferBinding.get();
-}
-
 bool WebGLRenderingContextBase::validateFramebufferFuncParameters(const char* functionName, GCGLenum target, GCGLenum attachment)
 {
     if (!validateFramebufferTarget(target)) {
@@ -5686,13 +5688,6 @@ void WebGLRenderingContextBase::simulateEventForTesting(SimulatedEventForTesting
         m_context->simulateEventForTesting(event);
 }
 
-String WebGLRenderingContextBase::ensureNotNull(const String& text) const
-{
-    if (text.isNull())
-        return emptyString();
-    return text;
-}
-
 WebGLRenderingContextBase::LRUImageBufferCache::LRUImageBufferCache(int capacity)
     : m_buffers(capacity)
 {
@@ -5748,14 +5743,6 @@ void WebGLRenderingContextBase::synthesizeLostContextGLError(GCGLenum error, con
     m_contextLostState->errors.add(errorCode);
 }
 
-void WebGLRenderingContextBase::enableOrDisable(GCGLenum capability, bool enable)
-{
-    if (enable)
-        m_context->enable(capability);
-    else
-        m_context->disable(capability);
-}
-
 IntSize WebGLRenderingContextBase::clampedCanvasSize()
 {
     IntSize canvasSize { static_cast<int>(canvasBase().width()), static_cast<int>(canvasBase().height()) };
@@ -5794,17 +5781,6 @@ void WebGLRenderingContextBase::setFramebuffer(const AbstractLocker&, GCGLenum t
     if (target == GraphicsContextGL::FRAMEBUFFER || target == GraphicsContextGL::DRAW_FRAMEBUFFER)
         m_framebufferBinding = buffer;
     m_context->bindFramebuffer(target, objectOrZero(buffer));
-}
-
-void WebGLRenderingContextBase::restoreCurrentFramebuffer()
-{
-    bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_framebufferBinding.get());
-}
-
-void WebGLRenderingContextBase::restoreCurrentTexture2D()
-{
-    auto texture = m_textureUnits[m_activeTextureUnit].texture2DBinding.get();
-    bindTexture(GraphicsContextGL::TEXTURE_2D, texture);
 }
 
 bool WebGLRenderingContextBase::supportsDrawBuffers()

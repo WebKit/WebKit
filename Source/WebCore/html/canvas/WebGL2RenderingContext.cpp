@@ -2800,17 +2800,6 @@ WebGLFramebuffer* WebGL2RenderingContext::getFramebufferBinding(GCGLenum target)
     return WebGLRenderingContextBase::getFramebufferBinding(target);
 }
 
-WebGLFramebuffer* WebGL2RenderingContext::getReadFramebufferBinding()
-{
-    return m_readFramebufferBinding.get();
-}
-
-void WebGL2RenderingContext::restoreCurrentFramebuffer()
-{
-    bindFramebuffer(GraphicsContextGL::DRAW_FRAMEBUFFER, m_framebufferBinding.get());
-    bindFramebuffer(GraphicsContextGL::READ_FRAMEBUFFER, m_readFramebufferBinding.get());
-}
-
 bool WebGL2RenderingContext::validateNonDefaultFramebufferAttachment(const char* functionName, GCGLenum attachment)
 {
     switch (attachment) {
