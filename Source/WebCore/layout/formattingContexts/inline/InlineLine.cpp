@@ -356,15 +356,12 @@ void Line::append(const InlineItem& inlineItem, const RenderStyle& style, Inline
         appendInlineBoxStart(inlineItem, style, logicalWidth);
     else if (inlineItem.isInlineBoxEnd())
         appendInlineBoxEnd(inlineItem, style, logicalWidth);
-    else if (inlineItem.layoutBox().isReplacedBox())
-        appendReplacedInlineLevelBox(inlineItem, style, logicalWidth);
     else if (inlineItem.isBox())
-        appendNonReplacedInlineLevelBox(inlineItem, style, logicalWidth);
+        appendGenericInlineLevelBox(inlineItem, style, logicalWidth);
     else if (inlineItem.isOpaque()) {
         ASSERT(!logicalWidth);
         appendOpaqueBox(inlineItem, style);
-    }
-    else
+    } else
         ASSERT_NOT_REACHED();
     m_hasNonDefaultBidiLevelRun = m_hasNonDefaultBidiLevelRun || inlineItem.bidiLevel() != UBIDI_DEFAULT_LTR;
 }
@@ -633,7 +630,7 @@ void Line::appendTextFast(const InlineTextItem& inlineTextItem, const RenderStyl
         m_trailingSoftHyphenWidth = style.fontCascade().width(TextRun { StringView { style.hyphenString() } });
 }
 
-void Line::appendNonReplacedInlineLevelBox(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit marginBoxLogicalWidth)
+void Line::appendGenericInlineLevelBox(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit marginBoxLogicalWidth)
 {
     resetTrailingContent();
     // Do not let negative margin make the content shorter than it already is.
@@ -649,13 +646,6 @@ void Line::appendNonReplacedInlineLevelBox(const InlineItem& inlineItem, const R
     // e.g. <img style="width: 100px; margin-left: -100px;"> pulls the replaced box to -100px with the margin box width of 0px.
     // Instead we need to position it at -100px and size it to 100px so the subsequent content starts at 0px. 
     m_runs.append({ inlineItem, style, lastRunLogicalRight() + marginStart, marginBoxLogicalWidth - marginStart });
-}
-
-void Line::appendReplacedInlineLevelBox(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit marginBoxLogicalWidth)
-{
-    ASSERT(inlineItem.layoutBox().isReplacedBox());
-    // FIXME: Surely replaced boxes behave differently.
-    appendNonReplacedInlineLevelBox(inlineItem, style, marginBoxLogicalWidth);
 }
 
 void Line::appendLineBreak(const InlineItem& inlineItem, const RenderStyle& style)
