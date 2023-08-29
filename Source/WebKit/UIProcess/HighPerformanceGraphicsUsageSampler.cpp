@@ -43,13 +43,16 @@ HighPerformanceGraphicsUsageSampler::HighPerformanceGraphicsUsageSampler(WebProc
     m_timer.startRepeating(samplingInterval);
 }
 
+HighPerformanceGraphicsUsageSampler::~HighPerformanceGraphicsUsageSampler() = default;
+
 void HighPerformanceGraphicsUsageSampler::timerFired()
 {
     bool isUsingHighPerformanceWebGL = false;
     bool isUsingHighPerformanceWebGLInVisibleView = false;
 
     RefPtr<WebPageProxy> firstPage;
-    for (auto& webProcess : m_webProcessPool.processes()) {
+    Ref pool = m_webProcessPool.get();
+    for (auto& webProcess : pool->processes()) {
         for (auto& page : webProcess->pages()) {
             if (!page)
                 continue;
