@@ -76,6 +76,7 @@ headers: "FocusedElementInformation.h" "WebCoreArgumentCoders.h"
     Vector<WebCore::Color> suggestedColors;
 #endif
 #endif
+    bool hasEverBeenPasswordField;
     bool shouldSynthesizeKeyEventsForEditing;
     bool isSpellCheckingEnabled;
     bool shouldAvoidResizingWhenInputViewBoundsChange;
