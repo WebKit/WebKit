@@ -70,6 +70,7 @@ PACKAGES=(
     $(aptIfExists libwpebackend-fdo-1.0-dev)
     libxml2-utils
     libxslt1-dev
+    mesa-common-dev
     ninja-build
     patch
     ruby
