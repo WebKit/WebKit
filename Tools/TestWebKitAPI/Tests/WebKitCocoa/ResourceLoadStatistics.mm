@@ -29,6 +29,7 @@
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebCore/SQLiteDatabase.h>
 #import <WebCore/SQLiteStatement.h>
 #import <WebKit/WKFoundation.h>
@@ -1353,4 +1354,64 @@ TEST(ResourceLoadStatistics, DatabaseSchemeUpdate)
     auto columns = columnsForTable(databaseAfterMigration, "ObservedDomains"_s);
     databaseAfterMigration.close();
     EXPECT_WK_STREQ(columns.last(), "mostRecentWebPushInteractionTime");
+}
+
+TEST(ResourceLoadStatistics, ClientEvaluatedJavaScriptDoesNotLogUserInteraction)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]).get()]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+    [dataStore _setResourceLoadStatisticsEnabled:YES];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
+    [webView loadHTMLString:@"" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    [webView _test_waitForDidFinishNavigation];
+
+    __block bool done = false;
+    [dataStore removeDataOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeResourceLoadStatistics] modifiedSince:[NSDate distantPast] completionHandler:^ {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [webView evaluateJavaScript:@"" completionHandler:^(id value, NSError *error) {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [dataStore fetchDataRecordsOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeResourceLoadStatistics] completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
+        EXPECT_EQ(records.count, 0u);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(ResourceLoadStatistics, UserGestureLogsUserInteraction)
+{
+    auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]).get()]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+    [dataStore _setResourceLoadStatisticsEnabled:YES];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration]);
+    [webView loadHTMLString:@"" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    [webView _test_waitForDidFinishNavigation];
+
+    __block bool done = false;
+    [dataStore removeDataOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeResourceLoadStatistics] modifiedSince:[NSDate distantPast] completionHandler:^ {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [webView evaluateJavaScript:@"internals.withUserGesture(() => {});" completionHandler:^(id value, NSError *error) {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [dataStore fetchDataRecordsOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeResourceLoadStatistics] completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
+        EXPECT_EQ(records.count, 1u);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
 }

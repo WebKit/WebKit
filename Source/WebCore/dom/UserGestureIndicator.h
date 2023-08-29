@@ -134,7 +134,7 @@ public:
     WEBCORE_EXPORT static bool processingUserGestureForMedia();
 
     // If a document is provided, its last known user gesture timestamp is updated.
-    enum class ProcessInteractionStyle { Immediate, Delayed };
+    enum class ProcessInteractionStyle { Immediate, Delayed, Never };
     WEBCORE_EXPORT explicit UserGestureIndicator(std::optional<ProcessingUserGestureState>, Document* = nullptr, UserGestureType = UserGestureType::ActivationTriggering, ProcessInteractionStyle = ProcessInteractionStyle::Immediate, std::optional<WTF::UUID> authorizationToken = std::nullopt);
     WEBCORE_EXPORT explicit UserGestureIndicator(RefPtr<UserGestureToken>, UserGestureToken::GestureScope = UserGestureToken::GestureScope::All, UserGestureToken::IsPropagatedFromFetch = UserGestureToken::IsPropagatedFromFetch::No);
     WEBCORE_EXPORT ~UserGestureIndicator();
