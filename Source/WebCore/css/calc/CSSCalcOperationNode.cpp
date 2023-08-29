@@ -1065,10 +1065,10 @@ void CSSCalcOperationNode::collectComputedStyleDependencies(ComputedStyleDepende
         child->collectComputedStyleDependencies(dependencies);
 }
 
-bool CSSCalcOperationNode::convertingToLengthRequiresNonNullStyle(int lengthConversion) const
+bool CSSCalcOperationNode::convertingToLengthHasRequiredConversionData(int lengthConversion, const CSSToLengthConversionData& conversionData) const
 {
-    return WTF::anyOf(m_children, [lengthConversion] (auto& child) {
-        return child->convertingToLengthRequiresNonNullStyle(lengthConversion);
+    return WTF::anyOf(m_children, [lengthConversion, &conversionData] (auto& child) {
+        return child->convertingToLengthHasRequiredConversionData(lengthConversion, conversionData);
     });
 }
 

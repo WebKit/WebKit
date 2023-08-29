@@ -6670,7 +6670,4 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/im
 # webkit.org/b/260546
 [ Debug ] imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/toggleEvent.html [ Pass Failure ]
 
-# webkit.org/b/260816 REGRESSION(267321@main): [ iOS Mac ] imported/w3c/web-platform-tests/css/geometry/DOMMatrix-001.html is a constant crash 
-imported/w3c/web-platform-tests/css/geometry/DOMMatrix-001.html [ Crash ]
-
 webkit.org/b/260823 http/tests/workers/service/self_registration.html [ Pass Failure ]

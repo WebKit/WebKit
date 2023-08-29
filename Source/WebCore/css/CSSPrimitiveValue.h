@@ -151,7 +151,7 @@ public:
     template<typename T> T computeLength(const CSSToLengthConversionData&) const;
     template<int> Length convertToLength(const CSSToLengthConversionData&) const;
 
-    bool convertingToLengthRequiresNonNullStyle(int lengthConversion) const;
+    bool convertingToLengthHasRequiredConversionData(int lengthConversion, const CSSToLengthConversionData&) const;
 
     double doubleValue(CSSUnitType) const;
 

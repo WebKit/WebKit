@@ -1953,31 +1953,32 @@ enum LengthConversion {
     CalculatedConversion = 1 << 4
 };
 
-inline bool CSSPrimitiveValue::convertingToLengthRequiresNonNullStyle(int lengthConversion) const
+inline bool CSSPrimitiveValue::convertingToLengthHasRequiredConversionData(int lengthConversion, const CSSToLengthConversionData& conversionData) const
 {
-    // This matches the implementation in CSSPrimitiveValue::computeLengthDouble().
-    //
     // FIXME: We should probably make CSSPrimitiveValue::computeLengthDouble and
     // CSSPrimitiveValue::computeNonCalcLengthDouble (which has the style assertion)
     // return std::optional<double> instead of having this check here.
-    switch (primitiveUnitType()) {
-    case CSSUnitType::CSS_EM:
-    case CSSUnitType::CSS_EX:
-    case CSSUnitType::CSS_CAP:
-    case CSSUnitType::CSS_CH:
-    case CSSUnitType::CSS_IC:
-    case CSSUnitType::CSS_LH:
-        return lengthConversion & (FixedIntegerConversion | FixedFloatConversion);
-    case CSSUnitType::CSS_CALC:
-        return m_value.calc->convertingToLengthRequiresNonNullStyle(lengthConversion);
-    default:
-        return false;
-    }
+
+    bool isFixedNumberConversion = lengthConversion & (FixedIntegerConversion | FixedFloatConversion);
+    auto dependencies = computedStyleDependencies();
+    if (!dependencies.rootProperties.isEmpty() && !conversionData.rootStyle())
+        return !isFixedNumberConversion;
+
+    if (!dependencies.properties.isEmpty() && !conversionData.style())
+        return !isFixedNumberConversion;
+
+    if (isViewportPercentageLength() && conversionData.defaultViewportFactor().isEmpty())
+        return !isFixedNumberConversion;
+
+    if (primitiveUnitType() == CSSUnitType::CSS_CALC)
+        return m_value.calc->convertingToLengthHasRequiredConversionData(lengthConversion, conversionData);
+
+    return true;
 }
 
 template<int supported> Length CSSPrimitiveValue::convertToLength(const CSSToLengthConversionData& conversionData) const
 {
-    if (convertingToLengthRequiresNonNullStyle(supported) && !conversionData.style())
+    if (!convertingToLengthHasRequiredConversionData(supported, conversionData))
         return Length(LengthType::Undefined);
     if ((supported & FixedIntegerConversion) && isLength())
         return computeLength<Length>(conversionData);
