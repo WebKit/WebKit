@@ -2433,7 +2433,11 @@ instructionLabel(_i64_rotr)
 instructionLabel(_f32_abs)
     # f32.abs
     popFloat32FT0()
-    absf ft0, ft0
+    if X86_64
+        absf ft0, ft0, ws2
+    else
+        absf ft0, ft0
+    end
     pushFloat32FT0()
 
     advancePC(1)
@@ -2442,7 +2446,11 @@ instructionLabel(_f32_abs)
 instructionLabel(_f32_neg)
     # f32.neg
     popFloat32FT0()
-    negf ft0, ft0
+    if X86_64
+        negf ft0, ft0, ws2
+    else
+        negf ft0, ft0
+    end
     pushFloat32FT0()
 
     advancePC(1)
@@ -2624,7 +2632,11 @@ instructionLabel(_f32_copysign)
 instructionLabel(_f64_abs)
     # f64.abs
     popFloat64FT0()
-    absd ft0, ft0
+    if X86_64
+        absd ft0, ft0, ws2
+    else
+        absd ft0, ft0
+    end
     pushFloat64FT0()
 
     advancePC(1)
@@ -2633,7 +2645,11 @@ instructionLabel(_f64_abs)
 instructionLabel(_f64_neg)
     # f64.neg
     popFloat64FT0()
-    negd ft0, ft0
+    if X86_64
+        negd ft0, ft0, ws2
+    else
+        negd ft0, ft0
+    end
     pushFloat64FT0()
 
     advancePC(1)
@@ -2931,7 +2947,11 @@ instructionLabel(_i64_trunc_f32_u)
     fi2f t0, ft1
     bfgtequn ft0, ft1, .ipint_i64_f32_u_outOfBoundsTrunc
 
-    truncatef2q ft0, t0
+    if X86_64
+        truncatef2q ft0, t0, ws2
+    else
+        truncatef2q ft0, t0
+    end
     pushInt64(t0)
     advancePC(1)
     nextIPIntInstruction()
@@ -2965,7 +2985,11 @@ instructionLabel(_i64_trunc_f64_u)
     fq2d t0, ft1
     bdgtequn ft0, ft1, .ipint_i64_f64_u_outOfBoundsTrunc
 
-    truncated2q ft0, t0
+    if X86_64
+        truncated2q ft0, t0, ws2
+    else
+        truncated2q ft0, t0
+    end
     pushInt64(t0)
     advancePC(1)
     nextIPIntInstruction()
@@ -2997,7 +3021,7 @@ instructionLabel(_f32_convert_i64_s)
 instructionLabel(_f32_convert_i64_u)
     popInt64(t0, t1)
     if X86_64
-        cq2f t0, t1, ft0
+        cq2f t0, t1, ft0, ws2
     else
         cq2f t0, ft0
     end
@@ -3036,7 +3060,7 @@ instructionLabel(_f64_convert_i64_s)
 instructionLabel(_f64_convert_i64_u)
     popInt64(t0, t1)
     if X86_64
-        cq2d t0, t1, ft0
+        cq2d t0, t1, ft0, ws2
     else
         cq2d t0, ft0
     end
@@ -3407,7 +3431,11 @@ instructionLabel(_i64_trunc_sat_f32_u)
     fi2f t0, ft1
     bfgtequn ft0, ft1, .ipint_i64_trunc_sat_f32_u_outOfBoundsTruncSatMax
 
-    truncatef2q ft0, t0
+    if X86_64
+        truncatef2q ft0, t0, ws2
+    else
+        truncatef2q ft0, t0
+    end
     pushInt64(t0)
     advancePC(2)
     nextIPIntInstruction()
@@ -3469,7 +3497,11 @@ instructionLabel(_i64_trunc_sat_f64_u)
     fq2d t0, ft1
     bdgtequn ft0, ft1, .ipint_i64_trunc_sat_f64_u_outOfBoundsTruncSatMax
 
-    truncated2q ft0, t0
+    if X86_64
+        truncated2q ft0, t0, ws2
+    else
+        truncated2q ft0, t0
+    end
     pushInt64(t0)
     advancePC(2)
     nextIPIntInstruction()
