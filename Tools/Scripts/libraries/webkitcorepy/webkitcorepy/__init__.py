@@ -90,7 +90,7 @@ else:
 
 AutoInstall.register(Package('setuptools_scm', Version(5, 0, 2), pypi_name='setuptools-scm'))
 AutoInstall.register(Package('socks', Version(1, 7, 1), pypi_name='PySocks'))
-AutoInstall.register(Package('six', Version(1, 15, 0)))
+AutoInstall.register(Package('six', Version(1, 16, 0)))
 AutoInstall.register(Package('tblib', Version(1, 7, 0)))
 
 if sys.version_info >= (3, 12):

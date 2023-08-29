@@ -34,8 +34,8 @@ if sys.platform == 'darwin':
 from webkitcorepy import AutoInstall, Package, Version
 AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}-{}'.format(sys.version_info[0], platform.machine())))
 
-if sys.version_info >= (3, 7):
-    AutoInstall.register(Package('pylint', Version(2, 6, 0)))
+if sys.version_info >= (3, 7, 2):
+    AutoInstall.register(Package('pylint', Version(2, 17, 5)))
     AutoInstall.register(
         Package("pytest", Version(7, 2, 0),
                 implicit_deps=["attr", "pluggy", "iniconfig"]
@@ -64,12 +64,16 @@ else:
 
 AutoInstall.register(Package('atomicwrites', Version(1, 1, 5)))
 AutoInstall.register(Package('attr', Version(20, 3, 0), pypi_name='attrs'))
-AutoInstall.register(Package('bs4', Version(4, 9, 3), pypi_name='beautifulsoup4'))
+
+if sys.version_info >= (3, 12):
+    AutoInstall.register(Package('bs4', Version(4, 12, 2), pypi_name='beautifulsoup4'))
+else:
+    AutoInstall.register(Package('bs4', Version(4, 9, 3), pypi_name='beautifulsoup4'))
 AutoInstall.register(Package('configparser', Version(4, 0, 2)))
 AutoInstall.register(Package('contextlib2', Version(0, 6, 0)))
 AutoInstall.register(Package('coverage', Version(5, 2, 1)))
 AutoInstall.register(Package('funcsigs', Version(1, 0, 2)))
-AutoInstall.register(Package('genshi', Version(0, 7, 3), pypi_name='Genshi'))
+AutoInstall.register(Package('genshi', Version(0, 7, 7), pypi_name='Genshi'))
 AutoInstall.register(Package('html5lib', Version(1, 1)))
 AutoInstall.register(Package('iniconfig', Version(1, 1, 1)))
 AutoInstall.register(Package('mechanize', Version(0, 4, 5)))
@@ -80,7 +84,12 @@ AutoInstall.register(Package('mozterm', Version(1, 0, 0)))
 AutoInstall.register(Package('pluggy', Version(0, 13, 1)))
 AutoInstall.register(Package('py', Version(1, 11, 0)))
 AutoInstall.register(Package('pycodestyle', Version(2, 5, 0)))
-AutoInstall.register(Package('pyfakefs', Version(3, 7, 2)))
+
+if sys.version_info >= (3, 7):
+    AutoInstall.register(Package('pyfakefs', Version(5, 2, 4)))
+else:
+    AutoInstall.register(Package('pyfakefs', Version(3, 7, 2)))
+
 AutoInstall.register(Package('scandir', Version(1, 10, 0)))
 AutoInstall.register(Package('soupsieve', Version(1, 9, 6)))
 AutoInstall.register(Package('selenium', Version(3, 141, 0)))
