@@ -318,6 +318,7 @@ public:
     virtual bool mediaPlayerShouldDisableHDR() const { return false; }
 
     virtual FloatSize mediaPlayerVideoLayerSize() const { return { }; }
+    virtual void mediaPlayerVideoLayerSizeDidChange(const FloatSize&) { }
 
 #if !RELEASE_LOG_DISABLED
     virtual const void* mediaPlayerLogIdentifier() { return nullptr; }
@@ -373,6 +374,7 @@ public:
     void requestHostingContextID(LayerHostingContextIDCallback&&);
     LayerHostingContextID hostingContextID() const;
     FloatSize videoLayerSize() const;
+    void videoLayerSizeDidChange(const FloatSize&);
     void setVideoLayerSizeFenced(const FloatSize&, WTF::MachSendRight&&);
 
 #if PLATFORM(IOS_FAMILY)
