@@ -815,7 +815,10 @@ static void checkIfClassIsAllowed(WKRemoteObjectDecoder *decoder, Class objectCl
     if (alwaysAllowedClasses().contains((__bridge CFTypeRef)objectClass))
         return;
 
-    [NSException raise:NSInvalidUnarchiveOperationException format:@"Object of class \"%@\" is not allowed. Allowed classes are \"%@\"", objectClass, decoder.allowedClasses];
+    NSString *message = [NSString stringWithFormat:@"%@,%@", NSStringFromClass(objectClass), decoder.allowedClasses];
+    std::array<uint64_t, 6> values { 0, 0, 0, 0, 0, 0 };
+    strncpy(reinterpret_cast<char*>(values.data()), message.UTF8String, sizeof(values));
+    CRASH_WITH_INFO(values[0], values[1], values[2], values[3], values[4], values[5]);
 }
 
 static void validateClass(WKRemoteObjectDecoder *decoder, Class objectClass)
