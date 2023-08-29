@@ -292,25 +292,25 @@ PASS CSS Transitions: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at 
 PASS CSS Transitions: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (0.25) should be [0.54 0.8 0.26 94.83deg]
 PASS CSS Transitions: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (0.75) should be [0.17 0.78 0.61 118.68deg]
 PASS CSS Transitions: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (1) should be [0 0.71 0.71 135deg]
-FAIL CSS Transitions: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (2) should be [-0.52 0.29 0.81 208.96deg] assert_equals: expected "- 0.52 0.29 0.81 208.96deg " but got "0.52 - 0.29 - 0.81 151.04deg "
+PASS CSS Transitions: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (2) should be [-0.52 0.29 0.81 208.96deg]
 FAIL CSS Transitions with transition: all: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (-1) should be [0.67 -0.06 -0.74 124.97deg] assert_equals: expected "0.67 - 0.06 - 0.74 124.97deg " but got "0.67 - 0.06 - 0.74 124.98deg "
 PASS CSS Transitions with transition: all: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (0) should be [0.71 0.71 0 90deg]
 PASS CSS Transitions with transition: all: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (0.25) should be [0.54 0.8 0.26 94.83deg]
 PASS CSS Transitions with transition: all: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (0.75) should be [0.17 0.78 0.61 118.68deg]
 PASS CSS Transitions with transition: all: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (1) should be [0 0.71 0.71 135deg]
-FAIL CSS Transitions with transition: all: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (2) should be [-0.52 0.29 0.81 208.96deg] assert_equals: expected "- 0.52 0.29 0.81 208.96deg " but got "0.52 - 0.29 - 0.81 151.04deg "
+PASS CSS Transitions with transition: all: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (2) should be [-0.52 0.29 0.81 208.96deg]
 FAIL CSS Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (-1) should be [0.67 -0.06 -0.74 124.97deg] assert_equals: expected "0.67 - 0.06 - 0.74 124.97deg " but got "0.67 - 0.06 - 0.74 124.98deg "
 PASS CSS Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (0) should be [0.71 0.71 0 90deg]
 PASS CSS Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (0.25) should be [0.54 0.8 0.26 94.83deg]
 PASS CSS Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (0.75) should be [0.17 0.78 0.61 118.68deg]
 PASS CSS Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (1) should be [0 0.71 0.71 135deg]
-FAIL CSS Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (2) should be [-0.52 0.29 0.81 208.96deg] assert_equals: expected "- 0.52 0.29 0.81 208.96deg " but got "0.52 - 0.29 - 0.81 151.04deg "
+PASS CSS Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (2) should be [-0.52 0.29 0.81 208.96deg]
 FAIL Web Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (-1) should be [0.67 -0.06 -0.74 124.97deg] assert_equals: expected "0.67 - 0.06 - 0.74 124.97deg " but got "0.67 - 0.06 - 0.74 124.98deg "
 PASS Web Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (0) should be [0.71 0.71 0 90deg]
 PASS Web Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (0.25) should be [0.54 0.8 0.26 94.83deg]
 PASS Web Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (0.75) should be [0.17 0.78 0.61 118.68deg]
 PASS Web Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (1) should be [0 0.71 0.71 135deg]
-FAIL Web Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (2) should be [-0.52 0.29 0.81 208.96deg] assert_equals: expected "- 0.52 0.29 0.81 208.96deg " but got "0.52 - 0.29 - 0.81 151.04deg "
+PASS Web Animations: property <rotate> from [1 1 0 90deg] to [0 1 1 135deg] at (2) should be [-0.52 0.29 0.81 208.96deg]
 PASS CSS Transitions: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (-1) should be [1 0 0 -450deg]
 PASS CSS Transitions: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (0) should be [1 0 0 0deg]
 PASS CSS Transitions: property <rotate> from [0 1 0 0deg] to [1 0 0 450deg] at (0.25) should be [1 0 0 112.5deg]
