@@ -63,10 +63,10 @@ class PullRequest(object):
 
     COMMIT_BODY_RES = [
         dict(
-            re=re.compile(r'\A#### (?P<hash>[0-9a-f]+)\n```\n(?P<message>.+)\n```\n?\Z', flags=re.DOTALL),
+            re=re.compile(r'\A#### (?P<hash>[0-9a-f]+)\n```\n(?P<message>.+)\n```\n?(<!--.+Start-->.+<!--.+End-->)?\Z', flags=re.DOTALL),
             escaped=False,
         ), dict(
-            re=re.compile(r'\A#### (?P<hash>[0-9a-f]+)\n<pre>\n(?P<message>.+)\n</pre>\n?\Z', flags=re.DOTALL),
+            re=re.compile(r'\A#### (?P<hash>[0-9a-f]+)\n<pre>\n(?P<message>.+)\n</pre>\n?(<!--.+Start-->.+<!--.+End-->)?\Z', flags=re.DOTALL),
             escaped=True,
         ),
     ]
