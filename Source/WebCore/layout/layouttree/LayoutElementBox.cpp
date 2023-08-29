@@ -101,6 +101,15 @@ const Box* ElementBox::lastInFlowOrFloatingChild() const
     return nullptr;
 }
 
+bool ElementBox::hasOutOfFlowChild() const
+{
+    for (auto* child = this->firstChild(); child; child = child->nextSibling()) {
+        if (child->isOutOfFlowPositioned())
+            return true;
+    }
+    return false;
+}
+
 void ElementBox::appendChild(UniqueRef<Box> childRef)
 {
     insertChild(WTFMove(childRef), m_lastChild.get());

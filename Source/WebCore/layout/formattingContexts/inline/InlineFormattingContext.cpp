@@ -71,7 +71,7 @@ InlineLayoutResult InlineFormattingContext::layoutInFlowAndFloatContent(const Co
 {
     auto& floatingState = inlineLayoutState.parentBlockLayoutState().floatingState();
     if (!root().hasInFlowChild()) {
-        // Float and/or out-of-flow only content does not support partial layout.
+        // Float only content does not support partial layout.
         ASSERT(!lineDamage);
         layoutFloatContentOnly(constraints, floatingState);
         return { { }, InlineLayoutResult::Range::Full };
@@ -238,13 +238,6 @@ void InlineFormattingContext::layoutFloatContentOnly(const ConstraintsForInlineC
             floatBoxGeometry.setLogicalTopLeft(floatBoxTopLeft);
             floatingState.append(floatingContext.toFloatItem(floatBox, floatBoxGeometry));
             continue;
-        }
-        if (inlineItem.isOpaque()) {
-            auto& opaqueBox = inlineItem.layoutBox();
-            if (opaqueBox.isOutOfFlowPositioned()) {
-                // FIXME: set the static position.
-                continue;
-            }
         }
         ASSERT_NOT_REACHED();
     }
