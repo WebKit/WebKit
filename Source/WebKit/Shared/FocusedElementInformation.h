@@ -131,6 +131,7 @@ struct FocusedElementInformation {
     Vector<WebCore::Color> suggestedColors;
 #endif
 #endif
+    bool hasEverBeenPasswordField { false };
     bool shouldSynthesizeKeyEventsForEditing { false };
     bool isSpellCheckingEnabled { true };
     bool shouldAvoidResizingWhenInputViewBoundsChange { false };
