@@ -114,9 +114,9 @@ Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation
     }
     
     // Convert that to Axis/Angle form
-    double x = -decomp.quaternionX;
-    double y = -decomp.quaternionY;
-    double z = -decomp.quaternionZ;
+    double x = decomp.quaternionX;
+    double y = decomp.quaternionY;
+    double z = decomp.quaternionZ;
     double length = std::hypot(x, y, z);
     double angle = 0;
     
