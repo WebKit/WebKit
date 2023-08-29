@@ -3671,6 +3671,7 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
         information.autocapitalizeType = element.autocapitalizeType();
         information.isAutocorrect = element.shouldAutocorrect();
         information.placeholder = element.attributeWithoutSynchronization(HTMLNames::placeholderAttr);
+        information.hasEverBeenPasswordField = element.hasEverBeenPasswordField();
         if (element.isPasswordField())
             information.elementType = InputType::Password;
         else if (element.isSearchField())

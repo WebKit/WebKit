@@ -610,6 +610,9 @@ inline void HTMLInputElement::runPostTypeUpdateTasks()
     }
 #endif
 
+    if (isPasswordField())
+        m_hasEverBeenPasswordField = true;
+
     if (renderer())
         invalidateStyleAndRenderersForSubtree();
 

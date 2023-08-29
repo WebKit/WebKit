@@ -593,7 +593,8 @@ typedef enum {
 @property (nonatomic, retain) UIColor *insertionPointColor;
 @property (nonatomic, retain) UIColor *selectionBarColor;
 @property (nonatomic, retain) UIColor *selectionHighlightColor;
-@property (nonatomic, readwrite) BOOL isSingleLineDocument;
+@property (nonatomic) BOOL isSingleLineDocument;
+@property (nonatomic) BOOL learnsCorrections;
 @end
 
 @protocol UITextInputDelegatePrivate
