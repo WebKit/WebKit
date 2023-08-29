@@ -2541,6 +2541,7 @@ rendering/LegacyLineLayout.cpp
 rendering/LegacyRootInlineBox.cpp
 rendering/LegacyInlineTextBox.cpp
 rendering/MarkedText.cpp
+rendering/MotionPath.cpp
 rendering/OrderIterator.cpp
 rendering/PathOperation.cpp
 rendering/PointerEventsHitRules.cpp

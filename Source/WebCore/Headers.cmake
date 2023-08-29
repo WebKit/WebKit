@@ -2270,6 +2270,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/LegacyLineLayout.h
     rendering/LegacyRootInlineBox.h
     rendering/MarkedText.h
+    rendering/MotionPath.h
     rendering/OrderIterator.h
     rendering/OverlapTestRequestClient.h
     rendering/Pagination.h

@@ -55,6 +55,7 @@
 #include "LayoutIntegrationLineLayout.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "MotionPath.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderBlockInlines.h"
@@ -637,7 +638,7 @@ void RenderBox::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 
 void RenderBox::applyTransform(TransformationMatrix& t, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
-    style.applyTransform(t, boundingBox, options);
+    style.applyTransform(t, TransformOperationData(boundingBox, this), options);
 }
 
 void RenderBox::constrainLogicalMinMaxSizesByAspectRatio(LayoutUnit& computedMinSize, LayoutUnit& computedMaxSize, LayoutUnit computedSize, MinimumSizeIsAutomaticContentBased minimumSizeType, ConstrainDimension dimension) const

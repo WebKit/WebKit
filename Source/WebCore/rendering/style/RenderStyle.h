@@ -91,6 +91,7 @@ class TextSizeAdjustment;
 class TextUnderlineOffset;
 class TransformOperations;
 class TransformationMatrix;
+class TransformOperationData;
 class TranslateTransformOperation;
 class WillChangeData;
 
@@ -898,11 +899,10 @@ public:
     void unapplyTransformOrigin(TransformationMatrix&, const FloatPoint3D& originTranslate) const;
 
     // applyTransform calls applyTransformOrigin(), then applyCSSTransform(), followed by unapplyTransformOrigin().
-    void applyTransform(TransformationMatrix&, const FloatRect& boundingBox) const;
-    void applyTransform(TransformationMatrix&, const FloatRect& boundingBox, OptionSet<TransformOperationOption>) const;
-    void applyCSSTransform(TransformationMatrix&, const FloatRect& boundingBox) const;
-    void applyCSSTransform(TransformationMatrix&, const FloatRect& boundingBox, OptionSet<TransformOperationOption>) const;
-    void applyMotionPathTransform(TransformationMatrix&, const FloatRect& boundingBox) const;
+    void applyTransform(TransformationMatrix&, const TransformOperationData& boundingBox) const;
+    void applyTransform(TransformationMatrix&, const TransformOperationData& boundingBox, OptionSet<TransformOperationOption>) const;
+    void applyCSSTransform(TransformationMatrix&, const TransformOperationData& boundingBox) const;
+    void applyCSSTransform(TransformationMatrix&, const TransformOperationData& boundingBox, OptionSet<TransformOperationOption>) const;
     void setPageScaleTransform(float);
 
     inline bool hasPositionedMask() const;

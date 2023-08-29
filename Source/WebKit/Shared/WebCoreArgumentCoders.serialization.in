@@ -2679,6 +2679,17 @@ header: <WebCore/RenderStyleConstants.h>
     ViewBox
 };
 
+header: <WebCore/MotionPath.h>
+[CustomHeader] struct WebCore::MotionPathData {
+    WebCore::FloatRect containingBlockBoundingRect;
+    WebCore::FloatPoint offsetFromContainingBlock;
+};
+
+[CustomHeader] class WebCore::TransformOperationData {
+    WebCore::FloatRect boundingBox();
+    std::optional<WebCore::MotionPathData> motionPathData();
+}
+
 header: <WebCore/PathOperation.h>
 [RefCounted, CustomHeader] class WebCore::ReferencePathOperation {
     std::optional<WebCore::Path> path();
@@ -2706,8 +2717,6 @@ header: <WebCore/PathOperation.h>
     float angle();
     WebCore::RayPathOperation::Size size();
     bool isContaining();
-    WebCore::FloatRect containingBlockBoundingRect();
-    WebCore::FloatPoint position();
 }
 
 [RefCounted] class WebCore::PathOperation subclasses {

@@ -59,6 +59,7 @@
 #include "FontCascade.h"
 #include "FontSelectionValueInlines.h"
 #include "GridPositionsResolver.h"
+#include "MotionPath.h"
 #include "NodeRenderStyle.h"
 #include "PerspectiveTransformOperation.h"
 #include "QuotesData.h"
@@ -846,7 +847,7 @@ static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyl
 
     if (renderer) {
         TransformationMatrix transform;
-        style.applyTransform(transform, renderer->transformReferenceBoxRect(style), { });
+        style.applyTransform(transform, TransformOperationData(renderer->transformReferenceBoxRect(style), renderer), { });
         return CSSTransformListValue::create(matrixTransformValue(transform, style));
     }
 

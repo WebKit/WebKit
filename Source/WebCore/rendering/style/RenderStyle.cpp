@@ -36,6 +36,7 @@
 #include "FontSelector.h"
 #include "InlineIteratorTextBox.h"
 #include "InlineTextBoxStyle.h"
+#include "MotionPath.h"
 #include "Pagination.h"
 #include "PathTraversalState.h"
 #include "QuotesData.h"
@@ -1625,25 +1626,25 @@ void RenderStyle::unapplyTransformOrigin(TransformationMatrix& transform, const 
         transform.translate3d(-originTranslate.x(), -originTranslate.y(), -originTranslate.z());
 }
 
-void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
+void RenderStyle::applyTransform(TransformationMatrix& transform, const TransformOperationData& transformData, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
     if (!options.contains(RenderStyle::TransformOperationOption::TransformOrigin) || !affectedByTransformOrigin()) {
-        applyCSSTransform(transform, boundingBox, options);
+        applyCSSTransform(transform, transformData, options);
         return;
     }
 
-    auto originTranslate = computeTransformOrigin(boundingBox);
+    auto originTranslate = computeTransformOrigin(transformData.boundingBox());
     applyTransformOrigin(transform, originTranslate);
-    applyCSSTransform(transform, boundingBox, options);
+    applyCSSTransform(transform, transformData, options);
     unapplyTransformOrigin(transform, originTranslate);
 }
 
-void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRect& boundingBox) const
+void RenderStyle::applyTransform(TransformationMatrix& transform, const TransformOperationData& transformData) const
 {
-    applyTransform(transform, boundingBox, allTransformOperations());
+    applyTransform(transform, transformData, allTransformOperations());
 }
 
-void RenderStyle::applyCSSTransform(TransformationMatrix& transform, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
+void RenderStyle::applyCSSTransform(TransformationMatrix& transform, const TransformOperationData& operationData, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
     // https://www.w3.org/TR/css-transforms-2/#ctm
     // The transformation matrix is computed from the transform, transform-origin, translate, rotate, scale, and offset properties as follows:
@@ -1651,7 +1652,7 @@ void RenderStyle::applyCSSTransform(TransformationMatrix& transform, const Float
 
     // 2. Translate by the computed X, Y, and Z values of transform-origin.
     // (implemented in applyTransformOrigin)
-
+    auto& boundingBox = operationData.boundingBox();
     // 3. Translate by the computed X, Y, and Z values of translate.
     if (options.contains(RenderStyle::TransformOperationOption::Translate)) {
         if (TransformOperation* translate = m_nonInheritedData->rareData->translate.get())
@@ -1672,7 +1673,7 @@ void RenderStyle::applyCSSTransform(TransformationMatrix& transform, const Float
 
     // 6. Translate and rotate by the transform specified by offset.
     if (options.contains(RenderStyle::TransformOperationOption::Offset))
-        applyMotionPathTransform(transform, boundingBox);
+        MotionPath::applyMotionPathTransform(*this, operationData, transform);
 
     // 7. Multiply by each of the transform functions in transform from left to right.
     auto& transformOperations = m_nonInheritedData->miscData->transform->operations;
@@ -1681,58 +1682,6 @@ void RenderStyle::applyCSSTransform(TransformationMatrix& transform, const Float
 
     // 8. Translate by the negated computed X, Y and Z values of transform-origin.
     // (implemented in unapplyTransformOrigin)
-}
-
-static PathTraversalState getTraversalStateAtDistance(const Path& path, const Length& distance)
-{
-    auto pathLength = path.length();
-    auto distanceValue = floatValueForLength(distance, pathLength);
-
-    float resolvedLength = 0;
-    if (path.isClosed()) {
-        if (pathLength) {
-            resolvedLength = fmod(distanceValue, pathLength);
-            if (resolvedLength < 0)
-                resolvedLength += pathLength;
-        }
-    } else
-        resolvedLength = clampTo<float>(distanceValue, 0, pathLength);
-
-    ASSERT(resolvedLength >= 0);
-    return path.traversalStateAtLength(resolvedLength);
-}
-
-void RenderStyle::applyMotionPathTransform(TransformationMatrix& transform, const FloatRect& boundingBox) const
-{
-    if (!offsetPath())
-        return;
-
-    auto transformOrigin = computeTransformOrigin(boundingBox).xy();
-    auto anchor = transformOrigin;
-    if (!offsetAnchor().x().isAuto())
-        anchor = floatPointForLengthPoint(offsetAnchor(), boundingBox.size()) + boundingBox.location();
-    
-    // Shift element to the point on path specified by offset-path and offset-distance.
-    auto path = offsetPath()->getPath(boundingBox);
-    if (!path)
-        return;
-    auto traversalState = getTraversalStateAtDistance(*path, offsetDistance());
-    transform.translate(traversalState.current().x(), traversalState.current().y());
-
-    // Shift element to the anchor specified by offset-anchor.
-    transform.translate(-anchor.x(), -anchor.y());
-
-    auto shiftToOrigin = anchor - transformOrigin;
-    transform.translate(shiftToOrigin.width(), shiftToOrigin.height());
-
-    // Apply rotation.
-    auto rotation = offsetRotate();
-    if (rotation.hasAuto())
-        transform.rotate(traversalState.normalAngle() + rotation.angle());
-    else
-        transform.rotate(rotation.angle());
-
-    transform.translate(-shiftToOrigin.width(), -shiftToOrigin.height());
 }
 
 void RenderStyle::setPageScaleTransform(float scale)
