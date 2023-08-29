@@ -2086,3 +2086,5 @@ webkit.org/b/260225 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-GC.
 
 # rdar://108846032 (REGRESSION (263506@main): [ Sonoma wk2 ] fast/layoutformattingcontext/horizontal-sizing-with-trailing-letter-spacing.html: WebCore::Layout::Line::TrimmableTrailingContent::remove)
 [ Sonoma+ ] fast/layoutformattingcontext/horizontal-sizing-with-trailing-letter-spacing.html [ Skip ]
+
+webkit.org/b/260833 [ Monterey+ ] imported/w3c/web-platform-tests/media-source/mediasource-play-then-seek-back.html [ Pass Failure ]
