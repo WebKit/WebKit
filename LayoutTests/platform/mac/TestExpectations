@@ -2738,7 +2738,6 @@ webkit.org/b/237415 webgl/1.0.x/conformance/rendering/clipping-wide-points.html 
 
 # webkit.org/b/255427 [ Ventura ] 4/13 batch mark expectations and branch bugs
 [ Ventura ] http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html [ Pass Failure ]
-[ Ventura ] imported/w3c/web-platform-tests/svg/import/metadata-example-01-t-manual.svg [ Pass Failure ]
 [ Ventura ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audiobuffersource-connections.html [ Pass Failure ]
 [ Ventura ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-dynamics-compressor-connections.html [ Pass Failure ]
 [ Ventura ] svg/W3C-SVG-1.1/metadata-example-01-b.svg [ Pass Failure ]
@@ -2868,3 +2867,5 @@ webkit.org/b/260529 [ Ventura+ x86_64 ] animations/suspend-resume-animation-even
 
 # rdar://114291916 (REGRESSION (266884@main): [ Sonoma wk2 ] editing/inserting/insert-paragraph-separator-with-html-elements-crash.html is a consistent failure)
 [ Sonoma+ ] editing/inserting/insert-paragraph-separator-with-html-elements-crash.html [ Failure ]
+
+webkit.org/b/260870 [ Ventura+ ] imported/w3c/web-platform-tests/svg/import/metadata-example-01-t-manual.svg [ Failure ]
