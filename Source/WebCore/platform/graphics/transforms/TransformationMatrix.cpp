@@ -546,54 +546,12 @@ static bool decompose4(const TransformationMatrix::Matrix4& mat, TransformationM
         w = (column[0][1] - column[1][0]) * s;
     }
 
-    result.quaternionX = x;
-    result.quaternionY = y;
-    result.quaternionZ = z;
-    result.quaternionW = w;
+    result.quaternion.x = x;
+    result.quaternion.y = y;
+    result.quaternion.z = z;
+    result.quaternion.w = w;
 
     return true;
-}
-
-// Perform a spherical linear interpolation between the two
-// passed quaternions with 0 <= t <= 1.
-
-static void slerp(double qa[4], const double qb[4], double t)
-{
-    const double kEpsilon = 1e-5;
-    double ax, ay, az, aw;
-    double bx, by, bz, bw;
-    double cx, cy, cz, cw;
-
-    ax = qa[0]; ay = qa[1]; az = qa[2]; aw = qa[3];
-    bx = qb[0]; by = qb[1]; bz = qb[2]; bw = qb[3];
-
-    double cosHalfAngle = ax * bx + ay * by + az * bz + aw * bw;
-
-    if (cosHalfAngle < 0.0) {
-        ax = -ax; ay = -ay;
-        az = -az; aw = -aw;
-        cosHalfAngle = -cosHalfAngle;
-    }
-
-    if (cosHalfAngle > 1)
-        cosHalfAngle = 1;
-
-    double sinHalfAngle = std::sqrt(1.0 - cosHalfAngle * cosHalfAngle);
-    if (sinHalfAngle < kEpsilon) {
-        // Quaternions share common axis and angle.
-        return;
-    }
-
-    double halfAngle = std::acos(cosHalfAngle);
-    double scale = std::sin((1 - t) * halfAngle) / sinHalfAngle;
-    double invscale = std::sin(t * halfAngle) / sinHalfAngle;
-
-    cx = ax * scale + bx * invscale;
-    cy = ay * scale + by * invscale;
-    cz = az * scale + bz * invscale;
-    cw = aw * scale + bw * invscale;
-
-    qa[0] = cx; qa[1] = cy; qa[2] = cz; qa[3] = cw;
 }
 
 // End of Supporting Math Functions
@@ -603,17 +561,17 @@ TransformationMatrix::TransformationMatrix(const AffineTransform& t)
     setMatrix(t.a(), t.b(), t.c(), t.d(), t.e(), t.f());
 }
 
-TransformationMatrix TransformationMatrix::fromQuaternion(double qx, double qy, double qz, double qw)
+TransformationMatrix TransformationMatrix::fromQuaternion(const Quaternion& q)
 {
-    double xx = qx * qx;
-    double yy = qy * qy;
-    double zz = qz * qz;
-    double xz = qx * qz;
-    double xy = qx * qy; 
-    double yz = qy * qz;
-    double xw = qw * qx;
-    double yw = qw * qy;
-    double zw = qw * qz;
+    double xx = q.x * q.x;
+    double yy = q.y * q.y;
+    double zz = q.z * q.z;
+    double xz = q.x * q.z;
+    double xy = q.x * q.y;
+    double yz = q.y * q.z;
+    double xw = q.w * q.x;
+    double yw = q.w * q.y;
+    double zw = q.w * q.z;
 
     return TransformationMatrix(1 - 2 * (yy + zz), 2 * (xy + zw), 2 * (xz - yw), 0,
         2 * (xy - zw), 1 - 2 * (xx + zz), 2 * (yz + xw), 0,
@@ -1748,30 +1706,6 @@ void TransformationMatrix::blend2(const TransformationMatrix& from, double progr
     recompose2(fromDecomp);
 }
 
-// Compute quaternion multiplication
-static void accumulateQuaternion(double qa[4], const double qb[4])
-{
-    auto qx = qa[3] * qb[0] + qa[0] * qb[3] + qa[1] * qb[2] - qa[2] * qb[1];
-    auto qy = qa[3] * qb[1] - qa[0] * qb[2] + qa[1] * qb[3] + qa[2] * qb[0];
-    auto qz = qa[3] * qb[2] + qa[0] * qb[1] - qa[1] * qb[0] + qa[2] * qb[3];
-    auto qw = qa[3] * qb[3] - qa[0] * qb[0] - qa[1] * qb[1] - qa[2] * qb[2];
-    qa[0] = qx; qa[1] = qy; qa[2] = qz; qa[3] = qw;
-}
-
-static void interpolateQuaternion(TransformationMatrix::Decomposed4Type& fromDecomp, TransformationMatrix::Decomposed4Type& toDecomp, double progress, CompositeOperation compositeOperation)
-{
-    double qa[4] = { fromDecomp.quaternionX, fromDecomp.quaternionY, fromDecomp.quaternionZ, fromDecomp.quaternionW };
-    double qb[4] = { toDecomp.quaternionX, toDecomp.quaternionY, toDecomp.quaternionZ, toDecomp.quaternionW };
-    if (compositeOperation == CompositeOperation::Accumulate)
-        accumulateQuaternion(qa, qb);
-    else
-        slerp(qa, qb, progress);
-    fromDecomp.quaternionX = qa[0];
-    fromDecomp.quaternionY = qa[1];
-    fromDecomp.quaternionZ = qa[2];
-    fromDecomp.quaternionW = qa[3];
-    
-}
 void TransformationMatrix::blend4(const TransformationMatrix& from, double progress, CompositeOperation compositeOperation)
 {
     Decomposed4Type fromDecomp;
@@ -1799,7 +1733,7 @@ void TransformationMatrix::blend4(const TransformationMatrix& from, double progr
     blendFloat(fromDecomp.perspectiveY, toDecomp.perspectiveY, progress, operationForNonOneBasedValues);
     blendFloat(fromDecomp.perspectiveZ, toDecomp.perspectiveZ, progress, operationForNonOneBasedValues);
     blendFloat(fromDecomp.perspectiveW, toDecomp.perspectiveW, progress, compositeOperation);
-    interpolateQuaternion(fromDecomp, toDecomp, progress, compositeOperation);
+    fromDecomp.quaternion = fromDecomp.quaternion.interpolate(toDecomp.quaternion, progress, compositeOperation);
 
     recompose4(fromDecomp);
 }
@@ -1880,7 +1814,7 @@ void TransformationMatrix::recompose4(const Decomposed4Type& decomp)
     translate3d(decomp.translateX, decomp.translateY, decomp.translateZ);
 
     // Apply rotation.
-    TransformationMatrix rotationMatrix = TransformationMatrix::fromQuaternion(decomp.quaternionX, decomp.quaternionY, decomp.quaternionZ, decomp.quaternionW);
+    TransformationMatrix rotationMatrix = TransformationMatrix::fromQuaternion(decomp.quaternion);
 
     multiply(rotationMatrix);
 

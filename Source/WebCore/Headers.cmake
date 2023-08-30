@@ -2101,6 +2101,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/transforms/Matrix3DTransformOperation.h
     platform/graphics/transforms/MatrixTransformOperation.h
     platform/graphics/transforms/PerspectiveTransformOperation.h
+    platform/graphics/transforms/Quaternion.h
     platform/graphics/transforms/RotateTransformOperation.h
     platform/graphics/transforms/ScaleTransformOperation.h
     platform/graphics/transforms/SkewTransformOperation.h
