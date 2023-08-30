@@ -5281,11 +5281,6 @@ void WebPage::didBeginTextSearchOperation()
     foundTextRangeController().didBeginTextSearchOperation();
 }
 
-void WebPage::didEndTextSearchOperation()
-{
-    foundTextRangeController().didEndTextSearchOperation();
-}
-
 void WebPage::requestRectForFoundTextRange(const WebFoundTextRange& range, CompletionHandler<void(WebCore::FloatRect)>&& completionHandler)
 {
     foundTextRangeController().requestRectForFoundTextRange(range, WTFMove(completionHandler));

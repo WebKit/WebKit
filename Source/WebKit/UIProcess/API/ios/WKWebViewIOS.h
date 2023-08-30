@@ -141,6 +141,9 @@ enum class TapHandlingResult : uint8_t;
 - (void)_findSelected:(id)sender;
 
 - (id<UITextSearching>)_searchableObject;
+
+- (void)_showFindOverlay;
+- (void)_hideFindOverlay;
 #endif
 
 - (void)_nextAccessoryTab:(id)sender;

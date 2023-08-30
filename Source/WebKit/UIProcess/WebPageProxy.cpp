@@ -5006,11 +5006,6 @@ void WebPageProxy::didBeginTextSearchOperation()
     send(Messages::WebPage::DidBeginTextSearchOperation());
 }
 
-void WebPageProxy::didEndTextSearchOperation()
-{
-    send(Messages::WebPage::DidEndTextSearchOperation());
-}
-
 void WebPageProxy::requestRectForFoundTextRange(const WebFoundTextRange& range, CompletionHandler<void(WebCore::FloatRect)>&& callbackFunction)
 {
     sendWithAsyncReply(Messages::WebPage::RequestRectForFoundTextRange(range), WTFMove(callbackFunction));

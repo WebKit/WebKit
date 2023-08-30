@@ -343,7 +343,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ScrollTextRangeToVisible(struct WebKit::WebFoundTextRange range)
     ClearAllDecoratedFoundText();
     DidBeginTextSearchOperation();
-    DidEndTextSearchOperation();
 
     RequestRectForFoundTextRange(struct WebKit::WebFoundTextRange range) -> (WebCore::FloatRect rect)
     AddLayerForFindOverlay() -> (WebCore::PlatformLayerIdentifier findLayerID)
