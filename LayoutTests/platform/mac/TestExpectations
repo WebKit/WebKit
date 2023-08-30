@@ -2868,3 +2868,7 @@ webkit.org/b/260529 [ Ventura+ x86_64 ] animations/suspend-resume-animation-even
 [ Sonoma+ ] editing/inserting/insert-paragraph-separator-with-html-elements-crash.html [ Failure ]
 
 webkit.org/b/260870 [ Ventura+ ] imported/w3c/web-platform-tests/svg/import/metadata-example-01-t-manual.svg [ Failure ]
+
+webkit.org/b/260912 [ Monterey+ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-1.html [ Timeout ]
+webkit.org/b/260912 [ Monterey+ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-2.html [ Timeout ]
+webkit.org/b/260912 [ Monterey+ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-3.html [ Timeout ]
