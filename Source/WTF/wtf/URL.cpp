@@ -409,6 +409,10 @@ bool URL::setProtocol(StringView newProtocol)
         return true;
     }
 
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=229427
+    if (URLParser::isSpecialScheme(this->protocol()) && !URLParser::isSpecialScheme(*newProtocolCanonicalized))
+        return true;
+
     if ((m_passwordEnd != m_userStart || port()) && *newProtocolCanonicalized == "file"_s)
         return true;
 
