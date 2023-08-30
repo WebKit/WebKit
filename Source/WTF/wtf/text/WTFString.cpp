@@ -228,16 +228,16 @@ String String::number(unsigned long long number)
     return numberToStringUnsigned<String>(number);
 }
 
-String String::numberToStringFixedPrecision(float number, unsigned precision, TrailingZerosTruncatingPolicy trailingZerosTruncatingPolicy)
+String String::numberToStringFixedPrecision(float number, unsigned precision, TrailingZerosPolicy trailingZerosTruncatingPolicy)
 {
     NumberToStringBuffer buffer;
-    return String { numberToFixedPrecisionString(number, precision, buffer, trailingZerosTruncatingPolicy == TruncateTrailingZeros) };
+    return String { numberToFixedPrecisionString(number, precision, buffer, trailingZerosTruncatingPolicy == TrailingZerosPolicy::Truncate) };
 }
 
-String String::numberToStringFixedPrecision(double number, unsigned precision, TrailingZerosTruncatingPolicy trailingZerosTruncatingPolicy)
+String String::numberToStringFixedPrecision(double number, unsigned precision, TrailingZerosPolicy trailingZerosTruncatingPolicy)
 {
     NumberToStringBuffer buffer;
-    return String { numberToFixedPrecisionString(number, precision, buffer, trailingZerosTruncatingPolicy == TruncateTrailingZeros) };
+    return String { numberToFixedPrecisionString(number, precision, buffer, trailingZerosTruncatingPolicy == TrailingZerosPolicy::Truncate) };
 }
 
 String String::number(float number)

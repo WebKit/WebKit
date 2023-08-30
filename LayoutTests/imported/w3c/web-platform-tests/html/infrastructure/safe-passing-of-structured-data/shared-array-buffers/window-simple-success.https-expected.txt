@@ -1,15 +1,17 @@
 
-FAIL postMessaging to a dedicated worker allows them to see each others' modifications with DataView promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedArrayBuffer"
-FAIL postMessaging to a dedicated worker allows them to see each others' modifications with Int8Array promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedArrayBuffer"
-FAIL postMessaging to a dedicated worker allows them to see each others' modifications with Uint8Array promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedArrayBuffer"
-FAIL postMessaging to a dedicated worker allows them to see each others' modifications with Uint8ClampedArray promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedArrayBuffer"
-FAIL postMessaging to a dedicated worker allows them to see each others' modifications with Int16Array promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedArrayBuffer"
-FAIL postMessaging to a dedicated worker allows them to see each others' modifications with Uint16Array promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedArrayBuffer"
-FAIL postMessaging to a dedicated worker allows them to see each others' modifications with Int32Array promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedArrayBuffer"
-FAIL postMessaging to a dedicated worker allows them to see each others' modifications with Uint32Array promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedArrayBuffer"
-FAIL postMessaging to a dedicated worker allows them to see each others' modifications with Float32Array promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedArrayBuffer"
-FAIL postMessaging to a dedicated worker allows them to see each others' modifications with Float64Array promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedArrayBuffer"
-FAIL postMessaging to a same-origin iframe allows them to see each others' modifications promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedArrayBuffer"
-FAIL postMessaging to a same-origin deeply-nested iframe allows them to see each others' modifications promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedArrayBuffer"
-FAIL postMessaging to a same-origin opened window allows them to see each others' modifications promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedArrayBuffer"
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with DataView
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with Int8Array
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with Uint8Array
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with Uint8ClampedArray
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with Int16Array
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with Uint16Array
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with Int32Array
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with Uint32Array
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with BigInt64Array
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with BigUint64Array
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with Float32Array
+PASS postMessaging to a dedicated worker allows them to see each others' modifications with Float64Array
+FAIL postMessaging to a same-origin iframe allows them to see each others' modifications assert_equals: The window must see changes made in the iframe expected 2 but got 1
+FAIL postMessaging to a same-origin deeply-nested iframe allows them to see each others' modifications assert_equals: The window must see changes made in the nested iframe expected 2 but got 1
+FAIL postMessaging to a same-origin opened window allows them to see each others' modifications assert_equals: The window must see changes made in the popup window expected 2 but got 1
 

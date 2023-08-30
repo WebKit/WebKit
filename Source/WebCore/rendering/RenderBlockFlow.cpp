@@ -4999,7 +4999,5 @@ LayoutUnit RenderBlockFlow::blockFormattingContextInFlowBlockLevelContentHeight(
     return logicalMarginBoxTopForChild(*lastChild) + logicalMarginBoxHeightForChild(*lastChild);
 }
 
-
-
 }
 // namespace WebCore

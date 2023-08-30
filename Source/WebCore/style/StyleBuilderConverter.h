@@ -751,6 +751,10 @@ inline RefPtr<PathOperation> BuilderConverter::convertPathOperation(BuilderState
             return nullptr;
         }
 
+        auto position = rayValue.position();
+        if (position)
+            return RayPathOperation::create(rayValue.angle()->computeDegrees(), size, rayValue.isContaining(), convertPosition(builderState, *position));
+
         return RayPathOperation::create(rayValue.angle()->computeDegrees(), size, rayValue.isContaining());
     }
 
@@ -883,6 +887,8 @@ inline RefPtr<StyleReflection> BuilderConverter::convertReflection(BuilderState&
     auto& reflectValue = downcast<CSSReflectValue>(value);
 
     NinePieceImage mask(NinePieceImage::Type::Mask);
+    mask.setFill(true);
+
     builderState.styleMap().mapNinePieceImage(reflectValue.mask(), mask);
 
     auto reflection = StyleReflection::create();

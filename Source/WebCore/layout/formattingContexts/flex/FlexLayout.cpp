@@ -445,7 +445,7 @@ FlexLayout::SizeList FlexLayout::hypotheticalCrossSizeForFlexItems(const Logical
             auto& inlineFormattingState = flexFormattingContext().layoutState().ensureInlineFormattingState(flexItemBox);
             auto inlineFormattingContext = InlineFormattingContext { flexItemBox, inlineFormattingState };
             auto constraintsForInFlowContent = ConstraintsForInFlowContent { HorizontalConstraints { { }, flexItemsMainSizeList[flexItemIndex] }, { } };
-            auto layoutResult = inlineFormattingContext.layoutInFlowAndFloatContent({ constraintsForInFlowContent, { } }, inlineLayoutState);
+            auto layoutResult = inlineFormattingContext.layout({ constraintsForInFlowContent, { } }, inlineLayoutState);
             return LayoutUnit { layoutResult.displayContent.lines.last().lineBoxLogicalRect().maxY() };
         };
         auto usedCrossSize = crossSizeAfterPerformingLayout();

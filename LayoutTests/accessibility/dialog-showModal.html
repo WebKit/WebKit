@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
 </head>
 
@@ -21,75 +21,78 @@
 </div>
 
 <script>
-    description("This tests that dialog.showModal() makes other elements inert.");
+    var output = "This tests that dialog.showModal() makes other elements inert.\n\n";
 
     if (window.accessibilityController) {
         window.jsTestIsAsync = true;
         
-        debug("Dialog is hidden");
-        shouldBeTrue("backgroundAccessible()");
+        output += "Dialog is hidden\n";
+        output += expect("backgroundAccessible()", "true");
         document.getElementById("dialog").showModal();
 
         // Background should be unaccessible after loading, since the
         // dialog is displayed
-        debug("Dialog is displaying");
-        shouldBeFalse("backgroundAccessible()");
+        output += "Dialog is displaying\n";
+        output += expect("backgroundAccessible()", "false");
 
         // Close the dialog, background should be accessible.
         document.getElementById("ok").click();
         setTimeout(async function() {
             await waitFor(() => backgroundAccessible());
-            debug("Dialog is not displaying");
-            shouldBeTrue("backgroundAccessible()");
+            output += "Dialog is not displaying\n";
+            output += expect("backgroundAccessible()", "true");
 
             // Non modal <dialog> should allow interactions with background.
             document.getElementById("dialog").show();
-            shouldBeTrue("backgroundAccessible()");
+            output += expect("backgroundAccessible()", "true");
+            await waitFor(() => accessibilityController.accessibleElementById("ok"));
             window.okButton = accessibilityController.accessibleElementById("ok");
-            shouldBeFalse("okButton.isIgnored");
+            output += expect("okButton.isIgnored", "false");
             document.getElementById("dialog").close();
 
             // Click the display button, dialog shows and background becomes unaccessible.
             document.getElementById("displayButton").click();
             await waitFor(() => !backgroundAccessible());
-            debug("Dialog is displaying");
-            shouldBeFalse("backgroundAccessible()");
+            output += "Dialog is displaying\n";
+            output += expect("backgroundAccessible()", "false");
+            await waitFor(() => accessibilityController.accessibleElementById("ok"));
             window.okButton = accessibilityController.accessibleElementById("ok");
-            shouldBeFalse("okButton.isIgnored");
+            output += expect("okButton.isIgnored", "false");
 
             // With the dialog displaying, test that aria-hidden and the opacity don't affect whether the background is accessible or not.
             // Dialog is aria hidden
             document.getElementById("dialog").setAttribute("aria-hidden", "true");
-            debug("Dialog is displaying and aria-hidden=true")
-            shouldBeFalse("backgroundAccessible()");
+            output += "Dialog is displaying and aria-hidden=true\n"
+            output += expect("backgroundAccessible()", "false");
 
             // Set aria-hidden=false.
             document.getElementById("dialog").setAttribute("aria-hidden", "false");
-            debug("Dialog is displaying and aria-hidden=false");
-            shouldBeFalse("backgroundAccessible()");
+            output += ("Dialog is displaying and aria-hidden=false\n");
+            output += expect("backgroundAccessible()", "false");
 
             // Set aria-modal=false.
             document.getElementById("dialog").setAttribute("aria-modal", "false");
-            debug("Dialog is displaying and aria-modal=false");
-            shouldBeFalse("backgroundAccessible()");
+            output += "Dialog is displaying and aria-modal=false\n";
+            output += expect("backgroundAccessible()", "false");
             document.getElementById("dialog").removeAttribute("aria-modal");
 
             // Set opacity to 0 which should make the dialog invisible.
             document.getElementById("dialog").style.opacity = 0;
-            debug("Dialog is not displaying with opacity 0");
-            shouldBeFalse("backgroundAccessible()");
+            output += "Dialog is not displaying with opacity 0\n";
+            output += expect("backgroundAccessible()", "false");
 
             // Set opacity to 1 which should make the dialog visible again.
             document.getElementById("dialog").style.opacity = 1;
-            debug("Dialog is displaying with opacity 1");
-            shouldBeFalse("backgroundAccessible()");
+            output += "Dialog is displaying with opacity 1\n";
+            output += expect("backgroundAccessible()", "false");
 
             // Test modal dialog is removed from DOM tree.
             document.getElementById("dialog").remove();
             await waitFor(() => backgroundAccessible());
-            debug("Dialog is removed from DOM");
-            shouldBeTrue("backgroundAccessible()");
+            output += "Dialog is removed from DOM\n";
+            output += expect("backgroundAccessible()", "true");
 
+            debug(output);
             finishJSTest();
         }, 0);
     }
@@ -104,6 +107,5 @@
         return !displayButton.isIgnored && !backgroundContent.isIgnored;
     }
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

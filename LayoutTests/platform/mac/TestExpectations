@@ -56,7 +56,7 @@ fast/images/mac [ Pass ]
 
 
 # Tests that rely on custom domain names.
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/tentative/nav-cancelation-2.sub.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/nav-cancelation-2.sub.html [ Skip ]
 
 fast/forms/search/search-padding-cancel-results-buttons.html [ Pass ]
 fast/forms/search/search-results-hidden-crash.html [ Pass ]
@@ -2738,7 +2738,6 @@ webkit.org/b/237415 webgl/1.0.x/conformance/rendering/clipping-wide-points.html 
 
 # webkit.org/b/255427 [ Ventura ] 4/13 batch mark expectations and branch bugs
 [ Ventura ] http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html [ Pass Failure ]
-[ Ventura ] imported/w3c/web-platform-tests/svg/import/metadata-example-01-t-manual.svg [ Pass Failure ]
 [ Ventura ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audiobuffersource-connections.html [ Pass Failure ]
 [ Ventura ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-dynamics-compressor-connections.html [ Pass Failure ]
 [ Ventura ] svg/W3C-SVG-1.1/metadata-example-01-b.svg [ Pass Failure ]
@@ -2768,8 +2767,7 @@ webkit.org/b/236128 imported/w3c/web-platform-tests/html/user-activation/activat
 
 webkit.org/b/252322 [ X86_64 ] media/media-source/media-source-video-renders.html [ ImageOnlyFailure ]
 
-# Requires Ventura or later
-[ BigSur Monterey ] media/media-source/media-source-paint-after-display-none.html [ Skip ]
+webkit.org/b/259712 [ Monterey+ ] media/media-source/media-source-paint-after-display-none.html [ Skip ]
 
 webkit.org/b/259489 [ Monterey+ ] http/tests/media/hls/track-in-band-multiple-cues.html [ Pass Failure ]
 
@@ -2803,6 +2801,9 @@ webkit.org/b/259190 http/tests/images/heic-as-heif.html [ Pass ImageOnlyFailure 
 [ Monterey ] imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-002.html [ Pass Failure ]
 [ Monterey ] scrollbars/overflow-scrollbar-combinations.html  [ Pass ImageOnlyFailure ]
 [ Monterey ] svg/custom/svg-fonts-in-html.html [ Pass ImageOnlyFailure ]
+
+# Sonoma has one extra whitespace for some reason.
+[ Sonoma+ ] imported/w3c/web-platform-tests/accname/name/comp_host_language_label.html [ Failure ]
 
 # rdar://102494267 ([ New Test ] (248203@main): [ Sonoma ] http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html is a consistent failure)
 [ Sonoma+ ] http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html [ Failure ]
@@ -2862,3 +2863,12 @@ webkit.org/b/260224 [ Ventura+ ] imported/w3c/web-platform-tests/css/css-transfo
 webkit.org/b/130490 media/video-remote-control-playpause.html [ Pass Timeout Crash ]
 
 webkit.org/b/260529 [ Ventura+ x86_64 ] animations/suspend-resume-animation-events.html [ Pass Failure ]
+
+# rdar://114291916 (REGRESSION (266884@main): [ Sonoma wk2 ] editing/inserting/insert-paragraph-separator-with-html-elements-crash.html is a consistent failure)
+[ Sonoma+ ] editing/inserting/insert-paragraph-separator-with-html-elements-crash.html [ Failure ]
+
+webkit.org/b/260870 [ Ventura+ ] imported/w3c/web-platform-tests/svg/import/metadata-example-01-t-manual.svg [ Failure ]
+
+webkit.org/b/260912 [ Monterey+ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-1.html [ Timeout ]
+webkit.org/b/260912 [ Monterey+ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-2.html [ Timeout ]
+webkit.org/b/260912 [ Monterey+ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-3.html [ Timeout ]

@@ -357,9 +357,9 @@ double CSSCalcValue::computeLengthPx(const CSSToLengthConversionData& conversion
     return clampToPermittedRange(m_expression->computeLengthPx(conversionData));
 }
 
-bool CSSCalcValue::convertingToLengthRequiresNonNullStyle(int lengthConversion) const
+bool CSSCalcValue::convertingToLengthHasRequiredConversionData(int lengthConversion, const CSSToLengthConversionData& conversionData) const
 {
-    return m_expression->convertingToLengthRequiresNonNullStyle(lengthConversion);
+    return m_expression->convertingToLengthHasRequiredConversionData(lengthConversion, conversionData);
 }
 
 bool CSSCalcValue::isCalcFunction(CSSValueID functionId)

@@ -134,6 +134,75 @@
 - (void)_hoverGestureRecognized:(UIHoverGestureRecognizer *)gestureRecognizer;
 @end
 
+#if HAVE(UI_POINTER_INTERACTION)
+
+@interface TestPointerRegionRequest : UIPointerRegionRequest
+- (instancetype)initWithLocation:(CGPoint)location;
+@end
+
+@implementation TestPointerRegionRequest {
+    CGPoint _requestLocation;
+}
+
+- (instancetype)initWithLocation:(CGPoint)location
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _requestLocation = location;
+    return self;
+}
+
+- (CGPoint)location
+{
+    return _requestLocation;
+}
+
+@end
+
+namespace TestWebKitAPI {
+
+struct PointerInfo {
+    BOOL isDefault { NO };
+    CGRect regionRect { CGRectNull };
+};
+
+} // namespace TestWebKitAPI
+
+@interface TestWKWebView (PointerInteractionTests)
+- (TestWebKitAPI::PointerInfo)pointerInfoAtLocation:(CGPoint)location;
+@end
+
+@implementation TestWKWebView (PointerInteractionTests)
+
+- (UIPointerInteraction *)pointerInteraction
+{
+    for (id<UIInteraction> interaction in self.textInputContentView.interactions) {
+        if (auto result = dynamic_objc_cast<UIPointerInteraction>(interaction))
+            return result;
+    }
+    return nil;
+}
+
+- (TestWebKitAPI::PointerInfo)pointerInfoAtLocation:(CGPoint)location
+{
+    auto contentView = (UIView<UIPointerInteractionDelegate> *)[self textInputContentView];
+    auto interaction = [self pointerInteraction];
+    auto request = adoptNS([[TestPointerRegionRequest alloc] initWithLocation:location]);
+
+    RetainPtr defaultRegion = [UIPointerRegion regionWithRect:contentView.bounds identifier:nil];
+    [contentView pointerInteraction:interaction regionForRequest:request.get() defaultRegion:defaultRegion.get()];
+    [self waitForNextPresentationUpdate];
+
+    auto region = [contentView pointerInteraction:interaction regionForRequest:request.get() defaultRegion:defaultRegion.get()];
+    auto style = [contentView pointerInteraction:interaction styleForRegion:region];
+    return { [style isEqual:UIPointerStyle.systemPointerStyle], region.rect };
+}
+
+@end
+
+#endif // HAVE(UI_POINTER_INTERACTION)
+
 namespace TestWebKitAPI {
 
 class MouseEventTestHarness {
@@ -775,6 +844,52 @@ TEST(iOSMouseSupport, MouseAlwaysConnected)
 }
 
 #endif // PLATFORM(MACCATALYST)
+
+#if HAVE(UI_POINTER_INTERACTION)
+
+TEST(iOSMouseSupport, BasicPointerInteractionRegions)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView synchronouslyLoadTestPageNamed:@"cursor-styles"];
+
+    {
+        auto info = [webView pointerInfoAtLocation:[webView elementMidpointFromSelector:@"#container"]];
+        EXPECT_TRUE(info.isDefault);
+        EXPECT_TRUE(CGRectEqualToRect(info.regionRect, [webView bounds]));
+    }
+    {
+        auto elementRect = [webView elementRectFromSelector:@"#editable-container"];
+        auto info = [webView pointerInfoAtLocation:[webView elementMidpointFromSelector:@"#editable-container"]];
+        EXPECT_FALSE(info.isDefault);
+        EXPECT_TRUE(CGRectContainsRect(elementRect, info.regionRect));
+    }
+    {
+        auto elementRect = [webView elementRectFromSelector:@"#container-with-cursor-pointer"];
+        auto info = [webView pointerInfoAtLocation:[webView elementMidpointFromSelector:@"#container-with-cursor-pointer"]];
+        EXPECT_TRUE(info.isDefault);
+        EXPECT_TRUE(CGRectContainsRect(elementRect, info.regionRect));
+    }
+    {
+        auto elementRect = [webView elementRectFromSelector:@"#container-with-text"];
+        auto info = [webView pointerInfoAtLocation:[webView elementMidpointFromSelector:@"#container-with-text"]];
+        EXPECT_FALSE(info.isDefault);
+        EXPECT_TRUE(CGRectContainsRect(elementRect, info.regionRect));
+    }
+    {
+        auto elementRect = [webView elementRectFromSelector:@"#container-with-link"];
+        auto info = [webView pointerInfoAtLocation:[webView elementMidpointFromSelector:@"#container-with-link"]];
+        EXPECT_TRUE(info.isDefault);
+        EXPECT_TRUE(CGRectContainsRect(elementRect, info.regionRect));
+    }
+    {
+        auto elementRect = [webView elementRectFromSelector:@"#container-with-cursor-text"];
+        auto info = [webView pointerInfoAtLocation:[webView elementMidpointFromSelector:@"#container-with-cursor-text"]];
+        EXPECT_FALSE(info.isDefault);
+        EXPECT_TRUE(CGRectContainsRect(elementRect, info.regionRect));
+    }
+}
+
+#endif // HAVE(UI_POINTER_INTERACTION)
 
 } // namespace TestWebKitAPI
 

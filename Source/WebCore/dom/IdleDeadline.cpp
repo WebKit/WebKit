@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "LocalDOMWindow.h"
 #include "Performance.h"
+#include "WindowEventLoop.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

@@ -1133,6 +1133,15 @@ imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?h
 imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?vp8 [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?vp9 [ Failure ]
 
+# Failing after resync, probably needs a rebasing
+imported/w3c/web-platform-tests/webcodecs/audio-decoder.https.any.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webcodecs/audio-decoder.https.any.worker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?av1 [ Pass Failure ]
+imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?av1 [ Pass Failure ]
+imported/w3c/web-platform-tests/webcodecs/video-encoder-config.https.any.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webcodecs/video-encoder-config.https.any.worker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.crossOriginSource.sub.html [ Pass Failure ]
+
 # HEVC support
 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h265_annexb [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h265_hevc [ Pass ]
@@ -1164,8 +1173,6 @@ imported/w3c/web-platform-tests/webcodecs/audio-data.any.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/audio-data.any.worker.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/audio-decoder.crossOriginIsolated.https.any.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/audio-decoder.crossOriginIsolated.https.any.worker.html [ Pass ]
-imported/w3c/web-platform-tests/webcodecs/audio-decoder.https.any.html [ Pass ]
-imported/w3c/web-platform-tests/webcodecs/audio-decoder.https.any.worker.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?opus [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?pcm_alaw [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?pcm_mulaw [ Pass ]

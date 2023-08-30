@@ -4420,7 +4420,7 @@ RefPtr<LocalFrame> createWindow(LocalFrame& openerFrame, LocalFrame& lookupFrame
 
     ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicyToApply(openerFrame, request);
     NavigationAction action { request.requester(), request.resourceRequest(), request.initiatedByMainFrame(), NavigationType::Other, shouldOpenExternalURLsPolicy };
-    action.setNewFrameOpenerPolicy(features.noopener || features.noreferrer ? NewFrameOpenerPolicy::Suppress : NewFrameOpenerPolicy::Allow);
+    action.setNewFrameOpenerPolicy(features.wantsNoOpener() ? NewFrameOpenerPolicy::Suppress : NewFrameOpenerPolicy::Allow);
     Page* page = oldPage->chrome().createWindow(openerFrame, features, action);
     if (!page)
         return nullptr;
@@ -4439,19 +4439,23 @@ RefPtr<LocalFrame> createWindow(LocalFrame& openerFrame, LocalFrame& lookupFrame
 
     if (!frame->page())
         return nullptr;
-    page->chrome().setStatusbarVisible(features.statusBarVisible);
+    if (features.statusBarVisible)
+        page->chrome().setStatusbarVisible(*features.statusBarVisible);
 
     if (!frame->page())
         return nullptr;
-    page->chrome().setScrollbarsVisible(features.scrollbarsVisible);
+    if (features.scrollbarsVisible)
+        page->chrome().setScrollbarsVisible(*features.scrollbarsVisible);
 
     if (!frame->page())
         return nullptr;
-    page->chrome().setMenubarVisible(features.menuBarVisible);
+    if (features.menuBarVisible)
+        page->chrome().setMenubarVisible(*features.menuBarVisible);
 
     if (!frame->page())
         return nullptr;
-    page->chrome().setResizable(features.resizable);
+    if (features.resizable)
+        page->chrome().setResizable(*features.resizable);
 
     // 'x' and 'y' specify the location of the window, while 'width' and 'height'
     // specify the size of the viewport. We can only resize the window, so adjust

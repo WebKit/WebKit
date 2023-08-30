@@ -529,11 +529,11 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 /* LOG_WITH_LEVEL */
 
 #if LOG_DISABLED
-#define LOG_WITH_LEVEL(channel, level, ...) ((void)0)
+#define LOG_WITH_LEVEL(channel, logLevel, ...) ((void)0)
 #else
-#define LOG_WITH_LEVEL(channel, level, ...) do { \
-        if  (LOG_CHANNEL(channel).state != logChannelStateOff && channel->level >= (level)) \
-            WTFLogWithLevel(&LOG_CHANNEL(channel), level, __VA_ARGS__); \
+#define LOG_WITH_LEVEL(channel, logLevel, ...) do { \
+        if  (LOG_CHANNEL(channel).state != logChannelStateOff && LOG_CHANNEL(channel).level >= (logLevel)) \
+            WTFLogWithLevel(&LOG_CHANNEL(channel), logLevel, __VA_ARGS__); \
     } while (0)
 #endif
 

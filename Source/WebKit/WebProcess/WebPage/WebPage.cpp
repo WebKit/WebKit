@@ -3093,9 +3093,13 @@ WebContextMenu& WebPage::contextMenu()
     return *m_contextMenu;
 }
 
-WebContextMenu* WebPage::contextMenuAtPointInWindow(const IntPoint& point)
+WebContextMenu* WebPage::contextMenuAtPointInWindow(FrameIdentifier frameID, const IntPoint& point)
 {
-    auto* coreFrame = m_mainFrame->coreLocalFrame();
+    auto* frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame)
+        return nullptr;
+
+    auto* coreFrame = frame->coreLocalFrame();
     if (!coreFrame)
         return nullptr;
 
@@ -3304,36 +3308,6 @@ void WebPage::didDismissContextMenu()
 #endif // ENABLE(CONTEXT_MENUS)
 
 #if ENABLE(CONTEXT_MENU_EVENT)
-static bool isContextClick(const PlatformMouseEvent& event)
-{
-#if USE(APPKIT)
-    return WebEventFactory::shouldBeHandledAsContextClick(event);
-#else
-    return event.button() == WebCore::RightButton;
-#endif
-}
-
-static bool handleContextMenuEvent(const PlatformMouseEvent& platformMouseEvent, WebPage* page)
-{
-    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->corePage()->mainFrame());
-    if (!localMainFrame)
-        return false;
-    IntPoint point = localMainFrame->view()->windowToContents(platformMouseEvent.position());
-    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent,  HitTestRequest::Type::AllowChildFrameContent };
-    HitTestResult result = localMainFrame->eventHandler().hitTestResultAtPoint(point, hitType);
-
-    Ref frame = *localMainFrame;
-    if (result.innerNonSharedNode())
-        frame = *result.innerNonSharedNode()->document().frame();
-
-    bool handled = frame->eventHandler().sendContextMenuEvent(platformMouseEvent);
-#if ENABLE(CONTEXT_MENUS)
-    if (handled)
-        page->contextMenu().show();
-#endif
-    return handled;
-}
-
 void WebPage::contextMenuForKeyEvent()
 {
 #if ENABLE(CONTEXT_MENUS)
@@ -3351,60 +3325,7 @@ void WebPage::contextMenuForKeyEvent()
 }
 #endif
 
-static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page)
-{
-    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->corePage()->mainFrame());
-    if (!localMainFrame)
-        return false;
-
-    if (!localMainFrame->view())
-        return false;
-
-    PlatformMouseEvent platformMouseEvent = platform(mouseEvent);
-
-    switch (platformMouseEvent.type()) {
-    case PlatformEvent::Type::MousePressed: {
-#if ENABLE(CONTEXT_MENUS)
-        if (isContextClick(platformMouseEvent))
-            page->corePage()->contextMenuController().clearContextMenu();
-#endif
-
-        bool handled = localMainFrame->eventHandler().handleMousePressEvent(platformMouseEvent);
-#if ENABLE(CONTEXT_MENU_EVENT)
-        if (isContextClick(platformMouseEvent))
-            handled = handleContextMenuEvent(platformMouseEvent, page);
-#endif
-        return handled;
-    }
-    case PlatformEvent::Type::MouseReleased:
-        if (mouseEvent.gestureWasCancelled() == GestureWasCancelled::Yes)
-            localMainFrame->eventHandler().invalidateClick();
-        return localMainFrame->eventHandler().handleMouseReleaseEvent(platformMouseEvent);
-
-    case PlatformEvent::Type::MouseMoved:
-#if PLATFORM(COCOA)
-        // We need to do a full, normal hit test during this mouse event if the page is active or if a mouse
-        // button is currently pressed. It is possible that neither of those things will be true since on
-        // Lion when legacy scrollbars are enabled, WebKit receives mouse events all the time. If it is one
-        // of those cases where the page is not active and the mouse is not pressed, then we can fire a more
-        // efficient scrollbars-only version of the event.
-        if (!(page->corePage()->focusController().isActive() || (mouseEvent.button() != WebMouseEventButton::NoButton)))
-            return localMainFrame->eventHandler().passMouseMovedEventToScrollbars(platformMouseEvent);
-#endif
-        return localMainFrame->eventHandler().mouseMoved(platformMouseEvent);
-
-    case PlatformEvent::Type::MouseForceChanged:
-    case PlatformEvent::Type::MouseForceDown:
-    case PlatformEvent::Type::MouseForceUp:
-        return localMainFrame->eventHandler().handleMouseForceEvent(platformMouseEvent);
-
-    default:
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-}
-
-void WebPage::mouseEvent(const WebMouseEvent& mouseEvent, std::optional<Vector<SandboxExtension::Handle>>&& sandboxExtensions)
+void WebPage::mouseEvent(FrameIdentifier frameID, const WebMouseEvent& mouseEvent, std::optional<Vector<SandboxExtension::Handle>>&& sandboxExtensions)
 {
     SetForScope userIsInteractingChange { m_userIsInteracting, true };
 
@@ -3440,9 +3361,9 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent, std::optional<Vector<S
         handled = m_footerBanner->mouseEvent(mouseEvent);
 #endif // !PLATFORM(IOS_FAMILY)
 
-    if (!handled) {
+    if (WebFrame* frame = WebProcess::singleton().webFrame(frameID); !handled && frame) {
         CurrentEvent currentEvent(mouseEvent);
-        handled = handleMouseEvent(mouseEvent, this);
+        handled = frame->handleMouseEvent(mouseEvent);
     }
 
     revokeSandboxExtensions(mouseEventSandboxExtensions);
@@ -3507,7 +3428,7 @@ void WebPage::performHitTestForMouseEvent(const WebMouseEvent& event, Completion
     completionHandler(WTFMove(hitTestResultData), modifiers, UserData(WebProcess::singleton().transformObjectsToHandles(WTFMove(userData).get()).get()));
 }
 
-void WebPage::handleWheelEvent(const WebWheelEvent& event, const OptionSet<WheelEventProcessingSteps>& processingSteps, std::optional<bool> willStartSwipe, CompletionHandler<void(WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>, bool)>&& completionHandler)
+void WebPage::handleWheelEvent(FrameIdentifier frameID, const WebWheelEvent& event, const OptionSet<WheelEventProcessingSteps>& processingSteps, std::optional<bool> willStartSwipe, CompletionHandler<void(WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>, bool)>&& completionHandler)
 {
 #if ENABLE(ASYNC_SCROLLING)
     RefPtr remoteScrollingCoordinator = dynamicDowncast<RemoteScrollingCoordinator>(scrollingCoordinator());
@@ -3517,7 +3438,7 @@ void WebPage::handleWheelEvent(const WebWheelEvent& event, const OptionSet<Wheel
     UNUSED_PARAM(willStartSwipe);
 #endif
 
-    bool handled = wheelEvent(event, processingSteps, EventDispatcher::WheelEventOrigin::UIProcess);
+    bool handled = wheelEvent(frameID, event, processingSteps, EventDispatcher::WheelEventOrigin::UIProcess);
 #if ENABLE(ASYNC_SCROLLING)
     if (remoteScrollingCoordinator) {
         auto gestureInfo = remoteScrollingCoordinator->takeCurrentWheelGestureInfo();
@@ -3528,20 +3449,19 @@ void WebPage::handleWheelEvent(const WebWheelEvent& event, const OptionSet<Wheel
     completionHandler(0, { }, handled);
 }
 
-bool WebPage::wheelEvent(const WebWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps, EventDispatcher::WheelEventOrigin wheelEventOrigin)
+bool WebPage::wheelEvent(const FrameIdentifier& frameID, const WebWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps, EventDispatcher::WheelEventOrigin wheelEventOrigin)
 {
     m_userActivity.impulse();
 
     CurrentEvent currentEvent(wheelEvent);
 
     auto dispatchWheelEvent = [&](const WebWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps) {
-
-        RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-        if (!localMainFrame || !localMainFrame->view())
+        auto* frame = WebProcess::singleton().webFrame(frameID);
+        if (!frame || !frame->coreLocalFrame() || !frame->coreLocalFrame()->view())
             return false;
 
         auto platformWheelEvent = platform(wheelEvent);
-        return localMainFrame->eventHandler().handleWheelEvent(platformWheelEvent, processingSteps);
+        return frame->coreLocalFrame()->eventHandler().handleWheelEvent(platformWheelEvent, processingSteps);
     };
 
     bool handled = dispatchWheelEvent(wheelEvent, processingSteps);
@@ -3550,7 +3470,7 @@ bool WebPage::wheelEvent(const WebWheelEvent& wheelEvent, OptionSet<WheelEventPr
 }
 
 #if PLATFORM(IOS_FAMILY)
-void WebPage::dispatchWheelEventWithoutScrolling(const WebWheelEvent& wheelEvent, CompletionHandler<void(bool)>&& completionHandler)
+void WebPage::dispatchWheelEventWithoutScrolling(FrameIdentifier frameID, const WebWheelEvent& wheelEvent, CompletionHandler<void(bool)>&& completionHandler)
 {
 #if ENABLE(KINETIC_SCROLLING)
     RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
@@ -3559,27 +3479,13 @@ void WebPage::dispatchWheelEventWithoutScrolling(const WebWheelEvent& wheelEvent
 #else
     bool isCancelable = true;
 #endif
-    bool handled = this->wheelEvent(wheelEvent, { isCancelable ? WheelEventProcessingSteps::BlockingDOMEventDispatch : WheelEventProcessingSteps::NonBlockingDOMEventDispatch }, EventDispatcher::WheelEventOrigin::UIProcess);
+    bool handled = this->wheelEvent(frameID, wheelEvent, { isCancelable ? WheelEventProcessingSteps::BlockingDOMEventDispatch : WheelEventProcessingSteps::NonBlockingDOMEventDispatch }, EventDispatcher::WheelEventOrigin::UIProcess);
     // The caller of dispatchWheelEventWithoutScrolling never cares about DidReceiveEvent being sent back.
     completionHandler(handled);
 }
 #endif
 
-static bool handleKeyEvent(const WebKeyboardEvent& keyboardEvent, Page* page)
-{
-    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
-    if (!localMainFrame)
-        return false;
-
-    if (!localMainFrame->view())
-        return false;
-
-    if (keyboardEvent.type() == WebEventType::Char && keyboardEvent.isSystemKey())
-        return Ref(page->focusController().focusedOrMainFrame())->eventHandler().handleAccessKey(platform(keyboardEvent));
-    return Ref(page->focusController().focusedOrMainFrame())->eventHandler().keyEvent(platform(keyboardEvent));
-}
-
-void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
+void WebPage::keyEvent(FrameIdentifier frameID, const WebKeyboardEvent& keyboardEvent)
 {
     SetForScope userIsInteractingChange { m_userIsInteracting, true };
 
@@ -3589,7 +3495,9 @@ void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
 
     CurrentEvent currentEvent(keyboardEvent);
 
-    bool handled = handleKeyEvent(keyboardEvent, m_page.get());
+    bool handled = false;
+    if (WebFrame* frame = WebProcess::singleton().webFrame(frameID))
+        handled = frame->handleKeyEvent(keyboardEvent);
 
     send(Messages::WebPageProxy::DidReceiveEvent(keyboardEvent.type(), handled));
 }
@@ -5373,11 +5281,6 @@ void WebPage::didBeginTextSearchOperation()
     foundTextRangeController().didBeginTextSearchOperation();
 }
 
-void WebPage::didEndTextSearchOperation()
-{
-    foundTextRangeController().didEndTextSearchOperation();
-}
-
 void WebPage::requestRectForFoundTextRange(const WebFoundTextRange& range, CompletionHandler<void(WebCore::FloatRect)>&& completionHandler)
 {
     foundTextRangeController().requestRectForFoundTextRange(range, WTFMove(completionHandler));
@@ -6415,18 +6318,18 @@ void WebPage::handleAlternativeTextUIResult(const String& result)
 void WebPage::simulateMouseDown(int button, WebCore::IntPoint position, int clickCount, WKEventModifiers modifiers, WallTime time)
 {
     static_assert(sizeof(WKEventModifiers) >= sizeof(WebEventModifier), "WKEventModifiers must be greater than or equal to the size of WebEventModifier");
-    mouseEvent(WebMouseEvent({ WebEventType::MouseDown, fromAPI(modifiers), time }, static_cast<WebMouseEventButton>(button), 0, position, position, 0, 0, 0, clickCount, WebCore::ForceAtClick, WebMouseEventSyntheticClickType::NoTap), std::nullopt);
+    mouseEvent(mainWebFrame().frameID(), WebMouseEvent({ WebEventType::MouseDown, fromAPI(modifiers), time }, static_cast<WebMouseEventButton>(button), 0, position, position, 0, 0, 0, clickCount, WebCore::ForceAtClick, WebMouseEventSyntheticClickType::NoTap), std::nullopt);
 }
 
 void WebPage::simulateMouseUp(int button, WebCore::IntPoint position, int clickCount, WKEventModifiers modifiers, WallTime time)
 {
     static_assert(sizeof(WKEventModifiers) >= sizeof(WebEventModifier), "WKEventModifiers must be greater than or equal to the size of WebEventModifier");
-    mouseEvent(WebMouseEvent({ WebEventType::MouseUp, fromAPI(modifiers), time }, static_cast<WebMouseEventButton>(button), 0, position, position, 0, 0, 0, clickCount, WebCore::ForceAtClick, WebMouseEventSyntheticClickType::NoTap), std::nullopt);
+    mouseEvent(mainWebFrame().frameID(), WebMouseEvent({ WebEventType::MouseUp, fromAPI(modifiers), time }, static_cast<WebMouseEventButton>(button), 0, position, position, 0, 0, 0, clickCount, WebCore::ForceAtClick, WebMouseEventSyntheticClickType::NoTap), std::nullopt);
 }
 
 void WebPage::simulateMouseMotion(WebCore::IntPoint position, WallTime time)
 {
-    mouseEvent(WebMouseEvent({ WebEventType::MouseMove, OptionSet<WebEventModifier> { }, time }, WebMouseEventButton::NoButton, 0, position, position, 0, 0, 0, 0, 0, WebMouseEventSyntheticClickType::NoTap), std::nullopt);
+    mouseEvent(mainWebFrame().frameID(), WebMouseEvent({ WebEventType::MouseMove, OptionSet<WebEventModifier> { }, time }, WebMouseEventButton::NoButton, 0, position, position, 0, 0, 0, 0, 0, WebMouseEventSyntheticClickType::NoTap), std::nullopt);
 }
 
 void WebPage::setCompositionForTesting(const String& compositionString, uint64_t from, uint64_t length, bool suppressUnderline, const Vector<CompositionHighlight>& highlights, const HashMap<String, Vector<WebCore::CharacterRange>>& annotations)

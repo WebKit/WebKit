@@ -991,7 +991,7 @@ def parse_serialized_types(file):
         if match:
             struct_or_class, name = match.groups()
             continue
-        match = re.search(r'using (.*) = (.*)', line)
+        match = re.search(r'using (.*) = ([^;]*)', line)
         if match:
             typedefs.append(match.groups())
             continue

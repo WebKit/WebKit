@@ -26,6 +26,9 @@
 #include "config.h"
 #include "TextOnlySimpleLineBuilder.h"
 
+#include "InlineFormattingContext.h"
+#include "RenderStyleInlines.h"
+
 namespace WebCore {
 namespace Layout {
 

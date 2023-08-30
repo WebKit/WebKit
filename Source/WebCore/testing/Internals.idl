@@ -818,6 +818,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined enableMockMediaCapabilities();
 
     [Conditional=SPEECH_SYNTHESIS] undefined enableMockSpeechSynthesizer();
+    [Conditional=SPEECH_SYNTHESIS] undefined simulateSpeechSynthesizerVoiceListChange();
     [Conditional=SPEECH_SYNTHESIS] undefined enableMockSpeechSynthesizerForMediaElement(HTMLMediaElement element);
     [Conditional=SPEECH_SYNTHESIS] undefined setSpeechUtteranceDuration(double duration);
     [Conditional=SPEECH_SYNTHESIS] readonly attribute unsigned long minimumExpectedVoiceCount;
@@ -1224,4 +1225,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     readonly attribute boolean isVisuallyNonEmpty;
     
     boolean isUsingUISideCompositing();
+
+    boolean readyToRetrieveComputedRoleOrLabel(Element element);
+    DOMString getComputedLabel(Element element);
+    DOMString getComputedRole(Element element);
 };

@@ -77,15 +77,18 @@ public:
     {
     }
 
+    explicit UUID(uint64_t high, uint64_t low)
+        : m_data((static_cast<UInt128>(high) << 64) | low)
+    {
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isHashTableDeletedValue());
+    }
+
     std::span<const uint8_t, 16> toSpan() const
     {
         return std::span<const uint8_t, 16> { reinterpret_cast<const uint8_t*>(&m_data), 16 };
     }
 
-    bool operator==(const UUID& other) const { return m_data == other.m_data; }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<UUID> decode(Decoder&);
+    friend bool operator==(const UUID&, const UUID&) = default;
 
     explicit constexpr UUID(HashTableDeletedValueType)
         : m_data(deletedValue)
@@ -104,6 +107,9 @@ public:
     bool isValid() const { return m_data != emptyValue && m_data != deletedValue; }
 
     UInt128 data() const { return m_data; }
+
+    uint64_t low() const { return static_cast<uint64_t>(m_data); }
+    uint64_t high() const { return static_cast<uint64_t>(m_data >> 64);  }
 
     struct MarkableTraits {
         static bool isEmptyValue(const UUID& uuid) { return !uuid; }
@@ -136,32 +142,6 @@ template<> struct HashTraits<UUID> : GenericHashTraits<UUID> {
     static bool isDeletedValue(const UUID& value) { return value.isHashTableDeletedValue(); }
 };
 template<> struct DefaultHash<UUID> : UUIDHash { };
-
-template<class Encoder>
-void UUID::encode(Encoder& encoder) const
-{
-    encoder << static_cast<uint64_t>(m_data >> 64) << static_cast<uint64_t>(m_data);
-}
-
-template<class Decoder>
-std::optional<UUID> UUID::decode(Decoder& decoder)
-{
-    std::optional<uint64_t> high;
-    decoder >> high;
-    if (!high)
-        return std::nullopt;
-
-    std::optional<uint64_t> low;
-    decoder >> low;
-    if (!low)
-        return std::nullopt;
-
-    auto result = (static_cast<UInt128>(*high) << 64) | *low;
-    if (result == deletedValue)
-        return { };
-
-    return UUID { result };
-}
 
 // Creates a UUID that consists of 32 hexadecimal digits and returns its canonical form.
 // The canonical form is displayed in 5 groups separated by hyphens, in the form 8-4-4-4-12 for a total of 36 characters.

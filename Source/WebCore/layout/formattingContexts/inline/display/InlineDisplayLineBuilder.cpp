@@ -50,8 +50,9 @@ static InlineRect flipLogicalLineRectToVisualForWritingMode(const InlineRect& li
     return lineLogicalRect;
 }
 
-InlineDisplayLineBuilder::InlineDisplayLineBuilder(const InlineFormattingContext& inlineFormattingContext)
-    : m_inlineFormattingContext(inlineFormattingContext)
+InlineDisplayLineBuilder::InlineDisplayLineBuilder(const ConstraintsForInlineContent& constraints, const InlineFormattingContext& inlineFormattingContext)
+    : m_constraints(constraints)
+    , m_inlineFormattingContext(inlineFormattingContext)
 {
 }
 
@@ -121,8 +122,9 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
     return { { enclosingTop.value_or(lineBoxRect.top()), enclosingBottom.value_or(lineBoxRect.top()) }, contentOverflowRect };
 }
 
-InlineDisplay::Line InlineDisplayLineBuilder::build(const LineLayoutResult& lineLayoutResult, const LineBox& lineBox, const ConstraintsForInlineContent& constraints, bool lineIsFullyTruncatedInBlockDirection) const
+InlineDisplay::Line InlineDisplayLineBuilder::build(const LineLayoutResult& lineLayoutResult, const LineBox& lineBox, bool lineIsFullyTruncatedInBlockDirection) const
 {
+    auto& constraints = this->constraints();
     auto& rootInlineBox = lineBox.rootInlineBox();
     auto isLeftToRightDirection = lineLayoutResult.directionality.inlineBaseDirection == TextDirection::LTR;
     auto lineBoxLogicalRect = lineBox.logicalRect();

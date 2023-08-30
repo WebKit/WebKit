@@ -455,6 +455,7 @@ struct GlobalInformation {
         FromRefFunc,
         FromExpression,
         FromVector,
+        FromExtendedExpression,
     };
 
     enum class BindingMode : uint8_t {
@@ -487,7 +488,8 @@ class I32InitExpr {
     WTF_MAKE_FAST_ALLOCATED;
     enum Type : uint8_t {
         Global,
-        Const
+        Const,
+        ExtendedExpression
     };
 
     I32InitExpr(Type type, uint32_t bits)
@@ -500,9 +502,11 @@ public:
 
     static I32InitExpr globalImport(uint32_t globalImportNumber) { return I32InitExpr(Global, globalImportNumber); }
     static I32InitExpr constValue(uint32_t constValue) { return I32InitExpr(Const, constValue); }
+    static I32InitExpr extendedExpression(uint32_t constantExpressionNumber) { return I32InitExpr(ExtendedExpression, constantExpressionNumber); }
 
     bool isConst() const { return m_type == Const; }
     bool isGlobalImport() const { return m_type == Global; }
+    bool isExtendedExpression() const { return m_type == ExtendedExpression; }
     uint32_t constValue() const
     {
         RELEASE_ASSERT(isConst());
@@ -511,6 +515,11 @@ public:
     uint32_t globalImportIndex() const
     {
         RELEASE_ASSERT(isGlobalImport());
+        return m_bits;
+    }
+    uint32_t constantExpressionIndex() const
+    {
+        RELEASE_ASSERT(isExtendedExpression());
         return m_bits;
     }
 

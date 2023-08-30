@@ -254,6 +254,9 @@ Vector<SerializedTypeInfo> allSerializedTypes()
         { "WebCore::SharedStringHash"_s, {
             { "uint32_t"_s, "alias"_s }
         } },
+        { "WebCore::UsingWithSemicolon"_s, {
+            { "uint32_t"_s, "alias"_s }
+        } },
     };
 }
 

@@ -75,8 +75,8 @@ WeakHashSet<WebProcessProxy> WebExtensionContext::processes(WebExtensionEventLis
     auto page = m_eventListenerPages.find(type);
     if (page != m_eventListenerPages.end()) {
         for (auto entry : page->value) {
-            auto& process = entry.key.process();
-            if (process.canSendMessage())
+            Ref process = entry.key.process();
+            if (process->canSendMessage())
                 processes.add(process);
         }
     }

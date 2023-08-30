@@ -83,7 +83,7 @@ void GroupActivitiesSessionNotifier::addWebPage(WebPageProxy& webPage)
     ASSERT(!m_webPages.contains(webPage));
     m_webPages.add(webPage);
 
-    auto frame = webPage.mainFrame();
+    RefPtr frame = webPage.mainFrame();
     if (!frame)
         return;
 

@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'message_port.start')
 
-Harness Error (FAIL), message = TypeError: null is not an object (evaluating 'message_port.start')
-
+FAIL postMessaging to a dedicated sub-worker allows them to see each others' modifications Can't find variable: Worker
+FAIL Bonus: self.crossOriginIsolated assert_true: expected true got false
 

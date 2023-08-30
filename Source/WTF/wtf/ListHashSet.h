@@ -232,7 +232,7 @@ public:
     // postfix -- intentionally omitted
 
     // Comparison.
-    bool operator==(const iterator& other) const { return m_iterator == other.m_iterator; }
+    friend bool operator==(const iterator&, const iterator&) = default;
 
     operator const_iterator() const { return m_iterator; }
 

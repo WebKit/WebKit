@@ -166,28 +166,18 @@ static bool shouldAllowNonPointerCursorForElement(const Element& element)
     return false;
 }
 
-static bool isOverlay(const RenderElement& renderer)
+static bool shouldGetOcclusion(const RenderElement& renderer)
 {
+    if (auto* renderLayerModelObject = dynamicDowncast<RenderBox>(renderer)) {
+        if (renderLayerModelObject->hasLayer() && renderLayerModelObject->layer()->isComposited())
+            return false;
+    }
+
     if (renderer.style().specifiedZIndex() > 0)
         return true;
 
     if (renderer.isFixedPositioned())
         return true;
-
-    if (auto* renderBox = dynamicDowncast<RenderBox>(renderer)) {
-        auto refContentBox = renderBox->absoluteContentBox();
-        auto lastRenderer = renderBox;
-        for (auto& ancestor : ancestorsOfType<RenderBox>(renderer)) {
-            // We don't want to occlude any previous siblings.
-            if (ancestor.firstChild() != lastRenderer)
-                return false;
-            lastRenderer = &ancestor;
-            if (ancestor.absoluteContentBox() != refContentBox)
-                return false;
-            if (ancestor.isFixedPositioned())
-                return true;
-        }
-    }
 
     return false;
 }
@@ -276,7 +266,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     }
 
     if (!hasListener || !(hasPointer || detectedHoverRules) || isTooBigForInteraction) {
-        if (isOriginalMatch && isOverlay(renderer)) {
+        if (isOriginalMatch && shouldGetOcclusion(renderer)) {
             return { {
                 InteractionRegion::Type::Occlusion,
                 elementIdentifier,

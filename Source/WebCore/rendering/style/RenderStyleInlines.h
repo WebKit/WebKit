@@ -282,7 +282,7 @@ inline bool RenderStyle::hasFilter() const { return !filter().operations().isEmp
 inline bool RenderStyle::hasInFlowPosition() const { return position() == PositionType::Relative || position() == PositionType::Sticky; }
 inline bool RenderStyle::hasIsolation() const { return isolation() != Isolation::Auto; }
 inline bool RenderStyle::hasMargin() const { return !m_nonInheritedData->surroundData->margin.isZero(); }
-inline bool RenderStyle::hasMask() const { return maskLayers().hasImage() || maskBoxImage().hasImage(); }
+inline bool RenderStyle::hasMask() const { return maskLayers().hasImage() || maskBorder().hasImage(); }
 inline bool RenderStyle::hasOffset() const { return !m_nonInheritedData->surroundData->offset.isZero(); }
 inline bool RenderStyle::hasOpacity() const { return m_nonInheritedData->miscData->hasOpacity(); }
 inline bool RenderStyle::hasOutOfFlowPosition() const { return position() == PositionType::Absolute || position() == PositionType::Fixed; }
@@ -567,9 +567,9 @@ inline MarqueeDirection RenderStyle::marqueeDirection() const { return static_ca
 inline const Length& RenderStyle::marqueeIncrement() const { return m_nonInheritedData->rareData->marquee->increment; }
 inline int RenderStyle::marqueeLoopCount() const { return m_nonInheritedData->rareData->marquee->loops; }
 inline int RenderStyle::marqueeSpeed() const { return m_nonInheritedData->rareData->marquee->speed; }
-inline const NinePieceImage& RenderStyle::maskBoxImage() const { return m_nonInheritedData->rareData->maskBoxImage; }
-inline LayoutBoxExtent RenderStyle::maskBoxImageOutsets() const { return imageOutsets(maskBoxImage()); }
-inline StyleImage* RenderStyle::maskBoxImageSource() const { return maskBoxImage().image(); }
+inline const NinePieceImage& RenderStyle::maskBorder() const { return m_nonInheritedData->rareData->maskBorder; }
+inline LayoutBoxExtent RenderStyle::maskBorderOutsets() const { return imageOutsets(maskBorder()); }
+inline StyleImage* RenderStyle::maskBorderSource() const { return maskBorder().image(); }
 inline FillBox RenderStyle::maskClip() const { return maskLayers().clip(); }
 inline CompositeOperator RenderStyle::maskComposite() const { return maskLayers().composite(); }
 inline StyleImage* RenderStyle::maskImage() const { return maskLayers().image(); }

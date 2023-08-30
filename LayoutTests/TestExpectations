@@ -919,6 +919,7 @@ imported/w3c/web-platform-tests/html/anonymous-iframe/sharedworker-partitioning.
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_forward_cross_realm_method.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/no_window_open_when_term_nesting_level_nonzero.window.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/dom/render-blocking/remove-element-unblocks-rendering.optional.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/blob-data.https.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/checkpoint-after-window-onerror-module.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/syntax/charset/without-inheritance.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/syntax/speculative-charset/speculative-script.tentative.html [ Failure Pass ]
@@ -1788,6 +1789,9 @@ webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/with-ports/021.
 webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/without-ports/020.html [ Skip ]
 webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/without-ports/021.html [ Skip ]
 
+# This webmessaging WPT test crashes in debug.
+webkit.org/b/260895 [ Debug ] imported/w3c/web-platform-tests/webmessaging/broadcastchannel/opaque-origin.html [ Crash ]
+
 webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/body-fills-html-quirk-vertical.html [ ImageOnlyFailure ]
 webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/body-fills-html-quirk.html [ ImageOnlyFailure ]
 webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/line-height-in-list-item.tentative.html [ ImageOnlyFailure ]
@@ -2381,11 +2385,9 @@ webkit.org/b/238371 imported/w3c/web-platform-tests/css/css-masking/clip-path/cl
 webkit.org/b/238371 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-002.html [ ImageOnlyFailure ]
 webkit.org/b/238371 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-003.html [ ImageOnlyFailure ]
 webkit.org/b/238371 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-004.html [ ImageOnlyFailure ]
-webkit.org/b/238371 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-interpolation-001.html [ ImageOnlyFailure ]
-webkit.org/b/238371 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-interpolation-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-rect-interpolation-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-interpolation-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-interpolation-002.html [ ImageOnlyFailure ]
+webkit.org/b/238371 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-interpolation-001.html [ ImageOnlyFailure ]
+webkit.org/b/238371 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-interpolation-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-xywh-interpolation-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-005.html [ ImageOnlyFailure ]
@@ -2641,7 +2643,6 @@ workers/sab/no-transfer.html [ Skip ]
 workers/sab/postMessage-clones.html [ Skip ]
 workers/sab/postMessage-transfer-type-error.html [ Skip ]
 workers/sab/sent-from-worker-no-transfer.html [ Skip ]
-imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/ [ Skip ]
 
 # These tests are slow by design.
 workers/wasm-hashset-many.html [ Slow ]
@@ -5282,6 +5283,9 @@ webkit.org/b/233340 imported/w3c/web-platform-tests/css/motion/offset-anchor-tra
 
 # CSS motion path ray test failing due to getting wrong size from containing block.
 webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-path-ray-007.html [ ImageOnlyFailure ]
+webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-path-ray-009.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-ray-012.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-ray-013.html [ ImageOnlyFailure ]
 
 # CSS motion path URL support.
 imported/w3c/web-platform-tests/css/motion/offset-path-url-002.html [ ImageOnlyFailure ]
@@ -5292,10 +5296,8 @@ imported/w3c/web-platform-tests/css/motion/offset-path-url-009.html [ ImageOnlyF
 imported/w3c/web-platform-tests/css/motion/offset-path-url-010.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-url-011.html [ ImageOnlyFailure ]
 
-# CSS motion path tests for missing <position> support in ray().
+# CSS motion path tests for missing offset-position: normal support in ray().
 imported/w3c/web-platform-tests/css/motion/offset-path-ray-011.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-ray-012.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-ray-013.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-ray-014.html [ ImageOnlyFailure ]
 
 # CSS motion path tests for missing <coord-box> support.
@@ -5303,6 +5305,8 @@ imported/w3c/web-platform-tests/css/motion/offset-path-coord-box-001.html [ Imag
 imported/w3c/web-platform-tests/css/motion/offset-path-coord-box-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-coord-box-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-coord-box-004.html [ ImageOnlyFailure ]
+
+# CSS motion path tests for missing parsing support for <coord-box> with ray.
 imported/w3c/web-platform-tests/css/motion/offset-path-ray-015.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-ray-016.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-ray-017.html [ ImageOnlyFailure ]
@@ -6595,6 +6599,35 @@ imported/w3c/web-platform-tests/css/css-text/word-break/auto [ Pass Failure Imag
 
 webkit.org/b/255970 [ Debug ] fullscreen/exit-full-screen-video-crash.html [ Crash ]
 
+# These tests time out because WebTransport only has a stub implementation.
+imported/w3c/web-platform-tests/webtransport/back-forward-cache-with-closed-webtransport-connection.https.window.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/back-forward-cache-with-open-webtransport-connection.https.window.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/close.https.any.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/close.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/close.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/close.https.any.worker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/connect.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/connect.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/connect.https.any.worker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/constructor.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/constructor.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/constructor.https.any.worker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/datagrams.https.any.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/datagrams.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/datagrams.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/datagrams.https.any.worker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/streams-close.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/streams-close.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/streams-close.https.any.worker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/streams-echo.https.any.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/streams-echo.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/streams-echo.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/streams-echo.https.any.worker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/server-certificate-hashes.https.any.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/server-certificate-hashes.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/server-certificate-hashes.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/server-certificate-hashes.https.any.worker.html [ Skip ]
+
 # These tests are slow and sometime time out in debug.
 [ Debug ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-so.https.html?1-2 [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-so.https.html?3-4 [ Skip ]
@@ -6669,3 +6702,5 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/im
 
 # webkit.org/b/260546
 [ Debug ] imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/toggleEvent.html [ Pass Failure ]
+
+webkit.org/b/260823 http/tests/workers/service/self_registration.html [ Pass Failure ]

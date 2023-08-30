@@ -43,18 +43,9 @@
                                       (layer anchorPoint [x: 0 y: 0]))))
                                 (
                                   (layer bounds [x: 0 y: 0 width: 0 height: 0])
-                                  (layer anchorPoint [x: 0 y: 0]))))))
-                        (
-                          (layer bounds [x: 0 y: 0 width: 800 height: 86050])
-                          (layer position [x: 400 y: 400])
-                          (sublayers
-                            (
-                              (layer bounds [x: 0 y: 0 width: 800 height: 86050])
-                              (layer anchorPoint [x: 0 y: 0])
-                              (sublayers
+                                  (layer anchorPoint [x: 0 y: 0]))
                                 (
-                                  (layer bounds [x: 0 y: 0 width: 800 height: 86050])
-                                  (layer anchorPoint [x: 0 y: 0])
+                                  (layer bounds [x: 0 y: 0 width: 0 height: 0])
                                   (sublayers
                                     (
                                       (type 0)
@@ -90,20 +81,7 @@
                                       (type 0)
                                       (layer bounds [x: 0 y: 0 width: 700 height: 36])
                                       (layer position [x: 400 y: 400])
-                                      (layer cornerRadius 8))
-                                    (
-                                      (layer bounds [x: 0 y: 0 width: 0 height: 0])
-                                      (sublayers
-                                        (
-                                          (layer bounds [x: 0 y: 0 width: 800 height: 512])
-                                          (layer anchorPoint [x: 0 y: 0]))
-                                        (
-                                          (layer bounds [x: 0 y: 0 width: 800 height: 512])
-                                          (layer position [x: 0 y: 0])
-                                          (layer anchorPoint [x: 0 y: 0]))))
-                                    (
-                                      (layer bounds [x: 0 y: 0 width: 0 height: 0])
-                                      (layer anchorPoint [x: 0 y: 0]))))))))))))))
+                                      (layer cornerRadius 8))))))))))))))
             (
               (layer bounds [x: 0 y: 0 width: 0 height: 0]))))
         (

@@ -203,7 +203,7 @@ static NSString * const webkitShowLinkPreviewsPreferenceKey = @"WebKitShowLinkPr
 static NSString * const pointerRegionIdentifier = @"WKPointerRegion";
 static NSString * const editablePointerRegionIdentifier = @"WKEditablePointerRegion";
 
-@interface WKContentView (WKUIPointerInteractionDelegate) <UIPointerInteractionDelegate_ForWebKitOnly>
+@interface WKContentView (WKUIPointerInteractionDelegate) <UIPointerInteractionDelegate>
 @end
 #endif
 
@@ -1233,6 +1233,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if HAVE(UI_POINTER_INTERACTION)
     [self removeInteraction:_pointerInteraction.get()];
     _pointerInteraction = nil;
+    _pointerInteractionRegionNeedsUpdate = NO;
 #endif
 
     _revealFocusedElementDeferrer = nullptr;
@@ -2514,6 +2515,11 @@ static BOOL isBuiltInScrollViewGestureRecognizer(UIGestureRecognizer *recognizer
         || [recognizer isKindOfClass:scrollViewKnobLongPressGestureRecognizerClass];
 }
 
+- (BOOL)_isContextMenuGestureRecognizerForFailureRelationships:(UIGestureRecognizer *)gestureRecognizer
+{
+    return [gestureRecognizer.name isEqualToString:@"com.apple.UIKit.clickPresentationFailure"] && gestureRecognizer.view == self;
+}
+
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)preventingGestureRecognizer canPreventGestureRecognizer:(UIGestureRecognizer *)preventedGestureRecognizer
 {
     // A long-press gesture can not be recognized while panning, but a pan can be recognized
@@ -2646,7 +2652,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return [(WKDeferringGestureRecognizer *)otherGestureRecognizer shouldDeferGestureRecognizer:gestureRecognizer];
 
 #if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS)
-    if (gestureRecognizer == _imageAnalysisTimeoutGestureRecognizer && otherGestureRecognizer == [self.contextMenuInteraction gestureRecognizerForFailureRelationships])
+    if (gestureRecognizer == _imageAnalysisTimeoutGestureRecognizer && [self _isContextMenuGestureRecognizerForFailureRelationships:otherGestureRecognizer])
         return YES;
 #endif
 
@@ -2659,7 +2665,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return [(WKDeferringGestureRecognizer *)gestureRecognizer shouldDeferGestureRecognizer:otherGestureRecognizer];
 
 #if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS)
-    if (gestureRecognizer == [self.contextMenuInteraction gestureRecognizerForFailureRelationships] && otherGestureRecognizer == _imageAnalysisTimeoutGestureRecognizer)
+    if ([self _isContextMenuGestureRecognizerForFailureRelationships:gestureRecognizer] && otherGestureRecognizer == _imageAnalysisTimeoutGestureRecognizer)
         return YES;
 #endif
 
@@ -8868,15 +8874,8 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
         return [gestureRecognizer isKindOfClass:UIPanGestureRecognizer.class] || [gestureRecognizer isKindOfClass:UIPinchGestureRecognizer.class];
 
     BOOL mayDelayReset = [&]() -> BOOL {
-#if USE(UICONTEXTMENU) && HAVE(LINK_PREVIEW)
-        if (gestureRecognizer == [self.contextMenuInteraction gestureRecognizerForFailureRelationships])
+        if ([self _isContextMenuGestureRecognizerForFailureRelationships:gestureRecognizer])
             return YES;
-#endif
-
-#if HAVE(TEXT_INTERACTION_WITH_CONTEXT_MENU_INTERACTION)
-        if (gestureRecognizer == [_textInteractionAssistant contextMenuInteraction].gestureRecognizerForFailureRelationships)
-            return YES;
-#endif
 
 #if ENABLE(DRAG_SUPPORT)
         if (gestureRecognizer.delegate == [_dragInteraction _initiationDriver])
@@ -10459,60 +10458,58 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
     [self addInteraction:_pointerInteraction.get()];
 }
 
-- (void)_pointerInteraction:(UIPointerInteraction *)interaction regionForRequest:(UIPointerRegionRequest *)request defaultRegion:(UIPointerRegion *)defaultRegion completion:(void(^)(UIPointerRegion *region))completion
+- (UIPointerRegion *)pointerInteraction:(UIPointerInteraction *)interaction regionForRequest:(UIPointerRegionRequest *)request defaultRegion:(UIPointerRegion *)defaultRegion
+{
+    [self _updateLastPointerRegionIfNeeded:request];
+    return _lastPointerRegion.get();
+}
+
+- (void)_updateLastPointerRegionIfNeeded:(UIPointerRegionRequest *)request
 {
     WebKit::InteractionInformationRequest interactionInformationRequest;
     interactionInformationRequest.point = WebCore::roundedIntPoint(request.location);
     interactionInformationRequest.includeCaretContext = true;
     interactionInformationRequest.includeHasDoubleClickHandler = false;
 
-    __block BOOL didSynchronouslyReplyWithApproximation = false;
-    if (![self _currentPositionInformationIsValidForRequest:interactionInformationRequest] && self.webView._editable && !_positionInformation.shouldNotUseIBeamInEditableContent) {
-        didSynchronouslyReplyWithApproximation = true;
-        completion([UIPointerRegion regionWithRect:self.bounds identifier:editablePointerRegionIdentifier]);
-    }
-
-    // If we already have an outstanding interaction information request, defer this one until
-    // we hear back, so that requests don't pile up if the Web Content process is slow.
-    if (_hasOutstandingPointerInteractionRequest) {
-        _deferredPointerInteractionRequest = std::make_pair(interactionInformationRequest, makeBlockPtr(completion));
+    if ([self _currentPositionInformationIsValidForRequest:interactionInformationRequest]) {
+        _lastPointerRegion = [self pointerRegionForPositionInformation:_positionInformation point:request.location];
+        _pointerInteractionRegionNeedsUpdate = NO;
         return;
     }
 
-    _hasOutstandingPointerInteractionRequest = YES;
+    // Note: In this case where position information is not up-to-date, checking the last cached
+    // position information may not yield expected results, since the client (or any other code in
+    // WebKit) may have queried position information at a totally different location, for unrelated
+    // reasons. However, this seems to work well in practice, since pointer updates are very frequent,
+    // so any invalid state would only persist for a single frame.
+    if (self.webView._editable && !_positionInformation.shouldNotUseIBeamInEditableContent) {
+        auto lastRegionRect = _lastPointerRegion ? [_lastPointerRegion rect] : self.bounds;
+        _lastPointerRegion = [UIPointerRegion regionWithRect:lastRegionRect identifier:editablePointerRegionIdentifier];
+    }
 
-    __block BlockPtr<void(WebKit::InteractionInformationAtPosition, void(^)(UIPointerRegion *))> replyHandler;
-    replyHandler = ^(WebKit::InteractionInformationAtPosition interactionInformation, void(^completion)(UIPointerRegion *region)) {
-        if (!_deferredPointerInteractionRequest)
-            _hasOutstandingPointerInteractionRequest = NO;
+    if (_pointerInteractionRegionNeedsUpdate)
+        return;
 
-        if (didSynchronouslyReplyWithApproximation)
-            [interaction invalidate];
-        else
-            completion([self pointerRegionForPositionInformation:interactionInformation point:request.location]);
+    _pointerInteractionRegionNeedsUpdate = YES;
 
-        if (_deferredPointerInteractionRequest) {
-            didSynchronouslyReplyWithApproximation = false;
-
-            auto deferredRequest = std::exchange(_deferredPointerInteractionRequest, std::nullopt);
-            [self doAfterPositionInformationUpdate:^(WebKit::InteractionInformationAtPosition interactionInformation) {
-                replyHandler(interactionInformation, deferredRequest->second.get());
-            } forRequest:deferredRequest->first];
+    [self doAfterPositionInformationUpdate:[weakSelf = WeakObjCPtr<WKContentView>(self), location = request.location](WebKit::InteractionInformationAtPosition information) {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf)
             return;
-        }
-    };
 
-    [self doAfterPositionInformationUpdate:^(WebKit::InteractionInformationAtPosition interactionInformation) {
-        replyHandler(interactionInformation, completion);
+        strongSelf->_pointerInteractionRegionNeedsUpdate = NO;
+        strongSelf->_lastPointerRegion = [strongSelf pointerRegionForPositionInformation:information point:location];
+        [strongSelf->_pointerInteraction invalidate];
     } forRequest:interactionInformationRequest];
 }
 
-- (UIPointerRegion *)pointerRegionForPositionInformation:(WebKit::InteractionInformationAtPosition&)interactionInformation point:(CGPoint)location
+- (UIPointerRegion *)pointerRegionForPositionInformation:(const WebKit::InteractionInformationAtPosition&)interactionInformation point:(CGPoint)location
 {
     WebCore::FloatRect expandedLineRect = enclosingIntRect(interactionInformation.lineCaretExtent);
 
     // Pad lines of text in order to avoid switching back to the dot cursor between lines.
     // This matches the value that UIKit uses.
+    // FIXME: Should this account for vertical writing mode?
     expandedLineRect.inflateY(10);
 
     if (interactionInformation.cursor) {
@@ -10540,10 +10537,12 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
     UIPointerStyle *(^iBeamCursor)(void) = ^{
         float beamLength = _positionInformation.caretLength * scaleFactor;
         auto axisOrientation = _positionInformation.isVerticalWritingMode ? UIAxisHorizontal : UIAxisVertical;
-        UIAxis iBeamConstraintAxes = _positionInformation.isVerticalWritingMode ? UIAxisHorizontal : UIAxisVertical;
+        auto iBeamConstraintAxes = _positionInformation.isVerticalWritingMode ? UIAxisHorizontal : UIAxisVertical;
+        auto regionLengthInBlockAxis = _positionInformation.isVerticalWritingMode ? CGRectGetWidth(region.rect) : CGRectGetHeight(region.rect);
 
         // If the I-beam is so large that the magnetism is hard to fight, we should not apply any magnetism.
-        if (beamLength > [UITextInteraction _maximumBeamSnappingLength])
+        static constexpr auto maximumBeamSnappingLength = 100;
+        if (beamLength > maximumBeamSnappingLength || regionLengthInBlockAxis > maximumBeamSnappingLength)
             iBeamConstraintAxes = UIAxisNeither;
 
         // If the region is the size of the view, we should not apply any magnetism.
@@ -10927,12 +10926,13 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (void)didBeginTextSearchOperation
 {
+    [self.webView _showFindOverlay];
     _page->didBeginTextSearchOperation();
 }
 
 - (void)didEndTextSearchOperation
 {
-    _page->didEndTextSearchOperation();
+    [self.webView _hideFindOverlay];
 }
 
 - (BOOL)supportsTextReplacement

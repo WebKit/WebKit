@@ -322,6 +322,7 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
 
 void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
 {
+    auto& formattingContext = this->formattingContext();
     auto& rootInlineBox = lineBox.rootInlineBox();
     setVerticalPropertiesForInlineLevelBox(lineBox, rootInlineBox);
 
@@ -335,31 +336,10 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
         auto& run = inlineContent[index];
         auto& layoutBox = run.layoutBox();
         auto& style = styleToUse(layoutBox);
-        auto runHasContent = [&] () -> bool {
-            ASSERT(!lineHasContent);
-            if (run.isContentful())
-                return true;
-            if (run.isText() || run.isWordBreakOpportunity() || run.isOpaque())
-                return false;
-
-            ASSERT(run.isInlineBox());
-            if (run.isLineSpanningInlineBoxStart()) {
-                // We already handled inline box decoration at the non-spanning start.
-                return false;
-            }
-            auto& inlineBoxGeometry = formattingContext().geometryForBox(layoutBox);
-            // Even negative horizontal margin makes the line "contentful".
-            if (run.isInlineBoxStart())
-                return inlineBoxGeometry.marginStart() || inlineBoxGeometry.borderStart() || inlineBoxGeometry.paddingStart().value_or(0_lu);
-            if (run.isInlineBoxEnd())
-                return inlineBoxGeometry.marginEnd() || inlineBoxGeometry.borderEnd() || inlineBoxGeometry.paddingEnd().value_or(0_lu);
-            ASSERT_NOT_REACHED();
-            return true;
-        };
-        lineHasContent = lineHasContent || runHasContent();
+        lineHasContent = lineHasContent || Line::Run::isContentfulOrHasDecoration(run, formattingContext);
         auto logicalLeft = rootInlineBox.logicalLeft() + run.logicalLeft();
         if (run.isBox()) {
-            auto& inlineLevelBoxGeometry = formattingContext().geometryForBox(layoutBox);
+            auto& inlineLevelBoxGeometry = formattingContext.geometryForBox(layoutBox);
             logicalLeft += std::max(0_lu, inlineLevelBoxGeometry.marginStart());
             auto atomicInlineLevelBox = InlineLevelBox::createAtomicInlineLevelBox(layoutBox, style, logicalLeft, inlineLevelBoxGeometry.borderBoxWidth());
             setVerticalPropertiesForInlineLevelBox(lineBox, atomicInlineLevelBox);
@@ -370,7 +350,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             auto marginStart = LayoutUnit { };
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
             if (style.boxDecorationBreak() == BoxDecorationBreak::Clone)
-                marginStart = formattingContext().geometryForBox(layoutBox).marginStart();
+                marginStart = formattingContext.geometryForBox(layoutBox).marginStart();
 #endif
             logicalLeft += std::max(0_lu, marginStart);
             auto logicalWidth = rootInlineBox.logicalRight() - logicalLeft;
@@ -383,7 +363,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             // At this point we don't know yet how wide this inline box is. Let's assume it's as long as the line is
             // and adjust it later if we come across an inlineBoxEnd run (see below).
             // Inline box run is based on margin box. Let's convert it to border box.
-            auto marginStart = formattingContext().geometryForBox(layoutBox).marginStart();
+            auto marginStart = formattingContext.geometryForBox(layoutBox).marginStart();
             logicalLeft += std::max(0_lu, marginStart);
             auto initialLogicalWidth = rootInlineBox.logicalRight() - logicalLeft;
             ASSERT(initialLogicalWidth >= 0 || lineLayoutResult().hangingContent.logicalWidth || std::isnan(initialLogicalWidth));
@@ -401,7 +381,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             ASSERT(inlineBox.isInlineBox());
             // Inline box run is based on margin box. Let's convert it to border box.
             // Negative margin end makes the run have negative width.
-            auto marginEndAdjustemnt = -formattingContext().geometryForBox(layoutBox).marginEnd();
+            auto marginEndAdjustemnt = -formattingContext.geometryForBox(layoutBox).marginEnd();
             auto logicalWidth = run.logicalWidth() + marginEndAdjustemnt;
             auto inlineBoxLogicalRight = logicalLeft + logicalWidth;
             // When the content pulls the </span> to the logical left direction (e.g. negative letter space)
@@ -446,7 +426,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             if (run.isListMarkerOutside())
                 m_outsideListMarkers.append(index);
 
-            auto atomicInlineLevelBox = InlineLevelBox::createAtomicInlineLevelBox(listMarkerBox, style, logicalLeft, formattingContext().geometryForBox(listMarkerBox).borderBoxWidth());
+            auto atomicInlineLevelBox = InlineLevelBox::createAtomicInlineLevelBox(listMarkerBox, style, logicalLeft, formattingContext.geometryForBox(listMarkerBox).borderBoxWidth());
             setVerticalPropertiesForInlineLevelBox(lineBox, atomicInlineLevelBox);
             lineBox.addInlineLevelBox(WTFMove(atomicInlineLevelBox));
             continue;

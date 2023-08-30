@@ -395,13 +395,20 @@ void webkitWindowPropertiesUpdateFromWebWindowFeatures(WebKitWindowProperties* w
     webkitWindowPropertiesSetGeometry(windowProperties, &geometry);
 #endif
 
-    webkitWindowPropertiesSetMenubarVisible(windowProperties, windowFeatures.menuBarVisible);
-    webkitWindowPropertiesSetStatusbarVisible(windowProperties, windowFeatures.statusBarVisible);
-    webkitWindowPropertiesSetToolbarVisible(windowProperties, windowFeatures.toolBarVisible);
-    webkitWindowPropertiesSetLocationbarVisible(windowProperties, windowFeatures.locationBarVisible);
-    webkitWindowPropertiesSetScrollbarsVisible(windowProperties, windowFeatures.scrollbarsVisible);
-    webkitWindowPropertiesSetResizable(windowProperties, windowFeatures.resizable);
-    webkitWindowPropertiesSetFullscreen(windowProperties, windowFeatures.fullscreen);
+    if (windowFeatures.menuBarVisible)
+        webkitWindowPropertiesSetMenubarVisible(windowProperties, *windowFeatures.menuBarVisible);
+    if (windowFeatures.statusBarVisible)
+        webkitWindowPropertiesSetStatusbarVisible(windowProperties, *windowFeatures.statusBarVisible);
+    if (windowFeatures.toolBarVisible)
+        webkitWindowPropertiesSetToolbarVisible(windowProperties, *windowFeatures.toolBarVisible);
+    if (windowFeatures.locationBarVisible)
+        webkitWindowPropertiesSetLocationbarVisible(windowProperties, *windowFeatures.locationBarVisible);
+    if (windowFeatures.scrollbarsVisible)
+        webkitWindowPropertiesSetScrollbarsVisible(windowProperties, *windowFeatures.scrollbarsVisible);
+    if (windowFeatures.resizable)
+        webkitWindowPropertiesSetResizable(windowProperties, *windowFeatures.resizable);
+    if (windowFeatures.fullscreen)
+        webkitWindowPropertiesSetFullscreen(windowProperties, *windowFeatures.fullscreen);
 }
 
 #if PLATFORM(GTK)

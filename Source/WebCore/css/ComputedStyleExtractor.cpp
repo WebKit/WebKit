@@ -59,6 +59,7 @@
 #include "FontCascade.h"
 #include "FontSelectionValueInlines.h"
 #include "GridPositionsResolver.h"
+#include "MotionPath.h"
 #include "NodeRenderStyle.h"
 #include "PerspectiveTransformOperation.h"
 #include "QuotesData.h"
@@ -846,7 +847,7 @@ static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyl
 
     if (renderer) {
         TransformationMatrix transform;
-        style.applyTransform(transform, renderer->transformReferenceBoxRect(style), { });
+        style.applyTransform(transform, TransformOperationData(renderer->transformReferenceBoxRect(style), renderer), { });
         return CSSTransformListValue::create(matrixTransformValue(transform, style));
     }
 
@@ -1730,10 +1731,9 @@ static Ref<CSSValue> valueForPathOperation(const RenderStyle& style, const PathO
 
     case PathOperation::Ray: {
         auto& ray = downcast<RayPathOperation>(*operation);
-
         auto angle = CSSPrimitiveValue::create(ray.angle(), CSSUnitType::CSS_DEG);
-
-        return CSSRayValue::create(WTFMove(angle), valueIDForRaySize(ray.size()), ray.isContaining());
+        RefPtr<CSSValuePair> position = ray.position().x().isAuto() ? nullptr : RefPtr { CSSValuePair::createNoncoalescing(Ref { zoomAdjustedPixelValueForLength(ray.position().x(), style) }, Ref { zoomAdjustedPixelValueForLength(ray.position().y(), style) }) };
+        return CSSRayValue::create(WTFMove(angle), valueIDForRaySize(ray.size()), ray.isContaining(), WTFMove(position));
     }
     }
 
@@ -3917,18 +3917,19 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return nullptr;
         return valueForNinePieceImageQuad(style.borderImage().borderSlices(), style);
     case CSSPropertyWebkitMaskBoxImage:
-        return valueForNinePieceImage(propertyID, style.maskBoxImage(), style);
-    case CSSPropertyWebkitMaskBoxImageOutset:
-        return valueForNinePieceImageQuad(style.maskBoxImage().outset(), style);
-    case CSSPropertyWebkitMaskBoxImageRepeat:
-        return valueForNinePieceImageRepeat(style.maskBoxImage());
-    case CSSPropertyWebkitMaskBoxImageSlice:
-        return valueForNinePieceImageSlice(style.maskBoxImage());
-    case CSSPropertyWebkitMaskBoxImageWidth:
-        return valueForNinePieceImageQuad(style.maskBoxImage().borderSlices(), style);
-    case CSSPropertyWebkitMaskBoxImageSource:
-        if (style.maskBoxImageSource())
-            return style.maskBoxImageSource()->computedStyleValue(style);
+    case CSSPropertyMaskBorder:
+        return valueForNinePieceImage(propertyID, style.maskBorder(), style);
+    case CSSPropertyMaskBorderOutset:
+        return valueForNinePieceImageQuad(style.maskBorder().outset(), style);
+    case CSSPropertyMaskBorderRepeat:
+        return valueForNinePieceImageRepeat(style.maskBorder());
+    case CSSPropertyMaskBorderSlice:
+        return valueForNinePieceImageSlice(style.maskBorder());
+    case CSSPropertyMaskBorderWidth:
+        return valueForNinePieceImageQuad(style.maskBorder().borderSlices(), style);
+    case CSSPropertyMaskBorderSource:
+        if (style.maskBorderSource())
+            return style.maskBorderSource()->computedStyleValue(style);
         return CSSPrimitiveValue::create(CSSValueNone);
     case CSSPropertyWebkitInitialLetter: {
         auto drop = !style.initialLetterDrop() ? CSSPrimitiveValue::create(CSSValueNormal) : CSSPrimitiveValue::create(style.initialLetterDrop());

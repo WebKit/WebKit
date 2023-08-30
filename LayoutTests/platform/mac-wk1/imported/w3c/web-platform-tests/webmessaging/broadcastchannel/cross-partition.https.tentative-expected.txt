@@ -1,0 +1,9 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS BroadcastChannel messages aren't received from a cross-partition iframe
+PASS BroadcastChannel messages aren't received from a nested iframe with a cross-site ancestor
+PASS BroadcastChannel messages aren't received from a cross-partition dedicated worker
+TIMEOUT BroadcastChannel messages aren't received from a cross-partition shared worker Test timed out
+NOTRUN BroadcastChannel messages aren't received from a cross-partition service worker
+

@@ -923,6 +923,11 @@ FloatSize MediaPlayer::videoLayerSize() const
     return client().mediaPlayerVideoLayerSize();
 }
 
+void MediaPlayer::videoLayerSizeDidChange(const FloatSize& size)
+{
+    client().mediaPlayerVideoLayerSizeDidChange(size);
+}
+
 void MediaPlayer::setVideoLayerSizeFenced(const FloatSize& size, WTF::MachSendRight&& fence)
 {
     m_private->setVideoLayerSizeFenced(size, WTFMove(fence));

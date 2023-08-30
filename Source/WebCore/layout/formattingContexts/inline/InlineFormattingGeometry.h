@@ -56,9 +56,6 @@ public:
 
     static InlineRect flipVisualRectToLogicalForWritingMode(const InlineRect& visualRect, WritingMode);
 
-    LayoutPoint staticPositionForOutOfFlowInlineLevelBox(const Box&, const ConstraintsForInFlowContent&, const InlineDisplay::Content&, const FloatingContext&) const;
-    LayoutPoint staticPositionForOutOfFlowBlockLevelBox(const Box&, const ConstraintsForInFlowContent&, const InlineDisplay::Content&) const;
-
     void adjustMarginStartForListMarker(const ElementBox&, LayoutUnit nestedListMarkerMarginStart, InlineLayoutUnit rootInlineBoxOffset) const;
 
     static InlineLayoutUnit horizontalAlignmentOffset(const RenderStyle& rootStyle, InlineLayoutUnit contentLogicalRight, InlineLayoutUnit lineLogicalRight, InlineLayoutUnit hangingTrailingWidth, const Line::RunList& runs, bool isLastLine, std::optional<TextDirection> inlineBaseDirectionOverride = std::nullopt);

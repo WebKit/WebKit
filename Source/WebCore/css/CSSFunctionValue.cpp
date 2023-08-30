@@ -27,6 +27,7 @@
 #include "CSSFunctionValue.h"
 
 #include "CSSValueKeywords.h"
+#include <wtf/Hasher.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 

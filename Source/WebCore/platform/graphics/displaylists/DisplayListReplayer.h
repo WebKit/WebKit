@@ -26,25 +26,17 @@
 #pragma once
 
 #include "DisplayListItems.h"
-#include "GraphicsContext.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class FloatRect;
+class GraphicsContext;
 
 namespace DisplayList {
 
 class DisplayList;
 class ResourceHeap;
-
-enum class StopReplayReason : uint8_t {
-    ReplayedAllItems,
-    MissingCachedResource,
-    InvalidItemOrExtent,
-    OutOfMemory
-};
 
 struct ReplayResult {
     std::unique_ptr<DisplayList> trackedDisplayList;
@@ -55,23 +47,17 @@ struct ReplayResult {
 class Replayer {
     WTF_MAKE_NONCOPYABLE(Replayer);
 public:
-    WEBCORE_EXPORT Replayer(GraphicsContext&, const DisplayList&, const ResourceHeap* = nullptr);
+    WEBCORE_EXPORT Replayer(GraphicsContext&, const DisplayList&);
+    WEBCORE_EXPORT Replayer(GraphicsContext&, const Vector<Item>&, const ResourceHeap&);
     ~Replayer() = default;
 
     WEBCORE_EXPORT ReplayResult replay(const FloatRect& initialClip = { }, bool trackReplayList = false);
 
 private:
-    struct ApplyItemResult {
-        std::optional<StopReplayReason> stopReason;
-        std::optional<RenderingResourceIdentifier> resourceIdentifier;
-    };
-    ApplyItemResult applyItem(const DisplayListItem&);
-
     GraphicsContext& m_context;
-    const DisplayList& m_displayList;
+    const Vector<Item>& m_items;
     const ResourceHeap& m_resourceHeap;
 };
 
-}
-}
-
+} // namespace DisplayList
+} // namespace WebCore

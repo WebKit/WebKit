@@ -208,9 +208,9 @@ void CSSCalcPrimitiveValueNode::collectComputedStyleDependencies(ComputedStyleDe
     m_value->collectComputedStyleDependencies(dependencies);
 }
 
-bool CSSCalcPrimitiveValueNode::convertingToLengthRequiresNonNullStyle(int lengthConversion) const
+bool CSSCalcPrimitiveValueNode::convertingToLengthHasRequiredConversionData(int lengthConversion, const CSSToLengthConversionData& conversionData) const
 {
-    return m_value->convertingToLengthRequiresNonNullStyle(lengthConversion);
+    return m_value->convertingToLengthHasRequiredConversionData(lengthConversion, conversionData);
 }
 
 bool CSSCalcPrimitiveValueNode::isZero() const

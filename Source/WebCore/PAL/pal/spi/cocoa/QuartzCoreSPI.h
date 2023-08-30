@@ -50,6 +50,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+#import <QuartzCore/CADisplay.h>
 #import <QuartzCore/CADisplayLinkPrivate.h>
 #endif
 
@@ -65,8 +66,12 @@
 typedef struct _CARenderContext CARenderContext;
 
 #if PLATFORM(IOS_FAMILY)
+@interface CADisplay : NSObject
+@end
+
 @interface CADisplayLink ()
 @property (readonly, nonatomic) CFTimeInterval maximumRefreshRate;
+@property (readonly, nonatomic) CADisplay *display;
 @end
 #endif
 
@@ -142,6 +147,7 @@ typedef struct _CARenderContext CARenderContext;
 - (void)removePresentationModifier:(CAPresentationModifier *)modifier;
 @property BOOL allowsGroupBlending;
 @property BOOL allowsHitTesting;
+@property BOOL hitTestsContentsAlphaChannel;
 @property BOOL canDrawConcurrently;
 @property BOOL contentsOpaque;
 @property BOOL hitTestsAsOpaque;

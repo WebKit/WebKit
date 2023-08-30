@@ -1063,16 +1063,13 @@ void SVGElement::updateRelativeLengthsInformation(bool hasRelativeLengths, SVGEl
     if (hasRelativeLengths)
         m_elementsWithRelativeLengths.add(element);
     else {
-        bool neverRegistered = !m_elementsWithRelativeLengths.contains(element);
-        if (neverRegistered)
+        if (!m_elementsWithRelativeLengths.remove(element))
             return;
-
-        m_elementsWithRelativeLengths.remove(element);
     }
 
     if (is<SVGGraphicsElement>(element)) {
-        if (RefPtr parent = parentNode(); is<SVGElement>(parent))
-            downcast<SVGElement>(*parent).updateRelativeLengthsInformation(hasRelativeLengths, *this);
+        if (RefPtr parent = dynamicDowncast<SVGElement>(parentNode()))
+            parent->updateRelativeLengthsInformation(hasRelativeLengths, *this);
     }
 }
 

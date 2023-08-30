@@ -455,6 +455,12 @@ namespace WebCore {
     macro(WebKitMediaKeySession) \
     macro(WebKitMediaKeys) \
     macro(WebSocket) \
+    macro(WebTransport) \
+    macro(WebTransportBidirectionalStream) \
+    macro(WebTransportDatagramDuplexStream) \
+    macro(WebTransportError) \
+    macro(WebTransportReceiveStream) \
+    macro(WebTransportSendStream) \
     macro(WindowClient) \
     macro(Worklet) \
     macro(WorkletGlobalScope) \

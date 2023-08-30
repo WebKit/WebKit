@@ -41,15 +41,13 @@ inline void traverseRuleFeaturesInShadowTree(Element& element, TraverseFunction&
         return;
 
     auto& shadowRuleSets = element.shadowRoot()->styleScope().resolver().ruleSets();
-    bool hasHostPseudoClassRulesMatchingInShadowTree = false;
     bool hasHostPseudoClassRule = shadowRuleSets.hasMatchingUserOrAuthorStyle([&] (auto& style) {
-        hasHostPseudoClassRulesMatchingInShadowTree = style.hasHostPseudoClassRulesMatchingInShadowTree();
-        return !style.hostPseudoClassRules().isEmpty();
+        return !style.hostPseudoClassRules().isEmpty() || style.hasHostPseudoClassRulesMatchingInShadowTree();
     });
-    if (!hasHostPseudoClassRule && !hasHostPseudoClassRulesMatchingInShadowTree)
+    if (!hasHostPseudoClassRule)
         return;
 
-    function(shadowRuleSets.features(), hasHostPseudoClassRulesMatchingInShadowTree);
+    function(shadowRuleSets.features(), false);
 }
 
 template <typename TraverseFunction>

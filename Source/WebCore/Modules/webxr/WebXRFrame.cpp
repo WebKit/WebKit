@@ -259,7 +259,7 @@ TransformationMatrix WebXRFrame::matrixFromPose(const PlatformXR::Device::FrameD
 {
     TransformationMatrix matrix;
     matrix.translate3d(pose.position.x(), pose.position.y(), pose.position.z());
-    matrix.multiply(TransformationMatrix::fromQuaternion(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w));
+    matrix.multiply(TransformationMatrix::fromQuaternion({ pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w }));
     return matrix;
 }
 

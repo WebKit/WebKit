@@ -93,6 +93,8 @@ RefPtr<ObjCObjectGraph> WebProcessProxy::transformHandlesToObjects(ObjCObjectGra
         {
         }
 
+        Ref<WebProcessProxy> protectedWebProcessProxy() const { return const_cast<WebProcessProxy&>(m_webProcessProxy.get()); }
+
         bool shouldTransformObject(id object) const override
         {
             if (dynamic_objc_cast<WKBrowsingContextHandle>(object))
@@ -108,7 +110,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         RetainPtr<id> transformObject(id object) const override
         {
             if (auto* handle = dynamic_objc_cast<WKBrowsingContextHandle>(object)) {
-                if (auto webPageProxy = m_webProcessProxy.webPage(handle.pageProxyID)) {
+                if (auto webPageProxy = protectedWebProcessProxy()->webPage(handle.pageProxyID)) {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                     return [WKBrowsingContextController _browsingContextControllerForPageRef:toAPI(webPageProxy.get())];
 ALLOW_DEPRECATED_DECLARATIONS_END
@@ -119,12 +121,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (auto* wrapper = dynamic_objc_cast<WKTypeRefWrapper>(object))
-                return adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(m_webProcessProxy.transformHandlesToObjects(toImpl(wrapper.object)).get())]);
+                return adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(protectedWebProcessProxy()->transformHandlesToObjects(toImpl(wrapper.object)).get())]);
 ALLOW_DEPRECATED_DECLARATIONS_END
             return object;
         }
 
-        WebProcessProxy& m_webProcessProxy;
+        CheckedRef<WebProcessProxy> m_webProcessProxy;
     };
 
     return ObjCObjectGraph::create(ObjCObjectGraph::transform(objectGraph.rootObject(), Transformer(*this)).get());

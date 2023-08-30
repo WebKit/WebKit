@@ -1,0 +1,6 @@
+Tests the #comp_tooltip portions of the AccName Name Computation algorithm.
+
+
+
+PASS link label from tooltip
+

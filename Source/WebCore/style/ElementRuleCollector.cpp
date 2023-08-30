@@ -79,8 +79,7 @@ IGNORE_GCC_WARNINGS_END
     return declaration;
 }
 
-class MatchRequest {
-public:
+struct MatchRequest {
     MatchRequest(const RuleSet& ruleSet, ScopeOrdinal styleScopeOrdinal = ScopeOrdinal::Element)
         : ruleSet(ruleSet)
         , styleScopeOrdinal(styleScopeOrdinal)
@@ -88,6 +87,7 @@ public:
     }
     const RuleSet& ruleSet;
     ScopeOrdinal styleScopeOrdinal;
+    bool matchingPartPseudoElementRules { false };
 };
 
 ElementRuleCollector::ElementRuleCollector(const Element& element, const ScopeRuleSets& ruleSets, SelectorMatchingState* selectorMatchingState)
@@ -375,6 +375,8 @@ void ElementRuleCollector::matchPartPseudoElementRulesForScope(const Element& pa
             continue;
 
         MatchRequest scopeMatchRequest(*hostRules, styleScopeOrdinal);
+        scopeMatchRequest.matchingPartPseudoElementRules = true;
+
         collectMatchingRulesForList(&hostRules->partPseudoElementRules(), scopeMatchRequest);
 
         // Element may only be exposed to styling from enclosing scopes via exportparts attributes.
@@ -559,7 +561,13 @@ bool ElementRuleCollector::containerQueriesMatch(const RuleData& ruleData, const
         return true;
 
     // Style bits indicating which pseudo-elements match are set during regular element matching. Container queries need to be evaluate in the right mode.
-    auto selectionMode = ruleData.canMatchPseudoElement() ? ContainerQueryEvaluator::SelectionMode::PseudoElement : ContainerQueryEvaluator::SelectionMode::Element;
+    auto selectionMode = [&] {
+        if (matchRequest.matchingPartPseudoElementRules)
+            return ContainerQueryEvaluator::SelectionMode::PartPseudoElement;
+        if (ruleData.canMatchPseudoElement())
+            return ContainerQueryEvaluator::SelectionMode::PseudoElement;
+        return ContainerQueryEvaluator::SelectionMode::Element;
+    }();
 
     // "Style rules defined on an element inside multiple nested container queries apply when all of the wrapping container queries are true for that element."
     ContainerQueryEvaluator evaluator(element(), selectionMode, matchRequest.styleScopeOrdinal, m_selectorMatchingState);

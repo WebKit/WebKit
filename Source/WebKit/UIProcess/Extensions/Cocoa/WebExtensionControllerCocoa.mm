@@ -154,8 +154,10 @@ void WebExtensionController::addPage(WebPageProxy& page)
     for (auto& entry : m_registeredSchemeHandlers)
         page.setURLSchemeHandlerForScheme(entry.value.copyRef(), entry.key);
 
-    addProcessPool(page.process().processPool());
-    addUserContentController(page.userContentController());
+    Ref pool = page.process().processPool();
+    addProcessPool(pool);
+    Ref controller = page.userContentController();
+    addUserContentController(controller);
 }
 
 void WebExtensionController::removePage(WebPageProxy& page)
@@ -163,8 +165,10 @@ void WebExtensionController::removePage(WebPageProxy& page)
     ASSERT(m_pages.contains(page));
     m_pages.remove(page);
 
-    removeProcessPool(page.process().processPool());
-    removeUserContentController(page.userContentController());
+    Ref pool = page.process().processPool();
+    removeProcessPool(pool);
+    Ref controller = page.userContentController();
+    removeUserContentController(controller);
 }
 
 void WebExtensionController::addProcessPool(WebProcessPool& processPool)

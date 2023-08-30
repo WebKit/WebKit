@@ -25,7 +25,7 @@ PASS test("mask: url(resources/gradient.gif) repeat center") is "repeat"
 PASS test("mask: url(resources/gradient.gif) no-repeat 12px") is "no-repeat"
 PASS test("mask: url(resources/gradient.gif) round left 50px") is "round"
 PASS test("mask: url(resources/gradient.gif) space 25px 25px") is "space"
-PASS testPropertyCount("mask: url(resources/gradient.gif) space 25px 25px;") is 9
+PASS testPropertyCount("mask: url(resources/gradient.gif) space 25px 25px;") is 14
 PASS test("mask-repeat: 45;") is ""
 PASS test("mask-repeat: coconut;") is ""
 PASS successfullyParsed is true

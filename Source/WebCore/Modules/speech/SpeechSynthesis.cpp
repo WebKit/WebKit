@@ -48,11 +48,13 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SpeechSynthesis);
 
 Ref<SpeechSynthesis>SpeechSynthesis::create(ScriptExecutionContext& context)
 {
-    return adoptRef(*new SpeechSynthesis(context));
+    auto synthesis = adoptRef(*new SpeechSynthesis(context));
+    synthesis->suspendIfNeeded();
+    return synthesis;
 }
 
 SpeechSynthesis::SpeechSynthesis(ScriptExecutionContext& context)
-    : ContextDestructionObserver(&context)
+    : ActiveDOMObject(&context)
     , m_currentSpeechUtterance(nullptr)
     , m_isPaused(false)
     , m_restrictions(NoRestrictions)
@@ -77,7 +79,8 @@ SpeechSynthesis::~SpeechSynthesis() = default;
 void SpeechSynthesis::setPlatformSynthesizer(Ref<PlatformSpeechSynthesizer>&& synthesizer)
 {
     m_platformSpeechSynthesizer = synthesizer.ptr();
-    m_voiceList.clear();
+    if (m_voiceList)
+        m_voiceList = std::nullopt;
     m_utteranceQueue.clear();
     // Finish current utterance.
     speakingErrorOccurred();
@@ -87,7 +90,9 @@ void SpeechSynthesis::setPlatformSynthesizer(Ref<PlatformSpeechSynthesizer>&& sy
 
 void SpeechSynthesis::voicesDidChange()
 {
-    m_voiceList.clear();
+    if (m_voiceList)
+        m_voiceList = std::nullopt;
+
     dispatchEvent(Event::create(eventNames().voiceschangedEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
@@ -100,15 +105,16 @@ PlatformSpeechSynthesizer& SpeechSynthesis::ensurePlatformSpeechSynthesizer()
 
 const Vector<Ref<SpeechSynthesisVoice>>& SpeechSynthesis::getVoices()
 {
-    if (!m_voiceList.isEmpty())
-        return m_voiceList;
+    if (m_voiceList)
+        return *m_voiceList;
 
     // If the voiceList is empty, that's the cue to get the voices from the platform again.
     auto& voiceList = m_speechSynthesisClient ? m_speechSynthesisClient->voiceList() : ensurePlatformSpeechSynthesizer().voiceList();
     m_voiceList = voiceList.map([](auto& voice) {
         return SpeechSynthesisVoice::create(*voice);
     });
-    return m_voiceList;
+
+    return *m_voiceList;
 }
 
 bool SpeechSynthesis::speaking() const
@@ -186,7 +192,7 @@ void SpeechSynthesis::pause()
     }
 }
 
-void SpeechSynthesis::resume()
+void SpeechSynthesis::resumeSynthesis()
 {
     if (m_currentSpeechUtterance) {
         if (m_speechSynthesisClient)
@@ -320,6 +326,32 @@ void SpeechSynthesis::speakingErrorOccurred(PlatformSpeechSynthesisUtterance& ut
 RefPtr<SpeechSynthesisUtterance> SpeechSynthesis::protectedCurrentSpeechUtterance()
 {
     return m_currentSpeechUtterance ? &m_currentSpeechUtterance->utterance() : nullptr;
+}
+
+void SpeechSynthesis::simulateVoicesListChange()
+{
+    if (m_speechSynthesisClient) {
+        voicesChanged();
+        return;
+    }
+
+    if (m_platformSpeechSynthesizer)
+        voicesDidChange();
+}
+
+const char* SpeechSynthesis::activeDOMObjectName() const
+{
+    return "SpeechSynthesis";
+}
+
+bool SpeechSynthesis::virtualHasPendingActivity() const
+{
+    return m_voiceList && m_hasEventListener;
+}
+
+void SpeechSynthesis::eventListenersDidChange()
+{
+    m_hasEventListener = hasEventListeners(eventNames().voiceschangedEvent);
 }
 
 } // namespace WebCore

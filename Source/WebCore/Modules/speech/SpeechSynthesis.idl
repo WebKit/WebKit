@@ -25,6 +25,7 @@
 
 // https://wicg.github.io/speech-api/#speechsynthesis
 [
+    ActiveDOMObject,
     EnabledBySetting=SpeechSynthesisAPIEnabled,
     Conditional=SPEECH_SYNTHESIS,
     Exposed=Window,
@@ -39,6 +40,6 @@
     undefined speak(SpeechSynthesisUtterance utterance);
     undefined cancel();
     undefined pause();
-    undefined resume();
+    [ImplementedAs=resumeSynthesis] undefined resume();
     sequence<SpeechSynthesisVoice> getVoices();
 };

@@ -12,7 +12,7 @@ description('Test setting the protocol attribute of the URL in a URL object .');
 var a = new URL("about:blank");
 
 debug("Basic test");
-a.href = "https://www.mydomain.com/path/";
+a.href = "test://www.mydomain.com/path/";
 a.protocol = "http-foo";
 shouldBe("a.href", "'http-foo://www.mydomain.com/path/'");
 
@@ -56,7 +56,7 @@ debug("Exception: " + e.description);
 debug("Set protocol to null");
 a.href = "https://www.mydomain.com/path/";
 a.protocol = null;
-shouldBe("a.href", "'null://www.mydomain.com/path/'");
+shouldBe("a.href", "'https://www.mydomain.com/path/'");
 
 // IE8 throws "Invalid argument" exception.
 try {
@@ -83,7 +83,7 @@ shouldBe("a.href", "'f-oo:path'");
 debug("Set protocol to undefined");
 a.href = "https://www.mydomain.com/path/";
 a.protocol = undefined;
-shouldBe("a.href", "'undefined://www.mydomain.com/path/'");
+shouldBe("a.href", "'https://www.mydomain.com/path/'");
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

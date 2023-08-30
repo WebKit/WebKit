@@ -91,6 +91,7 @@ class TextSizeAdjustment;
 class TextUnderlineOffset;
 class TransformOperations;
 class TransformationMatrix;
+class TransformOperationData;
 class TranslateTransformOperation;
 class WillChangeData;
 
@@ -381,7 +382,7 @@ public:
     inline bool hasBorderImageOutsets() const;
     inline LayoutBoxExtent borderImageOutsets() const;
 
-    inline LayoutBoxExtent maskBoxImageOutsets() const;
+    inline LayoutBoxExtent maskBorderOutsets() const;
 
     inline IntOutsets filterOutsets() const;
 
@@ -608,8 +609,8 @@ public:
     inline const LengthSize& maskSizeLength() const;
     inline FillLayer& ensureMaskLayers();
     inline const FillLayer& maskLayers() const;
-    inline const NinePieceImage& maskBoxImage() const;
-    inline StyleImage* maskBoxImageSource() const;
+    inline const NinePieceImage& maskBorder() const;
+    inline StyleImage* maskBorderSource() const;
 
     BorderCollapse borderCollapse() const { return static_cast<BorderCollapse>(m_inheritedFlags.borderCollapse); }
     float horizontalBorderSpacing() const;
@@ -898,11 +899,10 @@ public:
     void unapplyTransformOrigin(TransformationMatrix&, const FloatPoint3D& originTranslate) const;
 
     // applyTransform calls applyTransformOrigin(), then applyCSSTransform(), followed by unapplyTransformOrigin().
-    void applyTransform(TransformationMatrix&, const FloatRect& boundingBox) const;
-    void applyTransform(TransformationMatrix&, const FloatRect& boundingBox, OptionSet<TransformOperationOption>) const;
-    void applyCSSTransform(TransformationMatrix&, const FloatRect& boundingBox) const;
-    void applyCSSTransform(TransformationMatrix&, const FloatRect& boundingBox, OptionSet<TransformOperationOption>) const;
-    void applyMotionPathTransform(TransformationMatrix&, const FloatRect& boundingBox) const;
+    void applyTransform(TransformationMatrix&, const TransformOperationData& boundingBox) const;
+    void applyTransform(TransformationMatrix&, const TransformOperationData& boundingBox, OptionSet<TransformOperationOption>) const;
+    void applyCSSTransform(TransformationMatrix&, const TransformOperationData& boundingBox) const;
+    void applyCSSTransform(TransformationMatrix&, const TransformOperationData& boundingBox, OptionSet<TransformOperationOption>) const;
     void setPageScaleTransform(float);
 
     inline bool hasPositionedMask() const;
@@ -1255,8 +1255,8 @@ public:
 
     inline void setMaskImage(RefPtr<StyleImage>&&);
 
-    inline void setMaskBoxImage(const NinePieceImage&);
-    inline void setMaskBoxImageSource(RefPtr<StyleImage>&&);
+    inline void setMaskBorder(const NinePieceImage&);
+    inline void setMaskBorderSource(RefPtr<StyleImage>&&);
     inline void setMaskXPosition(Length&&);
     inline void setMaskYPosition(Length&&);
     inline void setMaskRepeat(FillRepeatXY);
@@ -1930,7 +1930,7 @@ public:
     static constexpr ImageResolutionSnap initialImageResolutionSnap();
     static float initialImageResolution() { return 1; }
     static StyleImage* initialBorderImageSource() { return nullptr; }
-    static StyleImage* initialMaskBoxImageSource() { return nullptr; }
+    static StyleImage* initialMaskBorderSource() { return nullptr; }
     static constexpr PrintColorAdjust initialPrintColorAdjust();
     static QuotesData* initialQuotes() { return nullptr; }
     static inline const AtomString& initialContentAltText();

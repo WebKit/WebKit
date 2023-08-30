@@ -35,6 +35,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/encoded-video-chunk.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/encoded-video-chunk.crossOriginIsolated.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/encoded-video-chunk.crossOriginIsolated.https.any.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/encodedVideoChunk-serialization.crossAgentCluster.helper.html
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/encodedVideoChunk-serialization.crossAgentCluster.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/four-colors-flip.avif
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/four-colors-flip.gif
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/four-colors-full-range-bt2020-pq-444-10bpc.avif
@@ -64,6 +66,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/pattern.png
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/per-frame-qp-encoding.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/reconfiguring-encoder.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/serialization.crossAgentCluster.serviceworker.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx-aac.mp4
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx-alaw.wav
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx-mulaw.wav
@@ -76,6 +79,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-decoder.crossOriginIsolated.https.any.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-decoder.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-encoder-config.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-encoder-h264.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-encoder-utils.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-encoder.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-frame-serialization.any.js
@@ -96,7 +100,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-drawImage.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-serialization.crossAgentCluster.helper.html
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-serialization.crossAgentCluster.https.html
-/LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-serialization.crossAgentCluster.serviceworker.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-texImage.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-utils.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/vp8.webm

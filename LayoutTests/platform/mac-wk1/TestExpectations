@@ -615,6 +615,12 @@ imported/w3c/web-platform-tests/fetch/stale-while-revalidate/fetch.any.sharedwor
 imported/w3c/web-platform-tests/fetch/stale-while-revalidate/fetch.any.worker.html [ Skip ]
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/cross-domain-iframe-in-multicol.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/messagechannel.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/broadcastchannel-success-and-failure.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/nested-sharedworker-success.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/no-coop-coep.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/no-coop-coep.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/window-iframe-messagechannel.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/window-sharedworker-failure.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/charset-bom.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/invalid-content-type.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/non-object.any.sharedworker.html [ Skip ]
@@ -775,6 +781,14 @@ imported/w3c/web-platform-tests/IndexedDB/storage-buckets.https.any.sharedworker
 imported/w3c/web-platform-tests/fetch/content-encoding/gzip-body.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/content-encoding/gzip-body.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/content-encoding/gzip-body.any.worker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/close.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/close.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/connect.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/connect.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/constructor.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/constructor.https.any.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/datagrams.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/webtransport/datagrams.https.any.sharedworker.html [ Skip ]
 
 # WebKitLegacy doesn't support https-based WPT
 webkit.org/b/246719 imported/w3c/web-platform-tests/reporting/generateTestReport-honors-endpoint.https.sub.html [ Failure ]
@@ -1811,8 +1825,6 @@ webkit.org/b/195098 pointerevents/mouse/pointer-events-before-mouse-events.html 
 
 webkit.org/b/244304 [ Monterey+ ] pointer-lock/pointermove-movement-delta.html [ Pass Timeout ]
 
-webkit.org/b/196915 [ Debug ] inspector/timeline/timeline-recording.html [ Pass Failure ]
-
 webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource.html [ Skip ]
 webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource-iframe.html [ Skip ]
 
@@ -2467,6 +2479,7 @@ http/tests/security/contentSecurityPolicy/image-with-https-url-allowed-by-csp-im
 http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ Failure Pass ]
 http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe.html [ Pass Failure ]
 http/tests/security/contentSecurityPolicy/script-src-parsing-implicit-and-explicit-port-number.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/webmessaging/broadcastchannel/cross-partition.https.tentative.html [ DumpJSConsoleLogInStdErr ]
 
 # These tests have been flaky on WK1 since their import.
 imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss [ Pass Failure ]
@@ -2583,13 +2596,7 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-eleme
 # rdar://111704637 - 'mousemove' not emitted from 'eventSender.moveMouseTo()'
 fast/html/transient-activation.html [ Skip ]
 
-webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-079.html [ ImageOnlyFailure ]
-webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-in-iframe.html [ ImageOnlyFailure ]
-webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-intrinsic-width.html [ ImageOnlyFailure ]
-webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-nested.html [ ImageOnlyFailure  ]
-webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-resize-observer-no-error.html [ ImageOnlyFailure ]
-
-webkit.org/b/259485 [ Ventura+ ] http/tests/media/hls/track-in-band-multiple-cues.html [ Crash ]
+webkit.org/b/259485 [ Ventura ] http/tests/media/hls/track-in-band-multiple-cues.html [ Crash ]
 
 webkit.org/b/259546 [ Debug ] media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Crash Timeout ]
 
@@ -2636,6 +2643,8 @@ imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visib
 [ Sonoma+ ] media/track/track-webvtt-snap-to-lines-inline-style.html [ ImageOnlyFailure ]
 [ Sonoma+ ] media/track/track-webvtt-snap-to-lines-left-right.html [ ImageOnlyFailure ]
 
+webkit.org/b/260888 [ Ventura+ ] media/track/track-user-stylesheet-override.html [ Crash ]
+
 # rdar://108816571 ([ Sonoma wk1 ] compositing/backing/solid-color-with-paints-into-ancestor.html is a flaky failure)
 [ Sonoma+ ] compositing/backing/solid-color-with-paints-into-ancestor.html [ Pass ImageOnlyFailure ]
 
@@ -2648,3 +2657,5 @@ imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visib
 webkit.org/b/260360 inspector/timeline/timeline-event-TimerFire.html [ Failure ]
 webkit.org/b/260360 inspector/timeline/timeline-event-TimerInstall.html [ Failure ]
 webkit.org/b/260360 inspector/timeline/timeline-event-TimerRemove.html [ Failure ]
+
+webkit.org/b/260883 [ Monterey+ ] inspector/timeline/timeline-recording.html [ Failure ]

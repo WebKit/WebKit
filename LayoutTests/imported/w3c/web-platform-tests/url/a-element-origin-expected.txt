@@ -329,7 +329,6 @@ PASS Parsing origin: <blob:> against <about:blank>
 PASS Parsing origin: <blob:blob:> against <about:blank>
 PASS Parsing origin: <blob:blob:https://example.org/> against <about:blank>
 PASS Parsing origin: <blob:about:blank> against <about:blank>
-FAIL Parsing origin: <blob:file://host/path> against <about:blank> assert_equals: origin expected "null" but got "file://"
 PASS Parsing origin: <blob:ftp://host/path> against <about:blank>
 PASS Parsing origin: <blob:ws://example.org/> against <about:blank>
 PASS Parsing origin: <blob:wss://example.org/> against <about:blank>

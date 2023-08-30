@@ -31,6 +31,7 @@
 #include "InlineFormattingContext.h"
 #include "InlineLineBuilder.h"
 #include "LayoutElementBox.h"
+#include "RenderStyleInlines.h"
 #include "TextOnlySimpleLineBuilder.h"
 
 namespace WebCore {

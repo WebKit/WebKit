@@ -680,8 +680,9 @@ void WebExtensionContext::removePermissionMatchPatterns(PermissionMatchPatternsM
         }
 
         for (auto& patternToRemove : matchPatternsToRemove) {
-            if (patternToRemove->matchesPattern(entry.key, WebExtensionMatchPattern::Options::IgnorePaths)) {
-                removedMatchPatterns.add(entry.key);
+            Ref pattern = entry.key;
+            if (patternToRemove->matchesPattern(pattern, WebExtensionMatchPattern::Options::IgnorePaths)) {
+                removedMatchPatterns.add(pattern);
                 return true;
             }
         }
@@ -1926,7 +1927,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
         auto injectedFrames = injectedContentData.injectsIntoAllFrames ? WebCore::UserContentInjectedFrames::InjectInAllFrames : WebCore::UserContentInjectedFrames::InjectInTopFrameOnly;
         auto injectionTime = toImpl(injectedContentData.injectionTime);
         auto waitForNotification = WebCore::WaitForNotificationBeforeInjecting::No;
-        auto& executionWorld = injectedContentData.forMainWorld ? API::ContentWorld::pageContentWorld() : *m_contentScriptWorld;
+        Ref executionWorld = injectedContentData.forMainWorld ? API::ContentWorld::pageContentWorld() : *m_contentScriptWorld;
 
         for (NSString *scriptPath in injectedContentData.scriptPaths.get()) {
             NSString *scriptString = m_extension->resourceStringForPath(scriptPath, WebExtension::CacheResult::Yes);

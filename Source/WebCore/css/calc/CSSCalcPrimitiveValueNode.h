@@ -74,7 +74,7 @@ private:
 
     double computeLengthPx(const CSSToLengthConversionData&) const final;
     void collectComputedStyleDependencies(ComputedStyleDependencies&) const final;
-    bool convertingToLengthRequiresNonNullStyle(int lengthConversion) const final;
+    bool convertingToLengthHasRequiredConversionData(int lengthConversion, const CSSToLengthConversionData&) const final;
 
     void dump(TextStream&) const final;
 

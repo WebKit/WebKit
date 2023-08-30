@@ -31,6 +31,7 @@
 
 #include "JSCJSValueInlines.h"
 #include "WasmBranchHintsSectionParser.h"
+#include "WasmConstExprGenerator.h"
 #include "WasmMemoryInformation.h"
 #include "WasmNameSectionParser.h"
 #include "WasmOps.h"
@@ -370,13 +371,16 @@ auto SectionParser::parseGlobal() -> PartialResult
 
         WASM_FAIL_IF_HELPER_FAILS(parseGlobalType(global));
         Type typeForInitOpcode;
-        WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, initialBitsOrImportNumber, initVector, typeForInitOpcode));
+        bool isExtendedConstantExpression;
+        WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, isExtendedConstantExpression, initialBitsOrImportNumber, initVector, global.type, typeForInitOpcode));
         if (typeForInitOpcode.isV128())
             global.initialBits.initialVector = initVector;
         else
             global.initialBits.initialBitsOrImportNumber = initialBitsOrImportNumber;
 
-        if (initOpcode == GetGlobal)
+        if (isExtendedConstantExpression)
+            global.initializationType = GlobalInformation::FromExtendedExpression;
+        else if (initOpcode == GetGlobal)
             global.initializationType = GlobalInformation::FromGlobalImport;
         else if (initOpcode == RefFunc)
             global.initializationType = GlobalInformation::FromRefFunc;
@@ -640,8 +644,9 @@ auto SectionParser::parseCode() -> PartialResult
     return { };
 }
 
-auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber, v128_t& vectorBits, Type& resultType) -> PartialResult
+auto SectionParser::parseInitExpr(uint8_t& opcode, bool& isExtendedConstantExpression, uint64_t& bitsOrImportNumber, v128_t& vectorBits, Type expectedType, Type& resultType) -> PartialResult
 {
+    size_t initialOffset = m_offset;
     WASM_PARSER_FAIL_IF(!parseUInt8(opcode), "can't get init_expr's opcode");
 
     switch (opcode) {
@@ -748,8 +753,26 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber,
     }
 
     uint8_t endOpcode;
-    WASM_PARSER_FAIL_IF(!parseUInt8(endOpcode), "can't get init_expr's end opcode");
-    WASM_PARSER_FAIL_IF(endOpcode != OpType::End, "init_expr should end with end, ended with ", endOpcode);
+    // Don't consume the opcode byte unless it's an End so that the extended
+    // parsing mode below can consume it if needed.
+    WASM_PARSER_FAIL_IF(offset() >= length(), "can't get init_expr's end opcode");
+    endOpcode = source()[offset()];
+
+    if (endOpcode == OpType::End) {
+        m_offset++;
+        isExtendedConstantExpression = false;
+        return { };
+    }
+    WASM_PARSER_FAIL_IF(!Options::useWebAssemblyExtendedConstantExpressions(), "init_expr should end with end, ended with ", endOpcode);
+
+    // If an End doesn't appear, we have to assume it's an extended constant expression
+    // and use the full Wasm expression parser to validate.
+    size_t initExprOffset;
+    WASM_FAIL_IF_HELPER_FAILS(parseExtendedConstExpr(source() + initialOffset, length() - initialOffset, initialOffset + m_offsetInSource, initExprOffset, m_info, expectedType));
+    m_offset += (initExprOffset - (m_offset - initialOffset));
+    WASM_PARSER_FAIL_IF(!m_info->constantExpressions.tryConstructAndAppend(source() + initialOffset, initExprOffset), "could not allocate memory for init expr");
+    bitsOrImportNumber = m_info->constantExpressions.size() - 1;
+    isExtendedConstantExpression = true;
 
     return { };
 }
@@ -765,12 +788,13 @@ auto SectionParser::validateElementTableIdx(uint32_t tableIndex, TableElementTyp
 auto SectionParser::parseI32InitExpr(std::optional<I32InitExpr>& initExpr, ASCIILiteral failMessage) -> PartialResult
 {
     uint8_t initOpcode;
+    bool isExtendedConstantExpression;
     uint64_t initExprBits;
     Type initExprType;
     v128_t unused;
-    WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, initExprBits, unused, initExprType));
+    WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, isExtendedConstantExpression, initExprBits, unused, Types::I32, initExprType));
     WASM_PARSER_FAIL_IF(!initExprType.isI32(), failMessage);
-    initExpr = makeI32InitExpr(initOpcode, initExprBits);
+    initExpr = makeI32InitExpr(initOpcode, isExtendedConstantExpression, initExprBits);
 
     return { };
 }
@@ -1143,6 +1167,8 @@ auto SectionParser::parseElementSegmentVectorOfExpressions(TableElementType tabl
         WASM_PARSER_FAIL_IF((opcode != RefFunc) && (opcode != RefNull), "opcode for exp in element section's should be either ref.func or ref.null ", elementNum, "th element's ", index, "th index");
 
         uint32_t functionIndex;
+        // FIXME: this should also parse other constant expressions
+        //        https://bugs.webkit.org/show_bug.cgi?id=260542
         if (opcode == RefFunc) {
             WASM_PARSER_FAIL_IF(!parseVarUInt32(functionIndex), "can't get Element section's ", elementNum, "th element's ", index, "th index");
             WASM_PARSER_FAIL_IF(functionIndex >= m_info->functionIndexSpaceSize(), "Element section's ", elementNum, "th element's ", index, "th index is ", functionIndex, " which exceeds the function index space size of ", m_info->functionIndexSpaceSize());

@@ -7913,6 +7913,20 @@ WebSocketEnabled:
       "PLATFORM(WATCHOS)": false
       default: true
 
+WebTransportEnabled:
+  type: bool
+  status: testable
+  category: networking
+  humanReadableName: "WebTransport"
+  humanReadableDescription: "Enable WebTransport"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 WebXRAugmentedRealityModuleEnabled:
   type: bool
   status: testable

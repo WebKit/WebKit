@@ -1981,6 +1981,10 @@ def runWebAssemblyTailCallSpecTest(mode)
     runWebAssemblySpecTestBase(mode, "tail-call-spec-harness", nil, "--useWebAssemblyTailCalls=true")
 end
 
+def runWebAssemblyExtendedConstSpecTest(mode)
+    runWebAssemblySpecTestBase(mode, "spec-harness", nil, "--useWebAssemblyExtendedConstantExpressions=true")
+end
+
 def runWebAssemblyLowExecutableMemory(*optionalTestSpecificOptions)
     return if !$jitTests
     return if !$isWasmPlatform

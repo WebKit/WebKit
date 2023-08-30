@@ -2322,6 +2322,8 @@ void Document::updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks
             scheduleFullStyleRebuild();
     }
 
+    updateRelevancyOfContentVisibilityElements();
+
     updateLayout();
 
     if (runPostLayoutTasks == RunPostLayoutTasks::Synchronously && view())
@@ -2383,6 +2385,8 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<Dim
         if (owner->document().updateLayoutIfDimensionsOutOfDate(*owner))
             requireFullLayout = true;
     }
+
+    updateRelevancyOfContentVisibilityElements();
 
     updateStyleIfNeeded();
 

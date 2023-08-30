@@ -27,6 +27,7 @@
 
 #include "GCLogging.h"
 #include "JSExportMacros.h"
+#include "OSCheck.h"
 #include <wtf/MathExtras.h>
 
 #if OS(DARWIN)
@@ -142,9 +143,9 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, dumpBBQDisassembly, false, Normal, "dumps disassembly of BBQ Wasm code upon compilation") \
     v(Bool, dumpOMGDisassembly, false, Normal, "dumps disassembly of OMG Wasm code upon compilation") \
     v(Bool, logJITCodeForPerf, false, Configurable, nullptr) \
-    v(OptionRange, bytecodeRangeToJITCompile, 0, Normal, "bytecode size range to allow compilation on, e.g. 1:100") \
-    v(OptionRange, bytecodeRangeToDFGCompile, 0, Normal, "bytecode size range to allow DFG compilation on, e.g. 1:100") \
-    v(OptionRange, bytecodeRangeToFTLCompile, 0, Normal, "bytecode size range to allow FTL compilation on, e.g. 1:100") \
+    v(OptionRange, bytecodeRangeToJITCompile, nullptr, Normal, "bytecode size range to allow compilation on, e.g. 1:100") \
+    v(OptionRange, bytecodeRangeToDFGCompile, nullptr, Normal, "bytecode size range to allow DFG compilation on, e.g. 1:100") \
+    v(OptionRange, bytecodeRangeToFTLCompile, nullptr, Normal, "bytecode size range to allow FTL compilation on, e.g. 1:100") \
     v(OptionString, jitAllowlist, nullptr, Normal, "file with newline separated list of function signatures to allow compilation on or, if no such file exists, the function signature to allow") \
     v(OptionString, dfgAllowlist, nullptr, Normal, "file with newline separated list of function signatures to allow DFG compilation on or, if no such file exists, the function signature to allow") \
     v(OptionString, ftlAllowlist, nullptr, Normal, "file with newline separated list of function signatures to allow FTL compilation on or, if no such file exists, the function signature to allow") \
@@ -518,7 +519,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useWasmLLIntPrologueOSR, true, Normal, "allows prologue OSR from Wasm LLInt if true") \
     v(Bool, useWasmLLIntLoopOSR, true, Normal, "allows loop OSR from Wasm LLInt if true") \
     v(Bool, useWasmLLIntEpilogueOSR, true, Normal, "allows epilogue OSR from Wasm LLInt if true") \
-    v(OptionRange, wasmFunctionIndexRangeToCompile, 0, Normal, "wasm function index range to allow compilation on, e.g. 1:100") \
+    v(OptionRange, wasmFunctionIndexRangeToCompile, nullptr, Normal, "wasm function index range to allow compilation on, e.g. 1:100") \
     v(Bool, wasmLLIntTiersUpToBBQ, true, Normal, nullptr) \
     v(Size, webAssemblyBBQAirModeThreshold, isIOS() ? (10 * MB) : 0, Normal, "If 0, we always use BBQ Air. If Wasm module code size hits this threshold, we compile Wasm module with B3 BBQ mode.") \
     v(Bool, useEagerWebAssemblyModuleHashing, false, Normal, "Unnamed WebAssembly modules are identified in backtraces through their hash, if available.") \
@@ -587,6 +588,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useWebAssemblySIMD, true, Normal, "Allow the new simd instructions and types from the wasm simd spec.") \
     v(Bool, useWebAssemblyRelaxedSIMD, false, Normal, "Allow the relaxed simd instructions and types from the wasm relaxed simd spec.") \
     v(Bool, useWebAssemblyTailCalls, false, Normal, "Allow the new instructions from the wasm tail calls spec.") \
+    v(Bool, useWebAssemblyExtendedConstantExpressions, false, Normal, "Allow the use of global, element, and data init expressions from the extended constant expressions proposal.") \
     v(Bool, useWasmIPInt, false, Normal, "Use the in-place interpereter for WASM instead of LLInt.") \
     v(Bool, useWasmIPIntPrologueOSR, true, Normal, "Allow IPInt to tier up during function prologues") \
     v(Bool, useWasmIPIntLoopOSR, true, Normal, "Allow IPInt to tier up during loop iterations") \
@@ -661,21 +663,11 @@ class OptionRange {
 private:
     enum RangeState { Uninitialized, InitError, Normal, Inverted };
 public:
-    OptionRange& operator=(int value)
-    {
-        // Only used for initialization to state Uninitialized.
-        // OptionsList specifies OptionRange options with default value 0.
-        RELEASE_ASSERT(!value);
-
-        m_state = Uninitialized;
-        m_rangeString = nullptr;
-        m_lowLimit = 0;
-        m_highLimit = 0;
-        return *this;
-    }
+    OptionRange() = default;
+    OptionRange(std::nullptr_t) { }
 
     bool init(const char*);
-    bool isInRange(unsigned);
+    bool isInRange(unsigned) const;
     const char* rangeString() const { return (m_state > InitError) ? m_rangeString : s_nullRangeStr; }
 
     void dump(PrintStream& out) const;
@@ -683,10 +675,10 @@ public:
 private:
     static const char* const s_nullRangeStr;
 
-    RangeState m_state;
-    const char* m_rangeString;
-    unsigned m_lowLimit;
-    unsigned m_highLimit;
+    RangeState m_state { Uninitialized };
+    const char* m_rangeString { nullptr };
+    unsigned m_lowLimit { 0 };
+    unsigned m_highLimit { 0 };
 };
 
 enum class OSLogType : uint8_t {
@@ -714,8 +706,7 @@ struct OptionsStorage {
     bool isFinalized;
 
 #define DECLARE_OPTION(type_, name_, defaultValue_, availability_, description_) \
-    type_ name_; \
-    type_ name_##Default;
+    type_ name_;
 FOR_EACH_JSC_OPTION(DECLARE_OPTION)
 #undef DECLARE_OPTION
 };

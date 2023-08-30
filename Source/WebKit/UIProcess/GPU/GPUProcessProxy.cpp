@@ -721,8 +721,8 @@ void GPUProcessProxy::updatePreferences(WebProcessProxy& webProcess)
     // In practice, all web pages' preferences should agree on these feature flag values.
     GPUProcessPreferences gpuPreferences;
     for (auto page : webProcess.pages()) {
-        auto& webPreferences = page->preferences();
-        if (!webPreferences.useGPUProcessForMediaEnabled())
+        Ref webPreferences = page->preferences();
+        if (!webPreferences->useGPUProcessForMediaEnabled())
             continue;
         gpuPreferences.copyEnabledWebPreferences(webPreferences);
     }

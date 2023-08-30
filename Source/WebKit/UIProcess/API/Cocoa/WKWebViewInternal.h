@@ -235,6 +235,7 @@ struct PerWebProcessState {
 
     BOOL _findInteractionEnabled;
 #if HAVE(UIFINDINTERACTION)
+    RetainPtr<UIView> _findOverlay;
     RetainPtr<UIFindInteraction> _findInteraction;
 #endif
 

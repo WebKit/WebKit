@@ -906,6 +906,7 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyJustifySelf:
     case CSSPropertyLeft:
     case CSSPropertyLineBreak:
+    case CSSPropertyMaskBorderWidth:
     case CSSPropertyMaskSize:
     case CSSPropertyOffsetAnchor:
     case CSSPropertyOffsetPosition:
@@ -940,7 +941,6 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyTextUnderlineOffset:
     case CSSPropertyTextUnderlinePosition:
     case CSSPropertyTop:
-    case CSSPropertyWebkitMaskBoxImageWidth:
     case CSSPropertyWebkitMaskSourceType:
     case CSSPropertyWillChange:
     case CSSPropertyZIndex:
@@ -1031,6 +1031,7 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyMarkerEnd:
     case CSSPropertyMarkerMid:
     case CSSPropertyMarkerStart:
+    case CSSPropertyMaskBorderSource:
     case CSSPropertyMaskImage:
     case CSSPropertyMaxBlockSize:
     case CSSPropertyMaxHeight:
@@ -1056,7 +1057,6 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyTextTransform:
     case CSSPropertyTransform:
     case CSSPropertyTranslate:
-    case CSSPropertyWebkitMaskBoxImageSource:
     case CSSPropertyWidth:
         return CSSValueNone;
     case CSSPropertyAnimationIterationCount:
@@ -1129,10 +1129,10 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyBorderCollapse:
         return CSSValueSeparate;
     case CSSPropertyBorderImageOutset:
-    case CSSPropertyWebkitMaskBoxImageOutset:
+    case CSSPropertyMaskBorderOutset:
         return InitialNumericValue { 0, CSSUnitType::CSS_NUMBER };
     case CSSPropertyBorderImageRepeat:
-    case CSSPropertyWebkitMaskBoxImageRepeat:
+    case CSSPropertyMaskBorderRepeat:
         return CSSValueStretch;
     case CSSPropertyBorderImageSlice:
         return InitialNumericValue { 100, CSSUnitType::CSS_PERCENTAGE };
@@ -1170,6 +1170,8 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
         return CSSValueOutside;
     case CSSPropertyListStyleType:
         return CSSValueDisc;
+    case CSSPropertyMaskBorderSlice:
+        return InitialNumericValue { 0, CSSUnitType::CSS_NUMBER };
     case CSSPropertyMaskComposite:
         return CSSValueAdd;
     case CSSPropertyMaskMode:
@@ -1289,12 +1291,12 @@ bool isInitialValueForLonghand(CSSPropertyID longhand, const CSSValue& value)
             return true;
         break;
     case CSSPropertyBorderImageOutset:
-    case CSSPropertyWebkitMaskBoxImageOutset:
+    case CSSPropertyMaskBorderOutset:
         if (isNumericQuad(value, 0, CSSUnitType::CSS_NUMBER))
             return true;
         break;
     case CSSPropertyBorderImageRepeat:
-    case CSSPropertyWebkitMaskBoxImageRepeat:
+    case CSSPropertyMaskBorderRepeat:
         if (isValueIDPair(value, CSSValueStretch))
             return true;
         break;
@@ -1316,13 +1318,13 @@ bool isInitialValueForLonghand(CSSPropertyID longhand, const CSSValue& value)
                 return true;
         }
         break;
-    case CSSPropertyWebkitMaskBoxImageSlice:
+    case CSSPropertyMaskBorderSlice:
         if (auto sliceValue = dynamicDowncast<CSSBorderImageSliceValue>(value)) {
-            if (sliceValue->fill() && isNumber(sliceValue->slices(), 0, CSSUnitType::CSS_NUMBER))
+            if (!sliceValue->fill() && isNumber(sliceValue->slices(), 0, CSSUnitType::CSS_NUMBER))
                 return true;
         }
         return false;
-    case CSSPropertyWebkitMaskBoxImageWidth:
+    case CSSPropertyMaskBorderWidth:
         if (auto widthValue = dynamicDowncast<CSSBorderImageWidthValue>(value)) {
             if (!widthValue->overridesBorderWidths() && isValueID(widthValue->widths(), CSSValueAuto))
                 return true;
@@ -1340,8 +1342,6 @@ bool isInitialValueForLonghand(CSSPropertyID longhand, const CSSValue& value)
 
 ASCIILiteral initialValueTextForLonghand(CSSPropertyID longhand)
 {
-    if (longhand == CSSPropertyWebkitMaskBoxImageSlice)
-        return "0 fill"_s;
     return WTF::switchOn(initialValueForLonghand(longhand), [](CSSValueID value) {
         return nameLiteral(value);
     }, [](InitialNumericValue initialValue) {
@@ -1386,8 +1386,6 @@ ASCIILiteral initialValueTextForLonghand(CSSPropertyID longhand)
 
 CSSValueID initialValueIDForLonghand(CSSPropertyID longhand)
 {
-    if (longhand == CSSPropertyWebkitMaskBoxImageSlice)
-        return CSSValueInvalid;
     return WTF::switchOn(initialValueForLonghand(longhand), [](CSSValueID value) {
         return value;
     }, [](InitialNumericValue) {
@@ -1575,12 +1573,12 @@ bool CSSPropertyParser::consumeBorderImage(CSSPropertyID property, bool importan
     RefPtr<CSSValue> repeat;
     if (!consumeBorderImageComponents(property, m_range, m_context, source, slice, width, outset, repeat))
         return false;
-    if (property == CSSPropertyWebkitMaskBoxImage) {
-        addProperty(CSSPropertyWebkitMaskBoxImageSource, property, WTFMove(source), important);
-        addProperty(CSSPropertyWebkitMaskBoxImageSlice, property, WTFMove(slice), important);
-        addProperty(CSSPropertyWebkitMaskBoxImageWidth, property, WTFMove(width), important);
-        addProperty(CSSPropertyWebkitMaskBoxImageOutset, property, WTFMove(outset), important);
-        addProperty(CSSPropertyWebkitMaskBoxImageRepeat, property, WTFMove(repeat), important);
+    if (property == CSSPropertyMaskBorder || property == CSSPropertyWebkitMaskBoxImage) {
+        addProperty(CSSPropertyMaskBorderSource, property, WTFMove(source), important);
+        addProperty(CSSPropertyMaskBorderSlice, property, WTFMove(slice), important);
+        addProperty(CSSPropertyMaskBorderWidth, property, WTFMove(width), important);
+        addProperty(CSSPropertyMaskBorderOutset, property, WTFMove(outset), important);
+        addProperty(CSSPropertyMaskBorderRepeat, property, WTFMove(repeat), important);
     } else {
         addProperty(CSSPropertyBorderImageSource, property, WTFMove(source), important);
         addProperty(CSSPropertyBorderImageSlice, property, WTFMove(slice), important);
@@ -1859,7 +1857,12 @@ static RefPtr<CSSValue> consumeBackgroundComponent(CSSPropertyID property, CSSPa
 // the x properties in the shorthand array.
 bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand& shorthand, bool important)
 {
-    const unsigned longhandCount = shorthand.length();
+    unsigned longhandCount = shorthand.length();
+
+    // mask resets mask-border properties outside of this method.
+    if (shorthand.id() == CSSPropertyMask)
+        longhandCount -= maskBorderShorthand().length();
+
     CSSValueListBuilder longhands[10];
     ASSERT(longhandCount <= 10);
 
@@ -2770,6 +2773,7 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
     case CSSPropertyBorderImage:
     case CSSPropertyWebkitBorderImage:
     case CSSPropertyWebkitMaskBoxImage:
+    case CSSPropertyMaskBorder:
         return consumeBorderImage(property, important);
     case CSSPropertyPageBreakAfter:
     case CSSPropertyPageBreakBefore:
@@ -2803,6 +2807,11 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return true;
     }
     case CSSPropertyMask:
+        if (!consumeBackgroundShorthand(shorthandForProperty(property), important))
+            return false;
+        for (auto longhand : maskBorderShorthand())
+            addProperty(longhand, CSSPropertyMask, nullptr, important);
+        return true;
     case CSSPropertyWebkitMask:
         return consumeBackgroundShorthand(shorthandForProperty(property), important);
     case CSSPropertyTransformOrigin:

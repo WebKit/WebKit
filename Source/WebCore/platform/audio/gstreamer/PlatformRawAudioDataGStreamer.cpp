@@ -28,6 +28,8 @@
 #include "SharedBuffer.h"
 #include "WebCodecsAudioDataAlgorithms.h"
 #include <gst/audio/audio-converter.h>
+#include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 
 GST_DEBUG_CATEGORY(webkit_audio_data_debug);
 #define GST_CAT_DEFAULT webkit_audio_data_debug
@@ -40,6 +42,15 @@ static void ensureAudioDataDebugCategoryInitialized()
     std::call_once(debugRegisteredFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkit_audio_data_debug, "webkitaudiodata", 0, "WebKit Audio Data");
     });
+}
+
+GstAudioConverter* getAudioConvertedForFormat(StringView&& key, GstAudioInfo& sourceInfo, GstAudioInfo& destinationInfo)
+{
+    static NeverDestroyed<HashMap<String, GUniquePtr<GstAudioConverter>>> audioConverters;
+    auto result = audioConverters->ensure(key.toString(), [&] {
+        return GUniquePtr<GstAudioConverter>(gst_audio_converter_new(GST_AUDIO_CONVERTER_FLAG_NONE, &sourceInfo, &destinationInfo, nullptr));
+    });
+    return result.iterator->value.get();
 }
 
 static std::pair<GstAudioFormat, GstAudioLayout> convertAudioSampleFormatToGStreamerFormat(const AudioSampleFormat& format)
@@ -205,23 +216,23 @@ void PlatformRawAudioData::copyTo(std::span<uint8_t> destination, AudioSampleFor
     GstAudioInfo destinationInfo;
     gst_audio_info_set_format(&destinationInfo, destinationFormat, static_cast<int>(self.sampleRate()), self.numberOfChannels(), nullptr);
     GST_AUDIO_INFO_LAYOUT(&destinationInfo) = destinationLayout;
-#ifndef GST_DISABLE_GST_DEBUG
+
     auto outputCaps = adoptGRef(gst_audio_info_to_caps(&destinationInfo));
     GST_TRACE("Output caps: %" GST_PTR_FORMAT, outputCaps.get());
-#endif
 
     GUniquePtr<GstAudioInfo> sourceInfo(gst_audio_info_copy(self.info()));
-    GUniquePtr<GstAudioConverter> converter(gst_audio_converter_new(GST_AUDIO_CONVERTER_FLAG_NONE, sourceInfo.get(), &destinationInfo, nullptr));
+    GUniquePtr<char> key(gst_info_strdup_printf("%" GST_PTR_FORMAT ";%" GST_PTR_FORMAT, gst_sample_get_caps(self.sample()), outputCaps.get()));
+    auto converter = getAudioConvertedForFormat(StringView { key.get(), static_cast<unsigned>(strlen(key.get())) }, *sourceInfo.get(), destinationInfo);
 
     auto inFrames = gst_buffer_get_size(gst_sample_get_buffer(self.sample())) / GST_AUDIO_INFO_BPF(sourceInfo.get());
-    auto outFrames = gst_audio_converter_get_out_frames(converter.get(), inFrames);
+    auto outFrames = gst_audio_converter_get_out_frames(converter, inFrames);
     auto destinationBuffer = adoptGRef(gst_buffer_new_and_alloc(outFrames * GST_AUDIO_INFO_BPF(&destinationInfo)));
     if (destinationLayout == GST_AUDIO_LAYOUT_NON_INTERLEAVED)
         gst_buffer_add_audio_meta(destinationBuffer.get(), &destinationInfo, self.numberOfFrames(), nullptr);
 
     GstMappedAudioBuffer mappedDestinationBuffer(destinationBuffer.get(), destinationInfo, GST_MAP_WRITE);
     auto outputBuffer = mappedDestinationBuffer.get();
-    gst_audio_converter_samples(converter.get(), GST_AUDIO_CONVERTER_FLAG_NONE, inputBuffer->planes, inputBuffer->n_samples, outputBuffer->planes, outputBuffer->n_samples);
+    gst_audio_converter_samples(converter, GST_AUDIO_CONVERTER_FLAG_NONE, inputBuffer->planes, inputBuffer->n_samples, outputBuffer->planes, outputBuffer->n_samples);
 
     auto planeSize = computeBytesPerSample(format) * outputBuffer->n_samples;
     memcpy(destination.data(), static_cast<uint8_t*>(outputBuffer->planes[planeIndex]) + sourceOffset, planeSize);

@@ -1,4 +1,4 @@
 
-PASS Cross-origin classic workers should fail to fetch
-PASS Cross-origin module workers should fail to fetch
+FAIL Cross-origin classic workers should fail to fetch The operation is insecure.
+FAIL Cross-origin module workers should fail to fetch The operation is insecure.
 

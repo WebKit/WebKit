@@ -11,7 +11,7 @@ const computedStyle = getComputedStyle(target);
 
 const initialValues = {
     '-webkit-mask-box-image': 'none',
-    '-webkit-mask-box-image-slice': '0 fill',
+    '-webkit-mask-box-image-slice': '0',
     '-webkit-mask-box-image-width': 'auto',
     '-webkit-mask-box-image-outset': '0',
     '-webkit-mask-box-image-repeat': 'stretch',
@@ -21,7 +21,10 @@ const testCases = [
     // value, expected
     [ '', initialValues ],
     [ '-webkit-mask-box-image: initial', initialValues ],
-    [ '-webkit-mask-box-image: none', initialValues ],
+    [ '-webkit-mask-box-image: none', {
+        ...initialValues,
+        '-webkit-mask-box-image-slice': '0 fill',
+    }],
     [
         '-webkit-mask-box-image-source: initial; -webkit-mask-box-image-slice: initial; -webkit-mask-box-image-width: initial; -webkit-mask-box-image-outset: initial; -webkit-mask-box-image-repeat: initial;',
         initialValues
@@ -29,6 +32,7 @@ const testCases = [
     [ '-webkit-mask-box-image: url(#)', {
         ...initialValues,
         '-webkit-mask-box-image': 'url("#") 0 fill / auto / 0 stretch',
+        '-webkit-mask-box-image-slice': '0 fill',
         '-webkit-mask-box-image-source': 'url("#")',
     }],
     [ '-webkit-mask-box-image: 1', {
@@ -53,6 +57,7 @@ const testCases = [
     }],
     [ '-webkit-mask-box-image: round', {
         ...initialValues,
+        '-webkit-mask-box-image-slice': '0 fill',
         '-webkit-mask-box-image-repeat': 'round',
     }],
 ];

@@ -98,22 +98,22 @@ String convertEnumerationToString(PlatformMediaSession::RemoteControlCommandType
         MAKE_STATIC_STRING_IMPL("BeginScrubbingCommand"),
         MAKE_STATIC_STRING_IMPL("EndScrubbingCommand"),
     };
-    static_assert(!static_cast<size_t>(PlatformMediaSession::NoCommand), "PlatformMediaSession::NoCommand is not 0 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::PlayCommand) == 1, "PlatformMediaSession::PlayCommand is not 1 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::PauseCommand) == 2, "PlatformMediaSession::PauseCommand is not 2 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::StopCommand) == 3, "PlatformMediaSession::StopCommand is not 3 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::TogglePlayPauseCommand) == 4, "PlatformMediaSession::TogglePlayPauseCommand is not 4 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::BeginSeekingBackwardCommand) == 5, "PlatformMediaSession::BeginSeekingBackwardCommand is not 5 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::EndSeekingBackwardCommand) == 6, "PlatformMediaSession::EndSeekingBackwardCommand is not 6 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::BeginSeekingForwardCommand) == 7, "PlatformMediaSession::BeginSeekingForwardCommand is not 7 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::EndSeekingForwardCommand) == 8, "PlatformMediaSession::EndSeekingForwardCommand is not 8 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::SeekToPlaybackPositionCommand) == 9, "PlatformMediaSession::SeekToPlaybackPositionCommand is not 9 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::SkipForwardCommand) == 10, "PlatformMediaSession::SkipForwardCommand is not 10 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::SkipBackwardCommand) == 11, "PlatformMediaSession::SkipBackwardCommand is not 11 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::NextTrackCommand) == 12, "PlatformMediaSession::NextTrackCommand is not 12 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::PreviousTrackCommand) == 13, "PlatformMediaSession::PreviousTrackCommand is not 13 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::BeginScrubbingCommand) == 14, "PlatformMediaSession::BeginScrubbingCommand is not 14 as expected");
-    static_assert(static_cast<size_t>(PlatformMediaSession::EndScrubbingCommand) == 15, "PlatformMediaSession::EndScrubbingCommand is not 15 as expected");
+    static_assert(!static_cast<size_t>(PlatformMediaSession::RemoteControlCommandType::NoCommand), "PlatformMediaSession::RemoteControlCommandType::NoCommand is not 0 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::RemoteControlCommandType::PlayCommand) == 1, "PlatformMediaSession::RemoteControlCommandType::PlayCommand is not 1 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::RemoteControlCommandType::PauseCommand) == 2, "PlatformMediaSession::RemoteControlCommandType::PauseCommand is not 2 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::RemoteControlCommandType::StopCommand) == 3, "PlatformMediaSession::RemoteControlCommandType::StopCommand is not 3 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::RemoteControlCommandType::TogglePlayPauseCommand) == 4, "PlatformMediaSession::RemoteControlCommandType::TogglePlayPauseCommand is not 4 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::RemoteControlCommandType::BeginSeekingBackwardCommand) == 5, "PlatformMediaSession::RemoteControlCommandType::BeginSeekingBackwardCommand is not 5 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::RemoteControlCommandType::EndSeekingBackwardCommand) == 6, "PlatformMediaSession::RemoteControlCommandType::EndSeekingBackwardCommand is not 6 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::RemoteControlCommandType::BeginSeekingForwardCommand) == 7, "PlatformMediaSession::RemoteControlCommandType::BeginSeekingForwardCommand is not 7 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::RemoteControlCommandType::EndSeekingForwardCommand) == 8, "PlatformMediaSession::RemoteControlCommandType::EndSeekingForwardCommand is not 8 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::RemoteControlCommandType::SeekToPlaybackPositionCommand) == 9, "PlatformMediaSession::RemoteControlCommandType::SeekToPlaybackPositionCommand is not 9 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::RemoteControlCommandType::SkipForwardCommand) == 10, "PlatformMediaSession::RemoteControlCommandType::SkipForwardCommand is not 10 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::RemoteControlCommandType::SkipBackwardCommand) == 11, "PlatformMediaSession::RemoteControlCommandType::SkipBackwardCommand is not 11 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::RemoteControlCommandType::NextTrackCommand) == 12, "PlatformMediaSession::RemoteControlCommandType::NextTrackCommand is not 12 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::RemoteControlCommandType::PreviousTrackCommand) == 13, "PlatformMediaSession::RemoteControlCommandType::PreviousTrackCommand is not 13 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::RemoteControlCommandType::BeginScrubbingCommand) == 14, "PlatformMediaSession::RemoteControlCommandType::BeginScrubbingCommand is not 14 as expected");
+    static_assert(static_cast<size_t>(PlatformMediaSession::RemoteControlCommandType::EndScrubbingCommand) == 15, "PlatformMediaSession::RemoteControlCommandType::EndScrubbingCommand is not 15 as expected");
 
     ASSERT(static_cast<size_t>(command) < std::size(values));
     return values[static_cast<size_t>(command)];

@@ -57,8 +57,6 @@ public:
 
     CALayer *layer() const { return m_layer.get(); }
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    CALayer *interactionRegionsLayer() const { return m_interactionRegionsLayer.get(); }
-
     struct VisibleRectMarkableTraits {
         static bool isEmptyValue(const WebCore::FloatRect& value)
         {
@@ -73,6 +71,10 @@ public:
 
     const Markable<WebCore::FloatRect, VisibleRectMarkableTraits> visibleRect() const { return m_visibleRect; }
     void setVisibleRect(const WebCore::FloatRect& value) { m_visibleRect = value; }
+
+    CALayer *ensureInteractionRegionsContainer();
+    void removeInteractionRegionsContainer();
+    void updateInteractionRegionAfterHierarchyChange();
 #endif
 #if PLATFORM(IOS_FAMILY)
     UIView *uiView() const { return m_uiView.get(); }
@@ -138,8 +140,18 @@ private:
 
     RetainPtr<CALayer> m_layer;
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    RetainPtr<CALayer> m_interactionRegionsLayer;
     Markable<WebCore::FloatRect, VisibleRectMarkableTraits> m_visibleRect;
+
+    void repositionInteractionRegionsContainerIfNeeded();
+    enum class InteractionRegionsInSubtree : bool { Yes, Unknown };
+    void propagateInteractionRegionsChangeInHierarchy(InteractionRegionsInSubtree);
+
+    bool hasInteractionRegions() const;
+    bool hasInteractionRegionsDescendant() const { return m_hasInteractionRegionsDescendant; }
+    void setHasInteractionRegionsDescendant(bool value) { m_hasInteractionRegionsDescendant = value; }
+
+    bool m_hasInteractionRegionsDescendant { false };
+    RetainPtr<CALayer> m_interactionRegionsContainer;
 #endif
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<UIView> m_uiView;

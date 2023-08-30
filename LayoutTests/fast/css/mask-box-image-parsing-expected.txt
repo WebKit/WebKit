@@ -1,4 +1,6 @@
 Blocked access to external URL https://example.test/
+Blocked access to external URL https://example.test/
+Blocked access to external URL https://example.test/
 Tests the parsing of the -webkit-mask-box-image CSS shorthand.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -12,7 +14,7 @@ PASS target.style.webkitMaskBoxImageOutset is ""
 PASS target.style.webkitMaskBoxImageRepeat is ""
 PASS getComputedStyle(target).webkitMaskBoxImage is "none"
 PASS getComputedStyle(target).webkitMaskBoxImageSource is "none"
-PASS getComputedStyle(target).webkitMaskBoxImageSlice is "0 fill"
+PASS getComputedStyle(target).webkitMaskBoxImageSlice is "0"
 PASS getComputedStyle(target).webkitMaskBoxImageWidth is "auto"
 PASS getComputedStyle(target).webkitMaskBoxImageOutset is "0"
 PASS getComputedStyle(target).webkitMaskBoxImageRepeat is "stretch"
@@ -26,13 +28,13 @@ PASS target.style.webkitMaskBoxImageOutset is "initial"
 PASS target.style.webkitMaskBoxImageRepeat is "initial"
 PASS getComputedStyle(target).webkitMaskBoxImage is "none"
 PASS getComputedStyle(target).webkitMaskBoxImageSource is "none"
-PASS getComputedStyle(target).webkitMaskBoxImageSlice is "0 fill"
+PASS getComputedStyle(target).webkitMaskBoxImageSlice is "0"
 PASS getComputedStyle(target).webkitMaskBoxImageWidth is "auto"
 PASS getComputedStyle(target).webkitMaskBoxImageOutset is "0"
 PASS getComputedStyle(target).webkitMaskBoxImageRepeat is "stretch"
 
 target.style = '-webkit-mask-box-image: none'
-PASS target.style.webkitMaskBoxImage is "none"
+PASS target.style.webkitMaskBoxImage is "0 fill"
 PASS target.style.webkitMaskBoxImageSource is "none"
 PASS target.style.webkitMaskBoxImageSlice is "0 fill"
 PASS target.style.webkitMaskBoxImageWidth is "auto"
@@ -46,7 +48,7 @@ PASS getComputedStyle(target).webkitMaskBoxImageOutset is "0"
 PASS getComputedStyle(target).webkitMaskBoxImageRepeat is "stretch"
 
 target.style = '-webkit-mask-box-image: url("https://example.test/")'
-PASS target.style.webkitMaskBoxImage is "url(\"https://example.test/\")"
+PASS target.style.webkitMaskBoxImage is "url(\"https://example.test/\") 0 fill"
 PASS target.style.webkitMaskBoxImageSource is "url(\"https://example.test/\")"
 PASS target.style.webkitMaskBoxImageSlice is "0 fill"
 PASS target.style.webkitMaskBoxImageWidth is "auto"
@@ -60,7 +62,7 @@ PASS getComputedStyle(target).webkitMaskBoxImageOutset is "0"
 PASS getComputedStyle(target).webkitMaskBoxImageRepeat is "stretch"
 
 target.style = '-webkit-mask-box-image: url("https://example.test/") 0 fill / auto / 0 stretch'
-PASS target.style.webkitMaskBoxImage is "url(\"https://example.test/\")"
+PASS target.style.webkitMaskBoxImage is "url(\"https://example.test/\") 0 fill"
 PASS target.style.webkitMaskBoxImageSource is "url(\"https://example.test/\")"
 PASS target.style.webkitMaskBoxImageSlice is "0 fill"
 PASS target.style.webkitMaskBoxImageWidth is "auto"
@@ -69,6 +71,34 @@ PASS target.style.webkitMaskBoxImageRepeat is "stretch"
 PASS getComputedStyle(target).webkitMaskBoxImage is "url(\"https://example.test/\") 0 fill / auto / 0 stretch"
 PASS getComputedStyle(target).webkitMaskBoxImageSource is "url(\"https://example.test/\")"
 PASS getComputedStyle(target).webkitMaskBoxImageSlice is "0 fill"
+PASS getComputedStyle(target).webkitMaskBoxImageWidth is "auto"
+PASS getComputedStyle(target).webkitMaskBoxImageOutset is "0"
+PASS getComputedStyle(target).webkitMaskBoxImageRepeat is "stretch"
+
+target.style = '-webkit-mask-box-image: url("https://example.test/") 50%'
+PASS target.style.webkitMaskBoxImage is "url(\"https://example.test/\") 50% fill"
+PASS target.style.webkitMaskBoxImageSource is "url(\"https://example.test/\")"
+PASS target.style.webkitMaskBoxImageSlice is "50% fill"
+PASS target.style.webkitMaskBoxImageWidth is "auto"
+PASS target.style.webkitMaskBoxImageOutset is "0"
+PASS target.style.webkitMaskBoxImageRepeat is "stretch"
+PASS getComputedStyle(target).webkitMaskBoxImage is "url(\"https://example.test/\") 50% fill / auto / 0 stretch"
+PASS getComputedStyle(target).webkitMaskBoxImageSource is "url(\"https://example.test/\")"
+PASS getComputedStyle(target).webkitMaskBoxImageSlice is "50% fill"
+PASS getComputedStyle(target).webkitMaskBoxImageWidth is "auto"
+PASS getComputedStyle(target).webkitMaskBoxImageOutset is "0"
+PASS getComputedStyle(target).webkitMaskBoxImageRepeat is "stretch"
+
+target.style = 'mask-border: url("https://example.test/") 50%'
+PASS target.style.webkitMaskBoxImage is "url(\"https://example.test/\") 50%"
+PASS target.style.webkitMaskBoxImageSource is "url(\"https://example.test/\")"
+PASS target.style.webkitMaskBoxImageSlice is "50%"
+PASS target.style.webkitMaskBoxImageWidth is "auto"
+PASS target.style.webkitMaskBoxImageOutset is "0"
+PASS target.style.webkitMaskBoxImageRepeat is "stretch"
+PASS getComputedStyle(target).webkitMaskBoxImage is "url(\"https://example.test/\") 50% / auto / 0 stretch"
+PASS getComputedStyle(target).webkitMaskBoxImageSource is "url(\"https://example.test/\")"
+PASS getComputedStyle(target).webkitMaskBoxImageSlice is "50%"
 PASS getComputedStyle(target).webkitMaskBoxImageWidth is "auto"
 PASS getComputedStyle(target).webkitMaskBoxImageOutset is "0"
 PASS getComputedStyle(target).webkitMaskBoxImageRepeat is "stretch"

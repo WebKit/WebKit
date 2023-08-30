@@ -61,9 +61,6 @@ struct SharedVideoFrame {
     WebCore::VideoFrameRotation rotation { };
     using Buffer = std::variant<std::nullptr_t, RemoteVideoFrameReadReference, MachSendRight, WebCore::IntSize>;
     Buffer buffer;
-
-    template<class Encoder> void encode(Encoder&) &&;
-    template<class Decoder> static std::optional<SharedVideoFrame> decode(Decoder&);
 };
 
 class SharedVideoFrameWriter {
@@ -132,32 +129,6 @@ private:
     WebCore::IntSize m_blackFrameSize;
     RetainPtr<CVPixelBufferRef> m_blackFrame;
 };
-
-template<class Encoder> void SharedVideoFrame::encode(Encoder& encoder) &&
-{
-    encoder << time;
-    encoder << mirrored;
-    encoder << rotation;
-    encoder << WTFMove(buffer);
-}
-
-template<class Decoder> std::optional<SharedVideoFrame> SharedVideoFrame::decode(Decoder& decoder)
-{
-    SharedVideoFrame frame;
-    if (!decoder.decode(frame.time))
-        return { };
-
-    if (!decoder.decode(frame.mirrored))
-        return { };
-
-    if (!decoder.decode(frame.rotation))
-        return { };
-
-    if (!decoder.decode(frame.buffer))
-        return { };
-
-    return frame;
-}
 
 }
 

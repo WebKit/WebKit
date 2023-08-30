@@ -50,16 +50,16 @@ public:
     struct LineMode {
         using Behavior = TextBreakIteratorICU::LineMode::Behavior;
         Behavior behavior;
-        bool operator==(const LineMode&) const = default;
+        friend bool operator==(LineMode, LineMode) = default;
     };
     struct CaretMode {
-        bool operator==(const CaretMode&) const = default;
+        friend bool operator==(CaretMode, CaretMode) = default;
     };
     struct DeleteMode {
-        bool operator==(const DeleteMode&) const = default;
+        friend bool operator==(DeleteMode, DeleteMode) = default;
     };
     struct CharacterMode {
-        bool operator==(const CharacterMode&) const = default;
+        friend bool operator==(CharacterMode, CharacterMode) = default;
     };
     using Mode = std::variant<LineMode, CaretMode, DeleteMode, CharacterMode>;
 
@@ -286,7 +286,7 @@ public:
             return m_priorContext.data() + (m_priorContext.size() - length());
         }
 
-        bool operator==(const PriorContext& other) const = default;
+        friend bool operator==(const PriorContext&, const PriorContext&) = default;
 
     private:
         std::array<UChar, Length> m_priorContext;

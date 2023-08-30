@@ -9,47 +9,10 @@
       (backgroundColor #FFFFFF)
       (event region
         (rect (0,0) width=1536 height=5013)
-      )
-      (children 3
-        (GraphicsLayer
-          (preserves3D 1)
-          (children 1
-            (GraphicsLayer
-              (bounds 1536.00 2008.00)
-              (event region
-                (rect (0,0) width=1536 height=2008)
 
-              (interaction regions [
-                (occlusion (0,0) width=1536 height=2008)
-                (borderRadius 0.00)])
-              )
-            )
-          )
-        )
-        (GraphicsLayer
-          (bounds 1536.00 2008.00)
-          (opacity 0.50)
-          (contentsOpaque 1)
-          (event region
-            (rect (0,0) width=1536 height=2008)
-
-          (interaction regions [
-            (occlusion (0,0) width=1536 height=2008)
-            (borderRadius 0.00)])
-          )
-        )
-        (GraphicsLayer
-          (bounds 1536.00 5000.00)
-          (opacity 0.50)
-          (contentsOpaque 1)
-          (event region
-            (rect (0,0) width=1536 height=5000)
-
-          (interaction regions [
-            (occlusion (0,0) width=1536 height=5000)
-            (borderRadius 0.00)])
-          )
-        )
+      (interaction regions [
+        (occlusion (0,0) width=1536 height=5000)
+        (borderRadius 0.00)])
       )
     )
   )

@@ -260,11 +260,9 @@ void HTMLFormElement::submitIfPossible(Event* event, HTMLFormControlElement* sub
     m_isSubmittingOrPreparingForSubmission = true;
     m_shouldSubmit = false;
 
-    if (UserGestureIndicator::processingUserGesture()) {
-        for (auto& element : m_listedElements) {
-            if (auto* formControlElement = dynamicDowncast<HTMLFormControlElement>(*element))
-                formControlElement->setInteractedWithSinceLastFormSubmitEvent(true);
-        }
+    for (auto& element : m_listedElements) {
+        if (auto* formControlElement = dynamicDowncast<HTMLFormControlElement>(*element))
+            formControlElement->setInteractedWithSinceLastFormSubmitEvent(true);
     }
 
     bool shouldValidate = document().page() && document().page()->settings().interactiveFormValidationEnabled() && !noValidate();

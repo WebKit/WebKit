@@ -33,8 +33,8 @@
 
 namespace WebCore::Style {
 
-class MatchRequest;
 class ScopeRuleSets;
+struct MatchRequest;
 struct SelectorMatchingState;
 enum class CascadeLevel : uint8_t;
 

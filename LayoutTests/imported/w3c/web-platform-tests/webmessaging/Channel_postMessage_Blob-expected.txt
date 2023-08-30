@@ -1,3 +1,0 @@
-
-PASS Test Description: Messages can contain Blobs.
-

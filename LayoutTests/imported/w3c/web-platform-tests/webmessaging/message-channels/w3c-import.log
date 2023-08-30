@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/message-channels/basics.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/message-channels/close.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/message-channels/cross-document.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/message-channels/detached-iframe.window.js
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/message-channels/dictionary-transferrable.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/message-channels/implied-start.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/message-channels/no-start.any.js

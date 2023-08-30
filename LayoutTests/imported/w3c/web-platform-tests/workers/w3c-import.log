@@ -103,6 +103,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/dedicated-worker-in-data-url-context.window.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/dedicated-worker-parse-error-failure.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/importscripts_mime.any.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/importscripts_mime_local.any.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/name-property.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/nested_worker.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/nested_worker_close_from_parent_worker.html
@@ -127,3 +128,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/shared-worker-parse-error-failure.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/shared-worker-partitioned.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/worker-performance.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/worker-request-animation-frame.html

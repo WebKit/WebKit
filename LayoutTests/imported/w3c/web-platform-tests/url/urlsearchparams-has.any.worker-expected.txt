@@ -2,4 +2,5 @@
 PASS Has basics
 PASS has() following delete()
 PASS Two-argument has()
+PASS Two-argument has() respects undefined as second arg
 

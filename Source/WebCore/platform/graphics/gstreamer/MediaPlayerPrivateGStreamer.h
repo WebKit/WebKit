@@ -341,6 +341,18 @@ protected:
     bool m_didErrorOccur { false };
     mutable bool m_isEndReached { false };
     mutable std::optional<bool> m_isLiveStream;
+
+    // m_isPaused represents:
+    // A) In MSE streams, whether playback or pause has last been requested with pause() and play(),
+    //    defaulting to true before playback starts.
+    // B) In live streams, whether at an unspecified point in time after the main thread tick in
+    //    which play() or pause() are called, whether the playback was paused or resumed.
+    // C) In regular non-live streams, it represents whether playback has ended with a EOS with
+    //    looping set to false since the pipeline successfully pre-rolled.
+    //
+    // FIXME m_isPaused should represent something useful and consistent for all the possible cases
+    // (regular playback, live playback, MSE, WebRTC) or be deleted from MediaPlayerPrivateGStreamer.
+    // https://bugs.webkit.org/show_bug.cgi?id=260385
     bool m_isPaused { true };
     float m_playbackRate { 1 };
     GstState m_currentState { GST_STATE_NULL };

@@ -74,7 +74,7 @@ TEST(DisplayListTests, ReplayWithMissingResource)
         ResourceHeap resourceHeap;
         resourceHeap.add(imageBuffer.releaseNonNull());
 
-        Replayer replayer { context, list, &resourceHeap };
+        Replayer replayer { context, list.items(), resourceHeap };
         auto result = replayer.replay();
         EXPECT_EQ(result.reasonForStopping, StopReplayReason::ReplayedAllItems);
         EXPECT_EQ(result.missingCachedResourceIdentifier, std::nullopt);

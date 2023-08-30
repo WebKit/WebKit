@@ -53,6 +53,8 @@ public:
 
     CompactPointerTuple() = default;
 
+    friend bool operator==(const CompactPointerTuple&, const CompactPointerTuple&) = default;
+
 #if CPU(ADDRESS64)
 public:
     static constexpr unsigned maxNumberOfBitsInPointer = 48;
@@ -96,11 +98,6 @@ public:
 
     uint64_t data() const { return m_data; }
 
-    bool operator==(const CompactPointerTuple& other) const
-    {
-        return m_data == other.m_data;
-    }
-
 private:
     static constexpr uint64_t encodeType(Type type)
     {
@@ -136,11 +133,6 @@ public:
     void setPointer(PointerType pointer) { m_pointer = pointer; }
     Type type() const { return m_type; }
     void setType(Type type) { m_type = type; }
-
-    bool operator==(const CompactPointerTuple& other) const
-    {
-        return m_type == other.m_type && m_pointer == other.m_pointer;
-    }
 
 private:
     PointerType m_pointer { nullptr };

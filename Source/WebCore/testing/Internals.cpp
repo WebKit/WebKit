@@ -1571,6 +1571,20 @@ ExceptionOr<void> Internals::setFormControlStateOfPreviousHistoryItem(const Vect
 }
 
 #if ENABLE(SPEECH_SYNTHESIS)
+void Internals::simulateSpeechSynthesizerVoiceListChange()
+{
+    if (m_platformSpeechSynthesizer) {
+        m_platformSpeechSynthesizer->client().voicesDidChange();
+        return;
+    }
+
+    RefPtr document = contextDocument();
+    if (!document || !document->domWindow())
+        return;
+
+    if (RefPtr synthesis = LocalDOMWindowSpeechSynthesis::speechSynthesis(*document->domWindow()))
+        synthesis->simulateVoicesListChange();
+}
 
 void Internals::enableMockSpeechSynthesizer()
 {
@@ -4703,27 +4717,27 @@ ExceptionOr<void> Internals::postRemoteControlCommand(const String& commandStrin
     PlatformMediaSession::RemoteCommandArgument parameter { argument, { } };
 
     if (equalLettersIgnoringASCIICase(commandString, "play"_s))
-        command = PlatformMediaSession::PlayCommand;
+        command = PlatformMediaSession::RemoteControlCommandType::PlayCommand;
     else if (equalLettersIgnoringASCIICase(commandString, "pause"_s))
-        command = PlatformMediaSession::PauseCommand;
+        command = PlatformMediaSession::RemoteControlCommandType::PauseCommand;
     else if (equalLettersIgnoringASCIICase(commandString, "stop"_s))
-        command = PlatformMediaSession::StopCommand;
+        command = PlatformMediaSession::RemoteControlCommandType::StopCommand;
     else if (equalLettersIgnoringASCIICase(commandString, "toggleplaypause"_s))
-        command = PlatformMediaSession::TogglePlayPauseCommand;
+        command = PlatformMediaSession::RemoteControlCommandType::TogglePlayPauseCommand;
     else if (equalLettersIgnoringASCIICase(commandString, "beginseekingbackward"_s))
-        command = PlatformMediaSession::BeginSeekingBackwardCommand;
+        command = PlatformMediaSession::RemoteControlCommandType::BeginSeekingBackwardCommand;
     else if (equalLettersIgnoringASCIICase(commandString, "endseekingbackward"_s))
-        command = PlatformMediaSession::EndSeekingBackwardCommand;
+        command = PlatformMediaSession::RemoteControlCommandType::EndSeekingBackwardCommand;
     else if (equalLettersIgnoringASCIICase(commandString, "beginseekingforward"_s))
-        command = PlatformMediaSession::BeginSeekingForwardCommand;
+        command = PlatformMediaSession::RemoteControlCommandType::BeginSeekingForwardCommand;
     else if (equalLettersIgnoringASCIICase(commandString, "endseekingforward"_s))
-        command = PlatformMediaSession::EndSeekingForwardCommand;
+        command = PlatformMediaSession::RemoteControlCommandType::EndSeekingForwardCommand;
     else if (equalLettersIgnoringASCIICase(commandString, "seektoplaybackposition"_s))
-        command = PlatformMediaSession::SeekToPlaybackPositionCommand;
+        command = PlatformMediaSession::RemoteControlCommandType::SeekToPlaybackPositionCommand;
     else if (equalLettersIgnoringASCIICase(commandString, "beginscrubbing"_s))
-        command = PlatformMediaSession::BeginScrubbingCommand;
+        command = PlatformMediaSession::RemoteControlCommandType::BeginScrubbingCommand;
     else if (equalLettersIgnoringASCIICase(commandString, "endscrubbing"_s))
-        command = PlatformMediaSession::EndScrubbingCommand;
+        command = PlatformMediaSession::RemoteControlCommandType::EndScrubbingCommand;
     else
         return Exception { InvalidAccessError };
 
@@ -7156,6 +7170,46 @@ bool Internals::isUsingUISideCompositing() const
     if (!page)
         return false;
     return page->chrome().client().isUsingUISideCompositing();
+}
+
+AccessibilityObject* Internals::axObjectForElement(Element& element) const
+{
+    auto* document = contextDocument();
+    if (!document)
+        return nullptr;
+    WebCore::AXObjectCache::enableAccessibility();
+
+    auto* cache = document->axObjectCache();
+    return cache ? cache->getOrCreate(&element) : nullptr;
+}
+
+String Internals::getComputedLabel(Element& element) const
+{
+    if (auto* axObject = axObjectForElement(element))
+        return axObject->computedLabel();
+    return ""_s;
+}
+
+String Internals::getComputedRole(Element& element) const
+{
+    if (auto* axObject = axObjectForElement(element))
+        return axObject->computedRoleString();
+    return ""_s;
+}
+
+bool Internals::readyToRetrieveComputedRoleOrLabel(Element& element) const
+{
+    // If the element has a renderer, it should be ready to go.
+    if (element.renderer())
+        return true;
+
+    auto* computedStyle = element.computedStyle();
+    // If we can't get computed style for some reason, assume we can query for computed role or label.
+    if (!computedStyle)
+        return true;
+
+    // If the element needs a renderer but doesn't have one yet, we aren't ready to query the computed accessibility role or label. Doing so before the renderer has been attached will yield incorrect results.
+    return !element.rendererIsNeeded(*computedStyle);
 }
 
 } // namespace WebCore

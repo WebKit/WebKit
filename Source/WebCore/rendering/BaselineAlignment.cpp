@@ -22,11 +22,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
 #include "BaselineAlignment.h"
 
 #include "BaselineAlignmentInlines.h"
 #include "RenderBox.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 

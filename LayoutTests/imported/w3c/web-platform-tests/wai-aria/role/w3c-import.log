@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/wai-aria/role/ReadMe.md
+/LayoutTests/imported/w3c/web-platform-tests/wai-aria/role/abstract-roles.html
+/LayoutTests/imported/w3c/web-platform-tests/wai-aria/role/basic.html
+/LayoutTests/imported/w3c/web-platform-tests/wai-aria/role/fallback-roles.html
+/LayoutTests/imported/w3c/web-platform-tests/wai-aria/role/form-roles.html
+/LayoutTests/imported/w3c/web-platform-tests/wai-aria/role/grid-roles.html
+/LayoutTests/imported/w3c/web-platform-tests/wai-aria/role/invalid-roles.html
+/LayoutTests/imported/w3c/web-platform-tests/wai-aria/role/list-roles.html
+/LayoutTests/imported/w3c/web-platform-tests/wai-aria/role/listbox-roles.html
+/LayoutTests/imported/w3c/web-platform-tests/wai-aria/role/region-roles.html
+/LayoutTests/imported/w3c/web-platform-tests/wai-aria/role/role_none_conflict_resolution.html
+/LayoutTests/imported/w3c/web-platform-tests/wai-aria/role/roles.html
+/LayoutTests/imported/w3c/web-platform-tests/wai-aria/role/synonym-roles.html
+/LayoutTests/imported/w3c/web-platform-tests/wai-aria/role/tab-roles.html

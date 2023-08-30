@@ -78,41 +78,50 @@ void PseudoClassChangeInvalidation::computeInvalidation(CSSSelector::PseudoClass
 
 void PseudoClassChangeInvalidation::collectRuleSets(const PseudoClassInvalidationKey& key, Value value, InvalidationScope invalidationScope)
 {
-    auto& ruleSets = m_element.styleResolver().ruleSets();
-    auto* invalidationRuleSets = ruleSets.pseudoClassInvalidationRuleSets(key);
-    if (!invalidationRuleSets)
-        return;
+    auto collect = [&](auto& ruleSets, std::optional<MatchElement> onlyMatchElement = { }) {
+        auto* invalidationRuleSets = ruleSets.pseudoClassInvalidationRuleSets(key);
+        if (!invalidationRuleSets)
+            return;
 
-    for (auto& invalidationRuleSet : *invalidationRuleSets) {
-        // For focus/hover we flip the whole ancestor chain. We only need to do deep invalidation traversal in the change root.
-        auto shouldInvalidate = [&] {
-            bool invalidatesAllDescendants = invalidationRuleSet.matchElement == MatchElement::Ancestor && isUniversalInvalidation(key);
-            switch (invalidationScope) {
-            case InvalidationScope::All:
+        for (auto& invalidationRuleSet : *invalidationRuleSets) {
+            if (onlyMatchElement && invalidationRuleSet.matchElement != onlyMatchElement)
+                continue;
+
+            // For focus/hover we flip the whole ancestor chain. We only need to do deep invalidation traversal in the change root.
+            auto shouldInvalidate = [&] {
+                bool invalidatesAllDescendants = invalidationRuleSet.matchElement == MatchElement::Ancestor && isUniversalInvalidation(key);
+                switch (invalidationScope) {
+                case InvalidationScope::All:
+                    return true;
+                case InvalidationScope::SelfChildrenAndSiblings:
+                    return !invalidatesAllDescendants;
+                case InvalidationScope::Descendants:
+                    return invalidatesAllDescendants;
+                }
+                ASSERT_NOT_REACHED();
                 return true;
-            case InvalidationScope::SelfChildrenAndSiblings:
-                return !invalidatesAllDescendants;
-            case InvalidationScope::Descendants:
-                return invalidatesAllDescendants;
+            }();
+            if (!shouldInvalidate)
+                continue;
+
+            if (value == Value::Any) {
+                Invalidator::addToMatchElementRuleSets(m_beforeChangeRuleSets, invalidationRuleSet);
+                Invalidator::addToMatchElementRuleSets(m_afterChangeRuleSets, invalidationRuleSet);
+                continue;
             }
-            ASSERT_NOT_REACHED();
-            return true;
-        }();
-        if (!shouldInvalidate)
-            continue;
 
-        if (value == Value::Any) {
-            Invalidator::addToMatchElementRuleSets(m_beforeChangeRuleSets, invalidationRuleSet);
-            Invalidator::addToMatchElementRuleSets(m_afterChangeRuleSets, invalidationRuleSet);
-            continue;
+            bool invalidateBeforeChange = invalidationRuleSet.isNegation == IsNegation::Yes ? value == Value::True : value == Value::False;
+            if (invalidateBeforeChange)
+                Invalidator::addToMatchElementRuleSets(m_beforeChangeRuleSets, invalidationRuleSet);
+            else
+                Invalidator::addToMatchElementRuleSets(m_afterChangeRuleSets, invalidationRuleSet);
         }
+    };
 
-        bool invalidateBeforeChange = invalidationRuleSet.isNegation == IsNegation::Yes ? value == Value::True : value == Value::False;
-        if (invalidateBeforeChange)
-            Invalidator::addToMatchElementRuleSets(m_beforeChangeRuleSets, invalidationRuleSet);
-        else
-            Invalidator::addToMatchElementRuleSets(m_afterChangeRuleSets, invalidationRuleSet);
-    }
+    collect(m_element.styleResolver().ruleSets());
+
+    if (auto* shadowRoot = m_element.shadowRoot())
+        collect(shadowRoot->styleScope().resolver().ruleSets(), MatchElement::Host);
 }
 
 void PseudoClassChangeInvalidation::invalidateBeforeChange()

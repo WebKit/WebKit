@@ -428,9 +428,11 @@ void DrawingAreaCoordinatedGraphics::updateGeometry(const IntSize& size, Complet
             send(Messages::DrawingAreaProxy::UpdateAcceleratedCompositingMode(0, layerTreeContext));
     } else {
         UpdateInfo updateInfo;
-        updateInfo.viewSize = webPage->size();
-        updateInfo.deviceScaleFactor = webPage->corePage()->deviceScaleFactor();
-        display(updateInfo);
+        if (m_isPaintingSuspended) {
+            updateInfo.viewSize = webPage->size();
+            updateInfo.deviceScaleFactor = webPage->corePage()->deviceScaleFactor();
+        } else
+            display(updateInfo);
         if (!m_layerTreeHost)
             send(Messages::DrawingAreaProxy::Update(0, WTFMove(updateInfo)));
     }
@@ -831,6 +833,12 @@ void DrawingAreaCoordinatedGraphics::forceUpdate()
 
     m_dirtyRegion = m_webPage->bounds();
     display();
+}
+
+void DrawingAreaCoordinatedGraphics::didDiscardBackingStore()
+{
+    // Ensure the next update will cover the entire view, since the UI process discarded its backing store.
+    m_dirtyRegion = m_webPage->bounds();
 }
 
 } // namespace WebKit

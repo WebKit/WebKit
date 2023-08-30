@@ -245,45 +245,143 @@ TEST(WebKit, OpenWindowFeatures)
     TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
-//  https://bugs.webkit.org/show_bug.cgi?id=174271 - WebCore currently doesn't distinguish between unspecified (nil) and false
-//  for the following window features.
-//  EXPECT_TRUE([openWindowFeatures menuBarVisibility] == nil);
-//  EXPECT_TRUE([openWindowFeatures statusBarVisibility] == nil);
-//  EXPECT_TRUE([openWindowFeatures toolbarsVisibility] == nil);
-//  EXPECT_TRUE([openWindowFeatures allowsResizing] == nil);
-//  EXPECT_TRUE([openWindowFeatures _locationBarVisibility] == nil);
-//  EXPECT_TRUE([openWindowFeatures _scrollbarsVisibility] == nil);
-//  EXPECT_TRUE([openWindowFeatures _fullscreenDisplay] == nil);
-//  EXPECT_TRUE([openWindowFeatures _dialogDisplay] == nil);
+    EXPECT_FALSE([openWindowFeatures _wantsPopup]);
+    EXPECT_FALSE([openWindowFeatures _hasAdditionalFeatures]);
+    EXPECT_TRUE([openWindowFeatures menuBarVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures statusBarVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures toolbarsVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures allowsResizing] == nil);
+    EXPECT_TRUE([openWindowFeatures _popup] == nil);
+    EXPECT_TRUE([openWindowFeatures _locationBarVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures _scrollbarsVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures _fullscreenDisplay] == nil);
+    EXPECT_TRUE([openWindowFeatures _dialogDisplay] == nil);
     openWindowFeatures = nullptr;
 
-    NSString *featuresStringAllSpecifiedAndTrue = @"menubar=yes,status=yes,toolbar=yes,resizable=yes,location=yes,scrollbars=yes,fullscreen=yes";
+    NSString *featuresStringOnlyNonPopupSpecifiedAndTrue = @"noopener=true,noreferrer=true";
+    [webView evaluateJavaScript:[NSString stringWithFormat:windowOpenFormatString, featuresStringOnlyNonPopupSpecifiedAndTrue] completionHandler:nil];
+    TestWebKitAPI::Util::run(&isDone);
+    isDone = false;
+
+    EXPECT_FALSE([openWindowFeatures _wantsPopup]);
+    EXPECT_FALSE([openWindowFeatures _hasAdditionalFeatures]);
+    EXPECT_TRUE([openWindowFeatures menuBarVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures statusBarVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures toolbarsVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures allowsResizing] == nil);
+    EXPECT_TRUE([openWindowFeatures _popup] == nil);
+    EXPECT_TRUE([openWindowFeatures _locationBarVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures _scrollbarsVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures _fullscreenDisplay] == nil);
+    EXPECT_TRUE([openWindowFeatures _dialogDisplay] == nil);
+    openWindowFeatures = nullptr;
+
+    NSString *featuresStringOnlyNonPopupSpecifiedAndFalse = @"noopener=false,noreferrer=false";
+    [webView evaluateJavaScript:[NSString stringWithFormat:windowOpenFormatString, featuresStringOnlyNonPopupSpecifiedAndFalse] completionHandler:nil];
+    TestWebKitAPI::Util::run(&isDone);
+    isDone = false;
+
+    EXPECT_FALSE([openWindowFeatures _wantsPopup]);
+    EXPECT_FALSE([openWindowFeatures _hasAdditionalFeatures]);
+    EXPECT_TRUE([openWindowFeatures menuBarVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures statusBarVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures toolbarsVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures allowsResizing] == nil);
+    EXPECT_TRUE([openWindowFeatures _popup] == nil);
+    EXPECT_TRUE([openWindowFeatures _locationBarVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures _scrollbarsVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures _fullscreenDisplay] == nil);
+    EXPECT_TRUE([openWindowFeatures _dialogDisplay] == nil);
+    openWindowFeatures = nullptr;
+
+    NSString *featuresStringAllSpecifiedAndTrue = @"popup=yes,menubar=yes,status=yes,toolbar=yes,resizable=yes,location=yes,scrollbars=yes,fullscreen=yes";
     [webView evaluateJavaScript:[NSString stringWithFormat:windowOpenFormatString, featuresStringAllSpecifiedAndTrue] completionHandler:nil];
     TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
+    EXPECT_TRUE([openWindowFeatures _wantsPopup]);
+    EXPECT_FALSE([openWindowFeatures _hasAdditionalFeatures]);
     EXPECT_TRUE([openWindowFeatures menuBarVisibility].boolValue);
     EXPECT_TRUE([openWindowFeatures statusBarVisibility].boolValue);
     EXPECT_TRUE([openWindowFeatures toolbarsVisibility].boolValue);
     EXPECT_TRUE([openWindowFeatures allowsResizing].boolValue);
+    EXPECT_TRUE([openWindowFeatures _popup].boolValue);
     EXPECT_TRUE([openWindowFeatures _locationBarVisibility].boolValue);
     EXPECT_TRUE([openWindowFeatures _scrollbarsVisibility].boolValue);
     EXPECT_TRUE([openWindowFeatures _fullscreenDisplay].boolValue);
+    EXPECT_TRUE([openWindowFeatures _dialogDisplay] == nil);
     openWindowFeatures = nullptr;
 
-    NSString *featuresStringAllSpecifiedAndFalse = @"menubar=no,status=no,toolbar=no,resizable=no,location=no,scrollbars=no,fullscreen=no";
+    NSString *featuresStringAllSpecifiedAndFalse = @"popup=no,menubar=no,status=no,toolbar=no,resizable=no,location=no,scrollbars=no,fullscreen=no";
     [webView evaluateJavaScript:[NSString stringWithFormat:windowOpenFormatString, featuresStringAllSpecifiedAndFalse] completionHandler:nil];
     TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
+    EXPECT_FALSE([openWindowFeatures _wantsPopup]);
+    EXPECT_FALSE([openWindowFeatures _hasAdditionalFeatures]);
     EXPECT_FALSE([openWindowFeatures menuBarVisibility].boolValue);
     EXPECT_FALSE([openWindowFeatures statusBarVisibility ].boolValue);
     EXPECT_FALSE([openWindowFeatures toolbarsVisibility].boolValue);
-//  https://bugs.webkit.org/show_bug.cgi?id=174388 - This property doesn't accurately reflect the parameters passed by the webpage.
-//  EXPECT_FALSE([openWindowFeatures allowsResizing].boolValue);
+    EXPECT_FALSE([openWindowFeatures allowsResizing].boolValue);
+    EXPECT_FALSE([openWindowFeatures _popup].boolValue);
     EXPECT_FALSE([openWindowFeatures _locationBarVisibility].boolValue);
     EXPECT_FALSE([openWindowFeatures _scrollbarsVisibility].boolValue);
     EXPECT_FALSE([openWindowFeatures _fullscreenDisplay].boolValue);
+    EXPECT_FALSE([openWindowFeatures _dialogDisplay].boolValue);
+    openWindowFeatures = nullptr;
+
+    NSString *featuresStringAllSpecifiedWithoutValues = @"popup,menubar,status,toolbar,resizable,location,scrollbars,fullscreen";
+    [webView evaluateJavaScript:[NSString stringWithFormat:windowOpenFormatString, featuresStringAllSpecifiedWithoutValues] completionHandler:nil];
+    TestWebKitAPI::Util::run(&isDone);
+    isDone = false;
+
+    EXPECT_TRUE([openWindowFeatures _wantsPopup]);
+    EXPECT_FALSE([openWindowFeatures _hasAdditionalFeatures]);
+    EXPECT_TRUE([openWindowFeatures menuBarVisibility].boolValue);
+    EXPECT_TRUE([openWindowFeatures statusBarVisibility ].boolValue);
+    EXPECT_TRUE([openWindowFeatures toolbarsVisibility].boolValue);
+    EXPECT_TRUE([openWindowFeatures allowsResizing].boolValue);
+    EXPECT_TRUE([openWindowFeatures _popup].boolValue);
+    EXPECT_TRUE([openWindowFeatures _locationBarVisibility].boolValue);
+    EXPECT_TRUE([openWindowFeatures _scrollbarsVisibility].boolValue);
+    EXPECT_TRUE([openWindowFeatures _fullscreenDisplay].boolValue);
+    EXPECT_TRUE([openWindowFeatures _dialogDisplay] == nil);
+    openWindowFeatures = nullptr;
+
+    NSString *featuresStringWithUnknownFeatures = @"foo=bar";
+    [webView evaluateJavaScript:[NSString stringWithFormat:windowOpenFormatString, featuresStringWithUnknownFeatures] completionHandler:nil];
+    TestWebKitAPI::Util::run(&isDone);
+    isDone = false;
+
+    EXPECT_TRUE([openWindowFeatures _wantsPopup]);
+    EXPECT_TRUE([openWindowFeatures _hasAdditionalFeatures]);
+    EXPECT_TRUE([openWindowFeatures menuBarVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures statusBarVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures toolbarsVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures allowsResizing] == nil);
+    EXPECT_TRUE([openWindowFeatures _popup] == nil);
+    EXPECT_TRUE([openWindowFeatures _locationBarVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures _scrollbarsVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures _fullscreenDisplay] == nil);
+    EXPECT_TRUE([openWindowFeatures _dialogDisplay] == nil);
+    openWindowFeatures = nullptr;
+
+    NSString *featuresStringGarbage = @",,   =   ,   ";
+    [webView evaluateJavaScript:[NSString stringWithFormat:windowOpenFormatString, featuresStringGarbage] completionHandler:nil];
+    TestWebKitAPI::Util::run(&isDone);
+    isDone = false;
+
+    EXPECT_FALSE([openWindowFeatures _wantsPopup]);
+    EXPECT_FALSE([openWindowFeatures _hasAdditionalFeatures]);
+    EXPECT_TRUE([openWindowFeatures menuBarVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures statusBarVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures toolbarsVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures allowsResizing] == nil);
+    EXPECT_TRUE([openWindowFeatures _popup] == nil);
+    EXPECT_TRUE([openWindowFeatures _locationBarVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures _scrollbarsVisibility] == nil);
+    EXPECT_TRUE([openWindowFeatures _fullscreenDisplay] == nil);
+    EXPECT_TRUE([openWindowFeatures _dialogDisplay] == nil);
     openWindowFeatures = nullptr;
 }
 

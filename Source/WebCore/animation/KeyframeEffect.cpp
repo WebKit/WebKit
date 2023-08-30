@@ -51,6 +51,7 @@
 #include "KeyframeEffectStack.h"
 #include "LocalFrameView.h"
 #include "Logging.h"
+#include "MotionPath.h"
 #include "MutableStyleProperties.h"
 #include "PropertyAllowlist.h"
 #include "RenderBox.h"
@@ -2314,7 +2315,7 @@ bool KeyframeEffect::computeTransformedExtentViaTransformList(const FloatRect& r
 bool KeyframeEffect::computeTransformedExtentViaMatrix(const FloatRect& rendererBox, const RenderStyle& style, LayoutRect& bounds) const
 {
     TransformationMatrix transform;
-    style.applyTransform(transform, rendererBox);
+    style.applyTransform(transform, TransformOperationData(rendererBox, renderer()));
     if (!transform.isAffine())
         return false;
 

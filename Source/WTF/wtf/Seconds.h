@@ -188,10 +188,7 @@ public:
     WTF_EXPORT_PRIVATE ApproximateTime operator-(ApproximateTime) const;
     WTF_EXPORT_PRIVATE TimeWithDynamicClockType operator-(const TimeWithDynamicClockType&) const;
     
-    constexpr bool operator==(Seconds other) const
-    {
-        return m_value == other.m_value;
-    }
+    friend constexpr bool operator==(Seconds, Seconds) = default;
     
     constexpr bool operator<(Seconds other) const
     {

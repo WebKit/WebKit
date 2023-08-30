@@ -659,7 +659,9 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
     for (size_t index = 0; index < runs.size(); ++index) {
         auto& inlineItem = runs[index].inlineItem;
         // FIXME: Maybe content across inline boxes should be hyphenated as well.
-        if (inlineItem.style().fontCascade() != style.fontCascade() || !inlineItem.isText())
+        if (inlineItem.isOpaque())
+            continue;
+        if (!inlineItem.isText() || inlineItem.style().fontCascade() != style.fontCascade())
             return { };
 
         auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);

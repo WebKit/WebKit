@@ -1,0 +1,7 @@
+
+PASS HTTP(S) URLs which respond with text/plain MIME type must not work
+FAIL HTTP(S) URLs which respond with text/plain MIME type must not work on SharedWorkers Shared workers are not supported
+PASS blob: URLs should load, despite no MIME type for the backing Blob
+PASS blob: URLs should load, despite the wrong MIME type for the backing Blob
+PASS data: URLs should load, despite the wrong MIME type
+

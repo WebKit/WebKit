@@ -1,0 +1,7 @@
+Tests the #comp_embedded_control portions of the AccName Name Computation algorithm.
+
+  Flash the screen   times
+
+FAIL checkbox label with embedded textfield assert_equals: <input type="checkbox" data-expectedlabel="Flash the screen 3 times" data-testname="checkbox label with embedded textfield" class="ex"> expected "Flash the screen 3 times" but got "Flash the screen number of times times"
+PASS label of embedded textfield inside checkbox label
+

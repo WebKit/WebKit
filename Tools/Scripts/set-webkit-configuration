@@ -114,7 +114,7 @@ if (isAppleCocoaWebKit() && !isCMakeBuild()) {
 }
 
 if (checkForArgumentAndRemoveFromARGV("--reset")) {
-    for my $fileName (qw(Architecture ASan Configuration Coverage ForceOptimizationLevel LTO TSan UBSan Workspace)) {
+    for my $fileName (qw(Architecture ASan Configuration Coverage ForceOptimizationLevel LibFuzzer LTO TSan UBSan Workspace)) {
         unlink File::Spec->catfile($baseProductDir, $fileName);
     }
     printCurrentSettings();

@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/basics.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/blobs.html
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/cross-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/cross-partition.https.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/detached-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/interface.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/opaque-origin.html

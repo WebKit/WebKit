@@ -111,6 +111,10 @@ public:
 #if ENABLE(TEXT_AUTOSIZING)
     DECLARE_PROPERTY_CUSTOM_HANDLERS(LineHeight);
 #endif
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(MaskBorderOutset);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(MaskBorderRepeat);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(MaskBorderSlice);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(MaskBorderWidth);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(OutlineStyle);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Size);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Stroke);
@@ -118,10 +122,6 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(TextIndent);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(TextShadow);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitBoxShadow);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageOutset);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageRepeat);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageSlice);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageWidth);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Zoom);
 
     // Custom handling of initial + inherit value setting only.
@@ -455,7 +455,7 @@ inline void BuilderCustom::applyValueTextIndent(BuilderState& builderState, CSSV
     builderState.style().setTextIndentType(textIndentTypeValue);
 }
 
-enum BorderImageType { BorderImage, WebkitMaskBoxImage };
+enum BorderImageType { BorderImage, MaskBorder };
 enum BorderImageModifierType { Outset, Repeat, Slice, Width };
 template<BorderImageType type, BorderImageModifierType modifier>
 class ApplyPropertyBorderImageModifier {
@@ -494,7 +494,7 @@ public:
         case Slice:
             // Masks have a different initial value for slices. Preserve the value of "0 fill" for backwards compatibility.
             image.setImageSlices(type == BorderImage ? LengthBox(Length(100, LengthType::Percent), Length(100, LengthType::Percent), Length(100, LengthType::Percent), Length(100, LengthType::Percent)) : LengthBox(LengthType::Fixed));
-            image.setFill(type != BorderImage);
+            image.setFill(false);
             break;
         case Width:
             // FIXME: This is a local variable to work around a bug in the GCC 8.1 Address Sanitizer.
@@ -532,12 +532,12 @@ public:
 private:
     static const NinePieceImage& getValue(const RenderStyle& style)
     {
-        return type == BorderImage ? style.borderImage() : style.maskBoxImage();
+        return type == BorderImage ? style.borderImage() : style.maskBorder();
     }
 
     static void setValue(RenderStyle& style, const NinePieceImage& value)
     {
-        return type == BorderImage ? style.setBorderImage(value) : style.setMaskBoxImage(value);
+        return type == BorderImage ? style.setBorderImage(value) : style.setMaskBorder(value);
     }
 };
 
@@ -559,10 +559,10 @@ DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(BorderImage, Outset)
 DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(BorderImage, Repeat)
 DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(BorderImage, Slice)
 DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(BorderImage, Width)
-DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Outset)
-DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Repeat)
-DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Slice)
-DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Width)
+DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(MaskBorder, Outset)
+DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(MaskBorder, Repeat)
+DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(MaskBorder, Slice)
+DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(MaskBorder, Width)
 
 static inline void applyLetterSpacing(BuilderState& builderState, float letterSpacing)
 {

@@ -4,14 +4,12 @@
 accessibility/mac/resolved-text-editing.html [ Crash Pass ]
 
 # Timeouts
-accessibility/aria-controls-with-tabs.html [ Timeout ]
 accessibility/frame-disconnect-textmarker-cache-crash.html [ Timeout ]
 accessibility/mac/combobox-activedescendant-notifications.html [ Timeout ]
 accessibility/mac/relationships-in-frames.html [ Timeout ]
 
 # Text failures
 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Failure ]
-accessibility/dialog-showModal.html [ Failure ]
 accessibility/dynamically-ignored-canvas.html [ Failure ]
 accessibility/element-reflection-ariacontrols.html [ Failure ]
 accessibility/element-reflection-ariadetails.html [ Failure ]

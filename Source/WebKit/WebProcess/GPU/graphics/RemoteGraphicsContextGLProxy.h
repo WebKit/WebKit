@@ -45,7 +45,7 @@
 
 namespace WebKit {
 
-class RemoteGraphicsContextGLInitializationState;
+struct RemoteGraphicsContextGLInitializationState;
 #if ENABLE(VIDEO)
 class RemoteVideoFrameObjectHeapProxy;
 #endif

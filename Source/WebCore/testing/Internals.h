@@ -62,6 +62,7 @@ OBJC_CLASS VKCImageAnalysis;
 
 namespace WebCore {
 
+class AccessibilityObject;
 class AbstractRange;
 class AnimationTimeline;
 class ArtworkImageLoader;
@@ -686,6 +687,7 @@ public:
     void enableMockMediaCapabilities();
 
 #if ENABLE(SPEECH_SYNTHESIS)
+    void simulateSpeechSynthesizerVoiceListChange();
     void enableMockSpeechSynthesizer();
     void enableMockSpeechSynthesizerForMediaElement(HTMLMediaElement&);
     ExceptionOr<void> setSpeechUtteranceDuration(double);
@@ -1400,10 +1402,16 @@ public:
         
     bool isUsingUISideCompositing() const;
 
+    bool readyToRetrieveComputedRoleOrLabel(Element&) const;
+    String getComputedLabel(Element&) const;
+    String getComputedRole(Element&) const;
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;
     LocalFrame* frame() const;
+
+    AccessibilityObject* axObjectForElement(Element&) const;
 
     void updatePageActivityState(OptionSet<ActivityState> statesToChange, bool newValue);
 

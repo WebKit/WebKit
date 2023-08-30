@@ -46,3 +46,8 @@ header: <wtf/text/AtomString.h>
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WTF::AtomString {
     String string()
 }
+
+class WTF::UUID {
+    uint64_t high();
+    [Validator='((static_cast<UInt128>(*high) << 64) | *low) != WTF::UUID::deletedValue'] uint64_t low();
+}

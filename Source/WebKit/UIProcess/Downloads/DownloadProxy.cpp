@@ -146,8 +146,8 @@ void DownloadProxy::willSendRequest(ResourceRequest&& proposedRequest, const Res
         m_redirectChain.append(newRequest.url());
         if (!protectedThis->m_dataStore)
             return;
-        auto& networkProcessProxy = protectedThis->m_dataStore->networkProcess();
-        networkProcessProxy.send(Messages::NetworkProcess::ContinueWillSendRequest(protectedThis->m_downloadID, newRequest), 0);
+        Ref networkProcessProxy = protectedThis->m_dataStore->networkProcess();
+        networkProcessProxy->send(Messages::NetworkProcess::ContinueWillSendRequest(protectedThis->m_downloadID, newRequest), 0);
     });
 }
 

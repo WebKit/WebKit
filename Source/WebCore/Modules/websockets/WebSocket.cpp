@@ -476,10 +476,9 @@ String WebSocket::extensions() const
     return m_extensions;
 }
 
-ExceptionOr<void> WebSocket::setBinaryType(BinaryType binaryType)
+void WebSocket::setBinaryType(BinaryType binaryType)
 {
     m_binaryType = binaryType;
-    return { };
 }
 
 EventTargetInterface WebSocket::eventTargetInterface() const

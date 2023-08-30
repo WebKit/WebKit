@@ -484,7 +484,11 @@ class BundleCreator(object):
     def _get_mesa_libraries(self):
         mesa_library_names = ['libglapi', 'libEGL', 'libGL', 'libGLESv2', 'libGLX', 'libdrm', 'libgbm', 'libMesaOpenCL']
         mesa_libraries = []
-        lib_dir_dri = self._get_pkg_config_var('dri', 'libdir')
+        try:
+            lib_dir_dri = self._get_pkg_config_var('dri', 'libdir')
+        except RuntimeError:
+            lib_dir_dri = os.path.dirname(self._get_pkg_config_var('dri', 'dridriverdir'))
+
         # Some versions of the flatpak SDK ship the Mesa libraries into a non-standard path.
         candidate_lib_dirs = [ lib_dir_dri, os.path.join(lib_dir_dri, 'GL/default/lib') ]
         for lib_dir in candidate_lib_dirs:

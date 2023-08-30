@@ -53,7 +53,6 @@ public:
 
         virtual WebGLObject* getObject() const = 0;
         virtual bool isSharedObject(WebGLObject*) const = 0;
-        virtual bool isValid() const = 0;
         virtual void onDetached(const AbstractLocker&, GraphicsContextGL*) = 0;
         virtual void attach(GraphicsContextGL*, GCGLenum target, GCGLenum attachment) = 0;
         virtual void unattach(GraphicsContextGL*, GCGLenum target, GCGLenum attachment) = 0;
@@ -74,12 +73,9 @@ public:
     void setAttachmentForBoundFramebuffer(GCGLenum target, GCGLenum attachment, WebGLRenderbuffer*);
     // If an object is attached to the currently bound framebuffer, remove it.
     void removeAttachmentFromBoundFramebuffer(const AbstractLocker&, GCGLenum target, WebGLObject*);
-    // If a given attachment point for the currently bound framebuffer is not null, remove the attached object.
-    void removeAttachmentFromBoundFramebuffer(const AbstractLocker&, GCGLenum target, GCGLenum attachment);
     WebGLObject* getAttachmentObject(GCGLenum) const;
 
     void didBind() { m_hasEverBeenBound = true; }
-    bool hasStencilBuffer() const;
 
     // Wrapper for drawBuffersEXT/drawBuffersARB to work around a driver bug.
     void drawBuffers(const Vector<GCGLenum>& bufs);
@@ -105,6 +101,9 @@ private:
     WebGLFramebuffer(WebGLRenderingContextBase&, PlatformGLObject, Type);
 
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
+
+    // If a given attachment point for the currently bound framebuffer is not null, remove the attached object.
+    void removeAttachmentFromBoundFramebuffer(const AbstractLocker&, GCGLenum target, GCGLenum attachment);
 
     WebGLAttachment* getAttachment(GCGLenum) const;
 

@@ -17,3 +17,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/support/ChildWindowPostMessage.htm
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/support/MessageEvent-trusted-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/support/compare.js
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/support/cross-domain-image-receive.htm

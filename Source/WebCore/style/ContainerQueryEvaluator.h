@@ -38,7 +38,7 @@ namespace Style {
 
 class ContainerQueryEvaluator : public MQ::GenericMediaQueryEvaluator<ContainerQueryEvaluator> {
 public:
-    enum class SelectionMode : bool { Element, PseudoElement };
+    enum class SelectionMode : uint8_t { Element, PseudoElement, PartPseudoElement };
     ContainerQueryEvaluator(const Element&, SelectionMode, ScopeOrdinal, SelectorMatchingState*);
 
     bool evaluate(const CQ::ContainerQuery&) const;

@@ -181,11 +181,6 @@ static NSString *interactionRegionGroupNameForLayer(CALayer *layer)
     return [layer valueForKey:interactionRegionGroupNameKey];
 }
 
-static bool isAnyInteractionRegionLayer(CALayer *layer)
-{
-    return !!interactionRegionTypeForLayer(layer);
-}
-
 static CACornerMask convertToCACornerMask(OptionSet<InteractionRegion::CornerMask> mask)
 {
     CACornerMask cornerMask = 0;
@@ -202,25 +197,18 @@ static CACornerMask convertToCACornerMask(OptionSet<InteractionRegion::CornerMas
     return cornerMask;
 }
 
-void insertInteractionRegionLayersForLayer(NSMutableArray *sublayers, CALayer *layer)
+void updateLayersForInteractionRegions(RemoteLayerTreeNode& node)
 {
-    NSUInteger insertionPoint = 0;
-    for (CALayer *sublayer in layer.sublayers) {
-        if (!isAnyInteractionRegionLayer(sublayer))
-            break;
-
-        [sublayers insertObject:sublayer atIndex:insertionPoint];
-        insertionPoint++;
+    if (node.eventRegion().interactionRegions().isEmpty()) {
+        node.removeInteractionRegionsContainer();
+        return;
     }
-}
 
-void updateLayersForInteractionRegions(const RemoteLayerTreeNode& node)
-{
-    CALayer *layer = node.interactionRegionsLayer();
+    CALayer *container = node.ensureInteractionRegionsContainer();
 
     HashMap<std::pair<IntRect, InteractionRegion::Type>, CALayer *>existingLayers;
     HashMap<std::pair<String, InteractionRegion::Type>, CALayer *>reusableLayers;
-    for (CALayer *sublayer in layer.sublayers) {
+    for (CALayer *sublayer in container.sublayers) {
         if (auto type = interactionRegionTypeForLayer(sublayer)) {
             auto result = existingLayers.add(std::make_pair(enclosingIntRect(sublayer.frame), *type), sublayer);
             ASSERT_UNUSED(result, result.isNewEntry);
@@ -238,6 +226,7 @@ void updateLayersForInteractionRegions(const RemoteLayerTreeNode& node)
     bool applyBackgroundColorForDebugging = [[NSUserDefaults standardUserDefaults] boolForKey:@"WKInteractionRegionDebugFill"];
 
     NSUInteger insertionPoint = 0;
+    HashSet<std::pair<IntRect, InteractionRegion::Type>>dedupeSet;
     for (const WebCore::InteractionRegion& region : node.eventRegion().interactionRegions()) {
         IntRect rect = region.rectInLayerCoordinates;
         if (!node.visibleRect() || !node.visibleRect()->intersects(rect))
@@ -245,6 +234,8 @@ void updateLayersForInteractionRegions(const RemoteLayerTreeNode& node)
 
         auto interactionRegionGroupName = interactionRegionGroupNameForRegion(node.layerID(), region);
         auto key = std::make_pair(rect, region.type);
+        if (dedupeSet.contains(key))
+            continue;
         auto reuseKey = std::make_pair(interactionRegionGroupName, region.type);
 
         RetainPtr<CALayer> regionLayer;
@@ -289,9 +280,9 @@ void updateLayersForInteractionRegions(const RemoteLayerTreeNode& node)
                 [regionLayer setMaskedCorners:convertToCACornerMask(region.maskedCorners)];
         }
 
-        if ([layer.sublayers objectAtIndex:insertionPoint] != regionLayer) {
+        if ([container.sublayers objectAtIndex:insertionPoint] != regionLayer) {
             [regionLayer removeFromSuperlayer];
-            [layer insertSublayer:regionLayer.get() atIndex:insertionPoint];
+            [container insertSublayer:regionLayer.get() atIndex:insertionPoint];
         }
 
         insertionPoint++;

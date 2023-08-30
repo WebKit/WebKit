@@ -1218,6 +1218,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/ImageBitmap.h
     html/ImageBitmapBacking.h
     html/ImageData.h
+    html/ImageDataSettings.h
     html/ImageDocument.h
     html/InputMode.h
     html/LinkIconCollector.h
@@ -1241,6 +1242,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/VoidCallback.h
 
     html/canvas/ImageBitmapRenderingContextSettings.h
+    html/canvas/PredefinedColorSpace.h
     html/canvas/WebGLAny.h
     html/canvas/WebGLContextAttributes.h
     html/canvas/WebGLExtensionAny.h
@@ -2032,6 +2034,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/displaylists/DisplayList.h
     platform/graphics/displaylists/DisplayListDrawingContext.h
     platform/graphics/displaylists/DisplayListImageBuffer.h
+    platform/graphics/displaylists/DisplayListItem.h
     platform/graphics/displaylists/DisplayListItems.h
     platform/graphics/displaylists/DisplayListRecorder.h
     platform/graphics/displaylists/DisplayListRecorderImpl.h
@@ -2098,6 +2101,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/transforms/Matrix3DTransformOperation.h
     platform/graphics/transforms/MatrixTransformOperation.h
     platform/graphics/transforms/PerspectiveTransformOperation.h
+    platform/graphics/transforms/Quaternion.h
     platform/graphics/transforms/RotateTransformOperation.h
     platform/graphics/transforms/ScaleTransformOperation.h
     platform/graphics/transforms/SkewTransformOperation.h
@@ -2268,6 +2272,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/LegacyLineLayout.h
     rendering/LegacyRootInlineBox.h
     rendering/MarkedText.h
+    rendering/MotionPath.h
     rendering/OrderIterator.h
     rendering/OverlapTestRequestClient.h
     rendering/Pagination.h

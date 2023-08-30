@@ -36,9 +36,9 @@ class LineBox;
 
 class InlineDisplayLineBuilder {
 public:
-    InlineDisplayLineBuilder(const InlineFormattingContext&);
+    InlineDisplayLineBuilder(const ConstraintsForInlineContent&, const InlineFormattingContext&);
 
-    InlineDisplay::Line build(const LineLayoutResult&, const LineBox&, const ConstraintsForInlineContent&, bool lineIsFullyTruncatedInBlockDirection) const;
+    InlineDisplay::Line build(const LineLayoutResult&, const LineBox&, bool lineIsFullyTruncatedInBlockDirection) const;
 
     static std::optional<FloatRect> trailingEllipsisVisualRectAfterTruncation(LineEndingEllipsisPolicy, const InlineDisplay::Line&, InlineDisplay::Boxes&, bool isLastLineWithInlineContent);
 
@@ -49,10 +49,13 @@ private:
     };
     EnclosingLineGeometry collectEnclosingLineGeometry(const LineLayoutResult&, const LineBox&, const InlineRect& lineBoxRect) const;
 
+    const ConstraintsForInlineContent& constraints() const { return m_constraints; }
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     const Box& root() const { return formattingContext().root(); }
     LayoutState& layoutState() const { return formattingContext().layoutState(); }
 
+private:
+    const ConstraintsForInlineContent& m_constraints;
     const InlineFormattingContext& m_inlineFormattingContext;
 };
 

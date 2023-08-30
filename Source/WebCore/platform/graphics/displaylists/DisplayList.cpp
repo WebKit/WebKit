@@ -39,7 +39,7 @@
 namespace WebCore {
 namespace DisplayList {
 
-void DisplayList::append(DisplayListItem&& item)
+void DisplayList::append(Item&& item)
 {
     m_items.append(WTFMove(item));
 }
@@ -94,11 +94,11 @@ String DisplayList::asText(OptionSet<AsTextFlag> flags) const
 {
     TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
     for (const auto& item : m_items) {
-        if (!shouldDumpDisplayListItem(item, flags))
+        if (!shouldDumpItem(item, flags))
             continue;
 
         TextStream::GroupScope group(stream);
-        dumpDisplayListItem(stream, item, flags);
+        dumpItem(stream, item, flags);
     }
     return stream.release();
 }
@@ -110,7 +110,7 @@ void DisplayList::dump(TextStream& ts) const
 
     for (const auto& item : m_items) {
         TextStream::GroupScope group(ts);
-        dumpDisplayListItem(ts, item, { AsTextFlag::IncludePlatformOperations, AsTextFlag::IncludeResourceIdentifiers });
+        dumpItem(ts, item, { AsTextFlag::IncludePlatformOperations, AsTextFlag::IncludeResourceIdentifiers });
     }
 }
 

@@ -28,8 +28,10 @@
 
 #include "APIWebsitePolicies.h"
 #include "DrawingAreaProxy.h"
+#include "FormDataReference.h"
 #include "FrameInfoData.h"
 #include "HandleMessage.h"
+#include "NavigationActionData.h"
 #include "RemotePageDrawingAreaProxy.h"
 #include "RemotePageVisitedLinkStoreRegistration.h"
 #include "WebFrameProxy.h"

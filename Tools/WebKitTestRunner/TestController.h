@@ -610,6 +610,9 @@ private:
 #if ENABLE(IMAGE_ANALYSIS)
     std::unique_ptr<InstanceMethodSwizzler> m_imageAnalysisRequestSwizzler;
 #endif
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
+    std::unique_ptr<InstanceMethodSwizzler> m_enhancedWindowingEnabledSwizzler;
+#endif
     bool m_verbose { false };
     bool m_printSeparators { false };
     bool m_usingServerMode { false };

@@ -53,7 +53,7 @@ inline StringReplaceCache::Entry* StringReplaceCache::get(const String& subject,
     return nullptr;
 }
 
-inline void StringReplaceCache::set(const String& subject, RegExp* regExp, JSImmutableButterfly* result, const Vector<int>& lastMatch)
+inline void StringReplaceCache::set(const String& subject, RegExp* regExp, JSImmutableButterfly* result, MatchResult matchResult, const Vector<int>& lastMatch)
 {
     DisallowGC disallowGC;
     if (!subject.impl() || !subject.impl()->isAtom())
@@ -67,6 +67,7 @@ inline void StringReplaceCache::set(const String& subject, RegExp* regExp, JSImm
             entry1.m_subject = subjectImpl;
             entry1.m_regExp = regExp;
             entry1.m_lastMatch = lastMatch;
+            entry1.m_matchResult = matchResult;
             entry1.m_result = result;
         } else {
             auto& entry2 = m_entries[(index + 1) & (cacheSize - 1)];
@@ -74,12 +75,14 @@ inline void StringReplaceCache::set(const String& subject, RegExp* regExp, JSImm
                 entry2.m_subject = subjectImpl;
                 entry2.m_regExp = regExp;
                 entry2.m_lastMatch = lastMatch;
+                entry2.m_matchResult = matchResult;
                 entry2.m_result = result;
             } else {
                 entry2 = { };
                 entry1.m_subject = subjectImpl;
                 entry1.m_regExp = regExp;
                 entry1.m_lastMatch = lastMatch;
+                entry1.m_matchResult = matchResult;
                 entry1.m_result = result;
             }
         }

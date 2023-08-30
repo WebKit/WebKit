@@ -68,7 +68,6 @@ private:
     WeakPtr<HTMLSummaryElement, WeakPtrImplWithEventTargetData> m_defaultSummary;
     RefPtr<HTMLSlotElement> m_defaultSlot;
 
-    DetailsState m_detailsState;
     std::optional<DetailsToggleEventData> m_queuedToggleEventData;
 };
 

@@ -27,6 +27,7 @@
 #define WebProgressTrackerClient_h
 
 #include <WebCore/ProgressTrackerClient.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
