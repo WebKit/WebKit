@@ -4,7 +4,7 @@
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
- * Copyright (C) 2014 Google Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -241,7 +241,7 @@ void HTMLTextFormControlElement::dispatchFormControlChangeEvent()
 
 ExceptionOr<void> HTMLTextFormControlElement::setRangeText(StringView replacement)
 {
-    return setRangeText(replacement, selectionStart(), selectionEnd(), String());
+    return setRangeText(replacement, selectionStart(), selectionEnd(), "preserve"_s);
 }
 
 ExceptionOr<void> HTMLTextFormControlElement::setRangeText(StringView replacement, unsigned start, unsigned end, const String& selectionMode)
@@ -265,15 +265,16 @@ ExceptionOr<void> HTMLTextFormControlElement::setRangeText(StringView replacemen
 
     setValue(text, TextFieldEventBehavior::DispatchNoEvent, TextControlSetValueSelection::DoNotSet);
 
-    if (equalLettersIgnoringASCIICase(selectionMode, "select"_s)) {
+    if (selectionMode == "select"_s) {
         newSelectionStart = start;
         newSelectionEnd = start + replacementLength;
-    } else if (equalLettersIgnoringASCIICase(selectionMode, "start"_s))
+    } else if (selectionMode == "start"_s)
         newSelectionStart = newSelectionEnd = start;
-    else if (equalLettersIgnoringASCIICase(selectionMode, "end"_s))
+    else if (selectionMode == "end"_s)
         newSelectionStart = newSelectionEnd = start + replacementLength;
     else {
         // Default is "preserve".
+        ASSERT(selectionMode == "preserve"_s);
         long delta = replacementLength - (end - start);
 
         if (newSelectionStart > end)

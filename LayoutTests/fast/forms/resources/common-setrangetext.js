@@ -83,10 +83,10 @@ function runTestsShouldPass(tagName, attributes)
 
     evalAndLog("element.value = '0123456789'");
     evalAndLog("element.setSelectionRange(6, 9)");
-    evalAndLog("element.setRangeText('AB', 1, 1, 'invalid')"); // Invalid selectMode values default to preserve.
-    shouldBeEqualToString("element.value", "0AB123456789");
-    shouldBe("element.selectionStart", "8");
-    shouldBe("element.selectionEnd", "11");
+    shouldThrow("element.setRangeText('AB', 1, 1, 'invalid')"); // Invalid selectMode should throw TypeError
+    shouldBeEqualToString("element.value", "0123456789");
+    shouldBe("element.selectionStart", "6");
+    shouldBe("element.selectionEnd", "9");
 
     evalAndLog("element.value = '0123456789'");
     evalAndLog("element.setSelectionRange(6, 9)");

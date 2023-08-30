@@ -78,9 +78,9 @@ PASS element.selectionEnd is 9
 element.value = '0123456789'
 element.setSelectionRange(6, 9)
 element.setRangeText('AB', 1, 1, 'invalid')
-PASS element.value is "0AB123456789"
-PASS element.selectionStart is 8
-PASS element.selectionEnd is 11
+PASS element.value is "0123456789"
+PASS element.selectionStart is 6
+PASS element.selectionEnd is 9
 element.value = '0123456789'
 element.setSelectionRange(6, 9)
 element.setRangeText('A', 1, 3, 'preserve')
