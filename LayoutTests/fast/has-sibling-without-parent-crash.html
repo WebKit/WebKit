@@ -1,0 +1,13 @@
+<div id=host>
+<template shadowrootmode=open>
+    <style>
+        div:has(~.next) { color:green; }
+    </style>
+    <div>This should be green</div>
+    <div id=target></div>
+</template>
+</div>
+<script>
+document.body.offsetLeft;
+host.shadowRoot.querySelector("#target").classList.add("next");
+</script>
