@@ -57,7 +57,7 @@ else:
     if platform.system() == 'Windows':
         AutoInstall.register(Package('win_inet_pton', Version(1, 1, 0), pypi_name='win-inet-pton'))
 
-if sys.version_info >= (3, 8):
+if sys.version_info >= (3, 12):
     AutoInstall.register(Package('setuptools', Version(68, 1, 2)))
 elif sys.version_info >= (3, 0):
     AutoInstall.register(Package('setuptools', Version(56, 0, 0)))
