@@ -97,11 +97,8 @@ private:
 SoupNetworkSession::SoupNetworkSession(PAL::SessionID sessionID)
     : m_sessionID(sessionID)
 {
-    // Values taken from http://www.browserscope.org/ following
-    // the rule "Do What Every Other Modern Browser Is Doing". They seem
-    // to significantly improve page loading time compared to soup's
-    // default values.
-    static const int maxConnections = 17;
+    // These values match Chrome 81. https://stackoverflow.com/a/30064610
+    static const int maxConnections = 256;
     static const int maxConnectionsPerHost = 6;
 
     m_soupSession = adoptGRef(soup_session_new_with_options(
