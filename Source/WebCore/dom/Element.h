@@ -110,7 +110,7 @@ enum class ContentRelevancy : uint8_t {
     OnScreen = 1 << 0,
     Focused = 1 << 1,
     IsInTopLayer = 1 << 2,
-    // FIXME: add Selected (see https://bugs.webkit.org/show_bug.cgi?id=258194).
+    Selected = 1 << 3,
 };
 
 namespace Style {
