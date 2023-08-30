@@ -2515,6 +2515,11 @@ static BOOL isBuiltInScrollViewGestureRecognizer(UIGestureRecognizer *recognizer
         || [recognizer isKindOfClass:scrollViewKnobLongPressGestureRecognizerClass];
 }
 
+- (BOOL)_isContextMenuGestureRecognizerForFailureRelationships:(UIGestureRecognizer *)gestureRecognizer
+{
+    return [gestureRecognizer.name isEqualToString:@"com.apple.UIKit.clickPresentationFailure"] && gestureRecognizer.view == self;
+}
+
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)preventingGestureRecognizer canPreventGestureRecognizer:(UIGestureRecognizer *)preventedGestureRecognizer
 {
     // A long-press gesture can not be recognized while panning, but a pan can be recognized
@@ -2647,7 +2652,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return [(WKDeferringGestureRecognizer *)otherGestureRecognizer shouldDeferGestureRecognizer:gestureRecognizer];
 
 #if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS)
-    if (gestureRecognizer == _imageAnalysisTimeoutGestureRecognizer && otherGestureRecognizer == [self.contextMenuInteraction gestureRecognizerForFailureRelationships])
+    if (gestureRecognizer == _imageAnalysisTimeoutGestureRecognizer && [self _isContextMenuGestureRecognizerForFailureRelationships:otherGestureRecognizer])
         return YES;
 #endif
 
@@ -2660,7 +2665,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return [(WKDeferringGestureRecognizer *)gestureRecognizer shouldDeferGestureRecognizer:otherGestureRecognizer];
 
 #if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS)
-    if (gestureRecognizer == [self.contextMenuInteraction gestureRecognizerForFailureRelationships] && otherGestureRecognizer == _imageAnalysisTimeoutGestureRecognizer)
+    if ([self _isContextMenuGestureRecognizerForFailureRelationships:gestureRecognizer] && otherGestureRecognizer == _imageAnalysisTimeoutGestureRecognizer)
         return YES;
 #endif
 
@@ -8869,15 +8874,8 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
         return [gestureRecognizer isKindOfClass:UIPanGestureRecognizer.class] || [gestureRecognizer isKindOfClass:UIPinchGestureRecognizer.class];
 
     BOOL mayDelayReset = [&]() -> BOOL {
-#if USE(UICONTEXTMENU) && HAVE(LINK_PREVIEW)
-        if (gestureRecognizer == [self.contextMenuInteraction gestureRecognizerForFailureRelationships])
+        if ([self _isContextMenuGestureRecognizerForFailureRelationships:gestureRecognizer])
             return YES;
-#endif
-
-#if HAVE(TEXT_INTERACTION_WITH_CONTEXT_MENU_INTERACTION)
-        if (gestureRecognizer == [_textInteractionAssistant contextMenuInteraction].gestureRecognizerForFailureRelationships)
-            return YES;
-#endif
 
 #if ENABLE(DRAG_SUPPORT)
         if (gestureRecognizer.delegate == [_dragInteraction _initiationDriver])
