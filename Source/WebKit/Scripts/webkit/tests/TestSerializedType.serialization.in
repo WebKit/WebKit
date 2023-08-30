@@ -136,6 +136,7 @@ struct SoftLinkedMember {
 }
 
 using WebCore::SharedStringHash = uint32_t
+using WebCore::UsingWithSemicolon = uint32_t;
 
 #if ENABLE(TEST_FEATURE)
 headers: "CommonHeader.h"
