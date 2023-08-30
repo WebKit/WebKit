@@ -5284,6 +5284,8 @@ webkit.org/b/233340 imported/w3c/web-platform-tests/css/motion/offset-anchor-tra
 # CSS motion path ray test failing due to getting wrong size from containing block.
 webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-path-ray-007.html [ ImageOnlyFailure ]
 webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-path-ray-009.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-ray-012.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-ray-013.html [ ImageOnlyFailure ]
 
 # CSS motion path URL support.
 imported/w3c/web-platform-tests/css/motion/offset-path-url-002.html [ ImageOnlyFailure ]
@@ -5294,10 +5296,8 @@ imported/w3c/web-platform-tests/css/motion/offset-path-url-009.html [ ImageOnlyF
 imported/w3c/web-platform-tests/css/motion/offset-path-url-010.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-url-011.html [ ImageOnlyFailure ]
 
-# CSS motion path tests for missing <position> support in ray().
+# CSS motion path tests for missing offset-position: normal support in ray().
 imported/w3c/web-platform-tests/css/motion/offset-path-ray-011.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-ray-012.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-ray-013.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-ray-014.html [ ImageOnlyFailure ]
 
 # CSS motion path tests for missing <coord-box> support.
@@ -5305,6 +5305,8 @@ imported/w3c/web-platform-tests/css/motion/offset-path-coord-box-001.html [ Imag
 imported/w3c/web-platform-tests/css/motion/offset-path-coord-box-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-coord-box-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-coord-box-004.html [ ImageOnlyFailure ]
+
+# CSS motion path tests for missing parsing support for <coord-box> with ray.
 imported/w3c/web-platform-tests/css/motion/offset-path-ray-015.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-ray-016.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-ray-017.html [ ImageOnlyFailure ]

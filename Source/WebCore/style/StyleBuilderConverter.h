@@ -751,6 +751,10 @@ inline RefPtr<PathOperation> BuilderConverter::convertPathOperation(BuilderState
             return nullptr;
         }
 
+        auto position = rayValue.position();
+        if (position)
+            return RayPathOperation::create(rayValue.angle()->computeDegrees(), size, rayValue.isContaining(), convertPosition(builderState, *position));
+
         return RayPathOperation::create(rayValue.angle()->computeDegrees(), size, rayValue.isContaining());
     }
 

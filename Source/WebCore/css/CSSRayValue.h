@@ -29,6 +29,7 @@
 #pragma once
 
 #include "CSSPrimitiveValue.h"
+#include "CSSValuePair.h"
 
 namespace WebCore {
 
@@ -36,9 +37,9 @@ namespace WebCore {
 // https://drafts.fxtf.org/motion-1/#funcdef-offset-path-ray.
 class CSSRayValue final : public CSSValue {
 public:
-    static Ref<CSSRayValue> create(Ref<CSSPrimitiveValue>&& angle, CSSValueID size, bool isContaining)
+    static Ref<CSSRayValue> create(Ref<CSSPrimitiveValue>&& angle, CSSValueID size, bool isContaining, RefPtr<CSSValuePair>&& position)
     {
-        return adoptRef(*new CSSRayValue(WTFMove(angle), size, isContaining));
+        return adoptRef(*new CSSRayValue(WTFMove(angle), size, isContaining, WTFMove(position)));
     }
 
     String customCSSText() const;
@@ -46,15 +47,17 @@ public:
     Ref<CSSPrimitiveValue> angle() const { return m_angle; }
     CSSValueID size() const { return m_size; }
     bool isContaining() const { return m_isContaining; }
+    RefPtr<CSSValuePair> position() const { return m_position; }
 
     bool equals(const CSSRayValue&) const;
 
 private:
-    CSSRayValue(Ref<CSSPrimitiveValue>&& angle, CSSValueID size, bool isContaining)
+    CSSRayValue(Ref<CSSPrimitiveValue>&& angle, CSSValueID size, bool isContaining, RefPtr<CSSValuePair>&& position)
         : CSSValue(RayClass)
         , m_angle(WTFMove(angle))
         , m_size(size)
         , m_isContaining(isContaining)
+        , m_position(WTFMove(position))
     {
         ASSERT(m_angle->isAngle());
     }
@@ -62,6 +65,7 @@ private:
     Ref<CSSPrimitiveValue> m_angle;
     CSSValueID m_size;
     bool m_isContaining;
+    RefPtr<CSSValuePair> m_position;
 };
 
 } // namespace WebCore

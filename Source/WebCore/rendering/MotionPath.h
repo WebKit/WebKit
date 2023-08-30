@@ -36,6 +36,7 @@ class RayPathOperation;
 struct MotionPathData {
     FloatRect containingBlockBoundingRect;
     FloatPoint offsetFromContainingBlock;
+    FloatPoint usedStartingPosition;
 };
 
 class MotionPath {

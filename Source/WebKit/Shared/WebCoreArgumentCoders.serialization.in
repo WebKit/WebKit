@@ -2683,6 +2683,7 @@ header: <WebCore/MotionPath.h>
 [CustomHeader] struct WebCore::MotionPathData {
     WebCore::FloatRect containingBlockBoundingRect;
     WebCore::FloatPoint offsetFromContainingBlock;
+    WebCore::FloatPoint usedStartingPosition;
 };
 
 [CustomHeader] class WebCore::TransformOperationData {
@@ -2713,10 +2714,17 @@ header: <WebCore/PathOperation.h>
     Sides
 };
 
+header: <WebCore/LengthPoint.h>
+struct WebCore::LengthPoint {
+    WebCore::Length x();
+    WebCore::Length y();
+}
+
 [RefCounted, CustomHeader] class WebCore::RayPathOperation {
     float angle();
     WebCore::RayPathOperation::Size size();
     bool isContaining();
+    WebCore::LengthPoint position();
 }
 
 [RefCounted] class WebCore::PathOperation subclasses {
@@ -5387,10 +5395,6 @@ enum class WebCore::StorageType : uint8_t {
 };
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
-struct WebCore::LengthPoint {
-    WebCore::Length x();
-    WebCore::Length y();
-}
 
 class WebCore::OffsetRotation {
     bool hasAuto();

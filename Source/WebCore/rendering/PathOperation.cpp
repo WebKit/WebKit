@@ -74,14 +74,15 @@ const SVGElement* ReferencePathOperation::element() const
     return m_element.get();
 }
 
-Ref<RayPathOperation> RayPathOperation::create(float angle, Size size, bool isContaining)
+Ref<RayPathOperation> RayPathOperation::create(float angle, Size size, bool isContaining, LengthPoint&& position)
 {
-    return adoptRef(*new RayPathOperation(angle, size, isContaining));
+    return adoptRef(*new RayPathOperation(angle, size, isContaining, WTFMove(position)));
 }
 
 Ref<PathOperation> RayPathOperation::clone() const
 {
-    return adoptRef(*new RayPathOperation(m_angle, m_size, m_isContaining));
+    auto position = m_position;
+    return adoptRef(*new RayPathOperation(m_angle, m_size, m_isContaining, WTFMove(position)));
 }
 
 bool RayPathOperation::canBlend(const PathOperation& to) const
@@ -95,7 +96,7 @@ RefPtr<PathOperation> RayPathOperation::blend(const PathOperation* to, const Ble
 {
     ASSERT(is<RayPathOperation>(to));
     auto& toRayPathOperation = downcast<RayPathOperation>(*to);
-    return RayPathOperation::create(WebCore::blend(m_angle, toRayPathOperation.angle(), context), m_size, m_isContaining);
+    return RayPathOperation::create(WebCore::blend(m_angle, toRayPathOperation.angle(), context), m_size, m_isContaining, WebCore::blend(m_position, toRayPathOperation.position(), context));
 }
 
 const std::optional<Path> RayPathOperation::getPath(const TransformOperationData& data) const

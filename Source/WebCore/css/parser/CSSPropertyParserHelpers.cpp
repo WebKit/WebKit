@@ -7051,7 +7051,6 @@ static RefPtr<CSSValue> consumeBasicShapeOrBox(CSSParserTokenRange& range, const
 
 // Parses the ray() definition as defined in https://drafts.fxtf.org/motion-1/#ray-function
 // ray( <angle> && <ray-size>? && contain? && [at <position>]? )
-// FIXME: Implement `at <position>`.
 static RefPtr<CSSRayValue> consumeRayShape(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     if (range.peek().type() != FunctionToken || range.peek().functionId() != CSSValueRay)
@@ -7062,12 +7061,20 @@ static RefPtr<CSSRayValue> consumeRayShape(CSSParserTokenRange& range, const CSS
     RefPtr<CSSPrimitiveValue> angle;
     std::optional<CSSValueID> size;
     bool isContaining = false;
+    std::optional<PositionCoordinates> position;
     while (!args.atEnd()) {
         if (!angle && (angle = consumeAngle(args, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid)))
             continue;
         if (!size && (size = consumeIdentRaw<CSSValueClosestSide, CSSValueClosestCorner, CSSValueFarthestSide, CSSValueFarthestCorner, CSSValueSides>(args)))
             continue;
         if (!isContaining && (isContaining = consumeIdentRaw<CSSValueContain>(args).has_value()))
+            continue;
+        auto consumeAtPosition = [&](CSSParserTokenRange& subrange) -> std::optional<PositionCoordinates> {
+            if (consumeIdentRaw<CSSValueAt>(subrange))
+                return consumePositionCoordinates(subrange, context.mode, UnitlessQuirk::Forbid, PositionSyntax::Position);
+            return std::nullopt;
+        };
+        if (!position && (position = consumeAtPosition(args)))
             continue;
         return nullptr;
     }
@@ -7076,7 +7083,12 @@ static RefPtr<CSSRayValue> consumeRayShape(CSSParserTokenRange& range, const CSS
     if (!angle)
         return nullptr;
 
-    return CSSRayValue::create(angle.releaseNonNull(), size.value_or(CSSValueClosestSide), isContaining);
+    return CSSRayValue::create(
+        angle.releaseNonNull(),
+        size.value_or(CSSValueClosestSide),
+        isContaining,
+        position ? RefPtr { CSSValuePair::createNoncoalescing(WTFMove(position->x), WTFMove(position->y)) } : nullptr
+    );
 }
 
 // Consumes shapes accepted by clip-path and offset-path.
