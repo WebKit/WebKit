@@ -939,7 +939,7 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
         updateFillImages(oldStyle ? &oldStyle->backgroundLayers() : nullptr, style ? &style->backgroundLayers() : nullptr);
         updateFillImages(oldStyle ? &oldStyle->maskLayers() : nullptr, style ? &style->maskLayers() : nullptr);
         updateImage(oldStyle ? oldStyle->borderImage().image() : nullptr, style ? style->borderImage().image() : nullptr);
-        updateImage(oldStyle ? oldStyle->maskBoxImage().image() : nullptr, style ? style->maskBoxImage().image() : nullptr);
+        updateImage(oldStyle ? oldStyle->maskBorder().image() : nullptr, style ? style->maskBorder().image() : nullptr);
         updateShapeImage(oldStyle ? oldStyle->shapeOutside() : nullptr, style ? style->shapeOutside() : nullptr);
     };
 
@@ -1080,7 +1080,7 @@ void RenderElement::willBeDestroyed()
         for (auto* maskLayer = &style.maskLayers(); maskLayer; maskLayer = maskLayer->next())
             unregisterImage(maskLayer->image());
         unregisterImage(style.borderImage().image());
-        unregisterImage(style.maskBoxImage().image());
+        unregisterImage(style.maskBorder().image());
         if (auto shapeValue = style.shapeOutside())
             unregisterImage(shapeValue->image());
     };

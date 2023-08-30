@@ -7356,6 +7356,11 @@ bool consumeBorderImageComponents(CSSPropertyID property, CSSParserTokenRange& r
         } else
             return false;
     } while (!range.atEnd());
+
+    // If we're setting from the legacy shorthand, make sure to set the `mask-border-slice` fill to true.
+    if (property == CSSPropertyWebkitMaskBoxImage && !slice)
+        slice = CSSBorderImageSliceValue::create({ CSSPrimitiveValue::create(0), CSSPrimitiveValue::create(0), CSSPrimitiveValue::create(0), CSSPrimitiveValue::create(0) }, true);
+
     return true;
 }
 

@@ -46,7 +46,7 @@ inline DataRef<NinePieceImage::Data>& NinePieceImage::defaultMaskData()
     static NeverDestroyed<DataRef<Data>> maskData { Data::create() };
     auto& data = maskData.get().access();
     data.imageSlices = LengthBox(0);
-    data.fill = true;
+    data.fill = false;
     data.borderSlices = LengthBox();
     return maskData.get();
 }

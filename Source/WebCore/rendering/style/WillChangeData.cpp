@@ -112,6 +112,7 @@ bool WillChangeData::propertyCreatesStackingContext(CSSPropertyID property)
     case CSSPropertyWebkitBackdropFilter:
 #endif
     case CSSPropertyMaskImage:
+    case CSSPropertyMaskBorder:
     case CSSPropertyWebkitMaskBoxImage:
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     case CSSPropertyWebkitOverflowScrolling:

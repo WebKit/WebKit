@@ -154,8 +154,8 @@ void InlineBoxPainter::paintMask()
     auto localRect = LayoutRect { m_inlineBox.visualRect() };
     LayoutPoint adjustedPaintOffset = m_paintOffset + localRect.location();
 
-    const NinePieceImage& maskNinePieceImage = renderer().style().maskBoxImage();
-    StyleImage* maskBoxImage = renderer().style().maskBoxImage().image();
+    const NinePieceImage& maskNinePieceImage = renderer().style().maskBorder();
+    StyleImage* maskBorder = renderer().style().maskBorder().image();
 
     // Figure out if we need to push a transparency layer to render our mask.
     bool pushTransparencyLayer = false;
@@ -163,7 +163,7 @@ void InlineBoxPainter::paintMask()
     bool flattenCompositingLayers = renderer().view().frameView().paintBehavior().contains(PaintBehavior::FlattenCompositingLayers);
     CompositeOperator compositeOp = CompositeOperator::SourceOver;
     if (!compositedMask || flattenCompositingLayers) {
-        if ((maskBoxImage && renderer().style().maskLayers().hasImage()) || renderer().style().maskLayers().next())
+        if ((maskBorder && renderer().style().maskLayers().hasImage()) || renderer().style().maskLayers().next())
             pushTransparencyLayer = true;
 
         compositeOp = CompositeOperator::DestinationIn;
@@ -178,8 +178,8 @@ void InlineBoxPainter::paintMask()
 
     paintFillLayers(Color(), renderer().style().maskLayers(), paintRect, compositeOp);
 
-    bool hasBoxImage = maskBoxImage && maskBoxImage->canRender(&renderer(), renderer().style().effectiveZoom());
-    if (!hasBoxImage || !maskBoxImage->isLoaded()) {
+    bool hasBoxImage = maskBorder && maskBorder->canRender(&renderer(), renderer().style().effectiveZoom());
+    if (!hasBoxImage || !maskBorder->isLoaded()) {
         if (pushTransparencyLayer)
             m_paintInfo.context().endTransparencyLayer();
         return; // Don't paint anything while we wait for the image to load.

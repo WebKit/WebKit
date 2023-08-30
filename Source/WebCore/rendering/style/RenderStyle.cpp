@@ -1152,7 +1152,7 @@ static bool rareDataChangeRequiresLayerRepaint(const StyleRareNonInheritedData& 
 #endif
 
     // FIXME: In SVG this needs to trigger a layout.
-    if (first.maskBoxImage != second.maskBoxImage)
+    if (first.maskBorder != second.maskBorder)
         return true;
 
     return false;

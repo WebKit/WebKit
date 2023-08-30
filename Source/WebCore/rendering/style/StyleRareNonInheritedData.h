@@ -131,7 +131,7 @@ public:
     
     RefPtr<StyleReflection> boxReflect;
 
-    NinePieceImage maskBoxImage;
+    NinePieceImage maskBorder;
 
     LengthSize pageSize;
 

@@ -887,6 +887,8 @@ inline RefPtr<StyleReflection> BuilderConverter::convertReflection(BuilderState&
     auto& reflectValue = downcast<CSSReflectValue>(value);
 
     NinePieceImage mask(NinePieceImage::Type::Mask);
+    mask.setFill(true);
+
     builderState.styleMap().mapNinePieceImage(reflectValue.mask(), mask);
 
     auto reflection = StyleReflection::create();

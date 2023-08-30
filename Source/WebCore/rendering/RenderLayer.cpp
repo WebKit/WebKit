@@ -5501,7 +5501,7 @@ RenderStyle RenderLayer::createReflectionStyle()
     newStyle.setTransform(transform);
 
     // Map in our mask.
-    newStyle.setMaskBoxImage(renderer().style().boxReflect()->mask());
+    newStyle.setMaskBorder(renderer().style().boxReflect()->mask());
 
     // Style has transform and mask, so needs to be stacking context.
     newStyle.setUsedZIndex(0);

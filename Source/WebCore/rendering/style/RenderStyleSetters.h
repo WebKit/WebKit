@@ -223,8 +223,8 @@ inline void RenderStyle::setMarqueeDirection(MarqueeDirection d) { SET_DOUBLY_NE
 inline void RenderStyle::setMarqueeIncrement(Length&& length) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, marquee, increment, WTFMove(length)); }
 inline void RenderStyle::setMarqueeLoopCount(int i) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, marquee, loops, i); }
 inline void RenderStyle::setMarqueeSpeed(int speed) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, marquee, speed, speed); }
-inline void RenderStyle::setMaskBoxImage(const NinePieceImage& image) { SET_NESTED(m_nonInheritedData, rareData, maskBoxImage, image); }
-inline void RenderStyle::setMaskBoxImageSource(RefPtr<StyleImage>&& value) { m_nonInheritedData.access().rareData.access().maskBoxImage.setImage(WTFMove(value)); }
+inline void RenderStyle::setMaskBorder(const NinePieceImage& image) { SET_NESTED(m_nonInheritedData, rareData, maskBorder, image); }
+inline void RenderStyle::setMaskBorderSource(RefPtr<StyleImage>&& value) { m_nonInheritedData.access().rareData.access().maskBorder.setImage(WTFMove(value)); }
 inline void RenderStyle::setMaskImage(RefPtr<StyleImage>&& image) { m_nonInheritedData.access().miscData.access().mask.access().setImage(WTFMove(image)); }
 inline void RenderStyle::setMaskRepeat(FillRepeatXY repeat) { SET_DOUBLY_NESTED_PAIR(m_nonInheritedData, miscData, mask, m_repeat, repeat, m_repeatSet, true); }
 inline void RenderStyle::setMaskSize(LengthSize size) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, mask, m_sizeLength, WTFMove(size)); }

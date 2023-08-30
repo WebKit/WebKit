@@ -4292,12 +4292,102 @@
                     "mask-origin",
                     "mask-clip",
                     "mask-composite",
-                    "mask-mode"
+                    "mask-mode",
+                    "mask-border-source",
+                    "mask-border-slice",
+                    "mask-border-width",
+                    "mask-border-outset",
+                    "mask-border-repeat"
                 ]
             },
             "specification": {
                 "category": "css-masking",
                 "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask"
+            }
+        },
+        "mask-border": {
+            "codegen-properties": {
+                "longhands": [
+                    "mask-border-source",
+                    "mask-border-slice",
+                    "mask-border-width",
+                    "mask-border-outset",
+                    "mask-border-repeat"
+                ]
+            },
+            "specification": {
+                "category": "css-masking"
+            }
+        },
+        "mask-border-outset": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-mask-box-image-outset"
+                ],
+                "custom": "All",
+                "parser-function": "consumeBorderImageOutset",
+                "parser-grammar-unused": "[ <number [0,inf]> | <length [0,inf]> ]{1,4}",
+                "parser-grammar-unused-reason": "Needs support for '{A,B}' multipliers."
+
+            },
+            "specification": {
+                "category": "css-masking"
+            }
+        },
+        "mask-border-repeat": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-mask-box-image-repeat"
+                ],
+                "custom": "All",
+                "parser-function": "consumeBorderImageRepeat",
+                "parser-grammar-unused": "[ stretch | repeat | space | round ]{1,2}",
+                "parser-grammar-unused-reason": "Needs support for '{A,B}' multipliers."
+            },
+            "specification": {
+                "category": "css-masking"
+            }
+        },
+        "mask-border-slice": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-mask-box-image-slice"
+                ],
+                "custom": "All",
+                "parser-function": "consumeBorderImageSlice",
+                "parser-function-requires-current-property": true,
+                "parser-grammar-unused": "[ <number [0,inf]> | <percentage [0,inf]> ]{1,4} && fill?",
+                "parser-grammar-unused-reason": "Needs support for '{A,B}' multipliers, '&&' groups and optionals."
+            },
+            "specification": {
+                "category": "css-masking"
+            }
+        },
+        "mask-border-source": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-mask-box-image-source"
+                ],
+                "converter": "StyleImage<CSSPropertyMaskBorderSource>",
+                "parser-grammar": "none | <image>"
+            },
+            "specification": {
+                "category": "css-masking"
+            }
+        },
+        "mask-border-width": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-mask-box-image-width"
+                ],
+                "custom": "All",
+                "parser-function": "consumeBorderImageWidth",
+                "parser-function-requires-current-property": true,
+                "parser-grammar-unused": "[ <length-percentage [0,inf]> | <number [0,inf]> | auto ]{1,4}",
+                "parser-grammar-unused-reason": "Needs support for '{A,B}' multipliers."
+            },
+            "specification": {
+                "category": "css-masking"
             }
         },
         "mask-clip": {
@@ -7839,77 +7929,16 @@
         "-webkit-mask-box-image": {
             "codegen-properties": {
                 "longhands": [
-                    "-webkit-mask-box-image-source",
-                    "-webkit-mask-box-image-slice",
-                    "-webkit-mask-box-image-width",
-                    "-webkit-mask-box-image-outset",
-                    "-webkit-mask-box-image-repeat"
+                    "mask-border-source",
+                    "mask-border-slice",
+                    "mask-border-width",
+                    "mask-border-outset",
+                    "mask-border-repeat"
                 ]
             },
-            "status": "non-standard",
-            "specification": {
-                "category": "css-masking"
-            }
-        },
-        "-webkit-mask-box-image-outset": {
-            "codegen-properties": {
-                "custom": "All",
-                "parser-function": "consumeBorderImageOutset",
-                "parser-grammar-unused": "[ <number [0,inf]> | <length [0,inf]> ]{1,4}",
-                "parser-grammar-unused-reason": "Needs support for '{A,B}' multipliers."
-
-            },
-            "status": "non-standard",
-            "specification": {
-                "category": "css-masking"
-            }
-        },
-        "-webkit-mask-box-image-repeat": {
-            "codegen-properties": {
-                "custom": "All",
-                "parser-function": "consumeBorderImageRepeat",
-                "parser-grammar-unused": "[ stretch | repeat | space | round ]{1,2}",
-                "parser-grammar-unused-reason": "Needs support for '{A,B}' multipliers."
-            },
-            "status": "non-standard",
-            "specification": {
-                "category": "css-masking"
-            }
-        },
-        "-webkit-mask-box-image-slice": {
-            "codegen-properties": {
-                "custom": "All",
-                "parser-function": "consumeBorderImageSlice",
-                "parser-function-requires-current-property": true,
-                "parser-grammar-unused": "[ <number [0,inf]> | <percentage [0,inf]> ]{1,4} && fill?",
-                "parser-grammar-unused-reason": "Needs support for '{A,B}' multipliers, '&&' groups and optionals."
-            },
-            "status": "non-standard",
-            "specification": {
-                "category": "css-masking"
-            }
-        },
-        "-webkit-mask-box-image-source": {
-            "codegen-properties": {
-                "converter": "StyleImage<CSSPropertyWebkitMaskBoxImageSource>",
-                "parser-grammar": "none | <image>"
-            },
-            "status": "non-standard",
-            "specification": {
-                "category": "css-masking"
-            }
-        },
-        "-webkit-mask-box-image-width": {
-            "codegen-properties": {
-                "custom": "All",
-                "parser-function": "consumeBorderImageWidth",
-                "parser-function-requires-current-property": true,
-                "parser-grammar-unused": "[ <length-percentage [0,inf]> | <number [0,inf]> | auto ]{1,4}",
-                "parser-grammar-unused-reason": "Needs support for '{A,B}' multipliers."
-            },
-            "status": "non-standard",
-            "specification": {
-                "category": "css-masking"
+            "status": {
+                "status": "obsolete",
+                "comment": "Differs from mask-border in that it always includes the 'fill' keyword in 'mask-border-slice'."
             }
         },
         "-webkit-mask-clip": {

@@ -3917,18 +3917,19 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return nullptr;
         return valueForNinePieceImageQuad(style.borderImage().borderSlices(), style);
     case CSSPropertyWebkitMaskBoxImage:
-        return valueForNinePieceImage(propertyID, style.maskBoxImage(), style);
-    case CSSPropertyWebkitMaskBoxImageOutset:
-        return valueForNinePieceImageQuad(style.maskBoxImage().outset(), style);
-    case CSSPropertyWebkitMaskBoxImageRepeat:
-        return valueForNinePieceImageRepeat(style.maskBoxImage());
-    case CSSPropertyWebkitMaskBoxImageSlice:
-        return valueForNinePieceImageSlice(style.maskBoxImage());
-    case CSSPropertyWebkitMaskBoxImageWidth:
-        return valueForNinePieceImageQuad(style.maskBoxImage().borderSlices(), style);
-    case CSSPropertyWebkitMaskBoxImageSource:
-        if (style.maskBoxImageSource())
-            return style.maskBoxImageSource()->computedStyleValue(style);
+    case CSSPropertyMaskBorder:
+        return valueForNinePieceImage(propertyID, style.maskBorder(), style);
+    case CSSPropertyMaskBorderOutset:
+        return valueForNinePieceImageQuad(style.maskBorder().outset(), style);
+    case CSSPropertyMaskBorderRepeat:
+        return valueForNinePieceImageRepeat(style.maskBorder());
+    case CSSPropertyMaskBorderSlice:
+        return valueForNinePieceImageSlice(style.maskBorder());
+    case CSSPropertyMaskBorderWidth:
+        return valueForNinePieceImageQuad(style.maskBorder().borderSlices(), style);
+    case CSSPropertyMaskBorderSource:
+        if (style.maskBorderSource())
+            return style.maskBorderSource()->computedStyleValue(style);
         return CSSPrimitiveValue::create(CSSValueNone);
     case CSSPropertyWebkitInitialLetter: {
         auto drop = !style.initialLetterDrop() ? CSSPrimitiveValue::create(CSSValueNormal) : CSSPrimitiveValue::create(style.initialLetterDrop());
