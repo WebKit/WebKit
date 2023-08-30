@@ -56,6 +56,8 @@ constexpr WebCore::FramesPerSecond DisplayLinkFramesPerSecond = 60;
 
 @end
 
+static void* displayRefreshRateObservationContext = &displayRefreshRateObservationContext;
+
 @implementation WKDisplayLinkHandler
 
 - (id)initWithDrawingAreaProxy:(WebKit::RemoteLayerTreeDrawingAreaProxy*)drawingAreaProxy
@@ -74,6 +76,7 @@ constexpr WebCore::FramesPerSecond DisplayLinkFramesPerSecond = 60;
         if (createDisplayLink) {
             _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkFired:)];
             [_displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
+            [_displayLink.display addObserver:self forKeyPath:@"refreshRate" options:NSKeyValueObservingOptionNew context:displayRefreshRateObservationContext];
             _displayLink.paused = YES;
 
             if (drawingAreaProxy && !drawingAreaProxy->page().preferences().preferPageRenderingUpdatesNear60FPSEnabled())
@@ -112,6 +115,7 @@ constexpr WebCore::FramesPerSecond DisplayLinkFramesPerSecond = 60;
 
 - (void)invalidate
 {
+    [_displayLink.display removeObserver:self forKeyPath:@"refreshRate" context:displayRefreshRateObservationContext];
     [_displayLink invalidate];
     _displayLink = nullptr;
 
@@ -139,6 +143,13 @@ constexpr WebCore::FramesPerSecond DisplayLinkFramesPerSecond = 60;
 #endif
 }
 
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context != displayRefreshRateObservationContext)
+        return;
+    [self didChangeNominalFramesPerSecond];
+}
+
 - (WebCore::FramesPerSecond)nominalFramesPerSecond
 {
     auto& page = _drawingAreaProxy->page();
@@ -149,6 +160,13 @@ constexpr WebCore::FramesPerSecond DisplayLinkFramesPerSecond = 60;
     }
 
     return DisplayLinkFramesPerSecond;
+}
+
+- (void)didChangeNominalFramesPerSecond
+{
+    Ref page = _drawingAreaProxy->page();
+    if (auto displayID = page->displayID())
+        page->windowScreenDidChange(*displayID);
 }
 
 @end
