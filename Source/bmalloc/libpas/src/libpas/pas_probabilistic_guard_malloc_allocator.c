@@ -255,7 +255,7 @@ size_t pas_probabilistic_guard_malloc_get_free_wasted_memory(void)
  * pgm_enabled config will ultimately be called.
  *
  * PGM has two layers before an allocation is called. The first layer is the activation check, which is called once on process initialization.
- * This will determine if PGM will be enabled while the process is alive. This is currently set to 1 in 1000, but
+ * This will determine if PGM will be enabled while the process is alive. This is currently set to 1 in 100, but
  * from benchmarking turning this on 100% of the time will not cause any noticeable memory or performance degradation.
  * If the activation check fails then PGM will never be enabled during the process' lifetime.
  *
@@ -273,7 +273,7 @@ void pas_probabilistic_guard_malloc_initialize_pgm(void)
     if (!pas_probabilistic_guard_malloc_is_initialized) {
         pas_probabilistic_guard_malloc_is_initialized = true;
 
-        if (PAS_LIKELY(pas_get_fast_random(1000) >= 1)) {
+        if (PAS_LIKELY(pas_get_fast_random(100) >= 1)) {
             pas_probabilistic_guard_malloc_can_use = false;
             return;
         }
