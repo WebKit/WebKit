@@ -63,7 +63,6 @@ public:
     void clearAllDecoratedFoundText();
 
     void didBeginTextSearchOperation();
-    void didEndTextSearchOperation();
 
     void addLayerForFindOverlay(CompletionHandler<void(WebCore::PlatformLayerIdentifier)>&&);
     void removeLayerForFindOverlay();

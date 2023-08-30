@@ -1948,7 +1948,6 @@ private:
     void scrollTextRangeToVisible(const WebFoundTextRange&);
     void clearAllDecoratedFoundText();
     void didBeginTextSearchOperation();
-    void didEndTextSearchOperation();
 
     void requestRectForFoundTextRange(const WebFoundTextRange&, CompletionHandler<void(WebCore::FloatRect)>&&);
     void addLayerForFindOverlay(CompletionHandler<void(WebCore::PlatformLayerIdentifier)>&&);

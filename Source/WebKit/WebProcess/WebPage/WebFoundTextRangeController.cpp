@@ -189,12 +189,6 @@ void WebFoundTextRangeController::didBeginTextSearchOperation()
     m_findPageOverlay->setNeedsDisplay();
 }
 
-void WebFoundTextRangeController::didEndTextSearchOperation()
-{
-    if (m_findPageOverlay)
-        m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*m_findPageOverlay, WebCore::PageOverlay::FadeMode::Fade);
-}
-
 void WebFoundTextRangeController::addLayerForFindOverlay(CompletionHandler<void(WebCore::PlatformLayerIdentifier)>&& completionHandler)
 {
     if (!m_findPageOverlay) {
