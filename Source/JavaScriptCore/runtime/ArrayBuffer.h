@@ -220,6 +220,8 @@ public:
         return contents;
     }
 
+    JS_EXPORT_PRIVATE void shareWith(ArrayBufferContents&);
+
 private:
     void reset()
     {
@@ -243,7 +245,6 @@ private:
     
     void makeShared();
     void copyTo(ArrayBufferContents&);
-    void shareWith(ArrayBufferContents&);
 
     using DataType = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>;
     DataType m_data { nullptr };

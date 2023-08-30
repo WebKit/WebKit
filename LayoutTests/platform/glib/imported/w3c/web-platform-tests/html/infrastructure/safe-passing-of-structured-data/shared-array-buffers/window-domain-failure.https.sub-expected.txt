@@ -1,0 +1,3 @@
+
+FAIL SharedArrayBuffer and a same-origin-domain (but not same-origin) iframe assert_equals: expected "www1.web-platform.test" but got "web-platform.test"
+

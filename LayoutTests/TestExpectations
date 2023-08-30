@@ -919,6 +919,7 @@ imported/w3c/web-platform-tests/html/anonymous-iframe/sharedworker-partitioning.
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_forward_cross_realm_method.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/no_window_open_when_term_nesting_level_nonzero.window.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/dom/render-blocking/remove-element-unblocks-rendering.optional.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/blob-data.https.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/checkpoint-after-window-onerror-module.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/syntax/charset/without-inheritance.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/syntax/speculative-charset/speculative-script.tentative.html [ Failure Pass ]
@@ -2639,7 +2640,6 @@ workers/sab/no-transfer.html [ Skip ]
 workers/sab/postMessage-clones.html [ Skip ]
 workers/sab/postMessage-transfer-type-error.html [ Skip ]
 workers/sab/sent-from-worker-no-transfer.html [ Skip ]
-imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/ [ Skip ]
 
 # These tests are slow by design.
 workers/wasm-hashset-many.html [ Slow ]

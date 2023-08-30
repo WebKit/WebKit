@@ -1,22 +1,22 @@
 
-FAIL history.pushState(): simple case assert_throws: function "() => {
+FAIL history.pushState(): simple case assert_throws_dom: function "() => {
       history[method](new SharedArrayBuffer(), "dummy title");
-    }" threw object "ReferenceError: Can't find variable: SharedArrayBuffer" that is not a DOMException DataCloneError: property "code" is equal to undefined, expected 25
-FAIL history.pushState(): is interleaved correctly assert_throws: function "() => {
+    }" did not throw
+FAIL history.pushState(): is interleaved correctly assert_throws_dom: function "() => {
       history[method]([
         { get x() { getter1Called = true; return 5; } },
         new SharedArrayBuffer(),
         { get x() { getter2Called = true; return 5; } }
       ], "dummy title");
-    }" threw object "ReferenceError: Can't find variable: SharedArrayBuffer" that is not a DOMException DataCloneError: property "code" is equal to undefined, expected 25
-FAIL history.replaceState(): simple case assert_throws: function "() => {
+    }" did not throw
+FAIL history.replaceState(): simple case assert_throws_dom: function "() => {
       history[method](new SharedArrayBuffer(), "dummy title");
-    }" threw object "ReferenceError: Can't find variable: SharedArrayBuffer" that is not a DOMException DataCloneError: property "code" is equal to undefined, expected 25
-FAIL history.replaceState(): is interleaved correctly assert_throws: function "() => {
+    }" did not throw
+FAIL history.replaceState(): is interleaved correctly assert_throws_dom: function "() => {
       history[method]([
         { get x() { getter1Called = true; return 5; } },
         new SharedArrayBuffer(),
         { get x() { getter2Called = true; return 5; } }
       ], "dummy title");
-    }" threw object "ReferenceError: Can't find variable: SharedArrayBuffer" that is not a DOMException DataCloneError: property "code" is equal to undefined, expected 25
+    }" did not throw
 

@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedArrayBuffer
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT SharedArrayBuffer and a cross-site <iframe> Test timed out
+FAIL SharedArrayBuffer and a cross-site <iframe> assert_unreached: Got a message event, expected a messageerror event Reached unreachable code
 
