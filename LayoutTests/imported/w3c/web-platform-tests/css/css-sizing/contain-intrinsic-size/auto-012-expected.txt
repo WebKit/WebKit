@@ -1,5 +1,5 @@
 
-FAIL Sizing normally assert_equals: clientWidth expected 50 but got 100
+PASS Sizing normally
 PASS Sizing with c-i-s fallback
 PASS Still sizing with c-i-s fallback
 PASS Sizing with last remembered size
