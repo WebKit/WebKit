@@ -332,7 +332,8 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
     case MatchElement::HasSibling: {
         if (auto* sibling = element.previousElementSibling()) {
             SelectorMatchingState selectorMatchingState;
-            selectorMatchingState.selectorFilter.pushParentInitializingIfNeeded(*element.parentElement());
+            if (RefPtr parent = element.parentElement())
+                selectorMatchingState.selectorFilter.pushParentInitializingIfNeeded(*parent);
 
             for (; sibling; sibling = sibling->previousElementSibling())
                 invalidateIfNeeded(*sibling, &selectorMatchingState);
