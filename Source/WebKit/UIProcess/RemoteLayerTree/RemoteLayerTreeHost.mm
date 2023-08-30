@@ -150,17 +150,9 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
     };
     Vector<LayerAndClone> clonesToUpdate;
 
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    bool rootLayerHierarchyChanged = false;
-#endif
     auto layerContentsType = this->layerContentsType();
     for (auto& [layerID, propertiesPointer] : transaction.changedLayerProperties()) {
         const auto& properties = *propertiesPointer;
-
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-        if (layerID == transaction.rootLayerID())
-            rootLayerHierarchyChanged = true;
-#endif
 
         auto* node = nodeForID(layerID);
         ASSERT(node);
@@ -216,14 +208,6 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
     // the backing store in the commit that reparents them.
     for (auto& newlyUnreachableLayerID : transaction.layerIDsWithNewlyUnreachableBackingStore())
         layerForID(newlyUnreachableLayerID).contents = nullptr;
-
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    if (rootLayerChanged || rootLayerHierarchyChanged) {
-        // The Interaction Regions subtree is always on top.
-        [m_rootNode->interactionRegionsLayer() removeFromSuperlayer];
-        [m_rootNode->layer() addSublayer:m_rootNode->interactionRegionsLayer()];
-    }
-#endif
 
 #if PLATFORM(MAC)
     if (updateBannerLayers(transaction))

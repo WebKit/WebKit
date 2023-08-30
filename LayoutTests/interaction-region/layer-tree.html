@@ -19,7 +19,7 @@
 
         background-color: #333;
     }
-    #nested {
+    .composited {
         will-change: transform;
     }
     #faded {
@@ -46,7 +46,17 @@
     <iframe></iframe>
     <div id="overlay">
         <a href="#">link</a>
-        <div id="nested">layered content</div>
+        <div class="composited">layered content</div>
+        <div class="composited">
+            layered content <a href="#">with interactions</a>
+            <div class="composited">
+                layered content
+                <div class="composited" id="to-hide">
+                    layered content <a href="#">with interactions</a>
+                </div>
+            </div>
+        </div>
+        <div class="composited">layered content</div>
     </div>
     <div id="faded">
         <a href="#">Faded link</a>
@@ -75,6 +85,9 @@ window.onload = async function () {
 
     await UIHelper.animationFrame();
     document.getElementById("resized").style.width = "200px";
+
+    await UIHelper.animationFrame();
+    document.getElementById("to-hide").style.display = "none";
 
     await UIHelper.ensureStablePresentationUpdate();
     results.textContent = await UIHelper.getCALayerTree();

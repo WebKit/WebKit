@@ -299,11 +299,6 @@ public:
     const LayerRepresentation& layer() const { return m_layer; }
     WEBCORE_EXPORT void setLayer(const LayerRepresentation&);
 
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    const LayerRepresentation& interactionRegionsLayer() const { return m_interactionRegionsLayer; }
-    WEBCORE_EXPORT void setInteractionRegionsLayer(const LayerRepresentation&);
-#endif
-
     ScrollingStateTree& scrollingStateTree() const { return m_scrollingStateTree; }
 
     ScrollingNodeID scrollingNodeID() const { return m_nodeID; }
@@ -351,9 +346,6 @@ private:
     Vector<Ref<ScrollingStateNode>> m_children;
 
     LayerRepresentation m_layer;
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    LayerRepresentation m_interactionRegionsLayer;
-#endif
 };
 
 inline ScrollingNodeID ScrollingStateNode::parentNodeID() const
