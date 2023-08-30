@@ -59,7 +59,7 @@ private:
 
     bool isValid() const final { return SVGTests::isValid(); }
     bool needsPendingResourceHandling() const final { return false; }
-    bool selfHasRelativeLengths() const final { return true; }
+    bool selfHasRelativeLengths() const final;
 
     Ref<SVGAnimatedLength> m_x { SVGAnimatedLength::create(this, SVGLengthMode::Width, "-10%"_s) };
     Ref<SVGAnimatedLength> m_y { SVGAnimatedLength::create(this, SVGLengthMode::Height, "-10%"_s) };

@@ -71,6 +71,11 @@ Ref<SVGPatternElement> SVGPatternElement::create(const QualifiedName& tagName, D
     return adoptRef(*new SVGPatternElement(tagName, document));
 }
 
+bool SVGPatternElement::selfHasRelativeLengths() const
+{
+    return x().isRelative() || y().isRelative() || width().isRelative() || height().isRelative();
+}
+
 void SVGPatternElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGParsingError parseError = NoError;
@@ -122,7 +127,25 @@ void SVGPatternElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    if (PropertyRegistry::isKnownAttribute(attrName) || SVGFitToViewBox::isKnownAttribute(attrName) || SVGURIReference::isKnownAttribute(attrName)) {
+    switch (attrName.nodeName()) {
+    case AttributeNames::xAttr:
+    case AttributeNames::yAttr:
+    case AttributeNames::widthAttr:
+    case AttributeNames::heightAttr:
+        updateRelativeLengthsInformation();
+        updateSVGRendererForElementChange();
+        return;
+    case AttributeNames::patternUnitsAttr:
+    case AttributeNames::patternContentUnitsAttr:
+    case AttributeNames::patternTransformAttr:
+        updateSVGRendererForElementChange();
+        return;
+    default:
+        ASSERT_WITH_MESSAGE(!PropertyRegistry::isKnownAttribute(attrName), "Should have been handled in this switch() above");
+        break;
+    }
+
+    if (SVGFitToViewBox::isKnownAttribute(attrName) || SVGURIReference::isKnownAttribute(attrName)) {
         updateSVGRendererForElementChange();
         return;
     }

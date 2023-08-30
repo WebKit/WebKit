@@ -63,6 +63,11 @@ Ref<SVGFilterElement> SVGFilterElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGFilterElement(tagName, document));
 }
 
+bool SVGFilterElement::selfHasRelativeLengths() const
+{
+    return x().isRelative() || y().isRelative() || width().isRelative() || height().isRelative();
+}
+
 void SVGFilterElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGParsingError parseError = NoError;
@@ -109,7 +114,24 @@ void SVGFilterElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    if (PropertyRegistry::isKnownAttribute(attrName) || SVGURIReference::isKnownAttribute(attrName)) {
+    switch (attrName.nodeName()) {
+    case AttributeNames::xAttr:
+    case AttributeNames::yAttr:
+    case AttributeNames::widthAttr:
+    case AttributeNames::heightAttr:
+        updateRelativeLengthsInformation();
+        updateSVGRendererForElementChange();
+        return;
+    case AttributeNames::filterUnitsAttr:
+    case AttributeNames::primitiveUnitsAttr:
+        updateSVGRendererForElementChange();
+        return;
+    default:
+        ASSERT_WITH_MESSAGE(!PropertyRegistry::isKnownAttribute(attrName), "Should have been handled in this switch()");
+        break;
+    }
+
+    if (SVGURIReference::isKnownAttribute(attrName)) {
         updateSVGRendererForElementChange();
         return;
     }

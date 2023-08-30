@@ -65,6 +65,11 @@ Ref<SVGMaskElement> SVGMaskElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGMaskElement(tagName, document));
 }
 
+bool SVGMaskElement::selfHasRelativeLengths() const
+{
+    return x().isRelative() || y().isRelative() || width().isRelative() || height().isRelative();
+}
+
 void SVGMaskElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGParsingError parseError = NoError;
@@ -110,9 +115,21 @@ void SVGMaskElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    if (PropertyRegistry::isKnownAttribute(attrName)) {
+    switch (attrName.nodeName()) {
+    case AttributeNames::xAttr:
+    case AttributeNames::yAttr:
+    case AttributeNames::widthAttr:
+    case AttributeNames::heightAttr:
+        updateRelativeLengthsInformation();
         updateSVGRendererForElementChange();
         return;
+    case AttributeNames::maskUnitsAttr:
+    case AttributeNames::maskContentUnitsAttr:
+        updateSVGRendererForElementChange();
+        return;
+    default:
+        ASSERT_WITH_MESSAGE(!PropertyRegistry::isKnownAttribute(attrName), "Should have been handled in this switch()");
+        break;
     }
 
     SVGElement::svgAttributeChanged(attrName);

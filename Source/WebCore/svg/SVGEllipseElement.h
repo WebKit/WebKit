@@ -50,7 +50,7 @@ private:
     void svgAttributeChanged(const QualifiedName&) final;
 
     bool isValid() const final { return SVGTests::isValid(); }
-    bool selfHasRelativeLengths() const final { return true; }
+    bool selfHasRelativeLengths() const final;
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 

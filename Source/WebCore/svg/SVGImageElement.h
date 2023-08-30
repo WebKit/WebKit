@@ -67,7 +67,7 @@ private:
     bool haveLoadedRequiredResources() final;
 
     bool isValid() const final { return SVGTests::isValid(); }
-    bool selfHasRelativeLengths() const final { return true; }
+    bool selfHasRelativeLengths() const final;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
     Ref<SVGAnimatedLength> m_x { SVGAnimatedLength::create(this, SVGLengthMode::Width) };

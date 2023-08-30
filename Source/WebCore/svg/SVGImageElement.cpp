@@ -87,6 +87,11 @@ bool SVGImageElement::renderingTaintsOrigin() const
     return cachedImage->isCORSCrossOrigin();
 }
 
+bool SVGImageElement::selfHasRelativeLengths() const
+{
+    return x().isRelative() || y().isRelative() || width().isRelative() || height().isRelative();
+}
+
 void SVGImageElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGParsingError parseError = NoError;
@@ -135,9 +140,10 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
                     return;
                 updateSVGRendererForElementChange();
             }
-        } else if (attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr)
+        } else if (attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr) {
+            updateRelativeLengthsInformation();
             setPresentationalHintStyleIsDirty();
-        else {
+        } else {
             ASSERT(attrName == SVGNames::preserveAspectRatioAttr);
             updateSVGRendererForElementChange();
         }

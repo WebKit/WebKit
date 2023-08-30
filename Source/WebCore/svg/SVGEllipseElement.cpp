@@ -52,6 +52,11 @@ Ref<SVGEllipseElement> SVGEllipseElement::create(const QualifiedName& tagName, D
     return adoptRef(*new SVGEllipseElement(tagName, document));
 }
 
+bool SVGEllipseElement::selfHasRelativeLengths() const
+{
+    return cx().isRelative() || cy().isRelative() || rx().isRelative() || ry().isRelative();
+}
+
 void SVGEllipseElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGParsingError parseError = NoError;
@@ -81,6 +86,7 @@ void SVGEllipseElement::svgAttributeChanged(const QualifiedName& attrName)
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         setPresentationalHintStyleIsDirty();
+        updateRelativeLengthsInformation();
         return;
     }
 

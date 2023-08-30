@@ -62,7 +62,7 @@ private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     bool childShouldCreateRenderer(const Node&) const final;
 
-    bool selfHasRelativeLengths() const final { return true; }
+    bool selfHasRelativeLengths() const final;
 
     Ref<SVGAnimatedEnumeration> m_filterUnits { SVGAnimatedEnumeration::create(this, SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) };
     Ref<SVGAnimatedEnumeration> m_primitiveUnits { SVGAnimatedEnumeration::create(this, SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE) };

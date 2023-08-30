@@ -56,6 +56,11 @@ Ref<SVGForeignObjectElement> SVGForeignObjectElement::create(const QualifiedName
     return adoptRef(*new SVGForeignObjectElement(tagName, document));
 }
 
+bool SVGForeignObjectElement::selfHasRelativeLengths() const
+{
+    return x().isRelative() || y().isRelative() || width().isRelative() || height().isRelative();
+}
+
 void SVGForeignObjectElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGParsingError parseError = NoError;
@@ -85,11 +90,11 @@ void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
+        updateRelativeLengthsInformation();
         if (attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr)
             setPresentationalHintStyleIsDirty();
         else {
             ASSERT(attrName == SVGNames::xAttr || attrName == SVGNames::yAttr);
-            updateRelativeLengthsInformation();
             updateSVGRendererForElementChange();
         }
         return;

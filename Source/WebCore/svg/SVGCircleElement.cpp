@@ -51,6 +51,11 @@ Ref<SVGCircleElement> SVGCircleElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGCircleElement(tagName, document));
 }
 
+bool SVGCircleElement::selfHasRelativeLengths() const
+{
+    return cx().isRelative() || cy().isRelative() || r().isRelative();
+}
+
 void SVGCircleElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGParsingError parseError = NoError;
@@ -78,6 +83,7 @@ void SVGCircleElement::svgAttributeChanged(const QualifiedName& attrName)
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         setPresentationalHintStyleIsDirty();
+        updateRelativeLengthsInformation();
         return;
     }
 
