@@ -4944,12 +4944,27 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
         }
     }
 
-    auto makeString = [] (const VisiblePosition& start, const VisiblePosition& end) -> AttributedString {
+    auto isTextObscured = [] (const VisiblePosition& visiblePosition) {
+        if (RefPtr textControl = enclosingTextFormControl(visiblePosition.deepEquivalent())) {
+            if (auto* input = dynamicDowncast<HTMLInputElement>(textControl.get())) {
+                if (input->isAutoFilledAndObscured())
+                    return true;
+            }
+        }
+        return false;
+    };
+
+    auto makeString = [&isTextObscured] (const VisiblePosition& start, const VisiblePosition& end) -> AttributedString {
         auto range = makeSimpleRange(start, end);
         if (!range || range->collapsed())
             return { };
         // FIXME: This should return editing-offset-compatible attributed strings if that option is requested.
-        return WebCore::AttributedString::fromNSAttributedString(adoptNS([[NSAttributedString alloc] initWithString:WebCore::plainTextReplacingNoBreakSpace(*range, TextIteratorBehavior::EmitsOriginalText)]));
+
+        auto isObscured = isTextObscured(start);
+        TextIteratorBehaviors textBehaviors = { };
+        if (!isObscured)
+            textBehaviors = TextIteratorBehavior::EmitsOriginalText;
+        return WebCore::AttributedString::fromNSAttributedString(adoptNS([[NSAttributedString alloc] initWithString:WebCore::plainTextReplacingNoBreakSpace(*range, textBehaviors)]));
     };
 
     DocumentEditingContext context;
