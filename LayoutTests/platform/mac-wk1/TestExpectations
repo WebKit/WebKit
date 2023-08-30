@@ -2648,6 +2648,8 @@ imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visib
 [ Sonoma+ ] media/track/track-webvtt-snap-to-lines-inline-style.html [ ImageOnlyFailure ]
 [ Sonoma+ ] media/track/track-webvtt-snap-to-lines-left-right.html [ ImageOnlyFailure ]
 
+webkit.org/b/260888 [ Ventura+ ] media/track/track-user-stylesheet-override.html [ Crash ]
+
 # rdar://108816571 ([ Sonoma wk1 ] compositing/backing/solid-color-with-paints-into-ancestor.html is a flaky failure)
 [ Sonoma+ ] compositing/backing/solid-color-with-paints-into-ancestor.html [ Pass ImageOnlyFailure ]
 
