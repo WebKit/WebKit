@@ -67,10 +67,10 @@ InlineFormattingContext::InlineFormattingContext(const ElementBox& formattingCon
 {
 }
 
-InlineLayoutResult InlineFormattingContext::layoutInFlowAndFloatContent(const ConstraintsForInlineContent& constraints, InlineLayoutState& inlineLayoutState, const InlineDamage* lineDamage)
+InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineContent& constraints, InlineLayoutState& inlineLayoutState, const InlineDamage* lineDamage)
 {
     auto& floatingState = inlineLayoutState.parentBlockLayoutState().floatingState();
-    if (!root().hasInFlowChild()) {
+    if (!root().hasInFlowChild() && !root().hasOutOfFlowChild()) {
         // Float only content does not support partial layout.
         ASSERT(!lineDamage);
         layoutFloatContentOnly(constraints, floatingState);
@@ -112,12 +112,6 @@ InlineLayoutResult InlineFormattingContext::layoutInFlowAndFloatContent(const Co
     }
     auto lineBuilder = LineBuilder { *this, inlineLayoutState, floatingState, constraints.horizontal(), inlineItems };
     return lineLayout(lineBuilder, inlineItems, needsLayoutRange, previousLine(), constraints, inlineLayoutState, lineDamage);
-}
-
-void InlineFormattingContext::layoutOutOfFlowContent(const ConstraintsForInlineContent& constraints, InlineLayoutState& inlineLayoutState, const InlineDisplay::Content& inlineDisplayContent)
-{
-    // Collecting out-of-flow boxes happens during the in-flow phase.
-    computeStaticPositionForOutOfFlowContent(formattingState().outOfFlowBoxes(), constraints, inlineDisplayContent, inlineLayoutState.parentBlockLayoutState().floatingState());
 }
 
 IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicSizes(const InlineDamage* lineDamage)
@@ -240,26 +234,6 @@ void InlineFormattingContext::layoutFloatContentOnly(const ConstraintsForInlineC
             continue;
         }
         ASSERT_NOT_REACHED();
-    }
-}
-
-void InlineFormattingContext::computeStaticPositionForOutOfFlowContent(const FormattingState::OutOfFlowBoxList& outOfFlowBoxes, const ConstraintsForInFlowContent& constraints, const InlineDisplay::Content& displayContent, const FloatingState& floatingState)
-{
-    // This function computes the static position for out-of-flow content inside the inline formatting context.
-    // As per spec, the static position of an out-of-flow box is computed as if the position was set to static.
-    // However it does not mean that the out-of-flow box should be involved in the inline layout process.
-    // Instead we figure out this static position after the inline layout by looking at the previous/next sibling (or parent) box's geometry and
-    // place the out-of-flow box at the logical right position.
-    auto& formattingGeometry = this->formattingGeometry();
-    auto& formattingState = this->formattingState();
-    auto floatingContext = FloatingContext { *this, floatingState };
-
-    for (auto& outOfFlowBox : outOfFlowBoxes) {
-        if (outOfFlowBox->style().isOriginalDisplayInlineType()) {
-            formattingState.boxGeometry(outOfFlowBox).setLogicalTopLeft(formattingGeometry.staticPositionForOutOfFlowInlineLevelBox(outOfFlowBox, constraints, displayContent, floatingContext));
-            continue;
-        }
-        formattingState.boxGeometry(outOfFlowBox).setLogicalTopLeft(formattingGeometry.staticPositionForOutOfFlowBlockLevelBox(outOfFlowBox, constraints, displayContent));
     }
 }
 

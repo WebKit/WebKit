@@ -70,6 +70,7 @@ public:
     InlineLayoutUnit handleTrailingTrimmableContent(TrailingContentAction);
     void handleTrailingHangingContent(std::optional<IntrinsicWidthMode>, InlineLayoutUnit horizontalAvailableSpace, bool isLastFormattedLine);
     void handleOverflowingNonBreakingSpace(TrailingContentAction, InlineLayoutUnit overflowingWidth);
+    const Box* removeOverflowingOurOfFlowContent();
     void resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel);
     void applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace);
 

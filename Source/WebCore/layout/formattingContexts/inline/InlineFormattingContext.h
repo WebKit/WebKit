@@ -59,8 +59,7 @@ class InlineFormattingContext final : public FormattingContext {
 public:
     InlineFormattingContext(const ElementBox& formattingContextRoot, InlineFormattingState&);
 
-    InlineLayoutResult layoutInFlowAndFloatContent(const ConstraintsForInlineContent&, InlineLayoutState&, const InlineDamage* = nullptr);
-    void layoutOutOfFlowContent(const ConstraintsForInlineContent&, InlineLayoutState&, const InlineDisplay::Content&);
+    InlineLayoutResult layout(const ConstraintsForInlineContent&, InlineLayoutState&, const InlineDamage* = nullptr);
     IntrinsicWidthConstraints computedIntrinsicSizes(const InlineDamage*);
     LayoutUnit maximumContentSize();
 
@@ -71,7 +70,6 @@ public:
 private:
     InlineLayoutResult lineLayout(AbstractLineBuilder&, const InlineItems&, InlineItemRange, std::optional<PreviousLine>, const ConstraintsForInlineContent&, InlineLayoutState&, const InlineDamage* = nullptr);
     void layoutFloatContentOnly(const ConstraintsForInlineContent&, FloatingState&);
-    void computeStaticPositionForOutOfFlowContent(const FormattingState::OutOfFlowBoxList&, const ConstraintsForInFlowContent&, const InlineDisplay::Content&, const FloatingState&);
 
     void collectContentIfNeeded();
     InlineRect createDisplayContentForLine(size_t lineIndex, const LineLayoutResult&, const ConstraintsForInlineContent&, const InlineLayoutState&, InlineDisplay::Content&);

@@ -260,6 +260,27 @@ void Line::handleOverflowingNonBreakingSpace(TrailingContentAction trailingConte
     m_contentLogicalWidth -= removedOrCollapsedContentWidth;
 }
 
+const Box* Line::removeOverflowingOurOfFlowContent()
+{
+    auto lastTrailingOpaqueItemIndex = std::optional<size_t> { };
+    for (size_t index = m_runs.size(); index--;) {
+        auto& run = m_runs[index];
+        if (run.isOpaque()) {
+            lastTrailingOpaqueItemIndex = index;
+            continue;
+        }
+        if (!run.logicalWidth() && (run.isInlineBoxStart() || run.isInlineBoxEnd()))
+            continue;
+        break;
+    }
+    if (!lastTrailingOpaqueItemIndex)
+        return { };
+    auto* lastTrailingOpaqueBox = &m_runs[*lastTrailingOpaqueItemIndex].layoutBox();
+    m_runs.remove(*lastTrailingOpaqueItemIndex, m_runs.size() - *lastTrailingOpaqueItemIndex);
+    ASSERT(!m_runs.isEmpty());
+    return lastTrailingOpaqueBox;
+}
+
 void Line::handleTrailingHangingContent(std::optional<IntrinsicWidthMode> intrinsicWidthMode, InlineLayoutUnit horizontalAvailableSpaceForContent, bool isLastFormattedLine)
 {
     // https://drafts.csswg.org/css-text/#hanging

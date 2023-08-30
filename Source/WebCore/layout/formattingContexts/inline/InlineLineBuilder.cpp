@@ -153,7 +153,7 @@ static bool hasTrailingSoftWrapOpportunity(size_t softWrapOpportunityIndex, size
         return false;
     }
     if (trailingInlineItem.isOpaque()) {
-        ASSERT(softWrapOpportunityIndex > 1); // Can't have opaque items only candidate content.
+        ASSERT(softWrapOpportunityIndex > 1 || inlineItems[softWrapOpportunityIndex].isFloat()); // Can't have opaque items only candidate content.
         return hasTrailingSoftWrapOpportunity(softWrapOpportunityIndex - 1, layoutRangeEnd, inlineItems);
     }
     ASSERT_NOT_REACHED();
@@ -477,6 +477,26 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
                 m_line.handleOverflowingNonBreakingSpace(isLineBreakAfterWhitespace() ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove, m_line.contentLogicalWidth() - horizontalAvailableSpace);
 
             m_line.handleTrailingHangingContent(intrinsicWidthMode(), horizontalAvailableSpace, isLastLine);
+
+            auto mayNeedOutOfFlowOverflowTrimming = !isInIntrinsicWidthMode() && lineHasOverflow() && !lineContent.partialTrailingContentLength && TextUtil::isWrappingAllowed(rootStyle);
+            if (mayNeedOutOfFlowOverflowTrimming) {
+                // Overflowing out-of-flow boxes should wrap the to subsequent lines just like any other in-flow content.
+                // However since we take a shortcut by not considering out-of-flow content as inflow but instead treating it as an opaque box with zero width and no
+                // soft wrap opportunity, any overflowing out-of-flow content would pile up as trailing content.
+                // Alternatively we could initiate a two pass layout first with out-of-flow content treated as true inflow and a second without them.
+                ASSERT(!lineContent.range.end.offset);
+                if (auto* lastRemovedTrailingBox = m_line.removeOverflowingOurOfFlowContent()) {
+                    auto lineEndIndex = [&] {
+                        for (auto index = lineContent.range.start.index; index < lineContent.range.end.index; ++index) {
+                            if (&m_inlineItems[index].layoutBox() == lastRemovedTrailingBox)
+                                return index;
+                        }
+                        ASSERT_NOT_REACHED();
+                        return lineContent.range.end.index;
+                    };
+                    lineContent.range.end.index = lineEndIndex();
+                }
+            }
         };
         handleTrailingContent();
 

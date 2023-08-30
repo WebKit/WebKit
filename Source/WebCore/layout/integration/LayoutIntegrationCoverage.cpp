@@ -355,7 +355,7 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
     if (is<RenderBlockFlow>(renderer) || is<RenderGrid>(renderer) || is<RenderFlexibleBox>(renderer) || is<RenderDeprecatedFlexibleBox>(renderer) || is<RenderReplaced>(renderer) || is<RenderListItem>(renderer) || is<RenderTable>(renderer)) {
         auto isSupportedFloatingOrPositioned = [&] (auto& renderer) {
             if (renderer.isOutOfFlowPositioned()) {
-                if (!renderer.parent()->style().isLeftToRightDirection())
+                if (!renderer.parent()->style().isLeftToRightDirection() || renderer.parent()->style().unicodeBidi() != UnicodeBidi::Normal)
                     return false;
                 if (is<RenderLayerModelObject>(renderer.parent()) && downcast<RenderLayerModelObject>(*renderer.parent()).shouldPlaceVerticalScrollbarOnLeft())
                     return false;

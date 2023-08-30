@@ -588,8 +588,7 @@ std::optional<LayoutRect> LineLayout::layout()
     }();
     auto parentBlockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState(), lineClamp(flow()), textBoxTrim(flow()), intrusiveInitialLetterBottom() };
     auto inlineLayoutState = Layout::InlineLayoutState { parentBlockLayoutState, WTFMove(m_nestedListMarkerOffsets) };
-    auto layoutResult = m_inlineFormattingContext.layoutInFlowAndFloatContent(inlineContentConstraints, inlineLayoutState, m_lineDamage.get());
-    m_inlineFormattingContext.layoutOutOfFlowContent(inlineContentConstraints, inlineLayoutState, layoutResult.displayContent);
+    auto layoutResult = m_inlineFormattingContext.layout(inlineContentConstraints, inlineLayoutState, m_lineDamage.get());
 
     auto repaintRect = LayoutRect { constructContent(inlineLayoutState, WTFMove(layoutResult)) };
 
