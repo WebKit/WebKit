@@ -52,9 +52,7 @@ private:
     template<typename ByteType>
     void writeType(const ByteType& type)
     {
-        size_t typeSize = sizeof(ByteType);
-        for (size_t i = 0; i < typeSize; ++i)
-            m_byteStream.append(type.bytes[i]);
+        m_byteStream.append(std::span { type.bytes, sizeof(ByteType) });
     }
 
     void writeFlag(bool value)

@@ -96,7 +96,7 @@ public:
     DataIterator begin() const { return m_data.begin(); }
     DataIterator end() const { return m_data.end(); }
 
-    void append(unsigned char byte) { m_data.append(byte); }
+    void append(std::span<const unsigned char> bytes) { m_data.append(bytes); }
     void append(const SVGPathByteStream& other) { m_data.appendVector(other.m_data); }
     void clear() { m_data.clear(); }
     bool isEmpty() const { return m_data.isEmpty(); }
