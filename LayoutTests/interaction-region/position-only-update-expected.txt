@@ -13,8 +13,6 @@ compositing
         (rect (0,0) width=800 height=600)
 
       (interaction regions [
-        (occlusion (0,0) width=800 height=140)
-        (borderRadius 0.00),
         (interaction (107,76) width=83 height=27)
         (borderRadius 8.00)])
       )

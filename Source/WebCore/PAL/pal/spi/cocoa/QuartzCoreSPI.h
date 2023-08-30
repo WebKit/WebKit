@@ -147,6 +147,7 @@ typedef struct _CARenderContext CARenderContext;
 - (void)removePresentationModifier:(CAPresentationModifier *)modifier;
 @property BOOL allowsGroupBlending;
 @property BOOL allowsHitTesting;
+@property BOOL hitTestsContentsAlphaChannel;
 @property BOOL canDrawConcurrently;
 @property BOOL contentsOpaque;
 @property BOOL hitTestsAsOpaque;

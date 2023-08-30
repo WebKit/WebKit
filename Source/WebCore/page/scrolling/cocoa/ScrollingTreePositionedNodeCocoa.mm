@@ -48,12 +48,8 @@ ScrollingTreePositionedNodeCocoa::~ScrollingTreePositionedNodeCocoa() = default;
 
 bool ScrollingTreePositionedNodeCocoa::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    if (stateNode.hasChangedProperty(ScrollingStateNode::Property::Layer)) {
+    if (stateNode.hasChangedProperty(ScrollingStateNode::Property::Layer))
         m_layer = static_cast<CALayer*>(stateNode.layer());
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-        m_interactionRegionsLayer = static_cast<CALayer*>(stateNode.interactionRegionsLayer());
-#endif
-    }
 
     return ScrollingTreePositionedNode::commitStateBeforeChildren(stateNode);
 }
@@ -66,9 +62,6 @@ void ScrollingTreePositionedNodeCocoa::applyLayerPositions()
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreePositionedNode " << scrollingNodeID() << " applyLayerPositions: overflow delta " << delta << " moving layer to " << layerPosition);
 
     [m_layer _web_setLayerTopLeftPosition:layerPosition - m_constraints.alignmentOffset()];
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    [m_interactionRegionsLayer _web_setLayerTopLeftPosition:layerPosition - m_constraints.alignmentOffset()];
-#endif
 }
 
 } // namespace WebCore
