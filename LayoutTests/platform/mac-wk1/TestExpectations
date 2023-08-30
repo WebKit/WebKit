@@ -2479,6 +2479,7 @@ http/tests/security/contentSecurityPolicy/image-with-https-url-allowed-by-csp-im
 http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ Failure Pass ]
 http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe.html [ Pass Failure ]
 http/tests/security/contentSecurityPolicy/script-src-parsing-implicit-and-explicit-port-number.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/webmessaging/broadcastchannel/cross-partition.https.tentative.html [ DumpJSConsoleLogInStdErr ]
 
 # These tests have been flaky on WK1 since their import.
 imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss [ Pass Failure ]

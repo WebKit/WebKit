@@ -6134,6 +6134,12 @@
     "imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-with-navigation.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/webmessaging/broadcastchannel/cross-partition.https.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webmessaging/broadcastchannel/opaque-origin.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-captureTimestamp.html": [
         "slow"
     ],

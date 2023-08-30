@@ -7255,6 +7255,7 @@
         "web-platform-tests/webmessaging/multi-globals/support/incumbent-document-domain.sub.html",
         "web-platform-tests/webmessaging/multi-globals/support/incumbent.html",
         "web-platform-tests/webmessaging/support/ChildWindowPostMessage.htm",
+        "web-platform-tests/webmessaging/support/cross-domain-image-receive.htm",
         "web-platform-tests/webmessaging/without-ports/019-1.html",
         "web-platform-tests/webmessaging/without-ports/020-1.html",
         "web-platform-tests/websockets/multi-globals/support/incumbent.sub.html",

@@ -1789,6 +1789,9 @@ webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/with-ports/021.
 webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/without-ports/020.html [ Skip ]
 webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/without-ports/021.html [ Skip ]
 
+# This webmessaging WPT test crashes in debug.
+webkit.org/b/260895 [ Debug ] imported/w3c/web-platform-tests/webmessaging/broadcastchannel/opaque-origin.html [ Crash ]
+
 webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/body-fills-html-quirk-vertical.html [ ImageOnlyFailure ]
 webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/body-fills-html-quirk.html [ ImageOnlyFailure ]
 webkit.org/b/244022 imported/w3c/web-platform-tests/quirks/line-height-in-list-item.tentative.html [ ImageOnlyFailure ]
