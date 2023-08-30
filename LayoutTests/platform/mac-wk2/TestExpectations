@@ -2090,4 +2090,4 @@ webkit.org/b/239627 [ arm64 ] fast/scrolling/mac/adjust-scroll-snap-during-gestu
 # rdar://114674858 (REGRESSION (262629@main): [ Sonoma wk2 ] printing/print-with-media-query-destory.html is a constant failure)
 [ Sonoma+ ] printing/print-with-media-query-destory.html [ Failure ]
 
-webkit.org/b/260917 [ Ventura ] fast/forms/border-color-relayout.html [ Pass Failure ]
+webkit.org/b/260917 [ Ventura ] fast/forms/border-color-relayout.html [ Pass ImageOnlyFailure ]
