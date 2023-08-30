@@ -4,5 +4,5 @@ PASS Worker construction for non-existent script should dispatch an ErrorEvent.
 PASS Static import for non-existent script should dispatch an ErrorEvent.
 PASS Dynamic import for non-existent script should throw an exception.
 PASS SharedWorker construction for an invalid URL should throw an exception.
-PASS SharedWorker construction for a file URL should throw an exception.
+FAIL SharedWorker construction for a file URL should throw an exception. URL of the shared worker is cross-origin
 

@@ -1,4 +1,7 @@
 
+PASS The ApplicationCache interface object should not be exposed
+PASS The SharedWorker interface object should not be exposed
+PASS The CanvasPath interface object should not be exposed
 PASS The DedicatedWorkerGlobalScope interface object should not be exposed
 PASS The AbstractView interface object should not be exposed
 PASS The AbstractWorker interface object should not be exposed

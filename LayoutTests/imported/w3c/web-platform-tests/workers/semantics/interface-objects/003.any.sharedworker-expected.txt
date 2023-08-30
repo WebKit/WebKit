@@ -1,9 +1,7 @@
 
-FAIL The ApplicationCache interface object should be exposed assert_true: expected true got false
 PASS The WorkerGlobalScope interface object should be exposed
 PASS The SharedWorkerGlobalScope interface object should be exposed
 FAIL The Worker interface object should be exposed assert_true: expected true got false
-FAIL The SharedWorker interface object should be exposed assert_true: expected true got false
 PASS The MessagePort interface object should be exposed
 PASS The MessageEvent interface object should be exposed
 PASS The WorkerNavigator interface object should be exposed
@@ -13,13 +11,12 @@ PASS The ImageData interface object should be exposed
 PASS The ImageBitmap interface object should be exposed
 PASS The CanvasGradient interface object should be exposed
 PASS The CanvasPattern interface object should be exposed
-FAIL The CanvasPath interface object should be exposed assert_true: expected true got false
 PASS The Path2D interface object should be exposed
 PASS The PromiseRejectionEvent interface object should be exposed
 PASS The EventSource interface object should be exposed
+PASS The BroadcastChannel interface object should be exposed
 PASS The WebSocket interface object should be exposed
 PASS The CloseEvent interface object should be exposed
-PASS The BroadcastChannel interface object should be exposed
 PASS The ArrayBuffer interface object should be exposed
 PASS The Int8Array interface object should be exposed
 PASS The Uint8Array interface object should be exposed

@@ -26,5 +26,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/navigator/006.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/navigator/007.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/navigator/007.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/navigator/008.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/navigator/language.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/navigator/language.js

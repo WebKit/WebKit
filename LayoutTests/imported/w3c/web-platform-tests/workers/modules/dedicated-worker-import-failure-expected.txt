@@ -5,5 +5,5 @@ PASS Worker construction for non-existent script should dispatch an ErrorEvent.
 PASS Static import for non-existent script should dispatch an ErrorEvent.
 PASS Dynamic import for non-existent script should throw an exception.
 PASS Worker construction for an invalid URL should throw an exception.
-PASS Worker construction for a file URL should throw an exception.
+FAIL Worker construction for a file URL should fail The operation is insecure.
 
