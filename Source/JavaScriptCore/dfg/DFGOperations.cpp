@@ -92,6 +92,7 @@
 #include "WeakMapImplInlines.h"
 #include "WeakMapPrototype.h"
 #include "WeakSetPrototype.h"
+#include "wtf/DataLog.h"
 
 #if ENABLE(JIT)
 #if ENABLE(DFG_JIT)
@@ -349,6 +350,18 @@ JSC_DEFINE_JIT_OPERATION(operationObjectAssignObject, void, (JSGlobalObject* glo
     auto scope = DECLARE_THROW_SCOPE(vm);
     bool targetCanPerformFastPut = jsDynamicCast<JSFinalObject*>(target) && target->canPerformFastPutInlineExcludingProto() && target->isStructureExtensible();
 
+    Structure* structure = source->structure();
+    dataLogLn("<YIJIA> operationObjectAssignUntyped target->structure() ", *target->structure(), 
+        " target->canPerformFastPutInlineExcludingProto() ", target->canPerformFastPutInlineExcludingProto(), 
+        " target->isStructureExtensible() ", target->isStructureExtensible(),
+        " source->structure() ", *structure,
+        " source->hasNonReifiedStaticProperties() ", source->hasNonReifiedStaticProperties(),
+        " source->indexingType() ", IndexingTypeDump(source->indexingType()),
+        " source->structure()->hasAnyKindOfGetterSetterProperties() ", structure->hasAnyKindOfGetterSetterProperties(), 
+        " source->structure()->hasReadOnlyOrGetterSetterPropertiesExcludingProto() ", structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto(), 
+        " source->structure()->isUncacheableDictionary() ", structure->isUncacheableDictionary(), 
+        " source->structure()->hasUnderscoreProtoPropertyExcludingOriginalProto() ", structure->hasUnderscoreProtoPropertyExcludingOriginalProto());
+
     if (targetCanPerformFastPut) {
         Vector<RefPtr<UniquedStringImpl>, 8> properties;
         MarkedArgumentBuffer values;
@@ -368,11 +381,21 @@ JSC_DEFINE_JIT_OPERATION(operationObjectAssignObject, void, (JSGlobalObject* glo
         // https://bugs.webkit.org/show_bug.cgi?id=187837
 
         // Do not clear since Vector::clear shrinks the backing store.
-        if (objectAssignFast(vm, target, source, properties, values))
+        if (objectAssignFast(globalObject, target, source, properties, values))
             return;
     }
 
     scope.release();
+    dataLogLn("<YIJIA> operationObjectAssignUntyped objectAssignGeneric target->structure() ", *target->structure(), 
+        " target->canPerformFastPutInlineExcludingProto() ", target->canPerformFastPutInlineExcludingProto(), 
+        " target->isStructureExtensible() ", target->isStructureExtensible(),
+        " source->structure() ", *structure,
+        " source->hasNonReifiedStaticProperties() ", source->hasNonReifiedStaticProperties(),
+        " source->indexingType() ", IndexingTypeDump(source->indexingType()),
+        " source->structure()->hasAnyKindOfGetterSetterProperties() ", structure->hasAnyKindOfGetterSetterProperties(), 
+        " source->structure()->hasReadOnlyOrGetterSetterPropertiesExcludingProto() ", structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto(), 
+        " source->structure()->isUncacheableDictionary() ", structure->isUncacheableDictionary(), 
+        " source->structure()->hasUnderscoreProtoPropertyExcludingOriginalProto() ", structure->hasUnderscoreProtoPropertyExcludingOriginalProto());
     objectAssignGeneric(globalObject, vm, target, source);
 }
 
@@ -391,6 +414,18 @@ JSC_DEFINE_JIT_OPERATION(operationObjectAssignUntyped, void, (JSGlobalObject* gl
     JSObject* source = sourceValue.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
 
+    Structure* structure = source->structure();
+    dataLogLn("<YIJIA> operationObjectAssignUntyped target->structure() ", *target->structure(), 
+        " target->canPerformFastPutInlineExcludingProto() ", target->canPerformFastPutInlineExcludingProto(), 
+        " target->isStructureExtensible() ", target->isStructureExtensible(),
+        " source->structure() ", *structure,
+        " source->hasNonReifiedStaticProperties() ", source->hasNonReifiedStaticProperties(),
+        " source->indexingType() ", IndexingTypeDump(source->indexingType()),
+        " source->structure()->hasAnyKindOfGetterSetterProperties() ", structure->hasAnyKindOfGetterSetterProperties(), 
+        " source->structure()->hasReadOnlyOrGetterSetterPropertiesExcludingProto() ", structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto(), 
+        " source->structure()->isUncacheableDictionary() ", structure->isUncacheableDictionary(), 
+        " source->structure()->hasUnderscoreProtoPropertyExcludingOriginalProto() ", structure->hasUnderscoreProtoPropertyExcludingOriginalProto());
+
     if (targetCanPerformFastPut) {
         if (!source->staticPropertiesReified()) {
             source->reifyAllStaticProperties(globalObject);
@@ -399,11 +434,21 @@ JSC_DEFINE_JIT_OPERATION(operationObjectAssignUntyped, void, (JSGlobalObject* gl
 
         Vector<RefPtr<UniquedStringImpl>, 8> properties;
         MarkedArgumentBuffer values;
-        if (objectAssignFast(vm, target, source, properties, values))
+        if (objectAssignFast(globalObject, target, source, properties, values))
             return;
     }
 
     scope.release();
+    dataLogLn("<YIJIA> operationObjectAssignUntyped objectAssignGeneric target->structure() ", *target->structure(), 
+        " target->canPerformFastPutInlineExcludingProto() ", target->canPerformFastPutInlineExcludingProto(), 
+        " target->isStructureExtensible() ", target->isStructureExtensible(),
+        " source->structure() ", *structure,
+        " source->hasNonReifiedStaticProperties() ", source->hasNonReifiedStaticProperties(),
+        " source->indexingType() ", IndexingTypeDump(source->indexingType()),
+        " source->structure()->hasAnyKindOfGetterSetterProperties() ", structure->hasAnyKindOfGetterSetterProperties(), 
+        " source->structure()->hasReadOnlyOrGetterSetterPropertiesExcludingProto() ", structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto(), 
+        " source->structure()->isUncacheableDictionary() ", structure->isUncacheableDictionary(), 
+        " source->structure()->hasUnderscoreProtoPropertyExcludingOriginalProto() ", structure->hasUnderscoreProtoPropertyExcludingOriginalProto());
     objectAssignGeneric(globalObject, vm, target, source);
 }
 

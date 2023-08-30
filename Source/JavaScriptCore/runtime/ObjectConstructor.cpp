@@ -387,7 +387,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorAssign, (JSGlobalObject* globalObject,
                 RETURN_IF_EXCEPTION(scope, { });
             }
 
-            if (objectAssignFast(vm, target, source, properties, values))
+            if (objectAssignFast(globalObject, target, source, properties, values))
                 continue;
         }
 

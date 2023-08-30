@@ -50,7 +50,7 @@ ALWAYS_INLINE bool canPerformFastPropertyNameEnumerationForJSONStringifyWithSide
     return true;
 }
 
-ALWAYS_INLINE bool objectAssignFast(VM& vm, JSObject* target, JSObject* source, Vector<RefPtr<UniquedStringImpl>, 8>& properties, MarkedArgumentBuffer& values)
+ALWAYS_INLINE bool objectAssignFast(JSGlobalObject* globalObject, JSObject* target, JSObject* source, Vector<RefPtr<UniquedStringImpl>, 8>& properties, MarkedArgumentBuffer& values)
 {
     // |source| Structure does not have any getters. And target can perform fast put.
     // So enumerating properties and putting properties are non observable.
@@ -66,9 +66,11 @@ ALWAYS_INLINE bool objectAssignFast(VM& vm, JSObject* target, JSObject* source, 
     // regression in object-assign-replace. Since the code is small and fast path, we keep both.
 
     // Do not clear since Vector::clear shrinks the backing store.
+    VM& vm = globalObject->vm();
     properties.resize(0);
     values.clear();
-    bool canUseFastPath = source->fastForEachPropertyWithSideEffectFreeFunctor(vm, [&](const PropertyTableEntry& entry) -> bool {
+
+    auto functor = [&](const PropertyTableEntry& entry) -> bool {
         if (entry.attributes() & PropertyAttribute::DontEnum)
             return true;
 
@@ -80,9 +82,26 @@ ALWAYS_INLINE bool objectAssignFast(VM& vm, JSObject* target, JSObject* source, 
         values.appendWithCrashOnOverflow(source->getDirect(entry.offset()));
 
         return true;
-    });
-    if (!canUseFastPath)
-        return false;
+    };
+
+    bool canUseFastPath = source->fastForEachPropertyWithSideEffectFreeFunctor(vm, functor);
+
+    if (!canUseFastPath) {
+        if (hasIndexedProperties(source->structure()->indexingType())) {
+            Structure* structure = source->structure();
+            structure->forEachProperty(vm, functor);
+            // getPropertiesAndValues(globalObject, source, properties, values);
+            target->putOwnDataPropertyBatching(vm, properties.data(), values.data(), properties.size());
+            
+            {
+                ArrayStorage* sourceStorage = source->ensureArrayStorage(vm);
+                
+            }
+
+            return true;
+        } else
+            return false;
+    }
 
     // Actually, assigning with empty object (option for example) is common. (`Object.assign(defaultOptions, passedOptions)` where `passedOptions` is empty object.)
     if (properties.size())

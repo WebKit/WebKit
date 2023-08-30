@@ -15396,6 +15396,7 @@ void SpeculativeJIT::compileObjectAssign(Node* node)
         JumpList doneCases;
         JumpList genericCases;
 
+        // Check empty JSObject
         genericCases.append(branchIfNotType(sourceGPR, FinalObjectType));
         genericCases.append(branchTest8(NonZero, Address(sourceGPR, JSObject::indexingTypeAndMiscOffset()), CCallHelpers::TrustedImm32(IndexingShapeMask)));
         emitLoadStructure(vm(), sourceGPR, scratch1GPR);

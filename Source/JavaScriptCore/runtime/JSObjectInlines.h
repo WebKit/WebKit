@@ -36,6 +36,7 @@
 #include "MegamorphicCache.h"
 #include "StructureInlines.h"
 #include "TypedArrayType.h"
+#include "wtf/DataLog.h"
 
 namespace JSC {
 
@@ -867,7 +868,7 @@ bool JSObject::fastForEachPropertyWithSideEffectFreeFunctor(VM& vm, const Functo
     Structure* structure = this->structure();
 
     if (!structure->canPerformFastPropertyEnumeration())
-        return false;
+        return false; // <-- here
 
     structure->forEachProperty(vm, functor);
     return true;
