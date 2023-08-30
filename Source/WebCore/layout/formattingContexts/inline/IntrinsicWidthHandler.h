@@ -25,11 +25,12 @@
 
 #pragma once
 
-#include "AbstractLineBuilder.h"
+#include "LineLayoutResult.h"
 
 namespace WebCore {
 namespace Layout {
 
+class AbstractLineBuilder;
 class ElementBox;
 class InlineFormattingContext;
 class InlineFormattingState;
@@ -47,7 +48,7 @@ public:
         InlineLayoutUnit constraint;
         LineLayoutResult result;
     };
-    std::optional<LineBreakingResult> maximumIntrinsicWidthResult() const { return m_maximumIntrinsicWidthResultForSingleLine; }
+    std::optional<LineBreakingResult>& maximumIntrinsicWidthResult() { return m_maximumIntrinsicWidthResultForSingleLine; }
 
 private:
     enum class MayCacheLayoutResult : bool { No, Yes };
