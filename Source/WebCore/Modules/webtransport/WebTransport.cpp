@@ -33,6 +33,7 @@
 #include "WebTransportDatagramDuplexStream.h"
 #include "WebTransportReliabilityMode.h"
 #include <JavaScriptCore/JSGlobalObject.h>
+#include <wtf/RunLoop.h>
 
 namespace WebCore {
 

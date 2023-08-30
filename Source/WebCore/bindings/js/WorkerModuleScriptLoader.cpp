@@ -27,6 +27,7 @@
 #include "WorkerModuleScriptLoader.h"
 
 #include "CachedScriptFetcher.h"
+#include "ContentSecurityPolicy.h"
 #include "DOMWrapperWorld.h"
 #include "JSDOMBinding.h"
 #include "JSDOMPromiseDeferred.h"

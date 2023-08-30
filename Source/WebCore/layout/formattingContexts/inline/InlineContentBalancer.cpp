@@ -27,6 +27,7 @@
 #include "InlineContentBalancer.h"
 
 #include "InlineLineBuilder.h"
+#include "RenderStyleInlines.h"
 #include <limits>
 
 namespace WebCore {

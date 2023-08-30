@@ -25,13 +25,16 @@
 
 #pragma once
 
+#include "AbstractLineBuilder.h"
+
 namespace WebCore {
 namespace Layout {
 
-class AbstractLineBuilder;
 class ElementBox;
 class InlineFormattingContext;
 class InlineFormattingState;
+
+struct IntrinsicWidthConstraints;
 
 class IntrinsicWidthHandler {
 public:

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ImplementationVisibility.h"
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC {
 

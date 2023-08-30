@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+class DeferredPromise;
+
 class WebTransportSendStream : public WritableStream {
 public:
     void getStats(Ref<DeferredPromise>&&);

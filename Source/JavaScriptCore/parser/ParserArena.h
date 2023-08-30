@@ -27,6 +27,7 @@
 
 #include "CommonIdentifiers.h"
 #include "Identifier.h"
+#include "MathCommon.h"
 #include <array>
 #include <type_traits>
 #include <wtf/SegmentedVector.h>

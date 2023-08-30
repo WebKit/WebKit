@@ -26,6 +26,9 @@
 #include "config.h"
 #include "WebTransportBidirectionalStream.h"
 
+#include "WebTransportReceiveStream.h"
+#include "WebTransportSendStream.h"
+
 namespace WebCore {
 
 ExceptionOr<Ref<WebTransportReceiveStream>> WebTransportBidirectionalStream::readable()

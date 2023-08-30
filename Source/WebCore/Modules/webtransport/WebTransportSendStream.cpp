@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebTransportSendStream.h"
 
+#include "JSDOMPromiseDeferred.h"
+
 namespace WebCore {
 
 void WebTransportSendStream::getStats(Ref<DeferredPromise>&& promise)

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include <wtf/RefCounted.h>
 
 namespace JSC {
@@ -35,6 +36,9 @@ namespace WebCore {
 
 enum class WebTransportReliabilityMode : uint8_t;
 enum class WebTransportCongestionControl : uint8_t;
+class DOMPromise;
+class DeferredPromise;
+class ReadableStream;
 class WebTransportDatagramDuplexStream;
 struct WebTransportSendStreamOptions;
 struct WebTransportOptions;

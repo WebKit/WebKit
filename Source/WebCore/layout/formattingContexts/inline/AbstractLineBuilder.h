@@ -26,7 +26,9 @@
 #pragma once
 
 #include "FloatingState.h"
+#include "InlineLine.h"
 #include "InlineLineTypes.h"
+#include "InlineRect.h"
 #include "LayoutUnits.h"
 
 namespace WebCore {
