@@ -568,7 +568,7 @@ static void pageCreatedCallback(WebKitWebProcessExtension* extension, WebKitWebP
 static gboolean extensionMessageReceivedCallback(WebKitWebProcessExtension* extension, WebKitUserMessage* message)
 {
     const char* messageName = webkit_user_message_get_name(message);
-    if (g_strcmp0(messageName, "RequestPing")) {
+    if (!g_strcmp0(messageName, "Test.RequestPing")) {
 #if ENABLE(2022_GLIB_API)
         webkit_web_process_extension_send_message_to_context(extension, webkit_user_message_new("Ping", nullptr), nullptr,
 #else
