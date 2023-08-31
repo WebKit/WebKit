@@ -171,8 +171,10 @@ void SVGElement::reportAttributeParsingError(SVGParsingError error, const Qualif
 
 void SVGElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
-    if (removalType.disconnectedFromDocument)
-        updateRelativeLengthsInformation(false, *this);
+    if (removalType.disconnectedFromDocument) {
+        ASSERT(!parentNode() || !parentNode()->isConnected());
+        m_elementsWithRelativeLengths.clear();
+    }
 
     StyledElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 
