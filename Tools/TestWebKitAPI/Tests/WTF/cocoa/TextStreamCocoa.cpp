@@ -34,3 +34,10 @@ TEST(WTF_TextStream, CFString)
     ts << reinterpret_cast<id>(const_cast<CFMutableStringRef>(CFSTR("Test")));
     EXPECT_EQ(ts.release(), "Test"_s);
 }
+
+TEST(WTF_TextStream, Hex)
+{
+    TextStream ts;
+    ts << hex(18);
+    EXPECT_EQ(ts.release(), "12"_s);
+}
