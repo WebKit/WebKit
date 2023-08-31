@@ -2876,3 +2876,5 @@ webkit.org/b/260912 [ Monterey+ Debug ] imported/w3c/web-platform-tests/dom/node
 webkit.org/b/260912 [ Monterey+ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-3.html [ Timeout ]
 
 webkit.org/b/260936 webanimations/accelerated-transform-related-animation-property-order.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/261000 media/video-orientation-canvas.html [ Pass Failure ]
