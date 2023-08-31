@@ -63,6 +63,19 @@ TEST(WTF, StringConcatenate)
     EXPECT_STREQ("hello world", makeString("hello", " ", "world").utf8().data());
 }
 
+TEST(WTF, StringConcatenate_Char)
+{
+    EXPECT_STREQ("abc", makeString("a", 'b', "c").utf8().data());
+    EXPECT_STREQ("abc", makeString("a", static_cast<LChar>('b'), "c").utf8().data());
+    EXPECT_STREQ("abc", makeString("a", static_cast<UChar>('b'), "c").utf8().data());
+    EXPECT_STREQ("abc", makeString("a", static_cast<UChar32>('b'), "c").utf8().data());
+
+    EXPECT_STREQ("aاc", makeString("a", static_cast<UChar>(0x0627), "c").utf8().data());
+    EXPECT_STREQ("aاc", makeString("a", static_cast<UChar32>(0x0627), "c").utf8().data());
+
+    EXPECT_STREQ("a😊c", makeString("a", static_cast<UChar32>(0x1F60A), "c").utf8().data());
+}
+
 TEST(WTF, StringConcatenate_Int)
 {
     EXPECT_EQ(5u, WTF::lengthOfIntegerAsString(17890));
@@ -216,4 +229,4 @@ TEST(WTF, StringConcatenate_Tuple)
     EXPECT_STREQ("hello 42 world", makeString(std::make_tuple(helloCodepoints, ' ', unsigned(42), ' ', "world")).utf8().data());
 }
 
-}
+} // namespace TestWebKitAPI

@@ -59,6 +59,28 @@ private:
     char m_character;
 };
 
+template<> class StringTypeAdapter<LChar, void> {
+public:
+    StringTypeAdapter(LChar character)
+        : m_character { character }
+    {
+    }
+
+    unsigned length() const { return 1; }
+    bool is8Bit() const { return true; }
+
+    void writeTo(LChar* destination) const
+    {
+        ASSERT(is8Bit());
+        *destination = m_character;
+    }
+
+    void writeTo(UChar* destination) const { *destination = m_character; }
+
+private:
+    LChar m_character;
+};
+
 template<> class StringTypeAdapter<UChar, void> {
 public:
     StringTypeAdapter(UChar character)
@@ -79,6 +101,42 @@ public:
 
 private:
     UChar m_character;
+};
+
+template<> class StringTypeAdapter<UChar32, void> {
+public:
+    StringTypeAdapter(UChar32 character)
+        : m_character { character }
+    {
+    }
+
+    unsigned length() const
+    {
+        return U_IS_SUPPLEMENTARY(m_character) ? 2 : 1;
+    }
+
+    bool is8Bit() const
+    {
+        return isLatin1(m_character);
+    }
+
+    void writeTo(LChar* destination) const
+    {
+        ASSERT(is8Bit());
+        *destination = m_character;
+    }
+
+    void writeTo(UChar* destination) const
+    {
+        size_t offset = 0;
+        bool isError = false;
+        U16_APPEND(destination, offset, length(), m_character, isError);
+        ASSERT(offset == length());
+        ASSERT_UNUSED(isError, !isError);
+    }
+
+private:
+    UChar32 m_character;
 };
 
 template<> class StringTypeAdapter<const LChar*, void> {
