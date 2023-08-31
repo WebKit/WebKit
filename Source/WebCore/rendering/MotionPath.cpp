@@ -32,11 +32,10 @@
 
 namespace WebCore {
 
-static FloatPoint offsetFromContainer(const RenderObject& renderer, const FloatRect& referenceRect)
+static FloatPoint offsetFromContainer(const RenderObject& renderer, RenderBlock& container)
 {
-    auto offsetFromContainingBlock = renderer.localToContainerPoint(FloatPoint(), renderer.containingBlock());
-    auto offset = offsetFromContainingBlock - referenceRect.location();
-    return { offset.width(), offset.height() };
+    auto offsetFromContainingBlock = renderer.offsetFromContainer(container, LayoutPoint());
+    return FloatPoint(offsetFromContainingBlock);
 }
 
 std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const RenderElement& renderer)
@@ -46,29 +45,33 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
     if (!pathOperation || !is<RenderLayerModelObject>(renderer))
         return std::nullopt;
 
-    auto startingPositionForOffsetPosition = [&](const LengthPoint& offsetPosition, const FloatRect& referenceRect) -> FloatPoint {
+    auto startingPositionForOffsetPosition = [&](const LengthPoint& offsetPosition, const FloatRect& referenceRect, RenderBlock& container) -> FloatPoint {
         // FIXME: Implement offset-position: normal.
         // If offset-position is auto, use top / left corner of the box.
         if (offsetPosition.x().isAuto() && offsetPosition.y().isAuto())
-            return offsetFromContainer(renderer, referenceRect);
+            return offsetFromContainer(renderer, container);
         return floatPointForLengthPoint(offsetPosition, referenceRect.size());
     };
 
     if (is<BoxPathOperation>(pathOperation)) {
-        auto& boxPathOperation = downcast<BoxPathOperation>(*pathOperation);
-        data.containingBlockBoundingRect = snapRectToDevicePixelsIfNeeded(renderer.referenceBoxRect(boxPathOperation.referenceBox()), downcast<RenderLayerModelObject>(renderer));
-        return data;
+        if (auto* container = renderer.containingBlock()) {
+            auto& boxPathOperation = downcast<BoxPathOperation>(*pathOperation);
+            data.containingBlockBoundingRect = snapRectToDevicePixelsIfNeeded(container->referenceBoxRect(boxPathOperation.referenceBox()), downcast<RenderLayerModelObject>(renderer));
+            data.offsetFromContainingBlock = offsetFromContainer(renderer, *container);
+            return data;
+        }
+        return std::nullopt;
     }
     if (is<RayPathOperation>(pathOperation)) {
-        if (auto* parentBlock = renderer.containingBlock()) {
+        if (auto* container = renderer.containingBlock()) {
             auto& rayPathOperation = downcast<RayPathOperation>(*pathOperation);
-            auto pathReferenceBoxRect = snapRectToDevicePixelsIfNeeded(parentBlock->transformReferenceBoxRect(parentBlock->style()), downcast<RenderLayerModelObject>(renderer));
+            auto pathReferenceBoxRect = snapRectToDevicePixelsIfNeeded(container->transformReferenceBoxRect(container->style()), downcast<RenderLayerModelObject>(renderer));
 
             auto offsetPosition = renderer.style().offsetPosition();
             auto startingPosition = rayPathOperation.position();
-            auto usedStartingPosition = startingPosition.x().isAuto() ? startingPositionForOffsetPosition(offsetPosition, pathReferenceBoxRect) : floatPointForLengthPoint(startingPosition, pathReferenceBoxRect.size());
+            auto usedStartingPosition = startingPosition.x().isAuto() ? startingPositionForOffsetPosition(offsetPosition, pathReferenceBoxRect, *container) : floatPointForLengthPoint(startingPosition, pathReferenceBoxRect.size());
             data.usedStartingPosition = usedStartingPosition;
-            data.offsetFromContainingBlock = offsetFromContainer(renderer, pathReferenceBoxRect);
+            data.offsetFromContainingBlock = offsetFromContainer(renderer, *container);
             data.containingBlockBoundingRect = pathReferenceBoxRect;
 
             return data;
@@ -184,5 +187,20 @@ std::optional<Path> MotionPath::computePathForRay(const RayPathOperation& rayPat
     path.addLineTo(currentOffsetForData(*motionPathData) + point);
     return path;
 }
+
+std::optional<Path> MotionPath::computePathForBox(const BoxPathOperation&, const TransformOperationData& data)
+{
+    if (auto motionPathData = data.motionPathData()) {
+        Path path;
+        auto rect = motionPathData->containingBlockBoundingRect;
+        auto shiftedPoint = motionPathData->offsetFromContainingBlock;
+        shiftedPoint.scale(-1);
+        rect.moveBy(shiftedPoint);
+        path.addRect(rect);
+        return path;
+    }
+    return std::nullopt;
+}
+
 
 } // namespace WebCore

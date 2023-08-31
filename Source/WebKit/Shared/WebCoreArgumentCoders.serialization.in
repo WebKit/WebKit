@@ -2702,7 +2702,6 @@ header: <WebCore/PathOperation.h>
 }
 
 [RefCounted, CustomHeader] class WebCore::BoxPathOperation {
-    WebCore::Path path();
     WebCore::CSSBoxType referenceBox();
 }
 

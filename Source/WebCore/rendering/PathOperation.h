@@ -173,15 +173,9 @@ public:
         return adoptRef(*new BoxPathOperation(referenceBox));
     }
 
-    static Ref<BoxPathOperation> create(Path&& path, CSSBoxType referenceBox)
-    {
-        return adoptRef(*new BoxPathOperation(WTFMove(path), referenceBox));
-    }
-
     Ref<PathOperation> clone() const final
     {
-        auto path = m_path;
-        return adoptRef(*new BoxPathOperation(WTFMove(path), m_referenceBox));
+        return adoptRef(*new BoxPathOperation(m_referenceBox));
     }
 
     const Path pathForReferenceRect(const FloatRoundedRect& boundingRect) const
@@ -191,8 +185,10 @@ public:
         return path;
     }
     
-    const std::optional<Path> getPath(const TransformOperationData&) const final { return m_path; }
-    const Path& path() const { return m_path; }
+    const std::optional<Path> getPath(const TransformOperationData& data) const final
+    {
+        return MotionPath::computePathForBox(*this, data);
+    }
     CSSBoxType referenceBox() const { return m_referenceBox; }
 
 private:
@@ -209,15 +205,6 @@ private:
         , m_referenceBox(referenceBox)
     {
     }
-
-    BoxPathOperation(Path&& path, CSSBoxType referenceBox)
-        : PathOperation(Box)
-        , m_path(WTFMove(path))
-        , m_referenceBox(referenceBox)
-    {
-    }
-
-    Path m_path;
     CSSBoxType m_referenceBox;
 };
 

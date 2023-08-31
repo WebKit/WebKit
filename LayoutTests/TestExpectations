@@ -5290,11 +5290,8 @@ imported/w3c/web-platform-tests/css/motion/offset-path-url-011.html [ ImageOnlyF
 imported/w3c/web-platform-tests/css/motion/offset-path-ray-011.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-ray-014.html [ ImageOnlyFailure ]
 
-# CSS motion path tests for missing <coord-box> support.
+# CSS motion path tests for missing <coord-box> support with border-radius.
 imported/w3c/web-platform-tests/css/motion/offset-path-coord-box-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-coord-box-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-coord-box-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-coord-box-004.html [ ImageOnlyFailure ]
 
 # CSS motion path tests for missing parsing support for <coord-box> with ray.
 imported/w3c/web-platform-tests/css/motion/offset-path-ray-015.html [ ImageOnlyFailure ]
