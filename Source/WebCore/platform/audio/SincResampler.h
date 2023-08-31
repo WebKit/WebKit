@@ -48,7 +48,7 @@ public:
     size_t chunkSize() const { return m_chunkSize; }
 
     // Processes numberOfSourceFrames from source to produce numberOfSourceFrames / scaleFactor frames in destination.
-    static void processBuffer(const float* source, float* destination, unsigned numberOfSourceFrames, double scaleFactor);
+    WEBCORE_EXPORT static void processBuffer(const float* source, float* destination, unsigned numberOfSourceFrames, double scaleFactor);
 
     // Process with provideInput callback function for streaming applications.
     void process(float* destination, size_t framesToProcess);
