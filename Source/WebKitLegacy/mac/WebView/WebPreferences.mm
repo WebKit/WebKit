@@ -3087,16 +3087,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey];
 }
 
-- (BOOL)referrerPolicyAttributeEnabled
-{
-    return [self _boolValueForKey:WebKitReferrerPolicyAttributeEnabledPreferenceKey];
-}
-
-- (void)setReferrerPolicyAttributeEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitReferrerPolicyAttributeEnabledPreferenceKey];
-}
-
 - (BOOL)coreMathMLEnabled
 {
     return [self _boolValueForKey:WebKitCoreMathMLEnabledPreferenceKey];

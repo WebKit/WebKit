@@ -1896,16 +1896,6 @@ bool WKPreferencesGetVP9DecoderEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->vp9DecoderEnabled();
 }
 
-void WKPreferencesSetReferrerPolicyAttributeEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setReferrerPolicyAttributeEnabled(flag);
-}
-
-bool WKPreferencesGetReferrerPolicyAttributeEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->referrerPolicyAttributeEnabled();
-}
-
 bool WKPreferencesGetRemotePlaybackEnabled(WKPreferencesRef preferencesRef)
 {
     return WebKit::toImpl(preferencesRef)->remotePlaybackEnabled();
@@ -2108,4 +2098,13 @@ void WKPreferencesSetLoadsSiteIconsIgnoringImageLoadingPreference(WKPreferencesR
 bool WKPreferencesGetLoadsSiteIconsIgnoringImageLoadingPreference(WKPreferencesRef)
 {
     return false;
+}
+
+void WKPreferencesSetReferrerPolicyAttributeEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+}
+
+bool WKPreferencesGetReferrerPolicyAttributeEnabled(WKPreferencesRef preferencesRef)
+{
+    return true;
 }

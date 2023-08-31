@@ -327,7 +327,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL fetchAPIKeepAliveEnabled;
 @property (nonatomic) BOOL genericCueAPIEnabled;
 @property (nonatomic) BOOL aspectRatioOfImgFromWidthAndHeightEnabled;
-@property (nonatomic) BOOL referrerPolicyAttributeEnabled;
 @property (nonatomic) BOOL coreMathMLEnabled;
 @property (nonatomic) BOOL linkPreloadResponsiveImagesEnabled;
 @property (nonatomic) BOOL remotePlaybackEnabled;

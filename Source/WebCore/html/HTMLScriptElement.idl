@@ -32,7 +32,7 @@
     [CEReactions=NotNeeded] attribute [AtomString] DOMString? crossOrigin;
     [CEReactions=NotNeeded, Reflect] attribute boolean noModule;
     [CEReactions=NotNeeded, Reflect] attribute DOMString integrity;
-    [EnabledBySetting=ReferrerPolicyAttributeEnabled, ImplementedAs=referrerPolicyForBindings, CEReactions=NotNeeded] attribute [AtomString] DOMString referrerPolicy;
+    [CEReactions=NotNeeded, ImplementedAs=referrerPolicyForBindings] attribute [AtomString] DOMString referrerPolicy;
     [CEReactions=NotNeeded, EnabledBySetting=FetchPriorityEnabled, ImplementedAs=fetchPriorityForBindings] attribute [AtomString] DOMString fetchPriority;
 
     static boolean supports(DOMString type);
