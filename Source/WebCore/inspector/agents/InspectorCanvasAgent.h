@@ -47,7 +47,7 @@ class InjectedScriptManager;
 namespace WebCore {
 
 class CanvasRenderingContext;
-class LocalFrame;
+class ScriptExecutionContext;
 
 #if ENABLE(WEBGL)
 class InspectorShaderProgram;
@@ -55,24 +55,22 @@ class WebGLProgram;
 class WebGLRenderingContextBase;
 #endif // ENABLE(WEBGL)
 
-class InspectorCanvasAgent final : public InspectorAgentBase, public Inspector::CanvasBackendDispatcherHandler, public CanvasObserver {
+class InspectorCanvasAgent : public InspectorAgentBase, public Inspector::CanvasBackendDispatcherHandler, public CanvasObserver {
     WTF_MAKE_NONCOPYABLE(InspectorCanvasAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorCanvasAgent(PageAgentContext&);
     ~InspectorCanvasAgent();
 
     // InspectorAgentBase
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
     void discardAgent();
+    virtual bool enabled() const;
 
     // CanvasBackendDispatcherHandler
     Inspector::Protocol::ErrorStringOr<void> enable();
     Inspector::Protocol::ErrorStringOr<void> disable();
-    Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> requestNode(const Inspector::Protocol::Canvas::CanvasId&);
     Inspector::Protocol::ErrorStringOr<String> requestContent(const Inspector::Protocol::Canvas::CanvasId&);
-    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> requestClientNodes(const Inspector::Protocol::Canvas::CanvasId&);
     Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> resolveContext(const Inspector::Protocol::Canvas::CanvasId&, const String& objectGroup);
     Inspector::Protocol::ErrorStringOr<void> setRecordingAutoCaptureFrameCount(int);
     Inspector::Protocol::ErrorStringOr<void> startRecording(const Inspector::Protocol::Canvas::CanvasId&, std::optional<int>&& frameCount, std::optional<int>&& memoryLimit);
@@ -90,9 +88,8 @@ public:
     void canvasDestroyed(CanvasBase&) final;
 
     // InspectorInstrumentation
-    void frameNavigated(LocalFrame&);
-    void didChangeCSSCanvasClientNodes(CanvasBase&);
     void didCreateCanvasRenderingContext(CanvasRenderingContext&);
+    void didChangeCanvasSize(CanvasRenderingContext&);
     void didChangeCanvasMemory(CanvasRenderingContext&);
     void didFinishRecordingCanvasFrame(CanvasRenderingContext&, bool forceDispatch = false);
     void consoleStartRecordingCanvas(CanvasRenderingContext&, JSC::JSGlobalObject&, JSC::JSObject* options);
@@ -113,6 +110,24 @@ public:
 #undef PROCESS_ARGUMENT_DECLARATION
     void recordAction(CanvasRenderingContext&, String&&, InspectorCanvasCallTracer::ProcessedArguments&& = { });
 
+protected:
+    InspectorCanvasAgent(WebAgentContext&);
+
+    virtual void internalEnable();
+    virtual void internalDisable();
+
+    void reset();
+    void unbindCanvas(InspectorCanvas&);
+
+    RefPtr<InspectorCanvas> assertInspectorCanvas(Inspector::Protocol::ErrorString&, const String& canvasId);
+    RefPtr<InspectorCanvas> findInspectorCanvas(CanvasRenderingContext&);
+
+    virtual bool matchesCurrentContext(ScriptExecutionContext*) const = 0;
+
+    std::unique_ptr<Inspector::CanvasFrontendDispatcher> m_frontendDispatcher;
+
+    MemoryCompactRobinHoodHashMap<String, RefPtr<InspectorCanvas>> m_identifierToInspectorCanvas;
+
 private:
     struct RecordingOptions {
         std::optional<long> frameCount;
@@ -125,12 +140,8 @@ private:
 #if ENABLE(WEBGL)
     void programDestroyedTimerFired();
 #endif // ENABLE(WEBGL)
-    void reset();
 
     InspectorCanvas& bindCanvas(CanvasRenderingContext&, bool captureBacktrace);
-    void unbindCanvas(InspectorCanvas&);
-    RefPtr<InspectorCanvas> assertInspectorCanvas(Inspector::Protocol::ErrorString&, const String& canvasId);
-    RefPtr<InspectorCanvas> findInspectorCanvas(CanvasRenderingContext&);
 
 #if ENABLE(WEBGL)
     void unbindProgram(InspectorShaderProgram&);
@@ -138,13 +149,10 @@ private:
     RefPtr<InspectorShaderProgram> findInspectorProgram(WebGLProgram&);
 #endif // ENABLE(WEBGL)
 
-    std::unique_ptr<Inspector::CanvasFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::CanvasBackendDispatcher> m_backendDispatcher;
 
     Inspector::InjectedScriptManager& m_injectedScriptManager;
-    Page& m_inspectedPage;
 
-    MemoryCompactRobinHoodHashMap<String, RefPtr<InspectorCanvas>> m_identifierToInspectorCanvas;
     Vector<String> m_removedCanvasIdentifiers;
     Timer m_canvasDestroyedTimer;
 

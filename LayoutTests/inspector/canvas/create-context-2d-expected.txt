@@ -29,6 +29,13 @@ PASS: Canvas context should be Offscreen2D.
 
 PASS: Removed canvas has expected ID.
 
+-- Running test case: Canvas.CreateContext2D.Worker
+PASS: Canvas context should be Offscreen2D.
+  0: getContext - [native code]
+  1: createContext - inspector/canvas/resources/worker.js:4:36
+  2: (anonymous function) - inspector/canvas/resources/worker.js:14:21
+
+
 -- Running test case: Canvas.CreateContext2D.CSSCanvas
 Create CSS canvas from -webkit-canvas(css-canvas).
 PASS: Canvas context should be 2D.

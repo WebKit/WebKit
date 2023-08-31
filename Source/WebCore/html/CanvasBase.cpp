@@ -251,6 +251,17 @@ bool CanvasBase::hasActiveInspectorCanvasCallTracer() const
     return context && context->hasActiveInspectorCanvasCallTracer();
 }
 
+void CanvasBase::setSize(const IntSize& size)
+{
+    if (size == m_size)
+        return;
+
+    m_size = size;
+
+    if (auto* context = renderingContext())
+        InspectorInstrumentation::didChangeCanvasSize(*context);
+}
+
 RefPtr<ImageBuffer> CanvasBase::setImageBuffer(RefPtr<ImageBuffer>&& buffer) const
 {
     RefPtr<ImageBuffer> returnBuffer;
@@ -260,14 +271,19 @@ RefPtr<ImageBuffer> CanvasBase::setImageBuffer(RefPtr<ImageBuffer>&& buffer) con
         returnBuffer = std::exchange(m_imageBuffer, WTFMove(buffer));
     }
 
-    if (m_imageBuffer && m_size != m_imageBuffer->truncatedLogicalSize())
+    auto* context = renderingContext();
+
+    if (m_imageBuffer && m_size != m_imageBuffer->truncatedLogicalSize()) {
         m_size = m_imageBuffer->truncatedLogicalSize();
+
+        if (context)
+            InspectorInstrumentation::didChangeCanvasSize(*context);
+    }
 
     size_t previousMemoryCost = m_imageBufferCost;
     m_imageBufferCost = memoryCost();
     s_activePixelMemory += m_imageBufferCost - previousMemoryCost;
 
-    auto* context = renderingContext();
     if (context && m_imageBuffer && previousMemoryCost != m_imageBufferCost)
         InspectorInstrumentation::didChangeCanvasMemory(*context);
 

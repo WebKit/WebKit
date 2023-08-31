@@ -94,9 +94,11 @@ void WorkerConsoleClient::profileEnd(JSC::JSGlobalObject*, const String&) { }
 void WorkerConsoleClient::takeHeapSnapshot(JSC::JSGlobalObject*, const String&) { }
 void WorkerConsoleClient::timeStamp(JSC::JSGlobalObject*, Ref<ScriptArguments>&&) { }
 
+// FIXME: <https://webkit.org/b/243362> Web Inspector: support starting/stopping recordings from the console in a Worker
 void WorkerConsoleClient::record(JSC::JSGlobalObject*, Ref<ScriptArguments>&&) { }
 void WorkerConsoleClient::recordEnd(JSC::JSGlobalObject*, Ref<ScriptArguments>&&) { }
 
+// FIXME: <https://webkit.org/b/243361> Web Inspector: support console screenshots in a Worker
 void WorkerConsoleClient::screenshot(JSC::JSGlobalObject*, Ref<ScriptArguments>&&) { }
 
 } // namespace WebCore

@@ -146,26 +146,17 @@ WI.RemoteObject = class RemoteObject
         });
     }
 
-    static resolveCanvasContext(canvas, objectGroup, callback)
+    static resolveCanvasContext(canvas, objectGroup)
     {
-        console.assert(typeof callback === "function");
-
-        function wrapCallback(error, object) {
-            if (error || !object)
-                callback(null);
-            else
-                callback(WI.RemoteObject.fromPayload(object, WI.mainTarget));
-        }
-
-        let target = WI.assumingMainTarget();
+        let promise = null;
 
         // COMPATIBILITY (iOS 13): Canvas.resolveCanvasContext was renamed to Canvas.resolveContext.
-        if (!target.hasCommand("Canvas.resolveContext")) {
-            target.CanvasAgent.resolveCanvasContext(canvas.identifier, objectGroup, wrapCallback);
-            return;
-        }
+        if (!canvas.target.hasCommand("Canvas.resolveContext"))
+            promise = canvas.target.CanvasAgent.resolveCanvasContext(canvas.identifier, objectGroup);
+        else
+            promise = canvas.target.CanvasAgent.resolveContext(canvas.identifier, objectGroup);
 
-        target.CanvasAgent.resolveContext(canvas.identifier, objectGroup, wrapCallback);
+        return promise.then(({object}) => WI.RemoteObject.fromPayload(object, canvas.target));
     }
 
     static resolveAnimation(animation, objectGroup, callback)
@@ -487,14 +478,18 @@ WI.RemoteObject = class RemoteObject
         }
     }
 
-    callFunctionJSON(functionDeclaration, args, callback)
+    callFunctionJSON(functionDeclaration, args, callback = null)
     {
-        function mycallback(error, result, wasThrown)
-        {
-            callback((error || wasThrown) ? null : result.value);
+        if (callback && typeof callback === "function") {
+            this._target.RuntimeAgent.callFunctionOn(this._objectId, appendWebInspectorSourceURL(functionDeclaration.toString()), args, true, true, (error, result, wasThrown) => {
+                callback((error || wasThrown) ? null : result.value);
+            });
+        } else {
+            return this._target.RuntimeAgent.callFunctionOn(this._objectId, appendWebInspectorSourceURL(functionDeclaration.toString()), args, true, true)
+                .then(({result, wasThrown}) => {
+                    return wasThrown ? null : result.value;
+                });
         }
-
-        this._target.RuntimeAgent.callFunctionOn(this._objectId, appendWebInspectorSourceURL(functionDeclaration.toString()), args, true, true, mycallback);
     }
 
     invokeGetter(getterRemoteObject, callback)

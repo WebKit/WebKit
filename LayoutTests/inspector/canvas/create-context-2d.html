@@ -5,6 +5,8 @@
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script src="resources/create-context-utilities.js"></script>
 <script>
+window.worker = new Worker("resources/worker.js");
+
 function test() {
     let suite = InspectorTest.CreateContextUtilities.initializeTestSuite("Canvas.CreateContext2D");
 
@@ -24,6 +26,13 @@ function test() {
         name: "Offscreen",
         expression: `createOffscreenCanvas("2d")`,
         contextType: WI.Canvas.ContextType.OffscreenCanvas2D,
+    });
+
+    InspectorTest.CreateContextUtilities.addSimpleTestCase({
+        name: "Worker",
+        expression: `worker.postMessage({name: "createContext", args: ["2d"]})`,
+        contextType: WI.Canvas.ContextType.OffscreenCanvas2D,
+        skipDestroy: true,
     });
 
     InspectorTest.CreateContextUtilities.addCSSCanvasTestCase(WI.Canvas.ContextType.Canvas2D);

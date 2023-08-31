@@ -896,9 +896,13 @@ Ref<Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(bool capture
         return Protocol::Canvas::ContextType::Canvas2D;
     }();
 
+    const auto& size = m_context->canvasBase().size();
+
     auto canvas = Protocol::Canvas::Canvas::create()
         .setCanvasId(m_identifier)
         .setContextType(contextType)
+        .setWidth(size.width())
+        .setHeight(size.height())
         .release();
 
     if (auto* node = canvasElement()) {

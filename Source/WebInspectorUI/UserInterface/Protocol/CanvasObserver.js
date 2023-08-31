@@ -29,42 +29,47 @@ WI.CanvasObserver = class CanvasObserver extends InspectorBackend.Dispatcher
 
     canvasAdded(canvas)
     {
-        WI.canvasManager.canvasAdded(canvas);
+        WI.canvasManager.canvasAdded(this._target, canvas);
     }
 
     canvasRemoved(canvasId)
     {
-        WI.canvasManager.canvasRemoved(canvasId);
+        WI.canvasManager.canvasRemoved(this._target, canvasId);
+    }
+
+    canvasSizeChanged(canvasId, width, height)
+    {
+        WI.canvasManager.canvasSizeChanged(this._target, canvasId, width, height);
     }
 
     canvasMemoryChanged(canvasId, memoryCost)
     {
-        WI.canvasManager.canvasMemoryChanged(canvasId, memoryCost);
+        WI.canvasManager.canvasMemoryChanged(this._target, canvasId, memoryCost);
     }
 
     clientNodesChanged(canvasId)
     {
-        WI.canvasManager.clientNodesChanged(canvasId);
+        WI.canvasManager.clientNodesChanged(this._target, canvasId);
     }
 
     recordingStarted(canvasId, initiator)
     {
-        WI.canvasManager.recordingStarted(canvasId, initiator);
+        WI.canvasManager.recordingStarted(this._target, canvasId, initiator);
     }
 
     recordingProgress(canvasId, frames, bufferUsed)
     {
-        WI.canvasManager.recordingProgress(canvasId, frames, bufferUsed);
+        WI.canvasManager.recordingProgress(this._target, canvasId, frames, bufferUsed);
     }
 
     recordingFinished(canvasId, recording)
     {
-        WI.canvasManager.recordingFinished(canvasId, recording);
+        WI.canvasManager.recordingFinished(this._target, canvasId, recording);
     }
 
     extensionEnabled(canvasId, extension)
     {
-        WI.canvasManager.extensionEnabled(canvasId, extension);
+        WI.canvasManager.extensionEnabled(this._target, canvasId, extension);
     }
 
     programCreated(shaderProgram)
@@ -76,17 +81,17 @@ WI.CanvasObserver = class CanvasObserver extends InspectorBackend.Dispatcher
                 programId: arguments[1],
             };
         }
-        WI.canvasManager.programCreated(shaderProgram);
+        WI.canvasManager.programCreated(this._target, shaderProgram);
     }
 
     programDeleted(programId)
     {
-        WI.canvasManager.programDeleted(programId);
+        WI.canvasManager.programDeleted(this._target, programId);
     }
 
     // COMPATIBILITY (iOS 13): Canvas.events.cssCanvasClientNodesChanged was renamed to Canvas.events.clientNodesChanged.
     cssCanvasClientNodesChanged(canvasId)
     {
-        WI.canvasManager.clientNodesChanged(canvasId);
+        WI.canvasManager.clientNodesChanged(this._target, canvasId);
     }
 };
