@@ -1223,14 +1223,14 @@ std::optional<Ref<WebCore::SharedBuffer>> ArgumentCoder<WebCore::SharedBuffer>::
     return std::nullopt;
 }
 
-#if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
+#if ENABLE(SHAREABLE_RESOURCE)
 static ShareableResource::Handle tryConvertToShareableResourceHandle(const ScriptBuffer& script)
 {
     if (!script.containsSingleFileMappedSegment())
         return ShareableResource::Handle { };
 
     auto& segment = script.buffer()->begin()->segment;
-    auto sharedMemory = SharedMemory::wrapMap(const_cast<uint8_t*>(segment->data()), segment->size(), SharedMemory::Protection::ReadOnly);
+    RefPtr<SharedMemory> sharedMemory;// SharedMemory::wrapMap(const_cast<uint8_t*>(segment->data()), segment->size(), SharedMemory::Protection::ReadOnly);
     if (!sharedMemory)
         return ShareableResource::Handle { };
 
@@ -1258,7 +1258,7 @@ static std::optional<WebCore::ScriptBuffer> decodeScriptBufferAsShareableResourc
 
 void ArgumentCoder<WebCore::ScriptBuffer>::encode(Encoder& encoder, const WebCore::ScriptBuffer& script)
 {
-#if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
+#if ENABLE(SHAREABLE_RESOURCE)
     auto handle = tryConvertToShareableResourceHandle(script);
     bool isShareableResourceHandle = !handle.isNull();
     encoder << isShareableResourceHandle;
@@ -1272,7 +1272,7 @@ void ArgumentCoder<WebCore::ScriptBuffer>::encode(Encoder& encoder, const WebCor
 
 std::optional<WebCore::ScriptBuffer> ArgumentCoder<WebCore::ScriptBuffer>::decode(Decoder& decoder)
 {
-#if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
+#if ENABLE(SHAREABLE_RESOURCE)
     std::optional<bool> isShareableResourceHandle;
     decoder >> isShareableResourceHandle;
     if (!isShareableResourceHandle)
