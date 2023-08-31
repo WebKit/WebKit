@@ -85,7 +85,7 @@
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(FULLSCREEN_API)
-#include "FullscreenManager.h"
+#include "DocumentFullscreen.h"
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -236,7 +236,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
             return false;
 
         // Only use background layers on the fullscreen element's backdrop.
-        auto* fullscreenElement = renderer.document().fullscreenManager().fullscreenElement();
+        auto* fullscreenElement = renderer.document().fullscreen().fullscreenElement();
         if (!fullscreenElement || !fullscreenElement->renderer() || fullscreenElement->renderer()->backdropRenderer() != &renderer)
             return false;
 

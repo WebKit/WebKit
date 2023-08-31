@@ -105,7 +105,7 @@
 #include <wtf/ProcessPrivilege.h>
 
 #if ENABLE(FULLSCREEN_API)
-#include <WebCore/FullscreenManager.h>
+#include <WebCore/DocumentFullscreen.h>
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS)
@@ -547,7 +547,7 @@ void WebLocalFrameLoaderClient::dispatchDidStartProvisionalLoad()
 
 #if ENABLE(FULLSCREEN_API)
     auto* document = m_frame->coreLocalFrame()->document();
-    if (document && document->fullscreenManager().fullscreenElement())
+    if (document && document->fullscreen().fullscreenElement())
         webPage->fullScreenManager()->exitFullScreenForElement(webPage->fullScreenManager()->element());
 #endif
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,29 +28,121 @@
 #if ENABLE(FULLSCREEN_API)
 
 #include "Document.h"
-#include "FullscreenManager.h"
-#include <wtf/Forward.h>
+#include "FrameDestructionObserverInlines.h"
+#include "GCReachableRef.h"
+#include "LayoutRect.h"
+#include "Page.h"
+#include <wtf/Deque.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class DeferredPromise;
-class Document;
-class Element;
+class RenderStyle;
 
-class DocumentFullscreen {
+class DocumentFullscreen final : public CanMakeWeakPtr<DocumentFullscreen> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
+    // Document+Fullscreen.idl methods:
     static void exitFullscreen(Document&, RefPtr<DeferredPromise>&&);
     static bool fullscreenEnabled(Document&);
-
-    static bool webkitFullscreenEnabled(Document& document) { return document.fullscreenManager().isFullscreenEnabled(); }
-    static Element* webkitFullscreenElement(Document& document) { return document.ancestorElementInThisScope(document.fullscreenManager().fullscreenElement()); }
+    static bool webkitFullscreenEnabled(Document& document) { return document.fullscreen().isFullscreenEnabled(); }
+    static Element* webkitFullscreenElement(Document& document) { return document.ancestorElementInThisScope(document.fullscreen().fullscreenElement()); }
     WEBCORE_EXPORT static void webkitExitFullscreen(Document&);
-    static bool webkitIsFullScreen(Document& document) { return document.fullscreenManager().isFullscreen(); }
-    static bool webkitFullScreenKeyboardInputAllowed(Document& document) { return document.fullscreenManager().isFullscreenKeyboardInputAllowed(); }
-    static Element* webkitCurrentFullScreenElement(Document& document) { return document.ancestorElementInThisScope(document.fullscreenManager().currentFullscreenElement()); }
-    static void webkitCancelFullScreen(Document& document) { document.fullscreenManager().cancelFullscreen(); }
+    static bool webkitIsFullScreen(Document& document) { return document.fullscreen().isFullscreen(); }
+    static bool webkitFullScreenKeyboardInputAllowed(Document& document) { return document.fullscreen().isFullscreenKeyboardInputAllowed(); }
+    static Element* webkitCurrentFullScreenElement(Document& document) { return document.ancestorElementInThisScope(document.fullscreen().currentFullscreenElement()); }
+    static void webkitCancelFullScreen(Document& document) { document.fullscreen().cancelFullscreen(); }
+
+    DocumentFullscreen(Document&);
+    ~DocumentFullscreen();
+
+    Document& document() { return m_document; }
+    const Document& document() const { return m_document; }
+    Page* page() const { return m_document.page(); }
+    LocalFrame* frame() const { return m_document.frame(); }
+    Element* documentElement() const { return m_document.documentElement(); }
+    bool isSimpleFullscreenDocument() const;
+    Document::BackForwardCacheState backForwardCacheState() const { return m_document.backForwardCacheState(); }
+
+    // WHATWG Fullscreen API
+    WEBCORE_EXPORT Element* fullscreenElement() const;
+    WEBCORE_EXPORT bool isFullscreenEnabled() const;
+    WEBCORE_EXPORT void exitFullscreen(RefPtr<DeferredPromise>&&);
+
+    // Mozilla versions.
+    bool isFullscreen() const { return m_fullscreenElement.get(); }
+    bool isFullscreenKeyboardInputAllowed() const { return m_fullscreenElement.get() && m_areKeysEnabledInFullscreen; }
+    Element* currentFullscreenElement() const { return m_fullscreenElement.get(); }
+    WEBCORE_EXPORT void cancelFullscreen();
+
+    enum FullscreenCheckType {
+        EnforceIFrameAllowFullscreenRequirement,
+        ExemptIFrameAllowFullscreenRequirement,
+    };
+    WEBCORE_EXPORT void requestFullscreenForElement(Ref<Element>&&, RefPtr<DeferredPromise>&&, FullscreenCheckType);
+
+    WEBCORE_EXPORT bool willEnterFullscreen(Element&);
+    WEBCORE_EXPORT bool didEnterFullscreen();
+    WEBCORE_EXPORT bool willExitFullscreen();
+    WEBCORE_EXPORT bool didExitFullscreen();
+
+    void notifyAboutFullscreenChangeOrError();
+
+    enum class ExitMode : bool { Resize, NoResize };
+    void finishExitFullscreen(Document&, ExitMode);
+
+    void exitRemovedFullscreenElement(Element&);
+
+    WEBCORE_EXPORT bool isAnimatingFullscreen() const;
+    WEBCORE_EXPORT void setAnimatingFullscreen(bool);
+
+    WEBCORE_EXPORT bool areFullscreenControlsHidden() const;
+    WEBCORE_EXPORT void setFullscreenControlsHidden(bool);
+
+    void clear();
+    void emptyEventQueue();
+
+protected:
+    friend class Document;
+
+    enum class EventType : bool { Change, Error };
+    void dispatchFullscreenChangeOrErrorEvent(Deque<GCReachableRef<Node>>&, EventType, bool shouldNotifyMediaElement);
+    void dispatchEventForNode(Node&, EventType);
+    void addDocumentToFullscreenChangeEventQueue(Document&);
+
+private:
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const { return m_document.logger(); }
+    const void* logIdentifier() const { return m_logIdentifier; }
+    const char* logClassName() const { return "DocumentFullscreen"; }
+    WTFLogChannel& logChannel() const;
+#endif
+
+    Document& topDocument() { return m_topDocument ? *m_topDocument : document().topDocument(); }
+
+    Document& m_document;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_topDocument;
+
+    RefPtr<Element> fullscreenOrPendingElement() const { return m_fullscreenElement ? m_fullscreenElement : m_pendingFullscreenElement; }
+
+    RefPtr<DeferredPromise> m_pendingPromise;
+
+    bool m_pendingExitFullscreen { false };
+    RefPtr<Element> m_pendingFullscreenElement;
+    RefPtr<Element> m_fullscreenElement;
+    Deque<GCReachableRef<Node>> m_fullscreenChangeEventTargetQueue;
+    Deque<GCReachableRef<Node>> m_fullscreenErrorEventTargetQueue;
+
+    bool m_areKeysEnabledInFullscreen { false };
+    bool m_isAnimatingFullscreen { false };
+    bool m_areFullscreenControlsHidden { false };
+
+#if !RELEASE_LOG_DISABLED
+    const void* m_logIdentifier;
+#endif
 };
 
-} // namespace WebCore
+}
 
-#endif // ENABLE(FULLSCREEN_API)
+#endif

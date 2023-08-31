@@ -148,6 +148,7 @@
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DisplayRefreshMonitorManager.h>
 #import <WebCore/Document.h>
+#import <WebCore/DocumentFullscreen.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/DragController.h>
 #import <WebCore/DragData.h>
@@ -166,7 +167,6 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameSelection.h>
 #import <WebCore/FrameTree.h>
-#import <WebCore/FullscreenManager.h>
 #import <WebCore/GCController.h>
 #import <WebCore/GameControllerGamepadProvider.h>
 #import <WebCore/GeolocationController.h>
@@ -3319,7 +3319,7 @@ IGNORE_WARNINGS_END
 
 #if ENABLE(FULLSCREEN_API)
     auto* document = core([frame DOMDocument]);
-    if (auto* element = document ? document->fullscreenManager().currentFullscreenElement() : 0) {
+    if (auto* element = document ? document->fullscreen().currentFullscreenElement() : 0) {
         SEL selector = @selector(webView:closeFullScreenWithListener:);
         if ([_private->UIDelegate respondsToSelector:selector]) {
             auto listener = adoptNS([[WebKitFullScreenListener alloc] initWithElement:element]);

@@ -73,7 +73,7 @@
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-#include "FullscreenManager.h"
+#include "DocumentFullscreen.h"
 #endif
 
 namespace WebCore {
@@ -585,7 +585,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         if (hasInertAttribute(element))
             return true;
 #if ENABLE(FULLSCREEN_API)
-        if (m_document.fullscreenManager().fullscreenElement() && element == m_document.documentElement())
+        if (m_document.fullscreen().fullscreenElement() && element == m_document.documentElement())
             return true;
 #endif
         return false;
@@ -599,7 +599,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             style.setEffectiveInert(false);
 
 #if ENABLE(FULLSCREEN_API)
-        if (m_element == m_document.fullscreenManager().fullscreenElement() && !hasInertAttribute(m_element))
+        if (m_element == m_document.fullscreen().fullscreenElement() && !hasInertAttribute(m_element))
             style.setEffectiveInert(false);
 #endif
 

@@ -27,12 +27,12 @@
 #include "ScreenOrientation.h"
 
 #include "Document.h"
+#include "DocumentFullscreen.h"
 #include "DocumentInlines.h"
 #include "Element.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FrameDestructionObserverInlines.h"
-#include "FullscreenManager.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LocalDOMWindow.h"
 #include "Page.h"
@@ -119,7 +119,7 @@ void ScreenOrientation::lock(LockType lockType, Ref<DeferredPromise>&& promise)
 
     if (document->settings().fullscreenRequirementForScreenOrientationLockingEnabled()) {
 #if ENABLE(FULLSCREEN_API)
-        if (!document->fullscreenManager().isFullscreen()) {
+        if (!document->fullscreen().isFullscreen()) {
 #else
         if (true) {
 #endif

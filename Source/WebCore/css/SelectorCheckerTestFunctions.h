@@ -47,8 +47,8 @@
 #endif
 
 #if ENABLE(FULLSCREEN_API)
+#include "DocumentFullscreen.h"
 #include "DocumentOrShadowRootFullscreen.h"
-#include "FullscreenManager.h"
 #endif
 
 #if ENABLE(VIDEO)
@@ -423,21 +423,21 @@ ALWAYS_INLINE bool matchesWebkitFullScreenPseudoClass(const Element& element)
     // context's Document is in the fullscreen state has the 'full-screen' pseudoclass applied.
     if (is<HTMLFrameElementBase>(element) && element.hasFullscreenFlag())
         return true;
-    if (!element.document().fullscreenManager().isFullscreen())
+    if (!element.document().fullscreen().isFullscreen())
         return false;
-    return &element == element.document().fullscreenManager().currentFullscreenElement();
+    return &element == element.document().fullscreen().currentFullscreenElement();
 }
 
 ALWAYS_INLINE bool matchesFullScreenAnimatingFullScreenTransitionPseudoClass(const Element& element)
 {
-    if (&element != element.document().fullscreenManager().currentFullscreenElement())
+    if (&element != element.document().fullscreen().currentFullscreenElement())
         return false;
-    return element.document().fullscreenManager().isAnimatingFullscreen();
+    return element.document().fullscreen().isAnimatingFullscreen();
 }
 
 ALWAYS_INLINE bool matchesFullScreenAncestorPseudoClass(const Element& element)
 {
-    auto* currentFullscreenElement = element.document().fullscreenManager().currentFullscreenElement();
+    auto* currentFullscreenElement = element.document().fullscreen().currentFullscreenElement();
     return currentFullscreenElement && currentFullscreenElement->isDescendantOrShadowDescendantOf(element);
 }
 
@@ -445,14 +445,14 @@ ALWAYS_INLINE bool matchesFullScreenDocumentPseudoClass(const Element& element)
 {
     // While a Document is in the fullscreen state, the 'full-screen-document' pseudoclass applies
     // to all elements of that Document.
-    return element.document().fullscreenManager().fullscreenElement();
+    return element.document().fullscreen().fullscreenElement();
 }
 
 ALWAYS_INLINE bool matchesFullScreenControlsHiddenPseudoClass(const Element& element)
 {
-    if (&element != element.document().fullscreenManager().currentFullscreenElement())
+    if (&element != element.document().fullscreen().currentFullscreenElement())
         return false;
-    return element.document().fullscreenManager().areFullscreenControlsHidden();
+    return element.document().fullscreen().areFullscreenControlsHidden();
 }
 
 #endif

@@ -32,7 +32,7 @@
 #include "CanvasRenderingContext.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "FullscreenManager.h"
+#include "DocumentFullscreen.h"
 #include "GraphicsLayer.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLIFrameElement.h"
@@ -2762,9 +2762,9 @@ enum class FullScreenDescendant { Yes, No, NotApplicable };
 static FullScreenDescendant isDescendantOfFullScreenLayer(const RenderLayer& layer)
 {
     auto& document = layer.renderer().document();
-    auto* fullScreenElement = document.fullscreenManager().fullscreenElement();
+    auto* fullScreenElement = document.fullscreen().fullscreenElement();
 
-    if (!document.fullscreenManager().isFullscreen() || !fullScreenElement)
+    if (!document.fullscreen().isFullscreen() || !fullScreenElement)
         return FullScreenDescendant::NotApplicable;
 
     auto* fullScreenRenderer = dynamicDowncast<RenderLayerModelObject>(fullScreenElement->renderer());

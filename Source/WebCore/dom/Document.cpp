@@ -66,6 +66,7 @@
 #include "DebugPageOverlays.h"
 #include "DeprecatedGlobalSettings.h"
 #include "DocumentFontLoader.h"
+#include "DocumentFullscreen.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
@@ -90,7 +91,6 @@
 #include "FontFaceSet.h"
 #include "FormController.h"
 #include "FrameLoader.h"
-#include "FullscreenManager.h"
 #include "GCReachableRef.h"
 #include "GPUCanvasContext.h"
 #include "GenericCachedHTMLCollection.h"
@@ -611,7 +611,7 @@ Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, 
     , m_xmlVersion("1.0"_s)
     , m_constantPropertyMap(makeUnique<ConstantPropertyMap>(*this))
 #if ENABLE(FULLSCREEN_API)
-    , m_fullscreenManager { makeUniqueRef<FullscreenManager>(*this) }
+    , m_fullscreen { makeUniqueRef<DocumentFullscreen>(*this) }
 #endif
     , m_intersectionObserversInitialUpdateTimer(*this, &Document::intersectionObserversInitialUpdateTimerFired)
     , m_loadEventDelayTimer(*this, &Document::loadEventDelayTimerFired)
@@ -806,7 +806,7 @@ void Document::removedLastRef()
         m_focusNavigationStartingNode = nullptr;
         m_userActionElements.clear();
 #if ENABLE(FULLSCREEN_API)
-        m_fullscreenManager->clear();
+        m_fullscreen->clear();
 #endif
         m_associatedFormControls.clear();
         m_pendingRenderTreeUpdate = { };
@@ -852,7 +852,7 @@ void Document::commonTeardown()
     stopActiveDOMObjects();
 
 #if ENABLE(FULLSCREEN_API)
-    m_fullscreenManager->emptyEventQueue();
+    m_fullscreen->emptyEventQueue();
 #endif
 
     if (svgExtensions())

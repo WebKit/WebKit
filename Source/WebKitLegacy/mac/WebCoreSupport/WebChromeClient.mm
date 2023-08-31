@@ -61,11 +61,11 @@
 #import <WebCore/CookieConsentDecisionResult.h>
 #import <WebCore/Cursor.h>
 #import <WebCore/DataListSuggestionPicker.h>
+#import <WebCore/DocumentFullscreen.h>
 #import <WebCore/Element.h>
 #import <WebCore/FileChooser.h>
 #import <WebCore/FileIconLoader.h>
 #import <WebCore/FloatRect.h>
-#import <WebCore/FullscreenManager.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLNames.h>
@@ -254,8 +254,8 @@ Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& fea
     WebView *newWebView;
 
 #if ENABLE(FULLSCREEN_API)
-    if (frame.document() && frame.document()->fullscreenManager().currentFullscreenElement())
-        frame.document()->fullscreenManager().cancelFullscreen();
+    if (frame.document() && frame.document()->fullscreen().currentFullscreenElement())
+        frame.document()->fullscreen().cancelFullscreen();
 #endif
     
     if ([delegate respondsToSelector:@selector(webView:createWebViewWithRequest:windowFeatures:)]) {

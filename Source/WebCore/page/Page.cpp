@@ -53,6 +53,7 @@
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
 #include "DisplayRefreshMonitorManager.h"
+#include "DocumentFullscreen.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
@@ -73,7 +74,6 @@
 #include "FrameLoader.h"
 #include "FrameSelection.h"
 #include "FrameTree.h"
-#include "FullscreenManager.h"
 #include "GeolocationController.h"
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"
@@ -3781,7 +3781,7 @@ void Page::setFullscreenControlsHidden(bool hidden)
 {
 #if ENABLE(FULLSCREEN_API)
     forEachDocument([&] (Document& document) {
-        document.fullscreenManager().setFullscreenControlsHidden(hidden);
+        document.fullscreen().setFullscreenControlsHidden(hidden);
     });
 #else
     UNUSED_PARAM(hidden);

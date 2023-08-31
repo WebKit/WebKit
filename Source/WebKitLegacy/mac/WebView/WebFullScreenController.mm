@@ -32,9 +32,9 @@
 #import "WebViewInternal.h"
 #import "WebWindowAnimation.h"
 #import <WebCore/Document.h>
+#import <WebCore/DocumentFullscreen.h>
 #import <WebCore/Element.h>
 #import <WebCore/FloatRect.h>
-#import <WebCore/FullscreenManager.h>
 #import <WebCore/HTMLElement.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/LocalFrame.h>
@@ -64,7 +64,7 @@ static WebCore::IntRect screenRectOfContents(WebCore::Element* element)
 - (void)_updateMenuAndDockForFullScreen;
 - (void)_swapView:(NSView*)view with:(NSView*)otherView;
 - (NakedPtr<WebCore::Document>)_document;
-- (WebCore::FullscreenManager*)_manager;
+- (WebCore::DocumentFullscreen*)_manager;
 - (void)_startEnterFullScreenAnimationWithDuration:(NSTimeInterval)duration;
 - (void)_startExitFullScreenAnimationWithDuration:(NSTimeInterval)duration;
 @end
@@ -296,7 +296,7 @@ static void setClipRectForWindow(NSWindow *window, NSRect clipRect)
 {
     if (!_element)
         return;
-    _element->document().fullscreenManager().cancelFullscreen();
+    _element->document().fullscreen().cancelFullscreen();
 }
 
 - (void)exitFullScreen
@@ -437,9 +437,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return &_element->document();
 }
 
-- (WebCore::FullscreenManager*)_manager
+- (WebCore::DocumentFullscreen*)_manager
 {
-    return &_element->document().fullscreenManager();
+    return &_element->document().fullscreen();
 }
 
 - (void)_swapView:(NSView*)view with:(NSView*)otherView

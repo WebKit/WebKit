@@ -29,7 +29,7 @@
 #include "RenderVideo.h"
 
 #include "Document.h"
-#include "FullscreenManager.h"
+#include "DocumentFullscreen.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "HTMLVideoElement.h"
@@ -301,7 +301,7 @@ bool RenderVideo::inElementOrVideoFullscreen() const
 {
     bool result = videoElement().isFullscreen();
 #if ENABLE(FULLSCREEN_API)
-    result = result || document().fullscreenManager().isFullscreen();
+    result = result || document().fullscreen().isFullscreen();
 #endif
     return result;
 }
