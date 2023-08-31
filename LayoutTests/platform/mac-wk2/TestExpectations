@@ -2087,7 +2087,4 @@ webkit.org/b/260867 [ Monterey+ ] fast/canvas/webgl/texImage2D-mse-flipY-false.h
 
 webkit.org/b/239627 [ arm64 ] fast/scrolling/mac/adjust-scroll-snap-during-gesture.html [ Pass Failure ]
 
-# rdar://114674858 (REGRESSION (262629@main): [ Sonoma wk2 ] printing/print-with-media-query-destory.html is a constant failure)
-[ Sonoma+ ] printing/print-with-media-query-destory.html [ Failure ]
-
 webkit.org/b/260917 [ Ventura ] fast/forms/border-color-relayout.html [ Pass ImageOnlyFailure ]
