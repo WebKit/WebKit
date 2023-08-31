@@ -2748,6 +2748,20 @@ FullscreenRequirementForScreenOrientationLockingEnabled:
     WebCore:
       default: true
 
+FullscreenSceneAspectRatioLockingEnabled:
+  type: bool
+  status: internal
+  humanReadableName: "Fullscreen scene aspect ratio locking"
+  humanReadableDescription: "Enable scene aspect ratio locking in Fullscreen"
+  condition: PLATFORM(VISION)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 FullscreenSceneDimmingEnabled:
   type: bool
   status: internal
