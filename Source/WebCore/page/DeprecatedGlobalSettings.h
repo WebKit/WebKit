@@ -61,9 +61,6 @@ public:
     WEBCORE_EXPORT static void setTrackingPreventionEnabled(bool);
 
 #if PLATFORM(IOS_FAMILY)
-    WEBCORE_EXPORT static void setAudioSessionCategoryOverride(unsigned);
-    static unsigned audioSessionCategoryOverride();
-
     WEBCORE_EXPORT static void setNetworkDataUsageTrackingEnabled(bool);
     static bool networkDataUsageTrackingEnabled() { return shared().m_networkDataUsageTrackingEnabled; }
 

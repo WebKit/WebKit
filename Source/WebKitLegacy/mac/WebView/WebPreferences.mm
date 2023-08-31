@@ -422,7 +422,6 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
         @NO, WebKitStorageTrackerEnabledPreferenceKey,
-        @(static_cast<unsigned>(AudioSession::CategoryType::None)), WebKitAudioSessionCategoryOverride,
 
         // Per-Origin Quota on iOS is 25MB. When the quota is reached for a particular origin
         // the quota for that origin can be increased. See also webView:exceededApplicationCacheOriginQuotaForSecurityOrigin:totalSpaceNeeded in WebUI/WebUIDelegate.m.
@@ -1992,44 +1991,6 @@ static RetainPtr<NSString>& classIBCreatorID()
 - (void)setMediaPlaybackAllowsAirPlay:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitAllowsAirPlayForMediaPlaybackPreferenceKey];
-}
-
-- (unsigned)audioSessionCategoryOverride
-{
-    return [self _unsignedIntValueForKey:WebKitAudioSessionCategoryOverride];
-}
-
-- (void)setAudioSessionCategoryOverride:(unsigned)override
-{
-    if (override > static_cast<unsigned>(AudioSession::CategoryType::AudioProcessing)) {
-        // Clients are passing us OSTypes values from AudioToolbox/AudioSession.h,
-        // which need to be translated into AudioSession::CategoryType:
-        switch (override) {
-        case WebKitAudioSessionCategoryAmbientSound:
-            override = static_cast<unsigned>(AudioSession::CategoryType::AmbientSound);
-            break;
-        case WebKitAudioSessionCategorySoloAmbientSound:
-            override = static_cast<unsigned>(AudioSession::CategoryType::SoloAmbientSound);
-            break;
-        case WebKitAudioSessionCategoryMediaPlayback:
-            override = static_cast<unsigned>(AudioSession::CategoryType::MediaPlayback);
-            break;
-        case WebKitAudioSessionCategoryRecordAudio:
-            override = static_cast<unsigned>(AudioSession::CategoryType::RecordAudio);
-            break;
-        case WebKitAudioSessionCategoryPlayAndRecord:
-            override = static_cast<unsigned>(AudioSession::CategoryType::PlayAndRecord);
-            break;
-        case WebKitAudioSessionCategoryAudioProcessing:
-            override = static_cast<unsigned>(AudioSession::CategoryType::AudioProcessing);
-            break;
-        default:
-            override = static_cast<unsigned>(AudioSession::CategoryType::None);
-            break;
-        }
-    }
-
-    [self _setUnsignedIntValue:override forKey:WebKitAudioSessionCategoryOverride];
 }
 
 - (BOOL)networkDataUsageTrackingEnabled

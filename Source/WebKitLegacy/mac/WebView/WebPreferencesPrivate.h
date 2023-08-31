@@ -64,15 +64,6 @@ typedef enum {
     WebKitFrameFlatteningFullyEnabled
 } WebKitFrameFlattening;
 
-typedef enum : unsigned {
-    WebKitAudioSessionCategoryAmbientSound = 'ambi',
-    WebKitAudioSessionCategorySoloAmbientSound = 'solo',
-    WebKitAudioSessionCategoryMediaPlayback = 'medi',
-    WebKitAudioSessionCategoryRecordAudio = 'reca',
-    WebKitAudioSessionCategoryPlayAndRecord = 'plar',
-    WebKitAudioSessionCategoryAudioProcessing = 'proc',
-} WebKitAudioSessionCategory;
-
 typedef enum {
     WebKitPitchCorrectionAlgorithmBestAllAround = 0,
     WebKitPitchCorrectionAlgorithmBestForMusic,
@@ -258,7 +249,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 #else
 
 @property (nonatomic) BOOL storageTrackerEnabled;
-@property (nonatomic) unsigned audioSessionCategoryOverride;
 // WARNING: this affect network performance. This must not be enabled for production use.
 // Enabling this makes WebCore reports the network data usage.
 // This is a global setting.
