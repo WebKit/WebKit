@@ -1,0 +1,27 @@
+CONSOLE MESSAGE: TypeError: textInputController.firstRectForCharacterRange is not a function. (In 'textInputController.firstRectForCharacterRange(1, 0)', 'textInputController.firstRectForCharacterRange' is undefined)
+
+Right aligned div.
+x
+
+RTL div.
+a
+
+0px right padding RTL textarea.
+
+LTR div and textarea.
+a
+
+
+NO WRAPPING
+No wrapping right aligned div.
+
+No wrapping RTL div.
+a
+
+No wrapping 0px right padding RTL textarea.
+
+No wrapping LTR div and textarea.
+a
+
+
+

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#test-container {
+    height: 50px;
+    width: 50px;
+    overflow: hidden;
+}
+
+#test {
+    background-color: white;
+    caret-color: green;
+    transform-origin: left top;
+    transform: scale(50, 50);
+    font-size: 10px; /* Needed for the caret to render in Firefox. */
+}
+
+#test > span {
+    background-color: inherit;
+}
+</style>
+</head>
+<body>
+<p>Tests that "caret-color: auto" behaves identical to omitting property caret-color.</p>
+<div id="test-container">
+    <div id="test" contenteditable="true">
+        <span>&nbsp;<!-- Needed for the caret to render in Firefox. --></span>
+    </div>
+</div>
+<script>
+document.getElementById("test").focus();
+window.getSelection().modify("move", "left", "character"); // Place the caret at the start of the <span>.
+</script>
+</body>
+</html>

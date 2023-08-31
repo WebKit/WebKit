@@ -1,0 +1,49 @@
+
+Right aligned div.
+x
+
+RTL div.
+a
+
+0px right padding RTL textarea.
+
+LTR div and textarea.
+a
+
+
+NO WRAPPING
+No wrapping right aligned div.
+
+No wrapping RTL div.
+a
+
+No wrapping 0px right padding RTL textarea.
+
+No wrapping LTR div and textarea.
+a
+
+
+==================================
+FAILED: right-align-div
+actual: 207
+expected: 208
+==================================
+FAILED: rtl-div
+actual: 207
+expected: 208
+==================================
+FAILED: 0-right-padding-rtl-textarea
+actual: 205
+expected: 206
+==================================
+FAILED: no-wrapping-right-align-div
+actual: 207
+expected: 208
+==================================
+FAILED: no-wrapping-rtl-div
+actual: 207
+expected: 208
+==================================
+FAILED: no-wrapping-0-right-padding-rtl-textarea
+actual: 205
+expected: 206

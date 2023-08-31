@@ -5,3 +5,41 @@
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Platform-specific directories. Skipped globally, then re-enabled here.
 #//////////////////////////////////////////////////////////////////////////////////////////
+# Disable Sonoma only test added in rdar://110488738.
+accessibility/mac/attributed-string/attributed-string-has-completion-annotation.html [ Skip ]
+
+# These tests require compile-time flags in WebKit that are only enabled in Sonoma. They were marked as Skip in
+# https://bugs.webkit.org/show_bug.cgi?id=248545 — re-disable them here.
+fast/images/animations-resume-from-last-displayed-frame.html [ Skip ]
+fast/images/individual-animation-toggle.html [ Skip ]
+fast/images/page-wide-animation-toggle.html [ Skip ]
+fast/images/pagewide-play-pause-animateTransform-svg-animation.html [ Skip ]
+fast/images/pagewide-play-pause-offscreen-animations.html [ Skip ]
+fast/images/mac/play-all-pause-all-animations-context-menu-items.html [ Skip ]
+fast/images/mac/animation-context-menu-items-presence.html [ Skip ]
+
+# Failing after OS migration rdar://112624778 (Migrate macOS Sonoma test expectations to OpenSource, add expectation files to Down-Levels (259373))
+scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-overflow-in-iframe.html [ Pass Failure ]
+fast/mediastream/video-srcObject-set-twice.html [ Pass ImageOnlyFailure ]
+http/tests/cache/disk-cache/disk-cache-vary-cookie.html [ Pass Timeout ]
+imported/w3c/web-platform-tests/content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html [ Pass Timeout ]
+imported/w3c/web-platform-tests/custom-elements/reactions/customized-builtins/HTMLTimeElement.html [ Pass Timeout ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/005.html [ Pass Timeout ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-opener.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1251.html?include=nested-browsing [ Pass Timeout ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute.https.sub.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/after-prepare-iframe-parse-error-external-module.html [ Pass Failure ]
+imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-webrtc.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webrtc/RTCDTMFSender-ontonechange.https.html [ Pass Failure ]
+media/modern-media-controls/text-tracks/text-tracks-height-no-controls.html [ Pass Failure ]
+webrtc/vp8-then-h264-gpu-process-crash.html [ Pass Timeout ]
+http/tests/websocket/tests/hybi/error-event-ready-state-non-existent-url-with-server-responding-404.html [ Pass Timeout ]
+imported/w3c/web-platform-tests/css/css-flexbox/flexbox-justify-content-wmvert-002.html [ Pass Timeout ]
+imported/w3c/web-platform-tests/fetch/http-cache/cc-request.any.sharedworker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-same-origin.https.html?1-2 [ Pass Timeout ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_boundary_events_in_capturing.html?mouse [ Pass Timeout ]
+imported/w3c/web-platform-tests/selection/addRange-16.html [ Pass Timeout ]
+imported/w3c/web-platform-tests/url/historical.any.worker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/wasm/jsapi/table/length.any.worker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webrtc/RTCIceCandidate-constructor.html [ Pass Timeout ]
+swipe/pushState-cached-back-swipe.html [ Pass Timeout ]
