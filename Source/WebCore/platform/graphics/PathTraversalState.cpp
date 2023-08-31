@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006, 2007 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2014 Google Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,8 +28,6 @@
 
 namespace WebCore {
 
-static const float kPathSegmentLengthTolerance = 0.00001f;
-
 static inline float distanceLine(const FloatPoint& start, const FloatPoint& end)
 {
     return std::hypot(end.x() - start.x(), end.y() - start.y());
@@ -40,22 +39,21 @@ struct QuadraticBezier {
         : start(s)
         , control(c)
         , end(e)
+        , splitDepth(0)
     {
     }
 
-    bool operator==(const QuadraticBezier& rhs) const
+    double magnitudeSquared() const
     {
-        return start == rhs.start
-            && control == rhs.control
-            && end == rhs.end;
+        return ((double)(start.dot(start)) + (double)(control.dot(control)) + (double)(end.dot(end))) / 9.0;
     }
-    
+
     float approximateDistance() const
     {
         return distanceLine(start, control) + distanceLine(control, end);
     }
     
-    bool split(QuadraticBezier& left, QuadraticBezier& right) const
+    void split(QuadraticBezier& left, QuadraticBezier& right) const
     {
         left.control = midPoint(start, control);
         right.control = midPoint(control, end);
@@ -67,12 +65,13 @@ struct QuadraticBezier {
         left.start = start;
         right.end = end;
 
-        return !(left == *this) && !(right == *this);
+        left.splitDepth = right.splitDepth = splitDepth + 1;
     }
     
     FloatPoint start;
     FloatPoint control;
     FloatPoint end;
+    uint16_t splitDepth;
 };
 
 struct CubicBezier {
@@ -82,15 +81,13 @@ struct CubicBezier {
         , control1(c1)
         , control2(c2)
         , end(e)
+        , splitDepth(0)
     {
     }
 
-    bool operator==(const CubicBezier& rhs) const
+    double magnitudeSquared() const
     {
-        return start == rhs.start
-            && control1 == rhs.control1
-            && control2 == rhs.control2
-            && end == rhs.end;
+        return ((double)(start.dot(start)) + (double)(control1.dot(control1)) + (double)(control2.dot(control2)) + (double)(end.dot(end))) / 16.0;
     }
 
     float approximateDistance() const
@@ -98,7 +95,7 @@ struct CubicBezier {
         return distanceLine(start, control1) + distanceLine(control1, control2) + distanceLine(control2, end);
     }
         
-    bool split(CubicBezier& left, CubicBezier& right) const
+    void split(CubicBezier& left, CubicBezier& right) const
     {    
         FloatPoint startToControl1 = midPoint(control1, control2);
         
@@ -114,36 +111,38 @@ struct CubicBezier {
         left.end = leftControl2ToRightControl1;
         right.start = leftControl2ToRightControl1;
 
-        return !(left == *this) && !(right == *this);
+        left.splitDepth = right.splitDepth = splitDepth + 1;
     }
     
     FloatPoint start;
     FloatPoint control1;
     FloatPoint control2;
     FloatPoint end;
+    uint16_t splitDepth;
 };
 
-// FIXME: This function is possibly very slow due to the ifs required for proper path measuring
-// A simple speed-up would be to use an additional boolean template parameter to control whether
-// to use the "fast" version of this function with no PathTraversalState updating, vs. the slow
-// version which does update the PathTraversalState.  We'll have to shark it to see if that's necessary.
-// Another check which is possible up-front (to send us down the fast path) would be to check if
-// approximateDistance() + current total distance > desired distance
 template<class CurveType>
 static float curveLength(const PathTraversalState& traversalState, const CurveType& originalCurve, FloatPoint& previous, FloatPoint& current)
 {
-    static const unsigned curveStackDepthLimit = 20;
+    static const unsigned short curveSplitDepthLimit = 20;
+    static const double pathSegmentLengthToleranceSquared = 1.e-16;
+
+    double curveScaleForToleranceSquared = originalCurve.magnitudeSquared();
+    if (curveScaleForToleranceSquared < pathSegmentLengthToleranceSquared)
+        return 0;
+
     CurveType curve = originalCurve;
-    Vector<CurveType, curveStackDepthLimit> curveStack;
+    Vector<CurveType> curveStack;
     float totalLength = 0;
 
     while (true) {
         float length = curve.approximateDistance();
+        double lengthDiscrepancy = length - distanceLine(curve.start, curve.end);
 
+        if ((lengthDiscrepancy * lengthDiscrepancy) / curveScaleForToleranceSquared > pathSegmentLengthToleranceSquared && curve.splitDepth < curveSplitDepthLimit) {
         CurveType leftCurve;
         CurveType rightCurve;
-
-        if ((length - distanceLine(curve.start, curve.end)) > kPathSegmentLengthTolerance && curveStack.size() < curveStackDepthLimit && curve.split(leftCurve, rightCurve)) {
+        curve.split(leftCurve, rightCurve);
             curve = leftCurve;
             curveStack.append(rightCurve);
             continue;
