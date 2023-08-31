@@ -23,26 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#import <WebKit/WebKit.h>
+#include "WebExtensionTabIdentifier.h"
+#include "WebExtensionWindowIdentifier.h"
+#include <wtf/Forward.h>
 
-#import <WebKit/_WKWebExtensionControllerDelegate.h>
-#import <WebKit/_WKWebExtensionMatchPattern.h>
-#import <WebKit/_WKWebExtensionPermission.h>
-#import <WebKit/_WKWebExtensionTab.h>
+namespace WebKit {
 
-@interface TestWebExtensionsDelegate : NSObject <_WKWebExtensionControllerDelegate>
+struct WebExtensionTabParameters {
+    std::optional<WebExtensionTabIdentifier> identifier;
 
-@property (nonatomic, copy) NSArray<id <_WKWebExtensionWindow>> *(^openWindows)(_WKWebExtensionContext *);
-@property (nonatomic, copy) id <_WKWebExtensionWindow> (^focusedWindow)(_WKWebExtensionContext *);
+    std::optional<URL> url;
+    std::optional<String> title;
 
-@property (nonatomic, copy) void (^openNewWindow)(_WKWebExtensionWindowCreationOptions *, _WKWebExtensionContext *, void (^)(id<_WKWebExtensionWindow>, NSError *));
-@property (nonatomic, copy) void (^openNewTab)(_WKWebExtensionTabCreationOptions *, _WKWebExtensionContext *, void (^)(id<_WKWebExtensionTab>, NSError *));
+    std::optional<WebExtensionWindowIdentifier> windowIdentifier;
+    std::optional<size_t> index;
+    std::optional<CGSize> size;
 
-@property (nonatomic, copy) void (^promptForPermissions)(id <_WKWebExtensionTab>, NSSet<NSString *> *, void (^)(NSSet<_WKWebExtensionPermission> *));
-@property (nonatomic, copy) void (^promptForPermissionMatchPatterns)(id <_WKWebExtensionTab>, NSSet<_WKWebExtensionMatchPattern *> *, void (^)(NSSet<_WKWebExtensionMatchPattern *> *));
+    std::optional<WebExtensionTabIdentifier> parentTabIdentifier;
 
-@end
+    std::optional<bool> active;
+    std::optional<bool> selected;
+    std::optional<bool> pinned;
+    std::optional<bool> audible;
+    std::optional<bool> muted;
+    std::optional<bool> loading;
+    std::optional<bool> privateBrowsing;
+    std::optional<bool> readerModeAvailable;
+    std::optional<bool> showingReaderMode;
+};
+
+} // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

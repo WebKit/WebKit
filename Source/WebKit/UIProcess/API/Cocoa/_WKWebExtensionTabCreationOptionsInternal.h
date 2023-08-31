@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface _WKWebExtensionTabCreationOptions ()
 
-- (instancetype)_init;
+- (instancetype)_init NS_DESIGNATED_INITIALIZER;
 
 @property (readwrite, setter=_setDesiredWindow:) id <_WKWebExtensionWindow> desiredWindow;
 @property (readwrite, setter=_setDesiredIndex:) NSUInteger desiredIndex;

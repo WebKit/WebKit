@@ -30,6 +30,7 @@
 #include "JSWebExtensionAPIWindowsEvent.h"
 #include "WebExtensionAPIEvent.h"
 #include "WebExtensionAPIObject.h"
+#include "WebExtensionWindow.h"
 
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSString;
@@ -40,17 +41,11 @@ class WebExtensionAPIWindowsEvent : public WebExtensionAPIObject, public JSWebEx
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIWindowsEvent, windowsEvent);
 
 public:
-    enum class WindowType : uint8_t {
-        None   = 0,
-        Normal = 1 << 0,
-        Popup  = 1 << 1,
-        All    = Normal | Popup,
-    };
-
-    using FilterAndCallbackPair = std::pair<RefPtr<WebExtensionCallbackHandler>, OptionSet<WindowType>>;
+    using WindowTypeFilter = WebExtensionWindow::TypeFilter;
+    using FilterAndCallbackPair = std::pair<RefPtr<WebExtensionCallbackHandler>, OptionSet<WindowTypeFilter>>;
     using ListenerVector = Vector<FilterAndCallbackPair>;
 
-    void invokeListenersWithArgument(id argument, WindowType);
+    void invokeListenersWithArgument(id argument, WindowTypeFilter);
 
     const ListenerVector& listeners() const { return m_listeners; }
 

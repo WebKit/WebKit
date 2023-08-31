@@ -33,6 +33,8 @@
 #include <WebKit/_WKWebExtensionControllerDelegatePrivate.h>
 #include <WebKit/_WKWebExtensionControllerPrivate.h>
 #include <WebKit/_WKWebExtensionPrivate.h>
+#include <WebKit/_WKWebExtensionTab.h>
+#include <WebKit/_WKWebExtensionWindow.h>
 
 #ifdef __OBJC__
 
@@ -53,9 +55,32 @@
 
 @end
 
+@interface TestWebExtensionTab : NSObject <_WKWebExtensionTab>
+@end
+
+@interface TestWebExtensionWindow : NSObject <_WKWebExtensionWindow>
+
+@property (nonatomic, copy) NSArray<id<_WKWebExtensionTab>> *tabs;
+@property (nonatomic, strong) id<_WKWebExtensionTab> activeTab;
+
+@property (nonatomic) _WKWebExtensionWindowState windowState;
+@property (nonatomic) _WKWebExtensionWindowType windowType;
+
+@property (nonatomic) CGRect frame;
+@property (nonatomic) CGRect screenFrame;
+
+@property (nonatomic, getter=isUsingPrivateBrowsing) BOOL usingPrivateBrowsing;
+
+@property (nonatomic, copy) void (^didFocus)(void);
+@property (nonatomic, copy) void (^didClose)(void);
+
+@end
+
 #else // not __OBJC__
 
 OBJC_CLASS TestWebExtensionManager;
+OBJC_CLASS TestWebExtensionTab;
+OBJC_CLASS TestWebExtensionWindow;
 
 #endif // __OBJC__
 

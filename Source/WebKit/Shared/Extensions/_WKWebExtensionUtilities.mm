@@ -32,6 +32,7 @@
 
 #import "CocoaHelpers.h"
 #import "Logging.h"
+#import <objc/runtime.h>
 
 @implementation _WKWebExtensionUtilities
 
@@ -45,18 +46,18 @@ static NSString *classToClassString(Class classType, BOOL plural = NO)
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         classTypeToSingularClassString = [NSMapTable strongToStrongObjectsMapTable];
-        [classTypeToSingularClassString setObject:@"a boolean value" forKey:[@YES class]];
-        [classTypeToSingularClassString setObject:@"a number value" forKey:[NSNumber class]];
-        [classTypeToSingularClassString setObject:@"a string value" forKey:[NSString class]];
-        [classTypeToSingularClassString setObject:@"an array" forKey:[NSArray class]];
-        [classTypeToSingularClassString setObject:@"an object" forKey:[NSDictionary class]];
+        [classTypeToSingularClassString setObject:@"a boolean value" forKey:@YES.class];
+        [classTypeToSingularClassString setObject:@"a number value" forKey:NSNumber.class];
+        [classTypeToSingularClassString setObject:@"a string value" forKey:NSString.class];
+        [classTypeToSingularClassString setObject:@"an array" forKey:NSArray.class];
+        [classTypeToSingularClassString setObject:@"an object" forKey:NSDictionary.class];
 
         classTypeToPluralClassString = [NSMapTable strongToStrongObjectsMapTable];
-        [classTypeToPluralClassString setObject:@"boolean values" forKey:[@YES class]];
-        [classTypeToPluralClassString setObject:@"number values" forKey:[NSNumber class]];
-        [classTypeToPluralClassString setObject:@"string values" forKey:[NSString class]];
-        [classTypeToPluralClassString setObject:@"arrays" forKey:[NSArray class]];
-        [classTypeToPluralClassString setObject:@"objects" forKey:[NSDictionary class]];
+        [classTypeToPluralClassString setObject:@"boolean values" forKey:@YES.class];
+        [classTypeToPluralClassString setObject:@"number values" forKey:NSNumber.class];
+        [classTypeToPluralClassString setObject:@"string values" forKey:NSString.class];
+        [classTypeToPluralClassString setObject:@"arrays" forKey:NSArray.class];
+        [classTypeToPluralClassString setObject:@"objects" forKey:NSDictionary.class];
     });
 
     NSMapTable<Class, NSString *> *classTypeToClassString = plural ? classTypeToPluralClassString : classTypeToSingularClassString;
@@ -80,38 +81,88 @@ static NSString *classToClassString(Class classType, BOOL plural = NO)
     NSSet<NSString *> *optionalKeysSet = [[NSSet alloc] initWithArray:optionalKeys];
 
     __block NSString *errorString;
-    [dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSObject *value, BOOL* stop) {
-        // This should never be hit, since the dictionary comes from JavaScript and all keys are strings.
-        ASSERT([key isKindOfClass:[NSString class]]);
 
-        if (![requiredKeysSet containsObject:key] && ![optionalKeysSet containsObject:key]) {
-            RELEASE_LOG_ERROR(Extensions, "Found unexpected key (%{private}@), not specified in required or optional keys.", key);
-            return;
+    auto validateArray = ^BOOL(NSString *key, NSObject *value, NSArray<Class> *validClassesArray) {
+        ASSERT(validClassesArray.count == 1);
+
+        Class expectedElementType = validClassesArray.firstObject;
+        NSArray *arrayValue = dynamic_objc_cast<NSArray>(value);
+        if (!arrayValue) {
+            errorString = [NSString stringWithFormat:@"Expected an array for '%@', found %@ instead.", key, classToClassString(value.class)];
+            return NO;
         }
 
-        id expectedValueType = keyTypes[key];
-        NSArray<Class> *validClassesArray = dynamic_objc_cast<NSArray>(expectedValueType);
-        if (validClassesArray) {
-            ASSERT(validClassesArray.count == 1UL);
-            Class expectedElementType = validClassesArray.firstObject;
-            NSArray<id> *arrayValue = dynamic_objc_cast<NSArray>(value);
-            if (!arrayValue) {
-                *stop = YES;
-                errorString = [NSString stringWithFormat:@"Expected an array for '%@'.", key];
-                return;
+        for (NSObject *element in arrayValue) {
+            if (![element isKindOfClass:expectedElementType]) {
+                errorString = [NSString stringWithFormat:@"Expected %@ in the array for '%@', found %@ instead.", classToClassString(expectedElementType, YES), key, classToClassString(element.class)];
+                return NO;
+            }
+        }
+
+        return YES;
+    };
+
+    auto validateSet = ^BOOL(NSString *key, NSObject *value, NSSet *validClassesSet) {
+        if ([validClassesSet containsObject:value.class])
+            return YES;
+
+        __block NSMutableString *expectedValuesString = [NSMutableString string];
+
+        auto addExpectedValueString = ^(Class expectedClass) {
+            if (expectedValuesString.length)
+                [expectedValuesString appendString:@" or "];
+            [expectedValuesString appendString:classToClassString(expectedClass)];
+        };
+
+        for (id classOrArray in validClassesSet) {
+            if ([classOrArray respondsToSelector:@selector(isSubclassOfClass:)]) {
+                ASSERT(classOrArray != NSArray.class);
+                addExpectedValueString(classOrArray);
+                if ([value isKindOfClass:classOrArray])
+                    return YES;
+                continue;
             }
 
-            for (NSObject *element in arrayValue) {
-                if (![element isKindOfClass:expectedElementType]) {
-                    *stop = YES;
-                    errorString = [NSString stringWithFormat:@"Expected %@ in the array for '%@', found %@ instead.", classToClassString(expectedElementType, YES), key, classToClassString(element.class)];
-                    return;
-                }
-            }
-        } else if (![value isKindOfClass:expectedValueType]) {
-            *stop = YES;
-            errorString = [NSString stringWithFormat:@"Expected %@ for '%@', found %@ instead.", classToClassString(expectedValueType), key, classToClassString(value.class)];
+            ASSERT([classOrArray isKindOfClass:NSArray.class]);
+            addExpectedValueString(NSArray.class);
+            if (validateArray(key, value, classOrArray))
+                return YES;
+
+            // Reset after validateArray.
+            errorString = nil;
+        }
+
+        errorString = [NSString stringWithFormat:@"Expected %@ for '%@', found %@ instead.", expectedValuesString, key, classToClassString(value.class)];
+
+        return NO;
+    };
+
+    [dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSObject *value, BOOL* stop) {
+        // This should never be hit, since the dictionary comes from JavaScript and all keys are strings.
+        ASSERT([key isKindOfClass:NSString.class]);
+
+        if (![requiredKeysSet containsObject:key] && ![optionalKeysSet containsObject:key])
             return;
+
+        id expectedValueType = keyTypes[key];
+
+        if (NSArray<Class> *validClassesArray = dynamic_objc_cast<NSArray>(expectedValueType)) {
+            if (!validateArray(key, value, validClassesArray)) {
+                *stop = YES;
+                return;
+            }
+        } else if (NSSet *validClassesSet = dynamic_objc_cast<NSSet>(expectedValueType)) {
+            if (!validateSet(key, value, validClassesSet)) {
+                *stop = YES;
+                return;
+            }
+        } else {
+            ASSERT([expectedValueType respondsToSelector:@selector(isSubclassOfClass:)]);
+            if (![value isKindOfClass:expectedValueType]) {
+                *stop = YES;
+                errorString = [NSString stringWithFormat:@"Expected %@ for '%@', found %@ instead.", classToClassString(expectedValueType), key, classToClassString(value.class)];
+                return;
+            }
         }
 
         if ([requiredKeysSet containsObject:key])
@@ -121,7 +172,7 @@ static NSString *classToClassString(Class classType, BOOL plural = NO)
     // Prioritize type errors over missing required key errors, since the dictionary *might* actually have
     // all the required keys, but we stopped checking. We do know for sure that the type is wrong though.
     if (remainingRequiredKeys.count && !errorString) {
-        NSString *missingRequiredKeys = [[remainingRequiredKeys allObjects] componentsJoinedByString:@", "];
+        NSString *missingRequiredKeys = [remainingRequiredKeys.allObjects componentsJoinedByString:@", "];
         errorString = [NSString stringWithFormat:@"Missing required keys: %@.", missingRequiredKeys];
     }
 
@@ -129,7 +180,6 @@ static NSString *classToClassString(Class classType, BOOL plural = NO)
         *outExceptionString = errorString;
     return !errorString;
 }
-
 
 #else
 

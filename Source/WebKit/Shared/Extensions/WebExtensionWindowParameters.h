@@ -23,26 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#import <WebKit/WebKit.h>
+#include "WebExtensionTabParameters.h"
+#include "WebExtensionWindow.h"
+#include "WebExtensionWindowIdentifier.h"
+#include <wtf/Forward.h>
 
-#import <WebKit/_WKWebExtensionControllerDelegate.h>
-#import <WebKit/_WKWebExtensionMatchPattern.h>
-#import <WebKit/_WKWebExtensionPermission.h>
-#import <WebKit/_WKWebExtensionTab.h>
+namespace WebKit {
 
-@interface TestWebExtensionsDelegate : NSObject <_WKWebExtensionControllerDelegate>
+struct WebExtensionWindowParameters {
+    std::optional<WebExtensionWindowIdentifier> identifier;
 
-@property (nonatomic, copy) NSArray<id <_WKWebExtensionWindow>> *(^openWindows)(_WKWebExtensionContext *);
-@property (nonatomic, copy) id <_WKWebExtensionWindow> (^focusedWindow)(_WKWebExtensionContext *);
+    std::optional<WebExtensionWindow::State> state;
+    std::optional<WebExtensionWindow::Type> type;
 
-@property (nonatomic, copy) void (^openNewWindow)(_WKWebExtensionWindowCreationOptions *, _WKWebExtensionContext *, void (^)(id<_WKWebExtensionWindow>, NSError *));
-@property (nonatomic, copy) void (^openNewTab)(_WKWebExtensionTabCreationOptions *, _WKWebExtensionContext *, void (^)(id<_WKWebExtensionTab>, NSError *));
+    std::optional<Vector<WebExtensionTabParameters>> tabs;
 
-@property (nonatomic, copy) void (^promptForPermissions)(id <_WKWebExtensionTab>, NSSet<NSString *> *, void (^)(NSSet<_WKWebExtensionPermission> *));
-@property (nonatomic, copy) void (^promptForPermissionMatchPatterns)(id <_WKWebExtensionTab>, NSSet<_WKWebExtensionMatchPattern *> *, void (^)(NSSet<_WKWebExtensionMatchPattern *> *));
+    std::optional<CGRect> frame;
 
-@end
+    std::optional<bool> focused;
+    std::optional<bool> privateBrowsing;
+};
+
+} // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

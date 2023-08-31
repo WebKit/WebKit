@@ -29,17 +29,14 @@
 
 #import "TestCocoa.h"
 #import "TestWebExtensionsDelegate.h"
+#import "WebExtensionUtilities.h"
 #import <WebKit/WKFoundation.h>
 #import <WebKit/_WKWebExtensionContextPrivate.h>
+#import <WebKit/_WKWebExtensionControllerPrivate.h>
 #import <WebKit/_WKWebExtensionMatchPatternPrivate.h>
 #import <WebKit/_WKWebExtensionPermission.h>
 #import <WebKit/_WKWebExtensionPrivate.h>
-
-@interface TestWindow : NSObject <_WKWebExtensionWindow>
-@end
-
-@implementation TestWindow
-@end
+#import <WebKit/_WKWebExtensionWindow.h>
 
 namespace TestWebKitAPI {
 
@@ -51,8 +48,8 @@ TEST(WKWebExtensionWindow, OpenWindows)
     auto testExtensionTwo = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:@{ @"manifest_version": @3 }]);
     auto testContextTwo = adoptNS([[_WKWebExtensionContext alloc] initForExtension:testExtensionTwo.get()]);
 
-    auto testWindowOne = adoptNS([[TestWindow alloc] init]);
-    auto testWindowTwo = adoptNS([[TestWindow alloc] init]);
+    auto testWindowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
+    auto testWindowTwo = adoptNS([[TestWebExtensionWindow alloc] init]);
 
     auto *openWindows = @[ testWindowOne.get(), testWindowTwo.get() ];
     auto *reversedOpenWindows = @[ testWindowTwo.get(), testWindowOne.get() ];
@@ -123,8 +120,8 @@ TEST(WKWebExtensionWindow, FocusedWindow)
     auto testExtensionTwo = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:@{ @"manifest_version": @3 }]);
     auto testContextTwo = adoptNS([[_WKWebExtensionContext alloc] initForExtension:testExtensionTwo.get()]);
 
-    auto testWindowOne = adoptNS([[TestWindow alloc] init]);
-    auto testWindowTwo = adoptNS([[TestWindow alloc] init]);
+    auto testWindowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
+    auto testWindowTwo = adoptNS([[TestWebExtensionWindow alloc] init]);
 
     auto controllerDelegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
 

@@ -29,7 +29,7 @@
 
 @interface _WKWebExtensionWindowCreationOptions ()
 
-- (instancetype)_init;
+- (instancetype)_init NS_DESIGNATED_INITIALIZER;
 
 @property (readwrite, setter=_setDesiredFrame:) CGRect desiredFrame;
 @property (readwrite, setter=_setDesiredWindowType:) _WKWebExtensionWindowType desiredWindowType;

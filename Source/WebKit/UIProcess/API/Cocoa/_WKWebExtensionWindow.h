@@ -99,7 +99,9 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @param state The new state of the window.
  @param completionHandler A block that must be called upon completion. It takes a single error argument,
  which should be provided if any errors occurred.
- @discussion No action is performed if not implemented.
+ @discussion The implementation of `windowStateForWebExtensionContext:` is a prerequisite.
+ Without it, this method will not be called.
+ @seealso windowStateForWebExtensionContext:
  */
 - (void)setWindowState:(_WKWebExtensionWindowState)state forWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
 
@@ -112,10 +114,18 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
 - (BOOL)isUsingPrivateBrowsingForWebExtensionContext:(_WKWebExtensionContext *)context;
 
 /*!
+ @abstract Called when the screen frame containing the window is needed.
+ @param context The context associated with the running web extension.
+ @return The frame for the screen containing the window.
+ @discussion Defaults to `CGRectNull` if not implemented.
+ */
+- (CGRect)screenFrameForWebExtensionContext:(_WKWebExtensionContext *)context;
+
+/*!
  @abstract Called when the frame of the window is needed.
  @param context The context in which the web extension is running.
  @return The frame of the window, in screen coordinates
- @discussion Defaults to `CGRectZero` if not implemented.
+ @discussion Defaults to `CGRectNull` if not implemented.
  */
 - (CGRect)frameForWebExtensionContext:(_WKWebExtensionContext *)context;
 
@@ -125,9 +135,22 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @param frame The new frame of the window, in screen coordinates.
  @param completionHandler A block that must be called upon completion. It takes a single error argument,
  which should be provided if any errors occurred.
- @discussion No action is performed if not implemented.
+ @discussion On macOS, the implementation of both `frameForWebExtensionContext:` and
+ `screenFrameForWebExtensionContext:` are prerequisites. On iOS, only `frameForWebExtensionContext:`
+ is a prerequisite. Without the respective method(s), this method will not be called.
+ @seealso frameForWebExtensionContext:
+ @seealso screenFrameForWebExtensionContext:
  */
 - (void)setFrame:(CGRect)frame forWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+
+/*!
+ @abstract Called to focus the window.
+ @param context The context in which the web extension is running.
+ @param completionHandler A block that must be called upon completion. It takes a single error argument,
+ which should be provided if any errors occurred.
+ @discussion No action is performed if not implemented.
+ */
+- (void)focusForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
 
 /*!
  @abstract Called to close the window.

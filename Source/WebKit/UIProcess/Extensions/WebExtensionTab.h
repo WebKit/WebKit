@@ -40,6 +40,7 @@ namespace WebKit {
 
 class WebExtensionContext;
 class WebExtensionWindow;
+struct WebExtensionTabParameters;
 
 class WebExtensionTab : public RefCounted<WebExtensionTab> {
     WTF_MAKE_NONCOPYABLE(WebExtensionTab);
@@ -73,7 +74,9 @@ public:
     using Error = std::optional<String>;
 
     WebExtensionTabIdentifier identifier() const { return m_identifier; }
-    WebExtensionContext* extensionContext() const { return m_extensionContext.get(); }
+    WebExtensionTabParameters parameters() const;
+
+    WebExtensionContext* extensionContext() const;
 
     bool operator==(const WebExtensionTab&) const;
 

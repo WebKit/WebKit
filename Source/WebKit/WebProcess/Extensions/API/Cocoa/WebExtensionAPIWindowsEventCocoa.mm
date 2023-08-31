@@ -32,6 +32,7 @@
 
 #import "CocoaHelpers.h"
 #import "MessageSenderInlines.h"
+#import "WebExtensionAPIWindows.h"
 #import "WebExtensionContextMessages.h"
 #import "WebPageProxy.h"
 #import "WebProcess.h"
@@ -39,13 +40,9 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-static NSString *windowTypesKey = @"windowTypes";
-static NSString *normalKey = @"normal";
-static NSString *popupKey = @"popup";
-
 namespace WebKit {
 
-void WebExtensionAPIWindowsEvent::invokeListenersWithArgument(id argument, WindowType windowType)
+void WebExtensionAPIWindowsEvent::invokeListenersWithArgument(id argument, WindowTypeFilter windowType)
 {
     if (m_listeners.isEmpty())
         return;
@@ -60,31 +57,9 @@ void WebExtensionAPIWindowsEvent::invokeListenersWithArgument(id argument, Windo
 
 void WebExtensionAPIWindowsEvent::addListener(WebPage* page, RefPtr<WebExtensionCallbackHandler> listener, NSDictionary *filter, NSString **outExceptionString)
 {
-    static NSArray<NSString *> *optionalKeys = @[
-        windowTypesKey,
-    ];
-
-    static NSDictionary<NSString *, id> *types = @{
-        windowTypesKey: @[ NSString.class ],
-    };
-
-    if (![_WKWebExtensionUtilities validateContentsOfDictionary:filter requiredKeys:nil optionalKeys:optionalKeys keyToExpectedValueType:types outExceptionString:outExceptionString])
+    OptionSet<WindowTypeFilter> windowTypeFilter;
+    if (!WebExtensionAPIWindows::parseWindowTypesFilter(filter, windowTypeFilter, outExceptionString))
         return;
-
-    OptionSet<WindowType> windowTypeFilter;
-
-    if (NSArray<NSString *> *windowTypes = objectForKey<NSArray>(filter, windowTypesKey, false, NSString.class)) {
-        if ([windowTypes containsObject:normalKey])
-            windowTypeFilter.add(WindowType::Normal);
-        if ([windowTypes containsObject:popupKey])
-            windowTypeFilter.add(WindowType::Popup);
-
-        if (!windowTypeFilter) {
-            *outExceptionString = @"The 'windowTypes' array must contain 'normal' and/or 'popup'.";
-            return;
-        }
-    } else
-        windowTypeFilter = WindowType::All;
 
     m_listeners.append({ listener, windowTypeFilter });
 
