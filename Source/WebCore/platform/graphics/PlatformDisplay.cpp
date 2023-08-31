@@ -374,14 +374,10 @@ void PlatformDisplay::terminateEGLDisplay()
 EGLImage PlatformDisplay::createEGLImage(EGLContext context, EGLenum target, EGLClientBuffer clientBuffer, const Vector<EGLAttrib>& attributes) const
 {
     if (eglCheckVersion(1, 5)) {
-#if USE(LIBEPOXY)
-        return eglCreateImage(m_eglDisplay, context, target, clientBuffer, attributes.isEmpty() ? nullptr : attributes.data());
-#else
         static PFNEGLCREATEIMAGEPROC s_eglCreateImage = reinterpret_cast<PFNEGLCREATEIMAGEPROC>(eglGetProcAddress("eglCreateImage"));
         if (s_eglCreateImage)
             return s_eglCreateImage(m_eglDisplay, context, target, clientBuffer, attributes.isEmpty() ? nullptr : attributes.data());
         return EGL_NO_IMAGE;
-#endif
     }
 
     if (!m_eglExtensions.KHR_image_base)
@@ -390,40 +386,28 @@ EGLImage PlatformDisplay::createEGLImage(EGLContext context, EGLenum target, EGL
     Vector<EGLint> intAttributes = attributes.map<Vector<EGLint>>([] (EGLAttrib value) {
         return value;
     });
-#if USE(LIBEPOXY)
-    return eglCreateImageKHR(m_eglDisplay, context, target, clientBuffer, intAttributes.isEmpty() ? nullptr : intAttributes.data());
-#else
     static PFNEGLCREATEIMAGEKHRPROC s_eglCreateImageKHR = reinterpret_cast<PFNEGLCREATEIMAGEKHRPROC>(eglGetProcAddress("eglCreateImageKHR"));
     if (s_eglCreateImageKHR)
         return s_eglCreateImageKHR(m_eglDisplay, context, target, clientBuffer, intAttributes.isEmpty() ? nullptr : intAttributes.data());
     return EGL_NO_IMAGE_KHR;
-#endif
 }
 
 bool PlatformDisplay::destroyEGLImage(EGLImage image) const
 {
     if (eglCheckVersion(1, 5)) {
-#if USE(LIBEPOXY)
-        return eglDestroyImage(m_eglDisplay, image);
-#else
         static PFNEGLDESTROYIMAGEPROC s_eglDestroyImage = reinterpret_cast<PFNEGLDESTROYIMAGEPROC>(eglGetProcAddress("eglDestroyImage"));
         if (s_eglDestroyImage)
             return s_eglDestroyImage(m_eglDisplay, image);
         return false;
-#endif
     }
 
     if (!m_eglExtensions.KHR_image_base)
         return false;
 
-#if USE(LIBEPOXY)
-    return eglDestroyImageKHR(m_eglDisplay, image);
-#else
     static PFNEGLDESTROYIMAGEKHRPROC s_eglDestroyImageKHR = reinterpret_cast<PFNEGLDESTROYIMAGEKHRPROC>(eglGetProcAddress("eglDestroyImageKHR"));
     if (s_eglDestroyImageKHR)
         return s_eglDestroyImageKHR(m_eglDisplay, image);
     return false;
-#endif
 }
 
 #if USE(LIBDRM)
