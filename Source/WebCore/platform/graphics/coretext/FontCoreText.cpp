@@ -43,6 +43,7 @@
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <unicode/uchar.h>
 #include <wtf/Assertions.h>
+#include <wtf/HexNumber.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/StdLibExtras.h>
 
@@ -612,12 +613,15 @@ GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned begi
         | (enableKerning && numberOfInputGlyphs ? kCTFontShapeWithKerning : 0)
         | (textDirection == TextDirection::RTL ? kCTFontShapeRightToLeft : 0);
 
+    // FIXME: This shouldn't actually be necessary, if we pass in a pointer to the base of the string.
     for (unsigned i = 0; i < glyphBuffer.size() - beginningGlyphIndex; ++i)
         glyphBuffer.offsetsInString(beginningGlyphIndex)[i] -= beginningStringIndex;
 
     LOG_WITH_STREAM(TextShaping,
         stream << "Simple shaping " << numberOfInputGlyphs << " glyphs in font " << String(adoptCF(CTFontCopyPostScriptName(m_platformData.ctFont())).get()) << ".\n";
         stream << "Font attributes: " << String(adoptCF(CFCopyDescription(adoptCF(CTFontDescriptorCopyAttributes(adoptCF(CTFontCopyFontDescriptor(m_platformData.ctFont())).get())).get())).get()) << "\n";
+        stream << "Locale: " << String(localeString.get()) << "\n";
+        stream << "Options: " << options << "\n";
         const auto* glyphs = glyphBuffer.glyphs(beginningGlyphIndex);
         stream << "Glyphs:";
         for (unsigned i = 0; i < numberOfInputGlyphs; ++i)
@@ -641,7 +645,7 @@ GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned begi
         const UChar* codeUnits = upconvertedCharacters.get();
         stream << "Code Units:";
         for (unsigned i = 0; i < numberOfInputGlyphs; ++i)
-            stream << " " << codeUnits[i];
+            stream << " U+" << hex(codeUnits[i], 4);
     );
 
     auto initialAdvance = CTFontShapeGlyphs(
@@ -678,11 +682,6 @@ GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned begi
         for (unsigned i = 0; i < glyphBuffer.size() - beginningGlyphIndex; ++i)
             stream << " " << offsets[i];
         stream << "\n";
-        const UChar* codeUnits = upconvertedCharacters.get();
-        stream << "Code Units:";
-        for (unsigned i = 0; i < glyphBuffer.size() - beginningGlyphIndex; ++i)
-            stream << " " << codeUnits[i];
-        stream << "\n";
         stream << "Initial advance: " << FloatSize(initialAdvance);
     );
 
@@ -692,7 +691,6 @@ GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned begi
     for (unsigned i = 0; i < glyphBuffer.size() - beginningGlyphIndex; ++i)
         glyphBuffer.offsetsInString(beginningGlyphIndex)[i] += beginningStringIndex;
 
-    // See the comment above in this function where the other call to reverse() is.
     if (textDirection == TextDirection::RTL)
         glyphBuffer.reverse(beginningGlyphIndex, glyphBuffer.size() - beginningGlyphIndex);
 
