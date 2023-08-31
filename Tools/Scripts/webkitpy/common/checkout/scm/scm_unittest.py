@@ -299,6 +299,20 @@ class SCMTest(unittest.TestCase):
         super(SCMTest, self).__init__(*args, **kwargs)
         self.scm = None
 
+    def assertRegex(self, *args, **kwargs):
+        try:
+            return super(SCMTest, self).assertRegex(*args, **kwargs)
+        except AttributeError:
+            # Python 2
+            return self.assertRegexpMatches(*args, **kwargs)
+
+    def assertNotRegex(self, *args, **kwargs):
+        try:
+            return super(SCMTest, self).assertNotRegex(*args, **kwargs)
+        except AttributeError:
+            # Python 2
+            return self.assertNotRegexpMatches(*args, **kwargs)
+
     def _create_patch(self, patch_contents):
         # FIXME: This code is brittle if the Attachment API changes.
         attachment = Attachment({"bug_id": 12345}, None)
@@ -451,10 +465,10 @@ class SCMTest(unittest.TestCase):
     def _shared_test_diff_for_revision(self):
         # Patch formats are slightly different between svn and git, so just regexp for things we know should be there.
         r3_patch = self.scm.diff_for_revision(4)
-        self.assertRegexpMatches(r3_patch, b'test3')
-        self.assertNotRegexpMatches(r3_patch, b'test4')
-        self.assertRegexpMatches(r3_patch, b'test2')
-        self.assertRegexpMatches(self.scm.diff_for_revision(3), b'test2')
+        self.assertRegex(r3_patch, b'test3')
+        self.assertNotRegex(r3_patch, b'test4')
+        self.assertRegex(r3_patch, b'test2')
+        self.assertRegex(self.scm.diff_for_revision(3), b'test2')
 
     def _shared_test_add_recursively(self):
         os.mkdir("added_dir")
@@ -615,8 +629,8 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
     @slow
     def test_commit_logs(self):
         # Commits have dates and usernames in them, so we can't just direct compare.
-        self.assertRegexpMatches(self.scm.last_svn_commit_log(), 'fourth commit')
-        self.assertRegexpMatches(self.scm.svn_commit_log(3), 'second commit')
+        self.assertRegex(self.scm.last_svn_commit_log(), 'fourth commit')
+        self.assertRegex(self.scm.svn_commit_log(3), 'second commit')
 
     def _shared_test_commit_with_message(self, username=None):
         write_into_file_at_path('test_file', 'more test content')
@@ -913,7 +927,7 @@ class GitTest(SCMTest):
         scm.commit_locally_with_message('message')
 
         patch = scm.create_patch()
-        self.assertNotRegexpMatches(patch, b'Subversion Revision:')
+        self.assertNotRegex(patch, b'Subversion Revision:')
 
     @xfail
     def test_create_patch_with_git_index(self):
@@ -931,10 +945,10 @@ class GitTest(SCMTest):
         write_into_file_at_path('test_file_commit1', 'third unicorn')
 
         patch = scm.create_patch(None, None, True)
-        self.assertRegexpMatches(patch, b'-first cat')
-        self.assertRegexpMatches(patch, b'\\+second dog')
-        self.assertNotRegexpMatches(patch, b'third')
-        self.assertNotRegexpMatches(patch, b'unicorn')
+        self.assertRegex(patch, b'-first cat')
+        self.assertRegex(patch, b'\\+second dog')
+        self.assertNotRegex(patch, b'third')
+        self.assertNotRegex(patch, b'unicorn')
 
     def test_orderfile(self):
         os.mkdir("Tools")
@@ -1017,8 +1031,8 @@ class GitTest(SCMTest):
         scm.commit_locally_with_message('message')
 
         patch = scm.create_patch()
-        self.assertNotRegexpMatches(patch, b'rename from ')
-        self.assertNotRegexpMatches(patch, b'rename to ')
+        self.assertNotRegex(patch, b'rename from ')
+        self.assertNotRegex(patch, b'rename to ')
 
     def test_untracked_files(self):
         self._shared_test_untracked_files(self.tracking_scm)
@@ -1096,7 +1110,7 @@ class GitSVNTest(SCMTest):
         run_command(['git', 'checkout', '-b', 'bar'])
         self.scm.delete_branch(new_branch)
 
-        self.assertNotRegexpMatches(run_command(['git', 'branch']), r'foo')
+        self.assertNotRegex(run_command(['git', 'branch']), r'foo')
 
     @slow
     @xfail
@@ -1109,8 +1123,8 @@ class GitSVNTest(SCMTest):
         diff_to_common_base = _git_diff(self.scm.remote_branch_ref() + '..')
         diff_to_merge_base = _git_diff(self.scm.remote_merge_base())
 
-        self.assertNotRegexpMatches(diff_to_common_base, b'foo')
-        self.assertRegexpMatches(diff_to_merge_base, b'foo')
+        self.assertNotRegex(diff_to_common_base, b'foo')
+        self.assertRegex(diff_to_merge_base, b'foo')
 
     @slow
     def test_commitish_parsing(self):
@@ -1156,7 +1170,7 @@ class GitSVNTest(SCMTest):
 
         self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '6')
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
-        self.assertRegexpMatches(svn_log, r'test_file_commit1')
+        self.assertRegex(svn_log, r'test_file_commit1')
 
     def _local_commit(self, filename, contents, message):
         write_into_file_at_path(filename, contents)
@@ -1196,8 +1210,8 @@ class GitSVNTest(SCMTest):
 
         self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '6')
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
-        self.assertRegexpMatches(svn_log, r'test_file_commit2')
-        self.assertRegexpMatches(svn_log, r'test_file_commit1')
+        self.assertRegex(svn_log, r'test_file_commit2')
+        self.assertRegex(svn_log, r'test_file_commit1')
 
     @slow
     @xfail
@@ -1208,8 +1222,8 @@ class GitSVNTest(SCMTest):
         self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '6')
 
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
-        self.assertRegexpMatches(svn_log, r'test_file_commit1')
-        self.assertNotRegexpMatches(svn_log, r'test_file_commit2')
+        self.assertRegex(svn_log, r'test_file_commit1')
+        self.assertNotRegex(svn_log, r'test_file_commit2')
 
     @slow
     @xfail
@@ -1220,9 +1234,9 @@ class GitSVNTest(SCMTest):
         self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '6')
 
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
-        self.assertNotRegexpMatches(svn_log, r'test_file_commit0')
-        self.assertRegexpMatches(svn_log, r'test_file_commit1')
-        self.assertRegexpMatches(svn_log, r'test_file_commit2')
+        self.assertNotRegex(svn_log, r'test_file_commit0')
+        self.assertRegex(svn_log, r'test_file_commit1')
+        self.assertRegex(svn_log, r'test_file_commit2')
 
     @slow
     @xfail
@@ -1230,7 +1244,7 @@ class GitSVNTest(SCMTest):
         self._one_local_commit()
         commit_text = self.scm.commit_with_message("another test commit")
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
-        self.assertRegexpMatches(svn_log, r'test_file_commit1')
+        self.assertRegex(svn_log, r'test_file_commit1')
 
     @slow
     @xfail
@@ -1243,8 +1257,8 @@ class GitSVNTest(SCMTest):
 
         self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '6')
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
-        self.assertRegexpMatches(svn_log, r'test_file_commit2')
-        self.assertRegexpMatches(svn_log, r'test_file_commit1')
+        self.assertRegex(svn_log, r'test_file_commit2')
+        self.assertRegex(svn_log, r'test_file_commit1')
 
     @slow
     def test_commit_with_message_git_commit_and_working_copy(self):
@@ -1261,8 +1275,8 @@ class GitSVNTest(SCMTest):
         self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '6')
 
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
-        self.assertRegexpMatches(svn_log, r'test_file_commit2')
-        self.assertRegexpMatches(svn_log, r'test_file_commit1')
+        self.assertRegex(svn_log, r'test_file_commit2')
+        self.assertRegex(svn_log, r'test_file_commit1')
 
     @slow
     @xfail
@@ -1274,8 +1288,8 @@ class GitSVNTest(SCMTest):
         self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '6')
 
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
-        self.assertRegexpMatches(svn_log, r'test_file_commit2')
-        self.assertRegexpMatches(svn_log, r'test_file_commit1')
+        self.assertRegex(svn_log, r'test_file_commit2')
+        self.assertRegex(svn_log, r'test_file_commit1')
 
     @slow
     @xfail
@@ -1288,9 +1302,9 @@ class GitSVNTest(SCMTest):
         self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '6')
 
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
-        self.assertNotRegexpMatches(svn_log, r'test_file2')
-        self.assertRegexpMatches(svn_log, r'test_file_commit2')
-        self.assertRegexpMatches(svn_log, r'test_file_commit1')
+        self.assertNotRegex(svn_log, r'test_file2')
+        self.assertRegex(svn_log, r'test_file_commit2')
+        self.assertRegex(svn_log, r'test_file_commit1')
 
     @slow
     def test_commit_with_message_not_synced_with_conflict(self):
@@ -1326,17 +1340,17 @@ class GitSVNTest(SCMTest):
     def test_create_patch_local_plus_working_copy(self):
         self._one_local_commit_plus_working_copy_changes()
         patch = self.scm.create_patch()
-        self.assertRegexpMatches(patch, b'test_file_commit1')
-        self.assertRegexpMatches(patch, b'test_file_commit2')
+        self.assertRegex(patch, b'test_file_commit1')
+        self.assertRegex(patch, b'test_file_commit2')
 
     @slow
     @xfail
     def test_create_patch(self):
         self._one_local_commit_plus_working_copy_changes()
         patch = self.scm.create_patch()
-        self.assertRegexpMatches(patch, b'test_file_commit2')
-        self.assertRegexpMatches(patch, b'test_file_commit1')
-        self.assertRegexpMatches(patch, b'Subversion Revision: 5')
+        self.assertRegex(patch, b'test_file_commit2')
+        self.assertRegex(patch, b'test_file_commit1')
+        self.assertRegex(patch, b'Subversion Revision: 5')
 
     @slow
     @xfail
@@ -1346,15 +1360,15 @@ class GitSVNTest(SCMTest):
         run_command(['git', 'merge', 'trunk'])
 
         patch = self.scm.create_patch()
-        self.assertRegexpMatches(patch, b'test_file_commit1')
-        self.assertRegexpMatches(patch, b'Subversion Revision: 5')
+        self.assertRegex(patch, b'test_file_commit1')
+        self.assertRegex(patch, b'Subversion Revision: 5')
 
     @slow
     @xfail
     def test_create_patch_with_changed_files(self):
         self._one_local_commit_plus_working_copy_changes()
         patch = self.scm.create_patch(changed_files=['test_file_commit2'])
-        self.assertRegexpMatches(patch, b'test_file_commit2')
+        self.assertRegex(patch, b'test_file_commit2')
 
     @slow
     @xfail
@@ -1369,32 +1383,32 @@ class GitSVNTest(SCMTest):
     def test_create_patch_git_commit(self):
         self._two_local_commits()
         patch = self.scm.create_patch(git_commit="HEAD^")
-        self.assertRegexpMatches(patch, b'test_file_commit1')
-        self.assertNotRegexpMatches(patch, b'test_file_commit2')
+        self.assertRegex(patch, b'test_file_commit1')
+        self.assertNotRegex(patch, b'test_file_commit2')
 
     @slow
     def test_create_patch_git_commit_range(self):
         self._three_local_commits()
         patch = self.scm.create_patch(git_commit="HEAD~2..HEAD")
-        self.assertNotRegexpMatches(patch, b'test_file_commit0')
-        self.assertRegexpMatches(patch, b'test_file_commit2')
-        self.assertRegexpMatches(patch, b'test_file_commit1')
+        self.assertNotRegex(patch, b'test_file_commit0')
+        self.assertRegex(patch, b'test_file_commit2')
+        self.assertRegex(patch, b'test_file_commit1')
 
     @slow
     @xfail
     def test_create_patch_working_copy_only(self):
         self._one_local_commit_plus_working_copy_changes()
         patch = self.scm.create_patch(git_commit="HEAD....")
-        self.assertNotRegexpMatches(patch, b'test_file_commit1')
-        self.assertRegexpMatches(patch, b'test_file_commit2')
+        self.assertNotRegex(patch, b'test_file_commit1')
+        self.assertRegex(patch, b'test_file_commit2')
 
     @slow
     @xfail
     def test_create_patch_multiple_local_commits(self):
         self._two_local_commits()
         patch = self.scm.create_patch()
-        self.assertRegexpMatches(patch, b'test_file_commit2')
-        self.assertRegexpMatches(patch, b'test_file_commit1')
+        self.assertRegex(patch, b'test_file_commit2')
+        self.assertRegex(patch, b'test_file_commit1')
 
     @slow
     @xfail
@@ -1402,9 +1416,9 @@ class GitSVNTest(SCMTest):
         run_command(['git', 'checkout', '-b', 'my-branch', 'trunk~3'])
         self._two_local_commits()
         patch = self.scm.create_patch()
-        self.assertNotRegexpMatches(patch, b'test_file2')
-        self.assertRegexpMatches(patch, b'test_file_commit2')
-        self.assertRegexpMatches(patch, b'test_file_commit1')
+        self.assertNotRegex(patch, b'test_file2')
+        self.assertRegex(patch, b'test_file_commit2')
+        self.assertRegex(patch, b'test_file_commit1')
 
     @slow
     @xfail
@@ -1421,8 +1435,8 @@ class GitSVNTest(SCMTest):
         write_into_file_at_path(test_file_path, file_contents, encoding=None)
         run_command(['git', 'add', test_file_name])
         patch = self.scm.create_patch()
-        self.assertRegexpMatches(patch, b'\nliteral 0\n')
-        self.assertRegexpMatches(patch, b'\nliteral 256\n')
+        self.assertRegex(patch, b'\nliteral 0\n')
+        self.assertRegex(patch, b'\nliteral 256\n')
 
         # Check if we can apply the created patch.
         run_command(['git', 'rm', '-f', test_file_name])
@@ -1436,8 +1450,8 @@ class GitSVNTest(SCMTest):
         run_command(['git', 'commit', '-m', 'binary diff'])
 
         patch_from_local_commit = self.scm.create_patch('HEAD')
-        self.assertRegexpMatches(patch_from_local_commit, b'\nliteral 0\n')
-        self.assertRegexpMatches(patch_from_local_commit, b'\nliteral 256\n')
+        self.assertRegex(patch_from_local_commit, b'\nliteral 0\n')
+        self.assertRegex(patch_from_local_commit, b'\nliteral 256\n')
 
     @slow
     @xfail

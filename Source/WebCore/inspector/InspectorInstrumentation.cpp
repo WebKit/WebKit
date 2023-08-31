@@ -57,6 +57,7 @@
 #include "LoaderStrategy.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
+#include "PageCanvasAgent.h"
 #include "PageDOMDebuggerAgent.h"
 #include "PageDebuggerAgent.h"
 #include "PageHeapAgent.h"
@@ -785,8 +786,8 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrument
     if (auto* pageRuntimeAgent = instrumentingAgents.enabledPageRuntimeAgent())
         pageRuntimeAgent->frameNavigated(frame);
 
-    if (auto* canvasAgent = instrumentingAgents.enabledCanvasAgent())
-        canvasAgent->frameNavigated(frame);
+    if (auto* pageCanvasAgent = instrumentingAgents.enabledPageCanvasAgent())
+        pageCanvasAgent->frameNavigated(frame);
 
     if (auto* animationAgent = instrumentingAgents.enabledAnimationAgent())
         animationAgent->frameNavigated(frame);
@@ -1126,14 +1127,20 @@ void InspectorInstrumentation::didSendWebSocketFrameImpl(InstrumentingAgents& in
 
 void InspectorInstrumentation::didChangeCSSCanvasClientNodesImpl(InstrumentingAgents& instrumentingAgents, CanvasBase& canvasBase)
 {
-    if (auto* canvasAgent = instrumentingAgents.enabledCanvasAgent())
-        canvasAgent->didChangeCSSCanvasClientNodes(canvasBase);
+    if (auto* pageCanvasAgent = instrumentingAgents.enabledPageCanvasAgent())
+        pageCanvasAgent->didChangeCSSCanvasClientNodes(canvasBase);
 }
 
 void InspectorInstrumentation::didCreateCanvasRenderingContextImpl(InstrumentingAgents& instrumentingAgents, CanvasRenderingContext& context)
 {
     if (auto* canvasAgent = instrumentingAgents.enabledCanvasAgent())
         canvasAgent->didCreateCanvasRenderingContext(context);
+}
+
+void InspectorInstrumentation::didChangeCanvasSizeImpl(InstrumentingAgents& instrumentingAgents, CanvasRenderingContext& context)
+{
+    if (auto* canvasAgent = instrumentingAgents.enabledCanvasAgent())
+        canvasAgent->didChangeCanvasSize(context);
 }
 
 void InspectorInstrumentation::didChangeCanvasMemoryImpl(InstrumentingAgents& instrumentingAgents, CanvasRenderingContext& context)

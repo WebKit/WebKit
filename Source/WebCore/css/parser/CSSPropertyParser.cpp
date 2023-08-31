@@ -704,30 +704,20 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
     RefPtr<CSSValue> capsValue;
     RefPtr<CSSValue> alternatesValue;
     RefPtr<CSSValue> positionValue;
-
     RefPtr<CSSValue> eastAsianValue;
     CSSFontVariantLigaturesParser ligaturesParser;
     CSSFontVariantNumericParser numericParser;
     bool implicitLigatures = true;
     bool implicitNumeric = true;
     do {
-        if (!capsValue) {
-            capsValue = CSSPropertyParsing::consumeFontVariantCaps(m_range);
-            if (capsValue)
-                continue;
-        }
+        if (!capsValue && (capsValue = CSSPropertyParsing::consumeFontVariantCaps(m_range)))
+            continue;
         
-        if (!positionValue) {
-            positionValue = CSSPropertyParsing::consumeFontVariantPosition(m_range);
-            if (positionValue)
-                continue;
-        }
+        if (!positionValue && (positionValue = CSSPropertyParsing::consumeFontVariantPosition(m_range)))
+            continue;
 
-        if (!alternatesValue) {
-            alternatesValue = consumeFontVariantAlternates(m_range);
-            if (alternatesValue)
-                continue;
-        }
+        if (!alternatesValue && (alternatesValue = consumeFontVariantAlternates(m_range)))
+            continue;
 
         CSSFontVariantLigaturesParser::ParseResult ligaturesParseResult = ligaturesParser.consumeLigature(m_range);
         CSSFontVariantNumericParser::ParseResult numericParseResult = numericParser.consumeNumeric(m_range);
@@ -744,15 +734,11 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
             || numericParseResult == CSSFontVariantNumericParser::ParseResult::DisallowedValue)
             return false;
 
-        if (!eastAsianValue) {
-            eastAsianValue = consumeFontVariantEastAsian(m_range);
-            if (eastAsianValue)
-                continue;
-        }
+        if (!eastAsianValue && (eastAsianValue = consumeFontVariantEastAsian(m_range)))
+            continue;
 
         // Saw some value that didn't match anything else.
         return false;
-
     } while (!m_range.atEnd());
 
     addProperty(CSSPropertyFontVariantLigatures, CSSPropertyFontVariant, ligaturesParser.finalizeValue().releaseNonNull(), important, implicitLigatures);
@@ -2500,9 +2486,9 @@ bool CSSPropertyParser::consumeOffset(bool important)
 
 bool CSSPropertyParser::consumeListStyleShorthand(bool important)
 {
-    RefPtr<CSSValue> parsedPosition;
-    RefPtr<CSSValue> parsedImage;
-    RefPtr<CSSValue> parsedType;
+    RefPtr<CSSValue> position;
+    RefPtr<CSSValue> image;
+    RefPtr<CSSValue> type;
     unsigned noneCount = 0;
 
     while (!m_range.atEnd()) {
@@ -2511,43 +2497,34 @@ bool CSSPropertyParser::consumeListStyleShorthand(bool important)
             consumeIdent(m_range);
             continue;
         }
-        if (!parsedPosition) {
-            if (auto position = parseSingleValue(CSSPropertyListStylePosition, CSSPropertyListStyle)) {
-                parsedPosition = position;
-                continue;
-            }
-        }
-        if (!parsedImage) {
-            if (auto image = parseSingleValue(CSSPropertyListStyleImage, CSSPropertyListStyle)) {
-                parsedImage = image;
-                continue;
-            }
-        }
-        if (!parsedType) {
-            if (auto type = parseSingleValue(CSSPropertyListStyleType, CSSPropertyListStyle)) {
-                parsedType = type;
-                continue;
-            }
-        }
+        if (!position && (position = parseSingleValue(CSSPropertyListStylePosition, CSSPropertyListStyle)))
+            continue;
+
+        if (!image && (image = parseSingleValue(CSSPropertyListStyleImage, CSSPropertyListStyle)))
+            continue;
+
+        if (!type && (type = parseSingleValue(CSSPropertyListStyleType, CSSPropertyListStyle)))
+            continue;
+
         return false;
     }
 
-    if (noneCount > (static_cast<unsigned>(!parsedImage + !parsedType)))
+    if (noneCount > (static_cast<unsigned>(!image + !type)))
         return false;
 
     if (noneCount == 2) {
         // Using implicit none for list-style-image is how we serialize "none" instead of "none none".
-        parsedImage = nullptr;
-        parsedType = CSSPrimitiveValue::create(CSSValueNone);
+        image = nullptr;
+        type = CSSPrimitiveValue::create(CSSValueNone);
     } else if (noneCount == 1) {
         // Use implicit none for list-style-image, but non-implicit for type.
-        if (!parsedType)
-            parsedType = CSSPrimitiveValue::create(CSSValueNone);
+        if (!type)
+            type = CSSPrimitiveValue::create(CSSValueNone);
     }
 
-    addProperty(CSSPropertyListStylePosition, CSSPropertyListStyle, WTFMove(parsedPosition), important);
-    addProperty(CSSPropertyListStyleImage, CSSPropertyListStyle, WTFMove(parsedImage), important);
-    addProperty(CSSPropertyListStyleType, CSSPropertyListStyle, WTFMove(parsedType), important);
+    addProperty(CSSPropertyListStylePosition, CSSPropertyListStyle, WTFMove(position), important);
+    addProperty(CSSPropertyListStyleImage, CSSPropertyListStyle, WTFMove(image), important);
+    addProperty(CSSPropertyListStyleType, CSSPropertyListStyle, WTFMove(type), important);
     return m_range.atEnd();
 }
 

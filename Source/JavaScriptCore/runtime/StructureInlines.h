@@ -759,7 +759,7 @@ inline Structure* Structure::nonPropertyTransition(VM& vm, Structure* structure,
     return nonPropertyTransitionSlow(vm, structure, transitionKind, deferred);
 }
 
-inline Structure* Structure::addPropertyTransitionToExistingStructureImpl(Structure* structure, UniquedStringImpl* uid, unsigned attributes, PropertyOffset& offset)
+ALWAYS_INLINE Structure* Structure::addPropertyTransitionToExistingStructureImpl(Structure* structure, UniquedStringImpl* uid, unsigned attributes, PropertyOffset& offset)
 {
     ASSERT(!structure->isDictionary());
     ASSERT(structure->isObject());

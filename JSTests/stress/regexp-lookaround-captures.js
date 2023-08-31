@@ -113,3 +113,9 @@ testRegExp(/abc(?=([iA-\u{103ff}]*)([A-\u{ffff}]+)([A-z]+))/u, "abcABCDEFGHIJK\u
 testRegExp(/(?<=([A-z]+)([A-\u{ffff}]+)([A-\u{103ff}]*))abc/u, "ABCDEFGHIJKabc", ["abc", "A", "B", "CDEFGHIJK"]);
 testRegExp(/(?<=([A-z]+)([A-\u{ffff}]+)([A-\u{103ff}]*))abc/u, "1\u{10420}X\u{273b}\u{10308}ABCDEFGHIJKabc", ["abc", "X", "\u{273b}", "\u{10308}ABCDEFGHIJK"]);
 testRegExp(/(?<=([A]+)([A-\u{103ff}]*))abc/u, "A\u{10420}X\u{273b}\u{10308}ABCDEFGHIJKabc", ["abc", "A", "BCDEFGHIJK"]);
+
+// Test 26
+testRegExp(/(?:(?=(abc)))a/, "abc", ["a", "abc"]);
+testRegExp(/(?:(?=(abc)))?a/, "abc", ["a", undefined]);
+testRegExp(/(?:(?=(abc)))??a/, "abc", ["a", undefined]);
+testRegExp(/(?:(?=(abc)))+a/, "abc", ["a", "abc"]);

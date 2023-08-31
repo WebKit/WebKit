@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Blocked setting data:, as the base URL because it does not have an allowed scheme.
 
 PASS Testing Request url 'http://example	.
 org' with base 'http://example.org/foo/bar'
@@ -273,7 +272,6 @@ PASS Testing Request url 'http://[google.com]' with base 'http://other.com/'
 PASS Testing Request url 'http://foo:💩@example.com/bar' with base 'http://other.com/'
 PASS Testing Request url '#' with base 'test:test'
 PASS Testing Request url '#x' with base 'mailto:x@x.com'
-FAIL Testing Request url '#x' with base 'data:,' assert_equals: expected "data:,#x" but got "mailto:x@x.com#x"
 PASS Testing Request url '#x' with base 'about:blank'
 PASS Testing Request url '#' with base 'test:test?test'
 PASS Testing Request url 'https://@test@test@example:800/' with base 'http://doesnotmatter/'

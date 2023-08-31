@@ -29,11 +29,14 @@
 #include "ContentVisibilityAutoStateChangeEvent.h"
 #include "Element.h"
 #include "EventNames.h"
+#include "FrameSelection.h"
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverEntry.h"
 #include "NodeRenderStyle.h"
 #include "RenderElement.h"
 #include "RenderStyleInlines.h"
+#include "SimpleRange.h"
+#include "VisibleSelection.h"
 
 namespace WebCore {
 
@@ -116,6 +119,14 @@ DidUpdateAnyContentRelevancy ContentVisibilityDocumentState::updateRelevancyOfCo
 
             if (relevancyToCheck.contains(ContentRelevancy::Focused))
                 setRelevancyValue(ContentRelevancy::Focused, target->hasFocusWithin());
+
+            auto targetContainsSelection = [](Element& target) {
+                auto selectionRange = target.document().selection().selection().range();
+                return selectionRange && intersects<ComposedTree>(*selectionRange, target);
+            };
+
+            if (relevancyToCheck.contains(ContentRelevancy::Selected))
+                setRelevancyValue(ContentRelevancy::Selected, targetContainsSelection(*target));
 
             auto hasTopLayerinSubtree = [](const Element& target) {
                 for (auto& element : target.document().topLayerElements()) {

@@ -363,7 +363,7 @@ struct PatternTerm {
     {
         ASSERT(this->type == Type::ParenthesesSubpattern
             || this->type == Type::ParentheticalAssertion);
-        return parentheses.lastSubpatternId >= parentheses.subpatternId;
+        return parentheses.lastSubpatternId && parentheses.lastSubpatternId >= parentheses.subpatternId;
     }
 
     void quantify(unsigned count, QuantifierType type)

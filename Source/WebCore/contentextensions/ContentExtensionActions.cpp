@@ -130,14 +130,6 @@ ModifyHeadersAction ModifyHeadersAction::isolatedCopy() &&
     return { crossThreadCopy(WTFMove(requestHeaders)), crossThreadCopy(WTFMove(responseHeaders)), crossThreadCopy(priority) };
 }
 
-bool ModifyHeadersAction::operator==(const ModifyHeadersAction& other) const
-{
-    return other.hashTableType == this->hashTableType
-        && other.requestHeaders == this->requestHeaders
-        && other.responseHeaders == this->responseHeaders
-        && other.priority == this->priority;
-}
-
 void ModifyHeadersAction::serialize(Vector<uint8_t>& vector) const
 {
     auto beginIndex = vector.size();
@@ -257,11 +249,6 @@ auto ModifyHeadersAction::ModifyHeaderInfo::isolatedCopy() && -> ModifyHeaderInf
     return { crossThreadCopy(WTFMove(operation)) };
 }
 
-bool ModifyHeadersAction::ModifyHeaderInfo::operator==(const ModifyHeaderInfo& other) const
-{
-    return other.operation == this->operation;
-}
-
 void ModifyHeadersAction::ModifyHeaderInfo::serialize(Vector<uint8_t>& vector) const
 {
     auto beginIndex = vector.size();
@@ -350,12 +337,6 @@ RedirectAction RedirectAction::isolatedCopy() const &
 RedirectAction RedirectAction::isolatedCopy() &&
 {
     return { crossThreadCopy(WTFMove(action)) };
-}
-
-bool RedirectAction::operator==(const RedirectAction& other) const
-{
-    return other.hashTableType == this->hashTableType
-        && other.action == this->action;
 }
 
 void RedirectAction::serialize(Vector<uint8_t>& vector) const
@@ -557,18 +538,6 @@ auto RedirectAction::URLTransformAction::isolatedCopy() && -> URLTransformAction
 {
     return { crossThreadCopy(WTFMove(fragment)), crossThreadCopy(WTFMove(host)), crossThreadCopy(WTFMove(password)), crossThreadCopy(WTFMove(path)), crossThreadCopy(WTFMove(port)),
         crossThreadCopy(WTFMove(queryTransform)), crossThreadCopy(WTFMove(scheme)), crossThreadCopy(WTFMove(username)) };
-}
-
-bool RedirectAction::URLTransformAction::operator==(const URLTransformAction& other) const
-{
-    return other.fragment == this->fragment
-        && other.host == this->host
-        && other.password == this->password
-        && other.path == this->path
-        && other.port == this->port
-        && other.queryTransform == this->queryTransform
-        && other.scheme == this->scheme
-        && other.username == this->username;
 }
 
 void RedirectAction::URLTransformAction::serialize(Vector<uint8_t>& vector) const
@@ -853,12 +822,6 @@ auto RedirectAction::URLTransformAction::QueryTransform::isolatedCopy() && -> Qu
     return { crossThreadCopy(WTFMove(addOrReplaceParams)), crossThreadCopy(WTFMove(removeParams)) };
 }
 
-bool RedirectAction::URLTransformAction::QueryTransform::operator==(const QueryTransform& other) const
-{
-    return other.addOrReplaceParams == this->addOrReplaceParams
-        && other.removeParams == this->removeParams;
-}
-
 void RedirectAction::URLTransformAction::QueryTransform::serialize(Vector<uint8_t>& vector) const
 {
     auto beginIndex = vector.size();
@@ -923,13 +886,6 @@ auto RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::parse(co
         replaceOnly = *boolean;
 
     return { { WTFMove(key), replaceOnly, WTFMove(value) } };
-}
-
-bool RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::operator==(const QueryKeyValue& other) const
-{
-    return other.key == this->key
-        && other.replaceOnly == this->replaceOnly
-        && other.value == this->value;
 }
 
 void RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::serialize(Vector<uint8_t>& vector) const

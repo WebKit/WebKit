@@ -1,0 +1,26 @@
+This test ensures PDFs loaded in iframes are exposed in the accessibility tree.
+
+Traversal path to text node inside PDF:
+
+At index 0, got AXRole: AXScrollArea
+At index 0, got AXRole: AXWebArea
+At index 0, got AXRole: AXGroup
+At index 0, got AXRole: AXGroup
+At index 0, got AXRole: AXGroup
+At index 0, got AXRole: AXPage
+At index 0, got AXRole: AXGroup
+At index 0, got AXRole: AXGroup
+At index 0, got AXRole: AXGroup
+At index 1, got AXRole: AXGroup
+At index 0, got AXRole: AXGroup
+At index 0, got AXRole: AXStaticText
+
+Found object:
+AXRole: AXStaticText
+AXValue: Welcome to the website for the WebKit Open Source Project!
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

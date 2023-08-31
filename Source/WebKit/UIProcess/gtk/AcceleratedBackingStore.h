@@ -58,7 +58,6 @@ public:
 #endif
     virtual void realize() { };
     virtual void unrealize() { };
-    virtual bool makeContextCurrent() { return false; }
     virtual int renderHostFileDescriptor() { return -1; }
 
 protected:

@@ -31,7 +31,15 @@ endif ()
 
 if (DEFINED ENV{WEBKIT_IGNORE_PATH})
     set(CMAKE_IGNORE_PATH $ENV{WEBKIT_IGNORE_PATH})
+    message(STATUS "Ignoring paths at ${CMAKE_IGNORE_PATH}")
 endif ()
+
+# Turn off pkg-config when finding PlayStation libraries
+# Prevent CMake from accidentally using the perl install's .pc files
+message(STATUS "Disabling pkgconfig")
+set(CMAKE_DISABLE_FIND_PACKAGE_PkgConfig ON)
+macro(pkg_check_modules _prefix _module0)
+endmacro()
 
 list(APPEND CMAKE_PREFIX_PATH ${WEBKIT_LIBRARIES_DIR})
 

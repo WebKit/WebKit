@@ -1309,50 +1309,6 @@ static Ref<CSSValue> fontVariantLigaturesPropertyValue(FontVariantLigatures comm
     return CSSValueList::createSpaceSeparated(WTFMove(valueList));
 }
 
-static Ref<CSSValue> fontVariantPositionPropertyValue(FontVariantPosition position)
-{
-    CSSValueID valueID = CSSValueNormal;
-    switch (position) {
-    case FontVariantPosition::Normal:
-        break;
-    case FontVariantPosition::Subscript:
-        valueID = CSSValueSub;
-        break;
-    case FontVariantPosition::Superscript:
-        valueID = CSSValueSuper;
-        break;
-    }
-    return CSSPrimitiveValue::create(valueID);
-}
-
-static Ref<CSSValue> fontVariantCapsPropertyValue(FontVariantCaps caps)
-{
-    CSSValueID valueID = CSSValueNormal;
-    switch (caps) {
-    case FontVariantCaps::Normal:
-        break;
-    case FontVariantCaps::Small:
-        valueID = CSSValueSmallCaps;
-        break;
-    case FontVariantCaps::AllSmall:
-        valueID = CSSValueAllSmallCaps;
-        break;
-    case FontVariantCaps::Petite:
-        valueID = CSSValuePetiteCaps;
-        break;
-    case FontVariantCaps::AllPetite:
-        valueID = CSSValueAllPetiteCaps;
-        break;
-    case FontVariantCaps::Unicase:
-        valueID = CSSValueUnicase;
-        break;
-    case FontVariantCaps::Titling:
-        valueID = CSSValueTitlingCaps;
-        break;
-    }
-    return CSSPrimitiveValue::create(valueID);
-}
-
 static Ref<CSSValue> fontVariantNumericPropertyValue(FontVariantNumericFigure figure, FontVariantNumericSpacing spacing, FontVariantNumericFraction fraction, FontVariantNumericOrdinal ordinal, FontVariantNumericSlashedZero slashedZero)
 {
     if (figure == FontVariantNumericFigure::Normal && spacing == FontVariantNumericSpacing::Normal && fraction == FontVariantNumericFraction::Normal && ordinal == FontVariantNumericOrdinal::Normal && slashedZero == FontVariantNumericSlashedZero::Normal)
@@ -3803,9 +3759,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyFontVariantLigatures:
         return fontVariantLigaturesPropertyValue(style.fontDescription().variantCommonLigatures(), style.fontDescription().variantDiscretionaryLigatures(), style.fontDescription().variantHistoricalLigatures(), style.fontDescription().variantContextualAlternates());
     case CSSPropertyFontVariantPosition:
-        return fontVariantPositionPropertyValue(style.fontDescription().variantPosition());
+        return createConvertingToCSSValueID(style.fontDescription().variantPosition());
     case CSSPropertyFontVariantCaps:
-        return fontVariantCapsPropertyValue(style.fontDescription().variantCaps());
+        return createConvertingToCSSValueID(style.fontDescription().variantCaps());
     case CSSPropertyFontVariantNumeric:
         return fontVariantNumericPropertyValue(style.fontDescription().variantNumericFigure(), style.fontDescription().variantNumericSpacing(), style.fontDescription().variantNumericFraction(), style.fontDescription().variantNumericOrdinal(), style.fontDescription().variantNumericSlashedZero());
     case CSSPropertyFontVariantAlternates:

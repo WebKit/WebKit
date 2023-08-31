@@ -4151,4 +4151,10 @@ ASCIILiteral JSObject::putDirectToDictionaryWithoutExtensibility(VM& vm, Propert
     return NonExtensibleObjectPropertyDefineError;
 }
 
+NEVER_INLINE void JSObject::putDirectForJSONSlow(VM& vm, PropertyName propertyName, JSValue value)
+{
+    PutPropertySlot slot(this);
+    putDirectInternal<PutModeDefineOwnPropertyForJSONSlow>(vm, propertyName, value, 0, slot);
+}
+
 } // namespace JSC

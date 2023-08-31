@@ -63,6 +63,7 @@ private:
     void displayBuffer(struct wpe_fdo_shm_exported_buffer*);
 #endif
     bool tryEnsureTexture(unsigned&, WebCore::IntSize&);
+    bool makeContextCurrent();
 
 #if USE(GTK4)
     void snapshot(GtkSnapshot*) override;
@@ -70,7 +71,6 @@ private:
     bool paint(cairo_t*, const WebCore::IntRect&) override;
 #endif
     void unrealize() override;
-    bool makeContextCurrent() override;
     void update(const LayerTreeContext&) override;
     int renderHostFileDescriptor() override;
 

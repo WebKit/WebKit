@@ -87,7 +87,7 @@ static FloatRect inlineVideoFrame(HTMLVideoElement& element)
 #pragma mark - VideoFullscreenInterfaceContext
 
 VideoFullscreenInterfaceContext::VideoFullscreenInterfaceContext(VideoFullscreenManager& manager, PlaybackSessionContextIdentifier contextId)
-    : m_manager(&manager)
+    : m_manager(manager)
     , m_contextId(contextId)
 {
 }
@@ -147,8 +147,6 @@ VideoFullscreenManager::~VideoFullscreenManager()
     for (auto& [model, interface] : m_contextMap.values()) {
         model->setVideoElement(nullptr);
         model->removeClient(*interface);
-
-        interface->invalidate();
     }
 
     m_contextMap.clear();
@@ -215,7 +213,6 @@ void VideoFullscreenManager::removeContext(PlaybackSessionContextIdentifier cont
         return;
 
     model->removeClient(*interface);
-    interface->invalidate();
     m_contextMap.remove(contextId);
 
     RefPtr videoElement = model->videoElement();

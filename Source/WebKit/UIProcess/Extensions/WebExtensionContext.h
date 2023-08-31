@@ -42,6 +42,7 @@
 #include "WebExtensionTabIdentifier.h"
 #include "WebExtensionWindow.h"
 #include "WebExtensionWindowIdentifier.h"
+#include "WebExtensionWindowParameters.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebProcessProxy.h"
 #include <wtf/CompletionHandler.h>
@@ -114,6 +115,9 @@ public:
 
     using WindowVector = Vector<Ref<WebExtensionWindow>>;
     using TabSet = HashSet<Ref<WebExtensionTab>>;
+
+    using PopulateTabs = WebExtensionWindow::PopulateTabs;
+    using WindowTypeFilter = WebExtensionWindow::TypeFilter;
 
     enum class EqualityOnly : bool { No, Yes };
     enum class WindowIsClosing : bool { No, Yes };
@@ -222,7 +226,7 @@ public:
     void clearCachedPermissionStates();
 
     Ref<WebExtensionWindow> getOrCreateWindow(_WKWebExtensionWindow *);
-    RefPtr<WebExtensionWindow> getWindow(WebExtensionWindowIdentifier);
+    RefPtr<WebExtensionWindow> getWindow(WebExtensionWindowIdentifier, std::optional<WebPageProxyIdentifier> = std::nullopt);
 
     Ref<WebExtensionTab> getOrCreateTab(_WKWebExtensionTab *);
     RefPtr<WebExtensionTab> getTab(WebExtensionTabIdentifier);
@@ -231,6 +235,7 @@ public:
     TabSet openTabs();
 
     RefPtr<WebExtensionWindow> focusedWindow();
+    RefPtr<WebExtensionWindow> frontmostWindow();
 
     void didOpenWindow(const WebExtensionWindow&);
     void didCloseWindow(const WebExtensionWindow&);
@@ -343,6 +348,14 @@ private:
     void permissionsRequest(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&&);
     void permissionsRemove(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&&);
     void firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType, const PermissionsSet&, const MatchPatternSet&);
+
+    // Windows APIs
+    void windowsCreate(WebExtensionWindowParameters, CompletionHandler<void(std::optional<WebExtensionWindowParameters>, WebExtensionWindow::Error)>&&);
+    void windowsGet(WebPageProxyIdentifier, WebExtensionWindowIdentifier, OptionSet<WindowTypeFilter>, PopulateTabs, CompletionHandler<void(std::optional<WebExtensionWindowParameters>, WebExtensionWindow::Error)>&&);
+    void windowsGetLastFocused(OptionSet<WindowTypeFilter>, PopulateTabs, CompletionHandler<void(std::optional<WebExtensionWindowParameters>, WebExtensionWindow::Error)>&&);
+    void windowsGetAll(OptionSet<WindowTypeFilter>, PopulateTabs, CompletionHandler<void(Vector<WebExtensionWindowParameters>, WebExtensionWindow::Error)>&&);
+    void windowsUpdate(WebExtensionWindowIdentifier, WebExtensionWindowParameters, CompletionHandler<void(std::optional<WebExtensionWindowParameters>, WebExtensionWindow::Error)>&&);
+    void windowsRemove(WebExtensionWindowIdentifier, CompletionHandler<void(WebExtensionWindow::Error)>&&);
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

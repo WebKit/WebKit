@@ -135,6 +135,112 @@
 
 @end
 
+@implementation TestWebExtensionTab
+
+@end
+
+@implementation TestWebExtensionWindow {
+    CGRect _previousFrame;
+}
+
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _tabs = [NSArray array];
+    _windowState = _WKWebExtensionWindowStateNormal;
+    _windowType = _WKWebExtensionWindowTypeNormal;
+
+    _screenFrame = CGRectMake(0, 0, 1920, 1080);
+
+#if PLATFORM(MAC)
+    // This is 50pt from top on the screen in Mac screen coordinates.
+    _frame = CGRectMake(100, _screenFrame.size.height - 600 - 50, 800, 600);
+#else
+    _frame = CGRectMake(100, 50, 800, 600);
+#endif
+
+    _previousFrame = CGRectNull;
+
+    return self;
+}
+
+- (NSArray<id<_WKWebExtensionTab>> *)tabsForWebExtensionContext:(_WKWebExtensionContext *)context
+{
+    return _tabs;
+}
+
+- (id<_WKWebExtensionTab>)activeTabForWebExtensionContext:(_WKWebExtensionContext *)context
+{
+    return _activeTab;
+}
+
+- (_WKWebExtensionWindowType)windowTypeForWebExtensionContext:(_WKWebExtensionContext *)context
+{
+    return _windowType;
+}
+
+- (_WKWebExtensionWindowState)windowStateForWebExtensionContext:(_WKWebExtensionContext *)context
+{
+    return _windowState;
+}
+
+- (void)setWindowState:(_WKWebExtensionWindowState)state forWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *error))completionHandler
+{
+    _windowState = state;
+
+    if (state == _WKWebExtensionWindowStateFullscreen) {
+        _previousFrame = _frame;
+        _frame = _screenFrame;
+    } else if (!CGRectIsEmpty(_previousFrame)) {
+        _frame = _previousFrame;
+        _previousFrame = CGRectNull;
+    }
+
+    completionHandler(nil);
+}
+
+- (BOOL)isUsingPrivateBrowsingForWebExtensionContext:(_WKWebExtensionContext *)context
+{
+    return _usingPrivateBrowsing;
+}
+
+- (CGRect)screenFrameForWebExtensionContext:(_WKWebExtensionContext *)context
+{
+    return _screenFrame;
+}
+
+- (CGRect)frameForWebExtensionContext:(_WKWebExtensionContext *)context
+{
+    return _frame;
+}
+
+- (void)setFrame:(CGRect)frame forWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *error))completionHandler
+{
+    _frame = frame;
+
+    completionHandler(nil);
+}
+
+- (void)focusForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *error))completionHandler
+{
+    if (_didFocus)
+        _didFocus();
+
+    completionHandler(nil);
+}
+
+- (void)closeForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *error))completionHandler
+{
+    if (_didClose)
+        _didClose();
+
+    completionHandler(nil);
+}
+
+@end
+
 namespace TestWebKitAPI {
 namespace Util {
 

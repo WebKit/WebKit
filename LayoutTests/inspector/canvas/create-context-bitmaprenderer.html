@@ -5,6 +5,8 @@
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script src="resources/create-context-utilities.js"></script>
 <script>
+window.worker = new Worker("resources/worker.js");
+
 function test() {
     let suite = InspectorTest.CreateContextUtilities.initializeTestSuite("Canvas.CreateContextBitmapRenderer");
 
@@ -19,6 +21,21 @@ function test() {
         expression: `createDetachedCanvas("bitmaprenderer")`,
         contextType: WI.Canvas.ContextType.BitmapRenderer,
     });
+
+    InspectorTest.CreateContextUtilities.addSimpleTestCase({
+        name: "Offscreen",
+        expression: `createOffscreenCanvas("bitmaprenderer")`,
+        contextType: WI.Canvas.ContextType.BitmapRenderer,
+    });
+
+    InspectorTest.CreateContextUtilities.addSimpleTestCase({
+        name: "Worker",
+        expression: `worker.postMessage({name: "createContext", args: ["bitmaprenderer"]})`,
+        contextType: WI.Canvas.ContextType.BitmapRenderer,
+        skipDestroy: true,
+    });
+
+    InspectorTest.CreateContextUtilities.addCSSCanvasTestCase(WI.Canvas.ContextType.BitmapRenderer);
 
     suite.runTestCasesAndFinish();
 }

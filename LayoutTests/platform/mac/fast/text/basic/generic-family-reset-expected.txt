@@ -17,9 +17,9 @@ layer at (0,0) size 800x600
               RenderText {#text} at (1,39) size 103x19
                 text run at (1,39) width 103: "html, body {"
               RenderBR {BR} at (103,39) size 1x19
-              RenderText {#text} at (1,58) size 197x19
-                text run at (1,58) width 197: "    font-family: Verdana;"
-              RenderBR {BR} at (197,58) size 1x19
+              RenderText {#text} at (1,58) size 198x19
+                text run at (1,58) width 198: "    font-family: Verdana;"
+              RenderBR {BR} at (198,58) size 1x19
               RenderText {#text} at (1,77) size 11x19
                 text run at (1,77) width 11: "}"
               RenderBR {BR} at (11,77) size 1x19
@@ -46,36 +46,36 @@ layer at (0,0) size 800x600
                 text run at (153,1) width 71: "<span>"
           RenderTableRow {TR} at (0,262) size 784x18
             RenderTableCell {TD} at (10,262) size 377x18 [r=2 c=0 rs=1 cs=1]
-              RenderInline {TT} at (0,0) size 257x16
-                RenderText {#text} at (1,1) size 257x16
-                  text run at (1,1) width 257: "font-family: Verdana; font-size: 0.8em;"
+              RenderInline {TT} at (0,0) size 258x16
+                RenderText {#text} at (1,1) size 258x16
+                  text run at (1,1) width 258: "font-family: Verdana; font-size: 0.8em;"
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (397,262) size 377x18 [r=2 c=1 rs=1 cs=1]
-              RenderInline {SPAN} at (0,0) size 257x16
-                RenderText {#text} at (1,1) size 257x16
-                  text run at (1,1) width 257: "font-family: Verdana; font-size: 0.8em;"
+              RenderInline {SPAN} at (0,0) size 258x16
+                RenderText {#text} at (1,1) size 258x16
+                  text run at (1,1) width 258: "font-family: Verdana; font-size: 0.8em;"
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,290) size 784x18
             RenderTableCell {TD} at (10,290) size 377x18 [r=3 c=0 rs=1 cs=1]
-              RenderInline {TT} at (0,0) size 314x16
-                RenderText {#text} at (1,1) size 314x16
-                  text run at (1,1) width 314: "font-family: inherit (Verdana); font-size: 0.8em;"
+              RenderInline {TT} at (0,0) size 315x16
+                RenderText {#text} at (1,1) size 315x16
+                  text run at (1,1) width 315: "font-family: inherit (Verdana); font-size: 0.8em;"
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (397,290) size 377x18 [r=3 c=1 rs=1 cs=1]
-              RenderInline {SPAN} at (0,0) size 245x16
-                RenderText {#text} at (1,1) size 245x16
-                  text run at (1,1) width 245: "font-family: inherit; font-size: 0.8em;"
+              RenderInline {SPAN} at (0,0) size 246x16
+                RenderText {#text} at (1,1) size 246x16
+                  text run at (1,1) width 246: "font-family: inherit; font-size: 0.8em;"
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,318) size 784x21
             RenderTableCell {TD} at (10,318) size 377x21 [r=4 c=0 rs=1 cs=1]
-              RenderInline {TT} at (0,0) size 321x19
-                RenderText {#text} at (1,1) size 321x19
-                  text run at (1,1) width 321: "font-family: Verdana; font-size: 1.0em;"
+              RenderInline {TT} at (0,0) size 322x19
+                RenderText {#text} at (1,1) size 322x19
+                  text run at (1,1) width 322: "font-family: Verdana; font-size: 1.0em;"
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (397,318) size 377x21 [r=4 c=1 rs=1 cs=1]
-              RenderInline {SPAN} at (0,0) size 321x19
-                RenderText {#text} at (1,1) size 321x19
-                  text run at (1,1) width 321: "font-family: Verdana; font-size: 1.0em;"
+              RenderInline {SPAN} at (0,0) size 322x19
+                RenderText {#text} at (1,1) size 322x19
+                  text run at (1,1) width 322: "font-family: Verdana; font-size: 1.0em;"
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,349) size 784x17
             RenderTableCell {TD} at (10,350) size 377x15 [r=5 c=0 rs=1 cs=1]

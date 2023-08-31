@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 343x18
           text run at (0,0) width 343: "This tests the selection methods on the new text field."
       RenderBlock {P} at (0,34) size 784x19
-        RenderTextControl {INPUT} at (0,0) size 147x19 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+        RenderTextControl {INPUT} at (0,0) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,69) size 784x486
         RenderBR {BR} at (0,0) size 0x18
@@ -74,8 +74,8 @@ layer at (0,0) size 800x600
           text run at (0,468) width 48: "Passed."
         RenderBR {BR} at (47,468) size 1x18
       RenderBlock {P} at (0,571) size 784x0
-layer at (11,45) size 141x13
-  RenderBlock {DIV} at (3,3) size 141x13
+layer at (11,45) size 142x13
+  RenderBlock {DIV} at (3,3) size 142x13
     RenderText {#text} at (0,0) size 133x13
       text run at (0,0) width 133: "123456789 ABCDEFGHIJ"
 selection start: position 3 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of child 1 {P} of body

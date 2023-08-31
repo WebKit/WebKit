@@ -73,9 +73,12 @@ private:
         return readType<float, FloatByte>();
     }
 
-    unsigned short readSVGSegmentType()
+    SVGPathSegType readSVGSegmentType()
     {
-        return readType<unsigned short, UnsignedShortByte>();
+        static_assert(std::is_same_v<std::underlying_type_t<SVGPathSegType>, uint8_t>);
+        uint8_t byte = *m_streamCurrent;
+        ++m_streamCurrent;
+        return static_cast<SVGPathSegType>(byte);
     }
 
     FloatPoint readFloatPoint()

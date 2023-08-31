@@ -703,10 +703,11 @@ static constexpr const bool safeStringLatin1CharactersInStrictJSON[256] = {
 template <typename CharType>
 static ALWAYS_INLINE bool isJSONWhiteSpace(const CharType& c)
 {
-    return isLatin1(c) && tokenTypesOfLatin1Characters[c] == TokErrorSpace;
+    return tokenTypesOfLatin1Characters[static_cast<uint8_t>(c)] == TokErrorSpace && isLatin1(c);
 }
 
 template <typename CharType>
+template <JSONIdentifierHint hint>
 ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lex(LiteralParserToken<CharType>& token)
 {
 #if ASSERT_ENABLED
@@ -732,7 +733,7 @@ ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lex(LiteralParserToken<C
                 m_lexErrorMessage = "Single quotes (\') are not allowed in JSON"_s;
                 return TokError;
             }
-            return lexString(token, character);
+            return lexString<hint>(token, character);
 
         case TokIdentifier: {
             switch (character) {
@@ -812,7 +813,15 @@ ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lexIdentifier(LiteralPar
 template <typename CharType>
 ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::next()
 {
-    TokenType result = lex(m_currentToken);
+    TokenType result = lex<JSONIdentifierHint::Unknown>(m_currentToken);
+    ASSERT(m_currentToken.type == result);
+    return result;
+}
+
+template <typename CharType>
+ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::nextMaybeIdentifier()
+{
+    TokenType result = lex<JSONIdentifierHint::MaybeIdentifier>(m_currentToken);
     ASSERT(m_currentToken.type == result);
     return result;
 }
@@ -853,7 +862,17 @@ static ALWAYS_INLINE bool isSafeStringCharacter(UChar c, UChar terminator)
         return (c >= ' ' && isLatin1(c) && c != '\\' && c != terminator) || (c == '\t');
 }
 
+template <SafeStringCharacterSet set>
+static ALWAYS_INLINE bool isSafeStringCharacterForIdentifier(UChar c, UChar terminator)
+{
+    if constexpr (set == SafeStringCharacterSet::Strict)
+        return isSafeStringCharacter<set>(static_cast<LChar>(c), static_cast<LChar>(terminator)) || !isLatin1(c);
+    else
+        return (c >= ' ' && isLatin1(c) && c != '\\' && c != terminator) || (c == '\t');
+}
+
 template <typename CharType>
+template <JSONIdentifierHint hint>
 ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lexString(LiteralParserToken<CharType>& token, CharType terminator)
 {
     ++m_ptr;
@@ -861,8 +880,13 @@ ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lexString(LiteralParserT
 
     if (m_mode == StrictJSON) {
         ASSERT(terminator == '"');
-        while (m_ptr < m_end && isSafeStringCharacter<SafeStringCharacterSet::Strict>(*m_ptr, '"'))
-            ++m_ptr;
+        if constexpr (hint == JSONIdentifierHint::MaybeIdentifier) {
+            while (m_ptr < m_end && isSafeStringCharacterForIdentifier<SafeStringCharacterSet::Strict>(*m_ptr, '"'))
+                ++m_ptr;
+        } else {
+            while (m_ptr < m_end && isSafeStringCharacter<SafeStringCharacterSet::Strict>(*m_ptr, '"'))
+                ++m_ptr;
+        }
     } else {
         while (m_ptr < m_end && isSafeStringCharacter<SafeStringCharacterSet::Sloppy>(*m_ptr, terminator))
             ++m_ptr;
@@ -1250,7 +1274,10 @@ JSValue LiteralParser<CharType>::parseRecursively(VM& vm, uint8_t* stackLimit)
 
     ASSERT(type == TokLBrace);
     JSObject* object = constructEmptyObject(m_globalObject);
-    type = m_lexer.next();
+    if constexpr (sizeof(CharType) == 2)
+        type = m_lexer.nextMaybeIdentifier();
+    else
+        type = m_lexer.next();
     if (type == TokString) {
         while (true) {
             Identifier ident = makeIdentifier(vm, m_lexer.currentToken());
@@ -1273,8 +1300,35 @@ JSValue LiteralParser<CharType>::parseRecursively(VM& vm, uint8_t* stackLimit)
             if (std::optional<uint32_t> index = parseIndex(ident)) {
                 object->putDirectIndex(m_globalObject, index.value(), value);
                 RETURN_IF_EXCEPTION(scope, { });
-            } else
-                object->putDirect(vm, ident, value);
+            } else {
+                // When creating JSON object in this fast path, we know the following.
+                //   1. The object is definitely JSFinalObject.
+                //   2. The object rarely has duplicate properties.
+                //   3. Many same-shaped objects would be created from JSON. Thus very likely, there is already an existing Structure.
+                // Let's make the above case super fast, and fallback to the normal implementation when it is not true.
+                auto* structure = object->structure();
+                PropertyOffset offset = 0;
+                Structure* newStructure = nullptr;
+                if (LIKELY(!structure->isDictionary() && (newStructure = Structure::addPropertyTransitionToExistingStructure(structure, ident, 0, offset)))) {
+                    Butterfly* newButterfly = object->butterfly();
+                    if (structure->outOfLineCapacity() != newStructure->outOfLineCapacity()) {
+                        ASSERT(newStructure != structure);
+                        newButterfly = object->allocateMoreOutOfLineStorage(vm, structure->outOfLineCapacity(), newStructure->outOfLineCapacity());
+                        object->nukeStructureAndSetButterfly(vm, structure->id(), newButterfly);
+                    }
+
+                    validateOffset(offset);
+                    ASSERT(newStructure->isValidOffset(offset));
+
+                    // This assertion verifies that the concurrent GC won't read garbage if the concurrentGC
+                    // is running at the same time we put without transitioning.
+                    ASSERT(!object->getDirect(offset) || !JSValue::encode(object->getDirect(offset)));
+                    object->putDirectOffset(vm, offset, value);
+                    object->setStructure(vm, newStructure);
+                    ASSERT(!newStructure->mayBePrototype()); // There is no way to make it prototype object.
+                } else
+                    object->putDirectForJSONSlow(vm, ident, value);
+            }
 
             type = m_lexer.currentToken()->type;
             if (type == TokComma) {

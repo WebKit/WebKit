@@ -40,7 +40,7 @@
     readonly attribute unsigned long naturalWidth;
     readonly attribute boolean complete;
     readonly attribute USVString currentSrc;
-    [CEReactions=NotNeeded, EnabledBySetting=ReferrerPolicyAttributeEnabled, ImplementedAs=referrerPolicyForBindings] attribute [AtomString] DOMString referrerPolicy;
+    [CEReactions=NotNeeded, ImplementedAs=referrerPolicyForBindings] attribute [AtomString] DOMString referrerPolicy;
     [CEReactions=NotNeeded] attribute [AtomString] DOMString decoding;
     [CEReactions=NotNeeded, EnabledBySetting=LazyImageLoadingEnabled, ImplementedAs=loadingForBindings] attribute [AtomString] DOMString loading;
 

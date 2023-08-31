@@ -51,8 +51,9 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @property (nonatomic, readonly) _WKWebExtensionWindowState desiredWindowState;
 
 /*!
- @abstract Indicates the frame where the new window should be positioned on screen.
- @discussion If this property is set to `CGRectZero`, the app's default position and size are suggested.
+ @abstract Indicates the frame where the new window should be positioned on the main screen.
+ @discussion This frame should override the app's default window position and size.
+ Individual components (e.g., `origin.x`, `size.width`) will be `NaN` if not specified.
  */
 @property (nonatomic, readonly) CGRect desiredFrame;
 

@@ -585,6 +585,11 @@ void SendSideBandwidthEstimation::UpdateEstimate(Timestamp at_time) {
                static_cast<double>(512 - last_fraction_loss_)) /
               512.0);
           has_decreased_since_last_fraction_loss_ = true;
+
+#if defined(WEBRTC_WEBKIT_BUILD)
+          RTC_LOG(LS_INFO) << "Loss " << loss << " above high loss threshold " << high_loss_threshold_ << ", reducing rate from " << current_target_.bps() << " to " << new_bitrate.bps();
+#endif
+
           UpdateTargetBitrate(new_bitrate, at_time);
           return;
         }

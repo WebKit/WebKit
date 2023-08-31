@@ -377,14 +377,13 @@ void HTMLImageElement::attributeChanged(const QualifiedName& name, const AtomStr
         if (!hasLazyLoadableAttributeValue(newValue))
             loadDeferredImage();
         break;
-    case AttributeNames::referrerpolicyAttr:
-        if (document().settings().referrerPolicyAttributeEnabled()) {
-            auto oldReferrerPolicy = parseReferrerPolicy(oldValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
-            auto newReferrerPolicy = parseReferrerPolicy(newValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
-            if (oldReferrerPolicy != newReferrerPolicy)
-                m_imageLoader->updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
-        }
+    case AttributeNames::referrerpolicyAttr: {
+        auto oldReferrerPolicy = parseReferrerPolicy(oldValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
+        auto newReferrerPolicy = parseReferrerPolicy(newValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
+        if (oldReferrerPolicy != newReferrerPolicy)
+            m_imageLoader->updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
         break;
+    }
     case AttributeNames::crossoriginAttr:
         if (parseCORSSettingsAttribute(oldValue) != parseCORSSettingsAttribute(newValue))
             m_imageLoader->updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
@@ -1007,9 +1006,7 @@ String HTMLImageElement::referrerPolicyForBindings() const
 
 ReferrerPolicy HTMLImageElement::referrerPolicy() const
 {
-    if (document().settings().referrerPolicyAttributeEnabled())
-        return parseReferrerPolicy(attributeWithoutSynchronization(referrerpolicyAttr), ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
-    return ReferrerPolicy::EmptyString;
+    return parseReferrerPolicy(attributeWithoutSynchronization(referrerpolicyAttr), ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
 }
 
 HTMLSourceElement* HTMLImageElement::sourceElement() const

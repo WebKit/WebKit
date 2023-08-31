@@ -49,6 +49,14 @@ messages -> WebExtensionContext {
     PermissionsContains(HashSet<String> permissions, HashSet<String> origins) -> (bool containsPermissions);
     PermissionsRequest(HashSet<String> permissions, HashSet<String> origins) -> (bool success);
     PermissionsRemove(HashSet<String> permissions, HashSet<String> origins) -> (bool success);
+
+    // Windows APIs
+    WindowsCreate(WebKit::WebExtensionWindowParameters creationParameters) -> (std::optional<WebKit::WebExtensionWindowParameters> windowParameters, WebKit::WebExtensionWindow::Error error);
+    WindowsGet(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier, OptionSet<WebKit::WebExtensionWindow::TypeFilter> filter, WebKit::WebExtensionWindow::PopulateTabs populate) -> (std::optional<WebKit::WebExtensionWindowParameters> windowParameters, WebKit::WebExtensionWindow::Error error);
+    WindowsGetLastFocused(OptionSet<WebKit::WebExtensionWindow::TypeFilter> filter, WebKit::WebExtensionWindow::PopulateTabs populate) -> (std::optional<WebKit::WebExtensionWindowParameters> windowParameters, WebKit::WebExtensionWindow::Error error);
+    WindowsGetAll(OptionSet<WebKit::WebExtensionWindow::TypeFilter> filter, WebKit::WebExtensionWindow::PopulateTabs populate) -> (Vector<WebKit::WebExtensionWindowParameters> windows, WebKit::WebExtensionWindow::Error error);
+    WindowsUpdate(WebKit::WebExtensionWindowIdentifier windowIdentifier, WebKit::WebExtensionWindowParameters updateParameters) -> (std::optional<WebKit::WebExtensionWindowParameters> windowParameters, WebKit::WebExtensionWindow::Error error);
+    WindowsRemove(WebKit::WebExtensionWindowIdentifier windowIdentifier) -> (WebKit::WebExtensionWindow::Error error);
 }
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

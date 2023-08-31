@@ -48,9 +48,10 @@ Ref<HTMLBaseElement> HTMLBaseElement::create(const QualifiedName& tagName, Docum
 
 void HTMLBaseElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == hrefAttr || name == targetAttr)
-        document().processBaseElement();
-    else
+    if (name == hrefAttr || name == targetAttr) {
+        if (isConnected())
+            document().processBaseElement();
+    } else
         HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 

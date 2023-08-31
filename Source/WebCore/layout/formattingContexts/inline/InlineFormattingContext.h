@@ -80,7 +80,6 @@ private:
 
     const InlineFormattingGeometry m_inlineFormattingGeometry;
     const InlineFormattingQuirks m_inlineFormattingQuirks;
-    std::optional<IntrinsicWidthHandler::LineBreakingResult> m_maximumIntrinsicWidthResultForSingleLine { };
 };
 
 }

@@ -28,6 +28,7 @@
 #include "FormattingState.h"
 #include "InlineDisplayContent.h"
 #include "InlineItem.h"
+#include "IntrinsicWidthHandler.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -53,8 +54,13 @@ public:
     void clearInlineItems() { m_inlineItems.clear(); }
     void shrinkToFit() { m_inlineItems.shrinkToFit(); }
 
+    void setMaximumIntrinsicWidthLayoutResult(IntrinsicWidthHandler::LineBreakingResult&& layoutResult) { m_maximumIntrinsicWidthLayoutResult = WTFMove(layoutResult); }
+    void clearMaximumIntrinsicWidthLayoutResult() { m_maximumIntrinsicWidthLayoutResult = { }; }
+    std::optional<IntrinsicWidthHandler::LineBreakingResult>& maximumIntrinsicWidthLayoutResult() { return m_maximumIntrinsicWidthLayoutResult; }
+
 private:
     InlineItems m_inlineItems;
+    std::optional<IntrinsicWidthHandler::LineBreakingResult> m_maximumIntrinsicWidthLayoutResult { };
     bool m_isNonBidiTextAndForcedLineBreakOnlyContent { false };
 };
 

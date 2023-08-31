@@ -36,6 +36,8 @@ OBJC_CLASS NSString;
 
 namespace WebKit {
 
+struct WebExtensionTabParameters;
+
 class WebExtensionAPITabs : public WebExtensionAPIObject, public JSWebExtensionWrappable {
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPITabs, tabs);
 
@@ -90,6 +92,8 @@ private:
     RefPtr<WebExtensionAPIEvent> m_onUpdated;
 #endif
 };
+
+NSDictionary *toWebAPI(const WebExtensionTabParameters&);
 
 } // namespace WebKit
 

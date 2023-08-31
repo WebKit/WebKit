@@ -264,7 +264,7 @@ std::optional<InlineContentBreaker::Result> InlineContentBreaker::simplifiedMini
 
         if (breakBehavior.containsAny({ WordBreakRule::AtArbitraryPositionWithinWords, WordBreakRule::AtArbitraryPosition })) {
             auto firstCharacterLength = TextUtil::firstUserPerceivedCharacterLength(leadingInlineTextItem);
-            if (leadingInlineTextItem.length() == firstCharacterLength)
+            if (leadingInlineTextItem.length() <= firstCharacterLength)
                 return Result { Result::Action::Keep, IsEndOfLine::Yes };
             auto firstCharacterWidth = TextUtil::width(leadingInlineTextItem, style.fontCascade(), leadingInlineTextItem.start(), leadingInlineTextItem.start() + firstCharacterLength, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No);
             return Result { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { { }, PartialRun { firstCharacterLength, firstCharacterWidth }, { } } };

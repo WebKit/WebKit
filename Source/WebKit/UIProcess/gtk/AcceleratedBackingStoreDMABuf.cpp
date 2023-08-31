@@ -508,19 +508,6 @@ void AcceleratedBackingStoreDMABuf::ensureGLContext()
         g_error("GDK failed to realize the GL context: %s.", error->message);
 }
 
-bool AcceleratedBackingStoreDMABuf::makeContextCurrent()
-{
-    if (!WebCore::PlatformDisplay::sharedDisplay().gtkEGLDisplay())
-        return false;
-
-    if (!gtk_widget_get_realized(m_webPage.viewWidget()))
-        return false;
-
-    ensureGLContext();
-    gdk_gl_context_make_current(m_gdkGLContext.get());
-    return true;
-}
-
 void AcceleratedBackingStoreDMABuf::update(const LayerTreeContext& context)
 {
     if (m_surface.id == context.contextID)

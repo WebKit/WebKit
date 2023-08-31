@@ -2841,12 +2841,6 @@ void webkitWebViewBaseExitAcceleratedCompositingMode(WebKitWebViewBase* webkitWe
     webkitWebViewBase->priv->acceleratedBackingStore->update(LayerTreeContext());
 }
 
-bool webkitWebViewBaseMakeGLContextCurrent(WebKitWebViewBase* webkitWebViewBase)
-{
-    ASSERT(webkitWebViewBase->priv->acceleratedBackingStore);
-    return webkitWebViewBase->priv->acceleratedBackingStore->makeContextCurrent();
-}
-
 void webkitWebViewBaseWillSwapWebProcess(WebKitWebViewBase* webkitWebViewBase)
 {
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;

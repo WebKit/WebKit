@@ -27,6 +27,8 @@
 
 namespace WebCore {
 
+enum class SVGPathSegType : uint8_t;
+
 class SVGPathByteStreamBuilder final : public SVGPathConsumer {
 public:
     SVGPathByteStreamBuilder(SVGPathByteStream&);
@@ -52,9 +54,7 @@ private:
     template<typename ByteType>
     void writeType(const ByteType& type)
     {
-        size_t typeSize = sizeof(ByteType);
-        for (size_t i = 0; i < typeSize; ++i)
-            m_byteStream.append(type.bytes[i]);
+        m_byteStream.append(std::span { type.bytes, sizeof(ByteType) });
     }
 
     void writeFlag(bool value)
@@ -77,11 +77,10 @@ private:
         writeFloat(point.y());
     }
 
-    void writeSegmentType(unsigned short value)
+    void writeSegmentType(SVGPathSegType type)
     {
-        UnsignedShortByte data;
-        data.value = value;
-        writeType(data);
+        static_assert(std::is_same_v<std::underlying_type_t<SVGPathSegType>, uint8_t>);
+        m_byteStream.append(static_cast<uint8_t>(type));
     }
 
     SVGPathByteStream& m_byteStream;

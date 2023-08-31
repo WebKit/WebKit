@@ -382,6 +382,8 @@ void RenderGrid::layoutGrid(bool relayoutChildren)
         m_trackSizingAlgorithm.reset();
 
         computeOverflow(layoutOverflowLogicalBottom(*this));
+
+        updateDescendantTransformsAfterLayout();
     }
 
     updateLayerTransform();
@@ -513,6 +515,8 @@ void RenderGrid::layoutMasonry(bool relayoutChildren)
         m_trackSizingAlgorithm.reset();
 
         computeOverflow(layoutOverflowLogicalBottom(*this));
+
+        updateDescendantTransformsAfterLayout();
     }
 
     updateLayerTransform();

@@ -63,6 +63,7 @@ namespace WebCore {
     M(EventRegions) \
     M(FileAPI) \
     M(Filters) \
+    M(FingerprintingMitigation) \
     M(Fonts) \
     M(Frames) \
     M(FTP) \

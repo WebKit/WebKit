@@ -38,11 +38,19 @@
 #import "WebExtensionAPINamespace.h"
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionContextProxy.h"
+#import "WebExtensionTabParameters.h"
 #import "WebProcess.h"
 #import "_WKWebExtensionUtilities.h"
 #import <wtf/DateMath.h>
 
 namespace WebKit {
+
+NSDictionary *toWebAPI(const WebExtensionTabParameters& parameters)
+{
+    // FIXME: Implemnet.
+
+    return @{ };
+}
 
 bool WebExtensionAPITabs::isPropertyAllowed(String name, WebPage*)
 {

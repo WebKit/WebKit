@@ -168,7 +168,7 @@ public:
     void setNeedsToCopyUserSelectNoneQuirk() { m_needsToCopyUserSelectNoneQuirk = true; }
 
     bool shouldEnableCanvas2DAdvancedPrivacyProtectionQuirk() const;
-    String advancedPrivacyProtectionSubstituteDataURLForText(const String&) const;
+    String advancedPrivacyProtectionSubstituteDataURLForScriptWithFeatures(const String& lastDrawnText, int canvasWidth, int canvasHeight) const;
 
     bool needsResettingTransitionCancelsRunningTransitionQuirk() const;
 

@@ -50,6 +50,22 @@
     return nil;
 }
 
+- (void)webExtensionController:(_WKWebExtensionController *)controller openNewWindowWithOptions:(_WKWebExtensionWindowCreationOptions *)options forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(id<_WKWebExtensionWindow> newWindow, NSError *error))completionHandler
+{
+    if (_openNewWindow)
+        return _openNewWindow(options, extensionContext, completionHandler);
+
+    completionHandler(nil, nil);
+}
+
+- (void)webExtensionController:(_WKWebExtensionController *)controller openNewTabWithOptions:(_WKWebExtensionTabCreationOptions *)options forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(id<_WKWebExtensionTab> newTab, NSError *error))completionHandler
+{
+    if (_openNewTab)
+        return _openNewTab(options, extensionContext, completionHandler);
+
+    completionHandler(nil, nil);
+}
+
 - (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissions:(NSSet<_WKWebExtensionPermission> *)permissions inTab:(id<_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<_WKWebExtensionPermission> *allowedPermissions))completionHandler
 {
     if (_promptForPermissions)

@@ -1,0 +1,5 @@
+
+FAIL Verify redirect mode of Fetch API and ServiceWorker FetchEvent. undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
+FAIL Verify redirected of Response(Fetch API) and ServiceWorker FetchEvent. undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
+FAIL Verify redirected of Response(Fetch API), Cache API and ServiceWorker FetchEvent. undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
+

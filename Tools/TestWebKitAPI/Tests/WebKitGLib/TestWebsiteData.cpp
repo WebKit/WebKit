@@ -163,6 +163,7 @@ public:
     GList* m_dataList { nullptr };
 };
 
+#if !ENABLE(2022_GLIB_API)
 static void loadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent, WebViewTest* test)
 {
     if (loadEvent != WEBKIT_LOAD_FINISHED)
@@ -170,6 +171,7 @@ static void loadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent, WebVi
     g_signal_handlers_disconnect_by_func(webView, reinterpret_cast<void*>(loadChanged), test);
     g_main_loop_quit(test->m_mainLoop);
 }
+#endif
 
 static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
 {

@@ -80,9 +80,21 @@ WebExtensionTab::WebExtensionTab(const WebExtensionContext& context, _WKWebExten
     ASSERT([delegate conformsToProtocol:@protocol(_WKWebExtensionTab)]);
 }
 
+WebExtensionContext* WebExtensionTab::extensionContext() const
+{
+    return m_extensionContext.get();
+}
+
 bool WebExtensionTab::operator==(const WebExtensionTab& other) const
 {
     return this == &other || (m_identifier == other.m_identifier && m_extensionContext == other.m_extensionContext && m_delegate.get() == other.m_delegate.get());
+}
+
+WebExtensionTabParameters WebExtensionTab::parameters() const
+{
+    // FIXME: <https://webkit.org/b/260994> Add support for tabs APIs.
+
+    return { };
 }
 
 RefPtr<WebExtensionWindow> WebExtensionTab::window() const
@@ -210,8 +222,10 @@ bool WebExtensionTab::isPrivate() const
 
 void WebExtensionTab::toggleReaderMode(CompletionHandler<void(Error)>&& completionHandler)
 {
-    if (!isValid() || !m_respondsToToggleReaderMode)
+    if (!isValid() || !m_respondsToToggleReaderMode) {
+        completionHandler("tabs.toggleReaderMode() not implemented."_s);
         return;
+    }
 
     [m_delegate toggleReaderModeForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
         if (error) {
@@ -242,8 +256,10 @@ bool WebExtensionTab::isShowingReaderMode() const
 
 void WebExtensionTab::mute(CompletionHandler<void(Error)>&& completionHandler)
 {
-    if (!isValid() || !m_respondsToMute)
+    if (!isValid() || !m_respondsToMute) {
+        completionHandler("tabs.update() not implemented for 'muted' set to `true`."_s);
         return;
+    }
 
     [m_delegate muteForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
         if (error) {
@@ -258,8 +274,10 @@ void WebExtensionTab::mute(CompletionHandler<void(Error)>&& completionHandler)
 
 void WebExtensionTab::unmute(CompletionHandler<void(Error)>&& completionHandler)
 {
-    if (!isValid() || !m_respondsToUnmute)
+    if (!isValid() || !m_respondsToUnmute) {
+        completionHandler("tabs.update() not implemented for 'muted' set to `false`."_s);
         return;
+    }
 
     [m_delegate unmuteForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
         if (error) {
@@ -308,6 +326,7 @@ void WebExtensionTab::setZoomFactor(double zoomFactor, CompletionHandler<void(Er
 {
     if (!isValid() || !m_respondsToSetZoomFactor) {
         mainWebView().pageZoom = zoomFactor;
+        completionHandler(std::nullopt);
         return;
     }
 
@@ -375,6 +394,7 @@ void WebExtensionTab::loadURL(URL url, CompletionHandler<void(Error)>&& completi
 {
     if (!isValid() || !m_respondsToLoadURL) {
         [mainWebView() loadRequest:[NSURLRequest requestWithURL:url]];
+        completionHandler(std::nullopt);
         return;
     }
 
@@ -393,6 +413,7 @@ void WebExtensionTab::reload(CompletionHandler<void(Error)>&& completionHandler)
 {
     if (!isValid() || !m_respondsToReload) {
         [mainWebView() reload];
+        completionHandler(std::nullopt);
         return;
     }
 
@@ -411,6 +432,7 @@ void WebExtensionTab::reloadFromOrigin(CompletionHandler<void(Error)>&& completi
 {
     if (!isValid() || !m_respondsToReloadFromOrigin) {
         [mainWebView() reloadFromOrigin];
+        completionHandler(std::nullopt);
         return;
     }
 
@@ -429,6 +451,7 @@ void WebExtensionTab::goBack(CompletionHandler<void(Error)>&& completionHandler)
 {
     if (!isValid() || !m_respondsToGoBack) {
         [mainWebView() goBack];
+        completionHandler(std::nullopt);
         return;
     }
 
@@ -447,6 +470,7 @@ void WebExtensionTab::goForward(CompletionHandler<void(Error)>&& completionHandl
 {
     if (!isValid() || !m_respondsToGoForward) {
         [mainWebView() goForward];
+        completionHandler(std::nullopt);
         return;
     }
 
@@ -463,8 +487,10 @@ void WebExtensionTab::goForward(CompletionHandler<void(Error)>&& completionHandl
 
 void WebExtensionTab::activate(CompletionHandler<void(Error)>&& completionHandler)
 {
-    if (!isValid() || !m_respondsToActivate)
+    if (!isValid() || !m_respondsToActivate) {
+        completionHandler("tabs.update() not implemented for 'active' set to `true`."_s);
         return;
+    }
 
     [m_delegate activateForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
         if (error) {
@@ -479,8 +505,10 @@ void WebExtensionTab::activate(CompletionHandler<void(Error)>&& completionHandle
 
 void WebExtensionTab::select(ExtendSelection extend, CompletionHandler<void(Error)>&& completionHandler)
 {
-    if (!isValid() || !m_respondsToSelect)
+    if (!isValid() || !m_respondsToSelect) {
+        completionHandler("tabs.update() not implemented for 'highlighted' or 'selected' set to `true`."_s);
         return;
+    }
 
     [m_delegate selectForWebExtensionContext:m_extensionContext->wrapper() extendSelection:(extend == ExtendSelection::Yes) completionHandler:^(NSError *error) {
         if (error) {
@@ -496,7 +524,7 @@ void WebExtensionTab::select(ExtendSelection extend, CompletionHandler<void(Erro
 void WebExtensionTab::duplicate(CompletionHandler<void(RefPtr<WebExtensionTab>, Error)>&& completionHandler)
 {
     if (!isValid() || !m_respondsToDuplicate) {
-        completionHandler(nullptr, std::nullopt);
+        completionHandler(nullptr, "tabs.duplicate() not implemented."_s);
         return;
     }
 
@@ -526,8 +554,10 @@ void WebExtensionTab::duplicate(CompletionHandler<void(RefPtr<WebExtensionTab>, 
 
 void WebExtensionTab::close(CompletionHandler<void(Error)>&& completionHandler)
 {
-    if (!isValid() || !m_respondsToClose)
+    if (!isValid() || !m_respondsToClose) {
+        completionHandler("tabs.remove() not implemented."_s);
         return;
+    }
 
     [m_delegate closeForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
         if (error) {

@@ -34,31 +34,31 @@ SVGPathByteStreamBuilder::SVGPathByteStreamBuilder(SVGPathByteStream& byteStream
 
 void SVGPathByteStreamBuilder::moveTo(const FloatPoint& targetPoint, bool, PathCoordinateMode mode)
 {
-    writeSegmentType(mode == RelativeCoordinates ?  PathSegMoveToRel : PathSegMoveToAbs);
+    writeSegmentType(mode == RelativeCoordinates ?  SVGPathSegType::MoveToRel : SVGPathSegType::MoveToAbs);
     writeFloatPoint(targetPoint);
 }
 
 void SVGPathByteStreamBuilder::lineTo(const FloatPoint& targetPoint, PathCoordinateMode mode)
 {
-    writeSegmentType(mode == RelativeCoordinates ? PathSegLineToRel : PathSegLineToAbs);
+    writeSegmentType(mode == RelativeCoordinates ? SVGPathSegType::LineToRel : SVGPathSegType::LineToAbs);
     writeFloatPoint(targetPoint);
 }
 
 void SVGPathByteStreamBuilder::lineToHorizontal(float x, PathCoordinateMode mode)
 {
-    writeSegmentType(mode == RelativeCoordinates ? PathSegLineToHorizontalRel : PathSegLineToHorizontalAbs);
+    writeSegmentType(mode == RelativeCoordinates ? SVGPathSegType::LineToHorizontalRel : SVGPathSegType::LineToHorizontalAbs);
     writeFloat(x);
 }
 
 void SVGPathByteStreamBuilder::lineToVertical(float y, PathCoordinateMode mode)
 {
-    writeSegmentType(mode == RelativeCoordinates ? PathSegLineToVerticalRel : PathSegLineToVerticalAbs);
+    writeSegmentType(mode == RelativeCoordinates ? SVGPathSegType::LineToVerticalRel : SVGPathSegType::LineToVerticalAbs);
     writeFloat(y);
 }
 
 void SVGPathByteStreamBuilder::curveToCubic(const FloatPoint& point1, const FloatPoint& point2, const FloatPoint& targetPoint, PathCoordinateMode mode)
 {
-    writeSegmentType(mode == RelativeCoordinates ? PathSegCurveToCubicRel : PathSegCurveToCubicAbs);
+    writeSegmentType(mode == RelativeCoordinates ? SVGPathSegType::CurveToCubicRel : SVGPathSegType::CurveToCubicAbs);
     writeFloatPoint(point1);
     writeFloatPoint(point2);
     writeFloatPoint(targetPoint);
@@ -66,27 +66,27 @@ void SVGPathByteStreamBuilder::curveToCubic(const FloatPoint& point1, const Floa
 
 void SVGPathByteStreamBuilder::curveToCubicSmooth(const FloatPoint& point2, const FloatPoint& targetPoint, PathCoordinateMode mode)
 {
-    writeSegmentType(mode == RelativeCoordinates ? PathSegCurveToCubicSmoothRel : PathSegCurveToCubicSmoothAbs);
+    writeSegmentType(mode == RelativeCoordinates ? SVGPathSegType::CurveToCubicSmoothRel : SVGPathSegType::CurveToCubicSmoothAbs);
     writeFloatPoint(point2);
     writeFloatPoint(targetPoint);
 }
 
 void SVGPathByteStreamBuilder::curveToQuadratic(const FloatPoint& point1, const FloatPoint& targetPoint, PathCoordinateMode mode)
 {
-    writeSegmentType(mode == RelativeCoordinates ? PathSegCurveToQuadraticRel : PathSegCurveToQuadraticAbs);
+    writeSegmentType(mode == RelativeCoordinates ? SVGPathSegType::CurveToQuadraticRel : SVGPathSegType::CurveToQuadraticAbs);
     writeFloatPoint(point1);
     writeFloatPoint(targetPoint);
 }
 
 void SVGPathByteStreamBuilder::curveToQuadraticSmooth(const FloatPoint& targetPoint, PathCoordinateMode mode)
 {
-    writeSegmentType(mode == RelativeCoordinates ? PathSegCurveToQuadraticSmoothRel : PathSegCurveToQuadraticSmoothAbs);
+    writeSegmentType(mode == RelativeCoordinates ? SVGPathSegType::CurveToQuadraticSmoothRel : SVGPathSegType::CurveToQuadraticSmoothAbs);
     writeFloatPoint(targetPoint);
 }
 
 void SVGPathByteStreamBuilder::arcTo(float r1, float r2, float angle, bool largeArcFlag, bool sweepFlag, const FloatPoint& targetPoint, PathCoordinateMode mode)
 {
-    writeSegmentType(mode == RelativeCoordinates ? PathSegArcRel : PathSegArcAbs);
+    writeSegmentType(mode == RelativeCoordinates ? SVGPathSegType::ArcRel : SVGPathSegType::ArcAbs);
     writeFloat(r1);
     writeFloat(r2);
     writeFloat(angle);
@@ -97,7 +97,7 @@ void SVGPathByteStreamBuilder::arcTo(float r1, float r2, float angle, bool large
 
 void SVGPathByteStreamBuilder::closePath()
 {
-    writeSegmentType(PathSegClosePath);
+    writeSegmentType(SVGPathSegType::ClosePath);
 }
 
 } // namespace WebCore

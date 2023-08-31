@@ -464,10 +464,17 @@ LayoutUnit RenderInline::innerPaddingBoxWidth() const
 
     if (LayoutIntegration::LineLayout::containing(*this)) {
         if (auto inlineBox = InlineIterator::firstInlineBoxFor(*this)) {
-            firstInlineBoxPaddingBoxLeft = inlineBox->logicalLeftIgnoringInlineDirection() + borderStart();
-            for (; inlineBox->nextInlineBox(); inlineBox.traverseNextInlineBox()) { }
-            ASSERT(inlineBox);
-            lastInlineBoxPaddingBoxRight = inlineBox->logicalRightIgnoringInlineDirection() - borderEnd();
+            if (style().isLeftToRightDirection()) {
+                firstInlineBoxPaddingBoxLeft = inlineBox->logicalLeftIgnoringInlineDirection() + borderStart();
+                for (; inlineBox->nextInlineBox(); inlineBox.traverseNextInlineBox()) { }
+                ASSERT(inlineBox);
+                lastInlineBoxPaddingBoxRight = inlineBox->logicalRightIgnoringInlineDirection() - borderEnd();
+            } else {
+                lastInlineBoxPaddingBoxRight = inlineBox->logicalRightIgnoringInlineDirection() - borderStart();
+                for (; inlineBox->nextInlineBox(); inlineBox.traverseNextInlineBox()) { }
+                ASSERT(inlineBox);
+                firstInlineBoxPaddingBoxLeft = inlineBox->logicalLeftIgnoringInlineDirection() + borderEnd();
+            }
             return std::max(0_lu, lastInlineBoxPaddingBoxRight - firstInlineBoxPaddingBoxLeft);
         }
         return { };

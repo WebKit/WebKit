@@ -769,17 +769,18 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
             }
         }
 
-        function processProperty(o, propertyName, isOwnProperty, privateDescriptor)
+        function processProperty(o, propertyName, isOwnProperty, isPrivate)
         {
             if (nameProcessed.@has(propertyName))
                 return InjectedScript.PropertyFetchAction.Continue;
 
             nameProcessed.@add(propertyName);
 
-            let name = toString(propertyName);
-            let symbol = isSymbol(propertyName) ? propertyName : null;
+            // Private fields are implemented as hidden symbols, so don't treat them like regular `Symbol`.
+            let name = isPrivate ? propertyName.description : toString(propertyName);
+            let symbol = (!isPrivate && isSymbol(propertyName)) ? propertyName : null;
 
-            let descriptor = privateDescriptor || @Object.@getOwnPropertyDescriptor(o, propertyName);
+            let descriptor = @Object.@getOwnPropertyDescriptor(o, propertyName);
             if (!descriptor) {
                 // FIXME: Bad descriptor. Can we get here?
                 // Fall back to very restrictive settings.
@@ -801,7 +802,7 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
                 descriptor.isOwn = true;
             if (symbol)
                 descriptor.symbol = symbol;
-            if (privateDescriptor)
+            if (isPrivate)
                 descriptor.isPrivate = true;
             return processDescriptor(descriptor, isOwnProperty);
         }
@@ -815,11 +816,10 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
             let isOwnProperty = o === object;
             let shouldBreak = false;
 
-            let privatePropertyDescriptors = InjectedScriptHost.getOwnPrivatePropertyDescriptors(o);
-            let privatePropertyNames = @Object.@getOwnPropertyNames(privatePropertyDescriptors);
-            for (let i = 0; i < privatePropertyNames.length; ++i) {
-                let privatePropertyName = privatePropertyNames[i];
-                let result = processProperty(o, privatePropertyName, isOwnProperty, privatePropertyDescriptors[privatePropertyName]);
+            let privatePropertySymbols = InjectedScriptHost.getOwnPrivatePropertySymbols(o);
+            for (let i = 0; i < privatePropertySymbols.length; ++i) {
+                let privatePropertySymbol = privatePropertySymbols[i];
+                let result = processProperty(o, privatePropertySymbol, isOwnProperty, true);
                 shouldBreak = result === InjectedScript.PropertyFetchAction.Stop;
                 if (shouldBreak)
                     break;

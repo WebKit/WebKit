@@ -32,4 +32,54 @@ namespace WebKit {
 struct WebExtensionTabIdentifierType;
 using WebExtensionTabIdentifier = ObjectIdentifier<WebExtensionTabIdentifierType>;
 
+struct WebExtensionTabConstants {
+    static constexpr double None { -1 };
+
+    static constexpr const WebExtensionTabIdentifier NoneIdentifier { std::numeric_limits<uint64_t>::max() - 1 };
+};
+
+inline bool isNone(WebExtensionTabIdentifier identifier)
+{
+    return identifier == WebExtensionTabConstants::NoneIdentifier;
+}
+
+inline bool isNone(std::optional<WebExtensionTabIdentifier> identifier)
+{
+    return identifier && isNone(identifier.value());
+}
+
+inline bool isValid(std::optional<WebExtensionTabIdentifier> identifier)
+{
+    return identifier && !isNone(identifier.value());
+}
+
+inline std::optional<WebExtensionTabIdentifier> toWebExtensionTabIdentifier(double identifier)
+{
+    if (identifier == WebExtensionTabConstants::None)
+        return WebExtensionTabConstants::NoneIdentifier;
+
+    if (!std::isfinite(identifier) || identifier <= 0 || identifier >= static_cast<double>(WebExtensionTabConstants::NoneIdentifier.toUInt64()))
+        return std::nullopt;
+
+    double integral;
+    if (std::modf(identifier, &integral) != 0.0) {
+        // Only integral numbers can be used.
+        return std::nullopt;
+    }
+
+    WebExtensionTabIdentifier result { static_cast<uint64_t>(identifier) };
+    ASSERT(result.isValid());
+    return result;
+}
+
+inline double toWebAPI(WebExtensionTabIdentifier identifier)
+{
+    ASSERT(identifier.isValid());
+
+    if (isNone(identifier))
+        return WebExtensionTabConstants::None;
+
+    return static_cast<double>(identifier.toUInt64());
+}
+
 }

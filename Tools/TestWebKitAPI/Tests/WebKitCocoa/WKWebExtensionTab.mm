@@ -29,35 +29,14 @@
 
 #import "TestCocoa.h"
 #import "TestWebExtensionsDelegate.h"
+#import "WebExtensionUtilities.h"
 #import <WebKit/WKFoundation.h>
 #import <WebKit/_WKWebExtensionContextPrivate.h>
+#import <WebKit/_WKWebExtensionControllerPrivate.h>
 #import <WebKit/_WKWebExtensionMatchPatternPrivate.h>
 #import <WebKit/_WKWebExtensionPermission.h>
 #import <WebKit/_WKWebExtensionPrivate.h>
-
-@interface TestTab : NSObject <_WKWebExtensionTab>
-@end
-
-@implementation TestTab
-@end
-
-@interface TestWindowForTabs : NSObject <_WKWebExtensionWindow>
-
-@property (nonatomic, copy) NSArray<id<_WKWebExtensionTab>> *tabs;
-
-@end
-
-@implementation TestWindowForTabs
-- (NSArray<id<_WKWebExtensionTab>> *)tabsForWebExtensionContext:(_WKWebExtensionContext *)context
-{
-    return _tabs;
-}
-
-- (id<_WKWebExtensionTab>)activeTabForWebExtensionContext:(_WKWebExtensionContext *)context
-{
-    return _tabs.firstObject;
-}
-@end
+#import <WebKit/_WKWebExtensionWindow.h>
 
 namespace TestWebKitAPI {
 
@@ -69,13 +48,13 @@ TEST(WKWebExtensionTab, OpenTabs)
     auto testExtensionTwo = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:@{ @"manifest_version": @3 }]);
     auto testContextTwo = adoptNS([[_WKWebExtensionContext alloc] initForExtension:testExtensionTwo.get()]);
 
-    auto testWindowOne = adoptNS([[TestWindowForTabs alloc] init]);
-    auto testWindowTwo = adoptNS([[TestWindowForTabs alloc] init]);
+    auto testWindowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
+    auto testWindowTwo = adoptNS([[TestWebExtensionWindow alloc] init]);
 
-    auto testTabOne = adoptNS([[TestTab alloc] init]);
-    auto testTabTwo = adoptNS([[TestTab alloc] init]);
-    auto testTabThree = adoptNS([[TestTab alloc] init]);
-    auto testTabFour = adoptNS([[TestTab alloc] init]);
+    auto testTabOne = adoptNS([[TestWebExtensionTab alloc] init]);
+    auto testTabTwo = adoptNS([[TestWebExtensionTab alloc] init]);
+    auto testTabThree = adoptNS([[TestWebExtensionTab alloc] init]);
+    auto testTabFour = adoptNS([[TestWebExtensionTab alloc] init]);
 
     testWindowOne.get().tabs = @[ testTabOne.get() ];
     testWindowTwo.get().tabs = @[ testTabTwo.get(), testTabThree.get() ];

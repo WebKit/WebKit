@@ -287,6 +287,12 @@ TransformationMatrix* RenderLayerModelObject::layerTransform() const
 
 void RenderLayerModelObject::updateLayerTransform()
 {
+    if (is<RenderBox>(this) && style().offsetPath() && MotionPath::needsUpdateAfterContainingBlockLayout(*style().offsetPath())) {
+        if (auto* containingBlock = this->containingBlock()) {
+            view().frameView().layoutContext().setBoxNeedsTransformUpdateAfterContainerLayout(*downcast<RenderBox>(this), *containingBlock);
+            return;
+        }
+    }
     // Transform-origin depends on box size, so we need to update the layer transform after layout.
     if (hasLayer())
         layer()->updateTransform();

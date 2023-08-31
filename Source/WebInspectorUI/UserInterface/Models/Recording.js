@@ -157,7 +157,7 @@ WI.Recording = class Recording extends WI.Object
         case Recording.Type.Canvas2D:
             return WI.UIString("2D");
         case Recording.Type.OffscreenCanvas2D:
-            return WI.UIString("2D (Offscreen)");
+            return WI.UIString("Offscreen2D");
         case Recording.Type.CanvasBitmapRenderer:
             return WI.UIString("Bitmap Renderer", "Recording Type Canvas Bitmap Renderer", "A type of canvas recording in the Graphics Tab");
         case Recording.Type.CanvasWebGL:
@@ -333,6 +333,11 @@ WI.Recording = class Recording extends WI.Object
 
         recordingNameSet.add(name);
         this._displayName = name;
+    }
+
+    is2D()
+    {
+        return WI.Recording.is2D(this._type);
     }
 
     async swizzle(index, type)

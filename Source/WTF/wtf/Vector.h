@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -834,6 +834,9 @@ public:
     void shrinkCapacity(size_t newCapacity);
     void shrinkToFit() { shrinkCapacity(size()); }
 
+    void growCapacityBy(size_t increment) { growCapacityBy<FailureAction::Crash>(increment); }
+    bool tryGrowCapacityBy(size_t increment) { return growCapacityBy<FailureAction::Report>(increment); }
+
     void clear() { shrinkCapacity(0); }
 
     ALWAYS_INLINE void append(ValueType&& value) { append<ValueType>(std::forward<ValueType>(value)); }
@@ -915,6 +918,7 @@ public:
 private:
     template<FailureAction> bool reserveCapacity(size_t newCapacity);
     template<FailureAction> bool reserveInitialCapacity(size_t initialCapacity);
+    template<FailureAction> bool growCapacityBy(size_t increment);
 
     template<FailureAction> bool expandCapacity(size_t newMinCapacity);
     template<FailureAction> T* expandCapacity(size_t newMinCapacity, T*);
@@ -1318,6 +1322,23 @@ inline bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::res
     if (initialCapacity <= inlineCapacity)
         return true;
     return Base::template allocateBuffer<action>(initialCapacity);
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
+template<FailureAction action>
+bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::growCapacityBy(size_t increment)
+{
+    static_assert(action == FailureAction::Crash || action == FailureAction::Report);
+    unsigned increment32 = static_cast<unsigned>(increment);
+    unsigned capacity32 = static_cast<unsigned>(capacity());
+    unsigned newCapacity = increment32 + capacity32;
+    if (increment32 < increment || newCapacity < capacity32) {
+        if constexpr (action == FailureAction::Crash)
+            CRASH();
+        else
+            return false;
+    }
+    return reserveCapacity<action>(newCapacity);
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>

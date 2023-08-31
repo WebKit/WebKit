@@ -33,6 +33,7 @@
 #include "WebInjectedScriptHost.h"
 #include "WebInjectedScriptManager.h"
 #include "WorkerAuditAgent.h"
+#include "WorkerCanvasAgent.h"
 #include "WorkerConsoleAgent.h"
 #include "WorkerDOMDebuggerAgent.h"
 #include "WorkerDebugger.h"
@@ -219,6 +220,7 @@ void WorkerInspectorController::createLazyAgents()
 
     m_agents.append(makeUnique<WorkerDOMDebuggerAgent>(workerContext, debuggerAgentPtr));
     m_agents.append(makeUnique<WorkerAuditAgent>(workerContext));
+    m_agents.append(makeUnique<WorkerCanvasAgent>(workerContext));
 
     if (auto& commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
         commandLineAPIHost->init(m_instrumentingAgents.copyRef());

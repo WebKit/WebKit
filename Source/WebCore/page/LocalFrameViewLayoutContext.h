@@ -26,6 +26,7 @@
 #pragma once
 
 #include "LayoutUnit.h"
+#include "RenderLayerModelObject.h"
 #include "Timer.h"
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -127,6 +128,8 @@ public:
 
     UpdateScrollInfoAfterLayoutTransaction& updateScrollInfoAfterLayoutTransaction();
     UpdateScrollInfoAfterLayoutTransaction* updateScrollInfoAfterLayoutTransactionIfExists() { return m_updateScrollInfoAfterLayoutTransaction.get(); }
+    void setBoxNeedsTransformUpdateAfterContainerLayout(RenderBox&, RenderBlock& container);
+    Vector<WeakPtr<RenderBox>> takeBoxesNeedingTransformUpdateAfterContainerLayout(RenderBlock&);
 
 private:
     friend class LayoutScope;
@@ -191,6 +194,7 @@ private:
     std::unique_ptr<Layout::LayoutTree> m_layoutTree;
     std::unique_ptr<Layout::LayoutState> m_layoutState;
     std::unique_ptr<UpdateScrollInfoAfterLayoutTransaction> m_updateScrollInfoAfterLayoutTransaction;
+    WeakHashMap<RenderBlock, Vector<WeakPtr<RenderBox>>> m_containersWithDescendantsNeedingTransformUpdate;
 };
 
 } // namespace WebCore

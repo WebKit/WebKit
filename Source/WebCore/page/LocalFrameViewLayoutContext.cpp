@@ -627,6 +627,17 @@ void LocalFrameViewLayoutContext::popLayoutState()
     }
 }
 
+void LocalFrameViewLayoutContext::setBoxNeedsTransformUpdateAfterContainerLayout(RenderBox& box, RenderBlock& container)
+{
+    auto it = m_containersWithDescendantsNeedingTransformUpdate.ensure(container, [] { return Vector<WeakPtr<RenderBox>>({ }); });
+    it.iterator->value.append(WeakPtr { box });
+}
+
+Vector<WeakPtr<RenderBox>> LocalFrameViewLayoutContext::takeBoxesNeedingTransformUpdateAfterContainerLayout(RenderBlock& container)
+{
+    return m_containersWithDescendantsNeedingTransformUpdate.take(container);
+}
+
 #ifndef NDEBUG
 void LocalFrameViewLayoutContext::checkLayoutState()
 {

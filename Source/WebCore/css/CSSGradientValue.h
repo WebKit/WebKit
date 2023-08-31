@@ -68,16 +68,18 @@ struct CSSGradientColorInterpolationMethod {
     {
         return { { ColorInterpolationMethod::SRGB { }, alphaPremultiplication }, Default::SRGB };
     }
-};
 
-inline bool operator==(const CSSGradientColorInterpolationMethod& a, const CSSGradientColorInterpolationMethod& b)
-{
-    return a.method == b.method && a.defaultMethod == b.defaultMethod;
-}
+    friend bool operator==(const CSSGradientColorInterpolationMethod&, const CSSGradientColorInterpolationMethod&) = default;
+};
 
 // MARK: Gradient Definitions.
 
 using CSSGradientPosition = std::pair<Ref<CSSValue>, Ref<CSSValue>>;
+
+inline bool operator==(const CSSGradientPosition& a, const CSSGradientPosition& b)
+{
+    return compareCSSValue(a.first, b.first) && compareCSSValue(a.second, b.second);
+}
 
 // MARK: - Linear.
 
@@ -85,11 +87,15 @@ class CSSLinearGradientValue final : public CSSValue {
 public:
     enum class Horizontal { Left, Right };
     enum class Vertical { Top, Bottom };
-    struct Angle { Ref<CSSPrimitiveValue> value; };
+    struct Angle {
+        Ref<CSSPrimitiveValue> value;
+        friend bool operator==(const Angle&, const Angle&);
+    };
     using GradientLine = std::variant<std::monostate, Angle, Horizontal, Vertical, std::pair<Horizontal, Vertical>>;
 
     struct Data {
         GradientLine gradientLine;
+        friend bool operator==(const Data&, const Data&) = default;
     };
 
     static Ref<CSSLinearGradientValue> create(Data data, CSSGradientRepeat repeating, CSSGradientColorInterpolationMethod colorInterpolationMethod, CSSGradientColorStopList stops)
@@ -128,17 +134,19 @@ private:
     mutable RefPtr<StyleImage> m_cachedStyleImage;
 };
 
-bool operator==(const CSSLinearGradientValue::Data&, const CSSLinearGradientValue::Data&);
-
 class CSSPrefixedLinearGradientValue final : public CSSValue {
 public:
     enum class Horizontal { Left, Right };
     enum class Vertical { Top, Bottom };
-    struct Angle { Ref<CSSPrimitiveValue> value; };
+    struct Angle {
+        Ref<CSSPrimitiveValue> value;
+        friend bool operator==(const Angle&, const Angle&);
+    };
     using GradientLine = std::variant<std::monostate, Angle, Horizontal, Vertical, std::pair<Horizontal, Vertical>>;
 
     struct Data {
         GradientLine gradientLine;
+        friend bool operator==(const Data&, const Data&) = default;
     };
 
     static Ref<CSSPrefixedLinearGradientValue> create(Data data, CSSGradientRepeat repeating, CSSGradientColorInterpolationMethod colorInterpolationMethod, CSSGradientColorStopList stops)
@@ -176,8 +184,6 @@ private:
     CSSGradientColorInterpolationMethod m_colorInterpolationMethod;
     mutable RefPtr<StyleImage> m_cachedStyleImage;
 };
-
-bool operator==(const CSSPrefixedLinearGradientValue::Data&, const CSSPrefixedLinearGradientValue::Data&);
 
 class CSSDeprecatedLinearGradientValue final : public CSSValue {
 public:
@@ -232,38 +238,48 @@ public:
     struct Shape {
         ShapeKeyword shape;
         std::optional<CSSGradientPosition> position;
+        friend bool operator==(const Shape&, const Shape&) = default;
     };
     struct Extent {
         ExtentKeyword extent;
         std::optional<CSSGradientPosition> position;
+        friend bool operator==(const Extent&, const Extent&) = default;
     };
     struct Length {
         Ref<CSSPrimitiveValue> length; // <length [0,∞]>
         std::optional<CSSGradientPosition> position;
+
+        friend bool operator==(const Length&, const Length&);
     };
     struct CircleOfLength {
         Ref<CSSPrimitiveValue> length; // <length [0,∞]>
         std::optional<CSSGradientPosition> position;
+        friend bool operator==(const CircleOfLength&, const CircleOfLength&);
     };
     struct CircleOfExtent {
         ExtentKeyword extent;
         std::optional<CSSGradientPosition> position;
+        friend bool operator==(const CircleOfExtent&, const CircleOfExtent&) = default;
     };
     struct Size {
         std::pair<Ref<CSSPrimitiveValue>, Ref<CSSPrimitiveValue>> size; // <length-percentage [0,∞]>, <length-percentage [0,∞]>
         std::optional<CSSGradientPosition> position;
+        friend bool operator==(const Size&, const Size&);
     };
     struct EllipseOfSize {
         std::pair<Ref<CSSPrimitiveValue>, Ref<CSSPrimitiveValue>> size; // <length-percentage [0,∞]>, <length-percentage [0,∞]>
         std::optional<CSSGradientPosition> position;
+        friend bool operator==(const EllipseOfSize&, const EllipseOfSize&);
     };
     struct EllipseOfExtent {
         ExtentKeyword extent;
         std::optional<CSSGradientPosition> position;
+        friend bool operator==(const EllipseOfExtent&, const EllipseOfExtent&) = default;
     };
     using GradientBox = std::variant<std::monostate, Shape, Extent, Length, Size, CircleOfLength, CircleOfExtent, EllipseOfSize, EllipseOfExtent, CSSGradientPosition>;
     struct Data {
         GradientBox gradientBox;
+        friend bool operator==(const Data&, const Data&) = default;
     };
 
     static Ref<CSSRadialGradientValue> create(Data data, CSSGradientRepeat repeating, CSSGradientColorInterpolationMethod colorInterpolationMethod, CSSGradientColorStopList stops)
@@ -302,8 +318,6 @@ private:
     mutable RefPtr<StyleImage> m_cachedStyleImage;
 };
 
-bool operator==(const CSSRadialGradientValue::Data&, const CSSRadialGradientValue::Data&);
-
 class CSSPrefixedRadialGradientValue final : public CSSValue {
 public:
     enum class ShapeKeyword { Circle, Ellipse };
@@ -311,9 +325,11 @@ public:
     struct ShapeAndExtent {
         ShapeKeyword shape;
         ExtentKeyword extent;
+        friend bool operator==(const ShapeAndExtent&, const ShapeAndExtent&) = default;
     };
     struct MeasuredSize {
         std::pair<Ref<CSSPrimitiveValue>, Ref<CSSPrimitiveValue>> size; // <length-percentage [0,∞]>, <length-percentage [0,∞]>
+        friend bool operator==(const MeasuredSize&, const MeasuredSize&);
     };
 
     using GradientBox = std::variant<std::monostate, ShapeKeyword, ExtentKeyword, ShapeAndExtent, MeasuredSize>;
@@ -321,6 +337,8 @@ public:
     struct Data {
         GradientBox gradientBox;
         std::optional<CSSGradientPosition> position;
+
+        friend bool operator==(const Data&, const Data&) = default;
     };
 
     static Ref<CSSPrefixedRadialGradientValue> create(Data data, CSSGradientRepeat repeating, CSSGradientColorInterpolationMethod colorInterpolationMethod, CSSGradientColorStopList stops)
@@ -358,8 +376,6 @@ private:
     CSSGradientColorInterpolationMethod m_colorInterpolationMethod;
     mutable RefPtr<StyleImage> m_cachedStyleImage;
 };
-
-bool operator==(const CSSPrefixedRadialGradientValue::Data&, const CSSPrefixedRadialGradientValue::Data&);
 
 class CSSDeprecatedRadialGradientValue final : public CSSValue {
 public:
@@ -411,11 +427,16 @@ bool operator==(const CSSDeprecatedRadialGradientValue::Data&, const CSSDeprecat
 
 class CSSConicGradientValue final : public CSSValue {
 public:
-    struct Angle { RefPtr<CSSPrimitiveValue> value; };
+    struct Angle {
+        RefPtr<CSSPrimitiveValue> value;
+        friend bool operator==(const Angle&, const Angle&);
+    };
 
     struct Data {
         Angle angle;
         std::optional<CSSGradientPosition> position;
+
+        friend bool operator==(const Data&, const Data&) = default;
     };
 
     static Ref<CSSConicGradientValue> create(Data data, CSSGradientRepeat repeating, CSSGradientColorInterpolationMethod colorInterpolationMethod, CSSGradientColorStopList stops)
@@ -453,8 +474,6 @@ private:
     CSSGradientColorInterpolationMethod m_colorInterpolationMethod;
     mutable RefPtr<StyleImage> m_cachedStyleImage;
 };
-
-bool operator==(const CSSConicGradientValue::Data&, const CSSConicGradientValue::Data&);
 
 } // namespace WebCore
 

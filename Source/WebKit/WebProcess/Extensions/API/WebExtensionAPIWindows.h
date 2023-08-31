@@ -30,37 +30,52 @@
 #include "JSWebExtensionAPIWindows.h"
 #include "WebExtensionAPIObject.h"
 #include "WebExtensionAPIWindowsEvent.h"
+#include "WebExtensionWindow.h"
+#include "WebExtensionWindowIdentifier.h"
 
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSString;
 
 namespace WebKit {
 
+class WebPage;
+
 class WebExtensionAPIWindows : public WebExtensionAPIObject, public JSWebExtensionWrappable {
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIWindows, windows);
 
 public:
 #if PLATFORM(COCOA)
+    using PopulateTabs = WebExtensionWindow::PopulateTabs;
+    using WindowTypeFilter = WebExtensionWindow::TypeFilter;
+
     bool isPropertyAllowed(String propertyName, WebPage*);
 
     void createWindow(NSDictionary *data, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    void get(double windowID, NSDictionary *info, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void getCurrent(NSDictionary *info, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void get(WebPage*, double windowID, NSDictionary *info, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void getCurrent(WebPage*, NSDictionary *info, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void getLastFocused(NSDictionary *info, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void getAll(NSDictionary *info, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     void update(double windowID, NSDictionary *info, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void remove(double windowID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    double windowIdentifierNone() const { return -1; }
-    double windowIdentifierCurrent() const { return -2; }
+    double windowIdentifierNone() const { return WebExtensionWindowConstants::None; }
+    double windowIdentifierCurrent() const { return WebExtensionWindowConstants::Current; }
 
     WebExtensionAPIWindowsEvent& onCreated();
     WebExtensionAPIWindowsEvent& onRemoved();
     WebExtensionAPIWindowsEvent& onFocusChanged();
 
 private:
+    friend class WebExtensionAPIWindowsEvent;
+
+    static bool parsePopulateTabs(NSDictionary *, PopulateTabs&, NSString **outExceptionString);
+    static bool parseWindowTypesFilter(NSDictionary *, OptionSet<WindowTypeFilter>&, NSString **outExceptionString);
+    static bool parseWindowGetOptions(NSDictionary *, PopulateTabs&, OptionSet<WindowTypeFilter>&, NSString **outExceptionString);
+    static bool parseWindowCreateOptions(NSDictionary *options, WebExtensionWindowParameters&, NSString **outExceptionString);
+    static bool parseWindowUpdateOptions(NSDictionary *options, WebExtensionWindowParameters&, NSString **outExceptionString);
+
     RefPtr<WebExtensionAPIWindowsEvent> m_onCreated;
     RefPtr<WebExtensionAPIWindowsEvent> m_onRemoved;
     RefPtr<WebExtensionAPIWindowsEvent> m_onFocusChanged;

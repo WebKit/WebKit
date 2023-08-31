@@ -288,14 +288,14 @@ const ImmutableStyleProperties* StyledElement::presentationalHintStyle() const
 void StyledElement::rebuildPresentationalHintStyle()
 {
     auto style = MutableStyleProperties::create(isSVGElement() ? SVGAttributeMode : HTMLQuirksMode);
-    for (const Attribute& attribute : attributesIterator())
+    for (auto& attribute : attributesIterator())
         collectPresentationalHintsForAttribute(attribute.name(), attribute.value(), style);
 
-    if (is<HTMLImageElement>(*this))
-        collectExtraStyleForPresentationalHints(style);
+    if (auto* imageElement = dynamicDowncast<HTMLImageElement>(*this))
+        imageElement->collectExtraStyleForPresentationalHints(style);
 
     // ShareableElementData doesn't store presentation attribute style, so make sure we have a UniqueElementData.
-    UniqueElementData& elementData = ensureUniqueElementData();
+    auto& elementData = ensureUniqueElementData();
 
     elementData.setPresentationalHintStyleIsDirty(false);
     if (style->isEmpty())

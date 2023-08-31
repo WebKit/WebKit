@@ -77,6 +77,13 @@ WI.Size = class Size
         this.height = height || 0;
     }
 
+    // Static
+
+    static fromJSON(json)
+    {
+        return new WI.Size(json.width, json.height);
+    }
+
     // Public
 
     toString()

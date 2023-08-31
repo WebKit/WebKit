@@ -45,7 +45,7 @@ public:
         double value;
         CSSUnitType unitType;
 
-        bool operator==(const NumericSyntaxValue& other) const { return value == other.value && unitType == other.unitType; }
+        friend bool operator==(const NumericSyntaxValue&, const NumericSyntaxValue&) = default;
     };
 
     struct TransformSyntaxValue {
@@ -59,7 +59,7 @@ public:
         Vector<SyntaxValue> values;
         ValueSeparator separator;
 
-        bool operator==(const SyntaxValueList& other) const { return values == other.values && separator == other.separator; }
+        friend bool operator==(const SyntaxValueList&, const SyntaxValueList&) = default;
     };
 
     using VariantValue = std::variant<std::monostate, Ref<CSSVariableReferenceValue>, CSSValueID, Ref<CSSVariableData>, SyntaxValue, SyntaxValueList>;

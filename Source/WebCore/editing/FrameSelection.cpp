@@ -473,6 +473,8 @@ void FrameSelection::setSelection(const VisibleSelection& selection, OptionSet<S
     m_selectionRevealIntent = intent;
     m_pendingSelectionUpdate = true;
 
+    protectedDocument->scheduleContentRelevancyUpdate(ContentRelevancy::Selected);
+
     if (protectedDocument->hasPendingStyleRecalc())
         return;
 

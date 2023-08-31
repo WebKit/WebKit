@@ -749,7 +749,6 @@ imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-conten
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/svg-inline-sizing/svg-inline.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_navigate_ancestor-1.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/historical-search-event.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-summary-element/anchor-with-inline-element.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/same-site-cookies.https.html [ Skip ]
 imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/message-module-Error.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/css/css-position/position-absolute-crash-chrome-013.html [ Skip ]
@@ -4940,9 +4939,6 @@ webanimations/translate-property-and-translate-animation-with-delay-on-forced-la
 imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-bfc-floats-001.html [ ImageOnlyFailure ]
 # forced layout
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-035.html [ Skip ]
-# off-screen selection
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-070.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-071.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-video.html [ ImageOnlyFailure ]
 
 # Style containment
@@ -5280,12 +5276,6 @@ imported/w3c/web-platform-tests/content-security-policy/script-src/ [ DumpJSCons
 webkit.org/b/233340 imported/w3c/web-platform-tests/css/motion/offset-anchor-transform-box-fill-box-001.html [ ImageOnlyFailure ]
 webkit.org/b/233340 imported/w3c/web-platform-tests/css/motion/offset-anchor-transform-box-fill-box-002.html [ ImageOnlyFailure ]
 webkit.org/b/233340 imported/w3c/web-platform-tests/css/motion/offset-anchor-transform-box-fill-box-003.html [ ImageOnlyFailure ]
-
-# CSS motion path ray test failing due to getting wrong size from containing block.
-webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-path-ray-007.html [ ImageOnlyFailure ]
-webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-path-ray-009.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-ray-012.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-ray-013.html [ ImageOnlyFailure ]
 
 # CSS motion path URL support.
 imported/w3c/web-platform-tests/css/motion/offset-path-url-002.html [ ImageOnlyFailure ]
@@ -6704,3 +6694,5 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/im
 [ Debug ] imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/toggleEvent.html [ Pass Failure ]
 
 webkit.org/b/260823 http/tests/workers/service/self_registration.html [ Pass Failure ]
+
+webkit.org/b/260929 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/location-of-the-media-resource/currentSrc.html [ Pass Failure ]

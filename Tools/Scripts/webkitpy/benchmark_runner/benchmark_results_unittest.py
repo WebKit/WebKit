@@ -26,11 +26,18 @@ from webkitpy.benchmark_runner.benchmark_results import BenchmarkResults
 
 
 class BenchmarkResultsTest(unittest.TestCase):
+    def assertRaisesRegex(self, *args, **kwargs):
+        try:
+            return super(BenchmarkResultsTest, self).assertRaisesRegex(*args, **kwargs)
+        except AttributeError:
+            # Python 2
+            return self.assertRaisesRegexp(*args, **kwargs)
+
     def test_init(self):
         results = BenchmarkResults({'SomeTest': {'metrics': {'Time': {'current': [1, 2, 3]}}}})
         self.assertEqual(results._results, {'SomeTest': {'metrics': {'Time': {None: {'current': [1, 2, 3]}}}, 'tests': {}}})
 
-        with self.assertRaisesRegexp(TypeError, r'"Time" metric of "SomeTest" contains non-numeric value: \[1, 2, "a"\]'):
+        with self.assertRaisesRegex(TypeError, r'"Time" metric of "SomeTest" contains non-numeric value: \[1, 2, "a"\]'):
             BenchmarkResults({'SomeTest': {'metrics': {'Time': {'current': [1, 2, 'a']}}}})
 
     def test_format(self):
@@ -269,16 +276,16 @@ SomeTest:Time:Arithmetic: 3.0ms stdev=33.3%
                     'SubTest2': {'metrics': {'Time': {None: {'current': [9, 24]}}}, 'tests': {}}}}})
 
     def test_lint_results(self):
-        with self.assertRaisesRegexp(TypeError, r'"SomeTest" does not contain metrics or tests'):
+        with self.assertRaisesRegex(TypeError, r'"SomeTest" does not contain metrics or tests'):
             BenchmarkResults._lint_results({'SomeTest': {}})
 
-        with self.assertRaisesRegexp(TypeError, r'The metrics in "SomeTest" is not a dictionary'):
+        with self.assertRaisesRegex(TypeError, r'The metrics in "SomeTest" is not a dictionary'):
             BenchmarkResults._lint_results({'SomeTest': {'metrics': []}})
 
-        with self.assertRaisesRegexp(TypeError, r'The aggregator list is empty in "Time" metric of "SomeTest"'):
+        with self.assertRaisesRegex(TypeError, r'The aggregator list is empty in "Time" metric of "SomeTest"'):
             BenchmarkResults._lint_results({'SomeTest': {'metrics': {'Time': []}}})
 
-        with self.assertRaisesRegexp(TypeError, r'"Time" metric of "SomeTest" is not wrapped by a configuration; e.g. "current"'):
+        with self.assertRaisesRegex(TypeError, r'"Time" metric of "SomeTest" is not wrapped by a configuration; e.g. "current"'):
             BenchmarkResults._lint_results({'SomeTest': {'metrics': {'Time': [1, 2]}}})
 
         self.assertTrue(BenchmarkResults._lint_results({'SomeTest': {'metrics': {'Time': {'current': [1, 2]}}}}))
@@ -286,39 +293,39 @@ SomeTest:Time:Arithmetic: 3.0ms stdev=33.3%
         self.assertTrue(BenchmarkResults._lint_results({'SomeTest': {'metrics': {'Time': ['Total', 'Total']}, 'tests': {
             'SubTest1': {'metrics': {'Time': {'current': []}}}}}}))
 
-        with self.assertRaisesRegexp(TypeError, r'"Time" metric of "SomeTest" was not an aggregator list or a dictionary of configurations: 1'):
+        with self.assertRaisesRegex(TypeError, r'"Time" metric of "SomeTest" was not an aggregator list or a dictionary of configurations: 1'):
             BenchmarkResults._lint_results({'SomeTest': {'metrics': {'Time': 1}}})
 
-        with self.assertRaisesRegexp(TypeError, r'"Time" metric of "SomeTest" contains non-numeric value: \["Total"\]'):
+        with self.assertRaisesRegex(TypeError, r'"Time" metric of "SomeTest" contains non-numeric value: \["Total"\]'):
             BenchmarkResults._lint_results({'SomeTest': {'metrics': {'Time': {'current': ['Total']}}}})
 
-        with self.assertRaisesRegexp(TypeError, r'"Time" metric of "SomeTest" contains non-numeric value: \["Total", "Geometric"\]'):
+        with self.assertRaisesRegex(TypeError, r'"Time" metric of "SomeTest" contains non-numeric value: \["Total", "Geometric"\]'):
             BenchmarkResults._lint_results({'SomeTest': {'metrics': {'Time': {'current': [['Total', 'Geometric']]}}}})
 
-        with self.assertRaisesRegexp(TypeError, r'"SomeTest" requires aggregation but it has no subtests'):
+        with self.assertRaisesRegex(TypeError, r'"SomeTest" requires aggregation but it has no subtests'):
             BenchmarkResults._lint_results({'SomeTest': {'metrics': {'Time': ['Total']}}})
 
-        with self.assertRaisesRegexp(TypeError, r'"OtherTest" requires aggregation but it has no subtests'):
+        with self.assertRaisesRegex(TypeError, r'"OtherTest" requires aggregation but it has no subtests'):
             BenchmarkResults._lint_results({'OtherTest': {'metrics': {'Time': ['Total']}}})
 
-        with self.assertRaisesRegexp(TypeError, r'"Time" metric of "SomeTest" uses unknown aggregator: KittenMean'):
+        with self.assertRaisesRegex(TypeError, r'"Time" metric of "SomeTest" uses unknown aggregator: KittenMean'):
             BenchmarkResults._lint_results({'SomeTest': {'metrics': {'Time': ['KittenMean']}, 'tests': {
                 'SubTest1': {'metrics': {'Time': {'current': []}}}}}})
 
-        with self.assertRaisesRegexp(TypeError, r'"Time" metric of "SomeTest" had a mismatching subtest values'):
+        with self.assertRaisesRegex(TypeError, r'"Time" metric of "SomeTest" had a mismatching subtest values'):
             BenchmarkResults._lint_results({'SomeTest': {'metrics': {'Time': ['Total']}, 'tests': {
                 'SubTest1': {'metrics': {'Time': {'current': [1, 2, 3]}}},
                 'SubTest2': {'metrics': {'Time': {'current': [4, 5, 6, 7]}}}}}})
 
-        with self.assertRaisesRegexp(TypeError, r'"Time" metric of "SomeTest" had a mismatching subtest values'):
+        with self.assertRaisesRegex(TypeError, r'"Time" metric of "SomeTest" had a mismatching subtest values'):
             BenchmarkResults._lint_results({'SomeTest': {'metrics': {'Time': ['Total']}, 'tests': {
                 'SubTest1': {'metrics': {'Time': {'current': [[1, 2], [3]]}}},
                 'SubTest2': {'metrics': {'Time': {'current': [[4, 5], [6, 7]]}}}}}})
 
-        with self.assertRaisesRegexp(TypeError, r'"Time" metric of "SomeTest" had malformed values: \[1, \[2\], 3\]'):
+        with self.assertRaisesRegex(TypeError, r'"Time" metric of "SomeTest" had malformed values: \[1, \[2\], 3\]'):
             BenchmarkResults._lint_results({'SomeTest': {'metrics': {'Time': {'current': [1, [2], 3]}}}})
 
-        with self.assertRaisesRegexp(TypeError, r'"Time" metric of "SomeTest" has no value to aggregate as "Arithmetic" in a subtest "SubTest1"'):
+        with self.assertRaisesRegex(TypeError, r'"Time" metric of "SomeTest" has no value to aggregate as "Arithmetic" in a subtest "SubTest1"'):
             BenchmarkResults._lint_results({'SomeTest': {
                 'metrics': {'Time': ['Arithmetic']},
                 'tests': {

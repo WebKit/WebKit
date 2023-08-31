@@ -54,11 +54,11 @@ template <typename CharacterType> static std::optional<SVGPathSegType> nextComma
 {
     // Check for remaining coordinates in the current command.
     if ((*buffer == '+' || *buffer == '-' || *buffer == '.' || isASCIIDigit(*buffer))
-        && previousCommand != PathSegClosePath) {
-        if (previousCommand == PathSegMoveToAbs)
-            return PathSegLineToAbs;
-        if (previousCommand == PathSegMoveToRel)
-            return PathSegLineToRel;
+        && previousCommand != SVGPathSegType::ClosePath) {
+        if (previousCommand == SVGPathSegType::MoveToAbs)
+            return SVGPathSegType::LineToAbs;
+        if (previousCommand == SVGPathSegType::MoveToRel)
+            return SVGPathSegType::LineToRel;
         return previousCommand;
     }
 
@@ -93,45 +93,45 @@ std::optional<SVGPathSegType> SVGPathStringViewSource::parseSVGSegmentType()
         switch (character) {
         case 'Z':
         case 'z':
-            return PathSegClosePath;
+            return SVGPathSegType::ClosePath;
         case 'M':
-            return PathSegMoveToAbs;
+            return SVGPathSegType::MoveToAbs;
         case 'm':
-            return PathSegMoveToRel;
+            return SVGPathSegType::MoveToRel;
         case 'L':
-            return PathSegLineToAbs;
+            return SVGPathSegType::LineToAbs;
         case 'l':
-            return PathSegLineToRel;
+            return SVGPathSegType::LineToRel;
         case 'C':
-            return PathSegCurveToCubicAbs;
+            return SVGPathSegType::CurveToCubicAbs;
         case 'c':
-            return PathSegCurveToCubicRel;
+            return SVGPathSegType::CurveToCubicRel;
         case 'Q':
-            return PathSegCurveToQuadraticAbs;
+            return SVGPathSegType::CurveToQuadraticAbs;
         case 'q':
-            return PathSegCurveToQuadraticRel;
+            return SVGPathSegType::CurveToQuadraticRel;
         case 'A':
-            return PathSegArcAbs;
+            return SVGPathSegType::ArcAbs;
         case 'a':
-            return PathSegArcRel;
+            return SVGPathSegType::ArcRel;
         case 'H':
-            return PathSegLineToHorizontalAbs;
+            return SVGPathSegType::LineToHorizontalAbs;
         case 'h':
-            return PathSegLineToHorizontalRel;
+            return SVGPathSegType::LineToHorizontalRel;
         case 'V':
-            return PathSegLineToVerticalAbs;
+            return SVGPathSegType::LineToVerticalAbs;
         case 'v':
-            return PathSegLineToVerticalRel;
+            return SVGPathSegType::LineToVerticalRel;
         case 'S':
-            return PathSegCurveToCubicSmoothAbs;
+            return SVGPathSegType::CurveToCubicSmoothAbs;
         case 's':
-            return PathSegCurveToCubicSmoothRel;
+            return SVGPathSegType::CurveToCubicSmoothRel;
         case 'T':
-            return PathSegCurveToQuadraticSmoothAbs;
+            return SVGPathSegType::CurveToQuadraticSmoothAbs;
         case 't':
-            return PathSegCurveToQuadraticSmoothRel;
+            return SVGPathSegType::CurveToQuadraticSmoothRel;
         default:
-            return PathSegUnknown;
+            return SVGPathSegType::Unknown;
         }
     });
 }
