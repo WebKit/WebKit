@@ -35,7 +35,7 @@ using namespace JSC;
 
 static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionSubtype);
 static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionFunctionDetails);
-static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionGetOwnPrivatePropertyDescriptors);
+static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionGetOwnPrivatePropertySymbols);
 static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionGetInternalProperties);
 static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionInternalConstructorName);
 static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionIsHTMLAllCollection);
@@ -63,7 +63,7 @@ void JSInjectedScriptHostPrototype::finishCreation(VM& vm, JSGlobalObject* globa
     
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("subtype"_s, jsInjectedScriptHostPrototypeFunctionSubtype, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Private);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("functionDetails"_s, jsInjectedScriptHostPrototypeFunctionFunctionDetails, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Private);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("getOwnPrivatePropertyDescriptors"_s, jsInjectedScriptHostPrototypeFunctionGetOwnPrivatePropertyDescriptors, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Private);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("getOwnPrivatePropertySymbols"_s, jsInjectedScriptHostPrototypeFunctionGetOwnPrivatePropertySymbols, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Private);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("getInternalProperties"_s, jsInjectedScriptHostPrototypeFunctionGetInternalProperties, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Private);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("internalConstructorName"_s, jsInjectedScriptHostPrototypeFunctionInternalConstructorName, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Private);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("isHTMLAllCollection"_s, jsInjectedScriptHostPrototypeFunctionIsHTMLAllCollection, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Private);
@@ -305,7 +305,7 @@ JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionFunctionDetails, (
     return JSValue::encode(castedThis->functionDetails(globalObject, callFrame));
 }
 
-JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionGetOwnPrivatePropertyDescriptors, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionGetOwnPrivatePropertySymbols, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -315,7 +315,7 @@ JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionGetOwnPrivatePrope
     if (!castedThis)
         return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->getOwnPrivatePropertyDescriptors(globalObject, callFrame));
+    return JSValue::encode(castedThis->getOwnPrivatePropertySymbols(globalObject, callFrame));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionGetInternalProperties, (JSGlobalObject* globalObject, CallFrame* callFrame))
