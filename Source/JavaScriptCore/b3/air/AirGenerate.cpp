@@ -249,12 +249,12 @@ static void generateWithAlreadyAllocatedRegisters(Code& code, CCallHelpers& jit)
             ASSERT(code.isEntrypoint(block));
 
             if (disassembler)
-                disassembler->startEntrypoint(jit); 
+                disassembler->startEntrypoint(jit, block);
 
             code.prologueGeneratorForEntrypoint(*entrypointIndex)->run(jit, code);
 
             if (disassembler)
-                disassembler->endEntrypoint(jit); 
+                disassembler->endEntrypoint(jit, block);
         } else
             ASSERT(!code.isEntrypoint(block));
         

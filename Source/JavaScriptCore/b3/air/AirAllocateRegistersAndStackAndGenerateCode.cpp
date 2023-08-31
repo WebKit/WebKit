@@ -593,12 +593,12 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
         if (std::optional<unsigned> entrypointIndex = m_code.entrypointIndex(block)) {
             ASSERT(m_code.isEntrypoint(block));
             if (disassembler)
-                disassembler->startEntrypoint(*m_jit); 
+                disassembler->startEntrypoint(*m_jit, block);
 
             m_code.prologueGeneratorForEntrypoint(*entrypointIndex)->run(*m_jit, m_code);
 
             if (disassembler)
-                disassembler->endEntrypoint(*m_jit); 
+                disassembler->endEntrypoint(*m_jit, block);
         } else
             ASSERT(!m_code.isEntrypoint(block));
 

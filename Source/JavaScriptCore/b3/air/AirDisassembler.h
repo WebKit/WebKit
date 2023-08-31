@@ -45,8 +45,8 @@ class Disassembler {
 public:
     Disassembler() = default;
 
-    void startEntrypoint(CCallHelpers&);
-    void endEntrypoint(CCallHelpers&);
+    void startEntrypoint(CCallHelpers&, BasicBlock*);
+    void endEntrypoint(CCallHelpers&, BasicBlock*);
     void startLatePath(CCallHelpers&);
     void endLatePath(CCallHelpers&);
     void startBlock(BasicBlock*, CCallHelpers&);
@@ -57,8 +57,8 @@ public:
 private:
     HashMap<Inst*, std::pair<MacroAssembler::Label, MacroAssembler::Label>> m_instToRange;
     Vector<BasicBlock*> m_blocks;
-    MacroAssembler::Label m_entrypointStart;
-    MacroAssembler::Label m_entrypointEnd;
+    HashMap<int, MacroAssembler::Label> m_entrypointStarts;
+    HashMap<int, MacroAssembler::Label> m_entrypointEnds;
     MacroAssembler::Label m_latePathStart;
     MacroAssembler::Label m_latePathEnd;
 };

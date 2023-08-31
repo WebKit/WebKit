@@ -37,14 +37,14 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
-void Disassembler::startEntrypoint(CCallHelpers& jit)
+void Disassembler::startEntrypoint(CCallHelpers& jit, BasicBlock* block)
 {
-    m_entrypointStart = jit.labelIgnoringWatchpoints();
+    m_entrypointStarts.add(block->index() + 1, jit.labelIgnoringWatchpoints());
 }
 
-void Disassembler::endEntrypoint(CCallHelpers& jit)
+void Disassembler::endEntrypoint(CCallHelpers& jit, BasicBlock* block)
 {
-    m_entrypointEnd = jit.labelIgnoringWatchpoints();
+    m_entrypointEnds.add(block->index() + 1, jit.labelIgnoringWatchpoints());
 }
 
 void Disassembler::startLatePath(CCallHelpers& jit)
@@ -86,7 +86,7 @@ void Disassembler::dump(Code& code, PrintStream& out, LinkBuffer& linkBuffer, co
     for (BasicBlock* block : m_blocks) {
         block->dumpHeader(out);
         if (code.isEntrypoint(block))
-            dumpAsmRange(m_entrypointStart, m_entrypointEnd);
+            dumpAsmRange(m_entrypointStarts.get(block->index() + 1), m_entrypointEnds.get(block->index() + 1));
 
         for (Inst& inst : *block) {
             doToEachInst(inst);
