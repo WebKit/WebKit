@@ -31,6 +31,7 @@
 #import "ContentType.h"
 #import "SourceBufferParserWebM.h"
 #import "WebMAudioUtilitiesCocoa.h"
+#import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/cocoa/AudioToolboxSPI.h>
 #import <wtf/SortedArrayMap.h>
 

@@ -2085,6 +2085,7 @@ platform/SystemSoundManager.cpp
 platform/StaticPasteboard.cpp
 platform/Theme.cpp
 platform/ThemeTypes.cpp
+platform/ThermalMitigationNotifier.cpp
 platform/ThreadGlobalData.cpp
 platform/ThreadTimers.cpp
 platform/Timer.cpp

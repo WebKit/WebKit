@@ -101,4 +101,4 @@ void notifyLowPowerModeChanged(LowPowerModeNotifier& notifier, bool enabled)
 
 } // namespace WebCore
 
-#endif // PLATFORM(APPLE_LOW_POWER_MODE_SUPPORT)
+#endif // HAVE(APPLE_LOW_POWER_MODE_SUPPORT)

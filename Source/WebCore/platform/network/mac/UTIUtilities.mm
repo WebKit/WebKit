@@ -26,6 +26,7 @@
 #import "config.h"
 #import "UTIUtilities.h"
 
+#import <wtf/HashSet.h>
 #import <wtf/Lock.h>
 #import <wtf/MainThread.h>
 #import <wtf/SortedArrayMap.h>

@@ -365,7 +365,7 @@ static void setSampleBufferAsDisplayImmediately(CMSampleBufferRef sampleBuffer)
     }
 }
 
-static inline CGAffineTransform videoTransformationMatrix(VideoFrame& videoFrame)
+static inline CGAffineTransform transformationMatrixForVideoFrame(VideoFrame& videoFrame)
 {
     auto size = videoFrame.presentationSize();
     size_t width = static_cast<size_t>(size.width());
@@ -388,7 +388,7 @@ static inline CGAffineTransform videoTransformationMatrix(VideoFrame& videoFrame
 void LocalSampleBufferDisplayLayer::enqueueVideoFrame(VideoFrame& videoFrame)
 {
     bool isReconfiguring = false;
-    auto affineTransform = videoTransformationMatrix(videoFrame);
+    auto affineTransform = transformationMatrixForVideoFrame(videoFrame);
     if (!CGAffineTransformEqualToTransform(affineTransform, m_affineTransform)) {
         m_affineTransform = affineTransform;
         m_videoFrameRotation = videoFrame.rotation();
