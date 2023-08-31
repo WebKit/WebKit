@@ -28,14 +28,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+import unittest
 
-from webkitpy.common.webkitunittest import TestCase
 from webkitpy.tool.mocktool import MockOptions, MockTool
 
 from webkitcorepy import OutputCapture
 
 
-class CommandsTest(TestCase):
+class CommandsTest(unittest.TestCase):
     def assert_execute_outputs(self, command, args=[], expected_stdout="", expected_stderr="", expected_exception=None, expected_logs=None, options=MockOptions(), tool=MockTool()):
         options.blocks = None
         if getattr(options, "cc", None) == None:

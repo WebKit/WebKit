@@ -29,7 +29,6 @@
 import os.path
 import sys
 import unittest
-from distutils.version import StrictVersion
 
 from webkitpy.common.system.executive import Executive
 from webkitpy.common.prettypatch import PrettyPatch
@@ -43,7 +42,8 @@ class PrettyPatchTest(unittest.TestCase):
         except OSError as e:
             return False
         # PrettyPatch relies on WEBrick, which was removed from the Ruby stdlib in 3
-        return StrictVersion(result) < StrictVersion("3.0.0")
+        major_version = result.split(".", 1)[0]
+        return int(major_version) < 3
 
     _diff_with_multiple_encodings = """
 Index: utf8_test
