@@ -257,8 +257,15 @@ bool PlatformMediaSessionManager::sessionWillBeginPlayback(PlatformMediaSession&
         return false;
     }
 
-    if (m_currentInterruption)
-        endInterruption(PlatformMediaSession::NoFlags);
+    if (m_currentInterruption) {
+        endInterruption(
+#if USE(AUDIO_SESSION)
+            AudioSession::sharedSession().isActive() ? PlatformMediaSession::MayResumePlaying : PlatformMediaSession::NoFlags
+#else
+            PlatformMediaSession::NoFlags
+#endif
+        );
+    }
 
     if (restrictions & ConcurrentPlaybackNotPermitted) {
         forEachMatchingSession([&session](auto& oneSession) {
