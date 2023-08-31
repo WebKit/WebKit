@@ -40,6 +40,10 @@
 #include "RenderTheme.h"
 #include <wtf/text/TextStream.h>
 
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
 namespace WebCore {
 
 static std::optional<Color> resolveAbsoluteComponents(const StyleColorMix&);
@@ -104,11 +108,17 @@ bool StyleColor::isAbsoluteColorKeyword(CSSValueID id)
 bool StyleColor::isSystemColorKeyword(CSSValueID id)
 {
     // https://drafts.csswg.org/css-color-4/#css-system-colors
-    return (id >= CSSValueCanvas && id <= CSSValueInternalDocumentTextColor) || id == CSSValueText || isDeprecatedSystemColorKeyword(id);
+    return (id >= CSSValueCanvas && id <= CSSValueInternalDocumentTextColor) || isDeprecatedSystemColorKeyword(id);
 }
 
 bool StyleColor::isDeprecatedSystemColorKeyword(CSSValueID id)
 {
+    if (id == CSSValueText)
+#if PLATFORM(COCOA)
+        return !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoTextValueForCSSColor);
+#else
+        return false;
+#endif
     // https://drafts.csswg.org/css-color-4/#deprecated-system-colors
     return (id >= CSSValueActiveborder && id <= CSSValueWindowtext) || id == CSSValueMenu;
 }

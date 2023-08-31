@@ -283,7 +283,6 @@ Color RenderThemeAdwaita::systemColor(CSSValueID cssValueID, OptionSet<StyleColo
     case CSSValueFieldtext:
     case CSSValueInactivecaptiontext:
     case CSSValueInfotext:
-    case CSSValueText:
     case CSSValueWindowtext:
         return useDarkAppearance ? Color::white : Color::black;
 
