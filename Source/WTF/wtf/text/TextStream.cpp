@@ -142,7 +142,7 @@ TextStream& TextStream::operator<<(StringView string)
     return *this;
 }
 
-TextStream& TextStream::operator<<(HexNumberBuffer buffer)
+TextStream& TextStream::operator<<(const HexNumberBuffer& buffer)
 {
     m_text.append(makeString(buffer));
     return *this;

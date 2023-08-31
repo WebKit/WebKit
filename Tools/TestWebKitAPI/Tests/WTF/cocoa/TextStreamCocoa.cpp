@@ -38,6 +38,6 @@ TEST(WTF_TextStream, CFString)
 TEST(WTF_TextStream, Hex)
 {
     TextStream ts;
-    ts << hex(18);
-    EXPECT_EQ(ts.release(), "12"_s);
+    ts << hex(31);
+    EXPECT_EQ(ts.release(), "1F"_s);
 }
