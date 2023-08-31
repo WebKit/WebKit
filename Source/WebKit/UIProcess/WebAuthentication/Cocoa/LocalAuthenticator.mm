@@ -227,9 +227,9 @@ void LocalAuthenticator::clearAllCredentials()
     // FIXME<rdar://problem/57171201>: We should guard the method with a first party entitlement once WebAuthn is avaliable for third parties.
     auto query = adoptNS([[NSMutableDictionary alloc] init]);
     [query setDictionary:@{
-        (id)kSecClass: (id)kSecClassKey,
-        (id)kSecAttrAccessGroup: @(LocalAuthenticatorAccessGroup),
-        (id)kSecUseDataProtectionKeychain: @YES
+        (id)kSecClass : (id)kSecClassKey,
+        (id)kSecAttrAccessGroup : @"com.apple.webkit.webauthn" /*WebCore::LocalAuthenticatorAccessGroup */,
+        (id)kSecUseDataProtectionKeychain : @YES
     }];
     updateQueryIfNecessary(query.get());
 

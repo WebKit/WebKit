@@ -118,8 +118,7 @@ static PKPaymentErrorCode toPKPaymentErrorCode(WebCore::ApplePayErrorCode code)
 
 static NSError *toNSError(const WebCore::ApplePayError& error)
 {
-    auto userInfo = adoptNS([[NSMutableDictionary alloc] init]);
-    [userInfo setObject:error.message() forKey:NSLocalizedDescriptionKey];
+    auto userInfo = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:error.message(), NSLocalizedDescriptionKey, nil]);
 
     if (auto contactField = error.contactField()) {
         NSString *pkContactField = nil;

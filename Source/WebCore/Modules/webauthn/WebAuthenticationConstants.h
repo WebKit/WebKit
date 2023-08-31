@@ -78,7 +78,7 @@ enum class ClientDataType : bool {
     Get
 };
 
-constexpr const char LocalAuthenticatorAccessGroup[] = "com.apple.webkit.webauthn";
+// constexpr const char LocalAuthenticatorAccessGroup[] = "com.apple.webkit.webauthn";
 
 // Credential serialization
 constexpr const char privateKeyKey[] = "priv";
