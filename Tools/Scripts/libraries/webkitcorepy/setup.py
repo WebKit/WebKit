@@ -52,9 +52,10 @@ setup(
         'webkitcorepy.mocks',
         'webkitcorepy.tests',
         'webkitcorepy.tests.mocks',
+        'webkitcorepy.testing',
     ],
     install_requires=[
-        'inspect2'
+        'inspect2',
         'mock',
         'requests',
         'six',

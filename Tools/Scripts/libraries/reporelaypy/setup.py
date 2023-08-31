@@ -20,19 +20,24 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from os.path import abspath, dirname, join
+from urllib.parse import urljoin
+from urllib.request import pathname2url
+
 from setuptools import setup
 
 
-def readme():
-    with open('README.md') as f:
-        return f.read()
+def _get_adjacent_package_requirement(name):
+    d = abspath(dirname(__file__))
+    package_path = join(d, "..", name)
+    file_url = urljoin("file://localhost", pathname2url(package_path))
+    return f"{name} @ {file_url}"
 
 
 setup(
     name='reporelaypy',
     version='0.8.1',
     description='Library for visualizing, processing and storing test results.',
-    long_description=readme(),
     classifiers=[
         'Development Status :: 4 - Beta',
         'Framework :: Flask',
@@ -51,13 +56,13 @@ setup(
     license='Modified BSD',
     packages=[
         'reporelaypy',
-        'reporelaypy.test',
+        'reporelaypy.tests',
     ],
     install_requires=[
         'xmltodict',
-        'webkitcorepy',
-        'webkitscmpy',
-        'webkitflaskpy',
+        _get_adjacent_package_requirement('webkitcorepy'),
+        _get_adjacent_package_requirement('webkitscmpy'),
+        _get_adjacent_package_requirement('webkitflaskpy'),
     ],
     include_package_data=True,
     zip_safe=False,

@@ -20,7 +20,27 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from os.path import abspath, dirname, join
+
+try:
+    from urllib.parse import urljoin
+except ImportError:
+    from urlparse import urljoin
+
+try:
+    from urllib.request import pathname2url
+except ImportError:
+    from urllib import pathname2url
+
 from setuptools import setup
+
+
+def _get_adjacent_package_requirement(name):
+    d = abspath(dirname(__file__))
+    package_path = join(d, "..", name)
+    file_url = urljoin("file://localhost", pathname2url(package_path))
+    return '{} @ {}'.format(name, file_url)
+
 
 def readme():
     with open('README.md') as f:
@@ -58,7 +78,15 @@ setup(
         'webkitscmpy.test',
     ],
     scripts=['git-webkit'],
-    install_requires=['fasteners', 'jinja2', 'monotonic', 'webkitcorepy', 'webkitbugspy', 'xmltodict', 'rapidfuzz'],
+    install_requires=[
+        'fasteners',
+        'jinja2',
+        'monotonic',
+        _get_adjacent_package_requirement('webkitcorepy'),
+        _get_adjacent_package_requirement('webkitbugspy'),
+        'xmltodict',
+        'rapidfuzz',
+    ],
     include_package_data=True,
     zip_safe=False,
 )
