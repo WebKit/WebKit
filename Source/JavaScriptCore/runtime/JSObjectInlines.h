@@ -405,7 +405,7 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
 
             // FIXME: Check attributes against PropertyAttribute::CustomAccessorOrValue. Changing GetterSetter should work w/o transition.
             // https://bugs.webkit.org/show_bug.cgi?id=214342
-            if (mode == PutModeDefineOwnProperty && (newAttributes != attributes || (newAttributes & PropertyAttribute::AccessorOrCustomAccessorOrValue))) {
+            if ((mode == PutModeDefineOwnProperty || mode == PutModeDefineOwnPropertyForJSONSlow) && (newAttributes != attributes || (newAttributes & PropertyAttribute::AccessorOrCustomAccessorOrValue))) {
                 DeferredStructureTransitionWatchpointFire deferred(vm, structure);
                 setStructure(vm, Structure::attributeChangeTransition(vm, structure, propertyName, newAttributes, &deferred));
                 if (UNLIKELY(mayBePrototype()))
@@ -427,33 +427,35 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
         return { };
     }
 
-    PropertyOffset offset;
-    size_t currentCapacity = this->structure()->outOfLineCapacity();
-    Structure* newStructure = Structure::addPropertyTransitionToExistingStructure(structure, propertyName, newAttributes, offset);
-    if (newStructure) {
-        Butterfly* newButterfly = butterfly();
-        if (currentCapacity != newStructure->outOfLineCapacity()) {
-            ASSERT(newStructure != this->structure());
-            newButterfly = allocateMoreOutOfLineStorage(vm, currentCapacity, newStructure->outOfLineCapacity());
-            nukeStructureAndSetButterfly(vm, structureID, newButterfly);
+    // In PutModeDefineOwnPropertyForJSONSlow, this is already checked.
+    if constexpr (mode != PutModeDefineOwnPropertyForJSONSlow) {
+        PropertyOffset offset;
+        Structure* newStructure = Structure::addPropertyTransitionToExistingStructure(structure, propertyName, newAttributes, offset);
+        if (newStructure) {
+            Butterfly* newButterfly = butterfly();
+            if (structure->outOfLineCapacity() != newStructure->outOfLineCapacity()) {
+                ASSERT(newStructure != this->structure());
+                newButterfly = allocateMoreOutOfLineStorage(vm, structure->outOfLineCapacity(), newStructure->outOfLineCapacity());
+                nukeStructureAndSetButterfly(vm, structureID, newButterfly);
+            }
+
+            validateOffset(offset);
+            ASSERT(newStructure->isValidOffset(offset));
+
+            // This assertion verifies that the concurrent GC won't read garbage if the concurrentGC
+            // is running at the same time we put without transitioning.
+            ASSERT(!getDirect(offset) || !JSValue::encode(getDirect(offset)));
+            putDirectOffset(vm, offset, value);
+            setStructure(vm, newStructure);
+            slot.setNewProperty(this, offset);
+            if (UNLIKELY(mayBePrototype()))
+                vm.invalidateStructureChainIntegrity(VM::StructureChainIntegrityEvent::Add);
+            return { };
         }
-
-        validateOffset(offset);
-        ASSERT(newStructure->isValidOffset(offset));
-
-        // This assertion verifies that the concurrent GC won't read garbage if the concurrentGC
-        // is running at the same time we put without transitioning.
-        ASSERT(!getDirect(offset) || !JSValue::encode(getDirect(offset)));
-        putDirectOffset(vm, offset, value);
-        setStructure(vm, newStructure);
-        slot.setNewProperty(this, offset);
-        if (UNLIKELY(mayBePrototype()))
-            vm.invalidateStructureChainIntegrity(VM::StructureChainIntegrityEvent::Add);
-        return { };
     }
 
     unsigned currentAttributes;
-    offset = structure->get(vm, propertyName, currentAttributes);
+    PropertyOffset offset = structure->get(vm, propertyName, currentAttributes);
     if (offset != invalidOffset) {
         if (mode == PutModePut && (currentAttributes & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessor))
             return ReadonlyPropertyChangeError;
@@ -463,7 +465,7 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
 
         // FIXME: Check attributes against PropertyAttribute::CustomAccessorOrValue. Changing GetterSetter should work w/o transition.
         // https://bugs.webkit.org/show_bug.cgi?id=214342
-        if (mode == PutModeDefineOwnProperty && (newAttributes != currentAttributes || (newAttributes & PropertyAttribute::AccessorOrCustomAccessorOrValue))) {
+        if ((mode == PutModeDefineOwnProperty || mode == PutModeDefineOwnPropertyForJSONSlow) && (newAttributes != currentAttributes || (newAttributes & PropertyAttribute::AccessorOrCustomAccessorOrValue))) {
             // We want the structure transition watchpoint to fire after this object has switched structure.
             // This allows adaptive watchpoints to observe if the new structure is the one we want.
             DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure);
@@ -486,7 +488,7 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
     // We want the structure transition watchpoint to fire after this object has switched structure.
     // This allows adaptive watchpoints to observe if the new structure is the one we want.
     DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure);
-    newStructure = Structure::addNewPropertyTransition(vm, structure, propertyName, newAttributes, offset, slot.context(), &deferredWatchpointFire);
+    Structure* newStructure = Structure::addNewPropertyTransition(vm, structure, propertyName, newAttributes, offset, slot.context(), &deferredWatchpointFire);
     
     validateOffset(offset);
     ASSERT(newStructure->isValidOffset(offset));
