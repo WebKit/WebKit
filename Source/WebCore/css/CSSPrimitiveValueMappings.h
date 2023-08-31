@@ -1967,6 +1967,9 @@ inline bool CSSPrimitiveValue::convertingToLengthHasRequiredConversionData(int l
     if (!dependencies.properties.isEmpty() && !conversionData.style())
         return !isFixedNumberConversion;
 
+    if (dependencies.containerDimensions && !conversionData.elementForContainerUnitResolution())
+        return !isFixedNumberConversion;
+
     if (isViewportPercentageLength() && conversionData.defaultViewportFactor().isEmpty())
         return !isFixedNumberConversion;
 
