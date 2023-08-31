@@ -58,21 +58,15 @@ ReferencePathOperation::ReferencePathOperation(const String& url, const AtomStri
     : PathOperation(Reference)
     , m_url(url)
     , m_fragment(fragment)
-    , m_element(element)
 {
-    if (is<SVGPathElement>(m_element) || is<SVGGeometryElement>(m_element))
-        m_path = pathFromGraphicsElement(m_element.get());
+    if (is<SVGPathElement>(element) || is<SVGGeometryElement>(element))
+        m_path = pathFromGraphicsElement(element.get());
 }
 
 ReferencePathOperation::ReferencePathOperation(std::optional<Path>&& path)
     : PathOperation(Reference)
     , m_path(WTFMove(path))
 {
-}
-
-const SVGElement* ReferencePathOperation::element() const
-{
-    return m_element.get();
 }
 
 Ref<RayPathOperation> RayPathOperation::create(float angle, Size size, bool isContaining, FloatRect&& containingBlockBoundingRect, FloatPoint&& position)
