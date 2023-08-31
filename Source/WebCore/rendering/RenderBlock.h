@@ -294,6 +294,8 @@ public:
 
     virtual bool hasLineIfEmpty() const;
 
+    void updateDescendantTransformsAfterLayout();
+
 protected:
     RenderFragmentedFlow* locateEnclosingFragmentedFlow() const override;
     void willBeDestroyed() override;

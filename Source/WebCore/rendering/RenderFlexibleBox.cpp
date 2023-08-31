@@ -455,6 +455,8 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
         repaintChildrenDuringLayoutIfMoved(oldChildRects);
         // FIXME: css3/flexbox/repaint-rtl-column.html seems to repaint more overflow than it needs to.
         computeOverflow(layoutOverflowLogicalBottom(*this));
+
+        updateDescendantTransformsAfterLayout();
     }
     updateLayerTransform();
 
