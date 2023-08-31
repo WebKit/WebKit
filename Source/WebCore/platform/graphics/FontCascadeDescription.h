@@ -135,6 +135,7 @@ public:
     static FontVariantAlternates initialVariantAlternates() { return FontVariantAlternates::Normal(); }
     static FontOpticalSizing initialOpticalSizing() { return FontOpticalSizing::Enabled; }
     static const AtomString& initialSpecifiedLocale() { return nullAtom(); }
+    static const AtomString& initialLanguageOverride() { return nullAtom(); }
     static FontPalette initialFontPalette() { return { FontPalette::Type::Normal, nullAtom() }; }
     static FontSizeAdjust initialFontSizeAdjust() { return { FontSizeAdjust::Metric::ExHeight }; }
     static TextSpacingTrim initialTextSpacingTrim() { return { }; }

@@ -528,6 +528,7 @@ public:
     inline FontSelectionValue fontWeight() const;
     inline FontSelectionValue fontStretch() const;
     inline std::optional<FontSelectionValue> fontItalic() const;
+    inline const AtomString& fontLanguageOverride() const;
     inline FontPalette fontPalette() const;
     inline FontSizeAdjust fontSizeAdjust() const;
 

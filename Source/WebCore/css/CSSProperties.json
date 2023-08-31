@@ -541,6 +541,20 @@
                 "url": "https://www.w3.org/TR/css-fonts-3/#font-family-prop"
             }
         },
+        "font-language-override": {
+            "inherited": true,
+            "codegen-properties": {
+                "custom": "Value",
+                "font-property": true,
+                "high-priority": true,
+                "name-for-methods": "LanguageOverride",
+                "parser-grammar": "normal | <string>"
+            },
+            "specification": {
+                "category": "css-fonts",
+                "url": "https://www.w3.org/TR/css-fonts-4/#propdef-font-language-override"
+            }
+        },
         "font-size": {
             "inherited": true,
             "values": [
