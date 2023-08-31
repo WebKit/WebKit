@@ -912,9 +912,11 @@ WebCore::DisplayRefreshMonitorFactory* WebChromeClient::displayRefreshMonitorFac
 #if ENABLE(GPU_PROCESS)
 RefPtr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, bool avoidBackendSizeCheck) const
 {
-    if (!WebProcess::singleton().shouldUseRemoteRenderingFor(purpose)) {
+    if (!WebProcess::singleton().shouldUseRemoteRenderingFor(purpose) || renderingMode == RenderingMode::Unaccelerated) {
+#if 0
         if (purpose != RenderingPurpose::ShareableSnapshot && purpose != RenderingPurpose::ShareableLocalSnapshot)
             return nullptr;
+#endif
 
         return ImageBuffer::create<ImageBufferShareableBitmapBackend>(size, resolutionScale, colorSpace, PixelFormat::BGRA8, purpose, { });
     }

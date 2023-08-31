@@ -321,6 +321,9 @@ bool CanvasBase::shouldAccelerate(const IntSize& size) const
 
 bool CanvasBase::shouldAccelerate(unsigned area) const
 {
+    if (area < (1 << 14))
+        return false;
+
     if (area > scriptExecutionContext()->settingsValues().maximumAccelerated2dCanvasSize)
         return false;
 

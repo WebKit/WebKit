@@ -2290,8 +2290,6 @@ GraphicsContext* CanvasRenderingContext2DBase::drawingContext() const
 
 void CanvasRenderingContext2DBase::prepareForDisplay()
 {
-    if (auto buffer = canvasBase().buffer())
-        buffer->flushDrawingContextAsync();
 }
 
 bool CanvasRenderingContext2DBase::needsPreparationForDisplay() const
