@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -205,7 +205,7 @@ static inline bool needsTrailingSlash(const CharacterType* characters, unsigned 
 template <typename CharacterType>
 static ALWAYS_INLINE SharedStringHash computeSharedStringHashInline(const CharacterType* url, unsigned length)
 {
-    return AlreadyHashed::avoidDeletedValue(StringHasher::computeHash(url, length));
+    return AlreadyHashed::avoidDeletedValue(SuperFastHash::computeHash(url, length));
 }
 
 SharedStringHash computeSharedStringHash(const String& url)

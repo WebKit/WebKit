@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -702,7 +702,7 @@ void VMInspector::dumpSubspaceHashes(VM* vm)
     unsigned count = 0;
     vm->heap.objectSpace().forEachSubspace([&] (const Subspace& subspace) -> IterationStatus {
         const char* name = subspace.name();
-        unsigned hash = StringHasher::computeHash(name);
+        unsigned hash = SuperFastHash::computeHash(name);
         void* hashAsPtr = reinterpret_cast<void*>(static_cast<uintptr_t>(hash));
         dataLogLn("    [", count++, "] ", name, " Hash:", RawPointer(hashAsPtr));
         return IterationStatus::Continue;

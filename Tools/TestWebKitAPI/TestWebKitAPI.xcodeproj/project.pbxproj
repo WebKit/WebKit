@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -1272,7 +1272,9 @@
 		FEC2A85424CE975F00ADBC35 /* DisallowVMEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEC2A85324CE974E00ADBC35 /* DisallowVMEntry.cpp */; };
 		FEC2A85624CEB65F00ADBC35 /* PropertySlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEC2A85524CEB65F00ADBC35 /* PropertySlot.cpp */; };
 		FF10AAF92831B1E600B9875B /* CompactPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF10AAF82831B1E600B9875B /* CompactPtr.cpp */; };
+		FF41AC702A79CAA000AC0FA5 /* WYHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF41AC682A79CAA000AC0FA5 /* WYHash.cpp */; };
 		FF5D0CB4283221AD00F3278A /* CompactRefPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF5D0CB3283221AD00F3278A /* CompactRefPtr.cpp */; };
+		FF8CB40C2A88C152004AF498 /* SuperFastHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF8CB4042A88C152004AF498 /* SuperFastHash.cpp */; };
 		FF910EA5297A0D1100D1A24D /* FixedBitVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF910E9D297A0D1100D1A24D /* FixedBitVector.cpp */; };
 /* End PBXBuildFile section */
 
@@ -3614,7 +3616,9 @@
 		FEC2A85524CEB65F00ADBC35 /* PropertySlot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertySlot.cpp; sourceTree = "<group>"; };
 		FF10AAF82831B1E600B9875B /* CompactPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompactPtr.cpp; sourceTree = "<group>"; };
 		FF25942A2834B7A7006892D6 /* AlignedRefLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlignedRefLogger.h; sourceTree = "<group>"; };
+		FF41AC682A79CAA000AC0FA5 /* WYHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WYHash.cpp; sourceTree = "<group>"; };
 		FF5D0CB3283221AD00F3278A /* CompactRefPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompactRefPtr.cpp; sourceTree = "<group>"; };
+		FF8CB4042A88C152004AF498 /* SuperFastHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SuperFastHash.cpp; sourceTree = "<group>"; };
 		FF910E9D297A0D1100D1A24D /* FixedBitVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FixedBitVector.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -5272,6 +5276,7 @@
 				E3A24FDB28CAB75B008D810B /* StringSearch.cpp */,
 				9332EF932649BB68009F5D6D /* StringToIntegerConversion.cpp */,
 				7C74D42D188228F300E5ED57 /* StringView.cpp */,
+				FF8CB4042A88C152004AF498 /* SuperFastHash.cpp */,
 				936E4AE32821BB6D00208654 /* SuspendableWorkQueueTests.cpp */,
 				5597F8341D9596C80066BC21 /* SynchronizedFixedQueue.cpp */,
 				9329AA281DE3F81E003ABD07 /* TextBreakIterator.cpp */,
@@ -5291,6 +5296,7 @@
 				E388887020C9098100E632BC /* WorkerPool.cpp */,
 				7AA6A1511AAC0B31002B2ED3 /* WorkQueue.cpp */,
 				265AF54F15D1E48A00B0CB4A /* WTFString.cpp */,
+				FF41AC682A79CAA000AC0FA5 /* WYHash.cpp */,
 			);
 			path = WTF;
 			sourceTree = "<group>";
@@ -6248,6 +6254,7 @@
 				E3A24FDC28CAB75B008D810B /* StringSearch.cpp in Sources */,
 				9332EF942649BB68009F5D6D /* StringToIntegerConversion.cpp in Sources */,
 				7C83DF3A1D0A590C00FEBCF3 /* StringView.cpp in Sources */,
+				FF8CB40C2A88C152004AF498 /* SuperFastHash.cpp in Sources */,
 				936E4AE42821BB6D00208654 /* SuspendableWorkQueueTests.cpp in Sources */,
 				5597F8361D9596C80066BC21 /* SynchronizedFixedQueue.cpp in Sources */,
 				7C83DF401D0A590C00FEBCF3 /* TestsController.cpp in Sources */,
@@ -6275,6 +6282,7 @@
 				57C3FA661F7C248F009D4B80 /* WeakPtr.cpp in Sources */,
 				46BBEA1B25F9835700D4987A /* WorkQueue.cpp in Sources */,
 				7C83DF631D0A590C00FEBCF3 /* WTFString.cpp in Sources */,
+				FF41AC702A79CAA000AC0FA5 /* WYHash.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -103,6 +103,8 @@ set(TestWTF_SOURCES
     Tests/WTF/StringCommon.cpp
     Tests/WTF/StringConcatenate.cpp
     Tests/WTF/StringHasher.cpp
+    Tests/WTF/SuperFastHash.cpp
+    Tests/WTF/WYHash.cpp
     Tests/WTF/StringImpl.cpp
     Tests/WTF/StringOperators.cpp
     Tests/WTF/StringParsingBuffer.cpp
