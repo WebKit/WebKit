@@ -37,15 +37,10 @@ typedef union {
     unsigned char bytes[sizeof(float)];
 } FloatByte;
 
-typedef union {
-    unsigned short value;
-    unsigned char bytes[sizeof(unsigned short)];
-} UnsignedShortByte;
-
 class SVGPathByteStream {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef Vector<unsigned char> Data;
+    typedef Vector<uint8_t> Data;
     typedef Data::const_iterator DataIterator;
 
     SVGPathByteStream() { }
@@ -96,7 +91,8 @@ public:
     DataIterator begin() const { return m_data.begin(); }
     DataIterator end() const { return m_data.end(); }
 
-    void append(std::span<const unsigned char> bytes) { m_data.append(bytes); }
+    void append(uint8_t byte) { m_data.append(byte); }
+    void append(std::span<const uint8_t> bytes) { m_data.append(bytes); }
     void append(const SVGPathByteStream& other) { m_data.appendVector(other.m_data); }
     void clear() { m_data.clear(); }
     bool isEmpty() const { return m_data.isEmpty(); }

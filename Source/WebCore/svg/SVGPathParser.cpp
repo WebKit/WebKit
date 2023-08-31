@@ -170,10 +170,10 @@ bool SVGPathParser::parseCurveToCubicSmoothSegment()
     if (!result)
         return false;
 
-    if (m_lastCommand != PathSegCurveToCubicAbs
-        && m_lastCommand != PathSegCurveToCubicRel
-        && m_lastCommand != PathSegCurveToCubicSmoothAbs
-        && m_lastCommand != PathSegCurveToCubicSmoothRel)
+    if (m_lastCommand != SVGPathSegType::CurveToCubicAbs
+        && m_lastCommand != SVGPathSegType::CurveToCubicRel
+        && m_lastCommand != SVGPathSegType::CurveToCubicSmoothAbs
+        && m_lastCommand != SVGPathSegType::CurveToCubicSmoothRel)
         m_controlPoint = m_currentPoint;
 
     if (m_pathParsingMode == NormalizedParsing) {
@@ -230,10 +230,10 @@ bool SVGPathParser::parseCurveToQuadraticSmoothSegment()
     if (!result)
         return false;
 
-    if (m_lastCommand != PathSegCurveToQuadraticAbs
-        && m_lastCommand != PathSegCurveToQuadraticRel
-        && m_lastCommand != PathSegCurveToQuadraticSmoothAbs
-        && m_lastCommand != PathSegCurveToQuadraticSmoothRel)
+    if (m_lastCommand != SVGPathSegType::CurveToQuadraticAbs
+        && m_lastCommand != SVGPathSegType::CurveToQuadraticRel
+        && m_lastCommand != SVGPathSegType::CurveToQuadraticSmoothAbs
+        && m_lastCommand != SVGPathSegType::CurveToQuadraticSmoothRel)
         m_controlPoint = m_currentPoint;
 
     if (m_pathParsingMode == NormalizedParsing) {
@@ -313,7 +313,7 @@ bool SVGPathParser::parsePathData(bool checkForInitialMoveTo)
     auto command = *parsedCommand;
 
     // Path must start with moveto.
-    if (checkForInitialMoveTo && command != PathSegMoveToAbs && command != PathSegMoveToRel)
+    if (checkForInitialMoveTo && command != SVGPathSegType::MoveToAbs && command != SVGPathSegType::MoveToRel)
         return false;
 
     while (true) {
@@ -321,69 +321,69 @@ bool SVGPathParser::parsePathData(bool checkForInitialMoveTo)
         m_source.moveToNextToken();
         m_mode = AbsoluteCoordinates;
         switch (command) {
-        case PathSegMoveToRel:
+        case SVGPathSegType::MoveToRel:
             m_mode = RelativeCoordinates;
             FALLTHROUGH;
-        case PathSegMoveToAbs:
+        case SVGPathSegType::MoveToAbs:
             if (!parseMoveToSegment())
                 return false;
             break;
-        case PathSegLineToRel:
+        case SVGPathSegType::LineToRel:
             m_mode = RelativeCoordinates;
             FALLTHROUGH;
-        case PathSegLineToAbs:
+        case SVGPathSegType::LineToAbs:
             if (!parseLineToSegment())
                 return false;
             break;
-        case PathSegLineToHorizontalRel:
+        case SVGPathSegType::LineToHorizontalRel:
             m_mode = RelativeCoordinates;
             FALLTHROUGH;
-        case PathSegLineToHorizontalAbs:
+        case SVGPathSegType::LineToHorizontalAbs:
             if (!parseLineToHorizontalSegment())
                 return false;
             break;
-        case PathSegLineToVerticalRel:
+        case SVGPathSegType::LineToVerticalRel:
             m_mode = RelativeCoordinates;
             FALLTHROUGH;
-        case PathSegLineToVerticalAbs:
+        case SVGPathSegType::LineToVerticalAbs:
             if (!parseLineToVerticalSegment())
                 return false;
             break;
-        case PathSegClosePath:
+        case SVGPathSegType::ClosePath:
             parseClosePathSegment();
             break;
-        case PathSegCurveToCubicRel:
+        case SVGPathSegType::CurveToCubicRel:
             m_mode = RelativeCoordinates;
             FALLTHROUGH;
-        case PathSegCurveToCubicAbs:
+        case SVGPathSegType::CurveToCubicAbs:
             if (!parseCurveToCubicSegment())
                 return false;
             break;
-        case PathSegCurveToCubicSmoothRel:
+        case SVGPathSegType::CurveToCubicSmoothRel:
             m_mode = RelativeCoordinates;
             FALLTHROUGH;
-        case PathSegCurveToCubicSmoothAbs:
+        case SVGPathSegType::CurveToCubicSmoothAbs:
             if (!parseCurveToCubicSmoothSegment())
                 return false;
             break;
-        case PathSegCurveToQuadraticRel:
+        case SVGPathSegType::CurveToQuadraticRel:
             m_mode = RelativeCoordinates;
             FALLTHROUGH;
-        case PathSegCurveToQuadraticAbs:
+        case SVGPathSegType::CurveToQuadraticAbs:
             if (!parseCurveToQuadraticSegment())
                 return false;
             break;
-        case PathSegCurveToQuadraticSmoothRel:
+        case SVGPathSegType::CurveToQuadraticSmoothRel:
             m_mode = RelativeCoordinates;
             FALLTHROUGH;
-        case PathSegCurveToQuadraticSmoothAbs:
+        case SVGPathSegType::CurveToQuadraticSmoothAbs:
             if (!parseCurveToQuadraticSmoothSegment())
                 return false;
             break;
-        case PathSegArcRel:
+        case SVGPathSegType::ArcRel:
             m_mode = RelativeCoordinates;
             FALLTHROUGH;
-        case PathSegArcAbs:
+        case SVGPathSegType::ArcAbs:
             if (!parseArcToSegment())
                 return false;
             break;
@@ -400,14 +400,14 @@ bool SVGPathParser::parsePathData(bool checkForInitialMoveTo)
 
         command = m_source.nextCommand(command);
 
-        if (m_lastCommand != PathSegCurveToCubicAbs
-            && m_lastCommand != PathSegCurveToCubicRel
-            && m_lastCommand != PathSegCurveToCubicSmoothAbs
-            && m_lastCommand != PathSegCurveToCubicSmoothRel
-            && m_lastCommand != PathSegCurveToQuadraticAbs
-            && m_lastCommand != PathSegCurveToQuadraticRel
-            && m_lastCommand != PathSegCurveToQuadraticSmoothAbs
-            && m_lastCommand != PathSegCurveToQuadraticSmoothRel)
+        if (m_lastCommand != SVGPathSegType::CurveToCubicAbs
+            && m_lastCommand != SVGPathSegType::CurveToCubicRel
+            && m_lastCommand != SVGPathSegType::CurveToCubicSmoothAbs
+            && m_lastCommand != SVGPathSegType::CurveToCubicSmoothRel
+            && m_lastCommand != SVGPathSegType::CurveToQuadraticAbs
+            && m_lastCommand != SVGPathSegType::CurveToQuadraticRel
+            && m_lastCommand != SVGPathSegType::CurveToQuadraticSmoothAbs
+            && m_lastCommand != SVGPathSegType::CurveToQuadraticSmoothRel)
             m_controlPoint = m_currentPoint;
 
         m_consumer.incrementPathSegmentCount();
