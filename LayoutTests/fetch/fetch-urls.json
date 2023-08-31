@@ -3640,21 +3640,6 @@ executeTests(
   },
   {
     "input": "#x",
-    "base": "data:,",
-    "href": "data:,#x",
-    "origin": "null",
-    "protocol": "data:",
-    "username": "",
-    "password": "",
-    "host": "",
-    "hostname": "",
-    "port": "",
-    "pathname": ",",
-    "search": "",
-    "hash": "#x"
-  },
-  {
-    "input": "#x",
     "base": "about:blank",
     "href": "about:blank#x",
     "origin": "null",

@@ -3720,13 +3720,15 @@ void Document::processBaseElement()
         if (!trimmedHref.isEmpty())
             baseElementURL = URL(fallbackBaseURL(), trimmedHref);
     }
-    if (m_baseElementURL != baseElementURL && contentSecurityPolicy()->allowBaseURI(baseElementURL)) {
-        if (settings().shouldRestrictBaseURLSchemes() && !SecurityPolicy::isBaseURLSchemeAllowed(baseElementURL))
+    if (m_baseElementURL != baseElementURL) {
+        if (!contentSecurityPolicy()->allowBaseURI(baseElementURL))
+            m_baseElementURL = { };
+        else if (settings().shouldRestrictBaseURLSchemes() && !SecurityPolicy::isBaseURLSchemeAllowed(baseElementURL)) {
+            m_baseElementURL = { };
             addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked setting " + baseElementURL.stringCenterEllipsizedToLength() + " as the base URL because it does not have an allowed scheme.");
-        else {
+        } else
             m_baseElementURL = baseElementURL;
-            updateBaseURL();
-        }
+        updateBaseURL();
     }
 
     m_baseTarget = target ? *target : nullAtom();
