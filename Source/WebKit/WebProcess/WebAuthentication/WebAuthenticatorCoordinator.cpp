@@ -83,7 +83,10 @@ void WebAuthenticatorCoordinator::getAssertion(const LocalFrame& frame, const Se
         return;
 
     auto isProcessingUserGesture = processingUserGesture(frame, webFrame->frameID());
-    m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::GetAssertion(webFrame->frameID(), webFrame->info(), hash, options, mediation, scopeAndCrossOriginParent.second, isProcessingUserGesture), WTFMove(handler));
+    std::optional<WebCore::SecurityOriginData> crossOriginParent;
+    if (scopeAndCrossOriginParent.first == WebAuthn::Scope::CrossOrigin)
+        crossOriginParent = scopeAndCrossOriginParent.second;
+    m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::GetAssertion(webFrame->frameID(), webFrame->info(), hash, options, mediation, crossOriginParent, isProcessingUserGesture), WTFMove(handler));
 }
 
 void WebAuthenticatorCoordinator::isConditionalMediationAvailable(const SecurityOrigin& origin, QueryCompletionHandler&& handler)
