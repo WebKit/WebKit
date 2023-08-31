@@ -133,6 +133,7 @@
         "createCodeMirrorCubicBezierTimingFunctionTextMarkers": true,
         "createCodeMirrorGradientTextMarkers": true,
         "createCodeMirrorSpringTimingFunctionTextMarkers": true,
+        "createCodeMirrorStepsTimingFunctionTextMarkers": true,
     },
     "rules": {
         "array-bracket-spacing": [2, "never"],

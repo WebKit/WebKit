@@ -607,6 +607,7 @@ localizedStrings["Edit Local Override\u2026"] = "Edit Local Override\u2026";
 localizedStrings["Edit \u201Cbox-shadow\u201D"] = "Edit \u201Cbox-shadow\u201D";
 localizedStrings["Edit \u201Ccubic-bezier\u201D function"] = "Edit \u201Ccubic-bezier\u201D function";
 localizedStrings["Edit \u201Cspring\u201D function"] = "Edit \u201Cspring\u201D function";
+localizedStrings["Edit \u201Csteps\u201D function"] = "Edit \u201Csteps\u201D function";
 localizedStrings["Edit configuration"] = "Edit configuration";
 localizedStrings["Edit custom gradient"] = "Edit custom gradient";
 /* Title of icon indiciating that the selected audit is being edited. */

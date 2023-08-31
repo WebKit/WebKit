@@ -673,6 +673,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         if (this._property.isVariable || WI.CSSKeywordCompletions.isTimingFunctionAwareProperty(this._property.name)) {
             tokens = this._addTimingFunctionTokens(tokens, "cubic-bezier");
             tokens = this._addTimingFunctionTokens(tokens, "spring");
+            tokens = this._addTimingFunctionTokens(tokens, "steps");
         }
 
         tokens = this._addVariableTokens(tokens);
@@ -811,14 +812,22 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                 let text = this._resolveVariables(rawTokens.map((token) => token.value).join(""));
                 rawTokens = this._addVariableTokens(rawTokens);
 
-                let valueObject;
+                let valueObject = null;
                 let inlineSwatchType;
-                if (tokenType === "cubic-bezier") {
+                switch (tokenType) {
+                case "cubic-bezier":
                     valueObject = WI.CubicBezierTimingFunction.fromString(text);
                     inlineSwatchType = WI.InlineSwatch.Type.CubicBezierTimingFunction;
-                } else if (tokenType === "spring") {
+                    break;
+
+                case "spring":
                     valueObject = WI.SpringTimingFunction.fromString(text);
                     inlineSwatchType = WI.InlineSwatch.Type.SpringTimingFunction;
+                    break;
+
+                case "steps":
+                    valueObject = WI.StepsTimingFunction.fromString(text);
+                    inlineSwatchType = WI.InlineSwatch.Type.StepsTimingFunction;
                 }
 
                 if (valueObject)
@@ -829,6 +838,8 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                 startIndex = NaN;
             } else if (token.value in WI.CubicBezierTimingFunction.keywordValues)
                 newTokens.push(this._createInlineSwatch(WI.InlineSwatch.Type.CubicBezierTimingFunction, [token], WI.CubicBezierTimingFunction.fromString(token.value)));
+            else if (token.value in WI.StepsTimingFunction.keywordValues)
+                newTokens.push(this._createInlineSwatch(WI.InlineSwatch.Type.StepsTimingFunction, [token], WI.StepsTimingFunction.fromString(token.value)));
             else if (isNaN(startIndex))
                 newTokens.push(token);
         }
@@ -953,6 +964,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                         fallbackTokens = this._addColorTokens(fallbackTokens);
                         fallbackTokens = this._addTimingFunctionTokens(fallbackTokens, "cubic-bezier");
                         fallbackTokens = this._addTimingFunctionTokens(fallbackTokens, "spring");
+                        fallbackTokens = this._addTimingFunctionTokens(fallbackTokens, "steps");
                         fallbackTokens = this._addVariableTokens(fallbackTokens);
                         contents.pushAll(fallbackTokens);
                     } else

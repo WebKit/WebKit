@@ -693,6 +693,11 @@ WI.TextEditor = class TextEditor extends WI.View
         return createCodeMirrorSpringTimingFunctionTextMarkers(this._codeMirror, range);
     }
 
+    createStepsTimingFunctionMarkers(range)
+    {
+        return createCodeMirrorStepsTimingFunctionTextMarkers(this._codeMirror, range);
+    }
+
     editingControllerForMarker(editableMarker)
     {
         switch (editableMarker.type) {
@@ -704,6 +709,8 @@ WI.TextEditor = class TextEditor extends WI.View
             return new WI.CodeMirrorCubicBezierTimingFunctionEditingController(this._codeMirror, editableMarker);
         case WI.TextMarker.Type.SpringTimingFunction:
             return new WI.CodeMirrorSpringTimingFunctionEditingController(this._codeMirror, editableMarker);
+        case WI.TextMarker.Type.StepsTimingFunction:
+            return new WI.CodeMirrorStepsTimingFunctionEditingController(this._codeMirror, editableMarker);
         default:
             return new WI.CodeMirrorEditingController(this._codeMirror, editableMarker);
         }
