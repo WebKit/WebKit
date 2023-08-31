@@ -1511,6 +1511,19 @@ CanvasFiltersEnabled:
     WebCore:
       default: false
 
+CanvasFingerprintingQuirkEnabled:
+  type: bool
+  status: stable
+  category: dom
+  humanReadableName: "Enable Canvas fingerprinting-related quirk"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 CanvasUsesAcceleratedDrawing:
   type: bool
   status: embedder
