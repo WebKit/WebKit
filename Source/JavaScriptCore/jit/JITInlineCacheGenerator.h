@@ -232,8 +232,6 @@ public:
 #if ENABLE(DFG_JIT)
     void generateDFGDataICFastPath(DFG::JITCompiler&, unsigned stubInfoConstant, JSValueRegs baseJSR, JSValueRegs valueJSR, GPRReg stubInfoGPR, GPRReg scratchGPR, GPRReg scratch2GPR);
 #endif
-    
-    V_JITOperation_GSsiJJC slowPathFunction();
 
     template<typename StubInfo>
     static void setUpStubInfo(StubInfo& stubInfo,

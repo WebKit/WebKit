@@ -101,63 +101,6 @@ IGNORE_WARNINGS_BEGIN("frame-address")
 namespace JSC { namespace DFG {
 
 template<bool strict, bool direct>
-static ALWAYS_INLINE void putByVal(JSGlobalObject* globalObject, VM& vm, JSValue baseValue, uint32_t index, JSValue value)
-{
-    ASSERT(isIndex(index));
-    if constexpr (direct) {
-        RELEASE_ASSERT(baseValue.isObject());
-        asObject(baseValue)->putDirectIndex(globalObject, index, value, 0, strict ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
-        return;
-    }
-    if (baseValue.isObject()) {
-        JSObject* object = asObject(baseValue);
-        if (object->trySetIndexQuickly(vm, index, value))
-            return;
-
-        object->methodTable()->putByIndex(object, globalObject, index, value, strict);
-        return;
-    }
-
-    baseValue.putByIndex(globalObject, index, value, strict);
-}
-
-template<bool strict, bool direct>
-ALWAYS_INLINE static void putByValInternal(JSGlobalObject* globalObject, VM& vm, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
-{
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue baseValue = JSValue::decode(encodedBase);
-    JSValue property = JSValue::decode(encodedProperty);
-    JSValue value = JSValue::decode(encodedValue);
-
-    if (std::optional<uint32_t> index = property.tryGetAsUint32Index()) {
-        scope.release();
-        putByVal<strict, direct>(globalObject, vm, baseValue, *index, value);
-        return;
-    }
-
-    // Don't put to an object if toString throws an exception.
-    auto propertyName = property.toPropertyKey(globalObject);
-    RETURN_IF_EXCEPTION(scope, void());
-
-    PutPropertySlot slot(baseValue, strict);
-    if constexpr (direct) {
-        RELEASE_ASSERT(baseValue.isObject());
-        JSObject* baseObject = asObject(baseValue);
-        if (std::optional<uint32_t> index = parseIndex(propertyName)) {
-            scope.release();
-            baseObject->putDirectIndex(globalObject, index.value(), value, 0, strict ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
-            return;
-        }
-        scope.release();
-        CommonSlowPaths::putDirectWithReify(vm, globalObject, baseObject, propertyName, value, slot);
-        return;
-    }
-    scope.release();
-    baseValue.put(globalObject, propertyName, value, slot);
-}
-
-template<bool strict, bool direct>
 ALWAYS_INLINE static void putByValCellInternal(JSGlobalObject* globalObject, VM& vm, JSCell* base, PropertyName propertyName, JSValue value)
 {
     PutPropertySlot slot(base, strict);
@@ -880,24 +823,6 @@ JSC_DEFINE_JIT_OPERATION(operationGetByValObjectSymbol, EncodedJSValue, (JSGloba
     return JSValue::encode(getByValObject(globalObject, vm, asObject(base), propertyName));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationPutByValStrict, void, (JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue))
-{
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    
-    putByValInternal<true, false>(globalObject, vm, encodedBase, encodedProperty, encodedValue);
-}
-
-JSC_DEFINE_JIT_OPERATION(operationPutByValSloppy, void, (JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue))
-{
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    
-    putByValInternal<false, false>(globalObject, vm, encodedBase, encodedProperty, encodedValue);
-}
-
 JSC_DEFINE_JIT_OPERATION(operationPutByValCellStringStrict, void, (JSGlobalObject* globalObject, JSCell* cell, JSCell* string, EncodedJSValue encodedValue))
 {
     VM& vm = globalObject->vm();
@@ -1036,24 +961,6 @@ JSC_DEFINE_JIT_OPERATION(operationPutDoubleByValDirectBeyondArrayBoundsSloppy, v
 
     PutPropertySlot slot(object, false);
     CommonSlowPaths::putDirectWithReify(vm, globalObject, object, Identifier::from(vm, index), jsValue, slot);
-}
-
-JSC_DEFINE_JIT_OPERATION(operationPutByValDirectStrict, void, (JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue))
-{
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    
-    putByValInternal<true, true>(globalObject, vm, encodedBase, encodedProperty, encodedValue);
-}
-
-JSC_DEFINE_JIT_OPERATION(operationPutByValDirectSloppy, void, (JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue))
-{
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    
-    putByValInternal<false, true>(globalObject, vm, encodedBase, encodedProperty, encodedValue);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationPutByValDirectCellStringStrict, void, (JSGlobalObject* globalObject, JSCell* cell, JSCell* string, EncodedJSValue encodedValue))

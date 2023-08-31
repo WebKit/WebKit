@@ -297,29 +297,6 @@ void JITPutByIdGenerator::generateFastPath(CCallHelpers& jit, GPRReg scratchGPR,
     m_done = jit.label();
 }
 
-V_JITOperation_GSsiJJC JITPutByIdGenerator::slowPathFunction()
-{
-    switch (m_accessType) {
-    case AccessType::PutByIdStrict:
-        return operationPutByIdStrictOptimize;
-    case AccessType::PutByIdSloppy:
-        return operationPutByIdSloppyOptimize;
-    case AccessType::PutByIdDirectStrict:
-        return operationPutByIdDirectStrictOptimize;
-    case AccessType::PutByIdDirectSloppy:
-        return operationPutByIdDirectSloppyOptimize;
-    case AccessType::DefinePrivateNameById:
-        return operationPutByIdDefinePrivateFieldStrictOptimize;
-    case AccessType::SetPrivateNameById:
-        return operationPutByIdSetPrivateFieldStrictOptimize;
-    default:
-        break;
-    }
-    // Make win port compiler happy
-    RELEASE_ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
 JITDelByValGenerator::JITDelByValGenerator(CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, const RegisterSetBuilder& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs result, GPRReg stubInfoGPR)
     : Base(codeBlock, stubInfo, jitType, codeOrigin, AccessType::DeleteByVal)
 {

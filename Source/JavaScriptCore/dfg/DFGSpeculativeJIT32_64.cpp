@@ -216,13 +216,13 @@ void SpeculativeJIT::cachedGetById(
     std::unique_ptr<SlowPathGenerator> slowPath;
     if (baseTagGPROrNone == InvalidGPRReg) {
         slowPath = slowPathCall(
-            slowCases, this, appropriateOptimizingGetByIdFunction(type),
+            slowCases, this, appropriateGetByIdOptimizeFunction(type),
             JSValueRegs(resultTagGPR, resultPayloadGPR), LinkableConstant::globalObject(*this, node), TrustedImmPtr(gen.stubInfo()),
             CellValue(basePayloadGPR),
             identifier.rawBits());
     } else {
         slowPath = slowPathCall(
-            slowCases, this, appropriateOptimizingGetByIdFunction(type),
+            slowCases, this, appropriateGetByIdOptimizeFunction(type),
             JSValueRegs(resultTagGPR, resultPayloadGPR), LinkableConstant::globalObject(*this, node), TrustedImmPtr(gen.stubInfo()), JSValueRegs(baseTagGPROrNone, basePayloadGPR), identifier.rawBits());
     }
 
@@ -1827,7 +1827,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
                 silentSpillAllRegisters(resultRegs);
             else
                 flushRegisters();
-            callOperation(operationGetByVal, resultRegs, LinkableConstant::globalObject(*this, node), baseGPR, propertyRegs);
+            callOperation(operationGetByValGeneric, resultRegs, LinkableConstant::globalObject(*this, node), baseGPR, propertyRegs);
             if (canUseFlush == CanUseFlush::No)
                 silentFillAllRegisters();
             exceptionCheck();
@@ -4369,7 +4369,7 @@ void SpeculativeJIT::compileGetByValWithThis(Node* node)
     flushRegisters();
     JSValueRegsFlushedCallResult result(this);
     JSValueRegs resultRegs = result.regs();
-    callOperation(operationGetByValWithThis, resultRegs, LinkableConstant::globalObject(*this, node), baseRegs, subscriptRegs, thisValueRegs);
+    callOperation(operationGetByValWithThisGeneric, resultRegs, LinkableConstant::globalObject(*this, node), baseRegs, subscriptRegs, thisValueRegs);
     exceptionCheck();
 
     jsValueResult(resultRegs, node);

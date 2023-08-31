@@ -137,17 +137,13 @@ using P_JITOperation_GStZB = char*(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, 
 using J_JITOperation_GJ = EncodedJSValue(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, EncodedJSValue);
 using J_JITOperation_GJI = EncodedJSValue(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, EncodedJSValue, UniquedStringImpl*);
 using J_JITOperation_GJIP = EncodedJSValue(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, EncodedJSValue, UniquedStringImpl*, void*);
-using V_JITOperation_GSsiJJC = void(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue, uintptr_t);
 using C_JITOperation_TT = uintptr_t(JIT_OPERATION_ATTRIBUTES *)(StringImpl*, StringImpl*);
 using C_JITOperation_B_GJssJss = uintptr_t(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, JSString*, JSString*);
 using S_JITOperation_GC = size_t(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, JSCell*);
 using S_JITOperation_GCZ = size_t(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, JSCell*, int32_t);
 using S_JITOperation_GJJ = size_t(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, EncodedJSValue, EncodedJSValue);
 using V_JITOperation_GJJJ = void(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue);
-using J_JITOperation_GSsiJJ = EncodedJSValue(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue);
-using J_JITOperation_GSsiJJI = EncodedJSValue(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue, UniquedStringImpl*);
 using V_JITOperation_GCCJ = void(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, JSCell*, JSCell*, EncodedJSValue);
-using J_JITOperation_GSsiJI = EncodedJSValue(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, StructureStubInfo*, EncodedJSValue, UniquedStringImpl*);
 using Z_JITOperation_GJZZ = int32_t(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, EncodedJSValue, int32_t, int32_t);
 using F_JITOperation_GFJZZ = CallFrame*(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, CallFrame*, EncodedJSValue, int32_t, int32_t);
 
@@ -166,64 +162,133 @@ JSC_DECLARE_JIT_OPERATION(operationThrowRemoteFunctionException, EncodedJSValue,
 
 JSC_DECLARE_JIT_OPERATION(operationThrowStackOverflowError, void, (CodeBlock*));
 
-JSC_DECLARE_JIT_OPERATION(operationTryGetById, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
-JSC_DECLARE_JIT_OPERATION(operationTryGetByIdGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, uintptr_t));
+// IC related functions and generic helpers.
+//
+//   1. Optimize suffixed ones are used for a normal fallback, which potentially set up IC.
+//   2. Megamorphic suffixed ones are used for a fallback for a megamorphic IC case.
+//   3. GaveUp suffixed ones are used for IC site which already gave up optimization.
+//   4. Generic is unrelated to IC: used outside of IC, just a generic operation.
+//
+// So, 1-3 functions take StructureStubInfo* since it is IC slow path. Generic one does not.
+
 JSC_DECLARE_JIT_OPERATION(operationTryGetByIdOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
-JSC_DECLARE_JIT_OPERATION(operationGetById, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
-JSC_DECLARE_JIT_OPERATION(operationGetByIdMegamorphic, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
-JSC_DECLARE_JIT_OPERATION(operationGetByIdGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationTryGetByIdGaveUp, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationTryGetByIdGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, uintptr_t));
+
 JSC_DECLARE_JIT_OPERATION(operationGetByIdOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
-JSC_DECLARE_JIT_OPERATION(operationGetByIdWithThis, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue, uintptr_t));
-JSC_DECLARE_JIT_OPERATION(operationGetByIdWithThisGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationGetByIdMegamorphic, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationGetByIdGaveUp, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationGetByIdGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationGetByIdMegamorphicGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, uintptr_t));
+
 JSC_DECLARE_JIT_OPERATION(operationGetByIdWithThisOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue, uintptr_t));
 JSC_DECLARE_JIT_OPERATION(operationGetByIdWithThisMegamorphic, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue, uintptr_t));
-JSC_DECLARE_JIT_OPERATION(operationGetByIdDirect, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
-JSC_DECLARE_JIT_OPERATION(operationGetByIdDirectGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationGetByIdWithThisGaveUp, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationGetByIdWithThisGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationGetByIdWithThisMegamorphicGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, uintptr_t));
+
 JSC_DECLARE_JIT_OPERATION(operationGetByIdDirectOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationGetByIdDirectGaveUp, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationGetByIdDirectGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, uintptr_t));
 
-JSC_DECLARE_JIT_OPERATION(operationInByIdGeneric, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
 JSC_DECLARE_JIT_OPERATION(operationInByIdOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
-JSC_DECLARE_JIT_OPERATION(operationInByValGeneric, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationInByValOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationHasPrivateNameGeneric, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationHasPrivateNameOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationHasPrivateBrandGeneric, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationHasPrivateBrandOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationInByIdGaveUp, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
 
-JSC_DECLARE_JIT_OPERATION(operationPutByIdStrict, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
-JSC_DECLARE_JIT_OPERATION(operationPutByIdSloppy, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
-JSC_DECLARE_JIT_OPERATION(operationPutByIdDirectStrict, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
-JSC_DECLARE_JIT_OPERATION(operationPutByIdDirectSloppy, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationInByValOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationInByValGaveUp, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue, EncodedJSValue));
+
+JSC_DECLARE_JIT_OPERATION(operationHasPrivateNameOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationHasPrivateNameGaveUp, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue));
+
+JSC_DECLARE_JIT_OPERATION(operationHasPrivateBrandOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationHasPrivateBrandGaveUp, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue));
+
 JSC_DECLARE_JIT_OPERATION(operationPutByIdStrictOptimize, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationPutByIdStrictMegamorphic, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationPutByIdStrictGaveUp, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationPutByIdStrictMegamorphicGeneric, void, (JSGlobalObject*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
+
 JSC_DECLARE_JIT_OPERATION(operationPutByIdSloppyOptimize, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationPutByIdSloppyMegamorphic, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationPutByIdSloppyGaveUp, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationPutByIdSloppyMegamorphicGeneric, void, (JSGlobalObject*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
+
 JSC_DECLARE_JIT_OPERATION(operationPutByIdDirectStrictOptimize, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationPutByIdDirectStrictGaveUp, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
+
 JSC_DECLARE_JIT_OPERATION(operationPutByIdDirectSloppyOptimize, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
-JSC_DECLARE_JIT_OPERATION(operationPutByIdMegamorphicStrict, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
-JSC_DECLARE_JIT_OPERATION(operationPutByIdMegamorphicSloppy, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
-JSC_DECLARE_JIT_OPERATION(operationPutByIdDefinePrivateFieldStrict, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationPutByIdDirectSloppyGaveUp, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
+
 JSC_DECLARE_JIT_OPERATION(operationPutByIdDefinePrivateFieldStrictOptimize, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
-JSC_DECLARE_JIT_OPERATION(operationPutByIdSetPrivateFieldStrict, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationPutByIdDefinePrivateFieldStrictGaveUp, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
+
 JSC_DECLARE_JIT_OPERATION(operationPutByIdSetPrivateFieldStrictOptimize, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationPutByIdSetPrivateFieldStrictGaveUp, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
 
 JSC_DECLARE_JIT_OPERATION(operationSetPrivateBrandOptimize, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationSetPrivateBrandGaveUp, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue));
+
 JSC_DECLARE_JIT_OPERATION(operationCheckPrivateBrandOptimize, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationSetPrivateBrandGeneric, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationCheckPrivateBrandGeneric, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationCheckPrivateBrandGaveUp, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue));
 
 JSC_DECLARE_JIT_OPERATION(operationPutByValSloppyOptimize, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
+JSC_DECLARE_JIT_OPERATION(operationPutByValSloppyMegamorphic, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
+JSC_DECLARE_JIT_OPERATION(operationPutByValSloppyGaveUp, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
+JSC_DECLARE_JIT_OPERATION(operationPutByValSloppyGeneric, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationPutByValSloppyMegamorphicGeneric, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue));
+
 JSC_DECLARE_JIT_OPERATION(operationPutByValStrictOptimize, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
+JSC_DECLARE_JIT_OPERATION(operationPutByValStrictMegamorphic, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
+JSC_DECLARE_JIT_OPERATION(operationPutByValStrictGaveUp, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
+JSC_DECLARE_JIT_OPERATION(operationPutByValStrictGeneric, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationPutByValStrictMegamorphicGeneric, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue));
+
 JSC_DECLARE_JIT_OPERATION(operationDirectPutByValSloppyOptimize, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
+JSC_DECLARE_JIT_OPERATION(operationDirectPutByValStrictGaveUp, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
+JSC_DECLARE_JIT_OPERATION(operationDirectPutByValStrictGeneric, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue));
+
 JSC_DECLARE_JIT_OPERATION(operationDirectPutByValStrictOptimize, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
-JSC_DECLARE_JIT_OPERATION(operationPutByValSloppyGeneric, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
-JSC_DECLARE_JIT_OPERATION(operationPutByValStrictGeneric, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
-JSC_DECLARE_JIT_OPERATION(operationPutByValMegamorphicStrict, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
-JSC_DECLARE_JIT_OPERATION(operationPutByValMegamorphicSloppy, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
-JSC_DECLARE_JIT_OPERATION(operationDirectPutByValStrictGeneric, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
-JSC_DECLARE_JIT_OPERATION(operationDirectPutByValSloppyGeneric, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
+JSC_DECLARE_JIT_OPERATION(operationDirectPutByValSloppyGaveUp, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
+JSC_DECLARE_JIT_OPERATION(operationDirectPutByValSloppyGeneric, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue));
+
 JSC_DECLARE_JIT_OPERATION(operationPutByValDefinePrivateFieldOptimize, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
-JSC_DECLARE_JIT_OPERATION(operationPutByValDefinePrivateFieldGeneric, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
+JSC_DECLARE_JIT_OPERATION(operationPutByValDefinePrivateFieldGaveUp, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
+JSC_DECLARE_JIT_OPERATION(operationPutByValDefinePrivateFieldGeneric, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue));
+
 JSC_DECLARE_JIT_OPERATION(operationPutByValSetPrivateFieldOptimize, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
-JSC_DECLARE_JIT_OPERATION(operationPutByValSetPrivateFieldGeneric, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
+JSC_DECLARE_JIT_OPERATION(operationPutByValSetPrivateFieldGaveUp, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
+JSC_DECLARE_JIT_OPERATION(operationPutByValSetPrivateFieldGeneric, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue));
+
+JSC_DECLARE_JIT_OPERATION(operationGetByValOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript));
+JSC_DECLARE_JIT_OPERATION(operationGetByValMegamorphic, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript));
+JSC_DECLARE_JIT_OPERATION(operationGetByValGaveUp, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript));
+JSC_DECLARE_JIT_OPERATION(operationGetByValGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty));
+JSC_DECLARE_JIT_OPERATION(operationGetByValMegamorphicGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript));
+
+JSC_DECLARE_JIT_OPERATION(operationGetByValWithThisOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, EncodedJSValue encodedThis));
+JSC_DECLARE_JIT_OPERATION(operationGetByValWithThisMegamorphic, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, EncodedJSValue encodedThis));
+JSC_DECLARE_JIT_OPERATION(operationGetByValWithThisGaveUp, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, EncodedJSValue encodedThis));
+JSC_DECLARE_JIT_OPERATION(operationGetByValWithThisGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedThis));
+JSC_DECLARE_JIT_OPERATION(operationGetByValWithThisMegamorphicGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, EncodedJSValue encodedThis));
+
+JSC_DECLARE_JIT_OPERATION(operationDeleteByIdOptimize, size_t, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue base, uintptr_t, ECMAMode));
+JSC_DECLARE_JIT_OPERATION(operationDeleteByIdGaveUp, size_t, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue base, uintptr_t, ECMAMode));
+JSC_DECLARE_JIT_OPERATION(operationDeleteByIdGeneric, size_t, (JSGlobalObject*, EncodedJSValue base, uintptr_t, ECMAMode));
+
+JSC_DECLARE_JIT_OPERATION(operationDeleteByValOptimize, size_t, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue base, EncodedJSValue target, ECMAMode));
+JSC_DECLARE_JIT_OPERATION(operationDeleteByValGaveUp, size_t, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue base, EncodedJSValue target, ECMAMode));
+JSC_DECLARE_JIT_OPERATION(operationDeleteByValGeneric, size_t, (JSGlobalObject*, EncodedJSValue base, EncodedJSValue target, ECMAMode));
+
+JSC_DECLARE_JIT_OPERATION(operationInstanceOfOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue value, EncodedJSValue proto));
+JSC_DECLARE_JIT_OPERATION(operationInstanceOfGaveUp, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue value, EncodedJSValue proto));
+
+JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedBase, EncodedJSValue encodedFieldName));
+JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameGaveUp, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedBase, EncodedJSValue encodedFieldName));
+JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedFieldName));
+
+JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameByIdOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameByIdGaveUp, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameByIdGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, uintptr_t));
 
 JSC_DECLARE_JIT_OPERATION(operationCallDirectEvalSloppy, EncodedJSValue, (void*, JSScope*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationCallDirectEvalStrict, EncodedJSValue, (void*, JSScope*, EncodedJSValue));
@@ -277,33 +342,12 @@ JSC_DECLARE_JIT_OPERATION(operationPutGetterSetter, void, (JSGlobalObject*, JSCe
 JSC_DECLARE_JIT_OPERATION(operationPutGetterSetter, void, (JSGlobalObject*, JSCell*, UniquedStringImpl*, int32_t attribute, JSCell*, JSCell*));
 #endif
 
-JSC_DECLARE_JIT_OPERATION(operationGetByValOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript));
-JSC_DECLARE_JIT_OPERATION(operationGetByValGeneric, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript));
-JSC_DECLARE_JIT_OPERATION(operationGetByValMegamorphic, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript));
-JSC_DECLARE_JIT_OPERATION(operationGetByVal, EncodedJSValue, (JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty));
-JSC_DECLARE_JIT_OPERATION(operationGetByValWithThisOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, EncodedJSValue encodedThis));
-JSC_DECLARE_JIT_OPERATION(operationGetByValWithThisGeneric, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, EncodedJSValue encodedThis));
-JSC_DECLARE_JIT_OPERATION(operationGetByValWithThisMegamorphic, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, EncodedJSValue encodedThis));
-JSC_DECLARE_JIT_OPERATION(operationGetByValWithThis, EncodedJSValue, (JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedThis));
-
-JSC_DECLARE_JIT_OPERATION(operationDeleteByIdOptimize, size_t, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue base, uintptr_t, ECMAMode));
-JSC_DECLARE_JIT_OPERATION(operationDeleteByIdGeneric, size_t, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue base, uintptr_t, ECMAMode));
-JSC_DECLARE_JIT_OPERATION(operationDeleteByValOptimize, size_t, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue base, EncodedJSValue target, ECMAMode));
-JSC_DECLARE_JIT_OPERATION(operationDeleteByValGeneric, size_t, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue base, EncodedJSValue target, ECMAMode));
 JSC_DECLARE_JIT_OPERATION(operationPushWithScope, JSCell*, (JSGlobalObject*, JSCell* currentScopeCell, EncodedJSValue object));
 JSC_DECLARE_JIT_OPERATION(operationPushWithScopeObject, JSCell*, (JSGlobalObject* globalObject, JSCell* currentScopeCell, JSObject* object));
-JSC_DECLARE_JIT_OPERATION(operationInstanceOfGeneric, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue value, EncodedJSValue proto));
-JSC_DECLARE_JIT_OPERATION(operationInstanceOfOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue value, EncodedJSValue proto));
 JSC_DECLARE_JIT_OPERATION(operationSizeFrameForForwardArguments, int32_t, (JSGlobalObject*, EncodedJSValue arguments, int32_t numUsedStackSlots, int32_t firstVarArgOffset));
 JSC_DECLARE_JIT_OPERATION(operationSizeFrameForVarargs, int32_t, (JSGlobalObject*, EncodedJSValue arguments, int32_t numUsedStackSlots, int32_t firstVarArgOffset));
 JSC_DECLARE_JIT_OPERATION(operationSetupForwardArgumentsFrame, CallFrame*, (JSGlobalObject*, CallFrame*, EncodedJSValue, int32_t, int32_t length));
 JSC_DECLARE_JIT_OPERATION(operationSetupVarargsFrame, CallFrame*, (JSGlobalObject*, CallFrame*, EncodedJSValue arguments, int32_t firstVarArgOffset, int32_t length));
-
-JSC_DECLARE_JIT_OPERATION(operationGetPrivateName, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedBase, EncodedJSValue encodedFieldName));
-JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedBase, EncodedJSValue encodedFieldName));
-JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameById, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
-JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameByIdOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
-JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameByIdGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, uintptr_t));
 
 JSC_DECLARE_JIT_OPERATION(operationSwitchCharWithUnknownKeyType, char*, (JSGlobalObject*, EncodedJSValue key, size_t tableIndex, int32_t min));
 JSC_DECLARE_JIT_OPERATION(operationSwitchImmWithUnknownKeyType, char*, (VM*, EncodedJSValue key, size_t tableIndex, int32_t min));
