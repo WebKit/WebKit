@@ -35,6 +35,7 @@ from webkitbugspy import User, log
 
 requests = webkitcorepy.CallByNeed(lambda: __import__('requests'))
 
+requests.packages.urllib3.util.connection.HAS_IPV6 = False
 
 class Tracker(GenericTracker):
     ROOT_RE = re.compile(r'\Ahttps?://(?P<domain>\S+)\Z')
