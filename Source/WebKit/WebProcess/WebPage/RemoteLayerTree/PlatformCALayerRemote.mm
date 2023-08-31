@@ -270,8 +270,10 @@ void PlatformCALayerRemote::updateBackingStore()
 #if PLATFORM(IOS_FAMILY)
     parameters.colorSpace = m_wantsDeepColorBackingStore ? DestinationColorSpace { extendedSRGBColorSpaceRef() } : DestinationColorSpace::SRGB();
 #else
-    if (auto displayColorSpace = m_context->displayColorSpace())
-        parameters.colorSpace = displayColorSpace.value();
+
+//    if (auto displayColorSpace = m_context->displayColorSpace())
+//        parameters.colorSpace = displayColorSpace.value();
+    parameters.colorSpace = DestinationColorSpace::SRGB();
 #endif
 
     parameters.scale = m_properties.contentsScale;

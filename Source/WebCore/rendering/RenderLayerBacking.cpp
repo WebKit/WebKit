@@ -547,10 +547,9 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
 #endif
 
 #if PLATFORM(COCOA) && USE(CA)
-    if (!compositor().acceleratedDrawingEnabled() && renderer().isCanvas()) {
+    if (renderer().isCanvas()) {
         const HTMLCanvasElement* canvas = downcast<HTMLCanvasElement>(renderer().element());
-        if (canvas->shouldAccelerate(canvas->size()))
-            m_graphicsLayer->setAcceleratesDrawing(true);
+        m_graphicsLayer->setAcceleratesDrawing(canvas->shouldAccelerate(canvas->size()));
     }
 #endif    
     auto& style = renderer().style();

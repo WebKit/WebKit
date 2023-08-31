@@ -706,8 +706,11 @@ RetainPtr<id> RemoteLayerBackingStoreProperties::layerContentsBufferFromBackendH
     RetainPtr<id> contents;
     WTF::switchOn(backendHandle,
         [&] (ShareableBitmap::Handle& handle) {
-            if (auto bitmap = ShareableBitmap::create(WTFMove(handle)))
-                contents = bridge_id_cast(bitmap->makeCGImageCopy());
+            if (auto bitmap = ShareableBitmap::create(WTFMove(handle))) {
+                auto image = bitmap->makeCGImage();
+                CGImageSetCachingFlags(image.get(), kCGImageCachingTransient);
+                contents = bridge_id_cast(image.get());
+            }
         },
         [&] (MachSendRight& machSendRight) {
             switch (contentsType) {
