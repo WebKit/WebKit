@@ -165,6 +165,7 @@ CounterStyleMap& CSSCounterStyleRegistry::userAgentCounterStyles()
 
 bool CSSCounterStyleRegistry::operator==(const CSSCounterStyleRegistry& other) const
 {
+    // Intentionally doesn't check m_hasUnresolvedReferences.
     return m_authorCounterStyles == other.m_authorCounterStyles;
 }
 
