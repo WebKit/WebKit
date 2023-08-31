@@ -374,6 +374,9 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
     case ContextMenuItemTagToggleVideoEnhancedFullscreen:
         m_context.hitTestResult().toggleEnhancedFullscreenForVideo();
         break;
+    case ContextMenuItemTagToggleShowSubtitles:
+        m_context.hitTestResult().toggleShowSubtitlesForVideo();
+        break;
     case ContextMenuItemTagOpenFrameInNewWindow: {
         DocumentLoader* loader = frame->loader().documentLoader();
         if (!loader->unreachableURL().isEmpty())
@@ -916,6 +919,9 @@ void ContextMenuController::populate()
         contextMenuItemTagMediaPlay());
     ContextMenuItem MediaMute(ActionType, ContextMenuItemTagMediaMute, 
         contextMenuItemTagMediaMute());
+#if PLATFORM(MAC)
+    ContextMenuItem ToggleShowSubtitles(ActionType, ContextMenuItemTagToggleShowSubtitles, contextMenuItemTagShowSubtitles());
+#endif
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     ContextMenuItem PlayAllAnimations(ActionType, ContextMenuItemTagPlayAllAnimations, contextMenuItemTagPlayAllAnimations());
     ContextMenuItem PauseAllAnimations(ActionType, ContextMenuItemTagPauseAllAnimations, contextMenuItemTagPauseAllAnimations());
@@ -1128,6 +1134,10 @@ void ContextMenuController::populate()
             appendItem(MediaMute, m_contextMenu.get());
             appendItem(ToggleMediaControls, m_contextMenu.get());
             appendItem(ToggleMediaLoop, m_contextMenu.get());
+#if PLATFORM(MAC)
+            if (m_context.hitTestResult().videoHasSubtitles())
+                appendItem(ToggleShowSubtitles, m_contextMenu.get());
+#endif
 #if SUPPORTS_TOGGLE_VIDEO_FULLSCREEN
             appendItem(ToggleVideoFullscreen, m_contextMenu.get());
 #else
@@ -1685,6 +1695,11 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagPauseAnimation:
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
             item.setTitle(contextMenuItemTagPauseAnimation());
+#endif
+            break;
+        case ContextMenuItemTagToggleShowSubtitles:
+#if PLATFORM(MAC)
+            item.setTitle(m_context.hitTestResult().subtitlesAreShowing() ? contextMenuItemTagHideSubtitles() : contextMenuItemTagShowSubtitles());
 #endif
             break;
         case ContextMenuItemTagToggleMediaControls:

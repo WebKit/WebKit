@@ -1,0 +1,10 @@
+
+RUN(internals.setUserPreferredLanguages(['en']))
+RUN(internals.setPrimaryAudioTrackLanguageOverride('ru'))
+RUN(internals.settings.setShouldDisplayTrackKind('Captions', true))
+EVENT(canplay)
+EVENT(addtrack)
+EXPECTED (video.textTracks[0].mode == 'disabled') OK
+EXPECTED (video.textTracks[0].mode == 'showing') OK
+END OF TEST
+

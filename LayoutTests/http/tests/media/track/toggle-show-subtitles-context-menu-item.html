@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test show/hide subtitles context menu item behavior</title>
+        <script src="../../../../resources/js-test.js"></script>
+        <script src="../../../../resources/js-test-pre.js"></script>
+        <script src="../../media-resources/video-test.js"></script>
+        <script src="../../media-resources/media-file.js"></script>
+        <script>
+            async function runTest()
+            {
+                run("internals.setUserPreferredLanguages(['en'])");
+                run("internals.setPrimaryAudioTrackLanguageOverride('ru')");
+                run("internals.settings.setShouldDisplayTrackKind('Captions', true)");
+                video = document.getElementById('video');
+                video.src = findMediaFile('video', '../resources/test');
+                await waitFor(video, 'canplay');
+                let track = document.createElement('track');
+                track.src = '../resources/hls/subtitles/subtitles.vtt';
+                track.setAttribute('srclang', 'en');
+                track.setAttribute('kind', 'captions');
+                video.appendChild(track);
+                await waitFor(video.textTracks, 'addtrack');
+
+                testExpected("video.textTracks[0].mode", 'disabled');
+                x = video.offsetLeft + video.offsetWidth / 2;
+                y = video.offsetTop + video.offsetHeight / 2;
+                eventSender.mouseMoveTo(x,y);
+                eventSender.contextClick().find(item => item.title === "Show Subtitles (auto)").click();
+                await testExpectedEventually("video.textTracks[0].mode", 'showing', "==", 1000);
+                endTest();
+            }
+        </script>    
+    </head>
+    <body onload="runTest()">
+        <video id="video" muted loop></video>
+    </body>
+</html>

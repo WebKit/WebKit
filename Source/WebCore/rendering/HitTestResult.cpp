@@ -50,6 +50,7 @@
 #include "Scrollbar.h"
 #include "ShadowRoot.h"
 #include "TextIterator.h"
+#include "TextTrackList.h"
 #include "UserGestureIndicator.h"
 #include "VisibleUnits.h"
 #include "XLinkNames.h"
@@ -523,6 +524,48 @@ void HitTestResult::enterFullscreenForVideo() const
         if (!videoElement.isFullscreen() && mediaElement->supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard)) {
             UserGestureIndicator indicator(ProcessingUserGesture, &mediaElement->document());
             videoElement.webkitEnterFullscreen();
+        }
+    }
+#endif
+}
+
+bool HitTestResult::videoHasSubtitles() const
+{
+#if ENABLE(VIDEO)
+    if (HTMLMediaElement* mediaElement = this->mediaElement()) {
+        if (auto* textTracks = mediaElement->textTracks())
+            return textTracks->length();
+    }
+#endif
+    return false;
+}
+
+bool HitTestResult::subtitlesAreShowing() const
+{
+#if ENABLE(VIDEO)
+    if (HTMLMediaElement* mediaElement = this->mediaElement()) {
+        if (mediaElement->isVideo()) {
+            if (auto* textTracks = mediaElement->textTracks(); textTracks && textTracks->length()) {
+                for (unsigned i = 0; i < textTracks->length(); i++) {
+                    if (textTracks->item(i)->mode() == TextTrack::Mode::Showing)
+                        return true;
+                }
+            }
+        }
+    }
+#endif
+    return false;
+}
+
+void HitTestResult::toggleShowSubtitlesForVideo() const
+{
+#if ENABLE(VIDEO)
+    if (HTMLMediaElement* mediaElement = this->mediaElement()) {
+        if (mediaElement->isVideo()) {
+            if (subtitlesAreShowing())
+                mediaElement->setSelectedTextTrack(&TextTrack::captionMenuOffItem());
+            else
+                mediaElement->setSelectedTextTrack(&TextTrack::captionMenuAutomaticItem());
         }
     }
 #endif

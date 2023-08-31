@@ -121,6 +121,7 @@ enum {
     kWKContextMenuItemTagPauseAllAnimations,
     kWKContextMenuItemTagPlayAnimation,
     kWKContextMenuItemTagPauseAnimation,
+    kWKContextMenuItemTagToggleShowSubtitles,
     kWKContextMenuItemTagCopyImageUrlToClipboard,
     kWKContextMenuItemTagSelectAll,
     kWKContextMenuItemTagOpenLinkInThisWindow,

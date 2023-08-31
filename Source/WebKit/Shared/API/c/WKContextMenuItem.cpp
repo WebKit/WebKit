@@ -262,5 +262,5 @@ STATIC_ASSERT_EQUALS(84, kWKContextMenuItemTagPlayAllAnimations, ContextMenuItem
 STATIC_ASSERT_EQUALS(85, kWKContextMenuItemTagPauseAllAnimations, ContextMenuItemTagPauseAllAnimations);
 STATIC_ASSERT_EQUALS(86, kWKContextMenuItemTagPlayAnimation, ContextMenuItemTagPlayAnimation);
 STATIC_ASSERT_EQUALS(87, kWKContextMenuItemTagPauseAnimation, ContextMenuItemTagPauseAnimation);
-
+STATIC_ASSERT_EQUALS(88, kWKContextMenuItemTagToggleShowSubtitles, ContextMenuItemTagToggleShowSubtitles);
 #endif // PLATFORM(COCOA)

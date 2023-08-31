@@ -146,6 +146,7 @@ enum ContextMenuAction {
     ContextMenuItemTagPauseAllAnimations,
     ContextMenuItemTagPlayAnimation,
     ContextMenuItemTagPauseAnimation,
+    ContextMenuItemTagToggleShowSubtitles,
     ContextMenuItemTagToggleVideoFullscreen,
     ContextMenuItemTagShareMenu,
     ContextMenuItemTagToggleVideoEnhancedFullscreen,

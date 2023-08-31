@@ -617,6 +617,9 @@ static NSString *menuItemIdentifier(const WebCore::ContextMenuAction action)
     case ContextMenuItemTagToggleVideoEnhancedFullscreen:
         return _WKMenuItemIdentifierToggleEnhancedFullScreen;
 
+    case ContextMenuItemTagToggleShowSubtitles:
+        return _WKMenuItemIdentifierToggleShowSubtitles;
+
     case ContextMenuItemTagToggleVideoFullscreen:
         return _WKMenuItemIdentifierToggleFullScreen;
 
