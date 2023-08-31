@@ -70,98 +70,6 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGElement);
 
-static NEVER_INLINE MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, CSSPropertyID> createAttributeNameToCSSPropertyIDMap()
-{
-    using namespace HTMLNames;
-    using namespace SVGNames;
-
-    // This list should include all base CSS and SVG CSS properties which are exposed as SVG XML attributes.
-    static constexpr std::array attributeNames {
-        &alignment_baselineAttr,
-        &baseline_shiftAttr,
-        &buffered_renderingAttr,
-        &clipAttr,
-        &clip_pathAttr,
-        &clip_ruleAttr,
-        &SVGNames::colorAttr,
-        &color_interpolationAttr,
-        &color_interpolation_filtersAttr,
-        &cursorAttr,
-        &cxAttr,
-        &cyAttr,
-        &SVGNames::directionAttr,
-        &displayAttr,
-        &dominant_baselineAttr,
-        &fillAttr,
-        &fill_opacityAttr,
-        &fill_ruleAttr,
-        &filterAttr,
-        &flood_colorAttr,
-        &flood_opacityAttr,
-        &font_familyAttr,
-        &font_sizeAttr,
-        &font_size_adjustAttr,
-        &font_stretchAttr,
-        &font_styleAttr,
-        &font_variantAttr,
-        &font_weightAttr,
-        &glyph_orientation_horizontalAttr,
-        &glyph_orientation_verticalAttr,
-        &image_renderingAttr,
-        &SVGNames::heightAttr,
-        &kerningAttr,
-        &letter_spacingAttr,
-        &lighting_colorAttr,
-        &marker_endAttr,
-        &marker_midAttr,
-        &marker_startAttr,
-        &maskAttr,
-        &mask_typeAttr,
-        &opacityAttr,
-        &overflowAttr,
-        &paint_orderAttr,
-        &pointer_eventsAttr,
-        &rAttr,
-        &rxAttr,
-        &ryAttr,
-        &shape_renderingAttr,
-        &stop_colorAttr,
-        &stop_opacityAttr,
-        &strokeAttr,
-        &stroke_dasharrayAttr,
-        &stroke_dashoffsetAttr,
-        &stroke_linecapAttr,
-        &stroke_linejoinAttr,
-        &stroke_miterlimitAttr,
-        &stroke_opacityAttr,
-        &stroke_widthAttr,
-        &text_anchorAttr,
-        &text_decorationAttr,
-        &text_renderingAttr,
-        &unicode_bidiAttr,
-        &vector_effectAttr,
-        &visibilityAttr,
-        &SVGNames::widthAttr,
-        &word_spacingAttr,
-        &writing_modeAttr,
-        &xAttr,
-        &yAttr,
-    };
-
-    MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, CSSPropertyID> map;
-
-    for (auto& name : attributeNames) {
-        auto& localName = name->get().localName();
-        map.add(localName, cssPropertyID(localName));
-    }
-
-    // FIXME: When CSS supports "transform-origin" this special case can be removed,
-    // and we can add transform_originAttr to the table above instead.
-    map.add(transform_originAttr->localName(), CSSPropertyTransformOrigin);
-
-    return map;
-}
-
 SVGElement::SVGElement(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry, ConstructionType constructionType)
     : StyledElement(tagName, document, constructionType)
     , m_propertyAnimatorFactory(makeUnique<SVGPropertyAnimatorFactory>())
@@ -925,8 +833,152 @@ CSSPropertyID SVGElement::cssPropertyIdForSVGAttributeName(const QualifiedName& 
     if (!attrName.namespaceURI().isNull())
         return CSSPropertyInvalid;
 
-    static NeverDestroyed properties = createAttributeNameToCSSPropertyIDMap();
-    return properties.get().get(attrName.localName());
+    switch (attrName.nodeName()) {
+    case AttributeNames::alignment_baselineAttr:
+        return CSSPropertyAlignmentBaseline;
+    case AttributeNames::baseline_shiftAttr:
+        return CSSPropertyBaselineShift;
+    case AttributeNames::buffered_renderingAttr:
+        return CSSPropertyBufferedRendering;
+    case AttributeNames::clipAttr:
+        return CSSPropertyClip;
+    case AttributeNames::clip_pathAttr:
+        return CSSPropertyClipPath;
+    case AttributeNames::clip_ruleAttr:
+        return CSSPropertyClipRule;
+    case AttributeNames::colorAttr:
+        return CSSPropertyColor;
+    case AttributeNames::color_interpolationAttr:
+        return CSSPropertyColorInterpolation;
+    case AttributeNames::color_interpolation_filtersAttr:
+        return CSSPropertyColorInterpolationFilters;
+    case AttributeNames::cursorAttr:
+        return CSSPropertyCursor;
+    case AttributeNames::cxAttr:
+        return CSSPropertyCx;
+    case AttributeNames::cyAttr:
+        return CSSPropertyCy;
+    case AttributeNames::directionAttr:
+        return CSSPropertyDirection;
+    case AttributeNames::displayAttr:
+        return CSSPropertyDisplay;
+    case AttributeNames::dominant_baselineAttr:
+        return CSSPropertyDominantBaseline;
+    case AttributeNames::fillAttr:
+        return CSSPropertyFill;
+    case AttributeNames::fill_opacityAttr:
+        return CSSPropertyFillOpacity;
+    case AttributeNames::fill_ruleAttr:
+        return CSSPropertyFillRule;
+    case AttributeNames::filterAttr:
+        return CSSPropertyFilter;
+    case AttributeNames::flood_colorAttr:
+        return CSSPropertyFloodColor;
+    case AttributeNames::flood_opacityAttr:
+        return CSSPropertyFloodOpacity;
+    case AttributeNames::font_familyAttr:
+        return CSSPropertyFontFamily;
+    case AttributeNames::font_sizeAttr:
+        return CSSPropertyFontSize;
+    case AttributeNames::font_size_adjustAttr:
+        return CSSPropertyFontSizeAdjust;
+    case AttributeNames::font_stretchAttr:
+        return CSSPropertyFontStretch;
+    case AttributeNames::font_styleAttr:
+        return CSSPropertyFontStyle;
+    case AttributeNames::font_variantAttr:
+        return CSSPropertyFontVariant;
+    case AttributeNames::font_weightAttr:
+        return CSSPropertyFontWeight;
+    case AttributeNames::glyph_orientation_horizontalAttr:
+        return CSSPropertyGlyphOrientationHorizontal;
+    case AttributeNames::glyph_orientation_verticalAttr:
+        return CSSPropertyGlyphOrientationVertical;
+    case AttributeNames::image_renderingAttr:
+        return CSSPropertyImageRendering;
+    case AttributeNames::heightAttr:
+        return CSSPropertyHeight;
+    case AttributeNames::kerningAttr:
+        return CSSPropertyKerning;
+    case AttributeNames::letter_spacingAttr:
+        return CSSPropertyLetterSpacing;
+    case AttributeNames::lighting_colorAttr:
+        return CSSPropertyLightingColor;
+    case AttributeNames::marker_endAttr:
+        return CSSPropertyMarkerEnd;
+    case AttributeNames::marker_midAttr:
+        return CSSPropertyMarkerMid;
+    case AttributeNames::marker_startAttr:
+        return CSSPropertyMarkerStart;
+    case AttributeNames::maskAttr:
+        return CSSPropertyMask;
+    case AttributeNames::mask_typeAttr:
+        return CSSPropertyMaskType;
+    case AttributeNames::opacityAttr:
+        return CSSPropertyOpacity;
+    case AttributeNames::overflowAttr:
+        return CSSPropertyOverflow;
+    case AttributeNames::paint_orderAttr:
+        return CSSPropertyPaintOrder;
+    case AttributeNames::pointer_eventsAttr:
+        return CSSPropertyPointerEvents;
+    case AttributeNames::rAttr:
+        return CSSPropertyR;
+    case AttributeNames::rxAttr:
+        return CSSPropertyRx;
+    case AttributeNames::ryAttr:
+        return CSSPropertyRy;
+    case AttributeNames::shape_renderingAttr:
+        return CSSPropertyShapeRendering;
+    case AttributeNames::stop_colorAttr:
+        return CSSPropertyStopColor;
+    case AttributeNames::stop_opacityAttr:
+        return CSSPropertyStopOpacity;
+    case AttributeNames::strokeAttr:
+        return CSSPropertyStroke;
+    case AttributeNames::stroke_dasharrayAttr:
+        return CSSPropertyStrokeDasharray;
+    case AttributeNames::stroke_dashoffsetAttr:
+        return CSSPropertyStrokeDashoffset;
+    case AttributeNames::stroke_linecapAttr:
+        return CSSPropertyStrokeLinecap;
+    case AttributeNames::stroke_linejoinAttr:
+        return CSSPropertyStrokeLinejoin;
+    case AttributeNames::stroke_miterlimitAttr:
+        return CSSPropertyStrokeMiterlimit;
+    case AttributeNames::stroke_opacityAttr:
+        return CSSPropertyStrokeOpacity;
+    case AttributeNames::stroke_widthAttr:
+        return CSSPropertyStrokeWidth;
+    case AttributeNames::text_anchorAttr:
+        return CSSPropertyTextAnchor;
+    case AttributeNames::text_decorationAttr:
+        return CSSPropertyTextDecoration;
+    case AttributeNames::text_renderingAttr:
+        return CSSPropertyTextRendering;
+    case AttributeNames::unicode_bidiAttr:
+        return CSSPropertyUnicodeBidi;
+    case AttributeNames::vector_effectAttr:
+        return CSSPropertyVectorEffect;
+    case AttributeNames::visibilityAttr:
+        return CSSPropertyVisibility;
+    case AttributeNames::widthAttr:
+        return CSSPropertyWidth;
+    case AttributeNames::word_spacingAttr:
+        return CSSPropertyWordSpacing;
+    case AttributeNames::writing_modeAttr:
+        return CSSPropertyWritingMode;
+    case AttributeNames::xAttr:
+        return CSSPropertyX;
+    case AttributeNames::yAttr:
+        return CSSPropertyY;
+    case AttributeNames::transform_originAttr:
+        return CSSPropertyTransformOrigin;
+    default:
+        break;
+    }
+
+    return CSSPropertyInvalid;
 }
 
 bool SVGElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const

@@ -68,7 +68,6 @@ public:
     const ImmutableStyleProperties* presentationalHintStyle() const;
     virtual void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) { }
     virtual const MutableStyleProperties* additionalPresentationalHintStyle() const { return nullptr; }
-    virtual void collectExtraStyleForPresentationalHints(MutableStyleProperties&) { }
 
 protected:
     StyledElement(const QualifiedName& name, Document& document, ConstructionType type)
