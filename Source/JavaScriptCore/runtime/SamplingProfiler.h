@@ -158,7 +158,8 @@ public:
     };
 
     struct UnprocessedStackTrace {
-        Seconds timestamp;
+        MonotonicTime timestamp;
+        Seconds stopwatchTimestamp;
         void* topPC;
         bool topFrameIsLLInt;
         void* llintPC;
@@ -167,7 +168,8 @@ public:
     };
 
     struct StackTrace {
-        Seconds timestamp;
+        MonotonicTime timestamp;
+        Seconds stopwatchTimestamp;
         Vector<StackFrame> frames;
         StackTrace()
         { }
@@ -221,7 +223,6 @@ private:
     Vector<StackTrace> m_stackTraces WTF_GUARDED_BY_LOCK(m_lock);
     Vector<UnprocessedStackTrace> m_unprocessedStackTraces WTF_GUARDED_BY_LOCK(m_lock);
     Seconds m_timingInterval;
-    Seconds m_lastTime WTF_GUARDED_BY_LOCK(m_lock);
     RefPtr<Thread> m_thread;
     RefPtr<Thread> m_jscExecutionThread WTF_GUARDED_BY_LOCK(m_lock);
     HashSet<JSCell*> m_liveCellPointers WTF_GUARDED_BY_LOCK(m_lock);

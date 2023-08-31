@@ -345,8 +345,6 @@ void SamplingProfiler::timerLoop()
 
             if (!m_isPaused && m_jscExecutionThread)
                 takeSample(stackTraceProcessingTime);
-
-            m_lastTime = m_stopwatch->elapsedTime();
         }
 
         // Read section 6.2 of this paper for more elaboration of why we add a random
@@ -363,7 +361,7 @@ void SamplingProfiler::takeSample(Seconds& stackTraceProcessingTime)
 {
     ASSERT(m_lock.isLocked());
     if (m_vm.entryScope) {
-        Seconds nowTime = m_stopwatch->elapsedTime();
+        auto [ nowTime, timestamp ] = m_stopwatch->elapsedTimeAndTimestamp();
 
         Locker machineThreadsLocker { m_vm.heap.machineThreads().getLock() };
         Locker codeBlockSetLocker { m_vm.heap.codeBlockSet().getLock() };
@@ -455,7 +453,7 @@ void SamplingProfiler::takeSample(Seconds& stackTraceProcessingTime)
                     stackTrace.uncheckedAppend(frame);
                 }
 
-                m_unprocessedStackTraces.append(UnprocessedStackTrace { nowTime, machinePC, topFrameIsLLInt, llintPC, regExp, WTFMove(stackTrace) });
+                m_unprocessedStackTraces.append(UnprocessedStackTrace { timestamp, nowTime, machinePC, topFrameIsLLInt, llintPC, regExp, WTFMove(stackTrace) });
 
                 if (didRunOutOfVectorSpace)
                     m_currentFrames.grow(m_currentFrames.size() * 1.25);
@@ -490,6 +488,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
         m_stackTraces.append(StackTrace());
         StackTrace& stackTrace = m_stackTraces.last();
         stackTrace.timestamp = unprocessedStackTrace.timestamp;
+        stackTrace.stopwatchTimestamp = unprocessedStackTrace.stopwatchTimestamp;
 
         auto populateCodeLocation = [] (CodeBlock* codeBlock, JITType jitType, BytecodeIndex bytecodeIndex, StackFrame::CodeLocation& location) {
             if (bytecodeIndex.offset() < codeBlock->instructionsSize()) {
@@ -782,7 +781,6 @@ void SamplingProfiler::noticeVMEntry()
     Locker locker { m_lock };
     ASSERT(m_vm.entryScope);
     noticeCurrentThreadAsJSCExecutionThreadWithLock();
-    m_lastTime = m_stopwatch->elapsedTime();
     createThreadIfNecessary();
 }
 
@@ -1110,7 +1108,7 @@ Ref<JSON::Value> SamplingProfiler::stackTracesAsJSON()
 
     auto stackTraceAsJSON = [&](StackTrace& stackTrace) {
         auto result = JSON::Object::create();
-        result->setDouble("timestamp"_s, stackTrace.timestamp.seconds());
+        result->setDouble("timestamp"_s, stackTrace.timestamp.secondsSinceEpoch().seconds());
         {
             auto frames = JSON::Array::create();
             for (StackFrame& stackFrame : stackTrace.frames)
