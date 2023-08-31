@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <script type="text/javascript">
-  if (window.testRunner)
+  if (window.testRunner) {
       testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+  }
   console.log('The test PASS if it does not crash.')
   requestAnimationFrame(function() {
       document.documentElement.addEventListener("DOMNodeRemoved", function() {
@@ -42,5 +44,8 @@
           document.execCommand('InsertParagraph');
       }, {once: true});
       oElement.outerHTML = "";
+
+      if (window.testRunner)
+          testRunner.notifyDone();
   })
 </script>

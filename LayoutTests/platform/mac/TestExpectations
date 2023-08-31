@@ -2864,9 +2864,6 @@ webkit.org/b/130490 media/video-remote-control-playpause.html [ Pass Timeout Cra
 
 webkit.org/b/260529 [ Ventura+ x86_64 ] animations/suspend-resume-animation-events.html [ Pass Failure ]
 
-# rdar://114291916 (REGRESSION (266884@main): [ Sonoma wk2 ] editing/inserting/insert-paragraph-separator-with-html-elements-crash.html is a consistent failure)
-[ Sonoma+ ] editing/inserting/insert-paragraph-separator-with-html-elements-crash.html [ Failure ]
-
 webkit.org/b/260870 [ Ventura+ ] imported/w3c/web-platform-tests/svg/import/metadata-example-01-t-manual.svg [ Failure ]
 
 webkit.org/b/260912 [ Monterey+ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-1.html [ Timeout ]
