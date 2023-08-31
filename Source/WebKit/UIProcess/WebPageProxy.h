@@ -1076,7 +1076,6 @@ public:
 
 #if PLATFORM(GTK)
     GtkWidget* viewWidget();
-    bool makeGLContextCurrent();
 #endif
 
 #if PLATFORM(GTK) && HAVE(APP_ACCENT_COLORS)

@@ -84,7 +84,6 @@ private:
 #endif
     void realize() override;
     void unrealize() override;
-    bool makeContextCurrent() override;
     void update(const LayerTreeContext&) override;
 
     class RenderSource {
