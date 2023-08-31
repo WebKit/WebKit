@@ -87,6 +87,7 @@ Scope::Scope(ShadowRoot& shadowRoot)
 Scope::~Scope()
 {
     ASSERT(!hasPendingSheets());
+    weakPtrFactory().revokeAll();
 }
 
 Resolver& Scope::resolver()
