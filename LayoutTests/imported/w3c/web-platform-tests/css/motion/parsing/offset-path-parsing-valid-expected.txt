@@ -62,6 +62,6 @@ PASS e.style['offset-path'] = "view-box" should set the property value
 FAIL e.style['offset-path'] = "inset(10% 20% 30% 40%) border-box" should set the property value assert_equals: serialization should be canonical expected "inset(10% 20% 30% 40%)" but got "inset(10% 20% 30% 40%) border-box"
 FAIL e.style['offset-path'] = "fill-box ellipse(50% 60%)" should set the property value assert_equals: serialization should be canonical expected "ellipse(50% 60%) fill-box" but got "fill-box ellipse(50% 60% at 50% 50%)"
 FAIL e.style['offset-path'] = "content-box ellipse(50% 60% at 50% 50%)" should set the property value assert_equals: serialization should be canonical expected "ellipse(50% 60% at 50% 50%) content-box" but got "content-box ellipse(50% 60% at 50% 50%)"
-FAIL e.style['offset-path'] = "ray(0deg) stroke-box" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['offset-path'] = "ray(0deg) stroke-box" should set the property value
 PASS e.style['offset-path'] = "path(\"m 20 0 h -100\") view-box" should set the property value
 

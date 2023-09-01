@@ -74,21 +74,21 @@ const SVGElement* ReferencePathOperation::element() const
     return m_element.get();
 }
 
-Ref<RayPathOperation> RayPathOperation::create(float angle, Size size, bool isContaining, LengthPoint&& position)
+Ref<RayPathOperation> RayPathOperation::create(float angle, Size size, bool isContaining, LengthPoint&& position, CSSBoxType referenceBox)
 {
-    return adoptRef(*new RayPathOperation(angle, size, isContaining, WTFMove(position)));
+    return adoptRef(*new RayPathOperation(angle, size, isContaining, WTFMove(position), referenceBox));
 }
 
 Ref<PathOperation> RayPathOperation::clone() const
 {
     auto position = m_position;
-    return adoptRef(*new RayPathOperation(m_angle, m_size, m_isContaining, WTFMove(position)));
+    return adoptRef(*new RayPathOperation(m_angle, m_size, m_isContaining, WTFMove(position), m_referenceBox));
 }
 
 bool RayPathOperation::canBlend(const PathOperation& to) const
 {
     if (auto* toRayPathOperation = dynamicDowncast<RayPathOperation>(to))
-        return m_size == toRayPathOperation->size() && m_isContaining == toRayPathOperation->isContaining();
+        return m_size == toRayPathOperation->size() && m_isContaining == toRayPathOperation->isContaining() && m_referenceBox == toRayPathOperation->referenceBox();
     return false;
 }
 
@@ -96,7 +96,7 @@ RefPtr<PathOperation> RayPathOperation::blend(const PathOperation* to, const Ble
 {
     ASSERT(is<RayPathOperation>(to));
     auto& toRayPathOperation = downcast<RayPathOperation>(*to);
-    return RayPathOperation::create(WebCore::blend(m_angle, toRayPathOperation.angle(), context), m_size, m_isContaining, WebCore::blend(m_position, toRayPathOperation.position(), context));
+    return RayPathOperation::create(WebCore::blend(m_angle, toRayPathOperation.angle(), context), m_size, m_isContaining, WebCore::blend(m_position, toRayPathOperation.position(), context), m_referenceBox);
 }
 
 const std::optional<Path> RayPathOperation::getPath(const TransformOperationData& data) const

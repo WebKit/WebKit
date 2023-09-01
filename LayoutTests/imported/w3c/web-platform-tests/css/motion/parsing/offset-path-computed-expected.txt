@@ -58,6 +58,6 @@ PASS Property offset-path value 'border-box'
 PASS Property offset-path value 'view-box'
 FAIL Property offset-path value 'inset(10% 20% 30% 40%) border-box' assert_equals: expected "inset(10% 20% 30% 40%)" but got "inset(10% 20% 30% 40%) border-box"
 PASS Property offset-path value 'fill-box ellipse(at 50% 60%)'
-FAIL Property offset-path value 'ray(0deg) stroke-box' assert_true: 'ray(0deg) stroke-box' is a supported value for offset-path. expected true got false
+PASS Property offset-path value 'ray(0deg) stroke-box'
 PASS Property offset-path value 'path("m 20 0 h -100") view-box'
 
