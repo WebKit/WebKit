@@ -170,6 +170,8 @@ public:
 
     WorkerClient* workerClient() { return m_workerClient.get(); }
 
+    void reportErrorToWorkerObject(const String&);
+
 protected:
     WorkerGlobalScope(WorkerThreadType, const WorkerParameters&, Ref<SecurityOrigin>&&, WorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<WorkerClient>&&);
 

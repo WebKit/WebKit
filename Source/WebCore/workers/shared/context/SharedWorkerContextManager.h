@@ -49,7 +49,7 @@ public:
     public:
         virtual ~Connection() { }
         virtual void establishConnection(CompletionHandler<void()>&&) = 0;
-        virtual void postExceptionToWorkerObject(SharedWorkerIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL) = 0;
+        virtual void postErrorToWorkerObject(SharedWorkerIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, bool isErrrorEvent) = 0;
         virtual void sharedWorkerTerminated(SharedWorkerIdentifier) = 0;
         bool isClosed() const { return m_isClosed; }
 

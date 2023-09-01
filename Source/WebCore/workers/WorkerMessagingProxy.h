@@ -62,6 +62,7 @@ private:
     void postMessageToWorkerObject(MessageWithMessagePorts&&) final;
     void postTaskToWorkerObject(Function<void(Worker&)>&&) final;
     void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL) final;
+    void reportErrorToWorkerObject(const String&) final;
     void workerGlobalScopeClosed() final;
     void workerGlobalScopeDestroyed() final;
 

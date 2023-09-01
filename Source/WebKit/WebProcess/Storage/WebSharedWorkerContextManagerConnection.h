@@ -53,7 +53,7 @@ public:
     ~WebSharedWorkerContextManagerConnection();
 
     void establishConnection(CompletionHandler<void()>&&) final;
-    void postExceptionToWorkerObject(WebCore::SharedWorkerIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL) final;
+    void postErrorToWorkerObject(WebCore::SharedWorkerIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, bool isErrorEvent) final;
     void sharedWorkerTerminated(WebCore::SharedWorkerIdentifier) final;
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

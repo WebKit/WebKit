@@ -331,6 +331,17 @@ void WorkerMessagingProxy::postExceptionToWorkerObject(const String& errorMessag
     });
 }
 
+void WorkerMessagingProxy::reportErrorToWorkerObject(const String& errorMessage)
+{
+    if (!m_scriptExecutionContext)
+        return;
+
+    m_scriptExecutionContext->postTask([this,  errorMessage =  errorMessage.isolatedCopy()] (auto&) {
+        if (RefPtr workerObject = this->workerObject())
+            workerObject->reportError(errorMessage);
+    });
+}
+
 void WorkerMessagingProxy::postMessageToDebugger(const String& message)
 {
     RunLoop::main().dispatch([this, protectedThis = Ref { *this }, message = message.isolatedCopy()]() mutable {

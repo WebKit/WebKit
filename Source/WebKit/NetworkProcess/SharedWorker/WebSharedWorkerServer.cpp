@@ -279,16 +279,16 @@ WebSharedWorkerServerToContextConnection* WebSharedWorkerServer::contextConnecti
     return m_contextConnections.get(domain);
 }
 
-void WebSharedWorkerServer::postExceptionToWorkerObject(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL)
+void WebSharedWorkerServer::postErrorToWorkerObject(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, bool isErrorEvent)
 {
     auto* sharedWorker = WebSharedWorker::fromIdentifier(sharedWorkerIdentifier);
-    RELEASE_LOG_ERROR(SharedWorker, "WebSharedWorkerServer::postExceptionToWorkerObject: sharedWorkerIdentifier=%" PRIu64 ", sharedWorker=%p", sharedWorkerIdentifier.toUInt64(), sharedWorker);
+    RELEASE_LOG_ERROR(SharedWorker, "WebSharedWorkerServer::postErrorToWorkerObject: sharedWorkerIdentifier=%" PRIu64 ", sharedWorker=%p", sharedWorkerIdentifier.toUInt64(), sharedWorker);
     if (!sharedWorker)
         return;
 
     sharedWorker->forEachSharedWorkerObject([&](auto sharedWorkerObjectIdentifier, auto&) {
         if (auto* serverConnection = m_connections.get(sharedWorkerObjectIdentifier.processIdentifier()))
-            serverConnection->postExceptionToWorkerObject(sharedWorkerObjectIdentifier, errorMessage, lineNumber, columnNumber, sourceURL);
+            serverConnection->postErrorToWorkerObject(sharedWorkerObjectIdentifier, errorMessage, lineNumber, columnNumber, sourceURL, isErrorEvent);
     });
 }
 
