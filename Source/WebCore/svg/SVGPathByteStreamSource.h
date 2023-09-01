@@ -78,9 +78,7 @@ private:
 
     FloatPoint readFloatPoint()
     {
-        float x = readType<float>();
-        float y = readType<float>();
-        return FloatPoint(x, y);
+        return readType<FloatPoint>();
     }
 
     SVGPathByteStream::DataIterator m_streamCurrent;

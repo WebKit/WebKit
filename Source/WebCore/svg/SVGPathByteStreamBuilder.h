@@ -63,12 +63,6 @@ private:
         m_byteStream.append(std::span { type.bytes, sizeof(ByteType) });
     }
 
-    void writeFloatPoint(const FloatPoint& point)
-    {
-        writeType(point.x());
-        writeType(point.y());
-    }
-
     void writeSegmentType(SVGPathSegType type)
     {
         static_assert(std::is_same_v<std::underlying_type_t<SVGPathSegType>, uint8_t>);
