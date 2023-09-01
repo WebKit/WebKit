@@ -204,6 +204,8 @@ class Tracker(GenericTracker):
         )
         issue._description = '\n'.join([desc.text for desc in radar.description.items()])
         issue._opened = False if radar.state in ('Verify', 'Closed') else True
+        if radar.duplicateOfProblemID is not None:
+            issue._original = self.issue(radar.duplicateOfProblemID)
         issue._creator = self.user(
             name='{} {}'.format(radar.originator.firstName, radar.originator.lastName),
             username=radar.originator.dsid,
@@ -270,7 +272,7 @@ class Tracker(GenericTracker):
 
         return issue
 
-    def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, **properties):
+    def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, original=None, **properties):
         if not self.client or not self.library:
             sys.stderr.write('radarclient inaccessible on this machine\n')
             return None
@@ -302,7 +304,12 @@ class Tracker(GenericTracker):
                 radar.resolution = 'Unresolved'
             else:
                 radar.state = 'Verify'
-                radar.resolution = 'Software Changed'
+                if original:
+                    radar.resolution = 'Duplicate'
+                    radar.duplicateOfProblemID = original.id
+                    issue._original = original
+                else:
+                    radar.resolution = 'Software Changed'
             did_change = True
 
         if project or component or version:

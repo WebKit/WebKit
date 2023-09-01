@@ -265,6 +265,20 @@ class TestBugzilla(unittest.TestCase):
             self.assertTrue(issue.opened)
             self.assertEqual(issue.comments[-1].content, 'Need to revert, fix broke the build')
 
+    def test_duplicate(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )):
+            tracker = bugzilla.Tracker(self.URL)
+            issue = tracker.issue(1)
+            self.assertTrue(issue.opened)
+            self.assertTrue(issue.close(original=tracker.issue(2)))
+            self.assertFalse(issue.opened)
+            self.assertEqual(issue.original, tracker.issue(2))
+
+            self.assertEqual(tracker.issue(1).original, tracker.issue(2))
+
     def test_projects(self):
         with mocks.Bugzilla(self.URL.split('://')[1], projects=mocks.PROJECTS):
             self.assertDictEqual(

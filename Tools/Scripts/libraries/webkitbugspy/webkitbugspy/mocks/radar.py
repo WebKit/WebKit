@@ -179,6 +179,7 @@ class RadarModel(object):
         self.assignee = self.Person(Radar.transform_user(issue['assignee']))
         self.description = self.CollectionProperty(self, self.DescriptionEntry(issue['description']))
         self.state = 'Analyze' if issue['opened'] else 'Verify'
+        self.duplicateOfProblemID = issue['original']['id'] if issue.get('original', None) else None
         self.substate = 'Investigate' if issue['opened'] else None
         self.priority = 2
         self.resolution = 'Unresolved' if issue['opened'] else 'Software Changed'
@@ -235,6 +236,10 @@ class RadarModel(object):
         ]
         self.client.parent.issues[self.id]['assignee'] = self.client.parent.users[self.assignee.dsid]
         self.client.parent.issues[self.id]['opened'] = self.state not in ('Verify', 'Closed')
+        if self.duplicateOfProblemID:
+            if self.duplicateOfProblemID not in self.client.parent.issues:
+                raise ValueError('{} is not a known radar'.format(self.duplicateOfProblemID))
+            self.client.parent.issues[self.id]['original'] = self.client.parent.issues[self.duplicateOfProblemID]
 
         for key in ('milestone', 'category', 'event', 'tentpole'):
             attribute = getattr(self, key, None)

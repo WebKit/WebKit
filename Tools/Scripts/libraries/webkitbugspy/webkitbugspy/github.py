@@ -338,7 +338,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
 
         return issue
 
-    def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, labels=None, **properties):
+    def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, labels=None, original=None, **properties):
         update_dict = dict()
 
         if properties:
@@ -424,7 +424,11 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
                     issue._opened = None
                 return None
 
-        return self.add_comment(issue, why) if why else issue
+        if issue and original:
+            issue = self.add_comment(issue, 'Duplicate of #{}'.format(original.id))
+        if issue and why:
+            issue = self.add_comment(issue, why)
+        return issue
 
     def add_assignees(self, issue, assignees):
         response = self.request(
