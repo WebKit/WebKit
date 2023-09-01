@@ -35,7 +35,10 @@ tags
 .cache
 .clangd
 compile_commands.json
-__pycache__
+__pycache__/
+.coverage
+.tox/
+*.egg-info
 
 # Ignore CMake caches outside of the build directory.
 __cmake_systeminformation/
@@ -71,3 +74,6 @@ Source/ThirdParty/ANGLE/parsetab.py
 
 # Ignore user CMake presets
 CMakeUserPresets.json
+
+# Ignore built Python packages
+/Tools/Scripts/libraries/*/build/
