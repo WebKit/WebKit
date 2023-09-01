@@ -101,7 +101,7 @@ private:
     {
 #ifndef GST_DISABLE_GST_DEBUG
         GUniquePtr<char> versionString(gst_version_string());
-        GST_DEBUG("BaseSinkPositionFlushWorkaroundProbe: running GStreamer %s, the bug fix is was merged in 1.23 and is expected to ship in 1.24.0.", versionString.get());
+        GST_DEBUG("BaseSinkPositionFlushWorkaroundProbe: running %s, the bug fix was merged in 1.23 and is expected to ship in 1.24.0.", versionString.get());
 #endif
         WorkaroundMode mode = getWorkAroundModeFromEnvironment("WEBKIT_GST_WORKAROUND_BASE_SINK_POSITION_FLUSH", WEBKIT_GST_WORKAROUND_BASE_SINK_POSITION_FLUSH_DEFAULT_MODE);
         if (mode == WorkaroundMode::ForceEnable) {
