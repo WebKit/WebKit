@@ -692,6 +692,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
 
 - (CGPoint)_initialContentOffsetForScrollView
 {
+    // FIXME: Should this use -[_scrollView adjustedContentInset]?
     auto combinedUnobscuredAndScrollViewInset = [self _computedContentInset];
     return CGPointMake(-combinedUnobscuredAndScrollViewInset.left, -combinedUnobscuredAndScrollViewInset.top);
 }
@@ -1327,10 +1328,10 @@ static void addOverlayEventRegions(WebCore::PlatformLayerIdentifier layerID, con
     [self _zoomToCenter:visibleRectAfterZoom.center() atScale:scale animated:animated honorScrollability:YES];
 }
 
-static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOffset, WebCore::FloatSize contentSize, WebCore::FloatSize unobscuredContentSize)
+static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOffset, WebCore::FloatPoint minimumContentOffset, WebCore::FloatSize contentSize, WebCore::FloatSize unobscuredContentSize)
 {
     WebCore::FloatSize maximumContentOffset = contentSize - unobscuredContentSize;
-    return contentOffset.constrainedBetween(WebCore::FloatPoint(), WebCore::FloatPoint(maximumContentOffset));
+    return contentOffset.constrainedBetween(minimumContentOffset, WebCore::FloatPoint(maximumContentOffset));
 }
 
 - (void)_scrollToContentScrollPosition:(WebCore::FloatPoint)scrollPosition scrollOrigin:(WebCore::IntPoint)scrollOrigin animated:(BOOL)animated
@@ -1415,6 +1416,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     WebCore::FloatPoint unobscuredContentOffset = unobscuredContentRect.location();
     WebCore::FloatSize contentSize([self._currentContentView bounds].size);
 
+    auto scrollViewInsets = [_scrollView adjustedContentInset];
+    WebCore::FloatPoint minimumContentOffset(-scrollViewInsets.left, -scrollViewInsets.top);
+
     // Center the target rect in the scroll view.
     // If the target doesn't fit in the scroll view, center on the gesture location instead.
     WebCore::FloatPoint newUnobscuredContentOffset;
@@ -1426,14 +1430,14 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         newUnobscuredContentOffset.setY(targetRect.y() - (unobscuredContentRect.height() - targetRect.height()) / 2);
     else
         newUnobscuredContentOffset.setY(origin.y() - unobscuredContentRect.height() / 2);
-    newUnobscuredContentOffset = constrainContentOffset(newUnobscuredContentOffset, contentSize, unobscuredContentRect.size());
+    newUnobscuredContentOffset = constrainContentOffset(newUnobscuredContentOffset, minimumContentOffset, contentSize, unobscuredContentRect.size());
 
     if (unobscuredContentOffset == newUnobscuredContentOffset) {
         if (targetRect.width() > unobscuredContentRect.width())
             newUnobscuredContentOffset.setX(origin.x() - unobscuredContentRect.width() / 2);
         if (targetRect.height() > unobscuredContentRect.height())
             newUnobscuredContentOffset.setY(origin.y() - unobscuredContentRect.height() / 2);
-        newUnobscuredContentOffset = constrainContentOffset(newUnobscuredContentOffset, contentSize, unobscuredContentRect.size());
+        newUnobscuredContentOffset = constrainContentOffset(newUnobscuredContentOffset, minimumContentOffset, contentSize, unobscuredContentRect.size());
     }
 
     WebCore::FloatSize scrollViewOffsetDelta = newUnobscuredContentOffset - unobscuredContentOffset;
