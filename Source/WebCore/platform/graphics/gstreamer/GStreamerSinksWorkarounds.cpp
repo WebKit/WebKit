@@ -280,7 +280,6 @@ bool AppSinkFlushCapsWorkaroundProbe::s_isNeeded;
 
 static void registerAppsinkWithWorkaroundsIfNeededCallOnce()
 {
-    ASSERT(isMainThread());
     // If any workarounds are needed in this system, override GStreamer appsink for a version containing any needed workarounds.
     GST_DEBUG_CATEGORY_INIT(webkit_workarounds_debug, "webkitworkarounds", 0, "WebKit GStreamer Workarounds");
     GST_DEBUG("Checking for potentially needed GStreamer workarounds...");

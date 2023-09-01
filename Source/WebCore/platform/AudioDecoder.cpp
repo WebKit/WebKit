@@ -34,7 +34,6 @@
 #include "GStreamerRegistryScanner.h"
 #endif
 
-#include <wtf/MainThread.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
@@ -52,11 +51,8 @@ bool AudioDecoder::isCodecSupported(const StringView& codec)
 
     bool result = false;
 #if USE(GSTREAMER)
-    // FIXME: Workaround for the "GStreamerSinksWorkarounds" quirks expecting to run in the main thread...
-    callOnMainThreadAndWait([&] {
-        auto& scanner = GStreamerRegistryScanner::singleton();
-        result = scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, codec.toString());
-    });
+    auto& scanner = GStreamerRegistryScanner::singleton();
+    result = scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, codec.toString());
 #endif
 
     return result;

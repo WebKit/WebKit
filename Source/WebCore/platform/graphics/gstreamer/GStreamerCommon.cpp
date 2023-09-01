@@ -263,6 +263,8 @@ Vector<String> extractGStreamerOptionsFromCommandLine()
 
 bool ensureGStreamerInitialized()
 {
+    // WARNING: Please note this function can be called from any thread, for instance when creating
+    // a WebCodec element from a JS Worker.
     RELEASE_ASSERT(isInWebProcess());
     static std::once_flag onceFlag;
     static bool isGStreamerInitialized;
