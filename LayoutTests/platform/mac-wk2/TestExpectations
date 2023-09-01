@@ -2111,3 +2111,5 @@ compositing/visibility/visibility-image-layers-dynamic.html [ Pass Failure ]
 editing/input/caret-at-the-edge-of-contenteditable.html [ Pass ImageOnlyFailure Failure ]
 
 webkit.org/b/261005 swipe/pushState-cached-back-swipe.html [ Pass Failure Timeout ]
+
+webkit.org/b/261041 accessibility/mac/basic-embed-pdf-accessibility.html [ Failure ]
