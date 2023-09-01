@@ -264,7 +264,7 @@ WebGLAny WebGLRenderingContext::getFramebufferAttachmentParameter(GCGLenum targe
     }
 #endif
 
-    RefPtr object = m_framebufferBinding->getAttachmentObject(attachment);
+    auto object = m_framebufferBinding->getAttachmentObject(attachment);
     if (!object) {
         if (pname == GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
             return static_cast<unsigned>(GraphicsContextGL::NONE);
@@ -274,18 +274,19 @@ WebGLAny WebGLRenderingContext::getFramebufferAttachmentParameter(GCGLenum targe
         return nullptr;
     }
 
+    const bool isTexture = std::holds_alternative<RefPtr<WebGLTexture>>(*object);
     switch (pname) {
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
-        if (object->isTexture())
+        if (isTexture)
             return static_cast<unsigned>(GraphicsContextGL::TEXTURE);
         return static_cast<unsigned>(GraphicsContextGL::RENDERBUFFER);
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
-        if (object->isTexture())
-            return static_pointer_cast<WebGLTexture>(WTFMove(object));
-        return static_pointer_cast<WebGLRenderbuffer>(WTFMove(object));
+        if (isTexture)
+            return std::get<RefPtr<WebGLTexture>>(WTFMove(*object));
+        return std::get<RefPtr<WebGLRenderbuffer>>(WTFMove(*object));
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
-        if (!object->isTexture())
+        if (!isTexture)
             break;
         return m_context->getFramebufferAttachmentParameteri(target, attachment, pname);
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT:

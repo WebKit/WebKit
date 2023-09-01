@@ -66,8 +66,6 @@ private:
 
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
 
-    bool isRenderbuffer() const override { return true; }
-
     GCGLenum m_internalFormat { GraphicsContextGL::RGBA4 };
     GCGLsizei m_width { 0 };
     GCGLsizei m_height { 0 };

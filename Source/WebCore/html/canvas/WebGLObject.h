@@ -112,9 +112,6 @@ public:
 
     Lock& objectGraphLockForContext();
 
-    virtual bool isRenderbuffer() const { return false; }
-    virtual bool isTexture() const { return false; }
-
 protected:
     WebGLObject(WebGLRenderingContextBase&, PlatformGLObject);
 
