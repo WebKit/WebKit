@@ -85,8 +85,6 @@ for entry in compile_commands:
                         "file": include_file,
                     })
                     break
-            else:
-                print('Failed to find', include_path)
 
 output_directory = os.path.dirname(args.output_file)
 if not os.path.isdir(output_directory):
