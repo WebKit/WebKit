@@ -2827,7 +2827,7 @@ svg/custom/hidpi-masking-clipping.svg [ Pass ImageOnlyFailure ]
 
 # rdar://110029481 (REGRESSION ( Sonoma ): [ Sonoma ] Two accessibility/mac/ tests are a consistent failure)
 accessibility/mac/basic-embed-pdf-accessibility.html [ Timeout ]
-accessibility/mac/iframe-pdf.html [ Timeout ]
+[ Sonoma+ ] accessibility/mac/iframe-pdf.html [ Timeout ]
 
 # rdar://111077813 (REGRESSION ( Sonoma ): [ Sonoma ] css3/color-filters/color-filter-caret-color.html is a consistent image failure)
 css3/color-filters/color-filter-caret-color.html [ ImageOnlyFailure ]
