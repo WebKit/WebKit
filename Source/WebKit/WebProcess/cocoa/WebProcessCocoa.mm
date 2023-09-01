@@ -209,6 +209,15 @@ void WebProcess::platformSetCacheModel(CacheModel)
 
 id WebProcess::accessibilityFocusedUIElement()
 {
+    auto retrieveFocusedUIElementFromMainThread = [] () {
+        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([] () -> RetainPtr<id> {
+            RefPtr page = WebProcess::singleton().focusedWebPage();
+            if (!page || !page->accessibilityRemoteObject())
+                return nil;
+            return [page->accessibilityRemoteObject() accessibilityFocusedUIElement];
+        });
+    };
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (!isMainRunLoop()) {
         // Avoid hitting the main thread by getting the focused object from the focused isolated tree.
@@ -223,23 +232,19 @@ id WebProcess::accessibilityFocusedUIElement()
             );
             return state.containsAll({ ActivityState::IsVisible, ActivityState::IsFocused, ActivityState::WindowIsActive });
         });
+        auto* isolatedTree = std::get_if<RefPtr<AXIsolatedTree>>(&tree);
+        if (!isolatedTree) {
+            // There is no isolated tree that has focus. This may be because none has been created yet, or because the one previously focused is being destroyed.
+            // In any case, get the focus from the main thread.
+            return retrieveFocusedUIElementFromMainThread();
+        }
 
-        RefPtr object = switchOn(tree,
-            [] (RefPtr<AXIsolatedTree>& typedTree) -> RefPtr<AXIsolatedObject> {
-                return typedTree ? typedTree->focusedNode() : nullptr;
-            }
-            , [] (auto&) -> RefPtr<AXIsolatedObject> {
-                return nullptr;
-            }
-        );
+        RefPtr object = (*isolatedTree)->focusedNode();
         return object ? object->wrapper() : nil;
     }
 #endif
 
-    WebPage* page = WebProcess::singleton().focusedWebPage();
-    if (!page || !page->accessibilityRemoteObject())
-        return nil;
-    return [page->accessibilityRemoteObject() accessibilityFocusedUIElement];
+    return retrieveFocusedUIElementFromMainThread();
 }
 
 #if USE(APPKIT)
