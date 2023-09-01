@@ -272,7 +272,9 @@ Color RenderThemeAdwaita::systemColor(CSSValueID cssValueID, OptionSet<StyleColo
 
     case CSSValueCanvas:
     case CSSValueField:
+#if HAVE(OS_DARK_MODE_SUPPORT)
     case CSSValueWebkitControlBackground:
+#endif
         return useDarkAppearance ? textFieldBackgroundColorDark : textFieldBackgroundColorLight;
 
     case CSSValueWindow:
