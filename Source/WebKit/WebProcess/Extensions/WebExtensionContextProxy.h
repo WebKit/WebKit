@@ -45,6 +45,7 @@ class WebExtensionAPINamespace;
 class WebExtensionMatchPattern;
 class WebFrame;
 struct WebExtensionAlarmParameters;
+struct WebExtensionWindowParameters;
 
 class WebExtensionContextProxy final : public RefCounted<WebExtensionContextProxy>, public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
@@ -92,6 +93,9 @@ private:
 
     // Web Navigation
     void dispatchWebNavigationEvent(WebExtensionEventListenerType, WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
+
+    // Windows
+    void dispatchWindowsEvent(WebExtensionEventListenerType, std::optional<WebExtensionWindowParameters>);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

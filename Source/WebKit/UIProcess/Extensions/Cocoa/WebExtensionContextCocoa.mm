@@ -1307,7 +1307,7 @@ void WebExtensionContext::didOpenWindow(const WebExtensionWindow& window)
     if (!isLoaded())
         return;
 
-    // FIXME: Fire event here.
+    fireWindowsEventIfNeeded(WebExtensionEventListenerType::WindowsOnCreated, window.parameters());
 }
 
 void WebExtensionContext::didCloseWindow(const WebExtensionWindow& window)
@@ -1332,7 +1332,7 @@ void WebExtensionContext::didCloseWindow(const WebExtensionWindow& window)
     if (!isLoaded())
         return;
 
-    // FIXME: Fire event here.
+    fireWindowsEventIfNeeded(WebExtensionEventListenerType::WindowsOnRemoved, window.minimalParameters());
 }
 
 void WebExtensionContext::didFocusWindow(WebExtensionWindow* window)
@@ -1355,7 +1355,7 @@ void WebExtensionContext::didFocusWindow(WebExtensionWindow* window)
     if (!isLoaded())
         return;
 
-    // FIXME: Fire event here.
+    fireWindowsEventIfNeeded(WebExtensionEventListenerType::WindowsOnFocusChanged, window ? std::optional(window->minimalParameters()) : std::nullopt);
 }
 
 void WebExtensionContext::didOpenTab(const WebExtensionTab& tab)

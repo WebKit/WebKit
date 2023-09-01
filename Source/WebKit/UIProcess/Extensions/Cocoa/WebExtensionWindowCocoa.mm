@@ -75,7 +75,6 @@ WebExtensionWindowParameters WebExtensionWindow::parameters(PopulateTabs populat
 
     if (populate == PopulateTabs::Yes) {
         auto tabs = this->tabs();
-
         tabParameters.reserveInitialCapacity(tabs.size());
 
         for (auto& tab : tabs)
@@ -92,6 +91,19 @@ WebExtensionWindowParameters WebExtensionWindow::parameters(PopulateTabs populat
         !CGRectIsNull(frame) ? std::optional(frame) : std::nullopt,
         isFocused(),
         isPrivate()
+    };
+}
+
+WebExtensionWindowParameters WebExtensionWindow::minimalParameters() const
+{
+    return {
+        identifier(),
+        std::nullopt,
+        type(),
+        std::nullopt,
+        std::nullopt,
+        std::nullopt,
+        std::nullopt
     };
 }
 

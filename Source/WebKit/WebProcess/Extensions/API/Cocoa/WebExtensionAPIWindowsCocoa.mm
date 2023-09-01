@@ -35,6 +35,7 @@
 #import "CocoaHelpers.h"
 #import "Logging.h"
 #import "MessageSenderInlines.h"
+#import "WebExtensionAPINamespace.h"
 #import "WebExtensionAPITabs.h"
 #import "WebExtensionAPIWindowsEvent.h"
 #import "WebExtensionContextMessages.h"
@@ -560,6 +561,50 @@ WebExtensionAPIWindowsEvent& WebExtensionAPIWindows::onFocusChanged()
         m_onFocusChanged = WebExtensionAPIWindowsEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WindowsOnFocusChanged);
 
     return *m_onFocusChanged;
+}
+
+inline WebExtensionAPIWindows::WindowTypeFilter toWindowTypeFilter(WebExtensionWindow::Type type)
+{
+    switch (type) {
+    case WebExtensionWindow::Type::Normal:
+        return WebExtensionAPIWindows::WindowTypeFilter::Normal;
+
+    case WebExtensionWindow::Type::Popup:
+        return WebExtensionAPIWindows::WindowTypeFilter::Popup;
+    }
+}
+
+void WebExtensionContextProxy::dispatchWindowsEvent(WebExtensionEventListenerType type, std::optional<WebExtensionWindowParameters> windowParameters)
+{
+    auto filter = windowParameters ? toWindowTypeFilter(windowParameters.value().type.value()) : WebExtensionAPIWindows::WindowTypeFilter::All;
+
+    enumerateNamespaceObjects([&](auto& namespaceObject) {
+        auto& windowsObject = namespaceObject.windows();
+
+        switch (type) {
+        case WebExtensionEventListenerType::WindowsOnCreated:
+            // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows/onCreated
+            ASSERT(windowParameters);
+            windowsObject.onCreated().invokeListenersWithArgument(toWebAPI(windowParameters.value()), filter);
+            break;
+
+        case WebExtensionEventListenerType::WindowsOnFocusChanged:
+            // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows/onFocusChanged
+            ASSERT(!windowParameters || windowParameters.value().identifier);
+            windowsObject.onFocusChanged().invokeListenersWithArgument(@(toWebAPI(windowParameters ? windowParameters.value().identifier.value() : WebExtensionWindowConstants::NoneIdentifier)), filter);
+            break;
+
+        case WebExtensionEventListenerType::WindowsOnRemoved:
+            // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows/onRemoved
+            ASSERT(windowParameters && windowParameters.value().identifier);
+            windowsObject.onRemoved().invokeListenersWithArgument(@(toWebAPI(windowParameters.value().identifier.value())), filter);
+            break;
+
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    });
 }
 
 } // namespace WebKit

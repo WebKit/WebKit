@@ -34,6 +34,9 @@ messages -> WebExtensionContextProxy {
 
     // Web Navigation
     DispatchWebNavigationEvent(WebKit::WebExtensionEventListenerType type, WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
+
+    // Windows
+    DispatchWindowsEvent(WebKit::WebExtensionEventListenerType type, std::optional<WebKit::WebExtensionWindowParameters> windowParameters)
 }
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)
