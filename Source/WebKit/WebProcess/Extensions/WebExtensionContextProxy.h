@@ -84,20 +84,16 @@ public:
 private:
     explicit WebExtensionContextProxy(const WebExtensionContextParameters&);
 
-    // Alarms support
-    void dispatchAlarmEvent(const WebExtensionAlarmParameters&);
+    // Alarms
+    void dispatchAlarmsEvent(const WebExtensionAlarmParameters&);
 
-    // webNavigation support
-    void dispatchWebNavigationOnBeforeNavigateEvent(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
-    void dispatchWebNavigationOnCommittedEvent(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
-    void dispatchWebNavigationOnDOMContentLoadedEvent(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
-    void dispatchWebNavigationOnCompletedEvent(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
-    void dispatchWebNavigationOnErrorOccurredEvent(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
+    // Permissions
+    void dispatchPermissionsEvent(WebExtensionEventListenerType, HashSet<String> permissions, HashSet<String> origins);
 
-    // Permissions support
-    void dispatchPermissionsEvent(const WebExtensionEventListenerType&, HashSet<String> permissions, HashSet<String> origins);
+    // Web Navigation
+    void dispatchWebNavigationEvent(WebExtensionEventListenerType, WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
 
-    // IPC::MessageReceiver.
+    // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     WebExtensionContextIdentifier m_identifier;

@@ -30,9 +30,11 @@
 #import "config.h"
 #import "WebExtensionAPIPermissions.h"
 
+#import "CocoaHelpers.h"
 #import "Logging.h"
 #import "MessageSenderInlines.h"
 #import "WebExtension.h"
+#import "WebExtensionAPINamespace.h"
 #import "WebExtensionContextMessages.h"
 #import "WebProcess.h"
 #import <wtf/cocoa/VectorCocoa.h>
@@ -239,6 +241,33 @@ WebExtensionAPIEvent& WebExtensionAPIPermissions::onRemoved()
         m_onRemoved = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::PermissionsOnRemoved);
 
     return *m_onRemoved;
+}
+
+void WebExtensionContextProxy::dispatchPermissionsEvent(WebExtensionEventListenerType type, HashSet<String> permissions, HashSet<String> origins)
+{
+    auto *permissionDetails = toAPIArray(permissions);
+    auto *originDetails = toAPIArray(origins);
+    auto *details = @{ @"permissions": permissionDetails, @"origins": originDetails };
+
+    enumerateNamespaceObjects([&](auto& namespaceObject) {
+        auto& permissionsObject = namespaceObject.permissions();
+
+        switch (type) {
+        case WebExtensionEventListenerType::PermissionsOnAdded:
+            // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/permissions/onAdded
+            permissionsObject.onAdded().invokeListenersWithArgument(details);
+            break;
+
+        case WebExtensionEventListenerType::PermissionsOnRemoved:
+            // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/permissions/onRemoved
+            permissionsObject.onRemoved().invokeListenersWithArgument(details);
+            break;
+
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    });
 }
 
 } // namespace WebKit

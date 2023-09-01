@@ -175,14 +175,13 @@ WebExtensionAPIEvent& WebExtensionAPIAlarms::onAlarm()
     return *m_onAlarm;
 }
 
-void WebExtensionContextProxy::dispatchAlarmEvent(const WebExtensionAlarmParameters& alarm)
+void WebExtensionContextProxy::dispatchAlarmsEvent(const WebExtensionAlarmParameters& alarm)
 {
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/onAlarm
-
-    NSDictionary *alarmDictionary = toAPI(alarm);
+    auto *details = toAPI(alarm);
 
     enumerateNamespaceObjects([&](auto& namespaceObject) {
-        namespaceObject.alarms().onAlarm().invokeListenersWithArgument(alarmDictionary);
+        // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/onAlarm
+        namespaceObject.alarms().onAlarm().invokeListenersWithArgument(details);
     });
 }
 
