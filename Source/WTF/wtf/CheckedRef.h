@@ -90,16 +90,12 @@ public:
     const T* ptrAllowingHashTableEmptyValue() const { ASSERT(m_ptr || isHashTableEmptyValue()); return PtrTraits::unwrap(m_ptr); }
     T* ptrAllowingHashTableEmptyValue() { ASSERT(m_ptr || isHashTableEmptyValue()); return PtrTraits::unwrap(m_ptr); }
 
-    ALWAYS_INLINE const T* ptr() const { return PtrTraits::unwrap(m_ptr); }
-    ALWAYS_INLINE T* ptr() { return PtrTraits::unwrap(m_ptr); }
-    ALWAYS_INLINE const T& get() const { ASSERT(ptr()); return *ptr(); }
-    ALWAYS_INLINE T& get() { ASSERT(ptr()); return *ptr(); }
-    ALWAYS_INLINE const T* operator->() const { return ptr(); }
-    ALWAYS_INLINE T* operator->() { return ptr(); }
+    ALWAYS_INLINE T* ptr() const { return PtrTraits::unwrap(m_ptr); }
+    ALWAYS_INLINE T& get() const { ASSERT(ptr()); return *ptr(); }
+    ALWAYS_INLINE T* operator->() const { return ptr(); }
 
-    ALWAYS_INLINE operator const T&() const { return get(); }
-    ALWAYS_INLINE operator T&() { return get(); }
-    ALWAYS_INLINE bool operator!() const { return !get(); }
+    ALWAYS_INLINE operator T&() const { return get(); }
+    ALWAYS_INLINE explicit operator bool() const { return get(); }
 
     CheckedRef& operator=(T& reference)
     {
