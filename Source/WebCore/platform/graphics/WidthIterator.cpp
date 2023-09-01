@@ -62,18 +62,16 @@ WidthIterator::WidthIterator(const FontCascade& font, const TextRun& run, HashSe
 }
 
 struct OriginalAdvancesForCharacterTreatedAsSpace {
-    explicit OriginalAdvancesForCharacterTreatedAsSpace(GlyphBufferStringOffset stringOffset, bool isSpace, float advanceBefore, float advanceAt)
+    explicit OriginalAdvancesForCharacterTreatedAsSpace(GlyphBufferStringOffset stringOffset, bool isSpace, float advance)
         : stringOffset(stringOffset)
         , characterIsSpace(isSpace)
-        , advanceBeforeCharacter(advanceBefore)
-        , advanceAtCharacter(advanceAt)
+        , advance(advance)
     {
     }
 
-    GlyphBufferStringOffset stringOffset;
-    bool characterIsSpace;
-    float advanceBeforeCharacter;
-    float advanceAtCharacter;
+    GlyphBufferStringOffset stringOffset { 0 };
+    bool characterIsSpace { false };
+    float advance { 0 };
 };
 
 inline auto WidthIterator::applyFontTransforms(GlyphBuffer& glyphBuffer, unsigned lastGlyphCount, const Font& font, CharactersTreatedAsSpace& charactersTreatedAsSpace) -> ApplyFontTransformsResult
@@ -107,9 +105,7 @@ inline auto WidthIterator::applyFontTransforms(GlyphBuffer& glyphBuffer, unsigne
         if (iterator == charactersTreatedAsSpace.end() || iterator->stringOffset != characterIndex)
             continue;
         const auto& originalAdvances = *iterator;
-        if (i && !originalAdvances.characterIsSpace)
-            setWidth(*glyphBuffer.advances(i - 1), originalAdvances.advanceBeforeCharacter);
-        setWidth(*glyphBuffer.advances(i), originalAdvances.advanceAtCharacter);
+        setWidth(*glyphBuffer.advances(i), originalAdvances.advance);
     }
     charactersTreatedAsSpace.clear();
 
@@ -381,7 +377,6 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
 
     UChar32 character = 0;
     float width = 0;
-    float previousWidth = 0;
     unsigned clusterLength = 0;
     // We are iterating in string order, not glyph order. Compare this to ComplexTextController::adjustGlyphsAndAdvances()
     if (!textIterator.consume(character, clusterLength))
@@ -442,12 +437,11 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
             continue;
         }
 
-        previousWidth = width;
         width = advanceInternalState.nextRangeFont->widthForGlyph(glyph, Font::SyntheticBoldInclusion::Exclude); // We apply synthetic bold after shaping, in applyCSSVisibilityRules().
         advanceInternalState.widthOfCurrentFontRange += width;
 
         if (FontCascade::treatAsSpace(characterToWrite))
-            advanceInternalState.charactersTreatedAsSpace.constructAndAppend(advanceInternalState.currentCharacterIndex, characterToWrite == space, previousWidth, characterToWrite == tabCharacter ? width : advanceInternalState.nextRangeFont->spaceWidth(Font::SyntheticBoldInclusion::Exclude));
+            advanceInternalState.charactersTreatedAsSpace.constructAndAppend(advanceInternalState.currentCharacterIndex, characterToWrite == space, characterToWrite == tabCharacter ? width : advanceInternalState.nextRangeFont->spaceWidth(Font::SyntheticBoldInclusion::Exclude));
 
         if (m_accountForGlyphBounds) {
             bounds = advanceInternalState.nextRangeFont->boundsForGlyph(glyph);

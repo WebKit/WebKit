@@ -10,8 +10,8 @@ layer at (0,0) size 800x2685
         RenderTableSection {TBODY} at (1,1) size 473x106
           RenderTableRow {TR} at (0,2) size 473x24
             RenderTableCell {TH} at (2,2) size 69x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (12,2) size 44x19
-                text run at (12,2) width 44: "Color "
+              RenderText {#text} at (13,2) size 43x19
+                text run at (13,2) width 43: "Color "
             RenderTableCell {TH} at (72,2) size 399x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (166,2) size 66x19
                 text run at (166,2) width 66: "Meaning "
