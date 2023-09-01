@@ -136,7 +136,12 @@ public:
 
     void setReferenceBox(CSSBoxType referenceBox) { m_referenceBox = referenceBox; }
     CSSBoxType referenceBox() const { return m_referenceBox; }
-    const std::optional<Path> getPath(const TransformOperationData& data) const final { return pathForReferenceRect(data.boundingBox()); }
+    const std::optional<Path> getPath(const TransformOperationData& data) const final
+    {
+        if (data.motionPathData())
+            return pathForReferenceRect(data.motionPathData()->containingBlockBoundingRect);
+        return pathForReferenceRect(data.boundingBox());
+    }
 
 private:
     bool operator==(const PathOperation& other) const override

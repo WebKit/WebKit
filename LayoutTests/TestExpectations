@@ -5297,22 +5297,13 @@ imported/w3c/web-platform-tests/css/motion/offset-path-ray-016.html [ ImageOnlyF
 imported/w3c/web-platform-tests/css/motion/offset-path-ray-017.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-ray-018.html [ ImageOnlyFailure ]
 
-# CSS motion path tests for missing <basic-shape> support.
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-001.html [ ImageOnlyFailure ]
+# CSS motion path tests <basic-shape> misc bugs.
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-005.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-ellipse-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-ellipse-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-ellipse-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-ellipse-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-ellipse-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-inset-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-inset-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-polygon-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-polygon-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-polygon-003.html [ ImageOnlyFailure ]
+
+# CSS motion path tests for missing <basic-shape> support.
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-rect-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-rect-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-rect-003.html [ ImageOnlyFailure ]

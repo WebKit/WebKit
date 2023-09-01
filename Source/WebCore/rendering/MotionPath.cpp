@@ -62,6 +62,15 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
         }
         return std::nullopt;
     }
+    if (is<ShapePathOperation>(pathOperation)) {
+        if (auto* container = renderer.containingBlock()) {
+            auto& shapePathOperation = downcast<ShapePathOperation>(*pathOperation);
+            data.containingBlockBoundingRect = snapRectToDevicePixelsIfNeeded(container->referenceBoxRect(shapePathOperation.referenceBox()), downcast<RenderLayerModelObject>(renderer));
+            data.offsetFromContainingBlock = offsetFromContainer(renderer, *container);
+            return data;
+        }
+        return std::nullopt;
+    }
     if (is<RayPathOperation>(pathOperation)) {
         if (auto* container = renderer.containingBlock()) {
             auto& rayPathOperation = downcast<RayPathOperation>(*pathOperation);
@@ -135,7 +144,7 @@ void MotionPath::applyMotionPathTransform(const RenderStyle& style, const Transf
 
 bool MotionPath::needsUpdateAfterContainingBlockLayout(const PathOperation& pathOperation)
 {
-    return is<RayPathOperation>(pathOperation) || is<BoxPathOperation>(pathOperation);
+    return is<RayPathOperation>(pathOperation) || is<BoxPathOperation>(pathOperation) || is<ShapePathOperation>(pathOperation);
 }
 
 double MotionPath::lengthForRayPath(const RayPathOperation& rayPathOperation, const MotionPathData& data)
