@@ -2799,18 +2799,18 @@ Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const TextRun
 
     FloatPoint offset = textOffset(fontWidth, textRun.direction());
 
-    metrics->setActualBoundingBoxAscent(glyphOverflow.top - offset.y());
-    metrics->setActualBoundingBoxDescent(glyphOverflow.bottom + offset.y());
-    metrics->setFontBoundingBoxAscent(fontMetrics.ascent() - offset.y());
-    metrics->setFontBoundingBoxDescent(fontMetrics.descent() + offset.y());
-    metrics->setEmHeightAscent(fontMetrics.ascent() - offset.y());
-    metrics->setEmHeightDescent(fontMetrics.descent() + offset.y());
-    metrics->setHangingBaseline(fontMetrics.ascent() - offset.y());
-    metrics->setAlphabeticBaseline(-offset.y());
-    metrics->setIdeographicBaseline(-fontMetrics.descent() - offset.y());
+    metrics->setActualBoundingBoxAscent(LayoutUnit::fromFloatRound(glyphOverflow.top - offset.y()));
+    metrics->setActualBoundingBoxDescent(LayoutUnit::fromFloatRound(glyphOverflow.bottom + offset.y()));
+    metrics->setFontBoundingBoxAscent(LayoutUnit::fromFloatRound(fontMetrics.floatAscent() - offset.y()));
+    metrics->setFontBoundingBoxDescent(LayoutUnit::fromFloatRound(fontMetrics.floatDescent() + offset.y()));
+    metrics->setEmHeightAscent(LayoutUnit::fromFloatRound(fontMetrics.floatAscent() - offset.y()));
+    metrics->setEmHeightDescent(LayoutUnit::fromFloatRound(fontMetrics.floatDescent() + offset.y()));
+    metrics->setHangingBaseline(LayoutUnit::fromFloatRound(fontMetrics.hangBaselineAboveAlpha() - offset.y()));
+    metrics->setAlphabeticBaseline(LayoutUnit::fromFloatRound(-offset.y()));
+    metrics->setIdeographicBaseline(LayoutUnit::fromFloatRound(fontMetrics.ideogramBaselineAboveAlpha() - offset.y()));
 
-    metrics->setActualBoundingBoxLeft(glyphOverflow.left - offset.x());
-    metrics->setActualBoundingBoxRight(fontWidth + glyphOverflow.right + offset.x());
+    metrics->setActualBoundingBoxLeft(LayoutUnit::fromFloatRound(glyphOverflow.left - offset.x()));
+    metrics->setActualBoundingBoxRight(LayoutUnit::fromFloatRound(fontWidth + glyphOverflow.right + offset.x()));
 
     return metrics;
 }
@@ -2822,15 +2822,19 @@ FloatPoint CanvasRenderingContext2DBase::textOffset(float width, TextDirection d
 
     switch (state().textBaseline) {
     case TopTextBaseline:
+        offset.setY(LayoutUnit::fromFloatRound(fontMetrics.floatAscent()));
+        break;
     case HangingTextBaseline:
-        offset.setY(fontMetrics.ascent());
+        offset.setY(LayoutUnit::fromFloatRound(fontMetrics.hangBaselineAboveAlpha()));
         break;
     case BottomTextBaseline:
+        offset.setY(-LayoutUnit::fromFloatRound(fontMetrics.floatDescent()));
+        break;
     case IdeographicTextBaseline:
-        offset.setY(-fontMetrics.descent());
+        offset.setY(LayoutUnit::fromFloatRound(fontMetrics.ideogramBaselineAboveAlpha()));
         break;
     case MiddleTextBaseline:
-        offset.setY(fontMetrics.height() / 2 - fontMetrics.descent());
+        offset.setY(LayoutUnit::fromFloatRound((fontMetrics.floatAscent() - fontMetrics.floatDescent()) / 2));
         break;
     case AlphabeticTextBaseline:
     default:

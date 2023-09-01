@@ -30,10 +30,20 @@
 #include <CoreGraphics/CoreGraphics.h>
 #include <CoreText/CoreText.h>
 
+#include <optional>
+
 namespace WebCore {
 namespace OpenType {
 
 bool tryGetTypoMetrics(CTFontRef, short& ascent, short& descent, short& lineGap);
+
+struct Baselines {
+    std::optional<short> ideo;
+    std::optional<short> hang;
+    std::optional<short> romn;
+};
+Baselines tryGetBaselineMetrics(CTFontRef);
+
 
 } // namespace OpenType
 } // namespace WebCore

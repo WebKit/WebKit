@@ -125,6 +125,12 @@ public:
     float ideogramWidth() const { return m_ideogramWidth; }
     void setIdeogramWidth(float ideogramWidth) { m_ideogramWidth = ideogramWidth; }
 
+    float ideogramBaselineAboveAlpha() const { return m_ideogramBaselineAboveAlpha; }
+    void setIdeogramBaselineAboveAlpha(float ideogramBaselineAboveAlpha) { m_ideogramBaselineAboveAlpha = ideogramBaselineAboveAlpha; }
+
+    float hangBaselineAboveAlpha() const { return m_hangBaselineAboveAlpha; }
+    void setHangBaselineAboveAlpha(float hangBaselineAboveAlpha) { m_hangBaselineAboveAlpha = hangBaselineAboveAlpha; }
+
     float underlinePosition() const { return m_underlinePosition; }
     void setUnderlinePosition(float underlinePosition) { m_underlinePosition = underlinePosition; }
 
@@ -150,6 +156,8 @@ private:
         m_xHeight = 0;
         m_zeroWidth = std::nullopt;
         m_ideogramWidth = 0;
+        m_ideogramBaselineAboveAlpha = 0;
+        m_hangBaselineAboveAlpha = 0;
         m_underlinePosition = 0;
         m_underlineThickness = 0;
     }
@@ -171,6 +179,8 @@ private:
 
     std::optional<float> m_zeroWidth;
     float m_ideogramWidth { 0 };
+    float m_ideogramBaselineAboveAlpha { 0 };
+    float m_hangBaselineAboveAlpha { 0 };
     float m_xHeight { 0 };
     float m_underlinePosition { 0 };
     float m_underlineThickness { 0 };

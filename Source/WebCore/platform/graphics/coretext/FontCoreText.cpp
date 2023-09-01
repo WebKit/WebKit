@@ -156,14 +156,11 @@ void Font::platformInit()
 
     // The Open Font Format describes the OS/2 USE_TYPO_METRICS flag as follows:
     // "If set, it is strongly recommended to use OS/2.sTypoAscender - OS/2.sTypoDescender+ OS/2.sTypoLineGap as a value for default line spacing for this font."
-    // On OS X, we only apply this rule in the important case of fonts with a MATH table.
-    if (fontHasTable(m_platformData.ctFont(), kCTFontTableMATH)) {
-        short typoAscent, typoDescent, typoLineGap;
-        if (OpenType::tryGetTypoMetrics(m_platformData.font(), typoAscent, typoDescent, typoLineGap)) {
-            ascent = scaleEmToUnits(typoAscent, unitsPerEm) * pointSize;
-            descent = -scaleEmToUnits(typoDescent, unitsPerEm) * pointSize;
-            lineGap = scaleEmToUnits(typoLineGap, unitsPerEm) * pointSize;
-        }
+    short typoAscent, typoDescent, typoLineGap;
+    if (OpenType::tryGetTypoMetrics(m_platformData.font(), typoAscent, typoDescent, typoLineGap)) {
+        ascent = scaleEmToUnits(typoAscent, unitsPerEm) * pointSize;
+        descent = -scaleEmToUnits(typoDescent, unitsPerEm) * pointSize;
+        lineGap = scaleEmToUnits(typoLineGap, unitsPerEm) * pointSize;
     }
 
     auto familyName = adoptCF(CTFontCopyFamilyName(m_platformData.font()));
@@ -181,6 +178,19 @@ void Font::platformInit()
     if (origin() == Origin::Local && needsAscentAdjustment(familyName.get()))
         ascent += std::round((ascent + descent) * 0.15f);
 #endif
+
+    auto baselines = OpenType::tryGetBaselineMetrics(m_platformData.font());
+    CGFloat ideoBaselineAboveAlpha = baselines.ideo ? scaleEmToUnits(*baselines.ideo, unitsPerEm) * pointSize : -descent;
+    CGFloat hangBaselineAboveAlpha = baselines.hang ? scaleEmToUnits(*baselines.hang, unitsPerEm) * pointSize : ascent;
+    if (baselines.romn && *baselines.romn) {
+        CGFloat baselineAdjust = scaleEmToUnits(*baselines.romn, unitsPerEm) * pointSize;
+        if (baselineAdjust) {
+            ascent -= baselineAdjust;
+            descent += baselineAdjust;
+            ideoBaselineAboveAlpha -= baselineAdjust;
+            hangBaselineAboveAlpha -= baselineAdjust;
+        }
+    }
 
     // Compute line spacing before the line metrics hacks are applied.
     float lineSpacing = lroundf(ascent) + lroundf(descent) + lroundf(lineGap);
@@ -248,6 +258,8 @@ void Font::platformInit()
     m_fontMetrics.setLineGap(lineGap);
     m_fontMetrics.setXHeight(xHeight);
     m_fontMetrics.setLineSpacing(lineSpacing);
+    m_fontMetrics.setIdeogramBaselineAboveAlpha(ideoBaselineAboveAlpha);
+    m_fontMetrics.setHangBaselineAboveAlpha(hangBaselineAboveAlpha);
     m_fontMetrics.setUnderlinePosition(-CTFontGetUnderlinePosition(m_platformData.font()));
     m_fontMetrics.setUnderlineThickness(CTFontGetUnderlineThickness(m_platformData.font()));
 }
