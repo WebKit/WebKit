@@ -573,12 +573,12 @@ static RefPtr<Node> firstFollowingSiblingNotInNodeSet(Node& context, const HashS
     return nullptr;
 }
 
-ExceptionOr<RefPtr<Node>> Node::convertNodesOrStringsIntoNode(FixedVector<NodeOrString>&& nodeOrStringVector)
+Vector<Ref<Node>, 1> Node::convertNodesOrStringsIntoNodeVector(FixedVector<NodeOrString>&& nodeOrStringVector)
 {
     if (nodeOrStringVector.isEmpty())
-        return nullptr;
+        return { };
 
-    Vector<Ref<Node>> nodes;
+    Vector<Ref<Node>, 1> nodes;
     nodes.reserveInitialCapacity(nodeOrStringVector.size());
     for (auto& variant : nodeOrStringVector) {
         WTF::switchOn(variant,
@@ -587,11 +587,19 @@ ExceptionOr<RefPtr<Node>> Node::convertNodesOrStringsIntoNode(FixedVector<NodeOr
         );
     }
 
-    if (nodes.size() == 1)
-        return RefPtr<Node> { WTFMove(nodes.first()) };
+    return nodes;
+}
+
+ExceptionOr<RefPtr<Node>> Node::convertNodesOrStringsIntoNode(FixedVector<NodeOrString>&& nodeOrStringVector)
+{
+    auto nodeVector = convertNodesOrStringsIntoNodeVector(WTFMove(nodeOrStringVector));
+    if (nodeVector.isEmpty())
+        return nullptr;
+    if (nodeVector.size() == 1)
+        return RefPtr<Node> { WTFMove(nodeVector[0]) };
 
     auto nodeToReturn = DocumentFragment::create(document());
-    for (auto& node : nodes) {
+    for (auto& node : nodeVector) {
         auto appendResult = nodeToReturn->appendChild(node);
         if (appendResult.hasException())
             return appendResult.releaseException();
