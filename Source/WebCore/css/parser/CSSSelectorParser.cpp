@@ -135,11 +135,6 @@ CSSSelectorList CSSSelectorParser::consumeRelativeSelectorList(CSSParserTokenRan
 
 CSSSelectorList CSSSelectorParser::consumeNestedSelectorList(CSSParserTokenRange& range)
 {
-    // We explicitely avoid starting a nested selector list with ident-like token
-    // This is already handled by parsing algorithm, but the CSSOM can bypass it.
-    if (range.peek().type() == IdentToken || range.peek().type() == FunctionToken)
-        return { };
-
     return consumeSelectorList(range, [&] (CSSParserTokenRange& range) {
         return consumeNestedComplexSelector(range);
     });
