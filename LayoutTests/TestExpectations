@@ -6249,7 +6249,6 @@ imported/w3c/web-platform-tests/wasm/serialization/module/cross-origin-module-sh
 imported/w3c/web-platform-tests/wasm/serialization/module/share-module-cross-origin-fails.sub.html [ Skip ]
 imported/w3c/web-platform-tests/wasm/serialization/module/window-domain-success.sub.html [ Skip ]
 imported/w3c/web-platform-tests/wasm/serialization/module/window-similar-but-cross-origin-success.sub.html [ Skip ]
-imported/w3c/web-platform-tests/webcodecs/videoFrame-serialization.crossAgentCluster.https.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc/RTCConfiguration-iceTransportPolicy.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-onicecandidateerror.https.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-remote-track-mute.https.html [ Skip ]
