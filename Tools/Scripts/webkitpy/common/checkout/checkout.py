@@ -49,8 +49,8 @@ if sys.version_info > (3, 0):
 # FIXME: Move a bunch of ChangeLog-specific processing from SCM to this object.
 # NOTE: All paths returned from this class should be absolute.
 class Checkout(object):
-    COMMIT_SUBJECT_RE = re.compile(b'Subject: \[PATCH ?(\d+\/\d+)?] (.+)')
-    FILTER_BRANCH_PROGRAM = '''import re
+    COMMIT_SUBJECT_RE = re.compile(br'Subject: \[PATCH ?(\d+\/\d+)?] (.+)')
+    FILTER_BRANCH_PROGRAM = r'''import re
 import sys
 
 lines = [l for l in sys.stdin]
