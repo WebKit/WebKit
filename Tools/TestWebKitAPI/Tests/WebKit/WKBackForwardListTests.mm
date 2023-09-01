@@ -331,6 +331,12 @@ static RetainPtr<WKNavigation> lastNavigation;
     return self;
 }
 
+- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
+{
+    EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
+    completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+}
+
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
     _navigated = true;
@@ -598,6 +604,49 @@ TEST(WKBackForwardList, BackForwardNavigationSkipsItemsWithoutUserGestureSubfram
     EXPECT_EQ([webView backForwardList].backList.count, 2U);
     EXPECT_EQ([webView backForwardList].forwardList.count, 0U);
     EXPECT_STREQ([webView URL].absoluteString.UTF8String, server.request("/destination.html"_s).URL.absoluteString.UTF8String);
+}
+
+TEST(WKBackForwardList, BackForwardNavigationSkipsClientSideRedirectWithCOOP)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/source.html"_s, { "<a id='testLink' href='form.html'>click me</a>"_s } },
+        { "/form.html"_s, { "<body><form id='testForm' method='POST' action='redirect.html'><input type='submit' value='submit'></form><script>document.getElementById('testForm').submit()</script></body>"_s } },
+        { "/redirect.html"_s, { { { "Content-Type"_s, "text/html"_s }, { "cross-origin-opener-policy"_s, "same-origin"_s } }, "<head><meta http-equiv='refresh' content='0; url=destination.html'></head>"_s } },
+        { "/destination.html"_s, { "foo"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Https);
+
+    auto webView = adoptNS([[WKWebView alloc] init]);
+
+    auto navigationDelegate = adoptNS([WKBackForwardNavigationDelegate new]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:server.request("/source.html"_s)];
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+
+    [webView evaluateJavaScript:@"document.getElementById('testLink').click()" completionHandler:nil];
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+
+    EXPECT_EQ([webView backForwardList].backList.count, 1U);
+    EXPECT_EQ([webView backForwardList].forwardList.count, 0U);
+    EXPECT_STREQ([webView URL].absoluteString.UTF8String, server.request("/form.html"_s).URL.absoluteString.UTF8String);
+
+    // Wait for form submission to happen.
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+    EXPECT_EQ([webView backForwardList].backList.count, 1U);
+    EXPECT_EQ([webView backForwardList].forwardList.count, 0U);
+    EXPECT_STREQ([webView URL].absoluteString.UTF8String, server.request("/redirect.html"_s).URL.absoluteString.UTF8String);
+
+    // Wait for redirect to finish.
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+    EXPECT_EQ([webView backForwardList].backList.count, 1U);
+    EXPECT_EQ([webView backForwardList].forwardList.count, 0U);
+    EXPECT_STREQ([webView URL].absoluteString.UTF8String, server.request("/destination.html"_s).URL.absoluteString.UTF8String);
+
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+    EXPECT_EQ([webView backForwardList].backList.count, 0U);
+    EXPECT_EQ([webView backForwardList].forwardList.count, 1U);
+    EXPECT_STREQ([webView URL].absoluteString.UTF8String, server.request("/source.html"_s).URL.absoluteString.UTF8String);
 }
 
 static void runBackForwardNavigationDoesNotSkipItemsWithUserGestureTest(Function<void(WKWebView *, ASCIILiteral fragment)>&& navigate)
