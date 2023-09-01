@@ -94,7 +94,7 @@ enum class AvoidanceReason : uint64_t {
     // Unused                                    = 1LLU  << 52,
     // Unused                                    = 1LLU  << 53,
     // Unused                                    = 1LLU  << 54,
-    ChildBoxIsFloatingOrPositioned               = 1LLU  << 55,
+    // Unused                                    = 1LLU  << 55,
     ContentIsSVG                                 = 1LLU  << 56,
     // Unused                                    = 1LLU  << 57,
     // Unused                                    = 1LLU  << 58,
