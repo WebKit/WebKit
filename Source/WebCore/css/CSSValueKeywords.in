@@ -135,6 +135,13 @@ full-width
 proportional-width
 ruby
 
+// font-variant-emoji
+//
+// normal
+// text
+emoji
+unicode
+
 //
 // CSS_PROP_FONT_WEIGHT:
 //

@@ -144,6 +144,7 @@ PASS font-synthesis-weight
 PASS font-variant-alternates
 PASS font-variant-caps
 PASS font-variant-east-asian
+PASS font-variant-emoji
 PASS font-variant-ligatures
 PASS font-variant-numeric
 PASS font-variant-position

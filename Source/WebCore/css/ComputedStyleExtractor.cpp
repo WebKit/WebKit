@@ -3768,6 +3768,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return fontVariantAlternatesPropertyValue(style.fontDescription().variantAlternates());
     case CSSPropertyFontVariantEastAsian:
         return fontVariantEastAsianPropertyValue(style.fontDescription().variantEastAsianVariant(), style.fontDescription().variantEastAsianWidth(), style.fontDescription().variantEastAsianRuby());
+    case CSSPropertyFontVariantEmoji:
+        return createConvertingToCSSValueID(style.fontDescription().variantEmoji());
     case CSSPropertyZIndex:
         if (style.hasAutoSpecifiedZIndex())
             return CSSPrimitiveValue::create(CSSValueAuto);

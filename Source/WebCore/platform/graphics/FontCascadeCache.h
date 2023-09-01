@@ -157,7 +157,8 @@ private:
             | static_cast<unsigned>(description.widthVariant()) << 4
             | static_cast<unsigned>(description.nonCJKGlyphOrientation()) << 3
             | static_cast<unsigned>(description.orientation()) << 2;
-        unsigned second = static_cast<unsigned>(description.variantEastAsianRuby()) << 26
+        unsigned second = static_cast<unsigned>(description.variantEmoji()) << 27
+            | static_cast<unsigned>(description.variantEastAsianRuby()) << 26
             | static_cast<unsigned>(description.variantEastAsianWidth()) << 24
             | static_cast<unsigned>(description.variantEastAsianVariant()) << 21
             // variantAlternates is in the Rare object, it can't be a bitfield.

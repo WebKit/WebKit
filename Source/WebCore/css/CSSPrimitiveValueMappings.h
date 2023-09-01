@@ -2367,6 +2367,12 @@ template<> constexpr FontVariantCaps fromCSSValueID(CSSValueID valueID)
     return FontVariantCaps::Normal;
 }
 
+#define TYPE FontVariantEmoji
+#define FOR_EACH(CASE) CASE(Normal) CASE(Text) CASE(Emoji) CASE(Unicode)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
+
 constexpr CSSValueID toCSSValueID(FontOpticalSizing sizing)
 {
     switch (sizing) {

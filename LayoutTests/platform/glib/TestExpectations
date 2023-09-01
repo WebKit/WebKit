@@ -700,6 +700,8 @@ webkit.org/b/213114 fast/flexbox/line-clamp-with-anchor-content-only.html [ Imag
 webkit.org/b/189483 imported/w3c/web-platform-tests/css/css-fonts/variations/slnt-variable.html [ ImageOnlyFailure ]
 webkit.org/b/189483 imported/w3c/web-platform-tests/css/css-fonts/variations/slnt-backslant-variable.html [ ImageOnlyFailure ]
 
+webkit.org/b/260973 imported/w3c/web-platform-tests/css/css-fonts/font-variant-emoji-2.html [ ImageOnlyFailure ]
+
 # fast/gradients are Skip in the top level Expectation. When fixing, change this to
 # Pass instead of removing this line.
 webkit.org/b/234606 fast/gradients/conic-gradient-alpha-unpremultiplied.html [ ImageOnlyFailure ]

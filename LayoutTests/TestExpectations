@@ -3858,7 +3858,6 @@ webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-face-weig
 
 # Triaged css-fonts failures
 webkit.org/b/246564 imported/w3c/web-platform-tests/css/css-fonts/font-synthesis-small-caps-not-applied.html [ ImageOnlyFailure ]
-webkit.org/b/246911 imported/w3c/web-platform-tests/css/css-fonts/font-variant-emoji-2.html [ ImageOnlyFailure ]
 
 # vert font feature in vertical-text
 webkit.org/b/182042 imported/w3c/web-platform-tests/css/css-fonts/font-default-04.html [ ImageOnlyFailure ]

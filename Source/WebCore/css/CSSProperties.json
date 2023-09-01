@@ -967,6 +967,26 @@
                 "url": "https://drafts.csswg.org/css-fonts-4/#font-variant-east-asian-prop"
             }
         },
+        "font-variant-emoji": {
+            "inherited": true,
+            "values": [
+                "normal",
+                "text",
+                "emoji",
+                "unicode"
+            ],
+            "codegen-properties": {
+                "parser-grammar": "<<values>>",
+                "name-for-methods": "VariantEmoji",
+                "font-property": true,
+                "high-priority": true,
+                "parser-exported": true
+            },
+            "specification": {
+                "category": "css-fonts",
+                "url": "https://drafts.csswg.org/css-fonts/#font-variant-emoji-prop"
+            }
+        },
         "font-synthesis": {
             "inherited": true,
             "codegen-properties": {
@@ -1065,6 +1085,7 @@
                     "font-variant-numeric",
                     "font-variant-east-asian",
                     "font-variant-position",
+                    "font-variant-emoji",
                     "font-feature-settings",
                     {
                         "value": "font-optical-sizing",
@@ -1090,7 +1111,8 @@
                     "font-variant-alternates",
                     "font-variant-numeric",
                     "font-variant-east-asian",
-                    "font-variant-position"
+                    "font-variant-position",
+                    "font-variant-emoji"
                 ]
             },
             "specification": {
