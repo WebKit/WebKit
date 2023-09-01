@@ -36,44 +36,18 @@
 
 namespace WebCore {
 
-struct NumericComponent { float value; };
-
-static NumericComponent numericComponent(float value)
+static String numericComponent(float value)
 {
-    return { value };
+    if (std::isnan(value))
+        return "none"_s;
+    if (std::isfinite(value))
+        return makeString(value);
+    return makeString(
+        "calc("_s,
+        FormattedCSSNumber::create(value),
+        ")"_s
+    );
 }
-
-};
-
-namespace WTF {
-
-template<> class StringTypeAdapter<WebCore::NumericComponent> {
-public:
-    StringTypeAdapter(WebCore::NumericComponent number)
-    {
-        if (std::isnan(number.value)) {
-            m_buffer = { 'n', 'o', 'n', 'e' };
-            m_length = 4;
-        } else {
-            numberToString(number.value, m_buffer);
-            m_length = std::strlen(&m_buffer[0]);
-        }
-    }
-
-    unsigned length() const { return m_length; }
-    bool is8Bit() const { return true; }
-    template<typename CharacterType> void writeTo(CharacterType* destination) const { StringImpl::copyCharacters(destination, buffer(), m_length); }
-
-private:
-    const LChar* buffer() const { return reinterpret_cast<const LChar*>(&m_buffer[0]); }
-
-    NumberToStringBuffer m_buffer;
-    unsigned m_length;
-};
-
-}
-
-namespace WebCore {
 
 static String serializationForCSS(const A98RGB<float>&, bool useColorFunctionSerialization);
 static String serializationForHTML(const A98RGB<float>&, bool useColorFunctionSerialization);
