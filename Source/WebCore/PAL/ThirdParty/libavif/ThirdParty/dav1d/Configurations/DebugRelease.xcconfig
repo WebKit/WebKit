@@ -44,3 +44,6 @@ WK_DEFAULT_LTO_MODE = $(WK_USER_LTO_MODE_none);
 
 WK_CCACHE_DIR = $(SRCROOT)/../../../../../../../Tools/ccache;
 #include "../../../../../../../Tools/ccache/ccache.xcconfig"
+
+WK_SCCACHE_DIR = $(SRCROOT)/../../../../../../../Tools/sccache;
+#include "../../../../../../../Tools/sccache/sccache.xcconfig"

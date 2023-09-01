@@ -23,3 +23,6 @@ MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 
 WK_CCACHE_DIR = $(SRCROOT)/../../../Tools/ccache;
 #include "../../../../Tools/ccache/ccache.xcconfig"
+
+WK_SCCACHE_DIR = $(SRCROOT)/../../../Tools/sccache;
+#include "../../../../Tools/sccache/sccache.xcconfig"

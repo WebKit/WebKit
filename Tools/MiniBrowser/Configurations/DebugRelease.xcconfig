@@ -39,3 +39,6 @@ VALIDATE_DEPENDENCIES_NATIVE_TARGET_YES = $(WK_VALIDATE_DEPENDENCIES);
 
 WK_CCACHE_DIR = $(SRCROOT)/../ccache;
 #include? "../../ccache/ccache.xcconfig"
+
+WK_SCCACHE_DIR = $(SRCROOT)/../sccache;
+#include? "../../sccache/sccache.xcconfig"
