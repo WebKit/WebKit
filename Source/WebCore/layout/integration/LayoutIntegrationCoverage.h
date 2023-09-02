@@ -45,7 +45,7 @@ enum class AvoidanceReason : uint64_t {
     ContentIsRuby                                = 1LLU  << 3,
     // Unused                                    = 1LLU  << 4,
     // Unused                                    = 1LLU  << 5,
-    FlowHasLineClamp                             = 1LLU  << 6,
+    // Unused                                    = 1LLU  << 6,
     // Unused                                    = 1LLU  << 7,
     // Unused                                    = 1LLU  << 8,
     FlowHasNonSupportedChild                     = 1LLU  << 9,
