@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 - 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Holger Hans Peter Freyther
  *
  * This library is free software; you can redistribute it and/or
@@ -23,6 +23,7 @@
 #define WidthIterator_h
 
 #include "GlyphBuffer.h"
+#include "TextDirection.h"
 #include <unicode/umachine.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
@@ -90,6 +91,10 @@ private:
     AdditionalWidth calculateAdditionalWidth(GlyphBuffer&, GlyphBufferStringOffset currentCharacterIndex, unsigned leadingGlyphIndex, unsigned trailingGlyphIndex, float position) const;
     void applyAdditionalWidth(GlyphBuffer&, GlyphIndexRange, float leftAdditionalWidth, float rightAdditionalWidth, float leftExpansionAdditionalWidth, float rightExpansionAdditionalWidth);
 
+    TextDirection direction() const { return m_direction; }
+    bool rtl() const { return m_direction == TextDirection::RTL; }
+    bool ltr() const { return m_direction == TextDirection::LTR; }
+
     const FontCascade& m_font;
     const TextRun& m_run;
     HashSet<const Font*>* m_fallbackFonts { nullptr };
@@ -105,6 +110,7 @@ private:
     float m_minGlyphBoundingBoxY { std::numeric_limits<float>::max() };
     float m_firstGlyphOverflow { 0 };
     float m_lastGlyphOverflow { 0 };
+    TextDirection m_direction { TextDirection::LTR };
     bool m_containsTabs { false };
     bool m_isAfterExpansion { false };
     bool m_accountForGlyphBounds { false };
@@ -113,6 +119,6 @@ private:
     bool m_forTextEmphasis { false };
 };
 
-}
+} // namespace WebCore
 
 #endif
