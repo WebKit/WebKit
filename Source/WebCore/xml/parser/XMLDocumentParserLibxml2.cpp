@@ -463,7 +463,7 @@ static void* openFunc(const char* uri)
 
     CachedResourceLoader& cachedResourceLoader = *XMLDocumentParserScope::currentCachedResourceLoader;
     Document* document = cachedResourceLoader.document();
-    // Same logic as HTMLBaseElement::href(). Keep them in sync.
+    // Same logic as Document::completeURL(). Keep them in sync.
     auto* encoding = (document && document->decoder()) ? document->decoder()->encodingForURLParsing() : nullptr;
     URL url(document ? document->fallbackBaseURL() : URL(), String::fromLatin1(uri), encoding);
 
