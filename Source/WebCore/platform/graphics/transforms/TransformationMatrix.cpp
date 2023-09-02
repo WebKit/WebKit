@@ -292,62 +292,43 @@ static void v3Cross(const Vector3 a, const Vector3 b, Vector3 result)
 
 static bool decompose2(const TransformationMatrix::Matrix4& matrix, TransformationMatrix::Decomposed2Type& result)
 {
-    double row0x = matrix[0][0];
-    double row0y = matrix[0][1];
-    double row1x = matrix[1][0];
-    double row1y = matrix[1][1];
+    // Decompose as per https://github.com/w3c/csswg-drafts/issues/3713
+    // since it's what the other engines do, and what WPT expects.
+    float m11 = matrix[0][0], m12 = matrix[0][1], m21 = matrix[1][0], m22 = matrix[1][1];
+    double determinant = m11 * m22 - m12 * m21;
+    if (!determinant)
+        return false;
+
+    result.scaleX = 1;
+    result.scaleY = 1;
+    if (determinant < 0) {
+        if (m11 < m22)
+            result.scaleX = -1;
+        else
+            result.scaleY = -1;
+    }
+
+    result.scaleX *= std::hypot(m11, m12);
+    m11 /= result.scaleX;
+    m12 /= result.scaleX;
+
+    result.skewXY = m11 * m21 + m12 * m22;
+    m21 -= m11 * result.skewXY;
+    m22 -= m12 * result.skewXY;
+
+    result.scaleY *= std::hypot(m21, m22);
+    m21 /= result.scaleY;
+    m22 /= result.scaleY;
+    result.skewXY /= result.scaleY;
+
+    double rotate = atan2(m12, m11);
+    result.quaternion.x = 0.0;
+    result.quaternion.y = 0.0;
+    result.quaternion.z = sin(rotate / 2);
+    result.quaternion.w = cos(rotate / 2);
+
     result.translateX = matrix[3][0];
     result.translateY = matrix[3][1];
-
-    // Compute scaling factors.
-    result.scaleX = std::hypot(row0x, row0y);
-    result.scaleY = std::hypot(row1x, row1y);
-
-    // If determinant is negative, one axis was flipped.
-    double determinant = row0x * row1y - row0y * row1x;
-    if (determinant < 0) {
-        // Flip axis with minimum unit vector dot product.
-        if (row0x < row1y)
-            result.scaleX = -result.scaleX;
-        else
-            result.scaleY = -result.scaleY;
-    }
-
-    // Renormalize matrix to remove scale.
-    if (result.scaleX) {
-        row0x *= 1 / result.scaleX;
-        row0y *= 1 / result.scaleX;
-    }
-    if (result.scaleY) {
-        row1x *= 1 / result.scaleY;
-        row1y *= 1 / result.scaleY;
-    }
-
-    // Compute rotation and renormalize matrix.
-    result.angle = atan2(row0y, row0x);
-
-    if (result.angle) {
-        // Rotate(-angle) = [cos(angle), sin(angle), -sin(angle), cos(angle)]
-        //                = [row0x, -row0y, row0y, row0x]
-        // Thanks to the normalization above.
-        double sn = -row0y;
-        double cs = row0x;
-        double m11 = row0x, m12 = row0y;
-        double m21 = row1x, m22 = row1y;
-
-        row0x = cs * m11 + sn * m21;
-        row0y = cs * m12 + sn * m22;
-        row1x = -sn * m11 + cs * m21;
-        row1y = -sn * m12 + cs * m22;
-    }
-
-    result.m11 = row0x;
-    result.m12 = row0y;
-    result.m21 = row1x;
-    result.m22 = row1y;
-
-    // Convert into degrees because our rotation functions expect it.
-    result.angle = rad2deg(result.angle);
 
     return true;
 }
@@ -1671,38 +1652,15 @@ void TransformationMatrix::blend2(const TransformationMatrix& from, double progr
         return;
     }
 
-    // If x-axis of one is flipped, and y-axis of the other, convert to an unflipped rotation.
-    if ((fromDecomp.scaleX < 0 && toDecomp.scaleY < 0) || (fromDecomp.scaleY < 0 && toDecomp.scaleX < 0)) {
-        fromDecomp.scaleX = -fromDecomp.scaleX;
-        fromDecomp.scaleY = -fromDecomp.scaleY;
-        fromDecomp.angle += fromDecomp.angle < 0 ? 180 : -180;
-    }
-
-    // Don't rotate the long way around.
-    if (!fromDecomp.angle)
-        fromDecomp.angle = 360;
-    if (!toDecomp.angle)
-        toDecomp.angle = 360;
-
-    if (std::abs(fromDecomp.angle - toDecomp.angle) > 180) {
-        if (fromDecomp.angle > toDecomp.angle)
-            fromDecomp.angle -= 360;
-        else
-            toDecomp.angle -= 360;
-    }
-    
     // When compositeOperation is accumulate, if the decomposed function is a 1-based value (for affine matrix these properties are
     // m11, m22, scaleX and scaleY), use one based accumulation. Otherwise, use behavior for add.
     auto operationForNonOneBasedValues = compositeOperation == CompositeOperation::Accumulate ? CompositeOperation::Add : compositeOperation;
-    blendFloat(fromDecomp.m11, toDecomp.m11, progress, compositeOperation);
-    blendFloat(fromDecomp.m12, toDecomp.m12, progress, operationForNonOneBasedValues);
-    blendFloat(fromDecomp.m21, toDecomp.m21, progress, operationForNonOneBasedValues);
-    blendFloat(fromDecomp.m22, toDecomp.m22, progress, compositeOperation);
+    blendFloat(fromDecomp.skewXY, toDecomp.skewXY, progress, operationForNonOneBasedValues);
     blendFloat(fromDecomp.translateX, toDecomp.translateX, progress, operationForNonOneBasedValues);
     blendFloat(fromDecomp.translateY, toDecomp.translateY, progress, operationForNonOneBasedValues);
     blendFloat(fromDecomp.scaleX, toDecomp.scaleX, progress, compositeOperation);
     blendFloat(fromDecomp.scaleY, toDecomp.scaleY, progress, compositeOperation);
-    blendFloat(fromDecomp.angle, toDecomp.angle, progress, operationForNonOneBasedValues);
+    fromDecomp.quaternion = fromDecomp.quaternion.interpolate(toDecomp.quaternion, progress, compositeOperation);
     recompose2(fromDecomp);
 }
 
@@ -1764,8 +1722,6 @@ bool TransformationMatrix::decompose2(Decomposed2Type& decomp) const
         memset(&decomp, 0, sizeof(decomp));
         decomp.scaleX = 1;
         decomp.scaleY = 1;
-        decomp.m11 = 1;
-        decomp.m22 = 1;
         return true;
     }
 
@@ -1790,13 +1746,17 @@ void TransformationMatrix::recompose2(const Decomposed2Type& decomp)
 {
     makeIdentity();
 
-    m_matrix[0][0] = decomp.m11;
-    m_matrix[0][1] = decomp.m12;
-    m_matrix[1][0] = decomp.m21;
-    m_matrix[1][1] = decomp.m22;
-
     translate3d(decomp.translateX, decomp.translateY, 0);
-    rotate(decomp.angle);
+
+    TransformationMatrix rotationMatrix = TransformationMatrix::fromQuaternion(decomp.quaternion);
+    multiply(rotationMatrix);
+
+    if (decomp.skewXY) {
+        TransformationMatrix tmp;
+        tmp.setM21(decomp.skewXY);
+        multiply(tmp);
+    }
+
     scale3d(decomp.scaleX, decomp.scaleY, 1);
 }
 

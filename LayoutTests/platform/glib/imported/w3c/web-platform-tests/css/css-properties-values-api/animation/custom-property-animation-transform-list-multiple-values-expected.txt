@@ -4,5 +4,5 @@ PASS Animating a custom property of type <transform-list> containing multiple va
 PASS Animating a custom property of type <transform-list> containing multiple values with additivity
 PASS Animating a custom property of type <transform-list> containing multiple values with a single keyframe and additivity
 PASS Animating a custom property of type <transform-list> containing multiple values with iterationComposite
-FAIL Animating a custom property of type <transform-list> containing multiple values and with mismatching list lengths assert_equals: expected "matrix(0, -1.5, 1.5, 0, 50, 0)" but got "matrix(0, 1.5, -1.5, 0, 50, 0)"
+PASS Animating a custom property of type <transform-list> containing multiple values and with mismatching list lengths
 
