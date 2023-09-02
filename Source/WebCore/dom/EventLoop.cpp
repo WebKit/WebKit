@@ -40,6 +40,7 @@ public:
     Type type() const { return m_type; }
     EventLoopTaskGroup* group() const { return m_task ? m_task->group() : nullptr; }
     bool isSuspended() const { return m_suspended; }
+    void execute() { m_task->execute(); }
 
     void stop()
     {
@@ -134,9 +135,8 @@ private:
         if (!m_task)
             return;
         WeakPtr group = m_task->group();
-        m_task->execute();
-        if (group && m_type == Type::OneShot)
-            group->removeScheduledTimer(*this);
+        ASSERT(group);
+        group->executeScheduledTask(*this);
     }
 
     std::unique_ptr<EventLoopTask> m_task;
@@ -483,6 +483,17 @@ EventLoopTimerHandle EventLoopTaskGroup::scheduleTask(Seconds timeout, TaskSourc
     if (m_state == State::Stopped || !m_eventLoop)
         return { };
     return m_eventLoop->scheduleTask(timeout, makeUnique<EventLoopFunctionDispatchTask>(source, *this, WTFMove(function)));
+}
+
+void EventLoopTaskGroup::executeScheduledTask(EventLoopTimer& timer)
+{
+    RefPtr eventLoop = m_eventLoop.get();
+    if (!eventLoop)
+        return;
+    eventLoop->runAllTasksScheduledPriorToTimer(timer);
+    timer.execute();
+    if (timer.type() == EventLoopTimer::Type::OneShot)
+        removeScheduledTimer(timer);
 }
 
 void EventLoopTaskGroup::removeScheduledTimer(EventLoopTimer& timer)

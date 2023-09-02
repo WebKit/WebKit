@@ -127,6 +127,8 @@ public:
     void invalidateNextTimerFireTimeCache() { m_nextTimerFireTimeCache = std::nullopt; }
     Markable<MonotonicTime> nextTimerFireTime() const;
 
+    void runAllTasksScheduledPriorToTimer(EventLoopTimer&) { run(); }
+
 protected:
     EventLoop();
     void scheduleToRunIfNeeded();
@@ -213,7 +215,7 @@ public:
     void runAtEndOfMicrotaskCheckpoint(EventLoop::TaskFunction&&);
 
     EventLoopTimerHandle scheduleTask(Seconds timeout, TaskSource, EventLoop::TaskFunction&&);
-    void didExecuteScheduledTask(EventLoopTimer&);
+    void executeScheduledTask(EventLoopTimer&);
     void removeScheduledTimer(EventLoopTimer&);
 
     EventLoopTimerHandle scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, TaskSource, EventLoop::TaskFunction&&);
