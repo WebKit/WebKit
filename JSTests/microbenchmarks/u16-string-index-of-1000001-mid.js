@@ -1,3 +1,5 @@
+//@ $skipModes << :lockdown if $architecture == "mips"
+
 function bench(string, func)
 {
     for (var i = 0; i < 1000; ++i)

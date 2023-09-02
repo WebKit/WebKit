@@ -1,3 +1,5 @@
+//@ $skipModes << :lockdown
+
 function assertEq(a, b) {
     if (a !== b)
         throw new Error("values not the same: " + a + " and " + b);

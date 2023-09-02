@@ -17,5 +17,8 @@ function shouldThrow(func, errorMessage) {
 
 shouldThrow(() => {
     let x = { toString: () => ''.padEnd(2 ** 31 - 1, 10..toLocaleString()) };
-    [x].join();
+    let y = [x].join();
+    // This is to force the resolution of the rope returned by x.toString() so that we'll
+    // get the OOME even if the slowJoin path is taken.
+    y[y.length - 1];
 }, `RangeError: Out of memory`);

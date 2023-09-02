@@ -365,6 +365,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, forceWeakRandomSeed, false, Normal, nullptr) \
     v(Unsigned, forcedWeakRandomSeed, 0, Normal, nullptr) \
     \
+    v(Bool, alwaysHaveABadTime, false, Normal, "debugging option to test HaveABadTime mode") \
     v(Bool, allowDoubleShape, true, Normal, "debugging option to test disabling use of DoubleShape") \
     v(Bool, useZombieMode, false, Normal, "debugging option to scribble over dead objects with 0xbadbeef0") \
     v(Bool, useImmortalObjects, false, Normal, "debugging option to keep all objects alive forever") \

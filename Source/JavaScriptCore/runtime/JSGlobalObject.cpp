@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1820,6 +1820,9 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     }
 
     fixupPrototypeChainWithObjectPrototype(vm);
+
+    if (UNLIKELY(Options::alwaysHaveABadTime()))
+        this->haveABadTime(vm);
 }
 
 bool JSGlobalObject::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
