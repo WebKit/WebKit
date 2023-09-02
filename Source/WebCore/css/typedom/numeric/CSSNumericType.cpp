@@ -179,18 +179,6 @@ auto CSSNumericType::valueForType(CSSNumericBaseType type) -> BaseTypeStorage&
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-bool CSSNumericType::operator==(const CSSNumericType& other) const
-{
-    return length == other.length
-        && angle == other.angle
-        && time == other.time
-        && frequency == other.frequency
-        && resolution == other.resolution
-        && flex == other.flex
-        && percent == other.percent
-        && percentHint == other.percentHint;
-}
-
 void CSSNumericType::applyPercentHint(CSSNumericBaseType hint)
 {
     // https://drafts.css-houdini.org/css-typed-om/#apply-the-percent-hint

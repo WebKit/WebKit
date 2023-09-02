@@ -1,3 +1,5 @@
+//@ $skipModes << :lockdown
+
 function assert(x, y) {
     if (x != y) {
         $vm.print("actual: ", x);

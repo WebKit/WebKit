@@ -46,7 +46,7 @@ public:
         String host;
         std::optional<uint16_t> port;
 
-        bool operator==(const Tuple& other) const { return protocol == other.protocol && host == other.host && port == other.port; }
+        friend bool operator==(const Tuple&, const Tuple&) = default;
         Tuple isolatedCopy() const & { return { protocol.isolatedCopy(), host.isolatedCopy(), port }; }
         Tuple isolatedCopy() && { return { WTFMove(protocol).isolatedCopy(), WTFMove(host).isolatedCopy(), port }; }
     };

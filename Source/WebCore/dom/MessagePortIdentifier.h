@@ -36,6 +36,8 @@ struct MessagePortIdentifier {
     ProcessIdentifier processIdentifier;
     PortIdentifier portIdentifier;
 
+    friend bool operator==(const MessagePortIdentifier&, const MessagePortIdentifier&) = default;
+
 #if !LOG_DISABLED
     String logString() const;
 #endif
@@ -44,11 +46,6 @@ struct MessagePortIdentifier {
 inline void add(Hasher& hasher, const MessagePortIdentifier& identifier)
 {
     add(hasher, identifier.processIdentifier, identifier.portIdentifier);
-}
-
-inline bool operator==(const MessagePortIdentifier& a, const MessagePortIdentifier& b)
-{
-    return a.processIdentifier == b.processIdentifier &&  a.portIdentifier == b.portIdentifier;
 }
 
 #if !LOG_DISABLED

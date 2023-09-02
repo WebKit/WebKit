@@ -1,0 +1,3 @@
+
+FAIL VTTCue.region, script-created cue The VTTCue.region attribute must be an instance of VTTRegion
+

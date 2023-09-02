@@ -296,17 +296,6 @@ void WebGLFramebuffer::setAttachmentInternal(GCGLenum attachment, AttachmentEntr
     entryAttach(result.iterator->value);
 }
 
-// FIXME: implement RefPtr<>::operator<=> to remove these.
-bool WebGLFramebuffer::TextureAttachment::operator==(const TextureAttachment& other) const
-{
-    return texture == other.texture && texTarget == other.texTarget && level == other.level;
-}
-
-bool WebGLFramebuffer::TextureLayerAttachment::operator==(const TextureLayerAttachment& other) const
-{
-    return texture == other.texture && level == other.level && layer == other.layer;
-}
-
 }
 
 #endif // ENABLE(WEBGL)

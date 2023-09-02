@@ -3713,13 +3713,9 @@ void Document::processBaseElement()
         }
     }
 
-    // FIXME: Since this doesn't share code with completeURL it may not handle encodings correctly.
     URL baseElementURL;
-    if (href) {
-        auto trimmedHref = href->string().trim(isASCIIWhitespace);
-        if (!trimmedHref.isEmpty())
-            baseElementURL = URL(fallbackBaseURL(), trimmedHref);
-    }
+    if (href)
+        baseElementURL = completeURL(href->string(), fallbackBaseURL());
     if (m_baseElementURL != baseElementURL) {
         if (!contentSecurityPolicy()->allowBaseURI(baseElementURL))
             m_baseElementURL = { };
@@ -5891,6 +5887,7 @@ URL Document::completeURL(const String& url, const URL& baseURLOverride, ForceUT
         return URL();
 
     URL baseURL = baseURLForComplete(baseURLOverride);
+    // Same logic as openFunc() in XMLDocumentParserLibxml2.cpp. Keep them in sync.
     if (!m_decoder || forceUTF8 == ForceUTF8::Yes)
         return URL(baseURL, url);
     return URL(baseURL, url, m_decoder->encodingForURLParsing());

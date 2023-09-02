@@ -27,7 +27,7 @@
 
 #include "APIObject.h"
 #include "ContentWorldShared.h"
-#include <wtf/HashSet.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -58,7 +58,7 @@ private:
 
     WebKit::ContentWorldIdentifier m_identifier;
     WTF::String m_name;
-    HashSet<WebKit::WebUserContentControllerProxy*> m_associatedContentControllerProxies;
+    WeakHashSet<WebKit::WebUserContentControllerProxy> m_associatedContentControllerProxies;
 };
 
 } // namespace API

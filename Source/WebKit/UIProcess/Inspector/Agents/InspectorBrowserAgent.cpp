@@ -52,7 +52,7 @@ InspectorBrowserAgent::~InspectorBrowserAgent() = default;
 
 bool InspectorBrowserAgent::enabled() const
 {
-    return m_inspectedPage.inspectorController().enabledBrowserAgent() == this;
+    return m_inspectedPage->inspectorController().enabledBrowserAgent() == this;
 }
 
 void InspectorBrowserAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
@@ -69,7 +69,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorBrowserAgent::enable()
     if (enabled())
         return makeUnexpected("Browser domain already enabled"_s);
 
-    m_inspectedPage.inspectorController().setEnabledBrowserAgent(this);
+    m_inspectedPage->inspectorController().setEnabledBrowserAgent(this);
 
     return { };
 }
@@ -79,7 +79,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorBrowserAgent::disable()
     if (!enabled())
         return makeUnexpected("Browser domain already disabled"_s);
 
-    m_inspectedPage.inspectorController().setEnabledBrowserAgent(nullptr);
+    m_inspectedPage->inspectorController().setEnabledBrowserAgent(nullptr);
 
     return { };
 }

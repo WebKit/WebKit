@@ -894,7 +894,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
         m_client->enqueueSecurityPolicyViolationEvent(WTFMove(violationEventInit));
     else {
         auto& document = downcast<Document>(*m_scriptExecutionContext);
-        if (element && element->document() == document)
+        if (element && &element->document() == &document)
             element->enqueueSecurityPolicyViolationEvent(WTFMove(violationEventInit));
         else
             document.enqueueSecurityPolicyViolationEvent(WTFMove(violationEventInit));

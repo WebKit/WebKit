@@ -88,7 +88,7 @@ public:
     void setStart(const T& start, WritingMode writingMode, TextDirection direction = TextDirection::LTR) { this->start(writingMode, direction) = start; }
     void setEnd(const T& end, WritingMode writingMode, TextDirection direction = TextDirection::LTR) { this->end(writingMode, direction) = end; }
 
-    bool operator==(const RectEdges& other) const { return m_sides == other.m_sides; }
+    friend bool operator==(const RectEdges&, const RectEdges&) = default;
 
     bool isZero() const
     {

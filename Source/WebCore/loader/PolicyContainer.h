@@ -39,17 +39,11 @@ struct PolicyContainer {
     CrossOriginOpenerPolicy crossOriginOpenerPolicy;
     ReferrerPolicy referrerPolicy = ReferrerPolicy::Default;
 
+    friend bool operator==(const PolicyContainer&, const PolicyContainer&) = default;
+
     PolicyContainer isolatedCopy() const & { return { contentSecurityPolicyResponseHeaders.isolatedCopy(), crossOriginEmbedderPolicy.isolatedCopy(), crossOriginOpenerPolicy.isolatedCopy(), referrerPolicy }; }
     PolicyContainer isolatedCopy() && { return { WTFMove(contentSecurityPolicyResponseHeaders).isolatedCopy(), WTFMove(crossOriginEmbedderPolicy).isolatedCopy(), WTFMove(crossOriginOpenerPolicy).isolatedCopy(), referrerPolicy }; }
 };
-
-inline bool operator==(const PolicyContainer& a, const PolicyContainer& b)
-{
-    return a.contentSecurityPolicyResponseHeaders == b.contentSecurityPolicyResponseHeaders
-        && a.crossOriginEmbedderPolicy == b.crossOriginEmbedderPolicy
-        && a.crossOriginOpenerPolicy == b.crossOriginOpenerPolicy
-        && a.referrerPolicy == b.referrerPolicy;
-}
 
 WEBCORE_EXPORT void addPolicyContainerHeaders(ResourceResponse&, const PolicyContainer&);
 

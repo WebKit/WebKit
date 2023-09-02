@@ -87,9 +87,7 @@ String HTMLBaseElement::href() const
     if (url.isNull())
         url = emptyAtom();
 
-    // Same logic as openFunc() in XMLDocumentParserLibxml2.cpp. Keep them in sync.
-    auto* encoding = document().decoder() ? document().decoder()->encodingForURLParsing() : nullptr;
-    URL urlRecord(document().fallbackBaseURL(), url, encoding);
+    auto urlRecord = document().completeURL(url, document().fallbackBaseURL());
     if (!urlRecord.isValid())
         return url;
 

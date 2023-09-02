@@ -183,7 +183,7 @@ private:
         ASSERT_UNUSED(offset, m_pointer + offset <= threadGlobalTimerHeap().data() + threadGlobalTimerHeap().size());
     }
 
-    friend bool operator==(TimerHeapIterator, TimerHeapIterator);
+    friend bool operator==(TimerHeapIterator, TimerHeapIterator) = default;
     friend bool operator<(TimerHeapIterator, TimerHeapIterator);
     friend bool operator>(TimerHeapIterator, TimerHeapIterator);
     friend bool operator<=(TimerHeapIterator, TimerHeapIterator);
@@ -198,7 +198,6 @@ private:
     RefPtr<ThreadTimerHeapItem>* m_pointer;
 };
 
-inline bool operator==(TimerHeapIterator a, TimerHeapIterator b) { return a.m_pointer == b.m_pointer; }
 inline bool operator<(TimerHeapIterator a, TimerHeapIterator b) { return a.m_pointer < b.m_pointer; }
 inline bool operator>(TimerHeapIterator a, TimerHeapIterator b) { return a.m_pointer > b.m_pointer; }
 inline bool operator<=(TimerHeapIterator a, TimerHeapIterator b) { return a.m_pointer <= b.m_pointer; }

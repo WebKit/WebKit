@@ -59,13 +59,13 @@ public:
         RefPtr<WebGLTexture> texture;
         GCGLenum texTarget;
         GCGLint level;
-        bool operator==(const TextureAttachment&) const;
+        friend bool operator==(const TextureAttachment&, const TextureAttachment&) = default;
     };
     struct TextureLayerAttachment {
         RefPtr<WebGLTexture> texture;
         GCGLint level;
         GCGLint layer;
-        bool operator==(const TextureLayerAttachment&) const;
+        friend bool operator==(const TextureLayerAttachment&, const TextureLayerAttachment&) = default;
     };
     using AttachmentEntry = std::variant<RefPtr<WebGLRenderbuffer>, TextureAttachment, TextureLayerAttachment>;
 

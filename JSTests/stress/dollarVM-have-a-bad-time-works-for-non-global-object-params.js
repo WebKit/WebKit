@@ -1,3 +1,5 @@
+//@ $skipModes << :lockdown
+
 let OtherArray = $vm.createGlobalObject().Array;
 if ($vm.isHavingABadTime(OtherArray))
     throw new Error();

@@ -40,6 +40,8 @@ struct SimpleRange {
 
     bool collapsed() const { return start == end; }
 
+    friend bool operator==(const SimpleRange&, const SimpleRange&) = default;
+
     WEBCORE_EXPORT SimpleRange(const BoundaryPoint&, const BoundaryPoint&);
     WEBCORE_EXPORT SimpleRange(BoundaryPoint&&, BoundaryPoint&&);
 };
@@ -60,8 +62,6 @@ template<typename ...T> auto makeSimpleRange(T&& ...arguments) -> decltype(makeS
 // FIXME: Would like these two functions to have shorter names; another option is to change prefix to makeSimpleRange.
 WEBCORE_EXPORT std::optional<SimpleRange> makeRangeSelectingNode(Node&);
 WEBCORE_EXPORT SimpleRange makeRangeSelectingNodeContents(Node&);
-
-WEBCORE_EXPORT bool operator==(const SimpleRange&, const SimpleRange&);
 
 template<TreeType = Tree> Node* commonInclusiveAncestor(const SimpleRange&);
 

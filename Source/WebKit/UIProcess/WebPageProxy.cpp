@@ -2069,12 +2069,9 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListItem
             m_backForwardList->goToItem(item);
     }
 
-    RefPtr<API::Navigation> navigation;
-    if (!m_backForwardList->currentItem()->itemIsInSameDocument(item))
-        navigation = m_navigationState->createBackForwardNavigation(process().coreProcessIdentifier(), item, m_backForwardList->currentItem(), frameLoadType);
-
+    auto navigation = m_navigationState->createBackForwardNavigation(process().coreProcessIdentifier(), item, m_backForwardList->currentItem(), frameLoadType);
     auto transaction = internals().pageLoadState.transaction();
-    internals().pageLoadState.setPendingAPIRequest(transaction, { navigation ? navigation->navigationID() : 0, item.url() });
+    internals().pageLoadState.setPendingAPIRequest(transaction, { navigation->navigationID(), item.url() });
 
     m_process->markProcessAsRecentlyUsed();
 
@@ -2083,10 +2080,10 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListItem
     topPrivatelyControlledDomain = WebCore::topPrivatelyControlledDomain(URL(item.url()).host().toString());
 #endif
     
-    send(Messages::WebPage::GoToBackForwardItem({ navigation ? navigation->navigationID() : 0, item.itemID(), frameLoadType, ShouldTreatAsContinuingLoad::No, std::nullopt, m_lastNavigationWasAppInitiated, std::nullopt, topPrivatelyControlledDomain, { } }));
+    send(Messages::WebPage::GoToBackForwardItem({ navigation->navigationID(), item.itemID(), frameLoadType, ShouldTreatAsContinuingLoad::No, std::nullopt, m_lastNavigationWasAppInitiated, std::nullopt, topPrivatelyControlledDomain, { } }));
     m_process->startResponsivenessTimer();
 
-    return navigation;
+    return RefPtr<API::Navigation> { WTFMove(navigation) };
 }
 
 void WebPageProxy::tryRestoreScrollPosition()

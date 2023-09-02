@@ -46,11 +46,6 @@ SimpleRange::SimpleRange(BoundaryPoint&& start, BoundaryPoint&& end)
 {
 }
 
-bool operator==(const SimpleRange& a, const SimpleRange& b)
-{
-    return a.start == b.start && a.end == b.end;
-}
-
 std::optional<SimpleRange> makeRangeSelectingNode(Node& node)
 {
     auto parent = node.parentNode();

@@ -42,7 +42,7 @@ WKTypeID WKInspectorGetTypeID()
 
 WKPageRef WKInspectorGetPage(WKInspectorRef inspectorRef)
 {
-    return toAPI(toImpl(inspectorRef)->inspectedPage());
+    return toAPI(toImpl(inspectorRef)->inspectedPage().get());
 }
 
 bool WKInspectorIsConnected(WKInspectorRef inspectorRef)

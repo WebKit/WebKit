@@ -57,17 +57,10 @@ String serializationForCSS(const CSSUnresolvedColorMix& unresolved)
     return builder.toString();
 }
 
-static bool operator==(const CSSUnresolvedColorMix::Component& a, const CSSUnresolvedColorMix::Component& b)
+bool operator==(const CSSUnresolvedColorMix::Component& a, const CSSUnresolvedColorMix::Component& b)
 {
     return compareCSSValue(a.color, b.color)
         && compareCSSValuePtr(a.percentage, b.percentage);
-}
-
-bool operator==(const CSSUnresolvedColorMix& a, const CSSUnresolvedColorMix& b)
-{
-    return a.colorInterpolationMethod == b.colorInterpolationMethod
-        && a.mixComponents1 == b.mixComponents1
-        && a.mixComponents2 == b.mixComponents2;
 }
 
 StyleColor createStyleColor(const CSSUnresolvedColorMix& unresolved, const Document& document, RenderStyle& style, Style::ForVisitedLink forVisitedLink)

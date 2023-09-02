@@ -28,6 +28,21 @@ The element losts a renderer. The element state should not be changed.
 PASS number.style.display = "none"; number.validity.badInput is true
 A bad input should be cleared by value="".
 PASS number.value = ""; document.execCommand("SelectAll"); document.getSelection().toString() is ""
+' ' is not a badInput.
+PASS number.validity.badInput is false
+PASS number.value is ""
+' +' is a badInput.
+PASS number.validity.badInput is true
+PASS number.value is ""
+' +1' is not a badInput.
+PASS number.validity.badInput is false
+PASS number.value is "1"
+' +1.' is not a badInput.
+PASS number.validity.badInput is false
+PASS number.value is "1"
+' +1. ' is not a badInput.
+PASS number.validity.badInput is false
+PASS number.value is "1"
 PASS successfullyParsed is true
 
 TEST COMPLETE

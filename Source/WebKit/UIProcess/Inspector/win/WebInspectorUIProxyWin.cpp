@@ -259,7 +259,7 @@ WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
     preferences->setLogsPageMessagesToSystemConsoleEnabled(true);
 #endif
     preferences->setJavaScriptRuntimeFlags({ });
-    auto pageGroup = WebPageGroup::create(WebKit::defaultInspectorPageGroupIdentifierForPage(inspectedPage()));
+    auto pageGroup = WebPageGroup::create(WebKit::defaultInspectorPageGroupIdentifierForPage(inspectedPage().get()));
     auto pageConfiguration = API::PageConfiguration::create();
     pageConfiguration->setProcessPool(&WebKit::defaultInspectorProcessPool(inspectionLevel()));
     pageConfiguration->setPreferences(preferences.ptr());

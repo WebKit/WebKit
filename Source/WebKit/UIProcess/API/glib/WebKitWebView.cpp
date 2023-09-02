@@ -4106,7 +4106,7 @@ static void webkitWebViewEvaluateJavascriptInternal(WebKitWebView* webView, cons
  *     } else {
  *         g_warning ("Error running javascript: unexpected return value");
  *     }
- *     webkit_javascript_result_unref (js_result);
+ *     g_object_unref (value);
  * }
  *
  * static void
@@ -4245,7 +4245,7 @@ static void webkitWebViewCallAsyncJavascriptFunctionInternal(WebKitWebView* webV
  *     } else {
  *         g_warning ("Error running javascript: unexpected return value");
  *     }
- *     webkit_javascript_result_unref (js_result);
+ *     g_object_unref (value);
  * }
  *
  * static void

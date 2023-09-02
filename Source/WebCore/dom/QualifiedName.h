@@ -86,7 +86,7 @@ public:
     explicit QualifiedName(WTF::HashTableDeletedValueType) : m_impl(WTF::HashTableDeletedValue) { }
     bool isHashTableDeletedValue() const { return m_impl.isHashTableDeletedValue(); }
 
-    bool operator==(const QualifiedName& other) const { return m_impl == other.m_impl; }
+    friend bool operator==(const QualifiedName&, const QualifiedName&) = default;
 
     bool matches(const QualifiedName& other) const { return m_impl == other.m_impl || (localName() == other.localName() && namespaceURI() == other.namespaceURI()); }
 
