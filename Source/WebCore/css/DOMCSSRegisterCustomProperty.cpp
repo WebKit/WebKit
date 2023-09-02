@@ -43,6 +43,8 @@
 namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DOMCSSRegisterCustomProperty);
 
+using namespace Style;
+
 ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& document, const DOMCSSCustomPropertyDescriptor& descriptor)
 {
     if (!isCustomPropertyName(descriptor.name))
@@ -56,29 +58,34 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
         return Exception { SyntaxError, "An initial value is mandatory except for the '*' syntax."_s };
 
     RefPtr<CSSCustomPropertyValue> initialValue;
+    RefPtr<CSSVariableData> initialValueTokensForViewportUnits;
+
     if (!descriptor.initialValue.isNull()) {
         CSSTokenizer tokenizer(descriptor.initialValue);
 
-        auto dependencies = CSSPropertyParser::collectParsedCustomPropertyValueDependencies(*syntax, tokenizer.tokenRange(), strictCSSParserContext());
+        auto parsedInitialValue = CustomPropertyRegistry::parseInitialValue(document, descriptor.name, *syntax, tokenizer.tokenRange());
 
-        if (!dependencies.isEmpty())
-            return Exception { SyntaxError, "The given initial value must be computationally independent."_s };
+        if (!parsedInitialValue) {
+            if (parsedInitialValue.error() == CustomPropertyRegistry::ParseInitialValueError::NotComputationallyIndependent)
+                return Exception { SyntaxError, "The given initial value must be computationally independent."_s };
 
-        // We don't need to provide a real context style since only computationally independent values are allowed (no 'em' etc).
-        auto placeholderStyle = RenderStyle::create();
-        Style::Builder builder { placeholderStyle, { document, RenderStyle::defaultStyle() }, { }, { } };
-
-        initialValue = CSSPropertyParser::parseTypedCustomPropertyInitialValue(descriptor.name, *syntax, tokenizer.tokenRange(), builder.state(), { document });
-
-        if (!initialValue)
+            ASSERT(parsedInitialValue.error() == CustomPropertyRegistry::ParseInitialValueError::DidNotParse);
             return Exception { SyntaxError, "The given initial value does not parse for the given syntax."_s };
+        }
+
+        initialValue = parsedInitialValue->first;
+        if (parsedInitialValue->second == CustomPropertyRegistry::ViewportUnitDependency::Yes) {
+            initialValueTokensForViewportUnits = CSSVariableData::create(tokenizer.tokenRange());
+            document.setHasStyleWithViewportUnits();
+        }
     }
 
     auto property = CSSRegisteredCustomProperty {
         descriptor.name,
         *syntax,
         descriptor.inherits,
-        WTFMove(initialValue)
+        WTFMove(initialValue),
+        WTFMove(initialValueTokensForViewportUnits)
     };
 
     auto& registry = document.styleScope().customPropertyRegistry();

@@ -50,14 +50,20 @@ public:
 
     const RenderStyle& initialValuePrototypeStyle() const;
 
+    bool invalidatePropertiesWithViewportUnits(Document&);
+
+    enum class ViewportUnitDependency : bool { No, Yes };
+    enum class ParseInitialValueError : uint8_t { NotComputationallyIndependent, DidNotParse };
+    static Expected<std::pair<RefPtr<CSSCustomPropertyValue>, ViewportUnitDependency>, ParseInitialValueError> parseInitialValue(const Document&, const AtomString& propertyName, const CSSCustomPropertySyntax&, CSSParserTokenRange);
+
 private:
     void invalidate(const AtomString&);
     void notifyAnimationsOfCustomPropertyRegistration(const AtomString&);
 
     Scope& m_scope;
 
-    HashMap<AtomString, std::unique_ptr<const CSSRegisteredCustomProperty>> m_propertiesFromAPI;
-    HashMap<AtomString, std::unique_ptr<const CSSRegisteredCustomProperty>> m_propertiesFromStylesheet;
+    HashMap<AtomString, UniqueRef<CSSRegisteredCustomProperty>> m_propertiesFromAPI;
+    HashMap<AtomString, UniqueRef<CSSRegisteredCustomProperty>> m_propertiesFromStylesheet;
 
     mutable std::unique_ptr<RenderStyle> m_initialValuePrototypeStyle;
     mutable bool m_hasInvalidPrototypeStyle { false };

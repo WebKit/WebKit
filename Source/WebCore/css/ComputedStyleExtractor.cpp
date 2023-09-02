@@ -59,6 +59,7 @@
 #include "FontCascade.h"
 #include "FontSelectionValueInlines.h"
 #include "GridPositionsResolver.h"
+#include "HTMLFrameOwnerElement.h"
 #include "MotionPath.h"
 #include "NodeRenderStyle.h"
 #include "PerspectiveTransformOperation.h"
@@ -2799,6 +2800,15 @@ RefPtr<CSSValue> ComputedStyleExtractor::customPropertyValue(const AtomString& p
     if (!style)
         return nullptr;
 
+    auto& document = styledElement->document();
+
+    if (document.hasStyleWithViewportUnits()) {
+        if (RefPtr owner = document.ownerElement()) {
+            owner->document().updateLayout();
+            style = computeRenderStyleForProperty(*styledElement, m_pseudoElementSpecifier, CSSPropertyCustom, ownedStyle, nullptr);
+        }
+    }
+
     auto* value = style->customPropertyValue(propertyName);
 
     return const_cast<CSSCustomPropertyValue*>(value);
@@ -2853,6 +2863,8 @@ static Ref<CSSFontValue> fontShorthandValue(const RenderStyle& style, ComputedSt
     return computedFont;
 }
 
+enum class ForcedLayout : uint8_t { No, Yes, ParentDocument };
+
 RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID, UpdateLayout updateLayout, PropertyValueType valueType) const
 {
     auto* styledElement = m_element.get();
@@ -2869,7 +2881,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
 
     std::unique_ptr<RenderStyle> ownedStyle;
     const RenderStyle* style = nullptr;
-    bool forceFullLayout = false;
+    auto forcedLayout = ForcedLayout::No;
+
     if (updateLayout == UpdateLayout::Yes) {
         Document& document = m_element->document();
 
@@ -2879,26 +2892,36 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
 
         style = computeRenderStyleForProperty(*styledElement, m_pseudoElementSpecifier, propertyID, ownedStyle, styledRenderer());
 
-        forceFullLayout = [&] {
+        forcedLayout = [&] {
             // FIXME: Some of these cases could be narrowed down or optimized better.
             if (isLayoutDependent(propertyID, style, styledRenderer()))
-                return true;
+                return ForcedLayout::Yes;
             // FIXME: Why?
             if (styledElement->isInShadowTree())
-                return true;
+                return ForcedLayout::Yes;
             if (!document.ownerElement())
-                return false;
+                return ForcedLayout::No;
             if (!document.styleScope().resolverIfExists())
-                return false;
-            auto& ruleSets = document.styleScope().resolverIfExists()->ruleSets();
-            return ruleSets.hasViewportDependentMediaQueries() || ruleSets.hasContainerQueries();
+                return ForcedLayout::No;
+            if (auto& ruleSets = document.styleScope().resolverIfExists()->ruleSets(); ruleSets.hasViewportDependentMediaQueries() || ruleSets.hasContainerQueries())
+                return ForcedLayout::Yes;
+            // FIXME: Can we limit this to properties whose computed length value derived from a viewport unit?
+            if (document.hasStyleWithViewportUnits())
+                return ForcedLayout::ParentDocument;
+            return ForcedLayout::No;
         }();
 
-        if (forceFullLayout)
+        if (forcedLayout == ForcedLayout::Yes)
             document.updateLayoutIgnorePendingStylesheets();
+        else if (forcedLayout == ForcedLayout::ParentDocument) {
+            if (RefPtr owner = document.ownerElement())
+                owner->document().updateLayout();
+            else
+                forcedLayout = ForcedLayout::No;
+        }
     }
 
-    if (updateLayout == UpdateLayout::No || forceFullLayout)
+    if (updateLayout == UpdateLayout::No || forcedLayout != ForcedLayout::No)
         style = computeRenderStyleForProperty(*styledElement, m_pseudoElementSpecifier, propertyID, ownedStyle, styledRenderer());
 
     if (!style)
