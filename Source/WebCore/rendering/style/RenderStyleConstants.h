@@ -243,9 +243,9 @@ enum class Float : uint8_t {
 };
 
 enum class UsedFloat : uint8_t {
-    None,
-    Left,
-    Right,
+    None  = 1 << 0,
+    Left  = 1 << 1,
+    Right = 1 << 2
 };
 
 // Box decoration attributes. Not inherited.

@@ -573,6 +573,7 @@ inline String operator"" _str(const UChar* characters, size_t length)
 
 } // namespace WTF
 
+using WTF::TrailingZerosPolicy;
 using WTF::String;
 using WTF::charactersToDouble;
 using WTF::charactersToFloat;

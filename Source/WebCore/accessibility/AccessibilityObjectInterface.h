@@ -1712,7 +1712,7 @@ inline AXCoreObject::AXValue AXCoreObject::value()
 
     if (isColorWell()) {
         auto color = convertColor<SRGBA<float>>(colorValue()).resolved();
-        return makeString("rgb ", String::numberToStringFixedPrecision(color.red, 6, WTF::TrailingZerosPolicy::Keep), " ", String::numberToStringFixedPrecision(color.green, 6, WTF::TrailingZerosPolicy::Keep), " ", String::numberToStringFixedPrecision(color.blue, 6, WTF::TrailingZerosPolicy::Keep), " 1");
+        return makeString("rgb ", String::numberToStringFixedPrecision(color.red, 6, TrailingZerosPolicy::Keep), " ", String::numberToStringFixedPrecision(color.green, 6, TrailingZerosPolicy::Keep), " ", String::numberToStringFixedPrecision(color.blue, 6, TrailingZerosPolicy::Keep), " 1");
     }
 
     return stringValue();

@@ -42,7 +42,7 @@ struct LineLayoutResult {
     struct FloatContent {
         PlacedFloatList placedFloats;
         SuspendedFloatList suspendedFloats;
-        bool hasIntrusiveFloat { false };
+        OptionSet<UsedFloat> hasIntrusiveFloat { };
     };
     FloatContent floatContent { };
 

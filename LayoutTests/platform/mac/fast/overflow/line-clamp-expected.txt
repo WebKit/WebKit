@@ -38,8 +38,8 @@ layer at (8,57) size 102x74 clip at (9,58) size 100x72 scrollHeight 144
         text run at (0,108) width 64: "multi-line"
         text run at (0,126) width 28: "text."
       RenderInline {A} at (0,0) size 36x18 [color=#0000EE]
-        RenderText {#text} at (27,126) size 36x18
-          text run at (27,126) width 36: "More"
+        RenderText {#text} at (61,54) size 36x18
+          text run at (61,54) width 36: "More"
       RenderText {#text} at (0,0) size 0x0
 layer at (114,111) size 102x20 clip at (115,112) size 100x18 scrollHeight 108
   RenderDeprecatedFlexibleBox {DIV} at (106,103) size 102x20 [border: (1px solid #808080)]
@@ -52,8 +52,8 @@ layer at (114,111) size 102x20 clip at (115,112) size 100x18 scrollHeight 108
         text run at (0,72) width 94: "truncating to 1"
         text run at (0,90) width 28: "line."
       RenderInline {A} at (0,0) size 36x18 [color=#0000EE]
-        RenderText {#text} at (27,90) size 36x18
-          text run at (27,90) width 36: "More"
+        RenderText {#text} at (62,0) size 35x18
+          text run at (62,0) width 35: "More"
       RenderText {#text} at (0,0) size 0x0
 layer at (220,93) size 102x38 clip at (221,94) size 100x36 scrollHeight 108
   RenderDeprecatedFlexibleBox {DIV} at (212,85) size 102x38 [border: (1px solid #808080)]
@@ -67,8 +67,8 @@ layer at (220,93) size 102x38 clip at (221,94) size 100x36 scrollHeight 108
         text run at (0,72) width 64: "multi-line"
         text run at (0,90) width 28: "text."
       RenderInline {A} at (0,0) size 36x18 [color=#0000EE]
-        RenderText {#text} at (27,90) size 36x18
-          text run at (27,90) width 36: "More"
+        RenderText {#text} at (60,18) size 35x18
+          text run at (60,18) width 35: "More"
       RenderText {#text} at (0,0) size 0x0
 layer at (326,75) size 102x56 clip at (327,76) size 100x54 scrollHeight 162
   RenderDeprecatedFlexibleBox {DIV} at (318,67) size 102x56 [border: (1px solid #808080)]
@@ -86,8 +86,8 @@ layer at (326,75) size 102x56 clip at (327,76) size 100x54 scrollHeight 162
         text run at (0,126) width 71: "versions of"
         text run at (0,144) width 54: "WebKit."
       RenderInline {A} at (0,0) size 36x18 [color=#0000EE]
-        RenderText {#text} at (53,144) size 36x18
-          text run at (53,144) width 36: "More"
+        RenderText {#text} at (63,36) size 36x18
+          text run at (63,36) width 36: "More"
       RenderText {#text} at (0,0) size 0x0
 layer at (432,93) size 102x38 clip at (433,94) size 100x36 scrollHeight 144
   RenderDeprecatedFlexibleBox {DIV} at (424,85) size 102x38 [border: (1px solid #808080)]
