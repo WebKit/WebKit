@@ -56,8 +56,8 @@ using namespace FileSystem;
 
 ContentRuleListStore& ContentRuleListStore::defaultStore()
 {
-    static ContentRuleListStore* defaultStore = adoptRef(new ContentRuleListStore()).leakRef();
-    return *defaultStore;
+    static NeverDestroyed<Ref<ContentRuleListStore>> defaultStore = adoptRef(*new ContentRuleListStore());
+    return defaultStore->get();
 }
 
 Ref<ContentRuleListStore> ContentRuleListStore::storeWithPath(const WTF::String& storePath)

@@ -54,6 +54,11 @@ RemoteWebInspectorUIProxy::~RemoteWebInspectorUIProxy()
     ASSERT(!m_inspectorPage);
 }
 
+RefPtr<WebPageProxy> RemoteWebInspectorUIProxy::protectedInspectorPage()
+{
+    return m_inspectorPage.get();
+}
+
 void RemoteWebInspectorUIProxy::invalidate()
 {
     closeFrontendPageAndWindow();
@@ -62,7 +67,7 @@ void RemoteWebInspectorUIProxy::invalidate()
 void RemoteWebInspectorUIProxy::setDiagnosticLoggingAvailable(bool available)
 {
 #if ENABLE(INSPECTOR_TELEMETRY)
-    m_inspectorPage->send(Messages::RemoteWebInspectorUI::SetDiagnosticLoggingAvailable(available));
+    protectedInspectorPage()->send(Messages::RemoteWebInspectorUI::SetDiagnosticLoggingAvailable(available));
 #else
     UNUSED_PARAM(available);
 #endif
@@ -75,8 +80,9 @@ void RemoteWebInspectorUIProxy::initialize(Ref<API::DebuggableInfo>&& debuggable
 
     createFrontendPageAndWindow();
 
-    m_inspectorPage->send(Messages::RemoteWebInspectorUI::Initialize(m_debuggableInfo->debuggableInfoData(), backendCommandsURL));
-    m_inspectorPage->loadRequest(URL { WebInspectorUIProxy::inspectorPageURL() });
+    auto inspectorPage = protectedInspectorPage();
+    inspectorPage->send(Messages::RemoteWebInspectorUI::Initialize(m_debuggableInfo->debuggableInfoData(), backendCommandsURL));
+    inspectorPage->loadRequest(URL { WebInspectorUIProxy::inspectorPageURL() });
 }
 
 void RemoteWebInspectorUIProxy::closeFromBackend()
@@ -97,17 +103,17 @@ void RemoteWebInspectorUIProxy::show()
 
 void RemoteWebInspectorUIProxy::showConsole()
 {
-    m_inspectorPage->send(Messages::RemoteWebInspectorUI::ShowConsole { });
+    protectedInspectorPage()->send(Messages::RemoteWebInspectorUI::ShowConsole { });
 }
 
 void RemoteWebInspectorUIProxy::showResources()
 {
-    m_inspectorPage->send(Messages::RemoteWebInspectorUI::ShowResources { });
+    protectedInspectorPage()->send(Messages::RemoteWebInspectorUI::ShowResources { });
 }
 
 void RemoteWebInspectorUIProxy::sendMessageToFrontend(const String& message)
 {
-    m_inspectorPage->send(Messages::RemoteWebInspectorUI::SendMessageToFrontend(message));
+    protectedInspectorPage()->send(Messages::RemoteWebInspectorUI::SendMessageToFrontend(message));
 }
 
 void RemoteWebInspectorUIProxy::frontendLoaded()
@@ -121,8 +127,8 @@ void RemoteWebInspectorUIProxy::frontendDidClose()
 {
     Ref<RemoteWebInspectorUIProxy> protect(*this);
 
-    if (m_client)
-        m_client->closeFromFrontend();
+    if (CheckedPtr client = m_client)
+        client->closeFromFrontend();
 
     closeFrontendPageAndWindow();
 }
@@ -192,16 +198,17 @@ void RemoteWebInspectorUIProxy::showCertificate(const CertificateInfo& certifica
 
 void RemoteWebInspectorUIProxy::setInspectorPageDeveloperExtrasEnabled(bool enabled)
 {
-    if (!m_inspectorPage)
+    auto inspectorPage = protectedInspectorPage();
+    if (!inspectorPage)
         return;
 
-    m_inspectorPage->preferences().setDeveloperExtrasEnabled(enabled);
+    inspectorPage->preferences().setDeveloperExtrasEnabled(enabled);
 }
 
 void RemoteWebInspectorUIProxy::sendMessageToBackend(const String& message)
 {
-    if (m_client)
-        m_client->sendMessageToBackend(message);
+    if (CheckedPtr client = m_client)
+        client->sendMessageToBackend(message);
 }
 
 void RemoteWebInspectorUIProxy::createFrontendPageAndWindow()
@@ -210,24 +217,26 @@ void RemoteWebInspectorUIProxy::createFrontendPageAndWindow()
         return;
 
     m_inspectorPage = platformCreateFrontendPageAndWindow();
+    RefPtr inspectorPage = m_inspectorPage.get();
 
-    trackInspectorPage(m_inspectorPage, nullptr);
+    trackInspectorPage(inspectorPage.get(), nullptr);
 
-    m_inspectorPage->process().addMessageReceiver(Messages::RemoteWebInspectorUIProxy::messageReceiverName(), m_inspectorPage->webPageID(), *this);
+    inspectorPage->process().addMessageReceiver(Messages::RemoteWebInspectorUIProxy::messageReceiverName(), inspectorPage->webPageID(), *this);
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    m_extensionController = WebInspectorUIExtensionControllerProxy::create(*m_inspectorPage);
+    m_extensionController = WebInspectorUIExtensionControllerProxy::create(*inspectorPage);
 #endif
 }
 
 void RemoteWebInspectorUIProxy::closeFrontendPageAndWindow()
 {
-    if (!m_inspectorPage)
+    RefPtr inspectorPage = protectedInspectorPage();
+    if (!inspectorPage)
         return;
 
-    m_inspectorPage->process().removeMessageReceiver(Messages::RemoteWebInspectorUIProxy::messageReceiverName(), m_inspectorPage->webPageID());
+    inspectorPage->process().removeMessageReceiver(Messages::RemoteWebInspectorUIProxy::messageReceiverName(), inspectorPage->webPageID());
 
-    untrackInspectorPage(m_inspectorPage);
+    untrackInspectorPage(inspectorPage.get());
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     // This extension controller may be kept alive by the IPC dispatcher beyond the point

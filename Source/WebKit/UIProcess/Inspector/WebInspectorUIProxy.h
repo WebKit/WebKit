@@ -31,12 +31,14 @@
 #include "DebuggableInfoData.h"
 #include "MessageReceiver.h"
 #include "WebInspectorUtilities.h"
+#include "WebPageProxy.h"
 #include "WebPageProxyIdentifier.h"
 #include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <WebCore/Color.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/InspectorClient.h>
 #include <WebCore/InspectorFrontendClient.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
@@ -73,7 +75,6 @@ namespace WebKit {
 
 class WebFrameProxy;
 class WebInspectorUIProxyClient;
-class WebPageProxy;
 class WebPreferences;
 #if ENABLE(INSPECTOR_EXTENSIONS)
 class WebInspectorUIExtensionControllerProxy;
@@ -108,8 +109,8 @@ public:
     void setInspectorClient(std::unique_ptr<API::InspectorClient>&&);
 
     // Public APIs
-    WebPageProxy* inspectedPage() const { return m_inspectedPage; }
-    WebPageProxy* inspectorPage() const { return m_inspectorPage; }
+    RefPtr<WebPageProxy> inspectedPage() const { return m_inspectedPage.get(); }
+    RefPtr<WebPageProxy> inspectorPage() const { return m_inspectorPage.get(); }
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     WebInspectorUIExtensionControllerProxy* extensionController() const { return m_extensionController.get(); }
@@ -301,8 +302,8 @@ private:
     void windowReceivedMessage(HWND, UINT, WPARAM, LPARAM) override;
 #endif
 
-    WebPageProxy* m_inspectedPage { nullptr };
-    WebPageProxy* m_inspectorPage { nullptr };
+    CheckedPtr<WebPageProxy> m_inspectedPage;
+    CheckedPtr<WebPageProxy> m_inspectorPage;
     std::unique_ptr<API::InspectorClient> m_inspectorClient;
     WebPageProxyIdentifier m_inspectedPageIdentifier;
 

@@ -28,6 +28,7 @@
 #include "WebPageInspectorAgentBase.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 
 namespace WebKit {
@@ -56,7 +57,7 @@ public:
 private:
     std::unique_ptr<Inspector::BrowserFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::BrowserBackendDispatcher> m_backendDispatcher;
-    WebPageProxy& m_inspectedPage;
+    CheckedRef<WebPageProxy> m_inspectedPage;
 };
 
 } // namespace WebKit

@@ -107,19 +107,19 @@ ContentWorld::~ContentWorld()
         ASSERT_UNUSED(taken, taken == this);
     }
 
-    for (auto proxy : m_associatedContentControllerProxies)
-        proxy->contentWorldDestroyed(*this);
+    for (auto& proxy : m_associatedContentControllerProxies)
+        Ref { proxy }->contentWorldDestroyed(*this);
 }
 
 void ContentWorld::addAssociatedUserContentControllerProxy(WebKit::WebUserContentControllerProxy& proxy)
 {
-    auto addResult = m_associatedContentControllerProxies.add(&proxy);
+    auto addResult = m_associatedContentControllerProxies.add(proxy);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
 void ContentWorld::userContentControllerProxyDestroyed(WebKit::WebUserContentControllerProxy& proxy)
 {
-    bool removed = m_associatedContentControllerProxies.remove(&proxy);
+    bool removed = m_associatedContentControllerProxies.remove(proxy);
     ASSERT_UNUSED(removed, removed);
 }
 

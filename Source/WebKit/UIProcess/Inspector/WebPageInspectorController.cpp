@@ -59,9 +59,14 @@ WebPageInspectorController::WebPageInspectorController(WebPageProxy& inspectedPa
     m_agents.append(WTFMove(targetAgent));
 }
 
+Ref<WebPageProxy> WebPageInspectorController::protectedInspectedPage()
+{
+    return m_inspectedPage.get();
+}
+
 void WebPageInspectorController::init()
 {
-    String pageTargetId = WebPageInspectorTarget::toTargetID(m_inspectedPage.webPageID());
+    String pageTargetId = WebPageInspectorTarget::toTargetID(m_inspectedPage->webPageID());
     createInspectorTarget(pageTargetId, Inspector::InspectorTargetType::Page);
 }
 
@@ -88,11 +93,12 @@ void WebPageInspectorController::connectFrontend(Inspector::FrontendChannel& fro
     if (connectingFirstFrontend)
         m_agents.didCreateFrontendAndBackend(&m_frontendRouter.get(), &m_backendDispatcher.get());
 
-    m_inspectedPage.didChangeInspectorFrontendCount(m_frontendRouter->frontendCount());
+    auto inspectedPage = protectedInspectedPage();
+    inspectedPage->didChangeInspectorFrontendCount(m_frontendRouter->frontendCount());
 
 #if ENABLE(REMOTE_INSPECTOR)
     if (hasLocalFrontend())
-        m_inspectedPage.remoteInspectorInformationDidChange();
+        inspectedPage->remoteInspectorInformationDidChange();
 #endif
 }
 
@@ -104,11 +110,12 @@ void WebPageInspectorController::disconnectFrontend(FrontendChannel& frontendCha
     if (disconnectingLastFrontend)
         m_agents.willDestroyFrontendAndBackend(DisconnectReason::InspectorDestroyed);
 
-    m_inspectedPage.didChangeInspectorFrontendCount(m_frontendRouter->frontendCount());
+    auto inspectedPage = protectedInspectedPage();
+    inspectedPage->didChangeInspectorFrontendCount(m_frontendRouter->frontendCount());
 
 #if ENABLE(REMOTE_INSPECTOR)
     if (disconnectingLastFrontend)
-        m_inspectedPage.remoteInspectorInformationDidChange();
+        inspectedPage->remoteInspectorInformationDidChange();
 #endif
 }
 
@@ -125,10 +132,11 @@ void WebPageInspectorController::disconnectAllFrontends()
     // Disconnect any remaining remote frontends.
     m_frontendRouter->disconnectAllFrontends();
 
-    m_inspectedPage.didChangeInspectorFrontendCount(m_frontendRouter->frontendCount());
+    auto inspectedPage = protectedInspectedPage();
+    inspectedPage->didChangeInspectorFrontendCount(m_frontendRouter->frontendCount());
 
 #if ENABLE(REMOTE_INSPECTOR)
-    m_inspectedPage.remoteInspectorInformationDidChange();
+    inspectedPage->remoteInspectorInformationDidChange();
 #endif
 }
 
@@ -140,20 +148,21 @@ void WebPageInspectorController::dispatchMessageFromFrontend(const String& messa
 #if ENABLE(REMOTE_INSPECTOR)
 void WebPageInspectorController::setIndicating(bool indicating)
 {
+    auto inspectedPage = protectedInspectedPage();
 #if !PLATFORM(IOS_FAMILY)
-    m_inspectedPage.setIndicating(indicating);
+    inspectedPage->setIndicating(indicating);
 #else
     if (indicating)
-        m_inspectedPage.showInspectorIndication();
+        inspectedPage->showInspectorIndication();
     else
-        m_inspectedPage.hideInspectorIndication();
+        inspectedPage->hideInspectorIndication();
 #endif
 }
 #endif
 
 void WebPageInspectorController::createInspectorTarget(const String& targetId, Inspector::InspectorTargetType type)
 {
-    addTarget(InspectorTargetProxy::create(m_inspectedPage, targetId, type));
+    addTarget(InspectorTargetProxy::create(protectedInspectedPage(), targetId, type));
 }
 
 void WebPageInspectorController::destroyInspectorTarget(const String& targetId)
@@ -249,10 +258,11 @@ void WebPageInspectorController::setEnabledBrowserAgent(InspectorBrowserAgent* a
 
     m_enabledBrowserAgent = agent;
 
+    auto inspectedPage = protectedInspectedPage();
     if (m_enabledBrowserAgent)
-        m_inspectedPage.uiClient().didEnableInspectorBrowserDomain(m_inspectedPage);
+        inspectedPage->uiClient().didEnableInspectorBrowserDomain(inspectedPage);
     else
-        m_inspectedPage.uiClient().didDisableInspectorBrowserDomain(m_inspectedPage);
+        inspectedPage->uiClient().didDisableInspectorBrowserDomain(inspectedPage);
 }
 
 void WebPageInspectorController::browserExtensionsEnabled(HashMap<String, String>&& extensionIDToName)

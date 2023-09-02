@@ -92,7 +92,7 @@ void WebInspectorUIProxy::setInspectorClient(std::unique_ptr<API::InspectorClien
 
 unsigned WebInspectorUIProxy::inspectionLevel() const
 {
-    return inspectorLevelForPage(inspectedPage());
+    return inspectorLevelForPage(inspectedPage().get());
 }
 
 WebPreferences& WebInspectorUIProxy::inspectorPagePreferences() const
@@ -418,7 +418,7 @@ void WebInspectorUIProxy::createFrontendPage()
     if (!m_inspectorPage)
         return;
 
-    trackInspectorPage(m_inspectorPage, m_inspectedPage);
+    trackInspectorPage(inspectorPage().get(), inspectedPage().get());
 
     // Make sure the inspected page has a running WebProcess so we can inspect it.
     m_inspectedPage->launchInitialProcessIfNecessary();
@@ -432,13 +432,14 @@ void WebInspectorUIProxy::createFrontendPage()
 
 void WebInspectorUIProxy::openLocalInspectorFrontend(bool canAttach, bool underTest)
 {
-    if (!m_inspectedPage)
+    auto inspectedPage = this->inspectedPage();
+    if (!inspectedPage)
         return;
 
-    if (!m_inspectedPage->preferences().developerExtrasEnabled())
+    if (!inspectedPage->preferences().developerExtrasEnabled())
         return;
 
-    if (m_inspectedPage->inspectorController().hasLocalFrontend()) {
+    if (inspectedPage->inspectorController().hasLocalFrontend()) {
         show();
         return;
     }
@@ -446,51 +447,53 @@ void WebInspectorUIProxy::openLocalInspectorFrontend(bool canAttach, bool underT
     m_underTest = underTest;
     createFrontendPage();
 
-    ASSERT(m_inspectorPage);
-    if (!m_inspectorPage)
+    auto inspectorPage = this->inspectorPage();
+    ASSERT(inspectorPage);
+    if (!inspectorPage)
         return;
 
-    m_inspectorPage->send(Messages::WebInspectorUI::EstablishConnection(m_inspectedPageIdentifier, infoForLocalDebuggable(), m_underTest, inspectionLevel()));
+    inspectorPage->send(Messages::WebInspectorUI::EstablishConnection(m_inspectedPageIdentifier, infoForLocalDebuggable(), m_underTest, inspectionLevel()));
 
     ASSERT(!m_isActiveFrontend);
     m_isActiveFrontend = true;
-    m_inspectedPage->inspectorController().connectFrontend(*this);
+    inspectedPage->inspectorController().connectFrontend(*this);
 
     if (!m_underTest) {
         m_canAttach = platformCanAttach(canAttach);
         m_isAttached = shouldOpenAttached();
         m_attachmentSide = static_cast<AttachmentSide>(inspectorPagePreferences().inspectorAttachmentSide());
 
-        m_inspectedPage->send(Messages::WebInspector::SetAttached(m_isAttached));
+        inspectedPage->send(Messages::WebInspector::SetAttached(m_isAttached));
 
         if (m_isAttached) {
             switch (m_attachmentSide) {
             case AttachmentSide::Bottom:
-                m_inspectorPage->send(Messages::WebInspectorUI::AttachedBottom());
+                inspectorPage->send(Messages::WebInspectorUI::AttachedBottom());
                 break;
 
             case AttachmentSide::Right:
-                m_inspectorPage->send(Messages::WebInspectorUI::AttachedRight());
+                inspectorPage->send(Messages::WebInspectorUI::AttachedRight());
                 break;
 
             case AttachmentSide::Left:
-                m_inspectorPage->send(Messages::WebInspectorUI::AttachedLeft());
+                inspectorPage->send(Messages::WebInspectorUI::AttachedLeft());
                 break;
             }
         } else
-            m_inspectorPage->send(Messages::WebInspectorUI::Detached());
+            inspectorPage->send(Messages::WebInspectorUI::Detached());
 
-        m_inspectorPage->send(Messages::WebInspectorUI::SetDockingUnavailable(!m_canAttach));
+        inspectorPage->send(Messages::WebInspectorUI::SetDockingUnavailable(!m_canAttach));
     }
 
     // Notify WebKit client when a local inspector attaches so that it may install delegates prior to the _WKInspector loading its frontend.
-    m_inspectedPage->uiClient().didAttachLocalInspector(*m_inspectedPage, *this);
+    inspectedPage->uiClient().didAttachLocalInspector(*inspectedPage, *this);
 
     // Bail out if the client closed the inspector from the delegate method.
-    if (!m_inspectorPage)
+
+    if (!inspectorPage)
         return;
 
-    m_inspectorPage->loadRequest(URL { m_underTest ? WebInspectorUIProxy::inspectorTestPageURL() : WebInspectorUIProxy::inspectorPageURL() });
+    inspectorPage->loadRequest(URL { m_underTest ? WebInspectorUIProxy::inspectorTestPageURL() : WebInspectorUIProxy::inspectorPageURL() });
 }
 
 void WebInspectorUIProxy::open()
@@ -533,21 +536,22 @@ void WebInspectorUIProxy::closeFrontendPageAndWindow()
     SetForScope reentrancyProtector(m_closing, true);
     
     // Notify WebKit client when a local inspector closes so it can clear _WKInspectorDelegate and perform other cleanup.
-    if (m_inspectedPage)
-        m_inspectedPage->uiClient().willCloseLocalInspector(*m_inspectedPage, *this);
+    if (auto inspectedPage = this->inspectedPage())
+        inspectedPage->uiClient().willCloseLocalInspector(*inspectedPage, *this);
 
     m_isVisible = false;
     m_isProfilingPage = false;
     m_showMessageSent = false;
     m_ignoreFirstBringToFront = false;
 
-    untrackInspectorPage(m_inspectorPage);
+    auto inspectorPage = this->inspectorPage();
+    untrackInspectorPage(inspectorPage.get());
 
-    m_inspectorPage->send(Messages::WebInspectorUI::SetIsVisible(m_isVisible));
-    m_inspectorPage->process().removeMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPageIdentifier);
+    inspectorPage->send(Messages::WebInspectorUI::SetIsVisible(m_isVisible));
+    inspectorPage->process().removeMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPageIdentifier);
 
-    if (m_inspectedPage && m_isActiveFrontend)
-        m_inspectedPage->inspectorController().disconnectFrontend(*this);
+    if (auto inspectedPage = this->inspectedPage(); inspectedPage && m_isActiveFrontend)
+        inspectedPage->inspectorController().disconnectFrontend(*this);
 
     m_isActiveFrontend = false;
 
@@ -573,19 +577,21 @@ void WebInspectorUIProxy::closeFrontendPageAndWindow()
 
 void WebInspectorUIProxy::sendMessageToBackend(const String& message)
 {
-    if (!m_inspectedPage)
+    auto inspectedPage = this->inspectedPage();
+    if (!inspectedPage)
         return;
 
-    m_inspectedPage->inspectorController().dispatchMessageFromFrontend(message);
+    inspectedPage->inspectorController().dispatchMessageFromFrontend(message);
 }
 
 void WebInspectorUIProxy::frontendLoaded()
 {
-    if (!m_inspectedPage)
+    auto inspectedPage = this->inspectedPage();
+    if (!inspectedPage)
         return;
 
-    if (auto* automationSession = m_inspectedPage->process().processPool().automationSession())
-        automationSession->inspectorFrontendLoaded(*m_inspectedPage);
+    if (auto* automationSession = inspectedPage->process().processPool().automationSession())
+        automationSession->inspectorFrontendLoaded(*inspectedPage);
     
 #if ENABLE(INSPECTOR_EXTENSIONS)
     if (m_extensionController)
@@ -621,8 +627,8 @@ void WebInspectorUIProxy::attachAvailabilityChanged(bool available)
     if (previousCanAttach == m_canAttach)
         return;
 
-    if (m_inspectorPage && !m_underTest)
-        m_inspectorPage->send(Messages::WebInspectorUI::SetDockingUnavailable(!m_canAttach));
+    if (auto inspectorPage = this->inspectorPage(); inspectorPage && !m_underTest)
+        inspectorPage->send(Messages::WebInspectorUI::SetDockingUnavailable(!m_canAttach));
 
     platformAttachAvailabilityChanged(m_canAttach);
 }
@@ -687,19 +693,19 @@ void WebInspectorUIProxy::setDeveloperPreferenceOverride(WebCore::InspectorClien
 {
     switch (developerPreference) {
     case InspectorClient::DeveloperPreference::PrivateClickMeasurementDebugModeEnabled:
-        if (m_inspectedPage)
-            m_inspectedPage->websiteDataStore().setPrivateClickMeasurementDebugMode(overrideValue && overrideValue.value());
+        if (auto inspectedPage = this->inspectedPage())
+            inspectedPage->websiteDataStore().setPrivateClickMeasurementDebugMode(overrideValue && overrideValue.value());
         return;
 
     case InspectorClient::DeveloperPreference::ITPDebugModeEnabled:
-        if (m_inspectedPage)
-            m_inspectedPage->websiteDataStore().setResourceLoadStatisticsDebugMode(overrideValue && overrideValue.value());
+        if (auto inspectedPage = this->inspectedPage())
+            inspectedPage->websiteDataStore().setResourceLoadStatisticsDebugMode(overrideValue && overrideValue.value());
         return;
 
     case InspectorClient::DeveloperPreference::MockCaptureDevicesEnabled:
 #if ENABLE(MEDIA_STREAM)
-        if (m_inspectedPage)
-            m_inspectedPage->setMockCaptureDevicesEnabledOverride(overrideValue);
+        if (auto inspectedPage = this->inspectedPage())
+            inspectedPage->setMockCaptureDevicesEnabledOverride(overrideValue);
 #endif // ENABLE(MEDIA_STREAM)
         return;
     }
@@ -711,8 +717,8 @@ void WebInspectorUIProxy::setDeveloperPreferenceOverride(WebCore::InspectorClien
 
 void WebInspectorUIProxy::setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit)
 {
-    if (m_inspectedPage)
-        m_inspectedPage->websiteDataStore().setEmulatedConditions(WTFMove(bytesPerSecondLimit));
+    if (auto inspectedPage = this->inspectedPage())
+        inspectedPage->websiteDataStore().setEmulatedConditions(WTFMove(bytesPerSecondLimit));
 }
 
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
@@ -771,10 +777,11 @@ bool WebInspectorUIProxy::shouldOpenAttached()
 
 void WebInspectorUIProxy::evaluateInFrontendForTesting(const String& expression)
 {
-    if (!m_inspectorPage)
+    auto inspectorPage = this->inspectorPage();
+    if (!inspectorPage)
         return;
 
-    m_inspectorPage->send(Messages::WebInspectorUI::EvaluateInFrontendForTesting(expression));
+    inspectorPage->send(Messages::WebInspectorUI::EvaluateInFrontendForTesting(expression));
 }
 
 // Unsupported configurations can use the stubs provided here.
