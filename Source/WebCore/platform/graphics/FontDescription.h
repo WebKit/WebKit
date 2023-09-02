@@ -84,6 +84,7 @@ public:
     FontVariantEastAsianVariant variantEastAsianVariant() const { return static_cast<FontVariantEastAsianVariant>(m_variantEastAsianVariant); }
     FontVariantEastAsianWidth variantEastAsianWidth() const { return static_cast<FontVariantEastAsianWidth>(m_variantEastAsianWidth); }
     FontVariantEastAsianRuby variantEastAsianRuby() const { return static_cast<FontVariantEastAsianRuby>(m_variantEastAsianRuby); }
+    FontVariantEmoji variantEmoji() const { return static_cast<FontVariantEmoji>(m_variantEmoji); }
     FontVariantSettings variantSettings() const
     {
         return { variantCommonLigatures(),
@@ -100,7 +101,8 @@ public:
             variantAlternates(),
             variantEastAsianVariant(),
             variantEastAsianWidth(),
-            variantEastAsianRuby() };
+            variantEastAsianRuby(),
+            variantEmoji() };
     }
     FontOpticalSizing opticalSizing() const { return static_cast<FontOpticalSizing>(m_opticalSizing); }
     FontStyleAxis fontStyleAxis() const { return m_fontStyleAxis ? FontStyleAxis::ital : FontStyleAxis::slnt; }
@@ -141,6 +143,7 @@ public:
     void setVariantEastAsianVariant(FontVariantEastAsianVariant variant) { m_variantEastAsianVariant = static_cast<unsigned>(variant); }
     void setVariantEastAsianWidth(FontVariantEastAsianWidth variant) { m_variantEastAsianWidth = static_cast<unsigned>(variant); }
     void setVariantEastAsianRuby(FontVariantEastAsianRuby variant) { m_variantEastAsianRuby = static_cast<unsigned>(variant); }
+    void setVariantEmoji(FontVariantEmoji variant) { m_variantEmoji = static_cast<unsigned>(variant); }
     void setOpticalSizing(FontOpticalSizing sizing) { m_opticalSizing = static_cast<unsigned>(sizing); }
     void setFontStyleAxis(FontStyleAxis axis) { m_fontStyleAxis = axis == FontStyleAxis::ital; }
     void setShouldAllowUserInstalledFonts(AllowUserInstalledFonts shouldAllowUserInstalledFonts) { m_shouldAllowUserInstalledFonts = static_cast<unsigned>(shouldAllowUserInstalledFonts); }
@@ -192,6 +195,7 @@ private:
     unsigned m_variantEastAsianVariant : 3; // FontVariantEastAsianVariant
     unsigned m_variantEastAsianWidth : 2; // FontVariantEastAsianWidth
     unsigned m_variantEastAsianRuby : 1; // FontVariantEastAsianRuby
+    unsigned m_variantEmoji : 2; // FontVariantEmoji
     unsigned m_opticalSizing : 1; // FontOpticalSizing
     unsigned m_fontStyleAxis : 1; // Whether "font-style: italic" or "font-style: oblique 20deg" was specified
     unsigned m_shouldAllowUserInstalledFonts : 1; // AllowUserInstalledFonts: If this description is allowed to match a user-installed font
@@ -227,6 +231,7 @@ inline bool FontDescription::operator==(const FontDescription& other) const
         && m_variantEastAsianVariant == other.m_variantEastAsianVariant
         && m_variantEastAsianWidth == other.m_variantEastAsianWidth
         && m_variantEastAsianRuby == other.m_variantEastAsianRuby
+        && m_variantEmoji == other.m_variantEmoji
         && m_opticalSizing == other.m_opticalSizing
         && m_fontStyleAxis == other.m_fontStyleAxis
         && m_shouldAllowUserInstalledFonts == other.m_shouldAllowUserInstalledFonts
@@ -269,6 +274,7 @@ void FontDescription::encode(Encoder& encoder) const
     encoder << variantEastAsianVariant();
     encoder << variantEastAsianWidth();
     encoder << variantEastAsianRuby();
+    encoder << variantEmoji();
     encoder << opticalSizing();
     encoder << fontStyleAxis();
     encoder << shouldAllowUserInstalledFonts();
@@ -433,6 +439,11 @@ std::optional<FontDescription> FontDescription::decode(Decoder& decoder)
     if (!variantEastAsianRuby)
         return std::nullopt;
 
+    std::optional<FontVariantEmoji> variantEmoji;
+    decoder >> variantEmoji;
+    if (!variantEmoji)
+        return std::nullopt;
+
     std::optional<FontOpticalSizing> opticalSizing;
     decoder >> opticalSizing;
     if (!opticalSizing)
@@ -497,6 +508,7 @@ std::optional<FontDescription> FontDescription::decode(Decoder& decoder)
     fontDescription.setVariantEastAsianVariant(*variantEastAsianVariant);
     fontDescription.setVariantEastAsianWidth(*variantEastAsianWidth);
     fontDescription.setVariantEastAsianRuby(*variantEastAsianRuby);
+    fontDescription.setVariantEmoji(*variantEmoji);
     fontDescription.setOpticalSizing(*opticalSizing);
     fontDescription.setFontStyleAxis(*fontStyleAxis);
     fontDescription.setShouldAllowUserInstalledFonts(*shouldAllowUserInstalledFonts);

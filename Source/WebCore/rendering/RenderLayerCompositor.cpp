@@ -2744,6 +2744,9 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer& layer, R
 bool RenderLayerCompositor::canBeComposited(const RenderLayer& layer) const
 {
     if (m_hasAcceleratedCompositing && layer.isSelfPaintingLayer()) {
+        if (layer.renderer().isSkippedContent())
+            return false;
+
         if (!layer.isInsideFragmentedFlow())
             return true;
 

@@ -122,7 +122,7 @@ String MediaControlsHost::layoutTraitsClassName() const
     return "VisionLayoutTraits"_s;
 #elif PLATFORM(WATCHOS)
     return "WatchOSLayoutTraits"_s;
-#elif PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN)
+#elif USE(THEME_ADWAITA)
     return "AdwaitaLayoutTraits"_s;
 #else
     ASSERT_NOT_REACHED();

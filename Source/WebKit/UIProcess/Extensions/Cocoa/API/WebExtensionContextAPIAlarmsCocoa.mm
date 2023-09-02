@@ -82,7 +82,7 @@ void WebExtensionContext::fireAlarmsEventIfNeeded(const WebExtensionAlarm& alarm
 {
     auto type = WebExtensionEventListenerType::AlarmsOnAlarm;
     wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
-        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchAlarmEvent(alarm.parameters()));
+        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchAlarmsEvent(alarm.parameters()));
     });
 }
 

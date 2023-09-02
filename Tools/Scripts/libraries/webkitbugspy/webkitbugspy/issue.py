@@ -54,6 +54,7 @@ class Issue(object):
     def __init__(self, id, tracker):
         self.id = int(id)
         self.tracker = tracker
+        self._original = None
 
         self._link = None
         self._title = None
@@ -120,10 +121,18 @@ class Issue(object):
             return False
         return bool(self.tracker.set(self, opened=True, why=why))
 
-    def close(self, why=None):
+    def close(self, why=None, original=None):
         if not self.opened:
             return False
-        return bool(self.tracker.set(self, opened=False, why=why))
+        if original and (self.tracker.NAME != original.tracker.NAME or getattr(self.tracker, 'url', None) != getattr(original.tracker, 'url', None)):
+            raise ValueError('Cannot dupe {} to {}'.format(self.link, original.link))
+        return bool(self.tracker.set(self, opened=False, why=why, original=original))
+
+    @property
+    def original(self):
+        if self._opened is None:
+            self.tracker.populate(self, 'opened')
+        return self._original
 
     @property
     def assignee(self):

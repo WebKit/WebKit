@@ -82,6 +82,7 @@ public:
 
     WebExtensionWindowIdentifier identifier() const { return m_identifier; }
     WebExtensionWindowParameters parameters(PopulateTabs = PopulateTabs::No) const;
+    WebExtensionWindowParameters minimalParameters() const;
 
     WebExtensionContext* extensionContext() const;
 

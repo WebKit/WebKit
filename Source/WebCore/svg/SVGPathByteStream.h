@@ -26,17 +26,6 @@
 
 namespace WebCore {
 
-// Type definitions for the byte stream data
-typedef union {
-    bool value;
-    unsigned char bytes[sizeof(bool)];
-} BoolByte;
-
-typedef union {
-    float value;
-    unsigned char bytes[sizeof(float)];
-} FloatByte;
-
 class SVGPathByteStream {
     WTF_MAKE_FAST_ALLOCATED;
 public:

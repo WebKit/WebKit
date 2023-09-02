@@ -3263,6 +3263,7 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
 
     NavigationAction action { request.requester(), workingResourceRequest, request.initiatedByMainFrame(), loadType, true, event, request.shouldOpenExternalURLsPolicy(), { } };
     action.setLockHistory(lockHistory);
+    action.setLockBackForwardList(request.lockBackForwardList());
     action.setShouldReplaceDocumentIfJavaScriptURL(request.shouldReplaceDocumentIfJavaScriptURL());
     action.setNewFrameOpenerPolicy(request.newFrameOpenerPolicy());
 

@@ -182,6 +182,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-084.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-085-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-085.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-086.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-087.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-088.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-089.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-090.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-applied-to-th-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-first-observation-immediate.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-in-iframe-expected.html
@@ -218,6 +223,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-resize-observer-no-error-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-resize-observer-no-error.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-selection-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-svg-path.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-svg-rect.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-svg-text.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-svg.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-video-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-video-ref.html

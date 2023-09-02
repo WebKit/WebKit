@@ -825,9 +825,11 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         }
 
         // Keep layer hierarchy visibility bits up to date if visibility changes.
-        if (m_style.visibility() != newStyle.visibility()) {
+        bool wasVisible = m_style.visibility() == Visibility::Visible && !m_style.skippedContentReason().has_value();
+        bool willBeVisible = newStyle.visibility() == Visibility::Visible && !newStyle.skippedContentReason().has_value();
+        if (wasVisible != willBeVisible) {
             if (RenderLayer* layer = enclosingLayer()) {
-                if (newStyle.visibility() == Visibility::Visible)
+                if (willBeVisible)
                     layer->setHasVisibleContent();
                 else if (layer->hasVisibleContent() && (this == &layer->renderer() || layer->renderer().style().visibility() != Visibility::Visible))
                     layer->dirtyVisibleContentStatus();

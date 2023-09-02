@@ -939,6 +939,9 @@ LLINT_SLOW_PATH_DECL(slow_path_iterator_next_get_value)
     Register& valueRegister = callFrame->uncheckedR(bytecode.m_value);
     JSValue iteratorReturn = valueRegister.jsValue();
 
+    if (callFrame->uncheckedR(bytecode.m_done).jsValue().toBoolean(globalObject))
+        LLINT_END();
+
     JSValue result = performLLIntGetByID(codeBlock->bytecodeIndex(pc).withCheckpoint(OpIteratorNext::getValue), codeBlock, globalObject, iteratorReturn, vm.propertyNames->value, metadata.m_valueModeMetadata);
     LLINT_CHECK_EXCEPTION();
     valueRegister = result;

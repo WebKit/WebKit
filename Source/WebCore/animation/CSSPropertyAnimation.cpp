@@ -3874,6 +3874,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new FontVariantNumericWrapper,
         new DiscreteFontDescriptionTypedWrapper<FontVariantPosition>(CSSPropertyFontVariantPosition, &FontCascadeDescription::variantPosition, &FontCascadeDescription::setVariantPosition),
         new DiscreteFontDescriptionTypedWrapper<FontVariantCaps>(CSSPropertyFontVariantCaps, &FontCascadeDescription::variantCaps, &FontCascadeDescription::setVariantCaps),
+        new DiscreteFontDescriptionTypedWrapper<FontVariantEmoji>(CSSPropertyFontVariantEmoji, &FontCascadeDescription::variantEmoji, &FontCascadeDescription::setVariantEmoji),
         new GridTemplateAreasWrapper,
         new QuotesWrapper,
         new DiscretePropertyWrapper<bool>(CSSPropertyScrollBehavior, &RenderStyle::useSmoothScrolling, &RenderStyle::setUseSmoothScrolling),

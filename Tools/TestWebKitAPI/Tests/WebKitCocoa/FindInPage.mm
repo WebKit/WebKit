@@ -792,6 +792,20 @@ TEST(WebKit, ScrollToFoundRangeRepeated)
     EXPECT_TRUE(CGPointEqualToPoint([webView scrollView].contentOffset, CGPointMake(0, 664)));
 }
 
+TEST(WebKit, ScrollToFoundRangeAtTopWithContentInsets)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+    [webView scrollView].contentInset = UIEdgeInsetsMake(30, 0, 0, 0);
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width,initial-scale=1'><div contenteditable><p>Top</p><p style='margin-top: 800px'>Bottom</p></div>"];
+    [webView objectByEvaluatingJavaScript:@"let p = document.querySelector('p'); document.getSelection().setBaseAndExtent(p, 0, p, 1)"];
+
+    auto ranges = textRangesForQueryString(webView.get(), @"Top");
+    [webView scrollRangeToVisible:[ranges firstObject] inDocument:nil];
+
+    TestWebKitAPI::Util::runFor(500_ms);
+    EXPECT_TRUE(CGPointEqualToPoint([webView scrollView].contentOffset, CGPointMake(0, -[webView scrollView].contentInset.top)));
+}
+
 TEST(WebKit, CannotHaveMultipleFindOverlays)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);

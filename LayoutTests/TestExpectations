@@ -3858,7 +3858,6 @@ webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-face-weig
 
 # Triaged css-fonts failures
 webkit.org/b/246564 imported/w3c/web-platform-tests/css/css-fonts/font-synthesis-small-caps-not-applied.html [ ImageOnlyFailure ]
-webkit.org/b/246911 imported/w3c/web-platform-tests/css/css-fonts/font-variant-emoji-2.html [ ImageOnlyFailure ]
 
 # vert font feature in vertical-text
 webkit.org/b/182042 imported/w3c/web-platform-tests/css/css-fonts/font-default-04.html [ ImageOnlyFailure ]
@@ -4939,7 +4938,6 @@ webanimations/translate-property-and-translate-animation-with-delay-on-forced-la
 imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-bfc-floats-001.html [ ImageOnlyFailure ]
 # forced layout
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-035.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-video.html [ ImageOnlyFailure ]
 
 # Style containment
 imported/w3c/web-platform-tests/css/css-contain/counter-scoping-001.html [ ImageOnlyFailure ]
@@ -5290,34 +5288,16 @@ imported/w3c/web-platform-tests/css/motion/offset-path-url-011.html [ ImageOnlyF
 imported/w3c/web-platform-tests/css/motion/offset-path-ray-011.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-ray-014.html [ ImageOnlyFailure ]
 
-# CSS motion path tests for missing <coord-box> support.
+# CSS motion path tests for missing <coord-box> support with border-radius.
 imported/w3c/web-platform-tests/css/motion/offset-path-coord-box-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-coord-box-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-coord-box-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-coord-box-004.html [ ImageOnlyFailure ]
 
-# CSS motion path tests for missing parsing support for <coord-box> with ray.
-imported/w3c/web-platform-tests/css/motion/offset-path-ray-015.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-ray-016.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-ray-017.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-ray-018.html [ ImageOnlyFailure ]
-
-# CSS motion path tests for missing <basic-shape> support.
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-001.html [ ImageOnlyFailure ]
+# CSS motion path tests <basic-shape> misc bugs.
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-005.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-ellipse-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-ellipse-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-ellipse-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-ellipse-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-ellipse-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-inset-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-inset-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-polygon-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-polygon-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-polygon-003.html [ ImageOnlyFailure ]
+
+# CSS motion path tests for missing <basic-shape> support.
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-rect-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-rect-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-rect-003.html [ ImageOnlyFailure ]
@@ -6253,7 +6233,6 @@ imported/w3c/web-platform-tests/wasm/serialization/module/cross-origin-module-sh
 imported/w3c/web-platform-tests/wasm/serialization/module/share-module-cross-origin-fails.sub.html [ Skip ]
 imported/w3c/web-platform-tests/wasm/serialization/module/window-domain-success.sub.html [ Skip ]
 imported/w3c/web-platform-tests/wasm/serialization/module/window-similar-but-cross-origin-success.sub.html [ Skip ]
-imported/w3c/web-platform-tests/webcodecs/videoFrame-serialization.crossAgentCluster.https.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc/RTCConfiguration-iceTransportPolicy.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-onicecandidateerror.https.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-remote-track-mute.https.html [ Skip ]
@@ -6469,10 +6448,6 @@ webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shad
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-002.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-003.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/css/css-color/lab-l-over-100-1.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-color/lab-l-over-100-2.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-color/lch-l-over-100-1.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-color/lch-l-over-100-2.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-color/system-color-hightlights-vs-getSelection-001.html [ ImageOnlyFailure ]
 
 # Flaky test that sometimes passes and sometimes fails.
@@ -6568,9 +6543,6 @@ imported/w3c/web-platform-tests/css/css-overflow/scrollable-overflow-input-002.h
 imported/w3c/web-platform-tests/css/css-overflow/scrollable-overflow-padding.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-029.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-block-in-inline-001.html [ Skip ]
-
-# CSS nesting relaxed syntax
-imported/w3c/web-platform-tests/css/css-nesting/nesting-type-selector.html [ ImageOnlyFailure ]
 
 # These tests have been flaky since their import.
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox-top-navigation-child-special-cases.tentative.sub.window.html [ DumpJSConsoleLogInStdErr Pass Failure ]

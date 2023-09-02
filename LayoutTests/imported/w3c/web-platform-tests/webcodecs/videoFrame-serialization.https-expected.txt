@@ -1,0 +1,15 @@
+
+
+PASS Verify frames can be passed within the same agent clusters
+PASS Verify frames can be passed back and forth between main and worker
+PASS Verify frames can be passed back and forth between main and data-url worker
+PASS Verify frames cannot be passed to sharedworker
+PASS Verify frames cannot be passed to serviceworker
+PASS Verify frames can be transferred within the same agent clusters
+PASS Verify frames can be transferred back and forth between main and worker
+PASS Verify frames can be transferred back and forth between main and data-url worker
+PASS Verify frames cannot be transferred to a sharedworker
+PASS Verify frames cannot be transferred to serviceworker
+PASS Verify frames is unavailable in sharedworker
+PASS Verify frames is unavailable in serviceworker
+

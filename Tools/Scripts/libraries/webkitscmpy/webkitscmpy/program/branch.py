@@ -225,7 +225,10 @@ class Branch(Command):
                 if re.match(r'\d+', input):
                     input = '<rdar://problem/{}>'.format(input)
                 rdar = Tracker.from_string(input)
-            issue.cc_radar(block=True, radar=rdar)
+            cced = issue.cc_radar(block=True, radar=rdar)
+            if cced and rdar and cced.id != rdar.id:
+                print('Duping {} to {}'.format(cced.link, rdar.link))
+                cced.close(original=rdar)
 
         if issue and not issue.tracker.hide_title:
             args._title = issue.title

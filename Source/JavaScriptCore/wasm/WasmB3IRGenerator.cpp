@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WasmB3IRGenerator.h"
 
-#if ENABLE(WEBASSEMBLY_B3JIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT)
 
 #include "AirCode.h"
 #include "AllowMacroScratchRegisterUsageIf.h"
@@ -76,7 +76,7 @@
 #include <wtf/StdLibExtras.h>
 
 #if !ENABLE(WEBASSEMBLY)
-#error ENABLE(WEBASSEMBLY_B3JIT) is enabled, but ENABLE(WEBASSEMBLY) is not.
+#error ENABLE(WEBASSEMBLY_OMGJIT) is enabled, but ENABLE(WEBASSEMBLY) is not.
 #endif
 
 void dumpProcedure(void* ptr)
@@ -5618,4 +5618,4 @@ void computePCToCodeOriginMap(CompilationContext& context, LinkBuffer& linkBuffe
 
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMBLY_B3JIT)
+#endif // ENABLE(WEBASSEMBLY_OMGJIT)

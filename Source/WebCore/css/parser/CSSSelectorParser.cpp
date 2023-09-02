@@ -30,6 +30,8 @@
 #include "config.h"
 #include "CSSSelectorParser.h"
 
+#include "CSSParserSelector.h"
+#include "CSSSelector.h"
 #include "CommonAtomStrings.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
@@ -133,11 +135,6 @@ CSSSelectorList CSSSelectorParser::consumeRelativeSelectorList(CSSParserTokenRan
 
 CSSSelectorList CSSSelectorParser::consumeNestedSelectorList(CSSParserTokenRange& range)
 {
-    // We explicitely avoid starting a nested selector list with ident-like token
-    // This is already handled by parsing algorithm, but the CSSOM can bypass it.
-    if (range.peek().type() == IdentToken || range.peek().type() == FunctionToken)
-        return { };
-
     return consumeSelectorList(range, [&] (CSSParserTokenRange& range) {
         return consumeNestedComplexSelector(range);
     });
@@ -307,12 +304,41 @@ static bool isDescendantCombinator(CSSSelector::RelationType relation)
 
 std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeNestedComplexSelector(CSSParserTokenRange& range)
 {
+    auto appendNestingSelector = [] (auto& parserSelector) {
+        // https://drafts.csswg.org/css-nesting/#cssom
+        // Relative selector should be absolutized (only when not "nest-containing" for the descendant one),
+        // with the implied nesting selector inserted.
+
+        auto lastSelector = parserSelector->leftmostSimpleSelector()->selector();
+        ASSERT(lastSelector);
+
+        // Relation is Descendant by default.
+        auto relation = lastSelector->relation();
+        if (relation == CSSSelector::RelationType::Subselector)
+            relation = CSSSelector::RelationType::DescendantSpace;
+
+        auto nestingSelector = makeUnique<CSSParserSelector>();
+        nestingSelector->setMatch(CSSSelector::Match::NestingParent);
+        // We add the implicit parent selector at the beginning of the selector.
+        parserSelector->appendTagHistory(relation, WTFMove(nestingSelector));
+    };
+
     auto selector = consumeComplexSelector(range);
-    if (selector)
+    if (selector) {
+        if (selector->hasExplicitNestingParent())
+            return selector;
+
+        appendNestingSelector(selector);
         return selector;
+    }
 
     selector = consumeRelativeNestedSelector(range);
-    return selector;
+    if (selector) {
+        appendNestingSelector(selector);
+        return selector;
+    }
+
+    return nullptr;
 }
 
 std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeComplexSelector(CSSParserTokenRange& range)
@@ -1240,47 +1266,15 @@ CSSSelectorList CSSSelectorParser::resolveNestingParent(const CSSSelectorList& n
     CSSSelectorList copiedSelectorList { nestedSelectorList };
     auto selector = copiedSelectorList.first();
     while (selector) {
-        if (selector->hasExplicitNestingParent()) {
-            if (parentResolvedSelectorList) {
-                // FIXME: We should build a new CSSParserSelector from this selector and resolve it
-                const_cast<CSSSelector*>(selector)->resolveNestingParentSelectors(*parentResolvedSelectorList);
-            } else {
-                // It's top-level, the nesting parent selector should be replace by :scope
-                const_cast<CSSSelector*>(selector)->replaceNestingParentByPseudoClassScope();
-            }
-            auto parserSelector = makeUnique<CSSParserSelector>(*selector);
-            result.append(WTFMove(parserSelector));
+        if (parentResolvedSelectorList) {
+            // FIXME: We should build a new CSSParserSelector from this selector and resolve it
+            const_cast<CSSSelector*>(selector)->resolveNestingParentSelectors(*parentResolvedSelectorList);
         } else {
-            auto parserSelector = makeUnique<CSSParserSelector>(*selector);
-            if (parentResolvedSelectorList) {
-                // We add the implicit parent selector at the beginning of the selector.
-                auto lastSelector = parserSelector->leftmostSimpleSelector()->selector();
-                ASSERT(lastSelector);
-                bool isLastInSelectorList = lastSelector->isLastInSelectorList();
-
-                // Relation is Descendant by default.
-                auto relation = lastSelector->relation();
-                if (relation == CSSSelector::RelationType::Subselector)
-                    relation = CSSSelector::RelationType::DescendantSpace;
-
-                lastSelector->setNotLastInTagHistory();
-                lastSelector->setNotLastInSelectorList();
-                CSSSelector parentIsSelector;
-                parentIsSelector.setMatch(CSSSelector::Match::PseudoClass);
-                parentIsSelector.setPseudoClassType(CSSSelector::PseudoClassType::Is);
-                parentIsSelector.setSelectorList(makeUnique<CSSSelectorList>(*parentResolvedSelectorList));
-                parentIsSelector.setLastInTagHistory();
-                if (isLastInSelectorList)
-                    parentIsSelector.setLastInSelectorList();
-                else
-                    parentIsSelector.setNotLastInSelectorList();
-
-                auto uniqueParentIsSelector = makeUnique<CSSParserSelector>(parentIsSelector);
-                parserSelector->appendTagHistory(relation, WTFMove(uniqueParentIsSelector));
-            }
-            // Otherwise, no nesting parent selector and top-level, do nothing to this selector
-            result.append(WTFMove(parserSelector));
+            // It's top-level, the nesting parent selector should be replace by :scope
+            const_cast<CSSSelector*>(selector)->replaceNestingParentByPseudoClassScope();
         }
+        auto parserSelector = makeUnique<CSSParserSelector>(*selector);
+        result.append(WTFMove(parserSelector));
         selector = copiedSelectorList.next(selector);
     }
 

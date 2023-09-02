@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBASSEMBLY_B3JIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT)
 
 #include "AirCode.h"
 #include "B3StackmapGenerationParams.h"
@@ -82,7 +82,7 @@ struct PatchpointExceptionHandle {
 static inline void computeExceptionHandlerAndLoopEntrypointLocations(Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>& handlers, Vector<CodeLocationLabel<WasmEntryPtrTag>>& loopEntrypoints, const InternalFunction* function, const CompilationContext& context, LinkBuffer& linkBuffer)
 {
     if (!context.procedure) {
-        ASSERT(Options::useSinglePassBBQJIT());
+        ASSERT(Options::useBBQJIT());
 
         for (auto label : function->bbqLoopEntrypoints)
             loopEntrypoints.append(linkBuffer.locationOf<WasmEntryPtrTag>(label));
@@ -215,4 +215,4 @@ static inline void prepareForTailCall(CCallHelpers& jit, const B3::StackmapGener
 
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMBLY_B3JIT)
+#endif // ENABLE(WEBASSEMBLY_OMGJIT)

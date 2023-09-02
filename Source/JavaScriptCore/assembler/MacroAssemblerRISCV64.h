@@ -1820,6 +1820,10 @@ public:
         m_assembler.fmvInsn<RISCV64Assembler::FMVType::D, RISCV64Assembler::FMVType::X>(dest, src);
     }
 
+    static bool supportsCountPopulation() { return false; }
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(countPopulation32);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(countPopulation64);
+
     // The RISC-V V vector extension is not yet standardized
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(moveVector);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(loadVector);

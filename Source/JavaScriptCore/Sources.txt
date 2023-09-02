@@ -1101,8 +1101,6 @@ tools/Integrity.cpp
 tools/JSDollarVM.cpp
 tools/VMInspector.cpp
 
-wasm/WasmAirIRGenerator32_64.cpp @no-unify
-wasm/WasmAirIRGenerator64.cpp @no-unify
 wasm/WasmB3IRGenerator.cpp
 wasm/WasmBBQDisassembler.cpp
 wasm/WasmBBQJIT.cpp @no-unify

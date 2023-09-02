@@ -1967,6 +1967,9 @@ inline bool CSSPrimitiveValue::convertingToLengthHasRequiredConversionData(int l
     if (!dependencies.properties.isEmpty() && !conversionData.style())
         return !isFixedNumberConversion;
 
+    if (dependencies.containerDimensions && !conversionData.elementForContainerUnitResolution())
+        return !isFixedNumberConversion;
+
     if (isViewportPercentageLength() && conversionData.defaultViewportFactor().isEmpty())
         return !isFixedNumberConversion;
 
@@ -2363,6 +2366,12 @@ template<> constexpr FontVariantCaps fromCSSValueID(CSSValueID valueID)
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
     return FontVariantCaps::Normal;
 }
+
+#define TYPE FontVariantEmoji
+#define FOR_EACH(CASE) CASE(Normal) CASE(Text) CASE(Emoji) CASE(Unicode)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
 
 constexpr CSSValueID toCSSValueID(FontOpticalSizing sizing)
 {

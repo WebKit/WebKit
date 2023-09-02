@@ -2287,7 +2287,8 @@ template<> struct NormalizePercentage<Lab<float>> {
     //  for L: 0% = 0.0, 100% = 100.0
     //  for a and b: -100% = -125, 100% = 125 (NOTE: 0% is 0)
 
-    static constexpr double lightnessScaleFactor = 100.0 / 100.0;
+    static constexpr double maximumLightnessNumber = 100.0;
+    static constexpr double lightnessScaleFactor = maximumLightnessNumber / 100.0;
     static constexpr double abScaleFactor = 125.0 / 100.0;
 };
 
@@ -2295,7 +2296,8 @@ template<> struct NormalizePercentage<OKLab<float>> {
     //  for L: 0% = 0.0, 100% = 1.0
     //  for a and b: -100% = -0.4, 100% = 0.4 (NOTE: 0% is 0)
 
-    static constexpr double lightnessScaleFactor = 1.0 / 100.0;
+    static constexpr double maximumLightnessNumber = 1.0;
+    static constexpr double lightnessScaleFactor = maximumLightnessNumber / 100.0;
     static constexpr double abScaleFactor = 0.4 / 100.0;
 };
 
@@ -2303,7 +2305,8 @@ template<> struct NormalizePercentage<LCHA<float>> {
     //  for L: 0% = 0.0, 100% = 100.0
     //  for C: 0% = 0, 100% = 150
 
-    static constexpr double lightnessScaleFactor = 100.0 / 100.0;
+    static constexpr double maximumLightnessNumber = 100.0;
+    static constexpr double lightnessScaleFactor = maximumLightnessNumber / 100.0;
     static constexpr double chromaScaleFactor = 150.0 / 100.0;
 };
 
@@ -2311,7 +2314,8 @@ template<> struct NormalizePercentage<OKLCHA<float>> {
     //  for L: 0% = 0.0, 100% = 1.0
     //  for C: 0% = 0.0 100% = 0.4
 
-    static constexpr double lightnessScaleFactor = 1.0 / 100.0;
+    static constexpr double maximumLightnessNumber = 1.0;
+    static constexpr double lightnessScaleFactor = maximumLightnessNumber / 100.0;
     static constexpr double chromaScaleFactor = 0.4 / 100.0;
 };
 
@@ -2416,8 +2420,8 @@ static Color parseLabParametersRaw(CSSParserTokenRange& args, ConsumerForLightne
         return { };
 
     auto normalizedLightness = WTF::switchOn(*lightness,
-        [] (NumberRaw number) { return std::max(0.0, number.value); },
-        [] (PercentRaw percent) { return std::max(0.0, normalizeLightnessPercent<ColorType>(percent.value)); },
+        [] (NumberRaw number) { return std::clamp(number.value, 0.0, NormalizePercentage<ColorType>::maximumLightnessNumber); },
+        [] (PercentRaw percent) { return std::clamp(normalizeLightnessPercent<ColorType>(percent.value), 0.0, 100.0); },
         [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
     );
     auto normalizedA = WTF::switchOn(*aValue,
@@ -2508,8 +2512,8 @@ static Color parseLCHParametersRaw(CSSParserTokenRange& args, ConsumerForLightne
         return { };
 
     auto normalizedLightness = WTF::switchOn(*lightness,
-        [] (NumberRaw number) { return std::max(0.0, number.value); },
-        [] (PercentRaw percent) { return std::max(0.0, normalizeLightnessPercent<ColorType>(percent.value)); },
+        [] (NumberRaw number) { return std::clamp(number.value, 0.0, NormalizePercentage<ColorType>::maximumLightnessNumber); },
+        [] (PercentRaw percent) { return std::clamp(normalizeLightnessPercent<ColorType>(percent.value), 0.0, 100.0); },
         [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
     );
     auto normalizedChroma = WTF::switchOn(*chroma,
@@ -7024,31 +7028,6 @@ static RefPtr<CSSValue> consumeBasicShape(CSSParserTokenRange& range, const CSSP
     return result;
 }
 
-static RefPtr<CSSValue> consumeBasicShapeOrBox(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    CSSValueListBuilder list;
-    bool shapeFound = false;
-    bool boxFound = false;
-    while (!range.atEnd() && !(shapeFound && boxFound)) {
-        RefPtr<CSSValue> componentValue;
-        if (range.peek().type() == FunctionToken && !shapeFound) {
-            componentValue = consumeBasicShape(range, context);
-            shapeFound = true;
-        } else if (range.peek().type() == IdentToken && !boxFound) {
-            // FIXME: The current Motion Path spec calls for this to be a <coord-box>, not a <geometry-box>, the difference being that the former does not contain "margin-box" as a valid term.
-            // However, the spec also has a few examples using "margin-box", so there seems to be some abiguity to be resolved. Tracked at https://github.com/w3c/fxtf-drafts/issues/481.
-            componentValue = CSSPropertyParsing::consumeGeometryBox(range);
-            boxFound = true;
-        }
-        if (!componentValue)
-            break;
-        list.append(componentValue.releaseNonNull());
-    }
-    if (list.isEmpty())
-        return nullptr;
-    return CSSValueList::createSpaceSeparated(WTFMove(list));
-}
-
 // Parses the ray() definition as defined in https://drafts.fxtf.org/motion-1/#ray-function
 // ray( <angle> && <ray-size>? && contain? && [at <position>]? )
 static RefPtr<CSSRayValue> consumeRayShape(CSSParserTokenRange& range, const CSSParserContext& context)
@@ -7091,6 +7070,39 @@ static RefPtr<CSSRayValue> consumeRayShape(CSSParserTokenRange& range, const CSS
     );
 }
 
+static RefPtr<CSSValue> consumeBasicShapeRayOrBox(CSSParserTokenRange& range, const CSSParserContext& context, ConsumeRay consumeRay)
+{
+    CSSValueListBuilder list;
+    bool funcFound = false;
+    bool boxFound = false;
+    while (!range.atEnd() && !(funcFound && boxFound)) {
+        RefPtr<CSSValue> componentValue;
+        if (range.peek().type() == FunctionToken && !funcFound) {
+            if (consumeRay == ConsumeRay::Include) {
+                componentValue = consumeRayShape(range, context);
+                if (componentValue) {
+                    funcFound = true;
+                    list.append(componentValue.releaseNonNull());
+                    continue;
+                }
+            }
+            componentValue = consumeBasicShape(range, context);
+            funcFound = true;
+        } else if (range.peek().type() == IdentToken && !boxFound) {
+            // FIXME: The current Motion Path spec calls for this to be a <coord-box>, not a <geometry-box>, the difference being that the former does not contain "margin-box" as a valid term.
+            // However, the spec also has a few examples using "margin-box", so there seems to be some abiguity to be resolved. Tracked at https://github.com/w3c/fxtf-drafts/issues/481.
+            componentValue = CSSPropertyParsing::consumeGeometryBox(range);
+            boxFound = true;
+        }
+        if (!componentValue)
+            break;
+        list.append(componentValue.releaseNonNull());
+    }
+    if (list.isEmpty())
+        return nullptr;
+    return CSSValueList::createSpaceSeparated(WTFMove(list));
+}
+
 // Consumes shapes accepted by clip-path and offset-path.
 RefPtr<CSSValue> consumePathOperation(CSSParserTokenRange& range, const CSSParserContext& context, ConsumeRay consumeRay)
 {
@@ -7098,11 +7110,7 @@ RefPtr<CSSValue> consumePathOperation(CSSParserTokenRange& range, const CSSParse
         return consumeIdent(range);
     if (auto url = consumeURL(range))
         return url;
-    if (consumeRay == ConsumeRay::Include) {
-        if (auto ray = consumeRayShape(range, context))
-            return ray;
-    }
-    return consumeBasicShapeOrBox(range, context);
+    return consumeBasicShapeRayOrBox(range, context, consumeRay);
 }
 
 RefPtr<CSSValue> consumeListStyleType(CSSParserTokenRange& range, const CSSParserContext& context)

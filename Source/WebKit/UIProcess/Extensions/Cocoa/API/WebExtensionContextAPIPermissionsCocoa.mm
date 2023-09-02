@@ -163,8 +163,8 @@ void WebExtensionContext::firePermissionsEventListenerIfNecessary(WebExtensionEv
     ASSERT(type == WebExtensionEventListenerType::PermissionsOnAdded || type == WebExtensionEventListenerType::PermissionsOnRemoved);
 
     HashSet<String> origins = toStrings(matchPatterns);
-    auto listenerTypes = WebExtensionContext::EventListenerTypeSet { type };
-    wakeUpBackgroundContentIfNecessaryToFireEvents(listenerTypes, [&] {
+
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchPermissionsEvent(type, permissions, origins));
     });
 }

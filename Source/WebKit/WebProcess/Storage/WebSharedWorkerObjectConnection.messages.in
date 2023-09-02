@@ -23,5 +23,5 @@
 messages -> WebSharedWorkerObjectConnection {
     FetchScriptInClient(URL url, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, struct WebCore::WorkerOptions workerOptions) -> (struct WebCore::WorkerFetchResult fetchResult, struct WebCore::WorkerInitializationData initializationData)
     NotifyWorkerObjectOfLoadCompletion(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::ResourceError error)
-    PostExceptionToWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, String errorMessage, int lineNumber, int columnNumber, String sourceURL)
+    PostErrorToWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, String errorMessage, int lineNumber, int columnNumber, String sourceURL, bool isErrorEvent)
 }

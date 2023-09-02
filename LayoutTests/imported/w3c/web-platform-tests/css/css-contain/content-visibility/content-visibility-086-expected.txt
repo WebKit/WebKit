@@ -1,0 +1,6 @@
+This text should be visible.
+This text should be visible.
+This text is also visible.
+
+PASS Content Visibility: innerText
+

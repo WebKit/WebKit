@@ -115,7 +115,7 @@ public:
 #endif
 
 private:
-    // IPC::MessageReceiver.
+    // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     void addProcessPool(WebProcessPool&);
@@ -124,7 +124,7 @@ private:
     void addUserContentController(WebUserContentControllerProxy&);
     void removeUserContentController(WebUserContentControllerProxy&);
 
-    // MARK: webNavigation support.
+    // Web Navigation
     void didStartProvisionalLoadForFrame(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL targetURL);
     void didCommitLoadForFrame(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
     void didFinishLoadForFrame(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);

@@ -96,7 +96,7 @@ public:
         ASSERT(runnable());
         RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
-#if ENABLE(WEBASSEMBLY_B3JIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT)
         if (!m_omgCallees.isEmpty() && m_omgCallees[calleeIndex])
             return *m_omgCallees[calleeIndex].get();
         if (!m_bbqCallees.isEmpty() && m_bbqCallees[calleeIndex])
@@ -107,7 +107,7 @@ public:
         return m_llintCallees->at(calleeIndex).get();
     }
 
-#if ENABLE(WEBASSEMBLY_B3JIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT)
     BBQCallee& wasmBBQCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
         // We do not look up without locking because this function is called from this BBQCallee itself.
@@ -169,8 +169,10 @@ public:
     ~CalleeGroup();
 private:
     friend class Plan;
-#if ENABLE(WEBASSEMBLY_B3JIT)
+#if ENABLE(WEBASSEMBLY_BBQJIT)
     friend class BBQPlan;
+#endif
+#if ENABLE(WEBASSEMBLY_OMGJIT)
     friend class OMGPlan;
     friend class OSREntryPlan;
 #endif
@@ -181,7 +183,7 @@ private:
     void setCompilationFinished();
     unsigned m_calleeCount;
     MemoryMode m_mode;
-#if ENABLE(WEBASSEMBLY_B3JIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT)
     FixedVector<RefPtr<OMGCallee>> m_omgCallees;
     FixedVector<RefPtr<BBQCallee>> m_bbqCallees;
 #endif

@@ -26,19 +26,17 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 messages -> WebExtensionContextProxy {
-    // Alarms support
-    DispatchAlarmEvent(struct WebKit::WebExtensionAlarmParameters alarmInfo)
+    // Alarms
+    DispatchAlarmsEvent(struct WebKit::WebExtensionAlarmParameters alarmInfo)
 
-    // Permissions support
+    // Permissions
     DispatchPermissionsEvent(WebKit::WebExtensionEventListenerType type, HashSet<String> permissions, HashSet<String> origins)
 
-    // webNavigation support
-    DispatchWebNavigationOnBeforeNavigateEvent(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
-    DispatchWebNavigationOnCommittedEvent(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
-    DispatchWebNavigationOnDOMContentLoadedEvent(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
-    DispatchWebNavigationOnCompletedEvent(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
-    DispatchWebNavigationOnErrorOccurredEvent(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
+    // Web Navigation
+    DispatchWebNavigationEvent(WebKit::WebExtensionEventListenerType type, WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
 
+    // Windows
+    DispatchWindowsEvent(WebKit::WebExtensionEventListenerType type, std::optional<WebKit::WebExtensionWindowParameters> windowParameters)
 }
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

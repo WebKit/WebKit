@@ -330,7 +330,7 @@ GlyphData FontCascade::glyphDataForCharacter(UChar32 c, bool mirror, FontVariant
     if (mirror)
         c = u_charMirror(c);
 
-    auto emojiPolicy = resolveEmojiPolicy(FontVariantEmoji::Normal, c);
+    auto emojiPolicy = resolveEmojiPolicy(m_fontDescription.variantEmoji(), c);
 
     return m_fonts->glyphDataForCharacter(c, m_fontDescription, variant, emojiPolicy);
 }

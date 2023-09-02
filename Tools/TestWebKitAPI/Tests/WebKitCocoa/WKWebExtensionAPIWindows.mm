@@ -191,6 +191,119 @@ TEST(WKWebExtensionAPIWindows, GetAll)
     [manager loadAndRun];
 }
 
+TEST(WKWebExtensionAPIWindows, CreatedEvent)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.windows.onCreated.addListener((window) => {",
+
+        @"  browser.test.assertEq(typeof window, 'object', 'The window should be an object');",
+        @"  browser.test.assertEq(typeof window.id, 'number', 'The window id should be a number');",
+        @"  browser.test.assertEq(window.type, 'normal', 'Window type should be normal');",
+        @"  browser.test.assertEq(window.state, 'normal', 'Window state should be normal');",
+        @"  browser.test.assertTrue(window.focused, 'Window should be focused');",
+        @"  browser.test.assertFalse(window.incognito, 'Window should not be in incognito mode');",
+        @"  browser.test.assertFalse(window.alwaysOnTop, 'Window should not be always on top');",
+        @"  browser.test.assertEq(window.top, 50, 'Window top position should be 50');",
+        @"  browser.test.assertEq(window.left, 100, 'Window left position should be 100');",
+        @"  browser.test.assertEq(window.width, 800, 'Window width should be 800');",
+        @"  browser.test.assertEq(window.height, 600, 'Window height should be 600');",
+
+        @"  browser.test.notifyPass();",
+
+        @"});",
+
+        @"browser.test.yield('Open Window');"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Open Window");
+
+    auto newWindow = adoptNS([[TestWebExtensionWindow alloc] init]);
+
+    [manager.get().controller didOpenWindow:newWindow.get()];
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIWindows, FocusChangedEvent)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"let focusedTwice = false;",
+
+        @"browser.windows.onFocusChanged.addListener((windowId) => {",
+        @"  if (windowId !== browser.windows.WINDOW_ID_NONE) {",
+        @"    if (!focusedTwice) {",
+        @"      browser.test.assertEq(typeof windowId, 'number', 'The window id should be a number when a window is focused');",
+        @"      browser.test.yield('Focus None');",
+        @"      focusedTwice = true;",
+        @"    } else {",
+        @"      browser.test.assertEq(typeof windowId, 'number', 'The window id should be a number when a window is focused again');",
+        @"      browser.test.notifyPass();",
+        @"    }",
+        @"  } else {",
+        @"    browser.test.assertEq(windowId, browser.windows.WINDOW_ID_NONE, 'The window id should be WINDOW_ID_NONE when nil is focused');",
+        @"    browser.test.yield('Focus Window Again');",
+        @"  }",
+        @"});",
+
+        @"browser.test.yield('Focus Window');"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto window = adoptNS([[TestWebExtensionWindow alloc] init]);
+
+    [manager load];
+
+    [manager.get().controller didOpenWindow:window.get()];
+    [manager run];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Focus Window");
+
+    [manager.get().controller didFocusWindow:window.get()];
+    [manager run];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Focus None");
+
+    [manager.get().controller didFocusWindow:nil];
+    [manager run];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Focus Window Again");
+
+    [manager.get().controller didFocusWindow:window.get()];
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIWindows, RemovedEvent)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.windows.onRemoved.addListener((windowId) => {",
+        @"  browser.test.assertEq(typeof windowId, 'number', 'The window id should be a number');",
+
+        @"  browser.test.notifyPass();",
+        @"});",
+
+        @"browser.test.yield('Close Window');"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto window = adoptNS([[TestWebExtensionWindow alloc] init]);
+
+    [manager load];
+
+    [manager.get().controller didOpenWindow:window.get()];
+    [manager run];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Close Window");
+
+    [manager.get().controller didCloseWindow:window.get()];
+    [manager run];
+}
+
 #if PLATFORM(MAC)
 
 TEST(WKWebExtensionAPIWindows, Create)

@@ -263,6 +263,9 @@ PASS font-variant-caps: "small-caps" onto "unicase"
 PASS font-variant-east-asian (type: discrete) has testAccumulation function
 PASS font-variant-east-asian: "proportional-width" onto "full-width"
 PASS font-variant-east-asian: "full-width" onto "proportional-width"
+PASS font-variant-emoji (type: discrete) has testAccumulation function
+PASS font-variant-emoji: "emoji" onto "text"
+PASS font-variant-emoji: "text" onto "emoji"
 PASS font-variant-ligatures (type: discrete) has testAccumulation function
 PASS font-variant-ligatures: "no-common-ligatures" onto "common-ligatures"
 PASS font-variant-ligatures: "common-ligatures" onto "no-common-ligatures"

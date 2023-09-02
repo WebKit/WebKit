@@ -291,6 +291,13 @@ void WebExtensionContext::windowsRemove(WebExtensionWindowIdentifier windowIdent
     window->close(WTFMove(completionHandler));
 }
 
+void WebExtensionContext::fireWindowsEventIfNeeded(WebExtensionEventListenerType type, std::optional<WebExtensionWindowParameters> windowParameters)
+{
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
+        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchWindowsEvent(type, windowParameters));
+    });
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

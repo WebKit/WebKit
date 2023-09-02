@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Apple Inc. All rights reserved
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved
  * Copyright (C) Research In Motion Limited 2009. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -109,8 +109,8 @@ namespace WTF {
     };
 
     struct ASCIICaseInsensitiveHash {
-        template<typename T>
         struct FoldCase {
+            template<typename T>
             static inline UChar convert(T character)
             {
                 return toASCIILower(character);
@@ -119,7 +119,7 @@ namespace WTF {
 
         static unsigned hash(const UChar* data, unsigned length)
         {
-            return StringHasher::computeHashAndMaskTop8Bits<UChar, FoldCase<UChar>>(data, length);
+            return StringHasher::computeHashAndMaskTop8Bits<UChar, FoldCase>(data, length);
         }
 
         static unsigned hash(StringImpl& string)
@@ -136,7 +136,7 @@ namespace WTF {
 
         static unsigned hash(const LChar* data, unsigned length)
         {
-            return StringHasher::computeHashAndMaskTop8Bits<LChar, FoldCase<LChar>>(data, length);
+            return StringHasher::computeHashAndMaskTop8Bits<LChar, FoldCase>(data, length);
         }
 
         static inline unsigned hash(const char* data, unsigned length)

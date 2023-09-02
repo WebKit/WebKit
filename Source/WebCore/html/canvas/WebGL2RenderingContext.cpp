@@ -677,7 +677,7 @@ void WebGL2RenderingContext::framebufferTextureLayer(GCGLenum target, GCGLenum a
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "framebufferTextureLayer", "no framebuffer bound");
         return;
     }
-    framebufferBinding->setAttachmentForBoundFramebuffer(target, attachment, texTarget, texture, level, layer);
+    framebufferBinding->setAttachmentForBoundFramebuffer(target, attachment, WebGLFramebuffer::TextureLayerAttachment { texture, level, layer });
 }
 
 WebGLAny WebGL2RenderingContext::getInternalformatParameter(GCGLenum target, GCGLenum internalformat, GCGLenum pname)
@@ -2723,10 +2723,10 @@ WebGLAny WebGL2RenderingContext::getFramebufferAttachmentParameter(GCGLenum targ
     if (!validateNonDefaultFramebufferAttachment(functionName, attachment))
         return nullptr;
 
-    RefPtr<WebGLObject> attachmentObject;
+    std::optional<WebGLFramebuffer::AttachmentObject> attachmentObject;
     if (attachment == GraphicsContextGL::DEPTH_STENCIL_ATTACHMENT) {
         attachmentObject = targetFramebuffer->getAttachmentObject(GraphicsContextGL::DEPTH_ATTACHMENT);
-        RefPtr stencilAttachment = targetFramebuffer->getAttachmentObject(GraphicsContextGL::STENCIL_ATTACHMENT);
+        auto stencilAttachment = targetFramebuffer->getAttachmentObject(GraphicsContextGL::STENCIL_ATTACHMENT);
         if (attachmentObject != stencilAttachment) {
             synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "different objects bound to DEPTH_ATTACHMENT and STENCIL_ATTACHMENT");
             return nullptr;
@@ -2743,19 +2743,20 @@ WebGLAny WebGL2RenderingContext::getFramebufferAttachmentParameter(GCGLenum targ
         return nullptr;
     }
 
+    const bool isTexture = std::holds_alternative<RefPtr<WebGLTexture>>(*attachmentObject);
     switch (pname) {
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
-        if (attachmentObject->isTexture())
+        if (isTexture)
             return static_cast<unsigned>(GraphicsContextGL::TEXTURE);
         return static_cast<unsigned>(GraphicsContextGL::RENDERBUFFER);
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
-        if (attachmentObject->isTexture())
-            return static_pointer_cast<WebGLTexture>(WTFMove(attachmentObject));
-        return static_pointer_cast<WebGLRenderbuffer>(WTFMove(attachmentObject));
+        if (isTexture)
+            return std::get<RefPtr<WebGLTexture>>(WTFMove(*attachmentObject));
+        return std::get<RefPtr<WebGLRenderbuffer>>(WTFMove(*attachmentObject));
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER:
-        if (!attachmentObject->isTexture())
+        if (!isTexture)
             break;
         FALLTHROUGH;
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_RED_SIZE:

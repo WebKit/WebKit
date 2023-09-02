@@ -702,7 +702,6 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         return false;
 
     if (selector.match() == CSSSelector::Match::NestingParent) {
-        ASSERT_NOT_REACHED();
         return false;
     }
 

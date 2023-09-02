@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-constexpr unsigned maxShorthandLength = 17; // FIXME: Generate this from CSSProperties.json.
+constexpr unsigned maxShorthandLength = 18; // FIXME: Generate this from CSSProperties.json.
 
 class ShorthandSerializer {
 public:

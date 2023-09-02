@@ -109,14 +109,11 @@ public:
     using UnspecifiedBoolType = void (CheckedPtr::*)() const;
     operator UnspecifiedBoolType() const { return m_ptr ? &CheckedPtr::unspecifiedBoolTypeInstance : nullptr; }
 
-    ALWAYS_INLINE bool operator!() const { return !PtrTraits::unwrap(m_ptr); }
+    ALWAYS_INLINE explicit operator bool() const { return PtrTraits::unwrap(m_ptr); }
 
-    ALWAYS_INLINE const T* get() const { return PtrTraits::unwrap(m_ptr); }
-    ALWAYS_INLINE T* get() { return PtrTraits::unwrap(m_ptr); }
-    ALWAYS_INLINE const T& operator*() const { ASSERT(m_ptr); return *get(); }
-    ALWAYS_INLINE T& operator*() { ASSERT(m_ptr); return *get(); }
-    ALWAYS_INLINE const T* operator->() const { return get(); }
-    ALWAYS_INLINE T* operator->() { return get(); }
+    ALWAYS_INLINE T* get() const { return PtrTraits::unwrap(m_ptr); }
+    ALWAYS_INLINE T& operator*() const { ASSERT(m_ptr); return *get(); }
+    ALWAYS_INLINE T* operator->() const { return get(); }
 
     bool operator==(const T* other) const { return m_ptr == other; }
     template<typename U> bool operator==(U* other) const { return m_ptr == other; }

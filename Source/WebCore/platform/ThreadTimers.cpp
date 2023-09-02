@@ -102,8 +102,8 @@ void ThreadTimers::sharedTimerFiredInternal()
     m_firingTimers = true;
     m_pendingSharedTimerFireTime = MonotonicTime { };
 
-    MonotonicTime fireTime = MonotonicTime::now();
-    MonotonicTime timeToQuit = fireTime + maxDurationOfFiringTimers;
+    auto fireTime = MonotonicTime::now();
+    auto timeToQuit = ApproximateTime::now() + maxDurationOfFiringTimers;
 
     while (!m_timerHeap.isEmpty()) {
         Ref<ThreadTimerHeapItem> item = *m_timerHeap.first();
@@ -124,7 +124,7 @@ void ThreadTimers::sharedTimerFiredInternal()
         item->timer().fired();
 
         // Catch the case where the timer asked timers to fire in a nested event loop, or we are over time limit.
-        if (!m_firingTimers || timeToQuit < MonotonicTime::now())
+        if (!m_firingTimers || timeToQuit < ApproximateTime::now())
             break;
 
         if (m_shouldBreakFireLoopForRenderingUpdate)

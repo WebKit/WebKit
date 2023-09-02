@@ -622,57 +622,67 @@ class PropertyData:
 
     @classmethod
     def createAndDumpHashTable(self, file, propertyDict, tablePrefix):
-        propertyKeys = propertyDict.keys()
-        numberOfKeys = len(propertyKeys)
-        hashSize = ceilingToPowerOf2(numberOfKeys * 2)
-        hashMask = hashSize - 1
-        hashTable = [None] * hashSize
-        valueTable = []
-        tableSize = hashSize
+        def createAndDumpHashTableHelper(propertyDict, tablePrefix, isMac):
+            propertyKeys = propertyDict.keys()
+            numberOfKeys = len(propertyKeys)
+            hashSize = ceilingToPowerOf2(numberOfKeys * 2)
+            hashMask = hashSize - 1
+            hashTable = [None] * hashSize
+            valueTable = []
+            tableSize = hashSize
+            hashTableString = ""
 
-        keyValuesToHash = []
-        for propertyName in propertyKeys:
-            propertyData = propertyDict[propertyName]
-            keyValuesToHash.append((propertyName, propertyData.getIndex()))
-            for alias in propertyData.aliases:
-                keyValuesToHash.append((alias, propertyData.getIndex()))
+            keyValuesToHash = []
+            for propertyName in propertyKeys:
+                propertyData = propertyDict[propertyName]
+                keyValuesToHash.append((propertyName, propertyData.getIndex()))
+                for alias in propertyData.aliases:
+                    keyValuesToHash.append((alias, propertyData.getIndex()))
 
-        for keyValue in keyValuesToHash:
-            key = keyValue[0]
-            hash = stringHash(key) % hashSize
-            while hashTable[hash] is not None:
-                if hashTable[hash][1] is not None:
-                    hash = hashTable[hash][1]
-                else:
-                    hashTable[hash] = (hashTable[hash][0], tableSize)
-                    hashTable.append(None)
-                    hash = tableSize
-                    tableSize = tableSize + 1
+            for keyValue in keyValuesToHash:
+                key = keyValue[0]
+                hash = stringHash(key, isMac) % hashSize
+                while hashTable[hash] is not None:
+                    if hashTable[hash][1] is not None:
+                        hash = hashTable[hash][1]
+                    else:
+                        hashTable[hash] = (hashTable[hash][0], tableSize)
+                        hashTable.append(None)
+                        hash = tableSize
+                        tableSize = tableSize + 1
 
-            hashTable[hash] = (len(valueTable), None)
-            valueTable.append((key, keyValue[1]))
+                hashTable[hash] = (len(valueTable), None)
+                valueTable.append((key, keyValue[1]))
 
-        file.write("static const struct HashIndex {}TableIndex[{}] = {{\n".format(tablePrefix, len(hashTable)))
+            hashTableString += "static const struct HashIndex {}TableIndex[{}] = {{\n".format(tablePrefix, len(hashTable))
 
-        for tableIndex in hashTable:
-            value = -1
-            next = -1
-            if tableIndex is not None:
-                value = tableIndex[0]
-                if tableIndex[1] is not None:
-                    next = tableIndex[1]
+            for tableIndex in hashTable:
+                value = -1
+                next = -1
+                if tableIndex is not None:
+                    value = tableIndex[0]
+                    if tableIndex[1] is not None:
+                        next = tableIndex[1]
 
-            file.write("    {{ {}, {} }},\n".format(value, next))
+                hashTableString += "    {{ {}, {} }},\n".format(value, next)
 
-        file.write("};\n\n")
+            hashTableString += "};\n\n"
 
-        file.write("static const struct HashValue {}TableValue[{}] = {{\n".format(tablePrefix, len(valueTable)))
-        for value in valueTable:
-            file.write("    {{ \"{}\", {} }},\n".format(value[0], value[1]))
-        file.write("};\n\n")
+            hashTableString += "static const struct HashValue {}TableValue[{}] = {{\n".format(tablePrefix, len(valueTable))
+            for value in valueTable:
+                hashTableString += "    {{ \"{}\", {} }},\n".format(value[0], value[1])
+            hashTableString += "};\n\n"
 
-        file.write("static const struct HashTable {}HashTable = \n".format(tablePrefix))
-        file.write("    {{ {}, {}, {}TableValue, {}TableIndex }};\n\n".format(len(valueTable), hashMask, tablePrefix, tablePrefix))
+            hashTableString += "static const struct HashTable {}HashTable = \n".format(tablePrefix)
+            hashTableString += "    {{ {}, {}, {}TableValue, {}TableIndex }};\n\n".format(len(valueTable), hashMask, tablePrefix, tablePrefix)
+            return hashTableString
+
+        hashTableForMacOS = createAndDumpHashTableHelper(propertyDict, tablePrefix, True)
+        hashTableForIOS = createAndDumpHashTableHelper(propertyDict, tablePrefix, False)
+        hashTableToWrite = hashTableForMacOS
+        if hashTableForMacOS != hashTableForIOS:
+            hashTableToWrite = "#if PLATFORM(MAC)\n{}#else\n{}#endif\n".format(hashTableForMacOS, hashTableForIOS)
+        file.write(hashTableToWrite)
 
     @classmethod
     def dumpMayContainStringFunc(cls, file):

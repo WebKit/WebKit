@@ -744,17 +744,23 @@ JSC_DEFINE_CUSTOM_SETTER(testStaticAccessorPutter, (JSGlobalObject* globalObject
     return thisObject->putDirect(vm, PropertyName(Identifier::fromString(vm, "testField"_s)), JSValue::decode(value));
 }
 
-static const struct CompactHashIndex staticCustomAccessorTableIndex[9] = {
-    { -1, -1 },
+#if PLATFORM(MAC)
+static const struct CompactHashIndex staticCustomAccessorTableIndex[5] = {
+    { 0, 4 },
     { -1, -1 },
     { 2, -1 },
     { -1, -1 },
-    { 0, 8 },
+    { 1, -1 },
+};
+#else
+static const struct CompactHashIndex staticCustomAccessorTableIndex[5] = {
+    { 0, 4 },
     { -1, -1 },
-    { -1, -1 },
+    { 2, -1 },
     { -1, -1 },
     { 1, -1 },
 };
+#endif
 
 static const struct HashTableValue staticCustomAccessorTableValues[3] = {
     { "testStaticAccessor"_s, static_cast<unsigned>(PropertyAttribute::CustomAccessor), NoIntrinsic, { HashTableValue::GetterSetterType, testStaticAccessorGetter, testStaticAccessorPutter } },
@@ -763,7 +769,7 @@ static const struct HashTableValue staticCustomAccessorTableValues[3] = {
 };
 
 static const struct HashTable staticCustomAccessorTable =
-    { 3, 7, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::CustomAccessor, nullptr, staticCustomAccessorTableValues, staticCustomAccessorTableIndex };
+    { 3, 3, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::CustomAccessor, nullptr, staticCustomAccessorTableValues, staticCustomAccessorTableIndex };
 
 class StaticCustomAccessor : public JSNonFinalObject {
     using Base = JSNonFinalObject;
@@ -844,16 +850,23 @@ JSC_DEFINE_CUSTOM_SETTER(testStaticValuePutterSetFlag, (JSGlobalObject* globalOb
     return thisObject->putDirect(vm, PropertyName(Identifier::fromString(vm, "testStaticValueSetterCalled"_s)), jsBoolean(true));
 }
 
-static const struct CompactHashIndex staticCustomValueTableIndex[8] = {
-    { 1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 3, -1 },
+#if PLATFORM(MAC)
+static const struct CompactHashIndex staticCustomValueTableIndex[5] = {
+    { 1, 4 },
     { 2, -1 },
     { 0, -1 },
     { -1, -1 },
+    { 3, -1 },
 };
+#else
+static const struct CompactHashIndex staticCustomValueTableIndex[5] = {
+    { 1, 4 },
+    { 2, -1 },
+    { 0, -1 },
+    { -1, -1 },
+    { 3, -1 },
+};
+#endif
 
 static const struct HashTableValue staticCustomValueTableValues[4] = {
     { "testStaticValue"_s, static_cast<unsigned>(PropertyAttribute::CustomValue), NoIntrinsic, { HashTableValue::GetterSetterType, testStaticValueGetter, testStaticValuePutter } },
@@ -863,7 +876,7 @@ static const struct HashTableValue staticCustomValueTableValues[4] = {
 };
 
 static const struct HashTable staticCustomValueTable =
-    { 4, 7, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::CustomValue, nullptr, staticCustomValueTableValues, staticCustomValueTableIndex };
+    { 4, 3, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::CustomValue, nullptr, staticCustomValueTableValues, staticCustomValueTableIndex };
 
 class StaticCustomValue : public JSNonFinalObject {
     using Base = JSNonFinalObject;
@@ -941,16 +954,23 @@ JSC_DEFINE_HOST_FUNCTION(staticDontDeleteDontEnumMethod, (JSGlobalObject*, CallF
     return encodedJSUndefined();
 }
 
-static const struct CompactHashIndex staticDontDeleteDontEnumTableIndex[8] = {
+#if PLATFORM(MAC)
+static const struct CompactHashIndex staticDontDeleteDontEnumTableIndex[5] = {
     { 0, -1 },
-    { 1, -1 },
-    { -1, -1 },
+    { 1, 4 },
     { -1, -1 },
     { -1, -1 },
     { 2, -1 },
-    { -1, -1 },
-    { -1, -1 },
 };
+#else
+static const struct CompactHashIndex staticDontDeleteDontEnumTableIndex[5] = {
+    { 0, -1 },
+    { 1, 4 },
+    { -1, -1 },
+    { -1, -1 },
+    { 2, -1 },
+};
+#endif
 
 static const struct HashTableValue staticDontDeleteDontEnumTableValues[3] = {
     { "dontEnum"_s, static_cast<unsigned>(PropertyAttribute::Function | PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::NativeFunctionType, staticDontDeleteDontEnumMethod, 0 } },
@@ -959,7 +979,7 @@ static const struct HashTableValue staticDontDeleteDontEnumTableValues[3] = {
 };
 
 static const struct HashTable staticDontDeleteDontEnumTable =
-    { 3, 7, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete, nullptr, staticDontDeleteDontEnumTableValues, staticDontDeleteDontEnumTableIndex };
+    { 3, 3, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete, nullptr, staticDontDeleteDontEnumTableValues, staticDontDeleteDontEnumTableIndex };
 
 class ObjectDoingSideEffectPutWithoutCorrectSlotStatus : public JSNonFinalObject {
     using Base = JSNonFinalObject;

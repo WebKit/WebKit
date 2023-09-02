@@ -69,7 +69,7 @@ namespace WasmOperationsInternal {
     static constexpr bool verbose = false;
 }
 
-#if ENABLE(WEBASSEMBLY_B3JIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT)
 static bool shouldTriggerOMGCompile(TierUpCount& tierUp, OMGCallee* replacement, uint32_t functionIndex)
 {
     if (!replacement && !tierUp.checkIfOptimizationThresholdReached()) {

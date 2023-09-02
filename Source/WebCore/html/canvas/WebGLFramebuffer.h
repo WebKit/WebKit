@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -28,6 +28,7 @@
 #if ENABLE(WEBGL)
 
 #include "WebGLObject.h"
+#include <variant>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -47,21 +48,6 @@ class WebGLTexture;
 
 class WebGLFramebuffer final : public WebGLObject {
 public:
-    class WebGLAttachment : public RefCounted<WebGLAttachment> {
-    public:
-        virtual ~WebGLAttachment();
-
-        virtual WebGLObject* getObject() const = 0;
-        virtual bool isSharedObject(WebGLObject*) const = 0;
-        virtual void onDetached(const AbstractLocker&, GraphicsContextGL*) = 0;
-        virtual void attach(GraphicsContextGL*, GCGLenum target, GCGLenum attachment) = 0;
-        virtual void unattach(GraphicsContextGL*, GCGLenum target, GCGLenum attachment) = 0;
-        virtual void addMembersToOpaqueRoots(const AbstractLocker&, JSC::AbstractSlotVisitor&) = 0;
-
-    protected:
-        WebGLAttachment();
-    };
-
     virtual ~WebGLFramebuffer();
 
     static RefPtr<WebGLFramebuffer> create(WebGLRenderingContextBase&);
@@ -69,11 +55,29 @@ public:
     static RefPtr<WebGLFramebuffer> createOpaque(WebGLRenderingContextBase&);
 #endif
 
-    void setAttachmentForBoundFramebuffer(GCGLenum target, GCGLenum attachment, GCGLenum texTarget, WebGLTexture*, GCGLint level, GCGLint layer);
-    void setAttachmentForBoundFramebuffer(GCGLenum target, GCGLenum attachment, WebGLRenderbuffer*);
+    struct TextureAttachment {
+        RefPtr<WebGLTexture> texture;
+        GCGLenum texTarget;
+        GCGLint level;
+        bool operator==(const TextureAttachment&) const;
+    };
+    struct TextureLayerAttachment {
+        RefPtr<WebGLTexture> texture;
+        GCGLint level;
+        GCGLint layer;
+        bool operator==(const TextureLayerAttachment&) const;
+    };
+    using AttachmentEntry = std::variant<RefPtr<WebGLRenderbuffer>, TextureAttachment, TextureLayerAttachment>;
+
+    void setAttachmentForBoundFramebuffer(GCGLenum target, GCGLenum attachment, AttachmentEntry);
+
+    // Below are nonnull. RefPtr instead of Ref due to call site object identity
+    // purposes, call site uses i.e pointer operator==.
+    using AttachmentObject = std::variant<RefPtr<WebGLRenderbuffer>, RefPtr<WebGLTexture>>;
+
     // If an object is attached to the currently bound framebuffer, remove it.
-    void removeAttachmentFromBoundFramebuffer(const AbstractLocker&, GCGLenum target, WebGLObject*);
-    WebGLObject* getAttachmentObject(GCGLenum) const;
+    void removeAttachmentFromBoundFramebuffer(const AbstractLocker&, GCGLenum target, AttachmentObject);
+    std::optional<AttachmentObject> getAttachmentObject(GCGLenum) const;
 
     void didBind() { m_hasEverBeenBound = true; }
 
@@ -105,25 +109,18 @@ private:
     // If a given attachment point for the currently bound framebuffer is not null, remove the attached object.
     void removeAttachmentFromBoundFramebuffer(const AbstractLocker&, GCGLenum target, GCGLenum attachment);
 
-    WebGLAttachment* getAttachment(GCGLenum) const;
-
     // Check if the framebuffer is currently bound to the given target.
     bool isBound(GCGLenum target) const;
-
-    // attach 'attachment' at 'attachmentPoint'.
-    void attach(GCGLenum target, GCGLenum attachment, GCGLenum attachmentPoint);
 
     // Check if a new drawBuffers call should be issued. This is called when we add or remove an attachment.
     void drawBuffersIfNecessary(bool force);
 
-    void setAttachmentInternal(GCGLenum attachment, GCGLenum texTarget, WebGLTexture*, GCGLint level, GCGLint layer);
-    void setAttachmentInternal(GCGLenum attachment, WebGLRenderbuffer*);
+    void setAttachmentInternal(GCGLenum attachment, AttachmentEntry);
     // If a given attachment point for the currently bound framebuffer is not
     // null, remove the attached object.
     void removeAttachmentInternal(const AbstractLocker&, GCGLenum attachment);
 
-    typedef HashMap<GCGLenum, RefPtr<WebGLAttachment>> AttachmentMap;
-    AttachmentMap m_attachments;
+    HashMap<GCGLenum, AttachmentEntry> m_attachments;
     bool m_hasEverBeenBound { false };
     Vector<GCGLenum> m_drawBuffers;
     Vector<GCGLenum> m_filteredDrawBuffers;

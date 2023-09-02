@@ -1,0 +1,4 @@
+[submitproject "filter"]
+    includedSubdirectoryPatterns = Source/
+    excludedSubdirectoryPatterns = Source/third_party/boringssl/src/util
+    excludedSubdirectoryPatterns = Source/webrtc/examples

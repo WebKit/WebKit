@@ -698,6 +698,7 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
         addProperty(CSSPropertyFontVariantNumeric, CSSPropertyFontVariant, nullptr, important);
         addProperty(CSSPropertyFontVariantEastAsian, CSSPropertyFontVariant, nullptr, important);
         addProperty(CSSPropertyFontVariantPosition, CSSPropertyFontVariant, nullptr, important);
+        addProperty(CSSPropertyFontVariantEmoji, CSSPropertyFontVariant, nullptr, important);
         return m_range.atEnd();
     }
 
@@ -705,6 +706,7 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
     RefPtr<CSSValue> alternatesValue;
     RefPtr<CSSValue> positionValue;
     RefPtr<CSSValue> eastAsianValue;
+    RefPtr<CSSValue> emojiValue;
     CSSFontVariantLigaturesParser ligaturesParser;
     CSSFontVariantNumericParser numericParser;
     bool implicitLigatures = true;
@@ -737,6 +739,9 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
         if (!eastAsianValue && (eastAsianValue = consumeFontVariantEastAsian(m_range)))
             continue;
 
+        if (!emojiValue && (emojiValue = CSSPropertyParsing::consumeFontVariantEmoji(m_range)))
+            continue;
+
         // Saw some value that didn't match anything else.
         return false;
     } while (!m_range.atEnd());
@@ -747,6 +752,7 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
     addProperty(CSSPropertyFontVariantNumeric, CSSPropertyFontVariant, numericParser.finalizeValue().releaseNonNull(), important, implicitNumeric);
     addProperty(CSSPropertyFontVariantEastAsian, CSSPropertyFontVariant, WTFMove(eastAsianValue), important);
     addProperty(CSSPropertyFontVariantPosition, CSSPropertyFontVariant, WTFMove(positionValue), important);
+    addProperty(CSSPropertyFontVariantEmoji, CSSPropertyFontVariant, WTFMove(emojiValue), important);
 
     return true;
 }
@@ -950,6 +956,7 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyFontVariantAlternates:
     case CSSPropertyFontVariantCaps:
     case CSSPropertyFontVariantEastAsian:
+    case CSSPropertyFontVariantEmoji:
     case CSSPropertyFontVariantLigatures:
     case CSSPropertyFontVariantNumeric:
     case CSSPropertyFontVariantPosition:

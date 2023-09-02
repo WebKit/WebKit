@@ -150,8 +150,20 @@ void SharedWorkerThreadProxy::postExceptionToWorkerObject(const String& errorMes
         return;
 
     callOnMainThread([sharedWorkerIdentifier = m_workerThread->identifier(), errorMessage = errorMessage.isolatedCopy(), lineNumber, columnNumber, sourceURL = sourceURL.isolatedCopy()] {
+        bool isErrorEvent = true;
         if (auto* connection = SharedWorkerContextManager::singleton().connection())
-            connection->postExceptionToWorkerObject(sharedWorkerIdentifier, errorMessage, lineNumber, columnNumber, sourceURL);
+            connection->postErrorToWorkerObject(sharedWorkerIdentifier, errorMessage, lineNumber, columnNumber, sourceURL, isErrorEvent);
+    });
+}
+
+void SharedWorkerThreadProxy::reportErrorToWorkerObject(const String& errorMessage)
+{
+    ASSERT(!isMainThread());
+
+    callOnMainThread([sharedWorkerIdentifier = m_workerThread->identifier(), errorMessage = errorMessage.isolatedCopy()] {
+        bool isErrorEvent = false;
+        if (auto* connection = SharedWorkerContextManager::singleton().connection())
+            connection->postErrorToWorkerObject(sharedWorkerIdentifier, errorMessage, 0, 0, { }, isErrorEvent);
     });
 }
 

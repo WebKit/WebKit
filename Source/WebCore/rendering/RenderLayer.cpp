@@ -360,19 +360,28 @@ RenderLayer::RenderLayer(RenderLayerModelObject& renderer)
     if (isRenderViewLayer())
         m_boxScrollingScope = m_contentsScrollingScope = nextScrollingScope();
 
-    if (renderer.firstChild())
-        return;
+    auto needsvisibleContentStatusUpdate = [&]() {
+        if (renderer.firstChild())
+            return false;
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    // Leave m_visibleContentStatusDirty = true in any case. The associated renderer needs to be inserted into the
-    // render tree, before we can determine the visible content status. The visible content status of a SVG renderer
-    // depends on its ancestors (all children of RenderSVGHiddenContainer are recursively invisible, no matter what).
-    if (renderer.isSVGLayerAwareRenderer() && renderer.document().settings().layerBasedSVGEngineEnabled())
-        return;
+        // Leave m_visibleContentStatusDirty = true in any case. The associated renderer needs to be inserted into the
+        // render tree, before we can determine the visible content status. The visible content status of a SVG renderer
+        // depends on its ancestors (all children of RenderSVGHiddenContainer are recursively invisible, no matter what).
+        if (renderer.isSVGLayerAwareRenderer() && renderer.document().settings().layerBasedSVGEngineEnabled())
+            return false;
 #endif
 
-    m_visibleContentStatusDirty = false;
-    m_hasVisibleContent = renderer.style().visibility() == Visibility::Visible;
+        //  We need the parent to know if we have skipped content or content-visibility root.
+        if (renderer.style().skippedContentReason().has_value() && !renderer.parent())
+            return false;
+        return true;
+    }();
+
+    if (needsvisibleContentStatusUpdate) {
+        m_visibleContentStatusDirty = false;
+        m_hasVisibleContent = renderer.style().visibility() == Visibility::Visible;
+    }
 }
 
 RenderLayer::~RenderLayer()
@@ -1584,7 +1593,12 @@ void RenderLayer::updateDescendantDependentFlags()
         bool hasNotIsolatedBlendingDescendants = false;
 #endif
 
-        for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
+        auto firstLayerChild = [&] () -> RenderLayer* {
+            if (renderer().isSkippedContentRoot())
+                return nullptr;
+            return firstChild();
+        }();
+        for (RenderLayer* child = firstLayerChild; child; child = child->nextSibling()) {
             child->updateDescendantDependentFlags();
 
             hasVisibleDescendant |= child->m_hasVisibleContent || child->m_hasVisibleDescendant;
@@ -1616,6 +1630,9 @@ void RenderLayer::updateDescendantDependentFlags()
     }
 
     if (m_visibleContentStatusDirty) {
+        //  We need the parent to know if we have skipped content or content-visibility root.
+        if (renderer().style().skippedContentReason().has_value() && !renderer().parent())
+            return;
         m_hasVisibleContent = computeHasVisibleContent();
         m_visibleContentStatusDirty = false;
     }
@@ -1629,6 +1646,9 @@ bool RenderLayer::computeHasVisibleContent() const
         return false;
 #endif
     if (m_isHiddenByOverflowTruncation)
+        return false;
+
+    if (renderer().isSkippedContent())
         return false;
 
     if (renderer().style().visibility() == Visibility::Visible)
@@ -3433,7 +3453,7 @@ void RenderLayer::paintList(LayerList layerIterator, GraphicsContext& context, c
     if (layerIterator.begin() == layerIterator.end())
         return;
 
-    if (!hasSelfPaintingLayerDescendant() || renderer().isSkippedContentRoot())
+    if (!hasSelfPaintingLayerDescendant())
         return;
 
 #if ASSERT_ENABLED
@@ -5386,7 +5406,7 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
     // likely be folded along with the rest.
     if (oldStyle) {
         bool visibilityChanged = oldStyle->visibility() != renderer().style().visibility();
-        if (oldStyle->usedZIndex() != renderer().style().usedZIndex() || visibilityChanged) {
+        if (oldStyle->usedZIndex() != renderer().style().usedZIndex() || oldStyle->skippedContentReason() != renderer().style().skippedContentReason() || visibilityChanged) {
             dirtyStackingContextZOrderLists();
             if (isStackingContext())
                 dirtyZOrderLists();

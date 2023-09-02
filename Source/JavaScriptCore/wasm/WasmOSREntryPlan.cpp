@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WasmOSREntryPlan.h"
 
-#if ENABLE(WEBASSEMBLY_B3JIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT)
 
 #include "JITCompilation.h"
 #include "LinkBuffer.h"
@@ -188,4 +188,4 @@ void OSREntryPlan::work(CompilationEffort)
 
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMBLY_B3JIT)
+#endif // ENABLE(WEBASSEMBLY_OMGJIT)

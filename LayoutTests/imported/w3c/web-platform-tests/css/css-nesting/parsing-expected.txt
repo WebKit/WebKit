@@ -3,10 +3,10 @@ PASS .foo { & { color: green; }}
 PASS .foo { &.bar { color: green; }}
 PASS .foo { & .bar { color: green; }}
 PASS .foo { & > .bar { color: green; }}
-FAIL .foo { > .bar { color: green; }} assert_equals: Inner rule's selector should be "& > .bar". expected "& > .bar" but got "> .bar"
-FAIL .foo { > & .bar { color: green; }} assert_equals: Inner rule's selector should be "& > & .bar". expected "& > & .bar" but got "> & .bar"
-FAIL .foo { + .bar & { color: green; }} assert_equals: Inner rule's selector should be "& + .bar &". expected "& + .bar &" but got "+ .bar &"
-FAIL .foo { + .bar, .foo, > .baz { color: green; }} assert_equals: Inner rule's selector should be "& + .bar, .foo, & > .baz". expected "& + .bar, .foo, & > .baz" but got "+ .bar, .foo, > .baz"
+PASS .foo { > .bar { color: green; }}
+PASS .foo { > & .bar { color: green; }}
+PASS .foo { + .bar & { color: green; }}
+PASS .foo { + .bar, .foo, > .baz { color: green; }}
 PASS .foo { .foo { color: green; }}
 PASS .foo { .test > & .bar { color: green; }}
 PASS .foo { .foo, .foo & { color: green; }}
@@ -14,7 +14,7 @@ PASS .foo { :is(.bar, .baz) { color: green; }}
 PASS .foo { &:is(.bar, .baz) { color: green; }}
 PASS .foo { :is(.bar, &.baz) { color: green; }}
 PASS .foo { &:is(.bar, &.baz) { color: green; }}
-FAIL .foo { div& { color: green; }} assert_equals: Inner rule should exist. expected 1 but got 0
+PASS .foo { div& { color: green; }}
 PASS INVALID: .foo { &div { color: green; }}
 PASS .foo { .class& { color: green; }}
 PASS .foo { &.class { color: green; }}

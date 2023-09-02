@@ -63,7 +63,7 @@ public:
     void globalObjectIsAvailableForFrame(WebPage&, WebFrame&, WebCore::DOMWrapperWorld&);
     void serviceWorkerGlobalObjectIsAvailableForFrame(WebPage&, WebFrame&, WebCore::DOMWrapperWorld&);
 
-    // webNavigation support.
+    // Web Navigation
     void didStartProvisionalLoadForFrame(WebPage&, WebFrame&, const URL&);
     void didCommitLoadForFrame(WebPage&, WebFrame&, const URL&);
     void didFinishLoadForFrame(WebPage&, WebFrame&, const URL&);
@@ -74,7 +74,7 @@ public:
 private:
     explicit WebExtensionControllerProxy(WebExtensionControllerParameters);
 
-    // IPC::MessageReceiver.
+    // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
 #if PLATFORM(COCOA)

@@ -637,6 +637,11 @@ void WorkerGlobalScope::addImportedScriptSourceProvider(const URL& url, ScriptBu
     }).iterator->value.add(provider);
 }
 
+void WorkerGlobalScope::reportErrorToWorkerObject(const String& errorMessage)
+{
+    thread().workerReportingProxy().reportErrorToWorkerObject(errorMessage);
+}
+
 void WorkerGlobalScope::clearDecodedScriptData()
 {
     ASSERT(isContextThread());

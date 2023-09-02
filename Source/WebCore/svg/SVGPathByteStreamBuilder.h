@@ -51,30 +51,16 @@ private:
     void curveToQuadraticSmooth(const FloatPoint&, PathCoordinateMode) final;
     void arcTo(float, float, float, bool largeArcFlag, bool sweepFlag, const FloatPoint&, PathCoordinateMode) final;
 
-    template<typename ByteType>
-    void writeType(const ByteType& type)
+    template<typename DataType>
+    void writeType(const DataType& data)
     {
+        typedef union {
+            DataType value;
+            uint8_t bytes[sizeof(DataType)];
+        } ByteType;
+
+        ByteType type = { data };
         m_byteStream.append(std::span { type.bytes, sizeof(ByteType) });
-    }
-
-    void writeFlag(bool value)
-    {
-        BoolByte data;
-        data.value = value;
-        writeType(data);
-    }
-
-    void writeFloat(float value)
-    {
-        FloatByte data;
-        data.value = value;
-        writeType(data);
-    }
-
-    void writeFloatPoint(const FloatPoint& point)
-    {
-        writeFloat(point.x());
-        writeFloat(point.y());
     }
 
     void writeSegmentType(SVGPathSegType type)

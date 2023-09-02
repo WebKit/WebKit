@@ -69,7 +69,7 @@ void CallsiteCollection::addCalleeGroupCallsites(const AbstractLocker& calleeGro
     m_calleeGroupCallsites = WTFMove(callsitesList);
 }
 
-#if ENABLE(WEBASSEMBLY_B3JIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT)
 void CallsiteCollection::updateCallsitesToCallUs(const AbstractLocker& calleeGroupLocker, CalleeGroup& calleeGroup, CodeLocationLabel<WasmEntryPtrTag> entrypoint, uint32_t functionIndex, uint32_t functionIndexSpace)
 {
     UNUSED_PARAM(calleeGroupLocker);
