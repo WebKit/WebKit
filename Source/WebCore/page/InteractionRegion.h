@@ -60,16 +60,9 @@ struct InteractionRegion {
     OptionSet<CornerMask> maskedCorners { };
 
     WEBCORE_EXPORT ~InteractionRegion();
-};
 
-inline bool operator==(const InteractionRegion& a, const InteractionRegion& b)
-{
-    return a.type == b.type
-        && a.elementIdentifier == b.elementIdentifier
-        && a.rectInLayerCoordinates == b.rectInLayerCoordinates
-        && a.borderRadius == b.borderRadius
-        && a.maskedCorners == b.maskedCorners;
-}
+    friend bool operator==(const InteractionRegion&, const InteractionRegion&) = default;
+};
 
 WEBCORE_EXPORT std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject&, const Region&);
 WEBCORE_EXPORT bool elementMatchesHoverRules(Element&);

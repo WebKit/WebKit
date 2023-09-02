@@ -96,7 +96,7 @@ public:
         --m_lineIndex;
     }
 
-    bool operator==(const LineBoxIteratorModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_lineIndex == other.m_lineIndex; }
+    friend bool operator==(const LineBoxIteratorModernPath&, const LineBoxIteratorModernPath&) = default;
 
     bool atEnd() const { return !m_inlineContent || m_lineIndex == lines().size(); }
 

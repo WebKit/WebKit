@@ -43,10 +43,7 @@ public:
     {
     }
 
-    bool operator==(const LengthPoint& o) const
-    {
-        return m_x == o.m_x && m_y == o.m_y;
-    }
+    friend bool operator==(const LengthPoint&, const LengthPoint&) = default;
 
     void setX(Length x) { m_x = WTFMove(x); }
     const Length& x() const { return m_x; }

@@ -62,7 +62,7 @@ public:
     public:
         EncodedData(Sign, int exponent, uint64_t coefficient);
 
-        bool operator==(const EncodedData&) const;
+        friend bool operator==(const EncodedData&, const EncodedData&) = default;
 
         uint64_t coefficient() const { return m_coefficient; }
         int countDigits() const;

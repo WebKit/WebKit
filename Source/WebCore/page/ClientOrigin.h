@@ -36,7 +36,7 @@ namespace WebCore {
 struct ClientOrigin {
     static ClientOrigin emptyKey() { return { }; }
 
-    bool operator==(const ClientOrigin&) const;
+    friend bool operator==(const ClientOrigin&, const ClientOrigin&) = default;
 
     ClientOrigin isolatedCopy() const & { return { topOrigin.isolatedCopy(), clientOrigin.isolatedCopy() }; }
     ClientOrigin isolatedCopy() && { return { WTFMove(topOrigin).isolatedCopy(), WTFMove(clientOrigin).isolatedCopy() }; }
@@ -53,11 +53,6 @@ struct ClientOrigin {
 inline void add(Hasher& hasher, const ClientOrigin& origin)
 {
     add(hasher, origin.topOrigin, origin.clientOrigin);
-}
-
-inline bool ClientOrigin::operator==(const ClientOrigin& other) const
-{
-    return topOrigin == other.topOrigin && clientOrigin == other.clientOrigin;
 }
 
 } // namespace WebCore

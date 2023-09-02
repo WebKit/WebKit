@@ -91,21 +91,7 @@ struct ScrollableAreaParameters {
 
     ScrollbarWidth scrollbarWidthStyle { ScrollbarWidth::Auto };
 
-    bool operator==(const ScrollableAreaParameters& other) const
-    {
-        return horizontalScrollElasticity == other.horizontalScrollElasticity
-            && verticalScrollElasticity == other.verticalScrollElasticity
-            && horizontalScrollbarMode == other.horizontalScrollbarMode
-            && verticalScrollbarMode == other.verticalScrollbarMode
-            && horizontalOverscrollBehavior == other.horizontalOverscrollBehavior
-            && verticalOverscrollBehavior == other.verticalOverscrollBehavior
-            && allowsHorizontalScrolling == other.allowsHorizontalScrolling
-            && allowsVerticalScrolling == other.allowsVerticalScrolling
-            && horizontalNativeScrollbarVisibility == other.horizontalNativeScrollbarVisibility
-            && verticalNativeScrollbarVisibility == other.verticalNativeScrollbarVisibility
-            && useDarkAppearanceForScrollbars == other.useDarkAppearanceForScrollbars
-            && scrollbarWidthStyle == other.scrollbarWidthStyle;
-    }
+    friend bool operator==(const ScrollableAreaParameters&, const ScrollableAreaParameters&) = default;
 };
 
 enum class ViewportRectStability {
@@ -160,10 +146,7 @@ struct RequestedKeyboardScrollData {
     KeyboardScrollAction action { KeyboardScrollAction::StartAnimation };
     std::optional<KeyboardScroll> keyboardScroll;
 
-    bool operator==(const RequestedKeyboardScrollData& other) const
-    {
-        return action == other.action && keyboardScroll == other.keyboardScroll;
-    }
+    friend bool operator==(const RequestedKeyboardScrollData&, const RequestedKeyboardScrollData&) = default;
 };
 
 enum class ScrollUpdateType : uint8_t {

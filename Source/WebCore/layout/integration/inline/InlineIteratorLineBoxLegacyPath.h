@@ -99,7 +99,7 @@ public:
         m_rootInlineBox = m_rootInlineBox->prevRootBox();
     }
 
-    bool operator==(const LineBoxIteratorLegacyPath& other) const { return m_rootInlineBox == other.m_rootInlineBox; }
+    friend bool operator==(LineBoxIteratorLegacyPath, LineBoxIteratorLegacyPath) = default;
 
     bool atEnd() const { return !m_rootInlineBox; }
 

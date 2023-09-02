@@ -30,14 +30,11 @@ struct LengthSize {
     Length width;
     Length height;
 
+    ALWAYS_INLINE friend bool operator==(const LengthSize&, const LengthSize&) = default;
+
     bool isEmpty() const { return width.isZero() || height.isZero(); }
     bool isZero() const { return width.isZero() && height.isZero(); }
 };
-
-ALWAYS_INLINE bool operator==(const LengthSize& a, const LengthSize& b)
-{
-    return a.width == b.width && a.height == b.height;
-}
 
 inline LengthSize blend(const LengthSize& from, const LengthSize& to, const BlendingContext& context)
 {

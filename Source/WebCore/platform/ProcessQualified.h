@@ -81,11 +81,7 @@ public:
         return m_processIdentifier.isHashTableDeletedValue();
     }
 
-    bool operator==(const ProcessQualified& other) const
-    {
-        return m_object == other.m_object
-            && m_processIdentifier == other.m_processIdentifier;
-    }
+    friend bool operator==(const ProcessQualified&, const ProcessQualified&) = default;
 
     static ProcessQualified generate() { return { T::generate(), Process::identifier() }; }
 

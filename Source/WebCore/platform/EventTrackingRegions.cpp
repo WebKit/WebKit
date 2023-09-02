@@ -150,10 +150,4 @@ void EventTrackingRegions::unite(const EventTrackingRegions& eventTrackingRegion
         uniteSynchronousRegion(slot.key, slot.value);
 }
 
-bool operator==(const EventTrackingRegions& a, const EventTrackingRegions& b)
-{
-    return a.asynchronousDispatchRegion == b.asynchronousDispatchRegion
-        && a.eventSpecificSynchronousDispatchRegions == b.eventSpecificSynchronousDispatchRegions;
-}
-
 } // namespace WebCore
