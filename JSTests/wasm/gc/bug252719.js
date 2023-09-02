@@ -1,6 +1,4 @@
-//@ runWebAssemblySuite("--useWebAssemblyTypedFunctionReferences=true", "--useWebAssemblyGC=true", "--webAssemblyBBQAirModeThreshold=20")
-
-// See the comments in `testIntFields()` for why we set --webAssemblyBBQAirModeThreshold=20
+//@ runWebAssemblySuite("--useWebAssemblyTypedFunctionReferences=true", "--useWebAssemblyGC=true")
 
 import * as assert from "../assert.js";
 import { compile, instantiate } from "./wast-wrapper.js";
@@ -48,9 +46,6 @@ function testIntFields() {
       threshold and so it will be compiled with Air, while m is above the size
       threshold and will be compiled with B3. The wrong result will be read
       because the backends will disagree on struct field offsets.
-
-      This relies on setting --webAssemblyBBQAirModeThreshold=20, which is between
-      the size of m and the size of m2.
      */
 
     // size = 14

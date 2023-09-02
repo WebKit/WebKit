@@ -26,14 +26,12 @@
 #include "config.h"
 #include "WasmBBQPlan.h"
 
-#if ENABLE(WEBASSEMBLY_B3JIT)
+#if ENABLE(WEBASSEMBLY_BBQJIT)
 
 #include "JITCompilation.h"
 #include "JSToWasm.h"
 #include "LinkBuffer.h"
 #include "NativeCalleeRegistry.h"
-#include "WasmAirIRGenerator.h"
-#include "WasmB3IRGenerator.h"
 #include "WasmBBQJIT.h"
 #include "WasmCallee.h"
 #include "WasmCalleeGroup.h"
@@ -72,24 +70,6 @@ FunctionAllowlist& BBQPlan::ensureGlobalBBQAllowlist()
     return bbqAllowlist;
 }
 
-bool BBQPlan::planGeneratesLoopOSREntrypoints(const ModuleInformation& moduleInformation)
-{
-    if constexpr (is32Bit())
-        return true;
-    if (Options::useSinglePassBBQJIT())
-        return true;
-
-    // FIXME: Some webpages use very large Wasm module, and it exhausts all executable memory in ARM64 devices since the size of executable memory region is only limited to 128MB.
-    // The long term solution should be to introduce a Wasm interpreter. But as a short term solution, we introduce heuristics to switch back to BBQ B3 at the sacrifice of start-up time,
-    // as BBQ Air bloats such lengthy Wasm code and will consume a large amount of executable memory.
-    if (Options::webAssemblyBBQAirModeThreshold() && moduleInformation.codeSectionSize >= Options::webAssemblyBBQAirModeThreshold())
-        return false;
-
-    if (!Options::wasmBBQUsesAir())
-        return false;
-    return true;
-}
-
 bool BBQPlan::prepareImpl()
 {
     const auto& functions = m_moduleInformation->functions;
@@ -114,30 +94,8 @@ bool BBQPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffe
 {
     if (UNLIKELY(shouldDumpDisassemblyFor(CompilationMode::BBQMode))) {
         dataLogF("Generated BBQ code for WebAssembly BBQ function[%i] %s name %s\n", functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data());
-        if (Options::useSinglePassBBQJIT()) {
-            if (context.bbqDisassembler)
-                context.bbqDisassembler->dump(linkBuffer);
-        } else {
-            auto* disassembler = context.procedure->code().disassembler();
-
-            const char* b3Prefix = "b3    ";
-            const char* airPrefix = "Air        ";
-            const char* asmPrefix = "asm              ";
-
-            B3::Value* prevOrigin = nullptr;
-            auto forEachInst = scopedLambda<void(B3::Air::Inst&)>([&] (B3::Air::Inst& inst) {
-                if (inst.origin && inst.origin != prevOrigin && context.procedure->code().shouldPreserveB3Origins()) {
-                    if (String string = inst.origin->compilerConstructionSite(); !string.isNull())
-                        dataLogLn("\033[1;37m", string, "\033[0m");
-                    dataLog(b3Prefix);
-                    inst.origin->deepDump(context.procedure.get(), WTF::dataFile());
-                    dataLogLn();
-                    prevOrigin = inst.origin;
-                }
-            });
-
-            disassembler->dump(context.procedure->code(), WTF::dataFile(), linkBuffer, airPrefix, asmPrefix, forEachInst);
-        }
+        if (context.bbqDisassembler)
+            context.bbqDisassembler->dump(linkBuffer);
         linkBuffer.didAlreadyDisassemble();
         return true;
     }
@@ -205,7 +163,7 @@ void BBQPlan::work(CompilationEffort effort)
 
     CodePtr<WasmEntryPtrTag> entrypoint;
     std::optional<CodeLocationLabel<WasmEntryPtrTag>> sharedLoopEntrypoint;
-    if (Options::useSinglePassBBQJIT() && function->bbqSharedLoopEntrypoint)
+    if (function->bbqSharedLoopEntrypoint)
         sharedLoopEntrypoint = linkBuffer.locationOf<WasmEntryPtrTag>(*function->bbqSharedLoopEntrypoint);
 
     {
@@ -304,14 +262,9 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionInde
     ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->typeIndexFromFunctionIndexSpace(functionIndexSpace) == typeIndex);
     Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileResult;
 
-    if (Options::useSinglePassBBQJIT()) {
 #if ENABLE(WEBASSEMBLY_BBQJIT)
-        parseAndCompileResult = parseAndCompileBBQ(context, callee, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, functionIndex, m_hasExceptionHandlers, UINT32_MAX, tierUp);
+    parseAndCompileResult = parseAndCompileBBQ(context, callee, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, functionIndex, m_hasExceptionHandlers, UINT32_MAX, tierUp);
 #endif
-    } else if (!planGeneratesLoopOSREntrypoints(m_moduleInformation.get()))
-        parseAndCompileResult = parseAndCompileB3(context, callee, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, CompilationMode::BBQMode, functionIndex, m_hasExceptionHandlers, UINT32_MAX, tierUp);
-    else
-        parseAndCompileResult = parseAndCompileAir(context, callee, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, functionIndex, m_hasExceptionHandlers, tierUp);
 
     if (UNLIKELY(!parseAndCompileResult)) {
         Locker locker { m_lock };
@@ -415,4 +368,4 @@ bool BBQPlan::didReceiveFunctionData(unsigned, const FunctionData&)
 
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMBLY_B3JIT)
+#endif // ENABLE(WEBASSEMBLY_BBQJIT)

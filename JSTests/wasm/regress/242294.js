@@ -1,5 +1,3 @@
-//@ requireOptions("--webAssemblyBBQAirModeThreshold=1")
-
 // Regression test for https://bugs.webkit.org/show_bug.cgi?id=242294
 // Run stress/osr-entry-basic.js with BBQB3 mode.
 

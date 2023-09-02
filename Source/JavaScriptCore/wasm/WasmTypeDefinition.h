@@ -45,7 +45,7 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
-#if ENABLE(WEBASSEMBLY_B3JIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT)
 #include "B3Type.h"
 #endif
 
@@ -59,7 +59,6 @@ namespace JSC {
 
 namespace Wasm {
 
-#if ENABLE(B3_JIT)
 #define CREATE_ENUM_VALUE(name, id, ...) name = id,
 enum class ExtSIMDOpType : uint32_t {
     FOR_EACH_WASM_EXT_SIMD_OP(CREATE_ENUM_VALUE)
@@ -242,7 +241,6 @@ constexpr Type simdScalarType(SIMDLane lane)
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
-#endif
 
 using FunctionArgCount = uint32_t;
 using StructFieldCount = uint32_t;
@@ -261,7 +259,7 @@ inline Width Type::width() const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-#if ENABLE(WEBASSEMBLY_B3JIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT)
 #define CREATE_CASE(name, id, b3type, ...) case TypeKind::name: return b3type;
 inline B3::Type toB3Type(Type type)
 {

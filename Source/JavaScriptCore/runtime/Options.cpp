@@ -680,7 +680,7 @@ void Options::notifyOptionsChanged()
     Options::useConcurrentGC() = false;
     Options::forceUnlinkedDFG() = false;
     Options::useWebAssemblySIMD() = false;
-    Options::useSinglePassBBQJIT() = false;
+    Options::useBBQJIT() = false;
 #endif
 
     if (!Options::allowDoubleShape())
@@ -782,7 +782,7 @@ void Options::notifyOptionsChanged()
             // BBQ backend if any of them are enabled. We should remove these limitations as support for each
             // is added.
             // FIXME: Add WASM tail calls support to single-pass BBQ JIT. https://bugs.webkit.org/show_bug.cgi?id=253192
-            Options::useSinglePassBBQJIT() = false;
+            Options::useBBQJIT() = false;
         }
     }
 

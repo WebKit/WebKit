@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-#if ENABLE(FTL_JIT) || ENABLE(WEBASSEMBLY_B3JIT)
+#if ENABLE(FTL_JIT) || ENABLE(WEBASSEMBLY_OMGJIT)
 namespace B3 {
 class PCToOriginMap;
 }
@@ -60,7 +60,7 @@ public:
     PCToCodeOriginMapBuilder(JSTag, VM&, B3::PCToOriginMap);
 #endif
 
-#if ENABLE(WEBASSEMBLY_B3JIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT)
     enum WasmTag { WasmCodeOriginMap };
     PCToCodeOriginMapBuilder(WasmTag, B3::PCToOriginMap);
 #endif

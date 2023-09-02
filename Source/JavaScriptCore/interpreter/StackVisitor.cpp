@@ -199,7 +199,7 @@ void StackVisitor::readInlinableNativeCalleeFrame(CallFrame* callFrame)
 
         m_frame.m_wasmFunctionIndexOrName = wasmCallee.indexOrName();
 
-#if ENABLE(WEBASSEMBLY_B3JIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT)
         bool canInline = isAnyOMG(wasmCallee.compilationMode());
         if (!canInline)
             return;
