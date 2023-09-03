@@ -692,12 +692,11 @@ void Styleable::updateCSSTransitions(const RenderStyle& currentStyle, const Rend
         auto gatherAnimatableCustomProperties = [&](const StyleCustomPropertyData& customPropertyData) {
             customPropertyData.forEach([&](auto& customPropertyAndValuePair) {
                 auto [customProperty, customPropertyValue] = customPropertyAndValuePair;
-                if (!customPropertyValue)
-                    return;
                 auto& variantValue = customPropertyValue->value();
                 if (std::holds_alternative<CSSCustomPropertyValue::SyntaxValue>(variantValue)
                     || std::holds_alternative<CSSCustomPropertyValue::SyntaxValueList>(variantValue))
                     animatableCustomProperties.add(customProperty);
+                return IterationStatus::Continue;
             });
         };
         gatherAnimatableCustomProperties(currentStyle.inheritedCustomProperties());
