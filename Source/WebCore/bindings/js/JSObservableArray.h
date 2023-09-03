@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022, 2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,9 +35,10 @@ public:
     virtual ~ObservableArray() { }
 
     virtual bool setValueAt(JSGlobalObject*, unsigned index, JSValue) = 0;
-    virtual bool deleteValueAt(JSGlobalObject*, unsigned index) = 0;
+    virtual void removeLast() = 0;
     virtual JSValue valueAt(JSGlobalObject*, unsigned index) const = 0;
     virtual unsigned length() const = 0;
+    virtual void shrinkTo(unsigned) = 0;
 };
 
 class JSObservableArray final : public JSArray {
@@ -66,6 +67,7 @@ public:
     ~JSObservableArray();
     static void destroy(JSCell*);
 
+    static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool throwException);
     static void getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, DontEnumPropertiesMode);
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     static bool getOwnPropertySlotByIndex(JSObject*, JSGlobalObject*, unsigned, PropertySlot&);
