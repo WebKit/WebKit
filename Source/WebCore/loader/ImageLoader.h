@@ -94,7 +94,6 @@ private:
     void resetLazyImageLoading(Document&);
 
     virtual void dispatchLoadEvent() = 0;
-    virtual String sourceURI(const AtomString&) const = 0;
 
     void updatedHasPendingEvent();
     void didUpdateCachedImage(RelevantMutation, CachedResourceHandle<CachedImage>&&);
