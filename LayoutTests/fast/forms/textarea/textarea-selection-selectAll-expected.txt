@@ -1,0 +1,3 @@
+
+PASS textarea selection index is correct when text ends in newline
+

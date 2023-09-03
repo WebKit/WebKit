@@ -4,7 +4,7 @@
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
- * Copyright (C) 2014 Google Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -710,7 +710,8 @@ unsigned HTMLTextFormControlElement::indexForPosition(const Position& passedPosi
                 index += std::min<unsigned>(length, passedPosition.offsetInContainerNode());
             else
                 index += length;
-        } else if (is<HTMLBRElement>(*node))
+            // Disregard the last auto added placeholder <br> tag.
+        } else if (is<HTMLBRElement>(*node) && node != innerText->lastChild())
             ++index;
     }
 
