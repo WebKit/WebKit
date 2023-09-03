@@ -362,8 +362,8 @@ fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Skip ]
 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Skip ]
 fast/canvas/webgl/texImage2D-video-flipY-false.html [ Skip ]
 fast/canvas/webgl/texImage2D-video-flipY-true.html [ Skip ]
-webgl/2.0.0/conformance/textures/image_bitmap_from_video [ Skip ]
-webgl/2.0.0/conformance/textures/video [ Skip ]
+webgl/2.0.y/conformance/textures/image_bitmap_from_video [ Skip ]
+webgl/2.0.y/conformance/textures/video [ Skip ]
 webgl/2.0.0/conformance2/textures/image_bitmap_from_video [ Skip ]
 webgl/2.0.0/conformance2/textures/video [ Skip ]
 webgl/2.0.y/conformance/textures/misc/texture-corner-case-videos.html [ Skip ]
@@ -1895,7 +1895,7 @@ webanimations [ Skip ]
 webexposed [ Skip ]
 webgl/1.0.3 [ Skip ]
 webgl/1.0.x [ Skip ]
-webgl/2.0.0/conformance/textures/image_bitmap_from_image_bitmap [ Skip ]
+webgl/2.0.y/conformance/textures/image_bitmap_from_image_bitmap [ Skip ]
 webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap [ Skip ]
 webxr [ Skip ]
 
@@ -1910,8 +1910,7 @@ webxr [ Skip ]
 [ Debug ] webgl/2.0.y/conformance/glsl/misc/struct-nesting-of-variable-names.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.y/conformance/rendering/many-draw-calls.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.y/conformance/rendering/multisample-corruption.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.0/conformance/state/gl-object-get-calls.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.0/conformance/textures/misc/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/textures/misc/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance2/glsl3/compound-assignment-type-combination.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-outofbounds.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance2/textures/misc/copy-texture-image-luma-format.html [ Skip ] # Slow
@@ -2127,9 +2126,9 @@ webgl/2.0.y/conformance/glsl/bugs/loop-if-loop-gradient.html [ Skip ] # Flaky ti
 webgl/2.0.y/conformance/glsl/bugs/qualcomm-crash.html [ Skip ] # Flaky timeout if it runs with other tests
 webgl/2.0.y/conformance/glsl/bugs/qualcomm-loop-with-continue-crash.html [ Skip ] # Flaky timeout if it runs with other tests
 webgl/2.0.y/conformance/glsl/bugs/sketchfab-lighting-shader-crash.html [ Skip ] # Flaky timeout if it runs with other tests
-webgl/2.0.0/conformance/textures/misc/texture-mips.html [ Failure Pass ]
-webgl/2.0.0/conformance/textures/misc/texture-upload-size.html [ Skip ] # Timeout
-webgl/2.0.0/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Skip ] # Timeout
+webgl/2.0.y/conformance/textures/misc/texture-mips.html [ Failure Pass ]
+webgl/2.0.y/conformance/textures/misc/texture-upload-size.html [ Skip ] # Timeout
+webgl/2.0.y/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Skip ] # Timeout
 webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.html [ Skip ] # Timeout
 webgl/2.0.0/conformance2/glsl3/tricky-loop-conditions.html [ Failure ]
 webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-srgb.html [ Pass Failure ]

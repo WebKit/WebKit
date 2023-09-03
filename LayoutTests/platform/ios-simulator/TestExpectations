@@ -113,9 +113,9 @@ imported/w3c/web-platform-tests/wasm [ Skip ]
 
 webkit.org/b/201509 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Failure ]
 
-# ANGLE Metal backend failing tests with shared texture memory on the simulator
-webkit.org/b/222685 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Pass Failure ]
-webkit.org/b/222685 webgl/1.0.3/conformance/textures/texture-mips.html [ Pass Failure ]
+# webkit.org/b/223724 These two tests are flakey timeouts on iOS Debug:
+http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html [ Pass Timeout ]
+http/tests/security/webaudio-render-remote-audio-allowed-crossorigin-redirect.html [ Pass Timeout ]
 
 webkit.org/b/223949 crypto/crypto-random-values-oom.html [ Pass Timeout ]
 

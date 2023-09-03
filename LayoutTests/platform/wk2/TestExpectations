@@ -229,15 +229,6 @@ media/encrypted-media/clearKey/clearKey-session-life-cycle.html [ Failure Crash 
 # fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Failure ]
 # fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Failure ]
 
-# webkit.org/b/221790
-# webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Failure ]
-# webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Failure ]
-# webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Failure ]
-# webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Failure ]
-
-# webkit.org/b/221806
-# webgl/2.0.0/conformance/textures/video/tex-2d-rgb-rgb-unsigned_byte.html [ Failure ]
-
 webkit.org/b/221816 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Failure ]
 
 webkit.org/b/222569 fast/mediastream/media-stream-track-interrupted.html [ Crash Pass ]
