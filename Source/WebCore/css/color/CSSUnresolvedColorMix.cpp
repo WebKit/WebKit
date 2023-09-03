@@ -26,28 +26,16 @@
 #include "config.h"
 #include "CSSUnresolvedColorMix.h"
 
+#include "CSSColorMixSerialization.h"
 #include "ColorFromPrimitiveValue.h"
 #include "ColorSerialization.h"
 #include "StyleBuilderState.h"
 
 namespace WebCore {
 
-static void serializationForCSS(StringBuilder& builder, const CSSUnresolvedColorMix::Component& component)
+void serializationForCSS(StringBuilder& builder, const CSSUnresolvedColorMix& colorMix)
 {
-    builder.append(component.color->customCSSText());
-    if (component.percentage)
-        builder.append(' ', component.percentage->customCSSText());
-}
-
-void serializationForCSS(StringBuilder& builder, const CSSUnresolvedColorMix& unresolved)
-{
-    builder.append("color-mix(in ");
-    serializationForCSS(builder, unresolved.colorInterpolationMethod);
-    builder.append(", ");
-    serializationForCSS(builder, unresolved.mixComponents1);
-    builder.append(", ");
-    serializationForCSS(builder, unresolved.mixComponents2);
-    builder.append(')');
+    serializationForCSSColorMix<CSSUnresolvedColorMix>(builder, colorMix);
 }
 
 String serializationForCSS(const CSSUnresolvedColorMix& unresolved)
