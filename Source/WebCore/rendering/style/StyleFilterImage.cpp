@@ -124,20 +124,26 @@ RefPtr<Image> StyleFilterImage::image(const RenderElement* renderer, const Float
     if (!image || image->isNull())
         return &Image::nullImage();
 
-    auto preferredFilterRenderingModes = renderer->page().preferredFilterRenderingModes();
-    auto sourceImageRect = FloatRect { { }, size };
+    // For retina display purpose, the image has to be upscaled to by the retina scaled first before
+    // applying the filters.
 
-    auto cssFilter = CSSFilter::create(const_cast<RenderElement&>(*renderer), m_filterOperations, preferredFilterRenderingModes, FloatSize { 1, 1 }, sourceImageRect, NullGraphicsContext());
+    auto sourceImageRect = FloatRect { { }, size };
+    auto preferredFilterRenderingModes = renderer->page().preferredFilterRenderingModes();
+
+    auto deviceScaleFactor = renderer->page().deviceScaleFactor();
+    auto filterScale = FloatSize { deviceScaleFactor, deviceScaleFactor };
+
+    auto cssFilter = CSSFilter::create(const_cast<RenderElement&>(*renderer), m_filterOperations, preferredFilterRenderingModes, filterScale, sourceImageRect, NullGraphicsContext());
     if (!cssFilter)
         return &Image::nullImage();
-
     cssFilter->setFilterRegion(sourceImageRect);
 
-    auto sourceImage = ImageBuffer::create(size, RenderingPurpose::DOM, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, bufferOptionsForRendingMode(cssFilter->renderingMode()), { renderer->hostWindow() });
+    auto sourceImage = ImageBuffer::create(size * deviceScaleFactor, RenderingPurpose::DOM, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, bufferOptionsForRendingMode(cssFilter->renderingMode()), { renderer->hostWindow() });
     if (!sourceImage)
         return &Image::nullImage();
 
     auto filteredImage = sourceImage->filteredImage(*cssFilter, [&](GraphicsContext& context) {
+        context.scale(deviceScaleFactor);
         context.drawImage(*image, sourceImageRect);
     });
 
