@@ -845,6 +845,14 @@ void Scope::didChangeViewportSize()
         return;
     resolver->clearCachedDeclarationsAffectedByViewportUnits();
 
+    if (customPropertyRegistry().invalidatePropertiesWithViewportUnits(m_document)) {
+        if (!m_shadowRoot) {
+            if (auto element = m_document.documentElement())
+                element->invalidateStyleForSubtree();
+        }
+        return;
+    }
+
     // FIXME: Ideally, we should save the list of elements that have viewport units and only iterate over those.
     for (RefPtr element = ElementTraversal::firstWithin(rootNode); element; element = ElementTraversal::nextIncludingPseudo(*element)) {
         auto* renderer = element->renderer();

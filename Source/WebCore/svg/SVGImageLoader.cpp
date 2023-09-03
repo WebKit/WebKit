@@ -44,12 +44,4 @@ void SVGImageLoader::dispatchLoadEvent()
         downcast<SVGImageElement>(ImageLoader::element()).sendLoadEventIfPossible();
 }
 
-String SVGImageLoader::sourceURI(const AtomString& attribute) const
-{
-    URL base = element().baseURI();
-    if (base != aboutBlankURL())
-        return URL(base, attribute).string();
-    return element().document().completeURL(attribute).string();
-}
-
 }
