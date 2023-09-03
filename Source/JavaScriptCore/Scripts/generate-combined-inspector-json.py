@@ -34,6 +34,9 @@ if len(sys.argv) < 3:
     sys.exit(1)
 
 files = []
+sys.stdout = open(sys.argv[-1], "w")
+sys.argv = sys.argv[0:-1]
+
 for arg in sys.argv[1:-1]:
     if not os.access(arg, os.F_OK):
         raise Exception("File \"%s\" not found" % arg)

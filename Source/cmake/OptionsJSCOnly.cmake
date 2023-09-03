@@ -19,6 +19,11 @@ WEBKIT_OPTION_BEGIN()
 WEBKIT_OPTION_DEFINE(USE_BUN_JSC_ADDITIONS "Whether to enable Bun's JSC additions" PUBLIC OFF)
 if (USE_BUN_JSC_ADDITIONS)
     SET_AND_EXPOSE_TO_BUILD(USE_BUN_JSC_ADDITIONS 1)
+
+    if (WIN32)
+        SET_AND_EXPOSE_TO_BUILD(JS_NO_EXPORT 1)
+    endif()
+
 endif ()
 WEBKIT_OPTION_END()
 
@@ -119,10 +124,23 @@ if (NOT ENABLE_STATIC_JSC AND NOT WIN32)
     set(WebCore_LIBRARY_TYPE SHARED)
 endif ()
 
+
 if (WIN32)
     add_definitions(-DNOMINMAX)
     add_definitions(-D_WINDOWS -DWINVER=0x601 -D_WIN32_WINNT=0x601)
     add_definitions(-DUNICODE -D_UNICODE)
+
+    add_definitions(-D_WINSOCKAPI_=)
+
+    set(CMAKE_DISABLE_PRECOMPILE_HEADERS OFF)
+
+    if (ENABLE_STATIC_JSC)
+        set(bmalloc_LIBRARY_TYPE STATIC)
+        set(WTF_LIBRARY_TYPE STATIC)
+        set(JavaScriptCore_LIBRARY_TYPE STATIC)
+        set(PAL_LIBRARY_TYPE STATIC)
+        set(WebCore_LIBRARY_TYPE STATIC)
+    endif ()
 
     if (NOT WEBKIT_LIBRARIES_DIR)
         if (DEFINED ENV{WEBKIT_LIBRARIES})

@@ -484,7 +484,7 @@ void initialize()
 #if PLATFORM(COCOA)
         initializeLibraryPathDiagnostics();
 #endif
-#if OS(WINDOWS)
+#if OS(WINDOWS) && !USE(BUN_JSC_ADDITIONS)
         RunLoop::registerRunLoopMessageWindowClass();
 #endif
     });
