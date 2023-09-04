@@ -51,6 +51,8 @@ static bool isSiblingOrSubject(MatchElement matchElement)
     case MatchElement::Ancestor:
     case MatchElement::ParentSibling:
     case MatchElement::AncestorSibling:
+    case MatchElement::ParentAnySibling:
+    case MatchElement::AncestorAnySibling:
     case MatchElement::HasChild:
     case MatchElement::HasDescendant:
     case MatchElement::HasSiblingDescendant:
@@ -174,6 +176,8 @@ MatchElement computeHasPseudoClassMatchElement(const CSSSelector& hasSelector)
         return MatchElement::HasSibling;
     case MatchElement::ParentSibling:
     case MatchElement::AncestorSibling:
+    case MatchElement::ParentAnySibling:
+    case MatchElement::AncestorAnySibling:
         return MatchElement::HasSiblingDescendant;
     case MatchElement::HasChild:
     case MatchElement::HasDescendant:
@@ -193,8 +197,13 @@ static MatchElement computeSubSelectorMatchElement(MatchElement matchElement, co
     if (selector.match() == CSSSelector::Match::PseudoClass) {
         auto type = selector.pseudoClassType();
         // For :nth-child(n of .some-subselector) where an element change may affect other elements similar to sibling combinators.
-        if (type == CSSSelector::PseudoClassType::NthChild || type == CSSSelector::PseudoClassType::NthLastChild)
+        if (type == CSSSelector::PseudoClassType::NthChild || type == CSSSelector::PseudoClassType::NthLastChild) {
+            if (matchElement == MatchElement::Parent)
+                return MatchElement::ParentAnySibling;
+            if (matchElement == MatchElement::Ancestor)
+                return MatchElement::AncestorAnySibling;
             return MatchElement::AnySibling;
+        }
 
         // Similarly for :host().
         if (type == CSSSelector::PseudoClassType::Host)

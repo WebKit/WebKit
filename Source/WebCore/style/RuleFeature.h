@@ -47,6 +47,8 @@ enum class MatchElement : uint8_t {
     AnySibling,
     ParentSibling,
     AncestorSibling,
+    ParentAnySibling,
+    AncestorAnySibling,
     HasChild,
     HasDescendant,
     HasSibling,
