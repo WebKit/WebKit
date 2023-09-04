@@ -47,10 +47,11 @@
 namespace WebCore {
 using namespace JSC;
 
-JSEventListener::JSEventListener(JSObject* function, JSObject* wrapper, bool isAttribute, CreatedFromMarkup createdFromMarkup, DOMWrapperWorld& isolatedWorld)
+JSEventListener::JSEventListener(JSObject* function, JSObject* wrapper, bool isAttribute, CreatedFromMarkup createdFromMarkup, DOMWrapperWorld& isolatedWorld, bool isWindowOnError = false)
     : EventListener(JSEventListenerType)
     , m_isAttribute(isAttribute)
     , m_wasCreatedFromMarkup(createdFromMarkup == CreatedFromMarkup::Yes)
+    , m_isWindowOnError(isWindowOnError)
     , m_isInitialized(false)
     , m_wrapper(wrapper)
     , m_isolatedWorld(&isolatedWorld)
@@ -212,7 +213,17 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
     }
 
     MarkedArgumentBuffer args;
-    args.append(toJS(lexicalGlobalObject, globalObject, &event));
+
+    if (m_isWindowOnError && is<ErrorEvent>(event)) {
+        auto& errorEvent = downcast<ErrorEvent>(event);
+        args.append(toJS<IDLDOMString>(*globalObject, errorEvent.message()));
+        args.append(toJS<IDLUSVString>(*globalObject, errorEvent.filename()));
+        args.append(toJS<IDLUnsignedLong>(errorEvent.lineno()));
+        args.append(toJS<IDLUnsignedLong>(errorEvent.colno()));
+        args.append(errorEvent.error(*globalObject));
+    } else
+        args.append(toJS(lexicalGlobalObject, globalObject, &event));
+
     ASSERT(!args.hasOverflowed());
 
     VMEntryScope entryScope(vm, vm.entryScope ? vm.entryScope->globalObject() : lexicalGlobalObject);
