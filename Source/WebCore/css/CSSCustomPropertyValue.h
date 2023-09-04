@@ -71,11 +71,6 @@ public:
         return adoptRef(*new CSSCustomPropertyValue(name, VariantValue { std::in_place_type<Ref<CSSVariableReferenceValue>>, WTFMove(value) }));
     }
 
-    static Ref<CSSCustomPropertyValue> createUnresolved(const AtomString& name, CSSValueID value)
-    {
-        return adoptRef(*new CSSCustomPropertyValue(name, { value }));
-    }
-
     static Ref<CSSCustomPropertyValue> createWithID(const AtomString& name, CSSValueID);
 
     static Ref<CSSCustomPropertyValue> createSyntaxAll(const AtomString& name, Ref<CSSVariableData>&& value)
