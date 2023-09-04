@@ -148,7 +148,7 @@ public:
     const std::optional<Path> getPath(const TransformOperationData& data) const final
     {
         if (data.motionPathData())
-            return pathForReferenceRect(data.motionPathData()->containingBlockBoundingRect);
+            return pathForReferenceRect(data.motionPathData()->containingBlockBoundingRect.rect());
         return pathForReferenceRect(data.boundingBox());
     }
 

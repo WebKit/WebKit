@@ -38,6 +38,14 @@ static FloatPoint offsetFromContainer(const RenderObject& renderer, RenderBlock&
     return FloatPoint(FloatPoint(offsetFromContainingBlock) - referenceRect.location());
 }
 
+static FloatRoundedRect containingBlockRectForRenderer(const RenderObject& renderer, RenderBlock& container, const PathOperation& operation)
+{
+    auto referenceRect = snapRectToDevicePixelsIfNeeded(container.referenceBoxRect(operation.referenceBox()), downcast<RenderLayerModelObject>(renderer));
+    if (is<BoxPathOperation>(operation))
+        return FloatRoundedRect(container.style().getRoundedBorderFor(LayoutRect(referenceRect)));
+    return FloatRoundedRect(referenceRect);
+}
+
 std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const RenderElement& renderer)
 {
     MotionPathData data;
@@ -53,39 +61,19 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
         return floatPointForLengthPoint(offsetPosition, referenceRect.size());
     };
 
-    if (is<BoxPathOperation>(pathOperation)) {
-        if (auto* container = renderer.containingBlock()) {
-            auto& boxPathOperation = downcast<BoxPathOperation>(*pathOperation);
-            data.containingBlockBoundingRect = snapRectToDevicePixelsIfNeeded(container->referenceBoxRect(boxPathOperation.referenceBox()), downcast<RenderLayerModelObject>(renderer));
-            data.offsetFromContainingBlock = offsetFromContainer(renderer, *container, data.containingBlockBoundingRect);
-            return data;
-        }
-        return std::nullopt;
-    }
-    if (is<ShapePathOperation>(pathOperation)) {
-        if (auto* container = renderer.containingBlock()) {
-            auto& shapePathOperation = downcast<ShapePathOperation>(*pathOperation);
-            data.containingBlockBoundingRect = snapRectToDevicePixelsIfNeeded(container->referenceBoxRect(shapePathOperation.referenceBox()), downcast<RenderLayerModelObject>(renderer));
-            data.offsetFromContainingBlock = offsetFromContainer(renderer, *container, data.containingBlockBoundingRect);
-            return data;
-        }
-        return std::nullopt;
-    }
-    if (is<RayPathOperation>(pathOperation)) {
-        if (auto* container = renderer.containingBlock()) {
-            auto& rayPathOperation = downcast<RayPathOperation>(*pathOperation);
-            auto pathReferenceBoxRect = snapRectToDevicePixelsIfNeeded(container->referenceBoxRect(rayPathOperation.referenceBox()), downcast<RenderLayerModelObject>(renderer));
+    if (auto* container = renderer.containingBlock()) {
+        data.containingBlockBoundingRect = containingBlockRectForRenderer(renderer, *container, *pathOperation);
+        data.offsetFromContainingBlock = offsetFromContainer(renderer, *container, data.containingBlockBoundingRect.rect());
 
+        if (is<RayPathOperation>(pathOperation)) {
+            auto& rayPathOperation = downcast<RayPathOperation>(*pathOperation);
             auto offsetPosition = renderer.style().offsetPosition();
             auto startingPosition = rayPathOperation.position();
-            auto usedStartingPosition = startingPosition.x().isAuto() ? startingPositionForOffsetPosition(offsetPosition, pathReferenceBoxRect, *container) : floatPointForLengthPoint(startingPosition, pathReferenceBoxRect.size());
-            data.usedStartingPosition = usedStartingPosition;
-            data.offsetFromContainingBlock = offsetFromContainer(renderer, *container, pathReferenceBoxRect);
-            data.containingBlockBoundingRect = pathReferenceBoxRect;
-
-            return data;
+            data.usedStartingPosition = startingPosition.x().isAuto() ? startingPositionForOffsetPosition(offsetPosition, data.containingBlockBoundingRect.rect(), *container) : floatPointForLengthPoint(startingPosition, data.containingBlockBoundingRect.rect().size());
         }
+        return data;
     }
+
     return std::nullopt;
 }
 
@@ -149,7 +137,7 @@ bool MotionPath::needsUpdateAfterContainingBlockLayout(const PathOperation& path
 
 double MotionPath::lengthForRayPath(const RayPathOperation& rayPathOperation, const MotionPathData& data)
 {
-    auto& boundingBox = data.containingBlockBoundingRect;
+    auto& boundingBox = data.containingBlockBoundingRect.rect();
     auto distances = distanceOfPointToSidesOfRect(boundingBox, data.usedStartingPosition);
 
     switch (rayPathOperation.size()) {
@@ -181,7 +169,7 @@ std::optional<Path> MotionPath::computePathForRay(const RayPathOperation& rayPat
 {
     auto motionPathData = data.motionPathData();
     auto elementBoundingBox = data.boundingBox();
-    if (!motionPathData || motionPathData->containingBlockBoundingRect.isZero())
+    if (!motionPathData || motionPathData->containingBlockBoundingRect.rect().isZero())
         return std::nullopt;
 
     double length = lengthForRayPath(rayPathOperation, *motionPathData);
@@ -205,7 +193,7 @@ std::optional<Path> MotionPath::computePathForBox(const BoxPathOperation&, const
         auto shiftedPoint = motionPathData->offsetFromContainingBlock;
         shiftedPoint.scale(-1);
         rect.setLocation(shiftedPoint);
-        path.addRect(rect);
+        path.addRoundedRect(rect, PathRoundedRect::Strategy::PreferBezier);
         return path;
     }
     return std::nullopt;
