@@ -1953,32 +1953,6 @@ enum LengthConversion {
     CalculatedConversion = 1 << 4
 };
 
-inline bool CSSPrimitiveValue::convertingToLengthHasRequiredConversionData(int lengthConversion, const CSSToLengthConversionData& conversionData) const
-{
-    // FIXME: We should probably make CSSPrimitiveValue::computeLengthDouble and
-    // CSSPrimitiveValue::computeNonCalcLengthDouble (which has the style assertion)
-    // return std::optional<double> instead of having this check here.
-
-    bool isFixedNumberConversion = lengthConversion & (FixedIntegerConversion | FixedFloatConversion);
-    auto dependencies = computedStyleDependencies();
-    if (!dependencies.rootProperties.isEmpty() && !conversionData.rootStyle())
-        return !isFixedNumberConversion;
-
-    if (!dependencies.properties.isEmpty() && !conversionData.style())
-        return !isFixedNumberConversion;
-
-    if (dependencies.containerDimensions && !conversionData.elementForContainerUnitResolution())
-        return !isFixedNumberConversion;
-
-    if (isViewportPercentageLength() && conversionData.defaultViewportFactor().isEmpty())
-        return !isFixedNumberConversion;
-
-    if (primitiveUnitType() == CSSUnitType::CSS_CALC)
-        return m_value.calc->convertingToLengthHasRequiredConversionData(lengthConversion, conversionData);
-
-    return true;
-}
-
 template<int supported> Length CSSPrimitiveValue::convertToLength(const CSSToLengthConversionData& conversionData) const
 {
     if (!convertingToLengthHasRequiredConversionData(supported, conversionData))

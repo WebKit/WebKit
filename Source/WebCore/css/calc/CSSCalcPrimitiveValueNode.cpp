@@ -208,11 +208,6 @@ void CSSCalcPrimitiveValueNode::collectComputedStyleDependencies(ComputedStyleDe
     m_value->collectComputedStyleDependencies(dependencies);
 }
 
-bool CSSCalcPrimitiveValueNode::convertingToLengthHasRequiredConversionData(int lengthConversion, const CSSToLengthConversionData& conversionData) const
-{
-    return m_value->convertingToLengthHasRequiredConversionData(lengthConversion, conversionData);
-}
-
 bool CSSCalcPrimitiveValueNode::isZero() const
 {
     return !m_value->doubleValue();

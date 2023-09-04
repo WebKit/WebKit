@@ -1062,13 +1062,6 @@ void CSSCalcOperationNode::collectComputedStyleDependencies(ComputedStyleDepende
         child->collectComputedStyleDependencies(dependencies);
 }
 
-bool CSSCalcOperationNode::convertingToLengthHasRequiredConversionData(int lengthConversion, const CSSToLengthConversionData& conversionData) const
-{
-    return WTF::anyOf(m_children, [lengthConversion, &conversionData] (auto& child) {
-        return child->convertingToLengthHasRequiredConversionData(lengthConversion, conversionData);
-    });
-}
-
 void CSSCalcOperationNode::buildCSSText(const CSSCalcExpressionNode& node, StringBuilder& builder)
 {
     auto shouldOutputEnclosingCalc = [](const CSSCalcExpressionNode& rootNode) {

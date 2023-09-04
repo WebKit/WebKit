@@ -1769,4 +1769,27 @@ void CSSPrimitiveValue::collectComputedStyleDependencies(ComputedStyleDependenci
     }
 }
 
+bool CSSPrimitiveValue::convertingToLengthHasRequiredConversionData(int lengthConversion, const CSSToLengthConversionData& conversionData) const
+{
+    // FIXME: We should probably make CSSPrimitiveValue::computeLengthDouble and
+    // CSSPrimitiveValue::computeNonCalcLengthDouble (which has the style assertion)
+    // return std::optional<double> instead of having this check here.
+
+    bool isFixedNumberConversion = lengthConversion & (FixedIntegerConversion | FixedFloatConversion);
+    auto dependencies = computedStyleDependencies();
+    if (!dependencies.rootProperties.isEmpty() && !conversionData.rootStyle())
+        return !isFixedNumberConversion;
+
+    if (!dependencies.properties.isEmpty() && !conversionData.style())
+        return !isFixedNumberConversion;
+
+    if (dependencies.containerDimensions && !conversionData.elementForContainerUnitResolution())
+        return !isFixedNumberConversion;
+
+    if (dependencies.viewportDimensions && conversionData.defaultViewportFactor().isEmpty())
+        return !isFixedNumberConversion;
+
+    return true;
+}
+
 } // namespace WebCore
