@@ -72,7 +72,7 @@ sub generateReport()
 
     # Generate the coverage data and report
     print "Collecting coverage data\n";
-    system("python Tools/Scripts/webkitpy/tool/gcovr --xml --output=WebKitBuild/Coverage/" . $reportName . ".xml") == 0 or die "Cannot run gcovr";
+    system("python3 Tools/Scripts/webkitpy/tool/gcovr --xml --output=WebKitBuild/Coverage/" . $reportName . ".xml") == 0 or die "Cannot run gcovr";
 
     # Collect useful data from xml to json format
     my $jsonData = encode_json(parseGcovrOutput("WebKitBuild/Coverage/$reportName.xml"));

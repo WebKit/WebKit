@@ -288,7 +288,7 @@ if (isAppleCocoaWebKit()) {
     }
 
 } elsif (isWinCairo() && !$skipLibraryUpdate) {
-    (system("python Tools/Scripts/update-webkit-wincairo-libs.py") == 0) or die;
+    (system("python3 Tools/Scripts/update-webkit-wincairo-libs.py") == 0) or die;
 }
 
 # If asked to build just the WebKit project, overwrite the projects
