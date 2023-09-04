@@ -55,4 +55,5 @@ add_custom_command(
 
 install(FILES ${DERIVED_SOURCES_WPE_API_DIR}/webkit-web-extension.h
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/wpe-webkit-${WPE_API_VERSION}/wpe
+    COMPONENT "Development"
 )
