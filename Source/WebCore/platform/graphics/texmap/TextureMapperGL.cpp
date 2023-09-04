@@ -461,7 +461,7 @@ void TextureMapperGL::drawTexture(GLuint texture, Flags flags, const IntSize& te
     if (wrapMode() == RepeatWrap && !m_contextAttributes.supportsNPOTTextures)
         options.add(TextureMapperShaderProgram::ManualRepeat);
 
-    RefPtr<FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
+    RefPtr<const FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
     GLuint filterContentTextureID = 0;
 
     if (filter) {
@@ -530,7 +530,7 @@ void TextureMapperGL::drawTexturePlanarYUV(const std::array<GLuint, 3>& textures
     if (wrapMode() == RepeatWrap && !m_contextAttributes.supportsNPOTTextures)
         options.add(TextureMapperShaderProgram::ManualRepeat);
 
-    RefPtr<FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
+    RefPtr<const FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
     GLuint filterContentTextureID = 0;
 
     if (filter) {
@@ -590,7 +590,7 @@ void TextureMapperGL::drawTextureSemiPlanarYUV(const std::array<GLuint, 2>& text
     if (wrapMode() == RepeatWrap && !m_contextAttributes.supportsNPOTTextures)
         options.add(TextureMapperShaderProgram::ManualRepeat);
 
-    RefPtr<FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
+    RefPtr<const FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
     GLuint filterContentTextureID = 0;
 
     if (filter) {
@@ -642,7 +642,7 @@ void TextureMapperGL::drawTexturePackedYUV(GLuint texture, const std::array<GLfl
     if (wrapMode() == RepeatWrap && !m_contextAttributes.supportsNPOTTextures)
         options.add(TextureMapperShaderProgram::ManualRepeat);
 
-    RefPtr<FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
+    RefPtr<const FilterOperation> filter = data().filterInfo ? data().filterInfo->filter: nullptr;
     GLuint filterContentTextureID = 0;
 
     if (filter) {
@@ -831,7 +831,7 @@ void TextureMapperGL::drawTexturedQuadWithProgram(TextureMapperShaderProgram& pr
     drawTexturedQuadWithProgram(program, { { texture, program.samplerLocation() } }, flags, rect, modelViewMatrix, opacity);
 }
 
-void TextureMapperGL::drawFiltered(const BitmapTexture& sampler, const BitmapTexture* contentTexture, const FilterOperation& filter, int pass)
+void TextureMapperGL::drawFilterPass(const BitmapTexture& sampler, const BitmapTexture* contentTexture, const FilterOperation& filter, int pass)
 {
     // For standard filters, we always draw the whole texture without transformations.
     TextureMapperShaderProgram::Options options = optionsForFilterType(filter.type(), pass);
@@ -840,6 +840,57 @@ void TextureMapperGL::drawFiltered(const BitmapTexture& sampler, const BitmapTex
     prepareFilterProgram(program.get(), filter, pass, sampler.contentSize(), contentTexture ? static_cast<const BitmapTextureGL*>(contentTexture)->id() : 0);
     FloatRect targetRect(IntPoint::zero(), sampler.contentSize());
     drawTexturedQuadWithProgram(program.get(), static_cast<const BitmapTextureGL&>(sampler).id(), 0, targetRect, TransformationMatrix(), 1);
+}
+
+static int getPassesRequiredForFilter(const FilterOperation& filter)
+{
+    switch (filter.type()) {
+    case FilterOperation::Type::Grayscale:
+    case FilterOperation::Type::Sepia:
+    case FilterOperation::Type::Saturate:
+    case FilterOperation::Type::HueRotate:
+    case FilterOperation::Type::Invert:
+    case FilterOperation::Type::Brightness:
+    case FilterOperation::Type::Contrast:
+    case FilterOperation::Type::Opacity:
+        return 1;
+    case FilterOperation::Type::Blur:
+    case FilterOperation::Type::DropShadow:
+        // We use two-passes (vertical+horizontal) for blur and drop-shadow.
+        return 2;
+    default:
+        return 0;
+    }
+}
+
+RefPtr<BitmapTexture> TextureMapperGL::applyFilter(RefPtr<BitmapTexture> sourceTexture, const RefPtr<const FilterOperation>& filter, bool defersLastPass)
+{
+    RefPtr<BitmapTexture> resultTexture = acquireTextureFromPool(sourceTexture->contentSize(), BitmapTexture::SupportsAlpha);
+    RefPtr<BitmapTexture> contentTexture;
+    int numPass = getPassesRequiredForFilter(*filter);
+
+    std::swap(resultTexture, sourceTexture);
+
+    for (int pass = 0; pass < numPass; pass++) {
+        if (defersLastPass && pass == numPass - 1) {
+            auto filterInfo = BitmapTextureGL::FilterInfo(filter.copyRef(), pass, contentTexture.copyRef());
+            toBitmapTextureGL(resultTexture.get())->setFilterInfo(WTFMove(filterInfo));
+            break;
+        }
+
+        std::swap(resultTexture, sourceTexture);
+
+        bindSurface(resultTexture.get());
+
+        drawFilterPass(*sourceTexture, contentTexture.get(), *filter, pass);
+
+        if (!pass && filter->type() == FilterOperation::Type::DropShadow) {
+            std::swap(contentTexture, sourceTexture);
+            sourceTexture = acquireTextureFromPool(contentTexture->contentSize(), BitmapTexture::SupportsAlpha);
+        }
+    }
+
+    return resultTexture;
 }
 
 static inline TransformationMatrix createProjectionMatrix(const IntSize& size, bool mirrored, double zNear, double zFar)
