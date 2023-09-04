@@ -61,16 +61,7 @@ public:
             return fontName.isHashTableDeletedValue();
         }
 
-        bool operator==(const CascadeListParameters& other) const
-        {
-            return fontName == other.fontName
-                && locale == other.locale
-                && weight == other.weight
-                && width == other.width
-                && size == other.size
-                && allowUserInstalledFonts == other.allowUserInstalledFonts
-                && italic == other.italic;
-        }
+        friend bool operator==(const CascadeListParameters&, const CascadeListParameters&) = default;
 
         struct Hash {
             static unsigned hash(const CascadeListParameters&);

@@ -35,11 +35,10 @@ struct FourCC {
     constexpr FourCC(const char (&nullTerminatedString)[5]);
     constexpr std::array<char, 5> string() const;
     static std::optional<FourCC> fromString(StringView);
+    friend constexpr bool operator==(FourCC, FourCC) = default;
 
     uint32_t value { 0 };
 };
-
-constexpr bool operator==(FourCC, FourCC);
 
 constexpr FourCC::FourCC(const char (&data)[5])
     : value(data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3])
@@ -61,8 +60,6 @@ constexpr std::array<char, 5> FourCC::string() const
         '\0'
     };
 }
-
-constexpr bool operator==(FourCC a, FourCC b) { return a.value == b.value; }
 
 } // namespace WebCore
 

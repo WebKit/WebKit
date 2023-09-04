@@ -80,7 +80,7 @@ private:
         FlipY unpackFlipY { FlipY::No };
         ImageOrientation orientation;
 
-        bool operator==(const TextureContent&) const;
+        friend bool operator==(const TextureContent&, const TextureContent&) = default;
     };
     using TextureContentMap = HashMap<GCGLuint, TextureContent, IntHash<GCGLuint>, WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>>;
     TextureContentMap m_knownContent;

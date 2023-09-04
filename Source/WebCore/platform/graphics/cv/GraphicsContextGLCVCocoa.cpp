@@ -446,18 +446,6 @@ static const GLfloat* YCbCrToRGBMatrixForRangeAndTransferFunction(PixelRange ran
     return iterator->second;
 }
 
-inline bool GraphicsContextGLCVCocoa::TextureContent::operator==(const TextureContent& other) const
-{
-    return surface == other.surface
-        && surfaceSeed == other.surfaceSeed
-        && level == other.level
-        && internalFormat == other.internalFormat
-        && format == other.format
-        && type == other.type
-        && unpackFlipY == other.unpackFlipY
-        && orientation == other.orientation;
-}
-
 std::unique_ptr<GraphicsContextGLCVCocoa> GraphicsContextGLCVCocoa::create(GraphicsContextGLCocoa& context)
 {
     std::unique_ptr<GraphicsContextGLCVCocoa> cv { new GraphicsContextGLCVCocoa(context) };

@@ -71,6 +71,8 @@ public:
     template<class Decoder>
     static std::optional<FontSelectionValue> decode(Decoder&);
 
+    friend constexpr bool operator==(FontSelectionValue, FontSelectionValue) = default;
+
 private:
     enum class RawTag { RawTag };
     constexpr FontSelectionValue(int, RawTag);
@@ -158,11 +160,6 @@ constexpr FontSelectionValue operator/(FontSelectionValue a, FontSelectionValue 
 constexpr FontSelectionValue operator-(FontSelectionValue value)
 {
     return { -value.m_backing, FontSelectionValue::RawTag::RawTag };
-}
-
-constexpr bool operator==(FontSelectionValue a, FontSelectionValue b)
-{
-    return a.rawValue() == b.rawValue();
 }
 
 constexpr bool operator<(FontSelectionValue a, FontSelectionValue b)
@@ -306,10 +303,7 @@ struct FontSelectionRange {
     {
     }
 
-    constexpr bool operator==(const FontSelectionRange& other) const
-    {
-        return WTF::tie(minimum, maximum) == WTF::tie(other.minimum, other.maximum);
-    }
+    friend constexpr bool operator==(const FontSelectionRange&, const FontSelectionRange&) = default;
 
     constexpr bool isValid() const
     {
@@ -385,10 +379,7 @@ struct FontSelectionRequest {
     // "oblique" font style. See webkit.org/b/187774.
     std::optional<Value> slope;
 
-    std::tuple<Value, Value, std::optional<Value>> tied() const
-    {
-        return WTF::tie(weight, width, slope);
-    }
+    friend bool operator==(const FontSelectionRequest&, const FontSelectionRequest&) = default;
 };
 
 inline TextStream& operator<<(TextStream& ts, const FontSelectionValue& fontSelectionValue)
@@ -403,23 +394,15 @@ inline TextStream& operator<<(TextStream& ts, const std::optional<FontSelectionV
     return ts;
 }
 
-inline bool operator==(const FontSelectionRequest& a, const FontSelectionRequest& b)
-{
-    return a.tied() == b.tied();
-}
-
 inline void add(Hasher& hasher, const FontSelectionRequest& request)
 {
-    add(hasher, request.tied());
+    add(hasher, request.weight, request.width, request.slope);
 }
 
 struct FontSelectionCapabilities {
     using Range = FontSelectionRange;
 
-    constexpr std::tuple<Range, Range, Range> tied() const
-    {
-        return WTF::tie(weight, width, slope);
-    }
+    friend constexpr bool operator==(const FontSelectionCapabilities&, const FontSelectionCapabilities&) = default;
 
     void expand(const FontSelectionCapabilities& capabilities)
     {
@@ -433,11 +416,6 @@ struct FontSelectionCapabilities {
     Range slope { normalItalicValue() };
 };
 
-constexpr bool operator==(const FontSelectionCapabilities& a, const FontSelectionCapabilities& b)
-{
-    return a.tied() == b.tied();
-}
-
 struct FontSelectionSpecifiedCapabilities {
     using Capabilities = FontSelectionCapabilities;
     using Range = FontSelectionRange;
@@ -448,19 +426,13 @@ struct FontSelectionSpecifiedCapabilities {
         return { computeWeight(), computeWidth(), computeSlope() };
     }
 
-    constexpr std::tuple<OptionalRange&, OptionalRange&, OptionalRange&> tied()
-    {
-        return WTF::tie(weight, width, slope);
-    }
-
-    constexpr std::tuple<const OptionalRange&, const OptionalRange&, const OptionalRange&> tied() const
-    {
-        return WTF::tie(weight, width, slope);
-    }
+    friend constexpr bool operator==(const FontSelectionSpecifiedCapabilities&, const FontSelectionSpecifiedCapabilities&) = default;
 
     FontSelectionSpecifiedCapabilities& operator=(const Capabilities& other)
     {
-        tied() = other.tied();
+        weight = other.weight;
+        width = other.width;
+        slope = other.slope;
         return *this;
     }
 
@@ -490,6 +462,11 @@ struct FontSelectionSpecifiedCapabilities {
     OptionalRange slope;
 };
 
+inline void add(Hasher& hasher, const FontSelectionSpecifiedCapabilities& capabilities)
+{
+    add(hasher, capabilities.weight, capabilities.width, capabilities.slope);
+}
+
 template<class Encoder>
 void FontSelectionSpecifiedCapabilities::encode(Encoder& encoder) const
 {
@@ -517,11 +494,6 @@ std::optional<FontSelectionSpecifiedCapabilities> FontSelectionSpecifiedCapabili
         return std::nullopt;
 
     return {{ *weight, *width, *slope }};
-}
-
-constexpr bool operator==(const FontSelectionSpecifiedCapabilities& a, const FontSelectionSpecifiedCapabilities& b)
-{
-    return a.tied() == b.tied();
 }
 
 class FontSelectionAlgorithm {

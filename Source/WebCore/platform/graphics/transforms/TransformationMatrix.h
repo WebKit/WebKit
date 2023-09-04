@@ -314,13 +314,7 @@ public:
         double angle;
         double m11, m12, m21, m22;
         
-        bool operator==(const Decomposed2Type& other) const
-        {
-            return scaleX == other.scaleX && scaleY == other.scaleY
-                && translateX == other.translateX && translateY == other.translateY
-                && angle == other.angle
-                && m11 == other.m11 && m12 == other.m12 && m21 == other.m21 && m22 == other.m22;
-        }
+        friend bool operator==(const Decomposed2Type&, const Decomposed2Type&) = default;
     };
 
     struct Decomposed4Type {
@@ -330,14 +324,7 @@ public:
         double translateX, translateY, translateZ;
         double perspectiveX, perspectiveY, perspectiveZ, perspectiveW;
 
-        bool operator==(const Decomposed4Type& other) const
-        {
-            return scaleX == other.scaleX && scaleY == other.scaleY && scaleZ == other.scaleZ
-                && skewXY == other.skewXY && skewXZ == other.skewXZ && skewYZ == other.skewYZ
-                && quaternion == other.quaternion
-                && translateX == other.translateX && translateY == other.translateY && translateZ == other.translateZ
-                && perspectiveX == other.perspectiveX && perspectiveY == other.perspectiveY && perspectiveZ == other.perspectiveZ && perspectiveW == other.perspectiveW;
-        }
+        friend bool operator==(const Decomposed4Type&, const Decomposed4Type&) = default;
     };
     
     bool decompose2(Decomposed2Type&) const WARN_UNUSED_RETURN;

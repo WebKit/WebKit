@@ -185,7 +185,7 @@ public:
     struct Request {
         AtomString initType;
         Vector<RetainPtr<AVContentKeyRequest>> requests;
-        bool operator==(const Request& other) const { return initType == other.initType && requests == other.requests; }
+        friend bool operator==(const Request&, const Request&) = default;
     };
 
     bool hasRequest(AVContentKeyRequest*) const;

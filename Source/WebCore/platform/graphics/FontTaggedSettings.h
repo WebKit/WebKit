@@ -69,7 +69,7 @@ public:
     FontTaggedSetting() = delete;
     FontTaggedSetting(FontTag, T value);
 
-    bool operator==(const FontTaggedSetting<T>& other) const;
+    friend bool operator==(const FontTaggedSetting&, const FontTaggedSetting&) = default;
     bool operator<(const FontTaggedSetting<T>& other) const;
 
     FontTag tag() const { return m_tag; }
@@ -89,12 +89,6 @@ FontTaggedSetting<T>::FontTaggedSetting(FontTag tag, T value)
     : m_tag(tag)
     , m_value(value)
 {
-}
-
-template <typename T>
-bool FontTaggedSetting<T>::operator==(const FontTaggedSetting<T>& other) const
-{
-    return m_tag == other.m_tag && m_value == other.m_value;
 }
 
 template <typename T>
@@ -156,7 +150,7 @@ public:
     using Setting = FontTaggedSetting<T>;
 
     void insert(FontTaggedSetting<T>&&);
-    bool operator==(const FontTaggedSettings<T>& other) const { return m_list == other.m_list; }
+    friend bool operator==(const FontTaggedSettings&, const FontTaggedSettings&) = default;
 
     bool isEmpty() const { return !size(); }
     size_t size() const { return m_list.size(); }

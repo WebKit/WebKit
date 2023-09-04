@@ -39,15 +39,8 @@ struct PlatformVideoColorSpace {
     std::optional<PlatformVideoTransferCharacteristics> transfer;
     std::optional<PlatformVideoMatrixCoefficients> matrix;
     std::optional<bool> fullRange;
+
+    friend bool operator==(const PlatformVideoColorSpace&, const PlatformVideoColorSpace&) = default;
 };
-
-inline bool operator==(const PlatformVideoColorSpace& a, const PlatformVideoColorSpace& b)
-{
-    return a.primaries == b.primaries
-        && a.transfer == b.transfer
-        && a.matrix == b.matrix
-        && a.fullRange == b.fullRange;
-}
-
 
 }

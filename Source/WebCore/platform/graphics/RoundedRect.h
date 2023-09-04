@@ -70,6 +70,8 @@ public:
     LayoutUnit minimumRadius() const { return std::min({ m_topLeft.minDimension(), m_topRight.minDimension(), m_bottomLeft.minDimension(), m_bottomRight.minDimension() }); }
     LayoutUnit maximumRadius() const { return std::max({ m_topLeft.minDimension(), m_topRight.minDimension(), m_bottomLeft.minDimension(), m_bottomRight.minDimension() }); }
 
+    friend bool operator==(const RoundedRectRadii&, const RoundedRectRadii&) = default;
+
 private:
     LayoutSize m_topLeft;
     LayoutSize m_topRight;
@@ -115,20 +117,12 @@ public:
 
     RoundedRect transposedRect() const { return RoundedRect(m_rect.transposedRect(), m_radii.transposedRadii()); }
 
+    friend bool operator==(const RoundedRect&, const RoundedRect&) = default;
+
 private:
     LayoutRect m_rect;
     Radii m_radii;
 };
-
-inline bool operator==(const RoundedRect::Radii& a, const RoundedRect::Radii& b)
-{
-    return a.topLeft() == b.topLeft() && a.topRight() == b.topRight() && a.bottomLeft() == b.bottomLeft() && a.bottomRight() == b.bottomRight();
-}
-
-inline bool operator==(const RoundedRect& a, const RoundedRect& b)
-{
-    return a.rect() == b.rect() && a.radii() == b.radii();
-}
 
 WTF::TextStream& operator<<(WTF::TextStream&, const RoundedRect&);
 

@@ -160,7 +160,7 @@ private:
 
 inline bool FontCascadeDescription::operator==(const FontCascadeDescription& other) const
 {
-    return FontDescription::operator==(other)
+    return static_cast<const FontDescription&>(*this) == static_cast<const FontDescription&>(other)
         && m_families.get() == other.m_families.get()
         && m_specifiedSize == other.m_specifiedSize
         && m_isAbsoluteSize == other.m_isAbsoluteSize
