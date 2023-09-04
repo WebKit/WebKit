@@ -84,11 +84,12 @@ public:
     Ref<BitmapTexture> createTexture() override;
     void setDepthRange(double zNear, double zFar) override;
 
-    void drawFiltered(const BitmapTexture& sourceTexture, const BitmapTexture* contentTexture, const FilterOperation&, int pass);
+    RefPtr<BitmapTexture> applyFilter(RefPtr<BitmapTexture> sourceTexture, const RefPtr<const FilterOperation>&, bool defersLastPass);
 
     void drawTextureExternalOES(GLuint texture, Flags, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
 
 private:
+    void drawFilterPass(const BitmapTexture& sourceTexture, const BitmapTexture* contentTexture, const FilterOperation&, int pass);
     void drawTexturedQuadWithProgram(TextureMapperShaderProgram&, uint32_t texture, Flags, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
     void drawTexturedQuadWithProgram(TextureMapperShaderProgram&, const Vector<std::pair<GLuint, GLuint> >& texturesAndSamplers, Flags, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
     void draw(const FloatRect&, const TransformationMatrix& modelViewMatrix, TextureMapperShaderProgram&, GLenum drawingMode, Flags);
