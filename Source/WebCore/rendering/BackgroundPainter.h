@@ -71,8 +71,8 @@ public:
     static void clipRoundedInnerRect(GraphicsContext&, const FloatRect&, const FloatRoundedRect& clipRect);
     static bool boxShadowShouldBeAppliedToBackground(const RenderBoxModelObject&, const LayoutPoint& paintOffset, BackgroundBleedAvoidance, const InlineIterator::InlineBoxIterator&);
 
-private:
     void paintRootBoxFillLayers();
+private:
 
     RoundedRect backgroundRoundedRectAdjustedForBleedAvoidance(const LayoutRect& borderRect, BackgroundBleedAvoidance, const InlineIterator::InlineBoxIterator&, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const;
     RoundedRect backgroundRoundedRect(const LayoutRect& borderRect, const InlineIterator::InlineBoxIterator&, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const;

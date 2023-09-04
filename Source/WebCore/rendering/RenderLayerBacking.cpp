@@ -2710,7 +2710,7 @@ static inline bool hasPerspectiveOrPreserves3D(const RenderStyle& style)
 Color RenderLayerBacking::rendererBackgroundColor() const
 {
     RenderElement* backgroundRenderer = nullptr;
-    if (renderer().isDocumentElementRenderer())
+    if (renderer().isRenderView())
         backgroundRenderer = renderer().view().rendererForRootBackground();
     
     if (!backgroundRenderer)

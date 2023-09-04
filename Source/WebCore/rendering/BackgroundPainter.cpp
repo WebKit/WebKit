@@ -67,7 +67,6 @@ BackgroundPainter::BackgroundPainter(RenderBoxModelObject& renderer, const Paint
 void BackgroundPainter::paintBackground(const LayoutRect& paintRect, BackgroundBleedAvoidance bleedAvoidance)
 {
     if (m_renderer.isDocumentElementRenderer()) {
-        paintRootBoxFillLayers();
         return;
     }
 

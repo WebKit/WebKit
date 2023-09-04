@@ -21,6 +21,7 @@
 #include "config.h"
 #include "RenderView.h"
 
+#include "BackgroundPainter.h"
 #include "Document.h"
 #include "Element.h"
 #include "FloatQuad.h"
@@ -440,32 +441,13 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
         }
     }
 
-    if (document().ownerElement())
-        return;
-
     if (paintInfo.skipRootBackground())
         return;
 
-    bool rootFillsViewport = false;
-    bool rootObscuresBackground = false;
-    auto shouldPropagateBackgroundPaintingToInitialContainingBlock = true;
-    Element* documentElement = document().documentElement();
-    if (RenderElement* rootRenderer = documentElement ? documentElement->renderer() : nullptr) {
-        // The document element's renderer is currently forced to be a block, but may not always be.
-        auto* rootBox = dynamicDowncast<RenderBox>(*rootRenderer);
-        rootFillsViewport = rootBox && !rootBox->x() && !rootBox->y() && rootBox->width() >= width() && rootBox->height() >= height();
-        rootObscuresBackground = rendererObscuresBackground(*rootRenderer);
-        shouldPropagateBackgroundPaintingToInitialContainingBlock = !!rendererForRootBackground();
-    }
+    auto shouldPropagateBackgroundPaintingToInitialContainingBlock = !!rendererForRootBackground();
 
-    compositor().rootBackgroundColorOrTransparencyChanged();
-
-    Page* page = document().page();
-    float pageScaleFactor = page ? page->pageScaleFactor() : 1;
-
-    // If painting will entirely fill the view, no need to fill the background.
-    if (rootFillsViewport && rootObscuresBackground && pageScaleFactor >= 1)
-        return;
+    if (!document().ownerElement())
+        compositor().rootBackgroundColorOrTransparencyChanged();
 
     // This code typically only executes if the root element's visibility has been set to hidden,
     // if there is a transform on the <html>, or if there is a page scale factor less than 1.
@@ -475,7 +457,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
     // in which case we use the document's background color.
     if (frameView().isTransparent()) // FIXME: This needs to be dynamic. We should be able to go back to blitting if we ever stop being transparent.
         frameView().setCannotBlitToWindow(); // The parent must show behind the child.
-    else {
+    else if (!document().ownerElement()) {
         const Color& documentBackgroundColor = frameView().documentBackgroundColor();
         const Color& backgroundColor = (shouldPropagateBackgroundPaintingToInitialContainingBlock && settings().backgroundShouldExtendBeyondPage() && documentBackgroundColor.isValid()) ? documentBackgroundColor : frameView().baseBackgroundColor();
         if (backgroundColor.isVisible()) {
@@ -485,6 +467,15 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
             paintInfo.context().setCompositeOperation(previousOperator);
         } else
             paintInfo.context().clearRect(paintInfo.rect);
+    }
+
+    // Paint the canvas/root element background.
+    Element* documentElement = document().documentElement();
+    if (RenderElement* rootRenderer = documentElement ? documentElement->renderer() : nullptr) {
+        // The document element's renderer is currently forced to be a block, but may not always be.
+        auto* rootBox = dynamicDowncast<RenderBox>(*rootRenderer);
+        BackgroundPainter backgroundPainter { *rootBox, paintInfo };
+        backgroundPainter.paintRootBoxFillLayers();
     }
 }
 

@@ -895,7 +895,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
     bool newStyleSlowScroll = false;
     if (newStyle.hasAnyFixedBackground() && !settings().fixedBackgroundsPaintRelativeToDocument()) {
         newStyleSlowScroll = true;
-        bool drawsRootBackground = isDocumentElementRenderer() || (isBody() && !rendererHasBackground(document().documentElement()->renderer()));
+        bool drawsRootBackground = isRenderView() || (isBody() && !rendererHasBackground(document().documentElement()->renderer()));
         if (drawsRootBackground && newStyle.hasEntirelyFixedBackground() && view().compositor().supportsFixedRootBackgroundCompositing())
             newStyleSlowScroll = false;
     }
@@ -906,7 +906,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
     } else if (newStyleSlowScroll)
         view().frameView().addSlowRepaintObject(*this);
 
-    if (isDocumentElementRenderer() || isBody())
+    if (isRenderView() || isBody())
         view().frameView().updateExtendBackgroundIfNecessary();
 }
 
