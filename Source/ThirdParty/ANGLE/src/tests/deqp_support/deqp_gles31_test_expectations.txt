@@ -199,7 +199,7 @@ b/266710445 WIN OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.a
 ////
 
 // Seem to trigger LowMemoryKiller when run in a certain sequence
-5185 VULKAN ANDROID : dEQP-GLES31.functional.atomic_counter.* = SKIP
+5185 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.atomic_counter.* = SKIP
 
 // Frambuffer without attachments still fail on Pixel 4. Rendering is crossing over the default framebuffer size
 3579 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.fbo.no_attachments.* = SKIP

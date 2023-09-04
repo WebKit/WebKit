@@ -85,9 +85,9 @@ class ShareGroupVk : public ShareGroupImpl
     PipelineLayoutCache &getPipelineLayoutCache() { return mPipelineLayoutCache; }
     DescriptorSetLayoutCache &getDescriptorSetLayoutCache() { return mDescriptorSetLayoutCache; }
     const egl::ContextMap &getContexts() const { return mState.getContexts(); }
-    vk::MetaDescriptorPool &getMetaDescriptorPool(DescriptorSetIndex descriptorSetIndex)
+    vk::DescriptorSetArray<vk::MetaDescriptorPool> &getMetaDescriptorPools()
     {
-        return mMetaDescriptorPools[descriptorSetIndex];
+        return mMetaDescriptorPools;
     }
 
     // Used to flush the mutable textures more often.
@@ -144,16 +144,24 @@ class ShareGroupVk : public ShareGroupImpl
     // Storage for vkUpdateDescriptorSets
     UpdateDescriptorSetsBuilder mUpdateDescriptorSetsBuilder;
 
-    // The per shared group buffer pools that all buffers should sub-allocate from.
-    enum class SuballocationAlgorithm : uint8_t
-    {
+// The per shared group buffer pools that all buffers should sub-allocate from.
+#if ANGLE_VMA_VERSION < 3000000
+    enum class SuballocationAlgorithm : uint8_t{
         Buddy       = 0,
         General     = 1,
         InvalidEnum = 2,
         EnumCount   = InvalidEnum,
     };
-    angle::PackedEnumMap<SuballocationAlgorithm, vk::BufferPoolPointerArray> mDefaultBufferPools;
     angle::PackedEnumMap<BufferUsageType, size_t> mSizeLimitForBuddyAlgorithm;
+#else
+    enum class SuballocationAlgorithm : uint8_t
+    {
+        General     = 0,
+        InvalidEnum = 1,
+        EnumCount   = InvalidEnum,
+    };
+#endif
+    angle::PackedEnumMap<SuballocationAlgorithm, vk::BufferPoolPointerArray> mDefaultBufferPools;
 
     // The system time when last pruneEmptyBuffer gets called.
     double mLastPruneTime;

@@ -60,10 +60,7 @@ public:
         return !m_trust;
     }
 
-    bool operator==(const CertificateInfo& other) const
-    {
-        return trust() == other.trust();
-    }
+    friend bool operator==(const CertificateInfo&, const CertificateInfo&) = default;
 
     WEBCORE_EXPORT static RetainPtr<CFArrayRef> certificateChainFromSecTrust(SecTrustRef);
     WEBCORE_EXPORT static RetainPtr<SecTrustRef> secTrustFromCertificateChain(CFArrayRef);

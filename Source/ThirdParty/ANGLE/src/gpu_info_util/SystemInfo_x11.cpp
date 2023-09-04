@@ -48,6 +48,11 @@ bool GetNvidiaDriverVersionWithXNVCtrl(std::string *version)
         }
     }
 
+    if (display)
+    {
+        XCloseDisplay(display);
+    }
+
     return false;
 }
 }  // namespace angle

@@ -265,6 +265,14 @@ class DelegateWorkerTask
 ANGLE_NO_SANITIZE_CFI_ICALL
 std::shared_ptr<WaitableEvent> DelegateWorkerPool::postWorkerTask(std::shared_ptr<Closure> task)
 {
+    if (mPlatform->postWorkerTask == nullptr)
+    {
+        // In the unexpected case where the platform methods have been changed during execution and
+        // postWorkerTask is no longer usable, simply run the task on the calling thread.
+        (*task)();
+        return std::make_shared<WaitableEventDone>();
+    }
+
     // Thread safety: This function is thread-safe because the |postWorkerTask| platform method is
     // expected to be thread safe.  For Chromium, that forwards the call to the |TaskTracker| class
     // in base/task/thread_pool/task_tracker.h which is thread-safe.
@@ -279,7 +287,7 @@ std::shared_ptr<WaitableEvent> DelegateWorkerPool::postWorkerTask(std::shared_pt
 
 bool DelegateWorkerPool::isAsync()
 {
-    return true;
+    return mPlatform->postWorkerTask != nullptr;
 }
 #endif
 

@@ -17,6 +17,7 @@
 #include "libANGLE/MemoryProgramCache.h"
 #include "libANGLE/renderer/OverlayImpl.h"
 #include "libANGLE/renderer/d3d/CompilerD3D.h"
+#include "libANGLE/renderer/d3d/ProgramExecutableD3D.h"
 #include "libANGLE/renderer/d3d/RenderbufferD3D.h"
 #include "libANGLE/renderer/d3d/SamplerD3D.h"
 #include "libANGLE/renderer/d3d/ShaderD3D.h"
@@ -44,8 +45,19 @@ ANGLE_INLINE bool DrawCallHasDynamicAttribs(const gl::Context *context)
     return vertexArray11->hasActiveDynamicAttrib(context);
 }
 
+bool InstancedPointSpritesActive(RendererD3D *renderer,
+                                 ProgramExecutableD3D *executableD3D,
+                                 gl::PrimitiveMode mode)
+{
+    return executableD3D->usesPointSize() &&
+           executableD3D->usesInstancedPointSpriteEmulation(renderer) &&
+           mode == gl::PrimitiveMode::Points;
+}
+
 bool DrawCallHasStreamingVertexArrays(const gl::Context *context, gl::PrimitiveMode mode)
 {
+    RendererD3D *renderer = GetImplAs<Context11>(context)->getRenderer();
+
     // Direct drawing doesn't support dynamic attribute storage since it needs the first and count
     // to translate when applyVertexBuffer. GL_LINE_LOOP and GL_TRIANGLE_FAN are not supported
     // either since we need to simulate them in D3D.
@@ -55,8 +67,9 @@ bool DrawCallHasStreamingVertexArrays(const gl::Context *context, gl::PrimitiveM
         return true;
     }
 
-    ProgramD3D *programD3D = GetImplAs<ProgramD3D>(context->getState().getProgram());
-    if (InstancedPointSpritesActive(programD3D, mode))
+    ProgramExecutableD3D *executableD3D =
+        GetImplAs<ProgramExecutableD3D>(context->getState().getProgramExecutable());
+    if (InstancedPointSpritesActive(renderer, executableD3D, mode))
     {
         return true;
     }
@@ -155,6 +168,11 @@ ShaderImpl *Context11::createShader(const gl::ShaderState &data)
 ProgramImpl *Context11::createProgram(const gl::ProgramState &data)
 {
     return new Program11(data, mRenderer);
+}
+
+ProgramExecutableImpl *Context11::createProgramExecutable(const gl::ProgramExecutable *executable)
+{
+    return new ProgramExecutableD3D(executable);
 }
 
 FramebufferImpl *Context11::createFramebuffer(const gl::FramebufferState &data)
@@ -954,18 +972,20 @@ angle::Result Context11::dispatchComputeIndirect(const gl::Context *context, GLi
 angle::Result Context11::triggerDrawCallProgramRecompilation(const gl::Context *context,
                                                              gl::PrimitiveMode drawMode)
 {
-    const auto &glState    = context->getState();
-    const auto *va11       = GetImplAs<VertexArray11>(glState.getVertexArray());
-    const auto *drawFBO    = glState.getDrawFramebuffer();
-    gl::Program *program   = glState.getProgram();
-    ProgramD3D *programD3D = GetImplAs<ProgramD3D>(program);
+    const auto &glState                 = context->getState();
+    const auto *va11                    = GetImplAs<VertexArray11>(glState.getVertexArray());
+    const auto *drawFBO                 = glState.getDrawFramebuffer();
+    gl::Program *program                = glState.getProgram();
+    ProgramD3D *programD3D              = GetImplAs<ProgramD3D>(program);
+    ProgramExecutableD3D *executableD3D = programD3D->getExecutable();
 
-    programD3D->updateCachedInputLayout(va11->getCurrentStateSerial(), glState);
-    programD3D->updateCachedOutputLayout(context, drawFBO);
+    executableD3D->updateCachedInputLayout(mRenderer, va11->getCurrentStateSerial(), glState);
+    executableD3D->updateCachedOutputLayout(context, drawFBO);
 
-    bool recompileVS = !programD3D->hasVertexExecutableForCachedInputLayout();
-    bool recompileGS = !programD3D->hasGeometryExecutableForPrimitiveType(glState, drawMode);
-    bool recompilePS = !programD3D->hasPixelExecutableForCachedOutputLayout();
+    bool recompileVS = !executableD3D->hasVertexExecutableForCachedInputLayout();
+    bool recompileGS =
+        !executableD3D->hasGeometryExecutableForPrimitiveType(mRenderer, glState, drawMode);
+    bool recompilePS = !executableD3D->hasPixelExecutableForCachedOutputLayout();
 
     if (!recompileVS && !recompileGS && !recompilePS)
     {
@@ -980,8 +1000,9 @@ angle::Result Context11::triggerDrawCallProgramRecompilation(const gl::Context *
     if (recompileVS)
     {
         ShaderExecutableD3D *vertexExe = nullptr;
-        ANGLE_TRY(programD3D->getVertexExecutableForCachedInputLayout(this, &vertexExe, &infoLog));
-        if (!programD3D->hasVertexExecutableForCachedInputLayout())
+        ANGLE_TRY(executableD3D->getVertexExecutableForCachedInputLayout(this, mRenderer,
+                                                                         &vertexExe, &infoLog));
+        if (!executableD3D->hasVertexExecutableForCachedInputLayout())
         {
             ASSERT(infoLog.getLength() > 0);
             ERR() << "Error compiling dynamic vertex executable: " << infoLog.str();
@@ -992,9 +1013,10 @@ angle::Result Context11::triggerDrawCallProgramRecompilation(const gl::Context *
     if (recompileGS)
     {
         ShaderExecutableD3D *geometryExe = nullptr;
-        ANGLE_TRY(programD3D->getGeometryExecutableForPrimitiveType(this, glState, drawMode,
-                                                                    &geometryExe, &infoLog));
-        if (!programD3D->hasGeometryExecutableForPrimitiveType(glState, drawMode))
+        ANGLE_TRY(executableD3D->getGeometryExecutableForPrimitiveType(
+            this, mRenderer, glState.getCaps(), glState.getProvokingVertex(), drawMode,
+            &geometryExe, &infoLog));
+        if (!executableD3D->hasGeometryExecutableForPrimitiveType(mRenderer, glState, drawMode))
         {
             ASSERT(infoLog.getLength() > 0);
             ERR() << "Error compiling dynamic geometry executable: " << infoLog.str();
@@ -1005,8 +1027,9 @@ angle::Result Context11::triggerDrawCallProgramRecompilation(const gl::Context *
     if (recompilePS)
     {
         ShaderExecutableD3D *pixelExe = nullptr;
-        ANGLE_TRY(programD3D->getPixelExecutableForCachedOutputLayout(this, &pixelExe, &infoLog));
-        if (!programD3D->hasPixelExecutableForCachedOutputLayout())
+        ANGLE_TRY(executableD3D->getPixelExecutableForCachedOutputLayout(this, mRenderer, &pixelExe,
+                                                                         &infoLog));
+        if (!executableD3D->hasPixelExecutableForCachedOutputLayout())
         {
             ASSERT(infoLog.getLength() > 0);
             ERR() << "Error compiling dynamic pixel executable: " << infoLog.str();
@@ -1025,13 +1048,14 @@ angle::Result Context11::triggerDrawCallProgramRecompilation(const gl::Context *
 
 angle::Result Context11::triggerDispatchCallProgramRecompilation(const gl::Context *context)
 {
-    const auto &glState    = context->getState();
-    gl::Program *program   = glState.getProgram();
-    ProgramD3D *programD3D = GetImplAs<ProgramD3D>(program);
+    const auto &glState                 = context->getState();
+    gl::Program *program                = glState.getProgram();
+    ProgramD3D *programD3D              = GetImplAs<ProgramD3D>(program);
+    ProgramExecutableD3D *executableD3D = programD3D->getExecutable();
 
-    programD3D->updateCachedComputeImage2DBindLayout(context);
+    executableD3D->updateCachedComputeImage2DBindLayout(context);
 
-    bool recompileCS = !programD3D->hasComputeExecutableForCachedImage2DBindLayout();
+    bool recompileCS = !executableD3D->hasComputeExecutableForCachedImage2DBindLayout();
 
     if (!recompileCS)
     {
@@ -1044,9 +1068,10 @@ angle::Result Context11::triggerDispatchCallProgramRecompilation(const gl::Conte
     gl::InfoLog infoLog;
 
     ShaderExecutableD3D *computeExe = nullptr;
-    ANGLE_TRY(
-        programD3D->getComputeExecutableForImage2DBindLayout(context, this, &computeExe, &infoLog));
-    if (!programD3D->hasComputeExecutableForCachedImage2DBindLayout())
+    ANGLE_TRY(executableD3D->getComputeExecutableForImage2DBindLayout(
+        this, mRenderer, program->getState().getAttachedShader(gl::ShaderType::Compute),
+        &computeExe, &infoLog));
+    if (!executableD3D->hasComputeExecutableForCachedImage2DBindLayout())
     {
         ASSERT(infoLog.getLength() > 0);
         ERR() << "Dynamic recompilation error log: " << infoLog.str();

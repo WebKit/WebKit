@@ -43,7 +43,7 @@ public:
 
     WEBCORE_EXPORT static ServiceWorkerRegistrationKey emptyKey();
 
-    WEBCORE_EXPORT bool operator==(const ServiceWorkerRegistrationKey&) const;
+    friend bool operator==(const ServiceWorkerRegistrationKey&, const ServiceWorkerRegistrationKey&) = default;
     bool isEmpty() const { return *this == emptyKey(); }
     WEBCORE_EXPORT bool isMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const;
     bool originIsMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const;

@@ -114,6 +114,36 @@ void main() {
     fragColor = vec4(1.0);
 })";
 
+// Shader that specifies an output with out-of-bounds location
+// for index 0 when another output uses index 1 is invalid.
+const char ESSL300_Index0OutOfBoundsFailureShader[] =
+    R"(precision mediump float;
+layout(location = 1, index = 0) out mediump vec4 fragColor;
+layout(location = 0, index = 1) out mediump vec4 secondaryFragColor;
+void main() {
+    fragColor = vec4(1);
+    secondaryFragColor = vec4(1);
+})";
+
+// Shader that specifies an output with out-of-bounds location for index 1 is invalid.
+const char ESSL300_Index1OutOfBoundsFailureShader[] =
+    R"(precision mediump float;
+layout(location = 1, index = 1) out mediump vec4 secondaryFragColor;
+void main() {
+    secondaryFragColor = vec4(1);
+})";
+
+// Shader that specifies two outputs with the same location
+// but different indices and different base types is invalid.
+const char ESSL300_IndexTypeMismatchFailureShader[] =
+    R"(precision mediump float;
+layout(location = 0, index = 0) out mediump vec4 fragColor;
+layout(location = 0, index = 1) out mediump ivec4 secondaryFragColor;
+void main() {
+    fragColor = vec4(1);
+    secondaryFragColor = ivec4(1);
+})";
+
 // Global index layout qualifier fails.
 const char ESSL300_GlobalIndexFailureShader[] =
     R"(precision mediump float;
@@ -260,6 +290,9 @@ INSTANTIATE_TEST_SUITE_P(IncorrectESSL300Shaders,
                                  Values(sh::ESSLVersion300, sh::ESSLVersion310),
                                  Values(ESSL300_LocationIndexFailureShader,
                                         ESSL300_DoubleIndexFailureShader,
+                                        ESSL300_Index0OutOfBoundsFailureShader,
+                                        ESSL300_Index1OutOfBoundsFailureShader,
+                                        ESSL300_IndexTypeMismatchFailureShader,
                                         ESSL300_GlobalIndexFailureShader,
                                         ESSL300_IndexOnUniformVariableFailureShader,
                                         ESSL300_IndexOnStructFailureShader,

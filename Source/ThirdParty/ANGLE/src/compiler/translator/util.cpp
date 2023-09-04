@@ -1030,4 +1030,25 @@ size_t FindFieldIndex(const TFieldList &fieldList, const char *fieldName)
     return 0;
 }
 
+Declaration ViewDeclaration(TIntermDeclaration &declNode)
+{
+    ASSERT(declNode.getChildCount() == 1);
+    TIntermNode *childNode = declNode.getChildNode(0);
+    ASSERT(childNode);
+    TIntermSymbol *symbolNode;
+    if ((symbolNode = childNode->getAsSymbolNode()))
+    {
+        return {*symbolNode, nullptr};
+    }
+    else
+    {
+        TIntermBinary *initNode = childNode->getAsBinaryNode();
+        ASSERT(initNode);
+        ASSERT(initNode->getOp() == TOperator::EOpInitialize);
+        symbolNode = initNode->getLeft()->getAsSymbolNode();
+        ASSERT(symbolNode);
+        return {*symbolNode, initNode->getRight()};
+    }
+}
+
 }  // namespace sh

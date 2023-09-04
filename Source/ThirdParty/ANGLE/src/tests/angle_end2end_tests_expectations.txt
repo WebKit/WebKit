@@ -64,7 +64,6 @@
 4092 WIN OPENGL : BufferDataOverflowTest.VertexBufferIntegerOverflow/* = SKIP
 4092 WIN GLES : BufferDataOverflowTest.VertexBufferIntegerOverflow/* = SKIP
 6064 WIN D3D11 : SimpleStateChangeTestES31.DrawThenChangeFBOThenDrawThenFlushInAnotherThreadThenDrawIndexed/* = SKIP
-4404 WIN D3D11 : ComputeShaderTest.FSReadImageThenCSSample/* = SKIP
 6101 WIN OPENGL INTEL : BlitFramebufferTest.OOBWrite/* = SKIP
 1229184 WIN NVIDIA VULKAN : SimpleStateChangeTest.RedefineFramebufferTexture/* = SKIP
 6173 WIN INTEL OPENGL : GLSLTest_ES31.BoolInInterfaceBlocks/* = SKIP
@@ -191,6 +190,7 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 7866 WIN INTEL VULKAN : VulkanPerformanceCounterTest.PipelineCacheIsWarmedUpAtLinkTime/* = SKIP
 // vk_icdNegotiateLoaderICDInterfaceVersion crashes (possibly Mesa bug?)
 8179 LINUX INTEL VULKAN : RGBTextureBufferTestES31.* = SKIP
+8179 LINUX INTEL VULKAN : TextureBufferTestES31.TexBufferFormatMismatch/* = SKIP
 
 // Linux AMD
 6855 LINUX AMD OPENGL : ClearTestES3.ClearMaxAttachmentsAfterDraw/* = SKIP
@@ -464,6 +464,8 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 5981 PIXEL4ORXL GLES : ImageTestES3.SourceAHBTargetExternalESSL3_Colorspace/* = SKIP
 5981 PIXEL4ORXL GLES : ImageTestES3.SourceCubeTargetExternalESSL3_Colorspace/* = SKIP
 5981 PIXEL4ORXL GLES : ImageTestES3.SourceRenderbufferTargetTextureExternalESSL3_Colorspace/* = SKIP
+// eglCreateImageKHR: AHardwareBuffer format 23 does not support enough features to use as a texture.
+298037344 PIXEL4ORXL GLES : ImageTestES3.RGBAHBUploadDataColorspace/* = SKIP
 5981 PIXEL4ORXL GLES : MipmapTest.DefineValidExtraLevelAndUseItLater/* = SKIP
 5981 PIXEL4ORXL GLES : MipmapTest.GenerateMipmapAfterModifyingBaseLevel/* = SKIP
 5981 PIXEL4ORXL GLES : MipmapTest.GenerateMipmapAfterSingleLevelDraw/* = SKIP
@@ -534,7 +536,6 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 5981 PIXEL4ORXL VULKAN : EXTBlendFuncExtendedDrawTestES31.UseTwoProgramStages/* = SKIP
 5981 PIXEL4ORXL VULKAN : GLSLTest_ES31.ParameterArrayArrayArraySampler/* = SKIP
 6794 PIXEL4ORXL VULKAN : MatrixTest31.Mat3x4StructVarying/* = SKIP
-5981 PIXEL4ORXL VULKAN : MultisampledRenderToTextureES3Test.ClearThenMaskedClearFramebufferTest/* = SKIP
 5981 PIXEL4ORXL VULKAN : PointSpriteTest.TrianglesNotTreatedAsPointSprites/* = SKIP
 5981 PIXEL4ORXL VULKAN : ProgramBinaryTransformFeedbackTest.GetTransformFeedbackVarying/* = SKIP
 5981 PIXEL4ORXL VULKAN : Texture2DArrayCopy.UnsignedByteFormats/* = SKIP
@@ -546,6 +547,8 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 6843 PIXEL4ORXL VULKAN : ImageTest.SourceYUVAHBTargetExternalRGBSampleInitData/* = SKIP
 6843 PIXEL4ORXL VULKAN : ImageTestES3.SourceYUVAHBTargetExternalYUVSampleLinearFiltering/* = SKIP
 7108 PIXEL4ORXL VULKAN : ImageTestES3.SourceAHBMipTarget2DMip/* = SKIP
+// eglCreateImageKHR: AHardwareBuffer format 23 does not support enough features to use as a texture.
+298037344 PIXEL4ORXL VULKAN : ImageTestES3.RGBAHBUploadDataColorspace/* = SKIP
 
 7140 PIXEL4ORXL VULKAN : ColorMaskForDrawBuffersTest.Clear/* = SKIP
 7140 PIXEL4ORXL VULKAN : ColorMaskForDrawBuffersTest.ScissoredClear/* = SKIP
@@ -566,6 +569,9 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 7684 PIXEL4ORXL VULKAN : PixelLocalStorageTest.MipMapLevels/* = SKIP
 7771 PIXEL4ORXL VULKAN : PixelLocalStorageTest.DrawStateReset/* = SKIP
 7771 PIXEL4ORXL VULKAN : PixelLocalStorageTestES31.DrawStateReset/* = SKIP
+
+8310 PIXEL4ORXL VULKAN : VulkanImageTest.PreInitializedOnGLImportLinearTiling/* = SKIP
+8310 LINUX SWIFTSHADER : VulkanImageTest.PreInitializedOnGLImportLinearTiling/* = SKIP
 
 6167 NEXUS5X GLES : DepthStencilTestES3.FramebufferClearThenStencilAttachedThenStencilTestState/* = SKIP
 6167 NEXUS5X GLES : DepthStencilTestES3.FramebufferClearThenStencilTestStateThenStencilAttached/* = SKIP
@@ -654,7 +660,7 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 // ARM drivers cannot support xfb emulation because they lack support for the
 // vertexPipelineStoresAndAtomics Vulkan feature.  The tests that force-enable this feature are
 // skipped.
-7376 PIXEL6 VULKAN : *_EmulateTransformFeedback_NoSupportsTransformFeedbackExtension_NoSupportsPrimitivesGeneratedQuery_NoSupportsGeometryStreamsCapability = SKIP
+7376 PIXEL6 VULKAN : *_NoSupportsTransformFeedbackExtension = SKIP
 
 // Crashing in Mali shader compiler
 217922015 PIXEL6 VULKAN : GLSLTest_ES3.NestedPowFromUniform/* = SKIP
@@ -962,7 +968,7 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 
 7112 SWIFTSHADER : TransformFeedbackTest.BaseInstance/* = SKIP
 7112 PIXEL4ORXL VULKAN : TransformFeedbackTest.BaseInstance/* = SKIP
-7112 VULKAN : TransformFeedbackTest.BaseInstance/ES3_Vulkan_EmulateTransformFeedback_NoSupportsTransformFeedbackExtension_NoSupportsPrimitivesGeneratedQuery_NoSupportsGeometryStreamsCapability = SKIP
+7112 VULKAN : TransformFeedbackTest.BaseInstance/ES3_Vulkan_NoSupportsTransformFeedbackExtension = SKIP
 
 // ASAN flaky timeouts and crashes with Win / Vulkan / Swiftshader
 6965 ASAN WIN VULKAN SWIFTSHADER : MipmapTest* = SKIP
@@ -970,6 +976,7 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 7160 ASAN WIN VULKAN SWIFTSHADER : GeometryShaderTest.LayeredFramebufferMidRenderClear3DColor/ES3_1_Vulkan_SwiftShader = SKIP
 7261 ASAN WIN VULKAN SWIFTSHADER : MemoryBarrierBufferTest.VertexAtrribArrayBitWriteThenVertexRead/ES3_1_Vulkan_SwiftShader* = SKIP
 7262 ASAN WIN VULKAN SWIFTSHADER : TimerQueriesTest.TimeElapsed/*_Vulkan_SwiftShader_AsyncCommandQueue = SKIP
+8306 ASAN WIN VULKAN SWIFTSHADER : *EnableParallelCompileAndLink* = SKIP
 
 // Regression after a buffer change.
 6881 INTEL VULKAN LINUX : Texture2DTest.TexStorageWithPBOMiddlePixelDifferent/* = SKIP
@@ -1120,10 +1127,6 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 5466 GLES : ClipCullDistanceTest.ClipDistanceInteractWithGeometryShader/* = SKIP
 5466 GLES : ClipCullDistanceTest.CullDistanceInteractWithGeometryShader/* = SKIP
 
-// ReadPixels clamps snorm color values to [0, 1]; fixed in Mesa 21.3.0
-8048 LINUX INTEL OPENGL : FramebufferTest_ES3.RenderSnorm* = SKIP
-8048 LINUX INTEL OPENGL : FramebufferTest_ES3.BlitReversedSnorm8/* = SKIP
-
 // ReadPixels clamps Red and Red-Green 16-bit snorm
 // color values to [0, 1] when using GL_RGBA format
 // As of June 2023, the driver issue has been fixed
@@ -1173,6 +1176,10 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 // Invalid gl_SampleMaskIn value when sample qualifier is present
 8131 LINUX INTEL : SampleMultisampleInterpolationTest.SampleMaskInPerSample/* = SKIP
 8131 LINUX INTEL : SampleMultisampleInterpolationTest.SampleMaskInPerSampleNoPerspective/* = SKIP
+
+// Driver bugs related to handling secondary fragment output arrays
+8336 ANDROID VULKAN : WebGLCompatibilityTest.EXTBlendFuncExtendedMissingOutputsArrays/* = SKIP
+8336 ANDROID VULKAN : WebGL2CompatibilityTest.EXTBlendFuncExtendedMissingOutputsArrays/* = SKIP
 
 // bits 24..31 from glClearValueuiv value don't work on Intel Metal.
 7794 MAC INTEL METAL : PixelLocalStorageTest.ClearValues_r32/* = SKIP

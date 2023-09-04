@@ -49,46 +49,6 @@ static inline bool operator==(const StyleGradientImageStop& a, const StyleGradie
         && compareCSSValuePtr(a.position, b.position);
 }
 
-static inline bool operator==(const StyleGradientImage::LinearData& a, const StyleGradientImage::LinearData& b)
-{
-    return a.repeating == b.repeating
-        && a.data == b.data;
-}
-
-static inline bool operator==(const StyleGradientImage::PrefixedLinearData& a, const StyleGradientImage::PrefixedLinearData& b)
-{
-    return a.repeating == b.repeating
-        && a.data == b.data;
-}
-
-static inline bool operator==(const StyleGradientImage::DeprecatedLinearData& a, const StyleGradientImage::DeprecatedLinearData& b)
-{
-    return a.data == b.data;
-}
-
-static inline bool operator==(const StyleGradientImage::RadialData& a, const StyleGradientImage::RadialData& b)
-{
-    return a.repeating == b.repeating
-        && a.data == b.data;
-}
-
-static inline bool operator==(const StyleGradientImage::PrefixedRadialData& a, const StyleGradientImage::PrefixedRadialData& b)
-{
-    return a.repeating == b.repeating
-        && a.data == b.data;
-}
-
-static inline bool operator==(const StyleGradientImage::DeprecatedRadialData& a, const StyleGradientImage::DeprecatedRadialData& b)
-{
-    return a.data == b.data;
-}
-
-static inline bool operator==(const StyleGradientImage::ConicData& a, const StyleGradientImage::ConicData& b)
-{
-    return a.repeating == b.repeating
-        && a.data == b.data;
-}
-
 static bool stopsAreCacheable(const Vector<StyleGradientImage::Stop>& stops)
 {
     for (auto& stop : stops) {

@@ -39,10 +39,9 @@
 //  Temprory entries: they should be removed once the bugs are fixed.
 //
 ////////////////////////////////////////////////////////////////////////////////
-
-// Fails/crashes everywhere
-8261 : dEQP-EGL.functional.native_color_mapping.native_window.* = SKIP
-8261 : dEQP-EGL.functional.native_coord_mapping.native_window.* = SKIP
+// Fails/crashes on win x86
+8261 WIN : dEQP-EGL.functional.native_color_mapping.native_window.* = SKIP
+8261 WIN : dEQP-EGL.functional.native_coord_mapping.native_window.* = SKIP
 
 // Flaky since we enabled depth/stencil backbuffer in all tests.
 2429 WIN NVIDIA : dEQP-EGL.functional.query_context.query_context.rgba8888_window = FAIL
@@ -116,6 +115,7 @@
 
 // Pixel 6 Vulkan
 6899 PIXEL6 VULKAN : dEQP-EGL.functional.query_context.*.rgb888_window = FAIL
+// http://issuetracker.google.com/295394803
 8214 PIXEL6 VULKAN : dEQP-EGL.functional.color_clears.multi_thread.gles2.other = SKIP
 8214 PIXEL6 VULKAN : dEQP-EGL.functional.color_clears.multi_thread.gles3.other = SKIP
 8214 PIXEL6 VULKAN : dEQP-EGL.functional.render.multi_thread.gles2.other = SKIP
@@ -139,8 +139,8 @@
 2306 LINUX : dEQP-EGL.functional.color_clears.single_context.gles1* = FAIL
 2306 LINUX : dEQP-EGL.functional.color_clears.multi_context.gles1* = FAIL
 
-// Tests failing since the Jan 2018 roll of dEQP
-2341 : dEQP-EGL.functional.swap_buffers.* = SKIP
+// Tests failing on Win OS
+2341 WIN : dEQP-EGL.functional.swap_buffers.* = SKIP
 
 // EGL images with the GL back-ends are not supported
 4606 OPENGL : dEQP-EGL.functional.image.api.create_image_gles2_* = FAIL

@@ -168,6 +168,8 @@ set(angle_translator_sources
     "src/compiler/translator/tree_ops/RemoveInvariantDeclaration.h"
     "src/compiler/translator/tree_ops/RemoveUnreferencedVariables.cpp"
     "src/compiler/translator/tree_ops/RemoveUnreferencedVariables.h"
+    "src/compiler/translator/tree_ops/RescopeGlobalVariables.cpp"
+    "src/compiler/translator/tree_ops/RescopeGlobalVariables.h"
     "src/compiler/translator/tree_ops/RewriteArrayOfArrayOfOpaqueUniforms.cpp"
     "src/compiler/translator/tree_ops/RewriteArrayOfArrayOfOpaqueUniforms.h"
     "src/compiler/translator/tree_ops/RewriteAtomicCounters.cpp"

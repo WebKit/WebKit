@@ -242,22 +242,6 @@
             "issue": "http://anglebug.com/3027"
         },
         {
-            "name": "dont_relink_programs_in_parallel",
-            "category": "Workarounds",
-            "description": [
-                "Relinking a program in parallel is buggy"
-            ],
-            "issue": "http://anglebug.com/3045"
-        },
-        {
-            "name": "disable_worker_contexts",
-            "category": "Workarounds",
-            "description": [
-                "Some tests have been seen to fail using worker contexts"
-            ],
-            "issue": "http://crbug.com/849576"
-        },
-        {
             "name": "limit_webgl_max_texture_size_to_4096",
             "category": "Workarounds",
             "description": [
@@ -739,6 +723,30 @@
                 "Apple OpenGL drivers crash when drawing with a zero-sized buffer bound using a non-zero divisor."
             ],
             "issue": "http://crbug.com/1456243"
+        },
+        {
+            "name": "explicit_fragment_locations",
+            "category": "Workarounds",
+            "description": [
+                "Always write explicit location layout qualifiers for fragment outputs."
+            ],
+            "issue": "https://anglebug.com/8308"
+        },
+        {
+            "name": "disable_render_snorm",
+            "category": "Workarounds",
+            "description": [
+                "Disable EXT_render_snorm extension."
+            ],
+            "issue": "https://anglebug.com/8315"
+        },
+        {
+            "name": "disable_texture_mirror_clamp_to_edge",
+            "category": "Workarounds",
+            "description": [
+                "Disable EXT_texture_mirror_clamp_to_edge extension."
+            ],
+            "issue": "https://anglebug.com/8319"
         }
     ]
 }

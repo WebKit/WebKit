@@ -117,7 +117,7 @@ bool ValidateObjectIdentifierAndName(const Context *context,
                 ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidType);
                 return false;
             }
-            if (context->getShader({name}) == nullptr)
+            if (context->getShaderNoResolveCompile({name}) == nullptr)
             {
                 ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidShaderName);
                 return false;

@@ -875,6 +875,7 @@ set(WebCore_NON_SVG_IDL_FILES
     crypto/parameters/RsaKeyGenParams.idl
     crypto/parameters/RsaOaepParams.idl
     crypto/parameters/RsaPssParams.idl
+    crypto/parameters/X25519Params.idl
 
     css/CSSConditionRule.idl
     css/CSSContainerRule.idl

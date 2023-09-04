@@ -44,11 +44,7 @@ struct FloatMarkableTraits {
 };
 
 struct FontSizeAdjust {
-    bool operator==(const FontSizeAdjust& other) const
-    {
-        return metric == other.metric && value == other.value
-            && isFromFont == other.isFromFont;
-    }
+    friend bool operator==(const FontSizeAdjust&, const FontSizeAdjust&) = default;
 
     enum class Metric : uint8_t {
         ExHeight,

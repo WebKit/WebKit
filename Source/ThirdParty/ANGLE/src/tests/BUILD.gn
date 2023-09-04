@@ -96,6 +96,9 @@ config("angle_common_test_utils_config") {
   if (angle_enable_gl_desktop_backend) {
     defines += [ "ANGLE_ENABLE_GL_DESKTOP_BACKEND" ]
   }
+  if (angle_enable_swiftshader) {
+    defines += [ "ANGLE_ENABLE_SWIFTSHADER" ]
+  }
 }
 
 template("angle_common_test_utils") {

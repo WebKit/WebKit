@@ -35,8 +35,10 @@ constexpr size_t kDescriptorWriteInfosInitialSize =
     kDescriptorBufferInfosInitialSize + kDescriptorImageInfosInitialSize;
 constexpr size_t kDescriptorBufferViewsInitialSize = 0;
 
+#if ANGLE_VMA_VERSION < 3000000
 constexpr VkDeviceSize kMaxStaticBufferSizeToUseBuddyAlgorithm  = 256;
 constexpr VkDeviceSize kMaxDynamicBufferSizeToUseBuddyAlgorithm = 4096;
+#endif
 
 // How often monolithic pipelines should be created, if preferMonolithicPipelinesOverLibraries is
 // enabled.  Pipeline creation is typically O(hundreds of microseconds).  A value of 2ms is chosen
@@ -77,9 +79,12 @@ ShareGroupVk::ShareGroupVk(const egl::ShareGroupState &state)
       mLastMonolithicPipelineJobTime(0)
 {
     mLastPruneTime = angle::GetCurrentSystemTime();
+
+#if ANGLE_VMA_VERSION < 3000000
     mSizeLimitForBuddyAlgorithm[BufferUsageType::Dynamic] =
         kMaxDynamicBufferSizeToUseBuddyAlgorithm;
     mSizeLimitForBuddyAlgorithm[BufferUsageType::Static] = kMaxStaticBufferSizeToUseBuddyAlgorithm;
+#endif
 }
 
 void ShareGroupVk::onContextAdd()
@@ -398,13 +403,22 @@ vk::BufferPool *ShareGroupVk::getDefaultBufferPool(RendererVk *renderer,
                                                    uint32_t memoryTypeIndex,
                                                    BufferUsageType usageType)
 {
+#if ANGLE_VMA_VERSION < 3000000
     // First pick allocation algorithm. Buddy algorithm is faster, but waste more memory
     // due to power of two alignment. For smaller size allocation we always use buddy algorithm
     // since align to power of two does not waste too much memory. For dynamic usage, the size
     // threshold for buddy algorithm is relaxed since the performance is more important.
-    SuballocationAlgorithm algorithm = size <= mSizeLimitForBuddyAlgorithm[usageType]
-                                           ? SuballocationAlgorithm::Buddy
-                                           : SuballocationAlgorithm::General;
+    SuballocationAlgorithm algorithm      = size <= mSizeLimitForBuddyAlgorithm[usageType]
+                                                ? SuballocationAlgorithm::Buddy
+                                                : SuballocationAlgorithm::General;
+    vma::VirtualBlockCreateFlags vmaFlags = algorithm == SuballocationAlgorithm::Buddy
+                                                ? vma::VirtualBlockCreateFlagBits::BUDDY
+                                                : vma::VirtualBlockCreateFlagBits::GENERAL;
+#else
+    // For VMA 3.0, the general allocation algorithm is used.
+    SuballocationAlgorithm algorithm      = SuballocationAlgorithm::General;
+    vma::VirtualBlockCreateFlags vmaFlags = vma::VirtualBlockCreateFlagBits::GENERAL;
+#endif  // ANGLE_VMA_VERSION < 3000000
 
     if (!mDefaultBufferPools[algorithm][memoryTypeIndex])
     {
@@ -414,10 +428,7 @@ vk::BufferPool *ShareGroupVk::getDefaultBufferPool(RendererVk *renderer,
         VkMemoryPropertyFlags memoryPropertyFlags;
         allocator.getMemoryTypeProperties(memoryTypeIndex, &memoryPropertyFlags);
 
-        std::unique_ptr<vk::BufferPool> pool  = std::make_unique<vk::BufferPool>();
-        vma::VirtualBlockCreateFlags vmaFlags = algorithm == SuballocationAlgorithm::Buddy
-                                                    ? vma::VirtualBlockCreateFlagBits::BUDDY
-                                                    : vma::VirtualBlockCreateFlagBits::GENERAL;
+        std::unique_ptr<vk::BufferPool> pool = std::make_unique<vk::BufferPool>();
         pool->initWithFlags(renderer, vmaFlags, usageFlags, 0, memoryTypeIndex,
                             memoryPropertyFlags);
         mDefaultBufferPools[algorithm][memoryTypeIndex] = std::move(pool);

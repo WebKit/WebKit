@@ -1992,7 +1992,7 @@ inline void BuilderCustom::applyInitialCustomProperty(BuilderState& builderState
         return;
     }
 
-    auto invalid = CSSCustomPropertyValue::createUnresolved(name, CSSValueInvalid);
+    auto invalid = CSSCustomPropertyValue::createWithID(name, CSSValueInvalid);
     applyValueCustomProperty(builderState, registered, invalid.get());
 }
 

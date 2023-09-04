@@ -56,6 +56,8 @@ VulkanPipelineCachePerfTest::~VulkanPipelineCachePerfTest()
 
 void VulkanPipelineCachePerfTest::SetUp()
 {
+    ANGLEPerfTest::SetUp();
+
     // Insert a number of random pipeline states.
     for (int pipelineCount = 0; pipelineCount < 100; ++pipelineCount)
     {

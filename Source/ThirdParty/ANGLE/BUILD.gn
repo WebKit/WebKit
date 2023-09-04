@@ -245,6 +245,10 @@ config("internal_config") {
       defines += [ "ANGLE_VULKAN_DISPLAY_MODE_SIMPLE" ]
     } else if (angle_vulkan_display_mode == "headless") {
       defines += [ "ANGLE_VULKAN_DISPLAY_MODE_HEADLESS" ]
+    } else if (angle_vulkan_display_mode == "offscreen") {
+      defines += [ "ANGLE_VULKAN_DISPLAY_MODE_OFFSCREEN" ]
+    } else {
+      assert(false)
     }
   }
 

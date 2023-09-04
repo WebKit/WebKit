@@ -59,14 +59,6 @@ bool operator==(const FontFamilyName& a, const FontFamilyName& b)
     return (a.string().isNull() || b.string().isNull()) ? a.string() == b.string() : FontCascadeDescription::familyNamesAreEqual(a.string(), b.string());
 }
 
-bool operator==(const FontCascadeCacheKey& a, const FontCascadeCacheKey& b)
-{
-    return a.fontDescriptionKey == b.fontDescriptionKey
-        && a.fontSelectorId == b.fontSelectorId
-        && a.fontSelectorVersion == b.fontSelectorVersion
-        && a.families == b.families;
-}
-
 FontCascadeCache& FontCascadeCache::forCurrentThread()
 {
     return FontCache::forCurrentThread().fontCascadeCache();

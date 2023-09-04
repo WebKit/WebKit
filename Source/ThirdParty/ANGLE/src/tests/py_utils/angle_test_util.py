@@ -195,8 +195,12 @@ def RunTestSuite(test_suite,
 
 def GetTestsFromOutput(output):
     out_lines = output.split('\n')
-    start = out_lines.index('Tests list:')
-    end = out_lines.index('End tests list.')
+    try:
+        start = out_lines.index('Tests list:')
+        end = out_lines.index('End tests list.')
+    except ValueError as e:
+        logging.exception(e)
+        return None
     return out_lines[start + 1:end]
 
 

@@ -38,6 +38,8 @@ set(d3d_shared_sources
     "src/libANGLE/renderer/d3d/IndexDataManager.h"
     "src/libANGLE/renderer/d3d/NativeWindowD3D.cpp"
     "src/libANGLE/renderer/d3d/NativeWindowD3D.h"
+    "src/libANGLE/renderer/d3d/ProgramExecutableD3D.cpp"
+    "src/libANGLE/renderer/d3d/ProgramExecutableD3D.h"
     "src/libANGLE/renderer/d3d/ProgramD3D.cpp"
     "src/libANGLE/renderer/d3d/ProgramD3D.h"
     "src/libANGLE/renderer/d3d/RenderTargetD3D.cpp"

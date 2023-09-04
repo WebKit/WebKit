@@ -114,14 +114,40 @@ void ClassChangeInvalidation::computeInvalidation(const SpaceSplitString& oldCla
     if (shouldInvalidateCurrent)
         m_element.invalidateStyle();
 
-    auto invalidateBeforeChange = [](ClassChangeType type, IsNegation isNegation, MatchElement matchElement) {
-        if (matchElement == MatchElement::AnySibling || matchElement == MatchElement::HasNonSubjectOrScopeBreaking)
+    auto invalidateBeforeAndAfterChange = [](MatchElement matchElement) {
+        switch (matchElement) {
+        case MatchElement::AnySibling:
+        case MatchElement::ParentAnySibling:
+        case MatchElement::AncestorAnySibling:
+        case MatchElement::HasNonSubjectOrScopeBreaking:
+            return true;
+        case MatchElement::Subject:
+        case MatchElement::Parent:
+        case MatchElement::Ancestor:
+        case MatchElement::DirectSibling:
+        case MatchElement::IndirectSibling:
+        case MatchElement::ParentSibling:
+        case MatchElement::AncestorSibling:
+        case MatchElement::HasChild:
+        case MatchElement::HasDescendant:
+        case MatchElement::HasSibling:
+        case MatchElement::HasSiblingDescendant:
+        case MatchElement::Host:
+        case MatchElement::HostChild:
+            return false;
+        }
+        ASSERT_NOT_REACHED();
+        return false;
+    };
+
+    auto invalidateBeforeChange = [&](ClassChangeType type, IsNegation isNegation, MatchElement matchElement) {
+        if (invalidateBeforeAndAfterChange(matchElement))
             return true;
         return type == ClassChangeType::Remove ? isNegation == IsNegation::No : isNegation == IsNegation::Yes;
     };
 
-    auto invalidateAfterChange = [](ClassChangeType type, IsNegation isNegation, MatchElement matchElement) {
-        if (matchElement == MatchElement::AnySibling || matchElement == MatchElement::HasNonSubjectOrScopeBreaking)
+    auto invalidateAfterChange = [&](ClassChangeType type, IsNegation isNegation, MatchElement matchElement) {
+        if (invalidateBeforeAndAfterChange(matchElement))
             return true;
         return type == ClassChangeType::Add ? isNegation == IsNegation::No : isNegation == IsNegation::Yes;
     };

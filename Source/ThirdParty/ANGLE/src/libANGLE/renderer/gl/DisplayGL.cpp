@@ -31,7 +31,7 @@ namespace rx
 // We also want to handle the case without GPUGeneration:
 // AMD Radeon GPU model (DRM DRMversion, kernelversion, LLVM LLVMversion)
 //
-// Thanks to Jeff Gilbert of Mozilla for this example
+// Thanks to Kelsey Gilbert of Mozilla for this example
 // https://phabricator.services.mozilla.com/D105636
 std::string SanitizeRendererString(std::string rendererString)
 {

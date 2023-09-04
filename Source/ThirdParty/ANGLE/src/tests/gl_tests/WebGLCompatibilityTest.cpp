@@ -6140,6 +6140,199 @@ void main() {
     EXPECT_FALSE(prg.valid());
 }
 
+// Test that EXT_blend_func_extended does not allow omitting locations in WebGL 2.0 contexts.
+TEST_P(WebGL2CompatibilityTest, EXTBlendFuncExtendedNoLocations)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_blend_func_extended"));
+
+    constexpr char kFS[] = R"(#version 300 es
+#extension GL_EXT_blend_func_extended : require
+out highp vec4 color0;
+out highp vec4 color1;
+void main() {
+    color0 = vec4(1.0, 0.0, 0.0, 1.0);
+    color1 = vec4(0.0, 1.0, 0.0, 1.0);
+})";
+
+    GLProgram prg;
+    prg.makeRaster(essl3_shaders::vs::Simple(), kFS);
+    EXPECT_FALSE(prg.valid());
+}
+
+// Test that a secondary fragment output is declared
+// when using EXT_blend_func_extended in WebGL 1.0 contexts.
+TEST_P(WebGLCompatibilityTest, EXTBlendFuncExtendedMissingOutputs)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_blend_func_extended"));
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_SRC1_COLOR_EXT);
+    ASSERT_GL_NO_ERROR();
+
+    {
+        constexpr char kFragColor[] = R"(
+void main() {
+    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFragColor);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+        ASSERT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+    {
+        constexpr char kSecondaryFragColor[] = R"(#extension GL_EXT_blend_func_extended : require
+void main() {
+    gl_SecondaryFragColorEXT = vec4(0.0, 1.0, 0.0, 1.0);
+})";
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kSecondaryFragColor);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+        ASSERT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+    {
+        constexpr char kFragColorAndSecondaryFragColor[] =
+            R"(#extension GL_EXT_blend_func_extended : require
+void main() {
+    gl_FragColor             = vec4(1.0, 0.0, 0.0, 1.0);
+    gl_SecondaryFragColorEXT = vec4(0.0, 1.0, 0.0, 1.0);
+})";
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFragColorAndSecondaryFragColor);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+        ASSERT_GL_NO_ERROR();
+    }
+}
+
+// Test that a secondary fragment output is declared
+// when using EXT_blend_func_extended in WebGL 1.0 contexts.
+TEST_P(WebGLCompatibilityTest, EXTBlendFuncExtendedMissingOutputsArrays)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_blend_func_extended"));
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_SRC1_COLOR_EXT);
+    ASSERT_GL_NO_ERROR();
+
+    {
+        constexpr char kFragData[] = R"(
+void main() {
+    gl_FragData[0] = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFragData);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+        ASSERT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+    {
+        constexpr char kSecondaryFragData[] = R"(#extension GL_EXT_blend_func_extended : require
+void main() {
+    gl_SecondaryFragDataEXT[0] = vec4(0.0, 1.0, 0.0, 1.0);
+})";
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kSecondaryFragData);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+        ASSERT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+    {
+        constexpr char kFragDataAndSecondaryFragData[] =
+            R"(#extension GL_EXT_blend_func_extended : require
+void main() {
+    gl_FragData[0]             = vec4(1.0, 0.0, 0.0, 1.0);
+    gl_SecondaryFragDataEXT[0] = vec4(0.0, 1.0, 0.0, 1.0);
+})";
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFragDataAndSecondaryFragData);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+        ASSERT_GL_NO_ERROR();
+    }
+}
+
+// Test that a secondary fragment output is declared
+// when using EXT_blend_func_extended in WebGL 2.0 contexts.
+TEST_P(WebGL2CompatibilityTest, EXTBlendFuncExtendedMissingOutputs)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_blend_func_extended"));
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_SRC1_COLOR_EXT);
+    ASSERT_GL_NO_ERROR();
+
+    {
+        constexpr char kColor0[] = R"(#version 300 es
+out mediump vec4 color0;
+void main() {
+    color0 = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+        ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kColor0);
+        drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+        ASSERT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+    {
+        constexpr char kColor1[] = R"(#version 300 es
+#extension GL_EXT_blend_func_extended : require
+layout(location = 0, index = 1) out mediump vec4 color1;
+void main() {
+    color1 = vec4(0.0, 1.0, 0.0, 1.0);
+})";
+        ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kColor1);
+        drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+        ASSERT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+    {
+        constexpr char kColor0AndColor1[] = R"(#version 300 es
+#extension GL_EXT_blend_func_extended : require
+layout(location = 0, index = 0) out mediump vec4 color0;
+layout(location = 0, index = 1) out mediump vec4 color1;
+void main() {
+    color0 = vec4(1.0, 0.0, 0.0, 1.0);
+    color1 = vec4(0.0, 1.0, 0.0, 1.0);
+})";
+        ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kColor0AndColor1);
+        drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+        ASSERT_GL_NO_ERROR();
+    }
+}
+
+// Test that a secondary fragment output is declared
+// when using EXT_blend_func_extended in WebGL 2.0 contexts.
+TEST_P(WebGL2CompatibilityTest, EXTBlendFuncExtendedMissingOutputsArrays)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_blend_func_extended"));
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_SRC1_COLOR_EXT);
+    ASSERT_GL_NO_ERROR();
+
+    {
+        constexpr char kArrayColor0[] = R"(#version 300 es
+out mediump vec4 color0[1];
+void main() {
+    color0[0] = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+        ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kArrayColor0);
+        drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+        ASSERT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+    {
+        constexpr char kArrayColor1[] = R"(#version 300 es
+#extension GL_EXT_blend_func_extended : require
+layout(location = 0, index = 1) out mediump vec4 color1[1];
+void main() {
+    color1[0] = vec4(0.0, 1.0, 0.0, 1.0);
+})";
+        ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kArrayColor1);
+        drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+        ASSERT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+    {
+        constexpr char kArrayColor0AndColor0[] = R"(#version 300 es
+#extension GL_EXT_blend_func_extended : require
+layout(location = 0, index = 0) out mediump vec4 color0[1];
+layout(location = 0, index = 1) out mediump vec4 color1[1];
+void main() {
+    color0[0] = vec4(1.0, 0.0, 0.0, 1.0);
+    color1[0] = vec4(0.0, 1.0, 0.0, 1.0);
+})";
+        ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kArrayColor0AndColor0);
+        drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+        ASSERT_GL_NO_ERROR();
+    }
+}
+
 // Test for a mishandling of instanced vertex attributes with zero-sized buffers bound on Apple
 // OpenGL drivers.
 TEST_P(WebGL2CompatibilityTest, DrawWithZeroSizedBuffer)

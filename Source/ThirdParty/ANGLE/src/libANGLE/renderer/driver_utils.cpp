@@ -236,7 +236,7 @@ bool Is12thGenIntel(uint32_t DeviceId)
            std::end(IntelGen12);
 }
 
-const char *GetVendorString(uint32_t vendorId)
+std::string GetVendorString(uint32_t vendorId)
 {
     switch (vendorId)
     {
@@ -274,11 +274,11 @@ const char *GetVendorString(uint32_t vendorId)
             return "Test";
         case 0:
             return "NULL";
-        default:
-            // TODO(jmadill): More vendor IDs.
-            UNIMPLEMENTED();
-            return "Unknown";
     }
+
+    std::stringstream s;
+    s << gl::FmtHex(vendorId);
+    return s.str();
 }
 
 ARMDriverVersion ParseARMDriverVersion(uint32_t driverVersion)

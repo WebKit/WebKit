@@ -396,7 +396,7 @@ void SetupEnvironmentVarsForCaptureReplay()
     std::string testName = std::string{testInfo->name()};
     std::replace(testName.begin(), testName.end(), '/', '_');
     SetEnvironmentVar("ANGLE_CAPTURE_LABEL",
-                      (std::string{testInfo->test_case_name()} + "_" + testName).c_str());
+                      (std::string{testInfo->test_suite_name()} + "_" + testName).c_str());
 }
 }  // anonymous namespace
 
@@ -632,7 +632,7 @@ void ANGLETestBase::ANGLETestSetUp()
     GPUTestConfig testConfig = GPUTestConfig(api, 0);
 
     std::stringstream fullTestNameStr;
-    fullTestNameStr << testInfo->test_case_name() << "." << testInfo->name();
+    fullTestNameStr << testInfo->test_suite_name() << "." << testInfo->name();
     std::string fullTestName = fullTestNameStr.str();
 
     TestSuite *testSuite = TestSuite::GetInstance();
@@ -656,7 +656,7 @@ void ANGLETestBase::ANGLETestSetUp()
         return;
     }
 
-    if (mLastLoadedDriver.valid() && mCurrentParams->driver != mLastLoadedDriver.value())
+    if (!mLastLoadedDriver.valid() || mCurrentParams->driver != mLastLoadedDriver.value())
     {
         LoadEntryPointsWithUtilLoader(mCurrentParams->driver);
         mLastLoadedDriver = mCurrentParams->driver;
@@ -791,7 +791,7 @@ void ANGLETestBase::ANGLETestTearDown()
     if (IsWindows())
     {
         const testing::TestInfo *info = testing::UnitTest::GetInstance()->current_test_info();
-        WriteDebugMessage("Exiting %s.%s\n", info->test_case_name(), info->name());
+        WriteDebugMessage("Exiting %s.%s\n", info->test_suite_name(), info->name());
     }
 
     if (mCurrentParams->noFixture || !mFixture->osWindow->valid())

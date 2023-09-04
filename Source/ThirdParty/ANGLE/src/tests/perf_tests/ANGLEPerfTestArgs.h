@@ -16,7 +16,6 @@
 
 namespace angle
 {
-extern bool gCalibration;
 extern int gStepsPerTrial;
 extern int gMaxStepsPerformed;
 extern bool gEnableTrace;
@@ -26,9 +25,7 @@ extern bool gSaveScreenshots;
 extern int gScreenshotFrame;
 extern bool gRunToKeyFrame;
 extern bool gVerboseLogging;
-extern int gWarmupTrials;
-extern int gWarmupSteps;
-extern int gCalibrationTimeSeconds;
+extern bool gWarmup;
 extern int gTrialTimeSeconds;
 extern int gTestTrials;
 extern bool gNoFinish;
@@ -43,8 +40,9 @@ extern bool gOffscreen;
 extern bool gVsync;
 extern const char *gPrintExtensionsToFile;
 extern const char *gRequestedExtensions;
+extern bool gIncludeInactiveResources;
 
-// Use this flag as an indicator that a trace's frame count should be used for warmup steps
+// Constant for when trace's frame count should be used
 constexpr int kAllFrames = -1;
 
 constexpr int kDefaultScreenshotFrame   = 1;

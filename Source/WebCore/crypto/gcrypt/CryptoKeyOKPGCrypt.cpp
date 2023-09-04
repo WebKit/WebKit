@@ -23,6 +23,7 @@
 #if ENABLE(WEB_CRYPTO)
 
 #include "CryptoKeyPair.h"
+#include "GCryptRFC7748.h"
 #include "GCryptUtilities.h"
 #include "JsonWebKey.h"
 #include <pal/crypto/gcrypt/Utilities.h>
@@ -33,7 +34,7 @@ namespace WebCore {
 
 bool CryptoKeyOKP::isPlatformSupportedCurve(NamedCurve namedCurve)
 {
-    return namedCurve == NamedCurve::Ed25519;
+    return namedCurve == NamedCurve::Ed25519 || namedCurve == NamedCurve::X25519;
 }
 
 namespace CryptoKeyOKPImpl {
@@ -45,8 +46,13 @@ static bool supportedAlgorithmIdentifier(CryptoAlgorithmIdentifier keyIdentifier
 
     switch (keyIdentifier) {
     case CryptoAlgorithmIdentifier::Ed25519:
-        // Ed25519 only supports id-Ed25519 idenfitied for imported keys.
+        // Ed25519 only supports id-Ed25519 idenfitier for imported keys.
         if (CryptoConstants::matches(data, size, CryptoConstants::s_ed25519Identifier))
+            return true;
+        return false;
+    case CryptoAlgorithmIdentifier::X25519:
+        // X25519 only supports id-X25519 idenfitier for imported keys.
+        if (CryptoConstants::matches(data, size, CryptoConstants::s_x25519Identifier))
             return true;
         return false;
     default:
@@ -61,11 +67,11 @@ static bool supportedAlgorithmIdentifier(CryptoAlgorithmIdentifier keyIdentifier
 
 std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve namedCurve, bool extractable, CryptoKeyUsageBitmap usages)
 {
-    if (namedCurve != NamedCurve::Ed25519)
+    if (namedCurve != NamedCurve::Ed25519 && namedCurve != NamedCurve::X25519)
         return { };
 
     PAL::GCrypt::Handle<gcry_sexp_t> genkeySexp;
-    gcry_error_t error = gcry_sexp_build(&genkeySexp, nullptr, "(genkey (ecdsa (curve \"Ed25519\") (flags eddsa)))");
+    gcry_error_t error = gcry_sexp_build(&genkeySexp, nullptr, namedCurve == CryptoKeyOKP::NamedCurve::Ed25519 ? "(genkey (ecdsa (curve Ed25519) (flags eddsa)))" : "(genkey (ecc (curve Curve25519)))");
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return std::nullopt;
@@ -85,17 +91,49 @@ std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmI
         return std::nullopt;
     }
 
+    // Retrieve the `q` data, which should be in the uncompressed point format for the X25519 keys.
+    // Validate the data size and the first byte (which should be 0x40).
+    size_t pubKeySize = namedCurve == NamedCurve::Ed25519 ? 32 : 33;
     auto publicKeyData = mpiData(qMpi);
+    if (!publicKeyData || publicKeyData->size() != pubKeySize
+        || (namedCurve == NamedCurve::X25519
+            && !CryptoConstants::matches(publicKeyData->data(), 1, CryptoConstants::s_x25519UncompressedFormatLeadingByte))) {
+        return std::nullopt;
+    }
+
     auto privateKeyData = mpiData(dMpi);
-    if (!publicKeyData || publicKeyData->size() != 32 || !privateKeyData || privateKeyData->size() != 32)
+    if (!privateKeyData || privateKeyData->size() != 32)
         return std::nullopt;
 
     bool isPublicKeyExtractable = true;
-    auto publicKey = CryptoKeyOKP::create(identifier, namedCurve, CryptoKeyType::Public, Vector<uint8_t>(*publicKeyData), isPublicKeyExtractable, usages);
+    auto publicKey = CryptoKeyOKP::create(identifier, namedCurve, CryptoKeyType::Public, Vector<uint8_t>(namedCurve == NamedCurve::Ed25519 ? publicKeyData->data() : publicKeyData->data() + 1, 32), isPublicKeyExtractable, usages);
     ASSERT(publicKey);
     auto privateKey = CryptoKeyOKP::create(identifier, namedCurve, CryptoKeyType::Private, Vector<uint8_t>(*privateKeyData), extractable, usages);
     ASSERT(privateKey);
     return CryptoKeyPair { WTFMove(publicKey), WTFMove(privateKey) };
+}
+
+bool CryptoKeyOKP::platformCheckPairedKeys(CryptoAlgorithmIdentifier, NamedCurve namedCurve, const Vector<uint8_t>& privateKey, const Vector<uint8_t>& publicKey)
+{
+    if (namedCurve != NamedCurve::Ed25519 && namedCurve != NamedCurve::X25519)
+        return false;
+
+    if (namedCurve == NamedCurve::X25519) {
+        // public key being X25519(a, 9), as defined in [RFC7748], section 6.1.
+        Vector<uint8_t> nine {
+            0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        };
+        auto q = X25519(privateKey, nine);
+
+        return q && q->size() == 32 && *q == publicKey;
+    }
+
+    // FIXME: Implement this check for Ed25519
+
+    return true;
 }
 
 // Per https://www.ietf.org/rfc/rfc5280.txt
@@ -137,8 +175,7 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importSpki(CryptoAlgorithmIdentifier identifi
             return nullptr;
 
         // Construct the `public-key` expression to be used for generating the MPI structure.
-        gcry_error_t error = gcry_sexp_build(&platformKey, nullptr, "(public-key(ecc(curve Ed25519)(q %b)))",
-            subjectPublicKey->size(), subjectPublicKey->data());
+        gcry_error_t error = gcry_sexp_build(&platformKey, nullptr, curve == CryptoKeyOKP::NamedCurve::Ed25519 ? "(public-key(ecc(curve Ed25519)(q %b)))" : "(public-key(ecc(curve Curve25519)(q %b)))", subjectPublicKey->size(), subjectPublicKey->data());
         if (error != GPG_ERR_NO_ERROR) {
             PAL::GCrypt::logError(error);
             return nullptr;
@@ -172,7 +209,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyOKP::exportSpki() const
             return Exception { OperationError };
 
         // Write out the id-edPublicKey identifier under `algorithm.algorithm`.
-        if (!PAL::TASN1::writeElement(spki, "algorithm.algorithm", CryptoConstants::s_ed25519Identifier.data(), 1))
+        if (!PAL::TASN1::writeElement(spki, "algorithm.algorithm", m_curve == CryptoKeyOKP::NamedCurve::Ed25519 ? CryptoConstants::s_ed25519Identifier.data() : CryptoConstants::s_x25519Identifier.data(), 1))
             return Exception { OperationError };
 
         // The 'paramaters' element should not be present
@@ -257,8 +294,7 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importPkcs8(CryptoAlgorithmIdentifier identif
             return nullptr;
 
         // Construct the `private-key` expression that will also be used for the EC context.
-        gcry_error_t error = gcry_sexp_build(&platformKey, nullptr, "(private-key(ecc(curve Ed25519)(flags eddsa)(d %b)))",
-            privateKey->size(), privateKey->data());
+        gcry_error_t error = gcry_sexp_build(&platformKey, nullptr, curve == CryptoKeyOKP::NamedCurve::Ed25519 ? "(private-key(ecc(curve Ed25519)(flags eddsa)(d %b)))" : "(private-key(ecc(curve Curve25519)(d %b)))", privateKey->size(), privateKey->data());
         if (error != GPG_ERR_NO_ERROR) {
             PAL::GCrypt::logError(error);
             return nullptr;
@@ -325,7 +361,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyOKP::exportPkcs8() const
             return Exception { OperationError };
 
         // Write out the id-Ed25519 identifier under `privateKeyAlgorithm.algorithm`.
-        if (!PAL::TASN1::writeElement(pkcs8, "privateKeyAlgorithm.algorithm", CryptoConstants::s_ed25519Identifier.data(), 1))
+        if (!PAL::TASN1::writeElement(pkcs8, "privateKeyAlgorithm.algorithm", m_curve == CryptoKeyOKP::NamedCurve::Ed25519 ? CryptoConstants::s_ed25519Identifier.data() : CryptoConstants::s_x25519Identifier.data(), 1))
             return Exception { OperationError };
 
         // The 'paramaters' element should not be present
@@ -364,6 +400,21 @@ String CryptoKeyOKP::generateJwkX() const
         return base64URLEncodeToString(m_data);
 
     ASSERT(type() == CryptoKeyType::Private);
+
+    if (m_curve == CryptoKeyOKP::NamedCurve::X25519) {
+        // public key being X25519(a, 9), as defined in [RFC7748], section 6.1.
+        Vector<uint8_t> nine {
+            0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        };
+        auto q = X25519(m_data, nine);
+        if (q && q->size() == 32)
+            return base64URLEncodeToString(*q);
+
+        return { };
+    }
 
     // We get an sexp of the private-key so that we could later extract the public-key associated to it.
     PAL::GCrypt::Handle<gcry_sexp_t> privKey;

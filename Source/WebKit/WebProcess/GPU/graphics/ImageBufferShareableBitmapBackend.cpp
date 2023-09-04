@@ -108,11 +108,6 @@ ImageBufferShareableBitmapBackend::ImageBufferShareableBitmapBackend(const Param
     , m_bitmap(WTFMove(bitmap))
     , m_context(WTFMove(context))
 {
-    // ShareableBitmap ensures that the coordinate space in the context that we're adopting
-    // has a top-left origin, so we don't ever need to flip here, so we don't call setupContext().
-    // However, ShareableBitmap does not have a notion of scale, so we must apply the device
-    // scale factor to the context ourselves.
-    m_context->applyDeviceScaleFactor(resolutionScale());
 }
 
 ImageBufferBackendHandle ImageBufferShareableBitmapBackend::createBackendHandle(SharedMemory::Protection protection) const

@@ -102,6 +102,7 @@ MSG kES31OrDrawBuffersIndexedExtensionNotAvailable = "EXT/OES_draw_buffers_index
 MSG kDrawBufferTypeMismatch = "Fragment shader output type does not match the bound framebuffer attachment type.";
 MSG kDrawFramebufferIncomplete = "Draw framebuffer is incomplete";
 MSG kDrawIndirectBufferNotBound = "Draw indirect buffer must be bound.";
+MSG kDualSourceBlendingDrawBuffersLimit = "Dual-source blending functions limit the number of supported draw buffers.";
 MSG kEGLImageCannotCreate2DMultisampled = "Cannot create a 2D texture from a multisampled EGL image.";
 MSG kEGLImageRenderbufferFormatNotSupported = "EGL image internal format is not supported as a renderbuffer.";
 MSG kEGLImageTextureFormatNotSupported = "EGL image internal format is not supported as a texture.";

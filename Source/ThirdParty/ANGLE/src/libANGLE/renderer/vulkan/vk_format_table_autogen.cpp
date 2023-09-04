@@ -664,6 +664,16 @@ void Format::initialize(RendererVk *renderer, const angle::Format &angleFormat)
             mVertexLoadRequiresConversion  = true;
             break;
 
+        case angle::FormatID::B8G8R8X8_UNORM_SRGB:
+            mIntendedGLFormat              = GL_BGRX8_SRGB_ANGLEX;
+            mActualSampleOnlyImageFormatID = angle::FormatID::B8G8R8A8_UNORM_SRGB;
+            mImageInitializerFunction      = nullptr;
+            mActualBufferFormatID          = angle::FormatID::NONE;
+            mVkBufferFormatIsPacked        = false;
+            mVertexLoadFunction            = nullptr;
+            mVertexLoadRequiresConversion  = true;
+            break;
+
         case angle::FormatID::BC1_RGBA_UNORM_BLOCK:
             mIntendedGLFormat              = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
             mActualSampleOnlyImageFormatID = angle::FormatID::BC1_RGBA_UNORM_BLOCK;
@@ -2215,6 +2225,16 @@ void Format::initialize(RendererVk *renderer, const angle::Format &angleFormat)
         case angle::FormatID::R8G8B8X8_UNORM:
             mIntendedGLFormat              = GL_RGBX8_ANGLE;
             mActualSampleOnlyImageFormatID = angle::FormatID::R8G8B8A8_UNORM;
+            mImageInitializerFunction      = nullptr;
+            mActualBufferFormatID          = angle::FormatID::NONE;
+            mVkBufferFormatIsPacked        = false;
+            mVertexLoadFunction            = nullptr;
+            mVertexLoadRequiresConversion  = true;
+            break;
+
+        case angle::FormatID::R8G8B8X8_UNORM_SRGB:
+            mIntendedGLFormat              = GL_RGBX8_SRGB_ANGLEX;
+            mActualSampleOnlyImageFormatID = angle::FormatID::R8G8B8A8_UNORM_SRGB;
             mImageInitializerFunction      = nullptr;
             mActualBufferFormatID          = angle::FormatID::NONE;
             mVkBufferFormatIsPacked        = false;

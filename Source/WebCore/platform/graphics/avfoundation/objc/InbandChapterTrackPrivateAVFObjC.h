@@ -64,10 +64,7 @@ private:
         MediaTime m_duration;
         String m_title;
 
-        constexpr bool operator==(const ChapterData& other) const
-        {
-            return m_startTime == other.m_startTime && m_duration == other.m_duration && m_title == other.m_title;
-        }
+        friend bool operator==(const ChapterData&, const ChapterData&) = default;
     };
 
     Vector<ChapterData> m_processedChapters;

@@ -729,6 +729,7 @@ class BlendStateExt final
     ///////// Blend Factors /////////
 
     FactorStorage::Type expandFactorValue(const GLenum func) const;
+    FactorStorage::Type expandFactorValue(const gl::BlendFactorType func) const;
     FactorStorage::Type expandSrcColorIndexed(const size_t index) const;
     FactorStorage::Type expandDstColorIndexed(const size_t index) const;
     FactorStorage::Type expandSrcAlphaIndexed(const size_t index) const;
@@ -775,6 +776,11 @@ class BlendStateExt final
         return mUsesAdvancedBlendEquationMask;
     }
 
+    constexpr DrawBufferMask getUsesExtendedBlendFactorMask() const
+    {
+        return mUsesExtendedBlendFactorMask;
+    }
+
     constexpr uint8_t getDrawBufferCount() const { return mDrawBufferCount; }
 
     constexpr void setSrcColorBits(const FactorStorage::Type srcColor) { mSrcColor = srcColor; }
@@ -819,17 +825,20 @@ class BlendStateExt final
     // Cache of whether the blend equation for each index is from KHR_blend_equation_advanced.
     DrawBufferMask mUsesAdvancedBlendEquationMask;
 
+    // Cache of whether the blend factor for each index is from EXT_blend_func_extended.
+    DrawBufferMask mUsesExtendedBlendFactorMask;
+
     uint8_t mDrawBufferCount;
 
-    ANGLE_MAYBE_UNUSED_PRIVATE_FIELD uint32_t kUnused = 0;
+    ANGLE_MAYBE_UNUSED_PRIVATE_FIELD uint8_t kUnused[3] = {};
 };
 
 static_assert(sizeof(BlendStateExt) == sizeof(uint64_t) +
                                            (sizeof(BlendStateExt::FactorStorage::Type) * 4 +
                                             sizeof(BlendStateExt::EquationStorage::Type) * 2 +
                                             sizeof(BlendStateExt::ColorMaskStorage::Type) * 2 +
-                                            sizeof(DrawBufferMask) * 3 + sizeof(uint8_t)) +
-                                           sizeof(uint32_t),
+                                            sizeof(DrawBufferMask) * 4 + sizeof(uint8_t)) +
+                                           sizeof(uint8_t) * 3,
               "The BlendStateExt class must not contain gaps.");
 
 // Used in StateCache

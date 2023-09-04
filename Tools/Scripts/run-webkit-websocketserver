@@ -71,7 +71,7 @@ sub openWebSocketServer()
         "--root", "$webSocketHandlerDir",
         "--pidfile", "$webSocketServerPidFile"
     );
-    system "/usr/bin/env python", @args;
+    system "/usr/bin/env python3", @args;
 }
 
 sub closeWebSocketServer()
@@ -81,7 +81,7 @@ sub closeWebSocketServer()
         "--server", "stop",
         "--pidfile", "$webSocketServerPidFile"
     );
-    system "/usr/bin/env python", @args;
+    system "/usr/bin/env python3", @args;
     unlink "$webSocketServerPidFile";
 }
 

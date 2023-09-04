@@ -20,6 +20,7 @@
 #include "libANGLE/renderer/gl/FunctionsGL.h"
 #include "libANGLE/renderer/gl/MemoryObjectGL.h"
 #include "libANGLE/renderer/gl/PLSProgramCache.h"
+#include "libANGLE/renderer/gl/ProgramExecutableGL.h"
 #include "libANGLE/renderer/gl/ProgramGL.h"
 #include "libANGLE/renderer/gl/ProgramPipelineGL.h"
 #include "libANGLE/renderer/gl/QueryGL.h"
@@ -69,6 +70,11 @@ ShaderImpl *ContextGL::createShader(const gl::ShaderState &data)
 ProgramImpl *ContextGL::createProgram(const gl::ProgramState &data)
 {
     return new ProgramGL(data, getFunctions(), getFeaturesGL(), getStateManager(), mRenderer);
+}
+
+ProgramExecutableImpl *ContextGL::createProgramExecutable(const gl::ProgramExecutable *executable)
+{
+    return new ProgramExecutableGL(executable);
 }
 
 FramebufferImpl *ContextGL::createFramebuffer(const gl::FramebufferState &data)

@@ -311,6 +311,21 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
         }
         break;
     }
+    case MatchElement::ParentAnySibling:
+        for (auto& sibling : childrenOfType<Element>(*element.parentNode())) {
+            auto siblingChildren = childrenOfType<Element>(sibling);
+            for (auto& siblingChild : siblingChildren)
+                invalidateIfNeeded(siblingChild, nullptr);
+        }
+        break;
+    case MatchElement::AncestorAnySibling: {
+        SelectorMatchingState selectorMatchingState;
+        for (auto& sibling : childrenOfType<Element>(*element.parentNode())) {
+            selectorMatchingState.selectorFilter.popParentsUntil(element.parentElement());
+            invalidateStyleForDescendants(sibling, &selectorMatchingState);
+        }
+        break;
+    }
     case MatchElement::HasChild: {
         if (auto* parent = element.parentElement())
             invalidateIfNeeded(*parent, nullptr);

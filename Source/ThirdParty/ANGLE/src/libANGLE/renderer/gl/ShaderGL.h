@@ -40,7 +40,6 @@ class ShaderGL : public ShaderImpl
     void compileShader(const char *source);
     void checkShader();
     bool peekCompletion();
-    bool compileAndCheckShaderInWorker(const char *source);
 
     GLuint mShaderID;
     MultiviewImplementationTypeGL mMultiviewImplementationType;

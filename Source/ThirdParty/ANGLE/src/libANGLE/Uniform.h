@@ -19,14 +19,20 @@
 
 namespace gl
 {
+class BinaryInputStream;
+class BinaryOutputStream;
 struct UniformTypeInfo;
 struct UsedUniform;
+struct LinkedUniform;
 
+// Note: keep this struct memcpy-able: i.e, a simple struct with basic types only and no virtual
+// functions. LinkedUniform relies on this so that it can use memcpy to initialize uniform for
+// performance.
 struct ActiveVariable
 {
     ActiveVariable();
     ActiveVariable(const ActiveVariable &rhs);
-    virtual ~ActiveVariable();
+    ~ActiveVariable();
 
     ActiveVariable &operator=(const ActiveVariable &rhs);
 
@@ -35,7 +41,7 @@ struct ActiveVariable
         return static_cast<ShaderType>(ScanForward(mActiveUseBits.bits()));
     }
     void setActive(ShaderType shaderType, bool used, uint32_t id);
-    void unionReferencesWith(const ActiveVariable &other);
+    void unionReferencesWith(const LinkedUniform &otherUniform);
     bool isActive(ShaderType shaderType) const
     {
         ASSERT(shaderType != ShaderType::InvalidEnum);
@@ -44,7 +50,6 @@ struct ActiveVariable
     const ShaderMap<uint32_t> &getIds() const { return mIds; }
     uint32_t getId(ShaderType shaderType) const { return mIds[shaderType]; }
     ShaderBitSet activeShaders() const { return mActiveUseBits; }
-    GLuint activeShaderCount() const { return static_cast<GLuint>(mActiveUseBits.count()); }
 
   private:
     ShaderBitSet mActiveUseBits;
@@ -53,68 +58,146 @@ struct ActiveVariable
     ShaderMap<uint32_t> mIds;
 };
 
+// Important: This struct must have basic data types only, so that we can initialize with memcpy. Do
+// not put any std::vector or objects with virtual functions in it.
 // Helper struct representing a single shader uniform. Most of this structure's data member and
 // access functions mirrors ShaderVariable; See ShaderVars.h for more info.
+ANGLE_ENABLE_STRUCT_PADDING_WARNINGS
 struct LinkedUniform
 {
     LinkedUniform();
     LinkedUniform(GLenum typeIn,
                   GLenum precisionIn,
-                  const std::string &nameIn,
                   const std::vector<unsigned int> &arraySizesIn,
                   const int bindingIn,
                   const int offsetIn,
                   const int locationIn,
                   const int bufferIndexIn,
                   const sh::BlockMemberInfo &blockInfoIn);
-    LinkedUniform(const LinkedUniform &other);
     LinkedUniform(const UsedUniform &usedUniform);
-    LinkedUniform &operator=(const LinkedUniform &other);
-    ~LinkedUniform();
 
-    bool isSampler() const { return typeInfo->isSampler; }
-    bool isImage() const { return typeInfo->isImageType; }
+    bool isSampler() const { return GetUniformTypeInfo(type).isSampler; }
+    bool isImage() const { return GetUniformTypeInfo(type).isImageType; }
     bool isAtomicCounter() const { return IsAtomicCounterType(type); }
     bool isInDefaultBlock() const { return bufferIndex == -1; }
-    size_t getElementSize() const { return typeInfo->externalSize; }
-    size_t getElementComponents() const { return typeInfo->componentCount; }
+    size_t getElementSize() const { return GetUniformTypeInfo(type).externalSize; }
+    GLint getElementComponents() const { return GetUniformTypeInfo(type).componentCount; }
 
-    bool isArrayOfArrays() const { return arraySizes.size() >= 2u; }
-    bool isArray() const { return !arraySizes.empty(); }
-    unsigned int getArraySizeProduct() const { return gl::ArraySizeProduct(arraySizes); }
-    unsigned int getOutermostArraySize() const { return isArray() ? arraySizes.back() : 0; }
-    unsigned int getBasicTypeElementCount() const
+    bool isTexelFetchStaticUse() const { return flagBits.texelFetchStaticUse; }
+    bool isFragmentInOut() const { return flagBits.isFragmentInOut; }
+
+    bool isArray() const { return flagBits.isArray; }
+    uint16_t getBasicTypeElementCount() const
     {
-        ASSERT(!isArrayOfArrays());
-        ASSERT(!isStruct || !isArray());
+        ASSERT(flagBits.isArray || arraySize == 1u);
+        return arraySize;
+    }
 
-        if (isArray())
+    GLenum getType() const { return type; }
+    uint16_t getOuterArrayOffset() const { return outerArrayOffset; }
+    uint16_t getOuterArraySizeProduct() const { return outerArraySizeProduct; }
+    int16_t getBinding() const { return binding; }
+    int16_t getOffset() const { return offset; }
+    int getBufferIndex() const { return bufferIndex; }
+    int getLocation() const { return location; }
+    GLenum getImageUnitFormat() const { return imageUnitFormat; }
+
+    ShaderType getFirstActiveShaderType() const
+    {
+        return static_cast<ShaderType>(ScanForward(mActiveUseBits.bits()));
+    }
+    void setActive(ShaderType shaderType, bool used, uint32_t _id)
+    {
+        mActiveUseBits.set(shaderType, used);
+        mIds[shaderType] = id;
+    }
+    bool isActive(ShaderType shaderType) const { return mActiveUseBits[shaderType]; }
+    const ShaderMap<uint32_t> &getIds() const { return mIds; }
+    uint32_t getId(ShaderType shaderType) const { return mIds[shaderType]; }
+    ShaderBitSet activeShaders() const { return mActiveUseBits; }
+    GLuint activeShaderCount() const { return static_cast<GLuint>(mActiveUseBits.count()); }
+
+    uint16_t type;
+    uint16_t precision;
+
+    int location;
+
+    // These are from sh::struct BlockMemberInfo struct. See locklayout.h for detail.
+    uint16_t blockOffset;
+    uint16_t blockArrayStride;
+
+    uint16_t blockMatrixStride;
+    uint16_t imageUnitFormat;
+
+    // maxUniformVectorsCount is 4K due to we clamp maxUniformBlockSize to 64KB. All of these
+    // variable should be enough to pack into 16 bits to reduce the size of mUniforms.
+    int16_t binding;
+    int16_t bufferIndex;
+
+    int16_t offset;
+    uint16_t arraySize;
+
+    uint16_t outerArraySizeProduct;
+    uint16_t outerArrayOffset;
+
+    uint16_t parentArrayIndex;
+    union
+    {
+        struct
         {
-            return getOutermostArraySize();
-        }
-        return 1u;
-    }
+            uint8_t isFragmentInOut : 1;
+            uint8_t texelFetchStaticUse : 1;
+            uint8_t isArray : 1;
+            uint8_t blockIsRowMajorMatrix : 1;
+            uint8_t isBlock : 1;
+            uint8_t padding : 3;
+        } flagBits;
+        uint8_t flagBitsAsUByte;
+    };
+    ShaderBitSet mActiveUseBits;
 
-    unsigned int getExternalSize() const;
+    uint32_t id;
 
-    bool findInfoByMappedName(const std::string &mappedFullName,
-                              const sh::ShaderVariable **leafVar,
-                              std::string *originalFullName) const;
-    bool isBuiltIn() const { return gl::IsBuiltInName(name); }
+    // The id of a linked variable in each shader stage.  This id originates from
+    // sh::ShaderVariable::id or sh::InterfaceBlock::id
+    ShaderMap<uint32_t> mIds;
+};
+static_assert(std::is_trivially_copyable<LinkedUniform>(), "must be memcpy-able");
+ANGLE_DISABLE_STRUCT_PADDING_WARNINGS
 
-    int parentArrayIndex() const
+struct BufferVariable : public sh::ShaderVariable
+{
+    BufferVariable();
+    BufferVariable(GLenum type,
+                   GLenum precision,
+                   const std::string &name,
+                   const std::vector<unsigned int> &arraySizes,
+                   const int bufferIndex,
+                   const sh::BlockMemberInfo &blockInfo);
+    ~BufferVariable();
+
+    void setActive(ShaderType shaderType, bool used, uint32_t _id)
     {
-        return hasParentArrayIndex() ? flattenedOffsetInParentArrays : 0;
+        activeVariable.setActive(shaderType, used, _id);
     }
-    int getFlattenedOffsetInParentArrays() const { return flattenedOffsetInParentArrays; }
-    void setParentArrayIndex(int indexIn) { flattenedOffsetInParentArrays = indexIn; }
+    bool isActive(ShaderType shaderType) const { return activeVariable.isActive(shaderType); }
+    uint32_t getId(ShaderType shaderType) const { return activeVariable.getId(shaderType); }
+    ShaderBitSet activeShaders() const { return activeVariable.activeShaders(); }
 
-    bool hasParentArrayIndex() const { return flattenedOffsetInParentArrays != -1; }
-    bool isSameInterfaceBlockFieldAtLinkTime(const sh::ShaderVariable &other) const;
+    ActiveVariable activeVariable;
+    int bufferIndex;
+    sh::BlockMemberInfo blockInfo;
 
-    bool isSameVariableAtLinkTime(const sh::ShaderVariable &other,
-                                  bool matchPrecision,
-                                  bool matchName) const;
+    int topLevelArraySize;
+};
+
+// Parent struct for atomic counter, uniform block, and shader storage block buffer, which all
+// contain a group of shader variables, and have a GL buffer backed.
+struct ShaderVariableBuffer
+{
+    ShaderVariableBuffer();
+    ShaderVariableBuffer(const ShaderVariableBuffer &other);
+    ~ShaderVariableBuffer();
 
     ShaderType getFirstActiveShaderType() const
     {
@@ -124,79 +207,17 @@ struct LinkedUniform
     {
         activeVariable.setActive(shaderType, used, _id);
     }
+    void unionReferencesWith(const LinkedUniform &otherUniform)
+    {
+        activeVariable.unionReferencesWith(otherUniform);
+    }
     bool isActive(ShaderType shaderType) const { return activeVariable.isActive(shaderType); }
     const ShaderMap<uint32_t> &getIds() const { return activeVariable.getIds(); }
     uint32_t getId(ShaderType shaderType) const { return activeVariable.getId(shaderType); }
     ShaderBitSet activeShaders() const { return activeVariable.activeShaders(); }
-    GLuint activeShaderCount() const { return activeVariable.activeShaderCount(); }
-
-    GLenum type;
-    GLenum precision;
-    std::string name;
-    // Only used by GL backend
-    std::string mappedName;
-
-    std::vector<unsigned int> arraySizes;
-
-    bool staticUse;
-    bool active;
-
-    bool isStruct;
-
-    int location;
-
-    int binding;
-    GLenum imageUnitFormat;
-    int offset;
-    bool rasterOrdered;
-    bool readonly;
-    bool writeonly;
-
-    bool isFragmentInOut;
-
-    bool texelFetchStaticUse;
-
-    uint32_t id;
-
-    int flattenedOffsetInParentArrays;
-
-    ActiveVariable activeVariable;
-
-    const UniformTypeInfo *typeInfo;
-
-    // Identifies the containing buffer backed resource -- interface block or atomic counter buffer.
-    int bufferIndex;
-    sh::BlockMemberInfo blockInfo;
-    unsigned int outerArraySizeProduct;
-    unsigned int outerArrayOffset;
-};
-
-struct BufferVariable : public sh::ShaderVariable, public ActiveVariable
-{
-    BufferVariable();
-    BufferVariable(GLenum type,
-                   GLenum precision,
-                   const std::string &name,
-                   const std::vector<unsigned int> &arraySizes,
-                   const int bufferIndex,
-                   const sh::BlockMemberInfo &blockInfo);
-    ~BufferVariable() override;
-
-    int bufferIndex;
-    sh::BlockMemberInfo blockInfo;
-
-    int topLevelArraySize;
-};
-
-// Parent struct for atomic counter, uniform block, and shader storage block buffer, which all
-// contain a group of shader variables, and have a GL buffer backed.
-struct ShaderVariableBuffer : public ActiveVariable
-{
-    ShaderVariableBuffer();
-    ShaderVariableBuffer(const ShaderVariableBuffer &other);
-    ~ShaderVariableBuffer() override;
     int numActiveVariables() const;
 
+    ActiveVariable activeVariable;
     int binding;
     unsigned int dataSize;
     std::vector<unsigned int> memberIndexes;

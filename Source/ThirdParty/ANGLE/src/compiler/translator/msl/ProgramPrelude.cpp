@@ -12,6 +12,7 @@
 #include "compiler/translator/msl/Name.h"
 #include "compiler/translator/msl/ProgramPrelude.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
+#include "compiler/translator/util.h"
 
 using namespace sh;
 

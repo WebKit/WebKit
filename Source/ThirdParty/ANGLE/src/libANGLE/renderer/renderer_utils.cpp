@@ -64,6 +64,17 @@ bool FeatureNameMatch(const std::string &a, const std::string &b)
 }
 }  // anonymous namespace
 
+// FeatureInfo implementation
+static const char *kFeatureOverrideTrue  = "true (override)";
+static const char *kFeatureOverrideFalse = "false (override)";
+
+void FeatureInfo::applyOverride(bool state)
+{
+    enabled     = state;
+    hasOverride = true;
+    condition   = state ? kFeatureOverrideTrue : kFeatureOverrideFalse;
+}
+
 // FeatureSetBase implementation
 void FeatureSetBase::reset()
 {
@@ -71,6 +82,7 @@ void FeatureSetBase::reset()
     {
         FeatureInfo *feature = iter.second;
         feature->enabled     = false;
+        feature->hasOverride = false;
     }
 }
 
@@ -89,7 +101,7 @@ void FeatureSetBase::overrideFeatures(const std::vector<std::string> &featureNam
                 continue;
             }
 
-            feature->enabled = enabled;
+            feature->applyOverride(enabled);
 
             // If name has a wildcard, try to match it with all features.  Otherwise, bail on first
             // match, as names are unique.

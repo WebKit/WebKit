@@ -139,6 +139,8 @@ EGLDisplay gEGLDisplay;
 
 std::string gBinaryDataDir = ".";
 
+angle::ReplayResourceMode gReplayResourceMode = angle::ReplayResourceMode::Active;
+
 template <typename T>
 T *AllocateZeroedValues(size_t count)
 {
@@ -347,6 +349,11 @@ struct TraceFunctionsImpl : angle::TraceFunctions
     void FinishReplay() override { ::FinishReplay(); }
 
     void SetBinaryDataDir(const char *dataDir) override { gBinaryDataDir = dataDir; }
+
+    void SetReplayResourceMode(const angle::ReplayResourceMode resourceMode) override
+    {
+        gReplayResourceMode = resourceMode;
+    }
 
     void SetTraceInfo(const angle::TraceInfo &traceInfo) override { gTraceInfo = traceInfo; }
 

@@ -21,6 +21,8 @@
 #include "compiler/translator/tree_util/DriverUniform.h"
 #include "compiler/translator/tree_util/FindMain.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
+#include "compiler/translator/util.h"
+
 using namespace sh;
 
 ////////////////////////////////////////////////////////////////////////////////

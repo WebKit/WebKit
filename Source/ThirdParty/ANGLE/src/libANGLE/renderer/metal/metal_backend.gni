@@ -22,6 +22,8 @@ metal_backend_sources = [
   "IOSurfaceSurfaceMtl.mm",
   "ImageMtl.h",
   "ImageMtl.mm",
+  "ProgramExecutableMtl.h",
+  "ProgramExecutableMtl.mm",
   "ProgramMtl.h",
   "ProgramMtl.mm",
   "ProvokingVertexHelper.h",

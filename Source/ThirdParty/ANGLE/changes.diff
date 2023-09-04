@@ -28,6 +28,19 @@ index a7607c9e529ce7a57bdc6c3c82134b144eb67130..c9ec1adec020589bd4fcfe226721042a
  /* Bison implementation for Yacc-like parsers in C
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
+diff --git a/src/compiler/translator/Compiler.cpp b/src/compiler/translator/Compiler.cpp
+index 1f3a4d52f2f45e7ed10b9b5512f2f92a06877256..f0ca1477d203e1758d88eda1d81e66ccd8fd3a76 100644
+--- a/src/compiler/translator/Compiler.cpp
++++ b/src/compiler/translator/Compiler.cpp
+@@ -1218,7 +1218,7 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
+ 
+ bool TCompiler::resizeClipAndCullDistanceBuiltins(TIntermBlock *root)
+ {
+-    auto resizeVariable = [=](const ImmutableString &name, uint32_t size, uint32_t maxSize) {
++    auto resizeVariable = [this, root](const ImmutableString &name, uint32_t size, uint32_t maxSize) {
+         // Skip if the variable is not used or implicitly has the maximum size
+         if (size == 0 || size == maxSize)
+             return true;
 diff --git a/src/compiler/translator/glslang_tab_autogen.cpp b/src/compiler/translator/glslang_tab_autogen.cpp
 index 233b571b7985ba9d33b245f495725851a12be569..6bd263e0b1ec4137e5b8bb1a6269ce07cc8a6b32 100644
 --- a/src/compiler/translator/glslang_tab_autogen.cpp
@@ -85,7 +98,7 @@ index a6fe076c72d043dba3fc347bf020ebf8ec895f51..add46e99c91d19bbd790d2de0d8768b8
 +
  #endif  // LIBANGLE_FEATURES_H_
 diff --git a/src/libANGLE/formatutils.cpp b/src/libANGLE/formatutils.cpp
-index bb1389aaa503b1491fffe33ebdc6695d6c675404..c886ef42e1f0bd6ce9e5163439db85364a8446c4 100644
+index ac154983262b48c1f8bf04f188b0346dabbd4b82..b127669edf02f346268655068926152b0baa25f7 100644
 --- a/src/libANGLE/formatutils.cpp
 +++ b/src/libANGLE/formatutils.cpp
 @@ -609,6 +609,13 @@ static GLenum EquivalentBlitInternalFormat(GLenum internalformat)
@@ -116,10 +129,10 @@ index 746823ce009702c2e49d1397a4159570838ebc9e..7976bcadedd832cabfda3f37b69ca457
      }
  
 diff --git a/src/libANGLE/renderer/metal/ContextMtl.mm b/src/libANGLE/renderer/metal/ContextMtl.mm
-index 9c43e35f402a07e31c761d6509b7473c595a5838..d244a06fa01dcd7a7ff0516a8231f0c750e9ea9a 100644
+index 920d75ae93e0d4e87449b77159090191a6932e0a..321e29720281cbec6e043b74e22e7920bd76b989 100644
 --- a/src/libANGLE/renderer/metal/ContextMtl.mm
 +++ b/src/libANGLE/renderer/metal/ContextMtl.mm
-@@ -1067,6 +1067,13 @@ angle::Result ContextMtl::multiDrawElementsInstancedBaseVertexBaseInstance(
+@@ -1068,6 +1068,13 @@ angle::Result ContextMtl::multiDrawElementsInstancedBaseVertexBaseInstance(
  // Device loss
  gl::GraphicsResetStatus ContextMtl::getResetStatus()
  {
@@ -133,7 +146,7 @@ index 9c43e35f402a07e31c761d6509b7473c595a5838..d244a06fa01dcd7a7ff0516a8231f0c7
      return gl::GraphicsResetStatus::NoError;
  }
  
-@@ -2459,8 +2466,22 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
+@@ -2466,8 +2473,22 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
              return angle::Result::Continue;
          }
          // Setup with flushed state should either produce a working encoder or fail with an error
@@ -159,10 +172,10 @@ index 9c43e35f402a07e31c761d6509b7473c595a5838..d244a06fa01dcd7a7ff0516a8231f0c7
      return angle::Result::Continue;
  }
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index 1ea34ce416973cf8d671643677e3d03d2c2dcadb..6a2d70e7755e552e8f98475398a55b538c30389f 100644
+index d9b34c991685ce23aed00279ee2136adfe9a0493..6639a54bc3ed4c579fa6980597df6586baca08c9 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
-@@ -185,12 +185,22 @@ void DisplayMtl::terminate()
+@@ -182,12 +182,22 @@ void DisplayMtl::terminate()
  
  bool DisplayMtl::testDeviceLost()
  {
@@ -185,7 +198,7 @@ index 1ea34ce416973cf8d671643677e3d03d2c2dcadb..6a2d70e7755e552e8f98475398a55b53
  }
  
  std::string DisplayMtl::getRendererDescription()
-@@ -1407,8 +1417,7 @@ bool DisplayMtl::supportsMetal2_2() const
+@@ -1408,8 +1418,7 @@ bool DisplayMtl::supportsMetal2_2() const
  bool DisplayMtl::supports32BitFloatFiltering() const
  {
  #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) || \
@@ -215,136 +228,23 @@ index f7eaf3362c8fd382ea047a68372c9b6d9213a2f8..af009029c5d980b9e8e084554ba77c08
  
      BufferMtl *packBufferMtl = mtl::GetImpl(packPixelsParams.packBuffer);
 diff --git a/src/libANGLE/renderer/metal/ProgramMtl.mm b/src/libANGLE/renderer/metal/ProgramMtl.mm
-index 3f1cb1a7f9c5a58acf40eb168ce77040010c1038..670be5f5a545e8ed12db23a2611873b871acbfa0 100644
+index 29a8134b2907a6e352dbfff010b8011319f6d668..96a3ce497f0545c0c327780e062936ac2e196263 100644
 --- a/src/libANGLE/renderer/metal/ProgramMtl.mm
 +++ b/src/libANGLE/renderer/metal/ProgramMtl.mm
-@@ -54,8 +54,25 @@ class [[nodiscard]] ScopedAutoClearVector
-     std::vector<T> &mArray;
- };
+@@ -1074,7 +1074,7 @@ angle::Result ProgramMtl::setupDraw(const gl::Context *glContext,
+     ContextMtl *context                 = mtl::GetImpl(glContext);
+     ProgramExecutableMtl *executableMtl = getExecutable();
  
-+inline void memcpy_guarded(void *dst, const void *src, const void *maxSrcPtr, size_t size)
-+{
-+    size_t bytesAvailable = maxSrcPtr > src ? (const uint8_t *)maxSrcPtr - (const uint8_t *)src : 0;
-+    size_t bytesToCopy    = std::min(size, bytesAvailable);
-+    size_t bytesToZero    = size - bytesToCopy;
-+
-+    if (bytesToCopy)
-+        memcpy(dst, src, bytesToCopy);
-+    if (bytesToZero)
-+        memset((uint8_t *)dst + bytesToCopy, 0, bytesToZero);
-+}
-+
- // Copy matrix one column at a time
--inline void copy_matrix(void *dst, const void *src, size_t srcStride, size_t dstStride, GLenum type)
-+inline void copy_matrix(void *dst,
-+                        const void *src,
-+                        const void *maxSrcPtr,
-+                        size_t srcStride,
-+                        size_t dstStride,
-+                        GLenum type)
- {
-     size_t elemSize      = mtl::GetMetalSizeForGLType(gl::VariableComponentType(type));
-     const size_t dstRows = gl::VariableRowCount(type);
-@@ -64,14 +81,15 @@ inline void copy_matrix(void *dst, const void *src, size_t srcStride, size_t dst
-     for (size_t col = 0; col < dstCols; col++)
-     {
-         size_t srcOffset = col * srcStride;
--        memcpy(((uint8_t *)dst) + dstStride * col, (const uint8_t *)src + srcOffset,
--               elemSize * dstRows);
-+        memcpy_guarded(((uint8_t *)dst) + dstStride * col, (const uint8_t *)src + srcOffset,
-+                       maxSrcPtr, elemSize * dstRows);
-     }
- }
- 
- // Copy matrix one element at a time to transpose.
- inline void copy_matrix_row_major(void *dst,
-                                   const void *src,
-+                                  const void *maxSrcPtr,
-                                   size_t srcStride,
-                                   size_t dstStride,
-                                   GLenum type)
-@@ -85,8 +103,8 @@ inline void copy_matrix_row_major(void *dst,
-         for (size_t row = 0; row < dstRows; row++)
-         {
-             size_t srcOffset = row * srcStride + col * elemSize;
--            memcpy((uint8_t *)dst + dstStride * col + row * elemSize,
--                   (const uint8_t *)src + srcOffset, elemSize);
-+            memcpy_guarded((uint8_t *)dst + dstStride * col + row * elemSize,
-+                           (const uint8_t *)src + srcOffset, maxSrcPtr, elemSize);
-         }
-     }
- }
-@@ -105,6 +123,7 @@ angle::Result ConvertUniformBufferData(ContextMtl *contextMtl,
-                                        size_t *bufferOffsetOut)
- {
-     uint8_t *dst             = nullptr;
-+    const uint8_t *maxSrcPtr = sourceData + sizeToCopy;
-     dynamicBuffer->releaseInFlightBuffers(contextMtl);
- 
-     // When converting a UBO buffer, we convert all of the data
-@@ -149,12 +168,12 @@ angle::Result ConvertUniformBufferData(ContextMtl *contextMtl,
-                     // Transpose matricies into column major order, if they're row major encoded.
-                     if (stdIterator->isRowMajorMatrix)
-                     {
--                        copy_matrix_row_major(dstMat, srcMat, stdIterator->matrixStride,
-+                        copy_matrix_row_major(dstMat, srcMat, maxSrcPtr, stdIterator->matrixStride,
-                                               mtlIterator->matrixStride, mtlIterator->type);
-                     }
-                     else
-                     {
--                        copy_matrix(dstMat, srcMat, stdIterator->matrixStride,
-+                        copy_matrix(dstMat, srcMat, maxSrcPtr, stdIterator->matrixStride,
-                                     mtlIterator->matrixStride, mtlIterator->type);
-                     }
-                 }
-@@ -166,24 +185,25 @@ angle::Result ConvertUniformBufferData(ContextMtl *contextMtl,
-                     for (int boolCol = 0; boolCol < gl::VariableComponentCount(mtlIterator->type);
-                          boolCol++)
-                     {
--                        const uint8_t *srcOffset =
-+                        const uint8_t *srcBool =
-                             (sourceData + stdIterator->offset + stdArrayOffset +
-                              blockConversionInfo.stdSize() * i +
-                              gl::VariableComponentSize(GL_BOOL) * boolCol);
--                        unsigned int srcValue = *((unsigned int *)(srcOffset));
--                        bool boolVal          = bool(srcValue);
--                        memcpy(dst + mtlIterator->offset + mtlArrayOffset +
--                                   blockConversionInfo.metalSize() * i + sizeof(bool) * boolCol,
--                               &boolVal, sizeof(bool));
-+                        unsigned int srcValue =
-+                            srcBool < maxSrcPtr ? *((unsigned int *)(srcBool)) : 0;
-+                        uint8_t *dstBool = dst + mtlIterator->offset + mtlArrayOffset +
-+                                           blockConversionInfo.metalSize() * i +
-+                                           sizeof(bool) * boolCol;
-+                        *dstBool = (srcValue != 0);
-                     }
-                 }
-                 else
-                 {
--                    memcpy(dst + mtlIterator->offset + mtlArrayOffset +
-+                    memcpy_guarded(dst + mtlIterator->offset + mtlArrayOffset +
-                                        blockConversionInfo.metalSize() * i,
-                                    sourceData + stdIterator->offset + stdArrayOffset +
-                                        blockConversionInfo.stdSize() * i,
--                           mtl::GetMetalSizeForGLType(mtlIterator->type));
-+                                   maxSrcPtr, mtl::GetMetalSizeForGLType(mtlIterator->type));
-                 }
-             }
-             ++stdIterator;
-@@ -1555,7 +1575,7 @@ angle::Result ProgramMtl::setupDraw(const gl::Context *glContext,
-                                     bool uniformBuffersDirty)
- {
-     ContextMtl *context = mtl::GetImpl(glContext);
 -    if (pipelineDescChanged)
 +    if (pipelineDescChanged || !cmdEncoder->hasPipelineState())
      {
          id<MTLFunction> vertexShader = nil;
          ANGLE_TRY(
 diff --git a/src/libANGLE/renderer/metal/VertexArrayMtl.mm b/src/libANGLE/renderer/metal/VertexArrayMtl.mm
-index 1d30b25345df8e39a4b20056b6906fc548a288e3..5a27b90c5943679f2f9e9c5b7565c308cf273a1a 100644
+index 13affb4ac934d779280a4f1885b92452af3adf05..1b3d3cf1b03b5d91492dcb763fdc0ebaa9872855 100644
 --- a/src/libANGLE/renderer/metal/VertexArrayMtl.mm
 +++ b/src/libANGLE/renderer/metal/VertexArrayMtl.mm
-@@ -1111,16 +1111,23 @@ angle::Result VertexArrayMtl::convertVertexBufferGPU(const gl::Context *glContex
+@@ -1109,16 +1109,23 @@ angle::Result VertexArrayMtl::convertVertexBufferGPU(const gl::Context *glContex
      ANGLE_TRY(conversion->data.allocate(contextMtl, numVertices * targetStride, nullptr, &newBuffer,
                                          &newBufferOffset));
  
@@ -674,10 +574,10 @@ index b6482fd3b28b5aa18e7d2fd7a4e468051342e0c9..4e5ffe72acc0e5c2c027ec2467e4b6e7
  {
  namespace mtl
 diff --git a/src/libANGLE/renderer/metal/mtl_utils.mm b/src/libANGLE/renderer/metal/mtl_utils.mm
-index cc26c3b693119e7842ae11d2cc8c40a8c93a1d6d..9f64cd4cc59d361cc5d55c7bf25c94ec84de196b 100644
+index d14c2cab752bcc11420eb2b47f57ad77a4a4fec1..efea43fa521f0d9c7da9e132f4a8ab40df32e38f 100644
 --- a/src/libANGLE/renderer/metal/mtl_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_utils.mm
-@@ -1495,6 +1495,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
+@@ -1536,6 +1536,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
  #endif      // TARGET_OS_IOS || TARGET_OS_TV
  }
  
@@ -702,7 +602,7 @@ index cc26c3b693119e7842ae11d2cc8c40a8c93a1d6d..9f64cd4cc59d361cc5d55c7bf25c94ec
  bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  {
  #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-@@ -1509,10 +1527,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+@@ -1550,10 +1568,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  #        if TARGET_OS_MACCATALYST
              ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
              case 1:
@@ -715,7 +615,7 @@ index cc26c3b693119e7842ae11d2cc8c40a8c93a1d6d..9f64cd4cc59d361cc5d55c7bf25c94ec
                  break;
                  ANGLE_APPLE_ALLOW_DEPRECATED_END
  #        else   // TARGET_OS_MACCATALYST
-@@ -1535,7 +1553,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+@@ -1576,7 +1594,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  
      // If device doesn't support [MTLDevice supportsFamily:], then use
      // [MTLDevice supportsFeatureSet:].
@@ -795,16 +695,10 @@ index 0000000000000000000000000000000000000000..23e8295bcc16412d3aef3fc8e85748fa
 +
 +if __name__ == '__main__':
 +    sys.exit(main())
-diff --git a/Source/ThirdParty/ANGLE/src/compiler/translator/Compiler.cpp b/Source/ThirdParty/ANGLE/src/compiler/translator/Compiler.cpp
-index 622defe818b3..6c2f8b654d4c 100644
---- a/Source/ThirdParty/ANGLE/src/compiler/translator/Compiler.cpp
-+++ b/Source/ThirdParty/ANGLE/src/compiler/translator/Compiler.cpp
-@@ -1208,7 +1208,7 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
- 
- bool TCompiler::resizeClipAndCullDistanceBuiltins(TIntermBlock *root)
- {
--    auto resizeVariable = [=](const ImmutableString &name, uint32_t size, uint32_t maxSize) {
-+    auto resizeVariable = [this, root](const ImmutableString &name, uint32_t size, uint32_t maxSize) {
-         // Skip if the variable is not used or implicitly has the maximum size
-         if (size == 0 || size == maxSize)
-             return true;
+diff --git a/third_party/zlib b/third_party/zlib
+deleted file mode 160000
+index f5fd0ad2663e239a31184ad4c9919991dda16f46..0000000000000000000000000000000000000000
+--- a/third_party/zlib
++++ /dev/null
+@@ -1 +0,0 @@
+-Subproject commit f5fd0ad2663e239a31184ad4c9919991dda16f46

@@ -142,7 +142,6 @@ _DEFAULT_BUILDERLESS_OS_CATEGORIES = [os_category.LINUX, os_category.WINDOWS]
 _GOMA_RBE_PROD = {
     "server_host": "goma.chromium.org",
     "rpc_extra_params": "?prod",
-    "use_luci_auth": True,
 }
 
 def _recipe_for_package(cipd_package):
@@ -228,14 +227,16 @@ def angle_builder(name, cpu):
         category = "trace"
 
         # Trace tests are only run on CQ if files in the capture folders change.
-        location_filters = [
-            cq.location_filter(path_regexp = "DEPS"),
-            cq.location_filter(path_regexp = "src/libANGLE/capture/.+"),
-            cq.location_filter(path_regexp = "src/tests/angle_end2end_tests_expectations.txt"),
-            cq.location_filter(path_regexp = "src/tests/capture.+"),
-            cq.location_filter(path_regexp = "src/tests/egl_tests/.+"),
-            cq.location_filter(path_regexp = "src/tests/gl_tests/.+"),
-        ]
+        # Temporarily disabled until goma->reclient switch anglebug.com/8309
+        # location_filters = [
+        #     cq.location_filter(path_regexp = "DEPS"),
+        #     cq.location_filter(path_regexp = "src/libANGLE/capture/.+"),
+        #     cq.location_filter(path_regexp = "src/tests/angle_end2end_tests_expectations.txt"),
+        #     cq.location_filter(path_regexp = "src/tests/capture.+"),
+        #     cq.location_filter(path_regexp = "src/tests/egl_tests/.+"),
+        #     cq.location_filter(path_regexp = "src/tests/gl_tests/.+"),
+        # ]
+
     elif is_perf:
         test_mode = "compile_and_test"
         category = "perf"
@@ -274,6 +275,11 @@ def angle_builder(name, cpu):
     properties = {
         "builder_group": "angle",
         "$build/goma": goma_props,
+        "$build/reclient": {
+            "instance": "rbe-chromium-untrusted",
+            "metrics_project": "chromium-reclient-metrics",
+            "scandeps_server": True,
+        },
         "platform": config_os.console_name,
         "toolchain": toolchain,
         "test_mode": test_mode,
@@ -282,6 +288,11 @@ def angle_builder(name, cpu):
     ci_properties = {
         "builder_group": "angle",
         "$build/goma": goma_props,
+        "$build/reclient": {
+            "instance": "rbe-chromium-trusted",
+            "metrics_project": "chromium-reclient-metrics",
+            "scandeps_server": True,
+        },
         "platform": config_os.console_name,
         "toolchain": toolchain,
         "test_mode": test_mode,
@@ -358,7 +369,9 @@ def angle_builder(name, cpu):
         )
 
         # Don't add experimental bots to CQ.
-        if not is_exp:
+        # Temporarily don't add trace bots to CQ,
+        # until goma->reclient switch anglebug.com/8309
+        if not (is_exp or is_trace):
             luci.cq_tryjob_verifier(
                 cq_group = "main",
                 builder = "angle:try/" + name,

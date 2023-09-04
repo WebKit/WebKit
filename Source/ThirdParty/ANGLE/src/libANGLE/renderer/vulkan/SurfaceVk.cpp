@@ -203,6 +203,8 @@ VkColorSpaceKHR MapEglColorSpaceToVkColorSpace(RendererVk *renderer, EGLenum EGL
             return VK_COLOR_SPACE_BT2020_LINEAR_EXT;
         case EGL_GL_COLORSPACE_BT2020_PQ_EXT:
             return VK_COLOR_SPACE_HDR10_ST2084_EXT;
+        case EGL_GL_COLORSPACE_BT2020_HLG_EXT:
+            return VK_COLOR_SPACE_HDR10_HLG_EXT;
         default:
             UNREACHABLE();
             return VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;

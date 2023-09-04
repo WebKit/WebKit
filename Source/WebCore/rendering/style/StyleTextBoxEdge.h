@@ -32,11 +32,8 @@ namespace WebCore {
 struct TextBoxEdge {
     TextBoxEdgeType over { TextBoxEdgeType::Leading };
     TextBoxEdgeType under { TextBoxEdgeType::Leading };
-};
 
-inline bool operator==(const TextBoxEdge& a, const TextBoxEdge& b)
-{
-    return a.over == b.over && a.under == b.under;
-}
+    friend bool operator==(const TextBoxEdge&, const TextBoxEdge&) = default;
+};
 
 } // namespace WebCore

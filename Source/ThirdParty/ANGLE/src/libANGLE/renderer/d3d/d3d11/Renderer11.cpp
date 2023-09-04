@@ -12,6 +12,7 @@
 #include <sstream>
 
 #include "anglebase/no_destructor.h"
+#include "common/debug.h"
 #include "common/tls.h"
 #include "common/utilities.h"
 #include "libANGLE/Buffer.h"
@@ -335,17 +336,17 @@ bool IsArrayRTV(ID3D11RenderTargetView *rtv)
     return false;
 }
 
-GLsizei GetAdjustedInstanceCount(const ProgramD3D *program, GLsizei instanceCount)
+GLsizei GetAdjustedInstanceCount(const ProgramExecutableD3D *executable, GLsizei instanceCount)
 {
-    if (!program->getState().usesMultiview())
+    if (!executable->getExecutable()->usesMultiview())
     {
         return instanceCount;
     }
     if (instanceCount == 0)
     {
-        return program->getState().getNumViews();
+        return executable->getExecutable()->getNumViews();
     }
-    return program->getState().getNumViews() * instanceCount;
+    return executable->getExecutable()->getNumViews() * instanceCount;
 }
 
 const uint32_t ScratchMemoryBufferLifetime = 1000;
@@ -1034,10 +1035,10 @@ egl::Error Renderer11::initializeD3DDevice()
 
 void Renderer11::setGlobalDebugAnnotator()
 {
-    static std::mutex gMutex;
+    static angle::base::NoDestructor<std::mutex> gMutex;
     static angle::base::NoDestructor<DebugAnnotator11> gGlobalAnnotator;
 
-    std::lock_guard<std::mutex> lg(gMutex);
+    std::lock_guard<std::mutex> lg(*gMutex);
     gl::InitializeDebugAnnotations(gGlobalAnnotator.get());
 }
 
@@ -1800,8 +1801,8 @@ angle::Result Renderer11::drawWithGeometryShaderAndTransformFeedback(Context11 *
                                                                      UINT instanceCount,
                                                                      UINT vertexCount)
 {
-    const gl::State &glState = context11->getState();
-    ProgramD3D *programD3D   = mStateManager.getProgramD3D();
+    const gl::State &glState            = context11->getState();
+    ProgramExecutableD3D *executableD3D = mStateManager.getProgramExecutableD3D();
 
     // Since we use a geometry if-and-only-if we rewrite vertex streams, transform feedback
     // won't get the correct output. To work around this, draw with *only* the stream out
@@ -1819,7 +1820,8 @@ angle::Result Renderer11::drawWithGeometryShaderAndTransformFeedback(Context11 *
     }
 
     rx::ShaderExecutableD3D *pixelExe = nullptr;
-    ANGLE_TRY(programD3D->getPixelExecutableForCachedOutputLayout(context11, &pixelExe, nullptr));
+    ANGLE_TRY(executableD3D->getPixelExecutableForCachedOutputLayout(
+        context11, context11->getRenderer(), &pixelExe, nullptr));
 
     // Skip the draw call if rasterizer discard is enabled (or no fragment shader).
     if (!pixelExe || glState.getRasterizerState().rasterizerDiscard)
@@ -1831,8 +1833,9 @@ angle::Result Renderer11::drawWithGeometryShaderAndTransformFeedback(Context11 *
 
     // Retrieve the geometry shader.
     rx::ShaderExecutableD3D *geometryExe = nullptr;
-    ANGLE_TRY(programD3D->getGeometryExecutableForPrimitiveType(context11, glState, mode,
-                                                                &geometryExe, nullptr));
+    ANGLE_TRY(executableD3D->getGeometryExecutableForPrimitiveType(
+        context11, context11->getRenderer(), glState.getCaps(), glState.getProvokingVertex(), mode,
+        &geometryExe, nullptr));
 
     mStateManager.setGeometryShader(&GetAs<ShaderExecutable11>(geometryExe)->getGeometryShader());
 
@@ -1861,10 +1864,12 @@ angle::Result Renderer11::drawArrays(const gl::Context *context,
         return angle::Result::Continue;
     }
 
+    Context11 *context11 = GetImplAs<Context11>(context);
+
     ANGLE_TRY(markRawBufferUsage(context));
 
-    ProgramD3D *programD3D        = mStateManager.getProgramD3D();
-    GLsizei adjustedInstanceCount = GetAdjustedInstanceCount(programD3D, instanceCount);
+    ProgramExecutableD3D *executableD3D = mStateManager.getProgramExecutableD3D();
+    GLsizei adjustedInstanceCount       = GetAdjustedInstanceCount(executableD3D, instanceCount);
 
     // Note: vertex indexes can be arbitrarily large.
     UINT clampedVertexCount = gl::GetClampedVertexCount<UINT>(vertexCount);
@@ -1874,10 +1879,11 @@ angle::Result Renderer11::drawArrays(const gl::Context *context,
     {
         ANGLE_TRY(markTransformFeedbackUsage(context));
 
-        if (programD3D->usesGeometryShader(glState, mode))
+        if (executableD3D->usesGeometryShader(context11->getRenderer(),
+                                              glState.getProvokingVertex(), mode))
         {
             return drawWithGeometryShaderAndTransformFeedback(
-                GetImplAs<Context11>(context), mode, adjustedInstanceCount, clampedVertexCount);
+                context11, mode, adjustedInstanceCount, clampedVertexCount);
         }
     }
 
@@ -1893,7 +1899,7 @@ angle::Result Renderer11::drawArrays(const gl::Context *context,
             if (getFeatures().useInstancedPointSpriteEmulation.enabled)
             {
                 // This code should not be reachable by multi-view programs.
-                ASSERT(programD3D->getState().usesMultiview() == false);
+                ASSERT(executableD3D->getExecutable()->usesMultiview() == false);
 
                 // If the shader is writing to gl_PointSize, then pointsprites are being rendered.
                 // Emulating instanced point sprites for FL9_3 requires the topology to be
@@ -1955,6 +1961,8 @@ angle::Result Renderer11::drawElements(const gl::Context *context,
         return angle::Result::Continue;
     }
 
+    Context11 *context11 = GetImplAs<Context11>(context);
+
     ANGLE_TRY(markRawBufferUsage(context));
 
     // Transform feedback is not allowed for DrawElements, this error should have been caught at the
@@ -1965,8 +1973,8 @@ angle::Result Renderer11::drawElements(const gl::Context *context,
     // If this draw call is coming from an indirect call, offset by the indirect call's base vertex.
     GLint baseVertexAdjusted = baseVertex - startVertex;
 
-    const ProgramD3D *programD3D  = mStateManager.getProgramD3D();
-    GLsizei adjustedInstanceCount = GetAdjustedInstanceCount(programD3D, instanceCount);
+    const ProgramExecutableD3D *executableD3D = mStateManager.getProgramExecutableD3D();
+    GLsizei adjustedInstanceCount = GetAdjustedInstanceCount(executableD3D, instanceCount);
 
     if (mode == gl::PrimitiveMode::LineLoop)
     {
@@ -1980,7 +1988,8 @@ angle::Result Renderer11::drawElements(const gl::Context *context,
                                adjustedInstanceCount);
     }
 
-    if (mode != gl::PrimitiveMode::Points || !programD3D->usesInstancedPointSpriteEmulation())
+    if (mode != gl::PrimitiveMode::Points ||
+        !executableD3D->usesInstancedPointSpriteEmulation(context11->getRenderer()))
     {
         if (!isInstancedDraw && adjustedInstanceCount == 0)
         {
@@ -1995,7 +2004,7 @@ angle::Result Renderer11::drawElements(const gl::Context *context,
     }
 
     // This code should not be reachable by multi-view programs.
-    ASSERT(programD3D->getState().usesMultiview() == false);
+    ASSERT(executableD3D->getExecutable()->usesMultiview() == false);
 
     // If the shader is writing to gl_PointSize, then pointsprites are being rendered.
     // Emulating instanced point sprites for FL9_3 requires the topology to be
@@ -2379,6 +2388,7 @@ std::string Renderer11::getRendererDescription() const
     std::ostringstream rendererString;
 
     rendererString << mDescription;
+    rendererString << " (" << gl::FmtHex(mAdapterDescription.DeviceId) << ")";
     rendererString << " Direct3D11";
     if (mD3d12Module)
         rendererString << "on12";
@@ -4197,20 +4207,20 @@ void Renderer11::generateCaps(gl::Caps *outCaps,
 
 void Renderer11::initializeFeatures(angle::FeaturesD3D *features) const
 {
+    ApplyFeatureOverrides(features, mDisplay->getState());
     if (!mDisplay->getState().featuresAllDisabled)
     {
         d3d11::InitializeFeatures(mRenderer11DeviceCaps, mAdapterDescription, features);
     }
-    ApplyFeatureOverrides(features, mDisplay->getState());
 }
 
 void Renderer11::initializeFrontendFeatures(angle::FrontendFeatures *features) const
 {
+    ApplyFeatureOverrides(features, mDisplay->getState());
     if (!mDisplay->getState().featuresAllDisabled)
     {
         d3d11::InitializeFrontendFeatures(mAdapterDescription, features);
     }
-    ApplyFeatureOverrides(features, mDisplay->getState());
 }
 
 DeviceImpl *Renderer11::createEGLDevice()
@@ -4257,10 +4267,10 @@ angle::Result Renderer11::dispatchCompute(const gl::Context *context,
                                           GLuint numGroupsY,
                                           GLuint numGroupsZ)
 {
-    const gl::State &glState   = context->getState();
-    const gl::Program *program = glState.getProgram();
-    if (program->getActiveShaderStorageBlockCount() > 0 ||
-        program->getActiveAtomicCounterBufferCount() > 0)
+    const gl::State &glState                = context->getState();
+    const gl::ProgramExecutable *executable = glState.getProgramExecutable();
+    if (executable->getActiveShaderStorageBlockCount() > 0 ||
+        executable->getActiveAtomicCounterBufferCount() > 0)
     {
         ANGLE_TRY(markRawBufferUsage(context));
     }
@@ -4272,10 +4282,10 @@ angle::Result Renderer11::dispatchCompute(const gl::Context *context,
 }
 angle::Result Renderer11::dispatchComputeIndirect(const gl::Context *context, GLintptr indirect)
 {
-    const auto &glState        = context->getState();
-    const gl::Program *program = glState.getProgram();
-    if (program->getActiveShaderStorageBlockCount() > 0 ||
-        program->getActiveAtomicCounterBufferCount() > 0)
+    const auto &glState                     = context->getState();
+    const gl::ProgramExecutable *executable = glState.getProgramExecutable();
+    if (executable->getActiveShaderStorageBlockCount() > 0 ||
+        executable->getActiveAtomicCounterBufferCount() > 0)
     {
         ANGLE_TRY(markRawBufferUsage(context));
     }
@@ -4479,12 +4489,13 @@ angle::Result Renderer11::mapResource(const gl::Context *context,
 angle::Result Renderer11::markTypedBufferUsage(const gl::Context *context)
 {
     const gl::State &glState = context->getState();
-    ProgramD3D *programD3D   = GetImplAs<ProgramD3D>(glState.getProgram());
-    gl::RangeUI imageRange   = programD3D->getUsedImageRange(gl::ShaderType::Compute, false);
+    ProgramExecutableD3D *executableD3D =
+        GetImplAs<ProgramExecutableD3D>(glState.getProgramExecutable());
+    gl::RangeUI imageRange = executableD3D->getUsedImageRange(gl::ShaderType::Compute, false);
     for (unsigned int imageIndex = imageRange.low(); imageIndex < imageRange.high(); imageIndex++)
     {
-        GLint imageUnitIndex = programD3D->getImageMapping(gl::ShaderType::Compute, imageIndex,
-                                                           false, context->getCaps());
+        GLint imageUnitIndex = executableD3D->getImageMapping(gl::ShaderType::Compute, imageIndex,
+                                                              false, context->getCaps());
         ASSERT(imageUnitIndex != -1);
         const gl::ImageUnit &imageUnit = glState.getImageUnit(imageUnitIndex);
         if (imageUnit.texture.get()->getType() == gl::TextureType::Buffer)

@@ -2464,6 +2464,51 @@ std::ostream &operator<<(std::ostream &os, TextureType value)
 }
 
 template <>
+TilingMode FromGLenum<TilingMode>(GLenum from)
+{
+    switch (from)
+    {
+        case GL_OPTIMAL_TILING_EXT:
+            return TilingMode::Optimal;
+        case GL_LINEAR_TILING_EXT:
+            return TilingMode::Linear;
+        default:
+            return TilingMode::InvalidEnum;
+    }
+}
+
+GLenum ToGLenum(TilingMode from)
+{
+    switch (from)
+    {
+        case TilingMode::Optimal:
+            return GL_OPTIMAL_TILING_EXT;
+        case TilingMode::Linear:
+            return GL_LINEAR_TILING_EXT;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, TilingMode value)
+{
+    switch (value)
+    {
+        case TilingMode::Optimal:
+            os << "GL_OPTIMAL_TILING_EXT";
+            break;
+        case TilingMode::Linear:
+            os << "GL_LINEAR_TILING_EXT";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
 VertexArrayType FromGLenum<VertexArrayType>(GLenum from)
 {
     switch (from)

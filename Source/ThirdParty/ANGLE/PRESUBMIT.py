@@ -485,9 +485,9 @@ def _CheckGClientExists(input_api, output_api, search_limit=None):
             '\n\nhttps://chromium.googlesource.com/angle/angle/+/refs/heads/main/doc/DevSetup.md')
     ]
 
-
 def CheckChangeOnUpload(input_api, output_api):
     results = []
+    results.extend(input_api.canned_checks.CheckForCommitObjects(input_api, output_api))
     results.extend(_CheckTabsInSourceFiles(input_api, output_api))
     results.extend(_CheckNonAsciiInSourceFiles(input_api, output_api))
     results.extend(_CheckCommentBeforeTestInTestFiles(input_api, output_api))

@@ -11,6 +11,7 @@
 #include "compiler/translator/msl/AstHelpers.h"
 #include "compiler/translator/msl/IntermRebuild.h"
 #include "compiler/translator/msl/SymbolEnv.h"
+#include "compiler/translator/util.h"
 
 using namespace sh;
 

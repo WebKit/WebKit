@@ -13,11 +13,14 @@
 #include <string>
 #include <vector>
 
-#define ANGLE_FEATURE_CONDITION(set, feature, cond)       \
-    do                                                    \
-    {                                                     \
-        (set)->feature.enabled   = cond;                  \
-        (set)->feature.condition = ANGLE_STRINGIFY(cond); \
+#define ANGLE_FEATURE_CONDITION(set, feature, cond)           \
+    do                                                        \
+    {                                                         \
+        if (!(set)->feature.hasOverride)                      \
+        {                                                     \
+            (set)->feature.enabled   = cond;                  \
+            (set)->feature.condition = ANGLE_STRINGIFY(cond); \
+        }                                                     \
     } while (0)
 
 namespace angle
@@ -126,6 +129,8 @@ struct FeatureInfo
                 const char *bug);
     ~FeatureInfo();
 
+    void applyOverride(bool state);
+
     // The name of the workaround, lowercase, camel_case
     const char *const name;
 
@@ -141,6 +146,10 @@ struct FeatureInfo
     // Whether the workaround is enabled or not. Determined by heuristics like vendor ID and
     // version, but may be overriden to any value.
     bool enabled = false;
+
+    // Whether this feature has an override applied to it, and the condition to
+    // enable it should not be checked.
+    bool hasOverride = false;
 
     // A stringified version of the condition used to set 'enabled'. ie "IsNvidia() && IsApple()"
     const char *condition;

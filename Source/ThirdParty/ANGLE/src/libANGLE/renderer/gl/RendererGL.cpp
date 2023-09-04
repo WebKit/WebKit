@@ -159,11 +159,11 @@ RendererGL::RendererGL(std::unique_ptr<FunctionsGL> functions,
       mNeedsFlushBeforeDeleteTextures(false)
 {
     ASSERT(mFunctions);
+    ApplyFeatureOverrides(&mFeatures, display->getState());
     if (!display->getState().featuresAllDisabled)
     {
         nativegl_gl::InitializeFeatures(mFunctions.get(), &mFeatures);
     }
-    ApplyFeatureOverrides(&mFeatures, display->getState());
     mStateManager =
         new StateManagerGL(mFunctions.get(), getNativeCaps(), getNativeExtensions(), mFeatures);
     mBlitter          = new BlitGL(mFunctions.get(), mFeatures, mStateManager);
@@ -215,11 +215,6 @@ RendererGL::~RendererGL()
     SafeDelete(mMultiviewClearer);
     SafeDelete(mStateManager);
     SafeDelete(mPLSProgramCache);
-
-    std::lock_guard<std::mutex> lock(mWorkerMutex);
-
-    ASSERT(mCurrentWorkerContexts.empty());
-    mWorkerContextPool.clear();
 }
 
 angle::Result RendererGL::flush()
@@ -395,57 +390,6 @@ void RendererGL::framebufferFetchBarrier()
     mWorkDoneSinceLastFlush = true;
 }
 
-bool RendererGL::bindWorkerContext(std::string *infoLog)
-{
-    if (mFeatures.disableWorkerContexts.enabled)
-    {
-        return false;
-    }
-
-    std::lock_guard<std::mutex> lock(mWorkerMutex);
-    std::unique_ptr<WorkerContext> workerContext;
-    if (!mWorkerContextPool.empty())
-    {
-        auto it       = mWorkerContextPool.begin();
-        workerContext = std::move(*it);
-        mWorkerContextPool.erase(it);
-    }
-    else
-    {
-        WorkerContext *newContext = createWorkerContext(infoLog);
-        if (newContext == nullptr)
-        {
-            return false;
-        }
-        workerContext.reset(newContext);
-    }
-
-    if (!workerContext->makeCurrent())
-    {
-        mWorkerContextPool.push_back(std::move(workerContext));
-        return false;
-    }
-    mCurrentWorkerContexts[angle::GetCurrentThreadUniqueId()] = std::move(workerContext);
-    return true;
-}
-
-void RendererGL::unbindWorkerContext()
-{
-    std::lock_guard<std::mutex> lock(mWorkerMutex);
-
-    auto it = mCurrentWorkerContexts.find(angle::GetCurrentThreadUniqueId());
-    ASSERT(it != mCurrentWorkerContexts.end());
-    (*it).second->unmakeCurrent();
-    mWorkerContextPool.push_back(std::move((*it).second));
-    mCurrentWorkerContexts.erase(it);
-}
-
-unsigned int RendererGL::getMaxWorkerContexts()
-{
-    // No more than 16 worker contexts.
-    return std::min(16u, std::thread::hardware_concurrency());
-}
-
 bool RendererGL::hasNativeParallelCompile()
 {
     if (mFeatures.disableNativeParallelCompile.enabled)
@@ -480,25 +424,6 @@ void RendererGL::flushIfNecessaryBeforeDeleteTextures()
     {
         (void)flush();
     }
-}
-
-ScopedWorkerContextGL::ScopedWorkerContextGL(RendererGL *renderer, std::string *infoLog)
-    : mRenderer(renderer)
-{
-    mValid = mRenderer->bindWorkerContext(infoLog);
-}
-
-ScopedWorkerContextGL::~ScopedWorkerContextGL()
-{
-    if (mValid)
-    {
-        mRenderer->unbindWorkerContext();
-    }
-}
-
-bool ScopedWorkerContextGL::operator()() const
-{
-    return mValid;
 }
 
 void RendererGL::handleGPUSwitch()

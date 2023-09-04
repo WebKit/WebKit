@@ -5,6 +5,7 @@
 //
 
 #include "libANGLE/Uniform.h"
+#include "common/BinaryStream.h"
 #include "libANGLE/ProgramLinkedResources.h"
 
 #include <cstring>
@@ -29,147 +30,88 @@ void ActiveVariable::setActive(ShaderType shaderType, bool used, uint32_t id)
     mIds[shaderType] = id;
 }
 
-void ActiveVariable::unionReferencesWith(const ActiveVariable &other)
+void ActiveVariable::unionReferencesWith(const LinkedUniform &other)
 {
     mActiveUseBits |= other.mActiveUseBits;
     for (const ShaderType shaderType : AllShaderTypes())
     {
-        ASSERT(mIds[shaderType] == 0 || other.mIds[shaderType] == 0 ||
-               mIds[shaderType] == other.mIds[shaderType]);
+        ASSERT(mIds[shaderType] == 0 || other.getId(shaderType) == 0 ||
+               mIds[shaderType] == other.getId(shaderType));
         if (mIds[shaderType] == 0)
         {
-            mIds[shaderType] = other.mIds[shaderType];
+            mIds[shaderType] = other.getId(shaderType);
         }
     }
 }
 
-LinkedUniform::LinkedUniform()
-    : type(GL_NONE),
-      precision(0),
-      staticUse(false),
-      active(false),
-      isStruct(false),
-      location(-1),
-      binding(-1),
-      imageUnitFormat(GL_NONE),
-      offset(-1),
-      rasterOrdered(false),
-      readonly(false),
-      writeonly(false),
-      isFragmentInOut(false),
-      texelFetchStaticUse(false),
-      id(0),
-      flattenedOffsetInParentArrays(-1),
-      typeInfo(nullptr),
-      bufferIndex(-1),
-      blockInfo(sh::kDefaultBlockMemberInfo),
-      outerArraySizeProduct(1),
-      outerArrayOffset(0)
-{}
+LinkedUniform::LinkedUniform() = default;
 
 LinkedUniform::LinkedUniform(GLenum typeIn,
                              GLenum precisionIn,
-                             const std::string &nameIn,
                              const std::vector<unsigned int> &arraySizesIn,
                              const int bindingIn,
                              const int offsetIn,
                              const int locationIn,
                              const int bufferIndexIn,
                              const sh::BlockMemberInfo &blockInfoIn)
-    : type(typeIn),
-      precision(precisionIn),
-      name(nameIn),
-      arraySizes(arraySizesIn),
-      location(locationIn),
-      binding(bindingIn),
-      offset(offsetIn),
-      typeInfo(&GetUniformTypeInfo(typeIn)),
-      bufferIndex(bufferIndexIn),
-      blockInfo(blockInfoIn)
 {
-    staticUse                     = false;
-    active                        = false;
-    isStruct                      = false;
-    rasterOrdered                 = false;
-    readonly                      = false;
-    writeonly                     = false;
-    isFragmentInOut               = false;
-    texelFetchStaticUse           = false;
-    id                            = 0;
-    flattenedOffsetInParentArrays = -1;
-    outerArraySizeProduct         = 1;
-    outerArrayOffset              = 0;
-    imageUnitFormat               = GL_NONE;
-    ASSERT(!isArrayOfArrays());
-    ASSERT(!isArray() || !isStruct);
-}
+    // arrays are always flattened, which means at most 1D array
+    ASSERT(arraySizesIn.size() <= 1);
 
-LinkedUniform::LinkedUniform(const LinkedUniform &other)
-{
-    *this = other;
+    memset(this, 0, sizeof(*this));
+    SetBitField(type, typeIn);
+    SetBitField(precision, precisionIn);
+    location = locationIn;
+    SetBitField(binding, bindingIn);
+    SetBitField(offset, offsetIn);
+    SetBitField(bufferIndex, bufferIndexIn);
+    outerArraySizeProduct = 1;
+    SetBitField(arraySize, arraySizesIn.empty() ? 1u : arraySizesIn[0]);
+    SetBitField(flagBits.isArray, !arraySizesIn.empty());
+    if (!(blockInfoIn == sh::kDefaultBlockMemberInfo))
+    {
+        flagBits.isBlock               = 1;
+        flagBits.blockIsRowMajorMatrix = blockInfoIn.isRowMajorMatrix;
+        SetBitField(blockOffset, blockInfoIn.offset);
+        SetBitField(blockArrayStride, blockInfoIn.arrayStride);
+        SetBitField(blockMatrixStride, blockInfoIn.matrixStride);
+    }
 }
 
 LinkedUniform::LinkedUniform(const UsedUniform &usedUniform)
 {
-    type                          = usedUniform.type;
-    precision                     = usedUniform.precision;
-    name                          = usedUniform.name;
-    mappedName                    = usedUniform.mappedName;
-    arraySizes                    = usedUniform.arraySizes;
-    staticUse                     = usedUniform.staticUse;
-    active                        = usedUniform.active;
-    isStruct                      = usedUniform.isStruct();
-    flattenedOffsetInParentArrays = usedUniform.getFlattenedOffsetInParentArrays();
-    location                      = usedUniform.location;
-    binding                       = usedUniform.binding;
-    imageUnitFormat               = usedUniform.imageUnitFormat;
-    offset                        = usedUniform.offset;
-    rasterOrdered                 = usedUniform.rasterOrdered;
-    readonly                      = usedUniform.readonly;
-    writeonly                     = usedUniform.writeonly;
-    isFragmentInOut               = usedUniform.isFragmentInOut;
-    texelFetchStaticUse           = usedUniform.texelFetchStaticUse;
-    id                            = usedUniform.id;
-    activeVariable                = usedUniform.activeVariable;
-    typeInfo                      = usedUniform.typeInfo;
-    bufferIndex                   = usedUniform.bufferIndex;
-    blockInfo                     = usedUniform.blockInfo;
-    outerArraySizeProduct         = ArraySizeProduct(usedUniform.outerArraySizes);
-    outerArrayOffset              = usedUniform.outerArrayOffset;
+    ASSERT(!usedUniform.isArrayOfArrays());
+    ASSERT(!usedUniform.isStruct());
+    ASSERT(usedUniform.active);
+    ASSERT(usedUniform.blockInfo == sh::kDefaultBlockMemberInfo);
+
+    // Note: Ensure every data member is initialized.
+    flagBitsAsUByte = 0;
+    SetBitField(type, usedUniform.type);
+    SetBitField(precision, usedUniform.precision);
+    SetBitField(imageUnitFormat, usedUniform.imageUnitFormat);
+    location          = usedUniform.location;
+    blockOffset       = 0;
+    blockArrayStride  = 0;
+    blockMatrixStride = 0;
+    SetBitField(binding, usedUniform.binding);
+    SetBitField(offset, usedUniform.offset);
+
+    SetBitField(bufferIndex, usedUniform.bufferIndex);
+    SetBitField(parentArrayIndex, usedUniform.parentArrayIndex());
+    SetBitField(outerArraySizeProduct, ArraySizeProduct(usedUniform.outerArraySizes));
+    SetBitField(outerArrayOffset, usedUniform.outerArrayOffset);
+    SetBitField(arraySize, usedUniform.isArray() ? usedUniform.getArraySizeProduct() : 1u);
+    SetBitField(flagBits.isArray, usedUniform.isArray());
+
+    id             = usedUniform.id;
+    mActiveUseBits = usedUniform.activeVariable.activeShaders();
+    mIds           = usedUniform.activeVariable.getIds();
+
+    SetBitField(flagBits.isFragmentInOut, usedUniform.isFragmentInOut);
+    SetBitField(flagBits.texelFetchStaticUse, usedUniform.texelFetchStaticUse);
+    ASSERT(!usedUniform.isArray() || arraySize == usedUniform.getArraySizeProduct());
 }
-
-LinkedUniform &LinkedUniform::operator=(const LinkedUniform &other)
-{
-    type                          = other.type;
-    precision                     = other.precision;
-    name                          = other.name;
-    mappedName                    = other.mappedName;
-    arraySizes                    = other.arraySizes;
-    staticUse                     = other.staticUse;
-    active                        = other.active;
-    isStruct                      = other.isStruct;
-    flattenedOffsetInParentArrays = other.flattenedOffsetInParentArrays;
-    location                      = other.location;
-    binding                       = other.binding;
-    imageUnitFormat               = other.imageUnitFormat;
-    offset                        = other.offset;
-    rasterOrdered                 = other.rasterOrdered;
-    readonly                      = other.readonly;
-    writeonly                     = other.writeonly;
-    isFragmentInOut               = other.isFragmentInOut;
-    texelFetchStaticUse           = other.texelFetchStaticUse;
-    id                            = other.id;
-    activeVariable                = other.activeVariable;
-    typeInfo                      = other.typeInfo;
-    bufferIndex                   = other.bufferIndex;
-    blockInfo                     = other.blockInfo;
-    outerArraySizeProduct         = other.outerArraySizeProduct;
-    outerArrayOffset              = other.outerArrayOffset;
-
-    return *this;
-}
-
-LinkedUniform::~LinkedUniform() {}
 
 BufferVariable::BufferVariable()
     : bufferIndex(-1), blockInfo(sh::kDefaultBlockMemberInfo), topLevelArraySize(-1)

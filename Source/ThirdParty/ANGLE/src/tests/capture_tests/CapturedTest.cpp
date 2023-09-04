@@ -39,6 +39,18 @@ class CapturedTest : public ANGLETest<>
         mFBOs.resize(2, 0);
         glGenFramebuffers(2, mFBOs.data());
 
+        constexpr char kInactiveVS[] = R"(precision highp float;
+void main(void) {
+   gl_Position = vec4(0.5, 0.5, 0.5, 1.0);
+})";
+
+        inactiveProgram            = glCreateProgram();
+        inactiveShader             = glCreateShader(GL_VERTEX_SHADER);
+        const char *sourceArray[1] = {kInactiveVS};
+        glShaderSource(inactiveShader, 1, sourceArray, 0);
+        glCompileShader(inactiveShader);
+        glAttachShader(inactiveProgram, inactiveShader);
+
         ASSERT_GL_NO_ERROR();
     }
 
@@ -50,12 +62,18 @@ class CapturedTest : public ANGLETest<>
         {
             glDeleteFramebuffers(static_cast<GLsizei>(mFBOs.size()), mFBOs.data());
         }
+
+        glDeleteProgram(inactiveProgram);
+        glDeleteShader(inactiveShader);
     }
 
     void frame1();
     void frame2();
 
     std::vector<GLuint> mFBOs;
+
+    GLuint inactiveProgram;
+    GLuint inactiveShader;
 };
 
 void CapturedTest::frame1()

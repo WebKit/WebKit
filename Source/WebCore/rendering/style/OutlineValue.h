@@ -31,10 +31,7 @@ namespace WebCore {
 class OutlineValue : public BorderValue {
 friend class RenderStyle;
 public:
-    bool operator==(const OutlineValue& o) const
-    {
-        return m_width == o.m_width && m_style == o.m_style && m_color == o.m_color && m_offset == o.m_offset && m_isAuto == o.m_isAuto;
-    }
+    friend bool operator==(const OutlineValue&, const OutlineValue&) = default;
     
     float offset() const { return m_offset; }
     OutlineIsAuto isAuto() const { return static_cast<OutlineIsAuto>(m_isAuto); }

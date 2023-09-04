@@ -18,6 +18,7 @@
 
 namespace angle
 {
+
 namespace
 {
 bool LoadJSONFromFile(const std::string &fileName, rapidjson::Document *doc)
@@ -31,6 +32,23 @@ bool LoadJSONFromFile(const std::string &fileName, rapidjson::Document *doc)
     rapidjson::IStreamWrapper inWrapper(ifs);
     doc->ParseStream(inWrapper);
     return !doc->HasParseError();
+}
+
+// https://anglebug.com/8307: temporary checks (copied from RendererVk.cpp)
+uint16_t ComputeCRC16(const uint8_t *data, const size_t size)
+{
+    constexpr uint16_t kPolynomialCRC16 = 0x8408;
+    uint16_t rem                        = 0;
+
+    for (size_t i = 0; i < size; i++)
+    {
+        rem ^= data[i];
+        for (int j = 0; j < 8; j++)
+        {
+            rem = (rem & 1) ? kPolynomialCRC16 ^ (rem >> 1) : rem >> 1;
+        }
+    }
+    return rem;
 }
 }  // namespace
 
@@ -209,7 +227,16 @@ uint8_t *TraceLibrary::LoadBinaryData(const char *fileName)
         }
 
         std::vector<uint8_t> compressedData(size);
-        (void)fread(compressedData.data(), 1, size, fp);
+        size_t bytesRead = fread(compressedData.data(), 1, size, fp);
+        if (bytesRead != static_cast<size_t>(size))
+        {
+            std::cerr << "Failed to read binary data: " << bytesRead << " != " << size << "\n";
+            exit(1);
+        }
+
+        // https://anglebug.com/8307: temporary checks
+        std::cout << "Compressed binary data size=" << size
+                  << " crc16=" << ComputeCRC16(compressedData.data(), size) << "\n";
 
         uint32_t uncompressedSize =
             zlib_internal::GetGzipUncompressedSize(compressedData.data(), compressedData.size());

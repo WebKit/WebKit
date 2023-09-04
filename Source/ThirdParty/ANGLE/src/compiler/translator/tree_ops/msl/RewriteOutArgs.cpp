@@ -125,23 +125,11 @@ class Rewriter : public TIntermRebuild
             const TVariable &param     = *func->getParam(i);
             const TType &paramType     = param.getType();
             const TQualifier paramQual = paramType.getQualifier();
-            switch (paramQual)
-            {
-                case TQualifier::EvqParamOut:
-                case TQualifier::EvqParamInOut:
-                    if (!mSymbolEnv.isReference(param))
-                    {
-                        mSymbolEnv.markAsReference(param, AddressSpace::Thread);
-                    }
-                    break;
-                default:
-                    break;
-            }
             return paramQual;
         };
 
+        // Check which params might be aliased, and mark all out params as references.
         bool mightAlias = false;
-
         for (size_t i = 0; i < argCount; ++i)
         {
             const TQualifier paramQual = getParamQualifier(i);
@@ -151,11 +139,17 @@ class Rewriter : public TIntermRebuild
                 case TQualifier::EvqParamOut:
                 case TQualifier::EvqParamInOut:
                 {
+                    const TVariable &param = *func->getParam(i);
+                    if (!mSymbolEnv.isReference(param))
+                    {
+                        mSymbolEnv.markAsReference(param, AddressSpace::Thread);
+                    }
+                    // Note: not the same as param above, this refers to the variable in the
+                    // argument list in the callsite.
                     const TVariable *var = GetVariable(*args[i]);
                     if (mVarBuffer.insert(var).count > 1)
                     {
                         mightAlias = true;
-                        i          = argCount;
                     }
                 }
                 break;

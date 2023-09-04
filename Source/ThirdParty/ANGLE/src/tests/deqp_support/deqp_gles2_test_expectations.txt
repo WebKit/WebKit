@@ -241,6 +241,9 @@
 
 // Mac / Metal
 
+// Some trig functions have precision issues when fast math is enabled in Metal shader compilation
+8287 MAC METAL : dEQP-GLES2.functional.shaders.invariance.lowp.loop_2 = FAIL
+
 // Fails on Metal, some of filtering tests fail when MSAA is off and pass when MSAA is on. Some
 // tests are opposite. The filtering tests mostly fail on a few pixels.
 6466 MAC METAL : dEQP-GLES2.functional.shaders.texture_functions.vertex.texturecubelod = FAIL

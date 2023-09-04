@@ -315,13 +315,6 @@ std::ostream &FmtHex(std::ostream &os, T value)
 #    define ANGLE_CRASH() ((void)(*(volatile char *)0 = 0)), __assume(0)
 #endif
 
-#if !defined(NDEBUG)
-#    define ANGLE_ASSERT_IMPL(expression) assert(expression)
-#else
-// TODO(jmadill): Detect if debugger is attached and break.
-#    define ANGLE_ASSERT_IMPL(expression) ANGLE_CRASH()
-#endif  // !defined(NDEBUG)
-
 // Note that gSwallowStream is used instead of an arbitrary LOG() stream to avoid the creation of an
 // object with a non-trivial destructor (LogMessage). On MSVC x86 (checked on 2015 Update 3), this
 // causes a few additional pointless instructions to be emitted even at full optimization level,

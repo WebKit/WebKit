@@ -36,6 +36,7 @@ enum class ImplicitTypeConversion
 };
 
 class TIntermBlock;
+class TIntermDeclaration;
 class TSymbolTable;
 class TIntermTyped;
 
@@ -102,6 +103,17 @@ bool IsPrecisionApplicableToType(TBasicType type);
 bool IsRedeclarableBuiltIn(const ImmutableString &name);
 
 size_t FindFieldIndex(const TFieldList &fieldList, const char *fieldName);
+
+// A convenience view of a TIntermDeclaration node's children.
+struct Declaration
+{
+    TIntermSymbol &symbol;
+    TIntermTyped *initExpr;  // Non-null iff declaration is initialized.
+};
+
+// Returns a `Declaration` view of the given node.
+Declaration ViewDeclaration(TIntermDeclaration &declNode);
+
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_UTIL_H_

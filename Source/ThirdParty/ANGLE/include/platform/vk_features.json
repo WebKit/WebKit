@@ -530,6 +530,14 @@
             "issue": "http://anglebug.com/5281"
         },
         {
+            "name": "allow_multisampled_render_to_texture_emulation",
+            "category": "Workarounds",
+            "description": [
+                "Allow emulation of EXT_multisampled_render_to_texture"
+            ],
+            "issue": "http://anglebug.com/8291"
+        },
+        {
             "name": "enable_multisampled_render_to_texture",
             "category": "Workarounds",
             "description": [
@@ -1351,6 +1359,14 @@
             "description": [
                 "VkDevice supports the VK_KHR_timeline_semaphore extension"
             ]
+        },
+        {
+            "name": "enable_parallel_compile_and_link",
+            "category": "Features",
+            "description": [
+                "Expose the GL_KHR_parallel_shader_compile extension"
+            ],
+            "issue": "http://anglebug.com/8297"
         }
     ]
 }

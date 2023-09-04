@@ -360,11 +360,6 @@ String PlatformTimeRanges::toString() const
     return result.toString();
 }
 
-bool PlatformTimeRanges::operator==(const PlatformTimeRanges& other) const
-{
-    return m_ranges == other.m_ranges;
-}
-
 size_t PlatformTimeRanges::findLastRangeIndexBefore(const MediaTime& start, const MediaTime& end) const
 {
     ASSERT(start <= end);

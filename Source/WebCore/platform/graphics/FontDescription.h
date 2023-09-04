@@ -42,7 +42,7 @@ class FontDescription {
 public:
     WEBCORE_EXPORT FontDescription();
 
-    bool operator==(const FontDescription&) const;
+    friend bool operator==(const FontDescription&, const FontDescription&) = default;
 
     float computedSize() const { return m_computedSize; }
     // Adjusted size regarding @font-face size-adjust but not regarding font-size-adjust. The latter adjustment is done with updateSizeWithFontSizeAdjust() after the font's creation.
@@ -201,46 +201,6 @@ private:
     unsigned m_shouldAllowUserInstalledFonts : 1; // AllowUserInstalledFonts: If this description is allowed to match a user-installed font
     unsigned m_shouldDisableLigaturesForSpacing : 1; // If letter-spacing is nonzero, we need to disable ligatures, which affects font preparation
 };
-
-inline bool FontDescription::operator==(const FontDescription& other) const
-{
-    return m_computedSize == other.m_computedSize
-        && m_fontSelectionRequest == other.m_fontSelectionRequest
-        && m_textRendering == other.m_textRendering
-        && m_orientation == other.m_orientation
-        && m_nonCJKGlyphOrientation == other.m_nonCJKGlyphOrientation
-        && m_widthVariant == other.m_widthVariant
-        && m_specifiedLocale == other.m_specifiedLocale
-        && m_featureSettings == other.m_featureSettings
-        && m_variationSettings == other.m_variationSettings
-        && m_fontSynthesisWeight == other.m_fontSynthesisWeight
-        && m_fontSynthesisStyle == other.m_fontSynthesisStyle
-        && m_fontSynthesisCaps == other.m_fontSynthesisCaps
-        && m_variantCommonLigatures == other.m_variantCommonLigatures
-        && m_variantDiscretionaryLigatures == other.m_variantDiscretionaryLigatures
-        && m_variantHistoricalLigatures == other.m_variantHistoricalLigatures
-        && m_variantContextualAlternates == other.m_variantContextualAlternates
-        && m_variantPosition == other.m_variantPosition
-        && m_variantCaps == other.m_variantCaps
-        && m_variantNumericFigure == other.m_variantNumericFigure
-        && m_variantNumericSpacing == other.m_variantNumericSpacing
-        && m_variantNumericFraction == other.m_variantNumericFraction
-        && m_variantNumericOrdinal == other.m_variantNumericOrdinal
-        && m_variantNumericSlashedZero == other.m_variantNumericSlashedZero
-        && m_variantAlternates == other.m_variantAlternates
-        && m_variantEastAsianVariant == other.m_variantEastAsianVariant
-        && m_variantEastAsianWidth == other.m_variantEastAsianWidth
-        && m_variantEastAsianRuby == other.m_variantEastAsianRuby
-        && m_variantEmoji == other.m_variantEmoji
-        && m_opticalSizing == other.m_opticalSizing
-        && m_fontStyleAxis == other.m_fontStyleAxis
-        && m_shouldAllowUserInstalledFonts == other.m_shouldAllowUserInstalledFonts
-        && m_shouldDisableLigaturesForSpacing == other.m_shouldDisableLigaturesForSpacing
-        && m_fontPalette == other.m_fontPalette
-        && m_sizeAdjust == other.m_sizeAdjust
-        && m_textSpacingTrim == other.m_textSpacingTrim
-        && m_textAutospace == other.m_textAutospace;
-}
 
 template<class Encoder>
 void FontDescription::encode(Encoder& encoder) const

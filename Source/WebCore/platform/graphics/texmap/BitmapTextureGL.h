@@ -66,19 +66,22 @@ public:
     void updateContents(const void*, const IntRect& target, const IntPoint& sourceOffset, int bytesPerLine) override;
     bool isBackedByOpenGL() const override { return true; }
 
-    RefPtr<BitmapTexture> applyFilters(TextureMapper&, const FilterOperations&, bool defersLastFilter) override;
+    RefPtr<BitmapTexture> applyFilters(TextureMapper&, const FilterOperations&, bool defersLastFilterPass) override;
     struct FilterInfo {
-        RefPtr<FilterOperation> filter;
+        RefPtr<const FilterOperation> filter;
         unsigned pass;
         RefPtr<BitmapTexture> contentTexture;
 
-        FilterInfo(RefPtr<FilterOperation>&& f = nullptr, unsigned p = 0, RefPtr<BitmapTexture>&& t = nullptr)
+        FilterInfo(RefPtr<const FilterOperation>&& f = nullptr, unsigned p = 0, RefPtr<BitmapTexture>&& t = nullptr)
             : filter(WTFMove(f))
             , pass(p)
             , contentTexture(WTFMove(t))
             { }
     };
+
     const FilterInfo* filterInfo() const { return &m_filterInfo; }
+    void setFilterInfo(FilterInfo&& filterInfo) { m_filterInfo = WTFMove(filterInfo); }
+
     ClipStack& clipStack() { return m_clipStack; }
 
     GLint internalFormat() const { return m_internalFormat; }

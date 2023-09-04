@@ -35,7 +35,7 @@ class GStreamerVideoEncoder : public VideoEncoder {
 public:
     static void create(const String& codecName, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
 
-    GStreamerVideoEncoder(const String& codecName, OutputCallback&&, PostTaskCallback&&);
+    GStreamerVideoEncoder(const String& codecName, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
     ~GStreamerVideoEncoder();
 
 private:

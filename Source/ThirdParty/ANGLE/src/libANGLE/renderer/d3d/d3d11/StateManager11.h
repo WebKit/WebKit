@@ -53,14 +53,15 @@ class ShaderConstants11 : angle::NonCopyable
     bool onImageChange(gl::ShaderType shaderType,
                        unsigned int imageIndex,
                        const gl::ImageUnit &imageUnit);
-    void onClipControlChange(bool lowerLeft, bool zeroToOne);
+    void onClipOriginChange(bool lowerLeft);
+    bool onClipDepthModeChange(bool zeroToOne);
     bool onClipDistancesEnabledChange(const uint32_t value);
     bool onMultisamplingChange(bool multisampling);
 
     angle::Result updateBuffer(const gl::Context *context,
                                Renderer11 *renderer,
                                gl::ShaderType shaderType,
-                               const ProgramD3D &programD3D,
+                               const ProgramExecutableD3D &executableD3D,
                                const d3d11::Buffer &driverConstantBuffer);
 
   private:
@@ -292,7 +293,8 @@ class StateManager11 final : angle::NonCopyable
                                                               GLsizei emulatedInstanceId);
 
     // TODO(jmadill): Should be private.
-    angle::Result applyComputeUniforms(const gl::Context *context, ProgramD3D *programD3D);
+    angle::Result applyComputeUniforms(const gl::Context *context,
+                                       ProgramExecutableD3D *executableD3D);
 
     // Only used in testing.
     InputLayoutCache *getInputLayoutCache() { return &mInputLayoutCache; }
@@ -300,7 +302,7 @@ class StateManager11 final : angle::NonCopyable
     bool getCullEverything() const { return mCullEverything; }
     VertexDataManager *getVertexDataManager() { return &mVertexDataManager; }
 
-    ProgramD3D *getProgramD3D() const { return mProgramD3D; }
+    ProgramExecutableD3D *getProgramExecutableD3D() const { return mExecutableD3D; }
 
   private:
     angle::Result ensureInitialized(const gl::Context *context);
@@ -680,7 +682,7 @@ class StateManager11 final : angle::NonCopyable
     UniqueSerial mEmptySerial;
 
     // These objects are cached to avoid having to query the impls.
-    ProgramD3D *mProgramD3D;
+    ProgramExecutableD3D *mExecutableD3D;
     VertexArray11 *mVertexArray11;
     Framebuffer11 *mFramebuffer11;
 };

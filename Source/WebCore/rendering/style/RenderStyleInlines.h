@@ -787,65 +787,6 @@ inline TextSizeAdjustment RenderStyle::textSizeAdjust() const { return m_rareInh
 inline StyleColor RenderStyle::tapHighlightColor() const { return m_rareInheritedData->tapHighlightColor; }
 #endif
 
-inline bool RenderStyle::InheritedFlags::operator==(const InheritedFlags& other) const
-{
-    return emptyCells == other.emptyCells
-        && captionSide == other.captionSide
-        && listStylePosition == other.listStylePosition
-        && visibility == other.visibility
-        && textAlign == other.textAlign
-        && textTransform == other.textTransform
-        && textDecorationLines == other.textDecorationLines
-        && cursor == other.cursor
-#if ENABLE(CURSOR_VISIBILITY)
-        && cursorVisibility == other.cursorVisibility
-#endif
-        && direction == other.direction
-        && whiteSpaceCollapse == other.whiteSpaceCollapse
-        && textWrap == other.textWrap
-        && borderCollapse == other.borderCollapse
-        && boxDirection == other.boxDirection
-        && rtlOrdering == other.rtlOrdering
-        && printColorAdjust == other.printColorAdjust
-        && pointerEvents == other.pointerEvents
-        && insideLink == other.insideLink
-        && insideDefaultButton == other.insideDefaultButton
-        && writingMode == other.writingMode
-        && hasExplicitlySetColor == other.hasExplicitlySetColor;
-}
-
-inline bool RenderStyle::NonInheritedFlags::operator==(const NonInheritedFlags& other) const
-{
-    return effectiveDisplay == other.effectiveDisplay
-        && originalDisplay == other.originalDisplay
-        && overflowX == other.overflowX
-        && overflowY == other.overflowY
-        && verticalAlign == other.verticalAlign
-        && clear == other.clear
-        && position == other.position
-        && unicodeBidi == other.unicodeBidi
-        && floating == other.floating
-        && tableLayout == other.tableLayout
-        && textDecorationLine == other.textDecorationLine
-        && hasExplicitlySetDirection == other.hasExplicitlySetDirection
-        && hasExplicitlySetWritingMode == other.hasExplicitlySetWritingMode
-#if ENABLE(DARK_MODE_CSS)
-        && hasExplicitlySetColorScheme == other.hasExplicitlySetColorScheme
-#endif
-        && usesViewportUnits == other.usesViewportUnits
-        && usesContainerUnits == other.usesContainerUnits
-        && hasExplicitlyInheritedProperties == other.hasExplicitlyInheritedProperties
-        && disallowsFastPathInheritance == other.disallowsFastPathInheritance
-        && hasContentNone == other.hasContentNone
-        && isUnique == other.isUnique
-        && emptyState == other.emptyState
-        && firstChildState == other.firstChildState
-        && lastChildState == other.lastChildState
-        && isLink == other.isLink
-        && styleType == other.styleType
-        && pseudoBits == other.pseudoBits;
-}
-
 inline bool RenderStyle::NonInheritedFlags::hasPseudoStyle(PseudoId pseudo) const
 {
     ASSERT(pseudo > PseudoId::None);

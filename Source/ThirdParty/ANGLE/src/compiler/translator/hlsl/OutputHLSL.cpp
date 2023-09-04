@@ -1124,6 +1124,11 @@ void OutputHLSL::header(TInfoSinkBase &out,
                    "dx_DepthRange.y, dx_DepthRange.z};\n"
                    "\n";
         }
+
+        if (mOutputType == SH_HLSL_4_1_OUTPUT && mResourcesHLSL->hasImages())
+        {
+            out << kImage2DFunctionString << "\n";
+        }
     }
     else  // Compute shader
     {

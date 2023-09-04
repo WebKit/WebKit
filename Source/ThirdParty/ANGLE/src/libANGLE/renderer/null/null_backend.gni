@@ -21,6 +21,8 @@ null_backend_sources = [
   "FramebufferNULL.h",
   "ImageNULL.cpp",
   "ImageNULL.h",
+  "ProgramExecutableNULL.cpp",
+  "ProgramExecutableNULL.h",
   "ProgramNULL.cpp",
   "ProgramNULL.h",
   "ProgramPipelineNULL.cpp",

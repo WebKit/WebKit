@@ -787,6 +787,8 @@ class Range
 
 typedef Range<int> RangeI;
 typedef Range<unsigned int> RangeUI;
+static_assert(std::is_trivially_copyable<RangeUI>(),
+              "RangeUI should be trivial copyable so that we can memcpy");
 
 struct IndexRange
 {

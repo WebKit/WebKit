@@ -35,15 +35,9 @@ struct PlatformAudioTrackConfiguration : PlatformTrackConfiguration {
     uint32_t sampleRate { 0 };
     uint32_t numberOfChannels { 0 };
     uint64_t bitrate { 0 };
-};
 
-inline bool operator==(const PlatformAudioTrackConfiguration& a, const PlatformAudioTrackConfiguration& b)
-{
-    return a.codec == b.codec
-        && a.sampleRate == b.sampleRate
-        && a.numberOfChannels == b.numberOfChannels
-        && a.bitrate == b.bitrate;
-}
+    friend bool operator==(const PlatformAudioTrackConfiguration&, const PlatformAudioTrackConfiguration&) = default;
+};
 
 }
 

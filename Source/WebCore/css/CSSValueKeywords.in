@@ -957,7 +957,6 @@ exclude
 // Variables Implementation
 //
 var
--internal-variable-value
 
 //
 // Environment Variables

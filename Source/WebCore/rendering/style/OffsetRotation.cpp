@@ -31,11 +31,6 @@
 
 namespace WebCore {
 
-bool OffsetRotation::operator==(const OffsetRotation& o) const
-{
-    return m_hasAuto == o.m_hasAuto && m_angle == o.m_angle;
-}
-
 bool OffsetRotation::canBlend(const OffsetRotation& to) const
 {
     return m_hasAuto == to.hasAuto();

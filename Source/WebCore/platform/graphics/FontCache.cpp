@@ -57,18 +57,13 @@ struct FontPlatformDataCacheKey {
     FontDescriptionKey descriptionKey;
     FontFamilyName family;
     FontCreationContext fontCreationContext;
+
+    friend bool operator==(const FontPlatformDataCacheKey&, const FontPlatformDataCacheKey&) = default;
 };
 
 inline void add(Hasher& hasher, const FontPlatformDataCacheKey& key)
 {
     add(hasher, key.descriptionKey, key.family, key.fontCreationContext);
-}
-
-static bool operator==(const FontPlatformDataCacheKey& a, const FontPlatformDataCacheKey& b)
-{
-    return a.descriptionKey == b.descriptionKey
-        && a.family == b.family
-        && a.fontCreationContext == b.fontCreationContext;
 }
 
 struct FontPlatformDataCacheKeyHash {

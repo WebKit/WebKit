@@ -192,7 +192,7 @@ private:
     void setBitDefaults();
 
     struct InheritedFlags {
-        bool operator==(const InheritedFlags&) const;
+        friend bool operator==(const InheritedFlags&, const InheritedFlags&) = default;
 
         unsigned shapeRendering : 2; // ShapeRendering
         unsigned clipRule : 1; // WindRule
@@ -472,18 +472,6 @@ inline void SVGRenderStyle::setBitDefaults()
     m_nonInheritedFlags.flagBits.vectorEffect = static_cast<unsigned>(initialVectorEffect());
     m_nonInheritedFlags.flagBits.bufferedRendering = static_cast<unsigned>(initialBufferedRendering());
     m_nonInheritedFlags.flagBits.maskType = static_cast<unsigned>(initialMaskType());
-}
-
-inline bool SVGRenderStyle::InheritedFlags::operator==(const InheritedFlags& other) const
-{
-    return shapeRendering == other.shapeRendering
-        && clipRule == other.clipRule
-        && fillRule == other.fillRule
-        && textAnchor == other.textAnchor
-        && colorInterpolation == other.colorInterpolation
-        && colorInterpolationFilters == other.colorInterpolationFilters
-        && glyphOrientationHorizontal == other.glyphOrientationHorizontal
-        && glyphOrientationVertical == other.glyphOrientationVertical;
 }
 
 } // namespace WebCore

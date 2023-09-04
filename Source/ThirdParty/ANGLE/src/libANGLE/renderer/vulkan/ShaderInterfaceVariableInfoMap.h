@@ -47,10 +47,8 @@ class ShaderInterfaceVariableInfoMap final : angle::NonCopyable
     ~ShaderInterfaceVariableInfoMap();
 
     void clear();
-    void load(VariableInfoArray &&data,
-              gl::ShaderMap<IdToIndexMap> &&idToIndexMap,
-              gl::ShaderMap<gl::PerVertexMemberBitSet> &&inputPerVertexActiveMembers,
-              gl::ShaderMap<gl::PerVertexMemberBitSet> &&outputPerVertexActiveMembers);
+    void load(gl::BinaryInputStream *stream);
+    void save(gl::BinaryOutputStream *stream);
 
     ShaderInterfaceVariableInfo &add(gl::ShaderType shaderType, uint32_t id);
     void addResource(gl::ShaderBitSet shaderTypes,

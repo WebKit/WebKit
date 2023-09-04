@@ -63,10 +63,7 @@ void BasicShapeCenterCoordinate::updateComputedLength()
 }
 
 struct SVGPathTransformedByteStream {
-    bool operator==(const SVGPathTransformedByteStream& other) const 
-    { 
-        return other.offset == offset && other.zoom == zoom && other.rawStream == rawStream;
-    }
+    friend bool operator==(const SVGPathTransformedByteStream&, const SVGPathTransformedByteStream&) = default;
     bool isEmpty() const { return rawStream.isEmpty(); }
 
     Path path() const

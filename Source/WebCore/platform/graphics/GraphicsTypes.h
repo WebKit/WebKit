@@ -79,12 +79,9 @@ enum class BlendMode : uint8_t {
 struct CompositeMode {
     CompositeOperator operation;
     BlendMode blendMode;
-};
 
-inline bool operator==(const CompositeMode& a, const CompositeMode& b)
-{
-    return a.operation == b.operation && a.blendMode == b.blendMode;
-}
+    friend bool operator==(const CompositeMode&, const CompositeMode&) = default;
+};
 
 enum class DocumentMarkerLineStyleMode : uint8_t {
     TextCheckingDictationPhraseWithAlternatives,

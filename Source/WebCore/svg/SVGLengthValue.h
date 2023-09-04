@@ -95,16 +95,13 @@ public:
 
     ExceptionOr<void> convertToSpecifiedUnits(const SVGLengthContext&, SVGLengthType);
 
+    friend bool operator==(SVGLengthValue, SVGLengthValue) = default;
+
 private:
     float m_valueInSpecifiedUnits { 0 };
     SVGLengthType m_lengthType { SVGLengthType::Number };
     SVGLengthMode m_lengthMode { SVGLengthMode::Other };
 };
-
-inline bool operator==(const SVGLengthValue& a, const SVGLengthValue& b)
-{
-    return a.valueInSpecifiedUnits() == b.valueInSpecifiedUnits() && a.lengthType() == b.lengthType() && a.lengthMode() == b.lengthMode();
-}
 
 WTF::TextStream& operator<<(WTF::TextStream&, const SVGLengthValue&);
 

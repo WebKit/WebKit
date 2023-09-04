@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "libANGLE/renderer/ProgramImpl.h"
+#include "libANGLE/renderer/gl/ProgramExecutableGL.h"
 
 namespace angle
 {
@@ -36,18 +37,19 @@ class ProgramGL : public ProgramImpl
               const std::shared_ptr<RendererGL> &renderer);
     ~ProgramGL() override;
 
+    void destroy(const gl::Context *context) override;
+
     std::unique_ptr<LinkEvent> load(const gl::Context *context,
-                                    gl::BinaryInputStream *stream,
-                                    gl::InfoLog &infoLog) override;
+                                    gl::BinaryInputStream *stream) override;
     void save(const gl::Context *context, gl::BinaryOutputStream *stream) override;
     void setBinaryRetrievableHint(bool retrievable) override;
     void setSeparable(bool separable) override;
 
+    void prepareForLink(const gl::ShaderMap<ShaderImpl *> &shaders) override;
     std::unique_ptr<LinkEvent> link(const gl::Context *contextImpl,
                                     const gl::ProgramLinkedResources &resources,
-                                    gl::InfoLog &infoLog,
-                                    const gl::ProgramMergedVaryings &mergedVaryings) override;
-    GLboolean validate(const gl::Caps &caps, gl::InfoLog *infoLog) override;
+                                    gl::ProgramMergedVaryings &&mergedVaryings) override;
+    GLboolean validate(const gl::Caps &caps) override;
 
     void setUniform1fv(GLint location, GLsizei count, const GLfloat *v) override;
     void setUniform2fv(GLint location, GLsizei count, const GLfloat *v) override;
@@ -115,14 +117,21 @@ class ProgramGL : public ProgramImpl
     angle::Result syncState(const gl::Context *context,
                             const gl::Program::DirtyBits &dirtyBits) override;
 
+    const ProgramExecutableGL *getExecutable() const
+    {
+        return GetImplAs<ProgramExecutableGL>(&mState.getExecutable());
+    }
+    ProgramExecutableGL *getExecutable()
+    {
+        return GetImplAs<ProgramExecutableGL>(&mState.getExecutable());
+    }
+
   private:
     class LinkTask;
     class LinkEventNativeParallel;
     class LinkEventGL;
 
-    void preLink();
-    bool checkLinkStatus(gl::InfoLog &infoLog);
-    void postLink();
+    bool checkLinkStatus();
 
     void reapplyUBOBindingsIfNeeded(const gl::Context *context);
 
@@ -144,26 +153,20 @@ class ProgramGL : public ProgramImpl
     void setUniformBlockBinding(GLuint uniformBlockIndex, GLuint uniformBlockBinding);
 
     // Helper function, makes it simpler to type.
-    GLint uniLoc(GLint glLocation) const { return mUniformRealLocationMap[glLocation]; }
+    GLint uniLoc(GLint glLocation) const
+    {
+        return getExecutable()->mUniformRealLocationMap[glLocation];
+    }
 
     const FunctionsGL *mFunctions;
     const angle::FeaturesGL &mFeatures;
     StateManagerGL *mStateManager;
 
-    std::vector<GLint> mUniformRealLocationMap;
-    std::vector<GLuint> mUniformBlockRealLocationMap;
-
-    bool mHasAppliedTransformFeedbackVaryings;
-
-    GLint mClipDistanceEnabledUniformLocation;
-
-    GLint mMultiviewBaseViewLayerIndexUniformLocation;
+    gl::ShaderMap<GLuint> mAttachedShaders;
 
     GLuint mProgramID;
 
     std::shared_ptr<RendererGL> mRenderer;
-
-    bool mLinkedInParallel;
 };
 
 }  // namespace rx

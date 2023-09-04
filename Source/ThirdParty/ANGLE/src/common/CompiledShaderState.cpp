@@ -181,7 +181,18 @@ void LoadShInterfaceBlock(gl::BinaryInputStream *stream, sh::InterfaceBlock *blo
 }
 
 CompiledShaderState::CompiledShaderState(gl::ShaderType type)
-    : shaderType(type), shaderVersion(100), numViews(-1), geometryShaderInvocations(1)
+    : shaderType(type),
+      shaderVersion(100),
+      hasClipDistance(false),
+      hasDiscard(false),
+      enablesPerSampleShading(false),
+      numViews(-1),
+      geometryShaderInvocations(1),
+      tessControlShaderVertices(0),
+      tessGenMode(0),
+      tessGenSpacing(0),
+      tessGenVertexOrder(0),
+      tessGenPointMode(0)
 {
     localSize.fill(-1);
 }

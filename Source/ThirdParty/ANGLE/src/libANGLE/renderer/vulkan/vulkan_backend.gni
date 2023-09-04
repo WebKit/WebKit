@@ -144,6 +144,8 @@ if (is_linux || is_chromeos) {
     "linux/DeviceVkLinux.h",
     "linux/DisplayVkLinux.cpp",
     "linux/DisplayVkLinux.h",
+    "linux/DisplayVkOffscreen.cpp",
+    "linux/DisplayVkOffscreen.h",
     "linux/DmaBufImageSiblingVkLinux.cpp",
     "linux/DmaBufImageSiblingVkLinux.h",
     "linux/display/DisplayVkSimple.cpp",

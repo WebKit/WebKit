@@ -329,7 +329,7 @@ bool ValidateProgramUniformBase(const Context *context,
     Program *programObject       = GetValidProgram(context, entryPoint, program);
     return ValidateUniformCommonBase(context, entryPoint, programObject, location, count,
                                      &uniform) &&
-           ValidateUniformValue(context, entryPoint, valueType, uniform->type);
+           ValidateUniformValue(context, entryPoint, valueType, uniform->getType());
 }
 
 bool ValidateProgramUniformMatrixBase(const Context *context,
@@ -344,7 +344,7 @@ bool ValidateProgramUniformMatrixBase(const Context *context,
     Program *programObject       = GetValidProgram(context, entryPoint, program);
     return ValidateUniformCommonBase(context, entryPoint, programObject, location, count,
                                      &uniform) &&
-           ValidateUniformMatrixValue(context, entryPoint, valueType, uniform->type);
+           ValidateUniformMatrixValue(context, entryPoint, valueType, uniform->getType());
 }
 
 bool ValidateVertexAttribFormatCommon(const Context *context,
@@ -746,7 +746,7 @@ bool ValidateProgramUniform1ivBase(const Context *context,
     Program *programObject       = GetValidProgram(context, entryPoint, program);
     return ValidateUniformCommonBase(context, entryPoint, programObject, location, count,
                                      &uniform) &&
-           ValidateUniform1ivValue(context, entryPoint, uniform->type, count, value);
+           ValidateUniform1ivValue(context, entryPoint, uniform->getType(), count, value);
 }
 
 bool ValidateProgramUniform2ivBase(const Context *context,

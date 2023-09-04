@@ -190,6 +190,8 @@ public:
     // Return false if x + width or y + height overflows.
     WEBCORE_EXPORT bool isValid() const;
 
+    friend bool operator==(const IntRect&, const IntRect&) = default;
+
 #if PLATFORM(WIN)
     WEBCORE_EXPORT IntRect(const RECT&);
     WEBCORE_EXPORT operator RECT() const;
@@ -225,11 +227,6 @@ inline IntRect unionRect(const IntRect& a, const IntRect& b)
     IntRect c = a;
     c.unite(b);
     return c;
-}
-
-inline bool operator==(const IntRect& a, const IntRect& b)
-{
-    return a.location() == b.location() && a.size() == b.size();
 }
 
 inline IntRect& operator-=(IntRect& r, const IntPoint& offset)

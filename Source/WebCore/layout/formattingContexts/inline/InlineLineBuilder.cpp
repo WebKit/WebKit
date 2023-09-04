@@ -902,12 +902,28 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
     if (isFloatLayoutSuspended())
         return false;
 
-    auto boxGeometry = BoxGeometry { formattingContext().geometryForBox(floatBox) };
+    auto floatingContext = FloatingContext { formattingContext(), floatingState() };
+    auto boxGeometry = [&]() -> BoxGeometry {
+        auto marginTrim = rootStyle().marginTrim();
+        if (!marginTrim.containsAny({ MarginTrimType::InlineStart, MarginTrimType::InlineEnd }) || m_lineIsConstrainedByFloat.containsAll({ UsedFloat::Left, UsedFloat::Right }))
+            return formattingContext().geometryForBox(floatBox);
+        // Discarding the inline-start/inline-end margin of an inline-start/inline-end float (or equivalent) whose outer edge on that side coincides with
+        // the inner edge of the container.
+        auto geometry = formattingContext().geometryForBox(floatBox);
+        if (floatingContext.isLogicalLeftPositioned(floatBox)) {
+            if (marginTrim.contains(MarginTrimType::InlineStart) && !m_lineIsConstrainedByFloat.contains(UsedFloat::Left))
+                geometry.setMarginStart({ });
+            return geometry;
+        }
+        if (marginTrim.contains(MarginTrimType::InlineEnd) && !m_lineIsConstrainedByFloat.contains(UsedFloat::Right))
+            geometry.setMarginEnd({ });
+        return geometry;
+    }();
+
     if (!shouldTryToPlaceFloatBox(floatBox, boxGeometry.marginBoxWidth(), mayOverConstrainLine))
         return false;
 
     auto lineMarginBoxLeft = std::max(0.f, m_lineLogicalRect.left() - m_lineMarginStart);
-    auto floatingContext = FloatingContext { formattingContext(), floatingState() };
     auto computeFloatBoxPosition = [&] {
         // Set static position first.
         auto staticPosition = LayoutPoint { lineMarginBoxLeft, m_lineLogicalRect.top() };
