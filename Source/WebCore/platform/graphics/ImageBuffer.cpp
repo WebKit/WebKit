@@ -247,7 +247,12 @@ GraphicsContext& ImageBuffer::context() const
 {
     ASSERT(m_backend);
     ASSERT(volatilityState() == VolatilityState::NonVolatile);
-    return m_backend->context();
+    auto& context = m_backend->context();
+    if (!m_hasInitializedContext) {
+        context.setCTM(m_backendInfo.baseTransform);
+        m_hasInitializedContext = true;
+    }
+    return context;
 }
 
 void ImageBuffer::flushDrawingContext()
@@ -274,6 +279,7 @@ void ImageBuffer::setBackend(std::unique_ptr<ImageBufferBackend>&& backend)
 
     m_backend = WTFMove(backend);
     ++m_backendGeneration;
+    m_hasInitializedContext = false;
 }
 
 std::unique_ptr<ImageBufferBackend> ImageBuffer::takeBackend()
@@ -548,6 +554,7 @@ void ImageBuffer::releaseGraphicsContext()
 {
     if (auto* backend = ensureBackendCreated())
         return backend->releaseGraphicsContext();
+    m_hasInitializedContext = false;
 }
 
 bool ImageBuffer::setVolatile()

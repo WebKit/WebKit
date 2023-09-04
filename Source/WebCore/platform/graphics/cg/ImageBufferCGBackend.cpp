@@ -70,15 +70,9 @@ std::unique_ptr<ThreadSafeImageBufferFlusher> ImageBufferCGBackend::createFlushe
 
 ImageBufferCGBackend::~ImageBufferCGBackend() = default;
 
-bool ImageBufferCGBackend::originAtBottomLeftCorner() const
-{
-    return isOriginAtBottomLeftCorner;
-}
-
 void ImageBufferCGBackend::applyBaseTransform(GraphicsContextCG& context) const
 {
     context.applyDeviceScaleFactor(m_parameters.resolutionScale);
-    context.setCTM(calculateBaseTransform(m_parameters, originAtBottomLeftCorner()));
 }
 
 String ImageBufferCGBackend::debugDescription() const
