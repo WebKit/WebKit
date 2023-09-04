@@ -57,7 +57,9 @@ if (angle_has_build) {
     import("//build/config/win/visual_studio_version.gni")
   }
 
-  if (is_castos || ozone_platform_headless) {
+  if (is_chromeos) {
+    angle_vulkan_display_mode = "offscreen"
+  } else if (is_castos || ozone_platform_headless) {
     angle_vulkan_display_mode = "headless"
   }
 

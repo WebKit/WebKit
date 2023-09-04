@@ -60,7 +60,7 @@ template <typename Key,
           class KeyEqual = std::equal_to<Key>>
 using HashMap = std::unordered_map<Key, T, Hash, KeyEqual>;
 template <typename Key, class Hash = std::hash<Key>, class KeyEqual = std::equal_to<Key>>
-using HashSet  = std::unordered_set<Key, Hash, KeyEqual>;
+using HashSet = std::unordered_set<Key, Hash, KeyEqual>;
 #    if __cpp_lib_generic_unordered_lookup >= 201811L
 #        define ANGLE_HAS_HASH_MAP_GENERIC_LOOKUP 1
 #    else
@@ -401,6 +401,15 @@ class ConditionalMutex final : angle::NonCopyable
     bool mUseMutex;
 };
 
+// Helper macro that casts to a bitfield type then verifies no bits were dropped.
+#define SetBitField(lhs, rhs)                                                         \
+    do                                                                                \
+    {                                                                                 \
+        auto ANGLE_LOCAL_VAR = rhs;                                                   \
+        lhs = static_cast<typename std::decay<decltype(lhs)>::type>(ANGLE_LOCAL_VAR); \
+        ASSERT(static_cast<decltype(ANGLE_LOCAL_VAR)>(lhs) == ANGLE_LOCAL_VAR);       \
+    } while (0)
+
 // snprintf is not defined with MSVC prior to to msvc14
 #if defined(_MSC_VER) && _MSC_VER < 1900
 #    define snprintf _snprintf
@@ -415,6 +424,9 @@ class ConditionalMutex final : angle::NonCopyable
 #define GL_UINT_64_ANGLEX 0x6ABF
 #define GL_BGRA8_SRGB_ANGLEX 0x6AC0
 #define GL_BGR10_A2_ANGLEX 0x6AF9
+#define GL_BGRX8_SRGB_ANGLEX 0x6AFC
+// fake format for GL_ANGLE_rgbx_internal_format
+#define GL_RGBX8_SRGB_ANGLEX 0x6AFA
 
 // These are fake formats used to fit typeless D3D textures that can be bound to EGL pbuffers into
 // the format system (for extension EGL_ANGLE_d3d_texture_client_buffer):

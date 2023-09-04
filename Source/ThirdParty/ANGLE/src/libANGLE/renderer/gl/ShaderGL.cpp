@@ -22,82 +22,7 @@
 namespace rx
 {
 
-using CompileAndCheckShaderInWorkerFunctor = std::function<bool(const char *source)>;
-class TranslateTaskGL : public angle::Closure
-{
-  public:
-    TranslateTaskGL(ShHandle handle,
-                    const ShCompileOptions &options,
-                    const std::string &source,
-                    CompileAndCheckShaderInWorkerFunctor &&compileAndCheckShaderInWorkerFunctor)
-        : mHandle(handle),
-          mOptions(options),
-          mSource(source),
-          mCompileAndCheckShaderInWorkerFunctor(std::move(compileAndCheckShaderInWorkerFunctor)),
-          mResult(false),
-          mWorkerAvailable(true)
-    {}
-
-    void operator()() override
-    {
-        ANGLE_TRACE_EVENT1("gpu.angle", "TranslateTaskGL::run", "source", mSource);
-        const char *source = mSource.c_str();
-        mResult            = sh::Compile(mHandle, &source, 1, mOptions);
-        if (mResult)
-        {
-            mWorkerAvailable =
-                mCompileAndCheckShaderInWorkerFunctor(sh::GetObjectCode(mHandle).c_str());
-        }
-    }
-
-    bool getResult() { return mResult; }
-
-    bool workerAvailable() { return mWorkerAvailable; }
-
-    ShHandle getHandle() { return mHandle; }
-
-  private:
-    ShHandle mHandle;
-    ShCompileOptions mOptions;
-    std::string mSource;
-    CompileAndCheckShaderInWorkerFunctor mCompileAndCheckShaderInWorkerFunctor;
-    bool mResult;
-    bool mWorkerAvailable;
-};
-
-using PostTranslateFunctor         = std::function<bool(std::string *infoLog)>;
-using CompileAndCheckShaderFunctor = std::function<void(const char *source)>;
-class WaitableCompileEventWorkerContext final : public WaitableCompileEvent
-{
-  public:
-    WaitableCompileEventWorkerContext(std::shared_ptr<angle::WaitableEvent> waitableEvent,
-                                      CompileAndCheckShaderFunctor &&compileAndCheckShaderFunctor,
-                                      PostTranslateFunctor &&postTranslateFunctor,
-                                      std::shared_ptr<TranslateTaskGL> translateTask)
-        : WaitableCompileEvent(waitableEvent),
-          mCompileAndCheckShaderFunctor(std::move(compileAndCheckShaderFunctor)),
-          mPostTranslateFunctor(std::move(postTranslateFunctor)),
-          mTranslateTask(translateTask)
-    {}
-
-    bool getResult() override { return mTranslateTask->getResult(); }
-
-    bool postTranslate(std::string *infoLog) override
-    {
-        if (!mTranslateTask->workerAvailable())
-        {
-            ShHandle handle = mTranslateTask->getHandle();
-            mCompileAndCheckShaderFunctor(sh::GetObjectCode(handle).c_str());
-        }
-        return mPostTranslateFunctor(infoLog);
-    }
-
-  private:
-    CompileAndCheckShaderFunctor mCompileAndCheckShaderFunctor;
-    PostTranslateFunctor mPostTranslateFunctor;
-    std::shared_ptr<TranslateTaskGL> mTranslateTask;
-};
-
+using PostTranslateFunctor  = std::function<bool(std::string *infoLog)>;
 using PeekCompletionFunctor = std::function<bool()>;
 using CheckShaderFunctor    = std::function<void()>;
 
@@ -219,24 +144,6 @@ bool ShaderGL::peekCompletion()
     GLint status                 = GL_FALSE;
     functions->getShaderiv(mShaderID, GL_COMPLETION_STATUS, &status);
     return status == GL_TRUE;
-}
-
-bool ShaderGL::compileAndCheckShaderInWorker(const char *source)
-{
-    std::string workerInfoLog;
-    ScopedWorkerContextGL worker(mRenderer.get(), &workerInfoLog);
-    if (worker())
-    {
-        compileAndCheckShader(source);
-        return true;
-    }
-    else
-    {
-#if !defined(NDEBUG)
-        mInfoLog += "bindWorkerContext failed.\n" + workerInfoLog;
-#endif
-        return false;
-    }
 }
 
 std::shared_ptr<WaitableCompileEvent> ShaderGL::compile(const gl::Context *context,
@@ -386,6 +293,11 @@ std::shared_ptr<WaitableCompileEvent> ShaderGL::compile(const gl::Context *conte
         options->scalarizeVecAndMatConstructorArgs = true;
     }
 
+    if (features.explicitFragmentLocations.enabled)
+    {
+        options->explicitFragmentLocations = true;
+    }
+
     if (mRenderer->getNativeExtensions().shaderPixelLocalStorageANGLE)
     {
         options->pls = mRenderer->getNativePixelLocalStorageOptions();
@@ -404,11 +316,12 @@ std::shared_ptr<WaitableCompileEvent> ShaderGL::compile(const gl::Context *conte
         return true;
     };
 
+    ShHandle handle = compilerInstance->getHandle();
+    const char *str = source.c_str();
+    bool result     = sh::Compile(handle, &str, 1, *options);
+
     if (mRenderer->hasNativeParallelCompile())
     {
-        ShHandle handle = compilerInstance->getHandle();
-        const char *str = source.c_str();
-        bool result     = sh::Compile(handle, &str, 1, *options);
         if (result)
         {
             compileShader(sh::GetObjectCode(handle).c_str());
@@ -424,28 +337,8 @@ std::shared_ptr<WaitableCompileEvent> ShaderGL::compile(const gl::Context *conte
                                                               result);
         }
     }
-    else if (workerThreadPool->isAsync())
-    {
-        auto compileAndCheckShaderInWorkerFunctor = [this](const char *source) {
-            return compileAndCheckShaderInWorker(source);
-        };
-        auto translateTask =
-            std::make_shared<TranslateTaskGL>(compilerInstance->getHandle(), *options, source,
-                                              std::move(compileAndCheckShaderInWorkerFunctor));
-
-        auto compileAndCheckShaderFunctor = [this](const char *source) {
-            compileAndCheckShader(source);
-        };
-        return std::make_shared<WaitableCompileEventWorkerContext>(
-            workerThreadPool->postWorkerTask(translateTask),
-            std::move(compileAndCheckShaderFunctor), std::move(postTranslateFunctor),
-            translateTask);
-    }
     else
     {
-        ShHandle handle = compilerInstance->getHandle();
-        const char *str = source.c_str();
-        bool result     = sh::Compile(handle, &str, 1, *options);
         if (result)
         {
             compileAndCheckShader(sh::GetObjectCode(handle).c_str());
@@ -456,7 +349,7 @@ std::shared_ptr<WaitableCompileEvent> ShaderGL::compile(const gl::Context *conte
 
 std::string ShaderGL::getDebugInfo() const
 {
-    return mState.getTranslatedSource();
+    return mState.getCompiledState()->translatedSource;
 }
 
 GLuint ShaderGL::getShaderID() const

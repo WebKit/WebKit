@@ -52,6 +52,7 @@ class ImageD3D;
 class IndexBuffer;
 class NativeWindowD3D;
 class ProgramD3D;
+class ProgramExecutableD3D;
 class RenderTargetD3D;
 class ShaderExecutableD3D;
 class SwapChainD3D;
@@ -477,7 +478,6 @@ class RendererD3D : public BufferFactoryD3D
 };
 
 unsigned int GetBlendSampleMask(const gl::State &glState, int samples);
-bool InstancedPointSpritesActive(ProgramD3D *programD3D, gl::PrimitiveMode mode);
 GLenum DefaultGLErrorCode(HRESULT hr);
 
 // Define stubs so we don't need to include D3D9/D3D11 headers directly.

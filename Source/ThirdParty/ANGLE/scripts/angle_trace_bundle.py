@@ -14,6 +14,7 @@
 #
 #  Example usage:
 #    % gn args out/Android  # angle_restricted_traces=["among_us"]
+#    (note: explicit build isn't necessary as it is invoked by mb isolate this script runs)
 #    % scripts/angle_trace_bundle.py out/Android angle_trace.zip --trace-name=among_us
 #
 #    (transfer the zip elsewhere)
@@ -83,11 +84,6 @@ def main():
     if not args.include_unstripped_libs:
         skipped_prefixes.append(os.path.join(gn_dir, 'lib.unstripped/'))
 
-    def addScript(fzip, path, contents):
-        info = zipfile.ZipInfo(path)
-        info.external_attr = 0o755 << 16  # unnecessarily obscure way to chmod 755...
-        fzip.writestr(info, contents)
-
     with zipfile.ZipFile(args.output_zip_file, 'w', zipfile.ZIP_DEFLATED, allowZip64=True) as fzip:
         for fn in isolate_file_paths:
             path = os.path.normpath(os.path.join(gn_dir, fn))
@@ -96,11 +92,17 @@ def main():
 
             fzip.write(path)
 
-        addScript(fzip, '_run_tests.sh', RUN_TESTS_TEMPLATE.format(gn_dir=gn_dir))
-        addScript(fzip, 'list_traces.sh', LIST_TRACES_TEMPLATE.format(gn_dir=gn_dir))
+        def addScript(path_in_zip, contents):
+            # Creates a script directly inside the zip file
+            info = zipfile.ZipInfo(path_in_zip)
+            info.external_attr = 0o755 << 16  # unnecessarily obscure way to chmod 755...
+            fzip.writestr(info, contents)
+
+        addScript('_run_tests.sh', RUN_TESTS_TEMPLATE.format(gn_dir=gn_dir))
+        addScript('list_traces.sh', LIST_TRACES_TEMPLATE.format(gn_dir=gn_dir))
 
         if args.trace_name:
-            addScript(fzip, 'run_trace.sh',
+            addScript('run_trace.sh',
                       RUN_TRACE_TEMPLATE.format(gn_dir=gn_dir, trace_name=args.trace_name))
 
     return 0

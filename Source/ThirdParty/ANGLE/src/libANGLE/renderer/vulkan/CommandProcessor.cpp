@@ -211,7 +211,6 @@ void CommandProcessorTask::initTask()
     mTask                           = CustomTask::Invalid;
     mOutsideRenderPassCommandBuffer = nullptr;
     mRenderPassCommandBuffer        = nullptr;
-    mRenderPass                     = nullptr;
     mSemaphore                      = VK_NULL_HANDLE;
     mOneOffWaitSemaphore            = VK_NULL_HANDLE;
     mOneOffWaitSemaphoreStageMask   = 0;
@@ -260,9 +259,10 @@ void CommandProcessorTask::initRenderPassProcessCommands(
 {
     mTask                    = CustomTask::ProcessRenderPassCommands;
     mRenderPassCommandBuffer = commandBuffer;
-    mRenderPass              = renderPass;
     mPriority                = priority;
     mProtectionType          = protectionType;
+
+    mRenderPass.setHandle(renderPass->getHandle());
 }
 
 void CommandProcessorTask::copyPresentInfo(const VkPresentInfoKHR &other)
@@ -761,7 +761,7 @@ angle::Result CommandProcessor::processTask(CommandProcessorTask *task)
         {
             RenderPassCommandBufferHelper *commandBuffer = task->getRenderPassCommandBuffer();
             ANGLE_TRY(mCommandQueue->flushRenderPassCommands(
-                this, task->getProtectionType(), task->getPriority(), *task->getRenderPass(),
+                this, task->getProtectionType(), task->getPriority(), task->getRenderPass(),
                 &commandBuffer));
 
             RenderPassCommandBufferHelper *originalCommandBuffer =

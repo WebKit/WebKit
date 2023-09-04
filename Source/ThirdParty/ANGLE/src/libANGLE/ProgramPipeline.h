@@ -33,7 +33,7 @@ class ProgramPipeline;
 class ProgramPipelineState final : angle::NonCopyable
 {
   public:
-    ProgramPipelineState();
+    ProgramPipelineState(rx::GLImplFactory *factory);
     ~ProgramPipelineState();
 
     const std::string &getLabel() const;
@@ -60,7 +60,7 @@ class ProgramPipelineState final : angle::NonCopyable
 
     void updateExecutableTextures();
 
-    rx::SpecConstUsageBits getSpecConstUsageBits() const;
+    void updateExecutableSpecConstUsageBits();
 
   private:
     void useProgramStage(const Context *context,
@@ -79,7 +79,9 @@ class ProgramPipelineState final : angle::NonCopyable
 
     GLboolean mValid;
 
-    ProgramExecutable *mExecutable;
+    InfoLog mInfoLog;
+
+    std::unique_ptr<ProgramExecutable> mExecutable;
 
     bool mIsLinked;
 };
@@ -126,6 +128,10 @@ class ProgramPipeline final : public RefCountObject<ProgramPipelineID>,
     void resetIsLinked() { mState.mIsLinked = false; }
     angle::Result link(const gl::Context *context);
 
+    InfoLog &getInfoLog() { return mState.mInfoLog; }
+    int getInfoLogLength() const;
+    void getInfoLog(GLsizei bufSize, GLsizei *length, char *infoLog) const;
+
     angle::Result syncState(const Context *context);
 
     // Ensure program pipeline is linked. Inlined to make sure its overhead is as low as possible.
@@ -155,7 +161,7 @@ class ProgramPipeline final : public RefCountObject<ProgramPipelineID>,
     void onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message) override;
 
   private:
-    bool linkVaryings(InfoLog &infoLog) const;
+    bool linkVaryings();
     void updateLinkedShaderStages();
     void updateExecutableAttributes();
     void updateTransformFeedbackMembers();

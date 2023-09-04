@@ -170,8 +170,26 @@ class PrivateStateCache final : angle::NonCopyable
     void onCapChange() { mIsCachedBasicDrawStatesErrorValid = false; }
     void onColorMaskChange() { mIsCachedBasicDrawStatesErrorValid = false; }
     void onDefaultVertexAttributeChange() { mIsCachedBasicDrawStatesErrorValid = false; }
-    void onBlendFuncIndexedChange() { mIsCachedBasicDrawStatesErrorValid = false; }
-    void onBlendEquationChange() { mIsCachedBasicDrawStatesErrorValid = false; }
+
+    // Blending updates invalidate draw
+    // state in the following cases:
+    //
+    // * Blend equations have been changed and the context
+    //   supports KHR_blend_equation_advanced. The number
+    //   of enabled draw buffers may need to be checked
+    //   to not be greater than 1.
+    //
+    // * Blend funcs have been changed with indexed
+    //   commands. The D3D11 backend cannot support
+    //   constant color and alpha blend funcs together
+    //   so a check is needed across all draw buffers.
+    //
+    // * Blend funcs have been changed and the context
+    //   supports EXT_blend_func_extended. The number
+    //   of enabled draw buffers may need to be checked
+    //   against MAX_DUAL_SOURCE_DRAW_BUFFERS_EXT limit.
+    void onBlendEquationOrFuncChange() { mIsCachedBasicDrawStatesErrorValid = false; }
+
     void onStencilStateChange() { mIsCachedBasicDrawStatesErrorValid = false; }
 
     bool isCachedBasicDrawStatesErrorValid() const { return mIsCachedBasicDrawStatesErrorValid; }
@@ -237,8 +255,7 @@ class StateCache final : angle::NonCopyable
     // 2. onStencilStateChange.
     // 3. onDefaultVertexAttributeChange.
     // 4. onColorMaskChange.
-    // 5. onBlendFuncIndexedChange.
-    // 6. onBlendEquationChange.
+    // 5. onBlendEquationOrFuncChange.
     intptr_t getBasicDrawStatesErrorString(const Context *context,
                                            const PrivateStateCache *privateStateCache) const
     {
@@ -557,10 +574,10 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     bool isResetNotificationEnabled() const;
 
-    bool isRobustnessEnabled() const;
+    bool isRobustnessEnabled() const { return mState.hasRobustAccess(); }
 
-    const egl::Config *getConfig() const;
-    EGLenum getClientType() const;
+    const egl::Config *getConfig() const { return mConfig; }
+    EGLenum getClientType() const { return mState.getClientType(); }
     EGLenum getRenderBuffer() const;
     EGLenum getContextPriority() const;
 
@@ -646,7 +663,8 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     }
 
     Program *getProgramNoResolveLink(ShaderProgramID handle) const;
-    Shader *getShader(ShaderProgramID handle) const;
+    Shader *getShaderResolveCompile(ShaderProgramID handle) const;
+    Shader *getShaderNoResolveCompile(ShaderProgramID handle) const;
 
     ANGLE_INLINE bool isTextureGenerated(TextureID texture) const
     {

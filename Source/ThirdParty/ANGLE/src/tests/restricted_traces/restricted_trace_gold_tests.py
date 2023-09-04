@@ -11,6 +11,7 @@
 
 import argparse
 import contextlib
+import hashlib
 import json
 import logging
 import os
@@ -343,11 +344,16 @@ def _get_gtest_filter_for_batch(args, batch):
     return '--gtest_filter=%s' % ':'.join(expanded)
 
 
+def sha256(path):
+    with open(path, 'rb') as f:
+        h = hashlib.sha256()
+        for chunk in iter(lambda: f.read(1024 * 1024), b''):
+            h.update(chunk)
+        return h.hexdigest()
+
+
 def _run_tests(args, tests, extra_flags, env, screenshot_dir, results, test_results):
     keys = get_skia_gold_keys(args, env)
-
-    if angle_test_util.IsAndroid() and args.test_suite == DEFAULT_TEST_SUITE:
-        android_helper.RunSmokeTest()
 
     with temporary_dir('angle_skia_gold_') as skia_gold_temp_dir:
         gold_properties = angle_skia_gold_properties.ANGLESkiaGoldProperties(args)
@@ -359,6 +365,12 @@ def _run_tests(args, tests, extra_flags, env, screenshot_dir, results, test_resu
 
         if args.isolated_script_test_filter:
             traces = angle_test_util.FilterTests(traces, args.isolated_script_test_filter)
+
+        # https://anglebug.com/8307: temporary hash check
+        for trace in traces:
+            angledata = os.path.join(angle_path_util.ANGLE_ROOT_DIR, 'src', 'tests',
+                                     'restricted_traces', trace, trace + '.angledata.gz')
+            logging.info('%s.angledata.gz hash: %s', trace, sha256(angledata))
 
         batches = _get_batches(traces, args.batch_size)
 

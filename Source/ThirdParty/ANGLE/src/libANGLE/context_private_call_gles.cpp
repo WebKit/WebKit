@@ -495,7 +495,10 @@ void ContextPrivateBlendEquation(PrivateState *privateState,
                                  GLenum mode)
 {
     privateState->setBlendEquation(mode, mode);
-    privateStateCache->onBlendEquationChange();
+    if (privateState->getExtensions().blendEquationAdvancedKHR)
+    {
+        privateStateCache->onBlendEquationOrFuncChange();
+    }
 }
 
 void ContextPrivateBlendEquationi(PrivateState *privateState,
@@ -504,7 +507,10 @@ void ContextPrivateBlendEquationi(PrivateState *privateState,
                                   GLenum mode)
 {
     privateState->setBlendEquationIndexed(mode, mode, buf);
-    privateStateCache->onBlendEquationChange();
+    if (privateState->getExtensions().blendEquationAdvancedKHR)
+    {
+        privateStateCache->onBlendEquationOrFuncChange();
+    }
 }
 
 void ContextPrivateBlendEquationSeparate(PrivateState *privateState,
@@ -513,7 +519,10 @@ void ContextPrivateBlendEquationSeparate(PrivateState *privateState,
                                          GLenum modeAlpha)
 {
     privateState->setBlendEquation(modeRGB, modeAlpha);
-    privateStateCache->onBlendEquationChange();
+    if (privateState->getExtensions().blendEquationAdvancedKHR)
+    {
+        privateStateCache->onBlendEquationOrFuncChange();
+    }
 }
 
 void ContextPrivateBlendEquationSeparatei(PrivateState *privateState,
@@ -523,7 +532,10 @@ void ContextPrivateBlendEquationSeparatei(PrivateState *privateState,
                                           GLenum modeAlpha)
 {
     privateState->setBlendEquationIndexed(modeRGB, modeAlpha, buf);
-    privateStateCache->onBlendEquationChange();
+    if (privateState->getExtensions().blendEquationAdvancedKHR)
+    {
+        privateStateCache->onBlendEquationOrFuncChange();
+    }
 }
 
 void ContextPrivateBlendFunc(PrivateState *privateState,
@@ -532,6 +544,10 @@ void ContextPrivateBlendFunc(PrivateState *privateState,
                              GLenum dfactor)
 {
     privateState->setBlendFactors(sfactor, dfactor, sfactor, dfactor);
+    if (privateState->getExtensions().blendFuncExtendedEXT)
+    {
+        privateStateCache->onBlendEquationOrFuncChange();
+    }
 }
 
 void ContextPrivateBlendFunci(PrivateState *privateState,
@@ -541,9 +557,10 @@ void ContextPrivateBlendFunci(PrivateState *privateState,
                               GLenum dst)
 {
     privateState->setBlendFactorsIndexed(src, dst, src, dst, buf);
-    if (privateState->noSimultaneousConstantColorAndAlphaBlendFunc())
+    if (privateState->noSimultaneousConstantColorAndAlphaBlendFunc() ||
+        privateState->getExtensions().blendFuncExtendedEXT)
     {
-        privateStateCache->onBlendFuncIndexedChange();
+        privateStateCache->onBlendEquationOrFuncChange();
     }
 }
 
@@ -555,6 +572,10 @@ void ContextPrivateBlendFuncSeparate(PrivateState *privateState,
                                      GLenum dstAlpha)
 {
     privateState->setBlendFactors(srcRGB, dstRGB, srcAlpha, dstAlpha);
+    if (privateState->getExtensions().blendFuncExtendedEXT)
+    {
+        privateStateCache->onBlendEquationOrFuncChange();
+    }
 }
 
 void ContextPrivateBlendFuncSeparatei(PrivateState *privateState,
@@ -566,9 +587,10 @@ void ContextPrivateBlendFuncSeparatei(PrivateState *privateState,
                                       GLenum dstAlpha)
 {
     privateState->setBlendFactorsIndexed(srcRGB, dstRGB, srcAlpha, dstAlpha, buf);
-    if (privateState->noSimultaneousConstantColorAndAlphaBlendFunc())
+    if (privateState->noSimultaneousConstantColorAndAlphaBlendFunc() ||
+        privateState->getExtensions().blendFuncExtendedEXT)
     {
-        privateStateCache->onBlendFuncIndexedChange();
+        privateStateCache->onBlendEquationOrFuncChange();
     }
 }
 

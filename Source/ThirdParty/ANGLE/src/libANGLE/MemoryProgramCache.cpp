@@ -51,17 +51,6 @@ void WriteProgramAliasedBindings(BinaryOutputStream *stream, const ProgramAliase
     }
 }
 
-void WriteVariableLocations(BinaryOutputStream *stream,
-                            const std::vector<gl::VariableLocation> &locations)
-{
-    for (const auto &loc : locations)
-    {
-        stream->writeInt(loc.index);
-        stream->writeInt(loc.arrayIndex);
-        stream->writeBool(loc.ignored);
-    }
-}
-
 }  // anonymous namespace
 
 MemoryProgramCache::MemoryProgramCache(egl::BlobCache &blobCache) : mBlobCache(blobCache) {}
@@ -100,9 +89,7 @@ void MemoryProgramCache::ComputeHash(const Context *context,
     {
         hashStream.writeString(transformFeedbackVaryingName);
     }
-    hashStream.writeInt(program->getState().getTransformFeedbackBufferMode());
-    WriteVariableLocations(&hashStream, program->getState().getOutputLocations());
-    WriteVariableLocations(&hashStream, program->getState().getSecondaryOutputLocations());
+    hashStream.writeInt(program->getTransformFeedbackBufferMode());
 
     // Include the status of FrameCapture, which adds source strings to the binary
     hashStream.writeBool(context->getShareGroup()->getFrameCaptureShared()->enabled());

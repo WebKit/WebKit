@@ -79,9 +79,6 @@ A basic guide to get up and running fixing bugs and performance issues in ANGLE.
 
 ## Profiling
 
-- You can use `scripts/perf_test_runner.py` to run any target of `./angle_perftests` (see script
-  source for details).
-
 ### With Visual Studio
 
 - In Visual Studio 2017, look under Debug/Profiler/Performance Explorer/New Performance Session.

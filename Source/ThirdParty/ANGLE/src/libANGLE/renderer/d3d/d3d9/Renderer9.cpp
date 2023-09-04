@@ -31,6 +31,7 @@
 #include "libANGLE/renderer/d3d/FramebufferD3D.h"
 #include "libANGLE/renderer/d3d/IndexDataManager.h"
 #include "libANGLE/renderer/d3d/ProgramD3D.h"
+#include "libANGLE/renderer/d3d/ProgramExecutableD3D.h"
 #include "libANGLE/renderer/d3d/RenderbufferD3D.h"
 #include "libANGLE/renderer/d3d/ShaderD3D.h"
 #include "libANGLE/renderer/d3d/SurfaceD3D.h"
@@ -1398,7 +1399,7 @@ angle::Result Renderer9::applyVertexBuffer(const gl::Context *context,
                                                     instances));
 
     return mVertexDeclarationCache.applyDeclaration(context, mDevice, mTranslatedAttribCache,
-                                                    state.getProgram(), first, instances,
+                                                    state.getProgramExecutable(), first, instances,
                                                     &mRepeatDraw);
 }
 
@@ -1786,24 +1787,28 @@ angle::Result Renderer9::getCountingIB(const gl::Context *context,
 
 angle::Result Renderer9::applyShaders(const gl::Context *context, gl::PrimitiveMode drawMode)
 {
-    const gl::State &state   = context->getState();
-    d3d::Context *contextD3D = GetImplAs<ContextD3D>(context);
+    const gl::State &state = context->getState();
+    Context9 *context9     = GetImplAs<Context9>(context);
+    RendererD3D *renderer  = context9->getRenderer();
 
     // This method is called single-threaded.
-    ANGLE_TRY(ensureHLSLCompilerInitialized(contextD3D));
+    ANGLE_TRY(ensureHLSLCompilerInitialized(context9));
 
-    ProgramD3D *programD3D = GetImplAs<ProgramD3D>(state.getProgram());
-    VertexArray9 *vao      = GetImplAs<VertexArray9>(state.getVertexArray());
-    programD3D->updateCachedInputLayout(vao->getCurrentStateSerial(), state);
+    ProgramExecutableD3D *executableD3D =
+        GetImplAs<ProgramExecutableD3D>(state.getProgramExecutable());
+    VertexArray9 *vao = GetImplAs<VertexArray9>(state.getVertexArray());
+    executableD3D->updateCachedInputLayout(renderer, vao->getCurrentStateSerial(), state);
 
     ShaderExecutableD3D *vertexExe = nullptr;
-    ANGLE_TRY(programD3D->getVertexExecutableForCachedInputLayout(contextD3D, &vertexExe, nullptr));
+    ANGLE_TRY(executableD3D->getVertexExecutableForCachedInputLayout(context9, renderer, &vertexExe,
+                                                                     nullptr));
 
     const gl::Framebuffer *drawFramebuffer = state.getDrawFramebuffer();
-    programD3D->updateCachedOutputLayout(context, drawFramebuffer);
+    executableD3D->updateCachedOutputLayout(context, drawFramebuffer);
 
     ShaderExecutableD3D *pixelExe = nullptr;
-    ANGLE_TRY(programD3D->getPixelExecutableForCachedOutputLayout(contextD3D, &pixelExe, nullptr));
+    ANGLE_TRY(executableD3D->getPixelExecutableForCachedOutputLayout(context9, renderer, &pixelExe,
+                                                                     nullptr));
 
     IDirect3DVertexShader9 *vertexShader =
         (vertexExe ? GetAs<ShaderExecutable9>(vertexExe)->getVertexShader() : nullptr);
@@ -1827,15 +1832,15 @@ angle::Result Renderer9::applyShaders(const gl::Context *context, gl::PrimitiveM
     // per-program, checking the program serial guarantees we upload fresh
     // uniform data even if our shader pointers are the same.
     // https://code.google.com/p/angleproject/issues/detail?id=661
-    unsigned int programSerial = programD3D->getSerial();
+    unsigned int programSerial = GetImplAs<ProgramD3D>(state.getProgram())->getSerial();
     if (programSerial != mAppliedProgramSerial)
     {
-        programD3D->dirtyAllUniforms();
+        executableD3D->dirtyAllUniforms();
         mStateManager.forceSetDXUniformsState();
         mAppliedProgramSerial = programSerial;
     }
 
-    applyUniforms(programD3D);
+    applyUniforms(executableD3D);
 
     // Driver uniforms
     mStateManager.setShaderConstants();
@@ -1843,15 +1848,15 @@ angle::Result Renderer9::applyShaders(const gl::Context *context, gl::PrimitiveM
     return angle::Result::Continue;
 }
 
-void Renderer9::applyUniforms(ProgramD3D *programD3D)
+void Renderer9::applyUniforms(ProgramExecutableD3D *executableD3D)
 {
     // Skip updates if we're not dirty. Note that D3D9 cannot have compute or geometry.
-    if (!programD3D->anyShaderUniformsDirty())
+    if (!executableD3D->anyShaderUniformsDirty())
     {
         return;
     }
 
-    const auto &uniformArray = programD3D->getD3DUniforms();
+    const auto &uniformArray = executableD3D->getD3DUniforms();
 
     for (const D3DUniform *targetUniform : uniformArray)
     {
@@ -1896,7 +1901,7 @@ void Renderer9::applyUniforms(ProgramD3D *programD3D)
         }
     }
 
-    programD3D->markUniformsClean();
+    executableD3D->markUniformsClean();
 }
 
 void Renderer9::applyUniformnfv(const D3DUniform *targetUniform, const GLfloat *v)
@@ -3099,11 +3104,11 @@ void Renderer9::generateCaps(gl::Caps *outCaps,
 
 void Renderer9::initializeFeatures(angle::FeaturesD3D *features) const
 {
+    ApplyFeatureOverrides(features, mDisplay->getState());
     if (!mDisplay->getState().featuresAllDisabled)
     {
         d3d9::InitializeFeatures(features, mAdapterIdentifier.VendorId);
     }
-    ApplyFeatureOverrides(features, mDisplay->getState());
 }
 
 void Renderer9::initializeFrontendFeatures(angle::FrontendFeatures *features) const {}
@@ -3125,12 +3130,15 @@ angle::Result Renderer9::genericDrawElements(const gl::Context *context,
                                              GLsizei instances)
 {
     const gl::State &state = context->getState();
-    gl::Program *program   = context->getState().getProgram();
-    ASSERT(program != nullptr);
-    ProgramD3D *programD3D = GetImplAs<ProgramD3D>(program);
-    bool usesPointSize     = programD3D->usesPointSize();
+    ProgramExecutableD3D *executableD3D =
+        GetImplAs<ProgramExecutableD3D>(state.getProgramExecutable());
+    ASSERT(executableD3D != nullptr);
+    bool usesPointSize = executableD3D->usesPointSize();
 
-    programD3D->updateSamplerMapping();
+    if (executableD3D->isSamplerMappingDirty())
+    {
+        executableD3D->updateSamplerMapping();
+    }
 
     if (!applyPrimitiveType(mode, count, usesPointSize))
     {
@@ -3155,12 +3163,16 @@ angle::Result Renderer9::genericDrawArrays(const gl::Context *context,
                                            GLsizei count,
                                            GLsizei instances)
 {
-    gl::Program *program = context->getState().getProgram();
-    ASSERT(program != nullptr);
-    ProgramD3D *programD3D = GetImplAs<ProgramD3D>(program);
-    bool usesPointSize     = programD3D->usesPointSize();
+    const gl::State &state = context->getState();
+    ProgramExecutableD3D *executableD3D =
+        GetImplAs<ProgramExecutableD3D>(state.getProgramExecutable());
+    ASSERT(executableD3D != nullptr);
+    bool usesPointSize = executableD3D->usesPointSize();
 
-    programD3D->updateSamplerMapping();
+    if (executableD3D->isSamplerMappingDirty())
+    {
+        executableD3D->updateSamplerMapping();
+    }
 
     if (!applyPrimitiveType(mode, count, usesPointSize))
     {
@@ -3261,20 +3273,21 @@ bool Renderer9::canSelectViewInVertexShader() const
 // Sampler mapping needs to be up-to-date on the program object before this is called.
 angle::Result Renderer9::applyTextures(const gl::Context *context, gl::ShaderType shaderType)
 {
-    const auto &glState    = context->getState();
-    const auto &caps       = context->getCaps();
-    ProgramD3D *programD3D = GetImplAs<ProgramD3D>(glState.getProgram());
+    const auto &glState = context->getState();
+    const auto &caps    = context->getCaps();
+    ProgramExecutableD3D *executableD3D =
+        GetImplAs<ProgramExecutableD3D>(glState.getProgramExecutable());
 
-    ASSERT(!programD3D->isSamplerMappingDirty());
+    ASSERT(!executableD3D->isSamplerMappingDirty());
 
     // TODO(jmadill): Use the Program's sampler bindings.
     const gl::ActiveTexturesCache &activeTextures = glState.getActiveTexturesCache();
 
-    const gl::RangeUI samplerRange = programD3D->getUsedSamplerRange(shaderType);
+    const gl::RangeUI samplerRange = executableD3D->getUsedSamplerRange(shaderType);
     for (unsigned int samplerIndex = samplerRange.low(); samplerIndex < samplerRange.high();
          samplerIndex++)
     {
-        GLint textureUnit = programD3D->getSamplerMapping(shaderType, samplerIndex, caps);
+        GLint textureUnit = executableD3D->getSamplerMapping(shaderType, samplerIndex, caps);
         ASSERT(textureUnit != -1);
         gl::Texture *texture = activeTextures[textureUnit];
 
@@ -3292,7 +3305,7 @@ angle::Result Renderer9::applyTextures(const gl::Context *context, gl::ShaderTyp
         else
         {
             gl::TextureType textureType =
-                programD3D->getSamplerTextureType(shaderType, samplerIndex);
+                executableD3D->getSamplerTextureType(shaderType, samplerIndex);
 
             // Texture is not sampler complete or it is in use by the framebuffer.  Bind the
             // incomplete texture.

@@ -11,11 +11,11 @@
 
 #include <map>
 
-#include "compiler/translator/msl/TranslatorMSL.h"
 #include "libANGLE/renderer/ShaderImpl.h"
+#include "libANGLE/renderer/metal/mtl_msl_utils.h"
+
 namespace rx
 {
-
 class ShaderMtl : public ShaderImpl
 {
   public:
@@ -26,20 +26,17 @@ class ShaderMtl : public ShaderImpl
                                                   gl::ShCompilerInstance *compilerInstance,
                                                   ShCompileOptions *options) override;
 
-    sh::TranslatorMetalReflection *getTranslatorMetalReflection()
-    {
-        return &translatorMetalReflection;
-    }
+    const SharedCompiledShaderStateMtl &getCompiledState() const { return mCompiledState; }
 
     std::string getDebugInfo() const override;
-
-    sh::TranslatorMetalReflection translatorMetalReflection = {};
 
   private:
     std::shared_ptr<WaitableCompileEvent> compileImplMtl(const gl::Context *context,
                                                          gl::ShCompilerInstance *compilerInstance,
                                                          const std::string &source,
                                                          ShCompileOptions *compileOptions);
+
+    SharedCompiledShaderStateMtl mCompiledState;
 };
 
 }  // namespace rx

@@ -18,16 +18,6 @@
 namespace sh
 {
 
-// A convenience view of a TIntermDeclaration node's children.
-struct Declaration
-{
-    TIntermSymbol &symbol;
-    TIntermTyped *initExpr;  // Non-null iff declaration is initialized.
-};
-
-// Returns a `Declaration` view of the given node.
-Declaration ViewDeclaration(TIntermDeclaration &declNode);
-
 // Creates a variable for a struct type.
 const TVariable &CreateStructTypeVariable(TSymbolTable &symbolTable, const TStructure &structure);
 

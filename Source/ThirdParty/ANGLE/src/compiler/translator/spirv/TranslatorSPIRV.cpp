@@ -1378,7 +1378,8 @@ void TranslatorSPIRV::assignSpirvIds(TIntermBlock *root)
             // webgl_FragColor, webgl_FragData, webgl_SecondaryFragColor and webgl_SecondaryFragData
             // are recorded with their original names (starting with gl_)
             ImmutableString name(symbol->getName());
-            if (angle::BeginsWith(name.data(), "webgl_"))
+            if (angle::BeginsWith(name.data(), "webgl_") &&
+                symbol->variable().symbolType() == SymbolType::AngleInternal)
             {
                 name = ImmutableString(name.data() + 3, name.length() - 3);
             }

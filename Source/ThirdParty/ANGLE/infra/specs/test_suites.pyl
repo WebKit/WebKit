@@ -1170,20 +1170,6 @@
       },
     },
 
-    'swangle_end2end_slow_flaky_tests': {
-      'angle_end2end_tests': {
-        'args': [
-          '--gtest_filter=*Vulkan_SwiftShader*',
-          # Flaky retries enabled on ASAN/TSAN. http://anglebug.com/7772
-          '--flaky-retries=2',
-        ],
-        'use_isolated_scripts_api': True,
-        'swarming': {
-          'shards': 6,
-        },
-      },
-    },
-
     'swangle_end2end_slow_tests': {
       'angle_end2end_tests': {
         'args': [
@@ -1202,6 +1188,20 @@
           '--gtest_filter=*Vulkan_SwiftShader*',
         ],
         'use_isolated_scripts_api': True,
+      },
+    },
+
+    'swangle_end2end_very_slow_flaky_tests': {
+      'angle_end2end_tests': {
+        'args': [
+          '--gtest_filter=*Vulkan_SwiftShader*',
+          # Flaky retries enabled on ASAN/TSAN. http://anglebug.com/7772
+          '--flaky-retries=2',
+        ],
+        'use_isolated_scripts_api': True,
+        'swarming': {
+          'shards': 10,
+        },
       },
     },
 
@@ -1332,11 +1332,10 @@
       'angle_unit_gtests',
     ],
 
-    # Temporarily disabled for upgrade crbug.com/1456549
-    # 'mac_nvidia_gtests': [
-    #   'angle_end2end_with_retry_gtests',
-    #   'angle_unit_gtests',
-    # ],
+    'mac_nvidia_gtests': [
+      'angle_end2end_with_retry_gtests',
+      'angle_unit_gtests',
+    ],
 
     'swangle_gtests': [
       'swangle_deqp_egl_tests',
@@ -1361,7 +1360,7 @@
     ],
 
     'swangle_non_deqp_slow_flaky_gtests': [
-      'swangle_end2end_slow_flaky_tests',
+      'swangle_end2end_very_slow_flaky_tests',
       'swangle_white_box_tests',
     ],
 
@@ -1375,7 +1374,7 @@
       'swangle_deqp_khr_noctx_gles2_tests',
       'swangle_deqp_khr_noctx_gles32_tests',
       'swangle_deqp_khr_single_gles32_tests',
-      'swangle_end2end_tests',
+      'swangle_end2end_slow_tests',
       'swangle_white_box_tests',
     ],
 

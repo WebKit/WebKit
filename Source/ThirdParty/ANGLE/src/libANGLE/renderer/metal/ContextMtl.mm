@@ -23,6 +23,7 @@
 #include "libANGLE/renderer/metal/CompilerMtl.h"
 #include "libANGLE/renderer/metal/DisplayMtl.h"
 #include "libANGLE/renderer/metal/FrameBufferMtl.h"
+#include "libANGLE/renderer/metal/ProgramExecutableMtl.h"
 #include "libANGLE/renderer/metal/ProgramMtl.h"
 #include "libANGLE/renderer/metal/QueryMtl.h"
 #include "libANGLE/renderer/metal/RenderBufferMtl.h"
@@ -1300,7 +1301,8 @@ angle::Result ContextMtl::syncState(const gl::Context *context,
             case gl::state::DIRTY_BIT_DISPATCH_INDIRECT_BUFFER_BINDING:
                 break;
             case gl::state::DIRTY_BIT_PROGRAM_BINDING:
-                mProgram = mtl::GetImpl(glState.getProgram());
+                mProgram    = mtl::GetImpl(glState.getProgram());
+                mExecutable = mProgram->getExecutable();
                 break;
             case gl::state::DIRTY_BIT_PROGRAM_EXECUTABLE:
                 updateProgramExecutable(context);
@@ -1469,6 +1471,11 @@ ShaderImpl *ContextMtl::createShader(const gl::ShaderState &state)
 ProgramImpl *ContextMtl::createProgram(const gl::ProgramState &state)
 {
     return new ProgramMtl(state);
+}
+
+ProgramExecutableImpl *ContextMtl::createProgramExecutable(const gl::ProgramExecutable *executable)
+{
+    return new ProgramExecutableMtl(executable);
 }
 
 // Framebuffer creation
@@ -1761,10 +1768,10 @@ const mtl::FormatCaps &ContextMtl::getNativeFormatCaps(MTLPixelFormat mtlFormat)
 
 angle::Result ContextMtl::getIncompleteTexture(const gl::Context *context,
                                                gl::TextureType type,
+                                               gl::SamplerFormat format,
                                                gl::Texture **textureOut)
 {
-    return mIncompleteTextures.getIncompleteTexture(context, type, gl::SamplerFormat::Float,
-                                                    nullptr, textureOut);
+    return mIncompleteTextures.getIncompleteTexture(context, type, format, nullptr, textureOut);
 }
 
 void ContextMtl::endRenderEncoding(mtl::RenderCommandEncoder *encoder)
@@ -2193,7 +2200,7 @@ void ContextMtl::updateFrontFace(const gl::State &glState)
 // PrimitiveMode is not POINTS.
 bool ContextMtl::requiresIndexRewrite(const gl::State &state, gl::PrimitiveMode mode)
 {
-    return mode != gl::PrimitiveMode::Points && mProgram->hasFlatAttribute() &&
+    return mode != gl::PrimitiveMode::Points && mExecutable->hasFlatAttribute() &&
            (state.getProvokingVertex() == gl::ProvokingVertexConvention::LastVertexConvention);
 }
 
@@ -2496,7 +2503,7 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
                                         bool xfbPass,
                                         bool *isNoOp)
 {
-    ASSERT(mProgram);
+    ASSERT(mExecutable);
     *isNoOp = false;
     // instances=0 means no instanced draw.
     GLsizei instanceCount = instances ? instances : 1;

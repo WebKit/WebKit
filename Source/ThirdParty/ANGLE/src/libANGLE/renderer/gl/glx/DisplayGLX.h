@@ -21,7 +21,6 @@ namespace rx
 {
 
 class FunctionsGLX;
-class WorkerContext;
 
 struct SwapControlData;
 
@@ -91,8 +90,6 @@ class DisplayGLX : public DisplayGL
     bool isWindowVisualIdSpecified() const;
     bool isMatchingWindowVisualId(unsigned long visualId) const;
 
-    WorkerContext *createWorkerContext(std::string *infoLog);
-
     void initializeFrontendFeatures(angle::FrontendFeatures *features) const override;
 
     void populateFeatureList(angle::FeatureList *features) override;
@@ -115,7 +112,7 @@ class DisplayGLX : public DisplayGL
     egl::Error createContextAttribs(glx::FBConfig,
                                     const Optional<gl::Version> &version,
                                     int profileMask,
-                                    glx::Context *context);
+                                    glx::Context *context) const;
 
     std::shared_ptr<RendererGL> mRenderer;
 
@@ -123,16 +120,11 @@ class DisplayGLX : public DisplayGL
 
     EGLint mRequestedVisual;
     glx::FBConfig mContextConfig;
-    std::vector<int> mAttribs;
-    XVisualInfo *mVisuals;
     glx::Context mContext;
-    glx::Context mSharedContext;
     angle::HashMap<uint64_t, glx::Context> mCurrentNativeContexts;
 
     // A pbuffer the context is current on during ANGLE initialization
     glx::Pbuffer mInitPbuffer;
-
-    std::vector<glx::Pbuffer> mWorkerPbufferPool;
 
     bool mUsesNewXDisplay;
     bool mIsMesa;

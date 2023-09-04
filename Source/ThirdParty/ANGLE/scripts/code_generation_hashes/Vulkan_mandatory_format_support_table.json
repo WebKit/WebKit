@@ -4,11 +4,11 @@
   "src/libANGLE/renderer/vulkan/gen_vk_mandatory_format_support_table.py":
     "ffb3d44c853669c2c260b96b3808fcf3",
   "src/libANGLE/renderer/vulkan/vk_format_map.json":
-    "3828950da790bd3841d085effb235fdf",
+    "e6347f078d5ed2a225ba3834cd85778d",
   "src/libANGLE/renderer/vulkan/vk_mandatory_format_support_data.json":
     "fa2bd54c1bb0ab2cf1d386061a4bc5c5",
   "src/libANGLE/renderer/vulkan/vk_mandatory_format_support_table_autogen.cpp":
     "a726ee791eb4964c406f3921d9b73346",
   "third_party/vulkan-deps/vulkan-headers/src/registry/vk.xml":
-    "b458b25b4af0d29133bd49c6a936be5a"
+    "17357a738ff51a7b47c6f7e5b2bfe78e"
 }

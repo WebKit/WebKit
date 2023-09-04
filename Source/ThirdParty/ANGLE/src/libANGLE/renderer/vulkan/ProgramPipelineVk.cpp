@@ -26,7 +26,7 @@ void ProgramPipelineVk::destroy(const gl::Context *context)
 
 void ProgramPipelineVk::reset(ContextVk *contextVk)
 {
-    mExecutable.reset(contextVk);
+    getExecutable()->reset(contextVk);
 }
 
 angle::Result ProgramPipelineVk::link(const gl::Context *glContext,
@@ -35,12 +35,12 @@ angle::Result ProgramPipelineVk::link(const gl::Context *glContext,
 {
     ContextVk *contextVk                      = vk::GetImpl(glContext);
     const gl::ProgramExecutable &glExecutable = mState.getExecutable();
+    ProgramExecutableVk *executableVk         = vk::GetImpl(&glExecutable);
     SpvSourceOptions options                  = SpvCreateSourceOptions(contextVk->getFeatures());
-    SpvProgramInterfaceInfo spvProgramInterfaceInfo;
-    spvProgramInterfaceInfo = {};
+    SpvProgramInterfaceInfo spvProgramInterfaceInfo = {};
 
     reset(contextVk);
-    mExecutable.clearVariableInfoMap();
+    executableVk->clearVariableInfoMap();
 
     // Now that the program pipeline has all of the programs attached, the various descriptor
     // set/binding locations need to be re-assigned to their correct values.
@@ -62,39 +62,51 @@ angle::Result ProgramPipelineVk::link(const gl::Context *glContext,
 
                 SpvAssignTransformFeedbackLocations(
                     shaderType, glProgram->getExecutable(), isTransformFeedbackStage,
-                    &spvProgramInterfaceInfo, &mExecutable.mVariableInfoMap);
+                    &spvProgramInterfaceInfo, &executableVk->mVariableInfoMap);
             }
         }
     }
 
-    mExecutable.mOriginalShaderInfo.clear();
+    executableVk->mOriginalShaderInfo.clear();
 
     SpvAssignLocations(options, glExecutable, varyingPacking, linkedTransformFeedbackStage,
-                       &spvProgramInterfaceInfo, &mExecutable.mVariableInfoMap);
+                       &spvProgramInterfaceInfo, &executableVk->mVariableInfoMap);
 
     for (const gl::ShaderType shaderType : glExecutable.getLinkedShaderStages())
     {
         const gl::Program *program               = mState.getShaderProgram(shaderType);
         ProgramVk *programVk                     = vk::GetImpl(program);
-        ProgramExecutableVk &programExecutableVk = programVk->getExecutable();
-        mExecutable.mDefaultUniformBlocks[shaderType] =
-            programExecutableVk.getSharedDefaultUniformBlock(shaderType);
+        ProgramExecutableVk *programExecutableVk = programVk->getExecutable();
+        executableVk->mDefaultUniformBlocks[shaderType] =
+            programExecutableVk->getSharedDefaultUniformBlock(shaderType);
 
-        mExecutable.mOriginalShaderInfo.initShaderFromProgram(
-            shaderType, programExecutableVk.mOriginalShaderInfo);
+        executableVk->mOriginalShaderInfo.initShaderFromProgram(
+            shaderType, programExecutableVk->mOriginalShaderInfo);
     }
 
-    mExecutable.setAllDefaultUniformsDirty(glExecutable);
+    executableVk->setAllDefaultUniformsDirty();
 
     if (contextVk->getFeatures().varyingsRequireMatchingPrecisionInSpirv.enabled &&
         contextVk->getFeatures().enablePrecisionQualifiers.enabled)
     {
-        mExecutable.resolvePrecisionMismatch(mergedVaryings);
+        executableVk->resolvePrecisionMismatch(mergedVaryings);
     }
 
-    ANGLE_TRY(mExecutable.createPipelineLayout(contextVk, mState.getExecutable(), nullptr));
+    executableVk->resetLayout(contextVk);
+    ANGLE_TRY(executableVk->createPipelineLayout(contextVk, &contextVk->getPipelineLayoutCache(),
+                                                 &contextVk->getDescriptorSetLayoutCache(),
+                                                 nullptr));
+    ANGLE_TRY(executableVk->initializeDescriptorPools(contextVk,
+                                                      &contextVk->getDescriptorSetLayoutCache(),
+                                                      &contextVk->getMetaDescriptorPools()));
 
-    return mExecutable.warmUpPipelineCache(contextVk, mState.getExecutable());
+    vk::RenderPass temporaryCompatibleRenderPass;
+    angle::Result result = executableVk->warmUpPipelineCache(
+        contextVk, contextVk->pipelineRobustness(), contextVk->pipelineProtectedAccess(),
+        &temporaryCompatibleRenderPass);
+
+    temporaryCompatibleRenderPass.destroy(contextVk->getDevice());
+    return result;
 }  // namespace rx
 
 angle::Result ProgramPipelineVk::syncState(const gl::Context *context,
@@ -102,12 +114,12 @@ angle::Result ProgramPipelineVk::syncState(const gl::Context *context,
 {
     ASSERT(dirtyBits.any());
     // Push dirty bits to executable so that they can be used later.
-    mExecutable.mDirtyBits |= dirtyBits;
+    getExecutable()->mDirtyBits |= dirtyBits;
     return angle::Result::Continue;
 }
 
 void ProgramPipelineVk::onProgramUniformUpdate(gl::ShaderType shaderType)
 {
-    mExecutable.mDefaultUniformBlocksDirty.set(shaderType);
+    getExecutable()->mDefaultUniformBlocksDirty.set(shaderType);
 }
 }  // namespace rx

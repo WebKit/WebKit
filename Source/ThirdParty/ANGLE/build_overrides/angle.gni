@@ -11,7 +11,7 @@ angle_has_build = true
 # Declares the maximum supported VulkanMemoryAllocator version by the client
 # in format AAABBBCCC, where AAA = major, BBB = minor, CCC = patch.
 # The VulkanMemoryAllocator version may be found in its CHANGELOG.md.
-angle_vma_version = 2003000
+angle_vma_version = 3000000
 
 # Overrides for ANGLE's dependencies
 angle_abseil_cpp_dir = "//third_party/abseil-cpp"

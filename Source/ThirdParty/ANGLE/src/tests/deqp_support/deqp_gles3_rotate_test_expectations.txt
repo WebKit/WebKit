@@ -7,4 +7,4 @@
 // Only tested on Vulkan currently
 
 // Flat shading (still failing March 16, 2022):
-3430 VULKAN : dEQP-GLES3.functional.rasterization.flatshading.* = FAIL
+3430 VULKAN NVIDIA : dEQP-GLES3.functional.rasterization.flatshading.* = FAIL

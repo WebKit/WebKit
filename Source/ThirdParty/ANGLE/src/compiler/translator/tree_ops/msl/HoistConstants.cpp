@@ -5,11 +5,11 @@
 //
 
 #include "compiler/translator/tree_ops/msl/HoistConstants.h"
-#include "compiler/translator/msl/AstHelpers.h"
 #include "compiler/translator/msl/IntermRebuild.h"
 #include "compiler/translator/msl/Layout.h"
 #include "compiler/translator/tree_util/FindFunction.h"
 #include "compiler/translator/tree_util/ReplaceVariable.h"
+#include "compiler/translator/util.h"
 
 using namespace sh;
 

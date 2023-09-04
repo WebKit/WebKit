@@ -15,6 +15,7 @@
 
 #include <array>
 #include <map>
+#include <memory>
 #include <set>
 #include <sstream>
 #include <string>
@@ -102,14 +103,11 @@ void LogLinkMismatch(InfoLog &infoLog,
 
 bool IsActiveInterfaceBlock(const sh::InterfaceBlock &interfaceBlock);
 
+void WriteActiveVariable(BinaryOutputStream *stream, const ActiveVariable &var);
+void LoadActiveVariable(BinaryInputStream *stream, ActiveVariable *var);
+
 void WriteBlockMemberInfo(BinaryOutputStream *stream, const sh::BlockMemberInfo &var);
 void LoadBlockMemberInfo(BinaryInputStream *stream, sh::BlockMemberInfo *var);
-
-void WriteInterfaceBlock(BinaryOutputStream *stream, const InterfaceBlock &block);
-void LoadInterfaceBlock(BinaryInputStream *stream, InterfaceBlock *block);
-
-void WriteShaderVariableBuffer(BinaryOutputStream *stream, const ShaderVariableBuffer &var);
-void LoadShaderVariableBuffer(BinaryInputStream *stream, ShaderVariableBuffer *var);
 
 // Struct used for correlating uniforms/elements of uniform arrays to handles
 struct VariableLocation
@@ -217,21 +215,21 @@ class ProgramAliasedBindings final : angle::NonCopyable
 class ProgramState final : angle::NonCopyable
 {
   public:
-    ProgramState();
+    ProgramState(rx::GLImplFactory *factory);
     ~ProgramState();
 
     const std::string &getLabel();
 
-    Shader *getAttachedShader(ShaderType shaderType) const;
-    const gl::ShaderMap<Shader *> &getAttachedShaders() const { return mAttachedShaders; }
+    SharedCompiledShaderState getAttachedShader(ShaderType shaderType) const;
+    const ShaderMap<SharedCompiledShaderState> &getAttachedShaders() const
+    {
+        return mAttachedShaders;
+    }
     const std::vector<std::string> &getTransformFeedbackVaryingNames() const
     {
         return mTransformFeedbackVaryingNames;
     }
-    GLint getTransformFeedbackBufferMode() const
-    {
-        return mExecutable->getTransformFeedbackBufferMode();
-    }
+    GLint getTransformFeedbackBufferMode() const { return mTransformFeedbackBufferMode; }
     GLuint getUniformBlockBinding(GLuint uniformBlockIndex) const
     {
         return mExecutable->getUniformBlockBinding(uniformBlockIndex);
@@ -244,7 +242,7 @@ class ProgramState final : angle::NonCopyable
     {
         return mExecutable->getActiveUniformBlockBindings();
     }
-    const std::vector<sh::ShaderVariable> &getProgramInputs() const
+    const std::vector<ProgramInput> &getProgramInputs() const
     {
         return mExecutable->getProgramInputs();
     }
@@ -261,7 +259,18 @@ class ProgramState final : angle::NonCopyable
         return mExecutable->getSecondaryOutputLocations();
     }
     const std::vector<LinkedUniform> &getUniforms() const { return mExecutable->getUniforms(); }
-    const std::vector<VariableLocation> &getUniformLocations() const { return mUniformLocations; }
+    const std::vector<std::string> &getUniformNames() const
+    {
+        return mExecutable->getUniformNames();
+    }
+    const std::vector<std::string> &getUniformMappedNames() const
+    {
+        return mExecutable->getUniformMappedNames();
+    }
+    const std::vector<VariableLocation> &getUniformLocations() const
+    {
+        return mExecutable->getUniformLocations();
+    }
     const std::vector<InterfaceBlock> &getUniformBlocks() const
     {
         return mExecutable->getUniformBlocks();
@@ -270,16 +279,26 @@ class ProgramState final : angle::NonCopyable
     {
         return mExecutable->getShaderStorageBlocks();
     }
-    const std::vector<BufferVariable> &getBufferVariables() const { return mBufferVariables; }
+    const std::vector<BufferVariable> &getBufferVariables() const
+    {
+        return mExecutable->getBufferVariables();
+    }
     const std::vector<SamplerBinding> &getSamplerBindings() const
     {
         return mExecutable->getSamplerBindings();
+    }
+    const std::vector<GLuint> &getSamplerBoundTextureUnits() const
+    {
+        return mExecutable->getSamplerBoundTextureUnits();
     }
     const std::vector<ImageBinding> &getImageBindings() const
     {
         return getExecutable().getImageBindings();
     }
-    const sh::WorkGroupSize &getComputeShaderLocalSize() const { return mComputeShaderLocalSize; }
+    const sh::WorkGroupSize &getComputeShaderLocalSize() const
+    {
+        return mExecutable->getComputeShaderLocalSize();
+    }
     const RangeUI &getDefaultUniformRange() const { return mExecutable->getDefaultUniformRange(); }
     const RangeUI &getSamplerUniformRange() const { return mExecutable->getSamplerUniformRange(); }
     const RangeUI &getImageUniformRange() const { return mExecutable->getImageUniformRange(); }
@@ -310,21 +329,33 @@ class ProgramState final : angle::NonCopyable
     GLuint getUniformIndexFromSamplerIndex(GLuint samplerIndex) const;
     bool isImageUniformIndex(GLuint index) const;
     GLuint getImageIndexFromUniformIndex(GLuint uniformIndex) const;
-    GLuint getAttributeLocation(const std::string &name) const;
+    GLuint getAttributeLocation(const std::string &name) const
+    {
+        return mExecutable->getAttributeLocation(name);
+    }
 
     GLuint getBufferVariableIndexFromName(const std::string &name) const;
 
-    int getNumViews() const { return mNumViews; }
-    bool usesMultiview() const { return mNumViews != -1; }
+    int getNumViews() const { return mExecutable->getNumViews(); }
+    bool usesMultiview() const { return mExecutable->usesMultiview(); }
 
-    bool hasAttachedShader() const;
+    bool hasAnyAttachedShader() const;
 
     ShaderType getFirstAttachedShaderStageType() const;
     ShaderType getLastAttachedShaderStageType() const;
 
+    const ProgramBindings &getAttributeBindings() const { return mAttributeBindings; }
     const ProgramAliasedBindings &getUniformLocationBindings() const
     {
         return mUniformLocationBindings;
+    }
+    const ProgramAliasedBindings &getFragmentOutputLocations() const
+    {
+        return mFragmentOutputLocations;
+    }
+    const ProgramAliasedBindings &getFragmentOutputIndexes() const
+    {
+        return mFragmentOutputIndexes;
     }
 
     const ProgramExecutable &getExecutable() const
@@ -339,7 +370,10 @@ class ProgramState final : angle::NonCopyable
     }
 
     bool hasImages() const { return !getImageBindings().empty(); }
-    rx::SpecConstUsageBits getSpecConstUsageBits() const { return mSpecConstUsageBits; }
+    rx::SpecConstUsageBits getSpecConstUsageBits() const
+    {
+        return mExecutable->getSpecConstUsageBits();
+    }
 
     // A Program can only either be graphics or compute, but never both, so it
     // can answer isCompute() based on which shaders it has.
@@ -347,17 +381,14 @@ class ProgramState final : angle::NonCopyable
 
     const std::string &getLabel() const { return mLabel; }
 
-    uint32_t getLocationsUsedForXfbExtension() const { return mLocationsUsedForXfbExtension; }
-
     bool hasBinaryRetrieveableHint() const { return mBinaryRetrieveableHint; }
 
     bool isSeparable() const { return mSeparable; }
 
-    int getDrawIDLocation() const { return mDrawIDLocation; }
+    int getDrawIDLocation() const { return mExecutable->getDrawIDLocation(); }
 
-    int getBaseVertexLocation() const { return mBaseVertexLocation; }
-
-    int getBaseInstanceLocation() const { return mBaseInstanceLocation; }
+    int getBaseVertexLocation() const { return mExecutable->getBaseVertexLocation(); }
+    int getBaseInstanceLocation() const { return mExecutable->getBaseInstanceLocation(); }
 
     ShaderType getAttachedTransformFeedbackStage() const;
 
@@ -366,47 +397,42 @@ class ProgramState final : angle::NonCopyable
     friend class Program;
 
     void updateActiveSamplers();
-    void updateProgramInterfaceInputs(const Context *context);
-    void updateProgramInterfaceOutputs(const Context *context);
+    void updateProgramInterfaceInputs();
+    void updateProgramInterfaceOutputs();
 
     // Scans the sampler bindings for type conflicts with sampler 'textureUnitIndex'.
     void setSamplerUniformTextureTypeAndFormat(size_t textureUnitIndex);
 
     std::string mLabel;
 
-    sh::WorkGroupSize mComputeShaderLocalSize;
+    ShaderMap<SharedCompiledShaderState> mAttachedShaders;
 
-    ShaderMap<Shader *> mAttachedShaders;
-
-    uint32_t mLocationsUsedForXfbExtension;
     std::vector<std::string> mTransformFeedbackVaryingNames;
-
-    std::vector<VariableLocation> mUniformLocations;
-    std::vector<BufferVariable> mBufferVariables;
+    GLenum mTransformFeedbackBufferMode;
 
     bool mBinaryRetrieveableHint;
     bool mSeparable;
-    rx::SpecConstUsageBits mSpecConstUsageBits;
 
-    // GL_OVR_multiview / GL_OVR_multiview2
-    int mNumViews;
-
-    // GL_ANGLE_multi_draw
-    int mDrawIDLocation;
-
-    // GL_ANGLE_base_vertex_base_instance_shader_builtin
-    int mBaseVertexLocation;
-    int mBaseInstanceLocation;
     // Cached value of base vertex and base instance
     // need to reset them to zero if using non base vertex or base instance draw calls.
     GLint mCachedBaseVertex;
     GLuint mCachedBaseInstance;
 
+    ProgramBindings mAttributeBindings;
+
     // Note that this has nothing to do with binding layout qualifiers that can be set for some
     // uniforms in GLES3.1+. It is used to pre-set the location of uniforms.
     ProgramAliasedBindings mUniformLocationBindings;
 
-    std::shared_ptr<ProgramExecutable> mExecutable;
+    // EXT_blend_func_extended
+    ProgramAliasedBindings mFragmentOutputLocations;
+    ProgramAliasedBindings mFragmentOutputIndexes;
+
+    InfoLog mInfoLog;
+
+    // The result of the link.  State that is not the link output should remain in ProgramState,
+    // while the link output should be placed in ProgramExecutable.
+    std::unique_ptr<ProgramExecutable> mExecutable;
 };
 
 struct ProgramVaryingRef
@@ -444,7 +470,7 @@ class Program final : public LabeledObject, public angle::Subject
         return mProgram;
     }
 
-    void attachShader(Shader *shader);
+    void attachShader(const Context *context, Shader *shader);
     void detachShader(const Context *context, Shader *shader);
     int getAttachedShadersCount() const;
 
@@ -485,8 +511,12 @@ class Program final : public LabeledObject, public angle::Subject
     void setBinaryRetrievableHint(bool retrievable);
     bool getBinaryRetrievableHint() const;
 
+    InfoLog &getInfoLog() { return mState.mInfoLog; }
+    int getInfoLogLength() const;
+    void getInfoLog(GLsizei bufSize, GLsizei *length, char *infoLog) const;
+
     void setSeparable(bool separable);
-    bool isSeparable() const;
+    bool isSeparable() const { return mState.mSeparable; }
 
     void getAttachedShaders(GLsizei maxCount, GLsizei *count, ShaderProgramID *shaders) const;
 
@@ -500,7 +530,6 @@ class Program final : public LabeledObject, public angle::Subject
                             GLchar *name) const;
     GLint getActiveAttributeCount() const;
     GLint getActiveAttributeMaxLength() const;
-    const std::vector<sh::ShaderVariable> &getAttributes() const;
 
     GLint getFragDataLocation(const std::string &name) const;
     size_t getOutputResourceCount() const;
@@ -524,13 +553,21 @@ class Program final : public LabeledObject, public angle::Subject
     const std::vector<VariableLocation> &getUniformLocations() const
     {
         ASSERT(!mLinkingState);
-        return mState.mUniformLocations;
+        return mState.getUniformLocations();
     }
 
     const LinkedUniform &getUniformByIndex(GLuint index) const
     {
         ASSERT(!mLinkingState);
         return mState.mExecutable->getUniformByIndex(index);
+    }
+    const std::string &getUniformNameByIndex(GLuint index) const
+    {
+        return mState.getUniformNames()[index];
+    }
+    const std::string &getUniformMappedNameByIndex(GLuint index) const
+    {
+        return mState.getUniformMappedNames()[index];
     }
 
     const BufferVariable &getBufferVariableByIndex(GLuint index) const;
@@ -649,7 +686,7 @@ class Program final : public LabeledObject, public angle::Subject
                                      GLchar *name) const;
     GLsizei getTransformFeedbackVaryingCount() const;
     GLsizei getTransformFeedbackVaryingMaxLength() const;
-    GLenum getTransformFeedbackBufferMode() const;
+    GLenum getTransformFeedbackBufferMode() const { return mState.mTransformFeedbackBufferMode; }
     GLuint getTransformFeedbackVaryingResourceIndex(const GLchar *name) const;
     const TransformFeedbackVarying &getTransformFeedbackVaryingResource(GLuint index) const;
 
@@ -718,22 +755,28 @@ class Program final : public LabeledObject, public angle::Subject
                                        GLsizei bufSize,
                                        GLsizei *length,
                                        GLchar *name) const;
-    const sh::ShaderVariable &getInputResource(size_t index) const;
-    GLuint getResourceMaxNameSize(const sh::ShaderVariable &resource, GLint max) const;
+    const ProgramInput &getInputResource(size_t index) const;
     GLuint getInputResourceMaxNameSize() const;
     GLuint getOutputResourceMaxNameSize() const;
-    GLuint getResourceLocation(const GLchar *name, const sh::ShaderVariable &variable) const;
     GLuint getInputResourceLocation(const GLchar *name) const;
     GLuint getOutputResourceLocation(const GLchar *name) const;
-    const std::string getResourceName(const sh::ShaderVariable &resource) const;
     const std::string getInputResourceName(GLuint index) const;
     const std::string getOutputResourceName(GLuint index) const;
     const sh::ShaderVariable &getOutputResource(size_t index) const;
 
-    const ProgramBindings &getAttributeBindings() const;
-    const ProgramAliasedBindings &getUniformLocationBindings() const;
-    const ProgramAliasedBindings &getFragmentOutputLocations() const;
-    const ProgramAliasedBindings &getFragmentOutputIndexes() const;
+    const ProgramBindings &getAttributeBindings() const { return mState.getAttributeBindings(); }
+    const ProgramAliasedBindings &getUniformLocationBindings() const
+    {
+        return mState.getUniformLocationBindings();
+    }
+    const ProgramAliasedBindings &getFragmentOutputLocations() const
+    {
+        return mState.getFragmentOutputLocations();
+    }
+    const ProgramAliasedBindings &getFragmentOutputIndexes() const
+    {
+        return mState.getFragmentOutputIndexes();
+    }
 
     int getNumViews() const
     {
@@ -797,21 +840,22 @@ class Program final : public LabeledObject, public angle::Subject
     ~Program() override;
 
     // Loads program state according to the specified binary blob.
-    angle::Result deserialize(const Context *context, BinaryInputStream &stream, InfoLog &infoLog);
+    angle::Result deserialize(const Context *context, BinaryInputStream &stream);
 
     void unlink();
     void deleteSelf(const Context *context);
 
     angle::Result linkImpl(const Context *context);
 
-    bool linkValidateShaders(const Context *context, InfoLog &infoLog);
-    bool linkAttributes(const Context *context, InfoLog &infoLog);
-    bool linkVaryings(const Context *context, InfoLog &infoLog) const;
+    bool linkValidateShaders(const Context *context);
+    void linkShaders();
+    bool linkAttributes(const Caps &caps, const Limitations &limitations, bool webglCompatibility);
+    bool linkVaryings();
 
-    bool linkUniforms(const Context *context,
+    bool linkUniforms(const Caps &caps,
+                      const Version &clientVersion,
                       std::vector<UnusedUniform> *unusedUniformsOutOrNull,
-                      GLuint *combinedImageUniformsOut,
-                      InfoLog &infoLog);
+                      GLuint *combinedImageUniformsOut);
 
     void updateLinkedShaderStages();
 
@@ -876,19 +920,13 @@ class Program final : public LabeledObject, public angle::Subject
                                  GLboolean transpose,
                                  const UniformT *v);
 
-    void dumpProgramInfo() const;
+    void dumpProgramInfo(const Context *context) const;
 
     rx::UniqueSerial mSerial;
     ProgramState mState;
     rx::ProgramImpl *mProgram;
 
     bool mValidated;
-
-    ProgramBindings mAttributeBindings;
-
-    // EXT_blend_func_extended
-    ProgramAliasedBindings mFragmentOutputLocations;
-    ProgramAliasedBindings mFragmentOutputIndexes;
 
     bool mLinked;
     std::unique_ptr<LinkingState> mLinkingState;
@@ -898,6 +936,12 @@ class Program final : public LabeledObject, public angle::Subject
 
     ShaderProgramManager *mResourceManager;
     const ShaderProgramID mHandle;
+
+    // ProgramState::mAttachedShaders holds a reference to shaders' compiled state, which is all the
+    // program and the backends require after link.  The actual shaders linked to the program are
+    // stored here to support shader attach/detach and link without providing access to them in the
+    // backends.
+    ShaderMap<Shader *> mAttachedShaders;
 
     DirtyBits mDirtyBits;
 

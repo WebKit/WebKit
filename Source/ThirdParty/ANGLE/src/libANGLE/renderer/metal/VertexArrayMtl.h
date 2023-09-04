@@ -71,7 +71,7 @@ class VertexArrayMtl : public VertexArrayImpl
   private:
     void reset(ContextMtl *context);
 
-    void getVertexAttribFormatAndArraySize(const sh::ShaderVariable &var,
+    void getVertexAttribFormatAndArraySize(const gl::ProgramInput &var,
                                            MTLVertexFormat *formatOut,
                                            uint32_t *arraySizeOut);
 

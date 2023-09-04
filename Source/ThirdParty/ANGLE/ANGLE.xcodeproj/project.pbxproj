@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -25,7 +25,6 @@
 		31CD0007249184BB00486F27 /* ContextEAGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 313BCE512361133900FC39E5 /* ContextEAGL.h */; };
 		31CD0008249184BB00486F27 /* DisplayEAGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 313BCE462361133800FC39E5 /* DisplayEAGL.h */; };
 		31CD0009249184BB00486F27 /* DeviceEAGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 313BCE4D2361133900FC39E5 /* DeviceEAGL.h */; };
-		31CD000A249184BB00486F27 /* RendererEAGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 313BCE492361133900FC39E5 /* RendererEAGL.h */; };
 		31CD000B249184BB00486F27 /* IOSurfaceSurfaceEAGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 313BCE472361133800FC39E5 /* IOSurfaceSurfaceEAGL.h */; };
 		31CD000C249184BB00486F27 /* PbufferSurfaceEAGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 313BCE4F2361133900FC39E5 /* PbufferSurfaceEAGL.h */; };
 		31CD000D249184BB00486F27 /* WindowSurfaceEAGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 313BCE502361133900FC39E5 /* WindowSurfaceEAGL.h */; };
@@ -477,6 +476,12 @@
 		7B76083F289832BD000012A1 /* TransformFeedbackImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B76083A289832BD000012A1 /* TransformFeedbackImpl.cpp */; };
 		7B81955B28CF63D800C7ABCD /* MemoryShaderCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B81955928CF63D800C7ABCD /* MemoryShaderCache.cpp */; };
 		7B81955C28CF63D800C7ABCD /* MemoryShaderCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B81955A28CF63D800C7ABCD /* MemoryShaderCache.h */; };
+		7BB62F522AA2008600C1DDA8 /* RescopeGlobalVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BB62F502AA2008600C1DDA8 /* RescopeGlobalVariables.h */; };
+		7BB62F552AA200A500C1DDA8 /* RescopeGlobalVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB62F512AA2008600C1DDA8 /* RescopeGlobalVariables.cpp */; };
+		7BB62F582AA202FD00C1DDA8 /* ProgramExecutableGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BB62F562AA202FD00C1DDA8 /* ProgramExecutableGL.h */; };
+		7BB62F592AA202FD00C1DDA8 /* ProgramExecutableGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB62F572AA202FD00C1DDA8 /* ProgramExecutableGL.cpp */; };
+		7BB62F5C2AA2032500C1DDA8 /* ProgramExecutableMtl.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BB62F5A2AA2032500C1DDA8 /* ProgramExecutableMtl.mm */; };
+		7BB62F5D2AA2032500C1DDA8 /* ProgramExecutableMtl.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BB62F5B2AA2032500C1DDA8 /* ProgramExecutableMtl.h */; };
 		7BCF49C528AD1C8C0090D34A /* apple_platform_utils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BCF49C228AD1C8C0090D34A /* apple_platform_utils.mm */; };
 		7BCF49C628AD1C8C0090D34A /* CircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BCF49C328AD1C8C0090D34A /* CircularBuffer.h */; };
 		7BCF49C728AD1C8C0090D34A /* apple_platform_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BCF49C428AD1C8C0090D34A /* apple_platform_utils.h */; };
@@ -950,9 +955,7 @@
 		313BCE462361133800FC39E5 /* DisplayEAGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayEAGL.h; sourceTree = "<group>"; };
 		313BCE472361133800FC39E5 /* IOSurfaceSurfaceEAGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOSurfaceSurfaceEAGL.h; sourceTree = "<group>"; };
 		313BCE482361133800FC39E5 /* PbufferSurfaceEAGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PbufferSurfaceEAGL.cpp; sourceTree = "<group>"; };
-		313BCE492361133900FC39E5 /* RendererEAGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RendererEAGL.h; sourceTree = "<group>"; };
 		313BCE4A2361133900FC39E5 /* ContextEAGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContextEAGL.cpp; sourceTree = "<group>"; };
-		313BCE4B2361133900FC39E5 /* RendererEAGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RendererEAGL.cpp; sourceTree = "<group>"; };
 		313BCE4C2361133900FC39E5 /* DeviceEAGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceEAGL.cpp; sourceTree = "<group>"; };
 		313BCE4D2361133900FC39E5 /* DeviceEAGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceEAGL.h; sourceTree = "<group>"; };
 		313BCE4E2361133900FC39E5 /* IOSurfaceSurfaceEAGL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IOSurfaceSurfaceEAGL.mm; sourceTree = "<group>"; };
@@ -1380,9 +1383,7 @@
 		5CCD59712284FA820018F2D8 /* IOSurfaceSurfaceCGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOSurfaceSurfaceCGL.h; sourceTree = "<group>"; };
 		5CCD59722284FA820018F2D8 /* ContextCGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContextCGL.cpp; sourceTree = "<group>"; };
 		5CCD59732284FA820018F2D8 /* IOSurfaceSurfaceCGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IOSurfaceSurfaceCGL.cpp; sourceTree = "<group>"; };
-		5CCD59742284FA820018F2D8 /* RendererCGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RendererCGL.cpp; sourceTree = "<group>"; };
 		5CCD59752284FA820018F2D8 /* ContextCGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextCGL.h; sourceTree = "<group>"; };
-		5CCD59762284FA830018F2D8 /* RendererCGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RendererCGL.h; sourceTree = "<group>"; };
 		5CCD597D2284FB8F0018F2D8 /* QueryImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QueryImpl.cpp; sourceTree = "<group>"; };
 		5CCD597E2284FB8F0018F2D8 /* ShaderImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShaderImpl.cpp; sourceTree = "<group>"; };
 		5CCD597F2284FB8F0018F2D8 /* MemoryObjectImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryObjectImpl.h; sourceTree = "<group>"; };
@@ -1560,6 +1561,12 @@
 		7B76083A289832BD000012A1 /* TransformFeedbackImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransformFeedbackImpl.cpp; sourceTree = "<group>"; };
 		7B81955928CF63D800C7ABCD /* MemoryShaderCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryShaderCache.cpp; sourceTree = "<group>"; };
 		7B81955A28CF63D800C7ABCD /* MemoryShaderCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryShaderCache.h; sourceTree = "<group>"; };
+		7BB62F502AA2008600C1DDA8 /* RescopeGlobalVariables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RescopeGlobalVariables.h; sourceTree = "<group>"; };
+		7BB62F512AA2008600C1DDA8 /* RescopeGlobalVariables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RescopeGlobalVariables.cpp; sourceTree = "<group>"; };
+		7BB62F562AA202FD00C1DDA8 /* ProgramExecutableGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgramExecutableGL.h; sourceTree = "<group>"; };
+		7BB62F572AA202FD00C1DDA8 /* ProgramExecutableGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProgramExecutableGL.cpp; sourceTree = "<group>"; };
+		7BB62F5A2AA2032500C1DDA8 /* ProgramExecutableMtl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProgramExecutableMtl.mm; sourceTree = "<group>"; };
+		7BB62F5B2AA2032500C1DDA8 /* ProgramExecutableMtl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgramExecutableMtl.h; sourceTree = "<group>"; };
 		7BCF49C228AD1C8C0090D34A /* apple_platform_utils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = apple_platform_utils.mm; sourceTree = "<group>"; };
 		7BCF49C328AD1C8C0090D34A /* CircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CircularBuffer.h; sourceTree = "<group>"; };
 		7BCF49C428AD1C8C0090D34A /* apple_platform_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = apple_platform_utils.h; sourceTree = "<group>"; };
@@ -2007,8 +2014,6 @@
 				313BCE4E2361133900FC39E5 /* IOSurfaceSurfaceEAGL.mm */,
 				313BCE482361133800FC39E5 /* PbufferSurfaceEAGL.cpp */,
 				313BCE4F2361133900FC39E5 /* PbufferSurfaceEAGL.h */,
-				313BCE4B2361133900FC39E5 /* RendererEAGL.cpp */,
-				313BCE492361133900FC39E5 /* RendererEAGL.h */,
 				313BCE502361133900FC39E5 /* WindowSurfaceEAGL.h */,
 				313BCE522361133900FC39E5 /* WindowSurfaceEAGL.mm */,
 			);
@@ -2512,6 +2517,8 @@
 				315EBDB81FCE44BF00AC7A89 /* null_functions.h */,
 				3A2C66FE292373D400FEDF46 /* PLSProgramCache.cpp */,
 				3A2C66FD292373D400FEDF46 /* PLSProgramCache.h */,
+				7BB62F572AA202FD00C1DDA8 /* ProgramExecutableGL.cpp */,
+				7BB62F562AA202FD00C1DDA8 /* ProgramExecutableGL.h */,
 				5CB300FC1DE39F1A00D2C405 /* ProgramGL.cpp */,
 				5CB300FD1DE39F1A00D2C405 /* ProgramGL.h */,
 				315EBDB01FCE44BD00AC7A89 /* ProgramPipelineGL.cpp */,
@@ -2559,8 +2566,6 @@
 				5CCD59712284FA820018F2D8 /* IOSurfaceSurfaceCGL.h */,
 				5CB3014C1DE39F4700D2C405 /* PbufferSurfaceCGL.cpp */,
 				5CB3014B1DE39F4700D2C405 /* PbufferSurfaceCGL.h */,
-				5CCD59742284FA820018F2D8 /* RendererCGL.cpp */,
-				5CCD59762284FA830018F2D8 /* RendererCGL.h */,
 				A31B6181230B747E001610D7 /* WindowSurfaceCGL.h */,
 				A31B6182230B747F001610D7 /* WindowSurfaceCGL.mm */,
 			);
@@ -2625,6 +2630,8 @@
 				5C55D5F122826B8E00B5BA2C /* RemoveInvariantDeclaration.h */,
 				5C55D5F522826B8E00B5BA2C /* RemoveUnreferencedVariables.cpp */,
 				5C55D64B22826B9F00B5BA2C /* RemoveUnreferencedVariables.h */,
+				7BB62F512AA2008600C1DDA8 /* RescopeGlobalVariables.cpp */,
+				7BB62F502AA2008600C1DDA8 /* RescopeGlobalVariables.h */,
 				FF194FD327432CC2006A97A3 /* RewriteArrayOfArrayOfOpaqueUniforms.cpp */,
 				FF194FD727432CC2006A97A3 /* RewriteArrayOfArrayOfOpaqueUniforms.h */,
 				A30306F32305F5EE002DA972 /* RewriteAtomicCounters.cpp */,
@@ -3144,6 +3151,8 @@
 				FF81FE9D25818D6800894E24 /* mtl_utils.mm */,
 				7BD5BEE729F139F1003F2E53 /* process.cpp */,
 				7BD5BEE829F139F1003F2E53 /* process.h */,
+				7BB62F5B2AA2032500C1DDA8 /* ProgramExecutableMtl.h */,
+				7BB62F5A2AA2032500C1DDA8 /* ProgramExecutableMtl.mm */,
 				FF81FE8125818D6800894E24 /* ProgramMtl.h */,
 				FF81FECD25818D6800894E24 /* ProgramMtl.mm */,
 				FF582E1526544FC4006DA5B8 /* ProvokingVertexHelper.h */,
@@ -3510,6 +3519,8 @@
 				FFD002B42746E5B2002BE3BC /* proc_table_egl.h in Headers */,
 				31CD006F249184FC00486F27 /* Program.h in Headers */,
 				31CD0058249184FC00486F27 /* ProgramExecutable.h in Headers */,
+				7BB62F582AA202FD00C1DDA8 /* ProgramExecutableGL.h in Headers */,
+				7BB62F5D2AA2032500C1DDA8 /* ProgramExecutableMtl.h in Headers */,
 				31CD0029249184E700486F27 /* ProgramGL.h in Headers */,
 				31CD004B249184F400486F27 /* ProgramImpl.h in Headers */,
 				31CD003A249184F400486F27 /* ProgramImpl_mock.h in Headers */,
@@ -3541,7 +3552,6 @@
 				31CD0035249184F400486F27 /* RenderbufferImpl.h in Headers */,
 				31CD0039249184F400486F27 /* RenderbufferImpl_mock.h in Headers */,
 				31CD002E249184F400486F27 /* renderer_utils.h in Headers */,
-				31CD000A249184BB00486F27 /* RendererEAGL.h in Headers */,
 				31CD001B249184E700486F27 /* RendererGL.h in Headers */,
 				31CD001E249184E700486F27 /* renderergl_utils.h in Headers */,
 				3AD0D2252988C96D0080D728 /* renderermtl_utils.h in Headers */,
@@ -3550,6 +3560,7 @@
 				FF62F64D27446DC800AD6EDC /* ReplaceClipCullDistanceVariable.h in Headers */,
 				31CDFFAD249184A100486F27 /* ReplaceShadowingVariables.h in Headers */,
 				31CDFFB7249184A100486F27 /* ReplaceVariable.h in Headers */,
+				7BB62F522AA2008600C1DDA8 /* RescopeGlobalVariables.h in Headers */,
 				31CD00B52491850000486F27 /* resource.h in Headers */,
 				31CD00BB2491854500486F27 /* resource.h in Headers */,
 				31CD00B4249184FD00486F27 /* ResourceManager.h in Headers */,
@@ -4020,6 +4031,8 @@
 				7BD5BEE929F139F2003F2E53 /* process.cpp in Sources */,
 				DF83E3052639FE17000825EF /* Program.cpp in Sources */,
 				DF83E3062639FE17000825EF /* ProgramExecutable.cpp in Sources */,
+				7BB62F592AA202FD00C1DDA8 /* ProgramExecutableGL.cpp in Sources */,
+				7BB62F5C2AA2032500C1DDA8 /* ProgramExecutableMtl.mm in Sources */,
 				DF83E34E2639FE92000825EF /* ProgramGL.cpp in Sources */,
 				7B76083E289832BD000012A1 /* ProgramImpl.cpp in Sources */,
 				DF83E3352639FE18000825EF /* ProgramLinkedResources.cpp in Sources */,
@@ -4059,6 +4072,7 @@
 				FF62F64427446DC800AD6EDC /* ReplaceClipCullDistanceVariable.cpp in Sources */,
 				DF83E2AE2639FD83000825EF /* ReplaceShadowingVariables.cpp in Sources */,
 				DF83E28F2639FD83000825EF /* ReplaceVariable.cpp in Sources */,
+				7BB62F552AA200A500C1DDA8 /* RescopeGlobalVariables.cpp in Sources */,
 				DF83E3112639FE17000825EF /* ResourceManager.cpp in Sources */,
 				FF194FE127432CC3006A97A3 /* RewriteArrayOfArrayOfOpaqueUniforms.cpp in Sources */,
 				DF83E25F2639FD33000825EF /* RewriteAtomicCounters.cpp in Sources */,

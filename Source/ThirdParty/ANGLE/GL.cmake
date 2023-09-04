@@ -37,6 +37,8 @@ set(gl_backend_sources
     "src/libANGLE/renderer/gl/MemoryObjectGL.h"
     "src/libANGLE/renderer/gl/PLSProgramCache.cpp"
     "src/libANGLE/renderer/gl/PLSProgramCache.h"
+    "src/libANGLE/renderer/gl/ProgramExecutableGL.cpp"
+    "src/libANGLE/renderer/gl/ProgramExecutableGL.h"
     "src/libANGLE/renderer/gl/ProgramGL.cpp"
     "src/libANGLE/renderer/gl/ProgramGL.h"
     "src/libANGLE/renderer/gl/ProgramPipelineGL.cpp"
@@ -175,8 +177,6 @@ if(angle_enable_cgl)
         "src/libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.h"
         "src/libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.cpp"
         "src/libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.h"
-        "src/libANGLE/renderer/gl/cgl/RendererCGL.cpp"
-        "src/libANGLE/renderer/gl/cgl/RendererCGL.h"
         "src/libANGLE/renderer/gl/cgl/WindowSurfaceCGL.h"
         "src/libANGLE/renderer/gl/cgl/WindowSurfaceCGL.mm"
     )
@@ -196,8 +196,6 @@ if(angle_enable_eagl)
         "src/libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.mm"
         "src/libANGLE/renderer/gl/eagl/PbufferSurfaceEAGL.cpp"
         "src/libANGLE/renderer/gl/eagl/PbufferSurfaceEAGL.h"
-        "src/libANGLE/renderer/gl/eagl/RendererEAGL.cpp"
-        "src/libANGLE/renderer/gl/eagl/RendererEAGL.h"
         "src/libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.h"
         "src/libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.mm"
     )

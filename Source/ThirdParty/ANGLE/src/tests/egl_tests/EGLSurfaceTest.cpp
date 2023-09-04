@@ -972,6 +972,71 @@ TEST_P(EGLSurfaceTest, CreateWithEGLConfig8880Support)
     glDeleteProgram(program);
 }
 
+// Test creating a surface that supports GL_RGB10_A2 with BT2020 colorspaces
+TEST_P(EGLSurfaceTest, CreateWithEGLConfig1010102Support)
+{
+    const EGLint configAttributes[] = {EGL_SURFACE_TYPE,
+                                       EGL_WINDOW_BIT,
+                                       EGL_RED_SIZE,
+                                       10,
+                                       EGL_GREEN_SIZE,
+                                       10,
+                                       EGL_BLUE_SIZE,
+                                       10,
+                                       EGL_ALPHA_SIZE,
+                                       2,
+                                       EGL_DEPTH_SIZE,
+                                       0,
+                                       EGL_STENCIL_SIZE,
+                                       0,
+                                       EGL_SAMPLE_BUFFERS,
+                                       0,
+                                       EGL_NONE};
+
+    initializeDisplay();
+    ASSERT_NE(mDisplay, EGL_NO_DISPLAY);
+
+    EGLConfig config;
+    if (EGLWindow::FindEGLConfig(mDisplay, configAttributes, &config) == EGL_FALSE)
+    {
+        std::cout << "EGLConfig for a GL_RGB10_A2 surface is not supported, skipping test"
+                  << std::endl;
+        return;
+    }
+
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(mDisplay, "EGL_EXT_gl_colorspace_bt2020_hlg"));
+    ANGLE_SKIP_TEST_IF(
+        !IsEGLDisplayExtensionEnabled(mDisplay, "EGL_EXT_gl_colorspace_bt2020_linear"));
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(mDisplay, "EGL_EXT_gl_colorspace_bt2020_pq"));
+
+    constexpr std::array<EGLint, 3u> kBt2020Colorspaces = {EGL_GL_COLORSPACE_BT2020_HLG_EXT,
+                                                           EGL_GL_COLORSPACE_BT2020_LINEAR_EXT,
+                                                           EGL_GL_COLORSPACE_BT2020_PQ_EXT};
+    for (EGLint bt2020Colorspace : kBt2020Colorspaces)
+    {
+        std::vector<EGLint> winSurfaceAttribs;
+        winSurfaceAttribs.push_back(EGL_GL_COLORSPACE_KHR);
+        winSurfaceAttribs.push_back(bt2020Colorspace);
+
+        initializeSurfaceWithAttribs(config, winSurfaceAttribs);
+        ASSERT_EGL_SUCCESS();
+        ASSERT_NE(mWindowSurface, EGL_NO_SURFACE);
+
+        EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext));
+        ASSERT_EGL_SUCCESS();
+
+        GLuint program = createProgram();
+        ASSERT_NE(0u, program);
+        drawWithProgram(program);
+        EXPECT_GL_NO_ERROR();
+        glDeleteProgram(program);
+
+        eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        eglDestroySurface(mDisplay, mWindowSurface);
+        mWindowSurface = EGL_NO_SURFACE;
+    }
+}
+
 TEST_P(EGLSurfaceTest, FixedSizeWindow)
 {
     const EGLint configAttributes[] = {EGL_SURFACE_TYPE,

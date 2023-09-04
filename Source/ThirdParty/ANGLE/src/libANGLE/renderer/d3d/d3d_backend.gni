@@ -34,6 +34,8 @@ d3d_shared_sources = [
   "NativeWindowD3D.h",
   "ProgramD3D.cpp",
   "ProgramD3D.h",
+  "ProgramExecutableD3D.cpp",
+  "ProgramExecutableD3D.h",
   "RenderTargetD3D.cpp",
   "RenderTargetD3D.h",
   "RenderbufferD3D.cpp",

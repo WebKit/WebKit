@@ -47,6 +47,7 @@ class ProgramAliasedBindings;
 class Shader;
 struct ShaderVariableBuffer;
 struct VariableLocation;
+struct Version;
 
 using AtomicCounterBuffer = ShaderVariableBuffer;
 using ShaderUniform       = std::pair<ShaderType, const sh::ShaderVariable *>;
@@ -124,6 +125,8 @@ class UniformLinker final : angle::NonCopyable
               const ProgramAliasedBindings &uniformLocationBindings);
 
     void getResults(std::vector<LinkedUniform> *uniforms,
+                    std::vector<std::string> *uniformNames,
+                    std::vector<std::string> *uniformMappedNames,
                     std::vector<UnusedUniform> *unusedUniformsOutOrNull,
                     std::vector<VariableLocation> *uniformLocationsOutOrNull);
 
@@ -218,6 +221,8 @@ class UniformBlockLinker final : public InterfaceBlockLinker
 
     void init(std::vector<InterfaceBlock> *blocksOut,
               std::vector<LinkedUniform> *uniformsOut,
+              std::vector<std::string> *uniformNamesOut,
+              std::vector<std::string> *uniformMappedNamesOut,
               std::vector<std::string> *unusedInterfaceBlocksOut);
 
   private:
@@ -229,7 +234,9 @@ class UniformBlockLinker final : public InterfaceBlockLinker
                                           ShaderType shaderType,
                                           int blockIndex) const override;
 
-    std::vector<LinkedUniform> *mUniformsOut = nullptr;
+    std::vector<LinkedUniform> *mUniformsOut         = nullptr;
+    std::vector<std::string> *mUniformNamesOut       = nullptr;
+    std::vector<std::string> *mUniformMappedNamesOut = nullptr;
 };
 
 class ShaderStorageBlockLinker final : public InterfaceBlockLinker
@@ -274,6 +281,8 @@ struct ProgramLinkedResources
 
     void init(std::vector<InterfaceBlock> *uniformBlocksOut,
               std::vector<LinkedUniform> *uniformsOut,
+              std::vector<std::string> *uniformNamesOut,
+              std::vector<std::string> *uniformMappedNamesOut,
               std::vector<InterfaceBlock> *shaderStorageBlocksOut,
               std::vector<BufferVariable> *bufferVariablesOut,
               std::vector<AtomicCounterBuffer> *atomicCounterBuffersOut);
@@ -288,9 +297,11 @@ struct ProgramLinkedResources
 
 struct LinkingVariables final : private angle::NonCopyable
 {
-    LinkingVariables(const Context *context, const ProgramState &state);
-    LinkingVariables(const ProgramPipelineState &state);
+    LinkingVariables();
     ~LinkingVariables();
+
+    void initForProgram(const ProgramState &state);
+    void initForProgramPipeline(const ProgramPipelineState &state);
 
     ShaderMap<std::vector<sh::ShaderVariable>> outputVaryings;
     ShaderMap<std::vector<sh::ShaderVariable>> inputVaryings;
@@ -316,8 +327,7 @@ class ProgramLinkedResourcesLinker final : angle::NonCopyable
         : mCustomEncoderFactory(customEncoderFactory)
     {}
 
-    void linkResources(const Context *context,
-                       const ProgramState &programState,
+    void linkResources(const ProgramState &programState,
                        const ProgramLinkedResources &resources) const;
 
   private:
@@ -360,7 +370,9 @@ LinkMismatchError LinkValidateProgramVariables(const sh::ShaderVariable &variabl
                                                std::string *mismatchedStructOrBlockMemberName);
 void AddProgramVariableParentPrefix(const std::string &parentName,
                                     std::string *mismatchedFieldName);
-bool LinkValidateProgramInterfaceBlocks(const Context *context,
+bool LinkValidateProgramInterfaceBlocks(const Caps &caps,
+                                        const Version &clientVersion,
+                                        bool webglCompatibility,
                                         ShaderBitSet activeProgramStages,
                                         const ProgramLinkedResources &resources,
                                         InfoLog &infoLog,

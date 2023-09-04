@@ -574,11 +574,11 @@ class RendererVk : angle::NonCopyable
         return mSupportedVulkanShaderStageMask;
     }
 
-    angle::Result getFormatDescriptorCountForVkFormat(ContextVk *contextVk,
+    angle::Result getFormatDescriptorCountForVkFormat(vk::Context *context,
                                                       VkFormat format,
                                                       uint32_t *descriptorCountOut);
 
-    angle::Result getFormatDescriptorCountForExternalFormat(ContextVk *contextVk,
+    angle::Result getFormatDescriptorCountForExternalFormat(vk::Context *context,
                                                             uint64_t format,
                                                             uint32_t *descriptorCountOut);
 

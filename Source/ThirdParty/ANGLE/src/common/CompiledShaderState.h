@@ -18,6 +18,7 @@
 #include <GLSLANG/ShaderLang.h>
 #include <GLSLANG/ShaderVars.h>
 
+#include <memory>
 #include <string>
 
 namespace sh
@@ -89,6 +90,8 @@ struct CompiledShaderState
     GLenum tessGenVertexOrder;
     GLenum tessGenPointMode;
 };
+
+using SharedCompiledShaderState = std::shared_ptr<CompiledShaderState>;
 }  // namespace gl
 
 #endif  // COMMON_COMPILEDSHADERSTATE_H_

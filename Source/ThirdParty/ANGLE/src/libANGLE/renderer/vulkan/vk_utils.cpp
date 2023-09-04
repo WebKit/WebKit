@@ -1709,6 +1709,20 @@ vk::LevelIndex GetLevelIndex(gl::LevelIndex levelGL, gl::LevelIndex baseLevel)
     return vk::LevelIndex(levelGL.get() - baseLevel.get());
 }
 
+VkImageTiling GetTilingMode(gl::TilingMode tilingMode)
+{
+    switch (tilingMode)
+    {
+        case gl::TilingMode::Optimal:
+            return VK_IMAGE_TILING_OPTIMAL;
+        case gl::TilingMode::Linear:
+            return VK_IMAGE_TILING_LINEAR;
+        default:
+            UNREACHABLE();
+            return VK_IMAGE_TILING_OPTIMAL;
+    }
+}
+
 }  // namespace gl_vk
 
 namespace vk_gl

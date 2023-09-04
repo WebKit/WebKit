@@ -31,5 +31,4 @@
 #    include "libANGLE/renderer/gl/cgl/DeviceCGL.cpp"
 #    include "libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.cpp"
 #    include "libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.cpp"
-#    include "libANGLE/renderer/gl/cgl/RendererCGL.cpp"
 #endif

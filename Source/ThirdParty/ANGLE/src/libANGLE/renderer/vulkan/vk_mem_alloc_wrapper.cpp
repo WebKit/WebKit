@@ -140,6 +140,7 @@ VkResult AllocateAndBindMemoryForImage(VmaAllocator allocator,
                                        VkImage *pImage,
                                        VkMemoryPropertyFlags requiredFlags,
                                        VkMemoryPropertyFlags preferredFlags,
+                                       uint32_t memoryTypeBits,
                                        bool allocateDedicatedMemory,
                                        VmaAllocation *pAllocationOut,
                                        uint32_t *pMemoryTypeIndexOut,
@@ -149,6 +150,7 @@ VkResult AllocateAndBindMemoryForImage(VmaAllocator allocator,
     VmaAllocationCreateInfo allocationCreateInfo = {};
     allocationCreateInfo.requiredFlags           = requiredFlags;
     allocationCreateInfo.preferredFlags          = preferredFlags;
+    allocationCreateInfo.memoryTypeBits          = memoryTypeBits;
     allocationCreateInfo.flags =
         allocateDedicatedMemory ? VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT : 0;
     VmaAllocationInfo allocationInfo = {};

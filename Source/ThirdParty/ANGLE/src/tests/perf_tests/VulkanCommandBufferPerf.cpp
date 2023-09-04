@@ -100,6 +100,8 @@ VulkanCommandBufferPerfTest::VulkanCommandBufferPerfTest()
 
 void VulkanCommandBufferPerfTest::SetUp()
 {
+    ANGLEPerfTest::SetUp();
+
     init_global_layer_properties(mInfo);
     init_instance_extension_names(mInfo);
     init_device_extension_names(mInfo);

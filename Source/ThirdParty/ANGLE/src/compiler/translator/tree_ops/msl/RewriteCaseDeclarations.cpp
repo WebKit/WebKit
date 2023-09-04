@@ -5,8 +5,8 @@
 //
 
 #include "compiler/translator/tree_ops/msl/RewriteCaseDeclarations.h"
-#include "compiler/translator/msl/AstHelpers.h"
 #include "compiler/translator/msl/IntermRebuild.h"
+#include "compiler/translator/util.h"
 
 using namespace sh;
 

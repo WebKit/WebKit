@@ -126,6 +126,8 @@ bool IsWindows8OrLater();
 bool IsWindows10OrLater();
 bool IsWindows11OrLater();
 
+bool Is64Bit();
+
 }  // namespace angle
 
 #endif  // COMMON_PLATFORM_HELPERS_H_

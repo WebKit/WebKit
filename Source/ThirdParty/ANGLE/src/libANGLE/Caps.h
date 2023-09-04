@@ -625,6 +625,15 @@ struct DisplayExtensions
     // EGL_ANGLE_colorspace_attribute_passthrough
     bool eglColorspaceAttributePassthroughANGLE = false;
 
+    // EGL_EXT_gl_colorspace_bt2020_linear
+    bool glColorspaceBt2020Linear = false;
+
+    // EGL_EXT_gl_colorspace_bt2020_pq
+    bool glColorspaceBt2020Pq = false;
+
+    // EGL_EXT_gl_colorspace_bt2020_hlg
+    bool glColorspaceBt2020Hlg = false;
+
     // EGL_ANDROID_framebuffer_target
     bool framebufferTargetANDROID = false;
 
@@ -731,6 +740,9 @@ struct ClientExtensions
 
     // EGL_EXT_platform_wayland
     bool platformWaylandEXT = false;
+
+    // EGL_MESA_platform_surfaceless
+    bool platformSurfacelessMESA = false;
 
     // EGL_ANGLE_platform_angle
     bool platformANGLE = false;

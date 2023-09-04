@@ -108,8 +108,9 @@ void LogPendingMemoryAllocation(RendererVk *renderer, vk::MemoryLogSeverity seve
         renderer->getMemoryAllocationTracker()->getPendingMemoryAllocationType();
     VkDeviceSize allocSize =
         renderer->getMemoryAllocationTracker()->getPendingMemoryAllocationSize();
-    uint32_t memoryHeapIndex = renderer->getMemoryProperties().getHeapIndexForMemoryType(
-        renderer->getMemoryAllocationTracker()->getPendingMemoryTypeIndex());
+    uint32_t memoryTypeIndex = renderer->getMemoryAllocationTracker()->getPendingMemoryTypeIndex();
+    uint32_t memoryHeapIndex =
+        renderer->getMemoryProperties().getHeapIndexForMemoryType(memoryTypeIndex);
 
     if (allocSize != 0)
     {
@@ -117,7 +118,8 @@ void LogPendingMemoryAllocation(RendererVk *renderer, vk::MemoryLogSeverity seve
 
         outStream << "Pending allocation size for memory allocation type ("
                   << vk::kMemoryAllocationTypeMessage[ToUnderlying(allocInfo)]
-                  << ") for heap index " << memoryHeapIndex << ": " << allocSize;
+                  << ") for heap index " << memoryHeapIndex << " (type index " << memoryTypeIndex
+                  << "): " << allocSize;
 
         // Output the log stream based on the level of severity.
         OutputMemoryLogStream(outStream, severity);

@@ -6,10 +6,10 @@
 
 #include <algorithm>
 
-#include "compiler/translator/msl/AstHelpers.h"
 #include "compiler/translator/tree_ops/SeparateDeclarations.h"
 #include "compiler/translator/tree_ops/msl/SeparateCompoundStructDeclarations.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
+#include "compiler/translator/util.h"
 
 using namespace sh;
 

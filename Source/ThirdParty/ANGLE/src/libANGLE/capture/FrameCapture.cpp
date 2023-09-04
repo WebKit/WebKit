@@ -77,7 +77,6 @@ constexpr char kCompressionVarName[]    = "ANGLE_CAPTURE_COMPRESSION";
 constexpr char kSerializeStateVarName[] = "ANGLE_CAPTURE_SERIALIZE_STATE";
 constexpr char kValidationVarName[]     = "ANGLE_CAPTURE_VALIDATION";
 constexpr char kValidationExprVarName[] = "ANGLE_CAPTURE_VALIDATION_EXPR";
-constexpr char kTrimEnabledVarName[]    = "ANGLE_CAPTURE_TRIM_ENABLED";
 constexpr char kSourceExtVarName[]      = "ANGLE_CAPTURE_SOURCE_EXT";
 constexpr char kSourceSizeVarName[]     = "ANGLE_CAPTURE_SOURCE_SIZE";
 constexpr char kForceShadowVarName[]    = "ANGLE_CAPTURE_FORCE_SHADOW";
@@ -102,7 +101,6 @@ constexpr char kAndroidCaptureLabel[]   = "debug.angle.capture.label";
 constexpr char kAndroidCompression[]    = "debug.angle.capture.compression";
 constexpr char kAndroidValidation[]     = "debug.angle.capture.validation";
 constexpr char kAndroidValidationExpr[] = "debug.angle.capture.validation_expr";
-constexpr char kAndroidTrimEnabled[]    = "debug.angle.capture.trim_enabled";
 constexpr char kAndroidSourceExt[]      = "debug.angle.capture.source_ext";
 constexpr char kAndroidSourceSize[]     = "debug.angle.capture.source_size";
 constexpr char kAndroidForceShadow[]    = "debug.angle.capture.force_shadow";
@@ -261,6 +259,7 @@ enum class ReplayFunc
 {
     Replay,
     Setup,
+    SetupInactive,
     Reset,
 };
 
@@ -352,6 +351,50 @@ std::ostream &operator<<(std::ostream &os, const FmtSetupFunction &fmt)
     return os;
 }
 
+struct FmtSetupInactiveFunction
+{
+    FmtSetupInactiveFunction(uint32_t partIdIn, gl::ContextID contextIdIn, FuncUsage usageIn)
+        : partId(partIdIn), contextId(contextIdIn), usage(usageIn)
+    {}
+
+    uint32_t partId;
+    gl::ContextID contextId;
+    FuncUsage usage;
+};
+
+std::ostream &operator<<(std::ostream &os, const FmtSetupInactiveFunction &fmt)
+{
+    if ((fmt.usage == FuncUsage::Call) && (fmt.partId == kNoPartId))
+    {
+        os << "if (gReplayResourceMode == angle::ReplayResourceMode::All)\n    {\n        ";
+    }
+    os << "SetupReplayContext";
+
+    if (fmt.contextId == kSharedContextId)
+    {
+        os << "Shared";
+    }
+    else
+    {
+        os << fmt.contextId;
+    }
+
+    os << "Inactive";
+
+    if (fmt.partId != kNoPartId)
+    {
+        os << "Part" << fmt.partId;
+    }
+
+    os << fmt.usage;
+
+    if ((fmt.usage == FuncUsage::Call) && (fmt.partId == kNoPartId))
+    {
+        os << ";\n    }";
+    }
+    return os;
+}
+
 struct FmtResetFunction
 {
     FmtResetFunction(uint32_t partIdIn, gl::ContextID contextIdIn, FuncUsage usageIn)
@@ -415,6 +458,10 @@ std::ostream &operator<<(std::ostream &os, const FmtFunction &fmt)
 
         case ReplayFunc::Setup:
             os << FmtSetupFunction(fmt.partId, fmt.contextId, fmt.usage);
+            break;
+
+        case ReplayFunc::SetupInactive:
+            os << FmtSetupInactiveFunction(fmt.partId, fmt.contextId, fmt.usage);
             break;
 
         case ReplayFunc::Reset:
@@ -1657,25 +1704,25 @@ void WriteCppReplayFunctionWithParts(const gl::ContextID contextID,
 
     for (const CallCapture &call : calls)
     {
-        if (!call.isActive)
+        // Process active calls for Setup and inactive calls for SetupInactive
+        if ((call.isActive && replayFunc != ReplayFunc::SetupInactive) ||
+            (!call.isActive && replayFunc == ReplayFunc::SetupInactive))
         {
-            // Don't write setup calls for inactive resources
-            continue;
-        }
+            out << "    ";
+            WriteCppReplayForCall(call, replayWriter, out, header, binaryData,
+                                  maxResourceIDBufferSize);
+            out << ";\n";
 
-        out << "    ";
-        WriteCppReplayForCall(call, replayWriter, out, header, binaryData, maxResourceIDBufferSize);
-        out << ";\n";
-
-        if (partCount > 0 && ++callCount % kFunctionSizeLimit == 0)
-        {
-            out << "}\n";
-            out << "\n";
-            out << "void "
-                << FmtFunction(replayFunc, contextID, FuncUsage::Definition, frameIndex,
-                               ++partCount)
-                << "\n";
-            out << "{\n";
+            if (partCount > 0 && ++callCount % kFunctionSizeLimit == 0)
+            {
+                out << "}\n";
+                out << "\n";
+                out << "void "
+                    << FmtFunction(replayFunc, contextID, FuncUsage::Definition, frameIndex,
+                                   ++partCount)
+                    << "\n";
+                out << "{\n";
+            }
         }
     }
     out << "}\n";
@@ -1766,6 +1813,7 @@ void WriteShareGroupCppSetupReplay(ReplayWriter &replayWriter,
                                    size_t *maxResourceIDBufferSize)
 {
     {
+
         std::stringstream include;
 
         include << "#include \"angle_trace_gl.h\"\n";
@@ -1791,6 +1839,18 @@ void WriteShareGroupCppSetupReplay(ReplayWriter &replayWriter,
                                         bodyStream, maxResourceIDBufferSize);
 
         replayWriter.addPrivateFunction(proto, headerStream, bodyStream);
+
+        protoStream.str("");
+        headerStream.str("");
+        bodyStream.str("");
+        protoStream << "void "
+                    << FmtSetupInactiveFunction(kNoPartId, kSharedContextId, FuncUsage::Prototype);
+        proto = protoStream.str();
+
+        WriteCppReplayFunctionWithParts(kSharedContextId, ReplayFunc::SetupInactive, replayWriter,
+                                        frameIndex, binaryData, setupCalls, headerStream,
+                                        bodyStream, maxResourceIDBufferSize);
+        replayWriter.addPrivateFunction(proto, headerStream, bodyStream);
     }
 
     {
@@ -1805,7 +1865,7 @@ void WriteShareGroupCppSetupReplay(ReplayWriter &replayWriter,
     replayWriter.saveSetupFile();
 }
 
-ProgramSources GetAttachedProgramSources(const gl::Program *program)
+ProgramSources GetAttachedProgramSources(const gl::Context *context, const gl::Program *program)
 {
     ProgramSources sources;
     for (gl::ShaderType shaderType : gl::AllShaderTypes())
@@ -1887,7 +1947,7 @@ void CaptureUpdateUniformLocations(const gl::Program *program, std::vector<CallC
         {
             const gl::LinkedUniform &uniform = uniforms[locationVar.index];
 
-            name = uniform.name;
+            name = program->getUniformNameByIndex(locationVar.index);
 
             if (uniform.isArray())
             {
@@ -1895,18 +1955,14 @@ void CaptureUpdateUniformLocations(const gl::Program *program, std::vector<CallC
                 {
                     // Non-sequential array uniform locations are not currently handled.
                     // In practice array locations shouldn't ever be non-sequential.
-                    ASSERT(uniform.location == -1 ||
-                           location == uniform.location + static_cast<int>(locationVar.arrayIndex));
+                    ASSERT(uniform.getLocation() == -1 ||
+                           location ==
+                               uniform.getLocation() + static_cast<int>(locationVar.arrayIndex));
                     continue;
                 }
 
-                if (uniform.isArrayOfArrays())
-                {
-                    UNIMPLEMENTED();
-                }
-
                 name  = gl::StripLastArrayIndex(name);
-                count = uniform.arraySizes[0];
+                count = uniform.getBasicTypeElementCount();
             }
         }
 
@@ -2506,28 +2562,22 @@ void CaptureUpdateUniformValues(const gl::State &replayState,
         CaptureUpdateCurrentProgram(callsOut->back(), 0, callsOut);
     }
 
-    const std::vector<gl::LinkedUniform> &uniforms = program->getState().getUniforms();
-
-    for (const gl::LinkedUniform &uniform : uniforms)
+    for (GLuint uniformIndex = 0; uniformIndex < static_cast<GLuint>(program->getUniforms().size());
+         uniformIndex++)
     {
-        std::string uniformName = uniform.name;
+        std::string uniformName          = program->getUniformNameByIndex(uniformIndex);
+        const gl::LinkedUniform &uniform = program->getUniformByIndex(uniformIndex);
 
         int uniformCount = 1;
         if (uniform.isArray())
         {
-            if (uniform.isArrayOfArrays())
-            {
-                UNIMPLEMENTED();
-                continue;
-            }
-
-            uniformCount = uniform.arraySizes[0];
+            uniformCount = uniform.getBasicTypeElementCount();
             uniformName  = gl::StripLastArrayIndex(uniformName);
         }
 
         gl::UniformLocation uniformLoc      = program->getUniformLocation(uniformName);
-        const gl::UniformTypeInfo *typeInfo = uniform.typeInfo;
-        int componentCount                  = typeInfo->componentCount;
+        const gl::UniformTypeInfo &typeInfo = gl::GetUniformTypeInfo(uniform.getType());
+        int componentCount                  = typeInfo.componentCount;
         int uniformSize                     = uniformCount * componentCount;
 
         // For arrayed uniforms, we'll need to increment a read location
@@ -2540,7 +2590,7 @@ void CaptureUpdateUniformValues(const gl::State &replayState,
         }
 
         // Image uniforms are special and cannot be set this way
-        if (typeInfo->isImageType)
+        if (typeInfo.isImageType)
         {
             continue;
         }
@@ -2552,7 +2602,7 @@ void CaptureUpdateUniformValues(const gl::State &replayState,
         CallVector defaultUniformCalls({callsOut, &resetCalls[uniformLoc]});
 
         // Samplers should be populated with GL_INT, regardless of return type
-        if (typeInfo->isSampler)
+        if (typeInfo.isSampler)
         {
             std::vector<GLint> uniformBuffer(uniformSize);
             for (int index = 0; index < uniformCount; index++, readLoc.value++)
@@ -2571,7 +2621,7 @@ void CaptureUpdateUniformValues(const gl::State &replayState,
             continue;
         }
 
-        switch (typeInfo->componentType)
+        switch (typeInfo.componentType)
         {
             case GL_FLOAT:
             {
@@ -2583,7 +2633,7 @@ void CaptureUpdateUniformValues(const gl::State &replayState,
                     resourceTracker->setDefaultUniformBaseLocation(program->id(), readLoc,
                                                                    uniformLoc);
                 }
-                switch (typeInfo->type)
+                switch (typeInfo.type)
                 {
                     // Note: All matrix uniforms are populated without transpose
                     case GL_FLOAT_MAT4x3:
@@ -3409,7 +3459,7 @@ void GenerateLinkedProgram(const gl::Context *context,
             varyingsStrings.push_back(varyingString.data());
         }
 
-        GLenum xfbMode = program->getState().getTransformFeedbackBufferMode();
+        GLenum xfbMode = program->getTransformFeedbackBufferMode();
         Capture(setupCalls, CaptureTransformFeedbackVaryings(replayState, true, id,
                                                              static_cast<GLint>(xfbVaryings.size()),
                                                              varyingsStrings.data(), xfbMode));
@@ -3417,7 +3467,7 @@ void GenerateLinkedProgram(const gl::Context *context,
 
     // Force the attributes to be bound the same way as in the existing program.
     // This can affect attributes that are optimized out in some implementations.
-    for (const sh::ShaderVariable &attrib : program->getState().getProgramInputs())
+    for (const gl::ProgramInput &attrib : program->getState().getProgramInputs())
     {
         if (gl::IsBuiltInName(attrib.name))
         {
@@ -3428,9 +3478,9 @@ void GenerateLinkedProgram(const gl::Context *context,
         // Separable programs may not have a VS, meaning it may not have attributes.
         if (program->getExecutable().hasLinkedShaderStage(gl::ShaderType::Vertex))
         {
-            ASSERT(attrib.location != -1);
+            ASSERT(attrib.getLocation() != -1);
             Capture(setupCalls, CaptureBindAttribLocation(replayState, true, id,
-                                                          static_cast<GLuint>(attrib.location),
+                                                          static_cast<GLuint>(attrib.getLocation()),
                                                           attrib.name.c_str()));
         }
     }
@@ -5794,13 +5844,6 @@ FrameCaptureShared::FrameCaptureShared()
         INFO() << "Validation expression is " << kValidationExprVarName;
     }
 
-    std::string trimEnabledFromEnv =
-        GetEnvironmentVarOrUnCachedAndroidProperty(kTrimEnabledVarName, kAndroidTrimEnabled);
-    if (trimEnabledFromEnv == "0")
-    {
-        mTrimEnabled = false;
-    }
-
     // TODO: Remove. http://anglebug.com/7753
     std::string sourceExtFromEnv =
         GetEnvironmentVarOrUnCachedAndroidProperty(kSourceExtVarName, kAndroidSourceExt);
@@ -7367,7 +7410,7 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
             gl::ShaderProgramID shaderID =
                 call.params.getParam("shaderPacked", ParamType::TShaderProgramID, 0)
                     .value.ShaderProgramIDVal;
-            const gl::Shader *shader = context->getShader(shaderID);
+            const gl::Shader *shader = context->getShaderNoResolveCompile(shaderID);
             // Shaders compiled for ProgramBinary will not have a shader created
             if (shader)
             {
@@ -7384,9 +7427,9 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
                     .value.ShaderProgramIDVal;
             const gl::Program *program = context->getProgramResolveLink(programID);
             // Programs linked in support of ProgramBinary will not have attached shaders
-            if (program->getState().hasAttachedShader())
+            if (program->getState().hasAnyAttachedShader())
             {
-                setProgramSources(programID, GetAttachedProgramSources(program));
+                setProgramSources(programID, GetAttachedProgramSources(context, program));
             }
             break;
         }
@@ -8830,7 +8873,6 @@ void FrameCaptureShared::writeJSON(const gl::Context *context)
     json.addBool("IsBindGeneratesResourcesEnabled", glState.isBindGeneratesResourceEnabled());
     json.addBool("IsWebGLCompatibilityEnabled", glState.isWebGL());
     json.addBool("IsRobustResourceInitEnabled", glState.isRobustResourceInitEnabled());
-    json.addBool("IsTrimmingEnabled", mTrimEnabled);
     json.endGroup();
 
     {
@@ -9008,6 +9050,9 @@ void FrameCaptureShared::writeMainContextCppReplay(const gl::Context *context,
             {
                 out << "    " << FmtSetupFunction(kNoPartId, kSharedContextId, FuncUsage::Call)
                     << ";\n";
+                out << "    "
+                    << FmtSetupInactiveFunction(kNoPartId, kSharedContextId, FuncUsage::Call)
+                    << "\n";
                 // Make sure that the current context is mapped correctly
                 out << "    SetCurrentContextID(" << context->id() << ");\n";
             }
@@ -9295,11 +9340,6 @@ void FrameCaptureShared::markResourceSetupCallsInactive(std::vector<CallCapture>
                                                         GLuint id,
                                                         gl::Range<size_t> range)
 {
-    if (!mTrimEnabled)
-    {
-        return;
-    }
-
     ASSERT(mResourceIDToSetupCalls[type].find(id) == mResourceIDToSetupCalls[type].end());
 
     // Mark all of the calls that were used to initialize this resource as INACTIVE
@@ -9689,7 +9729,6 @@ void ReplayWriter::writeReplaySource(const std::string &filename)
     SaveFileHelper saveCpp(filename);
 
     saveCpp << mSourcePrologue << "\n";
-
     for (const std::string &header : mReplayHeaders)
     {
         saveCpp << header << "\n";

@@ -7,10 +7,10 @@
 #include <unordered_map>
 
 #include "common/system_utils.h"
-#include "compiler/translator/msl/AstHelpers.h"
 #include "compiler/translator/msl/IntermRebuild.h"
 #include "compiler/translator/tree_ops/SimplifyLoopConditions.h"
 #include "compiler/translator/tree_ops/msl/SeparateCompoundExpressions.h"
+#include "compiler/translator/util.h"
 
 using namespace sh;
 

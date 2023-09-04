@@ -26,11 +26,11 @@ enum SubjectIndexes : angle::SubjectIndex
     kExecutableSubjectIndex = 0
 };
 
-ProgramPipelineState::ProgramPipelineState()
+ProgramPipelineState::ProgramPipelineState(rx::GLImplFactory *factory)
     : mLabel(),
       mActiveShaderProgram(nullptr),
       mValid(false),
-      mExecutable(new ProgramExecutable()),
+      mExecutable(new ProgramExecutable(factory, &mInfoLog)),
       mIsLinked(false)
 {
     for (const ShaderType shaderType : gl::AllShaderTypes())
@@ -39,10 +39,7 @@ ProgramPipelineState::ProgramPipelineState()
     }
 }
 
-ProgramPipelineState::~ProgramPipelineState()
-{
-    SafeDelete(mExecutable);
-}
+ProgramPipelineState::~ProgramPipelineState() {}
 
 const std::string &ProgramPipelineState::getLabel() const
 {
@@ -127,7 +124,7 @@ void ProgramPipelineState::updateExecutableTextures()
     }
 }
 
-rx::SpecConstUsageBits ProgramPipelineState::getSpecConstUsageBits() const
+void ProgramPipelineState::updateExecutableSpecConstUsageBits()
 {
     rx::SpecConstUsageBits specConstUsageBits;
     for (const ShaderType shaderType : mExecutable->getLinkedShaderStages())
@@ -136,12 +133,13 @@ rx::SpecConstUsageBits ProgramPipelineState::getSpecConstUsageBits() const
         ASSERT(program);
         specConstUsageBits |= program->getState().getSpecConstUsageBits();
     }
-    return specConstUsageBits;
+    mExecutable->mPODStruct.specConstUsageBits = specConstUsageBits;
 }
 
 ProgramPipeline::ProgramPipeline(rx::GLImplFactory *factory, ProgramPipelineID handle)
     : RefCountObject(factory->generateSerial(), handle),
       mProgramPipelineImpl(factory->createProgramPipeline(mState)),
+      mState(factory),
       mExecutableObserverBinding(this, kExecutableSubjectIndex)
 {
     ASSERT(mProgramPipelineImpl);
@@ -150,7 +148,7 @@ ProgramPipeline::ProgramPipeline(rx::GLImplFactory *factory, ProgramPipelineID h
     {
         mProgramObserverBindings.emplace_back(this, static_cast<angle::SubjectIndex>(shaderType));
     }
-    mExecutableObserverBinding.bind(mState.mExecutable);
+    mExecutableObserverBinding.bind(mState.mExecutable.get());
 }
 
 ProgramPipeline::~ProgramPipeline()
@@ -170,6 +168,7 @@ void ProgramPipeline::onDestroy(const Context *context)
     }
 
     getImplementation()->destroy(context);
+    mState.mExecutable->destroy(context);
 }
 
 angle::Result ProgramPipeline::setLabel(const Context *context, const std::string &label)
@@ -270,12 +269,22 @@ void ProgramPipeline::updateExecutableAttributes()
         return;
     }
 
-    const ProgramExecutable &vertexExecutable      = vertexProgram->getExecutable();
-    mState.mExecutable->mActiveAttribLocationsMask = vertexExecutable.mActiveAttribLocationsMask;
-    mState.mExecutable->mMaxActiveAttribLocation   = vertexExecutable.mMaxActiveAttribLocation;
-    mState.mExecutable->mAttributesTypeMask        = vertexExecutable.mAttributesTypeMask;
-    mState.mExecutable->mAttributesMask            = vertexExecutable.mAttributesMask;
-    mState.mExecutable->mProgramInputs             = vertexExecutable.mProgramInputs;
+    const ProgramExecutable &vertexExecutable = vertexProgram->getExecutable();
+    mState.mExecutable->mPODStruct.activeAttribLocationsMask =
+        vertexExecutable.mPODStruct.activeAttribLocationsMask;
+    mState.mExecutable->mPODStruct.maxActiveAttribLocation =
+        vertexExecutable.mPODStruct.maxActiveAttribLocation;
+    mState.mExecutable->mPODStruct.attributesTypeMask =
+        vertexExecutable.mPODStruct.attributesTypeMask;
+    mState.mExecutable->mPODStruct.attributesMask = vertexExecutable.mPODStruct.attributesMask;
+    mState.mExecutable->mProgramInputs            = vertexExecutable.mProgramInputs;
+
+    mState.mExecutable->mPODStruct.numViews       = vertexExecutable.mPODStruct.numViews;
+    mState.mExecutable->mPODStruct.drawIDLocation = vertexExecutable.mPODStruct.drawIDLocation;
+    mState.mExecutable->mPODStruct.baseVertexLocation =
+        vertexExecutable.mPODStruct.baseVertexLocation;
+    mState.mExecutable->mPODStruct.baseInstanceLocation =
+        vertexExecutable.mPODStruct.baseInstanceLocation;
 }
 
 void ProgramPipeline::updateTransformFeedbackMembers()
@@ -359,12 +368,14 @@ void ProgramPipeline::updateExecutableGeometryProperties()
     }
 
     const ProgramExecutable &geometryExecutable = geometryProgram->getExecutable();
-    mState.mExecutable->mGeometryShaderInputPrimitiveType =
-        geometryExecutable.mGeometryShaderInputPrimitiveType;
-    mState.mExecutable->mGeometryShaderOutputPrimitiveType =
-        geometryExecutable.mGeometryShaderOutputPrimitiveType;
-    mState.mExecutable->mGeometryShaderInvocations = geometryExecutable.mGeometryShaderInvocations;
-    mState.mExecutable->mGeometryShaderMaxVertices = geometryExecutable.mGeometryShaderMaxVertices;
+    mState.mExecutable->mPODStruct.geometryShaderInputPrimitiveType =
+        geometryExecutable.mPODStruct.geometryShaderInputPrimitiveType;
+    mState.mExecutable->mPODStruct.geometryShaderOutputPrimitiveType =
+        geometryExecutable.mPODStruct.geometryShaderOutputPrimitiveType;
+    mState.mExecutable->mPODStruct.geometryShaderInvocations =
+        geometryExecutable.mPODStruct.geometryShaderInvocations;
+    mState.mExecutable->mPODStruct.geometryShaderMaxVertices =
+        geometryExecutable.mPODStruct.geometryShaderMaxVertices;
 }
 
 void ProgramPipeline::updateExecutableTessellationProperties()
@@ -375,17 +386,20 @@ void ProgramPipeline::updateExecutableTessellationProperties()
     if (tessControlProgram)
     {
         const ProgramExecutable &tessControlExecutable = tessControlProgram->getExecutable();
-        mState.mExecutable->mTessControlShaderVertices =
-            tessControlExecutable.mTessControlShaderVertices;
+        mState.mExecutable->mPODStruct.tessControlShaderVertices =
+            tessControlExecutable.mPODStruct.tessControlShaderVertices;
     }
 
     if (tessEvalProgram)
     {
         const ProgramExecutable &tessEvalExecutable = tessEvalProgram->getExecutable();
-        mState.mExecutable->mTessGenMode            = tessEvalExecutable.mTessGenMode;
-        mState.mExecutable->mTessGenSpacing         = tessEvalExecutable.mTessGenSpacing;
-        mState.mExecutable->mTessGenVertexOrder     = tessEvalExecutable.mTessGenVertexOrder;
-        mState.mExecutable->mTessGenPointMode       = tessEvalExecutable.mTessGenPointMode;
+        mState.mExecutable->mPODStruct.tessGenMode  = tessEvalExecutable.mPODStruct.tessGenMode;
+        mState.mExecutable->mPODStruct.tessGenSpacing =
+            tessEvalExecutable.mPODStruct.tessGenSpacing;
+        mState.mExecutable->mPODStruct.tessGenVertexOrder =
+            tessEvalExecutable.mPODStruct.tessGenVertexOrder;
+        mState.mExecutable->mPODStruct.tessGenPointMode =
+            tessEvalExecutable.mPODStruct.tessGenPointMode;
     }
 }
 
@@ -398,10 +412,12 @@ void ProgramPipeline::updateFragmentInoutRangeAndEnablesPerSampleShading()
         return;
     }
 
-    const ProgramExecutable &fragmentExecutable  = fragmentProgram->getExecutable();
-    mState.mExecutable->mFragmentInoutRange      = fragmentExecutable.mFragmentInoutRange;
-    mState.mExecutable->mHasDiscard              = fragmentExecutable.mHasDiscard;
-    mState.mExecutable->mEnablesPerSampleShading = fragmentExecutable.mEnablesPerSampleShading;
+    const ProgramExecutable &fragmentExecutable = fragmentProgram->getExecutable();
+    mState.mExecutable->mPODStruct.fragmentInoutRange =
+        fragmentExecutable.mPODStruct.fragmentInoutRange;
+    mState.mExecutable->mPODStruct.hasDiscard = fragmentExecutable.mPODStruct.hasDiscard;
+    mState.mExecutable->mPODStruct.enablesPerSampleShading =
+        fragmentExecutable.mPODStruct.enablesPerSampleShading;
 }
 
 void ProgramPipeline::updateLinkedVaryings()
@@ -450,6 +466,7 @@ void ProgramPipeline::updateExecutable()
 
     // All Shader ProgramExecutable properties
     mState.updateExecutableTextures();
+    mState.updateExecutableSpecConstUsageBits();
     updateLinkedVaryings();
 }
 
@@ -462,21 +479,26 @@ angle::Result ProgramPipeline::link(const Context *context)
 
     ProgramMergedVaryings mergedVaryings;
     ProgramVaryingPacking varyingPacking;
-    LinkingVariables linkingVariables(mState);
+    LinkingVariables linkingVariables;
 
-    mState.mExecutable->reset(true);
+    mState.mExecutable->reset();
+    mState.mInfoLog.reset();
 
-    InfoLog &infoLog = mState.mExecutable->getInfoLog();
-    infoLog.reset();
+    linkingVariables.initForProgramPipeline(mState);
+
+    const Caps &caps               = context->getCaps();
+    const Limitations &limitations = context->getLimitations();
+    const Version &clientVersion   = context->getClientVersion();
+    const bool isWebGL             = context->isWebGL();
 
     if (mState.mExecutable->hasLinkedShaderStage(gl::ShaderType::Vertex))
     {
-        if (!linkVaryings(infoLog))
+        if (!linkVaryings())
         {
             return angle::Result::Stop;
         }
 
-        if (!LinkValidateProgramGlobalNames(infoLog, getExecutable(), linkingVariables))
+        if (!LinkValidateProgramGlobalNames(mState.mInfoLog, getExecutable(), linkingVariables))
         {
             return angle::Result::Stop;
         }
@@ -489,8 +511,7 @@ angle::Result ProgramPipeline::link(const Context *context)
             const GLuint combinedShaderStorageBlocks    = 0;
             const ProgramExecutable &fragmentExecutable = fragmentShaderProgram->getExecutable();
             if (!mState.mExecutable->linkValidateOutputVariables(
-                    context->getCaps(), context->getExtensions(), context->getClientVersion(),
-                    combinedImageUniforms, combinedShaderStorageBlocks,
+                    caps, clientVersion, combinedImageUniforms, combinedShaderStorageBlocks,
                     fragmentExecutable.getOutputVariables(),
                     fragmentExecutable.getLinkedShaderVersion(ShaderType::Fragment),
                     ProgramAliasedBindings(), ProgramAliasedBindings()))
@@ -522,9 +543,9 @@ angle::Result ProgramPipeline::link(const Context *context)
         const std::vector<std::string> &transformFeedbackVaryingNames =
             tfProgram->getState().getTransformFeedbackVaryingNames();
 
-        if (!mState.mExecutable->linkMergedVaryings(context, mergedVaryings,
-                                                    transformFeedbackVaryingNames, linkingVariables,
-                                                    false, &varyingPacking))
+        if (!mState.mExecutable->linkMergedVaryings(caps, limitations, clientVersion, isWebGL,
+                                                    mergedVaryings, transformFeedbackVaryingNames,
+                                                    linkingVariables, false, &varyingPacking))
         {
             return angle::Result::Stop;
         }
@@ -570,7 +591,17 @@ angle::Result ProgramPipeline::link(const Context *context)
     return angle::Result::Continue;
 }
 
-bool ProgramPipeline::linkVaryings(InfoLog &infoLog) const
+int ProgramPipeline::getInfoLogLength() const
+{
+    return static_cast<int>(mState.mInfoLog.getLength());
+}
+
+void ProgramPipeline::getInfoLog(GLsizei bufSize, GLsizei *length, char *infoLog) const
+{
+    return mState.mInfoLog.getLog(bufSize, length, infoLog);
+}
+
+bool ProgramPipeline::linkVaryings()
 {
     ShaderType previousShaderType = ShaderType::InvalidEnum;
     for (ShaderType shaderType : kAllGraphicsShaderTypes)
@@ -592,7 +623,7 @@ bool ProgramPipeline::linkVaryings(InfoLog &infoLog) const
                     previousExecutable.getLinkedOutputVaryings(previousShaderType),
                     executable.getLinkedInputVaryings(shaderType), previousShaderType, shaderType,
                     previousExecutable.getLinkedShaderVersion(previousShaderType),
-                    executable.getLinkedShaderVersion(shaderType), true, infoLog))
+                    executable.getLinkedShaderVersion(shaderType), true, mState.mInfoLog))
             {
                 return false;
             }
@@ -616,15 +647,14 @@ bool ProgramPipeline::linkVaryings(InfoLog &infoLog) const
         vertexExecutable.getLinkedOutputVaryings(ShaderType::Vertex),
         fragmentExecutable.getLinkedInputVaryings(ShaderType::Fragment), ShaderType::Vertex,
         ShaderType::Fragment, vertexExecutable.getLinkedShaderVersion(ShaderType::Vertex),
-        fragmentExecutable.getLinkedShaderVersion(ShaderType::Fragment), infoLog);
+        fragmentExecutable.getLinkedShaderVersion(ShaderType::Fragment), mState.mInfoLog);
 }
 
 void ProgramPipeline::validate(const gl::Context *context)
 {
     const Caps &caps = context->getCaps();
     mState.mValid    = true;
-    InfoLog &infoLog = mState.mExecutable->getInfoLog();
-    infoLog.reset();
+    mState.mInfoLog.reset();
 
     for (const ShaderType shaderType : mState.mExecutable->getLinkedShaderStages())
     {
@@ -637,14 +667,14 @@ void ProgramPipeline::validate(const gl::Context *context)
             if (shaderInfoString.length())
             {
                 mState.mValid = false;
-                infoLog << shaderInfoString << "\n";
+                mState.mInfoLog << shaderInfoString << "\n";
                 return;
             }
             if (!shaderProgram->isSeparable())
             {
                 mState.mValid = false;
-                infoLog << GetShaderTypeString(shaderType) << " is not marked separable."
-                        << "\n";
+                mState.mInfoLog << GetShaderTypeString(shaderType) << " is not marked separable."
+                                << "\n";
                 return;
             }
         }
@@ -655,11 +685,11 @@ void ProgramPipeline::validate(const gl::Context *context)
     {
         mState.mValid            = false;
         const char *errorMessage = reinterpret_cast<const char *>(programPipelineError);
-        infoLog << errorMessage << "\n";
+        mState.mInfoLog << errorMessage << "\n";
         return;
     }
 
-    if (!linkVaryings(infoLog))
+    if (!linkVaryings())
     {
         mState.mValid = false;
 
@@ -671,7 +701,7 @@ void ProgramPipeline::validate(const gl::Context *context)
             std::string shaderInfoString = shaderProgram->getExecutable().getInfoLogString();
             if (shaderInfoString.length())
             {
-                infoLog << shaderInfoString << "\n";
+                mState.mInfoLog << shaderInfoString << "\n";
             }
         }
     }

@@ -2218,11 +2218,6 @@ bool GenMetalTraverser::visitAggregate(Visit, TIntermAggregate *aggregateNode)
     else
     {
         const TOperator op = aggregateNode->getOp();
-        if (op == EOpAtan)
-        {
-            TranslatorMetalReflection *reflection = mtl::getTranslatorMetalReflection(&mCompiler);
-            reflection->hasAtan                   = true;
-        }
         switch (op)
         {
             case TOperator::EOpCallFunctionInAST:

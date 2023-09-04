@@ -464,8 +464,7 @@ TEST_P(SampleVariablesTest, SampleMask)
 precision highp float;
 uniform highp int sampleMask;
 
-// Fails on Adreno without explicit location
-layout(location = 0) out vec4 color;
+out vec4 color;
 
 void main()
 {

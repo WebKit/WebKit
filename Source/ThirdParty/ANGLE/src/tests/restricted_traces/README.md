@@ -315,6 +315,55 @@ git cl upload
 
 You're now ready to run your new trace on CI!
 
+# Comparing screenshots against the native driver
+
+To compare trace screenshots from ANGLE vs the native driver, you can
+use the `compare_trace_screenshots.py` script.
+
+The following steps will work on Android, but are transferrable to
+any operating system.
+
+First, make a spot for the results:
+```
+adb shell rm -r /sdcard/angle/screenshots
+adb shell mkdir -p /sdcard/angle/screenshots
+```
+
+Then run the traces using ANGLE:
+```
+out/AndroidPerformance/angle_trace_tests --verbose --run-to-key-frame --screenshot-dir /sdcard/angle/screenshots --shard-timeout 1000000
+```
+
+And again with the native driver:
+```
+out/AndroidPerformance/angle_trace_tests --verbose --run-to-key-frame --screenshot-dir /sdcard/angle/screenshots --shard-timeout 1000000 --use-gl=native
+```
+
+It may take a few tries as some drivers will crash.  In that case, run the ones at the end that were stragglers, i.e.:
+```
+out/AndroidPerformance/angle_trace_tests --verbose --run-to-key-frame --screenshot-dir /sdcard/angle/screenshots --shard-timeout 1000000 --use-gl=native --gtest_filter="*words*:*world*:*worms*:*zenonia*:*zillow*:*zombie*"
+```
+
+Pull the screenshots:
+```
+adb pull /sdcard/angle/screenshots
+cd screenshots
+```
+
+And run the compare script:
+```
+python3 ../src/tests/restricted_traces/compare_trace_screenshots.py versus_native --trace-list-path ../src/tests/restricted_traces/
+```
+
+The script will print out results comparing ANGLE vs. native screenshots at different fuzz factors.
+It may also print out NA for missing screenshots:
+```
+...
+arknights angle_vulkan_arknights.png MISSING_EXT.png NA NA NA NA NA NA
+asphalt_8 angle_vulkan_asphalt_8.png angle_native_asphalt_8.png 641849 222157 116426 1701 82 22
+asphalt_9 angle_vulkan_asphalt_9.png angle_native_asphalt_9.png 17919 420 305 293 232 3
+...
+```
 # Upgrading existing traces
 
 With tracer updates sometimes we want to re-run tracing to upgrade the trace file format or to
@@ -322,6 +371,216 @@ take advantage of new tracer improvements. The [`retrace_restricted_traces`](ret
 script allows us to re-run tracing using [SwiftShader](https://swiftshader.googlesource.com/SwiftShader)
 on a desktop machine. As of writing we require re-tracing on a Windows machine because of size
 limitations with a Linux app window.
+
+## Part 1: Retrace it
+
+Upgrade your trace into a new directory called `retrace-wip`
+
+In this instance, we'll upgrade `octopath_traveler`
+```
+export TRACE_GN_PATH=out/Debug
+export TRACE_NAME=octopath_traveler
+src/tests/restricted_traces/retrace_restricted_traces.py upgrade $TRACE_GN_PATH retrace-wip -f $TRACE_NAME
+```
+
+## Part 2: Verify it
+
+Before we check in an upgraded trace, we want to put it through enough paces to
+ensure behaves the same or better.
+
+### Screenshots
+
+For screenshots, we want to verify all frames render correctly before and after Reset.
+
+So make two spots to gather the screenshots, and one to gather results:
+```
+mkdir retrace-wip/${TRACE_NAME}_before
+mkdir retrace-wip/${TRACE_NAME}_after
+mkdir retrace-wip/${TRACE_NAME}_compare
+```
+
+We need two loops to verify Reset, so you'll need to inspect how many frames
+are in the trace. In this case, `octopath_traveler` has 500 frames, so we need
+1000 screenshots. We use -1 as the screenshot frame so we get all images:
+```
+out/Debug/angle_trace_tests --gtest_filter=TraceTest.${TRACE_NAME} --use-angle=swiftshader --max-steps-performed 1000 --screenshot-dir retrace-wip/${TRACE_NAME}_before --screenshot-frame -1
+```
+
+Then move the new trace in and run it again:
+```
+mv src/tests/restricted_traces/${TRACE_NAME} retrace-wip/${TRACE_NAME}_orig
+cp -r retrace-wip/${TRACE_NAME} src/tests/restricted_traces
+autoninja -C out/Debug angle_trace_tests
+out/Debug/angle_trace_tests --gtest_filter=TraceTest.${TRACE_NAME} --use-angle=swiftshader --max-steps-performed 1000 --screenshot-dir retrace-wip/${TRACE_NAME}_after --screenshot-frame -1
+```
+
+After that, we have a script that will compare the before and after screenshots,
+saving the results:
+```
+src/tests/restricted_traces/compare_trace_screenshots.py versus_upgrade --before retrace-wip/${TRACE_NAME}_before --after retrace-wip/${TRACE_NAME}_after --outdir retrace-wip/${TRACE_NAME}_compare
+```
+
+If you have any diffs, they will pop out like this, and you need to investigate:
+```
+angle_vulkan_swiftshader_octopath_traveler_frame1.png 0
+angle_vulkan_swiftshader_octopath_traveler_frame10.png 0
+angle_vulkan_swiftshader_octopath_traveler_frame100.png 1.12185e+06
+Pixel diff detected!
+```
+
+### Performance
+
+We need to ensure we're getting the same frame times and memory usage.
+
+The easiest way to do that is on Android, which can show us GPU and CPU memory.
+
+First, restore the original trace, then build and install the most optimized build,
+along with the ANGLE apk itself:
+```
+rm -r src/tests/restricted_traces/${TRACE_NAME}
+cp -r retrace-wip/${TRACE_NAME}_orig src/tests/restricted_traces/${TRACE_NAME}
+autoninja -C out/AndroidPerformance angle_trace_tests angle_apks
+adb install -r --force-queryable ./out/AndroidPerformance/apks/AngleLibraries.apk
+out/AndroidPerformance/angle_trace_tests --gtest_filter=TraceTest.${TRACE_NAME} --run-to-key-frame --no-warmup
+```
+
+Then run the `restricted_trace_perf.py` script to gather frame times and memory:
+```
+pushd src/tests/restricted_traces
+vpython3 restricted_trace_perf.py --fixedtime 10 --sleep 10 --power --output-tag ${TRACE_NAME}.before --loop-count 5 --renderer vulkan --filter ${TRACE_NAME}
+popd
+```
+
+You should get output like this:
+```
+trace                                    wall_time       gpu_time        cpu_time        gpu_power  cpu_power  gpu_mem_sustained    gpu_mem_peak    proc_mem_median      proc_mem_peak
+
+Starting run 1 with vulkan at 2023-08-17 16:26:29
+
+vulkan_octopath_traveler                 2.9650          0               3.8901000000    5183       5659       186837550            206241792       586976000            591528000
+
+Starting run 2 with vulkan at 2023-08-17 16:26:54
+
+vulkan_octopath_traveler                 3.0038          0               3.9452525714    5295       5128       186467084            205910016       584568000            589196000
+
+Starting run 3 with vulkan at 2023-08-17 16:27:18
+
+vulkan_octopath_traveler                 3.0061          0               3.9361028571    5203       5182       187197952            205262848       586596000            590324000
+
+Starting run 4 with vulkan at 2023-08-17 16:27:42
+
+vulkan_octopath_traveler                 2.9901          0               3.9330551429    5461       5165       194881803            197480448       585268000            588384000
+
+Starting run 5 with vulkan at 2023-08-17 16:28:05
+
+vulkan_octopath_traveler                 3.0749          0               3.9652568571    5197       5096       193443742            203177984       583636000            586380000
+```
+
+Bring in the upgraded trace, build and install the trace again:
+```
+rm -rf src/tests/restricted_traces/${TRACE_NAME}
+cp -r retrace-wip/${TRACE_NAME} src/tests/restricted_traces/${TRACE_NAME}
+autoninja -C out/AndroidPerformance angle_trace_tests
+out/AndroidPerformance/angle_trace_tests --gtest_filter=TraceTest.${TRACE_NAME} --run-to-key-frame --no-warmup
+```
+
+And collect performance data:
+```
+pushd src/tests/restricted_traces
+vpython3 restricted_trace_perf.py --fixedtime 10 --sleep 10 --power --output-tag ${TRACE_NAME}.after --loop-count 5 --renderer vulkan --filter ${TRACE_NAME}
+popd
+```
+
+Verify using a spreadsheet that the values are relatively the same.
+If you notice a marked difference, spend some time understanding it.
+For instance, you may see memory decrease due to fixed in the upgrade.
+
+## Part 3: Test the upgraded traces under an experimental prefix
+
+To test the trace on all platforms, we first upload them to a temporary CIPD
+path for testing. After a successful run on the CQ, we will then upload them
+to the main ANGLE prefix.
+
+To enable the experimental prefix, edit
+[`restricted_traces.json`](restricted_traces.json) to use a version
+number beginning with 'x'. For example:
+
+```
+  "traces": [
+    ...
+    "octopath_traveler x1",
+    ...
+```
+
+Then run:
+
+```
+src/tests/restricted_traces/sync_restricted_traces_to_cipd.py --filter ${TRACE_NAME}
+scripts/run_code_generation.py
+```
+
+After these commands complete succesfully, create and upload a CL as normal.
+
+Before running tests, you need to grant the bots access to your experimental
+CIPD files (substituting your account name):
+```
+cipd acl-edit experimental/google.com/$USERNAME -reader user:angle-try-builder@chops-service-accounts.iam.gserviceaccount.com
+cipd acl-edit experimental/google.com/$USERNAME -reader user:chromium-try-gpu-builder@chops-service-accounts.iam.gserviceaccount.com
+```
+
+You can verify it worked by running this command and seeing the bot added to readers:
+```
+cipd acl-list experimental/google.com/$USERNAME/angle/traces
+...
+Readers:
+  via "experimental/google.com/$USERNAME":
+    user:angle-try-builder@chops-service-accounts.iam.gserviceaccount.com
+    user:chromium-try-gpu-builder@chops-service-accounts.iam.gserviceaccount.com
+```
+
+Run CQ +1 Dry-Run. If you find a test regression, see the section below on
+diagnosing tracer errors. Otherwise proceed with the steps below.
+
+## Part 5: Upload the verified traces to CIPD under the stable prefix
+
+Now that you've validated the traces on the CQ, update
+[`restricted_traces.json`](restricted_traces.json) to remove the 'x' prefix
+and incrementing the version of the traces (skipping versions if you prefer)
+and then run:
+
+```
+src/tests/restricted_traces/sync_restricted_traces_to_cipd.py --filter ${TRACE_NAME}
+scripts/run_code_generation.py
+```
+
+Then create and upload a CL as normal. Congratulations, you've finished the
+trace upgrade!
+
+## Finding a trace's minimum requirements
+
+`retrace_restricted_traces.py` can be used to determine a trace's minimum
+extensions and GLES version. Run the command:
+
+```
+src/tests/restricted_traces/retrace_restricted_traces.py get_min_reqs $TRACE_GN_PATH [--traces "*"]
+```
+
+The script will run each listed trace multiple times so it can find the minimum
+required GLES version and each required extension. Finally it records that
+information to the trace's json file.
+
+By default it will run with SwiftShader. To make the script use your machine's
+native vulkan drivers, use the `--no-swiftshader` argument before the script's
+command:
+
+```
+src/tests/restricted_traces/retrace_restricted_traces.py --no-swiftshader get_min_reqs $TRACE_GN_PATH [--traces "*"]
+```
+
+## Extended testing and full trace upgrades
+
+If you want to really drill down on trace differences, you might want to use the
+built in validation support, which serailizes the internal state of ANGLE.
 
 ## Prep work: Back up existing traces
 
@@ -339,7 +598,7 @@ This will save the traces to `./retrace-backups`. At any time you can revert the
 src/tests/restricted_traces/retrace_restricted_traces.py restore "*"
 ```
 
-## Part 1: Sanity Check with T-Rex
+## Part 1: Upgrading Sanity Check with T-Rex
 
 First we'll retrace a single app to verify the workflow is intact. Please
 ensure you replace the specified variables with paths that work on your
@@ -397,7 +656,7 @@ src/tests/restricted_traces/retrace_restricted_traces.py validate $TRACE_GN_PATH
 ```
 
 If any traces failed validation, see the section below on diagnosing tracer
-errors. Otherwise proceed with the steps below.
+errors.
 
 ### Step 3/3: Restore all traces
 
@@ -416,79 +675,10 @@ If this process gets interrupted, re-run the upgrade command. The
 `--no-overwrite` argument will ensure it will complete eventually.
 
 If any traces failed to upgrade, see the section below on diagnosing tracer
-errors. Otherwise proceed with the steps below.
+errors.
 
-## Part 4: Test the upgraded traces under an experimental prefix (slow)
+Otherwise, use the steps above to [verify and upgrade your traces](#part-3-test-the-upgraded-traces-under-an-experimental-prefix).
 
-Because there still may be trace errors undetected by validation, we first
-upload the traces to a temporary CIPD path for testing. After a successful
-run on the CQ, we will then upload them to the main ANGLE prefix.
-
-To enable the experimental prefix, edit
-[`restricted_traces.json`](restricted_traces.json) to use a version
-number beginning with 'x'. For example:
-
-```
-  "traces": [
-    "aliexpress x1",
-    "among_us x1",
-    "angry_birds_2_1500 x1",
-    "arena_of_valor x1",
-    "asphalt_8 x1",
-    "avakin_life x1",
-... and so on ...
-```
-
-Then run:
-
-```
-src/tests/restricted_traces/retrace_restricted_traces.py restore -o retrace-wip "*"
-src/tests/restricted_traces/sync_restricted_traces_to_cipd.py
-scripts/run_code_generation.py
-```
-
-The restore command will copy the new traces from the `retrace-wip` directory
-into the trace folder before we call the sync script.
-
-After these commands complete succesfully, create and upload a CL as normal.
-Run CQ +1 Dry-Run. If you find a test regression, see the section below on
-diagnosing tracer errors. Otherwise proceed with the steps below.
-
-## Part 5: Upload the verified traces to CIPD under the stable prefix
-
-Now that you've validated the traces on the CQ, update
-[`restricted_traces.json`](restricted_traces.json) to remove the 'x' prefix
-and incrementing the version of the traces (skipping versions if you prefer)
-and then run:
-
-```
-src/tests/restricted_traces/sync_restricted_traces_to_cipd.py
-scripts/run_code_generation.py
-```
-
-Then create and upload a CL as normal. Congratulations, you've finished the
-trace upgrade!
-
-## Finding a trace's minimum requirements
-
-`retrace_restricted_traces.py` can be used to determine a trace's minimum
-extensions and GLES version. Run the command:
-
-```
-src/tests/restricted_traces/retrace_restricted_traces.py get_min_reqs $TRACE_GN_PATH [--traces "*"]
-```
-
-The script will run each listed trace multiple times so it can find the minimum
-required GLES version and each required extension. Finally it records that
-information to the trace's json file.
-
-By default it will run with SwiftShader. To make the script use your machine's
-native vulkan drivers, use the `--no-swiftshader` argument before the script's
-command:
-
-```
-src/tests/restricted_traces/retrace_restricted_traces.py --no-swiftshader get_min_reqs $TRACE_GN_PATH [--traces "*"]
-```
 
 # Diagnosing and fixing tracer errors
 
@@ -499,7 +689,7 @@ to find the exact command line and environment variables the script uses to
 produce the failure. For example:
 
 ```
-INFO:root:ANGLE_CAPTURE_LABEL=trex_200 ANGLE_CAPTURE_OUT_DIR=C:\src\angle\retrace-wip\trex_200 ANGLE_CAPTURE_FRAME_START=2 ANGLE_CAPTURE_FRAME_END=4 ANGLE_CAPTURE_VALIDATION=1 ANGLE_FEATURE_OVERRIDES_ENABLED=allocateNonZeroMemory:forceInitShaderVariables ANGLE_CAPTURE_TRIM_ENABLED=1 out\Debug\angle_trace_tests.exe --gtest_filter=TraceTest.trex_200 --use-angle=swiftshader --max-steps-performed 3 --retrace-mode
+INFO:root:ANGLE_CAPTURE_LABEL=trex_200 ANGLE_CAPTURE_OUT_DIR=C:\src\angle\retrace-wip\trex_200 ANGLE_CAPTURE_FRAME_START=2 ANGLE_CAPTURE_FRAME_END=4 ANGLE_CAPTURE_VALIDATION=1 ANGLE_FEATURE_OVERRIDES_ENABLED=allocateNonZeroMemory:forceInitShaderVariables out\Debug\angle_trace_tests.exe --gtest_filter=TraceTest.trex_200 --use-angle=swiftshader --max-steps-performed 3 --retrace-mode
 ```
 
 Once you can reproduce the issue you can use a debugger or other standard

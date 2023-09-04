@@ -225,10 +225,6 @@ def upgrade_single_trace(args, trace_binary, trace, out_path, no_overwrite, c_so
             'ANGLE_FEATURE_OVERRIDES_ENABLED'] = 'allocateNonZeroMemory:forceInitShaderVariables'
     if args.validation_expr:
         additional_env['ANGLE_CAPTURE_VALIDATION_EXPR'] = args.validation_expr
-    if args.trim:
-        additional_env['ANGLE_CAPTURE_TRIM_ENABLED'] = '1'
-    if args.no_trim:
-        additional_env['ANGLE_CAPTURE_TRIM_ENABLED'] = '0'
     # TODO: Remove when default. http://anglebug.com/7753
     if c_sources:
         additional_env['ANGLE_CAPTURE_SOURCE_EXT'] = 'c'
@@ -246,6 +242,13 @@ def upgrade_single_trace(args, trace_binary, trace, out_path, no_overwrite, c_so
             logging.error(
                 f'There was a problem tracing "{trace}", could not find json file: {json_file}')
             return False
+
+        # Copy over the list obtained by get_min_reqs if present
+        if 'RequiredExtensions' in json_data:
+            new_data = read_json(json_file)
+            new_data['RequiredExtensions'] = json_data['RequiredExtensions']
+            write_json(json_file, new_data)
+
     except subprocess.CalledProcessError as e:
         logging.exception('There was an exception running "%s":\n%s' % (trace, e.output.decode()))
         return False
@@ -377,11 +380,6 @@ def add_upgrade_args(parser):
         '--frame-limit',
         type=int,
         help='Limits the number of captured frames to produce a shorter trace than the original.')
-    parser.add_argument(
-        '--trim', action='store_true', help='Enables trace trimming. Breaks replay validation.')
-    parser.add_argument(
-        '--no-trim', action='store_true', help='Disables trace trimming. Useful for validation.')
-    parser.set_defaults(trim=True)
 
 
 def get_min_reqs(args, traces):

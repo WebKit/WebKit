@@ -16,12 +16,12 @@
 #import "common/system_utils.h"
 #import "gpu_info_util/SystemInfo.h"
 #import "libANGLE/Display.h"
+#import "libANGLE/renderer/gl/RendererGL.h"
 #import "libANGLE/renderer/gl/eagl/ContextEAGL.h"
 #import "libANGLE/renderer/gl/eagl/DeviceEAGL.h"
 #import "libANGLE/renderer/gl/eagl/FunctionsEAGL.h"
 #import "libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.h"
 #import "libANGLE/renderer/gl/eagl/PbufferSurfaceEAGL.h"
-#import "libANGLE/renderer/gl/eagl/RendererEAGL.h"
 #import "libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.h"
 
 namespace
@@ -87,7 +87,7 @@ egl::Error DisplayEAGL::initialize(egl::Display *display)
     std::unique_ptr<FunctionsGL> functionsGL(new FunctionsGLEAGL(handle));
     functionsGL->initialize(display->getAttributeMap());
 
-    mRenderer.reset(new RendererEAGL(std::move(functionsGL), display->getAttributeMap(), this));
+    mRenderer.reset(new RendererGL(std::move(functionsGL), display->getAttributeMap(), this));
 
     const gl::Version &maxVersion = mRenderer->getMaxSupportedESVersion();
     if (maxVersion < gl::Version(2, 0))
@@ -336,55 +336,6 @@ egl::Error DisplayEAGL::makeCurrentSurfaceless(gl::Context *context)
     // We have nothing to do as mContext is always current, and that EAGL is surfaceless by
     // default.
     return egl::NoError();
-}
-
-class WorkerContextEAGL final : public WorkerContext
-{
-  public:
-    WorkerContextEAGL(EAGLContextObj context);
-    ~WorkerContextEAGL() override;
-
-    bool makeCurrent() override;
-    void unmakeCurrent() override;
-
-  private:
-    EAGLContextObj mContext;
-};
-
-WorkerContextEAGL::WorkerContextEAGL(EAGLContextObj context) : mContext(context) {}
-
-WorkerContextEAGL::~WorkerContextEAGL()
-{
-    [getEAGLContextClass() setCurrentContext:nil];
-    mContext = nullptr;
-}
-
-bool WorkerContextEAGL::makeCurrent()
-{
-    if (![getEAGLContextClass() setCurrentContext:static_cast<EAGLContext *>(mContext)])
-    {
-        ERR() << "Unable to make gl context current.";
-        return false;
-    }
-    return true;
-}
-
-void WorkerContextEAGL::unmakeCurrent()
-{
-    [getEAGLContextClass() setCurrentContext:nil];
-}
-
-WorkerContext *DisplayEAGL::createWorkerContext(std::string *infoLog)
-{
-    EAGLContextObj context = nullptr;
-    context                = [allocEAGLContextInstance() initWithAPI:kEAGLRenderingAPIOpenGLES3];
-    if (!context)
-    {
-        *infoLog += "Could not create the EAGL context.";
-        return nullptr;
-    }
-
-    return new WorkerContextEAGL(context);
 }
 
 void DisplayEAGL::initializeFrontendFeatures(angle::FrontendFeatures *features) const

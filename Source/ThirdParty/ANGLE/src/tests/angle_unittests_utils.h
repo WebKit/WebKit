@@ -27,6 +27,10 @@ class NullFactory : public GLImplFactory
     CompilerImpl *createCompiler() override { return nullptr; }
     ShaderImpl *createShader(const gl::ShaderState &data) override { return nullptr; }
     ProgramImpl *createProgram(const gl::ProgramState &data) override { return nullptr; }
+    ProgramExecutableImpl *createProgramExecutable(const gl::ProgramExecutable *executable) override
+    {
+        return nullptr;
+    }
 
     // Framebuffer creation
     FramebufferImpl *createFramebuffer(const gl::FramebufferState &data) override
@@ -85,6 +89,7 @@ class MockGLFactory : public GLImplFactory
     MOCK_METHOD0(createCompiler, CompilerImpl *());
     MOCK_METHOD1(createShader, ShaderImpl *(const gl::ShaderState &));
     MOCK_METHOD1(createProgram, ProgramImpl *(const gl::ProgramState &));
+    MOCK_METHOD1(createProgramExecutable, ProgramExecutableImpl *(const gl::ProgramExecutable *));
     MOCK_METHOD1(createProgramPipeline, ProgramPipelineImpl *(const gl::ProgramPipelineState &));
     MOCK_METHOD1(createFramebuffer, FramebufferImpl *(const gl::FramebufferState &));
     MOCK_METHOD0(createMemoryObject, MemoryObjectImpl *());

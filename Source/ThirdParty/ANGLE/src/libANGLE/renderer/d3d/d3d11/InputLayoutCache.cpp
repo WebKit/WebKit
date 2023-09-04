@@ -13,6 +13,7 @@
 #include "common/utilities.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Program.h"
+#include "libANGLE/ProgramExecutable.h"
 #include "libANGLE/VertexArray.h"
 #include "libANGLE/VertexAttribute.h"
 #include "libANGLE/renderer/d3d/IndexDataManager.h"
@@ -30,21 +31,21 @@ namespace rx
 namespace
 {
 
-GLenum GetGLSLAttributeType(const std::vector<sh::ShaderVariable> &shaderAttributes, size_t index)
+GLenum GetGLSLAttributeType(const std::vector<gl::ProgramInput> &shaderAttributes, size_t index)
 {
     // Count matrices differently
-    for (const sh::ShaderVariable &attrib : shaderAttributes)
+    for (const gl::ProgramInput &attrib : shaderAttributes)
     {
-        if (attrib.location == -1)
+        if (attrib.getLocation() == -1)
         {
             continue;
         }
 
-        GLenum transposedType = gl::TransposeMatrixType(attrib.type);
+        GLenum transposedType = gl::TransposeMatrixType(attrib.getType());
         int rows              = gl::VariableRowCount(transposedType);
         int intIndex          = static_cast<int>(index);
 
-        if (intIndex >= attrib.location && intIndex < attrib.location + rows)
+        if (intIndex >= attrib.getLocation() && intIndex < attrib.getLocation() + rows)
         {
             return transposedType;
         }
@@ -119,13 +120,14 @@ angle::Result InputLayoutCache::getInputLayout(
     GLsizei instances,
     const d3d11::InputLayout **inputLayoutOut)
 {
-    gl::Program *program         = state.getProgram();
-    const auto &shaderAttributes = program->getAttributes();
+    gl::ProgramExecutable *executable = state.getProgramExecutable();
+    const auto &shaderAttributes      = executable->getProgramInputs();
     PackedAttributeLayout layout;
 
-    ProgramD3D *programD3D = GetImplAs<ProgramD3D>(program);
+    ProgramExecutableD3D *executableD3D = GetImplAs<ProgramExecutableD3D>(executable);
     bool programUsesInstancedPointSprites =
-        programD3D->usesPointSize() && programD3D->usesInstancedPointSpriteEmulation();
+        executableD3D->usesPointSize() &&
+        executableD3D->usesInstancedPointSpriteEmulation(context11->getRenderer());
     bool instancedPointSpritesActive =
         programUsesInstancedPointSprites && (mode == gl::PrimitiveMode::Points);
 
@@ -146,10 +148,10 @@ angle::Result InputLayoutCache::getInputLayout(
 
     const auto &attribs            = state.getVertexArray()->getVertexAttributes();
     const auto &bindings           = state.getVertexArray()->getVertexBindings();
-    const auto &locationToSemantic = programD3D->getAttribLocationToD3DSemantics();
-    int divisorMultiplier          = program->usesMultiview() ? program->getNumViews() : 1;
+    const auto &locationToSemantic = executableD3D->getAttribLocationToD3DSemantics();
+    int divisorMultiplier          = executable->usesMultiview() ? executable->getNumViews() : 1;
 
-    for (size_t attribIndex : state.getProgramExecutable()->getActiveAttribLocationsMask())
+    for (size_t attribIndex : executable->getActiveAttribLocationsMask())
     {
         // Record the type of the associated vertex shader vector in our key
         // This will prevent mismatched vertex shaders from using the same input layout
@@ -199,12 +201,13 @@ angle::Result InputLayoutCache::createInputLayout(
     GLsizei instances,
     d3d11::InputLayout *inputLayoutOut)
 {
-    Renderer11 *renderer           = context11->getRenderer();
-    ProgramD3D *programD3D         = renderer->getStateManager()->getProgramD3D();
-    D3D_FEATURE_LEVEL featureLevel = renderer->getRenderer11DeviceCaps().featureLevel;
+    Renderer11 *renderer                = context11->getRenderer();
+    ProgramExecutableD3D *executableD3D = renderer->getStateManager()->getProgramExecutableD3D();
+    D3D_FEATURE_LEVEL featureLevel      = renderer->getRenderer11DeviceCaps().featureLevel;
 
     bool programUsesInstancedPointSprites =
-        programD3D->usesPointSize() && programD3D->usesInstancedPointSpriteEmulation();
+        executableD3D->usesPointSize() &&
+        executableD3D->usesInstancedPointSpriteEmulation(renderer);
 
     unsigned int inputElementCount = 0;
     gl::AttribArray<D3D11_INPUT_ELEMENT_DESC> inputElements;
@@ -291,7 +294,8 @@ angle::Result InputLayoutCache::createInputLayout(
     }
 
     ShaderExecutableD3D *shader = nullptr;
-    ANGLE_TRY(programD3D->getVertexExecutableForCachedInputLayout(context11, &shader, nullptr));
+    ANGLE_TRY(executableD3D->getVertexExecutableForCachedInputLayout(context11, renderer, &shader,
+                                                                     nullptr));
 
     ShaderExecutableD3D *shader11 = GetAs<ShaderExecutable11>(shader);
 

@@ -239,20 +239,6 @@ struct FeaturesGL : FeatureSetBase
         &members, "http://anglebug.com/3027"
     };
 
-    FeatureInfo dontRelinkProgramsInParallel = {
-        "dontRelinkProgramsInParallel",
-        FeatureCategory::OpenGLWorkarounds,
-        "Relinking a program in parallel is buggy",
-        &members, "http://anglebug.com/3045"
-    };
-
-    FeatureInfo disableWorkerContexts = {
-        "disableWorkerContexts",
-        FeatureCategory::OpenGLWorkarounds,
-        "Some tests have been seen to fail using worker contexts",
-        &members, "http://crbug.com/849576"
-    };
-
     FeatureInfo limitWebglMaxTextureSizeTo4096 = {
         "limitWebglMaxTextureSizeTo4096",
         FeatureCategory::OpenGLWorkarounds,
@@ -680,6 +666,27 @@ struct FeaturesGL : FeatureSetBase
         FeatureCategory::OpenGLFeatures,
         "Apple OpenGL drivers crash when drawing with a zero-sized buffer bound using a non-zero divisor.",
         &members, "http://crbug.com/1456243"
+    };
+
+    FeatureInfo explicitFragmentLocations = {
+        "explicitFragmentLocations",
+        FeatureCategory::OpenGLWorkarounds,
+        "Always write explicit location layout qualifiers for fragment outputs.",
+        &members, "https://anglebug.com/8308"
+    };
+
+    FeatureInfo disableRenderSnorm = {
+        "disableRenderSnorm",
+        FeatureCategory::OpenGLWorkarounds,
+        "Disable EXT_render_snorm extension.",
+        &members, "https://anglebug.com/8315"
+    };
+
+    FeatureInfo disableTextureMirrorClampToEdge = {
+        "disableTextureMirrorClampToEdge",
+        FeatureCategory::OpenGLWorkarounds,
+        "Disable EXT_texture_mirror_clamp_to_edge extension.",
+        &members, "https://anglebug.com/8319"
     };
 
 };

@@ -28,8 +28,11 @@ class ProgramPipelineVk : public ProgramPipelineImpl
     void destroy(const gl::Context *context) override;
     void reset(ContextVk *contextVk);
 
-    const ProgramExecutableVk &getExecutable() const { return mExecutable; }
-    ProgramExecutableVk &getExecutable() { return mExecutable; }
+    const ProgramExecutableVk *getExecutable() const
+    {
+        return vk::GetImpl(&mState.getExecutable());
+    }
+    ProgramExecutableVk *getExecutable() { return vk::GetImpl(&mState.getExecutable()); }
 
     angle::Result link(const gl::Context *glContext,
                        const gl::ProgramMergedVaryings &mergedVaryings,
@@ -39,9 +42,6 @@ class ProgramPipelineVk : public ProgramPipelineImpl
 
     angle::Result syncState(const gl::Context *context,
                             const gl::Program::DirtyBits &dirtyBits) override;
-
-  private:
-    ProgramExecutableVk mExecutable;
 };
 
 }  // namespace rx

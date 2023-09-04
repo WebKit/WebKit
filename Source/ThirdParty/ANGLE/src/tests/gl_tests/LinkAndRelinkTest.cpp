@@ -21,6 +21,12 @@ class LinkAndRelinkTest : public ANGLETest<>
     LinkAndRelinkTest() {}
 };
 
+class LinkAndRelinkTestES3 : public ANGLETest<>
+{
+  protected:
+    LinkAndRelinkTestES3() {}
+};
+
 class LinkAndRelinkTestES31 : public ANGLETest<>
 {
   protected:
@@ -445,7 +451,354 @@ void main()
     EXPECT_GL_NO_ERROR();
 }
 
+// Parallel link should continue unscathed even if the attached shaders to the program are modified.
+TEST_P(LinkAndRelinkTestES31, ReattachShadersWhileParallelLinking)
+{
+    constexpr char kVS[]      = R"(#version 300 es
+void main()
+{
+    vec2 position = vec2(-1, -1);
+    if (gl_VertexID == 1)
+        position = vec2(3, -1);
+    else if (gl_VertexID == 2)
+        position = vec2(-1, 3);
+    gl_Position = vec4(position, 0, 1);
+})";
+    constexpr char kFSGreen[] = R"(#version 300 es
+out mediump vec4 color;
+void main()
+{
+    color = vec4(0, 1, 0, 1);
+})";
+    constexpr char kFSRed[]   = R"(#version 300 es
+out mediump vec4 color;
+void main()
+{
+    color = vec4(1, 0, 0, 1);
+})";
+
+    GLuint program = glCreateProgram();
+
+    GLuint vs    = CompileShader(GL_VERTEX_SHADER, kVS);
+    GLuint green = CompileShader(GL_FRAGMENT_SHADER, kFSGreen);
+    GLuint red   = CompileShader(GL_FRAGMENT_SHADER, kFSRed);
+
+    EXPECT_NE(0u, vs);
+    EXPECT_NE(0u, green);
+    EXPECT_NE(0u, red);
+
+    glAttachShader(program, vs);
+    glAttachShader(program, green);
+    glLinkProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    // Immediately reattach another shader
+    glDetachShader(program, green);
+    glAttachShader(program, red);
+    ASSERT_GL_NO_ERROR();
+
+    // Make sure the linked program draws with green
+    glUseProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    ASSERT_GL_NO_ERROR();
+
+    glDeleteShader(vs);
+    glDeleteShader(green);
+    glDeleteShader(red);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Parallel link should continue unscathed even if new shaders are attached to the program.
+TEST_P(LinkAndRelinkTestES31, AttachNewShadersWhileParallelLinking)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+
+    constexpr char kVS[] = R"(#version 310 es
+#extension GL_EXT_geometry_shader : require
+void main()
+{
+    vec2 position = vec2(-1, -1);
+    if (gl_VertexID == 1)
+        position = vec2(3, -1);
+    else if (gl_VertexID == 2)
+        position = vec2(-1, 3);
+    gl_Position = vec4(position, 0, 1);
+})";
+    constexpr char kFS[] = R"(#version 310 es
+#extension GL_EXT_geometry_shader : require
+out mediump vec4 color;
+void main()
+{
+    color = vec4(0, 1, 0, 1);
+})";
+    constexpr char kGS[] = R"(#version 310 es
+#extension GL_EXT_geometry_shader : require
+layout (invocations = 3, triangles) in;
+layout (triangle_strip, max_vertices = 3) out;
+void main()
+{
+})";
+
+    GLuint program = glCreateProgram();
+
+    GLuint vs = CompileShader(GL_VERTEX_SHADER, kVS);
+    GLuint fs = CompileShader(GL_FRAGMENT_SHADER, kFS);
+    GLuint gs = CompileShader(GL_GEOMETRY_SHADER, kGS);
+
+    EXPECT_NE(0u, vs);
+    EXPECT_NE(0u, fs);
+    EXPECT_NE(0u, gs);
+
+    glAttachShader(program, vs);
+    glAttachShader(program, fs);
+    glLinkProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    // Immediately attach another shader
+    glAttachShader(program, gs);
+    ASSERT_GL_NO_ERROR();
+
+    // Make sure the linked program draws with green
+    glUseProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    ASSERT_GL_NO_ERROR();
+
+    glDeleteShader(vs);
+    glDeleteShader(fs);
+    glDeleteShader(gs);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Make sure the shader can be compiled in between attach and link
+TEST_P(LinkAndRelinkTest, AttachShaderThenCompile)
+{
+    GLuint program = glCreateProgram();
+
+    GLShader vs(GL_VERTEX_SHADER);
+    GLShader fs(GL_FRAGMENT_SHADER);
+
+    // Attach the shaders to the program first.  This makes sure the program doesn't prematurely
+    // attempt to look into the shader's compilation result.
+    glAttachShader(program, vs);
+    glAttachShader(program, fs);
+
+    // Compile the shaders after that.
+    const char *kVS = essl1_shaders::vs::Simple();
+    const char *kFS = essl1_shaders::fs::Green();
+    glShaderSource(vs, 1, &kVS, nullptr);
+    glShaderSource(fs, 1, &kFS, nullptr);
+    EXPECT_GL_NO_ERROR();
+
+    glCompileShader(vs);
+    glCompileShader(fs);
+
+    // Then link
+    glLinkProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    // Make sure it works
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    ASSERT_GL_NO_ERROR();
+
+    glDeleteProgram(program);
+    ASSERT_GL_NO_ERROR();
+}
+
+// If a program is linked successfully once, it should retain its executable if a relink fails.
+TEST_P(LinkAndRelinkTestES3, SucessfullLinkThenFailingRelink)
+{
+    // Install a render program in current GL state via UseProgram, then render.
+    // It should succeed.
+    constexpr char kVS[]    = R"(#version 300 es
+out vec4 color;
+void main()
+{
+    vec2 position = vec2(-1, -1);
+    if (gl_VertexID == 1)
+        position = vec2(3, -1);
+    else if (gl_VertexID == 2)
+        position = vec2(-1, 3);
+
+    gl_Position = vec4(position, 0, 1);
+    color = vec4(0, 1, 0, 1);
+})";
+    constexpr char kBadFS[] = R"(#version 300 es
+flat in uvec2 color;
+out mediump vec4 colorOut;
+void main()
+{
+    colorOut = vec4(1, color, 1);
+})";
+
+    GLuint program = glCreateProgram();
+    GLuint vs      = CompileShader(GL_VERTEX_SHADER, kVS);
+    GLuint fs      = CompileShader(GL_FRAGMENT_SHADER, essl3_shaders::fs::Green());
+    GLuint badfs   = CompileShader(GL_FRAGMENT_SHADER, kBadFS);
+
+    EXPECT_NE(0u, vs);
+    EXPECT_NE(0u, fs);
+    EXPECT_NE(0u, badfs);
+
+    glAttachShader(program, vs);
+    glAttachShader(program, fs);
+
+    glLinkProgram(program);
+
+    GLint linkStatus;
+    glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
+    EXPECT_GL_TRUE(linkStatus);
+
+    EXPECT_GL_NO_ERROR();
+
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    glViewport(0, 0, w, h);
+
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, w / 2, h / 2);
+
+    glUseProgram(program);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_GL_NO_ERROR();
+
+    // Cause the program to fail linking
+    glDetachShader(program, fs);
+    glAttachShader(program, badfs);
+
+    glLinkProgram(program);
+
+    glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
+    EXPECT_GL_FALSE(linkStatus);
+
+    // Link failed, but the program should still be usable.
+    glScissor(w / 2, h / 2, w / 2, h / 2);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, w / 2, h / 2, GLColor::green);
+    EXPECT_PIXEL_RECT_EQ(w / 2, 0, w / 2, h / 2, GLColor::black);
+    EXPECT_PIXEL_RECT_EQ(0, h / 2, w / 2, h / 2, GLColor::black);
+    EXPECT_PIXEL_RECT_EQ(w / 2, h / 2, w / 2, h / 2, GLColor::green);
+
+    glDeleteShader(vs);
+    glDeleteShader(fs);
+    glDeleteShader(badfs);
+    glDeleteProgram(program);
+}
+
+// Same as SucessfullLinkThenFailingRelink, but with PPOs.
+TEST_P(LinkAndRelinkTestES31, SucessfullLinkThenFailingRelinkWithPPO)
+{
+    // Only the Vulkan backend supports PPOs.
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+
+    // Install a render program in current GL state via UseProgram, then render.
+    // It should succeed.
+    constexpr char kVS[]    = R"(#version 300 es
+void main()
+{
+    vec2 position = vec2(-1, -1);
+    if (gl_VertexID == 1)
+        position = vec2(3, -1);
+    else if (gl_VertexID == 2)
+        position = vec2(-1, 3);
+
+    gl_Position = vec4(position, 0, 1);
+})";
+    constexpr char kBadGS[] = R"(#version 310 es
+#extension GL_EXT_geometry_shader : require
+layout (invocations = 3, triangles) in;
+layout (triangle_strip, max_vertices = 3) out;
+void main()
+{
+})";
+
+    GLuint vs    = CompileShader(GL_VERTEX_SHADER, kVS);
+    GLuint fs    = CompileShader(GL_FRAGMENT_SHADER, essl3_shaders::fs::Green());
+    GLuint badgs = CompileShader(GL_GEOMETRY_SHADER, kBadGS);
+
+    EXPECT_NE(0u, vs);
+    EXPECT_NE(0u, fs);
+    EXPECT_NE(0u, badgs);
+
+    GLuint vsProg = glCreateProgram();
+    GLuint fsProg = glCreateProgram();
+
+    glProgramParameteri(vsProg, GL_PROGRAM_SEPARABLE, GL_TRUE);
+    glAttachShader(vsProg, vs);
+    glLinkProgram(vsProg);
+    EXPECT_GL_NO_ERROR();
+
+    glProgramParameteri(fsProg, GL_PROGRAM_SEPARABLE, GL_TRUE);
+    glAttachShader(fsProg, fs);
+    glLinkProgram(fsProg);
+    EXPECT_GL_NO_ERROR();
+
+    GLuint pipeline;
+    glGenProgramPipelines(1, &pipeline);
+    glUseProgramStages(pipeline, GL_VERTEX_SHADER_BIT, vsProg);
+    glUseProgramStages(pipeline, GL_FRAGMENT_SHADER_BIT, fsProg);
+    EXPECT_GL_NO_ERROR();
+
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    glViewport(0, 0, w, h);
+
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, w / 2, h / 2);
+
+    glUseProgram(0);
+    glBindProgramPipeline(pipeline);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_GL_NO_ERROR();
+
+    // Cause the fs program to fail linking
+    glAttachShader(fsProg, badgs);
+    glLinkProgram(fsProg);
+    glUseProgramStages(pipeline, GL_GEOMETRY_SHADER_BIT, fsProg);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    GLint linkStatus;
+    glGetProgramiv(fsProg, GL_LINK_STATUS, &linkStatus);
+    EXPECT_GL_FALSE(linkStatus);
+
+    // Program link failed, but the program pipeline should still be usable.
+    glScissor(w / 2, h / 2, w / 2, h / 2);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, w / 2, h / 2, GLColor::green);
+    EXPECT_PIXEL_RECT_EQ(w / 2, 0, w / 2, h / 2, GLColor::black);
+    EXPECT_PIXEL_RECT_EQ(0, h / 2, w / 2, h / 2, GLColor::black);
+    EXPECT_PIXEL_RECT_EQ(w / 2, h / 2, w / 2, h / 2, GLColor::green);
+
+    glDeleteShader(vs);
+    glDeleteShader(fs);
+    glDeleteShader(badgs);
+    glDeleteProgram(vsProg);
+    glDeleteProgram(fsProg);
+    glDeleteProgramPipelines(1, &pipeline);
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(LinkAndRelinkTest);
+
+ANGLE_INSTANTIATE_TEST_ES3(LinkAndRelinkTestES3);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(LinkAndRelinkTestES31);
 ANGLE_INSTANTIATE_TEST_ES31(LinkAndRelinkTestES31);

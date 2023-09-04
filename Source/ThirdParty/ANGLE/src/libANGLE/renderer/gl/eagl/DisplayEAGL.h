@@ -23,8 +23,6 @@ typedef void *EAGLContextObj;
 namespace rx
 {
 
-class WorkerContext;
-
 class DisplayEAGL : public DisplayGL
 {
   public:
@@ -74,8 +72,6 @@ class DisplayEAGL : public DisplayGL
     gl::Version getMaxSupportedESVersion() const override;
 
     EAGLContextObj getEAGLContext() const;
-
-    WorkerContext *createWorkerContext(std::string *infoLog);
 
     void initializeFrontendFeatures(angle::FrontendFeatures *features) const override;
 

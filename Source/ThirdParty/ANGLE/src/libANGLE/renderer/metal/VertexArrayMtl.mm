@@ -328,14 +328,14 @@ angle::Result VertexArrayMtl::syncState(const gl::Context *context,
     return angle::Result::Continue;
 }
 
-ANGLE_INLINE void VertexArrayMtl::getVertexAttribFormatAndArraySize(const sh::ShaderVariable &var,
+ANGLE_INLINE void VertexArrayMtl::getVertexAttribFormatAndArraySize(const gl::ProgramInput &var,
                                                                     MTLVertexFormat *formatOut,
                                                                     uint32_t *arraySizeOut)
 {
     uint32_t arraySize = var.getArraySizeProduct();
 
     MTLVertexFormat format;
-    switch (var.type)
+    switch (var.getType())
     {
         case GL_INT:
         case GL_INT_VEC2:
@@ -396,7 +396,6 @@ angle::Result VertexArrayMtl::setupDraw(const gl::Context *glContext,
         const gl::ProgramExecutable *executable = glContext->getState().getProgramExecutable();
         const gl::AttributesMask &programActiveAttribsMask =
             executable->getActiveAttribLocationsMask();
-        const gl::ProgramState &programState = glContext->getState().getProgram()->getState();
 
         const std::vector<gl::VertexAttribute> &attribs = mState.getVertexAttributes();
         const std::vector<gl::VertexBinding> &bindings  = mState.getVertexBindings();
@@ -437,11 +436,10 @@ angle::Result VertexArrayMtl::setupDraw(const gl::Context *glContext,
                 // Use default attribute
                 // Need to find the attribute having the exact binding location = v in the program
                 // inputs list to retrieve its coresponding data type:
-                const std::vector<sh::ShaderVariable> &programInputs =
-                    programState.getProgramInputs();
-                std::vector<sh::ShaderVariable>::const_iterator attribInfoIte = std::find_if(
-                    begin(programInputs), end(programInputs), [v](const sh::ShaderVariable &sv) {
-                        return static_cast<uint32_t>(sv.location) == v;
+                const std::vector<gl::ProgramInput> &programInputs = executable->getProgramInputs();
+                std::vector<gl::ProgramInput>::const_iterator attribInfoIte = std::find_if(
+                    begin(programInputs), end(programInputs), [v](const gl::ProgramInput &sv) {
+                        return static_cast<uint32_t>(sv.getLocation()) == v;
                     });
 
                 if (attribInfoIte == end(programInputs))

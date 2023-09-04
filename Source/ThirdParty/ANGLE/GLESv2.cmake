@@ -354,6 +354,7 @@ set(libangle_headers
     "src/libANGLE/renderer/MemoryObjectImpl.h"
     "src/libANGLE/renderer/OverlayImpl.h"
     "src/libANGLE/renderer/ProgramImpl.h"
+    "src/libANGLE/renderer/ProgramExecutableImpl.h"
     "src/libANGLE/renderer/ProgramPipelineImpl.h"
     "src/libANGLE/renderer/QueryImpl.h"
     "src/libANGLE/renderer/RenderbufferImpl.h"

@@ -22,8 +22,6 @@ typedef _CGLPixelFormatObject *CGLPixelFormatObj;
 namespace rx
 {
 
-class WorkerContext;
-
 struct EnsureCGLContextIsCurrent : angle::NonCopyable
 {
   public:
@@ -91,8 +89,6 @@ class DisplayCGL : public DisplayGL
 
     CGLContextObj getCGLContext() const;
     CGLPixelFormatObj getCGLPixelFormat() const;
-
-    WorkerContext *createWorkerContext(std::string *infoLog);
 
     void initializeFrontendFeatures(angle::FrontendFeatures *features) const override;
 

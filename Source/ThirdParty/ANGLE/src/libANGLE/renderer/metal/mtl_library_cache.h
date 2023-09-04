@@ -26,12 +26,14 @@ class LibraryCache : angle::NonCopyable
 
     AutoObjCPtr<id<MTLLibrary>> get(const std::shared_ptr<const std::string> &source,
                                     const std::map<std::string, std::string> &macros,
-                                    bool enableFastMath);
+                                    bool disableFastMath,
+                                    bool usesInvariance);
     AutoObjCPtr<id<MTLLibrary>> getOrCompileShaderLibrary(
         ContextMtl *context,
         const std::shared_ptr<const std::string> &source,
         const std::map<std::string, std::string> &macros,
-        bool enableFastMath,
+        bool disableFastMath,
+        bool usesInvariance,
         AutoObjCPtr<NSError *> *errorOut);
 
   private:
@@ -40,11 +42,13 @@ class LibraryCache : angle::NonCopyable
         LibraryKey() = default;
         LibraryKey(const std::shared_ptr<const std::string> &source,
                    const std::map<std::string, std::string> &macros,
-                   bool enableFastMath);
+                   bool disableFastMath,
+                   bool usesInvariance);
 
         std::shared_ptr<const std::string> source;
         std::map<std::string, std::string> macros;
-        bool enableFastMath;
+        bool disableFastMath;
+        bool usesInvariance;
 
         bool operator==(const LibraryKey &other) const;
     };
