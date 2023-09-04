@@ -282,7 +282,10 @@ InlineRect InlineFormattingContext::createDisplayContentForLine(size_t lineIndex
                 continue;
             }
             auto& boxGeometry = formattingState().boxGeometry(*floatItem.layoutBox());
-            boxGeometry.setLogicalTopLeft(BoxGeometry::borderBoxTopLeft(floatItem.boxGeometry()));
+            auto usedGeometry = floatItem.boxGeometry();
+            boxGeometry.setLogicalTopLeft(BoxGeometry::borderBoxTopLeft(usedGeometry));
+            // Adopt trimmed inline direction margin.
+            boxGeometry.setHorizontalMargin(usedGeometry.horizontalMargin());
         }
     };
     updateBoxGeometryForPlacedFloats();
