@@ -3676,7 +3676,7 @@ webkit.org/b/225407 imported/w3c/web-platform-tests/css/css-animations/transform
 webkit.org/b/203305 imported/w3c/web-platform-tests/css/css-transitions/properties-value-001.html [ Pass Failure ]
 webkit.org/b/203305 imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-001.html [ Pass Failure ]
 webkit.org/b/203305 imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-002.html [ Pass Failure ]
-webkit.org/b/203356 imported/w3c/web-platform-tests/css/css-transitions/properties-value-003.html [ Pass Timeout ]
+webkit.org/b/203356 imported/w3c/web-platform-tests/css/css-transitions/properties-value-003.html [ Failure Pass Timeout ]
 
 # wpt css-values failures
 webkit.org/b/203581 imported/w3c/web-platform-tests/css/css-values/absolute_length_units.html [ Pass Failure ]
@@ -4276,7 +4276,7 @@ webkit.org/b/235063 [ Debug ] fast/layers/top-layer-ancestor-opacity-and-transfo
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/3d-scene-with-iframe-001.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/3dtransform-and-position-sticky-001.html [ ImageOnlyFailure Pass ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/animation/rotate-transform-equivalent.html [ ImageOnlyFailure Pass ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-perspective.html [ ImageOnlyFailure ]
+webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-perspective.html [ ImageOnlyFailure Timeout ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-skew.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/backface-visibility-hidden-004.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/backface-visibility-hidden-005.tentative.html [ ImageOnlyFailure ]
