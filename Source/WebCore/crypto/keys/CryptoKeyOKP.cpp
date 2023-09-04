@@ -78,6 +78,7 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importRaw(CryptoAlgorithmIdentifier identifie
     if (!isPlatformSupportedCurve(namedCurve))
         return nullptr;
 
+    // FIXME: The Ed25519 spec states that import in raw format must be used only for Verify.
     return create(identifier, namedCurve, usages & CryptoKeyUsageSign ? CryptoKeyType::Private : CryptoKeyType::Public, WTFMove(keyData), extractable, usages);
 }
 
@@ -96,10 +97,9 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importJwk(CryptoAlgorithmIdentifier identifie
             if (usages & (CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt | CryptoKeyUsageSign | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits | CryptoKeyUsageWrapKey | CryptoKeyUsageUnwrapKey))
                 return nullptr;
         }
-        if (keyData.kty != "OKP"_s)
+        if (keyData.crv != "Ed25519"_s)
             return nullptr;
-       if (keyData.crv != "Ed25519"_s)
-            return nullptr;
+        // FIXME: Do we have tests for these checks ?
         if (!keyData.alg.isEmpty() && keyData.alg != "EdDSA"_s)
             return nullptr;
         if (usages && !keyData.use.isEmpty() && keyData.use != "sign"_s)
@@ -116,6 +116,9 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importJwk(CryptoAlgorithmIdentifier identifie
         break;
     }
 
+    if (keyData.kty != "OKP"_s)
+        return nullptr;
+
     if (keyData.x.isNull())
         return nullptr;
 
@@ -125,7 +128,7 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importJwk(CryptoAlgorithmIdentifier identifie
 
     if (!keyData.d.isNull()) {
         auto d = base64URLDecode(keyData.d);
-        if (!d || !platformCheckPairedKeys(identifier, namedCurve, WTFMove(*d), WTFMove(*x)))
+        if (!d || !platformCheckPairedKeys(identifier, namedCurve, *d, *x))
             return nullptr;
         return create(identifier, namedCurve, CryptoKeyType::Private, WTFMove(*d), extractable, usages);
     }
@@ -198,14 +201,8 @@ auto CryptoKeyOKP::algorithm() const -> KeyAlgorithm
     return CryptoKeyAlgorithm { CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier()) };
 }
 
-#if !PLATFORM(COCOA)
+#if !PLATFORM(COCOA) && !USE(GCRYPT)
 
-bool CryptoKeyOKP::platformCheckPairedKeys(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&&, Vector<uint8_t>&&)
-{
-    return true;
-}
-
-#if !USE(GCRYPT)
 bool CryptoKeyOKP::isPlatformSupportedCurve(NamedCurve)
 {
     return false;
@@ -214,6 +211,11 @@ bool CryptoKeyOKP::isPlatformSupportedCurve(NamedCurve)
 std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmIdentifier, NamedCurve, bool, CryptoKeyUsageBitmap)
 {
     return { };
+}
+
+bool CryptoKeyOKP::platformCheckPairedKeys(CryptoAlgorithmIdentifier, NamedCurve, const Vector<uint8_t>&, const Vector<uint8_t>&)
+{
+    return true;
 }
 
 RefPtr<CryptoKeyOKP> CryptoKeyOKP::importSpki(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&&, bool, CryptoKeyUsageBitmap)
@@ -252,8 +254,6 @@ Vector<uint8_t> CryptoKeyOKP::platformExportRaw() const
 {
     return { };
 }
-
-#endif
 #endif
 
 } // namespace WebCore

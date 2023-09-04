@@ -58,6 +58,7 @@ static const std::array<uint8_t, 1> s_asn1Version0 { { 0x00 } };
 static const std::array<uint8_t, 1> s_asn1Version1 { { 0x01 } };
 
 static const std::array<uint8_t, 1> s_ecUncompressedFormatLeadingByte { { 0x04 } };
+static const std::array<uint8_t, 1> s_x25519UncompressedFormatLeadingByte { { 0x40 } };
 
 template<size_t N>
 static inline bool matches(const void* lhs, size_t size, const std::array<uint8_t, N>& rhs)

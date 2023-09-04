@@ -1,0 +1,7 @@
+[
+    Conditional=WEB_CRYPTO,
+    ImplementedAs=CryptoAlgorithmX25519Params,
+] dictionary X25519Params : CryptoAlgorithmParameters {
+    required CryptoKey publicKey;
+
+};

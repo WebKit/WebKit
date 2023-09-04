@@ -768,6 +768,7 @@ crypto/algorithms/CryptoAlgorithmAES_KW.cpp
 crypto/algorithms/CryptoAlgorithmECDH.cpp
 crypto/algorithms/CryptoAlgorithmECDSA.cpp
 crypto/algorithms/CryptoAlgorithmEd25519.cpp
+crypto/algorithms/CryptoAlgorithmX25519.cpp
 crypto/algorithms/CryptoAlgorithmHKDF.cpp
 crypto/algorithms/CryptoAlgorithmHMAC.cpp
 crypto/algorithms/CryptoAlgorithmPBKDF2.cpp
@@ -4491,6 +4492,7 @@ JSWritableStream.cpp
 JSWritableStreamDefaultController.cpp
 JSWritableStreamDefaultWriter.cpp
 JSWritableStreamSink.cpp
+JSX25519Params.cpp
 JSXMLDocument.cpp
 JSXMLHttpRequest.cpp
 JSXMLHttpRequestEventTarget.cpp

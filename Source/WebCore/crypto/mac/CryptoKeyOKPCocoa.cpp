@@ -74,7 +74,7 @@ std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmI
     return CryptoKeyPair { WTFMove(publicKey), WTFMove(privateKey) };
 }
 
-bool CryptoKeyOKP::platformCheckPairedKeys(CryptoAlgorithmIdentifier, NamedCurve namedCurve, Vector<uint8_t>&& privateKey, Vector<uint8_t>&& publicKey)
+bool CryptoKeyOKP::platformCheckPairedKeys(CryptoAlgorithmIdentifier, NamedCurve namedCurve, const Vector<uint8_t>& privateKey, const Vector<uint8_t>& publicKey)
 {
     // FIXME: Implement the same check for X25519
     if (namedCurve != NamedCurve::Ed25519)

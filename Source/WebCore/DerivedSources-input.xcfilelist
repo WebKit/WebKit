@@ -1159,6 +1159,7 @@ $(PROJECT_DIR)/crypto/parameters/RsaHashedKeyGenParams.idl
 $(PROJECT_DIR)/crypto/parameters/RsaKeyGenParams.idl
 $(PROJECT_DIR)/crypto/parameters/RsaOaepParams.idl
 $(PROJECT_DIR)/crypto/parameters/RsaPssParams.idl
+$(PROJECT_DIR)/crypto/parameters/X25519Params.idl
 $(PROJECT_DIR)/css/CSSConditionRule.idl
 $(PROJECT_DIR)/css/CSSContainerRule.idl
 $(PROJECT_DIR)/css/CSSCounterStyleRule.idl
