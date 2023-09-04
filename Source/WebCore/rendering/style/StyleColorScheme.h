@@ -41,10 +41,7 @@ public:
         , m_allowsTransformations(allowsTransformations)
     { }
 
-    constexpr bool operator==(const StyleColorScheme& other) const
-    {
-        return m_colorScheme == other.m_colorScheme && m_allowsTransformations == other.m_allowsTransformations;
-    }
+    friend constexpr bool operator==(const StyleColorScheme&, const StyleColorScheme&) = default;
 
     constexpr bool isNormal() const { return m_colorScheme.isEmpty() && m_allowsTransformations; }
     constexpr bool isOnly() const { return m_colorScheme.isEmpty() && !m_allowsTransformations; }

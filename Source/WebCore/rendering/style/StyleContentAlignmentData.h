@@ -54,10 +54,7 @@ public:
     ContentDistribution distribution() const { return static_cast<ContentDistribution>(m_distribution); }
     OverflowAlignment overflow() const { return static_cast<OverflowAlignment>(m_overflow); }
 
-    bool operator==(const StyleContentAlignmentData& o) const
-    {
-        return m_position == o.m_position && m_distribution == o.m_distribution && m_overflow == o.m_overflow;
-    }
+    friend bool operator==(const StyleContentAlignmentData&, const StyleContentAlignmentData&) = default;
 
 private:
     uint16_t m_position : 4 { 0 }; // ContentPosition

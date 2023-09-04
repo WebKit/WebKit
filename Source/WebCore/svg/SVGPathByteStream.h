@@ -70,7 +70,7 @@ public:
         return *this;
     }
 
-    bool operator==(const SVGPathByteStream& other) const { return m_data == other.m_data; }
+    friend bool operator==(const SVGPathByteStream&, const SVGPathByteStream&) = default;
 
     std::unique_ptr<SVGPathByteStream> copy() const
     {

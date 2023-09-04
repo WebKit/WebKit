@@ -46,6 +46,8 @@ struct FillSize {
     {
     }
 
+    friend bool operator==(const FillSize&, const FillSize&) = default;
+
     FillSizeType type;
     LengthSize size;
 };
@@ -54,13 +56,8 @@ struct FillRepeatXY {
     FillRepeat x { FillRepeat::Repeat };
     FillRepeat y { FillRepeat::Repeat };
     
-    bool operator==(const FillRepeatXY& other) const { return x == other.x && y == other.y; }
+    friend bool operator==(const FillRepeatXY&, const FillRepeatXY&) = default;
 };
-
-inline bool operator==(const FillSize& a, const FillSize& b)
-{
-    return a.type == b.type && a.size == b.size;
-}
 
 class FillLayer : public RefCounted<FillLayer> {
     WTF_MAKE_FAST_ALLOCATED;

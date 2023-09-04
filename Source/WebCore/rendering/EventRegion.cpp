@@ -344,33 +344,6 @@ EventRegion::EventRegion(Region&& region
 {
 }
 
-bool EventRegion::operator==(const EventRegion& other) const
-{
-#if ENABLE(TOUCH_ACTION_REGIONS)
-    if (m_touchActionRegions != other.m_touchActionRegions)
-        return false;
-#endif
-
-#if ENABLE(WHEEL_EVENT_REGIONS)
-    if (m_wheelEventListenerRegion != other.m_wheelEventListenerRegion)
-        return false;
-    if (m_nonPassiveWheelEventListenerRegion != other.m_nonPassiveWheelEventListenerRegion)
-        return false;
-#endif
-
-#if ENABLE(EDITABLE_REGION)
-    if (m_editableRegion != other.m_editableRegion)
-        return false;
-#endif
-
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    if (m_interactionRegions != other.m_interactionRegions)
-        return false;
-#endif
-
-    return m_region == other.m_region;
-}
-
 void EventRegion::unite(const Region& region, const RenderStyle& style, bool overrideUserModifyIsEditable)
 {
     if (style.effectivePointerEvents() == PointerEvents::None)

@@ -95,11 +95,6 @@ int GridPosition::min()
     return -max();
 }
 
-bool GridPosition::operator==(const GridPosition& other) const
-{
-    return m_type == other.m_type && m_integerPosition == other.m_integerPosition && m_namedGridLine == other.m_namedGridLine;
-}
-
 void GridPosition::setMaxPositionForTesting(unsigned maxPosition)
 {
     gMaxPositionForTesting = static_cast<int>(maxPosition);

@@ -35,10 +35,7 @@ struct GradientData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
     struct Inputs {
-        bool operator==(const Inputs& other) const
-        {
-            return std::tie(objectBoundingBox, textPaintingScale) == std::tie(other.objectBoundingBox, other.textPaintingScale);
-        }
+        friend bool operator==(const Inputs&, const Inputs&) = default;
 
         std::optional<FloatRect> objectBoundingBox;
         float textPaintingScale = 1;

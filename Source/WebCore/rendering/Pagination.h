@@ -34,10 +34,7 @@ enum PaginationMode : uint8_t { Unpaginated, LeftToRightPaginated, RightToLeftPa
 struct Pagination {
     using Mode = PaginationMode;
 
-    bool operator==(const Pagination& other) const
-    {
-        return mode == other.mode && behavesLikeColumns == other.behavesLikeColumns && pageLength == other.pageLength && gap == other.gap;
-    }
+    friend bool operator==(const Pagination&, const Pagination&) = default;
 
     Mode mode { Unpaginated };
     bool behavesLikeColumns { false };

@@ -2134,7 +2134,7 @@ public:
 
 private:
     struct NonInheritedFlags {
-        bool operator==(const NonInheritedFlags&) const;
+        friend bool operator==(const NonInheritedFlags&, const NonInheritedFlags&) = default;
 
         inline void copyNonInheritedFrom(const NonInheritedFlags&);
 
@@ -2178,7 +2178,7 @@ private:
     };
 
     struct InheritedFlags {
-        bool operator==(const InheritedFlags&) const;
+        friend bool operator==(const InheritedFlags&, const InheritedFlags&) = default;
 
         unsigned emptyCells : 1; // EmptyCell
         unsigned captionSide : 2; // CaptionSide

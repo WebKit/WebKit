@@ -45,28 +45,42 @@ public:
     struct LinearData {
         CSSLinearGradientValue::Data data;
         CSSGradientRepeat repeating;
+
+        friend bool operator==(const LinearData&, const LinearData&) = default;
     };
     struct PrefixedLinearData {
         CSSPrefixedLinearGradientValue::Data data;
         CSSGradientRepeat repeating;
+
+        friend bool operator==(const PrefixedLinearData&, const PrefixedLinearData&) = default;
     };
     struct DeprecatedLinearData {
         CSSDeprecatedLinearGradientValue::Data data;
+
+        friend bool operator==(const DeprecatedLinearData&, const DeprecatedLinearData&) = default;
     };
     struct RadialData {
         CSSRadialGradientValue::Data data;
         CSSGradientRepeat repeating;
+
+        friend bool operator==(const RadialData&, const RadialData&) = default;
     };
     struct PrefixedRadialData {
         CSSPrefixedRadialGradientValue::Data data;
         CSSGradientRepeat repeating;
+
+        friend bool operator==(const PrefixedRadialData&, const PrefixedRadialData&) = default;
     };
     struct DeprecatedRadialData {
         CSSDeprecatedRadialGradientValue::Data data;
+
+        friend bool operator==(const DeprecatedRadialData&, const DeprecatedRadialData&) = default;
     };
     struct ConicData {
         CSSConicGradientValue::Data data;
         CSSGradientRepeat repeating;
+
+        friend bool operator==(const ConicData&, const ConicData&) = default;
     };
 
     using Data = std::variant<LinearData, DeprecatedLinearData, PrefixedLinearData, RadialData, DeprecatedRadialData, PrefixedRadialData, ConicData>;

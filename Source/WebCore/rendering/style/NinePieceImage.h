@@ -114,7 +114,7 @@ public:
     NinePieceImage(Type = Type::Normal);
     NinePieceImage(RefPtr<StyleImage>&&, LengthBox imageSlices, bool fill, LengthBox borderSlices, bool overridesBorderWidths, LengthBox outset, NinePieceImageRule horizontalRule, NinePieceImageRule verticalRule);
 
-    bool operator==(const NinePieceImage& other) const { return m_data == other.m_data; }
+    friend bool operator==(const NinePieceImage&, const NinePieceImage&) = default;
 
     bool hasImage() const { return m_data->image; }
     StyleImage* image() const { return m_data->image.get(); }
