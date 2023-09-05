@@ -20,25 +20,33 @@ test(() => {
 
     let codecs = RTCRtpSender.getCapabilities("video").codecs;
     vp9Codecs = codecs.filter(codec => codec.mimeType === "video/VP9");
-    assert_equals(vp9Codecs.length, 0, "no vp9 codec");
+
+    if (window.internals)
+        assert_equals(vp9Codecs.length, 0, "no vp9 codec");
 
     if (window.internals)
         window.internals.setWebRTCVP9Support(true, false);
 
     codecs = RTCRtpSender.getCapabilities("video").codecs;
     vp9Codecs = codecs.filter(codec => codec.mimeType === "video/VP9");
-    assert_equals(vp9Codecs.length, 1, "One vp9 codec");
-    assert_equals(vp9Codecs[0].sdpFmtpLine, "profile-id=0", "profile 0");
+
+    if (window.internals) {
+        assert_equals(vp9Codecs.length, 1, "One vp9 codec");
+        assert_equals(vp9Codecs[0].sdpFmtpLine, "profile-id=0", "profile 0");
+    }
 
     if (window.internals)
         window.internals.setWebRTCVP9Support(true, true);
 
     codecs = RTCRtpSender.getCapabilities("video").codecs;
     vp9Codecs = codecs.filter(codec => codec.mimeType === "video/VP9");
-    assert_equals(vp9Codecs[0].sdpFmtpLine, "profile-id=0", "first codec");
-    assert_equals(vp9Codecs[1].sdpFmtpLine, "profile-id=2", "second codec");
 
-    hasVP9 = true;
+    if (window.internals) {
+        assert_equals(vp9Codecs[0].sdpFmtpLine, "profile-id=0", "first codec");
+        assert_equals(vp9Codecs[1].sdpFmtpLine, "profile-id=2", "second codec");
+    }
+
+    hasVP9 = vp9Codecs.length > 0;
 }, "VP9 in sender getCapabilities");
 
 test(() => {
@@ -122,9 +130,15 @@ if (hasVP9) {
                 });
                 setTimeout(() => reject("Test timed out"), 5000);
             });
-        }).then((remoteStream) => {
+        }).then(async (remoteStream) => {
             video.srcObject = remoteStream;
-            return video.play();
+            await video.play();
+
+            const frame = new VideoFrame(video);
+            test.add_cleanup(() => frame.close());
+            assert_equals(frame.colorSpace.primaries, "bt709", "primaries");
+            assert_equals(frame.colorSpace.transfer, "bt709", "transfer");
+            assert_equals(frame.colorSpace.matrix, "bt709", "matrix");
         });
     }, "Setting video exchange");
 

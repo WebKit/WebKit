@@ -105,6 +105,14 @@ rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef> computeInputFormat(const uint8
   return rtc::ScopedCF(formatDescription);
 }
 
+static void overrideVP9ColorSpaceAttachments(CVImageBufferRef imageBuffer) {
+    CVBufferRemoveAttachment(imageBuffer, kCVImageBufferCGColorSpaceKey);
+    CVBufferSetAttachment(imageBuffer, kCVImageBufferColorPrimariesKey, kCVImageBufferColorPrimaries_ITU_R_709_2, kCVAttachmentMode_ShouldPropagate);
+    CVBufferSetAttachment(imageBuffer, kCVImageBufferTransferFunctionKey, kCVImageBufferTransferFunction_ITU_R_709_2, kCVAttachmentMode_ShouldPropagate);
+    CVBufferSetAttachment(imageBuffer, kCVImageBufferYCbCrMatrixKey, kCVImageBufferYCbCrMatrix_ITU_R_709_2, kCVAttachmentMode_ShouldPropagate);
+    CVBufferSetAttachment(imageBuffer, (CFStringRef)@"ColorInfoGuessedBy", (CFStringRef)@"RTCVideoDecoderVTBVP9", kCVAttachmentMode_ShouldPropagate);
+}
+
 // Struct that we pass to the decoder per frame to decode. We receive it again
 // in the decoder callback.
 struct RTCFrameDecodeParams {
@@ -157,6 +165,8 @@ void vp9DecompressionOutputCallback(void *decoderRef,
     decodeParams->callback(nil);
     return;
   }
+
+  overrideVP9ColorSpaceAttachments(imageBuffer);
 
   RTCCVPixelBuffer *frameBuffer = [[RTCCVPixelBuffer alloc] initWithPixelBuffer:imageBuffer];
   RTCVideoFrame *decodedFrame =
