@@ -63,15 +63,19 @@ static bool supportedAlgorithmIdentifier(CryptoAlgorithmIdentifier keyIdentifier
     return false;
 }
 
+static Vector<uint8_t> nine {
+    0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+};
+
 }
 
-std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve namedCurve, bool extractable, CryptoKeyUsageBitmap usages)
+static std::optional<std::pair<Vector<uint8_t>, Vector<uint8_t>>> gcryptGenerateEd25519Keys()
 {
-    if (namedCurve != NamedCurve::Ed25519 && namedCurve != NamedCurve::X25519)
-        return { };
-
     PAL::GCrypt::Handle<gcry_sexp_t> genkeySexp;
-    gcry_error_t error = gcry_sexp_build(&genkeySexp, nullptr, namedCurve == CryptoKeyOKP::NamedCurve::Ed25519 ? "(genkey (ecdsa (curve Ed25519) (flags eddsa)))" : "(genkey (ecc (curve Curve25519)))");
+    gcry_error_t error = gcry_sexp_build(&genkeySexp, nullptr, "(genkey (ecdsa (curve Ed25519) (flags eddsa)))");
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return std::nullopt;
@@ -91,24 +95,56 @@ std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmI
         return std::nullopt;
     }
 
-    // Retrieve the `q` data, which should be in the uncompressed point format for the X25519 keys.
-    // Validate the data size and the first byte (which should be 0x40).
-    size_t pubKeySize = namedCurve == NamedCurve::Ed25519 ? 32 : 33;
-    auto publicKeyData = mpiData(qMpi);
-    if (!publicKeyData || publicKeyData->size() != pubKeySize
-        || (namedCurve == NamedCurve::X25519
-            && !CryptoConstants::matches(publicKeyData->data(), 1, CryptoConstants::s_x25519UncompressedFormatLeadingByte))) {
+    auto q = mpiData(qMpi);
+    auto d = mpiData(dMpi);
+    if (UNLIKELY(!q || !d))
+        return std::nullopt;
+    return std::make_pair(WTFMove(*q), WTFMove(*d));
+}
+
+static std::optional<std::pair<Vector<uint8_t>, Vector<uint8_t>>> gcryptGenerateX25519Keys()
+{
+    // private key is just 32 random bytes
+    PAL::GCrypt::Handle<gcry_mpi_t> mpi(gcry_mpi_new(256));
+    gcry_mpi_randomize(mpi, 256, GCRY_STRONG_RANDOM);
+    auto q = mpiData(mpi);
+    if (UNLIKELY(!q))
+        return std::nullopt;
+
+    // public key being X25519(a, 9), as defined in [RFC7748], section 6.1.
+    auto d = X25519(*q, WebCore::CryptoKeyOKPImpl::nine);
+    if (UNLIKELY(!d))
+        return std::nullopt;
+
+    return std::make_pair(WTFMove(*q), WTFMove(*d));
+}
+
+std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve namedCurve, bool extractable, CryptoKeyUsageBitmap usages)
+{
+    std::optional<std::pair<Vector<uint8_t>, Vector<uint8_t>>> keyPair;
+    switch (namedCurve) {
+    case NamedCurve::Ed25519:
+        keyPair = gcryptGenerateEd25519Keys();
+        break;
+    case NamedCurve::X25519:
+        keyPair = gcryptGenerateX25519Keys();
+        break;
+    default:
         return std::nullopt;
     }
 
-    auto privateKeyData = mpiData(dMpi);
-    if (!privateKeyData || privateKeyData->size() != 32)
+    if (!keyPair)
+        return std::nullopt;
+
+    auto& publicKeyData = keyPair->first;
+    auto& privateKeyData = keyPair->second;
+    if (!(publicKeyData.size() == 32 && privateKeyData.size() == 32))
         return std::nullopt;
 
     bool isPublicKeyExtractable = true;
-    auto publicKey = CryptoKeyOKP::create(identifier, namedCurve, CryptoKeyType::Public, Vector<uint8_t>(namedCurve == NamedCurve::Ed25519 ? publicKeyData->data() : publicKeyData->data() + 1, 32), isPublicKeyExtractable, usages);
+    auto publicKey = CryptoKeyOKP::create(identifier, namedCurve, CryptoKeyType::Public, WTFMove(publicKeyData), isPublicKeyExtractable, usages);
     ASSERT(publicKey);
-    auto privateKey = CryptoKeyOKP::create(identifier, namedCurve, CryptoKeyType::Private, Vector<uint8_t>(*privateKeyData), extractable, usages);
+    auto privateKey = CryptoKeyOKP::create(identifier, namedCurve, CryptoKeyType::Private, WTFMove(privateKeyData), extractable, usages);
     ASSERT(privateKey);
     return CryptoKeyPair { WTFMove(publicKey), WTFMove(privateKey) };
 }
@@ -120,14 +156,7 @@ bool CryptoKeyOKP::platformCheckPairedKeys(CryptoAlgorithmIdentifier, NamedCurve
 
     if (namedCurve == NamedCurve::X25519) {
         // public key being X25519(a, 9), as defined in [RFC7748], section 6.1.
-        Vector<uint8_t> nine {
-            0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        };
-        auto q = X25519(privateKey, nine);
-
+        auto q = X25519(privateKey, WebCore::CryptoKeyOKPImpl::nine);
         return q && q->size() == 32 && *q == publicKey;
     }
 
@@ -403,13 +432,7 @@ String CryptoKeyOKP::generateJwkX() const
 
     if (m_curve == CryptoKeyOKP::NamedCurve::X25519) {
         // public key being X25519(a, 9), as defined in [RFC7748], section 6.1.
-        Vector<uint8_t> nine {
-            0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        };
-        auto q = X25519(m_data, nine);
+        auto q = X25519(m_data, WebCore::CryptoKeyOKPImpl::nine);
         if (q && q->size() == 32)
             return base64URLEncodeToString(*q);
 
