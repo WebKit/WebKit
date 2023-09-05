@@ -182,7 +182,8 @@ InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& line
         auto lineLayoutResult = lineBuilder.layoutInlineContent(lineInput, previousLine);
 
         auto lineIndex = previousLine ? (previousLine->lineIndex + 1) : 0lu;
-        auto lineLogicalRect = createDisplayContentForLine(lineIndex, lineLayoutResult, constraints, inlineLayoutState, layoutResult.displayContent);
+        auto lineLogicalRect = createDisplayContentForInlineContent(lineIndex, lineLayoutResult, constraints, inlineLayoutState, layoutResult.displayContent);
+        updateBoxGeometryForPlacedFloats(lineLayoutResult.floatContent.placedFloats);
 
         if (auto firstLineGap = lineLayoutResult.lineGeometry.initialLetterClearGap) {
             ASSERT(!inlineLayoutState.clearGapBeforeFirstLine());
@@ -253,7 +254,23 @@ static LineEndingEllipsisPolicy lineEndingEllipsisPolicy(const RenderStyle& root
     return LineEndingEllipsisPolicy::No;
 }
 
-InlineRect InlineFormattingContext::createDisplayContentForLine(size_t lineIndex, const LineLayoutResult& lineLayoutResult, const ConstraintsForInlineContent& constraints, InlineLayoutState& inlineLayoutState, InlineDisplay::Content& displayContent)
+void InlineFormattingContext::updateBoxGeometryForPlacedFloats(const LineLayoutResult::PlacedFloatList& placedFloats)
+{
+    for (auto& floatItem : placedFloats) {
+        if (!floatItem.layoutBox()) {
+            ASSERT_NOT_REACHED();
+            // We should not be placing intrusive floats coming from parent BFC.
+            continue;
+        }
+        auto& boxGeometry = formattingState().boxGeometry(*floatItem.layoutBox());
+        auto usedGeometry = floatItem.boxGeometry();
+        boxGeometry.setLogicalTopLeft(BoxGeometry::borderBoxTopLeft(usedGeometry));
+        // Adopt trimmed inline direction margin.
+        boxGeometry.setHorizontalMargin(usedGeometry.horizontalMargin());
+    }
+}
+
+InlineRect InlineFormattingContext::createDisplayContentForInlineContent(size_t lineIndex, const LineLayoutResult& lineLayoutResult, const ConstraintsForInlineContent& constraints, InlineLayoutState& inlineLayoutState, InlineDisplay::Content& displayContent)
 {
     auto numberOfVisibleLinesAllowed = [&] () -> std::optional<size_t> {
         if (auto lineClamp = inlineLayoutState.parentBlockLayoutState().lineClamp())
@@ -274,22 +291,6 @@ InlineRect InlineFormattingContext::createDisplayContentForLine(size_t lineIndex
 
     displayContent.boxes.appendVector(WTFMove(boxes));
     displayContent.lines.append(displayLine);
-    auto updateBoxGeometryForPlacedFloats = [&] {
-        for (auto& floatItem : lineLayoutResult.floatContent.placedFloats) {
-            if (!floatItem.layoutBox()) {
-                ASSERT_NOT_REACHED();
-                // We should not be placing intrusive floats coming from parent BFC.
-                continue;
-            }
-            auto& boxGeometry = formattingState().boxGeometry(*floatItem.layoutBox());
-            auto usedGeometry = floatItem.boxGeometry();
-            boxGeometry.setLogicalTopLeft(BoxGeometry::borderBoxTopLeft(usedGeometry));
-            // Adopt trimmed inline direction margin.
-            boxGeometry.setHorizontalMargin(usedGeometry.horizontalMargin());
-        }
-    };
-    updateBoxGeometryForPlacedFloats();
-
     return InlineFormattingGeometry::flipVisualRectToLogicalForWritingMode(displayContent.lines.last().lineBoxRect(), root().style().writingMode());
 }
 
@@ -349,7 +350,7 @@ bool InlineFormattingContext::createDisplayContentForLineFromCachedContent(const
     lineBreakingResult.lineGeometry.logicalTopLeft = { constraints.horizontal().logicalLeft, constraints.logicalTop() };
     lineBreakingResult.lineGeometry.logicalWidth = constraints.horizontal().logicalWidth;
     lineBreakingResult.contentGeometry.logicalLeft = InlineFormattingGeometry::horizontalAlignmentOffset(root().style(), lineBreakingResult.contentGeometry.logicalWidth, lineBreakingResult.lineGeometry.logicalWidth, lineBreakingResult.hangingContent.logicalWidth, lineBreakingResult.inlineContent, true);
-    createDisplayContentForLine(0, lineBreakingResult, constraints, inlineLayoutState, layoutResult.displayContent);
+    createDisplayContentForInlineContent(0, lineBreakingResult, constraints, inlineLayoutState, layoutResult.displayContent);
     return true;
 }
 
