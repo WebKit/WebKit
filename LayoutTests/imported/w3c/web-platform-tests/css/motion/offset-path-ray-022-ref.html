@@ -2,14 +2,11 @@
 <html>
   <head>
     <title>CSS Motion Path: ray paths</title>
-    <link rel="help" href="https://drafts.fxtf.org/motion-1/#offset-path-property">
-    <link rel="match" href="offset-path-ray-007-ref.html">
-    <meta name="assert" content="This tests ray() in a flex box.">
     <style>
       #container {
-        display: flex;
         width: 400px;
         height: 300px;
+        overflow: scroll;
       }
       #target {
         position: relative;
@@ -19,9 +16,7 @@
         height: 50px;
         background-color: lime;
         transform-origin: 0px 0px;
-        offset-path: ray(180deg sides);
-        offset-distance: 100%;
-        offset-position: auto;
+        transform: rotate(90deg) translate(200px);
       }
     </style>
   </head>
