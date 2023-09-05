@@ -613,15 +613,6 @@ bool FrameLoader::didOpenURL()
     m_isComplete = false;
     m_didCallImplicitClose = false;
 
-    // If we are still in the process of initializing an empty document then
-    // its frame is not in a consistent state for rendering, so avoid setJSStatusBarText
-    // since it may cause clients to attempt to render the frame.
-    if (!m_stateMachine.creatingInitialEmptyDocument()) {
-        auto* window = m_frame.document()->domWindow();
-        window->setStatus(String());
-        window->setDefaultStatus(String());
-    }
-
     started();
 
     return true;
@@ -2408,13 +2399,6 @@ void FrameLoader::willRestoreFromCachedPage()
 
     // We still have to close the previous part page.
     closeURL();
-    
-    // Delete old status bar messages (if it _was_ activated on last URL).
-    if (m_frame.script().canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript)) {
-        auto* window = m_frame.document()->domWindow();
-        window->setStatus(String());
-        window->setDefaultStatus(String());
-    }
 }
 
 void FrameLoader::open(CachedFrameBase& cachedFrame)

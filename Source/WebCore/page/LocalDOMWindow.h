@@ -229,8 +229,6 @@ public:
 
     String status() const;
     void setStatus(const String&);
-    String defaultStatus() const;
-    void setDefaultStatus(const String&);
 
     WindowProxy* opener() const;
     void disownOpener();
@@ -461,7 +459,6 @@ private:
     mutable RefPtr<VisualViewport> m_visualViewport;
 
     String m_status;
-    String m_defaultStatus;
 
 #if PLATFORM(IOS_FAMILY)
     unsigned m_scrollEventListenerCount { 0 };
@@ -504,11 +501,6 @@ private:
 inline String LocalDOMWindow::status() const
 {
     return m_status;
-}
-
-inline String LocalDOMWindow::defaultStatus() const
-{
-    return m_defaultStatus;
 }
 
 WebCoreOpaqueRoot root(LocalDOMWindow*);
