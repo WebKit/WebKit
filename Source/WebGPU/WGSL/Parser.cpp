@@ -32,6 +32,7 @@
 #include "WGSLShaderModule.h"
 
 #include <wtf/HashSet.h>
+#include <wtf/SortedArrayMap.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WGSL {
@@ -556,10 +557,11 @@ Result<AST::TypeName::Ref> Parser<Lexer>::parseTypeName()
 {
     START_PARSE();
 
-    if (current().type == TokenType::KeywordArray)
-        return parseArrayType();
     if (current().type == TokenType::Identifier) {
         PARSE(name, Identifier);
+        // FIXME: remove the special case for array
+        if (name == "array"_s)
+            return parseArrayType();
         return parseTypeNameAfterIdentifier(WTFMove(name), _startOfElementPosition);
     }
 
@@ -582,8 +584,6 @@ template<typename Lexer>
 Result<AST::TypeName::Ref> Parser<Lexer>::parseArrayType()
 {
     START_PARSE();
-
-    CONSUME_TYPE(KeywordArray);
 
     AST::TypeName::Ptr maybeElementType = nullptr;
     AST::Expression::Ptr maybeElementCount = nullptr;
@@ -725,26 +725,18 @@ Result<AST::StorageClass> Parser<Lexer>::parseStorageClass()
 {
     START_PARSE();
 
-    if (current().type == TokenType::KeywordFunction) {
-        consume();
-        return { AST::StorageClass::Function };
-    }
-    if (current().type == TokenType::KeywordPrivate) {
-        consume();
-        return { AST::StorageClass::Private };
-    }
-    if (current().type == TokenType::KeywordWorkgroup) {
-        consume();
-        return { AST::StorageClass::Workgroup };
-    }
-    if (current().type == TokenType::KeywordUniform) {
-        consume();
-        return { AST::StorageClass::Uniform };
-    }
-    if (current().type == TokenType::KeywordStorage) {
-        consume();
-        return { AST::StorageClass::Storage };
-    }
+    static constexpr std::pair<ComparableASCIILiteral, AST::StorageClass> storageClassMappings[] {
+        { "function", AST::StorageClass::Function },
+        { "private", AST::StorageClass::Private },
+        { "storage", AST::StorageClass::Storage },
+        { "uniform", AST::StorageClass::Uniform },
+        { "workgroup", AST::StorageClass::Workgroup },
+    };
+    static constexpr SortedArrayMap storageClasses { storageClassMappings };
+
+    CONSUME_TYPE_NAMED(identifier, Identifier);
+    if (auto* storageClass = storageClasses.tryGet(identifier.ident))
+        return { *storageClass };
 
     FAIL("Expected one of 'function'/'private'/'storage'/'uniform'/'workgroup'"_s);
 }
@@ -754,18 +746,16 @@ Result<AST::AccessMode> Parser<Lexer>::parseAccessMode()
 {
     START_PARSE();
 
-    if (current().type == TokenType::KeywordRead) {
-        consume();
-        return { AST::AccessMode::Read };
-    }
-    if (current().type == TokenType::KeywordWrite) {
-        consume();
-        return { AST::AccessMode::Write };
-    }
-    if (current().type == TokenType::KeywordReadWrite) {
-        consume();
-        return { AST::AccessMode::ReadWrite };
-    }
+    static constexpr std::pair<ComparableASCIILiteral, AST::AccessMode> accessModeMappings[] {
+        { "read", AST::AccessMode::Read },
+        { "read_write", AST::AccessMode::ReadWrite },
+        { "write", AST::AccessMode::Write },
+    };
+    static constexpr SortedArrayMap accessModes { accessModeMappings };
+
+    CONSUME_TYPE_NAMED(identifier, Identifier);
+    if (auto* accessMode = accessModes.tryGet(identifier.ident))
+        return { *accessMode };
 
     FAIL("Expected one of 'read'/'write'/'read_write'"_s);
 }
@@ -1252,6 +1242,12 @@ Result<AST::Expression::Ref> Parser<Lexer>::parsePrimaryExpression()
     }
     case TokenType::Identifier: {
         PARSE(ident, Identifier);
+        // FIXME: remove the special case for array
+        if (ident == "array"_s) {
+            PARSE(arrayType, ArrayType);
+            PARSE(arguments, ArgumentExpressionList);
+            RETURN_ARENA_NODE(CallExpression, WTFMove(arrayType), WTFMove(arguments));
+        }
         // FIXME: WGSL grammar has an ambiguity when trying to distinguish the
         // use of < as either the less-than operator or the beginning of a
         // template-parameter list. Here we are checking for vector or matrix
@@ -1263,17 +1259,12 @@ Result<AST::Expression::Ref> Parser<Lexer>::parsePrimaryExpression()
         }
         RETURN_ARENA_NODE(IdentifierExpression, WTFMove(ident));
     }
-    case TokenType::KeywordArray: {
-        PARSE(arrayType, ArrayType);
-        PARSE(arguments, ArgumentExpressionList);
-        RETURN_ARENA_NODE(CallExpression, WTFMove(arrayType), WTFMove(arguments));
-    }
 
     // const_literal
-    case TokenType::LiteralTrue:
+    case TokenType::KeywordTrue:
         consume();
         RETURN_ARENA_NODE(BoolLiteral, true);
-    case TokenType::LiteralFalse:
+    case TokenType::KeywordFalse:
         consume();
         RETURN_ARENA_NODE(BoolLiteral, false);
     case TokenType::IntegerLiteral: {
