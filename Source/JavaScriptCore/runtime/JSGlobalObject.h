@@ -119,6 +119,8 @@ enum class ScriptExecutionStatus {
     Stopped,
 };
 
+enum class BindingCreationContext : bool { Global, Eval };
+
 constexpr bool typeExposedByDefault = true;
 
 #define DEFINE_STANDARD_BUILTIN(macro, upperName, lowerName) macro(upperName, lowerName, lowerName, JS ## upperName, upperName, object, typeExposedByDefault)
@@ -603,7 +605,7 @@ protected:
 
     JS_EXPORT_PRIVATE void finishCreation(VM&, JSObject*);
 
-    void addGlobalVar(const Identifier&);
+    void addSymbolTableEntry(const Identifier&);
 
 public:
     JS_EXPORT_PRIVATE ~JSGlobalObject();
@@ -615,8 +617,11 @@ public:
     JS_EXPORT_PRIVATE static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
 
-    inline void addVar(JSGlobalObject*, const Identifier&);
-    void addFunction(JSGlobalObject*, const Identifier&);
+    bool canDeclareGlobalFunction(const Identifier&);
+    template<BindingCreationContext> void createGlobalFunctionBinding(const Identifier&);
+
+    inline bool canDeclareGlobalVar(const Identifier&);
+    template<BindingCreationContext> inline void createGlobalVarBinding(const Identifier&);
 
     inline JSScope* globalScope();
     JSGlobalLexicalEnvironment* globalLexicalEnvironment() { return m_globalLexicalEnvironment.get(); }

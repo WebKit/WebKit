@@ -1898,31 +1898,6 @@ test/language/eval-code/direct/arrow-fn-no-pre-existing-arguments-bindings-are-p
   default: 'Test262Error: globalThis.arguments unchanged Expected SameValue(«param», «undefined») to be true'
 test/language/eval-code/direct/arrow-fn-no-pre-existing-arguments-bindings-are-present-arrow-func-declare-arguments-assign.js:
   default: 'Test262Error: globalThis.arguments unchanged Expected SameValue(«param», «undefined») to be true'
-test/language/eval-code/direct/non-definable-function-with-function.js:
-  default: 'Test262Error: Expected SameValue(«[object Object]», «undefined») to be true'
-test/language/eval-code/direct/non-definable-function-with-variable.js:
-  default: 'Test262Error: Expected SameValue(«[object Object]», «undefined») to be true'
-test/language/eval-code/direct/non-definable-global-function.js:
-  default: 'Test262Error: Expected true but got false'
-test/language/eval-code/direct/non-definable-global-generator.js:
-  default: 'Test262Error: Expected true but got false'
-test/language/eval-code/direct/var-env-func-init-global-update-configurable.js:
-  default: 'Test262Error: Expected obj[f] to have enumerable:true.'
-test/language/eval-code/indirect/non-definable-function-with-function.js:
-  default: 'Test262Error: declaration preceding Expected SameValue(«[object Object]», «undefined») to be true'
-  strict mode: 'Test262Error: declaration preceding Expected SameValue(«[object Object]», «undefined») to be true'
-test/language/eval-code/indirect/non-definable-function-with-variable.js:
-  default: 'Test262Error: declaration preceding Expected SameValue(«[object Object]», «undefined») to be true'
-  strict mode: 'Test262Error: declaration preceding Expected SameValue(«[object Object]», «undefined») to be true'
-test/language/eval-code/indirect/non-definable-global-function.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/language/eval-code/indirect/non-definable-global-generator.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/language/eval-code/indirect/var-env-func-init-global-update-configurable.js:
-  default: 'Test262Error: Expected obj[f] to have enumerable:true.'
-  strict mode: 'Test262Error: Expected obj[f] to have enumerable:true.'
 test/language/expressions/arrow-function/scope-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
 test/language/expressions/assignment/S11.13.1_A7_T3.js:
@@ -2154,15 +2129,6 @@ test/language/expressions/yield/star-rhs-iter-rtrn-res-done-no-value.js:
 test/language/expressions/yield/star-rhs-iter-thrw-res-done-no-value.js:
   default: 'Test262Error: access count (second iteration) Expected SameValue(«1», «0») to be true'
   strict mode: 'Test262Error: access count (second iteration) Expected SameValue(«1», «0») to be true'
-test/language/global-code/script-decl-func-err-non-configurable.js:
-  default: 'Test262Error: writable, non-enumerable data property Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: writable, non-enumerable data property Expected a TypeError to be thrown but no exception was thrown at all'
-test/language/global-code/script-decl-func-err-non-extensible.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/language/global-code/script-decl-var-err.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/language/identifier-resolution/assign-to-global-undefined.js:
   strict mode: Expected uncaught exception with name 'ReferenceError' but none was thrown
 test/language/identifiers/start-unicode-10.0.0-class.js:

@@ -8,8 +8,8 @@ PASS: Element == undefined should be false and is.
 PASS: eval('Element == undefined') should be false and is.
 PASS: toString != undefined should be false and is.
 PASS: eval('toString != undefined') should be false and is.
-PASS: valueOf == undefined should be false and is.
-PASS: eval('valueOf == undefined') should be false and is.
+PASS: valueOf != undefined should be false and is.
+PASS: eval('valueOf != undefined') should be false and is.
 -----
 PASS: HTMLElement == marker should be true and is.
 PASS: eval('HTMLElement == marker') should be true and is.
