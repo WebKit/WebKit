@@ -573,9 +573,16 @@ Result<AST::TypeName::Ref> Parser<Lexer>::parseTypeNameAfterIdentifier(AST::Iden
 {
     if (current().type == TokenType::Lt) {
         CONSUME_TYPE(Lt);
-        PARSE(elementType, TypeName);
+        AST::TypeName::List arguments;
+        do {
+            PARSE(elementType, TypeName);
+            arguments.append(WTFMove(elementType));
+            if (current().type != TokenType::Comma)
+                break;
+            CONSUME_TYPE(Comma);
+        } while (current().type != TokenType::Gt);
         CONSUME_TYPE(Gt);
-        RETURN_ARENA_NODE(ParameterizedTypeName, WTFMove(name), WTFMove(elementType));
+        RETURN_ARENA_NODE(ParameterizedTypeName, WTFMove(name), WTFMove(arguments));
     }
     RETURN_ARENA_NODE(NamedTypeName, WTFMove(name));
 }
