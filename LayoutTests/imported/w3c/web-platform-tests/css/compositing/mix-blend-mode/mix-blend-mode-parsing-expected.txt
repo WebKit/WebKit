@@ -1,0 +1,19 @@
+
+PASS Mix-blend-mode normal
+PASS Mix-blend-mode multiply
+PASS Mix-blend-mode screen
+PASS Mix-blend-mode overlay
+PASS Mix-blend-mode darken
+PASS Mix-blend-mode lighten
+PASS Mix-blend-mode color-dodge
+PASS Mix-blend-mode color-burn
+PASS Mix-blend-mode hard-light
+PASS Mix-blend-mode soft-light
+PASS Mix-blend-mode difference
+PASS Mix-blend-mode exclusion
+PASS Mix-blend-mode hue
+PASS Mix-blend-mode saturation
+PASS Mix-blend-mode color
+PASS Mix-blend-mode luminosity
+PASS Mix-blend-mode plus-lighter
+
