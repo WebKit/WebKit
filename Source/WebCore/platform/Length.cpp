@@ -284,7 +284,7 @@ static Length blendMixedTypes(const Length& from, const Length& to, const Blendi
 
 Length blend(const Length& from, const Length& to, const BlendingContext& context)
 {
-    if ((from.isAuto() || to.isAuto()) || (from.isUndefined() || to.isUndefined()))
+    if (from.isAuto() || to.isAuto() || from.isUndefined() || to.isUndefined() || from.isNormal() || to.isNormal())
         return context.progress < 0.5 ? from : to;
 
     if (from.isCalculated() || to.isCalculated() || (from.type() != to.type()))
@@ -333,17 +333,18 @@ static TextStream& operator<<(TextStream& ts, LengthType type)
 {
     switch (type) {
     case LengthType::Auto: ts << "auto"; break;
-    case LengthType::Relative: ts << "relative"; break;
-    case LengthType::Percent: ts << "percent"; break;
+    case LengthType::Calculated: ts << "calc"; break;
+    case LengthType::Content: ts << "content"; break;
+    case LengthType::FillAvailable: ts << "fill-available"; break;
+    case LengthType::FitContent: ts << "fit-content"; break;
     case LengthType::Fixed: ts << "fixed"; break;
     case LengthType::Intrinsic: ts << "intrinsic"; break;
     case LengthType::MinIntrinsic: ts << "min-intrinsic"; break;
     case LengthType::MinContent: ts << "min-content"; break;
     case LengthType::MaxContent: ts << "max-content"; break;
-    case LengthType::FillAvailable: ts << "fill-available"; break;
-    case LengthType::FitContent: ts << "fit-content"; break;
-    case LengthType::Calculated: ts << "calc"; break;
-    case LengthType::Content: ts << "content"; break;
+    case LengthType::Normal: ts << "normal"; break;
+    case LengthType::Percent: ts << "percent"; break;
+    case LengthType::Relative: ts << "relative"; break;
     case LengthType::Undefined: ts << "undefined"; break;
     }
     return ts;
@@ -354,6 +355,7 @@ TextStream& operator<<(TextStream& ts, Length length)
     switch (length.type()) {
     case LengthType::Auto:
     case LengthType::Content:
+    case LengthType::Normal:
     case LengthType::Undefined:
         ts << length.type();
         break;

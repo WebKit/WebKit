@@ -1639,11 +1639,25 @@ static bool isAuto(const LengthPoint& position)
     return position.x().isAuto() && position.y().isAuto();
 }
 
+static bool isNormal(const LengthPoint& position)
+{
+    return position.x().isNormal();
+}
+
 static Ref<CSSValue> valueForPositionOrAuto(const RenderStyle& style, const LengthPoint& position)
 {
-    if (position.x().isAuto() && position.y().isAuto())
+    if (isAuto(position))
         return CSSPrimitiveValue::create(CSSValueAuto);
+    return valueForPosition(style, position);
+}
 
+
+static Ref<CSSValue> valueForPositionOrAutoOrNormal(const RenderStyle& style, const LengthPoint& position)
+{
+    if (isAuto(position))
+        return CSSPrimitiveValue::create(CSSValueAuto);
+    if (isNormal(position))
+        return CSSPrimitiveValue::create(CSSValueNormal);
     return valueForPosition(style, position);
 }
 
@@ -2720,8 +2734,8 @@ static Ref<CSSValue> valueForOffsetShorthand(const RenderStyle& style)
 
     CSSValueListBuilder innerList;
 
-    if (!isAuto(style.offsetPosition()))
-        innerList.append(valueForPositionOrAuto(style, style.offsetPosition()));
+    if (!isAuto(style.offsetPosition()) && !isNormal(style.offsetPosition()))
+        innerList.append(valueForPosition(style, style.offsetPosition()));
 
     bool nonInitialDistance = !style.offsetDistance().isZero();
     bool nonInitialRotate = style.offsetRotate() != style.initialOffsetRotate();
@@ -3561,7 +3575,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyOffsetDistance:
         return CSSPrimitiveValue::create(style.offsetDistance(), style);
     case CSSPropertyOffsetPosition:
-        return valueForPositionOrAuto(style, style.offsetPosition());
+        return valueForPositionOrAutoOrNormal(style, style.offsetPosition());
     case CSSPropertyOffsetAnchor:
         return valueForPositionOrAuto(style, style.offsetAnchor());
     case CSSPropertyOffsetRotate:

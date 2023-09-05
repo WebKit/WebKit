@@ -45,6 +45,7 @@ LayoutUnit valueForLength(const Length& length, LayoutUnit maximumValue)
         return minimumValueForLength(length, maximumValue);
     case LengthType::FillAvailable:
     case LengthType::Auto:
+    case LengthType::Normal:
         return maximumValue;
     case LengthType::Relative:
     case LengthType::Intrinsic:
@@ -71,6 +72,7 @@ float floatValueForLength(const Length& length, LayoutUnit maximumValue)
         return static_cast<float>(maximumValue * length.percent() / 100.0f);
     case LengthType::FillAvailable:
     case LengthType::Auto:
+    case LengthType::Normal:
         return static_cast<float>(maximumValue);
     case LengthType::Calculated:
         return length.nonNanCalculatedValue(maximumValue);
@@ -98,6 +100,7 @@ float floatValueForLength(const Length& length, float maximumValue)
         return static_cast<float>(maximumValue * length.percent() / 100.0f);
     case LengthType::FillAvailable:
     case LengthType::Auto:
+    case LengthType::Normal:
         return static_cast<float>(maximumValue);
     case LengthType::Calculated:
         return length.nonNanCalculatedValue(maximumValue);

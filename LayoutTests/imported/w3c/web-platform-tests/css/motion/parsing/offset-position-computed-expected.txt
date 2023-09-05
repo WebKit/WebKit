@@ -1,6 +1,6 @@
 
 PASS Property offset-position value 'auto'
-FAIL Property offset-position value 'normal' assert_true: 'normal' is a supported value for offset-position. expected true got false
+PASS Property offset-position value 'normal'
 PASS Property offset-position value 'left bottom'
 PASS Property offset-position value 'center center'
 PASS Property offset-position value 'right center'

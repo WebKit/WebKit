@@ -516,6 +516,10 @@ Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(const Length& length)
         return create(CSSValueAuto);
     case LengthType::Content:
         return create(CSSValueContent);
+    case LengthType::FillAvailable:
+        return create(CSSValueWebkitFillAvailable);
+    case LengthType::FitContent:
+        return create(CSSValueFitContent);
     case LengthType::Fixed:
         return create(length.value(), CSSUnitType::CSS_PX);
     case LengthType::Intrinsic:
@@ -526,10 +530,8 @@ Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(const Length& length)
         return create(CSSValueMinContent);
     case LengthType::MaxContent:
         return create(CSSValueMaxContent);
-    case LengthType::FillAvailable:
-        return create(CSSValueWebkitFillAvailable);
-    case LengthType::FitContent:
-        return create(CSSValueFitContent);
+    case LengthType::Normal:
+        return create(CSSValueNormal);
     case LengthType::Percent:
         ASSERT(std::isfinite(length.percent()));
         return create(length.percent(), CSSUnitType::CSS_PERCENTAGE);
@@ -546,12 +548,13 @@ Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(const Length& length, const Ren
     switch (length.type()) {
     case LengthType::Auto:
     case LengthType::Content:
+    case LengthType::FillAvailable:
+    case LengthType::FitContent:
     case LengthType::Intrinsic:
     case LengthType::MinIntrinsic:
     case LengthType::MinContent:
     case LengthType::MaxContent:
-    case LengthType::FillAvailable:
-    case LengthType::FitContent:
+    case LengthType::Normal:
     case LengthType::Percent:
         return create(length);
     case LengthType::Fixed:

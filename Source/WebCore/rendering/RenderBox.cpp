@@ -3521,6 +3521,7 @@ LayoutUnit RenderBox::computeReplacedLogicalWidthUsing(SizeType widthType, Lengt
     case LengthType::Intrinsic:
     case LengthType::MinIntrinsic:
     case LengthType::Auto:
+    case LengthType::Normal:
     case LengthType::Content:
     case LengthType::Relative:
     case LengthType::Undefined:

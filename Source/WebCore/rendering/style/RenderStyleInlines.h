@@ -415,7 +415,7 @@ inline LengthPoint RenderStyle::initialObjectPosition() { return { { 50.0f, Leng
 inline Length RenderStyle::initialOffset() { return LengthType::Auto; }
 inline LengthPoint RenderStyle::initialOffsetAnchor() { return { }; }
 inline Length RenderStyle::initialOffsetDistance() { return zeroLength(); }
-inline LengthPoint RenderStyle::initialOffsetPosition() { return { }; }
+inline LengthPoint RenderStyle::initialOffsetPosition() { return { { LengthType::Normal }, { LengthType::Normal } }; }
 constexpr OffsetRotation RenderStyle::initialOffsetRotate() { return { true }; }
 inline OrderedNamedGridLinesMap RenderStyle::initialOrderedNamedGridColumnLines() { return { }; }
 inline OrderedNamedGridLinesMap RenderStyle::initialOrderedNamedGridRowLines() { return { }; }
