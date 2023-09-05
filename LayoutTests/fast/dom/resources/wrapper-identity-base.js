@@ -96,8 +96,6 @@ var staticWindowProperties = [
     'confirm',
     'console',
     'crypto',
-    'defaultStatus',
-    'defaultstatus',
     'document',
     'event',
     'find',

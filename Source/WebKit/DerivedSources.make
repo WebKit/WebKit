@@ -370,12 +370,19 @@ ifeq ($(USE_SYSTEM_CONTENT_PATH),YES)
 	SANDBOX_DEFINES = -DUSE_SYSTEM_CONTENT_PATH=1 -DSYSTEM_CONTENT_PATH=$(SYSTEM_CONTENT_PATH)
 endif
 
-SANDBOX_PROFILES = \
+SANDBOX_PROFILES_WITHOUT_WEBPUSHD = \
 	com.apple.WebProcess.sb \
 	com.apple.WebKit.NetworkProcess.sb \
-	com.apple.WebKit.GPUProcess.sb \
+	com.apple.WebKit.GPUProcess.sb
+
+ifeq ($(WK_RELOCATABLE_WEBPUSHD),YES)
+WEBPUSHD_SANDBOX_PROFILE = \
+	com.apple.WebKit.webpushd.relocatable.mac.sb
+else
+WEBPUSHD_SANDBOX_PROFILE = \
 	com.apple.WebKit.webpushd.mac.sb
-	
+endif
+
 SANDBOX_PROFILES_IOS = \
 	com.apple.WebKit.adattributiond.sb \
 	com.apple.WebKit.webpushd.sb \
@@ -385,7 +392,7 @@ SANDBOX_PROFILES_IOS = \
 
 sandbox-profiles-ios : $(SANDBOX_PROFILES_IOS)
 
-all : $(SANDBOX_PROFILES) $(SANDBOX_PROFILES_IOS)
+all : $(SANDBOX_PROFILES_WITHOUT_WEBPUSHD) $(WEBPUSHD_SANDBOX_PROFILE) $(SANDBOX_PROFILES_IOS)
 
 %.sb : %.sb.in
 	@echo Pre-processing $* sandbox profile...

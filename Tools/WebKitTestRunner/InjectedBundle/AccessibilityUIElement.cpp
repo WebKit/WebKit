@@ -94,6 +94,7 @@ bool AccessibilityUIElement::isInTable() const { return false; }
 bool AccessibilityUIElement::isInLandmark() const { return false; }
 bool AccessibilityUIElement::isInList() const { return false; }
 bool AccessibilityUIElement::isMarkAnnotation() const { return false; }
+bool AccessibilityUIElement::supportsExpanded() const { return false; }
 #endif
     
 // Unsupported methods on various platforms. As they're implemented on other platforms this list should be modified.

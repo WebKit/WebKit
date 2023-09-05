@@ -558,7 +558,6 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useWasmFaultSignalHandler, true, Normal, nullptr) \
     v(Bool, dumpUnlinkedDFGValidation, false, Normal, nullptr) \
     v(Bool, dumpWasmOpcodeStatistics, false, Normal, nullptr) \
-    v(Bool, dumpCompilerConstructionSite, false, Normal, nullptr) \
     v(Bool, dumpWasmWarnings, false, Normal, nullptr) \
     v(Bool, useRecursiveJSONParse, true, Normal, nullptr) \
     v(Unsigned, thresholdForStringReplaceCache, 0x1000, Normal, nullptr) \

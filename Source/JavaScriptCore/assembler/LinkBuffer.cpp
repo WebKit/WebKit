@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -94,11 +94,10 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImp
         out.vprintf(format, argList);
 
     va_end(argList);
-    out.printf(":\n");
 
     uint8_t* executableAddress = result.code().untaggedPtr<uint8_t*>();
-    out.printf("    Code at [%p, %p)%s\n", executableAddress, executableAddress + result.size(), justDumpingHeader ? "." : ":");
-    
+    out.printf(": [%p, %p) %zu bytes%s\n", executableAddress, executableAddress + result.size(), result.size(), justDumpingHeader ? "." : ":");
+
     CString header = out.toCString();
     
     if (justDumpingHeader) {

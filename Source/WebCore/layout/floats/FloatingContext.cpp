@@ -564,10 +564,11 @@ FloatingContext::AbsoluteCoordinateValuesForFloatAvoider FloatingContext::absolu
     return { absoluteTopLeft, containingBlockAbsoluteTopLeft, { containingBlockAbsoluteTopLeft.x() + containingBlockGeometry.contentBoxLeft(), containingBlockAbsoluteTopLeft.x() + containingBlockGeometry.contentBoxRight() } };
 }
 
-LayoutPoint FloatingContext::mapTopLeftToFloatingStateRoot(const Box& floatBox, LayoutPoint borderBoxTopLeft) const
+LayoutPoint FloatingContext::mapTopLeftToFloatingStateRoot(const Box& layoutBox, LayoutPoint borderBoxTopLeft) const
 {
+    ASSERT(layoutBox.isFloatingPositioned() || layoutBox.isInFlow());
     auto& floatingStateRoot = floatingState().root();
-    for (auto& containingBlock : containingBlockChain(floatBox, floatingStateRoot))
+    for (auto& containingBlock : containingBlockChain(layoutBox, floatingStateRoot))
         borderBoxTopLeft.moveBy(BoxGeometry::borderBoxTopLeft(formattingContext().geometryForBox(containingBlock, FormattingContext::EscapeReason::FloatBoxIsAlwaysRelativeToFloatStateRoot)));
     return borderBoxTopLeft;
 }

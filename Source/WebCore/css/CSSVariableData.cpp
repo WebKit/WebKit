@@ -61,7 +61,8 @@ bool CSSVariableData::operator==(const CSSVariableData& other) const
     return tokens() == other.tokens();
 }
 
-CSSVariableData::CSSVariableData(const CSSParserTokenRange& range)
+CSSVariableData::CSSVariableData(const CSSParserTokenRange& range, const CSSParserContext& context)
+    : m_context(context)
 {
     StringBuilder stringBuilder;
     CSSParserTokenRange localRange = range;

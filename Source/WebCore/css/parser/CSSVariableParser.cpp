@@ -179,7 +179,10 @@ RefPtr<CSSCustomPropertyValue> CSSVariableParser::parseDeclarationValue(const At
     if (type->cssWideKeyword)
         return CSSCustomPropertyValue::createWithID(variableName, *type->cssWideKeyword);
 
-    return CSSCustomPropertyValue::createUnresolved(variableName, CSSVariableReferenceValue::create(range, parserContext));
+    if (type->hasReferences)
+        return CSSCustomPropertyValue::createUnresolved(variableName, CSSVariableReferenceValue::create(range, parserContext));
+
+    return CSSCustomPropertyValue::createSyntaxAll(variableName, CSSVariableData::create(range, parserContext));
 }
 
 RefPtr<CSSCustomPropertyValue> CSSVariableParser::parseInitialValueForUniversalSyntax(const AtomString& variableName, CSSParserTokenRange range)

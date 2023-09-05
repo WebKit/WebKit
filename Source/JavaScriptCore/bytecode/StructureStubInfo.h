@@ -341,10 +341,7 @@ private:
             return hash;
         }
 
-        friend bool operator==(const BufferedStructure& a, const BufferedStructure& b)
-        {
-            return a.m_structure == b.m_structure && a.m_byValId == b.m_byValId;
-        }
+        friend bool operator==(const BufferedStructure&, const BufferedStructure&) = default;
 
         struct Hash {
             static unsigned hash(const BufferedStructure& key)

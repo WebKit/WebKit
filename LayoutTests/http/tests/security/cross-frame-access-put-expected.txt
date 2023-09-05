@@ -91,8 +91,8 @@ CONSOLE MESSAGE: PASS: window.clientInformation should be '[object Navigator]' a
 CONSOLE MESSAGE: PASS: window.closed should be 'false' and is.
 CONSOLE MESSAGE: PASS: window.console should be '[object console]' and is.
 CONSOLE MESSAGE: PASS: window.crypto should be '[object Crypto]' and is.
-CONSOLE MESSAGE: PASS: window.defaultStatus should be '' and is.
-CONSOLE MESSAGE: PASS: window.defaultstatus should be '' and is.
+CONSOLE MESSAGE: PASS: window.defaultStatus should be 'undefined' and is.
+CONSOLE MESSAGE: PASS: window.defaultstatus should be 'undefined' and is.
 CONSOLE MESSAGE: PASS: window.devicePixelRatio should be '1' and is.
 CONSOLE MESSAGE: PASS: window.document should be '[object HTMLDocument]' and is.
 CONSOLE MESSAGE: PASS: window.embeds should be 'undefined' and is.

@@ -86,12 +86,6 @@ void AvailabilityMap::dump(PrintStream& out) const
     out.print("{locals = ", m_locals, "; heap = ", mapDump(m_heap), "}");
 }
 
-bool AvailabilityMap::operator==(const AvailabilityMap& other) const
-{
-    return m_locals == other.m_locals
-        && m_heap == other.m_heap;
-}
-
 void AvailabilityMap::merge(const AvailabilityMap& other)
 {
     for (unsigned i = other.m_locals.size(); i--;)

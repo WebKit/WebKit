@@ -1489,33 +1489,6 @@ void LocalDOMWindow::setName(const AtomString& string)
 void LocalDOMWindow::setStatus(const String& string)
 {
     m_status = string;
-
-    RefPtr frame = this->frame();
-    if (!frame)
-        return;
-
-    Page* page = frame->page();
-    if (!page)
-        return;
-
-    ASSERT(frame->document()); // Client calls shouldn't be made when the frame is in inconsistent state.
-    page->chrome().setStatusbarText(*frame, m_status);
-}
-
-void LocalDOMWindow::setDefaultStatus(const String& string)
-{
-    m_defaultStatus = string;
-
-    RefPtr frame = this->frame();
-    if (!frame)
-        return;
-
-    Page* page = frame->page();
-    if (!page)
-        return;
-
-    ASSERT(frame->document()); // Client calls shouldn't be made when the frame is in inconsistent state.
-    page->chrome().setStatusbarText(*frame, m_defaultStatus);
 }
 
 WindowProxy* LocalDOMWindow::opener() const

@@ -56,10 +56,7 @@ public:
     {
     }
 
-    inline bool operator==(const SourceCodeFlags& rhs) const
-    {
-        return m_flags == rhs.m_flags;
-    }
+    friend bool operator==(SourceCodeFlags, SourceCodeFlags) = default;
 
     unsigned bits() { return m_flags; }
 

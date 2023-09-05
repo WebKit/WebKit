@@ -207,14 +207,7 @@ public:
     // - Try not to increase the size of Kind too much. But it wouldn't be the end of the
     //   world if it bloated to 64 bits.
     
-    bool operator==(const Kind& other) const
-    {
-        return m_opcode == other.m_opcode
-            && m_isChill == other.m_isChill
-            && m_traps == other.m_traps
-            && m_isSensitiveToNaN == other.m_isSensitiveToNaN
-            && m_cloningForbidden == other.m_cloningForbidden;
-    }
+    friend bool operator==(const Kind&, const Kind&) = default;
     
     void dump(PrintStream&) const;
     

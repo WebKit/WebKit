@@ -354,4 +354,25 @@ TEST(WTF_WorkQueue, ThreadSafetyAnalysisAssertIsCurrentWorks)
         EXPECT_EQ(iterationCount + 1, holder.result);
 }
 
+#if ASSERT_ENABLED
+#define MAYBE_MainWorkQueueIsCurrent MainWorkQueueIsCurrent
+#else
+#define MAYBE_MainWorkQueueIsCurrent DISABLED_MainWorkQueueIsCurrent
+#endif
+TEST(WTF_WorkQueue, MAYBE_MainWorkQueueIsCurrent)
+{
+    assertIsCurrent(WorkQueue::main());
+    auto queue = WorkQueue::create("com.apple.WebKit.Test.MainWorkQueueIsCurrent");
+    queue->dispatch([] {
+        auto threadLikeAssertion = WorkQueue::main().threadLikeAssertion();
+        EXPECT_FALSE(threadLikeAssertion.isCurrent());
+        threadLikeAssertion.reset(); // To prevent assertion in ThreadLikeAssertion destructor.
+    });
+    queue->dispatchSync([] {
+        auto threadLikeAssertion = WorkQueue::main().threadLikeAssertion();
+        EXPECT_FALSE(threadLikeAssertion.isCurrent());
+        threadLikeAssertion.reset(); // To prevent assertion in ThreadLikeAssertion destructor.
+    });
+}
+
 } // namespace TestWebKitAPI

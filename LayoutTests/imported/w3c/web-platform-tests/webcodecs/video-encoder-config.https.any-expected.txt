@@ -13,6 +13,7 @@ PASS Test that VideoEncoder.configure() rejects invalid config: displayWidth is 
 PASS Test that VideoEncoder.configure() rejects invalid config: displayHeight is 0
 PASS Test that VideoEncoder.isConfigSupported() doesn't support config: Invalid scalability mode
 FAIL Test that VideoEncoder.isConfigSupported() doesn't support config: Unrecognized codec promise_test: Unhandled rejection with value: object "TypeError: Config is not valid"
+FAIL Test that VideoEncoder.isConfigSupported() doesn't support config: Codec with bad casing promise_test: Unhandled rejection with value: object "TypeError: Config is not valid"
 PASS Test that VideoEncoder.isConfigSupported() doesn't support config: Width is too large
 PASS Test that VideoEncoder.isConfigSupported() doesn't support config: Height is too large
 PASS Test that VideoEncoder.isConfigSupported() doesn't support config: Too strenuous accelerated encoding parameters
@@ -25,6 +26,9 @@ FAIL Test that VideoEncoder.configure() doesn't support config: Invalid scalabil
           codec.configure(entry.config);
         }" did not throw
 FAIL Test that VideoEncoder.configure() doesn't support config: Unrecognized codec assert_throws_dom: function "() => {
+          codec.configure(entry.config);
+        }" threw object "TypeError: Config is invalid" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+FAIL Test that VideoEncoder.configure() doesn't support config: Codec with bad casing assert_throws_dom: function "() => {
           codec.configure(entry.config);
         }" threw object "TypeError: Config is invalid" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
 FAIL Test that VideoEncoder.configure() doesn't support config: Width is too large assert_throws_dom: function "() => {

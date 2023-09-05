@@ -237,7 +237,6 @@ protected:
     std::unique_ptr<ImageBufferBackend> m_backend;
     RenderingResourceIdentifier m_renderingResourceIdentifier;
     unsigned m_backendGeneration { 0 };
-    mutable bool m_hasInitializedContext { false }; // FIXME: will be replaced with std::unique_ptr<GraphicsContext>.
 };
 
 class SerializedImageBuffer {

@@ -951,19 +951,11 @@ gchar* webkit_dom_dom_window_get_default_status(WebKitDOMDOMWindow* self)
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
-    auto* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->defaultStatus());
-    return result;
+    return g_strdup("");
 }
 
 void webkit_dom_dom_window_set_default_status(WebKitDOMDOMWindow* self, const gchar* value)
 {
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self));
-    g_return_if_fail(value);
-    auto* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setDefaultStatus(convertedValue);
 }
 
 WebKitDOMDOMWindow* webkit_dom_dom_window_get_self(WebKitDOMDOMWindow* self)

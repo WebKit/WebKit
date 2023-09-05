@@ -62,11 +62,7 @@ public:
         return !m_operand.isValid();
     }
     
-    bool operator==(const LazyOperandValueProfileKey& other) const
-    {
-        return m_bytecodeIndex == other.m_bytecodeIndex
-            && m_operand == other.m_operand;
-    }
+    friend bool operator==(const LazyOperandValueProfileKey&, const LazyOperandValueProfileKey&) = default;
     
     unsigned hash() const
     {

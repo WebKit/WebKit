@@ -55,6 +55,7 @@ public:
     ImageBufferBackendHandle createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const final;
     void setOwnershipIdentity(const WebCore::ProcessIdentity&) final;
     WebCore::GraphicsContext& context() final;
+    bool originAtBottomLeftCorner() const override { return isOriginAtBottomLeftCorner; }
 private:
     // ImageBufferBackendSharing
     ImageBufferBackendSharing* toBackendSharing() final { return this; }

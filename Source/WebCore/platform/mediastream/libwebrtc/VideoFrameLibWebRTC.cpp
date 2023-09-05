@@ -35,7 +35,7 @@ namespace WebCore {
 
 static PlatformVideoColorSpace defaultVPXColorSpace()
 {
-    return { PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Iec6196621, PlatformVideoMatrixCoefficients::Smpte170m, false };
+    return { PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Bt709, PlatformVideoMatrixCoefficients::Bt709, false };
 }
 
 Ref<VideoFrameLibWebRTC> VideoFrameLibWebRTC::create(MediaTime presentationTime, bool isMirrored, Rotation rotation, std::optional<PlatformVideoColorSpace>&& colorSpace, rtc::scoped_refptr<webrtc::VideoFrameBuffer>&& buffer, ConversionCallback&& conversionCallback)

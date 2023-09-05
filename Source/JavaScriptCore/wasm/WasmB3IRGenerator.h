@@ -48,8 +48,10 @@ namespace JSC {
 
 namespace Wasm {
 
+class BBQDisassembler;
 class MemoryInformation;
 class OptimizingJITCallee;
+class TierUpCount;
 
 struct CompilationContext {
     std::unique_ptr<CCallHelpers> jsEntrypointJIT;

@@ -90,6 +90,14 @@ const validButUnsupportedConfigs = [
     },
   },
   {
+    comment: 'Codec with bad casing',
+    config: {
+      codec: 'vP8',
+      width: 640,
+      height: 480,
+    },
+  },
+  {
     comment: 'Width is too large',
     config: {
       codec: 'vp8',

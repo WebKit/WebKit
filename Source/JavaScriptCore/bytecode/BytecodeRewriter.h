@@ -111,10 +111,7 @@ public:
             return bytecodeOffset < other.bytecodeOffset;
         }
 
-        bool operator==(const InsertionPoint& other) const
-        {
-            return bytecodeOffset == other.bytecodeOffset && position == other.position;
-        }
+        friend bool operator==(const InsertionPoint&, const InsertionPoint&) = default;
     };
 
 private:

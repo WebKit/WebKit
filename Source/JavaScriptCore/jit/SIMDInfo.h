@@ -103,10 +103,7 @@ struct SIMDInfo {
 
     constexpr SIMDInfo() = default;
 
-    friend bool operator==(const SIMDInfo& lhs, const SIMDInfo& rhs)
-    {
-        return lhs.lane == rhs.lane && lhs.signMode == rhs.signMode;
-    }
+    friend bool operator==(const SIMDInfo&, const SIMDInfo&) = default;
 };
 
 constexpr uint8_t elementCount(SIMDLane lane)

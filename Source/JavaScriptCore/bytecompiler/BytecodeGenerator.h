@@ -138,16 +138,7 @@ namespace JSC {
 
         void dump(PrintStream&) const;
 
-        bool operator==(const Variable& other) const
-        {
-            return m_ident == other.m_ident
-                && m_offset == other.m_offset
-                && m_local == other.m_local
-                && m_attributes == other.m_attributes
-                && m_kind == other.m_kind
-                && m_symbolTableConstantIndex == other.m_symbolTableConstantIndex
-                && m_isLexicallyScoped == other.m_isLexicallyScoped;
-        }
+        friend bool operator==(const Variable&, const Variable&) = default;
 
     private:
         Identifier m_ident;

@@ -1,0 +1,10 @@
+This verifies that the summary of a details element has the right isExpanded value.
+
+PASS: summaryElement.supportsExpanded === true
+PASS: summaryElement.isExpanded === true
+PASS: summaryElement.isExpanded === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Details example

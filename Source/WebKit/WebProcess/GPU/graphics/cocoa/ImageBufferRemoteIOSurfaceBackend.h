@@ -65,6 +65,8 @@ private:
     void getPixelBuffer(const WebCore::IntRect&, WebCore::PixelBuffer&) final;
     void putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) final;
 
+    bool originAtBottomLeftCorner() const final { return isOriginAtBottomLeftCorner; }
+
     unsigned bytesPerRow() const final;
 
     WebCore::VolatilityState volatilityState() const final { return m_volatilityState; }

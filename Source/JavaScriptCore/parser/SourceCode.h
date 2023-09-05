@@ -77,14 +77,7 @@ public:
 
     SourceCode subExpression(unsigned openBrace, unsigned closeBrace, int firstLine, int startColumn) const;
 
-    bool operator==(const SourceCode& other) const
-    {
-        return m_firstLine == other.m_firstLine
-            && m_startColumn == other.m_startColumn
-            && m_provider == other.m_provider
-            && m_startOffset == other.m_startOffset
-            && m_endOffset == other.m_endOffset;
-    }
+    friend bool operator==(const SourceCode&, const SourceCode&) = default;
 
 private:
     OrdinalNumber m_firstLine;

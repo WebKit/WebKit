@@ -118,7 +118,7 @@ struct Effects {
     // behavior in an observable way.
     bool interferes(const Effects&) const;
     
-    JS_EXPORT_PRIVATE bool operator==(const Effects&) const;
+    friend bool operator==(const Effects&, const Effects&) = default;
 
     JS_EXPORT_PRIVATE void dump(PrintStream& out) const;
 };
