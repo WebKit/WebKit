@@ -142,8 +142,10 @@ private:
 
     void drawFilteredImageBufferInternal(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, const WebCore::FloatRect& sourceImageRect, WebCore::Filter&, WebCore::FilterResults&);
 
-    RemoteResourceCache& resourceCache();
+    RemoteResourceCache& resourceCache() const;
     WebCore::GraphicsContext& drawingContext();
+    RefPtr<WebCore::ImageBuffer> imageBuffer(WebCore::RenderingResourceIdentifier) const;
+    std::optional<WebCore::SourceImage> sourceImage(WebCore::RenderingResourceIdentifier) const;
 
     template<typename T, typename ... AdditionalArgs>
     void handleItem(T&& item, AdditionalArgs&&... args)

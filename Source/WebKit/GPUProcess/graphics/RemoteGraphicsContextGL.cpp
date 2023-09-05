@@ -248,7 +248,7 @@ void RemoteGraphicsContextGL::paintNativeImageToImageBuffer(NativeImage& image, 
     bool isFinished = false;
 
     m_renderingBackend->dispatch([&]() mutable {
-        if (auto imageBuffer = m_renderingBackend->remoteResourceCache().cachedImageBuffer(imageBufferIdentifier)) {
+        if (auto imageBuffer = m_renderingBackend->imageBuffer(imageBufferIdentifier)) {
             // Here we do not try to play back pending commands for imageBuffer. Currently this call is only made for empty
             // image buffers and there's no good way to add display lists.
             GraphicsContextGL::paintToCanvas(image, imageBuffer->backendSize(), imageBuffer->context());

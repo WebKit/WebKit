@@ -28,16 +28,42 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "ScopedRenderingResourcesRequest.h"
+#include "ShareableBitmap.h"
+#include "StreamMessageReceiver.h"
 #include <WebCore/ImageBuffer.h>
+
+namespace IPC {
+class StreamConnectionWorkQueue;
+}
 
 namespace WebKit {
 
-class RemoteImageBuffer : public WebCore::ImageBuffer {
-public:
-    using WebCore::ImageBuffer::ImageBuffer;
-    ~RemoteImageBuffer();
+class RemoteRenderingBackend;
 
+class RemoteImageBuffer : public IPC::StreamMessageReceiver {
+public:
+    static Ref<RemoteImageBuffer> create(Ref<WebCore::ImageBuffer>, RemoteRenderingBackend&);
+    ~RemoteImageBuffer();
+    void stopListeningForIPC();
+    WebCore::RenderingResourceIdentifier identifier() const { return m_imageBuffer->renderingResourceIdentifier(); }
+    Ref<WebCore::ImageBuffer> imageBuffer() const { return m_imageBuffer; }
 private:
+    RemoteImageBuffer(Ref<WebCore::ImageBuffer>, RemoteRenderingBackend&);
+    void startListeningForIPC();
+    IPC::StreamConnectionWorkQueue& workQueue() const;
+
+    // IPC::StreamMessageReceiver
+    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
+
+    // Messages
+    void getPixelBuffer(WebCore::PixelBufferFormat, WebCore::IntRect srcRect, CompletionHandler<void()>&&);
+    void getPixelBufferWithNewMemory(SharedMemory::Handle&&, WebCore::PixelBufferFormat, WebCore::IntRect, CompletionHandler<void()>&&);
+    void putPixelBuffer(Ref<WebCore::PixelBuffer>, WebCore::IntRect srcRect, WebCore::IntPoint destPoint, WebCore::AlphaPremultiplication destFormat);
+    void getShareableBitmap(WebCore::PreserveResolution, CompletionHandler<void(ShareableBitmap::Handle&&)>&&);
+    void getFilteredImage(Ref<WebCore::Filter>, CompletionHandler<void(ShareableBitmap::Handle&&)>&&);
+
+    RefPtr<RemoteRenderingBackend> m_backend;
+    Ref<WebCore::ImageBuffer> m_imageBuffer;
     ScopedRenderingResourcesRequest m_renderingResourcesRequest { ScopedRenderingResourcesRequest::acquire() };
 };
 

@@ -139,6 +139,7 @@ set(WebKit_MESSAGES_IN_FILES
 
     GPUProcess/graphics/RemoteDisplayListRecorder
     GPUProcess/graphics/RemoteGraphicsContextGL
+    GPUProcess/graphics/RemoteImageBuffer
     GPUProcess/graphics/RemoteRenderingBackend
 
     GPUProcess/graphics/WebGPU/RemoteAdapter

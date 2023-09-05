@@ -126,7 +126,8 @@ RemoteImageBufferProxy::~RemoteImageBufferProxy()
     }
 
     flushDrawingContextAsync();
-    m_remoteRenderingBackendProxy->remoteResourceCacheProxy().releaseImageBuffer(*this);
+    m_remoteRenderingBackendProxy->remoteResourceCacheProxy().forgetImageBuffer(renderingResourceIdentifier());
+    m_remoteRenderingBackendProxy->releaseImageBuffer(renderingResourceIdentifier());
 }
 
 void RemoteImageBufferProxy::assertDispatcherIsCurrent() const
@@ -381,6 +382,8 @@ std::unique_ptr<SerializedImageBuffer> RemoteImageBufferProxy::sinkIntoSerialize
     if (!ensureBackendCreated())
         return nullptr;
 
+    m_remoteRenderingBackendProxy->remoteResourceCacheProxy().forgetImageBuffer(m_renderingResourceIdentifier);
+
     auto result = makeUnique<RemoteSerializedImageBufferProxy>(backend()->parameters(), backendInfo(), m_renderingResourceIdentifier, *m_remoteRenderingBackendProxy);
 
     clearBackend();
@@ -403,7 +406,6 @@ RemoteSerializedImageBufferProxy::RemoteSerializedImageBufferProxy(const WebCore
     , m_renderingResourceIdentifier(renderingResourceIdentifier)
     , m_connection(backend.connection())
 {
-    backend.remoteResourceCacheProxy().forgetImageBuffer(m_renderingResourceIdentifier);
     backend.moveToSerializedBuffer(m_renderingResourceIdentifier);
 }
 
