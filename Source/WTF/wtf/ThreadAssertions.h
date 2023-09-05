@@ -60,6 +60,7 @@ public:
     WTF_EXPORT_PRIVATE static uint32_t currentSequence();
 
 protected:
+    static constexpr uint32_t mainThreadID { 1 };
     static std::atomic<uint32_t> s_uid;
     static ThreadLikeAssertion createThreadLikeAssertion(uint32_t);
 };
@@ -99,9 +100,9 @@ public:
     ThreadLikeAssertion& operator=(ThreadLikeAssertion&&);
 
     void reset() { *this = currentThreadLike; }
+    bool isCurrent() const; // Public as used in API tests.
 private:
     constexpr ThreadLikeAssertion(uint32_t uid);
-    bool isCurrent() const;
 #if ASSERT_ENABLED
     uint32_t m_uid;
 #endif

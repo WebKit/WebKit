@@ -205,6 +205,11 @@ void WorkQueue::assertIsCurrent() const
 {
     WTF::assertIsCurrent(threadLikeAssertion());
 }
+
+ThreadLikeAssertion WorkQueue::threadLikeAssertion() const
+{
+    return createThreadLikeAssertion(m_threadID);
+}
 #endif
 
 ConcurrentWorkQueue::ConcurrentWorkQueue(const char* name, QOS qos)
