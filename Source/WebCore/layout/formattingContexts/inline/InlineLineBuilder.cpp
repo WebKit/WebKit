@@ -350,18 +350,28 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
     size_t resumedFloatCount = 0;
     auto layoutPreviouslySuspendedFloats = [&] {
         if (!m_previousLine)
-            return;
+            return true;
         // FIXME: Note that placedInlineItemCount is not incremented here as these floats are already accounted for (at previous line)
         // as LineContent only takes one range -meaning that inline layout may continue while float layout is being suspended
         // and the placed InlineItem range ends at the last inline item placed on the current line.
-        resumedFloatCount = m_previousLine->suspendedFloats.size();
-        for (auto* suspendedFloat : m_previousLine->suspendedFloats) {
-            auto isPlaced = tryPlacingFloatBox(*suspendedFloat, MayOverConstrainLine::Yes);
-            ASSERT_UNUSED(isPlaced, isPlaced);
+        for (size_t index = 0; index < m_previousLine->suspendedFloats.size(); ++index) {
+            auto& suspendedFloat = *m_previousLine->suspendedFloats[index];
+            auto isPlaced = tryPlacingFloatBox(suspendedFloat, !index ? MayOverConstrainLine::OnlyWhenFirstFloatOnLine : MayOverConstrainLine::No);
+            if (!isPlaced) {
+                // Can't place more floats here. We'll try to place these floats on subsequent lines.
+                for (; index < m_previousLine->suspendedFloats.size(); ++index)
+                    m_suspendedFloats.append(m_previousLine->suspendedFloats[index]);
+                return false;
+            }
+            ++resumedFloatCount;
         }
         m_previousLine->suspendedFloats.clear();
+        return true;
     };
-    layoutPreviouslySuspendedFloats();
+    if (!layoutPreviouslySuspendedFloats()) {
+        // Couldn't even manage to place all suspended floats from previous line(s). -which also means we can't fit any inline content at this vertical position.
+        return { { needsLayoutRange.start, needsLayoutRange.start } };
+    }
 
     auto lineContent = LineContent { };
     size_t placedInlineItemCount = 0;
@@ -851,20 +861,30 @@ std::optional<LineBuilder::InitialLetterOffsets> LineBuilder::adjustLineRectForI
 
 bool LineBuilder::shouldTryToPlaceFloatBox(const Box& floatBox, LayoutUnit floatBoxMarginBoxWidth, MayOverConstrainLine mayOverConstrainLine) const
 {
-    if (mayOverConstrainLine == MayOverConstrainLine::Yes) {
-        // This is a resumed float from a previous vertical position. Now we need to find a place for it.
+    switch (mayOverConstrainLine) {
+    case MayOverConstrainLine::Yes:
+        return true;
+    case MayOverConstrainLine::OnlyWhenFirstFloatOnLine:
+        // This is a resumed float from a previous line. Now we need to find a place for it.
         // (which also means that the current line can't have any floats that we couldn't place yet)
         ASSERT(m_suspendedFloats.isEmpty());
+        if (!isLineConstrainedByFloat())
+            return true;
+        FALLTHROUGH;
+    case MayOverConstrainLine::No: {
+        auto lineIsConsideredEmpty = !m_line.hasContent() && !isLineConstrainedByFloat();
+        if (lineIsConsideredEmpty)
+            return true;
+        // Non-clear type of floats stack up (horizontally). It's easy to check if there's space for this float at all,
+        // while floats with clear needs post-processing to see if they overlap existing line content (and here we just check if they may fit at all).
+        auto lineLogicalWidth = floatBox.hasFloatClear() ? m_lineInitialLogicalRect.width() : m_lineLogicalRect.width();
+        auto availableWidthForFloat = lineLogicalWidth - m_line.contentLogicalRight() + m_line.trimmableTrailingWidth();
+        return availableWidthForFloat >= InlineLayoutUnit { floatBoxMarginBoxWidth };
+    }
+    default:
+        ASSERT_NOT_REACHED();
         return true;
     }
-    auto lineIsConsideredEmpty = !m_line.hasContent() && !isLineConstrainedByFloat();
-    if (lineIsConsideredEmpty)
-        return true;
-    // Non-clear type of floats stack up (horizontally). It's easy to check if there's space for this float at all,
-    // while floats with clear needs post-processing to see if they overlap existing line content (and here we just check if they may fit at all).
-    auto lineLogicalWidth = floatBox.hasFloatClear() ? m_lineInitialLogicalRect.width() : m_lineLogicalRect.width();
-    auto availableWidthForFloat = lineLogicalWidth - m_line.contentLogicalRight() + m_line.trimmableTrailingWidth();
-    return availableWidthForFloat >= InlineLayoutUnit { floatBoxMarginBoxWidth };
 }
 
 static bool haveEnoughSpaceForFloatWithClear(const LayoutRect& floatBoxMarginBox, bool isLeftPositioned, const InlineRect& lineLogicalRect, InlineLayoutUnit contentLogicalWidth)

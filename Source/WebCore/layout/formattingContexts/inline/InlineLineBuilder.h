@@ -69,7 +69,7 @@ private:
         size_t partialTrailingContentLength { 0 };
         std::optional<InlineLayoutUnit> overflowLogicalWidth { };
     };
-    enum MayOverConstrainLine : bool { No, Yes };
+    enum MayOverConstrainLine : uint8_t { No, Yes, OnlyWhenFirstFloatOnLine };
     bool tryPlacingFloatBox(const Box&, MayOverConstrainLine);
     Result handleInlineContent(const InlineItemRange& needsLayoutRange, const LineCandidate&);
     UsedConstraints adjustedLineRectWithCandidateInlineContent(const LineCandidate&) const;
