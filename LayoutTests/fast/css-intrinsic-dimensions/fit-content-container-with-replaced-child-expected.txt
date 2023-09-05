@@ -1,0 +1,9 @@
+Tests that intrinsic width values on replaced element with fit-content container work.
+ PASS
+ PASS
+ PASS
+ PASS
+ PASS
+ PASS
+ PASS
+ PASS
