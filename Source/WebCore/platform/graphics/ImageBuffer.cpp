@@ -247,13 +247,7 @@ GraphicsContext& ImageBuffer::context() const
 {
     ASSERT(m_backend);
     ASSERT(volatilityState() == VolatilityState::NonVolatile);
-    auto& context = m_backend->context();
-    if (!m_hasInitializedContext) {
-        context.applyDeviceScaleFactor(m_parameters.resolutionScale);
-        context.setCTM(m_backendInfo.baseTransform);
-        m_hasInitializedContext = true;
-    }
-    return context;
+    return m_backend->context();
 }
 
 void ImageBuffer::flushDrawingContext()
@@ -280,7 +274,6 @@ void ImageBuffer::setBackend(std::unique_ptr<ImageBufferBackend>&& backend)
 
     m_backend = WTFMove(backend);
     ++m_backendGeneration;
-    m_hasInitializedContext = false;
 }
 
 std::unique_ptr<ImageBufferBackend> ImageBuffer::takeBackend()
@@ -553,10 +546,8 @@ bool ImageBuffer::isInUse() const
 
 void ImageBuffer::releaseGraphicsContext()
 {
-    if (auto* backend = ensureBackendCreated()) {
-        m_hasInitializedContext = false;
+    if (auto* backend = ensureBackendCreated())
         return backend->releaseGraphicsContext();
-    }
 }
 
 bool ImageBuffer::setVolatile()
