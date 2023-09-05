@@ -54,7 +54,7 @@ layer at (0,0) size 800x600
         RenderBlock {INPUT} at (10,4) size 17x16 [bgcolor=#FFFFFF03]
         RenderText {#text} at (28,3) size 66x19
           text run at (28,3) width 66: "checkbox "
-        RenderBlock {INPUT} at (95,4) size 17x16 [color=#575757] [bgcolor=#FFFFFF03]
+        RenderBlock {INPUT} at (95,4) size 17x16 [color=color(srgb 0.34117648 0.34117648 0.34117648)] [bgcolor=#FFFFFF03]
         RenderText {#text} at (113,3) size 9x19
           text run at (113,3) width 9: "b"
       RenderBlock {DIV} at (10,440) size 450x24 [border: (1px solid #FF0000)]
@@ -63,7 +63,7 @@ layer at (0,0) size 800x600
         RenderBlock {INPUT} at (10,4) size 17x16 [bgcolor=#FFFFFF03]
         RenderText {#text} at (28,3) size 37x19
           text run at (28,3) width 37: "radio "
-        RenderBlock {INPUT} at (66,4) size 17x16 [color=#575757] [bgcolor=#FFFFFF03]
+        RenderBlock {INPUT} at (66,4) size 17x16 [color=color(srgb 0.34117648 0.34117648 0.34117648)] [bgcolor=#FFFFFF03]
         RenderText {#text} at (84,3) size 9x19
           text run at (84,3) width 9: "b"
 layer at (33,363) size 141x14 scrollWidth 161
@@ -75,13 +75,13 @@ layer at (26,385) size 142x14 backgroundClip at (26,385) size 141x14 clip at (26
     RenderText {#text} at (0,0) size 21x14
       text run at (0,0) width 21: "\x{F79A}\x{F79A}\x{F79A}"
 layer at (209,360) size 153x21
-  RenderTextControl {INPUT} at (190,2) size 154x22 [color=#575757] [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+  RenderTextControl {INPUT} at (190,2) size 154x22 [color=color(srgb 0.34117648 0.34117648 0.34117648)] [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
 layer at (215,363) size 139x14
   RenderBlock {DIV} at (6,3) size 141x15
     RenderText {#text} at (0,0) size 17x14
       text run at (0,0) width 17: "foo"
 layer at (238,382) size 153x21
-  RenderTextControl {INPUT} at (220,24) size 154x22 [color=#575757] [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+  RenderTextControl {INPUT} at (220,24) size 154x22 [color=color(srgb 0.34117648 0.34117648 0.34117648)] [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
     RenderFlexibleBox {DIV} at (6,3) size 141x15
       RenderBlock {DIV} at (0,0) size 140x14
 layer at (245,385) size 140x14

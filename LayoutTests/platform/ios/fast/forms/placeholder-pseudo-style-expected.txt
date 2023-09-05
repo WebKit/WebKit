@@ -58,7 +58,7 @@ layer at (173,54) size 141x14
 layer at (173,54) size 141x14
   RenderBlock {DIV} at (6,3) size 143x15
 layer at (485,29) size 153x21
-  RenderTextControl {INPUT} at (476,21) size 154x22 [color=#575757] [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+  RenderTextControl {INPUT} at (476,21) size 154x22 [color=color(srgb 0.34117648 0.34117648 0.34117648)] [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
 layer at (491,32) size 139x14
   RenderBlock {DIV} at (6,3) size 141x15 [color=#640000]
     RenderText {#text} at (0,0) size 68x14
