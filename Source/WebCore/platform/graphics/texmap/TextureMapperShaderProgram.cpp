@@ -145,8 +145,7 @@ static const char* vertexTemplateCommon =
 #define ENABLE_APPLIER(Name) "#define ENABLE_"#Name"\n#define apply"#Name"IfNeeded apply"#Name"\n"
 #define DISABLE_APPLIER(Name) "#define apply"#Name"IfNeeded noop\n"
 #define BLUR_CONSTANTS \
-    GLSL_DIRECTIVE(define GAUSSIAN_KERNEL_HALF_WIDTH 11) \
-    GLSL_DIRECTIVE(define GAUSSIAN_KERNEL_STEP 0.2)
+    GLSL_DIRECTIVE(define GAUSSIAN_KERNEL_MAX_HALF_SIZE 11)
 
 
 #define OES_EGL_IMAGE_EXTERNAL_DIRECTIVE \
@@ -208,13 +207,16 @@ static const char* fragmentTemplateCommon =
         uniform float u_opacity;
         uniform float u_filterAmount;
         uniform mat4 u_yuvToRgb;
-        uniform vec2 u_blurRadius;
-        uniform vec2 u_shadowOffset;
         uniform vec4 u_color;
-        uniform float u_gaussianKernel[GAUSSIAN_KERNEL_HALF_WIDTH];
+        uniform vec2 u_texelSize;
+        uniform float u_gaussianKernel[GAUSSIAN_KERNEL_MAX_HALF_SIZE];
+        uniform int u_gaussianKernelHalfSize;
+        uniform vec2 u_blurDirection;
         uniform int u_roundedRectNumber;
         uniform vec4 u_roundedRect[ROUNDED_RECT_ARRAY_SIZE];
         uniform mat4 u_roundedRectInverseTransformMatrix[ROUNDED_RECT_INVERSE_TRANSFORM_ARRAY_SIZE];
+        uniform mat4 u_textureCopyMatrix;
+        uniform mat4 u_textureBlurMatrix;
 
         void noop(inout vec4 dummyParameter) { }
         void noop(inout vec4 dummyParameter, vec2 texCoord) { }
@@ -344,24 +346,29 @@ static const char* fragmentTemplateCommon =
             color *= u_filterAmount;
         }
 
-        vec4 sampleColorAtRadius(float radius, vec2 texCoord)
+        void applyTextureCopy(inout vec4 color, vec2 texCoord)
         {
-            vec2 coord = texCoord + radius * u_blurRadius;
-            return texture2D(s_sampler, coord);
+            vec2 coord = clamp(texCoord, u_texelSize / 2., vec2(1., 1.) - u_texelSize / 2.);
+            coord = (u_textureCopyMatrix * vec4(coord, 0., 1.)).xy;
+            color = texture2D(s_sampler, coord);
         }
 
-        float sampleAlphaAtRadius(float radius, vec2 texCoord)
+        vec4 sampleTextureClamp(sampler2D sampler, vec2 texCoord, vec2 offset, mat4 matrix)
         {
-            vec2 coord = texCoord - u_shadowOffset + radius * u_blurRadius;
-            return texture2D(s_sampler, coord).a * float(coord.x > 0. && coord.y > 0. && coord.x < 1. && coord.y < 1.);
+            vec2 coord = texCoord + offset;
+            coord = clamp(coord, u_texelSize / 2., vec2(1., 1.) - u_texelSize / 2.);
+            coord = (matrix * vec4(coord, 0., 1.)).xy;
+            return texture2D(sampler, coord);
         }
 
         void applyBlurFilter(inout vec4 color, vec2 texCoord)
         {
-            vec4 total = sampleColorAtRadius(0., texCoord) * u_gaussianKernel[0];
-            for (int i = 1; i < GAUSSIAN_KERNEL_HALF_WIDTH; i++) {
-                total += sampleColorAtRadius(float(i) * GAUSSIAN_KERNEL_STEP, texCoord) * u_gaussianKernel[i];
-                total += sampleColorAtRadius(float(-1 * i) * GAUSSIAN_KERNEL_STEP, texCoord) * u_gaussianKernel[i];
+            vec4 total = sampleTextureClamp(s_sampler, texCoord, vec2(0., 0.), u_textureBlurMatrix) * u_gaussianKernel[0];
+
+            for (int i = 1; i < u_gaussianKernelHalfSize; i++) {
+                vec2 offset = u_blurDirection * u_texelSize * float(i);
+                total += sampleTextureClamp(s_sampler, texCoord, +offset, u_textureBlurMatrix) * u_gaussianKernel[i];
+                total += sampleTextureClamp(s_sampler, texCoord, -offset, u_textureBlurMatrix) * u_gaussianKernel[i];
             }
 
             color = total;
@@ -369,13 +376,22 @@ static const char* fragmentTemplateCommon =
 
         void applyAlphaBlur(inout vec4 color, vec2 texCoord)
         {
-            float total = sampleAlphaAtRadius(0., texCoord) * u_gaussianKernel[0];
-            for (int i = 1; i < GAUSSIAN_KERNEL_HALF_WIDTH; i++) {
-                total += sampleAlphaAtRadius(float(i) * GAUSSIAN_KERNEL_STEP, texCoord) * u_gaussianKernel[i];
-                total += sampleAlphaAtRadius(float(-1 * i) * GAUSSIAN_KERNEL_STEP, texCoord) * u_gaussianKernel[i];
+            float total = sampleTextureClamp(s_sampler, texCoord, vec2(0., 0.), u_textureBlurMatrix).a * u_gaussianKernel[0];
+
+            for (int i = 1; i < u_gaussianKernelHalfSize; i++) {
+                vec2 offset = u_blurDirection * u_texelSize * float(i);
+                total += sampleTextureClamp(s_sampler, texCoord, +offset, u_textureBlurMatrix).a * u_gaussianKernel[i];
+                total += sampleTextureClamp(s_sampler, texCoord, -offset, u_textureBlurMatrix).a * u_gaussianKernel[i];
             }
 
-            color *= total;
+            color = vec4(0., 0., 0., total);
+        }
+
+        void applyAlphaToShadow(inout vec4 color, vec2 texCoord)
+        {
+            vec2 coord = clamp(texCoord, u_texelSize / 2., vec2(1., 1.) - u_texelSize / 2.);
+            color *= u_color;
+            color *= texture2D(s_sampler, coord).a;
         }
 
         vec4 sourceOver(vec4 src, vec4 dst) { return src + dst * (1. - src.a); }
@@ -476,6 +492,7 @@ static const char* fragmentTemplateCommon =
             applyPremultiplyIfNeeded(color);
             applySolidColorIfNeeded(color);
             applyAlphaBlurIfNeeded(color, texCoord);
+            applyAlphaToShadowIfNeeded(color, texCoord);
             applyContentTextureIfNeeded(color, texCoord);
             applyAntialiasingIfNeeded(color);
             applyOpacityIfNeeded(color);
@@ -487,6 +504,7 @@ static const char* fragmentTemplateCommon =
             applyBrightnessFilterIfNeeded(color);
             applyContrastFilterIfNeeded(color);
             applyOpacityFilterIfNeeded(color);
+            applyTextureCopyIfNeeded(color, texCoord);
             applyBlurFilterIfNeeded(color, texCoord);
             applyTextureExternalOESIfNeeded(color, texCoord);
             applyRoundedRectClipIfNeeded(color);
@@ -518,8 +536,10 @@ Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(TextureMapper
     SET_APPLIER_FROM_OPTIONS(ContrastFilter);
     SET_APPLIER_FROM_OPTIONS(InvertFilter);
     SET_APPLIER_FROM_OPTIONS(OpacityFilter);
+    SET_APPLIER_FROM_OPTIONS(TextureCopy);
     SET_APPLIER_FROM_OPTIONS(BlurFilter);
     SET_APPLIER_FROM_OPTIONS(AlphaBlur);
+    SET_APPLIER_FROM_OPTIONS(AlphaToShadow);
     SET_APPLIER_FROM_OPTIONS(ContentTexture);
     SET_APPLIER_FROM_OPTIONS(ManualRepeat);
     SET_APPLIER_FROM_OPTIONS(TextureExternalOES);
