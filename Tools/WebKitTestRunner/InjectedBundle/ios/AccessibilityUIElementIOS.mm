@@ -97,6 +97,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSString *)accessibilityExpandedTextValue;
 - (NSString *)accessibilitySortDirection;
 - (BOOL)accessibilityIsExpanded;
+- (BOOL)accessibilitySupportsARIAExpanded;
 - (BOOL)accessibilityIsIndeterminate;
 - (NSUInteger)accessibilityBlockquoteLevel;
 - (NSArray *)accessibilityFindMatchingObjects:(NSDictionary *)parameters;
@@ -702,6 +703,11 @@ bool AccessibilityUIElement::isIndeterminate() const
 bool AccessibilityUIElement::isExpanded() const
 {
     return [m_element accessibilityIsExpanded];
+}
+
+bool AccessibilityUIElement::supportsExpanded() const
+{
+    return [m_element accessibilitySupportsARIAExpanded];
 }
 
 bool AccessibilityUIElement::isChecked() const

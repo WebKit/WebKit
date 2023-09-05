@@ -3361,11 +3361,12 @@ bool AccessibilityObject::supportsExpanded() const
         return true;
 
     switch (roleValue()) {
+    case AccessibilityRole::Details:
+        return true;
     case AccessibilityRole::Button:
     case AccessibilityRole::CheckBox:
     case AccessibilityRole::ColumnHeader:
     case AccessibilityRole::ComboBox:
-    case AccessibilityRole::Details:
     case AccessibilityRole::DisclosureTriangle:
     case AccessibilityRole::GridCell:
     case AccessibilityRole::Link:
