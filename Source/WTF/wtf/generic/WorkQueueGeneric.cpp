@@ -77,14 +77,9 @@ void WorkQueueBase::dispatchAfter(Seconds delay, Function<void()>&& function)
     });
 }
 
-WorkQueue::WorkQueue(RunLoop& loop)
-    : WorkQueueBase(loop)
+WorkQueue::WorkQueue(MainTag)
+    : WorkQueueBase(RunLoop::main())
 {
-}
-
-Ref<WorkQueue> WorkQueue::constructMainWorkQueue()
-{
-    return adoptRef(*new WorkQueue(RunLoop::main()));
 }
 
 #if ASSERT_ENABLED

@@ -2681,7 +2681,7 @@ header: <WebCore/RenderStyleConstants.h>
 
 header: <WebCore/MotionPath.h>
 [CustomHeader] struct WebCore::MotionPathData {
-    WebCore::FloatRect containingBlockBoundingRect;
+    WebCore::FloatRoundedRect containingBlockBoundingRect;
     WebCore::FloatPoint offsetFromContainingBlock;
     WebCore::FloatPoint usedStartingPosition;
 };

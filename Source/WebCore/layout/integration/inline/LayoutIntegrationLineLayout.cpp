@@ -858,7 +858,17 @@ LayoutUnit LineLayout::contentBoxLogicalHeight() const
         return { };
     }
 
-    auto contentHeight = lines.last().lineBoxLogicalRect().maxY() - lines.first().lineBoxLogicalRect().y();
+    auto lastLineWithInlineContent = [&] {
+        // Out-of-flow/float content only don't produce lines with inline content. They should not be taken into
+        // account when computing content box height.
+        for (auto& line : makeReversedRange(lines)) {
+            ASSERT(line.boxCount());
+            if (line.boxCount() > 1)
+                return line;
+        }
+        return lines.first();
+    };
+    auto contentHeight = lastLineWithInlineContent().lineBoxLogicalRect().maxY() - lines.first().lineBoxLogicalRect().y();
     auto additionalHeight = m_inlineContent->firstLinePaginationOffset + m_inlineContent->clearGapBeforeFirstLine + m_inlineContent->clearGapAfterLastLine;
     return LayoutUnit { contentHeight + additionalHeight };
 }

@@ -48,6 +48,7 @@ class TypeName : public Node {
 public:
     using Ref = std::reference_wrapper<TypeName>;
     using Ptr = TypeName*;
+    using List = ReferenceWrapperVector<TypeName>;
 
     const Type* resolvedType() const { return m_resolvedType; }
 
@@ -102,17 +103,17 @@ class ParameterizedTypeName : public TypeName {
 public:
     NodeKind kind() const override;
     Identifier& base() { return m_base; }
-    TypeName& elementType() { return m_elementType; }
+    TypeName::List& arguments() { return m_arguments; }
 
 private:
-    ParameterizedTypeName(SourceSpan span, Identifier&& base, TypeName::Ref&& elementType)
+    ParameterizedTypeName(SourceSpan span, Identifier&& base, TypeName::List&& arguments)
         : TypeName(span)
         , m_base(WTFMove(base))
-        , m_elementType(WTFMove(elementType))
+        , m_arguments(WTFMove(arguments))
     { }
 
     Identifier m_base;
-    TypeName::Ref m_elementType;
+    TypeName::List m_arguments;
 };
 
 class ReferenceTypeName final : public TypeName {

@@ -96,24 +96,6 @@ static inline Vector<int32_t> computedVisualOrder(const Line::RunList& lineRuns,
     return visualOrderList;
 }
 
-static bool isLastLineWithInlineContent(const InlineItemRange& lineRange, const InlineItems& inlineItems, size_t lastInlineItemIndex, bool hasPartialTrailingContent)
-{
-    if (hasPartialTrailingContent)
-        return false;
-    if (lineRange.endIndex() == lastInlineItemIndex) {
-        // We must have only committed trailing (overconstraining) floats on the line when the range is empty.
-        return !lineRange.isEmpty();
-    }
-    // Omit floats to see if this is the last line with inline content.
-    for (auto i = lastInlineItemIndex; i--;) {
-        if (!inlineItems[i].isFloat())
-            return i == lineRange.endIndex() - 1;
-    }
-    // There has to be at least one non-float item.
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 static bool hasTrailingSoftWrapOpportunity(size_t softWrapOpportunityIndex, size_t layoutRangeEnd, const InlineItems& inlineItems)
 {
     if (!softWrapOpportunityIndex || softWrapOpportunityIndex == layoutRangeEnd) {
@@ -262,7 +244,7 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
         };
     }
 
-    auto isLastLine = isLastLineWithInlineContent(lineContent.range, m_inlineItems, lineInput.needsLayoutRange.endIndex(), lineContent.partialTrailingContentLength);
+    auto isLastLine = isLastLineWithInlineContent(lineContent, lineInput.needsLayoutRange.endIndex(), !result.runs.isEmpty());
     auto inlineBaseDirection = !result.runs.isEmpty() ? inlineBaseDirectionForLineContent(result.runs, rootStyle(), m_previousLine) : TextDirection::LTR;
     auto contentLogicalLeft = !result.runs.isEmpty() ? InlineFormattingGeometry::horizontalAlignmentOffset(rootStyle(), result.contentLogicalRight, m_lineLogicalRect.width(), result.hangingTrailingContentWidth, result.runs, isLastLine, inlineBaseDirection) : 0.f;
     Vector<int32_t> visualOrderList;
@@ -460,7 +442,7 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
     ASSERT(lineContent.range.endIndex() <= needsLayoutRange.endIndex());
 
     auto handleLineEnding = [&] {
-        auto isLastLine = isLastLineWithInlineContent(lineContent.range, m_inlineItems, needsLayoutRange.endIndex(), lineContent.partialTrailingContentLength);
+        auto isLastLine = isLastLineWithInlineContent(lineContent, needsLayoutRange.endIndex(), !m_line.runs().isEmpty());
         auto horizontalAvailableSpace = m_lineLogicalRect.width();
         auto& rootStyle = this->rootStyle();
 
@@ -1206,6 +1188,27 @@ size_t LineBuilder::rebuildLineForTrailingSoftHyphen(const InlineItemRange& layo
     if (auto trailingSoftHyphenWidth = m_line.trailingSoftHyphenWidth())
         m_line.addTrailingHyphen(*trailingSoftHyphenWidth);
     return committedCount;
+}
+
+bool LineBuilder::isLastLineWithInlineContent(const LineContent& lineContent, size_t needsLayoutEnd, bool lineHasInlineContent) const
+{
+    if (lineContent.partialTrailingContentLength)
+        return false;
+    // FIXME: This needs work with partial layout.
+    if (lineContent.range.endIndex() == needsLayoutEnd)
+        return lineHasInlineContent;
+    // Omit floats to see if this is the last line with inline content.
+    for (auto i = needsLayoutEnd; i--;) {
+        auto& inlineItem = m_inlineItems[i];
+        auto isContentfulInlineType = !inlineItem.isFloat() && !inlineItem.isOpaque() && (!inlineItem.isText() || !downcast<InlineTextItem>(inlineItem).isWhitespace() || InlineTextItem::shouldPreserveSpacesAndTabs(downcast<InlineTextItem>(inlineItem)));
+        if (isContentfulInlineType) {
+            // InlineItems beyond this line range won't produce any inline content.
+            return i == lineContent.range.endIndex() - 1;
+        }
+    }
+    // There has to be at least one non-float item.
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 const ElementBox& LineBuilder::root() const

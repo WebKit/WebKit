@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FloatRoundedRect.h"
 #include "RenderLayerModelObject.h"
 
 namespace WebCore {
@@ -35,7 +36,7 @@ class PathOperation;
 class RayPathOperation;
 
 struct MotionPathData {
-    FloatRect containingBlockBoundingRect;
+    FloatRoundedRect containingBlockBoundingRect;
     FloatPoint offsetFromContainingBlock;
     FloatPoint usedStartingPosition;
 };

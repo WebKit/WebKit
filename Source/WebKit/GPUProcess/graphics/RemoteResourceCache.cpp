@@ -29,28 +29,10 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteImageBuffer.h"
+#include <WebCore/ImageBuffer.h>
 
 namespace WebKit {
 using namespace WebCore;
-
-void RemoteResourceCache::cacheImageBuffer(Ref<RemoteImageBuffer>&& imageBuffer)
-{
-    Ref<ImageBuffer> buffer = WTFMove(imageBuffer);
-    m_resourceHeap.add(WTFMove(buffer));
-}
-
-RefPtr<RemoteImageBuffer> RemoteResourceCache::cachedImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier) const
-{
-    return static_pointer_cast<RemoteImageBuffer>(std::forward<RefPtr<ImageBuffer>>(m_resourceHeap.getImageBuffer(renderingResourceIdentifier)));
-}
-
-RefPtr<RemoteImageBuffer> RemoteResourceCache::takeImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
-{
-    RefPtr<RemoteImageBuffer> buffer = cachedImageBuffer(renderingResourceIdentifier);
-    m_resourceHeap.removeImageBuffer(renderingResourceIdentifier);
-    ASSERT(buffer->hasOneRef());
-    return buffer;
-}
 
 void RemoteResourceCache::cacheNativeImage(Ref<NativeImage>&& image)
 {
@@ -75,11 +57,6 @@ void RemoteResourceCache::cacheFilter(Ref<Filter>&& filter)
 RefPtr<NativeImage> RemoteResourceCache::cachedNativeImage(RenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_resourceHeap.getNativeImage(renderingResourceIdentifier);
-}
-
-std::optional<WebCore::SourceImage> RemoteResourceCache::cachedSourceImage(RenderingResourceIdentifier renderingResourceIdentifier) const
-{
-    return m_resourceHeap.getSourceImage(renderingResourceIdentifier);
 }
 
 void RemoteResourceCache::cacheFont(Ref<Font>&& font)

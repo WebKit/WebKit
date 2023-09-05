@@ -57,8 +57,9 @@ static void checkVecType(WGSL::AST::TypeName& type, ASCIILiteral vecType, ASCIIL
     EXPECT_TRUE(is<WGSL::AST::ParameterizedTypeName>(type));
     auto& parameterizedType = downcast<WGSL::AST::ParameterizedTypeName>(type);
     EXPECT_EQ(parameterizedType.base(), vecType);
-    EXPECT_TRUE(is<WGSL::AST::NamedTypeName>(parameterizedType.elementType()));
-    EXPECT_EQ(downcast<WGSL::AST::NamedTypeName>(parameterizedType.elementType()).name(), paramTypeName);
+    EXPECT_EQ(parameterizedType.arguments().size(), 1u);
+    EXPECT_TRUE(is<WGSL::AST::NamedTypeName>(parameterizedType.arguments()[0]));
+    EXPECT_EQ(downcast<WGSL::AST::NamedTypeName>(parameterizedType.arguments()[0]).name(), paramTypeName);
 }
 
 static void checkVec2F32Type(WGSL::AST::TypeName& type)
@@ -335,8 +336,9 @@ TEST(WGSLParserTests, TrivialGraphicsShader)
         EXPECT_TRUE(is<WGSL::AST::ParameterizedTypeName>(func.parameters()[0].typeName()));
         auto& paramType = downcast<WGSL::AST::ParameterizedTypeName>(func.parameters()[0].typeName());
         EXPECT_EQ(paramType.base(), "vec4"_s);
-        EXPECT_TRUE(is<WGSL::AST::NamedTypeName>(paramType.elementType()));
-        EXPECT_EQ(downcast<WGSL::AST::NamedTypeName>(paramType.elementType()).name(), "f32"_s);
+        EXPECT_EQ(paramType.arguments().size(), 1u);
+        EXPECT_TRUE(is<WGSL::AST::NamedTypeName>(paramType.arguments()[0]));
+        EXPECT_EQ(downcast<WGSL::AST::NamedTypeName>(paramType.arguments()[0]).name(), "f32"_s);
         EXPECT_EQ(func.returnAttributes().size(), 1u);
         checkBuiltin(func.returnAttributes()[0], "position"_s);
         EXPECT_TRUE(func.maybeReturnType());

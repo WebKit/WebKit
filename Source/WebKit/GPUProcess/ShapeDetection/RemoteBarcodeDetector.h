@@ -43,7 +43,7 @@ struct DetectedBarcode;
 }
 
 namespace WebKit {
-class RemoteResourceCache;
+class RemoteRenderingBackend;
 
 namespace ShapeDetection {
 class ObjectHeap;
@@ -53,15 +53,15 @@ class RemoteBarcodeDetector : public IPC::StreamMessageReceiver {
 public:
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteBarcodeDetector> create(Ref<WebCore::ShapeDetection::BarcodeDetector>&& barcodeDetector, ShapeDetection::ObjectHeap& objectHeap, RemoteResourceCache& remoteResourceCache, ShapeDetectionIdentifier identifier, WebCore::ProcessIdentifier webProcessIdentifier)
+    static Ref<RemoteBarcodeDetector> create(Ref<WebCore::ShapeDetection::BarcodeDetector>&& barcodeDetector, ShapeDetection::ObjectHeap& objectHeap, RemoteRenderingBackend& backend, ShapeDetectionIdentifier identifier, WebCore::ProcessIdentifier webProcessIdentifier)
     {
-        return adoptRef(*new RemoteBarcodeDetector(WTFMove(barcodeDetector), objectHeap, remoteResourceCache, identifier, webProcessIdentifier));
+        return adoptRef(*new RemoteBarcodeDetector(WTFMove(barcodeDetector), objectHeap, backend, identifier, webProcessIdentifier));
     }
 
     virtual ~RemoteBarcodeDetector();
 
 private:
-    RemoteBarcodeDetector(Ref<WebCore::ShapeDetection::BarcodeDetector>&&, ShapeDetection::ObjectHeap&, RemoteResourceCache&, ShapeDetectionIdentifier, WebCore::ProcessIdentifier);
+    RemoteBarcodeDetector(Ref<WebCore::ShapeDetection::BarcodeDetector>&&, ShapeDetection::ObjectHeap&, RemoteRenderingBackend&, ShapeDetectionIdentifier, WebCore::ProcessIdentifier);
 
     RemoteBarcodeDetector(const RemoteBarcodeDetector&) = delete;
     RemoteBarcodeDetector(RemoteBarcodeDetector&&) = delete;
@@ -76,7 +76,7 @@ private:
 
     Ref<WebCore::ShapeDetection::BarcodeDetector> m_backing;
     ShapeDetection::ObjectHeap& m_objectHeap;
-    RemoteResourceCache& m_remoteResourceCache;
+    RemoteRenderingBackend& m_backend;
     const ShapeDetectionIdentifier m_identifier;
     const WebCore::ProcessIdentifier m_webProcessIdentifier;
 };

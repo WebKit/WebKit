@@ -510,7 +510,8 @@ void Visitor::visit(AST::NamedTypeName&)
 
 void Visitor::visit(AST::ParameterizedTypeName& parameterizedTypeName)
 {
-    checkErrorAndVisit(parameterizedTypeName.elementType());
+    for (auto& argument : parameterizedTypeName.arguments())
+        checkErrorAndVisit(argument);
 }
 
 void Visitor::visit(AST::ReferenceTypeName& referenceTypeName)

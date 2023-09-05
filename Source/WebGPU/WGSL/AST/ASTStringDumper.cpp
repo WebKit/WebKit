@@ -418,7 +418,13 @@ void StringDumper::visit(NamedTypeName& type)
 void StringDumper::visit(ParameterizedTypeName& type)
 {
     m_out.print(type.base(), "<");
-    visit(type.elementType());
+    bool first = true;
+    for (auto& argument : type.arguments()) {
+        if (!first)
+            m_out.print(", ");
+        first = false;
+        visit(argument);
+    }
     m_out.print(">");
 }
 

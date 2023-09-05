@@ -614,7 +614,8 @@ void TypeChecker::visit(AST::CallExpression& call)
             if (isNamedType)
                 return downcast<AST::NamedTypeName>(target).name();
             auto& parameterizedType = downcast<AST::ParameterizedTypeName>(target);
-            typeArguments.append(resolve(parameterizedType.elementType()));
+            for (auto& argument : parameterizedType.arguments())
+                typeArguments.append(resolve(argument));
             return parameterizedType.base();
         }();
 
@@ -1112,7 +1113,11 @@ void TypeChecker::allocateSimpleConstructor(ASCIILiteral name, TargetConstructor
     introduceType(AST::Identifier::make(name), m_types.typeConstructorType(
         name,
         [this, constructor, arguments...](AST::ParameterizedTypeName& type) -> const Type* {
-            auto* elementType = resolve(type.elementType());
+            if (type.arguments().size() != 1) {
+                typeError(InferBottom::No, type.span(), "'", type.base(), "' requires 1 template argument");
+                return m_types.bottomType();
+            }
+            auto* elementType = resolve(type.arguments().first());
             if (isBottom(elementType))
                 return m_types.bottomType();
 
