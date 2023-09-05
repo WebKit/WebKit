@@ -7627,8 +7627,10 @@ HTMLMediaElement::SleepType HTMLMediaElement::shouldDisableSleep() const
     if (shouldBeAbleToSleep)
         return SleepType::None;
 
+#if HAVE(IDLE_SLEEP_STATE)
     if (m_elementIsHidden)
         return SleepType::System;
+#endif
 
     return SleepType::Display;
 }
