@@ -33,16 +33,16 @@
 
 namespace WTF {
 
-class SuspendableWorkQueue final : public WorkQueue {
+class WTF_EXPORT_PRIVATE SuspendableWorkQueue final : public WorkQueue {
 public:
     using QOS = WorkQueue::QOS;
     enum class ShouldLog : bool { No, Yes };
-    WTF_EXPORT_PRIVATE static Ref<SuspendableWorkQueue> create(const char* name, QOS = QOS::Default, ShouldLog = ShouldLog::No);
-    WTF_EXPORT_PRIVATE void suspend(Function<void()>&& suspendFunction, CompletionHandler<void()>&& suspensionCompletionHandler);
-    WTF_EXPORT_PRIVATE void resume();
-    WTF_EXPORT_PRIVATE void dispatch(Function<void()>&&) final;
-    WTF_EXPORT_PRIVATE void dispatchAfter(Seconds, Function<void()>&&) final;
-    WTF_EXPORT_PRIVATE void dispatchSync(Function<void()>&&) final;
+    static Ref<SuspendableWorkQueue> create(const char* name, QOS = QOS::Default, ShouldLog = ShouldLog::No);
+    void suspend(Function<void()>&& suspendFunction, CompletionHandler<void()>&& suspensionCompletionHandler);
+    void resume();
+    void dispatch(Function<void()>&&) final;
+    void dispatchAfter(Seconds, Function<void()>&&) final;
+    void dispatchSync(Function<void()>&&) final;
 
 private:
     SuspendableWorkQueue(const char* name, QOS, ShouldLog);

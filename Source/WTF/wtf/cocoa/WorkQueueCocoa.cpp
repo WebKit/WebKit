@@ -99,15 +99,10 @@ void WorkQueueBase::platformInvalidate()
 {
 }
 
-WorkQueue::WorkQueue(OSObjectPtr<dispatch_queue_t>&& queue)
-    : WorkQueueBase(WTFMove(queue))
+WorkQueue::WorkQueue(MainTag)
+    : WorkQueueBase(dispatch_get_main_queue())
 {
     // Note: for main work queue we do not create a sequence id, the main thread id will be used.
-}
-
-Ref<WorkQueue> WorkQueue::constructMainWorkQueue()
-{
-    return adoptRef(*new WorkQueue(dispatch_get_main_queue()));
 }
 
 #if ASSERT_ENABLED

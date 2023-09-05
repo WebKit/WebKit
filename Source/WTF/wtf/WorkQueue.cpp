@@ -40,16 +40,6 @@
 
 namespace WTF {
 
-WorkQueue& WorkQueue::main()
-{
-    static NeverDestroyed<RefPtr<WorkQueue>> mainWorkQueue;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        mainWorkQueue.get() = constructMainWorkQueue();
-    });
-    return *mainWorkQueue.get();
-}
-
 WorkQueueBase::WorkQueueBase(const char* name, Type type, QOS qos)
 {
     platformInitialize(name, type, qos);
@@ -60,14 +50,14 @@ WorkQueueBase::~WorkQueueBase()
     platformInvalidate();
 }
 
-Ref<WorkQueue> WorkQueue::create(const char* name, QOS qos)
-{
-    return adoptRef(*new WorkQueue(name, qos));
-}
-
 Ref<ConcurrentWorkQueue> ConcurrentWorkQueue::create(const char* name, QOS qos)
 {
     return adoptRef(*new ConcurrentWorkQueue(name, qos));
+}
+
+void ConcurrentWorkQueue::dispatch(Function<void()>&& function)
+{
+    WorkQueueBase::dispatch(WTFMove(function));
 }
 
 #if !PLATFORM(COCOA)
@@ -184,5 +174,42 @@ void ConcurrentWorkQueue::apply(size_t iterations, WTF::Function<void(size_t ind
     condition.wait(lock, [&] { return !activeThreads; });
 }
 #endif
+
+WorkQueue& WorkQueue::main()
+{
+    static NeverDestroyed<RefPtr<WorkQueue>> mainWorkQueue;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        mainWorkQueue.get() = adoptRef(*new WorkQueue(CreateMain));
+    });
+    return *mainWorkQueue.get();
+}
+
+Ref<WorkQueue> WorkQueue::create(const char* name, QOS qos)
+{
+    return adoptRef(*new WorkQueue(name, qos));
+}
+
+WorkQueue::WorkQueue(const char* name, QOS qos)
+    : WorkQueueBase(name, Type::Serial, qos)
+{
+}
+
+void WorkQueue::dispatch(Function<void()>&& function)
+{
+    WorkQueueBase::dispatch(WTFMove(function));
+}
+
+#if ASSERT_ENABLED
+void WorkQueue::assertIsCurrent() const
+{
+    WTF::assertIsCurrent(threadLikeAssertion());
+}
+#endif
+
+ConcurrentWorkQueue::ConcurrentWorkQueue(const char* name, QOS qos)
+    : WorkQueueBase(name, Type::Concurrent, qos)
+{
+}
 
 }
