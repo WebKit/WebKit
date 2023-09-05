@@ -448,11 +448,11 @@ void RemoteLayerTreeDrawingAreaProxy::initializeDebugIndicator()
 
 bool RemoteLayerTreeDrawingAreaProxy::maybePauseDisplayRefreshCallbacks()
 {
-    if (m_webPageProxyProcessState.commitLayerTreeMessageState == NeedsDisplayDidRefresh)
+    if (m_webPageProxyProcessState.commitLayerTreeMessageState == NeedsDisplayDidRefresh || m_webPageProxyProcessState.commitLayerTreeMessageState == CommitLayerTreePending)
         return false;
 
     for (auto pair : m_remotePageProcessState) {
-        if (pair.value.commitLayerTreeMessageState == NeedsDisplayDidRefresh)
+        if (pair.value.commitLayerTreeMessageState == NeedsDisplayDidRefresh || pair.value.commitLayerTreeMessageState == CommitLayerTreePending)
             return false;
     }
 
@@ -493,9 +493,6 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay(IPC::Connection* connect
     if (!m_webPageProxy.hasRunningProcess())
         return;
 
-    if (maybePauseDisplayRefreshCallbacks())
-        return;
-
     if (connection) {
         ProcessState& state = processStateForConnection(*connection);
         didRefreshDisplay(state, *connection);
@@ -507,6 +504,9 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay(IPC::Connection* connect
                 didRefreshDisplay(pair.value, *pair.key.process().connection());
         }
     }
+
+    if (maybePauseDisplayRefreshCallbacks())
+        return;
 
     m_webPageProxy.didUpdateActivityState();
 }
