@@ -66,8 +66,7 @@ public:
     {
     }
     RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, std::optional<LineClamp>, std::optional<TextBoxTrim>);
-    enum class IsPaginated : bool { No, Yes };
-    explicit RenderLayoutState(RenderElement&, IsPaginated = IsPaginated::No);
+    explicit RenderLayoutState(RenderElement&);
 
     bool isPaginated() const { return m_isPaginated; }
 
@@ -201,16 +200,6 @@ public:
 
 private:
     LocalFrameViewLayoutContext& m_context;
-};
-
-class PaginatedLayoutStateMaintainer {
-public:
-    PaginatedLayoutStateMaintainer(RenderBlockFlow&);
-    ~PaginatedLayoutStateMaintainer();
-
-private:
-    LocalFrameViewLayoutContext& m_context;
-    bool m_pushed { false };
 };
 
 inline void RenderLayoutState::addTextBoxTrimStart()
