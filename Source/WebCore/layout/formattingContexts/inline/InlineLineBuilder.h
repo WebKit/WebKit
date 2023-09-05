@@ -83,6 +83,7 @@ private:
         LayoutUnit sunkenBelowFirstLineOffset;
     };
     std::optional<InitialLetterOffsets> adjustLineRectForInitialLetterIfApplicable(const Box& floatBox);
+    bool isLastLineWithInlineContent(const LineContent&, size_t needsLayoutEnd, bool lineHasInlineContent) const;
 
     bool isFloatLayoutSuspended() const { return !m_suspendedFloats.isEmpty(); }
     bool shouldTryToPlaceFloatBox(const Box& floatBox, LayoutUnit floatBoxMarginBoxWidth, MayOverConstrainLine) const;
