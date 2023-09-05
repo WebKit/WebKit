@@ -50,7 +50,7 @@ from .steps import (AddReviewerToCommitMessage, AnalyzeAPITestsResults, AnalyzeC
                    CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors,
                    DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
                    EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
-                   FetchBranches, FindModifiedLayoutTests, GitHub, GitHubMixin, GenerateS3URL,
+                   FetchBranches, FilterPullRequestsIntoQueues, FindModifiedLayoutTests, GitHub, GitHubMixin, GenerateS3URL,
                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies, InstallHooks,
                    KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch, ReRunAPITests, ReRunWebKitPerlTests,
                    MapBranchAlias, ReRunWebKitTests, RevertPullRequestChanges, RunAPITests, RunAPITestsWithoutChange, RunBindingsTests, RunBuildWebKitOrgUnitTests,
@@ -5743,6 +5743,24 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=FAILURE, state_string="Changes to 'safari-123-branch' are not tested")
         rc = self.runStep()
         self.assertEqual(self.getProperty('fast_commit_queue'), None, 'fast_commit_queue is unexpectedly set')
+        return rc
+
+
+class TestFilterPullRequestsIntoQueues(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(FilterPullRequestsIntoQueues())
+        FilterPullRequestsIntoQueues.getNumPRs = lambda label: 3
+        FilterPullRequestsIntoQueues.sortPRs = lambda num_prs, label: [[1, 2, 3], [1, 2], [3]]
+        self.expectOutcome(result=SUCCESS)
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('safe_pr_list'), [1, 2])
+        self.assertEqual(self.getProperty('blocked_pr_list'), [3])
         return rc
 
 

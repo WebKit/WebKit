@@ -700,6 +700,10 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'push-commit-to-webkit-repo',
             'set-build-summary'
         ],
+        'Safe-Merge-Queue': [
+            'filter-pull-requests-into-queues',
+            'add-queue-labels-to-pull-requests'
+        ]
     }
 
     def setUp(self):

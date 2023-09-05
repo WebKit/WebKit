@@ -24,15 +24,15 @@
 from buildbot.process import factory
 from buildbot.steps import trigger
 
-from .steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canonicalize, CommitPatch,
+from .steps import (AddQueueLabelsToPullRequests, AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canonicalize, CommitPatch,
                    CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance,
                    CheckStatusOnEWSQueues, CheckStyle, CleanGitRepo, CompileJSC, CompileWebKit, ConfigureBuild,
-                   DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedLayoutTests,
+                   DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FilterPullRequestsIntoQueues, FindModifiedLayoutTests,
                    InstallGtkDependencies, InstallHooks, InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch,
                    MapBranchAlias, RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS,
                    RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsRedTree, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
-                   SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateWorkingDirectory, UpdatePullRequest,
+                   SafeMergeToMergeBlocked, SafeMergeToMergeQueue, SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateWorkingDirectory, UpdatePullRequest,
                    ValidateCommitMessage, ValidateChange, ValidateCommitterAndReviewer, WaitForCrashCollection,
                    InstallBuiltProduct, ValidateRemote, ValidateSquashed)
 
@@ -374,3 +374,11 @@ class UnsafeMergeQueueFactory(MergeQueueFactoryBase):
         self.addStep(UpdatePullRequest())
         self.addStep(PushCommitToWebKitRepo())
         self.addStep(SetBuildSummary())
+
+
+class SafeMergeQueueFactory(factory.BuildFactory):
+    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
+        super(SafeMergeQueueFactory, self).__init__()
+
+        self.addStep(FilterPullRequestsIntoQueues())
+        self.addStep(AddQueueLabelsToPullRequests())

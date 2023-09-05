@@ -170,6 +170,7 @@ class GitHubMixin(object):
     BLOCKED_LABEL = 'merging-blocked'
     MERGE_QUEUE_LABEL = 'merge-queue'
     UNSAFE_MERGE_QUEUE_LABEL = 'unsafe-merge-queue'
+    SAFE_MERGE_QUEUE_LABEL = 'safe-merge-queue'
     REQUEST_MERGE_QUEUE_LABEL = 'request-merge-queue'
     PER_PAGE_LIMIT = 100
     NUM_PAGE_LIMIT = 10
@@ -2148,6 +2149,162 @@ class RemoveLabelsFromPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixi
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
+
+# TODO: remove after twisted implemented
+import requests
+
+class FilterPullRequestsIntoQueues(buildstep.BuildStep, AddToLogMixin):
+    name = 'filter-pull-requests-into-queues'            
+
+    #@defer.inlineCallbacks
+    def run(self):
+        num_prs = self.getNumPRs()
+        if num_prs:
+            list_of_prs, label_as_safe, label_as_blocked = self.sortPRs(num_prs)
+            self.setProperty('safe_pr_list', label_as_safe)
+            self.setProperty('blocked_pr_list', label_as_blocked)
+        return SUCCESS if num_prs else FAILURE
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {'step': f"Successfully requested and filtered pull requests"}
+        elif self.results == FAILURE:
+            return {'step': f"Failed to request and filter pull requests"}
+        return buildstep.BuildStep.getResultSummary(self)
+
+    def queryGraphQL(self, payload):
+        graphql_url = 'https://api.github.com/graphql'
+        #username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
+        #if username and access_token:
+        #   auth_header = b64encode('{}:{}'.format(username, access_token).encode('utf-8')).decode('utf-8')
+        #    headers = {'Authorization': 'bearer {}'.format(access_token)}
+
+        headers = {'Authorization': 'bearer {}'.format(access_token)}
+        response = requests.post(url=graphql_url, json=payload, headers=headers)
+        data = json.loads(response.text)
+        if 'errors' in response:
+            print(response['errors'])
+        return data
+
+    def getNumPRs(self, label='\"safe-merge-queue\"'):
+        query_body = '{ repository(owner:"Webkit", name:"WebKit") { pullRequests(labels:%s) { totalCount } } }' % label
+        query = { 'query' : query_body}
+        num_prs = self.queryGraphQL(query)['data']['repository']['pullRequests']['totalCount']
+        if num_prs:
+            self._addToLog('stdio', 'There are {} PRs in safe-merge-queue.'.format(num_prs)) # TODO: yield before _addtolog
+            return num_prs
+        else:
+            # error handing tbd
+            return None
+
+    def sortPRs(self, num_prs, label='\"safe-merge-queue\"'):
+        query_body = '{ repository(owner:"Webkit", name:"WebKit") { pullRequests(labels:%s, last: %s) { edges { node { title number commits(last: 3) { nodes { commit { commitUrl status { state contexts { context state } } } } } } } } } }' % (label, num_prs)
+        query = { 'query' : query_body }
+
+        print("Fetching all PRs with label {}.".format(label))
+
+        response = self.queryGraphQL(query)
+        if not response:
+            self._addToLog('stderr', 'Query failed') # error handling tbd
+            return None
+        all_pr_data = response['data']['repository']['pullRequests']['edges']
+
+        list_of_prs = []
+        passed_status_check = []
+        failed_status_check = []
+        no_checks = []
+
+        ignore_contexts = ['style', 'webkitperl', 'wpe', 'wpe-wk2', 'gtk', 'gtk-wk2', 'api-gtk', 'wincaire']
+
+        for pr_data in all_pr_data:
+            failed = False
+            pr_num = pr_data['node']['number']
+            pr_commit_status_data = pr_data['node']['commits']['nodes'][0]['commit']['status']
+
+            list_of_prs.append(pr_num)
+
+            if pr_commit_status_data == None:
+                no_checks.append(pr_num)
+            else:
+                pr_commit_state = pr_commit_status_data['state']
+                pr_checks = pr_commit_status_data['contexts']
+
+                if pr_commit_state == "SUCCESS":
+                    passed_status_check.append(pr_num)
+                else:
+                    for c in pr_checks:
+                        if c['state'] == "FAILURE" and c['context'] not in ignore_contexts:
+                            failed_status_check.append(pr_num)
+                            failed = True
+                            break
+                    if not failed:
+                        passed_status_check.append(pr_num)
+                #print(json.dumps(pr_checks, indent=4))
+
+        return [list_of_prs, passed_status_check, failed_status_check]
+
+
+class SafeMergeToMergeQueue(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
+    name = 'safe-merge-to-merge-queue'
+    flunkOnFailure = False
+    haltOnFailure = False
+    LABELS_TO_REMOVE = [GitHubMixin.SAFE_MERGE_QUEUE_LABEL]
+
+    @defer.inlineCallbacks
+    def run(self):
+        safe_prs = self.getProperty('safe_pr_list')
+        pr_number = safe_prs.pop()
+        update_labels(pr_number)
+        self.setProperty('safe_pr_list', safe_prs)
+        if len(safe_prs):
+            self.addStepsAfterCurrentStep([SafeMergeToMergeQueue()])
+
+    @defer.inlineCallbacks
+    def update_labels(pr_number):
+        repository_url = self.getProperty('repository', '')
+
+        did_remove_labels = yield self.remove_labels(pr_number, self.LABELS_TO_REMOVE, repository_url=repository_url)
+        did_add_label = yield self.add_label(pr_number, self.SAFE_MERGE_QUEUE_LABEL, repository_url=repository_url)
+
+        defer.returnValue(SUCCESS if did_remove_labels and did_add_label else FAILURE)
+
+
+class SafeMergeToMergeBlocked(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
+    name = 'safe-merge-to-merge-blocked'
+    flunkOnFailure = False
+    haltOnFailure = False
+
+    @defer.inlineCallbacks
+    def run(self):
+        failed_prs = self.getProperty('blocked_pr_list', [])
+        pr_number = failed_prs.pop()
+        update_labels(pr_number)
+        self.setProperty('blocked_pr_list', failed_prs)
+        if len(failed_prs):
+            self.addStepsAfterCurrentStep([SafeMergeToMergeBlocked()])
+
+    @defer.inlineCallbacks
+    def update_labels(pr_number):
+        repository_url = self.getProperty('repository', '')
+
+        did_remove_labels = yield self.remove_labels(pr_number, self.LABELS_TO_REMOVE, repository_url=repository_url)
+        did_add_label = yield self.add_label(pr_number, self.BLOCKED_LABEL, repository_url=repository_url)
+
+        defer.returnValue(SUCCESS if did_remove_labels and did_add_label else FAILURE)
+
+
+class AddQueueLabelsToPullRequests(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
+    name = 'add-queue-labels-to-pull-requests'
+
+    def run(self):
+        label_as_safe = self.getProperty('safe_pr_list', [])
+        label_as_blocked = self.getProperty('blocked_pr_list', [])
+
+        if len(label_as_safe):
+            self.build.addStepsAfterCurrentStep([SafeMergeToMergeQueue()])
+
+        if len(label_as_blocked):
+            self.build.addStepsAfterCurrentStep([SafeMergeToMergeBlocked()])
 
 
 class CloseBug(buildstep.BuildStep, BugzillaMixin):

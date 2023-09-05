@@ -392,6 +392,11 @@
       "factory": "UnsafeMergeQueueFactory", "platform": "mac-monterey",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03", "webkit-cq-04", "webkit-cq-05"]
+    },
+    {
+      "name": "Safe-Merge-Queue", "shortname": "safe-merge", "icon": "testOnly",
+      "factory": "SafeMergeQueueFactory", "platform": "*",
+      "workernames": ["ews151"]
     }
   ],
   "schedulers": [
