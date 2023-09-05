@@ -65,16 +65,18 @@ using namespace WebCore;
 static webrtc::WebKitVideoDecoder createVideoDecoder(const webrtc::SdpVideoFormat& format)
 {
     auto& codecs = WebProcess::singleton().libWebRTCCodecs();
-    if (format.name == "H264")
+    auto codecString = String::fromUTF8(format.name.data(), format.name.length());
+
+    if (equalIgnoringASCIICase(codecString, "H264"_s))
         return { codecs.createDecoder(VideoCodecType::H264), false };
 
-    if (format.name == "H265")
+    if (equalIgnoringASCIICase(codecString, "H265"_s))
         return { codecs.createDecoder(VideoCodecType::H265), false };
 
-    if (format.name == "VP9" && codecs.supportVP9VTB())
+    if (equalIgnoringASCIICase(codecString, "VP9"_s) && codecs.supportVP9VTB())
         return { codecs.createDecoder(VideoCodecType::VP9), false };
 
-    if (format.name == "AV1") {
+    if (equalIgnoringASCIICase(codecString, "AV1"_s)) {
         auto av1Decoder = createLibWebRTCDav1dDecoder().moveToUniquePtr();
         return { av1Decoder.release(), true };
     }
@@ -124,10 +126,10 @@ static int32_t registerDecodeCompleteCallback(webrtc::WebKitVideoDecoder::Value 
 
 static webrtc::WebKitVideoEncoder createVideoEncoder(const webrtc::SdpVideoFormat& format)
 {
-    if (format.name == "H264")
+    if (format.name == "H264" || format.name == "h264")
         return WebProcess::singleton().libWebRTCCodecs().createEncoder(VideoCodecType::H264, format.parameters);
 
-    if (format.name == "H265")
+    if (format.name == "H265" || format.name == "h265")
         return WebProcess::singleton().libWebRTCCodecs().createEncoder(VideoCodecType::H265, format.parameters);
 
     return nullptr;
