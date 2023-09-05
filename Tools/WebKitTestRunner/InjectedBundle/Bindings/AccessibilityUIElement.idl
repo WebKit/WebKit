@@ -304,6 +304,7 @@
     readonly attribute boolean isSearchField;
     readonly attribute boolean isTextArea;
     readonly attribute boolean isMarkAnnotation;
+    readonly attribute boolean supportsExpanded;
 
     readonly attribute boolean hasDocumentRoleAncestor;
     readonly attribute boolean hasWebApplicationAncestor;

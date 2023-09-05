@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<details open id="details1">
+    <summary id="summary1">Details example</summary>
+    <p>
+    This is some description, hidden when the details element is collapsed. 
+    </p>
+</details>
+<script>
+    var result = "This verifies that the summary of a details element has the right isExpanded value.\n\n";
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var summaryElement = accessibilityController.accessibleElementById("summary1");
+
+        setTimeout(async () => {
+            result += expect("summaryElement.supportsExpanded", "true")
+            result += expect("summaryElement.isExpanded", "true");
+            document.getElementById("details1").toggleAttribute("open");
+            result += await expectAsync("summaryElement.isExpanded", "false");
+
+            debug(result);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

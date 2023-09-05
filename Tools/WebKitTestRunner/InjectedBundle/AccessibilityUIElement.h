@@ -200,6 +200,7 @@ public:
     
     bool isValid() const;
     bool isExpanded() const;
+    bool supportsExpanded() const;
     bool isChecked() const;
     JSRetainPtr<JSStringRef> currentStateValue() const;
     JSRetainPtr<JSStringRef> sortDirection() const;
