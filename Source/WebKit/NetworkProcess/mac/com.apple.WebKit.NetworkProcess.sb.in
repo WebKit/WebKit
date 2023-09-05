@@ -424,6 +424,7 @@
 (allow mach-lookup (global-name "org.webkit.pcmtestdaemon.service"))
 
 (allow mach-lookup (global-name "com.apple.webkit.webpushd.service"))
+(allow mach-lookup (global-name "com.apple.webkit.webpushd.relocatable.service"))
 (allow mach-lookup (global-name "org.webkit.webpushtestdaemon.service"))
 
 (deny mach-lookup (with no-report)
