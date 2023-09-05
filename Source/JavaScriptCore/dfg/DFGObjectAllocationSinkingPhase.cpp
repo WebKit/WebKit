@@ -268,14 +268,7 @@ public:
         return m_kind == Kind::RegExpObject;
     }
 
-    bool operator==(const Allocation& other) const
-    {
-        return m_identifier == other.m_identifier
-            && m_kind == other.m_kind
-            && m_fields == other.m_fields
-            && m_structures == other.m_structures
-            && m_structuresForMaterialization == other.m_structuresForMaterialization;
-    }
+    friend bool operator==(const Allocation&, const Allocation&) = default;
 
     void dump(PrintStream& out) const
     {

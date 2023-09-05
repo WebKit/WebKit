@@ -70,12 +70,7 @@ struct QueryKey {
             && m_searchDescriptor == TypeProfilerSearchDescriptorFunctionReturn;
     }
 
-    bool operator==(const QueryKey& other) const
-    {
-        return m_sourceID == other.m_sourceID 
-            && m_divot == other.m_divot
-            && m_searchDescriptor == other.m_searchDescriptor;
-    }
+    friend bool operator==(const QueryKey&, const QueryKey&) = default;
 
     unsigned hash() const 
     { 

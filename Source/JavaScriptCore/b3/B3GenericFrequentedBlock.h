@@ -45,11 +45,7 @@ public:
     {
     }
 
-    bool operator==(const GenericFrequentedBlock& other) const
-    {
-        return m_block == other.m_block
-            && m_frequency == other.m_frequency;
-    }
+    friend bool operator==(const GenericFrequentedBlock&, const GenericFrequentedBlock&) = default;
 
     explicit operator bool() const
     {

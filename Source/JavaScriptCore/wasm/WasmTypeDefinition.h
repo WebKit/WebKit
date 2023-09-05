@@ -489,7 +489,7 @@ public:
     StorageType type;
     Mutability mutability;
 
-    bool operator==(const FieldType& rhs) const { return type == rhs.type && mutability == rhs.mutability; }
+    friend bool operator==(const FieldType&, const FieldType&) = default;
 };
 
 class StructType {

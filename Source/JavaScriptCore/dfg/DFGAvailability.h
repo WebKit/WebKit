@@ -118,11 +118,7 @@ public:
     
     bool operator!() const { return nodeIsUnavailable() && flushedAt().format() == ConflictingFlush; }
 
-    bool operator==(const Availability& other) const
-    {
-        return m_node == other.m_node
-            && m_flushedAt == other.m_flushedAt;
-    }
+    friend bool operator==(const Availability&, const Availability&) = default;
     
     Availability merge(const Availability& other) const
     {

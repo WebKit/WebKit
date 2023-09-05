@@ -424,17 +424,7 @@ public:
 
             bool isHashTableDeletedValue() const { return m_wrapped == bitwise_cast<PolymorphicAccessJITStubRoutine*>(static_cast<uintptr_t>(1)); }
 
-            friend bool operator==(const Key& a, const Key& b)
-            {
-                return a.m_wrapped == b.m_wrapped
-                    && a.m_baseGPR == b.m_baseGPR
-                    && a.m_valueGPR == b.m_valueGPR
-                    && a.m_extraGPR == b.m_extraGPR
-                    && a.m_extra2GPR == b.m_extra2GPR
-                    && a.m_stubInfoGPR == b.m_stubInfoGPR
-                    && a.m_arrayProfileGPR == b.m_arrayProfileGPR
-                    && a.m_usedRegisters == b.m_usedRegisters;
-            }
+            friend bool operator==(const Key&, const Key&) = default;
 
             PolymorphicAccessJITStubRoutine* m_wrapped { nullptr };
             GPRReg m_baseGPR;

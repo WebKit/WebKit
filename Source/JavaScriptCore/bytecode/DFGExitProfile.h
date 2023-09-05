@@ -86,13 +86,7 @@ public:
         return m_kind == ExitKindUnset;
     }
     
-    bool operator==(const FrequentExitSite& other) const
-    {
-        return m_bytecodeIndex == other.m_bytecodeIndex
-            && m_kind == other.m_kind
-            && m_jitType == other.m_jitType
-            && m_inlineKind == other.m_inlineKind;
-    }
+    friend bool operator==(const FrequentExitSite&, const FrequentExitSite&) = default;
     
     bool subsumes(const FrequentExitSite& other) const
     {

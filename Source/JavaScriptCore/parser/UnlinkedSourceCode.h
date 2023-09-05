@@ -99,6 +99,8 @@ namespace JSC {
         int endOffset() const { return m_endOffset; }
         int length() const { return m_endOffset - m_startOffset; }
 
+        friend bool operator==(const UnlinkedSourceCode&, const UnlinkedSourceCode&) = default;
+
     protected:
         // FIXME: Make it Ref<SourceProvidier>.
         // https://bugs.webkit.org/show_bug.cgi?id=168325
