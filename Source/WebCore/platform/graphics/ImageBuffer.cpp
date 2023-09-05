@@ -249,6 +249,7 @@ GraphicsContext& ImageBuffer::context() const
     ASSERT(volatilityState() == VolatilityState::NonVolatile);
     auto& context = m_backend->context();
     if (!m_hasInitializedContext) {
+        context.applyDeviceScaleFactor(m_parameters.resolutionScale);
         context.setCTM(m_backendInfo.baseTransform);
         m_hasInitializedContext = true;
     }
@@ -552,9 +553,10 @@ bool ImageBuffer::isInUse() const
 
 void ImageBuffer::releaseGraphicsContext()
 {
-    if (auto* backend = ensureBackendCreated())
+    if (auto* backend = ensureBackendCreated()) {
+        m_hasInitializedContext = false;
         return backend->releaseGraphicsContext();
-    m_hasInitializedContext = false;
+    }
 }
 
 bool ImageBuffer::setVolatile()

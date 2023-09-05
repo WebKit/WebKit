@@ -64,7 +64,6 @@ ImageBufferShareableMappedIOSurfaceBitmapBackend::ImageBufferShareableMappedIOSu
     , m_ioSurfacePool(ioSurfacePool)
 {
     m_context = makeUnique<GraphicsContextCG>(lockAndContext.context.get());
-    applyBaseTransform(*m_context);
 }
 
 ImageBufferShareableMappedIOSurfaceBitmapBackend::~ImageBufferShareableMappedIOSurfaceBitmapBackend()
@@ -102,7 +101,6 @@ GraphicsContext& ImageBufferShareableMappedIOSurfaceBitmapBackend::context()
         if (lockAndContext) {
             m_lock = WTFMove(lockAndContext->lock);
             m_context = makeUnique<GraphicsContextCG>(lockAndContext->context.get());
-            applyBaseTransform(*m_context);
             return *m_context;
         }
     }
@@ -110,7 +108,6 @@ GraphicsContext& ImageBufferShareableMappedIOSurfaceBitmapBackend::context()
     // return an object.
     RELEASE_LOG(RemoteLayerBuffers, "ImageBufferShareableMappedIOSurfaceBitmapBackend::context() - failed to create or update the context");
     m_context = makeUnique<GraphicsContextCG>(nullptr);
-    applyBaseTransform(*m_context);
     return *m_context;
 }
 

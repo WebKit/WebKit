@@ -43,7 +43,6 @@ public:
 
 protected:
     using ImageBufferBackend::ImageBufferBackend;
-    void applyBaseTransform(GraphicsContextCG&) const;
 
     std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() override;
 

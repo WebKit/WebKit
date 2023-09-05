@@ -70,11 +70,6 @@ std::unique_ptr<ThreadSafeImageBufferFlusher> ImageBufferCGBackend::createFlushe
 
 ImageBufferCGBackend::~ImageBufferCGBackend() = default;
 
-void ImageBufferCGBackend::applyBaseTransform(GraphicsContextCG& context) const
-{
-    context.applyDeviceScaleFactor(m_parameters.resolutionScale);
-}
-
 String ImageBufferCGBackend::debugDescription() const
 {
     TextStream stream;
