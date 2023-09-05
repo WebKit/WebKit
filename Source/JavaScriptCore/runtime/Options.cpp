@@ -523,6 +523,11 @@ static void scaleJITPolicy()
     scaleOption(Options::thresholdForOptimizeSoon(), 1);
     scaleOption(Options::thresholdForFTLOptimizeSoon(), 2);
     scaleOption(Options::thresholdForFTLOptimizeAfterWarmUp(), 2);
+
+    scaleOption(Options::thresholdForBBQOptimizeAfterWarmUp(), 0);
+    scaleOption(Options::thresholdForBBQOptimizeSoon(), 0);
+    scaleOption(Options::thresholdForOMGOptimizeAfterWarmUp(), 1);
+    scaleOption(Options::thresholdForOMGOptimizeSoon(), 1);
 }
 
 static void overrideDefaults()
