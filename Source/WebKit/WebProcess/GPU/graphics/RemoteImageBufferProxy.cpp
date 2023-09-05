@@ -267,7 +267,8 @@ void RemoteImageBufferProxy::clearBackend()
 {
     m_needsFlush = false;
     m_pendingFlush = nullptr;
-    prepareForBackingStoreChange();
+    if (m_backend)
+        prepareForBackingStoreChange();
     m_backend = nullptr;
 }
 
