@@ -247,7 +247,7 @@ static NSArray<NSString *> *controlArray()
 {
     if (!_visible)
         return;
-    auto* page = _page.get();
+    RefPtr page = _page.get();
     if (!page)
         return;
     if ([control isEqualToString:PDFHUDZoomInControl])
