@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
 #include <wtf/text/WTFString.h>
 
@@ -39,23 +40,25 @@ class CSSVariableData : public RefCounted<CSSVariableData> {
     WTF_MAKE_NONCOPYABLE(CSSVariableData);
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSVariableData);
 public:
-    static Ref<CSSVariableData> create(const CSSParserTokenRange& range)
+    static Ref<CSSVariableData> create(const CSSParserTokenRange& range, const CSSParserContext& context = strictCSSParserContext())
     {
-        return adoptRef(*new CSSVariableData(range));
+        return adoptRef(*new CSSVariableData(range, context));
     }
 
     CSSParserTokenRange tokenRange() const { return m_tokens; }
+    const CSSParserContext& context() const { return m_context; }
 
     const Vector<CSSParserToken>& tokens() const { return m_tokens; }
 
     bool operator==(const CSSVariableData& other) const;
 
 private:
-    CSSVariableData(const CSSParserTokenRange&);
+    CSSVariableData(const CSSParserTokenRange&, const CSSParserContext&);
     template<typename CharacterType> void updateTokens(const CSSParserTokenRange&);
 
     String m_backingString;
     Vector<CSSParserToken> m_tokens;
+    const CSSParserContext m_context;
 };
 
 } // namespace WebCore

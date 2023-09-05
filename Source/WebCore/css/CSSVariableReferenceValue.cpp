@@ -44,21 +44,20 @@
 
 namespace WebCore {
 
-CSSVariableReferenceValue::CSSVariableReferenceValue(Ref<CSSVariableData>&& data, const CSSParserContext& context)
+CSSVariableReferenceValue::CSSVariableReferenceValue(Ref<CSSVariableData>&& data)
     : CSSValue(VariableReferenceClass)
     , m_data(WTFMove(data))
-    , m_context(context)
 {
 }
 
 Ref<CSSVariableReferenceValue> CSSVariableReferenceValue::create(const CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return adoptRef(*new CSSVariableReferenceValue(CSSVariableData::create(range), context));
+    return adoptRef(*new CSSVariableReferenceValue(CSSVariableData::create(range, context)));
 }
 
-Ref<CSSVariableReferenceValue> CSSVariableReferenceValue::create(Ref<CSSVariableData>&& data, const CSSParserContext& context)
+Ref<CSSVariableReferenceValue> CSSVariableReferenceValue::create(Ref<CSSVariableData>&& data)
 {
-    return adoptRef(*new CSSVariableReferenceValue(WTFMove(data), context));
+    return adoptRef(*new CSSVariableReferenceValue(WTFMove(data)));
 }
 
 bool CSSVariableReferenceValue::equals(const CSSVariableReferenceValue& other) const
@@ -71,6 +70,11 @@ String CSSVariableReferenceValue::customCSSText() const
     if (m_stringValue.isNull())
         m_stringValue = m_data->tokenRange().serialize();
     return m_stringValue;
+}
+
+const CSSParserContext& CSSVariableReferenceValue::context() const
+{
+    return m_data->context();
 }
 
 auto CSSVariableReferenceValue::resolveVariableFallback(const AtomString& variableName, CSSParserTokenRange range, CSSValueID functionId, Style::BuilderState& builderState) const -> std::pair<FallbackResult, Vector<CSSParserToken>>
@@ -90,7 +94,7 @@ auto CSSVariableReferenceValue::resolveVariableFallback(const AtomString& variab
             // https://drafts.css-houdini.org/css-properties-values-api/#fallbacks-in-var-references
             // The fallback value must match the syntax definition of the custom property being referenced,
             // otherwise the declaration is invalid at computed-value time
-            if (!tokens || !CSSPropertyParser::isValidCustomPropertyValueForSyntax(registered->syntax, *tokens, m_context))
+            if (!tokens || !CSSPropertyParser::isValidCustomPropertyValueForSyntax(registered->syntax, *tokens, context()))
                 return { FallbackResult::Invalid, { } };
 
             return { FallbackResult::Valid, WTFMove(*tokens) };
@@ -170,7 +174,7 @@ RefPtr<CSSVariableData> CSSVariableReferenceValue::resolveVariableReferences(Sty
     if (!resolvedTokens)
         return nullptr;
 
-    return CSSVariableData::create(*resolvedTokens);
+    return CSSVariableData::create(*resolvedTokens, context());
 }
 
 } // namespace WebCore
