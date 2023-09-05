@@ -139,10 +139,10 @@ namespace JSC {
     RETURN_WITH_PROFILING(value__, PROFILE_VALUE(returnValue__))
 
 #define PROFILE_VALUE(value__) \
-    PROFILE_VALUE_IN(value__, m_profile)
+    PROFILE_VALUE_IN(value__, m_valueProfile)
 
 #define PROFILE_VALUE_IN(value, profileName) do { \
-        bytecode.metadata(codeBlock).profileName.m_buckets[0] = JSValue::encode(value); \
+        codeBlock->valueProfileForOffset(bytecode.profileName).m_buckets[0] = JSValue::encode(value); \
     } while (false)
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_direct_arguments)
@@ -808,7 +808,7 @@ ALWAYS_INLINE UGPRPair iteratorOpenTryFastImpl(VM& vm, JSGlobalObject* globalObj
     auto bytecode = pc->asKnownWidth<OpIteratorOpen, width>();
     auto& metadata = bytecode.metadata(codeBlock);
     JSValue iterable = GET_C(bytecode.m_iterable).jsValue();
-    PROFILE_VALUE_IN(iterable, m_iterableProfile);
+    PROFILE_VALUE_IN(iterable, m_iterableValueProfile);
     JSValue symbolIterator = GET_C(bytecode.m_symbolIterator).jsValue();
     auto& iterator = GET(bytecode.m_iterator);
 
@@ -818,7 +818,7 @@ ALWAYS_INLINE UGPRPair iteratorOpenTryFastImpl(VM& vm, JSGlobalObject* globalObj
         GET(bytecode.m_next) = JSValue();
         auto* iteratedObject = jsCast<JSObject*>(iterable);
         iterator = JSArrayIterator::create(vm, globalObject->arrayIteratorStructure(), iteratedObject, IterationKind::Values);
-        PROFILE_VALUE_IN(iterator.jsValue(), m_iteratorProfile);
+        PROFILE_VALUE_IN(iterator.jsValue(), m_iteratorValueProfile);
         return encodeResult(pc, reinterpret_cast<void*>(static_cast<uintptr_t>(IterationMode::FastArray)));
     }
 
@@ -875,7 +875,7 @@ ALWAYS_INLINE UGPRPair iteratorNextTryFastImpl(VM& vm, JSGlobalObject* globalObj
                 ASSERT(index == static_cast<unsigned>(index));
                 value = array->getIndex(globalObject, static_cast<unsigned>(index));
                 CHECK_EXCEPTION();
-                PROFILE_VALUE_IN(value, m_valueProfile);
+                PROFILE_VALUE_IN(value, m_valueValueProfile);
             } else {
                 // No need for a barrier here because we know this is a primitive.
                 indexSlot.setWithoutWriteBarrier(jsNumber(-1));

@@ -490,6 +490,11 @@ namespace JSC {
             return m_codeBlock->metadata().addEntry(opcodeID);
         }
 
+        ALWAYS_INLINE unsigned nextValueProfileIndex()
+        {
+            return m_codeBlock->metadata().addValueProfile();
+        }
+
         void emitNode(StatementNode* n)
         {
             emitNode(nullptr, n);

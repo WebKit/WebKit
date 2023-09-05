@@ -1709,6 +1709,7 @@ void JIT::emit_op_get_from_scope(const JSInstruction* currentInstruction)
         code = vm().getCTIStub(generateOpGetFromScopeThunk<GlobalVar>);
 
     emitNakedNearCall(code.retaggedCode<NoPtrTag>());
+    emitValueProfilingSite(bytecode, returnValueJSR);
     emitPutVirtualRegister(dst, returnValueJSR);
 }
 
@@ -1838,8 +1839,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpGetFromScopeThunk(VM& vm)
         skipToEnd.link(&jit);
     }
 
-    static_assert(ValueProfile::numberOfBuckets == 1);
-    jit.storeValue(returnValueJSR, Address(metadataGPR, Metadata::offsetOfProfile() + ValueProfile::offsetOfFirstBucket()));
     jit.ret();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
@@ -1854,8 +1853,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator(VM& v
     // DFG/FTL may inline functions belonging to other globalObjects, which may not match
     // CallFrame::codeBlock().
     CCallHelpers jit;
-
-    using Metadata = OpGetFromScope::Metadata;
 
     using BaselineJITRegisters::GetFromScope::metadataGPR; // Incoming
     using BaselineJITRegisters::GetFromScope::bytecodeOffsetGPR; // Incoming
@@ -1883,7 +1880,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator(VM& v
 
     jit.loadPtr(Address(stackPointerRegister), metadataGPR); // Restore metadataGPR
     jit.addPtr(TrustedImmPtr(16), stackPointerRegister); // Restore stack pointer
-    jit.storeValue(returnValueJSR, Address(metadataGPR, Metadata::offsetOfProfile() + ValueProfile::offsetOfFirstBucket()));
 
     jit.emitCTIThunkEpilogue();
     jit.ret();

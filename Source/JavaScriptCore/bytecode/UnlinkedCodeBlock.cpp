@@ -108,7 +108,7 @@ void UnlinkedCodeBlock::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     for (auto& barrier : thisObject->m_functionExprs)
         visitor.append(barrier);
     visitor.appendValues(thisObject->m_constantRegisters.data(), thisObject->m_constantRegisters.size());
-    size_t extraMemory = thisObject->m_metadata->sizeInBytes();
+    size_t extraMemory = thisObject->metadataSizeInBytes();
     if (thisObject->m_instructions)
         extraMemory += thisObject->m_instructions->sizeInBytes();
     if (thisObject->hasRareData())
@@ -129,7 +129,7 @@ DEFINE_VISIT_CHILDREN(UnlinkedCodeBlock);
 size_t UnlinkedCodeBlock::estimatedSize(JSCell* cell, VM& vm)
 {
     UnlinkedCodeBlock* thisObject = jsCast<UnlinkedCodeBlock*>(cell);
-    size_t extraSize = thisObject->m_metadata->sizeInBytes();
+    size_t extraSize = thisObject->metadataSizeInBytes();
     if (thisObject->m_instructions)
         extraSize += thisObject->m_instructions->sizeInBytes();
     return Base::estimatedSize(cell, vm) + extraSize;
@@ -388,12 +388,7 @@ void UnlinkedCodeBlock::allocateSharedProfiles(unsigned numBinaryArithProfiles, 
     {
         unsigned numberOfValueProfiles = numParameters();
         if (m_metadata->hasMetadata()) {
-#define COUNT(__op) \
-            numberOfValueProfiles += m_metadata->numEntries<__op>();
-            FOR_EACH_OPCODE_WITH_VALUE_PROFILE(COUNT)
-#undef COUNT
-            numberOfValueProfiles += m_metadata->numEntries<OpIteratorOpen>() * 3;
-            numberOfValueProfiles += m_metadata->numEntries<OpIteratorNext>() * 3;
+            numberOfValueProfiles += m_metadata->numValueProfiles();
         }
 
         m_valueProfiles = FixedVector<UnlinkedValueProfile>(numberOfValueProfiles);

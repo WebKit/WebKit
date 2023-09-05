@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,9 +68,23 @@ void MetadataTable::destroy(MetadataTable* table)
     unlinkedMetadata->unlink(*table);
 }
 
-size_t MetadataTable::sizeInBytes()
+size_t MetadataTable::sizeInBytesForGC()
 {
-    return linkingData().unlinkedMetadata->sizeInBytes(*this);
+    return linkingData().unlinkedMetadata->sizeInBytesForGC(*this);
+}
+
+void MetadataTable::validate() const
+{
+    auto getOffset = [&](unsigned i) {
+        unsigned offset = offsetTable16()[i];
+        if (offset)
+            return offset;
+        return offsetTable32()[i];
+    };
+    UNUSED_PARAM(getOffset);
+    ASSERT(getOffset(0) >= (is32Bit() ? UnlinkedMetadataTable::s_offset16TableSize + UnlinkedMetadataTable::s_offset32TableSize : UnlinkedMetadataTable::s_offset16TableSize));
+    for (unsigned i = 1; i < UnlinkedMetadataTable::s_offsetTableEntries; ++i)
+        ASSERT(getOffset(i-1) <= getOffset(i));
 }
 
 } // namespace JSC

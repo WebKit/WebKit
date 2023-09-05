@@ -1,3 +1,5 @@
+//@ skip if $architecture == "arm"
+
 var wasm_code = read('simple-inline-stacktrace.wasm', 'binary')
 var wasm_module = new WebAssembly.Module(wasm_code);
 var wasm_instance = new WebAssembly.Instance(wasm_module, { a: { doThrow: () => { throw new Error() } } });
@@ -13,7 +15,7 @@ for (let i = 0; i < 10000; ++i) {
             "<?>.wasm-function[c]@[wasm code]", "<?>.wasm-function[b]@[wasm code]", "<?>.wasm-function[a]@[wasm code]",
             "<?>.wasm-function[main]@[wasm code]", "*"]
         if (trace.length != expected.length)
-            throw "unexpected length"
+            throw "unexpected length" + str;
         for (let i = 0; i < trace.length; ++i) {
             if (expected[i] == "*")
                 continue

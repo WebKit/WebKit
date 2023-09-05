@@ -346,7 +346,7 @@ public:
 
     size_t metadataSizeInBytes()
     {
-        return m_metadata->sizeInBytes();
+        return m_metadata->sizeInBytesForGC();
     }
 
     bool loopHintsAreEligibleForFuzzingEarlyReturn()

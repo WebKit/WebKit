@@ -1452,6 +1452,7 @@ public:
         if (!m_hasMetadata)
             return;
         m_is32Bit = metadataTable.m_is32Bit;
+        m_numValueProfiles = metadataTable.m_numValueProfiles;
         if (m_is32Bit) {
             for (unsigned i = UnlinkedMetadataTable::s_offsetTableEntries; i--;)
                 m_metadata[i] = metadataTable.offsetTable32()[i];
@@ -1466,10 +1467,11 @@ public:
         if (!m_hasMetadata)
             return UnlinkedMetadataTable::empty();
 
-        Ref<UnlinkedMetadataTable> metadataTable = UnlinkedMetadataTable::create(m_is32Bit);
+        Ref<UnlinkedMetadataTable> metadataTable = UnlinkedMetadataTable::create(m_is32Bit, m_numValueProfiles, m_metadata[UnlinkedMetadataTable::s_offsetTableEntries - 1]);
         metadataTable->m_isFinalized = true;
         metadataTable->m_isLinked = false;
         metadataTable->m_hasMetadata = m_hasMetadata;
+        metadataTable->m_numValueProfiles = m_numValueProfiles;
         if (m_is32Bit) {
             for (unsigned i = UnlinkedMetadataTable::s_offsetTableEntries; i--;)
                 metadataTable->offsetTable32()[i] = m_metadata[i];
@@ -1483,6 +1485,7 @@ public:
 private:
     bool m_hasMetadata;
     bool m_is32Bit;
+    unsigned m_numValueProfiles;
     std::array<unsigned, UnlinkedMetadataTable::s_offsetTableEntries> m_metadata;
 };
 
