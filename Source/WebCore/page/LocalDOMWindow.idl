@@ -77,6 +77,7 @@
 
     // the user agent
     readonly attribute Navigator navigator;
+    [Replaceable, ImplementedAs=navigator] readonly attribute Navigator clientInformation;
     // FIXME: This is specified to be [SecureContext]
     [EnabledByQuirk=shouldEnableApplicationCache] readonly attribute DOMApplicationCache applicationCache;
 
@@ -101,9 +102,6 @@
     long webkitRequestAnimationFrame(RequestAnimationFrameCallback callback);
     [ImplementedAs=cancelAnimationFrame] undefined webkitCancelAnimationFrame(long id);
     [ImplementedAs=cancelAnimationFrame] undefined webkitCancelRequestAnimationFrame(long id);
-
-    // Non-standard: May get added (https://github.com/whatwg/html/issues/2379).
-    [Replaceable] readonly attribute Navigator clientInformation;
 
     // Non-standard: iOS extension - https://developer.apple.com/reference/webkitjs/gestureevent
     [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongesturechange;
