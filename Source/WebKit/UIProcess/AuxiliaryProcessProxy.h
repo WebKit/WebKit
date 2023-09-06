@@ -50,8 +50,7 @@ class SandboxExtensionHandle;
 
 struct AuxiliaryProcessCreationParameters;
 
-class AuxiliaryProcessProxy : public ThreadSafeRefCounted<AuxiliaryProcessProxy, WTF::DestructionThread::MainRunLoop>, public CanMakeThreadSafeCheckedPtr,
-    public ResponsivenessTimer::Client, private ProcessLauncher::Client, public IPC::Connection::Client {
+class AuxiliaryProcessProxy : public ThreadSafeRefCounted<AuxiliaryProcessProxy, WTF::DestructionThread::MainRunLoop>, public ResponsivenessTimer::Client, private ProcessLauncher::Client, public IPC::Connection::Client {
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcessProxy);
 
 protected:
