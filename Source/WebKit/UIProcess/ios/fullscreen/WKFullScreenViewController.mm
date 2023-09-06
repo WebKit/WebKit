@@ -43,6 +43,10 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 
+#if PLATFORM(VISION)
+#import "MRUIKitSPI.h"
+#endif
+
 namespace WebCore {
 class PlaybackSessionInterfaceAVKit;
 }
@@ -183,7 +187,8 @@ private:
     BOOL _isShowingMenu;
 #if PLATFORM(VISION)
     RetainPtr<_WKExtrinsicButton> _moreActionsButton;
-    BOOL m_shouldHideCustomControls;
+    BOOL _shouldHideCustomControls;
+    BOOL _isInteractingWithSystemChrome;
 #endif
 }
 
@@ -202,6 +207,15 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     _nonZeroStatusBarHeight = UIApplication.sharedApplication.statusBarFrame.size.height;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_statusBarFrameDidChange:) name:UIApplicationDidChangeStatusBarFrameNotification object:nil];
 ALLOW_DEPRECATED_DECLARATIONS_END
+
+#if PLATFORM(VISION)
+    UIWindowScene *windowScene = webView.window.windowScene;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_didBeginInteractionWithSystemChrome:) name:_UIWindowSceneDidBeginLiveResizeNotification object:windowScene];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_didEndInteractionWithSystemChrome:) name:_UIWindowSceneDidEndLiveResizeNotification object:windowScene];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_didBeginInteractionWithSystemChrome:) name:_MRUIWindowSceneDidBeginRepositioningNotification object:windowScene];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_didEndInteractionWithSystemChrome:) name:_MRUIWindowSceneDidEndRepositioningNotification object:windowScene];
+#endif
+
     _secheuristic.setParameters(WebKit::FullscreenTouchSecheuristicParameters::iosParameters());
     self._webView = webView;
 
@@ -209,7 +223,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _valid = YES;
     _isShowingMenu = NO;
 #if PLATFORM(VISION)
-    m_shouldHideCustomControls = NO;
+    _shouldHideCustomControls = NO;
+    _isInteractingWithSystemChrome = NO;
 #endif
 
     return self;
@@ -298,6 +313,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (_isShowingMenu)
         return;
 
+#if PLATFORM(VISION)
+    if (_isInteractingWithSystemChrome)
+        return;
+#endif
+
     [UIView animateWithDuration:showHideAnimationDuration animations:^{
         [[self delegate] hideUI];
         if (_topConstraint)
@@ -365,14 +385,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         isPiPEnabled = page->preferences().pictureInPictureAPIEnabled() && page->preferences().allowsPictureInPictureMediaPlayback();
     bool isPiPSupported = playbackSessionModel && playbackSessionModel->isPictureInPictureSupported();
 #if PLATFORM(VISION)
-    [_cancelButton setHidden:m_shouldHideCustomControls];
+    [_cancelButton setHidden:_shouldHideCustomControls];
 
     bool isDimmingEnabled = false;
     if (auto page = [self._webView _page])
         isDimmingEnabled = page->preferences().fullscreenSceneDimmingEnabled();
-    [_moreActionsButton setHidden:m_shouldHideCustomControls || !isDimmingEnabled];
+    [_moreActionsButton setHidden:_shouldHideCustomControls || !isDimmingEnabled];
 
-    isPiPEnabled = !m_shouldHideCustomControls && isPiPEnabled;
+    isPiPEnabled = !_shouldHideCustomControls && isPiPEnabled;
 #endif
     [_pipButton setHidden:!isPiPEnabled || !isPiPSupported];
 }
@@ -386,14 +406,30 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 #if PLATFORM(VISION)
+
 - (void)hideCustomControls:(BOOL)hidden
 {
-    if (m_shouldHideCustomControls == hidden)
+    if (_shouldHideCustomControls == hidden)
         return;
 
-    m_shouldHideCustomControls = hidden;
+    _shouldHideCustomControls = hidden;
     [self videoControlsManagerDidChange];
 }
+
+- (void)_didBeginInteractionWithSystemChrome:(NSNotificationCenter *)notification
+{
+    _isInteractingWithSystemChrome = YES;
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideUI) object:nil];
+}
+
+- (void)_didEndInteractionWithSystemChrome:(NSNotificationCenter *)notification
+{
+    _isInteractingWithSystemChrome = NO;
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideUI) object:nil];
+    if (_playing)
+        [self performSelector:@selector(hideUI) withObject:nil afterDelay:autoHideDelay];
+}
+
 #endif // PLATFORM(VISION)
 
 - (void)setPrefersStatusBarHidden:(BOOL)value
