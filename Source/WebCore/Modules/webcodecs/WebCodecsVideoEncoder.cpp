@@ -67,10 +67,17 @@ WebCodecsVideoEncoder::~WebCodecsVideoEncoder()
 {
 }
 
-static bool isValidEncoderConfig(const WebCodecsVideoEncoderConfig& config, const Settings::Values& settings)
+static bool isSupportedEncoderCodec(const String& codec, const Settings::Values& settings)
 {
-    // FIXME: Check codec more accurately.
-    if (!config.codec.startsWith("vp8"_s) && !config.codec.startsWith("vp09."_s) && !config.codec.startsWith("avc1."_s) && !(config.codec.startsWith("hev1."_s) && settings.webCodecsHEVCEnabled) && !(config.codec.startsWith("hvc1."_s) && settings.webCodecsHEVCEnabled) && !(config.codec.startsWith("av01."_s) && settings.webCodecsAV1Enabled))
+    return codec.startsWith("vp8"_s) || codec.startsWith("vp09.0"_s) || codec.startsWith("avc1."_s)
+        || (codec.startsWith("hev1."_s) && settings.webCodecsHEVCEnabled)
+        || (codec.startsWith("hvc1."_s) && settings.webCodecsHEVCEnabled)
+        || (codec.startsWith("av01.0"_s) && settings.webCodecsAV1Enabled);
+}
+
+static bool isValidEncoderConfig(const WebCodecsVideoEncoderConfig& config)
+{
+    if (StringView(config.codec).trim(isASCIIWhitespace<UChar>).isEmpty())
         return false;
 
     if (!config.width || !config.height)
@@ -105,7 +112,7 @@ static ExceptionOr<VideoEncoder::Config> createVideoEncoderConfig(const WebCodec
 
 ExceptionOr<void> WebCodecsVideoEncoder::configure(ScriptExecutionContext& context, WebCodecsVideoEncoderConfig&& config)
 {
-    if (!isValidEncoderConfig(config, context.settingsValues()))
+    if (!isValidEncoderConfig(config))
         return Exception { TypeError, "Config is invalid"_s };
 
     if (m_state == WebCodecsCodecState::Closed || !scriptExecutionContext())
@@ -130,7 +137,20 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(ScriptExecutionContext& conte
         });
     }
 
-    queueControlMessageAndProcess([this, config = WTFMove(config), identifier = scriptExecutionContext()->identifier()]() mutable {
+    bool isSupportedCodec = isSupportedEncoderCodec(config.codec, context.settingsValues());
+    queueControlMessageAndProcess([this, config = WTFMove(config), isSupportedCodec, identifier = scriptExecutionContext()->identifier()]() mutable {
+        if (!isSupportedCodec) {
+            closeEncoder(Exception { NotSupportedError, "Codec is not supported"_s });
+            return;
+        }
+
+        auto encoderConfig = createVideoEncoderConfig(config);
+        if (encoderConfig.hasException()) {
+            closeEncoder(Exception { NotSupportedError, encoderConfig.releaseException().message() });
+            return;
+        }
+
+
         m_isMessageQueueBlocked = true;
         m_baseConfiguration = config;
 
@@ -147,22 +167,16 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(ScriptExecutionContext& conte
             };
         }
 
-        auto encoderConfig = createVideoEncoderConfig(config);
-        if (encoderConfig.hasException()) {
-            closeEncoder(Exception { NotSupportedError, encoderConfig.releaseException().message() });
-            return;
-        }
-
         VideoEncoder::create(config.codec, encoderConfig.releaseReturnValue(), [this, weakThis = WeakPtr { *this }](auto&& result) {
             if (!weakThis)
                 return;
 
+            m_isMessageQueueBlocked = false;
             if (!result.has_value()) {
                 closeEncoder(Exception { NotSupportedError, WTFMove(result.error()) });
                 return;
             }
             setInternalEncoder(WTFMove(result.value()));
-            m_isMessageQueueBlocked = false;
             m_hasNewActiveConfiguration = true;
             processControlMessageQueue();
         }, [this, weakThis = WeakPtr { *this }](auto&& configuration) {
@@ -289,8 +303,13 @@ ExceptionOr<void> WebCodecsVideoEncoder::close()
 
 void WebCodecsVideoEncoder::isConfigSupported(ScriptExecutionContext& context, WebCodecsVideoEncoderConfig&& config, Ref<DeferredPromise>&& promise)
 {
-    if (!isValidEncoderConfig(config, context.settingsValues())) {
+    if (!isValidEncoderConfig(config)) {
         promise->reject(Exception { TypeError, "Config is not valid"_s });
+        return;
+    }
+
+    if (!isSupportedEncoderCodec(config.codec, context.settingsValues())) {
+        promise->template resolve<IDLDictionary<WebCodecsVideoEncoderSupport>>(WebCodecsVideoEncoderSupport { false, WTFMove(config) });
         return;
     }
 
