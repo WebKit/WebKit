@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FloatingState.h"
+#include "InlineLine.h"
 #include "InlineLineTypes.h"
 #include "LayoutUnits.h"
 

@@ -39,7 +39,7 @@
 #include "modules/rtp_rtcp/source/rtp_video_stream_receiver_frame_transformer_delegate.h"
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer.h"
 #include "modules/video_coding/h264_sps_pps_tracker.h"
-#ifndef DISABLE_H265
+#ifdef WEBRTC_USE_H265
 #include "modules/video_coding/h265_vps_sps_pps_tracker.h"
 #endif
 #include "modules/video_coding/loss_notification_controller.h"
@@ -392,7 +392,7 @@ class RtpVideoStreamReceiver2 : public LossNotificationSender,
   std::map<uint8_t, std::unique_ptr<VideoRtpDepacketizer>> payload_type_map_
       RTC_GUARDED_BY(packet_sequence_checker_);
 
-#ifndef DISABLE_H265
+#ifdef WEBRTC_USE_H265
   video_coding::H265VpsSpsPpsTracker h265_tracker_;
 #endif
 

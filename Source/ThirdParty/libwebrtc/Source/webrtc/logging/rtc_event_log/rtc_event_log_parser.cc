@@ -261,6 +261,10 @@ VideoCodecType GetRuntimeCodecType(rtclog2::FrameDecodedEvents::Codec codec) {
       return VideoCodecType::kVideoCodecAV1;
     case rtclog2::FrameDecodedEvents::CODEC_H264:
       return VideoCodecType::kVideoCodecH264;
+#ifdef WEBRTC_USE_H265
+    case rtclog2::FrameDecodedEvents::CODEC_H265:
+      return VideoCodecType::kVideoCodecH265;
+#endif
     case rtclog2::FrameDecodedEvents::CODEC_UNKNOWN:
       RTC_LOG(LS_ERROR) << "Unknown codec type. Assuming "
                            "VideoCodecType::kVideoCodecMultiplex";

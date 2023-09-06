@@ -98,6 +98,7 @@ void RealtimeIncomingVideoSourceGStreamer::settingsDidChange(OptionSet<RealtimeM
 
 void RealtimeIncomingVideoSourceGStreamer::dispatchSample(GRefPtr<GstSample>&& sample)
 {
+    ASSERT(isMainThread());
     auto* buffer = gst_sample_get_buffer(sample.get());
     auto* caps = gst_sample_get_caps(sample.get());
     if (auto size = getVideoResolutionFromCaps(caps))

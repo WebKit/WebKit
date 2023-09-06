@@ -322,6 +322,16 @@ JSObject* createErrorForInvalidGlobalAssignment(JSGlobalObject* globalObject, co
     return createReferenceError(globalObject, makeString("Strict mode forbids implicit creation of global property '"_s, propertyName, '\''));
 }
 
+JSObject* createErrorForInvalidGlobalFunctionDeclaration(JSGlobalObject* globalObject, const Identifier& ident)
+{
+    return createTypeError(globalObject, makeString("Can't declare global function '", ident.string(), "': property must be either configurable or both writable and enumerable"));
+}
+
+JSObject* createErrorForInvalidGlobalVarDeclaration(JSGlobalObject* globalObject, const Identifier& ident)
+{
+    return createTypeError(globalObject, makeString("Can't declare global variable '", ident.string(), "': global object must be extensible"));
+}
+
 JSObject* createTDZError(JSGlobalObject* globalObject)
 {
     return createReferenceError(globalObject, "Cannot access uninitialized variable."_s);

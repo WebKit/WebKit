@@ -75,6 +75,7 @@ private:
     Vector<const InlineTextItem*> m_wrapOpportunityList;
     bool m_isWrappingAllowed { false };
     InlineLayoutUnit m_trimmedTrailingWhitespaceWidth { 0.f };
+    std::optional<InlineLayoutUnit> m_overflowContentLogicalWidth { };
 
     std::optional<InlineTextItem> m_partialLeadingTextItem;
 };

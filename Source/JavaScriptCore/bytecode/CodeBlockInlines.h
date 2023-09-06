@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,23 +40,11 @@ void CodeBlock::forEachValueProfile(const Functor& func)
         func(valueProfileForArgument(i), true);
 
     if (m_metadata) {
-#define VISIT(__op) \
-        m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.m_profile, false); });
-        FOR_EACH_OPCODE_WITH_VALUE_PROFILE(VISIT)
-#undef VISIT
-
-        m_metadata->forEach<OpIteratorOpen>([&] (auto& metadata) { 
-            func(metadata.m_iterableProfile, false);
-            func(metadata.m_iteratorProfile, false);
-            func(metadata.m_nextProfile, false);
-        });
-
-        m_metadata->forEach<OpIteratorNext>([&] (auto& metadata) {
-            func(metadata.m_nextResultProfile, false);
-            func(metadata.m_doneProfile, false);
-            func(metadata.m_valueProfile, false);
-        });
-    }   
+        auto wrapper = [&] (ValueProfile& profile) {
+            func(profile, false);
+        };
+        m_metadata->forEachValueProfile(wrapper);
+    }
 }
 
 template<typename Functor>

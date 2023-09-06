@@ -149,25 +149,26 @@ class ExecutiveTest(unittest.TestCase):
 
         executive = Executive()
 
-        output = executive.run_command(command_line('cat'), input=unicode_tor_input)
+        output = executive.run_command(command_line('cat'), input=unicode_tor_input, return_stderr=False)
         self.assertEqual(output, unicode_tor_output)
 
-        output = executive.run_command(command_line('echo', unicode_tor_input))
+        output = executive.run_command(command_line('echo', unicode_tor_input), return_stderr=False)
         self.assertEqual(output, unicode_tor_output)
 
-        output = executive.run_command(command_line('echo', unicode_tor_input), decode_output=False)
+        output = executive.run_command(command_line('echo', unicode_tor_input), decode_output=False, return_stderr=False)
         self.assertEqual(output, encoded_tor)
 
         # Make sure that str() input also works.
-        output = executive.run_command(command_line('cat'), input=encoded_tor, decode_output=False)
+        output = executive.run_command(command_line('cat'), input=encoded_tor, decode_output=False, return_stderr=False)
         self.assertEqual(output, encoded_tor)
 
         # FIXME: We should only have one run* method to test
+        # These use assertIn as run_and_throw_if_fail always redirects stderr to stdout
         output = executive.run_and_throw_if_fail(command_line('echo', unicode_tor_input), quiet=True)
-        self.assertEqual(output, unicode_tor_output)
+        self.assertIn(unicode_tor_output, output)
 
         output = executive.run_and_throw_if_fail(command_line('echo', unicode_tor_input), quiet=True, decode_output=False)
-        self.assertEqual(output, encoded_tor)
+        self.assertIn(encoded_tor, output)
 
     def serial_test_kill_process(self):
         executive = Executive()

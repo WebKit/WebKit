@@ -437,10 +437,34 @@ inline JSScope* JSGlobalObject::globalScope()
     return m_globalLexicalEnvironment.get();
 }
 
-inline void JSGlobalObject::addVar(JSGlobalObject* globalObject, const Identifier& propertyName)
+// https://tc39.es/ecma262/#sec-candeclareglobalvar
+inline bool JSGlobalObject::canDeclareGlobalVar(const Identifier& ident)
 {
-    if (!hasOwnProperty(globalObject, propertyName))
-        addGlobalVar(propertyName);
+    if (LIKELY(isStructureExtensible()))
+        return true;
+
+    PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
+    return getOwnPropertySlot(this, this, ident, slot);
+}
+
+// https://tc39.es/ecma262/#sec-createglobalvarbinding
+template<BindingCreationContext context>
+inline void JSGlobalObject::createGlobalVarBinding(const Identifier& ident)
+{
+    VM& vm = this->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
+    bool hasProperty = getOwnPropertySlot(this, this, ident, slot);
+    scope.assertNoExceptionExceptTermination();
+    if (UNLIKELY(hasProperty))
+        return;
+
+    ASSERT(isStructureExtensible());
+    if constexpr (context == BindingCreationContext::Global)
+        addSymbolTableEntry(ident);
+    else
+        putDirect(vm, ident, jsUndefined());
 }
 
 inline InlineWatchpointSet& JSGlobalObject::typedArraySpeciesWatchpointSet(TypedArrayType type)

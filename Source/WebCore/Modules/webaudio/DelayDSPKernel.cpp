@@ -72,8 +72,8 @@ DelayDSPKernel::DelayDSPKernel(DelayProcessor* processor)
         return;
 
     m_maxDelayTime = processor->maxDelayTime();
-    ASSERT(m_maxDelayTime >= 0);
-    if (m_maxDelayTime < 0)
+    ASSERT(m_maxDelayTime >= 0 && !std::isnan(m_maxDelayTime));
+    if (m_maxDelayTime < 0 || std::isnan(m_maxDelayTime))
         return;
 
     m_buffer.resize(bufferLengthForDelay(m_maxDelayTime, processor->sampleRate()));

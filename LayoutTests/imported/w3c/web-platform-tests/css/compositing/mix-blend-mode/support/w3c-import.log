@@ -1,0 +1,27 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/support/RGB_Circles.mov
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/support/RGB_Circles.mp4
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/support/RGB_Circles.oggtheora.ogv
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/support/RGB_Circles.webmhd.webm
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/support/RGB_Circles.webmsd.webm
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/support/red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/support/red_circle.mp4
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/support/red_circle.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/support/red_square.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/support/red_square.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/support/yellow_square.svg

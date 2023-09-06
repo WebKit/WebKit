@@ -28,6 +28,7 @@
 #include "Instruction.h"
 #include "Opcode.h"
 #include "UnlinkedMetadataTable.h"
+#include "ValueProfile.h"
 #include <wtf/RefCounted.h>
 
 namespace JSC {
@@ -35,8 +36,8 @@ namespace JSC {
 class CodeBlock;
 
 // MetadataTable has a bit strange memory layout for LLInt optimization.
-// [UnlinkedMetadataTable::LinkingData][MetadataTable]
-//                                     ^
+// [ValueProfile][UnlinkedMetadataTable::LinkingData][MetadataTableOffsets][MetadataContent]
+//                                                   ^
 //                 The pointer of MetadataTable points at this address.
 class MetadataTable {
     WTF_MAKE_FAST_ALLOCATED;
@@ -65,7 +66,26 @@ public:
             func(*metadata);
     }
 
-    size_t sizeInBytes();
+    template<typename Functor>
+    ALWAYS_INLINE void forEachValueProfile(const Functor& func)
+    {
+        // We could do a checked multiply here but if it overflows we'd just not look at any value profiles so it's probably not worth it.
+        int lastValueProfileOffset = -linkingData().unlinkedMetadata->m_numValueProfiles;
+        for (int i = -1; i >= lastValueProfileOffset; --i)
+            func(valueProfilesEnd()[i]);
+    }
+
+    ValueProfile* valueProfilesEnd()
+    {
+        return reinterpret_cast_ptr<ValueProfile*>(&linkingData());
+    }
+
+    ValueProfile& valueProfileForOffset(unsigned profileOffset)
+    {
+        return valueProfilesEnd()[-static_cast<ptrdiff_t>(profileOffset)];
+    }
+
+    size_t sizeInBytesForGC();
 
     void ref()
     {
@@ -100,6 +120,8 @@ public:
         return baseTypeOffset + sizeof(typename Opcode::Metadata) * opcode.m_metadataID;
     }
 
+    void validate() const;
+
 private:
     MetadataTable(UnlinkedMetadataTable&);
 
@@ -108,7 +130,7 @@ private:
 
     size_t totalSize() const
     {
-        return getOffset(UnlinkedMetadataTable::s_offsetTableEntries - 1);
+        return linkingData().unlinkedMetadata->m_numValueProfiles * sizeof(ValueProfile) + sizeof(UnlinkedMetadataTable::LinkingData) + getOffset(UnlinkedMetadataTable::s_offsetTableEntries - 1);
     }
 
     UnlinkedMetadataTable::LinkingData& linkingData() const
@@ -118,6 +140,7 @@ private:
 
     void* buffer() { return this; }
 
+    // Offset of zero means that the 16 bit table is not in use.
     bool is32Bit() const { return !offsetTable16()[0]; }
 
     ALWAYS_INLINE unsigned getOffset(unsigned i) const

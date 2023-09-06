@@ -49,6 +49,7 @@
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/mac/NSEventSPI.h>
+#import <wtf/BlockObjCExceptions.h>
 
 static const double minElasticMagnification = 0.75;
 static const double maxElasticMagnification = 4;
@@ -261,6 +262,7 @@ void ViewGestureController::trackSwipeGesture(PlatformScrollEvent event, SwipeDi
     RetainPtr<WKSwipeCancellationTracker> swipeCancellationTracker = adoptNS([[WKSwipeCancellationTracker alloc] init]);
     m_swipeCancellationTracker = swipeCancellationTracker;
 
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [event trackSwipeEventWithOptions:NSEventSwipeTrackingConsumeMouseEvents dampenAmountThresholdMin:minProgress max:maxProgress usingHandler:^(CGFloat progress, NSEventPhase phase, BOOL isComplete, BOOL *stop) {
         if ([swipeCancellationTracker isCancelled]) {
             *stop = YES;
@@ -277,6 +279,7 @@ void ViewGestureController::trackSwipeGesture(PlatformScrollEvent event, SwipeDi
         if (isComplete)
             this->endSwipeGesture(targetItem.get(), swipeCancelled);
     }];
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 FloatRect ViewGestureController::windowRelativeBoundsForCustomSwipeViews() const

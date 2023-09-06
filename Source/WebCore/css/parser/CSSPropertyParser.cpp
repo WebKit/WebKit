@@ -901,7 +901,6 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyMaskBorderWidth:
     case CSSPropertyMaskSize:
     case CSSPropertyOffsetAnchor:
-    case CSSPropertyOffsetPosition:
     case CSSPropertyOffsetRotate:
     case CSSPropertyOverflowAnchor:
     case CSSPropertyOverscrollBehaviorBlock:
@@ -964,6 +963,7 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyJustifyContent:
     case CSSPropertyLetterSpacing:
     case CSSPropertyLineHeight:
+    case CSSPropertyOffsetPosition:
     case CSSPropertyOverflowWrap:
     case CSSPropertyRowGap:
     case CSSPropertyScrollSnapStop:

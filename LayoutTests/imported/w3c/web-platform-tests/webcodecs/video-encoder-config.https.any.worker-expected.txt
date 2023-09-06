@@ -12,25 +12,25 @@ PASS Test that VideoEncoder.configure() rejects invalid config: Height is 0
 PASS Test that VideoEncoder.configure() rejects invalid config: displayWidth is 0
 PASS Test that VideoEncoder.configure() rejects invalid config: displayHeight is 0
 PASS Test that VideoEncoder.isConfigSupported() doesn't support config: Invalid scalability mode
-FAIL Test that VideoEncoder.isConfigSupported() doesn't support config: Unrecognized codec promise_test: Unhandled rejection with value: object "TypeError: Config is not valid"
-FAIL Test that VideoEncoder.isConfigSupported() doesn't support config: Codec with bad casing promise_test: Unhandled rejection with value: object "TypeError: Config is not valid"
+PASS Test that VideoEncoder.isConfigSupported() doesn't support config: Unrecognized codec
+PASS Test that VideoEncoder.isConfigSupported() doesn't support config: Codec with bad casing
 PASS Test that VideoEncoder.isConfigSupported() doesn't support config: Width is too large
 PASS Test that VideoEncoder.isConfigSupported() doesn't support config: Height is too large
 PASS Test that VideoEncoder.isConfigSupported() doesn't support config: Too strenuous accelerated encoding parameters
 PASS Test that VideoEncoder.isConfigSupported() doesn't support config: Odd sized frames for H264
 PASS Test that VideoEncoder.isConfigSupported() doesn't support config: Possible future H264 codec string
-FAIL Test that VideoEncoder.isConfigSupported() doesn't support config: Possible future HEVC codec string assert_false: expected false got true
+PASS Test that VideoEncoder.isConfigSupported() doesn't support config: Possible future HEVC codec string
 PASS Test that VideoEncoder.isConfigSupported() doesn't support config: Possible future VP9 codec string
-FAIL Test that VideoEncoder.isConfigSupported() doesn't support config: Possible future AV1 codec string assert_false: expected false got true
+PASS Test that VideoEncoder.isConfigSupported() doesn't support config: Possible future AV1 codec string
 FAIL Test that VideoEncoder.configure() doesn't support config: Invalid scalability mode assert_throws_dom: function "() => {
           codec.configure(entry.config);
         }" did not throw
 FAIL Test that VideoEncoder.configure() doesn't support config: Unrecognized codec assert_throws_dom: function "() => {
           codec.configure(entry.config);
-        }" threw object "TypeError: Config is invalid" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+        }" did not throw
 FAIL Test that VideoEncoder.configure() doesn't support config: Codec with bad casing assert_throws_dom: function "() => {
           codec.configure(entry.config);
-        }" threw object "TypeError: Config is invalid" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+        }" did not throw
 FAIL Test that VideoEncoder.configure() doesn't support config: Width is too large assert_throws_dom: function "() => {
           codec.configure(entry.config);
         }" did not throw

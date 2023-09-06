@@ -976,6 +976,7 @@
                 "unicode"
             ],
             "codegen-properties": {
+                "settings-flag": "cssFontVariantEmojiEnabled",
                 "parser-grammar": "<<values>>",
                 "name-for-methods": "VariantEmoji",
                 "font-property": true,
@@ -4792,12 +4793,13 @@
         },
         "offset-position": {
             "values": [
+                "normal",
                 "auto"
             ],
             "codegen-properties": {
-                "converter": "PositionOrAuto",
+                "converter": "PositionOrAutoOrNormal",
                 "settings-flag": "cssMotionPathEnabled",
-                "parser-grammar": "auto | <position>"
+                "parser-grammar": "normal | auto | <position>"
             },
             "specification": {
                 "category": "css-motion-path",

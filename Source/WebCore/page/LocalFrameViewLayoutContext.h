@@ -136,7 +136,6 @@ private:
     friend class LayoutStateMaintainer;
     friend class LayoutStateDisabler;
     friend class SubtreeLayoutStateMaintainer;
-    friend class PaginatedLayoutStateMaintainer;
 
     void performLayout();
     bool canPerformLayout() const;
@@ -157,7 +156,6 @@ private:
     // These functions may only be accessed by LayoutStateMaintainer.
     // Subtree push/pop
     void pushLayoutState(RenderElement&);
-    bool pushLayoutStateForPaginationIfNeeded(RenderBlockFlow&);
     bool pushLayoutState(RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageHeight = 0_lu, bool pageHeightChanged = false);
     void popLayoutState();
 

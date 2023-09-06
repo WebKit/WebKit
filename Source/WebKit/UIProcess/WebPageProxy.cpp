@@ -815,6 +815,11 @@ ProcessID WebPageProxy::gpuProcessID() const
     return 0;
 }
 
+Ref<WebProcessProxy> WebPageProxy::protectedProcess() const
+{
+    return m_process;
+}
+
 ProcessID WebPageProxy::processID() const
 {
     if (m_isClosed)

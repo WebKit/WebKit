@@ -122,8 +122,7 @@ fast/events/detect-caps-lock.html [ Pass ]
 fast/forms/auto-fill-button/caps-lock-indicator-should-not-be-visible-when-auto-fill-strong-password-button-is-visible.html [ Pass ]
 fast/forms/password-scrolled-after-caps-lock-toggled.html [ Pass ]
 
-# previously: webkit.org/b/194170
-webkit.org/b/260974 [ Release ] fast/repaint/placeholder-after-caps-lock-hidden.html [ Pass Failure Timeout ]
+fast/repaint/placeholder-after-caps-lock-hidden.html [ Pass ]
 
 fast/events/inactive-window-no-mouse-event.html [ Pass ]
 
@@ -747,7 +746,7 @@ imported/blink/http/tests/plugins/get-url-notify-on-removal.html [ Pass Timeout 
 imported/blink/fast/multicol/newmulticol/multicol-becomes-regular-block.html [ Pass ImageOnlyFailure ]
 imported/blink/fast/transforms/transform-update-frame-overflow.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ Pass Timeout ]
+webkit.org/b/261208 [ Ventura Release ] fast/text-autosizing/ios/text-autosizing-after-back.html [ Pass ImageOnlyFailure ]
 
 # PiP tests are only enabled for Sierra WebKit2.
 # rdar://problem/27574303
@@ -1805,8 +1804,6 @@ webkit.org/b/259160 http/tests/privateClickMeasurement/attribution-conversion-th
 webkit.org/b/259160 http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive.html [ Pass Failure ]
 webkit.org/b/259160 http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive-ephemeral.html [ Pass Failure ]
 
-webkit.org/b/259374 http/tests/inspector/network/xhr-request-type.html [ Failure ]
-
 webkit.org/b/259379 http/wpt/webcodecs/videoFrame-video-element.html [ Pass Failure ]
 
 webkit.org/b/259403 [ x86_64 ] fast/canvas/webgl/texImage2D-video-flipY-false.html [ Failure ]
@@ -2113,3 +2110,7 @@ editing/input/caret-at-the-edge-of-contenteditable.html [ Pass ImageOnlyFailure 
 webkit.org/b/261005 swipe/pushState-cached-back-swipe.html [ Pass Failure Timeout ]
 
 webkit.org/b/261041 accessibility/mac/basic-embed-pdf-accessibility.html [ Failure ]
+
+webkit.org/b/227761 imported/w3c/web-platform-tests/beacon/beacon-cors.https.window.html [ Pass Failure ]
+
+webkit.org/b/261215 webrtc/vp8-then-h264-gpu-process-crash.html [ Pass Timeout Failure ]

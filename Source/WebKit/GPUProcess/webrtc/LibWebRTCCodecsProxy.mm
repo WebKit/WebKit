@@ -265,15 +265,43 @@ void LibWebRTCCodecsProxy::doDecoderTask(VideoDecoderIdentifier identifier, Func
     task(iterator->value);
 }
 
-void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, VideoCodecType codecType, const Vector<std::pair<String, String>>& parameters, bool useLowLatency, bool useAnnexB, CompletionHandler<void(bool)>&& callback)
+static bool validateEncoderCodecString(VideoCodecType codecType, const String& codecString)
+{
+    // FIXME: Further tighten checks.
+    switch (codecType) {
+    case VideoCodecType::H264: {
+        auto parameters = parseAVCCodecParameters(codecString);
+        // Limit to High Profile, level 5.2.
+        return parameters && parameters->profileIDC <= 100 && parameters->levelIDC <= 52;
+    }
+    case VideoCodecType::H265: {
+        auto parameters = parseHEVCCodecParameters(codecString);
+        return parameters && validateHEVCParameters(*parameters, false, false);
+    }
+    case VideoCodecType::VP9:
+    case VideoCodecType::AV1:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return true;
+}
+
+void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, VideoCodecType codecType, const String& codecString, const Vector<std::pair<String, String>>& parameters, bool useLowLatency, bool useAnnexB, CompletionHandler<void(bool)>&& callback)
 {
     assertIsCurrent(workQueue());
     std::map<std::string, std::string> rtcParameters;
     for (auto& parameter : parameters)
         rtcParameters.emplace(parameter.first.utf8().data(), parameter.second.utf8().data());
 
-    if (codecType != VideoCodecType::H264 && codecType != VideoCodecType::H265)
+    if (codecType != VideoCodecType::H264 && codecType != VideoCodecType::H265) {
+        callback(false);
         return;
+    }
+    
+    if (!codecString.isNull() && !validateEncoderCodecString(codecType, codecString)) {
+        callback(false);
+        return;
+    }
 
     auto newFrameBlock = makeBlockPtr([connection = m_connection, identifier](const uint8_t* buffer, size_t size, const webrtc::WebKitEncodedFrameInfo& info) {
         connection->send(Messages::LibWebRTCCodecs::CompletedEncoding { identifier, IPC::DataReference { buffer, size }, info }, 0);

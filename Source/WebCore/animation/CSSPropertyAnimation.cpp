@@ -1011,9 +1011,9 @@ private:
 };
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LengthPointPropertyWrapper);
 
-// This class extends LengthPointPropertyWrapper to accommodate `auto` value expressed as
-// LengthPoint(Length(LengthType::Auto), Length(LengthType::Auto)). This is used for 
-// offset-anchor and offset-position, which allows `auto`, and is expressed like so.
+// This class extends LengthPointPropertyWrapper to accommodate `auto` or `normal` values expressed as
+// LengthPoint(Length(LengthType::Auto/Normal), Length(LengthType::Auto/Normal)). This is used for
+// offset-anchor and offset-position, which allows `auto` and `normal`, and is expressed like so.
 class LengthPointOrAutoPropertyWrapper : public LengthPointPropertyWrapper {
 public:
     LengthPointOrAutoPropertyWrapper(CSSPropertyID property, const LengthPoint& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthPoint))
@@ -1023,13 +1023,13 @@ public:
 
 private:
     // Check if it's possible to interpolate between the from and to values. In particular,
-    // it's only possible if they're both not auto.
+    // it's only possible if they're both not auto or normal.
     bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
     {
-        bool fromIsAuto = value(from).x().isAuto() && value(from).y().isAuto();
-        bool toIsAuto = value(to).x().isAuto() && value(to).y().isAuto();
+        auto valueFrom = value(from);
+        auto valueTo = value(to);
 
-        return (!fromIsAuto && !toIsAuto); 
+        return !valueFrom.x().isAuto() && !valueTo.x().isAuto() && !valueFrom.x().isNormal() && !valueTo.x().isNormal();
     }
 };
 

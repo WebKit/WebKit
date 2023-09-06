@@ -300,7 +300,7 @@ inline void JIT::emitValueProfilingSite(const Bytecode& bytecode, JSValueRegs va
     if (!shouldEmitProfiling())
         return;
 
-    ptrdiff_t offset = m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode) + valueProfileOffsetFor<Bytecode>(m_bytecodeIndex.checkpoint()) + ValueProfile::offsetOfFirstBucket();
+    ptrdiff_t offset = -static_cast<ptrdiff_t>(valueProfileOffsetFor<Bytecode>(bytecode, m_bytecodeIndex.checkpoint())) * sizeof(ValueProfile) + ValueProfile::offsetOfFirstBucket() - sizeof(UnlinkedMetadataTable::LinkingData);
     storeValue(value, Address(s_metadataGPR, offset));
 }
 

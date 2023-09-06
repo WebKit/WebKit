@@ -1432,6 +1432,7 @@ public:
 
     WebProcessProxy& ensureRunningProcess();
     WebProcessProxy& process() const { return m_process; }
+    Ref<WebProcessProxy> protectedProcess() const;
     ProcessID processID() const;
 
     ProcessID gpuProcessID() const;

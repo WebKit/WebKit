@@ -424,10 +424,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     // Bookkeep the strongly referenced module environments.
     HashSet<JSModuleEnvironment*> stronglyReferencedModuleEnvironments;
 
-    auto link_profile = [&](const auto& /*instruction*/, auto /*bytecode*/, auto& metadata) {
-        static_assert(std::is_same_v<ValueProfile, decltype(metadata.m_profile)>);
-    };
-
     auto link_objectAllocationProfile = [&](const auto& /*instruction*/, auto bytecode, auto& metadata) {
         metadata.m_objectAllocationProfile.initializeProfile(vm, m_globalObject.get(), this, m_globalObject->objectPrototype(), bytecode.m_inlineCapacity);
     };
@@ -468,26 +464,20 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         static_assert(OpcodeIDWidthBySize<JSOpcodeTraits, OpcodeSize::Wide32>::opcodeIDSize == 1);
         m_bytecodeCost += opcodeLengths[opcodeID] + 1;
         switch (opcodeID) {
-        LINK(OpGetByVal, profile)
-        LINK(OpGetPrivateName, profile)
+        LINK(OpGetByVal)
+        LINK(OpGetPrivateName)
 
-        LINK(OpGetByIdWithThis, profile)
-        LINK(OpTryGetById, profile)
-        LINK(OpGetByIdDirect, profile)
-        LINK(OpGetByValWithThis, profile)
-        LINK(OpGetPrototypeOf, profile)
-        LINK(OpGetFromArguments, profile)
-        LINK(OpToObject, profile)
-        LINK(OpGetArgument, profile)
-        LINK(OpGetInternalField, profile)
-        LINK(OpToThis, profile)
+        LINK(OpTryGetById)
+        LINK(OpGetByIdDirect)
+        LINK(OpGetByValWithThis)
+        LINK(OpToThis)
 
-        LINK(OpGetById, profile)
+        LINK(OpGetById)
 
         LINK(OpEnumeratorNext)
         LINK(OpEnumeratorInByVal)
         LINK(OpEnumeratorHasOwnProperty)
-        LINK(OpEnumeratorGetByVal, profile)
+        LINK(OpEnumeratorGetByVal)
 
         LINK(OpInByVal)
         LINK(OpPutByVal)
@@ -514,21 +504,20 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpCatch)
         LINK(OpProfileControlFlow)
 
-        LINK(OpCall, callLinkInfo, profile)
+        LINK(OpCall, callLinkInfo)
         LINK(OpTailCall, callLinkInfo)
-        LINK(OpCallDirectEval, callLinkInfo, profile)
-        LINK(OpConstruct, callLinkInfo, profile)
+        LINK(OpCallDirectEval, callLinkInfo)
+        LINK(OpConstruct, callLinkInfo)
         LINK(OpIteratorOpen, callLinkInfo)
         LINK(OpIteratorNext, callLinkInfo)
-        LINK(OpCallVarargs, callLinkInfo, profile)
+        LINK(OpCallVarargs, callLinkInfo)
         LINK(OpTailCallVarargs, callLinkInfo)
         LINK(OpTailCallForwardArguments, callLinkInfo)
-        LINK(OpConstructVarargs, callLinkInfo, profile)
+        LINK(OpConstructVarargs, callLinkInfo)
         LINK(OpCallIgnoreResult, callLinkInfo)
 
         case op_new_array_with_species: {
             INITIALIZE_METADATA(OpNewArrayWithSpecies)
-            link_profile(instruction, bytecode, metadata);
             break;
         }
 
@@ -562,7 +551,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         case op_get_from_scope: {
             INITIALIZE_METADATA(OpGetFromScope)
 
-            link_profile(instruction, bytecode, metadata);
             metadata.m_watchpointSet = nullptr;
 
             ASSERT(!isInitialization(bytecode.m_getPutInfo.initializationMode()));
@@ -744,7 +732,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         dumpBytecode();
 
     if (m_metadata)
-        vm.heap.reportExtraMemoryAllocated(m_metadata->sizeInBytes());
+        vm.heap.reportExtraMemoryAllocated(m_metadata->sizeInBytesForGC());
 
     initializeTemplateObjects(topLevelExecutable, templateObjectIndices);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -1020,7 +1008,7 @@ size_t CodeBlock::estimatedSize(JSCell* cell, VM& vm)
     CodeBlock* thisObject = jsCast<CodeBlock*>(cell);
     size_t extraMemoryAllocated = 0;
     if (thisObject->m_metadata)
-        extraMemoryAllocated += thisObject->m_metadata->sizeInBytes();
+        extraMemoryAllocated += thisObject->m_metadata->sizeInBytesForGC();
     RefPtr<JITCode> jitCode = thisObject->m_jitCode;
     if (jitCode && !jitCode->isShared())
         extraMemoryAllocated += jitCode->size();
@@ -1079,7 +1067,7 @@ void CodeBlock::visitChildren(Visitor& visitor)
 
     size_t extraMemory = 0;
     if (m_metadata)
-        extraMemory += m_metadata->sizeInBytes();
+        extraMemory += m_metadata->sizeInBytesForGC();
     if (m_jitCode && !m_jitCode->isShared())
         extraMemory += m_jitCode->size();
     visitor.reportExtraMemoryVisited(extraMemory);
@@ -3170,16 +3158,16 @@ ValueProfile* CodeBlock::tryGetValueProfileForBytecodeIndex(BytecodeIndex byteco
 
 #define CASE(Op) \
     case Op::opcodeID: \
-        return &instruction->as<Op>().metadata(this).m_profile;
+        return &m_metadata->valueProfilesEnd()[-static_cast<ptrdiff_t>(instruction->as<Op>().m_valueProfile)];
 
         FOR_EACH_OPCODE_WITH_VALUE_PROFILE(CASE)
 
 #undef CASE
 
     case op_iterator_open:
-        return &valueProfileFor(instruction->as<OpIteratorOpen>().metadata(this), bytecodeIndex.checkpoint());
+        return &m_metadata->valueProfilesEnd()[-static_cast<ptrdiff_t>(valueProfileOffsetFor(instruction->as<OpIteratorOpen>(), bytecodeIndex.checkpoint()))];
     case op_iterator_next:
-        return &valueProfileFor(instruction->as<OpIteratorNext>().metadata(this), bytecodeIndex.checkpoint());
+        return &m_metadata->valueProfilesEnd()[-static_cast<ptrdiff_t>(valueProfileOffsetFor(instruction->as<OpIteratorNext>(), bytecodeIndex.checkpoint()))];
 
     default:
         return nullptr;

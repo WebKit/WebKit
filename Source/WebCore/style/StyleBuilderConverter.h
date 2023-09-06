@@ -96,6 +96,7 @@ public:
     static LengthSize convertRadius(BuilderState&, const CSSValue&);
     static LengthPoint convertPosition(BuilderState&, const CSSValue&);
     static LengthPoint convertPositionOrAuto(BuilderState&, const CSSValue&);
+    static LengthPoint convertPositionOrAutoOrNormal(BuilderState&, const CSSValue&);
     static OptionSet<TextDecorationLine> convertTextDecorationLine(BuilderState&, const CSSValue&);
     static OptionSet<TextTransform> convertTextTransform(BuilderState&, const CSSValue&);
     template<typename T> static T convertNumber(BuilderState&, const CSSValue&);
@@ -477,6 +478,15 @@ inline LengthPoint BuilderConverter::convertPosition(BuilderState& builderState,
     Length lengthY = convertPositionComponent<CSSValueTop, CSSValueBottom>(builderState, value.second());
 
     return LengthPoint(lengthX, lengthY);
+}
+
+inline LengthPoint BuilderConverter::convertPositionOrAutoOrNormal(BuilderState& builderState, const CSSValue& value)
+{
+    if (value.isPair())
+        return convertPosition(builderState, value);
+    if (value.valueID() == CSSValueNormal)
+        return { { LengthType::Normal }, { LengthType::Normal } };
+    return { };
 }
 
 inline LengthPoint BuilderConverter::convertPositionOrAuto(BuilderState& builderState, const CSSValue& value)

@@ -38,11 +38,10 @@ struct WebExtensionContextParameters {
 
     URL baseURL;
     String uniqueIdentifier;
+    Ref<API::Data> localizationJSON;
     Ref<API::Data> manifestJSON;
     double manifestVersion;
     bool testingMode;
-
-    // FIXME: <https://webkit.org/b/246488> Add localized dictionary.
 };
 
 } // namespace WebKit

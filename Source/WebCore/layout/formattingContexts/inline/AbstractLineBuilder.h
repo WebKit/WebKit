@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "InlineContentBreaker.h"
 #include "LineLayoutResult.h"
 
 namespace WebCore {
@@ -43,6 +44,8 @@ public:
     void setIntrinsicWidthMode(IntrinsicWidthMode intrinsicWidthMode) { m_intrinsicWidthMode = intrinsicWidthMode; }
 
 protected:
+    std::optional<InlineLayoutUnit> eligibleOverflowWidthAsLeading(const InlineContentBreaker::ContinuousContent::RunList&, const InlineContentBreaker::Result&, bool) const;
+
     std::optional<IntrinsicWidthMode> intrinsicWidthMode() const { return m_intrinsicWidthMode; }
     bool isInIntrinsicWidthMode() const { return !!intrinsicWidthMode(); }
 

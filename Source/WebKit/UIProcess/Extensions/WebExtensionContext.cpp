@@ -57,12 +57,11 @@ WebExtensionContext::WebExtensionContext()
 
 WebExtensionContextParameters WebExtensionContext::parameters() const
 {
-    // FIXME: <https://webkit.org/b/246488> Send over localized dictionary to the WebProcess.
-
     return WebExtensionContextParameters {
         identifier(),
         baseURL(),
         uniqueIdentifier(),
+        extension().serializeLocalization(),
         extension().serializeManifest(),
         extension().manifestVersion(),
         inTestingMode()

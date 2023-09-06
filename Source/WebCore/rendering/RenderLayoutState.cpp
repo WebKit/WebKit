@@ -38,9 +38,9 @@
 
 namespace WebCore {
 
-RenderLayoutState::RenderLayoutState(RenderElement& renderer, IsPaginated isPaginated)
+RenderLayoutState::RenderLayoutState(RenderElement& renderer)
     : m_clipped(false)
-    , m_isPaginated(isPaginated == IsPaginated::Yes)
+    , m_isPaginated(false)
     , m_pageLogicalHeightChanged(false)
 #if ASSERT_ENABLED
     , m_layoutDeltaXSaturated(false)
@@ -334,18 +334,6 @@ SubtreeLayoutStateMaintainer::~SubtreeLayoutStateMaintainer()
         if (m_didDisablePaintOffsetCache)
             m_context->enablePaintOffsetCache();
     }
-}
-
-PaginatedLayoutStateMaintainer::PaginatedLayoutStateMaintainer(RenderBlockFlow& flow)
-    : m_context(flow.view().frameView().layoutContext())
-    , m_pushed(m_context.pushLayoutStateForPaginationIfNeeded(flow))
-{
-}
-
-PaginatedLayoutStateMaintainer::~PaginatedLayoutStateMaintainer()
-{
-    if (m_pushed)
-        m_context.popLayoutState();
 }
 
 } // namespace WebCore

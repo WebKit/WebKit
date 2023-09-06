@@ -1,0 +1,18 @@
+
+PASS Property mix-blend-mode value 'normal'
+PASS Property mix-blend-mode value 'multiply'
+PASS Property mix-blend-mode value 'screen'
+PASS Property mix-blend-mode value 'overlay'
+PASS Property mix-blend-mode value 'darken'
+PASS Property mix-blend-mode value 'lighten'
+PASS Property mix-blend-mode value 'color-dodge'
+PASS Property mix-blend-mode value 'color-burn'
+PASS Property mix-blend-mode value 'hard-light'
+PASS Property mix-blend-mode value 'soft-light'
+PASS Property mix-blend-mode value 'difference'
+PASS Property mix-blend-mode value 'exclusion'
+PASS Property mix-blend-mode value 'hue'
+PASS Property mix-blend-mode value 'saturation'
+PASS Property mix-blend-mode value 'color'
+PASS Property mix-blend-mode value 'luminosity'
+

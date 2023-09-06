@@ -289,7 +289,7 @@ void RenderLayerBacking::willDestroyLayer(const GraphicsLayer* layer)
         compositor().layerTiledBackingUsageChanged(layer, false);
 }
 
-static void clearBackingSharingLayerProviders(Vector<WeakPtr<RenderLayer>>& sharingLayers, const RenderLayer& providerLayer)
+static void clearBackingSharingLayerProviders(const Vector<WeakPtr<RenderLayer>>& sharingLayers, const RenderLayer& providerLayer)
 {
     for (auto& layerWeakPtr : sharingLayers) {
         if (!layerWeakPtr)
@@ -314,14 +314,14 @@ void RenderLayerBacking::setBackingSharingLayers(Vector<WeakPtr<RenderLayer>>&& 
 
     clearBackingSharingLayerProviders(m_backingSharingLayers, m_owningLayer);
 
-    if (sharingLayers != m_backingSharingLayers) {
+    ASSERT(sharingLayersChanged == (m_backingSharingLayers != sharingLayers));
+    if (sharingLayersChanged) {
         if (sharingLayers.size())
             setRequiresOwnBackingStore(true);
         setContentsNeedDisplay(); // This could be optimized to only repaint rects for changed layers.
     }
 
-    auto oldSharingLayers = WTFMove(m_backingSharingLayers);
-    m_backingSharingLayers = WTFMove(sharingLayers);
+    auto oldSharingLayers = std::exchange(m_backingSharingLayers, WTFMove(sharingLayers));
 
     for (auto& layerWeakPtr : m_backingSharingLayers)
         layerWeakPtr->setBackingProviderLayer(&m_owningLayer);

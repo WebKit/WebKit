@@ -2255,6 +2255,18 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 #endif
 }
 
+- (void)_updateDrawingAreaSize
+{
+    BOOL sizeChanged = NO;
+    if (_page) {
+        if (auto drawingArea = _page->drawingArea())
+            sizeChanged = drawingArea->setSize(WebCore::IntSize(self.bounds.size));
+    }
+
+    if (sizeChanged && [self usesStandardContentView])
+        [_contentView setSizeChangedSinceLastVisibleContentRectUpdate:YES];
+}
+
 - (void)_frameOrBoundsMayHaveChanged
 {
     CGRect bounds = self.bounds;
@@ -2276,14 +2288,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
             _page->setDefaultUnobscuredSize(WebCore::FloatSize(bounds.size));
         [self _recalculateViewportSizesWithMinimumViewportInset:_minimumViewportInset maximumViewportInset:_maximumViewportInset throwOnInvalidInput:NO];
 
-        BOOL sizeChanged = NO;
-        if (_page) {
-            if (auto drawingArea = _page->drawingArea())
-                sizeChanged = drawingArea->setSize(WebCore::IntSize(bounds.size));
-        }
-
-        if (sizeChanged & [self usesStandardContentView])
-            [_contentView setSizeChangedSinceLastVisibleContentRectUpdate:YES];
+        [self _updateDrawingAreaSize];
     }
 
     [_customContentView web_setMinimumSize:bounds.size];
@@ -2539,6 +2544,38 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
     return _perProcessState.liveResizeParameters || _perProcessState.dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing;
 }
 
+- (std::optional<WebKit::VisibleContentRectUpdateInfo>)_createVisibleContentRectUpdateInfo
+{
+    auto viewStability = _viewStabilityWhenVisibleContentRectUpdateScheduled;
+
+    CGRect visibleRectInContentCoordinates = [self _visibleContentRect];
+
+    UIEdgeInsets computedContentInsetUnadjustedForKeyboard = [self _computedObscuredInset];
+    if (!_haveSetObscuredInsets)
+        computedContentInsetUnadjustedForKeyboard.bottom -= _totalScrollViewBottomInsetAdjustmentForKeyboard;
+
+    CGFloat scaleFactor = contentZoomScale(self);
+    CGRect unobscuredRect = UIEdgeInsetsInsetRect(self.bounds, computedContentInsetUnadjustedForKeyboard);
+    WebCore::FloatRect unobscuredRectInContentCoordinates = WebCore::FloatRect(_perProcessState.frozenUnobscuredContentRect ? _perProcessState.frozenUnobscuredContentRect.value() : [self convertRect:unobscuredRect toView:_contentView.get()]);
+    if (![_contentView sizeChangedSinceLastVisibleContentRectUpdate])
+        unobscuredRectInContentCoordinates.intersect([self _contentBoundsExtendedForRubberbandingWithScale:scaleFactor]);
+
+    auto contentInsets = [self currentlyVisibleContentInsetsWithScale:scaleFactor obscuredInsets:computedContentInsetUnadjustedForKeyboard];
+
+    return [_contentView createVisibleContentRectUpdateInfoFromVisibleRect:visibleRectInContentCoordinates
+        unobscuredRect:unobscuredRectInContentCoordinates
+        contentInsets:contentInsets
+        unobscuredRectInScrollViewCoordinates:unobscuredRect
+        obscuredInsets:_obscuredInsets
+        unobscuredSafeAreaInsets:[self _computedUnobscuredSafeAreaInset]
+        inputViewBounds:_inputViewBoundsInWindow
+        scale:scaleFactor
+        minimumScale:[_scrollView minimumZoomScale]
+        viewStability:viewStability
+        enclosedInScrollableAncestorView:scrollViewCanScroll([self _scroller])
+        sendEvenIfUnchanged:_alwaysSendNextVisibleContentRectUpdate];
+}
+
 - (void)_updateVisibleContentRects
 {
     auto viewStability = _viewStabilityWhenVisibleContentRectUpdateScheduled;
@@ -2768,6 +2805,9 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
 {
     [self _scheduleVisibleContentRectUpdate];
 
+    // This should do at least all the things that had been skipped in `-[WKWebView _frameOrBoundsMayHaveChanged]`,
+    // since geometry updates were deferred then.
+
     CGRect newBounds = self.bounds;
     auto newViewLayoutSize = [self activeViewLayoutSize:newBounds];
     auto newMinimumUnobscuredSize = activeMinimumUnobscuredSize(self, newBounds);
@@ -2788,6 +2828,8 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
 
     if (!_perProcessState.lastSentDeviceOrientation || newOrientation != _perProcessState.lastSentDeviceOrientation.value())
         [self _dispatchSetDeviceOrientation:newOrientation];
+
+    [self _updateDrawingAreaSize];
 
     while (!_callbacksDeferredDuringResize.isEmpty())
         _callbacksDeferredDuringResize.takeLast()();

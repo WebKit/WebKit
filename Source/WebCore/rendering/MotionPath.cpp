@@ -46,6 +46,13 @@ static FloatRoundedRect containingBlockRectForRenderer(const RenderObject& rende
     return FloatRoundedRect(referenceRect);
 }
 
+static FloatPoint normalPositionForOffsetPath(PathOperation* operation, const FloatRect& referenceRect)
+{
+    if (is<RayPathOperation>(operation))
+        return referenceRect.center();
+    return { };
+}
+
 std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const RenderElement& renderer)
 {
     MotionPathData data;
@@ -54,7 +61,9 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
         return std::nullopt;
 
     auto startingPositionForOffsetPosition = [&](const LengthPoint& offsetPosition, const FloatRect& referenceRect, RenderBlock& container) -> FloatPoint {
-        // FIXME: Implement offset-position: normal.
+        // If offset-position is normal, the element does not have an offset starting position.
+        if (offsetPosition.x().isNormal())
+            return normalPositionForOffsetPath(pathOperation, referenceRect);
         // If offset-position is auto, use top / left corner of the box.
         if (offsetPosition.x().isAuto() && offsetPosition.y().isAuto())
             return offsetFromContainer(renderer, container, referenceRect);

@@ -52,6 +52,7 @@
     "web-platform-tests/credential-management": "import",
     "web-platform-tests/css": "skip",
     "web-platform-tests/css/WOFF2": "import",
+    "web-platform-tests/css/compositing": "import",
     "web-platform-tests/css/css-align": "import",
     "web-platform-tests/css/css-animations": "import",
     "web-platform-tests/css/css-backgrounds": "import",
