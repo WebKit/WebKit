@@ -119,6 +119,9 @@ void RemoteAudioSession::setPreferredBufferSize(size_t size)
 
 bool RemoteAudioSession::tryToSetActiveInternal(bool active)
 {
+    if (active && m_isInterruptedForTesting)
+        return false;
+
     auto sendResult = ensureConnection().sendSync(Messages::RemoteAudioSessionProxy::TryToSetActive(active), { });
     auto [succeeded] = sendResult.takeReplyOr(false);
     if (succeeded)
@@ -201,11 +204,16 @@ void RemoteAudioSession::endAudioSessionInterruption(MayResume mayResume)
 
 void RemoteAudioSession::beginInterruptionForTesting()
 {
+    m_isInterruptedForTesting = true;
     ensureConnection().send(Messages::RemoteAudioSessionProxy::TriggerBeginInterruptionForTesting(), { });
 }
 
 void RemoteAudioSession::endInterruptionForTesting()
 {
+    if (!m_isInterruptedForTesting)
+        return;
+
+    m_isInterruptedForTesting = false;
     ensureConnection().send(Messages::RemoteAudioSessionProxy::TriggerEndInterruptionForTesting(), { });
 }
 

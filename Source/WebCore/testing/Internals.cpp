@@ -672,6 +672,7 @@ void Internals::resetToConsistentState(Page& page)
 #if USE(AUDIO_SESSION)
     AudioSession::sharedSession().setCategoryOverride(AudioSessionCategory::None);
     AudioSession::sharedSession().tryToSetActive(false);
+    AudioSession::sharedSession().endInterruptionForTesting();
 #endif
 }
 
