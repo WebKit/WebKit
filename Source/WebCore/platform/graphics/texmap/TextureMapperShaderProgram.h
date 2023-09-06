@@ -51,9 +51,7 @@ namespace WebCore {
     macro(blurDirection) \
     macro(roundedRectNumber) \
     macro(roundedRect) \
-    macro(roundedRectInverseTransformMatrix) \
-    macro(textureCopyMatrix) \
-    macro(textureBlurMatrix)
+    macro(roundedRectInverseTransformMatrix)
 
 #define TEXMAP_SAMPLER_VARIABLES(macro)           \
     macro(sampler)                                \

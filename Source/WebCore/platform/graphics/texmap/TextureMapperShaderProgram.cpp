@@ -215,8 +215,6 @@ static const char* fragmentTemplateCommon =
         uniform int u_roundedRectNumber;
         uniform vec4 u_roundedRect[ROUNDED_RECT_ARRAY_SIZE];
         uniform mat4 u_roundedRectInverseTransformMatrix[ROUNDED_RECT_INVERSE_TRANSFORM_ARRAY_SIZE];
-        uniform mat4 u_textureCopyMatrix;
-        uniform mat4 u_textureBlurMatrix;
 
         void noop(inout vec4 dummyParameter) { }
         void noop(inout vec4 dummyParameter, vec2 texCoord) { }
@@ -348,27 +346,26 @@ static const char* fragmentTemplateCommon =
 
         void applyTextureCopy(inout vec4 color, vec2 texCoord)
         {
-            vec2 coord = clamp(texCoord, u_texelSize / 2., vec2(1., 1.) - u_texelSize / 2.);
-            coord = (u_textureCopyMatrix * vec4(coord, 0., 1.)).xy;
-            color = texture2D(s_sampler, coord);
-        }
+            vec2 min = (u_textureSpaceMatrix * vec4(0., 0., 0., 1.)).xy + u_texelSize / 2.;
+            vec2 max = (u_textureSpaceMatrix * vec4(1., 1., 0., 1.)).xy - u_texelSize / 2.;
 
-        vec4 sampleTextureClamp(sampler2D sampler, vec2 texCoord, vec2 offset, mat4 matrix)
-        {
-            vec2 coord = texCoord + offset;
-            coord = clamp(coord, u_texelSize / 2., vec2(1., 1.) - u_texelSize / 2.);
-            coord = (matrix * vec4(coord, 0., 1.)).xy;
-            return texture2D(sampler, coord);
+            vec2 coord = clamp(texCoord, min, max);
+
+            color = texture2D(s_sampler, coord);
         }
 
         void applyBlurFilter(inout vec4 color, vec2 texCoord)
         {
-            vec4 total = sampleTextureClamp(s_sampler, texCoord, vec2(0., 0.), u_textureBlurMatrix) * u_gaussianKernel[0];
+            vec2 step = u_blurDirection * u_texelSize;
+            vec2 min = (u_textureSpaceMatrix * vec4(0., 0., 0., 1.)).xy + u_texelSize / 2.;
+            vec2 max = (u_textureSpaceMatrix * vec4(1., 1., 0., 1.)).xy - u_texelSize / 2.;
+
+            vec4 total = texture2D(s_sampler, texCoord) * u_gaussianKernel[0];
 
             for (int i = 1; i < u_gaussianKernelHalfSize; i++) {
-                vec2 offset = u_blurDirection * u_texelSize * float(i);
-                total += sampleTextureClamp(s_sampler, texCoord, +offset, u_textureBlurMatrix) * u_gaussianKernel[i];
-                total += sampleTextureClamp(s_sampler, texCoord, -offset, u_textureBlurMatrix) * u_gaussianKernel[i];
+                vec2 offset = step * float(i);
+                total += texture2D(s_sampler, clamp(texCoord + offset, min, max)) * u_gaussianKernel[i];
+                total += texture2D(s_sampler, clamp(texCoord - offset, min, max)) * u_gaussianKernel[i];
             }
 
             color = total;
@@ -376,12 +373,16 @@ static const char* fragmentTemplateCommon =
 
         void applyAlphaBlur(inout vec4 color, vec2 texCoord)
         {
-            float total = sampleTextureClamp(s_sampler, texCoord, vec2(0., 0.), u_textureBlurMatrix).a * u_gaussianKernel[0];
+            vec2 step = u_blurDirection * u_texelSize;
+            vec2 min = (u_textureSpaceMatrix * vec4(0., 0., 0., 1.)).xy + u_texelSize / 2.;
+            vec2 max = (u_textureSpaceMatrix * vec4(1., 1., 0., 1.)).xy - u_texelSize / 2.;
+
+            float total = texture2D(s_sampler, texCoord).a * u_gaussianKernel[0];
 
             for (int i = 1; i < u_gaussianKernelHalfSize; i++) {
-                vec2 offset = u_blurDirection * u_texelSize * float(i);
-                total += sampleTextureClamp(s_sampler, texCoord, +offset, u_textureBlurMatrix).a * u_gaussianKernel[i];
-                total += sampleTextureClamp(s_sampler, texCoord, -offset, u_textureBlurMatrix).a * u_gaussianKernel[i];
+                vec2 offset = step * float(i);
+                total += texture2D(s_sampler, clamp(texCoord + offset, min, max)).a * u_gaussianKernel[i];
+                total += texture2D(s_sampler, clamp(texCoord - offset, min, max)).a * u_gaussianKernel[i];
             }
 
             color = vec4(0., 0., 0., total);
