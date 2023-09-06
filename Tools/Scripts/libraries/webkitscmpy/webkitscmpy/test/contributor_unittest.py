@@ -200,21 +200,18 @@ class TestContributor(unittest.TestCase):
 
     def test_github(self):
         mapping = Contributor.Mapping()
-        mapping.add(Contributor(
-            'Jonathan Bedard',
-            emails=['jbedard@apple.com'],
+        mapping.create(
+            'Jonathan Bedard', 'jbedard@apple.com',
             github='JonWBedard',
-        ))
-        mapping.add(Contributor(
-            'Jonathan Bedard',
-            emails=['jbedard@apple.com'],
+        )
+        mapping.create(
+            'Jonathan Bedard', 'jbedard@apple.com',
             github='JonWBedard',
-        ))
-        mapping.add(Contributor(
-            'Kocsen Chung',
-            emails=['kocsen_chung@apple.com'],
+        )
+        mapping.create(
+            'Kocsen Chung', 'kocsen_chung@apple.com',
             github='kocsenc',
-        ))
+        )
 
         self.assertEqual(mapping['JonWBedard'], mapping['jbedard@apple.com'])
         self.assertEqual(mapping['kocsenc'], mapping['kocsen_chung@apple.com'])
@@ -223,16 +220,14 @@ class TestContributor(unittest.TestCase):
 
     def test_bitbucket(self):
         mapping = Contributor.Mapping()
-        mapping.add(Contributor(
-            'Jonathan Bedard',
-            emails=['jbedard@apple.com'],
+        mapping.create(
+            'Jonathan Bedard', 'jbedard@apple.com',
             bitbucket='jonathan_bedard',
-        ))
-        mapping.add(Contributor(
-            'Kocsen Chung',
-            emails=['kocsen_chung@apple.com'],
+        )
+        mapping.create(
+            'Kocsen Chung', 'kocsen_chung@apple.com',
             bitbucket='kocsen_chung',
-        ))
+        )
 
         self.assertEqual(mapping['jonathan_bedard'], mapping['jbedard@apple.com'])
         self.assertEqual(mapping['kocsen_chung'], mapping['kocsen_chung@apple.com'])
