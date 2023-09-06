@@ -124,7 +124,7 @@ function checkSampling() {
     wtu.setupUnitQuad(gl);
 
     const drawProgram = wtu.setupProgram(gl, [wtu.simpleVertexShader,
-                                          wtu.simpleColorFragmentShader]);
+                                              wtu.simpleColorFragmentShader]);
 
     const readDepthProgram = wtu.setupProgram(gl, [wtu.simpleTextureVertexShaderESSL300,
                                                    wtu.simpleTextureFragmentShaderESSL300]);
@@ -227,7 +227,16 @@ function checkSampling() {
                                 if (validFilters(gl[magFilter], gl[minFilter])) {
                                     wtu.checkCanvasRect(gl, 0, 0, 1, 1, [170, 0, 0, 1], "sampling stencil from complete texture", 1);
                                 } else {
-                                    wtu.checkCanvasRect(gl, 0, 0, 1, 1, [0, 0, 0, 255], "sampling stencil from incomplete texture", 1);
+                                    // Incomplete textures may produce [0, 0, 0, 1] or [0, 0, 0, 255].
+                                    const value = new Uint8Array(4);
+                                    gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, value);
+                                    wtu.glErrorShouldBe(gl, gl.NO_ERROR);
+                                    const msg = "sampling stencil from incomplete texture";
+                                    if (value[0] == 0 && value[1] == 0 && value[2] == 0 && (value[3] == 1 || value[3] == 255)) {
+                                        testPassed(msg);
+                                    } else {
+                                        testFailed(`${msg}: ${value}`);
+                                    }
                                 }
                             } else {
                                 wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "sampling stencil using incompatible program");
