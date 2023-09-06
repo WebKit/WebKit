@@ -938,7 +938,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer()
     if (m_mediaSourcePrivate)
         m_mediaSourcePrivate->setVideoLayer(m_sampleBufferDisplayLayer.get());
     if (player) {
-        m_videoLayerManager->setVideoLayer(m_sampleBufferDisplayLayer.get(), player->videoInlineSize());
+        m_videoLayerManager->setVideoLayer(m_sampleBufferDisplayLayer.get(), player->presentationSize());
         player->renderingModeChanged();
     }
 }

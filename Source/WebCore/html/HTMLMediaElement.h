@@ -644,7 +644,6 @@ public:
     WEBCORE_EXPORT LayerHostingContextID layerHostingContextID();
     WEBCORE_EXPORT WebCore::FloatSize naturalSize();
 
-    FloatSize mediaPlayerVideoInlineSize() const override { return videoInlineSize(); }
     WEBCORE_EXPORT WebCore::FloatSize videoInlineSize() const;
     void setVideoInlineSizeFenced(const FloatSize&, const WTF::MachSendRight&);
     void updateMediaState();
@@ -823,6 +822,9 @@ private:
     bool mediaPlayerPrefersSandboxedParsing() const final;
 
     bool mediaPlayerShouldDisableHDR() const final { return shouldDisableHDR(); }
+
+    FloatSize mediaPlayerVideoInlineSize() const final { return videoInlineSize(); }
+    void mediaPlayerVideoInlineSizeDidChange(const FloatSize& size) final { m_videoInlineSize = size; }
 
     void pendingActionTimerFired();
     void progressEventTimerFired();

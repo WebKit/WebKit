@@ -318,6 +318,7 @@ public:
     virtual bool mediaPlayerShouldDisableHDR() const { return false; }
 
     virtual FloatSize mediaPlayerVideoInlineSize() const { return { }; }
+    virtual void mediaPlayerVideoInlineSizeDidChange(const FloatSize&) { }
 
 #if !RELEASE_LOG_DISABLED
     virtual const void* mediaPlayerLogIdentifier() { return nullptr; }
@@ -373,6 +374,7 @@ public:
     void requestHostingContextID(LayerHostingContextIDCallback&&);
     LayerHostingContextID hostingContextID() const;
     FloatSize videoInlineSize() const;
+    void videoInlineSizeDidChange(const FloatSize&);
     void setVideoInlineSizeFenced(const FloatSize&, const WTF::MachSendRight&);
 
 #if PLATFORM(IOS_FAMILY)
