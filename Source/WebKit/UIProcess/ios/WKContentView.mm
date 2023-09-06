@@ -555,9 +555,9 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
         floatBoxExtent(unobscuredSafeAreaInsets),
         zoomScale,
         viewStability,
-        _sizeChangedSinceLastVisibleContentRectUpdate,
-        self.webView._allowsViewportShrinkToFit,
-        enclosedInScrollableAncestorView,
+        !!_sizeChangedSinceLastVisibleContentRectUpdate,
+        !!self.webView._allowsViewportShrinkToFit,
+        !!enclosedInScrollableAncestorView,
         velocityData,
         downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea).lastCommittedLayerTreeTransactionID()
     };
