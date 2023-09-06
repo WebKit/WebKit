@@ -338,7 +338,8 @@ void RenderLayerBacking::setBackingSharingLayers(Vector<WeakPtr<RenderLayer>>&& 
 void RenderLayerBacking::removeBackingSharingLayer(RenderLayer& layer)
 {
     layer.setBackingProviderLayer(nullptr);
-    m_backingSharingLayers.removeAll(&layer);
+    m_backingSharingLayers.removeFirst(&layer);
+    ASSERT(!m_backingSharingLayers.contains(&layer));
 }
 
 void RenderLayerBacking::clearBackingSharingLayers()
