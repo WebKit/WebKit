@@ -531,15 +531,15 @@ static inline webrtc::VideoCodecType toWebRTCCodecType(VideoCodecType type)
 
 LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoder(VideoCodecType type, const std::map<std::string, std::string>& parameters)
 {
-    return createEncoderInternal(type, parameters, true, true, [](auto*) { });
+    return createEncoderInternal(type, { }, parameters, true, true, [](auto*) { });
 }
 
-void LibWebRTCCodecs::createEncoderAndWaitUntilReady(VideoCodecType type, const std::map<std::string, std::string>& parameters, bool isRealtime, bool useAnnexB, Function<void(Encoder*)>&& callback)
+void LibWebRTCCodecs::createEncoderAndWaitUntilReady(VideoCodecType type, const String& codec, const std::map<std::string, std::string>& parameters, bool isRealtime, bool useAnnexB, Function<void(Encoder*)>&& callback)
 {
-    createEncoderInternal(type, parameters, isRealtime, useAnnexB, WTFMove(callback));
+    createEncoderInternal(type, codec, parameters, isRealtime, useAnnexB, WTFMove(callback));
 }
 
-LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoderInternal(VideoCodecType type, const std::map<std::string, std::string>& formatParameters, bool isRealtime, bool useAnnexB, Function<void(Encoder*)>&& callback)
+LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoderInternal(VideoCodecType type, const String& codec, const std::map<std::string, std::string>& formatParameters, bool isRealtime, bool useAnnexB, Function<void(Encoder*)>&& callback)
 {
     auto encoder = makeUnique<Encoder>();
     auto* result = encoder.get();
@@ -547,6 +547,7 @@ LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoderInternal(VideoCodecType 
     encoder->type = type;
     encoder->useAnnexB = useAnnexB;
     encoder->isRealtime = isRealtime;
+    encoder->codec = codec.isolatedCopy();
 
     auto parameters = WTF::map(formatParameters, [](auto& entry) {
         return std::pair { String::fromUTF8(entry.first.data(), entry.first.length()), String::fromUTF8(entry.second.data(), entry.second.length()) };
@@ -562,7 +563,7 @@ LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoderInternal(VideoCodecType 
 
         {
             Locker locker { m_encodersConnectionLock };
-            connection->sendWithAsyncReply(Messages::LibWebRTCCodecsProxy::CreateEncoder { encoder->identifier, encoder->type, parameters, encoder->isRealtime, encoder->useAnnexB }, [identifier = encoder->identifier, callback = WTFMove(callback)](bool result) mutable {
+            connection->sendWithAsyncReply(Messages::LibWebRTCCodecsProxy::CreateEncoder { encoder->identifier, encoder->type, encoder->codec, parameters, encoder->isRealtime, encoder->useAnnexB }, [identifier = encoder->identifier, callback = WTFMove(callback)](bool result) mutable {
                 WebProcess::singleton().libWebRTCCodecs().m_queue->dispatch([identifier, result, callback = WTFMove(callback)]() mutable {
                     if (!result) {
                         callback(nullptr);
@@ -822,7 +823,7 @@ void LibWebRTCCodecs::gpuProcessConnectionDidClose(GPUProcessConnection&)
 
         Locker locker { m_encodersConnectionLock };
         for (auto& encoder : m_encoders.values()) {
-            connection->send(Messages::LibWebRTCCodecsProxy::CreateEncoder { encoder->identifier, encoder->type, encoder->parameters, encoder->isRealtime, encoder->useAnnexB }, 0);
+            connection->send(Messages::LibWebRTCCodecsProxy::CreateEncoder { encoder->identifier, encoder->type, encoder->codec, encoder->parameters, encoder->isRealtime, encoder->useAnnexB }, 0);
             if (encoder->initializationData)
                 connection->send(Messages::LibWebRTCCodecsProxy::InitializeEncoder { encoder->identifier, encoder->initializationData->width, encoder->initializationData->height, encoder->initializationData->startBitRate, encoder->initializationData->maxBitRate, encoder->initializationData->minBitRate, encoder->initializationData->maxFrameRate }, 0);
             setEncoderConnection(*encoder, connection.get());

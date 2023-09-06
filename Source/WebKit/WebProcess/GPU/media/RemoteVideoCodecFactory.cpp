@@ -177,7 +177,7 @@ void RemoteVideoCodecFactory::createEncoder(const String& codec, const WebCore::
         }
     }
 
-    WebProcess::singleton().libWebRTCCodecs().createEncoderAndWaitUntilReady(*type, parameters, config.isRealtime, config.useAnnexB, [config, createCallback = WTFMove(createCallback), descriptionCallback = WTFMove(descriptionCallback), outputCallback = WTFMove(outputCallback), postTaskCallback = WTFMove(postTaskCallback)](auto* internalEncoder) mutable {
+    WebProcess::singleton().libWebRTCCodecs().createEncoderAndWaitUntilReady(*type, codec, parameters, config.isRealtime, config.useAnnexB, [config, createCallback = WTFMove(createCallback), descriptionCallback = WTFMove(descriptionCallback), outputCallback = WTFMove(outputCallback), postTaskCallback = WTFMove(postTaskCallback)](auto* internalEncoder) mutable {
         if (!internalEncoder) {
             postTaskCallback([createCallback = WTFMove(createCallback)]() mutable {
                 createCallback(makeUnexpected("Encoder creation failed"_s));
