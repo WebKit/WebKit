@@ -60,7 +60,8 @@ void FrameLoadState::didSuspend()
 
 void FrameLoadState::didExplicitOpen(const URL& url)
 {
-    m_url = url;
+    ASSERT(!url.isNull());
+    m_url = url.isNull() ? aboutBlankURL() : url;
     m_provisionalURL = { };
 }
 
@@ -85,7 +86,8 @@ void FrameLoadState::didCommitLoad()
     ASSERT(m_state == State::Provisional);
 
     m_state = State::Committed;
-    m_url = m_provisionalURL;
+    ASSERT(!m_provisionalURL.isNull());
+    m_url = m_provisionalURL.isNull() ? aboutBlankURL() : m_provisionalURL;
     m_provisionalURL = { };
 }
 
@@ -110,7 +112,8 @@ void FrameLoadState::didFailLoad()
 
 void FrameLoadState::didSameDocumentNotification(const URL& url)
 {
-    m_url = url;
+    ASSERT(!url.isNull());
+    m_url = url.isNull() ? aboutBlankURL() : url;
 }
 
 void FrameLoadState::setUnreachableURL(const URL& unreachableURL)
