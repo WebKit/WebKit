@@ -1156,14 +1156,6 @@ JSC_DEFINE_JIT_OPERATION(operationArraySpliceExtract, EncodedJSValue, (JSGlobalO
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     uint64_t length = base->length();
-    if (!length) {
-        scope.release();
-        setLength(globalObject, vm, base, length);
-        constexpr bool throwException = true;
-        base->setLength(globalObject, 0, throwException);
-        return JSValue::encode(jsUndefined());
-    }
-
     uint64_t actualStart = 0;
     int64_t startInt64 = start;
     if (startInt64 < 0) {
@@ -1183,7 +1175,7 @@ JSC_DEFINE_JIT_OPERATION(operationArraySpliceExtract, EncodedJSValue, (JSGlobalO
     std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(globalObject, base, actualDeleteCount);
     EXCEPTION_ASSERT(!!scope.exception() == (speciesResult.first == SpeciesConstructResult::Exception));
     if (speciesResult.first == SpeciesConstructResult::Exception)
-        return JSValue::encode(jsUndefined());
+        return { };
 
     JSValue result;
     if (LIKELY(speciesResult.first == SpeciesConstructResult::FastPath)) {
