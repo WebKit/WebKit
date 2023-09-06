@@ -24,7 +24,9 @@
 #include "../../Configurations/FeatureDefines.xcconfig"
 #include "../../../../Configurations/Version.xcconfig"
 
-GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) $(inherited);
+WEBGPU_PREPROCESSOR_DEFINITIONS = WGPU_NULLABLE=_Nullable WGPU_NONNULL=_Nonnull WGPU_ASSUME_NONNULL_BEGIN="_Pragma(\"clang assume_nonnull begin\")" WGPU_ASSUME_NONNULL_END="_Pragma(\"clang assume_nonnull end\")";
+
+GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) $(WEBGPU_PREPROCESSOR_DEFINITIONS) $(inherited);
 
 FRAMEWORK_SEARCH_PATHS[sdk=iphone*] = $(FRAMEWORK_SEARCH_PATHS_ios_$(CONFIGURATION));
 FRAMEWORK_SEARCH_PATHS_ios_Debug = $(BUILT_PRODUCTS_DIR);
