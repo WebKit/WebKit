@@ -2096,9 +2096,6 @@ imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.
 # rdar://99153669 ([ iOS macOS ] 4X imported/w3c/web-platform-tests/html/cross-origin-opener-policy/(Layout tests) are flaky failures (244358))
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-unsafe-none.https.html [ Pass Crash ]
 
-# rdar://105130453 ([ New Test ] (259654@main): [ Sonoma wk2 ] fast/images/mac/play-pause-individual-animation-context-menu-items.html is a consistent failure)
-fast/images/mac/play-pause-individual-animation-context-menu-items.html [ Failure ]
-
 # Failing after OS migration rdar://112624778 (Migrate macOS Sonoma test expectations to OpenSource, add expectation files to Down-Levels (259373))
 compositing/backing/inline-block-no-backing.html [ Pass Failure ]
 compositing/backing/whitespace-nodes-no-backing.html [ Pass Failure ]
@@ -2114,3 +2111,5 @@ webkit.org/b/261041 accessibility/mac/basic-embed-pdf-accessibility.html [ Failu
 webkit.org/b/227761 imported/w3c/web-platform-tests/beacon/beacon-cors.https.window.html [ Pass Failure ]
 
 webkit.org/b/261215 webrtc/vp8-then-h264-gpu-process-crash.html [ Pass Timeout Failure ]
+
+webkit.org/b/261226 fast/images/mac/play-pause-individual-animation-context-menu-items.html [ Timeout ]
