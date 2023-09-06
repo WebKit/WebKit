@@ -137,7 +137,7 @@ class ConfigTest(unittest.TestCase):
         expected = 'Debug'
 
         args = [sys.executable, script, '--mock', expected]
-        actual = e.run_command(args).rstrip()
+        actual = e.run_command(args, return_stderr=False).rstrip()
         self.assertEqual(actual, expected)
 
     def test_default_configuration__no_perl(self):
