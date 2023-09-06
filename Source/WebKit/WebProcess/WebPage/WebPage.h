@@ -1169,11 +1169,6 @@ public:
     void handleAlternativeTextUIResult(const String&);
 #endif
 
-    // For testing purpose.
-    void simulateMouseDown(int button, WebCore::IntPoint, int clickCount, WKEventModifiers, WallTime);
-    void simulateMouseUp(int button, WebCore::IntPoint, int clickCount, WKEventModifiers, WallTime);
-    void simulateMouseMotion(WebCore::IntPoint, WallTime);
-
 #if ENABLE(CONTEXT_MENUS)
     void startWaitingForContextMenuToShow() { m_waitingForContextMenuToShow = true; }
 #endif
