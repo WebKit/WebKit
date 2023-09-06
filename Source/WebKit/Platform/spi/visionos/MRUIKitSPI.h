@@ -31,7 +31,7 @@
 
 #import <MRUIKit/MRUIStage.h>
 #import <MRUIKit/UIApplication+MRUIKit.h>
-#import <MRUIKit/UIWindowScene+MRUIKit.h>
+#import <MRUIKit/UIWindowScene+MRUIKit_Private.h>
 
 #else
 
@@ -83,6 +83,9 @@ typedef void (^MRUIWindowSceneResizeRequestCompletion)(CGSize grantedSize, NSErr
 @property (nonatomic, readonly) MRUIWindowScenePlacement *mrui_placement;
 
 @end
+
+extern NSNotificationName const _MRUIWindowSceneDidBeginRepositioningNotification;
+extern NSNotificationName const _MRUIWindowSceneDidEndRepositioningNotification;
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
