@@ -129,6 +129,10 @@ void ScrollingStateStickyNode::reconcileLayerPositionForViewportRect(const Layou
     FloatPoint position = computeLayerPosition(viewportRect);
     if (layer().representsGraphicsLayer()) {
         auto* graphicsLayer = static_cast<GraphicsLayer*>(layer());
+        ASSERT(graphicsLayer);
+        // Crash data suggest that graphicsLayer can be null: rdar://106547410.
+        if (!graphicsLayer)
+            return;
 
         LOG_WITH_STREAM(Compositing, stream << "ScrollingStateStickyNode " << scrollingNodeID() << " reconcileLayerPositionForViewportRect " << action << " position of layer " << graphicsLayer->primaryLayerID() << " to " << position << " sticky offset " << m_constraints.stickyOffsetAtLastLayout());
         
