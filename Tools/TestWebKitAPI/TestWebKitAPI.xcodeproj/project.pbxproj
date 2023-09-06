@@ -941,6 +941,7 @@
 		AD7C434D1DD2A54E0026888B /* Expected.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD7C434C1DD2A5470026888B /* Expected.cpp */; };
 		B55AD1D5179F3B3000AC1494 /* PreventImageLoadWithAutoResizing_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B55AD1D3179F3ABF00AC1494 /* PreventImageLoadWithAutoResizing_Bundle.cpp */; };
 		B55F11B71517D03300915916 /* attributedStringCustomFont.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = B55F11B01517A2C400915916 /* attributedStringCustomFont.html */; };
+		B68735A32AA78E620006FB3A /* WKWebExtensionAPILocalization.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6D1708E2A9F9C9F004C72E6 /* WKWebExtensionAPILocalization.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		BC22D31914DC68B900FFB1DD /* UserMessage_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC22D31714DC68B800FFB1DD /* UserMessage_Bundle.cpp */; };
 		BC246D9C132F1FF000B56D7C /* CanHandleRequest_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC246D97132F1FE100B56D7C /* CanHandleRequest_Bundle.cpp */; };
 		BC2D006412AA04CE00E732A3 /* file-with-anchor.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = BC2D004A12A9FEB300E732A3 /* file-with-anchor.html */; };
@@ -3115,6 +3116,7 @@
 		B61EB1642994734A0048DFC0 /* WKWebExtensionAPIPermissions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPIPermissions.mm; sourceTree = "<group>"; };
 		B63EF53E2995797F00A190A3 /* TestWebExtensionsDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TestWebExtensionsDelegate.h; path = cocoa/TestWebExtensionsDelegate.h; sourceTree = "<group>"; };
 		B63EF5462995797F00A190A3 /* TestWebExtensionsDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = TestWebExtensionsDelegate.mm; path = cocoa/TestWebExtensionsDelegate.mm; sourceTree = "<group>"; };
+		B6D1708E2A9F9C9F004C72E6 /* WKWebExtensionAPILocalization.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPILocalization.mm; sourceTree = "<group>"; };
 		B6E1E1E02942B0DD00F314D2 /* WKWebExtensionAPIEvent.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPIEvent.mm; sourceTree = "<group>"; };
 		BC029B161486AD6400817DA9 /* RetainPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RetainPtr.cpp; sourceTree = "<group>"; };
 		BC029B1B1486B25900817DA9 /* RetainPtr.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RetainPtr.mm; path = ns/RetainPtr.mm; sourceTree = "<group>"; };
@@ -4206,6 +4208,7 @@
 				1C2B4D4C2A81F42800C528A1 /* WKWebExtensionAPIAlarms.mm */,
 				B6E1E1E02942B0DD00F314D2 /* WKWebExtensionAPIEvent.mm */,
 				1C1549A2292ADB64001B9E5B /* WKWebExtensionAPIExtension.mm */,
+				B6D1708E2A9F9C9F004C72E6 /* WKWebExtensionAPILocalization.mm */,
 				330E135E2943C92000367438 /* WKWebExtensionAPINamespace.mm */,
 				B61EB1642994734A0048DFC0 /* WKWebExtensionAPIPermissions.mm */,
 				1C1549852926F4CA001B9E5B /* WKWebExtensionAPIRuntime.mm */,
@@ -6753,6 +6756,7 @@
 				7CCE7F221A411AE600447C4C /* WKString.cpp in Sources */,
 				7CCE7F1E1A411AE600447C4C /* WKStringJSString.cpp in Sources */,
 				2D4CF8BD1D8360CC0001CE8D /* WKThumbnailView.mm in Sources */,
+				B68735A32AA78E620006FB3A /* WKWebExtensionAPILocalization.mm in Sources */,
 				514958BE1F7427AC00E87BAD /* WKWebViewAutofillTests.mm in Sources */,
 				F425831624F07CA5006B985D /* WKWebViewCoders.mm in Sources */,
 				F4FA91811E61849B007B8C1D /* WKWebViewMacEditingTests.mm in Sources */,

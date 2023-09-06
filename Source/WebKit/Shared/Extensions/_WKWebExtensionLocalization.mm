@@ -32,16 +32,18 @@
 
 #import "CocoaHelpers.h"
 #import "Logging.h"
+#import "WebExtension.h"
+#import <WebKit/_WKWebExtensionInternal.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIKit.h>
 #endif
 
-NSString * const _WKLocalizationDictionaryMessageKey = @"message";
-NSString * const _WKLocalizationDictionaryDescriptionKey = @"description";
-NSString * const _WKLocalizationDictionaryPlaceholdersKey = @"placeholders";
+static NSString * const messageKey = @"message";
+static NSString * const pathToJSONFile = @"_locales/%@/messages.json";
+static NSString * const placeholdersKey = @"placeholders";
+static NSString * const placeholderDictionaryContentKey = @"content";
 
-static NSString * const localizationDictionaryJSONPathFormat = @"_locales/%@/messages.json";
 static NSString * const predefinedMessageUILocale = @"@@ui_locale";
 static NSString * const predefinedMessageLanguageDirection = @"@@bidi_dir";
 static NSString * const predefinedMessageLanguageDirectionReversed = @"@@bidi_reversed_dir";
@@ -54,7 +56,6 @@ static NSString * const predefinedMessageValueRightToLeft = @"rtl";
 static NSString * const predefinedMessageValueTextEdgeLeft = @"left";
 static NSString * const predefinedMessageValueTextEdgeRight = @"right";
 
-static NSString * const placeholderDictionaryContentKey = @"content";
 
 // NSCoding keys
 static NSString * const localizationDictionaryCodingKey = @"localizationDictionary";
@@ -69,24 +70,8 @@ using namespace WebKit;
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-static LocalizationDictionary *localizationDictionaryAtURL(NSURL *dictionaryFileURL)
-{
-    NSData *dictionaryData = [NSData dataWithContentsOfURL:dictionaryFileURL];
-    if (!dictionaryData)
-        return nil;
-
-    NSError *jsonParsingError;
-    LocalizationDictionary *localizationDictionary = dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:dictionaryData options:0 error:&jsonParsingError]);
-
-    if (!localizationDictionary)
-        RELEASE_LOG_ERROR(Extensions , "Could not parse localization dictionary: %{public}@", privacyPreservingDescription(jsonParsingError));
-
-    return localizationDictionary;
-}
-
 @interface _WKWebExtensionLocalization ()
 {
-    LocalizationDictionary *_localizationDictionary;
     NSString *_localeString;
     NSLocale *_locale;
     NSString *_uniqueIdentifier;
@@ -104,11 +89,13 @@ static LocalizationDictionary *localizationDictionaryAtURL(NSURL *dictionaryFile
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-- (instancetype)initWithBundleURL:(NSURL *)bundleURL defaultLocale:(NSString *)defaultLocaleString uniqueIdentifier:(NSString *)uniqueIdentifier
+- (instancetype)initWithWebExtension:(WebExtension&)webExtension
 {
+    NSString *defaultLocaleString = webExtension.defaultLocale().localeIdentifier;
+
     if (!defaultLocaleString.length) {
-        RELEASE_LOG(Extensions, "Not loading localization for extension bundle at URL %{private}@. No default locale provided.", bundleURL);
-        return [self initWithRegionalLocalization:nil languageLocalization:nil defaultLocalization:nil withBestLocale:nil uniqueIdentifier:uniqueIdentifier];
+        RELEASE_LOG_INFO(Extensions, "Not loading localization for extension %{private}@. No default locale provided.", webExtension.displayName());
+        return [self initWithRegionalLocalization:nil languageLocalization:nil defaultLocalization:nil withBestLocale:nil uniqueIdentifier:nil];
     }
 
     NSLocale *currentLocale = NSLocale.autoupdatingCurrentLocale;
@@ -116,31 +103,21 @@ static LocalizationDictionary *localizationDictionaryAtURL(NSURL *dictionaryFile
     NSString *countryCode = currentLocale.countryCode;
 
     NSString *regionalLocaleString = [NSString stringWithFormat:@"%@_%@", languageCode, countryCode];
-    NSURL *defaultLocaleDictionaryURL = [bundleURL URLByAppendingPathComponent:[NSString stringWithFormat:localizationDictionaryJSONPathFormat, defaultLocaleString]];
-    NSURL *languageDictionaryURL = [bundleURL URLByAppendingPathComponent:[NSString stringWithFormat:localizationDictionaryJSONPathFormat, languageCode]];
-    NSURL *regionalDictionaryURL = [bundleURL URLByAppendingPathComponent:[NSString stringWithFormat:localizationDictionaryJSONPathFormat, regionalLocaleString]];
-
     NSString *bestLocaleString;
 
-    LocalizationDictionary *defaultLocaleDictionary = localizationDictionaryAtURL(defaultLocaleDictionaryURL);
+    LocalizationDictionary *defaultLocaleDictionary = [self _localizationDictionaryForWebExtension:webExtension withLocale:defaultLocaleString];
     if (defaultLocaleDictionary)
         bestLocaleString = defaultLocaleString;
-    else
-        RELEASE_LOG_DEBUG(Extensions, "Could not find localization for %{public}@ for extension bundle at URL %{private}@", defaultLocaleString, bundleURL);
 
-    LocalizationDictionary *languageDictionary = localizationDictionaryAtURL(languageDictionaryURL);
+    LocalizationDictionary *languageDictionary = [self _localizationDictionaryForWebExtension:webExtension withLocale:languageCode];
     if (languageDictionary)
         bestLocaleString = languageCode;
-    else
-        RELEASE_LOG_DEBUG(Extensions, "Could not find localization for %{public}@ for extension bundle at URL %{private}@", languageCode, bundleURL);
 
-    LocalizationDictionary *regionalDictionary = localizationDictionaryAtURL(regionalDictionaryURL);
+    LocalizationDictionary *regionalDictionary = [self _localizationDictionaryForWebExtension:webExtension withLocale:regionalLocaleString];
     if (regionalDictionary)
         bestLocaleString = defaultLocaleString;
-    else
-        RELEASE_LOG_DEBUG(Extensions, "Could not find localization for %{public}@ for extension bundle at URL %{private}@", regionalLocaleString, bundleURL);
 
-    return [self initWithRegionalLocalization:regionalDictionary languageLocalization:languageDictionary defaultLocalization:defaultLocaleDictionary withBestLocale:bestLocaleString uniqueIdentifier:uniqueIdentifier];
+    return [self initWithRegionalLocalization:regionalDictionary languageLocalization:languageDictionary defaultLocalization:defaultLocaleDictionary withBestLocale:bestLocaleString uniqueIdentifier:nil];
 }
 
 - (instancetype)initWithRegionalLocalization:(LocalizationDictionary *)regionalLocalization languageLocalization:(LocalizationDictionary *)languageLocalization defaultLocalization:(LocalizationDictionary *)defaultLocalization withBestLocale:(NSString *)localeString uniqueIdentifier:(NSString *)uniqueIdentifier
@@ -150,12 +127,11 @@ static LocalizationDictionary *localizationDictionaryAtURL(NSURL *dictionaryFile
 
     _locale = [NSLocale localeWithLocaleIdentifier:localeString];
     _localeString = localeString;
-    if (_uniqueIdentifier)
-        _uniqueIdentifier = uniqueIdentifier;
+    _uniqueIdentifier = uniqueIdentifier;
 
     LocalizationDictionary *localizationDictionary = [self _predefinedMessagesForLocale:_locale];
     localizationDictionary = dictionaryWithLowercaseKeys(localizationDictionary);
-    localizationDictionary = mergeDictionaries(languageLocalization, localizationDictionary);
+    localizationDictionary = mergeDictionaries(localizationDictionary, dictionaryWithLowercaseKeys(regionalLocalization));
     localizationDictionary = mergeDictionaries(localizationDictionary, dictionaryWithLowercaseKeys(languageLocalization));
     localizationDictionary = mergeDictionaries(localizationDictionary, dictionaryWithLowercaseKeys(defaultLocalization));
 
@@ -192,11 +168,11 @@ static LocalizationDictionary *localizationDictionaryAtURL(NSURL *dictionaryFile
 
     LocalizationDictionary *stringDictionary = objectForKey<NSDictionary>(_localizationDictionary, key.lowercaseString);
 
-    NSString *localizedString = objectForKey<NSString>(stringDictionary, _WKLocalizationDictionaryMessageKey);
+    NSString *localizedString = objectForKey<NSString>(stringDictionary, messageKey);
     if (!localizedString.length)
         return @"";
 
-    PlaceholderDictionary *namedPlaceholders = dictionaryWithLowercaseKeys(objectForKey<NSDictionary>(stringDictionary, _WKLocalizationDictionaryPlaceholdersKey));
+    PlaceholderDictionary *namedPlaceholders = dictionaryWithLowercaseKeys(objectForKey<NSDictionary>(stringDictionary, placeholdersKey));
 
     localizedString = [self _stringByReplacingNamedPlaceholdersInString:localizedString withNamedPlaceholders:namedPlaceholders];
     localizedString = [self _stringByReplacingPositionalPlaceholdersInString:localizedString withValues:placeholders];
@@ -241,29 +217,39 @@ static LocalizationDictionary *localizationDictionaryAtURL(NSURL *dictionaryFile
     return localizedString;
 }
 
+- (LocalizationDictionary *)_localizationDictionaryForWebExtension:(WebExtension&)webExtension withLocale:(NSString *)locale
+{
+    NSString *path = [NSString stringWithFormat:pathToJSONFile, locale];
+    NSData *data = [NSData dataWithData:webExtension.resourceDataForPath(path)];
+    if (!data)
+        return nil;
+
+    return [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];;
+}
+
 - (LocalizationDictionary *)_predefinedMessagesForLocale:(NSLocale *)locale
 {
     NSDictionary *predefindedMessage;
     if ([NSParagraphStyle defaultWritingDirectionForLanguage:_locale.languageCode] == NSWritingDirectionLeftToRight) {
         predefindedMessage = @{
-            predefinedMessageUILocale: @{ _WKLocalizationDictionaryMessageKey: _localeString ?: @"" },
-            predefinedMessageLanguageDirection: @{ _WKLocalizationDictionaryMessageKey: predefinedMessageValueLeftToRight },
-            predefinedMessageLanguageDirectionReversed: @{ _WKLocalizationDictionaryMessageKey: predefinedMessageValueRightToLeft },
-            predefinedMessageTextLeadingEdge: @{ _WKLocalizationDictionaryMessageKey: predefinedMessageValueTextEdgeLeft },
-            predefinedMessageTextTrailingEdge: @{ _WKLocalizationDictionaryMessageKey: predefinedMessageValueTextEdgeRight },
+            predefinedMessageUILocale: @{ messageKey: _localeString ?: @"" },
+            predefinedMessageLanguageDirection: @{ messageKey: predefinedMessageValueLeftToRight },
+            predefinedMessageLanguageDirectionReversed: @{ messageKey: predefinedMessageValueRightToLeft },
+            predefinedMessageTextLeadingEdge: @{ messageKey: predefinedMessageValueTextEdgeLeft },
+            predefinedMessageTextTrailingEdge: @{ messageKey: predefinedMessageValueTextEdgeRight },
         };
     } else {
         predefindedMessage = @{
-            predefinedMessageUILocale: @{ _WKLocalizationDictionaryMessageKey: _localeString ?: @"" },
-            predefinedMessageLanguageDirection: @{ _WKLocalizationDictionaryMessageKey: predefinedMessageValueRightToLeft },
-            predefinedMessageLanguageDirectionReversed: @{ _WKLocalizationDictionaryMessageKey: predefinedMessageValueLeftToRight },
-            predefinedMessageTextLeadingEdge: @{ _WKLocalizationDictionaryMessageKey: predefinedMessageValueTextEdgeRight },
-            predefinedMessageTextTrailingEdge: @{ _WKLocalizationDictionaryMessageKey: predefinedMessageValueTextEdgeLeft },
+            predefinedMessageUILocale: @{ messageKey: _localeString ?: @"" },
+            predefinedMessageLanguageDirection: @{ messageKey: predefinedMessageValueRightToLeft },
+            predefinedMessageLanguageDirectionReversed: @{ messageKey: predefinedMessageValueLeftToRight },
+            predefinedMessageTextLeadingEdge: @{ messageKey: predefinedMessageValueTextEdgeRight },
+            predefinedMessageTextTrailingEdge: @{ messageKey: predefinedMessageValueTextEdgeLeft },
         };
     }
 
-    if (_uniqueIdentifier)
-        return mergeDictionaries(predefindedMessage, @{ predefinedMessageExtensionID: @{ _WKLocalizationDictionaryMessageKey: _uniqueIdentifier } });
+    // FIXME: <https://webkit.org/b/261047> Handle multiple unique identifiers for localization.
+
     return predefindedMessage;
 }
 
@@ -312,9 +298,9 @@ static LocalizationDictionary *localizationDictionaryAtURL(NSURL *dictionaryFile
 
 #else
 
-- (instancetype)initWithBundleURL:(NSURL *)bundleURL defaultLocale:(NSString *)defaultLocaleString uniqueIdentifier:(NSString *)uniqueIdentifier
+- (instancetype)initWithWebExtension:(WebExtension&)extension
 {
-    return [self initWithRegionalLocalization:nil languageLocalization:nil defaultLocalization:nil withBestLocale:nil uniqueIdentifier:uniqueIdentifier];
+    return [self initWithRegionalLocalization:nil languageLocalization:nil defaultLocalization:nil withBestLocale:nil uniqueIdentifier:nil];
 }
 
 - (instancetype)initWithRegionalLocalization:(LocalizationDictionary *)regionalLocalization languageLocalization:(LocalizationDictionary *)languageLocalization defaultLocalization:(LocalizationDictionary *)defaultLocalization withBestLocale:(NSString *)localeString uniqueIdentifier:(NSString *)uniqueIdentifier

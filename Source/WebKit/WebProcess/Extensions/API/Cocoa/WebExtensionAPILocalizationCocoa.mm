@@ -34,6 +34,7 @@
 #import "Logging.h"
 #import "MessageSenderInlines.h"
 #import "WebExtensionContextMessages.h"
+#import "WebExtensionContextProxy.h"
 #import "WebProcess.h"
 #import "_WKWebExtensionLocalization.h"
 #import <JavaScriptCore/APICast.h>
@@ -51,8 +52,8 @@ NSString *WebExtensionAPILocalization::getMessage(NSString* messageName, id subs
 {
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/i18n/getMessage
 
-    // FIXME: <https://webkit.org/b/246488> Retrieve localized dictionary from the WebExtensionContextProxy.
-    _WKWebExtensionLocalization *localizedDictionary;
+    _WKWebExtensionLocalization *localization = extensionContext().localization();
+
     NSArray<NSString *> *substitutionsArray;
     if ([substitutions isKindOfClass:NSString.class])
         substitutionsArray = @[ substitutions ];
@@ -62,14 +63,12 @@ NSString *WebExtensionAPILocalization::getMessage(NSString* messageName, id subs
         });
     }
 
-    return [localizedDictionary localizedStringForKey:messageName withPlaceholders:substitutionsArray];
+    return [localization localizedStringForKey:messageName withPlaceholders:substitutionsArray];
 }
 
 NSString *WebExtensionAPILocalization::getUILanguage()
 {
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/i18n/getUILanguage
-
-    RELEASE_LOG_INFO(Extensions, "i18n.getUILanguage()");
 
     return localeStringInWebExtensionFormat(NSLocale.currentLocale);
 }
@@ -77,8 +76,6 @@ NSString *WebExtensionAPILocalization::getUILanguage()
 void WebExtensionAPILocalization::getAcceptLanguages(Ref<WebExtensionCallbackHandler>&& callback)
 {
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/i18n/getAcceptLanguages
-
-    RELEASE_LOG_INFO(Extensions, "i18n.getAcceptedLanguages()");
 
     NSArray<NSString *> *preferredLocaleIdentifiers = NSLocale.preferredLanguages;
     NSMutableOrderedSet<NSString *> *acceptLanguages = [NSMutableOrderedSet orderedSetWithCapacity:preferredLocaleIdentifiers.count];

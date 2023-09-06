@@ -25,22 +25,22 @@
 
 #import <WebKit/WKFoundation.h>
 
+namespace WebKit {
+class WebExtension;
+}
+
 NS_ASSUME_NONNULL_BEGIN
 
-WK_EXTERN NSString * const _WKLocalizationDictionaryMessageKey;
-WK_EXTERN NSString * const _WKLocalizationDictionaryDescriptionKey;
-WK_EXTERN NSString * const _WKLocalizationDictionaryPlaceholdersKey;
-
-WK_EXTERN
 @interface _WKWebExtensionLocalization : NSObject
 
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;
 
 @property (nonatomic, nullable, copy) NSString *uniqueIdentifier;
+@property (nonatomic, nullable, copy) NSDictionary *localizationDictionary;
 
-- (instancetype)initWithBundleURL:(NSURL *)bundleURL defaultLocale:(NSString *)defaultLocaleString uniqueIdentifier:(nullable NSString *)uniqueIdentifier;
-- (instancetype)initWithRegionalLocalization:(nullable NSDictionary<NSString *, NSDictionary *> *)regionalLocalization languageLocalization:(nullable NSDictionary<NSString *, NSDictionary *> *)languageLocalization defaultLocalization:(nullable NSDictionary<NSString *, NSDictionary *> *)defaultLocalization withBestLocale:(nullable NSString *)localeString uniqueIdentifier:(NSString *)uniqueIdentifier NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithWebExtension:(WebKit::WebExtension&)webExtension;
+- (instancetype)initWithRegionalLocalization:(nullable NSDictionary<NSString *, NSDictionary *> *)regionalLocalization languageLocalization:(nullable NSDictionary<NSString *, NSDictionary *> *)languageLocalization defaultLocalization:(nullable NSDictionary<NSString *, NSDictionary *> *)defaultLocalization withBestLocale:(nullable NSString *)localeString uniqueIdentifier:(nullable NSString *)uniqueIdentifier NS_DESIGNATED_INITIALIZER;
 
 - (NSDictionary<NSString *, id> *)localizedDictionaryForDictionary:(NSDictionary<NSString *, id> *)dictionary;
 - (nullable NSString *)localizedStringForKey:(NSString *)key withPlaceholders:(nullable NSArray<NSString *> *)placeholders;

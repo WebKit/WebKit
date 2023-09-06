@@ -197,7 +197,8 @@ NSDictionary *WebExtension::manifest()
     NSString *defaultLocale = [m_manifest objectForKey:defaultLocaleManifestKey];
     m_defaultLocale = [NSLocale localeWithLocaleIdentifier:defaultLocale];
 
-    m_localization = [[_WKWebExtensionLocalization alloc] initWithBundleURL:m_resourceBaseURL.get() defaultLocale:defaultLocale uniqueIdentifier:nil];
+    m_localization = [[_WKWebExtensionLocalization alloc] initWithWebExtension:*this];
+
     m_manifest = [m_localization.get() localizedDictionaryForDictionary:m_manifest.get()];
     ASSERT(m_manifest);
 
@@ -218,6 +219,11 @@ double WebExtension::manifestVersion()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/manifest_version
 
     return objectForKey<NSNumber>(manifest(), manifestVersionManifestKey).doubleValue;
+}
+
+Ref<API::Data> WebExtension::serializeLocalization()
+{
+    return API::Data::createWithoutCopying([NSJSONSerialization dataWithJSONObject:m_localization.get().localizationDictionary options:0 error:nullptr]);
 }
 
 #if PLATFORM(MAC)
@@ -345,6 +351,9 @@ NSData *WebExtension::resourceDataForPath(NSString *path, CacheResult cacheResul
 
     if (NSString *cachedString = objectForKey<NSString>(m_resources, path))
         return [cachedString dataUsingEncoding:NSUTF8StringEncoding];
+
+    if (NSDictionary *cachedDictionary = objectForKey<NSDictionary>(m_resources, path))
+        return [NSJSONSerialization dataWithJSONObject:cachedDictionary options:0 error:nullptr];
 
     if ([path isEqualToString:generatedBackgroundPageFilename])
         return [generatedBackgroundContent() dataUsingEncoding:NSUTF8StringEncoding];

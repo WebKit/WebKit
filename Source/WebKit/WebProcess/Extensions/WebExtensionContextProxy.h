@@ -38,6 +38,7 @@
 #include <wtf/WeakHashSet.h>
 
 OBJC_CLASS NSDictionary;
+OBJC_CLASS _WKWebExtensionLocalization;
 
 namespace WebKit {
 
@@ -67,10 +68,14 @@ public:
     const String& uniqueIdentifier() const { return m_uniqueIdentifier; }
 
     NSDictionary *manifest() { return m_manifest.get(); }
-    static RetainPtr<NSDictionary> parseManifest(API::Data&);
 
     double manifestVersion() { return m_manifestVersion; }
     bool supportsManifestVersion(double version) { return manifestVersion() >= version; }
+
+    _WKWebExtensionLocalization *localization() { return m_localization.get(); }
+
+    static RetainPtr<_WKWebExtensionLocalization> parseLocalization(API::Data&);
+    static RetainPtr<NSDictionary> parseJSON(API::Data&);
 
     bool inTestingMode() { return m_testingMode; }
 
@@ -103,6 +108,7 @@ private:
     WebExtensionContextIdentifier m_identifier;
     URL m_baseURL;
     String m_uniqueIdentifier;
+    RetainPtr<_WKWebExtensionLocalization> m_localization;
     RetainPtr<NSDictionary> m_manifest;
     double m_manifestVersion { 0 };
     bool m_testingMode { false };

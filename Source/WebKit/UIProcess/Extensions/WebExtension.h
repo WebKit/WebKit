@@ -149,6 +149,8 @@ public:
     double manifestVersion();
     bool supportsManifestVersion(double version) { return manifestVersion() >= version; }
 
+    Ref<API::Data> serializeLocalization();
+
 #if PLATFORM(MAC)
     SecStaticCodeRef bundleStaticCode();
     bool validateResourceData(NSURL *, NSData *, NSError **);

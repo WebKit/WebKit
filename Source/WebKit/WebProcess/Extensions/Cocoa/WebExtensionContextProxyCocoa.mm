@@ -37,6 +37,7 @@
 #include "WebExtensionAPINamespace.h"
 #include "WebExtensionAPIPermissions.h"
 #include "WebExtensionAPIWebNavigation.h"
+#include "_WKWebExtensionLocalization.h"
 #include <WebCore/ProcessQualified.h>
 #include <wtf/ObjectIdentifier.h>
 
@@ -44,9 +45,19 @@ namespace WebKit {
 
 using namespace WebCore;
 
-RetainPtr<NSDictionary> WebExtensionContextProxy::parseManifest(API::Data& json)
+RetainPtr<NSDictionary> WebExtensionContextProxy::parseJSON(API::Data& json)
 {
     return dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:wrapper(json) options:0 error:nullptr]);
+}
+
+RetainPtr<_WKWebExtensionLocalization> WebExtensionContextProxy::parseLocalization(API::Data& json)
+{
+    NSDictionary *localizedDictionary = parseJSON(json).get();
+    if (!localizedDictionary)
+        return nil;
+
+    _WKWebExtensionLocalization *localization = [[_WKWebExtensionLocalization alloc] initWithRegionalLocalization:localizedDictionary languageLocalization:nil defaultLocalization:nil withBestLocale:localizedDictionary[@"@@ui_locale"][@"message"] uniqueIdentifier:nil];
+    return localization;
 }
 
 } // namespace WebKit

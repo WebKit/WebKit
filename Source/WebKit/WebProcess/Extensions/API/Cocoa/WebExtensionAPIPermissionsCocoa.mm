@@ -50,8 +50,6 @@ void WebExtensionAPIPermissions::getAll(Ref<WebExtensionCallbackHandler>&& callb
 {
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/permissions/getAll
 
-    RELEASE_LOG(Extensions, "permissions.getAll()");
-
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::PermissionsGetAll(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Vector<String> permissions, Vector<String> origins) {
         callback->call(@{
             permissionsKey: createNSArray(permissions).get(),
@@ -63,8 +61,6 @@ void WebExtensionAPIPermissions::getAll(Ref<WebExtensionCallbackHandler>&& callb
 void WebExtensionAPIPermissions::contains(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/permissions/contains
-
-    RELEASE_LOG(Extensions, "permissions.contains()");
 
     HashSet<String> permissions, origins;
     WebExtension::MatchPatternSet matchPatterns;
@@ -81,8 +77,6 @@ void WebExtensionAPIPermissions::contains(NSDictionary *details, Ref<WebExtensio
 void WebExtensionAPIPermissions::request(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **)
 {
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/permissions/request
-
-    RELEASE_LOG(Extensions, "permissions.request()");
 
     HashSet<String> permissions, origins;
     parseDetailsDictionary(details, permissions, origins);
@@ -117,8 +111,6 @@ void WebExtensionAPIPermissions::request(NSDictionary *details, Ref<WebExtension
 void WebExtensionAPIPermissions::remove(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **)
 {
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/permissions/remove
-
-    RELEASE_LOG(Extensions, "permissions.remove()");
 
     HashSet<String> permissions, origins;
     parseDetailsDictionary(details, permissions, origins);
