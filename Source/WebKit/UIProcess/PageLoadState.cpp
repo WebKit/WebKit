@@ -338,7 +338,8 @@ void PageLoadState::didCommitLoad(const Transaction::Token& token, const WebCore
     m_uncommittedState.hasInsecureContent = hasInsecureContent;
     m_uncommittedState.certificateInfo = certificateInfo;
 
-    m_uncommittedState.url = m_uncommittedState.provisionalURL;
+    ASSERT(!m_uncommittedState.provisionalURL.isNull());
+    m_uncommittedState.url = m_uncommittedState.provisionalURL.isNull() ? aboutBlankURL().string() : m_uncommittedState.provisionalURL;
     m_uncommittedState.provisionalURL = String();
     m_uncommittedState.negotiatedLegacyTLS = usedLegacyTLS;
     m_uncommittedState.wasPrivateRelayed = wasPrivateRelayed;
