@@ -122,8 +122,7 @@ fast/events/detect-caps-lock.html [ Pass ]
 fast/forms/auto-fill-button/caps-lock-indicator-should-not-be-visible-when-auto-fill-strong-password-button-is-visible.html [ Pass ]
 fast/forms/password-scrolled-after-caps-lock-toggled.html [ Pass ]
 
-# previously: webkit.org/b/194170
-webkit.org/b/260974 [ Release ] fast/repaint/placeholder-after-caps-lock-hidden.html [ Pass Failure Timeout ]
+fast/repaint/placeholder-after-caps-lock-hidden.html [ Pass ]
 
 fast/events/inactive-window-no-mouse-event.html [ Pass ]
 

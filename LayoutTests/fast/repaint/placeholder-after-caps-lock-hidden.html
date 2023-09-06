@@ -14,9 +14,7 @@ async function runTest()
         return;
     let input = document.getElementById("input");
     await UIHelper.activateElementAndWaitForInputSession(input);
-    await UIHelper.callFunctionAndWaitForEvent(async () => {
-        await UIHelper.toggleCapsLock();
-    }, input, "keyup");
+    await UIHelper.toggleCapsLock();
 
     await UIHelper.callFunctionAndWaitForEvent(async () => {
         await UIHelper.keyDown("a");
@@ -26,10 +24,9 @@ async function runTest()
         await UIHelper.keyDown("\b");
     }, input, "keyup");
 
+    await UIHelper.ensureStablePresentationUpdate();
     internals.startTrackingRepaints();
-    await UIHelper.callFunctionAndWaitForEvent(async () => {
-        await UIHelper.toggleCapsLock();
-    }, input, "keyup");
+    await UIHelper.toggleCapsLock();
     document.getElementById("result").textContent = internals.repaintRectsAsText();
     internals.stopTrackingRepaints();
     testRunner.notifyDone();

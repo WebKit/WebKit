@@ -270,17 +270,21 @@ void UIScriptControllerMac::toggleCapsLock(JSValueRef callback)
 {
     m_capsLockOn = !m_capsLockOn;
     NSWindow *window = [webView() window];
-    NSEvent *fakeEvent = [NSEvent keyEventWithType:NSEventTypeFlagsChanged
-        location:NSZeroPoint
-        modifierFlags:m_capsLockOn ? NSEventModifierFlagCapsLock : 0
-        timestamp:0
-        windowNumber:window.windowNumber
-        context:nullptr
-        characters:@""
-        charactersIgnoringModifiers:@""
-        isARepeat:NO
-        keyCode:57];
-    [window sendEvent:fakeEvent];
+    const auto makeFakeCapsLockKeyEventWithType = [capsLockOn = m_capsLockOn, window] (NSEventType eventType) {
+        return [NSEvent keyEventWithType:eventType
+            location:NSZeroPoint
+            modifierFlags:capsLockOn ? NSEventModifierFlagCapsLock : 0
+            timestamp:0
+            windowNumber:window.windowNumber
+            context:nullptr
+            characters:@""
+            charactersIgnoringModifiers:@""
+            isARepeat:NO
+            keyCode:57];
+    };
+    NSArray<NSEvent *> *fakeEventsToBeSent = @[ makeFakeCapsLockKeyEventWithType(NSEventTypeKeyDown), makeFakeCapsLockKeyEventWithType(NSEventTypeKeyUp), makeFakeCapsLockKeyEventWithType(NSEventTypeFlagsChanged) ];
+    for (NSEvent *fakeEvent in fakeEventsToBeSent)
+        [window sendEvent:fakeEvent];
     doAsyncTask(callback);
 }
 
