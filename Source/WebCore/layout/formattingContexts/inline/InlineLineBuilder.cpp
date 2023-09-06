@@ -718,47 +718,6 @@ static inline InlineLayoutUnit availableWidth(const LineCandidate::InlineContent
     return std::isnan(availableWidth) ? maxInlineLayoutUnit() : (availableWidth + candidateContent.accumulatedClonedDecorationEnd());
 }
 
-static std::optional<InlineLayoutUnit> eligibleOverflowWidthAsLeading(const InlineContentBreaker::ContinuousContent::RunList& candidateRuns, const InlineContentBreaker::Result& lineBreakingResult, bool isFirstFormattedLine)
-{
-    auto eligibleTrailingRunIndex = [&]() -> std::optional<size_t> {
-        ASSERT(lineBreakingResult.action == InlineContentBreaker::Result::Action::Wrap || lineBreakingResult.action == InlineContentBreaker::Result::Action::Break);
-        if (candidateRuns.size() == 1 && candidateRuns.first().inlineItem.isText()) {
-            // A single text run is always a candidate.
-            return { 0 };
-        }
-        if (lineBreakingResult.action == InlineContentBreaker::Result::Action::Break && lineBreakingResult.partialTrailingContent) {
-            auto& trailingRun = candidateRuns[lineBreakingResult.partialTrailingContent->trailingRunIndex];
-            if (trailingRun.inlineItem.isText())
-                return lineBreakingResult.partialTrailingContent->trailingRunIndex;
-        }
-        return { };
-    }();
-
-    if (!eligibleTrailingRunIndex)
-        return { };
-
-    auto& overflowingRun = candidateRuns[*eligibleTrailingRunIndex];
-    // FIXME: Add support for other types of continuous content.
-    ASSERT(is<InlineTextItem>(overflowingRun.inlineItem));
-    auto& inlineTextItem = downcast<InlineTextItem>(overflowingRun.inlineItem);
-    if (inlineTextItem.isWhitespace())
-        return { };
-    if (isFirstFormattedLine) {
-        auto& usedStyle = overflowingRun.style;
-        auto& style = overflowingRun.inlineItem.style();
-        if (&usedStyle != &style && usedStyle.fontCascade() != style.fontCascade()) {
-            // We may have the incorrect text width when styles differ. Just re-measure the text content when we place it on the next line.
-            return { };
-        }
-    }
-    auto logicalWidthForNextLineAsLeading = overflowingRun.logicalWidth;
-    if (lineBreakingResult.action == InlineContentBreaker::Result::Action::Wrap)
-        return logicalWidthForNextLineAsLeading;
-    if (lineBreakingResult.action == InlineContentBreaker::Result::Action::Break && lineBreakingResult.partialTrailingContent->partialRun)
-        return logicalWidthForNextLineAsLeading - lineBreakingResult.partialTrailingContent->partialRun->logicalWidth;
-    return { };
-}
-
 LineBuilder::UsedConstraints LineBuilder::floatConstrainedRect(const InlineRect& logicalRect, InlineLayoutUnit marginStart) const
 {
     if (isInIntrinsicWidthMode() || floatingState().isEmpty())

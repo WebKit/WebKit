@@ -28,7 +28,6 @@
 #include "AbstractLineBuilder.h"
 #include "FloatingContext.h"
 #include "FormattingConstraints.h"
-#include "InlineContentBreaker.h"
 #include "InlineFormattingState.h"
 #include "InlineLayoutState.h"
 #include "InlineLine.h"

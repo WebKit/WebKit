@@ -36,6 +36,7 @@ struct TextOnlyLineBreakResult {
     InlineContentBreaker::IsEndOfLine isEndOfLine { InlineContentBreaker::IsEndOfLine::Yes };
     size_t committedCount { 0 };
     size_t overflowingContentLength { 0 };
+    std::optional<InlineLayoutUnit> overflowLogicalWidth { };
     bool isRevert { false };
 };
 
@@ -112,7 +113,7 @@ LineLayoutResult TextOnlySimpleLineBuilder::layoutInlineContent(const LineInput&
     return { { lineInput.needsLayoutRange.start, placedContentEnd }
         , WTFMove(result.runs)
         , { }
-        , { contentLogicalLeft, result.contentLogicalWidth, contentLogicalLeft + result.contentLogicalRight, { } }
+        , { contentLogicalLeft, result.contentLogicalWidth, contentLogicalLeft + result.contentLogicalRight, m_overflowContentLogicalWidth }
         , { m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), m_lineLogicalRect.left()  }
         , { !result.isHangingTrailingContentWhitespace, result.hangingTrailingContentWidth }
         , { }
@@ -145,6 +146,7 @@ void TextOnlySimpleLineBuilder::initialize(const InlineItemRange& layoutRange, c
     m_lineLogicalRect = initialLogicalRect;
     m_wrapOpportunityList = { };
     m_trimmedTrailingWhitespaceWidth = { };
+    m_overflowContentLogicalWidth = { };
 }
 
 InlineItemPosition TextOnlySimpleLineBuilder::placeInlineTextContent(const InlineItemRange& layoutRange)
@@ -211,6 +213,7 @@ InlineItemPosition TextOnlySimpleLineBuilder::placeInlineTextContent(const Inlin
     ASSERT(placedInlineItemCount);
     auto placedContentEnd = placedInlineItemEnd(layoutRange.startIndex(), placedInlineItemCount, result.overflowingContentLength, m_inlineItems);
     handleLineEnding(placedContentEnd, layoutRange.endIndex());
+    m_overflowContentLogicalWidth = result.overflowLogicalWidth;
     return placedContentEnd;
 }
 
@@ -316,7 +319,7 @@ TextOnlyLineBreakResult TextOnlySimpleLineBuilder::handleOverflowingTextContent(
     ASSERT(lineBreakingResult.isEndOfLine == InlineContentBreaker::IsEndOfLine::Yes);
 
     if (lineBreakingResult.action == InlineContentBreaker::Result::Action::Wrap)
-        return { InlineContentBreaker::IsEndOfLine::Yes };
+        return { InlineContentBreaker::IsEndOfLine::Yes, { }, { }, eligibleOverflowWidthAsLeading(candidateContent.runs(), lineBreakingResult, isFirstFormattedLine()) };
 
     if (lineBreakingResult.action == InlineContentBreaker::Result::Action::WrapWithHyphen) {
         ASSERT(m_line.trailingSoftHyphenWidth());
@@ -343,7 +346,7 @@ TextOnlyLineBreakResult TextOnlySimpleLineBuilder::handleOverflowingTextContent(
                 m_line.appendTextFast(downcast<InlineTextItem>(trailingRun.inlineItem), trailingRun.style, trailingRun.logicalWidth);
                 if (auto hyphenWidth = lineBreakingResult.partialTrailingContent->hyphenWidth)
                     m_line.addTrailingHyphen(*hyphenWidth);
-                return { InlineContentBreaker::IsEndOfLine::Yes, committedInlineItemCount, { } };
+                return { InlineContentBreaker::IsEndOfLine::Yes, committedInlineItemCount };
             }
 
             auto partialRun = *lineBreakingResult.partialTrailingContent->partialRun;
@@ -352,7 +355,7 @@ TextOnlyLineBreakResult TextOnlySimpleLineBuilder::handleOverflowingTextContent(
             if (auto hyphenWidth = partialRun.hyphenWidth)
                 m_line.addTrailingHyphen(*hyphenWidth);
             auto overflowingContentLength = trailingInlineTextItem.length() - partialRun.length;
-            return { InlineContentBreaker::IsEndOfLine::Yes, committedInlineItemCount, overflowingContentLength };
+            return { InlineContentBreaker::IsEndOfLine::Yes, committedInlineItemCount, overflowingContentLength, eligibleOverflowWidthAsLeading(candidateContent.runs(), lineBreakingResult, isFirstFormattedLine()) };
         };
         return processPartialContent();
     }
@@ -364,10 +367,10 @@ TextOnlyLineBreakResult TextOnlySimpleLineBuilder::handleOverflowingTextContent(
     }
 
     if (lineBreakingResult.action == InlineContentBreaker::Result::Action::RevertToLastWrapOpportunity)
-        return { InlineContentBreaker::IsEndOfLine::Yes, revertToTrailingItem(layoutRange, *m_wrapOpportunityList.last()), { }, true };
+        return { InlineContentBreaker::IsEndOfLine::Yes, revertToTrailingItem(layoutRange, *m_wrapOpportunityList.last()), { }, { }, true };
 
     if (lineBreakingResult.action == InlineContentBreaker::Result::Action::RevertToLastNonOverflowingWrapOpportunity)
-        return { InlineContentBreaker::IsEndOfLine::Yes, revertToLastNonOverflowingItem(layoutRange), { }, true };
+        return { InlineContentBreaker::IsEndOfLine::Yes, revertToLastNonOverflowingItem(layoutRange), { }, { }, true };
 
     ASSERT_NOT_REACHED();
     return { InlineContentBreaker::IsEndOfLine::Yes };
