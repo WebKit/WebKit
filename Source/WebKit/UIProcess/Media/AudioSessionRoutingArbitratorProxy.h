@@ -29,6 +29,7 @@
 
 #include "MessageReceiver.h"
 #include <WebCore/AudioSession.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/WallTime.h>
 #include <wtf/WeakPtr.h>
 
@@ -72,6 +73,8 @@ protected:
     WTFLogChannel& logChannel() const;
 
 private:
+    Ref<WebProcessProxy> protectedProcess();
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
@@ -79,7 +82,7 @@ private:
     void beginRoutingArbitrationWithCategory(WebCore::AudioSession::CategoryType, ArbitrationCallback&&);
     void endRoutingArbitration();
 
-    WebProcessProxy& m_process;
+    CheckedRef<WebProcessProxy> m_process;
     WebCore::AudioSession::CategoryType m_category { WebCore::AudioSession::CategoryType::None };
     ArbitrationStatus m_arbitrationStatus { ArbitrationStatus::None };
     WallTime m_arbitrationUpdateTime;
