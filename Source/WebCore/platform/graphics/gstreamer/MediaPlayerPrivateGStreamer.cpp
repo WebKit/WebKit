@@ -3478,6 +3478,9 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
     };
 
     GstMappedFrame sourceFrame(m_sample, GST_MAP_READ);
+    if (!sourceFrame)
+        return;
+
     auto* sourceVideoFrame = sourceFrame.get();
     for (unsigned i = 0; i < GST_VIDEO_FRAME_N_PLANES(sourceVideoFrame); ++i) {
         auto& planeData = swapchainBuffer->planeData(i);
