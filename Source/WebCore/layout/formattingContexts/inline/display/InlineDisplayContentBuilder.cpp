@@ -886,20 +886,20 @@ void InlineDisplayContentBuilder::collectInkOverflowForInlineBoxes(InlineDisplay
     }
 }
 
-void InlineDisplayContentBuilder::setGeometryForBlockLevelOutOfFlowBoxes(const Vector<size_t> indexList, const LineBox& lineBox, const Line::RunList& lineRuns, const Vector<int32_t>& visualOrderList)
+void InlineDisplayContentBuilder::setGeometryForBlockLevelOutOfFlowBoxes(const Vector<size_t> indexListOfOutOfFlowBoxes, const LineBox& lineBox, const Line::RunList& lineRuns, const Vector<int32_t>& visualOrderList)
 {
     auto& formattingContext = this->formattingContext();
     auto outOfFlowContentHasPreviousInFlowSiblingWithContentOrDecoration = false;
 
-    for (size_t i = 0; i < indexList.size(); ++i) {
-        auto outOfFlowBoxIndex = indexList[i];
+    for (size_t i = 0; i < indexListOfOutOfFlowBoxes.size(); ++i) {
+        auto outOfFlowBoxIndex = indexListOfOutOfFlowBoxes[i];
         ASSERT(outOfFlowBoxIndex < lineRuns.size());
 
         auto hasPreviousInFlowContent = [&] {
             if (outOfFlowContentHasPreviousInFlowSiblingWithContentOrDecoration)
                 return true;
-            for (size_t runIndex = i ? outOfFlowBoxIndex + 1 : 0; runIndex < outOfFlowBoxIndex; ++runIndex) {
-                auto& previousRun = visualOrderList.isEmpty() ? lineRuns[runIndex] : lineRuns[visualOrderList[runIndex]];
+            for (size_t previousRunIndex = !i ? 0 : indexListOfOutOfFlowBoxes[i - 1] + 1; previousRunIndex < outOfFlowBoxIndex; ++previousRunIndex) {
+                auto& previousRun = visualOrderList.isEmpty() ? lineRuns[previousRunIndex] : lineRuns[visualOrderList[previousRunIndex]];
                 if (Line::Run::isContentfulOrHasDecoration(previousRun, formattingContext)) {
                     outOfFlowContentHasPreviousInFlowSiblingWithContentOrDecoration = true;
                     return true;
