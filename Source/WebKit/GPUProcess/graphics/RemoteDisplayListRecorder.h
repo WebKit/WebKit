@@ -143,7 +143,7 @@ private:
     void drawFilteredImageBufferInternal(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, const WebCore::FloatRect& sourceImageRect, WebCore::Filter&, WebCore::FilterResults&);
 
     RemoteResourceCache& resourceCache() const;
-    WebCore::GraphicsContext& drawingContext();
+    WebCore::GraphicsContext& drawingContext() { return m_imageBuffer->context(); }
     RefPtr<WebCore::ImageBuffer> imageBuffer(WebCore::RenderingResourceIdentifier) const;
     std::optional<WebCore::SourceImage> sourceImage(WebCore::RenderingResourceIdentifier) const;
 
@@ -165,7 +165,7 @@ private:
     void setSharedVideoFrameMemory(SharedMemory::Handle&&);
 #endif
 
-    ThreadSafeWeakPtr<WebCore::ImageBuffer> m_imageBuffer;
+    Ref<WebCore::ImageBuffer> m_imageBuffer;
     WebCore::RenderingResourceIdentifier m_imageBufferIdentifier;
     RefPtr<RemoteRenderingBackend> m_renderingBackend;
     std::unique_ptr<WebCore::ControlFactory> m_controlFactory;
