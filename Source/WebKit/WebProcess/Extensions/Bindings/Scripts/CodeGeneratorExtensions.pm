@@ -314,6 +314,7 @@ EOF
 
     push(@contents, <<EOF);
 #include "Logging.h"
+#include "WebExtensionUtilities.h"
 #include <wtf/GetPtr.h>
 
 namespace WebKit {
@@ -411,7 +412,7 @@ EOF
 void ${className}::getPropertyNames(JSContextRef context, JSObjectRef thisObject, JSPropertyNameAccumulatorRef propertyNames)
 {
     ${implementationClassName}* impl = to${implementationClassName}(context, thisObject);
-    if (!impl)
+    if (UNLIKELY(!impl))
         return;
 
     NSArray *propertyNameStrings = impl->${customGetPropertyNamesFunction}();
@@ -428,7 +429,7 @@ EOF
 bool ${className}::hasProperty(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName)
 {
     ${implementationClassName}* impl = to${implementationClassName}(context, thisObject);
-    if (!impl)
+    if (UNLIKELY(!impl))
         return false;
 
     return impl->${customHasPropertyFunction}(toNSString(propertyName));
@@ -479,7 +480,7 @@ EOF
     RELEASE_LOG_DEBUG(Extensions, "Called function: ${call} (%{public}lu %{public}s)", argumentCount, argumentCount == 1 ? "argument" : "arguments");
 
     ${implementationClassName}* impl = to${implementationClassName}(context, thisObject);
-    if (${functionEarlyReturnCondition})
+    if (UNLIKELY(${functionEarlyReturnCondition}))
         return ${defaultEarlyReturnValue};
 EOF
 
@@ -514,10 +515,8 @@ EOF
             if ($requiredArgumentCount) {
                 push(@contents, <<EOF);
     const size_t requiredArgumentCount = ${requiredArgumentCount};
-    if (argumentCount < requiredArgumentCount) {
-        NSString *requiredArgumentsMissingExceptionString = @"Invalid call to ${call}. A required argument is missing.";
-        RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", requiredArgumentsMissingExceptionString);
-        *exception = toJSError(context, requiredArgumentsMissingExceptionString);
+    if (UNLIKELY(argumentCount < requiredArgumentCount)) {
+        *exception = toJSError(context, @"${call}", nil, @"a required argument is missing");
         return ${defaultEarlyReturnValue};
     }
 
@@ -591,8 +590,13 @@ EOF
 
                     push(@contents, "        }\n");
 
-                    push(@contents, "\n") unless $lastArgument || ($j eq $#specifiedParameters - 1 && $hasOptionalCallbackHandlerAsLastArgument && $processArgumentsLeftToRight);
+                    push(@contents, "\n") unless ($j eq $#specifiedParameters - 1 && $hasOptionalCallbackHandlerAsLastArgument && $processArgumentsLeftToRight);
                 }
+
+                push(@contents, "        if (UNLIKELY($argumentIndexConditon)) {\n");
+                push(@contents, "            *exception = toJSError(context, @\"${call}\", nil, @\"an unknown argument was provided\");\n");
+                push(@contents, "            return ${defaultReturnValue};\n");
+                push(@contents, "        }\n");
 
                 push(@contents, "    }\n");
             } else {
@@ -672,9 +676,8 @@ EOF
     NSString *exceptionString = nil;
     JSValueRef result = ${returnExpression};
 
-    if (exceptionString) {
-        RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", exceptionString);
-        *exception = toJSError(context, exceptionString);
+    if (UNLIKELY(exceptionString)) {
+        *exception = toJSError(context, @"${call}", nil, exceptionString);
         return ${defaultReturnValue};
     }
 
@@ -686,10 +689,8 @@ EOF
     NSString *exceptionString = nil;
     ${functionCall};
 
-    if (exceptionString) {
-        RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", exceptionString);
-        *exception = toJSError(context, exceptionString);
-    }
+    if (UNLIKELY(exceptionString))
+        *exception = toJSError(context, @"${call}", nil, exceptionString);
 
     return ${defaultReturnValue};
 }
@@ -707,7 +708,7 @@ EOF
 ${functionSignature}
 {
     ${implementationClassName}* impl = to${implementationClassName}(context, thisObject);
-    if (${functionEarlyReturnCondition})
+    if (UNLIKELY(${functionEarlyReturnCondition}))
         return JSValueMakeUndefined(context);
 
 EOF
@@ -801,7 +802,7 @@ EOF
     RELEASE_LOG_DEBUG(Extensions, "Called getter: ${call}");
 
     ${implementationClassName}* impl = to${implementationClassName}(context, object);
-    if (${getterEarlyReturnCondition})
+    if (UNLIKELY(${getterEarlyReturnCondition}))
         return JSValueMakeUndefined(context);
 EOF
 
@@ -826,7 +827,7 @@ EOF
     RELEASE_LOG_DEBUG(Extensions, "Called setter: ${call}");
 
     ${implementationClassName}* impl = to${implementationClassName}(context, object);
-    if (${setterEarlyReturnCondition})
+    if (UNLIKELY(${setterEarlyReturnCondition}))
         return false;
 
 EOF
@@ -956,7 +957,7 @@ sub _installAutomaticExceptions
 
         push(@$contents, <<EOF);
 
-    if (*exception)
+    if (UNLIKELY(*exception))
         return ${result};
 EOF
     }
@@ -966,10 +967,8 @@ EOF
 
         push(@$contents, <<EOF);
 
-    if (!$variable) {
-        NSString *mustBeAStringString = @"Invalid '${variableLabel}' value passed to ${call}. Expected a string.";
-        RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", mustBeAStringString);
-        *exception = toJSError(context, mustBeAStringString);
+    if (UNLIKELY(!$variable)) {
+        *exception = toJSError(context, @"${call}", @"${variableLabel}", @"a string is expected");
         return ${result};
     }
 EOF
@@ -980,10 +979,8 @@ EOF
 
         push(@$contents, <<EOF);
 
-    if (isnan($variable)) {
-        NSString *mustBeANumberString = @"Invalid '${variableLabel}' value passed to ${call}. Expected a number.";
-        RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", mustBeANumberString);
-        *exception = toJSError(context, mustBeANumberString);
+    if (UNLIKELY(!std::isfinite($variable))) {
+        *exception = toJSError(context, @"${call}", @"${variableLabel}", @"a number is expected");
         return ${result};
     }
 EOF
@@ -994,10 +991,8 @@ EOF
 
         push(@$contents, <<EOF);
 
-    if (!$variable) {
-        NSString *mustBeAnObjectString = @"Invalid '${variableLabel}' value passed to ${call}. Expected an object.";
-        RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", mustBeAnObjectString);
-        *exception = toJSError(context, mustBeAnObjectString);
+    if (UNLIKELY(!$variable)) {
+        *exception = toJSError(context, @"${call}", @"${variableLabel}", @"an object is expected");
         return ${result};
     }
 EOF
@@ -1008,10 +1003,8 @@ EOF
 
         push(@$contents, <<EOF);
 
-    if ($variable && !$variable.isObject) {
-        NSString *mustBeAnObjectString = @"Invalid '${variableLabel}' value passed to ${call}. Expected an object.";
-        RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", mustBeAnObjectString);
-        *exception = toJSError(context, mustBeAnObjectString);
+    if (UNLIKELY($variable && !$variable.isObject)) {
+        *exception = toJSError(context, @"${call}", @"${variableLabel}", @"an object is expected");
         return ${result};
     }
 EOF
@@ -1022,10 +1015,8 @@ EOF
 
         push(@$contents, <<EOF);
 
-    if (!$variable) {
-        NSString *mustBeAnArrayString = @"Invalid '${variableLabel}' value passed to ${call}. Expected an array.";
-        RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", mustBeAnArrayString);
-        *exception = toJSError(context, mustBeAnArrayString);
+    if (UNLIKELY(!$variable)) {
+        *exception = toJSError(context, @"${call}", @"${variableLabel}", @"an array is expected");
         return ${result};
     }
 EOF
@@ -1043,10 +1034,8 @@ EOF
 
         push(@$contents, <<EOF);
 
-    if (${isEmptyCheck}) {
-        NSString *cannotBeEmptyExceptionString = @"Invalid '${variableLabel}' value passed to ${call}. Cannot be empty.";
-        RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", cannotBeEmptyExceptionString);
-        *exception = toJSError(context, cannotBeEmptyExceptionString);
+    if (UNLIKELY(${isEmptyCheck})) {
+        *exception = toJSError(context, @"${call}", @"${variableLabel}", @"it cannot be empty");
         return ${result};
     }
 EOF
@@ -1060,10 +1049,8 @@ EOF
 
         push(@$contents, <<EOF);
 
-    if (${variable}.isFileURL) {
-        NSString *cannotBeAccessedExceptionString = @"Invalid '${variableLabel}' value passed to ${call}. Cannot be a local file URL.";
-        RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", cannotBeAccessedExceptionString);
-        *exception = toJSError(context, cannotBeAccessedExceptionString);
+    if (UNLIKELY(${variable}.isFileURL)) {
+        *exception = toJSError(context, @"${call}", @"${variableLabel}", @"it cannot be a local file URL");
         return ${result};
     }
 EOF
@@ -1074,10 +1061,8 @@ EOF
 
         push(@$contents, <<EOF);
 
-    if ($variable && !JSObjectIsFunction(context, $variable)) {
-        NSString *mustBeAFunctionString = @"Invalid '${variableLabel}' value passed to ${call}. Expected a function.";
-        RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", mustBeAFunctionString);
-        *exception = toJSError(context, mustBeAFunctionString);
+    if (UNLIKELY($variable && !JSObjectIsFunction(context, $variable))) {
+        *exception = toJSError(context, @"${call}", @"${variableLabel}", @"a function is expected");
         return ${result};
     }
 EOF
@@ -1088,10 +1073,8 @@ EOF
 
         push(@$contents, <<EOF);
 
-    if (!$variable) {
-        NSString *mustBeAFunctionString = @"Invalid '${variableLabel}' value passed to ${call}. Expected a function.";
-        RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", mustBeAFunctionString);
-        *exception = toJSError(context, mustBeAFunctionString);
+    if (UNLIKELY(!$variable)) {
+        *exception = toJSError(context, @"${call}", @"${variableLabel}", @"a function is expected");
         return ${result};
     }
 EOF
@@ -1446,7 +1429,7 @@ sub _dynamicAttributesImplementation
 void ${className}::getPropertyNames(JSContextRef context, JSObjectRef thisObject, JSPropertyNameAccumulatorRef propertyNames)
 {
     ${implementationClassName}* impl = to${implementationClassName}(context, thisObject);
-    if (!impl)
+    if (UNLIKELY(!impl))
         return;
 
 EOF
@@ -1495,7 +1478,7 @@ EOF
 bool ${className}::hasProperty(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName)
 {
     ${implementationClassName}* impl = to${implementationClassName}(context, thisObject);
-    if (!impl)
+    if (UNLIKELY(!impl))
         return false;
 
 EOF
@@ -1529,7 +1512,7 @@ EOF
 JSValueRef ${className}::getProperty(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     ${implementationClassName}* impl = to${implementationClassName}(context, thisObject);
-    if (!impl)
+    if (UNLIKELY(!impl))
         return JSValueMakeUndefined(context);
 
 EOF

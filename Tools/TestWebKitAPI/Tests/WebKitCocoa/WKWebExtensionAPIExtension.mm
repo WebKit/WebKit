@@ -40,9 +40,9 @@ TEST(WKWebExtensionAPIExtension, GetURL)
         [NSString stringWithFormat:@"const baseURL = '%@'", baseURLString],
 
         // Error Cases
-        @"browser.test.assertThrows(() => browser.extension.getURL(), /A required argument is missing./)",
-        @"browser.test.assertThrows(() => browser.extension.getURL(null), /Expected a string./)",
-        @"browser.test.assertThrows(() => browser.extension.getURL(undefined), /Expected a string./)",
+        @"browser.test.assertThrows(() => browser.extension.getURL(), /required argument is missing/i)",
+        @"browser.test.assertThrows(() => browser.extension.getURL(null), /'resourcePath' value is invalid, because a string is expected/i)",
+        @"browser.test.assertThrows(() => browser.extension.getURL(undefined), /'resourcePath' value is invalid, because a string is expected/i)",
 
         // Normal Cases
         @"browser.test.assertEq(browser.extension.getURL(''), `${baseURL}/`)",

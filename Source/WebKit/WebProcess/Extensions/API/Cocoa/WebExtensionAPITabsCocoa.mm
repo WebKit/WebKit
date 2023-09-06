@@ -39,9 +39,8 @@
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionContextProxy.h"
 #import "WebExtensionTabParameters.h"
+#import "WebExtensionUtilities.h"
 #import "WebProcess.h"
-#import "_WKWebExtensionUtilities.h"
-#import <wtf/DateMath.h>
 
 namespace WebKit {
 

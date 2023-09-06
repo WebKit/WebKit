@@ -29,7 +29,7 @@
     ReturnsPromiseWhenCallbackIsOmitted,
 ] interface WebExtensionAPIAlarms {
 
-    [RaisesException, ImplementedAs=createAlarm] void create([Optional] DOMString name, [NSDictionary] any alarmInfo);
+    [RaisesException, ImplementedAs=createAlarm] void create([Optional] DOMString name, [NSDictionary] any info);
 
     void get([Optional] DOMString name, [Optional, CallbackHandler] function callback);
     void getAll([Optional, CallbackHandler] function callback);

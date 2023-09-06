@@ -34,9 +34,9 @@
 #import "MessageSenderInlines.h"
 #import "WebExtensionAPIWindows.h"
 #import "WebExtensionContextMessages.h"
+#import "WebExtensionUtilities.h"
 #import "WebPageProxy.h"
 #import "WebProcess.h"
-#import "_WKWebExtensionUtilities.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
@@ -58,7 +58,7 @@ void WebExtensionAPIWindowsEvent::invokeListenersWithArgument(id argument, Windo
 void WebExtensionAPIWindowsEvent::addListener(WebPage* page, RefPtr<WebExtensionCallbackHandler> listener, NSDictionary *filter, NSString **outExceptionString)
 {
     OptionSet<WindowTypeFilter> windowTypeFilter;
-    if (!WebExtensionAPIWindows::parseWindowTypesFilter(filter, windowTypeFilter, outExceptionString))
+    if (!WebExtensionAPIWindows::parseWindowTypesFilter(filter, windowTypeFilter, @"filters", outExceptionString))
         return;
 
     m_listeners.append({ listener, windowTypeFilter });

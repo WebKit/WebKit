@@ -2189,11 +2189,6 @@ framework module WebKit_Private [system] {
     export *
   }
 
-  explicit module _WKWebExtensionUtilities {
-    header "_WKWebExtensionUtilities.h"
-    export *
-  }
-
   explicit module _WKWebExtensionWebNavigationURLFilter {
     header "_WKWebExtensionWebNavigationURLFilter.h"
     export *

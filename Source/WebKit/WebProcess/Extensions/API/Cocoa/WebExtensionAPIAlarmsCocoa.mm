@@ -38,20 +38,20 @@
 #import "WebExtensionAPINamespace.h"
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionContextProxy.h"
+#import "WebExtensionUtilities.h"
 #import "WebProcess.h"
-#import "_WKWebExtensionUtilities.h"
 #import <wtf/DateMath.h>
 
 namespace WebKit {
 
-static NSString *whenKey = @"when";
-static NSString *delayInMinutesKey = @"delayInMinutes";
-static NSString *periodInMinutesKey = @"periodInMinutes";
+static NSString * const whenKey = @"when";
+static NSString * const delayInMinutesKey = @"delayInMinutes";
+static NSString * const periodInMinutesKey = @"periodInMinutes";
 
-static NSString *nameKey = @"name";
-static NSString *scheduledTimeKey = @"scheduledTime";
+static NSString * const nameKey = @"name";
+static NSString * const scheduledTimeKey = @"scheduledTime";
 
-static NSString *emptyAlarmName = @"";
+static NSString * const emptyAlarmName = @"";
 
 static inline NSDictionary *toAPI(const WebExtensionAlarmParameters& alarm)
 {
@@ -97,12 +97,21 @@ void WebExtensionAPIAlarms::createAlarm(NSString *name, NSDictionary *alarmInfo,
         periodInMinutesKey: NSNumber.class,
     };
 
-    if (![_WKWebExtensionUtilities validateContentsOfDictionary:alarmInfo requiredKeys:nil optionalKeys:optionalKeys keyToExpectedValueType:types outExceptionString:outExceptionString])
+    if (!validateDictionary(alarmInfo, @"info", nil, optionalKeys, types, outExceptionString))
         return;
 
-    Seconds when = Seconds::fromMilliseconds(objectForKey<NSNumber>(alarmInfo, whenKey).doubleValue);
-    Seconds delay = Seconds::fromMinutes(objectForKey<NSNumber>(alarmInfo, delayInMinutesKey).doubleValue);
-    Seconds period = Seconds::fromMinutes(objectForKey<NSNumber>(alarmInfo, periodInMinutesKey).doubleValue);
+    auto *whenNumber = objectForKey<NSNumber>(alarmInfo, whenKey);
+    auto *delayNumber = objectForKey<NSNumber>(alarmInfo, delayInMinutesKey);
+    auto *periodNumber = objectForKey<NSNumber>(alarmInfo, periodInMinutesKey);
+
+    if (whenNumber && delayNumber) {
+        *outExceptionString = toErrorString(nil, @"info", @"it cannot specify both 'delayInMinutes' and 'when'");
+        return;
+    }
+
+    Seconds when = Seconds::fromMilliseconds(whenNumber.doubleValue);
+    Seconds delay = Seconds::fromMinutes(delayNumber.doubleValue);
+    Seconds period = Seconds::fromMinutes(periodNumber.doubleValue);
     Seconds currentTime = Seconds::fromMilliseconds(jsCurrentTime());
 
     Seconds initialInterval;

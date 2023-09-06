@@ -46,8 +46,8 @@
 
 namespace WebKit {
 
-static NSString *permissionsKey = @"permissions";
-static NSString *originsKey = @"origins";
+static NSString * const permissionsKey = @"permissions";
+static NSString * const originsKey = @"origins";
 
 void WebExtensionContext::permissionsGetAll(CompletionHandler<void(Vector<String>, Vector<String>)>&& completionHandler)
 {

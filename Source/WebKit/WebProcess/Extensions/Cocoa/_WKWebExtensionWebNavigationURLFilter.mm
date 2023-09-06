@@ -32,9 +32,11 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#import "_WKWebExtensionUtilities.h"
+#import "WebExtensionUtilities.h"
 #import <WebKit/WebNSURLExtras.h>
 #import <wtf/RetainPtr.h>
+
+using namespace WebKit;
 
 typedef NS_ENUM(NSInteger, PredicateType) {
     PredicateTypeHostContains,
@@ -59,28 +61,28 @@ typedef NS_ENUM(NSInteger, PredicateType) {
     PredicateTypePorts,
 };
 
-static NSString *urlKey = @"url";
+static NSString * const urlKey = @"url";
 
-static NSString *hostContainsKey = @"hostContains";
-static NSString *hostEqualsKey = @"hostEquals";
-static NSString *hostPrefixKey = @"hostPrefix";
-static NSString *hostSuffixKey = @"hostSuffix";
-static NSString *pathContainsKey = @"pathContains";
-static NSString *pathEqualsKey = @"pathEquals";
-static NSString *pathPrefixKey = @"pathPrefix";
-static NSString *pathSuffixKey = @"pathSuffix";
-static NSString *queryContainsKey = @"queryContains";
-static NSString *queryEqualsKey = @"queryEquals";
-static NSString *queryPrefixKey = @"queryPrefix";
-static NSString *querySuffixKey = @"querySuffix";
-static NSString *urlContainsKey = @"urlContains";
-static NSString *urlEqualsKey = @"urlEquals";
-static NSString *urlMatchesKey = @"urlMatches";
-static NSString *originAndPathMatchesKey = @"originAndPathMatches";
-static NSString *urlPrefixKey = @"urlPrefix";
-static NSString *urlSuffixKey = @"urlSuffix";
-static NSString *schemesKey = @"schemes";
-static NSString *portsKey = @"ports";
+static NSString * const hostContainsKey = @"hostContains";
+static NSString * const hostEqualsKey = @"hostEquals";
+static NSString * const hostPrefixKey = @"hostPrefix";
+static NSString * const hostSuffixKey = @"hostSuffix";
+static NSString * const pathContainsKey = @"pathContains";
+static NSString * const pathEqualsKey = @"pathEquals";
+static NSString * const pathPrefixKey = @"pathPrefix";
+static NSString * const pathSuffixKey = @"pathSuffix";
+static NSString * const queryContainsKey = @"queryContains";
+static NSString * const queryEqualsKey = @"queryEquals";
+static NSString * const queryPrefixKey = @"queryPrefix";
+static NSString * const querySuffixKey = @"querySuffix";
+static NSString * const urlContainsKey = @"urlContains";
+static NSString * const urlEqualsKey = @"urlEquals";
+static NSString * const urlMatchesKey = @"urlMatches";
+static NSString * const originAndPathMatchesKey = @"originAndPathMatches";
+static NSString * const urlPrefixKey = @"urlPrefix";
+static NSString * const urlSuffixKey = @"urlSuffix";
+static NSString * const schemesKey = @"schemes";
+static NSString * const portsKey = @"ports";
 
 @interface _WKWebExtensionWebNavigationURLPredicate : NSObject
 - (instancetype)init NS_UNAVAILABLE;
@@ -298,10 +300,10 @@ static NSString *portsKey = @"ports";
         urlKey: @[ [NSDictionary class] ],
     };
 
-    if (![_WKWebExtensionUtilities validateContentsOfDictionary:dictionary requiredKeys:requiredKeys optionalKeys:nil keyToExpectedValueType:types outExceptionString:outErrorMessage])
+    if (!validateDictionary(dictionary, @"filters", requiredKeys, nil, types, outErrorMessage))
         return nil;
 
-    static NSArray<NSString *> *optionalURLDictionaryKeys = @[
+    static NSArray<NSString *> *urlOptionalKeys = @[
         hostContainsKey,
         hostEqualsKey,
         hostPrefixKey,
@@ -324,7 +326,7 @@ static NSString *portsKey = @"ports";
         portsKey,
     ];
 
-    static NSDictionary<NSString *, id> *URLDictionaryTypes = @{
+    static NSDictionary<NSString *, id> *urlTypes = @{
         hostContainsKey: [NSString class],
         hostEqualsKey: [NSString class],
         hostPrefixKey: [NSString class],
@@ -350,7 +352,7 @@ static NSString *portsKey = @"ports";
     NSMutableArray<NSArray<_WKWebExtensionWebNavigationURLPredicate *> *> *predicateGroups = [[NSMutableArray alloc] init];
 
     for (NSDictionary<NSString *, id> *urlDictionary in dictionary[urlKey]) {
-        if (![_WKWebExtensionUtilities validateContentsOfDictionary:urlDictionary requiredKeys:nil optionalKeys:optionalURLDictionaryKeys keyToExpectedValueType:URLDictionaryTypes outExceptionString:outErrorMessage])
+        if (!validateDictionary(urlDictionary, urlKey, nil, urlOptionalKeys, urlTypes, outErrorMessage))
             return nil;
 
         NSMutableArray<_WKWebExtensionWebNavigationURLPredicate *> *predicates = [[NSMutableArray alloc] init];

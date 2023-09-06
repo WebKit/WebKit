@@ -299,7 +299,6 @@ Tests/WebKitCocoa/WKWebExtensionController.mm
 Tests/WebKitCocoa/WKWebExtensionControllerConfiguration.mm
 Tests/WebKitCocoa/WKWebExtensionMatchPattern.mm
 Tests/WebKitCocoa/WKWebExtensionTab.mm
-Tests/WebKitCocoa/WKWebExtensionUtilities.mm
 Tests/WebKitCocoa/WKWebExtensionWindow.mm
 Tests/WebKitCocoa/WKWebViewAlwaysShowsScroller.mm
 Tests/WebKitCocoa/WKWebViewCandidateTests.mm

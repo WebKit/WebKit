@@ -43,6 +43,40 @@ static auto *alarmsManifest = @{
     @"permissions": @[ @"alarms" ],
 };
 
+TEST(WKWebExtensionAPIAlarms, Errors)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertThrows(() => browser.alarms.create(null), /'info' value is invalid, because an object is expected/i)",
+        @"browser.test.assertThrows(() => browser.alarms.create(undefined), /'info' value is invalid, because an object is expected/i)",
+
+        @"browser.test.assertThrows(() => browser.alarms.create({ when: 'bad' }), /'when' is expected to be a number value, but a string value was provided/i)",
+        @"browser.test.assertThrows(() => browser.alarms.create({ delayInMinutes: 'bad' }), /'delayInMinutes' is expected to be a number value, but a string value was provided/i)",
+        @"browser.test.assertThrows(() => browser.alarms.create({ periodInMinutes: 'bad' }), /'periodInMinutes' is expected to be a number value, but a string value was provided/i)",
+
+        @"browser.test.assertThrows(() => browser.alarms.create({ when: NaN }), /'when' is expected to be a number value, but NaN was provided/i)",
+        @"browser.test.assertThrows(() => browser.alarms.create({ delayInMinutes: NaN }), /'delayInMinutes' is expected to be a number value, but NaN was provided/i)",
+        @"browser.test.assertThrows(() => browser.alarms.create({ periodInMinutes: NaN }), /'periodInMinutes' is expected to be a number value, but NaN was provided/i)",
+
+        @"browser.test.assertThrows(() => browser.alarms.create({ when: [ Date.now() + 60000 ] }), /'when' is expected to be a number value, but an array was provided/i)",
+        @"browser.test.assertThrows(() => browser.alarms.create({ delayInMinutes: [ 1 ] }), /'delayInMinutes' is expected to be a number value, but an array was provided/i)",
+        @"browser.test.assertThrows(() => browser.alarms.create({ periodInMinutes: [ 1 ] }), /'periodInMinutes' is expected to be a number value, but an array was provided/i)",
+
+        @"browser.test.assertThrows(() => browser.alarms.create({ when: true }), /'when' is expected to be a number value, but a boolean value was provided/i)",
+        @"browser.test.assertThrows(() => browser.alarms.create({ delayInMinutes: true }), /'delayInMinutes' is expected to be a number value, but a boolean value was provided/i)",
+        @"browser.test.assertThrows(() => browser.alarms.create({ periodInMinutes: true }), /'periodInMinutes' is expected to be a number value, but a boolean value was provided/i)",
+
+        @"browser.test.assertThrows(() => browser.alarms.create({ when: { time: Date.now() + 60000 } }), /'when' is expected to be a number value, but an object was provided/i)",
+        @"browser.test.assertThrows(() => browser.alarms.create({ delayInMinutes: { value: 1 } }), /'delayInMinutes' is expected to be a number value, but an object was provided/i)",
+        @"browser.test.assertThrows(() => browser.alarms.create({ periodInMinutes: { value: 1 } }), /'periodInMinutes' is expected to be a number value, but an object was provided/i)",
+
+        @"browser.test.assertThrows(() => browser.alarms.create({ delayInMinutes: 1, when: Date.now() + 60000 }), /cannot specify both 'delayInMinutes' and 'when'/i)",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    Util::loadAndRunExtension(alarmsManifest, @{ @"background.js": backgroundScript });
+}
+
 TEST(WKWebExtensionAPIAlarms, DelaySingleShot)
 {
     auto *backgroundScript = Util::constructScript(@[
