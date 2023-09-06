@@ -138,7 +138,7 @@ void RemoteVideoCodecFactory::createDecoder(const String& codec, const VideoDeco
     WebProcess::singleton().libWebRTCCodecs().createDecoderAndWaitUntilReady(*type, codec, [width = config.width, height = config.height, description = Vector<uint8_t> { config.description }, createCallback = WTFMove(createCallback), outputCallback = WTFMove(outputCallback), postTaskCallback = WTFMove(postTaskCallback)](auto* internalDecoder) mutable {
         if (!internalDecoder) {
             postTaskCallback([createCallback = WTFMove(createCallback)]() mutable {
-                createCallback(makeUnexpected("Encoder creation failed"_s));
+                createCallback(makeUnexpected("Decoder creation failed"_s));
             });
             return;
         }
@@ -157,7 +157,7 @@ void RemoteVideoCodecFactory::createEncoder(const String& codec, const WebCore::
 {
     LibWebRTCCodecs::initializeIfNeeded();
 
-    auto type = WebProcess::singleton().libWebRTCCodecs().videoCodecTypeFromWebCodec(codec);
+    auto type = WebProcess::singleton().libWebRTCCodecs().videoEncoderTypeFromWebCodec(codec);
     if (!type) {
         VideoEncoder::createLocalEncoder(codec, config, WTFMove(createCallback), WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postTaskCallback));
         return;

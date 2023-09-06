@@ -77,6 +77,7 @@ public:
     static void initializeIfNeeded();
 
     std::optional<VideoCodecType> videoCodecTypeFromWebCodec(const String&);
+    std::optional<VideoCodecType> videoEncoderTypeFromWebCodec(const String&);
 
     using DecoderCallback = Function<void(RefPtr<WebCore::VideoFrame>&&, int64_t timestamp)>;
     struct Decoder {
