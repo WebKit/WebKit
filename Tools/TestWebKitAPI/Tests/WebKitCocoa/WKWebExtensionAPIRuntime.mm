@@ -53,6 +53,8 @@ TEST(WKWebExtensionAPIRuntime, GetURL)
         @"browser.test.assertThrows(() => browser.runtime.getURL(), /required argument is missing/i)",
         @"browser.test.assertThrows(() => browser.runtime.getURL(null), /'resourcePath' value is invalid, because a string is expected/i)",
         @"browser.test.assertThrows(() => browser.runtime.getURL(undefined), /'resourcePath' value is invalid, because a string is expected/i)",
+        @"browser.test.assertThrows(() => browser.runtime.getURL(42), /'resourcePath' value is invalid, because a string is expected/i)",
+        @"browser.test.assertThrows(() => browser.runtime.getURL(/test/), /'resourcePath' value is invalid, because a string is expected/i)",
 
         // Normal Cases
         @"browser.test.assertEq(browser.runtime.getURL(''), `${baseURL}/`)",
@@ -69,8 +71,6 @@ TEST(WKWebExtensionAPIRuntime, GetURL)
 
         // Unexpected Cases
         // FIXME: <https://webkit.org/b/248154> browser.runtime.getURL() has some edge cases that should be failures or return different results
-        @"browser.test.assertEq(browser.runtime.getURL(42), `${baseURL}/42`)",
-        @"browser.test.assertEq(browser.runtime.getURL(/test/), `${baseURL}/test/`)",
         @"browser.test.assertEq(browser.runtime.getURL('//'), 'test-extension://')",
         @"browser.test.assertEq(browser.runtime.getURL('//example'), `test-extension://example`)",
         @"browser.test.assertEq(browser.runtime.getURL('///'), 'test-extension:///')",
