@@ -32,7 +32,6 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/mo
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-webrtc.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCDTMFSender-ontonechange.https.html [ Pass Failure ]
 media/modern-media-controls/text-tracks/text-tracks-height-no-controls.html [ Pass Failure ]
-webrtc/vp8-then-h264-gpu-process-crash.html [ Pass Timeout ]
 http/tests/websocket/tests/hybi/error-event-ready-state-non-existent-url-with-server-responding-404.html [ Pass Timeout ]
 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-justify-content-wmvert-002.html [ Pass Timeout ]
 imported/w3c/web-platform-tests/fetch/http-cache/cc-request.any.sharedworker.html [ Pass Failure ]
