@@ -2856,3 +2856,5 @@ webkit.org/b/261000 media/video-orientation-canvas.html [ Pass Failure ]
 [ Release ] imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-with-transform-and-preserve-3D.html [ ImageOnlyFailure ]
 
 webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ Pass Timeout ]
+
+webkit.org/b/261213 inspector/sampling-profiler/many-call-frames.html [ Failure ]
