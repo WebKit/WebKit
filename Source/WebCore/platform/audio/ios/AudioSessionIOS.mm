@@ -135,7 +135,13 @@ void AudioSessionIOS::setHostProcessAttribution(audit_token_t auditToken)
         return;
     }
 
-    [[PAL::getAVAudioSessionClass() sharedInstance] setHostProcessAttribution:@[ bundleProxy.bundleIdentifier ] error:&error];
+    auto bundleIdentifier = bundleProxy.bundleIdentifier;
+    if (!bundleIdentifier) {
+        RELEASE_LOG_ERROR(WebRTC, "-[LSBundleProxy bundleIdentifier] returned nil!");
+        return;
+    }
+
+    [[PAL::getAVAudioSessionClass() sharedInstance] setHostProcessAttribution:@[ bundleIdentifier ] error:&error];
     if (error)
         RELEASE_LOG_ERROR(WebRTC, "Failed to set attribution bundleID with error: %@.", error.localizedDescription);
 #else
