@@ -976,6 +976,7 @@
                 "unicode"
             ],
             "codegen-properties": {
+                "settings-flag": "cssFontVariantEmojiEnabled",
                 "parser-grammar": "<<values>>",
                 "name-for-methods": "VariantEmoji",
                 "font-property": true,

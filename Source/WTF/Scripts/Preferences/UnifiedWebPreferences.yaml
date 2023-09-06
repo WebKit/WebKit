@@ -1070,6 +1070,20 @@ CSSFontFaceSizeAdjustEnabled:
     WebCore:
       default: true
 
+CSSFontVariantEmojiEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS font-variant-emoji property"
+  humanReadableDescription: "Enable the font-variant-emoji CSS property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSGradientInterpolationColorSpacesEnabled:
   type: bool
   status: stable
