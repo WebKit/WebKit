@@ -10,50 +10,23 @@
 
 #include "common_video/h265/h265_common.h"
 
+#include "common_video/h264/h264_common.h"
+
 namespace webrtc {
 namespace H265 {
 
 const uint8_t kNaluTypeMask = 0x7E;
 
-std::vector<H264::NaluIndex> FindNaluIndices(const uint8_t* buffer,
+std::vector<NaluIndex> FindNaluIndices(const uint8_t* buffer,
                                        size_t buffer_size) {
-  // This is sorta like Boyer-Moore, but with only the first optimization step:
-  // given a 3-byte sequence we're looking at, if the 3rd byte isn't 1 or 0,
-  // skip ahead to the next 3-byte sequence. 0s and 1s are relatively rare, so
-  // this will skip the majority of reads/checks.
-  std::vector<H264::NaluIndex> sequences;
-  if (buffer_size < kNaluShortStartSequenceSize)
-    return sequences;
-
-  const size_t end = buffer_size - kNaluShortStartSequenceSize;
-  for (size_t i = 0; i < end;) {
-    if (buffer[i + 2] > 1) {
-      i += 3;
-    } else if (buffer[i + 2] == 1 && buffer[i + 1] == 0 && buffer[i] == 0) {
-      // We found a start sequence, now check if it was a 3 of 4 byte one.
-      H264::NaluIndex index = {i, i + 3, 0};
-      if (index.start_offset > 0 && buffer[index.start_offset - 1] == 0)
-        --index.start_offset;
-
-      // Update length of previous entry.
-      auto it = sequences.rbegin();
-      if (it != sequences.rend())
-        it->payload_size = index.start_offset - it->payload_start_offset;
-
-      sequences.push_back(index);
-
-      i += 3;
-    } else {
-      ++i;
-    }
+  std::vector<H264::NaluIndex> indices =
+      H264::FindNaluIndices(buffer, buffer_size);
+  std::vector<NaluIndex> results;
+  for (auto& index : indices) {
+    results.push_back(
+        {index.start_offset, index.payload_start_offset, index.payload_size});
   }
-
-  // Update length of last entry, if any.
-  auto it = sequences.rbegin();
-  if (it != sequences.rend())
-    it->payload_size = buffer_size - it->payload_start_offset;
-
-  return sequences;
+  return results;
 }
 
 NaluType ParseNaluType(uint8_t data) {
@@ -61,49 +34,26 @@ NaluType ParseNaluType(uint8_t data) {
 }
 
 std::vector<uint8_t> ParseRbsp(const uint8_t* data, size_t length) {
-  std::vector<uint8_t> out;
-  out.reserve(length);
-
-  for (size_t i = 0; i < length;) {
-    // Be careful about over/underflow here. byte_length_ - 3 can underflow, and
-    // i + 3 can overflow, but byte_length_ - i can't, because i < byte_length_
-    // above, and that expression will produce the number of bytes left in
-    // the stream including the byte at i.
-    if (length - i >= 3 && !data[i] && !data[i + 1] && data[i + 2] == 3) {
-      // Two rbsp bytes.
-      out.push_back(data[i++]);
-      out.push_back(data[i++]);
-      // Skip the emulation byte.
-      i++;
-    } else {
-      // Single rbsp byte.
-      out.push_back(data[i++]);
-    }
-  }
-  return out;
+  return H264::ParseRbsp(data, length);
 }
 
 void WriteRbsp(const uint8_t* bytes, size_t length, rtc::Buffer* destination) {
-  static const uint8_t kZerosInStartSequence = 2;
-  static const uint8_t kEmulationByte = 0x03u;
-  size_t num_consecutive_zeros = 0;
-  destination->EnsureCapacity(destination->size() + length);
+  H264::WriteRbsp(bytes, length, destination);
+}
 
-  for (size_t i = 0; i < length; ++i) {
-    uint8_t byte = bytes[i];
-    if (byte <= kEmulationByte &&
-        num_consecutive_zeros >= kZerosInStartSequence) {
-      // Need to escape.
-      destination->AppendData(kEmulationByte);
-      num_consecutive_zeros = 0;
-    }
-    destination->AppendData(byte);
-    if (byte == 0) {
-      ++num_consecutive_zeros;
-    } else {
-      num_consecutive_zeros = 0;
-    }
+uint32_t Log2(uint32_t value) {
+  uint32_t result = 0;
+  // If value is not a power of two an additional bit is required
+  // to account for the ceil() of log2() below.
+  if ((value & (value - 1)) != 0) {
+    ++result;
   }
+  while (value > 0) {
+    value >>= 1;
+    ++result;
+  }
+
+  return result;
 }
 
 }  // namespace H265

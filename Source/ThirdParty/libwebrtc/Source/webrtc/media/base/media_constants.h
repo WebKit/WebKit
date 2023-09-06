@@ -123,6 +123,7 @@ RTC_EXPORT extern const char kVp8CodecName[];
 RTC_EXPORT extern const char kVp9CodecName[];
 RTC_EXPORT extern const char kAv1CodecName[];
 RTC_EXPORT extern const char kH264CodecName[];
+RTC_EXPORT extern const char kH265CodecName[];
 
 // RFC 6184 RTP Payload Format for H.264 video
 RTC_EXPORT extern const char kH264FmtpProfileLevelId[];
@@ -135,6 +136,13 @@ extern const char kH264ProfileLevelConstrainedHigh[];
 
 extern const char kVP9ProfileId[];
 
+#ifdef WEBRTC_USE_H265
+// RFC 7798 RTP Payload Format for H.265 video
+RTC_EXPORT extern const char kH265FmtpProfileSpace[];
+RTC_EXPORT extern const char kH265FmtpProfileId[];
+RTC_EXPORT extern const char kH265FmtpTierFlag[];
+RTC_EXPORT extern const char kH265FmtpLevelId[];
+#endif
 extern const int kDefaultVideoMaxFramerate;
 
 extern const size_t kConferenceMaxNumSpatialLayers;

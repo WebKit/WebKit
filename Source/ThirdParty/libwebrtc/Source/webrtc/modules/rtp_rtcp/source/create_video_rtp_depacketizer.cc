@@ -13,7 +13,7 @@
 #include <memory>
 
 #include "api/video/video_codec_type.h"
-#ifndef DISABLE_H265
+#ifdef WEBRTC_USE_H265
 #include "modules/rtp_rtcp/source/rtp_format_h265.h"
 #endif
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer.h"
@@ -22,6 +22,7 @@
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer_h264.h"
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer_vp8.h"
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer_vp9.h"
+#include "modules/rtp_rtcp/source/video_rtp_depacketizer_h265.h"
 
 namespace webrtc {
 
@@ -30,9 +31,9 @@ std::unique_ptr<VideoRtpDepacketizer> CreateVideoRtpDepacketizer(
   switch (codec) {
     case kVideoCodecH264:
       return std::make_unique<VideoRtpDepacketizerH264>();
-#ifndef DISABLE_H265
+#ifdef WEBRTC_USE_H265
     case kVideoCodecH265:
-      return std::make_unique<VideoRtpDepacketizerGeneric>();
+      return std::make_unique<VideoRtpDepacketizerH265>();
 #endif
     case kVideoCodecVP8:
       return std::make_unique<VideoRtpDepacketizerVp8>();

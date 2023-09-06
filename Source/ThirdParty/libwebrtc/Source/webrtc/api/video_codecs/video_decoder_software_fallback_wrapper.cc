@@ -167,7 +167,7 @@ void VideoDecoderSoftwareFallbackWrapper::UpdateFallbackDecoderHistograms() {
       RTC_HISTOGRAM_COUNTS_100000(kFallbackHistogramsUmaPrefix + "H264",
                                   hw_decoded_frames_since_last_fallback_);
       break;
-#ifndef DISABLE_H265
+#ifdef WEBRTC_USE_H265
     case kVideoCodecH265:
       RTC_HISTOGRAM_COUNTS_100000(kFallbackHistogramsUmaPrefix + "H265",
                                   hw_decoded_frames_since_last_fallback_);
