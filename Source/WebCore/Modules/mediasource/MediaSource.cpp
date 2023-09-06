@@ -188,8 +188,10 @@ const PlatformTimeRanges& MediaSource::buffered() const
 
 void MediaSource::seekToTarget(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
 {
-    if (isClosed())
+    if (isClosed()) {
+        completionHandler(MediaTime::invalidTime());
         return;
+    }
 
     ALWAYS_LOG(LOGIDENTIFIER, target.time);
 
@@ -256,8 +258,10 @@ void MediaSource::completeSeek()
         {
             auto seekTime = time;
             for (auto& result : seekResults) {
-                if (result.isInvalid())
+                if (result.isInvalid()) {
                     completionHandler(MediaTime::invalidTime());
+                    return;
+                }
                 if (abs(time - result) > abs(time - seekTime))
                     seekTime = result;
             }
