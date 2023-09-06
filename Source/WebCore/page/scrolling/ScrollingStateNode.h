@@ -316,10 +316,9 @@ public:
 
     // Note that node ownership is via the parent, so these functions can trigger node deletion.
     void removeFromParent();
-    void removeChildAtIndex(size_t index);
     void removeChild(ScrollingStateNode&);
 
-    size_t indexOfChild(ScrollingStateNode&) const;
+    RefPtr<ScrollingStateNode> childAtIndex(size_t) const;
 
     String scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { }) const;
 
