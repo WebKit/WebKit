@@ -69,13 +69,6 @@
             }
         }
     },
-    "TestWebViewEditor": {
-        "subtests": {
-            "/webkit/WebKitWebView/editable/editable": {
-                "expected": {"gtk@Debug": {"status": ["FAIL"], "bug": "webkit.org/b/134580"}}
-            }
-        }
-    },
     "TestWebProcessExtensions": {
         "subtests": {
             "/webkit/WebKitWebProcessExtension/form-submission-steps": {

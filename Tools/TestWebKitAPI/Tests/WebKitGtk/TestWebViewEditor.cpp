@@ -271,6 +271,22 @@ public:
         return typingAttributes();
     }
 
+    static void editorStateChangedCallback(EditorTest* test)
+    {
+        if (webkit_editor_state_is_cut_available(test->editorState()))
+            g_main_loop_quit(test->m_mainLoop);
+    }
+
+    void waitUntilCutIsAvailable()
+    {
+        if (webkit_editor_state_is_cut_available(editorState()))
+            return;
+
+        auto signalID = g_signal_connect_swapped(editorState(), "changed", G_CALLBACK (editorStateChangedCallback), this);
+        g_main_loop_run(m_mainLoop);
+        g_signal_handler_disconnect(editorState(), signalID);
+    }
+
     Clipboard m_clipboard;
     bool m_canExecuteEditingCommand { false };
     WebKitEditorState* m_editorState { nullptr };
@@ -383,13 +399,11 @@ static void loadContentsAndTryToCutSelection(EditorTest* test, bool contentEdita
     GUniquePtr<char> selectedSpanHTML(g_strdup_printf(selectedSpanHTMLFormat, contentEditable ? "true" : "false"));
     test->loadHtml(selectedSpanHTML.get(), nullptr);
     test->waitUntilLoadFinished();
-    test->flushEditorState();
 
-    g_assert_false(test->isEditable());
     test->setEditable(true);
     g_assert_true(test->isEditable());
 
-    test->flushEditorState();
+    test->waitUntilCutIsAvailable();
 
     // Cut the selection to the clipboard to see if the view is indeed editable.
     g_assert_cmpstr(test->cutSelection(), ==, "make Jack a dull");
