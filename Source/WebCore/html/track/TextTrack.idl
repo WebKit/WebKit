@@ -56,6 +56,4 @@ enum TextTrackKind { "subtitles", "captions", "descriptions", "chapters", "metad
 
     // FIXME: Remove 'non-standard'. See: https://bugs.webkit.org/show_bug.cgi?id=260767 
     readonly attribute VTTRegionList regions;
-    undefined addRegion(VTTRegion region);
-    undefined removeRegion(VTTRegion region);
 };
