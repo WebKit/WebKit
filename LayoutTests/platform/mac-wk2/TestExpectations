@@ -2112,3 +2112,5 @@ editing/input/caret-at-the-edge-of-contenteditable.html [ Pass ImageOnlyFailure 
 webkit.org/b/261005 swipe/pushState-cached-back-swipe.html [ Pass Failure Timeout ]
 
 webkit.org/b/261041 accessibility/mac/basic-embed-pdf-accessibility.html [ Failure ]
+
+webkit.org/b/227761 imported/w3c/web-platform-tests/beacon/beacon-cors.https.window.html [ Pass Failure ]
