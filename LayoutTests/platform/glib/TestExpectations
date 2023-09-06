@@ -1297,19 +1297,6 @@ webkit.org/b/203146 fast/canvas/offscreen-enabled.html [ Pass ]
 webkit.org/b/203146 http/wpt/offscreen-canvas [ Pass ]
 webkit.org/b/203146 imported/w3c/web-platform-tests/html/canvas/offscreen [ Pass ]
 
-webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.drop_shadow.html [ ImageOnlyFailure ]
-webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.drop_shadow.w.html [ Timeout ]
-webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.global_composite_operation.html [ ImageOnlyFailure ]
-webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.global_composite_operation.w.html [ Timeout ]
-webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.line.html [ ImageOnlyFailure ]
-webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.line.w.html [ Timeout ]
-webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.misc.html [ ImageOnlyFailure ]
-webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.misc.w.html [ Timeout ]
-webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.miter_limit.html [ ImageOnlyFailure ]
-webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.miter_limit.w.html [ Timeout ]
-webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.text.html [ ImageOnlyFailure ]
-webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.text.w.html [ Timeout ]
-
 webkit.org/b/258077 fast/canvas/offscreen-clipped.html [ ImageOnlyFailure ]
 
 # OffscreenCanvas tests that are flaky due to console output from unhandled Promise rejections due to unimplemented API.

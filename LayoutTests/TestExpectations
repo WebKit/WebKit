@@ -6636,17 +6636,17 @@ webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/element/reset/2d
 webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.miter_limit.html [ ImageOnlyFailure ]
 webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.render.text.html [ ImageOnlyFailure ]
 webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.drop_shadow.html [ ImageOnlyFailure ]
-webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.drop_shadow.w.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.drop_shadow.w.html [ Timeout ]
 webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.global_composite_operation.html [ ImageOnlyFailure ]
-webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.global_composite_operation.w.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.global_composite_operation.w.html [ Timeout ]
 webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.line.html [ ImageOnlyFailure ]
-webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.line.w.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.line.w.html [ Timeout ]
 webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.misc.html [ ImageOnlyFailure ]
-webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.misc.w.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.misc.w.html [ Timeout ]
 webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.miter_limit.html [ ImageOnlyFailure ]
-webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.miter_limit.w.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.miter_limit.w.html [ Timeout ]
 webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.text.html [ ImageOnlyFailure ]
-webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.text.w.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.text.w.html [ Timeout ]
 
 # We only support import-attributes and do not support import-assertions.
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/import-assertions
