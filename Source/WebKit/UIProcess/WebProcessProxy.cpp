@@ -2575,7 +2575,6 @@ Logger& WebProcessProxy::logger()
 void WebProcessProxy::resetState()
 {
     m_hasCommittedAnyProvisionalLoads = false;
-    m_hasCommittedAnyMeaningfulProvisionalLoads = false;
 }
 
 TextStream& operator<<(TextStream& ts, const WebProcessProxy& process)
