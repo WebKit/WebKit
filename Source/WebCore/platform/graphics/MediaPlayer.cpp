@@ -452,7 +452,7 @@ Ref<MediaPlayer> MediaPlayer::create(MediaPlayerClient& client, MediaPlayerEnums
 }
 
 MediaPlayer::MediaPlayer(MediaPlayerClient& client)
-    : m_client(&client)
+    : m_client(client)
     , m_reloadTimer(*this, &MediaPlayer::reloadTimerFired)
     , m_private(makeUnique<NullMediaPlayerPrivate>(this))
     , m_preferredDynamicRangeMode(DynamicRangeMode::Standard)
@@ -460,7 +460,7 @@ MediaPlayer::MediaPlayer(MediaPlayerClient& client)
 }
 
 MediaPlayer::MediaPlayer(MediaPlayerClient& client, MediaPlayerEnums::MediaEngineIdentifier mediaEngineIdentifier)
-    : m_client(&client)
+    : m_client(client)
     , m_reloadTimer(*this, &MediaPlayer::reloadTimerFired)
     , m_private(makeUnique<NullMediaPlayerPrivate>(this))
     , m_activeEngineIdentifier(mediaEngineIdentifier)
@@ -475,7 +475,7 @@ MediaPlayer::~MediaPlayer()
 
 void MediaPlayer::invalidate()
 {
-    m_client = &nullMediaPlayerClient();
+    m_client = nullMediaPlayerClient();
 }
 
 bool MediaPlayer::load(const URL& url, const ContentType& contentType, const String& keySystem, bool requiresRemotePlayback)

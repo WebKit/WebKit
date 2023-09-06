@@ -166,7 +166,7 @@ struct SeekTarget {
     String toString() const;
 };
 
-class MediaPlayerClient {
+class MediaPlayerClient : public CanMakeWeakPtr<MediaPlayerClient> {
 public:
     virtual ~MediaPlayerClient() = default;
 
@@ -757,7 +757,7 @@ private:
     const MediaPlayerFactory* nextMediaEngine(const MediaPlayerFactory*);
     void reloadTimerFired();
 
-    MediaPlayerClient* m_client;
+    WeakPtr<MediaPlayerClient> m_client;
     Timer m_reloadTimer;
     std::unique_ptr<MediaPlayerPrivateInterface> m_private;
     const MediaPlayerFactory* m_currentMediaEngine { nullptr };

@@ -106,9 +106,13 @@ class RemoteVideoTrackProxy;
 class RemoteMediaPlayerProxy final
     : public RefCounted<RemoteMediaPlayerProxy>
     , public WebCore::MediaPlayerClient
-    , public IPC::MessageReceiver {
+    , private IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    using WebCore::MediaPlayerClient::WeakPtrImplType;
+    using WebCore::MediaPlayerClient::WeakValueType;
+    using WebCore::MediaPlayerClient::weakPtrFactory;
+
     static Ref<RemoteMediaPlayerProxy> create(RemoteMediaPlayerManagerProxy&, WebCore::MediaPlayerIdentifier, Ref<IPC::Connection>&&, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&, RemoteVideoFrameObjectHeap&, const WebCore::ProcessIdentity&);
     ~RemoteMediaPlayerProxy();
 
