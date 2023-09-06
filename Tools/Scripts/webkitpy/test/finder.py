@@ -40,11 +40,8 @@ class _DirectoryTree(object):
     def __init__(self, filesystem, top_directory, starting_subdirectory):
         self.filesystem = filesystem
         self.top_directory = filesystem.realpath(top_directory)
-        self.search_directory = self.top_directory
-        self.top_package = ''
-        if starting_subdirectory:
-            self.top_package = starting_subdirectory.replace(filesystem.sep, '.') + '.'
-            self.search_directory = filesystem.join(self.top_directory, starting_subdirectory)
+        self.top_package = starting_subdirectory.replace(filesystem.sep, '.') + '.'
+        self.search_directory = filesystem.join(self.top_directory, starting_subdirectory)
 
     def find_modules(self, suffixes, sub_directory=None):
         if sub_directory:
@@ -64,7 +61,9 @@ class _DirectoryTree(object):
     def subpath(self, path):
         """Returns the relative path from the top of the tree to the path, or None if the path is not under the top of the tree."""
         realpath = self.filesystem.realpath(self.filesystem.join(self.top_directory, path))
-        if realpath.startswith(self.top_directory + self.filesystem.sep):
+        if realpath == self.search_directory:
+            return self.top_package
+        if realpath.startswith(self.search_directory + self.filesystem.sep):
             return realpath.replace(self.top_directory + self.filesystem.sep, '')
         return None
 
@@ -89,7 +88,7 @@ class Finder(object):
         self.trees = []
         self._names_to_skip = []
 
-    def add_tree(self, top_directory, starting_subdirectory=None):
+    def add_tree(self, top_directory, starting_subdirectory):
         self.trees.append(_DirectoryTree(self.filesystem, top_directory, starting_subdirectory))
 
     def skip(self, names, reason, bugid):
