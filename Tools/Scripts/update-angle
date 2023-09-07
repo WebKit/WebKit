@@ -12,7 +12,7 @@ q="-q"
 
 generate_changes_diff() {
     # Exclude WebKit-added build files from the diff.
-    git diff "$1" --full-index --cached -b --ignore-cr-at-eol -- . \
+    git diff "$1" --ignore-submodules=all --full-index --cached -b --ignore-cr-at-eol -- . \
         ':(exclude)ANGLE.plist' \
         ':(exclude)ANGLE.xcodeproj' \
         ':(exclude)Configurations' \
