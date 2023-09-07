@@ -3842,6 +3842,9 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<BlendMode>(CSSPropertyMixBlendMode, &RenderStyle::blendMode, &RenderStyle::setBlendMode),
         new DiscretePropertyWrapper<BlendMode>(CSSPropertyBackgroundBlendMode, &RenderStyle::backgroundBlendMode, &RenderStyle::setBackgroundBlendMode),
 #endif
+#if ENABLE(DARK_MODE_CSS)
+        new DiscretePropertyWrapper<StyleColorScheme>(CSSPropertyColorScheme, &RenderStyle::colorScheme, &RenderStyle::setColorScheme),
+#endif
         new PropertyWrapperAspectRatio,
         new DiscretePropertyWrapper<FontPalette>(CSSPropertyFontPalette, &RenderStyle::fontPalette, &RenderStyle::setFontPalette),
 
@@ -3977,9 +3980,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         // When adding a new property, you should make sure it belongs in this list
         // or provide a wrapper for it above. If you are adding to this list but the
         // property should be animatable, make sure to file a bug.
-#if ENABLE(DARK_MODE_CSS)
-        case CSSPropertyColorScheme:
-#endif
         case CSSPropertyDirection:
         case CSSPropertyDisplay:
 #if ENABLE(VARIATION_FONTS)
