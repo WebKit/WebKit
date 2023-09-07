@@ -25,15 +25,21 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
 #include <wtf/HashMap.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
 
+enum class SoupNetworkProxySettingsMode : uint8_t {
+    Default,
+    NoProxy,
+    Custom,
+    Auto
+};
+
 struct SoupNetworkProxySettings {
-    enum class Mode { Default, NoProxy, Custom, Auto };
+    using Mode = SoupNetworkProxySettingsMode;
 
     SoupNetworkProxySettings() = default;
 
@@ -80,17 +86,3 @@ struct SoupNetworkProxySettings {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::SoupNetworkProxySettings::Mode> {
-    using values = EnumValues<
-        WebCore::SoupNetworkProxySettings::Mode,
-        WebCore::SoupNetworkProxySettings::Mode::Default,
-        WebCore::SoupNetworkProxySettings::Mode::NoProxy,
-        WebCore::SoupNetworkProxySettings::Mode::Custom,
-        WebCore::SoupNetworkProxySettings::Mode::Auto
-    >;
-};
-
-} // namespace WTF

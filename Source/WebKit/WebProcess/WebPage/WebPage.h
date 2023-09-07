@@ -437,7 +437,7 @@ public:
 
     void scrollMainFrameIfNotAtMaxScrollPosition(const WebCore::IntSize& scrollOffset);
 
-    bool scrollBy(uint32_t scrollDirection, WebCore::ScrollGranularity);
+    bool scrollBy(WebCore::ScrollDirection, WebCore::ScrollGranularity);
 
     void centerSelectionInVisibleArea();
 

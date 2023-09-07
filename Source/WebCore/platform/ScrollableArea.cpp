@@ -144,7 +144,7 @@ bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granula
 
     auto scrollDelta = step * stepCount;
     
-    if (direction == ScrollUp || direction == ScrollLeft)
+    if (direction == ScrollDirection::ScrollUp || direction == ScrollDirection::ScrollLeft)
         scrollDelta = -scrollDelta;
 
     return scrollAnimator().singleAxisScroll(axis, scrollDelta, ScrollAnimator::ScrollBehavior::RespectScrollSnap);

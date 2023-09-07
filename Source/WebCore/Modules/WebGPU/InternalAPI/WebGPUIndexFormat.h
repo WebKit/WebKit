@@ -26,7 +26,6 @@
 #pragma once
 
 #include <cstdint>
-#include <wtf/EnumTraits.h>
 
 namespace WebCore::WebGPU {
 
@@ -36,15 +35,3 @@ enum class IndexFormat : uint8_t {
 };
 
 } // namespace WebCore::WebGPU
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::WebGPU::IndexFormat> {
-    using values = EnumValues<
-        WebCore::WebGPU::IndexFormat,
-        WebCore::WebGPU::IndexFormat::Uint16,
-        WebCore::WebGPU::IndexFormat::Uint32
-    >;
-};
-
-} // namespace WTF

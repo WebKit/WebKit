@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -102,36 +101,3 @@ inline bool operator==(const ProtectionSpace& a, const ProtectionSpace& b) { ret
     
 } // namespace WebCore
 
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ProtectionSpaceBase::AuthenticationScheme> {
-    using values = EnumValues<
-        WebCore::ProtectionSpaceBase::AuthenticationScheme,
-        WebCore::ProtectionSpaceBase::AuthenticationScheme::Default,
-        WebCore::ProtectionSpaceBase::AuthenticationScheme::HTTPBasic,
-        WebCore::ProtectionSpaceBase::AuthenticationScheme::HTTPDigest,
-        WebCore::ProtectionSpaceBase::AuthenticationScheme::HTMLForm,
-        WebCore::ProtectionSpaceBase::AuthenticationScheme::NTLM,
-        WebCore::ProtectionSpaceBase::AuthenticationScheme::Negotiate,
-        WebCore::ProtectionSpaceBase::AuthenticationScheme::ClientCertificateRequested,
-        WebCore::ProtectionSpaceBase::AuthenticationScheme::ServerTrustEvaluationRequested,
-        WebCore::ProtectionSpaceBase::AuthenticationScheme::OAuth,
-        WebCore::ProtectionSpaceBase::AuthenticationScheme::Unknown
-    >;
-};
-
-template<> struct EnumTraits<WebCore::ProtectionSpaceBase::ServerType> {
-    using values = EnumValues<
-        WebCore::ProtectionSpaceBase::ServerType,
-        WebCore::ProtectionSpaceBase::ServerType::HTTP,
-        WebCore::ProtectionSpaceBase::ServerType::HTTPS,
-        WebCore::ProtectionSpaceBase::ServerType::FTP,
-        WebCore::ProtectionSpaceBase::ServerType::FTPS,
-        WebCore::ProtectionSpaceBase::ServerType::ProxyHTTP,
-        WebCore::ProtectionSpaceBase::ServerType::ProxyHTTPS,
-        WebCore::ProtectionSpaceBase::ServerType::ProxyFTP,
-        WebCore::ProtectionSpaceBase::ServerType::ProxySOCKS
-    >;
-};
-
-} // namespace WTF
