@@ -41,8 +41,9 @@ namespace WebCore {
 
 bool AudioDecoder::isCodecSupported(const StringView& codec)
 {
-    // FIXME: Check codec more accurately.
-    bool isCodecAllowed = codec.startsWith("mp4a."_s) || codec == "mp3"_s || codec == "opus"_s
+    bool isMPEG4AAC = codec == "mp4a.40.2"_s || codec == "mp4a.40.02"_s || codec == "mp4a.40.5"_s
+        || codec == "mp4a.40.05"_s || codec == "mp4a.40.29"_s || codec == "mp4a.40.42"_s;
+    bool isCodecAllowed = isMPEG4AAC || codec == "mp3"_s || codec == "opus"_s
         || codec == "alaw"_s || codec == "ulaw"_s || codec == "flac"_s
         || codec == "vorbis"_s || codec.startsWith("pcm-"_s);
 

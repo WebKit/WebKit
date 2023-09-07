@@ -36,8 +36,8 @@ namespace WebCore {
 struct WebCodecsAudioDecoderConfig {
     String codec;
     std::optional<BufferSource::VariantType> description;
-    std::optional<size_t> sampleRate;
-    std::optional<size_t> numberOfChannels;
+    size_t sampleRate;
+    size_t numberOfChannels;
 
     WebCodecsAudioDecoderConfig isolatedCopyWithoutDescription() && { return { WTFMove(codec).isolatedCopy(), { }, sampleRate, numberOfChannels }; }
     WebCodecsAudioDecoderConfig isolatedCopyWithoutDescription() const & { return { codec.isolatedCopy(), { }, sampleRate, numberOfChannels }; }

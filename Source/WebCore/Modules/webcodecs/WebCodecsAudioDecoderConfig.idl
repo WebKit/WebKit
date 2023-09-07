@@ -31,7 +31,7 @@ typedef [EnforceRange] unsigned long WebCodecsAudioDecoderConfigSize;
     JSGenerateToJSObject,
 ] dictionary WebCodecsAudioDecoderConfig {
     required DOMString codec;
-    WebCodecsAudioDecoderConfigSize sampleRate;
-    WebCodecsAudioDecoderConfigSize numberOfChannels;
+    required WebCodecsAudioDecoderConfigSize sampleRate;
+    required WebCodecsAudioDecoderConfigSize numberOfChannels;
     (ArrayBufferView or ArrayBuffer) description;
 };
