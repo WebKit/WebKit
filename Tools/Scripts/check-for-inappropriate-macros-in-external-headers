@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+require 'fileutils'
+
 # Copyright (C) 2012 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -75,3 +77,4 @@ ARGV.each do |path|
 end
 
 exit 1 if $error_printed
+FileUtils.touch "#{ENV['TARGET_TEMP_DIR']}/#{File.basename($0)}.timestamp"

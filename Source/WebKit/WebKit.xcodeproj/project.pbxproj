@@ -12,6 +12,7 @@
 			buildConfigurationList = 1A50DB48110A3C27000D3FE5 /* Build configuration list for PBXAggregateTarget "Framework, XPC Services, and daemons" */;
 			buildPhases = (
 				BCFFCA8A160D6DEA003DF315 /* Add XPCServices symlink */,
+				DDFA47222AA93C7F00C7C788 /* Check For Inappropriate Files In Framework */,
 			);
 			dependencies = (
 				517B5F6D275B07C3002DC22D /* PBXTargetDependency */,
@@ -15830,7 +15831,6 @@
 				5DF408C5131DD46700130071 /* Check For Weak VTables and Externals */,
 				3713F0231429063D0036387F /* Check For Inappropriate Objective-C Class Names */,
 				5DF408C6131DD49700130071 /* Check For Framework Include Consistency */,
-				5DF408D1131DDBEC00130071 /* Check For Inappropriate Files In Framework */,
 				A55DEAA61670402E003DB841 /* Check For Inappropriate Macros in External Headers */,
 				1A2180161B5454620046AEC4 /* Add Symlink in /System/Library/PrivateFrameworks */,
 				5379C7AC21E5288500E4A8F6 /* Check .xcfilelists */,
@@ -16193,6 +16193,7 @@
 			);
 			name = "Check For Inappropriate Objective-C Class Names";
 			outputPaths = (
+				"$(TARGET_TEMP_DIR)/check-for-inappropriate-objc-class-names.timestamp",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -16475,29 +16476,15 @@
 			files = (
 			);
 			inputPaths = (
-				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+				"$(CPP_HEADERMAP_PRODUCT_HEADERS_VFS_FILE)",
 			);
 			name = "Check For Framework Include Consistency";
 			outputPaths = (
+				"$(TARGET_TEMP_DIR)/check-for-webkit-framework-include-consistency.timestamp",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-webkit-framework-include-consistency ]; then\n    ../../Tools/Scripts/check-for-webkit-framework-include-consistency || exit $?\nfi\n";
-		};
-		5DF408D1131DDBEC00130071 /* Check For Inappropriate Files In Framework */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
-			);
-			name = "Check For Inappropriate Files In Framework";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-files-in-framework ]; then\n    ../../Tools/Scripts/check-for-inappropriate-files-in-framework || exit $?\nfi\n";
 		};
 		6508960F28482C6A00A91844 /* Copy launchd plist and create symlink */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -16832,10 +16819,11 @@
 			files = (
 			);
 			inputPaths = (
-				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+				"$(CPP_HEADERMAP_PRODUCT_HEADERS_VFS_FILE)",
 			);
 			name = "Check For Inappropriate Macros in External Headers";
 			outputPaths = (
+				"$(TARGET_TEMP_DIR)/check-for-inappropriate-macros-in-external-headers.timestamp",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -16918,6 +16906,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SCRIPT_INPUT_FILE_0}\"\n";
+		};
+		DDFA47222AA93C7F00C7C788 /* Check For Inappropriate Files In Framework */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Check For Inappropriate Files In Framework";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-files-in-framework ]; then\n    export PRODUCT_NAME=WebKit\n    if [ -z \"${WK_FRAMEWORK_VERSION_PREFIX}\" ]; then\n        export SHALLOW_BUNDLE=YES\n    fi\n    ../../Tools/Scripts/check-for-inappropriate-files-in-framework || exit $?\nfi\n";
 		};
 		E1AC2E2C20F7B95800B0897D /* Unlock Keychain */ = {
 			isa = PBXShellScriptBuildPhase;
