@@ -145,7 +145,7 @@ static const char* vertexTemplateCommon =
 #define ENABLE_APPLIER(Name) "#define ENABLE_"#Name"\n#define apply"#Name"IfNeeded apply"#Name"\n"
 #define DISABLE_APPLIER(Name) "#define apply"#Name"IfNeeded noop\n"
 #define BLUR_CONSTANTS \
-    GLSL_DIRECTIVE(define GAUSSIAN_KERNEL_MAX_HALF_SIZE 11)
+    GLSL_DIRECTIVE(define GAUSSIAN_KERNEL_MAX_HALF_SIZE 6)
 
 
 #define OES_EGL_IMAGE_EXTERNAL_DIRECTIVE \
@@ -210,6 +210,7 @@ static const char* fragmentTemplateCommon =
         uniform vec4 u_color;
         uniform vec2 u_texelSize;
         uniform float u_gaussianKernel[GAUSSIAN_KERNEL_MAX_HALF_SIZE];
+        uniform float u_gaussianKernelOffset[GAUSSIAN_KERNEL_MAX_HALF_SIZE];
         uniform int u_gaussianKernelHalfSize;
         uniform vec2 u_blurDirection;
         uniform int u_roundedRectNumber;
@@ -363,7 +364,7 @@ static const char* fragmentTemplateCommon =
             vec4 total = texture2D(s_sampler, texCoord) * u_gaussianKernel[0];
 
             for (int i = 1; i < u_gaussianKernelHalfSize; i++) {
-                vec2 offset = step * float(i);
+                vec2 offset = step * u_gaussianKernelOffset[i];
                 total += texture2D(s_sampler, clamp(texCoord + offset, min, max)) * u_gaussianKernel[i];
                 total += texture2D(s_sampler, clamp(texCoord - offset, min, max)) * u_gaussianKernel[i];
             }
@@ -380,7 +381,7 @@ static const char* fragmentTemplateCommon =
             float total = texture2D(s_sampler, texCoord).a * u_gaussianKernel[0];
 
             for (int i = 1; i < u_gaussianKernelHalfSize; i++) {
-                vec2 offset = step * float(i);
+                vec2 offset = step * u_gaussianKernelOffset[i];
                 total += texture2D(s_sampler, clamp(texCoord + offset, min, max)).a * u_gaussianKernel[i];
                 total += texture2D(s_sampler, clamp(texCoord - offset, min, max)).a * u_gaussianKernel[i];
             }
