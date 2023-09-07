@@ -16174,13 +16174,22 @@
 			buildActionMask = 12;
 			files = (
 			);
+			inputFileListPaths = (
+				"$(WK_WEBKIT_RESOURCES_INPUT_XCFILELIST_ADDITIONS)",
+			);
+			inputPaths = (
+				"$(WEBKITLEGACY_PRIVATE_HEADERS_DIR)/xcfilelist-copy.py",
+			);
 			name = "Copy Additional Resources";
+			outputFileListPaths = (
+				"$(WK_WEBKIT_RESOURCES_OUTPUT_XCFILELIST_ADDITIONS)",
+			);
 			outputPaths = (
-				"",
+				"$(TARGET_TEMP_DIR)/copy-additional-resources.timestamp",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nRELATIVE_SOURCE_PATH=\"usr/local/include/WebKitAdditions/WebKit/AdditionalResources\"\nSOURCE_PATH=\"$BUILT_PRODUCTS_DIR/$RELATIVE_SOURCE_PATH\"\n\nif [[ ! -d \"$SOURCE_PATH\" ]]; then\n    SOURCE_PATH=\"$SDK_DIR/$RELATIVE_SOURCE_PATH\"\nfi\n\nif [[ -d \"$SOURCE_PATH\" ]]; then\n    ditto $SOURCE_PATH \"$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\"\nfi\n";
+			shellScript = "\"${SCRIPT_INPUT_FILE_0}\"\n";
 		};
 		3713F0231429063D0036387F /* Check For Inappropriate Objective-C Class Names */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -16886,7 +16895,7 @@
 				"$(SRCROOT)/MigratedHeaders-input.xcfilelist",
 			);
 			inputPaths = (
-				"$(WEBKITLEGACY_PRIVATE_HEADERS_DIR)/migrate-headers.py",
+				"$(WEBKITLEGACY_PRIVATE_HEADERS_DIR)/xcfilelist-copy.py",
 				"$(SRCROOT)/Scripts/postprocess-header-rule",
 			);
 			name = "Migrate WebCore and WebKitLegacy Headers";
