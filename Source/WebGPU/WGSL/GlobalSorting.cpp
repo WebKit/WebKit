@@ -177,7 +177,6 @@ public:
     void visit(AST::VariableStatement&) override;
     void visit(AST::CompoundStatement&) override;
     void visit(AST::IdentifierExpression&) override;
-    void visit(AST::NamedTypeName&) override;
 
 private:
     GraphBuilder(Graph<ASTNode>&, typename Graph<ASTNode>::Node&);
@@ -236,12 +235,6 @@ template<typename ASTNode>
 void GraphBuilder<ASTNode>::visit(AST::IdentifierExpression& identifier)
 {
     readVariable(identifier.identifier());
-}
-
-template<typename ASTNode>
-void GraphBuilder<ASTNode>::visit(AST::NamedTypeName& type)
-{
-    readVariable(type.name());
 }
 
 template<typename ASTNode>

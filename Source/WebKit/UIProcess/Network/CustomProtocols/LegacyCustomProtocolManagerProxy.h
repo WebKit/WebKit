@@ -28,6 +28,7 @@
 #include "DataReference.h"
 #include "LegacyCustomProtocolID.h"
 #include "MessageReceiver.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
@@ -64,10 +65,12 @@ public:
     void didFinishLoading(LegacyCustomProtocolID);
 
 private:
+    Ref<NetworkProcessProxy> protectedProcess();
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    NetworkProcessProxy& m_networkProcessProxy;
+    CheckedRef<NetworkProcessProxy> m_networkProcessProxy;
 };
 
 } // namespace WebKit

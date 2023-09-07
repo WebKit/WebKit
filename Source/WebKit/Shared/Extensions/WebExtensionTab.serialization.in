@@ -45,4 +45,23 @@ struct WebKit::WebExtensionTabParameters {
     std::optional<bool> showingReaderMode;
 }
 
+struct WebKit::WebExtensionTabQueryParameters {
+    std::optional<Vector<String>> urlPatterns;
+    std::optional<String> titlePattern;
+
+    std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier;
+    std::optional<OptionSet<WebKit::WebExtensionWindow::TypeFilter>> windowType;
+    std::optional<bool> currentWindow;
+    std::optional<bool> frontmostWindow;
+    std::optional<size_t> index;
+
+    std::optional<bool> active;
+    std::optional<bool> audible;
+    std::optional<bool> hidden;
+    std::optional<bool> loading;
+    std::optional<bool> muted;
+    std::optional<bool> pinned;
+    std::optional<bool> selected;
+}
+
 #endif

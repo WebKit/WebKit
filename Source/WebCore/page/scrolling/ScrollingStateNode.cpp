@@ -131,25 +131,18 @@ void ScrollingStateNode::removeFromParent()
 
 void ScrollingStateNode::removeChild(ScrollingStateNode& childNode)
 {
-    auto childIndex = indexOfChild(childNode);
-    if (childIndex != notFound)
-        removeChildAtIndex(childIndex);
-}
-
-void ScrollingStateNode::removeChildAtIndex(size_t index)
-{
-    if (index < m_children.size()) {
-        m_children.remove(index);
-        setPropertyChanged(Property::ChildNodes);
-    } else
-        ASSERT_NOT_REACHED();
-}
-
-size_t ScrollingStateNode::indexOfChild(ScrollingStateNode& childNode) const
-{
-    return m_children.findIf([&](auto& child) {
+    auto didRemove = m_children.removeFirstMatching([&](auto& child) {
         return child.ptr() == &childNode;
     });
+    if (didRemove)
+        setPropertyChanged(Property::ChildNodes);
+}
+
+RefPtr<ScrollingStateNode> ScrollingStateNode::childAtIndex(size_t index) const
+{
+    if (index >= m_children.size())
+        return nullptr;
+    return m_children[index].copyRef();
 }
 
 void ScrollingStateNode::setLayer(const LayerRepresentation& layerRepresentation)

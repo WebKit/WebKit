@@ -4282,8 +4282,7 @@ private:
                 callOperation(
                     *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
                     exceptions.get(), operationGetByIdWithThisMegamorphicGeneric, resultGPR,
-                    CCallHelpers::TrustedImmPtr(globalObject),
-                    CCallHelpers::TrustedImmPtr(nullptr), baseGPR, thisGPR, CCallHelpers::TrustedImmPtr(identifier.rawBits())).call();
+                    CCallHelpers::TrustedImmPtr(globalObject), baseGPR, thisGPR, CCallHelpers::TrustedImmPtr(identifier.rawBits())).call();
                 jit.jump().linkTo(doneForSlow, &jit);
             });
         });

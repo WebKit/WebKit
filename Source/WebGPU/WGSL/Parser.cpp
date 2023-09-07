@@ -553,7 +553,7 @@ Result<std::reference_wrapper<AST::StructureMember>> Parser<Lexer>::parseStructu
 }
 
 template<typename Lexer>
-Result<AST::TypeName::Ref> Parser<Lexer>::parseTypeName()
+Result<AST::Expression::Ref> Parser<Lexer>::parseTypeName()
 {
     START_PARSE();
 
@@ -569,11 +569,11 @@ Result<AST::TypeName::Ref> Parser<Lexer>::parseTypeName()
 }
 
 template<typename Lexer>
-Result<AST::TypeName::Ref> Parser<Lexer>::parseTypeNameAfterIdentifier(AST::Identifier&& name, SourcePosition _startOfElementPosition) // NOLINT
+Result<AST::Expression::Ref> Parser<Lexer>::parseTypeNameAfterIdentifier(AST::Identifier&& name, SourcePosition _startOfElementPosition) // NOLINT
 {
     if (current().type == TokenType::Lt) {
         CONSUME_TYPE(Lt);
-        AST::TypeName::List arguments;
+        AST::Expression::List arguments;
         do {
             PARSE(elementType, TypeName);
             arguments.append(WTFMove(elementType));
@@ -582,17 +582,17 @@ Result<AST::TypeName::Ref> Parser<Lexer>::parseTypeNameAfterIdentifier(AST::Iden
             CONSUME_TYPE(Comma);
         } while (current().type != TokenType::Gt);
         CONSUME_TYPE(Gt);
-        RETURN_ARENA_NODE(ParameterizedTypeName, WTFMove(name), WTFMove(arguments));
+        RETURN_ARENA_NODE(ElaboratedTypeExpression, WTFMove(name), WTFMove(arguments));
     }
-    RETURN_ARENA_NODE(NamedTypeName, WTFMove(name));
+    RETURN_ARENA_NODE(IdentifierExpression, WTFMove(name));
 }
 
 template<typename Lexer>
-Result<AST::TypeName::Ref> Parser<Lexer>::parseArrayType()
+Result<AST::Expression::Ref> Parser<Lexer>::parseArrayType()
 {
     START_PARSE();
 
-    AST::TypeName::Ptr maybeElementType = nullptr;
+    AST::Expression::Ptr maybeElementType = nullptr;
     AST::Expression::Ptr maybeElementCount = nullptr;
 
     if (current().type == TokenType::Lt) {
@@ -617,7 +617,7 @@ Result<AST::TypeName::Ref> Parser<Lexer>::parseArrayType()
         CONSUME_TYPE(Gt);
     }
 
-    RETURN_ARENA_NODE(ArrayTypeName, maybeElementType, maybeElementCount);
+    RETURN_ARENA_NODE(ArrayTypeExpression, maybeElementType, maybeElementCount);
 }
 
 template<typename Lexer>
@@ -661,7 +661,7 @@ Result<AST::Variable::Ref> Parser<Lexer>::parseVariableWithAttributes(AST::Attri
 
     PARSE(name, Identifier);
 
-    AST::TypeName::Ptr maybeType = nullptr;
+    AST::Expression::Ptr maybeType = nullptr;
     if (current().type == TokenType::Colon) {
         consume();
         PARSE(typeName, TypeName);
@@ -788,7 +788,7 @@ Result<AST::Function::Ref> Parser<Lexer>::parseFunction(AST::Attribute::List&& a
     CONSUME_TYPE(ParenRight);
 
     AST::Attribute::List returnAttributes;
-    AST::TypeName::Ptr maybeReturnType = nullptr;
+    AST::Expression::Ptr maybeReturnType = nullptr;
     if (current().type == TokenType::Arrow) {
         consume();
         PARSE(parsedReturnAttributes, Attributes);

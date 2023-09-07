@@ -37,6 +37,7 @@ OBJC_CLASS NSString;
 namespace WebKit {
 
 struct WebExtensionTabParameters;
+struct WebExtensionTabQueryParameters;
 
 class WebExtensionAPITabs : public WebExtensionAPIObject, public JSWebExtensionWrappable {
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPITabs, tabs);
@@ -81,6 +82,10 @@ public:
     WebExtensionAPIEvent& onUpdated();
 
 private:
+    static bool parseTabCreateOptions(NSDictionary *, WebExtensionTabParameters&, NSString *sourceKey, NSString **outExceptionString);
+    static bool parseTabUpdateOptions(NSDictionary *, WebExtensionTabParameters&, NSString *sourceKey, NSString **outExceptionString);
+    static bool parseTabQueryOptions(NSDictionary *, WebExtensionTabQueryParameters&, NSString *sourceKey, NSString **outExceptionString);
+
     RefPtr<WebExtensionAPIEvent> m_onActivated;
     RefPtr<WebExtensionAPIEvent> m_onAttached;
     RefPtr<WebExtensionAPIEvent> m_onCreated;

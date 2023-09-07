@@ -62,7 +62,6 @@ public:
     using Constant = unsigned;
 
     enum class Type : uint8_t {
-        GlobalObject,
         StructureStubInfo,
         FunctionDecl,
         FunctionExpr,
@@ -109,16 +108,20 @@ class BaselineJITData final : public TrailingArray<BaselineJITData, void*> {
 public:
     using Base = TrailingArray<BaselineJITData, void*>;
 
-    static std::unique_ptr<BaselineJITData> create(unsigned poolSize)
+    static std::unique_ptr<BaselineJITData> create(unsigned poolSize, JSGlobalObject* globalObject)
     {
-        return std::unique_ptr<BaselineJITData> { new (NotNull, fastMalloc(Base::allocationSize(poolSize))) BaselineJITData(poolSize) };
+        return std::unique_ptr<BaselineJITData> { new (NotNull, fastMalloc(Base::allocationSize(poolSize))) BaselineJITData(poolSize, globalObject) };
     }
 
-    explicit BaselineJITData(unsigned size)
+    explicit BaselineJITData(unsigned size, JSGlobalObject* globalObject)
         : Base(size)
+        , m_globalObject(globalObject)
     {
     }
 
+    static ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(BaselineJITData, m_globalObject); }
+
+    JSGlobalObject* m_globalObject { nullptr }; // This is not marked since owner CodeBlock will mark JSGlobalObject.
     FixedVector<StructureStubInfo> m_stubInfos;
 };
 

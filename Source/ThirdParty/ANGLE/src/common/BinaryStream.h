@@ -57,15 +57,23 @@ class BinaryInputStream : angle::NonCopyable
         *outValue = readInt<IntT>();
     }
 
-    template <class IntT, class VectorElementT>
-    void readIntVector(std::vector<VectorElementT> *param)
+    template <class T>
+    void readVector(std::vector<T> *param)
     {
+        static_assert(std::is_trivially_copyable<T>(), "must be memcpy-able");
         size_t size = readInt<size_t>();
-        param->reserve(size);
-        for (size_t index = 0; index < size; ++index)
+        if (size > 0)
         {
-            param->push_back(readInt<IntT>());
+            param->resize(size);
+            readBytes(reinterpret_cast<uint8_t *>(param->data()), param->size() * sizeof(T));
         }
+    }
+
+    template <class T>
+    void readStruct(T *param)
+    {
+        static_assert(std::is_trivially_copyable<T>(), "must be memcpy-able");
+        readBytes(reinterpret_cast<uint8_t *>(param), sizeof(T));
     }
 
     template <class EnumT>
@@ -227,14 +235,24 @@ class BinaryOutputStream : angle::NonCopyable
         }
     }
 
-    template <class IntT>
-    void writeIntVector(const std::vector<IntT> &param)
+    template <class T>
+    void writeVector(const std::vector<T> &param)
     {
+        static_assert(std::is_trivially_copyable<T>(), "must be memcpy-able");
         writeInt(param.size());
-        for (IntT element : param)
+        if (param.size() > 0)
         {
-            writeIntOrNegOne(element);
+            writeBytes(reinterpret_cast<const uint8_t *>(param.data()), param.size() * sizeof(T));
         }
+    }
+
+    template <class T>
+    void writeStruct(const T &param)
+    {
+        static_assert(!std::is_pointer<T>::value,
+                      "Must pass in a struct, not the pointer to struct");
+        static_assert(std::is_trivially_copyable<T>(), "must be memcpy-able");
+        writeBytes(reinterpret_cast<const uint8_t *>(&param), sizeof(T));
     }
 
     template <class EnumT>

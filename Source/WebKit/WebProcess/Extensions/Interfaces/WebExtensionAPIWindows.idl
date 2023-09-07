@@ -29,14 +29,14 @@
     ReturnsPromiseWhenCallbackIsOmitted,
 ] interface WebExtensionAPIWindows {
 
-    [RaisesException, Dynamic, ImplementedAs=createWindow] void create([Optional, NSDictionary] any data, [Optional, CallbackHandler] function callback);
+    [RaisesException, Dynamic, ImplementedAs=createWindow] void create([Optional, NSDictionary] any info, [Optional, CallbackHandler] function callback);
 
-    [RaisesException, NeedsPage] void get(double windowID, [Optional, NSDictionary] any info, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPage] void get(double windowID, [Optional, NSDictionary] any properties, [Optional, CallbackHandler] function callback);
     [RaisesException, NeedsPage] void getCurrent([Optional, NSDictionary] any info, [Optional, CallbackHandler] function callback);
     [RaisesException] void getLastFocused([Optional, NSDictionary] any info, [Optional, CallbackHandler] function callback);
     [RaisesException] void getAll([Optional, NSDictionary] any info, [Optional, CallbackHandler] function callback);
 
-    [RaisesException, Dynamic] void update(double windowID, [NSDictionary] any info, [Optional, CallbackHandler] function callback);
+    [RaisesException, Dynamic] void update(double windowID, [NSDictionary] any properties, [Optional, CallbackHandler] function callback);
     [RaisesException, Dynamic] void remove(double windowID, [Optional, CallbackHandler] function callback);
 
     [ImplementedAs=windowIdentifierNone] readonly attribute double WINDOW_ID_NONE;

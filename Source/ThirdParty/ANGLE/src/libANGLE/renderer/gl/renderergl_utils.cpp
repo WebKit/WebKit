@@ -2591,7 +2591,8 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
 
     // https://anglebug.com/8315
     ANGLE_FEATURE_CONDITION(features, disableRenderSnorm,
-                            isMesa && mesaVersion < (std::array<int, 3>{21, 3, 0}));
+                            isMesa && (mesaVersion < (std::array<int, 3>{21, 3, 0}) ||
+                                       functions->standard == STANDARD_GL_ES));
 
     // https://anglebug.com/8319
     ANGLE_FEATURE_CONDITION(features, disableTextureMirrorClampToEdge,

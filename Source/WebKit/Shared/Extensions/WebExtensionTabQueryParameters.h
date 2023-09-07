@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,12 +25,33 @@
 
 #pragma once
 
-namespace WebCore {
+#if ENABLE(WK_WEB_EXTENSIONS)
 
-enum class FrameFlattening : uint8_t {
-    Disabled,
-    EnabledForNonFullScreenIFrames,
-    FullyEnabled
+#include "WebExtensionWindow.h"
+#include "WebExtensionWindowIdentifier.h"
+#include <wtf/Forward.h>
+
+namespace WebKit {
+
+struct WebExtensionTabQueryParameters {
+    std::optional<Vector<String>> urlPatterns;
+    std::optional<String> titlePattern;
+
+    std::optional<WebExtensionWindowIdentifier> windowIdentifier;
+    std::optional<OptionSet<WebExtensionWindow::TypeFilter>> windowType;
+    std::optional<bool> currentWindow;
+    std::optional<bool> frontmostWindow;
+    std::optional<size_t> index;
+
+    std::optional<bool> active;
+    std::optional<bool> audible;
+    std::optional<bool> hidden;
+    std::optional<bool> loading;
+    std::optional<bool> muted;
+    std::optional<bool> pinned;
+    std::optional<bool> selected;
 };
 
-}
+} // namespace WebKit
+
+#endif // ENABLE(WK_WEB_EXTENSIONS)

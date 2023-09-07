@@ -404,6 +404,8 @@ D3DSampler::D3DSampler() : active(false), logicalTextureUnit(0), textureType(gl:
 
 D3DImage::D3DImage() : active(false), logicalImageUnit(0) {}
 
+unsigned int ProgramExecutableD3D::mCurrentSerial = 1;
+
 ProgramExecutableD3D::ProgramExecutableD3D(const gl::ProgramExecutable *executable)
     : ProgramExecutableImpl(executable),
       mUsesPointSize(false),
@@ -412,7 +414,8 @@ ProgramExecutableD3D::ProgramExecutableD3D(const gl::ProgramExecutable *executab
       mDirtySamplerMapping(true),
       mUsedImageRange({}),
       mUsedReadonlyImageRange({}),
-      mUsedAtomicCounterRange({})
+      mUsedAtomicCounterRange({}),
+      mSerial(issueSerial())
 {}
 
 ProgramExecutableD3D::~ProgramExecutableD3D() {}
@@ -2331,6 +2334,11 @@ const D3DUniform *ProgramExecutableD3D::getD3DUniformFromLocation(
     const gl::VariableLocation &locationInfo) const
 {
     return mD3DUniforms[locationInfo.index];
+}
+
+unsigned int ProgramExecutableD3D::issueSerial()
+{
+    return mCurrentSerial++;
 }
 
 }  // namespace rx

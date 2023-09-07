@@ -759,7 +759,8 @@ void RenderPassDesc::populateRenderPipelineOutputDesc(const BlendDescArray &blen
 
         if (texture)
         {
-            if (renderPassColorAttachment.blendable)
+            if (renderPassColorAttachment.blendable &&
+                blendDescArray[i].writeMask != MTLColorWriteMaskNone)
             {
                 // Copy parameters from blend state
                 outputDescriptor.colorAttachments[i].reset(texture->pixelFormat(),
@@ -767,8 +768,19 @@ void RenderPassDesc::populateRenderPipelineOutputDesc(const BlendDescArray &blen
             }
             else
             {
-                // Disable blending if the attachment's render target doesn't support blending.
-                // Force default blending state to reduce the number of unique states.
+                // Disable blending if the attachment's render target doesn't support blending
+                // or if all its color channels are masked out. The latter is needed because:
+                //
+                // * When blending is enabled and *Source1* blend factors are used, Metal
+                //   requires a fragment shader to bind both primary and secondary outputs
+                //
+                // * ANGLE frontend validation allows draw calls on draw buffers without
+                //   bound fragment outputs if all their color channels are masked out
+                //
+                // * When all color channels are masked out, blending has no effect anyway
+                //
+                // Besides disabling blending, use default values for factors and
+                // operations to reduce the number of unique pipeline states.
                 outputDescriptor.colorAttachments[i].reset(texture->pixelFormat(),
                                                            blendDescArray[i].writeMask);
             }

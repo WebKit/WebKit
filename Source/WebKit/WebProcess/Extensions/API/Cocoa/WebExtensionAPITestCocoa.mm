@@ -137,30 +137,41 @@ void WebExtensionAPITest::assertEq(JSContextRef context, JSValue *expectedValue,
 
 JSValue *WebExtensionAPITest::assertRejects(JSContextRef context, JSValue *promise, JSValue *expectedError, NSString *message)
 {
+    __block JSValue *resolveCallback;
+    JSValue *resultPromise = [JSValue valueWithNewPromiseInContext:promise.context fromExecutor:^(JSValue *resolve, JSValue *reject) {
+        resolveCallback = resolve;
+    }];
+
     // Wrap in a native promise for consistency.
     promise = [JSValue valueWithNewPromiseResolvedWithResult:promise inContext:promise.context];
 
     [promise _awaitThenableResolutionWithCompletionHandler:^(JSValue *result, JSValue *error) {
         if (result || !error) {
             assertTrue(context, false, [NSString stringWithFormat:@"Promise resolved with a result (%@); expected an error (%@).", debugString(result), debugString(expectedError)]);
+            [resolveCallback callWithArguments:nil];
             return;
         }
 
-        if (!expectedError)
-            return;
-
         JSValue *errorMessageValue = error.isObject && [error hasProperty:@"message"] ? error[@"message"] : error;
+
+        if (!expectedError) {
+            assertTrue(context, true, [NSString stringWithFormat:@"Promise rejected with an error (%@).", debugString(errorMessageValue)]);
+            [resolveCallback callWithArguments:nil];
+            return;
+        }
 
         if (expectedError._regularExpression) {
             JSValue *testResult = [expectedError invokeMethod:@"test" withArguments:@[ errorMessageValue ]];
             assertTrue(context, testResult.toBool, [NSString stringWithFormat:@"Promise rejected with an error (%@) that didn't match %@.", debugString(errorMessageValue), debugString(expectedError)]);
+            [resolveCallback callWithArguments:nil];
             return;
         }
 
         assertTrue(context, [expectedError isEqualWithTypeCoercionToObject:errorMessageValue], [NSString stringWithFormat:@"Promise rejected with an error (%@) that didn't equal %@.", debugString(errorMessageValue), debugString(expectedError)]);
+        [resolveCallback callWithArguments:nil];
     }];
 
-    return promise;
+    return resultPromise;
 }
 
 void WebExtensionAPITest::assertThrows(JSContextRef context, JSValue *function, JSValue *expectedError, NSString *message)
@@ -173,18 +184,23 @@ void WebExtensionAPITest::assertThrows(JSContextRef context, JSValue *function, 
         return;
     }
 
-    if (!expectedError)
-        return;
-
     JSValue *exceptionMessageValue = exceptionValue.isObject && [exceptionValue hasProperty:@"message"] ? exceptionValue[@"message"] : exceptionValue;
 
-    if (expectedError._regularExpression) {
-        JSValue *testResult = [expectedError invokeMethod:@"test" withArguments:@[ exceptionMessageValue ]];
-        assertTrue(context, testResult.toBool, [NSString stringWithFormat:@"Function throw an exception (%@) that didn't match %@.", debugString(exceptionMessageValue), debugString(expectedError)]);
+    // Clear the exception since it was caught.
+    function.context.exception = nil;
+
+    if (!expectedError) {
+        assertTrue(context, true, [NSString stringWithFormat:@"Function threw an exception (%@).", debugString(exceptionMessageValue)]);
         return;
     }
 
-    assertTrue(context, [expectedError isEqualWithTypeCoercionToObject:exceptionMessageValue], [NSString stringWithFormat:@"Function throw an exception (%@) that didn't equal %@.", debugString(exceptionMessageValue), debugString(expectedError)]);
+    if (expectedError._regularExpression) {
+        JSValue *testResult = [expectedError invokeMethod:@"test" withArguments:@[ exceptionMessageValue ]];
+        assertTrue(context, testResult.toBool, [NSString stringWithFormat:@"Function threw an exception (%@) that didn't match %@.", debugString(exceptionMessageValue), debugString(expectedError)]);
+        return;
+    }
+
+    assertTrue(context, [expectedError isEqualWithTypeCoercionToObject:exceptionMessageValue], [NSString stringWithFormat:@"Function threw an exception (%@) that didn't equal %@.", debugString(exceptionMessageValue), debugString(expectedError)]);
 }
 
 WebExtensionAPIWebNavigationEvent& WebExtensionAPITest::testWebNavigationEvent()

@@ -154,6 +154,7 @@ InlineRect InlineFormattingGeometry::flipVisualRectToLogicalForWritingMode(const
 {
     switch (writingModeToBlockFlowDirection(writingMode)) {
     case BlockFlowDirection::TopToBottom:
+    case BlockFlowDirection::BottomToTop:
         return visualRect;
     case BlockFlowDirection::LeftToRight:
     case BlockFlowDirection::RightToLeft: {

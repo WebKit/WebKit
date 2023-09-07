@@ -542,7 +542,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
         m_lastSeekTime = seekedTime;
 
         ALWAYS_LOG(LOGIDENTIFIER);
-        MediaTime synchronizerTime = PAL::toMediaTime(PAL::CMTimebaseGetTime([m_synchronizer timebase]));
+        MediaTime synchronizerTime = PAL::toMediaTime([m_synchronizer currentTime]);
 
         m_synchronizerSeeking = synchronizerTime != seekedTime;
         ALWAYS_LOG(LOGIDENTIFIER, "seekedTime = ", seekedTime, ", synchronizerTime = ", synchronizerTime, "synchronizer seeking = ", m_synchronizerSeeking);
@@ -574,8 +574,10 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekCompleted()
         ALWAYS_LOG(LOGIDENTIFIER, "Synchronizer still seeking, bailing out");
         return;
     }
-    if (auto player = m_player.get())
+    if (auto player = m_player.get()) {
+        player->seeked(m_lastSeekTime);
         player->timeChanged();
+    }
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::seeking() const

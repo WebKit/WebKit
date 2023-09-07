@@ -1269,9 +1269,7 @@ ColorBlitUtils::ColorBlitUtils(const std::string &fragmentShaderName)
 
 angle::Result ColorBlitUtils::ensureShadersInitialized(
     ContextMtl *ctx,
-    uint32_t numOutputs,
-    int alphaPremultiplyType,
-    int textureType,
+    const ShaderKey &key,
     AutoObjCPtr<id<MTLFunction>> *fragmentShaderOut)
 {
     ANGLE_MTL_OBJC_SCOPE
@@ -1298,31 +1296,22 @@ angle::Result ColorBlitUtils::ensureShadersInitialized(
             MTLFunctionConstantValues *funcConstants =
                 [[[MTLFunctionConstantValues alloc] init] ANGLE_MTL_AUTORELEASE];
 
-            constexpr BOOL multiplyAlphaFlags[][2] = {// premultiply, unmultiply
-
-                                                      // Normal blit
-                                                      {NO, NO},
-                                                      // Blit premultiply-alpha
-                                                      {YES, NO},
-                                                      // Blit unmultiply alpha
-                                                      {NO, YES}};
-
             // Set alpha multiply flags
-            [funcConstants setConstantValue:&multiplyAlphaFlags[alphaPremultiplyType][0]
-                                       type:MTLDataTypeBool
-                                   withName:PREMULTIPLY_ALPHA_CONSTANT_NAME];
-            [funcConstants setConstantValue:&multiplyAlphaFlags[alphaPremultiplyType][1]
+            [funcConstants setConstantValue:&key.unmultiplyAlpha
                                        type:MTLDataTypeBool
                                    withName:UNMULTIPLY_ALPHA_CONSTANT_NAME];
+            [funcConstants setConstantValue:&key.premultiplyAlpha
+                                       type:MTLDataTypeBool
+                                   withName:PREMULTIPLY_ALPHA_CONSTANT_NAME];
 
             // We create blit shader pipeline cache for each number of color outputs.
             // So blit k color outputs will use mBlitRenderPipelineCache[k-1] for example:
-            [funcConstants setConstantValue:&numOutputs
+            [funcConstants setConstantValue:&key.numColorAttachments
                                        type:MTLDataTypeUInt
                                    withName:NUM_COLOR_OUTPUTS_CONSTANT_NAME];
 
             // Set texture type constant
-            [funcConstants setConstantValue:&textureType
+            [funcConstants setConstantValue:&key.sourceTextureType
                                        type:MTLDataTypeInt
                                    withName:SOURCE_TEXTURE_TYPE_CONSTANT_NAME];
 
@@ -1361,28 +1350,17 @@ angle::Result ColorBlitUtils::getColorBlitRenderPipelineState(
 
     pipelineDesc.inputPrimitiveTopology = kPrimitiveTopologyClassTriangle;
 
-    AutoObjCPtr<id<MTLFunction>> *fragmentShader = nullptr;
-    int alphaPremultiplyType;
-    uint32_t nOutputIndex = renderPassDesc.numColorAttachments - 1;
-    int textureType       = GetShaderTextureType(params.src);
-    if (params.unpackPremultiplyAlpha == params.unpackUnmultiplyAlpha)
+    ShaderKey key;
+    key.numColorAttachments = renderPassDesc.numColorAttachments;
+    key.sourceTextureType   = GetShaderTextureType(params.src);
+    if (params.unpackPremultiplyAlpha != params.unpackUnmultiplyAlpha)
     {
-        alphaPremultiplyType = 0;
-        fragmentShader       = &mBlitFragmentShaders[nOutputIndex][textureType];
-    }
-    else if (params.unpackPremultiplyAlpha)
-    {
-        alphaPremultiplyType = 1;
-        fragmentShader       = &mBlitPremultiplyAlphaFragmentShaders[nOutputIndex][textureType];
-    }
-    else
-    {
-        alphaPremultiplyType = 2;
-        fragmentShader       = &mBlitUnmultiplyAlphaFragmentShaders[nOutputIndex][textureType];
+        key.unmultiplyAlpha  = params.unpackUnmultiplyAlpha;
+        key.premultiplyAlpha = params.unpackPremultiplyAlpha;
     }
 
-    ANGLE_TRY(ensureShadersInitialized(contextMtl, renderPassDesc.numColorAttachments,
-                                       alphaPremultiplyType, textureType, fragmentShader));
+    AutoObjCPtr<id<MTLFunction>> *fragmentShader = &mBlitFragmentShaders[key];
+    ANGLE_TRY(ensureShadersInitialized(contextMtl, key, fragmentShader));
 
     return contextMtl->getPipelineCache().getRenderPipeline(
         contextMtl, mVertexShader, *fragmentShader, pipelineDesc, outPipelineState);

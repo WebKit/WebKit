@@ -29,6 +29,7 @@
 
 #include "RenderStyleConstants.h"
 #include <wtf/OptionSet.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -58,6 +59,13 @@ private:
     OptionSet<ColorScheme> m_colorScheme;
     bool m_allowsTransformations { true };
 };
+
+inline WTF::TextStream& operator<<(WTF::TextStream& ts, const StyleColorScheme& styleColorScheme)
+{
+    ts.dumpProperty("color-scheme", styleColorScheme.colorScheme());
+    ts.dumpProperty("allows-transformations", styleColorScheme.allowsTransformations());
+    return ts;
+}
 
 } // namespace WebCore
 

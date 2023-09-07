@@ -33,18 +33,6 @@ class WebServerBenchmarkRunner(BenchmarkRunner):
     def _get_result(self, test_url):
         result = self._browser_driver.add_additional_results(test_url, self._http_server_driver.fetch_result())
         assert(not self._http_server_driver.get_return_code())
-
-        if self._pgo_profile_output_dir:
-            _log.info('Getting benchmark PGO profile results for {} and copying them to {}.'.format(test_url, self._pgo_profile_output_dir))
-            copy_output = subprocess.Popen(r"""log stream --style json --color none | perl -mFile::Basename -mFile::Copy -nle 'if (m/<WEBKIT_LLVM_PROFILE>.*<BEGIN>(.*)<END>/) { (my $l = $1) =~ s/\\\//\//g; my $b = File::Basename::basename($l); my $d = """ + "\"" + self._pgo_profile_output_dir + """/$b"; print "Moving $l to $d"; File::Copy::move($l, $d); }'""", shell=True, bufsize=0, preexec_fn=os.setsid)
-            time.sleep(1)
-            subprocess.call(['notifyutil', '-p', 'com.apple.WebKit.profiledata'])
-            time.sleep(7)
-            # We can kill the shell with kill(), but killing children is harder.
-            os.killpg(os.getpgid(copy_output.pid), signal.SIGINT)
-            copy_output.kill()
-            time.sleep(1)
-            _log.debug('Hopefully the benchmark profile has finished writing to disk, moving on.')
         return result
 
     def _construct_subtest_url(self, subtests):

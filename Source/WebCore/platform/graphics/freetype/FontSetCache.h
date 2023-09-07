@@ -49,11 +49,6 @@ struct FontSetCacheKey {
         return descriptionKey == other.descriptionKey && preferColoredFont == other.preferColoredFont;
     }
 
-    bool operator!=(const FontSetCacheKey& other) const
-    {
-        return !(*this == other);
-    }
-
     bool isHashTableDeletedValue() const { return descriptionKey.isHashTableDeletedValue(); }
 
     FontDescriptionKey descriptionKey;

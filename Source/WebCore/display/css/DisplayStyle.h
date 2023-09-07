@@ -93,7 +93,6 @@ public:
     Overflow overflowY() const;
     bool hasClippedOverflow() const { return m_overflowX != Overflow::Visible || m_overflowY != Overflow::Visible; }
 
-    WhiteSpace whiteSpace() const { return m_whiteSpace; }
     bool autoWrap() const;
     bool preserveNewline() const;
     bool collapseWhiteSpace() const;
@@ -117,7 +116,6 @@ private:
     Overflow m_overflowY;
 
     FontCascade m_fontCascade;
-    WhiteSpace m_whiteSpace;
     TabSize m_tabSize;
     
     float m_opacity;

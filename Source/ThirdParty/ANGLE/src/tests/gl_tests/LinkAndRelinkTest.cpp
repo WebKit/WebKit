@@ -612,7 +612,7 @@ TEST_P(LinkAndRelinkTest, AttachShaderThenCompile)
 }
 
 // If a program is linked successfully once, it should retain its executable if a relink fails.
-TEST_P(LinkAndRelinkTestES3, SucessfullLinkThenFailingRelink)
+TEST_P(LinkAndRelinkTestES3, SuccessfulLinkThenFailingRelink)
 {
     // Install a render program in current GL state via UseProgram, then render.
     // It should succeed.
@@ -697,8 +697,147 @@ void main()
     glDeleteProgram(program);
 }
 
-// Same as SucessfullLinkThenFailingRelink, but with PPOs.
-TEST_P(LinkAndRelinkTestES31, SucessfullLinkThenFailingRelinkWithPPO)
+// Similar to SuccessfulLinkThenFailingRelink, but with a more complicated mix of resources.
+TEST_P(LinkAndRelinkTestES31, SuccessfulLinkThenFailingRelink2)
+{
+    GLint maxFragmentShaderStorageBlocks;
+    glGetIntegerv(GL_MAX_FRAGMENT_SHADER_STORAGE_BLOCKS, &maxFragmentShaderStorageBlocks);
+
+    ANGLE_SKIP_TEST_IF(maxFragmentShaderStorageBlocks < 1);
+
+    // Install a render program in current GL state via UseProgram, then render.
+    // It should succeed.
+    constexpr char kVS[]     = R"(#version 310 es
+out vec4 color;
+void main()
+{
+    vec2 position = vec2(-1, -1);
+    if (gl_VertexID == 1)
+        position = vec2(3, -1);
+    else if (gl_VertexID == 2)
+        position = vec2(-1, 3);
+
+    gl_Position = vec4(position, 0, 1);
+    color = vec4(0, 1, 0, 1);
+})";
+    constexpr char kGoodFS[] = R"(#version 310 es
+in mediump vec4 color;
+out mediump vec4 colorOut;
+mediump uniform float u;  // should be 0.5;
+uniform UBO
+{
+    highp float b;  // should be 1.75
+};
+layout(std140, binding = 1) buffer SSBO
+{
+    uint s;  // should be 0x12345678
+};
+void main()
+{
+    if (abs(u - 0.5) > 0.01)
+        colorOut = vec4(1, 0, 0, 1);
+    else if (abs(b - 1.75) > 0.01)
+        colorOut = vec4(0, 0, 1, 1);
+    else if (s != 0x12345678u)
+        colorOut = vec4(1, 0, 1, 1);
+    else
+        colorOut = color;
+})";
+    constexpr char kBadFS[]  = R"(#version 310 es
+flat in uvec2 color;
+layout(location = 0) out mediump vec4 colorOut;
+layout(location = 1) out mediump vec4 colorOut2;
+void main()
+{
+    colorOut = vec4(1, color, 1);
+    colorOut2 = vec4(color, 0, 1);
+})";
+
+    GLuint program = glCreateProgram();
+    GLuint vs      = CompileShader(GL_VERTEX_SHADER, kVS);
+    GLuint fs      = CompileShader(GL_FRAGMENT_SHADER, kGoodFS);
+    GLuint badfs   = CompileShader(GL_FRAGMENT_SHADER, kBadFS);
+
+    EXPECT_NE(0u, vs);
+    EXPECT_NE(0u, fs);
+    EXPECT_NE(0u, badfs);
+
+    glAttachShader(program, vs);
+    glAttachShader(program, fs);
+
+    glLinkProgram(program);
+
+    GLint linkStatus;
+    glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
+    EXPECT_GL_TRUE(linkStatus);
+
+    EXPECT_GL_NO_ERROR();
+
+    constexpr float kUBOValue = 1.75;
+    GLBuffer ubo;
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(kUBOValue), &kUBOValue, GL_STATIC_DRAW);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, ubo);
+
+    constexpr uint32_t kSSBOValue = 0x12345678;
+    GLBuffer ssbo;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(kSSBOValue), &kSSBOValue, GL_STATIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, ssbo);
+
+    EXPECT_GL_NO_ERROR();
+
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    glViewport(0, 0, w, h);
+
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, w / 2, h / 2);
+
+    glUseProgram(program);
+
+    const GLint uniLoc = glGetUniformLocation(program, "u");
+    ASSERT_NE(uniLoc, -1);
+    glUniform1f(uniLoc, 0.5);
+
+    const GLint uboIndex = glGetUniformBlockIndex(program, "UBO");
+    ASSERT_NE(uboIndex, -1);
+    glUniformBlockBinding(program, uboIndex, 0);
+
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_GL_NO_ERROR();
+
+    // Cause the program to fail linking
+    glDetachShader(program, fs);
+    glAttachShader(program, badfs);
+
+    glLinkProgram(program);
+
+    glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
+    EXPECT_GL_FALSE(linkStatus);
+
+    // Link failed, but the program should still be usable.
+    glScissor(w / 2, h / 2, w / 2, h / 2);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, w / 2, h / 2, GLColor::green);
+    EXPECT_PIXEL_RECT_EQ(w / 2, 0, w / 2, h / 2, GLColor::black);
+    EXPECT_PIXEL_RECT_EQ(0, h / 2, w / 2, h / 2, GLColor::black);
+    EXPECT_PIXEL_RECT_EQ(w / 2, h / 2, w / 2, h / 2, GLColor::green);
+
+    glDeleteShader(vs);
+    glDeleteShader(fs);
+    glDeleteShader(badfs);
+    glDeleteProgram(program);
+}
+
+// Same as SuccessfulLinkThenFailingRelink, but with PPOs.
+TEST_P(LinkAndRelinkTestES31, SuccessfulLinkThenFailingRelinkWithPPO)
 {
     // Only the Vulkan backend supports PPOs.
     ANGLE_SKIP_TEST_IF(!IsVulkan());

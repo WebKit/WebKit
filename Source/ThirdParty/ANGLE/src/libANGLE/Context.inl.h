@@ -77,6 +77,9 @@ ANGLE_INLINE void MarkShaderStorageUsage(const Context *context)
 //  have a valid primitive for this mode (0 for points, 0-1 for lines, 0-2 for tris).
 ANGLE_INLINE bool Context::noopDraw(PrimitiveMode mode, GLsizei count) const
 {
+    // Make sure any pending link is done before checking whether draw is allowed.
+    mState.ensureNoPendingLink(this);
+
     if (!mStateCache.getCanDraw())
     {
         return true;

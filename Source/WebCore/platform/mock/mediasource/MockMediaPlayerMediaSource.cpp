@@ -218,8 +218,10 @@ void MockMediaPlayerMediaSource::seekToTarget(const SeekTarget& target)
         m_seekCompleted = true;
         m_currentTime = seekTime;
 
-        if (auto player = m_player.get())
+        if (auto player = m_player.get()) {
+            player->seeked(seekTime);
             player->timeChanged();
+        }
 
         if (m_playing)
             callOnMainThread([this, weakThis = WeakPtr { *this }] {

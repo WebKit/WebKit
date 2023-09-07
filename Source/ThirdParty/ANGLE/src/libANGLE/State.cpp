@@ -2212,7 +2212,6 @@ State::State(const State *shareContextState,
       mReadFramebuffer(nullptr),
       mDrawFramebuffer(nullptr),
       mProgram(nullptr),
-      mExecutable(nullptr),
       mVertexArray(nullptr),
       mDisplayTextureShareGroup(shareTextures != nullptr),
       mMaxShaderCompilerThreads(std::numeric_limits<GLuint>::max()),
@@ -2301,8 +2300,8 @@ void State::initialize(Context *context)
         mActiveQueries[type].set(context, nullptr);
     }
 
-    mProgram    = nullptr;
-    mExecutable = nullptr;
+    mProgram = nullptr;
+    UninstallExecutable(context, &mExecutable);
 
     mReadFramebuffer = nullptr;
     mDrawFramebuffer = nullptr;
@@ -2345,13 +2344,13 @@ void State::reset(const Context *context)
         UpdateBufferBinding(context, &mBoundBuffers[type], nullptr, type);
     }
 
+    UninstallExecutable(context, &mExecutable);
     if (mProgram)
     {
         mProgram->release(context);
     }
     mProgram = nullptr;
     mProgramPipeline.set(context, nullptr);
-    mExecutable = nullptr;
 
     if (mTransformFeedback.get())
     {
@@ -2828,19 +2827,20 @@ angle::Result State::setProgram(const Context *context, Program *newProgram)
             mProgram->release(context);
         }
 
-        mProgram    = newProgram;
-        mExecutable = nullptr;
+        mProgram = newProgram;
 
         if (mProgram)
         {
-            mExecutable = &mProgram->getExecutable();
             newProgram->addRef();
-            ANGLE_TRY(onProgramExecutableChange(context, newProgram));
+            ANGLE_TRY(installProgramExecutable(context));
         }
-        else if (mProgramPipeline.get())
+        else if (mProgramPipeline.get() == nullptr)
         {
-            mExecutable = &mProgramPipeline->getExecutable();
-            ANGLE_TRY(onProgramPipelineExecutableChange(context));
+            UninstallExecutable(context, &mExecutable);
+        }
+        else if (mProgramPipeline->isLinked())
+        {
+            ANGLE_TRY(installProgramPipelineExecutableIfNotAlready(context));
         }
 
         // Note that rendering is undefined if glUseProgram(0) is called. But ANGLE will generate
@@ -2898,14 +2898,9 @@ angle::Result State::setProgramPipelineBinding(const Context *context, ProgramPi
     // current ProgramExecutable if there isn't currently a Program bound.
     if (!mProgram)
     {
-        if (mProgramPipeline.get())
+        if (mProgramPipeline.get() && mProgramPipeline->isLinked())
         {
-            mExecutable = &mProgramPipeline->getExecutable();
-            ANGLE_TRY(onProgramPipelineExecutableChange(context));
-        }
-        else
-        {
-            mExecutable = nullptr;
+            ANGLE_TRY(installProgramPipelineExecutableIfNotAlready(context));
         }
     }
 
@@ -2920,7 +2915,7 @@ void State::detachProgramPipeline(const Context *context, ProgramPipelineID pipe
     // current ProgramExecutable if there isn't currently a Program bound.
     if (!mProgram)
     {
-        mExecutable = nullptr;
+        UninstallExecutable(context, &mExecutable);
     }
 }
 
@@ -3785,77 +3780,61 @@ void State::setObjectDirty(GLenum target)
     }
 }
 
-angle::Result State::onProgramExecutableChange(const Context *context, Program *program)
+angle::Result State::installProgramExecutable(const Context *context)
 {
     // OpenGL Spec:
     // "If LinkProgram or ProgramBinary successfully re-links a program object
     //  that was already in use as a result of a previous call to UseProgram, then the
     //  generated executable code will be installed as part of the current rendering state."
-    ASSERT(program->isLinked());
-
-    // If this Program is currently active, we need to update the State's pointer to the current
-    // ProgramExecutable if we just changed it.
-    if (mProgram == program)
-    {
-        mExecutable = &program->getExecutable();
-    }
+    ASSERT(mProgram->isLinked());
 
     mDirtyBits.set(state::DIRTY_BIT_PROGRAM_EXECUTABLE);
 
-    if (program->hasAnyDirtyBit())
+    if (mProgram->hasAnyDirtyBit())
     {
         mDirtyObjects.set(state::DIRTY_OBJECT_PROGRAM);
     }
 
-    // Set any bound textures.
-    const ProgramExecutable &executable        = program->getExecutable();
-    const ActiveTextureTypeArray &textureTypes = executable.getActiveSamplerTypes();
-    for (size_t textureIndex : executable.getActiveSamplersMask())
+    // The bound Program always overrides the ProgramPipeline, so install the executable regardless
+    // of whether a program pipeline is bound.
+    InstallExecutable(context, mProgram->getSharedExecutable(), &mExecutable);
+    return onExecutableChange(context);
+}
+
+angle::Result State::installProgramPipelineExecutable(const Context *context)
+{
+    ASSERT(mProgramPipeline->isLinked());
+
+    mDirtyBits.set(state::DIRTY_BIT_PROGRAM_EXECUTABLE);
+
+    // A bound Program always overrides the ProgramPipeline, so only update the current
+    // ProgramExecutable if there isn't currently a Program bound.
+    if (mProgram == nullptr)
     {
-        TextureType type = textureTypes[textureIndex];
-
-        // This can happen if there is a conflicting texture type.
-        if (type == TextureType::InvalidEnum)
-            continue;
-
-        Texture *texture = getTextureForActiveSampler(type, textureIndex);
-        updateTextureBinding(context, textureIndex, texture);
-    }
-
-    for (size_t imageUnitIndex : executable.getActiveImagesMask())
-    {
-        Texture *image = mImageUnits[imageUnitIndex].texture.get();
-        if (!image)
-            continue;
-
-        if (image->hasAnyDirtyBit())
-        {
-            ANGLE_TRY(image->syncState(context, Command::Other));
-        }
-
-        if (isRobustResourceInitEnabled() && image->initState() == InitState::MayNeedInit)
-        {
-            mDirtyObjects.set(state::DIRTY_OBJECT_IMAGES_INIT);
-        }
+        InstallExecutable(context, mProgramPipeline->getSharedExecutable(), &mExecutable);
+        return onExecutableChange(context);
     }
 
     return angle::Result::Continue;
 }
 
-angle::Result State::onProgramPipelineExecutableChange(const Context *context)
+angle::Result State::installProgramPipelineExecutableIfNotAlready(const Context *context)
 {
-    mDirtyBits.set(state::DIRTY_BIT_PROGRAM_EXECUTABLE);
-
-    if (!mProgramPipeline->isLinked())
+    // If a program pipeline is bound, then unbound and bound again, its executable will still be
+    // set, and there is no need to reinstall it.
+    if (mExecutable.get() == mProgramPipeline->getSharedExecutable().get())
     {
-        mDirtyObjects.set(state::DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT);
+        return onExecutableChange(context);
     }
+    return installProgramPipelineExecutable(context);
+}
 
+angle::Result State::onExecutableChange(const Context *context)
+{
     // Set any bound textures.
-    const ProgramExecutable &executable        = mProgramPipeline->getExecutable();
-    const ActiveTextureTypeArray &textureTypes = executable.getActiveSamplerTypes();
+    const ActiveTextureTypeArray &textureTypes = mExecutable->getActiveSamplerTypes();
 
-    for (size_t textureIndex : executable.getActiveSamplersMask())
+    for (size_t textureIndex : mExecutable->getActiveSamplersMask())
     {
         TextureType type = textureTypes[textureIndex];
 
@@ -3867,7 +3846,7 @@ angle::Result State::onProgramPipelineExecutableChange(const Context *context)
         updateTextureBinding(context, textureIndex, texture);
     }
 
-    for (size_t imageUnitIndex : executable.getActiveImagesMask())
+    for (size_t imageUnitIndex : mExecutable->getActiveImagesMask())
     {
         Texture *image = mImageUnits[imageUnitIndex].texture.get();
         if (!image)

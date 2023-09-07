@@ -86,7 +86,6 @@ Style::Style(const RenderStyle& style, const RenderStyle* styleForBackground)
     , m_overflowX(style.overflowX())
     , m_overflowY(style.overflowY())
     , m_fontCascade(style.fontCascade())
-    , m_whiteSpace(style.whiteSpace())
     , m_tabSize(style.tabSize())
     , m_opacity(style.opacity())
 {
@@ -144,17 +143,20 @@ bool Style::backgroundHasOpaqueTopLayer() const
 
 bool Style::autoWrap() const
 {
-    return RenderStyle::autoWrap(whiteSpace());
+    ASSERT_NOT_IMPLEMENTED_YET();
+    return true;
 }
 
 bool Style::preserveNewline() const
 {
-    return RenderStyle::preserveNewline(whiteSpace());
+    ASSERT_NOT_IMPLEMENTED_YET();
+    return false;
 }
 
 bool Style::collapseWhiteSpace() const
 {
-    return RenderStyle::collapseWhiteSpace(whiteSpace());
+    ASSERT_NOT_IMPLEMENTED_YET();
+    return true;
 }
 
 } // namespace Display

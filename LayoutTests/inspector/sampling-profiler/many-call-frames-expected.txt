@@ -4,7 +4,7 @@
 PASS: Should have seen stacktrace:
 [
   {
-    "name": "top"
+    "name": "stacktraceTop"
   },
   {
     "name": "g"

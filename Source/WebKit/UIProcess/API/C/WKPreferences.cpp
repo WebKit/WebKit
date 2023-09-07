@@ -187,16 +187,6 @@ bool WKPreferencesGetDatabasesEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->databasesEnabled();
 }
 
-void WKPreferencesSetFrameFlatteningEnabled(WKPreferencesRef preferencesRef, bool frameFlatteningEnabled)
-{
-    toImpl(preferencesRef)->setFrameFlatteningEnabled(frameFlatteningEnabled);
-}
-
-bool WKPreferencesGetFrameFlatteningEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->frameFlatteningEnabled();
-}
-
 void WKPreferencesSetPluginsEnabled(WKPreferencesRef preferencesRef, bool pluginsEnabled)
 {
     toImpl(preferencesRef)->setPluginsEnabled(pluginsEnabled);

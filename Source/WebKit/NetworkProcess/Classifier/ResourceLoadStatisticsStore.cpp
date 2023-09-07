@@ -283,11 +283,6 @@ Seconds OperatingDate::secondsSinceEpoch() const
     return Seconds { dateToDaysFrom1970(m_year, m_month, m_monthDay) * secondsPerDay };
 }
 
-bool OperatingDate::operator==(const OperatingDate& other) const
-{
-    return m_monthDay == other.m_monthDay && m_month == other.m_month && m_year == other.m_year;
-}
-
 bool OperatingDate::operator<(const OperatingDate& other) const
 {
     return secondsSinceEpoch() < other.secondsSinceEpoch();

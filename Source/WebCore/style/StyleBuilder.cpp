@@ -363,30 +363,11 @@ Ref<CSSValue> Builder::resolveVariableReferences(CSSPropertyID propertyID, CSSVa
     auto variableValue = [&]() -> RefPtr<CSSValue> {
         if (is<CSSPendingSubstitutionValue>(value)) {
             auto& substitution = downcast<CSSPendingSubstitutionValue>(value);
-            auto shorthandID = substitution.shorthandPropertyId();
-
-            auto resolvedData = substitution.shorthandValue().resolveVariableReferences(m_state);
-            if (!resolvedData)
-                return nullptr;
-
-            ParsedPropertyVector parsedProperties;
-            if (!CSSPropertyParser::parseValue(shorthandID, false, resolvedData->tokens(), substitution.shorthandValue().context(), parsedProperties, StyleRuleType::Style))
-                return nullptr;
-
-            for (auto& property : parsedProperties) {
-                if (property.id() == propertyID)
-                    return property.value();
-            }
-
-            return nullptr;
+            return substitution.shorthandValue().resolveSubstitutionValue(m_state, propertyID, substitution.shorthandPropertyId());
         }
 
         auto& variableReferenceValue = downcast<CSSVariableReferenceValue>(value);
-        auto resolvedData = variableReferenceValue.resolveVariableReferences(m_state);
-        if (!resolvedData)
-            return nullptr;
-
-        return CSSPropertyParser::parseSingleValue(propertyID, resolvedData->tokens(), variableReferenceValue.context());
+        return variableReferenceValue.resolveSingleValue(m_state, propertyID);
     }();
 
     // https://drafts.csswg.org/css-variables-2/#invalid-variables

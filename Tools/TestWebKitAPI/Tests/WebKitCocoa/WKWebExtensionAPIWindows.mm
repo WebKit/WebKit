@@ -31,6 +31,12 @@
 #import "WebExtensionUtilities.h"
 #import <WebKit/_WKWebExtensionWindowCreationOptions.h>
 
+@interface DummyWebExtensionWindow : NSObject <_WKWebExtensionWindow>
+@end
+
+@implementation DummyWebExtensionWindow
+@end
+
 namespace TestWebKitAPI {
 
 static auto *windowsManifest = @{
@@ -42,6 +48,61 @@ static auto *windowsManifest = @{
         @"persistent": @NO,
     },
 };
+
+TEST(WKWebExtensionAPIWindows, Errors)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertThrows(() => browser.windows.get('bad'), /'windowID' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.windows.get(NaN), /'windowID' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.windows.get(Infinity), /'windowID' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.windows.get(-Infinity), /'windowID' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.windows.get(-3), /'windowID' value is invalid, because it is not a window identifier/i)",
+        @"browser.test.assertThrows(() => browser.windows.get(1.2), /'windowID' value is invalid, because it is not a window identifier/i)",
+        @"browser.test.assertThrows(() => browser.windows.get(browser.windows.WINDOW_ID_NONE), /'windowID' value is invalid, because 'windows.WINDOW_ID_NONE' is not allowed/i)",
+
+        @"await browser.test.assertRejects(browser.windows.get(42), /window not found/i)",
+
+#if PLATFORM(MAC)
+        // iOS does not support create() and update().
+        @"await browser.test.assertRejects(browser.windows.update(99, { focused: true }), /window not found/i)",
+
+        @"browser.test.assertThrows(() => browser.windows.create({ url: 42 }), /'url' is expected to be a string value or an array of string values, but a number value was provided/i)",
+        @"browser.test.assertThrows(() => browser.windows.create({ url: 'bad' }), /'url' value is invalid, because 'bad' is not a valid URL/i)",
+        @"browser.test.assertThrows(() => browser.windows.create({ url: ['bad'] }), /'url' value is invalid, because 'bad' is not a valid URL/i)",
+        @"browser.test.assertThrows(() => browser.windows.create({ left: 'bad' }), /'left' is expected to be a number value/i)",
+        @"browser.test.assertThrows(() => browser.windows.create({ top: 'bad' }), /'top' is expected to be a number value/i)",
+        @"browser.test.assertThrows(() => browser.windows.create({ width: 'bad' }), /'width' is expected to be a number value/i)",
+        @"browser.test.assertThrows(() => browser.windows.create({ height: 'bad' }), /'height' is expected to be a number value/i)",
+        @"browser.test.assertThrows(() => browser.windows.create({ incognito: 'bad' }), /'incognito' is expected to be a boolean value/i)",
+        @"browser.test.assertThrows(() => browser.windows.create({ focused: 'bad' }), /'focused' is expected to be a boolean value/i)",
+        @"browser.test.assertThrows(() => browser.windows.create({ tabId: 'bad' }), /'tabId' is expected to be a number value/i)",
+
+        @"const window = await browser.windows.getCurrent()",
+        @"await browser.test.assertRejects(browser.windows.update(window.id, { left: 10 }), /not implemented for 'top', 'left', 'width', and 'height'/i)",
+        @"await browser.test.assertRejects(browser.windows.update(window.id, { top: 10 }), /not implemented for 'top', 'left', 'width', and 'height'/i)",
+        @"await browser.test.assertRejects(browser.windows.update(window.id, { width: 500 }), /not implemented for 'top', 'left', 'width', and 'height'/i)",
+        @"await browser.test.assertRejects(browser.windows.update(window.id, { height: 500 }), /not implemented for 'top', 'left', 'width', and 'height'/i)",
+        @"await browser.test.assertRejects(browser.windows.update(window.id, { focused: true }), /not implemented for 'focused'/i)",
+        @"await browser.test.assertRejects(browser.windows.update(window.id, { state: 'minimized' }), /not implemented for 'state'/i)",
+#endif
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
+    manager.get().controllerDelegate = delegate.get();
+
+    auto windowOne = adoptNS([[DummyWebExtensionWindow alloc] init]);
+
+    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
+        return @[ windowOne.get() ];
+    };
+
+    [manager loadAndRun];
+}
 
 TEST(WKWebExtensionAPIWindows, GetCurrent)
 {
@@ -305,6 +366,8 @@ TEST(WKWebExtensionAPIWindows, RemovedEvent)
 }
 
 #if PLATFORM(MAC)
+
+// iOS does not support create() and update().
 
 TEST(WKWebExtensionAPIWindows, Create)
 {

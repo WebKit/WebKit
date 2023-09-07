@@ -39,7 +39,7 @@ namespace LayoutIntegration {
 class LineLayout;
 
 enum class AvoidanceReason : uint64_t {
-    FlowHasMarginTrim                            = 1LLU  << 0,
+    // Unused                                    = 1LLU  << 0,
     // Unused                                    = 1LLU  << 1,
     // Unused                                    = 1LLU  << 2,
     ContentIsRuby                                = 1LLU  << 3,
@@ -56,7 +56,7 @@ enum class AvoidanceReason : uint64_t {
     // Unused                                    = 1LLU  << 14,
     // Unused                                    = 1LLU  << 15,
     // Unused                                    = 1LLU  << 16,
-    FlowHasUnsupportedWritingMode                = 1LLU  << 17,
+    // Unused                                    = 1LLU  << 17,
     // Unused                                    = 1LLU  << 18,
     // Unused                                    = 1LLU  << 19,
     FlowHasLineAlignEdges                        = 1LLU  << 20,
@@ -78,7 +78,7 @@ enum class AvoidanceReason : uint64_t {
     // Unused                                    = 1LLU  << 36,
     // Unused                                    = 1LLU  << 37,
     // Unused                                    = 1LLU  << 38,
-    FlowTextIsSVGInlineText                      = 1LLU  << 39,
+    // Unused                                    = 1LLU  << 39,
     // Unused                                    = 1LLU  << 40,
     FeatureIsDisabled                            = 1LLU  << 41,
     // Unused                                    = 1LLU  << 42,
@@ -86,7 +86,7 @@ enum class AvoidanceReason : uint64_t {
     // Unused                                    = 1LLU  << 44,
     // Unused                                    = 1LLU  << 45,
     // Unused                                    = 1LLU  << 46,
-    MultiColumnFlowHasVerticalWritingMode        = 1LLU  << 47,
+    MultiColumnFlowHasUnsupportedWritingMode     = 1LLU  << 47,
     // Unused                                    = 1LLU  << 48,
     // Unused                                    = 1LLU  << 49,
     MultiColumnFlowIsFloating                    = 1LLU  << 50,

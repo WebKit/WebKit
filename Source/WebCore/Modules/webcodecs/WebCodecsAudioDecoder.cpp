@@ -63,9 +63,15 @@ WebCodecsAudioDecoder::~WebCodecsAudioDecoder()
 {
 }
 
-static bool isValidDecoderConfig(const WebCodecsAudioDecoderConfig& config, const Settings::Values&)
+static bool isValidDecoderConfig(const WebCodecsAudioDecoderConfig& config)
 {
-    return AudioDecoder::isCodecSupported(config.codec);
+    if (StringView(config.codec).trim(isASCIIWhitespace<UChar>).isEmpty())
+        return false;
+
+    // FIXME: We might need to check numberOfChannels and sampleRate here. See
+    // https://github.com/w3c/webcodecs/issues/714.
+
+    return true;
 }
 
 static AudioDecoder::Config createAudioDecoderConfig(const WebCodecsAudioDecoderConfig& config)
@@ -82,16 +88,12 @@ static AudioDecoder::Config createAudioDecoderConfig(const WebCodecsAudioDecoder
             description = { data, length };
     }
 
-    return {
-        description,
-        config.sampleRate.value_or(0),
-        config.numberOfChannels.value_or(0)
-    };
+    return { description, config.sampleRate, config.numberOfChannels };
 }
 
-ExceptionOr<void> WebCodecsAudioDecoder::configure(ScriptExecutionContext& context, WebCodecsAudioDecoderConfig&& config)
+ExceptionOr<void> WebCodecsAudioDecoder::configure(ScriptExecutionContext&, WebCodecsAudioDecoderConfig&& config)
 {
-    if (!isValidDecoderConfig(config, context.settingsValues()))
+    if (!isValidDecoderConfig(config))
         return Exception { TypeError, "Config is not valid"_s };
 
     if (m_state == WebCodecsCodecState::Closed || !scriptExecutionContext())
@@ -100,7 +102,8 @@ ExceptionOr<void> WebCodecsAudioDecoder::configure(ScriptExecutionContext& conte
     m_state = WebCodecsCodecState::Configured;
     m_isKeyChunkRequired = true;
 
-    queueControlMessageAndProcess([this, config = WTFMove(config), identifier = scriptExecutionContext()->identifier()]() mutable {
+    bool isSupportedCodec = AudioDecoder::isCodecSupported(config.codec);
+    queueControlMessageAndProcess([this, config = WTFMove(config), isSupportedCodec, identifier = scriptExecutionContext()->identifier()]() mutable {
         m_isMessageQueueBlocked = true;
         AudioDecoder::PostTaskCallback postTaskCallback = [identifier, weakThis = WeakPtr { *this }](auto&& task) {
             ScriptExecutionContext::postTaskTo(identifier, [weakThis, task = WTFMove(task)](auto&) mutable {
@@ -111,6 +114,11 @@ ExceptionOr<void> WebCodecsAudioDecoder::configure(ScriptExecutionContext& conte
                 });
             });
         };
+
+        if (!isSupportedCodec) {
+            closeDecoder(Exception { NotSupportedError, "Codec is not supported"_s });
+            return;
+        }
 
         AudioDecoder::create(config.codec, createAudioDecoderConfig(config), [this](auto&& result) {
             if (!result.has_value()) {
@@ -195,8 +203,13 @@ ExceptionOr<void> WebCodecsAudioDecoder::close()
 
 void WebCodecsAudioDecoder::isConfigSupported(ScriptExecutionContext& context, WebCodecsAudioDecoderConfig&& config, Ref<DeferredPromise>&& promise)
 {
-    if (!isValidDecoderConfig(config, context.settingsValues())) {
+    if (!isValidDecoderConfig(config)) {
         promise->reject(Exception { TypeError, "Config is not valid"_s });
+        return;
+    }
+
+    if (!AudioDecoder::isCodecSupported(config.codec)) {
+        promise->template resolve<IDLDictionary<WebCodecsAudioDecoderSupport>>(WebCodecsAudioDecoderSupport { false, WTFMove(config) });
         return;
     }
 

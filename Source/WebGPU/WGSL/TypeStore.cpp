@@ -26,7 +26,6 @@
 #include "config.h"
 #include "TypeStore.h"
 
-#include "ASTTypeName.h"
 #include "Types.h"
 #include <wtf/EnumTraits.h>
 
@@ -193,7 +192,7 @@ const Type* TypeStore::referenceType(AddressSpace addressSpace, const Type* elem
     return type;
 }
 
-const Type* TypeStore::typeConstructorType(ASCIILiteral name, std::function<const Type*(AST::ParameterizedTypeName&)>&& constructor)
+const Type* TypeStore::typeConstructorType(ASCIILiteral name, std::function<const Type*(AST::ElaboratedTypeExpression&)>&& constructor)
 {
     return allocateType<TypeConstructor>(name, WTFMove(constructor));
 }

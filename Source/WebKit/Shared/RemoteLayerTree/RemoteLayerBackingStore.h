@@ -110,20 +110,7 @@ public:
         UseCGDisplayListImageCache useCGDisplayListImageCache { UseCGDisplayListImageCache::No };
 #endif
 
-        bool operator==(const Parameters& other) const
-        {
-            return (type == other.type
-                && size == other.size
-                && colorSpace == other.colorSpace
-                && scale == other.scale
-                && deepColor == other.deepColor
-                && isOpaque == other.isOpaque
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-                && includeDisplayList == other.includeDisplayList
-                && useCGDisplayListImageCache == other.useCGDisplayListImageCache
-#endif
-                );
-        }
+        friend bool operator==(const Parameters&, const Parameters&) = default;
     };
 
     void ensureBackingStore(const Parameters&);

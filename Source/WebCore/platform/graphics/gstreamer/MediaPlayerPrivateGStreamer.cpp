@@ -492,7 +492,7 @@ void MediaPlayerPrivateGStreamer::seekToTarget(const SeekTarget& inTarget)
     // Avoid useless seeking.
     if (inTarget.time == currentMediaTime()) {
         GST_DEBUG_OBJECT(pipeline(), "[Seek] Already at requested position. Aborting.");
-        timeChanged(); // needed for seeked event to be fired.
+        timeChanged(inTarget.time);
         return;
     }
 
@@ -537,7 +537,7 @@ void MediaPlayerPrivateGStreamer::seekToTarget(const SeekTarget& inTarget)
         m_isEndReached = false;
         m_isSeeking = false;
         m_cachedPosition = MediaTime::zeroTime();
-        timeChanged();
+        timeChanged(target.time);
         return;
     }
 
@@ -1245,12 +1245,15 @@ void MediaPlayerPrivateGStreamer::loadStateChanged()
     updateStates();
 }
 
-void MediaPlayerPrivateGStreamer::timeChanged()
+void MediaPlayerPrivateGStreamer::timeChanged(const MediaTime& seekedTime)
 {
     updateStates();
-    GST_DEBUG_OBJECT(pipeline(), "Emitting timeChanged notification");
-    if (auto player = m_player.get())
+    GST_DEBUG_OBJECT(pipeline(), "Emitting timeChanged notification (seekCompleted:%d)", seekedTime.isValid());
+    if (auto player = m_player.get()) {
+        if (seekedTime.isValid())
+            player->seeked(seekedTime);
         player->timeChanged();
+    }
 }
 
 void MediaPlayerPrivateGStreamer::loadingFailed(MediaPlayer::NetworkState networkError, MediaPlayer::ReadyState readyState, bool forceNotifications)
@@ -2413,7 +2416,7 @@ void MediaPlayerPrivateGStreamer::finishSeek()
     // The pipeline can still have a pending state. In this case a position query will fail.
     // Right now we can use m_seekTarget as a fallback.
     m_canFallBackToLastFinishedSeekPosition = true;
-    timeChanged();
+    timeChanged(m_seekTarget.time);
 }
 
 void MediaPlayerPrivateGStreamer::updateStates()
@@ -2756,7 +2759,7 @@ void MediaPlayerPrivateGStreamer::didEnd()
         configureMediaStreamAudioTracks();
     }
 
-    timeChanged();
+    timeChanged(MediaTime::invalidTime());
 }
 
 void MediaPlayerPrivateGStreamer::getSupportedTypes(HashSet<String>& types)

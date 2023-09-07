@@ -4947,7 +4947,7 @@ void CaptureMidExecutionSetup(const gl::Context *context,
         // or compute stages.
         for (gl::ShaderType shaderType : gl::AllShaderTypes())
         {
-            gl::Program *program = pipeline->getShaderProgram(shaderType);
+            const gl::Program *program = pipeline->getShaderProgram(shaderType);
             if (!program)
             {
                 continue;

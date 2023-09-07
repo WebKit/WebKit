@@ -57,7 +57,7 @@ RemotePageProxy::RemotePageProxy(WebPageProxy& page, WebProcessProxy& process, c
 
 void RemotePageProxy::injectPageIntoNewProcess()
 {
-    auto* page = m_page.get();
+    RefPtr page = m_page.get();
     if (!page) {
         ASSERT_NOT_REACHED();
         return;

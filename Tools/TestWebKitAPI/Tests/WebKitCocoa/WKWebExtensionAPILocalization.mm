@@ -107,9 +107,11 @@ TEST(WKWebExtensionAPILocalization, Errors)
 TEST(WKWebExtensionAPILocalization, i18n)
 {
     NSArray<NSString *> *preferredLocaleIdentifiers = NSLocale.preferredLanguages;
-    NSMutableOrderedSet<NSString *> *acceptedLanguages = [NSMutableOrderedSet orderedSetWithArray:preferredLocaleIdentifiers];
-    for (NSString *localeIdentifier in preferredLocaleIdentifiers)
+    NSMutableOrderedSet<NSString *> *acceptedLanguages = [NSMutableOrderedSet orderedSetWithCapacity:preferredLocaleIdentifiers.count];
+    for (NSString *localeIdentifier in preferredLocaleIdentifiers) {
+        [acceptedLanguages addObject:localeIdentifier];
         [acceptedLanguages addObject:[NSLocale localeWithLocaleIdentifier:localeIdentifier].languageCode];
+    }
 
     auto *acceptedLanguagesString = Util::constructJSArrayOfStrings(acceptedLanguages.array);
 

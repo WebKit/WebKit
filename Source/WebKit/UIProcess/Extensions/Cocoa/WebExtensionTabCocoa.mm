@@ -37,6 +37,7 @@
 #import "WKWebView.h"
 #import "WKWebViewConfigurationPrivate.h"
 #import "WebExtensionContext.h"
+#import "WebExtensionUtilities.h"
 #import "_WKWebExtensionTab.h"
 #import "_WKWebExtensionTabCreationOptionsInternal.h"
 
@@ -223,7 +224,7 @@ bool WebExtensionTab::isPrivate() const
 void WebExtensionTab::toggleReaderMode(CompletionHandler<void(Error)>&& completionHandler)
 {
     if (!isValid() || !m_respondsToToggleReaderMode) {
-        completionHandler("tabs.toggleReaderMode() not implemented."_s);
+        completionHandler(toErrorString(@"tabs.toggleReaderMode()", nil, @"it is not implemented"));
         return;
     }
 
@@ -257,7 +258,7 @@ bool WebExtensionTab::isShowingReaderMode() const
 void WebExtensionTab::mute(CompletionHandler<void(Error)>&& completionHandler)
 {
     if (!isValid() || !m_respondsToMute) {
-        completionHandler("tabs.update() not implemented for 'muted' set to `true`."_s);
+        completionHandler(toErrorString(@"tabs.update()", nil, @"it is not implemented for 'muted' set to `true`"));
         return;
     }
 
@@ -275,7 +276,7 @@ void WebExtensionTab::mute(CompletionHandler<void(Error)>&& completionHandler)
 void WebExtensionTab::unmute(CompletionHandler<void(Error)>&& completionHandler)
 {
     if (!isValid() || !m_respondsToUnmute) {
-        completionHandler("tabs.update() not implemented for 'muted' set to `false`."_s);
+        completionHandler(toErrorString(@"tabs.update()", nil, @"it is not implemented for 'muted' set to `false`"));
         return;
     }
 
@@ -488,7 +489,7 @@ void WebExtensionTab::goForward(CompletionHandler<void(Error)>&& completionHandl
 void WebExtensionTab::activate(CompletionHandler<void(Error)>&& completionHandler)
 {
     if (!isValid() || !m_respondsToActivate) {
-        completionHandler("tabs.update() not implemented for 'active' set to `true`."_s);
+        completionHandler(toErrorString(@"tabs.update()", nil, @"it is not implemented for 'active' set to `true`"));
         return;
     }
 
@@ -506,7 +507,7 @@ void WebExtensionTab::activate(CompletionHandler<void(Error)>&& completionHandle
 void WebExtensionTab::select(ExtendSelection extend, CompletionHandler<void(Error)>&& completionHandler)
 {
     if (!isValid() || !m_respondsToSelect) {
-        completionHandler("tabs.update() not implemented for 'highlighted' or 'selected' set to `true`."_s);
+        completionHandler(toErrorString(@"tabs.update()", nil, @"it is not implemented for 'highlighted' or 'selected' set to `true`"));
         return;
     }
 
@@ -524,7 +525,7 @@ void WebExtensionTab::select(ExtendSelection extend, CompletionHandler<void(Erro
 void WebExtensionTab::duplicate(CompletionHandler<void(RefPtr<WebExtensionTab>, Error)>&& completionHandler)
 {
     if (!isValid() || !m_respondsToDuplicate) {
-        completionHandler(nullptr, "tabs.duplicate() not implemented."_s);
+        completionHandler(nullptr, toErrorString(@"tabs.duplicate()", nil, @"it is not implemented"));
         return;
     }
 
@@ -555,7 +556,7 @@ void WebExtensionTab::duplicate(CompletionHandler<void(RefPtr<WebExtensionTab>, 
 void WebExtensionTab::close(CompletionHandler<void(Error)>&& completionHandler)
 {
     if (!isValid() || !m_respondsToClose) {
-        completionHandler("tabs.remove() not implemented."_s);
+        completionHandler(toErrorString(@"tabs.remove()", nil, @"it is not implemented"));
         return;
     }
 

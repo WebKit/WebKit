@@ -209,6 +209,15 @@ void Visitor::visit(Expression& expression)
     case AST::NodeKind::Unsigned32Literal:
         checkErrorAndVisit(downcast<AST::Unsigned32Literal>(expression));
         break;
+    case AST::NodeKind::ArrayTypeExpression:
+        checkErrorAndVisit(downcast<AST::ArrayTypeExpression>(expression));
+        break;
+    case AST::NodeKind::ElaboratedTypeExpression:
+        checkErrorAndVisit(downcast<AST::ElaboratedTypeExpression>(expression));
+        break;
+    case AST::NodeKind::ReferenceTypeExpression:
+        checkErrorAndVisit(downcast<AST::ReferenceTypeExpression>(expression));
+        break;
     default:
         ASSERT_NOT_REACHED("Unhandled Expression");
     }
@@ -478,45 +487,21 @@ void Visitor::visit(AST::StructureMember& structureMember)
 
 // Types
 
-void Visitor::visit(AST::TypeName& typeName)
+void Visitor::visit(AST::ArrayTypeExpression& arrayTypeExpression)
 {
-    switch (typeName.kind()) {
-    case AST::NodeKind::ArrayTypeName:
-        checkErrorAndVisit(downcast<AST::ArrayTypeName>(typeName));
-        break;
-    case AST::NodeKind::NamedTypeName:
-        checkErrorAndVisit(downcast<AST::NamedTypeName>(typeName));
-        break;
-    case AST::NodeKind::ParameterizedTypeName:
-        checkErrorAndVisit(downcast<AST::ParameterizedTypeName>(typeName));
-        break;
-    case AST::NodeKind::ReferenceTypeName:
-        checkErrorAndVisit(downcast<AST::ReferenceTypeName>(typeName));
-        break;
-    default:
-        ASSERT_NOT_REACHED("Unhandled TypeName");
-    }
+    maybeCheckErrorAndVisit(arrayTypeExpression.maybeElementType());
+    maybeCheckErrorAndVisit(arrayTypeExpression.maybeElementCount());
 }
 
-void Visitor::visit(AST::ArrayTypeName& arrayTypeName)
+void Visitor::visit(AST::ElaboratedTypeExpression& elaboratedExpression)
 {
-    maybeCheckErrorAndVisit(arrayTypeName.maybeElementType());
-    maybeCheckErrorAndVisit(arrayTypeName.maybeElementCount());
-}
-
-void Visitor::visit(AST::NamedTypeName&)
-{
-}
-
-void Visitor::visit(AST::ParameterizedTypeName& parameterizedTypeName)
-{
-    for (auto& argument : parameterizedTypeName.arguments())
+    for (auto& argument : elaboratedExpression.arguments())
         checkErrorAndVisit(argument);
 }
 
-void Visitor::visit(AST::ReferenceTypeName& referenceTypeName)
+void Visitor::visit(AST::ReferenceTypeExpression& referenceTypeExpression)
 {
-    checkErrorAndVisit(referenceTypeName.type());
+    checkErrorAndVisit(referenceTypeExpression.type());
 }
 
 // Variable

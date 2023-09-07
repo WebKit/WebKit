@@ -35,6 +35,7 @@
 #import "CocoaHelpers.h"
 #import "WebExtensionContextProxy.h"
 #import "WebExtensionContextProxyMessages.h"
+#import "WebExtensionUtilities.h"
 #import "WebExtensionWindowIdentifier.h"
 #import "_WKWebExtensionControllerDelegatePrivate.h"
 #import "_WKWebExtensionWindowCreationOptionsInternal.h"
@@ -56,7 +57,7 @@ void WebExtensionContext::windowsCreate(WebExtensionWindowParameters creationPar
 {
     auto delegate = extensionController()->delegate();
     if (![delegate respondsToSelector:@selector(webExtensionController:openNewWindowWithOptions:forExtensionContext:completionHandler:)]) {
-        completionHandler(std::nullopt, "windows.create() not implemented."_s);
+        completionHandler(std::nullopt, toErrorString(@"windows.create()", nil, @"it is not implemented"));
         return;
     }
 
@@ -123,14 +124,16 @@ void WebExtensionContext::windowsCreate(WebExtensionWindowParameters creationPar
 
 void WebExtensionContext::windowsGet(WebPageProxyIdentifier, WebExtensionWindowIdentifier windowIdentifier, OptionSet<WindowTypeFilter> filter, PopulateTabs populate, CompletionHandler<void(std::optional<WebExtensionWindowParameters>, WebExtensionWindow::Error)>&& completionHandler)
 {
+    static NSString * const apiName = @"windows.get()";
+
     auto window = getWindow(windowIdentifier);
     if (!window) {
-        completionHandler(std::nullopt, "Window not found."_s);
+        completionHandler(std::nullopt, toErrorString(apiName, nil, @"window not found"));
         return;
     }
 
     if (!matchesFilter(*window, filter)) {
-        completionHandler(std::nullopt, "Window does not match requested 'windowTypes'."_s);
+        completionHandler(std::nullopt, toErrorString(apiName, nil, @"window does not match requested 'windowTypes'"));
         return;
     }
 
@@ -139,14 +142,16 @@ void WebExtensionContext::windowsGet(WebPageProxyIdentifier, WebExtensionWindowI
 
 void WebExtensionContext::windowsGetLastFocused(OptionSet<WindowTypeFilter> filter, PopulateTabs populate, CompletionHandler<void(std::optional<WebExtensionWindowParameters>, WebExtensionWindow::Error)>&& completionHandler)
 {
+    static NSString * const apiName = @"windows.getLastFocused()";
+
     auto window = frontmostWindow();
     if (!window) {
-        completionHandler(std::nullopt, "Window not found."_s);
+        completionHandler(std::nullopt, toErrorString(apiName, nil, @"window not found"));
         return;
     }
 
     if (!matchesFilter(*window, filter)) {
-        completionHandler(std::nullopt, "Window does not match requested 'windowTypes'."_s);
+        completionHandler(std::nullopt, toErrorString(apiName, nil, @"window does not match requested 'windowTypes'"));
         return;
     }
 
@@ -168,9 +173,11 @@ void WebExtensionContext::windowsGetAll(OptionSet<WindowTypeFilter> filter, Popu
 
 void WebExtensionContext::windowsUpdate(WebExtensionWindowIdentifier windowIdentifier, WebExtensionWindowParameters updateParameters, CompletionHandler<void(std::optional<WebExtensionWindowParameters>, WebExtensionWindow::Error)>&& completionHandler)
 {
+    static NSString * const apiName = @"windows.update()";
+
     auto window = getWindow(windowIdentifier);
     if (!window) {
-        completionHandler(std::nullopt, "Window not found."_s);
+        completionHandler(std::nullopt, toErrorString(apiName, nil, @"window not found"));
         return;
     }
 
@@ -200,7 +207,7 @@ void WebExtensionContext::windowsUpdate(WebExtensionWindowIdentifier windowIdent
 
         CGRect currentFrame = window->frame();
         if (CGRectIsNull(currentFrame)) {
-            stepCompletionHandler("windows.update() not implemented for 'top', 'left', 'width', and 'height'."_s);
+            stepCompletionHandler(toErrorString(apiName, nil, @"it is not implemented for 'top', 'left', 'width', and 'height'"));
             return;
         }
 
@@ -218,7 +225,7 @@ void WebExtensionContext::windowsUpdate(WebExtensionWindowIdentifier windowIdent
         // coordinates with the origin in the top-left corner.
         CGRect screenFrame = window->screenFrame();
         if (CGRectIsEmpty(screenFrame)) {
-            stepCompletionHandler("windows.update() not implemented for 'top', 'left', 'width', and 'height'."_s);
+            stepCompletionHandler(toErrorString(apiName, nil, @"it is not implemented for 'top', 'left', 'width', and 'height'"));
             return;
         }
 
@@ -284,7 +291,7 @@ void WebExtensionContext::windowsRemove(WebExtensionWindowIdentifier windowIdent
 {
     auto window = getWindow(windowIdentifier);
     if (!window) {
-        completionHandler("Window not found."_s);
+        completionHandler(toErrorString(@"windows.remove()", nil, @"window not found"));
         return;
     }
 

@@ -80,9 +80,7 @@ private:
         Initial,
         Began,
         Loading,
-        Failed,
-        Succeeded,
-        Ended
+        Viewing
     };
 
     State m_state { State::Initial };

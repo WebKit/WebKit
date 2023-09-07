@@ -47,6 +47,7 @@ namespace WebCore {
     macro(filterAmount) \
     macro(texelSize) \
     macro(gaussianKernel) \
+    macro(gaussianKernelOffset) \
     macro(gaussianKernelHalfSize) \
     macro(blurDirection) \
     macro(roundedRectNumber) \

@@ -349,6 +349,8 @@ class ProgramExecutableD3D : public ProgramExecutableImpl
                                               gl::BinaryInputStream *stream,
                                               gl::InfoLog &infoLog);
 
+    unsigned int getSerial() const { return mSerial; }
+
   private:
     friend class ProgramD3D;
 
@@ -467,6 +469,11 @@ class ProgramExecutableD3D : public ProgramExecutableImpl
     gl::ShaderBitSet mShaderUniformsDirty;
 
     UniqueSerial mCurrentVertexArrayStateSerial;
+
+    unsigned int mSerial;
+
+    static unsigned int issueSerial();
+    static unsigned int mCurrentSerial;
 };
 
 }  // namespace rx

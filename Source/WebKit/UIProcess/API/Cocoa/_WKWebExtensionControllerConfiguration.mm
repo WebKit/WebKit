@@ -33,8 +33,8 @@
 #import "WebExtensionControllerConfiguration.h"
 #import <WebCore/WebCoreObjCExtras.h>
 
-static constexpr NSString *persistentCodingKey = @"persistent";
-static constexpr NSString *identifierCodingKey = @"identifier";
+static NSString * const persistentCodingKey = @"persistent";
+static NSString * const identifierCodingKey = @"identifier";
 
 @implementation _WKWebExtensionControllerConfiguration
 

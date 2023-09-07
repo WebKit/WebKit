@@ -108,6 +108,29 @@ vk::PresentMode GetDesiredPresentMode(const std::vector<vk::PresentMode> &presen
     return vk::PresentMode::FifoKHR;
 }
 
+uint32_t GetMinImageCount(const VkSurfaceCapabilitiesKHR &surfaceCaps)
+{
+    // - On mailbox, we need at least three images; one is being displayed to the user until the
+    //   next v-sync, and the application alternatingly renders to the other two, one being
+    //   recorded, and the other queued for presentation if v-sync happens in the meantime.
+    // - On immediate, we need at least two images; the application alternates between the two
+    //   images.
+    // - On fifo, we use at least three images.  Triple-buffering allows us to present an image,
+    //   have one in the queue, and record in another.  Note: on certain configurations (windows +
+    //   nvidia + windowed mode), we could get away with a smaller number.
+    //
+    // For simplicity, we always allocate at least three images.
+    uint32_t minImageCount = std::max(3u, surfaceCaps.minImageCount);
+
+    // Make sure we don't exceed maxImageCount.
+    if (surfaceCaps.maxImageCount > 0 && minImageCount > surfaceCaps.maxImageCount)
+    {
+        minImageCount = surfaceCaps.maxImageCount;
+    }
+
+    return minImageCount;
+}
+
 constexpr VkImageUsageFlags kSurfaceVkImageUsageFlags =
     VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 constexpr VkImageUsageFlags kSurfaceVkColorImageUsageFlags =
@@ -1788,16 +1811,26 @@ angle::Result WindowSurfaceVk::checkForOutOfDateSwapchain(ContextVk *contextVk,
     // Get the latest surface capabilities.
     ANGLE_TRY(queryAndAdjustSurfaceCaps(contextVk, &mSurfaceCaps));
 
-    if (contextVk->getRenderer()->getFeatures().perFrameWindowSizeQuery.enabled &&
-        !presentOutOfDate)
+    if (contextVk->getRenderer()->getFeatures().perFrameWindowSizeQuery.enabled)
     {
-        // This device generates neither VK_ERROR_OUT_OF_DATE_KHR nor VK_SUBOPTIMAL_KHR.  Check for
-        // whether the size and/or rotation have changed since the swapchain was created.
-        uint32_t swapchainWidth  = getWidth();
-        uint32_t swapchainHeight = getHeight();
-        presentOutOfDate         = mSurfaceCaps.currentTransform != mPreTransform ||
-                           mSurfaceCaps.currentExtent.width != swapchainWidth ||
-                           mSurfaceCaps.currentExtent.height != swapchainHeight;
+        // On Android, rotation can cause the minImageCount to change
+        uint32_t minImageCount = GetMinImageCount(mSurfaceCaps);
+        if (mMinImageCount != minImageCount)
+        {
+            presentOutOfDate = true;
+            mMinImageCount   = minImageCount;
+        }
+
+        if (!presentOutOfDate)
+        {
+            // This device generates neither VK_ERROR_OUT_OF_DATE_KHR nor VK_SUBOPTIMAL_KHR.  Check
+            // for whether the size and/or rotation have changed since the swapchain was created.
+            uint32_t swapchainWidth  = getWidth();
+            uint32_t swapchainHeight = getHeight();
+            presentOutOfDate         = mSurfaceCaps.currentTransform != mPreTransform ||
+                               mSurfaceCaps.currentExtent.width != swapchainWidth ||
+                               mSurfaceCaps.currentExtent.height != swapchainHeight;
+        }
     }
 
     // If anything has changed, recreate the swapchain.
@@ -2767,23 +2800,8 @@ void WindowSurfaceVk::setSwapInterval(EGLint interval)
 
     mDesiredSwapchainPresentMode = GetDesiredPresentMode(mPresentModes, interval);
 
-    // - On mailbox, we need at least three images; one is being displayed to the user until the
-    //   next v-sync, and the application alternatingly renders to the other two, one being
-    //   recorded, and the other queued for presentation if v-sync happens in the meantime.
-    // - On immediate, we need at least two images; the application alternates between the two
-    //   images.
-    // - On fifo, we use at least three images.  Triple-buffering allows us to present an image,
-    //   have one in the queue, and record in another.  Note: on certain configurations (windows +
-    //   nvidia + windowed mode), we could get away with a smaller number.
-    //
-    // For simplicity, we always allocate at least three images.
-    mMinImageCount = std::max(3u, mSurfaceCaps.minImageCount);
-
-    // Make sure we don't exceed maxImageCount.
-    if (mSurfaceCaps.maxImageCount > 0 && mMinImageCount > mSurfaceCaps.maxImageCount)
-    {
-        mMinImageCount = mSurfaceCaps.maxImageCount;
-    }
+    // minImageCount may vary based on the Present Mode
+    mMinImageCount = GetMinImageCount(mSurfaceCaps);
 
     // On the next swap, if the desired present mode is different from the current one, the
     // swapchain will be recreated.

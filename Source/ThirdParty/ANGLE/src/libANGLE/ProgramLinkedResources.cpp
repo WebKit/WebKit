@@ -1630,13 +1630,12 @@ void LinkingVariables::initForProgramPipeline(const ProgramPipelineState &state)
 {
     for (ShaderType shaderType : state.getExecutable().getLinkedShaderStages())
     {
-        const Program *program = state.getShaderProgram(shaderType);
-        ASSERT(program);
-        outputVaryings[shaderType] = program->getExecutable().getLinkedOutputVaryings(shaderType);
-        inputVaryings[shaderType]  = program->getExecutable().getLinkedInputVaryings(shaderType);
-        uniforms[shaderType] = program->getState().getExecutable().getLinkedUniforms(shaderType);
-        uniformBlocks[shaderType] =
-            program->getState().getExecutable().getLinkedUniformBlocks(shaderType);
+        const SharedProgramExecutable &executable = state.getShaderProgramExecutable(shaderType);
+        ASSERT(executable);
+        outputVaryings[shaderType] = executable->getLinkedOutputVaryings(shaderType);
+        inputVaryings[shaderType]  = executable->getLinkedInputVaryings(shaderType);
+        uniforms[shaderType]       = executable->getLinkedUniforms(shaderType);
+        uniformBlocks[shaderType]  = executable->getLinkedUniformBlocks(shaderType);
         isShaderStageUsedBitset.set(shaderType);
     }
 }

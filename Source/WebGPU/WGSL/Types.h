@@ -26,7 +26,6 @@
 #pragma once
 
 #include "ASTForward.h"
-#include "ASTTypeName.h"
 #include <wtf/HashMap.h>
 #include <wtf/Markable.h>
 #include <wtf/PrintStream.h>
@@ -128,7 +127,7 @@ struct Reference {
 
 struct TypeConstructor {
     ASCIILiteral name;
-    std::function<const Type*(AST::ParameterizedTypeName&)> construct;
+    std::function<const Type*(AST::ElaboratedTypeExpression&)> construct;
 };
 
 struct Bottom {

@@ -65,9 +65,9 @@
 // This number was chosen arbitrarily based on testing with some popular extensions.
 static constexpr size_t maximumCachedPermissionResults = 256;
 
-static constexpr NSString *backgroundContentEventListenersKey = @"BackgroundContentEventListeners";
-static constexpr NSString *lastSeenBaseURLStateKey = @"LastSeenBaseURL";
-static constexpr NSString *lastSeenVersionStateKey = @"LastSeenVersion";
+static NSString * const backgroundContentEventListenersKey = @"BackgroundContentEventListeners";
+static NSString * const lastSeenBaseURLStateKey = @"LastSeenBaseURL";
+static NSString * const lastSeenVersionStateKey = @"LastSeenVersion";
 
 // Update this value when any changes are made to the WebExtensionEventListenerType enum.
 static constexpr NSInteger currentBackgroundPageListenerStateVersion = 1;

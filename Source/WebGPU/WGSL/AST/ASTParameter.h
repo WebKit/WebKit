@@ -27,8 +27,8 @@
 
 #include "ASTAttribute.h"
 #include "ASTBuilder.h"
+#include "ASTExpression.h"
 #include "ASTIdentifier.h"
-#include "ASTTypeName.h"
 #include <wtf/ReferenceWrapperVector.h>
 
 namespace WGSL::AST {
@@ -46,12 +46,12 @@ public:
 
     NodeKind kind() const override;
     Identifier& name() { return m_name; }
-    TypeName& typeName() { return m_typeName.get(); }
+    Expression& typeName() { return m_typeName.get(); }
     Attribute::List& attributes() { return m_attributes; }
     ParameterRole role() { return m_role; }
 
 private:
-    Parameter(SourceSpan span, Identifier&& name, TypeName::Ref&& typeName, Attribute::List&& attributes, ParameterRole role)
+    Parameter(SourceSpan span, Identifier&& name, Expression::Ref&& typeName, Attribute::List&& attributes, ParameterRole role)
         : Node(span)
         , m_role(role)
         , m_name(WTFMove(name))
@@ -61,7 +61,7 @@ private:
 
     ParameterRole m_role;
     Identifier m_name;
-    TypeName::Ref m_typeName;
+    Expression::Ref m_typeName;
     Attribute::List m_attributes;
 };
 

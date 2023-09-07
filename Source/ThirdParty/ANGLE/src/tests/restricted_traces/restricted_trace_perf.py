@@ -113,6 +113,11 @@ def cleanup():
     run_adb_command('shell rm -f /sdcard/Download/out.txt /sdcard/Download/gpumem.txt')
 
 
+def clear_blob_cache():
+    run_adb_command(
+        'shell run-as com.android.angle.test rm -rf /data/user_de/0/com.android.angle.test/cache')
+
+
 def select_device(device_arg):
     # The output from 'adb devices' always includes a header and a new line at the end.
     result_dev = run_command('adb devices')
@@ -730,6 +735,8 @@ def run_traces(args):
             for trace in fnmatch.filter(traces, args.filter):
                 # Remove any previous perf results
                 cleanup()
+                # Clear blob cache to avoid post-warmup cache eviction b/298028816
+                clear_blob_cache()
 
                 test = trace.split(' ')[0]
 
@@ -747,12 +754,12 @@ def run_traces(args):
                 logging.debug('Running %s' % test)
                 test_time = run_trace(test, args)
 
+                gpu_power, cpu_power = 0, 0
                 if args.power:
                     done_event.set()
                     power_thread.join(timeout=2)
                     if power_thread.is_alive():
                         logging.warning('collect_power thread did not terminate')
-                        gpu_power, cpu_power = 0, 0
                     else:
                         gpu_power = power_results['gpu']
                         cpu_power = power_results['cpu']

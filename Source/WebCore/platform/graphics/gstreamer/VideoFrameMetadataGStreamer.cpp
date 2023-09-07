@@ -86,8 +86,12 @@ const GstMetaInfo* videoFrameMetadataGetInfo()
                 auto* frameMeta = VIDEO_FRAME_METADATA_CAST(meta);
                 destroyVideoFrameMetadataPrivate(frameMeta->priv);
             },
-            [](GstBuffer* buffer, GstMeta* meta, GstBuffer*, GQuark type, gpointer) -> gboolean {
+            [](GstBuffer* buffer, GstMeta* meta, GstBuffer*, GQuark type, gpointer data) -> gboolean {
                 if (!GST_META_TRANSFORM_IS_COPY(type))
+                    return FALSE;
+
+                auto transformCopy = reinterpret_cast<GstMetaTransformCopy*>(data);
+                if (!transformCopy->region)
                     return FALSE;
 
                 auto* frameMeta = VIDEO_FRAME_METADATA_CAST(meta);

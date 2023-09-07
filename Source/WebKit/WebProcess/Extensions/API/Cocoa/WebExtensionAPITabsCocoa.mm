@@ -39,129 +39,524 @@
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionContextProxy.h"
 #import "WebExtensionTabParameters.h"
+#import "WebExtensionTabQueryParameters.h"
+#import "WebExtensionUtilities.h"
+#import "WebExtensionWindowIdentifier.h"
 #import "WebProcess.h"
-#import "_WKWebExtensionUtilities.h"
-#import <wtf/DateMath.h>
+#import <wtf/cocoa/VectorCocoa.h>
+
+static NSString * const idKey = @"id";
+static NSString * const urlKey = @"url";
+static NSString * const titleKey = @"title";
+
+static NSString * const windowIdKey = @"windowId";
+static NSString * const indexKey = @"index";
+static NSString * const openerTabIdKey = @"openerTabId";
+
+static NSString * const widthKey = @"width";
+static NSString * const heightKey = @"height";
+
+static NSString * const activeKey = @"active";
+static NSString * const highlightedKey = @"highlighted";
+static NSString * const selectedKey = @"selected";
+static NSString * const incognitoKey = @"incognito";
+static NSString * const pinnedKey = @"pinned";
+static NSString * const audibleKey = @"audible";
+
+static NSString * const mutedInfoKey = @"mutedInfo";
+static NSString * const mutedKey = @"muted";
+
+static NSString * const statusKey = @"status";
+static NSString * const loadingKey = @"loading";
+static NSString * const completeKey = @"complete";
+
+static NSString * const isArticleKey = @"isArticle";
+static NSString * const isInReaderModeKey = @"isInReaderMode";
+static NSString * const openInReaderModeKey = @"openInReaderMode";
+
+static NSString * const currentWindowKey = @"currentWindow";
+static NSString * const hiddenKey = @"hidden";
+static NSString * const lastFocusedWindowKey = @"lastFocusedWindow";
+static NSString * const windowTypeKey = @"windowType";
+
+static NSString * const emptyURLValue = @"";
 
 namespace WebKit {
 
 NSDictionary *toWebAPI(const WebExtensionTabParameters& parameters)
 {
-    // FIXME: Implemnet.
+    ASSERT(parameters.identifier);
 
-    return @{ };
+    auto *result = [NSMutableDictionary dictionary];
+
+    result[idKey] = @(toWebAPI(parameters.identifier.value()));
+
+    if (parameters.url)
+        result[urlKey] = (NSString *)parameters.url.value().string();
+    else
+        result[urlKey] = emptyURLValue;
+
+    if (parameters.title)
+        result[titleKey] = (NSString *)parameters.title.value();
+
+    if (parameters.windowIdentifier)
+        result[windowIdKey] = @(toWebAPI(parameters.windowIdentifier.value()));
+
+    if (parameters.index)
+        result[indexKey] = @(parameters.index.value());
+
+    if (parameters.size) {
+        auto size = parameters.size.value();
+        result[widthKey] = @(size.width);
+        result[heightKey] = @(size.height);
+    }
+
+    if (parameters.parentTabIdentifier)
+        result[openerTabIdKey] = @(toWebAPI(parameters.parentTabIdentifier.value()));
+
+    if (parameters.active)
+        result[activeKey] = @(parameters.active.value());
+
+    if (parameters.selected) {
+        result[selectedKey] = @(parameters.selected.value());
+        result[highlightedKey] = @(parameters.selected.value());
+    }
+
+    if (parameters.pinned)
+        result[pinnedKey] = @(parameters.pinned.value());
+
+    if (parameters.audible)
+        result[audibleKey] = @(parameters.audible.value());
+
+    if (parameters.muted)
+        result[mutedInfoKey] = @{ mutedKey: @(parameters.muted.value()) };
+
+    if (parameters.loading)
+        result[statusKey] = parameters.loading.value() ? loadingKey : completeKey;
+
+    if (parameters.privateBrowsing)
+        result[incognitoKey] = @(parameters.privateBrowsing.value());
+
+    if (parameters.readerModeAvailable)
+        result[isArticleKey] = @(parameters.readerModeAvailable.value());
+
+    if (parameters.showingReaderMode)
+        result[isInReaderModeKey] = @(parameters.showingReaderMode.value());
+
+    return [result copy];
 }
 
-bool WebExtensionAPITabs::isPropertyAllowed(String name, WebPage*)
+bool WebExtensionAPITabs::parseTabCreateOptions(NSDictionary *options, WebExtensionTabParameters& parameters, NSString *sourceKey, NSString **outExceptionString)
 {
-    // FIXME: Implement.
+    if (!parseTabUpdateOptions(options, parameters, sourceKey, outExceptionString))
+        return false;
+
+    static NSArray<NSString *> *optionalKeys = @[
+        indexKey,
+        openInReaderModeKey,
+        titleKey,
+        windowIdKey,
+    ];
+
+    static NSDictionary<NSString *, id> *types = @{
+        indexKey: NSNumber.class,
+        openInReaderModeKey: @YES.class,
+        titleKey: NSString.class,
+        windowIdKey: NSNumber.class,
+    };
+
+    if (!validateDictionary(options, sourceKey, nil, optionalKeys, types, outExceptionString))
+        return false;
+
+    if (NSNumber *windowId = objectForKey<NSNumber>(options, windowIdKey)) {
+        parameters.windowIdentifier = toWebExtensionWindowIdentifier(windowId.doubleValue);
+
+        if (!parameters.windowIdentifier || !isValid(parameters.windowIdentifier.value())) {
+            *outExceptionString = toErrorString(nil, windowIdKey, @"'%@' is not a window identifier", windowId);
+            return false;
+        }
+    }
+
+    if (NSNumber *index = objectForKey<NSNumber>(options, indexKey))
+        parameters.index = index.unsignedIntegerValue;
+
+    if (NSNumber *openInReaderMode = objectForKey<NSNumber>(options, openInReaderModeKey))
+        parameters.showingReaderMode = openInReaderMode.boolValue;
+
+    if (NSString *title = objectForKey<NSString>(options, titleKey))
+        parameters.title = title;
 
     return true;
 }
 
-void WebExtensionAPITabs::createTab(NSDictionary *properties, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+bool WebExtensionAPITabs::parseTabUpdateOptions(NSDictionary *options, WebExtensionTabParameters& parameters, NSString *sourceKey, NSString **outExceptionString)
+{
+    static NSArray<NSString *> *optionalKeys = @[
+        activeKey,
+        highlightedKey,
+        mutedKey,
+        openerTabIdKey,
+        pinnedKey,
+        selectedKey,
+        urlKey,
+    ];
+
+    static NSDictionary<NSString *, id> *types = @{
+        activeKey: @YES.class,
+        highlightedKey: @YES.class,
+        mutedKey: @YES.class,
+        openerTabIdKey: NSNumber.class,
+        pinnedKey: @YES.class,
+        selectedKey: @YES.class,
+        urlKey: NSString.class,
+    };
+
+    if (!validateDictionary(options, sourceKey, nil, optionalKeys, types, outExceptionString))
+        return false;
+
+    if (NSString *url = objectForKey<NSString>(options, urlKey)) {
+        parameters.url = URL { url };
+
+        if (!parameters.url.value().isValid()) {
+            *outExceptionString = toErrorString(nil, urlKey, @"'%@' is not a valid URL", url);
+            return false;
+        }
+    }
+
+    if (NSNumber *openerTabId = objectForKey<NSNumber>(options, openerTabIdKey)) {
+        parameters.parentTabIdentifier = toWebExtensionTabIdentifier(openerTabId.doubleValue);
+
+        if (!parameters.parentTabIdentifier || !isValid(parameters.parentTabIdentifier.value())) {
+            *outExceptionString = toErrorString(nil, openerTabIdKey, @"'%@' is not a tab identifier", openerTabId);
+            return false;
+        }
+    }
+
+    if (NSNumber *active = objectForKey<NSNumber>(options, activeKey))
+        parameters.active = active.boolValue;
+
+    if (NSNumber *pinned = objectForKey<NSNumber>(options, pinnedKey))
+        parameters.pinned = pinned.boolValue;
+
+    if (NSNumber *muted = objectForKey<NSNumber>(options, mutedKey))
+        parameters.muted = muted.boolValue;
+
+    if (NSNumber *selected = objectForKey<NSNumber>(options, selectedKey))
+        parameters.selected = selected.boolValue;
+
+    if (NSNumber *highlighted = objectForKey<NSNumber>(options, highlightedKey))
+        parameters.selected = highlighted.boolValue;
+
+    return true;
+}
+
+bool WebExtensionAPITabs::parseTabQueryOptions(NSDictionary *options, WebExtensionTabQueryParameters& parameters, NSString *sourceKey, NSString **outExceptionString)
+{
+    static NSArray<NSString *> *optionalKeys = @[
+        activeKey,
+        audibleKey,
+        currentWindowKey,
+        hiddenKey,
+        highlightedKey,
+        indexKey,
+        lastFocusedWindowKey,
+        mutedKey,
+        pinnedKey,
+        selectedKey,
+        statusKey,
+        titleKey,
+        urlKey,
+        windowIdKey,
+        windowTypeKey,
+    ];
+
+    static NSDictionary<NSString *, id> *types = @{
+        activeKey: @YES.class,
+        audibleKey: @YES.class,
+        currentWindowKey: @YES.class,
+        hiddenKey: @YES.class,
+        highlightedKey: @YES.class,
+        indexKey: NSNumber.class,
+        lastFocusedWindowKey: @YES.class,
+        mutedKey: @YES.class,
+        pinnedKey: @YES.class,
+        selectedKey: @YES.class,
+        statusKey: NSString.class,
+        titleKey: NSString.class,
+        urlKey: [NSOrderedSet orderedSetWithObjects:NSString.class, @[ NSString.class ], nil],
+        windowIdKey: NSNumber.class,
+        windowTypeKey: NSString.class,
+    };
+
+    if (!validateDictionary(options, sourceKey, nil, optionalKeys, types, outExceptionString))
+        return false;
+
+    if (NSNumber *windowId = objectForKey<NSNumber>(options, windowIdKey)) {
+        parameters.windowIdentifier = toWebExtensionWindowIdentifier(windowId.doubleValue);
+
+        if (!parameters.windowIdentifier || !isValid(parameters.windowIdentifier.value())) {
+            *outExceptionString = toErrorString(nil, windowIdKey, @"'%@' is not a window identifier", windowId);
+            return false;
+        }
+    }
+
+    if (NSString *windowType = objectForKey<NSString>(options, windowTypeKey)) {
+        OptionSet<WebExtensionWindow::TypeFilter> windowTypeFilter;
+        if (!WebExtensionAPIWindows::parseWindowTypeFilter(windowType, windowTypeFilter, windowTypeKey, outExceptionString))
+            return false;
+
+        parameters.windowType = windowTypeFilter;
+    }
+
+    if (NSNumber *currentWindow = objectForKey<NSNumber>(options, currentWindowKey))
+        parameters.currentWindow = currentWindow.boolValue;
+
+    if (NSNumber *lastFocusedWindow = objectForKey<NSNumber>(options, lastFocusedWindowKey))
+        parameters.frontmostWindow = lastFocusedWindow.boolValue;
+
+    if (NSString *url = objectForKey<NSString>(options, urlKey, true))
+        parameters.urlPatterns = { url };
+    else if (NSArray *urls = objectForKey<NSArray>(options, urlKey, true))
+        parameters.urlPatterns = makeVector<String>(urls);
+
+    if (NSString *title = objectForKey<NSString>(options, titleKey, true))
+        parameters.titlePattern = title;
+
+    if (NSNumber *audible = objectForKey<NSNumber>(options, audibleKey))
+        parameters.audible = audible.boolValue;
+
+    if (NSNumber *hidden = objectForKey<NSNumber>(options, hiddenKey))
+        parameters.hidden = hidden.boolValue;
+
+    if (NSNumber *index = objectForKey<NSNumber>(options, indexKey))
+        parameters.index = index.unsignedIntegerValue;
+
+    if (NSNumber *active = objectForKey<NSNumber>(options, activeKey))
+        parameters.active = active.boolValue;
+
+    if (NSNumber *pinned = objectForKey<NSNumber>(options, pinnedKey))
+        parameters.pinned = pinned.boolValue;
+
+    if (NSNumber *selected = objectForKey<NSNumber>(options, selectedKey))
+        parameters.selected = selected.boolValue;
+
+    if (NSNumber *highlighted = objectForKey<NSNumber>(options, highlightedKey))
+        parameters.selected = highlighted.boolValue;
+
+    if (NSNumber *muted = objectForKey<NSNumber>(options, mutedKey))
+        parameters.muted = muted.boolValue;
+
+    return true;
+}
+
+static bool isValid(std::optional<WebExtensionTabIdentifier> identifier, NSString **outExceptionString)
+{
+    if (UNLIKELY(!isValid(identifier))) {
+        if (isNone(identifier))
+            *outExceptionString = toErrorString(nil, @"tabID", @"'tabs.TAB_ID_NONE' is not allowed");
+        else if (identifier)
+            *outExceptionString = toErrorString(nil, @"tabID", @"'%llu' is not a tab identifier", identifier.value().toUInt64());
+        else
+            *outExceptionString = toErrorString(nil, @"tabID", @"it is not a tab identifier");
+        return false;
+    }
+
+    return true;
+}
+
+bool WebExtensionAPITabs::isPropertyAllowed(String name, WebPage*)
+{
+    // FIXME: <https://webkit.org/b/260994> Implement.
+
+    return true;
+}
+
+void WebExtensionAPITabs::createTab(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/create
 
-    // FIXME: Implement.
+    WebExtensionTabParameters parameters;
+    if (!parseTabCreateOptions(options, parameters, @"properties", outExceptionString))
+        return;
+
+    // FIXME: <https://webkit.org/b/260994> Implement.
 }
 
-void WebExtensionAPITabs::query(NSDictionary *queryInfo, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPITabs::query(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/query
 
-    // FIXME: Implement.
+    WebExtensionTabQueryParameters parameters;
+    if (!parseTabQueryOptions(options, parameters, @"info", outExceptionString))
+        return;
+
+    // FIXME: <https://webkit.org/b/260994> Implement.
 }
 
 void WebExtensionAPITabs::get(double tabID, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/get
 
-    // FIXME: Implement.
+    auto tabIdentifer = toWebExtensionTabIdentifier(tabID);
+    if (!isValid(tabIdentifer, outExceptionString))
+        return;
+
+    // FIXME: <https://webkit.org/b/260994> Implement.
 }
 
 void WebExtensionAPITabs::getCurrent(Ref<WebExtensionCallbackHandler>&& callback)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/getCurrent
 
-    // FIXME: Implement.
+    // FIXME: <https://webkit.org/b/260994> Implement.
 }
 
 void WebExtensionAPITabs::getSelected(double windowID, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/getSelected
 
-    // FIXME: Implement.
+    auto windowIdentifer = toWebExtensionWindowIdentifier(windowID);
+    if (!isValid(windowIdentifer, outExceptionString))
+        return;
+
+    // FIXME: <https://webkit.org/b/260994> Implement.
 }
 
 void WebExtensionAPITabs::duplicate(double tabID, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/duplicate
 
-    // FIXME: Implement.
+    auto tabIdentifer = toWebExtensionTabIdentifier(tabID);
+    if (!isValid(tabIdentifer, outExceptionString))
+        return;
+
+    // FIXME: <https://webkit.org/b/260994> Implement.
 }
 
-void WebExtensionAPITabs::update(double tabID, NSDictionary *updateProperties, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPITabs::update(double tabID, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/update
 
-    // FIXME: Implement.
+    auto tabIdentifer = toWebExtensionTabIdentifier(tabID);
+    if (!isValid(tabIdentifer, outExceptionString))
+        return;
+
+    WebExtensionTabParameters parameters;
+    if (!parseTabUpdateOptions(options, parameters, @"properties", outExceptionString))
+        return;
+
+    // FIXME: <https://webkit.org/b/260994> Implement.
 }
 
 void WebExtensionAPITabs::remove(NSObject *tabIDs, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/remove
 
-    // FIXME: Implement.
+    if (!validateObject(tabIDs, @"tabIDs", [NSOrderedSet orderedSetWithObjects:NSNumber.class, @[ NSNumber.class ], nil], outExceptionString))
+        return;
+
+    Vector<WebExtensionTabIdentifier> identifiers;
+
+    if (NSNumber *tabID = dynamic_objc_cast<NSNumber>(tabIDs)) {
+        auto tabIdentifer = toWebExtensionTabIdentifier(tabID.doubleValue);
+        if (!isValid(tabIdentifer)) {
+            *outExceptionString = toErrorString(nil, @"tabIDs", @"'%@' is not a tab identifier", tabID);
+            return;
+        }
+
+        identifiers.append(tabIdentifer.value());
+    } else if (NSArray *tabIDArray = dynamic_objc_cast<NSArray>(tabIDs)) {
+        identifiers.reserveInitialCapacity(tabIDArray.count);
+
+        for (NSNumber *tabID in tabIDArray) {
+            auto tabIdentifer = toWebExtensionTabIdentifier(tabID.doubleValue);
+            if (!isValid(tabIdentifer)) {
+                *outExceptionString = toErrorString(nil, @"tabIDs", @"'%@' is not a tab identifier", tabID);
+                return;
+            }
+
+            identifiers.uncheckedAppend(tabIdentifer.value());
+        }
+    }
+
+    // FIXME: <https://webkit.org/b/260994> Implement.
 }
 
 void WebExtensionAPITabs::reload(double tabID, NSDictionary *reloadProperties, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/reload
 
-    // FIXME: Implement.
+    auto tabIdentifer = toWebExtensionTabIdentifier(tabID);
+    if (!isValid(tabIdentifer, outExceptionString))
+        return;
+
+    // FIXME: <https://webkit.org/b/260994> Implement.
 }
 
 void WebExtensionAPITabs::goBack(double tabID, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/goBack
 
-    // FIXME: Implement.
+    auto tabIdentifer = toWebExtensionTabIdentifier(tabID);
+    if (!isValid(tabIdentifer, outExceptionString))
+        return;
+
+    // FIXME: <https://webkit.org/b/260994> Implement.
 }
 
 void WebExtensionAPITabs::goForward(double tabID, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/goForward
 
-    // FIXME: Implement.
+    auto tabIdentifer = toWebExtensionTabIdentifier(tabID);
+    if (!isValid(tabIdentifer, outExceptionString))
+        return;
+
+    // FIXME: <https://webkit.org/b/260994> Implement.
 }
 
 void WebExtensionAPITabs::getZoom(double tabID, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/getZoom
 
-    // FIXME: Implement.
+    auto tabIdentifer = toWebExtensionTabIdentifier(tabID);
+    if (!isValid(tabIdentifer, outExceptionString))
+        return;
+
+    // FIXME: <https://webkit.org/b/260994> Implement.
 }
 
 void WebExtensionAPITabs::setZoom(double tabID, double zoomFactor, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/setZoom
 
-    // FIXME: Implement.
+    auto tabIdentifer = toWebExtensionTabIdentifier(tabID);
+    if (!isValid(tabIdentifer, outExceptionString))
+        return;
+
+    // FIXME: <https://webkit.org/b/260994> Implement.
 }
 
 void WebExtensionAPITabs::detectLanguage(double tabID, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/detectLanguage
 
-    // FIXME: Implement.
+    auto tabIdentifer = toWebExtensionTabIdentifier(tabID);
+    if (!isValid(tabIdentifer, outExceptionString))
+        return;
+
+    // FIXME: <https://webkit.org/b/260994> Implement.
 }
 
 void WebExtensionAPITabs::toggleReaderMode(double tabID, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/toggleReaderMode
 
-    // FIXME: Implement.
+    auto tabIdentifer = toWebExtensionTabIdentifier(tabID);
+    if (!isValid(tabIdentifer, outExceptionString))
+        return;
+
+    // FIXME: <https://webkit.org/b/260994> Implement.
 }
 
 WebExtensionAPIEvent& WebExtensionAPITabs::onActivated()

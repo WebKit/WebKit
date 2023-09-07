@@ -99,11 +99,9 @@ public:
     void visit(AST::AbstractFloatLiteral&) override;
 
     // Types
-    void visit(AST::TypeName&) override;
-    void visit(AST::ArrayTypeName&) override;
-    void visit(AST::NamedTypeName&) override;
-    void visit(AST::ParameterizedTypeName&) override;
-    void visit(AST::ReferenceTypeName&) override;
+    void visit(AST::ArrayTypeExpression&) override;
+    void visit(AST::ElaboratedTypeExpression&) override;
+    void visit(AST::ReferenceTypeExpression&) override;
 
 private:
     enum class VariableKind : uint8_t {
@@ -123,7 +121,7 @@ private:
     void typeError(InferBottom, const SourceSpan&, Arguments&&...);
 
     const Type* infer(AST::Expression&);
-    const Type* resolve(AST::TypeName&);
+    const Type* resolve(AST::Expression&);
     const Type* lookupType(const AST::Identifier&);
     void inferred(const Type*);
     bool unify(const Type*, const Type*) WARN_UNUSED_RETURN;
@@ -267,11 +265,11 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
         }
         result = m_types.referenceType(addressSpace, result, accessMode);
         if (auto* maybeTypeName = variable.maybeTypeName()) {
-            auto& referenceType = m_shaderModule.astBuilder().construct<AST::ReferenceTypeName>(
+            auto& referenceType = m_shaderModule.astBuilder().construct<AST::ReferenceTypeExpression>(
                 maybeTypeName->span(),
                 *maybeTypeName
             );
-            referenceType.m_resolvedType = result;
+            referenceType.m_inferredType = result;
             variable.m_referenceType = &referenceType;
         }
     }
@@ -606,22 +604,22 @@ void TypeChecker::visit(AST::IdentifierExpression& identifier)
 void TypeChecker::visit(AST::CallExpression& call)
 {
     auto& target = call.target();
-    bool isNamedType = is<AST::NamedTypeName>(target);
-    bool isParameterizedType = is<AST::ParameterizedTypeName>(target);
+    bool isNamedType = is<AST::IdentifierExpression>(target);
+    bool isParameterizedType = is<AST::ElaboratedTypeExpression>(target);
     if (isNamedType || isParameterizedType) {
         Vector<const Type*> typeArguments;
         String targetName = [&]() -> String {
             if (isNamedType)
-                return downcast<AST::NamedTypeName>(target).name();
-            auto& parameterizedType = downcast<AST::ParameterizedTypeName>(target);
-            for (auto& argument : parameterizedType.arguments())
+                return downcast<AST::IdentifierExpression>(target).identifier();
+            auto& elaborated = downcast<AST::ElaboratedTypeExpression>(target);
+            for (auto& argument : elaborated.arguments())
                 typeArguments.append(resolve(argument));
-            return parameterizedType.base();
+            return elaborated.base();
         }();
 
         auto* targetBinding = isNamedType ? readVariable(targetName) : nullptr;
         if (targetBinding) {
-            target.m_resolvedType = targetBinding->type;
+            target.m_inferredType = targetBinding->type;
             if (targetBinding->kind == Binding::Type) {
                 if (auto* structType = std::get_if<Types::Struct>(targetBinding->type)) {
                     auto numberOfArguments = call.arguments().size();
@@ -693,7 +691,7 @@ void TypeChecker::visit(AST::CallExpression& call)
 
         auto* result = chooseOverload("initializer", call.span(), targetName, call.arguments(), typeArguments);
         if (result) {
-            target.m_resolvedType = result;
+            target.m_inferredType = result;
             return;
         }
 
@@ -704,8 +702,8 @@ void TypeChecker::visit(AST::CallExpression& call)
         return;
     }
 
-    if (is<AST::ArrayTypeName>(target)) {
-        AST::ArrayTypeName& array = downcast<AST::ArrayTypeName>(target);
+    if (is<AST::ArrayTypeExpression>(target)) {
+        AST::ArrayTypeExpression& array = downcast<AST::ArrayTypeExpression>(target);
         const Type* elementType = nullptr;
         unsigned elementCount;
 
@@ -804,14 +802,7 @@ void TypeChecker::visit(AST::AbstractFloatLiteral&)
 }
 
 // Types
-void TypeChecker::visit(AST::TypeName&)
-{
-    // NOTE: this should never be called directly, only through `resolve`, which
-    // captures the inferred type
-    ASSERT_NOT_REACHED();
-}
-
-void TypeChecker::visit(AST::ArrayTypeName& array)
+void TypeChecker::visit(AST::ArrayTypeExpression& array)
 {
     // FIXME: handle the case where there is no element type
     ASSERT(array.maybeElementType());
@@ -850,12 +841,7 @@ const Type* TypeChecker::lookupType(const AST::Identifier& name)
     return binding->type;
 }
 
-void TypeChecker::visit(AST::NamedTypeName& namedType)
-{
-    inferred(lookupType(namedType.name()));
-}
-
-void TypeChecker::visit(AST::ParameterizedTypeName& type)
+void TypeChecker::visit(AST::ElaboratedTypeExpression& type)
 {
     auto* base = lookupType(type.base());
     if (isBottom(base)) {
@@ -872,7 +858,7 @@ void TypeChecker::visit(AST::ParameterizedTypeName& type)
     inferred(constructor->construct(type));
 }
 
-void TypeChecker::visit(AST::ReferenceTypeName&)
+void TypeChecker::visit(AST::ReferenceTypeExpression&)
 {
     // FIXME: we don't yet parse reference types
     ASSERT_NOT_REACHED();
@@ -1028,10 +1014,13 @@ const Type* TypeChecker::infer(AST::Expression& expression)
     return inferredType;
 }
 
-const Type* TypeChecker::resolve(AST::TypeName& type)
+const Type* TypeChecker::resolve(AST::Expression& type)
 {
     ASSERT(!m_inferredType);
-    AST::Visitor::visit(type);
+    if (is<AST::IdentifierExpression>(type))
+        inferred(lookupType(downcast<AST::IdentifierExpression>(type).identifier()));
+    else
+        AST::Visitor::visit(type);
     ASSERT(m_inferredType);
 
     if (shouldDumpInferredTypes) {
@@ -1041,7 +1030,7 @@ const Type* TypeChecker::resolve(AST::TypeName& type)
         dataLogLn(*m_inferredType);
     }
 
-    type.m_resolvedType = m_inferredType;
+    type.m_inferredType = m_inferredType;
     const Type* inferredType = m_inferredType;
     m_inferredType = nullptr;
 
@@ -1112,7 +1101,7 @@ void TypeChecker::allocateSimpleConstructor(ASCIILiteral name, TargetConstructor
 {
     introduceType(AST::Identifier::make(name), m_types.typeConstructorType(
         name,
-        [this, constructor, arguments...](AST::ParameterizedTypeName& type) -> const Type* {
+        [this, constructor, arguments...](AST::ElaboratedTypeExpression& type) -> const Type* {
             if (type.arguments().size() != 1) {
                 typeError(InferBottom::No, type.span(), "'", type.base(), "' requires 1 template argument");
                 return m_types.bottomType();

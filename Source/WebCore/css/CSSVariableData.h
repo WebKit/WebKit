@@ -37,7 +37,6 @@ namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSVariableData);
 class CSSVariableData : public RefCounted<CSSVariableData> {
-    WTF_MAKE_NONCOPYABLE(CSSVariableData);
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSVariableData);
 public:
     static Ref<CSSVariableData> create(const CSSParserTokenRange& range, const CSSParserContext& context = strictCSSParserContext())
@@ -54,7 +53,7 @@ public:
 
 private:
     CSSVariableData(const CSSParserTokenRange&, const CSSParserContext&);
-    template<typename CharacterType> void updateTokens(const CSSParserTokenRange&);
+    template<typename CharacterType> void updateBackingStringsInTokens();
 
     String m_backingString;
     Vector<CSSParserToken> m_tokens;

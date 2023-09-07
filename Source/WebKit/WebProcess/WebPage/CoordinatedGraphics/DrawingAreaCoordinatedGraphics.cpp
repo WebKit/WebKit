@@ -69,12 +69,6 @@ DrawingAreaCoordinatedGraphics::DrawingAreaCoordinatedGraphics(WebPage& webPage,
 #endif
 
     updatePreferences(parameters.store);
-
-    if (m_alwaysUseCompositing) {
-        enterAcceleratedCompositingMode(nullptr);
-        if (!parameters.isProcessSwap)
-            sendEnterAcceleratedCompositingModeIfNeeded();
-    }
 }
 
 DrawingAreaCoordinatedGraphics::~DrawingAreaCoordinatedGraphics() = default;
@@ -288,6 +282,16 @@ void DrawingAreaCoordinatedGraphics::didChangeViewportAttributes(ViewportAttribu
         m_layerTreeHost->didChangeViewportAttributes(WTFMove(attrs));
     else if (m_previousLayerTreeHost)
         m_previousLayerTreeHost->didChangeViewportAttributes(WTFMove(attrs));
+}
+
+bool DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingModeIfNeeded()
+{
+    ASSERT(!m_layerTreeHost);
+    if (!m_alwaysUseCompositing)
+        return false;
+
+    enterAcceleratedCompositingMode(nullptr);
+    return true;
 }
 #endif
 

@@ -196,7 +196,7 @@ sub printCurrentSettings()
     $result .= " LibFuzzer" if libFuzzerIsEnabled();
     $result .= " Coverage" if coverageIsEnabled();
     $result .= " LTOMode:" . ltoMode() if ltoMode();
-    $result .= " ForceOptimizationLevel:O" . forceOptimizationLevel() if forceOptimizationLevel();
+    $result .= " ForceOptimizationLevel:O" . forceOptimizationLevel() if defined forceOptimizationLevel();
     $result .= " Workspace:" . configuredXcodeWorkspace() if configuredXcodeWorkspace();
 
     print STDERR $result, "\n";

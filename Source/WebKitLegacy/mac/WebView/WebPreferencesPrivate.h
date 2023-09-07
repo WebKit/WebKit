@@ -58,12 +58,6 @@ typedef enum {
     WebKitJavaScriptRuntimeFlagsAllEnabled = 0
 } WebKitJavaScriptRuntimeFlags;
 
-typedef enum {
-    WebKitFrameFlatteningDisabled,
-    WebKitFrameFlatteningEnabledForNonFullScreenIFrames,
-    WebKitFrameFlatteningFullyEnabled
-} WebKitFrameFlattening;
-
 typedef enum : unsigned {
     WebKitAudioSessionCategoryAmbientSound = 'ambi',
     WebKitAudioSessionCategorySoloAmbientSound = 'solo',
@@ -134,8 +128,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL needsStorageAccessFromFileURLsQuirk;
 @property (nonatomic) BOOL zoomsTextOnly;
 @property (nonatomic) BOOL javaScriptCanAccessClipboard;
-@property (nonatomic, getter=isFrameFlatteningEnabled) BOOL frameFlatteningEnabled;
-@property (nonatomic) WebKitFrameFlattening frameFlattening;
 @property (nonatomic) BOOL asyncFrameScrollingEnabled;
 @property (nonatomic, getter=isSpatialNavigationEnabled) BOOL spatialNavigationEnabled;
 @property (nonatomic) BOOL mediaDevicesEnabled;

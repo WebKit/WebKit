@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LayerTreeContext.h"
+#pragma once
 
-#include "ArgumentCoders.h"
-#include "Decoder.h"
-#include "Encoder.h"
+#include "ASTExpression.h"
 
-namespace WebKit {
+namespace WGSL::AST {
 
-LayerTreeContext::LayerTreeContext()
-    : contextID(0)
-{
-}
+class ElaboratedTypeExpression : public Expression {
+    WGSL_AST_BUILDER_NODE(ElaboratedTypeExpression);
 
-LayerTreeContext::~LayerTreeContext()
-{
-}
+public:
+    NodeKind kind() const override;
+    Identifier& base() { return m_base; }
+    Expression::List& arguments() { return m_arguments; }
 
-bool LayerTreeContext::isEmpty() const
-{
-    return !contextID;
-}
+private:
+    ElaboratedTypeExpression(SourceSpan span, Identifier&& base, Expression::List&& arguments)
+        : Expression(span)
+        , m_base(WTFMove(base))
+        , m_arguments(WTFMove(arguments))
+    { }
 
-bool operator==(const LayerTreeContext& a, const LayerTreeContext& b)
-{
-    return a.contextID == b.contextID;
-}
+    Identifier m_base;
+    Expression::List m_arguments;
+};
 
-} // namespace WebKit
+} // namespace WGSL::AST
+
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(ElaboratedTypeExpression)

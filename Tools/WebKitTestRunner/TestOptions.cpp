@@ -94,7 +94,6 @@ const TestFeatures& TestOptions::defaults()
             { "DirectoryUploadEnabled", true },
             { "EventHandlerDrivenSmoothKeyboardScrollingEnabled", eventHandlerDrivenSmoothKeyboardScrollingEnabledValue },
             { "ExposeSpeakersEnabled", true },
-            { "FrameFlatteningEnabled", false },
             { "FullScreenEnabled", true },
             { "GenericCueAPIEnabled", false },
             { "HiddenPageCSSAnimationSuspensionEnabled", false },
@@ -135,6 +134,9 @@ const TestFeatures& TestOptions::defaults()
             { "WebAuthenticationEnabled", true },
 #if ENABLE(WEBGL) && PLATFORM(COCOA)
             { "WebGLUsingMetal", true },
+#endif
+#if ENABLE(WEBGL)
+            { "WebGLDraftExtensionsEnabled", true },
 #endif
             { "WebRTCRemoteVideoFrameEnabled", true },
             { "XSSAuditorEnabled", false },

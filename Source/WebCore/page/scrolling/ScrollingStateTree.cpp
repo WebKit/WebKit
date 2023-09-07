@@ -141,18 +141,15 @@ ScrollingNodeID ScrollingStateTree::insertNode(ScrollingNodeType nodeType, Scrol
             if (!parentID)
                 return newNodeID;
 
-            size_t currentIndex = parent->indexOfChild(*node);
-            if (currentIndex == childIndex)
+            if (parent->childAtIndex(childIndex) == node)
                 return newNodeID;
 
-            ASSERT(currentIndex != notFound);
-            Ref protectedNode { *node };
-            parent->removeChildAtIndex(currentIndex);
+            parent->removeChild(*node);
 
             if (childIndex == notFound)
-                parent->appendChild(WTFMove(protectedNode));
+                parent->appendChild(node.releaseNonNull());
             else
-                parent->insertChild(WTFMove(protectedNode), childIndex);
+                parent->insertChild(node.releaseNonNull(), childIndex);
 
             return newNodeID;
         }
