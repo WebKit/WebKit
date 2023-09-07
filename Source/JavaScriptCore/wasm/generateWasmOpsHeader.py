@@ -264,11 +264,6 @@ struct Type {
         return other.kind == kind && other.isNullable() == isNullable() && other.index == index;
     }
 
-    bool operator!=(const Type& other) const
-    {
-        return !(other == *this);
-    }
-
     bool isNullable() const
     {
         return kind == TypeKind::RefNull || kind == TypeKind::Externref || kind == TypeKind::Funcref;

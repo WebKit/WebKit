@@ -467,7 +467,6 @@ public:
         {
             return m_iter == other.m_iter && m_done == other.m_done;
         }
-        bool operator!=(const iterator& other) const { return !(*this == other); }
 
     private:
         GstIterator* m_iter;
