@@ -430,13 +430,6 @@ bool NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& conne
     return false;
 }
 
-void NetworkConnectionToWebProcess::updateQuotaBasedOnSpaceUsageForTesting(ClientOrigin&& origin)
-{
-    NETWORK_PROCESS_MESSAGE_CHECK(allowTestOnlyIPC());
-    if (auto* session = m_networkProcess->networkSession(sessionID()))
-        session->storageManager().resetQuotaUpdatedBasedOnUsageForTesting(WTFMove(origin));
-}
-
 void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
 {
 #if ENABLE(SERVICE_WORKER)

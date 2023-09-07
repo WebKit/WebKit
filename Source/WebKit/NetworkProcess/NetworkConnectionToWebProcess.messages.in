@@ -101,7 +101,6 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     ConnectToRTCDataChannelRemoteSource(struct WebCore::RTCDataChannelIdentifier source, struct WebCore::RTCDataChannelIdentifier handler) -> (std::optional<bool> result)
 #endif
 
-    [EnabledIf='allowTestOnlyIPC()'] UpdateQuotaBasedOnSpaceUsageForTesting(struct WebCore::ClientOrigin origin)
     CreateNewMessagePortChannel(struct WebCore::MessagePortIdentifier port1, struct WebCore::MessagePortIdentifier port2)
     EntangleLocalPortInThisProcessToRemote(struct WebCore::MessagePortIdentifier local, struct WebCore::MessagePortIdentifier remote)
     MessagePortDisentangled(struct WebCore::MessagePortIdentifier local)

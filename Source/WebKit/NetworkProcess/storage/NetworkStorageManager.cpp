@@ -1230,13 +1230,10 @@ void NetworkStorageManager::resetQuotaForTesting(CompletionHandler<void()>&& com
 
 void NetworkStorageManager::resetQuotaUpdatedBasedOnUsageForTesting(WebCore::ClientOrigin&& origin)
 {
-    ASSERT(RunLoop::isMain());
+    assertIsCurrent(workQueue());
 
-    m_queue->dispatch([this, protectedThis = Ref { *this }, origin = crossThreadCopy(WTFMove(origin))]() mutable {
-        assertIsCurrent(workQueue());
-        if (auto manager = m_originStorageManagers.get(origin))
-            manager->quotaManager().resetQuotaUpdatedBasedOnUsageForTesting();
-    });
+    if (auto manager = m_originStorageManagers.get(origin))
+        manager->quotaManager().resetQuotaUpdatedBasedOnUsageForTesting();
 }
 
 #if PLATFORM(IOS_FAMILY)
