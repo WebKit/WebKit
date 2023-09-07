@@ -60,7 +60,6 @@
 		33EA186627BC1AD500A1DD52 /* CompilationMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186527BC1AD500A1DD52 /* CompilationMessage.h */; };
 		33EA186A27BC1BE600A1DD52 /* ASTAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186927BC1BE600A1DD52 /* ASTAttribute.h */; };
 		33EA186C27BC1CBC00A1DD52 /* ASTExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186B27BC1CBC00A1DD52 /* ASTExpression.h */; };
-		33EA186E27BC1D4C00A1DD52 /* ASTTypeName.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186D27BC1D4C00A1DD52 /* ASTTypeName.h */; };
 		33EA187227BC1FE100A1DD52 /* ASTVariableQualifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA187127BC1FE100A1DD52 /* ASTVariableQualifier.h */; };
 		33EA187427BC204900A1DD52 /* ASTStructure.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA187327BC204900A1DD52 /* ASTStructure.h */; };
 		33EA187627BC216B00A1DD52 /* ASTFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA187527BC216B00A1DD52 /* ASTFunction.h */; };
@@ -123,6 +122,9 @@
 		3AE27DB528C1BA480043A8E0 /* ASTVariableStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE27DB428C1BA480043A8E0 /* ASTVariableStatement.h */; };
 		664C92FD286A66090008D143 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 664C92FC286A66090008D143 /* IOSurface.framework */; };
 		66DC575528627E0B0014CABD /* ParserPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 66DC575428627E0B0014CABD /* ParserPrivate.h */; };
+		97099AC12AA60D58003B41F8 /* ASTElaboratedTypeExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 97099ABE2AA60D58003B41F8 /* ASTElaboratedTypeExpression.h */; };
+		97099AC22AA60D58003B41F8 /* ASTReferenceTypeExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 97099ABF2AA60D58003B41F8 /* ASTReferenceTypeExpression.h */; };
+		97099AC32AA60D58003B41F8 /* ASTArrayTypeExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 97099AC02AA60D58003B41F8 /* ASTArrayTypeExpression.h */; };
 		97296766299C09BC001C8BD4 /* TypeDeclarations.rb in Sources */ = {isa = PBXBuildFile; fileRef = 97296765299C09B0001C8BD4 /* TypeDeclarations.rb */; };
 		973F784729C8A78200166C66 /* Pipeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 973F784529C8A78200166C66 /* Pipeline.h */; };
 		973F784829C8A78200166C66 /* Pipeline.mm in Sources */ = {isa = PBXBuildFile; fileRef = 973F784629C8A78200166C66 /* Pipeline.mm */; };
@@ -333,7 +335,6 @@
 		33EA186727BC1B1400A1DD52 /* CompilationMessage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CompilationMessage.cpp; sourceTree = "<group>"; };
 		33EA186927BC1BE600A1DD52 /* ASTAttribute.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTAttribute.h; sourceTree = "<group>"; };
 		33EA186B27BC1CBC00A1DD52 /* ASTExpression.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTExpression.h; sourceTree = "<group>"; };
-		33EA186D27BC1D4C00A1DD52 /* ASTTypeName.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTTypeName.h; sourceTree = "<group>"; };
 		33EA187127BC1FE100A1DD52 /* ASTVariableQualifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTVariableQualifier.h; sourceTree = "<group>"; };
 		33EA187327BC204900A1DD52 /* ASTStructure.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTStructure.h; sourceTree = "<group>"; };
 		33EA187527BC216B00A1DD52 /* ASTFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTFunction.h; sourceTree = "<group>"; };
@@ -396,6 +397,9 @@
 		3AE27DB428C1BA480043A8E0 /* ASTVariableStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTVariableStatement.h; sourceTree = "<group>"; };
 		664C92FC286A66090008D143 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		66DC575428627E0B0014CABD /* ParserPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserPrivate.h; sourceTree = "<group>"; };
+		97099ABE2AA60D58003B41F8 /* ASTElaboratedTypeExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTElaboratedTypeExpression.h; sourceTree = "<group>"; };
+		97099ABF2AA60D58003B41F8 /* ASTReferenceTypeExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTReferenceTypeExpression.h; sourceTree = "<group>"; };
+		97099AC02AA60D58003B41F8 /* ASTArrayTypeExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTArrayTypeExpression.h; sourceTree = "<group>"; };
 		97296764299BFB72001C8BD4 /* main.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = main.rb; sourceTree = "<group>"; };
 		97296765299C09B0001C8BD4 /* TypeDeclarations.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = TypeDeclarations.rb; sourceTree = "<group>"; };
 		973F784529C8A78200166C66 /* Pipeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pipeline.h; sourceTree = "<group>"; };
@@ -669,6 +673,7 @@
 				3A12AED128FCFC5500C1B975 /* ASTAbstractFloatLiteral.h */,
 				3A12AECF28FCFC5500C1B975 /* ASTAbstractIntegerLiteral.h */,
 				3A12AEA528FCE94C00C1B975 /* ASTAlignAttribute.h */,
+				97099AC02AA60D58003B41F8 /* ASTArrayTypeExpression.h */,
 				33EA187F27BC24E200A1DD52 /* ASTAssignmentStatement.h */,
 				33EA186927BC1BE600A1DD52 /* ASTAttribute.h */,
 				3AD0D23C2988F3AA0080D728 /* ASTBinaryExpression.cpp */,
@@ -690,6 +695,7 @@
 				3A12AEA428FCE94C00C1B975 /* ASTDecrementIncrementStatement.h */,
 				33EA185F27BC198100A1DD52 /* ASTDirective.h */,
 				3A12AEA828FCE94C00C1B975 /* ASTDiscardStatement.h */,
+				97099ABE2AA60D58003B41F8 /* ASTElaboratedTypeExpression.h */,
 				33EA186B27BC1CBC00A1DD52 /* ASTExpression.h */,
 				33EA188327BC268600A1DD52 /* ASTFieldAccessExpression.h */,
 				3A12AED228FCFC5500C1B975 /* ASTFloat32Literal.h */,
@@ -711,6 +717,7 @@
 				3A12AEA628FCE94C00C1B975 /* ASTParameter.h */,
 				3A12AE9328FCE94A00C1B975 /* ASTPhonyStatement.h */,
 				3A9D029F298390A000888A75 /* ASTPointerDereference.h */,
+				97099ABF2AA60D58003B41F8 /* ASTReferenceTypeExpression.h */,
 				33EA187D27BC249000A1DD52 /* ASTReturnStatement.h */,
 				3A12AECE28FCFC5500C1B975 /* ASTSigned32Literal.h */,
 				3A12AEA128FCE94B00C1B975 /* ASTSizeAttribute.h */,
@@ -722,7 +729,6 @@
 				33EA187327BC204900A1DD52 /* ASTStructure.h */,
 				3A12AEC428FCEEC400C1B975 /* ASTStructureMember.h */,
 				3A1A1EFE28FD35E800C5934A /* ASTSwitchStatement.h */,
-				33EA186D27BC1D4C00A1DD52 /* ASTTypeName.h */,
 				3AD0D23A2988ED8F0080D728 /* ASTUnaryExpression.cpp */,
 				3AAE4EB328C56E9A00DA484B /* ASTUnaryExpression.h */,
 				3A12AECA28FCFA9800C1B975 /* ASTUnsigned32Literal.h */,
@@ -779,6 +785,7 @@
 				3A12AED728FCFC5600C1B975 /* ASTAbstractFloatLiteral.h in Headers */,
 				3A12AED528FCFC5600C1B975 /* ASTAbstractIntegerLiteral.h in Headers */,
 				3A12AEBF28FCE94C00C1B975 /* ASTAlignAttribute.h in Headers */,
+				97099AC32AA60D58003B41F8 /* ASTArrayTypeExpression.h in Headers */,
 				33EA188027BC24E200A1DD52 /* ASTAssignmentStatement.h in Headers */,
 				33EA186A27BC1BE600A1DD52 /* ASTAttribute.h in Headers */,
 				3AD0D23F2988F3AB0080D728 /* ASTBinaryExpression.h in Headers */,
@@ -797,6 +804,7 @@
 				3A12AEBE28FCE94C00C1B975 /* ASTDecrementIncrementStatement.h in Headers */,
 				33EA186027BC198100A1DD52 /* ASTDirective.h in Headers */,
 				3A12AEC228FCE94C00C1B975 /* ASTDiscardStatement.h in Headers */,
+				97099AC12AA60D58003B41F8 /* ASTElaboratedTypeExpression.h in Headers */,
 				33EA186C27BC1CBC00A1DD52 /* ASTExpression.h in Headers */,
 				33EA188427BC268600A1DD52 /* ASTFieldAccessExpression.h in Headers */,
 				3A12AED828FCFC5600C1B975 /* ASTFloat32Literal.h in Headers */,
@@ -818,6 +826,7 @@
 				3A12AEC028FCE94C00C1B975 /* ASTParameter.h in Headers */,
 				3A12AEAD28FCE94C00C1B975 /* ASTPhonyStatement.h in Headers */,
 				3A9D02A0298390A000888A75 /* ASTPointerDereference.h in Headers */,
+				97099AC22AA60D58003B41F8 /* ASTReferenceTypeExpression.h in Headers */,
 				33EA187E27BC249000A1DD52 /* ASTReturnStatement.h in Headers */,
 				3A12AED428FCFC5600C1B975 /* ASTSigned32Literal.h in Headers */,
 				3A12AEBB28FCE94C00C1B975 /* ASTSizeAttribute.h in Headers */,
@@ -828,7 +837,6 @@
 				33EA187427BC204900A1DD52 /* ASTStructure.h in Headers */,
 				3A12AEC728FCEEC400C1B975 /* ASTStructureMember.h in Headers */,
 				3A1A1F0228FD35E800C5934A /* ASTSwitchStatement.h in Headers */,
-				33EA186E27BC1D4C00A1DD52 /* ASTTypeName.h in Headers */,
 				3AAE4EB428C56E9A00DA484B /* ASTUnaryExpression.h in Headers */,
 				3A12AECC28FCFA9800C1B975 /* ASTUnsigned32Literal.h in Headers */,
 				33EA186427BC1A1D00A1DD52 /* ASTVariable.h in Headers */,

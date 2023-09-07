@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "ASTTypeName.h"
 #include "Types.h"
 #include <wtf/FixedVector.h>
 #include <wtf/HashMap.h>
@@ -64,7 +63,7 @@ public:
     const Type* textureType(const Type*, Types::Texture::Kind);
     const Type* functionType(Vector<const Type*>&&, const Type*);
     const Type* referenceType(AddressSpace, const Type*, AccessMode);
-    const Type* typeConstructorType(ASCIILiteral, std::function<const Type*(AST::ParameterizedTypeName&)>&&);
+    const Type* typeConstructorType(ASCIILiteral, std::function<const Type*(AST::ElaboratedTypeExpression&)>&&);
 
 private:
     class TypeCache {

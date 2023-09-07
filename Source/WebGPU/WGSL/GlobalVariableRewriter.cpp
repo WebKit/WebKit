@@ -111,7 +111,7 @@ private:
     void packArrayResource(AST::Variable&, const Types::Array*);
     void packStructResource(AST::Variable&, const Types::Struct*);
     const Type* packStructType(const Types::Struct*);
-    void updateReference(AST::Variable&, AST::TypeName&);
+    void updateReference(AST::Variable&, AST::Expression&);
 
     enum Packing : uint8_t {
         Packed   = 1 << 0,
@@ -302,11 +302,11 @@ auto RewriteGlobalVariables::pack(Packing expectedPacking, AST::Expression& expr
             }
         }
         RELEASE_ASSERT(!operation.isNull());
-        auto& callee = m_callGraph.ast().astBuilder().construct<AST::NamedTypeName>(
+        auto& callee = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(
             SourceSpan::empty(),
             AST::Identifier::make(operation)
         );
-        callee.m_resolvedType = m_callGraph.ast().types().bottomType();
+        callee.m_inferredType = m_callGraph.ast().types().bottomType();
         auto& argument = m_callGraph.ast().astBuilder().construct<std::remove_cvref_t<decltype(expression)>>(expression);
         auto& call = m_callGraph.ast().astBuilder().construct<AST::CallExpression>(
             SourceSpan::empty(),
@@ -471,7 +471,7 @@ void RewriteGlobalVariables::packResource(AST::Variable& global)
     auto* maybeTypeName = global.maybeTypeName();
     ASSERT(maybeTypeName);
 
-    auto* resolvedType = maybeTypeName->resolvedType();
+    auto* resolvedType = maybeTypeName->inferredType();
     if (auto* arrayType = std::get_if<Types::Array>(resolvedType)) {
         packArrayResource(global, arrayType);
         return;
@@ -486,12 +486,12 @@ void RewriteGlobalVariables::packResource(AST::Variable& global)
 void RewriteGlobalVariables::packStructResource(AST::Variable& global, const Types::Struct* structType)
 {
     const Type* packedStructType = packStructType(structType);
-    auto& packedType = m_callGraph.ast().astBuilder().construct<AST::NamedTypeName>(
+    auto& packedType = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(
         SourceSpan::empty(),
         AST::Identifier::make(std::get<Types::Struct>(*packedStructType).structure.name().id())
     );
-    packedType.m_resolvedType = packedStructType;
-    auto& namedTypeName = downcast<AST::NamedTypeName>(*global.maybeTypeName());
+    packedType.m_inferredType = packedStructType;
+    auto& namedTypeName = downcast<AST::IdentifierExpression>(*global.maybeTypeName());
     m_callGraph.ast().replace(namedTypeName, packedType);
     updateReference(global, packedType);
 }
@@ -503,39 +503,39 @@ void RewriteGlobalVariables::packArrayResource(AST::Variable& global, const Type
         return;
 
     const Type* packedStructType = packStructType(structType);
-    auto& packedType = m_callGraph.ast().astBuilder().construct<AST::NamedTypeName>(
+    auto& packedType = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(
         SourceSpan::empty(),
         AST::Identifier::make(std::get<Types::Struct>(*packedStructType).structure.name().id())
     );
-    packedType.m_resolvedType = packedStructType;
+    packedType.m_inferredType = packedStructType;
 
-    auto& arrayTypeName = downcast<AST::ArrayTypeName>(*global.maybeTypeName());
-    auto& packedArrayTypeName = m_callGraph.ast().astBuilder().construct<AST::ArrayTypeName>(
+    auto& arrayTypeName = downcast<AST::ArrayTypeExpression>(*global.maybeTypeName());
+    auto& packedArrayTypeName = m_callGraph.ast().astBuilder().construct<AST::ArrayTypeExpression>(
         arrayTypeName.span(),
         &packedType,
         arrayTypeName.maybeElementCount()
     );
-    packedArrayTypeName.m_resolvedType = m_callGraph.ast().types().arrayType(packedStructType, arrayType->size);
+    packedArrayTypeName.m_inferredType = m_callGraph.ast().types().arrayType(packedStructType, arrayType->size);
 
     m_callGraph.ast().replace(arrayTypeName, packedArrayTypeName);
     updateReference(global, packedArrayTypeName);
 }
 
-void RewriteGlobalVariables::updateReference(AST::Variable& global, AST::TypeName& packedType)
+void RewriteGlobalVariables::updateReference(AST::Variable& global, AST::Expression& packedType)
 {
     auto* maybeReference = global.maybeReferenceType();
     ASSERT(maybeReference);
-    ASSERT(is<AST::ReferenceTypeName>(*maybeReference));
-    auto& reference = downcast<AST::ReferenceTypeName>(*maybeReference);
-    auto* referenceType = std::get_if<Types::Reference>(reference.resolvedType());
+    ASSERT(is<AST::ReferenceTypeExpression>(*maybeReference));
+    auto& reference = downcast<AST::ReferenceTypeExpression>(*maybeReference);
+    auto* referenceType = std::get_if<Types::Reference>(reference.inferredType());
     ASSERT(referenceType);
-    auto& packedTypeReference = m_callGraph.ast().astBuilder().construct<AST::ReferenceTypeName>(
+    auto& packedTypeReference = m_callGraph.ast().astBuilder().construct<AST::ReferenceTypeExpression>(
         SourceSpan::empty(),
         packedType
     );
-    packedTypeReference.m_resolvedType = m_callGraph.ast().types().referenceType(
+    packedTypeReference.m_inferredType = m_callGraph.ast().types().referenceType(
         referenceType->addressSpace,
-        packedType.resolvedType(),
+        packedType.inferredType(),
         referenceType->accessMode
     );
     m_callGraph.ast().replace(reference, packedTypeReference);
@@ -591,8 +591,8 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
     ASSERT(type);
     auto addressSpace = [&]() {
         if (maybeReference) {
-            auto& reference = downcast<AST::ReferenceTypeName>(*maybeReference);
-            auto* referenceType = std::get_if<Types::Reference>(reference.resolvedType());
+            auto& reference = downcast<AST::ReferenceTypeExpression>(*maybeReference);
+            auto* referenceType = std::get_if<Types::Reference>(reference.inferredType());
             if (referenceType && referenceType->addressSpace == AddressSpace::Storage)
                 return BufferBindingType::Storage;
         }
@@ -851,8 +851,8 @@ void RewriteGlobalVariables::insertParameters(AST::Function& function, const Use
     auto span = function.span();
     for (auto& it : usedResources) {
         unsigned group = it.key;
-        auto& type = m_callGraph.ast().astBuilder().construct<AST::NamedTypeName>(span, argumentBufferStructName(group));
-        type.m_resolvedType = m_structTypes.get(group);
+        auto& type = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(span, argumentBufferStructName(group));
+        type.m_inferredType = m_structTypes.get(group);
         m_callGraph.ast().append(function.parameters(), m_callGraph.ast().astBuilder().construct<AST::Parameter>(
             span,
             argumentBufferParameterName(group),

@@ -25,38 +25,26 @@
 
 #pragma once
 
-#include "ASTAttribute.h"
-#include "ASTBuilder.h"
 #include "ASTExpression.h"
-#include "ASTIdentifier.h"
-#include <wtf/ReferenceWrapperVector.h>
 
 namespace WGSL::AST {
 
-class StructureMember final : public Node {
-    WGSL_AST_BUILDER_NODE(StructureMember);
+class ReferenceTypeExpression final : public Expression {
+    WGSL_AST_BUILDER_NODE(ReferenceTypeExpression);
 
 public:
-    using List = ReferenceWrapperVector<StructureMember>;
-
-    NodeKind kind() const final;
-    Identifier& name() { return m_name; }
-    Expression& type() { return m_type; }
-    Attribute::List& attributes() { return m_attributes; }
+    NodeKind kind() const override;
+    Expression& type() const { return m_type.get(); }
 
 private:
-    StructureMember(SourceSpan span, Identifier&& name, Expression::Ref&& type, Attribute::List&& attributes)
-        : Node(span)
-        , m_name(WTFMove(name))
-        , m_attributes(WTFMove(attributes))
+    ReferenceTypeExpression(SourceSpan span, Expression::Ref&& type)
+        : Expression(span)
         , m_type(WTFMove(type))
     { }
 
-    Identifier m_name;
-    Attribute::List m_attributes;
     Expression::Ref m_type;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_AST(StructureMember)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(ReferenceTypeExpression)

@@ -25,38 +25,29 @@
 
 #pragma once
 
-#include "ASTAttribute.h"
-#include "ASTBuilder.h"
 #include "ASTExpression.h"
-#include "ASTIdentifier.h"
-#include <wtf/ReferenceWrapperVector.h>
 
 namespace WGSL::AST {
 
-class StructureMember final : public Node {
-    WGSL_AST_BUILDER_NODE(StructureMember);
+class ElaboratedTypeExpression : public Expression {
+    WGSL_AST_BUILDER_NODE(ElaboratedTypeExpression);
 
 public:
-    using List = ReferenceWrapperVector<StructureMember>;
-
-    NodeKind kind() const final;
-    Identifier& name() { return m_name; }
-    Expression& type() { return m_type; }
-    Attribute::List& attributes() { return m_attributes; }
+    NodeKind kind() const override;
+    Identifier& base() { return m_base; }
+    Expression::List& arguments() { return m_arguments; }
 
 private:
-    StructureMember(SourceSpan span, Identifier&& name, Expression::Ref&& type, Attribute::List&& attributes)
-        : Node(span)
-        , m_name(WTFMove(name))
-        , m_attributes(WTFMove(attributes))
-        , m_type(WTFMove(type))
+    ElaboratedTypeExpression(SourceSpan span, Identifier&& base, Expression::List&& arguments)
+        : Expression(span)
+        , m_base(WTFMove(base))
+        , m_arguments(WTFMove(arguments))
     { }
 
-    Identifier m_name;
-    Attribute::List m_attributes;
-    Expression::Ref m_type;
+    Identifier m_base;
+    Expression::List m_arguments;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_AST(StructureMember)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(ElaboratedTypeExpression)

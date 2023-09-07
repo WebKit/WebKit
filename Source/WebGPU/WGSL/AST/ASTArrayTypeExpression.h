@@ -25,38 +25,30 @@
 
 #pragma once
 
-#include "ASTAttribute.h"
-#include "ASTBuilder.h"
 #include "ASTExpression.h"
-#include "ASTIdentifier.h"
-#include <wtf/ReferenceWrapperVector.h>
 
 namespace WGSL::AST {
 
-class StructureMember final : public Node {
-    WGSL_AST_BUILDER_NODE(StructureMember);
+class ArrayTypeExpression : public Expression {
+    WGSL_AST_BUILDER_NODE(ArrayTypeExpression);
 
 public:
-    using List = ReferenceWrapperVector<StructureMember>;
+    NodeKind kind() const override;
 
-    NodeKind kind() const final;
-    Identifier& name() { return m_name; }
-    Expression& type() { return m_type; }
-    Attribute::List& attributes() { return m_attributes; }
+    Expression* maybeElementType() const { return m_elementType; }
+    Expression* maybeElementCount() const { return m_elementCount; }
 
 private:
-    StructureMember(SourceSpan span, Identifier&& name, Expression::Ref&& type, Attribute::List&& attributes)
-        : Node(span)
-        , m_name(WTFMove(name))
-        , m_attributes(WTFMove(attributes))
-        , m_type(WTFMove(type))
+    ArrayTypeExpression(SourceSpan span, Expression::Ptr elementType, Expression::Ptr elementCount)
+        : Expression(span)
+        , m_elementType(elementType)
+        , m_elementCount(elementCount)
     { }
 
-    Identifier m_name;
-    Attribute::List m_attributes;
-    Expression::Ref m_type;
+    Expression::Ptr m_elementType;
+    Expression::Ptr m_elementCount;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_AST(StructureMember)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(ArrayTypeExpression)

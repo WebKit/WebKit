@@ -181,12 +181,12 @@ void ConstantRewriter::visit(AST::CallExpression& call)
     }
 
     auto& target = call.target();
-    bool isNamedType = is<AST::NamedTypeName>(target);
-    bool isParameterizedType = !isNamedType && is<AST::ParameterizedTypeName>(target);
+    bool isNamedType = is<AST::IdentifierExpression>(target);
+    bool isParameterizedType = !isNamedType && is<AST::ElaboratedTypeExpression>(target);
     if (isNamedType || isParameterizedType) {
         AST::Identifier targetName = isParameterizedType
-            ? downcast<AST::ParameterizedTypeName>(target).base()
-            : downcast<AST::NamedTypeName>(target).name();
+            ? downcast<AST::ElaboratedTypeExpression>(target).base()
+            : downcast<AST::IdentifierExpression>(target).identifier();
 
         // FIXME: this implementation of the vector constructors is incorrect, so
         // the ineffient comparison is irrelevant as it will be rewritten soon
@@ -200,7 +200,7 @@ void ConstantRewriter::visit(AST::CallExpression& call)
         }
     }
 
-    if (is<AST::ArrayTypeName>(target)) {
+    if (is<AST::ArrayTypeExpression>(target)) {
         evaluated(call, { call.inferredType(), ConstantArray(WTFMove(arguments)) });
         return;
     }

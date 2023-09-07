@@ -82,7 +82,6 @@ public:
     void visit(AST::CompoundStatement&) override;
     void visit(AST::IdentifierExpression&) override;
     void visit(AST::FieldAccessExpression&) override;
-    void visit(AST::NamedTypeName&) override;
 
 private:
     using NameMap = ContextProvider::ContextMap;
@@ -209,11 +208,6 @@ void NameManglerVisitor::visit(AST::FieldAccessExpression& access)
 {
     // FIXME: need to resolve type of expressions in order to be able to replace struct fields
     AST::Visitor::visit(access.base());
-}
-
-void NameManglerVisitor::visit(AST::NamedTypeName& type)
-{
-    readVariable(type.name());
 }
 
 void NameManglerVisitor::introduceVariable(AST::Identifier& name, MangledName::Kind kind)

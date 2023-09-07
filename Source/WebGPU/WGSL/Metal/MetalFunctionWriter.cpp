@@ -98,8 +98,6 @@ public:
     void visit(AST::BreakStatement&) override;
     void visit(AST::ContinueStatement&) override;
 
-    void visit(AST::TypeName&) override;
-
     void visit(AST::Parameter&) override;
     void visitArgumentBufferParameter(AST::Parameter&);
 
@@ -204,7 +202,7 @@ void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)
     }
 
     if (functionDefinition.maybeReturnType())
-        checkErrorAndVisit(*functionDefinition.maybeReturnType());
+        visit(functionDefinition.maybeReturnType()->inferredType());
     else
         m_stringBuilder.append("void");
 
@@ -258,7 +256,7 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
 
         for (auto& member : structDecl.members()) {
             auto& name = member.name();
-            auto* type = member.type().resolvedType();
+            auto* type = member.type().inferredType();
             if (isPrimitiveReference(type, Types::Primitive::TextureExternal)) {
                 m_stringBuilder.append(m_indent, "texture2d<float> __", name, "_FirstPlane;\n");
                 m_stringBuilder.append(m_indent, "texture2d<float> __", name, "_SecondPlane;\n");
@@ -288,7 +286,7 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
             }
 
             m_stringBuilder.append(m_indent);
-            visit(member.type());
+            visit(member.type().inferredType());
             m_stringBuilder.append(" ", name);
             for (auto &attribute : member.attributes()) {
                 m_stringBuilder.append(" ");
@@ -553,11 +551,6 @@ void FunctionDefinitionWriter::visit(AST::AlignAttribute&)
 }
 
 // Types
-void FunctionDefinitionWriter::visit(AST::TypeName& type)
-{
-    visit(type.resolvedType());
-}
-
 void FunctionDefinitionWriter::visit(const Type* type)
 {
     using namespace WGSL::Types;
@@ -694,7 +687,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
 
 void FunctionDefinitionWriter::visit(AST::Parameter& parameter)
 {
-    visit(parameter.typeName());
+    visit(parameter.typeName().inferredType());
     m_stringBuilder.append(" ", parameter.name());
     for (auto& attribute : parameter.attributes()) {
         m_stringBuilder.append(" ");
@@ -705,7 +698,7 @@ void FunctionDefinitionWriter::visit(AST::Parameter& parameter)
 void FunctionDefinitionWriter::visitArgumentBufferParameter(AST::Parameter& parameter)
 {
     m_stringBuilder.append("constant ");
-    visit(parameter.typeName());
+    visit(parameter.typeName().inferredType());
     m_stringBuilder.append("& ", parameter.name());
     for (auto& attribute : parameter.attributes()) {
         m_stringBuilder.append(" ");
@@ -748,8 +741,8 @@ static void visitArguments(FunctionDefinitionWriter* writer, AST::CallExpression
 
 void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call)
 {
-    auto isArray = is<AST::ArrayTypeName>(call.target());
-    auto isStruct = !isArray && std::holds_alternative<Types::Struct>(*call.target().resolvedType());
+    auto isArray = is<AST::ArrayTypeExpression>(call.target());
+    auto isStruct = !isArray && std::holds_alternative<Types::Struct>(*call.target().inferredType());
     if (isArray || isStruct) {
         if (isStruct) {
             visit(type);
@@ -779,7 +772,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
         return;
     }
 
-    if (is<AST::NamedTypeName>(call.target())) {
+    if (is<AST::IdentifierExpression>(call.target())) {
         static constexpr std::pair<ComparableASCIILiteral, void(*)(FunctionDefinitionWriter*, AST::CallExpression&)> builtinMappings[] {
             { "textureLoad", [](FunctionDefinitionWriter* writer, AST::CallExpression& call) {
                 auto& texture = call.arguments()[0];
@@ -871,7 +864,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             } },
         };
         static constexpr SortedArrayMap builtins { builtinMappings };
-        const auto& targetName = downcast<AST::NamedTypeName>(call.target()).name().id();
+        const auto& targetName = downcast<AST::IdentifierExpression>(call.target()).identifier().id();
         if (auto mappedBuiltin = builtins.get(targetName)) {
             mappedBuiltin(this, call);
             return;
