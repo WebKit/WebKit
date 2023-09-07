@@ -1879,3 +1879,68 @@ TEST(WKNavigation, Multiple303Redirects)
     EXPECT_TRUE(finishedSuccessfully);
     EXPECT_TRUE(reachedPage3);
 }
+
+TEST(WKNavigation, NavigationToUnknownBlankURL)
+{
+    auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:viewConfiguration.get()]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    __block bool navigationFailed = false;
+    delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *navigation, NSError *error) {
+        navigationFailed = true;
+        done = true;
+    };
+
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *navigation) {
+        done = true;
+    };
+
+    done = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE(navigationFailed);
+
+    done = false;
+    navigationFailed = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:srcdoc"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE(navigationFailed);
+
+    done = false;
+    navigationFailed = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank#foo"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE(navigationFailed);
+
+    done = false;
+    navigationFailed = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank?foo=bar"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE(navigationFailed);
+
+    done = false;
+    navigationFailed = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:srcdoc#foo"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE(navigationFailed);
+
+    done = false;
+    navigationFailed = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:srcdoc?foo=bar"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE(navigationFailed);
+
+    done = false;
+    navigationFailed = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:foo"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_TRUE(navigationFailed);
+
+    done = false;
+    navigationFailed = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:google.com"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_TRUE(navigationFailed);
+}

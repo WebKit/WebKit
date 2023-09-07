@@ -3,7 +3,7 @@ Tests opening a new about://webkit.org window and accessing its document
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS e.name is "SecurityError"
+PASS Navigation didn't happen
 PASS successfullyParsed is true
 
 TEST COMPLETE
