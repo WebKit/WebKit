@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true MockScrollbarsEnabled=false ] -->
 <html>
 <head>
     <style>
@@ -27,7 +27,10 @@
     <script>
         if (window.testRunner)
             testRunner.waitUntilDone();
-        
+
+        if (window.internals)
+            window.internals.setUsesOverlayScrollbars(true);
+
         window.addEventListener('load', async () => {
             scroller.style.overflow = 'hidden';
             scroller.scrollTop = 200;

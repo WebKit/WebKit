@@ -19,13 +19,13 @@
               (backingStoreAttached 1)
               (children 1
                 (GraphicsLayer
-                  (bounds 256.00 500.00)
+                  (bounds 241.00 485.00)
                   (clips 1)
                   (backingStoreAttached 1)
                   (children 1
                     (GraphicsLayer
                       (anchor 0.00 0.00)
-                      (bounds 256.00 1000.00)
+                      (bounds 241.00 1000.00)
                       (drawsContent 1)
                       (backingStoreAttached 1)
                     )
@@ -47,14 +47,14 @@
               (children 1
                 (GraphicsLayer
                   (bounds origin 0.00 1000.00)
-                  (bounds 444.00 500.00)
+                  (bounds 429.00 485.00)
                   (clips 1)
                   (backingStoreAttached 1)
                   (children 1
                     (GraphicsLayer
                       (scrollOffset (0,1000))
                       (anchor 0.00 0.00)
-                      (bounds 444.00 2810.00)
+                      (bounds 429.00 2810.00)
                       (drawsContent 1)
                       (backingStoreAttached 1)
                     )

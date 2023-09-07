@@ -19,13 +19,13 @@
                 (GraphicsLayer
                   (offsetFromRenderer width=2 height=2)
                   (position 2.00 2.00)
-                  (bounds 296.00 296.00)
+                  (bounds 281.00 296.00)
                   (clips 1)
                   (children 1
                     (GraphicsLayer
                       (offsetFromRenderer width=2 height=2)
                       (anchor 0.00 0.00)
-                      (bounds 296.00 364.00)
+                      (bounds 281.00 364.00)
                     )
                   )
                 )
@@ -45,14 +45,14 @@
           (children 1
             (GraphicsLayer
               (position 12.00 12.00)
-              (bounds 296.00 296.00)
+              (bounds 281.00 296.00)
               (clips 1)
               (children 1
                 (GraphicsLayer
                   (children 1
                     (GraphicsLayer
                       (position 20.00 20.00)
-                      (bounds 256.00 24.00)
+                      (bounds 241.00 24.00)
                       (drawsContent 1)
                     )
                   )

@@ -16,13 +16,13 @@
             (GraphicsLayer
               (offsetFromRenderer width=2 height=2)
               (position 2.00 2.00)
-              (bounds 520.00 420.00)
+              (bounds 520.00 405.00)
               (clips 1)
               (children 1
                 (GraphicsLayer
                   (offsetFromRenderer width=2 height=2)
                   (anchor 0.00 0.00)
-                  (bounds 2050.00 420.00)
+                  (bounds 2050.00 405.00)
                   (drawsContent 1)
                 )
               )

@@ -15,7 +15,7 @@ abs
   (behavior for fixed 1)
   (children 5
     (Overflow scrolling node
-      (scrollable area size 300 300)
+      (scrollable area size 285 285)
       (contents size 381 530)
       (scrollable area parameters
         (horizontal scroll elasticity 1)

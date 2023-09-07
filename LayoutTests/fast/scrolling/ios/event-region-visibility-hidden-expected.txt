@@ -16,9 +16,9 @@
           )
           (children 1
             (GraphicsLayer
-              (bounds 50.00 50.00)
+              (bounds 35.00 35.00)
               (event region
-                (rect (0,0) width=50 height=50)
+                (rect (0,0) width=35 height=35)
               )
               (children 1
                 (GraphicsLayer

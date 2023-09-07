@@ -258,8 +258,6 @@ private:
     bool hasHorizontalOverflow() const;
     bool hasVerticalOverflow() const;
 
-    bool showsOverflowControls() const;
-
     ScrollOffset clampScrollOffset(const ScrollOffset&) const;
 
     void computeScrollDimensions();

@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true MockScrollbarsEnabled=false ] -->
 <html>
 <head>
     <!--Trigger some scaling -->
@@ -27,6 +27,9 @@
     <script src="../../resources/ui-helper.js"></script>
     <script>
         jsTestIsAsync = true;
+
+        if (window.internals)
+            window.internals.setUsesOverlayScrollbars(true);
 
         async function tryScrollAt(x, y, xScrollOffset, yScrollOffset)
         {

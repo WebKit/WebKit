@@ -33,8 +33,8 @@
               (behavior for fixed 1)
               (children 2
                 (Overflow scrolling node
-                  (scrollable area size 400 300)
-                  (contents size 400 1760)
+                  (scrollable area size 385 285)
+                  (contents size 385 1760)
                   (scrollable area parameters
                     (horizontal scroll elasticity 1)
                     (vertical scroll elasticity 1)
@@ -46,11 +46,11 @@
                       (anchor edges: AnchorEdgeTop AnchorEdgeBottom)
                       (top offset 10.00)
                       (bottom offset 10.00)
-                      (containing block rect at (0,0) size 400x1760)
+                      (containing block rect at (0,0) size 385x1760)
                       (sticky box rect at (0,830) size 100x100)
-                      (constraining rect at (0,0) size 400x300)
-                      (sticky offset at last layout width=0 height=-640)
-                      (layer position at last layout (0,190))
+                      (constraining rect at (0,0) size 385x285)
+                      (sticky offset at last layout width=0 height=-655)
+                      (layer position at last layout (0,175))
                     )
                   )
                 )

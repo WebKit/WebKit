@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: TypeError: eventSender.clearTouchPoints is not a function. (In 'eventSender.clearTouchPoints()', 'eventSender.clearTouchPoints' is undefined)
 Tests that touch events cause an overflow:scroll div to scroll.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,4 +5,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS targetDiv.scrollLeft is 0
 PASS targetDiv.scrollTop is 0
+PASS targetDiv.scrollLeft is 0
+FAIL targetDiv.scrollTop should be 100. Was 0.
+PASS targetDiv.scrollLeft is 0
+FAIL targetDiv.scrollTop should be 50. Was 0.
+FAIL targetDiv.scrollLeft should be 100. Was 0.
+FAIL targetDiv.scrollTop should be 150. Was 0.
 

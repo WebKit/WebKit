@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true MockScrollbarsEnabled=false ] -->
 <html>
     <head>
         <style>
@@ -27,6 +27,10 @@
                 background-color: green;
             }
         </style>
+        <script>
+            if (window.internals)
+                window.internals.setUsesOverlayScrollbars(true);
+        </script>
     </head>
     <body>
         <div class="scroller">

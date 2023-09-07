@@ -26,8 +26,8 @@ None visible
     (max layoutViewport origin (0,0))
     (behavior for fixed 1)
     (overflow scrolling node
-      (scrollable area size width=200 height=100)
-      (total content size width=400 height=200)
+      (scrollable area size width=184 height=84)
+      (total content size width=368 height=168)
       (last committed scroll position (0,0))
       (scrollable area parameters
         (horizontal scroll elasticity 1)
@@ -37,8 +37,8 @@ None visible
         (allows horizontal scrolling 1)
         (allows vertical scrolling 1)))
     (overflow scrolling node
-      (scrollable area size width=200 height=100)
-      (total content size width=400 height=200)
+      (scrollable area size width=200 height=84)
+      (total content size width=400 height=168)
       (last committed scroll position (0,0))
       (scrollable area parameters
         (horizontal scroll elasticity 1)
@@ -49,8 +49,8 @@ None visible
         (allows vertical scrolling 1)
         (vertical scrollbar hidden by style 1)))
     (overflow scrolling node
-      (scrollable area size width=200 height=100)
-      (total content size width=400 height=200)
+      (scrollable area size width=184 height=100)
+      (total content size width=368 height=200)
       (last committed scroll position (0,0))
       (scrollable area parameters
         (horizontal scroll elasticity 1)

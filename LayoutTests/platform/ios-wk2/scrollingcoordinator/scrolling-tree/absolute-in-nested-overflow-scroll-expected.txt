@@ -13,8 +13,8 @@
   (behavior for fixed 1)
   (children 1
     (Overflow scrolling node
-      (scrollable area size 310 310)
-      (contents size 310 1112)
+      (scrollable area size 295 295)
+      (contents size 295 1112)
       (scrollable area parameters
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)
@@ -23,8 +23,8 @@
         (allows vertical scrolling 1))
       (children 1
         (Overflow scrolling node
-          (scrollable area size 298 100)
-          (contents size 596 100)
+          (scrollable area size 283 85)
+          (contents size 566 85)
           (scrollable area parameters
             (horizontal scroll elasticity 1)
             (vertical scroll elasticity 1)

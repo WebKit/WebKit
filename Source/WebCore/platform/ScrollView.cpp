@@ -587,10 +587,6 @@ IntSize ScrollView::overhangAmount() const
 
 bool ScrollView::managesScrollbars() const
 {
-#if PLATFORM(IOS_FAMILY)
-    // FIXME: We should be able to remove this. iOS should always hit the DelegatedToNativeScrollView condition below.
-    return false;
-#else
     if (platformWidget())
         return false;
 
@@ -598,7 +594,6 @@ bool ScrollView::managesScrollbars() const
         return false;
 
     return true;
-#endif
 }
 
 void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)

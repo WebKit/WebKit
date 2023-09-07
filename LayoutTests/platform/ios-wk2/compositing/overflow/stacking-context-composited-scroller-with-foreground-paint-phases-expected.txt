@@ -18,12 +18,12 @@ Scrolled contents
             (GraphicsLayer
               (offsetFromRenderer width=1 height=1)
               (position 1.00 1.00)
-              (bounds 320.00 320.00)
+              (bounds 305.00 305.00)
               (children 1
                 (GraphicsLayer
                   (offsetFromRenderer width=1 height=1)
                   (anchor 0.00 0.00)
-                  (bounds 320.00 1020.00)
+                  (bounds 305.00 1020.00)
                   (drawsContent 1)
                   (paintingPhases [overflow-contents, composited-scroll])
                   (children 2
@@ -35,7 +35,7 @@ Scrolled contents
                     )
                     (GraphicsLayer
                       (offsetFromRenderer width=1 height=1)
-                      (bounds 320.00 1020.00)
+                      (bounds 305.00 1020.00)
                       (drawsContent 1)
                       (paintingPhases [foreground, overflow-contents])
                     )

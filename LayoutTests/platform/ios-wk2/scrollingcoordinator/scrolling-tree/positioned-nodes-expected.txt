@@ -18,8 +18,8 @@ Scrolling content
   (behavior for fixed 1)
   (children 5
     (Overflow scrolling node
-      (scrollable area size 220 170)
-      (contents size 220 1020)
+      (scrollable area size 205 155)
+      (contents size 205 1020)
       (scrollable area parameters
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)
@@ -28,7 +28,7 @@ Scrolling content
         (allows vertical scrolling 1))
     )
     (Overflow scrolling node
-      (scrollable area size 220 170)
+      (scrollable area size 205 155)
       (contents size 242 1020)
       (scrollable area parameters
         (horizontal scroll elasticity 1)
@@ -39,8 +39,8 @@ Scrolling content
         (allows vertical scrolling 1))
       (children 1
         (Overflow scrolling node
-          (scrollable area size 220 170)
-          (contents size 220 1020)
+          (scrollable area size 205 155)
+          (contents size 205 1020)
           (scrollable area parameters
             (horizontal scroll elasticity 1)
             (vertical scroll elasticity 1)
@@ -54,8 +54,8 @@ Scrolling content
       (related overflow scrolling node scroll position (0,0))
     )
     (Overflow scrolling node
-      (scrollable area size 220 170)
-      (contents size 220 1020)
+      (scrollable area size 205 155)
+      (contents size 205 1020)
       (scrollable area parameters
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)
@@ -64,8 +64,8 @@ Scrolling content
         (allows vertical scrolling 1))
     )
     (Overflow scrolling node
-      (scrollable area size 220 170)
-      (contents size 220 1020)
+      (scrollable area size 205 155)
+      (contents size 205 1020)
       (scrollable area parameters
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)

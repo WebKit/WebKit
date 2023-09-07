@@ -2285,6 +2285,10 @@ fast/events/ios/rotation/zz-no-rotation.html [ Timeout ]
 
 webkit.org/b/210849 compositing/overflow/rtl-scrollbar-layer-positioning.html [ Pass Timeout ]
 
+# putting RTL scrollbars on the left is not supported on iOS
+compositing/geometry/rtl-overflow-scroll.html [ ImageOnlyFailure ]
+compositing/ios/rtl-overflow-scrolling-2.html [ ImageOnlyFailure ]
+
 webkit.org/b/243515 svg/compositing/svg-poster-circle.html [ Pass ImageOnlyFailure ]
 webkit.org/b/243515 svg/compositing/outermost-svg-with-border.html [ Pass ImageOnlyFailure ]
 # See also webkit.org/b/252088

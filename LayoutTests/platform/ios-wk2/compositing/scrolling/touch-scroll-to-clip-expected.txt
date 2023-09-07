@@ -16,7 +16,7 @@
               (bounds 280.00 400.00)
               (children 1
                 (GraphicsLayer
-                  (bounds 280.00 500.00)
+                  (bounds 265.00 500.00)
                   (contentsOpaque 1)
                 )
               )

@@ -19,12 +19,12 @@ Text
                 (GraphicsLayer
                   (offsetFromRenderer width=2 height=2)
                   (position 2.00 2.00)
-                  (bounds 296.00 296.00)
+                  (bounds 281.00 296.00)
                   (children 1
                     (GraphicsLayer
                       (offsetFromRenderer width=2 height=2)
                       (anchor 0.00 0.00)
-                      (bounds 296.00 468.00)
+                      (bounds 281.00 468.00)
                       (drawsContent 1)
                     )
                   )

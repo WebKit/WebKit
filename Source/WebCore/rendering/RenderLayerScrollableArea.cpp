@@ -541,7 +541,7 @@ bool RenderLayerScrollableArea::handleWheelEventForScrolling(const PlatformWheel
 IntRect RenderLayerScrollableArea::visibleContentRectInternal(VisibleContentRectIncludesScrollbars scrollbarInclusion, VisibleContentRectBehavior) const
 {
     IntSize scrollbarSpace;
-    if (showsOverflowControls() && scrollbarInclusion == IncludeScrollbars)
+    if (scrollbarInclusion == IncludeScrollbars)
         scrollbarSpace = scrollbarIntrusion();
 
     auto visibleSize = this->visibleSize();
@@ -775,16 +775,13 @@ IntSize RenderLayerScrollableArea::scrollbarOffset(const Scrollbar& scrollbar) c
 
 void RenderLayerScrollableArea::invalidateScrollbarRect(Scrollbar& scrollbar, const IntRect& rect)
 {
-    if (!showsOverflowControls())
-        return;
-
     if (&scrollbar == m_vBar.get()) {
-        if (GraphicsLayer* layer = layerForVerticalScrollbar()) {
+        if (auto* layer = layerForVerticalScrollbar()) {
             layer->setNeedsDisplayInRect(rect);
             return;
         }
     } else {
-        if (GraphicsLayer* layer = layerForHorizontalScrollbar()) {
+        if (auto* layer = layerForHorizontalScrollbar()) {
             layer->setNeedsDisplayInRect(rect);
             return;
         }
@@ -811,10 +808,7 @@ void RenderLayerScrollableArea::invalidateScrollbarRect(Scrollbar& scrollbar, co
 
 void RenderLayerScrollableArea::invalidateScrollCornerRect(const IntRect& rect)
 {
-    if (!showsOverflowControls())
-        return;
-
-    if (GraphicsLayer* layer = layerForScrollCorner()) {
+    if (auto* layer = layerForScrollCorner()) {
         layer->setNeedsDisplayInRect(rect);
         return;
     }
@@ -872,7 +866,7 @@ Ref<Scrollbar> RenderLayerScrollableArea::createScrollbar(ScrollbarOrientation o
     auto& actualRenderer = *rendererForScrollbar(renderer);
     bool usesLegacyScrollbarStyle = is<RenderBox>(actualRenderer) && downcast<RenderBox>(actualRenderer).style().usesLegacyScrollbarStyle();
     auto element = downcast<RenderBox>(actualRenderer).element();
-    if (usesLegacyScrollbarStyle && element)
+    if (usesLegacyScrollbarStyle && element) // FIXME
         widget = RenderScrollbar::createCustomScrollbar(*this, orientation, element);
     else {
         widget = Scrollbar::createNativeScrollbar(*this, orientation, scrollbarWidthStyle());
@@ -983,7 +977,7 @@ int RenderLayerScrollableArea::verticalScrollbarWidth(OverlayScrollbarSizeReleva
     if (!m_vBar && isHorizontalWritingMode && !(scrollbarGutterStyle().isAuto || ScrollbarTheme::theme().usesOverlayScrollbars()))
         return ScrollbarTheme::theme().scrollbarThickness(scrollbarWidthStyle());
 
-    if (!m_vBar || !showsOverflowControls())
+    if (!m_vBar)
         return 0;
 
     return m_vBar->width();
@@ -997,7 +991,7 @@ int RenderLayerScrollableArea::horizontalScrollbarHeight(OverlayScrollbarSizeRel
     if (!m_hBar && !isHorizontalWritingMode && !(scrollbarGutterStyle().isAuto || ScrollbarTheme::theme().usesOverlayScrollbars()))
         return ScrollbarTheme::theme().scrollbarThickness(scrollbarWidthStyle());
 
-    if (!m_hBar || !showsOverflowControls())
+    if (!m_hBar)
         return 0;
 
     return m_hBar->height();
@@ -1401,24 +1395,11 @@ bool RenderLayerScrollableArea::overflowControlsIntersectRect(const IntRect& loc
     return false;
 }
 
-bool RenderLayerScrollableArea::showsOverflowControls() const
-{
-#if PLATFORM(IOS_FAMILY)
-    // On iOS, the scrollbars are made in the UI process.
-    return !canUseCompositedScrolling();
-#endif
-
-    return true;
-}
-
 void RenderLayerScrollableArea::paintOverflowControls(GraphicsContext& context, const IntPoint& paintOffset, const IntRect& damageRect, bool paintingOverlayControls)
 {
     // Don't do anything if we have no overflow.
     auto& renderer = m_layer.renderer();
     if (!renderer.hasNonVisibleOverflow())
-        return;
-
-    if (!showsOverflowControls())
         return;
 
     // Overlay scrollbars paint in a second pass through the layer tree so that they will paint
