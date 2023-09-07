@@ -220,7 +220,6 @@ Shared/IPCConnectionTester.cpp
 Shared/IPCStreamTester.cpp
 Shared/IPCTester.cpp
 Shared/IPCTesterReceiver.cpp
-Shared/LayerTreeContext.cpp
 Shared/LoadParameters.cpp
 Shared/PersistencyUtils.cpp
 Shared/PrintInfo.cpp

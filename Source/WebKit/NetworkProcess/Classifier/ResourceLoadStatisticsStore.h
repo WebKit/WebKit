@@ -63,7 +63,7 @@ public:
     int month() const { return m_month; }
     int monthDay() const { return m_monthDay; }
 
-    bool operator==(const OperatingDate& other) const;
+    friend bool operator==(const OperatingDate&, const OperatingDate&) = default;
     bool operator<(const OperatingDate& other) const;
     bool operator<=(const OperatingDate& other) const;
     
