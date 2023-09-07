@@ -24,15 +24,12 @@
  */
 
 #import "config.h"
-#import "WebPushToolMain.h"
-
 #import "PushMessageForTesting.h"
 #import "WebPushToolConnection.h"
+#import <Foundation/Foundation.h>
 #import <optional>
 #import <wtf/MainThread.h>
 #import <wtf/WTFProcess.h>
-
-#if HAVE(OS_LAUNCHD_JOB) && (PLATFORM(MAC) || PLATFORM(IOS))
 
 using WebKit::WebPushD::PushMessageForTesting;
 
@@ -89,6 +86,7 @@ static std::unique_ptr<PushMessageForTesting> pushMessageFromArguments(NSEnumera
     return makeUniqueWithoutFastMallocCheck<PushMessageForTesting>(WTFMove(pushMessage));
 }
 
+#if HAVE(OS_LAUNCHD_JOB)
 static bool registerDaemonWithLaunchD(WebPushTool::PreferTestService preferTestService)
 {
     // For now webpushtool only knows how to host webpushd when they're in the same directory
@@ -144,10 +142,9 @@ static bool registerDaemonWithLaunchD(WebPushTool::PreferTestService preferTestS
 
     return true;
 }
+#endif // #if HAVE(OS_LAUNCHD_JOB)
 
-namespace WebKit {
-
-int WebPushToolMain(int, char **)
+int main(int, const char **)
 {
     WTF::initializeMainThread();
 
@@ -173,8 +170,10 @@ int WebPushToolMain(int, char **)
                 action = WebPushTool::Action::StreamDebugMessages;
             else if ([argument isEqualToString:@"--reconnect"])
                 reconnect = WebPushTool::Reconnect::Yes;
+#if HAVE(OS_LAUNCHD_JOB)
             else if ([argument isEqualToString:@"--host"])
                 host = true;
+#endif
             else if ([argument isEqualToString:@"--push"]) {
                 pushMessage = pushMessageFromArguments(enumerator);
                 if (!pushMessage)
@@ -189,8 +188,10 @@ int WebPushToolMain(int, char **)
     if (!action && !pushMessage)
         printUsageAndTerminate(@"No action provided");
 
+#if HAVE(OS_LAUNCHD_JOB)
     if (host && !registerDaemonWithLaunchD(preferTestService))
         printUsageAndTerminate(@"Unable to install plist to host the service");
+#endif
 
     auto connection = WebPushTool::Connection::create(action, preferTestService, reconnect);
     if (pushMessage)
@@ -201,16 +202,3 @@ int WebPushToolMain(int, char **)
     CFRunLoopRun();
     return 0;
 }
-
-} // namespace WebKit
-
-#else
-
-namespace WebKit {
-int WebPushToolMain(int, char **)
-{
-    return -1;
-}
-}
-
-#endif // #if HAVE(OS_LAUNCHD_JOB) && (PLATFORM(MAC) || PLATFORM(IOS))
