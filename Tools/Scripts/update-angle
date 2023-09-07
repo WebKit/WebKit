@@ -52,12 +52,12 @@ generate_sources() {
 
 usage() {
     SCRIPT_NAME=$(basename "$0")
-    echo "USAGE: $SCRIPT_NAME [-h|--help] [--generate-changes-diff] [--generate-sources] [commit]"
+    echo "USAGE: $SCRIPT_NAME [-h|--help] [--generate-changes | --generate-sources | <commit>]"
     echo "  -h or --help                     Print this help message."
     echo "  -v or --verbose                  Print more output."
     echo "  --generate-changes               Generate ANGLE changes.diff, difference to last merged upstream revision."
     echo "  --generate-sources               Generate ANGLE generated sources."
-    echo "  commit                           The ANGLE commit to update to. Defaults to origin/main"
+    echo "  <commit>                         The ANGLE commit to update to. Defaults to origin/main"
 }
 
 while [[ $# -gt 0 ]]; do
