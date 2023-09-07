@@ -143,8 +143,6 @@ class ProgramD3D : public ProgramImpl
     void getUniformiv(const gl::Context *context, GLint location, GLint *params) const override;
     void getUniformuiv(const gl::Context *context, GLint location, GLuint *params) const override;
 
-    unsigned int getSerial() const;
-
     const gl::ProgramState &getState() const { return mState; }
 
     const ProgramExecutableD3D *getExecutable() const
@@ -197,11 +195,6 @@ class ProgramD3D : public ProgramImpl
     void linkResources(const gl::ProgramLinkedResources &resources);
 
     RendererD3D *mRenderer;
-
-    unsigned int mSerial;
-
-    static unsigned int issueSerial();
-    static unsigned int mCurrentSerial;
 };
 }  // namespace rx
 

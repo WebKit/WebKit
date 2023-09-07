@@ -20,7 +20,6 @@
 #include "libANGLE/renderer/ProgramImpl.h"
 #include "libANGLE/renderer/metal/ProgramExecutableMtl.h"
 #include "libANGLE/renderer/metal/ShaderMtl.h"
-#include "libANGLE/renderer/metal/mtl_command_buffer.h"
 #include "libANGLE/renderer/metal/mtl_context_device.h"
 
 namespace rx
@@ -101,20 +100,6 @@ class ProgramMtl : public ProgramImpl
     void getUniformiv(const gl::Context *context, GLint location, GLint *params) const override;
     void getUniformuiv(const gl::Context *context, GLint location, GLuint *params) const override;
 
-    angle::Result getSpecializedShader(ContextMtl *context,
-                                       gl::ShaderType shaderType,
-                                       const mtl::RenderPipelineDesc &renderPipelineDesc,
-                                       id<MTLFunction> *shaderOut);
-
-    // Calls this before drawing, changedPipelineDesc is passed when vertex attributes desc and/or
-    // shader program changed.
-    angle::Result setupDraw(const gl::Context *glContext,
-                            mtl::RenderCommandEncoder *cmdEncoder,
-                            const mtl::RenderPipelineDesc &pipelineDesc,
-                            bool pipelineDescChanged,
-                            bool forceTexturesSetting,
-                            bool uniformBuffersDirty);
-
     const ProgramExecutableMtl *getExecutable() const
     {
         return mtl::GetImpl(&mState.getExecutable());
@@ -136,50 +121,12 @@ class ProgramMtl : public ProgramImpl
     template <typename T>
     void setUniformImpl(GLint location, GLsizei count, const T *v, GLenum entryPointType);
 
-    angle::Result commitUniforms(ContextMtl *context, mtl::RenderCommandEncoder *cmdEncoder);
-    angle::Result updateTextures(const gl::Context *glContext,
-                                 mtl::RenderCommandEncoder *cmdEncoder,
-                                 bool forceUpdate);
-
-    angle::Result updateUniformBuffers(ContextMtl *context,
-                                       mtl::RenderCommandEncoder *cmdEncoder,
-                                       const mtl::RenderPipelineDesc &pipelineDesc);
-    angle::Result updateXfbBuffers(ContextMtl *context,
-                                   mtl::RenderCommandEncoder *cmdEncoder,
-                                   const mtl::RenderPipelineDesc &pipelineDesc);
-    angle::Result legalizeUniformBufferOffsets(ContextMtl *context,
-                                               const std::vector<gl::InterfaceBlock> &blocks);
-    angle::Result bindUniformBuffersToDiscreteSlots(ContextMtl *context,
-                                                    mtl::RenderCommandEncoder *cmdEncoder,
-                                                    const std::vector<gl::InterfaceBlock> &blocks,
-                                                    gl::ShaderType shaderType);
-
-    angle::Result encodeUniformBuffersInfoArgumentBuffer(
-        ContextMtl *context,
-        mtl::RenderCommandEncoder *cmdEncoder,
-        const std::vector<gl::InterfaceBlock> &blocks,
-        gl::ShaderType shaderType);
-
     void reset(ContextMtl *context);
 
     void linkResources(const gl::ProgramLinkedResources &resources);
     std::unique_ptr<LinkEvent> compileMslShaderLibs(const gl::Context *context);
 
-    mtl::BufferPool *getBufferPool(ContextMtl *context);
-
     gl::ShaderMap<SharedCompiledShaderStateMtl> mAttachedShaders;
-
-    // Scratch data:
-    // Legalized buffers and their offsets. For example, uniform buffer's offset=1 is not a valid
-    // offset, it will be converted to legal offset and the result is stored in this array.
-    std::vector<std::pair<mtl::BufferRef, uint32_t>> mLegalizedOffsetedUniformBuffers;
-    // Stores the render stages usage of each uniform buffer. Only used if the buffers are encoded
-    // into an argument buffer.
-    std::vector<uint32_t> mArgumentBufferRenderStageUsages;
-
-    uint32_t mShadowCompareModes[mtl::kMaxShaderSamplers];
-
-    mtl::BufferPool *mAuxBufferPool;
 };
 
 }  // namespace rx

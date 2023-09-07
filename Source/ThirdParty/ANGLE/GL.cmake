@@ -111,8 +111,6 @@ if(angle_use_x11)
         "src/libANGLE/renderer/gl/glx/PbufferSurfaceGLX.h"
         "src/libANGLE/renderer/gl/glx/PixmapSurfaceGLX.cpp"
         "src/libANGLE/renderer/gl/glx/PixmapSurfaceGLX.h"
-        "src/libANGLE/renderer/gl/glx/RendererGLX.cpp"
-        "src/libANGLE/renderer/gl/glx/RendererGLX.h"
         "src/libANGLE/renderer/gl/glx/SurfaceGLX.h"
         "src/libANGLE/renderer/gl/glx/WindowSurfaceGLX.cpp"
         "src/libANGLE/renderer/gl/glx/WindowSurfaceGLX.h"

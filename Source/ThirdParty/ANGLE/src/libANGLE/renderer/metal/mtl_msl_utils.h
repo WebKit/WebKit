@@ -52,12 +52,11 @@ void MSLGetShaderSource(const gl::ProgramState &programState,
                         gl::ShaderMap<std::string> *shaderSourcesOut);
 
 angle::Result MTLGetMSL(Context *context,
-                        const gl::ProgramState &programState,
+                        const gl::ProgramExecutable &executable,
                         const gl::Caps &glCaps,
                         const gl::ShaderMap<std::string> &shaderSources,
                         const gl::ShaderMap<SharedCompiledShaderStateMtl> &shadersState,
-                        gl::ShaderMap<TranslatedShaderInfo> *mslShaderInfoOut,
-                        size_t xfbBufferCount);
+                        gl::ShaderMap<TranslatedShaderInfo> *mslShaderInfoOut);
 
 // Get equivalent shadow compare mode that is used in translated msl shader.
 uint MslGetShaderShadowCompareMode(GLenum mode, GLenum func);

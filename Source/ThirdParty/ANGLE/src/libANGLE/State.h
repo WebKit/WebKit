@@ -854,8 +854,8 @@ class State : angle::NonCopyable
 
     // If both a Program and a ProgramPipeline are bound, the Program will
     // always override the ProgramPipeline.
-    ProgramExecutable *getProgramExecutable() const { return mExecutable; }
-    ProgramExecutable *getLinkedProgramExecutable(const Context *context) const
+    ProgramExecutable *getProgramExecutable() const { return mExecutable.get(); }
+    void ensureNoPendingLink(const Context *context) const
     {
         if (mProgram)
         {
@@ -865,7 +865,11 @@ class State : angle::NonCopyable
         {
             mProgramPipeline->resolveLink(context);
         }
-        return mExecutable;
+    }
+    ProgramExecutable *getLinkedProgramExecutable(const Context *context) const
+    {
+        ensureNoPendingLink(context);
+        return mExecutable.get();
     }
 
     // Program binding manipulation
@@ -1051,9 +1055,9 @@ class State : angle::NonCopyable
     }
 
     // Sets the dirty bit for the program executable.
-    angle::Result onProgramExecutableChange(const Context *context, Program *program);
+    angle::Result installProgramExecutable(const Context *context);
     // Sets the dirty bit for the program pipeline executable.
-    angle::Result onProgramPipelineExecutableChange(const Context *context);
+    angle::Result installProgramPipelineExecutable(const Context *context);
 
     const state::DirtyBits getDirtyBits() const
     {
@@ -1414,6 +1418,9 @@ class State : angle::NonCopyable
     PrivateState *getMutablePrivateState() { return &mPrivateState; }
     GLES1State *getMutableGLES1State() { return mPrivateState.getMutableGLES1State(); }
 
+    angle::Result installProgramPipelineExecutableIfNotAlready(const Context *context);
+    angle::Result onExecutableChange(const Context *context);
+
     void unsetActiveTextures(const ActiveTextureMask &textureMask);
     void setActiveTextureDirty(size_t textureIndex, Texture *texture);
     void updateTextureBinding(const Context *context, size_t textureIndex, Texture *texture);
@@ -1520,7 +1527,9 @@ class State : angle::NonCopyable
     BindingPointer<Renderbuffer> mRenderbuffer;
     Program *mProgram;
     BindingPointer<ProgramPipeline> mProgramPipeline;
-    ProgramExecutable *mExecutable;
+    // The _installed_ executable.  Note that this may be different from the program's (or the
+    // program pipeline's) executable, as they may have been unsuccessfully relinked.
+    SharedProgramExecutable mExecutable;
 
     VertexArray *mVertexArray;
 

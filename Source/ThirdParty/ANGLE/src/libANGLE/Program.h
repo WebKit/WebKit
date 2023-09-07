@@ -326,7 +326,6 @@ class ProgramState final : angle::NonCopyable
     Optional<GLuint> getSamplerIndex(UniformLocation location) const;
     bool isSamplerUniformIndex(GLuint index) const;
     GLuint getSamplerIndexFromUniformIndex(GLuint uniformIndex) const;
-    GLuint getUniformIndexFromSamplerIndex(GLuint samplerIndex) const;
     bool isImageUniformIndex(GLuint index) const;
     GLuint getImageIndexFromUniformIndex(GLuint uniformIndex) const;
     GLuint getAttributeLocation(const std::string &name) const
@@ -367,6 +366,12 @@ class ProgramState final : angle::NonCopyable
     {
         ASSERT(mExecutable);
         return *mExecutable;
+    }
+
+    const SharedProgramExecutable &getSharedExecutable() const
+    {
+        ASSERT(mExecutable);
+        return mExecutable;
     }
 
     bool hasImages() const { return !getImageBindings().empty(); }
@@ -432,7 +437,12 @@ class ProgramState final : angle::NonCopyable
 
     // The result of the link.  State that is not the link output should remain in ProgramState,
     // while the link output should be placed in ProgramExecutable.
-    std::unique_ptr<ProgramExecutable> mExecutable;
+    //
+    // This is a shared_ptr because it can be "installed" in the context as part of the rendering
+    // context.  Similarly, it can be installed in a program pipeline.  Once the executable is
+    // installed, the actual Program should not be referenced; it may have been unsuccessfully
+    // relinked and its executable in an unusable state.
+    SharedProgramExecutable mExecutable;
 };
 
 struct ProgramVaryingRef
@@ -498,18 +508,23 @@ class Program final : public LabeledObject, public angle::Subject
         return mLinked;
     }
 
-    angle::Result loadBinary(const Context *context,
-                             GLenum binaryFormat,
-                             const void *binary,
-                             GLsizei length);
-    angle::Result saveBinary(Context *context,
-                             GLenum *binaryFormat,
-                             void *binary,
-                             GLsizei bufSize,
-                             GLsizei *length) const;
+    angle::Result setBinary(const Context *context,
+                            GLenum binaryFormat,
+                            const void *binary,
+                            GLsizei length);
+    angle::Result getBinary(Context *context,
+                            GLenum *binaryFormat,
+                            void *binary,
+                            GLsizei bufSize,
+                            GLsizei *length) const;
     GLint getBinaryLength(Context *context) const;
     void setBinaryRetrievableHint(bool retrievable);
     bool getBinaryRetrievableHint() const;
+
+    angle::Result loadBinary(const Context *context,
+                             const void *binary,
+                             GLsizei length,
+                             bool *successOut);
 
     InfoLog &getInfoLog() { return mState.mInfoLog; }
     int getInfoLogLength() const;
@@ -740,11 +755,7 @@ class Program final : public LabeledObject, public angle::Subject
     GLenum getTessGenSpacing() const;
     GLenum getTessGenVertexOrder() const;
 
-    const ProgramState &getState() const
-    {
-        ASSERT(!mLinkingState);
-        return mState;
-    }
+    const ProgramState &getState() const { return mState; }
 
     GLuint getInputResourceIndex(const GLchar *name) const;
     GLuint getOutputResourceIndex(const GLchar *name) const;
@@ -823,6 +834,10 @@ class Program final : public LabeledObject, public angle::Subject
 
     const ProgramExecutable &getExecutable() const { return mState.getExecutable(); }
     ProgramExecutable &getExecutable() { return mState.getExecutable(); }
+    const SharedProgramExecutable &getSharedExecutable() const
+    {
+        return mState.getSharedExecutable();
+    }
 
     void onUniformBufferStateChange(size_t uniformBufferIndex)
     {
@@ -846,6 +861,8 @@ class Program final : public LabeledObject, public angle::Subject
     void deleteSelf(const Context *context);
 
     angle::Result linkImpl(const Context *context);
+
+    void makeNewExecutable(const Context *context);
 
     bool linkValidateShaders(const Context *context);
     void linkShaders();

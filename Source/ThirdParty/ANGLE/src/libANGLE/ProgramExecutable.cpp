@@ -152,29 +152,29 @@ bool IsOutputSecondaryForLink(const ProgramAliasedBindings &fragmentOutputIndexe
     return false;
 }
 
-RangeUI AddUniforms(const ShaderMap<Program *> &programs,
+RangeUI AddUniforms(const ShaderMap<SharedProgramExecutable> &executables,
                     ShaderBitSet activeShaders,
                     std::vector<LinkedUniform> *outputUniforms,
                     std::vector<std::string> *outputUniformNames,
                     std::vector<std::string> *outputUniformMappedNames,
-                    const std::function<RangeUI(const ProgramState &)> &getRange)
+                    const std::function<RangeUI(const ProgramExecutable &)> &getRange)
 {
     unsigned int startRange = static_cast<unsigned int>(outputUniforms->size());
     for (ShaderType shaderType : activeShaders)
     {
-        const ProgramState &programState = programs[shaderType]->getState();
-        const RangeUI uniformRange       = getRange(programState);
+        const ProgramExecutable &executable = *executables[shaderType];
+        const RangeUI uniformRange          = getRange(executable);
 
-        const std::vector<LinkedUniform> &programUniforms = programState.getUniforms();
+        const std::vector<LinkedUniform> &programUniforms = executable.getUniforms();
         outputUniforms->insert(outputUniforms->end(), programUniforms.begin() + uniformRange.low(),
                                programUniforms.begin() + uniformRange.high());
 
-        const std::vector<std::string> &uniformNames = programState.getUniformNames();
+        const std::vector<std::string> &uniformNames = executable.getUniformNames();
         outputUniformNames->insert(outputUniformNames->end(),
                                    uniformNames.begin() + uniformRange.low(),
                                    uniformNames.begin() + uniformRange.high());
 
-        const std::vector<std::string> &uniformMappedNames = programState.getUniformMappedNames();
+        const std::vector<std::string> &uniformMappedNames = executable.getUniformMappedNames();
         outputUniformMappedNames->insert(outputUniformMappedNames->end(),
                                          uniformMappedNames.begin() + uniformRange.low(),
                                          uniformMappedNames.begin() + uniformRange.high());
@@ -203,8 +203,7 @@ void SaveProgramInputs(BinaryOutputStream *stream, const std::vector<ProgramInpu
     {
         stream->writeString(attrib.name);
         stream->writeString(attrib.mappedName);
-        stream->writeBytes(reinterpret_cast<const unsigned char *>(&attrib.basicDataTypeStruct),
-                           sizeof(attrib.basicDataTypeStruct));
+        stream->writeStruct(attrib.basicDataTypeStruct);
     }
 }
 void LoadProgramInputs(BinaryInputStream *stream, std::vector<ProgramInput> *programInputs)
@@ -219,8 +218,7 @@ void LoadProgramInputs(BinaryInputStream *stream, std::vector<ProgramInput> *pro
             ProgramInput &attrib = (*programInputs)[attribIndex];
             stream->readString(&attrib.name);
             stream->readString(&attrib.mappedName);
-            stream->readBytes(reinterpret_cast<unsigned char *>(&attrib.basicDataTypeStruct),
-                              sizeof(attrib.basicDataTypeStruct));
+            stream->readStruct(&attrib.basicDataTypeStruct);
         }
     }
 }
@@ -231,21 +229,16 @@ void SaveUniforms(BinaryOutputStream *stream,
                   const std::vector<std::string> &uniformMappedNames,
                   const std::vector<VariableLocation> &uniformLocations)
 {
-    stream->writeInt(uniforms.size());
-    if (uniforms.size() > 0)
+    stream->writeVector(uniforms);
+    ASSERT(uniforms.size() == uniformNames.size());
+    ASSERT(uniforms.size() == uniformMappedNames.size());
+    for (const std::string &name : uniformNames)
     {
-        // LinkedUniform is a simple structure with fundamental data types, we can just do bulk save
-        // for performance.
-        stream->writeBytes(reinterpret_cast<const uint8_t *>(uniforms.data()),
-                           sizeof(LinkedUniform) * uniforms.size());
-        for (const std::string &name : uniformNames)
-        {
-            stream->writeString(name);
-        }
-        for (const std::string &name : uniformMappedNames)
-        {
-            stream->writeString(name);
-        }
+        stream->writeString(name);
+    }
+    for (const std::string &name : uniformMappedNames)
+    {
+        stream->writeString(name);
     }
 
     stream->writeInt(uniformLocations.size());
@@ -263,21 +256,16 @@ void LoadUniforms(BinaryInputStream *stream,
                   std::vector<VariableLocation> *uniformLocations)
 {
     ASSERT(uniforms->empty());
-    size_t uniformCount = stream->readInt<size_t>();
-    if (uniformCount > 0)
+    stream->readVector(uniforms);
+    if (!uniforms->empty())
     {
-        uniforms->resize(uniformCount);
-        // LinkedUniform is a simple structure with fundamental data types, we can just do bulk load
-        // for performance.
-        stream->readBytes(reinterpret_cast<uint8_t *>(uniforms->data()),
-                          sizeof(LinkedUniform) * uniforms->size());
-        uniformNames->resize(uniformCount);
-        for (size_t uniformIndex = 0; uniformIndex < uniformCount; ++uniformIndex)
+        uniformNames->resize(uniforms->size());
+        for (size_t uniformIndex = 0; uniformIndex < uniforms->size(); ++uniformIndex)
         {
             stream->readString(&(*uniformNames)[uniformIndex]);
         }
-        uniformMappedNames->resize(uniformCount);
-        for (size_t uniformIndex = 0; uniformIndex < uniformCount; ++uniformIndex)
+        uniformMappedNames->resize(uniforms->size());
+        for (size_t uniformIndex = 0; uniformIndex < uniforms->size(); ++uniformIndex)
         {
             stream->readString(&(*uniformMappedNames)[uniformIndex]);
         }
@@ -300,9 +288,7 @@ void SaveSamplerBindings(BinaryOutputStream *stream,
                          const std::vector<SamplerBinding> &samplerBindings,
                          const std::vector<GLuint> &samplerBoundTextureUnits)
 {
-    stream->writeInt(samplerBindings.size());
-    stream->writeBytes(reinterpret_cast<const uint8_t *>(samplerBindings.data()),
-                       sizeof(*samplerBindings.data()) * samplerBindings.size());
+    stream->writeVector(samplerBindings);
     stream->writeInt(samplerBoundTextureUnits.size());
 }
 void LoadSamplerBindings(BinaryInputStream *stream,
@@ -310,13 +296,7 @@ void LoadSamplerBindings(BinaryInputStream *stream,
                          std::vector<GLuint> *samplerBoundTextureUnits)
 {
     ASSERT(samplerBindings->empty());
-    size_t samplerBindingCount = stream->readInt<size_t>();
-    if (samplerBindingCount > 0)
-    {
-        samplerBindings->resize(samplerBindingCount);
-        stream->readBytes(reinterpret_cast<uint8_t *>(samplerBindings->data()),
-                          sizeof(*samplerBindings->data()) * samplerBindingCount);
-    }
+    stream->readVector(samplerBindings);
 
     ASSERT(samplerBoundTextureUnits->empty());
     size_t boundTextureUnitsCount = stream->readInt<size_t>();
@@ -349,13 +329,7 @@ void WriteShaderVariableBuffer(BinaryOutputStream *stream, const ShaderVariableB
 
     stream->writeInt(var.binding);
     stream->writeInt(var.dataSize);
-
-    stream->writeInt(var.memberIndexes.size());
-    if (!var.memberIndexes.empty())
-    {
-        stream->writeBytes(reinterpret_cast<const unsigned char *>(var.memberIndexes.data()),
-                           sizeof(*var.memberIndexes.data()) * var.memberIndexes.size());
-    }
+    stream->writeVector(var.memberIndexes);
 }
 
 void LoadShaderVariableBuffer(BinaryInputStream *stream, ShaderVariableBuffer *var)
@@ -366,13 +340,7 @@ void LoadShaderVariableBuffer(BinaryInputStream *stream, ShaderVariableBuffer *v
     var->dataSize = stream->readInt<unsigned int>();
 
     ASSERT(var->memberIndexes.empty());
-    size_t numMembers = stream->readInt<size_t>();
-    if (numMembers > 0)
-    {
-        var->memberIndexes.resize(numMembers);
-        stream->readBytes(reinterpret_cast<unsigned char *>(var->memberIndexes.data()),
-                          sizeof(*var->memberIndexes.data()) * var->memberIndexes.size());
-    }
+    stream->readVector(&var->memberIndexes);
 }
 
 void WriteInterfaceBlock(BinaryOutputStream *stream, const InterfaceBlock &block)
@@ -418,6 +386,8 @@ ProgramExecutable::~ProgramExecutable()
 
 void ProgramExecutable::destroy(const Context *context)
 {
+    ASSERT(mImplementation != nullptr);
+
     mImplementation->destroy(context);
     SafeDelete(mImplementation);
 }
@@ -502,7 +472,7 @@ void ProgramExecutable::load(bool isSeparable, gl::BinaryInputStream *stream)
                   "All bits of mDrawBufferTypeMask and mActiveOutputVariables types and mask fit "
                   "into 32 bits each");
 
-    stream->readBytes(reinterpret_cast<unsigned char *>(&mPODStruct), sizeof(mPODStruct));
+    stream->readStruct(&mPODStruct);
 
     LoadProgramInputs(stream, &mProgramInputs);
     LoadUniforms(stream, &mUniforms, &mUniformNames, &mUniformMappedNames, &mUniformLocations);
@@ -554,7 +524,7 @@ void ProgramExecutable::load(bool isSeparable, gl::BinaryInputStream *stream)
     {
         TransformFeedbackVarying &varying =
             mLinkedTransformFeedbackVaryings[transformFeedbackVaryingIndex];
-        stream->readIntVector<unsigned int>(&varying.arraySizes);
+        stream->readVector(&varying.arraySizes);
         stream->readInt(&varying.type);
         stream->readString(&varying.name);
         varying.arrayIndex = stream->readInt<GLuint>();
@@ -649,7 +619,7 @@ void ProgramExecutable::save(bool isSeparable, gl::BinaryOutputStream *stream) c
         "All bits of mDrawBufferTypeMask and mActiveOutputVariables can be contained in 32 bits");
 
     ASSERT(mPODStruct.geometryShaderInvocations >= 1 && mPODStruct.geometryShaderMaxVertices >= 0);
-    stream->writeBytes(reinterpret_cast<const unsigned char *>(&mPODStruct), sizeof(mPODStruct));
+    stream->writeStruct(mPODStruct);
 
     SaveProgramInputs(stream, mProgramInputs);
     SaveUniforms(stream, mUniforms, mUniformNames, mUniformMappedNames, mUniformLocations);
@@ -681,7 +651,7 @@ void ProgramExecutable::save(bool isSeparable, gl::BinaryOutputStream *stream) c
     stream->writeInt(getLinkedTransformFeedbackVaryings().size());
     for (const auto &var : getLinkedTransformFeedbackVaryings())
     {
-        stream->writeIntVector(var.arraySizes);
+        stream->writeVector(var.arraySizes);
         stream->writeInt(var.type);
         stream->writeString(var.name);
 
@@ -793,10 +763,10 @@ void ProgramExecutable::hasSamplerFormatConflict(size_t textureUnit)
     mActiveSamplerFormats[textureUnit] = SamplerFormat::InvalidEnum;
 }
 
-void ProgramExecutable::updateActiveSamplers(const ProgramState &programState)
+void ProgramExecutable::updateActiveSamplers(const ProgramExecutable &executable)
 {
-    const std::vector<SamplerBinding> &samplerBindings = programState.getSamplerBindings();
-    const std::vector<GLuint> &boundTextureUnits       = programState.getSamplerBoundTextureUnits();
+    const std::vector<SamplerBinding> &samplerBindings = executable.getSamplerBindings();
+    const std::vector<GLuint> &boundTextureUnits       = executable.getSamplerBoundTextureUnits();
 
     for (uint32_t samplerIndex = 0; samplerIndex < samplerBindings.size(); ++samplerIndex)
     {
@@ -807,8 +777,8 @@ void ProgramExecutable::updateActiveSamplers(const ProgramState &programState)
             GLint textureUnit = samplerBinding.getTextureUnit(boundTextureUnits, index);
             if (++mActiveSamplerRefCounts[textureUnit] == 1)
             {
-                uint32_t uniformIndex = programState.getUniformIndexFromSamplerIndex(samplerIndex);
-                setActive(textureUnit, samplerBinding, programState.getUniforms()[uniformIndex]);
+                uint32_t uniformIndex = executable.getUniformIndexFromSamplerIndex(samplerIndex);
+                setActive(textureUnit, samplerBinding, executable.getUniforms()[uniformIndex]);
             }
             else
             {
@@ -914,21 +884,18 @@ void ProgramExecutable::saveLinkedStateInfo(const ProgramState &state)
     }
 }
 
-bool ProgramExecutable::linkMergedVaryings(
-    const Caps &caps,
-    const Limitations &limitations,
-    const Version &clientVersion,
-    bool webglCompatibility,
-    const ProgramMergedVaryings &mergedVaryings,
-    const std::vector<std::string> &transformFeedbackVaryingNames,
-    const LinkingVariables &linkingVariables,
-    bool isSeparable,
-    ProgramVaryingPacking *varyingPacking)
+bool ProgramExecutable::linkMergedVaryings(const Caps &caps,
+                                           const Limitations &limitations,
+                                           const Version &clientVersion,
+                                           bool webglCompatibility,
+                                           const ProgramMergedVaryings &mergedVaryings,
+                                           const LinkingVariables &linkingVariables,
+                                           bool isSeparable,
+                                           ProgramVaryingPacking *varyingPacking)
 {
     ShaderType tfStage = GetLastPreFragmentStage(linkingVariables.isShaderStageUsedBitset);
 
-    if (!linkValidateTransformFeedback(caps, clientVersion, mergedVaryings, tfStage,
-                                       transformFeedbackVaryingNames))
+    if (!linkValidateTransformFeedback(caps, clientVersion, mergedVaryings, tfStage))
     {
         return false;
     }
@@ -962,28 +929,26 @@ bool ProgramExecutable::linkMergedVaryings(
     }
 
     if (!varyingPacking->collectAndPackUserVaryings(*mInfoLog, caps, packMode, activeShadersMask,
-                                                    mergedVaryings, transformFeedbackVaryingNames,
+                                                    mergedVaryings, mTransformFeedbackVaryingNames,
                                                     isSeparable))
     {
         return false;
     }
 
-    gatherTransformFeedbackVaryings(mergedVaryings, tfStage, transformFeedbackVaryingNames);
+    gatherTransformFeedbackVaryings(mergedVaryings, tfStage);
     updateTransformFeedbackStrides();
 
     return true;
 }
 
-bool ProgramExecutable::linkValidateTransformFeedback(
-    const Caps &caps,
-    const Version &clientVersion,
-    const ProgramMergedVaryings &varyings,
-    ShaderType stage,
-    const std::vector<std::string> &transformFeedbackVaryingNames)
+bool ProgramExecutable::linkValidateTransformFeedback(const Caps &caps,
+                                                      const Version &clientVersion,
+                                                      const ProgramMergedVaryings &varyings,
+                                                      ShaderType stage)
 {
     // Validate the tf names regardless of the actual program varyings.
     std::set<std::string> uniqueNames;
-    for (const std::string &tfVaryingName : transformFeedbackVaryingNames)
+    for (const std::string &tfVaryingName : mTransformFeedbackVaryingNames)
     {
         if (clientVersion < Version(3, 1) && tfVaryingName.find('[') != std::string::npos)
         {
@@ -1014,7 +979,7 @@ bool ProgramExecutable::linkValidateTransformFeedback(
     // From OpneGLES spec. 11.1.2.1: A program will fail to link if:
     // the count specified by TransformFeedbackVaryings is non-zero, but the
     // program object has no vertex, tessellation evaluation, or geometry shader
-    if (transformFeedbackVaryingNames.size() > 0 &&
+    if (mTransformFeedbackVaryingNames.size() > 0 &&
         !gl::ShaderTypeSupportsTransformFeedback(getLinkedTransformFeedbackStage()))
     {
         *mInfoLog << "Linked transform feedback stage " << getLinkedTransformFeedbackStage()
@@ -1024,7 +989,7 @@ bool ProgramExecutable::linkValidateTransformFeedback(
 
     // Validate against program varyings.
     size_t totalComponents = 0;
-    for (const std::string &tfVaryingName : transformFeedbackVaryingNames)
+    for (const std::string &tfVaryingName : mTransformFeedbackVaryingNames)
     {
         std::vector<unsigned int> subscripts;
         std::string baseName = ParseResourceName(tfVaryingName, &subscripts);
@@ -1100,14 +1065,12 @@ bool ProgramExecutable::linkValidateTransformFeedback(
     return true;
 }
 
-void ProgramExecutable::gatherTransformFeedbackVaryings(
-    const ProgramMergedVaryings &varyings,
-    ShaderType stage,
-    const std::vector<std::string> &transformFeedbackVaryingNames)
+void ProgramExecutable::gatherTransformFeedbackVaryings(const ProgramMergedVaryings &varyings,
+                                                        ShaderType stage)
 {
     // Gather the linked varyings that are used for transform feedback, they should all exist.
     mLinkedTransformFeedbackVaryings.clear();
-    for (const std::string &tfVaryingName : transformFeedbackVaryingNames)
+    for (const std::string &tfVaryingName : mTransformFeedbackVaryingNames)
     {
         std::vector<unsigned int> subscripts;
         std::string baseName = ParseResourceName(tfVaryingName, &subscripts);
@@ -1679,17 +1642,17 @@ bool ProgramExecutable::linkAtomicCounterBuffers(const Caps &caps)
     return true;
 }
 
-void ProgramExecutable::copyInputsFromProgram(const ProgramState &programState)
+void ProgramExecutable::copyInputsFromProgram(const ProgramExecutable &executable)
 {
-    mProgramInputs = programState.getProgramInputs();
+    mProgramInputs = executable.getProgramInputs();
 }
 
-void ProgramExecutable::copyShaderBuffersFromProgram(const ProgramState &programState,
+void ProgramExecutable::copyShaderBuffersFromProgram(const ProgramExecutable &executable,
                                                      ShaderType shaderType)
 {
-    AppendActiveBlocks(shaderType, programState.getUniformBlocks(), mUniformBlocks);
-    AppendActiveBlocks(shaderType, programState.getShaderStorageBlocks(), mShaderStorageBlocks);
-    AppendActiveBlocks(shaderType, programState.getAtomicCounterBuffers(), mAtomicCounterBuffers);
+    AppendActiveBlocks(shaderType, executable.getUniformBlocks(), mUniformBlocks);
+    AppendActiveBlocks(shaderType, executable.getShaderStorageBlocks(), mShaderStorageBlocks);
+    AppendActiveBlocks(shaderType, executable.getAtomicCounterBuffers(), mAtomicCounterBuffers);
 
     // Buffer variable info is queried through the program, and program pipelines don't access it.
     ASSERT(mBufferVariables.empty());
@@ -1701,10 +1664,10 @@ void ProgramExecutable::clearSamplerBindings()
     mSamplerBoundTextureUnits.clear();
 }
 
-void ProgramExecutable::copySamplerBindingsFromProgram(const ProgramState &programState)
+void ProgramExecutable::copySamplerBindingsFromProgram(const ProgramExecutable &executable)
 {
-    const std::vector<SamplerBinding> &bindings = programState.getSamplerBindings();
-    const std::vector<GLuint> &textureUnits     = programState.getSamplerBoundTextureUnits();
+    const std::vector<SamplerBinding> &bindings = executable.getSamplerBindings();
+    const std::vector<GLuint> &textureUnits     = executable.getSamplerBoundTextureUnits();
     uint16_t adjustedStartIndex                 = mSamplerBoundTextureUnits.size();
     mSamplerBoundTextureUnits.insert(mSamplerBoundTextureUnits.end(), textureUnits.begin(),
                                      textureUnits.end());
@@ -1715,50 +1678,60 @@ void ProgramExecutable::copySamplerBindingsFromProgram(const ProgramState &progr
     }
 }
 
-void ProgramExecutable::copyImageBindingsFromProgram(const ProgramState &programState)
+void ProgramExecutable::copyImageBindingsFromProgram(const ProgramExecutable &executable)
 {
-    const std::vector<ImageBinding> &bindings = programState.getImageBindings();
+    const std::vector<ImageBinding> &bindings = executable.getImageBindings();
     mImageBindings.insert(mImageBindings.end(), bindings.begin(), bindings.end());
 }
 
-void ProgramExecutable::copyOutputsFromProgram(const ProgramState &programState)
+void ProgramExecutable::copyOutputsFromProgram(const ProgramExecutable &executable)
 {
-    mOutputVariables          = programState.getOutputVariables();
-    mOutputLocations          = programState.getOutputLocations();
-    mSecondaryOutputLocations = programState.getSecondaryOutputLocations();
+    mOutputVariables          = executable.getOutputVariables();
+    mOutputLocations          = executable.getOutputLocations();
+    mSecondaryOutputLocations = executable.getSecondaryOutputLocations();
 }
 
-void ProgramExecutable::copyUniformsFromProgramMap(const ShaderMap<Program *> &programs)
+void ProgramExecutable::copyUniformsFromProgramMap(
+    const ShaderMap<SharedProgramExecutable> &executables)
 {
     // Merge default uniforms.
-    auto getDefaultRange = [](const ProgramState &state) { return state.getDefaultUniformRange(); };
+    auto getDefaultRange = [](const ProgramExecutable &state) {
+        return state.getDefaultUniformRange();
+    };
     mPODStruct.defaultUniformRange =
-        AddUniforms(programs, mPODStruct.linkedShaderStages, &mUniforms, &mUniformNames,
+        AddUniforms(executables, mPODStruct.linkedShaderStages, &mUniforms, &mUniformNames,
                     &mUniformMappedNames, getDefaultRange);
 
     // Merge sampler uniforms.
-    auto getSamplerRange = [](const ProgramState &state) { return state.getSamplerUniformRange(); };
+    auto getSamplerRange = [](const ProgramExecutable &state) {
+        return state.getSamplerUniformRange();
+    };
     mPODStruct.samplerUniformRange =
-        AddUniforms(programs, mPODStruct.linkedShaderStages, &mUniforms, &mUniformNames,
+        AddUniforms(executables, mPODStruct.linkedShaderStages, &mUniforms, &mUniformNames,
                     &mUniformMappedNames, getSamplerRange);
 
     // Merge image uniforms.
-    auto getImageRange = [](const ProgramState &state) { return state.getImageUniformRange(); };
-    mPODStruct.imageUniformRange = AddUniforms(programs, mPODStruct.linkedShaderStages, &mUniforms,
-                                               &mUniformNames, &mUniformMappedNames, getImageRange);
+    auto getImageRange = [](const ProgramExecutable &state) {
+        return state.getImageUniformRange();
+    };
+    mPODStruct.imageUniformRange =
+        AddUniforms(executables, mPODStruct.linkedShaderStages, &mUniforms, &mUniformNames,
+                    &mUniformMappedNames, getImageRange);
 
     // Merge atomic counter uniforms.
-    auto getAtomicRange = [](const ProgramState &state) {
+    auto getAtomicRange = [](const ProgramExecutable &state) {
         return state.getAtomicCounterUniformRange();
     };
     mPODStruct.atomicCounterUniformRange =
-        AddUniforms(programs, mPODStruct.linkedShaderStages, &mUniforms, &mUniformNames,
+        AddUniforms(executables, mPODStruct.linkedShaderStages, &mUniforms, &mUniformNames,
                     &mUniformMappedNames, getAtomicRange);
 
     // Merge fragment in/out uniforms.
-    auto getInoutRange = [](const ProgramState &state) { return state.getFragmentInoutRange(); };
+    auto getInoutRange = [](const ProgramExecutable &state) {
+        return state.getFragmentInoutRange();
+    };
     mPODStruct.fragmentInoutRange =
-        AddUniforms(programs, mPODStruct.linkedShaderStages, &mUniforms, &mUniformNames,
+        AddUniforms(executables, mPODStruct.linkedShaderStages, &mUniforms, &mUniformNames,
                     &mUniformMappedNames, getInoutRange);
 
     // Note: uniforms are set through the program, and the program pipeline never needs it.
@@ -1776,5 +1749,29 @@ GLuint ProgramExecutable::getAttributeLocation(const std::string &name) const
     }
 
     return static_cast<GLuint>(-1);
+}
+
+void InstallExecutable(const Context *context,
+                       const SharedProgramExecutable &toInstall,
+                       SharedProgramExecutable *executable)
+{
+    // There should never be a need to re-install the same executable.
+    ASSERT(toInstall.get() != executable->get());
+
+    // Destroy the old executable before it gets deleted.
+    UninstallExecutable(context, executable);
+
+    // Install the new executable.
+    *executable = toInstall;
+}
+
+void UninstallExecutable(const Context *context, SharedProgramExecutable *executable)
+{
+    if (executable->use_count() == 1)
+    {
+        (*executable)->destroy(context);
+    }
+
+    executable->reset();
 }
 }  // namespace gl

@@ -34,21 +34,44 @@ bool LoadJSONFromFile(const std::string &fileName, rapidjson::Document *doc)
     return !doc->HasParseError();
 }
 
-// https://anglebug.com/8307: temporary checks (copied from RendererVk.cpp)
-uint16_t ComputeCRC16(const uint8_t *data, const size_t size)
+// Branched from:
+// https://crsrc.org/c/third_party/zlib/google/compression_utils_portable.cc;drc=9fc44ce454cc889b603900ccd14b7024ea2c284c;l=167
+// Unmodified other than inlining ZlibStreamWrapperType and z_stream arg to access .msg
+int GzipUncompressHelperPatched(Bytef *dest,
+                                uLongf *dest_length,
+                                const Bytef *source,
+                                uLong source_length,
+                                z_stream &stream)
 {
-    constexpr uint16_t kPolynomialCRC16 = 0x8408;
-    uint16_t rem                        = 0;
+    stream.next_in  = static_cast<z_const Bytef *>(const_cast<Bytef *>(source));
+    stream.avail_in = static_cast<uInt>(source_length);
+    if (static_cast<uLong>(stream.avail_in) != source_length)
+        return Z_BUF_ERROR;
 
-    for (size_t i = 0; i < size; i++)
+    stream.next_out  = dest;
+    stream.avail_out = static_cast<uInt>(*dest_length);
+    if (static_cast<uLong>(stream.avail_out) != *dest_length)
+        return Z_BUF_ERROR;
+
+    stream.zalloc = static_cast<alloc_func>(0);
+    stream.zfree  = static_cast<free_func>(0);
+
+    int err = inflateInit2(&stream, MAX_WBITS + 16);
+    if (err != Z_OK)
+        return err;
+
+    err = inflate(&stream, Z_FINISH);
+    if (err != Z_STREAM_END)
     {
-        rem ^= data[i];
-        for (int j = 0; j < 8; j++)
-        {
-            rem = (rem & 1) ? kPolynomialCRC16 ^ (rem >> 1) : rem >> 1;
-        }
+        inflateEnd(&stream);
+        if (err == Z_NEED_DICT || (err == Z_BUF_ERROR && stream.avail_in == 0))
+            return Z_DATA_ERROR;
+        return err;
     }
-    return rem;
+    *dest_length = stream.total_out;
+
+    err = inflateEnd(&stream);
+    return err;
 }
 }  // namespace
 
@@ -234,22 +257,20 @@ uint8_t *TraceLibrary::LoadBinaryData(const char *fileName)
             exit(1);
         }
 
-        // https://anglebug.com/8307: temporary checks
-        std::cout << "Compressed binary data size=" << size
-                  << " crc16=" << ComputeCRC16(compressedData.data(), size) << "\n";
-
         uint32_t uncompressedSize =
             zlib_internal::GetGzipUncompressedSize(compressedData.data(), compressedData.size());
 
         mBinaryData.resize(uncompressedSize + 1);  // +1 to make sure .data() is valid
         uLong destLen = uncompressedSize;
+        z_stream stream;
         int zResult =
-            zlib_internal::GzipUncompressHelper(mBinaryData.data(), &destLen, compressedData.data(),
-                                                static_cast<uLong>(compressedData.size()));
+            GzipUncompressHelperPatched(mBinaryData.data(), &destLen, compressedData.data(),
+                                        static_cast<uLong>(compressedData.size()), stream);
 
         if (zResult != Z_OK)
         {
-            std::cerr << "Failure to decompressed binary data: " << zResult << "\n";
+            std::cerr << "Failure to decompressed binary data: " << zResult
+                      << " msg=" << (stream.msg ? stream.msg : "nil") << "\n";
             exit(1);
         }
     }

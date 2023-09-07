@@ -954,8 +954,9 @@ void StateManager11::syncState(const gl::Context *context,
 
     const gl::State &state = context->getState();
 
-    for (size_t dirtyBit : dirtyBits)
+    for (auto iter = dirtyBits.begin(), endIter = dirtyBits.end(); iter != endIter; ++iter)
     {
+        size_t dirtyBit = *iter;
         switch (dirtyBit)
         {
             case gl::state::DIRTY_BIT_BLEND_EQUATIONS:
@@ -1169,7 +1170,10 @@ void StateManager11::syncState(const gl::Context *context,
                 invalidateTransformFeedback();
                 break;
             case gl::state::DIRTY_BIT_PROGRAM_BINDING:
-                mExecutableD3D = GetImplAs<ProgramExecutableD3D>(state.getProgramExecutable());
+                static_assert(
+                    gl::state::DIRTY_BIT_PROGRAM_EXECUTABLE > gl::state::DIRTY_BIT_PROGRAM_BINDING,
+                    "Dirty bit order");
+                iter.setLaterBit(gl::state::DIRTY_BIT_PROGRAM_EXECUTABLE);
                 break;
             case gl::state::DIRTY_BIT_PROGRAM_EXECUTABLE:
             {
@@ -1181,6 +1185,8 @@ void StateManager11::syncState(const gl::Context *context,
                 invalidateProgramShaderStorageBuffers();
                 invalidateDriverUniforms();
                 const gl::ProgramExecutable *executable = state.getProgramExecutable();
+                ASSERT(executable);
+                mExecutableD3D = GetImplAs<ProgramExecutableD3D>(executable);
                 if (!executable || command != gl::Command::Dispatch)
                 {
                     mInternalDirtyBits.set(DIRTY_BIT_PRIMITIVE_TOPOLOGY);

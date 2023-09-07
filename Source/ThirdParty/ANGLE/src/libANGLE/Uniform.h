@@ -162,7 +162,6 @@ struct LinkedUniform
     // sh::ShaderVariable::id or sh::InterfaceBlock::id
     ShaderMap<uint32_t> mIds;
 };
-static_assert(std::is_trivially_copyable<LinkedUniform>(), "must be memcpy-able");
 ANGLE_DISABLE_STRUCT_PADDING_WARNINGS
 
 struct BufferVariable : public sh::ShaderVariable

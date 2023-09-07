@@ -68,7 +68,7 @@ index d5a48edd40f382359db76acf1a1ce75b6a6dc6d5..907c62e0bb659292b391270790498186
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index b5dbd7492e28e0154dcbd1e4928b11f85b8d0142..fb08b70be4e79b903ab2be3265a65f1c02da23da 100644
+index 319f8901e490ccafd770bad3aaeb113451d8cea9..172754b930089ed72a8593752ea012171576cb9d 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
 @@ -6,6 +6,9 @@
@@ -129,7 +129,7 @@ index 746823ce009702c2e49d1397a4159570838ebc9e..7976bcadedd832cabfda3f37b69ca457
      }
  
 diff --git a/src/libANGLE/renderer/metal/ContextMtl.mm b/src/libANGLE/renderer/metal/ContextMtl.mm
-index 920d75ae93e0d4e87449b77159090191a6932e0a..321e29720281cbec6e043b74e22e7920bd76b989 100644
+index 1d728d0ea8a331e8faaa981622747a73d2dc69f1..b3f5ac0dcc1f26c122fa13ba0d59e74b9282fb4c 100644
 --- a/src/libANGLE/renderer/metal/ContextMtl.mm
 +++ b/src/libANGLE/renderer/metal/ContextMtl.mm
 @@ -1068,6 +1068,13 @@ angle::Result ContextMtl::multiDrawElementsInstancedBaseVertexBaseInstance(
@@ -146,7 +146,7 @@ index 920d75ae93e0d4e87449b77159090191a6932e0a..321e29720281cbec6e043b74e22e7920
      return gl::GraphicsResetStatus::NoError;
  }
  
-@@ -2466,8 +2473,22 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
+@@ -2475,8 +2482,22 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
              return angle::Result::Continue;
          }
          // Setup with flushed state should either produce a working encoder or fail with an error
@@ -227,13 +227,13 @@ index f7eaf3362c8fd382ea047a68372c9b6d9213a2f8..af009029c5d980b9e8e084554ba77c08
      uint32_t offset = static_cast<uint32_t>(packPixelsParams.offset);
  
      BufferMtl *packBufferMtl = mtl::GetImpl(packPixelsParams.packBuffer);
-diff --git a/src/libANGLE/renderer/metal/ProgramMtl.mm b/src/libANGLE/renderer/metal/ProgramMtl.mm
-index 29a8134b2907a6e352dbfff010b8011319f6d668..96a3ce497f0545c0c327780e062936ac2e196263 100644
---- a/src/libANGLE/renderer/metal/ProgramMtl.mm
-+++ b/src/libANGLE/renderer/metal/ProgramMtl.mm
-@@ -1074,7 +1074,7 @@ angle::Result ProgramMtl::setupDraw(const gl::Context *glContext,
-     ContextMtl *context                 = mtl::GetImpl(glContext);
-     ProgramExecutableMtl *executableMtl = getExecutable();
+diff --git a/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm b/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
+index 571f343e14dd6d488f8e19e48f3c006dbad7e0ba..a7fd60b9fcb174eb7f52a7433331c36269eccde5 100644
+--- a/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
++++ b/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
+@@ -847,7 +847,7 @@ angle::Result ProgramExecutableMtl::setupDraw(const gl::Context *glContext,
+ {
+     ContextMtl *context = mtl::GetImpl(glContext);
  
 -    if (pipelineDescChanged)
 +    if (pipelineDescChanged || !cmdEncoder->hasPipelineState())
@@ -272,10 +272,10 @@ index 13affb4ac934d779280a4f1885b92452af3adf05..1b3d3cf1b03b5d91492dcb763fdc0eba
      params.srcDefaultAlphaData  = convertedFormat.defaultAlpha;
  
 diff --git a/src/libANGLE/renderer/metal/mtl_command_buffer.h b/src/libANGLE/renderer/metal/mtl_command_buffer.h
-index 5f516c7c5bd4ee8844ca88905638135208cea8e6..454c8768b923fe156dd252e1a3dec66174461d01 100644
+index 2b0ef5ddfe906ba09ad818dadeb41dd444c55f07..5a6d64e0d58fa4e976e16d1fd03b98be9033603f 100644
 --- a/src/libANGLE/renderer/metal/mtl_command_buffer.h
 +++ b/src/libANGLE/renderer/metal/mtl_command_buffer.h
-@@ -88,6 +88,8 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
+@@ -87,6 +87,8 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
      bool isTimeElapsedEntryComplete(uint64_t id);
      double getTimeElapsedEntryInSeconds(uint64_t id);
  
@@ -284,7 +284,7 @@ index 5f516c7c5bd4ee8844ca88905638135208cea8e6..454c8768b923fe156dd252e1a3dec661
    private:
      void onCommandBufferCompleted(id<MTLCommandBuffer> buf,
                                    uint64_t serial,
-@@ -129,6 +131,8 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
+@@ -128,6 +130,8 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
      void recordCommandBufferTimeElapsed(std::lock_guard<std::mutex> &lg,
                                          uint64_t id,
                                          double seconds);
@@ -293,7 +293,7 @@ index 5f516c7c5bd4ee8844ca88905638135208cea8e6..454c8768b923fe156dd252e1a3dec661
  };
  
  class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::NonCopyable
-@@ -539,6 +543,7 @@ class RenderCommandEncoder final : public CommandEncoder
+@@ -538,6 +542,7 @@ class RenderCommandEncoder final : public CommandEncoder
  
      const RenderPassDesc &renderPassDesc() const { return mRenderPassDesc; }
      bool hasDrawCalls() const { return mHasDrawCalls; }
@@ -347,108 +347,8 @@ index 145400aec715ddfadcf33dc941201e1064d33ca0..84b6b2b462ca23fb40722093ec488d7c
      if (timeElapsedEntry != 0)
      {
          // Record this command buffer's elapsed time.
-diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.h b/src/libANGLE/renderer/metal/mtl_render_utils.h
-index 895651a37f35ad21f4f8b18b2d3d4d8c2d24fc7d..a021d8ea3de1abeca94f76892e45e333dd4e8017 100644
---- a/src/libANGLE/renderer/metal/mtl_render_utils.h
-+++ b/src/libANGLE/renderer/metal/mtl_render_utils.h
-@@ -219,7 +219,7 @@ class ClearUtils final : angle::NonCopyable
-     const std::string mFragmentShaderName;
- 
-     AutoObjCPtr<id<MTLFunction>> mVertexShader;
--    std::array<AutoObjCPtr<id<MTLFunction>>, kMaxRenderTargets + 1> mFragmentShaders;
-+    std::array<AutoObjCPtr<id<MTLFunction>>, kMaxRenderTargets + 1> mFragmentShaders {};
- };
- 
- class ColorBlitUtils final : angle::NonCopyable
-@@ -260,9 +260,9 @@ class ColorBlitUtils final : angle::NonCopyable
-     using ColorBlitFragmentShaderArray =
-         std::array<std::array<AutoObjCPtr<id<MTLFunction>>, mtl_shader::kTextureTypeCount>,
-                    kMaxRenderTargets>;
--    ColorBlitFragmentShaderArray mBlitFragmentShaders;
--    ColorBlitFragmentShaderArray mBlitPremultiplyAlphaFragmentShaders;
--    ColorBlitFragmentShaderArray mBlitUnmultiplyAlphaFragmentShaders;
-+    ColorBlitFragmentShaderArray mBlitFragmentShaders {{}};
-+    ColorBlitFragmentShaderArray mBlitPremultiplyAlphaFragmentShaders {{}};
-+    ColorBlitFragmentShaderArray mBlitUnmultiplyAlphaFragmentShaders {{}};
- };
- 
- class DepthStencilBlitUtils final : angle::NonCopyable
-@@ -304,15 +304,15 @@ class DepthStencilBlitUtils final : angle::NonCopyable
-     AutoObjCPtr<id<MTLFunction>> mVertexShader;
- 
-     std::array<AutoObjCPtr<id<MTLFunction>>, mtl_shader::kTextureTypeCount>
--        mDepthBlitFragmentShaders;
-+        mDepthBlitFragmentShaders {};
-     std::array<AutoObjCPtr<id<MTLFunction>>, mtl_shader::kTextureTypeCount>
--        mStencilBlitFragmentShaders;
-+        mStencilBlitFragmentShaders {};
-     std::array<std::array<AutoObjCPtr<id<MTLFunction>>, mtl_shader::kTextureTypeCount>,
-                mtl_shader::kTextureTypeCount>
--        mDepthStencilBlitFragmentShaders;
-+        mDepthStencilBlitFragmentShaders {{}};
- 
-     std::array<AutoObjCPtr<id<MTLFunction>>, mtl_shader::kTextureTypeCount>
--        mStencilBlitToBufferComputeShaders;
-+        mStencilBlitToBufferComputeShaders {};
- 
-     // Intermediate buffer for storing copied stencil data. Used when device doesn't support
-     // writing stencil in shader.
-@@ -425,12 +425,12 @@ class IndexGeneratorUtils final : angle::NonCopyable
-                                                  const IndexGenerationParams &params,
-                                                  size_t *indicesGenerated);
- 
--    IndexConversionShaderArray mIndexConversionShaders;
-+    IndexConversionShaderArray mIndexConversionShaders {{}};
- 
--    IndexConversionShaderArray mTriFanFromElemArrayGeneratorShaders;
-+    IndexConversionShaderArray mTriFanFromElemArrayGeneratorShaders {{}};
-     AutoObjCPtr<id<MTLFunction>> mTriFanFromArraysGeneratorShader;
- 
--    IndexConversionShaderArray mLineLoopFromElemArrayGeneratorShaders;
-+    IndexConversionShaderArray mLineLoopFromElemArrayGeneratorShaders {{}};
-     AutoObjCPtr<id<MTLFunction>> mLineLoopFromArraysGeneratorShader;
- };
- 
-@@ -453,7 +453,7 @@ class VisibilityResultUtils final : angle::NonCopyable
-     // Visibility combination compute shaders:
-     // - 0: This compute shader only combines the new values and discard old value.
-     // - 1: This compute shader keep the old value and combines with new values.
--    std::array<AutoObjCPtr<id<MTLFunction>>, 2> mVisibilityResultCombineComputeShaders;
-+    std::array<AutoObjCPtr<id<MTLFunction>>, 2> mVisibilityResultCombineComputeShaders {};
- };
- 
- // Util class for handling mipmap generation
-@@ -491,7 +491,7 @@ class MipmapUtils final : angle::NonCopyable
- class CopyPixelsUtils final : angle::NonCopyable
- {
-   public:
--    CopyPixelsUtils() = default;
-+    CopyPixelsUtils() = delete;
-     CopyPixelsUtils(const std::string &readShaderName, const std::string &writeShaderName);
- 
-     angle::Result unpackPixelsFromBufferToTexture(ContextMtl *contextMtl,
-@@ -514,7 +514,7 @@ class CopyPixelsUtils final : angle::NonCopyable
-     using PixelsCopyComputeShaderArray =
-         std::array<std::array<AutoObjCPtr<id<MTLFunction>>, mtl_shader::kTextureTypeCount * 2>,
-                    angle::kNumANGLEFormats>;
--    PixelsCopyComputeShaderArray mPixelsCopyComputeShaders;
-+    PixelsCopyComputeShaderArray mPixelsCopyComputeShaders {{}};
- 
-     const std::string mReadShaderName;
-     const std::string mWriteShaderName;
-@@ -583,8 +583,8 @@ class VertexFormatConversionUtils final : angle::NonCopyable
-     using ConvertToFloatVertexShaderArray =
-         std::array<AutoObjCPtr<id<MTLFunction>>, angle::kNumANGLEFormats>;
- 
--    ConvertToFloatComputeShaderArray mConvertToFloatCompPipelineCaches;
--    ConvertToFloatVertexShaderArray mConvertToFloatVertexShaders;
-+    ConvertToFloatComputeShaderArray mConvertToFloatCompPipelineCaches {};
-+    ConvertToFloatVertexShaderArray mConvertToFloatVertexShaders {};
- 
-     AutoObjCPtr<id<MTLFunction>> mComponentsExpandComputeShader;
-     AutoObjCPtr<id<MTLFunction>> mComponentsExpandVertexShader;
 diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.mm b/src/libANGLE/renderer/metal/mtl_render_utils.mm
-index 1748bebeb4c93686f242978d568d20c2fcd9bebd..ee9f4662304784e64a8d75e83e9fee4ee3733b5f 100644
+index 29af9becf5069d86d4ec12a10108533ce2dda847..0140885cae242fbab3ab4d03ecc594cd36f96d8a 100644
 --- a/src/libANGLE/renderer/metal/mtl_render_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_render_utils.mm
 @@ -602,7 +602,8 @@ void DispatchCompute(ContextMtl *contextMtl,
@@ -553,7 +453,7 @@ index 829539a2e821e01d6aa80729e9eb72cb5ea0e083..4e856a7f4039986fefb06b426eced442
  }
  
 diff --git a/src/libANGLE/renderer/metal/mtl_state_cache.mm b/src/libANGLE/renderer/metal/mtl_state_cache.mm
-index b6482fd3b28b5aa18e7d2fd7a4e468051342e0c9..4e5ffe72acc0e5c2c027ec2467e4b6e7a42a961f 100644
+index 8534c5c32fbc218da6c00ed95804026ccab508ef..7b2e9926b29407d7870b0da20a6591d0982146e7 100644
 --- a/src/libANGLE/renderer/metal/mtl_state_cache.mm
 +++ b/src/libANGLE/renderer/metal/mtl_state_cache.mm
 @@ -21,9 +21,16 @@
@@ -695,10 +595,3 @@ index 0000000000000000000000000000000000000000..23e8295bcc16412d3aef3fc8e85748fa
 +
 +if __name__ == '__main__':
 +    sys.exit(main())
-diff --git a/third_party/zlib b/third_party/zlib
-deleted file mode 160000
-index f5fd0ad2663e239a31184ad4c9919991dda16f46..0000000000000000000000000000000000000000
---- a/third_party/zlib
-+++ /dev/null
-@@ -1 +0,0 @@
--Subproject commit f5fd0ad2663e239a31184ad4c9919991dda16f46

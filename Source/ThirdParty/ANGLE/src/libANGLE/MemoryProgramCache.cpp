@@ -101,12 +101,13 @@ void MemoryProgramCache::ComputeHash(const Context *context,
 
 angle::Result MemoryProgramCache::getProgram(const Context *context,
                                              Program *program,
-                                             egl::BlobCache::Key *hashOut)
+                                             egl::BlobCache::Key *hashOut,
+                                             bool *successOut)
 {
     // If caching is effectively disabled, don't bother calculating the hash.
     if (!mBlobCache.isCachingEnabled())
     {
-        return angle::Result::Incomplete;
+        return angle::Result::Continue;
     }
 
     ComputeHash(context, program, hashOut);
@@ -115,32 +116,30 @@ angle::Result MemoryProgramCache::getProgram(const Context *context,
     switch (mBlobCache.getAndDecompress(context->getScratchBuffer(), *hashOut, &uncompressedData))
     {
         case egl::BlobCache::GetAndDecompressResult::NotFound:
-            return angle::Result::Incomplete;
+            return angle::Result::Continue;
 
         case egl::BlobCache::GetAndDecompressResult::DecompressFailure:
             ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
                                "Error decompressing program binary data fetched from cache.");
-            return angle::Result::Incomplete;
+            return angle::Result::Continue;
 
         case egl::BlobCache::GetAndDecompressResult::GetSuccess:
-            angle::Result result =
-                program->loadBinary(context, GL_PROGRAM_BINARY_ANGLE, uncompressedData.data(),
-                                    static_cast<int>(uncompressedData.size()));
-            ANGLE_TRY(result);
+            ANGLE_TRY(program->loadBinary(context, uncompressedData.data(),
+                                          static_cast<int>(uncompressedData.size()), successOut));
 
-            if (result == angle::Result::Continue)
-                return angle::Result::Continue;
+            // If cache load failed, evict the entry
+            if (!*successOut)
+            {
+                ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
+                                   "Failed to load program binary from cache.");
+                remove(*hashOut);
+            }
 
-            // Cache load failed, evict
-            ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
-                               "Failed to load program binary from cache.");
-            remove(*hashOut);
-
-            return angle::Result::Incomplete;
+            return angle::Result::Continue;
     }
 
     UNREACHABLE();
-    return angle::Result::Incomplete;
+    return angle::Result::Continue;
 }
 
 bool MemoryProgramCache::getAt(size_t index,
@@ -162,7 +161,7 @@ angle::Result MemoryProgramCache::putProgram(const egl::BlobCache::Key &programH
     // If caching is effectively disabled, don't bother serializing the program.
     if (!mBlobCache.isCachingEnabled())
     {
-        return angle::Result::Incomplete;
+        return angle::Result::Continue;
     }
 
     angle::MemoryBuffer serializedProgram;
@@ -174,7 +173,7 @@ angle::Result MemoryProgramCache::putProgram(const egl::BlobCache::Key &programH
     {
         ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
                            "Error compressing binary data.");
-        return angle::Result::Incomplete;
+        return angle::Result::Continue;
     }
 
     {

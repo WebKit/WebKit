@@ -1832,7 +1832,7 @@ angle::Result Renderer9::applyShaders(const gl::Context *context, gl::PrimitiveM
     // per-program, checking the program serial guarantees we upload fresh
     // uniform data even if our shader pointers are the same.
     // https://code.google.com/p/angleproject/issues/detail?id=661
-    unsigned int programSerial = GetImplAs<ProgramD3D>(state.getProgram())->getSerial();
+    unsigned int programSerial = executableD3D->getSerial();
     if (programSerial != mAppliedProgramSerial)
     {
         executableD3D->dirtyAllUniforms();

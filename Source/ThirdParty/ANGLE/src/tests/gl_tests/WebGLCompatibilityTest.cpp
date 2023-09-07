@@ -6159,8 +6159,49 @@ void main() {
     EXPECT_FALSE(prg.valid());
 }
 
-// Test that a secondary fragment output is declared
-// when using EXT_blend_func_extended in WebGL 1.0 contexts.
+// Test that fragment outputs may be omitted when enabling
+// SRC1 blend functions with all color channels masked out.
+TEST_P(WebGLCompatibilityTest, EXTBlendFuncExtendedMissingOutputsWithAllChannelsMaskedOut)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_blend_func_extended"));
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_SRC1_COLOR_EXT);
+    glColorMask(false, false, false, false);
+
+    // Secondary output missing
+    {
+        constexpr char kFragColor[] = R"(
+            void main() {
+                gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+            })";
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFragColor);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5, 1.0, true);
+        EXPECT_GL_NO_ERROR();
+    }
+
+    // Primary output missing
+    {
+        constexpr char kSecondaryFragColor[] = R"(#extension GL_EXT_blend_func_extended : enable
+            void main() {
+                gl_SecondaryFragColorEXT = vec4(0.0, 1.0, 0.0, 1.0);
+            })";
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kSecondaryFragColor);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5, 1.0, true);
+        EXPECT_GL_NO_ERROR();
+    }
+
+    // Both outputs missing
+    {
+        constexpr char kNone[] = "void main() {}";
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kNone);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5, 1.0, true);
+        EXPECT_GL_NO_ERROR();
+    }
+}
+
+// Test that both fragment outputs must be statically used
+// when enabling SRC1 blend functions in WebGL 1.0 contexts.
 TEST_P(WebGLCompatibilityTest, EXTBlendFuncExtendedMissingOutputs)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_blend_func_extended"));
@@ -6200,8 +6241,8 @@ void main() {
     }
 }
 
-// Test that a secondary fragment output is declared
-// when using EXT_blend_func_extended in WebGL 1.0 contexts.
+// Test that both fragment outputs must be statically used
+// when enabling SRC1 blend functions in WebGL 1.0 contexts.
 TEST_P(WebGLCompatibilityTest, EXTBlendFuncExtendedMissingOutputsArrays)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_blend_func_extended"));
@@ -6241,8 +6282,8 @@ void main() {
     }
 }
 
-// Test that a secondary fragment output is declared
-// when using EXT_blend_func_extended in WebGL 2.0 contexts.
+// Test that both fragment outputs must be statically used
+// when enabling SRC1 blend functions in WebGL 2.0 contexts.
 TEST_P(WebGL2CompatibilityTest, EXTBlendFuncExtendedMissingOutputs)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_blend_func_extended"));
@@ -6287,8 +6328,8 @@ void main() {
     }
 }
 
-// Test that a secondary fragment output is declared
-// when using EXT_blend_func_extended in WebGL 2.0 contexts.
+// Test that both fragment outputs must be statically used
+// when enabling SRC1 blend functions in WebGL 2.0 contexts.
 TEST_P(WebGL2CompatibilityTest, EXTBlendFuncExtendedMissingOutputsArrays)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_blend_func_extended"));

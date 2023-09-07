@@ -138,6 +138,7 @@ TEST_P(CapturedTest, MultiFrame)
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CapturedTest);
-ANGLE_INSTANTIATE_TEST_ES3(CapturedTest);
+// Capture is only supported on the Vulkan backend
+ANGLE_INSTANTIATE_TEST(CapturedTest, ES3_VULKAN());
 
 }  // anonymous namespace

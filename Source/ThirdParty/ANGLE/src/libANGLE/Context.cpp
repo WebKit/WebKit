@@ -439,6 +439,7 @@ enum SubjectIndexes : angle::SubjectIndex
     kVertexArraySubjectIndex = kSamplerMaxSubjectIndex,
     kReadFramebufferSubjectIndex,
     kDrawFramebufferSubjectIndex,
+    kProgramSubjectIndex,
     kProgramPipelineSubjectIndex,
 };
 
@@ -650,6 +651,7 @@ Context::Context(egl::Display *display,
       mVertexArrayObserverBinding(this, kVertexArraySubjectIndex),
       mDrawFramebufferObserverBinding(this, kDrawFramebufferSubjectIndex),
       mReadFramebufferObserverBinding(this, kReadFramebufferSubjectIndex),
+      mProgramObserverBinding(this, kProgramSubjectIndex),
       mProgramPipelineObserverBinding(this, kProgramPipelineSubjectIndex),
       mFrameCapture(new angle::FrameCapture),
       mRefCount(0),
@@ -1133,12 +1135,6 @@ GLuint Context::createShaderProgramv(ShaderType type, GLsizei count, const GLcha
                     deleteProgram(programID);
                     return 0u;
                 }
-                if (onProgramLink(programObject) != angle::Result::Continue)
-                {
-                    deleteShader(shaderID);
-                    deleteProgram(programID);
-                    return 0u;
-                }
 
                 programObject->detachShader(this, shaderObject);
             }
@@ -1555,8 +1551,10 @@ void Context::bindImageTexture(GLuint unit,
 
 void Context::useProgram(ShaderProgramID program)
 {
-    ANGLE_CONTEXT_TRY(mState.setProgram(this, getProgramResolveLink(program)));
+    Program *programObject = getProgramResolveLink(program);
+    ANGLE_CONTEXT_TRY(mState.setProgram(this, programObject));
     mStateCache.onProgramExecutableChange(this);
+    mProgramObserverBinding.bind(programObject);
 }
 
 void Context::useProgramStages(ProgramPipelineID pipeline,
@@ -7240,7 +7238,6 @@ void Context::linkProgram(ShaderProgramID program)
     Program *programObject = getProgramNoResolveLink(program);
     ASSERT(programObject);
     ANGLE_CONTEXT_TRY(programObject->link(this));
-    ANGLE_CONTEXT_TRY(onProgramLink(programObject));
 }
 
 void Context::releaseShaderCompiler()
@@ -7501,7 +7498,7 @@ void Context::getProgramBinary(ShaderProgramID program,
     Program *programObject = getProgramResolveLink(program);
     ASSERT(programObject != nullptr);
 
-    ANGLE_CONTEXT_TRY(programObject->saveBinary(this, binaryFormat, binary, bufSize, length));
+    ANGLE_CONTEXT_TRY(programObject->getBinary(this, binaryFormat, binary, bufSize, length));
 }
 
 void Context::programBinary(ShaderProgramID program,
@@ -7512,8 +7509,7 @@ void Context::programBinary(ShaderProgramID program,
     Program *programObject = getProgramResolveLink(program);
     ASSERT(programObject != nullptr);
 
-    ANGLE_CONTEXT_TRY(programObject->loadBinary(this, binaryFormat, binary, length));
-    ANGLE_CONTEXT_TRY(onProgramLink(programObject));
+    ANGLE_CONTEXT_TRY(programObject->setBinary(this, binaryFormat, binary, length));
 }
 
 void Context::uniform1ui(UniformLocation location, GLuint v0)
@@ -9435,15 +9431,35 @@ void Context::onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMess
             }
             break;
 
-        case kProgramPipelineSubjectIndex:
+        case kProgramSubjectIndex:
             switch (message)
             {
-                case angle::SubjectMessage::SubjectChanged:
-                    ANGLE_CONTEXT_TRY(mState.onProgramPipelineExecutableChange(this));
+                case angle::SubjectMessage::ProgramUnlinked:
                     mStateCache.onProgramExecutableChange(this);
                     break;
                 case angle::SubjectMessage::ProgramRelinked:
-                    ANGLE_CONTEXT_TRY(mState.mProgramPipeline->link(this));
+                {
+                    Program *program = mState.getProgram();
+                    ASSERT(program->isLinked());
+                    ANGLE_CONTEXT_TRY(mState.installProgramExecutable(this));
+                    mStateCache.onProgramExecutableChange(this);
+                    break;
+                }
+                default:
+                    // Ignore all the other notifications
+                    break;
+            }
+            break;
+
+        case kProgramPipelineSubjectIndex:
+            switch (message)
+            {
+                case angle::SubjectMessage::ProgramUnlinked:
+                    mStateCache.onProgramExecutableChange(this);
+                    break;
+                case angle::SubjectMessage::ProgramRelinked:
+                    ANGLE_CONTEXT_TRY(mState.installProgramPipelineExecutable(this));
+                    mStateCache.onProgramExecutableChange(this);
                     break;
                 default:
                     UNREACHABLE();
@@ -9492,29 +9508,6 @@ void Context::onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMess
             }
             break;
     }
-}
-
-angle::Result Context::onProgramLink(Program *programObject)
-{
-    // Don't parallel link a program which is active in any GL contexts. With this assumption, we
-    // don't need to worry that:
-    //   1. Draw calls after link use the new executable code or the old one depending on the link
-    //      result.
-    //   2. When a backend program, e.g., ProgramD3D is linking, other backend classes like
-    //      StateManager11, Renderer11, etc., may have a chance to make unexpected calls to
-    //      ProgramD3D.
-    if (programObject->isInUse())
-    {
-        programObject->resolveLink(this);
-        if (programObject->isLinked())
-        {
-            ANGLE_TRY(mState.onProgramExecutableChange(this, programObject));
-            programObject->onStateChange(angle::SubjectMessage::ProgramRelinked);
-        }
-        mStateCache.onProgramExecutableChange(this);
-    }
-
-    return angle::Result::Continue;
 }
 
 egl::Error Context::setDefaultFramebuffer(egl::Surface *drawSurface, egl::Surface *readSurface)
@@ -10534,9 +10527,16 @@ void StateCache::updateActiveImageUnitIndices(Context *context)
 
 void StateCache::updateCanDraw(Context *context)
 {
+    // Can draw if:
+    //
+    // - Is GLES1: GLES1 always creates programs as needed
+    // - There is an installed executable with a vertex shader
+    // - A program pipeline is to be used: Program pipelines don't have a specific link function, so
+    //   the pipeline might just be waiting to be linked at draw time (in which case there won't
+    //   necessarily be an executable installed yet).
     mCachedCanDraw =
-        (context->isGLES1() || (context->getState().getProgramExecutable() &&
-                                context->getState().getProgramExecutable()->hasVertexShader()));
+        context->isGLES1() || (context->getState().getProgramExecutable() &&
+                               context->getState().getProgramExecutable()->hasVertexShader());
 }
 
 bool StateCache::isCurrentContext(const Context *context,

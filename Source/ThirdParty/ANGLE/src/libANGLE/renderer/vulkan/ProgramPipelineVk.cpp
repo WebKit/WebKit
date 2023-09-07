@@ -53,15 +53,16 @@ angle::Result ProgramPipelineVk::link(const gl::Context *glContext,
     {
         for (const gl::ShaderType shaderType : glExecutable.getLinkedShaderStages())
         {
-            const gl::Program *glProgram = mState.getShaderProgram(shaderType);
-            if (glProgram && gl::ShaderTypeSupportsTransformFeedback(shaderType))
+            const gl::SharedProgramExecutable &glShaderExecutable =
+                mState.getShaderProgramExecutable(shaderType);
+            if (glShaderExecutable && gl::ShaderTypeSupportsTransformFeedback(shaderType))
             {
                 const bool isTransformFeedbackStage =
                     shaderType == linkedTransformFeedbackStage &&
-                    !glProgram->getState().getLinkedTransformFeedbackVaryings().empty();
+                    !glShaderExecutable->getLinkedTransformFeedbackVaryings().empty();
 
                 SpvAssignTransformFeedbackLocations(
-                    shaderType, glProgram->getExecutable(), isTransformFeedbackStage,
+                    shaderType, *glShaderExecutable.get(), isTransformFeedbackStage,
                     &spvProgramInterfaceInfo, &executableVk->mVariableInfoMap);
             }
         }
@@ -74,9 +75,9 @@ angle::Result ProgramPipelineVk::link(const gl::Context *glContext,
 
     for (const gl::ShaderType shaderType : glExecutable.getLinkedShaderStages())
     {
-        const gl::Program *program               = mState.getShaderProgram(shaderType);
-        ProgramVk *programVk                     = vk::GetImpl(program);
-        ProgramExecutableVk *programExecutableVk = programVk->getExecutable();
+        const gl::SharedProgramExecutable &glShaderExecutable =
+            mState.getShaderProgramExecutable(shaderType);
+        ProgramExecutableVk *programExecutableVk = vk::GetImpl(glShaderExecutable.get());
         executableVk->mDefaultUniformBlocks[shaderType] =
             programExecutableVk->getSharedDefaultUniformBlock(shaderType);
 

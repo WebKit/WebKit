@@ -62,7 +62,6 @@ struct SamplerBinding
     uint16_t textureUnitsStartIndex;
     uint16_t textureUnitsCount;
 };
-static_assert(std::is_trivially_copyable<SamplerBinding>(), "must be memcpy-able");
 ANGLE_DISABLE_STRUCT_PADDING_WARNINGS
 
 struct ImageBinding
@@ -144,7 +143,6 @@ struct ProgramInput
 
         uint32_t id;
     } basicDataTypeStruct;
-    static_assert(std::is_trivially_copyable<PODStruct>(), "must be memcpy-able");
 };
 ANGLE_DISABLE_STRUCT_PADDING_WARNINGS
 
@@ -197,6 +195,9 @@ struct TransformFeedbackVarying : public sh::ShaderVariable
 
 class ProgramState;
 class ProgramPipelineState;
+
+class ProgramExecutable;
+using SharedProgramExecutable = std::shared_ptr<ProgramExecutable>;
 
 class ProgramExecutable final : public angle::Subject
 {
@@ -289,7 +290,7 @@ class ProgramExecutable final : public angle::Subject
     void hasSamplerTypeConflict(size_t textureUnit);
     void hasSamplerFormatConflict(size_t textureUnit);
 
-    void updateActiveSamplers(const ProgramState &programState);
+    void updateActiveSamplers(const ProgramExecutable &executable);
 
     bool hasDefaultUniforms() const { return !getDefaultUniformRange().empty(); }
     bool hasTextures() const { return !getSamplerBindings().empty(); }
@@ -365,6 +366,16 @@ class ProgramExecutable final : public angle::Subject
     {
         ASSERT(blockIndex < mShaderStorageBlocks.size());
         return mShaderStorageBlocks[blockIndex].binding;
+    }
+    const InterfaceBlock &getUniformBlockByIndex(GLuint index) const
+    {
+        ASSERT(index < static_cast<GLuint>(mUniformBlocks.size()));
+        return mUniformBlocks[index];
+    }
+    const InterfaceBlock &getShaderStorageBlockByIndex(GLuint index) const
+    {
+        ASSERT(index < static_cast<GLuint>(mShaderStorageBlocks.size()));
+        return mShaderStorageBlocks[index];
     }
     const std::vector<GLsizei> &getTransformFeedbackStrides() const
     {
@@ -501,13 +512,13 @@ class ProgramExecutable final : public angle::Subject
                       GLuint *combinedImageUniformsCount,
                       std::vector<UnusedUniform> *unusedUniforms);
 
-    void copyInputsFromProgram(const ProgramState &programState);
-    void copyShaderBuffersFromProgram(const ProgramState &programState, ShaderType shaderType);
+    void copyInputsFromProgram(const ProgramExecutable &executable);
+    void copyShaderBuffersFromProgram(const ProgramExecutable &executable, ShaderType shaderType);
     void clearSamplerBindings();
-    void copySamplerBindingsFromProgram(const ProgramState &programState);
-    void copyImageBindingsFromProgram(const ProgramState &programState);
-    void copyOutputsFromProgram(const ProgramState &programState);
-    void copyUniformsFromProgramMap(const ShaderMap<Program *> &programs);
+    void copySamplerBindingsFromProgram(const ProgramExecutable &executable);
+    void copyImageBindingsFromProgram(const ProgramExecutable &executable);
+    void copyOutputsFromProgram(const ProgramExecutable &executable);
+    void copyUniformsFromProgramMap(const ShaderMap<SharedProgramExecutable> &executables);
 
     GLuint getAttributeLocation(const std::string &name) const;
 
@@ -531,22 +542,16 @@ class ProgramExecutable final : public angle::Subject
                             const Version &clientVersion,
                             bool webglCompatibility,
                             const ProgramMergedVaryings &mergedVaryings,
-                            const std::vector<std::string> &transformFeedbackVaryingNames,
                             const LinkingVariables &linkingVariables,
                             bool isSeparable,
                             ProgramVaryingPacking *varyingPacking);
 
-    bool linkValidateTransformFeedback(
-        const Caps &caps,
-        const Version &clientVersion,
-        const ProgramMergedVaryings &varyings,
-        ShaderType stage,
-        const std::vector<std::string> &transformFeedbackVaryingNames);
+    bool linkValidateTransformFeedback(const Caps &caps,
+                                       const Version &clientVersion,
+                                       const ProgramMergedVaryings &varyings,
+                                       ShaderType stage);
 
-    void gatherTransformFeedbackVaryings(
-        const ProgramMergedVaryings &varyings,
-        ShaderType stage,
-        const std::vector<std::string> &transformFeedbackVaryingNames);
+    void gatherTransformFeedbackVaryings(const ProgramMergedVaryings &varyings, ShaderType stage);
 
     void updateTransformFeedbackStrides();
 
@@ -572,70 +577,75 @@ class ProgramExecutable final : public angle::Subject
     // convenience as numerous functions reference it.
     InfoLog *mInfoLog;
 
-    // This struct must only contains basic data types so that entire struct can be memcpy.
+    ANGLE_ENABLE_STRUCT_PADDING_WARNINGS
     struct PODStruct
     {
-        ShaderBitSet linkedShaderStages;
+        // 8 bytes each
         angle::BitSet<MAX_VERTEX_ATTRIBS> activeAttribLocationsMask;
-        unsigned int maxActiveAttribLocation;
         ComponentTypeMask attributesTypeMask;
         // attributesMask is identical to mActiveAttribLocationsMask with built-in attributes
         // removed.
         AttributesMask attributesMask;
-        DrawBufferMask activeOutputVariablesMask;
-        DrawBufferMask activeSecondaryOutputVariablesMask;
         ComponentTypeMask drawBufferTypeMask;
 
-        RangeUI defaultUniformRange;
-        RangeUI samplerUniformRange;
-        RangeUI imageUniformRange;
-        RangeUI atomicCounterUniformRange;
-        RangeUI fragmentInoutRange;
+        // 4 bytes each
+        uint32_t maxActiveAttribLocation;
+        // KHR_blend_equation_advanced supported equation list
+        BlendEquationBitSet advancedBlendEquations;
 
+        // 1 byte each
+        ShaderBitSet linkedShaderStages;
+        DrawBufferMask activeOutputVariablesMask;
+        DrawBufferMask activeSecondaryOutputVariablesMask;
         bool hasClipDistance;
         bool hasDiscard;
         bool hasYUVOutput;
         bool enablesPerSampleShading;
         bool canDrawWith;
 
-        // KHR_blend_equation_advanced supported equation list
-        BlendEquationBitSet advancedBlendEquations;
+        // 8 bytes each
+        RangeUI defaultUniformRange;
+        RangeUI samplerUniformRange;
+        RangeUI imageUniformRange;
+        RangeUI atomicCounterUniformRange;
+        RangeUI fragmentInoutRange;
 
         // GL_EXT_geometry_shader.
         PrimitiveMode geometryShaderInputPrimitiveType;
         PrimitiveMode geometryShaderOutputPrimitiveType;
-        int geometryShaderInvocations;
-        int geometryShaderMaxVertices;
+        uint8_t pad0, pad1;
+        int32_t geometryShaderInvocations;
+        int32_t geometryShaderMaxVertices;
+        GLenum transformFeedbackBufferMode;
 
-        // GL_OVR_multiview / GL_OVR_multiview2
-        int numViews;
-
+        // 4 bytes each. GL_OVR_multiview / GL_OVR_multiview2
+        int32_t numViews;
         // GL_ANGLE_multi_draw
-        int drawIDLocation;
+        int32_t drawIDLocation;
 
         // GL_ANGLE_base_vertex_base_instance_shader_builtin
-        int baseVertexLocation;
-        int baseInstanceLocation;
+        int32_t baseVertexLocation;
+        int32_t baseInstanceLocation;
 
         // GL_EXT_tessellation_shader
-        int tessControlShaderVertices;
+        int32_t tessControlShaderVertices;
         GLenum tessGenMode;
         GLenum tessGenSpacing;
         GLenum tessGenVertexOrder;
         GLenum tessGenPointMode;
 
-        GLenum transformFeedbackBufferMode;
-
-        // For faster iteration on the blocks currently being bound.
-        UniformBlockBindingMask activeUniformBlockBindings;
-
-        ShaderMap<int> linkedShaderVersions;
-
-        sh::WorkGroupSize computeShaderLocalSize;
-
+        // 4 bytes
         rx::SpecConstUsageBits specConstUsageBits;
+
+        // 8 bytes. For faster iteration on the blocks currently being bound.
+        UniformBlockBindingMask activeUniformBlockBindings;
+        // 24 bytes
+        ShaderMap<int> linkedShaderVersions;
+        // 12 bytes
+        sh::WorkGroupSize computeShaderLocalSize;
+        uint8_t pads[4];
     } mPODStruct;
-    static_assert(std::is_trivially_copyable<PODStruct>(), "must be memcpy-able");
+    ANGLE_DISABLE_STRUCT_PADDING_WARNINGS
 
     // Cached mask of active samplers and sampler types.
     ActiveTextureMask mActiveSamplersMask;
@@ -658,6 +668,15 @@ class ProgramExecutable final : public angle::Subject
     // Vertex attributes, Fragment input varyings, etc.
     std::vector<ProgramInput> mProgramInputs;
     std::vector<TransformFeedbackVarying> mLinkedTransformFeedbackVaryings;
+    // Duplicate of ProgramState::mTransformFeedbackVaryingNames.  This is cached here because the
+    // xfb names may change, relink may fail, yet program pipeline link should be able to function
+    // with the last installed executable.  In truth, program pipeline link should have been able to
+    // hoist transform feedback varyings directly from the executable, among most other things, but
+    // that is currently not done.
+    //
+    // This array is not serialized, it's already done by the program, and will be duplicated during
+    // deserialization.
+    std::vector<std::string> mTransformFeedbackVaryingNames;
     // The size of the data written to each transform feedback buffer per vertex.
     std::vector<GLsizei> mTransformFeedbackStrides;
     // Uniforms are sorted in order:
@@ -700,6 +719,11 @@ class ProgramExecutable final : public angle::Subject
     // Cache for sampler validation
     mutable Optional<bool> mCachedValidateSamplersResult;
 };
+
+void InstallExecutable(const Context *context,
+                       const SharedProgramExecutable &toInstall,
+                       SharedProgramExecutable *executable);
+void UninstallExecutable(const Context *context, SharedProgramExecutable *executable);
 }  // namespace gl
 
 #endif  // LIBANGLE_PROGRAMEXECUTABLE_H_

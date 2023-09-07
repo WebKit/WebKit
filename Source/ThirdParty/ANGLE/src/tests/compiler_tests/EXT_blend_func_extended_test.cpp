@@ -59,6 +59,15 @@ const char ESSL100_ColorAndDataWriteFailureShader3[] =
     "    gl_FragData[gl_MaxDrawBuffers] = vec4(0.1);\n"
     "}\n";
 
+// Dynamic indexing of SecondaryFragData is not allowed in WebGL 2.0.
+const char ESSL100_IndexSecondaryFragDataWithNonConstantShader[] =
+    "precision mediump float;\n"
+    "void main() {\n"
+    "    for (int i = 0; i < 2; ++i) {\n"
+    "        gl_SecondaryFragDataEXT[true ? 0 : i] = vec4(0.0);\n"
+    "    }\n"
+    "}\n";
+
 // In GLSL version 300 es, the gl_MaxDualSourceDrawBuffersEXT is available.
 const char ESSL300_MaxDualSourceAccessShader[] =
     "precision mediump float;\n"
@@ -267,6 +276,13 @@ INSTANTIATE_TEST_SUITE_P(IncorrectESSL100Shaders,
                                  Values(ESSL100_ColorAndDataWriteFailureShader1,
                                         ESSL100_ColorAndDataWriteFailureShader2,
                                         ESSL100_ColorAndDataWriteFailureShader3)));
+
+// Correct #version 100 shaders that are incorrect in WebGL 2.0.
+INSTANTIATE_TEST_SUITE_P(IncorrectESSL100ShadersWebGL2,
+                         EXTBlendFuncExtendedCompileFailureTest,
+                         Combine(Values(SH_WEBGL2_SPEC),
+                                 Values(sh::ESSLVersion100),
+                                 Values(ESSL100_IndexSecondaryFragDataWithNonConstantShader)));
 
 // Correct #version 300 es shaders fail in GLES2 context, regardless of version string.
 INSTANTIATE_TEST_SUITE_P(CorrectESSL300Shaders,

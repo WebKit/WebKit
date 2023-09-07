@@ -835,8 +835,6 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     VertexArray *checkVertexArrayAllocation(VertexArrayID vertexArrayHandle);
     TransformFeedback *checkTransformFeedbackAllocation(TransformFeedbackID transformFeedback);
 
-    angle::Result onProgramLink(Program *programObject);
-
     void detachBuffer(Buffer *buffer);
     void detachTexture(TextureID texture);
     void detachFramebuffer(FramebufferID framebuffer);
@@ -950,6 +948,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     angle::ObserverBinding mVertexArrayObserverBinding;
     angle::ObserverBinding mDrawFramebufferObserverBinding;
     angle::ObserverBinding mReadFramebufferObserverBinding;
+    angle::ObserverBinding mProgramObserverBinding;
     angle::ObserverBinding mProgramPipelineObserverBinding;
     std::vector<angle::ObserverBinding> mUniformBufferObserverBindings;
     std::vector<angle::ObserverBinding> mAtomicCounterBufferObserverBindings;

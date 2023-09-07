@@ -595,7 +595,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
     // Cached back-end objects
     FramebufferMtl *mDrawFramebuffer  = nullptr;
     VertexArrayMtl *mVertexArray      = nullptr;
-    ProgramMtl *mProgram              = nullptr;
     ProgramExecutableMtl *mExecutable = nullptr;
     QueryMtl *mOcclusionQuery         = nullptr;
     mtl::TextureRef mWorkTexture;

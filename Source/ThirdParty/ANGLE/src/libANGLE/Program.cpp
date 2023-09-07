@@ -32,6 +32,7 @@
 #include "libANGLE/features.h"
 #include "libANGLE/histogram_macros.h"
 #include "libANGLE/queryconversions.h"
+#include "libANGLE/renderer/ContextImpl.h"
 #include "libANGLE/renderer/GLImplFactory.h"
 #include "libANGLE/renderer/ProgramImpl.h"
 #include "platform/PlatformMethods.h"
@@ -928,11 +929,6 @@ GLuint ProgramState::getSamplerIndexFromUniformIndex(GLuint uniformIndex) const
     return uniformIndex - mExecutable->mPODStruct.samplerUniformRange.low();
 }
 
-GLuint ProgramState::getUniformIndexFromSamplerIndex(GLuint samplerIndex) const
-{
-    return mExecutable->getUniformIndexFromSamplerIndex(samplerIndex);
-}
-
 bool ProgramState::isImageUniformIndex(GLuint index) const
 {
     return mExecutable->mPODStruct.imageUniformRange.contains(index);
@@ -1028,7 +1024,7 @@ void Program::onDestroy(const Context *context)
     }
 
     mProgram->destroy(context);
-    mState.mExecutable->destroy(context);
+    UninstallExecutable(context, &mState.mExecutable);
 
     ASSERT(!mState.hasAnyAttachedShader());
     SafeDelete(mProgram);
@@ -1037,7 +1033,6 @@ void Program::onDestroy(const Context *context)
 }
 ShaderProgramID Program::id() const
 {
-    ASSERT(!mLinkingState);
     return mHandle;
 }
 
@@ -1098,7 +1093,6 @@ int Program::getAttachedShadersCount() const
 
 Shader *Program::getAttachedShader(ShaderType shaderType) const
 {
-    ASSERT(!mLinkingState);
     return mAttachedShaders[shaderType];
 }
 
@@ -1126,8 +1120,33 @@ void Program::bindFragmentOutputIndex(GLuint index, const char *name)
     mState.mFragmentOutputIndexes.bindLocation(index, name);
 }
 
+void Program::makeNewExecutable(const Context *context)
+{
+    // Unlink the program, but do not clear the validation-related caching yet, since we can still
+    // use the previously linked program if linking the shaders fails.
+    mLinked = false;
+
+    mLinkingState = std::make_unique<LinkingState>();
+
+    // By default, set the link event as failing.  If link succeeds, it will be replaced by the
+    // appropriate event.
+    mLinkingState->linkEvent = std::make_unique<rx::LinkEventDone>(angle::Result::Stop);
+
+    InstallExecutable(
+        context,
+        std::make_shared<ProgramExecutable>(context->getImplementation(), &mState.mInfoLog),
+        &mState.mExecutable);
+    onStateChange(angle::SubjectMessage::ProgramUnlinked);
+}
+
 angle::Result Program::link(const Context *context)
 {
+    // Create a new executable to hold the result of the link.  The previous executable may still be
+    // referenced by the contexts the program is current on, and any program pipelines it may be
+    // used in.  Once link succeeds, the users of the program are notified to update thier
+    // executables.
+    makeNewExecutable(context);
+
     // Make sure no compile jobs are pending.
     //
     // For every attached shader, get the compiled state.  This is done at link time (instead of
@@ -1157,9 +1176,7 @@ angle::Result Program::link(const Context *context)
         dumpProgramInfo(context);
     }
 
-    angle::Result result = linkImpl(context);
-
-    return result;
+    return linkImpl(context);
 }
 
 // The attached shaders are checked for linking errors by matching up their variables.
@@ -1167,30 +1184,22 @@ angle::Result Program::link(const Context *context)
 // The code gets compiled into binaries.
 angle::Result Program::linkImpl(const Context *context)
 {
-    ASSERT(!mLinkingState);
-    // Don't make any local variables pointing to anything within the ProgramExecutable, since
-    // unlink() resets the ProgramExecutable making any references/pointers invalid.
     auto *platform   = ANGLEPlatformCurrent();
     double startTime = platform->currentTime(platform);
 
-    // Make sure the executable state is in sync with the program.  Only the transform feedback
-    // buffer mode is duplicated in the executable as is the only link-input that is also needed at
-    // draw time.
+    // Make sure the executable state is in sync with the program.
+    //
+    // The transform feedback buffer mode is duplicated in the executable as is the only link-input
+    // that is also needed at draw time.
+    //
+    // The transform feedback varying names are duplicated because the program pipeline link is not
+    // currently able to use the link result of the program directly (and redoes the link, using
+    // these names).
     mState.mExecutable->mPODStruct.transformFeedbackBufferMode =
         mState.mTransformFeedbackBufferMode;
-
-    // Unlink the program, but do not clear the validation-related caching yet, since we can still
-    // use the previously linked program if linking the shaders fails.
-    mLinked = false;
+    mState.mExecutable->mTransformFeedbackVaryingNames = mState.mTransformFeedbackVaryingNames;
 
     mState.mInfoLog.reset();
-
-    // Validate we have properly attached shaders before checking the cache.
-    if (!linkValidateShaders(context))
-    {
-        return angle::Result::Continue;
-    }
-    linkShaders();
 
     egl::BlobCache::Key programHash = {0};
     MemoryProgramCache *cache       = context->getMemoryProgramCache();
@@ -1199,17 +1208,16 @@ angle::Result Program::linkImpl(const Context *context)
     if (cache && !isSeparable())
     {
         std::lock_guard<std::mutex> cacheLock(context->getProgramCacheMutex());
-        angle::Result cacheResult = cache->getProgram(context, this, &programHash);
-        ANGLE_TRY(cacheResult);
+        bool success = false;
+        ANGLE_TRY(cache->getProgram(context, this, &programHash, &success));
 
-        // Check explicitly for Continue, Incomplete means a cache miss
-        if (cacheResult == angle::Result::Continue)
+        if (success)
         {
             std::scoped_lock lock(mHistogramMutex);
             // Succeeded in loading the binaries in the front-end, back end may still be loading
             // asynchronously
             double delta = platform->currentTime(platform) - startTime;
-            int us       = static_cast<int>(delta * 1000000.0);
+            int us       = static_cast<int>(delta * 1000'000.0);
             ANGLE_HISTOGRAM_COUNTS("GPU.ANGLE.ProgramCache.ProgramCacheHitTimeUS", us);
             return angle::Result::Continue;
         }
@@ -1223,13 +1231,19 @@ angle::Result Program::linkImpl(const Context *context)
     // Cache load failed, fall through to normal linking.
     unlink();
 
-    // Re-link shaders after the unlink call.
+    // Validate we have properly attached shaders after checking the cache.  Since the input to the
+    // shaders is part of the cache key, if there was a cache hit, the shaders would have linked
+    // correctly.
+    if (!linkValidateShaders(context))
+    {
+        return angle::Result::Continue;
+    }
+
     linkShaders();
 
-    std::unique_ptr<LinkingState> linkingState(new LinkingState());
     ProgramMergedVaryings mergedVaryings;
-    LinkingVariables &linkingVariables = linkingState->linkingVariables;
-    ProgramLinkedResources &resources  = linkingState->resources;
+    LinkingVariables &linkingVariables = mLinkingState->linkingVariables;
+    ProgramLinkedResources &resources  = mLinkingState->resources;
 
     linkingVariables.initForProgram(mState);
     resources.init(&mState.mExecutable->mUniformBlocks, &mState.mExecutable->mUniforms,
@@ -1237,7 +1251,6 @@ angle::Result Program::linkImpl(const Context *context)
                    &mState.mExecutable->mShaderStorageBlocks, &mState.mExecutable->mBufferVariables,
                    &mState.mExecutable->mAtomicCounterBuffers);
 
-    // TODO: Fix incomplete linking. http://anglebug.com/6358
     updateLinkedShaderStages();
 
     InitUniformBlockLinker(mState, &resources.uniformBlockLinker);
@@ -1335,10 +1348,9 @@ angle::Result Program::linkImpl(const Context *context)
         }
 
         mergedVaryings = GetMergedVaryingsFromLinkingVariables(linkingVariables);
-        if (!mState.mExecutable->linkMergedVaryings(
-                caps, limitations, clientVersion, isWebGL, mergedVaryings,
-                mState.mTransformFeedbackVaryingNames, linkingVariables, isSeparable(),
-                &resources.varyingPacking))
+        if (!mState.mExecutable->linkMergedVaryings(caps, limitations, clientVersion, isWebGL,
+                                                    mergedVaryings, linkingVariables, isSeparable(),
+                                                    &resources.varyingPacking))
         {
             return angle::Result::Continue;
         }
@@ -1346,7 +1358,6 @@ angle::Result Program::linkImpl(const Context *context)
 
     mState.mExecutable->saveLinkedStateInfo(mState);
 
-    mLinkingState                    = std::move(linkingState);
     mLinkingState->linkingFromBinary = false;
     mLinkingState->programHash       = programHash;
     mLinkingState->linkEvent = mProgram->link(context, resources, std::move(mergedVaryings));
@@ -1360,8 +1371,7 @@ angle::Result Program::linkImpl(const Context *context)
 
 bool Program::isLinking() const
 {
-    return (mLinkingState.get() && mLinkingState->linkEvent &&
-            mLinkingState->linkEvent->isLinking());
+    return mLinkingState.get() && mLinkingState->linkEvent && mLinkingState->linkEvent->isLinking();
 }
 
 void Program::resolveLinkImpl(const Context *context)
@@ -1374,6 +1384,18 @@ void Program::resolveLinkImpl(const Context *context)
     std::unique_ptr<LinkingState> linkingState = std::move(mLinkingState);
     if (!mLinked)
     {
+        // If the link fails, the spec allows program queries to either return empty results (all
+        // zeros) or whatever parts of the link happened to have been done before the failure:
+        //
+        // > Implementations may return information on variables and interface blocks that would
+        // > have been active had the program been linked successfully.  In cases where the link
+        // > failed because the program required too many resources, these commands may help
+        // > applications determine why limits were exceeded. However, the information returned in
+        // > this case is implementation-dependent and may be incomplete.
+        //
+        // The above means that it's ok for ANGLE to reset the executable here, but it *may* be
+        // helpful to applications if it doesn't.  We do reset it however, the info log should
+        // already have enough debug information for the application.
         mState.mExecutable->reset();
         return;
     }
@@ -1389,6 +1411,11 @@ void Program::resolveLinkImpl(const Context *context)
 
     // Must be called after markUnusedUniformLocations.
     postResolveLink(context);
+
+    // Notify observers that a new linked executable is available.  If this program is current on a
+    // context, the executable is reinstalled.  If it is attached to a PPO, it is installed there
+    // and the PPO is marked as needing to be linked again.
+    onStateChange(angle::SubjectMessage::ProgramRelinked);
 
     if (linkingState->linkingFromBinary)
     {
@@ -1430,7 +1457,7 @@ void Program::updateLinkedShaderStages()
 void ProgramState::updateActiveSamplers()
 {
     mExecutable->mActiveSamplerRefCounts.fill(0);
-    mExecutable->updateActiveSamplers(*this);
+    mExecutable->updateActiveSamplers(*mExecutable);
 }
 
 void ProgramState::updateProgramInterfaceInputs()
@@ -1499,32 +1526,35 @@ void ProgramState::updateProgramInterfaceOutputs()
 // Returns the program object to an unlinked state, before re-linking, or at destruction
 void Program::unlink()
 {
-    mState.mExecutable->reset();
+    // There is always a new executable created on link, so the executable is already in a clean
+    // state.
 
     mState.mCachedBaseVertex   = 0;
     mState.mCachedBaseInstance = 0;
 
     mValidated = false;
+}
 
-    mLinked = false;
+angle::Result Program::setBinary(const Context *context,
+                                 GLenum binaryFormat,
+                                 const void *binary,
+                                 GLsizei length)
+{
+    ASSERT(binaryFormat == GL_PROGRAM_BINARY_ANGLE);
+
+    makeNewExecutable(context);
+
+    bool success = false;
+    return loadBinary(context, binary, length, &success);
 }
 
 angle::Result Program::loadBinary(const Context *context,
-                                  GLenum binaryFormat,
                                   const void *binary,
-                                  GLsizei length)
+                                  GLsizei length,
+                                  bool *successOut)
 {
-    mState.mInfoLog.reset();
-
-    ASSERT(!mLinkingState);
+    ASSERT(mLinkingState);
     unlink();
-
-    ASSERT(binaryFormat == GL_PROGRAM_BINARY_ANGLE);
-    if (binaryFormat != GL_PROGRAM_BINARY_ANGLE)
-    {
-        mState.mInfoLog << "Invalid program binary format.";
-        return angle::Result::Incomplete;
-    }
 
     BinaryInputStream stream(binary, length);
     ANGLE_TRY(deserialize(context, stream));
@@ -1537,46 +1567,19 @@ angle::Result Program::loadBinary(const Context *context,
         mDirtyBits.set(uniformBlockIndex);
     }
 
-    // The rx::LinkEvent returned from ProgramImpl::load is a base class with multiple
-    // implementations. In some implementations, a background thread is used to compile the
-    // shaders. Any calls to the LinkEvent object, therefore, are racy and may interfere with
-    // the operation.
+    mLinkingState->linkingFromBinary = true;
+    mLinkingState->linkEvent         = mProgram->load(context, &stream);
 
-    // We do not want to call LinkEvent::wait because that will cause the background thread
-    // to finish its task before returning, thus defeating the purpose of background compilation.
-    // We need to defer waiting on background compilation until the very last minute when we
-    // absolutely need the results, such as when the developer binds the program or queries
-    // for the completion status.
+    *successOut = true;
 
-    // If load returns nullptr, we know for sure that the binary is not compatible with the backend.
-    // The loaded binary could have been read from the on-disk shader cache and be corrupted or
-    // serialized with different revision and subsystem id than the currently loaded backend.
-    // Returning 'Incomplete' to the caller results in link happening using the original shader
-    // sources.
-    angle::Result result;
-    std::unique_ptr<LinkingState> linkingState;
-    std::unique_ptr<rx::LinkEvent> linkEvent = mProgram->load(context, &stream);
-    if (linkEvent)
-    {
-        linkingState                    = std::make_unique<LinkingState>();
-        linkingState->linkingFromBinary = true;
-        linkingState->linkEvent         = std::move(linkEvent);
-        result                          = angle::Result::Continue;
-    }
-    else
-    {
-        result = angle::Result::Incomplete;
-    }
-    mLinkingState = std::move(linkingState);
-
-    return result;
+    return angle::Result::Continue;
 }
 
-angle::Result Program::saveBinary(Context *context,
-                                  GLenum *binaryFormat,
-                                  void *binary,
-                                  GLsizei bufSize,
-                                  GLsizei *length) const
+angle::Result Program::getBinary(Context *context,
+                                 GLenum *binaryFormat,
+                                 void *binary,
+                                 GLsizei bufSize,
+                                 GLsizei *length) const
 {
     ASSERT(!mLinkingState);
     if (binaryFormat)
@@ -1631,7 +1634,7 @@ GLint Program::getBinaryLength(Context *context) const
 
     GLint length;
     angle::Result result =
-        saveBinary(context, nullptr, nullptr, std::numeric_limits<GLint>::max(), &length);
+        getBinary(context, nullptr, nullptr, std::numeric_limits<GLint>::max(), &length);
     if (result != angle::Result::Continue)
     {
         return 0;
@@ -1687,7 +1690,6 @@ unsigned int Program::getRefCount() const
 
 void Program::getAttachedShaders(GLsizei maxCount, GLsizei *count, ShaderProgramID *shaders) const
 {
-    ASSERT(!mLinkingState);
     int total = 0;
 
     for (const Shader *shader : mAttachedShaders)
@@ -2612,15 +2614,13 @@ GLuint Program::getShaderStorageBlockIndex(const std::string &name) const
 const InterfaceBlock &Program::getUniformBlockByIndex(GLuint index) const
 {
     ASSERT(!mLinkingState);
-    ASSERT(index < static_cast<GLuint>(mState.mExecutable->getActiveUniformBlockCount()));
-    return mState.mExecutable->getUniformBlocks()[index];
+    return mState.mExecutable->getUniformBlockByIndex(index);
 }
 
 const InterfaceBlock &Program::getShaderStorageBlockByIndex(GLuint index) const
 {
     ASSERT(!mLinkingState);
-    ASSERT(index < static_cast<GLuint>(mState.mExecutable->getActiveShaderStorageBlockCount()));
-    return mState.mExecutable->getShaderStorageBlocks()[index];
+    return mState.mExecutable->getShaderStorageBlockByIndex(index);
 }
 
 void Program::bindUniformBlock(UniformBlockIndex uniformBlockIndex, GLuint uniformBlockBinding)
@@ -3573,6 +3573,12 @@ angle::Result Program::serialize(const Context *context, angle::MemoryBuffer *bi
     stream.writeBool(mState.mSeparable);
     stream.writeInt(mState.mTransformFeedbackBufferMode);
 
+    stream.writeInt(mState.mTransformFeedbackVaryingNames.size());
+    for (const std::string &name : mState.mTransformFeedbackVaryingNames)
+    {
+        stream.writeString(name);
+    }
+
     mState.mExecutable->save(mState.mSeparable, &stream);
 
     // Warn the app layer if saving a binary with unsupported transform feedback.
@@ -3670,6 +3676,12 @@ angle::Result Program::deserialize(const Context *context, BinaryInputStream &st
     mState.mSeparable                   = stream.readBool();
     mState.mTransformFeedbackBufferMode = stream.readInt<GLenum>();
 
+    mState.mTransformFeedbackVaryingNames.resize(stream.readInt<size_t>());
+    for (std::string &name : mState.mTransformFeedbackVaryingNames)
+    {
+        name = stream.readString();
+    }
+
     mState.mExecutable->load(mState.mSeparable, &stream);
 
     static_assert(static_cast<unsigned long>(ShaderType::EnumCount) <= sizeof(unsigned long) * 8,
@@ -3686,6 +3698,7 @@ angle::Result Program::deserialize(const Context *context, BinaryInputStream &st
     if (!mState.mAttachedShaders[ShaderType::Compute])
     {
         mState.mExecutable->updateTransformFeedbackStrides();
+        mState.mExecutable->mTransformFeedbackVaryingNames = mState.mTransformFeedbackVaryingNames;
     }
 
     if (context->getShareGroup()->getFrameCaptureShared()->enabled())

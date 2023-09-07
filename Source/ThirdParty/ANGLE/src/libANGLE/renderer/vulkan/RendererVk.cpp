@@ -258,7 +258,6 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-VkVertexInputBindingDivisorDescriptionEXT-divisor-01870",
     // https://anglebug.com/8237
     "VUID-VkGraphicsPipelineCreateInfo-topology-08773",
-    "VUID-VkGraphicsPipelineCreateInfo-topology-08890",
     // https://anglebug.com/8242
     "VUID-vkCmdDraw-None-08608",
     "VUID-vkCmdDrawIndexed-None-08608",
