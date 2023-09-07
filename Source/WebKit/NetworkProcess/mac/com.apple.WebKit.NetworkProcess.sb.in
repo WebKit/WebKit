@@ -851,3 +851,7 @@
     (global-name "com.apple.WebPrivacy.Service"))
 
 #endif
+
+#if ENABLE(LLVM_PROFILE_GENERATION)
+(allow file-write* (subpath "/private/tmp/WebKitPGO"))
+#endif

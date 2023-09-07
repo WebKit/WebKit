@@ -2410,3 +2410,7 @@
     (deny mach-task-special-port-get (with telemetry))
     (deny mach-task-special-port-set (with telemetry)))
 #endif
+
+#if ENABLE(LLVM_PROFILE_GENERATION)
+(allow file-write* (subpath "/private/tmp/WebKitPGO"))
+#endif

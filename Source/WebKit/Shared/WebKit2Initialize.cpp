@@ -29,7 +29,6 @@
 #include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/CommonAtomStrings.h>
 #include <WebCore/WebCoreJITOperations.h>
-#include <wtf/GenerateProfiles.h>
 #include <wtf/MainThread.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
