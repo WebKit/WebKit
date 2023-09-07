@@ -106,7 +106,7 @@ def parseChanges(command, commit_message):
 
 def message(source=None, sha=None):
     commit_message = []
-    command = ['perl', os.path.join(SCRIPTS, 'prepare-ChangeLog'), '--no-write', '--only-files', '--delimiters', '--git-index']
+    command = [{{ perl }}, os.path.join(SCRIPTS, 'prepare-ChangeLog'), '--no-write', '--only-files', '--delimiters', '--git-index']
 
     if sha:
         commit_message.append('Amend changes:')

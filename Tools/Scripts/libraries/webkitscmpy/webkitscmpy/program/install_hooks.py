@@ -23,6 +23,7 @@
 import os
 import re
 import sys
+import shutil
 
 from .command import Command
 from webkitbugspy import radar
@@ -181,6 +182,9 @@ class InstallHooks(Command):
 
         trailers_to_strip = ['Identifier'] + ([identifier_template.split(':', 1)[0]] if identifier_template else [])
         source_remotes = repository.source_remotes() or ['origin']
+        perl = 'perl'
+        if sys.version_info >= (3, 3):
+            perl = shutil.which('perl')
 
         installed_hooks = 0
         for hook in hook_names:
@@ -197,6 +201,7 @@ class InstallHooks(Command):
                 from jinja2 import Template
                 contents = Template(f.read()).render(
                     location=os.path.relpath(source_path, repository.root_path),
+                    perl=repr(perl),
                     python=os.path.basename(sys.executable),
                     prefer_radar=bool(radar.Tracker.radarclient()),
                     default_pre_push_mode="'{}'".format(getattr(args, 'mode', cls.MODES[0])),
