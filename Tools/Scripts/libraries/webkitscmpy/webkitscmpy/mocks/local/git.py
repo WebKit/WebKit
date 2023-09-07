@@ -722,7 +722,7 @@ nothing to commit, working tree clean
                 generator=lambda *args, **kwargs:
                     mocks.ProcessCompletion(
                         returncode=0,
-                        stdout='git-lfs/3.1.2 (???)\n',
+                        stdout='git-lfs/3.4.0 (???)\n',
                     ) if self.has_git_lfs else mocks.ProcessCompletion(
                         returncode=1,
                         stderr='usage: git [--version] [--help]...\n',

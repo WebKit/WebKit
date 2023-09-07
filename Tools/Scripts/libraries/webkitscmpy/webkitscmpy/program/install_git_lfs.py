@@ -42,8 +42,8 @@ class InstallGitLFS(Command):
     help = "Install 'git lfs' on this machine"
 
     BASE_URL = 'https://github.com/git-lfs/git-lfs/releases/download'
-    VERSION = Version(3, 1, 2)
-    FILE = 'git-lfs-v{}.zip'.format(VERSION)
+    VERSION = Version(3, 4, 0)
+    FILE = 'git-lfs-v{}.{}.{}.zip'.format(VERSION[0], VERSION[1], VERSION[2])
 
     VERSION_RE = re.compile(r'^git-lfs/(?P<version>\d+\.\d+\.\d+) \(.*\)')
 
@@ -52,11 +52,11 @@ class InstallGitLFS(Command):
         _url = None
         from whichcraft import which
         if platform.system() == 'Darwin':
-            # x86_64 compiled version works better with VPN, if Rosetta is installed, prefer it even on Apple Silicon
-            if platform.machine() == 'arm64' and not which('rosetta'):
-                _url = '{url}/v{version}/git-lfs-darwin-arm64-v{version}.zip'.format(url=cls.BASE_URL, version=cls.VERSION)
+            version_str = '{}.{}.{}'.format(cls.VERSION[0], cls.VERSION[1], cls.VERSION[2])
+            if platform.machine() == 'arm64':
+                _url = '{url}/v{version}/git-lfs-darwin-arm64-v{version}.zip'.format(url=cls.BASE_URL, version=version_str)
             else:
-                _url = '{url}/v{version}/git-lfs-darwin-amd64-v{version}.zip'.format(url=cls.BASE_URL, version=cls.VERSION)
+                _url = '{url}/v{version}/git-lfs-darwin-amd64-v{version}.zip'.format(url=cls.BASE_URL, version=version_str)
         _url = mirror_resolver_func(_url) if _url and callable(mirror_resolver_func) else _url
         # FIXME: Determine URLs for non-Darwin installs
         return _url
@@ -91,7 +91,7 @@ class InstallGitLFS(Command):
             log.info("Unpacked '{}' to '{}'...".format(dest, target))
 
             log.info("Installing `git lfs` from '{}'...".format(target))
-            install_script = os.path.join(target, 'install.sh')
+            install_script = os.path.join(target, 'git-lfs-{}.{}.{}'.format(cls.VERSION[0], cls.VERSION[1], cls.VERSION[2]), 'install.sh')
             if not os.path.isfile(install_script):
                 sys.stderr.write("Could not find install script at '{}'\n".format(install_script))
                 return False
