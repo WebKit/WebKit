@@ -122,8 +122,13 @@ LineLayout* LineLayout::containing(RenderObject& renderer)
         return nullptr;
 
     if (!renderer.isInline()) {
-        // IFC may contain block level boxes (floats and out-of-flow boxes).
 
+        if (renderer.isRenderSVGBlock()) {
+            // SVG content inside svg root shows up as block (see RenderSVGBlock). We only support inline root svg as "atomic content".
+            return nullptr;
+        }
+
+        // IFC may contain block level boxes (floats and out-of-flow boxes).
         auto adjustedContainingBlock = [&] {
             RenderElement* containingBlock = nullptr;
             if (renderer.isOutOfFlowPositioned()) {
