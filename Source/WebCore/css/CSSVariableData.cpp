@@ -65,10 +65,7 @@ CSSVariableData::CSSVariableData(const CSSParserTokenRange& range, const CSSPars
     : m_context(context)
 {
     StringBuilder stringBuilder;
-    CSSParserTokenRange localRange = range;
-
-    while (!localRange.atEnd()) {
-        CSSParserToken token = localRange.consume();
+    for (auto& token : range) {
         if (token.hasStringBacking())
             stringBuilder.append(token.value());
     }
