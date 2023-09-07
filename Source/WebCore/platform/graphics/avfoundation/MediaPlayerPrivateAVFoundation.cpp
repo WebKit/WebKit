@@ -287,6 +287,7 @@ void MediaPlayerPrivateAVFoundation::seekToTarget(const SeekTarget& target)
 
     ALWAYS_LOG(LOGIDENTIFIER, "seeking to ", adjustedTarget.time);
 
+    m_lastSeekTime = adjustedTarget.time;
     seekToTargetInternal(adjustedTarget);
 }
 
@@ -676,12 +677,18 @@ void MediaPlayerPrivateAVFoundation::seekCompleted(bool finished)
         return;
     }
 
+    if (!finished)
+        return;
+
     if (currentTextTrack())
         currentTextTrack()->endSeeking();
 
     updateStates();
-    if (auto player = m_player.get())
+
+    if (auto player = m_player.get()) {
+        player->seeked(m_lastSeekTime);
         player->timeChanged();
+    }
 }
 
 void MediaPlayerPrivateAVFoundation::didEnd()

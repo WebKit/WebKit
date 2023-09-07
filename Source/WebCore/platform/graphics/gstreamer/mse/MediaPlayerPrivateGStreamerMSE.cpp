@@ -270,8 +270,7 @@ void MediaPlayerPrivateGStreamerMSE::asyncStateChangeDone()
         m_isSeeking = false;
         GST_DEBUG("Seek complete because of preroll. currentMediaTime = %s", currentMediaTime().toString().utf8().data());
         // By calling timeChanged(), m_isSeeking will be checked an a "seeked" event will be emitted.
-        if (auto player = m_player.get())
-            player->timeChanged();
+        timeChanged(currentMediaTime());
     }
 
     propagateReadyStateToPlayer();

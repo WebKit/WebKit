@@ -814,6 +814,11 @@ void MediaPlayer::seekWhenPossible(const MediaTime& time)
         seekToTime(time);
 }
 
+void MediaPlayer::seeked(const MediaTime& time)
+{
+    client().mediaPlayerSeeked(time);
+}
+
 bool MediaPlayer::paused() const
 {
     return m_private->paused();

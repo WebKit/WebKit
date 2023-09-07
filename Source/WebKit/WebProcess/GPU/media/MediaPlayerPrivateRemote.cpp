@@ -286,6 +286,7 @@ MediaTime MediaPlayerPrivateRemote::currentMediaTime() const
 
 void MediaPlayerPrivateRemote::seekToTarget(const WebCore::SeekTarget& target)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, target);
     m_seeking = true;
     m_cachedMediaTime = target.time;
     connection().send(Messages::RemoteMediaPlayerProxy::SeekToTarget(target), m_id);
@@ -331,6 +332,7 @@ void MediaPlayerPrivateRemote::networkStateChanged(RemoteMediaPlayerState&& stat
 
 void MediaPlayerPrivateRemote::setReadyState(MediaPlayer::ReadyState readyState)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, readyState);
     m_cachedState.readyState = readyState;
     if (auto player = m_player.get())
         player->readyStateChanged();
@@ -338,6 +340,7 @@ void MediaPlayerPrivateRemote::setReadyState(MediaPlayer::ReadyState readyState)
 
 void MediaPlayerPrivateRemote::readyStateChanged(RemoteMediaPlayerState&& state)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, state.readyState);
     updateCachedState(WTFMove(state));
     if (auto player = m_player.get()) {
         player->readyStateChanged();
@@ -359,10 +362,19 @@ void MediaPlayerPrivateRemote::muteChanged(bool muted)
         player->muteChanged(muted);
 }
 
+void MediaPlayerPrivateRemote::seeked(const MediaTime& time)
+{
+    ALWAYS_LOG(LOGIDENTIFIER, time);
+    m_seeking = false;
+    m_cachedMediaTime =  time;
+    m_cachedMediaTimeQueryTime = MonotonicTime::now();
+    if (auto player = m_player.get())
+        player->seeked(time);
+}
+
 void MediaPlayerPrivateRemote::timeChanged(RemoteMediaPlayerState&& state)
 {
-    if (!state.seeking)
-        m_seeking = false;
+    ALWAYS_LOG(LOGIDENTIFIER);
     updateCachedState(WTFMove(state));
     if (auto player = m_player.get())
         player->timeChanged();
