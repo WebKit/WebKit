@@ -287,8 +287,10 @@ void MediaPlayerPrivateWebM::seekToTarget(const SeekTarget& target)
         reenqueueMediaForTime(trackBuffer, trackId, target.time);
     }
     [m_synchronizer setRate:m_rate];
-    if (auto player = m_player.get())
+    if (auto player = m_player.get()) {
+        player->seeked(target.time);
         player->timeChanged();
+    }
 }
 
 void MediaPlayerPrivateWebM::setRateDouble(double rate)

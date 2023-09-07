@@ -234,6 +234,7 @@ void RemoteMediaPlayerProxy::pause()
 
 void RemoteMediaPlayerProxy::seekToTarget(const WebCore::SeekTarget& target)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, target);
     m_player->seekToTarget(target);
 }
 
@@ -432,6 +433,12 @@ void RemoteMediaPlayerProxy::mediaPlayerVolumeChanged()
 void RemoteMediaPlayerProxy::mediaPlayerMuteChanged()
 {
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::MuteChanged(m_player->muted()), m_id);
+}
+
+void RemoteMediaPlayerProxy::mediaPlayerSeeked(const MediaTime& time)
+{
+    ALWAYS_LOG(LOGIDENTIFIER, time);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::Seeked(time), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerTimeChanged()
@@ -968,7 +975,6 @@ void RemoteMediaPlayerProxy::updateCachedState(bool forceCurrentTimeUpdate)
         currentTimeChanged(m_player->currentTime());
 
     m_cachedState.paused = m_player->paused();
-    m_cachedState.seeking = m_player->seeking();
     maybeUpdateCachedVideoMetrics();
     if (m_bufferedChanged) {
         m_bufferedChanged = false;

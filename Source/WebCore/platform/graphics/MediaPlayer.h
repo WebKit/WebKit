@@ -163,7 +163,7 @@ struct SeekTarget {
     MediaTime negativeThreshold { MediaTime::zeroTime() };
     MediaTime positiveThreshold { MediaTime::zeroTime() };
 
-    String toString() const;
+    WEBCORE_EXPORT String toString() const;
 };
 
 class MediaPlayerClient : public CanMakeWeakPtr<MediaPlayerClient> {
@@ -181,6 +181,9 @@ public:
 
     // the mute state has changed
     virtual void mediaPlayerMuteChanged() { }
+
+    // the last seek operation has completed
+    virtual void mediaPlayerSeeked(const MediaTime&) { }
 
     // time has jumped, eg. not as a result of normal playback
     virtual void mediaPlayerTimeChanged() { }
@@ -442,6 +445,7 @@ public:
     void seekWhenPossible(const MediaTime&);
     void seekToTarget(const SeekTarget&);
     bool seeking() const;
+    void seeked(const MediaTime&);
 
     static double invalidTime() { return -1.0;}
     MediaTime duration() const;

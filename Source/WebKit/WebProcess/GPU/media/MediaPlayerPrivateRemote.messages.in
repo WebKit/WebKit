@@ -29,6 +29,7 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
     FirstVideoFrameAvailable()
     VolumeChanged(double volume)
     MuteChanged(bool mute)
+    Seeked(MediaTime mediaTime)
     TimeChanged(struct WebKit::RemoteMediaPlayerState state)
     DurationChanged(struct WebKit::RemoteMediaPlayerState state)
     RateChanged(double rate)

@@ -103,6 +103,7 @@ public:
     void readyStateChanged(RemoteMediaPlayerState&&);
     void volumeChanged(double);
     void muteChanged(bool);
+    void seeked(const MediaTime&);
     void timeChanged(RemoteMediaPlayerState&&);
     void durationChanged(RemoteMediaPlayerState&&);
     void rateChanged(double);
