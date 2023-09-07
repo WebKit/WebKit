@@ -286,10 +286,10 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     , m_ownerExecutable(other.vm(), this, other.m_ownerExecutable.get())
     , m_vm(other.m_vm)
     , m_instructionsRawPointer(other.m_instructionsRawPointer)
+    , m_metadata(other.m_metadata)
     , m_constantRegisters(other.m_constantRegisters)
     , m_functionDecls(other.m_functionDecls)
     , m_functionExprs(other.m_functionExprs)
-    , m_metadata(other.m_metadata)
     , m_creationTime(ApproximateTime::now())
 {
     ASSERT(heap()->isDeferred());
@@ -757,7 +757,7 @@ void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
     {
         ConcurrentJSLocker locker(m_lock);
         ASSERT(!m_jitData);
-        auto baselineJITData = BaselineJITData::create(jitCode->m_constantPool.size());
+        auto baselineJITData = BaselineJITData::create(jitCode->m_constantPool.size(), m_globalObject.get());
         baselineJITData->m_stubInfos = FixedVector<StructureStubInfo>(jitCode->m_unlinkedStubInfos.size());
         for (auto& unlinkedCallLinkInfo : jitCode->m_unlinkedCalls) {
             CallLinkInfo* callLinkInfo = getCallLinkInfoForBytecodeIndex(locker, unlinkedCallLinkInfo.bytecodeIndex);
@@ -768,9 +768,6 @@ void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
         for (size_t i = 0; i < jitCode->m_constantPool.size(); ++i) {
             auto entry = jitCode->m_constantPool.at(i);
             switch (entry.type()) {
-            case JITConstantPool::Type::GlobalObject:
-                baselineJITData->at(i) = m_globalObject.get();
-                break;
             case JITConstantPool::Type::StructureStubInfo: {
                 unsigned index = bitwise_cast<uintptr_t>(entry.pointer());
                 BaselineUnlinkedStructureStubInfo& unlinkedStubInfo = jitCode->m_unlinkedStubInfos[index];

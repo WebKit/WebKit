@@ -780,6 +780,11 @@ public:
         loadPair32(src, offset, dest1, dest2);
     }
 
+    void loadPairPtr(Address src, RegisterID dest1, RegisterID dest2)
+    {
+        loadPair32(src, dest1, dest2);
+    }
+
 #if ENABLE(FAST_TLS_JIT)
     void loadFromTLSPtr(uint32_t offset, RegisterID dst)
     {
@@ -1152,6 +1157,11 @@ public:
     void loadPairPtr(RegisterID src, TrustedImm32 offset, RegisterID dest1, RegisterID dest2)
     {
         loadPair64(src, offset, dest1, dest2);
+    }
+
+    void loadPairPtr(Address src, RegisterID dest1, RegisterID dest2)
+    {
+        loadPair64(src, dest1, dest2);
     }
 
 #if ENABLE(FAST_TLS_JIT)

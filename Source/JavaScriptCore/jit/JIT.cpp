@@ -71,8 +71,6 @@ JIT::JIT(VM& vm, CodeBlock* codeBlock, BytecodeIndex loopOSREntryBytecodeIndex)
     , m_profiledCodeBlock(codeBlock)
     , m_unlinkedCodeBlock(codeBlock->unlinkedCodeBlock())
 {
-    auto globalObjectConstant = addToConstantPool(JITConstantPool::Type::GlobalObject);
-    ASSERT_UNUSED(globalObjectConstant, globalObjectConstant == s_globalObjectConstant);
 }
 
 JIT::~JIT()
@@ -231,9 +229,8 @@ void JIT::privateCompileMainPass()
 #if ASSERT_ENABLED
         if (opcodeID != op_catch) {
             loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
-            loadPtr(Address(regT0, CodeBlock::offsetOfMetadataTable()), regT1);
-            loadPtr(Address(regT0, CodeBlock::offsetOfJITData()), regT2);
-
+            ASSERT(static_cast<ptrdiff_t>(CodeBlock::offsetOfJITData() + sizeof(void*)) == CodeBlock::offsetOfMetadataTable());
+            loadPairPtr(Address(regT0, CodeBlock::offsetOfJITData()), regT2, regT1);
             m_consistencyCheckCalls.append(nearCall());
         }
 #endif
@@ -668,8 +665,8 @@ void JIT::privateCompileSlowCases()
 void JIT::emitMaterializeMetadataAndConstantPoolRegisters()
 {
     loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
-    loadPtr(Address(regT0, CodeBlock::offsetOfMetadataTable()), s_metadataGPR);
-    loadPtr(Address(regT0, CodeBlock::offsetOfJITData()), s_constantsGPR);
+    ASSERT(static_cast<ptrdiff_t>(CodeBlock::offsetOfJITData() + sizeof(void*)) == CodeBlock::offsetOfMetadataTable());
+    loadPairPtr(Address(regT0, CodeBlock::offsetOfJITData()), s_constantsGPR, s_metadataGPR);
 }
 
 void JIT::emitSaveCalleeSaves()
@@ -701,8 +698,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::consistencyCheckGenerator(VM&)
         jit.subPtr(TrustedImm32(delta), expectedStackPointerGPR);
 
     jit.loadPtr(addressFor(CallFrameSlot::codeBlock), expectedConstantsGPR);
-    jit.loadPtr(Address(expectedConstantsGPR, CodeBlock::offsetOfMetadataTable()), expectedMetadataGPR);
-    jit.loadPtr(Address(expectedConstantsGPR, CodeBlock::offsetOfJITData()), expectedConstantsGPR);
+    ASSERT(static_cast<ptrdiff_t>(CodeBlock::offsetOfJITData() + sizeof(void*)) == CodeBlock::offsetOfMetadataTable());
+    jit.loadPairPtr(Address(expectedConstantsGPR, CodeBlock::offsetOfJITData()), expectedConstantsGPR, expectedMetadataGPR);
 
     auto stackPointerOK = jit.branchPtr(Equal, expectedStackPointerGPR, stackPointerRegister);
     jit.breakpoint();

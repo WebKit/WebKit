@@ -964,6 +964,7 @@ public:
     void* m_jitData { nullptr };
 private:
 #endif
+    RefPtr<MetadataTable> m_metadata;
 #if ENABLE(DFG_JIT)
     // This is relevant to non-DFG code blocks that serve as the profiled code block
     // for DFG code blocks.
@@ -985,8 +986,6 @@ private:
 
     uint16_t m_optimizationDelayCounter { 0 };
     uint16_t m_reoptimizationRetryCounter { 0 };
-
-    RefPtr<MetadataTable> m_metadata;
 
     ApproximateTime m_creationTime;
     double m_previousCounter { 0 };

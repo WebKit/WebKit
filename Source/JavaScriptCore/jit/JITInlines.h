@@ -492,7 +492,7 @@ ALWAYS_INLINE void JIT::loadConstant(CCallHelpers& jit, JITConstantPool::Constan
 
 ALWAYS_INLINE void JIT::loadGlobalObject(CCallHelpers& jit, GPRReg result)
 {
-    loadConstant(jit, s_globalObjectConstant, result);
+    jit.loadPtr(Address(s_constantsGPR, BaselineJITData::offsetOfGlobalObject()), result);
 }
 
 ALWAYS_INLINE void JIT::loadConstant(JITConstantPool::Constant constantIndex, GPRReg result)
