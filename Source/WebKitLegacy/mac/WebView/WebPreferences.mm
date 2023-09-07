@@ -1853,27 +1853,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:forceLowPower forKey:WebKitForceWebGLUsesLowPowerPreferenceKey];
 }
 
-- (BOOL)isFrameFlatteningEnabled
-{
-    return [self _unsignedIntValueForKey:WebKitFrameFlatteningPreferenceKey] != WebKitFrameFlatteningDisabled;
-}
-
-- (void)setFrameFlatteningEnabled:(BOOL)flattening
-{
-    WebKitFrameFlattening value = flattening ? WebKitFrameFlatteningFullyEnabled : WebKitFrameFlatteningDisabled;
-    [self _setUnsignedIntValue:value forKey:WebKitFrameFlatteningPreferenceKey];
-}
-
-- (WebKitFrameFlattening)frameFlattening
-{
-    return static_cast<WebKitFrameFlattening>([self _unsignedIntValueForKey:WebKitFrameFlatteningPreferenceKey]);
-}
-
-- (void)setFrameFlattening:(WebKitFrameFlattening)flattening
-{
-    [self _setUnsignedIntValue:flattening forKey:WebKitFrameFlatteningPreferenceKey];
-}
-
 - (BOOL)asyncFrameScrollingEnabled
 {
     return [self _boolValueForKey:WebKitAsyncFrameScrollingEnabledPreferenceKey];

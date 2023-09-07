@@ -94,7 +94,6 @@ const TestFeatures& TestOptions::defaults()
             { "DirectoryUploadEnabled", true },
             { "EventHandlerDrivenSmoothKeyboardScrollingEnabled", eventHandlerDrivenSmoothKeyboardScrollingEnabledValue },
             { "ExposeSpeakersEnabled", true },
-            { "FrameFlatteningEnabled", false },
             { "FullScreenEnabled", true },
             { "GenericCueAPIEnabled", false },
             { "HiddenPageCSSAnimationSuspensionEnabled", false },

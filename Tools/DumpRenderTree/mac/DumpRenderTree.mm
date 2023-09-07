@@ -888,7 +888,6 @@ static void setWebPreferencesForTestOptions(WebPreferences *preferences, const W
 
         preferences.acceleratedDrawingEnabled = useAcceleratedDrawing;
         preferences.editableLinkBehavior = WebKitEditableLinkOnlyLiveWithShiftKey;
-        preferences.frameFlattening = WebKitFrameFlatteningDisabled;
         preferences.cacheModel = WebCacheModelDocumentBrowser;
 
         preferences.privateBrowsingEnabled = options.useEphemeralSession();

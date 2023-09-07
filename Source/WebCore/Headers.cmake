@@ -1472,7 +1472,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/Frame.h
     page/FrameDestructionObserver.h
     page/FrameDestructionObserverInlines.h
-    page/FrameFlattening.h
     page/FrameIdentifier.h
     page/FrameSnapshotting.h
     page/FrameTree.h

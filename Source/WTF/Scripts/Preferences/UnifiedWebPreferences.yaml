@@ -2778,19 +2778,6 @@ FormAssociatedCustomElementsEnabled:
     WebCore:
       default: true
 
-# FIXME: This should be reconciled with 'FrameFlattening'.
-FrameFlatteningEnabled:
-  type: bool
-  status: embedder
-  humanReadableName: "Frame flattening"
-  humanReadableDescription: "Enable frame flattening, which adjusts the height of an iframe to fit its contents"
-  webcoreBinding: custom
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      "PLATFORM(IOS_FAMILY)": true
-      default: false
-
 FullScreenEnabled:
   type: bool
   status: embedder
