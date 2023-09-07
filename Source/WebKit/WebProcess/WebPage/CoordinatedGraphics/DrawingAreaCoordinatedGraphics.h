@@ -63,6 +63,7 @@ private:
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     void deviceOrPageScaleFactorChanged() override;
     void didChangeViewportAttributes(WebCore::ViewportAttributes&&) override;
+    bool enterAcceleratedCompositingModeIfNeeded() override;
 #endif
 
     bool supportsAsyncScrolling() const override;
