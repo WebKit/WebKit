@@ -229,6 +229,21 @@ bool WebExtensionAPIWindows::parseWindowTypesFilter(NSDictionary *options, Optio
     return true;
 }
 
+bool WebExtensionAPIWindows::parseWindowTypeFilter(NSString *windowType, OptionSet<WindowTypeFilter>& windowTypeFilter, NSString *sourceKey, NSString **outExceptionString)
+{
+    if ([windowType isEqualToString:normalKey])
+        windowTypeFilter.add(WindowTypeFilter::Normal);
+    else if ([windowType isEqualToString:popupKey])
+        windowTypeFilter.add(WindowTypeFilter::Popup);
+
+    if (!windowTypeFilter) {
+        *outExceptionString = toErrorString(nil, sourceKey, @"it must specify either 'normal' or 'popup'");
+        return false;
+    }
+
+    return true;
+}
+
 bool WebExtensionAPIWindows::parseWindowGetOptions(NSDictionary *options, PopulateTabs& populate, OptionSet<WindowTypeFilter>& filter, NSString *sourceKey, NSString **outExceptionString)
 {
     if (!parsePopulateTabs(options, populate, sourceKey, outExceptionString))
@@ -362,7 +377,7 @@ bool WebExtensionAPIWindows::parseWindowUpdateOptions(NSDictionary *options, Web
     return true;
 }
 
-static bool isValid(std::optional<WebExtensionWindowIdentifier> identifier, NSString **outExceptionString)
+bool isValid(std::optional<WebExtensionWindowIdentifier> identifier, NSString **outExceptionString)
 {
     if (UNLIKELY(!isValid(identifier))) {
         if (isNone(identifier))
