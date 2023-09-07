@@ -37,12 +37,12 @@
 namespace WebKit {
 using namespace WebCore;
 
-std::unique_ptr<WebCore::MediaRecorderPrivate> MediaRecorderProvider::createMediaRecorderPrivate(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)
+RefPtr<WebCore::MediaRecorderPrivate> MediaRecorderProvider::createMediaRecorderPrivate(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)
 {
 #if ENABLE(GPU_PROCESS)
     auto* page = m_webPage.corePage();
     if (page && page->settings().webRTCPlatformCodecsInGPUProcessEnabled())
-        return makeUnique<MediaRecorderPrivate>(stream, options);
+        return MediaRecorderPrivate::create(stream, options);
 #endif
     return WebCore::MediaRecorderProvider::createMediaRecorderPrivate(stream, options);
 }
