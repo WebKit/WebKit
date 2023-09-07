@@ -366,6 +366,11 @@ namespace WebKit {
 
 void SystemPreviewController::begin(const URL& url, const SecurityOriginData& topOrigin, const WebCore::SystemPreviewInfo& systemPreviewInfo, CompletionHandler<void()>&& completionHandler)
 {
+    if (m_state != State::Initial) {
+        RELEASE_LOG(SystemPreview, "SystemPreview didn't start because an existing preview is in progress");
+        return completionHandler();
+    }
+
     ASSERT(!m_qlPreviewController);
     if (m_qlPreviewController)
         return completionHandler();
@@ -409,7 +414,7 @@ void SystemPreviewController::begin(const URL& url, const SecurityOriginData& to
     [presentingViewController presentViewController:m_qlPreviewController.get() animated:YES completion:nullptr];
 #endif
 
-    m_state = State::Began;
+    m_state = State::Initial;
 }
 
 void SystemPreviewController::loadStarted(const URL& localFileURL)
@@ -438,16 +443,16 @@ void SystemPreviewController::loadCompleted(const URL& localFileURL)
 #if PLATFORM(VISION)
     if ([getASVLaunchPreviewClass() respondsToSelector:@selector(launchPreviewApplicationWithURLs:completion:)])
         [getASVLaunchPreviewClass() launchPreviewApplicationWithURLs:localFileURLs() completion:^(NSError *error) { }];
+    m_state = State::Initial;
 #else
     if (m_qlPreviewControllerDataSource)
         [m_qlPreviewControllerDataSource finish:m_localFileURL];
+    m_state = State::Viewing;
 #endif
     releaseActivityTokenIfNecessary();
 
     if (m_testingCallback)
         m_testingCallback(true);
-
-    m_state = State::Succeeded;
 }
 
 void SystemPreviewController::loadFailed()
@@ -474,7 +479,7 @@ void SystemPreviewController::loadFailed()
     if (m_testingCallback)
         m_testingCallback(false);
 
-    m_state = State::Failed;
+    m_state = State::Initial;
 }
 
 void SystemPreviewController::end()
@@ -488,7 +493,7 @@ void SystemPreviewController::end()
     m_wkSystemPreviewDataTaskDelegate = nullptr;
 #endif
 
-    m_state = State::Ended;
+    m_state = State::Initial;
 }
 
 void SystemPreviewController::updateProgress(float progress)
