@@ -39,17 +39,6 @@ class TimeRanges;
 class PlaybackSessionModelClient;
 struct MediaSelectionOption;
 
-enum class PlaybackSessionModelExternalPlaybackTargetType : uint8_t {
-    TargetTypeNone,
-    TargetTypeAirPlay,
-    TargetTypeTVOut
-};
-
-enum class PlaybackSessionModelPlaybackState : uint8_t {
-    Playing = 1 << 0,
-    Stalled = 1 << 1,
-};
-
 class PlaybackSessionModel : public CanMakeWeakPtr<PlaybackSessionModel> {
 public:
     virtual ~PlaybackSessionModel() { };
@@ -77,15 +66,17 @@ public:
     virtual void setPlayingOnSecondScreen(bool) = 0;
     virtual void sendRemoteCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) { };
 
-    using ExternalPlaybackTargetType = PlaybackSessionModelExternalPlaybackTargetType;
+    enum class ExternalPlaybackTargetType { TargetTypeNone, TargetTypeAirPlay, TargetTypeTVOut };
 
     virtual double playbackStartedTime() const = 0;
     virtual double duration() const = 0;
     virtual double currentTime() const = 0;
     virtual double bufferedTime() const = 0;
 
-    using PlaybackState = PlaybackSessionModelPlaybackState;
-
+    enum class PlaybackState {
+        Playing = 1 << 0,
+        Stalled = 1 << 1,
+    };
     virtual bool isPlaying() const = 0;
     virtual bool isStalled() const = 0;
     virtual bool isScrubbing() const = 0;
@@ -139,5 +130,26 @@ public:
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::PlaybackSessionModel::ExternalPlaybackTargetType> {
+    using values = EnumValues<
+        WebCore::PlaybackSessionModel::ExternalPlaybackTargetType,
+        WebCore::PlaybackSessionModel::ExternalPlaybackTargetType::TargetTypeNone,
+        WebCore::PlaybackSessionModel::ExternalPlaybackTargetType::TargetTypeAirPlay,
+        WebCore::PlaybackSessionModel::ExternalPlaybackTargetType::TargetTypeTVOut
+    >;
+};
+
+template<> struct EnumTraits<WebCore::PlaybackSessionModel::PlaybackState> {
+    using values = EnumValues<
+        WebCore::PlaybackSessionModel::PlaybackState,
+        WebCore::PlaybackSessionModel::PlaybackState::Playing,
+        WebCore::PlaybackSessionModel::PlaybackState::Stalled
+    >;
+};
+
+} // namespace WTF
 
 #endif // PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))

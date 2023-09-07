@@ -27,6 +27,7 @@
 
 #include "WebGPUIntegralTypes.h"
 #include <cstdint>
+#include <wtf/EnumTraits.h>
 #include <wtf/OptionSet.h>
 
 namespace WebCore::WebGPU {
@@ -38,4 +39,16 @@ enum class MapMode : uint8_t {
 using MapModeFlags = OptionSet<MapMode>;
 
 } // namespace WebCore::WebGPU
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::WebGPU::MapMode> {
+    using values = EnumValues<
+        WebCore::WebGPU::MapMode,
+        WebCore::WebGPU::MapMode::Read,
+        WebCore::WebGPU::MapMode::Write
+    >;
+};
+
+} // namespace WTF
 

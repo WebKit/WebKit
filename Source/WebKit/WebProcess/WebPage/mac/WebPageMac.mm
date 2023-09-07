@@ -453,27 +453,27 @@ bool WebPage::performNonEditingBehaviorForSelector(const String& selector, Keybo
     
     if (!frame->eventHandler().shouldUseSmoothKeyboardScrollingForFocusedScrollableArea()) {
         if (selector == "moveUp:"_s)
-            didPerformAction = scroll(m_page.get(), ScrollDirection::ScrollUp, ScrollGranularity::Line);
+            didPerformAction = scroll(m_page.get(), ScrollUp, ScrollGranularity::Line);
         else if (selector == "moveToBeginningOfParagraph:"_s)
-            didPerformAction = scroll(m_page.get(), ScrollDirection::ScrollUp, ScrollGranularity::Page);
+            didPerformAction = scroll(m_page.get(), ScrollUp, ScrollGranularity::Page);
         else if (selector == "moveToBeginningOfDocument:"_s) {
-            didPerformAction = scroll(m_page.get(), ScrollDirection::ScrollUp, ScrollGranularity::Document);
-            didPerformAction |= scroll(m_page.get(), ScrollDirection::ScrollLeft, ScrollGranularity::Document);
+            didPerformAction = scroll(m_page.get(), ScrollUp, ScrollGranularity::Document);
+            didPerformAction |= scroll(m_page.get(), ScrollLeft, ScrollGranularity::Document);
         } else if (selector == "moveDown:"_s)
-            didPerformAction = scroll(m_page.get(), ScrollDirection::ScrollDown, ScrollGranularity::Line);
+            didPerformAction = scroll(m_page.get(), ScrollDown, ScrollGranularity::Line);
         else if (selector == "moveToEndOfParagraph:"_s)
-            didPerformAction = scroll(m_page.get(), ScrollDirection::ScrollDown, ScrollGranularity::Page);
+            didPerformAction = scroll(m_page.get(), ScrollDown, ScrollGranularity::Page);
         else if (selector == "moveToEndOfDocument:"_s) {
-            didPerformAction = scroll(m_page.get(), ScrollDirection::ScrollDown, ScrollGranularity::Document);
-            didPerformAction |= scroll(m_page.get(), ScrollDirection::ScrollLeft, ScrollGranularity::Document);
+            didPerformAction = scroll(m_page.get(), ScrollDown, ScrollGranularity::Document);
+            didPerformAction |= scroll(m_page.get(), ScrollLeft, ScrollGranularity::Document);
         } else if (selector == "moveLeft:"_s)
-            didPerformAction = scroll(m_page.get(), ScrollDirection::ScrollLeft, ScrollGranularity::Line);
+            didPerformAction = scroll(m_page.get(), ScrollLeft, ScrollGranularity::Line);
         else if (selector == "moveWordLeft:"_s)
-            didPerformAction = scroll(m_page.get(), ScrollDirection::ScrollLeft, ScrollGranularity::Page);
+            didPerformAction = scroll(m_page.get(), ScrollLeft, ScrollGranularity::Page);
         else if (selector == "moveRight:"_s)
-            didPerformAction = scroll(m_page.get(), ScrollDirection::ScrollRight, ScrollGranularity::Line);
+            didPerformAction = scroll(m_page.get(), ScrollRight, ScrollGranularity::Line);
         else if (selector == "moveWordRight:"_s)
-            didPerformAction = scroll(m_page.get(), ScrollDirection::ScrollRight, ScrollGranularity::Page);
+            didPerformAction = scroll(m_page.get(), ScrollRight, ScrollGranularity::Page);
     }
 
     if (selector == "moveToLeftEndOfLine:"_s)

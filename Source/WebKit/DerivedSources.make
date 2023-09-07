@@ -642,11 +642,6 @@ WEBCORE_SERIALIZATION_DESCRIPTION_FILES = \
 	PlatformEvent.serialization.in \
 	PlatformMediaSession.serialization.in \
 	PlatformScreen.serialization.in \
-	PlatformWheelEvent.serialization.in \
-	PlaybackSessionModel.serialization.in \
-	ProtectionSpaceBase.serialization.in \
-	ScrollTypes.serialization.in \
-	WebGPU.serialization.in \
 #
 
 WEBCORE_SERIALIZATION_DESCRIPTION_FILES_FULLPATH := $(foreach I,$(WEBCORE_SERIALIZATION_DESCRIPTION_FILES),$(WebCorePrivateHeaders)/$I)

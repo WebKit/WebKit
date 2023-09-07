@@ -129,7 +129,7 @@ class ValidationBubble;
 
 enum class LayoutMilestone : uint16_t;
 enum PaginationMode : uint8_t;
-enum class ScrollDirection : uint8_t;
+enum ScrollDirection : uint8_t;
 enum ScrollbarOverlayStyle : uint8_t;
 
 enum class ActivityState : uint16_t;

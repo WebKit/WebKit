@@ -750,7 +750,7 @@ LRESULT WebPopupMenuProxyWin::onMouseWheel(HWND hWnd, UINT message, WPARAM wPara
             --i;
     }
 
-    ScrollableArea::scroll(i > 0 ? ScrollDirection::ScrollUp : ScrollDirection::ScrollDown, ScrollGranularity::Line, std::abs(i));
+    ScrollableArea::scroll(i > 0 ? ScrollUp : ScrollDown, ScrollGranularity::Line, std::abs(i));
     return 0;
 }
 

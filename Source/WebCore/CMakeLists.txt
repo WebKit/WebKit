@@ -2748,8 +2748,6 @@ WEBKIT_COMPUTE_SOURCES(WebCore)
 target_precompile_headers(WebCore PRIVATE WebCorePrefix.h)
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
-    Modules/WebGPU/InternalAPI/WebGPU.serialization.in
-
     page/ActivityState.serialization.in
     page/DragActions.serialization.in
     page/LayoutMilestones.serialization.in
@@ -2757,22 +2755,14 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/PlatformEvent.serialization.in
     platform/PlatformScreen.serialization.in
-    platform/PlatformWheelEvent.serialization.in
-    platform/ScrollTypes.serialization.in
 
     platform/audio/PlatformMediaSession.serialization.in
-
-    platform/cocoa/PlaybackSessionModel.serialization.in
 
     platform/graphics/cocoa/MediaPlaybackTargetContext.serialization.in
 
     platform/graphics/InbandTextTrackPrivate.serialization.in
 
     platform/mediastream/MDNSRegisterError.serialization.in
-
-    platform/network/ProtectionSpaceBase.serialization.in
-
-    platform/network/soup/SoupNetworkProxySettings.serialization.in
 )
 
 WEBKIT_COPY_FILES(WebCore_CopyPrivateHeaders

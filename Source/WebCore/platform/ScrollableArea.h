@@ -244,11 +244,11 @@ public:
     Scrollbar* scrollbarForDirection(ScrollDirection direction) const
     {
         switch (direction) {
-        case ScrollDirection::ScrollUp:
-        case ScrollDirection::ScrollDown:
+        case ScrollUp:
+        case ScrollDown:
             return verticalScrollbar();
-        case ScrollDirection::ScrollLeft:
-        case ScrollDirection::ScrollRight:
+        case ScrollLeft:
+        case ScrollRight:
             return horizontalScrollbar();
         }
         return nullptr;

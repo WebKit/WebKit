@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <wtf/EnumTraits.h>
 
 namespace WebCore::WebGPU {
 
@@ -37,3 +38,15 @@ enum class ErrorFilter : uint8_t {
 
 } // namespace WebCore::WebGPU
 
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::WebGPU::ErrorFilter> {
+    using values = EnumValues<
+        WebCore::WebGPU::ErrorFilter,
+        WebCore::WebGPU::ErrorFilter::OutOfMemory,
+        WebCore::WebGPU::ErrorFilter::Validation,
+        WebCore::WebGPU::ErrorFilter::Internal
+    >;
+};
+
+} // namespace WTF

@@ -687,12 +687,6 @@ set(WebCore_SERIALIZATION_IN_FILES
     PlatformEvent.serialization.in
     PlatformMediaSession.serialization.in
     PlatformScreen.serialization.in
-    PlatformWheelEvent.serialization.in
-    PlaybackSessionModel.serialization.in
-    ProtectionSpaceBase.serialization.in
-    ScrollTypes.serialization.in
-    SoupNetworkProxySettings.serialization.in
-    WebGPU.serialization.in
 )
 
 set(WebKit_SERIALIZATION_DEPENDENCIES ${WebKit_SERIALIZATION_IN_FILES})

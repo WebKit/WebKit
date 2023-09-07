@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cstdint>
+#include <wtf/EnumTraits.h>
 
 namespace WebCore::ShapeDetection {
 
@@ -48,3 +49,26 @@ enum class BarcodeFormat : uint8_t {
 
 } // namespace WebCore::ShapeDetection
 
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ShapeDetection::BarcodeFormat> {
+    using values = EnumValues<
+        WebCore::ShapeDetection::BarcodeFormat,
+        WebCore::ShapeDetection::BarcodeFormat::Aztec,
+        WebCore::ShapeDetection::BarcodeFormat::Code_128,
+        WebCore::ShapeDetection::BarcodeFormat::Code_39,
+        WebCore::ShapeDetection::BarcodeFormat::Code_93,
+        WebCore::ShapeDetection::BarcodeFormat::Codabar,
+        WebCore::ShapeDetection::BarcodeFormat::Data_matrix,
+        WebCore::ShapeDetection::BarcodeFormat::Ean_13,
+        WebCore::ShapeDetection::BarcodeFormat::Ean_8,
+        WebCore::ShapeDetection::BarcodeFormat::Itf,
+        WebCore::ShapeDetection::BarcodeFormat::Pdf417,
+        WebCore::ShapeDetection::BarcodeFormat::Qr_code,
+        WebCore::ShapeDetection::BarcodeFormat::Unknown,
+        WebCore::ShapeDetection::BarcodeFormat::Upc_a,
+        WebCore::ShapeDetection::BarcodeFormat::Upc_e
+    >;
+};
+
+} // namespace WTF
