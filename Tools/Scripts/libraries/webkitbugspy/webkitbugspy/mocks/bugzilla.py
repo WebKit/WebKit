@@ -135,6 +135,19 @@ class Bugzilla(Base, mocks.Requests):
                         )),
                     )
                 issue['opened'] = data['status'] == 'REOPENED'
+                dupe_of = data.get('dupe_of', None)
+                if dupe_of:
+                    if dupe_of not in self.issues:
+                        return mocks.Response(
+                            url=url,
+                            headers={'Content-Type': 'text/json'},
+                            status_code=400,
+                            text=json.dumps(dict(
+                                error=True,
+                                message='Bug #{} does not exist'.format(dupe_of),
+                            )),
+                        )
+                    issue['original'] = self.issues[dupe_of]
             if data.get('comment'):
                 issue['comments'].append(
                     Issue.Comment(user=user, timestamp=int(time.time()), content=data['comment']['body']),
@@ -182,6 +195,7 @@ class Bugzilla(Base, mocks.Requests):
                 creation_time=self.time_string(issue['timestamp']),
                 status='REOPENED' if issue['opened'] else 'RESOLVED',
                 resolution='' if issue['opened'] else 'FIXED',
+                dupe_of=issue['original']['id'] if issue.get('original', None) else None,
                 creator=self.users[issue['creator'].name].username,
                 product=issue.get('project'),
                 component=issue.get('component'),

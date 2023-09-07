@@ -186,6 +186,9 @@ class Tracker(GenericTracker):
                 else:
                     issue._creator = self.user(username=response['creator']) if response.get('creator') else None
                 issue._opened = response['status'] != 'RESOLVED'
+                dupe = response.get('dupe_of')
+                if dupe is not None:
+                    issue._original = self.issue(dupe)
                 if response.get('assigned_to_detail'):
                     issue._assignee = self.user(
                         name=response['assigned_to_detail'].get('real_name'),
@@ -273,7 +276,7 @@ class Tracker(GenericTracker):
 
         return issue
 
-    def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, **properties):
+    def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, original=None, **properties):
         update_dict = dict()
 
         if properties:
@@ -292,7 +295,12 @@ class Tracker(GenericTracker):
                 why = why or 'Reopening bug'
             else:
                 update_dict['status'] = 'RESOLVED'
-                update_dict['resolution'] = 'FIXED'
+                if original:
+                    update_dict['resolution'] = 'DUPLICATE'
+                    update_dict['dupe_of'] = original.id
+                    issue._original = original
+                else:
+                    update_dict['resolution'] = 'FIXED'
 
         if why is not None:
             update_dict['comment'] = dict(body=why)
