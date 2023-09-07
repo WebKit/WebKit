@@ -5,8 +5,6 @@ accessibility/mac/resolved-text-editing.html [ Crash Pass ]
 
 # Timeouts
 accessibility/frame-disconnect-textmarker-cache-crash.html [ Timeout ]
-accessibility/mac/combobox-activedescendant-notifications.html [ Timeout ]
-accessibility/mac/relationships-in-frames.html [ Timeout ]
 
 # Text failures
 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Failure ]
@@ -31,7 +29,6 @@ accessibility/mac/search-predicate-from-ignored-element.html [ Failure ]
 accessibility/mac/search-predicate-immediate-descendants-only.html [ Failure ]
 accessibility/mac/set-value-editable-types.html [ Failure ]
 accessibility/mac/setting-attributes-is-asynchronous.html [ Failure ]
-accessibility/mac/title-attribute-used-as-last-resort.html [ Failure ]
 accessibility/mac/attributed-string/attributed-string-has-completion-annotation.html [ Failure ]
 accessibility/mac/text-input-marked-range.html [ Failure ]
 accessibility/mac/text-input-marked-text-marker-range.html [ Failure ]
