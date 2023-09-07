@@ -4639,6 +4639,8 @@ webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/oklch-009.html
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/oklch-010.html [ ImageOnlyFailure ]
 webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-visited-link-initial.html [ ImageOnlyFailure ]
 webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-table-border-currentcolor-responsive.html [ ImageOnlyFailure ]
+webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background-mismatch-opaque-cross-origin.sub.html [ ImageOnlyFailure ]
+webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-preferred.html [ ImageOnlyFailure ]
 
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/conic-gradient-angle.html [ ImageOnlyFailure ]
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/conic-gradient-angle-negative.html [ ImageOnlyFailure ]
