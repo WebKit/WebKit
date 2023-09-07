@@ -410,6 +410,8 @@ protected:
 
     bool updateVideoSinkStatistics();
 
+    void finishSeek();
+
 private:
     class TaskAtMediaTimeScheduler {
     public:
@@ -464,7 +466,6 @@ private:
     MediaTime playbackPosition() const;
 
     virtual void updateStates();
-    void finishSeek();
     virtual void asyncStateChangeDone() { }
 
     void createGSTPlayBin(const URL&);

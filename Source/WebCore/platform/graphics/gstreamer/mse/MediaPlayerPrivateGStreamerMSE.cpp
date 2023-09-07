@@ -166,8 +166,6 @@ void MediaPlayerPrivateGStreamerMSE::seekToTarget(const SeekTarget& target)
 
 bool MediaPlayerPrivateGStreamerMSE::doSeek(const SeekTarget& target, float rate)
 {
-    // This method should only be called outside of MediaPlayerPrivateGStreamerMSE by MediaPlayerPrivateGStreamer::setRate().
-
     // Note: An important difference between seek with WebKitMediaSrc and regular playback is that seeking before
     // pre-roll (e.g. to start playback at a non-zero position) is supported in WebKitMediaSrc but not in regular
     // playback. This is relevant in MSE because pre-roll may never occur if the JS code never appends a range starting
@@ -191,8 +189,11 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const SeekTarget& target, float rate
 
     // Notify MediaSource and have new frames enqueued (when they're available).
     // Seek should only continue once the seekToTarget completionhandler has run.
-    // This will also add support for fastSeek once done (see webkit.org/b/260607)
-    m_mediaSource->seekToTarget(target, [](const MediaTime&) { });
+    m_mediaSource->seekToTarget(target, [weakThis = WeakPtr { *this }, this](const MediaTime&) {
+        if (!weakThis)
+            return;
+        finishSeek();
+    });
     return true;
 }
 
