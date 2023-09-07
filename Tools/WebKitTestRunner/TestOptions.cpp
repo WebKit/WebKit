@@ -136,6 +136,9 @@ const TestFeatures& TestOptions::defaults()
 #if ENABLE(WEBGL) && PLATFORM(COCOA)
             { "WebGLUsingMetal", true },
 #endif
+#if ENABLE(WEBGL)
+            { "WebGLDraftExtensionsEnabled", true },
+#endif
             { "WebRTCRemoteVideoFrameEnabled", true },
             { "XSSAuditorEnabled", false },
 #if PLATFORM(IOS_FAMILY_SIMULATOR)

@@ -7484,7 +7484,8 @@ WebCryptoX25519Enabled:
 
 WebGLDraftExtensionsEnabled:
   type: bool
-  status: unstable
+  status: testable
+  category: dom
   humanReadableName: "WebGL Draft Extensions"
   humanReadableDescription: "Enable WebGL extensions that are still in draft status"
   defaultValue:
