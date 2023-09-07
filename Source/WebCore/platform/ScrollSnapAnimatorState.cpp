@@ -204,7 +204,7 @@ bool ScrollSnapAnimatorState::resnapAfterLayout(ScrollOffset scrollOffset, const
     auto wasSnappedToMultipleBoxes = previouslySnappedBoxes.size() > 1;
     auto currentlySnappedToMultipleBoxes = m_currentlySnappedBoxes.size() > 1;
     
-    if (wasSnappedToMultipleBoxes && !currentlySnappedToMultipleBoxes) {
+    if ((wasSnappedToMultipleBoxes && !currentlySnappedToMultipleBoxes) || (wasSnappedToMultipleBoxes == currentlySnappedToMultipleBoxes && previouslySnappedBoxes != m_currentlySnappedBoxes)) {
         auto box = chooseBoxToResnapTo(previouslySnappedBoxes, snapOffsetsHorizontal, snapOffsetsVertical);
         snapPointChanged |= preserveCurrentTargetForAxis(ScrollEventAxis::Horizontal, box);
         snapPointChanged |= preserveCurrentTargetForAxis(ScrollEventAxis::Vertical, box);
