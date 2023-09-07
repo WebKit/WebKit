@@ -2636,7 +2636,6 @@ TEST(WKDownload, BlobDownload)
         EXPECT_NOT_NULL(value);
         blobURL = adoptNS([[NSURL alloc] initWithString:value]);
         doneEvaluatingJavaScript = true;
-        WTFLogAlways("evaluateJavaScript: blobURL string: %@, blobURL url: %@", value, blobURL.get().absoluteString);
     }];
     Util::run(&doneEvaluatingJavaScript);
 
@@ -2648,7 +2647,6 @@ TEST(WKDownload, BlobDownload)
     };
 
     __block WKDownload *blobDownload = nil;
-    WTFLogAlways("before startDownloadUsingRequest: blobURL: %@", blobURL.get().absoluteString);
     [webView startDownloadUsingRequest:[NSURLRequest requestWithURL:blobURL.get()] completionHandler:^(WKDownload *download) {
         blobDownload = download;
         download.delegate = delegate.get();
