@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -60,9 +61,9 @@ Ref<TransformOperation> TranslateTransformOperation::blend(const TransformOperat
     if (!outputType)
         return *this;
 
-    const TranslateTransformOperation* fromOp = downcast<TranslateTransformOperation>(from);
-    Length fromX = fromOp ? fromOp->m_x : zeroLength;
-    Length fromY = fromOp ? fromOp->m_y : zeroLength;
+    const auto* fromOp = downcast<TranslateTransformOperation>(from);
+    const Length& fromX = fromOp ? fromOp->m_x : zeroLength;
+    const Length& fromY = fromOp ? fromOp->m_y : zeroLength;
     Length fromZ = fromOp ? fromOp->m_z : zeroLength;
     return TranslateTransformOperation::create(WebCore::blend(fromX, x(), context), WebCore::blend(fromY, y(), context), WebCore::blend(fromZ, z(), context), *outputType);
 }

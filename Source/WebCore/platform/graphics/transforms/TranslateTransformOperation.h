@@ -2,7 +2,8 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005-2008, 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Google Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -53,8 +54,8 @@ public:
     float yAsFloat(const FloatSize& borderBoxSize) const { return floatValueForLength(m_y, borderBoxSize.height()); }
     float zAsFloat() const { return floatValueForLength(m_z, 1); }
 
-    Length x() const { return m_x; }
-    Length y() const { return m_y; }
+    const Length& x() const { return m_x; }
+    const Length& y() const { return m_y; }
     Length z() const { return m_z; }
 
     void setX(Length newX) { m_x = newX; }
