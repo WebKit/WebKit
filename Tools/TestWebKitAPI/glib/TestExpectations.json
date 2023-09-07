@@ -58,7 +58,7 @@
     "TestUIClient": {
         "subtests": {
             "/webkit/WebKitWebView/geolocation-permission-requests": {
-                "expected": {"all": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/235955"}}
+                "expected": {"all": {"slow": true}}
             }
         }
     },
