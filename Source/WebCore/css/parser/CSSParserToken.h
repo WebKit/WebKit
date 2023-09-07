@@ -142,6 +142,9 @@ public:
 
     void serialize(StringBuilder&, const CSSParserToken* nextToken = nullptr) const;
 
+    template<typename CharacterType>
+    void updateCharacters(const CharacterType* characters, unsigned length);
+
     CSSParserToken copyWithUpdatedString(StringView) const;
 
 private:
@@ -171,5 +174,13 @@ private:
         mutable int m_id;
     };
 };
+
+template<typename CharacterType>
+inline void CSSParserToken::updateCharacters(const CharacterType* characters, unsigned length)
+{
+    m_valueLength = length;
+    m_valueIs8Bit = (sizeof(CharacterType) == 1);
+    m_valueDataCharRaw = characters;
+}
 
 } // namespace WebCore
