@@ -1776,9 +1776,9 @@ void Internals::setShouldInterruptAudioOnPageVisibilityChange(bool shouldInterru
 #endif // ENABLE(MEDIA_STREAM)
 
 #if ENABLE(MEDIA_RECORDER)
-static ExceptionOr<std::unique_ptr<MediaRecorderPrivate>> createRecorderMockSource(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions&)
+static ExceptionOr<Ref<MediaRecorderPrivate>> createRecorderMockSource(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions&)
 {
-    return std::unique_ptr<MediaRecorderPrivate>(new MediaRecorderPrivateMock(stream));
+    return { MediaRecorderPrivateMock::create(stream) };
 }
 
 void Internals::setCustomPrivateRecorderCreator()

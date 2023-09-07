@@ -59,7 +59,7 @@ public:
     using Options = MediaRecorderPrivateOptions;
     static ExceptionOr<Ref<MediaRecorder>> create(Document&, Ref<MediaStream>&&, Options&& = { });
 
-    using CreatorFunction = ExceptionOr<std::unique_ptr<MediaRecorderPrivate>> (*)(MediaStreamPrivate&, const Options&);
+    using CreatorFunction = ExceptionOr<Ref<MediaRecorderPrivate>> (*)(MediaStreamPrivate&, const Options&);
 
     WEBCORE_EXPORT static void setCustomPrivateRecorderCreator(CreatorFunction);
 
@@ -87,7 +87,7 @@ public:
 private:
     MediaRecorder(Document&, Ref<MediaStream>&&, Options&&);
 
-    static ExceptionOr<std::unique_ptr<MediaRecorderPrivate>> createMediaRecorderPrivate(Document&, MediaStreamPrivate&, const Options&);
+    static ExceptionOr<Ref<MediaRecorderPrivate>> createMediaRecorderPrivate(Document&, MediaStreamPrivate&, const Options&);
     
     Document* document() const;
 
@@ -130,7 +130,7 @@ private:
 
     Options m_options;
     Ref<MediaStream> m_stream;
-    std::unique_ptr<MediaRecorderPrivate> m_private;
+    RefPtr<MediaRecorderPrivate> m_private;
     RecordingState m_state { RecordingState::Inactive };
     Vector<Ref<MediaStreamTrackPrivate>> m_tracks;
     std::optional<unsigned> m_timeSlice;

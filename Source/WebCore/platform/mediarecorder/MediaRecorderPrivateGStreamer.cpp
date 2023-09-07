@@ -37,7 +37,7 @@ namespace WebCore {
 GST_DEBUG_CATEGORY(webkit_media_recorder_debug);
 #define GST_CAT_DEFAULT webkit_media_recorder_debug
 
-std::unique_ptr<MediaRecorderPrivateGStreamer> MediaRecorderPrivateGStreamer::create(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)
+RefPtr<MediaRecorderPrivateGStreamer> MediaRecorderPrivateGStreamer::create(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)
 {
     ensureGStreamerInitialized();
     registerWebKitGStreamerElements();
@@ -46,7 +46,7 @@ std::unique_ptr<MediaRecorderPrivateGStreamer> MediaRecorderPrivateGStreamer::cr
         GST_DEBUG_CATEGORY_INIT(webkit_media_recorder_debug, "webkitmediarecorder", 0, "WebKit MediaStream recorder");
     });
 
-    auto recorder = makeUnique<MediaRecorderPrivateGStreamer>(stream, options);
+    auto recorder = adoptRef(*new MediaRecorderPrivateGStreamer(stream, options));
     if (!recorder->preparePipeline())
         return nullptr;
 

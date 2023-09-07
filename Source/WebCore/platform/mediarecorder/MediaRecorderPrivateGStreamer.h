@@ -41,8 +41,7 @@ class MediaRecorderPrivateGStreamer final : public MediaRecorderPrivate, public 
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    static std::unique_ptr<MediaRecorderPrivateGStreamer> create(MediaStreamPrivate&, const MediaRecorderPrivateOptions&);
-    explicit MediaRecorderPrivateGStreamer(MediaStreamPrivate&, const MediaRecorderPrivateOptions&);
+    static RefPtr<MediaRecorderPrivateGStreamer> create(MediaStreamPrivate&, const MediaRecorderPrivateOptions&);
     ~MediaRecorderPrivateGStreamer();
 
     static bool isTypeSupported(const ContentType&);
@@ -51,6 +50,7 @@ protected:
     bool preparePipeline();
 
 private:
+    MediaRecorderPrivateGStreamer(MediaStreamPrivate&, const MediaRecorderPrivateOptions&);
     void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) final { };
     void audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final { };
 
