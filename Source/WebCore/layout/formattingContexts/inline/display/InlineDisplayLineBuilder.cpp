@@ -38,6 +38,7 @@ static InlineRect flipLogicalLineRectToVisualForWritingMode(const InlineRect& li
 {
     switch (writingModeToBlockFlowDirection(writingMode)) {
     case BlockFlowDirection::TopToBottom:
+    case BlockFlowDirection::BottomToTop:
         return lineLogicalRect;
     case BlockFlowDirection::LeftToRight:
     case BlockFlowDirection::RightToLeft:

@@ -100,17 +100,14 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasNonSupportedChild:
         stream << "unsupported child renderer";
         break;
-    case AvoidanceReason::FlowHasUnsupportedWritingMode:
-        stream << "unsupported writing mode (vertical-rl/horizontal-bt";
-        break;
     case AvoidanceReason::FlowHasLineAlignEdges:
         stream << "-webkit-line-align edges";
         break;
     case AvoidanceReason::FlowHasLineSnap:
         stream << "-webkit-line-snap property";
         break;
-    case AvoidanceReason::MultiColumnFlowHasVerticalWritingMode:
-        stream << "column has vertical writing mode";
+    case AvoidanceReason::MultiColumnFlowHasUnsupportedWritingMode:
+        stream << "column has unsupported writing mode";
         break;
     case AvoidanceReason::MultiColumnFlowIsFloating:
         stream << "column with floating objects";
@@ -266,8 +263,6 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
 {
     auto& style = renderer.style();
     OptionSet<AvoidanceReason> reasons;
-    if (style.writingMode() == WritingMode::HorizontalBt)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedWritingMode, reasons, includeReasons);
     // These are non-standard properties.
     if (style.lineAlign() != LineAlign::None)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineAlignEdges, reasons, includeReasons);
@@ -347,8 +342,8 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
     }
     if (flow.fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow) {
         auto& style = flow.style();
-        if (!style.isHorizontalWritingMode())
-            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowHasVerticalWritingMode, reasons, includeReasons);
+        if (!style.isHorizontalWritingMode() || style.blockFlowDirection() == BlockFlowDirection::BottomToTop)
+            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowHasUnsupportedWritingMode, reasons, includeReasons);
         if (style.isFloating())
             SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowIsFloating, reasons, includeReasons);
     }
