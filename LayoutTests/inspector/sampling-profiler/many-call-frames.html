@@ -17,15 +17,15 @@ function c() { d(); }
 function d() { e(); }
 function e() { f(); }
 function f() { g(); }
-function g() { top(); }
+function g() { stacktraceTop(); }
 
-function top() {
+function stacktraceTop() {
     for (let i = 0; i < 10000; i++) {
         i++;
         i--;
     }
 }
-noInline(top);
+noInline(stacktraceTop);
 
 function test()
 {
@@ -39,7 +39,7 @@ function test()
                 let tree = WI.CallingContextTree.__test_makeTreeFromProtocolMessageObject(messageObject);
 
                 let trace = [
-                    {name: "top"},
+                    {name: "stacktraceTop"},
                     {name: "g"},
                     {name: "f"},
                     {name: "e"},
