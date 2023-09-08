@@ -48,7 +48,7 @@ static FloatRoundedRect containingBlockRectForRenderer(const RenderObject& rende
 
 static FloatPoint normalPositionForOffsetPath(PathOperation* operation, const FloatRect& referenceRect)
 {
-    if (is<RayPathOperation>(operation))
+    if (is<RayPathOperation>(operation) || is<ShapePathOperation>(operation))
         return referenceRect.center();
     return { };
 }
@@ -74,9 +74,12 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
         data.containingBlockBoundingRect = containingBlockRectForRenderer(renderer, *container, *pathOperation);
         data.offsetFromContainingBlock = offsetFromContainer(renderer, *container, data.containingBlockBoundingRect.rect());
 
+        auto offsetPosition = renderer.style().offsetPosition();
+
+        if (is<ShapePathOperation>(pathOperation))
+            data.usedStartingPosition = startingPositionForOffsetPosition(offsetPosition, data.containingBlockBoundingRect.rect(), *container);
         if (is<RayPathOperation>(pathOperation)) {
             auto& rayPathOperation = downcast<RayPathOperation>(*pathOperation);
-            auto offsetPosition = renderer.style().offsetPosition();
             auto startingPosition = rayPathOperation.position();
             data.usedStartingPosition = startingPosition.x().isAuto() ? startingPositionForOffsetPosition(offsetPosition, data.containingBlockBoundingRect.rect(), *container) : floatPointForLengthPoint(startingPosition, data.containingBlockBoundingRect.rect().size());
         }
@@ -208,5 +211,20 @@ std::optional<Path> MotionPath::computePathForBox(const BoxPathOperation&, const
     return std::nullopt;
 }
 
+std::optional<Path> MotionPath::computePathForShape(const ShapePathOperation& pathOperation, const TransformOperationData& data)
+{
+    if (data.motionPathData()) {
+        auto& shape = pathOperation.basicShape();
+        auto containingBlockRect = data.motionPathData()->containingBlockBoundingRect.rect();
+        if (is<BasicShapeCircleOrEllipse>(shape)) {
+            auto& centerCoordShape = downcast<BasicShapeCircleOrEllipse>(shape);
+            if (centerCoordShape.positionWasOmitted())
+                return centerCoordShape.pathForCenterCoordinate(containingBlockRect, data.motionPathData()->usedStartingPosition);
+        }
+        return pathOperation.pathForReferenceRect(containingBlockRect);
+    }
+    return pathOperation.pathForReferenceRect(data.boundingBox());
+
+}
 
 } // namespace WebCore

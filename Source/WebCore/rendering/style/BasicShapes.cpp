@@ -172,30 +172,29 @@ bool BasicShapeCircle::operator==(const BasicShape& other) const
         && m_radius == otherCircle.m_radius;
 }
 
-float BasicShapeCircle::floatValueForRadiusInBox(float boxWidth, float boxHeight) const
+float BasicShapeCircle::floatValueForRadiusInBox(float boxWidth, float boxHeight, FloatPoint center) const
 {
     if (m_radius.type() == BasicShapeRadius::Type::Value)
         return floatValueForLength(m_radius.value(), std::hypot(boxWidth, boxHeight) / sqrtOfTwoFloat);
 
-    float centerX = floatValueForCenterCoordinate(m_centerX, boxWidth);
-    float centerY = floatValueForCenterCoordinate(m_centerY, boxHeight);
-
-    float widthDelta = std::abs(boxWidth - centerX);
-    float heightDelta = std::abs(boxHeight - centerY);
+    float widthDelta = std::abs(boxWidth - center.x());
+    float heightDelta = std::abs(boxHeight - center.y());
     if (m_radius.type() == BasicShapeRadius::Type::ClosestSide)
-        return std::min(std::min(std::abs(centerX), widthDelta), std::min(std::abs(centerY), heightDelta));
+        return std::min(std::min(std::abs(center.x()), widthDelta), std::min(std::abs(center.y()), heightDelta));
 
     // If radius.type() == BasicShapeRadius::Type::FarthestSide.
-    return std::max(std::max(std::abs(centerX), widthDelta), std::max(std::abs(centerY), heightDelta));
+    return std::max(std::max(std::abs(center.x()), widthDelta), std::max(std::abs(center.y()), heightDelta));
+}
+
+const Path& BasicShapeCircle::pathForCenterCoordinate(const FloatRect& boundingBox, FloatPoint center) const
+{
+    float radius = floatValueForRadiusInBox(boundingBox.width(), boundingBox.height(),  center);
+    return cachedEllipsePath(FloatRect(center.x() - radius + boundingBox.x(), center.y() - radius + boundingBox.y(), radius * 2, radius * 2));
 }
 
 const Path& BasicShapeCircle::path(const FloatRect& boundingBox)
 {
-    float centerX = floatValueForCenterCoordinate(m_centerX, boundingBox.width());
-    float centerY = floatValueForCenterCoordinate(m_centerY, boundingBox.height());
-    float radius = floatValueForRadiusInBox(boundingBox.width(), boundingBox.height());
-
-    return cachedEllipsePath(FloatRect(centerX - radius + boundingBox.x(), centerY - radius + boundingBox.y(), radius * 2, radius * 2));
+    return pathForCenterCoordinate(boundingBox, { floatValueForCenterCoordinate(m_centerX, boundingBox.width()), floatValueForCenterCoordinate(m_centerY, boundingBox.height()) });
 }
 
 bool BasicShapeCircle::canBlend(const BasicShape& other) const
@@ -272,14 +271,17 @@ float BasicShapeEllipse::floatValueForRadiusInBox(const BasicShapeRadius& radius
     return std::max(std::abs(center), widthOrHeightDelta);
 }
 
+const Path& BasicShapeEllipse::pathForCenterCoordinate(const FloatRect& boundingBox, FloatPoint center) const
+{
+    float radiusX = floatValueForRadiusInBox(m_radiusX, center.x(), boundingBox.width());
+    float radiusY = floatValueForRadiusInBox(m_radiusY, center.y(), boundingBox.height());
+
+    return cachedEllipsePath(FloatRect(center.x() - radiusX + boundingBox.x(), center.y() - radiusY + boundingBox.y(), radiusX * 2, radiusY * 2));
+}
+
 const Path& BasicShapeEllipse::path(const FloatRect& boundingBox)
 {
-    float centerX = floatValueForCenterCoordinate(m_centerX, boundingBox.width());
-    float centerY = floatValueForCenterCoordinate(m_centerY, boundingBox.height());
-    float radiusX = floatValueForRadiusInBox(m_radiusX, centerX, boundingBox.width());
-    float radiusY = floatValueForRadiusInBox(m_radiusY, centerY, boundingBox.height());
-
-    return cachedEllipsePath(FloatRect(centerX - radiusX + boundingBox.x(), centerY - radiusY + boundingBox.y(), radiusX * 2, radiusY * 2));
+    return pathForCenterCoordinate(boundingBox, { floatValueForCenterCoordinate(m_centerX, boundingBox.width()), floatValueForCenterCoordinate(m_centerY, boundingBox.height()) });
 }
 
 bool BasicShapeEllipse::canBlend(const BasicShape& other) const

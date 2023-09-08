@@ -147,9 +147,7 @@ public:
     CSSBoxType referenceBox() const { return m_referenceBox; }
     const std::optional<Path> getPath(const TransformOperationData& data) const final
     {
-        if (data.motionPathData())
-            return pathForReferenceRect(data.motionPathData()->containingBlockBoundingRect.rect());
-        return pathForReferenceRect(data.boundingBox());
+        return MotionPath::computePathForShape(*this, data);
     }
 
 private:

@@ -105,7 +105,7 @@ Ref<const Shape> Shape::createShape(const BasicShape& basicShape, const LayoutPo
         const auto& circle = downcast<BasicShapeCircle>(basicShape);
         float centerX = floatValueForCenterCoordinate(circle.centerX(), boxWidth);
         float centerY = floatValueForCenterCoordinate(circle.centerY(), boxHeight);
-        float radius = circle.floatValueForRadiusInBox(boxWidth, boxHeight);
+        float radius = circle.floatValueForRadiusInBox(boxWidth, boxHeight, { centerX, centerY });
         FloatPoint logicalCenter = physicalPointToLogical(FloatPoint(centerX, centerY), logicalBoxSize.height(), writingMode);
         logicalCenter.moveBy(borderBoxOffset);
 

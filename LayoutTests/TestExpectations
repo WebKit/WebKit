@@ -5283,10 +5283,6 @@ imported/w3c/web-platform-tests/css/motion/offset-path-url-009.html [ ImageOnlyF
 imported/w3c/web-platform-tests/css/motion/offset-path-url-010.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-url-011.html [ ImageOnlyFailure ]
 
-# CSS motion path: circle/ellipse offset-position support.
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-ellipse-002.html [ ImageOnlyFailure ]
-
 # CSS motion path: https://bugs.webkit.org/show_bug.cgi?id=261217
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-inset-001.html [ ImageOnlyFailure ]
 

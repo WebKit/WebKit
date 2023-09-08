@@ -170,7 +170,17 @@ private:
     Type m_type { Type::ClosestSide };
 };
 
-class BasicShapeCircle final : public BasicShape {
+class BasicShapeCircleOrEllipse : public BasicShape {
+public:
+    void setPositionWasOmitted(bool flag) { m_centerWasOmitted = flag; }
+    bool positionWasOmitted() const { return m_centerWasOmitted; }
+    virtual const Path& pathForCenterCoordinate(const FloatRect&, FloatPoint) const = 0;
+
+private:
+    bool m_centerWasOmitted = false;
+};
+
+class BasicShapeCircle final : public BasicShapeCircleOrEllipse {
 public:
     static Ref<BasicShapeCircle> create() { return adoptRef(*new BasicShapeCircle); }
     WEBCORE_EXPORT static Ref<BasicShapeCircle> create(BasicShapeCenterCoordinate&& centerX, BasicShapeCenterCoordinate&& centerY, BasicShapeRadius&&);
@@ -180,7 +190,7 @@ public:
     const BasicShapeCenterCoordinate& centerX() const { return m_centerX; }
     const BasicShapeCenterCoordinate& centerY() const { return m_centerY; }
     const BasicShapeRadius& radius() const { return m_radius; }
-    float floatValueForRadiusInBox(float boxWidth, float boxHeight) const;
+    float floatValueForRadiusInBox(float boxWidth, float boxHeight, FloatPoint) const;
 
     void setCenterX(BasicShapeCenterCoordinate centerX) { m_centerX = WTFMove(centerX); }
     void setCenterY(BasicShapeCenterCoordinate centerY) { m_centerY = WTFMove(centerY); }
@@ -193,6 +203,7 @@ private:
     Type type() const override { return Type::Circle; }
 
     const Path& path(const FloatRect&) override;
+    const Path& pathForCenterCoordinate(const FloatRect&, FloatPoint) const override;
 
     bool canBlend(const BasicShape&) const override;
     Ref<BasicShape> blend(const BasicShape& from, const BlendingContext&) const override;
@@ -206,7 +217,7 @@ private:
     BasicShapeRadius m_radius;
 };
 
-class BasicShapeEllipse final : public BasicShape {
+class BasicShapeEllipse final : public BasicShapeCircleOrEllipse {
 public:
     static Ref<BasicShapeEllipse> create() { return adoptRef(*new BasicShapeEllipse); }
     WEBCORE_EXPORT static Ref<BasicShapeEllipse> create(BasicShapeCenterCoordinate&& centerX, BasicShapeCenterCoordinate&& centerY, BasicShapeRadius&& radiusX, BasicShapeRadius&& radiusY);
@@ -231,6 +242,7 @@ private:
     Type type() const override { return Type::Ellipse; }
 
     const Path& path(const FloatRect&) override;
+    const Path& pathForCenterCoordinate(const FloatRect&, FloatPoint) const override;
 
     bool canBlend(const BasicShape&) const override;
     Ref<BasicShape> blend(const BasicShape& from, const BlendingContext&) const override;
@@ -432,6 +444,11 @@ WTF::TextStream& operator<<(WTF::TextStream&, const BasicShape&);
 
 } // namespace WebCore
 
+#define SPECIALIZE_TYPE_TRAITS_BASIC_SHAPE_CIRCULAR(ToValueTypeName, predicate1, predicate2) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+    static bool isType(const WebCore::BasicShape& basicShape) { return basicShape.type() == WebCore::predicate1 || basicShape.type() == WebCore::predicate2; } \
+SPECIALIZE_TYPE_TRAITS_END()
+
 #define SPECIALIZE_TYPE_TRAITS_BASIC_SHAPE(ToValueTypeName, predicate) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
     static bool isType(const WebCore::BasicShape& basicShape) { return basicShape.type() == WebCore::predicate; } \
@@ -443,3 +460,4 @@ SPECIALIZE_TYPE_TRAITS_BASIC_SHAPE(BasicShapePolygon, BasicShape::Type::Polygon)
 SPECIALIZE_TYPE_TRAITS_BASIC_SHAPE(BasicShapePath, BasicShape::Type::Path)
 SPECIALIZE_TYPE_TRAITS_BASIC_SHAPE(BasicShapeInset, BasicShape::Type::Inset)
 SPECIALIZE_TYPE_TRAITS_BASIC_SHAPE(BasicShapeXywh, BasicShape::Type::Xywh)
+SPECIALIZE_TYPE_TRAITS_BASIC_SHAPE_CIRCULAR(BasicShapeCircleOrEllipse, BasicShape::Type::Circle, BasicShape::Type::Ellipse);

@@ -208,6 +208,7 @@ Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionDa
         circle->setRadius(cssValueToBasicShapeRadius(conversionData, circleValue.radius()));
         circle->setCenterX(convertToCenterCoordinate(conversionData, circleValue.centerX()));
         circle->setCenterY(convertToCenterCoordinate(conversionData, circleValue.centerY()));
+        circle->setPositionWasOmitted(!circleValue.centerX() && !circleValue.centerY());
         return circle;
     }
     if (value.isEllipse()) {
@@ -217,6 +218,7 @@ Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionDa
         ellipse->setRadiusY(cssValueToBasicShapeRadius(conversionData, ellipseValue.radiusY()));
         ellipse->setCenterX(convertToCenterCoordinate(conversionData, ellipseValue.centerX()));
         ellipse->setCenterY(convertToCenterCoordinate(conversionData, ellipseValue.centerY()));
+        ellipse->setPositionWasOmitted(!ellipseValue.centerX() && !ellipseValue.centerY());
         return ellipse;
     }
     if (value.isPolygon()) {
