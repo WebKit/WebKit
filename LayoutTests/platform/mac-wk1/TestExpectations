@@ -2679,4 +2679,4 @@ webkit.org/b/261305 [ Monterey+ Debug ] editing/inserting/break-out-of-nested-li
 [ Monterey+ ] fast/scrolling/mac/scrollbars/overlay-scrollbar-state.html [ Failure ]
 
 webkit.org/b/261339 [ Monterey+ Debug ] editing/selection/cleared-by-relayout.html [ Crash ]
-
+webkit.org/b/261339 [ Monterey+ Debug ] imported/w3c/web-platform-tests/editing/crashtests/designMode-document-will-be-blurred-by-focus-event-listener.html [ Crash ]
