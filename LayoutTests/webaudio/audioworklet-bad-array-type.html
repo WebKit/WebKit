@@ -1,0 +1,31 @@
+<body>
+<p>This test passes if it does not crash.</p>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+async function runTest() {
+    const audio_context = new OfflineAudioContext(2, 1, 44100);
+    await audio_context.audioWorklet.addModule('bad-array-type-processor.js?' + Math.random());
+
+    const node1 = new AudioWorkletNode(audio_context, 'bad-array-type-processor');
+    const node2 = new AudioWorkletNode(audio_context, 'bad-array-type-processor', {
+        numberOfOutputs: 2,
+        outputChannelCount: [1, 1]
+    });
+
+    const buffer_source = audio_context.createBufferSource();
+    buffer_source.buffer = audio_context.createBuffer(1, 1, 44100);
+    buffer_source.connect(node1).connect(node2).connect(audio_context.destination);
+    buffer_source.start();
+
+    await audio_context.startRendering();
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+runTest();
+</script>
+</body>
