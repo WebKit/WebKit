@@ -2854,3 +2854,12 @@ webkit.org/b/261000 media/video-orientation-canvas.html [ Pass Failure ]
 [ Release ] imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-with-transform-and-preserve-3D.html [ ImageOnlyFailure ]
 
 webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ Pass Timeout ]
+
+# webkit.org/b261304 Batch mark expectations for flaky media tests
+[ Monterey+ Debug ] media/modern-media-controls/airplay-support/airplay-support-disable-event-listeners-with-hidden-controls.html [ Pass Failure ]
+[ Monterey+ ] media/media-source/media-source-fudge-factor.html [ Pass Failure Timeout ]
+[ Monterey+ Debug ] media/remove-from-document.html [ Pass Failure ]
+[ Monterey+ Debug ] media/media-event-listeners.html [ Pass Failure ]
+[ Monterey+ x86_64 ] media/video-object-fit.html [ Pass ImageOnlyFailure ]
+[ Monterey+ Debug ] media/modern-media-controls/volume-support/volume-support-click.html [ Pass Timeout ]
+[ Monterey+ Debug ] media/video-concurrent-playback.html [ Pass Failure ]
