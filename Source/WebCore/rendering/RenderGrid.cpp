@@ -1874,7 +1874,7 @@ GridAxisPosition RenderGrid::columnAxisPositionForChild(const RenderBox& child) 
     if (child.isOutOfFlowPositioned() && !hasStaticPositionForChild(child, ForRows))
         return GridAxisStart;
 
-    switch (alignSelfForChild(child).position()) {
+    switch (const auto gridItemAlignSelf = alignSelfForChild(child).position()) {
     case ItemPosition::SelfStart:
         // FIXME: Should we implement this logic in a generic utility function ?
         // Aligns the alignment subject to be flush with the edge of the alignment container
@@ -1920,10 +1920,18 @@ GridAxisPosition RenderGrid::columnAxisPositionForChild(const RenderBox& child) 
     case ItemPosition::End:
         return GridAxisEnd;
     case ItemPosition::Stretch:
-    case ItemPosition::Baseline:
         return GridAxisStart;
-    case ItemPosition::LastBaseline:
-        return GridAxisEnd;
+    case ItemPosition::Baseline:
+    case ItemPosition::LastBaseline: {
+        auto fallbackAlignment = [&] {
+            if (gridItemAlignSelf == ItemPosition::Baseline)
+                return hasSameWritingMode ? GridAxisStart : GridAxisEnd;
+            return hasSameWritingMode ? GridAxisEnd : GridAxisStart;
+        };
+        if (GridLayoutFunctions::isOrthogonalChild(*this, child))
+            return gridItemAlignSelf == ItemPosition::Baseline ? GridAxisStart : GridAxisEnd;
+        return fallbackAlignment();
+    }
     case ItemPosition::Legacy:
     case ItemPosition::Auto:
     case ItemPosition::Normal:
