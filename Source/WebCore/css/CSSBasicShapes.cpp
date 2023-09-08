@@ -191,6 +191,115 @@ bool CSSEllipseValue::equals(const CSSEllipseValue& other) const
         && compareCSSValuePtr(m_radiusY, other.m_radiusY);
 }
 
+CSSXywhValue::CSSXywhValue(Ref<CSSValue> insetX, Ref<CSSValue> insetY, Ref<CSSValue> width, Ref<CSSValue> height, RefPtr<CSSValue> topLeftRadius, RefPtr<CSSValue> topRightRadius, RefPtr<CSSValue> bottomRightRadius, RefPtr<CSSValue> bottomLeftRadius)
+    : CSSValue(XywhShapeClass)
+    , m_insetX(WTFMove(insetX))
+    , m_insetY(WTFMove(insetY))
+    , m_width(WTFMove(width))
+    , m_height(WTFMove(height))
+    , m_topLeftRadius(WTFMove(topLeftRadius))
+    , m_topRightRadius(WTFMove(topRightRadius))
+    , m_bottomRightRadius(WTFMove(bottomRightRadius))
+    , m_bottomLeftRadius(WTFMove(bottomLeftRadius))
+{
+}
+
+Ref<CSSXywhValue> CSSXywhValue::create(Ref<CSSValue> insetX, Ref<CSSValue> insetY, Ref<CSSValue> width, Ref<CSSValue> height, RefPtr<CSSValue> topLeftRadius, RefPtr<CSSValue> topRightRadius, RefPtr<CSSValue> bottomRightRadius, RefPtr<CSSValue> bottomLeftRadius)
+{
+    return adoptRef(*new CSSXywhValue(WTFMove(insetX), WTFMove(insetY), WTFMove(width), WTFMove(height), WTFMove(topLeftRadius), WTFMove(topRightRadius), WTFMove(bottomRightRadius), WTFMove(bottomLeftRadius)));
+}
+
+bool CSSXywhValue::equals(const CSSXywhValue& other) const
+{
+    return compareCSSValue(m_insetX, other.m_insetX)
+        && compareCSSValue(m_insetY, other.m_insetY)
+        && compareCSSValue(m_width, other.m_width)
+        && compareCSSValue(m_height, other.m_height)
+        && compareCSSValuePtr(m_topLeftRadius, other.m_topLeftRadius)
+        && compareCSSValuePtr(m_topRightRadius, other.m_topRightRadius)
+        && compareCSSValuePtr(m_bottomRightRadius, other.m_bottomRightRadius)
+        && compareCSSValuePtr(m_bottomLeftRadius, other.m_bottomLeftRadius);
+}
+
+static inline void updateCornerRadiusWidthAndHeight(const CSSValue* corner, String& width, String& height)
+{
+    if (!corner)
+        return;
+    width = corner->first().cssText();
+    height = corner->second().cssText();
+}
+
+static bool buildRadii(Vector<String>& radii, const String& topLeftRadius, const String& topRightRadius, const String& bottomRightRadius, const String& bottomLeftRadius)
+{
+    bool showBottomLeft = topRightRadius != bottomLeftRadius;
+    bool showBottomRight = showBottomLeft || (bottomRightRadius != topLeftRadius);
+    bool showTopRight = showBottomRight || (topRightRadius != topLeftRadius);
+
+    radii.append(topLeftRadius);
+    if (showTopRight)
+        radii.append(topRightRadius);
+    if (showBottomRight)
+        radii.append(bottomRightRadius);
+    if (showBottomLeft)
+        radii.append(bottomLeftRadius);
+
+    return radii.size() == 1 && radii[0] == "0px"_s;
+}
+
+static String buildXywhString(const String& insetX, const String& insetY, const String& width, const String& height,
+    const String& topLeftRadiusWidth, const String& topLeftRadiusHeight,
+    const String& topRightRadiusWidth, const String& topRightRadiusHeight,
+    const String& bottomRightRadiusWidth, const String& bottomRightRadiusHeight,
+    const String& bottomLeftRadiusWidth, const String& bottomLeftRadiusHeight)
+{
+    StringBuilder result;
+    result.append("xywh("_s, insetX, ' ', insetY, ' ', width, ' ', height);
+
+    if (!topLeftRadiusWidth.isNull() && !topLeftRadiusHeight.isNull()) {
+        Vector<String> horizontalRadii;
+        bool areDefaultCornerRadii = buildRadii(horizontalRadii, topLeftRadiusWidth, topRightRadiusWidth, bottomRightRadiusWidth, bottomLeftRadiusWidth);
+
+        Vector<String> verticalRadii;
+        areDefaultCornerRadii &= buildRadii(verticalRadii, topLeftRadiusHeight, topRightRadiusHeight, bottomRightRadiusHeight, bottomLeftRadiusHeight);
+
+        if (!areDefaultCornerRadii) {
+            result.append(" round"_s);
+
+            for (auto& radius : horizontalRadii)
+                result.append(' ', radius);
+
+            if (verticalRadii != horizontalRadii) {
+                result.append(" /"_s);
+                for (auto& radius : verticalRadii)
+                    result.append(' ', radius);
+            }
+        }
+    }
+    result.append(')');
+    return result.toString();
+}
+
+String CSSXywhValue::customCSSText() const
+{
+    String topLeftRadiusWidth;
+    String topLeftRadiusHeight;
+    String topRightRadiusWidth;
+    String topRightRadiusHeight;
+    String bottomRightRadiusWidth;
+    String bottomRightRadiusHeight;
+    String bottomLeftRadiusWidth;
+    String bottomLeftRadiusHeight;
+
+    updateCornerRadiusWidthAndHeight(topLeftRadius(), topLeftRadiusWidth, topLeftRadiusHeight);
+    updateCornerRadiusWidthAndHeight(topRightRadius(), topRightRadiusWidth, topRightRadiusHeight);
+    updateCornerRadiusWidthAndHeight(bottomRightRadius(), bottomRightRadiusWidth, bottomRightRadiusHeight);
+    updateCornerRadiusWidthAndHeight(bottomLeftRadius(), bottomLeftRadiusWidth, bottomLeftRadiusHeight);
+
+    return buildXywhString(m_insetX->cssText(), m_insetY->cssText(), m_width->cssText(), m_height->cssText(),
+        topLeftRadiusWidth, topLeftRadiusHeight, topRightRadiusWidth, topRightRadiusHeight,
+        bottomRightRadiusWidth, bottomRightRadiusHeight, bottomLeftRadiusWidth, bottomLeftRadiusHeight);
+}
+
 CSSPathValue::CSSPathValue(SVGPathByteStream data, WindRule rule)
     : CSSValue(PathClass)
     , m_pathData(WTFMove(data))
@@ -272,23 +381,6 @@ Ref<CSSInsetShapeValue> CSSInsetShapeValue::create(Ref<CSSValue> top, Ref<CSSVal
         WTFMove(topLeftRadius), WTFMove(topRightRadius), WTFMove(bottomRightRadius), WTFMove(bottomLeftRadius)));
 }
 
-static bool buildInsetRadii(Vector<String>& radii, const String& topLeftRadius, const String& topRightRadius, const String& bottomRightRadius, const String& bottomLeftRadius)
-{
-    bool showBottomLeft = topRightRadius != bottomLeftRadius;
-    bool showBottomRight = showBottomLeft || (bottomRightRadius != topLeftRadius);
-    bool showTopRight = showBottomRight || (topRightRadius != topLeftRadius);
-
-    radii.append(topLeftRadius);
-    if (showTopRight)
-        radii.append(topRightRadius);
-    if (showBottomRight)
-        radii.append(bottomRightRadius);
-    if (showBottomLeft)
-        radii.append(bottomLeftRadius);
-
-    return radii.size() == 1 && radii[0] == "0px"_s;
-}
-
 static String buildInsetString(const String& top, const String& right, const String& bottom, const String& left,
     const String& topLeftRadiusWidth, const String& topLeftRadiusHeight,
     const String& topRightRadiusWidth, const String& topRightRadiusHeight,
@@ -310,10 +402,10 @@ static String buildInsetString(const String& top, const String& right, const Str
 
     if (!topLeftRadiusWidth.isNull() && !topLeftRadiusHeight.isNull()) {
         Vector<String> horizontalRadii;
-        bool areDefaultCornerRadii = buildInsetRadii(horizontalRadii, topLeftRadiusWidth, topRightRadiusWidth, bottomRightRadiusWidth, bottomLeftRadiusWidth);
+        bool areDefaultCornerRadii = buildRadii(horizontalRadii, topLeftRadiusWidth, topRightRadiusWidth, bottomRightRadiusWidth, bottomLeftRadiusWidth);
 
         Vector<String> verticalRadii;
-        areDefaultCornerRadii &= buildInsetRadii(verticalRadii, topLeftRadiusHeight, topRightRadiusHeight, bottomRightRadiusHeight, bottomLeftRadiusHeight);
+        areDefaultCornerRadii &= buildRadii(verticalRadii, topLeftRadiusHeight, topRightRadiusHeight, bottomRightRadiusHeight, bottomLeftRadiusHeight);
 
         if (!areDefaultCornerRadii) {
             result.append(" round"_s);
@@ -321,8 +413,7 @@ static String buildInsetString(const String& top, const String& right, const Str
             for (auto& radius : horizontalRadii)
                 result.append(' ', radius);
 
-            if (verticalRadii.size() != horizontalRadii.size()
-                || !WTF::VectorComparer<false, String>::compare(verticalRadii.data(), horizontalRadii.data(), verticalRadii.size())) {
+            if (verticalRadii != horizontalRadii) {
                 result.append(" /"_s);
                 for (auto& radius : verticalRadii)
                     result.append(' ', radius);
@@ -331,14 +422,6 @@ static String buildInsetString(const String& top, const String& right, const Str
     }
     result.append(')');
     return result.toString();
-}
-
-static inline void updateCornerRadiusWidthAndHeight(const CSSValue* corner, String& width, String& height)
-{
-    if (!corner)
-        return;
-    width = corner->first().cssText();
-    height = corner->second().cssText();
 }
 
 String CSSInsetShapeValue::customCSSText() const

@@ -1429,6 +1429,7 @@ fill-box
 
 // motion path
 path
+xywh
 
 calc
 -webkit-calc

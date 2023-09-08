@@ -79,6 +79,13 @@ static SVGPathByteStream copySVGPathByteStream(const SVGPathByteStream& source, 
 
 Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& basicShape, SVGPathConversion conversion)
 {
+    auto createValue = [&](const Length& length) {
+        return CSSPrimitiveValue::create(length, style);
+    };
+    auto createPair = [&](const LengthSize& size) {
+        return CSSValuePair::create(createValue(size.width), createValue(size.height));
+    };
+
     switch (basicShape.type()) {
     case BasicShape::Type::Circle: {
         auto& circle = downcast<BasicShapeCircle>(basicShape);
@@ -106,17 +113,18 @@ Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& bas
         return CSSPathValue::create(copySVGPathByteStream(*pathShape.pathData(), conversion), pathShape.windRule());
     }
     case BasicShape::Type::Inset: {
-        auto createValue = [&](const Length& length) {
-            return CSSPrimitiveValue::create(length, style);
-        };
-        auto createPair = [&](const LengthSize& size) {
-            return CSSValuePair::create(createValue(size.width), createValue(size.height));
-        };
         auto& inset = downcast<BasicShapeInset>(basicShape);
         return CSSInsetShapeValue::create(createValue(inset.top()), createValue(inset.right()),
             createValue(inset.bottom()), createValue(inset.left()),
             createPair(inset.topLeftRadius()), createPair(inset.topRightRadius()),
             createPair(inset.bottomRightRadius()), createPair(inset.bottomLeftRadius()));
+    }
+    case BasicShape::Type::Xywh: {
+        auto& xywh = downcast<BasicShapeXywh>(basicShape);
+        return CSSXywhValue::create(createValue(xywh.insetX()), createValue(xywh.insetY()),
+            createValue(xywh.width()), createValue(xywh.height()),
+            createPair(xywh.topLeftRadius()), createPair(xywh.topRightRadius()),
+            createPair(xywh.bottomRightRadius()), createPair(xywh.bottomLeftRadius()));
     }
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -226,6 +234,20 @@ Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionDa
         rect->setRight(convertToLength(conversionData, rectValue.right()));
         rect->setBottom(convertToLength(conversionData, rectValue.bottom()));
         rect->setLeft(convertToLength(conversionData, rectValue.left()));
+        rect->setTopLeftRadius(convertToLengthSize(conversionData, rectValue.topLeftRadius()));
+        rect->setTopRightRadius(convertToLengthSize(conversionData, rectValue.topRightRadius()));
+        rect->setBottomRightRadius(convertToLengthSize(conversionData, rectValue.bottomRightRadius()));
+        rect->setBottomLeftRadius(convertToLengthSize(conversionData, rectValue.bottomLeftRadius()));
+        return rect;
+    }
+    if (value.isXywhShape()) {
+        auto& rectValue = downcast<CSSXywhValue>(value);
+        auto rect = BasicShapeXywh::create();
+        rect->setInsetX(convertToLength(conversionData, rectValue.insetX()));
+        rect->setInsetY(convertToLength(conversionData, rectValue.insetY()));
+        rect->setWidth(convertToLength(conversionData, rectValue.width()));
+        rect->setHeight(convertToLength(conversionData, rectValue.height()));
+
         rect->setTopLeftRadius(convertToLengthSize(conversionData, rectValue.topLeftRadius()));
         rect->setTopRightRadius(convertToLengthSize(conversionData, rectValue.topRightRadius()));
         rect->setBottomRightRadius(convertToLengthSize(conversionData, rectValue.bottomRightRadius()));

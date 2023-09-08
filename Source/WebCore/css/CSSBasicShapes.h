@@ -124,6 +124,37 @@ private:
     WindRule m_windRule { };
 };
 
+class CSSXywhValue : public CSSValue {
+public:
+    static Ref<CSSXywhValue> create(Ref<CSSValue> insetX, Ref<CSSValue> insetY, Ref<CSSValue> width, Ref<CSSValue> height, RefPtr<CSSValue> topLeftRadius, RefPtr<CSSValue> topRightRadius, RefPtr<CSSValue> bottomRightRadius, RefPtr<CSSValue> bottomLeftRadius);
+
+    const CSSValue& insetX() const { return m_insetX; }
+    const CSSValue& insetY() const { return m_insetY; }
+    const CSSValue& width() const { return m_width; }
+    const CSSValue& height() const { return m_height; }
+
+    const CSSValue* topLeftRadius() const { return m_topLeftRadius.get(); }
+    const CSSValue* topRightRadius() const { return m_topRightRadius.get(); }
+    const CSSValue* bottomRightRadius() const { return m_bottomRightRadius.get(); }
+    const CSSValue* bottomLeftRadius() const { return m_bottomLeftRadius.get(); }
+
+    String customCSSText() const;
+    bool equals(const CSSXywhValue&) const;
+
+private:
+    CSSXywhValue(Ref<CSSValue> insetX, Ref<CSSValue> insetY, Ref<CSSValue> width, Ref<CSSValue> height, RefPtr<CSSValue> topLeftRadius, RefPtr<CSSValue> topRightRadius, RefPtr<CSSValue> bottomRightRadius, RefPtr<CSSValue> bottomLeftRadius);
+
+    Ref<CSSValue> m_insetX;
+    Ref<CSSValue> m_insetY;
+    Ref<CSSValue> m_width;
+    Ref<CSSValue> m_height;
+
+    RefPtr<CSSValue> m_topLeftRadius;
+    RefPtr<CSSValue> m_topRightRadius;
+    RefPtr<CSSValue> m_bottomRightRadius;
+    RefPtr<CSSValue> m_bottomLeftRadius;
+};
+
 class CSSPathValue : public CSSValue {
 public:
     static Ref<CSSPathValue> create(SVGPathByteStream, WindRule);
@@ -148,3 +179,4 @@ SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSEllipseValue, isEllipse())
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSInsetShapeValue, isInsetShape())
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSPolygonValue, isPolygon())
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSPathValue, isPath())
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSXywhValue, isXywhShape())

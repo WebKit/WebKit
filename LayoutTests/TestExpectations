@@ -2383,7 +2383,6 @@ webkit.org/b/238371 imported/w3c/web-platform-tests/css/css-masking/clip-path/cl
 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-rect-interpolation-001.html [ ImageOnlyFailure ]
 webkit.org/b/238371 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-interpolation-001.html [ ImageOnlyFailure ]
 webkit.org/b/238371 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-interpolation-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-xywh-interpolation-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-006.html [ ImageOnlyFailure ]
@@ -2391,9 +2390,10 @@ imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-rect-001.htm
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-rect-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-rect-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-svg-text-css.html [ ImageOnlyFailure ]
-webkit.org/b/259989 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-xywh-001.html [ ImageOnlyFailure ]
-webkit.org/b/259989 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-xywh-002.html [ ImageOnlyFailure ]
-webkit.org/b/259989 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-xywh-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-xywh-interpolation-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-xywh-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-xywh-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-xywh-003.html [ ImageOnlyFailure ]
 
 webkit.org/b/229370 imported/w3c/web-platform-tests/css/css-masking/clip/clip-filter-order.html [ ImageOnlyFailure ]
 webkit.org/b/229370 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-local-mask.html [ ImageOnlyFailure ]
@@ -5283,19 +5283,24 @@ imported/w3c/web-platform-tests/css/motion/offset-path-url-009.html [ ImageOnlyF
 imported/w3c/web-platform-tests/css/motion/offset-path-url-010.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-url-011.html [ ImageOnlyFailure ]
 
-# CSS motion path tests <basic-shape> misc bugs.
+# CSS motion path: circle/ellipse offset-position support.
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-ellipse-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-inset-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-inset-002.html [ ImageOnlyFailure ]
 
-# CSS motion path tests for missing <basic-shape> support.
+# CSS motion path: https://bugs.webkit.org/show_bug.cgi?id=261217
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-inset-001.html [ ImageOnlyFailure ]
+
+# CSS motion path: positioning inset shapes with border-radius.
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-inset-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-xywh-002.html [ ImageOnlyFailure ]
+
+# CSS motion path: positioning inset shapes with coord-box.
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-xywh-003.html [ ImageOnlyFailure ]
+
+# CSS motion path: missing rect() modern syntax support.
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-rect-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-rect-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-rect-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-xywh-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-xywh-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-xywh-003.html [ ImageOnlyFailure ]
 
 # IPC test failing in Debug mode due to assert.
 [ Debug ] ipc/send-invalid-message.html [ Skip ]
