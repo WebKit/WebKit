@@ -1874,6 +1874,8 @@ compositing/hidpi-image-backing-store.html [ Failure ]
 # rdar://108846032 (REGRESSION (263506@main): [ Sonoma wk2 ] fast/layoutformattingcontext/horizontal-sizing-with-trailing-letter-spacing.html: WebCore::Layout::Line::TrimmableTrailingContent::remove)
 [ Sonoma+ ] fast/layoutformattingcontext/horizontal-sizing-with-trailing-letter-spacing.html [ Skip ]
 
+webkit.org/b/260867 [ Monterey+ ] fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Pass Failure ]
+
 webkit.org/b/239627 [ arm64 ] fast/scrolling/mac/adjust-scroll-snap-during-gesture.html [ Pass Failure ]
 
 webkit.org/b/260917 [ Ventura ] fast/forms/border-color-relayout.html [ Pass ImageOnlyFailure ]
