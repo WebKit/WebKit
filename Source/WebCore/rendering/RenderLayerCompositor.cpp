@@ -2798,6 +2798,7 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer& layer, R
         || requiresCompositingForBackfaceVisibility(renderer)
         || requiresCompositingForVideo(renderer)
         || requiresCompositingForModel(renderer)
+        || requiresCompositingForFixedBackgroundAndEffects(renderer)
         || requiresCompositingForFrame(renderer, queryData)
         || requiresCompositingForPlugin(renderer, queryData)
         || requiresCompositingForOverflowScrolling(*renderer.layer(), queryData);
@@ -2869,6 +2870,7 @@ bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer& layer, co
         || requiresCompositingForBackfaceVisibility(renderer)
         || requiresCompositingForVideo(renderer)
         || requiresCompositingForModel(renderer)
+        || requiresCompositingForFixedBackgroundAndEffects(renderer)
         || requiresCompositingForFrame(renderer, queryData)
         || requiresCompositingForPlugin(renderer, queryData)
         || requiresCompositingForOverflowScrolling(layer, queryData)
@@ -2920,6 +2922,8 @@ OptionSet<CompositingReason> RenderLayerCompositor::reasonsForCompositing(const 
         reasons.add(CompositingReason::Canvas);
     else if (requiresCompositingForModel(renderer))
         reasons.add(CompositingReason::Model);
+    else if (requiresCompositingForFixedBackgroundAndEffects(renderer))
+        reasons.add(CompositingReason::PositionFixed);
     else if (requiresCompositingForPlugin(renderer, queryData))
         reasons.add(CompositingReason::Plugin);
     else if (requiresCompositingForFrame(renderer, queryData))
@@ -3469,6 +3473,18 @@ bool RenderLayerCompositor::requiresCompositingForModel(RenderLayerModelObject& 
     return false;
 }
 
+bool RenderLayerCompositor::requiresCompositingForFixedBackgroundAndEffects(RenderLayerModelObject& renderer) const
+{
+    if (!renderer.isDocumentElementRenderer())
+        return false;
+    if (!needsFixedRootBackgroundLayer())
+        return false;
+    // FIXME: Is this everything? Any layerized effect that needs to
+    // apply to the fixed background. Isolation?
+    auto& style = renderer.style();
+    return style.hasOpacity() || style.hasFilter() || style.hasBlendMode() || style.hasMask() || style.clipPath();
+}
+
 bool RenderLayerCompositor::requiresCompositingForPlugin(RenderLayerModelObject& renderer, RequiresCompositingData& queryData) const
 {
     if (!(m_compositingTriggers & ChromeClient::PluginTrigger))
@@ -3945,11 +3961,8 @@ bool RenderLayerCompositor::supportsFixedRootBackgroundCompositing() const
     return renderViewBacking && renderViewBacking->isFrameLayerWithTiledBacking();
 }
 
-bool RenderLayerCompositor::needsFixedRootBackgroundLayer(const RenderLayer& layer) const
+bool RenderLayerCompositor::needsFixedRootBackgroundLayer() const
 {
-    if (!layer.isRenderViewLayer())
-        return false;
-
     if (m_renderView.settings().fixedBackgroundsPaintRelativeToDocument())
         return false;
 
@@ -3965,6 +3978,13 @@ GraphicsLayer* RenderLayerCompositor::fixedRootBackgroundLayer() const
 
     if (viewLayer->isComposited() && viewLayer->backing()->backgroundLayerPaintsFixedRootBackground())
         return viewLayer->backing()->backgroundLayer();
+
+    auto* rootElementLayer = m_renderView.firstChild() ? downcast<RenderBox>(m_renderView.firstChild())->layer() : nullptr;
+    if (!rootElementLayer)
+        return nullptr;
+
+    if (rootElementLayer->isComposited() && rootElementLayer->backing()->backgroundLayerPaintsFixedRootBackground())
+        return rootElementLayer->backing()->backgroundLayer();
 
     return nullptr;
 }

@@ -103,6 +103,7 @@ struct PaintInfo {
     Color forcedTextColor() const { return forceBlackText() ? Color::black : Color::white; }
 
     bool skipRootBackground() const { return paintBehavior.contains(PaintBehavior::SkipRootBackground); }
+    bool skipViewBackground() const { return paintBehavior.contains(PaintBehavior::SkipViewBackground); }
     bool paintRootBackgroundOnly() const { return paintBehavior.contains(PaintBehavior::RootBackgroundOnly); }
 
     const RenderLayer* enclosingSelfPaintingLayer() const { return m_enclosingSelfPaintingLayer; }

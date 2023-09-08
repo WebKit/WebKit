@@ -661,7 +661,11 @@ static LayoutRect overflowControlsHostLayerRect(const RenderBox& renderBox)
 
 void RenderLayerBacking::updateOpacity(const RenderStyle& style)
 {
-    m_graphicsLayer->setOpacity(compositingOpacity(style.opacity()));
+    if (m_contentsContainmentLayer) {
+        m_contentsContainmentLayer->setOpacity(compositingOpacity(style.opacity()));
+        m_graphicsLayer->setOpacity(1.);
+    } else
+        m_graphicsLayer->setOpacity(compositingOpacity(style.opacity()));
 }
 
 void RenderLayerBacking::updateTransform(const RenderStyle& style)
@@ -670,7 +674,7 @@ void RenderLayerBacking::updateTransform(const RenderStyle& style)
     if (m_owningLayer.isTransformed())
         m_owningLayer.updateTransformFromStyle(t, style, RenderStyle::individualTransformOperations());
     
-    if (m_contentsContainmentLayer) {
+    if (m_contentsContainmentLayer && !renderer().isDocumentElementRenderer()) {
         m_contentsContainmentLayer->setTransform(t);
         m_graphicsLayer->setTransform({ });
     } else
@@ -709,7 +713,7 @@ void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect&
         transformOrigin.z()
     };
 
-    if (m_contentsContainmentLayer)
+    if (m_contentsContainmentLayer && !renderer().isDocumentElementRenderer())
         m_contentsContainmentLayer->setAnchorPoint(anchor);
     else
         m_graphicsLayer->setAnchorPoint(anchor);
@@ -769,7 +773,11 @@ void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect&
 
 void RenderLayerBacking::updateFilters(const RenderStyle& style)
 {
-    m_canCompositeFilters = m_graphicsLayer->setFilters(style.filter());
+    if (m_contentsContainmentLayer) {
+        m_canCompositeFilters = m_contentsContainmentLayer->setFilters(style.filter());
+        m_graphicsLayer->setFilters(FilterOperations());
+    } else
+        m_canCompositeFilters = m_graphicsLayer->setFilters(style.filter());
 }
 
 #if ENABLE(FILTERS_LEVEL_2)
@@ -819,6 +827,11 @@ void RenderLayerBacking::updateBlendMode(const RenderStyle& style)
     // FIXME: where is the blend mode updated when m_ancestorClippingStacks come and go?
     if (m_ancestorClippingStack) {
         m_ancestorClippingStack->stack().first().clippingLayer->setBlendMode(style.blendMode());
+        m_graphicsLayer->setBlendMode(BlendMode::Normal);
+        if (m_contentsContainmentLayer)
+            m_contentsContainmentLayer->setBlendMode(BlendMode::Normal);
+    } else if (m_contentsContainmentLayer) {
+        m_contentsContainmentLayer->setBlendMode(style.blendMode());
         m_graphicsLayer->setBlendMode(BlendMode::Normal);
     } else
         m_graphicsLayer->setBlendMode(style.blendMode());
@@ -1063,9 +1076,24 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
     if (updateViewportConstrainedAnchorLayer(compositor.isViewportConstrainedFixedOrStickyLayer(m_owningLayer)))
         layerConfigChanged = true;
 
-    setBackgroundLayerPaintsFixedRootBackground(compositor.needsFixedRootBackgroundLayer(m_owningLayer));
+    // Pretty complex interactions between layers, need to ensure that we don't
+    // depend on the other layer's configuration.
+    if (m_owningLayer.isRenderViewAndCanPaintFixedRootBackground()) {
+        // If we can propagate the root background to the view, then do
+        // so.
+        setBackgroundLayerPaintsRootElementBackground(true);
+        setBackgroundLayerPaintsFixedRootBackground(true);
+    } else if (renderer().isDocumentElementRenderer() && !m_owningLayer.parent()->isRenderViewAndCanPaintFixedRootBackground() && renderer().style().hasBackgroundImage() && (compositor.needsFixedRootBackgroundLayer() || m_owningLayer.isTransformed())) {
+        // If we're the root element, and we have a fixed background that couldn't be propagated
+        // to the view, or if we're transformed, then we need to layerize our background.
+        setBackgroundLayerPaintsRootElementBackground(true);
+        setBackgroundLayerPaintsFixedRootBackground(compositor.needsFixedRootBackgroundLayer());
+    } else {
+        setBackgroundLayerPaintsRootElementBackground(false);
+        setBackgroundLayerPaintsFixedRootBackground(false);
+    }
 
-    if (updateBackgroundLayer(m_backgroundLayerPaintsFixedRootBackground || m_requiresBackgroundLayer))
+    if (updateBackgroundLayer(m_backgroundLayerPaintsRootElementBackground || m_requiresBackgroundLayer))
         layerConfigChanged = true;
 
     if (updateForegroundLayer(compositor.needsContentsCompositingLayer(m_owningLayer)))
@@ -1577,7 +1605,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
             const LocalFrameView& frameView = renderer().view().frameView();
             backgroundPosition = frameView.scrollPositionForFixedPosition();
             backgroundSize = frameView.layoutSize();
-        } else {
+        } else if (!renderer().isDocumentElementRenderer()) {
             auto boundingBox = renderer().objectBoundingBox();
             backgroundPosition = boundingBox.location();
             backgroundSize = boundingBox.size();
@@ -1672,7 +1700,7 @@ void RenderLayerBacking::updateAfterDescendants()
 
     updateDrawsContent(contentsInfo);
 
-    if (!m_isMainFrameRenderViewLayer && !m_isFrameLayerWithTiledBacking && !m_requiresBackgroundLayer) {
+    if (!m_isMainFrameRenderViewLayer && !m_isFrameLayerWithTiledBacking && !m_requiresBackgroundLayer && !m_backgroundLayerPaintsRootElementBackground) {
         // For non-root layers, background is always painted by the primary graphics layer.
         ASSERT(!m_backgroundLayer);
         m_graphicsLayer->setContentsOpaque(!m_hasSubpixelRounding && m_owningLayer.backgroundIsKnownToBeOpaqueInRect(compositedBounds()));
@@ -2210,9 +2238,13 @@ void RenderLayerBacking::setBackgroundLayerPaintsFixedRootBackground(bool backgr
     m_backgroundLayerPaintsFixedRootBackground = backgroundLayerPaintsFixedRootBackground;
 
     if (m_backgroundLayerPaintsFixedRootBackground) {
-        ASSERT(m_isFrameLayerWithTiledBacking);
         renderer().view().frameView().removeSlowRepaintObject(*renderer().view().rendererForRootBackground());
     }
+}
+
+void RenderLayerBacking::setBackgroundLayerPaintsRootElementBackground(bool backgroundLayerPaintsRootElementBackground)
+{
+    m_backgroundLayerPaintsRootElementBackground = backgroundLayerPaintsRootElementBackground;
 }
 
 void RenderLayerBacking::setRequiresBackgroundLayer(bool requiresBackgroundLayer)
@@ -2482,6 +2514,8 @@ bool RenderLayerBacking::updateMaskingLayer(bool hasMask, bool hasClipPath)
         GraphicsLayer::Type requiredLayerType = paintsContent ? GraphicsLayer::Type::Normal : GraphicsLayer::Type::Shape;
         if (m_maskLayer && m_maskLayer->type() != requiredLayerType) {
             m_graphicsLayer->setMaskLayer(nullptr);
+            if (m_contentsContainmentLayer)
+                m_contentsContainmentLayer->setMaskLayer(nullptr);
             willDestroyLayer(m_maskLayer.get());
             GraphicsLayer::clear(m_maskLayer);
         }
@@ -2489,7 +2523,10 @@ bool RenderLayerBacking::updateMaskingLayer(bool hasMask, bool hasClipPath)
         if (!m_maskLayer) {
             m_maskLayer = createGraphicsLayer("mask"_s, requiredLayerType);
             layerChanged = true;
-            m_graphicsLayer->setMaskLayer(m_maskLayer.copyRef());
+            if (m_contentsContainmentLayer)
+                m_contentsContainmentLayer->setMaskLayer(m_maskLayer.copyRef());
+            else
+                m_graphicsLayer->setMaskLayer(m_maskLayer.copyRef());
             // We need a geometry update to size the new mask layer.
             m_owningLayer.setNeedsCompositingGeometryUpdate();
         }
@@ -2497,6 +2534,8 @@ bool RenderLayerBacking::updateMaskingLayer(bool hasMask, bool hasClipPath)
         m_maskLayer->setPaintingPhase(maskPhases);
     } else if (m_maskLayer) {
         m_graphicsLayer->setMaskLayer(nullptr);
+        if (m_contentsContainmentLayer)
+            m_contentsContainmentLayer->setMaskLayer(nullptr);
         willDestroyLayer(m_maskLayer.get());
         GraphicsLayer::clear(m_maskLayer);
         layerChanged = true;
@@ -3543,9 +3582,17 @@ OptionSet<RenderLayer::PaintLayerFlag> RenderLayerBacking::paintFlagsForLayer(co
     if (paintingPhase.contains(GraphicsLayerPaintingPhase::CompositedScroll))
         paintFlags.add(RenderLayer::PaintLayerFlag::PaintingCompositingScrollingPhase);
 
-    if (&graphicsLayer == m_backgroundLayer.get() && m_backgroundLayerPaintsFixedRootBackground)
-        paintFlags.add({ RenderLayer::PaintLayerFlag::PaintingRootBackgroundOnly, RenderLayer::PaintLayerFlag::PaintingCompositingForegroundPhase }); // Need PaintLayerFlag::PaintingCompositingForegroundPhase to walk child layers.
-    else if (compositor().fixedRootBackgroundLayer())
+    if (m_backgroundLayerPaintsRootElementBackground) {
+        if (&graphicsLayer == m_backgroundLayer.get()) {
+            paintFlags.add({ RenderLayer::PaintLayerFlag::PaintingRootBackgroundOnly });
+            if (m_owningLayer.isRenderViewLayer())
+                paintFlags.add({ RenderLayer::PaintLayerFlag::PaintingCompositingForegroundPhase }); // Need PaintLayerFlag::PaintingCompositingForegroundPhase to walk child layers.
+        } else {
+            paintFlags.add(RenderLayer::PaintLayerFlag::PaintingSkipRootBackground);
+            if (m_owningLayer.isRenderViewLayer())
+                paintFlags.add(RenderLayer::PaintLayerFlag::PaintingSkipViewBackground);
+        }
+    } else if (compositor().fixedRootBackgroundLayer())
         paintFlags.add(RenderLayer::PaintLayerFlag::PaintingSkipRootBackground);
 
     return paintFlags;

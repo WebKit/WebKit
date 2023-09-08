@@ -324,6 +324,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject& renderer)
     , m_hasSelfPaintingLayerDescendantDirty(false)
     , m_usedTransparency(false)
     , m_paintingInsideReflection(false)
+    , m_paintingInsideRootElementBackground(false)
     , m_repaintStatus(NeedsNormalRepaint)
     , m_visibleContentStatusDirty(true)
     , m_hasVisibleContent(false)
@@ -2247,7 +2248,7 @@ enum TransparencyClipBoxMode {
     RootOfTransparencyClipBox
 };
 
-static LayoutRect transparencyClipBox(const RenderLayer&, const RenderLayer* rootLayer, TransparencyClipBoxBehavior, TransparencyClipBoxMode, OptionSet<PaintBehavior> = { });
+static LayoutRect transparencyClipBox(const RenderLayer&, const RenderLayer* rootLayer, TransparencyClipBoxBehavior, TransparencyClipBoxMode, OptionSet<PaintBehavior> = { }, bool = false);
 
 static void expandClipRectForDescendantsAndReflection(LayoutRect& clipRect, const RenderLayer& layer, const RenderLayer* rootLayer,
     TransparencyClipBoxBehavior transparencyBehavior, OptionSet<PaintBehavior> paintBehavior)
@@ -2276,13 +2277,13 @@ static void expandClipRectForDescendantsAndReflection(LayoutRect& clipRect, cons
 }
 
 static LayoutRect transparencyClipBox(const RenderLayer& layer, const RenderLayer* rootLayer, TransparencyClipBoxBehavior transparencyBehavior,
-    TransparencyClipBoxMode transparencyMode, OptionSet<PaintBehavior> paintBehavior)
+    TransparencyClipBoxMode transparencyMode, OptionSet<PaintBehavior> paintBehavior, bool paintingInsideRootElementBackground)
 {
     // FIXME: Although this function completely ignores CSS-imposed clipping, we did already intersect with the
     // paintDirtyRect, and that should cut down on the amount we have to paint.  Still it
     // would be better to respect clips.
     
-    if (rootLayer != &layer && ((transparencyBehavior == PaintingTransparencyClipBox && layer.paintsWithTransform(paintBehavior))
+    if (rootLayer != &layer && !paintingInsideRootElementBackground && ((transparencyBehavior == PaintingTransparencyClipBox && layer.paintsWithTransform(paintBehavior))
         || (transparencyBehavior == HitTestingTransparencyClipBox && layer.isTransformed()))) {
         // The best we can do here is to use enclosed bounding boxes to establish a "fuzzy" enough clip to encompass
         // the transformed layer and all of its children.
@@ -2322,9 +2323,9 @@ static LayoutRect transparencyClipBox(const RenderLayer& layer, const RenderLaye
     return clipRect;
 }
 
-static LayoutRect paintingExtent(const RenderLayer& currentLayer, const RenderLayer* rootLayer, const LayoutRect& paintDirtyRect, OptionSet<PaintBehavior> paintBehavior)
+static LayoutRect paintingExtent(const RenderLayer& currentLayer, const RenderLayer* rootLayer, const LayoutRect& paintDirtyRect, OptionSet<PaintBehavior> paintBehavior, bool paintingInsideRootElementBackground)
 {
-    return intersection(transparencyClipBox(currentLayer, rootLayer, PaintingTransparencyClipBox, RootOfTransparencyClipBox, paintBehavior), paintDirtyRect);
+    return intersection(transparencyClipBox(currentLayer, rootLayer, PaintingTransparencyClipBox, RootOfTransparencyClipBox, paintBehavior, paintingInsideRootElementBackground), paintDirtyRect);
 }
 
 void RenderLayer::beginTransparencyLayers(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, const LayoutRect& dirtyRect)
@@ -2345,7 +2346,7 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext& context, const LayerP
             return;
         }
         context.save();
-        LayoutRect adjustedClipRect = paintingExtent(*this, paintingInfo.rootLayer, dirtyRect, paintingInfo.paintBehavior);
+        LayoutRect adjustedClipRect = paintingExtent(*this, paintingInfo.rootLayer, dirtyRect, paintingInfo.paintBehavior, m_paintingInsideRootElementBackground);
         adjustedClipRect.move(paintingInfo.subpixelOffset);
         FloatRect pixelSnappedClipRect = snapRectToDevicePixels(adjustedClipRect, renderer().document().deviceScaleFactor());
         context.clip(pixelSnappedClipRect);
@@ -3289,6 +3290,8 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
             paintBehavior.add(PaintBehavior::SkipRootBackground);
         else if (localPaintFlags.contains(PaintLayerFlag::PaintingRootBackgroundOnly))
             paintBehavior.add(PaintBehavior::RootBackgroundOnly);
+        if (localPaintFlags.contains(PaintLayerFlag::PaintingSkipViewBackground))
+            paintBehavior.add(PaintBehavior::SkipViewBackground);
 
         // FIXME: This seems wrong. We should retain the DefaultAsynchronousImageDecode flag for all RenderLayers painted into the root tile cache.
         if ((paintingInfo.paintBehavior & PaintBehavior::DefaultAsynchronousImageDecode) && isRenderViewLayer())
@@ -3420,7 +3423,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     }
 
     // End our transparency layer
-    if (haveTransparency && m_usedTransparency && !m_paintingInsideReflection) {
+    if (haveTransparency && m_usedTransparency && !m_paintingInsideReflection && !m_paintingInsideRootElementBackground) {
         if (m_savedAlphaForTransparency) {
             context.setAlpha(*m_savedAlphaForTransparency);
             m_savedAlphaForTransparency = std::nullopt;
@@ -3438,6 +3441,14 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
 void RenderLayer::paintLayerByApplyingTransform(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags, const LayoutSize& translationOffset)
 {
+    auto localPaintFlags = paintFlags;
+    if (m_renderer.isDocumentElementRenderer()) {
+        m_paintingInsideRootElementBackground = true;
+        paintLayerContentsAndReflection(context, paintingInfo, paintFlags | PaintLayerFlag::PaintingRootBackgroundOnly | PaintLayerFlag::TemporaryClipRects);
+        localPaintFlags.add(PaintLayerFlag::PaintingSkipRootBackground);
+        m_paintingInsideRootElementBackground = false;
+    }
+
     // This involves subtracting out the position of the layer in our current coordinate space, but preserving
     // the accumulated error for sub-pixel layout.
     // Note: The pixel-snapping logic is disabled for the whole SVG render tree, except the outermost <svg>.
@@ -3472,7 +3483,7 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext& context, const 
     transformedPaintingInfo.rootLayer = this;
     transformedPaintingInfo.paintDirtyRect = LayoutRect(encloseRectToDevicePixels(valueOrDefault(transform.inverse()).mapRect(paintingInfo.paintDirtyRect), deviceScaleFactor));
     transformedPaintingInfo.subpixelOffset = adjustedSubpixelOffset;
-    paintLayerContentsAndReflection(context, transformedPaintingInfo, paintFlags);
+    paintLayerContentsAndReflection(context, transformedPaintingInfo, localPaintFlags);
 
     if (paintingInfo.regionContext)
         paintingInfo.regionContext->popTransform();
@@ -4744,6 +4755,20 @@ LayoutRect RenderLayer::childrenClipRect() const
     return intersection(absoluteClippingRect, renderer().view().unscaledDocumentRect());
 }
 
+bool RenderLayer::isRenderViewAndCanPaintFixedRootBackground() const
+{
+    if (!isRenderViewLayer())
+        return false;
+    if (!compositor().needsFixedRootBackgroundLayer())
+        return false;
+    if (!firstChild())
+        return false;
+    ASSERT(firstChild()->renderer().isDocumentElementRenderer());
+    // This feels really bad... We can't just check if the layer is
+    // composited though, since it might not be computed yet.
+    return !compositor().requiresCompositingForFixedBackgroundAndEffects(firstChild()->renderer());
+}
+
 LayoutRect RenderLayer::clipRectRelativeToAncestor(RenderLayer* ancestor, LayoutSize offsetFromAncestor, const LayoutRect& constrainingRect) const
 {
     LayoutRect layerBounds;
@@ -5841,6 +5866,7 @@ TextStream& operator<<(TextStream& ts, PaintBehavior behavior)
     case PaintBehavior::EventRegionIncludeBackground: ts << "EventRegionIncludeBackground"; break;
     case PaintBehavior::Snapshotting: ts << "Snapshotting"; break;
     case PaintBehavior::DontShowVisitedLinks: ts << "DontShowVisitedLinks"; break;
+    case PaintBehavior::SkipViewBackground: ts << "SkipViewBackground"; break;
     }
 
     return ts;
