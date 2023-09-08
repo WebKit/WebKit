@@ -2121,3 +2121,4 @@ webkit.org/b/261226 fast/images/mac/play-pause-individual-animation-context-menu
 [ Monterey+ X86_64 ] imported/w3c/web-platform-tests/webrtc/simulcast/getStats.https.html [ Pass Failure ]
 
 webkit.org/b/261341 requestidlecallback/requestidlecallback-in-page-cache.html [ Pass Failure Timeout ]
+webkit.org/b/261344 requestidlecallback/requestidlecallback-does-not-block-timer.html [ Pass Failure ]
