@@ -40,9 +40,6 @@ public:
 
     bool isEmpty() const { return m_displayList.isEmpty(); }
 
-    void convertToLuminanceMask() final { }
-    void transformToColorSpace(const DestinationColorSpace&) final { }
-
 private:
     void recordSave() final;
     void recordRestore() final;

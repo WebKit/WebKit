@@ -111,8 +111,6 @@ public:
     void fillPathSegment(const WebCore::PathSegment&);
     void fillPath(const WebCore::Path&);
     void fillEllipse(const WebCore::FloatRect&);
-    void convertToLuminanceMask();
-    void transformToColorSpace(const WebCore::DestinationColorSpace&);
 #if ENABLE(VIDEO)
     void paintFrameForMedia(WebCore::MediaPlayerIdentifier, const WebCore::FloatRect& destination);
 #endif
@@ -134,8 +132,6 @@ public:
     void applyFillPattern();
 #endif
     void applyDeviceScaleFactor(float);
-    void flushContext(IPC::Semaphore&&);
-    void flushContextSync(CompletionHandler<void()>&&);
 
 private:
     RemoteDisplayListRecorder(WebCore::ImageBuffer&, WebCore::RenderingResourceIdentifier, RemoteRenderingBackend&);

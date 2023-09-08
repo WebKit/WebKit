@@ -29,6 +29,10 @@ messages -> RemoteImageBuffer NotRefCounted Stream {
     PutPixelBuffer(Ref<WebCore::PixelBuffer> pixelBuffer,  WebCore::IntRect srcRect, WebCore::IntPoint destPoint, enum:uint8_t WebCore::AlphaPremultiplication destFormat)
     GetShareableBitmap(enum:bool WebCore::PreserveResolution preserveResolution) -> (WebKit::ShareableBitmap::Handle handle) Synchronous NotStreamEncodableReply
     GetFilteredImage(Ref<WebCore::Filter> filter) -> (WebKit::ShareableBitmap::Handle handle) Synchronous NotStreamEncodableReply
+    ConvertToLuminanceMask()
+    TransformToColorSpace(WebCore::DestinationColorSpace colorSpace)
+    FlushContext(IPC::Semaphore semaphore) NotStreamEncodable
+    FlushContextSync() -> () Synchronous
 }
 
 #endif

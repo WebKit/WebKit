@@ -41,6 +41,11 @@
 #include <WebCore/ARKitBadgeSystemImage.h>
 #endif
 
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+#include "IPCSemaphore.h"
+#include "RemoteVideoFrameObjectHeap.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -494,16 +499,6 @@ void RemoteDisplayListRecorder::fillEllipse(const FloatRect& rect)
     handleItem(DisplayList::FillEllipse(rect));
 }
 
-void RemoteDisplayListRecorder::convertToLuminanceMask()
-{
-    m_imageBuffer->convertToLuminanceMask();
-}
-
-void RemoteDisplayListRecorder::transformToColorSpace(const WebCore::DestinationColorSpace& colorSpace)
-{
-    m_imageBuffer->transformToColorSpace(colorSpace);
-}
-
 #if ENABLE(VIDEO)
 void RemoteDisplayListRecorder::paintFrameForMedia(MediaPlayerIdentifier identifier, const FloatRect& destination)
 {
@@ -613,18 +608,6 @@ void RemoteDisplayListRecorder::applyFillPattern()
 void RemoteDisplayListRecorder::applyDeviceScaleFactor(float scaleFactor)
 {
     handleItem(DisplayList::ApplyDeviceScaleFactor(scaleFactor));
-}
-
-void RemoteDisplayListRecorder::flushContext(IPC::Semaphore&& semaphore)
-{
-    m_imageBuffer->flushDrawingContext();
-    semaphore.signal();
-}
-
-void RemoteDisplayListRecorder::flushContextSync(CompletionHandler<void()>&& completionHandler)
-{
-    m_imageBuffer->flushDrawingContext();
-    completionHandler();
 }
 
 } // namespace WebKit

@@ -61,9 +61,6 @@ public:
     WEBCORE_EXPORT Recorder(const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, const DestinationColorSpace&, DrawGlyphsMode = DrawGlyphsMode::Normal);
     WEBCORE_EXPORT virtual ~Recorder();
 
-    virtual void convertToLuminanceMask() = 0;
-    virtual void transformToColorSpace(const DestinationColorSpace&) = 0;
-
     // Records possible pending commands. Should be used when recording is known to end.
     WEBCORE_EXPORT void commitRecording();
 

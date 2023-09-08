@@ -29,6 +29,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "IPCSemaphore.h"
 #include "RemoteImageBufferMessages.h"
 #include "StreamConnectionWorkQueue.h"
 #include <WebCore/GraphicsContext.h>
@@ -152,6 +153,32 @@ void RemoteImageBuffer::getFilteredImage(Ref<WebCore::Filter> filter, Completion
             handle = WTFMove(*bitmapHandle);
     }();
     completionHandler(WTFMove(handle));
+}
+
+void RemoteImageBuffer::convertToLuminanceMask()
+{
+    assertIsCurrent(workQueue());
+    m_imageBuffer->convertToLuminanceMask();
+}
+
+void RemoteImageBuffer::transformToColorSpace(const WebCore::DestinationColorSpace& colorSpace)
+{
+    assertIsCurrent(workQueue());
+    m_imageBuffer->transformToColorSpace(colorSpace);
+}
+
+void RemoteImageBuffer::flushContext(IPC::Semaphore&& semaphore)
+{
+    assertIsCurrent(workQueue());
+    m_imageBuffer->flushDrawingContext();
+    semaphore.signal();
+}
+
+void RemoteImageBuffer::flushContextSync(CompletionHandler<void()>&& completionHandler)
+{
+    assertIsCurrent(workQueue());
+    m_imageBuffer->flushDrawingContext();
+    completionHandler();
 }
 
 IPC::StreamConnectionWorkQueue& RemoteImageBuffer::workQueue() const
