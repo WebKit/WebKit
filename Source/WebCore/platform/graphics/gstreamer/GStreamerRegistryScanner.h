@@ -97,7 +97,7 @@ public:
     MediaPlayerEnums::SupportsType isContentTypeSupported(Configuration, const ContentType&, const Vector<ContentType>& contentTypesRequiringHardwareSupport) const;
     bool areAllCodecsSupported(Configuration, const Vector<String>& codecs, bool shouldCheckForHardwareUse = false) const;
 
-    CodecLookupResult areCapsSupported(Configuration, const GRefPtr<GstCaps>&, bool shouldCheckForHardwareUse);
+    CodecLookupResult areCapsSupported(Configuration, const GRefPtr<GstCaps>&, bool shouldCheckForHardwareUse) const;
 
 #if USE(GSTREAMER_WEBRTC)
     RTCRtpCapabilities audioRtpCapabilities(Configuration);
@@ -159,9 +159,10 @@ protected:
     };
     void fillMimeTypeSetFromCapsMapping(const ElementFactories&, const Vector<GstCapsWebKitMapping>&);
 
-    CodecLookupResult isAVC1CodecSupported(Configuration, const String& codec, bool shouldCheckForHardwareUse) const;
-
 private:
+    CodecLookupResult isAVC1CodecSupported(Configuration, const String& codec, bool shouldCheckForHardwareUse) const;
+    CodecLookupResult isHEVCCodecSupported(Configuration, const String& codec, bool shouldCheckForHardwareUse) const;
+
     const char* configurationNameForLogging(Configuration) const;
     bool supportsFeatures(const String& features) const;
 
