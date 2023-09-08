@@ -2111,5 +2111,11 @@ webkit.org/b/261215 webrtc/vp8-then-h264-gpu-process-crash.html [ Pass Timeout F
 
 webkit.org/b/261226 fast/images/mac/play-pause-individual-animation-context-menu-items.html [ Timeout ]
 
-# webkit.org/b261304 Batch mark expectations for flaky media tests
+# webkit.org/b/261304 Batch mark expectations for flaky media tests
 [ Monterey+ ] media/media-source/media-source-evict-codedframe-large-currenttime.html [ Pass Failure ]
+
+# webkit.org/b/261308 Batch mark expectations for flaky imported/w3c/web-platform-tests
+[ Monterey+ X86_64 ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Pass Failure ]
+[ Ventura+ ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-opener.https.html [ Pass Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/webcodecs/videoFrame-serialization.crossAgentCluster.https.html [ Pass Failure ]
+[ Monterey+ X86_64 ] imported/w3c/web-platform-tests/webrtc/simulcast/getStats.https.html [ Pass Failure ]
