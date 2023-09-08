@@ -331,7 +331,7 @@ bool CanvasBase::shouldAccelerate(unsigned area) const
 #endif
 }
 
-RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer(bool usesDisplayListDrawing, bool avoidBackendSizeCheckForTesting) const
+RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer(bool avoidBackendSizeCheckForTesting) const
 {
     auto checkedArea = size().area<RecordOverflow>();
 
@@ -348,9 +348,6 @@ RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer(bool usesDisplayListDrawing,
     OptionSet<ImageBufferOptions> bufferOptions;
     if (shouldAccelerate(area))
         bufferOptions.add(ImageBufferOptions::Accelerated);
-    // FIXME: Add a new setting for DisplayList drawing on canvas.
-    if (usesDisplayListDrawing || scriptExecutionContext()->settingsValues().displayListDrawingEnabled)
-        bufferOptions.add(ImageBufferOptions::UseDisplayList);
 
     auto [colorSpace, pixelFormat] = [&] {
         if (renderingContext())

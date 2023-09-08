@@ -148,7 +148,7 @@ protected:
 
     void resetGraphicsContextState() const;
 
-    RefPtr<ImageBuffer> allocateImageBuffer(bool usesDisplayListDrawing, bool avoidBackendSizeCheckForTesting) const;
+    RefPtr<ImageBuffer> allocateImageBuffer(bool avoidBackendSizeCheckForTesting) const;
     String lastFillText() const { return m_lastFillText; }
 
 private:
