@@ -8343,9 +8343,15 @@ void Document::updateIntersectionObservations()
     if (needsLayout || hasPendingStyleRecalc())
         return;
 
+    updateIntersectionObservations(m_intersectionObservers);
+}
+
+void Document::updateIntersectionObservations(const Vector<WeakPtr<IntersectionObserver>>& intersectionObservers)
+{
+    RELEASE_ASSERT(view() && !(view()->layoutContext().isLayoutPending() || (renderView() && renderView()->needsLayout())) && !hasPendingStyleRecalc());
     Vector<WeakPtr<IntersectionObserver>> intersectionObserversWithPendingNotifications;
 
-    for (auto& weakObserver : m_intersectionObservers) {
+    for (auto& weakObserver : intersectionObservers) {
         RefPtr observer = weakObserver.get();
         if (!observer)
             continue;
@@ -8449,14 +8455,18 @@ void Document::updateResizeObservations(Page& page)
         addConsoleMessage(MessageSource::Other, MessageLevel::Info, "ResizeObservers silenced due to: http://webkit.org/b/258597"_s);
         return;
     }
-    if (!hasResizeObservers() && !m_resizeObserverForContainIntrinsicSize)
+    if (!hasResizeObservers() && !m_resizeObserverForContainIntrinsicSize && !m_contentVisibilityDocumentState)
         return;
 
-    // We need layout the whole frame tree here. Because ResizeObserver could observe element in other frame,
-    // and it could change other frame in deliverResizeObservations().
-    page.layoutIfNeeded();
     size_t resizeObserverDepth = 0;
     while (true) {
+        // We need layout the whole frame tree here. Because ResizeObserver could observe element in other frame,
+        // and it could change other frame in deliverResizeObservations().
+        page.layoutIfNeeded();
+        // If we have determined a change because of visibility we need to get up-to-date layout before reporting any values to resize observers.
+        if (m_contentVisibilityDocumentState && m_contentVisibilityDocumentState->determineInitialVisibleContentVisibility() == HadInitialVisibleContentVisibilityDetermination::Yes)
+            continue;
+
         // Start check resize observers;
         if (!resizeObserverDepth && gatherResizeObservationsForContainIntrinsicSize() != ResizeObserver::maxElementDepth())
             deliverResizeObservations();
@@ -8465,7 +8475,6 @@ void Document::updateResizeObservations(Page& page)
         if (resizeObserverDepth == ResizeObserver::maxElementDepth())
             break;
         deliverResizeObservations();
-        page.layoutIfNeeded();
     }
 
     if (hasSkippedResizeObservations()) {

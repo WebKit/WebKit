@@ -5395,12 +5395,6 @@ void Element::setContentRelevancy(OptionSet<ContentRelevancy> contentRelevancy)
     ensureElementRareData().setContentRelevancy(contentRelevancy);
 }
 
-void Element::contentVisibilityViewportChange(bool)
-{
-    ASSERT(renderStyle() && renderStyle()->contentVisibility() == ContentVisibility::Auto);
-    document().scheduleContentRelevancyUpdate(ContentRelevancy::OnScreen);
-}
-
 AtomString Element::makeTargetBlankIfHasDanglingMarkup(const AtomString& target)
 {
     if ((target.contains('\n') || target.contains('\r') || target.contains('\t')) && target.contains('<'))
