@@ -6,7 +6,6 @@
 #//////////////////////////////////////////////////////////////////////////////////////////
 
 # Failing after OS migration rdar://112624778 (Migrate macOS Sonoma test expectations to OpenSource, add expectation files to Down-Levels (259373))
-editing/pasteboard/datatransfer-types-dropping-text-file-promise.html [ Pass Failure ]
 fast/dom/SelectorAPI/caseID.html [ Pass Failure ]
 fast/selectors/style-invalidation-hover-change-descendants.html [ Pass Failure ]
 fast/selectors/style-invalidation-hover-change-siblings.html [ Pass Failure ]
