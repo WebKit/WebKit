@@ -19,7 +19,6 @@ fast/images/mac/play-all-pause-all-animations-context-menu-items.html [ Skip ]
 fast/images/mac/animation-context-menu-items-presence.html [ Skip ]
 
 # Failing after OS migration rdar://112624778 (Migrate macOS Sonoma test expectations to OpenSource, add expectation files to Down-Levels (259373))
-editing/selection/block-cursor-overtype-mode.html [ Pass Failure ]
 http/tests/permissions/permission-status-onchange-event-service-worker.html [ Pass Timeout ]
 imported/w3c/web-platform-tests/feature-policy/reporting/picture-in-picture-reporting.html [ Pass Failure ]
 imported/w3c/web-platform-tests/fetch/range/non-matching-range-response.html [ Pass Failure ]
