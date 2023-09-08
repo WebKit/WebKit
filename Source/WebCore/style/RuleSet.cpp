@@ -75,11 +75,23 @@ static unsigned rulesCountForName(const RuleSet::AtomRuleMap& map, const AtomStr
 
 static bool isHostSelectorMatchingInShadowTree(const CSSSelector& startSelector)
 {
+    auto isHostSelectorMatchingInShadowTreeInSelectorList = [](const CSSSelectorList* selectorList) {
+        if (!selectorList || selectorList->isEmpty())
+            return false;
+        for (auto* selector = selectorList->first(); selector; selector = CSSSelectorList::next(selector)) {
+            if (isHostSelectorMatchingInShadowTree(*selector))
+                return true;
+        }
+        return false;
+    };
+
     bool hasOnlyOneCompound = true;
     bool hasHostInLastCompound = false;
     for (auto* selector = &startSelector; selector; selector = selector->tagHistory()) {
         if (selector->match() == CSSSelector::Match::PseudoClass && selector->pseudoClassType() == CSSSelector::PseudoClassType::Host)
             hasHostInLastCompound = true;
+        if (isHostSelectorMatchingInShadowTreeInSelectorList(selector->selectorList()))
+            return true;
         if (selector->tagHistory() && selector->relation() != CSSSelector::RelationType::Subselector) {
             hasOnlyOneCompound = false;
             hasHostInLastCompound = false;
