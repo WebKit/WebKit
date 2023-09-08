@@ -472,7 +472,14 @@ inline bool JSObject::mayBePrototype() const
 
 inline void JSObject::didBecomePrototype()
 {
-    setPerCellBit(true);
+    Structure* oldStructure = structure();
+    if (UNLIKELY(!oldStructure->mayBePrototype())) {
+        DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
+        setStructure(vm, Structure::becomePrototypeTransition(vm, oldStructure, &deferred));
+    }
+
+    if (UNLIKELY(type() == GlobalProxyType))
+        jsCast<JSGlobalProxy*>(this)->target()->didBecomePrototype(vm);
 }
 
 inline bool JSObject::canGetIndexQuicklyForTypedArray(unsigned i) const

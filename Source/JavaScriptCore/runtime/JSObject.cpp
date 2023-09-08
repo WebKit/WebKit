@@ -1147,6 +1147,11 @@ void JSObject::enterDictionaryIndexingMode(VM& vm)
 
 void JSObject::notifyPresenceOfIndexedAccessors(VM& vm)
 {
+    if (UNLIKELY(isGlobalObject())) {
+        jsCast<JSGlobalObject*>(this)->globalThis()->notifyPresenceOfIndexedAccessors(vm);
+        return;
+    }
+
     if (mayInterceptIndexedAccesses())
         return;
     
