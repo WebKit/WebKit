@@ -389,28 +389,16 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeRelativeScopeSelect
     if (!selector)
         return nullptr;
 
-    auto hasScopePseudoClass = [](auto& selector) {
-        return selector.match() == CSSSelector::Match::PseudoClass && selector.pseudoClassType() == CSSSelector::PseudoClassType::Scope;
-    };
-
-    bool hasExplicitScope = hasScopePseudoClass(*selector);
-
     auto* end = selector.get();
-    while (end->tagHistory()) {
+    while (end->tagHistory())
         end = end->tagHistory();
-        if (hasScopePseudoClass(*end))
-            hasExplicitScope = true;
-    }
 
-    // If the selector doesn't have an explicit :scope on the left, add an implicit one.
-    if (!hasExplicitScope || scopeCombinator != CSSSelector::RelationType::DescendantSpace) {
-        auto scopeSelector = makeUnique<CSSParserSelector>();
-        scopeSelector->setMatch(CSSSelector::Match::PseudoClass);
-        scopeSelector->setPseudoClassType(CSSSelector::PseudoClassType::RelativeScope);
+    auto scopeSelector = makeUnique<CSSParserSelector>();
+    scopeSelector->setMatch(CSSSelector::Match::PseudoClass);
+    scopeSelector->setPseudoClassType(CSSSelector::PseudoClassType::HasScope);
 
-        end->setRelation(scopeCombinator);
-        end->setTagHistory(WTFMove(scopeSelector));
-    }
+    end->setRelation(scopeCombinator);
+    end->setTagHistory(WTFMove(scopeSelector));
 
     return selector;
 }

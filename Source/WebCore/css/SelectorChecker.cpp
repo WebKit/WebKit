@@ -1083,14 +1083,15 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return matchesVolumeLockedPseudoClass(element);
 #endif
 
-        case CSSSelector::PseudoClassType::Scope:
-        case CSSSelector::PseudoClassType::RelativeScope: {
+        case CSSSelector::PseudoClassType::Scope: {
             const Node* contextualReferenceNode = !checkingContext.scope ? element.document().documentElement() : checkingContext.scope;
+            return &element == contextualReferenceNode;
+        }
+        case CSSSelector::PseudoClassType::HasScope: {
+            bool matches = &element == checkingContext.hasScope || checkingContext.matchesAllHasScopes;
 
-            bool matches = &element == contextualReferenceNode || checkingContext.matchesAllScopes;
-
-            if (!matches && checkingContext.scope) {
-                if (element.isDescendantOf(*checkingContext.scope))
+            if (!matches && checkingContext.hasScope) {
+                if (element.isDescendantOf(*checkingContext.hasScope))
                     checkingContext.matchedInsideScope = true;
             }
 
@@ -1318,7 +1319,7 @@ bool SelectorChecker::matchHasPseudoClass(CheckingContext& checkingContext, cons
     }
 
     CheckingContext hasCheckingContext(SelectorChecker::Mode::ResolvingStyle);
-    hasCheckingContext.scope = &element;
+    hasCheckingContext.hasScope = &element;
 
     bool matchedInsideScope = false;
 
