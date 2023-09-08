@@ -512,7 +512,8 @@ RefPtr<PixelBuffer> ImageBuffer::getPixelBuffer(const PixelBufferFormat& destina
     if (!backend)
         return nullptr;
     ASSERT(PixelBuffer::supportedPixelFormat(destinationFormat.pixelFormat));
-    auto sourceRectScaled = backend->toBackendCoordinates(sourceRect);
+    auto sourceRectScaled = sourceRect;
+    sourceRectScaled.scale(resolutionScale());
     auto destination = allocator.createPixelBuffer(destinationFormat, sourceRectScaled.size());
     if (!destination)
         return nullptr;
@@ -525,8 +526,10 @@ void ImageBuffer::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& 
     auto* backend = ensureBackendCreated();
     if (!backend)
         return;
-    auto sourceRectScaled = backend->toBackendCoordinates(sourceRect);
-    auto destinationPointScaled = backend->toBackendCoordinates(destinationPoint);
+    auto sourceRectScaled = sourceRect;
+    sourceRectScaled.scale(resolutionScale());
+    auto destinationPointScaled = destinationPoint;
+    destinationPointScaled.scale(resolutionScale());
     backend->putPixelBuffer(pixelBuffer, sourceRectScaled, destinationPointScaled, destinationFormat);
 }
 
