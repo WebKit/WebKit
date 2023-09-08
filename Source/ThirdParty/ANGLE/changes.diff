@@ -298,7 +298,7 @@ index 2b0ef5ddfe906ba09ad818dadeb41dd444c55f07..5a6d64e0d58fa4e976e16d1fd03b98be
      uint64_t getSerial() const { return mSerial; }
  
 diff --git a/src/libANGLE/renderer/metal/mtl_command_buffer.mm b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
-index 145400aec715ddfadcf33dc941201e1064d33ca0..84b6b2b462ca23fb40722093ec488d7c77787f9c 100644
+index 145400aec715ddfadcf33dc941201e1064d33ca0..8fa9415a6194f3152a681162473dc3e5faae4a4d 100644
 --- a/src/libANGLE/renderer/metal/mtl_command_buffer.mm
 +++ b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
 @@ -373,12 +373,20 @@ inline void SetVisibilityResultModeCmd(id<MTLRenderCommandEncoder> encoder,
@@ -330,14 +330,22 @@ index 145400aec715ddfadcf33dc941201e1064d33ca0..84b6b2b462ca23fb40722093ec488d7c
      [resource ANGLE_MTL_RELEASE];
  }
  
-@@ -606,6 +615,12 @@ void CommandQueue::onCommandBufferCompleted(id<MTLCommandBuffer> buf,
+@@ -606,6 +615,20 @@ void CommandQueue::onCommandBufferCompleted(id<MTLCommandBuffer> buf,
  
      ANGLE_MTL_LOG("Completed MTLCommandBuffer %llu:%p", serial, buf);
  
-+    if ([buf status] != MTLCommandBufferStatusCompleted)
++    MTLCommandBufferStatus status = buf.status;
++    if (status != MTLCommandBufferStatusCompleted)
 +    {
-+        mIsDeviceLost = true;
-+        return;
++        NSError *error = buf.error;
++        // MTLCommandBufferErrorNotPermitted is non-fatal, all other errors
++        // result in device lost.
++        mIsDeviceLost  = !error || error.domain != MTLCommandBufferErrorDomain ||
++                        error.code != MTLCommandBufferErrorNotPermitted;
++        if (mIsDeviceLost)
++        {
++            return;
++        }
 +    }
 +
      if (timeElapsedEntry != 0)
