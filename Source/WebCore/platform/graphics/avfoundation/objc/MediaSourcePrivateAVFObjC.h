@@ -74,7 +74,8 @@ public:
     MediaPlayer::ReadyState readyState() const final;
     void setReadyState(MediaPlayer::ReadyState) final;
 
-    void seekToTarget(const SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) final;
+    void waitForTarget(const SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) final;
+    void seekToTime(const MediaTime&, CompletionHandler<void()>&&) final;
 
     MediaTime duration() const;
     const PlatformTimeRanges& buffered();

@@ -186,7 +186,7 @@ const PlatformTimeRanges& MediaSource::buffered() const
     return m_buffered;
 }
 
-void MediaSource::seekToTarget(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
+void MediaSource::waitForTarget(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
 {
     if (isClosed()) {
         completionHandler(MediaTime::invalidTime());
@@ -280,10 +280,21 @@ void MediaSource::completeSeek()
     auto callbackAggregator = adoptRef(*new SeeksCallbackAggregator(seekTarget.time, *this, WTFMove(m_seekCompletedHandler)));
 
     for (auto& sourceBuffer : *m_activeSourceBuffers) {
-        sourceBuffer->seekToTarget(seekTarget, [callbackAggregator](const MediaTime& seekTime) {
+        sourceBuffer->computeSeekTime(seekTarget, [callbackAggregator](const MediaTime& seekTime) {
             callbackAggregator->seekResults.append(seekTime);
         });
     }
+}
+
+void MediaSource::seekToTime(const MediaTime& time, CompletionHandler<void()>&& completionHandler)
+{
+    if (isClosed()) {
+        completionHandler();
+        return;
+    }
+    for (auto& sourceBuffer : *m_activeSourceBuffers)
+        sourceBuffer->seekToTime(time);
+    completionHandler();
 }
 
 Ref<TimeRanges> MediaSource::seekable()
