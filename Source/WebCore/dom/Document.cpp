@@ -2339,6 +2339,12 @@ std::unique_ptr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets
     ASSERT(pseudoElementSpecifier == PseudoId::None || parentStyle);
     ASSERT(Style::postResolutionCallbacksAreSuspended());
 
+    std::optional<RenderStyle> updatedDocumentStyle;
+    if (!parentStyle && m_needsFullStyleRebuild) {
+        updatedDocumentStyle.emplace(Style::resolveForDocument(*this));
+        parentStyle = &*updatedDocumentStyle;
+    }
+
     SetForScope change(m_ignorePendingStylesheets, true);
     auto& resolver = element.styleResolver();
 
