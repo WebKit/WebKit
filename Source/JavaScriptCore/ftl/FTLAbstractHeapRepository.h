@@ -162,6 +162,7 @@ namespace JSC { namespace FTL {
     macro(Structure_previousOrRareData, Structure::previousOrRareDataOffset()) \
     macro(Structure_propertyHash, Structure::propertyHashOffset()) \
     macro(Structure_prototype, Structure::prototypeOffset()) \
+    macro(Structure_seenProperties, Structure::seenPropertiesOffset()) \
     macro(StructureRareData_cachedEnumerableStrings, StructureRareData::offsetOfCachedPropertyNames(CachedPropertyNamesKind::EnumerableStrings)) \
     macro(StructureRareData_cachedStrings, StructureRareData::offsetOfCachedPropertyNames(CachedPropertyNamesKind::Strings)) \
     macro(StructureRareData_cachedSymbols, StructureRareData::offsetOfCachedPropertyNames(CachedPropertyNamesKind::Symbols)) \
