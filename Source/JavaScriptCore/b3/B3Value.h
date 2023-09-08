@@ -52,7 +52,7 @@ class PhiChildren;
 class Procedure;
 
 class JS_EXPORT_PRIVATE Value {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_IR_ALLOCATED;
 public:
     static const char* const dumpPrefix;
 
@@ -574,7 +574,7 @@ private:
         // We must allocate enough space that replaceWithIdentity can work without buffer overflow.
         size_t allocIdentitySize = sizeof(Value) + sizeof(Value*);
         size_t allocSize = std::max(size + adjacencyListSpace, allocIdentitySize);
-        return static_cast<char*>(WTF::fastMalloc(allocSize));
+        return static_cast<char*>(WTF::irMalloc(allocSize));
     }
 
 protected:

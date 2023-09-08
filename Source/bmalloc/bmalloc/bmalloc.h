@@ -37,6 +37,7 @@
 
 #if BUSE(LIBPAS)
 #include "bmalloc_heap_inlines.h"
+#include "ir_heap_inlines.h"
 #endif
 
 namespace bmalloc {
@@ -56,6 +57,8 @@ inline pas_primitive_heap_ref& heapForKind(Gigacage::Kind kind)
 BINLINE void* tryMalloc(size_t size, HeapKind kind = HeapKind::Primary)
 {
 #if BUSE(LIBPAS)
+    if (kind == HeapKind::IR)
+        return ir_try_allocate_inline(size);
     if (!isGigacage(kind))
         return bmalloc_try_allocate_inline(size);
     return bmalloc_try_allocate_auxiliary_inline(&heapForKind(gigacageKind(kind)), size);
@@ -68,6 +71,8 @@ BINLINE void* tryMalloc(size_t size, HeapKind kind = HeapKind::Primary)
 BINLINE void* malloc(size_t size, HeapKind kind = HeapKind::Primary)
 {
 #if BUSE(LIBPAS)
+    if (kind == HeapKind::IR)
+        return ir_allocate_inline(size);
     if (!isGigacage(kind))
         return bmalloc_allocate_inline(size);
     return bmalloc_allocate_auxiliary_inline(&heapForKind(gigacageKind(kind)), size);
@@ -79,6 +84,8 @@ BINLINE void* malloc(size_t size, HeapKind kind = HeapKind::Primary)
 BINLINE void* tryZeroedMalloc(size_t size, HeapKind kind = HeapKind::Primary)
 {
 #if BUSE(LIBPAS)
+    if (kind == HeapKind::IR)
+        return ir_try_allocate_zeroed_inline(size);
     if (!isGigacage(kind))
         return bmalloc_try_allocate_zeroed_inline(size);
     return bmalloc_try_allocate_auxiliary_zeroed_inline(&heapForKind(gigacageKind(kind)), size);
@@ -94,6 +101,8 @@ BINLINE void* tryZeroedMalloc(size_t size, HeapKind kind = HeapKind::Primary)
 BINLINE void* zeroedMalloc(size_t size, HeapKind kind = HeapKind::Primary)
 {
 #if BUSE(LIBPAS)
+    if (kind == HeapKind::IR)
+        return ir_allocate_zeroed_inline(size);
     if (!isGigacage(kind))
         return bmalloc_allocate_zeroed_inline(size);
     return bmalloc_allocate_auxiliary_zeroed_inline(&heapForKind(gigacageKind(kind)), size);
@@ -110,6 +119,8 @@ BEXPORT void* mallocOutOfLine(size_t size, HeapKind kind = HeapKind::Primary);
 BINLINE void* tryMemalign(size_t alignment, size_t size, HeapKind kind = HeapKind::Primary)
 {
 #if BUSE(LIBPAS)
+    if (kind == HeapKind::IR)
+        return ir_try_allocate_with_alignment_inline(size, alignment);
     if (!isGigacage(kind))
         return bmalloc_try_allocate_with_alignment_inline(size, alignment);
     return bmalloc_try_allocate_auxiliary_with_alignment_inline(
@@ -123,6 +134,8 @@ BINLINE void* tryMemalign(size_t alignment, size_t size, HeapKind kind = HeapKin
 BINLINE void* memalign(size_t alignment, size_t size, HeapKind kind = HeapKind::Primary)
 {
 #if BUSE(LIBPAS)
+    if (kind == HeapKind::IR)
+        return ir_allocate_with_alignment_inline(size, alignment);
     if (!isGigacage(kind))
         return bmalloc_allocate_with_alignment_inline(size, alignment);
     return bmalloc_allocate_auxiliary_with_alignment_inline(
@@ -136,6 +149,9 @@ BINLINE void* memalign(size_t alignment, size_t size, HeapKind kind = HeapKind::
 BINLINE void* tryRealloc(void* object, size_t newSize, HeapKind kind = HeapKind::Primary)
 {
 #if BUSE(LIBPAS)
+    if (kind == HeapKind::IR)
+        return ir_try_reallocate_inline(
+            object, newSize, pas_reallocate_free_if_successful);
     if (!isGigacage(kind)) {
         return bmalloc_try_reallocate_inline(
             object, newSize, pas_reallocate_free_if_successful);
@@ -151,6 +167,8 @@ BINLINE void* tryRealloc(void* object, size_t newSize, HeapKind kind = HeapKind:
 BINLINE void* realloc(void* object, size_t newSize, HeapKind kind = HeapKind::Primary)
 {
 #if BUSE(LIBPAS)
+    if (kind == HeapKind::IR)
+        return ir_reallocate_inline(object, newSize, pas_reallocate_free_if_successful);
     if (!isGigacage(kind))
         return bmalloc_reallocate_inline(object, newSize, pas_reallocate_free_if_successful);
     return bmalloc_reallocate_auxiliary_inline(
@@ -169,8 +187,10 @@ BEXPORT void* tryLargeZeroedMemalignVirtual(size_t alignment, size_t size, HeapK
 BINLINE void free(void* object, HeapKind kind = HeapKind::Primary)
 {
 #if BUSE(LIBPAS)
-    BUNUSED(kind);
-    bmalloc_deallocate_inline(object);
+    if (kind == HeapKind::IR)
+        ir_deallocate_inline(object);
+    else
+        bmalloc_deallocate_inline(object);
 #else
     Cache::deallocate(kind, object);
 #endif

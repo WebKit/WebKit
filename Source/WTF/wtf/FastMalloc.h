@@ -102,6 +102,10 @@ WTF_EXPORT_PRIVATE TryMallocReturnValue tryFastRealloc(void*, size_t);
 
 WTF_EXPORT_PRIVATE void fastFree(void*);
 
+// FIXME: Add the rest of the FastMalloc interface here.
+WTF_EXPORT_PRIVATE void* irMalloc(size_t) RETURNS_NONNULL;
+WTF_EXPORT_PRIVATE void irFree(void*);
+
 // Allocations from fastAlignedMalloc() must be freed using fastAlignedFree().
 WTF_EXPORT_PRIVATE void* fastAlignedMalloc(size_t alignment, size_t) RETURNS_NONNULL;
 WTF_EXPORT_PRIVATE void* tryFastAlignedMalloc(size_t alignment, size_t);
@@ -343,11 +347,51 @@ using WTF::fastAlignedFree;
     } \
     using webkitFastMalloced = int; \
 
+#define WTF_MAKE_IR_ALLOCATED_IMPL \
+    void* operator new(size_t, void* p) { return p; } \
+    void* operator new[](size_t, void* p) { return p; } \
+    \
+    void* operator new(size_t size) \
+    { \
+        return ::WTF::irMalloc(size); \
+    } \
+    \
+    void operator delete(void* p) \
+    { \
+        ::WTF::irFree(p); \
+    } \
+    \
+    void* operator new[](size_t size) \
+    { \
+        return ::WTF::irMalloc(size); \
+    } \
+    \
+    void operator delete[](void* p) \
+    { \
+        ::WTF::irFree(p); \
+    } \
+    void* operator new(size_t, NotNullTag, void* location) \
+    { \
+        ASSERT(location); \
+        return location; \
+    } \
+    static void freeAfterDestruction(void* p) \
+    { \
+        ::WTF::irFree(p); \
+    } \
+    using webkitFastMalloced = int; \
+
 // FIXME: WTF_MAKE_FAST_ALLOCATED should take class name so that we can create malloc_zone per this macro.
 // https://bugs.webkit.org/show_bug.cgi?id=205702
 #define WTF_MAKE_FAST_ALLOCATED \
 public: \
     WTF_MAKE_FAST_ALLOCATED_IMPL \
+private: \
+using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
+
+#define WTF_MAKE_IR_ALLOCATED \
+public: \
+    WTF_MAKE_IR_ALLOCATED_IMPL \
 private: \
 using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 

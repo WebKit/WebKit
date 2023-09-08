@@ -590,6 +590,12 @@
 		2CB9B15B278F85EE003A8C1B /* pas_lenient_compact_ptr_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CB9B157278F85EE003A8C1B /* pas_lenient_compact_ptr_inlines.h */; };
 		2CB9B15D278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CB9B15C278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp */; };
 		2CE2AE35275A953E00D02BBC /* BitfitTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CE2AE34275A953E00D02BBC /* BitfitTests.cpp */; };
+		3049A1A22AABC8C7000A1A63 /* ir_heap_config.c in Sources */ = {isa = PBXBuildFile; fileRef = 3049A19C2AABC8C6000A1A63 /* ir_heap_config.c */; };
+		3049A1A32AABC8C7000A1A63 /* ir_heap_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 3049A19D2AABC8C6000A1A63 /* ir_heap_inlines.h */; };
+		3049A1A42AABC8C7000A1A63 /* ir_heap_config_root_data.h in Headers */ = {isa = PBXBuildFile; fileRef = 3049A19E2AABC8C6000A1A63 /* ir_heap_config_root_data.h */; };
+		3049A1A52AABC8C7000A1A63 /* ir_heap.c in Sources */ = {isa = PBXBuildFile; fileRef = 3049A19F2AABC8C6000A1A63 /* ir_heap.c */; };
+		3049A1A62AABC8C7000A1A63 /* ir_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 3049A1A02AABC8C7000A1A63 /* ir_heap.h */; };
+		3049A1A72AABC8C7000A1A63 /* ir_heap_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 3049A1A12AABC8C7000A1A63 /* ir_heap_config.h */; };
 		E3096D4C2A82357800BC4CA0 /* pas_allocation_result.c in Sources */ = {isa = PBXBuildFile; fileRef = E3096D4B2A82357800BC4CA0 /* pas_allocation_result.c */; };
 		E3AA9B8328C724D8005DF9D6 /* pas_darwin_spi.h in Headers */ = {isa = PBXBuildFile; fileRef = E3AA9B8228C724D8005DF9D6 /* pas_darwin_spi.h */; };
 /* End PBXBuildFile section */
@@ -1303,6 +1309,12 @@
 		2CB9B157278F85EE003A8C1B /* pas_lenient_compact_ptr_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_lenient_compact_ptr_inlines.h; sourceTree = "<group>"; };
 		2CB9B15C278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LotsOfHeapsAndThreads.cpp; sourceTree = "<group>"; };
 		2CE2AE34275A953E00D02BBC /* BitfitTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitfitTests.cpp; sourceTree = "<group>"; };
+		3049A19C2AABC8C6000A1A63 /* ir_heap_config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ir_heap_config.c; sourceTree = "<group>"; };
+		3049A19D2AABC8C6000A1A63 /* ir_heap_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ir_heap_inlines.h; sourceTree = "<group>"; };
+		3049A19E2AABC8C6000A1A63 /* ir_heap_config_root_data.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ir_heap_config_root_data.h; sourceTree = "<group>"; };
+		3049A19F2AABC8C6000A1A63 /* ir_heap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ir_heap.c; sourceTree = "<group>"; };
+		3049A1A02AABC8C7000A1A63 /* ir_heap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ir_heap.h; sourceTree = "<group>"; };
+		3049A1A12AABC8C7000A1A63 /* ir_heap_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ir_heap_config.h; sourceTree = "<group>"; };
 		E3096D4B2A82357800BC4CA0 /* pas_allocation_result.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_allocation_result.c; sourceTree = "<group>"; };
 		E3AA9B8228C724D8005DF9D6 /* pas_darwin_spi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_darwin_spi.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1455,6 +1467,12 @@
 				0F8A80FD25F6A79500790B4A /* hotbit_heap_config.h */,
 				0F8A810025F6A79500790B4A /* hotbit_heap_inlines.h */,
 				0F8A80FC25F6A79500790B4A /* hotbit_heap_innards.h */,
+				3049A19F2AABC8C6000A1A63 /* ir_heap.c */,
+				3049A1A02AABC8C7000A1A63 /* ir_heap.h */,
+				3049A19C2AABC8C6000A1A63 /* ir_heap_config.c */,
+				3049A1A12AABC8C7000A1A63 /* ir_heap_config.h */,
+				3049A19E2AABC8C6000A1A63 /* ir_heap_config_root_data.h */,
+				3049A19D2AABC8C6000A1A63 /* ir_heap_inlines.h */,
 				0FE7EE74229F010F004F4166 /* iso_heap.c */,
 				0FE7EE75229F010F004F4166 /* iso_heap.h */,
 				0FE7EE5522974335004F4166 /* iso_heap_config.c */,
@@ -2058,6 +2076,10 @@
 				0F8A810325F6A79500790B4A /* hotbit_heap_config.h in Headers */,
 				0F8A810625F6A79500790B4A /* hotbit_heap_inlines.h in Headers */,
 				0F8A810225F6A79500790B4A /* hotbit_heap_innards.h in Headers */,
+				3049A1A62AABC8C7000A1A63 /* ir_heap.h in Headers */,
+				3049A1A72AABC8C7000A1A63 /* ir_heap_config.h in Headers */,
+				3049A1A42AABC8C7000A1A63 /* ir_heap_config_root_data.h in Headers */,
+				3049A1A32AABC8C7000A1A63 /* ir_heap_inlines.h in Headers */,
 				0FE7EE77229F010F004F4166 /* iso_heap.h in Headers */,
 				0FE7EE5622974335004F4166 /* iso_heap_config.h in Headers */,
 				0F5FE7A425B614F2001859FC /* iso_heap_inlines.h in Headers */,
@@ -2709,6 +2731,8 @@
 				2C11E8912728A893002162D0 /* bmalloc_type.c in Sources */,
 				0F8A810425F6A79500790B4A /* hotbit_heap.c in Sources */,
 				0F8A810125F6A79500790B4A /* hotbit_heap_config.c in Sources */,
+				3049A1A52AABC8C7000A1A63 /* ir_heap.c in Sources */,
+				3049A1A22AABC8C7000A1A63 /* ir_heap_config.c in Sources */,
 				0FE7EE76229F010F004F4166 /* iso_heap.c in Sources */,
 				0FE7EE5722974335004F4166 /* iso_heap_config.c in Sources */,
 				0F5E5CF023BEF55300AA0B6F /* iso_test_heap.c in Sources */,

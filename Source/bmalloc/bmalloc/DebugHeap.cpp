@@ -210,6 +210,7 @@ bool pas_debug_heap_is_enabled(pas_heap_config_kind kind)
     switch (kind) {
     case pas_heap_config_kind_bmalloc:
         return !!DebugHeap::tryGet();
+    case pas_heap_config_kind_ir:
     case pas_heap_config_kind_jit:
     case pas_heap_config_kind_pas_utility:
         return false;

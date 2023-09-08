@@ -44,6 +44,8 @@
 #include <wtf/WorkQueue.h>
 
 #if ENABLE(LIBPAS_JIT_HEAP)
+#include <bmalloc/ir_heap.h>
+#include <bmalloc/ir_heap_config.h>
 #include <bmalloc/jit_heap.h>
 #include <bmalloc/jit_heap_config.h>
 #else
@@ -405,6 +407,9 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
     };
 
     reservation.pageReservation = tryCreatePageReservation(reservation.size);
+
+    // Mark latter half as RW. We will use this half of the JIT region for IR.
+    OSAllocator::protect(reinterpret_cast<uint8_t*>(reservation.pageReservation.base()) + reservation.pageReservation.size() / 2, reservation.pageReservation.size(), true, true);
 
     if (Options::verboseExecutablePoolAllocation())
         dataLog(getpid(), ": Got executable pool reservation at ", RawPointer(reservation.pageReservation.base()), "...", RawPointer(reservation.pageReservation.end()), ", while I'm at ", RawPointer(bitwise_cast<void*>(initializeJITPageReservation)), "\n");
@@ -828,8 +833,11 @@ private:
             RELEASE_ASSERT(!m_start);
             RELEASE_ASSERT(!m_end);
             m_start = reinterpret_cast<uintptr_t>(start);
+            size_t mid = m_start + sizeInBytes / 2;
             m_end = m_start + sizeInBytes;
-            jit_heap_add_fresh_memory(pas_range_create(m_start, m_end));
+
+            jit_heap_add_fresh_memory(pas_range_create(m_start, mid));
+            ir_heap_add_fresh_memory(pas_range_create(mid, m_end));
         }
 
         bool isInAllocatedMemory(const AbstractLocker&, void* address)

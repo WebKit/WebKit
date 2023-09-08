@@ -664,6 +664,23 @@ TryMallocReturnValue tryFastRealloc(void* object, size_t newSize)
     return bmalloc::api::tryRealloc(object, newSize);
 }
 
+void* irMalloc(size_t size)
+{
+    ASSERT_IS_WITHIN_LIMIT(size);
+    ASSERT(!forbidMallocUseScopeCount || disableMallocRestrictionScopeCount);
+    void* result = bmalloc::api::malloc(size, bmalloc::HeapKind::IR);
+#if ENABLE(MALLOC_HEAP_BREAKDOWN) && TRACK_MALLOC_CALLSTACK
+    if (!AvoidRecordingScope::avoidRecordingCount())
+        MallocCallTracker::singleton().recordMalloc(result, size);
+#endif
+    return result;
+}
+
+void irFree(void* object)
+{
+    bmalloc::api::free(object, bmalloc::HeapKind::IR);
+}
+
 void releaseFastMallocFreeMemoryForThisThread()
 {
     bmalloc::api::scavengeThisThread();

@@ -119,5 +119,9 @@ PAS_DEFINE_BITFIT_PAGE_CONFIG_KIND(jit_small_bitfit,
                                    JIT_HEAP_CONFIG.small_bitfit_config)
 PAS_DEFINE_BITFIT_PAGE_CONFIG_KIND(jit_medium_bitfit,
                                    JIT_HEAP_CONFIG.medium_bitfit_config)
+PAS_DEFINE_BITFIT_PAGE_CONFIG_KIND(ir_small_bitfit,
+                                   IR_HEAP_CONFIG.small_bitfit_config)
+PAS_DEFINE_BITFIT_PAGE_CONFIG_KIND(ir_medium_bitfit,
+                                   IR_HEAP_CONFIG.medium_bitfit_config)
 #endif
 
