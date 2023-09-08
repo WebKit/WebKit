@@ -8229,7 +8229,10 @@ IGNORE_CLANG_WARNINGS_END
 
             m_out.appendTo(checkStructure2, genericCase);
             LValue structure = loadStructure(source);
-            m_out.branch(m_out.isZero32(m_out.load32(structure, m_heaps.Structure_propertyHash)), unsure(continuation), unsure(genericCase));
+            if constexpr (sizeof(Structure::SeenProperties) == sizeof(void*))
+                m_out.branch(m_out.isNull(m_out.loadPtr(structure, m_heaps.Structure_seenProperties)), unsure(continuation), unsure(genericCase));
+            else
+                m_out.branch(m_out.isZero32(m_out.load32(structure, m_heaps.Structure_seenProperties)), unsure(continuation), unsure(genericCase));
 
             m_out.appendTo(genericCase, continuation);
             vmCall(Void, operationObjectAssignObject, weakPointer(globalObject), target, source);

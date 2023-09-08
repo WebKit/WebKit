@@ -214,6 +214,8 @@ public:
     static constexpr int s_maxTransitionLength = 64;
     static constexpr int s_maxTransitionLengthForNonEvalPutById = 512;
 
+    using SeenProperties = TinyBloomFilter<CompactPtr<UniquedStringImpl>::StorageType>;
+
     enum PolyProtoTag { PolyProto };
     inline static Structure* create(VM&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*, IndexingType = NonArray, unsigned inlineCapacity = 0);
     static Structure* create(PolyProtoTag, VM&, JSGlobalObject*, JSObject* prototype, const TypeInfo&, const ClassInfo*, IndexingType = NonArray, unsigned inlineCapacity = 0);
@@ -747,6 +749,11 @@ public:
         return OBJECT_OFFSETOF(Structure, m_propertyHash);
     }
 
+    static ptrdiff_t seenPropertiesOffset()
+    {
+        return OBJECT_OFFSETOF(Structure, m_seenProperties) + SeenProperties::offsetOfBits();
+    }
+
     static Structure* createStructure(VM&);
         
     bool transitionWatchpointSetHasBeenInvalidated() const
@@ -1052,7 +1059,7 @@ private:
     uint16_t m_maxOffset;
 
     uint32_t m_propertyHash;
-    TinyBloomFilter<CompactPtr<UniquedStringImpl>::StorageType> m_seenProperties;
+    SeenProperties m_seenProperties;
 
 
     WriteBarrier<JSGlobalObject> m_globalObject;

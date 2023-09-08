@@ -15400,7 +15400,10 @@ void SpeculativeJIT::compileObjectAssign(Node* node)
         genericCases.append(branchIfNotType(sourceGPR, FinalObjectType));
         genericCases.append(branchTest8(NonZero, Address(sourceGPR, JSObject::indexingTypeAndMiscOffset()), CCallHelpers::TrustedImm32(IndexingShapeMask)));
         emitLoadStructure(vm(), sourceGPR, scratch1GPR);
-        doneCases.append(branchTest32(Zero, Address(scratch1GPR, Structure::propertyHashOffset())));
+        if constexpr (sizeof(Structure::SeenProperties) == sizeof(void*))
+            doneCases.append(branchTestPtr(Zero, Address(scratch1GPR, Structure::seenPropertiesOffset())));
+        else
+            doneCases.append(branchTest32(Zero, Address(scratch1GPR, Structure::seenPropertiesOffset())));
 
         genericCases.link(this);
         callOperation(operationObjectAssignObject, LinkableConstant::globalObject(*this, node), targetGPR, sourceGPR);
