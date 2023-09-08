@@ -626,6 +626,7 @@ public:
     PropertyOffset get(VM&, PropertyName);
     PropertyOffset get(VM&, PropertyName, unsigned& attributes);
 
+    bool canPerformFastPropertyEnumerationCommon() const;
     bool canPerformFastPropertyEnumeration() const;
 
     // This is a somewhat internalish method. It will call your functor while possibly holding the

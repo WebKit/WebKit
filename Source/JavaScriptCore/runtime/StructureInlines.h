@@ -823,25 +823,30 @@ inline void Structure::clearCachedPrototypeChain()
     rareData()->clearCachedPropertyNameEnumerator();
 }
 
-ALWAYS_INLINE bool Structure::canPerformFastPropertyEnumeration() const
+ALWAYS_INLINE bool Structure::canPerformFastPropertyEnumerationCommon() const
 {
     if (typeInfo().overridesGetOwnPropertySlot())
         return false;
     if (typeInfo().overridesAnyFormOfGetOwnPropertyNames())
         return false;
-    // FIXME: Indexed properties can be handled.
-    // https://bugs.webkit.org/show_bug.cgi?id=185358
-
-    if (hasIndexedProperties(indexingType()))
-        return false;
     if (hasAnyKindOfGetterSetterProperties())
-        return false;
-    if (hasReadOnlyOrGetterSetterPropertiesExcludingProto())
         return false;
     if (isUncacheableDictionary())
         return false;
     // Cannot perform fast [[Put]] to |target| if the property names of the |source| contain "__proto__".
     if (hasUnderscoreProtoPropertyExcludingOriginalProto())
+        return false;
+    return true;
+}
+
+ALWAYS_INLINE bool Structure::canPerformFastPropertyEnumeration() const
+{
+    if (!canPerformFastPropertyEnumerationCommon())
+        return false;
+    // FIXME: Indexed properties can be handled.
+    // https://bugs.webkit.org/show_bug.cgi?id=185358
+
+    if (hasIndexedProperties(indexingType()))
         return false;
     return true;
 }
