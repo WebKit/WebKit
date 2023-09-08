@@ -353,7 +353,20 @@ auto RenderLayerCompositor::BackingSharingState::backingProviderForLayer(const R
 bool RenderLayerCompositor::BackingSharingState::canUseMultipleProviders(RenderLayer& layer) const
 {
     ASSERT(!m_backingProviderCandidates.isEmpty());
-    return m_backingProviderCandidates[0].providerLayer->canUseCompositedScrolling() && layer.canUseCompositedScrolling();
+
+    // Allow multiple providers for scrolling layers only so we don't need to do expensive overlap testing for non-clipped layers.
+    if (!m_backingProviderCandidates[0].providerLayer->canUseCompositedScrolling() || !layer.canUseCompositedScrolling())
+        return false;
+
+    // See if the layer overlaps any existing sharing providers. If not we can keep the sharing sequence going.
+    auto layerBox = layer.calculateLayerBounds(m_backingProviderStackingContext, layer.offsetFromAncestor(m_backingProviderStackingContext));
+    for (auto& candidate : m_backingProviderCandidates) {
+        auto& providerLayer = *candidate.providerLayer;
+        auto candidateBox = providerLayer.calculateLayerBounds(m_backingProviderStackingContext, providerLayer.offsetFromAncestor(m_backingProviderStackingContext));
+        if (layerBox.intersects(candidateBox))
+            return false;
+    }
+    return true;
 }
 
 const RenderLayer* RenderLayerCompositor::BackingSharingState::updateBeforeDescendantTraversal(RenderLayer& layer, bool willBeComposited, RenderLayer* stackingContextAncestor)
@@ -369,17 +382,8 @@ const RenderLayer* RenderLayerCompositor::BackingSharingState::updateBeforeDesce
             return false;
         if (stackingContextAncestor != m_backingProviderStackingContext)
             return true;
-        // Allow multiple providers for scrolling layers only so we don't need to do expensive overlap testing for non-clipped layers.
         if (!canUseMultipleProviders(layer))
             return true;
-        // See if the layer overlaps any existing sharing providers. If not we can keep the sharing sequence going.
-        auto layerBox = layer.calculateLayerBounds(m_backingProviderStackingContext, layer.offsetFromAncestor(m_backingProviderStackingContext));
-        for (auto& candidate : m_backingProviderCandidates) {
-            auto& providerLayer = *candidate.providerLayer;
-            auto candidateBox = providerLayer.calculateLayerBounds(m_backingProviderStackingContext, providerLayer.offsetFromAncestor(m_backingProviderStackingContext));
-            if (layerBox.intersects(candidateBox))
-                return true;
-        }
         return false;
     }();
 
