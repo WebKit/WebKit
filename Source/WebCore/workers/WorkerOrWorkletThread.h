@@ -47,10 +47,9 @@ class WorkerOrWorkletThread : public SerialFunctionDispatcher, public ThreadSafe
 public:
     virtual ~WorkerOrWorkletThread();
 
+    // SerialFunctionDispatcher methods
     void dispatch(Function<void()>&&) final;
-#if ASSERT_ENABLED
-    void assertIsCurrent() const final;
-#endif
+    bool isCurrent() const final;
 
     Thread* thread() const { return m_thread.get(); }
 

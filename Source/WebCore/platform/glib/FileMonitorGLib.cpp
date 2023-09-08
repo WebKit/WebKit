@@ -49,7 +49,7 @@ FileMonitor::FileMonitor(const String& path, Ref<WorkQueue>&& handlerQueue, Func
     };
 
     // The monitor can be created in the work queue thread.
-    if (&m_handlerQueue->runLoop() == &RunLoop::current()) {
+    if (m_handlerQueue->isCurrent()) {
         createPlatformMonitor();
         return;
     }
@@ -62,7 +62,7 @@ FileMonitor::FileMonitor(const String& path, Ref<WorkQueue>&& handlerQueue, Func
 FileMonitor::~FileMonitor()
 {
     // The monitor can be destroyed in the work queue thread.
-    if (&m_handlerQueue->runLoop() == &RunLoop::current()) {
+    if (m_handlerQueue->isCurrent()) {
         cancel();
         return;
     }
