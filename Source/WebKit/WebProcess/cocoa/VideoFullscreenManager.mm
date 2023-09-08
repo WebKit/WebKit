@@ -418,7 +418,6 @@ void VideoFullscreenManager::exitVideoFullscreenForVideoElement(HTMLVideoElement
     LOG(Fullscreen, "VideoFullscreenManager::exitVideoFullscreenForVideoElement(%p)", this);
 
     ASSERT(m_page);
-    ASSERT(m_videoElements.contains(videoElement));
 
     if (!m_videoElements.contains(videoElement)) {
         completionHandler(false);
@@ -453,7 +452,6 @@ void VideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(HTMLVideo
     INFO_LOG(LOGIDENTIFIER);
 
     ASSERT(m_page);
-    ASSERT(m_videoElements.contains(videoElement));
 
     if (!m_videoElements.contains(videoElement))
         return;
