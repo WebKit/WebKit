@@ -1004,7 +1004,7 @@ void Document::resetActiveLinkColor()
 DOMImplementation& Document::implementation()
 {
     if (!m_implementation)
-        m_implementation = makeUnique<DOMImplementation>(*this);
+        m_implementation = makeUniqueWithoutRefCountedCheck<DOMImplementation>(*this);
     return *m_implementation;
 }
 

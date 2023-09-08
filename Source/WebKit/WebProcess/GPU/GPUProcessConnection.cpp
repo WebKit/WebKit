@@ -210,7 +210,7 @@ RemoteVideoFrameObjectHeapProxy& GPUProcessConnection::videoFrameObjectHeapProxy
 
 RemoteMediaPlayerManager& GPUProcessConnection::mediaPlayerManager()
 {
-    return *WebProcess::singleton().supplement<RemoteMediaPlayerManager>();
+    return WebProcess::singleton().remoteMediaPlayerManager();
 }
 #endif
 
@@ -227,7 +227,7 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
 {
 #if ENABLE(VIDEO)
     if (decoder.messageReceiverName() == Messages::MediaPlayerPrivateRemote::messageReceiverName()) {
-        WebProcess::singleton().supplement<RemoteMediaPlayerManager>()->didReceivePlayerMessage(connection, decoder);
+        WebProcess::singleton().remoteMediaPlayerManager().didReceivePlayerMessage(connection, decoder);
         return true;
     }
 #endif

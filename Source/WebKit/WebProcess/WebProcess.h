@@ -129,8 +129,10 @@ class NetworkProcessConnection;
 class ObjCObjectGraph;
 class ProcessAssertion;
 class RemoteCDMFactory;
+class RemoteImageDecoderAVFManager;
 class RemoteLegacyCDMFactory;
 class RemoteMediaEngineConfigurationFactory;
+class RemoteMediaPlayerManager;
 class StorageAreaMap;
 class UserData;
 class WebAutomationSessionProxy;
@@ -330,6 +332,12 @@ public:
 
     WebCacheStorageProvider& cacheStorageProvider() { return m_cacheStorageProvider.get(); }
     WebBadgeClient& badgeClient() { return m_badgeClient.get(); }
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
+    RemoteMediaPlayerManager& remoteMediaPlayerManager() { return m_remoteMediaPlayerManager.get(); }
+#endif
+#if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
+    RemoteImageDecoderAVFManager& remoteImageDecoderAVFManager() { return m_remoteImageDecoderAVFManager.get(); }
+#endif
     WebBroadcastChannelRegistry& broadcastChannelRegistry() { return m_broadcastChannelRegistry.get(); }
     WebCookieJar& cookieJar() { return m_cookieJar.get(); }
     WebSocketChannelManager& webSocketChannelManager() { return m_webSocketChannelManager; }
@@ -691,6 +699,12 @@ private:
 #endif
     Ref<WebCacheStorageProvider> m_cacheStorageProvider;
     Ref<WebBadgeClient> m_badgeClient;
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
+    Ref<RemoteMediaPlayerManager> m_remoteMediaPlayerManager;
+#endif
+#if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
+    Ref<RemoteImageDecoderAVFManager> m_remoteImageDecoderAVFManager;
+#endif
     Ref<WebBroadcastChannelRegistry> m_broadcastChannelRegistry;
     Ref<WebCookieJar> m_cookieJar;
     WebSocketChannelManager m_webSocketChannelManager;

@@ -28,7 +28,6 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "GPUProcessConnection.h"
-#include "WebProcessSupplement.h"
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <wtf/HashMap.h>
@@ -44,17 +43,15 @@ class RemoteMediaPlayerMIMETypeCache;
 class WebProcess;
 struct PlatformTextTrackData;
 struct TrackPrivateRemoteConfiguration;
+struct WebProcessCreationParameters;
 
 class RemoteMediaPlayerManager
-    : public WebProcessSupplement
-    , public GPUProcessConnection::Client
+    : public GPUProcessConnection::Client
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteMediaPlayerManager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit RemoteMediaPlayerManager(WebProcess&);
+    static Ref<RemoteMediaPlayerManager> create();
     ~RemoteMediaPlayerManager();
-
-    static const char* supplementName();
 
     void setUseGPUProcess(bool);
 
@@ -72,11 +69,11 @@ public:
     void deref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteMediaPlayerManager>::deref(); }
     ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteMediaPlayerManager>::controlBlock(); }
 
-private:
-    std::unique_ptr<WebCore::MediaPlayerPrivateInterface> createRemoteMediaPlayer(WebCore::MediaPlayer*, WebCore::MediaPlayerEnums::MediaEngineIdentifier);
+    void initialize(const WebProcessCreationParameters&);
 
-    // WebProcessSupplement
-    void initialize(const WebProcessCreationParameters&) final;
+private:
+    RemoteMediaPlayerManager();
+    std::unique_ptr<WebCore::MediaPlayerPrivateInterface> createRemoteMediaPlayer(WebCore::MediaPlayer*, WebCore::MediaPlayerEnums::MediaEngineIdentifier);
 
     // GPUProcessConnection::Client
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;

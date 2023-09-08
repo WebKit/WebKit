@@ -504,7 +504,7 @@ bool HTMLLinkElement::styleSheetIsLoading() const
 DOMTokenList& HTMLLinkElement::sizes()
 {
     if (!m_sizes)
-        m_sizes = makeUnique<DOMTokenList>(*this, sizesAttr);
+        m_sizes = makeUniqueWithoutRefCountedCheck<DOMTokenList>(*this, sizesAttr);
     return *m_sizes;
 }
 
@@ -559,7 +559,7 @@ void HTMLLinkElement::dispatchPendingEvent(LinkEventSender* eventSender, const A
 DOMTokenList& HTMLLinkElement::relList()
 {
     if (!m_relList) 
-        m_relList = makeUnique<DOMTokenList>(*this, HTMLNames::relAttr, [](Document& document, StringView token) {
+        m_relList = makeUniqueWithoutRefCountedCheck<DOMTokenList>(*this, HTMLNames::relAttr, [](Document& document, StringView token) {
             return LinkRelAttribute::isSupported(document, token);
         });
     return *m_relList;

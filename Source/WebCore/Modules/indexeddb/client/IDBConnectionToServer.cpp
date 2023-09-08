@@ -52,7 +52,7 @@ Ref<IDBConnectionToServer> IDBConnectionToServer::create(IDBConnectionToServerDe
 
 IDBConnectionToServer::IDBConnectionToServer(IDBConnectionToServerDelegate& delegate)
     : m_delegate(delegate)
-    , m_proxy(makeUnique<IDBConnectionProxy>(*this))
+    , m_proxy(makeUniqueWithoutRefCountedCheck<IDBConnectionProxy>(*this))
 {
 }
 
