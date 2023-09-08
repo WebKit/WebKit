@@ -22,7 +22,6 @@ let currentDraftExtensions = {
         "NV_shader_noperspective_interpolation",
         "OES_sample_variables",
         "OES_shader_multisample_interpolation",
-        "WEBGL_clip_cull_distance",
         "WEBGL_draw_instanced_base_vertex_base_instance",
         "WEBGL_multi_draw_instanced_base_vertex_base_instance",
         "WEBGL_polygon_mode",
