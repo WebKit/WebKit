@@ -39,9 +39,6 @@ GraphicsContextState::GraphicsContextState(const ChangeFlags& changeFlags, Inter
 
 void GraphicsContextState::repurpose(Purpose purpose)
 {
-    if (purpose == m_purpose)
-        return;
-
     if (purpose == Purpose::Initial)
         m_changeFlags = { };
 
