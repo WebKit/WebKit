@@ -311,7 +311,7 @@ void DataTransfer::didAddFileToItemList()
 DataTransferItemList& DataTransfer::items(Document& document)
 {
     if (!m_itemList)
-        m_itemList = makeUnique<DataTransferItemList>(document, *this);
+        m_itemList = makeUniqueWithoutRefCountedCheck<DataTransferItemList>(document, *this);
     return *m_itemList;
 }
 

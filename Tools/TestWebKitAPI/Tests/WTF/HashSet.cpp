@@ -304,7 +304,7 @@ struct DerefObserver {
 
 TEST(WTF_HashSet, RefPtrNotZeroedBeforeDeref)
 {
-    auto observer = makeUnique<DerefObserver>();
+    auto observer = makeUniqueWithoutRefCountedCheck<DerefObserver>();
 
     HashSet<RefPtr<DerefObserver>> set;
     set.add(adoptRef(observer.get()));

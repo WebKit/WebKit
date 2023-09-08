@@ -186,7 +186,7 @@ CSSKeyframeRule* CSSKeyframesRule::item(unsigned index) const
 CSSRuleList& CSSKeyframesRule::cssRules()
 {
     if (!m_ruleListCSSOMWrapper)
-        m_ruleListCSSOMWrapper = makeUnique<LiveCSSRuleList<CSSKeyframesRule>>(*this);
+        m_ruleListCSSOMWrapper = makeUniqueWithoutRefCountedCheck<LiveCSSRuleList<CSSKeyframesRule>>(*this);
     return *m_ruleListCSSOMWrapper;
 }
 

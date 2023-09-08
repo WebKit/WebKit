@@ -589,8 +589,23 @@ ALWAYS_INLINE constexpr typename remove_reference<T>::type&& move(T&& value)
 
 namespace WTF {
 
+template<typename T> class TypeHasRefMemberFunction {
+    template<typename> static std::false_type test(...);
+    template<typename U> static auto test(int) -> decltype(std::declval<U>().ref(), std::true_type());
+public:
+    static constexpr bool value = std::is_same<decltype(test<T>(0)), std::true_type>::value;
+};
+
 template<class T, class... Args>
 ALWAYS_INLINE decltype(auto) makeUnique(Args&&... args)
+{
+    static_assert(std::is_same<typename T::webkitFastMalloced, int>::value, "T is FastMalloced");
+    static_assert(!TypeHasRefMemberFunction<T>::value, "T should not be refcounted");
+    return std::make_unique<T>(std::forward<Args>(args)...);
+}
+
+template<class T, class... Args>
+ALWAYS_INLINE decltype(auto) makeUniqueWithoutRefCountedCheck(Args&&... args)
 {
     static_assert(std::is_same<typename T::webkitFastMalloced, int>::value, "T is FastMalloced");
     return std::make_unique<T>(std::forward<Args>(args)...);
@@ -599,6 +614,7 @@ ALWAYS_INLINE decltype(auto) makeUnique(Args&&... args)
 template<class T, class... Args>
 ALWAYS_INLINE decltype(auto) makeUniqueWithoutFastMallocCheck(Args&&... args)
 {
+    static_assert(!TypeHasRefMemberFunction<T>::value, "T should not be refcounted");
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
 
@@ -702,6 +718,7 @@ using WTF::isPointerAligned;
 using WTF::isStatelessLambda;
 using WTF::makeUnique;
 using WTF::makeUniqueWithoutFastMallocCheck;
+using WTF::makeUniqueWithoutRefCountedCheck;
 using WTF::mergeDeduplicatedSorted;
 using WTF::roundUpToMultipleOf;
 using WTF::roundUpToMultipleOfNonPowerOfTwo;

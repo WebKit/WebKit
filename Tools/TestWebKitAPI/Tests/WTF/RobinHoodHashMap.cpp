@@ -768,7 +768,7 @@ struct DerefObserver {
 
 TEST(WTF_RobinHoodHashMap, RefPtrNotZeroedBeforeDeref)
 {
-    auto observer = makeUnique<DerefObserver>();
+    auto observer = makeUniqueWithoutRefCountedCheck<DerefObserver>();
 
     MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<DerefObserver>, int, RobinHoodHash<RefPtr<DerefObserver>>> map;
     map.add(adoptRef(observer.get()), 5);

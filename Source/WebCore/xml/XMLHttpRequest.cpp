@@ -272,7 +272,7 @@ String XMLHttpRequest::responseURL() const
 XMLHttpRequestUpload& XMLHttpRequest::upload()
 {
     if (!m_upload)
-        m_upload = makeUnique<XMLHttpRequestUpload>(*this);
+        m_upload = makeUniqueWithoutRefCountedCheck<XMLHttpRequestUpload>(*this);
     return *m_upload;
 }
 

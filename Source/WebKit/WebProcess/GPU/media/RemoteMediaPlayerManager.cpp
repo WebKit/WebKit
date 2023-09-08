@@ -103,18 +103,14 @@ private:
     RemoteMediaPlayerManager& m_manager;
 };
 
-RemoteMediaPlayerManager::RemoteMediaPlayerManager(WebProcess&)
+Ref<RemoteMediaPlayerManager> RemoteMediaPlayerManager::create()
 {
+    return adoptRef(*new RemoteMediaPlayerManager);
 }
 
-RemoteMediaPlayerManager::~RemoteMediaPlayerManager()
-{
-}
+RemoteMediaPlayerManager::RemoteMediaPlayerManager() = default;
 
-const char* RemoteMediaPlayerManager::supplementName()
-{
-    return "RemoteMediaPlayerManager";
-}
+RemoteMediaPlayerManager::~RemoteMediaPlayerManager() = default;
 
 using RemotePlayerTypeCache = HashMap<MediaPlayerEnums::MediaEngineIdentifier, std::unique_ptr<RemoteMediaPlayerMIMETypeCache>, WTF::IntHash<MediaPlayerEnums::MediaEngineIdentifier>, WTF::StrongEnumHashTraits<MediaPlayerEnums::MediaEngineIdentifier>>;
 static RemotePlayerTypeCache& mimeCaches()

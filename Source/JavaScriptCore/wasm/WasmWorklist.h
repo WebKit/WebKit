@@ -91,7 +91,7 @@ private:
     // Priority it the wrong order, which isn't wrong, just suboptimal.
     Ticket m_lastGrantedTicket { 0 };
     PriorityQueue<QueueElement, isHigherPriority, 10> m_queue;
-    Vector<std::unique_ptr<Thread>> m_threads;
+    Vector<Ref<Thread>> m_threads;
 };
 
 Worklist* existingWorklistOrNull();
