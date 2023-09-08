@@ -91,8 +91,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     void setNetworkState(MediaPlayer::NetworkState);
 
     void seekInternal();
-    void waitForSeekCompleted();
-    void seekCompleted();
+    void maybeCompleteSeek();
     void setLoadingProgresssed(bool flag) { m_loadingProgressed = flag; }
     void setHasAvailableVideoFrame(bool);
     bool hasAvailableVideoFrame() const override;

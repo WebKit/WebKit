@@ -449,11 +449,17 @@ void SourceBuffer::removedFromMediaSource()
     m_source = nullptr;
 }
 
-void SourceBuffer::seekToTarget(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
+void SourceBuffer::computeSeekTime(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
 
 {
     ALWAYS_LOG(LOGIDENTIFIER, target);
-    m_private->seekToTarget(target, WTFMove(completionHandler));
+    m_private->computeSeekTime(target, WTFMove(completionHandler));
+}
+
+void SourceBuffer::seekToTime(const MediaTime& time)
+{
+    ALWAYS_LOG(LOGIDENTIFIER, time);
+    m_private->seekToTime(time);
 }
 
 bool SourceBuffer::virtualHasPendingActivity() const

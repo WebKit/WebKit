@@ -172,12 +172,20 @@ void MediaSourcePrivateRemote::setTimeFudgeFactor(const MediaTime& fudgeFactor)
     gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::SetTimeFudgeFactor(fudgeFactor), m_identifier);
 }
 
-void MediaSourcePrivateRemote::seekToTarget(const WebCore::SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
+void MediaSourcePrivateRemote::waitForTarget(const WebCore::SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
 {
     if (m_client)
-        m_client->seekToTarget(target, WTFMove(completionHandler));
+        m_client->waitForTarget(target, WTFMove(completionHandler));
     else
         completionHandler(MediaTime::invalidTime());
+}
+
+void MediaSourcePrivateRemote::seekToTime(const MediaTime& time, CompletionHandler<void()>&& completionHandler)
+{
+    if (m_client)
+        m_client->seekToTime(time, WTFMove(completionHandler));
+    else
+        completionHandler();
 }
 
 void MediaSourcePrivateRemote::mediaSourcePrivateShuttingDown(CompletionHandler<void()>&& completionHandler)

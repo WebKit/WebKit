@@ -158,12 +158,20 @@ void MediaSourcePrivateGStreamer::setReadyState(MediaPlayer::ReadyState state)
     m_playerPrivate.setReadyState(state);
 }
 
-void MediaSourcePrivateGStreamer::seekToTarget(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
+void MediaSourcePrivateGStreamer::waitForTarget(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
 {
     if (m_mediaSource)
-        m_mediaSource->seekToTarget(target, WTFMove(completionHandler));
+        m_mediaSource->waitForTarget(target, WTFMove(completionHandler));
     else
         completionHandler(MediaTime::invalidTime());
+}
+
+void MediaSourcePrivateGStreamer::seekToTime(const MediaTime& time, CompletionHandler<void()>&& completionHandler)
+{
+    if (m_mediaSource)
+        m_mediaSource->seekToTime(time, WTFMove(completionHandler));
+    else
+        completionHandler();
 }
 
 MediaTime MediaSourcePrivateGStreamer::duration() const

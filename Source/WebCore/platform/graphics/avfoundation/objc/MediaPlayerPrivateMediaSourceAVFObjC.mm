@@ -173,7 +173,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
 
         if (m_synchronizerSeeking && !m_pendingSeek) {
             m_synchronizerSeeking = false;
-            seekCompleted();
+            maybeCompleteSeek();
         }
 
         if (m_pendingSeek)
@@ -531,8 +531,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
     m_lastSeekTime = pendingSeek.time;
 
     m_seekState = Seeking;
-    m_mediaSourcePrivate->willSeek();
-    m_mediaSourcePrivate->seekToTarget(pendingSeek, [this, weakThis = WeakPtr { this }] (const MediaTime& seekedTime) {
+    m_mediaSourcePrivate->waitForTarget(pendingSeek, [this, weakThis = WeakPtr { this }] (const MediaTime& seekedTime) {
         if (!weakThis)
             return;
         if (m_seekState != Seeking || seekedTime.isInvalid()) {
@@ -547,17 +546,25 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
         m_synchronizerSeeking = synchronizerTime != seekedTime;
         ALWAYS_LOG(LOGIDENTIFIER, "seekedTime = ", seekedTime, ", synchronizerTime = ", synchronizerTime, "synchronizer seeking = ", m_synchronizerSeeking);
 
+        if (!m_synchronizerSeeking) {
+            // In cases where the destination seek time precisely matches the synchronizer's existing time
+            // no time jumped notification will be issued. In this case, just notify the MediaPlayer that
+            // the seek completed successfully.
+            maybeCompleteSeek();
+            return;
+        }
+        m_mediaSourcePrivate->willSeek();
         [m_synchronizer setRate:0 time:PAL::toCMTime(seekedTime)];
 
-        // In cases where the destination seek time precisely matches the synchronizer's existing time
-        // no time jumped notification will be issued. In this case, just notify the MediaPlayer that
-        // the seek completed successfully.
-        if (!m_synchronizerSeeking)
-            seekCompleted();
+        m_mediaSourcePrivate->seekToTime(seekedTime, [this, weakThis] {
+            if (!weakThis)
+                return;
+            maybeCompleteSeek();
+        });
     });
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::seekCompleted()
+void MediaPlayerPrivateMediaSourceAVFObjC::maybeCompleteSeek()
 {
     if (m_seekState == SeekCompleted)
         return;
@@ -566,14 +573,15 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekCompleted()
         m_seekState = WaitingForAvailableFame;
         return;
     }
+    m_seekState = Seeking;
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_seekState = SeekCompleted;
-    if (shouldBePlaying())
-        [m_synchronizer setRate:m_rate];
     if (m_synchronizerSeeking) {
         ALWAYS_LOG(LOGIDENTIFIER, "Synchronizer still seeking, bailing out");
         return;
     }
+    m_seekState = SeekCompleted;
+    if (shouldBePlaying())
+        [m_synchronizer setRate:m_rate];
     if (auto player = m_player.get()) {
         player->seeked(m_lastSeekTime);
         player->timeChanged();
@@ -1002,7 +1010,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setHasAvailableVideoFrame(bool flag)
     if (player)
         player->firstVideoFrameAvailable();
     if (m_seekState == WaitingForAvailableFame)
-        seekCompleted();
+        maybeCompleteSeek();
 
     if (m_readyStateIsWaitingForAvailableFrame) {
         m_readyStateIsWaitingForAvailableFrame = false;

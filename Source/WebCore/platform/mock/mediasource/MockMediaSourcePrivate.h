@@ -56,7 +56,8 @@ public:
 
     MockMediaPlayerMediaSource& player() const { return m_player; }
 
-    void seekToTarget(const SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) final;
+    void waitForTarget(const SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) final;
+    void seekToTime(const MediaTime&, CompletionHandler<void()>&&) final;
     MediaTime currentMediaTime() const;
 
     std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics();

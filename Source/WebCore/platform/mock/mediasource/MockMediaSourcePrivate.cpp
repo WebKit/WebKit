@@ -153,12 +153,20 @@ bool MockMediaSourcePrivate::hasVideo() const
     return std::any_of(m_activeSourceBuffers.begin(), m_activeSourceBuffers.end(), MockSourceBufferPrivateHasVideo);
 }
 
-void MockMediaSourcePrivate::seekToTarget(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
+void MockMediaSourcePrivate::waitForTarget(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
 {
     if (m_client)
-        m_client->seekToTarget(target, WTFMove(completionHandler));
+        m_client->waitForTarget(target, WTFMove(completionHandler));
     else
         completionHandler(MediaTime::invalidTime());
+}
+
+void MockMediaSourcePrivate::seekToTime(const MediaTime& time, CompletionHandler<void()>&& completionHandler)
+{
+    if (m_client)
+        m_client->seekToTime(time, WTFMove(completionHandler));
+    else
+        completionHandler();
 }
 
 MediaTime MockMediaSourcePrivate::currentMediaTime() const

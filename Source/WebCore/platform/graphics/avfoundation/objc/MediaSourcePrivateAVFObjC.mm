@@ -227,12 +227,22 @@ void MediaSourcePrivateAVFObjC::willSeek()
         sourceBuffer->willSeek();
 }
 
-void MediaSourcePrivateAVFObjC::seekToTarget(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
+void MediaSourcePrivateAVFObjC::waitForTarget(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
 {
-    if (m_client)
-        m_client->seekToTarget(target, WTFMove(completionHandler));
-    else
+    if (!m_client) {
         completionHandler(MediaTime::invalidTime());
+        return;
+    }
+    m_client->waitForTarget(target, WTFMove(completionHandler));
+}
+
+void MediaSourcePrivateAVFObjC::seekToTime(const MediaTime& time, CompletionHandler<void()>&& completionHandler)
+{
+    if (!m_client) {
+        completionHandler();
+        return;
+    }
+    m_client->seekToTime(time, WTFMove(completionHandler));
 }
 
 FloatSize MediaSourcePrivateAVFObjC::naturalSize() const
