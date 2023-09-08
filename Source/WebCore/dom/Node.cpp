@@ -186,6 +186,8 @@ static const char* stringForRareDataUseType(NodeRareData::UseType useType)
         return "Nonce";
     case NodeRareData::UseType::ExplicitlySetAttrElementsMap:
         return "ExplicitlySetAttrElementsMap";
+    case NodeRareData::UseType::Popover:
+        return "Popover";
     }
     return nullptr;
 }

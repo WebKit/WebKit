@@ -152,6 +152,8 @@ public:
     OptionSet<UseType> useTypes() const
     {
         auto result = NodeRareData::useTypes();
+        if (m_unusualTabIndex)
+            result.add(UseType::TabIndex);
         if (!m_savedLayerScrollPosition.isZero())
             result.add(UseType::ScrollingPosition);
         if (m_computedStyle)
