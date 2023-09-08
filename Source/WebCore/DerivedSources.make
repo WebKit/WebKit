@@ -1263,6 +1263,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/canvas/CanvasTextDrawingStyles.idl \
     $(WebCore)/html/canvas/CanvasTransform.idl \
     $(WebCore)/html/canvas/CanvasUserInterface.idl \
+    $(WebCore)/html/canvas/EXTBlendFuncExtended.idl \
     $(WebCore)/html/canvas/EXTBlendMinMax.idl \
     $(WebCore)/html/canvas/EXTClipControl.idl \
     $(WebCore)/html/canvas/EXTColorBufferFloat.idl \

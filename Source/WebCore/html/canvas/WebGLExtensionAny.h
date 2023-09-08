@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class ANGLEInstancedArrays;
+class EXTBlendFuncExtended;
 class EXTBlendMinMax;
 class EXTClipControl;
 class EXTColorBufferFloat;
@@ -90,6 +91,7 @@ class WebGLStencilTexturing;
 // Remember to #include "WebGLExtensionAnyInlines.h" at any instantiation compilation unit.
 using WebGLExtensionAny = std::variant<
     Ref<ANGLEInstancedArrays>,
+    Ref<EXTBlendFuncExtended>,
     Ref<EXTBlendMinMax>,
     Ref<EXTClipControl>,
     Ref<EXTColorBufferFloat>,

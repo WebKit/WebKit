@@ -1953,6 +1953,7 @@ list(APPEND WebCore_CSS_VALUE_KEYWORDS
 if (ENABLE_WEBGL)
     list(APPEND WebCore_SOURCES
         html/canvas/ANGLEInstancedArrays.cpp
+        html/canvas/EXTBlendFuncExtended.cpp
         html/canvas/EXTBlendMinMax.cpp
         html/canvas/EXTClipControl.cpp
         html/canvas/EXTColorBufferFloat.cpp
@@ -2031,6 +2032,7 @@ endif ()
 
 list(APPEND WebCore_IDL_FILES
     html/canvas/ANGLEInstancedArrays.idl
+    html/canvas/EXTBlendFuncExtended.idl
     html/canvas/EXTBlendMinMax.idl
     html/canvas/EXTClipControl.idl
     html/canvas/EXTColorBufferFloat.idl

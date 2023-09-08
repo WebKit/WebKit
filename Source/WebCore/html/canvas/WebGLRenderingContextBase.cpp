@@ -34,6 +34,7 @@
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
 #include "Document.h"
+#include "EXTBlendFuncExtended.h"
 #include "EXTBlendMinMax.h"
 #include "EXTClipControl.h"
 #include "EXTColorBufferFloat.h"
@@ -1386,15 +1387,14 @@ void WebGLRenderingContextBase::blendEquationSeparate(GCGLenum modeRGB, GCGLenum
 
 void WebGLRenderingContextBase::blendFunc(GCGLenum sfactor, GCGLenum dfactor)
 {
-    if (isContextLost() || !validateBlendFuncFactors("blendFunc", sfactor, dfactor))
+    if (isContextLost())
         return;
     m_context->blendFunc(sfactor, dfactor);
 }
 
 void WebGLRenderingContextBase::blendFuncSeparate(GCGLenum srcRGB, GCGLenum dstRGB, GCGLenum srcAlpha, GCGLenum dstAlpha)
 {
-    // Note: Alpha does not have the same restrictions as RGB.
-    if (isContextLost() || !validateBlendFuncFactors("blendFunc", srcRGB, dstRGB))
+    if (isContextLost())
         return;
     m_context->blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
 }
@@ -2423,6 +2423,11 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
             return getUnsignedIntParameter(pname);
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, EXT_clip_control not enabled");
         return nullptr;
+    case GraphicsContextGL::MAX_DUAL_SOURCE_DRAW_BUFFERS_EXT: // EXT_blend_func_extended
+        if (m_extBlendFuncExtended)
+            return getUnsignedIntParameter(pname);
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, EXT_blend_func_extended not enabled");
+        return nullptr;
     case GraphicsContextGL::MAX_COLOR_ATTACHMENTS_EXT: // EXT_draw_buffers BEGIN
         if (m_webglDrawBuffers || isWebGL2())
             return getMaxColorAttachments();
@@ -2971,6 +2976,7 @@ bool WebGLRenderingContextBase::extensionIsEnabled(const String& name)
         return variable != nullptr;
 
     CHECK_EXTENSION(m_angleInstancedArrays, "ANGLE_instanced_arrays");
+    CHECK_EXTENSION(m_extBlendFuncExtended, "EXT_blend_func_extended");
     CHECK_EXTENSION(m_extBlendMinMax, "EXT_blend_minmax");
     CHECK_EXTENSION(m_extClipControl, "EXT_clip_control");
     CHECK_EXTENSION(m_extColorBufferFloat, "EXT_color_buffer_float");
@@ -5369,18 +5375,6 @@ bool WebGLRenderingContextBase::validateFramebufferFuncParameters(const char* fu
     }
 }
 
-bool WebGLRenderingContextBase::validateBlendFuncFactors(const char* functionName, GCGLenum src, GCGLenum dst)
-{
-    if (((src == GraphicsContextGL::CONSTANT_COLOR || src == GraphicsContextGL::ONE_MINUS_CONSTANT_COLOR)
-        && (dst == GraphicsContextGL::CONSTANT_ALPHA || dst == GraphicsContextGL::ONE_MINUS_CONSTANT_ALPHA))
-        || ((dst == GraphicsContextGL::CONSTANT_COLOR || dst == GraphicsContextGL::ONE_MINUS_CONSTANT_COLOR)
-            && (src == GraphicsContextGL::CONSTANT_ALPHA || src == GraphicsContextGL::ONE_MINUS_CONSTANT_ALPHA))) {
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "incompatible src and dst");
-        return false;
-    }
-    return true;
-}
-
 bool WebGLRenderingContextBase::validateCapability(const char* functionName, GCGLenum cap)
 {
     switch (cap) {
@@ -5868,6 +5862,7 @@ template<typename T> void loseExtension(RefPtr<T> extension)
 void WebGLRenderingContextBase::loseExtensions(LostContextMode mode)
 {
     loseExtension(WTFMove(m_angleInstancedArrays));
+    loseExtension(WTFMove(m_extBlendFuncExtended));
     loseExtension(WTFMove(m_extBlendMinMax));
     loseExtension(WTFMove(m_extClipControl));
     loseExtension(WTFMove(m_extColorBufferFloat));

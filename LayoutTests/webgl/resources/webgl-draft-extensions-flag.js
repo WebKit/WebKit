@@ -4,6 +4,7 @@
 
 let currentDraftExtensions = {
     "webgl": [
+        "EXT_blend_func_extended",
         "EXT_clip_control",
         "EXT_depth_clamp",
         "EXT_polygon_offset_clamp",
@@ -11,6 +12,7 @@ let currentDraftExtensions = {
         "WEBGL_polygon_mode",
     ],
     "webgl2" : [
+        "EXT_blend_func_extended",
         "EXT_clip_control",
         "EXT_conservative_depth",
         "EXT_depth_clamp",

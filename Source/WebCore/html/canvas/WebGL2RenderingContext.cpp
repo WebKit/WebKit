@@ -2549,6 +2549,7 @@ std::optional<WebGLExtensionAny> WebGL2RenderingContext::getExtension(const Stri
         return *variable; \
     }
 
+    ENABLE_IF_REQUESTED(EXTBlendFuncExtended, m_extBlendFuncExtended, "EXT_blend_func_extended"_s, EXTBlendFuncExtended::supported(*m_context) && enableDraftExtensions);
     ENABLE_IF_REQUESTED(EXTClipControl, m_extClipControl, "EXT_clip_control"_s, EXTClipControl::supported(*m_context) && enableDraftExtensions);
     ENABLE_IF_REQUESTED(EXTColorBufferFloat, m_extColorBufferFloat, "EXT_color_buffer_float"_s, EXTColorBufferFloat::supported(*m_context));
     ENABLE_IF_REQUESTED(EXTColorBufferHalfFloat, m_extColorBufferHalfFloat, "EXT_color_buffer_half_float"_s, EXTColorBufferHalfFloat::supported(*m_context));
@@ -2603,6 +2604,7 @@ std::optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
     if (condition) \
         result.append(nameLiteral ## _s);
 
+    APPEND_IF_SUPPORTED("EXT_blend_func_extended", EXTBlendFuncExtended::supported(*m_context) && enableDraftExtensions)
     APPEND_IF_SUPPORTED("EXT_clip_control", EXTClipControl::supported(*m_context) && enableDraftExtensions)
     APPEND_IF_SUPPORTED("EXT_color_buffer_float", EXTColorBufferFloat::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_color_buffer_half_float", EXTColorBufferHalfFloat::supported(*m_context))
