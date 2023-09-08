@@ -1,4 +1,17 @@
 =================
+WebKitGTK 2.41.92
+=================
+
+What's new in WebKitGTK 2.41.92?
+
+  - Fix render updates after cross origin history navigation with GTK4.
+  - Fix flickering in non accelerated compositing mode.
+  - Fix pixelated accelerated blur filter.
+  - Fix web process launching when xdg-dbus-proxy is not installed.
+  - Pass GBM_BO_USE_RENDERING to gbm_bo_create.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK 2.41.91
 =================
 
