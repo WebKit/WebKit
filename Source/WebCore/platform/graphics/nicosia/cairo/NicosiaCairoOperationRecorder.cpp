@@ -809,14 +809,14 @@ void CairoOperationRecorder::drawFocusRing(const Vector<FloatRect>& rects, float
     UNUSED_PARAM(outlineOffset);
 }
 
-void CairoOperationRecorder::save()
+void CairoOperationRecorder::save(GraphicsContextState::Purpose purpose)
 {
-    struct Save final : PaintingOperation, OperationData<> {
+    struct Save final : PaintingOperation, OperationData<GraphicsContextState::Purpose> {
         virtual ~Save() = default;
 
         void execute(PaintingOperationReplay& replayer) override
         {
-            contextForReplay(replayer).save();
+            contextForReplay(replayer).save(arg<0>());
         }
 
         void dump(TextStream& ts) override
@@ -825,21 +825,21 @@ void CairoOperationRecorder::save()
         }
     };
 
-    GraphicsContext::save();
+    GraphicsContext::save(purpose);
 
-    append(createCommand<Save>());
+    append(createCommand<Save>(purpose));
 
     m_stateStack.append(m_stateStack.last());
 }
 
-void CairoOperationRecorder::restore()
+void CairoOperationRecorder::restore(GraphicsContextState::Purpose purpose)
 {
-    struct Restore final : PaintingOperation, OperationData<> {
+    struct Restore final : PaintingOperation, OperationData<GraphicsContextState::Purpose> {
         virtual ~Restore() = default;
 
         void execute(PaintingOperationReplay& replayer) override
         {
-            contextForReplay(replayer).restore();
+            contextForReplay(replayer).restore(arg<0>());
         }
 
         void dump(TextStream& ts) override
@@ -851,12 +851,12 @@ void CairoOperationRecorder::restore()
     if (!stackSize())
         return;
 
-    GraphicsContext::restore();
+    GraphicsContext::restore(purpose);
 
     if (m_stateStack.isEmpty())
         return;
 
-    append(createCommand<Restore>());
+    append(createCommand<Restore>(purpose));
 
     m_stateStack.removeLast();
     if (m_stateStack.isEmpty())

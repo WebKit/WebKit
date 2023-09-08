@@ -156,24 +156,17 @@ protected:
 
     struct ContextState {
         GraphicsContextState state;
-        std::optional<GraphicsContextState> lastDrawingState;
         AffineTransform ctm;
         FloatRect clipBounds;
-
-        ContextState(const GraphicsContextState& state, const AffineTransform& ctm, const FloatRect& clipBounds)
-            : state(state)
-            , ctm(ctm)
-            , clipBounds(clipBounds)
-        {
-        }
+        std::optional<GraphicsContextState> lastDrawingState { std::nullopt };
 
         ContextState cloneForTransparencyLayer() const
         {
-            auto copy = *this;
-            copy.state.didBeginTransparencyLayer();
-            if (copy.lastDrawingState)
-                copy.lastDrawingState->didBeginTransparencyLayer();
-            return copy;
+            auto stateClone = state.clone(GraphicsContextState::Purpose::TransparencyLayer);
+            std::optional<GraphicsContextState> lastDrawingStateClone;
+            if (lastDrawingStateClone)
+                lastDrawingStateClone = lastDrawingState->clone(GraphicsContextState::Purpose::TransparencyLayer);
+            return ContextState { WTFMove(stateClone), ctm, clipBounds, WTFMove(lastDrawingStateClone) };
         }
 
         void translate(float x, float y);
@@ -254,8 +247,8 @@ private:
     WEBCORE_EXPORT void drawFocusRing(const Path&, float outlineWidth, const Color&) final;
     WEBCORE_EXPORT void drawFocusRing(const Vector<FloatRect>&, float outlineOffset, float outlineWidth, const Color&) final;
 
-    WEBCORE_EXPORT void save() final;
-    WEBCORE_EXPORT void restore() final;
+    WEBCORE_EXPORT void save(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
+    WEBCORE_EXPORT void restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
 
     WEBCORE_EXPORT void translate(float x, float y) final;
     WEBCORE_EXPORT void rotate(float angleInRadians) final;

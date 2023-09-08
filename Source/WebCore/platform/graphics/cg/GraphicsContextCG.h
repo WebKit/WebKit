@@ -49,8 +49,8 @@ public:
 
     const DestinationColorSpace& colorSpace() const final;
 
-    void save() final;
-    void restore() final;
+    void save(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
+    void restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
 
     void drawRect(const FloatRect&, float borderThickness = 1) final;
     void drawLine(const FloatPoint&, const FloatPoint&) final;

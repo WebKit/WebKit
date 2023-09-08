@@ -61,17 +61,22 @@ GraphicsContext::~GraphicsContext()
     ASSERT(!m_transparencyLayerCount);
 }
 
-void GraphicsContext::save()
+void GraphicsContext::save(GraphicsContextState::Purpose purpose)
 {
+    ASSERT(purpose == GraphicsContextState::Purpose::SaveRestore || purpose == GraphicsContextState::Purpose::TransparencyLayer);
     m_stack.append(m_state);
+    m_state.repurpose(purpose);
 }
 
-void GraphicsContext::restore()
+void GraphicsContext::restore(GraphicsContextState::Purpose purpose)
 {
     if (m_stack.isEmpty()) {
         LOG_ERROR("ERROR void GraphicsContext::restore() stack is empty");
         return;
     }
+
+    ASSERT_UNUSED(purpose, purpose == m_state.purpose());
+    ASSERT_UNUSED(purpose, purpose == GraphicsContextState::Purpose::SaveRestore || purpose == GraphicsContextState::Purpose::TransparencyLayer);
 
     m_state = m_stack.last();
     m_stack.removeLast();

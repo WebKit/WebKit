@@ -37,6 +37,30 @@ GraphicsContextState::GraphicsContextState(const ChangeFlags& changeFlags, Inter
 {
 }
 
+void GraphicsContextState::repurpose(Purpose purpose)
+{
+    if (purpose == m_purpose)
+        return;
+
+    if (purpose == Purpose::Initial)
+        m_changeFlags = { };
+
+#if USE(CG)
+    // CGContextBeginTransparencyLayer() sets the CG global alpha to 1. Keep the clone's alpha in sync.
+    if (purpose == Purpose::TransparencyLayer)
+        m_alpha = 1;
+#endif
+
+    m_purpose = purpose;
+}
+
+GraphicsContextState GraphicsContextState::clone(Purpose purpose) const
+{
+    auto clone = *this;
+    clone.repurpose(purpose);
+    return clone;
+}
+
 std::optional<GraphicsDropShadow> GraphicsContextState::dropShadow() const
 {
     if (!m_style)
@@ -46,13 +70,6 @@ std::optional<GraphicsDropShadow> GraphicsContextState::dropShadow() const
         return std::nullopt;
 
     return std::get<GraphicsDropShadow>(*m_style);
-}
-
-GraphicsContextState GraphicsContextState::cloneForRecording() const
-{
-    auto clone = *this;
-    clone.m_changeFlags = { };
-    return clone;
 }
 
 bool GraphicsContextState::containsOnlyInlineChanges() const
@@ -185,14 +202,6 @@ void GraphicsContextState::mergeAllChanges(const GraphicsContextState& state)
     mergeChange(Change::DrawLuminanceMask,           &GraphicsContextState::m_drawLuminanceMask);
 #if HAVE(OS_DARK_MODE_SUPPORT)
     mergeChange(Change::UseDarkAppearance,           &GraphicsContextState::m_useDarkAppearance);
-#endif
-}
-
-void GraphicsContextState::didBeginTransparencyLayer()
-{
-#if USE(CG)
-    // CGContextBeginTransparencyLayer() sets the CG global alpha to 1. Keep our alpha in sync.
-    m_alpha = 1;
 #endif
 }
 
