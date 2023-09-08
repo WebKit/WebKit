@@ -500,6 +500,23 @@ set(WebKit_SERIALIZATION_IN_FILES
     WebProcess/WebCoreSupport/WebSpeechSynthesisVoice.serialization.in
 )
 
+set(WebCore_GENERATED_SERIALIZATION_IN_FILES
+    HTTPHeaderNames.serialization.in
+)
+
+set(WebCore_SERIALIZATION_IN_FILES
+    ActivityState.serialization.in
+    DragActions.serialization.in
+    InbandTextTrackPrivate.serialization.in
+    LayoutMilestones.serialization.in
+    MDNSRegisterError.serialization.in
+    MediaPlaybackTargetContext.serialization.in
+    MediaProducer.serialization.in
+    PlatformEvent.serialization.in
+    PlatformMediaSession.serialization.in
+    PlatformScreen.serialization.in
+)
+
 set(WebKit_FRAMEWORKS
     JavaScriptCore
     PAL
@@ -671,23 +688,6 @@ macro(GENERATE_MESSAGE_SOURCES _output_source _inputs)
     )
 endmacro()
 GENERATE_MESSAGE_SOURCES(WebKit_DERIVED_SOURCES "${WebKit_MESSAGES_IN_FILES}")
-
-set(WebCore_GENERATED_SERIALIZATION_IN_FILES
-    HTTPHeaderNames.serialization.in
-)
-
-set(WebCore_SERIALIZATION_IN_FILES
-    ActivityState.serialization.in
-    DragActions.serialization.in
-    InbandTextTrackPrivate.serialization.in
-    LayoutMilestones.serialization.in
-    MDNSRegisterError.serialization.in
-    MediaPlaybackTargetContext.serialization.in
-    MediaProducer.serialization.in
-    PlatformEvent.serialization.in
-    PlatformMediaSession.serialization.in
-    PlatformScreen.serialization.in
-)
 
 set(WebKit_SERIALIZATION_DEPENDENCIES ${WebKit_SERIALIZATION_IN_FILES})
 foreach (in_file ${WebCore_GENERATED_SERIALIZATION_IN_FILES})
