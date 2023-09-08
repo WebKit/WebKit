@@ -306,9 +306,14 @@ TEST(WTF_WorkQueue, DestroyDispatchedOnDispatchQueue)
         for (size_t j = 0; j < queueCount; ++j)
             queue[j]->dispatch([instance = std::make_unique<DestructionWorkQueueTester>(counter, *queue[j])] { }); // NOLINT
     }
+    // dispatchQOS() behaves the same as dispatch().
+    for (size_t i = 0; i < iterationCount; ++i) {
+        for (size_t j = 0; j < queueCount; ++j)
+            queue[j]->dispatchWithQOS([instance = std::make_unique<DestructionWorkQueueTester>(counter, *queue[j])] { }, Thread::QOS::UserInteractive); // NOLINT
+    }
     for (size_t j = 0; j < queueCount; ++j)
         queue[j]->dispatchSync([] { });
-    EXPECT_EQ(queueCount * iterationCount, counter);
+    EXPECT_EQ(2u * queueCount * iterationCount, counter);
 }
 
 namespace {
