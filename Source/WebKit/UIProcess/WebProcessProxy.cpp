@@ -778,8 +778,7 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
     updateRegistrationWithDataStore();
     updateBackgroundResponsivenessTimer();
     updateBlobRegistryPartitioningState();
-    updatePreferencesEnabledStateInGPUProcess();
-    updateDOMRenderingStateInGPUProcess();
+    updatePreferencesForGPUProcess();
 
     // If this was previously a standalone worker process with no pages we need to call didChangeThrottleState()
     // to update our process assertions on the network process since standalone worker processes do not hold
@@ -818,8 +817,7 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
     updateAudibleMediaAssertions();
     updateMediaStreamingActivity();
     updateBackgroundResponsivenessTimer();
-    updatePreferencesEnabledStateInGPUProcess();
-    updateDOMRenderingStateInGPUProcess();
+    updatePreferencesForGPUProcess();
     updateBlobRegistryPartitioningState();
 
     maybeShutDown();
@@ -1005,6 +1003,10 @@ void WebProcessProxy::getNetworkProcessConnection(CompletionHandler<void(Network
 #if ENABLE(GPU_PROCESS)
 void WebProcessProxy::createGPUProcessConnection(IPC::Connection::Handle&& connectionIdentifier, WebKit::GPUProcessConnectionParameters&& parameters)
 {
+    if (!m_preferencesForGPUProcess)
+        m_preferencesForGPUProcess = computePreferencesForGPUProcess();
+    parameters.preferences = *m_preferencesForGPUProcess;
+
     m_processPool->createGPUProcessConnection(*this, WTFMove(connectionIdentifier), WTFMove(parameters));
 }
 
@@ -1980,29 +1982,28 @@ void WebProcessProxy::updateBlobRegistryPartitioningState() const
         networkProcess->setBlobRegistryTopOriginPartitioningEnabled(sessionID(),  dataStore->isBlobRegistryPartitioningEnabled());
 }
 
-
-void WebProcessProxy::updateDOMRenderingStateInGPUProcess()
-{
 #if ENABLE(GPU_PROCESS)
-    if (auto* gpuProcess = processPool().gpuProcess()) {
-        gpuProcess->updateDOMRenderingEnabled(*this, WTF::anyOf(pages(), [](auto& page) {
-            return page->preferences().useGPUProcessForDOMRenderingEnabled();
-        }));
+GPUProcessPreferencesForWebProcess WebProcessProxy::computePreferencesForGPUProcess() const
+{
+    GPUProcessPreferencesForWebProcess preferences;
+    for (auto& page : pages()) {
+        preferences.isWebGPUEnabled |= page->preferences().webGPUEnabled();
+        preferences.isWebGLEnabled |= page->preferences().webGLEnabled();
+        preferences.isDOMRenderingEnabled |= page->preferences().useGPUProcessForDOMRenderingEnabled();
     }
-#endif
+    return preferences;
 }
+#endif
 
-void WebProcessProxy::updatePreferencesEnabledStateInGPUProcess()
+void WebProcessProxy::updatePreferencesForGPUProcess()
 {
 #if ENABLE(GPU_PROCESS)
     if (auto* process = processPool().gpuProcess()) {
-        process->updateWebGPUEnabled(*this, WTF::anyOf(pages(), [](const auto& page) {
-            return page->preferences().webGPUEnabled();
-        }));
-
-        process->updateWebGLEnabled(*this, WTF::anyOf(pages(), [](const auto& page) {
-            return page->preferences().webGLEnabled();
-        }));
+        auto newPreferences = computePreferencesForGPUProcess();
+        if (m_preferencesForGPUProcess != newPreferences) {
+            m_preferencesForGPUProcess = newPreferences;
+            process->updatePreferencesForWebProcess(*this, newPreferences);
+        }
     }
 #endif
 }

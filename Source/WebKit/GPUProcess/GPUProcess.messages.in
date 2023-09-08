@@ -26,9 +26,7 @@ messages -> GPUProcess LegacyReceiver {
     InitializeGPUProcess(struct WebKit::GPUProcessCreationParameters processCreationParameters)
 
     CreateGPUConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID, IPC::Connection::Handle connectionHandle, struct WebKit::GPUProcessConnectionParameters parameters) -> () AllowedWhenWaitingForSyncReply
-    UpdateWebGPUEnabled(WebCore::ProcessIdentifier processIdentifier, bool webGPUEnabled)
-    UpdateWebGLEnabled(WebCore::ProcessIdentifier processIdentifier, bool webGLEnabled)
-    UpdateDOMRenderingEnabled(WebCore::ProcessIdentifier processIdentifier, bool isDOMRenderingEnabled)
+    UpdatePreferencesForWebProcess(WebCore::ProcessIdentifier processIdentifier, struct WebKit::GPUProcessPreferencesForWebProcess preferences)
     UpdateGPUProcessPreferences(struct WebKit::GPUProcessPreferences preferences)
     UpdateSandboxAccess(Vector<WebKit::SandboxExtension::Handle> extensions);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,32 +25,18 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
-#include "GPUProcessPreferencesForWebProcess.h"
-#include "WebCoreArgumentCoders.h"
-#include <WebCore/ProcessIdentity.h>
-#include <wtf/MachSendRight.h>
-
 namespace WebKit {
 
-struct GPUProcessConnectionParameters {
-    WebCore::ProcessIdentity webProcessIdentity;
-    GPUProcessPreferencesForWebProcess preferences;
-    bool isLockdownModeEnabled { false };
-#if ENABLE(IPC_TESTING_API)
-    bool ignoreInvalidMessageForTesting { false };
-#endif
-    bool allowTestOnlyIPC { false };
-#if HAVE(AUDIT_TOKEN)
-    std::optional<audit_token_t> presentingApplicationAuditToken;
-#endif
-#if ENABLE(VP9)
-    std::optional<bool> hasVP9HardwareDecoder;
-    std::optional<bool> hasVP9ExtensionSupport;
-#endif
+#if ENABLE(GPU_PROCESS)
+
+struct GPUProcessPreferencesForWebProcess {
+    bool isWebGLEnabled { false };
+    bool isWebGPUEnabled { false };
+    bool isDOMRenderingEnabled { false };
+
+    friend bool operator==(const GPUProcessPreferencesForWebProcess&, const GPUProcessPreferencesForWebProcess&) = default;
 };
 
-}; // namespace WebKit
-
 #endif // ENABLE(GPU_PROCESS)
+
+} // namespace WebKit
