@@ -1418,6 +1418,34 @@ bool SelectorChecker::matchHasPseudoClass(CheckingContext& checkingContext, cons
     if (cache)
         cache->add(Style::makeHasPseudoClassCacheKey(element, hasSelector), matchTypeForCache());
 
+    auto relationNeededForHasInvalidation = [](Style::Relation::Type type) {
+        switch (type) {
+        case Style::Relation::ChildrenAffectedByForwardPositionalRules:
+        case Style::Relation::ChildrenAffectedByBackwardPositionalRules:
+        case Style::Relation::ChildrenAffectedByFirstChildRules:
+        case Style::Relation::ChildrenAffectedByLastChildRules:
+            return true;
+        case Style::Relation::AffectedByEmpty:
+        case Style::Relation::AffectedByPreviousSibling:
+        case Style::Relation::DescendantsAffectedByPreviousSibling:
+        case Style::Relation::AffectsNextSibling:
+        case Style::Relation::DescendantsAffectedByForwardPositionalRules:
+        case Style::Relation::DescendantsAffectedByBackwardPositionalRules:
+        case Style::Relation::FirstChild:
+        case Style::Relation::LastChild:
+        case Style::Relation::NthChildIndex:
+        case Style::Relation::Unique:
+            return false;
+        }
+        ASSERT_NOT_REACHED();
+        return false;
+    };
+
+    for (auto& relation : hasCheckingContext.styleRelations) {
+        if (relationNeededForHasInvalidation(relation.type))
+            checkingContext.styleRelations.append(relation);
+    }
+
     return result;
 }
 

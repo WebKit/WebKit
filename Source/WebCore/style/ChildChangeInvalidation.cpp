@@ -38,7 +38,7 @@
 
 namespace WebCore::Style {
 
-void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElement, MatchingHasSelectors& matchingHasSelectors)
+void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElement, MatchingHasSelectors& matchingHasSelectors, ChangedElementRelation changedElementRelation)
 {
     auto& ruleSets = parentElement().styleResolver().ruleSets();
 
@@ -61,7 +61,7 @@ void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElemen
         }
     };
 
-    bool isFirst = isChild && m_childChange.previousSiblingElement == changedElement.previousElementSibling();
+    bool isFirst = isChild && m_childChange.previousSiblingElement == changedElement.previousElementSibling() && changedElementRelation == ChangedElementRelation::SelfOrDescendant;
 
     auto hasMatchingInvalidationSelector = [&](auto& invalidationRuleSet) {
         SelectorChecker selectorChecker(changedElement.document());
@@ -112,28 +112,98 @@ void ChildChangeInvalidation::invalidateForHasBeforeMutation()
 {
     ASSERT(m_needsHasInvalidation);
 
-    if (m_childChange.isInsertion() && m_childChange.type != ContainerNode::ChildChange::Type::AllChildrenReplaced)
-        return;
-
     MatchingHasSelectors matchingHasSelectors;
 
     traverseRemovedElements([&](auto& changedElement) {
-        invalidateForChangedElement(changedElement, matchingHasSelectors);
+        invalidateForChangedElement(changedElement, matchingHasSelectors, ChangedElementRelation::SelfOrDescendant);
     });
+
+    auto firstChildStateWillStopMatching = [&] {
+        if (!m_childChange.nextSiblingElement)
+            return false;
+
+        if (!parentElement().childrenAffectedByFirstChildRules())
+            return false;
+
+        if (m_childChange.isInsertion() && !m_childChange.nextSiblingElement->previousElementSibling())
+            return true;
+
+        return false;
+    };
+
+    auto lastChildStateWillStopMatching = [&] {
+        if (!m_childChange.previousSiblingElement)
+            return false;
+
+        if (!parentElement().childrenAffectedByLastChildRules())
+            return false;
+
+        if (m_childChange.isInsertion() && !m_childChange.previousSiblingElement->nextElementSibling())
+            return true;
+
+        return false;
+    };
+
+    if (parentElement().childrenAffectedByForwardPositionalRules() || parentElement().childrenAffectedByBackwardPositionalRules()) {
+        traverseRemainingExistingSiblings([&](auto& changedElement) {
+            invalidateForChangedElement(changedElement, matchingHasSelectors, ChangedElementRelation::Sibling);
+        });
+    } else {
+        if (firstChildStateWillStopMatching())
+            invalidateForChangedElement(*m_childChange.nextSiblingElement, matchingHasSelectors, ChangedElementRelation::Sibling);
+
+        if (lastChildStateWillStopMatching())
+            invalidateForChangedElement(*m_childChange.previousSiblingElement, matchingHasSelectors, ChangedElementRelation::Sibling);
+    }
 }
 
 void ChildChangeInvalidation::invalidateForHasAfterMutation()
 {
     ASSERT(m_needsHasInvalidation);
 
-    if (!m_childChange.isInsertion())
-        return;
-
     MatchingHasSelectors matchingHasSelectors;
 
     traverseAddedElements([&](auto& changedElement) {
-        invalidateForChangedElement(changedElement, matchingHasSelectors);
+        invalidateForChangedElement(changedElement, matchingHasSelectors, ChangedElementRelation::SelfOrDescendant);
     });
+
+    auto firstChildStateWillStartMatching = [&](Element* elementAfterChange) {
+        if (!elementAfterChange)
+            return false;
+
+        if (!parentElement().childrenAffectedByFirstChildRules())
+            return false;
+
+        if (!m_childChange.isInsertion() && !elementAfterChange->previousElementSibling())
+            return true;
+
+        return false;
+    };
+
+    auto lastChildStateWillStartMatching = [&](Element* elementBeforeChange) {
+        if (!elementBeforeChange)
+            return false;
+
+        if (!parentElement().childrenAffectedByLastChildRules())
+            return false;
+
+        if (!m_childChange.isInsertion() && !elementBeforeChange->nextElementSibling())
+            return true;
+
+        return false;
+    };
+
+    if (parentElement().childrenAffectedByForwardPositionalRules() || parentElement().childrenAffectedByBackwardPositionalRules()) {
+        traverseRemainingExistingSiblings([&](auto& changedElement) {
+            invalidateForChangedElement(changedElement, matchingHasSelectors, ChangedElementRelation::Sibling);
+        });
+    } else {
+        if (firstChildStateWillStartMatching(m_childChange.nextSiblingElement))
+            invalidateForChangedElement(*m_childChange.nextSiblingElement, matchingHasSelectors, ChangedElementRelation::Sibling);
+
+        if (lastChildStateWillStartMatching(m_childChange.previousSiblingElement))
+            invalidateForChangedElement(*m_childChange.previousSiblingElement, matchingHasSelectors, ChangedElementRelation::Sibling);
+    }
 }
 
 static bool needsDescendantTraversal(const RuleFeatureSet& features)
@@ -146,6 +216,9 @@ static bool needsDescendantTraversal(const RuleFeatureSet& features)
 template<typename Function>
 void ChildChangeInvalidation::traverseRemovedElements(Function&& function)
 {
+    if (m_childChange.isInsertion() && m_childChange.type != ContainerNode::ChildChange::Type::AllChildrenReplaced)
+        return;
+
     auto& features = parentElement().styleResolver().ruleSets().features();
     bool needsDescendantTraversal = Style::needsDescendantTraversal(features);
 
@@ -165,6 +238,9 @@ void ChildChangeInvalidation::traverseRemovedElements(Function&& function)
 template<typename Function>
 void ChildChangeInvalidation::traverseAddedElements(Function&& function)
 {
+    if (!m_childChange.isInsertion())
+        return;
+
     auto* newElement = [&] {
         auto* previous = m_childChange.previousSiblingElement;
         auto* candidate = previous ? ElementTraversal::nextSibling(*previous) : ElementTraversal::firstChild(parentElement());
@@ -184,6 +260,19 @@ void ChildChangeInvalidation::traverseAddedElements(Function&& function)
 
     for (auto& descendant : descendantsOfType<Element>(*newElement))
         function(descendant);
+}
+
+template<typename Function>
+void ChildChangeInvalidation::traverseRemainingExistingSiblings(Function&& function)
+{
+    if (m_childChange.isInsertion() && m_childChange.type == ContainerNode::ChildChange::Type::AllChildrenReplaced)
+        return;
+
+    for (auto* child = m_childChange.previousSiblingElement; child; child = child->previousElementSibling())
+        function(*child);
+
+    for (auto* child = m_childChange.nextSiblingElement; child; child = child->nextElementSibling())
+        function(*child);
 }
 
 static void checkForEmptyStyleChange(Element& element)
