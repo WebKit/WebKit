@@ -348,16 +348,14 @@ RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer(bool avoidBackendSizeCheckFo
     OptionSet<ImageBufferOptions> bufferOptions;
     if (shouldAccelerate(area))
         bufferOptions.add(ImageBufferOptions::Accelerated);
-
+    if (avoidBackendSizeCheckForTesting)
+        bufferOptions.add(ImageBufferOptions::AvoidBackendSizeCheckForTesting);
     auto [colorSpace, pixelFormat] = [&] {
         if (renderingContext())
             return std::pair { renderingContext()->colorSpace(), renderingContext()->pixelFormat() };
         return std::pair { DestinationColorSpace::SRGB(), PixelFormat::BGRA8 };
     }();
-    ImageBufferCreationContext context = { };
-    context.graphicsClient = graphicsClient();
-    context.avoidIOSurfaceSizeCheckInWebProcessForTesting = avoidBackendSizeCheckForTesting;
-    return ImageBuffer::create(size(), RenderingPurpose::Canvas, 1, colorSpace, pixelFormat, bufferOptions, context);
+    return ImageBuffer::create(size(), RenderingPurpose::Canvas, 1, colorSpace, pixelFormat, bufferOptions, graphicsClient());
 }
 
 bool CanvasBase::shouldInjectNoiseBeforeReadback() const

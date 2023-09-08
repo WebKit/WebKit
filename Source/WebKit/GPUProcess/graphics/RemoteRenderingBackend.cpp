@@ -201,7 +201,7 @@ void RemoteRenderingBackend::moveToImageBuffer(RenderingResourceIdentifier image
 
     ASSERT(imageBufferIdentifier == imageBuffer->renderingResourceIdentifier());
 
-    ImageBufferCreationContext creationContext { nullptr };
+    ImageBufferCreationContext creationContext;
 #if HAVE(IOSURFACE)
     creationContext.surfacePool = &ioSurfacePool();
 #endif
@@ -214,7 +214,7 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
 {
     assertIsCurrent(workQueue());
     RefPtr<ImageBuffer> imageBuffer;
-    ImageBufferCreationContext creationContext { nullptr };
+    ImageBufferCreationContext creationContext;
 #if HAVE(IOSURFACE)
     creationContext.surfacePool = &ioSurfacePool();
 #endif
