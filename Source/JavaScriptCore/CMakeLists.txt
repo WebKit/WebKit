@@ -934,6 +934,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     parser/SourceProvider.h
     parser/SourceProviderCache.h
     parser/SourceProviderCacheItem.h
+    parser/SourceTaintedOrigin.h
     parser/UnlinkedSourceCode.h
     parser/VariableEnvironment.h
 

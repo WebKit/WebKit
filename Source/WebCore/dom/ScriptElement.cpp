@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -27,6 +27,7 @@
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "CachedScript.h"
+#include "CommonVM.h"
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
 #include "CurrentScriptIncrementer.h"
@@ -73,6 +74,7 @@ ScriptElement::ScriptElement(Element& element, bool parserInserted, bool already
     , m_creationTime(MonotonicTime::now())
     , m_userGestureToken(UserGestureIndicator::currentUserGesture())
 {
+    m_taintedOrigin = computeNewSourceTaintedOriginFromStack(commonVM(), commonVM().topCallFrame);
     if (parserInserted) {
         Ref document = m_element.document();
         if (RefPtr parser = document->scriptableDocumentParser(); parser && !document->isInDocumentWrite())
@@ -276,9 +278,9 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
         ASSERT(scriptType == ScriptType::Classic || scriptType == ScriptType::ImportMap);
         TextPosition position = document.isInDocumentWrite() ? TextPosition() : scriptStartPosition;
         if (scriptType == ScriptType::Classic)
-            executeClassicScript(ScriptSourceCode(sourceText, URL(document.url()), position, JSC::SourceProviderSourceType::Program, InlineClassicScript::create(*this)));
+            executeClassicScript(ScriptSourceCode(sourceText, m_taintedOrigin, URL(document.url()), position, JSC::SourceProviderSourceType::Program, InlineClassicScript::create(*this)));
         else
-            registerImportMap(ScriptSourceCode(sourceText, URL(document.url()), position, JSC::SourceProviderSourceType::ImportMap));
+            registerImportMap(ScriptSourceCode(sourceText, m_taintedOrigin, URL(document.url()), position, JSC::SourceProviderSourceType::ImportMap));
     }
 
     return true;
@@ -352,7 +354,7 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
     auto script = LoadableModuleScript::create(nonce, emptyAtom(), referrerPolicy(), fetchPriorityHint(), crossOriginMode, scriptCharset(), m_element.localName(), m_element.isInUserAgentShadowTree());
 
     TextPosition position = m_element.document().isInDocumentWrite() ? TextPosition() : scriptStartPosition;
-    ScriptSourceCode sourceCode(scriptContent(), URL(m_element.document().url()), position, JSC::SourceProviderSourceType::Module, script.copyRef());
+    ScriptSourceCode sourceCode(scriptContent(), m_taintedOrigin, URL(m_element.document().url()), position, JSC::SourceProviderSourceType::Module, script.copyRef());
 
     ASSERT(m_element.document().contentSecurityPolicy());
     const auto& contentSecurityPolicy = *m_element.document().contentSecurityPolicy();
@@ -563,9 +565,9 @@ void ScriptElement::executePendingScript(PendingScript& pendingScript)
             ASSERT(!pendingScript.hasError());
             ASSERT_WITH_MESSAGE(scriptType() == ScriptType::Classic || scriptType() == ScriptType::ImportMap, "Module script always have a loadableScript pointer.");
             if (scriptType() == ScriptType::Classic)
-                executeClassicScript(ScriptSourceCode(scriptContent(), URL(m_element.document().url()), pendingScript.startingPosition(), JSC::SourceProviderSourceType::Program, InlineClassicScript::create(*this)));
+                executeClassicScript(ScriptSourceCode(scriptContent(), m_taintedOrigin, URL(m_element.document().url()), pendingScript.startingPosition(), JSC::SourceProviderSourceType::Program, InlineClassicScript::create(*this)));
             else
-                registerImportMap(ScriptSourceCode(scriptContent(), URL(m_element.document().url()), pendingScript.startingPosition(), JSC::SourceProviderSourceType::ImportMap));
+                registerImportMap(ScriptSourceCode(scriptContent(), m_taintedOrigin, URL(m_element.document().url()), pendingScript.startingPosition(), JSC::SourceProviderSourceType::ImportMap));
             dispatchLoadEventRespectingUserGestureIndicator();
         }
     }

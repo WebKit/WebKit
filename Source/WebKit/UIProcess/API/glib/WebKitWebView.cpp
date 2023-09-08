@@ -4040,7 +4040,7 @@ void webkitWebViewRunJavascriptWithoutForcedUserGestures(WebKitWebView* webView,
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(script);
 
-    RunJavaScriptParameters params = { String::fromUTF8(script), URL { }, RunAsAsyncFunction::No, std::nullopt, ForceUserGesture::No, RemoveTransientActivation::Yes };
+    RunJavaScriptParameters params = { String::fromUTF8(script), JSC::SourceTaintedOrigin::Untainted, URL { }, RunAsAsyncFunction::No, std::nullopt, ForceUserGesture::No, RemoveTransientActivation::Yes };
     webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), nullptr, RunJavascriptReturnType::JSCValue, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
 }
 
@@ -4049,7 +4049,7 @@ static void webkitWebViewEvaluateJavascriptInternal(WebKitWebView* webView, cons
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(script);
 
-    RunJavaScriptParameters params = { String::fromUTF8(script, length < 0 ? strlen(script) : length), URL({ }, String::fromUTF8(sourceURI)), RunAsAsyncFunction::No, std::nullopt, ForceUserGesture::Yes, RemoveTransientActivation::Yes };
+    RunJavaScriptParameters params = { String::fromUTF8(script, length < 0 ? strlen(script) : length), JSC::SourceTaintedOrigin::Untainted, URL({ }, String::fromUTF8(sourceURI)), RunAsAsyncFunction::No, std::nullopt, ForceUserGesture::Yes, RemoveTransientActivation::Yes };
     webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), worldName, returnType, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
 }
 
@@ -4185,7 +4185,7 @@ static void webkitWebViewCallAsyncJavascriptFunctionInternal(WebKitWebView* webV
         return;
     }
 
-    RunJavaScriptParameters params = { String::fromUTF8(body, length < 0 ? strlen(body) : length), URL({ }, String::fromUTF8(sourceURI)), RunAsAsyncFunction::Yes, WTFMove(argumentsMap), ForceUserGesture::Yes, RemoveTransientActivation::Yes };
+    RunJavaScriptParameters params = { String::fromUTF8(body, length < 0 ? strlen(body) : length), JSC::SourceTaintedOrigin::Untainted, URL({ }, String::fromUTF8(sourceURI)), RunAsAsyncFunction::Yes, WTFMove(argumentsMap), ForceUserGesture::Yes, RemoveTransientActivation::Yes };
     webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), worldName, returnType, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
 }
 
@@ -4515,7 +4515,7 @@ static void resourcesStreamReadCallback(GObject* object, GAsyncResult* result, g
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(g_task_get_source_object(task.get()));
     gpointer outputStreamData = g_memory_output_stream_get_data(G_MEMORY_OUTPUT_STREAM(object));
-    RunJavaScriptParameters params = { String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)), URL { }, RunAsAsyncFunction::No, std::nullopt, ForceUserGesture::Yes, RemoveTransientActivation::Yes };
+    RunJavaScriptParameters params = { String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)), JSC::SourceTaintedOrigin::Untainted, URL { }, RunAsAsyncFunction::No, std::nullopt, ForceUserGesture::Yes, RemoveTransientActivation::Yes };
     webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), nullptr, RunJavascriptReturnType::WebKitJavascriptResult, WTFMove(task));
 }
 

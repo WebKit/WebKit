@@ -1180,7 +1180,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
     }
 
     auto removeTransientActivation = WebKit::shouldEvaluateJavaScriptWithoutTransientActivation() ? WebCore::RemoveTransientActivation::Yes : WebCore::RemoveTransientActivation::No;
-    _page->runJavaScriptInFrameInScriptWorld({ javaScriptString, sourceURL, !!asAsyncFunction, WTFMove(argumentsMap), !!forceUserGesture, removeTransientActivation }, frameID, *world->_contentWorld.get(), [handler] (auto&& result) {
+    _page->runJavaScriptInFrameInScriptWorld({ javaScriptString, JSC::SourceTaintedOrigin::Untainted, sourceURL, !!asAsyncFunction, WTFMove(argumentsMap), !!forceUserGesture, removeTransientActivation }, frameID, *world->_contentWorld.get(), [handler] (auto&& result) {
         if (!handler)
             return;
 

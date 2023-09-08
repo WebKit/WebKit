@@ -4127,7 +4127,7 @@ JSC::JSValue Internals::evaluateInWorldIgnoringException(const String& name, con
     auto* document = contextDocument();
     auto& scriptController = document->frame()->script();
     auto world = ScriptController::createWorld(name);
-    return scriptController.executeScriptInWorldIgnoringException(world, source);
+    return scriptController.executeScriptInWorldIgnoringException(world, source, JSC::SourceTaintedOrigin::Untainted);
 }
 
 #if !PLATFORM(MAC)

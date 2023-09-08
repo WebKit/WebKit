@@ -1,0 +1,11 @@
+Test taintedness is tracked via several ways to inject scripts in WebCore
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS $vm.vmTaintedState() is "IndirectlyTainted"
+PASS $vm.vmTaintedState() is "IndirectlyTaintedByHistory"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -102,7 +102,8 @@ JSC_DEFINE_HOST_FUNCTION(evalInRealm, (JSGlobalObject* globalObject, CallFrame* 
     RETURN_IF_EXCEPTION(scope, { });
 
     NakedPtr<JSObject> executableError;
-    SourceCode source = makeSource(script, callFrame->callerSourceOrigin(vm));
+    SourceTaintedOrigin sourceTaintedOrigin = computeNewSourceTaintedOriginFromStack(vm, callFrame);
+    SourceCode source = makeSource(script, callFrame->callerSourceOrigin(vm), sourceTaintedOrigin);
     EvalExecutable* eval = IndirectEvalExecutable::create(realmGlobalObject, source, DerivedContextType::None, false, EvalContextType::None, executableError);
     if (executableError) {
         JSValue error = executableError.get();

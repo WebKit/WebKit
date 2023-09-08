@@ -8085,7 +8085,7 @@ bool HTMLMediaElement::ensureMediaControls()
         for (auto& mediaControlsScript : mediaControlsScripts) {
             if (mediaControlsScript.isEmpty())
                 continue;
-            scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(mediaControlsScript), world);
+            scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(mediaControlsScript, JSC::SourceTaintedOrigin::Untainted), world);
             RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
         }
 

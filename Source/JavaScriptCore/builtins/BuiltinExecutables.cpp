@@ -36,7 +36,7 @@ namespace JSC {
 
 BuiltinExecutables::BuiltinExecutables(VM& vm)
     : m_vm(vm)
-    , m_combinedSourceProvider(StringSourceProvider::create(StringImpl::createWithoutCopying(s_JSCCombinedCode, s_JSCCombinedCodeLength), { }, String()))
+    , m_combinedSourceProvider(StringSourceProvider::create(StringImpl::createWithoutCopying(s_JSCCombinedCode, s_JSCCombinedCodeLength), { }, String(), SourceTaintedOrigin::Untainted))
 {
 }
 
@@ -48,11 +48,11 @@ SourceCode BuiltinExecutables::defaultConstructorSourceCode(ConstructorKind cons
         break;
     case ConstructorKind::Base: {
         static NeverDestroyed<const String> baseConstructorCode(MAKE_STATIC_STRING_IMPL("(function () { })"));
-        return makeSource(baseConstructorCode, { });
+        return makeSource(baseConstructorCode, { }, SourceTaintedOrigin::Untainted);
     }
     case ConstructorKind::Extends: {
         static NeverDestroyed<const String> derivedConstructorCode(MAKE_STATIC_STRING_IMPL("(function (...args) { super(...args); })"));
-        return makeSource(derivedConstructorCode, { });
+        return makeSource(derivedConstructorCode, { }, SourceTaintedOrigin::Untainted);
     }
     }
     RELEASE_ASSERT_NOT_REACHED();

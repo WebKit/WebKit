@@ -139,7 +139,7 @@ void RemoteInspectorProtocolHandler::inspect(const String& hostAndPort, Connecti
 
 void RemoteInspectorProtocolHandler::runScript(const String& script)
 {
-    m_page.runJavaScriptInMainFrame({ script, URL { }, false, std::nullopt, false, RemoveTransientActivation::Yes },
+    m_page.runJavaScriptInMainFrame({ script, JSC::SourceTaintedOrigin::Untainted, URL { }, false, std::nullopt, false, RemoveTransientActivation::Yes },
         [] (auto&& result) {
         if (!result.has_value())
             LOG_ERROR("Exception running script \"%s\"", result.error().message.utf8().data());

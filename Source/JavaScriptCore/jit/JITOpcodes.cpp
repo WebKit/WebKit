@@ -1245,6 +1245,9 @@ void JIT::emit_op_enter(const JSInstruction*)
     using BaselineJITRegisters::Enter::canBeOptimizedGPR;
     using BaselineJITRegisters::Enter::localsToInitGPR;
 
+    if (m_profiledCodeBlock->couldBeTainted())
+        store8(TrustedImm32(1), vm().addressOfMightBeExecutingTaintedCode());
+
     move(TrustedImm32(canBeOptimized()), canBeOptimizedGPR);
     move(TrustedImm32(localsToInit), localsToInitGPR);
     emitNakedNearCall(vm().getCTIStub(op_enter_handlerGenerator).retaggedCode<NoPtrTag>());

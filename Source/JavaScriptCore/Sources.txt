@@ -718,6 +718,7 @@ parser/Parser.cpp @no-unify
 parser/ParserArena.cpp
 parser/SourceProvider.cpp
 parser/SourceProviderCache.cpp
+parser/SourceTaintedOrigin.cpp
 parser/UnlinkedSourceCode.cpp
 parser/VariableEnvironment.cpp
 

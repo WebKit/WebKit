@@ -571,14 +571,14 @@ void ScriptController::clearScriptObjects()
     }
 }
 
-JSC::JSValue ScriptController::executeScriptIgnoringException(const String& script, bool forceUserGesture)
+JSC::JSValue ScriptController::executeScriptIgnoringException(const String& script, JSC::SourceTaintedOrigin taintedness, bool forceUserGesture)
 {
-    return executeScriptInWorldIgnoringException(mainThreadNormalWorld(), script, forceUserGesture);
+    return executeScriptInWorldIgnoringException(mainThreadNormalWorld(), script, taintedness, forceUserGesture);
 }
 
-JSC::JSValue ScriptController::executeScriptInWorldIgnoringException(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
+JSC::JSValue ScriptController::executeScriptInWorldIgnoringException(DOMWrapperWorld& world, const String& script, JSC::SourceTaintedOrigin taintedness, bool forceUserGesture)
 {
-    auto result = executeScriptInWorld(world, { script, URL { }, false, std::nullopt, forceUserGesture, RemoveTransientActivation::Yes });
+    auto result = executeScriptInWorld(world, { script, taintedness, URL { }, false, std::nullopt, forceUserGesture, RemoveTransientActivation::Yes });
     return result ? result.value() : JSC::JSValue { };
 }
 
@@ -616,7 +616,7 @@ ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, 
 
     switch (parameters.runAsAsyncFunction) {
     case RunAsAsyncFunction::No:
-        return evaluateInWorld({ parameters.source, WTFMove(sourceURL), TextPosition(), JSC::SourceProviderSourceType::Program, CachedScriptFetcher::create(m_frame.document()->charset()) }, world);
+        return evaluateInWorld(ScriptSourceCode { parameters.source, parameters.taintedness, WTFMove(sourceURL), TextPosition(), JSC::SourceProviderSourceType::Program, CachedScriptFetcher::create(m_frame.document()->charset()) }, world);
     case RunAsAsyncFunction::Yes:
         return callInWorld(WTFMove(parameters), world);
     default:
@@ -661,7 +661,7 @@ ValueOrException ScriptController::callInWorld(RunJavaScriptParameters&& paramet
 
     functionStringBuilder.append("){", parameters.source, "})");
 
-    auto sourceCode = ScriptSourceCode { functionStringBuilder.toString(), WTFMove(parameters.sourceURL), TextPosition(), JSC::SourceProviderSourceType::Program, CachedScriptFetcher::create(m_frame.document()->charset()) };
+    auto sourceCode = ScriptSourceCode { functionStringBuilder.toString(), parameters.taintedness, WTFMove(parameters.sourceURL), TextPosition(), JSC::SourceProviderSourceType::Program, CachedScriptFetcher::create(m_frame.document()->charset()) };
     const auto& jsSourceCode = sourceCode.jsSourceCode();
 
     const URL& sourceURL = jsSourceCode.provider()->sourceOrigin().url();
@@ -716,7 +716,7 @@ JSC::JSValue ScriptController::executeUserAgentScriptInWorldIgnoringException(DO
 }
 ValueOrException ScriptController::executeUserAgentScriptInWorld(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
 {
-    return executeScriptInWorld(world, { script, URL { }, false, std::nullopt, forceUserGesture, RemoveTransientActivation::No });
+    return executeScriptInWorld(world, { script, JSC::SourceTaintedOrigin::Untainted, URL { }, false, std::nullopt, forceUserGesture, RemoveTransientActivation::No });
 }
 
 void ScriptController::executeAsynchronousUserAgentScriptInWorld(DOMWrapperWorld& world, RunJavaScriptParameters&& parameters, ResolveFunction&& resolveCompletionHandler)
@@ -829,7 +829,8 @@ void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigi
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     String decodedURL = PAL::decodeURLEscapeSequences(url.string());
-    auto result = executeScriptIgnoringException(decodedURL.substring(javascriptSchemeLength));
+    // FIXME: This probably needs to figure out if the origin is considered tanited.
+    auto result = executeScriptIgnoringException(decodedURL.substring(javascriptSchemeLength), JSC::SourceTaintedOrigin::Untainted);
     RELEASE_ASSERT(&vm == &jsWindowProxy(mainThreadNormalWorld()).window()->vm());
 
     // If executing script caused this frame to be removed from the page, we

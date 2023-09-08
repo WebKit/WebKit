@@ -2619,7 +2619,7 @@ void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, vo
     auto removeTransientActivation = RemoveTransientActivation::Yes;
 #endif
 
-    toImpl(pageRef)->runJavaScriptInMainFrame({ toImpl(scriptRef)->string(), URL { }, false, std::nullopt, true, removeTransientActivation }, [context, callback] (auto&& result) {
+    toImpl(pageRef)->runJavaScriptInMainFrame({ toImpl(scriptRef)->string(), JSC::SourceTaintedOrigin::Untainted, URL { }, false, std::nullopt, true, removeTransientActivation }, [context, callback] (auto&& result) {
         if (result.has_value())
             callback(toAPI(result.value().get()), nullptr, context);
         else

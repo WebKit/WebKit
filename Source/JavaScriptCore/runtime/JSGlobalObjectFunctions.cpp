@@ -505,7 +505,8 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncEval, (JSGlobalObject* globalObject, CallFram
         return JSValue::encode(parsedObject);
 
     SourceOrigin sourceOrigin = callFrame->callerSourceOrigin(vm);
-    EvalExecutable* eval = IndirectEvalExecutable::tryCreate(globalObject, makeSource(s, sourceOrigin), DerivedContextType::None, false, EvalContextType::None);
+    SourceTaintedOrigin sourceTaintedOrigin = computeNewSourceTaintedOriginFromStack(vm, callFrame);
+    EvalExecutable* eval = IndirectEvalExecutable::tryCreate(globalObject, makeSource(s, sourceOrigin, sourceTaintedOrigin), DerivedContextType::None, false, EvalContextType::None);
     EXCEPTION_ASSERT(!!scope.exception() == !eval);
     if (!eval)
         return encodedJSValue();

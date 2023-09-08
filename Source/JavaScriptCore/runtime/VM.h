@@ -494,6 +494,7 @@ public:
     ALWAYS_INLINE GCClient::IsoSubspace& unlinkedFunctionExecutableSpace() { return clientHeap.unlinkedFunctionExecutableSpace; }
 
     VMType vmType;
+    bool m_mightBeExecutingTaintedCode { false };
     ClientData* clientData { nullptr };
     EntryFrame* topEntryFrame { nullptr };
     // NOTE: When throwing an exception while rolling back the call frame, this may be equal to
@@ -579,6 +580,10 @@ public:
     StringSplitCache stringSplitCache;
     Vector<unsigned> stringSplitIndice;
     StringReplaceCache stringReplaceCache;
+
+    bool mightBeExecutingTaintedCode() const { return m_mightBeExecutingTaintedCode; }
+    bool* addressOfMightBeExecutingTaintedCode() { return &m_mightBeExecutingTaintedCode; }
+    void setMightBeExecutingTaintedCode(bool value = true) { m_mightBeExecutingTaintedCode = value; }
 
     AtomStringTable* atomStringTable() const { return m_atomStringTable; }
     WTF::SymbolRegistry& symbolRegistry() { return m_symbolRegistry; }
@@ -920,7 +925,12 @@ public:
     void queueMicrotask(QueuedTask&&);
     JS_EXPORT_PRIVATE void drainMicrotasks();
     void setOnEachMicrotaskTick(WTF::Function<void(VM&)>&& func) { m_onEachMicrotaskTick = WTFMove(func); }
-    void finalizeSynchronousJSExecution() { ASSERT(currentThreadIsHoldingAPILock()); m_currentWeakRefVersion++; }
+    void finalizeSynchronousJSExecution()
+    {
+        ASSERT(currentThreadIsHoldingAPILock());
+        m_currentWeakRefVersion++;
+        setMightBeExecutingTaintedCode(false);
+    }
     uintptr_t currentWeakRefVersion() const { return m_currentWeakRefVersion; }
 
     void setGlobalConstRedeclarationShouldThrow(bool globalConstRedeclarationThrow) { m_globalConstRedeclarationShouldThrow = globalConstRedeclarationThrow; }

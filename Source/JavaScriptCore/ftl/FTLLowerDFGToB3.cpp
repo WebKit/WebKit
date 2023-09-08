@@ -273,6 +273,9 @@ public:
         m_vmValue = m_out.constIntPtr(vm);
         m_numberTag = m_out.constInt64(JSValue::NumberTag);
         m_notCellMask = m_out.constInt64(JSValue::NotCellMask);
+
+        if (m_graph.m_codeBlock->couldBeTainted())
+            m_out.store32As8(m_out.int32One, m_out.absolute(vm->addressOfMightBeExecutingTaintedCode()));
         if (Options::validateDFGClobberize())
             m_out.store32As8(m_out.int32Zero, m_out.absolute(reinterpret_cast<char*>(vm) + OBJECT_OFFSETOF(VM, didEnterVM)));
 

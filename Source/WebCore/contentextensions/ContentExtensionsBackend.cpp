@@ -323,7 +323,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
                 && ((equalLettersIgnoringASCIICase(url.host(), "www.google-analytics.com"_s) && equalLettersIgnoringASCIICase(url.path(), "/analytics.js"_s))
                     || (equalLettersIgnoringASCIICase(url.host(), "www.googletagmanager.com"_s) && equalLettersIgnoringASCIICase(url.path(), "/gtm.js"_s)))) {
                 if (auto* frame = currentDocument->frame())
-                    frame->script().evaluateIgnoringException(ScriptSourceCode { "try { window.dataLayer.hide.end(); console.log('Called window.dataLayer.hide.end() in frame ' + document.URL + ' because the content blocker blocked the load of the https://www.google-analytics.com/analytics.js script'); } catch (e) { }"_s });
+                    frame->script().evaluateIgnoringException(ScriptSourceCode { "try { window.dataLayer.hide.end(); console.log('Called window.dataLayer.hide.end() in frame ' + document.URL + ' because the content blocker blocked the load of the https://www.google-analytics.com/analytics.js script'); } catch (e) { }"_s, JSC::SourceTaintedOrigin::Untainted });
             }
         }
     }

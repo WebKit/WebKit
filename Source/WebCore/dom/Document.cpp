@@ -8076,7 +8076,7 @@ void Document::ensurePlugInsInjectedScript(DOMWrapperWorld& world)
     if (!jsString)
         jsString = StringImpl::createWithoutCopying(plugInsJavaScript, sizeof(plugInsJavaScript));
 
-    scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(jsString), world);
+    scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(jsString, JSC::SourceTaintedOrigin::Untainted), world);
 
     m_hasInjectedPlugInsScript = true;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1534,12 +1534,14 @@ public:
         m_sourceURLDirective.encode(encoder, sourceProvider.sourceURLDirective());
         m_sourceMappingURLDirective.encode(encoder, sourceProvider.sourceMappingURLDirective());
         m_startPosition.encode(encoder, sourceProvider.startPosition());
+        m_sourceTaintedOrigin = sourceProvider.sourceTaintedOrigin();
     }
 
     void decode(Decoder& decoder, SourceProvider& sourceProvider) const
     {
         sourceProvider.setSourceURLDirective(m_sourceURLDirective.decode(decoder));
         sourceProvider.setSourceMappingURLDirective(m_sourceMappingURLDirective.decode(decoder));
+        sourceProvider.setSourceTaintedOrigin(m_sourceTaintedOrigin);
     }
 
 protected:
@@ -1549,6 +1551,7 @@ protected:
     CachedString m_sourceURLDirective;
     CachedString m_sourceMappingURLDirective;
     CachedTextPosition m_startPosition;
+    SourceTaintedOrigin m_sourceTaintedOrigin;
 };
 
 class CachedStringSourceProvider : public CachedSourceProviderShape<StringSourceProvider, CachedStringSourceProvider> {
@@ -1568,7 +1571,7 @@ public:
         String decodedSourceURL = m_sourceURL.decode(decoder);
         TextPosition decodedStartPosition = m_startPosition.decode(decoder);
 
-        Ref<StringSourceProvider> sourceProvider = StringSourceProvider::create(decodedSource, decodedSourceOrigin, decodedSourceURL, decodedStartPosition, sourceType);
+        Ref<StringSourceProvider> sourceProvider = StringSourceProvider::create(decodedSource, decodedSourceOrigin, decodedSourceURL, m_sourceTaintedOrigin, decodedStartPosition, sourceType);
         Base::decode(decoder, sourceProvider.get());
         return &sourceProvider.leakRef();
     }

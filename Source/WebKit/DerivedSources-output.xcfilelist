@@ -513,4 +513,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.webpushd.mac.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.webpushd.relocatable.mac.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.webpushd.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebProcess.sb
+<<<<<<< ours
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/module.private.modulemap
+=======
+>>>>>>> theirs

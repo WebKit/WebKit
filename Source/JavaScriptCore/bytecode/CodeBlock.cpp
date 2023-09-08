@@ -276,6 +276,7 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     , m_numCalleeLocals(other.m_numCalleeLocals)
     , m_numVars(other.m_numVars)
     , m_numberOfArgumentsToSkip(other.m_numberOfArgumentsToSkip)
+    , m_couldBeTainted(other.m_couldBeTainted)
     , m_hasDebuggerStatement(false)
     , m_steppingMode(SteppingModeDisabled)
     , m_numBreakpoints(0)
@@ -299,6 +300,7 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     constexpr bool allocateArgumentValueProfiles = false;
     setNumParameters(other.numParameters(), allocateArgumentValueProfiles);
 
+    ASSERT(m_couldBeTainted == (taintednessToTriState(source().provider()->sourceTaintedOrigin()) != TriState::False));
     vm.heap.codeBlockSet().add(this);
 }
 
@@ -345,6 +347,7 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, ScriptExecutable* ownerExecut
     constexpr bool allocateArgumentValueProfiles = true;
     setNumParameters(unlinkedCodeBlock->numParameters(), allocateArgumentValueProfiles);
 
+    m_couldBeTainted = source().provider()->couldBeTainted();
     vm.heap.codeBlockSet().add(this);
 }
 

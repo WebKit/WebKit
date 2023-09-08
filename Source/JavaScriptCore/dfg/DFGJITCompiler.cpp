@@ -151,6 +151,8 @@ void JITCompiler::compileEntry()
     // both normal return code and when jumping to an exception handler).
     emitFunctionPrologue();
     jitAssertCodeBlockOnCallFrameWithType(GPRInfo::regT2, JITType::DFGJIT);
+    if (m_graph.m_codeBlock->couldBeTainted())
+        store8(TrustedImm32(1), vm().addressOfMightBeExecutingTaintedCode());
 }
 
 void JITCompiler::compileSetupRegistersForEntry()

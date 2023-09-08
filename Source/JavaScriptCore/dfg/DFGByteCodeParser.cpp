@@ -1676,6 +1676,11 @@ unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountInclu
         return UINT_MAX;
     }
 
+    if (codeBlock->couldBeTainted() != m_codeBlock->couldBeTainted()) {
+        VERBOSE_LOG("    Failing because taintedness of callee does not match the caller");
+        return UINT_MAX;
+    }
+
     if (!Options::useArityFixupInlining()) {
         if (codeBlock->numParameters() > static_cast<unsigned>(argumentCountIncludingThis)) {
             VERBOSE_LOG("    Failing because of arity mismatch.\n");

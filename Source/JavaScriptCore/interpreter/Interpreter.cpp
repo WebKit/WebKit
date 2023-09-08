@@ -170,12 +170,15 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
         TDZEnvironment variablesUnderTDZ;
         PrivateNameEnvironment privateNameEnvironment;
         JSScope::collectClosureVariablesUnderTDZ(callerScopeChain, variablesUnderTDZ, privateNameEnvironment);
-        eval = DirectEvalExecutable::create(globalObject, makeSource(programSource, callerBaselineCodeBlock->source().provider()->sourceOrigin()), derivedContextType, callerUnlinkedCodeBlock->needsClassFieldInitializer(), callerUnlinkedCodeBlock->privateBrandRequirement(), isArrowFunctionContext, callerBaselineCodeBlock->ownerExecutable()->isInsideOrdinaryFunction(), evalContextType, &variablesUnderTDZ, &privateNameEnvironment, ecmaMode);
+        SourceTaintedOrigin sourceTaintedOrigin = computeNewSourceTaintedOriginFromStack(vm, callFrame);
+        eval = DirectEvalExecutable::create(globalObject, makeSource(programSource, callerBaselineCodeBlock->source().provider()->sourceOrigin(), sourceTaintedOrigin), derivedContextType, callerUnlinkedCodeBlock->needsClassFieldInitializer(), callerUnlinkedCodeBlock->privateBrandRequirement(), isArrowFunctionContext, callerBaselineCodeBlock->ownerExecutable()->isInsideOrdinaryFunction(), evalContextType, &variablesUnderTDZ, &privateNameEnvironment, ecmaMode);
         EXCEPTION_ASSERT(!!scope.exception() == !eval);
         if (!eval)
             return jsUndefined();
 
-        callerBaselineCodeBlock->directEvalCodeCache().set(globalObject, callerBaselineCodeBlock, programSource, bytecodeIndex, eval);
+        // Skip the eval cache if tainted since another eval call could have a different taintedness.
+        if (sourceTaintedOrigin == SourceTaintedOrigin::Untainted)
+            callerBaselineCodeBlock->directEvalCodeCache().set(globalObject, callerBaselineCodeBlock, programSource, bytecodeIndex, eval);
     }
 
     RELEASE_AND_RETURN(scope, vm.interpreter.executeEval(eval, thisValue, callerScopeChain));
@@ -884,6 +887,11 @@ JSValue Interpreter::executeProgram(const SourceCode& source, JSGlobalObject*, J
     Vector<JSONPData> JSONPData;
     bool parseResult;
     StringView programSource = program->source().view();
+    // Skip JSONP if the program is tainted. We want there to be a tainted
+    // frame on the stack in case the program does an eval via a setter.
+    if (source.provider()->sourceTaintedOrigin() != SourceTaintedOrigin::Untainted)
+        goto failedJSONP;
+
     if (programSource.isNull())
         return jsUndefined();
     if (programSource.is8Bit()) {

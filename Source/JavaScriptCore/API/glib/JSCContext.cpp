@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018 Igalia S.L.
+ * Copyright (C) 2023 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -972,7 +973,7 @@ JSCCheckSyntaxResult jsc_context_check_syntax(JSCContext* context, const char* c
     JSC::JSLockHolder locker(vm);
 
     URL sourceURL = uri ? URL(String::fromLatin1(uri)) : URL();
-    JSC::SourceCode source = JSC::makeSource(String::fromUTF8(code, length < 0 ? strlen(code) : length), JSC::SourceOrigin { sourceURL },
+    JSC::SourceCode source = JSC::makeSource(String::fromUTF8(code, length < 0 ? strlen(code) : length), JSC::SourceOrigin { sourceURL }, JSC::SourceTaintedOrigin::Untainted,
         sourceURL.string() , TextPosition(OrdinalNumber::fromOneBasedInt(lineNumber), OrdinalNumber()));
     bool success = false;
     JSC::ParserError error;

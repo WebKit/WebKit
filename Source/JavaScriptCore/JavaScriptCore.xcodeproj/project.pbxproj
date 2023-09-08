@@ -1018,6 +1018,7 @@
 		534E03581E53BF2F00213F64 /* GetterSetterAccessCase.h in Headers */ = {isa = PBXBuildFile; fileRef = 534E03571E53BF2F00213F64 /* GetterSetterAccessCase.h */; };
 		5350356527147E5A00EC1A7E /* SourceID.h in Headers */ = {isa = PBXBuildFile; fileRef = 5350356427147E5900EC1A7E /* SourceID.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53529A4C1C457B75000B49C6 /* APIUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 53529A4B1C457B75000B49C6 /* APIUtils.h */; };
+		53542B232AA8D8AF00205FB3 /* SourceTaintedOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = 53542B222AA8D89D00205FB3 /* SourceTaintedOrigin.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		535557141D9D9EA5006D583B /* WasmMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 535557131D9D9EA5006D583B /* WasmMemory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		535C24611F78928E006EC40E /* create_regex_tables in Headers */ = {isa = PBXBuildFile; fileRef = A718F8211178EB4B002465A7 /* create_regex_tables */; };
 		535C246C1F7A1778006EC40E /* UnifiedSource136.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 535C246B1F7A1777006EC40E /* UnifiedSource136.cpp */; };
@@ -1208,7 +1209,6 @@
 		554C418829B14CA5003C9F71 /* WebAssemblyGCObjectBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 554C418629B14CA5003C9F71 /* WebAssemblyGCObjectBase.h */; };
 		55579D9028DD641000153DAE /* WebAssemblyArrayPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 55579D8D28DD640F00153DAE /* WebAssemblyArrayPrototype.h */; };
 		55579D9128DD641000153DAE /* WebAssemblyArrayConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 55579D8E28DD641000153DAE /* WebAssemblyArrayConstructor.h */; };
-		556872AC2A97BCD100502424 /* WasmConstExprGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 556872AA2A97BCD100502424 /* WasmConstExprGenerator.cpp */; };
 		556872AD2A97BCD100502424 /* WasmConstExprGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 556872AB2A97BCD100502424 /* WasmConstExprGenerator.h */; };
 		55F5DFB128DA9A2000595620 /* JSWebAssemblyArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 55F5DFAE28DA9A2000595620 /* JSWebAssemblyArray.h */; };
 		5B4032802798D20600F37939 /* JSRemoteFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B40327E2798D1FD00F37939 /* JSRemoteFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4056,6 +4056,8 @@
 		534E03571E53BF2F00213F64 /* GetterSetterAccessCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetterSetterAccessCase.h; sourceTree = "<group>"; };
 		5350356427147E5900EC1A7E /* SourceID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceID.h; sourceTree = "<group>"; };
 		53529A4B1C457B75000B49C6 /* APIUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIUtils.h; sourceTree = "<group>"; };
+		53542B212AA8D89D00205FB3 /* SourceTaintedOrigin.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SourceTaintedOrigin.cpp; sourceTree = "<group>"; };
+		53542B222AA8D89D00205FB3 /* SourceTaintedOrigin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SourceTaintedOrigin.h; sourceTree = "<group>"; };
 		535557131D9D9EA5006D583B /* WasmMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmMemory.h; sourceTree = "<group>"; };
 		535557151D9DFA32006D583B /* WasmMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmMemory.cpp; sourceTree = "<group>"; };
 		535C246B1F7A1777006EC40E /* UnifiedSource136.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource136.cpp; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource136.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -7779,6 +7781,8 @@
 				E49DC15512EF277200184A1F /* SourceProviderCache.cpp */,
 				E49DC15112EF272200184A1F /* SourceProviderCache.h */,
 				E49DC14912EF261A00184A1F /* SourceProviderCacheItem.h */,
+				53542B212AA8D89D00205FB3 /* SourceTaintedOrigin.cpp */,
+				53542B222AA8D89D00205FB3 /* SourceTaintedOrigin.h */,
 				A7A7EE7711B98B8D0065A14F /* SyntaxChecker.h */,
 				0F8F2B9D17306C8B007DBDA5 /* UnlinkedSourceCode.cpp */,
 				14AB66751DECF40900A56C26 /* UnlinkedSourceCode.h */,
@@ -11559,6 +11563,7 @@
 				BC18C4630E16F5CD00B34460 /* SourceProvider.h in Headers */,
 				E49DC16C12EF294E00184A1F /* SourceProviderCache.h in Headers */,
 				E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */,
+				53542B232AA8D8AF00205FB3 /* SourceTaintedOrigin.h in Headers */,
 				0FDE87FC1DFE6E510064C390 /* SpaceTimeMutatorScheduler.h in Headers */,
 				0FB7F39E15ED8E4600F167B2 /* SparseArrayValueMap.h in Headers */,
 				A7386554118697B400540279 /* SpecializedThunkJIT.h in Headers */,

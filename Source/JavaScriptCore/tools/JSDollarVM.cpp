@@ -30,6 +30,7 @@
 #include "BuiltinNames.h"
 #include "CachedCall.h"
 #include "CodeBlock.h"
+#include "Completion.h"
 #include "ControlFlowProfiler.h"
 #include "DOMAttributeGetterSetter.h"
 #include "DOMJITGetterSetter.h"
@@ -2152,6 +2153,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionClearLinkBufferStats);
 static JSC_DECLARE_HOST_FUNCTION(functionLinkBufferStats);
 static JSC_DECLARE_HOST_FUNCTION(functionValue);
 static JSC_DECLARE_HOST_FUNCTION(functionGetPID);
+static JSC_DECLARE_HOST_FUNCTION(functionVMTaintedState);
 static JSC_DECLARE_HOST_FUNCTION(functionHaveABadTime);
 static JSC_DECLARE_HOST_FUNCTION(functionIsHavingABadTime);
 static JSC_DECLARE_HOST_FUNCTION(functionCallWithStackSize);
@@ -2179,6 +2181,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionCreateObjectDoingSideEffectPutWithoutCo
 static JSC_DECLARE_HOST_FUNCTION(functionCreateEmptyFunctionWithName);
 static JSC_DECLARE_HOST_FUNCTION(functionSetImpureGetterDelegate);
 static JSC_DECLARE_HOST_FUNCTION(functionCreateBuiltin);
+static JSC_DECLARE_HOST_FUNCTION(functionRunTaintedString);
 static JSC_DECLARE_HOST_FUNCTION(functionGetPrivateProperty);
 static JSC_DECLARE_HOST_FUNCTION(functionCreateRoot);
 static JSC_DECLARE_HOST_FUNCTION(functionCreateElement);
@@ -2825,6 +2828,16 @@ JSC_DEFINE_HOST_FUNCTION(functionGetPID, (JSGlobalObject*, CallFrame*))
     return JSValue::encode(jsNumber(getCurrentProcessID()));
 }
 
+// Returns a string describing the current taintedness state of the VM.
+JSC_DEFINE_HOST_FUNCTION(functionVMTaintedState, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+
+    SourceTaintedOrigin sourceTaintedOrigin = sourceTaintedOriginFromStack(vm, callFrame);
+    return JSValue::encode(jsString(vm, sourceTaintedOriginToString(sourceTaintedOrigin)));
+}
+
 // Make the globalObject have a bad time. Does nothing if the object is not a JSGlobalObject.
 // Usage: $vm.haveABadTime(globalObject)
 JSC_DEFINE_HOST_FUNCTION(functionHaveABadTime, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -3256,10 +3269,32 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateBuiltin, (JSGlobalObject* globalObject, C
     String functionText = asString(callFrame->argument(0))->value(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    SourceCode source = makeSource(WTFMove(functionText), { });
+    SourceCode source = makeSource(WTFMove(functionText), { }, SourceTaintedOrigin::Untainted);
     JSFunction* func = JSFunction::create(vm, createBuiltinExecutable(vm, source, Identifier::fromString(vm, "foo"_s), ImplementationVisibility::Public, ConstructorKind::None, ConstructAbility::CannotConstruct)->link(vm, nullptr, source), globalObject);
 
     return JSValue::encode(func);
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionRunTaintedString, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (callFrame->argumentCount() < 1 || !callFrame->argument(0).isString())
+        return JSValue::encode(jsUndefined());
+
+    String functionText = asString(callFrame->argument(0))->value(globalObject);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    SourceCode source = makeSource(functionText, { }, SourceTaintedOrigin::KnownTainted);
+    NakedPtr<Exception> error;
+    JSValue result = evaluate(globalObject, source, JSValue(), error);
+
+    if (error)
+        return throwVMException(globalObject, scope, error.get());
+
+    return JSValue::encode(result);
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionGetPrivateProperty, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -4162,6 +4197,10 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "createDOMJITCheckJSCastObject"_s, functionCreateDOMJITCheckJSCastObject, 0);
     addFunction(vm, "createDOMJITGetterBaseJSObject"_s, functionCreateDOMJITGetterBaseJSObject, 0);
     addFunction(vm, "createBuiltin"_s, functionCreateBuiltin, 2);
+
+    addFunction(vm, "vmTaintedState"_s, functionVMTaintedState, 0);
+    addFunction(vm, "runTaintedString"_s, functionRunTaintedString, 1);
+
 #if ENABLE(WEBASSEMBLY)
     addFunction(vm, "createWasmStreamingParser"_s, functionCreateWasmStreamingParser, 0);
     addFunction(vm, "createWasmStreamingCompilerForCompile"_s, functionCreateWasmStreamingCompilerForCompile, 0);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2021 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,12 +30,13 @@ namespace JSC {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringSourceProvider);
 
-SourceProvider::SourceProvider(const SourceOrigin& sourceOrigin, String&& sourceURL, String&& preRedirectURL, const TextPosition& startPosition, SourceProviderSourceType sourceType)
+SourceProvider::SourceProvider(const SourceOrigin& sourceOrigin, String&& sourceURL, String&& preRedirectURL, SourceTaintedOrigin taintedness, const TextPosition& startPosition, SourceProviderSourceType sourceType)
     : m_sourceType(sourceType)
     , m_sourceOrigin(sourceOrigin)
     , m_sourceURL(WTFMove(sourceURL))
     , m_preRedirectURL(WTFMove(preRedirectURL))
     , m_startPosition(startPosition)
+    , m_taintedness(taintedness)
 {
 }
 
@@ -64,7 +65,7 @@ const String& SourceProvider::sourceURLStripped()
 
 #if ENABLE(WEBASSEMBLY)
 BaseWebAssemblySourceProvider::BaseWebAssemblySourceProvider(const SourceOrigin& sourceOrigin, String&& sourceURL)
-    : SourceProvider(sourceOrigin, WTFMove(sourceURL), String(), TextPosition(), SourceProviderSourceType::WebAssembly)
+    : SourceProvider(sourceOrigin, WTFMove(sourceURL), String(), SourceTaintedOrigin::Untainted, TextPosition(), SourceProviderSourceType::WebAssembly)
 {
 }
 #endif
