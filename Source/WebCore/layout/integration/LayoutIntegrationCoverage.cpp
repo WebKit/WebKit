@@ -429,8 +429,11 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
         return true;
     }
     if (lineLayout.isDamaged()) {
-        // Single mutation only atm.
-        return true;
+        auto previousDamages = lineLayout.damageReasons();
+        if (previousDamages && previousDamages != Layout::InlineDamage::Reason::Append) {
+            // Only support subsequent append operations.
+            return true;
+        }
     }
     if (renderer.style().textWrap() == TextWrap::Balance)
         return true;
