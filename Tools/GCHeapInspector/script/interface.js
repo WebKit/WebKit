@@ -256,6 +256,16 @@ class HeapSnapshotInspector
         header = document.createElement('h1');
         header.textContent = 'All paths to…'
         this.allPathsContainer.appendChild(header);
+        let clearAllButton = document.createElement('button');
+        clearAllButton.innerText = 'Clear All';
+        clearAllButton.addEventListener("click", () => {
+            let header = this.allPathsContainer.childNodes[0];
+            let clearAllButton = this.allPathsContainer.childNodes[1];
+            DOMUtils.removeAllChildren(this.allPathsContainer);
+            this.allPathsContainer.appendChild(header);
+            this.allPathsContainer.appendChild(clearAllButton);
+        });
+        this.allPathsContainer.appendChild(clearAllButton);
 
         this.containerElement.appendChild(this.pathsToRootsContainer);
         this.containerElement.appendChild(this.allPathsContainer);
@@ -387,6 +397,15 @@ class HeapSnapshotInspector
         this.pathsToRootsContainer.appendChild(detailsContainer);
     }
 
+    addClearButtonToDetailsNode(details)
+    {
+        let summary = details.firstChild;
+        let clearButton = document.createElement('button');
+        clearButton.innerText = 'Clear';
+        clearButton.addEventListener("click", () => this.allPathsContainer.removeChild(details));
+        summary.appendChild(clearButton);
+    }
+
     showAllPathsToNode(node)
     {
         let paths = this.snapshot._gcRootPaths(node.id);
@@ -395,6 +414,7 @@ class HeapSnapshotInspector
         let summary = details.firstChild;
         summary.appendChild(document.createTextNode(`${paths.length} path${paths.length > 1 ? 's' : ''} to `));
         summary.appendChild(HeapInspectorUtils.spanForNode(this, node, false));
+        this.addClearButtonToDetailsNode(details);
 
         let detailsContainer = document.createElement('section')
         detailsContainer.className = 'path';
