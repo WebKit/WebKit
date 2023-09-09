@@ -78,7 +78,7 @@ public:
     ExceptionOr<void> setViewportAnchorY(double);
 
     const AtomString& scroll() const;
-    ExceptionOr<void> setScroll(const AtomString&);
+    void setScroll(const AtomString&);
 
     void updateParametersFromRegion(const VTTRegion&);
 

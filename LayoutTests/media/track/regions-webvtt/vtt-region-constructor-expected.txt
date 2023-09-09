@@ -14,7 +14,6 @@ EXPECTED (region.width == '100') OK
 
 ** Test that incorrect mutation keeps previous valid values. **
 RUN(region.scroll = 'invalid-scroll-value')
-SyntaxError: The string did not match the expected pattern.
 EXPECTED (region.scroll == '') OK
 
 Invalid percentage value: -1

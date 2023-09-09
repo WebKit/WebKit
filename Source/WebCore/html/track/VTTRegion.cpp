@@ -132,17 +132,14 @@ const AtomString& VTTRegion::scroll() const
     return m_scroll ? upKeyword() : emptyAtom();
 }
 
-ExceptionOr<void> VTTRegion::setScroll(const AtomString& value)
+void VTTRegion::setScroll(const AtomString& value)
 {
     if (value.isEmpty()) {
         m_scroll = false;
-        return { };
     }
     if (value == upKeyword()) {
         m_scroll = true;
-        return { };
     }
-    return Exception { SyntaxError };
 }
 
 void VTTRegion::updateParametersFromRegion(const VTTRegion& other)
