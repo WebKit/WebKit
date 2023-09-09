@@ -62,6 +62,7 @@
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ScriptController.h>
 #include <wtf/PageBlock.h>
+#include <wtf/Scope.h>
 
 namespace WebKit {
 
@@ -474,6 +475,16 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
                 JSC::JSLockHolder lock(vm);
 
                 auto scope = DECLARE_CATCH_SCOPE(vm);
+
+                auto cleanup = makeScopeExit([context, resolve, reject] {
+                    JSValueUnprotect(context, reject);
+                    JSValueUnprotect(context, resolve);
+                    JSGlobalContextRelease(JSContextGetGlobalContext(context));
+                });
+
+                if (!replyDecoder || !replyDecoder->isValid())
+                    return;
+
                 auto* jsResult = jsResultFromReplyDecoder(globalObject, messageName, *replyDecoder);
                 if (auto* exception = scope.exception()) {
                     scope.clearException();
@@ -483,9 +494,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
                     JSValueRef arguments[] = { toRef(globalObject, jsResult) };
                     JSObjectCallAsFunction(context, resolve, resolve, 1, arguments, nullptr);
                 }
-                JSValueUnprotect(context, reject);
-                JSValueUnprotect(context, resolve);
-                JSGlobalContextRelease(JSContextGetGlobalContext(context));
             },
             IPC::Connection::AsyncReplyID::generate()
         };
