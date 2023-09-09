@@ -32,6 +32,7 @@
 #include "JSLocalDOMWindow.h"
 #include "LocalDOMWindow.h"
 #include "ScriptController.h"
+#include "ScriptDisallowedScope.h"
 #include "WorkerGlobalScope.h"
 #include <JavaScriptCore/BuiltinNames.h>
 #include <JavaScriptCore/Exception.h>
@@ -56,6 +57,8 @@ void DeferredPromise::callFunction(JSGlobalObject& lexicalGlobalObject, ResolveM
 {
     if (shouldIgnoreRequestToFulfill())
         return;
+
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::isScriptAllowedInMainThread());
 
     JSC::VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);

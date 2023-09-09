@@ -58,8 +58,8 @@ void PaymentResponse::finishConstruction()
 
 PaymentResponse::~PaymentResponse()
 {
-    ASSERT(!hasPendingActivity());
-    ASSERT(!hasRetryPromise());
+    ASSERT(!hasPendingActivity() || isContextStopped());
+    ASSERT(!hasRetryPromise() || isContextStopped());
 }
 
 void PaymentResponse::setDetailsFunction(DetailsFunction&& detailsFunction)
@@ -140,15 +140,16 @@ void PaymentResponse::settleRetryPromise(ExceptionOr<void>&& result)
         return;
 
     ASSERT(hasPendingActivity());
-    ASSERT(m_state == State::Created);
+    ASSERT(m_state == State::Created || m_state == State::Stopped);
     m_retryPromise->settle(WTFMove(result));
     m_retryPromise = nullptr;
 }
 
 void PaymentResponse::stop()
 {
-    settleRetryPromise(Exception { AbortError });
-    m_pendingActivity = nullptr;
+    queueTaskKeepingObjectAlive(*this, TaskSource::Payment, [this, pendingActivity = std::exchange(m_pendingActivity, nullptr)] {
+        settleRetryPromise(Exception { AbortError });
+    });
     m_state = State::Stopped;
 }
 

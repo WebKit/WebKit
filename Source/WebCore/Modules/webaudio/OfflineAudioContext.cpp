@@ -82,7 +82,7 @@ void OfflineAudioContext::uninitialize()
 
     BaseAudioContext::uninitialize();
 
-    if (auto promise = std::exchange(m_pendingRenderingPromise, nullptr))
+    if (auto promise = std::exchange(m_pendingRenderingPromise, nullptr); promise && !isContextStopped())
         promise->reject(Exception { InvalidStateError, "Context is going away"_s });
 }
 
