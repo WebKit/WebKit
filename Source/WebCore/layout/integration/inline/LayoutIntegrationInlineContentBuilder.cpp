@@ -118,8 +118,7 @@ FloatRect InlineContentBuilder::build(Layout::InlineLayoutResult&& layoutResult,
 
     inlineContent.releaseCaches();
 
-    updateIfTextRenderersNeedVisualReordering(layoutResult.displayContent.boxes);
-    computeIsFirstIsLastBoxForInlineContent(layoutResult.displayContent.boxes);
+    computeIsFirstIsLastBoxAndBidiReorderingForInlineContent(layoutResult.displayContent.boxes);
 
     switch (layoutResult.range) {
     case Layout::InlineLayoutResult::Range::Full:
@@ -259,7 +258,7 @@ void InlineContentBuilder::adjustDisplayLines(InlineContent& inlineContent, size
     }
 }
 
-void InlineContentBuilder::computeIsFirstIsLastBoxForInlineContent(InlineDisplay::Boxes& boxes) const
+void InlineContentBuilder::computeIsFirstIsLastBoxAndBidiReorderingForInlineContent(InlineDisplay::Boxes& boxes) const
 {
     if (boxes.isEmpty()) {
         // Line clamp may produce a completely empty IFC.
@@ -280,6 +279,9 @@ void InlineContentBuilder::computeIsFirstIsLastBoxForInlineContent(InlineDisplay
             continue;
         }
         auto& layoutBox = displayBox.layoutBox();
+        if (is<Layout::InlineTextBox>(layoutBox) && displayBox.bidiLevel() != UBIDI_DEFAULT_LTR)
+            downcast<RenderText>(m_boxTree.rendererForLayoutBox(layoutBox)).setNeedsVisualReordering();
+
         if (lastDisplayBoxForLayoutBoxIndexes.set(&layoutBox, index).isNewEntry)
             displayBox.setIsFirstForLayoutBox(true);
     }
@@ -287,18 +289,6 @@ void InlineContentBuilder::computeIsFirstIsLastBoxForInlineContent(InlineDisplay
         boxes[index].setIsLastForLayoutBox(true);
 
     boxes[lastRootInlineBoxIndex].setIsLastForLayoutBox(true);
-}
-
-void InlineContentBuilder::updateIfTextRenderersNeedVisualReordering(InlineDisplay::Boxes& boxes) const
-{
-    // FIXME: We may want to have a global, "is this a bidi paragraph" flag to avoid this loop for non-rtl, non-bidi content.
-    for (auto& displayBox : boxes) {
-        auto& layoutBox = displayBox.layoutBox();
-        if (!is<Layout::InlineTextBox>(layoutBox))
-            continue;
-        if (displayBox.bidiLevel() != UBIDI_DEFAULT_LTR)
-            downcast<RenderText>(m_boxTree.rendererForLayoutBox(layoutBox)).setNeedsVisualReordering();
-    }
 }
 
 }

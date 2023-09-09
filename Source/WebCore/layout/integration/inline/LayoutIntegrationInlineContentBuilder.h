@@ -47,8 +47,7 @@ public:
 
 private:
     void adjustDisplayLines(InlineContent&, size_t startIndex) const;
-    void computeIsFirstIsLastBoxForInlineContent(InlineDisplay::Boxes&) const;
-    void updateIfTextRenderersNeedVisualReordering(InlineDisplay::Boxes&) const;
+    void computeIsFirstIsLastBoxAndBidiReorderingForInlineContent(InlineDisplay::Boxes&) const;
 
     const RenderBlockFlow& m_blockFlow;
     BoxTree& m_boxTree;
