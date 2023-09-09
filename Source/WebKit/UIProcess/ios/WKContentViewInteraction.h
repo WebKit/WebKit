@@ -412,6 +412,7 @@ struct ImageAnalysisContextMenuActionData {
     WebKit::WebAutocorrectionContext _lastAutocorrectionContext;
     WebKit::WKAutoCorrectionData _autocorrectionData;
     WebKit::InteractionInformationAtPosition _positionInformation;
+    std::optional<WebCore::TextIndicatorData> _positionInformationLinkIndicator;
     WebKit::FocusedElementInformation _focusedElementInformation;
     RetainPtr<NSObject<WKFormPeripheral>> _inputPeripheral;
     BlockPtr<void(::WebEvent *, BOOL)> _keyWebEventHandler;

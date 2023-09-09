@@ -302,23 +302,31 @@ void DragDropInteractionState::clearAllDelayedItemPreviewProviders()
     m_delayedItemPreviewProviders.clear();
 }
 
-UITargetedDragPreview *DragDropInteractionState::previewForLifting(UIDragItem *item, UIView *contentView, UIView *previewContainer) const
+UITargetedDragPreview *DragDropInteractionState::previewForLifting(UIDragItem *item, UIView *contentView, UIView *previewContainer, const std::optional<WebCore::TextIndicatorData>& indicator) const
 {
-    return createDragPreviewInternal(item, contentView, previewContainer, AddPreviewViewToContainer::No).autorelease();
+    return createDragPreviewInternal(item, contentView, previewContainer, AddPreviewViewToContainer::No, indicator).autorelease();
 }
 
 UITargetedDragPreview *DragDropInteractionState::previewForCancelling(UIDragItem *item, UIView *contentView, UIView *previewContainer)
 {
-    auto preview = createDragPreviewInternal(item, contentView, previewContainer, AddPreviewViewToContainer::Yes);
+    auto preview = createDragPreviewInternal(item, contentView, previewContainer, AddPreviewViewToContainer::Yes, std::nullopt);
     m_previewViewForDragCancel = [preview view];
     return preview.autorelease();
 }
 
-RetainPtr<UITargetedDragPreview> DragDropInteractionState::createDragPreviewInternal(UIDragItem *item, UIView *contentView, UIView *previewContainer, AddPreviewViewToContainer addPreviewViewToContainer) const
+RetainPtr<UITargetedDragPreview> DragDropInteractionState::createDragPreviewInternal(UIDragItem *item, UIView *contentView, UIView *previewContainer, AddPreviewViewToContainer addPreviewViewToContainer, const std::optional<WebCore::TextIndicatorData>& indicator) const
 {
     auto foundSource = activeDragSourceForItem(item);
     if (!foundSource)
         return nil;
+
+    if (indicator) {
+        // If the context menu preview was created using the snapshot mechanism,
+        // the drag preview should be created likewise, so that the size and position
+        // of both previews match.
+        auto textIndicatorImage = uiImageForImage(indicator->contentImage.get());
+        return createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, indicator->textBoundingRectInRootViewCoordinates, indicator->textRectsInBoundingRectCoordinates, cocoaColor(indicator->estimatedBackgroundColor).get(), nil, addPreviewViewToContainer).autorelease();
+    }
 
     auto& source = foundSource.value();
     if (shouldUseDragImageToCreatePreviewForDragSource(source)) {
