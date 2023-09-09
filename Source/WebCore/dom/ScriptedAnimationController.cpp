@@ -29,6 +29,7 @@
 
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
+#include "OpportunisticTaskScheduler.h"
 #include "Page.h"
 #include "RequestAnimationFrameCallback.h"
 #include "Settings.h"
@@ -108,7 +109,10 @@ ScriptedAnimationController::CallbackId ScriptedAnimationController::registerCal
     CallbackId callbackId = ++m_nextCallbackId;
     callback->m_firedOrCancelled = false;
     callback->m_id = callbackId;
-    m_callbackDataList.append({ WTFMove(callback), UserGestureIndicator::currentUserGesture() });
+    RefPtr<ImminentlyScheduledWorkScope> workScope;
+    if (page())
+        workScope = page()->opportunisticTaskScheduler().makeScheduledWorkScope();
+    m_callbackDataList.append({ WTFMove(callback), UserGestureIndicator::currentUserGesture(), WTFMove(workScope) });
 
     if (m_document)
         InspectorInstrumentation::didRequestAnimationFrame(*m_document, callbackId);
@@ -157,7 +161,7 @@ void ScriptedAnimationController::serviceRequestAnimationFrameCallbacks(ReducedR
     Ref<ScriptedAnimationController> protectedThis(*this);
     Ref<Document> protectedDocument(*m_document);
 
-    for (auto& [callback, userGestureTokenToForward] : callbackDataList) {
+    for (auto& [callback, userGestureTokenToForward, scheduledWorkScope] : callbackDataList) {
         if (callback->m_firedOrCancelled)
             continue;
         callback->m_firedOrCancelled = true;

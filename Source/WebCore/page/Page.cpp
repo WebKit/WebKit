@@ -1490,12 +1490,12 @@ void Page::didCommitLoad()
         geolocationController->didNavigatePage();
 #endif
 
-    m_opportunisticTaskDeferralScopeForFirstPaint = m_opportunisticTaskScheduler->makeDeferralScope();
+    m_isWaitingForFirstMeaningfulPaint = true;
 }
 
 void Page::didFirstMeaningfulPaint()
 {
-    m_opportunisticTaskDeferralScopeForFirstPaint = nullptr;
+    m_isWaitingForFirstMeaningfulPaint = false;
 }
 
 void Page::didFinishLoad()
@@ -4535,12 +4535,15 @@ void Page::reloadExecutionContextsForOrigin(const ClientOrigin& origin, std::opt
     }
 }
 
-void Page::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
+void Page::opportunisticallyRunIdleCallbacks()
 {
-    TraceScope tracingScope(PerformOpportunisticallyScheduledTasksStart, PerformOpportunisticallyScheduledTasksEnd, (deadline - MonotonicTime::now()).microseconds());
-    forEachWindowEventLoop([&](WindowEventLoop& eventLoop) {
+    forEachWindowEventLoop([&](auto& eventLoop) {
         eventLoop.opportunisticallyRunIdleCallbacks();
     });
+}
+
+void Page::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
+{
     commonVM().performOpportunisticallyScheduledTasks(deadline);
 }
 

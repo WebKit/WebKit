@@ -200,6 +200,7 @@ int DOMTimer::install(ScriptExecutionContext& context, Function<void(ScriptExecu
 {
     Ref<DOMTimer> timer = adoptRef(*new DOMTimer(context, WTFMove(action), timeout, type));
     timer->suspendIfNeeded();
+    timer->makeImminentlyScheduledWorkScopeIfPossible(context);
 
     // Keep asking for the next id until we're given one that we don't already have.
     do {
@@ -246,8 +247,10 @@ void DOMTimer::removeById(ScriptExecutionContext& context, int timeoutId)
 
     InspectorInstrumentation::didRemoveTimer(context, timeoutId);
 
-    if (auto timer = context.takeTimeout(timeoutId))
+    if (auto timer = context.takeTimeout(timeoutId)) {
+        timer->clearImminentlyScheduledWorkScope();
         timer->m_timer = nullptr;
+    }
 }
 
 inline bool DOMTimer::isDOMTimersThrottlingEnabled(const Document& document) const
@@ -345,6 +348,7 @@ void DOMTimer::fired()
 
         updateThrottlingStateIfNecessary(fireState);
 
+        clearImminentlyScheduledWorkScope();
         return;
     }
 
@@ -371,6 +375,8 @@ void DOMTimer::fired()
         }
         nestedTimers->stopTracking();
     }
+
+    clearImminentlyScheduledWorkScope();
 }
 
 void DOMTimer::stop()
@@ -380,6 +386,8 @@ void DOMTimer::stop()
     // which will cause a memory leak.
     m_timer = nullptr;
     m_action = nullptr;
+
+    clearImminentlyScheduledWorkScope();
 }
 
 void DOMTimer::updateTimerIntervalIfNecessary()
@@ -440,6 +448,27 @@ std::optional<MonotonicTime> ScriptExecutionContext::alignedFireTime(bool hasRea
 const char* DOMTimer::activeDOMObjectName() const
 {
     return "DOMTimer";
+}
+
+void DOMTimer::makeImminentlyScheduledWorkScopeIfPossible(ScriptExecutionContext& context)
+{
+    if (!m_oneShot || m_currentTimerInterval > 1_ms)
+        return;
+
+    RefPtr document = dynamicDowncast<Document>(context);
+    if (!document)
+        return;
+
+    auto* page = document->page();
+    if (!page)
+        return;
+
+    m_imminentlyScheduledWorkScope = page->opportunisticTaskScheduler().makeScheduledWorkScope();
+}
+
+void DOMTimer::clearImminentlyScheduledWorkScope()
+{
+    m_imminentlyScheduledWorkScope = nullptr;
 }
 
 } // namespace WebCore

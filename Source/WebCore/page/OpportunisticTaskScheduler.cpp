@@ -30,80 +30,90 @@
 
 namespace WebCore {
 
-OpportunisticTaskDeferralScope::OpportunisticTaskDeferralScope(OpportunisticTaskScheduler& scheduler)
-    : m_scheduler(&scheduler)
-{
-    scheduler.incrementDeferralCount();
-}
-
-OpportunisticTaskDeferralScope::OpportunisticTaskDeferralScope(OpportunisticTaskDeferralScope&& scope)
-    : m_scheduler(std::exchange(scope.m_scheduler, { }))
-{
-}
-
-OpportunisticTaskDeferralScope::~OpportunisticTaskDeferralScope()
-{
-    if (m_scheduler)
-        m_scheduler->decrementDeferralCount();
-}
-
 OpportunisticTaskScheduler::OpportunisticTaskScheduler(Page& page)
     : m_page(&page)
     , m_runLoopObserver(makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::PostRenderingUpdate, [weakThis = WeakPtr { this }] {
         if (auto strongThis = weakThis.get())
             strongThis->runLoopObserverFired();
-    }, RunLoopObserver::Type::OneShot))
+    }, RunLoopObserver::Type::Repeating))
 {
+    m_runLoopObserver->schedule();
 }
 
 OpportunisticTaskScheduler::~OpportunisticTaskScheduler() = default;
 
 void OpportunisticTaskScheduler::reschedule(MonotonicTime deadline)
 {
+    m_runloopCountAfterBeingScheduled = 0;
     m_currentDeadline = deadline;
-
-    if (m_runLoopObserver->isScheduled())
-        return;
-
-    if (m_taskDeferralCount)
-        m_runLoopObserver->invalidate();
-    else
-        m_runLoopObserver->schedule();
 }
 
-std::unique_ptr<OpportunisticTaskDeferralScope> OpportunisticTaskScheduler::makeDeferralScope()
+Ref<ImminentlyScheduledWorkScope> OpportunisticTaskScheduler::makeScheduledWorkScope()
 {
-    return makeUnique<OpportunisticTaskDeferralScope>(*this);
+    return ImminentlyScheduledWorkScope::create(*this);
 }
 
 void OpportunisticTaskScheduler::runLoopObserverFired()
 {
-    m_runLoopObserver->invalidate();
-
-    if (m_taskDeferralCount)
+    if (!m_currentDeadline)
         return;
+
+    auto page = m_page;
+    if (UNLIKELY(!page))
+        return;
+
+    if (page->isWaitingForFirstMeaningfulPaint())
+        return;
+
+    auto currentTime = ApproximateTime::now();
+    auto remainingTime = m_currentDeadline.secondsSinceEpoch() - currentTime.secondsSinceEpoch();
+    if (remainingTime < 0_ms)
+        return;
+
+    m_runloopCountAfterBeingScheduled++;
+
+    bool shouldRunTask = [&] {
+        if (!hasImminentlyScheduledWork())
+            return true;
+
+        static constexpr auto fractionOfRenderingIntervalWhenScheduledWorkIsImminent = 0.72;
+        if (remainingTime > fractionOfRenderingIntervalWhenScheduledWorkIsImminent * page->preferredRenderingUpdateInterval())
+            return true;
+
+        static constexpr auto minimumRunloopCountWhenScheduledWorkIsImminent = 4;
+        if (m_runloopCountAfterBeingScheduled > minimumRunloopCountWhenScheduledWorkIsImminent)
+            return true;
+
+        return false;
+    }();
+
+    if (!shouldRunTask)
+        return;
+
+    TraceScope tracingScope {
+        PerformOpportunisticallyScheduledTasksStart,
+        PerformOpportunisticallyScheduledTasksEnd,
+        static_cast<uint64_t>(remainingTime.microseconds())
+    };
 
     auto deadline = std::exchange(m_currentDeadline, MonotonicTime { });
-    if (!deadline)
+    page->opportunisticallyRunIdleCallbacks();
+    if (UNLIKELY(!page))
         return;
 
-    if (ApproximateTime::now().secondsSinceEpoch() > deadline.secondsSinceEpoch())
-        return;
-
-    if (auto page = m_page.get())
-        page->performOpportunisticallyScheduledTasks(deadline);
+    page->performOpportunisticallyScheduledTasks(deadline);
 }
 
-void OpportunisticTaskScheduler::incrementDeferralCount()
+ImminentlyScheduledWorkScope::ImminentlyScheduledWorkScope(OpportunisticTaskScheduler& scheduler)
+    : m_scheduler(&scheduler)
 {
-    if (++m_taskDeferralCount == 1)
-        m_runLoopObserver->invalidate();
+    scheduler.m_imminentlyScheduledWorkCount++;
 }
 
-void OpportunisticTaskScheduler::decrementDeferralCount()
+ImminentlyScheduledWorkScope::~ImminentlyScheduledWorkScope()
 {
-    if (!--m_taskDeferralCount && m_currentDeadline)
-        m_runLoopObserver->schedule();
+    if (m_scheduler)
+        m_scheduler->m_imminentlyScheduledWorkCount--;
 }
 
 } // namespace WebCore

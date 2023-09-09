@@ -127,7 +127,6 @@ class MediaPlaybackTarget;
 class MediaRecorderProvider;
 class MediaSessionCoordinatorPrivate;
 class ModelPlayerProvider;
-class OpportunisticTaskDeferralScope;
 class PageConfiguration;
 class PageConsoleClient;
 class PageDebuggable;
@@ -1053,7 +1052,10 @@ public:
     WEBCORE_EXPORT void addRootFrame(LocalFrame&);
     WEBCORE_EXPORT void removeRootFrame(LocalFrame&);
 
+    void opportunisticallyRunIdleCallbacks();
     void performOpportunisticallyScheduledTasks(MonotonicTime deadline);
+
+    bool isWaitingForFirstMeaningfulPaint() const { return m_isWaitingForFirstMeaningfulPaint; }
 
 private:
     struct Navigation {
@@ -1411,7 +1413,7 @@ private:
     std::unique_ptr<AttachmentElementClient> m_attachmentElementClient;
 #endif
 
-    std::unique_ptr<OpportunisticTaskDeferralScope> m_opportunisticTaskDeferralScopeForFirstPaint;
+    bool m_isWaitingForFirstMeaningfulPaint { false };
     Ref<OpportunisticTaskScheduler> m_opportunisticTaskScheduler;
 
 #if ENABLE(IMAGE_ANALYSIS)

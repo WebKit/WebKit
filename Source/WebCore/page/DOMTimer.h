@@ -39,6 +39,7 @@ namespace WebCore {
 
 class DOMTimerFireState;
 class Document;
+class ImminentlyScheduledWorkScope;
 class ScheduledAction;
 
 class DOMTimer final : public RefCounted<DOMTimer>, public ActiveDOMObject, public CanMakeWeakPtr<DOMTimer> {
@@ -82,6 +83,9 @@ private:
     const char* activeDOMObjectName() const final;
     void stop() final;
 
+    void makeImminentlyScheduledWorkScopeIfPossible(ScriptExecutionContext&);
+    void clearImminentlyScheduledWorkScope();
+
     enum TimerThrottleState {
         Undetermined,
         ShouldThrottle,
@@ -98,6 +102,7 @@ private:
     bool m_hasReachedMaxNestingLevel;
     Seconds m_currentTimerInterval;
     RefPtr<UserGestureToken> m_userGestureTokenToForward;
+    RefPtr<ImminentlyScheduledWorkScope> m_imminentlyScheduledWorkScope;
 };
 
 } // namespace WebCore
