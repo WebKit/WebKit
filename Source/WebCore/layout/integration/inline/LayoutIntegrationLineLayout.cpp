@@ -1245,7 +1245,7 @@ void LineLayout::insertedIntoTree(const RenderElement& parent, RenderObject& chi
         return;
     }
 
-    if (childLayoutBox.isLineBreakBox()) {
+    if (childLayoutBox.isLineBreakBox() || childLayoutBox.isReplacedBox()) {
         auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState.inlineItems(), m_inlineContent->displayContent() };
         invalidation.inlineLevelBoxInserted(childLayoutBox);
         return;

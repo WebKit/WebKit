@@ -106,7 +106,7 @@ static std::optional<size_t> damagedLineIndex(std::optional<DamagedContent> dama
     };
 
     auto leadingIndexForDisplayBox = *lastDisplayBoxIndex;
-    if (damagedContent->layoutBox.isLineBreakBox()) {
+    if (damagedContent->layoutBox.isLineBreakBox() || damagedContent->layoutBox.isReplacedBox()) {
         auto& displayBox = displayBoxes[leadingIndexForDisplayBox];
         return displayBox.lineIndex() ? displayBox.lineIndex() - 1 : 0;
     }
@@ -319,7 +319,7 @@ void InlineInvalidation::updateInlineDamage(InlineDamage::Type type, std::option
 
 static bool isSupportedContent(const Box& layoutBox)
 {
-    return is<InlineTextBox>(layoutBox) || layoutBox.isLineBreakBox();
+    return is<InlineTextBox>(layoutBox) || layoutBox.isLineBreakBox() || layoutBox.isReplacedBox();
 }
 
 bool InlineInvalidation::applyFullDamageIfNeeded(const Box& layoutBox)
