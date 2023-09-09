@@ -218,6 +218,7 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
         unsigned unsafeCallSiteAsRawBits() const;
         CallSiteIndex callSiteIndex() const;
         CallSiteIndex unsafeCallSiteIndex() const;
+        void setCallSiteIndex(CallSiteIndex);
 
 #if ENABLE(WEBASSEMBLY)
         Wasm::Instance* wasmInstance() const;

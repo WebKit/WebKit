@@ -61,8 +61,10 @@ enum class PutByKind {
 };
 
 enum class DelByKind {
-    ById,
-    ByVal
+    ByIdStrict,
+    ByIdSloppy,
+    ByValStrict,
+    ByValSloppy,
 };
 
 enum class InByKind {

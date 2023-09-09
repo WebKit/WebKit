@@ -32,6 +32,7 @@
 namespace JSC {
 
 struct EntryFrame;
+class StructureStubInfo;
 
 class SuspendExceptionScope {
 public:
@@ -139,5 +140,21 @@ public:
     VM& m_vm;
 #endif
 };
+
+class ICSlowPathCallFrameTracer {
+public:
+    inline ICSlowPathCallFrameTracer(VM&, CallFrame*, StructureStubInfo*);
+
+#if ASSERT_ENABLED
+    ~ICSlowPathCallFrameTracer()
+    {
+        // Fill vm.topCallFrame with invalid value when leaving from JIT operation functions.
+        m_vm.topCallFrame = bitwise_cast<CallFrame*>(static_cast<uintptr_t>(0x0badbeef0badbeefULL));
+    }
+
+    VM& m_vm;
+#endif
+};
+
 
 } // namespace JSC

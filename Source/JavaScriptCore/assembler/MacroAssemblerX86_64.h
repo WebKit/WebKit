@@ -577,6 +577,13 @@ public:
         m_assembler.popcntq_mr(src.offset, src.base, dst);
     }
 
+    void addUnsignedRightShift32(RegisterID src1, RegisterID src2, TrustedImm32 amount, RegisterID dest)
+    {
+        // dest = src1 + (src2 >> amount)
+        urshift32(src2, amount, scratchRegister());
+        add32(src1, scratchRegister(), dest);
+    }
+
     void lshift64(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.shlq_i8r(imm.m_value, dest);
@@ -1461,6 +1468,12 @@ public:
     Jump branch32(RelationalCondition cond, AbsoluteAddress left, RegisterID right)
     {
         load32(left.m_ptr, scratchRegister());
+        return branch32(cond, scratchRegister(), right);
+    }
+
+    Jump branch32WithMemory16(RelationalCondition cond, Address left, RegisterID right)
+    {
+        MacroAssemblerHelpers::load16OnCondition(*this, cond, left, scratchRegister());
         return branch32(cond, scratchRegister(), right);
     }
 

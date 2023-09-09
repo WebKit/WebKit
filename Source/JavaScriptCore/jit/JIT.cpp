@@ -664,9 +664,14 @@ void JIT::privateCompileSlowCases()
 
 void JIT::emitMaterializeMetadataAndConstantPoolRegisters()
 {
-    loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
+    emitMaterializeMetadataAndConstantPoolRegisters(*this);
+}
+
+void JIT::emitMaterializeMetadataAndConstantPoolRegisters(CCallHelpers& jit)
+{
+    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), s_constantsGPR);
     ASSERT(static_cast<ptrdiff_t>(CodeBlock::offsetOfJITData() + sizeof(void*)) == CodeBlock::offsetOfMetadataTable());
-    loadPairPtr(Address(regT0, CodeBlock::offsetOfJITData()), s_constantsGPR, s_metadataGPR);
+    jit.loadPairPtr(Address(s_constantsGPR, CodeBlock::offsetOfJITData()), s_constantsGPR, s_metadataGPR);
 }
 
 void JIT::emitSaveCalleeSaves()
