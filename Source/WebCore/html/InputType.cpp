@@ -1042,7 +1042,7 @@ ExceptionOr<void> InputType::applyStep(int count, AnyStepHandling anyStepHandlin
 
     newValue = newValue + stepRange.step() * Decimal::fromDouble(count);
     const AtomString& stepString = element()->getAttribute(HTMLNames::stepAttr);
-    if (!equalLettersIgnoringASCIICase(stepString, "any"_s))
+    if (!equalLettersIgnoringASCIICase(stepString, "any"_s) && stepRange.stepMismatch(current))
         newValue = stepRange.alignValueForStep(current, newValue);
 
     // 8. If the element has a minimum, and value is less than that minimum, then set value to the smallest value that, when subtracted from the step
@@ -1222,6 +1222,14 @@ void InputType::createShadowSubtreeIfNeeded()
     element()->ensureUserAgentShadowRoot();
     m_hasCreatedShadowSubtree = true;
     createShadowSubtree();
+}
+
+Decimal InputType::findStepBase(const Decimal& defaultValue) const
+{
+    Decimal stepBase = parseToNumberOrNaN(element()->attributeWithoutSynchronization(minAttr));
+    if (!stepBase.isFinite())
+        stepBase = parseToNumber(element()->attributeWithoutSynchronization(valueAttr), defaultValue);
+    return stepBase;
 }
 
 } // namespace WebCore

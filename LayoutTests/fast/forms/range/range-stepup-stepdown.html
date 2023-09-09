@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -9,13 +9,29 @@
 <script>
 description('Check stepUp() and stepDown() bahevior for range type.');
 
-var input = document.createElement('input');
+var input;
+function createRangeElement() {
+    input = document.createElement('input');
+    input.type = 'range';
+}
 
 function setInputAttributes(min, max, step, value) {
     input.min = min;
     input.max = max;
     input.step = step;
     input.value = value;
+}
+
+function createInputWithContentAttributes(min, max, step, value) {
+    createRangeElement();
+    function setIfNonNull(attribute, value) {
+        if (typeof value !== "null")
+	    input.setAttribute(attribute, value);
+    }
+    setIfNonNull("min", min);
+    setIfNonNull("max", max);
+    setIfNonNull("step", step);
+    setIfNonNull("value", value);
 }
 
 function stepUp(value, step, max, optionalStepCount) {
@@ -57,30 +73,29 @@ function stepDownExplicitBounds(min, max, step, value, stepCount) {
     return input.value;
 }
 
-input.type = 'range';
+createRangeElement();
 debug('function arguments are (min, max, step, value, [stepCount])');
 debug('Using the default values');
-shouldBe('stepUpExplicitBounds(null, null, null, "")', '"51"');
-shouldBe('stepDownExplicitBounds(null, null, null, "")', '"49"');
+shouldBeEqualToString('stepUpExplicitBounds(null, null, null, "")', '51');
+shouldBeEqualToString('stepDownExplicitBounds(null, null, null, "")', '49');
 
 debug('');
 debug('Non-number arguments (stepCount)');
-shouldBe('stepUpExplicitBounds(null, null, null, "0", "0")', '"0"');
-shouldBe('stepDownExplicitBounds(null, null, null, "0", "0")', '"0"');
-shouldBe('stepUpExplicitBounds(null, null, null, "0", "foo")', '"0"');
-shouldBe('stepDownExplicitBounds(null, null, null, "0", "foo")', '"0"');
-shouldBe('stepUpExplicitBounds(null, null, null, "0", null)', '"0"');
-shouldBe('stepDownExplicitBounds(null, null, null, "0", null)', '"0"');
+shouldBeEqualToString('stepUpExplicitBounds(null, null, null, "0", "0")', '0');
+shouldBeEqualToString('stepDownExplicitBounds(null, null, null, "0", "0")', '0');
+shouldBeEqualToString('stepUpExplicitBounds(null, null, null, "0", "foo")', '0');
+shouldBeEqualToString('stepDownExplicitBounds(null, null, null, "0", "foo")', '0');
+shouldBeEqualToString('stepUpExplicitBounds(null, null, null, "0", null)', '0');
+shouldBeEqualToString('stepDownExplicitBounds(null, null, null, "0", null)', '0');
 
 debug('');
 debug('Normal cases');
-shouldBe('stepUpExplicitBounds(null, null, null, "0")', '"1"');
-shouldBe('stepUpExplicitBounds(null, null, null, "1", 2)', '"3"');
-shouldBe('stepUpExplicitBounds(null, null, null, "3", -1)', '"2"');
-shouldBe('stepDownExplicitBounds("-100", null, null, "2")', '"1"');
-shouldBe('stepDownExplicitBounds("-100", null, null, "1", 2)', '"-1"');
-shouldBe('stepDownExplicitBounds("-100", null, null, "-1", -1)', '"0"');
-
+shouldBeEqualToString('stepUpExplicitBounds(null, null, null, "0")', '1');
+shouldBeEqualToString('stepUpExplicitBounds(null, null, null, "1", 2)', '3');
+shouldBeEqualToString('stepUpExplicitBounds(null, null, null, "3", -1)', '2');
+shouldBeEqualToString('stepDownExplicitBounds("-100", null, null, "2")', '1');
+shouldBeEqualToString('stepDownExplicitBounds("-100", null, null, "1", 2)', '-1');
+shouldBeEqualToString('stepDownExplicitBounds("-100", null, null, "-1", -1)', '0');
 debug('');
 debug('Fractional cases')
 // "When the element is suffering from a step mismatch, the user agent must
@@ -209,18 +224,30 @@ shouldBe('stepDownExplicitBounds(-10, 10, .1, "-2.")', '"-2.1"');
 
 debug('');
 debug('Extra arguments');
-shouldBe('setInputAttributes(null, null, null, "0"); input.stepUp(1,2); input.value', '"1"');
-shouldBe('setInputAttributes(null, null, null, "1"); input.stepDown(1,3); input.value', '"0"');
+shouldBeEqualToString('setInputAttributes(null, null, null, "0"); input.stepUp(1,2); input.value', '1');
+shouldBeEqualToString('setInputAttributes(null, null, null, "1"); input.stepDown(1,3); input.value', '0');
 
 debug('');
 debug('Invalid step value');
-shouldBe('stepUpExplicitBounds(null, null, "foo", "0")', '"1"');
-shouldBe('stepUpExplicitBounds(null, null, "0", "1")', '"2"');
-shouldBe('stepUpExplicitBounds(null, null, "-1", "2")', '"3"');
-shouldBe('stepDownExplicitBounds(null, null, "foo", "1")', '"0"');
-shouldBe('stepDownExplicitBounds(null, null, "0", "2")', '"1"');
-shouldBe('stepDownExplicitBounds(null, null, "-1", "3")', '"2"');
+shouldBeEqualToString('stepUpExplicitBounds(null, null, "foo", "0")', '1');
+shouldBeEqualToString('stepUpExplicitBounds(null, null, "0", "1")', '2');
+shouldBeEqualToString('stepUpExplicitBounds(null, null, "-1", "2")', '3');
+shouldBeEqualToString('stepDownExplicitBounds(null, null, "foo", "1")', '0');
+shouldBeEqualToString('stepDownExplicitBounds(null, null, "0", "2")', '1');
+shouldBeEqualToString('stepDownExplicitBounds(null, null, "-1", "3")', '2');
 
+debug('');
+debug('Step bases');
+shouldBeEqualToString('createInputWithContentAttributes(0, 100, "20", "50"); input.value', '60');
+shouldBeEqualToString('createInputWithContentAttributes(null, null, "50", "25"); input.value', '25');
+shouldBeEqualToString('createInputWithContentAttributes(null, null, "50", "25"); input.stepUp(1); input.value', '75');
+shouldBeEqualToString('createInputWithContentAttributes(null, null, "50", "25"); input.stepUp(1); input.stepDown(1); input.value', '25');
+// FIXME: these shouldn't throw according to the spec; commented-out version give its expected outcomes.
+// shouldBeEqualToString('createInputWithContentAttributes(null, null, "50", "25"); input.stepUp(2); input.stepDown(2); input.value', '25');
+// shouldBeEqualToString('createInputWithContentAttributes(null, null, "7", "22"); input.stepUp(40); input.value', '99');
+
+// Reset 'input' for follow-on tests.
+createRangeElement();
 debug('');
 debug('Step=any');
 shouldThrowErrorName('stepUpExplicitBounds(null, null, "any", "1")', "InvalidStateError");
@@ -228,29 +255,29 @@ shouldThrowErrorName('stepDownExplicitBounds(null, null, "any", "1")', "InvalidS
 
 debug('');
 debug('Overflow/underflow');
-shouldBe('stepUpExplicitBounds(null, "100", "1", "99")', '"100"');
+shouldBeEqualToString('stepUpExplicitBounds(null, "100", "1", "99")', '100');
 shouldBe('stepUpExplicitBounds(null, "100", "1", "100")', '"100"');
-shouldBe('input.value', '"100"');
+shouldBeEqualToString('input.value', '100');
 shouldBe('stepUpExplicitBounds(null, "100", "1", "99", "2")', '"100"');
-shouldBe('input.value', '"100"');
-shouldBe('stepDownExplicitBounds("0", null, "1", "1")', '"0"');
+shouldBeEqualToString('input.value', '100');
+shouldBeEqualToString('stepDownExplicitBounds("0", null, "1", "1")', '0');
 shouldBe('stepDownExplicitBounds("0", null, "1", "0")', '"0"');
-shouldBe('input.value', '"0"');
+shouldBeEqualToString('input.value', '0');
 shouldBe('stepDownExplicitBounds("0", null, "1", "1", "2")', '"0"');
-shouldBe('input.value', '"0"');
+shouldBeEqualToString('input.value', '0');
 shouldBe('stepDownExplicitBounds(null, null, "3.40282346e+38", "1", "2")', '"0"');
-shouldBe('stepUpExplicitBounds(-100, 0, 1, -1)', '"0"');
+shouldBeEqualToString('stepUpExplicitBounds(-100, 0, 1, -1)', '0');
 shouldBe('stepUpExplicitBounds(null, 0, 1, 0)', '"0"');
 shouldBe('stepUpExplicitBounds(-100, 0, 1, -1, 2)', '"0"');
-shouldBe('input.value', '"0"');
+shouldBeEqualToString('input.value', '0');
 shouldBe('stepUpExplicitBounds(null, null, "3.40282346e+38", "1", "2")', '"0"');
 
 debug('');
 debug('stepDown()/stepUp() for stepMismatch values');
-shouldBe('stepUpExplicitBounds(null, null, 2, 1)', '"4"');
-shouldBe('input.stepDown(); input.value', '"2"');
-shouldBe('stepUpExplicitBounds(0, null, 10, 9, 9)', '"100"');
-shouldBe('stepDownExplicitBounds(0, null, 10, 19)', '"10"');
+shouldBeEqualToString('stepUpExplicitBounds(null, null, 2, 1)', '4');
+shouldBeEqualToString('input.stepDown(); input.value', '2');
+shouldBeEqualToString('stepUpExplicitBounds(0, null, 10, 9, 9)', '100');
+shouldBeEqualToString('stepDownExplicitBounds(0, null, 10, 19)', '10');
 
 debug('');
 debug('value + step is <= max, but rounded result would be > max.');
@@ -258,23 +285,22 @@ shouldBe('stepUpExplicitBounds(null, 99, 10, 89)', '"90"');
 
 debug('');
 debug('Huge value and small step');
-shouldBe('stepUpExplicitBounds(0, 1e38, 1, 1e38, 999999)', '"1e+38"');
-shouldBe('stepDownExplicitBounds(0, 1e38, 1, 1e38, 999999)', '"1e+38"');
+shouldBeEqualToString('stepUpExplicitBounds(0, 1e38, 1, 1e38, 999999)', '1e+38');
+shouldBeEqualToString('stepDownExplicitBounds(0, 1e38, 1, 1e38, 999999)', '1e+38');
 
 debug('');
 debug('Fractional numbers');
-shouldBe('stepUpExplicitBounds(null, null, 0.33333333333333333, 0, 3)', '"1"');
-shouldBe('stepUpExplicitBounds(null, null, 0.1, 1)', '"1.1"');
-shouldBe('stepUpExplicitBounds(null, null, 0.1, 1, 8)', '"1.8"');
-shouldBe('stepUpExplicitBounds(null, null, 0.1, 1, 10)', '"2"');
-shouldBe('input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.value', '"3"');
-shouldBe('stepUpExplicitBounds(0, 1, 0.003921568627450980, 0, 255)', '"1"');
-shouldBe('for (var i = 0; i < 255; i++) { input.stepDown(); }; input.value', '"0"');
-shouldBe('stepDownExplicitBounds(null, null, 0.1, 1, 8)', '"0.2"');
-shouldBe('stepDownExplicitBounds(null, null, 0.1, 1)', '"0.9"');
+shouldBeEqualToString('stepUpExplicitBounds(null, null, 0.33333333333333333, 0, 3)', '1');
+shouldBeEqualToString('stepUpExplicitBounds(null, null, 0.1, 1)', '1.1');
+shouldBeEqualToString('stepUpExplicitBounds(null, null, 0.1, 1, 8)', '1.8');
+shouldBeEqualToString('stepUpExplicitBounds(null, null, 0.1, 1, 10)', '2');
+shouldBeEqualToString('input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.value', '3');
+shouldBeEqualToString('stepUpExplicitBounds(0, 1, 0.003921568627450980, 0, 255)', '1');
+shouldBeEqualToString('for (var i = 0; i < 255; i++) { input.stepDown(); }; input.value', '0');
+shouldBeEqualToString('stepDownExplicitBounds(null, null, 0.1, 1, 8)', '0.2');
+shouldBeEqualToString('stepDownExplicitBounds(null, null, 0.1, 1)', '0.9');
 
 debug('');
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

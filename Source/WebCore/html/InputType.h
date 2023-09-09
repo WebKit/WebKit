@@ -248,6 +248,7 @@ public:
     virtual float decorationWidth() const;
     bool stepMismatch(const String&) const;
     virtual bool getAllowedValueStep(Decimal*) const;
+    Decimal findStepBase(const Decimal&) const;
     virtual StepRange createStepRange(AnyStepHandling) const;
     virtual ExceptionOr<void> stepUp(int);
     virtual void stepUpFromRenderer(int);
