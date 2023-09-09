@@ -446,6 +446,28 @@ What component in 'WebKit' should the bug be associated with?:
                 bugzilla.Tracker.Redaction(True, "matches 'version:Other'"),
             )
 
+    def test_redacted_duplicate(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), projects=mocks.PROJECTS):
+            tracker = bugzilla.Tracker(self.URL, redact={'component:Text': True})
+            self.assertEqual(tracker.issue(1).redacted, bugzilla.Tracker.Redaction(True, "matches 'component:Text'"))
+            self.assertEqual(tracker.issue(2).redacted, False)
+            tracker.issue(1).close(original=tracker.issue(2))
+            self.assertEqual(tracker.issue(2).redacted, bugzilla.Tracker.Redaction(True, "matches 'component:Text'"))
+
+    def test_redacted_original(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), projects=mocks.PROJECTS):
+            tracker = bugzilla.Tracker(self.URL, redact={'component:Text': True})
+            self.assertEqual(tracker.issue(1).redacted, bugzilla.Tracker.Redaction(True, "matches 'component:Text'"))
+            self.assertEqual(tracker.issue(2).redacted, False)
+            tracker.issue(2).close(original=tracker.issue(1))
+            self.assertEqual(tracker.issue(2).redacted, bugzilla.Tracker.Redaction(True, "matches 'component:Text'"))
+
     def test_redaction_exception(self):
         with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS):
             self.assertEqual(bugzilla.Tracker(

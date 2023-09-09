@@ -261,6 +261,21 @@ class RadarModel(object):
     def milestone_associations(self, milestone=None):
         return RadarModel.MilestoneAssociations(milestone or self.milestone)
 
+    def relationships(self, relationships=None):
+        if not relationships or len(relationships) != 1:
+            raise ValueError('Invalid radarclient call')
+        if relationships[0] != Radar.Relationship.TYPE_ORIGINAL_OF:
+            raise ValueError("Unknown relationship type '{}'".format(relationships[0]))
+        result = []
+        for data in self.client.parent.issues.values():
+            if (data.get('original') or {}).get('id') != self.id:
+                continue
+            result.append(Radar.Relationship(
+                Radar.Relationship.TYPE_ORIGINAL_OF,
+                self, RadarModel(self.client, data),
+            ))
+        return result
+
 
 class RadarClient(object):
     def __init__(self, parent, authentication_strategy):
@@ -405,6 +420,15 @@ class Radar(Base, ContextStack):
             self.text = text
             self.addedAt = addedAt
             self.addedBy = addedBy
+
+    class Relationship(object):
+        TYPE_ORIGINAL_OF = 'Original of'
+
+        def __init__(self, type, radar, related_radar=None):
+            self.type = type
+            self.radar = radar
+            self.related_radar = related_radar
+            self.related_radar_id = related_radar.id if related_radar else None
 
     class exceptions(object):
         class UnsuccessfulResponseException(Exception):
