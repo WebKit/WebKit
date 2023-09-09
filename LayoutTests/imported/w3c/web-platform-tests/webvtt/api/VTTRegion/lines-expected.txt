@@ -1,3 +1,3 @@
 
-FAIL VTTRegion.lines script-created region The index is not in the allowed range.
+PASS VTTRegion.lines script-created region
 

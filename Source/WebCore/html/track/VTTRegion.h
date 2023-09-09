@@ -62,8 +62,8 @@ public:
     double width() const { return m_width; }
     ExceptionOr<void> setWidth(double);
 
-    int lines() const { return m_lines; }
-    ExceptionOr<void> setLines(int);
+    unsigned lines() const { return m_lines; }
+    void setLines(unsigned);
 
     double regionAnchorX() const { return m_regionAnchor.x(); }
     ExceptionOr<void> setRegionAnchorX(double);

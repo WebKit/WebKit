@@ -102,8 +102,7 @@ RUN(region.width = invalidPercentageValues[index])
 TypeError: The provided value is non-finite
 EXPECTED (region.width == '100') OK
 RUN(region.lines = -1)
-IndexSizeError: The index is not in the allowed range.
-EXPECTED (region.lines == '3') OK
+EXPECTED (region.lines == '4294967295') OK
 
 ** Test that proper mutation keeps assigned value. **
 RUN(region.lines = 130)

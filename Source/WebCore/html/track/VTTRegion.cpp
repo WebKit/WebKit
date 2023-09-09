@@ -84,12 +84,9 @@ ExceptionOr<void> VTTRegion::setWidth(double value)
     return { };
 }
 
-ExceptionOr<void> VTTRegion::setLines(int value)
+void VTTRegion::setLines(unsigned value)
 {
-    if (value < 0)
-        return Exception { IndexSizeError };
     m_lines = value;
-    return { };
 }
 
 ExceptionOr<void> VTTRegion::setRegionAnchorX(double value)
@@ -224,11 +221,11 @@ void VTTRegion::parseSettingValue(RegionSetting setting, VTTScanner& input)
         break;
     }
     case Lines: {
-        int number;
+        unsigned number;
         if (input.scanDigits(number) && parsedEntireRun(input, valueRun))
             m_lines = number;
         else
-            LOG(Media, "VTTRegion::parseSettingValue, invalid Height");
+            LOG(Media, "VTTRegion::parseSettingValue, invalid Lines");
         break;
     }
     case RegionAnchor: {

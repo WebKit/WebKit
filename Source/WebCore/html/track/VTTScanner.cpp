@@ -117,7 +117,7 @@ String VTTScanner::restOfInputAsString()
     return extractString(rest);
 }
 
-unsigned VTTScanner::scanDigits(int& number)
+unsigned VTTScanner::scanDigits(unsigned& number)
 {
     Run runOfDigits = collectWhile<isASCIIDigit>();
     if (runOfDigits.isEmpty()) {
@@ -132,8 +132,8 @@ unsigned VTTScanner::scanDigits(int& number)
     else
         string = { m_data.characters16, numDigits };
 
-    // Since these are ASCII digits, the only failure mode is overflow, so use the maximum int value.
-    number = parseInteger<int>(string).value_or(std::numeric_limits<int>::max());
+    // Since these are ASCII digits, the only failure mode is overflow, so use the maximum unsigned value.
+    number = parseInteger<unsigned>(string).value_or(std::numeric_limits<unsigned>::max());
 
     // Consume the digits.
     seekTo(runOfDigits.end());
