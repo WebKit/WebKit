@@ -32,6 +32,7 @@
 #include "JSDOMPromise.h"
 #include "JSDOMWindow.h"
 #include "ScriptController.h"
+#include "ScriptDisallowedScope.h"
 #include "WorkerGlobalScope.h"
 #include <JavaScriptCore/BuiltinNames.h>
 #include <JavaScriptCore/Exception.h>
@@ -55,6 +56,16 @@ void DeferredPromise::callFunction(JSGlobalObject& lexicalGlobalObject, ResolveM
 {
     if (shouldIgnoreRequestToFulfill())
         return;
+
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::isScriptAllowedInMainThread());
+
+    JSC::VM& vm = lexicalGlobalObject.vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    auto handleExceptionIfNeeded = makeScopeExit([&] {
+        if (UNLIKELY(scope.exception()))
+            handleUncaughtException(scope, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject));
+    });
 
     if (activeDOMObjectsAreSuspended()) {
         JSC::Strong<JSC::Unknown, ShouldStrongDestructorGrabLock::Yes> strongResolution(lexicalGlobalObject.vm(), resolution);

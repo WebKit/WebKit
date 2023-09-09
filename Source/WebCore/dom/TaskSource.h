@@ -39,6 +39,7 @@ enum class TaskSource : uint8_t {
     MediaElement,
     Microtask,
     Networking,
+    Payment,
     PerformanceTimeline,
     Permission,
     PostedMessageQueue,
