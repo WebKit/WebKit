@@ -469,4 +469,11 @@ NS_ASSUME_NONNULL_END
 @interface AVSampleBufferVideoRenderer (AVSampleBufferVideoRendererWebKitPrivate)
 @property (nonatomic, copy, nullable, getter=_STSLabel) NSString *STSLabel SPI_AVAILABLE(ios(15.0)) API_UNAVAILABLE(macos, tvos, watchos);
 @end
+@interface AVAudioSession (SpatialPreferenceWebKitPrivate)
+@property (readonly, nullable) NSString* spatialTrackingLabel SPI_AVAILABLE(xros(1.0)) API_UNAVAILABLE(ios, watchos, tvos, macos);
+@end
 #endif
+
+@interface NSObject (AVSampleBufferRenderSynchronizer_PrivateWebKitStaged_114060722)
+- (void)resetRendererTrackedBySTS SPI_AVAILABLE(ios(15.0)) API_UNAVAILABLE(macos, tvos, watchos);
+@end

@@ -432,8 +432,11 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setPageIsVisible(bool visible)
     if (!visible) {
         AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
         [m_sampleBufferDisplayLayer sampleBufferRenderer].STSLabel = session.spatialTrackingLabel;
-    } else
+    } else {
         [m_sampleBufferDisplayLayer sampleBufferRenderer].STSLabel = nil;
+        if ([m_synchronizer respondsToSelector:@selector(resetRendererTrackedBySTS)])
+            [m_synchronizer resetRendererTrackedBySTS];
+    }
 #endif
 }
 
