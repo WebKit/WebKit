@@ -87,6 +87,23 @@ void GraphicsContext::restore(GraphicsContextState::Purpose purpose)
         m_stack.clear();
 }
 
+void GraphicsContext::unwindStateStack(unsigned count)
+{
+    ASSERT(count <= stackSize());
+    while (count-- > 0) {
+        switch (m_state.purpose()) {
+        case GraphicsContextState::Purpose::SaveRestore:
+            restore();
+            break;
+        case GraphicsContextState::Purpose::TransparencyLayer:
+            endTransparencyLayer();
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    }
+}
+
 void GraphicsContext::mergeLastChanges(const GraphicsContextState& state, const std::optional<GraphicsContextState>& lastDrawingState)
 {
     m_state.mergeLastChanges(state, lastDrawingState);

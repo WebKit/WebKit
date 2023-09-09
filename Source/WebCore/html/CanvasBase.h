@@ -135,6 +135,8 @@ public:
     bool postProcessPixelBufferResults(Ref<PixelBuffer>&&) const;
     void recordLastFillText(const String&);
 
+    void resetGraphicsContextState() const;
+
 protected:
     explicit CanvasBase(IntSize, const std::optional<NoiseInjectionHashSalt>&);
 
@@ -145,8 +147,6 @@ protected:
     RefPtr<ImageBuffer> setImageBuffer(RefPtr<ImageBuffer>&&) const;
     virtual bool hasCreatedImageBuffer() const { return false; }
     static size_t activePixelMemory();
-
-    void resetGraphicsContextState() const;
 
     RefPtr<ImageBuffer> allocateImageBuffer(bool avoidBackendSizeCheckForTesting) const;
     String lastFillText() const { return m_lastFillText; }

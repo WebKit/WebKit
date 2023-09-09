@@ -349,7 +349,7 @@ PASS OffscreenCanvasRenderingContext2D interface: operation commit()
 PASS OffscreenCanvasRenderingContext2D interface: attribute canvas
 PASS OffscreenCanvasRenderingContext2D interface: operation save()
 PASS OffscreenCanvasRenderingContext2D interface: operation restore()
-FAIL OffscreenCanvasRenderingContext2D interface: operation reset() assert_own_property: interface prototype object missing non-static operation expected property "reset" missing
+PASS OffscreenCanvasRenderingContext2D interface: operation reset()
 FAIL OffscreenCanvasRenderingContext2D interface: operation isContextLost() assert_own_property: interface prototype object missing non-static operation expected property "isContextLost" missing
 PASS OffscreenCanvasRenderingContext2D interface: operation scale(unrestricted double, unrestricted double)
 PASS OffscreenCanvasRenderingContext2D interface: operation rotate(unrestricted double)

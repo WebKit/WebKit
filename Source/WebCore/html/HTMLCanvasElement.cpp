@@ -583,9 +583,10 @@ void HTMLCanvasElement::reset()
     int w = limitToOnlyHTMLNonNegative(attributeWithoutSynchronization(widthAttr), defaultWidth);
     int h = limitToOnlyHTMLNonNegative(attributeWithoutSynchronization(heightAttr), defaultHeight);
 
-    resetGraphicsContextState();
     if (is<CanvasRenderingContext2D>(m_context))
         downcast<CanvasRenderingContext2D>(*m_context).reset();
+    else
+        resetGraphicsContextState();
 
     IntSize oldSize = size();
     IntSize newSize(w, h);
