@@ -314,7 +314,8 @@ fast/css/accent-color/text.html [ Pass ]
 
 # Only GStreamer is honoring the CodecDelay field
 webkit.org/b/254222 media/media-source/media-webm-opus-codecdelay.html [ Pass ]
-
+# GStreamer seeks to the wrong frame
+webkit.org/b/261335 media/media-source/media-managedmse-seek.html [ Failure ]
 # NOTIFICATION_EVENT tests
 http/tests/workers/service/shownotification-allowed-document.html [ Pass ]
 http/tests/workers/service/shownotification-invalid-data.html [ Pass ]
@@ -1101,7 +1102,6 @@ imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-during-x
 
 # Expected to pass when we enable playbin3 by default.
 webkit.org/b/131546 media/track/track-in-band-cues-added-once.html [ Timeout Crash ]
-webkit.org/b/131546 webkit.org/b/198830 media/track/track-in-band-legacy-api.html [ Failure Crash ]
 webkit.org/b/131546 media/track/track-in-band-mode.html [ Failure ]
 
 # Even with playbin3 enabled there is still a failure here, h264parse is unable
@@ -1144,7 +1144,6 @@ imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.
 imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?h265_hevc [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.worker.html?h265_annexb [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.worker.html?h265_hevc [ Pass ]
-http/wpt/webcodecs/hevc-encoder-config.https.any.html [ Failure ]
 
 imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.worker.html [ Pass ]
 
@@ -1831,6 +1830,8 @@ webkit.org/b/235885 fast/mediastream/RTCPeerConnection-statsSelector.html [ Skip
 
 webrtc/video-av1.html [ Skip ]
 
+webrtc/h265.html [ Pass Timeout ]
+
 # GStreamer's DTLS agent currently generates RSA certificates only. DTLS 1.2 is not supported yet (AFAIK).
 webrtc/datachannel/dtls10.html [ Failure ]
 
@@ -1911,7 +1912,6 @@ webkit.org/b/235885 webrtc/filtering-ice-candidate-after-reload.html [ Failure ]
 webkit.org/b/235885 webrtc/peer-connection-track-end.html [ Failure ]
 webkit.org/b/235885 webrtc/peerconnection-page-cache-long.html [ Timeout ]
 webkit.org/b/235885 webrtc/peerconnection-page-cache.html [ Timeout ]
-webkit.org/b/235885 webrtc/video-getParameters.html [ Failure ]
 webkit.org/b/235885 webrtc/video-stats.html [ Failure ]
 webkit.org/b/235885 webrtc/vp8-then-h264.html [ Failure Timeout Crash ]
 webkit.org/b/252878 fast/mediastream/mediastreamtrack-video-clone.html [ Crash Failure Timeout Pass ]
@@ -1980,6 +1980,7 @@ webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Skip ]
 
 # Flakes moved from wpe/TestExpectations -- if they're flaky in WPE they're very likely to be flaky in GTK
 http/tests/webrtc/muted-video-mediastream-invisible-autoplay.html [ Failure Timeout Pass ]
+webkit.org/b/260072 fast/mediastream/success.html [ Crash Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
@@ -2371,9 +2372,6 @@ media/unsupported-rtsp.html [ WontFix Skip ]
 
 # This test is specific to QuickTime media engine.
 media/video-does-not-loop.html [ WontFix Timeout Crash ]
-
-# Requires media engine closed caption support.
-media/media-captions.html [ WontFix Failure ]
 
 # No support for MPEG-4 caption support
 webkit.org/b/131546 media/track/track-forced-subtitles-in-band.html [ Timeout Failure Crash ]

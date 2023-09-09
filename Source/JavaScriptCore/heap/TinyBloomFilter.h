@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/StdLibExtras.h>
+
 namespace JSC {
 
 template <typename Bits = uintptr_t>
@@ -38,6 +40,8 @@ public:
     bool ruleOut(Bits) const; // True for 0.
     void reset();
     Bits bits() const { return m_bits; }
+
+    static ptrdiff_t offsetOfBits() { return OBJECT_OFFSETOF(TinyBloomFilter, m_bits); }
 
 private:
     Bits m_bits { 0 };

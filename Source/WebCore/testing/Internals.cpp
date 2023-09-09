@@ -3374,11 +3374,6 @@ ExceptionOr<void> Internals::setElementUsesDisplayListDrawing(Element& element, 
     if (!element.renderer())
         return Exception { InvalidAccessError };
 
-    if (is<HTMLCanvasElement>(element)) {
-        downcast<HTMLCanvasElement>(element).setUsesDisplayListDrawing(usesDisplayListDrawing);
-        return { };
-    }
-
     if (!element.renderer()->hasLayer())
         return Exception { InvalidAccessError };
 
@@ -4127,7 +4122,7 @@ JSC::JSValue Internals::evaluateInWorldIgnoringException(const String& name, con
     auto* document = contextDocument();
     auto& scriptController = document->frame()->script();
     auto world = ScriptController::createWorld(name);
-    return scriptController.executeScriptInWorldIgnoringException(world, source);
+    return scriptController.executeScriptInWorldIgnoringException(world, source, JSC::SourceTaintedOrigin::Untainted);
 }
 
 #if !PLATFORM(MAC)

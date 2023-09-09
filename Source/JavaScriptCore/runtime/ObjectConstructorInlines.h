@@ -50,7 +50,20 @@ ALWAYS_INLINE bool canPerformFastPropertyNameEnumerationForJSONStringifyWithSide
     return true;
 }
 
-ALWAYS_INLINE bool objectAssignFast(VM& vm, JSObject* target, JSObject* source, Vector<RefPtr<UniquedStringImpl>, 8>& properties, MarkedArgumentBuffer& values)
+ALWAYS_INLINE void objectAssignIndexedPropertiesFast(JSGlobalObject* globalObject, JSObject* target, JSObject* source)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    source->forEachIndexedProperty(globalObject, [&](unsigned index, JSValue value) {
+        target->putDirectIndex(globalObject, index, value);
+        RETURN_IF_EXCEPTION(scope, IterationStatus::Done);
+        return IterationStatus::Continue;
+    });
+    RETURN_IF_EXCEPTION(scope, void());
+}
+
+ALWAYS_INLINE bool objectAssignFast(JSGlobalObject* globalObject, JSObject* target, JSObject* source, Vector<RefPtr<UniquedStringImpl>, 8>& properties, MarkedArgumentBuffer& values)
 {
     // |source| Structure does not have any getters. And target can perform fast put.
     // So enumerating properties and putting properties are non observable.
@@ -66,6 +79,8 @@ ALWAYS_INLINE bool objectAssignFast(VM& vm, JSObject* target, JSObject* source, 
     // regression in object-assign-replace. Since the code is small and fast path, we keep both.
 
     // Do not clear since Vector::clear shrinks the backing store.
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     properties.resize(0);
     values.clear();
     bool canUseFastPath = source->fastForEachPropertyWithSideEffectFreeFunctor(vm, [&](const PropertyTableEntry& entry) -> bool {
@@ -83,6 +98,11 @@ ALWAYS_INLINE bool objectAssignFast(VM& vm, JSObject* target, JSObject* source, 
     });
     if (!canUseFastPath)
         return false;
+
+    if (source->canHaveExistingOwnIndexedProperties()) {
+        objectAssignIndexedPropertiesFast(globalObject, target, source);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
 
     // Actually, assigning with empty object (option for example) is common. (`Object.assign(defaultOptions, passedOptions)` where `passedOptions` is empty object.)
     if (properties.size())

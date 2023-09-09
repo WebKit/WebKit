@@ -241,6 +241,7 @@ namespace JSC {
         // Assuming s_constantsGPR is available.
         static void loadGlobalObject(CCallHelpers&, GPRReg);
         static void loadConstant(CCallHelpers&, unsigned constantIndex, GPRReg);
+        static void emitMaterializeMetadataAndConstantPoolRegisters(CCallHelpers&);
 
         void loadCodeBlockConstant(VirtualRegister, JSValueRegs);
         void loadCodeBlockConstantPayload(VirtualRegister, RegisterID);
@@ -330,6 +331,8 @@ namespace JSC {
         void emitArrayProfilingSiteWithCell(const Bytecode&, RegisterID cellGPR, RegisterID scratchGPR);
         template <typename Bytecode>
         void emitArrayProfilingSiteWithCell(const Bytecode&, ptrdiff_t, RegisterID cellGPR, RegisterID scratchGPR);
+
+        void emitArrayProfilingSiteWithCellAndProfile(RegisterID cellGPR, RegisterID profileGPR, RegisterID scratchGPR);
 
         template<typename Op>
         ECMAMode ecmaMode(Op);

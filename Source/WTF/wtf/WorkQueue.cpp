@@ -200,17 +200,10 @@ void WorkQueue::dispatch(Function<void()>&& function)
     WorkQueueBase::dispatch(WTFMove(function));
 }
 
-#if ASSERT_ENABLED
-void WorkQueue::assertIsCurrent() const
+bool WorkQueue::isCurrent() const
 {
-    WTF::assertIsCurrent(threadLikeAssertion());
+    return currentSequence() == m_threadID;
 }
-
-ThreadLikeAssertion WorkQueue::threadLikeAssertion() const
-{
-    return createThreadLikeAssertion(m_threadID);
-}
-#endif
 
 ConcurrentWorkQueue::ConcurrentWorkQueue(const char* name, QOS qos)
     : WorkQueueBase(name, Type::Concurrent, qos)

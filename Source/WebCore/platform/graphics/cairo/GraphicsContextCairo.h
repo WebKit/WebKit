@@ -80,8 +80,8 @@ public:
     void drawFocusRing(const Path&, float outlineWidth, const Color&) final;
     void drawFocusRing(const Vector<FloatRect>&, float outlineOffset, float outlineWidth, const Color&) final;
 
-    void save() final;
-    void restore() final;
+    void save(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
+    void restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
 
     void translate(float, float) final;
     void rotate(float) final;

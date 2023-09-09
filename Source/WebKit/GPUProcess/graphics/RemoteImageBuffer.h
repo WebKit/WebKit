@@ -33,6 +33,7 @@
 #include <WebCore/ImageBuffer.h>
 
 namespace IPC {
+class Semaphore;
 class StreamConnectionWorkQueue;
 }
 
@@ -61,6 +62,10 @@ private:
     void putPixelBuffer(Ref<WebCore::PixelBuffer>, WebCore::IntRect srcRect, WebCore::IntPoint destPoint, WebCore::AlphaPremultiplication destFormat);
     void getShareableBitmap(WebCore::PreserveResolution, CompletionHandler<void(ShareableBitmap::Handle&&)>&&);
     void getFilteredImage(Ref<WebCore::Filter>, CompletionHandler<void(ShareableBitmap::Handle&&)>&&);
+    void convertToLuminanceMask();
+    void transformToColorSpace(const WebCore::DestinationColorSpace&);
+    void flushContext(IPC::Semaphore&&);
+    void flushContextSync(CompletionHandler<void()>&&);
 
     RefPtr<RemoteRenderingBackend> m_backend;
     Ref<WebCore::ImageBuffer> m_imageBuffer;

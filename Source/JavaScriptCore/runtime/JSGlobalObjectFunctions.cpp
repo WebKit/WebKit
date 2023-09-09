@@ -505,7 +505,8 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncEval, (JSGlobalObject* globalObject, CallFram
         return JSValue::encode(parsedObject);
 
     SourceOrigin sourceOrigin = callFrame->callerSourceOrigin(vm);
-    EvalExecutable* eval = IndirectEvalExecutable::tryCreate(globalObject, makeSource(s, sourceOrigin), DerivedContextType::None, false, EvalContextType::None);
+    SourceTaintedOrigin sourceTaintedOrigin = computeNewSourceTaintedOriginFromStack(vm, callFrame);
+    EvalExecutable* eval = IndirectEvalExecutable::tryCreate(globalObject, makeSource(s, sourceOrigin, sourceTaintedOrigin), DerivedContextType::None, false, EvalContextType::None);
     EXCEPTION_ASSERT(!!scope.exception() == !eval);
     if (!eval)
         return encodedJSValue();
@@ -935,7 +936,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
         RETURN_IF_EXCEPTION(scope, { });
     }
 
-    if (canPerformFastPropertyEnumerationForCopyDataProperties(source->structure())) {
+    if (LIKELY(canPerformFastPropertyEnumerationForCopyDataProperties(source->structure()))) {
         Vector<RefPtr<UniquedStringImpl>, 8> properties;
         MarkedArgumentBuffer values;
 
@@ -946,7 +947,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
         // that ends up transitioning the structure underneath us.
         // https://bugs.webkit.org/show_bug.cgi?id=187837
 
-        source->structure()->forEachProperty(vm, [&] (const PropertyTableEntry& entry) -> bool {
+        source->structure()->forEachProperty(vm, [&](const PropertyTableEntry& entry) ALWAYS_INLINE_LAMBDA {
             PropertyName propertyName(entry.key());
             if (propertyName.isPrivateName())
                 return true;
@@ -961,43 +962,46 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
             values.appendWithCrashOnOverflow(source->getDirect(entry.offset()));
             return true;
         });
-
         RETURN_IF_EXCEPTION(scope, { });
 
-        for (size_t i = 0; i < properties.size(); ++i) {
-            // FIXME: We could put properties in a batching manner to accelerate CopyDataProperties more.
-            // https://bugs.webkit.org/show_bug.cgi?id=185358
-            target->putDirect(vm, properties[i].get(), values.at(i));
+        // excludedSet is no longer used.
+        ensureStillAliveHere(unlinkedCodeBlock);
+
+        if (LIKELY(target->inherits<JSFinalObject>() && target->canPerformFastPutInlineExcludingProto() && target->isStructureExtensible()))
+            target->putOwnDataPropertyBatching(vm, properties.data(), values.data(), properties.size());
+        else {
+            for (size_t i = 0; i < properties.size(); ++i)
+                target->putDirect(vm, properties[i].get(), values.at(i));
         }
-    } else {
-        PropertyNameArray propertyNames(vm, PropertyNameMode::StringsAndSymbols, PrivateSymbolMode::Exclude);
-        source->methodTable()->getOwnPropertyNames(source, globalObject, propertyNames, DontEnumPropertiesMode::Include);
-        RETURN_IF_EXCEPTION(scope, { });
-
-        for (const auto& propertyName : propertyNames) {
-            if (isPropertyNameExcluded(propertyName))
-                continue;
-
-            PropertySlot slot(source, PropertySlot::InternalMethodType::GetOwnProperty);
-            bool hasProperty = source->methodTable()->getOwnPropertySlot(source, globalObject, propertyName, slot);
-            RETURN_IF_EXCEPTION(scope, { });
-            if (!hasProperty)
-                continue;
-            if (slot.attributes() & PropertyAttribute::DontEnum)
-                continue;
-
-            JSValue value;
-            if (LIKELY(!slot.isTaintedByOpaqueObject()))
-                value = slot.getValue(globalObject, propertyName);
-            else
-                value = source->get(globalObject, propertyName);
-            RETURN_IF_EXCEPTION(scope, { });
-
-            target->putDirectMayBeIndex(globalObject, propertyName, value);
-            RETURN_IF_EXCEPTION(scope, { });
-        }
+        return JSValue::encode(target);
     }
 
+    PropertyNameArray propertyNames(vm, PropertyNameMode::StringsAndSymbols, PrivateSymbolMode::Exclude);
+    source->methodTable()->getOwnPropertyNames(source, globalObject, propertyNames, DontEnumPropertiesMode::Include);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    for (const auto& propertyName : propertyNames) {
+        if (isPropertyNameExcluded(propertyName))
+            continue;
+
+        PropertySlot slot(source, PropertySlot::InternalMethodType::GetOwnProperty);
+        bool hasProperty = source->methodTable()->getOwnPropertySlot(source, globalObject, propertyName, slot);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (!hasProperty)
+            continue;
+        if (slot.attributes() & PropertyAttribute::DontEnum)
+            continue;
+
+        JSValue value;
+        if (LIKELY(!slot.isTaintedByOpaqueObject()))
+            value = slot.getValue(globalObject, propertyName);
+        else
+            value = source->get(globalObject, propertyName);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        target->putDirectMayBeIndex(globalObject, propertyName, value);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
     ensureStillAliveHere(unlinkedCodeBlock);
     return JSValue::encode(target);
 }

@@ -149,7 +149,7 @@ struct PossiblyQuotedIdentifier {
             Not,
             Root,
             Scope,
-            RelativeScope, // Like :scope but for internal use with relative selectors like :has(> foo).
+            HasScope, // for internal use, matches the :has() scope
             WindowInactive,
             CornerPresent,
             Decrement,

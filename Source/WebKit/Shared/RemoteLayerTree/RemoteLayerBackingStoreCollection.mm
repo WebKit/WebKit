@@ -255,8 +255,11 @@ void RemoteLayerBackingStoreCollection::scheduleVolatilityTimer()
 RefPtr<WebCore::ImageBuffer> RemoteLayerBackingStoreCollection::allocateBufferForBackingStore(const RemoteLayerBackingStore& backingStore)
 {
     switch (backingStore.type()) {
-    case RemoteLayerBackingStore::Type::IOSurface:
-        return WebCore::ImageBuffer::create<AcceleratedImageBufferShareableMappedBackend>(backingStore.size(), backingStore.scale(), backingStore.colorSpace(), backingStore.pixelFormat(), WebCore::RenderingPurpose::LayerBacking, { nullptr, &WebCore::IOSurfacePool::sharedPool() });
+    case RemoteLayerBackingStore::Type::IOSurface: {
+        ImageBufferCreationContext creationContext;
+        creationContext.surfacePool = &WebCore::IOSurfacePool::sharedPool();
+        return WebCore::ImageBuffer::create<AcceleratedImageBufferShareableMappedBackend>(backingStore.size(), backingStore.scale(), backingStore.colorSpace(), backingStore.pixelFormat(), WebCore::RenderingPurpose::LayerBacking, creationContext);
+    }
     case RemoteLayerBackingStore::Type::Bitmap:
         return WebCore::ImageBuffer::create<UnacceleratedImageBufferShareableBackend>(backingStore.size(), backingStore.scale(), backingStore.colorSpace(), backingStore.pixelFormat(), WebCore::RenderingPurpose::LayerBacking, { });
     }

@@ -83,7 +83,7 @@ public:
     const DragSourceState& stagedDragSource() const { return m_stagedDragSource.value(); }
     enum class DidBecomeActive : bool { No, Yes };
     void clearStagedDragSource(DidBecomeActive = DidBecomeActive::No);
-    UITargetedDragPreview *previewForLifting(UIDragItem *, UIView *contentView, UIView *previewContainer) const;
+    UITargetedDragPreview *previewForLifting(UIDragItem *, UIView *contentView, UIView *previewContainer, const std::optional<WebCore::TextIndicatorData>&) const;
     UITargetedDragPreview *previewForCancelling(UIDragItem *, UIView *contentView, UIView *previewContainer);
     void dragSessionWillDelaySetDownAnimation(dispatch_block_t completion);
     bool shouldRequestAdditionalItemForDragSession(id <UIDragSession>) const;
@@ -118,7 +118,7 @@ private:
     UITargetedDragPreview *defaultDropPreview(UIDragItem *) const;
     BlockPtr<void(UITargetedDragPreview *)> dropPreviewProvider(UIDragItem *);
 
-    RetainPtr<UITargetedDragPreview> createDragPreviewInternal(UIDragItem *, UIView *contentView, UIView *previewContainer, AddPreviewViewToContainer) const;
+    RetainPtr<UITargetedDragPreview> createDragPreviewInternal(UIDragItem *, UIView *contentView, UIView *previewContainer, AddPreviewViewToContainer, const std::optional<WebCore::TextIndicatorData>&) const;
 
     CGPoint m_lastGlobalPosition { CGPointZero };
     CGPoint m_adjustedPositionForDragEnd { CGPointZero };

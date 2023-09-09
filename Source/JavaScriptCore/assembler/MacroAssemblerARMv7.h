@@ -592,6 +592,13 @@ public:
         urshift32(dest, imm, dest);
     }
 
+    void addUnsignedRightShift32(RegisterID src1, RegisterID src2, TrustedImm32 amount, RegisterID dest)
+    {
+        // dest = src1 + (src2 >> amount)
+        urshift32(src2, amount, dataTempRegister);
+        add32(src1, dataTempRegister, dest);
+    }
+
     void sub32(RegisterID src, RegisterID dest)
     {
         m_assembler.sub(dest, dest, src);
@@ -2337,6 +2344,12 @@ public:
     {
         // use addressTempRegister incase the branch32 we call uses dataTempRegister. :-/
         load32WithUnalignedHalfWords(left, addressTempRegister);
+        return branch32(cond, addressTempRegister, right);
+    }
+
+    Jump branch32WithMemory16(RelationalCondition cond, Address left, RegisterID right)
+    {
+        MacroAssemblerHelpers::load16OnCondition(*this, cond, left, addressTempRegister);
         return branch32(cond, addressTempRegister, right);
     }
 

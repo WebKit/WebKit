@@ -94,7 +94,7 @@ a={ssrc:OK}msid:{media-stream-id:OK} {media-stream-track-id:FAILED}
 a=ssrc:{ssrc:OK} cname:{cname:OK}
 a=mid:{mid:OK}
 a=fingerprint:sha-256 {fingerprint:OK}
-m=video 9 UDP/TLS/RTP/SAVPF 97 98 99 100 101 102 103 104 105 106 107 108 96 98 99 100
+m=video 9 UDP/TLS/RTP/SAVPF 97 98 99 100 101 102 103 104 105 106 107 108 109 96 98 99 100
 c=IN IP4 0.0.0.0
 a=setup:actpass
 a=ice-ufrag:{ice-ufrag:OK}
@@ -163,32 +163,38 @@ a=rtcp-fb:104 ccm fir
 a=rtcp-fb:104 transport-cc
 a=msid:{media-stream-id:OK} {media-stream-track-id:OK}
 a=fmtp:104 level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=4d001f
-a=rtpmap:105 AV1/90000
+a=rtpmap:105 H265/90000
 a=rtcp-fb:105 nack
 a=rtcp-fb:105 nack pli
 a=rtcp-fb:105 ccm fir
 a=rtcp-fb:105 transport-cc
 a=msid:{media-stream-id:OK} {media-stream-track-id:OK}
-a=rtpmap:106 VP8/90000
+a=rtpmap:106 AV1/90000
 a=rtcp-fb:106 nack
 a=rtcp-fb:106 nack pli
 a=rtcp-fb:106 ccm fir
 a=rtcp-fb:106 transport-cc
 a=msid:{media-stream-id:OK} {media-stream-track-id:OK}
-a=rtpmap:107 VP9/90000
+a=rtpmap:107 VP8/90000
 a=rtcp-fb:107 nack
 a=rtcp-fb:107 nack pli
 a=rtcp-fb:107 ccm fir
 a=rtcp-fb:107 transport-cc
 a=msid:{media-stream-id:OK} {media-stream-track-id:OK}
-a=fmtp:107 profile-id=0
 a=rtpmap:108 VP9/90000
 a=rtcp-fb:108 nack
 a=rtcp-fb:108 nack pli
 a=rtcp-fb:108 ccm fir
 a=rtcp-fb:108 transport-cc
 a=msid:{media-stream-id:OK} {media-stream-track-id:OK}
-a=fmtp:108 profile-id=2
+a=fmtp:108 profile-id=0
+a=rtpmap:109 VP9/90000
+a=rtcp-fb:109 nack
+a=rtcp-fb:109 nack pli
+a=rtcp-fb:109 ccm fir
+a=rtcp-fb:109 transport-cc
+a=msid:{media-stream-id:OK} {media-stream-track-id:OK}
+a=fmtp:109 profile-id=2
 a=rtpmap:96 red/90000
 a=rtpmap:98 ulpfec/90000
 a=rtpmap:99 rtx/90000
@@ -196,6 +202,8 @@ a=fmtp:99 apt=97
 a=rtpmap:100 rtx/90000
 a=fmtp:100 apt=96
 a=ssrc-group:{semantics:OK} {ssrc-id:OK}
+a={ssrc:OK}msid:{media-stream-id:OK} {media-stream-track-id:FAILED}
+a=ssrc:{ssrc:OK} cname:{cname:OK}
 a={ssrc:OK}msid:{media-stream-id:OK} {media-stream-track-id:FAILED}
 a=ssrc:{ssrc:OK} cname:{cname:OK}
 a={ssrc:OK}msid:{media-stream-id:OK} {media-stream-track-id:FAILED}

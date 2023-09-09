@@ -448,19 +448,9 @@ std::optional<bool> GPUProcessProxy::s_hasVP9HardwareDecoder;
 std::optional<bool> GPUProcessProxy::s_hasVP9ExtensionSupport;
 #endif
 
-void GPUProcessProxy::updateWebGPUEnabled(WebProcessProxy& webProcessProxy, bool webGPUEnabled)
+void GPUProcessProxy::updatePreferencesForWebProcess(WebProcessProxy& webProcessProxy, const GPUProcessPreferencesForWebProcess& preferences)
 {
-    send(Messages::GPUProcess::UpdateWebGPUEnabled(webProcessProxy.coreProcessIdentifier(), webGPUEnabled), 0);
-}
-
-void GPUProcessProxy::updateWebGLEnabled(WebProcessProxy& webProcessProxy, bool webGLEnabled)
-{
-    send(Messages::GPUProcess::UpdateWebGLEnabled(webProcessProxy.coreProcessIdentifier(), webGLEnabled), 0);
-}
-
-void GPUProcessProxy::updateDOMRenderingEnabled(WebProcessProxy& webProcessProxy, bool isDOMRenderingEnabled)
-{
-    send(Messages::GPUProcess::UpdateDOMRenderingEnabled(webProcessProxy.coreProcessIdentifier(), isDOMRenderingEnabled), 0);
+    send(Messages::GPUProcess::UpdatePreferencesForWebProcess(webProcessProxy.coreProcessIdentifier(), preferences), 0);
 }
 
 void GPUProcessProxy::createGPUProcessConnection(WebProcessProxy& webProcessProxy, IPC::Connection::Handle&& connectionIdentifier, GPUProcessConnectionParameters&& parameters)

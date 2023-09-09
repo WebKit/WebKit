@@ -1,6 +1,6 @@
 
 PASS Before adding 'a' to #host: Check #subject1 color
 PASS Before adding 'a' to #host: Check #subject2 color
-FAIL After adding 'a' to #host: Check #subject1 color assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL After adding 'a' to #host: Check #subject2 color assert_equals: expected "rgb(0, 0, 255)" but got "rgb(255, 0, 0)"
+PASS After adding 'a' to #host: Check #subject1 color
+PASS After adding 'a' to #host: Check #subject2 color
 

@@ -1530,6 +1530,7 @@ public:
     void removeIntersectionObserver(IntersectionObserver&);
     unsigned numberOfIntersectionObservers() const { return m_intersectionObservers.size(); }
     void updateIntersectionObservations();
+    void updateIntersectionObservations(const Vector<WeakPtr<IntersectionObserver>>&);
     void scheduleInitialIntersectionObservationUpdate();
     IntersectionObserverData& ensureIntersectionObserverData();
     IntersectionObserverData* intersectionObserverDataIfExists() { return m_intersectionObserverData.get(); }

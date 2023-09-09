@@ -100,8 +100,8 @@ private:
     void resetClip() final { }
     void clip(const FloatRect&) final { }
     void clipOut(const FloatRect&) final { }
-    void save() final { }
-    void restore() final { }
+    void save(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final { }
+    void restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final { }
 
     void drawRaisedEllipse(const FloatRect&, const Color&, const Color&) final { }
 

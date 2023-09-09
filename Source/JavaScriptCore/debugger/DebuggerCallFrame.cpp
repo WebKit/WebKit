@@ -251,7 +251,7 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(VM& vm, const String& scri
     JSScope::collectClosureVariablesUnderTDZ(scope(vm)->jsScope(), variablesUnderTDZ, privateNameEnvironment);
 
     ECMAMode ecmaMode = codeBlock->ownerExecutable()->isInStrictContext() ? ECMAMode::strict() : ECMAMode::sloppy();
-    auto* eval = DirectEvalExecutable::create(globalObject, makeSource(script, callFrame->callerSourceOrigin(vm)), codeBlock->unlinkedCodeBlock()->derivedContextType(), codeBlock->unlinkedCodeBlock()->needsClassFieldInitializer(), codeBlock->unlinkedCodeBlock()->privateBrandRequirement(), codeBlock->unlinkedCodeBlock()->isArrowFunction(), codeBlock->ownerExecutable()->isInsideOrdinaryFunction(), evalContextType, &variablesUnderTDZ, &privateNameEnvironment, ecmaMode);
+    auto* eval = DirectEvalExecutable::create(globalObject, makeSource(script, callFrame->callerSourceOrigin(vm), SourceTaintedOrigin::Untainted), codeBlock->unlinkedCodeBlock()->derivedContextType(), codeBlock->unlinkedCodeBlock()->needsClassFieldInitializer(), codeBlock->unlinkedCodeBlock()->privateBrandRequirement(), codeBlock->unlinkedCodeBlock()->isArrowFunction(), codeBlock->ownerExecutable()->isInsideOrdinaryFunction(), evalContextType, &variablesUnderTDZ, &privateNameEnvironment, ecmaMode);
     if (UNLIKELY(catchScope.exception())) {
         exception = catchScope.exception();
         catchScope.clearException();

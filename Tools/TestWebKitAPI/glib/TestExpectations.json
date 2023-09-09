@@ -55,13 +55,6 @@
             }
         }
     },
-    "TestUIClient": {
-        "subtests": {
-            "/webkit/WebKitWebView/geolocation-permission-requests": {
-                "expected": {"all": {"slow": true}}
-            }
-        }
-    },
     "TestPrinting": {
         "subtests": {
             "/webkit/WebKitPrintOperation/custom-widget": {

@@ -28,6 +28,7 @@
 
 #import "PCMDaemonEntryPoint.h"
 #import "WebPushDaemonMain.h"
+#import "WebPushToolMain.h"
 #import "XPCServiceEntryPoint.h"
 
 int WKXPCServiceMain(int argc, const char** argv)
@@ -43,4 +44,9 @@ int WKAdAttributionDaemonMain(int argc, const char** argv)
 int WKWebPushDaemonMain(int argc, char** argv)
 {
     return WebKit::WebPushDaemonMain(argc, argv);
+}
+
+int WKWebPushToolMain(int argc, char** argv)
+{
+    return WebKit::WebPushToolMain(argc, argv);
 }

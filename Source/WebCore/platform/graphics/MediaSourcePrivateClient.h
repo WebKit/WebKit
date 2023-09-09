@@ -43,7 +43,8 @@ public:
     virtual void setPrivateAndOpen(Ref<MediaSourcePrivate>&&) = 0;
     virtual MediaTime duration() const = 0;
     virtual const PlatformTimeRanges& buffered() const = 0;
-    virtual void seekToTarget(const SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) = 0;
+    virtual void waitForTarget(const SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) = 0;
+    virtual void seekToTime(const MediaTime&, CompletionHandler<void()>&&) = 0;
     virtual void monitorSourceBuffers() = 0;
 
 #if !RELEASE_LOG_DISABLED

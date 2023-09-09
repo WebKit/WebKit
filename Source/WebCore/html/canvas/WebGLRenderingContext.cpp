@@ -30,6 +30,7 @@
 
 #include "ANGLEInstancedArrays.h"
 #include "CachedImage.h"
+#include "EXTBlendFuncExtended.h"
 #include "EXTBlendMinMax.h"
 #include "EXTClipControl.h"
 #include "EXTColorBufferFloat.h"
@@ -146,6 +147,7 @@ std::optional<WebGLExtensionAny> WebGLRenderingContext::getExtension(const Strin
     }
 
     ENABLE_IF_REQUESTED(ANGLEInstancedArrays, m_angleInstancedArrays, "ANGLE_instanced_arrays", ANGLEInstancedArrays::supported(*m_context));
+    ENABLE_IF_REQUESTED(EXTBlendFuncExtended, m_extBlendFuncExtended, "EXT_blend_func_extended", EXTBlendFuncExtended::supported(*m_context) && enableDraftExtensions);
     ENABLE_IF_REQUESTED(EXTBlendMinMax, m_extBlendMinMax, "EXT_blend_minmax", EXTBlendMinMax::supported(*m_context));
     ENABLE_IF_REQUESTED(EXTClipControl, m_extClipControl, "EXT_clip_control", EXTClipControl::supported(*m_context) && enableDraftExtensions);
     ENABLE_IF_REQUESTED(EXTColorBufferHalfFloat, m_extColorBufferHalfFloat, "EXT_color_buffer_half_float", EXTColorBufferHalfFloat::supported(*m_context));
@@ -201,8 +203,9 @@ std::optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
         result.append(nameLiteral ## _s);
 
     APPEND_IF_SUPPORTED("ANGLE_instanced_arrays", ANGLEInstancedArrays::supported(*m_context))
-    APPEND_IF_SUPPORTED("EXT_clip_control", EXTClipControl::supported(*m_context) && enableDraftExtensions)
+    APPEND_IF_SUPPORTED("EXT_blend_func_extended", EXTBlendFuncExtended::supported(*m_context) && enableDraftExtensions)
     APPEND_IF_SUPPORTED("EXT_blend_minmax", EXTBlendMinMax::supported(*m_context))
+    APPEND_IF_SUPPORTED("EXT_clip_control", EXTClipControl::supported(*m_context) && enableDraftExtensions)
     APPEND_IF_SUPPORTED("EXT_color_buffer_half_float", EXTColorBufferHalfFloat::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_depth_clamp", EXTDepthClamp::supported(*m_context) && enableDraftExtensions)
     APPEND_IF_SUPPORTED("EXT_disjoint_timer_query", EXTDisjointTimerQuery::supported(*m_context) && scriptExecutionContext()->settingsValues().webGLTimerQueriesEnabled)

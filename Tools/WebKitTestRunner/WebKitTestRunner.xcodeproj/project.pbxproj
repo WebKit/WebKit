@@ -1190,15 +1190,17 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/DerivedSources.make",
 			);
 			name = "Check .xcfilelists";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"$(TARGET_TEMP_DIR)/check-xcfilelists.timestamp",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "Scripts/check-xcfilelists.sh\n";
+			shellScript = "Scripts/check-xcfilelists.sh && touch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 		BC952D8211F3BF78003398B4 /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;

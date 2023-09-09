@@ -60,6 +60,7 @@ private:
     URL m_sourceURL;
     TextPosition m_sourcePosition;
     WeakPtr<ContainerNode, WeakPtrImplWithEventTargetData> m_originalNode;
+    JSC::SourceTaintedOrigin m_sourceTaintedOrigin;
 };
 
 } // namespace WebCore

@@ -73,9 +73,7 @@ protected:
 #else
     RunLoop* m_runLoop;
 #endif
-#if ASSERT_ENABLED
     uint32_t m_threadID { 0 };
-#endif
 private:
     void platformInitialize(const char* name, Type, QOS);
     void platformInvalidate();
@@ -93,13 +91,7 @@ public:
     static WorkQueue& main();
     static Ref<WorkQueue> create(const char* name, QOS = QOS::Default);
     void dispatch(Function<void()>&&) override;
-#if ASSERT_ENABLED
-    void assertIsCurrent() const final;
-    ThreadLikeAssertion threadLikeAssertion() const; // public as used in API tests.
-#else
-    ThreadLikeAssertion threadLikeAssertion() const { return { }; }; // NOLINT
-#endif
-
+    bool isCurrent() const override;
 #if !USE(COCOA_EVENT_LOOP)
     RunLoop& runLoop() const { return *m_runLoop; }
 #endif
@@ -130,4 +122,3 @@ private:
 
 using WTF::WorkQueue;
 using WTF::ConcurrentWorkQueue;
-using WTF::assertIsCurrent;

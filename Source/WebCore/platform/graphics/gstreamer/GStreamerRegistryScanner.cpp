@@ -678,6 +678,22 @@ void GStreamerRegistryScanner::initializeEncoders(const GStreamerRegistryScanner
     }
 }
 
+GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::isHEVCCodecSupported(Configuration configuration, const String& codec, bool shouldCheckForHardwareUse) const
+{
+    auto h265Caps = adoptGRef(gst_caps_new_empty_simple("video/x-h265"));
+    if (codec.find('.') == notFound) {
+        GST_DEBUG("Codec has no profile/level, falling back to unconstrained caps");
+        return areCapsSupported(configuration, h265Caps, shouldCheckForHardwareUse);
+    }
+
+    if (!GStreamerCodecUtilities::parseHEVCProfile(codec)) {
+        GST_ERROR("HEVC codec string is invalid: %s", codec.utf8().data());
+        return { false, nullptr };
+    }
+
+    return areCapsSupported(configuration, h265Caps, shouldCheckForHardwareUse);
+}
+
 GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::isCodecSupported(Configuration configuration, const String& codec, bool shouldCheckForHardwareUse) const
 {
     // If the codec is named like a mimetype (eg: video/avc) remove the "video/" part.
@@ -687,6 +703,8 @@ GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::isCodecSup
     CodecLookupResult result;
     if (codecName.startsWith("avc1"_s))
         result = isAVC1CodecSupported(configuration, codecName, shouldCheckForHardwareUse);
+    else if (codecName.startsWith("hev1"_s) || codecName.startsWith("hvc1"_s))
+        result = isHEVCCodecSupported(configuration, codecName, shouldCheckForHardwareUse);
     else {
         auto& codecMap = configuration == Configuration::Decoding ? m_decoderCodecMap : m_encoderCodecMap;
         for (const auto& [codecId, lookupResult] : codecMap) {
@@ -832,7 +850,7 @@ bool GStreamerRegistryScanner::areAllCodecsSupported(Configuration configuration
     return true;
 }
 
-GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::areCapsSupported(Configuration configuration, const GRefPtr<GstCaps>& caps, bool shouldCheckForHardwareUse)
+GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::areCapsSupported(Configuration configuration, const GRefPtr<GstCaps>& caps, bool shouldCheckForHardwareUse) const
 {
     OptionSet<ElementFactories::Type> factoryTypes;
     switch (configuration) {
@@ -844,32 +862,17 @@ GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::areCapsSup
         break;
     }
     auto lookupResult = ElementFactories(factoryTypes).hasElementForCaps(factoryTypes.toSingleValue().value(), caps, ElementFactories::CheckHardwareClassifier::Yes);
-    bool supported = lookupResult && shouldCheckForHardwareUse ? lookupResult.isUsingHardware : true;
+    bool supported = lookupResult && (shouldCheckForHardwareUse ? lookupResult.isUsingHardware : true);
     GST_DEBUG("%s decoding supported for caps %" GST_PTR_FORMAT ": %s", shouldCheckForHardwareUse ? "Hardware" : "Software", caps.get(), boolForPrinting(supported));
     return { supported, supported ? lookupResult.factory : nullptr };
 }
 
 GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::isAVC1CodecSupported(Configuration configuration, const String& codec, bool shouldCheckForHardwareUse) const
 {
-    auto checkH264Caps = [&](const char* capsString) -> CodecLookupResult {
-        OptionSet<ElementFactories::Type> factoryTypes;
-        switch (configuration) {
-        case Configuration::Decoding:
-            factoryTypes.add(ElementFactories::Type::VideoDecoder);
-            break;
-        case Configuration::Encoding:
-            factoryTypes.add(ElementFactories::Type::VideoEncoder);
-            break;
-        }
-        auto lookupResult = ElementFactories(factoryTypes).hasElementForMediaType(factoryTypes.toSingleValue().value(), capsString, ElementFactories::CheckHardwareClassifier::Yes);
-        bool supported = lookupResult && shouldCheckForHardwareUse ? lookupResult.isUsingHardware : true;
-        GST_DEBUG("%s decoding supported for codec %s: %s", shouldCheckForHardwareUse ? "Hardware" : "Software", codec.utf8().data(), boolForPrinting(supported));
-        return { supported, supported ? lookupResult.factory : nullptr };
-    };
-
+    auto h264Caps = adoptGRef(gst_caps_new_empty_simple("video/x-h264"));
     if (codec.find('.') == notFound) {
         GST_DEBUG("Codec has no profile/level, falling back to unconstrained caps");
-        return checkH264Caps("video/x-h264");
+        return areCapsSupported(configuration, h264Caps, shouldCheckForHardwareUse);
     }
 
     auto [profile, level] = GStreamerCodecUtilities::parseH264ProfileAndLevel(codec);
@@ -898,11 +901,14 @@ GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::isAVC1Code
         }
         if (levelAsInteger > maxLevel)
             return { false, nullptr };
-        return checkH264Caps(makeString("video/x-h264, level=(string)", maxLevelString).utf8().data());
+
+        gst_caps_set_simple(h264Caps.get(), "level", G_TYPE_STRING, maxLevelString, nullptr);
+        return areCapsSupported(configuration, h264Caps, shouldCheckForHardwareUse);
     }
 
     GST_DEBUG("Checking video decoders for constrained caps");
-    return checkH264Caps(makeString("video/x-h264, level=(string)", level, ", profile=(string)", profile).utf8().data());
+    gst_caps_set_simple(h264Caps.get(), "level", G_TYPE_STRING, level, "profile", G_TYPE_STRING, profile, nullptr);
+    return areCapsSupported(configuration, h264Caps, shouldCheckForHardwareUse);
 }
 
 const char* GStreamerRegistryScanner::configurationNameForLogging(Configuration configuration) const

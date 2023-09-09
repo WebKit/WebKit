@@ -100,7 +100,7 @@ std::unique_ptr<ImageBufferCairoImageSurfaceBackend> ImageBufferCairoImageSurfac
 
 std::unique_ptr<ImageBufferCairoImageSurfaceBackend> ImageBufferCairoImageSurfaceBackend::create(const Parameters& parameters, const GraphicsContext&)
 {
-    return ImageBufferCairoImageSurfaceBackend::create(parameters, nullptr);
+    return ImageBufferCairoImageSurfaceBackend::create(parameters, ImageBufferCreationContext { });
 }
 
 ImageBufferCairoImageSurfaceBackend::ImageBufferCairoImageSurfaceBackend(const Parameters& parameters, RefPtr<cairo_surface_t>&& surface)

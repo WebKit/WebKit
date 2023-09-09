@@ -29,6 +29,7 @@
 
 #include "ImageBufferAllocator.h"
 #include "ImageBufferBackend.h"
+#include "PlatformScreen.h"
 #include "ProcessIdentity.h"
 #include "RenderingMode.h"
 #include "RenderingResourceIdentifier.h"
@@ -51,51 +52,30 @@ class ScriptExecutionContext;
 
 enum class ImageBufferOptions : uint8_t {
     Accelerated     = 1 << 0,
-    UseDisplayList  = 1 << 1
+    UseDisplayList  = 1 << 1,
+    AvoidBackendSizeCheckForTesting = 1 << 2,
 };
 
 class SerializedImageBuffer;
 
 struct ImageBufferCreationContext {
-    // clang 13.1.6 throws errors if we use default initializers here.
-    GraphicsClient* graphicsClient;
 #if HAVE(IOSURFACE)
-    IOSurfacePool* surfacePool;
+    IOSurfacePool* surfacePool { nullptr };
+    PlatformDisplayID displayID { 0 };
 #endif
-    bool avoidIOSurfaceSizeCheckInWebProcessForTesting = false;
-
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     enum class UseCGDisplayListImageCache : bool { No, Yes };
-    UseCGDisplayListImageCache useCGDisplayListImageCache;
+    UseCGDisplayListImageCache useCGDisplayListImageCache { UseCGDisplayListImageCache::No };
 #endif
     WebCore::ProcessIdentity resourceOwner;
 
-    ImageBufferCreationContext(GraphicsClient* client = nullptr
-#if HAVE(IOSURFACE)
-        , IOSurfacePool* pool = nullptr
-#endif
-        , bool avoidCheck = false
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-        , UseCGDisplayListImageCache useCGDisplayListImageCache = UseCGDisplayListImageCache::No
-#endif
-        , WebCore::ProcessIdentity resourceOwner = { }
-    )
-        : graphicsClient(client)
-#if HAVE(IOSURFACE)
-        , surfacePool(pool)
-#endif
-        , avoidIOSurfaceSizeCheckInWebProcessForTesting(avoidCheck)
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-        , useCGDisplayListImageCache(useCGDisplayListImageCache)
-#endif
-        , resourceOwner(WTFMove(resourceOwner))
-    { }
+    ImageBufferCreationContext() = default; // To guarantee order in presence of ifdefs, use individual .property to initialize them.
 };
 
 class ImageBuffer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ImageBuffer> {
 public:
 
-    WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, PixelFormat, OptionSet<ImageBufferOptions> = { }, const ImageBufferCreationContext& = { });
+    WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, PixelFormat, OptionSet<ImageBufferOptions> = { }, GraphicsClient* graphicsClient = nullptr);
 
     template<typename BackendType, typename ImageBufferType = ImageBuffer, typename... Arguments>
     static RefPtr<ImageBufferType> create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingPurpose purpose, const ImageBufferCreationContext& creationContext, Arguments&&... arguments)

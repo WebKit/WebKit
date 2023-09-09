@@ -154,23 +154,15 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(ScriptExecutionContext& conte
         m_isMessageQueueBlocked = true;
         m_baseConfiguration = config;
 
-        VideoEncoder::PostTaskCallback postTaskCallback;
-        if (isMainThread()) {
-            postTaskCallback = [](auto&& task) {
-                callOnMainThread(WTFMove(task));
-            };
-        } else {
-            postTaskCallback = [identifier](auto&& task) {
-                ScriptExecutionContext::postTaskTo(identifier, [task = WTFMove(task)](auto&) mutable {
-                    task();
-                });
-            };
-        }
+        VideoEncoder::PostTaskCallback postTaskCallback = [weakThis = WeakPtr { *this }, identifier](auto&& task) {
+            ScriptExecutionContext::postTaskTo(identifier, [weakThis, task = WTFMove(task)](auto&) mutable {
+                if (!weakThis)
+                    return;
+                weakThis->queueTaskKeepingObjectAlive(*weakThis, TaskSource::MediaElement, WTFMove(task));
+            });
+        };
 
-        VideoEncoder::create(config.codec, encoderConfig.releaseReturnValue(), [this, weakThis = WeakPtr { *this }](auto&& result) {
-            if (!weakThis)
-                return;
-
+        VideoEncoder::create(config.codec, encoderConfig.releaseReturnValue(), [this](auto&& result) {
             m_isMessageQueueBlocked = false;
             if (!result.has_value()) {
                 closeEncoder(Exception { NotSupportedError, WTFMove(result.error()) });
@@ -179,14 +171,11 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(ScriptExecutionContext& conte
             setInternalEncoder(WTFMove(result.value()));
             m_hasNewActiveConfiguration = true;
             processControlMessageQueue();
-        }, [this, weakThis = WeakPtr { *this }](auto&& configuration) {
-            if (!weakThis)
-                return;
-
+        }, [this](auto&& configuration) {
             m_activeConfiguration = WTFMove(configuration);
             m_hasNewActiveConfiguration = true;
-        }, [this, weakThis = WeakPtr { *this }](auto&& result) {
-            if (!weakThis || m_state != WebCodecsCodecState::Configured)
+        }, [this](auto&& result) {
+            if (m_state != WebCodecsCodecState::Configured)
                 return;
 
             RefPtr<JSC::ArrayBuffer> buffer = JSC::ArrayBuffer::create(result.data.data(), result.data.size());

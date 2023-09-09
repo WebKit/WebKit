@@ -2,9 +2,11 @@ This test outputs which WebGL draft extensions are available.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-TEST COMPLETE: 39 PASS, 0 FAIL
+TEST COMPLETE: 41 PASS, 0 FAIL
 
 
+PASS webgl:EXT_blend_func_extended: Supported
+PASS webgl:EXT_blend_func_extended: Has object.
 PASS webgl:EXT_clip_control: Supported
 PASS webgl:EXT_clip_control: Has object.
 PASS webgl:EXT_depth_clamp: Supported
@@ -15,6 +17,8 @@ PASS webgl:EXT_texture_mirror_clamp_to_edge: Supported
 PASS webgl:EXT_texture_mirror_clamp_to_edge: Has object.
 PASS webgl:WEBGL_polygon_mode: Supported
 PASS webgl:WEBGL_polygon_mode: Has object.
+PASS webgl2:EXT_blend_func_extended: Supported
+PASS webgl2:EXT_blend_func_extended: Has object.
 PASS webgl2:EXT_clip_control: Supported
 PASS webgl2:EXT_clip_control: Has object.
 PASS webgl2:EXT_conservative_depth: Supported
@@ -33,8 +37,6 @@ PASS webgl2:OES_sample_variables: Supported
 PASS webgl2:OES_sample_variables: Has object.
 PASS webgl2:OES_shader_multisample_interpolation: Supported
 PASS webgl2:OES_shader_multisample_interpolation: Has object.
-PASS webgl2:WEBGL_clip_cull_distance: Supported
-PASS webgl2:WEBGL_clip_cull_distance: Has object.
 PASS webgl2:WEBGL_draw_instanced_base_vertex_base_instance: Supported
 PASS webgl2:WEBGL_draw_instanced_base_vertex_base_instance: Has object.
 PASS webgl2:WEBGL_multi_draw_instanced_base_vertex_base_instance: Supported

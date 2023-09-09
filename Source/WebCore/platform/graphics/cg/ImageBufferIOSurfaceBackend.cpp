@@ -84,14 +84,13 @@ std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create
     if (!surface)
         return nullptr;
 
-    auto displayID = creationContext.graphicsClient ? creationContext.graphicsClient->displayID() : 0;
-    RetainPtr<CGContextRef> cgContext = surface->createPlatformContext(displayID);
+    RetainPtr<CGContextRef> cgContext = surface->createPlatformContext(creationContext.displayID);
     if (!cgContext)
         return nullptr;
 
     CGContextClearRect(cgContext.get(), FloatRect(FloatPoint::zero(), backendSize));
 
-    return makeUnique<ImageBufferIOSurfaceBackend>(parameters, WTFMove(surface), WTFMove(cgContext), displayID, creationContext.surfacePool);
+    return std::unique_ptr<ImageBufferIOSurfaceBackend> { new ImageBufferIOSurfaceBackend { parameters, WTFMove(surface), WTFMove(cgContext), creationContext.displayID, creationContext.surfacePool } };
 }
 
 ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const Parameters& parameters, std::unique_ptr<IOSurface> surface, RetainPtr<CGContextRef> platformContext, PlatformDisplayID displayID, IOSurfacePool* ioSurfacePool)

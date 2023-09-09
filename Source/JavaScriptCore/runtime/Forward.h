@@ -30,6 +30,7 @@
 
 namespace JSC {
 class ArrayBuffer;
+enum class SourceTaintedOrigin : uint8_t;
 }
 
 using JSC::ArrayBuffer;

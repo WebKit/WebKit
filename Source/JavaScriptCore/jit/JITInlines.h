@@ -319,6 +319,14 @@ inline void JIT::emitArrayProfilingSiteWithCell(const Bytecode& bytecode, Regist
     emitArrayProfilingSiteWithCell(bytecode, Bytecode::Metadata::offsetOfArrayProfile() + ArrayProfile::offsetOfLastSeenStructureID(), cellGPR, scratchGPR);
 }
 
+inline void JIT::emitArrayProfilingSiteWithCellAndProfile(RegisterID cellGPR, RegisterID profileGPR, RegisterID scratchGPR)
+{
+    if (shouldEmitProfiling()) {
+        load32(Address(cellGPR, JSCell::structureIDOffset()), scratchGPR);
+        store32(scratchGPR, Address(profileGPR, ArrayProfile::offsetOfLastSeenStructureID()));
+    }
+}
+
 ALWAYS_INLINE int32_t JIT::getOperandConstantInt(VirtualRegister src)
 {
     return getConstantOperand(src).asInt32();

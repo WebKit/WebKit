@@ -925,6 +925,8 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_enter)
     BEGIN();
     Heap::heap(codeBlock)->writeBarrier(codeBlock);
     GET(codeBlock->scopeRegister()) = jsCast<JSCallee*>(callFrame->jsCallee())->scope();
+    if (UNLIKELY(codeBlock->couldBeTainted()))
+        vm.setMightBeExecutingTaintedCode();
     END();
 }
 

@@ -737,8 +737,6 @@ public:
 
     bool isRelevantToUser() const;
 
-    void contentVisibilityViewportChange(bool);
-
     std::optional<OptionSet<ContentRelevancy>> contentRelevancy() const;
     void setContentRelevancy(OptionSet<ContentRelevancy>);
 

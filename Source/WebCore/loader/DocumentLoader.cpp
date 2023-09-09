@@ -2105,6 +2105,11 @@ void DocumentLoader::startLoadingMainResource()
 
     Ref<DocumentLoader> protectedThis(*this);
 
+    if (m_request.url().protocolIsAbout() && !(m_request.url().isAboutBlank() || m_request.url().isAboutSrcDoc())) {
+        cancelMainResourceLoad(frameLoader()->client().cannotShowURLError(m_request));
+        return;
+    }
+
     if (maybeLoadEmpty()) {
         DOCUMENTLOADER_RELEASE_LOG("startLoadingMainResource: Returning empty document");
         return;
@@ -2549,8 +2554,10 @@ ResourceError DocumentLoader::handleContentFilterDidBlock(ContentFilterUnblockHa
     unblockHandler.setUnreachableURL(documentURL());
     if (!unblockRequestDeniedScript.isEmpty() && frame()) {
         unblockHandler.wrapWithDecisionHandler([scriptController = WeakPtr { frame()->script() }, script = WTFMove(unblockRequestDeniedScript).isolatedCopy()](bool unblocked) {
-            if (!unblocked && scriptController)
-                scriptController->executeScriptIgnoringException(script);
+            if (!unblocked && scriptController) {
+                // FIXME: This probably needs to figure out if the origin is considered tanited.
+                scriptController->executeScriptIgnoringException(script, JSC::SourceTaintedOrigin::Untainted);
+            }
         });
     }
     frameLoader()->client().contentFilterDidBlockLoad(WTFMove(unblockHandler));

@@ -55,10 +55,8 @@ private:
         ASSERT(!entries.isEmpty());
 
         for (auto& entry : entries) {
-            if (auto* element = entry->target()) {
-                element->contentVisibilityViewportChange(entry->isIntersecting());
-                element->document().contentVisibilityDocumentState().updateOnScreenObservationTarget(*element, entry->isIntersecting());
-            }
+            if (auto* element = entry->target())
+                element->document().contentVisibilityDocumentState().updateViewportProximity(*element, entry->isIntersecting() ? ViewportProximity::Near : ViewportProximity::Far);
         }
         return { };
     }
@@ -81,7 +79,7 @@ void ContentVisibilityDocumentState::unobserve(Element& element)
     auto& state = element.document().contentVisibilityDocumentState();
     if (auto& intersectionObserver = state.m_observer) {
         intersectionObserver->unobserve(element);
-        state.updateOnScreenObservationTarget(element, false);
+        state.removeViewportProximity(element);
     }
     element.setContentRelevancy({ });
 }
@@ -99,56 +97,90 @@ IntersectionObserver* ContentVisibilityDocumentState::intersectionObserver(Docum
     return m_observer.get();
 }
 
-DidUpdateAnyContentRelevancy ContentVisibilityDocumentState::updateRelevancyOfContentVisibilityElements(const OptionSet<ContentRelevancy>& relevancyToCheck)
+bool ContentVisibilityDocumentState::checkRelevancyOfContentVisibilityElement(Element& target, OptionSet<ContentRelevancy> relevancyToCheck) const
+{
+    auto oldRelevancy = target.contentRelevancy();
+    OptionSet<ContentRelevancy> newRelevancy;
+    if (oldRelevancy)
+        newRelevancy = *oldRelevancy;
+    auto setRelevancyValue = [&](ContentRelevancy reason, bool value) {
+        if (value)
+            newRelevancy.add(reason);
+        else
+            newRelevancy.remove(reason);
+    };
+    if (relevancyToCheck.contains(ContentRelevancy::OnScreen)) {
+        auto viewportProximityIterator = m_elementViewportProximities.find(target);
+        setRelevancyValue(ContentRelevancy::OnScreen, viewportProximityIterator->value == ViewportProximity::Near);
+    }
+
+    if (relevancyToCheck.contains(ContentRelevancy::Focused))
+        setRelevancyValue(ContentRelevancy::Focused, target.hasFocusWithin());
+
+    auto targetContainsSelection = [](Element& target) {
+        auto selectionRange = target.document().selection().selection().range();
+        return selectionRange && intersects<ComposedTree>(*selectionRange, target);
+    };
+
+    if (relevancyToCheck.contains(ContentRelevancy::Selected))
+        setRelevancyValue(ContentRelevancy::Selected, targetContainsSelection(target));
+
+    auto hasTopLayerinSubtree = [](const Element& target) {
+        for (auto& element : target.document().topLayerElements()) {
+            if (element->isDescendantOf(target))
+                return true;
+        }
+        return false;
+    };
+    if (relevancyToCheck.contains(ContentRelevancy::IsInTopLayer))
+        setRelevancyValue(ContentRelevancy::IsInTopLayer, hasTopLayerinSubtree(target));
+
+    if (oldRelevancy && oldRelevancy == newRelevancy)
+        return false;
+    target.setContentRelevancy(newRelevancy);
+    target.invalidateStyle();
+    if (target.isConnected()) {
+        ContentVisibilityAutoStateChangeEvent::Init init;
+        init.skipped = newRelevancy.isEmpty();
+        target.queueTaskToDispatchEvent(TaskSource::DOMManipulation, ContentVisibilityAutoStateChangeEvent::create(eventNames().contentvisibilityautostatechangeEvent, init));
+    }
+    return true;
+}
+
+DidUpdateAnyContentRelevancy ContentVisibilityDocumentState::updateRelevancyOfContentVisibilityElements(OptionSet<ContentRelevancy> relevancyToCheck) const
 {
     auto didUpdateAnyContentRelevancy = DidUpdateAnyContentRelevancy::No;
     for (auto target : m_observer->observationTargets()) {
         if (target) {
-            auto oldRelevancy = target->contentRelevancy();
-            OptionSet<ContentRelevancy> newRelevancy;
-            if (oldRelevancy)
-                newRelevancy = *oldRelevancy;
-            auto setRelevancyValue = [&](ContentRelevancy reason, bool value) {
-                if (value)
-                    newRelevancy.add(reason);
-                else
-                    newRelevancy.remove(reason);
-            };
-            if (relevancyToCheck.contains(ContentRelevancy::OnScreen))
-                setRelevancyValue(ContentRelevancy::OnScreen, m_onScreenObservationTargets.contains(*target));
-
-            if (relevancyToCheck.contains(ContentRelevancy::Focused))
-                setRelevancyValue(ContentRelevancy::Focused, target->hasFocusWithin());
-
-            auto targetContainsSelection = [](Element& target) {
-                auto selectionRange = target.document().selection().selection().range();
-                return selectionRange && intersects<ComposedTree>(*selectionRange, target);
-            };
-
-            if (relevancyToCheck.contains(ContentRelevancy::Selected))
-                setRelevancyValue(ContentRelevancy::Selected, targetContainsSelection(*target));
-
-            auto hasTopLayerinSubtree = [](const Element& target) {
-                for (auto& element : target.document().topLayerElements()) {
-                    if (element->isDescendantOf(target))
-                        return true;
-                }
-                return false;
-            };
-            if (relevancyToCheck.contains(ContentRelevancy::IsInTopLayer))
-                setRelevancyValue(ContentRelevancy::IsInTopLayer, hasTopLayerinSubtree(*target));
-
-            if (oldRelevancy && oldRelevancy == newRelevancy)
-                continue;
-            target->setContentRelevancy(newRelevancy);
-            target->invalidateStyle();
-            ContentVisibilityAutoStateChangeEvent::Init init;
-            init.skipped = newRelevancy.isEmpty();
-            target->queueTaskToDispatchEvent(TaskSource::DOMManipulation, ContentVisibilityAutoStateChangeEvent::create(eventNames().contentvisibilityautostatechangeEvent, init));
-            didUpdateAnyContentRelevancy = DidUpdateAnyContentRelevancy::Yes;
+            if (checkRelevancyOfContentVisibilityElement(*target, relevancyToCheck))
+                didUpdateAnyContentRelevancy = DidUpdateAnyContentRelevancy::Yes;
         }
     }
     return didUpdateAnyContentRelevancy;
+}
+
+HadInitialVisibleContentVisibilityDetermination ContentVisibilityDocumentState::determineInitialVisibleContentVisibility() const
+{
+    if (!m_observer)
+        return HadInitialVisibleContentVisibilityDetermination::No;
+    Vector<Ref<Element>> elementsToCheck;
+    for (auto target : m_observer->observationTargets()) {
+        if (target) {
+            bool checkForInitialDetermination = !m_elementViewportProximities.contains(*target) && !target->isRelevantToUser();
+            if (checkForInitialDetermination)
+                elementsToCheck.append(*target);
+        }
+    }
+    auto hadInitialVisibleContentVisibilityDetermination = HadInitialVisibleContentVisibilityDetermination::No;
+    if (!elementsToCheck.isEmpty()) {
+        elementsToCheck.first()->document().updateIntersectionObservations({ m_observer });
+        for (auto& element : elementsToCheck) {
+            checkRelevancyOfContentVisibilityElement(element, { ContentRelevancy::OnScreen });
+            if (element->isRelevantToUser())
+                hadInitialVisibleContentVisibilityDetermination = HadInitialVisibleContentVisibilityDetermination::Yes;
+        }
+    }
+    return hadInitialVisibleContentVisibilityDetermination;
 }
 
 // Workaround for lack of support for scroll anchoring. We make sure any content-visibility: auto elements
@@ -174,21 +206,28 @@ void ContentVisibilityDocumentState::updateContentRelevancyForScrollIfNeeded(con
         for (auto target : m_observer->observationTargets()) {
             if (target) {
                 ASSERT(target->renderer() && target->renderStyle()->contentVisibility() == ContentVisibility::Auto);
-                updateOnScreenObservationTarget(*target, false);
+                updateViewportProximity(*target, ViewportProximity::Far);
             }
         }
-        updateOnScreenObservationTarget(*scrollAnchorRoot, true);
-        scrollAnchorRoot->document().scheduleContentRelevancyUpdate(ContentRelevancy::OnScreen);
+        updateViewportProximity(*scrollAnchorRoot, ViewportProximity::Near);
         scrollAnchorRoot->document().updateRelevancyOfContentVisibilityElements();
     }
 }
 
-void ContentVisibilityDocumentState::updateOnScreenObservationTarget(const Element& element, bool onScreen)
+void ContentVisibilityDocumentState::updateViewportProximity(const Element& element, ViewportProximity viewportProximity)
 {
-    if (onScreen)
-        m_onScreenObservationTargets.add(element);
-    else
-        m_onScreenObservationTargets.remove(element);
+    // No need to schedule content relevancy update for first time call, since
+    // that will be handled by determineInitialVisibleContentVisibility.
+    if (m_elementViewportProximities.contains(element))
+        element.document().scheduleContentRelevancyUpdate(ContentRelevancy::OnScreen);
+    m_elementViewportProximities.ensure(element, [] {
+        return ViewportProximity::Far;
+    }).iterator->value = viewportProximity;
+}
+
+void ContentVisibilityDocumentState::removeViewportProximity(const Element& element)
+{
+    m_elementViewportProximities.remove(element);
 }
 
 }

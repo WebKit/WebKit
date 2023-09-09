@@ -64,7 +64,7 @@ ImageSource::ImageSource(Ref<NativeImage>&& nativeImage)
 ImageSource::~ImageSource()
 {
     ASSERT(!hasAsyncDecodingQueue());
-    ASSERT(&m_runLoop == &RunLoop::current());
+    assertIsCurrent(m_runLoop);
 }
 
 bool ImageSource::ensureDecoderAvailable(FragmentedSharedBuffer* data)
@@ -432,7 +432,7 @@ const ImageFrame& ImageSource::frameAtIndexCacheIfNeeded(size_t index, ImageFram
 {
     if (index >= m_frames.size())
         return ImageFrame::defaultFrame();
-    
+
     ImageFrame& frame = m_frames[index];
     if (!isDecoderAvailable() || frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(index, DecodingOptions(DecodingMode::Asynchronous)))
         return frame;
@@ -599,7 +599,7 @@ IntSize ImageSource::sourceSize(ImageOrientation orientation)
     else
 #endif
         size = firstFrameMetadataCacheIfNeeded(m_size, MetadataType::Size, &ImageFrame::size, ImageFrame::Caching::Metadata, SubsamplingLevel::Default);
-    
+
     if (orientation == ImageOrientation::Orientation::FromImage)
         orientation = this->orientation();
 

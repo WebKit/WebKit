@@ -4073,6 +4073,11 @@ public:
         return branch32(cond, left, right);
     }
 
+    Jump branch32WithMemory16(RelationalCondition cond, Address left, RegisterID right)
+    {
+        MacroAssemblerHelpers::load16OnCondition(*this, cond, left, getCachedMemoryTempRegisterIDAndInvalidate());
+        return branch32(cond, memoryTempRegister, right);
+    }
 
     // Arithmetic control flow operations:
     //

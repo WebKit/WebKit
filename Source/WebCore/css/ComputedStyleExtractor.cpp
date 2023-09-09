@@ -2203,7 +2203,8 @@ Ref<CSSValue> ComputedStyleExtractor::fontVariantShorthandValue() const
     CSSValueListBuilder list;
     for (auto longhand : fontVariantShorthand()) {
         auto value = propertyValue(longhand, UpdateLayout::No);
-        if (isValueID(value, CSSValueNormal))
+        // We may not have a value if the longhand is disabled.
+        if (!value || isValueID(value, CSSValueNormal))
             continue;
         list.append(value.releaseNonNull());
     }

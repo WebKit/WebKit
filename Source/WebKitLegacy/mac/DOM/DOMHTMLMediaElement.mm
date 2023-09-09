@@ -273,19 +273,19 @@
 - (BOOL)webkitHasClosedCaptions
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->webkitHasClosedCaptions();
+    return IMPL->hasClosedCaptions();
 }
 
 - (BOOL)webkitClosedCaptionsVisible
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->webkitClosedCaptionsVisible();
+    return IMPL->closedCaptionsVisible();
 }
 
 - (void)setWebkitClosedCaptionsVisible:(BOOL)newWebkitClosedCaptionsVisible
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setWebkitClosedCaptionsVisible(newWebkitClosedCaptionsVisible);
+    IMPL->setClosedCaptionsVisible(newWebkitClosedCaptionsVisible);
 }
 
 - (NSString *)mediaGroup

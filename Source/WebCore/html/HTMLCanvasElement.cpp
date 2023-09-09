@@ -583,9 +583,10 @@ void HTMLCanvasElement::reset()
     int w = limitToOnlyHTMLNonNegative(attributeWithoutSynchronization(widthAttr), defaultWidth);
     int h = limitToOnlyHTMLNonNegative(attributeWithoutSynchronization(heightAttr), defaultHeight);
 
-    resetGraphicsContextState();
     if (is<CanvasRenderingContext2D>(m_context))
         downcast<CanvasRenderingContext2D>(*m_context).reset();
+    else
+        resetGraphicsContextState();
 
     IntSize oldSize = size();
     IntSize newSize(w, h);
@@ -875,11 +876,6 @@ SecurityOrigin* HTMLCanvasElement::securityOrigin() const
     return &document().securityOrigin();
 }
 
-void HTMLCanvasElement::setUsesDisplayListDrawing(bool usesDisplayListDrawing)
-{
-    m_usesDisplayListDrawing = usesDisplayListDrawing;
-}
-
 void HTMLCanvasElement::setAvoidIOSurfaceSizeCheckInWebProcessForTesting()
 {
     m_avoidBackendSizeCheckForTesting = true;
@@ -891,7 +887,7 @@ void HTMLCanvasElement::createImageBuffer() const
 
     m_hasCreatedImageBuffer = true;
     m_didClearImageBuffer = true;
-    setImageBuffer(allocateImageBuffer(m_usesDisplayListDrawing.value_or(false), m_avoidBackendSizeCheckForTesting));
+    setImageBuffer(allocateImageBuffer(m_avoidBackendSizeCheckForTesting));
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
     if (m_context && m_context->is2d()) {

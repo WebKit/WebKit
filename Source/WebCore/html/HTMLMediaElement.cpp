@@ -459,7 +459,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_sentEndEvent(false)
     , m_pausedInternal(false)
     , m_closedCaptionsVisible(false)
-    , m_webkitLegacyClosedCaptionOverride(false)
     , m_completelyLoaded(false)
     , m_havePreparedToPlay(false)
     , m_parsingInProgress(createdByParser)
@@ -4939,11 +4938,6 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
 
     if (trackToEnable) {
         trackToEnable->setMode(TextTrack::Mode::Showing);
-
-        // If user preferences indicate we should always display captions, make sure we reflect the
-        // proper status via the webkitClosedCaptionsVisible API call:
-        if (!webkitClosedCaptionsVisible() && closedCaptionsVisible() && displayMode == CaptionUserPreferences::AlwaysOn)
-            m_webkitLegacyClosedCaptionOverride = true;
     }
 }
 
@@ -7163,23 +7157,6 @@ void HTMLMediaElement::setClosedCaptionsVisible(bool closedCaptionVisible)
     updateTextTrackDisplay();
 }
 
-void HTMLMediaElement::setWebkitClosedCaptionsVisible(bool visible)
-{
-    m_webkitLegacyClosedCaptionOverride = visible;
-    setClosedCaptionsVisible(visible);
-}
-
-bool HTMLMediaElement::webkitClosedCaptionsVisible() const
-{
-    return m_webkitLegacyClosedCaptionOverride && m_closedCaptionsVisible;
-}
-
-
-bool HTMLMediaElement::webkitHasClosedCaptions() const
-{
-    return hasClosedCaptions();
-}
-
 #if ENABLE(MEDIA_STATISTICS)
 unsigned HTMLMediaElement::webkitAudioDecodedByteCount() const
 {
@@ -7328,7 +7305,7 @@ void HTMLMediaElement::captionPreferencesChanged()
         return;
 
     m_captionDisplayMode = displayMode;
-    setWebkitClosedCaptionsVisible(captionDisplayMode() == CaptionUserPreferences::AlwaysOn);
+    setClosedCaptionsVisible(captionDisplayMode() == CaptionUserPreferences::AlwaysOn);
 }
 
 CaptionUserPreferences::CaptionDisplayMode HTMLMediaElement::captionDisplayMode()
@@ -8085,7 +8062,7 @@ bool HTMLMediaElement::ensureMediaControls()
         for (auto& mediaControlsScript : mediaControlsScripts) {
             if (mediaControlsScript.isEmpty())
                 continue;
-            scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(mediaControlsScript), world);
+            scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(mediaControlsScript, JSC::SourceTaintedOrigin::Untainted), world);
             RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
         }
 

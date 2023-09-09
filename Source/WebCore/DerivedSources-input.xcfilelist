@@ -1574,6 +1574,7 @@ $(PROJECT_DIR)/html/canvas/CanvasTextBaseline.idl
 $(PROJECT_DIR)/html/canvas/CanvasTextDrawingStyles.idl
 $(PROJECT_DIR)/html/canvas/CanvasTransform.idl
 $(PROJECT_DIR)/html/canvas/CanvasUserInterface.idl
+$(PROJECT_DIR)/html/canvas/EXTBlendFuncExtended.idl
 $(PROJECT_DIR)/html/canvas/EXTBlendMinMax.idl
 $(PROJECT_DIR)/html/canvas/EXTClipControl.idl
 $(PROJECT_DIR)/html/canvas/EXTColorBufferFloat.idl

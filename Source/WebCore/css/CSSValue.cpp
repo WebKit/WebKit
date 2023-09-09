@@ -218,6 +218,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSValuePair>(*this));
     case VariableReferenceClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSVariableReferenceValue>(*this));
+    case XywhShapeClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSXywhValue>(*this));
 #if ENABLE(CSS_PAINTING_API)
     case PaintImageClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSPaintImageValue>(*this));

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000 Peter Kelly <pmk@post.com>
- * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
@@ -912,9 +912,9 @@ void XMLDocumentParser::endElementNs()
 
         if (scriptElement.readyToBeParserExecuted()) {
             if (scriptElement.scriptType() == ScriptType::Classic)
-                scriptElement.executeClassicScript(ScriptSourceCode(scriptElement.scriptContent(), URL(document()->url()), m_scriptStartPosition, JSC::SourceProviderSourceType::Program, InlineClassicScript::create(scriptElement)));
+                scriptElement.executeClassicScript(ScriptSourceCode(scriptElement.scriptContent(), scriptElement.sourceTaintedOrigin(), URL(document()->url()), m_scriptStartPosition, JSC::SourceProviderSourceType::Program, InlineClassicScript::create(scriptElement)));
             else
-                scriptElement.registerImportMap(ScriptSourceCode(scriptElement.scriptContent(), URL(document()->url()), m_scriptStartPosition, JSC::SourceProviderSourceType::ImportMap));
+                scriptElement.registerImportMap(ScriptSourceCode(scriptElement.scriptContent(), scriptElement.sourceTaintedOrigin(), URL(document()->url()), m_scriptStartPosition, JSC::SourceProviderSourceType::ImportMap));
         } else if (scriptElement.willBeParserExecuted() && scriptElement.loadableScript()) {
             m_pendingScript = PendingScript::create(scriptElement, *scriptElement.loadableScript());
             m_pendingScript->setClient(*this);

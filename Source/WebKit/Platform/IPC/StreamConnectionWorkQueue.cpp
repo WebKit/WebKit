@@ -165,13 +165,10 @@ void StreamConnectionWorkQueue::processStreams()
     } while (hasMoreToProcess);
 }
 
-#if ASSERT_ENABLED
-void StreamConnectionWorkQueue::assertIsCurrent() const
+bool StreamConnectionWorkQueue::isCurrent() const
 {
     Locker locker { m_lock };
-    ASSERT(m_processingThread);
-    WTF::assertIsCurrent(*m_processingThread);
+    return m_processingThread ? m_processingThread->uid() == Thread::current().uid() : false;
 }
-#endif
 
 }

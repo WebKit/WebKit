@@ -751,6 +751,13 @@ public:
         m_assembler.maskRegister<32>(dest);
     }
 
+    void addUnsignedRightShift32(RegisterID src1, RegisterID src2, TrustedImm32 amount, RegisterID dest)
+    {
+        // dest = src1 + (src2 >> amount)
+        urshift32(src2, amount, dataTempRegister);
+        add32(src1, dataTempRegister, dest);
+    }
+
     void urshift64(RegisterID shiftAmount, RegisterID dest)
     {
         urshift64(dest, shiftAmount, dest);
@@ -2374,6 +2381,15 @@ public:
     Jump branch32WithUnalignedHalfWords(RelationalCondition cond, BaseIndex address, TrustedImm32 imm)
     {
         return branch32(cond, address, imm);
+    }
+
+    Jump branch32WithMemory16(RelationalCondition cond, Address left, RegisterID right)
+    {
+        auto temp = temps<Data, Memory>();
+        MacroAssemblerHelpers::load16OnCondition(*this, cond, left, temp.data());
+        m_assembler.signExtend<32>(temp.data(), temp.data());
+        m_assembler.signExtend<32>(temp.memory(), right);
+        return makeBranch(cond, temp.data(), temp.memory());
     }
 
     Jump branchAdd32(ResultCondition cond, RegisterID src, RegisterID dest)

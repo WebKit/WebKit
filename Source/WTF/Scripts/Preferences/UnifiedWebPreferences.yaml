@@ -2205,6 +2205,20 @@ DeprecationReportingEnabled:
     WebCore:
       default: false
 
+DetailsNameAttributeEnabled:
+  type: bool
+  status: preview
+  category: html
+  humanReadableName: "HTML <details name> attribute"
+  humanReadableDescription: "Enable HTML <details name> attribute"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 DeveloperExtrasEnabled:
   type: bool
   status: embedder

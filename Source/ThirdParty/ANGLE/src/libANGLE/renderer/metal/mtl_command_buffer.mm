@@ -615,10 +615,18 @@ void CommandQueue::onCommandBufferCompleted(id<MTLCommandBuffer> buf,
 
     ANGLE_MTL_LOG("Completed MTLCommandBuffer %llu:%p", serial, buf);
 
-    if ([buf status] != MTLCommandBufferStatusCompleted)
+    MTLCommandBufferStatus status = buf.status;
+    if (status != MTLCommandBufferStatusCompleted)
     {
-        mIsDeviceLost = true;
-        return;
+        NSError *error = buf.error;
+        // MTLCommandBufferErrorNotPermitted is non-fatal, all other errors
+        // result in device lost.
+        // TODO(djg): Should this also check error.domain for MTLCommandBufferErrorDomain?
+        mIsDeviceLost  = !error || error.code != MTLCommandBufferErrorNotPermitted;
+        if (mIsDeviceLost)
+        {
+            return;
+        }
     }
 
     if (timeElapsedEntry != 0)

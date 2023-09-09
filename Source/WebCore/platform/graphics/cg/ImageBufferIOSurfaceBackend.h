@@ -46,7 +46,6 @@ public:
 
     static std::unique_ptr<ImageBufferIOSurfaceBackend> create(const Parameters&, const ImageBufferCreationContext&);
 
-    ImageBufferIOSurfaceBackend(const Parameters&, std::unique_ptr<IOSurface>, RetainPtr<CGContextRef> platformContext, PlatformDisplayID, IOSurfacePool*);
     ~ImageBufferIOSurfaceBackend();
     
     static constexpr RenderingMode renderingMode = RenderingMode::Accelerated;
@@ -56,6 +55,7 @@ public:
     void flushContext() override;
 
 protected:
+    ImageBufferIOSurfaceBackend(const Parameters&, std::unique_ptr<IOSurface>, RetainPtr<CGContextRef> platformContext, PlatformDisplayID, IOSurfacePool*);
     CGContextRef ensurePlatformContext();
     // Returns true if flush happened.
     bool flushContextDraws();

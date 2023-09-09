@@ -6978,6 +6978,41 @@ bool consumeRadii(std::array<RefPtr<CSSValue>, 4>& horizontalRadii, std::array<R
     return true;
 }
 
+static bool consumeShapeBorderRadius(CSSParserTokenRange& args, const CSSParserContext& context, std::array<RefPtr<CSSValuePair>, 4>& radii)
+{
+    if (consumeIdentRaw<CSSValueRound>(args)) {
+        std::array<RefPtr<CSSValue>, 4> horizontalRadii;
+        std::array<RefPtr<CSSValue>, 4> verticalRadii;
+        if (!consumeRadii(horizontalRadii, verticalRadii, args, context.mode, false))
+            return false;
+        for (unsigned i = 0; i < 4; ++i)
+            radii[i] = CSSValuePair::create(horizontalRadii[i].releaseNonNull(), verticalRadii[i].releaseNonNull());
+    }
+    return true;
+}
+
+static RefPtr<CSSXywhValue> consumeBasicShapeXywh(CSSParserTokenRange& args, const CSSParserContext& context)
+{
+    std::array<RefPtr<CSSValue>, 2> insets;
+    for (auto& inset : insets) {
+        inset = consumeLengthOrPercent(args, context.mode, ValueRange::All);
+        if (!inset)
+            return nullptr;
+    }
+
+    std::array<RefPtr<CSSValue>, 2> dimensions;
+    for (auto& dimension : dimensions) {
+        dimension = consumeLengthOrPercent(args, context.mode, ValueRange::All);
+        if (!dimension)
+            return nullptr;
+    }
+
+    std::array<RefPtr<CSSValuePair>, 4> radii;
+    if (consumeShapeBorderRadius(args, context, radii))
+        return CSSXywhValue::create(insets[0].releaseNonNull(), insets[1].releaseNonNull(), dimensions[0].releaseNonNull(), dimensions[1].releaseNonNull(), WTFMove(radii[0]), WTFMove(radii[1]), WTFMove(radii[2]), WTFMove(radii[3]));
+    return nullptr;
+}
+
 static RefPtr<CSSInsetShapeValue> consumeBasicShapeInset(CSSParserTokenRange& args, const CSSParserContext& context)
 {
     std::array<RefPtr<CSSValue>, 4> sides;
@@ -6989,17 +7024,11 @@ static RefPtr<CSSInsetShapeValue> consumeBasicShapeInset(CSSParserTokenRange& ar
     if (!sides[0])
         return nullptr;
     complete4Sides(sides);
+
     std::array<RefPtr<CSSValuePair>, 4> radii;
-    if (consumeIdent<CSSValueRound>(args)) {
-        std::array<RefPtr<CSSValue>, 4> horizontalRadii;
-        std::array<RefPtr<CSSValue>, 4> verticalRadii;
-        if (!consumeRadii(horizontalRadii, verticalRadii, args, context.mode, false))
-            return nullptr;
-        for (unsigned i = 0; i < 4; ++i)
-            radii[i] = CSSValuePair::create(horizontalRadii[i].releaseNonNull(), verticalRadii[i].releaseNonNull());
-    }
-    return CSSInsetShapeValue::create(sides[0].releaseNonNull(), sides[1].releaseNonNull(), sides[2].releaseNonNull(), sides[3].releaseNonNull(),
-        WTFMove(radii[0]), WTFMove(radii[1]), WTFMove(radii[2]), WTFMove(radii[3]));
+    if (consumeShapeBorderRadius(args, context, radii))
+        return CSSInsetShapeValue::create(sides[0].releaseNonNull(), sides[1].releaseNonNull(), sides[2].releaseNonNull(), sides[3].releaseNonNull(), WTFMove(radii[0]), WTFMove(radii[1]), WTFMove(radii[2]), WTFMove(radii[3]));
+    return nullptr;
 }
 
 static RefPtr<CSSValue> consumeBasicShape(CSSParserTokenRange& range, const CSSParserContext& context)
@@ -7019,6 +7048,8 @@ static RefPtr<CSSValue> consumeBasicShape(CSSParserTokenRange& range, const CSSP
         result = consumeBasicShapePolygon(args, context);
     else if (id == CSSValueInset)
         result = consumeBasicShapeInset(args, context);
+    else if (id == CSSValueXywh)
+        result = consumeBasicShapeXywh(args, context);
     else if (id == CSSValuePath)
         result = consumeBasicShapePath(args);
     if (!result || !args.atEnd())

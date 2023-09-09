@@ -392,20 +392,8 @@ ALWAYS_INLINE void* getWide32CodePtr(OpcodeID id)
 #if ENABLE(JIT)
 struct Registers {
     static constexpr GPRReg pcGPR = GPRInfo::regT4;
-
-#if CPU(X86_64) && !OS(WINDOWS)
-    static constexpr GPRReg metadataTableGPR = GPRInfo::regCS1;
     static constexpr GPRReg pbGPR = GPRInfo::constantsRegister;
-#elif CPU(X86_64) && OS(WINDOWS)
-    static constexpr GPRReg metadataTableGPR = GPRInfo::regCS3;
-    static constexpr GPRReg pbGPR = GPRInfo::constantsRegister;
-#elif CPU(ARM64) || CPU(RISCV64)
-    static constexpr GPRReg metadataTableGPR = GPRInfo::regCS6;
-    static constexpr GPRReg pbGPR = GPRInfo::constantsRegister;
-#elif CPU(MIPS) || CPU(ARM_THUMB2)
-    static constexpr GPRReg metadataTableGPR = GPRInfo::regCS0;
-    static constexpr GPRReg pbGPR = GPRInfo::regCS1;
-#endif
+    static constexpr GPRReg metadataTableGPR = GPRInfo::metadataTableRegister;
 };
 #endif
 

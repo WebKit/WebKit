@@ -28,6 +28,7 @@
 #if ENABLE(WEBGL)
 
 #include "ANGLEInstancedArrays.h"
+#include "EXTBlendFuncExtended.h"
 #include "EXTBlendMinMax.h"
 #include "EXTClipControl.h"
 #include "EXTColorBufferFloat.h"

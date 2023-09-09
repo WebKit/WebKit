@@ -882,6 +882,13 @@ public:
     static constexpr GCGLenum MAX_FRAGMENT_INTERPOLATION_OFFSET_OES = 0x8E5C;
     static constexpr GCGLenum FRAGMENT_INTERPOLATION_OFFSET_BITS_OES = 0x8E5D;
 
+    // GL_EXT_blend_func_extended
+    static constexpr GCGLenum SRC1_COLOR_EXT = 0x88F9;
+    static constexpr GCGLenum SRC1_ALPHA_EXT = 0x8589;
+    static constexpr GCGLenum ONE_MINUS_SRC1_COLOR_EXT = 0x88FA;
+    static constexpr GCGLenum ONE_MINUS_SRC1_ALPHA_EXT = 0x88FB;
+    static constexpr GCGLenum MAX_DUAL_SOURCE_DRAW_BUFFERS_EXT = 0x88FC;
+
     // GL_ARB_draw_buffers / GL_EXT_draw_buffers
     static constexpr GCGLenum MAX_DRAW_BUFFERS_EXT = 0x8824;
     static constexpr GCGLenum DRAW_BUFFER0_EXT = 0x8825;

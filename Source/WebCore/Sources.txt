@@ -1480,6 +1480,7 @@ html/canvas/CanvasRenderingContext.cpp
 html/canvas/CanvasRenderingContext2D.cpp
 html/canvas/CanvasRenderingContext2DBase.cpp
 html/canvas/CanvasStyle.cpp
+html/canvas/EXTBlendFuncExtended.cpp
 html/canvas/EXTBlendMinMax.cpp
 html/canvas/EXTClipControl.cpp
 html/canvas/EXTColorBufferFloat.cpp
@@ -3406,6 +3407,7 @@ JSDoubleRange.cpp
 JSDragEvent.cpp
 JSDynamicsCompressorNode.cpp
 JSDynamicsCompressorOptions.cpp
+JSEXTBlendFuncExtended.cpp
 JSEXTBlendMinMax.cpp
 JSEXTClipControl.cpp
 JSEXTColorBufferFloat.cpp

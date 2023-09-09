@@ -52,9 +52,14 @@ namespace WebCore {
 static const float MaxClampedLength = 4096;
 static const float MaxClampedArea = MaxClampedLength * MaxClampedLength;
 
-RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, OptionSet<ImageBufferOptions> options, const ImageBufferCreationContext& creationContext)
+RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, OptionSet<ImageBufferOptions> options, GraphicsClient* graphicsClient)
 {
     RefPtr<ImageBuffer> imageBuffer;
+    ImageBufferCreationContext creationContext;
+#if HAVE(IOSURFACE)
+    if (graphicsClient)
+        creationContext.displayID = graphicsClient->displayID();
+#endif
 
     // Give UseDisplayList a higher precedence since it is a debug option.
     if (options.contains(ImageBufferOptions::UseDisplayList)) {
@@ -65,9 +70,10 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose 
             imageBuffer = DisplayList::ImageBuffer::create<UnacceleratedImageBufferBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
     }
 
-    if (creationContext.graphicsClient && !imageBuffer) {
+    if (graphicsClient && !imageBuffer) {
         auto renderingMode = options.contains(ImageBufferOptions::Accelerated) ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
-        imageBuffer = creationContext.graphicsClient->createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, creationContext.avoidIOSurfaceSizeCheckInWebProcessForTesting);
+        bool avoidBackendSizeCheckForTesting = options.contains(ImageBufferOptions::AvoidBackendSizeCheckForTesting);
+        imageBuffer = graphicsClient->createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, avoidBackendSizeCheckForTesting);
     }
 
     if (imageBuffer)
@@ -89,7 +95,7 @@ template<typename BackendType, typename ImageBufferType, typename... Arguments>
 RefPtr<ImageBufferType> ImageBuffer::create(const FloatSize& size, const GraphicsContext& context, RenderingPurpose purpose, Arguments&&... arguments)
 {
     auto parameters = ImageBufferBackend::Parameters { size, 1, context.colorSpace(), PixelFormat::BGRA8, purpose };
-    auto backend = BackendType::create(parameters, { nullptr });
+    auto backend = BackendType::create(parameters, { });
     if (!backend)
         return nullptr;
     auto backendInfo = populateBackendInfo<BackendType>(parameters);
@@ -512,7 +518,8 @@ RefPtr<PixelBuffer> ImageBuffer::getPixelBuffer(const PixelBufferFormat& destina
     if (!backend)
         return nullptr;
     ASSERT(PixelBuffer::supportedPixelFormat(destinationFormat.pixelFormat));
-    auto sourceRectScaled = backend->toBackendCoordinates(sourceRect);
+    auto sourceRectScaled = sourceRect;
+    sourceRectScaled.scale(resolutionScale());
     auto destination = allocator.createPixelBuffer(destinationFormat, sourceRectScaled.size());
     if (!destination)
         return nullptr;
@@ -525,8 +532,10 @@ void ImageBuffer::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& 
     auto* backend = ensureBackendCreated();
     if (!backend)
         return;
-    auto sourceRectScaled = backend->toBackendCoordinates(sourceRect);
-    auto destinationPointScaled = backend->toBackendCoordinates(destinationPoint);
+    auto sourceRectScaled = sourceRect;
+    sourceRectScaled.scale(resolutionScale());
+    auto destinationPointScaled = destinationPoint;
+    destinationPointScaled.scale(resolutionScale());
     backend->putPixelBuffer(pixelBuffer, sourceRectScaled, destinationPointScaled, destinationFormat);
 }
 

@@ -1108,7 +1108,8 @@ webkit.org/b/212091 platform/mac/media/media-source/media-source-change-source.h
 
 webkit.org/b/212413 fast/mediastream/mock-media-source-webaudio.html [ Pass Timeout ]
 
-webkit.org/b/188924 fast/mediastream/device-change-event-2.html [ Pass Timeout ]
+webkit.org/b/261356 [ Release ] fast/mediastream/device-change-event-2.html [ Pass Timeout ] # old: webkit.org/b/188924
+webkit.org/b/261356 [ Debug ] fast/mediastream/device-change-event-2.html [ Pass Timeout Failure ]
 
 webkit.org/b/212721 svg/custom/textPath-change-id.svg [ Pass ImageOnlyFailure ]
 
@@ -1393,7 +1394,7 @@ webkit.org/b/227536 [ BigSur ] imported/w3c/web-platform-tests/webrtc/simplecall
 # rdar://80346382 ([ Monterey Release wk2 arm64 ] platform/mac/fast/overflow/overflow-scrollbar-hit-test.html is a flaky crash)
 [ Monterey arm64 ] platform/mac/fast/overflow/overflow-scrollbar-hit-test.html [ Failure Crash ]
 
-# rdar://80333935 (REGRESSION: [ Monterey wk2 arm64 ] fast/animation/request-animation-frame-throttling-detached-iframe.html and request-animation-frame-throttling-lowPowerMode.html failing)
+# rdar://80333935 (REGRESSION: [ Monterey wk2 arm64 ] fast/animation/request-animation-frame-throttling-lowPowerMode.html failing)
 [ arm64 ] fast/animation/request-animation-frame-throttling-lowPowerMode.html [ Failure ]
 [ Monterey arm64 ] fast/animation/css-animation-throttling-lowPowerMode.html [ Failure ]
 
@@ -1619,8 +1620,6 @@ webkit.org/b/240821 webgl/max-active-contexts-webglcontextlost-prevent-default.h
 webkit.org/b/240927 [ BigSur Debug ] storage/indexeddb/request-with-null-open-db-request.html [ Pass Crash ]
 
 webkit.org/b/241265 [ Debug ] imported/w3c/web-platform-tests/html/rendering/replaced-elements/svg-embedded-sizing/svg-in-object-percentage.html [ Pass Crash ]
-
-webkit.org/b/241283 fast/animation/request-animation-frame-throttling-detached-iframe.html [ Pass Failure ]
 
 # NOTIFICATION_EVENT is Ventura+
 [ Ventura+ ] http/tests/workers/service/shownotification-allowed-document.html [ Pass ]
@@ -1876,6 +1875,8 @@ compositing/hidpi-image-backing-store.html [ Failure ]
 # rdar://108846032 (REGRESSION (263506@main): [ Sonoma wk2 ] fast/layoutformattingcontext/horizontal-sizing-with-trailing-letter-spacing.html: WebCore::Layout::Line::TrimmableTrailingContent::remove)
 [ Sonoma+ ] fast/layoutformattingcontext/horizontal-sizing-with-trailing-letter-spacing.html [ Skip ]
 
+webkit.org/b/260867 [ Monterey+ ] fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Pass Failure ]
+
 webkit.org/b/239627 [ arm64 ] fast/scrolling/mac/adjust-scroll-snap-during-gesture.html [ Pass Failure ]
 
 webkit.org/b/260917 [ Ventura ] fast/forms/border-color-relayout.html [ Pass ImageOnlyFailure ]
@@ -2110,3 +2111,15 @@ webkit.org/b/227761 imported/w3c/web-platform-tests/beacon/beacon-cors.https.win
 webkit.org/b/261215 webrtc/vp8-then-h264-gpu-process-crash.html [ Pass Timeout Failure ]
 
 webkit.org/b/261226 fast/images/mac/play-pause-individual-animation-context-menu-items.html [ Timeout ]
+
+# webkit.org/b/261304 Batch mark expectations for flaky media tests
+[ Monterey+ ] media/media-source/media-source-evict-codedframe-large-currenttime.html [ Pass Failure ]
+
+# webkit.org/b/261308 Batch mark expectations for flaky imported/w3c/web-platform-tests
+[ Monterey+ X86_64 ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Pass Failure ]
+[ Ventura+ ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-opener.https.html [ Pass Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/webcodecs/videoFrame-serialization.crossAgentCluster.https.html [ Pass Failure ]
+[ Monterey+ X86_64 ] imported/w3c/web-platform-tests/webrtc/simulcast/getStats.https.html [ Pass Failure ]
+
+webkit.org/b/261341 requestidlecallback/requestidlecallback-in-page-cache.html [ Pass Failure Timeout ]
+webkit.org/b/261344 requestidlecallback/requestidlecallback-does-not-block-timer.html [ Pass Failure ]

@@ -45,16 +45,13 @@ protected:
 
 class WTF_CAPABILITY("is current") WTF_EXPORT_PRIVATE SerialFunctionDispatcher : public FunctionDispatcher {
 public:
-#if ASSERT_ENABLED
-    virtual void assertIsCurrent() const = 0;
-#endif
+    virtual bool isCurrent() const = 0;
 };
 
 inline void assertIsCurrent(const SerialFunctionDispatcher& queue) WTF_ASSERTS_ACQUIRED_CAPABILITY(queue)
 {
-#if ASSERT_ENABLED
-    queue.assertIsCurrent();
-#else
+    ASSERT(queue.isCurrent());
+#if !ASSERT_ENABLED
     UNUSED_PARAM(queue);
 #endif
 }

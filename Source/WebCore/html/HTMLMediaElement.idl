@@ -103,10 +103,6 @@ typedef (
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250871
     [CEReactions=NotNeeded, ImplementedAs=preservesPitch] attribute boolean webkitPreservesPitch;
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250870
-    readonly attribute boolean webkitHasClosedCaptions;
-    attribute boolean webkitClosedCaptionsVisible;
-
     // The number of bytes consumed by the media decoder.
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitAudioDecodedByteCount;
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitVideoDecodedByteCount;

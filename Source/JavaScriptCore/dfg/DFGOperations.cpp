@@ -311,7 +311,9 @@ JSC_DEFINE_JIT_OPERATION(operationObjectAssignObject, void, (JSGlobalObject* glo
         // https://bugs.webkit.org/show_bug.cgi?id=187837
 
         // Do not clear since Vector::clear shrinks the backing store.
-        if (objectAssignFast(vm, target, source, properties, values))
+        bool objectAssignFastSucceeded = objectAssignFast(globalObject, target, source, properties, values);
+        RETURN_IF_EXCEPTION(scope, void());
+        if (objectAssignFastSucceeded)
             return;
     }
 
@@ -342,7 +344,9 @@ JSC_DEFINE_JIT_OPERATION(operationObjectAssignUntyped, void, (JSGlobalObject* gl
 
         Vector<RefPtr<UniquedStringImpl>, 8> properties;
         MarkedArgumentBuffer values;
-        if (objectAssignFast(vm, target, source, properties, values))
+        bool objectAssignFastSucceeded = objectAssignFast(globalObject, target, source, properties, values);
+        RETURN_IF_EXCEPTION(scope, void());
+        if (objectAssignFastSucceeded)
             return;
     }
 

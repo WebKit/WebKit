@@ -868,11 +868,69 @@ bool JSObject::fastForEachPropertyWithSideEffectFreeFunctor(VM& vm, const Functo
 
     Structure* structure = this->structure();
 
-    if (!structure->canPerformFastPropertyEnumeration())
+    if (!structure->canPerformFastPropertyEnumerationCommon())
         return false;
 
     structure->forEachProperty(vm, functor);
     return true;
+}
+
+template<typename Functor>
+void JSObject::forEachIndexedProperty(JSGlobalObject* globalObject, const Functor& functor)
+{
+    ASSERT(structure()->canPerformFastPropertyEnumerationCommon());
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    switch (indexingType()) {
+    case ALL_BLANK_INDEXING_TYPES:
+    case ALL_UNDECIDED_INDEXING_TYPES:
+        break;
+
+    case ALL_INT32_INDEXING_TYPES:
+    case ALL_CONTIGUOUS_INDEXING_TYPES:
+    case ALL_DOUBLE_INDEXING_TYPES: {
+        unsigned usedLength = m_butterfly->publicLength();
+        for (unsigned i = 0; i < usedLength; ++i) {
+            JSValue value = getDirectIndex(globalObject, i);
+            RETURN_IF_EXCEPTION(scope, void());
+            if (value && functor(i, value) == IterationStatus::Done)
+                return;
+        }
+        break;
+    }
+
+    case ALL_ARRAY_STORAGE_INDEXING_TYPES: {
+        Vector<unsigned, 8> properties;
+        MarkedArgumentBuffer values;
+
+        ArrayStorage* storage = m_butterfly->arrayStorage();
+        unsigned usedVectorLength = std::min(storage->length(), storage->vectorLength());
+        for (unsigned i = 0; i < usedVectorLength; ++i) {
+            auto value = storage->m_vector[i];
+            if (value) {
+                properties.append(i);
+                values.appendWithCrashOnOverflow(value.get());
+            }
+        }
+
+        if (SparseArrayValueMap* map = storage->m_sparseMap.get()) {
+            for (auto& [key, value] : *map) {
+                properties.append(key);
+                values.appendWithCrashOnOverflow(value.getNonSparseMode());
+            }
+        }
+
+        for (size_t i = 0; i < properties.size(); ++i) {
+            if (functor(properties[i], values.at(i)) == IterationStatus::Done)
+                return;
+        }
+        break;
+    }
+
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 }
 
 ALWAYS_INLINE JSFinalObject* JSFinalObject::createDefaultEmptyObject(JSGlobalObject* globalObject)

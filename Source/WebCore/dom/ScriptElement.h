@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2008 Nikolas Zimmermann <zimmermann@kde.org>
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,6 +29,7 @@
 #include "ScriptExecutionContextIdentifier.h"
 #include "ScriptType.h"
 #include "UserGestureIndicator.h"
+#include <JavaScriptCore/Forward.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/text/TextPosition.h>
 
@@ -76,6 +77,8 @@ public:
     LoadableScript* loadableScript() { return m_loadableScript.get(); }
 
     ScriptType scriptType() const { return m_scriptType; }
+
+    JSC::SourceTaintedOrigin sourceTaintedOrigin() const { return m_taintedOrigin; }
 
     void ref();
     void deref();
@@ -126,6 +129,7 @@ private:
 
     Element& m_element;
     OrdinalNumber m_startLineNumber { OrdinalNumber::beforeFirst() };
+    JSC::SourceTaintedOrigin m_taintedOrigin;
     ParserInserted m_parserInserted : bitWidthOfParserInserted;
     bool m_isExternalScript : 1 { false };
     bool m_alreadyStarted : 1;

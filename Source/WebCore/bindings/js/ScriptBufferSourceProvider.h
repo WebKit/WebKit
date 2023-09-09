@@ -96,7 +96,7 @@ public:
 
 private:
     ScriptBufferSourceProvider(const ScriptBuffer& scriptBuffer, const JSC::SourceOrigin& sourceOrigin, String&& sourceURL, String&& preRedirectURL, const TextPosition& startPosition, JSC::SourceProviderSourceType sourceType)
-        : JSC::SourceProvider(sourceOrigin, WTFMove(sourceURL), WTFMove(preRedirectURL), startPosition, sourceType)
+        : JSC::SourceProvider(sourceOrigin, WTFMove(sourceURL), WTFMove(preRedirectURL), JSC::SourceTaintedOrigin::Untainted, startPosition, sourceType)
         , m_scriptBuffer(scriptBuffer)
     {
     }

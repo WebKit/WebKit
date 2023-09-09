@@ -331,7 +331,7 @@ bool CanvasBase::shouldAccelerate(unsigned area) const
 #endif
 }
 
-RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer(bool usesDisplayListDrawing, bool avoidBackendSizeCheckForTesting) const
+RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer(bool avoidBackendSizeCheckForTesting) const
 {
     auto checkedArea = size().area<RecordOverflow>();
 
@@ -348,19 +348,14 @@ RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer(bool usesDisplayListDrawing,
     OptionSet<ImageBufferOptions> bufferOptions;
     if (shouldAccelerate(area))
         bufferOptions.add(ImageBufferOptions::Accelerated);
-    // FIXME: Add a new setting for DisplayList drawing on canvas.
-    if (usesDisplayListDrawing || scriptExecutionContext()->settingsValues().displayListDrawingEnabled)
-        bufferOptions.add(ImageBufferOptions::UseDisplayList);
-
+    if (avoidBackendSizeCheckForTesting)
+        bufferOptions.add(ImageBufferOptions::AvoidBackendSizeCheckForTesting);
     auto [colorSpace, pixelFormat] = [&] {
         if (renderingContext())
             return std::pair { renderingContext()->colorSpace(), renderingContext()->pixelFormat() };
         return std::pair { DestinationColorSpace::SRGB(), PixelFormat::BGRA8 };
     }();
-    ImageBufferCreationContext context = { };
-    context.graphicsClient = graphicsClient();
-    context.avoidIOSurfaceSizeCheckInWebProcessForTesting = avoidBackendSizeCheckForTesting;
-    return ImageBuffer::create(size(), RenderingPurpose::Canvas, 1, colorSpace, pixelFormat, bufferOptions, context);
+    return ImageBuffer::create(size(), RenderingPurpose::Canvas, 1, colorSpace, pixelFormat, bufferOptions, graphicsClient());
 }
 
 bool CanvasBase::shouldInjectNoiseBeforeReadback() const

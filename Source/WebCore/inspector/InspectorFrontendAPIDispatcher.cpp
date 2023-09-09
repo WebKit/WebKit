@@ -265,7 +265,7 @@ ValueOrException InspectorFrontendAPIDispatcher::evaluateExpression(const String
     JSC::SuspendExceptionScope scope(m_frontendPage->inspectorController().vm());
 
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_frontendPage->mainFrame());
-    return localMainFrame->script().evaluateInWorld(ScriptSourceCode(expression), mainThreadNormalWorld());
+    return localMainFrame->script().evaluateInWorld(ScriptSourceCode(expression, JSC::SourceTaintedOrigin::Untainted), mainThreadNormalWorld());
 }
 
 void InspectorFrontendAPIDispatcher::evaluateExpressionForTesting(const String& expression)

@@ -36,6 +36,7 @@
 #include "GPUProcessConnectionParameters.h"
 #include "GPUProcessCreationParameters.h"
 #include "GPUProcessPreferences.h"
+#include "GPUProcessPreferencesForWebProcess.h"
 #include "GPUProcessProxyMessages.h"
 #include "GPUProcessSessionParameters.h"
 #include "LogInitialization.h"
@@ -120,22 +121,10 @@ void GPUProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
     didReceiveGPUProcessMessage(connection, decoder);
 }
 
-void GPUProcess::updateWebGPUEnabled(WebCore::ProcessIdentifier processIdentifier, bool webGPUEnabled)
+void GPUProcess::updatePreferencesForWebProcess(WebCore::ProcessIdentifier processIdentifier, const GPUProcessPreferencesForWebProcess& preferences)
 {
     if (auto* connection = m_webProcessConnections.get(processIdentifier))
-        connection->updateWebGPUEnabled(webGPUEnabled);
-}
-
-void GPUProcess::updateWebGLEnabled(WebCore::ProcessIdentifier processIdentifier, bool webGLEnabled)
-{
-    if (auto* connection = m_webProcessConnections.get(processIdentifier))
-        connection->updateWebGLEnabled(webGLEnabled);
-}
-
-void GPUProcess::updateDOMRenderingEnabled(WebCore::ProcessIdentifier processIdentifier, bool isDOMRenderingEnabled)
-{
-    if (auto* connection = m_webProcessConnections.get(processIdentifier))
-        connection->updateDOMRenderingEnabled(isDOMRenderingEnabled);
+        connection->updatePreferences(preferences);
 }
 
 void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier identifier, PAL::SessionID sessionID, IPC::Connection::Handle&& connectionHandle, GPUProcessConnectionParameters&& parameters, CompletionHandler<void()>&& completionHandler)

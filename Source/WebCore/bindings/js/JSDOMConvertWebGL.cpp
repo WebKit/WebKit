@@ -30,6 +30,7 @@
 
 #include "JSANGLEInstancedArrays.h"
 #include "JSDOMConvertBufferSource.h"
+#include "JSEXTBlendFuncExtended.h"
 #include "JSEXTBlendMinMax.h"
 #include "JSEXTClipControl.h"
 #include "JSEXTColorBufferFloat.h"
@@ -190,8 +191,11 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         [&] (Ref<ANGLEInstancedArrays> extension) {
             return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
         },
+        [&] (Ref<EXTBlendFuncExtended> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
         [&] (Ref<EXTBlendMinMax> extension) {
-        return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
         },
         [&] (Ref<EXTClipControl> extension) {
             return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));

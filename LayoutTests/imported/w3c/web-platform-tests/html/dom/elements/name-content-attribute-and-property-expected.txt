@@ -16,6 +16,7 @@ PASS param element's name property reflects its content attribute
 PASS select element's name property reflects its content attribute
 PASS slot element's name property reflects its content attribute
 PASS textarea element's name property reflects its content attribute
+PASS details element's name property reflects its content attribute
 PASS abbr element's name property does not reflect its content attribute
 PASS address element's name property does not reflect its content attribute
 PASS area element's name property does not reflect its content attribute
@@ -39,7 +40,6 @@ PASS data element's name property does not reflect its content attribute
 PASS datalist element's name property does not reflect its content attribute
 PASS dd element's name property does not reflect its content attribute
 PASS del element's name property does not reflect its content attribute
-PASS details element's name property does not reflect its content attribute
 PASS dfn element's name property does not reflect its content attribute
 PASS dialog element's name property does not reflect its content attribute
 PASS div element's name property does not reflect its content attribute

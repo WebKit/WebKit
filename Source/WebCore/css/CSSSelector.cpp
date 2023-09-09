@@ -157,7 +157,7 @@ SelectorSpecificity simpleSelectorSpecificity(const CSSSelector& simpleSelector)
         case CSSSelector::PseudoClassType::NthLastChild:
         case CSSSelector::PseudoClassType::Host:
             return SelectorSpecificityIncrement::ClassB + maxSpecificity(simpleSelector.selectorList());
-        case CSSSelector::PseudoClassType::RelativeScope:
+        case CSSSelector::PseudoClassType::HasScope:
             return 0;
         default:
             return SelectorSpecificityIncrement::ClassB;
@@ -680,7 +680,7 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             case CSSSelector::PseudoClassType::Scope:
                 builder.append(":scope");
                 break;
-            case CSSSelector::PseudoClassType::RelativeScope:
+            case CSSSelector::PseudoClassType::HasScope:
                 // Remove the space from the start to generate a relative selector string like in ":has(> foo)".
                 return makeString(separator.substring(1), rightSide);
             case CSSSelector::PseudoClassType::SingleButton:

@@ -256,7 +256,7 @@ void SourceBufferPrivate::reenqueSamples(const AtomString& trackID)
     reenqueueMediaForTime(*trackBuffer, trackID, currentMediaTime());
 }
 
-void SourceBufferPrivate::seekToTarget(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
+void SourceBufferPrivate::computeSeekTime(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
 {
     if (!isAttached()) {
         completionHandler(MediaTime::invalidTime());
@@ -274,7 +274,11 @@ void SourceBufferPrivate::seekToTarget(const SeekTarget& target, CompletionHandl
                 seekTime = trackSeekTime;
         }
     }
-    seekToTime(seekTime);
+    // When converting from a double-precision float to a MediaTime, a certain amount of precision is lost. If that
+    // results in a round-trip between `float in -> MediaTime -> float out` where in != out, we will wait forever for
+    // the time jump observer to fire.
+    if (seekTime.hasDoubleValue())
+        seekTime = MediaTime::createWithDouble(seekTime.toDouble(), MediaTime::DefaultTimeScale);
 
     completionHandler(seekTime);
 }

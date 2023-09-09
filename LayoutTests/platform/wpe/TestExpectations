@@ -1636,9 +1636,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlob
 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h264_avc [ Pass Failure ]
 perf/htmlcollection-backwards-iteration.html [ Pass Failure ]
 
-# Unable to reproduce this crash outside of WPE bots.
-webkit.org/b/260072 fast/mediastream/success.html [ Crash Pass ]
-
 # mime-type is different due to different networking implementation.
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/content-type-checking.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/credentials.sub.html [ Pass Failure ]

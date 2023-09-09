@@ -180,9 +180,7 @@ private:
 
     // SerialFunctionDispatcher
     void dispatch(Function<void()>&& function) final { m_dispatcher.dispatch(WTFMove(function)); }
-#if ASSERT_ENABLED
-    void assertIsCurrent() const final { m_dispatcher.assertIsCurrent(); }
-#endif
+    bool isCurrent() const final { return m_dispatcher.isCurrent(); }
     RefPtr<IPC::Connection> m_connection;
     RefPtr<IPC::StreamClientConnection> m_streamConnection;
     RemoteRenderingBackendCreationParameters m_parameters;

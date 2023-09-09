@@ -166,6 +166,7 @@ crypto/mac/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp
 crypto/mac/CryptoAlgorithmRSA_OAEPMac.cpp
 crypto/mac/CryptoAlgorithmRSA_PSSMac.cpp
 crypto/mac/CryptoAlgorithmRegistryMac.cpp
+crypto/mac/CryptoAlgorithmX25519Cocoa.cpp
 crypto/mac/CryptoKeyECMac.cpp
 crypto/mac/CryptoKeyOKPCocoa.cpp
 crypto/mac/CryptoKeyMac.cpp

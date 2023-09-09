@@ -211,24 +211,29 @@ MediaTime MockMediaPlayerMediaSource::durationMediaTime() const
 void MockMediaPlayerMediaSource::seekToTarget(const SeekTarget& target)
 {
     m_seekCompleted = false;
-    m_mediaSourcePrivate->seekToTarget(target, [this, weakThis = WeakPtr { this }](const MediaTime& seekTime) {
+    m_mediaSourcePrivate->waitForTarget(target, [this, weakThis = WeakPtr { this }](const MediaTime& seekTime) {
         if (!weakThis || !seekTime.isValid())
             return;
 
-        m_seekCompleted = true;
-        m_currentTime = seekTime;
+        m_mediaSourcePrivate->seekToTime(seekTime, [this, weakThis, seekTime] {
+            if (!weakThis)
+                return;
+            m_seekCompleted = true;
+            m_currentTime = seekTime;
 
-        if (auto player = m_player.get()) {
-            player->seeked(seekTime);
-            player->timeChanged();
-        }
+            if (auto player = m_player.get()) {
+                player->seeked(seekTime);
+                player->timeChanged();
+            }
 
-        if (m_playing)
-            callOnMainThread([this, weakThis = WeakPtr { *this }] {
-                if (!weakThis)
-                    return;
-                advanceCurrentTime();
-            });
+            if (m_playing) {
+                callOnMainThread([this, weakThis = WeakPtr { *this }] {
+                    if (!weakThis)
+                        return;
+                    advanceCurrentTime();
+                });
+            }
+        });
     });
 }
 

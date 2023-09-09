@@ -190,7 +190,7 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
     void setupVarargsFrameAndSetThis(JSGlobalObject*, CallFrame* execCaller, CallFrame* execCallee, JSValue thisValue, JSValue arguments, uint32_t firstVarArgOffset, uint32_t length);
     void setupForwardArgumentsFrame(JSGlobalObject*, CallFrame* execCaller, CallFrame* execCallee, uint32_t length);
     void setupForwardArgumentsFrameAndSetThis(JSGlobalObject*, CallFrame* execCaller, CallFrame* execCallee, JSValue thisValue, uint32_t length);
-    
+
 } // namespace JSC
 
 namespace WTF {

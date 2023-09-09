@@ -28,6 +28,7 @@
 #include "Test.h"
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
+#include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
 #include <wtf/WorkQueue.h>
 #include <memory>
@@ -285,16 +286,17 @@ TEST(WTF_WorkQueue, DestroyDispatchedOnDispatchQueue)
     public:
         DestructionWorkQueueTester(std::atomic<size_t>& counter, WorkQueue& queue)
             : m_counter(counter)
-            , m_ownerAssertion(queue.threadLikeAssertion()) // Queue is not yet current, but we expect it to be the time destructor runs.
+            , m_queue(queue) // Queue is not yet current, but we expect it to be the time destructor runs.
         {
         }
         ~DestructionWorkQueueTester()
         {
             m_counter++;
+            RELEASE_ASSERT(m_queue->isCurrent());
         }
     private:
         std::atomic<size_t>& m_counter;
-        NO_UNIQUE_ADDRESS ThreadLikeAssertion m_ownerAssertion;
+        Ref<WorkQueue> m_queue;
     };
     constexpr size_t queueCount = 50;
     constexpr size_t iterationCount = 10000;
@@ -306,9 +308,14 @@ TEST(WTF_WorkQueue, DestroyDispatchedOnDispatchQueue)
         for (size_t j = 0; j < queueCount; ++j)
             queue[j]->dispatch([instance = std::make_unique<DestructionWorkQueueTester>(counter, *queue[j])] { }); // NOLINT
     }
+    // dispatchQOS() behaves the same as dispatch().
+    for (size_t i = 0; i < iterationCount; ++i) {
+        for (size_t j = 0; j < queueCount; ++j)
+            queue[j]->dispatchWithQOS([instance = std::make_unique<DestructionWorkQueueTester>(counter, *queue[j])] { }, Thread::QOS::UserInteractive); // NOLINT
+    }
     for (size_t j = 0; j < queueCount; ++j)
         queue[j]->dispatchSync([] { });
-    EXPECT_EQ(queueCount * iterationCount, counter);
+    EXPECT_EQ(2u * queueCount * iterationCount, counter);
 }
 
 namespace {
@@ -364,14 +371,10 @@ TEST(WTF_WorkQueue, MAYBE_MainWorkQueueIsCurrent)
     assertIsCurrent(WorkQueue::main());
     auto queue = WorkQueue::create("com.apple.WebKit.Test.MainWorkQueueIsCurrent");
     queue->dispatch([] {
-        auto threadLikeAssertion = WorkQueue::main().threadLikeAssertion();
-        EXPECT_FALSE(threadLikeAssertion.isCurrent());
-        threadLikeAssertion.reset(); // To prevent assertion in ThreadLikeAssertion destructor.
+        EXPECT_FALSE(WorkQueue::main().isCurrent());
     });
     queue->dispatchSync([] {
-        auto threadLikeAssertion = WorkQueue::main().threadLikeAssertion();
-        EXPECT_FALSE(threadLikeAssertion.isCurrent());
-        threadLikeAssertion.reset(); // To prevent assertion in ThreadLikeAssertion destructor.
+        EXPECT_FALSE(WorkQueue::main().isCurrent());
     });
 }
 

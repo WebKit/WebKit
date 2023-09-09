@@ -192,7 +192,11 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const SeekTarget& target, float rate
     // Notify MediaSource and have new frames enqueued (when they're available).
     // Seek should only continue once the seekToTarget completionhandler has run.
     // This will also add support for fastSeek once done (see webkit.org/b/260607)
-    m_mediaSource->seekToTarget(target, [](const MediaTime&) { });
+    m_mediaSource->waitForTarget(target, [this, weakThis = WeakPtr { this }](const MediaTime& time) {
+        if (!weakThis)
+            return;
+        m_mediaSource->seekToTime(time, [] { });
+    });
     return true;
 }
 

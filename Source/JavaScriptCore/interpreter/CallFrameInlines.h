@@ -129,4 +129,9 @@ inline Register* CallFrame::topOfFrame()
     return topOfFrameInternal();
 }
 
+SUPPRESS_ASAN ALWAYS_INLINE void CallFrame::setCallSiteIndex(CallSiteIndex callSiteIndex)
+{
+    this[static_cast<int>(CallFrameSlot::argumentCountIncludingThis)].tag() = callSiteIndex.bits();
+}
+
 } // namespace JSC

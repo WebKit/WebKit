@@ -194,7 +194,7 @@ std::unique_ptr<DisplayList::DisplayList> FontCascade::displayListForTextRun(Gra
         return nullptr;
 
     std::unique_ptr<DisplayList::DisplayList> displayList = makeUnique<DisplayList::DisplayList>();
-    DisplayList::RecorderImpl recordingContext(*displayList, context.state().cloneForRecording(), { },
+    DisplayList::RecorderImpl recordingContext(*displayList, context.state().clone(GraphicsContextState::Purpose::Initial), { },
         context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale), context.colorSpace(),
         DisplayList::Recorder::DrawGlyphsMode::DeconstructUsingDrawDecomposedGlyphsCommands);
 

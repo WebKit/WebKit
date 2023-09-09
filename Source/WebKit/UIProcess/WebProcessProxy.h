@@ -28,6 +28,7 @@
 #include "APIUserInitiatedAction.h"
 #include "AuxiliaryProcessProxy.h"
 #include "BackgroundProcessResponsivenessTimer.h"
+#include "GPUProcessPreferencesForWebProcess.h"
 #include "MessageReceiverMap.h"
 #include "NetworkProcessProxy.h"
 #include "ProcessLauncher.h"
@@ -566,8 +567,10 @@ private:
 
     void updateBlobRegistryPartitioningState() const;
 
-    void updatePreferencesEnabledStateInGPUProcess();
-    void updateDOMRenderingStateInGPUProcess();
+#if ENABLE(GPU_PROCESS)
+    GPUProcessPreferencesForWebProcess computePreferencesForGPUProcess() const;
+#endif
+    void updatePreferencesForGPUProcess();
 
     void processDidTerminateOrFailedToLaunch(ProcessTerminationReason);
 
@@ -770,6 +773,9 @@ private:
     bool m_platformSuspendDidReleaseNearSuspendedAssertion { false };
 #endif
     mutable String m_environmentIdentifier;
+#if ENABLE(GPU_PROCESS)
+    std::optional<GPUProcessPreferencesForWebProcess> m_preferencesForGPUProcess;
+#endif
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const WebProcessProxy&);
