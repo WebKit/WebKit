@@ -86,6 +86,7 @@ public:
     float contentLogicalWidth() const { return m_contentLogicalWidth; }
 
     size_t firstBoxIndex() const { return m_firstBoxIndex; }
+    size_t lastBoxIndex() const { return firstBoxIndex() + boxCount() - 1; }
     size_t boxCount() const { return m_boxCount; }
     bool isFirstAfterPageBreak() const { return m_isFirstAfterPageBreak; }
 

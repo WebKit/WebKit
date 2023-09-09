@@ -46,8 +46,9 @@ public:
     void updateLineOverflow(InlineContent&) const;
 
 private:
-    void adjustDisplayLines(InlineContent&) const;
-    void computeIsFirstIsLastBoxForInlineContent(InlineContent&) const;
+    void adjustDisplayLines(InlineContent&, size_t startIndex) const;
+    void computeIsFirstIsLastBoxForInlineContent(InlineDisplay::Boxes&) const;
+    void updateIfTextRenderersNeedVisualReordering(InlineDisplay::Boxes&) const;
 
     const RenderBlockFlow& m_blockFlow;
     BoxTree& m_boxTree;
