@@ -4069,8 +4069,8 @@ def check_identifier_name_in_declaration(filename, line_number, line, file_state
                   the state of things in the file.
       error: The function to call with any errors found.
     """
-    # We don't check a return statement.
-    if match(r'\s*(return|delete)\b', line):
+    # We don't check return, case or delete statements.
+    if match(r'\s*(return|case|delete)\b', line):
         return
 
     # Make sure Ref/RefPtrs used as protectors are named correctly, and do this before we start stripping things off the input.
