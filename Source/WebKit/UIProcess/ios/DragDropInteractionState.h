@@ -82,7 +82,7 @@ public:
     const DragSourceState& stagedDragSource() const { return m_stagedDragSource.value(); }
     enum class DidBecomeActive : bool { No, Yes };
     void clearStagedDragSource(DidBecomeActive = DidBecomeActive::No);
-    UITargetedDragPreview *previewForDragItem(UIDragItem *, UIView *contentView, UIView *previewContainer) const;
+    UITargetedDragPreview *previewForDragItem(UIDragItem *, UIView *contentView, UIView *previewContainer, const std::optional<WebCore::TextIndicatorData>&) const;
     void dragSessionWillDelaySetDownAnimation(dispatch_block_t completion);
     bool shouldRequestAdditionalItemForDragSession(id <UIDragSession>) const;
     void dragSessionWillRequestAdditionalItem(void (^completion)(NSArray <UIDragItem *> *));

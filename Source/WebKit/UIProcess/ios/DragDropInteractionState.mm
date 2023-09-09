@@ -297,11 +297,19 @@ void DragDropInteractionState::clearAllDelayedItemPreviewProviders()
     m_delayedItemPreviewProviders.clear();
 }
 
-UITargetedDragPreview *DragDropInteractionState::previewForDragItem(UIDragItem *item, UIView *contentView, UIView *previewContainer) const
+UITargetedDragPreview *DragDropInteractionState::previewForDragItem(UIDragItem *item, UIView *contentView, UIView *previewContainer, const std::optional<WebCore::TextIndicatorData>& indicator) const
 {
     auto foundSource = activeDragSourceForItem(item);
     if (!foundSource)
         return nil;
+
+    if (indicator) {
+        // If the context menu preview was created using the snapshot mechanism,
+        // the drag preview should be created likewise, so that the size and position
+        // of both previews match.
+        auto textIndicatorImage = uiImageForImage(indicator->contentImage.get());
+        return createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, indicator->textBoundingRectInRootViewCoordinates, indicator->textRectsInBoundingRectCoordinates, cocoaColor(indicator->estimatedBackgroundColor).get(), nil, addPreviewViewToContainer).autorelease();
+    }
 
     auto& source = foundSource.value();
     if (shouldUseDragImageToCreatePreviewForDragSource(source)) {
