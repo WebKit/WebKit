@@ -138,8 +138,8 @@ WK_UIKIT_LDFLAGS_cocoatouch = -framework UIKit;
 // it's impossible to tell the difference between visionOS and iOS with the latter.
 // Don't copy this unless you also need to differentiate!
 WK_MRUIKIT_LDFLAGS = $(WK_MRUIKIT_LDFLAGS_$(PLATFORM_NAME));
-WK_MRUIKIT_LDFLAGS_xros = -framework MRUIKit;
-WK_MRUIKIT_LDFLAGS_xrsimulator = -framework MRUIKit;
+WK_MRUIKIT_LDFLAGS_xros = -weak_framework MRUIKit;
+WK_MRUIKIT_LDFLAGS_xrsimulator = -weak_framework MRUIKit;
 
 WK_UNIFORM_TYPE_IDENTIFIERS_LDFLAGS = $(WK_UNIFORM_TYPE_IDENTIFIERS_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_UNIFORM_TYPE_IDENTIFIERS_LDFLAGS_iphoneos = $(WK_UNIFORM_TYPE_IDENTIFIERS_LDFLAGS$(WK_IOS_14));
