@@ -41,6 +41,9 @@ public:
 
 private:
     void collectInlineItems(InlineItems&, InlineItemPosition startPosition);
+    using LayoutQueue = Vector<CheckedRef<const Box>>;
+    LayoutQueue initializeLayoutQueue(InlineItemPosition startPosition);
+    bool traverseUntilDamaged(LayoutQueue&, const Box& subtreeRoot, const Box& firstDamagedLayoutBox);
     void breakAndComputeBidiLevels(InlineItems&);
     void computeInlineTextItemWidths(InlineItems&);
 
