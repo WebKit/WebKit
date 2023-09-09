@@ -3,5 +3,5 @@
 check that the state is reset
 
 
-FAIL check that the state is reset ctx.reset is not a function. (In 'ctx.reset()', 'ctx.reset' is undefined)
+PASS check that the state is reset
 

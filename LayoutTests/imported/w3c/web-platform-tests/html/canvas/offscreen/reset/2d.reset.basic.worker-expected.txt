@@ -1,3 +1,3 @@
 
-FAIL reset clears to transparent black ctx.reset is not a function. (In 'ctx.reset()', 'ctx.reset' is undefined)
+PASS reset clears to transparent black
 
