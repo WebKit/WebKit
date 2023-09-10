@@ -160,6 +160,7 @@
     // Table info.
     DOMString attributesOfColumnHeaders();
     DOMString attributesOfRowHeaders();
+    object columns();
     DOMString attributesOfColumns();
     DOMString attributesOfRows();
     DOMString attributesOfVisibleCells();

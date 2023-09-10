@@ -1,0 +1,104 @@
+This test ensures that the headers associated with cells are exposed properly via accessibility APIs for role='row' elements with display:contents.
+
+
+Column had header with attributes:
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
+AXRole: AXCell
+AXSubrole: (null)
+AXRoleDescription: cell
+AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
+AXHelp:
+AXParent: <AXCell>
+AXSize: NSSize: {45, 18}
+AXTitle:
+AXDescription:
+AXValue:
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXCell>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXCell>
+AXEndTextMarker: <AXCell>
+AXVisited: 0
+AXLinkedUIElements: <array of size 0>
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXCell>
+AXLanguage:
+AXDOMIdentifier: r0c0
+AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
+AXRowIndexRange: NSRange: {0, 1}
+AXColumnIndexRange: NSRange: {0, 1}
+AXColumnHeaderUIElements: <array of size 0>
+AXRowHeaderUIElements: <array of size 0>
+AXARIAColumnIndex: -1
+AXARIARowIndex: -1
+AXElementBusy: 0
+AXRequired: 0
+
+------------
+
+
+Column had header with attributes:
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
+AXRole: AXCell
+AXSubrole: (null)
+AXRoleDescription: cell
+AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
+AXHelp:
+AXParent: <AXCell>
+AXSize: NSSize: {30, 18}
+AXTitle:
+AXDescription:
+AXValue:
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXCell>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXCell>
+AXEndTextMarker: <AXCell>
+AXVisited: 0
+AXLinkedUIElements: <array of size 0>
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXCell>
+AXLanguage:
+AXDOMIdentifier: r0c1
+AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
+AXRowIndexRange: NSRange: {0, 1}
+AXColumnIndexRange: NSRange: {1, 1}
+AXColumnHeaderUIElements: <array of size 0>
+AXRowHeaderUIElements: <array of size 0>
+AXARIAColumnIndex: -1
+AXARIARowIndex: -1
+AXElementBusy: 0
+AXRequired: 0
+
+------------
+
+
+Found table header container. Dumping its children.
+AXRole: AXGroup AXValue:
+    AXRole: AXCell AXValue:
+        AXRole: AXStaticText AXValue: Author
+    AXRole: AXCell AXValue:
+        AXRole: AXStaticText AXValue: Year
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Author Year
+Stephen Hawking 1988
+Carl Sagan 1980
+

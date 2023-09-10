@@ -230,6 +230,7 @@ public:
     JSRetainPtr<JSStringRef> attributesOfColumnHeaders();
     JSRetainPtr<JSStringRef> attributesOfRowHeaders();
     JSRetainPtr<JSStringRef> attributesOfColumns();
+    JSValueRef columns();
     JSRetainPtr<JSStringRef> attributesOfRows();
     JSRetainPtr<JSStringRef> attributesOfVisibleCells();
     JSRetainPtr<JSStringRef> attributesOfHeader();
