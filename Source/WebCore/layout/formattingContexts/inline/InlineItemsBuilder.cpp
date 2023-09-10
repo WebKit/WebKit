@@ -130,6 +130,10 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
 
 static bool isNonBidiTextOrForcedLineBreak(const Box& layoutBox)
 {
+    auto& style = layoutBox.isInlineBox() ? layoutBox.style() : layoutBox.parent().style();
+    auto contentRequiresVisualReordering = !style.isLeftToRightDirection() || (style.rtlOrdering() == Order::Logical && style.unicodeBidi() != UnicodeBidi::Normal);
+    if (contentRequiresVisualReordering)
+        return false;
     if (is<InlineTextBox>(layoutBox))
         return TextUtil::containsStrongDirectionalityText(downcast<InlineTextBox>(layoutBox).content());
     return layoutBox.isLineBreakBox();

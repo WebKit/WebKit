@@ -319,7 +319,7 @@ void InlineInvalidation::updateInlineDamage(InlineDamage::Type type, std::option
 
 static bool isSupportedContent(const Box& layoutBox)
 {
-    return is<InlineTextBox>(layoutBox) || layoutBox.isLineBreakBox() || layoutBox.isReplacedBox();
+    return is<InlineTextBox>(layoutBox) || layoutBox.isLineBreakBox() || layoutBox.isReplacedBox() || layoutBox.isInlineBox();
 }
 
 bool InlineInvalidation::applyFullDamageIfNeeded(const Box& layoutBox)

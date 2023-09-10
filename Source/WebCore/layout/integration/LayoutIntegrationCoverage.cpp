@@ -409,19 +409,27 @@ bool canUseForPreferredWidthComputation(const RenderBlockFlow& blockContainer)
 
 bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlockContainer, const RenderObject& renderer, const LineLayout& lineLayout, TypeOfChangeForInvalidation typeOfChange)
 {
-    auto isSupportedRenderer = [&](auto& renderer) {
+    auto isSupportedRendererWithChange = [&](auto& renderer) {
         if (is<RenderText>(renderer))
             return true;
         if (!renderer.isInFlow())
             return false;
         if (is<RenderLineBreak>(renderer))
             return true;
-        if (is<RenderReplaced>(renderer))
+        if (is<RenderReplaced>(renderer) || is<RenderInline>(renderer))
             return typeOfChange == TypeOfChangeForInvalidation::NodeInsertion;
         return false;
     };
-    if (!isSupportedRenderer(renderer) || !is<RenderBlockFlow>(renderer.parent()))
+    if (!isSupportedRendererWithChange(renderer))
         return true;
+    auto isSupportedParent = [&] {
+        auto* parent = renderer.parent();
+        // Content append under existing inline box is not yet supported.
+        return is<RenderBlockFlow>(parent) || (is<RenderInline>(parent) && !parent->everHadLayout());
+    };
+    if (!isSupportedParent())
+        return true;
+
     if (lineLayout.hasOutOfFlowContent())
         return true;
     if (rootBlockContainer.containsFloats())
@@ -437,12 +445,12 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
             return true;
         }
     }
-    if (renderer.style().textWrap() == TextWrap::Balance)
+    if (rootBlockContainer.style().direction() == TextDirection::RTL || rootBlockContainer.style().textWrap() == TextWrap::Balance)
         return true;
 
     auto rootHasNonSupportedRenderer = [&] {
         for (auto* sibling = rootBlockContainer.firstChild(); sibling; sibling = sibling->nextSibling()) {
-            if (!isSupportedRenderer(*sibling))
+            if (!is<RenderText>(*sibling) && !is<RenderLineBreak>(*sibling))
                 return true;
         }
         return !canUseForLineLayout(rootBlockContainer);
@@ -454,11 +462,12 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
             return true;
         return rootHasNonSupportedRenderer();
     case TypeOfChangeForInvalidation::NodeInsertion: {
-        auto contentHasNonSupportedRenderer = rootHasNonSupportedRenderer();
-        if (contentHasNonSupportedRenderer)
+        if (!renderer.nextSibling())
+            return false;
+        if (rootHasNonSupportedRenderer())
             return true;
         // Allow text content insert as individual renderers (this is about editing inserting RenderText for each \n)
-        return !renderer.nextSibling() ? false : !is<RenderText>(renderer);
+        return !is<RenderText>(renderer);
     }
     case TypeOfChangeForInvalidation::NodeMutation:
         return rootHasNonSupportedRenderer();
