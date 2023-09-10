@@ -2451,6 +2451,8 @@ webkit.org/b/214166 imported/w3c/web-platform-tests/media-source/idlharness.wind
 # Failing since more testcases were added in https://bugs.webkit.org/show_bug.cgi?id=242092
 accessibility/table-exposure-updates-dynamically.html [ Skip ]
 
+accessibility/display-contents/role-row-headers.html [ Skip ]
+
 # Failing since added in https://bugs.webkit.org/show_bug.cgi?id=243768.
 accessibility/spinbutton-increment-decrement.html [ Skip ]
 

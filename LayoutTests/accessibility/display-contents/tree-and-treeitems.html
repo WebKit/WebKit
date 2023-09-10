@@ -63,6 +63,7 @@ if (window.accessibilityController) {
     output += expect("treeitem1.isAttributeSupported('AXValue')", "true");
     var canSetDisclosing = treeitem1.isAttributeSettable('AXDisclosing');
     output += expect("canSetDisclosing", "true");
+    output += `treeitem1 text:\n${platformTextAlternatives(treeitem1)}\n\n`;
 
     var treeitem2 = treeitem1.disclosedRowAtIndex(0);
     output += expect("treeitem2.role", "'AXRole: AXRow'");
@@ -72,6 +73,7 @@ if (window.accessibilityController) {
     output += expect("treeitem2.disclosedByRow().isEqual(treeitem1)", "true");
     canSetDisclosing = treeitem2.isAttributeSettable('AXDisclosing');
     output += expect("canSetDisclosing", "false");
+    output += `treeitem2 text:\n${platformTextAlternatives(treeitem2)}\n\n`;
 
     var treeitem3 = treeitem2.childAtIndex(0);
     output += expect("treeitem3.stringValue", "'AXValue: Birds'");
@@ -83,6 +85,7 @@ if (window.accessibilityController) {
     output += expect("treeitem3.role", "'AXRole: AXRow'");
     output += expect("treeitem3.subrole", "'AXSubrole: AXOutlineRow'");
     output += expect("treeitem3.isExpanded", "true");
+    output += `treeitem3 text:\n${platformTextAlternatives(treeitem3)}\n`;
 
     var selectedRow, treeitem4, treeitem5, treeitem6;
     // Test that the row can be selected correctly.

@@ -199,27 +199,6 @@ bool LineLayout::shouldInvalidateLineLayoutPathAfterTreeMutation(const RenderBlo
     return shouldInvalidateLineLayoutPathAfterChangeFor(parent, renderer, lineLayout, isRemoval ? TypeOfChangeForInvalidation::NodeRemoval : TypeOfChangeForInvalidation::NodeInsertion);
 }
 
-bool LineLayout::shouldSwitchToLegacyOnInvalidation() const
-{
-    // FIXME: Support partial invalidation in LFC.
-    // This avoids O(n^2) when lots of boxes are being added dynamically while forcing layouts between.
-    constexpr size_t maximimumBoxTreeSizeForInvalidation = 128;
-    if (m_boxTree.boxCount() <= maximimumBoxTreeSizeForInvalidation)
-        return false;
-    auto isSegmentedTextContent = [&] {
-        // Large text content is broken into smaller (65k) pieces. Modern line layout should be able to handle it just fine.
-        auto renderers = m_boxTree.renderers();
-        ASSERT(renderers.size());
-        for (size_t index = 0; index < renderers.size() - 1; ++index) {
-            if (!is<RenderText>(renderers[index]) || downcast<RenderText>(*renderers[index]).length() < Text::defaultLengthLimit)
-                return false;
-        }
-        return is<RenderText>(renderers[renderers.size() - 1]);
-    };
-    auto isEditable = rootLayoutBox().style().effectiveUserModify() != UserModify::ReadOnly;
-    return isEditable || !isSegmentedTextContent();
-}
-
 void LineLayout::updateReplacedDimensions(const RenderBox& replaced)
 {
     updateLayoutBoxDimensions(replaced);
@@ -1245,7 +1224,7 @@ void LineLayout::insertedIntoTree(const RenderElement& parent, RenderObject& chi
         return;
     }
 
-    if (childLayoutBox.isLineBreakBox()) {
+    if (childLayoutBox.isLineBreakBox() || childLayoutBox.isReplacedBox() || childLayoutBox.isInlineBox()) {
         auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState.inlineItems(), m_inlineContent->displayContent() };
         invalidation.inlineLevelBoxInserted(childLayoutBox);
         return;

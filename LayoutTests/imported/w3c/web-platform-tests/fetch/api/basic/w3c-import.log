@@ -47,3 +47,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/stream-response.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/stream-safe-creation.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/text-utf8.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/url-parsing.sub.html

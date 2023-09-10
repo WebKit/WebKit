@@ -33,6 +33,7 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSize.h>
 #include <stdint.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TypeCasts.h>
@@ -139,9 +140,11 @@ public:
 protected:
     DrawingAreaProxy(DrawingAreaType, WebPageProxy&);
 
+    Ref<WebPageProxy> protectedWebPageProxy() const;
+
     DrawingAreaType m_type;
     DrawingAreaIdentifier m_identifier;
-    WebPageProxy& m_webPageProxy;
+    CheckedRef<WebPageProxy> m_webPageProxy;
 
     WebCore::IntSize m_size;
     WebCore::IntSize m_scrollOffset;

@@ -3,6 +3,9 @@ PASS Empty string integrity
 PASS SHA-256 integrity
 PASS SHA-384 integrity
 PASS SHA-512 integrity
+PASS SHA-512 integrity with missing padding
+PASS SHA-512 integrity base64url encoded
+PASS SHA-512 integrity base64url encoded with missing padding
 PASS Invalid integrity
 PASS Multiple integrities: valid stronger than invalid
 PASS Multiple integrities: invalid stronger than valid
