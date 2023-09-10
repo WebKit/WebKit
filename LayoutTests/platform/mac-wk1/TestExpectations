@@ -821,6 +821,8 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element [ Wont
 # Default ARIA for custom elements are not yet enabled
 accessibility/custom-elements/ [ Skip ]
 
+accessibility/display-contents/role-row-headers.html [ Skip ]
+
 # Missing necessary testing logic (AccessibilityController::{get,set}RetainedElement)
 accessibility/ax-object-destroyed-on-reload.html [ Skip ]
 accessibility/page-reload-deadlock.html [ Skip ]
