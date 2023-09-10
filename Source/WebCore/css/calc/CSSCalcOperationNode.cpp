@@ -917,12 +917,16 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
                     return false;
             }
 
-            // At the root, preserve the root function by only merging nodes with the same function.
             auto& child = parent.children().first();
             if (!is<CSSCalcOperationNode>(child))
                 return false;
 
+            // At the root, calc(otherFunction()) should always collapse to otherFunction().
             auto parentFunction = functionFromOperator(parent.calcOperator());
+            if (parentFunction == CSSValueCalc)
+                return true;
+
+            // At the root, preserve the root function by merging nodes with the same function.
             auto childFunction = functionFromOperator(downcast<CSSCalcOperationNode>(child.get()).calcOperator());
             return childFunction == parentFunction;
         };
