@@ -24,9 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
- // https://www.w3.org/TR/webvtt1/#the-vttregion-interface
+// https://w3c.github.io/webvtt/#the-vttregion-interface
 
- // FIXME: Add 'enum' for 'ScrollSetting' to align with the specification. See: https://bugs.webkit.org/show_bug.cgi?id=260766
+enum ScrollSetting { "" /* none */, "up" };
 
 [
     Conditional=VIDEO,
@@ -42,7 +42,8 @@
     attribute double regionAnchorY;
     attribute double viewportAnchorX;
     attribute double viewportAnchorY;
-    // FIXME: Use 'enum' 'ScrollSetting' for 'scroll'. See: https://bugs.webkit.org/show_bug.cgi?id=260766
-    attribute [AtomString] DOMString scroll;
+    attribute ScrollSetting scroll;
+    
+    // FIXME: non-standard?
     readonly attribute TextTrack track;
 };
