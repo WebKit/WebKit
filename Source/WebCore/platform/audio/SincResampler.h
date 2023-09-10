@@ -31,6 +31,7 @@
 
 #include "AudioArray.h"
 #include "AudioSourceProvider.h"
+#include <span>
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>
 
@@ -43,17 +44,17 @@ class SincResampler final {
 public:
     // scaleFactor == sourceSampleRate / destinationSampleRate
     // requestFrames controls the size in frames of the buffer requested by each provideInput() call.
-    SincResampler(double scaleFactor, unsigned requestFrames, Function<void(float* buffer, size_t framesToProcess)>&& provideInput);
+    SincResampler(double scaleFactor, unsigned requestFrames, Function<void(std::span<float> buffer, size_t framesToProcess)>&& provideInput);
     
     size_t chunkSize() const { return m_chunkSize; }
 
-    // Processes numberOfSourceFrames from source to produce numberOfSourceFrames / scaleFactor frames in destination.
-    WEBCORE_EXPORT static void processBuffer(const float* source, float* destination, unsigned numberOfSourceFrames, double scaleFactor);
+    // Processes samples in `source` to produce source.size() / scaleFactor frames in `destination`.
+    WEBCORE_EXPORT static void processBuffer(std::span<const float> source, std::span<float> destination, double scaleFactor);
 
     // Process with provideInput callback function for streaming applications.
-    void process(float* destination, size_t framesToProcess);
+    void process(std::span<float> destination, size_t framesToProcess);
 
-protected:
+private:
     void initializeKernel();
     void updateRegions(bool isSecondLoad);
 
@@ -72,23 +73,23 @@ protected:
     // This is the number of destination frames we generate per processing pass on the buffer.
     unsigned m_requestFrames;
 
-    Function<void(float* buffer, size_t framesToProcess)> m_provideInput;
+    Function<void(std::span<float> buffer, size_t framesToProcess)> m_provideInput;
 
     // The number of source frames processed per pass.
-    unsigned m_blockSize { 0 };
+    size_t m_blockSize { 0 };
 
     size_t m_chunkSize { 0 };
 
     // Source is copied into this buffer for each processing pass.
     AudioFloatArray m_inputBuffer;
 
-    // Pointers to the various regions inside |m_inputBuffer|. See the diagram at
+    // Spans to the various regions inside |m_inputBuffer|. See the diagram at
     // the top of the .cpp file for more information.
-    float* m_r0 { nullptr };
-    float* const m_r1 { nullptr };
-    float* const m_r2 { nullptr };
-    float* m_r3 { nullptr };
-    float* m_r4 { nullptr };
+    std::span<float> m_r0;
+    const std::span<float> m_r1;
+    const std::span<float> m_r2;
+    std::span<float> m_r3;
+    std::span<float> m_r4;
 
     // The buffer is primed once at the very beginning of processing.
     bool m_isBufferPrimed { false };
