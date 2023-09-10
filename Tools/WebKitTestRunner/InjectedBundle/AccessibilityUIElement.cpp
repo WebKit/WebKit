@@ -123,7 +123,8 @@ JSValueRef AccessibilityUIElement::searchTextWithCriteria(JSContextRef, JSValueR
 bool AccessibilityUIElement::isOnScreen() const { return true; }
 JSValueRef AccessibilityUIElement::mathRootRadicand() const { return { }; }
 unsigned AccessibilityUIElement::numberOfCharacters() const { return 0; }
-#endif
+JSValueRef AccessibilityUIElement::columns() { return { }; }
+#endif // !PLATFORM(MAC) || !ENABLE(ACCESSIBILITY)
 
 #if !PLATFORM(COCOA) || !ENABLE(ACCESSIBILITY)
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::focusedElement() const { return nullptr; }

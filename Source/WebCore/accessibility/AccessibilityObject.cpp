@@ -625,7 +625,9 @@ void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, De
     if (displayContentsParent && displayContentsParent != this) {
         // Make sure the display:contents parent object knows it has a child it needs to add.
         displayContentsParent->setNeedsToUpdateChildren();
-        return;
+        // Don't exit early for certain table components, as they rely on inserting children for which they are not the rightful parent to behave correctly.
+        if (!isTableColumn() && roleValue() != AccessibilityRole::TableHeaderContainer)
+            return;
     }
 
     auto thisAncestorFlags = computeAncestorFlags();
