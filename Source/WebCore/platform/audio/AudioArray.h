@@ -29,6 +29,7 @@
 #ifndef AudioArray_h
 #define AudioArray_h
 
+#include <span>
 #include <string.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/FastMalloc.h>
@@ -72,6 +73,8 @@ public:
         zero();
     }
 
+    std::span<T> span() { return { data(), size() }; }
+    std::span<const T> span() const { return { data(), size() }; }
     T* data() { return m_allocation; }
     const T* data() const { return m_allocation; }
     size_t size() const { return m_size; }
