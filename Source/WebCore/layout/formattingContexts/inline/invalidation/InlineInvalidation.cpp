@@ -395,6 +395,11 @@ bool InlineInvalidation::inlineLevelBoxInserted(const Box& layoutBox)
     auto damagedLine = std::optional<DamagedLine> { };
     if (!layoutBox.nextInFlowSibling()) {
         // New box got appended. Let's dirty the last line.
+        if (m_inlineDamage.reasons() == InlineDamage::Reason::Append) {
+            // Series of append operations always produces the same damage position.
+            return m_inlineDamage.type() != InlineDamage::Type::Invalid;
+        }
+        ASSERT(!m_inlineDamage.reasons());
         damagedLine = leadingInlineItemPositionOnLastLine(m_inlineItems, displayBoxes());
     } else {
         damagedLine = DamagedLine { };
