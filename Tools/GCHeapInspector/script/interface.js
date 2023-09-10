@@ -271,6 +271,11 @@ class HeapSnapshotInspector
         this.containerElement.appendChild(this.allPathsContainer);
         this.containerElement.appendChild(this.rootsContainer);
         this.containerElement.appendChild(this.objectByTypeContainer);
+
+        // Cache for precomputed paths in the All Paths To... section.
+        // Enables on-demand DOM node creation to cut down on memory use for
+        // objects with a huge number of paths.
+        this.nodePathDetailsWeakMap = new WeakMap()
     }
 
     buildAllObjectsByType()
@@ -406,6 +411,34 @@ class HeapSnapshotInspector
         summary.appendChild(clearButton);
     }
 
+    populatePathDetailsOnDemand(pathDetails)
+    {
+        let pathNodes = this.nodePathDetailsWeakMap.get(pathDetails);
+        if (!pathNodes) {
+            pathDetails.appendChild(document.createTextNode('Error loading path: Path not cached in HeapSnapshotInspector.nodePathDetailsWeakMap'));
+            return;
+        }
+
+        let pathList = document.createElement('ul');
+        pathList.className = 'path';
+
+        let isNode = true;
+        let currItem = undefined;
+        for (let item of pathNodes) {
+            if (isNode) {
+                currItem = document.createElement('li');
+                currItem.appendChild(HeapInspectorUtils.spanForNode(this, item));
+                pathList.appendChild(currItem);
+            } else {
+                currItem.appendChild(HeapInspectorUtils.spanForEdge(this.snapshot, item));
+                currItem = undefined;
+            }
+            isNode = !isNode;
+        }
+
+        pathDetails.appendChild(pathList);
+    }
+
     showAllPathsToNode(node)
     {
         let paths = this.snapshot._gcRootPaths(node.id);
@@ -429,25 +462,19 @@ class HeapSnapshotInspector
             let pathDetails = DOMUtils.createDetails('');
             let pathSummary = pathDetails.firstChild;
             pathSummary.appendChild(HeapInspectorUtils.summarySpanForPath(this, pathNodes));
-        
-            let pathList = document.createElement('ul');
-            pathList.className = 'path';
 
-            let isNode = true;
-            let currItem = undefined;
-            for (let item of pathNodes) {
-                if (isNode) {
-                    currItem = document.createElement('li');
-                    currItem.appendChild(HeapInspectorUtils.spanForNode(this, item));
-                    pathList.appendChild(currItem);
-                } else {
-                    currItem.appendChild(HeapInspectorUtils.spanForEdge(this.snapshot, item));
-                    currItem = undefined;
-                }
-                isNode = !isNode;
-            }
-    
-            pathDetails.appendChild(pathList);
+            if (!this.nodePathDetailsWeakMap.get(pathDetails))
+                this.nodePathDetailsWeakMap.set(pathDetails, pathNodes);
+        
+            pathDetails.addEventListener('toggle', (event) => {
+                if (event.target.open)
+                    return this.populatePathDetailsOnDemand(event.target);
+
+                let pathSummary = pathDetails.firstChild;
+                DOMUtils.removeAllChildren(event.target);
+                pathDetails.appendChild(pathSummary);
+            });
+
             detailsContainer.appendChild(pathDetails);
         }
     
