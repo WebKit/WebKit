@@ -135,16 +135,20 @@ void AccessibilityNodeObject::updateRole()
 
 AccessibilityObject* AccessibilityNodeObject::firstChild() const
 {
-    if (!node())
-        return nullptr;
-    
-    Node* firstChild = node()->firstChild();
-
-    if (!firstChild)
+    auto* currentChild = node() ? node()->firstChild() : nullptr;
+    if (!currentChild)
         return nullptr;
 
-    auto objectCache = axObjectCache();
-    return objectCache ? objectCache->getOrCreate(firstChild) : nullptr;
+    auto* cache = axObjectCache();
+    if (!cache)
+        return nullptr;
+
+    auto* axCurrentChild = cache->getOrCreate(currentChild);
+    while (!axCurrentChild && currentChild) {
+        currentChild = currentChild->nextSibling();
+        axCurrentChild = cache->getOrCreate(currentChild);
+    }
+    return axCurrentChild;
 }
 
 AccessibilityObject* AccessibilityNodeObject::lastChild() const
@@ -2382,10 +2386,17 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
                 continue;
             }
         }
-        
+
+        if (node) {
+            auto* childParentElement = child->node() ? child->node()->parentElement() : nullptr;
+            // Do not take the textUnderElement for a different element (determined by child's element parent not being us). Otherwise we may doubly-expose the same text.
+            if (childParentElement && childParentElement != node && childParentElement->shadowHost() != node)
+                continue;
+        }
+
         String childText = child->textUnderElement(mode);
         if (childText.length())
-            appendNameToStringBuilder(builder, childText);
+            appendNameToStringBuilder(builder, WTFMove(childText));
     }
 
     return builder.toString().trim(deprecatedIsSpaceOrNewline).simplifyWhiteSpace(isHTMLSpaceButNotLineBreak);
