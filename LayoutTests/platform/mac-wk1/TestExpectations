@@ -2663,8 +2663,6 @@ fast/mediastream/device-change-event-2.html [ Failure ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-with-text.html [ Pass ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-plus-lighter-svg.html [ Pass ]
 
-webkit.org/b/261305 [ Monterey+ Debug ] editing/inserting/break-out-of-nested-lists.html [ Crash ]
-
 # webkit.org/b/261304 Batch mark expectations for flaky media tests
 [ Monterey+ ] http/tests/media/fairplay/legacy-fairplay-hls.html [ Pass Failure ]
 

@@ -5419,7 +5419,9 @@ void Document::setWindowAttributeEventListener(const AtomString& eventType, cons
 
 void Document::dispatchWindowEvent(Event& event, EventTarget* target)
 {
+#if PLATFORM(IOS_FAMILY)
     ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
+#endif
     if (!m_domWindow)
         return;
     m_domWindow->dispatchEvent(event, target);
