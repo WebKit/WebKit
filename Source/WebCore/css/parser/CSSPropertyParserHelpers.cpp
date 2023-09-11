@@ -6991,6 +6991,22 @@ static bool consumeShapeBorderRadius(CSSParserTokenRange& args, const CSSParserC
     return true;
 }
 
+static RefPtr<CSSRectShapeValue> consumeBasicShapeRect(CSSParserTokenRange& args, const CSSParserContext& context)
+{
+    std::array<RefPtr<CSSValue>, 4> offsets;
+    for (auto& offset : offsets) {
+        offset = consumeAutoOrLengthOrPercent(args, context.mode, UnitlessQuirk::Forbid);
+
+        if (!offset)
+            return nullptr;
+    }
+
+    std::array<RefPtr<CSSValuePair>, 4> radii;
+    if (consumeShapeBorderRadius(args, context, radii))
+        return CSSRectShapeValue::create(offsets[0].releaseNonNull(), offsets[1].releaseNonNull(), offsets[2].releaseNonNull(), offsets[3].releaseNonNull(), WTFMove(radii[0]), WTFMove(radii[1]), WTFMove(radii[2]), WTFMove(radii[3]));
+    return nullptr;
+}
+
 static RefPtr<CSSXywhValue> consumeBasicShapeXywh(CSSParserTokenRange& args, const CSSParserContext& context)
 {
     std::array<RefPtr<CSSValue>, 2> insets;
@@ -7048,6 +7064,8 @@ static RefPtr<CSSValue> consumeBasicShape(CSSParserTokenRange& range, const CSSP
         result = consumeBasicShapePolygon(args, context);
     else if (id == CSSValueInset)
         result = consumeBasicShapeInset(args, context);
+    else if (id == CSSValueRect)
+        result = consumeBasicShapeRect(args, context);
     else if (id == CSSValueXywh)
         result = consumeBasicShapeXywh(args, context);
     else if (id == CSSValuePath)

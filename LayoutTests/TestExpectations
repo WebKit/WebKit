@@ -2380,14 +2380,11 @@ webkit.org/b/238371 imported/w3c/web-platform-tests/css/css-masking/clip-path/cl
 webkit.org/b/238371 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-002.html [ ImageOnlyFailure ]
 webkit.org/b/238371 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-003.html [ ImageOnlyFailure ]
 webkit.org/b/238371 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-rect-interpolation-001.html [ ImageOnlyFailure ]
 webkit.org/b/238371 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-interpolation-001.html [ ImageOnlyFailure ]
 webkit.org/b/238371 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-shape-interpolation-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-006.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-rect-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-rect-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-rect-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-svg-text-css.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-xywh-interpolation-001.html [ ImageOnlyFailure ]
@@ -5289,13 +5286,10 @@ imported/w3c/web-platform-tests/css/motion/offset-path-shape-inset-001.html [ Im
 # CSS motion path: positioning inset shapes with border-radius.
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-inset-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-xywh-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-rect-002.html [ ImageOnlyFailure ]
 
 # CSS motion path: positioning inset shapes with coord-box.
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-xywh-003.html [ ImageOnlyFailure ]
-
-# CSS motion path: missing rect() modern syntax support.
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-rect-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-rect-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-rect-003.html [ ImageOnlyFailure ]
 
 # IPC test failing in Debug mode due to assert.
