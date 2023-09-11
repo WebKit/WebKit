@@ -87,6 +87,7 @@ String MIMETypeRegistry::mimeTypeForExtension(StringView string)
         mimetypeMap.add("xhtml"_s, "application/xhtml+xml"_s);
         mimetypeMap.add("rss"_s, "application/rss+xml"_s);
         mimetypeMap.add("webarchive"_s, "application/x-webarchive"_s);
+        mimetypeMap.add("avif"_s, "image/avif"_s);
         mimetypeMap.add("svg"_s, "image/svg+xml"_s);
         mimetypeMap.add("svgz"_s, "image/svg+xml"_s);
         mimetypeMap.add("jpg"_s, "image/jpeg"_s);
