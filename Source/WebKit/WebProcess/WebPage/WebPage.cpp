@@ -113,6 +113,7 @@
 #include "WebFullScreenManagerMessages.h"
 #include "WebGamepadProvider.h"
 #include "WebGeolocationClient.h"
+#include "WebHistoryItemClient.h"
 #include "WebHitTestResultData.h"
 #include "WebImage.h"
 #include "WebInspector.h"
@@ -616,6 +617,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if ENABLE(APP_HIGHLIGHTS)
     , m_appHighlightsVisible(parameters.appHighlightsVisible)
 #endif
+    , m_historyItemClient(WebHistoryItemClient::create())
 {
     ASSERT(m_identifier);
     WEBPAGE_RELEASE_LOG(Loading, "constructor:");
@@ -676,6 +678,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         makeUniqueRef<WebStorageProvider>(),
         makeUniqueRef<WebModelPlayerProvider>(*this),
         WebProcess::singleton().badgeClient(),
+        m_historyItemClient.copyRef(),
 #if ENABLE(CONTEXT_MENUS)
         makeUniqueRef<WebContextMenuClient>(this),
 #endif
@@ -3566,9 +3569,9 @@ void WebPage::restoreSessionInternal(const Vector<BackForwardListItemState>& ite
 {
     // Since we're merely restoring HistoryItems from the UIProcess, there is no need to send HistoryItem update notifications back to the UIProcess.
     // Also, with process-swap on navigation, these updates may actually overwrite important state in the UIProcess such as the scroll position.
-    SetForScope bypassHistoryItemUpdateNotifications(WebCore::notifyHistoryItemChanged, [](WebCore::HistoryItem&) { });
+    auto bypassHistoryItemUpdateNotifications = m_historyItemClient->ignoreChangesForScope();
     for (const auto& itemState : itemStates) {
-        auto historyItem = toHistoryItem(itemState);
+        auto historyItem = toHistoryItem(m_historyItemClient, itemState);
         historyItem->setWasRestoredFromSession(restoredByAPIRequest == WasRestoredByAPIRequest::Yes);
         static_cast<WebBackForwardListProxy&>(corePage()->backForward().client()).addItemFromUIProcess(itemState.identifier, WTFMove(historyItem), m_identifier, overwrite);
     }
@@ -3586,7 +3589,7 @@ void WebPage::updateBackForwardListForReattach(const Vector<WebKit::BackForwardL
 
 void WebPage::setCurrentHistoryItemForReattach(WebKit::BackForwardListItemState&& itemState)
 {
-    auto historyItem = toHistoryItem(itemState);
+    auto historyItem = toHistoryItem(m_historyItemClient, itemState);
     auto& historyItemRef = historyItem.get();
     static_cast<WebBackForwardListProxy&>(corePage()->backForward().client()).addItemFromUIProcess(itemState.identifier, WTFMove(historyItem), m_identifier, WebBackForwardListProxy::OverwriteExistingItem::Yes);
     if (auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame()))

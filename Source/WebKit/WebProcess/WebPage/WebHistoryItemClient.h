@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,18 +25,22 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
-
-namespace WebCore {
-class HistoryItem;
-class HistoryItemClient;
-};
+#include <WebCore/HistoryItem.h>
+#include <wtf/Scope.h>
 
 namespace WebKit {
 
-struct BackForwardListItemState;
+class WebHistoryItemClient final : public WebCore::HistoryItemClient {
+public:
+    static Ref<WebHistoryItemClient> create() { return adoptRef(*new WebHistoryItemClient); }
 
-BackForwardListItemState toBackForwardListItemState(const WebCore::HistoryItem&);
-Ref<WebCore::HistoryItem> toHistoryItem(WebCore::HistoryItemClient&, const BackForwardListItemState&);
+    ScopeExit<CompletionHandler<void()>> ignoreChangesForScope();
 
-} // namespace WebKit
+private:
+    WebHistoryItemClient() = default;
+    void historyItemChanged(const WebCore::HistoryItem&) final;
+
+    bool m_shouldIgnoreChanges { false };
+};
+
+}

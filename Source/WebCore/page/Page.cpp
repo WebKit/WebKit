@@ -376,6 +376,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_opportunisticTaskScheduler(OpportunisticTaskScheduler::create(*this))
     , m_contentSecurityPolicyModeForExtension(WTFMove(pageConfiguration.contentSecurityPolicyModeForExtension))
     , m_badgeClient(WTFMove(pageConfiguration.badgeClient))
+    , m_historyItemClient(WTFMove(pageConfiguration.historyItemClient))
 {
     updateTimerThrottlingState();
 

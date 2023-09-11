@@ -139,7 +139,7 @@ static Ref<FormData> toFormData(const HTTPBody& httpBody)
     return formData;
 }
 
-static void applyFrameState(HistoryItem& historyItem, const FrameState& frameState)
+static void applyFrameState(WebCore::HistoryItemClient& client, HistoryItem& historyItem, const FrameState& frameState)
 {
     historyItem.setOriginalURLString(frameState.originalURLString);
     historyItem.setReferrer(frameState.referrer);
@@ -176,19 +176,19 @@ static void applyFrameState(HistoryItem& historyItem, const FrameState& frameSta
 #endif
 
     for (const auto& childFrameState : frameState.children) {
-        Ref<HistoryItem> childHistoryItem = HistoryItem::create(childFrameState.urlString, { }, { });
-        applyFrameState(childHistoryItem, childFrameState);
+        Ref<HistoryItem> childHistoryItem = HistoryItem::create(client, childFrameState.urlString, { }, { });
+        applyFrameState(client, childHistoryItem, childFrameState);
 
         historyItem.addChildItem(WTFMove(childHistoryItem));
     }
 }
 
-Ref<HistoryItem> toHistoryItem(const BackForwardListItemState& itemState)
+Ref<HistoryItem> toHistoryItem(WebCore::HistoryItemClient& client, const BackForwardListItemState& itemState)
 {
-    Ref<HistoryItem> historyItem = HistoryItem::create(itemState.pageState.mainFrameState.urlString, itemState.pageState.title, { }, itemState.identifier);
+    Ref<HistoryItem> historyItem = HistoryItem::create(client, itemState.pageState.mainFrameState.urlString, itemState.pageState.title, { }, itemState.identifier);
     historyItem->setShouldOpenExternalURLsPolicy(itemState.pageState.shouldOpenExternalURLsPolicy);
     historyItem->setStateObject(itemState.pageState.sessionStateObject.get());
-    applyFrameState(historyItem, itemState.pageState.mainFrameState);
+    applyFrameState(client, historyItem, itemState.pageState.mainFrameState);
 
     return historyItem;
 }

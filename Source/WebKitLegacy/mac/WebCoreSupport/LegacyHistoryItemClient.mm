@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "LegacyHistoryItemClient.h"
 
-#include <wtf/Forward.h>
+#import "WebHistoryItemInternal.h"
 
-namespace WebCore {
-class HistoryItem;
-class HistoryItemClient;
-};
+LegacyHistoryItemClient& LegacyHistoryItemClient::singleton()
+{
+    static NeverDestroyed<Ref<LegacyHistoryItemClient>> client { adoptRef(*new LegacyHistoryItemClient) };
+    return client.get().get();
+}
 
-namespace WebKit {
-
-struct BackForwardListItemState;
-
-BackForwardListItemState toBackForwardListItemState(const WebCore::HistoryItem&);
-Ref<WebCore::HistoryItem> toHistoryItem(WebCore::HistoryItemClient&, const BackForwardListItemState&);
-
-} // namespace WebKit
+void LegacyHistoryItemClient::historyItemChanged(const WebCore::HistoryItem&)
+{
+    WKNotifyHistoryItemChanged();
+}

@@ -114,6 +114,7 @@ class FormData;
 class HTMLElement;
 class HTMLMediaElement;
 class HistoryItem;
+class HistoryItemClient;
 class OpportunisticTaskScheduler;
 class ImageAnalysisQueue;
 class ImageOverlayController;
@@ -1044,6 +1045,7 @@ public:
 #endif
 
     BadgeClient& badgeClient() { return m_badgeClient.get(); }
+    HistoryItemClient& historyItemClient() { return m_historyItemClient.get(); }
 
     void willBeginScrolling();
     void didFinishScrolling();
@@ -1428,6 +1430,7 @@ private:
     ContentSecurityPolicyModeForExtension m_contentSecurityPolicyModeForExtension { ContentSecurityPolicyModeForExtension::None };
 
     Ref<BadgeClient> m_badgeClient;
+    Ref<HistoryItemClient> m_historyItemClient;
 
     HashMap<RegistrableDomain, uint64_t> m_noiseInjectionHashSalts;
 };

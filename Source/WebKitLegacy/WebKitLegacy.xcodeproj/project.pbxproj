@@ -659,6 +659,8 @@
 		F4F665C21DD67672007714B4 /* WebAutocapitalizeTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = F4F665C11DD67672007714B4 /* WebAutocapitalizeTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F834AAD70E64B1C700E2737C /* WebTextIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = F834AAD50E64B1C700E2737C /* WebTextIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F834AAD80E64B1C700E2737C /* WebTextIterator.mm in Sources */ = {isa = PBXBuildFile; fileRef = F834AAD60E64B1C700E2737C /* WebTextIterator.mm */; };
+		FA96E4B02AAAFA920090C5A3 /* LegacyHistoryItemClient.h in Headers */ = {isa = PBXBuildFile; fileRef = FA96E4AE2AAAFA920090C5A3 /* LegacyHistoryItemClient.h */; };
+		FA96E4B12AAAFA920090C5A3 /* LegacyHistoryItemClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = FA96E4AF2AAAFA920090C5A3 /* LegacyHistoryItemClient.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -1509,6 +1511,8 @@
 		F834AAD60E64B1C700E2737C /* WebTextIterator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebTextIterator.mm; sourceTree = "<group>"; };
 		F8CA15B5029A39D901000122 /* WebAuthenticationPanel.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebAuthenticationPanel.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F8CA15B6029A39D901000122 /* WebAuthenticationPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebAuthenticationPanel.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		FA96E4AE2AAAFA920090C5A3 /* LegacyHistoryItemClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyHistoryItemClient.h; sourceTree = "<group>"; };
+		FA96E4AF2AAAFA920090C5A3 /* LegacyHistoryItemClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LegacyHistoryItemClient.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2493,6 +2497,8 @@
 				A10C1D4418202FFB0036883A /* ios */,
 				B82958D1132707D0000D0E79 /* CorrectionPanel.h */,
 				B82958D2132707D0000D0E79 /* CorrectionPanel.mm */,
+				FA96E4AE2AAAFA920090C5A3 /* LegacyHistoryItemClient.h */,
+				FA96E4AF2AAAFA920090C5A3 /* LegacyHistoryItemClient.mm */,
 				5CB05C7F29CA0E7000CC1AA0 /* LegacySocketProvider.cpp */,
 				5CB05C7E29CA0E7000CC1AA0 /* LegacySocketProvider.h */,
 				5CA46E7721F1451D00CE86B4 /* NetworkStorageSessionMap.cpp */,
@@ -2829,6 +2835,7 @@
 				93D437991D57ABEF00AB85EA /* ExceptionHandlers.h in Headers */,
 				1A60519417502A5D00BC62F5 /* HistoryPropertyList.h in Headers */,
 				9364006F23996E81001E185E /* InProcessIDBServer.h in Headers */,
+				FA96E4B02AAAFA920090C5A3 /* LegacyHistoryItemClient.h in Headers */,
 				5CB05C8229CA0E7000CC1AA0 /* LegacySocketProvider.h in Headers */,
 				5CA46E7821F1451D00CE86B4 /* NetworkStorageSessionMap.h in Headers */,
 				E1531BD82187B954002E3F81 /* NSURLDownloadSPI.h in Headers */,
@@ -3397,6 +3404,7 @@
 				B82958D4132707D0000D0E79 /* CorrectionPanel.mm in Sources */,
 				1A60519317502A5D00BC62F5 /* HistoryPropertyList.mm in Sources */,
 				9364006E23996E81001E185E /* InProcessIDBServer.cpp in Sources */,
+				FA96E4B12AAAFA920090C5A3 /* LegacyHistoryItemClient.mm in Sources */,
 				A10C1D601820300E0036883A /* PopupMenuIOS.mm in Sources */,
 				5C40CD2122D8F9C000E9DAD5 /* PopupMenuMac.mm in Sources */,
 				A10C1D611820300E0036883A /* SearchPopupMenuIOS.cpp in Sources */,

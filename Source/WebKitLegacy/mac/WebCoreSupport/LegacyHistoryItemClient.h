@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,18 +25,12 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
+#include <WebCore/HistoryItem.h>
 
-namespace WebCore {
-class HistoryItem;
-class HistoryItemClient;
+class LegacyHistoryItemClient final : public WebCore::HistoryItemClient {
+public:
+    static LegacyHistoryItemClient& singleton();
+private:
+    LegacyHistoryItemClient() = default;
+    void historyItemChanged(const WebCore::HistoryItem&) final;
 };
-
-namespace WebKit {
-
-struct BackForwardListItemState;
-
-BackForwardListItemState toBackForwardListItemState(const WebCore::HistoryItem&);
-Ref<WebCore::HistoryItem> toHistoryItem(WebCore::HistoryItemClient&, const BackForwardListItemState&);
-
-} // namespace WebKit

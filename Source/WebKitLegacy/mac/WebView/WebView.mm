@@ -37,6 +37,7 @@
 #import "DOMInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
+#import "LegacyHistoryItemClient.h"
 #import "LegacySocketProvider.h"
 #import "PageStorageSessionProvider.h"
 #import "SocketStreamHandleImpl.h"
@@ -1520,6 +1521,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         makeUniqueRef<WebCore::DummyStorageProvider>(),
         makeUniqueRef<WebCore::DummyModelPlayerProvider>(),
         WebCore::EmptyBadgeClient::create(),
+        LegacyHistoryItemClient::singleton(),
 #if ENABLE(CONTEXT_MENUS)
         makeUniqueRef<WebContextMenuClient>(self),
 #endif
@@ -1781,6 +1783,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         makeUniqueRef<WebCore::DummyStorageProvider>(),
         makeUniqueRef<WebCore::DummyModelPlayerProvider>(),
         WebCore::EmptyBadgeClient::create(),
+        LegacyHistoryItemClient::singleton(),
 #if ENABLE(APPLE_PAY)
         makeUniqueRef<WebPaymentCoordinatorClient>(),
 #endif

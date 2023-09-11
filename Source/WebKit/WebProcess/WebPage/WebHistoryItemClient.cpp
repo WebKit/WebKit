@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebHistoryItemClient.h"
 
-#include <wtf/Forward.h>
-
-namespace WebCore {
-class HistoryItem;
-class HistoryItemClient;
-};
+#include "SessionStateConversion.h"
+#include "WebProcess.h"
+#include "WebProcessProxyMessages.h"
+#include <WebCore/HistoryItem.h>
 
 namespace WebKit {
 
-struct BackForwardListItemState;
+ScopeExit<CompletionHandler<void()>> WebHistoryItemClient::ignoreChangesForScope()
+{
+    m_shouldIgnoreChanges = true;
+    return makeScopeExit(CompletionHandler<void()> { [this, protectedThis = Ref { *this }] {
+        m_shouldIgnoreChanges = false;
+    } });
+}
 
-BackForwardListItemState toBackForwardListItemState(const WebCore::HistoryItem&);
-Ref<WebCore::HistoryItem> toHistoryItem(WebCore::HistoryItemClient&, const BackForwardListItemState&);
+void WebHistoryItemClient::historyItemChanged(const WebCore::HistoryItem& item)
+{
+    if (m_shouldIgnoreChanges)
+        return;
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::UpdateBackForwardItem(toBackForwardListItemState(item)), 0);
+}
 
-} // namespace WebKit
+}

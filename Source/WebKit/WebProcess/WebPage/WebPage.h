@@ -325,6 +325,7 @@ class WebDateTimeChooser;
 class WebDocumentLoader;
 class WebEvent;
 class WebFoundTextRangeController;
+class WebHistoryItemClient;
 class PlaybackSessionManager;
 class VideoFullscreenManager;
 class WebBackForwardListItem;
@@ -2604,6 +2605,8 @@ private:
 #if ENABLE(APP_HIGHLIGHTS)
     WebCore::HighlightVisibility m_appHighlightsVisible { WebCore::HighlightVisibility::Hidden };
 #endif
+
+    Ref<WebHistoryItemClient> m_historyItemClient;
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     HashSet<String> m_linkDecorationFilteringData;

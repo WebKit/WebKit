@@ -1187,6 +1187,13 @@ public:
     RefPtr<ThreadableWebSocketChannel> createWebSocketChannel(Document&, WebSocketChannelClient&) final { return nullptr; }
 };
 
+class EmptyHistoryItemClient final : public HistoryItemClient {
+public:
+    static Ref<EmptyHistoryItemClient> create() { return adoptRef(*new EmptyHistoryItemClient); }
+private:
+    void historyItemChanged(const HistoryItem&) { }
+};
+
 PageConfiguration pageConfigurationWithEmptyClients(std::optional<PageIdentifier> identifier, PAL::SessionID sessionID)
 {
     PageConfiguration pageConfiguration {
@@ -1208,6 +1215,7 @@ PageConfiguration pageConfigurationWithEmptyClients(std::optional<PageIdentifier
         makeUniqueRef<DummyStorageProvider>(),
         makeUniqueRef<DummyModelPlayerProvider>(),
         EmptyBadgeClient::create(),
+        EmptyHistoryItemClient::create(),
 #if ENABLE(CONTEXT_MENUS)
         makeUniqueRef<EmptyContextMenuClient>(),
 #endif
