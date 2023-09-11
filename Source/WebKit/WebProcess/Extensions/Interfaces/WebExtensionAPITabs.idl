@@ -38,19 +38,19 @@
     [RaisesException, Dynamic, NeedsPage] void getSelected([Optional] double windowID, [Optional, CallbackHandler] function callback);
 
     [RaisesException] void duplicate(double tabID, [Optional, CallbackHandler] function callback);
-    [RaisesException] void update([Optional] double tabID, [NSDictionary] any properties, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPage] void update([Optional] double tabID, [NSDictionary] any properties, [Optional, CallbackHandler] function callback);
     [RaisesException] void remove([NSObject] any tabIDs, [Optional, CallbackHandler] function callback);
 
-    [RaisesException] void reload([Optional] double tabID, [Optional, NSDictionary] any reloadProperties, [Optional, CallbackHandler] function callback);
-    [RaisesException] void goBack([Optional] double tabID, [Optional, CallbackHandler] function callback);
-    [RaisesException] void goForward([Optional] double tabID, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPage] void reload([Optional] double tabID, [Optional, NSDictionary] any properties, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPage] void goBack([Optional] double tabID, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPage] void goForward([Optional] double tabID, [Optional, CallbackHandler] function callback);
 
-    [RaisesException] void getZoom([Optional] double tabID, [Optional, CallbackHandler] function callback);
-    [RaisesException] void setZoom([Optional] double tabID, double zoomFactor, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPage] void getZoom([Optional] double tabID, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPage] void setZoom([Optional] double tabID, double zoomFactor, [Optional, CallbackHandler] function callback);
 
-    [RaisesException] void detectLanguage([Optional] double tabID, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPage] void detectLanguage([Optional] double tabID, [Optional, CallbackHandler] function callback);
 
-    [RaisesException] void toggleReaderMode([Optional] double tabID, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPage] void toggleReaderMode([Optional] double tabID, [Optional, CallbackHandler] function callback);
 
     // [RaisesException] void captureVisibleTab([Optional] double windowID, [Optional, NSDictionary] any options, [Optional, CallbackHandler] function callback);
 

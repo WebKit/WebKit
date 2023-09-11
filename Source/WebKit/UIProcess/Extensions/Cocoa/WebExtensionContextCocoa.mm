@@ -1165,9 +1165,18 @@ RefPtr<WebExtensionWindow> WebExtensionContext::getWindow(WebExtensionWindowIden
     if (!isValid(identifier))
         return nullptr;
 
-    // FIXME: <https://webkit.org/b/260995> Use the page identifier to get the current window based on web view.
-    if (isCurrent(identifier))
+    if (isCurrent(identifier)) {
+        for (auto& tab : openTabs()) {
+            for (WKWebView *webView in tab->webViews()) {
+                if (webView._page->identifier() == webPageProxyIdentifier)
+                    return tab->window();
+            }
+        }
+
+        // FIXME: <https://webkit.org/b/260154> Use the page identifier to get the current window for popup pages.
+
         return frontmostWindow();
+    }
 
     auto* window = m_windowMap.get(identifier);
     if (!window) {
@@ -1203,6 +1212,9 @@ Ref<WebExtensionTab> WebExtensionContext::getOrCreateTab(_WKWebExtensionTab *del
 
 RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebExtensionTabIdentifier identifier)
 {
+    if (!isValid(identifier))
+        return nullptr;
+
     auto* tab = m_tabMap.get(identifier);
     if (!tab) {
         RELEASE_LOG_ERROR(Extensions, "Tab %{public}llu was not found", identifier.toUInt64());
@@ -1216,6 +1228,17 @@ RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebExtensionTabIdentifier id
     }
 
     return tab;
+}
+
+RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> identifier)
+{
+    if (identifier)
+        return getTab(identifier.value());
+
+    if (auto window = getWindow(WebExtensionWindowConstants::CurrentIdentifier, webPageProxyIdentifier))
+        return window->activeTab();
+
+    return nullptr;
 }
 
 void WebExtensionContext::populateWindowsAndTabs()
@@ -1248,27 +1271,14 @@ void WebExtensionContext::populateWindowsAndTabs()
         m_focusedWindowIdentifier = !m_openWindowIdentifiers.isEmpty() ? std::optional(m_openWindowIdentifiers.first()) : std::nullopt;
 }
 
-WebExtensionContext::WindowVector WebExtensionContext::openWindows()
+WebExtensionContext::WindowVector WebExtensionContext::openWindows() const
 {
     WindowVector result;
-    result.reserveInitialCapacity(m_windowMap.size());
+    result.reserveInitialCapacity(m_openWindowIdentifiers.size());
 
-    for (auto& identifer : m_openWindowIdentifiers) {
-        if (auto window = getWindow(identifer))
+    for (auto& identifier : m_openWindowIdentifiers) {
+        if (auto window = m_windowMap.get(identifier))
             result.uncheckedAppend(*window);
-    }
-
-    return result;
-}
-
-WebExtensionContext::TabSet WebExtensionContext::openTabs()
-{
-    TabSet result;
-    result.reserveInitialCapacity(m_tabMap.size());
-
-    for (auto& tab : m_tabMap.values()) {
-        if (tab->isValid())
-            result.addVoid(tab);
     }
 
     return result;

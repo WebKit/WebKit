@@ -113,6 +113,10 @@ public:
     using EventListenerTypeSet = HashSet<WebExtensionEventListenerType, WTF::IntHash<WebKit::WebExtensionEventListenerType>, WTF::StrongEnumHashTraits<WebKit::WebExtensionEventListenerType>>;
     using VoidCompletionHandlerVector = Vector<CompletionHandler<void()>>;
 
+    using WindowIdentifierMap = HashMap<WebExtensionWindowIdentifier, Ref<WebExtensionWindow>>;
+    using TabIdentifierMap = HashMap<WebExtensionTabIdentifier, Ref<WebExtensionTab>>;
+    using TabMapValueIterator = TabIdentifierMap::ValuesConstIteratorRange;
+
     using WindowVector = Vector<Ref<WebExtensionWindow>>;
     using TabSet = HashSet<Ref<WebExtensionTab>>;
 
@@ -121,6 +125,7 @@ public:
 
     enum class EqualityOnly : bool { No, Yes };
     enum class WindowIsClosing : bool { No, Yes };
+    enum class ReloadFromOrigin : bool { No, Yes };
 
     enum class Error : uint8_t {
         Unknown = 1,
@@ -230,9 +235,10 @@ public:
 
     Ref<WebExtensionTab> getOrCreateTab(_WKWebExtensionTab *);
     RefPtr<WebExtensionTab> getTab(WebExtensionTabIdentifier);
+    RefPtr<WebExtensionTab> getTab(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> = std::nullopt);
 
-    WindowVector openWindows();
-    TabSet openTabs();
+    WindowVector openWindows() const;
+    TabMapValueIterator openTabs() const { return m_tabMap.values(); }
 
     RefPtr<WebExtensionWindow> focusedWindow();
     RefPtr<WebExtensionWindow> frontmostWindow();
@@ -353,6 +359,14 @@ private:
     void tabsGet(WebExtensionTabIdentifier, CompletionHandler<void(std::optional<WebExtensionTabParameters>, WebExtensionTab::Error)>&&);
     void tabsGetCurrent(WebPageProxyIdentifier, CompletionHandler<void(std::optional<WebExtensionTabParameters>, WebExtensionTab::Error)>&&);
     void tabsQuery(WebPageProxyIdentifier, const WebExtensionTabQueryParameters&, CompletionHandler<void(Vector<WebExtensionTabParameters>, WebExtensionTab::Error)>&&);
+    void tabsReload(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, ReloadFromOrigin, CompletionHandler<void(WebExtensionTab::Error)>&&);
+    void tabsGoBack(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(WebExtensionTab::Error)>&&);
+    void tabsGoForward(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(WebExtensionTab::Error)>&&);
+    void tabsDetectLanguage(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::optional<String>, WebExtensionTab::Error)>&&);
+    void tabsToggleReaderMode(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(WebExtensionTab::Error)>&&);
+    void tabsGetZoom(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::optional<double>, WebExtensionTab::Error)>&&);
+    void tabsSetZoom(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier>, double, CompletionHandler<void(WebExtensionTab::Error)>&&);
+    void tabsRemove(Vector<WebExtensionTabIdentifier>, CompletionHandler<void(WebExtensionTab::Error)>&&);
 
     // Windows APIs
     void windowsCreate(const WebExtensionWindowParameters&, CompletionHandler<void(std::optional<WebExtensionWindowParameters>, WebExtensionWindow::Error)>&&);
@@ -424,11 +438,11 @@ private:
 
     HashMap<String, Ref<WebExtensionAlarm>> m_alarmMap;
 
-    HashMap<WebExtensionWindowIdentifier, Ref<WebExtensionWindow>> m_windowMap;
+    WindowIdentifierMap m_windowMap;
     Vector<WebExtensionWindowIdentifier> m_openWindowIdentifiers;
     std::optional<WebExtensionWindowIdentifier> m_focusedWindowIdentifier;
 
-    HashMap<WebExtensionTabIdentifier, Ref<WebExtensionTab>> m_tabMap;
+    TabIdentifierMap m_tabMap;
 };
 
 template<typename T>

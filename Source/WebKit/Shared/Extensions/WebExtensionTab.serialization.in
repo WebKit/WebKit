@@ -22,6 +22,8 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+headers: "WebExtensionContext.h"
+
 struct WebKit::WebExtensionTabParameters {
     std::optional<WebKit::WebExtensionTabIdentifier> identifier;
 
@@ -63,5 +65,7 @@ struct WebKit::WebExtensionTabQueryParameters {
     std::optional<bool> pinned;
     std::optional<bool> selected;
 }
+
+[Nested] enum class WebKit::WebExtensionContext::ReloadFromOrigin : bool;
 
 #endif

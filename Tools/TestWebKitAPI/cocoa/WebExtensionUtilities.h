@@ -62,12 +62,24 @@
 @property (nonatomic, weak) id<_WKWebExtensionWindow> window;
 @property (nonatomic, strong) WKWebView *mainWebView;
 
+@property (nonatomic, getter=isShowingReaderMode) bool showingReaderMode;
+
+@property (nonatomic, copy) void (^toggleReaderMode)(void);
+@property (nonatomic, copy) NSLocale *(^detectWebpageLocale)(void);
+
+@property (nonatomic, copy) void (^reload)(void);
+@property (nonatomic, copy) void (^reloadFromOrigin)(void);
+@property (nonatomic, copy) void (^goBack)(void);
+@property (nonatomic, copy) void (^goForward)(void);
+
 @end
 
 @interface TestWebExtensionWindow : NSObject <_WKWebExtensionWindow>
 
 @property (nonatomic, copy) NSArray<id<_WKWebExtensionTab>> *tabs;
 @property (nonatomic, strong) id<_WKWebExtensionTab> activeTab;
+
+- (void)closeTab:(id<_WKWebExtensionTab>)tab;
 
 @property (nonatomic) _WKWebExtensionWindowState windowState;
 @property (nonatomic) _WKWebExtensionWindowType windowType;

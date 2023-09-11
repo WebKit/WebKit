@@ -35,12 +35,13 @@
 #import "MessageSenderInlines.h"
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionContextProxy.h"
+#import "WebExtensionUtilities.h"
 #import "WebProcess.h"
 #import "_WKWebExtensionLocalization.h"
 #import <JavaScriptCore/APICast.h>
 #import <JavaScriptCore/ScriptCallStack.h>
 #import <JavaScriptCore/ScriptCallStackFactory.h>
-#include <wtf/CompletionHandler.h>
+#import <wtf/CompletionHandler.h>
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
@@ -70,7 +71,7 @@ NSString *WebExtensionAPILocalization::getUILanguage()
 {
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/i18n/getUILanguage
 
-    return localeStringInWebExtensionFormat(NSLocale.currentLocale);
+    return toWebAPI(NSLocale.currentLocale);
 }
 
 void WebExtensionAPILocalization::getAcceptLanguages(Ref<WebExtensionCallbackHandler>&& callback)

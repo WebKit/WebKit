@@ -87,6 +87,141 @@ void WebExtensionContext::tabsQuery(WebPageProxyIdentifier webPageProxyIdentifie
     completionHandler(WTFMove(result), std::nullopt);
 }
 
+void WebExtensionContext::tabsReload(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, ReloadFromOrigin reloadFromOrigin, CompletionHandler<void(WebExtensionTab::Error)>&& completionHandler)
+{
+    auto tab = getTab(webPageProxyIdentifier, tabIdentifier);
+    if (!tab) {
+        completionHandler(toErrorString(@"tabs.reload()", nil, @"tab not found"));
+        return;
+    }
+
+    if (reloadFromOrigin == ReloadFromOrigin::Yes)
+        tab->reloadFromOrigin(WTFMove(completionHandler));
+    else
+        tab->reload(WTFMove(completionHandler));
+}
+
+void WebExtensionContext::tabsGoBack(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(WebExtensionTab::Error)>&& completionHandler)
+{
+    auto tab = getTab(webPageProxyIdentifier, tabIdentifier);
+    if (!tab) {
+        completionHandler(toErrorString(@"tabs.goBack()", nil, @"tab not found"));
+        return;
+    }
+
+    tab->goBack(WTFMove(completionHandler));
+}
+
+void WebExtensionContext::tabsGoForward(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(WebExtensionTab::Error)>&& completionHandler)
+{
+    auto tab = getTab(webPageProxyIdentifier, tabIdentifier);
+    if (!tab) {
+        completionHandler(toErrorString(@"tabs.goForward()", nil, @"tab not found"));
+        return;
+    }
+
+    tab->goForward(WTFMove(completionHandler));
+}
+
+void WebExtensionContext::tabsDetectLanguage(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(std::optional<String>, WebExtensionTab::Error)>&& completionHandler)
+{
+    auto tab = getTab(webPageProxyIdentifier, tabIdentifier);
+    if (!tab) {
+        completionHandler(std::nullopt, toErrorString(@"tabs.detectLanguage()", nil, @"tab not found"));
+        return;
+    }
+
+    tab->detectWebpageLocale([completionHandler = WTFMove(completionHandler)](NSLocale *locale, WebExtensionTab::Error error) mutable {
+        if (error) {
+            completionHandler(std::nullopt, error);
+            return;
+        }
+
+        if (!locale) {
+            completionHandler(std::nullopt, std::nullopt);
+            return;
+        }
+
+        completionHandler(toWebAPI(locale), std::nullopt);
+    });
+}
+
+void WebExtensionContext::tabsToggleReaderMode(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(WebExtensionTab::Error)>&& completionHandler)
+{
+    auto tab = getTab(webPageProxyIdentifier, tabIdentifier);
+    if (!tab) {
+        completionHandler(toErrorString(@"tabs.toggleReaderMode()", nil, @"tab not found"));
+        return;
+    }
+
+    tab->toggleReaderMode(WTFMove(completionHandler));
+}
+
+void WebExtensionContext::tabsGetZoom(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(std::optional<double>, WebExtensionTab::Error)>&& completionHandler)
+{
+    auto tab = getTab(webPageProxyIdentifier, tabIdentifier);
+    if (!tab) {
+        completionHandler(std::nullopt, toErrorString(@"tabs.getZoom()", nil, @"tab not found"));
+        return;
+    }
+
+    completionHandler(tab->zoomFactor(), std::nullopt);
+}
+
+void WebExtensionContext::tabsSetZoom(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, double zoomFactor, CompletionHandler<void(WebExtensionTab::Error)>&& completionHandler)
+{
+    auto tab = getTab(webPageProxyIdentifier, tabIdentifier);
+    if (!tab) {
+        completionHandler(toErrorString(@"tabs.setZoom()", nil, @"tab not found"));
+        return;
+    }
+
+    tab->setZoomFactor(zoomFactor, WTFMove(completionHandler));
+}
+
+void WebExtensionContext::tabsRemove(Vector<WebExtensionTabIdentifier> tabIdentifiers, CompletionHandler<void(WebExtensionTab::Error)>&& completionHandler)
+{
+    auto tabs = tabIdentifiers.map([&](auto& tabIdentifier) -> RefPtr<WebExtensionTab> {
+        auto tab = getTab(tabIdentifier);
+        if (!tab) {
+            completionHandler(toErrorString(@"tabs.remove()", nil, @"tab '%llu' was not found", tabIdentifier.toUInt64()));
+            return nullptr;
+        }
+
+        return tab;
+    });
+
+    if (tabs.contains(nullptr)) {
+        // The completionHandler was called with an error in map() when returning nullptr.
+        return;
+    }
+
+    size_t completed = 0;
+    bool errorOccured = false;
+    auto internalCompletionHandler = WTFMove(completionHandler);
+
+    for (auto& tab : tabs) {
+        if (errorOccured)
+            break;
+
+        tab->close([&](WebExtensionTab::Error error) mutable {
+            if (errorOccured)
+                return;
+
+            if (error) {
+                errorOccured = true;
+                internalCompletionHandler(error);
+                return;
+            }
+
+            if (++completed < tabs.size())
+                return;
+
+            internalCompletionHandler(std::nullopt);
+        });
+    }
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

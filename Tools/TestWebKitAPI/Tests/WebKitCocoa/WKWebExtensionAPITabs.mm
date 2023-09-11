@@ -50,12 +50,10 @@ TEST(WKWebExtensionAPITabs, Errors)
         @"browser.test.assertThrows(() => browser.tabs.get(-3), /'tabID' value is invalid, because it is not a tab identifier/i)",
         @"browser.test.assertThrows(() => browser.tabs.duplicate('bad'), /'tabID' value is invalid, because a number is expected/i)",
         @"browser.test.assertThrows(() => browser.tabs.remove('bad'), /'tabIDs' value is invalid, because a number value or an array of number values is expected, but a string value was provided/i)",
+        @"browser.test.assertThrows(() => browser.tabs.remove(['bad']), /'tabIDs' value is invalid, because a number value or an array of number values is expected, but an array with other values was provided/i)",
         @"browser.test.assertThrows(() => browser.tabs.reload('bad'), /an unknown argument was provided/i)",
-        @"browser.test.assertThrows(() => browser.tabs.goBack('bad'), /'tabID' value is invalid, because it is not a tab identifier/i)",
-        @"browser.test.assertThrows(() => browser.tabs.goForward('bad'), /'tabID' value is invalid, because it is not a tab identifier/i)",
-        @"browser.test.assertThrows(() => browser.tabs.getZoom('bad'), /'tabID' value is invalid, because it is not a tab identifier/i)",
-        @"browser.test.assertThrows(() => browser.tabs.detectLanguage('bad'), /'tabID' value is invalid, because it is not a tab identifier/i)",
-        @"browser.test.assertThrows(() => browser.tabs.toggleReaderMode('bad'), /'tabID' value is invalid, because it is not a tab identifier/i)",
+
+        // FIXME: <https://webkit.org/b/261386> Test that goBack(), goForward(), getZoom(), detectLanguage(), and toggleReaderMode() throw errors for bad tab IDs.
 
         @"browser.test.assertThrows(() => browser.tabs.setZoom('bad'), /'zoomFactor' value is invalid, because a number is expected/i)",
         @"browser.test.assertThrows(() => browser.tabs.setZoom(1, 'bad'), /'zoomFactor' value is invalid, because a number is expected/i)",
@@ -240,6 +238,312 @@ TEST(WKWebExtensionAPITabs, Query)
 
     delegate.get().focusedWindow = ^id<_WKWebExtensionWindow>(_WKWebExtensionContext *) {
         return windowOne.get();
+    };
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPITabs, Zoom)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const allWindows = await browser.windows.getAll({ populate: true })",
+        @"const windowId = allWindows[0].id",
+        @"const tabId = allWindows[0].tabs[0].id",
+
+        @"await browser.tabs.setZoom(tabId, 1.5)",
+
+        @"const zoomLevel = await browser.tabs.getZoom(tabId)",
+
+        @"browser.test.assertEq(typeof zoomLevel, 'number', 'The zoomLevel should be a number')",
+        @"browser.test.assertEq(zoomLevel, 1.5, 'The tab zoom level should be 1.5')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
+    manager.get().controllerDelegate = delegate.get();
+
+    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
+    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
+
+    windowOne.get().tabs = @[ tabOne.get() ];
+
+    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
+        return @[ windowOne.get() ];
+    };
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPITabs, ToggleReaderMode)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const allWindows = await browser.windows.getAll({ populate: true })",
+        @"const tabId = allWindows[0].tabs[0].id",
+
+        @"await browser.tabs.toggleReaderMode(tabId)",
+
+        @"let tab = await browser.tabs.get(tabId)",
+        @"browser.test.assertEq(tab.isInReaderMode, true, 'The tab should be in reader mode after toggling')",
+
+        @"await browser.tabs.toggleReaderMode(tabId)",
+
+        @"tab = await browser.tabs.get(tabId)",
+        @"browser.test.assertEq(tab.isInReaderMode, false, 'The tab should not be in reader mode after toggling again')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
+    manager.get().controllerDelegate = delegate.get();
+
+    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
+    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
+
+    __block size_t toggleReaderModeCounter = 0;
+    tabOne.get().toggleReaderMode = ^{
+        ++toggleReaderModeCounter;
+    };
+
+    windowOne.get().tabs = @[ tabOne.get() ];
+
+    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
+        return @[ windowOne.get() ];
+    };
+
+    [manager loadAndRun];
+
+    ASSERT_EQ(toggleReaderModeCounter, 2lu);
+}
+
+TEST(WKWebExtensionAPITabs, DetectLanguage)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const allWindows = await browser.windows.getAll({ populate: true })",
+        @"const tabId = allWindows[0].tabs[0].id",
+
+        @"const detectedLanguage = await browser.tabs.detectLanguage(tabId)",
+
+        @"browser.test.assertEq(detectedLanguage, 'en-US', 'The detected language should be English')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
+    manager.get().controllerDelegate = delegate.get();
+
+    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
+    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
+
+    __block bool detectWebpageLocaleCalled = false;
+    tabOne.get().detectWebpageLocale = ^{
+        detectWebpageLocaleCalled = true;
+        return [NSLocale localeWithLocaleIdentifier:@"en-US"];
+    };
+
+    windowOne.get().tabs = @[ tabOne.get() ];
+
+    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
+        return @[ windowOne.get() ];
+    };
+
+    [manager loadAndRun];
+
+    ASSERT_TRUE(detectWebpageLocaleCalled);
+}
+
+TEST(WKWebExtensionAPITabs, Reload)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const allWindows = await browser.windows.getAll({ populate: true })",
+        @"const tabId = allWindows[0].tabs[0].id",
+
+        @"await browser.tabs.reload(tabId)",
+        @"await browser.tabs.reload(tabId, { bypassCache: true })",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
+    manager.get().controllerDelegate = delegate.get();
+
+    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
+    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
+
+    __block bool reloadCalled = false;
+    __block bool reloadFromOriginCalled = false;
+
+    tabOne.get().reload = ^{
+        reloadCalled = true;
+    };
+
+    tabOne.get().reloadFromOrigin = ^{
+        reloadFromOriginCalled = true;
+    };
+
+    windowOne.get().tabs = @[ tabOne.get() ];
+
+    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
+        return @[ windowOne.get() ];
+    };
+
+    [manager loadAndRun];
+
+    ASSERT_TRUE(reloadCalled);
+    ASSERT_TRUE(reloadFromOriginCalled);
+}
+
+TEST(WKWebExtensionAPITabs, GoBack)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const allWindows = await browser.windows.getAll({ populate: true })",
+        @"const tabId = allWindows[0].tabs[0].id",
+
+        @"await browser.tabs.goBack(tabId)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
+    manager.get().controllerDelegate = delegate.get();
+
+    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
+    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
+
+    __block bool goBackCalled = false;
+
+    tabOne.get().goBack = ^{
+        goBackCalled = true;
+    };
+
+    windowOne.get().tabs = @[ tabOne.get() ];
+
+    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
+        return @[ windowOne.get() ];
+    };
+
+    [manager loadAndRun];
+
+    ASSERT_TRUE(goBackCalled);
+}
+
+TEST(WKWebExtensionAPITabs, GoForward)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const allWindows = await browser.windows.getAll({ populate: true })",
+        @"const tabId = allWindows[0].tabs[0].id",
+
+        @"await browser.tabs.goForward(tabId)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
+    manager.get().controllerDelegate = delegate.get();
+
+    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
+    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
+
+    __block bool goForwardCalled = false;
+
+    tabOne.get().goForward = ^{
+        goForwardCalled = true;
+    };
+
+    windowOne.get().tabs = @[ tabOne.get() ];
+
+    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
+        return @[ windowOne.get() ];
+    };
+
+    [manager loadAndRun];
+
+    ASSERT_TRUE(goForwardCalled);
+}
+
+TEST(WKWebExtensionAPITabs, Remove)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const allWindows = await browser.windows.getAll({ populate: true })",
+        @"const tabIdToRemove = allWindows[0].tabs[1].id",
+
+        @"await browser.tabs.remove(tabIdToRemove)",
+
+        @"const updatedAllWindows = await browser.windows.getAll({ populate: true })",
+        @"const remainingTabs = updatedAllWindows[0].tabs.map(tab => tab.id)",
+
+        @"browser.test.assertFalse(remainingTabs.includes(tabIdToRemove), 'The tab should be removed')",
+        @"await browser.test.assertRejects(browser.tabs.get(tabIdToRemove), /tab not found/i, 'The removed tab should not be retrievable with tabs.get()')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
+    manager.get().controllerDelegate = delegate.get();
+
+    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
+    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
+    auto tabTwo = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
+
+    windowOne.get().tabs = @[ tabOne.get(), tabTwo.get() ];
+
+    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
+        return @[ windowOne.get() ];
+    };
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPITabs, RemoveMultipleTabs)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const allWindows = await browser.windows.getAll({ populate: true })",
+        @"const tabIdsToRemove = [allWindows[0].tabs[1].id, allWindows[0].tabs[2].id]",
+
+        @"await browser.tabs.remove(tabIdsToRemove)",
+
+        @"const updatedAllWindows = await browser.windows.getAll({ populate: true })",
+        @"const remainingTabs = updatedAllWindows[0].tabs.map(tab => tab.id)",
+
+        @"for (let id of tabIdsToRemove) {",
+        @"    browser.test.assertFalse(remainingTabs.includes(id), 'Removed tabs should not be retrievable')",
+        @"}",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
+    manager.get().controllerDelegate = delegate.get();
+
+    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
+    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
+    auto tabTwo = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
+    auto tabThree = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
+
+    windowOne.get().tabs = @[ tabOne.get(), tabTwo.get(), tabThree.get() ];
+
+    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
+        return @[ windowOne.get() ];
     };
 
     [manager loadAndRun];

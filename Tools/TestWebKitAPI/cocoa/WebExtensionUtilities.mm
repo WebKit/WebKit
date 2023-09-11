@@ -136,7 +136,9 @@
 
 @end
 
-@implementation TestWebExtensionTab
+@implementation TestWebExtensionTab {
+    __weak _WKWebExtensionController *_extensionController;
+}
 
 - (instancetype)initWithWindow:(id<_WKWebExtensionWindow>)window extensionController:(_WKWebExtensionController *)extensionController
 {
@@ -149,6 +151,7 @@
     configuration._webExtensionController = extensionController;
 
     _mainWebView = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration];
+    _extensionController = extensionController;
 
     return self;
 }
@@ -163,10 +166,76 @@
     return _mainWebView;
 }
 
+- (BOOL)isShowingReaderModeForWebExtensionContext:(_WKWebExtensionContext *)context
+{
+    return _showingReaderMode;
+}
+
+- (void)toggleReaderModeForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+{
+    if (_toggleReaderMode)
+        _toggleReaderMode();
+
+    _showingReaderMode = !_showingReaderMode;
+
+    completionHandler(nil);
+}
+
+- (void)detectWebpageLocaleForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSLocale *, NSError *))completionHandler
+{
+    if (_detectWebpageLocale)
+        completionHandler(_detectWebpageLocale(), nil);
+    else
+        completionHandler(nil, nil);
+}
+
+- (void)reloadForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+{
+    if (_reload)
+        _reload();
+
+    completionHandler(nil);
+}
+
+- (void)reloadFromOriginForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+{
+    if (_reloadFromOrigin)
+        _reloadFromOrigin();
+
+    completionHandler(nil);
+}
+
+- (void)goBackForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+{
+    if (_goBack)
+        _goBack();
+
+    completionHandler(nil);
+}
+
+- (void)goForwardForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+{
+    if (_goForward)
+        _goForward();
+
+    completionHandler(nil);
+}
+
+- (void)closeForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+{
+    if (auto *window = dynamic_objc_cast<TestWebExtensionWindow>(_window))
+        [window closeTab:self];
+
+    [_extensionController didCloseTab:self windowIsClosing:NO];
+
+    completionHandler(nil);
+}
+
 @end
 
 @implementation TestWebExtensionWindow {
     CGRect _previousFrame;
+    NSMutableArray *_tabs;
 }
 
 - (instancetype)init
@@ -174,7 +243,7 @@
     if (!(self = [super init]))
         return nil;
 
-    _tabs = [NSArray array];
+    _tabs = [NSMutableArray array];
     _windowState = _WKWebExtensionWindowStateNormal;
     _windowType = _WKWebExtensionWindowTypeNormal;
 
@@ -192,10 +261,20 @@
     return self;
 }
 
+- (NSArray<id<_WKWebExtensionTab>> *)tabs
+{
+    return [_tabs copy];
+}
+
 - (void)setTabs:(NSArray<id<_WKWebExtensionTab>> *)tabs
 {
-    _tabs = [tabs copy];
+    _tabs = [tabs mutableCopy];
     _activeTab = _tabs.firstObject;
+}
+
+- (void)closeTab:(id<_WKWebExtensionTab>)tab
+{
+    [_tabs removeObject:tab];
 }
 
 - (NSArray<id<_WKWebExtensionTab>> *)tabsForWebExtensionContext:(_WKWebExtensionContext *)context

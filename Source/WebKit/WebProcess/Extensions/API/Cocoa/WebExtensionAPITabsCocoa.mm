@@ -36,6 +36,7 @@
 #import "Logging.h"
 #import "MessageSenderInlines.h"
 #import "WebExtensionAPINamespace.h"
+#import "WebExtensionContext.h"
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionContextProxy.h"
 #import "WebExtensionTabParameters.h"
@@ -79,8 +80,11 @@ static NSString * const hiddenKey = @"hidden";
 static NSString * const lastFocusedWindowKey = @"lastFocusedWindow";
 static NSString * const windowTypeKey = @"windowType";
 
+static NSString * const bypassCacheKey = @"bypassCache";
+
 static NSString * const emptyURLValue = @"";
 static NSString * const emptyTitleValue = @"";
+static NSString * const unknownLanguageValue = @"und";
 
 namespace WebKit {
 
@@ -527,12 +531,12 @@ void WebExtensionAPITabs::duplicate(double tabID, Ref<WebExtensionCallbackHandle
     // FIXME: <https://webkit.org/b/260994> Implement.
 }
 
-void WebExtensionAPITabs::update(double tabID, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPITabs::update(WebPage* page, double tabID, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/update
 
     auto tabIdentifer = toWebExtensionTabIdentifier(tabID);
-    if (!isValid(tabIdentifer, outExceptionString))
+    if (tabIdentifer && !isValid(tabIdentifer, outExceptionString))
         return;
 
     WebExtensionTabParameters parameters;
@@ -573,84 +577,163 @@ void WebExtensionAPITabs::remove(NSObject *tabIDs, Ref<WebExtensionCallbackHandl
         }
     }
 
-    // FIXME: <https://webkit.org/b/260994> Implement.
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsRemove(WTFMove(identifiers)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebExtensionTab::Error error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        callback->call();
+    }, extensionContext().identifier().toUInt64());
 }
 
-void WebExtensionAPITabs::reload(double tabID, NSDictionary *reloadProperties, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPITabs::reload(WebPage* page, double tabID, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/reload
 
     auto tabIdentifer = toWebExtensionTabIdentifier(tabID);
-    if (!isValid(tabIdentifer, outExceptionString))
+    if (tabIdentifer && !isValid(tabIdentifer, outExceptionString))
         return;
 
-    // FIXME: <https://webkit.org/b/260994> Implement.
+    static NSArray<NSString *> *optionalKeys = @[
+        bypassCacheKey,
+    ];
+
+    static NSDictionary<NSString *, id> *types = @{
+        bypassCacheKey: @YES.class,
+    };
+
+    if (!validateDictionary(options, @"properties", nil, optionalKeys, types, outExceptionString))
+        return;
+
+    using ReloadFromOrigin = WebExtensionContext::ReloadFromOrigin;
+
+    NSNumber *bypassCacheNumber = objectForKey<NSNumber>(options, bypassCacheKey);
+    ReloadFromOrigin reloadFromOrigin = bypassCacheNumber.boolValue ? ReloadFromOrigin::Yes : ReloadFromOrigin::No;
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsReload(page->webPageProxyIdentifier(), tabIdentifer, reloadFromOrigin), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebExtensionTab::Error error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        callback->call();
+    }, extensionContext().identifier().toUInt64());
 }
 
-void WebExtensionAPITabs::goBack(double tabID, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPITabs::goBack(WebPage* page, double tabID, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/goBack
 
     auto tabIdentifer = toWebExtensionTabIdentifier(tabID);
-    if (!isValid(tabIdentifer, outExceptionString))
+    if (tabIdentifer && !isValid(tabIdentifer, outExceptionString))
         return;
 
-    // FIXME: <https://webkit.org/b/260994> Implement.
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsGoBack(page->webPageProxyIdentifier(), tabIdentifer), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebExtensionTab::Error error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        callback->call();
+    }, extensionContext().identifier().toUInt64());
 }
 
-void WebExtensionAPITabs::goForward(double tabID, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPITabs::goForward(WebPage* page, double tabID, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/goForward
 
     auto tabIdentifer = toWebExtensionTabIdentifier(tabID);
-    if (!isValid(tabIdentifer, outExceptionString))
+    if (tabIdentifer && !isValid(tabIdentifer, outExceptionString))
         return;
 
-    // FIXME: <https://webkit.org/b/260994> Implement.
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsGoForward(page->webPageProxyIdentifier(), tabIdentifer), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebExtensionTab::Error error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        callback->call();
+    }, extensionContext().identifier().toUInt64());
 }
 
-void WebExtensionAPITabs::getZoom(double tabID, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPITabs::getZoom(WebPage* page, double tabID, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/getZoom
 
     auto tabIdentifer = toWebExtensionTabIdentifier(tabID);
-    if (!isValid(tabIdentifer, outExceptionString))
+    if (tabIdentifer && !isValid(tabIdentifer, outExceptionString))
         return;
 
-    // FIXME: <https://webkit.org/b/260994> Implement.
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsGetZoom(page->webPageProxyIdentifier(), tabIdentifer), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<double> zoomFactor, WebExtensionTab::Error error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        ASSERT(zoomFactor);
+
+        callback->call(@(zoomFactor.value()));
+    }, extensionContext().identifier().toUInt64());
 }
 
-void WebExtensionAPITabs::setZoom(double tabID, double zoomFactor, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPITabs::setZoom(WebPage* page, double tabID, double zoomFactor, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/setZoom
 
     auto tabIdentifer = toWebExtensionTabIdentifier(tabID);
-    if (!isValid(tabIdentifer, outExceptionString))
+    if (tabIdentifer && !isValid(tabIdentifer, outExceptionString))
         return;
 
-    // FIXME: <https://webkit.org/b/260994> Implement.
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsSetZoom(page->webPageProxyIdentifier(), tabIdentifer, zoomFactor), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebExtensionTab::Error error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        callback->call();
+    }, extensionContext().identifier().toUInt64());
 }
 
-void WebExtensionAPITabs::detectLanguage(double tabID, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPITabs::detectLanguage(WebPage* page, double tabID, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/detectLanguage
 
     auto tabIdentifer = toWebExtensionTabIdentifier(tabID);
-    if (!isValid(tabIdentifer, outExceptionString))
+    if (tabIdentifer && !isValid(tabIdentifer, outExceptionString))
         return;
 
-    // FIXME: <https://webkit.org/b/260994> Implement.
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsDetectLanguage(page->webPageProxyIdentifier(), tabIdentifer), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> language, WebExtensionTab::Error error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        if (!language || language.value().isEmpty()) {
+            callback->call(unknownLanguageValue);
+            return;
+        }
+
+        callback->call((NSString *)language.value());
+    }, extensionContext().identifier().toUInt64());
 }
 
-void WebExtensionAPITabs::toggleReaderMode(double tabID, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPITabs::toggleReaderMode(WebPage* page, double tabID, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/toggleReaderMode
 
     auto tabIdentifer = toWebExtensionTabIdentifier(tabID);
-    if (!isValid(tabIdentifer, outExceptionString))
+    if (tabIdentifer && !isValid(tabIdentifer, outExceptionString))
         return;
 
-    // FIXME: <https://webkit.org/b/260994> Implement.
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsToggleReaderMode(page->webPageProxyIdentifier(), tabIdentifer), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebExtensionTab::Error error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        callback->call();
+    }, extensionContext().identifier().toUInt64());
 }
 
 WebExtensionAPIEvent& WebExtensionAPITabs::onActivated()

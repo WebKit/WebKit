@@ -58,6 +58,8 @@ NSString *toErrorString(NSString *callingAPIName, NSString *sourceKey, NSString 
 /// Returns an error object that combines the provided information into a single, descriptive message.
 JSObjectRef toJSError(JSContextRef, NSString *callingAPIName, NSString *sourceKey, NSString *underlyingErrorString);
 
+NSString *toWebAPI(NSLocale *);
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

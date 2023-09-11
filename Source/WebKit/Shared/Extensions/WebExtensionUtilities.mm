@@ -321,6 +321,16 @@ JSObjectRef toJSError(JSContextRef context, NSString *callingAPIName, NSString *
     return toJSError(context, toErrorString(callingAPIName, sourceKey, underlyingErrorString));
 }
 
+NSString *toWebAPI(NSLocale *locale)
+{
+    if (!locale.languageCode)
+        return nil;
+
+    if (locale.countryCode.length)
+        return [NSString stringWithFormat:@"%@-%@", locale.languageCode, locale.countryCode];
+    return locale.languageCode;
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

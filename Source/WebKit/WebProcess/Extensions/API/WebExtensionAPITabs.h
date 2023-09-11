@@ -56,19 +56,19 @@ public:
     void getSelected(WebPage*, double windowID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     void duplicate(double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void update(double tabID, NSDictionary *updateProperties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void update(WebPage*, double tabID, NSDictionary *updateProperties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void remove(NSObject *tabIDs, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    void reload(double tabID, NSDictionary *reloadProperties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void goBack(double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void goForward(double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void reload(WebPage*, double tabID, NSDictionary *reloadProperties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void goBack(WebPage*, double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void goForward(WebPage*, double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    void getZoom(double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void setZoom(double tabID, double zoomFactor, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void getZoom(WebPage*, double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void setZoom(WebPage*, double tabID, double zoomFactor, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    void detectLanguage(double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void detectLanguage(WebPage*, double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    void toggleReaderMode(double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void toggleReaderMode(WebPage*, double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     double tabIdentifierNone() const { return -1; }
 

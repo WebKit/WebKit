@@ -477,7 +477,7 @@ static inline id<_WKWebExtensionWindow> toAPI(const RefPtr<WebKit::WebExtensionW
     return window ? window->delegate() : nil;
 }
 
-static inline NSArray *toAPI(const Vector<Ref<WebKit::WebExtensionWindow>>& windows)
+static inline NSArray *toAPI(const WebKit::WebExtensionContext::WindowVector& windows)
 {
     if (windows.isEmpty())
         return [NSArray array];
@@ -502,7 +502,7 @@ static inline NSArray *toAPI(const Vector<Ref<WebKit::WebExtensionWindow>>& wind
     return toAPI(_webExtensionContext->focusedWindow());
 }
 
-static inline NSSet *toAPI(const HashSet<Ref<WebKit::WebExtensionTab>>& tabs)
+static inline NSSet *toAPI(const WebKit::WebExtensionContext::TabMapValueIterator& tabs)
 {
     if (tabs.isEmpty())
         return [NSSet set];

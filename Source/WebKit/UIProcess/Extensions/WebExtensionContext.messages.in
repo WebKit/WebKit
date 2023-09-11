@@ -54,6 +54,14 @@ messages -> WebExtensionContext {
     TabsGet(WebKit::WebExtensionTabIdentifier tabIdentifier) -> (std::optional<WebKit::WebExtensionTabParameters> tabParameters, WebKit::WebExtensionTab::Error error);
     TabsGetCurrent(WebKit::WebPageProxyIdentifier webPageProxyIdentifier) -> (std::optional<WebKit::WebExtensionTabParameters> tabParameters, WebKit::WebExtensionTab::Error error);
     TabsQuery(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionTabQueryParameters queryParameters) -> (Vector<WebKit::WebExtensionTabParameters> tabs, WebKit::WebExtensionWindow::Error error);
+    TabsReload(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, WebKit::WebExtensionContext::ReloadFromOrigin reloadFromOrigin) -> (WebKit::WebExtensionWindow::Error error);
+    TabsGoBack(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (WebKit::WebExtensionTab::Error error);
+    TabsGoForward(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (WebKit::WebExtensionTab::Error error);
+    TabsDetectLanguage(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (std::optional<String> language, WebKit::WebExtensionTab::Error error);
+    TabsToggleReaderMode(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (WebKit::WebExtensionTab::Error error);
+    TabsGetZoom(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (std::optional<double> zoomFactor, WebKit::WebExtensionTab::Error error);
+    TabsSetZoom(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, double zoomFactor) -> (WebKit::WebExtensionTab::Error error);
+    TabsRemove(Vector<WebKit::WebExtensionTabIdentifier> tabIdentifiers) -> (WebKit::WebExtensionWindow::Error error);
 
     // Windows APIs
     WindowsCreate(WebKit::WebExtensionWindowParameters creationParameters) -> (std::optional<WebKit::WebExtensionWindowParameters> windowParameters, WebKit::WebExtensionWindow::Error error);
