@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+
 #include "PushClientConnection.h"
 #include "PushMessageForTesting.h"
 #include "PushService.h"
@@ -72,33 +74,25 @@ public:
     void handleIncomingPush(const WebCore::PushSubscriptionSetIdentifier&, WebKit::WebPushMessage&&);
 
     // Message handlers
-    void echoTwice(PushClientConnection*, const String&, CompletionHandler<void(const String&)>&& replySender);
-    void setPushAndNotificationsEnabledForOrigin(PushClientConnection*, const String& originString, bool, CompletionHandler<void()>&& replySender);
-    void deletePushAndNotificationRegistration(PushClientConnection*, const String& originString, CompletionHandler<void(const String&)>&& replySender);
-    void setDebugModeIsEnabled(PushClientConnection*, bool);
-    void updateConnectionConfiguration(PushClientConnection*, const WebPushDaemonConnectionConfiguration&);
-    void injectPushMessageForTesting(PushClientConnection*, const PushMessageForTesting&, CompletionHandler<void(bool)>&&);
-    void injectEncryptedPushMessageForTesting(PushClientConnection*, const String&, CompletionHandler<void(bool)>&&);
-    void getPendingPushMessages(PushClientConnection*, CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender);
-    void getPushTopicsForTesting(OSObjectPtr<xpc_object_t>&&);
-    void subscribeToPushService(PushClientConnection*, const URL& scopeURL, const Vector<uint8_t>& applicationServerKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&& replySender);
-    void unsubscribeFromPushService(PushClientConnection*, const URL& scopeURL, std::optional<WebCore::PushSubscriptionIdentifier>, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&& replySender);
-    void getPushSubscription(PushClientConnection*, const URL& scopeURL, CompletionHandler<void(const Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&& replySender);
-    void getPushPermissionState(PushClientConnection*, const URL& scopeURL, CompletionHandler<void(const Expected<uint8_t, WebCore::ExceptionData>&)>&& replySender);
-    void incrementSilentPushCount(PushClientConnection*, const WebCore::SecurityOriginData&, CompletionHandler<void(unsigned)>&&);
-    void removeAllPushSubscriptions(PushClientConnection*, CompletionHandler<void(unsigned)>&&);
-    void removePushSubscriptionsForOrigin(PushClientConnection*, const WebCore::SecurityOriginData&, CompletionHandler<void(unsigned)>&&);
-    void setPublicTokenForTesting(PushClientConnection*, const String& publicToken, CompletionHandler<void()>&&);
+    void setPushAndNotificationsEnabledForOrigin(PushClientConnection&, const String& originString, bool, CompletionHandler<void()>&& replySender);
+    void deletePushAndNotificationRegistration(PushClientConnection&, const String& originString, CompletionHandler<void(const String&)>&& replySender);
+    void injectPushMessageForTesting(PushClientConnection&, const PushMessageForTesting&, CompletionHandler<void(bool)>&&);
+    void injectEncryptedPushMessageForTesting(PushClientConnection&, const String&, CompletionHandler<void(bool)>&&);
+    void getPendingPushMessages(PushClientConnection&, CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender);
+    void getPushTopicsForTesting(CompletionHandler<void(Vector<String>, Vector<String>)>&&);
+    void subscribeToPushService(PushClientConnection&, const URL& scopeURL, const Vector<uint8_t>& applicationServerKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&& replySender);
+    void unsubscribeFromPushService(PushClientConnection&, const URL& scopeURL, std::optional<WebCore::PushSubscriptionIdentifier>, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&& replySender);
+    void getPushSubscription(PushClientConnection&, const URL& scopeURL, CompletionHandler<void(const Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&& replySender);
+    void incrementSilentPushCount(PushClientConnection&, const WebCore::SecurityOriginData&, CompletionHandler<void(unsigned)>&&);
+    void removeAllPushSubscriptions(PushClientConnection&, CompletionHandler<void(unsigned)>&&);
+    void removePushSubscriptionsForOrigin(PushClientConnection&, const WebCore::SecurityOriginData&, CompletionHandler<void(unsigned)>&&);
+    void setPublicTokenForTesting(const String& publicToken, CompletionHandler<void()>&&);
 
     void broadcastDebugMessage(const String&);
     void broadcastAllConnectionIdentities();
 
 private:
     WebPushDaemon();
-
-    CompletionHandler<void(EncodedMessage&&)> createReplySender(WebKit::WebPushD::MessageType, OSObjectPtr<xpc_object_t>&& request);
-    void decodeAndHandleRawXPCMessage(WebKit::WebPushD::RawXPCMessageType, OSObjectPtr<xpc_object_t>&&);
-    void decodeAndHandleMessage(xpc_connection_t, WebKit::WebPushD::MessageType, std::span<const uint8_t> encodedMessage, CompletionHandler<void(EncodedMessage&&)>&&);
 
     bool canRegisterForNotifications(PushClientConnection&);
 
@@ -128,3 +122,6 @@ private:
 };
 
 } // namespace WebPushD
+
+#endif // ENABLE(BUILT_IN_NOTIFICATIONS)
+

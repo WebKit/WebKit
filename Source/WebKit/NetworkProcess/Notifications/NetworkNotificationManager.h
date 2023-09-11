@@ -78,11 +78,6 @@ private:
 
     NetworkSession& m_networkSession;
     std::unique_ptr<WebPushD::Connection> m_connection;
-
-    template<WebPushD::MessageType messageType, typename... Args>
-    void sendMessage(Args&&...) const;
-    template<WebPushD::MessageType messageType, typename... Args, typename... ReplyArgs>
-    void sendMessageWithReply(CompletionHandler<void(ReplyArgs...)>&&, Args&&...) const;
 };
 
 } // namespace WebKit

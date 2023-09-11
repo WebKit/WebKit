@@ -876,6 +876,7 @@ RemoteGraphicsContextGLMessageReceiver.cpp
 RemoteGraphicsContextGLProxyMessageReceiver.cpp
 PlatformXRSystemMessageReceiver.cpp
 PlatformXRSystemProxyMessageReceiver.cpp
+PushClientConnectionMessageReceiver.cpp
 RemoteAdapterMessageReceiver.cpp
 RemoteBarcodeDetectorMessageReceiver.cpp
 RemoteBindGroupMessageReceiver.cpp

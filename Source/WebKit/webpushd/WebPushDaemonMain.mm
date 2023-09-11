@@ -24,6 +24,8 @@
  */
 
 #import "config.h"
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+
 #import "WebPushDaemonMain.h"
 
 #import "AuxiliaryProcess.h"
@@ -171,3 +173,6 @@ int WebPushDaemonMain(int argc, char** argv)
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(BUILT_IN_NOTIFICATIONS)
+

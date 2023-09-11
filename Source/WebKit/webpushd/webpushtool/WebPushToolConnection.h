@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "MessageSenderInlines.h"
 #include "PushMessageForTesting.h"
 #include <memory>
 #include <wtf/RetainPtr.h>
@@ -55,11 +56,12 @@ enum class WaitForServiceToExist : bool {
     Yes,
 };
 
-class Connection : public CanMakeWeakPtr<Connection> {
+class Connection : public CanMakeWeakPtr<Connection>, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<Connection> create(std::optional<Action>, PreferTestService, Reconnect);
     Connection(std::optional<Action>, PreferTestService, Reconnect);
+    ~Connection() final { }
 
     void connectToService(WaitForServiceToExist);
 
@@ -74,6 +76,11 @@ private:
     void sendPushMessage();
 
     void sendAuditToken();
+
+    bool performSendWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&&) const final;
+    bool performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&&, CompletionHandler<void(IPC::Decoder*)>&&) const final;
+    IPC::Connection* messageSenderConnection() const final { return nullptr; }
+    uint64_t messageSenderDestinationID() const final { return 0; }
 
     std::optional<Action> m_action;
     bool m_reconnect { false };

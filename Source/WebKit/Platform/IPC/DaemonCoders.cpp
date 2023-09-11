@@ -29,7 +29,6 @@
 #include "DaemonDecoder.h"
 #include "DaemonEncoder.h"
 #include "PushMessageForTesting.h"
-#include "WebPushDaemonConnectionConfiguration.h"
 #include "WebPushMessage.h"
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/ExceptionData.h>
@@ -351,16 +350,6 @@ std::optional<WebCore::PCM::AttributionTriggerData> Coder<WebCore::PCM::Attribut
         WTFMove(*destinationSite),
         // destinationUnlinkableToken and destinationSecretToken are not serialized.
     } };
-}
-
-void Coder<WebPushD::WebPushDaemonConnectionConfiguration, void>::encode(Encoder& encoder, const WebPushD::WebPushDaemonConnectionConfiguration& instance)
-{
-    instance.encode(encoder);
-}
-
-std::optional<WebPushD::WebPushDaemonConnectionConfiguration> Coder<WebPushD::WebPushDaemonConnectionConfiguration, void>::decode(Decoder& decoder)
-{
-    return WebPushD::WebPushDaemonConnectionConfiguration::decode(decoder);
 }
 
 void Coder<WebPushMessage, void>::encode(Encoder& encoder, const WebPushMessage& instance)

@@ -337,6 +337,8 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/WebStorage/StorageAreaMap
 
     WebProcess/XR/PlatformXRSystemProxy
+
+    webpushd/PushClientConnection
 )
 
 set(WebKit_SERIALIZATION_IN_FILES

@@ -349,6 +349,7 @@
 		51CD1C721B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51CD1C711B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html */; };
 		51DB16CE1F085137001FA4C5 /* WebViewIconLoading.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51DB16CD1F085047001FA4C5 /* WebViewIconLoading.mm */; };
 		51E1007929C6D947009CEE99 /* file-with-managedmse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51E1007129C6D891009CEE99 /* file-with-managedmse.html */; };
+		51E4810D2AAB93800069B158 /* libWebKitPlatform.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B9FC5CC28A52DC0007570E7 /* libWebKitPlatform.a */; };
 		51E5C7021919C3B200D8B3E1 /* simple2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51E780361919AFF8001829A2 /* simple2.html */; };
 		51E5C7031919C3B200D8B3E1 /* simple3.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51E780371919AFF8001829A2 /* simple3.html */; };
 		51E6A8961D2F1CA700C004B6 /* LocalStorageClear.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51E6A8951D2F1C7700C004B6 /* LocalStorageClear.html */; };
@@ -3691,6 +3692,7 @@
 				CDA3159D1ED5643F009F60D3 /* IOKit.framework in Frameworks */,
 				7B9FC5CB28A52D90007570E7 /* libboringssl.a in Frameworks */,
 				7C83E03F1D0A61A000FEBCF3 /* libicucore.dylib in Frameworks */,
+				51E4810D2AAB93800069B158 /* libWebKitPlatform.a in Frameworks */,
 				578CBD67204FB2C80083B9F2 /* LocalAuthentication.framework in Frameworks */,
 				7A010BCD1D877C0D00EDE72A /* QuartzCore.framework in Frameworks */,
 				574F55D2204D47F0002948C6 /* Security.framework in Frameworks */,

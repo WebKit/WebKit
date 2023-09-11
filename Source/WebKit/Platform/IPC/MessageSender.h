@@ -70,11 +70,11 @@ public:
     template<typename T, typename C, typename U, typename V> inline AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID);
     template<typename T, typename C, typename U, typename V> inline AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID, OptionSet<SendOption>);
 
-    template<typename T> inline bool sendWithoutUsingIPCConnection(T&& message);
-    virtual bool performSendWithoutUsingIPCConnection(UniqueRef<Encoder>&&);
+    template<typename T> inline bool sendWithoutUsingIPCConnection(T&& message) const;
+    virtual bool performSendWithoutUsingIPCConnection(UniqueRef<Encoder>&&) const;
 
-    template<typename T, typename C> inline bool sendWithAsyncReplyWithoutUsingIPCConnection(T&& message, C&& completionHandler);
-    virtual bool performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<Encoder>&&, CompletionHandler<void(Decoder*)>);
+    template<typename T, typename C> inline bool sendWithAsyncReplyWithoutUsingIPCConnection(T&& message, C&& completionHandler) const;
+    virtual bool performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<Encoder>&&, CompletionHandler<void(Decoder*)>&&) const;
 
     virtual bool sendMessage(UniqueRef<Encoder>&&, OptionSet<SendOption>);
 

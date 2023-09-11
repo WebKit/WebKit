@@ -25,7 +25,15 @@
 
 #pragma once
 
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+
+#include "MessageReceiver.h"
+#include "PushMessageForTesting.h"
+#include "WebPushMessage.h"
+#include <WebCore/ExceptionData.h>
+#include <WebCore/PushSubscriptionData.h>
 #include <WebCore/PushSubscriptionIdentifier.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/Identified.h>
@@ -36,6 +44,10 @@
 #include <wtf/spi/darwin/XPCSPI.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebCore {
+class SecurityOriginData;
+}
+
 namespace WebKit {
 namespace WebPushD {
 enum class DaemonMessageType : uint8_t;
@@ -44,22 +56,21 @@ struct WebPushDaemonConnectionConfiguration;
 }
 
 using WebKit::WebPushD::DaemonMessageType;
+using WebKit::WebPushD::PushMessageForTesting;
 using WebKit::WebPushD::WebPushDaemonConnectionConfiguration;
 
 namespace WebPushD {
 
-class PushClientConnection : public RefCounted<PushClientConnection>, public CanMakeWeakPtr<PushClientConnection>, public Identified<PushClientConnection> {
+class PushClientConnection : public RefCounted<PushClientConnection>, public Identified<PushClientConnection>, public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<PushClientConnection> create(xpc_connection_t);
 
-    void updateConnectionConfiguration(const WebPushDaemonConnectionConfiguration&);
-
     bool hasHostAppAuditToken() const { return !!m_hostAppAuditToken; }
 
     WebCore::PushSubscriptionSetIdentifier subscriptionSetIdentifier();
-
     const String& hostAppCodeSigningIdentifier();
+
     bool hostAppHasPushEntitlement();
     bool hostAppHasPushInjectEntitlement();
 
@@ -76,16 +87,30 @@ public:
     void broadcastDebugMessage(const String&);
     void sendDebugMessage(const String&);
 
+    void didReceiveMessageWithReplyHandler(IPC::Decoder&, Function<void(UniqueRef<IPC::Encoder>&&)>&&) override;
+
 private:
     PushClientConnection(xpc_connection_t);
 
+    // PushClientConnectionMessages
+    void setPushAndNotificationsEnabledForOrigin(const String& originString, bool, CompletionHandler<void()>&& replySender);
+    void deletePushAndNotificationRegistration(const String& originString, CompletionHandler<void(const String&)>&& replySender);
+    void injectPushMessageForTesting(PushMessageForTesting&&, CompletionHandler<void(bool)>&&);
+    void injectEncryptedPushMessageForTesting(const String&, CompletionHandler<void(bool)>&&);
+    void getPendingPushMessages(CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender);
+    void subscribeToPushService(URL&& scopeURL, const Vector<uint8_t>& applicationServerKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&& replySender);
+    void unsubscribeFromPushService(URL&& scopeURL, std::optional<WebCore::PushSubscriptionIdentifier>, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&& replySender);
+    void getPushSubscription(URL&& scopeURL, CompletionHandler<void(const Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&& replySender);
+    void incrementSilentPushCount(WebCore::SecurityOriginData&&, CompletionHandler<void(unsigned)>&&);
+    void removeAllPushSubscriptions(CompletionHandler<void(unsigned)>&&);
+    void removePushSubscriptionsForOrigin(WebCore::SecurityOriginData&&, CompletionHandler<void(unsigned)>&&);
+    void setPublicTokenForTesting(const String& publicToken, CompletionHandler<void()>&&);
+    void updateConnectionConfiguration(WebPushDaemonConnectionConfiguration&&);
+    void getPushPermissionState(URL&& scopeURL, CompletionHandler<void(const Expected<uint8_t, WebCore::ExceptionData>&)>&&);
     void setHostAppAuditTokenData(const Vector<uint8_t>&);
-
+    void getPushTopicsForTesting(CompletionHandler<void(Vector<String>, Vector<String>)>&&);
     String bundleIdentifierFromAuditToken(audit_token_t);
     bool hostHasEntitlement(ASCIILiteral);
-
-    template<DaemonMessageType messageType, typename... Args>
-    void sendDaemonMessage(Args&&...) const;
 
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
 
@@ -101,3 +126,5 @@ private:
 };
 
 } // namespace WebPushD
+
+#endif // ENABLE(BUILT_IN_NOTIFICATIONS)

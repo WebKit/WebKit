@@ -104,6 +104,7 @@ VPATH = \
     $(WebKit2)/UIProcess/WebAuthentication \
     $(WebKit2)/UIProcess/mac \
     $(WebKit2)/UIProcess/ios \
+    $(WebKit2)/webpushd \
     $(WebKit2)/webpushd/mac \
     $(WEBKITADDITIONS_HEADER_SEARCH_PATHS) \
 #
@@ -316,6 +317,7 @@ MESSAGE_RECEIVERS = \
 	GPUProcess/media/RemoteMediaSourceProxy \
 	GPUProcess/media/RemoteRemoteCommandListenerProxy \
 	GPUProcess/media/RemoteSourceBufferProxy \
+	webpushd/PushClientConnection \
 #
 
 GENERATE_MESSAGE_RECEIVER_SCRIPT = $(WebKit2)/Scripts/generate-message-receiver.py

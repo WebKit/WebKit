@@ -982,6 +982,8 @@ def headers_for_type(type):
         'WebKit::WebGPU::VertexBufferLayout': ['"WebGPUVertexBufferLayout.h"'],
         'WebKit::WebGPU::VertexState': ['"WebGPUVertexState.h"'],
         'WebKit::WebGPU::WebCodecsVideoFrameIdentifier': ['"WebGPUExternalTextureDescriptor.h"'],
+        'WebKit::WebPushD::PushMessageForTesting': ['"PushMessageForTesting.h"'],
+        'WebKit::WebPushD::WebPushDaemonConnectionConfiguration': ['"WebPushDaemonConnectionConfiguration.h"'],
         'WebKit::WebScriptMessageHandlerData': ['"WebUserContentControllerDataTypes.h"'],
         'WebKit::WebUserScriptData': ['"WebUserContentControllerDataTypes.h"'],
         'WebKit::WebUserStyleSheetData': ['"WebUserContentControllerDataTypes.h"'],
@@ -1158,10 +1160,11 @@ def generate_message_handler(receiver):
             if not receiver.has_attribute(NOT_USING_IPC_CONNECTION_ATTRIBUTE):
                 result.append('    UNUSED_PARAM(connection);\n')
             result.append('    UNUSED_PARAM(decoder);\n')
-            result.append('#if ENABLE(IPC_TESTING_API)\n')
-            result.append('    if (connection.ignoreInvalidMessageForTesting())\n')
-            result.append('        return;\n')
-            result.append('#endif // ENABLE(IPC_TESTING_API)\n')
+            if not receiver.has_attribute(NOT_USING_IPC_CONNECTION_ATTRIBUTE):
+                result.append('#if ENABLE(IPC_TESTING_API)\n')
+                result.append('    if (connection.ignoreInvalidMessageForTesting())\n')
+                result.append('        return;\n')
+                result.append('#endif // ENABLE(IPC_TESTING_API)\n')
             result.append('    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());\n')
         result.append('}\n')
 
@@ -1178,10 +1181,12 @@ def generate_message_handler(receiver):
         result.append('    UNUSED_PARAM(connection);\n')
         result.append('    UNUSED_PARAM(decoder);\n')
         result.append('    UNUSED_PARAM(replyEncoder);\n')
-        result.append('#if ENABLE(IPC_TESTING_API)\n')
-        result.append('    if (connection.ignoreInvalidMessageForTesting())\n')
-        result.append('        return false;\n')
-        result.append('#endif // ENABLE(IPC_TESTING_API)\n')
+
+        if not receiver.has_attribute(NOT_USING_IPC_CONNECTION_ATTRIBUTE):
+            result.append('#if ENABLE(IPC_TESTING_API)\n')
+            result.append('    if (connection.ignoreInvalidMessageForTesting())\n')
+            result.append('        return false;\n')
+            result.append('#endif // ENABLE(IPC_TESTING_API)\n')
         result.append('    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled synchronous message %s to %" PRIu64, description(decoder.messageName()), decoder.destinationID());\n')
         result.append('    return false;\n')
         result.append('}\n')

@@ -26,7 +26,9 @@
 #import "config.h"
 #import "DaemonUtilities.h"
 
+#import "Encoder.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/UniqueRef.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/text/ASCIILiteral.h>
 
@@ -83,6 +85,17 @@ RetainPtr<xpc_object_t> vectorToXPCData(Vector<uint8_t>&& vector)
         fastFree(rawPointer);
     }));
     return adoptNS(xpc_data_create_with_dispatch_data(dispatchData.get()));
+}
+
+OSObjectPtr<xpc_object_t> encoderToXPCData(UniqueRef<IPC::Encoder>&& encoder)
+{
+    __block auto blockEncoder = WTFMove(encoder);
+    auto dispatchData = adoptNS(dispatch_data_create(blockEncoder->buffer(), blockEncoder->bufferSize(), dispatch_get_main_queue(), ^{
+        // Explicitly clear out the encoder, destroying it.
+        blockEncoder.moveToUniquePtr();
+    }));
+
+    return adoptOSObject(xpc_data_create_with_dispatch_data(dispatchData.get()));
 }
 
 } // namespace WebKit

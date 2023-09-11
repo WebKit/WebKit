@@ -24,6 +24,8 @@
  */
 
 #import "config.h"
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+
 #import "PushClientConnection.h"
 
 #import "CodeSigning.h"
@@ -33,6 +35,7 @@
 #import "WebPushDaemonConnectionConfiguration.h"
 #import "WebPushDaemonConstants.h"
 #import <JavaScriptCore/ConsoleTypes.h>
+#import <WebCore/PushPermissionState.h>
 #import <wtf/HexNumber.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/Entitlements.h>
@@ -56,7 +59,7 @@ PushClientConnection::PushClientConnection(xpc_connection_t connection)
 {
 }
 
-void PushClientConnection::updateConnectionConfiguration(const WebPushDaemonConnectionConfiguration& configuration)
+void PushClientConnection::updateConnectionConfiguration(WebPushDaemonConnectionConfiguration&& configuration)
 {
     if (configuration.hostAppAuditTokenData)
         setHostAppAuditTokenData(*configuration.hostAppAuditTokenData);
@@ -85,6 +88,11 @@ void PushClientConnection::setHostAppAuditTokenData(const Vector<uint8_t>& token
 
     m_hostAppAuditToken = WTFMove(token);
     WebPushDaemon::singleton().broadcastAllConnectionIdentities();
+}
+
+void PushClientConnection::getPushTopicsForTesting(CompletionHandler<void(Vector<String>, Vector<String>)>&& completionHandler)
+{
+    WebPushDaemon::singleton().getPushTopicsForTesting(WTFMove(completionHandler));
 }
 
 WebCore::PushSubscriptionSetIdentifier PushClientConnection::subscriptionSetIdentifier()
@@ -179,14 +187,9 @@ void PushClientConnection::broadcastDebugMessage(const String& message)
 
 void PushClientConnection::sendDebugMessage(const String& message)
 {
-    // FIXME: We currently send the debug message twice.
-    // After getting all debug message clients onto the encoder/decoder mechanism, remove the old style message.
     auto dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
-    xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolDebugMessageLevelKey, static_cast<uint64_t>(JSC::MessageLevel::Info));
     xpc_dictionary_set_string(dictionary.get(), WebKit::WebPushD::protocolDebugMessageKey, message.utf8().data());
     xpc_connection_send_message(m_xpcConnection.get(), dictionary.get());
-
-    sendDaemonMessage<DaemonMessageType::DebugMessage>(message);
 }
 
 void PushClientConnection::connectionClosed()
@@ -197,21 +200,74 @@ void PushClientConnection::connectionClosed()
     m_xpcConnection = nullptr;
 }
 
-template<DaemonMessageType messageType, typename... Args>
-void PushClientConnection::sendDaemonMessage(Args&&... args) const
+void PushClientConnection::setPushAndNotificationsEnabledForOrigin(const String& originString, bool enabled, CompletionHandler<void()>&& replySender)
 {
-    if (!m_xpcConnection)
-        return;
+    WebPushDaemon::singleton().setPushAndNotificationsEnabledForOrigin(*this, originString, enabled, WTFMove(replySender));
+}
 
-    Encoder encoder;
-    encoder.encode(std::forward<Args>(args)...);
+void PushClientConnection::deletePushAndNotificationRegistration(const String& originString, CompletionHandler<void(const String&)>&& replySender)
+{
+    WebPushDaemon::singleton().deletePushAndNotificationRegistration(*this, originString, WTFMove(replySender));
+}
 
-    auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-    xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolVersionKey, WebKit::WebPushD::protocolVersionValue);
-    xpc_dictionary_set_value(dictionary.get(), WebKit::WebPushD::protocolEncodedMessageKey, WebKit::vectorToXPCData(encoder.takeBuffer()).get());
-    xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolMessageTypeKey, static_cast<uint64_t>(messageType));
+void PushClientConnection::injectPushMessageForTesting(PushMessageForTesting&& message, CompletionHandler<void(bool)>&& replySender)
+{
+    WebPushDaemon::singleton().injectPushMessageForTesting(*this, WTFMove(message), WTFMove(replySender));
+}
 
-    xpc_connection_send_message(m_xpcConnection.get(), dictionary.get());
+void PushClientConnection::injectEncryptedPushMessageForTesting(const String& message, CompletionHandler<void(bool)>&& replySender)
+{
+    WebPushDaemon::singleton().injectEncryptedPushMessageForTesting(*this, message, WTFMove(replySender));
+}
+
+void PushClientConnection::getPendingPushMessages(CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender)
+{
+    WebPushDaemon::singleton().getPendingPushMessages(*this, WTFMove(replySender));
+}
+
+void PushClientConnection::subscribeToPushService(URL&& scopeURL, const Vector<uint8_t>& applicationServerKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&& replySender)
+{
+    WebPushDaemon::singleton().subscribeToPushService(*this, WTFMove(scopeURL), applicationServerKey, WTFMove(replySender));
+}
+
+void PushClientConnection::unsubscribeFromPushService(URL&& scopeURL, std::optional<WebCore::PushSubscriptionIdentifier> identifier, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&& replySender)
+{
+    WebPushDaemon::singleton().unsubscribeFromPushService(*this, WTFMove(scopeURL), WTFMove(identifier), WTFMove(replySender));
+}
+
+void PushClientConnection::getPushSubscription(URL&& scopeURL, CompletionHandler<void(const Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&& replySender)
+{
+    WebPushDaemon::singleton().getPushSubscription(*this, WTFMove(scopeURL), WTFMove(replySender));
+}
+
+void PushClientConnection::incrementSilentPushCount(WebCore::SecurityOriginData&& origin, CompletionHandler<void(unsigned)>&& replySender)
+{
+    WebPushDaemon::singleton().incrementSilentPushCount(*this, WTFMove(origin), WTFMove(replySender));
+}
+
+void PushClientConnection::removeAllPushSubscriptions(CompletionHandler<void(unsigned)>&& replySender)
+{
+    WebPushDaemon::singleton().removeAllPushSubscriptions(*this, WTFMove(replySender));
+}
+
+void PushClientConnection::removePushSubscriptionsForOrigin(WebCore::SecurityOriginData&& origin, CompletionHandler<void(unsigned)>&& replySender)
+{
+    WebPushDaemon::singleton().removePushSubscriptionsForOrigin(*this, WTFMove(origin), WTFMove(replySender));
+}
+
+void PushClientConnection::setPublicTokenForTesting(const String& publicToken, CompletionHandler<void()>&& replySender)
+{
+    WebPushDaemon::singleton().setPublicTokenForTesting(publicToken, WTFMove(replySender));
+}
+
+void PushClientConnection::getPushPermissionState(URL&&, CompletionHandler<void(const Expected<uint8_t, WebCore::ExceptionData>&)>&& replySender)
+{
+    // FIXME: This doesn't actually get called right now, since the permission is currently checked
+    // in WebProcess. However, we've left this stub in for now because there is a chance that we
+    // will move the permission check into webpushd when supporting other platforms.
+    replySender(static_cast<uint8_t>(WebCore::PushPermissionState::Denied));
 }
 
 } // namespace WebPushD
+
+#endif // ENABLE(BUILT_IN_NOTIFICATIONS)

@@ -26,14 +26,18 @@
 #import "config.h"
 
 #import "DaemonTestUtilities.h"
+#import "Encoder.h"
 #import "HTTPServer.h"
+#import "MessageSenderInlines.h"
 #import "PlatformUtilities.h"
+#import "PushClientConnectionMessages.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestNotificationProvider.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
+#import "WebPushDaemonConnectionConfiguration.h"
 #import <WebCore/PushSubscriptionIdentifier.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -55,9 +59,6 @@
 
 // FIXME: Work through enabling on iOS
 #if ENABLE(NOTIFICATIONS) && ENABLE(NOTIFICATION_EVENT) && PLATFORM(MAC)
-
-using WebKit::WebPushD::MessageType;
-using WebKit::WebPushD::RawXPCMessageType;
 
 static bool alertReceived = false;
 @interface NotificationPermissionDelegate : NSObject<WKUIDelegatePrivate>
@@ -162,48 +163,87 @@ static void cleanUpTestWebPushD(NSURL *tempDir)
     EXPECT_NULL(error);
 }
 
-template <typename T>
-static void addMessageHeaders(xpc_object_t request, T messageType, uint64_t version)
-{
-    xpc_dictionary_set_uint64(request, WebKit::WebPushD::protocolMessageTypeKey, static_cast<uint64_t>(messageType));
-    xpc_dictionary_set_uint64(request, WebKit::WebPushD::protocolVersionKey, version);
-}
-
-void sendMessageToDaemon(xpc_connection_t connection, MessageType messageType, const Vector<uint8_t>& message, uint64_t version = WebKit::WebPushD::protocolVersionValue)
-{
-    auto request = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-    addMessageHeaders(request.get(), messageType, version);
-    xpc_dictionary_set_data(request.get(), WebKit::WebPushD::protocolEncodedMessageKey, message.data(), message.size());
-    xpc_connection_send_message(connection, request.get());
-}
-
-xpc_object_t sendMessageToDaemonWithReplySync(xpc_connection_t connection, MessageType messageType, const Vector<uint8_t>& message, uint64_t version = WebKit::WebPushD::protocolVersionValue)
-{
-    auto request = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-    addMessageHeaders(request.get(), messageType, version);
-    xpc_dictionary_set_data(request.get(), WebKit::WebPushD::protocolEncodedMessageKey, message.data(), message.size());
-    return xpc_connection_send_message_with_reply_sync(connection, request.get());
-}
-
-xpc_object_t sendRawMessageToDaemonWithReplySync(xpc_connection_t connection, RawXPCMessageType messageType, xpc_object_t request, uint64_t version = WebKit::WebPushD::protocolVersionValue)
-{
-    addMessageHeaders(request, messageType, version);
-    return xpc_connection_send_message_with_reply_sync(connection, request);
-}
-
-static Vector<String> toStringVector(xpc_object_t object)
-{
-    if (xpc_get_type(object) != XPC_TYPE_ARRAY)
-        return { };
-
-    Vector<String> result;
-    for (size_t i = 0; i < xpc_array_get_count(object); i++) {
-        auto element = xpc_array_get_string(object, i);
-        if (!element)
-            return { };
-        result.append(String::fromUTF8(element));
+class WebPushXPCConnectionMessageSender final : public IPC::MessageSender {
+public:
+    WebPushXPCConnectionMessageSender(xpc_connection_t connection)
+        : m_connection(connection)
+    {
     }
-    return result;
+    ~WebPushXPCConnectionMessageSender() final { };
+
+    void setShouldIncrementProtocolVersionForTesting() { m_shouldIncrementProtocolVersionForTesting = true; }
+
+private:
+    bool performSendWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&&) const final;
+    bool performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&&, CompletionHandler<void(IPC::Decoder*)>&&) const final;
+
+    OSObjectPtr<xpc_object_t> messageDictionaryFromEncoder(UniqueRef<IPC::Encoder>&&) const;
+
+    IPC::Connection* messageSenderConnection() const final { return nullptr; }
+    uint64_t messageSenderDestinationID() const final { return 0; }
+
+    OSObjectPtr<xpc_connection_t> m_connection;
+    bool m_shouldIncrementProtocolVersionForTesting { false };
+};
+
+OSObjectPtr<xpc_object_t> WebPushXPCConnectionMessageSender::messageDictionaryFromEncoder(UniqueRef<IPC::Encoder>&& encoder) const
+{
+    auto dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+
+    uint64_t protocolVersion = WebKit::WebPushD::protocolVersionValue;
+    if (m_shouldIncrementProtocolVersionForTesting)
+        ++protocolVersion;
+    xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolVersionKey, protocolVersion);
+
+    __block auto blockEncoder = WTFMove(encoder);
+    auto dispatchData = adoptNS(dispatch_data_create(blockEncoder->buffer(), blockEncoder->bufferSize(), dispatch_get_main_queue(), ^{
+        // Explicitly clear out the encoder, destroying it.
+        blockEncoder.moveToUniquePtr();
+    }));
+    auto encoderData = adoptOSObject(xpc_data_create_with_dispatch_data(dispatchData.get()));
+
+    xpc_dictionary_set_value(dictionary.get(), WebKit::WebPushD::protocolEncodedMessageKey, encoderData.get());
+
+    return dictionary;
+}
+
+bool WebPushXPCConnectionMessageSender::performSendWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& encoder) const
+{
+    auto dictionary = messageDictionaryFromEncoder(WTFMove(encoder));
+    xpc_connection_send_message(m_connection.get(), dictionary.get());
+
+    return true;
+}
+
+bool WebPushXPCConnectionMessageSender::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& encoder, CompletionHandler<void(IPC::Decoder*)>&& completionHandler) const
+{
+    auto dictionary = messageDictionaryFromEncoder(WTFMove(encoder));
+
+    xpc_connection_send_message_with_reply(m_connection.get(), dictionary.get(), dispatch_get_main_queue(), makeBlockPtr([this, completionHandler = WTFMove(completionHandler)] (xpc_object_t reply) mutable {
+        if (xpc_get_type(reply) == XPC_TYPE_ERROR) {
+            // We only expect an error if we were purposefully testing the wrong protocol version.
+            RELEASE_ASSERT(m_shouldIncrementProtocolVersionForTesting);
+            return completionHandler(nullptr);
+        }
+
+        if (xpc_get_type(reply) != XPC_TYPE_DICTIONARY) {
+            RELEASE_ASSERT_NOT_REACHED();
+            return completionHandler(nullptr);
+        }
+        if (xpc_dictionary_get_uint64(reply, WebKit::WebPushD::protocolVersionKey) != WebKit::WebPushD::protocolVersionValue) {
+            RELEASE_ASSERT_NOT_REACHED();
+            return completionHandler(nullptr);
+        }
+
+        size_t dataSize { 0 };
+        const uint8_t* data = static_cast<const uint8_t *>(xpc_dictionary_get_data(reply, WebKit::WebPushD::protocolEncodedMessageKey, &dataSize));
+        auto decoder = IPC::Decoder::create(data, dataSize, { });
+        ASSERT(decoder);
+
+        completionHandler(decoder.get());
+    }).get());
+
+    return true;
 }
 
 static void sendConfigurationWithAuditToken(xpc_connection_t connection)
@@ -216,21 +256,12 @@ static void sendConfigurationWithAuditToken(xpc_connection_t connection)
         return;
     }
 
-    // Send configuration with audit token
-    {
-        Vector<uint8_t> encodedMessage(48);
-        encodedMessage.fill(0);
-        encodedMessage[1] = 1;
-        encodedMessage[2] = 32;
-        memcpy(&encodedMessage[10], &token, sizeof(token));
-        encodedMessage[42] = 0; // Sets pushPartition to empty string.
-        encodedMessage[43] = 0;
-        encodedMessage[44] = 0;
-        encodedMessage[45] = 0;
-        encodedMessage[46] = 1;
-        encodedMessage[47] = 0; // Sets dataStoreIdentifier to std::nullopt.
-        sendMessageToDaemon(connection, MessageType::UpdateConnectionConfiguration, encodedMessage);
-    }
+    WebKit::WebPushD::WebPushDaemonConnectionConfiguration configuration;
+    configuration.hostAppAuditTokenData = Vector<unsigned char>(sizeof(token));
+    memcpy(configuration.hostAppAuditTokenData->data(), &token, sizeof(token));
+
+    auto sender = WebPushXPCConnectionMessageSender { connection };
+    sender.sendWithoutUsingIPCConnection(Messages::PushClientConnection::UpdateConnectionConfiguration(configuration));
 }
 
 RetainPtr<xpc_connection_t> createAndConfigureConnectionToService(const char* serviceName)
@@ -243,25 +274,6 @@ RetainPtr<xpc_connection_t> createAndConfigureConnectionToService(const char* se
     return WTFMove(connection);
 }
 
-static Vector<uint8_t> encodeString(const String& message)
-{
-    ASSERT(message.is8Bit());
-    auto utf8 = message.utf8();
-
-    Vector<uint8_t> result(utf8.length() + 5);
-    result[0] = static_cast<uint8_t>(utf8.length());
-    result[1] = static_cast<uint8_t>(utf8.length() >> 8);
-    result[2] = static_cast<uint8_t>(utf8.length() >> 16);
-    result[3] = static_cast<uint8_t>(utf8.length() >> 24);
-    result[4] = 0x01;
-
-    auto data = utf8.data();
-    for (size_t i = 0; i < utf8.length(); ++i)
-        result[5 + i] = data[i];
-
-    return result;
-}
-
 TEST(WebPushD, BasicCommunication)
 {
     NSURL *tempDir = setUpTestWebPushD();
@@ -269,10 +281,15 @@ TEST(WebPushD, BasicCommunication)
     auto connection = adoptNS(xpc_connection_create_mach_service("org.webkit.webpushtestdaemon.service", dispatch_get_main_queue(), 0));
 
     __block bool done = false;
+    __block bool interrupted = false;
     xpc_connection_set_event_handler(connection.get(), ^(xpc_object_t request) {
+        if (request == XPC_ERROR_CONNECTION_INTERRUPTED) {
+            interrupted = true;
+            return;
+        }
         if (xpc_get_type(request) != XPC_TYPE_DICTIONARY)
             return;
-        const char* debugMessage = xpc_dictionary_get_string(request, "debug message");
+        const char* debugMessage = xpc_dictionary_get_string(request, WebKit::WebPushD::protocolDebugMessageKey);
         if (!debugMessage)
             return;
 
@@ -297,42 +314,22 @@ TEST(WebPushD, BasicCommunication)
 
     // Enable debug messages, and wait for the resulting debug message
     {
-        auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-        Vector<uint8_t> encodedMessage(1);
-        encodedMessage[0] = 1;
-        sendMessageToDaemon(connection.get(), MessageType::SetDebugModeIsEnabled, encodedMessage);
+        auto sender = WebPushXPCConnectionMessageSender { connection.get() };
+        sender.sendWithoutUsingIPCConnection(Messages::PushClientConnection::SetDebugModeIsEnabled(true));
         TestWebKitAPI::Util::run(&done);
     }
 
-    // Echo and wait for a reply
-    auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-    auto encodedString = encodeString("hello"_s);
-    xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolVersionKey, WebKit::WebPushD::protocolVersionValue);
-    xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolMessageTypeKey, static_cast<uint64_t>(MessageType::EchoTwice));
-    xpc_dictionary_set_data(dictionary.get(), WebKit::WebPushD::protocolEncodedMessageKey, encodedString.data(), encodedString.size());
-
-    done = false;
-    xpc_connection_send_message_with_reply(connection.get(), dictionary.get(), dispatch_get_main_queue(), ^(xpc_object_t reply) {
-        if (xpc_get_type(reply) != XPC_TYPE_DICTIONARY) {
-            NSLog(@"Unexpected non-dictionary: %@", reply);
-            done = true;
-            EXPECT_TRUE(FALSE);
-            return;
-        }
-
-        size_t dataSize = 0;
-        const void* data = xpc_dictionary_get_data(reply, "encoded message", &dataSize);
-        EXPECT_EQ(dataSize, 15u);
-        std::array<uint8_t, 15> expectedReply { 10, 0, 0, 0, 1, 'h', 'e', 'l', 'l', 'o' , 'h', 'e', 'l', 'l', 'o' };
-        EXPECT_FALSE(memcmp(data, expectedReply.data(), expectedReply.size()));
-        done = true;
-    });
-    TestWebKitAPI::Util::run(&done);
-
     // Sending a message with a higher protocol version should cause the connection to be terminated
-    auto reply = sendMessageToDaemonWithReplySync(connection.get(), MessageType::EchoTwice, { }, WebKit::WebPushD::protocolVersionValue + 1);
-    EXPECT_EQ(reply, XPC_ERROR_CONNECTION_INTERRUPTED);
+    auto sender = WebPushXPCConnectionMessageSender { connection.get() };
+    sender.setShouldIncrementProtocolVersionForTesting();
+    __block bool messageReplied = false;
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::RemoveAllPushSubscriptions(), ^(bool result) {
+        EXPECT_FALSE(result);
+        messageReplied = true;
+    });
 
+    TestWebKitAPI::Util::run(&messageReplied);
+    TestWebKitAPI::Util::run(&interrupted);
     cleanUpTestWebPushD(tempDir);
 }
 
@@ -621,10 +618,14 @@ public:
         NSData *data = [NSJSONSerialization dataWithJSONObject:obj options:0 error:nullptr];
 
         String message { static_cast<const char *>(data.bytes), static_cast<unsigned>(data.length) };
-        auto encodedMessage = encodeString(WTFMove(message));
 
         auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
-        sendMessageToDaemonWithReplySync(utilityConnection.get(), MessageType::InjectEncryptedPushMessageForTesting, encodedMessage);
+        auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
+        __block bool done = false;
+        sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectEncryptedPushMessageForTesting(message), ^(bool injected) {
+            done = true;
+        });
+        TestWebKitAPI::Util::run(&done);
     }
 
     RetainPtr<NSArray<NSDictionary *>> fetchPushMessages()
@@ -768,12 +769,17 @@ public:
 
     std::pair<Vector<String>, Vector<String>> getPushTopics()
     {
+        Vector<String> enabledTopics;
+        Vector<String> ignoredTopics;
         auto connection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
-        auto request = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
-        auto reply = sendRawMessageToDaemonWithReplySync(connection.get(), RawXPCMessageType::GetPushTopicsForTesting, request.get());
-
-        auto enabledTopics = toStringVector(xpc_dictionary_get_value(reply, "enabled"));
-        auto ignoredTopics = toStringVector(xpc_dictionary_get_value(reply, "ignored"));
+        auto sender = WebPushXPCConnectionMessageSender { connection.get() };
+        bool done = false;
+        sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushTopicsForTesting(), [&](Vector<String> enabled, Vector<String> ignored) {
+            enabledTopics = enabled;
+            ignoredTopics = ignored;
+            done = true;
+        });
+        TestWebKitAPI::Util::run(&done);
 
         return std::make_pair(WTFMove(enabledTopics), WTFMove(ignoredTopics));
     }
@@ -1065,7 +1071,12 @@ TEST_F(WebPushDTest, GetPushSubscriptionWithMismatchedPublicToken)
 
     // If the public token changes, all subscriptions should be invalidated.
     auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
-    sendMessageToDaemonWithReplySync(utilityConnection.get(), MessageType::SetPublicTokenForTesting, encodeString("foobar"_s));
+    auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
+    bool done = false;
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::SetPublicTokenForTesting("foobar"_s), [&]() {
+        done = true;
+    });
+    TestWebKitAPI::Util::run(&done);
 
     for (auto& v : webViews())
         ASSERT_FALSE(v->hasPushSubscription());
