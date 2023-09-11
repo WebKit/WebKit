@@ -542,12 +542,16 @@ EOF
                     push(@parameters, $parameter->name) unless $parameter->extendedAttributes->{"CallbackHandler"} && $parameter->extendedAttributes->{"Optional"};
                 }
 
-                push(@contents, "\n") unless $argumentCount eq 1;
+                push(@contents, "\n");
 
                 my $hasOptionalCallbackHandlerAsLastArgument = 1 if $lastParameter->extendedAttributes->{"CallbackHandler"} && $hasOptionalAsLastArgument;
 
-                push(@contents, "    if (argumentCount == ${argumentCount}) {\n") unless $argumentCount eq 1;
-                push(@contents, "    if (argumentCount == ${argumentCount})\n") if $argumentCount eq 1;
+                push(@contents, "    if (argumentCount == ${argumentCount}) {\n");
+
+                foreach my $i (0..$#specifiedParameters) {
+                    my $parameter = $specifiedParameters[$i];
+                    $self->_installArgumentTypeExceptions(\@contents, $parameter, $idlType, "arguments[${i}]", $parameter->name, $defaultReturnValue, \%contentsIncludes, $function, 1, 2);
+                }
 
                 foreach my $i (0..$#specifiedParameters) {
                     my $parameter = $specifiedParameters[$i];
@@ -560,11 +564,17 @@ EOF
 
                     foreach my $i (0..$#specifiedParameters - 1) {
                         my $parameter = $specifiedParameters[$i];
+                        $self->_installArgumentTypeExceptions(\@contents, $parameter, $idlType, "arguments[${i}]", $parameter->name, $defaultReturnValue, \%contentsIncludes, $function, 1, 2);
+                    }
+
+                    foreach my $i (0..$#specifiedParameters - 1) {
+                        my $parameter = $specifiedParameters[$i];
                         push(@contents, "        " . $self->_platformTypeVariableDeclaration($parameter, $parameter->name, "arguments[${i}]", undef, 1) . "\n");
                     }
 
                     if ($hasOptionalCallbackHandlerAsLastArgument && $requiredArgumentCount ne ($argumentCount - 1)) {
                         push(@contents, "    } else if (argumentCount == 1) {\n");
+                        $self->_installArgumentTypeExceptions(\@contents, $lastParameter, $idlType, "arguments[0]", $lastParameter->name, $defaultReturnValue, \%contentsIncludes, $function, 1, 2);
                         push(@contents, "        " . $self->_platformTypeVariableDeclaration($lastParameter, $lastParameter->name, "arguments[0]", undef, 1) . "\n");
                     }
                 } elsif ($argumentCount > 1) {
@@ -610,6 +620,7 @@ EOF
                             push(@contents, "                $nextArgumentIndex;\n");
                             push(@contents, "            }\n");
                         } else {
+                            $self->_installArgumentTypeExceptions(\@contents, $parameter, $idlType, "currentArgument", $parameter->name, $defaultReturnValue, \%contentsIncludes, $function, 1, 3);
                             push(@contents, "            " . $self->_platformTypeVariableDeclaration($parameter, $parameter->name, "currentArgument", undef, 1) . "\n");
                             push(@contents, "            $nextArgumentIndex;\n");
                         }
@@ -618,8 +629,13 @@ EOF
                     }
                 }
 
-                push(@contents, "    }\n") unless $argumentCount eq 1;
+                push(@contents, "    }\n");
             } else {
+                foreach my $i (0..$#specifiedParameters) {
+                    my $parameter = $specifiedParameters[$i];
+                    $self->_installArgumentTypeExceptions(\@contents, $parameter, $idlType, "arguments[${i}]", $parameter->name, $defaultReturnValue, \%contentsIncludes, $function, 1, 1);
+                }
+
                 foreach my $i (0..$#specifiedParameters) {
                     my $parameter = $specifiedParameters[$i];
 
@@ -972,6 +988,102 @@ sub _callString
     return $call;
 }
 
+sub _installArgumentTypeExceptions
+{
+    my ($self, $contents, $signature, $classIDLType, $variable, $variableLabel, $result, $contentsIncludes, $functionOrAttribute, $isFunction, $indentLevel) = @_;
+
+    my $indentString = ' ' x (4 * $indentLevel);
+    my $call = _callString($classIDLType, $functionOrAttribute, $isFunction);
+    my $condition = $self->_javaScriptTypeCondition($signature, $variable);
+    my $hasExceptions = 0;
+
+    if ($$self{codeGenerator}->IsStringType($signature->type)) {
+        $hasExceptions = 1;
+
+        push(@$contents, <<EOF);
+${indentString}if (UNLIKELY(!($condition))) {
+${indentString}    *exception = toJSError(context, @"${call}", @"${variableLabel}", @"a string is expected");
+${indentString}    return ${result};
+${indentString}}
+
+EOF
+    }
+
+    if ($$self{codeGenerator}->IsPrimitiveType($signature->type) && $signature->type->name ne "boolean") {
+        $hasExceptions = 1;
+
+        push(@$contents, <<EOF);
+${indentString}if (UNLIKELY(!($condition))) {
+${indentString}    *exception = toJSError(context, @"${call}", @"${variableLabel}", @"a number is expected");
+${indentString}    return ${result};
+${indentString}}
+
+EOF
+    }
+
+    if ($$self{codeGenerator}->IsPrimitiveType($signature->type) && $signature->type->name eq "boolean") {
+        $hasExceptions = 1;
+
+        push(@$contents, <<EOF);
+${indentString}if (UNLIKELY(!($condition))) {
+${indentString}    *exception = toJSError(context, @"${call}", @"${variableLabel}", @"a boolean is expected");
+${indentString}    return ${result};
+${indentString}}
+
+EOF
+    }
+
+    if ($signature->type->name eq "any" && ($signature->extendedAttributes->{"NSDictionary"} || $signature->extendedAttributes->{"Serialization"})) {
+        $hasExceptions = 1;
+
+        push(@$contents, <<EOF);
+${indentString}if (UNLIKELY(!($condition))) {
+${indentString}    *exception = toJSError(context, @"${call}", @"${variableLabel}", @"an object is expected");
+${indentString}    return ${result};
+${indentString}}
+
+EOF
+    }
+
+    if ($signature->type->name eq "any" && !($signature->extendedAttributes->{"NSDictionary"} || $signature->extendedAttributes->{"Serialization"}) && !$signature->extendedAttributes->{"NSObject"} && !$signature->extendedAttributes->{"ValuesAllowed"}) {
+        $hasExceptions = 1;
+
+        push(@$contents, <<EOF);
+${indentString}if (UNLIKELY(!($condition))) {
+${indentString}    *exception = toJSError(context, @"${call}", @"${variableLabel}", @"an object is expected");
+${indentString}    return ${result};
+${indentString}}
+
+EOF
+    }
+
+    if ($signature->type->name eq "any" && $signature->extendedAttributes->{"NSArray"}) {
+        $hasExceptions = 1;
+
+        push(@$contents, <<EOF);
+${indentString}if (UNLIKELY(!($condition))) {
+${indentString}    *exception = toJSError(context, @"${call}", @"${variableLabel}", @"an array is expected");
+${indentString}    return ${result};
+${indentString}}
+
+EOF
+    }
+
+    if ($signature->type->name eq "function") {
+        $hasExceptions = 1;
+
+        push(@$contents, <<EOF);
+${indentString}if (UNLIKELY(!($condition))) {
+${indentString}    *exception = toJSError(context, @"${call}", @"${variableLabel}", @"a function is expected");
+${indentString}    return ${result};
+${indentString}}
+
+EOF
+    }
+
+    return $hasExceptions;
+}
+
 sub _installAutomaticExceptions
 {
     my ($self, $contents, $signature, $classIDLType, $variable, $variableLabel, $result, $contentsIncludes, $functionOrAttribute, $isFunction) = @_;
@@ -1168,16 +1280,16 @@ sub _javaScriptTypeCondition
     return undef unless defined $idlType;
 
     my $idlTypeName = $idlType->name;
-    my $nullOrUndefined = "JSValueIsNull(context, ${argument}) || JSValueIsUndefined(context, ${argument})";
+    my $nullOrUndefined = " || JSValueIsNull(context, ${argument}) || JSValueIsUndefined(context, ${argument})" if $signature->extendedAttributes->{"Optional"};
 
-    return "(JSValueIsObject(context, ${argument}) && !JSObjectIsFunction(context, JSValueToObject(context, ${argument}, nullptr))) || JSValueIsString(context, ${argument}) || ${nullOrUndefined}" if $idlTypeName eq "any" && $signature->extendedAttributes->{"NSObject"} && $signature->extendedAttributes->{"DOMString"};
-    return "(JSValueIsObject(context, ${argument}) && !JSObjectIsFunction(context, JSValueToObject(context, ${argument}, nullptr))) || ${nullOrUndefined}" if $idlTypeName eq "any" && ($signature->extendedAttributes->{"NSObject"} || $signature->extendedAttributes->{"NSArray"} || $signature->extendedAttributes->{"NSDictionary"} || $signature->extendedAttributes->{"Serialization"});
-    return "JSValueIsObject(context, ${argument}) || ${nullOrUndefined}" if $idlTypeName eq "any" && !$signature->extendedAttributes->{"ValuesAllowed"};
-    return "(JSValueIsObject(context, ${argument}) && JSObjectIsFunction(context, JSValueToObject(context, ${argument}, nullptr))) || ${nullOrUndefined}" if $idlTypeName eq "function";
-    return "JSValueIsBoolean(context, ${argument}) || ${nullOrUndefined}" if $idlTypeName eq "boolean";
-    return "JSValueIsArray(context, ${argument}) || ${nullOrUndefined}" if $idlTypeName eq "array";
-    return "JSValueIsString(context, ${argument}) || ${nullOrUndefined}" if $$self{codeGenerator}->IsStringType($idlType);
-    return "JSValueIsNumber(context, ${argument}) || ${nullOrUndefined}"  if $$self{codeGenerator}->IsPrimitiveType($idlType);
+    return "(JSValueIsObject(context, ${argument}) && !JSObjectIsFunction(context, JSValueToObject(context, ${argument}, nullptr))) || JSValueIsString(context, ${argument})${nullOrUndefined}" if $idlTypeName eq "any" && $signature->extendedAttributes->{"NSObject"} && $signature->extendedAttributes->{"DOMString"};
+    return "(JSValueIsObject(context, ${argument}) && !JSObjectIsFunction(context, JSValueToObject(context, ${argument}, nullptr)))${nullOrUndefined}" if $idlTypeName eq "any" && ($signature->extendedAttributes->{"NSObject"} || $signature->extendedAttributes->{"NSArray"} || $signature->extendedAttributes->{"NSDictionary"} || $signature->extendedAttributes->{"Serialization"});
+    return "JSValueIsObject(context, ${argument})${nullOrUndefined}" if $idlTypeName eq "any" && !$signature->extendedAttributes->{"ValuesAllowed"};
+    return "(JSValueIsObject(context, ${argument}) && JSObjectIsFunction(context, JSValueToObject(context, ${argument}, nullptr)))${nullOrUndefined}" if $idlTypeName eq "function";
+    return "JSValueIsBoolean(context, ${argument})${nullOrUndefined}" if $idlTypeName eq "boolean";
+    return "JSValueIsArray(context, ${argument})${nullOrUndefined}" if $idlTypeName eq "array";
+    return "JSValueIsString(context, ${argument})${nullOrUndefined}" if $$self{codeGenerator}->IsStringType($idlType);
+    return "JSValueIsNumber(context, ${argument})${nullOrUndefined}"  if $$self{codeGenerator}->IsPrimitiveType($idlType);
     return $argument;
 }
 
@@ -1270,8 +1382,6 @@ sub _platformTypeVariableDeclaration
     } elsif (defined $defaultValue) {
         die "DefaultValue extended attribute is currently only supported for numeric types";
     }
-
-    $condition = "JSValueIsNumber(context, $argumentName)" if $platformType eq "double" and $argumentName and !$condition;
 
     if ($platformType eq "JSValueRef" or $platformType eq "JSObjectRef" or $platformType eq "RefPtr<WebExtensionCallbackHandler>" or $platformType eq "double" or $platformType eq "bool") {
         $platformType .= " ";

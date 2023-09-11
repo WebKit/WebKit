@@ -167,13 +167,6 @@ bool WebExtensionAPITabs::parseTabCreateOptions(NSDictionary *options, WebExtens
     if (!parseTabUpdateOptions(options, parameters, sourceKey, outExceptionString))
         return false;
 
-    static NSArray<NSString *> *optionalKeys = @[
-        indexKey,
-        openInReaderModeKey,
-        titleKey,
-        windowIdKey,
-    ];
-
     static NSDictionary<NSString *, id> *types = @{
         indexKey: NSNumber.class,
         openInReaderModeKey: @YES.class,
@@ -181,7 +174,7 @@ bool WebExtensionAPITabs::parseTabCreateOptions(NSDictionary *options, WebExtens
         windowIdKey: NSNumber.class,
     };
 
-    if (!validateDictionary(options, sourceKey, nil, optionalKeys, types, outExceptionString))
+    if (!validateDictionary(options, sourceKey, nil, types, outExceptionString))
         return false;
 
     if (NSNumber *windowId = objectForKey<NSNumber>(options, windowIdKey)) {
@@ -207,16 +200,6 @@ bool WebExtensionAPITabs::parseTabCreateOptions(NSDictionary *options, WebExtens
 
 bool WebExtensionAPITabs::parseTabUpdateOptions(NSDictionary *options, WebExtensionTabParameters& parameters, NSString *sourceKey, NSString **outExceptionString)
 {
-    static NSArray<NSString *> *optionalKeys = @[
-        activeKey,
-        highlightedKey,
-        mutedKey,
-        openerTabIdKey,
-        pinnedKey,
-        selectedKey,
-        urlKey,
-    ];
-
     static NSDictionary<NSString *, id> *types = @{
         activeKey: @YES.class,
         highlightedKey: @YES.class,
@@ -227,7 +210,7 @@ bool WebExtensionAPITabs::parseTabUpdateOptions(NSDictionary *options, WebExtens
         urlKey: NSString.class,
     };
 
-    if (!validateDictionary(options, sourceKey, nil, optionalKeys, types, outExceptionString))
+    if (!validateDictionary(options, sourceKey, nil, types, outExceptionString))
         return false;
 
     if (NSString *url = objectForKey<NSString>(options, urlKey)) {
@@ -268,24 +251,6 @@ bool WebExtensionAPITabs::parseTabUpdateOptions(NSDictionary *options, WebExtens
 
 bool WebExtensionAPITabs::parseTabQueryOptions(NSDictionary *options, WebExtensionTabQueryParameters& parameters, NSString *sourceKey, NSString **outExceptionString)
 {
-    static NSArray<NSString *> *optionalKeys = @[
-        activeKey,
-        audibleKey,
-        currentWindowKey,
-        hiddenKey,
-        highlightedKey,
-        indexKey,
-        lastFocusedWindowKey,
-        mutedKey,
-        pinnedKey,
-        selectedKey,
-        statusKey,
-        titleKey,
-        urlKey,
-        windowIdKey,
-        windowTypeKey,
-    ];
-
     static NSDictionary<NSString *, id> *types = @{
         activeKey: @YES.class,
         audibleKey: @YES.class,
@@ -304,7 +269,7 @@ bool WebExtensionAPITabs::parseTabQueryOptions(NSDictionary *options, WebExtensi
         windowTypeKey: NSString.class,
     };
 
-    if (!validateDictionary(options, sourceKey, nil, optionalKeys, types, outExceptionString))
+    if (!validateDictionary(options, sourceKey, nil, types, outExceptionString))
         return false;
 
     if (NSNumber *windowId = objectForKey<NSNumber>(options, windowIdKey)) {
@@ -595,15 +560,11 @@ void WebExtensionAPITabs::reload(WebPage* page, double tabID, NSDictionary *opti
     if (tabIdentifer && !isValid(tabIdentifer, outExceptionString))
         return;
 
-    static NSArray<NSString *> *optionalKeys = @[
-        bypassCacheKey,
-    ];
-
     static NSDictionary<NSString *, id> *types = @{
         bypassCacheKey: @YES.class,
     };
 
-    if (!validateDictionary(options, @"properties", nil, optionalKeys, types, outExceptionString))
+    if (!validateDictionary(options, @"properties", nil, types, outExceptionString))
         return;
 
     using ReloadFromOrigin = WebExtensionContext::ReloadFromOrigin;

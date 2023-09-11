@@ -49,11 +49,14 @@ TEST(WKWebExtensionAPITabs, Errors)
         @"browser.test.assertThrows(() => browser.tabs.get('bad'), /'tabID' value is invalid, because a number is expected/i)",
         @"browser.test.assertThrows(() => browser.tabs.get(-3), /'tabID' value is invalid, because it is not a tab identifier/i)",
         @"browser.test.assertThrows(() => browser.tabs.duplicate('bad'), /'tabID' value is invalid, because a number is expected/i)",
-        @"browser.test.assertThrows(() => browser.tabs.remove('bad'), /'tabIDs' value is invalid, because a number value or an array of number values is expected, but a string value was provided/i)",
-        @"browser.test.assertThrows(() => browser.tabs.remove(['bad']), /'tabIDs' value is invalid, because a number value or an array of number values is expected, but an array with other values was provided/i)",
+        @"browser.test.assertThrows(() => browser.tabs.remove('bad'), /'tabIDs' value is invalid, because a number or an array of numbers is expected, but a string was provided/i)",
+        @"browser.test.assertThrows(() => browser.tabs.remove(['bad']), /'tabIDs' value is invalid, because a number or an array of numbers is expected, but an array with other values was provided/i)",
         @"browser.test.assertThrows(() => browser.tabs.reload('bad'), /an unknown argument was provided/i)",
-
-        // FIXME: <https://webkit.org/b/261386> Test that goBack(), goForward(), getZoom(), detectLanguage(), and toggleReaderMode() throw errors for bad tab IDs.
+        @"browser.test.assertThrows(() => browser.tabs.goBack('bad'), /'tabID' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.tabs.goForward('bad'), /'tabID' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.tabs.getZoom('bad'), /'tabID' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.tabs.detectLanguage('bad'), /'tabID' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.tabs.toggleReaderMode('bad'), /'tabID' value is invalid, because a number is expected/i)",
 
         @"browser.test.assertThrows(() => browser.tabs.setZoom('bad'), /'zoomFactor' value is invalid, because a number is expected/i)",
         @"browser.test.assertThrows(() => browser.tabs.setZoom(1, 'bad'), /'zoomFactor' value is invalid, because a number is expected/i)",
@@ -61,23 +64,23 @@ TEST(WKWebExtensionAPITabs, Errors)
         @"browser.test.assertThrows(() => browser.tabs.update('bad'), /'properties' value is invalid, because an object is expected/i)",
         @"browser.test.assertThrows(() => browser.tabs.update(1, 'bad'), /'properties' value is invalid, because an object is expected/i)",
 
-        @"browser.test.assertThrows(() => browser.tabs.update(1, { 'openerTabId': true }), /'openerTabId' is expected to be a number value, but a boolean value was provided/i)",
+        @"browser.test.assertThrows(() => browser.tabs.update(1, { 'openerTabId': true }), /'openerTabId' is expected to be a number, but a boolean was provided/i)",
         @"browser.test.assertThrows(() => browser.tabs.update(1, { 'openerTabId': 4.2 }), /'openerTabId' value is invalid, because '4.2' is not a tab identifier/i)",
 
-        @"browser.test.assertThrows(() => browser.tabs.create({ 'url': 1234 }), /'url' is expected to be a string value/i)",
+        @"browser.test.assertThrows(() => browser.tabs.create({ 'url': 1234 }), /'url' is expected to be a string/i)",
 
         @"browser.test.assertThrows(() => browser.tabs.query({ status: 'bad' }), /'status' value is invalid, because it must specify either 'loading' or 'complete'/i)",
 
-        @"browser.test.assertThrows(() => browser.tabs.query({ url: 12345 }), /'info' value is invalid, because 'url' is expected to be a string value or an array of string values, but a number value was provided/i)",
-        @"browser.test.assertThrows(() => browser.tabs.query({ url: ['bad', 12345] }), /'url' is expected to be a string value or an array of string values, but an array with other values was provided/i)",
+        @"browser.test.assertThrows(() => browser.tabs.query({ url: 12345 }), /'info' value is invalid, because 'url' is expected to be a string or an array of strings, but a number was provided/i)",
+        @"browser.test.assertThrows(() => browser.tabs.query({ url: ['bad', 12345] }), /'url' is expected to be a string or an array of strings, but an array with other values was provided/i)",
 
-        @"browser.test.assertThrows(() => browser.tabs.query({ windowId: 'bad' }), /'windowId' is expected to be a number value, but a string value was provided/i)",
+        @"browser.test.assertThrows(() => browser.tabs.query({ windowId: 'bad' }), /'windowId' is expected to be a number, but a string was provided/i)",
         @"browser.test.assertThrows(() => browser.tabs.query({ windowId: -5 }), /'windowId' value is invalid, because '-5' is not a window identifier/i)",
 
-        @"browser.test.assertThrows(() => browser.tabs.query({ active: 'true' }), /'active' is expected to be a boolean value, but a string value was provided/i)",
-        @"browser.test.assertThrows(() => browser.tabs.query({ highlighted: 123 }), /'highlighted' is expected to be a boolean value, but a number value was provided/i)",
-        @"browser.test.assertThrows(() => browser.tabs.query({ index: 'five' }), /'index' is expected to be a number value, but a string value was provided/i)",
-        @"browser.test.assertThrows(() => browser.tabs.query({ audible: 'yes' }), /'audible' is expected to be a boolean value, but a string value was provided/i)",
+        @"browser.test.assertThrows(() => browser.tabs.query({ active: 'true' }), /'active' is expected to be a boolean, but a string was provided/i)",
+        @"browser.test.assertThrows(() => browser.tabs.query({ highlighted: 123 }), /'highlighted' is expected to be a boolean, but a number was provided/i)",
+        @"browser.test.assertThrows(() => browser.tabs.query({ index: 'five' }), /'index' is expected to be a number, but a string was provided/i)",
+        @"browser.test.assertThrows(() => browser.tabs.query({ audible: 'yes' }), /'audible' is expected to be a boolean, but a string was provided/i)",
 
         @"browser.test.notifyPass()"
     ]);

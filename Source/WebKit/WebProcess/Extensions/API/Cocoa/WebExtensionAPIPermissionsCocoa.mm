@@ -146,17 +146,12 @@ void WebExtensionAPIPermissions::remove(NSDictionary *details, Ref<WebExtensionC
 
 bool WebExtensionAPIPermissions::parseDetailsDictionary(NSDictionary *details, HashSet<String>& permissions, HashSet<String>& origins, NSString *callingAPIName, NSString **outExceptionString)
 {
-    static NSArray<NSString *> *optionalKeys = @[
-        permissionsKey,
-        originsKey,
-    ];
-
     static NSDictionary<NSString *, id> *types = @{
         permissionsKey: @[ NSString.class ],
         originsKey: @[ NSString.class ],
     };
 
-    if (!validateDictionary(details, permissionsKey, nil, optionalKeys, types, outExceptionString))
+    if (!validateDictionary(details, permissionsKey, nil, types, outExceptionString))
         return false;
 
     for (NSString *permission in objectForKey<NSArray>(details, permissionsKey, true, NSString.class))

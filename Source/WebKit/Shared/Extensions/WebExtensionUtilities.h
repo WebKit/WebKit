@@ -32,8 +32,7 @@
 namespace WebKit {
 
 /// Verifies that a dictionary:
-///  - Contains a required set of string keys, as listed in `requiredKeys`.
-///  - Has no unexpected keys beyond the required keys and an additional set of optional keys, listed in `optionalKeys`.
+///  - Contains a required set of string keys, as listed in `requiredKeys`, all other types specified in `keyTypes` are optional keys.
 ///  - Has values that are the appropriate type for each key, as specified by `keyTypes`. The keys in this dictionary
 ///    correspond to keys in the original dictionary being validated, and the values in `keyTypes` may be:
 ///     - A `Class`, that the value in the original dictionary must be a kind of.
@@ -41,7 +40,7 @@ namespace WebKit {
 ///     - An `NSOrderedSet` containing one or more classes or arrays, specifying the value in the dictionary should be of any classes in the set or their subclasses.
 ///  - The `callingAPIName` and `sourceKey` parameters are used to reference the object within a larger context. When an error occurs, this key helps identify the source of the problem in the `outExceptionString`.
 /// If the dictionary is valid, returns `YES`. Otherwise returns `NO` and sets `outExceptionString` to a message describing what validation failed.
-bool validateDictionary(NSDictionary<NSString *, id> *, NSString *sourceKey, NSArray<NSString *> *requiredKeys, NSArray<NSString *> *optionalKeys, NSDictionary<NSString *, id> *keyTypes, NSString **outExceptionString);
+bool validateDictionary(NSDictionary<NSString *, id> *, NSString *sourceKey, NSArray<NSString *> *requiredKeys, NSDictionary<NSString *, id> *keyTypes, NSString **outExceptionString);
 
 /// Verifies a single object against a certain type criteria:
 ///  - Checks that the object matches the type defined in `valueTypes`. The `valueTypes` can be:
