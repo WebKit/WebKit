@@ -156,19 +156,15 @@ bool CSSVariableReferenceValue::resolveVariableReference(CSSParserTokenRange ran
 std::optional<Vector<CSSParserToken>> CSSVariableReferenceValue::resolveTokenRange(CSSParserTokenRange range, Style::BuilderState& builderState) const
 {
     Vector<CSSParserToken> tokens;
-    bool success = true;
     while (!range.atEnd()) {
         auto functionId = range.peek().functionId();
         if (functionId == CSSValueVar || functionId == CSSValueEnv) {
             if (!resolveVariableReference(range.consumeBlock(), functionId, tokens, builderState))
-                success = false;
+                return { };
             continue;
         }
         tokens.append(range.consume());
     }
-    if (!success)
-        return { };
-
     return tokens;
 }
 
