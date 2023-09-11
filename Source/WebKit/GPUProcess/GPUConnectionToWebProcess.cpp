@@ -681,22 +681,7 @@ void GPUConnectionToWebProcess::createRemoteGPU(WebGPUIdentifier identifier, Ren
     MESSAGE_CHECK(streamConnection);
 
     auto addResult = m_remoteGPUMap.ensure(identifier, [&, streamConnection = WTFMove(streamConnection)] () mutable {
-        return IPC::ScopedActiveMessageReceiveQueue { RemoteGPU::create(
-#if ENABLE(VIDEO) && PLATFORM(COCOA)
-            [&] (std::variant<WebCore::MediaPlayerIdentifier, WebKit::RemoteVideoFrameReference> identifier, Function<void(RefPtr<WebCore::VideoFrame>)>&& callback) mutable {
-                return WTF::switchOn(identifier, [&] (WebCore::MediaPlayerIdentifier i) {
-                    performWithMediaPlayerOnMainThread(i, [&callback](auto& player) {
-                        callback(player.videoFrameForCurrentTime());
-                    });
-                }, [&] (WebKit::RemoteVideoFrameReference i) {
-                    callback(videoFrameObjectHeap().get(RemoteVideoFrameReadReference(WTFMove(i))));
-                });
-            },
-#else
-            [] () mutable {
-            },
-#endif
-            identifier, *this, *renderingBackend, streamConnection.releaseNonNull()) };
+        return IPC::ScopedActiveMessageReceiveQueue { RemoteGPU::create(identifier, *this, *renderingBackend, streamConnection.releaseNonNull()) };
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }

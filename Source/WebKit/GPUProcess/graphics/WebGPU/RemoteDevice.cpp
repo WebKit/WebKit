@@ -84,13 +84,19 @@
 
 namespace WebKit {
 
-RemoteDevice::RemoteDevice(PerformWithMediaPlayerOnMainThread& performWithMediaPlayerOnMainThread, WebCore::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
+RemoteDevice::RemoteDevice(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
     : m_backing(device)
     , m_objectHeap(objectHeap)
     , m_streamConnection(streamConnection.copyRef())
     , m_identifier(identifier)
     , m_queue(RemoteQueue::create(device.queue(), objectHeap, WTFMove(streamConnection), queueIdentifier))
-    , m_performWithMediaPlayerOnMainThread(performWithMediaPlayerOnMainThread)
+#if ENABLE(VIDEO)
+    , m_videoFrameObjectHeap(gpuConnectionToWebProcess.videoFrameObjectHeap())
+#if PLATFORM(COCOA)
+    , m_sharedVideoFrameReader(m_videoFrameObjectHeap.ptr(), gpuConnectionToWebProcess.webProcessIdentity())
+#endif
+#endif
+    , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
 {
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteDevice::messageReceiverName(), m_identifier.toUInt64());
 }
@@ -153,26 +159,6 @@ void RemoteDevice::createSampler(const WebGPU::SamplerDescriptor& descriptor, We
     m_objectHeap.addObject(identifier, remoteSampler);
 }
 
-static void populateConvertedDescriptor(auto mediaIdentifier, auto& convertedDescriptor, auto& performWithMediaPlayerOnMainThread)
-{
-#if ENABLE(VIDEO) && PLATFORM(COCOA)
-    using MediaPlayerOrVideoFrameResult = std::variant<WebCore::MediaPlayerIdentifier, WebKit::RemoteVideoFrameReference>;
-    MediaPlayerOrVideoFrameResult result = WTF::switchOn(mediaIdentifier, [] (WebCore::WebGPU::HTMLVideoElementIdentifier i) -> MediaPlayerOrVideoFrameResult {
-        return WebCore::MediaPlayerIdentifier(i.identifier);
-    }, [] (WebCore::WebGPU::WebCodecsVideoFrameIdentifier i) -> MediaPlayerOrVideoFrameResult {
-        return RemoteVideoFrameReference(RemoteVideoFrameIdentifier(i.identifier.first), i.identifier.second);
-    });
-
-    performWithMediaPlayerOnMainThread(result, [&convertedDescriptor](RefPtr<WebCore::VideoFrame> videoFrame) mutable {
-        convertedDescriptor->pixelBuffer = videoFrame ? videoFrame->pixelBuffer() : nullptr;
-    });
-#else
-    UNUSED_PARAM(mediaIdentifier);
-    UNUSED_PARAM(convertedDescriptor);
-    UNUSED_PARAM(performWithMediaPlayerOnMainThread);
-#endif
-}
-
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
 void RemoteDevice::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphore)
 {
@@ -202,9 +188,19 @@ void RemoteDevice::importExternalTextureFromPixelBuffer(const WebGPU::ExternalTe
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     if (sharedBuffer)
         convertedDescriptor->pixelBuffer = m_sharedVideoFrameReader.readBuffer(WTFMove(*sharedBuffer));
-    else
+    else {
+        WTF::switchOn(descriptor.mediaIdentifier, [&] (WebCore::WebGPU::HTMLVideoElementIdentifier i) {
+            m_gpuConnectionToWebProcess.performWithMediaPlayerOnMainThread(WebCore::MediaPlayerIdentifier(i.identifier), [&convertedDescriptor] (auto& player) mutable {
+                auto videoFrame = player.videoFrameForCurrentTime();
+                convertedDescriptor->pixelBuffer = videoFrame ? videoFrame->pixelBuffer() : nullptr;
+            });
+        }, [&] (WebCore::WebGPU::WebCodecsVideoFrameIdentifier i) {
+            auto readReference = RemoteVideoFrameReadReference(RemoteVideoFrameReference(RemoteVideoFrameIdentifier(i.identifier.first), i.identifier.second));
+            auto videoFrame = m_videoFrameObjectHeap.get().get(WTFMove(readReference));
+            convertedDescriptor->pixelBuffer = videoFrame ? videoFrame->pixelBuffer() : nullptr;
+        });
+    }
 #endif
-        populateConvertedDescriptor(descriptor.mediaIdentifier, convertedDescriptor, m_performWithMediaPlayerOnMainThread);
 
     if (!convertedDescriptor->pixelBuffer)
         return;
