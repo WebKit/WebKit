@@ -987,19 +987,40 @@ const Color& Document::themeColor()
     return m_cachedThemeColor;
 }
 
+Color Document::linkColor(const RenderStyle& style) const
+{
+    if (m_linkColor.isValid())
+        return m_linkColor;
+    return StyleColor::colorFromKeyword(CSSValueWebkitLink, styleColorOptions(&style));
+}
+
+Color Document::visitedLinkColor(const RenderStyle& style) const
+{
+    if (m_visitedLinkColor.isValid())
+        return m_visitedLinkColor;
+    return StyleColor::colorFromKeyword(CSSValueWebkitLink, styleColorOptions(&style) | StyleColorOptions::ForVisitedLink);
+}
+
+Color Document::activeLinkColor(const RenderStyle& style) const
+{
+    if (m_activeLinkColor.isValid())
+        return m_activeLinkColor;
+    return StyleColor::colorFromKeyword(CSSValueWebkitActivelink, styleColorOptions(&style));
+}
+
 void Document::resetLinkColor()
 {
-    m_linkColor = StyleColor::colorFromKeyword(CSSValueWebkitLink, styleColorOptions(nullptr));
+    m_linkColor = { };
 }
 
 void Document::resetVisitedLinkColor()
 {
-    m_visitedLinkColor = StyleColor::colorFromKeyword(CSSValueWebkitLink, styleColorOptions(nullptr) | StyleColorOptions::ForVisitedLink);
+    m_visitedLinkColor = { };
 }
 
 void Document::resetActiveLinkColor()
 {
-    m_activeLinkColor = StyleColor::colorFromKeyword(CSSValueWebkitActivelink, styleColorOptions(nullptr));
+    m_activeLinkColor = { };
 }
 
 DOMImplementation& Document::implementation()
