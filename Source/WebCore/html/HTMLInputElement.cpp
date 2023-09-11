@@ -512,6 +512,8 @@ void HTMLInputElement::updateType(const AtomString& typeAttributeValue)
         return;
     ASSERT(m_inputType->type() != newType->type());
 
+    Style::PseudoClassChangeInvalidation defaultInvalidation(*this, CSSSelector::PseudoClassType::Default, Style::PseudoClassChangeInvalidation::AnyValue);
+
     removeFromRadioButtonGroup();
     resignStrongPasswordAppearance();
 
@@ -781,8 +783,7 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
         HTMLTextFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
         break;
     case AttributeNames::checkedAttr:
-        if (m_inputType->isCheckable())
-            invalidateStyleForSubtree();
+        setDefaultCheckedState(!newValue.isNull());
         // Another radio button in the same group might be checked by state
         // restore. We shouldn't call setChecked() even if this has the checked
         // attribute. So, delay the setChecked() call until
@@ -955,7 +956,7 @@ bool HTMLInputElement::matchesDefaultPseudoClass() const
     ASSERT(m_inputType);
     if (m_inputType->canBeSuccessfulSubmitButton())
         return !isDisabledFormControl() && form() && form()->defaultButton() == this;
-    return m_inputType->isCheckable() && hasAttributeWithoutSynchronization(checkedAttr);
+    return m_inputType->isCheckable() && m_isDefaultChecked;
 }
 
 bool HTMLInputElement::isActivatedSubmit() const
@@ -998,6 +999,17 @@ bool HTMLInputElement::isTextField() const
 bool HTMLInputElement::isTextType() const
 {
     return m_inputType->isTextType();
+}
+
+void HTMLInputElement::setDefaultCheckedState(bool isDefaultChecked)
+{
+    if (m_isDefaultChecked == isDefaultChecked)
+        return;
+
+    std::optional<Style::PseudoClassChangeInvalidation> defaultInvalidation;
+    if (m_inputType->isCheckable())
+        defaultInvalidation.emplace(*this, CSSSelector::PseudoClassType::Default, isDefaultChecked);
+    m_isDefaultChecked = isDefaultChecked;
 }
 
 void HTMLInputElement::setChecked(bool isChecked)
@@ -1059,6 +1071,7 @@ void HTMLInputElement::copyNonAttributePropertiesFromElement(const Element& sour
     m_valueIfDirty = sourceElement.m_valueIfDirty;
     m_wasModifiedByUser = false;
     setChecked(sourceElement.m_isChecked);
+    m_isDefaultChecked = sourceElement.m_isDefaultChecked;
     m_dirtyCheckednessFlag = sourceElement.m_dirtyCheckednessFlag;
     m_isIndeterminate = sourceElement.m_isIndeterminate;
 

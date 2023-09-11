@@ -5,8 +5,9 @@ PASS :indeterminate invalidation on <progress>
 PASS :disabled invalidation
 PASS :read-only invalidation
 PASS :valid invalidation
-FAIL :default invalidation with input[type=radio] assert_equals: ancestor should be lightblue expected "rgb(173, 216, 230)" but got "rgb(0, 0, 0)"
+PASS :default invalidation with input[type=radio]
 PASS :required invalidation
 PASS :out-of-range invalidation
 PASS :placeholder-shown invalidation
+PASS :default invalidation with input[type=checkbox] and assignment to .checked
 
