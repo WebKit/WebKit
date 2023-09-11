@@ -42,18 +42,7 @@
 
 namespace WebKit {
 
-static inline bool matchesFilter(const WebExtensionWindow& window, OptionSet<WebExtensionWindow::TypeFilter> filter)
-{
-    switch (window.type()) {
-    case WebExtensionWindow::Type::Normal:
-        return filter.contains(WebExtensionWindow::TypeFilter::Normal);
-
-    case WebExtensionWindow::Type::Popup:
-        return filter.contains(WebExtensionWindow::TypeFilter::Popup);
-    }
-}
-
-void WebExtensionContext::windowsCreate(WebExtensionWindowParameters creationParameters, CompletionHandler<void(std::optional<WebExtensionWindowParameters>, WebExtensionWindow::Error)>&& completionHandler)
+void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& creationParameters, CompletionHandler<void(std::optional<WebExtensionWindowParameters>, WebExtensionWindow::Error)>&& completionHandler)
 {
     auto delegate = extensionController()->delegate();
     if (![delegate respondsToSelector:@selector(webExtensionController:openNewWindowWithOptions:forExtensionContext:completionHandler:)]) {
@@ -132,7 +121,7 @@ void WebExtensionContext::windowsGet(WebPageProxyIdentifier, WebExtensionWindowI
         return;
     }
 
-    if (!matchesFilter(*window, filter)) {
+    if (!window->matches(filter)) {
         completionHandler(std::nullopt, toErrorString(apiName, nil, @"window does not match requested 'windowTypes'"));
         return;
     }
@@ -150,7 +139,7 @@ void WebExtensionContext::windowsGetLastFocused(OptionSet<WindowTypeFilter> filt
         return;
     }
 
-    if (!matchesFilter(*window, filter)) {
+    if (!window->matches(filter)) {
         completionHandler(std::nullopt, toErrorString(apiName, nil, @"window does not match requested 'windowTypes'"));
         return;
     }
@@ -162,7 +151,7 @@ void WebExtensionContext::windowsGetAll(OptionSet<WindowTypeFilter> filter, Popu
 {
     Vector<WebExtensionWindowParameters> result;
     for (auto& window : openWindows()) {
-        if (!matchesFilter(window, filter))
+        if (!window->matches(filter))
             continue;
 
         result.append(window->parameters(populate));

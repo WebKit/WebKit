@@ -29,6 +29,7 @@
 
 #import "config.h"
 #import "WebExtensionUtilities.h"
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 
 @interface TestWebExtensionManager () <_WKWebExtensionControllerDelegatePrivate>
 @end
@@ -137,6 +138,31 @@
 
 @implementation TestWebExtensionTab
 
+- (instancetype)initWithWindow:(id<_WKWebExtensionWindow>)window extensionController:(_WKWebExtensionController *)extensionController
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _window = window;
+
+    WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
+    configuration._webExtensionController = extensionController;
+
+    _mainWebView = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration];
+
+    return self;
+}
+
+- (id<_WKWebExtensionWindow>)windowForWebExtensionContext:(_WKWebExtensionContext *)context
+{
+    return _window;
+}
+
+- (WKWebView *)mainWebViewForWebExtensionContext:(_WKWebExtensionContext *)context
+{
+    return _mainWebView;
+}
+
 @end
 
 @implementation TestWebExtensionWindow {
@@ -164,6 +190,12 @@
     _previousFrame = CGRectNull;
 
     return self;
+}
+
+- (void)setTabs:(NSArray<id<_WKWebExtensionTab>> *)tabs
+{
+    _tabs = [tabs copy];
+    _activeTab = _tabs.firstObject;
 }
 
 - (NSArray<id<_WKWebExtensionTab>> *)tabsForWebExtensionContext:(_WKWebExtensionContext *)context

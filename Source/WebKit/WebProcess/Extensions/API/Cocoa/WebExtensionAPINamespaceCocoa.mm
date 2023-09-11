@@ -36,7 +36,7 @@
 
 namespace WebKit {
 
-bool WebExtensionAPINamespace::isPropertyAllowed(String name, WebPage*)
+bool WebExtensionAPINamespace::isPropertyAllowed(ASCIILiteral name, WebPage*)
 {
     // This property is only allowed in testing contexts.
     if (name == "test"_s)
@@ -44,7 +44,7 @@ bool WebExtensionAPINamespace::isPropertyAllowed(String name, WebPage*)
 
     // FIXME: https://webkit.org/b/259914 This should be a hasPermission: call to extensionContext() and updated with actually granted permissions from the UI process.
     auto *permissions = objectForKey<NSArray>(extensionContext().manifest(), @"permissions", true, NSString.class);
-    return [permissions containsObject:static_cast<NSString *>(name)];
+    return [permissions containsObject:name.createNSString().get()];
 }
 
 WebExtensionAPIAlarms& WebExtensionAPINamespace::alarms()

@@ -50,6 +50,11 @@ messages -> WebExtensionContext {
     PermissionsRequest(HashSet<String> permissions, HashSet<String> origins) -> (bool success);
     PermissionsRemove(HashSet<String> permissions, HashSet<String> origins) -> (bool success);
 
+    // Tabs APIs
+    TabsGet(WebKit::WebExtensionTabIdentifier tabIdentifier) -> (std::optional<WebKit::WebExtensionTabParameters> tabParameters, WebKit::WebExtensionTab::Error error);
+    TabsGetCurrent(WebKit::WebPageProxyIdentifier webPageProxyIdentifier) -> (std::optional<WebKit::WebExtensionTabParameters> tabParameters, WebKit::WebExtensionTab::Error error);
+    TabsQuery(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionTabQueryParameters queryParameters) -> (Vector<WebKit::WebExtensionTabParameters> tabs, WebKit::WebExtensionWindow::Error error);
+
     // Windows APIs
     WindowsCreate(WebKit::WebExtensionWindowParameters creationParameters) -> (std::optional<WebKit::WebExtensionWindowParameters> windowParameters, WebKit::WebExtensionWindow::Error error);
     WindowsGet(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier, OptionSet<WebKit::WebExtensionWindow::TypeFilter> filter, WebKit::WebExtensionWindow::PopulateTabs populate) -> (std::optional<WebKit::WebExtensionWindowParameters> windowParameters, WebKit::WebExtensionWindow::Error error);

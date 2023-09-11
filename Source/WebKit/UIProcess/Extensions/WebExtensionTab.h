@@ -28,6 +28,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "WebExtensionTabIdentifier.h"
+#include "WebPageProxyIdentifier.h"
 #include <wtf/Forward.h>
 #include <wtf/WeakObjCPtr.h>
 
@@ -41,6 +42,7 @@ namespace WebKit {
 class WebExtensionContext;
 class WebExtensionWindow;
 struct WebExtensionTabParameters;
+struct WebExtensionTabQueryParameters;
 
 class WebExtensionTab : public RefCounted<WebExtensionTab> {
     WTF_MAKE_NONCOPYABLE(WebExtensionTab);
@@ -70,15 +72,21 @@ public:
     };
 
     enum class ExtendSelection : bool { No, Yes };
+    enum class AssumeWindowMatches : bool { No, Yes };
 
     using Error = std::optional<String>;
 
     WebExtensionTabIdentifier identifier() const { return m_identifier; }
     WebExtensionTabParameters parameters() const;
+    WebExtensionTabParameters minimalParameters() const;
 
     WebExtensionContext* extensionContext() const;
 
     bool operator==(const WebExtensionTab&) const;
+
+    bool matches(const WebExtensionTabQueryParameters&, AssumeWindowMatches = AssumeWindowMatches::No, std::optional<WebPageProxyIdentifier> = std::nullopt) const;
+
+    bool extensionHasAccess() const;
 
     RefPtr<WebExtensionWindow> window() const;
     size_t index() const;
@@ -90,6 +98,7 @@ public:
 
     String title() const;
 
+    bool isActive() const;
     bool isSelected() const;
     bool isPinned() const;
     bool isPrivate() const;

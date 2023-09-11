@@ -80,12 +80,15 @@ static NSString * const lastFocusedWindowKey = @"lastFocusedWindow";
 static NSString * const windowTypeKey = @"windowType";
 
 static NSString * const emptyURLValue = @"";
+static NSString * const emptyTitleValue = @"";
 
 namespace WebKit {
 
 NSDictionary *toWebAPI(const WebExtensionTabParameters& parameters)
 {
     ASSERT(parameters.identifier);
+
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/Tab
 
     auto *result = [NSMutableDictionary dictionary];
 
@@ -98,9 +101,13 @@ NSDictionary *toWebAPI(const WebExtensionTabParameters& parameters)
 
     if (parameters.title)
         result[titleKey] = (NSString *)parameters.title.value();
+    else
+        result[titleKey] = emptyTitleValue;
 
     if (parameters.windowIdentifier)
         result[windowIdKey] = @(toWebAPI(parameters.windowIdentifier.value()));
+    else
+        result[windowIdKey] = @(toWebAPI(WebExtensionWindowConstants::NoneIdentifier));
 
     if (parameters.index)
         result[indexKey] = @(parameters.index.value());
@@ -116,10 +123,15 @@ NSDictionary *toWebAPI(const WebExtensionTabParameters& parameters)
 
     if (parameters.active)
         result[activeKey] = @(parameters.active.value());
+    else
+        result[activeKey] = @NO;
 
     if (parameters.selected) {
         result[selectedKey] = @(parameters.selected.value());
         result[highlightedKey] = @(parameters.selected.value());
+    } else {
+        result[selectedKey] = result[activeKey];
+        result[highlightedKey] = result[activeKey];
     }
 
     if (parameters.pinned)
@@ -298,6 +310,11 @@ bool WebExtensionAPITabs::parseTabQueryOptions(NSDictionary *options, WebExtensi
             *outExceptionString = toErrorString(nil, windowIdKey, @"'%@' is not a window identifier", windowId);
             return false;
         }
+
+        if (isCurrent(parameters.windowIdentifier)) {
+            parameters.windowIdentifier = std::nullopt;
+            parameters.currentWindow = true;
+        }
     }
 
     if (NSString *windowType = objectForKey<NSString>(options, windowTypeKey)) {
@@ -308,19 +325,40 @@ bool WebExtensionAPITabs::parseTabQueryOptions(NSDictionary *options, WebExtensi
         parameters.windowType = windowTypeFilter;
     }
 
-    if (NSNumber *currentWindow = objectForKey<NSNumber>(options, currentWindowKey))
-        parameters.currentWindow = currentWindow.boolValue;
-
-    if (NSNumber *lastFocusedWindow = objectForKey<NSNumber>(options, lastFocusedWindowKey))
-        parameters.frontmostWindow = lastFocusedWindow.boolValue;
+    if (NSString *status = objectForKey<NSString>(options, statusKey)) {
+        if ([status isEqualToString:loadingKey])
+            parameters.loading = true;
+        else if ([status isEqualToString:completeKey])
+            parameters.loading = false;
+        else {
+            *outExceptionString = toErrorString(nil, statusKey, @"it must specify either 'loading' or 'complete'");
+            return false;
+        }
+    }
 
     if (NSString *url = objectForKey<NSString>(options, urlKey, true))
         parameters.urlPatterns = { url };
     else if (NSArray *urls = objectForKey<NSArray>(options, urlKey, true))
         parameters.urlPatterns = makeVector<String>(urls);
 
+    if (parameters.urlPatterns) {
+        for (auto& patternString : parameters.urlPatterns.value()) {
+            auto pattern = WebExtensionMatchPattern::getOrCreate(patternString);
+            if (!pattern || !pattern->isSupported()) {
+                *outExceptionString = toErrorString(nil, urlKey, @"'%@' is not a valid pattern", (NSString *)patternString);
+                return false;
+            }
+        }
+    }
+
     if (NSString *title = objectForKey<NSString>(options, titleKey, true))
         parameters.titlePattern = title;
+
+    if (NSNumber *currentWindow = objectForKey<NSNumber>(options, currentWindowKey))
+        parameters.currentWindow = currentWindow.boolValue;
+
+    if (NSNumber *lastFocusedWindow = objectForKey<NSNumber>(options, lastFocusedWindowKey))
+        parameters.frontmostWindow = lastFocusedWindow.boolValue;
 
     if (NSNumber *audible = objectForKey<NSNumber>(options, audibleKey))
         parameters.audible = audible.boolValue;
@@ -364,11 +402,14 @@ static bool isValid(std::optional<WebExtensionTabIdentifier> identifier, NSStrin
     return true;
 }
 
-bool WebExtensionAPITabs::isPropertyAllowed(String name, WebPage*)
+bool WebExtensionAPITabs::isPropertyAllowed(ASCIILiteral name, WebPage*)
 {
-    // FIXME: <https://webkit.org/b/260994> Implement.
+    static NeverDestroyed<HashSet<AtomString>> removedInManifestVersion3 { HashSet { AtomString("executeScript"_s), AtomString("getSelected"_s), AtomString("insertCSS"_s), AtomString("removeCSS"_s) } };
+    if (removedInManifestVersion3.get().contains(name))
+        return !extensionContext().supportsManifestVersion(3);
 
-    return true;
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 void WebExtensionAPITabs::createTab(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
@@ -382,7 +423,7 @@ void WebExtensionAPITabs::createTab(NSDictionary *options, Ref<WebExtensionCallb
     // FIXME: <https://webkit.org/b/260994> Implement.
 }
 
-void WebExtensionAPITabs::query(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPITabs::query(WebPage* page, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/query
 
@@ -390,7 +431,18 @@ void WebExtensionAPITabs::query(NSDictionary *options, Ref<WebExtensionCallbackH
     if (!parseTabQueryOptions(options, parameters, @"info", outExceptionString))
         return;
 
-    // FIXME: <https://webkit.org/b/260994> Implement.
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsQuery(page->webPageProxyIdentifier(), WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Vector<WebExtensionTabParameters> tabs, WebExtensionTab::Error error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:tabs.size()];
+        for (auto& tabParameters : tabs)
+            [result addObject:toWebAPI(tabParameters)];
+
+        callback->call([result copy]);
+    }, extensionContext().identifier().toUInt64());
 }
 
 void WebExtensionAPITabs::get(double tabID, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
@@ -401,17 +453,41 @@ void WebExtensionAPITabs::get(double tabID, Ref<WebExtensionCallbackHandler>&& c
     if (!isValid(tabIdentifer, outExceptionString))
         return;
 
-    // FIXME: <https://webkit.org/b/260994> Implement.
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsGet(tabIdentifer.value()), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebExtensionTabParameters> tabParameters, WebExtensionTab::Error error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        if (!tabParameters) {
+            callback->call();
+            return;
+        }
+
+        callback->call(toWebAPI(tabParameters.value()));
+    }, extensionContext().identifier().toUInt64());
 }
 
-void WebExtensionAPITabs::getCurrent(Ref<WebExtensionCallbackHandler>&& callback)
+void WebExtensionAPITabs::getCurrent(WebPage* page, Ref<WebExtensionCallbackHandler>&& callback)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/getCurrent
 
-    // FIXME: <https://webkit.org/b/260994> Implement.
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsGetCurrent(page->webPageProxyIdentifier()), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebExtensionTabParameters> tabParameters, WebExtensionTab::Error error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        if (!tabParameters) {
+            callback->call();
+            return;
+        }
+
+        callback->call(toWebAPI(tabParameters.value()));
+    }, extensionContext().identifier().toUInt64());
 }
 
-void WebExtensionAPITabs::getSelected(double windowID, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPITabs::getSelected(WebPage* page, double windowID, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/getSelected
 
@@ -419,7 +495,25 @@ void WebExtensionAPITabs::getSelected(double windowID, Ref<WebExtensionCallbackH
     if (!isValid(windowIdentifer, outExceptionString))
         return;
 
-    // FIXME: <https://webkit.org/b/260994> Implement.
+    WebExtensionTabQueryParameters parameters;
+    parameters.windowIdentifier = windowIdentifer;
+    parameters.active = true;
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsQuery(page->webPageProxyIdentifier(), WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Vector<WebExtensionTabParameters> tabs, WebExtensionTab::Error error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        if (tabs.isEmpty()) {
+            callback->call();
+            return;
+        }
+
+        ASSERT(tabs.size() == 1);
+
+        callback->call(toWebAPI(tabs.first()));
+    }, extensionContext().identifier().toUInt64());
 }
 
 void WebExtensionAPITabs::duplicate(double tabID, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)

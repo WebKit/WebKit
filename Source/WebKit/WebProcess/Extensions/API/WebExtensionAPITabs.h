@@ -30,6 +30,7 @@
 #include "JSWebExtensionAPITabs.h"
 #include "WebExtensionAPIEvent.h"
 #include "WebExtensionAPIObject.h"
+#include "WebExtensionTab.h"
 
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSString;
@@ -44,15 +45,15 @@ class WebExtensionAPITabs : public WebExtensionAPIObject, public JSWebExtensionW
 
 public:
 #if PLATFORM(COCOA)
-    bool isPropertyAllowed(String propertyName, WebPage*);
+    bool isPropertyAllowed(ASCIILiteral propertyName, WebPage*);
 
     void createTab(NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    void query(NSDictionary *queryInfo, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void query(WebPage*, NSDictionary *queryInfo, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     void get(double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void getCurrent(Ref<WebExtensionCallbackHandler>&&);
-    void getSelected(double windowID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void getCurrent(WebPage*, Ref<WebExtensionCallbackHandler>&&);
+    void getSelected(WebPage*, double windowID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     void duplicate(double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void update(double tabID, NSDictionary *updateProperties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);

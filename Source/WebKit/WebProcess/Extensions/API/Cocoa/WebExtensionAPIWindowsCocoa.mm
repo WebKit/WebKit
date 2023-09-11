@@ -110,6 +110,8 @@ static NSDictionary *toWebAPI(const WebExtensionWindowParameters& parameters)
     ASSERT(parameters.focused);
     ASSERT(parameters.privateBrowsing);
 
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows/Window
+
     NSMutableDictionary *result = [@{
         idKey: @(toWebAPI(parameters.identifier.value())),
         stateKey: toWebAPI(parameters.state.value()),
@@ -392,14 +394,14 @@ bool isValid(std::optional<WebExtensionWindowIdentifier> identifier, NSString **
     return true;
 }
 
-bool WebExtensionAPIWindows::isPropertyAllowed(String propertyName, WebPage*)
+bool WebExtensionAPIWindows::isPropertyAllowed(ASCIILiteral name, WebPage*)
 {
 #if PLATFORM(MAC)
     return true;
 #else
-    // Opening, closing, and updating a window in not supported on iOS or visionOS.
-    static NSSet<NSString *> *unsupportedWindowProperties = [NSSet setWithObjects:@"create", @"remove", @"update", nil];
-    return ![unsupportedWindowProperties containsObject:(NSString *)propertyName];
+    // Opening, closing, and updating a window in not supported on iOS, iPadOS, or visionOS.
+    static NeverDestroyed<HashSet<AtomString>> unsupported { HashSet { AtomString("create"_s), AtomString("remove"_s), AtomString("update"_s) } };
+    return !unsupported.get().contains(name);
 #endif
 }
 

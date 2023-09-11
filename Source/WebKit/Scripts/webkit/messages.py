@@ -424,6 +424,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::WCLayerTreeHostIdentifier',
         'WebKit::WebExtensionEventListenerType',
         'WebKit::WebExtensionTabParameters',
+        'WebKit::WebExtensionTabQueryParameters',
         'WebKit::WebExtensionWindowParameters',
         'WebKit::XRDeviceIdentifier',
     ] + serialized_identifiers() + types_that_must_be_moved())

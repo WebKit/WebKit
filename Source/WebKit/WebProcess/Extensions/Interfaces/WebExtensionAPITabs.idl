@@ -31,11 +31,11 @@
 
     [RaisesException, ImplementedAs=createTab] void create([NSDictionary] any properties, [Optional, CallbackHandler] function callback);
 
-    [RaisesException] void query([NSDictionary] any info, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsPage] void query([NSDictionary] any info, [Optional, CallbackHandler] function callback);
 
     [RaisesException] void get(double tabID, [Optional, CallbackHandler] function callback);
-    void getCurrent([Optional, CallbackHandler] function callback);
-    [RaisesException, Dynamic] void getSelected([Optional] double windowID, [Optional, CallbackHandler] function callback);
+    [NeedsPage] void getCurrent([Optional, CallbackHandler] function callback);
+    [RaisesException, Dynamic, NeedsPage] void getSelected([Optional] double windowID, [Optional, CallbackHandler] function callback);
 
     [RaisesException] void duplicate(double tabID, [Optional, CallbackHandler] function callback);
     [RaisesException] void update([Optional] double tabID, [NSDictionary] any properties, [Optional, CallbackHandler] function callback);

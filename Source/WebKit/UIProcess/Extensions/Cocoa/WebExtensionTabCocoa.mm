@@ -37,7 +37,10 @@
 #import "WKWebView.h"
 #import "WKWebViewConfigurationPrivate.h"
 #import "WebExtensionContext.h"
+#import "WebExtensionTabParameters.h"
+#import "WebExtensionTabQueryParameters.h"
 #import "WebExtensionUtilities.h"
+#import "WebExtensionWindowIdentifier.h"
 #import "_WKWebExtensionTab.h"
 #import "_WKWebExtensionTabCreationOptionsInternal.h"
 
@@ -93,9 +96,133 @@ bool WebExtensionTab::operator==(const WebExtensionTab& other) const
 
 WebExtensionTabParameters WebExtensionTab::parameters() const
 {
-    // FIXME: <https://webkit.org/b/260994> Add support for tabs APIs.
+    bool hasAccess = extensionHasAccess();
+    auto window = this->window();
+    auto index = this->index();
+    auto parentTab = this->parentTab();
 
-    return { };
+    return {
+        identifier(),
+
+        hasAccess ? std::optional(url()) : std::nullopt,
+        hasAccess ? std::optional(title()) : std::nullopt,
+
+        window ? std::optional(window->identifier()) : std::nullopt,
+
+        index != notFound ? std::optional(index) : std::nullopt,
+        size(),
+
+        parentTab ? std::optional(parentTab->identifier()) : std::nullopt,
+
+        isActive(),
+
+        m_respondsToIsSelected ? std::optional(isSelected()) : std::nullopt,
+        m_respondsToIsPinned ? std::optional(isPinned()) : std::nullopt,
+        m_respondsToIsAudible ? std::optional(isAudible()) : std::nullopt,
+        m_respondsToIsMuted ? std::optional(isMuted()) : std::nullopt,
+
+        !isLoadingComplete(),
+        isPrivate(),
+
+        m_respondsToIsReaderModeAvailable ? std::optional(isReaderModeAvailable()) : std::nullopt,
+        m_respondsToIsShowingReaderMode ? std::optional(isShowingReaderMode()) : std::nullopt
+    };
+}
+
+WebExtensionTabParameters WebExtensionTab::minimalParameters() const
+{
+    auto window = this->window();
+
+    return {
+        identifier(),
+        std::nullopt,
+        std::nullopt,
+        window ? std::optional(window->identifier()) : std::nullopt,
+        std::nullopt,
+        std::nullopt,
+        std::nullopt,
+        std::nullopt,
+        std::nullopt,
+        std::nullopt,
+        std::nullopt,
+        std::nullopt,
+        std::nullopt,
+        std::nullopt,
+        std::nullopt,
+        std::nullopt
+    };
+}
+
+bool WebExtensionTab::matches(const WebExtensionTabQueryParameters& parameters, AssumeWindowMatches assumeWindowMatches, std::optional<WebPageProxyIdentifier> webPageProxyIdentifier) const
+{
+    if (assumeWindowMatches == AssumeWindowMatches::No && (parameters.windowIdentifier || parameters.windowType || parameters.frontmostWindow || parameters.currentWindow)) {
+        auto window = this->window();
+        if (!window)
+            return false;
+
+        if (!window->matches(parameters, webPageProxyIdentifier))
+            return false;
+    }
+
+    if (auto index = this->index(); parameters.index && (index == notFound || index != parameters.index.value()))
+        return false;
+
+    bool isActive = this->isActive();
+    if (parameters.active && isActive != parameters.active.value())
+        return false;
+
+    if (parameters.audible && isAudible() != parameters.audible.value())
+        return false;
+
+    if (parameters.hidden && isActive != !parameters.hidden.value())
+        return false;
+
+    if (parameters.loading && isLoadingComplete() != !parameters.loading.value())
+        return false;
+
+    if (parameters.muted && isMuted() != parameters.muted.value())
+        return false;
+
+    if (parameters.pinned && isPinned() != parameters.pinned.value())
+        return false;
+
+    if (parameters.selected && isSelected() != parameters.selected.value())
+        return false;
+
+    auto url = this->url();
+    if ((parameters.urlPatterns || parameters.titlePattern) && !extensionHasAccess())
+        return false;
+
+    if (parameters.urlPatterns) {
+        bool matchesAnyPattern = false;
+        for (auto& patternString : parameters.urlPatterns.value()) {
+            auto matchPattern = WebExtensionMatchPattern::create(patternString);
+            if (!matchPattern)
+                continue;
+
+            if (matchPattern->matchesURL(url)) {
+                matchesAnyPattern = true;
+                break;
+            }
+        }
+
+        if (!matchesAnyPattern)
+            return false;
+    }
+
+    if (parameters.titlePattern) {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF LIKE %@", (NSString *)parameters.titlePattern.value()];
+        if (![predicate evaluateWithObject:title()])
+            return false;
+    }
+
+    return true;
+}
+
+bool WebExtensionTab::extensionHasAccess() const
+{
+    auto url = this->url();
+    return extensionContext()->hasPermission(url, delegate());
 }
 
 RefPtr<WebExtensionWindow> WebExtensionTab::window() const
@@ -196,10 +323,19 @@ String WebExtensionTab::title() const
     return tabTitle;
 }
 
+bool WebExtensionTab::isActive() const
+{
+    if (!isValid())
+        return false;
+
+    auto window = this->window();
+    return window ? window->activeTab() == this : false;
+}
+
 bool WebExtensionTab::isSelected() const
 {
     if (!isValid() || !m_respondsToIsSelected)
-        return false;
+        return isActive();
 
     return [m_delegate isSelectedForWebExtensionContext:m_extensionContext->wrapper()];
 }

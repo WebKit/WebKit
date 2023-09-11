@@ -68,11 +68,179 @@ TEST(WKWebExtensionAPITabs, Errors)
 
         @"browser.test.assertThrows(() => browser.tabs.create({ 'url': 1234 }), /'url' is expected to be a string value/i)",
 
+        @"browser.test.assertThrows(() => browser.tabs.query({ status: 'bad' }), /'status' value is invalid, because it must specify either 'loading' or 'complete'/i)",
+
+        @"browser.test.assertThrows(() => browser.tabs.query({ url: 12345 }), /'info' value is invalid, because 'url' is expected to be a string value or an array of string values, but a number value was provided/i)",
+        @"browser.test.assertThrows(() => browser.tabs.query({ url: ['bad', 12345] }), /'url' is expected to be a string value or an array of string values, but an array with other values was provided/i)",
+
+        @"browser.test.assertThrows(() => browser.tabs.query({ windowId: 'bad' }), /'windowId' is expected to be a number value, but a string value was provided/i)",
+        @"browser.test.assertThrows(() => browser.tabs.query({ windowId: -5 }), /'windowId' value is invalid, because '-5' is not a window identifier/i)",
+
+        @"browser.test.assertThrows(() => browser.tabs.query({ active: 'true' }), /'active' is expected to be a boolean value, but a string value was provided/i)",
+        @"browser.test.assertThrows(() => browser.tabs.query({ highlighted: 123 }), /'highlighted' is expected to be a boolean value, but a number value was provided/i)",
+        @"browser.test.assertThrows(() => browser.tabs.query({ index: 'five' }), /'index' is expected to be a number value, but a string value was provided/i)",
+        @"browser.test.assertThrows(() => browser.tabs.query({ audible: 'yes' }), /'audible' is expected to be a boolean value, but a string value was provided/i)",
+
         @"browser.test.notifyPass()"
     ]);
 
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPITabs, Get)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const allWindows = await browser.windows.getAll({ populate: true })",
+        @"const windowId = allWindows[0].id",
+        @"const tabId = allWindows[0].tabs[0].id",
+
+        @"const tab = await browser.tabs.get(tabId)",
+
+        @"browser.test.assertEq(typeof tab, 'object', 'The tab should be an object')",
+        @"browser.test.assertEq(tab.id, tabId, 'The tab id should match the one used with tabs.get()')",
+        @"browser.test.assertEq(tab.windowId, windowId, 'The tab windowId should match the window id from windows.getAll()')",
+        @"browser.test.assertEq(tab.index, 0, 'The tab index should be 0')",
+        @"browser.test.assertEq(tab.status, 'complete', 'The tab status should be complete')",
+        @"browser.test.assertEq(tab.active, true, 'The tab active state should be true')",
+        @"browser.test.assertEq(tab.selected, true, 'The tab selected state should be true')",
+        @"browser.test.assertEq(tab.highlighted, true, 'The tab highlighted state should be true')",
+        @"browser.test.assertEq(tab.incognito, false, 'The tab incognito state should be false')",
+        @"browser.test.assertEq(tab.url, '', 'The tab url should be an empty string')",
+        @"browser.test.assertEq(tab.title, '', 'The tab title should be an empty string')",
+        @"browser.test.assertEq(tab.width, 800, 'The tab width should be 800')",
+        @"browser.test.assertEq(tab.height, 600, 'The tab height should be 600')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
+    manager.get().controllerDelegate = delegate.get();
+
+    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
+
+    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
+    auto tabTwo = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
+
+    windowOne.get().tabs = @[ tabOne.get(), tabTwo.get() ];
+
+    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
+        return @[ windowOne.get() ];
+    };
+
+    delegate.get().focusedWindow = ^id<_WKWebExtensionWindow>(_WKWebExtensionContext *) {
+        return windowOne.get();
+    };
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPITabs, GetCurrent)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const tab = await browser.tabs.getCurrent()",
+
+        @"browser.test.assertEq(tab, undefined, 'The current tab should be undefined in the background page')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
+    manager.get().controllerDelegate = delegate.get();
+
+    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
+
+    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
+    auto tabTwo = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
+
+    windowOne.get().tabs = @[ tabOne.get(), tabTwo.get() ];
+
+    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
+        return @[ windowOne.get() ];
+    };
+
+    delegate.get().focusedWindow = ^id<_WKWebExtensionWindow>(_WKWebExtensionContext *) {
+        return windowOne.get();
+    };
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPITabs, Query)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const allWindows = await browser.windows.getAll({ populate: true })",
+        @"const windowIdOne = allWindows[0].id",
+        @"const windowIdTwo = allWindows[1].id",
+
+        @"const tabIdOne = allWindows[0].tabs[0].id",
+        @"const tabIdTwo = allWindows[0].tabs[1].id",
+        @"const tabIdThree = allWindows[1].tabs[0].id",
+        @"const tabIdFour = allWindows[1].tabs[1].id",
+        @"const tabIdFive = allWindows[1].tabs[2].id",
+
+        @"const tabsInWindowOne = await browser.tabs.query({ windowId: windowIdOne })",
+        @"const tabsInWindowTwo = await browser.tabs.query({ windowId: windowIdTwo })",
+        @"browser.test.assertEq(tabsInWindowOne.length, 2, 'There should be 2 tabs in the first window')",
+        @"browser.test.assertEq(tabsInWindowTwo.length, 3, 'There should be 3 tabs in the second window')",
+
+        @"const thirdTab = await browser.tabs.query({ index: 0, windowId: windowIdTwo })",
+        @"browser.test.assertEq(thirdTab[0].id, tabIdThree, 'Third tab ID should match the first tab of the second window')",
+
+        @"const activeTabs = await browser.tabs.query({ active: true })",
+        @"browser.test.assertEq(activeTabs.length, 2, 'There should be 2 active tabs across all windows')",
+
+        @"const hiddenTabs = await browser.tabs.query({ hidden: true })",
+        @"browser.test.assertEq(hiddenTabs.length, 3, 'There should be 3 hidden tabs across all windows')",
+
+        @"const lastFocusedTabs = await browser.tabs.query({ lastFocusedWindow: true })",
+        @"browser.test.assertEq(lastFocusedTabs.length, 2, 'There should be 2 tabs in the last focused window')",
+
+        @"const pinnedTabs = await browser.tabs.query({ pinned: true })",
+        @"browser.test.assertEq(pinnedTabs.length, 0, 'There should be no pinned tabs')",
+
+        @"const loadingTabs = await browser.tabs.query({ status: 'loading' })",
+        @"browser.test.assertEq(loadingTabs.length, 0, 'There should be no tabs loading')",
+
+        @"const completeTabs = await browser.tabs.query({ status: 'complete' })",
+        @"browser.test.assertEq(completeTabs.length, 5, 'There should be 5 tabs with loading complete')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto delegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
+    manager.get().controllerDelegate = delegate.get();
+
+    auto windowOne = adoptNS([[TestWebExtensionWindow alloc] init]);
+    auto windowTwo = adoptNS([[TestWebExtensionWindow alloc] init]);
+
+    auto tabOne = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
+    auto tabTwo = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowOne.get() extensionController:manager.get().controller]);
+    auto tabThree = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowTwo.get() extensionController:manager.get().controller]);
+    auto tabFour = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowTwo.get() extensionController:manager.get().controller]);
+    auto tabFive = adoptNS([[TestWebExtensionTab alloc] initWithWindow:windowTwo.get() extensionController:manager.get().controller]);
+
+    windowOne.get().tabs = @[ tabOne.get(), tabTwo.get() ];
+    windowTwo.get().tabs = @[ tabThree.get(), tabFour.get(), tabFive.get() ];
+
+    delegate.get().openWindows = ^NSArray<id<_WKWebExtensionWindow>> *(_WKWebExtensionContext *) {
+        return @[ windowOne.get(), windowTwo.get() ];
+    };
+
+    delegate.get().focusedWindow = ^id<_WKWebExtensionWindow>(_WKWebExtensionContext *) {
+        return windowOne.get();
+    };
 
     [manager loadAndRun];
 }

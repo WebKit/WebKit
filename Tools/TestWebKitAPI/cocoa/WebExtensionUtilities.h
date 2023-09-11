@@ -56,6 +56,12 @@
 @end
 
 @interface TestWebExtensionTab : NSObject <_WKWebExtensionTab>
+
+- (instancetype)initWithWindow:(id<_WKWebExtensionWindow>)window extensionController:(_WKWebExtensionController *)extensionController;
+
+@property (nonatomic, weak) id<_WKWebExtensionWindow> window;
+@property (nonatomic, strong) WKWebView *mainWebView;
+
 @end
 
 @interface TestWebExtensionWindow : NSObject <_WKWebExtensionWindow>

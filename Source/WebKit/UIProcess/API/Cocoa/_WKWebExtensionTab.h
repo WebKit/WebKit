@@ -110,7 +110,7 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @abstract Called when the selected state of the tab is needed.
  @param context The context in which the web extension is running.
  @return `YES` if the tab is selected, `NO` otherwise.
- @discussion Defaults to `NO` if not implemented.
+ @discussion Defaults to `YES` for the active tab and `NO` for other tabs if not implemented.
  */
 - (BOOL)isSelectedForWebExtensionContext:(_WKWebExtensionContext *)context;
 

@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-bool WebExtensionAPIExtension::isPropertyAllowed(String name, WebPage*)
+bool WebExtensionAPIExtension::isPropertyAllowed(ASCIILiteral name, WebPage*)
 {
     // This method was removed in manifest version 3.
     if (name == "getURL"_s)

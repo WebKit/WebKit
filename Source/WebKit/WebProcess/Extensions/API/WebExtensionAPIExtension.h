@@ -42,7 +42,7 @@ class WebExtensionAPIExtension : public WebExtensionAPIObject, public JSWebExten
 
 public:
 #if PLATFORM(COCOA)
-    bool isPropertyAllowed(String propertyName, WebPage*);
+    bool isPropertyAllowed(ASCIILiteral propertyName, WebPage*);
 
     NSURL *getURL(NSString *resourcePath, NSString **errorString);
 #endif

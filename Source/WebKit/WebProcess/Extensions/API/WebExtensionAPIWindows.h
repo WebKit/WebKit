@@ -48,7 +48,7 @@ public:
     using PopulateTabs = WebExtensionWindow::PopulateTabs;
     using WindowTypeFilter = WebExtensionWindow::TypeFilter;
 
-    bool isPropertyAllowed(String propertyName, WebPage*);
+    bool isPropertyAllowed(ASCIILiteral propertyName, WebPage*);
 
     void createWindow(NSDictionary *data, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
