@@ -573,18 +573,9 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     if (!scriptExecutionContext)
         return nullptr;
 
-    if (type == GraphicsContextGLWebGLVersion::WebGL2 && !scriptExecutionContext->settingsValues().webGLEnabled)
-        return nullptr;
-
     GraphicsClient* graphicsClient = canvas.graphicsClient();
 
     auto* canvasElement = dynamicDowncast<HTMLCanvasElement>(canvas);
-
-    if (!scriptExecutionContext->settingsValues().webGLEnabled) {
-        canvasElement->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent,
-            Event::CanBubble::No, Event::IsCancelable::Yes, "Web page was not allowed to create a WebGL context."_s));
-        return nullptr;
-    }
 
     if (scriptExecutionContext->settingsValues().forceWebGLUsesLowPower) {
         if (attributes.powerPreference == GraphicsContextGLPowerPreference::HighPerformance)
