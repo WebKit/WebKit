@@ -450,22 +450,16 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
 
     auto rootHasNonSupportedRenderer = [&] {
         for (auto* sibling = rootBlockContainer.firstChild(); sibling; sibling = sibling->nextSibling()) {
-            if (!is<RenderText>(*sibling) && !is<RenderLineBreak>(*sibling))
+            if (!is<RenderText>(*sibling) && !is<RenderLineBreak>(*sibling) && !is<RenderReplaced>(*sibling))
                 return true;
         }
         return !canUseForLineLayout(rootBlockContainer);
     };
     switch (typeOfChange) {
     case TypeOfChangeForInvalidation::NodeRemoval:
-        // Last text child?
-        if (!renderer.previousSibling() && !renderer.nextSibling())
-            return true;
-        return rootHasNonSupportedRenderer();
-    case TypeOfChangeForInvalidation::NodeInsertion: {
-        if (!renderer.nextSibling())
-            return false;
-        return rootHasNonSupportedRenderer();
-    }
+        return (!renderer.previousSibling() && !renderer.nextSibling()) || rootHasNonSupportedRenderer();
+    case TypeOfChangeForInvalidation::NodeInsertion:
+        return renderer.nextSibling() && rootHasNonSupportedRenderer();
     case TypeOfChangeForInvalidation::NodeMutation:
         return rootHasNonSupportedRenderer();
     default:
