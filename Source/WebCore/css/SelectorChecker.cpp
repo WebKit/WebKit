@@ -1319,6 +1319,7 @@ bool SelectorChecker::matchHasPseudoClass(CheckingContext& checkingContext, cons
     }
 
     CheckingContext hasCheckingContext(SelectorChecker::Mode::ResolvingStyle);
+    hasCheckingContext.scope = checkingContext.scope;
     hasCheckingContext.hasScope = &element;
 
     bool matchedInsideScope = false;
