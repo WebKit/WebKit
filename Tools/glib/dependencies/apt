@@ -55,6 +55,7 @@ PACKAGES=(
     libkate-dev
     liblcms2-dev
     $(aptIfExists libmanette-0.2-dev)
+    libnghttp2-dev
     libopenjp2-7-dev
     libpng-dev
     libseccomp-dev

@@ -100,8 +100,3 @@ def init(jhbuildrc_globals, jhbuild_platform):
         jhbuild_enable_thunder = os.environ['JHBUILD_ENABLE_THUNDER'].lower()
         if jhbuild_enable_thunder == 'yes' or jhbuild_enable_thunder == '1' or jhbuild_enable_thunder == 'true':
             jhbuildrc_globals['conditions'].add('Thunder')
-
-    if 'JHBUILD_USE_SOUP2' in os.environ:
-        jhbuild_use_soup2 = os.environ['JHBUILD_USE_SOUP2'].lower()
-        if jhbuild_use_soup2 in ('true', 'on', 'yes', '1'):
-            jhbuildrc_globals['conditions'].add('USE_SOUP2')
