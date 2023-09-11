@@ -50,11 +50,12 @@ public:
         m_currentPosition = { 1, 0, 0 };
     }
 
-    Token lex();
+    Vector<Token> lex();
     bool isAtEndOfFile() const;
     SourcePosition currentPosition() const { return m_currentPosition; }
 
 private:
+    Token nextToken();
     unsigned currentOffset() const { return m_currentPosition.offset; }
     unsigned currentTokenLength() const { return currentOffset() - m_tokenStartingPosition.offset; }
 

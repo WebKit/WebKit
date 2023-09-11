@@ -86,6 +86,7 @@ FOREACH_KEYWORD(KEYWORD_TO_STRING)
         return "="_s;
     case TokenType::EqEq:
         return "=="_s;
+    case TokenType::TemplateArgsRight:
     case TokenType::Gt:
         return ">"_s;
     case TokenType::GtEq:
@@ -94,6 +95,7 @@ FOREACH_KEYWORD(KEYWORD_TO_STRING)
         return ">>"_s;
     case TokenType::GtGtEq:
         return ">>="_s;
+    case TokenType::TemplateArgsLeft:
     case TokenType::Lt:
         return "<"_s;
     case TokenType::LtEq:
@@ -148,6 +150,8 @@ FOREACH_KEYWORD(KEYWORD_TO_STRING)
         return "^"_s;
     case TokenType::XorEq:
         return "^="_s;
+    case TokenType::Placeholder:
+        return "<placeholder>"_s;
     }
 }
 

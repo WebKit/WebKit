@@ -33,7 +33,34 @@
 namespace WGSL {
 
 template <typename T>
-Token Lexer<T>::lex()
+Vector<Token> Lexer<T>::lex()
+{
+    Vector<Token> tokens;
+
+    while (true) {
+        auto token = nextToken();
+        tokens.append(token);
+        switch (token.type) {
+        case TokenType::GtGtEq:
+            tokens.append(makeToken(TokenType::Placeholder));
+            FALLTHROUGH;
+        case TokenType::GtGt:
+        case TokenType::GtEq:
+            tokens.append(makeToken(TokenType::Placeholder));
+            break;
+        default:
+            break;
+        }
+
+        if (token.type == TokenType::EndOfFile || token.type == TokenType::Invalid)
+            break;
+    }
+
+    return tokens;
+}
+
+template <typename T>
+Token Lexer<T>::nextToken()
 {
     if (!skipWhitespaceAndComments())
         return makeToken(TokenType::Invalid);

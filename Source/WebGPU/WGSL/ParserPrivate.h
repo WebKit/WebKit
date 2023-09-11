@@ -48,11 +48,15 @@ public:
         : m_shaderModule(shaderModule)
         , m_builder(shaderModule.astBuilder())
         , m_lexer(lexer)
-        , m_current(lexer.lex())
+        , m_tokens(m_lexer.lex())
+        , m_current(m_tokens[0])
     {
     }
 
     Result<void> parseShader();
+
+    void maybeSplitToken(unsigned index);
+    void disambiguateTemplates();
 
     // AST::<type>::Ref whenever it can return multiple types.
     Result<AST::Identifier> parseIdentifier();
@@ -106,6 +110,8 @@ private:
     ShaderModule& m_shaderModule;
     AST::Builder& m_builder;
     Lexer& m_lexer;
+    Vector<Token> m_tokens;
+    unsigned m_currentTokenIndex { 0 };
     Token m_current;
 };
 
