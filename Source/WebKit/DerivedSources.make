@@ -531,6 +531,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/SameDocumentNavigationType.serialization.in \
 	Shared/SessionState.serialization.in \
 	Shared/ShareableBitmap.serialization.in \
+	Shared/ShareableResource.serialization.in \
 	Shared/TextFlags.serialization.in \
 	Shared/TextRecognitionResult.serialization.in \
 	Shared/UserInterfaceIdiom.serialization.in \
