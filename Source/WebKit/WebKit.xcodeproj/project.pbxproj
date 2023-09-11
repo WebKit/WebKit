@@ -91,6 +91,7 @@
 			buildPhases = (
 			);
 			dependencies = (
+				CD0C36DD2639D3B4004E35D8 /* PBXTargetDependency */,
 				CD0C36DB2639D3AF004E35D8 /* PBXTargetDependency */,
 			);
 			name = Everything;
@@ -2528,13 +2529,6 @@
 			remoteGlobalIDString = A16E65FF2581930800EE1749;
 			remoteInfo = MediaFormatReader;
 		};
-		A1EB7B652AAE7D7700CBDC5D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CD95493426159004008372D9;
-			remoteInfo = WebKitSwift;
-		};
 		A1EF36D02581F7A70090B02A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -2569,6 +2563,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 1A50DB38110A3C13000D3FE5;
 			remoteInfo = "Framework & XPC Services";
+		};
+		CD0C36DC2639D3B4004E35D8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CD95493426159004008372D9;
+			remoteInfo = WebKitSwift;
 		};
 		DFBD8A3B2718B38C00BEC5B0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -15873,7 +15874,6 @@
 				37F7407912721F740093869B /* PBXTargetDependency */,
 				2D11BA052126A5AE006F8878 /* PBXTargetDependency */,
 				7B9FC5BD28A5233B007570E7 /* PBXTargetDependency */,
-				A1EB7B662AAE7D7700CBDC5D /* PBXTargetDependency */,
 			);
 			name = WebKit;
 			productInstallPath = "$(HOME)/Library/Frameworks";
@@ -17750,11 +17750,6 @@
 			target = A16E65FF2581930800EE1749 /* MediaFormatReader */;
 			targetProxy = A15797422582AE9B00528236 /* PBXContainerItemProxy */;
 		};
-		A1EB7B662AAE7D7700CBDC5D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CD95493426159004008372D9 /* WebKitSwift */;
-			targetProxy = A1EB7B652AAE7D7700CBDC5D /* PBXContainerItemProxy */;
-		};
 		A1EF36D12581F7A70090B02A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = A16E65FF2581930800EE1749 /* MediaFormatReader */;
@@ -17779,6 +17774,11 @@
 			isa = PBXTargetDependency;
 			target = 1A50DB38110A3C13000D3FE5 /* Framework, XPC Services, and daemons */;
 			targetProxy = CD0C36DA2639D3AF004E35D8 /* PBXContainerItemProxy */;
+		};
+		CD0C36DD2639D3B4004E35D8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CD95493426159004008372D9 /* WebKitSwift */;
+			targetProxy = CD0C36DC2639D3B4004E35D8 /* PBXContainerItemProxy */;
 		};
 		DFBD8A3C2718B38C00BEC5B0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

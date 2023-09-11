@@ -1,4 +1,4 @@
-// Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+// Copyright (C) 2021 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -25,20 +25,17 @@
 
 import AVFoundation
 import Combine
-import Foundation
 @_spi(Safari) import GroupActivities
+import Foundation
 
-@available(macOS 12.0, *)
-@objc(WKGroupSessionState)
-public enum GroupSessionState : Int {
+@objc public enum WKGroupSessionState : Int {
     case waiting = 0
     case joined = 1
     case invalidated = 2
 }
 
-@available(macOS 12.0, *)
 @objc(WKURLActivity)
-public final class URLActivityWrapper : NSObject {
+public final class WKURLActivityWrapper : NSObject {
     private var urlActivity: URLActivity
     init(activity: URLActivity) {
         self.urlActivity = activity
@@ -50,16 +47,15 @@ public final class URLActivityWrapper : NSObject {
     }
 }
 
-@available(macOS 12.0, *)
 @objc(WKGroupSession)
-public final class GroupSessionWrapper : NSObject {
+public final class WKGroupSessionWrapper : NSObject {
     private var groupSession: GroupSession<URLActivity>
-    private var activityWrapper : URLActivityWrapper
+    private var activityWrapper : WKURLActivityWrapper
     private var cancellables: Set<AnyCancellable> = []
 
     init(groupSession: GroupSession<URLActivity>) {
         self.groupSession = groupSession
-        self.activityWrapper = .init(activity: groupSession.activity)
+        self.activityWrapper = WKURLActivityWrapper(activity: groupSession.activity)
 
         super.init()
 
@@ -71,30 +67,30 @@ public final class GroupSessionWrapper : NSObject {
             .store(in: &cancellables)
     }
 
-    @objc public var activity: URLActivityWrapper { self.activityWrapper }
+    @objc public var activity: WKURLActivityWrapper { self.activityWrapper }
     @objc public var uuid: UUID { groupSession.id }
 
-    private static func wrapperSessionState(state: GroupSession<URLActivity>.State) -> GroupSessionState {
+    private static func wrapperSessionState(state: GroupSession<URLActivity>.State) -> WKGroupSessionState {
         switch state {
         case .waiting:
-            return GroupSessionState.waiting
+            return WKGroupSessionState.waiting
         case .joined:
-            return GroupSessionState.joined
+            return WKGroupSessionState.joined
         case .invalidated:
-            return GroupSessionState.invalidated
+            return WKGroupSessionState.invalidated
         @unknown default:
             // Unanticipated state value.
             assertionFailure()
-            return GroupSessionState.invalidated
+            return WKGroupSessionState.invalidated
         }
     }
 
-    @objc public var state: GroupSessionState {
-        return Self.wrapperSessionState(state: groupSession.state)
+    @objc public var state: WKGroupSessionState {
+        return WKGroupSessionWrapper.wrapperSessionState(state: groupSession.state)
     }
 
-    @objc public var newActivityCallback: ((URLActivityWrapper) -> Void)?
-    @objc public var stateChangedCallback: ((GroupSessionState) -> Void)?
+    @objc public var newActivityCallback: ((WKURLActivityWrapper) -> Void)?
+    @objc public var stateChangedCallback: ((WKGroupSessionState) -> Void)?
 
     @objc public func join() {
         groupSession.join()
@@ -110,7 +106,7 @@ public final class GroupSessionWrapper : NSObject {
     }
 
     private func activityChanged(activity: URLActivity) {
-        self.activityWrapper = .init(activity: groupSession.activity)
+        self.activityWrapper = WKURLActivityWrapper(activity: groupSession.activity)
 
         guard let callback = newActivityCallback else {
             return
@@ -124,21 +120,20 @@ public final class GroupSessionWrapper : NSObject {
             return
         }
 
-        callback(Self.wrapperSessionState(state: state))
+        callback(WKGroupSessionWrapper.wrapperSessionState(state: state))
     }
 }
 
-@available(macOS 12.0, *)
 @objc(WKGroupSessionObserver)
-public class GroupSessionObserver : NSObject {
-    @objc public var newSessionCallback: ((GroupSessionWrapper) -> Void)?
+public class WKGroupSessionObserver : NSObject {
+    @objc public var newSessionCallback: ((WKGroupSessionWrapper) -> Void)?
 
-    private var incomingSessionsTask: Task<Void, Never>?
+    private var incomingSessionsTask: Task.Handle<Void, Never>?
 
     @objc public override init() {
         super.init()
 
-        incomingSessionsTask = Task.detached { [weak self] in
+        incomingSessionsTask = detach { [weak self] in
             for await newSession in URLActivity.self.sessions() {
                 DispatchQueue.main.async { [weak self] in
                     self?.receivedSession(newSession)
@@ -156,9 +151,9 @@ public class GroupSessionObserver : NSObject {
             return
         }
 
-        let sessionWrapper = GroupSessionWrapper(groupSession: session)
+        let sessionWrapper = WKGroupSessionWrapper(groupSession: session)
         callback(sessionWrapper)
     }
 }
 
-#endif // canImport(GroupActivities)
+#endif
