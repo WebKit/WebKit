@@ -1,6 +1,11 @@
 
 
-FAIL contextmenu is a PointerEvent assert_equals: contextmenu should use a PointerEvent constructor expected function "function PointerEvent() {
+FAIL contextmenu using mouse is a PointerEvent with correct properties assert_equals: contextmenu should use a PointerEvent constructor expected function "function PointerEvent() {
+    [native code]
+}" but got function "function MouseEvent() {
+    [native code]
+}"
+FAIL contextmenu using mouse is a PointerEvent with correct properties when no other PointerEvent listeners are present assert_equals: contextmenu should use a PointerEvent constructor expected function "function PointerEvent() {
     [native code]
 }" but got function "function MouseEvent() {
     [native code]

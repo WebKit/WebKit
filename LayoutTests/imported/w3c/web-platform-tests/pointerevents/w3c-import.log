@@ -29,6 +29,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_auxclick_is_a_pointerevent.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_boundary_events_at_implicit_release_hoverable_pointers.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_boundary_events_in_capturing.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_bubble_ancestors_none.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_bubble_display_none.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_bubble_mousedown_mouseup_different_target.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_capture_mouse.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_capture_suppressing_mouse.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerevent_change-touch-action-onpointerdown_touch.html
