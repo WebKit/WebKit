@@ -70,12 +70,6 @@ SWServer::Connection::~Connection()
         request.callback({ });
 }
 
-HashSet<SWServer*>& SWServer::allServers()
-{
-    static NeverDestroyed<HashSet<SWServer*>> servers;
-    return servers;
-}
-
 SWServer::~SWServer()
 {
     // Destroy the remaining connections before the SWServer gets destroyed since they have a raw pointer
@@ -93,8 +87,6 @@ SWServer::~SWServer()
     }
     for (auto& runningWorker : runningWorkers)
         runningWorker->terminate();
-
-    allServers().remove(this);
 }
 
 SWServerWorker* SWServer::workerByID(ServiceWorkerIdentifier identifier) const
@@ -422,7 +414,6 @@ SWServer::SWServer(SWServerDelegate& delegate, UniqueRef<SWOriginStore>&& origin
         registrationStoreImportComplete();
 
     UNUSED_PARAM(registrationDatabaseDirectory);
-    allServers().add(this);
 }
 
 unsigned SWServer::maxRegistrationCount()
