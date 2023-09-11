@@ -2687,6 +2687,13 @@
    },
    {
       "emails" : [
+         "lerica@apple.com"
+      ],
+      "github" : "lericaa",
+      "name" : "Erica Li"
+   },
+   {
+      "emails" : [
          "arv@chromium.org"
       ],
       "name" : "Erik Arvidsson",
@@ -4290,7 +4297,6 @@
       "emails" : [
          "jc_hanson@apple.com"
       ],
-      "github" : "julia-c-hanson",
       "name" : "Julia Hanson"
    },
    {
@@ -5742,6 +5748,13 @@
    },
    {
       "emails" : [
+         "nicole_rosario@apple.com"
+      ],
+      "github" : "NKRosario",
+      "name" : "Nicole Rosario"
+   },
+   {
+      "emails" : [
          "nvasilyev@apple.com",
          "me@elv1s.ru"
       ],
@@ -5801,6 +5814,13 @@
       "nicks" : [
          "nghanavatian"
       ]
+   },
+   {
+      "emails" : [
+         "nisha_jain@apple.com"
+      ],
+      "github" : "nishajain61",
+      "name" : "Nisha Jain"
    },
    {
       "emails" : [
@@ -6641,6 +6661,13 @@
          "satish@chromium.org"
       ],
       "name" : "Satish Sampath"
+   },
+   {
+      "emails" : [
+         "mscott@apple.com"
+      ],
+      "github" : "mscottapple",
+      "name" : "Scott Marcy"
    },
    {
       "emails" : [
