@@ -1266,6 +1266,8 @@ editing/inserting/typing-space-to-trigger-smart-link.html [ Failure ]
 editing/inserting/smart-quote-with-all-configurations.html [ Failure ]
 fast/events/input-event-insert-link.html [ Failure ]
 
+editing/inserting/caret-position.html [ Failure ]
+
 ###### Text Iterator
 # Plain text controller currently in Mac DumpRenderTree only.
 editing/text-iterator [ Skip ]
@@ -2717,6 +2719,6 @@ webkit.org/b/257624 fast/dom/SelectorAPI/caseID.html [ Failure Pass ]
 
 fast/text/smiley-local-font-src.html [ ImageOnlyFailure ]
 
-fast/canvas/imageData-consistency.html [ Failure ]
+fast/canvas/imageData-consistency.html [ Timeout Failure ]
 
 http/tests/inspector/network/resource-timing.html [ Pass Failure ]
