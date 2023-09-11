@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-CSSCircleValue::CSSCircleValue(RefPtr<CSSValue> radius, RefPtr<CSSValue> centerX, RefPtr<CSSValue> centerY)
+CSSCircleValue::CSSCircleValue(RefPtr<CSSValue>&& radius, RefPtr<CSSValue>&& centerX, RefPtr<CSSValue>&& centerY)
     : CSSValue(CircleClass)
     , m_radius(WTFMove(radius))
     , m_centerX(WTFMove(centerX))
@@ -48,7 +48,7 @@ CSSCircleValue::CSSCircleValue(RefPtr<CSSValue> radius, RefPtr<CSSValue> centerX
 {
 }
 
-Ref<CSSCircleValue> CSSCircleValue::create(RefPtr<CSSValue> radius, RefPtr<CSSValue> centerX, RefPtr<CSSValue> centerY)
+Ref<CSSCircleValue> CSSCircleValue::create(RefPtr<CSSValue>&& radius, RefPtr<CSSValue>&& centerX, RefPtr<CSSValue>&& centerY)
 {
     return adoptRef(*new CSSCircleValue(WTFMove(radius), WTFMove(centerX), WTFMove(centerY)));
 }
@@ -126,7 +126,7 @@ bool CSSCircleValue::equals(const CSSCircleValue& other) const
         && compareCSSValuePtr(m_radius, other.m_radius);
 }
 
-CSSEllipseValue::CSSEllipseValue(RefPtr<CSSValue> radiusX, RefPtr<CSSValue> radiusY, RefPtr<CSSValue> centerX, RefPtr<CSSValue> centerY)
+CSSEllipseValue::CSSEllipseValue(RefPtr<CSSValue>&& radiusX, RefPtr<CSSValue>&& radiusY, RefPtr<CSSValue>&& centerX, RefPtr<CSSValue>&& centerY)
     : CSSValue(EllipseClass)
     , m_radiusX(WTFMove(radiusX))
     , m_radiusY(WTFMove(radiusY))
@@ -135,7 +135,7 @@ CSSEllipseValue::CSSEllipseValue(RefPtr<CSSValue> radiusX, RefPtr<CSSValue> radi
 {
 }
 
-Ref<CSSEllipseValue> CSSEllipseValue::create(RefPtr<CSSValue> radiusX, RefPtr<CSSValue> radiusY, RefPtr<CSSValue> centerX, RefPtr<CSSValue> centerY)
+Ref<CSSEllipseValue> CSSEllipseValue::create(RefPtr<CSSValue>&& radiusX, RefPtr<CSSValue>&& radiusY, RefPtr<CSSValue>&& centerX, RefPtr<CSSValue>&& centerY)
 {
     return adoptRef(*new CSSEllipseValue(WTFMove(radiusX), WTFMove(radiusY), WTFMove(centerX), WTFMove(centerY)));
 }
@@ -191,7 +191,7 @@ bool CSSEllipseValue::equals(const CSSEllipseValue& other) const
         && compareCSSValuePtr(m_radiusY, other.m_radiusY);
 }
 
-CSSXywhValue::CSSXywhValue(Ref<CSSValue> insetX, Ref<CSSValue> insetY, Ref<CSSValue> width, Ref<CSSValue> height, RefPtr<CSSValue> topLeftRadius, RefPtr<CSSValue> topRightRadius, RefPtr<CSSValue> bottomRightRadius, RefPtr<CSSValue> bottomLeftRadius)
+CSSXywhValue::CSSXywhValue(Ref<CSSValue>&& insetX, Ref<CSSValue>&& insetY, Ref<CSSValue>&& width, Ref<CSSValue>&& height, RefPtr<CSSValue>&& topLeftRadius, RefPtr<CSSValue>&& topRightRadius, RefPtr<CSSValue>&& bottomRightRadius, RefPtr<CSSValue>&& bottomLeftRadius)
     : CSSValue(XywhShapeClass)
     , m_insetX(WTFMove(insetX))
     , m_insetY(WTFMove(insetY))
@@ -204,7 +204,7 @@ CSSXywhValue::CSSXywhValue(Ref<CSSValue> insetX, Ref<CSSValue> insetY, Ref<CSSVa
 {
 }
 
-Ref<CSSXywhValue> CSSXywhValue::create(Ref<CSSValue> insetX, Ref<CSSValue> insetY, Ref<CSSValue> width, Ref<CSSValue> height, RefPtr<CSSValue> topLeftRadius, RefPtr<CSSValue> topRightRadius, RefPtr<CSSValue> bottomRightRadius, RefPtr<CSSValue> bottomLeftRadius)
+Ref<CSSXywhValue> CSSXywhValue::create(Ref<CSSValue>&& insetX, Ref<CSSValue>&& insetY, Ref<CSSValue>&& width, Ref<CSSValue>&& height, RefPtr<CSSValue>&& topLeftRadius, RefPtr<CSSValue>&& topRightRadius, RefPtr<CSSValue>&& bottomRightRadius, RefPtr<CSSValue>&& bottomLeftRadius)
 {
     return adoptRef(*new CSSXywhValue(WTFMove(insetX), WTFMove(insetY), WTFMove(width), WTFMove(height), WTFMove(topLeftRadius), WTFMove(topRightRadius), WTFMove(bottomRightRadius), WTFMove(bottomLeftRadius)));
 }
@@ -246,15 +246,11 @@ static bool buildRadii(Vector<String>& radii, const String& topLeftRadius, const
     return radii.size() == 1 && radii[0] == "0px"_s;
 }
 
-static String buildXywhString(const String& insetX, const String& insetY, const String& width, const String& height,
-    const String& topLeftRadiusWidth, const String& topLeftRadiusHeight,
+static void buildRadiiString(StringBuilder& result, const String& topLeftRadiusWidth, const String& topLeftRadiusHeight,
     const String& topRightRadiusWidth, const String& topRightRadiusHeight,
     const String& bottomRightRadiusWidth, const String& bottomRightRadiusHeight,
     const String& bottomLeftRadiusWidth, const String& bottomLeftRadiusHeight)
 {
-    StringBuilder result;
-    result.append("xywh("_s, insetX, ' ', insetY, ' ', width, ' ', height);
-
     if (!topLeftRadiusWidth.isNull() && !topLeftRadiusHeight.isNull()) {
         Vector<String> horizontalRadii;
         bool areDefaultCornerRadii = buildRadii(horizontalRadii, topLeftRadiusWidth, topRightRadiusWidth, bottomRightRadiusWidth, bottomLeftRadiusWidth);
@@ -275,6 +271,19 @@ static String buildXywhString(const String& insetX, const String& insetY, const 
             }
         }
     }
+}
+
+static String buildXywhString(const String& insetX, const String& insetY, const String& width, const String& height,
+    const String& topLeftRadiusWidth, const String& topLeftRadiusHeight,
+    const String& topRightRadiusWidth, const String& topRightRadiusHeight,
+    const String& bottomRightRadiusWidth, const String& bottomRightRadiusHeight,
+    const String& bottomLeftRadiusWidth, const String& bottomLeftRadiusHeight)
+{
+    StringBuilder result;
+    result.append("xywh("_s, insetX, ' ', insetY, ' ', width, ' ', height);
+
+    buildRadiiString(result, topLeftRadiusWidth, topLeftRadiusHeight, topRightRadiusWidth, topRightRadiusHeight, bottomRightRadiusWidth, bottomRightRadiusHeight, bottomLeftRadiusWidth, bottomLeftRadiusHeight);
+
     result.append(')');
     return result.toString();
 }
@@ -296,6 +305,72 @@ String CSSXywhValue::customCSSText() const
     updateCornerRadiusWidthAndHeight(bottomLeftRadius(), bottomLeftRadiusWidth, bottomLeftRadiusHeight);
 
     return buildXywhString(m_insetX->cssText(), m_insetY->cssText(), m_width->cssText(), m_height->cssText(),
+        topLeftRadiusWidth, topLeftRadiusHeight, topRightRadiusWidth, topRightRadiusHeight,
+        bottomRightRadiusWidth, bottomRightRadiusHeight, bottomLeftRadiusWidth, bottomLeftRadiusHeight);
+}
+
+CSSRectShapeValue::CSSRectShapeValue(Ref<CSSValue>&& top, Ref<CSSValue>&& right, Ref<CSSValue>&& bottom, Ref<CSSValue>&& left, RefPtr<CSSValue>&& topLeftRadius, RefPtr<CSSValue>&& topRightRadius, RefPtr<CSSValue>&& bottomRightRadius, RefPtr<CSSValue>&& bottomLeftRadius)
+    : CSSValue(RectShapeClass)
+    , m_top(WTFMove(top))
+    , m_right(WTFMove(right))
+    , m_bottom(WTFMove(bottom))
+    , m_left(WTFMove(left))
+    , m_topLeftRadius(WTFMove(topLeftRadius))
+    , m_topRightRadius(WTFMove(topRightRadius))
+    , m_bottomRightRadius(WTFMove(bottomRightRadius))
+    , m_bottomLeftRadius(WTFMove(bottomLeftRadius))
+{
+}
+
+Ref<CSSRectShapeValue> CSSRectShapeValue::create(Ref<CSSValue>&& top, Ref<CSSValue>&& right, Ref<CSSValue>&& bottom, Ref<CSSValue>&& left, RefPtr<CSSValue>&& topLeftRadius, RefPtr<CSSValue>&& topRightRadius, RefPtr<CSSValue>&& bottomRightRadius, RefPtr<CSSValue>&& bottomLeftRadius)
+{
+    return adoptRef(*new CSSRectShapeValue(WTFMove(top), WTFMove(right), WTFMove(bottom), WTFMove(left), WTFMove(topLeftRadius), WTFMove(topRightRadius), WTFMove(bottomRightRadius), WTFMove(bottomLeftRadius)));
+}
+
+bool CSSRectShapeValue::equals(const CSSRectShapeValue& other) const
+{
+    return compareCSSValue(m_top, other.m_top)
+        && compareCSSValue(m_right, other.m_right)
+        && compareCSSValue(m_bottom, other.m_bottom)
+        && compareCSSValue(m_left, other.m_left)
+        && compareCSSValuePtr(m_topLeftRadius, other.m_topLeftRadius)
+        && compareCSSValuePtr(m_topRightRadius, other.m_topRightRadius)
+        && compareCSSValuePtr(m_bottomRightRadius, other.m_bottomRightRadius)
+        && compareCSSValuePtr(m_bottomLeftRadius, other.m_bottomLeftRadius);
+}
+
+static String buildRectString(const String& top, const String& right, const String& bottom, const String& left,
+    const String& topLeftRadiusWidth, const String& topLeftRadiusHeight,
+    const String& topRightRadiusWidth, const String& topRightRadiusHeight,
+    const String& bottomRightRadiusWidth, const String& bottomRightRadiusHeight,
+    const String& bottomLeftRadiusWidth, const String& bottomLeftRadiusHeight)
+{
+    StringBuilder result;
+    result.append("rect("_s, top, ' ', right, ' ', bottom, ' ', left);
+
+    buildRadiiString(result, topLeftRadiusWidth, topLeftRadiusHeight, topRightRadiusWidth, topRightRadiusHeight, bottomRightRadiusWidth, bottomRightRadiusHeight, bottomLeftRadiusWidth, bottomLeftRadiusHeight);
+
+    result.append(')');
+    return result.toString();
+}
+
+String CSSRectShapeValue::customCSSText() const
+{
+    String topLeftRadiusWidth;
+    String topLeftRadiusHeight;
+    String topRightRadiusWidth;
+    String topRightRadiusHeight;
+    String bottomRightRadiusWidth;
+    String bottomRightRadiusHeight;
+    String bottomLeftRadiusWidth;
+    String bottomLeftRadiusHeight;
+
+    updateCornerRadiusWidthAndHeight(topLeftRadius(), topLeftRadiusWidth, topLeftRadiusHeight);
+    updateCornerRadiusWidthAndHeight(topRightRadius(), topRightRadiusWidth, topRightRadiusHeight);
+    updateCornerRadiusWidthAndHeight(bottomRightRadius(), bottomRightRadiusWidth, bottomRightRadiusHeight);
+    updateCornerRadiusWidthAndHeight(bottomLeftRadius(), bottomLeftRadiusWidth, bottomLeftRadiusHeight);
+
+    return buildRectString(m_top->cssText(), m_right->cssText(), m_bottom->cssText(), m_left->cssText(),
         topLeftRadiusWidth, topLeftRadiusHeight, topRightRadiusWidth, topRightRadiusHeight,
         bottomRightRadiusWidth, bottomRightRadiusHeight, bottomLeftRadiusWidth, bottomLeftRadiusHeight);
 }
@@ -361,7 +436,7 @@ bool CSSPolygonValue::equals(const CSSPolygonValue& other) const
     return m_windRule == other.m_windRule && itemsEqual(other);
 }
 
-CSSInsetShapeValue::CSSInsetShapeValue(Ref<CSSValue> top, Ref<CSSValue> right, Ref<CSSValue> bottom, Ref<CSSValue> left, RefPtr<CSSValue> topLeftRadius, RefPtr<CSSValue> topRightRadius, RefPtr<CSSValue> bottomRightRadius, RefPtr<CSSValue> bottomLeftRadius)
+CSSInsetShapeValue::CSSInsetShapeValue(Ref<CSSValue>&& top, Ref<CSSValue>&& right, Ref<CSSValue>&& bottom, Ref<CSSValue>&& left, RefPtr<CSSValue>&& topLeftRadius, RefPtr<CSSValue>&& topRightRadius, RefPtr<CSSValue>&& bottomRightRadius, RefPtr<CSSValue>&& bottomLeftRadius)
     : CSSValue(InsetShapeClass)
     , m_top(WTFMove(top))
     , m_right(WTFMove(right))
@@ -374,8 +449,8 @@ CSSInsetShapeValue::CSSInsetShapeValue(Ref<CSSValue> top, Ref<CSSValue> right, R
 {
 }
 
-Ref<CSSInsetShapeValue> CSSInsetShapeValue::create(Ref<CSSValue> top, Ref<CSSValue> right, Ref<CSSValue> bottom, Ref<CSSValue> left,
-    RefPtr<CSSValue> topLeftRadius, RefPtr<CSSValue> topRightRadius, RefPtr<CSSValue> bottomRightRadius, RefPtr<CSSValue> bottomLeftRadius)
+Ref<CSSInsetShapeValue> CSSInsetShapeValue::create(Ref<CSSValue>&& top, Ref<CSSValue>&& right, Ref<CSSValue>&& bottom, Ref<CSSValue>&& left,
+    RefPtr<CSSValue>&& topLeftRadius, RefPtr<CSSValue>&& topRightRadius, RefPtr<CSSValue>&& bottomRightRadius, RefPtr<CSSValue>&& bottomLeftRadius)
 {
     return adoptRef(*new CSSInsetShapeValue(WTFMove(top), WTFMove(right), WTFMove(bottom), WTFMove(left),
         WTFMove(topLeftRadius), WTFMove(topRightRadius), WTFMove(bottomRightRadius), WTFMove(bottomLeftRadius)));
@@ -400,26 +475,8 @@ static String buildInsetString(const String& top, const String& right, const Str
     if (showLeftArg)
         result.append(' ', left);
 
-    if (!topLeftRadiusWidth.isNull() && !topLeftRadiusHeight.isNull()) {
-        Vector<String> horizontalRadii;
-        bool areDefaultCornerRadii = buildRadii(horizontalRadii, topLeftRadiusWidth, topRightRadiusWidth, bottomRightRadiusWidth, bottomLeftRadiusWidth);
+    buildRadiiString(result, topLeftRadiusWidth, topLeftRadiusHeight, topRightRadiusWidth, topRightRadiusHeight, bottomRightRadiusWidth, bottomRightRadiusHeight, bottomLeftRadiusWidth, bottomLeftRadiusHeight);
 
-        Vector<String> verticalRadii;
-        areDefaultCornerRadii &= buildRadii(verticalRadii, topLeftRadiusHeight, topRightRadiusHeight, bottomRightRadiusHeight, bottomLeftRadiusHeight);
-
-        if (!areDefaultCornerRadii) {
-            result.append(" round"_s);
-
-            for (auto& radius : horizontalRadii)
-                result.append(' ', radius);
-
-            if (verticalRadii != horizontalRadii) {
-                result.append(" /"_s);
-                for (auto& radius : verticalRadii)
-                    result.append(' ', radius);
-            }
-        }
-    }
     result.append(')');
     return result.toString();
 }
