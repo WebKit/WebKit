@@ -1180,7 +1180,7 @@ public:
     void recomputeShortCircuitHorizontalWheelEventsState();
 
 #if ENABLE(MAC_GESTURE_EVENTS)
-    void gestureEvent(const WebGestureEvent&);
+    void gestureEvent(const WebGestureEvent&, CompletionHandler<void(WebEventType, bool)>&&);
 #endif
 
     void updateVisibilityState(bool isInitialState = false);
@@ -1790,15 +1790,15 @@ private:
 
     void setNeedsFontAttributes(bool);
 
-    void mouseEvent(WebCore::FrameIdentifier, const WebMouseEvent&, std::optional<Vector<SandboxExtension::Handle>>&& sandboxExtensions);
-    void keyEvent(WebCore::FrameIdentifier, const WebKeyboardEvent&);
+    void mouseEvent(WebCore::FrameIdentifier, const WebMouseEvent&, std::optional<Vector<SandboxExtension::Handle>>&& sandboxExtensions, CompletionHandler<void(WebEventType, bool)>&&);
+    void keyEvent(WebCore::FrameIdentifier, const WebKeyboardEvent&, CompletionHandler<void(WebEventType, bool)>&&);
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     void touchEventSync(const WebTouchEvent&, CompletionHandler<void(bool)>&&);
     void resetPotentialTapSecurityOrigin();
     void updatePotentialTapSecurityOrigin(const WebTouchEvent&, bool wasHandled);
 #elif ENABLE(TOUCH_EVENTS)
-    void touchEvent(const WebTouchEvent&);
+    void touchEvent(const WebTouchEvent&, CompletionHandler<void(WebEventType, bool)>&&);
 #endif
 
     void cancelPointer(WebCore::PointerID, const WebCore::IntPoint&);
@@ -2360,11 +2360,12 @@ private:
 
     unsigned m_cachedPageCount { 0 };
 
-    struct DeferredDidReceiveMouseEvent {
+    struct DeferredMouseEventCompletionHandler {
         WebEventType type { WebEventType::NoType };
         bool handled { false };
+        CompletionHandler<void(WebEventType, bool)> completionHandler;
     };
-    std::optional<DeferredDidReceiveMouseEvent> m_deferredDidReceiveMouseEvent;
+    std::optional<DeferredMouseEventCompletionHandler> m_deferredMouseEventCompletionHandler;
 
     HashSet<WebCore::ResourceLoaderIdentifier> m_trackedNetworkResourceRequestIdentifiers;
 

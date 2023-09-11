@@ -3279,7 +3279,11 @@ void WebPageProxy::processNextQueuedMouseEvent()
 
     LOG_WITH_STREAM(MouseHandling, stream << "UIProcess: sent mouse event " << eventType << " (queue size " << internals().mouseEventQueue.size() << ")");
     m_process->recordUserGestureAuthorizationToken(event.authorizationToken());
-    send(Messages::WebPage::MouseEvent(m_mainFrame->frameID(), event, sandboxExtensions));
+    sendWithAsyncReply(Messages::WebPage::MouseEvent(m_mainFrame->frameID(), event, sandboxExtensions), [this, protectedThis = Ref { *this }] (WebEventType eventType, bool handled) {
+        if (!m_pageClient)
+            return;
+        didReceiveEvent(eventType, handled);
+    });
 }
 
 void WebPageProxy::doAfterProcessingAllPendingMouseEvents(WTF::Function<void ()>&& action)
@@ -3545,7 +3549,11 @@ bool WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
     if (internals().keyEventQueue.size() == 1) {
         LOG(KeyHandling, " UI process: sent keyEvent from handleKeyboardEvent");
         m_process->recordUserGestureAuthorizationToken(event.authorizationToken());
-        send(Messages::WebPage::KeyEvent(m_mainFrame->frameID(), event));
+        sendWithAsyncReply(Messages::WebPage::KeyEvent(m_mainFrame->frameID(), event), [this, protectedThis = Ref { *this }] (WebEventType eventType, bool handled) {
+            if (!m_pageClient)
+                return;
+            didReceiveEvent(eventType, handled);
+        });
     }
 
     return true;
@@ -3649,7 +3657,11 @@ void WebPageProxy::handleGestureEvent(const NativeWebGestureEvent& event)
 
     m_process->startResponsivenessTimer((event.type() == WebEventType::GestureStart || event.type() == WebEventType::GestureChange) ? WebProcessProxy::UseLazyStop::Yes : WebProcessProxy::UseLazyStop::No);
 
-    send(Messages::EventDispatcher::GestureEvent(internals().webPageID, event), 0);
+    sendWithAsyncReply(Messages::EventDispatcher::GestureEvent(internals().webPageID, event), [this, protectedThis = Ref { *this }] (WebEventType eventType, bool handled) {
+        if (!m_pageClient)
+            return;
+        didReceiveEvent(eventType, handled);
+    }, 0);
 }
 #endif
 
@@ -3797,7 +3809,11 @@ void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
     if (!m_areActiveDOMObjectsAndAnimationsSuspended) {
         internals().touchEventQueue.append(event);
         m_process->startResponsivenessTimer();
-        send(Messages::WebPage::TouchEvent(event));
+        sendWithAsyncReply(Messages::WebPage::TouchEvent(event), [this, protectedThis = Ref { *this }] (WebEventType eventType, bool handled) {
+            if (!m_pageClient)
+                return;
+            didReceiveEvent(eventType, handled);
+        });
     } else {
         if (internals().touchEventQueue.isEmpty()) {
             bool isEventHandled = false;
@@ -8579,7 +8595,11 @@ void WebPageProxy::didReceiveEvent(WebEventType eventType, bool handled)
             auto nextEvent = internals().keyEventQueue.first();
             LOG(KeyHandling, " UI process: sent keyEvent from didReceiveEvent");
             m_process->recordUserGestureAuthorizationToken(nextEvent.authorizationToken());
-            send(Messages::WebPage::KeyEvent(m_mainFrame->frameID(), internals().keyEventQueue.first()));
+            sendWithAsyncReply(Messages::WebPage::KeyEvent(m_mainFrame->frameID(), nextEvent), [this, protectedThis = Ref { *this }] (WebEventType eventType, bool handled) {
+                if (!m_pageClient)
+                    return;
+                didReceiveEvent(eventType, handled);
+            });
         }
 
         // The call to doneWithKeyEvent may close this WebPage.

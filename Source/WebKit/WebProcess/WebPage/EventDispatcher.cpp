@@ -191,10 +191,10 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
 }
 
 #if ENABLE(MAC_GESTURE_EVENTS)
-void EventDispatcher::gestureEvent(PageIdentifier pageID, const WebKit::WebGestureEvent& gestureEvent)
+void EventDispatcher::gestureEvent(PageIdentifier pageID, const WebKit::WebGestureEvent& gestureEvent, CompletionHandler<void(WebEventType, bool)>&& completionHandler)
 {
-    RunLoop::main().dispatch([this, pageID, gestureEvent] {
-        dispatchGestureEvent(pageID, gestureEvent);
+    RunLoop::main().dispatch([this, pageID, gestureEvent, completionHandler = WTFMove(completionHandler)] () mutable {
+        dispatchGestureEvent(pageID, gestureEvent, WTFMove(completionHandler));
     });
 }
 #endif
@@ -281,15 +281,15 @@ void EventDispatcher::dispatchWheelEvent(PageIdentifier pageID, const WebWheelEv
 }
 
 #if ENABLE(MAC_GESTURE_EVENTS)
-void EventDispatcher::dispatchGestureEvent(PageIdentifier pageID, const WebGestureEvent& gestureEvent)
+void EventDispatcher::dispatchGestureEvent(PageIdentifier pageID, const WebGestureEvent& gestureEvent, CompletionHandler<void(WebEventType, bool)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
     RefPtr webPage = WebProcess::singleton().webPage(pageID);
     if (!webPage)
-        return;
+        return completionHandler(gestureEvent.type(), false);
 
-    webPage->gestureEvent(gestureEvent);
+    webPage->gestureEvent(gestureEvent, WTFMove(completionHandler));
 }
 #endif
 

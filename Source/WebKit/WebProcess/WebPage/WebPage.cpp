@@ -3333,7 +3333,7 @@ void WebPage::contextMenuForKeyEvent()
 }
 #endif
 
-void WebPage::mouseEvent(FrameIdentifier frameID, const WebMouseEvent& mouseEvent, std::optional<Vector<SandboxExtension::Handle>>&& sandboxExtensions)
+void WebPage::mouseEvent(FrameIdentifier frameID, const WebMouseEvent& mouseEvent, std::optional<Vector<SandboxExtension::Handle>>&& sandboxExtensions, CompletionHandler<void(WebEventType, bool)>&& completionHandler)
 {
     SetForScope userIsInteractingChange { m_userIsInteracting, true };
 
@@ -3351,10 +3351,8 @@ void WebPage::mouseEvent(FrameIdentifier frameID, const WebMouseEvent& mouseEven
         shouldHandleEvent = false;
 #endif
 
-    if (!shouldHandleEvent) {
-        send(Messages::WebPageProxy::DidReceiveEvent(mouseEvent.type(), false));
-        return;
-    }
+    if (!shouldHandleEvent)
+        return completionHandler(mouseEvent.type(), false);
 
     Vector<Ref<SandboxExtension>> mouseEventSandboxExtensions;
     if (sandboxExtensions)
@@ -3401,17 +3399,17 @@ void WebPage::mouseEvent(FrameIdentifier frameID, const WebMouseEvent& mouseEven
         // This logic works in tandem with the mouse event queue in the UI process, which
         // coalesces mousemove events until the DidReceiveEvent() message is received after
         // the rendering update.
-        m_deferredDidReceiveMouseEvent = { { mouseEvent.type(), handled } };
+        m_deferredMouseEventCompletionHandler = { { mouseEvent.type(), handled, WTFMove(completionHandler) } };
         return;
     }
 
-    send(Messages::WebPageProxy::DidReceiveEvent(mouseEvent.type(), handled));
+    completionHandler(mouseEvent.type(), handled);
 }
 
 void WebPage::flushDeferredDidReceiveMouseEvent()
 {
-    if (auto info = std::exchange(m_deferredDidReceiveMouseEvent, std::nullopt))
-        send(Messages::WebPageProxy::DidReceiveEvent(info->type, info->handled));
+    if (auto info = std::exchange(m_deferredMouseEventCompletionHandler, std::nullopt))
+        info->completionHandler(info->type, info->handled);
 }
 
 void WebPage::performHitTestForMouseEvent(const WebMouseEvent& event, CompletionHandler<void(WebHitTestResultData&&, OptionSet<WebEventModifier>, UserData&&)>&& completionHandler)
@@ -3493,7 +3491,7 @@ void WebPage::dispatchWheelEventWithoutScrolling(FrameIdentifier frameID, const 
 }
 #endif
 
-void WebPage::keyEvent(FrameIdentifier frameID, const WebKeyboardEvent& keyboardEvent)
+void WebPage::keyEvent(FrameIdentifier frameID, const WebKeyboardEvent& keyboardEvent, CompletionHandler<void(WebEventType, bool)>&& completionHandler)
 {
     SetForScope userIsInteractingChange { m_userIsInteracting, true };
 
@@ -3507,7 +3505,7 @@ void WebPage::keyEvent(FrameIdentifier frameID, const WebKeyboardEvent& keyboard
     if (WebFrame* frame = WebProcess::singleton().webFrame(frameID))
         handled = frame->handleKeyEvent(keyboardEvent);
 
-    send(Messages::WebPageProxy::DidReceiveEvent(keyboardEvent.type(), handled));
+    completionHandler(keyboardEvent.type(), handled);
 }
 
 bool WebPage::handleKeyEventByRelinquishingFocusToChrome(const KeyboardEvent& event)
@@ -3671,13 +3669,13 @@ void WebPage::updatePotentialTapSecurityOrigin(const WebTouchEvent& touchEvent, 
         m_potentialTapSecurityOrigin = &targetDocument->securityOrigin();
 }
 #elif ENABLE(TOUCH_EVENTS)
-void WebPage::touchEvent(const WebTouchEvent& touchEvent)
+void WebPage::touchEvent(const WebTouchEvent& touchEvent, CompletionHandler<void(WebEventType, bool)>&& completionHandler)
 {
     CurrentEvent currentEvent(touchEvent);
 
     bool handled = handleTouchEvent(touchEvent, m_page.get());
 
-    send(Messages::WebPageProxy::DidReceiveEvent(touchEvent.type(), handled));
+    completionHandler(touchEvent.type(), handled);
 }
 #endif
 
@@ -3701,11 +3699,11 @@ static bool handleGestureEvent(const WebGestureEvent& event, Page* page)
     return localMainFrame->eventHandler().handleGestureEvent(platform(event));
 }
 
-void WebPage::gestureEvent(const WebGestureEvent& gestureEvent)
+void WebPage::gestureEvent(const WebGestureEvent& gestureEvent, CompletionHandler<void(WebEventType, bool)>&& completionHandler)
 {
     CurrentEvent currentEvent(gestureEvent);
     bool handled = handleGestureEvent(gestureEvent, m_page.get());
-    send(Messages::WebPageProxy::DidReceiveEvent(gestureEvent.type(), handled));
+    completionHandler(gestureEvent.type(), handled);
 }
 #endif
 

@@ -47,8 +47,8 @@ messages -> WebPage LegacyReceiver {
     ViewWillEndLiveResize()
 
     ExecuteEditCommandWithCallback(String name, String argument) -> ()
-    KeyEvent(WebCore::FrameIdentifier frameID, WebKit::WebKeyboardEvent event)
-    MouseEvent(WebCore::FrameIdentifier frameID, WebKit::WebMouseEvent event, std::optional<Vector<WebKit::SandboxExtension::Handle>> sandboxExtensions)
+    KeyEvent(WebCore::FrameIdentifier frameID, WebKit::WebKeyboardEvent event) -> (enum:int8_t WebKit::WebEventType eventType, bool handled)
+    MouseEvent(WebCore::FrameIdentifier frameID, WebKit::WebMouseEvent event, std::optional<Vector<WebKit::SandboxExtension::Handle>> sandboxExtensions) -> (enum:int8_t WebKit::WebEventType eventType, bool handled)
 
 #if ENABLE(NOTIFICATIONS)
     ClearNotificationPermissionState()
@@ -158,7 +158,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ResetPotentialTapSecurityOrigin()
 #endif
 #if !ENABLE(IOS_TOUCH_EVENTS) && ENABLE(TOUCH_EVENTS)
-    TouchEvent(WebKit::WebTouchEvent event)
+    TouchEvent(WebKit::WebTouchEvent event) -> (enum:int8_t WebKit::WebEventType eventType, bool handled)
 #endif
 
     CancelPointer(WebCore::PointerID pointerId, WebCore::IntPoint documentPoint)
