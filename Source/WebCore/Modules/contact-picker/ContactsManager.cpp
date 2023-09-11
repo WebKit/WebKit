@@ -77,7 +77,7 @@ void ContactsManager::getProperties(Ref<DeferredPromise>&& promise)
 
 void ContactsManager::select(const Vector<ContactProperty>& properties, const ContactsSelectOptions& options, Ref<DeferredPromise>&& promise)
 {
-    auto* frame = this->frame();
+    RefPtr frame = this->frame();
     if (!frame || !frame->isMainFrame() || !frame->document() || !frame->page()) {
         promise->reject(InvalidStateError);
         return;

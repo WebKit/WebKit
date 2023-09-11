@@ -81,7 +81,7 @@ static bool shouldDocumentAllowWebAudioToAutoPlay(const Document& document)
         return true;
     if (document.quirks().shouldAutoplayWebAudioForArbitraryUserGesture() && document.topDocument().hasHadUserInteraction())
         return true;
-    auto* window = document.domWindow();
+    RefPtr window = document.domWindow();
     return window && window->hasTransientActivation();
 }
 
@@ -150,7 +150,7 @@ void AudioContext::constructCommon()
 
 AudioContext::~AudioContext()
 {
-    if (auto* document = this->document())
+    if (RefPtr document = this->document())
         document->removeAudioProducer(*this);
 }
 
@@ -324,7 +324,7 @@ void AudioContext::lazyInitialize()
 
 bool AudioContext::willPausePlayback()
 {
-    auto* document = this->document();
+    RefPtr document = this->document();
     if (!document)
         return false;
 
@@ -378,7 +378,7 @@ void AudioContext::mayResumePlayback(bool shouldResume)
 
 bool AudioContext::willBeginPlayback()
 {
-    auto* document = this->document();
+    RefPtr document = this->document();
     if (!document)
         return false;
 
@@ -449,7 +449,7 @@ void AudioContext::suspendPlayback()
 
 MediaSessionGroupIdentifier AudioContext::mediaSessionGroupIdentifier() const
 {
-    auto* document = downcast<Document>(scriptExecutionContext());
+    RefPtr document = downcast<Document>(scriptExecutionContext());
     return document && document->page() ? document->page()->mediaSessionGroupIdentifier() : MediaSessionGroupIdentifier { };
 }
 
@@ -485,7 +485,7 @@ void AudioContext::isPlayingAudioDidChange()
     // Make sure to call Document::updateIsPlayingMedia() on the main thread, since
     // we could be on the audio I/O thread here and the call into WebCore could block.
     callOnMainThread([protectedThis = Ref { *this }] {
-        if (auto* document = protectedThis->document())
+        if (RefPtr document = protectedThis->document())
             document->updateIsPlayingMedia();
     });
 }

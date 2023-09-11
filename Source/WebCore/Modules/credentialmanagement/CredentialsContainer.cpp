@@ -55,7 +55,7 @@ ScopeAndCrossOriginParent CredentialsContainer::scopeAndCrossOriginParent() cons
     auto& origin = m_document->securityOrigin();
     auto& url = m_document->url();
     std::optional<SecurityOriginData> crossOriginParent;
-    for (auto* document = m_document->parentDocument(); document; document = document->parentDocument()) {
+    for (RefPtr document = m_document->parentDocument(); document; document = document->parentDocument()) {
         if (!origin.isSameOriginDomain(document->securityOrigin()) && !areRegistrableDomainsEqual(url, document->url()))
             isSameSite = false;
         if (!crossOriginParent && !origin.isSameOriginAs(document->securityOrigin()))

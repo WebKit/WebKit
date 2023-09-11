@@ -78,7 +78,7 @@ std::optional<ThreadableWebSocketChannel::ValidatedURL> ThreadableWebSocketChann
         if (!page->allowsLoadFromURL(requestedURL, MainFrameMainResource::No))
             return { };
 #if ENABLE(CONTENT_EXTENSIONS)
-        if (auto* documentLoader = document.loader()) {
+        if (RefPtr documentLoader = document.loader()) {
             auto results = page->userContentProvider().processContentRuleListsForLoad(*page, validatedURL.url, ContentExtensions::ResourceType::WebSocket, *documentLoader);
             if (results.summary.blockedLoad)
                 return { };
@@ -108,7 +108,7 @@ std::optional<ResourceRequest> ThreadableWebSocketChannel::webSocketConnectReque
     request.setFirstPartyForCookies(document.firstPartyForCookies());
     request.setHTTPHeaderField(HTTPHeaderName::Origin, document.securityOrigin().toString());
 
-    if (auto* documentLoader = document.loader())
+    if (RefPtr documentLoader = document.loader())
         request.setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
 
     FrameLoader::addSameSiteInfoToRequestIfNeeded(request, &document);

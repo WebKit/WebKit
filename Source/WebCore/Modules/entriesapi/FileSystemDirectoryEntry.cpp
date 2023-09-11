@@ -61,7 +61,7 @@ void FileSystemDirectoryEntry::getEntry(ScriptExecutionContext& context, const S
         return;
 
     filesystem().getEntry(context, *this, path, flags, [this, pendingActivity = makePendingActivity(*this), matches = WTFMove(matches), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback)](auto&& result) mutable {
-        auto* document = this->document();
+        RefPtr document = this->document();
         if (result.hasException()) {
             if (errorCallback && document) {
                 document->eventLoop().queueTask(TaskSource::Networking, [errorCallback = WTFMove(errorCallback), exception = result.releaseException(), pendingActivity = WTFMove(pendingActivity)]() mutable {

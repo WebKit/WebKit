@@ -431,12 +431,12 @@ public:
     {
         ASSERT(event.type() == eventNames().contextmenuEvent);
 
-        auto* target = event.target();
-        if (!is<Node>(target))
+        RefPtr target = event.target();
+        if (!is<Node>(target.get()))
             return;
-        auto& node = downcast<Node>(*target);
+        Ref node = static_reference_cast<Node>(target.releaseNonNull());
 
-        auto* page = node.document().page();
+        auto* page = node->document().page();
         if (!page)
             return;
 
@@ -557,9 +557,9 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)
 
     if (optionsJSONObject->getBoolean("includeLanguages"_s).value_or(false)) {
-        if (auto* audioTracks = mediaElement.audioTracks(); audioTracks && audioTracks->length() > 1) {
+        if (RefPtr audioTracks = mediaElement.audioTracks(); audioTracks && audioTracks->length() > 1) {
             auto& captionPreferences = page->group().ensureCaptionPreferences();
-            auto languageMenuItems = captionPreferences.sortedTrackListForMenu(audioTracks).map([&](auto& audioTrack) {
+            auto languageMenuItems = captionPreferences.sortedTrackListForMenu(audioTracks.get()).map([&](auto& audioTrack) {
                 return createMenuItem(audioTrack, captionPreferences.displayNameForTrack(audioTrack.get()), audioTrack->enabled());
             });
 
@@ -569,9 +569,9 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
     }
 
     if (optionsJSONObject->getBoolean("includeSubtitles"_s).value_or(false)) {
-        if (auto* textTracks = mediaElement.textTracks(); textTracks && textTracks->length()) {
+        if (RefPtr textTracks = mediaElement.textTracks(); textTracks && textTracks->length()) {
             auto& captionPreferences = page->group().ensureCaptionPreferences();
-            auto sortedTextTracks = captionPreferences.sortedTrackListForMenu(textTracks, { TextTrack::Kind::Subtitles, TextTrack::Kind::Captions, TextTrack::Kind::Descriptions });
+            auto sortedTextTracks = captionPreferences.sortedTrackListForMenu(textTracks.get(), { TextTrack::Kind::Subtitles, TextTrack::Kind::Captions, TextTrack::Kind::Descriptions });
             bool allTracksDisabled = notFound == sortedTextTracks.findIf([] (const auto& textTrack) {
                 return textTrack->mode() == TextTrack::Mode::Showing;
             });
@@ -593,16 +593,16 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
     }
 
     if (optionsJSONObject->getBoolean("includeChapters"_s).value_or(false)) {
-        if (auto* textTracks = mediaElement.textTracks(); textTracks && textTracks->length()) {
+        if (RefPtr textTracks = mediaElement.textTracks(); textTracks && textTracks->length()) {
             auto& captionPreferences = page->group().ensureCaptionPreferences();
 
-            for (auto& textTrack : captionPreferences.sortedTrackListForMenu(textTracks, { TextTrack::Kind::Chapters })) {
+            for (auto& textTrack : captionPreferences.sortedTrackListForMenu(textTracks.get(), { TextTrack::Kind::Chapters })) {
                 Vector<MenuItem> chapterMenuItems;
 
-                if (auto* cues = textTrack->cues()) {
+                if (RefPtr cues = textTrack->cues()) {
                     for (unsigned i = 0; i < cues->length(); ++i) {
-                        auto* cue = cues->item(i);
-                        if (!is<VTTCue>(cue))
+                        RefPtr cue = cues->item(i);
+                        if (!is<VTTCue>(cue.get()))
                             continue;
 
                         auto& vttCue = downcast<VTTCue>(*cue);

@@ -173,7 +173,7 @@ void GamepadHapticActuator::stop()
 
 void GamepadHapticActuator::visibilityStateChanged()
 {
-    auto* document = this->document();
+    RefPtr document = this->document();
     if (!document || !document->hidden())
         return;
     stopEffects([] { });

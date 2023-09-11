@@ -317,7 +317,7 @@ void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promi
         // FIXME: This needs a global MediaKeySession tracker.
 
         String origin;
-        if (auto* document = downcast<Document>(scriptExecutionContext()))
+        if (RefPtr document = downcast<Document>(scriptExecutionContext()))
             origin = document->securityOrigin().toString();
 
         // 8.4. Let expiration time be NaN.
@@ -747,7 +747,7 @@ void MediaKeySession::sessionIdChanged(const String& sessionId)
 
 PlatformDisplayID MediaKeySession::displayID()
 {
-    auto* document = downcast<Document>(scriptExecutionContext());
+    RefPtr document = downcast<Document>(scriptExecutionContext());
     if (!document)
         return 0;
 
@@ -792,7 +792,7 @@ void MediaKeySession::sessionClosed()
 
 String MediaKeySession::mediaKeysStorageDirectory() const
 {
-    auto* document = downcast<Document>(scriptExecutionContext());
+    RefPtr document = downcast<Document>(scriptExecutionContext());
     if (!document)
         return emptyString();
 

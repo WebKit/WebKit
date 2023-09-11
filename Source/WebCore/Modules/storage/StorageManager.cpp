@@ -64,18 +64,18 @@ static ExceptionOr<ConnectionInfo> connectionInfo(NavigatorBase* navigator)
     if (!navigator)
         return Exception { InvalidStateError, "Navigator does not exist"_s };
 
-    auto context = navigator->scriptExecutionContext();
+    RefPtr context = navigator->scriptExecutionContext();
     if (!context)
         return Exception { InvalidStateError, "Context is invalid"_s };
 
     if (context->canAccessResource(ScriptExecutionContext::ResourceType::StorageManager) == ScriptExecutionContext::HasResourceAccess::No)
         return Exception { TypeError, "Context not access storage"_s };
 
-    auto* origin = context->securityOrigin();
+    RefPtr origin = context->securityOrigin();
     ASSERT(origin);
 
     if (is<Document>(context)) {
-        if (auto* connection = downcast<Document>(context)->storageConnection())
+        if (RefPtr connection = downcast<Document>(context)->storageConnection())
             return ConnectionInfo { *connection, { context->topOrigin().data(), origin->data() } };
 
         return Exception { InvalidStateError, "Connection is invalid"_s };
@@ -135,7 +135,7 @@ void StorageManager::fileSystemAccessGetDirectory(DOMPromiseDeferred<IDLInterfac
             return promise.reject(result.releaseException());
 
         auto [identifier, connection] = result.releaseReturnValue();
-        auto* context = weakNavigator ? weakNavigator->scriptExecutionContext() : nullptr;
+        RefPtr context = weakNavigator ? weakNavigator->scriptExecutionContext() : nullptr;
         if (!context) {
             connection->closeHandle(identifier);
             return promise.reject(Exception { InvalidStateError, "Context has stopped"_s });

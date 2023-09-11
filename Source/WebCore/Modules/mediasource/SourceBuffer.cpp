@@ -654,7 +654,7 @@ uint64_t SourceBuffer::maximumBufferSize() const
     if (isRemoved())
         return 0;
 
-    auto* element = m_source->mediaElement();
+    RefPtr element = m_source->mediaElement();
     if (!element)
         return 0;
 
@@ -751,7 +751,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(Initializa
         ASSERT(segment.audioTracks.size() == audioTracks().length());
         for (auto& audioTrackInfo : segment.audioTracks) {
             if (audioTracks().length() == 1) {
-                auto* track = audioTracks().item(0);
+                RefPtr track = audioTracks().item(0);
                 auto oldId = track->id();
                 auto newId = audioTrackInfo.track->id();
                 track->setPrivate(*audioTrackInfo.track);
@@ -768,7 +768,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(Initializa
         ASSERT(segment.videoTracks.size() == videoTracks().length());
         for (auto& videoTrackInfo : segment.videoTracks) {
             if (videoTracks().length() == 1) {
-                auto* track = videoTracks().item(0);
+                RefPtr track = videoTracks().item(0);
                 auto oldId = track->id();
                 auto newId = videoTrackInfo.track->id();
                 track->setPrivate(*videoTrackInfo.track);
@@ -785,7 +785,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(Initializa
         ASSERT(segment.textTracks.size() == textTracks().length());
         for (auto& textTrackInfo : segment.textTracks) {
             if (textTracks().length() == 1) {
-                auto* track = downcast<InbandTextTrack>(textTracks().item(0));
+                RefPtr track = downcast<InbandTextTrack>(textTracks().item(0));
                 auto oldId = track->id();
                 auto newId = textTrackInfo.track->id();
                 track->setPrivate(*textTrackInfo.track);

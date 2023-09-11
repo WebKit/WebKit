@@ -43,8 +43,8 @@ Ref<WebXRHand> WebXRHand::create(const WebXRInputSource& inputSource)
 WebXRHand::WebXRHand(const WebXRInputSource& inputSource)
     : m_inputSource(inputSource)
 {
-    auto* session = this->session();
-    auto* document = session ? downcast<Document>(session->scriptExecutionContext()) : nullptr;
+    RefPtr session = this->session();
+    RefPtr document = session ? downcast<Document>(session->scriptExecutionContext()) : nullptr;
     if (!document)
         return;
 

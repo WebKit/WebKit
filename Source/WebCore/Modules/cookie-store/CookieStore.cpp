@@ -86,13 +86,13 @@ void CookieStore::get(String&& name, Ref<DeferredPromise>&& promise)
 
 void CookieStore::get(CookieStoreGetOptions&& options, Ref<DeferredPromise>&& promise)
 {
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context) {
         promise->reject(SecurityError);
         return;
     }
 
-    auto* origin = context->securityOrigin();
+    RefPtr origin = context->securityOrigin();
     if (!origin) {
         promise->reject(SecurityError);
         return;
@@ -134,13 +134,13 @@ void CookieStore::getAll(String&& name, Ref<DeferredPromise>&& promise)
 
 void CookieStore::getAll(CookieStoreGetOptions&& options, Ref<DeferredPromise>&& promise)
 {
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context) {
         promise->reject(SecurityError);
         return;
     }
 
-    auto* origin = context->securityOrigin();
+    RefPtr origin = context->securityOrigin();
     if (!origin) {
         promise->reject(SecurityError);
         return;
@@ -193,13 +193,13 @@ void CookieStore::set(String&& name, String&& value, Ref<DeferredPromise>&& prom
 
 void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
 {
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context) {
         promise->reject(SecurityError);
         return;
     }
 
-    auto* origin = context->securityOrigin();
+    RefPtr origin = context->securityOrigin();
     if (!origin) {
         promise->reject(SecurityError);
         return;
@@ -292,13 +292,13 @@ void CookieStore::remove(String&& name, Ref<DeferredPromise>&& promise)
 
 void CookieStore::remove(CookieStoreDeleteOptions&& options, Ref<DeferredPromise>&& promise)
 {
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context) {
         promise->reject(SecurityError);
         return;
     }
 
-    auto* origin = context->securityOrigin();
+    RefPtr origin = context->securityOrigin();
     if (!origin) {
         promise->reject(SecurityError);
         return;
@@ -324,7 +324,7 @@ void CookieStore::cookiesAdded(const String& host, const Vector<Cookie>& cookies
     ASSERT_UNUSED(host, host == m_host);
     ASSERT(m_hasChangeEventListener);
 
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return;
 
@@ -346,7 +346,7 @@ void CookieStore::cookiesDeleted(const String& host, const Vector<Cookie>& cooki
     ASSERT_UNUSED(host, host == m_host);
     ASSERT(m_hasChangeEventListener);
 
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return;
 

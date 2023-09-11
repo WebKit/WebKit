@@ -643,7 +643,7 @@ void WebXRSession::onFrame(PlatformXR::Device::FrameData&& frameData)
 bool WebXRSession::posesCanBeReported(const Document& document) const
 {
     // 1. If session’s relevant global object is not the current global object, return false.
-    auto* sessionDocument = downcast<Document>(scriptExecutionContext());
+    RefPtr sessionDocument = downcast<Document>(scriptExecutionContext());
     if (!sessionDocument || sessionDocument->domWindow() != document.domWindow())
         return false;
 

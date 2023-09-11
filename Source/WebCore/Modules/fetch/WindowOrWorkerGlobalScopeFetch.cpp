@@ -74,7 +74,7 @@ static void doFetch(ScriptExecutionContext& scope, FetchRequest::Info&& input, F
 
 void WindowOrWorkerGlobalScopeFetch::fetch(LocalDOMWindow& window, FetchRequest::Info&& input, FetchRequest::Init&& init, Ref<DeferredPromise>&& promise)
 {
-    auto* document = window.document();
+    RefPtr document = window.document();
     if (!document) {
         promise->reject(InvalidStateError);
         return;

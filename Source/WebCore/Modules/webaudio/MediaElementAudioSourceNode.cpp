@@ -36,6 +36,7 @@
 #include "Logging.h"
 #include "MediaElementAudioSourceOptions.h"
 #include "MediaPlayer.h"
+#include "SecurityOrigin.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Locker.h>
 
@@ -133,7 +134,7 @@ void MediaElementAudioSourceNode::provideInput(AudioBus* bus, size_t framesToPro
 
 bool MediaElementAudioSourceNode::wouldTaintOrigin()
 {
-    if (auto* origin = context().origin())
+    if (RefPtr origin = context().origin())
         return m_mediaElement->taintsOrigin(*origin);
 
     return true;

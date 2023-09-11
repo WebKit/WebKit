@@ -65,7 +65,7 @@ void provideMediaKeySystemTo(Page& page, MediaKeySystemClient& client)
 
 void MediaKeySystemController::logRequestMediaKeySystemDenial(Document& document)
 {
-    if (auto* window = document.domWindow())
+    if (RefPtr window = document.domWindow())
         window->printErrorMessage(makeString("Not allowed to access MediaKeySystem."));
 }
 

@@ -46,7 +46,7 @@ Ref<IDBKey> IDBKey::createBinary(const ThreadSafeDataBuffer& buffer)
 
 Ref<IDBKey> IDBKey::createBinary(JSC::JSArrayBuffer& arrayBuffer)
 {
-    auto* buffer = arrayBuffer.impl();
+    RefPtr buffer = arrayBuffer.impl();
     return adoptRef(*new IDBKey(ThreadSafeDataBuffer::copyData(buffer->data(), buffer->byteLength())));
 }
 

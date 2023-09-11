@@ -138,7 +138,7 @@ void WebXRInputSourceArray::handleRemovedInputSources(const InputSourceList& inp
 // https://immersive-web.github.io/webxr/#list-of-active-xr-input-sources
 void WebXRInputSourceArray::handleAddedOrUpdatedInputSources(double timestamp, const InputSourceList& inputSources, Vector<RefPtr<WebXRInputSource>>& added, Vector<RefPtr<WebXRInputSource>>& removed, Vector<Ref<XRInputSourceEvent>>& inputEvents)
 {
-    auto* document = downcast<Document>(m_session.scriptExecutionContext());
+    RefPtr document = downcast<Document>(m_session.scriptExecutionContext());
     if (!document)
         return;
 

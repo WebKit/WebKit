@@ -79,7 +79,7 @@ void WebXRInputSource::update(double timestamp, const PlatformXR::Device::FrameD
     if (auto gripOrigin = source.gripOrigin) {
         if (m_gripSpace)
             m_gripSpace->setPose(*gripOrigin);
-        else if (auto* document = downcast<Document>(session->scriptExecutionContext()))
+        else if (RefPtr document = downcast<Document>(session->scriptExecutionContext()))
             m_gripSpace = WebXRInputSpace::create(*document, *session, *gripOrigin);
     } else
         m_gripSpace = nullptr;

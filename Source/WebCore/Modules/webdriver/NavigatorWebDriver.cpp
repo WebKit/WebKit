@@ -44,7 +44,7 @@ const char* NavigatorWebDriver::supplementName()
 
 bool NavigatorWebDriver::isControlledByAutomation(const Navigator& navigator)
 {
-    auto* frame = navigator.frame();
+    RefPtr frame = navigator.frame();
     if (!frame || !frame->page())
         return false;
 

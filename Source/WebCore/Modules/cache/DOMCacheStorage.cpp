@@ -55,7 +55,7 @@ DOMCacheStorage::~DOMCacheStorage() = default;
 
 std::optional<ClientOrigin> DOMCacheStorage::origin() const
 {
-    auto* origin = scriptExecutionContext() ? scriptExecutionContext()->securityOrigin() : nullptr;
+    RefPtr origin = scriptExecutionContext() ? scriptExecutionContext()->securityOrigin() : nullptr;
     if (!origin)
         return std::nullopt;
 

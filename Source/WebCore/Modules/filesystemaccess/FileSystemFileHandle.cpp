@@ -61,11 +61,11 @@ void FileSystemFileHandle::getFile(DOMPromiseDeferred<IDLInterface<File>>&& prom
         if (result.hasException())
             return promise.reject(result.releaseException());
 
-        auto* context = protectedThis->scriptExecutionContext();
+        RefPtr context = protectedThis->scriptExecutionContext();
         if (!context)
             return promise.reject(Exception { InvalidStateError, "Context has stopped"_s });
 
-        promise.resolve(File::create(context, result.returnValue(), { }, protectedThis->name()));
+        promise.resolve(File::create(context.get(), result.returnValue(), { }, protectedThis->name()));
     });
 }
 
@@ -82,7 +82,7 @@ void FileSystemFileHandle::createSyncAccessHandle(DOMPromiseDeferred<IDLInterfac
         if (!info.file)
             return promise.reject(Exception { UnknownError, "Invalid platform file handle"_s });
 
-        auto* context = protectedThis->scriptExecutionContext();
+        RefPtr context = protectedThis->scriptExecutionContext();
         if (!context) {
             protectedThis->closeSyncAccessHandle(info.identifier);
             return promise.reject(Exception { InvalidStateError, "Context has stopped"_s });

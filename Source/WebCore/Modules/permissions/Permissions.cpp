@@ -120,7 +120,7 @@ std::optional<PermissionName> Permissions::toPermissionName(const String& name)
 
 void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DOMPromiseDeferred<IDLInterface<PermissionStatus>>&& promise)
 {
-    auto* context = m_navigator ? m_navigator->scriptExecutionContext() : nullptr;
+    RefPtr context = m_navigator ? m_navigator->scriptExecutionContext() : nullptr;
     if (!context || !context->globalObject()) {
         promise.reject(Exception { InvalidStateError, "The context is invalid"_s });
         return;
@@ -132,7 +132,7 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DO
         return;
     }
 
-    auto* document = dynamicDowncast<Document>(*context);
+    RefPtr document = dynamicDowncast<Document>(*context);
     if (document && !document->isFullyActive()) {
         promise.reject(Exception { InvalidStateError, "The document is not fully active"_s });
         return; 
@@ -146,7 +146,7 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DO
         return;
     }
 
-    auto* origin = context->securityOrigin();
+    RefPtr origin = context->securityOrigin();
     auto originData = origin ? origin->data() : SecurityOriginData { };
 
     if (document) {

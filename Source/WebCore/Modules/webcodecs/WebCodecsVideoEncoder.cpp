@@ -250,7 +250,7 @@ ExceptionOr<void> WebCodecsVideoEncoder::encode(Ref<WebCodecsVideoFrame>&& frame
 
             --m_beingEncodedQueueSize;
             if (!result.isNull()) {
-                if (auto* context = scriptExecutionContext())
+                if (RefPtr context = scriptExecutionContext())
                     context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("VideoEncoder encode failed: ", result));
                 closeEncoder(Exception { EncodingError, WTFMove(result) });
                 return;

@@ -70,7 +70,7 @@ WebCodecsVideoFrame::~WebCodecsVideoFrame()
 {
     if (m_isDetached)
         return;
-    if (auto* context = scriptExecutionContext()) {
+    if (RefPtr context = scriptExecutionContext()) {
         context->postTask([](auto& context) {
             context.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "A VideoFrame was destroyed without having been closed explicitly"_s);
         });
@@ -85,7 +85,7 @@ static std::optional<Exception> checkImageUsability(ScriptExecutionContext& cont
         if (!imageElement->originClean(*context.securityOrigin()))
             return Exception { SecurityError, "Image element is tainted"_s };
 
-        auto* image = imageElement->cachedImage() ? imageElement->cachedImage()->image() : nullptr;
+        RefPtr image = imageElement->cachedImage() ? imageElement->cachedImage()->image() : nullptr;
         if (!image)
             return Exception { InvalidStateError,  "Image element has no data"_s };
         if (!image->width() || !image->height())
@@ -96,7 +96,7 @@ static std::optional<Exception> checkImageUsability(ScriptExecutionContext& cont
         if (imageElement->renderingTaintsOrigin())
             return Exception { SecurityError, "Image element is tainted"_s };
 
-        auto* image = imageElement->cachedImage() ? imageElement->cachedImage()->image() : nullptr;
+        RefPtr image = imageElement->cachedImage() ? imageElement->cachedImage()->image() : nullptr;
         if (!image)
             return Exception { InvalidStateError,  "Image element has no data"_s };
         if (!image->width() || !image->height())
@@ -110,7 +110,7 @@ static std::optional<Exception> checkImageUsability(ScriptExecutionContext& cont
     },
 #if ENABLE(VIDEO)
     [&] (const RefPtr<HTMLVideoElement>& video) -> std::optional<Exception> {
-        auto* origin = context.securityOrigin();
+        RefPtr origin = context.securityOrigin();
         if (video->taintsOrigin(*origin))
             return Exception { SecurityError, "Video element is tainted"_s };
 
@@ -213,7 +213,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
         if (!canvas->width() || !canvas->height())
             return Exception { InvalidStateError,  "Input canvas has a bad size"_s };
 
-        auto* imageBuffer = canvas->buffer();
+        RefPtr imageBuffer = canvas->buffer();
         if (!imageBuffer)
             return Exception { InvalidStateError,  "Input canvas has no image buffer"_s };
 
@@ -227,7 +227,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
         if (!image->width() || !image->height())
             return Exception { InvalidStateError,  "Input image has a bad size"_s };
 
-        auto* imageBuffer = image->buffer();
+        RefPtr imageBuffer = image->buffer();
         if (!imageBuffer)
             return Exception { InvalidStateError,  "Input image has no image buffer"_s };
 

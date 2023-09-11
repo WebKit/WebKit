@@ -43,7 +43,7 @@ TransactionOperation::TransactionOperation(IDBTransaction& transaction, IDBReque
     m_indexIdentifier = request.sourceIndexIdentifier();
     if (m_indexIdentifier)
         m_indexRecordType = request.requestedIndexRecordType();
-    if (auto* cursor = request.pendingCursor())
+    if (RefPtr cursor = request.pendingCursor())
         m_cursorIdentifier = cursor->info().identifier();
 
     request.setTransactionOperationID(m_operationID);

@@ -59,7 +59,7 @@ void FileSystemDirectoryHandle::getFileHandle(const String& name, const FileSyst
             return promise.reject(result.releaseException());
 
         auto strongThis = weakThis.get();
-        auto* context = strongThis ? strongThis->scriptExecutionContext() : nullptr;
+        RefPtr context = strongThis ? strongThis->scriptExecutionContext() : nullptr;
         if (!context)
             return promise.reject(Exception { InvalidStateError, "Context has stopped"_s });
 
@@ -79,7 +79,7 @@ void FileSystemDirectoryHandle::getDirectoryHandle(const String& name, const Fil
             return promise.reject(result.releaseException());
 
         auto strongThis = weakThis.get();
-        auto* context = strongThis ? strongThis->scriptExecutionContext() : nullptr;
+        RefPtr context = strongThis ? strongThis->scriptExecutionContext() : nullptr;
         if (!context)
             return promise.reject(Exception { InvalidStateError, "Context has stopped"_s });
 
@@ -128,7 +128,7 @@ void FileSystemDirectoryHandle::getHandle(const String& name, CompletionHandler<
 
         auto [identifier, isDirectory] = result.returnValue()->release();
         auto strongThis = weakThis.get();
-        auto* context = strongThis ? strongThis->scriptExecutionContext() : nullptr;
+        RefPtr context = strongThis ? strongThis->scriptExecutionContext() : nullptr;
         if (!context)
             return completionHandler(Exception { InvalidStateError, "Context has stopped"_s });
 

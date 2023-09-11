@@ -92,7 +92,7 @@ void OfflineAudioDestinationNode::uninitialize()
             m_renderThread->waitForCompletion();
             m_renderThread = nullptr;
         }
-        if (auto* workletProxy = context().audioWorklet().proxy()) {
+        if (RefPtr workletProxy = context().audioWorklet().proxy()) {
             BinarySemaphore semaphore;
             workletProxy->postTaskForModeToWorkletGlobalScope([&semaphore](ScriptExecutionContext&) mutable {
                 semaphore.signal();
@@ -139,7 +139,7 @@ void OfflineAudioDestinationNode::startRendering(CompletionHandler<void(std::opt
         });
     };
 
-    if (auto* workletProxy = context().audioWorklet().proxy()) {
+    if (RefPtr workletProxy = context().audioWorklet().proxy()) {
         workletProxy->postTaskForModeToWorkletGlobalScope([offThreadRendering = WTFMove(offThreadRendering)](ScriptExecutionContext&) mutable {
             offThreadRendering();
         }, WorkerRunLoop::defaultMode());

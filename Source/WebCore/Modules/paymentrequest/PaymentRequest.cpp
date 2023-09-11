@@ -374,7 +374,7 @@ void PaymentRequest::show(Document& document, RefPtr<DOMPromise>&& detailsPromis
         return;
     }
 
-    auto* window = document.frame()->window();
+    RefPtr window = document.frame()->window();
     if (!window || !window->consumeTransientActivation()) {
         promise.reject(Exception { SecurityError, "show() must be triggered by user activation."_s });
         return;

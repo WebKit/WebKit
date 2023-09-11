@@ -81,11 +81,11 @@ void NavigatorBeacon::logError(const ResourceError& error)
 {
     ASSERT(!error.isNull());
 
-    auto* frame = m_navigator.frame();
+    RefPtr frame = m_navigator.frame();
     if (!frame)
         return;
 
-    auto* document = frame->document();
+    RefPtr document = frame->document();
     if (!document)
         return;
 
@@ -124,7 +124,7 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& 
     ResourceRequest request(parsedUrl);
     request.setHTTPMethod("POST"_s);
     request.setRequester(ResourceRequestRequester::Beacon);
-    if (auto* documentLoader = document.loader())
+    if (RefPtr documentLoader = document.loader())
         request.setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
 
     ResourceLoaderOptions options;

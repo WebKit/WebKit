@@ -365,7 +365,7 @@ void IDBRequest::setResult(const IDBKeyData& keyData)
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return;
 
@@ -379,7 +379,7 @@ void IDBRequest::setResult(const Vector<IDBKeyData>& keyDatas)
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return;
 
@@ -393,7 +393,7 @@ void IDBRequest::setResult(const IDBGetAllResult& result)
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return;
 
@@ -407,7 +407,7 @@ void IDBRequest::setResult(uint64_t number)
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return;
 
@@ -423,7 +423,7 @@ void IDBRequest::setResultToStructuredClone(const IDBGetResult& result)
 
     LOG(IndexedDB, "IDBRequest::setResultToStructuredClone");
 
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return;
 
@@ -437,7 +437,7 @@ void IDBRequest::setResultToUndefined()
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return;
     
@@ -470,7 +470,7 @@ void IDBRequest::willIterateCursor(IDBCursor& cursor)
     m_hasPendingActivity = true;
     m_result = NullResultType::Empty;
 
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return;
 
@@ -484,7 +484,7 @@ void IDBRequest::didOpenOrIterateCursor(const IDBResultData& resultData)
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
     ASSERT(m_pendingCursor);
 
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return;
 
@@ -541,7 +541,7 @@ void IDBRequest::setResult(Ref<IDBDatabase>&& database)
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return;
 
@@ -554,7 +554,7 @@ void IDBRequest::setResult(Ref<IDBDatabase>&& database)
 
 void IDBRequest::clearWrappers()
 {
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return;
     VM& vm = context->vm();

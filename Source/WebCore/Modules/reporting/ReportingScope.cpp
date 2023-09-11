@@ -157,7 +157,7 @@ void ReportingScope::generateTestReport(String&& message, String&& group)
     URL testReportURL;
     String reportURL { ""_s };
 
-    auto* document = dynamicDowncast<Document>(scriptExecutionContext());
+    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
     if (document) {
         testReportURL = document->url();
         reportURL = testReportURL.strippedForUseAsReferrer();

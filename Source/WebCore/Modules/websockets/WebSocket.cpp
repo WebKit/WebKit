@@ -276,7 +276,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         return Exception { SecurityError };
     }
 
-    if (auto* provider = context.socketProvider())
+    if (RefPtr provider = context.socketProvider())
         m_channel = ThreadableWebSocketChannel::create(*scriptExecutionContext(), *this, *provider);
 
     // Every ScriptExecutionContext should have a SocketProvider.
@@ -331,7 +331,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
 
 #if ENABLE(TRACKING_PREVENTION)
     auto reportRegistrableDomain = [domain = RegistrableDomain(m_url).isolatedCopy()](auto& context) mutable {
-        if (auto* frame = downcast<Document>(context).frame())
+        if (RefPtr frame = downcast<Document>(context).frame())
             frame->loader().client().didLoadFromRegistrableDomain(WTFMove(domain));
     };
     if (is<Document>(context))

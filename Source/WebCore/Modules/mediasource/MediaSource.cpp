@@ -786,7 +786,7 @@ ExceptionOr<void> MediaSource::removeSourceBuffer(SourceBuffer& buffer)
     ASSERT(scriptExecutionContext());
     if (!scriptExecutionContext()->activeDOMObjectsAreStopped()) {
         // 4. Let SourceBuffer audioTracks list equal the AudioTrackList object returned by sourceBuffer.audioTracks.
-        auto* audioTracks = buffer.audioTracksIfExists();
+        RefPtr audioTracks = buffer.audioTracksIfExists();
 
         // 5. If the SourceBuffer audioTracks list is not empty, then run the following steps:
         if (audioTracks && audioTracks->length()) {
@@ -826,7 +826,7 @@ ExceptionOr<void> MediaSource::removeSourceBuffer(SourceBuffer& buffer)
         }
 
         // 6. Let SourceBuffer videoTracks list equal the VideoTrackList object returned by sourceBuffer.videoTracks.
-        auto* videoTracks = buffer.videoTracksIfExists();
+        RefPtr videoTracks = buffer.videoTracksIfExists();
 
         // 7. If the SourceBuffer videoTracks list is not empty, then run the following steps:
         if (videoTracks && videoTracks->length()) {
@@ -866,7 +866,7 @@ ExceptionOr<void> MediaSource::removeSourceBuffer(SourceBuffer& buffer)
         }
 
         // 8. Let SourceBuffer textTracks list equal the TextTrackList object returned by sourceBuffer.textTracks.
-        auto* textTracks = buffer.textTracksIfExists();
+        RefPtr textTracks = buffer.textTracksIfExists();
 
         // 9. If the SourceBuffer textTracks list is not empty, then run the following steps:
         if (textTracks && textTracks->length()) {
