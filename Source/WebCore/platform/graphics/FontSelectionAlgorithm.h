@@ -42,6 +42,9 @@ public:
 
     FontSelectionValue() = default;
 
+    // Exposed over IPC
+    explicit constexpr FontSelectionValue(BackingType);
+
     // Explicit because it won't work correctly for values outside the representable range.
     explicit constexpr FontSelectionValue(int);
 
@@ -65,14 +68,6 @@ public:
 
     constexpr BackingType rawValue() const { return m_backing; }
 
-    template<class Encoder>
-    void encode(Encoder&) const;
-
-    template<class Decoder>
-    static std::optional<FontSelectionValue> decode(Decoder&);
-
-    friend constexpr bool operator==(FontSelectionValue, FontSelectionValue) = default;
-
 private:
     enum class RawTag { RawTag };
     constexpr FontSelectionValue(int, RawTag);
@@ -81,23 +76,9 @@ private:
     BackingType m_backing { 0 };
 };
 
-template<class Encoder>
-void FontSelectionValue::encode(Encoder& encoder) const
+constexpr FontSelectionValue::FontSelectionValue(BackingType x)
+    : m_backing(x)
 {
-    encoder << m_backing;
-}
-
-template<class Decoder>
-std::optional<FontSelectionValue> FontSelectionValue::decode(Decoder& decoder)
-{
-    std::optional<FontSelectionValue::BackingType> backing;
-    decoder >> backing;
-    if (!backing)
-        return std::nullopt;
-
-    FontSelectionValue result;
-    result.m_backing = *backing;
-    return result;
 }
 
 constexpr FontSelectionValue::FontSelectionValue(int x)
@@ -327,38 +308,9 @@ struct FontSelectionRange {
         return target >= minimum && target <= maximum;
     }
 
-    template<class Encoder>
-    void encode(Encoder&) const;
-
-    template<class Decoder>
-    static std::optional<FontSelectionRange> decode(Decoder&);
-
     Value minimum { 1 };
     Value maximum { 0 };
 };
-
-template<class Encoder>
-void FontSelectionRange::encode(Encoder& encoder) const
-{
-    encoder << minimum;
-    encoder << maximum;
-}
-
-template<class Decoder>
-std::optional<FontSelectionRange> FontSelectionRange::decode(Decoder& decoder)
-{
-    std::optional<FontSelectionRange::Value> minimum;
-    decoder >> minimum;
-    if (!minimum)
-        return std::nullopt;
-
-    std::optional<FontSelectionRange::Value> maximum;
-    decoder >> maximum;
-    if (!maximum)
-        return std::nullopt;
-
-    return {{ *minimum, *maximum }};
-}
 
 inline void add(Hasher& hasher, const FontSelectionRange& range)
 {
@@ -451,12 +403,6 @@ struct FontSelectionSpecifiedCapabilities {
         return slope.value_or(Range { normalItalicValue() });
     }
 
-    template<class Encoder>
-    void encode(Encoder&) const;
-
-    template<class Decoder>
-    static std::optional<FontSelectionSpecifiedCapabilities> decode(Decoder&);
-
     OptionalRange weight;
     OptionalRange width;
     OptionalRange slope;
@@ -465,35 +411,6 @@ struct FontSelectionSpecifiedCapabilities {
 inline void add(Hasher& hasher, const FontSelectionSpecifiedCapabilities& capabilities)
 {
     add(hasher, capabilities.weight, capabilities.width, capabilities.slope);
-}
-
-template<class Encoder>
-void FontSelectionSpecifiedCapabilities::encode(Encoder& encoder) const
-{
-    encoder << weight;
-    encoder << width;
-    encoder << slope;
-}
-
-template<class Decoder>
-std::optional<FontSelectionSpecifiedCapabilities> FontSelectionSpecifiedCapabilities::decode(Decoder& decoder)
-{
-    std::optional<OptionalRange> weight;
-    decoder >> weight;
-    if (!weight)
-        return std::nullopt;
-
-    std::optional<OptionalRange> width;
-    decoder >> width;
-    if (!width)
-        return std::nullopt;
-
-    std::optional<OptionalRange> slope;
-    decoder >> slope;
-    if (!slope)
-        return std::nullopt;
-
-    return {{ *weight, *width, *slope }};
 }
 
 class FontSelectionAlgorithm {

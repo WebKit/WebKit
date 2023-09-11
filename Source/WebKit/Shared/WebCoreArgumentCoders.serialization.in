@@ -5886,3 +5886,35 @@ header: <WebCore/ScrollingConstraints.h>
     WebCore::FloatSize stickyOffsetAtLastLayout();
     WebCore::FloatPoint layerPositionAtLastLayout();
 };
+
+class WebCore::FloatLine {
+    WebCore::FloatPoint start();
+    WebCore::FloatPoint end();
+};
+
+header: <WebCore/FontCache.h>
+[CustomHeader] struct WebCore::FontCachePrewarmInformation {
+    Vector<String> seenFamilies;
+    Vector<String> fontNamesRequiringSystemFallback;
+};
+
+struct WebCore::PrewarmInformation {
+    WebCore::FontCachePrewarmInformation fontCache;
+};
+
+header: <WebCore/FontSelectionAlgorithm.h>
+using WebCore::FontSelectionValue::BackingType = int16_t;
+[CustomHeader] class WebCore::FontSelectionValue {
+    WebCore::FontSelectionValue::BackingType rawValue();
+};
+
+[CustomHeader] struct WebCore::FontSelectionRange {
+    WebCore::FontSelectionValue minimum;
+    WebCore::FontSelectionValue maximum;
+};
+
+[CustomHeader] struct WebCore::FontSelectionSpecifiedCapabilities {
+    std::optional<WebCore::FontSelectionRange> weight;
+    std::optional<WebCore::FontSelectionRange> width;
+    std::optional<WebCore::FontSelectionRange> slope;
+};
