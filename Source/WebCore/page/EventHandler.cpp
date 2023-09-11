@@ -3161,10 +3161,10 @@ static bool scrollViaNonPlatformEvent(ScrollableArea& scrollableArea, const Whee
     ScrollGranularity scrollGranularity = wheelGranularityToScrollGranularity(wheelEvent.deltaMode());
     bool didHandleWheelEvent = false;
     if (float absoluteDelta = std::abs(filteredDelta.width()))
-        didHandleWheelEvent |= scrollableArea.scroll(filteredDelta.width() > 0 ? ScrollRight : ScrollLeft, scrollGranularity, absoluteDelta);
+        didHandleWheelEvent |= scrollableArea.scroll(filteredDelta.width() > 0 ? ScrollDirection::ScrollRight : ScrollDirection::ScrollLeft, scrollGranularity, absoluteDelta);
 
     if (float absoluteDelta = std::abs(filteredDelta.height()))
-        didHandleWheelEvent |= scrollableArea.scroll(filteredDelta.height() > 0 ? ScrollDown : ScrollUp, scrollGranularity, absoluteDelta);
+        didHandleWheelEvent |= scrollableArea.scroll(filteredDelta.height() > 0 ? ScrollDirection::ScrollDown : ScrollDirection::ScrollUp, scrollGranularity, absoluteDelta);
     return didHandleWheelEvent;
 }
 

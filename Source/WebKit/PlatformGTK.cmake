@@ -62,6 +62,8 @@ list(APPEND WebKit_MESSAGES_IN_FILES
     WebProcess/gtk/GtkSettingsManagerProxy
 )
 
+list(APPEND WebCore_SERIALIZATION_IN_FILES SoupNetworkProxySettings.serialization.in)
+
 list(APPEND WebKit_DERIVED_SOURCES
     ${WebKitGTK_DERIVED_SOURCES_DIR}/InspectorGResourceBundle.c
     ${WebKitGTK_DERIVED_SOURCES_DIR}/WebKitDirectoryInputStreamData.cpp

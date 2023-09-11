@@ -628,7 +628,7 @@ enum {
 
 - (BOOL)_scrollToBeginningOfDocument
 {
-    if ([self _scrollOverflowInDirection:WebCore::ScrollUp granularity:WebCore::ScrollGranularity::Document])
+    if ([self _scrollOverflowInDirection:WebCore::ScrollDirection::ScrollUp granularity:WebCore::ScrollGranularity::Document])
         return YES;
     if (![self _isScrollable])
         return NO;
@@ -640,7 +640,7 @@ enum {
 
 - (BOOL)_scrollToEndOfDocument
 {
-    if ([self _scrollOverflowInDirection:WebCore::ScrollDown granularity:WebCore::ScrollGranularity::Document])
+    if ([self _scrollOverflowInDirection:WebCore::ScrollDirection::ScrollDown granularity:WebCore::ScrollGranularity::Document])
         return YES;
     if (![self _isScrollable])
         return NO;
@@ -737,7 +737,7 @@ enum {
 
 - (BOOL)_pageVertically:(BOOL)up
 {
-    if ([self _scrollOverflowInDirection:up ? WebCore::ScrollUp : WebCore::ScrollDown granularity:WebCore::ScrollGranularity::Page])
+    if ([self _scrollOverflowInDirection:up ? WebCore::ScrollDirection::ScrollUp : WebCore::ScrollDirection::ScrollDown granularity:WebCore::ScrollGranularity::Page])
         return YES;
     
     if (![self _isScrollable])
@@ -749,7 +749,7 @@ enum {
 
 - (BOOL)_pageHorizontally:(BOOL)left
 {
-    if ([self _scrollOverflowInDirection:left ? WebCore::ScrollLeft : WebCore::ScrollRight granularity:WebCore::ScrollGranularity::Page])
+    if ([self _scrollOverflowInDirection:left ? WebCore::ScrollDirection::ScrollLeft : WebCore::ScrollDirection::ScrollRight granularity:WebCore::ScrollGranularity::Page])
         return YES;
 
     if (![self _isScrollable])
@@ -771,7 +771,7 @@ enum {
 
 - (BOOL)_scrollLineVertically:(BOOL)up
 {
-    if ([self _scrollOverflowInDirection:up ? WebCore::ScrollUp : WebCore::ScrollDown granularity:WebCore::ScrollGranularity::Line])
+    if ([self _scrollOverflowInDirection:up ? WebCore::ScrollDirection::ScrollUp : WebCore::ScrollDirection::ScrollDown granularity:WebCore::ScrollGranularity::Line])
         return YES;
 
     if (![self _isScrollable])
@@ -783,7 +783,7 @@ enum {
 
 - (BOOL)_scrollLineHorizontally:(BOOL)left
 {
-    if ([self _scrollOverflowInDirection:left ? WebCore::ScrollLeft : WebCore::ScrollRight granularity:WebCore::ScrollGranularity::Line])
+    if ([self _scrollOverflowInDirection:left ? WebCore::ScrollDirection::ScrollLeft : WebCore::ScrollDirection::ScrollRight granularity:WebCore::ScrollGranularity::Line])
         return YES;
 
     if (![self _isScrollable])

@@ -518,6 +518,11 @@ set(WebCore_SERIALIZATION_IN_FILES
     PlatformEvent.serialization.in
     PlatformMediaSession.serialization.in
     PlatformScreen.serialization.in
+    PlatformWheelEvent.serialization.in
+    PlaybackSessionModel.serialization.in
+    ProtectionSpaceBase.serialization.in
+    ScrollTypes.serialization.in
+    WebGPU.serialization.in
 )
 
 set(WebKit_FRAMEWORKS
