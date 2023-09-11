@@ -100,7 +100,7 @@ private:
 class RemoteVideoEncoder : public WebCore::VideoEncoder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RemoteVideoEncoder(LibWebRTCCodecs::Encoder&, const VideoEncoder::Config&, Ref<RemoteVideoEncoderCallbacks>&&);
+    RemoteVideoEncoder(LibWebRTCCodecs::Encoder&, Ref<RemoteVideoEncoderCallbacks>&&);
     ~RemoteVideoEncoder();
 
 private:
@@ -177,7 +177,7 @@ void RemoteVideoCodecFactory::createEncoder(const String& codec, const WebCore::
         }
     }
 
-    WebProcess::singleton().libWebRTCCodecs().createEncoderAndWaitUntilReady(*type, codec, parameters, config.isRealtime, config.useAnnexB, [config, createCallback = WTFMove(createCallback), descriptionCallback = WTFMove(descriptionCallback), outputCallback = WTFMove(outputCallback), postTaskCallback = WTFMove(postTaskCallback)](auto* internalEncoder) mutable {
+    WebProcess::singleton().libWebRTCCodecs().createEncoderAndWaitUntilInitialized(*type, codec, parameters, config, [createCallback = WTFMove(createCallback), descriptionCallback = WTFMove(descriptionCallback), outputCallback = WTFMove(outputCallback), postTaskCallback = WTFMove(postTaskCallback)](auto* internalEncoder) mutable {
         if (!internalEncoder) {
             postTaskCallback([createCallback = WTFMove(createCallback)]() mutable {
                 createCallback(makeUnexpected("Encoder creation failed"_s));
@@ -185,7 +185,7 @@ void RemoteVideoCodecFactory::createEncoder(const String& codec, const WebCore::
             return;
         }
         auto callbacks = RemoteVideoEncoderCallbacks::create(WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postTaskCallback));
-        UniqueRef<VideoEncoder> encoder = makeUniqueRef<RemoteVideoEncoder>(*internalEncoder, config, callbacks.copyRef());
+        UniqueRef<VideoEncoder> encoder = makeUniqueRef<RemoteVideoEncoder>(*internalEncoder, callbacks.copyRef());
         callbacks->postTask([createCallback = WTFMove(createCallback), encoder = WTFMove(encoder)]() mutable {
             createCallback(WTFMove(encoder));
         });
@@ -261,13 +261,10 @@ void RemoteVideoDecoderCallbacks::notifyDecodingResult(RefPtr<WebCore::VideoFram
     });
 }
 
-RemoteVideoEncoder::RemoteVideoEncoder(LibWebRTCCodecs::Encoder& encoder, const VideoEncoder::Config& config, Ref<RemoteVideoEncoderCallbacks>&& callbacks)
+RemoteVideoEncoder::RemoteVideoEncoder(LibWebRTCCodecs::Encoder& encoder, Ref<RemoteVideoEncoderCallbacks>&& callbacks)
     : m_internalEncoder(encoder)
     , m_callbacks(WTFMove(callbacks))
 {
-    WebProcess::singleton().libWebRTCCodecs().initializeEncoder(m_internalEncoder, config.width, config.height, 0, 0, 0, 0);
-    WebProcess::singleton().libWebRTCCodecs().setEncodeRates(m_internalEncoder, config.bitRate, config.frameRate);
-
     WebProcess::singleton().libWebRTCCodecs().registerEncodedVideoFrameCallback(m_internalEncoder, [callbacks = m_callbacks](auto&& encodedChunk, bool isKeyFrame, auto timestamp, auto duration) {
         callbacks->notifyEncodedChunk(Vector<uint8_t> { encodedChunk }, isKeyFrame, timestamp, duration);
     });

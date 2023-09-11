@@ -534,9 +534,16 @@ LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoder(VideoCodecType type, co
     return createEncoderInternal(type, { }, parameters, true, true, [](auto*) { });
 }
 
-void LibWebRTCCodecs::createEncoderAndWaitUntilReady(VideoCodecType type, const String& codec, const std::map<std::string, std::string>& parameters, bool isRealtime, bool useAnnexB, Function<void(Encoder*)>&& callback)
+void LibWebRTCCodecs::createEncoderAndWaitUntilInitialized(VideoCodecType type, const String& codec, const std::map<std::string, std::string>& parameters, const VideoEncoder::Config& config, Function<void(Encoder*)>&& callback)
 {
-    createEncoderInternal(type, codec, parameters, isRealtime, useAnnexB, WTFMove(callback));
+    createEncoderInternal(type, codec, parameters, config.isRealtime, config.useAnnexB, [config, callback = WTFMove(callback)] (auto* encoder) {
+        if (encoder) {
+            // Encoders use kbps bit rates.
+            WebProcess::singleton().libWebRTCCodecs().initializeEncoderInternal(*encoder, config.width, config.height, config.bitRate / 1000, 2 * config.bitRate / 1000, 0, config.frameRate);
+            WebProcess::singleton().libWebRTCCodecs().setEncodeRates(*encoder, config.bitRate / 1000, config.frameRate);
+        }
+        callback(encoder);
+    });
 }
 
 LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoderInternal(VideoCodecType type, const String& codec, const std::map<std::string, std::string>& formatParameters, bool isRealtime, bool useAnnexB, Function<void(Encoder*)>&& callback)
@@ -615,13 +622,19 @@ int32_t LibWebRTCCodecs::initializeEncoder(Encoder& encoder, uint16_t width, uin
     ensureGPUProcessConnectionAndDispatchToThread([this, encoderIdentifier = encoder.identifier, width, height, startBitRate, maxBitRate, minBitRate, maxFrameRate]() mutable {
         assertIsCurrent(workQueue());
 
-        auto* encoder = m_encoders.get(encoderIdentifier);
-        encoder->initializationData = EncoderInitializationData { width, height, startBitRate, maxBitRate, minBitRate, maxFrameRate };
-
-        Locker locker { m_encodersConnectionLock };
-        encoderConnection(*encoder)->send(Messages::LibWebRTCCodecsProxy::InitializeEncoder { encoderIdentifier, width, height, startBitRate, maxBitRate, minBitRate, maxFrameRate }, 0);
+        initializeEncoderInternal(*m_encoders.get(encoderIdentifier), width, height, startBitRate, maxBitRate, minBitRate, maxFrameRate);
     });
     return 0;
+}
+
+void LibWebRTCCodecs::initializeEncoderInternal(Encoder& encoder, uint16_t width, uint16_t height, unsigned startBitRate, unsigned maxBitRate, unsigned minBitRate, uint32_t maxFrameRate)
+{
+    assertIsCurrent(workQueue());
+
+    encoder.initializationData = EncoderInitializationData { width, height, startBitRate, maxBitRate, minBitRate, maxFrameRate };
+
+    Locker locker { m_encodersConnectionLock };
+    encoderConnection(encoder)->send(Messages::LibWebRTCCodecsProxy::InitializeEncoder { encoder.identifier, width, height, startBitRate, maxBitRate, minBitRate, maxFrameRate }, 0);
 }
 
 template<typename Frame> int32_t LibWebRTCCodecs::encodeFrameInternal(Encoder& encoder, const Frame& frame, bool shouldEncodeAsKeyFrame, WebCore::VideoFrame::Rotation rotation, MediaTime mediaTime, int64_t timestamp, std::optional<uint64_t> duration)
