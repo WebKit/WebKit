@@ -106,10 +106,8 @@ static std::optional<size_t> damagedLineIndex(std::optional<DamagedContent> dama
     };
 
     auto leadingIndexForDisplayBox = *lastDisplayBoxIndex;
-    if (damagedContent->layoutBox.isLineBreakBox() || damagedContent->layoutBox.isReplacedBox()) {
-        auto& displayBox = displayBoxes[leadingIndexForDisplayBox];
-        return displayBox.lineIndex() ? displayBox.lineIndex() - 1 : 0;
-    }
+    if (damagedContent->layoutBox.isLineBreakBox() || damagedContent->layoutBox.isReplacedBox())
+        return candidateLineIndex(leadingIndexForDisplayBox);
 
     if (is<InlineTextBox>(damagedContent->layoutBox)) {
         if (!damagedContent->offset)

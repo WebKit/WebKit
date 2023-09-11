@@ -464,10 +464,7 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
     case TypeOfChangeForInvalidation::NodeInsertion: {
         if (!renderer.nextSibling())
             return false;
-        if (rootHasNonSupportedRenderer())
-            return true;
-        // Allow text content insert as individual renderers (this is about editing inserting RenderText for each \n)
-        return !is<RenderText>(renderer);
+        return rootHasNonSupportedRenderer();
     }
     case TypeOfChangeForInvalidation::NodeMutation:
         return rootHasNonSupportedRenderer();
