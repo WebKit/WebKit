@@ -67,8 +67,6 @@ public:
     }
     virtual ~VideoFullscreenModelContext();
 
-    void invalidate() { m_manager = nullptr; }
-
     PlatformView *layerHostView() const { return m_layerHostView.get(); }
     void setLayerHostView(RetainPtr<PlatformView>&& layerHostView) { m_layerHostView = WTFMove(layerHostView); }
 
@@ -129,7 +127,7 @@ private:
     WTFLogChannel& logChannel() const;
 #endif
 
-    VideoFullscreenManagerProxy* m_manager;
+    WeakPtr<VideoFullscreenManagerProxy> m_manager;
     Ref<PlaybackSessionModelContext> m_playbackSessionModel;
     PlaybackSessionContextIdentifier m_contextId;
     RetainPtr<PlatformView> m_layerHostView;
@@ -148,8 +146,15 @@ private:
 #endif
 };
 
-class VideoFullscreenManagerProxy : public RefCounted<VideoFullscreenManagerProxy>, private IPC::MessageReceiver {
+class VideoFullscreenManagerProxy
+    : public RefCounted<VideoFullscreenManagerProxy>
+    , public CanMakeWeakPtr<VideoFullscreenManagerProxy>
+    , private IPC::MessageReceiver {
 public:
+    using CanMakeWeakPtr<VideoFullscreenManagerProxy>::WeakPtrImplType;
+    using CanMakeWeakPtr<VideoFullscreenManagerProxy>::WeakValueType;
+    using CanMakeWeakPtr<VideoFullscreenManagerProxy>::weakPtrFactory;
+
     static Ref<VideoFullscreenManagerProxy> create(WebPageProxy&, PlaybackSessionManagerProxy&);
     virtual ~VideoFullscreenManagerProxy();
 

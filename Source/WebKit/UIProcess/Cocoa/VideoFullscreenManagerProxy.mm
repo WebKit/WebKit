@@ -189,7 +189,7 @@ void VideoFullscreenManagerProxy::applicationDidBecomeActive()
 #pragma mark - VideoFullscreenModelContext
 
 VideoFullscreenModelContext::VideoFullscreenModelContext(VideoFullscreenManagerProxy& manager, PlaybackSessionModelContext& playbackSessionModel, PlaybackSessionContextIdentifier contextId)
-    : m_manager(&manager)
+    : m_manager(manager)
     , m_playbackSessionModel(playbackSessionModel)
     , m_contextId(contextId)
 {
