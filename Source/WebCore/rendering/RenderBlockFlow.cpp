@@ -2419,7 +2419,7 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
         auto shouldInvalidateLineLayoutPath = [&] {
             if (selfNeedsLayout() || legacyLineLayout())
                 return true;
-            if (modernLineLayout() && !LayoutIntegration::LineLayout::canUseForAfterStyleChange(*this, diff))
+            if (modernLineLayout() && !LayoutIntegration::LineLayout::canUseForAfterBlockStyleChange(*this, diff))
                 return true;
             return false;
         };

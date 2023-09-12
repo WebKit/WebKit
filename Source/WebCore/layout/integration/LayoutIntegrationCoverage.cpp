@@ -262,11 +262,16 @@ static void printModernLineLayoutCoverage(void)
 }
 #endif
 
-static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, IncludeReasons includeReasons)
+static OptionSet<AvoidanceReason> canUseForBlockStyle(const RenderBlockFlow& blockContainer, IncludeReasons includeReasons)
 {
-    auto& style = renderer.style();
+    ASSERT(is<RenderBlockFlow>(blockContainer));
+
     OptionSet<AvoidanceReason> reasons;
-    // These are non-standard properties.
+    auto& style = blockContainer.style();
+    if (blockContainer.fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow) {
+        if (!style.isHorizontalWritingMode() || style.blockFlowDirection() == BlockFlowDirection::BottomToTop)
+            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowHasUnsupportedWritingMode, reasons, includeReasons);
+    }
     if (style.lineAlign() != LineAlign::None)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineAlignEdges, reasons, includeReasons);
     if (style.lineSnap() != LineSnap::None)
@@ -291,12 +296,6 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
 
     if (is<RenderLineBreak>(child))
         return reasons;
-
-    auto& style = child.style();
-    if (style.styleType() == PseudoId::FirstLetter) {
-        if (auto styleReasons = canUseForStyle(downcast<RenderElement>(child), includeReasons))
-            ADD_REASONS_AND_RETURN_IF_NEEDED(styleReasons, reasons, includeReasons);
-    }
 
     auto& renderer = downcast<RenderElement>(child);
 #if !ALLOW_RUBY
@@ -329,9 +328,6 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
         if (renderer.isRubyInline())
             SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
 #endif
-        auto styleReasons = canUseForStyle(renderer, includeReasons);
-        if (styleReasons)
-            ADD_REASONS_AND_RETURN_IF_NEEDED(styleReasons, reasons, includeReasons);
         return reasons;
     }
 
@@ -359,11 +355,6 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         ASSERT(is<RenderSVGBlock>(flow));
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
     }
-    if (flow.fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow) {
-        auto& style = flow.style();
-        if (!style.isHorizontalWritingMode() || style.blockFlowDirection() == BlockFlowDirection::BottomToTop)
-            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowHasUnsupportedWritingMode, reasons, includeReasons);
-    }
 #if !ALLOW_RUBY || !ALLOW_RUBY_BASE_AND_TEXT
     if (flow.isRubyText() || flow.isRubyBase())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
@@ -373,7 +364,7 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         if (auto childReasons = canUseForChild(flow, child, includeReasons))
             ADD_REASONS_AND_RETURN_IF_NEEDED(childReasons, reasons, includeReasons);
     }
-    auto styleReasons = canUseForStyle(flow, includeReasons);
+    auto styleReasons = canUseForBlockStyle(flow, includeReasons);
     if (styleReasons)
         ADD_REASONS_AND_RETURN_IF_NEEDED(styleReasons, reasons, includeReasons);
 
@@ -385,28 +376,9 @@ bool canUseForLineLayout(const RenderBlockFlow& flow)
     return canUseForLineLayoutWithReason(flow, IncludeReasons::First).isEmpty();
 }
 
-bool canUseForLineLayoutAfterStyleChange(const RenderBlockFlow& blockContainer, StyleDifference diff)
+bool canUseForLineLayoutAfterBlockStyleChange(const RenderBlockFlow& blockContainer, StyleDifference diff)
 {
-    switch (diff) {
-    case StyleDifference::Equal:
-    case StyleDifference::RecompositeLayer:
-        return true;
-    case StyleDifference::Repaint:
-    case StyleDifference::RepaintIfText:
-    case StyleDifference::RepaintLayer:
-        // FIXME: We could do a more focused style check by matching RendererStyle::changeRequiresRepaint&co.
-        return canUseForStyle(blockContainer, IncludeReasons::First).isEmpty();
-    case StyleDifference::LayoutPositionedMovementOnly:
-        return true;
-    case StyleDifference::SimplifiedLayout:
-    case StyleDifference::SimplifiedLayoutAndPositionedMovement:
-        return canUseForStyle(blockContainer, IncludeReasons::First).isEmpty();
-    case StyleDifference::Layout:
-    case StyleDifference::NewStyle:
-        return canUseForLineLayout(blockContainer);
-    }
-    ASSERT_NOT_REACHED();
-    return canUseForLineLayout(blockContainer);
+    return diff == StyleDifference::Layout ? canUseForLineLayout(blockContainer) : true;
 }
 
 bool canUseForPreferredWidthComputation(const RenderBlockFlow& blockContainer)
@@ -483,11 +455,6 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
         ASSERT_NOT_REACHED();
         return true;
     }
-}
-
-bool canUseForLineLayoutAfterInlineBoxStyleChange(const RenderInline& renderer, StyleDifference)
-{
-    return canUseForStyle(renderer, IncludeReasons::First).isEmpty();
 }
 
 bool canUseForFlexLayout(const RenderFlexibleBox& flexBox)
