@@ -80,6 +80,9 @@ public:
     
     bool hitTestClipContent(const FloatRect&, const FloatPoint&);
 
+    bool canUsePathOnlyClip() const;
+    std::optional<std::pair<Path, WindRule>> pathOnlyClip(const FloatRect& objectBoundingBox, float effectiveZoom, const AffineTransform& animatedLocalTransform) const;
+
     inline SVGUnitTypes::SVGUnitType clipPathUnits() const;
 
 private:
@@ -91,9 +94,11 @@ private:
     bool isSVGResourceClipper() const override { return true; }
 
     ClipperData::Inputs computeInputs(const GraphicsContext&, const RenderElement&, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float effectiveZoom);
-    bool pathOnlyClipping(GraphicsContext&, const AffineTransform&, const FloatRect&, float effectiveZoom);
+    bool applyPathOnlyClipping(GraphicsContext&, const AffineTransform&, const FloatRect&, float effectiveZoom) const;
     bool drawContentIntoMaskImage(ImageBuffer&, const FloatRect& objectBoundingBox, float effectiveZoom);
     void calculateClipContentRepaintRect();
+
+    RefPtr<SVGGraphicsElement> pathOnlyClipSourceElement() const;
 
     FloatRect m_clipBoundaries;
     HashMap<const RenderObject*, std::unique_ptr<ClipperData>> m_clipperMap;
