@@ -44,7 +44,7 @@ using namespace WebCore;
 #pragma mark - PlaybackSessionModelContext
 
 PlaybackSessionModelContext::PlaybackSessionModelContext(PlaybackSessionManagerProxy& manager, PlaybackSessionContextIdentifier contextId)
-    : m_manager(&manager)
+    : m_manager(manager)
     , m_contextId(contextId)
 {
 }
@@ -377,7 +377,7 @@ Ref<PlaybackSessionManagerProxy> PlaybackSessionManagerProxy::create(WebPageProx
 }
 
 PlaybackSessionManagerProxy::PlaybackSessionManagerProxy(WebPageProxy& page)
-    : m_page(&page)
+    : m_page(page)
 #if !RELEASE_LOG_DISABLED
     , m_logger(page.logger())
     , m_logIdentifier(page.logIdentifier())

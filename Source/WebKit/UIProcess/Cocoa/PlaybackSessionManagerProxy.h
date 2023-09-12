@@ -52,8 +52,6 @@ public:
     }
     virtual ~PlaybackSessionModelContext() { }
 
-    void invalidate() { m_manager = nullptr; }
-
     // PlaybackSessionModel
     void addClient(WebCore::PlaybackSessionModelClient&) final;
     void removeClient(WebCore::PlaybackSessionModelClient&)final;
@@ -140,7 +138,7 @@ private:
     WTFLogChannel& logChannel() const;
 #endif
 
-    PlaybackSessionManagerProxy* m_manager;
+    WeakPtr<PlaybackSessionManagerProxy> m_manager;
     PlaybackSessionContextIdentifier m_contextId;
     HashSet<WebCore::PlaybackSessionModelClient*> m_clients;
     double m_playbackStartedTime { 0 };
@@ -174,8 +172,15 @@ private:
 #endif
 };
 
-class PlaybackSessionManagerProxy : public RefCounted<PlaybackSessionManagerProxy>, private IPC::MessageReceiver {
+class PlaybackSessionManagerProxy
+    : public RefCounted<PlaybackSessionManagerProxy>
+    , public CanMakeWeakPtr<PlaybackSessionManagerProxy>
+    , private IPC::MessageReceiver {
 public:
+    using CanMakeWeakPtr<PlaybackSessionManagerProxy>::WeakPtrImplType;
+    using CanMakeWeakPtr<PlaybackSessionManagerProxy>::WeakValueType;
+    using CanMakeWeakPtr<PlaybackSessionManagerProxy>::weakPtrFactory;
+
     static Ref<PlaybackSessionManagerProxy> create(WebPageProxy&);
     virtual ~PlaybackSessionManagerProxy();
 
@@ -258,7 +263,7 @@ private:
     WTFLogChannel& logChannel() const;
 #endif
 
-    WebPageProxy* m_page;
+    WeakPtr<WebPageProxy> m_page;
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
     PlaybackSessionContextIdentifier m_controlsManagerContextId;
     HashCountedSet<PlaybackSessionContextIdentifier> m_clientCounts;
