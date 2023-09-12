@@ -3328,15 +3328,16 @@
    },
    {
       "emails" : [
-         "hs85.jeong@samsung.com",
-         "hs85jeong@gmail.com"
+         "hs85jeong@gmail.com",
+         "hs85.jeong@samsung.com"
       ],
-      "expertise" : "The EFLWebKit port, Cairo graphics backend",
+      "expertise" : "Accessibility",
       "github" : "hs85jeong",
       "name" : "Hunseop Jeong",
       "nicks" : [
          "hunseop"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [
