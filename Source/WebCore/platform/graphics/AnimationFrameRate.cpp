@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-static constexpr OptionSet<ThrottlingReason> halfSpeedThrottlingReasons { ThrottlingReason::LowPowerMode, ThrottlingReason::NonInteractedCrossOriginFrame, ThrottlingReason::VisuallyIdle };
+static constexpr OptionSet<ThrottlingReason> halfSpeedThrottlingReasons { };
 
 FramesPerSecond framesPerSecondNearestFullSpeed(FramesPerSecond nominalFramesPerSecond)
 {
