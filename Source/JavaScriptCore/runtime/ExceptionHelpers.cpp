@@ -317,9 +317,9 @@ JSObject* createInvalidPrototypeError(JSGlobalObject* globalObject, JSValue valu
     return createError(globalObject, value, "is not an object or null"_s, invalidPrototypeSourceAppender);
 }
 
-JSObject* createErrorForInvalidGlobalAssignment(JSGlobalObject* globalObject, const String& propertyName)
+JSObject* createErrorForDuplicateGlobalVariableDeclaration(JSGlobalObject* globalObject, UniquedStringImpl* key)
 {
-    return createReferenceError(globalObject, makeString("Strict mode forbids implicit creation of global property '"_s, propertyName, '\''));
+    return createSyntaxError(globalObject, makeString("Can't create duplicate variable: '"_s, StringView(key), '\''));
 }
 
 JSObject* createErrorForInvalidGlobalFunctionDeclaration(JSGlobalObject* globalObject, const Identifier& ident)

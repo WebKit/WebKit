@@ -1,4 +1,4 @@
-function shouldThrow(func, errorMessage) {
+var shouldThrow = function(func, errorMessage) {
     var errorThrown = false;
     var error = null;
     try {
@@ -11,7 +11,7 @@ function shouldThrow(func, errorMessage) {
         throw new Error('not thrown');
     if (String(error) !== errorMessage)
         throw new Error(`bad error: ${String(error)}`);
-}
+};
 
 shouldThrow(() => {
     $.evalScript(`const shouldThrow = 42`);

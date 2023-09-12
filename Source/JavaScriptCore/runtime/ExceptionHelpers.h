@@ -52,7 +52,7 @@ JSObject* createInvalidInstanceofParameterErrorHasInstanceValueNotFunction(JSGlo
 JSObject* createNotAConstructorError(JSGlobalObject*, JSValue);
 JSObject* createNotAFunctionError(JSGlobalObject*, JSValue);
 JSObject* createInvalidPrototypeError(JSGlobalObject*, JSValue);
-JSObject* createErrorForInvalidGlobalAssignment(JSGlobalObject*, const String&);
+JSObject* createErrorForDuplicateGlobalVariableDeclaration(JSGlobalObject*, UniquedStringImpl*);
 JSObject* createErrorForInvalidGlobalFunctionDeclaration(JSGlobalObject*, const Identifier&);
 JSObject* createErrorForInvalidGlobalVarDeclaration(JSGlobalObject*, const Identifier&);
 JSObject* createInvalidPrivateNameError(JSGlobalObject*);

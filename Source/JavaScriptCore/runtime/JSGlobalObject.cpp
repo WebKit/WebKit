@@ -1886,6 +1886,14 @@ bool JSGlobalObject::defineOwnProperty(JSObject* object, JSGlobalObject* globalO
     RELEASE_AND_RETURN(scope, Base::defineOwnProperty(thisObject, globalObject, propertyName, descriptor, shouldThrow));
 }
 
+bool JSGlobalObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
+{
+    bool result = Base::deleteProperty(cell, globalObject, propertyName, slot);
+    if (result)
+        jsCast<JSGlobalObject*>(cell)->m_varNamesDeclaredViaEval.remove(propertyName.uid());
+    return result;
+}
+
 // https://tc39.es/ecma262/#sec-candeclareglobalfunction
 bool JSGlobalObject::canDeclareGlobalFunction(const Identifier& ident)
 {
@@ -1933,6 +1941,9 @@ void JSGlobalObject::createGlobalFunctionBinding(const Identifier& ident)
         else
             putDirect(vm, ident, jsUndefined());
     }
+
+    if constexpr (context == BindingCreationContext::Eval)
+        m_varNamesDeclaredViaEval.add(ident.impl());
 }
 
 template void JSGlobalObject::createGlobalFunctionBinding<BindingCreationContext::Global>(const Identifier&);
@@ -2593,6 +2604,8 @@ SUPPRESS_ASAN void JSGlobalObject::exposeDollarVM(VM& vm)
 
 void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)
 {
+    ASSERT(!m_lastStaticGlobalOffset || m_lastStaticGlobalOffset == symbolTable()->maxScopeOffset());
+
     ScopeOffset startOffset = addVariables(count, jsUndefined());
 
     for (int i = 0; i < count; ++i) {
@@ -2617,6 +2630,8 @@ void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)
         }
         symbolTablePutTouchWatchpointSet(vm(), this, global.identifier, global.value, variable, watchpointSet);
     }
+
+    m_lastStaticGlobalOffset = symbolTable()->maxScopeOffset();
 }
 
 bool JSGlobalObject::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
