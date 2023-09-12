@@ -109,8 +109,8 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::MultiColumnFlowHasUnsupportedWritingMode:
         stream << "column has unsupported writing mode";
         break;
-    case AvoidanceReason::MultiColumnFlowIsFloating:
-        stream << "column with floating objects";
+    case AvoidanceReason::MultiColumnFlowHasFloatingOrOutOfFlowChild:
+        stream << "column with floating/out-of-flow boxes";
         break;
     case AvoidanceReason::ChildBoxIsFloatingOrPositioned:
         stream << "child box is floating or positioned";
@@ -286,7 +286,7 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
 
     if (flow.fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow) {
         if (child.isFloating() || child.isOutOfFlowPositioned())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowHasFloatingOrOutOfFlowChild, reasons, includeReasons);
     }
 
     if (is<RenderLineBreak>(child))
@@ -363,8 +363,6 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         auto& style = flow.style();
         if (!style.isHorizontalWritingMode() || style.blockFlowDirection() == BlockFlowDirection::BottomToTop)
             SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowHasUnsupportedWritingMode, reasons, includeReasons);
-        if (style.isFloating())
-            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowIsFloating, reasons, includeReasons);
     }
 #if !ALLOW_RUBY || !ALLOW_RUBY_BASE_AND_TEXT
     if (flow.isRubyText() || flow.isRubyBase())
