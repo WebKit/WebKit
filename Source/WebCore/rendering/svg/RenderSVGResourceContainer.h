@@ -22,6 +22,7 @@
 #include "LegacyRenderSVGHiddenContainer.h"
 #include "RenderSVGResource.h"
 #include "SVGDocumentExtensions.h"
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -43,8 +44,8 @@ public:
 
     void idChanged();
     void markAllClientsForRepaint();
-    void addClientRenderLayer(RenderLayer*);
-    void removeClientRenderLayer(RenderLayer*);
+    void addClientRenderLayer(RenderLayer&);
+    void removeClientRenderLayer(RenderLayer&);
     void markAllClientLayersForInvalidation();
 
 protected:
@@ -72,8 +73,8 @@ private:
     void registerResource();
 
     AtomString m_id;
-    HashSet<RenderElement*> m_clients;
-    HashSet<RenderLayer*> m_clientLayers;
+    WeakHashSet<RenderElement> m_clients;
+    WeakHashSet<RenderLayer> m_clientLayers;
     bool m_registered { false };
     bool m_isInvalidating { false };
 };

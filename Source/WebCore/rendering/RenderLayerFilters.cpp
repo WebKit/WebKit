@@ -93,7 +93,7 @@ void RenderLayerFilters::updateReferenceFilterClients(const FilterOperations& op
             auto* renderer = filterElement->renderer();
             if (!is<RenderSVGResourceFilter>(renderer))
                 continue;
-            downcast<RenderSVGResourceFilter>(*renderer).addClientRenderLayer(&m_layer);
+            downcast<RenderSVGResourceFilter>(*renderer).addClientRenderLayer(m_layer);
             m_internalSVGReferences.append(filterElement);
         }
     }
@@ -108,7 +108,7 @@ void RenderLayerFilters::removeReferenceFilterClients()
 
     for (auto& filterElement : m_internalSVGReferences) {
         if (auto* renderer = filterElement->renderer())
-            downcast<RenderSVGResourceContainer>(*renderer).removeClientRenderLayer(&m_layer);
+            downcast<RenderSVGResourceContainer>(*renderer).removeClientRenderLayer(m_layer);
     }
     m_internalSVGReferences.clear();
 }

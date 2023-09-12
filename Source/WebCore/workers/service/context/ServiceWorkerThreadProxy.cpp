@@ -50,6 +50,7 @@
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
+#include <wtf/ThreadSafeWeakHashSet.h>
 
 namespace WebCore {
 
@@ -58,9 +59,9 @@ static inline IDBClient::IDBConnectionProxy* idbConnectionProxy(Document& docume
     return document.idbConnectionProxy();
 }
 
-static HashSet<ServiceWorkerThreadProxy*>& allServiceWorkerThreadProxies()
+static ThreadSafeWeakHashSet<ServiceWorkerThreadProxy>& allServiceWorkerThreadProxies()
 {
-    static NeverDestroyed<HashSet<ServiceWorkerThreadProxy*>> set;
+    static MainThreadNeverDestroyed<ThreadSafeWeakHashSet<ServiceWorkerThreadProxy>> set;
     return set;
 }
 
@@ -80,8 +81,8 @@ ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(UniqueRef<Page>&& page, Servi
         addedListener = true;
     }
 
-    ASSERT(!allServiceWorkerThreadProxies().contains(this));
-    allServiceWorkerThreadProxies().add(this);
+    ASSERT(!allServiceWorkerThreadProxies().contains(*this));
+    allServiceWorkerThreadProxies().add(*this);
 
 #if ENABLE(REMOTE_INSPECTOR)
     m_remoteDebuggable->setInspectable(m_page->inspectable());
@@ -91,8 +92,7 @@ ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(UniqueRef<Page>&& page, Servi
 
 ServiceWorkerThreadProxy::~ServiceWorkerThreadProxy()
 {
-    ASSERT(allServiceWorkerThreadProxies().contains(this));
-    allServiceWorkerThreadProxies().remove(this);
+    allServiceWorkerThreadProxies().remove(*this);
 
     auto functionalEventTasks = WTFMove(m_ongoingFunctionalEventTasks);
     for (auto& callback : functionalEventTasks.values())
@@ -172,8 +172,8 @@ std::unique_ptr<FetchLoader> ServiceWorkerThreadProxy::createBlobLoader(FetchLoa
 
 void ServiceWorkerThreadProxy::networkStateChanged(bool isOnLine)
 {
-    for (auto* proxy : allServiceWorkerThreadProxies())
-        proxy->notifyNetworkStateChange(isOnLine);
+    for (auto& proxy : allServiceWorkerThreadProxies())
+        proxy.notifyNetworkStateChange(isOnLine);
 }
 
 void ServiceWorkerThreadProxy::notifyNetworkStateChange(bool isOnline)

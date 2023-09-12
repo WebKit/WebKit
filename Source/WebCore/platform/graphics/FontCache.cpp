@@ -415,9 +415,8 @@ static void dispatchToAllFontCaches(F function)
 
     function(FontCache::forCurrentThread());
 
-    Locker locker { WorkerOrWorkletThread::workerOrWorkletThreadsLock() };
-    for (auto thread : WorkerOrWorkletThread::workerOrWorkletThreads()) {
-        thread->runLoop().postTask([function](ScriptExecutionContext&) {
+    for (auto& thread : WorkerOrWorkletThread::workerOrWorkletThreads()) {
+        thread.runLoop().postTask([function](ScriptExecutionContext&) {
             if (auto fontCache = FontCache::forCurrentThreadIfExists())
                 function(*fontCache);
         });

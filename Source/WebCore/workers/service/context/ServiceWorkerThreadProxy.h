@@ -54,7 +54,7 @@ class ServiceWorkerInspectorProxy;
 struct ServiceWorkerContextData;
 enum class WorkerThreadMode : bool;
 
-class ServiceWorkerThreadProxy final : public ThreadSafeRefCounted<ServiceWorkerThreadProxy>, public WorkerLoaderProxy, public WorkerDebuggerProxy, public WorkerBadgeProxy {
+class ServiceWorkerThreadProxy final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ServiceWorkerThreadProxy, WTF::DestructionThread::Main>, public WorkerLoaderProxy, public WorkerDebuggerProxy, public WorkerBadgeProxy {
 public:
     template<typename... Args> static Ref<ServiceWorkerThreadProxy> create(Args&&... args)
     {
