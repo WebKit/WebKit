@@ -688,6 +688,7 @@ void Options::notifyOptionsChanged()
     Options::useWebAssemblySIMD() = false;
     Options::useBBQJIT() = false;
 #endif
+    Options::useDataICInFTL() = false; // Currently, it is not completed. Disable forcefully.
 
     if (!Options::allowDoubleShape())
         Options::useJIT() = false; // We don't support JIT with !allowDoubleShape. So disable it.

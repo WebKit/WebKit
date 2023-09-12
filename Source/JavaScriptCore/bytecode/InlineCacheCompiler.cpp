@@ -29,6 +29,7 @@
 #if ENABLE(JIT)
 
 #include "AccessCaseSnippetParams.h"
+#include "BaselineJITCode.h"
 #include "BinarySwitch.h"
 #include "CCallHelpers.h"
 #include "CacheableIdentifierInlines.h"
@@ -1629,9 +1630,11 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
             this->restoreLiveRegistersFromStackForCall(spillState, dontRestore);
         };
 
-        jit.store32(
-            CCallHelpers::TrustedImm32(callSiteIndexForExceptionHandlingOrOriginal().bits()),
-            CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+        if (codeBlock->useDataIC()) {
+            callSiteIndexForExceptionHandlingOrOriginal();
+            jit.transfer32(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCallSiteIndex()), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+        } else
+            jit.store32(CCallHelpers::TrustedImm32(callSiteIndexForExceptionHandlingOrOriginal().bits()), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
 
         if (accessCase.m_type == AccessCase::Getter || accessCase.m_type == AccessCase::Setter) {
             auto& access = accessCase.as<GetterSetterAccessCase>();
@@ -1760,8 +1763,14 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
             }
             done.link(&jit);
 
-            int stackPointerOffset = (codeBlock->stackPointerOffset() * sizeof(Register)) - m_preservedReusedRegisterState.numberOfBytesPreserved - spillState.numberOfStackBytesUsedForRegisterPreservation;
-            jit.addPtr(CCallHelpers::TrustedImm32(stackPointerOffset), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+            if (codeBlock->useDataIC()) {
+                jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfStackOffset()), m_scratchGPR);
+                jit.addPtr(CCallHelpers::TrustedImm32(-(m_preservedReusedRegisterState.numberOfBytesPreserved + spillState.numberOfStackBytesUsedForRegisterPreservation)), m_scratchGPR);
+                jit.addPtr(m_scratchGPR, GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+            } else {
+                int stackPointerOffset = (codeBlock->stackPointerOffset() * sizeof(Register)) - m_preservedReusedRegisterState.numberOfBytesPreserved - spillState.numberOfStackBytesUsedForRegisterPreservation;
+                jit.addPtr(CCallHelpers::TrustedImm32(stackPointerOffset), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+            }
 
             bool callHasReturnValue = accessCase.isGetter();
             restoreLiveRegistersFromStackForCall(spillState, callHasReturnValue);
@@ -1980,10 +1989,11 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
                 extraRegistersToPreserve.add(valueRegs, IgnoreVectors);
                 InlineCacheCompiler::SpillState spillState = preserveLiveRegistersToStackForCall(extraRegistersToPreserve);
 
-                jit.store32(
-                    CCallHelpers::TrustedImm32(
-                        callSiteIndexForExceptionHandlingOrOriginal().bits()),
-                    CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+                if (codeBlock->useDataIC()) {
+                    callSiteIndexForExceptionHandlingOrOriginal();
+                    jit.transfer32(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCallSiteIndex()), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+                } else
+                    jit.store32(CCallHelpers::TrustedImm32(callSiteIndexForExceptionHandlingOrOriginal().bits()), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
 
                 jit.makeSpaceOnStackForCCall();
 
@@ -2226,6 +2236,12 @@ void InlineCacheCompiler::emitDOMJITGetter(GetterSetterAccessCase& accessCase, c
     GPRReg baseGPR = stubInfo.m_baseGPR;
     GPRReg scratchGPR = m_scratchGPR;
 
+    if (jit.codeBlock()->useDataIC()) {
+        callSiteIndexForExceptionHandlingOrOriginal();
+        jit.transfer32(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCallSiteIndex()), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+    } else
+        jit.store32(CCallHelpers::TrustedImm32(callSiteIndexForExceptionHandlingOrOriginal().bits()), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+
     // We construct the environment that can execute the DOMJIT::Snippet here.
     Ref<DOMJIT::CallDOMGetterSnippet> snippet = domJIT->compiler()();
 
@@ -2370,9 +2386,11 @@ void InlineCacheCompiler::emitProxyObjectAccess(ProxyObjectAccessCase& accessCas
 
     InlineCacheCompiler::SpillState spillState = preserveLiveRegistersToStackForCall();
 
-    jit.store32(
-        CCallHelpers::TrustedImm32(callSiteIndexForExceptionHandlingOrOriginal().bits()),
-        CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+    if (codeBlock->useDataIC()) {
+        callSiteIndexForExceptionHandlingOrOriginal();
+        jit.transfer32(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCallSiteIndex()), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+    } else
+        jit.store32(CCallHelpers::TrustedImm32(callSiteIndexForExceptionHandlingOrOriginal().bits()), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
 
     setSpillStateForJSCall(spillState);
 
@@ -2471,8 +2489,14 @@ void InlineCacheCompiler::emitProxyObjectAccess(ProxyObjectAccessCase& accessCas
 
     done.link(&jit);
 
-    int stackPointerOffset = (codeBlock->stackPointerOffset() * sizeof(Register)) - m_preservedReusedRegisterState.numberOfBytesPreserved - spillState.numberOfStackBytesUsedForRegisterPreservation;
-    jit.addPtr(CCallHelpers::TrustedImm32(stackPointerOffset), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+    if (codeBlock->useDataIC()) {
+        jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfStackOffset()), m_scratchGPR);
+        jit.addPtr(CCallHelpers::TrustedImm32(-(m_preservedReusedRegisterState.numberOfBytesPreserved + spillState.numberOfStackBytesUsedForRegisterPreservation)), m_scratchGPR);
+        jit.addPtr(m_scratchGPR, GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+    } else {
+        int stackPointerOffset = (codeBlock->stackPointerOffset() * sizeof(Register)) - m_preservedReusedRegisterState.numberOfBytesPreserved - spillState.numberOfStackBytesUsedForRegisterPreservation;
+        jit.addPtr(CCallHelpers::TrustedImm32(stackPointerOffset), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+    }
 
     RegisterSet dontRestore;
     if (accessCase.m_type != AccessCase::ProxyObjectStore) {
@@ -3018,7 +3042,11 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     m_jit = &jit;
 
     if (!canBeShared && ASSERT_ENABLED) {
-        jit.addPtr(CCallHelpers::TrustedImm32(codeBlock->stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, jit.scratchRegister());
+        if (codeBlock->useDataIC()) {
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfStackOffset()), jit.scratchRegister());
+            jit.addPtr(jit.scratchRegister(), GPRInfo::callFrameRegister, jit.scratchRegister());
+        } else
+            jit.addPtr(CCallHelpers::TrustedImm32(codeBlock->stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, jit.scratchRegister());
         auto ok = jit.branchPtr(CCallHelpers::Equal, CCallHelpers::stackPointerRegister, jit.scratchRegister());
         jit.breakpoint();
         ok.link(&jit);
@@ -3206,16 +3234,19 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
         MacroAssembler::Label makeshiftCatchHandler = jit.label();
         JIT_COMMENT(jit, "exception handler");
 
-        int stackPointerOffset = codeBlock->stackPointerOffset() * sizeof(EncodedJSValue);
-        InlineCacheCompiler::SpillState spillStateForJSCall = this->spillStateForJSCall();
-        ASSERT(!spillStateForJSCall.isEmpty());
-        stackPointerOffset -= m_preservedReusedRegisterState.numberOfBytesPreserved;
-        stackPointerOffset -= spillStateForJSCall.numberOfStackBytesUsedForRegisterPreservation;
-
+        InlineCacheCompiler::SpillState spillState = this->spillStateForJSCall();
+        ASSERT(!spillState.isEmpty());
         jit.loadPtr(vm().addressOfCallFrameForCatch(), GPRInfo::callFrameRegister);
-        jit.addPtr(CCallHelpers::TrustedImm32(stackPointerOffset), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+        if (codeBlock->useDataIC()) {
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfStackOffset()), m_scratchGPR);
+            jit.addPtr(CCallHelpers::TrustedImm32(-(m_preservedReusedRegisterState.numberOfBytesPreserved + spillState.numberOfStackBytesUsedForRegisterPreservation)), m_scratchGPR);
+            jit.addPtr(m_scratchGPR, GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+        } else {
+            int stackPointerOffset = (codeBlock->stackPointerOffset() * sizeof(Register)) - m_preservedReusedRegisterState.numberOfBytesPreserved - spillState.numberOfStackBytesUsedForRegisterPreservation;
+            jit.addPtr(CCallHelpers::TrustedImm32(stackPointerOffset), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+        }
 
-        restoreLiveRegistersFromStackForCallWithThrownException(spillStateForJSCall);
+        restoreLiveRegistersFromStackForCallWithThrownException(spillState);
         restoreScratch();
         CCallHelpers::Jump jumpToOSRExitExceptionHandler = jit.jump();
 

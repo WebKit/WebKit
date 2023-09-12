@@ -235,7 +235,7 @@ RegisterSet RegisterSetBuilder::llintBaselineCalleeSaveRegisters()
 #elif CPU(X86_64)
 #if !OS(WINDOWS)
     result.add(GPRInfo::regCS1, IgnoreVectors);
-    static_assert(GPRInfo::regCS2 == GPRInfo::constantsRegister);
+    static_assert(GPRInfo::regCS2 == GPRInfo::jitDataRegister);
     static_assert(GPRInfo::regCS3 == GPRInfo::numberTagRegister);
     static_assert(GPRInfo::regCS4 == GPRInfo::notCellMaskRegister);
     result.add(GPRInfo::regCS2, IgnoreVectors);
@@ -243,7 +243,7 @@ RegisterSet RegisterSetBuilder::llintBaselineCalleeSaveRegisters()
     result.add(GPRInfo::regCS4, IgnoreVectors);
 #else
     result.add(GPRInfo::regCS3, IgnoreVectors);
-    static_assert(GPRInfo::regCS4 == GPRInfo::constantsRegister);
+    static_assert(GPRInfo::regCS4 == GPRInfo::jitDataRegister);
     static_assert(GPRInfo::regCS5 == GPRInfo::numberTagRegister);
     static_assert(GPRInfo::regCS6 == GPRInfo::notCellMaskRegister);
     result.add(GPRInfo::regCS4, IgnoreVectors);
@@ -255,7 +255,7 @@ RegisterSet RegisterSetBuilder::llintBaselineCalleeSaveRegisters()
     result.add(GPRInfo::regCS1, IgnoreVectors);
 #elif CPU(ARM64) || CPU(RISCV64)
     result.add(GPRInfo::regCS6, IgnoreVectors);
-    static_assert(GPRInfo::regCS7 == GPRInfo::constantsRegister);
+    static_assert(GPRInfo::regCS7 == GPRInfo::jitDataRegister);
     static_assert(GPRInfo::regCS8 == GPRInfo::numberTagRegister);
     static_assert(GPRInfo::regCS9 == GPRInfo::notCellMaskRegister);
     result.add(GPRInfo::regCS7, IgnoreVectors);
@@ -275,7 +275,7 @@ RegisterSet RegisterSetBuilder::dfgCalleeSaveRegisters()
     result.add(GPRInfo::regCS0, IgnoreVectors);
     result.add(GPRInfo::regCS1, IgnoreVectors);
 #if !OS(WINDOWS)
-    static_assert(GPRInfo::regCS2 == GPRInfo::constantsRegister);
+    static_assert(GPRInfo::regCS2 == GPRInfo::jitDataRegister);
     static_assert(GPRInfo::regCS3 == GPRInfo::numberTagRegister);
     static_assert(GPRInfo::regCS4 == GPRInfo::notCellMaskRegister);
     result.add(GPRInfo::regCS2, IgnoreVectors);
@@ -284,7 +284,7 @@ RegisterSet RegisterSetBuilder::dfgCalleeSaveRegisters()
 #else
     result.add(GPRInfo::regCS2, IgnoreVectors);
     result.add(GPRInfo::regCS3, IgnoreVectors);
-    static_assert(GPRInfo::regCS4 == GPRInfo::constantsRegister);
+    static_assert(GPRInfo::regCS4 == GPRInfo::jitDataRegister);
     static_assert(GPRInfo::regCS5 == GPRInfo::numberTagRegister);
     static_assert(GPRInfo::regCS6 == GPRInfo::notCellMaskRegister);
     result.add(GPRInfo::regCS4, IgnoreVectors);
@@ -295,7 +295,7 @@ RegisterSet RegisterSetBuilder::dfgCalleeSaveRegisters()
     result.add(GPRInfo::regCS0, IgnoreVectors);
     result.add(GPRInfo::regCS1, IgnoreVectors);
 #elif CPU(ARM64) || CPU(RISCV64)
-    static_assert(GPRInfo::regCS7 == GPRInfo::constantsRegister);
+    static_assert(GPRInfo::regCS7 == GPRInfo::jitDataRegister);
     static_assert(GPRInfo::regCS8 == GPRInfo::numberTagRegister);
     static_assert(GPRInfo::regCS9 == GPRInfo::notCellMaskRegister);
     result.add(GPRInfo::regCS7, IgnoreVectors);
@@ -314,7 +314,7 @@ RegisterSet RegisterSetBuilder::ftlCalleeSaveRegisters()
 #if CPU(X86_64) && !OS(WINDOWS)
     result.add(GPRInfo::regCS0, IgnoreVectors);
     result.add(GPRInfo::regCS1, IgnoreVectors);
-    static_assert(GPRInfo::regCS2 == GPRInfo::constantsRegister);
+    static_assert(GPRInfo::regCS2 == GPRInfo::jitDataRegister);
     static_assert(GPRInfo::regCS3 == GPRInfo::numberTagRegister);
     static_assert(GPRInfo::regCS4 == GPRInfo::notCellMaskRegister);
     result.add(GPRInfo::regCS2, IgnoreVectors);
@@ -329,7 +329,7 @@ RegisterSet RegisterSetBuilder::ftlCalleeSaveRegisters()
     result.add(GPRInfo::regCS4, IgnoreVectors);
     result.add(GPRInfo::regCS5, IgnoreVectors);
     result.add(GPRInfo::regCS6, IgnoreVectors);
-    static_assert(GPRInfo::regCS7 == GPRInfo::constantsRegister);
+    static_assert(GPRInfo::regCS7 == GPRInfo::jitDataRegister);
     static_assert(GPRInfo::regCS8 == GPRInfo::numberTagRegister);
     static_assert(GPRInfo::regCS9 == GPRInfo::notCellMaskRegister);
     result.add(GPRInfo::regCS7, IgnoreVectors);
@@ -351,7 +351,7 @@ RegisterSet RegisterSetBuilder::ftlCalleeSaveRegisters()
     result.add(GPRInfo::regCS4, IgnoreVectors);
     result.add(GPRInfo::regCS5, IgnoreVectors);
     result.add(GPRInfo::regCS6, IgnoreVectors);
-    static_assert(GPRInfo::regCS7 == GPRInfo::constantsRegister);
+    static_assert(GPRInfo::regCS7 == GPRInfo::jitDataRegister);
     static_assert(GPRInfo::regCS8 == GPRInfo::numberTagRegister);
     static_assert(GPRInfo::regCS9 == GPRInfo::notCellMaskRegister);
     result.add(GPRInfo::regCS7, IgnoreVectors);

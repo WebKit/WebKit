@@ -1740,6 +1740,17 @@ public:
         storePair32(src1, src2, addrTempRegister);
     }
 
+    void transfer32(Address src, Address dest)
+    {
+        load32(src, dataTempRegister);
+        store32(dataTempRegister, dest);
+    }
+
+    void transferPtr(Address src, Address dest)
+    {
+        transfer32(src, dest);
+    }
+
     // Floating-point operations:
 
     static bool supportsFloatingPoint()

@@ -547,7 +547,7 @@ void SpeculativeJIT::compileInvalidationPoint(Node* node)
 
 #if USE(JSVALUE64)
     if (m_graph.m_plan.isUnlinked()) {
-        auto exitJump = branchTest8(NonZero, Address(GPRInfo::constantsRegister, JITData::offsetOfIsInvalidated()));
+        auto exitJump = branchTest8(NonZero, Address(GPRInfo::jitDataRegister, JITData::offsetOfIsInvalidated()));
         speculationCheck(UncountableInvalidation, JSValueRegs(), nullptr, exitJump);
         noResult(node);
         return;
@@ -2482,8 +2482,8 @@ void SpeculativeJIT::compileCurrentBlock()
         emitMaterializeTagCheckRegisters();
 #if USE(JSVALUE64)
         if (m_graph.m_plan.isUnlinked()) {
-            emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, GPRInfo::constantsRegister);
-            loadPtr(Address(GPRInfo::constantsRegister, CodeBlock::offsetOfJITData()), GPRInfo::constantsRegister);
+            emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, GPRInfo::jitDataRegister);
+            loadPtr(Address(GPRInfo::jitDataRegister, CodeBlock::offsetOfJITData()), GPRInfo::jitDataRegister);
         }
 #endif
     }

@@ -420,7 +420,7 @@ public:
     static constexpr GPRReg callFrameRegister = X86Registers::ebp;
     static constexpr GPRReg numberTagRegister = X86Registers::r14;
     static constexpr GPRReg notCellMaskRegister = X86Registers::r15;
-    static constexpr GPRReg constantsRegister = X86Registers::r13;
+    static constexpr GPRReg jitDataRegister = X86Registers::r13;
     static constexpr GPRReg metadataTableRegister = X86Registers::r12;
 
     // Temporary registers.
@@ -445,14 +445,14 @@ public:
 
 #if !OS(WINDOWS)
     static constexpr GPRReg regCS1 = X86Registers::r12; // metadataTable in LLInt/Baseline
-    static constexpr GPRReg regCS2 = X86Registers::r13; // constantsRegister
+    static constexpr GPRReg regCS2 = X86Registers::r13; // jitDataRegister
     static constexpr GPRReg regCS3 = X86Registers::r14; // numberTagRegister
     static constexpr GPRReg regCS4 = X86Registers::r15; // notCellMaskRegister
 #else
     static constexpr GPRReg regCS1 = X86Registers::esi;
     static constexpr GPRReg regCS2 = X86Registers::edi;
     static constexpr GPRReg regCS3 = X86Registers::r12; // metadataTable in LLInt/Baseline
-    static constexpr GPRReg regCS4 = X86Registers::r13; // constantsRegister
+    static constexpr GPRReg regCS4 = X86Registers::r13; // jitDataRegister
     static constexpr GPRReg regCS5 = X86Registers::r14; // numberTagRegister
     static constexpr GPRReg regCS6 = X86Registers::r15; // notCellMaskRegister
 #endif
@@ -570,11 +570,11 @@ public:
     static constexpr GPRReg regT6 = ARMRegisters::r8;
     static constexpr GPRReg regT7 = ARMRegisters::r9;
     static constexpr GPRReg regCS0 = ARMRegisters::r10; // metadataTable in LLInt/Baseline
-    static constexpr GPRReg regCS1 = ARMRegisters::r11; // constantsRegister
+    static constexpr GPRReg regCS1 = ARMRegisters::r11; // jitDataRegister
 
     // These registers match the baseline JIT.
     static constexpr GPRReg callFrameRegister = ARMRegisters::fp;
-    static constexpr GPRReg constantsRegister = regCS1;
+    static constexpr GPRReg jitDataRegister = regCS1;
     static constexpr GPRReg metadataTableRegister = regCS0;
 
     // These constants provide the names for the general purpose argument & return value registers.
@@ -645,7 +645,7 @@ public:
     static constexpr GPRReg callFrameRegister = ARM64Registers::fp;
     static constexpr GPRReg numberTagRegister = ARM64Registers::x27;
     static constexpr GPRReg notCellMaskRegister = ARM64Registers::x28;
-    static constexpr GPRReg constantsRegister = ARM64Registers::x26;
+    static constexpr GPRReg jitDataRegister = ARM64Registers::x26;
     static constexpr GPRReg metadataTableRegister = ARM64Registers::x25;
     static constexpr GPRReg dataTempRegister = MacroAssembler::dataTempRegister;
     static constexpr GPRReg memoryTempRegister = MacroAssembler::memoryTempRegister;
@@ -785,11 +785,11 @@ public:
     static constexpr GPRReg regT10 = MIPSRegisters::a3;
 
     static constexpr GPRReg regCS0 = MIPSRegisters::s0; // metadataTable in LLInt/Baseline
-    static constexpr GPRReg regCS1 = MIPSRegisters::s1; // constantsRegister
+    static constexpr GPRReg regCS1 = MIPSRegisters::s1; // jitDataRegister
 
     // These registers match the baseline JIT.
     static constexpr GPRReg callFrameRegister = MIPSRegisters::fp;
-    static constexpr GPRReg constantsRegister = regCS1;
+    static constexpr GPRReg jitDataRegister = regCS1;
     static constexpr GPRReg metadataTableRegister = regCS0;
 
     // These constants provide the names for the general purpose argument & return value registers.
@@ -854,7 +854,7 @@ public:
     static constexpr GPRReg callFrameRegister = RISCV64Registers::fp;
     static constexpr GPRReg numberTagRegister = RISCV64Registers::x25;
     static constexpr GPRReg notCellMaskRegister = RISCV64Registers::x26;
-    static constexpr GPRReg constantsRegister = RISCV64Registers::x24;
+    static constexpr GPRReg jitDataRegister = RISCV64Registers::x24;
     static constexpr GPRReg metadataTableRegister = RISCV64Registers::x23;
 
     static constexpr GPRReg regT0 = RISCV64Registers::x10;

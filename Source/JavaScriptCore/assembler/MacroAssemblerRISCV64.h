@@ -1230,6 +1230,13 @@ public:
         m_assembler.sdInsn(temp.memory(), immRegister, Imm::S<0>());
     }
 
+    void transfer32(Address src, Address dest)
+    {
+        auto temp = temps<Data>();
+        load32(src, temp.data());
+        store32(temp.data(), dest);
+    }
+
     void transfer64(Address src, Address dest)
     {
         auto temp = temps<Data>();

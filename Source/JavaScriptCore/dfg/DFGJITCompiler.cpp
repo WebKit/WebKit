@@ -116,27 +116,27 @@ void JITCompiler::linkOSRExits()
 
 #if USE(JSVALUE64)
     if (m_graph.m_plan.isUnlinked()) {
-        // When jumping to OSR exit handler via exception, we do not have proper callFrameRegister and constantsRegister.
+        // When jumping to OSR exit handler via exception, we do not have proper callFrameRegister and jitDataRegister.
         // We should reload appropriate callFrameRegister from VM::callFrameForCatch to materialize constants buffer register.
         // FIXME: The following code can be a DFG Thunk.
         if (!dispatchCasesWithoutLinkedFailures.empty()) {
             dispatchCasesWithoutLinkedFailures.link(this);
             loadPtr(vm().addressOfCallFrameForCatch(), GPRInfo::notCellMaskRegister);
             MacroAssembler::Jump didNotHaveException = branchTestPtr(MacroAssembler::Zero, GPRInfo::notCellMaskRegister);
-            move(GPRInfo::notCellMaskRegister, GPRInfo::constantsRegister);
-            emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, GPRInfo::constantsRegister, GPRInfo::constantsRegister);
-            loadPtr(Address(GPRInfo::constantsRegister, CodeBlock::offsetOfJITData()), GPRInfo::constantsRegister);
+            move(GPRInfo::notCellMaskRegister, GPRInfo::jitDataRegister);
+            emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, GPRInfo::jitDataRegister, GPRInfo::jitDataRegister);
+            loadPtr(Address(GPRInfo::jitDataRegister, CodeBlock::offsetOfJITData()), GPRInfo::jitDataRegister);
             didNotHaveException.link(this);
         }
         dispatchCases.link(this);
         store32(GPRInfo::numberTagRegister, &vm().osrExitIndex);
-        loadPtr(Address(GPRInfo::constantsRegister, JITData::offsetOfExits()), GPRInfo::constantsRegister);
+        loadPtr(Address(GPRInfo::jitDataRegister, JITData::offsetOfExits()), GPRInfo::jitDataRegister);
         static_assert(sizeof(JITData::ExitVector::value_type) == 16);
         ASSERT(!JITData::ExitVector::value_type::offsetOfCodePtr());
         lshiftPtr(TrustedImm32(4), GPRInfo::numberTagRegister);
-        addPtr(GPRInfo::numberTagRegister, GPRInfo::constantsRegister);
+        addPtr(GPRInfo::numberTagRegister, GPRInfo::jitDataRegister);
         emitMaterializeTagCheckRegisters();
-        farJump(Address(GPRInfo::constantsRegister, JITData::ExitVector::Storage::offsetOfData()), OSRExitPtrTag);
+        farJump(Address(GPRInfo::jitDataRegister, JITData::ExitVector::Storage::offsetOfData()), OSRExitPtrTag);
     }
 #endif
 }
@@ -161,8 +161,8 @@ void JITCompiler::compileSetupRegistersForEntry()
     emitMaterializeTagCheckRegisters();    
 #if USE(JSVALUE64)
     if (m_graph.m_plan.isUnlinked()) {
-        emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, GPRInfo::constantsRegister);
-        loadPtr(Address(GPRInfo::constantsRegister, CodeBlock::offsetOfJITData()), GPRInfo::constantsRegister);
+        emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, GPRInfo::jitDataRegister);
+        loadPtr(Address(GPRInfo::jitDataRegister, CodeBlock::offsetOfJITData()), GPRInfo::jitDataRegister);
     }
 #endif
 }
@@ -499,7 +499,7 @@ void JITCompiler::makeCatchOSREntryBuffer()
 void JITCompiler::loadConstant(LinkerIR::Constant index, GPRReg dest)
 {
 #if USE(JSVALUE64)
-    loadPtr(Address(GPRInfo::constantsRegister, JITData::offsetOfData() + sizeof(void*) * index), dest);
+    loadPtr(Address(GPRInfo::jitDataRegister, JITData::offsetOfData() + sizeof(void*) * index), dest);
 #else
     UNUSED_PARAM(index);
     UNUSED_PARAM(dest);

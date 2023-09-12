@@ -392,7 +392,7 @@ ALWAYS_INLINE void* getWide32CodePtr(OpcodeID id)
 #if ENABLE(JIT)
 struct Registers {
     static constexpr GPRReg pcGPR = GPRInfo::regT4;
-    static constexpr GPRReg pbGPR = GPRInfo::constantsRegister;
+    static constexpr GPRReg pbGPR = GPRInfo::jitDataRegister;
     static constexpr GPRReg metadataTableGPR = GPRInfo::metadataTableRegister;
 };
 #endif
