@@ -125,7 +125,6 @@ enum class AXPropertyName : uint16_t {
     IsExposable,
     IsExposedTableCell,
     IsFieldset,
-    IsFocused,
     IsIndeterminate,
     IsInlineText,
     IsInputImage,
@@ -269,6 +268,7 @@ public:
     constexpr AXGeometryManager* geometryManager() const { return m_geometryManager.get(); }
 
     RefPtr<AXIsolatedObject> rootNode();
+    AXID focusedNodeID();
     WEBCORE_EXPORT RefPtr<AXIsolatedObject> focusedNode();
 
     RefPtr<AXIsolatedObject> objectForID(const AXID) const;
