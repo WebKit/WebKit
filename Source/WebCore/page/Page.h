@@ -1087,7 +1087,7 @@ private:
     void playbackControlsManagerUpdateTimerFired();
 #endif
 
-    void handleLowModePowerChange(bool);
+    void handleLowPowerModeChange(bool);
     void handleThermalMitigationChange(bool);
 
     enum class TimerThrottlingState { Disabled, Enabled, EnabledIncreasing };

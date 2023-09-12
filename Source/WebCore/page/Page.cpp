@@ -342,7 +342,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #endif
     , m_isUtilityPage(isUtilityPageChromeClient(chrome().client()))
     , m_performanceMonitor(isUtilityPage() ? nullptr : makeUnique<PerformanceMonitor>(*this))
-    , m_lowPowerModeNotifier(makeUnique<LowPowerModeNotifier>([this](bool isLowPowerModeEnabled) { handleLowModePowerChange(isLowPowerModeEnabled); }))
+    , m_lowPowerModeNotifier(makeUnique<LowPowerModeNotifier>([this](bool isLowPowerModeEnabled) { handleLowPowerModeChange(isLowPowerModeEnabled); }))
     , m_thermalMitigationNotifier(makeUnique<ThermalMitigationNotifier>([this](bool thermalMitigationEnabled) { handleThermalMitigationChange(thermalMitigationEnabled); }))
     , m_performanceLogging(makeUnique<PerformanceLogging>(*this))
 #if PLATFORM(MAC) && (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION))
@@ -1516,17 +1516,17 @@ bool Page::isOnlyNonUtilityPage() const
 
 void Page::setLowPowerModeEnabledOverrideForTesting(std::optional<bool> isEnabled)
 {
-    // Remove ThrottlingReason::LowPowerMode so handleLowModePowerChange() can do its work.
+    // Remove ThrottlingReason::LowPowerMode so handleLowPowerModeChange() can do its work.
     m_throttlingReasonsOverridenForTesting.remove(ThrottlingReason::LowPowerMode);
 
     // Use the current low power mode value of the device.
     if (!isEnabled) {
-        handleLowModePowerChange(m_lowPowerModeNotifier->isLowPowerModeEnabled());
+        handleLowPowerModeChange(m_lowPowerModeNotifier->isLowPowerModeEnabled());
         return;
     }
 
     // Override the value and add ThrottlingReason::LowPowerMode so it override the device state.
-    handleLowModePowerChange(isEnabled.value());
+    handleLowPowerModeChange(isEnabled.value());
     m_throttlingReasonsOverridenForTesting.add(ThrottlingReason::LowPowerMode);
 }
 
@@ -2259,7 +2259,7 @@ void Page::setIsVisuallyIdleInternal(bool isVisuallyIdle)
     chrome().client().renderingUpdateFramesPerSecondChanged();
 }
 
-void Page::handleLowModePowerChange(bool isLowPowerModeEnabled)
+void Page::handleLowPowerModeChange(bool isLowPowerModeEnabled)
 {
     if (!canUpdateThrottlingReason(ThrottlingReason::LowPowerMode))
         return;
