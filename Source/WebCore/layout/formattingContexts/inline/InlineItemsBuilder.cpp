@@ -128,15 +128,15 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
 #endif
 }
 
-static bool isNonBidiTextOrForcedLineBreak(const Box& layoutBox)
+static bool requiresVisualReordering(const Box& layoutBox)
 {
-    auto& style = layoutBox.isInlineBox() ? layoutBox.style() : layoutBox.parent().style();
-    auto contentRequiresVisualReordering = !style.isLeftToRightDirection() || (style.rtlOrdering() == Order::Logical && style.unicodeBidi() != UnicodeBidi::Normal);
-    if (contentRequiresVisualReordering)
-        return false;
     if (is<InlineTextBox>(layoutBox))
         return TextUtil::containsStrongDirectionalityText(downcast<InlineTextBox>(layoutBox).content());
-    return layoutBox.isLineBreakBox();
+    if (layoutBox.isInlineBox() && layoutBox.isInFlow()) {
+        auto& style = layoutBox.style();
+        return !style.isLeftToRightDirection() || (style.rtlOrdering() == Order::Logical && style.unicodeBidi() != UnicodeBidi::Normal);
+    }
+    return false;
 }
 
 bool InlineItemsBuilder::traverseUntilDamaged(LayoutQueue& layoutQueue, const Box& subtreeRoot, const Box& firstDamagedLayoutBox)
@@ -144,7 +144,8 @@ bool InlineItemsBuilder::traverseUntilDamaged(LayoutQueue& layoutQueue, const Bo
     if (&subtreeRoot == &firstDamagedLayoutBox)
         return true;
 
-    m_isNonBidiTextAndForcedLineBreakOnlyContent = m_isNonBidiTextAndForcedLineBreakOnlyContent && isNonBidiTextOrForcedLineBreak(subtreeRoot);
+    m_contentRequiresVisualReordering = m_contentRequiresVisualReordering || requiresVisualReordering(subtreeRoot);
+    m_isNonBidiTextAndForcedLineBreakOnlyContent = m_isNonBidiTextAndForcedLineBreakOnlyContent && !m_contentRequiresVisualReordering && (subtreeRoot.isInlineTextBox() || subtreeRoot.isLineBreakBox());
 
     auto shouldSkipSubtree = subtreeRoot.establishesFormattingContext();
     if (!shouldSkipSubtree && is<ElementBox>(subtreeRoot) && downcast<ElementBox>(subtreeRoot).hasChild()) {
@@ -191,7 +192,6 @@ InlineItemsBuilder::LayoutQueue InlineItemsBuilder::initializeLayoutQueue(Inline
 
     auto& firstDamagedLayoutBox = existingInlineItems[startPosition.index].layoutBox();
     auto& firstChild = *root.firstChild();
-    m_isNonBidiTextAndForcedLineBreakOnlyContent = m_isNonBidiTextAndForcedLineBreakOnlyContent && isNonBidiTextOrForcedLineBreak(firstChild);
     LayoutQueue layoutQueue;
     layoutQueue.append(firstChild);
     traverseUntilDamaged(layoutQueue, firstChild, firstDamagedLayoutBox);
@@ -267,6 +267,7 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, InlineItem
         }
     }
     m_formattingState.setIsNonBidiTextAndForcedLineBreakOnlyContent(m_isNonBidiTextAndForcedLineBreakOnlyContent);
+    m_formattingState.setContentRequiresVisualReordering(m_contentRequiresVisualReordering);
 }
 
 static void replaceNonPreservedNewLineAndTabCharactersAndAppend(const InlineTextBox& inlineTextBox, StringBuilder& paragraphContentBuilder)
@@ -651,7 +652,7 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
     if (inlineTextBox.isCombined())
         return inlineItems.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, { }, contentLength, UBIDI_DEFAULT_LTR, false, { }));
 
-    m_contentRequiresVisualReordering = m_contentRequiresVisualReordering || TextUtil::containsStrongDirectionalityText(text);
+    m_contentRequiresVisualReordering = m_contentRequiresVisualReordering || requiresVisualReordering(inlineTextBox);
     m_isNonBidiTextAndForcedLineBreakOnlyContent = m_isNonBidiTextAndForcedLineBreakOnlyContent && !m_contentRequiresVisualReordering;
     auto& style = inlineTextBox.style();
     auto shouldPreserveSpacesAndTabs = TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox);
@@ -744,8 +745,7 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
 void InlineItemsBuilder::handleInlineBoxStart(const Box& inlineBox, InlineItems& inlineItems)
 {
     inlineItems.append({ inlineBox, InlineItem::Type::InlineBoxStart });
-    auto& style = inlineBox.style();
-    m_contentRequiresVisualReordering = m_contentRequiresVisualReordering || !style.isLeftToRightDirection() || (style.rtlOrdering() == Order::Logical && style.unicodeBidi() != UnicodeBidi::Normal);
+    m_contentRequiresVisualReordering = m_contentRequiresVisualReordering || requiresVisualReordering(inlineBox);
     m_isNonBidiTextAndForcedLineBreakOnlyContent = false;
 }
 

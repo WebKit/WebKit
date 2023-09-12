@@ -412,6 +412,7 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
     };
     if (!isSupportedRendererWithChange(renderer))
         return true;
+
     auto isSupportedParent = [&] {
         auto* parent = renderer.parent();
         // Content append under existing inline box is not yet supported.
@@ -419,12 +420,23 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
     };
     if (!isSupportedParent())
         return true;
-
     if (lineLayout.hasOutOfFlowContent())
         return true;
     if (rootBlockContainer.containsFloats())
         return true;
-    if (lineLayout.contentNeedsVisualReordering() || (is<RenderText>(renderer) && Layout::TextUtil::containsStrongDirectionalityText(downcast<RenderText>(renderer).text()))) {
+
+    auto isBidiContent = [&] {
+        if (lineLayout.contentNeedsVisualReordering())
+            return true;
+        if (is<RenderText>(renderer))
+            return Layout::TextUtil::containsStrongDirectionalityText(downcast<RenderText>(renderer).text());
+        if (is<RenderInline>(renderer)) {
+            auto& style = renderer.style();
+            return !style.isLeftToRightDirection() || (style.rtlOrdering() == Order::Logical && style.unicodeBidi() != UnicodeBidi::Normal);
+        }
+        return false;
+    };
+    if (isBidiContent()) {
         // FIXME: InlineItemsBuilder needs some work to support paragraph level bidi handling.
         return true;
     }

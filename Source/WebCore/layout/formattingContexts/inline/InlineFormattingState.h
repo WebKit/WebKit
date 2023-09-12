@@ -48,6 +48,9 @@ public:
     void setInlineItems(InlineItems&& inlineItems) { m_inlineItems = WTFMove(inlineItems); }
     void appendInlineItems(InlineItems&& inlineItems) { m_inlineItems.appendVector(WTFMove(inlineItems)); }
 
+    void setContentRequiresVisualReordering(bool contentRequiresVisualReordering) { m_contentRequiresVisualReordering = contentRequiresVisualReordering; }
+    bool contentRequiresVisualReordering() const { return m_contentRequiresVisualReordering; }
+
     void setIsNonBidiTextAndForcedLineBreakOnlyContent(bool isNonBidiTextAndForcedLineBreakOnlyContent) { m_isNonBidiTextAndForcedLineBreakOnlyContent = isNonBidiTextAndForcedLineBreakOnlyContent; }
     bool isNonBidiTextAndForcedLineBreakOnlyContent() const { return m_isNonBidiTextAndForcedLineBreakOnlyContent; }
 
@@ -61,6 +64,7 @@ public:
 private:
     InlineItems m_inlineItems;
     std::optional<IntrinsicWidthHandler::LineBreakingResult> m_maximumIntrinsicWidthLayoutResult { };
+    bool m_contentRequiresVisualReordering { false };
     bool m_isNonBidiTextAndForcedLineBreakOnlyContent { false };
 };
 
