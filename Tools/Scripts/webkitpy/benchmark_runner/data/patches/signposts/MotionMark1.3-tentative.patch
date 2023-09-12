@@ -1,0 +1,47 @@
+diff --git a/resources/runner/benchmark-runner.js b/resources/runner/benchmark-runner.js
+index 1aa630356cff167ec370961d7256920a21d6c508..ef393bcdebc03d2aad9c52c3caef5ad0a6e35dc1 100644
+--- a/resources/runner/benchmark-runner.js
++++ b/resources/runner/benchmark-runner.js
+@@ -92,10 +92,13 @@ BenchmarkRunner = Utilities.createClass(
+         var options = { complexity: test.complexity };
+         Utilities.extendObject(options, this._client.options);
+         Utilities.extendObject(options, contentWindow.Utilities.parseParameters());
++        Utilities.extendObject(options, { "suite": suite, "test": test });
+ 
+         var benchmark = new contentWindow.benchmarkClass(options);
+         document.body.style.backgroundColor = benchmark.backgroundColor();
++        __signpostStart(`${suite.name}.${test.name}`);
+         benchmark.run().then(function(testData) {
++            __signpostStop(`${suite.name}.${test.name}`);
+             var suiteResults = self._suitesResults[suite.name] || {};
+             suiteResults[test.name] = testData;
+             self._suitesResults[suite.name] = suiteResults;
+diff --git a/tests/resources/main.js b/tests/resources/main.js
+index c6c669e0eb1f5e1fa2dc6ac60ca0a7532d5d690f..81b121ef765d546fce7c02ac91d2c053a9de7ad3 100644
+--- a/tests/resources/main.js
++++ b/tests/resources/main.js
+@@ -851,6 +851,8 @@ Benchmark = Utilities.createClass(
+         this._frameCount = 0;
+         this._warmupFrameCount = options["warmup-frame-count"];
+         this._firstFrameMinimumLength = options["first-frame-minimum-length"];
++        this._suite = options["suite"]
++        this._test = options["test"]
+ 
+         this._stage = stage;
+         this._stage.initialize(this, options);
+@@ -908,6 +910,7 @@ Benchmark = Utilities.createClass(
+             this._finishPromise = new SimplePromise;
+             this._previousTimestamp = undefined;
+             this._didWarmUp = false;
++            __signpostStart(`${this._suite.name}.${this._test.name}: warmup`);
+             this._stage.tune(this._controller.initialComplexity - this._stage.complexity());
+             this._animateLoop();
+             return this._finishPromise;
+@@ -938,6 +941,7 @@ Benchmark = Utilities.createClass(
+                 this._benchmarkStartTimestamp = timestamp;
+             } else if (timestamp - this._previousTimestamp >= this._warmupLength && this._frameCount >= this._warmupFrameCount) {
+                 this._didWarmUp = true;
++                __signpostStop(`${this._suite.name}.${this._test.name}: warmup`);
+                 this._benchmarkStartTimestamp = timestamp;
+                 this._controller.start(timestamp, this._stage);
+                 this._previousTimestamp = timestamp;
