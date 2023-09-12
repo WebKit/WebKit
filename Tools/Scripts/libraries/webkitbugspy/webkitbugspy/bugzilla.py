@@ -33,6 +33,11 @@ from .radar import Tracker as RadarTracker
 from datetime import datetime
 from webkitbugspy import User, log
 
+if sys.version_info > (3, 0):
+    from html.parser import HTMLParser
+else:
+    from HTMLParser import HTMLParser
+
 requests = webkitcorepy.CallByNeed(lambda: __import__('requests'))
 
 
@@ -43,6 +48,35 @@ class Tracker(GenericTracker):
         r'\A{}/show_bug.cgi\?id=(?P<id>\d+)\Z',
     ]
     NAME = 'Bugzilla'
+
+    class BugzillaPageParser(HTMLParser):
+        def __init__(self):
+            HTMLParser.__init__(self)
+            self.data = {}
+            self.current_value = None
+
+        def handle_starttag(self, tag, attrs):
+            if tag == 'span' and ('id', 'duplicates') in attrs:
+                self.current_value = 'duplicates'
+                self.data[self.current_value] = []
+
+        def handle_data(self, data):
+            if not self.current_value:
+                return
+            data = data.rstrip().lstrip()
+            if not data:
+                return
+            self.data[self.current_value].append(data)
+
+        def handle_endtag(self, tag):
+            if tag == 'span':
+                self.current_value = None
+
+        @staticmethod
+        def parse(html_text):
+            parser = Tracker.BugzillaPageParser()
+            parser.feed(html_text)
+            return parser.data
 
     class Encoder(GenericTracker.Encoder):
         @webkitcorepy.decorators.hybridmethod
@@ -230,7 +264,7 @@ class Tracker(GenericTracker):
             else:
                 sys.stderr.write("Failed to fetch comments for '{}'\n".format(issue.link))
 
-        if member == 'references':
+        if member in ('duplicates', 'references'):
             issue._references = []
             refs = set()
 
@@ -273,6 +307,23 @@ class Tracker(GenericTracker):
                     refs.add(candidate.link)
             else:
                 sys.stderr.write("Failed to fetch related issues for '{}'\n".format(issue.link))
+
+            # API doesn't allow us to access duplicates, we need to parse HTML instead
+            response = requests.get('{url}/show_bug.cgi{query}'.format(
+                url=self.url, id=issue.id,
+                query=self._login_arguments(required=False, query='id={}'.format(issue.id)),
+            ))
+            if response.status_code // 100 == 4 and self._logins_left:
+                self._logins_left -= 1
+            issue._duplicates = []
+            data = self.BugzillaPageParser.parse(response.text) if response.status_code // 100 == 2 else {}
+            for dupe_id in data.get('duplicates') or []:
+                if not dupe_id.isnumeric():
+                    continue
+                dupe = self.issue(dupe_id)
+                issue._duplicates.append(dupe)
+                if issue.link not in refs:
+                    issue._references.append(dupe)
 
         return issue
 
