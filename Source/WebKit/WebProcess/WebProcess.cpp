@@ -515,7 +515,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     SandboxExtension::consumePermanently(parameters.additionalSandboxExtensionHandles);
 
     if (!parameters.injectedBundlePath.isEmpty())
-        m_injectedBundle = InjectedBundle::create(parameters, transformHandlesToObjects(parameters.initializationUserData.object()).get());
+        m_injectedBundle = InjectedBundle::create(parameters, transformHandlesToObjects(parameters.initializationUserData.object()));
 
     for (auto& supplement : m_supplements.values())
         supplement->initialize(parameters);
@@ -854,7 +854,7 @@ void WebProcess::createWebPage(PageIdentifier pageID, WebPageCreationParameters&
     if (result.isNewEntry) {
         ASSERT(!result.iterator->value);
         auto page = WebPage::create(pageID, WTFMove(parameters));
-        result.iterator->value = page.ptr();
+        result.iterator->value = page.copyRef();
 
 #if ENABLE(GPU_PROCESS)
         if (RefPtr gpuProcessConnection = m_gpuProcessConnection)
@@ -1127,7 +1127,7 @@ void WebProcess::handleInjectedBundleMessage(const String& messageName, const Us
     if (!injectedBundle)
         return;
 
-    injectedBundle->didReceiveMessage(messageName, transformHandlesToObjects(messageBody.object()).get());
+    injectedBundle->didReceiveMessage(messageName, transformHandlesToObjects(messageBody.object()));
 }
 
 void WebProcess::setInjectedBundleParameter(const String& key, const IPC::DataReference& value)

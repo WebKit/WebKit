@@ -58,7 +58,7 @@ void RemoteCaptureSampleManager::stopListeningForIPC()
     setConnection(nullptr);
 }
 
-void RemoteCaptureSampleManager::setConnection(IPC::Connection* connection)
+void RemoteCaptureSampleManager::setConnection(RefPtr<IPC::Connection>&& connection)
 {
     if (m_connection == connection)
         return;
@@ -83,7 +83,7 @@ void RemoteCaptureSampleManager::setConnection(IPC::Connection* connection)
 void RemoteCaptureSampleManager::addSource(Ref<RemoteRealtimeAudioSource>&& source)
 {
     ASSERT(WTF::isMainRunLoop());
-    setConnection(Ref { source->connection() }.ptr());
+    setConnection(Ref { source->connection() });
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, source = WTFMove(source)]() mutable {
         auto identifier = source->identifier();
@@ -96,7 +96,7 @@ void RemoteCaptureSampleManager::addSource(Ref<RemoteRealtimeAudioSource>&& sour
 void RemoteCaptureSampleManager::addSource(Ref<RemoteRealtimeVideoSource>&& source)
 {
     ASSERT(WTF::isMainRunLoop());
-    setConnection(&source->connection());
+    setConnection(Ref { source->connection() });
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, source = WTFMove(source)]() mutable {
         auto identifier = source->identifier();

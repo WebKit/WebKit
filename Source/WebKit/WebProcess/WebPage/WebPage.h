@@ -1515,7 +1515,7 @@ public:
 
 #if ENABLE(APP_BOUND_DOMAINS)
     void notifyPageOfAppBoundBehavior();
-    void setIsNavigatingToAppBoundDomain(std::optional<NavigatingToAppBoundDomain>, WebFrame*);
+    void setIsNavigatingToAppBoundDomain(std::optional<NavigatingToAppBoundDomain>, WebFrame&);
     bool needsInAppBrowserPrivacyQuirks() { return m_needsInAppBrowserPrivacyQuirks; }
 #endif
 

@@ -486,7 +486,7 @@ Ref<WebPage> WebPage::create(PageIdentifier pageID, WebPageCreationParameters&& 
     auto page = adoptRef(*new WebPage(pageID, WTFMove(parameters)));
 
     if (RefPtr injectedBundle = WebProcess::singleton().injectedBundle())
-        injectedBundle->didCreatePage(page.ptr());
+        injectedBundle->didCreatePage(page);
 
 #if HAVE(SANDBOX_STATE_FLAGS)
     static bool hasSetLaunchVariable = false;
@@ -1611,7 +1611,8 @@ PluginView* WebPage::pluginViewForFrame(LocalFrame* frame)
 
 PluginView* WebPage::mainFramePlugIn() const
 {
-    return pluginViewForFrame(dynamicDowncast<LocalFrame>(mainFrame()));
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
+    return pluginViewForFrame(localMainFrame.get());
 }
 
 #endif
@@ -1716,7 +1717,7 @@ void WebPage::close()
         reportUsedFeatures();
 
     if (WebProcess::singleton().injectedBundle())
-        WebProcess::singleton().injectedBundle()->willDestroyPage(this);
+        WebProcess::singleton().injectedBundle()->willDestroyPage(Ref { *this });
 
     if (m_inspector) {
         m_inspector->disconnectFromPage();
@@ -1908,7 +1909,7 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     setLastNavigationWasAppInitiated(loadParameters.request.isAppInitiated());
 
 #if ENABLE(APP_BOUND_DOMAINS)
-    setIsNavigatingToAppBoundDomain(loadParameters.isNavigatingToAppBoundDomain, frame.get());
+    setIsNavigatingToAppBoundDomain(loadParameters.isNavigatingToAppBoundDomain, *frame);
 #endif
 
     WebProcess::singleton().webLoaderStrategy().setExistingNetworkResourceLoadIdentifierToResume(loadParameters.existingNetworkResourceLoadIdentifierToResume);
@@ -1968,7 +1969,8 @@ void WebPage::loadRequestWaitingForProcessLaunch(LoadParameters&&, URL&&, WebPag
 void WebPage::loadDataImpl(uint64_t navigationID, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<WebsitePoliciesData>&& websitePolicies, Ref<FragmentedSharedBuffer>&& sharedBuffer, ResourceRequest&& request, ResourceResponse&& response, const URL& unreachableURL, const UserData& userData, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, SubstituteData::SessionHistoryVisibility sessionHistoryVisibility, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
 {
 #if ENABLE(APP_BOUND_DOMAINS)
-    setIsNavigatingToAppBoundDomain(isNavigatingToAppBoundDomain, &m_mainFrame.get());
+    Ref mainFrame = m_mainFrame.copyRef();
+    setIsNavigatingToAppBoundDomain(isNavigatingToAppBoundDomain, mainFrame.get());
 #endif
 
     SendStopResponsivenessTimer stopper;
@@ -2796,7 +2798,7 @@ void WebPage::postInjectedBundleMessage(const String& messageName, const UserDat
     if (!injectedBundle)
         return;
 
-    injectedBundle->didReceiveMessageToPage(this, messageName, webProcess.transformHandlesToObjects(userData.object()).get());
+    injectedBundle->didReceiveMessageToPage(Ref { *this }, messageName, webProcess.transformHandlesToObjects(userData.object()));
 }
 
 void WebPage::setUnderPageBackgroundColorOverride(WebCore::Color&& underPageBackgroundColorOverride)
@@ -4250,13 +4252,14 @@ void WebPage::getMainResourceDataOfFrame(FrameIdentifier frameID, CompletionHand
 {
     RefPtr<FragmentedSharedBuffer> buffer;
     if (RefPtr frame = WebProcess::singleton().webFrame(frameID)) {
+        RefPtr coreFrame = frame->coreLocalFrame();
 #if ENABLE(PDFKIT_PLUGIN)
-        if (PluginView* pluginView = pluginViewForFrame(frame->coreLocalFrame()))
+        if (PluginView* pluginView = pluginViewForFrame(coreFrame.get()))
             buffer = pluginView->liveResourceData();
         if (!buffer)
 #endif
         {
-            if (DocumentLoader* loader = frame->coreLocalFrame()->loader().documentLoader())
+            if (RefPtr loader = coreFrame->loader().documentLoader())
                 buffer = loader->mainResourceData();
         }
     }
@@ -8532,9 +8535,9 @@ void WebPage::animationDidFinishForElement(const WebCore::Element&)
 #endif
 
 #if ENABLE(APP_BOUND_DOMAINS)
-void WebPage::setIsNavigatingToAppBoundDomain(std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, WebFrame* frame)
+void WebPage::setIsNavigatingToAppBoundDomain(std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, WebFrame& frame)
 {
-    frame->setIsNavigatingToAppBoundDomain(isNavigatingToAppBoundDomain);
+    frame.setIsNavigatingToAppBoundDomain(isNavigatingToAppBoundDomain);
     
     m_navigationHasOccured = true;
 }

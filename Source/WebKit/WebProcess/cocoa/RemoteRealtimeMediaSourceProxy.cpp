@@ -43,7 +43,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static IPC::Connection& getSourceConnection(bool shouldCaptureInGPUProcess)
+static Ref<IPC::Connection> getSourceConnection(bool shouldCaptureInGPUProcess)
 {
     ASSERT(isMainRunLoop());
 #if ENABLE(GPU_PROCESS)

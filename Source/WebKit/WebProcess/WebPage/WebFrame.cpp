@@ -461,7 +461,7 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyCheckIdentifi
 {
 #if ENABLE(APP_BOUND_DOMAINS)
     if (m_page)
-        m_page->setIsNavigatingToAppBoundDomain(policyDecision.isNavigatingToAppBoundDomain, this);
+        m_page->setIsNavigatingToAppBoundDomain(policyDecision.isNavigatingToAppBoundDomain, Ref { *this });
 #endif
 
     if (!m_coreFrame)
@@ -486,7 +486,7 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyCheckIdentifi
     m_policyDownloadID = policyDecision.downloadID;
     if (policyDecision.navigationID) {
         auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
-        if (WebDocumentLoader* documentLoader = localFrame ? static_cast<WebDocumentLoader*>(localFrame->loader().policyDocumentLoader()) : nullptr)
+        if (RefPtr documentLoader = localFrame ? static_cast<WebDocumentLoader*>(localFrame->loader().policyDocumentLoader()) : nullptr)
             documentLoader->setNavigationID(policyDecision.navigationID);
     }
 
