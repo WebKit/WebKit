@@ -120,8 +120,8 @@ class RadarModel(object):
         def __init__(
             self, name,
             isClosed=False,
-            isRestricted=False, restrictedAccessGroup='',
-            isProtected=False, protectedAccessGroup='',
+            isRestricted=False, restrictedAccessGroups=None,
+            isProtected=False, protectedAccessGroups=None,
             isCategoryRequired=False, categories=None,
             isEventRequired=False, events=None,
             isTentpoleRequired=False, tentpoles=None,
@@ -129,9 +129,9 @@ class RadarModel(object):
             self.name = name
             self.isClosed = isClosed
             self.isRestricted = isRestricted
-            self.restrictedAccessGroup = restrictedAccessGroup
+            self.restrictedAccessGroups = [RadarModel.RadarGroup(name) for name in restrictedAccessGroups or []]
             self.isProtected = isProtected
-            self.protectedAccessGroup = protectedAccessGroup
+            self.protectedAccessGroups = [RadarModel.RadarGroup(name) for name in protectedAccessGroups or []]
 
             self._isCategoryRequired = isCategoryRequired
             self._categories = [RadarModel.Category(category) for category in (categories or [])]
@@ -141,6 +141,7 @@ class RadarModel(object):
 
             self._isTentpoleRequired = isTentpoleRequired
             self._tentpoles = [RadarModel.Tentpole(tentpole) for tentpole in (tentpoles or [])]
+
 
     class Category(object):
         def __init__(self, name):
@@ -166,6 +167,10 @@ class RadarModel(object):
     class Keyword(object):
         def __init__(self, name):
             self.name = name
+
+    class RadarGroup(object):
+        def __init__(self, id):
+            self.id = id
 
     def __init__(self, client, issue):
         from datetime import datetime, timedelta
@@ -434,6 +439,9 @@ class Radar(Base, ContextStack):
         class UnsuccessfulResponseException(Exception):
             pass
 
+    class RetryPolicy(object):
+        pass
+
     @classmethod
     def transform_user(cls, user):
         return User(
@@ -459,7 +467,7 @@ class Radar(Base, ContextStack):
             self.milestones[ms.name] = ms
 
         self.AppleDirectoryQuery = AppleDirectoryQuery(self)
-        self.RadarClient = lambda authentication_strategy, client_system_identifier: RadarClient(self, authentication_strategy)
+        self.RadarClient = lambda authentication_strategy, client_system_identifier, retry_policy=None: RadarClient(self, authentication_strategy)
 
         from mock import patch
         self.patches.append(patch('webkitbugspy.radar.Tracker.radarclient', new=lambda s=None: self))
