@@ -698,7 +698,8 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
 
         auto contentRightInInlineDirectionVisualOrder = contentStartInInlineDirectionVisualOrder;
         auto& inlineContent = lineLayoutResult.inlineContent;
-        for (auto visualOrder : lineLayoutResult.directionality.visualOrderList) {
+        for (size_t index = 0; index < lineLayoutResult.directionality.visualOrderList.size(); ++index) {
+            auto visualOrder = lineLayoutResult.directionality.visualOrderList[index];
             ASSERT(inlineContent[visualOrder].bidiLevel() != InlineItem::opaqueBidiLevel);
 
             auto& lineRun = inlineContent[visualOrder];
@@ -781,7 +782,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
                     logicalTopLeft.moveBy(lineBox.logicalRect().topLeft());
                     boxGeometry.setLogicalTopLeft(toLayoutPoint(logicalTopLeft));
                 } else
-                    blockLevelOutOfFlowBoxList.append(visualOrder);
+                    blockLevelOutOfFlowBoxList.append(index);
                 continue;
             }
             ASSERT_NOT_REACHED();
@@ -909,7 +910,8 @@ void InlineDisplayContentBuilder::setGeometryForBlockLevelOutOfFlowBoxes(const V
         };
         // Block level boxes are placed either at the start of the line or "under" depending whether they have previous inflow sibling.
         auto logicalTop = hasPreviousInFlowContent() ? lineBox.logicalRect().bottom() : lineBox.logicalRect().top();
-        formattingState().boxGeometry(lineRuns[outOfFlowBoxIndex].layoutBox()).setLogicalTopLeft({ constraints().horizontal().logicalLeft, logicalTop });
+        auto& lineRun = visualOrderList.isEmpty() ? lineRuns[outOfFlowBoxIndex] : lineRuns[visualOrderList[outOfFlowBoxIndex]];
+        formattingState().boxGeometry(lineRun.layoutBox()).setLogicalTopLeft({ constraints().horizontal().logicalLeft, logicalTop });
     }
 }
 
