@@ -384,6 +384,22 @@ What version of 'WebKit Text' should the bug be associated with?:
                 redact={'version:Other': True},
             ).issue(1).redacted, radar.Tracker.Redaction(True, "matches 'version:Other'"))
 
+    def test_redacted_duplicate(self):
+        with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES, projects=mocks.PROJECTS):
+            tracker = radar.Tracker(project='WebKit', redact={'component:Text': True})
+            self.assertEqual(tracker.issue(1).redacted, radar.Tracker.Redaction(True, "matches 'component:Text'"))
+            self.assertEqual(tracker.issue(2).redacted, False)
+            tracker.issue(1).close(original=tracker.issue(2))
+            self.assertEqual(tracker.issue(2).redacted, radar.Tracker.Redaction(True, "matches 'component:Text'"))
+
+    def test_redacted_original(self):
+        with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES, projects=mocks.PROJECTS):
+            tracker = radar.Tracker(project='WebKit', redact={'component:Text': True})
+            self.assertEqual(tracker.issue(1).redacted, radar.Tracker.Redaction(True, "matches 'component:Text'"))
+            self.assertEqual(tracker.issue(2).redacted, False)
+            tracker.issue(2).close(original=tracker.issue(1))
+            self.assertEqual(tracker.issue(2).redacted, radar.Tracker.Redaction(True, "matches 'component:Text'"))
+
     def test_redaction_exception(self):
         with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES, projects=mocks.PROJECTS):
             self.assertEqual(radar.Tracker(
