@@ -54,9 +54,13 @@ void webkitWebViewBaseSetMouseIsOverScrollbar(WebKitWebViewBase*, WebKit::WebHit
 void webkitWebViewBasePropagateKeyEvent(WebKitWebViewBase*, GdkEvent*);
 void webkitWebViewBasePropagateWheelEvent(WebKitWebViewBase*, GdkEvent*);
 void webkitWebViewBaseChildMoveResize(WebKitWebViewBase*, GtkWidget*, const WebCore::IntRect&);
+#if ENABLE(FULLSCREEN_API)
+void webkitWebViewBaseWillEnterFullScreen(WebKitWebViewBase*);
 void webkitWebViewBaseEnterFullScreen(WebKitWebViewBase*);
+void webkitWebViewBaseWillExitFullScreen(WebKitWebViewBase*);
 void webkitWebViewBaseExitFullScreen(WebKitWebViewBase*);
 bool webkitWebViewBaseIsFullScreen(WebKitWebViewBase*);
+#endif
 void webkitWebViewBaseSetInspectorViewSize(WebKitWebViewBase*, unsigned size);
 void webkitWebViewBaseSetActiveContextMenuProxy(WebKitWebViewBase*, WebKit::WebContextMenuProxyGtk*);
 WebKit::WebContextMenuProxyGtk* webkitWebViewBaseGetActiveContextMenuProxy(WebKitWebViewBase*);

@@ -2774,29 +2774,21 @@ void webkitWebViewResourceLoadStarted(WebKitWebView* webView, WebKitWebResource*
     g_signal_emit(webView, signals[RESOURCE_LOAD_STARTED], 0, resource, uriRequest.get());
 }
 
-void webkitWebViewEnterFullScreen(WebKitWebView* webView)
-{
 #if ENABLE(FULLSCREEN_API)
+bool webkitWebViewEnterFullScreen(WebKitWebView* webView)
+{
     gboolean returnValue;
     g_signal_emit(webView, signals[ENTER_FULLSCREEN], 0, &returnValue);
-#if PLATFORM(GTK)
-    if (!returnValue)
-        webkitWebViewBaseEnterFullScreen(WEBKIT_WEB_VIEW_BASE(webView));
-#endif
-#endif
+    return returnValue;
 }
 
-void webkitWebViewExitFullScreen(WebKitWebView* webView)
+bool webkitWebViewExitFullScreen(WebKitWebView* webView)
 {
-#if ENABLE(FULLSCREEN_API)
     gboolean returnValue;
     g_signal_emit(webView, signals[LEAVE_FULLSCREEN], 0, &returnValue);
-#if PLATFORM(GTK)
-    if (!returnValue)
-        webkitWebViewBaseExitFullScreen(WEBKIT_WEB_VIEW_BASE(webView));
-#endif
-#endif
+    return returnValue;
 }
+#endif
 
 void webkitWebViewRunFileChooserRequest(WebKitWebView* webView, WebKitFileChooserRequest* request)
 {
