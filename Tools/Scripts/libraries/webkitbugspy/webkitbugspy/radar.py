@@ -113,6 +113,7 @@ class Tracker(GenericTracker):
         if authentication:
             self.client = self.library.RadarClient(
                 authentication, self.library.ClientSystemIdentifier(library_name, str(library_version)),
+                retry_policy=self.radarclient().RetryPolicy(),
             )
         else:
             self.client = None
