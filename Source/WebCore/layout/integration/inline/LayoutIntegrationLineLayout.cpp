@@ -394,7 +394,9 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
             || is<RenderAttachment>(replacedOrInlineBlock)
 #endif
             || is<RenderButton>(replacedOrInlineBlock)
+#if ENABLE(MATHML)
             || is<RenderMathMLBlock>(replacedOrInlineBlock)
+#endif
             || is<RenderRubyRun>(replacedOrInlineBlock)) {
             // These are special RenderBlock renderers that override the default baseline position behavior of the inline block box.
             return true;

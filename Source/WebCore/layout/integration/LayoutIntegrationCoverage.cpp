@@ -304,7 +304,11 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
 #endif
 
-    if (is<RenderBlockFlow>(renderer) || is<RenderGrid>(renderer) || is<RenderFlexibleBox>(renderer) || is<RenderDeprecatedFlexibleBox>(renderer) || is<RenderReplaced>(renderer) || is<RenderListItem>(renderer) || is<RenderTable>(renderer) || is<RenderMathMLBlock>(renderer)) {
+    if (is<RenderBlockFlow>(renderer) || is<RenderGrid>(renderer) || is<RenderFlexibleBox>(renderer) || is<RenderDeprecatedFlexibleBox>(renderer) || is<RenderReplaced>(renderer) || is<RenderListItem>(renderer) || is<RenderTable>(renderer)
+#if ENABLE(MATHML)
+        || is<RenderMathMLBlock>(renderer)
+#endif
+        ) {
         auto isSupportedFloatingOrPositioned = [&] (auto& renderer) {
             if (renderer.isOutOfFlowPositioned()) {
                 if (!renderer.parent()->style().isLeftToRightDirection() || renderer.parent()->style().unicodeBidi() != UnicodeBidi::Normal)
