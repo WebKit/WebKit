@@ -64,6 +64,7 @@
 #include "RenderListBox.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
+#include "RenderMathMLBlock.h"
 #include "RenderRubyRun.h"
 #include "RenderSlider.h"
 #include "RenderTable.h"
@@ -393,6 +394,7 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
             || is<RenderAttachment>(replacedOrInlineBlock)
 #endif
             || is<RenderButton>(replacedOrInlineBlock)
+            || is<RenderMathMLBlock>(replacedOrInlineBlock)
             || is<RenderRubyRun>(replacedOrInlineBlock)) {
             // These are special RenderBlock renderers that override the default baseline position behavior of the inline block box.
             return true;
