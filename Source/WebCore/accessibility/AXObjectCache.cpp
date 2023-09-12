@@ -516,10 +516,8 @@ AccessibilityObject* AXObjectCache::focusedObjectForNode(Node* focusedNode)
 void AXObjectCache::setIsolatedTreeFocusedObject(AccessibilityObject* focus)
 {
     ASSERT(isMainThread());
-    if (!m_pageID)
-        return;
 
-    if (auto tree = AXIsolatedTree::treeForPageID(*m_pageID))
+    if (auto tree = AXIsolatedTree::treeForPageID(m_pageID))
         tree->setFocusedNodeID(focus ? focus->objectID() : AXID());
 }
 #endif
@@ -3968,9 +3966,15 @@ void AXObjectCache::performDeferredCacheUpdate()
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (m_deferredRegenerateIsolatedTree) {
         if (auto tree = AXIsolatedTree::treeForPageID(m_pageID)) {
+            // Re-generate the subtree rooted at the webarea.
             if (auto* webArea = rootWebArea()) {
                 AXLOG("Regenerating isolated tree from AXObjectCache::performDeferredCacheUpdate().");
                 tree->generateSubtree(*webArea);
+
+                // In some cases, the ID of the focus after a dialog pops up doesn't match the ID in the last focus change notification, creating a mismatch between the isolated tree cached focused object ID and the actual focused object ID.
+                // For this reason, reset the focused object ID.
+                if (auto* focus = focusedObjectForPage(document().page()))
+                    tree->setFocusedNodeID(focus->objectID());
             }
         }
     }
