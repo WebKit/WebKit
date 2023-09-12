@@ -40,7 +40,7 @@ class LineLayout;
 
 enum class AvoidanceReason : uint64_t {
     // Unused                                    = 1LLU  << 0,
-    // Unused                                    = 1LLU  << 1,
+    ChildBoxIsFloatingOrPositioned               = 1LLU  << 1,
     // Unused                                    = 1LLU  << 2,
     ContentIsRuby                                = 1LLU  << 3,
     // Unused                                    = 1LLU  << 4,
