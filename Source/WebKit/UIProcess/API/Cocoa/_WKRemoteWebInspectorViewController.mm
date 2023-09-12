@@ -106,6 +106,7 @@ private:
 
 - (void)dealloc
 {
+    m_remoteInspectorProxy->setClient(nullptr);
     [_configuration release];
     [super dealloc];
 }
