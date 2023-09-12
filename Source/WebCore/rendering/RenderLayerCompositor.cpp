@@ -318,7 +318,7 @@ void RenderLayerCompositor::BackingSharingState::endBackingSharingSequence(Rende
 
     for (auto& candidate : m_backingProviderCandidates) {
         candidate.sharingLayers.remove(endLayer);
-        candidate.providerLayer->backing()->setBackingSharingLayers(copyToVector(candidate.sharingLayers));
+        candidate.providerLayer->backing()->setBackingSharingLayers(WTFMove(candidate.sharingLayers));
     }
     m_backingProviderCandidates.clear();
     m_backingProviderStackingContext = nullptr;

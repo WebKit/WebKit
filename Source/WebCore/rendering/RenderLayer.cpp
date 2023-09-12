@@ -395,12 +395,6 @@ RenderLayer::~RenderLayer()
     clearLayerScrollableArea();
     clearLayerFilters();
 
-    if (paintsIntoProvidedBacking()) {
-        auto* backingProviderLayer = this->backingProviderLayer();
-        if (backingProviderLayer->backing())
-            backingProviderLayer->backing()->removeBackingSharingLayer(*this);
-    }
-
     // Child layers will be deleted by their corresponding render objects, so
     // we don't need to delete them ourselves.
 
