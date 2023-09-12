@@ -1098,6 +1098,7 @@
 
 (define (syscall-unix-rarely-in-use)
     (syscall-number
+        SYS___pthread_kill
         SYS_fgetxattr
         SYS_getxattr
         SYS_iopolicysys
@@ -1128,11 +1129,6 @@
         SYS_thread_selfusage
         SYS_write))
 
-(define (syscall-unix-rarely-in-use-need-backtrace)
-    (syscall-number
-        SYS___pthread_kill
-        ))
-
 (deny syscall-unix (with telemetry))
 (allow syscall-unix
     (syscall-unix-in-use-after-launch)
@@ -1145,12 +1141,9 @@
 (allow syscall-unix (syscall-unix-only-in-use-during-launch))
 #endif
 
-(allow syscall-unix
+(allow syscall-unix (with report) (with telemetry-backtrace)
     (syscall-unix-rarely-in-use)
     (syscall-unix-rarely-in-use-blocked-in-lockdown-mode))
-
-(allow syscall-unix (with report)
-    (syscall-unix-rarely-in-use-need-backtrace))
 
 (deny syscall-unix (with no-report) (syscall-number
     SYS_connect
