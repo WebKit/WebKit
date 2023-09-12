@@ -4544,7 +4544,10 @@ void Page::opportunisticallyRunIdleCallbacks()
 
 void Page::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
 {
-    commonVM().performOpportunisticallyScheduledTasks(deadline);
+    OptionSet<JSC::VM::SchedulerOptions> options;
+    if (m_opportunisticTaskScheduler->hasImminentlyScheduledWork())
+        options.add(JSC::VM::SchedulerOptions::HasImminentlyScheduledWork);
+    commonVM().performOpportunisticallyScheduledTasks(deadline, options);
 }
 
 } // namespace WebCore

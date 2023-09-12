@@ -416,7 +416,10 @@ public:
         m_entryScopeServices.add(service);
     }
 
-    JS_EXPORT_PRIVATE void performOpportunisticallyScheduledTasks(MonotonicTime deadline);
+    enum class SchedulerOptions : uint8_t {
+        HasImminentlyScheduledWork = 1 << 0,
+    };
+    JS_EXPORT_PRIVATE void performOpportunisticallyScheduledTasks(MonotonicTime deadline, OptionSet<SchedulerOptions>);
 
 private:
     VMIdentifier m_identifier;

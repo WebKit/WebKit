@@ -1665,11 +1665,29 @@ void VM::removeDebugger(Debugger& debugger)
     m_debuggers.remove(&debugger);
 }
 
-void VM::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
+void VM::performOpportunisticallyScheduledTasks(MonotonicTime deadline, OptionSet<SchedulerOptions> options)
 {
     JSLockHolder locker { *this };
-    if (!deferredWorkTimer->hasAnyPendingWork())
-        heap.sweeper().doWorkUntil(*this, deadline);
+    if (deferredWorkTimer->hasAnyPendingWork())
+        return;
+
+    static constexpr auto minimumDelayBeforeOpportunisticGC = 10_ms;
+    static constexpr auto extraDurationToAvoidExceedingDeadlineDuringEdenGC = 1_ms;
+
+    if (!options.contains(SchedulerOptions::HasImminentlyScheduledWork)) {
+        auto secondsSinceEpoch = ApproximateTime::now().secondsSinceEpoch();
+        auto latestGCTime = std::max(heap.m_lastGCEndTime, heap.m_currentGCStartTime);
+        if (secondsSinceEpoch - latestGCTime.secondsSinceEpoch() > minimumDelayBeforeOpportunisticGC) {
+            auto remainingTime = deadline.secondsSinceEpoch() - secondsSinceEpoch;
+            if (heap.m_bytesAllocatedThisCycle && heap.m_bytesAllocatedBeforeLastEdenCollect) {
+                auto estimatedGCDuration = (heap.lastEdenGCLength() * heap.m_bytesAllocatedThisCycle) / heap.m_bytesAllocatedBeforeLastEdenCollect;
+                if (estimatedGCDuration + extraDurationToAvoidExceedingDeadlineDuringEdenGC < remainingTime)
+                    heap.collectSync(CollectionScope::Eden);
+            }
+        }
+    }
+
+    heap.sweeper().doWorkUntil(*this, deadline);
 }
 
 void QueuedTask::run()
