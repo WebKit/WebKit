@@ -1392,7 +1392,8 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
         m_opaqueRoots.clear();
         m_collectorSlotVisitor->clearMarkStacks();
         m_mutatorMarkStack->clear();
-    }
+    } else
+        m_bytesAllocatedBeforeLastEdenCollect = m_bytesAllocatedThisCycle;
 
     RELEASE_ASSERT(m_raceMarkStack->isEmpty());
 
