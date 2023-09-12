@@ -37,7 +37,7 @@ using namespace JSC;
 JSValue toJSNewlyCreated(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<WebXRSpace>&& space)
 {
     if (is<WebXRReferenceSpace>(space))
-        return toJSNewlyCreated(lexicalGlobalObject, globalObject, static_reference_cast<WebXRReferenceSpace>(WTFMove(space)));
+        return toJSNewlyCreated(lexicalGlobalObject, globalObject, downcast<WebXRReferenceSpace>(WTFMove(space)));
     return createWrapper<WebXRSpace>(globalObject, WTFMove(space));
 }
 

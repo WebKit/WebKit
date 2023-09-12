@@ -296,7 +296,7 @@ std::unique_ptr<ScrollingStateTree> ScrollingStateTree::commit(LayerRepresentati
     treeStateClone->setPreferredLayerRepresentation(preferredLayerRepresentation);
 
     if (m_rootStateNode)
-        treeStateClone->setRootStateNode(static_reference_cast<ScrollingStateFrameScrollingNode>(m_rootStateNode->cloneAndReset(*treeStateClone)));
+        treeStateClone->setRootStateNode(downcast<ScrollingStateFrameScrollingNode>(m_rootStateNode->cloneAndReset(*treeStateClone)));
 
     // Now the clone tree has changed properties, and the original tree does not.
     treeStateClone->m_hasChangedProperties = std::exchange(m_hasChangedProperties, false);

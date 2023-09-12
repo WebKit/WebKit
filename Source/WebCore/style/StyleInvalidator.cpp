@@ -50,12 +50,12 @@ static bool shouldDirtyAllStyle(const Vector<Ref<StyleRuleBase>>& rules)
 {
     for (auto& rule : rules) {
         if (is<StyleRuleMedia>(rule)) {
-            if (shouldDirtyAllStyle(downcast<StyleRuleMedia>(rule).childRules()))
+            if (shouldDirtyAllStyle(downcast<StyleRuleMedia>(rule.get()).childRules()))
                 return true;
             continue;
         }
         if (is<StyleRuleWithNesting>(rule)) {
-            if (shouldDirtyAllStyle(downcast<StyleRuleWithNesting>(rule).nestedRules()))
+            if (shouldDirtyAllStyle(downcast<StyleRuleWithNesting>(rule.get()).nestedRules()))
                 return true;
             continue;
         }

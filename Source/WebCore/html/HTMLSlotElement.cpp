@@ -160,9 +160,7 @@ Vector<Ref<Node>> HTMLSlotElement::assignedNodes(const AssignedNodesOptions& opt
 Vector<Ref<Element>> HTMLSlotElement::assignedElements(const AssignedNodesOptions& options) const
 {
     return compactMap(assignedNodes(options), [](auto&& node) -> RefPtr<Element> {
-        if (!is<Element>(node))
-            return nullptr;
-        return static_reference_cast<Element>(WTFMove(node));
+        return dynamicDowncast<Element>(WTFMove(node));
     });
 }
 

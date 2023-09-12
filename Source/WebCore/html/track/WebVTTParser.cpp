@@ -389,11 +389,11 @@ bool WebVTTParser::checkAndStoreStyleSheet(StringView line)
     StringBuilder sanitizedStyleSheetBuilder;
     
     for (const auto& rule : childRules) {
-        if (!rule->isStyleRule())
+        auto styleRule = dynamicDowncast<StyleRule>(rule);
+        if (!styleRule)
             return true;
-        const auto& styleRule = downcast<StyleRule>(rule);
 
-        const auto& selectorList = styleRule.selectorList();
+        const auto& selectorList = styleRule->selectorList();
         if (selectorList.listSize() != 1)
             return true;
         auto selector = selectorList.selectorAt(0);
@@ -403,10 +403,10 @@ bool WebVTTParser::checkAndStoreStyleSheet(StringView line)
         if (!isCue)
             return true;
 
-        if (styleRule.properties().isEmpty())
+        if (styleRule->properties().isEmpty())
             continue;
 
-        sanitizedStyleSheetBuilder.append(selectorText, " { ", styleRule.properties().asText(), "  }\n");
+        sanitizedStyleSheetBuilder.append(selectorText, " { ", styleRule->properties().asText(), "  }\n");
     }
 
     // It would be more stylish to parse the stylesheet only once instead of serializing a sanitized version.

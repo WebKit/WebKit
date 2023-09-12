@@ -434,7 +434,7 @@ public:
         RefPtr target = event.target();
         if (!is<Node>(target.get()))
             return;
-        Ref node = static_reference_cast<Node>(target.releaseNonNull());
+        Ref node = downcast<Node>(target.releaseNonNull());
 
         auto* page = node->document().page();
         if (!page)

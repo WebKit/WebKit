@@ -778,7 +778,6 @@ RefPtr<StyleRuleFontFeatureValues> CSSParserImpl::consumeFontFeatureValuesRule(C
     consumeRuleList(block, FontFeatureValuesRuleList, [&rules](auto rule) {
         rules.append(rule);
     });
-    rules.shrinkToFit();
     
     if (m_observerWrapper)
         m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(block));
@@ -786,10 +785,10 @@ RefPtr<StyleRuleFontFeatureValues> CSSParserImpl::consumeFontFeatureValuesRule(C
     // Convert block rules to value (remove duplicate...etc)
     auto fontFeatureValues = FontFeatureValues::create();
 
-    for (auto block : rules) {
+    for (auto& block : rules) {
         if (!block->isFontFeatureValuesBlockRule())
             continue;
-        const auto& fontFeatureValuesBlockRule = downcast<StyleRuleFontFeatureValuesBlock>(block);
+        const auto& fontFeatureValuesBlockRule = downcast<StyleRuleFontFeatureValuesBlock>(block.get());
         fontFeatureValues->updateOrInsertForType(fontFeatureValuesBlockRule.fontFeatureValuesType(), fontFeatureValuesBlockRule.tags());
     }
 

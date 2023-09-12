@@ -265,27 +265,28 @@ inline Ref<T, U> adoptRef(T& reference)
 }
 
 template<typename ExpectedType, typename ArgType, typename PtrTraits>
-inline bool is(Ref<ArgType, PtrTraits>& source)
-{
-    return is<ExpectedType>(source.get());
-}
-
-template<typename ExpectedType, typename ArgType, typename PtrTraits>
 inline bool is(const Ref<ArgType, PtrTraits>& source)
 {
     return is<ExpectedType>(source.get());
 }
 
 template<typename Target, typename Source, typename PtrTraits>
-inline Target& downcast(Ref<Source, PtrTraits>& source)
+inline Ref<Target> downcast(Ref<Source, PtrTraits> source)
 {
-    return downcast<Target>(source.get());
+    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
+    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
+    ASSERT_WITH_SECURITY_IMPLICATION(is<Target>(source));
+    return static_reference_cast<Target>(WTFMove(source));
 }
 
 template<typename Target, typename Source, typename PtrTraits>
-inline Target& downcast(const Ref<Source, PtrTraits>& source)
+inline RefPtr<Target> dynamicDowncast(Ref<Source, PtrTraits> source)
 {
-    return downcast<Target>(source.get());
+    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
+    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
+    if (!is<Target>(source))
+        return nullptr;
+    return static_reference_cast<Target>(WTFMove(source));
 }
 
 } // namespace WTF

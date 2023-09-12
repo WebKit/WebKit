@@ -125,7 +125,7 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
     if (m_styleRule->isStyleRuleWithNesting())
-        downcast<StyleRuleWithNesting>(m_styleRule).wrapperAdoptOriginalSelectorList(WTFMove(*selectorList));
+        downcast<StyleRuleWithNesting>(m_styleRule)->wrapperAdoptOriginalSelectorList(WTFMove(*selectorList));
     else
         m_styleRule->wrapperAdoptSelectorList(WTFMove(*selectorList));
 
@@ -231,7 +231,7 @@ ExceptionOr<unsigned> CSSStyleRule::insertRule(const String& ruleString, unsigne
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);
     ASSERT(m_styleRule->isStyleRuleWithNesting());
-    downcast<StyleRuleWithNesting>(m_styleRule).nestedRules().insert(index, newRule.releaseNonNull());
+    downcast<StyleRuleWithNesting>(m_styleRule)->nestedRules().insert(index, newRule.releaseNonNull());
     m_childRuleCSSOMWrappers.insert(index, RefPtr<CSSRule>());
     return index;
 }
@@ -247,7 +247,7 @@ ExceptionOr<void> CSSStyleRule::deleteRule(unsigned index)
     }
 
     ASSERT(m_styleRule->isStyleRuleWithNesting());
-    auto& rules = downcast<StyleRuleWithNesting>(m_styleRule).nestedRules();
+    auto& rules = downcast<StyleRuleWithNesting>(m_styleRule.get()).nestedRules();
     
     CSSStyleSheet::RuleMutationScope mutationScope(this);
     rules.remove(index);

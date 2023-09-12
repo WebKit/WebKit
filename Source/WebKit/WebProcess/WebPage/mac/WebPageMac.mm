@@ -938,9 +938,8 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
             auto lookupResult = pluginView->lookupTextAtLocation(locationInViewCoordinates, immediateActionResult);
             if (auto lookupText = std::get<String>(lookupResult); !lookupText.isEmpty()) {
                 // FIXME (144030): Focus does not seem to get set to the PDF when invoking the menu.
-                Ref document = element->document();
-                if (is<PluginDocument>(document))
-                    downcast<PluginDocument>(document).setFocusedElement(element.get());
+                if (RefPtr pluginDocument = dynamicDowncast<PluginDocument>(element->document()))
+                    pluginDocument->setFocusedElement(element.get());
 
                 auto selection = std::get<PDFSelection *>(lookupResult);
                 auto options = std::get<NSDictionary *>(lookupResult);

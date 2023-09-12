@@ -141,15 +141,15 @@ void UserAgentStyle::addToDefaultStyle(StyleSheetContents& sheet)
     // Build a stylesheet consisting of non-trivial media queries seen in default style.
     // Rulesets for these can't be global and need to be built in document context.
     for (auto& rule : sheet.childRules()) {
-        if (!is<StyleRuleMedia>(rule))
+        auto mediaRule = dynamicDowncast<StyleRuleMedia>(rule);
+        if (!mediaRule)
             continue;
-        auto& mediaRule = downcast<StyleRuleMedia>(rule);
-        auto& mediaQuery = mediaRule.mediaQueries();
+        auto& mediaQuery = mediaRule->mediaQueries();
         if (screenEval().evaluate(mediaQuery))
             continue;
         if (printEval().evaluate(mediaQuery))
             continue;
-        mediaQueryStyleSheet->parserAppendRule(mediaRule.copy());
+        mediaQueryStyleSheet->parserAppendRule(mediaRule->copy());
     }
 
     ++defaultStyleVersion;

@@ -1209,7 +1209,7 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
     if (!is<MediaSampleAVFObjC>(sample))
         return;
 
-    Ref<MediaSampleAVFObjC> sampleAVFObjC = static_reference_cast<MediaSampleAVFObjC>(WTFMove(sample));
+    Ref sampleAVFObjC = downcast<MediaSampleAVFObjC>(WTFMove(sample));
     if (!canEnqueueSample(trackID, sampleAVFObjC)) {
         m_blockedSamples.append({ trackID, WTFMove(sampleAVFObjC) });
         return;
