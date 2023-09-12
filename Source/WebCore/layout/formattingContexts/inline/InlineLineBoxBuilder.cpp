@@ -78,16 +78,16 @@ TextUtil::FallbackFontList LineBoxBuilder::collectFallbackFonts(const InlineLeve
     }
     auto text = *run.textContent();
     auto fallbackFonts = TextUtil::fallbackFontsForText(StringView(inlineTextBox.content()).substring(text.start, text.length), style, text.needsHyphen ? TextUtil::IncludeHyphen::Yes : TextUtil::IncludeHyphen::No);
-    if (fallbackFonts.isEmpty())
+    if (fallbackFonts.isEmptyIgnoringNullReferences())
         return { };
 
     auto fallbackFontsForInlineBoxes = m_fallbackFontsForInlineBoxes.get(&parentInlineBox);
-    auto numberOfFallbackFontsForInlineBox = fallbackFontsForInlineBoxes.size();
-    for (auto* font : fallbackFonts) {
+    auto numberOfFallbackFontsForInlineBox = fallbackFontsForInlineBoxes.computeSize();
+    for (auto& font : fallbackFonts) {
         fallbackFontsForInlineBoxes.add(font);
-        m_fallbackFontRequiresIdeographicBaseline = m_fallbackFontRequiresIdeographicBaseline || font->hasVerticalGlyphs();
+        m_fallbackFontRequiresIdeographicBaseline = m_fallbackFontRequiresIdeographicBaseline || font.hasVerticalGlyphs();
     }
-    if (fallbackFontsForInlineBoxes.size() != numberOfFallbackFontsForInlineBox)
+    if (fallbackFontsForInlineBoxes.computeSize() != numberOfFallbackFontsForInlineBox)
         m_fallbackFontsForInlineBoxes.set(&parentInlineBox, fallbackFontsForInlineBoxes);
     return fallbackFonts;
 }
@@ -158,7 +158,7 @@ static InlineLevelBox::AscentAndDescent ascentAndDescentWithTextBoxEdgeForInline
 
 InlineLevelBox::AscentAndDescent LineBoxBuilder::enclosingAscentDescentWithFallbackFonts(const InlineLevelBox& inlineBox, const TextUtil::FallbackFontList& fallbackFontsForContent, FontBaseline fontBaseline) const
 {
-    ASSERT(!fallbackFontsForContent.isEmpty());
+    ASSERT(!fallbackFontsForContent.isEmptyIgnoringNullReferences());
     ASSERT(inlineBox.isInlineBox());
 
     // https://www.w3.org/TR/css-inline-3/#inline-height
@@ -168,8 +168,8 @@ InlineLevelBox::AscentAndDescent LineBoxBuilder::enclosingAscentDescentWithFallb
     // If line-height computes to normal and either text-box-edge is leading or this is the root inline box,
     // the font's line gap metric may also be incorporated into A and D by adding half to each side as half-leading.
     auto shouldUseLineGapToAdjustAscentDescent = inlineBox.isRootInlineBox() || isTextBoxEdgeLeading(inlineBox);
-    for (auto* font : fallbackFontsForContent) {
-        auto& fontMetrics = font->fontMetrics();
+    for (auto& font : fallbackFontsForContent) {
+        auto& fontMetrics = font.fontMetrics();
         auto ascentAndDescent = ascentAndDescentWithTextBoxEdgeForInlineBox(inlineBox, fontMetrics, fontBaseline);
         if (shouldUseLineGapToAdjustAscentDescent) {
             auto halfLeading = (fontMetrics.lineSpacing() - ascentAndDescent.height()) / 2;
@@ -393,7 +393,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
         if (run.isText()) {
             auto& parentInlineBox = lineBox.parentInlineBox(run);
             parentInlineBox.setHasContent();
-            if (auto fallbackFonts = collectFallbackFonts(parentInlineBox, run, style); !fallbackFonts.isEmpty()) {
+            if (auto fallbackFonts = collectFallbackFonts(parentInlineBox, run, style); !fallbackFonts.isEmptyIgnoringNullReferences()) {
                 // Adjust non-empty inline box height when glyphs from the non-primary font stretch the box.
                 if (parentInlineBox.isPreferredLineHeightFontMetricsBased()) {
                     auto enclosingAscentAndDescent = enclosingAscentDescentWithFallbackFonts(parentInlineBox, fallbackFonts, AlphabeticBaseline);
@@ -468,7 +468,7 @@ void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(LineBox
             auto halfLeading = (lineGap - ascentAndDescent.height()) / 2;
             auto ascent = ascentAndDescent.ascent + halfLeading;
             auto descent = ascentAndDescent.descent + halfLeading;
-            if (auto fallbackFonts = m_fallbackFontsForInlineBoxes.get(&inlineBox); !fallbackFonts.isEmpty()) {
+            if (auto fallbackFonts = m_fallbackFontsForInlineBoxes.get(&inlineBox); !fallbackFonts.isEmptyIgnoringNullReferences()) {
                 auto enclosingAscentAndDescent = enclosingAscentDescentWithFallbackFonts(inlineBox, fallbackFonts, lineBox.baselineType());
                 ascent = std::max(ascent, enclosingAscentAndDescent.ascent);
                 descent = std::max(descent, enclosingAscentAndDescent.descent);
@@ -591,7 +591,7 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox)
 
         auto needsFontFallbackAdjustment = inlineLevelBox.isInlineBox();
         if (needsFontFallbackAdjustment) {
-            if (auto fallbackFonts = m_fallbackFontsForInlineBoxes.get(&inlineLevelBox); !fallbackFonts.isEmpty() && inlineLevelBox.isPreferredLineHeightFontMetricsBased()) {
+            if (auto fallbackFonts = m_fallbackFontsForInlineBoxes.get(&inlineLevelBox); !fallbackFonts.isEmptyIgnoringNullReferences() && inlineLevelBox.isPreferredLineHeightFontMetricsBased()) {
                 auto enclosingAscentAndDescent = enclosingAscentDescentWithFallbackFonts(inlineLevelBox, fallbackFonts, IdeographicBaseline);
                 auto layoutBounds = inlineLevelBox.layoutBounds();
                 inlineLevelBox.setLayoutBounds({ std::max(layoutBounds.ascent, enclosingAscentAndDescent.ascent), std::max(layoutBounds.descent, enclosingAscentAndDescent.descent) });

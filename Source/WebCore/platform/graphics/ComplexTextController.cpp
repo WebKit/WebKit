@@ -60,7 +60,7 @@ public:
     {
     }
 
-    float width(unsigned from, unsigned len, HashSet<const Font*>* fallbackFonts)
+    float width(unsigned from, unsigned len, WeakHashSet<const Font>* fallbackFonts)
     {
         m_controller->advance(from, 0, ByWholeGlyphs, fallbackFonts);
         float beforeWidth = m_controller->runWidthSoFar();
@@ -97,7 +97,7 @@ std::unique_ptr<TextLayout, TextLayoutDeleter> FontCascade::createLayout(RenderT
     return std::unique_ptr<TextLayout, TextLayoutDeleter>(new TextLayout(text, *this, xPos));
 }
 
-float FontCascade::width(TextLayout& layout, unsigned from, unsigned len, HashSet<const Font*>* fallbackFonts)
+float FontCascade::width(TextLayout& layout, unsigned from, unsigned len, WeakHashSet<const Font>* fallbackFonts)
 {
     return layout.width(from, len, fallbackFonts);
 }
@@ -116,7 +116,7 @@ void ComplexTextController::computeExpansionOpportunity()
     }
 }
 
-ComplexTextController::ComplexTextController(const FontCascade& font, const TextRun& run, bool mayUseNaturalWritingDirection, HashSet<const Font*>* fallbackFonts, bool forTextEmphasis)
+ComplexTextController::ComplexTextController(const FontCascade& font, const TextRun& run, bool mayUseNaturalWritingDirection, WeakHashSet<const Font>* fallbackFonts, bool forTextEmphasis)
     : m_fallbackFonts(fallbackFonts)
     , m_font(font)
     , m_run(run)
@@ -510,7 +510,7 @@ float ComplexTextController::runWidthSoFarFraction(unsigned glyphStartOffset, un
     return static_cast<float>(m_characterInCurrentGlyph - oldCharacterInCurrentGlyph) / (glyphEndOffset - glyphStartOffset);
 }
 
-void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer, GlyphIterationStyle iterationStyle, HashSet<const Font*>* fallbackFonts)
+void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer, GlyphIterationStyle iterationStyle, WeakHashSet<const Font>* fallbackFonts)
 {
     if (offset > m_end)
         offset = m_end;
@@ -536,7 +536,7 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer, G
         unsigned glyphIndexIntoCurrentRun = ltr ? m_glyphInCurrentRun : glyphCount - 1 - m_glyphInCurrentRun;
         unsigned glyphIndexIntoComplexTextController = indexOfLeftmostGlyphInCurrentRun + glyphIndexIntoCurrentRun;
         if (fallbackFonts && &complexTextRun.font() != &m_font.primaryFont())
-            fallbackFonts->add(&complexTextRun.font());
+            fallbackFonts->add(complexTextRun.font());
 
         // We must store the initial advance for the first glyph we are going to draw.
         // When leftmostGlyph is 0, it represents the first glyph to draw, taking into

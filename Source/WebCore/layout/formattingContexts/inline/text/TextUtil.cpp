@@ -119,7 +119,7 @@ InlineLayoutUnit TextUtil::trailingWhitespaceWidth(const InlineTextBox& inlineTe
 }
 
 template <typename TextIterator>
-static void fallbackFontsForRunWithIterator(HashSet<const Font*>& fallbackFonts, const FontCascade& fontCascade, const TextRun& run, TextIterator& textIterator)
+static void fallbackFontsForRunWithIterator(WeakHashSet<const Font>& fallbackFonts, const FontCascade& fontCascade, const TextRun& run, TextIterator& textIterator)
 {
     auto isRTL = run.rtl();
     auto isSmallCaps = fontCascade.isSmallCaps();
@@ -144,7 +144,7 @@ static void fallbackFontsForRunWithIterator(HashSet<const Font*>& fallbackFonts,
                 // If we include the synthetic bold expansion, then even zero-width glyphs will have their fonts added.
                 if (isNonSpacingMark || glyphData.font->widthForGlyph(glyphData.glyph, Font::SyntheticBoldInclusion::Exclude))
                     if (!isIgnored)
-                        fallbackFonts.add(glyphData.font);
+                        fallbackFonts.add(*glyphData.font);
             }
         };
         addFallbackFontForCharacterIfApplicable(currentCharacter);

@@ -36,7 +36,7 @@ namespace WebCore {
 
 using namespace WTF::Unicode;
 
-WidthIterator::WidthIterator(const FontCascade& font, const TextRun& run, HashSet<const Font*>* fallbackFonts, bool accountForGlyphBounds, bool forTextEmphasis)
+WidthIterator::WidthIterator(const FontCascade& font, const TextRun& run, WeakHashSet<const Font>* fallbackFonts, bool accountForGlyphBounds, bool forTextEmphasis)
     : m_font(font)
     , m_run(run)
     , m_fallbackFonts(fallbackFonts)
@@ -304,7 +304,7 @@ void WidthIterator::commitCurrentFontRange(AdvanceInternalState& advanceInternal
     m_currentCharacterIndex = advanceInternalState.currentCharacterIndex;
 
     if (advanceInternalState.widthOfCurrentFontRange && m_fallbackFonts && advanceInternalState.rangeFont != &advanceInternalState.primaryFont)
-        m_fallbackFonts->add(advanceInternalState.rangeFont);
+        m_fallbackFonts->add(*advanceInternalState.rangeFont);
 
     advanceInternalState.widthOfCurrentFontRange = 0;
     advanceInternalState.lastGlyphCount = advanceInternalState.glyphBuffer.size();

@@ -46,6 +46,7 @@
 #include "TrailingObjects.h"
 #include "WordTrailingSpace.h"
 #include <wtf/Function.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/StringView.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -67,7 +68,7 @@ struct WordMeasurement {
     float width;
     unsigned startOffset;
     unsigned endOffset;
-    HashSet<const Font*> fallbackFonts;
+    WeakHashSet<const Font> fallbackFonts;
 };
 
 class BreakingContext {
@@ -128,8 +129,8 @@ public:
     void commitAndUpdateLineBreakIfNeeded();
     LegacyInlineIterator handleEndOfLine();
     
-    float computeAdditionalBetweenWordsWidth(RenderText&, TextLayout*, UChar, WordTrailingSpace&, HashSet<const Font*>& fallbackFonts, WordMeasurements&, const FontCascade&, bool isFixedPitch, unsigned lastSpace, float lastSpaceWordSpacing, float wordSpacingForWordMeasurement, unsigned offset);
-    float textWidthConsideringPossibleTrailingSpace(RenderText&, TextLayout*, UChar currentCharacter, WordTrailingSpace&, HashSet<const Font*>& fallbackFonts, HashSet<const Font*>& wordMeasurementFallbackFonts, const FontCascade&, bool isFixedPitch, unsigned lastSpace, unsigned offset);
+    float computeAdditionalBetweenWordsWidth(RenderText&, TextLayout*, UChar, WordTrailingSpace&, WeakHashSet<const Font>& fallbackFonts, WordMeasurements&, const FontCascade&, bool isFixedPitch, unsigned lastSpace, float lastSpaceWordSpacing, float wordSpacingForWordMeasurement, unsigned offset);
+    float textWidthConsideringPossibleTrailingSpace(RenderText&, TextLayout*, UChar currentCharacter, WordTrailingSpace&, WeakHashSet<const Font>& fallbackFonts, WeakHashSet<const Font>& wordMeasurementFallbackFonts, const FontCascade&, bool isFixedPitch, unsigned lastSpace, unsigned offset);
 
     void clearLineBreakIfFitsOnLine(bool ignoringTrailingSpace = false)
     {
@@ -534,13 +535,13 @@ inline void nextCharacter(UChar& currentCharacter, UChar& lastCharacter, UChar& 
     lastCharacter = currentCharacter;
 }
 
-inline float measureHyphenWidth(RenderText& renderer, const FontCascade& font, HashSet<const Font*>* fallbackFonts = 0)
+inline float measureHyphenWidth(RenderText& renderer, const FontCascade& font, WeakHashSet<const Font>* fallbackFonts = nullptr)
 {
     const RenderStyle& style = renderer.style();
     return font.width(RenderBlock::constructTextRun(style.hyphenString().string(), style), fallbackFonts);
 }
 
-ALWAYS_INLINE float textWidth(RenderText& text, unsigned from, unsigned len, const FontCascade& font, float xPos, bool isFixedPitch, bool collapseWhiteSpace, HashSet<const Font*>& fallbackFonts, TextLayout* layout = nullptr)
+ALWAYS_INLINE float textWidth(RenderText& text, unsigned from, unsigned len, const FontCascade& font, float xPos, bool isFixedPitch, bool collapseWhiteSpace, WeakHashSet<const Font>& fallbackFonts, TextLayout* layout = nullptr)
 {
     const RenderStyle& style = text.style();
 
@@ -619,7 +620,7 @@ inline void tryHyphenating(RenderText& text, const FontCascade& font, const Atom
     ASSERT(pos - lastSpace - prefixLength >= minimumSuffixLength);
 
 #if ASSERT_ENABLED
-    HashSet<const Font*> fallbackFonts;
+    WeakHashSet<const Font> fallbackFonts;
     float prefixWidth = hyphenWidth + textWidth(text, lastSpace, prefixLength, font, xPos, isFixedPitch, collapseWhiteSpace, fallbackFonts) + lastSpaceWordSpacing;
     ASSERT(xPos + prefixWidth <= availableWidth);
 #else
@@ -630,14 +631,14 @@ inline void tryHyphenating(RenderText& text, const FontCascade& font, const Atom
     hyphenated = true;
 }
 
-inline float BreakingContext::textWidthConsideringPossibleTrailingSpace(RenderText& renderText, TextLayout* textLayout, UChar currentCharacter, WordTrailingSpace& wordTrailingSpace, HashSet<const Font*>& fallbackFonts, HashSet<const Font*>& wordMeasurementFallbackFonts, const FontCascade& font, bool isFixedPitch, unsigned lastSpace, unsigned offset)
+inline float BreakingContext::textWidthConsideringPossibleTrailingSpace(RenderText& renderText, TextLayout* textLayout, UChar currentCharacter, WordTrailingSpace& wordTrailingSpace, WeakHashSet<const Font>& fallbackFonts, WeakHashSet<const Font>& wordMeasurementFallbackFonts, const FontCascade& font, bool isFixedPitch, unsigned lastSpace, unsigned offset)
 {
     return RenderText::measureTextConsideringPossibleTrailingSpace(currentCharacter == space, lastSpace, offset - lastSpace, wordTrailingSpace, fallbackFonts, [&] (unsigned from, unsigned len) {
         return textWidth(renderText, from, len, font, m_width.currentWidth(), isFixedPitch, m_collapseWhiteSpace, wordMeasurementFallbackFonts, textLayout);
     });
 }
 
-inline float BreakingContext::computeAdditionalBetweenWordsWidth(RenderText& renderText, TextLayout* textLayout, UChar currentCharacter, WordTrailingSpace& wordTrailingSpace, HashSet<const Font*>& fallbackFonts, WordMeasurements& wordMeasurements, const FontCascade& font, bool isFixedPitch, unsigned lastSpace, float lastSpaceWordSpacing, float wordSpacingForWordMeasurement, unsigned offset)
+inline float BreakingContext::computeAdditionalBetweenWordsWidth(RenderText& renderText, TextLayout* textLayout, UChar currentCharacter, WordTrailingSpace& wordTrailingSpace, WeakHashSet<const Font>& fallbackFonts, WordMeasurements& wordMeasurements, const FontCascade& font, bool isFixedPitch, unsigned lastSpace, float lastSpaceWordSpacing, float wordSpacingForWordMeasurement, unsigned offset)
 {
     wordMeasurements.grow(wordMeasurements.size() + 1);
     WordMeasurement& wordMeasurement = wordMeasurements.last();
@@ -648,8 +649,8 @@ inline float BreakingContext::computeAdditionalBetweenWordsWidth(RenderText& ren
     
     float additionalTempWidth = textWidthConsideringPossibleTrailingSpace(renderText, textLayout, currentCharacter, wordTrailingSpace, fallbackFonts, wordMeasurement.fallbackFonts, font, isFixedPitch, lastSpace, offset);
     
-    if (wordMeasurement.fallbackFonts.isEmpty() && !fallbackFonts.isEmpty())
-        wordMeasurement.fallbackFonts.swap(fallbackFonts);
+    if (wordMeasurement.fallbackFonts.isEmptyIgnoringNullReferences() && !fallbackFonts.isEmptyIgnoringNullReferences())
+        wordMeasurement.fallbackFonts = std::exchange(fallbackFonts, { });
     fallbackFonts.clear();
     
     wordMeasurement.width = additionalTempWidth + wordSpacingForWordMeasurement;
@@ -724,7 +725,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
         m_renderTextInfo.layout = font.createLayout(renderer, m_width.currentWidth(), m_collapseWhiteSpace);
     }
 
-    HashSet<const Font*> fallbackFonts;
+    WeakHashSet<const Font> fallbackFonts;
     m_hasFormerOpportunity = false;
     bool canBreakMidWord = breakWords || breakAll;
     UChar lastCharacterFromPreviousRenderText = m_renderTextInfo.lineBreakIteratorFactory.priorContext().lastCharacter();
@@ -1050,8 +1051,8 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     if (m_hangsAtEnd && inlineLogicalTempWidth)
         m_hangsAtEnd = false;
 
-    if (wordMeasurement.fallbackFonts.isEmpty() && !fallbackFonts.isEmpty())
-        wordMeasurement.fallbackFonts.swap(fallbackFonts);
+    if (wordMeasurement.fallbackFonts.isEmptyIgnoringNullReferences() && !fallbackFonts.isEmptyIgnoringNullReferences())
+        wordMeasurement.fallbackFonts = std::exchange(fallbackFonts, { });
     fallbackFonts.clear();
 
     if (m_collapseWhiteSpace && m_currentCharacterIsSpace && additionalTempWidth)

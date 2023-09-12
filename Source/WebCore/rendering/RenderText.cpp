@@ -833,7 +833,7 @@ static inline std::optional<float> combineTextWidth(const RenderText& renderer, 
     return combineTextRenderer.isCombined() ? std::make_optional(combineTextRenderer.combinedTextWidth(fontCascade)) : std::nullopt;
 }
 
-ALWAYS_INLINE float RenderText::widthFromCache(const FontCascade& fontCascade, unsigned start, unsigned length, float xPos, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow, const RenderStyle& style) const
+ALWAYS_INLINE float RenderText::widthFromCache(const FontCascade& fontCascade, unsigned start, unsigned length, float xPos, WeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow, const RenderStyle& style) const
 {
     if (auto width = combineTextWidth(*this, fontCascade, style))
         return *width;
@@ -845,7 +845,7 @@ ALWAYS_INLINE float RenderText::widthFromCache(const FontCascade& fontCascade, u
     return fontCascade.width(run, fallbackFonts, glyphOverflow);
 }
 
-ALWAYS_INLINE float RenderText::widthFromCacheConsideringPossibleTrailingSpace(const RenderStyle& style, const FontCascade& font, unsigned startIndex, unsigned wordLen, float xPos, bool currentCharacterIsSpace, WordTrailingSpace& wordTrailingSpace, HashSet<const Font*>& fallbackFonts, GlyphOverflow& glyphOverflow) const
+ALWAYS_INLINE float RenderText::widthFromCacheConsideringPossibleTrailingSpace(const RenderStyle& style, const FontCascade& font, unsigned startIndex, unsigned wordLen, float xPos, bool currentCharacterIsSpace, WordTrailingSpace& wordTrailingSpace, WeakHashSet<const Font>& fallbackFonts, GlyphOverflow& glyphOverflow) const
 {
     return measureTextConsideringPossibleTrailingSpace(currentCharacterIsSpace, startIndex, wordLen, wordTrailingSpace, fallbackFonts, [&] (unsigned from, unsigned len) {
         return widthFromCache(font, from, len, xPos, &fallbackFonts, &glyphOverflow, style);
@@ -1059,10 +1059,10 @@ TextBreakIterator::ContentAnalysis mapWordBreakToContentAnalysis(WordBreak wordB
 
 void RenderText::computePreferredLogicalWidths(float leadWidth, bool forcedMinMaxWidthComputation)
 {
-    HashSet<const Font*> fallbackFonts;
+    WeakHashSet<const Font> fallbackFonts;
     GlyphOverflow glyphOverflow;
     computePreferredLogicalWidths(leadWidth, fallbackFonts, glyphOverflow, forcedMinMaxWidthComputation);
-    if (fallbackFonts.isEmpty() && !glyphOverflow.left && !glyphOverflow.right && !glyphOverflow.top && !glyphOverflow.bottom)
+    if (fallbackFonts.isEmptyIgnoringNullReferences() && !glyphOverflow.left && !glyphOverflow.right && !glyphOverflow.top && !glyphOverflow.bottom)
         m_knownToHaveNoOverflowAndNoFallbackFonts = true;
 }
 
@@ -1073,7 +1073,7 @@ static inline float hyphenWidth(RenderText& renderer, const FontCascade& font)
     return font.width(textRun);
 }
 
-float RenderText::maxWordFragmentWidth(const RenderStyle& style, const FontCascade& font, StringView word, unsigned minimumPrefixLength, unsigned minimumSuffixLength, bool currentCharacterIsSpace, unsigned characterIndex, float xPos, float entireWordWidth, WordTrailingSpace& wordTrailingSpace, HashSet<const Font*>& fallbackFonts, GlyphOverflow& glyphOverflow)
+float RenderText::maxWordFragmentWidth(const RenderStyle& style, const FontCascade& font, StringView word, unsigned minimumPrefixLength, unsigned minimumSuffixLength, bool currentCharacterIsSpace, unsigned characterIndex, float xPos, float entireWordWidth, WordTrailingSpace& wordTrailingSpace, WeakHashSet<const Font>& fallbackFonts, GlyphOverflow& glyphOverflow)
 {
     unsigned suffixStart = 0;
     if (word.length() <= minimumSuffixLength)
@@ -1126,7 +1126,7 @@ float RenderText::maxWordFragmentWidth(const RenderStyle& style, const FontCasca
     return std::max(maxFragmentWidth, suffixWidth);
 }
 
-void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Font*>& fallbackFonts, GlyphOverflow& glyphOverflow, bool forcedMinMaxWidthComputation)
+void RenderText::computePreferredLogicalWidths(float leadWidth, WeakHashSet<const Font>& fallbackFonts, GlyphOverflow& glyphOverflow, bool forcedMinMaxWidthComputation)
 {
     ASSERT_UNUSED(forcedMinMaxWidthComputation, m_hasTab || preferredLogicalWidthsDirty() || forcedMinMaxWidthComputation || !m_knownToHaveNoOverflowAndNoFallbackFonts);
 
@@ -1732,7 +1732,7 @@ bool RenderText::usesLegacyLineLayoutPath() const
     return !LayoutIntegration::LineLayout::containing(*this);
 }
 
-float RenderText::width(unsigned from, unsigned len, float xPos, bool firstLine, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float RenderText::width(unsigned from, unsigned len, float xPos, bool firstLine, WeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     if (from >= text().length())
         return 0;
@@ -1744,7 +1744,7 @@ float RenderText::width(unsigned from, unsigned len, float xPos, bool firstLine,
     return width(from, len, lineStyle.fontCascade(), xPos, fallbackFonts, glyphOverflow);
 }
 
-float RenderText::width(unsigned from, unsigned length, const FontCascade& fontCascade, float xPos, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float RenderText::width(unsigned from, unsigned length, const FontCascade& fontCascade, float xPos, WeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     ASSERT(from + length <= text().length());
     if (!text().length() || !length)
@@ -1764,7 +1764,7 @@ float RenderText::width(unsigned from, unsigned length, const FontCascade& fontC
                 ASSERT(glyphOverflow);
                 if (preferredLogicalWidthsDirty() || !m_knownToHaveNoOverflowAndNoFallbackFonts) {
                     const_cast<RenderText*>(this)->computePreferredLogicalWidths(0, *fallbackFonts, *glyphOverflow);
-                    if (fallbackFonts->isEmpty() && !glyphOverflow->left && !glyphOverflow->right && !glyphOverflow->top && !glyphOverflow->bottom)
+                    if (fallbackFonts->isEmptyIgnoringNullReferences() && !glyphOverflow->left && !glyphOverflow->right && !glyphOverflow->top && !glyphOverflow->bottom)
                         m_knownToHaveNoOverflowAndNoFallbackFonts = true;
                 }
                 // The rare case of when we switch between IFC and legacy preferred width computation.

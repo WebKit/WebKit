@@ -206,7 +206,7 @@ std::unique_ptr<DisplayList::DisplayList> FontCascade::displayListForTextRun(Gra
     return displayList;
 }
 
-float FontCascade::widthOfTextRange(const TextRun& run, unsigned from, unsigned to, HashSet<const Font*>* fallbackFonts, float* outWidthBeforeRange, float* outWidthAfterRange) const
+float FontCascade::widthOfTextRange(const TextRun& run, unsigned from, unsigned to, WeakHashSet<const Font>* fallbackFonts, float* outWidthBeforeRange, float* outWidthAfterRange) const
 {
     ASSERT(from <= to);
     ASSERT(to <= run.length());
@@ -250,7 +250,7 @@ float FontCascade::widthOfTextRange(const TextRun& run, unsigned from, unsigned 
     return offsetAfterRange - offsetBeforeRange;
 }
 
-float FontCascade::width(const TextRun& run, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float FontCascade::width(const TextRun& run, WeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     if (!run.length())
         return 0;
@@ -270,7 +270,7 @@ float FontCascade::width(const TextRun& run, HashSet<const Font*>* fallbackFonts
     if (cacheEntry && !std::isnan(*cacheEntry))
         return *cacheEntry;
 
-    HashSet<const Font*> localFallbackFonts;
+    WeakHashSet<const Font> localFallbackFonts;
     if (!fallbackFonts)
         fallbackFonts = &localFallbackFonts;
 
@@ -280,7 +280,7 @@ float FontCascade::width(const TextRun& run, HashSet<const Font*>* fallbackFonts
     else
         result = floatWidthForSimpleText(run, fallbackFonts, glyphOverflow);
 
-    if (cacheEntry && fallbackFonts->isEmpty())
+    if (cacheEntry && fallbackFonts->isEmptyIgnoringNullReferences())
         *cacheEntry = result;
     return result;
 }
@@ -1426,7 +1426,7 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const GlyphBuffer&
     drawGlyphBuffer(context, markBuffer, startPoint, CustomFontNotReadyAction::DoNotPaintIfFontNotReady);
 }
 
-float FontCascade::floatWidthForSimpleText(const TextRun& run, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float FontCascade::floatWidthForSimpleText(const TextRun& run, WeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     WidthIterator it(*this, run, fallbackFonts, glyphOverflow);
     GlyphBuffer glyphBuffer;
@@ -1443,7 +1443,7 @@ float FontCascade::floatWidthForSimpleText(const TextRun& run, HashSet<const Fon
     return it.runWidthSoFar();
 }
 
-float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float FontCascade::floatWidthForComplexText(const TextRun& run, WeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     ComplexTextController controller(*this, run, true, fallbackFonts);
     if (glyphOverflow) {

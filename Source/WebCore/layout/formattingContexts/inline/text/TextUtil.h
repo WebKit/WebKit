@@ -29,6 +29,7 @@
 #include "InlineItem.h"
 #include "InlineLine.h"
 #include "LayoutUnits.h"
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {
@@ -50,7 +51,7 @@ public:
 
     static InlineLayoutUnit trailingWhitespaceWidth(const InlineTextBox&, const FontCascade&, size_t startPosition, size_t endPosition);
 
-    using FallbackFontList = HashSet<const Font*>;
+    using FallbackFontList = WeakHashSet<const Font>;
     enum class IncludeHyphen : bool { No, Yes };
     static FallbackFontList fallbackFontsForText(StringView, const RenderStyle&, IncludeHyphen);
 
