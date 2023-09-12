@@ -251,7 +251,7 @@ private:
     bool m_mockVideoPresentationModeEnabled { false };
     WebCore::FloatSize m_mockPictureInPictureWindowSize { DefaultMockPictureInPictureWindowWidth, DefaultMockPictureInPictureWindowHeight };
 
-    WebPageProxy* m_page;
+    WeakPtr<WebPageProxy> m_page;
     Ref<PlaybackSessionManagerProxy> m_playbackSessionManagerProxy;
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;

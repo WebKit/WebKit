@@ -431,7 +431,7 @@ Ref<VideoFullscreenManagerProxy> VideoFullscreenManagerProxy::create(WebPageProx
 }
 
 VideoFullscreenManagerProxy::VideoFullscreenManagerProxy(WebPageProxy& page, PlaybackSessionManagerProxy& playbackSessionManagerProxy)
-    : m_page(&page)
+    : m_page(page)
     , m_playbackSessionManagerProxy(playbackSessionManagerProxy)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -646,7 +646,7 @@ void VideoFullscreenManagerProxy::addVideoInPictureInPictureDidChangeObserver(co
 void VideoFullscreenManagerProxy::hasVideoInPictureInPictureDidChange(bool value)
 {
     ALWAYS_LOG(LOGIDENTIFIER, value);
-    RefPtr page = m_page;
+    RefPtr page = m_page.get();
     page->uiClient().hasVideoInPictureInPictureDidChange(page.get(), value);
     m_pipChangeObservers.forEach([value] (auto& observer) { observer(value); });
 }
