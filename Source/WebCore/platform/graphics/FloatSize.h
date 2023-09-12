@@ -267,6 +267,26 @@ inline IntPoint flooredIntPoint(const FloatSize& p)
     return IntPoint(clampToInteger(floorf(p.width())), clampToInteger(floorf(p.height())));
 }
 
+inline IntSize essentiallyFlooredIntSize(const FloatSize& p)
+{
+    IntSize result { clampToInteger(p.width()), clampToInteger(p.height()) };
+    if (!WTF::areEssentiallyEqual<float>(p.width(), result.width()))
+        result.setWidth(clampToInteger(floorf(p.width())));
+    if (!WTF::areEssentiallyEqual<float>(p.height(), result.height()))
+        result.setHeight(clampToInteger(floorf(p.height())));
+    return result;
+}
+
+inline IntSize essentiallyExpandedIntSize(const FloatSize& p)
+{
+    IntSize result { clampToInteger(p.width()), clampToInteger(p.height()) };
+    if (!WTF::areEssentiallyEqual<float>(p.width(), result.width()))
+        result.setWidth(clampToInteger(ceilf(p.width())));
+    if (!WTF::areEssentiallyEqual<float>(p.height(), result.height()))
+        result.setHeight(clampToInteger(ceilf(p.height())));
+    return result;
+}
+
 constexpr FloatSize FloatSize::nanSize()
 {
     return {
