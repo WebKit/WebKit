@@ -44,7 +44,7 @@ WKBundleDOMWindowExtensionRef WKBundleDOMWindowExtensionCreate(WKBundleFrameRef 
 
 WKBundleFrameRef WKBundleDOMWindowExtensionGetFrame(WKBundleDOMWindowExtensionRef extension)
 {
-    return toAPI(WebKit::toImpl(extension)->frame());
+    return toAPI(WebKit::toImpl(extension)->frame().get());
 }
 
 WKBundleScriptWorldRef WKBundleDOMWindowExtensionGetScriptWorld(WKBundleDOMWindowExtensionRef extension)

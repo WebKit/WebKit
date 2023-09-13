@@ -202,7 +202,7 @@ RefPtr<PluginView> PluginView::create(HTMLPlugInElement& element, const URL& mai
     if (!coreFrame)
         return nullptr;
 
-    auto* frame = WebFrame::fromCoreFrame(*coreFrame);
+    auto frame = WebFrame::fromCoreFrame(*coreFrame);
     if (!frame)
         return nullptr;
 

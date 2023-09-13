@@ -44,23 +44,23 @@ WebGeolocationClient::~WebGeolocationClient()
 
 void WebGeolocationClient::geolocationDestroyed()
 {
-    WebProcess::singleton().supplement<WebGeolocationManager>()->unregisterWebPage(m_page);
+    WebProcess::singleton().supplement<WebGeolocationManager>()->unregisterWebPage(m_page.get());
     delete this;
 }
 
 void WebGeolocationClient::startUpdating(const String& authorizationToken, bool needsHighAccuracy)
 {
-    WebProcess::singleton().supplement<WebGeolocationManager>()->registerWebPage(m_page, authorizationToken, needsHighAccuracy);
+    WebProcess::singleton().supplement<WebGeolocationManager>()->registerWebPage(m_page.get(), authorizationToken, needsHighAccuracy);
 }
 
 void WebGeolocationClient::stopUpdating()
 {
-    WebProcess::singleton().supplement<WebGeolocationManager>()->unregisterWebPage(m_page);
+    WebProcess::singleton().supplement<WebGeolocationManager>()->unregisterWebPage(m_page.get());
 }
 
 void WebGeolocationClient::setEnableHighAccuracy(bool enabled)
 {
-    WebProcess::singleton().supplement<WebGeolocationManager>()->setEnableHighAccuracyForPage(m_page, enabled);
+    WebProcess::singleton().supplement<WebGeolocationManager>()->setEnableHighAccuracyForPage(m_page.get(), enabled);
 }
 
 std::optional<GeolocationPositionData> WebGeolocationClient::lastPosition()
@@ -70,17 +70,17 @@ std::optional<GeolocationPositionData> WebGeolocationClient::lastPosition()
 
 void WebGeolocationClient::requestPermission(Geolocation& geolocation)
 {
-    m_page.geolocationPermissionRequestManager().startRequestForGeolocation(geolocation);
+    m_page.get().geolocationPermissionRequestManager().startRequestForGeolocation(geolocation);
 }
 
 void WebGeolocationClient::revokeAuthorizationToken(const String& authorizationToken)
 {
-    m_page.geolocationPermissionRequestManager().revokeAuthorizationToken(authorizationToken);
+    m_page.get().geolocationPermissionRequestManager().revokeAuthorizationToken(authorizationToken);
 }
 
 void WebGeolocationClient::cancelPermissionRequest(Geolocation& geolocation)
 {
-    m_page.geolocationPermissionRequestManager().cancelRequestForGeolocation(geolocation);
+    m_page.get().geolocationPermissionRequestManager().cancelRequestForGeolocation(geolocation);
 }
 
 } // namespace WebKit

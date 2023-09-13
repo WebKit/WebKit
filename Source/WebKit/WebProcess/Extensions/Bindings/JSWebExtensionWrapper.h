@@ -98,7 +98,7 @@ enum class NullOrEmptyString {
     NullStringAsEmptyString
 };
 
-inline WebFrame* toWebFrame(JSContextRef context)
+inline RefPtr<WebFrame> toWebFrame(JSContextRef context)
 {
     ASSERT(context);
     return WebFrame::frameForContext(JSContextGetGlobalContext(context));
@@ -107,7 +107,7 @@ inline WebFrame* toWebFrame(JSContextRef context)
 inline WebPage* toWebPage(JSContextRef context)
 {
     ASSERT(context);
-    auto* frame = toWebFrame(context);
+    auto frame = toWebFrame(context);
     return frame ? frame->page() : nullptr;
 }
 

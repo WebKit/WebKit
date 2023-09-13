@@ -58,7 +58,7 @@ bool WKBundleFrameIsMainFrame(WKBundleFrameRef frameRef)
 
 WKBundleFrameRef WKBundleFrameGetParentFrame(WKBundleFrameRef frameRef)
 {
-    return toAPI(WebKit::toImpl(frameRef)->parentFrame());
+    return toAPI(WebKit::toImpl(frameRef)->parentFrame().get());
 }
 
 WKURLRef WKBundleFrameCopyURL(WKBundleFrameRef frameRef)
@@ -102,7 +102,7 @@ JSGlobalContextRef WKBundleFrameGetJavaScriptContext(WKBundleFrameRef frameRef)
 
 WKBundleFrameRef WKBundleFrameForJavaScriptContext(JSContextRef context)
 {
-    return toAPI(WebKit::WebFrame::frameForContext(context));
+    return toAPI(WebKit::WebFrame::frameForContext(context).get());
 }
 
 JSGlobalContextRef WKBundleFrameGetJavaScriptContextForWorld(WKBundleFrameRef frameRef, WKBundleScriptWorldRef worldRef)

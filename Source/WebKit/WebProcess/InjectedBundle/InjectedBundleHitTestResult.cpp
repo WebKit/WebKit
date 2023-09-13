@@ -59,7 +59,7 @@ RefPtr<InjectedBundleNodeHandle> InjectedBundleHitTestResult::urlElementHandle()
     return InjectedBundleNodeHandle::getOrCreate(m_hitTestResult.URLElement());
 }
 
-WebFrame* InjectedBundleHitTestResult::frame() const
+RefPtr<WebFrame> InjectedBundleHitTestResult::frame() const
 {
     auto* node = m_hitTestResult.innerNonSharedNode();
     if (!node)
@@ -72,7 +72,7 @@ WebFrame* InjectedBundleHitTestResult::frame() const
     return WebFrame::fromCoreFrame(*frame);
 }
 
-WebFrame* InjectedBundleHitTestResult::targetFrame() const
+RefPtr<WebFrame> InjectedBundleHitTestResult::targetFrame() const
 {
     auto* frame = m_hitTestResult.targetFrame();
     if (!frame)
@@ -150,7 +150,7 @@ IntRect InjectedBundleHitTestResult::imageRect() const
         
     // The image rect in HitTestResult is in frame coordinates, but we need it in WKView
     // coordinates since WebKit2 clients don't have enough context to do the conversion themselves.
-    auto* webFrame = frame();
+    auto webFrame = frame();
     if (!webFrame)
         return imageRect;
     

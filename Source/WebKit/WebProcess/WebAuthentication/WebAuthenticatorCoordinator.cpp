@@ -68,7 +68,7 @@ WebAuthenticatorCoordinator::WebAuthenticatorCoordinator(WebPage& webPage)
 
 void WebAuthenticatorCoordinator::makeCredential(const LocalFrame& frame, const SecurityOrigin&, const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions& options, RequestCompletionHandler&& handler)
 {
-    auto* webFrame = WebFrame::fromCoreFrame(frame);
+    auto webFrame = WebFrame::fromCoreFrame(frame);
     if (!webFrame)
         return;
 
@@ -78,7 +78,7 @@ void WebAuthenticatorCoordinator::makeCredential(const LocalFrame& frame, const 
 
 void WebAuthenticatorCoordinator::getAssertion(const LocalFrame& frame, const SecurityOrigin&, const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions& options, MediationRequirement mediation, const ScopeAndCrossOriginParent& scopeAndCrossOriginParent, RequestCompletionHandler&& handler)
 {
-    auto* webFrame = WebFrame::fromCoreFrame(frame);
+    auto webFrame = WebFrame::fromCoreFrame(frame);
     if (!webFrame)
         return;
 

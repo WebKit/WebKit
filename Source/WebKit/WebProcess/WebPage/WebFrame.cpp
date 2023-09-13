@@ -198,7 +198,7 @@ WebPage* WebFrame::page() const
     return page ? WebPage::fromCorePage(*page) : nullptr;
 }
 
-WebFrame* WebFrame::fromCoreFrame(const Frame& frame)
+RefPtr<WebFrame> WebFrame::fromCoreFrame(const Frame& frame)
 {
     if (auto* localFrame = dynamicDowncast<LocalFrame>(frame)) {
         auto* webLocalFrameLoaderClient = toWebLocalFrameLoaderClient(localFrame->loader().client());
@@ -693,7 +693,7 @@ String WebFrame::innerText() const
     return localFrame->document()->documentElement()->innerText();
 }
 
-WebFrame* WebFrame::parentFrame() const
+RefPtr<WebFrame> WebFrame::parentFrame() const
 {
     RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
     if (!localFrame || !localFrame->ownerElement())
@@ -965,13 +965,13 @@ void WebFrame::stopLoading()
     localFrame->loader().stopForUserCancel();
 }
 
-WebFrame* WebFrame::frameForContext(JSContextRef context)
+RefPtr<WebFrame> WebFrame::frameForContext(JSContextRef context)
 {
     RefPtr coreFrame = LocalFrame::fromJSContext(context);
     return coreFrame ? WebFrame::fromCoreFrame(*coreFrame) : nullptr;
 }
 
-WebFrame* WebFrame::contentFrameForWindowOrFrameElement(JSContextRef context, JSValueRef value)
+RefPtr<WebFrame> WebFrame::contentFrameForWindowOrFrameElement(JSContextRef context, JSValueRef value)
 {
     RefPtr coreFrame = LocalFrame::contentFrameFromWindowOrFrameElement(context, value);
     return coreFrame ? WebFrame::fromCoreFrame(*coreFrame) : nullptr;
@@ -1143,7 +1143,7 @@ bool WebFrame::shouldEnableInAppBrowserPrivacyProtections()
 
     bool treeHasNonAppBoundFrame = m_isNavigatingToAppBoundDomain && m_isNavigatingToAppBoundDomain == NavigatingToAppBoundDomain::No;
     if (!treeHasNonAppBoundFrame) {
-        for (WebFrame* frame = this; frame; frame = frame->parentFrame()) {
+        for (RefPtr frame = this; frame; frame = frame->parentFrame()) {
             if (frame->isNavigatingToAppBoundDomain() && frame->isNavigatingToAppBoundDomain() == NavigatingToAppBoundDomain::No) {
                 treeHasNonAppBoundFrame = true;
                 break;

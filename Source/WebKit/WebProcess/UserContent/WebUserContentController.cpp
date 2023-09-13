@@ -278,11 +278,11 @@ private:
         if (!frame)
             return;
     
-        WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
+        auto webFrame = WebFrame::fromCoreFrame(*frame);
         if (!webFrame)
             return;
 
-        WebPage* webPage = webFrame->page();
+        RefPtr webPage = webFrame->page();
         if (!webPage)
             return;
 

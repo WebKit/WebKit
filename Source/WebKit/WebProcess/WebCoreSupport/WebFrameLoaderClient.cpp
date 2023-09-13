@@ -88,11 +88,11 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         return;
     }
 
-    auto* requestingFrame = WebProcess::singleton().webFrame(*requester.frameID);
+    RefPtr requestingFrame = WebProcess::singleton().webFrame(*requester.frameID);
 
     auto originatingFrameID = *requester.frameID;
     std::optional<WebCore::FrameIdentifier> parentFrameID;
-    if (auto* parentFrame = requestingFrame ? requestingFrame->parentFrame() : nullptr)
+    if (auto parentFrame = requestingFrame ? requestingFrame->parentFrame() : nullptr)
         parentFrameID = parentFrame->frameID();
 
     FrameInfoData originatingFrameInfoData {

@@ -255,18 +255,18 @@ void WebChromeClient::takeFocus(FocusDirection direction)
 
 void WebChromeClient::focusedElementChanged(Element* element)
 {
-    auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
+    RefPtr inputElement = dynamicDowncast<HTMLInputElement>(element);
     if (!inputElement || !inputElement->isText())
         return;
 
-    WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
+    auto webFrame = WebFrame::fromCoreFrame(*element->document().frame());
     ASSERT(webFrame);
-    m_page.injectedBundleFormClient().didFocusTextField(&m_page, *inputElement, webFrame);
+    m_page.injectedBundleFormClient().didFocusTextField(&m_page, *inputElement, webFrame.get());
 }
 
 void WebChromeClient::focusedFrameChanged(LocalFrame* frame)
 {
-    WebFrame* webFrame = frame ? WebFrame::fromCoreFrame(*frame) : nullptr;
+    auto webFrame = frame ? WebFrame::fromCoreFrame(*frame) : nullptr;
 
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::FocusedFrameChanged(webFrame ? std::make_optional(webFrame->frameID()) : std::nullopt), m_page.identifier());
 }
@@ -274,7 +274,7 @@ void WebChromeClient::focusedFrameChanged(LocalFrame* frame)
 Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& windowFeatures, const NavigationAction& navigationAction)
 {
 #if ENABLE(FULLSCREEN_API)
-    if (auto* document = frame.document())
+    if (RefPtr document = frame.document())
         document->fullscreenManager().cancelFullscreen();
 #endif
 
@@ -313,7 +313,7 @@ Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& win
 #endif
     };
 
-    WebFrame* webFrame = WebFrame::fromCoreFrame(frame);
+    auto webFrame = WebFrame::fromCoreFrame(frame);
 
     auto sendResult = webProcess.parentProcessConnection()->sendSync(Messages::WebPageProxy::CreateNewPage(webFrame->info(), webFrame->page()->webPageProxyIdentifier(), navigationAction.resourceRequest(), windowFeatures, navigationActionData), m_page.identifier(), IPC::Timeout::infinity(), { IPC::SendSyncOption::MaintainOrderingWithAsyncMessages, IPC::SendSyncOption::InformPlatformProcessWillSuspend });
     if (!sendResult.succeeded())
@@ -441,7 +441,7 @@ bool WebChromeClient::canRunBeforeUnloadConfirmPanel()
 
 bool WebChromeClient::runBeforeUnloadConfirmPanel(const String& message, LocalFrame& frame)
 {
-    WebFrame* webFrame = WebFrame::fromCoreFrame(frame);
+    auto webFrame = WebFrame::fromCoreFrame(frame);
 
     HangDetectionDisabler hangDetectionDisabler;
 
@@ -461,8 +461,8 @@ void WebChromeClient::closeWindow()
 
     m_page.corePage()->setGroupName(String());
 
-    auto& frame = m_page.mainWebFrame();
-    if (auto* coreFrame = frame.coreLocalFrame())
+    Ref frame = m_page.mainWebFrame();
+    if (RefPtr coreFrame = frame->coreLocalFrame())
         coreFrame->loader().stopForUserCancel();
 
     m_page.sendClose();
@@ -481,11 +481,11 @@ void WebChromeClient::runJavaScriptAlert(LocalFrame& frame, const String& alertT
     if (shouldSuppressJavaScriptDialogs(frame))
         return;
 
-    WebFrame* webFrame = WebFrame::fromCoreFrame(frame);
+    auto webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
 
     // Notify the bundle client.
-    m_page.injectedBundleUIClient().willRunJavaScriptAlert(&m_page, alertText, webFrame);
+    m_page.injectedBundleUIClient().willRunJavaScriptAlert(&m_page, alertText, webFrame.get());
     m_page.prepareToRunModalJavaScriptDialog();
 
     HangDetectionDisabler hangDetectionDisabler;
@@ -499,11 +499,11 @@ bool WebChromeClient::runJavaScriptConfirm(LocalFrame& frame, const String& mess
     if (shouldSuppressJavaScriptDialogs(frame))
         return false;
 
-    WebFrame* webFrame = WebFrame::fromCoreFrame(frame);
+    auto webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
 
     // Notify the bundle client.
-    m_page.injectedBundleUIClient().willRunJavaScriptConfirm(&m_page, message, webFrame);
+    m_page.injectedBundleUIClient().willRunJavaScriptConfirm(&m_page, message, webFrame.get());
     m_page.prepareToRunModalJavaScriptDialog();
 
     HangDetectionDisabler hangDetectionDisabler;
@@ -519,11 +519,11 @@ bool WebChromeClient::runJavaScriptPrompt(LocalFrame& frame, const String& messa
     if (shouldSuppressJavaScriptDialogs(frame))
         return false;
 
-    WebFrame* webFrame = WebFrame::fromCoreFrame(frame);
+    auto webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
 
     // Notify the bundle client.
-    m_page.injectedBundleUIClient().willRunJavaScriptPrompt(&m_page, message, defaultValue, webFrame);
+    m_page.injectedBundleUIClient().willRunJavaScriptPrompt(&m_page, message, defaultValue, webFrame.get());
     m_page.prepareToRunModalJavaScriptDialog();
 
     HangDetectionDisabler hangDetectionDisabler;
@@ -592,11 +592,11 @@ void WebChromeClient::invalidateRootView(const IntRect&)
 
 void WebChromeClient::invalidateContentsAndRootView(const IntRect& rect)
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.corePage()->mainFrame());
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page.corePage()->mainFrame());
     if (!localMainFrame)
         return;
 
-    if (Document* document = localMainFrame->document()) {
+    if (RefPtr document = localMainFrame->document()) {
         if (document->printing())
             return;
     }
@@ -606,18 +606,18 @@ void WebChromeClient::invalidateContentsAndRootView(const IntRect& rect)
 
 void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect)
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.corePage()->mainFrame());
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page.corePage()->mainFrame());
     if (!localMainFrame)
         return;
 
-    if (Document* document = localMainFrame->document()) {
+    if (RefPtr document = localMainFrame->document()) {
         if (document->printing())
             return;
     }
 
     m_page.pageDidScroll();
 #if USE(COORDINATED_GRAPHICS)
-    auto* frameView = m_page.localMainFrameView();
+    RefPtr frameView = m_page.localMainFrameView();
     if (frameView && frameView->delegatesScrolling()) {
         m_page.drawingArea()->scroll(rect, IntSize());
         return;
@@ -670,7 +670,7 @@ void WebChromeClient::intrinsicContentsSizeChanged(const IntSize& size) const
 
 void WebChromeClient::contentsSizeChanged(LocalFrame& frame, const IntSize& size) const
 {
-    auto* frameView = frame.view();
+    RefPtr frameView = frame.view();
 
     if (&frame.page()->mainFrame() != &frame)
         return;
@@ -746,7 +746,7 @@ static constexpr unsigned maxTitleLength = 1000; // Closest power of 10 above th
 
 void WebChromeClient::print(LocalFrame& frame, const StringWithDirection& title)
 {
-    WebFrame* webFrame = WebFrame::fromCoreFrame(frame);
+    auto webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
 
     WebCore::FloatSize pdfFirstPageSize;
@@ -826,7 +826,7 @@ void WebChromeClient::runOpenPanel(LocalFrame& frame, FileChooser& fileChooser)
 
     m_page.setActiveOpenPanelResultListener(WebOpenPanelResultListener::create(m_page, fileChooser));
 
-    auto* webFrame = WebFrame::fromCoreFrame(frame);
+    auto webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
     m_page.send(Messages::WebPageProxy::RunOpenPanel(webFrame->frameID(), webFrame->info(), fileChooser.settings()));
 }
@@ -867,9 +867,9 @@ RefPtr<Icon> WebChromeClient::createIconForFiles(const Vector<String>& filenames
 
 void WebChromeClient::didAssociateFormControls(const Vector<RefPtr<Element>>& elements, WebCore::LocalFrame& frame)
 {
-    WebFrame* webFrame = WebFrame::fromCoreFrame(frame);
+    auto webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
-    return m_page.injectedBundleFormClient().didAssociateFormControls(&m_page, elements, webFrame);
+    return m_page.injectedBundleFormClient().didAssociateFormControls(&m_page, elements, webFrame.get());
 }
 
 bool WebChromeClient::shouldNotifyOnFormChanges()
@@ -1500,7 +1500,7 @@ void WebChromeClient::removePlaybackTargetPickerClient(PlaybackTargetClientConte
 
 void WebChromeClient::showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier contextId, const IntPoint& position, bool isVideo)
 {
-    auto* frameView = m_page.localMainFrameView();
+    RefPtr frameView = m_page.localMainFrameView();
     if (!frameView)
         return;
 
@@ -1542,14 +1542,14 @@ void WebChromeClient::didInvalidateDocumentMarkerRects()
 #if ENABLE(TRACKING_PREVENTION)
 void WebChromeClient::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, LocalFrame& frame, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto* webFrame = WebFrame::fromCoreFrame(frame);
+    auto webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
     m_page.hasStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), *webFrame, WTFMove(completionHandler));
 }
 
 void WebChromeClient::requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, LocalFrame& frame, StorageAccessScope scope, CompletionHandler<void(RequestStorageAccessResult)>&& completionHandler)
 {
-    auto* webFrame = WebFrame::fromCoreFrame(frame);
+    auto webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
     m_page.requestStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), *webFrame, scope, WTFMove(completionHandler));
 }
@@ -1563,7 +1563,7 @@ bool WebChromeClient::hasPageLevelStorageAccess(const WebCore::RegistrableDomain
 #if ENABLE(DEVICE_ORIENTATION)
 void WebChromeClient::shouldAllowDeviceOrientationAndMotionAccess(LocalFrame& frame, bool mayPrompt, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& callback)
 {
-    auto* webFrame = WebFrame::fromCoreFrame(frame);
+    auto webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
     m_page.shouldAllowDeviceOrientationAndMotionAccess(webFrame->frameID(), webFrame->info(), mayPrompt, WTFMove(callback));
 }
