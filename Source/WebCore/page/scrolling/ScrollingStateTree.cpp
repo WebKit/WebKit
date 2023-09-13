@@ -61,7 +61,15 @@ ScrollingStateTree::ScrollingStateTree(AsyncScrollingCoordinator* scrollingCoord
 {
 }
 
+ScrollingStateTree::ScrollingStateTree(ScrollingStateTree&&) = default;
+
 ScrollingStateTree::~ScrollingStateTree() = default;
+
+void ScrollingStateTree::attachDeserializedNodes()
+{
+    if (m_rootStateNode)
+        m_rootStateNode->attachAfterDeserialization(*this);
+}
 
 void ScrollingStateTree::setHasChangedProperties(bool changedProperties)
 {

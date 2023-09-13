@@ -39,7 +39,7 @@ namespace WebCore {
 ScrollingStateNode::ScrollingStateNode(ScrollingNodeType nodeType, ScrollingStateTree& scrollingStateTree, ScrollingNodeID nodeID)
     : m_nodeType(nodeType)
     , m_nodeID(nodeID)
-    , m_scrollingStateTree(scrollingStateTree)
+    , m_scrollingStateTree(&scrollingStateTree)
 {
 }
 
@@ -49,7 +49,7 @@ ScrollingStateNode::ScrollingStateNode(const ScrollingStateNode& stateNode, Scro
     : m_nodeType(stateNode.nodeType())
     , m_nodeID(stateNode.scrollingNodeID())
     , m_changedProperties(stateNode.changedProperties())
-    , m_scrollingStateTree(adoptiveTree)
+    , m_scrollingStateTree(&adoptiveTree)
 {
     if (hasChangedProperty(Property::Layer))
         setLayer(stateNode.layer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
@@ -59,13 +59,22 @@ ScrollingStateNode::ScrollingStateNode(const ScrollingStateNode& stateNode, Scro
 
 ScrollingStateNode::~ScrollingStateNode() = default;
 
+void ScrollingStateNode::attachAfterDeserialization(ScrollingStateTree& tree)
+{
+    ASSERT(m_scrollingStateTree); // FIXME: This will switch to ASSERT(!m_scrollingStateTree) once we deserialize nodes without the context of a ScrollingStateTree.
+    m_scrollingStateTree = &tree;
+    for (auto& child : m_children)
+        child->attachAfterDeserialization(tree);
+}
+
 void ScrollingStateNode::setPropertyChanged(Property property)
 {
     if (hasChangedProperty(property))
         return;
 
     setPropertyChangedInternal(property);
-    m_scrollingStateTree.setHasChangedProperties();
+    ASSERT(m_scrollingStateTree);
+    m_scrollingStateTree->setHasChangedProperties();
 }
 
 OptionSet<ScrollingStateNode::Property> ScrollingStateNode::applicableProperties() const
@@ -77,7 +86,8 @@ void ScrollingStateNode::setPropertyChangesAfterReattach()
 {
     auto allPropertiesForNodeType = applicableProperties();
     setPropertiesChangedInternal(allPropertiesForNodeType);
-    m_scrollingStateTree.setHasChangedProperties();
+    ASSERT(m_scrollingStateTree);
+    m_scrollingStateTree->setHasChangedProperties();
 }
 
 Ref<ScrollingStateNode> ScrollingStateNode::cloneAndReset(ScrollingStateTree& adoptiveTree)

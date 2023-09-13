@@ -289,7 +289,7 @@ public:
     void resetChangedProperties() { m_changedProperties = { }; }
     void setPropertyChanged(Property);
 
-    virtual void setPropertyChangesAfterReattach();
+    void setPropertyChangesAfterReattach();
 
     OptionSet<Property> changedProperties() const { return m_changedProperties; }
     void setChangedProperties(OptionSet<Property> changedProperties) { m_changedProperties = changedProperties; }
@@ -299,7 +299,12 @@ public:
     const LayerRepresentation& layer() const { return m_layer; }
     WEBCORE_EXPORT void setLayer(const LayerRepresentation&);
 
-    ScrollingStateTree& scrollingStateTree() const { return m_scrollingStateTree; }
+    ScrollingStateTree& scrollingStateTree() const
+    {
+        ASSERT(m_scrollingStateTree);
+        return *m_scrollingStateTree;
+    }
+    void attachAfterDeserialization(ScrollingStateTree&);
 
     ScrollingNodeID scrollingNodeID() const { return m_nodeID; }
 
@@ -339,7 +344,7 @@ private:
     const ScrollingNodeID m_nodeID;
     OptionSet<Property> m_changedProperties;
 
-    ScrollingStateTree& m_scrollingStateTree;
+    ScrollingStateTree* m_scrollingStateTree { nullptr }; // Only null between deserialization and attachAfterDeserialization.
 
     ThreadSafeWeakPtr<ScrollingStateNode> m_parent;
     Vector<Ref<ScrollingStateNode>> m_children;
