@@ -6065,7 +6065,7 @@ class TestDetermineLabelOwner(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success_merge_queue(self):
         self.setupStep(DetermineLabelOwner())
-        self.setProperty('pr_number', 17518)
+        self.setProperty('github.number', 17518)
         self.setProperty('buildername', 'Merge-Queue')
         response = {"data": {
                     "repository": {
@@ -6096,7 +6096,7 @@ class TestDetermineLabelOwner(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure(self):
         self.setupStep(DetermineLabelOwner())
-        self.setProperty('pr_number', 17518)
+        self.setProperty('github.number', 17518)
         self.setProperty('buildername', 'Merge-Queue')
         response = {"data": {
                     "repository": {
