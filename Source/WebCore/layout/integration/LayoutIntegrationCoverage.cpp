@@ -98,8 +98,8 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::ContentIsRuby:
         stream << "ruby";
         break;
-    case AvoidanceReason::FlowHasNonSupportedChild:
-        stream << "unsupported child renderer";
+    case AvoidanceReason::FlowIsInitialContainingBlock:
+        stream << "flow is ICB";
         break;
     case AvoidanceReason::FlowHasLineAlignEdges:
         stream << "-webkit-line-align edges";
@@ -324,7 +324,7 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
         return reasons;
     }
 
-    SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+    ASSERT_NOT_REACHED();
     return reasons;
 }
 
@@ -342,7 +342,7 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
     if (!DeprecatedGlobalSettings::inlineFormattingContextIntegrationEnabled())
         SET_REASON_AND_RETURN_IF_NEEDED(FeatureIsDisabled, reasons, includeReasons);
     if (flow.isRenderView())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsInitialContainingBlock, reasons, includeReasons);
     if (!flow.firstChild()) {
         // Non-SVG code does not call into layoutInlineChildren with no children anymore.
         ASSERT(is<RenderSVGBlock>(flow));

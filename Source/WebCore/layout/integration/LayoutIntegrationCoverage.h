@@ -48,7 +48,7 @@ enum class AvoidanceReason : uint64_t {
     // Unused                                    = 1LLU  << 6,
     // Unused                                    = 1LLU  << 7,
     // Unused                                    = 1LLU  << 8,
-    FlowHasNonSupportedChild                     = 1LLU  << 9,
+    FlowIsInitialContainingBlock                 = 1LLU  << 9,
     // Unused                                    = 1LLU  << 10,
     // Unused                                    = 1LLU  << 11,
     // Unused                                    = 1LLU  << 12,
