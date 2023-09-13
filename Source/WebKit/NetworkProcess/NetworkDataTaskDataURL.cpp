@@ -77,7 +77,7 @@ void NetworkDataTaskDataURL::resume()
 
     m_state = State::Running;
 
-    DataURLDecoder::decode(firstRequest().url(), { }, [this, protectedThis = Ref { *this }](auto decodeResult) mutable {
+    DataURLDecoder::decode(firstRequest().url(), { }, DataURLDecoder::ShouldValidatePadding::Yes, [this, protectedThis = Ref { *this }](auto decodeResult) mutable {
         if (m_state == State::Canceling || m_state == State::Completed)
             return;
 

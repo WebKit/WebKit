@@ -42,7 +42,9 @@ enum class Base64EncodeMode : bool { Default, URL };
 //   enforce a correct number of trailing equal signs in the input.
 // - ::DefaultValidatePaddingAndIgnoreWhitespace ignores ASCII whitespace in
 //   the input. It matches <https://infra.spec.whatwg.org/#forgiving-base64>.
-enum class Base64DecodeMode { DefaultIgnorePadding, DefaultValidatePadding, DefaultValidatePaddingAndIgnoreWhitespace, URL };
+// - ::DefaultIgnoreWhitespaceForQuirk, URL ignores ASCII whitespace in the
+//   input but doesn't validate padding. It is currently only used for quirks.
+enum class Base64DecodeMode { DefaultIgnorePadding, DefaultValidatePadding, DefaultValidatePaddingAndIgnoreWhitespace, DefaultIgnoreWhitespaceForQuirk, URL };
 
 struct Base64Specification {
     std::span<const std::byte> input;

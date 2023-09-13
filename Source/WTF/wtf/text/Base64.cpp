@@ -199,7 +199,7 @@ template<typename T> static std::optional<Vector<uint8_t>> base64DecodeInternal(
                 if (equalsSignCount)
                     return std::nullopt;
                 destination[destinationLength++] = decodedCharacter;
-            } else if (mode != Base64DecodeMode::DefaultValidatePaddingAndIgnoreWhitespace || !isASCIIWhitespace(ch))
+            } else if ((mode != Base64DecodeMode::DefaultValidatePaddingAndIgnoreWhitespace && mode != Base64DecodeMode::DefaultIgnoreWhitespaceForQuirk) || !isASCIIWhitespace(ch))
                 return std::nullopt;
         }
     }
