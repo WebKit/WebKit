@@ -227,7 +227,7 @@ bool RenderBox::hasFragmentRangeInFragmentedFlow() const
     return fragmentedFlow->hasCachedFragmentRangeForBox(*this);
 }
 
-LayoutRect RenderBox::clientBoxRectInFragment(RenderFragmentContainer* fragment) const
+LayoutRect RenderBox::clientBoxRectInFragment(const RenderFragmentContainer* fragment) const
 {
     if (!fragment)
         return clientBoxRect();
@@ -239,7 +239,7 @@ LayoutRect RenderBox::clientBoxRectInFragment(RenderFragmentContainer* fragment)
     return clientBox;
 }
 
-LayoutRect RenderBox::borderBoxRectInFragment(RenderFragmentContainer*, RenderBoxFragmentInfoFlags) const
+LayoutRect RenderBox::borderBoxRectInFragment(const RenderFragmentContainer*, RenderBoxFragmentInfoFlags) const
 {
     return borderBoxRect();
 }

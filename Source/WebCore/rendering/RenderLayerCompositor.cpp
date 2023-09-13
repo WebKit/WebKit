@@ -5367,24 +5367,24 @@ void LegacyWebKitScrollingLayerCoordinator::registerAllViewportConstrainedLayers
     LayerMap layerMap;
     StickyContainerMap stickyContainerMap;
 
-    for (auto* layer : m_viewportConstrainedLayers) {
-        ASSERT(layer->isComposited());
+    for (auto& layer : m_viewportConstrainedLayers) {
+        ASSERT(layer.isComposited());
 
         std::unique_ptr<ViewportConstraints> constraints;
-        if (layer->renderer().isStickilyPositioned()) {
-            constraints = makeUnique<StickyPositionViewportConstraints>(compositor.computeStickyViewportConstraints(*layer));
+        if (layer.renderer().isStickilyPositioned()) {
+            constraints = makeUnique<StickyPositionViewportConstraints>(compositor.computeStickyViewportConstraints(layer));
             const RenderLayer* enclosingTouchScrollableLayer = nullptr;
-            if (compositor.isAsyncScrollableStickyLayer(*layer, &enclosingTouchScrollableLayer) && enclosingTouchScrollableLayer) {
+            if (compositor.isAsyncScrollableStickyLayer(layer, &enclosingTouchScrollableLayer) && enclosingTouchScrollableLayer) {
                 ASSERT(enclosingTouchScrollableLayer->isComposited());
                 // what
-                stickyContainerMap.add(layer->backing()->graphicsLayer()->platformLayer(), enclosingTouchScrollableLayer->backing()->scrollContainerLayer()->platformLayer());
+                stickyContainerMap.add(layer.backing()->graphicsLayer()->platformLayer(), enclosingTouchScrollableLayer->backing()->scrollContainerLayer()->platformLayer());
             }
-        } else if (layer->renderer().isFixedPositioned())
-            constraints = makeUnique<FixedPositionViewportConstraints>(compositor.computeFixedViewportConstraints(*layer));
+        } else if (layer.renderer().isFixedPositioned())
+            constraints = makeUnique<FixedPositionViewportConstraints>(compositor.computeFixedViewportConstraints(layer));
         else
             continue;
 
-        layerMap.add(layer->backing()->graphicsLayer()->platformLayer(), WTFMove(constraints));
+        layerMap.add(layer.backing()->graphicsLayer()->platformLayer(), WTFMove(constraints));
     }
     
     m_chromeClient.updateViewportConstrainedLayers(layerMap, stickyContainerMap);
@@ -5416,27 +5416,27 @@ void LegacyWebKitScrollingLayerCoordinator::updateScrollingLayer(RenderLayer& la
 
 void LegacyWebKitScrollingLayerCoordinator::registerAllScrollingLayers()
 {
-    for (auto* layer : m_scrollingLayers)
-        updateScrollingLayer(*layer);
+    for (auto& layer : m_scrollingLayers)
+        updateScrollingLayer(layer);
 }
 
 void LegacyWebKitScrollingLayerCoordinator::unregisterAllScrollingLayers()
 {
-    for (auto* layer : m_scrollingLayers) {
-        auto* backing = layer->backing();
+    for (auto& layer : m_scrollingLayers) {
+        auto* backing = layer.backing();
         ASSERT(backing);
-        m_chromeClient.removeScrollingLayer(layer->renderer().element(), backing->scrollContainerLayer()->platformLayer(), backing->scrolledContentsLayer()->platformLayer());
+        m_chromeClient.removeScrollingLayer(layer.renderer().element(), backing->scrollContainerLayer()->platformLayer(), backing->scrolledContentsLayer()->platformLayer());
     }
 }
 
 void LegacyWebKitScrollingLayerCoordinator::addScrollingLayer(RenderLayer& layer)
 {
-    m_scrollingLayers.add(&layer);
+    m_scrollingLayers.add(layer);
 }
 
 void LegacyWebKitScrollingLayerCoordinator::removeScrollingLayer(RenderLayer& layer, RenderLayerBacking& backing)
 {
-    if (m_scrollingLayers.remove(&layer)) {
+    if (m_scrollingLayers.remove(layer)) {
         auto* scrollContainerLayer = backing.scrollContainerLayer()->platformLayer();
         auto* scrolledContentsLayer = backing.scrolledContentsLayer()->platformLayer();
         m_chromeClient.removeScrollingLayer(layer.renderer().element(), scrollContainerLayer, scrolledContentsLayer);
@@ -5448,17 +5448,17 @@ void LegacyWebKitScrollingLayerCoordinator::removeLayer(RenderLayer& layer)
     removeScrollingLayer(layer, *layer.backing());
 
     // We'll put the new set of layers to the client via registerAllViewportConstrainedLayers() at flush time.
-    m_viewportConstrainedLayers.remove(&layer);
+    m_viewportConstrainedLayers.remove(layer);
 }
 
 void LegacyWebKitScrollingLayerCoordinator::addViewportConstrainedLayer(RenderLayer& layer)
 {
-    m_viewportConstrainedLayers.add(&layer);
+    m_viewportConstrainedLayers.add(layer);
 }
 
 void LegacyWebKitScrollingLayerCoordinator::removeViewportConstrainedLayer(RenderLayer& layer)
 {
-    m_viewportConstrainedLayers.remove(&layer);
+    m_viewportConstrainedLayers.remove(layer);
 }
 
 #endif

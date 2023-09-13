@@ -2359,12 +2359,12 @@ static RenderLayer* findCommonAncestor(const RenderLayer& firstLayer, const Rend
     if (&firstLayer == &secondLayer)
         return const_cast<RenderLayer*>(&firstLayer);
 
-    HashSet<const RenderLayer*> ancestorChain;
+    WeakHashSet<const RenderLayer> ancestorChain;
     for (auto* currLayer = &firstLayer; currLayer; currLayer = currLayer->parent())
-        ancestorChain.add(currLayer);
+        ancestorChain.add(*currLayer);
 
     for (auto* currLayer = &secondLayer; currLayer; currLayer = currLayer->parent()) {
-        if (ancestorChain.contains(currLayer))
+        if (ancestorChain.contains(*currLayer))
             return const_cast<RenderLayer*>(currLayer);
     }
     return nullptr;

@@ -671,8 +671,8 @@ void RenderTableSection::computeOverflowFromCells(unsigned totalRows, unsigned n
             hasOverflowingCell |= cell->hasVisualOverflow();
 #endif
             if (cell->hasVisualOverflow() && !m_forceSlowPaintPathWithOverflowingCell) {
-                m_overflowingCells.add(cell);
-                if (m_overflowingCells.size() > maxAllowedOverflowingCellsCount) {
+                m_overflowingCells.add(*cell);
+                if (m_overflowingCells.computeSize() > maxAllowedOverflowingCellsCount) {
                     // We need to set m_forcesSlowPaintPath only if there is a least one overflowing cells as the hit testing code rely on this information.
                     m_forceSlowPaintPathWithOverflowingCell = true;
                     // The slow path does not make any use of the overflowing cells info, don't hold on to the memory.
@@ -944,14 +944,14 @@ void RenderTableSection::paint(PaintInfo& paintInfo, const LayoutPoint& paintOff
         paintOutline(paintInfo, LayoutRect(adjustedPaintOffset, size()));
 }
 
-static inline bool compareCellPositions(RenderTableCell* elem1, RenderTableCell* elem2)
+static inline bool compareCellPositions(const WeakPtr<RenderTableCell>& elem1, const WeakPtr<RenderTableCell>& elem2)
 {
     return elem1->rowIndex() < elem2->rowIndex();
 }
 
 // This comparison is used only when we have overflowing cells as we have an unsorted array to sort. We thus need
 // to sort both on rows and columns to properly repaint.
-static inline bool compareCellPositionsWithOverflowingCells(RenderTableCell* elem1, RenderTableCell* elem2)
+static inline bool compareCellPositionsWithOverflowingCells(const WeakPtr<RenderTableCell>& elem1, const WeakPtr<RenderTableCell>& elem2)
 {
     if (elem1->rowIndex() != elem2->rowIndex())
         return elem1->rowIndex() < elem2->rowIndex();
@@ -1223,7 +1223,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
     CellSpan dirtiedColumns = this->dirtiedColumns(tableAlignedRect);
 
     if (dirtiedColumns.start < dirtiedColumns.end) {
-        if (!m_hasMultipleCellLevels && !m_overflowingCells.size()) {
+        if (!m_hasMultipleCellLevels && m_overflowingCells.isEmptyIgnoringNullReferences()) {
             if (paintInfo.phase == PaintPhase::CollapsedTableBorders) {
                 // Collapsed borders are painted from the bottom right to the top left so that precedence
                 // due to cell position is respected. We need to paint one row beyond the topmost dirtied
@@ -1281,7 +1281,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
 #if ASSERT_ENABLED
             unsigned totalRows = m_grid.size();
             unsigned totalCols = table()->columns().size();
-            ASSERT(m_overflowingCells.size() < totalRows * totalCols * gMaxAllowedOverflowingCellRatioForFastPaintPath);
+            ASSERT(m_overflowingCells.computeSize() < totalRows * totalCols * gMaxAllowedOverflowingCellRatioForFastPaintPath);
 #endif
 
             // To make sure we properly repaint the section, we repaint all the overflowing cells that we collected.
@@ -1298,7 +1298,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
                     if (!current.hasCells())
                         continue;
                     for (unsigned i = 0; i < current.cells.size(); ++i) {
-                        if (m_overflowingCells.contains(current.cells[i]))
+                        if (m_overflowingCells.contains(*current.cells[i]))
                             continue;
 
                         if (current.cells[i]->rowSpan() > 1 || current.cells[i]->colSpan() > 1) {
@@ -1312,7 +1312,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
             }
 
             // Sort the dirty cells by paint order.
-            if (!m_overflowingCells.size())
+            if (m_overflowingCells.isEmptyIgnoringNullReferences())
                 std::stable_sort(cells.begin(), cells.end(), compareCellPositions);
             else
                 std::sort(cells.begin(), cells.end(), compareCellPositionsWithOverflowingCells);
@@ -1324,7 +1324,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
                 }
             } else {
                 for (unsigned i = 0; i < cells.size(); ++i)
-                    paintCell(cells[i], paintInfo, paintOffset);
+                    paintCell(cells[i].get(), paintInfo, paintOffset);
             }
         }
     }

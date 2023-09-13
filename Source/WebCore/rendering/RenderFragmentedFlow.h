@@ -33,7 +33,7 @@
 #include "PODIntervalTree.h"
 #include "RenderBlockFlow.h"
 #include "RenderFragmentContainer.h"
-#include <wtf/ListHashSet.h>
+#include <wtf/WeakListHashSet.h>
 
 namespace WebCore {
 
@@ -43,9 +43,9 @@ class RenderStyle;
 class RenderFragmentContainer;
 class LegacyRootInlineBox;
 
-typedef ListHashSet<RenderFragmentContainer*> RenderFragmentContainerList;
-typedef Vector<RenderLayer*> RenderLayerList;
-typedef HashMap<const LegacyRootInlineBox*, RenderFragmentContainer*> ContainingFragmentMap;
+typedef WeakListHashSet<RenderFragmentContainer> RenderFragmentContainerList;
+typedef Vector<WeakPtr<RenderLayer>> RenderLayerList;
+typedef HashMap<const LegacyRootInlineBox*, WeakPtr<RenderFragmentContainer>> ContainingFragmentMap;
 
 // RenderFragmentedFlow is used to collect all the render objects that participate in a
 // flow thread. It will also help in doing the layout. However, it will not render
@@ -70,7 +70,7 @@ public:
     void deleteLines() override;
 
     virtual void addFragmentToThread(RenderFragmentContainer*) = 0;
-    virtual void removeFragmentFromThread(RenderFragmentContainer*);
+    void removeFragmentFromThread(RenderFragmentContainer&);
     const RenderFragmentContainerList& renderFragmentContainerList() const { return m_fragmentList; }
 
     void updateLogicalWidth() final;
@@ -78,12 +78,12 @@ public:
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
-    bool hasFragments() const { return m_fragmentList.size(); }
+    bool hasFragments() const { return !m_fragmentList.isEmptyIgnoringNullReferences(); }
     virtual void fragmentChangedWritingMode(RenderFragmentContainer*) { }
 
     void validateFragments();
     void invalidateFragments(MarkingBehavior = MarkContainingBlockChain);
-    bool hasValidFragmentInfo() const { return !m_fragmentsInvalidated && !m_fragmentList.isEmpty(); }
+    bool hasValidFragmentInfo() const { return !m_fragmentsInvalidated && !m_fragmentList.isEmptyIgnoringNullReferences(); }
     
     // Called when a descendant box's layout is finished and it has been positioned within its container.
     virtual void fragmentedFlowDescendantBoxLaidOut(RenderBox*) { }

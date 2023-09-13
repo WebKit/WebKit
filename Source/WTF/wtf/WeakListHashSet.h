@@ -146,7 +146,7 @@ public:
             return *this;
         }
 
-        WeakListHashSetIterator& operator--()
+        WeakListHashSetConstIterator& operator--()
         {
             Base::advanceBackwards();
             return *this;
@@ -184,7 +184,7 @@ public:
         increaseOperationCountSinceLastCleanup();
         auto& weakPtrImpl = value.weakPtrFactory().m_impl;
         if (auto* pointer = weakPtrImpl.pointer(); pointer && *pointer)
-            return WeakListHashSetIterator(*this, m_set.find(*pointer));
+            return WeakListHashSetConstIterator(*this, m_set.find(*pointer));
         return end();
     }
 
@@ -308,6 +308,34 @@ public:
         }
         cleanupHappened();
         return didRemove;
+    }
+
+    T& first()
+    {
+        auto it = begin();
+        ASSERT(it != end());
+        return *it;
+    }
+
+    const T& first() const
+    {
+        auto it = begin();
+        ASSERT(it != end());
+        return *it;
+    }
+
+    T& last()
+    {
+        auto it = end();
+        --it;
+        return *it;
+    }
+
+    const T& last() const
+    {
+        auto it = end();
+        --it;
+        return *it;
     }
 
 private:

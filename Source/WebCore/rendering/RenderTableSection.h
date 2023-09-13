@@ -193,7 +193,7 @@ private:
     void distributeExtraLogicalHeightToAutoRows(LayoutUnit& extraLogicalHeight, unsigned autoRowsCount);
     void distributeRemainingExtraLogicalHeight(LayoutUnit& extraLogicalHeight);
 
-    bool hasOverflowingCell() const { return m_overflowingCells.size() || m_forceSlowPaintPathWithOverflowingCell; }
+    bool hasOverflowingCell() const { return m_overflowingCells.computeSize() || m_forceSlowPaintPathWithOverflowingCell; }
     void computeOverflowFromCells(unsigned totalRows, unsigned nEffCols);
 
     CellSpan fullTableRowSpan() const;
@@ -234,7 +234,7 @@ private:
     // This HashSet holds the overflowing cells for faster painting.
     // If we have more than gMaxAllowedOverflowingCellRatio * total cells, it will be empty
     // and m_forceSlowPaintPathWithOverflowingCell will be set to save memory.
-    HashSet<RenderTableCell*> m_overflowingCells;
+    WeakHashSet<RenderTableCell> m_overflowingCells;
 
     // This map holds the collapsed border values for cells with collapsed borders.
     // It is held at RenderTableSection level to spare memory consumption by table cells.

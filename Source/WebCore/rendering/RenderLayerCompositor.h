@@ -32,6 +32,7 @@
 #include <pal/HysteresisActivity.h>
 #include <wtf/HashMap.h>
 #include <wtf/OptionSet.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -132,8 +133,8 @@ private:
 
     ChromeClient& m_chromeClient;
 
-    HashSet<RenderLayer*> m_scrollingLayers;
-    HashSet<RenderLayer*> m_viewportConstrainedLayers;
+    WeakHashSet<RenderLayer> m_scrollingLayers;
+    WeakHashSet<RenderLayer> m_viewportConstrainedLayers;
 
     const bool m_coordinateViewportConstrainedLayers;
 };
