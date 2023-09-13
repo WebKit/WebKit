@@ -403,7 +403,7 @@ bool ScriptElement::requestImportMap(LocalFrame& frame, const String& sourceURL)
 
 void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
 {
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed() || !isInWebProcess());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
     ASSERT(m_alreadyStarted);
 
     if (sourceCode.isEmpty())
