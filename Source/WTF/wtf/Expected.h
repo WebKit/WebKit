@@ -445,7 +445,7 @@ public:
     constexpr expected(unexpected_type&& u) : base(__expected_detail::error_tag, std::forward<unexpected_type>(u).value()) { }
     template<class Err> constexpr expected(const unexpected<Err>& u) : base(__expected_detail::error_tag, u.value()) { }
     template<class Err> constexpr expected(unexpected<Err>&& u) : base(__expected_detail::error_tag, std::forward<Err>(u.value())) { }
-    template<class... Args> constexpr explicit expected(unexpected_t, Args&&... args) : base(__expected_detail::value_tag, unexpected_type(std::forward<Args>(args)...)) { }
+    template<class... Args> constexpr explicit expected(unexpected_t, Args&&... args) : base(__expected_detail::error_tag, error_type(std::forward<Args>(args)...)) { }
     // template<class U, class... Args> constexpr explicit expected(unexpected_t, std::initializer_list<U>, Args&&...);
 
     ~expected() = default;
