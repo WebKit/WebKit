@@ -65,6 +65,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLVideoElement.h"
+#include "HandleMouseEventResult.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "Image.h"
@@ -91,6 +92,7 @@
 #include "PointerEventTypeNames.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "Range.h"
+#include "RemoteFrame.h"
 #include "RenderFrameSet.h"
 #include "RenderImage.h"
 #include "RenderLayer.h"
@@ -1385,14 +1387,14 @@ IntPoint EventHandler::lastKnownMousePosition() const
     return valueOrDefault(m_lastKnownMousePosition);
 }
 
-RefPtr<LocalFrame> EventHandler::subframeForHitTestResult(const MouseEventWithHitTestResults& hitTestResult)
+RefPtr<Frame> EventHandler::subframeForHitTestResult(const MouseEventWithHitTestResults& hitTestResult)
 {
     if (!hitTestResult.isOverWidget())
         return nullptr;
     return subframeForTargetNode(hitTestResult.targetNode());
 }
 
-RefPtr<LocalFrame> EventHandler::subframeForTargetNode(Node* node)
+RefPtr<Frame> EventHandler::subframeForTargetNode(Node* node)
 {
     if (!node)
         return nullptr;
@@ -1402,10 +1404,10 @@ RefPtr<LocalFrame> EventHandler::subframeForTargetNode(Node* node)
         return nullptr;
 
     Widget* widget = downcast<RenderWidget>(*renderer).widget();
-    if (!is<LocalFrameView>(widget))
+    if (!is<FrameView>(widget))
         return nullptr;
 
-    return &downcast<LocalFrameView>(*widget).frame();
+    return &downcast<FrameView>(*widget).frame();
 }
 
 static bool isSubmitImage(Node* node)
@@ -1734,9 +1736,9 @@ void EventHandler::autoHideCursorTimerFired()
 }
 #endif
 
-static LayoutPoint documentPointForWindowPoint(LocalFrame& frame, const IntPoint& windowPoint)
+static LayoutPoint documentPointForWindowPoint(Frame& frame, const IntPoint& windowPoint)
 {
-    auto* view = frame.view();
+    auto* view = frame.virtualView();
     // FIXME: Is it really OK to use the wrong coordinates here when view is 0?
     // Historically the code would just crash; this is clearly no worse than that.
     return view ? view->windowToContents(windowPoint) : windowPoint;
@@ -1752,7 +1754,7 @@ static Scrollbar* scrollbarForMouseEvent(const MouseEventWithHitTestResults& mou
 
 }
 
-bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouseEvent)
+HandleMouseEventResult EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouseEvent)
 {
     Ref protectedFrame { m_frame };
     RefPtr protectedView { m_frame.view() };
@@ -1825,13 +1827,19 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouse
     bool passedToScrollbar = scrollbar && passMousePressEventToScrollbar(mouseEvent, scrollbar);
 
     if (!passedToScrollbar) {
-        RefPtr subframe = subframeForHitTestResult(mouseEvent);
-        if (subframe && passMousePressEventToSubframe(mouseEvent, *subframe)) {
+        auto subframe = subframeForHitTestResult(mouseEvent);
+        if (is<RemoteFrame>(subframe)) {
+            auto transformedPoint = documentPointForWindowPoint(*subframe, mouseEvent.hitTestResult().roundedPointInInnerNodeFrame());
+            return RemoteMouseEventData { subframe->frameID(), roundedIntPoint(transformedPoint) };
+        }
+
+        RefPtr localSubframe = dynamicDowncast<LocalFrame>(subframe.get());
+        if (localSubframe && passMousePressEventToSubframe(mouseEvent, *localSubframe)) {
             // Start capturing future events for this frame. We only do this if we didn't clear
             // the m_mousePressed flag, which may happen if an AppKit widget entered a modal event loop.
-            m_capturesDragging = subframe->eventHandler().capturesDragging();
+            m_capturesDragging = localSubframe->eventHandler().capturesDragging();
             if (m_mousePressed && m_capturesDragging) {
-                m_capturingMouseEventsElement = subframe->ownerElement();
+                m_capturingMouseEventsElement = localSubframe->ownerElement();
                 m_eventHandlerWillResetCapturingMouseEventsElement = true;
             }
             invalidateClick();
@@ -1928,7 +1936,7 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& platfor
 
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::Release, HitTestRequest::Type::DisallowUserAgentShadowContent };
     MouseEventWithHitTestResults mouseEvent = prepareMouseEvent(hitType, platformMouseEvent);
-    auto subframe = subframeForHitTestResult(mouseEvent);
+    auto subframe = dynamicDowncast<LocalFrame>(subframeForHitTestResult(mouseEvent));
 
     if (m_eventHandlerWillResetCapturingMouseEventsElement)
         m_capturingMouseEventsElement = nullptr;
@@ -1982,7 +1990,7 @@ ScrollableArea* EventHandler::enclosingScrollableArea(Node* node)
     return m_frame.view();
 }
 
-bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
+HandleMouseEventResult EventHandler::mouseMoved(const PlatformMouseEvent& event)
 {
     Ref protectedFrame { m_frame };
     RefPtr protectedView { m_frame.view() };
@@ -1992,7 +2000,7 @@ bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
         return true;
 
     HitTestResult hitTestResult;
-    bool result = handleMouseMoveEvent(event, &hitTestResult);
+    auto result = handleMouseMoveEvent(event, &hitTestResult);
 
     Page* page = m_frame.page();
     if (!page)
@@ -2012,7 +2020,7 @@ bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
 bool EventHandler::passMouseMovedEventToScrollbars(const PlatformMouseEvent& event)
 {
     HitTestResult hitTestResult;
-    return handleMouseMoveEvent(event, &hitTestResult, true);
+    return handleMouseMoveEvent(event, &hitTestResult, true).wasHandled();
 }
 
 OptionSet<HitTestRequest::Type> EventHandler::getHitTypeForMouseMoveEvent(const PlatformMouseEvent& platformMouseEvent, bool onlyUpdateScrollbars)
@@ -2051,7 +2059,7 @@ HitTestResult EventHandler::getHitTestResultForMouseEvent(const PlatformMouseEve
     return prepareMouseEvent(request, platformMouseEvent).hitTestResult();
 }
 
-bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseEvent, HitTestResult* hitTestResult, bool onlyUpdateScrollbars)
+HandleMouseEventResult EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseEvent, HitTestResult* hitTestResult, bool onlyUpdateScrollbars)
 {
 #if ENABLE(TOUCH_EVENTS)
     bool defaultPrevented = dispatchSyntheticTouchEventIfEnabled(platformMouseEvent);
@@ -2120,28 +2128,34 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
     }
 
     bool swallowEvent = false;
-    RefPtr newSubframe = m_capturingMouseEventsElement.get() ? subframeForTargetNode(m_capturingMouseEventsElement.get()) : subframeForHitTestResult(mouseEvent);
+    auto subframe = m_capturingMouseEventsElement.get() ? subframeForTargetNode(m_capturingMouseEventsElement.get()) : subframeForHitTestResult(mouseEvent);
+    if (is<RemoteFrame>(subframe)) {
+        auto transformedPoint = documentPointForWindowPoint(*subframe, mouseEvent.hitTestResult().roundedPointInInnerNodeFrame());
+        return RemoteMouseEventData { subframe->frameID(), roundedIntPoint(transformedPoint) };
+    }
+
+    RefPtr localSubframe = dynamicDowncast<LocalFrame>(subframe.get());
  
     // We want mouseouts to happen first, from the inside out.  First send a move event to the last subframe so that it will fire mouseouts.
-    if (m_lastMouseMoveEventSubframe && m_lastMouseMoveEventSubframe->tree().isDescendantOf(&m_frame) && m_lastMouseMoveEventSubframe != newSubframe)
+    if (m_lastMouseMoveEventSubframe && m_lastMouseMoveEventSubframe->tree().isDescendantOf(&m_frame) && m_lastMouseMoveEventSubframe != localSubframe)
         passMouseMoveEventToSubframe(mouseEvent, *m_lastMouseMoveEventSubframe);
 
-    if (newSubframe) {
+    if (localSubframe) {
         // Update over/out state before passing the event to the subframe.
         updateMouseEventTargetNode(eventNames().mousemoveEvent, mouseEvent.targetNode(), platformMouseEvent, FireMouseOverOut::Yes);
         
         // Event dispatch in updateMouseEventTargetNode may have caused the subframe of the target
         // node to be detached from its FrameView, in which case the event should not be passed.
-        if (newSubframe->view())
-            swallowEvent |= passMouseMoveEventToSubframe(mouseEvent, *newSubframe, hitTestResult);
+        if (localSubframe->view())
+            swallowEvent |= passMouseMoveEventToSubframe(mouseEvent, *localSubframe, hitTestResult);
     }
 
-    if (!newSubframe || mouseEvent.scrollbar()) {
+    if (!localSubframe || mouseEvent.scrollbar()) {
         if (RefPtr view = m_frame.view())
             updateCursor(*view, mouseEvent.hitTestResult(), platformMouseEvent.shiftKey());
     }
 
-    m_lastMouseMoveEventSubframe = newSubframe;
+    m_lastMouseMoveEventSubframe = localSubframe;
 
     if (swallowEvent)
         return true;
@@ -2195,7 +2209,7 @@ static RefPtr<Node> targetNodeForClickEvent(Node* mousePressNode, Node* mouseRel
     return nullptr;
 }
 
-bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& platformMouseEvent)
+HandleMouseEventResult EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& platformMouseEvent)
 {
     Ref protectedFrame { m_frame };
     RefPtr protectedView { m_frame.view() };
@@ -2252,10 +2266,17 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& platformMou
 
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::Release, HitTestRequest::Type::DisallowUserAgentShadowContent };
     MouseEventWithHitTestResults mouseEvent = prepareMouseEvent(hitType, platformMouseEvent);
-    RefPtr subframe = m_capturingMouseEventsElement.get() ? subframeForTargetNode(m_capturingMouseEventsElement.get()) : subframeForHitTestResult(mouseEvent);
+    auto subframe = m_capturingMouseEventsElement.get() ? subframeForTargetNode(m_capturingMouseEventsElement.get()) : subframeForHitTestResult(mouseEvent);
     if (m_eventHandlerWillResetCapturingMouseEventsElement)
         m_capturingMouseEventsElement = nullptr;
-    if (subframe && passMouseReleaseEventToSubframe(mouseEvent, *subframe))
+
+    if (is<RemoteFrame>(subframe)) {
+        auto transformedPoint = documentPointForWindowPoint(*subframe, mouseEvent.hitTestResult().roundedPointInInnerNodeFrame());
+        return RemoteMouseEventData { subframe->frameID(), roundedIntPoint(transformedPoint) };
+    }
+
+    RefPtr localSubframe = dynamicDowncast<LocalFrame>(subframe.get());
+    if (localSubframe && passMouseReleaseEventToSubframe(mouseEvent, *localSubframe))
         return true;
 
     bool swallowMouseUpEvent = !dispatchMouseEvent(eventNames().mouseupEvent, mouseEvent.targetNode(), m_clickCount, platformMouseEvent, FireMouseOverOut::No);

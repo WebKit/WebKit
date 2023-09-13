@@ -76,6 +76,7 @@
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLSelectElement.h>
 #include <WebCore/HTMLTextAreaElement.h>
+#include <WebCore/HandleMouseEventResult.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/JSCSSStyleDeclaration.h>
 #include <WebCore/JSElement.h>
@@ -89,6 +90,7 @@
 #include <WebCore/RemoteDOMWindow.h>
 #include <WebCore/RemoteFrame.h>
 #include <WebCore/RemoteFrameView.h>
+#include <WebCore/RemoteMouseEventData.h>
 #include <WebCore/RenderLayerCompositor.h>
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/RenderView.h>
@@ -1235,7 +1237,7 @@ bool WebFrame::handleContextMenuEvent(const PlatformMouseEvent& platformMouseEve
 }
 #endif
 
-bool WebFrame::handleMouseEvent(const WebMouseEvent& mouseEvent)
+WebCore::HandleMouseEventResult WebFrame::handleMouseEvent(const WebMouseEvent& mouseEvent)
 {
     auto* coreLocalFrame = dynamicDowncast<LocalFrame>(coreFrame());
     if (!coreLocalFrame)
@@ -1253,12 +1255,12 @@ bool WebFrame::handleMouseEvent(const WebMouseEvent& mouseEvent)
             page()->corePage()->contextMenuController().clearContextMenu();
 #endif
 
-        bool handled = coreLocalFrame->eventHandler().handleMousePressEvent(platformMouseEvent);
+        auto mousePressEventResult = coreLocalFrame->eventHandler().handleMousePressEvent(platformMouseEvent);
 #if ENABLE(CONTEXT_MENU_EVENT)
         if (isContextClick(platformMouseEvent))
-            handled = handleContextMenuEvent(platformMouseEvent);
+            mousePressEventResult.setHandled(handleContextMenuEvent(platformMouseEvent));
 #endif
-        return handled;
+        return mousePressEventResult;
     }
     case PlatformEvent::Type::MouseReleased:
         if (mouseEvent.gestureWasCancelled() == GestureWasCancelled::Yes)

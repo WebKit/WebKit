@@ -55,6 +55,7 @@ namespace WebCore {
 class CertificateInfo;
 class Frame;
 class HTMLFrameOwnerElement;
+class HandleMouseEventResult;
 class IntPoint;
 class IntRect;
 class LocalFrame;
@@ -229,7 +230,7 @@ public:
     OptionSet<WebCore::AdvancedPrivacyProtections> originatorAdvancedPrivacyProtections() const;
 
     bool handleContextMenuEvent(const WebCore::PlatformMouseEvent&);
-    bool handleMouseEvent(const WebMouseEvent&);
+    WebCore::HandleMouseEventResult handleMouseEvent(const WebMouseEvent&);
     bool handleKeyEvent(const WebKeyboardEvent&);
 private:
     WebFrame(WebPage&, WebCore::FrameIdentifier);

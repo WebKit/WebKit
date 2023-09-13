@@ -48,7 +48,7 @@ messages -> WebPage LegacyReceiver {
 
     ExecuteEditCommandWithCallback(String name, String argument) -> ()
     KeyEvent(WebCore::FrameIdentifier frameID, WebKit::WebKeyboardEvent event) -> (enum:int8_t WebKit::WebEventType eventType, bool handled)
-    MouseEvent(WebCore::FrameIdentifier frameID, WebKit::WebMouseEvent event, std::optional<Vector<WebKit::SandboxExtension::Handle>> sandboxExtensions) -> (enum:int8_t WebKit::WebEventType eventType, bool handled)
+    MouseEvent(WebCore::FrameIdentifier frameID, WebKit::WebMouseEvent event, std::optional<Vector<WebKit::SandboxExtension::Handle>> sandboxExtensions) -> (enum:int8_t WebKit::WebEventType eventType, bool handled, struct std::optional<WebCore::RemoteMouseEventData> remoteMouseEventData)
 
 #if ENABLE(NOTIFICATIONS)
     ClearNotificationPermissionState()

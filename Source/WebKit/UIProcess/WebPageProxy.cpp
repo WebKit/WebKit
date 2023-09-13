@@ -201,6 +201,7 @@
 #include <WebCore/PlatformEvent.h>
 #include <WebCore/PublicSuffix.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
+#include <WebCore/RemoteMouseEventData.h>
 #include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/RunJavaScriptParameters.h>
@@ -3204,6 +3205,37 @@ static bool removeOldRedundantEvent(Deque<NativeWebMouseEvent>& queue, WebEventT
     return false;
 }
 
+void WebPageProxy::handleMouseEventReply(WebEventType eventType, bool handled, const std::optional<WebCore::RemoteMouseEventData>& remoteMouseEventData, std::optional<Vector<SandboxExtensionHandle>>&& sandboxExtensions)
+{
+    if (remoteMouseEventData) {
+        auto* frame = WebFrameProxy::webFrame(remoteMouseEventData->targetFrameID);
+        if (!frame)
+            return;
+
+        auto& event = internals().mouseEventQueue.first();
+        event.setPosition(remoteMouseEventData->transformedPoint);
+
+        auto remotePageProxy = frame->remotePageProxy();
+        if (!remotePageProxy) {
+            sendMouseEvent(remoteMouseEventData->targetFrameID, event, WTFMove(sandboxExtensions));
+            return;
+        }
+
+        remotePageProxy->sendMouseEvent(remoteMouseEventData->targetFrameID, event, WTFMove(sandboxExtensions));
+        return;
+    }
+    didReceiveEvent(eventType, handled);
+}
+
+void WebPageProxy::sendMouseEvent(const WebCore::FrameIdentifier& frameID, const NativeWebMouseEvent& event, std::optional<Vector<SandboxExtensionHandle>>&& sandboxExtensions)
+{
+    sendWithAsyncReply(Messages::WebPage::MouseEvent(frameID, event, sandboxExtensions), [this, protectedThis = Ref { *this }, sandboxExtensions = WTFMove(sandboxExtensions)] (WebEventType eventType, bool handled, std::optional<WebCore::RemoteMouseEventData> remoteMouseEventData) mutable {
+        if (!m_pageClient)
+            return;
+        handleMouseEventReply(eventType, handled, remoteMouseEventData, WTFMove(sandboxExtensions));
+    });
+}
+
 void WebPageProxy::handleMouseEvent(const NativeWebMouseEvent& event)
 {
     if (event.type() == WebEventType::MouseDown)
@@ -3279,11 +3311,7 @@ void WebPageProxy::processNextQueuedMouseEvent()
 
     LOG_WITH_STREAM(MouseHandling, stream << "UIProcess: sent mouse event " << eventType << " (queue size " << internals().mouseEventQueue.size() << ")");
     m_process->recordUserGestureAuthorizationToken(event.authorizationToken());
-    sendWithAsyncReply(Messages::WebPage::MouseEvent(m_mainFrame->frameID(), event, sandboxExtensions), [this, protectedThis = Ref { *this }] (WebEventType eventType, bool handled) {
-        if (!m_pageClient)
-            return;
-        didReceiveEvent(eventType, handled);
-    });
+    sendMouseEvent(m_mainFrame->frameID(), event, WTFMove(sandboxExtensions));
 }
 
 void WebPageProxy::doAfterProcessingAllPendingMouseEvents(WTF::Function<void ()>&& action)

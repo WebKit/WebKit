@@ -498,6 +498,11 @@ FrameTreeCreationParameters WebFrameProxy::frameTreeCreationParameters() const
     };
 }
 
+RefPtr<RemotePageProxy> WebFrameProxy::remotePageProxy()
+{
+    return m_remotePageProxy;
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK

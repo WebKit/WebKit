@@ -279,6 +279,7 @@ struct InteractionRegion;
 struct KeypressCommand;
 struct MediaUsageInfo;
 struct PromisedAttachmentInfo;
+struct RemoteMouseEventData;
 struct RequestStorageAccessResult;
 struct RunJavaScriptParameters;
 struct TextCheckingResult;
@@ -1791,7 +1792,7 @@ private:
 
     void setNeedsFontAttributes(bool);
 
-    void mouseEvent(WebCore::FrameIdentifier, const WebMouseEvent&, std::optional<Vector<SandboxExtension::Handle>>&& sandboxExtensions, CompletionHandler<void(WebEventType, bool)>&&);
+    void mouseEvent(WebCore::FrameIdentifier, const WebMouseEvent&, std::optional<Vector<SandboxExtension::Handle>>&& sandboxExtensions, CompletionHandler<void(WebEventType, bool, std::optional<WebCore::RemoteMouseEventData>)>&&);
     void keyEvent(WebCore::FrameIdentifier, const WebKeyboardEvent&, CompletionHandler<void(WebEventType, bool)>&&);
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -2364,7 +2365,7 @@ private:
     struct DeferredMouseEventCompletionHandler {
         WebEventType type { WebEventType::NoType };
         bool handled { false };
-        CompletionHandler<void(WebEventType, bool)> completionHandler;
+        CompletionHandler<void(WebEventType, bool, std::optional<WebCore::RemoteMouseEventData>)> completionHandler;
     };
     std::optional<DeferredMouseEventCompletionHandler> m_deferredMouseEventCompletionHandler;
 

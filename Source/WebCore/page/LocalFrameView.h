@@ -29,6 +29,7 @@
 #include "FrameView.h"
 #include "LayoutMilestone.h"
 #include "LayoutRect.h"
+#include "LocalFrame.h"
 #include "LocalFrameViewLayoutContext.h"
 #include "Pagination.h"
 #include "PaintPhase.h"
@@ -57,7 +58,6 @@ class FloatSize;
 class Frame;
 class GraphicsContext;
 class HTMLFrameOwnerElement;
-class LocalFrame;
 class Page;
 class RegionContext;
 class RenderBox;
@@ -109,7 +109,7 @@ public:
     Type viewType() const final { return Type::Local; }
     void writeRenderTreeAsText(TextStream&, OptionSet<RenderAsTextFlag>) override;
 
-    WEBCORE_EXPORT LocalFrame& frame() const;
+    WEBCORE_EXPORT LocalFrame& frame() const final;
 
     WEBCORE_EXPORT RenderView* renderView() const;
 

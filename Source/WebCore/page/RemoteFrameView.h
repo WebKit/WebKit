@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FrameView.h"
+#include "RemoteFrame.h"
 
 namespace WebCore {
 
@@ -37,8 +38,7 @@ public:
 
     Type viewType() const final { return Type::Remote; }
     void writeRenderTreeAsText(TextStream&, OptionSet<RenderAsTextFlag>) override;
-    const RemoteFrame& frame() const { return m_frame.get(); }
-    RemoteFrame& frame() { return m_frame.get(); }
+    RemoteFrame& frame() const final { return m_frame; }
 
 private:
     WEBCORE_EXPORT RemoteFrameView(RemoteFrame&);

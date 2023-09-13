@@ -242,6 +242,7 @@ struct PlatformLayerIdentifierType;
 struct PlaybackTargetClientContextIdentifierType;
 struct PromisedAttachmentInfo;
 struct RecentSearch;
+struct RemoteMouseEventData;
 struct RunJavaScriptParameters;
 struct SerializedAttachmentData;
 struct ShareDataWithParsedURL;
@@ -1095,6 +1096,8 @@ public:
 
     bool isProcessingMouseEvents() const;
     void processNextQueuedMouseEvent();
+    void handleMouseEventReply(WebEventType, bool, const std::optional<WebCore::RemoteMouseEventData>&, std::optional<Vector<SandboxExtensionHandle>>&&);
+    void sendMouseEvent(const WebCore::FrameIdentifier&, const NativeWebMouseEvent&, std::optional<Vector<SandboxExtensionHandle>>&&);
     void handleMouseEvent(const NativeWebMouseEvent&);
     void dispatchMouseDidMoveOverElementAsynchronously(const NativeWebMouseEvent&);
 
