@@ -2340,7 +2340,7 @@ std::unique_ptr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets
     ASSERT(Style::postResolutionCallbacksAreSuspended());
 
     std::optional<RenderStyle> updatedDocumentStyle;
-    if (!parentStyle && m_needsFullStyleRebuild) {
+    if (!parentStyle && m_needsFullStyleRebuild && hasLivingRenderTree()) {
         updatedDocumentStyle.emplace(Style::resolveForDocument(*this));
         parentStyle = &*updatedDocumentStyle;
     }
