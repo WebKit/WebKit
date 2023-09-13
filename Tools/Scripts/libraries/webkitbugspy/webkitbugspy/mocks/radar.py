@@ -169,8 +169,8 @@ class RadarModel(object):
             self.name = name
 
     class RadarGroup(object):
-        def __init__(self, id):
-            self.id = id
+        def __init__(self, name):
+            self.name = name
 
     def __init__(self, client, issue):
         from datetime import datetime, timedelta
