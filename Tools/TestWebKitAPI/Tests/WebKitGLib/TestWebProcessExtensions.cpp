@@ -372,7 +372,6 @@ static void testWebProcessExtensionFormSubmissionSteps(FormSubmissionTest* test,
     test->loadHtml("<form id=\"" FORM_SUBMISSION_TEST_ID "\" target=\"target_frame\">"
         "<input type=\"text\" name=\"foo\" value=\"first\">"
         "<input type=\"text\" name=\"bar\" value=\"second\">"
-        "<input type=\"submit\" id=\"submit_button\">"
         "</form>"
         "<iframe name=\"target_frame\"></iframe>", nullptr);
     test->waitUntilLoadFinished();
@@ -387,6 +386,14 @@ static void testWebProcessExtensionFormSubmissionSteps(FormSubmissionTest* test,
     g_assert_true(test->m_willCompleteCallbackExecuted);
     test->m_willCompleteCallbackExecuted = false;
 
+    test->loadHtml("<form id=\"" FORM_SUBMISSION_TEST_ID "\" target=\"target_frame\">"
+        "<input type=\"text\" name=\"foo\" value=\"first\">"
+        "<input type=\"text\" name=\"bar\" value=\"second\">"
+        "<input type=\"submit\" id=\"submit_button\">"
+        "</form>"
+        "<iframe name=\"target_frame\"></iframe>", nullptr);
+    test->waitUntilLoadFinished();
+
     static const char* manuallySubmitFormScript =
         "var button = document.getElementById(\"submit_button\");"
         "button.click();";
@@ -395,11 +402,6 @@ static void testWebProcessExtensionFormSubmissionSteps(FormSubmissionTest* test,
     g_assert_true(test->m_willCompleteCallbackExecuted);
     test->m_willSendDOMEventCallbackExecuted = false;
     test->m_willCompleteCallbackExecuted = false;
-
-    test->loadHtml("<form id=\"" FORM_SUBMISSION_TEST_ID "\" target=\"target_frame\">"
-        "</form>"
-        "<iframe name=\"target_frame\"></iframe>", nullptr);
-    test->waitUntilLoadFinished();
 }
 
 static void webViewPageIDChanged(WebKitWebView* webView, GParamSpec*, bool* pageIDChangedEmitted)

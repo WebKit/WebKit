@@ -62,13 +62,6 @@
             }
         }
     },
-    "TestWebProcessExtensions": {
-        "subtests": {
-            "/webkit/WebKitWebProcessExtension/form-submission-steps": {
-                "expected": {"all": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/205333"}}
-            }
-        }
-    },
     "TestWebKitWebView": {
         "subtests": {
             "/webkit/WebKitWebView/is-web-process-responsive": {
