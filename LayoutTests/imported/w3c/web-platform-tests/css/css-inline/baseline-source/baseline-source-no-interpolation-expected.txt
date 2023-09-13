@@ -1,0 +1,30 @@
+
+FAIL CSS Transitions: property <baseline-source> from [initial] to [last] at (-0.3) should be [last] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <baseline-source> from [initial] to [last] at (0) should be [last] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <baseline-source> from [initial] to [last] at (0.3) should be [last] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <baseline-source> from [initial] to [last] at (0.5) should be [last] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <baseline-source> from [initial] to [last] at (0.6) should be [last] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <baseline-source> from [initial] to [last] at (1) should be [last] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <baseline-source> from [initial] to [last] at (1.5) should be [last] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <baseline-source> from [initial] to [last] at (-0.3) should be [last] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <baseline-source> from [initial] to [last] at (0) should be [last] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <baseline-source> from [initial] to [last] at (0.3) should be [last] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <baseline-source> from [initial] to [last] at (0.5) should be [last] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <baseline-source> from [initial] to [last] at (0.6) should be [last] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <baseline-source> from [initial] to [last] at (1) should be [last] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <baseline-source> from [initial] to [last] at (1.5) should be [last] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <baseline-source> from [initial] to [last] at (-0.3) should be [initial] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <baseline-source> from [initial] to [last] at (0) should be [initial] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <baseline-source> from [initial] to [last] at (0.3) should be [initial] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <baseline-source> from [initial] to [last] at (0.5) should be [last] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <baseline-source> from [initial] to [last] at (0.6) should be [last] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <baseline-source> from [initial] to [last] at (1) should be [last] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <baseline-source> from [initial] to [last] at (1.5) should be [last] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <baseline-source> from [initial] to [last] at (-0.3) should be [initial] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <baseline-source> from [initial] to [last] at (0) should be [initial] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <baseline-source> from [initial] to [last] at (0.3) should be [initial] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <baseline-source> from [initial] to [last] at (0.5) should be [last] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <baseline-source> from [initial] to [last] at (0.6) should be [last] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <baseline-source> from [initial] to [last] at (1) should be [last] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <baseline-source> from [initial] to [last] at (1.5) should be [last] assert_true: 'from' value should be supported expected true got false
+
