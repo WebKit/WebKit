@@ -55,18 +55,18 @@
 namespace WebKit {
 using namespace WebCore;
 
-static HashMap<UserContentControllerIdentifier, WebUserContentController*>& userContentControllers()
+static HashMap<UserContentControllerIdentifier, WeakPtr<WebUserContentController>>& userContentControllers()
 {
-    static NeverDestroyed<HashMap<UserContentControllerIdentifier, WebUserContentController*>> userContentControllers;
+    static NeverDestroyed<HashMap<UserContentControllerIdentifier, WeakPtr<WebUserContentController>>> userContentControllers;
 
     return userContentControllers;
 }
 
-typedef HashMap<ContentWorldIdentifier, std::pair<RefPtr<InjectedBundleScriptWorld>, unsigned>> WorldMap;
+typedef HashMap<ContentWorldIdentifier, std::pair<Ref<InjectedBundleScriptWorld>, unsigned>> WorldMap;
 
 static WorldMap& worldMap()
 {
-    static NeverDestroyed<WorldMap> map(std::initializer_list<WorldMap::KeyValuePairType> { { pageContentWorldIdentifier(), std::make_pair(&InjectedBundleScriptWorld::normalWorld(), 1) } });
+    static NeverDestroyed<WorldMap> map(std::initializer_list<WorldMap::KeyValuePairType> { { pageContentWorldIdentifier(), std::make_pair(Ref { InjectedBundleScriptWorld::normalWorld() }, 1) } });
 
     return map;
 }
@@ -101,7 +101,7 @@ WebUserContentController::~WebUserContentController()
 InjectedBundleScriptWorld* WebUserContentController::worldForIdentifier(ContentWorldIdentifier identifier)
 {
     auto iterator = worldMap().find(identifier);
-    return iterator == worldMap().end() ? nullptr : iterator->value.first.get();
+    return iterator == worldMap().end() ? nullptr : iterator->value.first.ptr();
 }
 
 InjectedBundleScriptWorld* WebUserContentController::addContentWorld(const std::pair<ContentWorldIdentifier, String>& world)
@@ -122,7 +122,7 @@ InjectedBundleScriptWorld* WebUserContentController::addContentWorld(const std::
     });
     
     if (addResult.isNewEntry)
-        return addResult.iterator->value.first.get();
+        return addResult.iterator->value.first.ptr();
     return nullptr;
 }
 
@@ -176,7 +176,8 @@ void WebUserContentController::addUserScripts(Vector<WebUserScriptData>&& userSc
         }
 
         UserScript script = userScriptData.userScript;
-        addUserScriptInternal(*it->value.first, userScriptData.identifier, WTFMove(script), immediately);
+        Ref world = it->value.first;
+        addUserScriptInternal(world, userScriptData.identifier, WTFMove(script), immediately);
     }
 }
 
@@ -188,7 +189,8 @@ void WebUserContentController::removeUserScript(ContentWorldIdentifier worldIden
         return;
     }
 
-    removeUserScriptInternal(*it->value.first, userScriptIdentifier);
+    Ref world = it->value.first;
+    removeUserScriptInternal(world, userScriptIdentifier);
 }
 
 void WebUserContentController::removeAllUserScripts(const Vector<ContentWorldIdentifier>& worldIdentifiers)
@@ -200,7 +202,8 @@ void WebUserContentController::removeAllUserScripts(const Vector<ContentWorldIde
             return;
         }
 
-        removeUserScripts(*it->value.first);
+        Ref world = it->value.first;
+        removeUserScripts(world);
     }
 }
 
@@ -214,7 +217,8 @@ void WebUserContentController::addUserStyleSheets(const Vector<WebUserStyleSheet
         }
         
         UserStyleSheet sheet = userStyleSheetData.userStyleSheet;
-        addUserStyleSheetInternal(*it->value.first, userStyleSheetData.identifier, WTFMove(sheet));
+        Ref world = it->value.first;
+        addUserStyleSheetInternal(world, userStyleSheetData.identifier, WTFMove(sheet));
     }
 
     invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
@@ -228,7 +232,8 @@ void WebUserContentController::removeUserStyleSheet(ContentWorldIdentifier world
         return;
     }
 
-    removeUserStyleSheetInternal(*it->value.first, userStyleSheetIdentifier);
+    Ref world = it->value.first;
+    removeUserStyleSheetInternal(world, userStyleSheetIdentifier);
 }
 
 void WebUserContentController::removeAllUserStyleSheets(const Vector<ContentWorldIdentifier>& worldIdentifiers)
@@ -241,7 +246,8 @@ void WebUserContentController::removeAllUserStyleSheets(const Vector<ContentWorl
             return;
         }
 
-        if (m_userStyleSheets.remove(it->value.first.get()))
+        Ref world = it->value.first;
+        if (m_userStyleSheets.remove(world.ptr()))
             sheetsChanged = true;
     }
 
@@ -314,7 +320,8 @@ void WebUserContentController::addUserScriptMessageHandlers(const Vector<WebScri
             continue;
         }
 
-        addUserScriptMessageHandlerInternal(*it->value.first, handler.identifier, AtomString(handler.name));
+        Ref world = it->value.first;
+        addUserScriptMessageHandlerInternal(world, handler.identifier, AtomString(handler.name));
     }
 #else
     UNUSED_PARAM(scriptMessageHandlers);
@@ -330,7 +337,8 @@ void WebUserContentController::removeUserScriptMessageHandler(ContentWorldIdenti
         return;
     }
 
-    removeUserScriptMessageHandlerInternal(*it->value.first, userScriptMessageHandlerIdentifier);
+    Ref world = it->value.first;
+    removeUserScriptMessageHandlerInternal(world, userScriptMessageHandlerIdentifier);
 #else
     UNUSED_PARAM(worldIdentifier);
     UNUSED_PARAM(userScriptMessageHandlerIdentifier);
@@ -359,7 +367,8 @@ void WebUserContentController::removeAllUserScriptMessageHandlersForWorlds(const
             return;
         }
 
-        if (m_userMessageHandlers.remove(it->value.first.get()))
+        Ref world = it->value.first;
+        if (m_userMessageHandlers.remove(world.ptr()))
             userMessageHandlersChanged = true;
     }
 
