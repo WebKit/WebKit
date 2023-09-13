@@ -311,9 +311,9 @@ uint32_t Device::maxBuffersPlusVertexBuffersForVertexStage() const
     return 8;
 }
 
-uint32_t Device::vertexBufferIndexForBindGroup(uint32_t groupIndex) const
+uint32_t Device::vertexBufferIndexForBindGroup(uint32_t groupIndex, uint32_t maxIndex) const
 {
-    auto maxIndex = maxBuffersPlusVertexBuffersForVertexStage();
+    maxIndex = maxIndex ?: maxBuffersPlusVertexBuffersForVertexStage();
     return WGSL::vertexBufferIndexForBindGroup(groupIndex, maxIndex);
 }
 
