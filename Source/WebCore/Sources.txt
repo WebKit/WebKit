@@ -435,6 +435,7 @@ Modules/webauthn/fido/U2fResponseConverter.cpp
 Modules/webcodecs/WebCodecsAudioDecoder.cpp
 Modules/webcodecs/WebCodecsAudioData.cpp
 Modules/webcodecs/WebCodecsAudioDataAlgorithms.cpp
+Modules/webcodecs/WebCodecsAudioEncoder.cpp
 Modules/webcodecs/WebCodecsEncodedAudioChunk.cpp
 Modules/webcodecs/WebCodecsEncodedVideoChunk.cpp
 Modules/webcodecs/WebCodecsVideoDecoder.cpp
@@ -2034,6 +2035,7 @@ page/scrolling/ThreadedScrollingCoordinator.cpp
 page/scrolling/ThreadedScrollingTree.cpp
 page/scrolling/ThreadedScrollingTreeScrollingNodeDelegate.cpp
 platform/AudioDecoder.cpp
+platform/AudioEncoder.cpp
 platform/CaretAnimator.cpp
 platform/CommonAtomStrings.cpp
 platform/ContentType.cpp
@@ -3129,6 +3131,7 @@ WebCoreJSBuiltins.cpp
 // FIXME: We should probably move these into ${DerivedSources}/bindings/js/ so they get bundled with the custom bindings.
 
 JSANGLEInstancedArrays.cpp
+JSAacEncoderConfig.cpp
 JSAbortAlgorithm.cpp
 JSAbortController.cpp
 JSAbortSignal.cpp
@@ -3479,6 +3482,7 @@ JSFileSystemFileHandle.cpp
 JSFileSystemHandle.cpp
 JSFileSystemSyncAccessHandle.cpp
 JSFillMode.cpp
+JSFlacEncoderConfig.cpp
 JSFocusEvent.cpp
 JSFocusOptions.cpp
 JSFontFace.cpp
@@ -3884,6 +3888,7 @@ JSOfflineAudioContextOptions.cpp
 JSOffscreenCanvas.cpp
 JSOffscreenCanvasRenderingContext2D.cpp
 JSOptionalEffectTiming.cpp
+JSOpusEncoderConfig.cpp
 JSOscillatorNode.cpp
 JSOscillatorOptions.cpp
 JSOscillatorType.cpp
@@ -4367,7 +4372,12 @@ JSWebCodecsAudioDataOutputCallback.cpp
 JSWebCodecsAudioDecoder.cpp
 JSWebCodecsAudioDecoderConfig.cpp
 JSWebCodecsAudioDecoderSupport.cpp
+JSWebCodecsAudioEncoder.cpp
+JSWebCodecsAudioEncoderConfig.cpp
+JSWebCodecsAudioEncoderSupport.cpp
 JSWebCodecsEncodedAudioChunk.cpp
+JSWebCodecsEncodedAudioChunkMetadata.cpp
+JSWebCodecsEncodedAudioChunkOutputCallback.cpp
 JSWebCodecsEncodedAudioChunkType.cpp
 JSWebCodecsEncodedVideoChunk.cpp
 JSWebCodecsEncodedVideoChunkMetadata.cpp

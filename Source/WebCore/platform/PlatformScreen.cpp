@@ -29,6 +29,7 @@
 #if PLATFORM(COCOA) || PLATFORM(GTK)
 
 #include "ScreenProperties.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

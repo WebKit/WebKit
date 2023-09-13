@@ -42,6 +42,8 @@ public:
     virtual size_t memoryCost() const = 0;
 
     void copyTo(std::span<uint8_t>, AudioSampleFormat, size_t planeIndex, std::optional<size_t> frameOffset, std::optional<size_t> frameCount, unsigned long copyElementCount);
+
+    virtual bool isGStreamer() const { return false; }
 };
 
 } // namespace WebCore

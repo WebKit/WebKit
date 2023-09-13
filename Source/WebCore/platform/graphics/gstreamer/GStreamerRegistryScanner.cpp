@@ -602,6 +602,18 @@ void GStreamerRegistryScanner::initializeEncoders(const GStreamerRegistryScanner
         m_encoderCodecMap.add(AtomString("mp4a*"_s), result);
     }
 
+    if (auto alawSupported = factories.hasElementForMediaType(ElementFactories::Type::AudioEncoder, "audio/x-alaw"))
+        m_encoderCodecMap.add(AtomString("alaw"_s), alawSupported);
+
+    if (auto ulawSupported = factories.hasElementForMediaType(ElementFactories::Type::AudioEncoder, "audio/x-mulaw"))
+        m_encoderCodecMap.add(AtomString("ulaw"_s), ulawSupported);
+
+    if (auto flacSupported = factories.hasElementForMediaType(ElementFactories::Type::AudioEncoder, "audio/x-flac"))
+        m_encoderCodecMap.add(AtomString("flac"_s), flacSupported);
+
+    if (auto mp3Supported = factories.hasElementForMediaType(ElementFactories::Type::AudioEncoder, "audio/mpeg, mpegversion=(int)1, layer=(int)3"))
+        m_encoderCodecMap.add(AtomString("mp3"_s), mp3Supported);
+
     auto opusSupported = factories.hasElementForMediaType(ElementFactories::Type::AudioEncoder, "audio/x-opus");
     if (opusSupported) {
         m_encoderCodecMap.add(AtomString("opus"_s), opusSupported);
