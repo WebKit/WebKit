@@ -185,10 +185,10 @@ PASS div[role="generic"] -> generic.
 PASS div[role="button foo"] -> button.
 PASS div[role="foo button bar"] -> button.
 PASS div[role="foo  button  bar"] -> button.
-PASS div[role="foo	button	bar"] -> generic.
+PASS div[role="foo	button	bar"] -> button.
 PASS div[role="foo
 button
-bar"] -> generic.
+bar"] -> button.
 PASS img[role="foo"] -> image.
 PASS img[role="foo bar"] -> image.
 PASS img[role="foo  bar"] -> image.
