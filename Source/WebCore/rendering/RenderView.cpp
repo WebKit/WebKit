@@ -126,7 +126,7 @@ void RenderView::scheduleLazyRepaint(RenderBox& renderer)
     if (renderer.renderBoxNeedsLazyRepaint())
         return;
     renderer.setRenderBoxNeedsLazyRepaint(true);
-    m_renderersNeedingLazyRepaint.add(&renderer);
+    m_renderersNeedingLazyRepaint.add(renderer);
     if (!m_lazyRepaintTimer.isActive())
         m_lazyRepaintTimer.startOneShot(0_s);
 }
@@ -136,16 +136,16 @@ void RenderView::unscheduleLazyRepaint(RenderBox& renderer)
     if (!renderer.renderBoxNeedsLazyRepaint())
         return;
     renderer.setRenderBoxNeedsLazyRepaint(false);
-    m_renderersNeedingLazyRepaint.remove(&renderer);
-    if (m_renderersNeedingLazyRepaint.isEmpty())
+    m_renderersNeedingLazyRepaint.remove(renderer);
+    if (m_renderersNeedingLazyRepaint.isEmptyIgnoringNullReferences())
         m_lazyRepaintTimer.stop();
 }
 
 void RenderView::lazyRepaintTimerFired()
 {
     for (auto& renderer : m_renderersNeedingLazyRepaint) {
-        renderer->repaint();
-        renderer->setRenderBoxNeedsLazyRepaint(false);
+        renderer.repaint();
+        renderer.setRenderBoxNeedsLazyRepaint(false);
     }
     m_renderersNeedingLazyRepaint.clear();
 }
@@ -854,52 +854,52 @@ ImageQualityController& RenderView::imageQualityController()
 
 void RenderView::registerForVisibleInViewportCallback(RenderElement& renderer)
 {
-    ASSERT(!m_visibleInViewportRenderers.contains(&renderer));
-    m_visibleInViewportRenderers.add(&renderer);
+    ASSERT(!m_visibleInViewportRenderers.contains(renderer));
+    m_visibleInViewportRenderers.add(renderer);
 }
 
 void RenderView::unregisterForVisibleInViewportCallback(RenderElement& renderer)
 {
-    ASSERT(m_visibleInViewportRenderers.contains(&renderer));
-    m_visibleInViewportRenderers.remove(&renderer);
+    ASSERT(m_visibleInViewportRenderers.contains(renderer));
+    m_visibleInViewportRenderers.remove(renderer);
 }
 
 void RenderView::updateVisibleViewportRect(const IntRect& visibleRect)
 {
     resumePausedImageAnimationsIfNeeded(visibleRect);
 
-    for (auto* renderer : m_visibleInViewportRenderers) {
-        auto state = visibleRect.intersects(enclosingIntRect(renderer->absoluteClippedOverflowRectForRepaint())) ? VisibleInViewportState::Yes : VisibleInViewportState::No;
-        renderer->setVisibleInViewportState(state);
+    for (auto& renderer : m_visibleInViewportRenderers) {
+        auto state = visibleRect.intersects(enclosingIntRect(renderer.absoluteClippedOverflowRectForRepaint())) ? VisibleInViewportState::Yes : VisibleInViewportState::No;
+        renderer.setVisibleInViewportState(state);
     }
 }
 
 void RenderView::addRendererWithPausedImageAnimations(RenderElement& renderer, CachedImage& image)
 {
-    ASSERT(!renderer.hasPausedImageAnimations() || m_renderersWithPausedImageAnimation.contains(&renderer));
+    ASSERT(!renderer.hasPausedImageAnimations() || m_renderersWithPausedImageAnimation.contains(renderer));
 
     renderer.setHasPausedImageAnimations(true);
-    auto& images = m_renderersWithPausedImageAnimation.ensure(&renderer, [] {
-        return Vector<CachedImage*>();
+    auto& images = m_renderersWithPausedImageAnimation.ensure(renderer, [] {
+        return Vector<WeakPtr<CachedImage>>();
     }).iterator->value;
     if (!images.contains(&image))
-        images.append(&image);
+        images.append(image);
 }
 
 void RenderView::removeRendererWithPausedImageAnimations(RenderElement& renderer)
 {
     ASSERT(renderer.hasPausedImageAnimations());
-    ASSERT(m_renderersWithPausedImageAnimation.contains(&renderer));
+    ASSERT(m_renderersWithPausedImageAnimation.contains(renderer));
 
     renderer.setHasPausedImageAnimations(false);
-    m_renderersWithPausedImageAnimation.remove(&renderer);
+    m_renderersWithPausedImageAnimation.remove(renderer);
 }
 
 void RenderView::removeRendererWithPausedImageAnimations(RenderElement& renderer, CachedImage& image)
 {
     ASSERT(renderer.hasPausedImageAnimations());
 
-    auto it = m_renderersWithPausedImageAnimation.find(&renderer);
+    auto it = m_renderersWithPausedImageAnimation.find(renderer);
     ASSERT(it != m_renderersWithPausedImageAnimation.end());
 
     auto& images = it->value;
@@ -914,24 +914,24 @@ void RenderView::removeRendererWithPausedImageAnimations(RenderElement& renderer
 
 void RenderView::resumePausedImageAnimationsIfNeeded(const IntRect& visibleRect)
 {
-    Vector<std::pair<RenderElement*, CachedImage*>, 10> toRemove;
-    for (auto& it : m_renderersWithPausedImageAnimation) {
-        auto* renderer = it.key;
-        for (auto* image : it.value) {
-            if (renderer->repaintForPausedImageAnimationsIfNeeded(visibleRect, *image))
-                toRemove.append(std::make_pair(renderer, image));
+    Vector<std::pair<WeakPtr<RenderElement>, WeakPtr<CachedImage>>, 10> toRemove;
+    for (auto it : m_renderersWithPausedImageAnimation) {
+        auto& renderer = it.key;
+        for (auto& image : it.value) {
+            if (renderer.repaintForPausedImageAnimationsIfNeeded(visibleRect, *image))
+                toRemove.append({ renderer, image });
         }
     }
     for (auto& pair : toRemove)
         removeRendererWithPausedImageAnimations(*pair.first, *pair.second);
 
-    Vector<SVGSVGElement*> svgSvgElementsToRemove;
+    Vector<Ref<SVGSVGElement>> svgSvgElementsToRemove;
     m_SVGSVGElementsWithPausedImageAnimation.forEach([&] (WeakPtr<SVGSVGElement, WeakPtrImplWithEventTargetData> svgSvgElement) {
         if (svgSvgElement && svgSvgElement->resumePausedAnimationsIfNeeded(visibleRect))
-            svgSvgElementsToRemove.append(svgSvgElement.get());
+            svgSvgElementsToRemove.append(*svgSvgElement);
     });
     for (auto& svgSvgElement : svgSvgElementsToRemove)
-        m_SVGSVGElementsWithPausedImageAnimation.remove(*svgSvgElement);
+        m_SVGSVGElementsWithPausedImageAnimation.remove(svgSvgElement.get());
 }
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
@@ -1092,12 +1092,12 @@ RenderLayer* RenderView::takeStyleChangeLayerTreeMutationRoot()
 
 void RenderView::registerBoxWithScrollSnapPositions(const RenderBox& box)
 {
-    m_boxesWithScrollSnapPositions.add(&box);
+    m_boxesWithScrollSnapPositions.add(box);
 }
 
 void RenderView::unregisterBoxWithScrollSnapPositions(const RenderBox& box)
 {
-    m_boxesWithScrollSnapPositions.remove(&box);
+    m_boxesWithScrollSnapPositions.remove(box);
 }
 
 void RenderView::registerContainerQueryBox(const RenderBox& box)

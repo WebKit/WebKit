@@ -205,7 +205,7 @@ public:
 
     void registerBoxWithScrollSnapPositions(const RenderBox&);
     void unregisterBoxWithScrollSnapPositions(const RenderBox&);
-    const HashSet<const RenderBox*>& boxesWithScrollSnapPositions() { return m_boxesWithScrollSnapPositions; }
+    const WeakHashSet<const RenderBox>& boxesWithScrollSnapPositions() { return m_boxesWithScrollSnapPositions; }
 
     void registerContainerQueryBox(const RenderBox&);
     void unregisterContainerQueryBox(const RenderBox&);
@@ -261,7 +261,7 @@ private:
     void lazyRepaintTimerFired();
 
     Timer m_lazyRepaintTimer;
-    HashSet<RenderBox*> m_renderersNeedingLazyRepaint;
+    WeakHashSet<RenderBox> m_renderersNeedingLazyRepaint;
 
     std::unique_ptr<ImageQualityController> m_imageQualityController;
     std::optional<LayoutSize> m_pageLogicalSize;
@@ -278,11 +278,11 @@ private:
     bool m_needsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly { false };
     bool m_needsEventRegionUpdateForNonCompositedFrame { false };
 
-    HashMap<RenderElement*, Vector<CachedImage*>> m_renderersWithPausedImageAnimation;
+    WeakHashMap<RenderElement, Vector<WeakPtr<CachedImage>>> m_renderersWithPausedImageAnimation;
     WeakHashSet<SVGSVGElement, WeakPtrImplWithEventTargetData> m_SVGSVGElementsWithPausedImageAnimation;
-    HashSet<RenderElement*> m_visibleInViewportRenderers;
+    WeakHashSet<RenderElement> m_visibleInViewportRenderers;
 
-    HashSet<const RenderBox*> m_boxesWithScrollSnapPositions;
+    WeakHashSet<const RenderBox> m_boxesWithScrollSnapPositions;
     WeakHashSet<const RenderBox> m_containerQueryBoxes;
 };
 
