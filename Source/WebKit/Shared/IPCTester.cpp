@@ -45,7 +45,7 @@
 // The tester API.
 extern "C" {
 // Returns 0 if driver should continue.
-typedef int (*WKMessageTestSendMessageFunc)(const uint8_t* data, size_t sz, void* context);
+typedef int (*WKMessageTestSendMessageFunc)(IPC::DataReference buffer, void* context);
 typedef void (*WKMessageTestDriverFunc)(WKMessageTestSendMessageFunc sendMessageFunc, void* context);
 }
 
@@ -64,13 +64,13 @@ static void defaultTestDriver(WKMessageTestSendMessageFunc sendMessageFunc, void
     Vector<uint8_t> data(1000);
     for (int i = 0; i < 1000; i++) {
         cryptographicallyRandomValues(data.data(), data.size());
-        int ret = sendMessageFunc(data.data(), data.size(), context);
+        int ret = sendMessageFunc(data.span(), context);
         if (ret)
             return;
     }
 }
 
-static int sendTestMessage(const uint8_t* data, size_t size, void* context)
+static int sendTestMessage(IPC::DataReference buffer, void* context)
 {
     auto messageContext = reinterpret_cast<SendMessageContext*>(context);
     if (messageContext->shouldStop)
@@ -79,7 +79,7 @@ static int sendTestMessage(const uint8_t* data, size_t size, void* context)
     if (!testedConnection->isValid())
         return 1;
     BinarySemaphore semaphore;
-    auto decoder = IPC::Decoder::create(data, size, [&semaphore] (const uint8_t*, size_t) { semaphore.signal(); }, { }); // NOLINT
+    auto decoder = IPC::Decoder::create(buffer, [&semaphore] (IPC::DataReference) { semaphore.signal(); }, { }); // NOLINT
     if (decoder) {
         testedConnection->dispatchIncomingMessageForTesting(WTFMove(decoder));
         semaphore.wait();
@@ -222,6 +222,6 @@ void IPCTester::stopIfNeeded()
     }
 }
 
-}
+} // namespace WebKit
 
 #endif

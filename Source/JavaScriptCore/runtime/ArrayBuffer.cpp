@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -208,6 +208,14 @@ Ref<ArrayBuffer> ArrayBuffer::create(const void* source, size_t byteLength)
     return buffer.releaseNonNull();
 }
 
+Ref<ArrayBuffer> ArrayBuffer::create(std::span<uint8_t> span)
+{
+    auto buffer = tryCreate(span);
+    if (!buffer)
+        CRASH();
+    return buffer.releaseNonNull();
+}
+
 Ref<ArrayBuffer> ArrayBuffer::create(ArrayBufferContents&& contents)
 {
     return adoptRef(*new ArrayBuffer(WTFMove(contents)));
@@ -266,6 +274,11 @@ RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(const void* source, size_t byteLength
     if (!contents.m_data)
         return nullptr;
     return createInternal(WTFMove(contents), source, byteLength);
+}
+
+RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(std::span<uint8_t> span)
+{
+    return tryCreate(span.data(), span.size_bytes());
 }
 
 Ref<ArrayBuffer> ArrayBuffer::createUninitialized(size_t numElements, unsigned elementByteSize)

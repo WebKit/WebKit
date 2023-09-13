@@ -37,7 +37,7 @@ std::optional<T> copyViaEncoder(const T& o)
 {
     IPC::Encoder encoder(static_cast<IPC::MessageName>(78), 0);
     encoder << o;
-    auto decoder = IPC::Decoder::create(encoder.buffer(), encoder.bufferSize(), encoder.releaseAttachments());
+    auto decoder = IPC::Decoder::create({ encoder.buffer(), encoder.bufferSize() }, encoder.releaseAttachments());
     return decoder->decode<T>();
 }
 

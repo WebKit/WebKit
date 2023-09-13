@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -231,7 +231,7 @@ bool Connection::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IP
 
         size_t dataSize { 0 };
         const uint8_t* data = static_cast<const uint8_t *>(xpc_dictionary_get_data(reply, WebKit::WebPushD::protocolEncodedMessageKey, &dataSize));
-        auto decoder = IPC::Decoder::create(data, dataSize, { });
+        auto decoder = IPC::Decoder::create({ data, dataSize }, { });
         ASSERT(decoder);
 
         completionHandler(decoder.get());

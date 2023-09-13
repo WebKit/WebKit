@@ -237,7 +237,7 @@ bool WebPushXPCConnectionMessageSender::performSendWithAsyncReplyWithoutUsingIPC
 
         size_t dataSize { 0 };
         const uint8_t* data = static_cast<const uint8_t *>(xpc_dictionary_get_data(reply, WebKit::WebPushD::protocolEncodedMessageKey, &dataSize));
-        auto decoder = IPC::Decoder::create(data, dataSize, { });
+        auto decoder = IPC::Decoder::create({ data, dataSize }, { });
         ASSERT(decoder);
 
         completionHandler(decoder.get());

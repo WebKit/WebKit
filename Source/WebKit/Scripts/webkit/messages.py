@@ -1263,6 +1263,7 @@ def generate_message_names_header(receivers):
         if condition:
             result.append('#endif\n')
     result.append('    Count,\n')
+    result.append('    Invalid = Count,\n')
     result.append('    Last = Count - 1\n')
     result.append('};\n')
     result.append('\n')

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,6 +24,10 @@
  */
 
 #pragma once
+
+#include <cstring>
+#include <span>
+#include <wtf/Assertions.h>
 
 namespace WTF {
 
@@ -54,5 +58,15 @@ bool allOf(ContainerType&& container, AllOfFunction allOfFunction)
     return true;
 }
 
+template<typename T, typename U>
+std::span<T> spanReinterpretCast(std::span<U> span)
+{
+    RELEASE_ASSERT(!(span.size_bytes() % sizeof(T)));
+    static_assert(std::is_const_v<T> || (!std::is_const_v<T> && !std::is_const_v<U>), "spanCast will not remove constness from source");
+    return std::span<T> { reinterpret_cast<T*>(const_cast<std::remove_const_t<U>*>(span.data())), span.size_bytes() / sizeof(T) };
 }
+
+} // namespace WTF
+
+using WTF::spanReinterpretCast;
 
