@@ -173,6 +173,7 @@ public:
     bool needsResettingTransitionCancelsRunningTransitionQuirk() const;
 
     bool shouldStarBeFeaturePolicyDefaultValue() const;
+    bool shouldDisableDataURLPaddingValidation() const;
 
 private:
     bool needsQuirks() const;
@@ -235,6 +236,7 @@ private:
     bool m_needsConfigurableIndexedPropertiesQuirk { false };
     bool m_needsToCopyUserSelectNoneQuirk { false };
     mutable std::optional<bool> m_shouldStarBeFeaturePolicyDefaultValueQuirk;
+    mutable std::optional<bool> m_shouldDisableDataURLPaddingValidation;
 };
 
 } // namespace WebCore
