@@ -44,6 +44,7 @@ static bool isSiblingOrSubject(MatchElement matchElement)
     case MatchElement::DirectSibling:
     case MatchElement::AnySibling:
     case MatchElement::HasSibling:
+    case MatchElement::HasAnySibling:
     case MatchElement::Host:
     case MatchElement::HostChild:
         return true;
@@ -70,6 +71,7 @@ bool isHasPseudoClassMatchElement(MatchElement matchElement)
     case MatchElement::HasDescendant:
     case MatchElement::HasSibling:
     case MatchElement::HasSiblingDescendant:
+    case MatchElement::HasAnySibling:
     case MatchElement::HasNonSubjectOrScopeBreaking:
         return true;
     default:
@@ -150,11 +152,17 @@ static MatchElement computeNextHasPseudoClassMatchElement(MatchElement matchElem
 {
     ASSERT(isHasPseudoClassMatchElement(matchElement));
 
+    if (canBreakScope == CanBreakScope::No)
+        return matchElement;
+
     // :has(:is(foo bar)) can be affected by changes outside the :has scope.
-    if (canBreakScope == CanBreakScope::Yes) {
-        if (relation == CSSSelector::RelationType::DescendantSpace || relation == CSSSelector::RelationType::Child)
-            return MatchElement::HasNonSubjectOrScopeBreaking;
-    }
+    if (relation == CSSSelector::RelationType::DescendantSpace || relation == CSSSelector::RelationType::Child)
+        return MatchElement::HasNonSubjectOrScopeBreaking;
+
+    // :has(~ :is(.x ~ .y)) must look at previous siblings of the :scope scope too.
+    if (matchElement == MatchElement::HasSibling && (relation == CSSSelector::RelationType::IndirectAdjacent || relation == CSSSelector::RelationType::DirectAdjacent))
+        return MatchElement::HasAnySibling;
+
     return matchElement;
 }
 
@@ -183,6 +191,7 @@ MatchElement computeHasPseudoClassMatchElement(const CSSSelector& hasSelector)
     case MatchElement::HasDescendant:
     case MatchElement::HasSibling:
     case MatchElement::HasSiblingDescendant:
+    case MatchElement::HasAnySibling:
     case MatchElement::HasNonSubjectOrScopeBreaking:
     case MatchElement::Host:
     case MatchElement::HostChild:

@@ -53,6 +53,7 @@ enum class MatchElement : uint8_t {
     HasDescendant,
     HasSibling,
     HasSiblingDescendant,
+    HasAnySibling,
     HasNonSubjectOrScopeBreaking, // FIXME: This is a catch-all for cases where :has() is in a non-subject position, or may break scope.
     Host,
     HostChild
@@ -156,8 +157,9 @@ inline bool RuleFeatureSet::usesHasPseudoClass() const
 {
     return usesMatchElement(MatchElement::HasChild)
         || usesMatchElement(MatchElement::HasDescendant)
-        || usesMatchElement(MatchElement::HasSiblingDescendant)
         || usesMatchElement(MatchElement::HasSibling)
+        || usesMatchElement(MatchElement::HasSiblingDescendant)
+        || usesMatchElement(MatchElement::HasAnySibling)
         || usesMatchElement(MatchElement::HasNonSubjectOrScopeBreaking);
 }
 

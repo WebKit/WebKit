@@ -344,7 +344,7 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
         }
         break;
     }
-    case MatchElement::HasSibling: {
+    case MatchElement::HasSibling:
         if (auto* sibling = element.previousElementSibling()) {
             SelectorMatchingState selectorMatchingState;
             if (RefPtr parent = element.parentElement())
@@ -353,6 +353,13 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
             for (; sibling; sibling = sibling->previousElementSibling())
                 invalidateIfNeeded(*sibling, &selectorMatchingState);
         }
+        break;
+    case MatchElement::HasAnySibling: {
+        SelectorMatchingState selectorMatchingState;
+        if (auto* parent = element.parentElement())
+            selectorMatchingState.selectorFilter.pushParentInitializingIfNeeded(*parent);
+        for (auto& sibling : childrenOfType<Element>(*element.parentNode()))
+            invalidateIfNeeded(sibling, &selectorMatchingState);
         break;
     }
     case MatchElement::HasSiblingDescendant: {
