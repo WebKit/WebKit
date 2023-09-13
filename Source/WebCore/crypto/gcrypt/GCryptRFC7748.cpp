@@ -103,5 +103,4 @@ std::optional<Vector<uint8_t>> X25519(const Vector<uint8_t>& kArg, const Vector<
     return xImpl<X25519Impl>(kArg, uArg);
 }
 
-
 } // namespace WebCore

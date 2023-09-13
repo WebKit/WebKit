@@ -24,6 +24,7 @@
 
 #include "CryptoKeyPair.h"
 #include "GCryptRFC7748.h"
+#include "GCryptRFC8032.h"
 #include "GCryptUtilities.h"
 #include "JsonWebKey.h"
 #include <pal/crypto/gcrypt/Utilities.h>
@@ -151,18 +152,18 @@ std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmI
 
 bool CryptoKeyOKP::platformCheckPairedKeys(CryptoAlgorithmIdentifier, NamedCurve namedCurve, const Vector<uint8_t>& privateKey, const Vector<uint8_t>& publicKey)
 {
-    if (namedCurve != NamedCurve::Ed25519 && namedCurve != NamedCurve::X25519)
-        return false;
-
-    if (namedCurve == NamedCurve::X25519) {
+    switch (namedCurve) {
+    case NamedCurve::X25519: {
         // public key being X25519(a, 9), as defined in [RFC7748], section 6.1.
         auto q = X25519(privateKey, WebCore::CryptoKeyOKPImpl::nine);
         return q && q->size() == 32 && *q == publicKey;
     }
-
-    // FIXME: Implement this check for Ed25519
-
-    return true;
+    case NamedCurve::Ed25519:
+        return validateEd25519KeyPair(privateKey, publicKey);
+    default:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
 }
 
 // Per https://www.ietf.org/rfc/rfc5280.txt
