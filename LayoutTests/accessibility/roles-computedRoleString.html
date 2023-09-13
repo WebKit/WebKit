@@ -286,11 +286,10 @@
 <div role="foo button bar"           data-role="button" data-platform="atspi,mac" class="ex">X</div>
 <div role="foo  button  bar"         data-role="button" data-platform="atspi,mac" class="ex">X</div><!-- [sic] Two spaces in role string -->
 
-<!-- FIXME: These two should be button but fail b/c of http://webkit.org/b/128400 -->
-<div role="foo	button	bar"         data-role="generic" data-platform="atspi,mac" class="ex">X</div><!-- [sic] Tab chars in role string -->
+<div role="foo	button	bar"         data-role="button" data-platform="atspi,mac" class="ex">X</div><!-- [sic] Tab chars in role string -->
 <div role="foo
 button
-bar"                                 data-role="generic" data-platform="atspi,mac" class="ex">X</div><!-- [sic] Newlines in role string -->
+bar"                                 data-role="button" data-platform="atspi,mac" class="ex">X</div><!-- [sic] Newlines in role string -->
 
 
 <!-- ==================================================================================================== -->
