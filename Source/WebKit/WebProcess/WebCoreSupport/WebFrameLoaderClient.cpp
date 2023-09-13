@@ -180,10 +180,8 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
 void WebFrameLoaderClient::broadcastFrameRemovalToOtherProcesses()
 {
     auto* webPage = m_frame->page();
-    if (!webPage) {
-        ASSERT_NOT_REACHED();
+    if (!webPage)
         return;
-    }
     webPage->send(Messages::WebPageProxy::BroadcastFrameRemovalToOtherProcesses(m_frame->frameID()));
 }
 
