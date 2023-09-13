@@ -308,7 +308,7 @@ UITargetedDragPreview *DragDropInteractionState::previewForDragItem(UIDragItem *
         // the drag preview should be created likewise, so that the size and position
         // of both previews match.
         auto textIndicatorImage = uiImageForImage(indicator->contentImage.get());
-        return createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, indicator->textBoundingRectInRootViewCoordinates, indicator->textRectsInBoundingRectCoordinates, cocoaColor(indicator->estimatedBackgroundColor).get(), nil, addPreviewViewToContainer).autorelease();
+        return createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, indicator->textBoundingRectInRootViewCoordinates, indicator->textRectsInBoundingRectCoordinates, cocoaColor(indicator->estimatedBackgroundColor).get(), nil).autorelease();
     }
 
     auto& source = foundSource.value();
