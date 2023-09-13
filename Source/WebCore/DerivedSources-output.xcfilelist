@@ -51,6 +51,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/InternalSettingsGenerated.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/InternalSettingsGenerated.idl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSANGLEInstancedArrays.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSANGLEInstancedArrays.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAacEncoderConfig.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAacEncoderConfig.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAbortAlgorithm.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAbortAlgorithm.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAbortController.cpp
@@ -1043,6 +1045,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemSyncAccessHandle.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFileSystemSyncAccessHandle.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFillMode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFillMode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFlacEncoderConfig.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFlacEncoderConfig.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFocusEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFocusEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFocusOptions.cpp
@@ -2021,6 +2025,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOffscreenCanvasRenderingContext2D
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOffscreenCanvasRenderingContext2D.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOptionalEffectTiming.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOptionalEffectTiming.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOpusEncoderConfig.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOpusEncoderConfig.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOscillatorNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOscillatorNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOscillatorOptions.cpp
@@ -2963,10 +2969,20 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsAudioDecoderConfig.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsAudioDecoderConfig.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsAudioDecoderSupport.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsAudioDecoderSupport.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsAudioEncoder.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsAudioEncoder.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsAudioEncoderConfig.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsAudioEncoderConfig.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsAudioEncoderSupport.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsAudioEncoderSupport.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsCodecState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsCodecState.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsEncodedAudioChunk.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsEncodedAudioChunk.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsEncodedAudioChunkMetadata.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsEncodedAudioChunkMetadata.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsEncodedAudioChunkOutputCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsEncodedAudioChunkOutputCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsEncodedAudioChunkType.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsEncodedAudioChunkType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsEncodedVideoChunk.cpp
