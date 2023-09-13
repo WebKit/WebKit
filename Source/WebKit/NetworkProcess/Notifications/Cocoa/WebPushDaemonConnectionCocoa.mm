@@ -69,19 +69,15 @@ bool Connection::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IP
 {
     auto dictionary = messageDictionaryFromEncoder(WTFMove(encoder));
     Daemon::Connection::sendWithReply(dictionary.get(), [completionHandler = WTFMove(completionHandler)] (xpc_object_t reply) mutable {
-        if (xpc_get_type(reply) != XPC_TYPE_DICTIONARY) {
-            ASSERT_NOT_REACHED();
+        if (xpc_get_type(reply) != XPC_TYPE_DICTIONARY)
             return completionHandler(nullptr);
-        }
-        if (xpc_dictionary_get_uint64(reply, WebPushD::protocolVersionKey) != WebPushD::protocolVersionValue) {
-            ASSERT_NOT_REACHED();
+
+        if (xpc_dictionary_get_uint64(reply, WebPushD::protocolVersionKey) != WebPushD::protocolVersionValue)
             return completionHandler(nullptr);
-        }
 
         size_t dataSize { 0 };
         const uint8_t* data = static_cast<const uint8_t *>(xpc_dictionary_get_data(reply, WebPushD::protocolEncodedMessageKey, &dataSize));
         auto decoder = IPC::Decoder::create({ data, dataSize }, { });
-        ASSERT(decoder);
 
         completionHandler(decoder.get());
     });
