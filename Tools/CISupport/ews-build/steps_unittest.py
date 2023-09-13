@@ -47,7 +47,7 @@ from .steps import (AddReviewerToCommitMessage, AnalyzeAPITestsResults, AnalyzeC
                    AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, BugzillaMixin,
                    Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckStatusOnEWSQueues, CheckStyle,
                    CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CommitPatch, CompileJSCWithoutChange,
-                   CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors,
+                   CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors, DetermineLabelOwner,
                    DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
                    EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
                    FetchBranches, FindModifiedLayoutTests, GitHub, GitHubMixin, GenerateS3URL,
@@ -6054,6 +6054,75 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(self.getProperty('build_finish_summary'), 'Failed to commit to WebKit repository')
         self.assertEqual(self.getProperty('comment_text'), 'merge-queue failed to commit PR to repository. To retry, remove any blocking labels and re-apply merge-queue label')
         return rc
+
+
+class TestDetermineLabelOwner(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success_merge_queue(self):
+        self.setupStep(DetermineLabelOwner())
+        self.setProperty('pr_number', 17518)
+        self.setProperty('buildername', 'Merge-Queue')
+        response = {"data": {
+                    "repository": {
+                        "pullRequest": {
+                            "timelineItems": {
+                                "nodes": [
+                                    {
+                                        "actor": {
+                                            "login": "JonWBedard"
+                                        },
+                                        "label": {
+                                            "name": "safe-merge-queue"
+                                        },
+                                        "createdAt": "2023-09-07T00:24:06Z"
+                                    },
+                                    {
+                                        "actor": {
+                                            "login": "webkit-commit-queue"
+                                        },
+                                        "label": {
+                                            "name": "merge-queue"
+                                        },
+                                        "createdAt": "2023-09-11T20:53:23Z"}]}}}}}
+        GitHubMixin.query_graph_ql = lambda self, query: response
+        self.expectOutcome(result=SUCCESS, state_string='Owner of PR 17518 determined to be JonWBedard\n')
+        self.runStep()
+        self.assertEqual(self.getProperty('owners'), ['JonWBedard'])
+
+    def test_failure(self):
+        self.setupStep(DetermineLabelOwner())
+        self.setProperty('pr_number', 17518)
+        self.setProperty('buildername', 'Merge-Queue')
+        response = {"data": {
+                    "repository": {
+                        "pullRequest": {
+                            "timelineItems": {
+                                "nodes": [
+                                    {
+                                        "actor": {
+                                            "login": "JonWBedard"
+                                        },
+                                        "label": {
+                                            "name": "Tools / Tests"
+                                        },
+                                        "createdAt": "2023-09-07T00:24:06Z"
+                                    },
+                                    {
+                                        "actor": {
+                                            "login": "webkit-commit-queue"
+                                        },
+                                        "label": {
+                                            "name": "merging-blocked"
+                                        },
+                                        "createdAt": "2023-09-11T20:53:23Z"}]}}}}}
+        GitHubMixin.query_graph_ql = lambda self, query: response
+        self.expectOutcome(result=FAILURE, state_string="Unable to determine owner of PR 17518\n")
+        self.runStep()
 
 
 class TestDetermineLandedIdentifier(BuildStepMixinAdditions, unittest.TestCase):

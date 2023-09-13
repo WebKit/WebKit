@@ -170,6 +170,7 @@ class GitHubMixin(object):
     BLOCKED_LABEL = 'merging-blocked'
     MERGE_QUEUE_LABEL = 'merge-queue'
     UNSAFE_MERGE_QUEUE_LABEL = 'unsafe-merge-queue'
+    SAFE_MERGE_QUEUE_LABEL = 'safe-merge-queue'
     REQUEST_MERGE_QUEUE_LABEL = 'request-merge-queue'
     PER_PAGE_LIMIT = 100
     NUM_PAGE_LIMIT = 10
@@ -192,6 +193,29 @@ class GitHubMixin(object):
             defer.returnValue(False if response.status_code // 100 == 4 else None)
         else:
             defer.returnValue(response)
+
+    @defer.inlineCallbacks
+    def query_graph_ql(self, payload):
+        headers = {'Accept': ['application/vnd.github.v3+json']}
+        graphql_url = 'https://api.github.com/graphql'
+        username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
+        if username and access_token:
+            auth_header = b64encode('{}:{}'.format(username, access_token).encode('utf-8')).decode('utf-8')
+            headers['Authorization'] = ['bearer {}'.format(access_token)]
+
+        response = yield TwistedAdditions.request(
+            graphql_url, type=b'POST',
+            headers=headers,
+            logger=lambda content: self._addToLog('stdio', content),
+            json=payload,
+        )
+        if response and response.status_code // 100 != 2:
+            yield self._addToLog('stdio', f'Accessed {graphql_url} with unexpected status code {response.status_code}.\n')
+            defer.returnValue(False if response.status_code // 100 == 4 else None)
+        else:
+            data = json.loads(response.text)
+            defer.returnValue(data)
+
 
     @defer.inlineCallbacks
     def get_pr_json(self, pr_number, repository_url=None, retry=0):
@@ -2008,6 +2032,57 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
         self.setProperty('reviewers_full_names', [self.full_name_from_email(reviewer) for reviewer in reviewers])
 
         defer.returnValue(SUCCESS)
+
+
+class DetermineLabelOwner(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
+    name = 'determine-label-owner'
+    flunkOnFailure = False
+    haltOnFailure = False
+
+    @defer.inlineCallbacks
+    def run(self):
+        builder_name = self.getProperty('buildername', '')
+        pr_number = self.getProperty('pr_number', '')
+        if builder_name == 'Safe-Merge-Queue':
+            list_of_prs = self.getProperty('list_of_prs', [])
+            pr_number = list_of_prs.pop()
+            self.setProperty('pr_number', pr_number)
+            self.setProperty('list_of_prs', list_of_prs)
+
+        query_body = '{ repository(owner:"Webkit", name:"WebKit") { pullRequest(number: %s) {timelineItems(itemTypes: LABELED_EVENT, last: 5) {nodes {... on LabeledEvent {actor { login } label { name } createdAt } } } } } }' % pr_number
+        query = {'query': query_body}
+
+        response = yield self.query_graph_ql(query)
+        if 'errors' in response:
+            yield self._addToLog('stdio', response['errors'][0]['message'])
+            return defer.returnValue(FAILURE)
+        if response:
+            yield self._addToLog('stdio', '')
+            label_events = response['data']['repository']['pullRequest']['timelineItems']['nodes']
+        else:
+            yield self._addToLog('stdio', 'Failed to retrieve label author.\n')
+            return defer.returnValue(FAILURE)
+
+        owner = None
+        label = builder_name.lower()
+        for event in reversed(label_events):  # traverse list backwards for most recent label
+            if event['label']['name'] == label:
+                owner = event['actor']['login']
+                yield self._addToLog('stdio', f'Label: {label}, Owner: {owner}\n')
+                if owner == 'webkit-commit-queue':
+                    label = 'safe-merge-queue'
+                    continue
+                else:
+                    break
+
+        self.setProperty('owners', [owner])
+        defer.returnValue(SUCCESS if owner else FAILURE)
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {'step': f"Owner of PR {self.getProperty('pr_number')} determined to be {self.getProperty('owners')[0]}\n"}
+        elif self.results == FAILURE:
+            return {'step': f"Unable to determine owner of PR {self.getProperty('pr_number')}\n"}
 
 
 class SetCommitQueueMinusFlagOnPatch(buildstep.BuildStep, BugzillaMixin):

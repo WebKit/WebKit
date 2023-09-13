@@ -26,7 +26,7 @@ from buildbot.steps import trigger
 
 from .steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canonicalize, CommitPatch,
                    CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance,
-                   CheckStatusOnEWSQueues, CheckStyle, CleanGitRepo, CompileJSC, CompileWebKit, ConfigureBuild,
+                   CheckStatusOnEWSQueues, CheckStyle, CleanGitRepo, CompileJSC, CompileWebKit, ConfigureBuild, DetermineLabelOwner,
                    DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedLayoutTests,
                    InstallGtkDependencies, InstallHooks, InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch,
                    MapBranchAlias, RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS,
@@ -328,6 +328,7 @@ class MergeQueueFactoryBase(factory.BuildFactory):
         super(MergeQueueFactoryBase, self).__init__()
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=None, remotes=None, additionalArguments=additionalArguments))
         self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
+        self.addStep(DetermineLabelOwner())
         self.addStep(ValidateCommitterAndReviewer())
         self.addStep(PrintConfiguration())
         self.addStep(CleanGitRepo())
