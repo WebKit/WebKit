@@ -1404,24 +1404,24 @@ void WebProcess::remotePostMessage(WebCore::FrameIdentifier identifier, std::opt
     domWindow->postMessageFromRemoteFrame(*globalObject, target, message);
 }
 
-void WebProcess::renderTreeAsText(WebCore::FrameIdentifier frameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior, CompletionHandler<void(String)>&& completionHandler)
+void WebProcess::renderTreeAsText(WebCore::FrameIdentifier frameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior, CompletionHandler<void(String&&)>&& completionHandler)
 {
     RefPtr webFrame = WebProcess::singleton().webFrame(frameIdentifier);
     if (!webFrame) {
         ASSERT_NOT_REACHED();
-        return completionHandler({ });
+        return completionHandler("Test Error - WebFrame missing in web process"_s);
     }
 
     RefPtr coreLocalFrame = webFrame->coreLocalFrame();
     if (!coreLocalFrame) {
         ASSERT_NOT_REACHED();
-        return completionHandler({ });
+        return completionHandler("Test Error - WebFrame missing LocalFrame in web process"_s);
     }
 
     auto* renderer = coreLocalFrame->contentRenderer();
     if (!renderer) {
         ASSERT_NOT_REACHED();
-        return completionHandler({ });
+        return completionHandler("Test Error - WebFrame missing RenderView in web process"_s);
     }
 
     auto ts = WebCore::createTextStream(*renderer);

@@ -1387,18 +1387,18 @@ void WebProcessProxy::postMessageToRemote(WebCore::FrameIdentifier identifier, s
     destinationFrame->process().send(Messages::WebProcess::RemotePostMessage(identifier, target, message), 0);
 }
 
-void WebProcessProxy::renderTreeAsText(WebCore::FrameIdentifier frameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior, CompletionHandler<void(String)>&& completionHandler)
+void WebProcessProxy::renderTreeAsText(WebCore::FrameIdentifier frameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior, CompletionHandler<void(String&&)>&& completionHandler)
 {
     auto* frame = WebFrameProxy::webFrame(frameIdentifier);
     if (!frame)
-        return completionHandler({ });
+        return completionHandler("Test Error - frame missing in UI process"_s);
 
     auto sendResult = frame->process().sendSync(Messages::WebProcess::RenderTreeAsText(frameIdentifier, baseIndent, behavior), 0);
     if (!sendResult.succeeded())
-        return completionHandler({ });
+        return completionHandler("Test Error - sending WebProcess::RenderTreeAsText failed"_s);
 
     auto [result] = sendResult.takeReply();
-    completionHandler(result);
+    completionHandler(WTFMove(result));
 }
 
 bool WebProcessProxy::canBeAddedToWebProcessCache() const
