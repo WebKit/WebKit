@@ -1103,6 +1103,9 @@
         SYS_getxattr
         SYS_iopolicysys
         SYS_openat_nocancel
+#if ASAN_ENABLED
+        SYS_sigaltstack
+#endif
         SYS_sigprocmask
         SYS_umask
         SYS_unlink
@@ -1122,7 +1125,6 @@
         SYS_rmdir
         SYS_sendto
         SYS_setrlimit
-        SYS_sigaltstack
 #if PLATFORM(WATCHOS)
         SYS_sigreturn
 #endif

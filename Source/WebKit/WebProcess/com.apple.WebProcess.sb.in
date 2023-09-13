@@ -1933,7 +1933,9 @@
         SYS_readlink
         SYS_rename
         SYS_sendto
+#if ASAN_ENABLED
         SYS_sigaltstack
+#endif
         SYS_stat64
         SYS_statfs64
         SYS_sysctl
