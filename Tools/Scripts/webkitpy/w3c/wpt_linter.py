@@ -29,9 +29,8 @@ import subprocess
 
 class WPTLinter(object):
     def __init__(self, repository_directory, filesystem):
-        self.wpt_path = filesystem.join(repository_directory, 'wpt')
+        self.wpt_path = repository_directory
 
     def lint(self):
-        cmd = [self.wpt_path, 'lint']
-        proc = subprocess.Popen(cmd)
+        proc = subprocess.Popen(['./wpt', 'lint'], cwd=self.wpt_path)
         return proc.wait()
