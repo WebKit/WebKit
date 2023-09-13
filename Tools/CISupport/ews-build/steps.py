@@ -2042,14 +2042,19 @@ class DetermineLabelOwner(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     @defer.inlineCallbacks
     def run(self):
         builder_name = self.getProperty('buildername', '')
-        pr_number = self.getProperty('pr_number', '')
+        pr_number = self.getProperty('github.number', '')
+        self.setProperty('pr_number', pr_number)
         if builder_name == 'Safe-Merge-Queue':
             list_of_prs = self.getProperty('list_of_prs', [])
             pr_number = list_of_prs.pop()
             self.setProperty('pr_number', pr_number)
             self.setProperty('list_of_prs', list_of_prs)
 
-        query_body = '{ repository(owner:"Webkit", name:"WebKit") { pullRequest(number: %s) {timelineItems(itemTypes: LABELED_EVENT, last: 5) {nodes {... on LabeledEvent {actor { login } label { name } createdAt } } } } } }' % pr_number
+        if not pr_number:
+            yield self._addToLog('stdio', 'Unable to fetch PR number.\n')
+            return defer.returnValue(FAILURE)
+
+        query_body = '{repository(owner:"Webkit", name:"WebKit") { pullRequest(number: %s) {timelineItems(itemTypes: LABELED_EVENT, last: 5) {nodes {... on LabeledEvent {actor { login } label { name } createdAt } } } } } }' % pr_number
         query = {'query': query_body}
 
         response = yield self.query_graph_ql(query)
