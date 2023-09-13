@@ -1272,6 +1272,8 @@ inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::asa
     if (!buffer())
         return;
 
+    RELEASE_ASSERT_WITH_MESSAGE(newSize <= capacity(), "Attempt to expand size (%lu) beyond current capacity (%lu)", newSize, capacity());
+
     // Change allowed range.
     __sanitizer_annotate_contiguous_container(buffer(), endOfBuffer(), buffer() + size(), buffer() + newSize);
 #else
@@ -1389,7 +1391,7 @@ ALWAYS_INLINE bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Mallo
     if (!dataSize)
         return true;
 
-    ASSERT(size() < capacity());
+    ASSERT_WITH_MESSAGE((Checked<size_t>(size()) + dataSize) <= capacity(), "uncheckedAppend() without expanding capacity");
 
     size_t newSize = m_size + dataSize;
     asanBufferSizeWillChangeTo(newSize);
