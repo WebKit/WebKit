@@ -1490,12 +1490,7 @@ void Page::didCommitLoad()
         geolocationController->didNavigatePage();
 #endif
 
-    m_isWaitingForFirstMeaningfulPaint = true;
-}
-
-void Page::didFirstMeaningfulPaint()
-{
-    m_isWaitingForFirstMeaningfulPaint = false;
+    m_isWaitingForLoadToFinish = true;
 }
 
 void Page::didFinishLoad()
@@ -1506,6 +1501,8 @@ void Page::didFinishLoad()
         m_performanceMonitor->didFinishLoad();
 
     setLoadSchedulingMode(LoadSchedulingMode::Direct);
+
+    m_isWaitingForLoadToFinish = false;
 }
 
 bool Page::isOnlyNonUtilityPage() const

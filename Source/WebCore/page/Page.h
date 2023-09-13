@@ -478,7 +478,6 @@ public:
     void didStartProvisionalLoad();
     void didCommitLoad();
     void didFinishLoad();
-    void didFirstMeaningfulPaint();
 
     bool delegatesScaling() const { return m_delegatesScaling; }
     WEBCORE_EXPORT void setDelegatesScaling(bool);
@@ -1055,7 +1054,7 @@ public:
     void opportunisticallyRunIdleCallbacks();
     void performOpportunisticallyScheduledTasks(MonotonicTime deadline);
 
-    bool isWaitingForFirstMeaningfulPaint() const { return m_isWaitingForFirstMeaningfulPaint; }
+    bool isWaitingForLoadToFinish() const { return m_isWaitingForLoadToFinish; }
 
 private:
     struct Navigation {
@@ -1413,7 +1412,7 @@ private:
     std::unique_ptr<AttachmentElementClient> m_attachmentElementClient;
 #endif
 
-    bool m_isWaitingForFirstMeaningfulPaint { false };
+    bool m_isWaitingForLoadToFinish { false };
     Ref<OpportunisticTaskScheduler> m_opportunisticTaskScheduler;
 
 #if ENABLE(IMAGE_ANALYSIS)
