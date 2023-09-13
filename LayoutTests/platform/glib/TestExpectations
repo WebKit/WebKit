@@ -1127,10 +1127,6 @@ webkit.org/b/239750 media/media-source/media-mp4-xhe-aac.html [ Skip ]
 media/media-hevc-video-as-img.html [ ImageOnlyFailure ]
 
 # Temporal scalability support
-imported/w3c/web-platform-tests/webcodecs/reconfiguring-encoder.https.any.html?h264_annexb [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/reconfiguring-encoder.https.any.html?h264_avc [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/reconfiguring-encoder.https.any.worker.html?h264_annexb [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/reconfiguring-encoder.https.any.worker.html?h264_avc [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?h264 [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?vp8 [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?vp9 [ Failure ]
