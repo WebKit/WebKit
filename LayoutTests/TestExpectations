@@ -5285,9 +5285,8 @@ imported/w3c/web-platform-tests/css/motion/offset-path-shape-inset-002.html [ Im
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-xywh-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-rect-002.html [ ImageOnlyFailure ]
 
-# CSS motion path: positioning inset shapes with coord-box.
+# CSS motion path: misc xywh bug.
 imported/w3c/web-platform-tests/css/motion/offset-path-shape-xywh-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/motion/offset-path-shape-rect-003.html [ ImageOnlyFailure ]
 
 # IPC test failing in Debug mode due to assert.
 [ Debug ] ipc/send-invalid-message.html [ Skip ]
