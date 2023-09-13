@@ -381,6 +381,7 @@ fast/canvas/offscreen-enabled.html [ Skip ]
 fast/canvas/offscreen-giant-transfer-to-imagebitmap.html [ Skip ]
 fast/canvas/offscreen-scaling.html [ Skip ]
 fast/canvas/offscreen-toggle-display.html [ Skip ]
+webgl/offscreen-webgl-errors-to-console.html [ Skip ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # These areas are not implemented well on WinCairo
@@ -1905,12 +1906,10 @@ webxr [ Skip ]
 
 [ Debug ] webgl/2.0.y/conformance/attribs/gl-vertexattribpointer.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance/canvas/drawingbuffer-test.html [ Skip ] # Crash by assertion failure
-[ Debug ] webgl/2.0.y/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.y/conformance/glsl/bugs/compound-assignment-type-combination.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.y/conformance/glsl/constructors/glsl-construct-ivec4.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.y/conformance/glsl/constructors/glsl-construct-vec4.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.y/conformance/glsl/misc/const-variable-initialization.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.y/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.y/conformance/glsl/misc/struct-nesting-of-variable-names.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.y/conformance/rendering/many-draw-calls.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.y/conformance/rendering/multisample-corruption.html [ Skip ] # Slow
@@ -2722,3 +2721,6 @@ fast/text/smiley-local-font-src.html [ ImageOnlyFailure ]
 fast/canvas/imageData-consistency.html [ Timeout Failure ]
 
 http/tests/inspector/network/resource-timing.html [ Pass Failure ]
+
+webkit.org/b/261297 webgl/2.0.y/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Skip ]
+webkit.org/b/261297 webgl/2.0.y/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Skip ]
