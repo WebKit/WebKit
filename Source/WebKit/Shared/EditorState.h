@@ -163,6 +163,8 @@ struct EditorState {
     std::optional<PostLayoutData> postLayoutData;
     std::optional<VisualData> visualData;
 
+    void clipOwnedRectExtentsToNumericLimits();
+
 private:
     friend TextStream& operator<<(TextStream&, const EditorState&);
 };

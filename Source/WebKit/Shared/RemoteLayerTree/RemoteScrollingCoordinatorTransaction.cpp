@@ -903,7 +903,7 @@ void RemoteScrollingCoordinatorTransaction::dump() const
 {
     WTFLogAlways("%s", description().utf8().data());
 }
-#endif
+#endif // !defined(NDEBUG) || !LOG_DISABLED
 
 } // namespace WebKit
 
