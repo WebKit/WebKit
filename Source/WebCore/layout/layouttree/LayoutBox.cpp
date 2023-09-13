@@ -240,6 +240,8 @@ bool Box::isInlineLevelBox() const
         || display == DisplayType::InlineBox
         || display == DisplayType::InlineFlex
         || display == DisplayType::InlineGrid
+        || display == DisplayType::Ruby
+        || display == DisplayType::RubyBase
         || isInlineBlockBox()
         || isInlineTableBox();
 }
@@ -248,7 +250,8 @@ bool Box::isInlineBox() const
 {
     // An inline box is one that is both inline-level and whose contents participate in its containing inline formatting context.
     // A non-replaced element with a 'display' value of 'inline' generates an inline box.
-    return m_style.display() == DisplayType::Inline && !isReplacedBox();
+    auto display = m_style.display();
+    return (display == DisplayType::Inline || display == DisplayType::Ruby || display == DisplayType::RubyBase) && !isReplacedBox();
 }
 
 bool Box::isAtomicInlineLevelBox() const
@@ -270,6 +273,7 @@ bool Box::isBlockContainer() const
     return display == DisplayType::Block
         || display == DisplayType::FlowRoot
         || display == DisplayType::ListItem
+        || display == DisplayType::RubyBlock
         || isInlineBlockBox()
         || isTableCell()
         || isTableCaption(); // TODO && !replaced element
@@ -290,6 +294,16 @@ bool Box::isLayoutContainmentBox() const
         return true;
     };
     return m_style.effectiveContainment().contains(Containment::Layout) && supportsLayoutContainment();
+}
+
+bool Box::isRubyAnnotationBox() const
+{
+    return m_style.display() == DisplayType::RubyAnnotation;
+}
+
+bool Box::isInternalRubyBox() const
+{
+    return m_style.display() == DisplayType::RubyBase || m_style.display() == DisplayType::RubyAnnotation;
 }
 
 bool Box::isSizeContainmentBox() const
@@ -466,6 +480,18 @@ const RubyAdjustments* Box::rubyAdjustments() const
 void Box::setRubyAdjustments(std::unique_ptr<RubyAdjustments> rubyAdjustments)
 {
     ensureRareData().rubyAdjustments = WTFMove(rubyAdjustments);
+}
+
+const ElementBox* Box::associatedRubyAnnotationBox() const
+{
+    if (style().display() != DisplayType::RubyBase)
+        return nullptr;
+
+    auto* next = nextSibling();
+    if (!next || next->style().display() != DisplayType::RubyAnnotation)
+        return nullptr;
+
+    return dynamicDowncast<ElementBox>(next);
 }
 
 void Box::setCachedGeometryForLayoutState(LayoutState& layoutState, std::unique_ptr<BoxGeometry> geometry) const

@@ -5098,7 +5098,7 @@ RefPtr<CSSValue> consumeAspectRatio(CSSParserTokenRange& range)
     return CSSValueList::createSpaceSeparated(autoValue.releaseNonNull(), ratioList.releaseNonNull());
 }
 
-RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range, CSSParserMode mode)
 {
     // Parse single keyword values
     auto singleKeyword = consumeIdent<
@@ -5114,6 +5114,8 @@ RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range)
         CSSValueTableFooterGroup,
         CSSValueTableRow,
         CSSValueTableRowGroup,
+        CSSValueRubyBase,
+        CSSValueRubyText,
         // <display-legacy>
         CSSValueInlineBlock,
         CSSValueInlineFlex,
@@ -5126,8 +5128,16 @@ RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range)
         CSSValueListItem
     >(range);
 
-    if (singleKeyword)
+    auto allowsValue = [&](CSSValueID value) {
+        bool isRuby = value == CSSValueRubyBase || value == CSSValueRubyText || value == CSSValueBlockRuby || value == CSSValueRuby;
+        return !isRuby || mode == CSSParserMode::UASheetMode;
+    };
+
+    if (singleKeyword) {
+        if (!allowsValue(singleKeyword->valueID()))
+            return nullptr;
         return singleKeyword;
+    }
 
     // Empty value, stop parsing
     if (range.atEnd())
@@ -5160,6 +5170,7 @@ RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range)
         case CSSValueFlowRoot:
         case CSSValueGrid:
         case CSSValueTable:
+        case CSSValueRuby:
             if (parsedDisplayInside)
                 return nullptr;
             parsedDisplayInside = nextValueID;
@@ -5171,13 +5182,21 @@ RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range)
     }
 
     // Set defaults when one of the two values are unspecified
-    CSSValueID displayOutside = parsedDisplayOutside.value_or(CSSValueBlock);
     CSSValueID displayInside = parsedDisplayInside.value_or(CSSValueFlow);
 
     auto selectShortValue = [&]() -> CSSValueID {
-        if (displayOutside == CSSValueBlock) {
+        if (!parsedDisplayOutside || *parsedDisplayOutside == CSSValueInline) {
+            if (displayInside == CSSValueRuby)
+                return CSSValueRuby;
+        }
+
+        if (!parsedDisplayOutside || *parsedDisplayOutside == CSSValueBlock) {
             // Alias display: flow to display: block
-            return displayInside == CSSValueFlow ? CSSValueBlock : displayInside;
+            if (displayInside == CSSValueFlow)
+                return CSSValueBlock;
+            if (displayInside == CSSValueRuby)
+                return CSSValueBlockRuby;
+            return displayInside;
         }
 
         // Convert `display: inline <display-inside>` to the equivalent short value
@@ -5198,7 +5217,11 @@ RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range)
         }
     };
 
-    return CSSPrimitiveValue::create(selectShortValue());
+    auto shortValue = selectShortValue();
+    if (!allowsValue(shortValue))
+        return nullptr;
+
+    return CSSPrimitiveValue::create(shortValue);
 }
 
 RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange& range, const CSSParserContext& context)

@@ -257,6 +257,8 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, InlineItem
             else if (layoutBox->isFloatingPositioned()) {
                 inlineItems.append({ layoutBox, InlineItem::Type::Float });
                 m_isNonBidiTextAndForcedLineBreakOnlyContent = false;
+            } else if (layoutBox->isRubyAnnotationBox()) {
+                // Does not participate in inline layout.
             } else
                 ASSERT_NOT_REACHED();
 

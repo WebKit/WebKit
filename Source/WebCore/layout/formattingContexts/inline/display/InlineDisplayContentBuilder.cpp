@@ -385,6 +385,8 @@ void InlineDisplayContentBuilder::appendInlineBoxDisplayBox(const Line::Run& lin
         , isLineFullyTruncatedInBlockDirection()
         , isFirstLastBox(inlineBox)
     });
+
+    appendAssociatedRubyAnnotationBoxIfNeeded(layoutBox, inlineBoxBorderBox, boxes);
 }
 
 void InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox(const Line::Run& lineRun, const InlineLevelBox& inlineBox, const InlineRect& inlineBoxBorderBox, bool linehasContent, InlineDisplay::Boxes& boxes)
@@ -439,6 +441,34 @@ void InlineDisplayContentBuilder::appendInlineDisplayBoxAtBidiBoundary(const Box
         , isContentful
         , isLineFullyTruncatedInBlockDirection()
     });
+}
+
+void InlineDisplayContentBuilder::appendAssociatedRubyAnnotationBoxIfNeeded(const Box& layoutBox, const InlineRect& inlineBoxBorderBox, InlineDisplay::Boxes& boxes)
+{
+    auto* annotationBox = layoutBox.associatedRubyAnnotationBox();
+    if (!annotationBox)
+        return;
+
+    auto& geometry = formattingState().boxGeometry(*annotationBox);
+
+    auto top = inlineBoxBorderBox.top() - geometry.borderBoxHeight();
+    auto left = inlineBoxBorderBox.left() + ((inlineBoxBorderBox.width() - geometry.borderBoxWidth()) / 2);
+
+    auto annoationBorderBox = InlineRect { top, left, geometry.borderBoxWidth(), geometry.borderBoxHeight() };
+
+    boxes.append({ m_lineIndex
+        , InlineDisplay::Box::Type::AtomicInlineLevelBox
+        , *annotationBox
+        , UBIDI_DEFAULT_LTR
+        , annoationBorderBox
+        , annoationBorderBox
+        , { }
+        , { }
+        , true
+        , isLineFullyTruncatedInBlockDirection()
+    });
+
+    geometry.setLogicalTopLeft(toLayoutPoint(annoationBorderBox.topLeft()));
 }
 
 void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& lineLayoutResult, const LineBox& lineBox, InlineDisplay::Boxes& boxes)

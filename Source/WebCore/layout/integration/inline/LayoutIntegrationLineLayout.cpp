@@ -616,7 +616,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
 
         auto& layoutBox = box.layoutBox();
 
-        if (!layoutBox.isAtomicInlineLevelBox())
+        if (!layoutBox.isAtomicInlineLevelBox() && !layoutBox.isRubyAnnotationBox())
             continue;
 
         auto& renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));

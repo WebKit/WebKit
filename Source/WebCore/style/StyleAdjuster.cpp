@@ -113,6 +113,7 @@ static void addIntrinsicMargins(RenderStyle& style)
 }
 #endif
 
+// https://www.w3.org/TR/css-display-3/#transformations
 static DisplayType equivalentBlockDisplay(const RenderStyle& style)
 {
     switch (auto display = style.display()) {
@@ -123,6 +124,7 @@ static DisplayType equivalentBlockDisplay(const RenderStyle& style)
     case DisplayType::Grid:
     case DisplayType::FlowRoot:
     case DisplayType::ListItem:
+    case DisplayType::RubyBlock:
         return display;
     case DisplayType::InlineTable:
         return DisplayType::Table;
@@ -132,6 +134,8 @@ static DisplayType equivalentBlockDisplay(const RenderStyle& style)
         return DisplayType::Flex;
     case DisplayType::InlineGrid:
         return DisplayType::Grid;
+    case DisplayType::Ruby:
+        return DisplayType::RubyBlock;
 
     case DisplayType::Inline:
     case DisplayType::InlineBlock:
@@ -143,7 +147,10 @@ static DisplayType equivalentBlockDisplay(const RenderStyle& style)
     case DisplayType::TableColumn:
     case DisplayType::TableCell:
     case DisplayType::TableCaption:
+    case DisplayType::RubyBase:
+    case DisplayType::RubyAnnotation:
         return DisplayType::Block;
+
     case DisplayType::Contents:
         ASSERT_NOT_REACHED();
         return DisplayType::Contents;
@@ -153,6 +160,57 @@ static DisplayType equivalentBlockDisplay(const RenderStyle& style)
     }
     ASSERT_NOT_REACHED();
     return DisplayType::Block;
+}
+
+// https://www.w3.org/TR/css-display-3/#transformations
+static DisplayType equivalentInlineDisplay(const RenderStyle& style)
+{
+    switch (auto display = style.display()) {
+    case DisplayType::Block:
+        return DisplayType::InlineBlock;
+    case DisplayType::Table:
+        return DisplayType::InlineTable;
+    case DisplayType::Box:
+        return DisplayType::InlineBox;
+    case DisplayType::Flex:
+        return DisplayType::InlineFlex;
+    case DisplayType::Grid:
+        return DisplayType::InlineGrid;
+    case DisplayType::RubyBlock:
+        return DisplayType::Ruby;
+
+    case DisplayType::Inline:
+    case DisplayType::InlineBlock:
+    case DisplayType::InlineTable:
+    case DisplayType::InlineBox:
+    case DisplayType::InlineFlex:
+    case DisplayType::InlineGrid:
+    case DisplayType::Ruby:
+    case DisplayType::RubyBase:
+    case DisplayType::RubyAnnotation:
+        return display;
+
+    case DisplayType::FlowRoot:
+    case DisplayType::ListItem:
+    case DisplayType::TableRowGroup:
+    case DisplayType::TableHeaderGroup:
+    case DisplayType::TableFooterGroup:
+    case DisplayType::TableRow:
+    case DisplayType::TableColumnGroup:
+    case DisplayType::TableColumn:
+    case DisplayType::TableCell:
+    case DisplayType::TableCaption:
+        return DisplayType::Inline;
+
+    case DisplayType::Contents:
+        ASSERT_NOT_REACHED();
+        return DisplayType::Contents;
+    case DisplayType::None:
+        ASSERT_NOT_REACHED();
+        return DisplayType::None;
+    }
+    ASSERT_NOT_REACHED();
+    return DisplayType::Inline;
 }
 
 static bool isOutermostSVGElement(const Element* element)
@@ -296,6 +354,17 @@ static bool isOverflowClipOrVisible(Overflow overflow)
     return overflow == Overflow::Clip || overflow == Overflow::Visible;
 }
 
+static bool shouldInlinifyForRuby(const RenderStyle& style, const RenderStyle& parentBoxStyle)
+{
+    auto parentDisplay = parentBoxStyle.display();
+    auto hasRubyParent = parentDisplay == DisplayType::Ruby
+        || parentDisplay == DisplayType::RubyBlock
+        || parentDisplay == DisplayType::RubyAnnotation
+        || parentDisplay == DisplayType::RubyBase;
+
+    return hasRubyParent && !style.hasOutOfFlowPosition() && !style.isFloating();
+}
+
 void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearanceStyle) const
 {
     if (style.display() == DisplayType::Contents)
@@ -365,6 +434,10 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             style.setFloating(Float::None);
             style.setEffectiveDisplay(equivalentBlockDisplay(style));
         }
+
+        // https://www.w3.org/TR/css-ruby-1/#anon-gen-inlinize
+        if (shouldInlinifyForRuby(style, m_parentBoxStyle))
+            style.setEffectiveDisplay(equivalentInlineDisplay(style));
     }
 
     auto hasAutoZIndex = [](const RenderStyle& style, const RenderStyle& parentBoxStyle, const Element* element) {

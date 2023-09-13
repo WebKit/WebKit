@@ -1,0 +1,10 @@
+@namespace "http://www.w3.org/1999/xhtml";
+
+ruby {
+    display: ruby;
+}
+ruby > rt {
+    display: ruby-text;
+    white-space: nowrap;
+    line-height: 1;
+}

@@ -130,6 +130,8 @@ public:
     bool isInitialContainingBlock() const { return baseTypeFlags().contains(InitialContainingBlockFlag); }
     bool isLayoutContainmentBox() const;
     bool isSizeContainmentBox() const;
+    bool isInternalRubyBox() const;
+    bool isRubyAnnotationBox() const;
 
     bool isDocumentBox() const { return m_nodeType == NodeType::DocumentElement; }
     bool isBodyBox() const { return m_nodeType == NodeType::Body; }
@@ -148,7 +150,6 @@ public:
     bool isFlexItem() const;
     bool isIFrame() const { return m_nodeType == NodeType::IFrame; }
     bool isImage() const { return m_nodeType == NodeType::Image; }
-    bool isInternalRubyBox() const { return false; }
     bool isLineBreakBox() const { return m_nodeType == NodeType::LineBreak || m_nodeType == NodeType::WordBreakOpportunity; }
     bool isWordBreakOpportunity() const { return m_nodeType == NodeType::WordBreakOpportunity; }
     bool isListMarkerBox() const { return m_nodeType == NodeType::ListMarker; }
@@ -197,6 +198,8 @@ public:
 
     const RubyAdjustments* rubyAdjustments() const;
     void setRubyAdjustments(std::unique_ptr<RubyAdjustments>);
+
+    const ElementBox* associatedRubyAnnotationBox() const;
 
     bool canCacheForLayoutState(const LayoutState&) const;
     BoxGeometry* cachedGeometryForLayoutState(const LayoutState&) const;

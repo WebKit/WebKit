@@ -1962,6 +1962,7 @@ USER_AGENT_STYLE_SHEETS = \
     $(WebCore)/css/plugIns.css \
     $(WebCore)/css/popover.css \
     $(WebCore)/css/quirks.css \
+    $(WebCore)/css/ruby.css \
     $(WebCore)/css/svg.css \
     $(WebCore)/html/shadow/mac/imageControlsMac.css \
     $(WebCore)/html/shadow/attachmentElementShadow.css \

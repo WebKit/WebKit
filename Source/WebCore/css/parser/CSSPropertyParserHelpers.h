@@ -219,7 +219,7 @@ bool isGridBreadthIdent(CSSValueID);
 
 RefPtr<CSSValueList> consumeAlignTracks(CSSParserTokenRange&);
 RefPtr<CSSValueList> consumeJustifyTracks(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeQuotes(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeFontSizeAdjust(CSSParserTokenRange&);

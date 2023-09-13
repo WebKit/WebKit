@@ -209,6 +209,15 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
     case DisplayType::Box:
     case DisplayType::InlineBox:
         return createRenderer<RenderDeprecatedFlexibleBox>(element, WTFMove(style));
+    case DisplayType::RubyBase:
+        return createRenderer<RenderInline>(element, WTFMove(style));
+    case DisplayType::RubyAnnotation:
+        return createRenderer<RenderBlockFlow>(element, WTFMove(style));
+    case DisplayType::Ruby:
+        return createRenderer<RenderInline>(element, WTFMove(style));
+    case DisplayType::RubyBlock:
+        return createRenderer<RenderBlockFlow>(element, WTFMove(style));
+
     default: {
         if (style.isDisplayTableOrTablePart() && rendererTypeOverride.contains(ConstructBlockLevelRendererFor::TableOrTablePart))
             return createRenderer<RenderBlockFlow>(element, WTFMove(style));

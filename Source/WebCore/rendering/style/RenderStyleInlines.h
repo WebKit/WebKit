@@ -864,7 +864,8 @@ constexpr bool RenderStyle::isDisplayBlockType(DisplayType display)
         || display == DisplayType::FlowRoot
         || display == DisplayType::Grid
         || display == DisplayType::ListItem
-        || display == DisplayType::Table;
+        || display == DisplayType::Table
+        || display == DisplayType::RubyBlock;
 }
 
 constexpr bool RenderStyle::isDisplayInlineType(DisplayType display)
@@ -874,7 +875,10 @@ constexpr bool RenderStyle::isDisplayInlineType(DisplayType display)
         || display == DisplayType::InlineBox
         || display == DisplayType::InlineFlex
         || display == DisplayType::InlineGrid
-        || display == DisplayType::InlineTable;
+        || display == DisplayType::InlineTable
+        || display == DisplayType::Ruby
+        || display == DisplayType::RubyBase
+        || display == DisplayType::RubyAnnotation;
 }
 
 constexpr bool RenderStyle::isDisplayRegionType() const
