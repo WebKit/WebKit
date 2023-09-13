@@ -1,0 +1,43 @@
+Tests menu and related roles.
+
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+
+PASS role is menu
+PASS role is menuitem (in menu)
+PASS role is group (in menu)
+PASS role is menuitem (in group, in menu)
+PASS role is menuitemradio (in group, in menu)
+PASS role is menuitemcheckbox (in group, in menu)
+PASS role is menubar
+PASS role is menuitem (in menubar)
+PASS role is group (in menubar)
+PASS role is menuitem (in group, in menubar)
+PASS role is menuitemradio (in group, in menubar)
+PASS role is menuitemcheckbox (in group, in menubar)
+FAIL orphaned menuitem outside the context of menu/menubar assert_equals: <nav role="menuitem" data-testname="orphaned menuitem outside the context of menu/menubar" data-expectedrole="navigation" class="ex">x
+</nav> expected "navigation" but got "menuitem"
+FAIL orphaned menuitemradio outside the context of menu/menubar assert_equals: <nav role="menuitemradio" data-testname="orphaned menuitemradio outside the context of menu/menubar" data-expectedrole="navigation" class="ex">x
+</nav> expected "navigation" but got "menuitemradio"
+FAIL orphaned menuitemcheckbox outside the context of menu/menubar assert_equals: <nav role="menuitemcheckbox" data-testname="orphaned menuitemcheckbox outside the context of menu/menubar" data-expectedrole="navigation" class="ex">x
+</nav> expected "navigation" but got "menuitemcheckbox"
+

@@ -2894,9 +2894,6 @@ AccessibilityRole AccessibilityNodeObject::remapAriaRoleDueToParent(Accessibilit
         // Selects and listboxes both have options as child roles, but they map to different roles within WebCore.
         if (role == AccessibilityRole::ListBoxOption && parentAriaRole == AccessibilityRole::Menu)
             return AccessibilityRole::MenuItem;
-        // An aria "menuitem" may map to MenuButton or MenuItem depending on its parent.
-        if (role == AccessibilityRole::MenuItem && parentAriaRole == AccessibilityRole::ApplicationGroup)
-            return AccessibilityRole::MenuButton;
         
         // If the parent had a different role, then we don't need to continue searching up the chain.
         if (parentAriaRole != AccessibilityRole::Unknown)
