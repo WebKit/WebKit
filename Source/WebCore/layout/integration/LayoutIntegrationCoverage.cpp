@@ -57,9 +57,6 @@
 #include <pal/Logging.h>
 #include <wtf/OptionSet.h>
 
-#define ALLOW_RUBY 0
-#define ALLOW_RUBY_BASE_AND_TEXT 0
-
 #ifndef NDEBUG
 #define SET_REASON_AND_RETURN_IF_NEEDED(reason, reasons, includeReasons) { \
         reasons.add(AvoidanceReason::reason); \
@@ -296,10 +293,8 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
         return reasons;
 
     auto& renderer = downcast<RenderElement>(child);
-#if !ALLOW_RUBY
     if (renderer.isRubyRun())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
-#endif
 
     if (is<RenderBlockFlow>(renderer)
         || is<RenderGrid>(renderer)
@@ -317,10 +312,8 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
     if (is<RenderInline>(renderer)) {
         if (renderer.isSVGInline())
             SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
-#if !ALLOW_RUBY
         if (renderer.isRubyInline())
             SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
-#endif
         return reasons;
     }
 
@@ -348,10 +341,8 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         ASSERT(is<RenderSVGBlock>(flow));
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
     }
-#if !ALLOW_RUBY || !ALLOW_RUBY_BASE_AND_TEXT
     if (flow.isRubyText() || flow.isRubyBase())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
-#endif
     for (auto walker = InlineWalker(flow); !walker.atEnd(); walker.advance()) {
         auto& child = *walker.current();
         if (auto childReasons = canUseForChild(flow, child, includeReasons))

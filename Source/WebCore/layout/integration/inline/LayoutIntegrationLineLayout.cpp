@@ -65,7 +65,6 @@
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderMathMLBlock.h"
-#include "RenderRubyRun.h"
 #include "RenderSlider.h"
 #include "RenderTable.h"
 #include "RenderTextControlMultiLine.h"
@@ -393,11 +392,10 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
 #if ENABLE(ATTACHMENT_ELEMENT)
             || is<RenderAttachment>(replacedOrInlineBlock)
 #endif
-            || is<RenderButton>(replacedOrInlineBlock)
 #if ENABLE(MATHML)
             || is<RenderMathMLBlock>(replacedOrInlineBlock)
 #endif
-            || is<RenderRubyRun>(replacedOrInlineBlock)) {
+            || is<RenderButton>(replacedOrInlineBlock)) {
             // These are special RenderBlock renderers that override the default baseline position behavior of the inline block box.
             return true;
         }
@@ -414,16 +412,6 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
 
     if (auto* shapeOutsideInfo = replacedOrInlineBlock.shapeOutsideInfo())
         layoutBox.setShape(&shapeOutsideInfo->computedShape());
-
-    if (auto* rubyRun = dynamicDowncast<RenderRubyRun>(replacedOrInlineBlock)) {
-        auto adjustments = makeUnique<Layout::RubyAdjustments>();
-
-        std::tie(adjustments->annotationAbove, adjustments->annotationBelow) = rubyRun->annotationsAboveAndBelow();
-        std::tie(adjustments->overhang.start, adjustments->overhang.end) = rubyRun->startAndEndOverhang(false);
-        std::tie(adjustments->firstLineOverhang.start, adjustments->firstLineOverhang.end) = rubyRun->startAndEndOverhang(true);
-
-        layoutBox.setRubyAdjustments(WTFMove(adjustments));
-    }
 }
 
 void LineLayout::updateLineBreakBoxDimensions(const RenderLineBreak& lineBreakBox)

@@ -113,10 +113,6 @@ InlineRect LineBox::logicalBorderBoxForAtomicInlineLevelBox(const Box& layoutBox
     auto verticalMargin = boxGeometry.marginBefore() + boxGeometry.marginAfter();
     logicalRect.expandVertically(-verticalMargin);
 
-    // FIXME: The overhang adjustment should be based on the computed value.
-    if (auto* rubyAdjustments = layoutBox.rubyAdjustments())
-        logicalRect.moveHorizontally(-rubyAdjustments->overhang.start);
-
     return logicalRect;
 }
 

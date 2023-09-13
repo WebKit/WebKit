@@ -470,18 +470,6 @@ void Box::setShape(RefPtr<const Shape> shape)
     ensureRareData().shape = WTFMove(shape);
 }
 
-const RubyAdjustments* Box::rubyAdjustments() const
-{
-    if (!hasRareData())
-        return nullptr;
-    return rareData().rubyAdjustments.get();
-}
-
-void Box::setRubyAdjustments(std::unique_ptr<RubyAdjustments> rubyAdjustments)
-{
-    ensureRareData().rubyAdjustments = WTFMove(rubyAdjustments);
-}
-
 const ElementBox* Box::associatedRubyAnnotationBox() const
 {
     if (style().display() != DisplayType::RubyBase)

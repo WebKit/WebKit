@@ -364,12 +364,6 @@ InlineLayoutUnit InlineFormattingGeometry::inlineItemWidth(const InlineItem& inl
     if (inlineItem.isOpaque())
         return { };
 
-    // FIXME: The overhang should be computed to not overlap the neighboring runs or overflow the line.
-    if (auto* rubyAdjustments = layoutBox.rubyAdjustments()) {
-        auto& overhang = useFirstLineStyle ? rubyAdjustments->firstLineOverhang : rubyAdjustments->overhang;
-        return boxGeometry.marginBoxWidth() - (overhang.start + overhang.end);
-    }
-
     // Non-replaced inline box (e.g. inline-block)
     return boxGeometry.marginBoxWidth();
 }

@@ -44,10 +44,6 @@ inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& s
         m_style.verticalAlignment.baselineOffset = floatValueForLength(style.verticalAlignLength(), preferredLineHeight());
 
     auto setAnnotationIfApplicable = [&] {
-        if (auto* rubyAdjustments = layoutBox.rubyAdjustments()) {
-            m_annotation = { rubyAdjustments->annotationAbove, rubyAdjustments->annotationBelow };
-            return;
-        }
         // Generic, non-inline box inline-level content (e.g. replaced elements) can't have text-emphasis annotations.
         if (!isRootInlineBox() && !isInlineBox())
             return;
