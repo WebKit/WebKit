@@ -344,4 +344,9 @@ static CGRect coreGraphicsScreenRectForAppKitScreenRect(NSRect rect)
     return self.window;
 }
 
+- (void)updateTitleForBadgeChange
+{
+    // Only implemented in WebKit2
+}
+
 @end

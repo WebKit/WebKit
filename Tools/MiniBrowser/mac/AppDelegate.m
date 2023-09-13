@@ -29,6 +29,8 @@
 #import "SettingsController.h"
 #import "WK1BrowserWindowController.h"
 #import "WK2BrowserWindowController.h"
+#import <UserNotifications/UNNotificationContent.h>
+#import <UserNotifications/UserNotifications.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
@@ -36,6 +38,7 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKFeature.h>
+#import <WebKit/_WKNotificationData.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 
@@ -73,9 +76,116 @@ enum {
         _browserWindowControllers = [[NSMutableSet alloc] init];
         _extensionManagerWindowController = [[ExtensionManagerWindowController alloc] init];
         _openNewWindowAtStartup = true;
+        [UNUserNotificationCenter currentNotificationCenter].delegate = self;
     }
 
     return self;
+}
+
+- (WKWebsiteDataStore *)persistentDataStore
+{
+    static WKWebsiteDataStore *dataStore;
+
+    if (!dataStore) {
+        _WKWebsiteDataStoreConfiguration *configuration = [[_WKWebsiteDataStoreConfiguration alloc] init];
+        configuration.networkCacheSpeculativeValidationEnabled = YES;
+
+        // Push will only function if someone has taken the step to install the test daemon service, or otherwise host it manually.
+        [configuration setWebPushMachServiceName:@"org.webkit.webpushtestdaemon.service"];
+
+        dataStore = [[WKWebsiteDataStore alloc] _initWithConfiguration:configuration];
+        dataStore._delegate = self;
+    }
+    
+    return dataStore;
+}
+
+- (NSDictionary<NSString *, NSNumber *> *)notificationPermissionsForWebsiteDataStore:(WKWebsiteDataStore *)dataStore
+{
+    return [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"NotificationPermissions"];
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler
+{
+    if (![response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
+        NSLog(@"Received UNNotificationResponse that was not for the default action: %@", response.actionIdentifier);
+        completionHandler();
+        return;
+    }
+
+    [self.persistentDataStore _processPersistentNotificationClick:response.notification.request.content.userInfo completionHandler:^(bool result) {
+        if (!result)
+            NSLog(@"_processPersistentNotificationClick failed");
+        completionHandler();
+    }];
+}
+
+- (void)websiteDataStore:(WKWebsiteDataStore *)dataStore showNotification:(_WKNotificationData *)notificationData
+{
+    UNMutableNotificationContent *content = [UNMutableNotificationContent new];
+
+    NSLog(@"notificationData.title %@", notificationData.title);
+    NSLog(@"notificationData.body  %@", notificationData.body);
+
+    content.title = notificationData.title;
+    content.body = notificationData.body;
+    if ([notificationData respondsToSelector:@selector(alert)] && notificationData.alert == _WKNotificationAlertEnabled)
+        content.sound = [UNNotificationSound defaultSound];
+
+    NSString *notificationSource = notificationData.origin;
+
+    content.subtitle = [NSString stringWithFormat:@"from %@", notificationSource];
+    content.userInfo = notificationData.userInfo;
+
+    UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:notificationData.identifier content:content trigger:nil];
+    UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+    UNAuthorizationOptions options = UNAuthorizationOptionBadge | UNAuthorizationOptionAlert | UNAuthorizationOptionSound;
+    [center requestAuthorizationWithOptions:options completionHandler:^(BOOL granted, NSError *error) {
+        if (error) {
+            NSLog(@"Error acquiring notification permission: %@", error.description);
+            return;
+        }
+        if (!granted) {
+            NSLog(@"Notification permission was denied");
+            return;
+        }
+        [center addNotificationRequest:request withCompletionHandler:^(NSError * _Nullable error) {
+            if (error)
+                NSLog(@"Failed to add web push notification request: %@", error.debugDescription);
+        }];
+    }];
+}
+
+static NSNumber *_currentBadge;
++ (NSNumber *)currentBadge
+{
+    return _currentBadge;
+}
+
+- (void)websiteDataStore:(WKWebsiteDataStore *)dataStore workerOrigin:(WKSecurityOrigin *)workerOrigin updatedAppBadge:(NSNumber *)badge
+{
+    _currentBadge = badge;
+
+    for (BrowserWindowController *controller in _browserWindowControllers)
+        [controller updateTitleForBadgeChange];
+}
+
+- (void)_processPendingPushMessages
+{
+    [[self persistentDataStore] _getPendingPushMessages:^(NSArray<NSDictionary *> *pendingPushMessages) {
+        for (NSDictionary *message in pendingPushMessages) {
+            [[self persistentDataStore] _processPushMessage:message completionHandler:^(bool success) {
+            }];
+        }
+    }];
+}
+
+- (void)_handleURLEvent:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent
+{
+    NSAppleEventDescriptor *directAEDesc = [event paramDescriptorForKeyword:keyDirectObject];
+    NSURL *url = [NSURL URLWithString:[directAEDesc stringValue]];
+    if ([[url scheme] isEqualToString:@"x-webkit-app-launch"])
+        [self _processPendingPushMessages];
 }
 
 - (void)awakeFromNib
@@ -87,24 +197,15 @@ enum {
 
     if ([NSApp respondsToSelector:@selector(setAutomaticCustomizeTouchBarMenuItemEnabled:)])
         [NSApp setAutomaticCustomizeTouchBarMenuItemEnabled:YES];
-}
 
-static WKWebsiteDataStore *persistentDataStore(void)
-{
-    static WKWebsiteDataStore *dataStore;
-
-    if (!dataStore) {
-        _WKWebsiteDataStoreConfiguration *configuration = [[_WKWebsiteDataStoreConfiguration alloc] init];
-        configuration.networkCacheSpeculativeValidationEnabled = YES;
-
-        // FIXME: When built-in notifications are enabled, WebKit doesn't yet gracefully handle a missing webpushd service
-        // Until it does, uncomment this line when the service is known to be installed.
-        // [configuration setWebPushMachServiceName:@"org.webkit.webpushtestdaemon.service"];
-
-        dataStore = [[WKWebsiteDataStore alloc] _initWithConfiguration:configuration];
-    }
-    
-    return dataStore;
+    [[NSAppleEventManager sharedAppleEventManager] setEventHandler:self
+                                                       andSelector:@selector(_handleURLEvent:withReplyEvent:)
+                                                     forEventClass:kInternetEventClass
+                                                        andEventID:(AEEventID)kAEGetURL];
+    [[NSAppleEventManager sharedAppleEventManager] setEventHandler:self
+                                                       andSelector:@selector(_handleURLEvent:withReplyEvent:)
+                                                     forEventClass:'WWW!'
+                                                        andEventID:'OURL'];
 }
 
 - (WKWebViewConfiguration *)defaultConfiguration
@@ -113,7 +214,7 @@ static WKWebsiteDataStore *persistentDataStore(void)
 
     if (!configuration) {
         configuration = [[WKWebViewConfiguration alloc] init];
-        configuration.websiteDataStore = persistentDataStore();
+        configuration.websiteDataStore = [self persistentDataStore];
 
         _WKProcessPoolConfiguration *processConfiguration = [[_WKProcessPoolConfiguration alloc] init];
         if (_settingsController.perWindowWebProcessesDisabled)
@@ -139,6 +240,10 @@ static WKWebsiteDataStore *persistentDataStore(void)
         configuration.preferences._developerExtrasEnabled = YES;
         configuration.preferences._accessibilityIsolatedTreeEnabled = YES;
         configuration.preferences._logsPageMessagesToSystemConsoleEnabled = YES;
+        configuration.preferences._pushAPIEnabled = YES;
+        configuration.preferences._notificationsEnabled = YES;
+        configuration.preferences._notificationEventEnabled = YES;
+        configuration.preferences._appBadgeEnabled = YES;
     }
 
     configuration.suppressesIncrementalRendering = _settingsController.incrementalRenderingSuppressed;
@@ -351,16 +456,16 @@ static WKWebsiteDataStore *persistentDataStore(void)
 
 - (IBAction)fetchDefaultStoreWebsiteData:(id)sender
 {
-    [persistentDataStore() fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray *websiteDataRecords) {
+    [[self persistentDataStore] fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray *websiteDataRecords) {
         NSLog(@"did fetch default store website data %@.", websiteDataRecords);
     }];
 }
 
 - (IBAction)fetchAndClearDefaultStoreWebsiteData:(id)sender
 {
-    [persistentDataStore() fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray *websiteDataRecords) {
-        [persistentDataStore() removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] forDataRecords:websiteDataRecords completionHandler:^{
-            [persistentDataStore() fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray *websiteDataRecords) {
+    [[self persistentDataStore] fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray *websiteDataRecords) {
+        [[self persistentDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] forDataRecords:websiteDataRecords completionHandler:^{
+            [[self persistentDataStore] fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray *websiteDataRecords) {
                 NSLog(@"did clear default store website data, after clearing data is %@.", websiteDataRecords);
             }];
         }];
@@ -369,7 +474,7 @@ static WKWebsiteDataStore *persistentDataStore(void)
 
 - (IBAction)clearDefaultStoreWebsiteData:(id)sender
 {
-    [persistentDataStore() removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^{
+    [[self persistentDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^{
         NSLog(@"Did clear default store website data.");
     }];
 }
