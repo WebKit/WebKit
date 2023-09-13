@@ -109,7 +109,7 @@ void ApplePaySetup::begin(Document& document, Vector<RefPtr<ApplePaySetupFeature
     m_beginPromise = WTFMove(promise);
     m_pendingActivity = makePendingActivity(*this);
 
-    page->paymentCoordinator().beginApplePaySetup(m_configuration, document.url(), WTFMove(features), [this](bool result) {
+    page->paymentCoordinator().beginApplePaySetup(m_configuration, document.topDocument().url(), WTFMove(features), [this](bool result) {
         if (m_beginPromise)
             std::exchange(m_beginPromise, std::nullopt)->resolve(result);
     });
