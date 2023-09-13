@@ -398,8 +398,10 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
             return false;
         if (is<RenderLineBreak>(renderer))
             return true;
-        if (is<RenderReplaced>(renderer) || is<RenderInline>(renderer))
+        if (is<RenderReplaced>(renderer))
             return typeOfChange == TypeOfChangeForInvalidation::NodeInsertion;
+        if (is<RenderInline>(renderer))
+            return typeOfChange == TypeOfChangeForInvalidation::NodeInsertion && !downcast<RenderInline>(renderer).firstChild();
         return false;
     };
     if (!isSupportedRendererWithChange(renderer))
