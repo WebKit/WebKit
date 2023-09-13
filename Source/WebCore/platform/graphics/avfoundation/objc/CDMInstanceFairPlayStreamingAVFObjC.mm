@@ -39,6 +39,7 @@
 #import "TextDecoder.h"
 #import <AVFoundation/AVContentKeySession.h>
 #import <objc/runtime.h>
+#import <pal/graphics/cocoa/WebContentKeyGrouping.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/Algorithms.h>
 #import <wtf/FileSystem.h>
@@ -51,10 +52,14 @@
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 static NSString * const InitializationDataTypeKey = @"InitializationDataType";
+static const NSInteger SecurityLevelError = -42811;
+
 #if HAVE(AVCONTENTKEYREPORTGROUP)
 static NSString * const ContentKeyReportGroupKey = @"ContentKeyReportGroup";
+
+@interface AVContentKeyReportGroup () <WebContentKeyGrouping>
+@end
 #endif
-static const NSInteger SecurityLevelError = -42811;
 
 @interface WebCoreFPSContentKeySessionDelegate : NSObject<AVContentKeySessionDelegate> {
     WebCore::AVContentKeySessionDelegateClient* _parent;
