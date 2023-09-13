@@ -744,6 +744,28 @@ TEST(SiteIsolation, GrandchildIframe)
     // (add an onload in the response to /webkit and verify that it is actually called. It is not right now.)
 }
 
+TEST(SiteIsolation, GrandchildIframeSameOriginAsGrandparent)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe id='webkit_frame' src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "<iframe src='https://example.com/example_grandchild'></iframe>\">"_s } },
+        { "/example_grandchild"_s, { "<script>alert('grandchild loaded successfully')</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "grandchild loaded successfully");
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s, { { RemoteFrame, { { "https://example.com"_s } } } } },
+        { RemoteFrame, { { "https://webkit.org"_s, { { RemoteFrame } } } } }
+    });
+}
+
 TEST(SiteIsolation, ChildNavigatingToNewDomain)
 {
     HTTPServer server({
