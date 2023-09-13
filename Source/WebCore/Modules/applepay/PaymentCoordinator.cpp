@@ -102,7 +102,7 @@ bool PaymentCoordinator::beginPaymentSession(Document& document, PaymentSession&
     auto linkIconURLs = LinkIconCollector { document }.iconsOfTypes({ LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon }).map([](auto& icon) {
         return icon.url;
     });
-    auto showPaymentUI = m_client->showPaymentUI(document.url(), WTFMove(linkIconURLs), paymentRequest);
+    auto showPaymentUI = m_client->showPaymentUI(document.topDocument().url(), WTFMove(linkIconURLs), paymentRequest);
     PAYMENT_COORDINATOR_RELEASE_LOG("beginPaymentSession() -> %d", showPaymentUI);
     if (!showPaymentUI)
         return false;
