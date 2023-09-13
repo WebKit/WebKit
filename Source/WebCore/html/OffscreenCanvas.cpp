@@ -68,16 +68,7 @@ RefPtr<ImageBuffer> DetachedOffscreenCanvas::takeImageBuffer(ScriptExecutionCont
 {
     if (!m_buffer)
         return nullptr;
-    GraphicsClient* client = nullptr;
-    if (is<WorkerGlobalScope>(context)) {
-        client = downcast<WorkerGlobalScope>(context).workerClient();
-        ASSERT(client);
-    } else if (is<Document>(context)) {
-        ASSERT(downcast<Document>(context).page());
-        client = &downcast<Document>(context).page()->chrome();
-    }
-    ASSERT(client);
-    return client->sinkIntoImageBuffer(WTFMove(m_buffer));
+    return SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(m_buffer), context.graphicsClient());
 }
 
 WeakPtr<HTMLCanvasElement, WeakPtrImplWithEventTargetData> DetachedOffscreenCanvas::takePlaceholderCanvas()
@@ -493,9 +484,8 @@ void OffscreenCanvas::pushBufferToPlaceholder()
     callOnMainThread([placeholderData = Ref { *m_placeholderData }] () mutable {
         Locker locker { placeholderData->bufferLock };
         if (RefPtr canvas = placeholderData->canvas.get()) {
-            if (canvas->document().page() && placeholderData->pendingCommitBuffer) {
-                GraphicsClient& client = canvas->document().page()->chrome();
-                auto imageBuffer = client.sinkIntoImageBuffer(WTFMove(placeholderData->pendingCommitBuffer));
+            if (placeholderData->pendingCommitBuffer) {
+                auto imageBuffer = SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(placeholderData->pendingCommitBuffer), canvas->document().graphicsClient());
                 canvas->setImageBufferAndMarkDirty(WTFMove(imageBuffer));
             }
         }

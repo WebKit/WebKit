@@ -9510,6 +9510,14 @@ NotificationClient* Document::notificationClient()
 #endif
 }
 
+GraphicsClient* Document::graphicsClient()
+{
+    auto* page = this->page();
+    if (!page)
+        return nullptr;
+    return &page->chrome();
+}
+
 std::optional<PAL::SessionID> Document::sessionID() const
 {
     if (auto* page = this->page())

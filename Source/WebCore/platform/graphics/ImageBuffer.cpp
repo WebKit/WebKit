@@ -120,8 +120,10 @@ bool ImageBuffer::sizeNeedsClamping(const FloatSize& size)
     return floorf(size.height()) * floorf(size.width()) > MaxClampedArea;
 }
 
-RefPtr<ImageBuffer> SerializedImageBuffer::sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer> buffer)
+RefPtr<ImageBuffer> SerializedImageBuffer::sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer> buffer, GraphicsClient* graphicsClient)
 {
+    if (graphicsClient)
+        return graphicsClient->sinkIntoImageBuffer(WTFMove(buffer));
     return buffer->sinkIntoImageBuffer();
 }
 

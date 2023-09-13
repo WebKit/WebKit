@@ -573,7 +573,7 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     if (!scriptExecutionContext)
         return nullptr;
 
-    GraphicsClient* graphicsClient = canvas.graphicsClient();
+    GraphicsClient* graphicsClient = scriptExecutionContext->graphicsClient();
 
     auto* canvasElement = dynamicDowncast<HTMLCanvasElement>(canvas);
 
@@ -5636,7 +5636,7 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     if (!scriptExecutionContext->settingsValues().webGLEnabled)
         return;
 
-    GraphicsClient* graphicsClient = canvasBase().graphicsClient();
+    GraphicsClient* graphicsClient = scriptExecutionContext->graphicsClient();
     if (!graphicsClient)
         return;
 

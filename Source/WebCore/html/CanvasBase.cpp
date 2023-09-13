@@ -300,16 +300,6 @@ RefPtr<ImageBuffer> CanvasBase::setImageBuffer(RefPtr<ImageBuffer>&& buffer) con
     return returnBuffer;
 }
 
-GraphicsClient* CanvasBase::graphicsClient() const
-{
-    if (scriptExecutionContext()->isDocument() && downcast<Document>(scriptExecutionContext())->page())
-        return &downcast<Document>(scriptExecutionContext())->page()->chrome();
-    if (is<WorkerGlobalScope>(scriptExecutionContext()))
-        return downcast<WorkerGlobalScope>(scriptExecutionContext())->workerClient();
-
-    return nullptr;
-}
-
 bool CanvasBase::shouldAccelerate(const IntSize& size) const
 {
     auto checkedArea = size.area<RecordOverflow>();
@@ -358,7 +348,7 @@ RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer() const
         pixelFormat = context->pixelFormat();
     }
 
-    return ImageBuffer::create(size(), RenderingPurpose::Canvas, 1, colorSpace, pixelFormat, bufferOptions, graphicsClient());
+    return ImageBuffer::create(size(), RenderingPurpose::Canvas, 1, colorSpace, pixelFormat, bufferOptions, scriptExecutionContext()->graphicsClient());
 }
 
 bool CanvasBase::shouldInjectNoiseBeforeReadback() const

@@ -133,6 +133,7 @@ class FormController;
 class FrameSelection;
 class FullscreenManager;
 class GPUCanvasContext;
+class GraphicsClient;
 class HTMLAllCollection;
 class HTMLAttachmentElement;
 class HTMLBodyElement;
@@ -690,6 +691,7 @@ public:
     void suspendActiveDOMObjects(ReasonForSuspension) final;
     void resumeActiveDOMObjects(ReasonForSuspension) final;
     void stopActiveDOMObjects() final;
+    GraphicsClient* graphicsClient() final;
 
     const Settings::Values& settingsValues() const final { return settings().values(); }
 

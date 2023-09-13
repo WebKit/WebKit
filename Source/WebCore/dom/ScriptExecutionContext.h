@@ -72,6 +72,7 @@ class EventQueue;
 class EventLoopTaskGroup;
 class EventTarget;
 class FontLoadRequest;
+class GraphicsClient;
 class MessagePort;
 class NotificationClient;
 class PublicURLManager;
@@ -128,6 +129,8 @@ public:
     virtual IDBClient::IDBConnectionProxy* idbConnectionProxy() = 0;
 
     virtual SocketProvider* socketProvider() = 0;
+
+    virtual GraphicsClient* graphicsClient() { return nullptr; }
 
     virtual std::optional<uint64_t> noiseInjectionHashSalt() const = 0;
 

@@ -229,6 +229,11 @@ IDBClient::IDBConnectionProxy* WorkerGlobalScope::idbConnectionProxy()
     return m_connectionProxy.get();
 }
 
+GraphicsClient* WorkerGlobalScope::graphicsClient()
+{
+    return workerClient();
+}
+
 void WorkerGlobalScope::stopIndexedDatabase()
 {
     if (m_connectionProxy)

@@ -229,7 +229,7 @@ public:
 
     virtual size_t memoryCost() = 0;
 
-    WEBCORE_EXPORT static RefPtr<ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer>);
+    WEBCORE_EXPORT static RefPtr<ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer>, GraphicsClient* = nullptr);
 
     virtual bool isRemoteSerializedImageBufferProxy() const { return false; }
 

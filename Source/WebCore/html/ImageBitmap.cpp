@@ -96,17 +96,7 @@ RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scrip
     }
 
     auto bufferOptions = bufferOptionsForRendingMode(renderingMode);
-
-    GraphicsClient* client = nullptr;
-    if (scriptExecutionContext.isDocument()) {
-        auto& document = downcast<Document>(scriptExecutionContext);
-        if (document.view() && document.view()->root()) {
-            client = document.view()->root()->hostWindow();
-        }
-    } else if (scriptExecutionContext.isWorkerGlobalScope())
-        client = downcast<WorkerGlobalScope>(scriptExecutionContext).workerClient();
-
-    return ImageBuffer::create(size, RenderingPurpose::Canvas, resolutionScale, *imageBufferColorSpace, PixelFormat::BGRA8, bufferOptions, client);
+    return ImageBuffer::create(size, RenderingPurpose::Canvas, resolutionScale, *imageBufferColorSpace, PixelFormat::BGRA8, bufferOptions, scriptExecutionContext.graphicsClient());
 }
 
 void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, ImageBitmapOptions&& options, ImageBitmapCompletionHandler&& completionHandler)
