@@ -2876,4 +2876,23 @@ DestinationColorSpace CanvasRenderingContext2DBase::colorSpace() const
     return toDestinationColorSpace(m_settings.colorSpace);
 }
 
+OptionSet<ImageBufferOptions> CanvasRenderingContext2DBase::adjustImageBufferOptionsForTesting(OptionSet<ImageBufferOptions> bufferOptions)
+{
+    if (!m_settings.renderingModeForTesting)
+        return bufferOptions;
+    switch (*m_settings.renderingModeForTesting) {
+    case CanvasRenderingContext2DSettings::RenderingMode::Default:
+        break;
+    case CanvasRenderingContext2DSettings::RenderingMode::Unaccelerated:
+        bufferOptions.remove(ImageBufferOptions::Accelerated);
+        bufferOptions.add(ImageBufferOptions::AvoidBackendSizeCheckForTesting);
+        break;
+    case CanvasRenderingContext2DSettings::RenderingMode::Accelerated:
+        bufferOptions.add(ImageBufferOptions::Accelerated);
+        bufferOptions.add(ImageBufferOptions::AvoidBackendSizeCheckForTesting);
+        break;
+    }
+    return bufferOptions;
+}
+
 } // namespace WebCore

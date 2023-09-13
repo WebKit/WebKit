@@ -95,6 +95,7 @@ public:
 
     virtual PixelFormat pixelFormat() const;
     virtual DestinationColorSpace colorSpace() const;
+    virtual OptionSet<ImageBufferOptions> adjustImageBufferOptionsForTesting(OptionSet<ImageBufferOptions> bufferOptions) { return bufferOptions; }
 
 protected:
     explicit CanvasRenderingContext(CanvasBase&);

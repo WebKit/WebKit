@@ -148,7 +148,7 @@ protected:
     virtual bool hasCreatedImageBuffer() const { return false; }
     static size_t activePixelMemory();
 
-    RefPtr<ImageBuffer> allocateImageBuffer(bool avoidBackendSizeCheckForTesting) const;
+    RefPtr<ImageBuffer> allocateImageBuffer() const;
     String lastFillText() const { return m_lastFillText; }
 
 private:

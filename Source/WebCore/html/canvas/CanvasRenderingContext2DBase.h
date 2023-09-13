@@ -325,6 +325,8 @@ protected:
 
     bool usesCSSCompatibilityParseMode() const { return m_usesCSSCompatibilityParseMode; }
 
+    OptionSet<ImageBufferOptions> adjustImageBufferOptionsForTesting(OptionSet<ImageBufferOptions>) final;
+
 private:
     struct CachedImageData {
         CachedImageData(CanvasRenderingContext2DBase&);

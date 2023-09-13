@@ -7111,19 +7111,6 @@ String Internals::modelInlinePreviewUUIDForModelElement(const HTMLModelElement& 
 
 #endif
 
-void Internals::avoidIOSurfaceSizeCheckInWebProcess(HTMLCanvasElement& element)
-{
-    auto* document = contextDocument();
-    if (!document)
-        return;
-    auto* page = document->page();
-    if (!page)
-        return;
-    page->settings().setMaximumAccelerated2dCanvasSize(UINT_MAX);
-    CanvasBase::setMaxCanvasAreaForTesting(UINT_MAX);
-    element.setAvoidIOSurfaceSizeCheckInWebProcessForTesting();
-}
-
 bool Internals::hasSleepDisabler() const
 {
     auto* document = contextDocument();
