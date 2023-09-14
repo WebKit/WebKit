@@ -100,18 +100,50 @@
 #endif
 
 namespace JSC {
+
+namespace v8 {
+
+// Copyright 2013 the V8 project authors. All rights reserved.
+// Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1.  Redistributions of source code must retain the above copyright
+//     notice, this list of conditions and the following disclaimer.
+// 2.  Redistributions in binary form must reproduce the above copyright
+//     notice, this list of conditions and the following disclaimer in the
+//     documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+// DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+// DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+// (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+// ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 constexpr int kMaxInt = 0x7FFFFFFF;
 
 constexpr intptr_t kIntptrAllBitsSet = intptr_t { -1 };
 constexpr uintptr_t kUintptrAllBitsSet = static_cast<uintptr_t>(kIntptrAllBitsSet);
-static constexpr intptr_t kSmiMinValue = static_cast<intptr_t>(kUintptrAllBitsSet << (32 - 1));
+#if USE(JSVALUE32_64)
+static constexpr int kSmiValueSize = 31;
+#else
+static constexpr int kSmiValueSize = 32;
+#endif
+
+static constexpr intptr_t kSmiMinValue = static_cast<intptr_t>(kUintptrAllBitsSet << (kSmiValueSize - 1));
 static constexpr intptr_t kSmiMaxValue = -(kSmiMinValue + 1);
 static constexpr int kMaxValue = static_cast<int>(kSmiMaxValue);
 
 template<typename T, typename U>
 inline constexpr bool IsInRange(T value, U lower_limit, U higher_limit)
 {
-    // DCHECK_LE(lower_limit, higher_limit);
+    ASSERT(lower_limit <= higher_limit);
     static_assert(sizeof(U) <= sizeof(T));
     using unsigned_T = typename std::make_unsigned<T>::type;
     // Use static_cast to support enum classes.
@@ -129,6 +161,17 @@ inline constexpr bool IsDecimalDigit(uint32_t c)
 bool IsLineTerminator(unsigned int c)
 {
     return c == 0x000A || c == 0x000D || c == 0x2028 || c == 0x2029;
+}
+
+namespace Smi {
+bool IsValid(intptr_t value)
+{
+#if USE(JSVALUE32_64)
+    return (static_cast<uintptr_t>(value) - static_cast<uintptr_t>(kSmiMinValue)) <= (static_cast<uintptr_t>(kSmiMaxValue) - static_cast<uintptr_t>(kSmiMinValue));
+#else
+    return value == static_cast<int32_t>(value);
+#endif
+}
 }
 
 /***** src/date/dateparser.h *****/
@@ -283,22 +326,22 @@ private:
 
         int number()
         {
-            // DCHECK(IsNumber());
+            ASSERT(IsNumber());
             return value_;
         }
         KeywordType keyword_type()
         {
-            // DCHECK(IsKeyword());
+            ASSERT(IsKeyword());
             return static_cast<KeywordType>(tag_);
         }
         int keyword_value()
         {
-            // DCHECK(IsKeyword());
+            ASSERT(IsKeyword());
             return value_;
         }
         char symbol()
         {
-            // DCHECK(IsSymbol());
+            ASSERT(IsSymbol());
             return static_cast<char>(value_);
         }
         bool IsSymbol(char symbol)
@@ -316,7 +359,7 @@ private:
         }
         int ascii_sign()
         {
-            // DCHECK(IsAsciiSign());
+            ASSERT(IsAsciiSign());
             return 44 - value_;
         }
         bool IsKeywordZ()
@@ -590,9 +633,7 @@ bool DateParser::DayComposer::Write(double* output)
             year += 1900;
     }
 
-    // if (!Smi::IsValid(year) || !IsMonth(month) || !IsDay(day))
-    //     return false;
-    if (year != static_cast<int32_t>(year) || !IsMonth(month) || !IsDay(day))
+    if (!Smi::IsValid(year) || !IsMonth(month) || !IsDay(day))
         return false;
 
     output[YEAR] = year;
@@ -650,7 +691,7 @@ bool DateParser::TimeZoneComposer::Write(double* output)
         if (sign_ < 0) {
             total_seconds = -total_seconds;
         }
-        // DCHECK(Smi::IsValid(total_seconds));
+        ASSERT(Smi::IsValid(total_seconds));
         output[UTC_OFFSET] = total_seconds;
     } else {
         output[UTC_OFFSET] = std::numeric_limits<double>::quiet_NaN();
@@ -732,7 +773,7 @@ int DateParser::ReadMilliseconds(DateToken token)
         // most significant digits.
         int factor = 1;
         do {
-            // DCHECK_LE(factor, 100000000); // factor won't overflow.
+            ASSERT(factor <= 100000000); // factor won't overflow.
             factor *= 10;
             length--;
         } while (length > 3);
@@ -939,7 +980,7 @@ DateParser::DateToken DateParser::DateStringTokenizer::Scan()
     if (in_->Skip(')'))
         return DateToken::Symbol(')');
     if (in_->IsAsciiAlphaOrAbove() && !in_->IsWhiteSpaceChar()) {
-        // DCHECK_EQ(KeywordTable::kPrefixLength, 3);
+        ASSERT(KeywordTable::kPrefixLength == 3);
         uint32_t buffer[3] = { 0, 0, 0 };
         int length = in_->ReadWord(buffer, 3);
         int index = KeywordTable::Lookup(buffer, length);
@@ -987,9 +1028,9 @@ DateParser::DateToken DateParser::ParseES5DateTime(
     DateStringTokenizer* scanner, DayComposer* day, TimeComposer* time,
     TimeZoneComposer* tz)
 {
-    // DCHECK(day->IsEmpty());
-    // DCHECK(time->IsEmpty());
-    // DCHECK(tz->IsEmpty());
+    ASSERT(day->IsEmpty());
+    ASSERT(time->IsEmpty());
+    ASSERT(tz->IsEmpty());
 
     // Parse mandatory date string: [('-'|'+')yy]yyyy[':'MM[':'DD]]
     if (scanner->Peek().IsAsciiSign()) {
@@ -1094,20 +1135,133 @@ DateParser::DateToken DateParser::ParseES5DateTime(
     return DateToken::EndOfInput();
 }
 
-inline double ymdhmsToMilliseconds(int year, long mon, long day, long hour, long minute, long second, double milliseconds)
+// ES6 section 20.3.1.1 Time Values and Time Range
+const double kMinYear = -1000000.0;
+const double kMaxYear = -kMinYear;
+const double kMinMonth = -10000000.0;
+const double kMaxMonth = -kMinMonth;
+
+const double kMsPerDay = 86400000.0;
+
+const double kMsPerSecond = 1000.0;
+const double kMsPerMinute = 60000.0;
+const double kMsPerHour = 3600000.0;
+static const int64_t kMsPerMonth = kMsPerDay * 30;
+
+// The largest time that can be stored in JSDate.
+static const int64_t kMaxTimeInMs = static_cast<int64_t>(864000000) * 10000000;
+
+// Conservative upper bound on time that can be stored in JSDate
+// before UTC conversion.
+static const int64_t kMaxTimeBeforeUTCInMs = kMaxTimeInMs + kMsPerMonth;
+
+// #sec-tointegerorinfinity
+inline double DoubleToInteger(double x)
 {
-    int mday = WTF::firstDayOfMonth[isLeapYear(year)][mon - 1];
-    double ydays = daysFrom1970ToYear(year);
+    // ToIntegerOrInfinity normalizes -0 to +0. Special case 0 for performance.
+    if (std::isnan(x) || x == 0.0)
+        return 0;
+    if (!std::isfinite(x))
+        return x;
+    // Add 0.0 in the truncation case to ensure this doesn't return -0.
+    return ((x > 0) ? std::floor(x) : std::ceil(x)) + 0.0;
+}
 
-    double dateMilliseconds = milliseconds + second * msPerSecond + minute * (secondsPerMinute * msPerSecond) + hour * (WTF::secondsPerHour * msPerSecond) + (mday + day - 1 + ydays) * (secondsPerDay * msPerSecond);
+// ECMA 262 - ES#sec-timeclip TimeClip (time)
+double TimeClip(double time)
+{
+    if (-kMaxTimeInMs <= time && time <= kMaxTimeInMs) {
+        return DoubleToInteger(time);
+    }
+    return std::numeric_limits<double>::quiet_NaN();
+}
 
-    // Clamp to EcmaScript standard (ecma262/#sec-time-values-and-time-range) of
-    //  +/- 100,000,000 days from 01 January, 1970.
-    if (dateMilliseconds < -8640000000000000.0 || dateMilliseconds > 8640000000000000.0)
+double MakeDay(double year, double month, double date)
+{
+    if ((kMinYear <= year && year <= kMaxYear) && (kMinMonth <= month && month <= kMaxMonth) && std::isfinite(date)) {
+        int y = static_cast<int>(year);
+        int m = static_cast<int>(month);
+        y += m / 12;
+        m %= 12;
+        if (m < 0) {
+            m += 12;
+            y -= 1;
+        }
+        ASSERT(0 <= m);
+        ASSERT(m < 12);
+
+        // kYearDelta is an arbitrary number such that:
+        // a) kYearDelta = -1 (mod 400)
+        // b) year + kYearDelta > 0 for years in the range defined by
+        //    ECMA 262 - 15.9.1.1, i.e. upto 100,000,000 days on either side of
+        //    Jan 1 1970. This is required so that we don't run into integer
+        //    division of negative numbers.
+        // c) there shouldn't be an overflow for 32-bit integers in the following
+        //    operations.
+        static const int kYearDelta = 399999;
+        static const int kBaseDay = 365 * (1970 + kYearDelta) + (1970 + kYearDelta) / 4 - (1970 + kYearDelta) / 100 + (1970 + kYearDelta) / 400;
+        int day_from_year = 365 * (y + kYearDelta) + (y + kYearDelta) / 4 - (y + kYearDelta) / 100 + (y + kYearDelta) / 400 - kBaseDay;
+        if ((y % 4 != 0) || (y % 100 == 0 && y % 400 != 0)) {
+            static const int kDayFromMonth[] = { 0, 31, 59, 90, 120, 151,
+                181, 212, 243, 273, 304, 334 };
+            day_from_year += kDayFromMonth[m];
+        } else {
+            static const int kDayFromMonth[] = { 0, 31, 60, 91, 121, 152,
+                182, 213, 244, 274, 305, 335 };
+            day_from_year += kDayFromMonth[m];
+        }
+        return static_cast<double>(day_from_year - 1) + DoubleToInteger(date);
+    }
+    return std::numeric_limits<double>::quiet_NaN();
+}
+
+double MakeTime(double hour, double min, double sec, double ms)
+{
+    if (std::isfinite(hour) && std::isfinite(min) && std::isfinite(sec) && std::isfinite(ms)) {
+        double const h = DoubleToInteger(hour);
+        double const m = DoubleToInteger(min);
+        double const s = DoubleToInteger(sec);
+        double const milli = DoubleToInteger(ms);
+        return h * kMsPerHour + m * kMsPerMinute + s * kMsPerSecond + milli;
+    }
+    return std::numeric_limits<double>::quiet_NaN();
+}
+
+double MakeDate(double day, double time)
+{
+    if (std::isfinite(day) && std::isfinite(time)) {
+        return time + day * kMsPerDay;
+    }
+    return std::numeric_limits<double>::quiet_NaN();
+}
+
+double ParseDateTimeString(DateCache* cache, const char* str, size_t size, bool& local)
+{
+    double out[v8::DateParser::OUTPUT_SIZE];
+
+    if (!DateParser::Parse(nullptr, str, size, out))
         return std::numeric_limits<double>::quiet_NaN();
 
-    return dateMilliseconds;
+    double const day = MakeDay(out[DateParser::YEAR], out[DateParser::MONTH], out[DateParser::DAY]);
+    double const time = MakeTime(out[DateParser::HOUR], out[DateParser::MINUTE], out[DateParser::SECOND], out[DateParser::MILLISECOND]);
+
+    double date = MakeDate(day, time);
+
+    if (std::isnan(out[DateParser::UTC_OFFSET])) {
+        if (date >= -kMaxTimeBeforeUTCInMs && date <= kMaxTimeBeforeUTCInMs) {
+            // Mark it local and use JSC DateCache::DSTCache instead of v8's DateCache to get the offset.
+            local = true;
+        } else {
+            return std::numeric_limits<double>::quiet_NaN();
+        }
+    } else {
+        date -= out[DateParser::UTC_OFFSET] * 1000.0;
+    }
+
+    return date;
 }
+
+} // namespace v8
 
 namespace JSDateMathInternal {
 static constexpr bool verbose = false;
@@ -1458,25 +1612,26 @@ double DateCache::parseDate(JSGlobalObject* globalObject, VM& vm, const String& 
     }
 
     auto parseDateImpl = [this](const char* dateString, size_t size) {
+        if (Options::useV8DateParser()) {
+            bool local = false;
+            double value = v8::ParseDateTimeString(this, dateString, size, local);
+
+            if (local)
+                value -= localTimeOffset(static_cast<int64_t>(value), WTF::LocalTime).offset;
+
+            return v8::TimeClip(value);
+        }
+
         double value = 0.0f;
 
-        if (Options::useV8DateParser()) {
-            double out[DateParser::OUTPUT_SIZE];
-            if (!DateParser::Parse(nullptr, dateString, size, out)) {
-                value = std::numeric_limits<double>::quiet_NaN();
-            } else {
-                value = ymdhmsToMilliseconds(out[0], out[1], out[2], out[3], out[4], out[5], out[7]);
-            }
-        } else {
-            bool isLocalTime;
-            value = WTF::parseES5DateFromNullTerminatedCharacters(dateString, isLocalTime);
-            if (std::isnan(value)) {
-                value = WTF::parseDateFromNullTerminatedCharacters(dateString, isLocalTime);
-            }
-
-            if (isLocalTime && std::isfinite(value))
-                value -= localTimeOffset(static_cast<int64_t>(value), WTF::LocalTime).offset;
+        bool isLocalTime;
+        value = WTF::parseES5DateFromNullTerminatedCharacters(dateString, isLocalTime);
+        if (std::isnan(value)) {
+            value = WTF::parseDateFromNullTerminatedCharacters(dateString, isLocalTime);
         }
+
+        if (isLocalTime && std::isfinite(value))
+            value -= localTimeOffset(static_cast<int64_t>(value), WTF::LocalTime).offset;
 
         return value;
     };
