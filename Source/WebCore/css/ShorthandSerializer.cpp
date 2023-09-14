@@ -191,8 +191,14 @@ bool ShorthandSerializer::commonSerializationChecks(const ComputedStyleExtractor
 
     ASSERT(m_shorthand.id() != CSSPropertyAll);
 
-    for (unsigned i = 0; i < length(); ++i)
-        m_longhandValues[i] = properties.propertyValue(longhandProperty(i));
+    for (unsigned i = 0; i < length(); ++i) {
+        auto longhandValue = properties.propertyValue(longhandProperty(i));
+        if (!longhandValue) {
+            m_result = emptyString();
+            return true;
+        }
+        m_longhandValues[i] = longhandValue;
+    }
 
     return false;
 }
