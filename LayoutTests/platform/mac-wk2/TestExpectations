@@ -786,8 +786,6 @@ fast/scrolling/rtl-scrollbars-animation-property.html [ Pass ]
 
 webkit.org/b/167607 [ Debug ] http/tests/inspector/worker/blob-script-with-cross-domain-imported-scripts.html [ Pass Timeout ]
 
-webkit.org/b/159896 storage/indexeddb/modern/handle-user-delete.html [ Pass Timeout ]
-
 webkit.org/b/160042 accessibility/mac/value-change/value-change-user-info-contenteditable.html [ Pass Failure ]
 
 webkit.org/b/160309 fast/dom/Window/child-window-focus.html [ Pass Failure ]

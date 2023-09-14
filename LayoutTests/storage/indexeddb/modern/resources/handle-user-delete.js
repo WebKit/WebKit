@@ -47,11 +47,15 @@ function prepareDatabase(event)
 {
     log("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
+    // Overwrite the unexpected error handler of IDBOpenDBRequest set in indexedDBTest(),
+    // because this test expects version change transaction to fail.
+    event.target.onerror = () => { };
+
     var versionTransaction = event.target.transaction;
     var database = event.target.result;
     var objectStore = database.createObjectStore("TestObjectStore");
     objectStore.put("bar", "foo");
-    
+
     database.onerror = function(event) {
         databaseError = true;
         maybeFinish();
