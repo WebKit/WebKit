@@ -1143,9 +1143,10 @@
 (allow syscall-unix (syscall-unix-only-in-use-during-launch))
 #endif
 
-(allow syscall-unix (with report) (with telemetry-backtrace)
-    (syscall-unix-rarely-in-use)
-    (syscall-unix-rarely-in-use-blocked-in-lockdown-mode))
+(with-filter (require-not (state-flag "EnableExperimentalSandbox"))
+    (allow syscall-unix (with report) (with telemetry-backtrace)
+        (syscall-unix-rarely-in-use)
+        (syscall-unix-rarely-in-use-blocked-in-lockdown-mode)))
 
 (deny syscall-unix (with no-report) (syscall-number
     SYS_connect
