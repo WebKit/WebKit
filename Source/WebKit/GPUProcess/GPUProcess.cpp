@@ -616,6 +616,12 @@ void GPUProcess::requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier pro
 }
 #endif
 
+void GPUProcess::userPreferredLanguagesChanged(const Vector<String>& languages)
+{
+    LOG_WITH_STREAM(Language, stream << "The GPU process's userPreferredLanguagesChanged: " << languages);
+    overrideUserPreferredLanguages(languages);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

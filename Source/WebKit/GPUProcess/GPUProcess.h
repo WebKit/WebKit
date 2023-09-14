@@ -199,6 +199,8 @@ private:
     void enablePowerLogging(SandboxExtension::Handle&&);
 #endif
 
+    void userPreferredLanguagesChanged(const Vector<String>&);
+
     // Connections to WebProcesses.
     HashMap<WebCore::ProcessIdentifier, Ref<GPUConnectionToWebProcess>> m_webProcessConnections;
     MonotonicTime m_creationTime { MonotonicTime::now() };
