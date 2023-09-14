@@ -1098,7 +1098,6 @@
 
 (define (syscall-unix-rarely-in-use)
     (syscall-number
-        SYS___pthread_kill
         SYS_fgetxattr
         SYS_getxattr
         SYS_iopolicysys
@@ -1113,6 +1112,7 @@
 
 (define (syscall-unix-rarely-in-use-blocked-in-lockdown-mode)
     (syscall-number
+        SYS___pthread_kill
         SYS___pthread_sigmask
         SYS___semwait_signal
         SYS_fsync
@@ -1164,9 +1164,7 @@
     (deny syscall-unix (with telemetry) (with message "Lockdown mode")
         (syscall-unix-in-use-after-launch-blocked-in-lockdown-mode))
     (deny syscall-unix (with telemetry) (with message "Lockdown mode")
-        (syscall-unix-rarely-in-use-blocked-in-lockdown-mode))
-    (deny syscall-unix (with telemetry) (with message "Lockdown mode")
-        (syscall-unix-rarely-in-use-need-backtrace)))
+        (syscall-unix-rarely-in-use-blocked-in-lockdown-mode)))
 
 (deny file-ioctl (with telemetry))
 
