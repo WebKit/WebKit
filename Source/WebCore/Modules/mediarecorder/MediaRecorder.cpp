@@ -165,11 +165,7 @@ ExceptionOr<void> MediaRecorder::startRecording(std::optional<unsigned> timeSlic
         return result.releaseException();
 
     m_private = result.releaseReturnValue();
-    m_private->startRecording([this, weakThis = WeakPtr { *this }, pendingActivity = makePendingActivity(*this)](auto&& mimeTypeOrException, unsigned audioBitsPerSecond, unsigned videoBitsPerSecond) mutable {
-        auto protectedThis = RefPtr { weakThis.get() };
-        if (!protectedThis)
-            return;
-
+    m_private->startRecording([this, pendingActivity = makePendingActivity(*this)](auto&& mimeTypeOrException, unsigned audioBitsPerSecond, unsigned videoBitsPerSecond) mutable {
         if (!m_isActive)
             return;
 
