@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true MockScrollbarsEnabled=false ] -->
 <html>
 <head>
     <meta name="viewport" content="initial-scale=1.0">
@@ -27,6 +27,9 @@
     <script>
         if (window.testRunner)
             testRunner.waitUntilDone();
+
+        if (window.internals)
+            window.internals.setUsesOverlayScrollbars(true);
 
         function getUnstableScrollScript(x, y, scrollX, scrollY)
         {

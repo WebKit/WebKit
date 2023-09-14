@@ -12,22 +12,25 @@
           (bounds 402.00 402.00)
           (drawsContent 1)
           (repaint rects
-            (rect 1.00 121.00 400.00 40.00)
+            (rect 1.00 121.00 385.00 40.00)
+            (rect 386.00 1.00 15.00 90.00)
+            (rect 386.00 27.00 15.00 128.00)
+            (rect 386.00 91.00 15.00 295.00)
           )
           (children 1
             (GraphicsLayer
               (offsetFromRenderer width=1 height=1)
               (position 1.00 1.00)
               (bounds origin 0.00 80.00)
-              (bounds 400.00 400.00)
+              (bounds 385.00 385.00)
               (children 1
                 (GraphicsLayer
                   (offsetFromRenderer width=1 height=1)
                   (scrollOffset (0,80))
                   (anchor 0.00 0.00)
-                  (bounds 400.00 1200.00)
+                  (bounds 385.00 1155.00)
                   (repaint rects
-                    (rect 0.00 200.00 400.00 40.00)
+                    (rect 0.00 200.00 385.00 40.00)
                   )
                   (children 2
                     (GraphicsLayer
@@ -37,7 +40,7 @@
                     )
                     (GraphicsLayer
                       (position 0.00 200.00)
-                      (bounds 400.00 40.00)
+                      (bounds 385.00 40.00)
                       (contentsOpaque 1)
                       (drawsContent 1)
                     )

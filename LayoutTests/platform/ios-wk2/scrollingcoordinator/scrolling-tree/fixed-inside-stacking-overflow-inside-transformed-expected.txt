@@ -15,8 +15,8 @@ Fixed inside scroller
   (children 1
     (Overflow scrolling node
       (scroll position 0 50)
-      (scrollable area size 440 440)
-      (contents size 440 2040)
+      (scrollable area size 425 425)
+      (contents size 425 1965)
       (requested scroll position 0 50)
       (requested scroll position represents programmatic scroll 1)
       (scrollable area parameters

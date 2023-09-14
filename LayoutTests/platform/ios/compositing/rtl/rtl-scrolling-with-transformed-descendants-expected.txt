@@ -9,7 +9,7 @@
       (children 1
         (GraphicsLayer
           (position 8.00 8.00)
-          (bounds 404.00 209.00)
+          (bounds 404.00 224.00)
           (drawsContent 1)
           (children 1
             (GraphicsLayer

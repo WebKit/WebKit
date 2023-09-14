@@ -15,7 +15,7 @@ relative
             (GraphicsLayer
               (offsetFromRenderer width=2 height=2)
               (position 2.00 2.00)
-              (bounds 320.00 320.00)
+              (bounds 305.00 305.00)
               (children 1
                 (GraphicsLayer
                   (offsetFromRenderer width=2 height=2)

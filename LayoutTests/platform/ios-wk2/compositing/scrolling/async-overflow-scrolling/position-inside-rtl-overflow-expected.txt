@@ -15,12 +15,12 @@
             (GraphicsLayer
               (offsetFromRenderer width=5 height=5)
               (position 5.00 5.00)
-              (bounds 200.00 200.00)
+              (bounds 177.00 200.00)
               (children 1
                 (GraphicsLayer
                   (offsetFromRenderer width=5 height=5)
                   (anchor 0.00 0.00)
-                  (bounds 200.00 400.00)
+                  (bounds 177.00 400.00)
                   (drawsContent 1)
                   (children 1
                     (GraphicsLayer

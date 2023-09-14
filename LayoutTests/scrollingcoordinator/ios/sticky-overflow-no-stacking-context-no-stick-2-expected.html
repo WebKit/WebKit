@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true MockScrollbarsEnabled=false ] -->
 <html>
 <head>
     <meta name="viewport" content="initial-scale=1.0">
@@ -32,6 +32,9 @@
     <script>
         if (window.testRunner)
             testRunner.waitUntilDone();
+
+        if (window.internals)
+            window.internals.setUsesOverlayScrollbars(true);
 
         async function doTest()
         {

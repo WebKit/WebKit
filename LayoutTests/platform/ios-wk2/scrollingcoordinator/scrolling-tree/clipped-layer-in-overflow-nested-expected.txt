@@ -14,8 +14,8 @@
   (children 3
     (Overflow scrolling node
       (scroll position 0 50)
-      (scrollable area size 316 316)
-      (contents size 316 640)
+      (scrollable area size 301 316)
+      (contents size 301 640)
       (requested scroll position 0 50)
       (requested scroll position represents programmatic scroll 1)
       (scrollable area parameters
@@ -27,8 +27,8 @@
       (children 1
         (Overflow scrolling node
           (scroll position 0 150)
-          (scrollable area size 200 200)
-          (contents size 200 554)
+          (scrollable area size 185 200)
+          (contents size 185 554)
           (requested scroll position 0 150)
           (requested scroll position represents programmatic scroll 1)
           (scrollable area parameters

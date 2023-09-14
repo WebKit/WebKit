@@ -27,13 +27,14 @@ Stacking
   (behavior for fixed 1)
   (children 19
     (Overflow scrolling node
-      (scrollable area size 220 170)
-      (contents size 220 1020)
+      (scrollable area size 205 155)
+      (contents size 210 1020)
       (scrollable area parameters
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)
         (horizontal scrollbar mode 0)
         (vertical scrollbar mode 0)
+        (allows horizontal scrolling 1)
         (allows vertical scrolling 1))
     )
     (Overflow scroll proxy node
@@ -46,13 +47,14 @@ Stacking
       (related overflow scrolling node scroll position (0,0))
     )
     (Overflow scrolling node
-      (scrollable area size 220 170)
-      (contents size 220 1020)
+      (scrollable area size 205 155)
+      (contents size 210 1020)
       (scrollable area parameters
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)
         (horizontal scrollbar mode 0)
         (vertical scrollbar mode 0)
+        (allows horizontal scrolling 1)
         (allows vertical scrolling 1))
     )
     (Overflow scroll proxy node
@@ -62,21 +64,8 @@ Stacking
       (related overflow scrolling node scroll position (0,0))
     )
     (Overflow scrolling node
-      (scrollable area size 220 170)
-      (contents size 220 1020)
-      (scrollable area parameters
-        (horizontal scroll elasticity 1)
-        (vertical scroll elasticity 1)
-        (horizontal scrollbar mode 0)
-        (vertical scrollbar mode 0)
-        (allows vertical scrolling 1))
-    )
-    (Overflow scroll proxy node
-      (related overflow scrolling node scroll position (0,0))
-    )
-    (Overflow scrolling node
-      (scrollable area size 220 170)
-      (contents size 220 1020)
+      (scrollable area size 205 155)
+      (contents size 205 1020)
       (scrollable area parameters
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)
@@ -88,13 +77,27 @@ Stacking
       (related overflow scrolling node scroll position (0,0))
     )
     (Overflow scrolling node
-      (scrollable area size 220 170)
-      (contents size 220 1020)
+      (scrollable area size 205 155)
+      (contents size 205 1020)
       (scrollable area parameters
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)
         (horizontal scrollbar mode 0)
         (vertical scrollbar mode 0)
+        (allows vertical scrolling 1))
+    )
+    (Overflow scroll proxy node
+      (related overflow scrolling node scroll position (0,0))
+    )
+    (Overflow scrolling node
+      (scrollable area size 205 155)
+      (contents size 210 1020)
+      (scrollable area parameters
+        (horizontal scroll elasticity 1)
+        (vertical scroll elasticity 1)
+        (horizontal scrollbar mode 0)
+        (vertical scrollbar mode 0)
+        (allows horizontal scrolling 1)
         (allows vertical scrolling 1))
     )
     (Overflow scroll proxy node
@@ -110,8 +113,8 @@ Stacking
       (related overflow scrolling node scroll position (0,0))
     )
     (Overflow scrolling node
-      (scrollable area size 220 170)
-      (contents size 220 1020)
+      (scrollable area size 205 155)
+      (contents size 205 1020)
       (scrollable area parameters
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)

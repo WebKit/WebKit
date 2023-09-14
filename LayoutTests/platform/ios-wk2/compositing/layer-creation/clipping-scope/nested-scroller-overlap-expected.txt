@@ -14,13 +14,13 @@
             (GraphicsLayer
               (offsetFromRenderer width=1 height=1)
               (position 1.00 1.00)
-              (bounds 400.00 350.00)
+              (bounds 385.00 350.00)
               (clips 1)
               (children 1
                 (GraphicsLayer
                   (offsetFromRenderer width=1 height=1)
                   (anchor 0.00 0.00)
-                  (bounds 400.00 832.00)
+                  (bounds 385.00 832.00)
                   (drawsContent 1)
                   (children 1
                     (GraphicsLayer
@@ -32,13 +32,13 @@
                         (GraphicsLayer
                           (offsetFromRenderer width=1 height=1)
                           (position 1.00 1.00)
-                          (bounds 300.00 200.00)
+                          (bounds 285.00 200.00)
                           (clips 1)
                           (children 1
                             (GraphicsLayer
                               (offsetFromRenderer width=1 height=1)
                               (anchor 0.00 0.00)
-                              (bounds 300.00 280.00)
+                              (bounds 285.00 280.00)
                               (drawsContent 1)
                             )
                           )
@@ -57,14 +57,14 @@
         )
         (GraphicsLayer
           (position 24.00 106.00)
-          (bounds 400.00 350.00)
+          (bounds 385.00 350.00)
           (clips 1)
           (children 1
             (GraphicsLayer
               (children 1
                 (GraphicsLayer
                   (position 21.00 111.00)
-                  (bounds 300.00 200.00)
+                  (bounds 285.00 200.00)
                   (clips 1)
                   (children 1
                     (GraphicsLayer
@@ -84,14 +84,14 @@
         )
         (GraphicsLayer
           (position 24.00 106.00)
-          (bounds 400.00 350.00)
+          (bounds 385.00 350.00)
           (clips 1)
           (children 1
             (GraphicsLayer
               (children 1
                 (GraphicsLayer
                   (position 21.00 111.00)
-                  (bounds 300.00 200.00)
+                  (bounds 285.00 200.00)
                   (clips 1)
                   (children 1
                     (GraphicsLayer
@@ -111,14 +111,14 @@
         )
         (GraphicsLayer
           (position 24.00 106.00)
-          (bounds 400.00 350.00)
+          (bounds 385.00 350.00)
           (clips 1)
           (children 1
             (GraphicsLayer
               (children 1
                 (GraphicsLayer
                   (position 21.00 111.00)
-                  (bounds 300.00 200.00)
+                  (bounds 285.00 200.00)
                   (clips 1)
                   (children 1
                     (GraphicsLayer

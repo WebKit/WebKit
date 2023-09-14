@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true MockScrollbarsEnabled=false ] -->
 <html>
 <head>
 <style>
@@ -29,6 +29,9 @@
 <script src="../../resources/js-test-pre.js"></script>
 <script>
 var successfullyParsed = false;
+
+if (window.internals)
+    window.internals.setUsesOverlayScrollbars(true);
 </script>
 </head>
 <body id="body">

@@ -18,16 +18,16 @@
           )
           (children 1
             (GraphicsLayer
-              (bounds 50.00 50.00)
+              (bounds 35.00 35.00)
               (event region
-                (rect (0,0) width=50 height=50)
+                (rect (0,0) width=35 height=35)
               )
               (children 1
                 (GraphicsLayer
                   (anchor 0.00 0.00)
-                  (bounds 50.00 100.00)
+                  (bounds 35.00 100.00)
                   (event region
-                    (rect (0,0) width=50 height=100)
+                    (rect (0,0) width=35 height=100)
                   )
                 )
               )
@@ -71,16 +71,16 @@ After setting 'pointer-events:auto':
           )
           (children 1
             (GraphicsLayer
-              (bounds 50.00 50.00)
+              (bounds 35.00 35.00)
               (event region
-                (rect (0,0) width=50 height=50)
+                (rect (0,0) width=35 height=35)
               )
               (children 1
                 (GraphicsLayer
                   (anchor 0.00 0.00)
-                  (bounds 50.00 100.00)
+                  (bounds 35.00 100.00)
                   (event region
-                    (rect (0,0) width=50 height=100)
+                    (rect (0,0) width=35 height=100)
                   )
                 )
               )
@@ -133,16 +133,16 @@ After setting 'pointer-events:none':
           )
           (children 1
             (GraphicsLayer
-              (bounds 50.00 50.00)
+              (bounds 35.00 35.00)
               (event region
-                (rect (0,0) width=50 height=50)
+                (rect (0,0) width=35 height=35)
               )
               (children 1
                 (GraphicsLayer
                   (anchor 0.00 0.00)
-                  (bounds 50.00 100.00)
+                  (bounds 35.00 100.00)
                   (event region
-                    (rect (0,0) width=50 height=100)
+                    (rect (0,0) width=35 height=100)
                   )
                 )
               )

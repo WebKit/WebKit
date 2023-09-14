@@ -10,18 +10,23 @@
           (position 8.00 8.00)
           (bounds 202.00 202.00)
           (drawsContent 1)
+          (repaint rects
+            (rect 186.00 1.00 15.00 20.00)
+            (rect 186.00 5.00 15.00 33.00)
+            (rect 186.00 21.00 15.00 165.00)
+          )
           (children 1
             (GraphicsLayer
               (offsetFromRenderer width=1 height=1)
               (position 1.00 1.00)
               (bounds origin 0.00 25.00)
-              (bounds 200.00 200.00)
+              (bounds 185.00 185.00)
               (children 1
                 (GraphicsLayer
                   (offsetFromRenderer width=1 height=1)
                   (scrollOffset (0,25))
                   (anchor 0.00 0.00)
-                  (bounds 200.00 1025.00)
+                  (bounds 185.00 1025.00)
                 )
               )
             )

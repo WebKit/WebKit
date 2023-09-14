@@ -14,7 +14,7 @@
             (GraphicsLayer
               (offsetFromRenderer width=1 height=1)
               (position 1.00 1.00)
-              (bounds 400.00 115.00)
+              (bounds 400.00 100.00)
               (children 1
                 (GraphicsLayer
                   (offsetFromRenderer width=1 height=1)

@@ -15,12 +15,12 @@ Relative foreground
             (GraphicsLayer
               (offsetFromRenderer width=2 height=2)
               (position 2.00 2.00)
-              (bounds 300.00 300.00)
+              (bounds 285.00 285.00)
               (children 1
                 (GraphicsLayer
                   (offsetFromRenderer width=2 height=2)
                   (anchor 0.00 0.00)
-                  (bounds 300.00 364.00)
+                  (bounds 285.00 364.00)
                   (drawsContent 1)
                 )
               )

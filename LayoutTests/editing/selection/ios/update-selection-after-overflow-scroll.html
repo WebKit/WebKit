@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true MockScrollbarsEnabled=false ] -->
 <html>
 <head>
 <script src="../../../resources/js-test.js"></script>
@@ -24,6 +24,9 @@ body, html {
 </style>
 <script>
 jsTestIsAsync = true;
+
+if (window.internals)
+    window.internals.setUsesOverlayScrollbars(true);
 
 function rectsAreEqual(rects, otherRects)
 {
