@@ -33,27 +33,11 @@ namespace WGSL {
 
 using namespace Types;
 
-// These keys are used so that, for a given type T, we can have keys for all of
-// the following types:
-// vecN<T>, matCxR<T>, array<T, N?>
-//
-// To make sure they never collide, we encode them into a pair<Type*, uint64_t>
-// where the first element of the pair is always T and the second word is used
-// to disambiguate between all the possible types. That's possible because we
-// we only have 3 possibilities for Vector (2, 3, 4), 9 possibilities for Matrix
-// ((2, 3, 4) * (2, 3, 4)) and 2**32 for Array. To avoid collisions, the
-// data is encoded as follows:
-//
-// Vector: size in the least significant byte.
-// Matrix: rows in byte 1 and columns in byte 2
-// Array: 0 for dynamic array or 32-bit size in the upper 32-bits
-// Texture: kind << 16
-// Reference: AddressSpace + AccessMode compacted into 1 byte and shifted 24 bits left
 struct VectorKey {
     const Type* elementType;
     uint8_t size;
 
-    uint64_t extra() const { return size; }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Vector, size, 0, 0, bitwise_cast<uintptr_t>(elementType)); }
 };
 
 struct MatrixKey {
@@ -61,21 +45,29 @@ struct MatrixKey {
     uint8_t columns;
     uint8_t rows;
 
-    uint64_t extra() const { return (static_cast<uint64_t>(columns) << 8) | rows; }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Matrix, columns, rows, 0, bitwise_cast<uintptr_t>(elementType)); }
 };
 
 struct ArrayKey {
     const Type* elementType;
     std::optional<unsigned> size;
 
-    uint64_t extra() const { return size.has_value() ? static_cast<uint64_t>(*size) << 32 : 0; }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Array, 0, 0, size.value_or(0), bitwise_cast<uintptr_t>(elementType)); }
 };
 
 struct TextureKey {
     const Type* elementType;
     Texture::Kind kind;
 
-    uint64_t extra() const { return static_cast<uint64_t>(kind) << 16; }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Texture, WTF::enumToUnderlyingType(kind), 0, 0, bitwise_cast<uintptr_t>(elementType)); }
+};
+
+struct TextureStorageKey {
+    TextureStorage::Kind kind;
+    TexelFormat format;
+    AccessMode access;
+
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::TextureStorage, WTF::enumToUnderlyingType(kind), WTF::enumToUnderlyingType(format), WTF::enumToUnderlyingType(access), 0); }
 };
 
 struct ReferenceKey {
@@ -83,33 +75,22 @@ struct ReferenceKey {
     AddressSpace addressSpace;
     AccessMode accessMode;
 
-    uint64_t extra() const
-    {
-        constexpr unsigned addressSpaceShift = 2;
-
-        auto addressSpace = WTF::enumToUnderlyingType(this->addressSpace);
-        auto accessMode = WTF::enumToUnderlyingType(this->accessMode);
-
-        ASSERT(accessMode < (1 << addressSpaceShift));
-        ASSERT(addressSpace < (1 << (sizeof(addressSpace) * 8 - addressSpaceShift)));
-
-        return static_cast<uint64_t>(accessMode | (addressSpace << addressSpaceShift)) << 24;
-    }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Reference, WTF::enumToUnderlyingType(addressSpace), WTF::enumToUnderlyingType(accessMode), 0, bitwise_cast<uintptr_t>(elementType)); }
 };
 
 template<typename Key>
-const Type* TypeStore::TypeCache::find(const Key& key) const
+const Type* TypeCache::find(const Key& key) const
 {
-    auto it = m_storage.find(std::pair(key.elementType, key.extra()));
+    auto it = m_storage.find(key.encode());
     if (it != m_storage.end())
         return it->value;
     return nullptr;
 }
 
 template<typename Key>
-void TypeStore::TypeCache::insert(const Key& key, const Type* type)
+void TypeCache::insert(const Key& key, const Type* type)
 {
-    auto it = m_storage.add(std::pair(key.elementType, key.extra()), type);
+    auto it = m_storage.add(key.encode(), type);
     ASSERT_UNUSED(it, it.isNewEntry);
 }
 
@@ -125,6 +106,8 @@ TypeStore::TypeStore()
     m_f32 = allocateType<Primitive>(Primitive::F32);
     m_sampler = allocateType<Primitive>(Primitive::Sampler);
     m_textureExternal = allocateType<Primitive>(Primitive::TextureExternal);
+    m_accessMode = allocateType<Primitive>(Primitive::AccessMode);
+    m_texelFormat = allocateType<Primitive>(Primitive::TexelFormat);
 }
 
 const Type* TypeStore::structType(AST::Structure& structure, HashMap<String, const Type*>&& fields)
@@ -172,6 +155,17 @@ const Type* TypeStore::textureType(const Type* elementType, Texture::Kind kind)
     if (type)
         return type;
     type = allocateType<Texture>(elementType, kind);
+    m_cache.insert(key, type);
+    return type;
+}
+
+const Type* TypeStore::textureStorageType(TextureStorage::Kind kind, TexelFormat format, AccessMode access)
+{
+    TextureStorageKey key { kind, format, access };
+    const Type* type = m_cache.find(key);
+    if (type)
+        return type;
+    type = allocateType<TextureStorage>(kind, format, access);
     m_cache.insert(key, type);
     return type;
 }

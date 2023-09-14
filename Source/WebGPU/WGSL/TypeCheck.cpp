@@ -36,6 +36,7 @@
 #include "Types.h"
 #include "WGSLShaderModule.h"
 #include <wtf/DataLog.h>
+#include <wtf/SortedArrayMap.h>
 
 namespace WGSL {
 
@@ -131,6 +132,7 @@ private:
 
     template<typename TargetConstructor, typename... Arguments>
     void allocateSimpleConstructor(ASCIILiteral, TargetConstructor, Arguments&&...);
+    void allocateTextureStorageConstructor(ASCIILiteral, Types::TextureStorage::Kind);
 
     template<typename CallArguments>
     const Type* chooseOverload(const char*, const SourceSpan&, const String&, CallArguments&& valueArguments, const Vector<const Type*>& typeArguments);
@@ -175,10 +177,33 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
     allocateSimpleConstructor("texture_cube"_s, &TypeStore::textureType, Types::Texture::Kind::TextureCube);
     allocateSimpleConstructor("texture_cube_array"_s, &TypeStore::textureType, Types::Texture::Kind::TextureCubeArray);
     allocateSimpleConstructor("texture_multisampled_2d"_s, &TypeStore::textureType, Types::Texture::Kind::TextureMultisampled2d);
-    allocateSimpleConstructor("texture_storage_1d"_s, &TypeStore::textureType, Types::Texture::Kind::TextureStorage1d);
-    allocateSimpleConstructor("texture_storage_2d"_s, &TypeStore::textureType, Types::Texture::Kind::TextureStorage2d);
-    allocateSimpleConstructor("texture_storage_2d_array"_s, &TypeStore::textureType, Types::Texture::Kind::TextureStorage2dArray);
-    allocateSimpleConstructor("texture_storage_3d"_s, &TypeStore::textureType, Types::Texture::Kind::TextureStorage3d);
+
+    allocateTextureStorageConstructor("texture_storage_1d"_s, Types::TextureStorage::Kind::TextureStorage1d);
+    allocateTextureStorageConstructor("texture_storage_2d"_s, Types::TextureStorage::Kind::TextureStorage2d);
+    allocateTextureStorageConstructor("texture_storage_2d_array"_s, Types::TextureStorage::Kind::TextureStorage2dArray);
+    allocateTextureStorageConstructor("texture_storage_3d"_s, Types::TextureStorage::Kind::TextureStorage3d);
+
+    introduceValue(AST::Identifier::make("read"_s), m_types.accessModeType());
+    introduceValue(AST::Identifier::make("write"_s), m_types.accessModeType());
+    introduceValue(AST::Identifier::make("read_write"_s), m_types.accessModeType());
+
+    introduceValue(AST::Identifier::make("bgra8unorm"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("r32float"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("r32sint"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("r32uint"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rg32float"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rg32sint"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rg32uint"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rgba16float"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rgba16sint"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rgba16uint"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rgba32float"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rgba32sint"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rgba32uint"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rgba8sint"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rgba8snorm"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rgba8uint"_s), m_types.texelFormatType());
+    introduceValue(AST::Identifier::make("rgba8unorm"_s), m_types.texelFormatType());
 
     // This file contains the declarations generated from `TypeDeclarations.rb`
 #include "TypeDeclarations.h" // NOLINT
@@ -1111,6 +1136,68 @@ void TypeChecker::allocateSimpleConstructor(ASCIILiteral name, TargetConstructor
                 return m_types.bottomType();
 
             return (m_types.*constructor)(elementType, arguments...);
+        }
+    ));
+}
+
+void TypeChecker::allocateTextureStorageConstructor(ASCIILiteral name, Types::TextureStorage::Kind kind)
+{
+    introduceType(AST::Identifier::make(name), m_types.typeConstructorType(
+        name,
+        [this, kind](AST::ElaboratedTypeExpression& type) -> const Type* {
+            if (type.arguments().size() != 2) {
+                typeError(InferBottom::No, type.span(), "'", type.base(), "' requires 2 template argument");
+                return m_types.bottomType();
+            }
+
+            auto* formatType = infer(type.arguments()[0]);
+            if (!unify(formatType, m_types.texelFormatType())) {
+                typeError(InferBottom::No, type.span(), "cannot use '", *formatType, "' as texel format");
+                return m_types.bottomType();
+            }
+
+            auto* accessType = infer(type.arguments()[1]);
+            if (!unify(accessType, m_types.accessModeType())) {
+                typeError(InferBottom::No, type.span(), "cannot use '", *accessType, "' as access mode");
+                return m_types.bottomType();
+            }
+
+            ASSERT(is<AST::IdentifierExpression>(type.arguments()[0]));
+            ASSERT(is<AST::IdentifierExpression>(type.arguments()[1]));
+            auto& formatName = downcast<AST::IdentifierExpression>(type.arguments()[0]).identifier();
+            auto& accessName = downcast<AST::IdentifierExpression>(type.arguments()[1]).identifier();
+
+            static constexpr std::pair<ComparableASCIILiteral, TexelFormat> texelFormatMappings[] {
+                { "bgra8unorm", TexelFormat::BGRA8unorm },
+                { "r32float", TexelFormat::R32float },
+                { "r32sint", TexelFormat::R32sint },
+                { "r32uint", TexelFormat::R32uint },
+                { "rg32float", TexelFormat::RG32float },
+                { "rg32sint", TexelFormat::RG32sint },
+                { "rg32uint", TexelFormat::RG32uint },
+                { "rgba16float", TexelFormat::RGBA16float },
+                { "rgba16sint", TexelFormat::RGBA16sint },
+                { "rgba16uint", TexelFormat::RGBA16uint },
+                { "rgba32float", TexelFormat::RGBA32float },
+                { "rgba32sint", TexelFormat::RGBA32sint },
+                { "rgba32uint", TexelFormat::RGBA32uint },
+                { "rgba8sint", TexelFormat::RGBA8sint },
+                { "rgba8snorm", TexelFormat::RGBA8snorm },
+                { "rgba8uint", TexelFormat::RGBA8uint },
+                { "rgba8unorm", TexelFormat::RGBA8unorm },
+            };
+            static constexpr SortedArrayMap texelFormats { texelFormatMappings };
+
+            static constexpr std::pair<ComparableASCIILiteral, AccessMode> accessModeMappings[] {
+                { "read", AccessMode::Read },
+                { "read_write", AccessMode::ReadWrite },
+                { "write", AccessMode::Write },
+            };
+            static constexpr SortedArrayMap accessModes { accessModeMappings };
+
+            auto format = texelFormats.get(formatName.id());
+            auto access = accessModes.get(accessName.id());
+            return m_types.textureStorageType(kind, format, access);
         }
     ));
 }

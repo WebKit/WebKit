@@ -602,18 +602,6 @@ void printInternal(PrintStream& out, WGSL::Types::Texture::Kind textureKind)
     case WGSL::Types::Texture::Kind::TextureMultisampled2d:
         out.print("texture_multisampled_2d");
         return;
-    case WGSL::Types::Texture::Kind::TextureStorage1d:
-        out.print("texture_storage_1d");
-        return;
-    case WGSL::Types::Texture::Kind::TextureStorage2d:
-        out.print("texture_storage_2d");
-        return;
-    case WGSL::Types::Texture::Kind::TextureStorage2dArray:
-        out.print("texture_storage_2d_array");
-        return;
-    case WGSL::Types::Texture::Kind::TextureStorage3d:
-        out.print("texture_storage_3d");
-        return;
     }
 }
 

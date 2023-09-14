@@ -116,6 +116,11 @@ var te: texture_external;
 var tc: texture_cube<f32>;
 var tca: texture_cube_array<f32>;
 
+var ts1d: texture_storage_2d<rgba8unorm, read>;
+var ts2d: texture_storage_2d<rgba16uint, write>;
+var ts2da: texture_storage_2d<r32sint, read_write>;
+var ts3d: texture_storage_2d<rgba32float, write>;
+
 fn testTextureSample() {
   {
     _ = textureSample(t1d, s, 1);

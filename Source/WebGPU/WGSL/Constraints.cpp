@@ -58,6 +58,8 @@ bool satisfies(const Type* type, Constraint constraint)
     case Types::Primitive::Void:
     case Types::Primitive::Sampler:
     case Types::Primitive::TextureExternal:
+    case Types::Primitive::AccessMode:
+    case Types::Primitive::TexelFormat:
         return false;
     }
 }
@@ -126,6 +128,8 @@ const Type* satisfyOrPromote(const Type* type, Constraint constraint, const Type
     case Types::Primitive::Void:
     case Types::Primitive::Sampler:
     case Types::Primitive::TextureExternal:
+    case Types::Primitive::AccessMode:
+    case Types::Primitive::TexelFormat:
         return nullptr;
     }
 }

@@ -392,6 +392,8 @@ bool FunctionDefinitionWriter::emitPackedVector(const Types::Vector& vector)
     case Types::Primitive::Void:
     case Types::Primitive::Sampler:
     case Types::Primitive::TextureExternal:
+    case Types::Primitive::AccessMode:
+    case Types::Primitive::TexelFormat:
         RELEASE_ASSERT_NOT_REACHED();
     }
     return true;
@@ -576,6 +578,9 @@ void FunctionDefinitionWriter::visit(const Type* type)
             case Types::Primitive::TextureExternal:
                 m_stringBuilder.append("texture_external");
                 break;
+            case Types::Primitive::AccessMode:
+            case Types::Primitive::TexelFormat:
+                RELEASE_ASSERT_NOT_REACHED();
             }
         },
         [&](const Vector& vector) {
@@ -600,7 +605,6 @@ void FunctionDefinitionWriter::visit(const Type* type)
         },
         [&](const Texture& texture) {
             const char* type;
-            const char* mode = "sample";
             switch (texture.kind) {
             case Types::Texture::Kind::Texture1d:
                 type = "texture1d";
@@ -623,27 +627,66 @@ void FunctionDefinitionWriter::visit(const Type* type)
             case Types::Texture::Kind::TextureMultisampled2d:
                 type = "texture2d_ms";
                 break;
-
-            case Types::Texture::Kind::TextureStorage1d:
-                type = "texture1d";
-                mode = "write";
-                break;
-            case Types::Texture::Kind::TextureStorage2d:
-                type = "texture2d";
-                mode = "write";
-                break;
-            case Types::Texture::Kind::TextureStorage2dArray:
-                type = "texture2d_aray";
-                mode = "write";
-                break;
-            case Types::Texture::Kind::TextureStorage3d:
-                type = "texture3d";
-                mode = "write";
-                break;
             }
             m_stringBuilder.append(type, "<");
             visit(texture.element);
-            m_stringBuilder.append(", access::", mode, ">");
+            m_stringBuilder.append(", access::sample>");
+        },
+        [&](const TextureStorage& texture) {
+            const char* base;
+            const char* type;
+            const char* mode;
+            switch (texture.kind) {
+            case Types::TextureStorage::Kind::TextureStorage1d:
+                base = "texture1d";
+                break;
+            case Types::TextureStorage::Kind::TextureStorage2d:
+                base = "texture2d";
+                break;
+            case Types::TextureStorage::Kind::TextureStorage2dArray:
+                base = "texture2d_aray";
+                break;
+            case Types::TextureStorage::Kind::TextureStorage3d:
+                base = "texture3d";
+                break;
+            }
+            switch (texture.format) {
+            case TexelFormat::BGRA8unorm:
+            case TexelFormat::RGBA8unorm:
+            case TexelFormat::RGBA8snorm:
+            case TexelFormat::RGBA16float:
+            case TexelFormat::R32float:
+            case TexelFormat::RG32float:
+            case TexelFormat::RGBA32float:
+                type = "float";
+                break;
+            case TexelFormat::RGBA8uint:
+            case TexelFormat::RGBA16uint:
+            case TexelFormat::R32uint:
+            case TexelFormat::RG32uint:
+            case TexelFormat::RGBA32uint:
+                type = "uint";
+                break;
+            case TexelFormat::RGBA8sint:
+            case TexelFormat::RGBA16sint:
+            case TexelFormat::R32sint:
+            case TexelFormat::RG32sint:
+            case TexelFormat::RGBA32sint:
+                type = "int";
+                break;
+            }
+            switch (texture.access) {
+            case AccessMode::Read:
+                mode = "read";
+                break;
+            case AccessMode::Write:
+                mode = "write";
+                break;
+            case AccessMode::ReadWrite:
+                mode = "read_write";
+                break;
+            }
+            m_stringBuilder.append(base, "<", type, ", access::", mode, ">");
         },
         [&](const Reference& reference) {
             const char* addressSpace = nullptr;
