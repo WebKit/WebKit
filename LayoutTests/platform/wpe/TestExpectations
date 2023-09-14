@@ -1668,3 +1668,7 @@ webkit.org/b/261024 svg/custom/pattern-userSpaceOnUse-userToBaseTransform.xhtml 
 webkit.org/b/261024 svg/hixie/mixed/010.xml [ Failure Missing Pass ]
 webkit.org/b/261024 webgl/1.0.x/conformance/reading/read-pixels-test.html [ Pass Timeout ]
 webkit.org/b/261024 webrtc/vp9.html [ Failure Pass Timeout ]
+
+imported/w3c/web-platform-tests/css/filter-effects/background-image-blur-repaint.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/effect-reference-rename-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/svg-mutation-function-to-url.html [ ImageOnlyFailure ]

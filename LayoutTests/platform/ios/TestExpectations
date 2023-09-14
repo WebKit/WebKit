@@ -4598,3 +4598,9 @@ webkit.org/b/257904 http/tests/site-isolation/basic-iframe.html [ Skip ]
 # Initial css/compositing test import
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-both-parent-and-blended-with-3D-transform.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-with-text.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-clip-rect.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/effect-reference-feimage-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/effect-reference-feimage-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/svg-image-root-filter.html [ ImageOnlyFailure ]

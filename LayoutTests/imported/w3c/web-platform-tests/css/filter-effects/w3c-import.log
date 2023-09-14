@@ -9,15 +9,13 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-None
+backdrop-filter
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/META.yml
-/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-basic-background-color-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-basic-background-color-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-basic-background-color.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-basic-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-basic-opacity-2-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-basic-opacity-2-ref.html
@@ -47,9 +45,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-edge-pixels-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-edge-pixels-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-edge-pixels.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-feimage-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-fixed-clip-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-fixed-clip-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-fixed-clip.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-invalid-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-isolation-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-isolation-fixed-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-isolation-fixed.html
@@ -70,11 +71,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-opacity-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-opacity-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-opacity.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-will-change-opacity-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-will-change-opacity.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-reference-filter-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-reference-filter.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-root-element-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-root-element-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-root-element.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-svg-background-image-blur-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-svg-background-image-blur.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-svg-foreignObject-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-svg-foreignObject.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-update-expected.html
@@ -207,6 +212,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/effect-reference-feimage-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/effect-reference-feimage-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/effect-reference-feimage-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/effect-reference-feimage-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/effect-reference-feimage-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/effect-reference-lighting-no-light.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/effect-reference-lighting-no-light.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/effect-reference-local-url-with-base-001-expected.html
@@ -254,6 +261,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-cb-dynamic-1a.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-cb-dynamic-1b-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-cb-dynamic-1b.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-chained-url-url-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-chained-url-url-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-contrast-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-contrast-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-contrast-001.html
@@ -284,18 +293,25 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-hue_rotate-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-hue_rotate-001-test-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-hue_rotate-001-test.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-invalid-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-invalid-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-invert-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-invert-001-test-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-invert-001-test.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-invert-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-invert-002-test-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-invert-002-test.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-region-calc-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-region-calc-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-region-negative-positioned-child-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-region-negative-positioned-child-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-region-transformed-child-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-region-transformed-child-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-region-transformed-composited-child-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-region-transformed-composited-child-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-region-units-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-region-units-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-saturate-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-saturate-001-test-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-saturate-001-test.html
@@ -308,6 +324,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-subregion-01-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-subregion-01-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-subregion-01.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-svg-background-image-blur-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-svg-background-image-blur.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-turbulence-invalid-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-turbulence-invalid-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-url-to-non-existent-filter-001-expected.html
@@ -328,6 +346,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filters-drop-shadow-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filters-drop-shadow-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filters-drop-shadow-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filters-drop-shadow-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filters-drop-shadow-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filters-grayscale-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filters-grayscale-001-test-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filters-grayscale-001-test.html
@@ -344,6 +364,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filters-test-brightness-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filters-test-brightness-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filters-test-brightness-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/fixed-pos-filter-clip-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/fixed-pos-filter-clip-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/fixed-pos-filter-clip-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/fixed-pos-filter-clip-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/fixed-pos-filter-clip-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/idlharness.any.js
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/morphology-mirrored-expected.html
@@ -352,10 +377,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/reference-filter-update-on-attribute-change-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/remove-filter-repaint-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/remove-filter-repaint.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/repaint-added-backdrop-filter-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/repaint-added-backdrop-filter.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/root-element-with-opacity-filter-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/root-element-with-opacity-filter-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-empty-container-with-filter-content-added-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-empty-container-with-filter-content-added.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-external-filter-resource-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-external-filter-resource.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-feflood-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-feflood-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-feimage-001-expected.html
@@ -366,12 +395,17 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-filter-vs-clip-path.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-filter-vs-mask-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-filter-vs-mask.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-image-root-filter-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-image-root-filter-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-image-root-filter.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-multiple-filter-functions-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-multiple-filter-functions.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-mutation-drop-shadow-color-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-mutation-drop-shadow-color.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-mutation-drop-shadow-offset-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-mutation-drop-shadow-offset.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-mutation-filter-used-by-mask-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-mutation-filter-used-by-mask.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-mutation-function-to-url-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-mutation-function-to-url.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-mutation-group-position-changed-expected.html
@@ -473,3 +507,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/tainting-fetile-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/tainting-fetile-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/tainting-fetile-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/will-change-blur-filter-under-clip-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/will-change-blur-filter-under-clip.html

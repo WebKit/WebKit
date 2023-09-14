@@ -22,7 +22,7 @@ div {
     background: #ff7fff;
 }
 #filterbox {
-    backdrop-filter: invert(0);
+    -webkit-backdrop-filter: invert(0);
 }
 </style>
 
@@ -31,7 +31,7 @@ window.onload = function(e) {
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       let filt = document.getElementById("filterbox");
-      filt.style.backdropFilter = "invert(1)";
+      filt.style.webkitBackdropFilter = "invert(1)";
 	  document.documentElement.classList.remove('reftest-wait');
     });
   });
