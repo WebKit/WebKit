@@ -208,7 +208,7 @@ void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identif
             signalSocketIsClosed(identifier);
             return;
         }
-        callOnRTCNetworkThread([this, identifier, localAddress = RTCNetwork::isolatedCopy(localAddress.value), remoteAddress = RTCNetwork::isolatedCopy(remoteAddress.value), proxyInfo = proxyInfoFromSession(remoteAddress, *session), userAgent = WTFMove(userAgent).isolatedCopy(), options]() mutable {
+        callOnRTCNetworkThread([this, protectedThis = Ref { *this }, identifier, localAddress = RTCNetwork::isolatedCopy(localAddress.value), remoteAddress = RTCNetwork::isolatedCopy(remoteAddress.value), proxyInfo = proxyInfoFromSession(remoteAddress, *session), userAgent = WTFMove(userAgent).isolatedCopy(), options]() mutable {
 
             rtc::PacketSocketTcpOptions tcpOptions;
             tcpOptions.opts = options;
@@ -247,7 +247,7 @@ void NetworkRTCProvider::closeSocket(LibWebRTCSocketIdentifier identifier)
 
 void NetworkRTCProvider::doSocketTaskOnRTCNetworkThread(LibWebRTCSocketIdentifier identifier, Function<void(Socket&)>&& callback)
 {
-    callOnRTCNetworkThread([this, identifier, callback = WTFMove(callback)]() mutable {
+    callOnRTCNetworkThread([this, protectedThis = Ref { *this }, identifier, callback = WTFMove(callback)]() mutable {
         auto iterator = m_sockets.find(identifier);
         if (iterator == m_sockets.end())
             return;
