@@ -3485,17 +3485,6 @@
    },
    {
       "emails" : [
-         "j_pascoe@apple.com"
-      ],
-      "github" : "pascoej",
-      "name" : "J Pascoe",
-      "nicks" : [
-         "j_pascoe"
-      ],
-      "status" : "reviewer"
-   },
-   {
-      "emails" : [
          "joncarlo@apple.com",
          "joncarloalvarado@gmail.com"
       ],
@@ -5920,6 +5909,17 @@
       "nicks" : [
          "pamg"
       ]
+   },
+   {
+      "emails" : [
+         "pascoe@apple.com"
+      ],
+      "github" : "pascoej",
+      "name" : "Pascoe",
+      "nicks" : [
+         "pascoe"
+      ],
+      "status" : "reviewer"
    },
    {
       "emails" : [
