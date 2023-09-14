@@ -295,13 +295,19 @@ ALWAYS_INLINE bool JIT::isOperandConstantChar(VirtualRegister src)
 }
 
 template<typename Bytecode>
-inline void JIT::emitValueProfilingSite(const Bytecode& bytecode, JSValueRegs value)
+inline void JIT::emitValueProfilingSite(const Bytecode& bytecode, BytecodeIndex bytecodeIndex, JSValueRegs value)
 {
     if (!shouldEmitProfiling())
         return;
 
-    ptrdiff_t offset = -static_cast<ptrdiff_t>(valueProfileOffsetFor<Bytecode>(bytecode, m_bytecodeIndex.checkpoint())) * sizeof(ValueProfile) + ValueProfile::offsetOfFirstBucket() - sizeof(UnlinkedMetadataTable::LinkingData);
+    ptrdiff_t offset = -static_cast<ptrdiff_t>(valueProfileOffsetFor<Bytecode>(bytecode, bytecodeIndex.checkpoint())) * sizeof(ValueProfile) + ValueProfile::offsetOfFirstBucket() - sizeof(UnlinkedMetadataTable::LinkingData);
     storeValue(value, Address(s_metadataGPR, offset));
+}
+
+template<typename Bytecode>
+inline void JIT::emitValueProfilingSite(const Bytecode& bytecode, JSValueRegs value)
+{
+    emitValueProfilingSite(bytecode, m_bytecodeIndex, value);
 }
 
 template <typename Bytecode>

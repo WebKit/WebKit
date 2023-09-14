@@ -314,6 +314,7 @@ namespace JSC {
         void emitWriteBarrier(GPRReg owner);
 
         template<typename Bytecode> void emitValueProfilingSite(const Bytecode&, JSValueRegs);
+        template<typename Bytecode> void emitValueProfilingSite(const Bytecode&, BytecodeIndex, JSValueRegs);
 
         template<typename Op>
         static inline constexpr bool isProfiledOp = std::is_same_v<decltype(Op::Metadata::m_profile), ValueProfile>;
@@ -683,6 +684,7 @@ namespace JSC {
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_private_name_callSlowOperationThenCheckExceptionGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_from_scopeGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_resolve_scopeGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_instanceof_callSlowOperationThenCheckExceptionGenerator(VM&);
         template <ResolveType>
         static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpGetFromScopeThunk(VM&);
         template <ResolveType>

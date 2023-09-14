@@ -479,6 +479,7 @@ void JIT::emit_op_iterator_open(const JSInstruction* instruction)
     addSlowCase();
     m_getByIds.append(gen);
 
+    setFastPathResumePoint();
     emitValueProfilingSite(bytecode, resultJSR);
     emitPutVirtualRegister(bytecode.m_next, resultJSR);
 
@@ -505,28 +506,16 @@ void JIT::emitSlow_op_iterator_open(const JSInstruction* instruction, Vector<Slo
     notObject.append(branchIfNotCell(baseJSR));
     notObject.append(branchIfNotObject(baseJSR.payloadGPR()));
 
-    VirtualRegister nextVReg = bytecode.m_next;
-
     JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
-
     Label coldPathBegin = label();
-
-    using SlowOperation = decltype(operationGetByIdOptimize);
-    loadGlobalObject(globalObjectGPR);
-    callOperationWithProfile<SlowOperation>(
-        bytecode,
-        Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()),
-        nextVReg,
-        baseJSR, globalObjectGPR, stubInfoGPR);
+    emitNakedNearCall(vm().getCTIStub(slow_op_get_by_id_callSlowOperationThenCheckExceptionGenerator).retaggedCode<NoPtrTag>());
+    static_assert(BaselineJITRegisters::GetById::resultJSR == returnValueJSR);
     gen.reportSlowPathCall(coldPathBegin, Call());
-
-    auto done = jump();
+    jump().linkTo(fastPathResumePoint(), this);
 
     notObject.link(this);
     loadGlobalObject(argumentGPR0);
     callOperation(operationThrowIteratorResultIsNotObject, argumentGPR0);
-
-    done.link(this);
 }
 
 void JIT::emit_op_iterator_next(const JSInstruction* instruction)
@@ -568,11 +557,11 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
     moveValueRegs(returnValueJSR, baseJSR);
     moveValueRegs(returnValueJSR, iterCallResultJSR);
 
+    addSlowCase(branchIfNotCell(baseJSR));
+    addSlowCase(branchIfNotObject(baseJSR.payloadGPR()));
     {
         auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
         loadConstant(stubInfoIndex, stubInfoGPR);
-
-        emitJumpSlowCaseIfNotJSCell(baseJSR);
 
         auto preservedRegs = RegisterSetBuilder::stubUnavailableRegisters();
         preservedRegs.add(iterCallResultJSR, IgnoreVectors);
@@ -585,9 +574,10 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
         addSlowCase();
         m_getByIds.append(gen);
 
-        emitValueProfilingSite(bytecode, resultJSR);
-        emitPutVirtualRegister(bytecode.m_done, resultJSR);
+        BytecodeIndex bytecodeIndex = m_bytecodeIndex;
         advanceToNextCheckpoint();
+        emitValueProfilingSite(bytecode, bytecodeIndex, resultJSR);
+        emitPutVirtualRegister(bytecode.m_done, resultJSR);
     }
 
     {
@@ -613,6 +603,7 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
         addSlowCase();
         m_getByIds.append(gen);
 
+        setFastPathResumePoint();
         emitValueProfilingSite(bytecode, resultJSR);
         emitPutVirtualRegister(bytecode.m_value, resultJSR);
 
@@ -640,51 +631,27 @@ void JIT::emitSlow_op_iterator_next(const JSInstruction* instruction, Vector<Slo
 
     constexpr JSValueRegs iterCallResultJSR = dontClobberJSR;
 
+    linkAllSlowCases(iter);
+    loadGlobalObject(argumentGPR0);
+    callOperation(operationThrowIteratorResultIsNotObject, argumentGPR0);
+
     {
-        VirtualRegister doneVReg = bytecode.m_done;
-
-        linkAllSlowCases(iter);
-        JumpList notObject;
-        notObject.append(branchIfNotCell(baseJSR));
-
         JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
-        
         Label coldPathBegin = label();
-
-        notObject.append(branchIfNotObject(baseJSR.payloadGPR()));
-
-        using SlowOperation = decltype(operationGetByIdOptimize);
-        loadGlobalObject(globalObjectGPR);
-        callOperationWithProfile<SlowOperation>(
-            bytecode,
-            Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()),
-            doneVReg,
-            baseJSR, globalObjectGPR, stubInfoGPR);
+        emitNakedNearCall(vm().getCTIStub(slow_op_get_by_id_callSlowOperationThenCheckExceptionGenerator).retaggedCode<NoPtrTag>());
+        static_assert(BaselineJITRegisters::GetById::resultJSR == returnValueJSR);
         gen.reportSlowPathCall(coldPathBegin, Call());
-
+        static_assert(noOverlap(resultJSR, iterCallResultJSR));
         emitGetVirtualRegister(bytecode.m_value, iterCallResultJSR);
         emitJumpSlowToHotForCheckpoint(jump());
-
-        notObject.link(this);
-        loadGlobalObject(argumentGPR0);
-        callOperation(operationThrowIteratorResultIsNotObject, argumentGPR0);
     }
 
     {
         linkAllSlowCases(iter);
-        VirtualRegister valueVReg = bytecode.m_value;
-
         JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
-
         Label coldPathBegin = label();
-
-        using SlowOperation = decltype(operationGetByIdOptimize);
-        loadGlobalObject(globalObjectGPR);
-        callOperationWithProfile<SlowOperation>(
-            bytecode,
-            Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()),
-            valueVReg,
-            baseJSR, globalObjectGPR, stubInfoGPR);
+        emitNakedNearCall(vm().getCTIStub(slow_op_get_by_id_callSlowOperationThenCheckExceptionGenerator).retaggedCode<NoPtrTag>());
+        static_assert(BaselineJITRegisters::GetById::resultJSR == returnValueJSR);
         gen.reportSlowPathCall(coldPathBegin, Call());
     }
 }
