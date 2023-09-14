@@ -2062,7 +2062,7 @@ class DetermineLabelOwner(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
             yield self._addToLog('stdio', response['errors'][0]['message'])
             return defer.returnValue(FAILURE)
         if response:
-            yield self._addToLog('stdio', '')
+            yield self._addToLog('stdio', 'Retrieved labels.\n')
             label_events = response['data']['repository']['pullRequest']['timelineItems']['nodes']
         else:
             yield self._addToLog('stdio', 'Failed to retrieve label author.\n')
@@ -2079,9 +2079,12 @@ class DetermineLabelOwner(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
                     continue
                 else:
                     break
-
-        self.setProperty('owners', [owner])
-        defer.returnValue(SUCCESS if owner else FAILURE)
+        if owner:
+            self.setProperty('owners', [owner])
+            defer.returnValue(SUCCESS)
+        else:
+            yield self._addToLog('stdio', f'Did not change owner because owner not found from labels.\n')
+            defer.returnValue(FAILURE)
 
     def getResultSummary(self):
         if self.results == SUCCESS:
