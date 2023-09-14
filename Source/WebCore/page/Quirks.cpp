@@ -1575,7 +1575,7 @@ bool Quirks::shouldDisableDataURLPaddingValidation() const
         return false;
 
     if (!m_shouldDisableDataURLPaddingValidation)
-        m_shouldDisableDataURLPaddingValidation = m_document->url().host().endsWith("officeapps.live.com"_s);
+        m_shouldDisableDataURLPaddingValidation = m_document->url().host().endsWith("officeapps.live.com"_s) || m_document->url().host().endsWith("onedrive.live.com"_s);
     return *m_shouldDisableDataURLPaddingValidation;
 }
 
