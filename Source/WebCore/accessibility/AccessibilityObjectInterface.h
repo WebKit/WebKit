@@ -771,6 +771,8 @@ enum class AccessibilityVisiblePositionForBounds {
 enum class AccessibilityMathScriptObjectType { Subscript, Superscript };
 enum class AccessibilityMathMultiscriptObjectType { PreSubscript, PreSuperscript, PostSubscript, PostSuperscript };
 
+enum class CompositionState : uint8_t { Started, InProgress, Ended };
+
 // Relationships between AX objects.
 enum class AXRelationType : uint8_t {
     None,
