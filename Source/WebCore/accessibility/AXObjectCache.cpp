@@ -1729,12 +1729,17 @@ void AXObjectCache::onValidityChange(Element& element)
     postNotification(get(&element), nullptr, AXInvalidStatusChanged);
 }
 
-void AXObjectCache::onTextCompositionChange(Node& node, CompositionState compositionState, bool valueChanged)
+void AXObjectCache::onTextCompositionChange(Node& node, CompositionState compositionState, bool valueChanged, const String& text, size_t position, bool handlingAcceptedCandidate)
 {
 #if HAVE(INLINE_PREDICTIONS)
     auto* object = getOrCreate(&node);
     if (!object)
         return;
+
+#if PLATFORM(IOS_FAMILY)
+    if (valueChanged)
+        object->setLastPresentedTextPrediction(node, compositionState, text, position, handlingAcceptedCandidate);
+#endif
 
     if (auto* observableObject = object->observableObject())
         object = observableObject;
@@ -1756,6 +1761,12 @@ void AXObjectCache::onTextCompositionChange(Node& node, CompositionState composi
     UNUSED_PARAM(compositionState);
     UNUSED_PARAM(valueChanged);
 #endif // HAVE(INLINE_PREDICTIONS)
+
+#if !PLATFORM(IOS_FAMILY) || !HAVE(INLINE_PREDICTIONS)
+    UNUSED_PARAM(text);
+    UNUSED_PARAM(position);
+    UNUSED_PARAM(handlingAcceptedCandidate);
+#endif
 }
 
 #ifndef NDEBUG

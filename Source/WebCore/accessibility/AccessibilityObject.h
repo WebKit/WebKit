@@ -764,6 +764,23 @@ public:
 #if PLATFORM(COCOA) && ENABLE(MODEL_ELEMENT)
     Vector<RetainPtr<id>> modelElementChildren() override;
 #endif
+
+#if PLATFORM(IOS_FAMILY)
+    struct InlineTextPrediction {
+        String text;
+        size_t location { 0 };
+        void reset()
+        {
+            text = ""_s;
+            location = 0;
+        }
+    };
+
+    InlineTextPrediction& lastPresentedTextPrediction() { return m_lastPresentedTextPrediction; }
+    InlineTextPrediction& lastPresentedTextPredictionComplete() { return m_lastPresentedTextPredictionComplete; }
+    void setLastPresentedTextPrediction(Node&, CompositionState, const String&, size_t, bool);
+#endif // PLATFORM(IOS_FAMILY)
+
 protected:
     AccessibilityObject() = default;
 
@@ -828,6 +845,10 @@ private:
     mutable std::optional<SimpleRange> m_cachedVisibleCharacterRange;
     // This is std::nullopt if we haven't cached any input yet.
     mutable std::optional<std::tuple<std::optional<SimpleRange>, FloatRect, IntRect>> m_cachedVisibleCharacterRangeInputs;
+#if PLATFORM(IOS_FAMILY)
+    InlineTextPrediction m_lastPresentedTextPrediction;
+    InlineTextPrediction m_lastPresentedTextPredictionComplete;
+#endif
 protected: // FIXME: Make the data members private.
     // FIXME: This can be replaced by AXAncestorFlags.
     AccessibilityIsIgnoredFromParentData m_isIgnoredFromParentData;

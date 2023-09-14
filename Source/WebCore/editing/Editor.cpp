@@ -2188,7 +2188,7 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
     m_customCompositionAnnotations.clear();
 
     if (auto* cache = m_document.existingAXObjectCache(); cache && previousCompositionNode)
-        cache->onTextCompositionChange(*previousCompositionNode, AXObjectCache::CompositionState::Ended, false);
+        cache->onTextCompositionChange(*previousCompositionNode, CompositionState::Ended, false, text, m_compositionStart, m_isHandlingAcceptedCandidate);
 
     if (m_document.selection().isNone())
         return;
@@ -2335,12 +2335,12 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
 
     if (auto* cache = m_document.existingAXObjectCache()) {
         if (previousCompositionNode && previousCompositionNode != m_compositionNode) {
-            auto state = m_compositionNode ? AXObjectCache::CompositionState::InProgress : AXObjectCache::CompositionState::Ended;
-            cache->onTextCompositionChange(*previousCompositionNode, state, true);
+            auto state = m_compositionNode ? CompositionState::InProgress : CompositionState::Ended;
+            cache->onTextCompositionChange(*previousCompositionNode, state, true, text, m_compositionStart, m_isHandlingAcceptedCandidate);
         }
         if (m_compositionNode) {
-            auto state = previousCompositionNode ? AXObjectCache::CompositionState::InProgress : AXObjectCache::CompositionState::Started;
-            cache->onTextCompositionChange(*m_compositionNode, state, true);
+            auto state = previousCompositionNode ? CompositionState::InProgress : CompositionState::Started;
+            cache->onTextCompositionChange(*m_compositionNode, state, true, text, m_compositionStart, m_isHandlingAcceptedCandidate);
         }
     }
 
