@@ -671,7 +671,7 @@ JSC_DEFINE_JIT_OPERATION(operationInByIdOptimize, EncodedJSValue, (EncodedJSValu
     return JSValue::encode(jsBoolean(found));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationInByValOptimize, EncodedJSValue, (EncodedJSValue encodedBase, EncodedJSValue encodedKey, JSGlobalObject* globalObject, StructureStubInfo* stubInfo, ArrayProfile* arrayProfile))
+JSC_DEFINE_JIT_OPERATION(operationInByValOptimize, EncodedJSValue, (EncodedJSValue encodedBase, EncodedJSValue encodedKey, JSGlobalObject* globalObject, StructureStubInfo* stubInfo, ArrayProfile* profile))
 {
     SuperSamplerScope superSamplerScope(false);
 
@@ -681,21 +681,30 @@ JSC_DEFINE_JIT_OPERATION(operationInByValOptimize, EncodedJSValue, (EncodedJSVal
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue baseValue = JSValue::decode(encodedBase);
+    JSValue key = JSValue::decode(encodedKey);
+
     if (!baseValue.isObject()) {
         throwException(globalObject, scope, createInvalidInParameterError(globalObject, baseValue));
-        return encodedJSValue();
+        return { };
     }
-    JSObject* baseObject = asObject(baseValue);
-    if (arrayProfile)
-        arrayProfile->observeStructure(baseObject->structure());
 
-    JSValue key = JSValue::decode(encodedKey);
+    JSObject* baseObject = asObject(baseValue);
+
     uint32_t i;
     if (key.getUInt32(i)) {
-        // FIXME: InByVal should have inline caching for integer indices too, as GetByVal does.
-        // https://bugs.webkit.org/show_bug.cgi?id=226619
-        if (arrayProfile)
-            arrayProfile->observeIndexedRead(baseObject, i);
+        if (profile)
+            profile->observeIndexedRead(baseObject, i);
+
+        CodeBlock* codeBlock = callFrame->codeBlock();
+        Structure* structure = baseValue.asCell()->structure();
+        if (stubInfo->considerRepatchingCacheGeneric(vm, codeBlock, structure)) {
+            if (profile) {
+                ConcurrentJSLocker locker(codeBlock->m_lock);
+                profile->computeUpdatedPrediction(locker, codeBlock, structure);
+            }
+            repatchArrayInByVal(globalObject, codeBlock, baseValue, key, *stubInfo, InByKind::ByVal);
+        }
+
         RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(baseObject->hasProperty(globalObject, i))));
     }
 

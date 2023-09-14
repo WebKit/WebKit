@@ -5666,11 +5666,77 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case HasIndexedProperty: {
-        SpeculateStrictInt32Operand index(this, m_graph.varArgChild(node, 1));
-        GPRTemporary result(this, Reuse, index);
+        ArrayMode mode = node->arrayMode();
+        switch (mode.type()) {
+        case Array::Int32:
+        case Array::Contiguous:
+        case Array::Double:
+        case Array::ArrayStorage: {
+            SpeculateStrictInt32Operand index(this, m_graph.varArgChild(node, 1));
+            GPRTemporary result(this, Reuse, index);
 
-        compileHasIndexedProperty(node, operationHasIndexedProperty, scopedLambda<std::tuple<GPRReg, GPRReg>()>([&] { return std::make_pair(index.gpr(), result.gpr()); }));
-        unblessedBooleanResult(result.gpr(), node);
+            compileHasIndexedProperty(node, operationHasIndexedProperty, scopedLambda<std::tuple<GPRReg, GPRReg>()>([&] { return std::make_pair(index.gpr(), result.gpr()); }));
+            unblessedBooleanResult(result.gpr(), node);
+            break;
+        }
+        default: {
+            SpeculateCellOperand base(this, m_graph.varArgChild(node, 0));
+            JSValueOperand key(this, m_graph.varArgChild(node, 1), ManualOperandSpeculation);
+            JSValueRegsTemporary result(this, Reuse, key);
+            std::optional<GPRTemporary> stubInfoTemp;
+
+            GPRReg stubInfoGPR = InvalidGPRReg;
+            if (m_graph.m_plan.isUnlinked()) {
+                stubInfoTemp.emplace(this);
+                stubInfoGPR = stubInfoTemp->gpr();
+            }
+            GPRReg baseGPR = base.gpr();
+            JSValueRegs keyRegs = key.jsValueRegs();
+            JSValueRegs resultRegs = result.regs();
+
+            if (m_graph.varArgChild(node, 0).useKind() == ObjectUse)
+                speculateObject(m_graph.varArgChild(node, 0), baseGPR);
+            speculate(node, m_graph.varArgChild(node, 1));
+
+            JumpList slowCases;
+
+            CodeOrigin codeOrigin = node->origin.semantic;
+            CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
+            RegisterSetBuilder usedRegisters = this->usedRegisters();
+            auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
+            JITInByValGenerator gen(
+                codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, AccessType::InByVal, usedRegisters,
+                JSValueRegs::payloadOnly(baseGPR), keyRegs, resultRegs, InvalidGPRReg, stubInfoGPR);
+
+            std::visit([&](auto* stubInfo) {
+                stubInfo->propertyIsInt32 = true;
+                stubInfo->isEnumerator = false;
+            }, stubInfo);
+
+            std::unique_ptr<SlowPathGenerator> slowPath;
+            if (m_graph.m_plan.isUnlinked()) {
+                gen.generateDFGDataICFastPath(*this, stubInfoConstant.index(), stubInfoGPR);
+                ASSERT(!gen.stubInfo());
+                slowPath = slowPathICCall(
+                    slowCases, this, stubInfoConstant, stubInfoGPR, Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), operationInByValOptimize,
+                    NeedToSpill, ExceptionCheckRequirement::CheckNeeded,
+                    resultRegs, CellValue(baseGPR), keyRegs, LinkableConstant::globalObject(*this, node), stubInfoGPR, nullptr);
+            } else {
+                gen.generateFastPath(*this);
+                slowCases.append(gen.slowPathJump());
+                slowPath = slowPathCall(
+                    slowCases, this, operationInByValOptimize,
+                    NeedToSpill, ExceptionCheckRequirement::CheckNeeded,
+                    resultRegs, CellValue(baseGPR), keyRegs, LinkableConstant::globalObject(*this, node), TrustedImmPtr(gen.stubInfo()), nullptr);
+            }
+
+            addInByVal(gen, slowPath.get());
+            addSlowPathGenerator(WTFMove(slowPath));
+
+            blessedBooleanResult(resultRegs.payloadGPR(), node);
+            break;
+        }
+        }
         break;
     }
 

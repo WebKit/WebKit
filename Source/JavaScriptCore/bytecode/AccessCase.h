@@ -175,6 +175,32 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(IndexedResizableTypedArrayUint32Store) \
     macro(IndexedResizableTypedArrayFloat32Store) \
     macro(IndexedResizableTypedArrayFloat64Store) \
+    macro(IndexedInt32InHit) \
+    macro(IndexedDoubleInHit) \
+    macro(IndexedContiguousInHit) \
+    macro(IndexedArrayStorageInHit) \
+    macro(IndexedScopedArgumentsInHit) \
+    macro(IndexedDirectArgumentsInHit) \
+    macro(IndexedTypedArrayInt8InHit) \
+    macro(IndexedTypedArrayUint8InHit) \
+    macro(IndexedTypedArrayUint8ClampedInHit) \
+    macro(IndexedTypedArrayInt16InHit) \
+    macro(IndexedTypedArrayUint16InHit) \
+    macro(IndexedTypedArrayInt32InHit) \
+    macro(IndexedTypedArrayUint32InHit) \
+    macro(IndexedTypedArrayFloat32InHit) \
+    macro(IndexedTypedArrayFloat64InHit) \
+    macro(IndexedResizableTypedArrayInt8InHit) \
+    macro(IndexedResizableTypedArrayUint8InHit) \
+    macro(IndexedResizableTypedArrayUint8ClampedInHit) \
+    macro(IndexedResizableTypedArrayInt16InHit) \
+    macro(IndexedResizableTypedArrayUint16InHit) \
+    macro(IndexedResizableTypedArrayInt32InHit) \
+    macro(IndexedResizableTypedArrayUint32InHit) \
+    macro(IndexedResizableTypedArrayFloat32InHit) \
+    macro(IndexedResizableTypedArrayFloat64InHit) \
+    macro(IndexedStringInHit) \
+    macro(IndexedNoIndexingInMiss) \
 
 
 class AccessCase : public ThreadSafeRefCounted<AccessCase> {

@@ -84,48 +84,66 @@ static TypedArrayType toTypedArrayType(AccessCase::AccessType accessType)
     switch (accessType) {
     case AccessCase::IndexedTypedArrayInt8Load:
     case AccessCase::IndexedTypedArrayInt8Store:
+    case AccessCase::IndexedTypedArrayInt8InHit:
     case AccessCase::IndexedResizableTypedArrayInt8Load:
     case AccessCase::IndexedResizableTypedArrayInt8Store:
+    case AccessCase::IndexedResizableTypedArrayInt8InHit:
         return TypeInt8;
     case AccessCase::IndexedTypedArrayUint8Load:
     case AccessCase::IndexedTypedArrayUint8Store:
+    case AccessCase::IndexedTypedArrayUint8InHit:
     case AccessCase::IndexedResizableTypedArrayUint8Load:
     case AccessCase::IndexedResizableTypedArrayUint8Store:
+    case AccessCase::IndexedResizableTypedArrayUint8InHit:
         return TypeUint8;
     case AccessCase::IndexedTypedArrayUint8ClampedLoad:
     case AccessCase::IndexedTypedArrayUint8ClampedStore:
+    case AccessCase::IndexedTypedArrayUint8ClampedInHit:
     case AccessCase::IndexedResizableTypedArrayUint8ClampedLoad:
     case AccessCase::IndexedResizableTypedArrayUint8ClampedStore:
+    case AccessCase::IndexedResizableTypedArrayUint8ClampedInHit:
         return TypeUint8Clamped;
     case AccessCase::IndexedTypedArrayInt16Load:
     case AccessCase::IndexedTypedArrayInt16Store:
+    case AccessCase::IndexedTypedArrayInt16InHit:
     case AccessCase::IndexedResizableTypedArrayInt16Load:
     case AccessCase::IndexedResizableTypedArrayInt16Store:
+    case AccessCase::IndexedResizableTypedArrayInt16InHit:
         return TypeInt16;
     case AccessCase::IndexedTypedArrayUint16Load:
     case AccessCase::IndexedTypedArrayUint16Store:
+    case AccessCase::IndexedTypedArrayUint16InHit:
     case AccessCase::IndexedResizableTypedArrayUint16Load:
     case AccessCase::IndexedResizableTypedArrayUint16Store:
+    case AccessCase::IndexedResizableTypedArrayUint16InHit:
         return TypeUint16;
     case AccessCase::IndexedTypedArrayInt32Load:
     case AccessCase::IndexedTypedArrayInt32Store:
+    case AccessCase::IndexedTypedArrayInt32InHit:
     case AccessCase::IndexedResizableTypedArrayInt32Load:
     case AccessCase::IndexedResizableTypedArrayInt32Store:
+    case AccessCase::IndexedResizableTypedArrayInt32InHit:
         return TypeInt32;
     case AccessCase::IndexedTypedArrayUint32Load:
     case AccessCase::IndexedTypedArrayUint32Store:
+    case AccessCase::IndexedTypedArrayUint32InHit:
     case AccessCase::IndexedResizableTypedArrayUint32Load:
     case AccessCase::IndexedResizableTypedArrayUint32Store:
+    case AccessCase::IndexedResizableTypedArrayUint32InHit:
         return TypeUint32;
     case AccessCase::IndexedTypedArrayFloat32Load:
     case AccessCase::IndexedTypedArrayFloat32Store:
+    case AccessCase::IndexedTypedArrayFloat32InHit:
     case AccessCase::IndexedResizableTypedArrayFloat32Load:
     case AccessCase::IndexedResizableTypedArrayFloat32Store:
+    case AccessCase::IndexedResizableTypedArrayFloat32InHit:
         return TypeFloat32;
     case AccessCase::IndexedTypedArrayFloat64Load:
     case AccessCase::IndexedTypedArrayFloat64Store:
+    case AccessCase::IndexedTypedArrayFloat64InHit:
     case AccessCase::IndexedResizableTypedArrayFloat64Load:
     case AccessCase::IndexedResizableTypedArrayFloat64Store:
+    case AccessCase::IndexedResizableTypedArrayFloat64InHit:
         return TypeFloat64;
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -153,11 +171,260 @@ static bool forResizableTypedArray(AccessCase::AccessType accessType)
     case AccessCase::IndexedResizableTypedArrayUint32Store:
     case AccessCase::IndexedResizableTypedArrayFloat32Store:
     case AccessCase::IndexedResizableTypedArrayFloat64Store:
+    case AccessCase::IndexedResizableTypedArrayInt8InHit:
+    case AccessCase::IndexedResizableTypedArrayUint8InHit:
+    case AccessCase::IndexedResizableTypedArrayUint8ClampedInHit:
+    case AccessCase::IndexedResizableTypedArrayInt16InHit:
+    case AccessCase::IndexedResizableTypedArrayUint16InHit:
+    case AccessCase::IndexedResizableTypedArrayInt32InHit:
+    case AccessCase::IndexedResizableTypedArrayUint32InHit:
+    case AccessCase::IndexedResizableTypedArrayFloat32InHit:
+    case AccessCase::IndexedResizableTypedArrayFloat64InHit:
         return true;
     default:
         return false;
     }
 }
+
+static bool needsScratchFPR(AccessCase::AccessType type)
+{
+    switch (type) {
+    case AccessCase::Load:
+    case AccessCase::LoadMegamorphic:
+    case AccessCase::StoreMegamorphic:
+    case AccessCase::Transition:
+    case AccessCase::Delete:
+    case AccessCase::DeleteNonConfigurable:
+    case AccessCase::DeleteMiss:
+    case AccessCase::Replace:
+    case AccessCase::Miss:
+    case AccessCase::GetGetter:
+    case AccessCase::Getter:
+    case AccessCase::Setter:
+    case AccessCase::CustomValueGetter:
+    case AccessCase::CustomAccessorGetter:
+    case AccessCase::CustomValueSetter:
+    case AccessCase::CustomAccessorSetter:
+    case AccessCase::InHit:
+    case AccessCase::InMiss:
+    case AccessCase::CheckPrivateBrand:
+    case AccessCase::SetPrivateBrand:
+    case AccessCase::ArrayLength:
+    case AccessCase::StringLength:
+    case AccessCase::DirectArgumentsLength:
+    case AccessCase::ScopedArgumentsLength:
+    case AccessCase::ModuleNamespaceLoad:
+    case AccessCase::ProxyObjectHas:
+    case AccessCase::ProxyObjectLoad:
+    case AccessCase::ProxyObjectStore:
+    case AccessCase::InstanceOfHit:
+    case AccessCase::InstanceOfMiss:
+    case AccessCase::InstanceOfGeneric:
+    case AccessCase::IndexedProxyObjectLoad:
+    case AccessCase::IndexedMegamorphicLoad:
+    case AccessCase::IndexedMegamorphicStore:
+    case AccessCase::IndexedInt32Load:
+    case AccessCase::IndexedContiguousLoad:
+    case AccessCase::IndexedArrayStorageLoad:
+    case AccessCase::IndexedScopedArgumentsLoad:
+    case AccessCase::IndexedDirectArgumentsLoad:
+    case AccessCase::IndexedTypedArrayInt8Load:
+    case AccessCase::IndexedTypedArrayUint8Load:
+    case AccessCase::IndexedTypedArrayUint8ClampedLoad:
+    case AccessCase::IndexedTypedArrayInt16Load:
+    case AccessCase::IndexedTypedArrayUint16Load:
+    case AccessCase::IndexedTypedArrayInt32Load:
+    case AccessCase::IndexedResizableTypedArrayInt8Load:
+    case AccessCase::IndexedResizableTypedArrayUint8Load:
+    case AccessCase::IndexedResizableTypedArrayUint8ClampedLoad:
+    case AccessCase::IndexedResizableTypedArrayInt16Load:
+    case AccessCase::IndexedResizableTypedArrayUint16Load:
+    case AccessCase::IndexedResizableTypedArrayInt32Load:
+    case AccessCase::IndexedStringLoad:
+    case AccessCase::IndexedNoIndexingMiss:
+    case AccessCase::IndexedInt32Store:
+    case AccessCase::IndexedContiguousStore:
+    case AccessCase::IndexedArrayStorageStore:
+    case AccessCase::IndexedTypedArrayInt8Store:
+    case AccessCase::IndexedTypedArrayUint8Store:
+    case AccessCase::IndexedTypedArrayUint8ClampedStore:
+    case AccessCase::IndexedTypedArrayInt16Store:
+    case AccessCase::IndexedTypedArrayUint16Store:
+    case AccessCase::IndexedTypedArrayInt32Store:
+    case AccessCase::IndexedResizableTypedArrayInt8Store:
+    case AccessCase::IndexedResizableTypedArrayUint8Store:
+    case AccessCase::IndexedResizableTypedArrayUint8ClampedStore:
+    case AccessCase::IndexedResizableTypedArrayInt16Store:
+    case AccessCase::IndexedResizableTypedArrayUint16Store:
+    case AccessCase::IndexedResizableTypedArrayInt32Store:
+    case AccessCase::IndexedInt32InHit:
+    case AccessCase::IndexedContiguousInHit:
+    case AccessCase::IndexedArrayStorageInHit:
+    case AccessCase::IndexedScopedArgumentsInHit:
+    case AccessCase::IndexedDirectArgumentsInHit:
+    case AccessCase::IndexedTypedArrayInt8InHit:
+    case AccessCase::IndexedTypedArrayUint8InHit:
+    case AccessCase::IndexedTypedArrayUint8ClampedInHit:
+    case AccessCase::IndexedTypedArrayInt16InHit:
+    case AccessCase::IndexedTypedArrayUint16InHit:
+    case AccessCase::IndexedTypedArrayInt32InHit:
+    case AccessCase::IndexedResizableTypedArrayInt8InHit:
+    case AccessCase::IndexedResizableTypedArrayUint8InHit:
+    case AccessCase::IndexedResizableTypedArrayUint8ClampedInHit:
+    case AccessCase::IndexedResizableTypedArrayInt16InHit:
+    case AccessCase::IndexedResizableTypedArrayUint16InHit:
+    case AccessCase::IndexedResizableTypedArrayInt32InHit:
+    case AccessCase::IndexedStringInHit:
+    case AccessCase::IndexedNoIndexingInMiss:
+    // Indexed TypedArray InHit does not need FPR since it does not load a value.
+    case AccessCase::IndexedTypedArrayUint32InHit:
+    case AccessCase::IndexedTypedArrayFloat32InHit:
+    case AccessCase::IndexedTypedArrayFloat64InHit:
+    case AccessCase::IndexedResizableTypedArrayUint32InHit:
+    case AccessCase::IndexedResizableTypedArrayFloat32InHit:
+    case AccessCase::IndexedResizableTypedArrayFloat64InHit:
+        return false;
+    case AccessCase::IndexedDoubleLoad:
+    case AccessCase::IndexedTypedArrayFloat32Load:
+    case AccessCase::IndexedTypedArrayFloat64Load:
+    case AccessCase::IndexedTypedArrayUint32Load:
+    case AccessCase::IndexedResizableTypedArrayFloat32Load:
+    case AccessCase::IndexedResizableTypedArrayFloat64Load:
+    case AccessCase::IndexedResizableTypedArrayUint32Load:
+    case AccessCase::IndexedDoubleStore:
+    case AccessCase::IndexedTypedArrayUint32Store:
+    case AccessCase::IndexedTypedArrayFloat32Store:
+    case AccessCase::IndexedTypedArrayFloat64Store:
+    case AccessCase::IndexedResizableTypedArrayUint32Store:
+    case AccessCase::IndexedResizableTypedArrayFloat32Store:
+    case AccessCase::IndexedResizableTypedArrayFloat64Store:
+    case AccessCase::IndexedDoubleInHit:
+    // Used by TypedArrayLength/TypedArrayByteOffset in the process of boxing their result as a double
+    case AccessCase::IntrinsicGetter:
+        return true;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+static bool forInBy(AccessCase::AccessType type)
+{
+    switch (type) {
+    case AccessCase::Load:
+    case AccessCase::LoadMegamorphic:
+    case AccessCase::StoreMegamorphic:
+    case AccessCase::Transition:
+    case AccessCase::Delete:
+    case AccessCase::DeleteNonConfigurable:
+    case AccessCase::DeleteMiss:
+    case AccessCase::Replace:
+    case AccessCase::Miss:
+    case AccessCase::GetGetter:
+    case AccessCase::ArrayLength:
+    case AccessCase::StringLength:
+    case AccessCase::DirectArgumentsLength:
+    case AccessCase::ScopedArgumentsLength:
+    case AccessCase::CheckPrivateBrand:
+    case AccessCase::SetPrivateBrand:
+    case AccessCase::IndexedMegamorphicLoad:
+    case AccessCase::IndexedMegamorphicStore:
+    case AccessCase::IndexedInt32Load:
+    case AccessCase::IndexedDoubleLoad:
+    case AccessCase::IndexedContiguousLoad:
+    case AccessCase::IndexedArrayStorageLoad:
+    case AccessCase::IndexedScopedArgumentsLoad:
+    case AccessCase::IndexedDirectArgumentsLoad:
+    case AccessCase::IndexedTypedArrayInt8Load:
+    case AccessCase::IndexedTypedArrayUint8Load:
+    case AccessCase::IndexedTypedArrayUint8ClampedLoad:
+    case AccessCase::IndexedTypedArrayInt16Load:
+    case AccessCase::IndexedTypedArrayUint16Load:
+    case AccessCase::IndexedTypedArrayInt32Load:
+    case AccessCase::IndexedTypedArrayUint32Load:
+    case AccessCase::IndexedTypedArrayFloat32Load:
+    case AccessCase::IndexedTypedArrayFloat64Load:
+    case AccessCase::IndexedResizableTypedArrayInt8Load:
+    case AccessCase::IndexedResizableTypedArrayUint8Load:
+    case AccessCase::IndexedResizableTypedArrayUint8ClampedLoad:
+    case AccessCase::IndexedResizableTypedArrayInt16Load:
+    case AccessCase::IndexedResizableTypedArrayUint16Load:
+    case AccessCase::IndexedResizableTypedArrayInt32Load:
+    case AccessCase::IndexedResizableTypedArrayUint32Load:
+    case AccessCase::IndexedResizableTypedArrayFloat32Load:
+    case AccessCase::IndexedResizableTypedArrayFloat64Load:
+    case AccessCase::IndexedInt32Store:
+    case AccessCase::IndexedDoubleStore:
+    case AccessCase::IndexedContiguousStore:
+    case AccessCase::IndexedArrayStorageStore:
+    case AccessCase::IndexedTypedArrayInt8Store:
+    case AccessCase::IndexedTypedArrayUint8Store:
+    case AccessCase::IndexedTypedArrayUint8ClampedStore:
+    case AccessCase::IndexedTypedArrayInt16Store:
+    case AccessCase::IndexedTypedArrayUint16Store:
+    case AccessCase::IndexedTypedArrayInt32Store:
+    case AccessCase::IndexedTypedArrayUint32Store:
+    case AccessCase::IndexedTypedArrayFloat32Store:
+    case AccessCase::IndexedTypedArrayFloat64Store:
+    case AccessCase::IndexedResizableTypedArrayInt8Store:
+    case AccessCase::IndexedResizableTypedArrayUint8Store:
+    case AccessCase::IndexedResizableTypedArrayUint8ClampedStore:
+    case AccessCase::IndexedResizableTypedArrayInt16Store:
+    case AccessCase::IndexedResizableTypedArrayUint16Store:
+    case AccessCase::IndexedResizableTypedArrayInt32Store:
+    case AccessCase::IndexedResizableTypedArrayUint32Store:
+    case AccessCase::IndexedResizableTypedArrayFloat32Store:
+    case AccessCase::IndexedResizableTypedArrayFloat64Store:
+    case AccessCase::IndexedStringLoad:
+    case AccessCase::IndexedNoIndexingMiss:
+    case AccessCase::InstanceOfGeneric:
+    case AccessCase::Getter:
+    case AccessCase::Setter:
+    case AccessCase::ProxyObjectHas:
+    case AccessCase::ProxyObjectLoad:
+    case AccessCase::ProxyObjectStore:
+    case AccessCase::IndexedProxyObjectLoad:
+    case AccessCase::CustomValueGetter:
+    case AccessCase::CustomAccessorGetter:
+    case AccessCase::CustomValueSetter:
+    case AccessCase::CustomAccessorSetter:
+    case AccessCase::IntrinsicGetter:
+    case AccessCase::ModuleNamespaceLoad:
+    case AccessCase::InstanceOfHit:
+    case AccessCase::InstanceOfMiss:
+        return false;
+    case AccessCase::InHit:
+    case AccessCase::InMiss:
+    case AccessCase::IndexedInt32InHit:
+    case AccessCase::IndexedDoubleInHit:
+    case AccessCase::IndexedContiguousInHit:
+    case AccessCase::IndexedArrayStorageInHit:
+    case AccessCase::IndexedScopedArgumentsInHit:
+    case AccessCase::IndexedDirectArgumentsInHit:
+    case AccessCase::IndexedTypedArrayInt8InHit:
+    case AccessCase::IndexedTypedArrayUint8InHit:
+    case AccessCase::IndexedTypedArrayUint8ClampedInHit:
+    case AccessCase::IndexedTypedArrayInt16InHit:
+    case AccessCase::IndexedTypedArrayUint16InHit:
+    case AccessCase::IndexedTypedArrayInt32InHit:
+    case AccessCase::IndexedTypedArrayUint32InHit:
+    case AccessCase::IndexedTypedArrayFloat32InHit:
+    case AccessCase::IndexedTypedArrayFloat64InHit:
+    case AccessCase::IndexedResizableTypedArrayInt8InHit:
+    case AccessCase::IndexedResizableTypedArrayUint8InHit:
+    case AccessCase::IndexedResizableTypedArrayUint8ClampedInHit:
+    case AccessCase::IndexedResizableTypedArrayInt16InHit:
+    case AccessCase::IndexedResizableTypedArrayUint16InHit:
+    case AccessCase::IndexedResizableTypedArrayInt32InHit:
+    case AccessCase::IndexedResizableTypedArrayUint32InHit:
+    case AccessCase::IndexedResizableTypedArrayFloat32InHit:
+    case AccessCase::IndexedResizableTypedArrayFloat64InHit:
+    case AccessCase::IndexedStringInHit:
+    case AccessCase::IndexedNoIndexingInMiss:
+        return true;
+    }
+    return false;
+}
+
+
 
 void InlineCacheCompiler::installWatchpoint(CodeBlock* codeBlock, const ObjectPropertyCondition& condition)
 {
@@ -541,7 +808,8 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
         return;
     }
 
-    case AccessCase::IndexedScopedArgumentsLoad: {
+    case AccessCase::IndexedScopedArgumentsLoad:
+    case AccessCase::IndexedScopedArgumentsInHit: {
         ASSERT(!accessCase.viaGlobalProxy());
         // This code is written such that the result could alias with the base or the property.
         GPRReg propertyGPR = stubInfo.propertyGPR();
@@ -580,12 +848,19 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
 #if USE(JSVALUE64)
         jit.loadValue(CCallHelpers::BaseIndex(scratch3GPR, scratch2GPR, CCallHelpers::TimesEight), JSValueRegs(scratchGPR));
         failAndIgnore.append(jit.branchIfEmpty(scratchGPR));
-        jit.move(scratchGPR, valueRegs.payloadGPR());
+        if (forInBy(accessCase.m_type))
+            jit.moveTrustedValue(jsBoolean(true), valueRegs);
+        else
+            jit.move(scratchGPR, valueRegs.payloadGPR());
 #else
         jit.loadValue(CCallHelpers::BaseIndex(scratch3GPR, scratch2GPR, CCallHelpers::TimesEight), JSValueRegs(scratch2GPR, scratchGPR));
         failAndIgnore.append(jit.branchIfEmpty(scratch2GPR));
-        jit.move(scratchGPR, valueRegs.payloadGPR());
-        jit.move(scratch2GPR, valueRegs.tagGPR());
+        if (forInBy(accessCase.m_type))
+            jit.moveTrustedValue(jsBoolean(true), valueRegs);
+        else {
+            jit.move(scratchGPR, valueRegs.payloadGPR());
+            jit.move(scratch2GPR, valueRegs.tagGPR());
+        }
 #endif
 
         done.link(&jit);
@@ -603,7 +878,8 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
         return;
     }
 
-    case AccessCase::IndexedDirectArgumentsLoad: {
+    case AccessCase::IndexedDirectArgumentsLoad:
+    case AccessCase::IndexedDirectArgumentsInHit: {
         ASSERT(!accessCase.viaGlobalProxy());
         // This code is written such that the result could alias with the base or the property.
         GPRReg propertyGPR = stubInfo.propertyGPR();
@@ -613,8 +889,12 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
         jit.load32(CCallHelpers::Address(baseGPR, DirectArguments::offsetOfLength()), scratchGPR);
         m_failAndRepatch.append(jit.branch32(CCallHelpers::AboveOrEqual, propertyGPR, scratchGPR));
         m_failAndRepatch.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::Address(baseGPR, DirectArguments::offsetOfMappedArguments())));
-        jit.zeroExtend32ToWord(propertyGPR, scratchGPR);
-        jit.loadValue(CCallHelpers::BaseIndex(baseGPR, scratchGPR, CCallHelpers::TimesEight, DirectArguments::storageOffset()), valueRegs);
+        if (forInBy(accessCase.m_type))
+            jit.moveTrustedValue(jsBoolean(true), valueRegs);
+        else {
+            jit.zeroExtend32ToWord(propertyGPR, scratchGPR);
+            jit.loadValue(CCallHelpers::BaseIndex(baseGPR, scratchGPR, CCallHelpers::TimesEight, DirectArguments::storageOffset()), valueRegs);
+        }
         succeed();
         return;
     }
@@ -636,7 +916,25 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
     case AccessCase::IndexedResizableTypedArrayInt32Load:
     case AccessCase::IndexedResizableTypedArrayUint32Load:
     case AccessCase::IndexedResizableTypedArrayFloat32Load:
-    case AccessCase::IndexedResizableTypedArrayFloat64Load: {
+    case AccessCase::IndexedResizableTypedArrayFloat64Load:
+    case AccessCase::IndexedTypedArrayInt8InHit:
+    case AccessCase::IndexedTypedArrayUint8InHit:
+    case AccessCase::IndexedTypedArrayUint8ClampedInHit:
+    case AccessCase::IndexedTypedArrayInt16InHit:
+    case AccessCase::IndexedTypedArrayUint16InHit:
+    case AccessCase::IndexedTypedArrayInt32InHit:
+    case AccessCase::IndexedTypedArrayUint32InHit:
+    case AccessCase::IndexedTypedArrayFloat32InHit:
+    case AccessCase::IndexedTypedArrayFloat64InHit:
+    case AccessCase::IndexedResizableTypedArrayInt8InHit:
+    case AccessCase::IndexedResizableTypedArrayUint8InHit:
+    case AccessCase::IndexedResizableTypedArrayUint8ClampedInHit:
+    case AccessCase::IndexedResizableTypedArrayInt16InHit:
+    case AccessCase::IndexedResizableTypedArrayUint16InHit:
+    case AccessCase::IndexedResizableTypedArrayInt32InHit:
+    case AccessCase::IndexedResizableTypedArrayUint32InHit:
+    case AccessCase::IndexedResizableTypedArrayFloat32InHit:
+    case AccessCase::IndexedResizableTypedArrayFloat64InHit: {
         ASSERT(!accessCase.viaGlobalProxy());
         // This code is written such that the result could alias with the base or the property.
 
@@ -677,68 +975,72 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
 #endif
         }
 
+        if (forInBy(accessCase.m_type))
+            jit.moveTrustedValue(jsBoolean(true), valueRegs);
+        else {
 #if USE(LARGE_TYPED_ARRAYS)
-        jit.load64(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfLength()), scratchGPR);
+            jit.load64(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfLength()), scratchGPR);
 #else
-        jit.load32(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfLength()), scratchGPR);
+            jit.load32(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfLength()), scratchGPR);
 #endif
-        jit.loadPtr(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfVector()), scratch2GPR);
-        jit.cageConditionallyAndUntag(Gigacage::Primitive, scratch2GPR, scratchGPR, scratchGPR, false);
-        jit.signExtend32ToPtr(propertyGPR, scratchGPR);
-        if (isInt(type)) {
-            switch (elementSize(type)) {
-            case 1:
-                if (JSC::isSigned(type))
-                    jit.load8SignedExtendTo32(CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesOne), valueRegs.payloadGPR());
-                else
-                    jit.load8(CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesOne), valueRegs.payloadGPR());
-                break;
-            case 2:
-                if (JSC::isSigned(type))
-                    jit.load16SignedExtendTo32(CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesTwo), valueRegs.payloadGPR());
-                else
-                    jit.load16(CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesTwo), valueRegs.payloadGPR());
-                break;
-            case 4:
-                jit.load32(CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesFour), valueRegs.payloadGPR());
-                break;
-            default:
-                CRASH();
-            }
+            jit.loadPtr(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfVector()), scratch2GPR);
+            jit.cageConditionallyAndUntag(Gigacage::Primitive, scratch2GPR, scratchGPR, scratchGPR, false);
+            jit.signExtend32ToPtr(propertyGPR, scratchGPR);
+            if (isInt(type)) {
+                switch (elementSize(type)) {
+                case 1:
+                    if (JSC::isSigned(type))
+                        jit.load8SignedExtendTo32(CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesOne), valueRegs.payloadGPR());
+                    else
+                        jit.load8(CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesOne), valueRegs.payloadGPR());
+                    break;
+                case 2:
+                    if (JSC::isSigned(type))
+                        jit.load16SignedExtendTo32(CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesTwo), valueRegs.payloadGPR());
+                    else
+                        jit.load16(CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesTwo), valueRegs.payloadGPR());
+                    break;
+                case 4:
+                    jit.load32(CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesFour), valueRegs.payloadGPR());
+                    break;
+                default:
+                    CRASH();
+                }
 
-            CCallHelpers::Jump done;
-            if (type == TypeUint32) {
+                CCallHelpers::Jump done;
+                if (type == TypeUint32) {
+                    RELEASE_ASSERT(m_scratchFPR != InvalidFPRReg);
+                    auto canBeInt = jit.branch32(CCallHelpers::GreaterThanOrEqual, valueRegs.payloadGPR(), CCallHelpers::TrustedImm32(0));
+
+                    jit.convertInt32ToDouble(valueRegs.payloadGPR(), m_scratchFPR);
+                    jit.addDouble(CCallHelpers::AbsoluteAddress(&CCallHelpers::twoToThe32), m_scratchFPR);
+                    jit.boxDouble(m_scratchFPR, valueRegs);
+                    done = jit.jump();
+                    canBeInt.link(&jit);
+                }
+
+                jit.boxInt32(valueRegs.payloadGPR(), valueRegs);
+                if (done.isSet())
+                    done.link(&jit);
+            } else {
+                ASSERT(isFloat(type));
                 RELEASE_ASSERT(m_scratchFPR != InvalidFPRReg);
-                auto canBeInt = jit.branch32(CCallHelpers::GreaterThanOrEqual, valueRegs.payloadGPR(), CCallHelpers::TrustedImm32(0));
+                switch (elementSize(type)) {
+                case 4:
+                    jit.loadFloat(CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesFour), m_scratchFPR);
+                    jit.convertFloatToDouble(m_scratchFPR, m_scratchFPR);
+                    break;
+                case 8: {
+                    jit.loadDouble(CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesEight), m_scratchFPR);
+                    break;
+                }
+                default:
+                    CRASH();
+                }
 
-                jit.convertInt32ToDouble(valueRegs.payloadGPR(), m_scratchFPR);
-                jit.addDouble(CCallHelpers::AbsoluteAddress(&CCallHelpers::twoToThe32), m_scratchFPR);
+                jit.purifyNaN(m_scratchFPR);
                 jit.boxDouble(m_scratchFPR, valueRegs);
-                done = jit.jump();
-                canBeInt.link(&jit);
             }
-
-            jit.boxInt32(valueRegs.payloadGPR(), valueRegs);
-            if (done.isSet())
-                done.link(&jit);
-        } else {
-            ASSERT(isFloat(type));
-            RELEASE_ASSERT(m_scratchFPR != InvalidFPRReg);
-            switch (elementSize(type)) {
-            case 4:
-                jit.loadFloat(CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesFour), m_scratchFPR);
-                jit.convertFloatToDouble(m_scratchFPR, m_scratchFPR);
-                break;
-            case 8: {
-                jit.loadDouble(CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesEight), m_scratchFPR);
-                break;
-            }
-            default:
-                CRASH();
-            }
-
-            jit.purifyNaN(m_scratchFPR);
-            jit.boxDouble(m_scratchFPR, valueRegs);
         }
 
         allocator.restoreReusedRegistersByPopping(jit, preservedState);
@@ -752,7 +1054,8 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
         return;
     }
 
-    case AccessCase::IndexedStringLoad: {
+    case AccessCase::IndexedStringLoad:
+    case AccessCase::IndexedStringInHit: {
         ASSERT(!accessCase.viaGlobalProxy());
         // This code is written such that the result could alias with the base or the property.
         GPRReg propertyGPR = stubInfo.propertyGPR();
@@ -773,21 +1076,26 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
 
         failAndIgnore.append(jit.branch32(CCallHelpers::AboveOrEqual, propertyGPR, scratchGPR));
 
-        jit.load32(CCallHelpers::Address(scratch2GPR, StringImpl::flagsOffset()), scratchGPR);
-        jit.loadPtr(CCallHelpers::Address(scratch2GPR, StringImpl::dataOffset()), scratch2GPR);
-        auto is16Bit = jit.branchTest32(CCallHelpers::Zero, scratchGPR, CCallHelpers::TrustedImm32(StringImpl::flagIs8Bit()));
-        jit.zeroExtend32ToWord(propertyGPR, scratchGPR);
-        jit.load8(CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesOne, 0), scratch2GPR);
-        auto is8BitLoadDone = jit.jump();
-        is16Bit.link(&jit);
-        jit.zeroExtend32ToWord(propertyGPR, scratchGPR);
-        jit.load16(CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesTwo, 0), scratch2GPR);
-        is8BitLoadDone.link(&jit);
+        if (forInBy(accessCase.m_type))
+            jit.moveTrustedValue(jsBoolean(true), valueRegs);
+        else {
+            jit.load32(CCallHelpers::Address(scratch2GPR, StringImpl::flagsOffset()), scratchGPR);
+            jit.loadPtr(CCallHelpers::Address(scratch2GPR, StringImpl::dataOffset()), scratch2GPR);
+            auto is16Bit = jit.branchTest32(CCallHelpers::Zero, scratchGPR, CCallHelpers::TrustedImm32(StringImpl::flagIs8Bit()));
+            jit.zeroExtend32ToWord(propertyGPR, scratchGPR);
+            jit.load8(CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesOne, 0), scratch2GPR);
+            auto is8BitLoadDone = jit.jump();
+            is16Bit.link(&jit);
+            jit.zeroExtend32ToWord(propertyGPR, scratchGPR);
+            jit.load16(CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesTwo, 0), scratch2GPR);
+            is8BitLoadDone.link(&jit);
 
-        failAndIgnore.append(jit.branch32(CCallHelpers::Above, scratch2GPR, CCallHelpers::TrustedImm32(maxSingleCharacterString)));
-        jit.move(CCallHelpers::TrustedImmPtr(vm.smallStrings.singleCharacterStrings()), scratchGPR);
-        jit.loadPtr(CCallHelpers::BaseIndex(scratchGPR, scratch2GPR, CCallHelpers::ScalePtr, 0), valueRegs.payloadGPR());
-        jit.boxCell(valueRegs.payloadGPR(), valueRegs);
+            failAndIgnore.append(jit.branch32(CCallHelpers::Above, scratch2GPR, CCallHelpers::TrustedImm32(maxSingleCharacterString)));
+            jit.move(CCallHelpers::TrustedImmPtr(vm.smallStrings.singleCharacterStrings()), scratchGPR);
+            jit.loadPtr(CCallHelpers::BaseIndex(scratchGPR, scratch2GPR, CCallHelpers::ScalePtr, 0), valueRegs.payloadGPR());
+            jit.boxCell(valueRegs.payloadGPR(), valueRegs);
+        }
+
         allocator.restoreReusedRegistersByPopping(jit, preservedState);
         succeed();
 
@@ -801,7 +1109,8 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
         return;
     }
 
-    case AccessCase::IndexedNoIndexingMiss: {
+    case AccessCase::IndexedNoIndexingMiss:
+    case AccessCase::IndexedNoIndexingInMiss: {
         emitDefaultGuard();
         GPRReg propertyGPR = stubInfo.propertyGPR();
         m_failAndIgnore.append(jit.branch32(CCallHelpers::LessThan, propertyGPR, CCallHelpers::TrustedImm32(0)));
@@ -811,7 +1120,11 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
     case AccessCase::IndexedInt32Load:
     case AccessCase::IndexedDoubleLoad:
     case AccessCase::IndexedContiguousLoad:
-    case AccessCase::IndexedArrayStorageLoad: {
+    case AccessCase::IndexedArrayStorageLoad:
+    case AccessCase::IndexedInt32InHit:
+    case AccessCase::IndexedDoubleInHit:
+    case AccessCase::IndexedContiguousInHit:
+    case AccessCase::IndexedArrayStorageInHit: {
         ASSERT(!accessCase.viaGlobalProxy());
         // This code is written such that the result could alias with the base or the property.
         GPRReg propertyGPR = stubInfo.propertyGPR();
@@ -833,7 +1146,7 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
             preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
         };
 
-        if (accessCase.m_type == AccessCase::IndexedArrayStorageLoad) {
+        if (accessCase.m_type == AccessCase::IndexedArrayStorageLoad || accessCase.m_type == AccessCase::IndexedArrayStorageInHit) {
             jit.add32(CCallHelpers::TrustedImm32(-ArrayStorageShape), scratchGPR, scratchGPR);
             fallThrough.append(jit.branch32(CCallHelpers::Above, scratchGPR, CCallHelpers::TrustedImm32(SlowPutArrayStorageShape - ArrayStorageShape)));
 
@@ -846,24 +1159,34 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
 #if USE(JSVALUE64)
             jit.loadValue(CCallHelpers::BaseIndex(scratchGPR, scratch2GPR, CCallHelpers::TimesEight, ArrayStorage::vectorOffset()), JSValueRegs(scratchGPR));
             failAndIgnore.append(jit.branchIfEmpty(scratchGPR));
-            jit.move(scratchGPR, valueRegs.payloadGPR());
+            if (forInBy(accessCase.m_type))
+                jit.moveTrustedValue(jsBoolean(true), valueRegs);
+            else
+                jit.move(scratchGPR, valueRegs.payloadGPR());
 #else
             jit.loadValue(CCallHelpers::BaseIndex(scratchGPR, scratch2GPR, CCallHelpers::TimesEight, ArrayStorage::vectorOffset()), JSValueRegs(scratch3GPR, scratchGPR));
             failAndIgnore.append(jit.branchIfEmpty(scratch3GPR));
-            jit.move(scratchGPR, valueRegs.payloadGPR());
-            jit.move(scratch3GPR, valueRegs.tagGPR());
+            if (forInBy(accessCase.m_type))
+                jit.moveTrustedValue(jsBoolean(true), valueRegs);
+            else {
+                jit.move(scratchGPR, valueRegs.payloadGPR());
+                jit.move(scratch3GPR, valueRegs.tagGPR());
+            }
 #endif
         } else {
             IndexingType expectedShape;
             switch (accessCase.m_type) {
             case AccessCase::IndexedInt32Load:
+            case AccessCase::IndexedInt32InHit:
                 expectedShape = Int32Shape;
                 break;
             case AccessCase::IndexedDoubleLoad:
+            case AccessCase::IndexedDoubleInHit:
                 ASSERT(Options::allowDoubleShape());
                 expectedShape = DoubleShape;
                 break;
             case AccessCase::IndexedContiguousLoad:
+            case AccessCase::IndexedContiguousInHit:
                 expectedShape = ContiguousShape;
                 break;
             default:
@@ -878,21 +1201,31 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
             jit.loadPtr(CCallHelpers::Address(baseGPR, JSObject::butterflyOffset()), scratchGPR);
             failAndIgnore.append(jit.branch32(CCallHelpers::AboveOrEqual, propertyGPR, CCallHelpers::Address(scratchGPR, Butterfly::offsetOfPublicLength())));
             jit.zeroExtend32ToWord(propertyGPR, scratch2GPR);
-            if (accessCase.m_type == AccessCase::IndexedDoubleLoad) {
+            if (accessCase.m_type == AccessCase::IndexedDoubleLoad || accessCase.m_type == AccessCase::IndexedDoubleInHit) {
                 RELEASE_ASSERT(m_scratchFPR != InvalidFPRReg);
                 jit.loadDouble(CCallHelpers::BaseIndex(scratchGPR, scratch2GPR, CCallHelpers::TimesEight), m_scratchFPR);
                 failAndIgnore.append(jit.branchIfNaN(m_scratchFPR));
-                jit.boxDouble(m_scratchFPR, valueRegs);
+                if (forInBy(accessCase.m_type))
+                    jit.moveTrustedValue(jsBoolean(true), valueRegs);
+                else
+                    jit.boxDouble(m_scratchFPR, valueRegs);
             } else {
 #if USE(JSVALUE64)
                 jit.loadValue(CCallHelpers::BaseIndex(scratchGPR, scratch2GPR, CCallHelpers::TimesEight), JSValueRegs(scratchGPR));
                 failAndIgnore.append(jit.branchIfEmpty(scratchGPR));
-                jit.move(scratchGPR, valueRegs.payloadGPR());
+                if (forInBy(accessCase.m_type))
+                    jit.moveTrustedValue(jsBoolean(true), valueRegs);
+                else
+                    jit.move(scratchGPR, valueRegs.payloadGPR());
 #else
                 jit.loadValue(CCallHelpers::BaseIndex(scratchGPR, scratch2GPR, CCallHelpers::TimesEight), JSValueRegs(scratch3GPR, scratchGPR));
                 failAndIgnore.append(jit.branchIfEmpty(scratch3GPR));
-                jit.move(scratchGPR, valueRegs.payloadGPR());
-                jit.move(scratch3GPR, valueRegs.tagGPR());
+                if (forInBy(accessCase.m_type))
+                    jit.moveTrustedValue(jsBoolean(true), valueRegs);
+                else {
+                    jit.move(scratchGPR, valueRegs.payloadGPR());
+                    jit.move(scratch3GPR, valueRegs.tagGPR());
+                }
 #endif
             }
         }
@@ -2159,6 +2492,11 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
         succeed();
         return;
 
+    case AccessCase::IndexedNoIndexingInMiss:
+        jit.moveTrustedValue(jsBoolean(false), valueRegs);
+        succeed();
+        return;
+
     case AccessCase::DirectArgumentsLength:
     case AccessCase::ScopedArgumentsLength:
     case AccessCase::ModuleNamespaceLoad:
@@ -2219,6 +2557,31 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
     case AccessCase::IndexedResizableTypedArrayUint32Store:
     case AccessCase::IndexedResizableTypedArrayFloat32Store:
     case AccessCase::IndexedResizableTypedArrayFloat64Store:
+    case AccessCase::IndexedInt32InHit:
+    case AccessCase::IndexedDoubleInHit:
+    case AccessCase::IndexedContiguousInHit:
+    case AccessCase::IndexedArrayStorageInHit:
+    case AccessCase::IndexedScopedArgumentsInHit:
+    case AccessCase::IndexedDirectArgumentsInHit:
+    case AccessCase::IndexedTypedArrayInt8InHit:
+    case AccessCase::IndexedTypedArrayUint8InHit:
+    case AccessCase::IndexedTypedArrayUint8ClampedInHit:
+    case AccessCase::IndexedTypedArrayInt16InHit:
+    case AccessCase::IndexedTypedArrayUint16InHit:
+    case AccessCase::IndexedTypedArrayInt32InHit:
+    case AccessCase::IndexedTypedArrayUint32InHit:
+    case AccessCase::IndexedTypedArrayFloat32InHit:
+    case AccessCase::IndexedTypedArrayFloat64InHit:
+    case AccessCase::IndexedResizableTypedArrayInt8InHit:
+    case AccessCase::IndexedResizableTypedArrayUint8InHit:
+    case AccessCase::IndexedResizableTypedArrayUint8ClampedInHit:
+    case AccessCase::IndexedResizableTypedArrayInt16InHit:
+    case AccessCase::IndexedResizableTypedArrayUint16InHit:
+    case AccessCase::IndexedResizableTypedArrayInt32InHit:
+    case AccessCase::IndexedResizableTypedArrayUint32InHit:
+    case AccessCase::IndexedResizableTypedArrayFloat32InHit:
+    case AccessCase::IndexedResizableTypedArrayFloat64InHit:
+    case AccessCase::IndexedStringInHit:
         // These need to be handled by generateWithGuard(), since the guard is part of the
         // algorithm. We can be sure that nobody will call generate() directly for these since they
         // are not guarded by structure checks.
@@ -2950,7 +3313,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     m_scratchGPR = allocator.allocateScratchGPR();
 
     for (auto& accessCase : cases) {
-        if (accessCase->needsScratchFPR()) {
+        if (needsScratchFPR(accessCase->m_type)) {
             m_scratchFPR = allocator.allocateScratchFPR();
             break;
         }

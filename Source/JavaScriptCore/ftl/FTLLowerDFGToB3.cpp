@@ -14833,8 +14833,28 @@ IGNORE_CLANG_WARNINGS_END
 
     void compileHasIndexedProperty()
     {
-        LValue index = lowInt32(m_graph.varArgChild(m_node, 1));
-        setBoolean(compileHasIndexedPropertyImpl(index, operationHasIndexedProperty));
+        ArrayMode mode = m_node->arrayMode();
+        switch (mode.type()) {
+        case Array::Int32:
+        case Array::Contiguous:
+        case Array::Double:
+        case Array::ArrayStorage: {
+            LValue index = lowInt32(m_graph.varArgChild(m_node, 1));
+            setBoolean(compileHasIndexedPropertyImpl(index, operationHasIndexedProperty));
+            break;
+        }
+        default: {
+            LValue base = nullptr;
+            if (m_graph.varArgChild(m_node, 0).useKind() == ObjectUse)
+                base = lowObject(m_graph.varArgChild(m_node, 0));
+            else
+                base = lowCell(m_graph.varArgChild(m_node, 0));
+            LValue property = lowJSValue(m_graph.varArgChild(m_node, 1), ManualOperandSpeculation);
+            speculate(m_graph.varArgChild(m_node, 1));
+            compileInBy<AccessType::InByVal>(base, property);
+            break;
+        }
+        }
     }
 
     void compileGetPropertyEnumerator()
