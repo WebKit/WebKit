@@ -656,6 +656,8 @@ public:
 
     void updateFloatPainterAfterSelfPaintingLayerChange();
 
+    bool computeHasTransformRelatedProperty(const RenderStyle&) const;
+
 protected:
     RenderBox(Element&, RenderStyle&&, BaseTypeFlags);
     RenderBox(Document&, RenderStyle&&, BaseTypeFlags);

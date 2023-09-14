@@ -472,7 +472,10 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     // Same for the additional translation component present in RenderSVGTransformableContainer (that stems from <use> x/y
     // properties, that are transferred to the internal RenderSVGTransformableContainer), or for the viewBox-induced transformation
     // in RenderSVGViewportContainer. They all need to return true for 'hasTransformRelatedProperty'.
-    auto hasTransformRelatedProperty = [](const RenderStyle& style, const Element* element) {
+    auto hasTransformRelatedProperty = [](const RenderStyle& style, const Element* element, const RenderStyle& parentStyle) {
+        if (element && element->document().settings().css3DTransformBackfaceVisibilityInteroperabilityEnabled() && style.backfaceVisibility() == BackfaceVisibility::Hidden && parentStyle.preserves3D())
+            return true;
+
         if (style.hasTransformRelatedProperty())
             return true;
 
@@ -494,7 +497,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     if (style.hasAutoUsedZIndex()) {
         if ((m_element && m_document.documentElement() == m_element)
             || style.hasOpacity()
-            || hasTransformRelatedProperty(style, m_element)
+            || hasTransformRelatedProperty(style, m_element, m_parentStyle)
             || style.hasMask()
             || style.clipPath()
             || style.boxReflect()

@@ -905,6 +905,20 @@ CFNetworkNetworkLoaderEnabled:
     WebKit:
       default: false
 
+CSS3DTransformBackfaceVisibilityInteroperabilityEnabled:
+  type: bool
+  status: preview
+  category: css
+  humanReadableName: "CSS 3D Transform Interoperability for backface-visibility"
+  humanReadableDescription: "Enable 3D transform behavior for backface-visibility that is specification-compliant but backwards incompatible"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSS3DTransformInteroperabilityEnabled:
   type: bool
   status: stable

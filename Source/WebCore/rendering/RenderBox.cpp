@@ -504,8 +504,33 @@ void RenderBox::updateFromStyle()
             setHasNonVisibleOverflow();
         }
     }
-    setHasTransformRelatedProperty(styleToUse.hasTransformRelatedProperty());
+    setHasTransformRelatedProperty(computeHasTransformRelatedProperty(styleToUse));
     setHasReflection(styleToUse.boxReflect());
+}
+
+bool RenderBox::computeHasTransformRelatedProperty(const RenderStyle& styleToUse) const
+{
+    if (styleToUse.hasTransformRelatedProperty())
+        return true;
+
+    if (!settings().css3DTransformBackfaceVisibilityInteroperabilityEnabled())
+        return false;
+
+    if (styleToUse.backfaceVisibility() != BackfaceVisibility::Hidden)
+        return false;
+
+    if (!element())
+        return false;
+
+    auto* parent = element()->parentElement();
+    if (!parent)
+        return false;
+
+    auto* parentRenderer = parent->renderer();
+    if (!parentRenderer)
+        return false;
+
+    return parentRenderer->style().preserves3D();
 }
 
 void RenderBox::layout()

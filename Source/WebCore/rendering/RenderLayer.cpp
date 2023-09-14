@@ -2169,6 +2169,9 @@ RenderLayer* RenderLayer::clippingRootForPainting() const
         if (current->transform() || compositedWithOwnBackingStore(*current))
             return const_cast<RenderLayer*>(current);
 
+        if (renderer().settings().css3DTransformBackfaceVisibilityInteroperabilityEnabled() && current->participatesInPreserve3D() && current->renderer().style().backfaceVisibility() == BackfaceVisibility::Hidden)
+            return const_cast<RenderLayer*>(current);
+
         if (current->paintsIntoProvidedBacking())
             return current->backingProviderLayer();
     }
