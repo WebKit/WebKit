@@ -131,6 +131,7 @@ ExceptionOr<void> Range::setStart(Ref<Node>&& container, unsigned offset)
     updateAssociatedSelection();
     updateDocument();
     m_didChangeHighlight = true;
+    m_ownerDocument->updateHighlightPositions();
     return { };
 }
 
@@ -146,6 +147,7 @@ ExceptionOr<void> Range::setEnd(Ref<Node>&& container, unsigned offset)
     updateAssociatedSelection();
     updateDocument();
     m_didChangeHighlight = true;
+    m_ownerDocument->updateHighlightPositions();
     return { };
 }
 
