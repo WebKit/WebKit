@@ -677,6 +677,12 @@ public:
     
     bool run()
     {
+
+        if (DFGCSEPhaseInternal::verbose) {
+            dataLog("Graph before Global CSE:\n");
+            m_graph.dump();
+        }
+
         ASSERT(m_graph.m_fixpointState == FixpointNotConverged);
         ASSERT(m_graph.m_form == SSA);
         
