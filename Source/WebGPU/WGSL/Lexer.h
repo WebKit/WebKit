@@ -52,7 +52,6 @@ public:
 
     Vector<Token> lex();
     bool isAtEndOfFile() const;
-    SourcePosition currentPosition() const { return m_currentPosition; }
 
 private:
     Token nextToken();

@@ -66,10 +66,10 @@ struct TemplateTypes<TT> {
 };
 
 #define START_PARSE() \
-    auto _startOfElementPosition = m_lexer.currentPosition();
+    auto _startOfElementPosition = m_currentPosition;
 
 #define CURRENT_SOURCE_SPAN() \
-    SourceSpan(_startOfElementPosition, m_lexer.currentPosition())
+    SourceSpan(_startOfElementPosition, m_currentPosition)
 
 #define MAKE_ARENA_NODE(type, ...) \
     m_builder.construct<AST::type>(CURRENT_SOURCE_SPAN() __VA_OPT__(,) __VA_ARGS__) /* NOLINT */
@@ -345,6 +345,7 @@ void Parser<Lexer>::consume()
 {
     do {
         m_current = m_tokens[++m_currentTokenIndex];
+        m_currentPosition = SourcePosition { m_current.span.line, m_current.span.lineOffset, m_current.span.offset };
     } while (m_current.type == TokenType::Placeholder);
 }
 
@@ -1327,7 +1328,7 @@ Result<AST::Expression::Ref> Parser<Lexer>::parsePostfixExpression(AST::Expressi
             PARSE(arrayIndex, Expression);
             CONSUME_TYPE(BracketRight);
             // FIXME: Replace with NODE_REF(...)
-            SourceSpan span(startPosition, m_lexer.currentPosition());
+            SourceSpan span(startPosition, m_currentPosition);
             expr = m_builder.construct<AST::IndexAccessExpression>(span, WTFMove(expr), WTFMove(arrayIndex));
             break;
         }
@@ -1336,7 +1337,7 @@ Result<AST::Expression::Ref> Parser<Lexer>::parsePostfixExpression(AST::Expressi
             consume();
             PARSE(fieldName, Identifier);
             // FIXME: Replace with NODE_REF(...)
-            SourceSpan span(startPosition, m_lexer.currentPosition());
+            SourceSpan span(startPosition, m_currentPosition);
             expr = m_builder.construct<AST::FieldAccessExpression>(span, WTFMove(expr), WTFMove(fieldName));
             break;
         }

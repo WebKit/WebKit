@@ -50,6 +50,7 @@ public:
         , m_lexer(lexer)
         , m_tokens(m_lexer.lex())
         , m_current(m_tokens[0])
+        , m_currentPosition({ m_current.span.line, m_current.span.lineOffset, m_current.span.offset })
     {
     }
 
@@ -113,6 +114,7 @@ private:
     Vector<Token> m_tokens;
     unsigned m_currentTokenIndex { 0 };
     Token m_current;
+    SourcePosition m_currentPosition;
 };
 
 } // namespace WGSL
