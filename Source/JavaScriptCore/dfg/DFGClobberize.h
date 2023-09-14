@@ -1475,7 +1475,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         unsigned identifierNumber = node->storageAccessData().identifierNumber;
         AbstractHeap heap(NamedProperties, identifierNumber);
         read(heap);
-        def(HeapLocation(NamedPropertyLoc, heap, node->child2()), LazyNode(node));
+        def(HeapLocation(NamedPropertyLoc, heap, node->child2(), &node->storageAccessData()), LazyNode(node));
         return;
     }
 
@@ -1484,7 +1484,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         read(JSObject_butterfly);
         AbstractHeap heap(NamedProperties, node->multiGetByOffsetData().identifierNumber);
         read(heap);
-        def(HeapLocation(NamedPropertyLoc, heap, node->child1()), LazyNode(node));
+        def(HeapLocation(NamedPropertyLoc, heap, node->child1(), &node->multiGetByOffsetData()), LazyNode(node));
         return;
     }
         
@@ -1497,7 +1497,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             write(JSCell_structureID);
         if (node->multiPutByOffsetData().reallocatesStorage())
             write(JSObject_butterfly);
-        def(HeapLocation(NamedPropertyLoc, heap, node->child1()), LazyNode(node->child2().node()));
+        def(HeapLocation(NamedPropertyLoc, heap, node->child1(), &node->multiPutByOffsetData()), LazyNode(node->child2().node()));
         return;
     }
 
@@ -1519,7 +1519,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         unsigned identifierNumber = node->storageAccessData().identifierNumber;
         AbstractHeap heap(NamedProperties, identifierNumber);
         write(heap);
-        def(HeapLocation(NamedPropertyLoc, heap, node->child2()), LazyNode(node->child3().node()));
+        def(HeapLocation(NamedPropertyLoc, heap, node->child2(), &node->storageAccessData()), LazyNode(node->child3().node()));
         return;
     }
         

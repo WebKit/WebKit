@@ -89,16 +89,20 @@ public:
     HeapLocation(
         LocationKind kind = InvalidLocationKind,
         AbstractHeap heap = AbstractHeap(),
-        Node* base = nullptr, LazyNode index = LazyNode(), Node* descriptor = nullptr)
+        Node* base = nullptr,
+        LazyNode index = LazyNode(),
+        Node* descriptor = nullptr,
+        void* extraState = nullptr)
         : m_kind(kind)
         , m_heap(heap)
         , m_base(base)
         , m_index(index)
         , m_descriptor(descriptor)
+        , m_extraState(extraState)
     {
         ASSERT((kind == InvalidLocationKind) == !heap);
         ASSERT(!!m_heap || !m_base);
-        ASSERT(m_base || (!m_index && !m_descriptor));
+        ASSERT(m_base || (!m_index && !m_descriptor && !m_extraState));
     }
 
     HeapLocation(LocationKind kind, AbstractHeap heap, Node* base, Node* index, Node* descriptor = nullptr)
@@ -108,6 +112,11 @@ public:
     
     HeapLocation(LocationKind kind, AbstractHeap heap, Edge base, Edge index = Edge(), Edge descriptor = Edge())
         : HeapLocation(kind, heap, base.node(), index.node(), descriptor.node())
+    {
+    }
+
+    HeapLocation(LocationKind kind, AbstractHeap heap, Edge base, void* extraState)
+        : HeapLocation(kind, heap, base.node(), nullptr, nullptr, extraState)
     {
     }
     
@@ -126,10 +135,16 @@ public:
     AbstractHeap heap() const { return m_heap; }
     Node* base() const { return m_base; }
     LazyNode index() const { return m_index; }
+    void* extraState() const { return m_extraState; }
     
     unsigned hash() const
     {
-        return m_kind + m_heap.hash() + m_index.hash() + static_cast<unsigned>(bitwise_cast<uintptr_t>(m_base)) + static_cast<unsigned>(bitwise_cast<uintptr_t>(m_descriptor));
+        return m_kind
+            + m_heap.hash()
+            + m_index.hash()
+            + static_cast<unsigned>(bitwise_cast<uintptr_t>(m_base))
+            + static_cast<unsigned>(bitwise_cast<uintptr_t>(m_descriptor))
+            + static_cast<unsigned>(bitwise_cast<uintptr_t>(m_extraState));
     }
     
     bool operator==(const HeapLocation& other) const
@@ -138,7 +153,8 @@ public:
             && m_heap == other.m_heap
             && m_base == other.m_base
             && m_index == other.m_index
-            && m_descriptor == other.m_descriptor;
+            && m_descriptor == other.m_descriptor
+            && m_extraState == other.m_extraState;
     }
     
     bool isHashTableDeletedValue() const
@@ -154,6 +170,7 @@ private:
     Node* m_base;
     LazyNode m_index;
     Node* m_descriptor;
+    void* m_extraState { nullptr };
 };
 
 struct HeapLocationHash {
