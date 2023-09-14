@@ -67,19 +67,20 @@ void PDFPluginAnnotation::attach(Element* parent)
     ASSERT(!m_parent);
 
     m_parent = parent;
-    m_element = createAnnotationElement();
+    Ref element = createAnnotationElement();
+    m_element = element.copyRef();
 
-    m_element->setAttributeWithoutSynchronization(classAttr, "annotation"_s);
-    m_element->setAttributeWithoutSynchronization(x_apple_pdf_annotationAttr, "true"_s);
-    m_element->addEventListener(eventNames().changeEvent, *m_eventListener, false);
-    m_element->addEventListener(eventNames().blurEvent, *m_eventListener, false);
+    element->setAttributeWithoutSynchronization(classAttr, "annotation"_s);
+    element->setAttributeWithoutSynchronization(x_apple_pdf_annotationAttr, "true"_s);
+    element->addEventListener(eventNames().changeEvent, *m_eventListener, false);
+    element->addEventListener(eventNames().blurEvent, *m_eventListener, false);
 
     updateGeometry();
 
-    m_parent->appendChild(*m_element);
+    RefPtr { m_parent.get() }->appendChild(element);
 
     // FIXME: The text cursor doesn't blink after this. Why?
-    m_element->focus();
+    element->focus();
 }
 
 void PDFPluginAnnotation::commit()

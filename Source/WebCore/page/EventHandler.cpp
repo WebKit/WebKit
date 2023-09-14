@@ -2618,9 +2618,9 @@ void EventHandler::clearDragState()
 
 #endif // ENABLE(DRAG_SUPPORT)
 
-void EventHandler::setCapturingMouseEventsElement(Element* element)
+void EventHandler::setCapturingMouseEventsElement(RefPtr<Element>&& element)
 {
-    m_capturingMouseEventsElement = element;
+    m_capturingMouseEventsElement = WTFMove(element);
     m_eventHandlerWillResetCapturingMouseEventsElement = false;
 }
 

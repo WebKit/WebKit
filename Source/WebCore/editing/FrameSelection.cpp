@@ -2352,14 +2352,12 @@ void FrameSelection::setCaretVisibility(CaretVisibility visibility, ShouldUpdate
 
 // Helper function that tells whether a particular node is an element that has an entire
 // Frame and FrameView, a <frame>, <iframe>, or <object>.
-static bool isFrameElement(const Node* n)
+static bool isFrameElement(const Node& node)
 {
-    if (!n)
+    auto* renderer = dynamicDowncast<RenderWidget>(node.renderer());
+    if (!renderer)
         return false;
-    RenderObject* renderer = n->renderer();
-    if (!is<RenderWidget>(renderer))
-        return false;
-    Widget* widget = downcast<RenderWidget>(*renderer).widget();
+    auto* widget = renderer->widget();
     return widget && widget->isLocalFrameView();
 }
 
@@ -2377,14 +2375,14 @@ void FrameSelection::setFocusedElementIfNeeded()
         }
     }
 
-    if (Element* target = m_selection.rootEditableElement()) {
+    if (RefPtr target = m_selection.rootEditableElement()) {
         // Walk up the DOM tree to search for an element to focus.
         while (target) {
             // We don't want to set focus on a subframe when selecting in a parent frame,
             // so add the !isFrameElement check here. There's probably a better way to make this
             // work in the long term, but this is the safest fix at this time.
-            if (target->isMouseFocusable() && !isFrameElement(target)) {
-                CheckedRef(m_document->page()->focusController())->setFocusedElement(target, *m_document->frame());
+            if (target->isMouseFocusable() && !isFrameElement(*target)) {
+                CheckedRef(m_document->page()->focusController())->setFocusedElement(target.get(), *m_document->frame());
                 return;
             }
             target = target->parentOrShadowHostElement();

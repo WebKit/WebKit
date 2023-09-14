@@ -4937,9 +4937,8 @@ bool Document::setFocusedElement(Element* element)
     return setFocusedElement(element, { });
 }
 
-bool Document::setFocusedElement(Element* element, const FocusOptions& options)
+bool Document::setFocusedElement(Element* newFocusedElement, const FocusOptions& options)
 {
-    RefPtr<Element> newFocusedElement = element;
     // Make sure newFocusedElement is actually in this document
     if (newFocusedElement && (&newFocusedElement->document() != this))
         return true;
@@ -4970,7 +4969,7 @@ bool Document::setFocusedElement(Element* element, const FocusOptions& options)
             }
 
             // Dispatch the blur event and let the node do any other blur related activities (important for text fields)
-            oldFocusedElement->dispatchBlurEvent(newFocusedElement.copyRef());
+            oldFocusedElement->dispatchBlurEvent(newFocusedElement);
 
             if (m_focusedElement) {
                 // handler shifted focus
@@ -4978,7 +4977,7 @@ bool Document::setFocusedElement(Element* element, const FocusOptions& options)
                 newFocusedElement = nullptr;
             }
 
-            oldFocusedElement->dispatchFocusOutEventIfNeeded(newFocusedElement.copyRef()); // DOM level 3 bubbling blur event.
+            oldFocusedElement->dispatchFocusOutEventIfNeeded(newFocusedElement); // DOM level 3 bubbling blur event.
 
             if (m_focusedElement) {
                 // handler shifted focus
@@ -5092,7 +5091,7 @@ bool Document::setFocusedElement(Element* element, const FocusOptions& options)
 #else
         if (auto* cache = existingAXObjectCache())
 #endif
-            cache->onFocusChange(oldFocusedElement.get(), newFocusedElement.get());
+            cache->onFocusChange(oldFocusedElement.get(), newFocusedElement);
     }
 
     if (page())

@@ -5095,7 +5095,7 @@ void WebPage::textInputContextsInRect(FloatRect searchRect, CompletionHandler<vo
 
 void WebPage::focusTextInputContextAndPlaceCaret(const ElementContext& elementContext, const IntPoint& point, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto target = elementForContext(elementContext);
+    RefPtr target = elementForContext(elementContext);
     if (!target) {
         completionHandler(false);
         return;

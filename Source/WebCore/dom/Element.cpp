@@ -3528,7 +3528,7 @@ void Element::focus(const FocusOptions& options)
 
     document->updateContentRelevancyForScrollIfNeeded(*this);
 
-    RefPtr<Element> newTarget = this;
+    RefPtr newTarget { this };
 
     // If we don't have renderer yet, isFocusable will compute it without style update.
     // FIXME: Expand it to avoid style update in all cases.

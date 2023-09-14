@@ -931,7 +931,7 @@ bool FocusController::setFocusedElement(Element* element, LocalFrame& newFocused
     RefPtr oldFocusedFrame { focusedFrame() };
     RefPtr oldDocument = oldFocusedFrame ? oldFocusedFrame->document() : nullptr;
     
-    Element* oldFocusedElement = oldDocument ? oldDocument->focusedElement() : nullptr;
+    RefPtr oldFocusedElement = oldDocument ? oldDocument->focusedElement() : nullptr;
     if (oldFocusedElement == element) {
         if (element)
             m_page.chrome().client().elementDidRefocus(*element, options);
@@ -944,7 +944,7 @@ bool FocusController::setFocusedElement(Element* element, LocalFrame& newFocused
 
     m_page.editorClient().willSetInputMethodState();
 
-    if (shouldClearSelectionWhenChangingFocusedElement(m_page, oldFocusedElement, element))
+    if (shouldClearSelectionWhenChangingFocusedElement(m_page, WTFMove(oldFocusedElement), element))
         clearSelectionIfNeeded(oldFocusedFrame.get(), &newFocusedFrame, element);
 
     if (!element) {
@@ -954,7 +954,7 @@ bool FocusController::setFocusedElement(Element* element, LocalFrame& newFocused
         return true;
     }
 
-    Ref<Document> newDocument(element->document());
+    Ref newDocument(element->document());
 
     if (newDocument->focusedElement() == element) {
         m_page.editorClient().setInputMethodState(element);
@@ -969,8 +969,6 @@ bool FocusController::setFocusedElement(Element* element, LocalFrame& newFocused
         return false;
     }
     setFocusedFrame(&newFocusedFrame);
-
-    Ref<Element> protect(*element);
 
     bool successfullyFocused = newDocument->setFocusedElement(element, options);
     if (!successfullyFocused)

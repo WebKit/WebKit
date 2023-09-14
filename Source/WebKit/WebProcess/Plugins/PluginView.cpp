@@ -501,16 +501,16 @@ void PluginView::handleEvent(Event& event)
         return;
 
     bool didHandleEvent = false;
-
     if ((event.type() == eventNames().mousemoveEvent && currentEvent->type() == WebEventType::MouseMove)
         || (event.type() == eventNames().mousedownEvent && currentEvent->type() == WebEventType::MouseDown)
         || (event.type() == eventNames().mouseupEvent && currentEvent->type() == WebEventType::MouseUp)) {
         // FIXME: Clicking in a scroll bar should not change focus.
+        RefPtr frame = this->frame();
         if (currentEvent->type() == WebEventType::MouseDown) {
             focusPluginElement();
-            frame()->eventHandler().setCapturingMouseEventsElement(m_pluginElement.ptr());
+            frame->eventHandler().setCapturingMouseEventsElement(m_pluginElement.copyRef());
         } else if (currentEvent->type() == WebEventType::MouseUp)
-            frame()->eventHandler().setCapturingMouseEventsElement(nullptr);
+            frame->eventHandler().setCapturingMouseEventsElement(nullptr);
 
         didHandleEvent = m_plugin->handleMouseEvent(static_cast<const WebMouseEvent&>(*currentEvent));
     } else if (eventNames().isWheelEventType(event.type()) && currentEvent->type() == WebEventType::Wheel)
@@ -669,7 +669,7 @@ IntRect PluginView::clipRectInWindowCoordinates() const
     // Get the frame rect in window coordinates.
     IntRect frameRectInWindowCoordinates = parent()->contentsToWindow(frameRect());
 
-    auto* frame = this->frame();
+    RefPtr frame = this->frame();
 
     // Get the window clip rect for the plugin element (in window coordinates).
     IntRect windowClipRect = frame->view()->windowClipRectForFrameOwner(m_pluginElement.ptr(), true);
@@ -682,12 +682,14 @@ IntRect PluginView::clipRectInWindowCoordinates() const
 
 void PluginView::focusPluginElement()
 {
-    ASSERT(frame());
-    
-    if (Page* page = frame()->page())
-        CheckedRef(page->focusController())->setFocusedElement(m_pluginElement.ptr(), *frame());
+    RefPtr frame = this->frame();
+    ASSERT(frame);
+
+    Ref pluginElement = m_pluginElement;
+    if (auto* page = frame->page())
+        CheckedRef(page->focusController())->setFocusedElement(pluginElement.ptr(), *frame);
     else
-        RefPtr(frame()->document())->setFocusedElement(m_pluginElement.ptr());
+        RefPtr(frame->document())->setFocusedElement(pluginElement.ptr());
 }
 
 void PluginView::pendingResourceRequestTimerFired()
