@@ -1931,8 +1931,8 @@ inline Vector<typename CopyOrMoveToVectorResult<Collection>::Type> copyToVector(
 template<typename DestinationItemType, typename Collection>
 inline auto moveToVectorOf(Collection&& collection) -> Vector<DestinationItemType>
 {
-    return WTF::map(collection, [] (auto&& v) -> DestinationItemType {
-        return WTFMove(v);
+    return WTF::map(collection, [] (auto&& item) -> DestinationItemType {
+        return std::forward<DestinationItemType>(item);
     });
 }
 
