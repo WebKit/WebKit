@@ -1,9 +1,8 @@
 <!doctype html>
 <meta charset="utf-8">
-<title>CSS Motion Path test: &lt;basic-shape&gt; circle() path with offset-distance</title>
+<title>CSS Motion Path test: &lt;basic-shape&gt; circle() path with offset from container</title>
 <meta name=fuzzy content="0-170;0-550">
-<link rel="author" title="Daniil Sakhapov" href="sakhapov@google.com">
-<link rel="match" href="offset-path-shape-circle-003-ref.html">
+<link rel="match" href="offset-path-shape-circle-007-ref.html">
 <link rel="help" href="https://drafts.fxtf.org/motion/#valdef-offset-path-basic-shape">
 
 <style>
@@ -15,6 +14,8 @@
   height: 400px;
 }
 #box {
+  top: 100px;
+  left: 100px;
   background-color: green;
   position: relative;
   offset-path: circle(farthest-side at top);

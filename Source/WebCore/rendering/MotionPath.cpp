@@ -57,7 +57,7 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
 {
     MotionPathData data;
     auto pathOperation = renderer.style().offsetPath();
-    if (!pathOperation || !is<RenderLayerModelObject>(renderer))
+    if (!is<RenderLayerModelObject>(renderer) || !pathOperation || (is<ShapePathOperation>(pathOperation) && is<BasicShapePath>(downcast<ShapePathOperation>(*pathOperation).shape())))
         return std::nullopt;
 
     auto startingPositionForOffsetPosition = [&](const LengthPoint& offsetPosition, const FloatRect& referenceRect, RenderBlock& container) -> FloatPoint {
@@ -197,15 +197,20 @@ std::optional<Path> MotionPath::computePathForRay(const RayPathOperation& rayPat
     return path;
 }
 
+static FloatRoundedRect offsetRectForData(const MotionPathData& data)
+{
+    auto rect = data.containingBlockBoundingRect;
+    auto shiftedPoint = data.offsetFromContainingBlock;
+    shiftedPoint.scale(-1);
+    rect.setLocation(shiftedPoint);
+    return rect;
+}
+
 std::optional<Path> MotionPath::computePathForBox(const BoxPathOperation&, const TransformOperationData& data)
 {
     if (auto motionPathData = data.motionPathData()) {
         Path path;
-        auto rect = motionPathData->containingBlockBoundingRect;
-        auto shiftedPoint = motionPathData->offsetFromContainingBlock;
-        shiftedPoint.scale(-1);
-        rect.setLocation(shiftedPoint);
-        path.addRoundedRect(rect, PathRoundedRect::Strategy::PreferBezier);
+        path.addRoundedRect(offsetRectForData(*motionPathData), PathRoundedRect::Strategy::PreferBezier);
         return path;
     }
     return std::nullopt;
@@ -213,13 +218,13 @@ std::optional<Path> MotionPath::computePathForBox(const BoxPathOperation&, const
 
 std::optional<Path> MotionPath::computePathForShape(const ShapePathOperation& pathOperation, const TransformOperationData& data)
 {
-    if (data.motionPathData()) {
+    if (auto motionPathData = data.motionPathData()) {
         auto& shape = pathOperation.basicShape();
-        auto containingBlockRect = data.motionPathData()->containingBlockBoundingRect.rect();
+        auto containingBlockRect = offsetRectForData(*motionPathData).rect();
         if (is<BasicShapeCircleOrEllipse>(shape)) {
             auto& centerCoordShape = downcast<BasicShapeCircleOrEllipse>(shape);
             if (centerCoordShape.positionWasOmitted())
-                return centerCoordShape.pathForCenterCoordinate(containingBlockRect, data.motionPathData()->usedStartingPosition);
+                return centerCoordShape.pathForCenterCoordinate(containingBlockRect, currentOffsetForData(*motionPathData));
         }
         return pathOperation.pathForReferenceRect(containingBlockRect);
     }
