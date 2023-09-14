@@ -93,7 +93,7 @@ bool canUseWebAssemblyFastMemory();
     \
     v(Bool, reportMustSucceedExecutableAllocations, false, Normal, nullptr) \
     /* Bun Features */\
-    v(Bool, useV8DateParser, true, Normal, nullptr) \
+    v(Bool, useV8DateParser, false, Normal, nullptr) \
     v(Bool, showPrivateScriptsInStackTraces, false, Normal, "Show private scripts in stack traces.") \
     \
     v(Unsigned, maxPerThreadStackUsage, 5 * MB, Normal, "Max allowed stack usage by the VM") \
