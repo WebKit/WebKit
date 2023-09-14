@@ -140,6 +140,7 @@ static constexpr intptr_t kSmiMinValue = static_cast<intptr_t>(kUintptrAllBitsSe
 static constexpr intptr_t kSmiMaxValue = -(kSmiMinValue + 1);
 static constexpr int kMaxValue = static_cast<int>(kSmiMaxValue);
 
+// https://github.com/v8/v8/blob/c45b7804109ece574f71fd45417b4ad498a99e6f/src/base/bounds.h#L17
 template<typename T, typename U>
 inline constexpr bool IsInRange(T value, U lower_limit, U higher_limit)
 {
@@ -152,6 +153,7 @@ inline constexpr bool IsInRange(T value, U lower_limit, U higher_limit)
 
 inline constexpr int AsciiAlphaToLower(uint32_t c) { return c | 0x20; }
 
+// https://github.com/v8/v8/blob/c45b7804109ece574f71fd45417b4ad498a99e6f/src/strings/char-predicates-inl.h#L32
 inline constexpr bool IsDecimalDigit(uint32_t c)
 {
     // ECMA-262, 3rd, 7.8.3 (p 16)
@@ -174,7 +176,7 @@ bool IsValid(intptr_t value)
 }
 }
 
-/***** src/date/dateparser.h *****/
+// https://github.com/v8/v8/blob/c45b7804109ece574f71fd45417b4ad498a99e6f/src/date/dateparser.h#L15
 class DateParser {
 public:
     enum {
@@ -582,8 +584,7 @@ private:
         TimeZoneComposer* tz);
 };
 
-/***** src/date/dateparser.cc *****/
-
+// https://github.com/v8/v8/blob/c45b7804109ece574f71fd45417b4ad498a99e6f/src/date/dateparser.cc#L13
 bool DateParser::DayComposer::Write(double* output)
 {
     if (index_ < 1)
@@ -782,8 +783,7 @@ int DateParser::ReadMilliseconds(DateToken token)
     return number;
 }
 
-/***** src/date/dataparser-inl.h *****/
-
+// https://github.com/v8/v8/blob/c45b7804109ece574f71fd45417b4ad498a99e6f/src/date/dateparser-inl.h#L16
 // template<typename Char>
 bool DateParser::Parse(void* isolate, const char* str, size_t size, double* out)
 {
@@ -951,6 +951,7 @@ bool DateParser::Parse(void* isolate, const char* str, size_t size, double* out)
 
     bool success = day.Write(out) && time.Write(out) && tz.Write(out);
 
+    // DIFF: leaving this commented because we don't have isolate and don't need to count usage
     // if (legacy_parser && success) {
     //     isolate->CountUsage(v8::Isolate::kLegacyDateParser);
     // }
@@ -1135,6 +1136,7 @@ DateParser::DateToken DateParser::ParseES5DateTime(
     return DateToken::EndOfInput();
 }
 
+// https://github.com/v8/v8/blob/c45b7804109ece574f71fd45417b4ad498a99e6f/src/date/date.cc#L462
 // ES6 section 20.3.1.1 Time Values and Time Range
 const double kMinYear = -1000000.0;
 const double kMaxYear = -kMinYear;
@@ -1155,6 +1157,7 @@ static const int64_t kMaxTimeInMs = static_cast<int64_t>(864000000) * 10000000;
 // before UTC conversion.
 static const int64_t kMaxTimeBeforeUTCInMs = kMaxTimeInMs + kMsPerMonth;
 
+// https://github.com/v8/v8/blob/c45b7804109ece574f71fd45417b4ad498a99e6f/src/numbers/conversions-inl.h#L83
 // #sec-tointegerorinfinity
 inline double DoubleToInteger(double x)
 {
@@ -1167,6 +1170,7 @@ inline double DoubleToInteger(double x)
     return ((x > 0) ? std::floor(x) : std::ceil(x)) + 0.0;
 }
 
+// https://github.com/v8/v8/blob/c45b7804109ece574f71fd45417b4ad498a99e6f/src/date/date.cc#L68
 // ECMA 262 - ES#sec-timeclip TimeClip (time)
 double TimeClip(double time)
 {
@@ -1176,6 +1180,7 @@ double TimeClip(double time)
     return std::numeric_limits<double>::quiet_NaN();
 }
 
+// https://github.com/v8/v8/blob/c45b7804109ece574f71fd45417b4ad498a99e6f/src/date/date.cc#L482
 double MakeDay(double year, double month, double date)
 {
     if ((kMinYear <= year && year <= kMaxYear) && (kMinMonth <= month && month <= kMaxMonth) && std::isfinite(date)) {
@@ -1215,6 +1220,7 @@ double MakeDay(double year, double month, double date)
     return std::numeric_limits<double>::quiet_NaN();
 }
 
+// https://github.com/v8/v8/blob/c45b7804109ece574f71fd45417b4ad498a99e6f/src/date/date.cc#L525
 double MakeTime(double hour, double min, double sec, double ms)
 {
     if (std::isfinite(hour) && std::isfinite(min) && std::isfinite(sec) && std::isfinite(ms)) {
@@ -1227,6 +1233,7 @@ double MakeTime(double hour, double min, double sec, double ms)
     return std::numeric_limits<double>::quiet_NaN();
 }
 
+// https://github.com/v8/v8/blob/c45b7804109ece574f71fd45417b4ad498a99e6f/src/date/date.cc#L475
 double MakeDate(double day, double time)
 {
     if (std::isfinite(day) && std::isfinite(time)) {
@@ -1235,6 +1242,7 @@ double MakeDate(double day, double time)
     return std::numeric_limits<double>::quiet_NaN();
 }
 
+// https://github.com/v8/v8/blob/c45b7804109ece574f71fd45417b4ad498a99e6f/src/builtins/builtins-date.cc#L30
 double ParseDateTimeString(DateCache* cache, const char* str, size_t size, bool& local)
 {
     double out[v8::DateParser::OUTPUT_SIZE];
@@ -1249,7 +1257,8 @@ double ParseDateTimeString(DateCache* cache, const char* str, size_t size, bool&
 
     if (std::isnan(out[DateParser::UTC_OFFSET])) {
         if (date >= -kMaxTimeBeforeUTCInMs && date <= kMaxTimeBeforeUTCInMs) {
-            // Mark it local and use JSC DateCache::DSTCache instead of v8's DateCache to get the offset.
+            // DIFF: Use JSC DateCache::DSTCache instead of v8's DateCache. Mark as local and handle
+            // the offset in DateCache::ParseDate.
             local = true;
         } else {
             return std::numeric_limits<double>::quiet_NaN();
