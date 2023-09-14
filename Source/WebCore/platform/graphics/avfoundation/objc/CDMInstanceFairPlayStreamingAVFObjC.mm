@@ -31,6 +31,7 @@
 #import "CDMFairPlayStreaming.h"
 #import "CDMKeySystemConfiguration.h"
 #import "CDMMediaCapability.h"
+#import "ContentKeyGroupFactoryAVFObjC.h"
 #import "InitDataRegistry.h"
 #import "Logging.h"
 #import "MediaSessionManagerCocoa.h"
@@ -39,7 +40,7 @@
 #import "TextDecoder.h"
 #import <AVFoundation/AVContentKeySession.h>
 #import <objc/runtime.h>
-#import <pal/graphics/cocoa/WebContentKeyGrouping.h>
+#import <pal/graphics/cocoa/WebAVContentKeyReportGroupExtras.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/Algorithms.h>
 #import <wtf/FileSystem.h>
@@ -56,9 +57,6 @@ static const NSInteger SecurityLevelError = -42811;
 
 #if HAVE(AVCONTENTKEYREPORTGROUP)
 static NSString * const ContentKeyReportGroupKey = @"ContentKeyReportGroup";
-
-@interface AVContentKeyReportGroup () <WebContentKeyGrouping>
-@end
 #endif
 
 @interface WebCoreFPSContentKeySessionDelegate : NSObject<AVContentKeySessionDelegate> {
@@ -722,7 +720,7 @@ Keys CDMInstanceSessionFairPlayStreamingAVFObjC::keyIDs()
     return keyIDs;
 }
 
-void CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense(LicenseType licenseType, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)
+void CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense(LicenseType licenseType, KeyGroupingStrategy keyGroupingStrategy, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)
 {
     if (!isLicenseTypeSupported(licenseType)) {
         ERROR_LOG(LOGIDENTIFIER, " false, licenseType \"", licenseType, "\" not supported");
@@ -736,7 +734,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense(LicenseType lice
         return;
     }
 
-    if (!ensureSessionOrGroup()) {
+    if (!ensureSessionOrGroup(keyGroupingStrategy)) {
         ERROR_LOG(LOGIDENTIFIER, " false, could not create session or group object");
         callback(SharedBuffer::create(), emptyString(), false, Failed);
         return;
@@ -1165,10 +1163,10 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyR
                     NSData *sessionID = nullptr;
 #if HAVE(AVCONTENTKEYREPORTGROUP)
                     if (m_group)
-                        sessionID = m_group.get().contentProtectionSessionIdentifier;
+                        sessionID = [m_group contentProtectionSessionIdentifier];
                     else
 #endif
-                        sessionID = m_session.get().contentProtectionSessionIdentifier;
+                        sessionID = [m_session contentProtectionSessionIdentifier];
                     sessionIdentifierChanged(sessionID);
                 }
 
@@ -1595,7 +1593,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateProtectionStatusForDispla
         m_client->updateKeyStatuses(copyKeyStatuses());
 }
 
-bool CDMInstanceSessionFairPlayStreamingAVFObjC::ensureSessionOrGroup()
+bool CDMInstanceSessionFairPlayStreamingAVFObjC::ensureSessionOrGroup(KeyGroupingStrategy keyGroupingStrategy)
 {
     if (m_session)
         return true;
@@ -1605,9 +1603,11 @@ bool CDMInstanceSessionFairPlayStreamingAVFObjC::ensureSessionOrGroup()
         return true;
 
     if (auto* session = m_instance->contentKeySession()) {
-        m_group = [session makeContentKeyGroup];
+        m_group = ContentKeyGroupFactoryAVFObjC::createContentKeyGroup(keyGroupingStrategy, session);
         return true;
     }
+#else
+    UNUSED_PARAM(keyGroupingStrategy);
 #endif
 
     auto storageURL = m_instance->storageURL();

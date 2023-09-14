@@ -442,7 +442,7 @@ RefPtr<CDMInstanceSession> CDMInstanceClearKey::createSession()
     return adoptRef(new CDMInstanceSessionClearKey(*this));
 }
 
-void CDMInstanceSessionClearKey::requestLicense(LicenseType, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)
+void CDMInstanceSessionClearKey::requestLicense(LicenseType, KeyGroupingStrategy, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)
 {
     static uint32_t s_sessionIdValue = 0;
     ++s_sessionIdValue;

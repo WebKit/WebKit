@@ -3589,7 +3589,9 @@ header: <WebCore/ScrollingStateNode.h>
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-enum class WebCore::CDMEncryptionScheme : bool
+enum class WebCore::CDMEncryptionScheme : bool;
+
+enum class WebCore::CDMKeyGroupingStrategy : bool;
 
 struct WebCore::CDMMediaCapability {
     String contentType;
@@ -3607,7 +3609,7 @@ struct WebCore::CDMRestrictions {
     bool distinctiveIdentifierDenied;
     bool persistentStateDenied;
     HashSet<WebCore::CDMSessionType, IntHash<WebCore::CDMSessionType>, WTF::StrongEnumHashTraits<WebCore::CDMSessionType>> deniedSessionTypes;
-}
+};
 
 #endif
 

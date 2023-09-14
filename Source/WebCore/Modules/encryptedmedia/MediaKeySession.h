@@ -98,6 +98,7 @@ private:
     void updateExpiration(double);
     void sessionClosed();
     String mediaKeysStorageDirectory() const;
+    CDMKeyGroupingStrategy keyGroupingStrategy() const;
 
     // CDMInstanceSessionClient
     void updateKeyStatuses(CDMInstanceSessionClient::KeyStatusVector&&) override;

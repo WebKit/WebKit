@@ -348,21 +348,23 @@ platform/graphics/avfoundation/objc/AudioTrackPrivateMediaSourceAVFObjC.cpp
 platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm
 platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm
 platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm
+platform/graphics/avfoundation/objc/ContentKeyGroupFactoryAVFObjC.mm
 platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm
 platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/InbandChapterTrackPrivateAVFObjC.mm @no-unify
-platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm
-platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm
+platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm @no-unify
+platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm @no-unify
 platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm @no-unify
 platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm @no-unify
-platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm
+platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm
 platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm
 platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm @no-unify
-platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm
+platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/VideoLayerManagerObjC.mm @no-unify
 platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.cpp
 platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.mm
+platform/graphics/avfoundation/objc/WebContentKeyGroup.mm
 platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm
 platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/ca/LayerPool.cpp

@@ -37,6 +37,7 @@
 #import "MediaDescription.h"
 #import "MediaSample.h"
 #import "MediaSampleAVFObjC.h"
+#import "MediaSessionManagerCocoa.h"
 #import "NotImplemented.h"
 #import "SharedBuffer.h"
 #import "SourceBufferPrivate.h"

@@ -34,17 +34,15 @@
 #import "MediaUtilities.h"
 #import "VideoFrame.h"
 #import "VideoFrameMetadata.h"
-
 #import <AVFoundation/AVSampleBufferDisplayLayer.h>
 #import <QuartzCore/CALayer.h>
 #import <QuartzCore/CATransaction.h>
-
+#import <pal/avfoundation/MediaTimeAVFoundation.h>
+#import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/MainThread.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/cf/TypeCastsCF.h>
 
-#import <pal/avfoundation/MediaTimeAVFoundation.h>
-#import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 

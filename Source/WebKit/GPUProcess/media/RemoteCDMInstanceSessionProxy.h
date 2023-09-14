@@ -55,6 +55,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     // Types
+    using KeyGroupingStrategy = WebCore::CDMInstanceSession::KeyGroupingStrategy;
     using LicenseType = WebCore::CDMInstanceSession::LicenseType;
     using KeyStatusVector = WebCore::CDMInstanceSession::KeyStatusVector;
     using Message = WebCore::CDMInstanceSession::Message;
@@ -68,7 +69,7 @@ private:
 
     // Messages
     void setLogIdentifier(uint64_t);
-    void requestLicense(LicenseType, AtomString initDataType, RefPtr<WebCore::SharedBuffer>&& initData, LicenseCallback&&);
+    void requestLicense(LicenseType, KeyGroupingStrategy, AtomString initDataType, RefPtr<WebCore::SharedBuffer>&& initData, LicenseCallback&&);
     void updateLicense(String sessionId, LicenseType, RefPtr<WebCore::SharedBuffer>&& response, LicenseUpdateCallback&&);
     void loadSession(LicenseType, String sessionId, String origin, LoadSessionCallback&&);
     void closeSession(const String& sessionId, CloseSessionCallback&&);

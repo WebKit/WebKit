@@ -33,6 +33,7 @@
 
 #include "CDM.h"
 #include "CDMInstance.h"
+#include "CDMKeyGroupingStrategy.h"
 #include "DOMPromiseProxy.h"
 #include "Document.h"
 #include "EventLoop.h"
@@ -224,7 +225,7 @@ void MediaKeySession::generateRequest(const AtomString& initDataType, const Buff
             m_latestDecryptTime = 0;
         }
 
-        m_instanceSession->requestLicense(m_sessionType, initDataType, sanitizedInitData.releaseNonNull(), [this, weakThis, promise = WTFMove(promise), identifier = WTFMove(identifier)] (Ref<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, CDMInstanceSession::SuccessValue succeeded) mutable {
+        m_instanceSession->requestLicense(m_sessionType, keyGroupingStrategy(), initDataType, sanitizedInitData.releaseNonNull(), [this, weakThis, promise = WTFMove(promise), identifier = WTFMove(identifier)] (Ref<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, CDMInstanceSession::SuccessValue succeeded) mutable {
             if (!weakThis)
                 return;
 
@@ -805,6 +806,18 @@ String MediaKeySession::mediaKeysStorageDirectory() const
         return emptyString();
 
     return FileSystem::pathByAppendingComponent(storageDirectory, document->securityOrigin().data().databaseIdentifier());
+}
+
+CDMKeyGroupingStrategy MediaKeySession::keyGroupingStrategy() const
+{
+    RefPtr document = downcast<Document>(scriptExecutionContext());
+    if (!document)
+        return CDMKeyGroupingStrategy::Platform;
+
+    if (!document->settings().builtInCDMKeyGroupingStrategyEnabled())
+        return CDMKeyGroupingStrategy::Platform;
+
+    return CDMKeyGroupingStrategy::BuiltIn;
 }
 
 bool MediaKeySession::virtualHasPendingActivity() const

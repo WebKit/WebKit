@@ -45,6 +45,8 @@ namespace WebCore {
 
 class SharedBuffer;
 
+enum class CDMKeyGroupingStrategy : bool;
+
 class CDMInstanceSessionClient : public CanMakeWeakPtr<CDMInstanceSessionClient> {
 public:
     virtual ~CDMInstanceSessionClient() = default;
@@ -62,6 +64,7 @@ class CDMInstanceSession : public RefCounted<CDMInstanceSession> {
 public:
     virtual ~CDMInstanceSession() = default;
 
+    using KeyGroupingStrategy = CDMKeyGroupingStrategy;
     using KeyStatus = CDMKeyStatus;
     using LicenseType = CDMSessionType;
     using MessageType = CDMMessageType;
@@ -79,7 +82,7 @@ public:
     };
 
     using LicenseCallback = CompletionHandler<void(Ref<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, SuccessValue succeeded)>;
-    virtual void requestLicense(LicenseType, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) = 0;
+    virtual void requestLicense(LicenseType, KeyGroupingStrategy, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) = 0;
 
     using KeyStatusVector = CDMInstanceSessionClient::KeyStatusVector;
     using Message = std::pair<MessageType, Ref<SharedBuffer>>;

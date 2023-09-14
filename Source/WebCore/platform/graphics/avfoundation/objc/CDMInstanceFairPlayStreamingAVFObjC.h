@@ -156,7 +156,7 @@ public:
     virtual ~CDMInstanceSessionFairPlayStreamingAVFObjC();
 
     // CDMInstanceSession
-    void requestLicense(LicenseType, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
+    void requestLicense(LicenseType, KeyGroupingStrategy, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
     void updateLicense(const String&, LicenseType, Ref<SharedBuffer>&&, LicenseUpdateCallback&&) final;
     void loadSession(LicenseType, const String&, const String&, LoadSessionCallback&&) final;
     void closeSession(const String&, CloseSessionCallback&&) final;
@@ -196,7 +196,7 @@ public:
     KeyStatusVector copyKeyStatuses() const;
 
 private:
-    bool ensureSessionOrGroup();
+    bool ensureSessionOrGroup(KeyGroupingStrategy);
     bool isLicenseTypeSupported(LicenseType) const;
 
     void updateKeyStatuses(std::optional<PlatformDisplayID> = std::nullopt);
