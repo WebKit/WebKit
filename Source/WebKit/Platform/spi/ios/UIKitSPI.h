@@ -898,17 +898,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (UIPanGestureRecognizer *)gestureRecognizerForInteractiveTransition:(_UINavigationInteractiveTransitionBase *)interactiveTransition WithTarget:(id)target action:(SEL)action;
 @end
 
-@interface _UISheetDetent : NSObject
-@property (class, nonatomic, readonly) _UISheetDetent *_mediumDetent;
-@property (class, nonatomic, readonly) _UISheetDetent *_largeDetent;
-@end
-
-@interface _UISheetPresentationController : UIPresentationController
-@property (nonatomic, copy, setter=_setDetents:) NSArray<_UISheetDetent *> *_detents;
-@property (nonatomic, setter=_setWantsBottomAttachedInCompactHeight:) BOOL _wantsBottomAttachedInCompactHeight;
-@property (nonatomic, setter=_setWidthFollowsPreferredContentSizeWhenBottomAttached:) BOOL _widthFollowsPreferredContentSizeWhenBottomAttached;
-@end
-
 @class BKSAnimationFenceHandle;
 
 @interface UIGestureRecognizer (SPI)
