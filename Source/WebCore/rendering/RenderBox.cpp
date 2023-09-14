@@ -207,7 +207,7 @@ RenderFragmentContainer* RenderBox::clampToStartAndEndFragments(RenderFragmentCo
     // they overflow into, which makes no sense when this block doesn't exist in |fragment| at all.
     RenderFragmentContainer* startFragment = nullptr;
     RenderFragmentContainer* endFragment = nullptr;
-    if (!fragmentedFlow->getFragmentRangeForBox(this, startFragment, endFragment))
+    if (!fragmentedFlow->getFragmentRangeForBox(*this, startFragment, endFragment))
         return fragment;
 
     if (fragment->logicalTopForFragmentedFlowContent() < startFragment->logicalTopForFragmentedFlowContent())
@@ -227,12 +227,9 @@ bool RenderBox::hasFragmentRangeInFragmentedFlow() const
     return fragmentedFlow->hasCachedFragmentRangeForBox(*this);
 }
 
-LayoutRect RenderBox::clientBoxRectInFragment(const RenderFragmentContainer* fragment) const
+LayoutRect RenderBox::clientBoxRectInFragment(const RenderFragmentContainer& fragment) const
 {
-    if (!fragment)
-        return clientBoxRect();
-
-    LayoutRect clientBox = borderBoxRectInFragment(fragment);
+    LayoutRect clientBox = borderBoxRectInFragment(&fragment);
     clientBox.setLocation(clientBox.location() + LayoutSize(borderLeft(), borderTop()));
     clientBox.setSize(clientBox.size() - LayoutSize(borderLeft() + borderRight() + verticalScrollbarWidth(), borderTop() + borderBottom() + horizontalScrollbarHeight()));
 
@@ -654,7 +651,7 @@ void RenderBox::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& accu
 void RenderBox::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
     RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
-    if (fragmentedFlow && fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, this))
+    if (fragmentedFlow && fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, *this))
         return;
 
     auto localRect = FloatRect { 0, 0, width(), height() };
@@ -4990,7 +4987,7 @@ VisiblePosition RenderBox::positionForPoint(const LayoutPoint& point, const Rend
     for (auto& renderer : childrenOfType<RenderBox>(*this)) {
         if (is<RenderFragmentedFlow>(*this)) {
             ASSERT(fragment);
-            if (!downcast<RenderFragmentedFlow>(*this).objectShouldFragmentInFlowFragment(&renderer, fragment))
+            if (!downcast<RenderFragmentedFlow>(*this).objectShouldFragmentInFlowFragment(renderer, fragment))
                 continue;
         }
 
@@ -5097,7 +5094,7 @@ void RenderBox::addVisualEffectOverflow()
     addVisualOverflow(applyVisualEffectOverflow(borderBoxRect()));
 
     if (auto* fragmentedFlow = enclosingFragmentedFlow())
-        fragmentedFlow->addFragmentsVisualEffectOverflow(this);
+        fragmentedFlow->addFragmentsVisualEffectOverflow(*this);
 }
 
 LayoutRect RenderBox::applyVisualEffectOverflow(const LayoutRect& borderBox) const
@@ -5144,20 +5141,20 @@ LayoutRect RenderBox::applyVisualEffectOverflow(const LayoutRect& borderBox) con
     return LayoutRect(overflowMinX, overflowMinY, overflowMaxX - overflowMinX, overflowMaxY - overflowMinY);
 }
 
-void RenderBox::addOverflowFromChild(const RenderBox* child, const LayoutSize& delta)
+void RenderBox::addOverflowFromChild(const RenderBox& child, const LayoutSize& delta)
 {
     // Never allow flow threads to propagate overflow up to a parent.
-    if (child->isRenderFragmentedFlow())
+    if (child.isRenderFragmentedFlow())
         return;
 
-    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
+    auto* fragmentedFlow = enclosingFragmentedFlow();
     if (fragmentedFlow)
-        fragmentedFlow->addFragmentsOverflowFromChild(this, child, delta);
+        fragmentedFlow->addFragmentsOverflowFromChild(*this, child, delta);
 
     // Only propagate layout overflow from the child if the child isn't clipping its overflow.  If it is, then
     // its overflow is internal to it, and we don't care about it. layoutOverflowRectForPropagation takes care of this
     // and just propagates the border box rect instead.
-    LayoutRect childLayoutOverflowRect = child->layoutOverflowRectForPropagation(&style());
+    LayoutRect childLayoutOverflowRect = child.layoutOverflowRectForPropagation(&style());
     childLayoutOverflowRect.move(delta);
     addLayoutOverflow(childLayoutOverflowRect);
 
@@ -5172,17 +5169,17 @@ void RenderBox::addOverflowFromChild(const RenderBox* child, const LayoutSize& d
 
     std::optional<LayoutRect> childVisualOverflowRect;
     auto computeChildVisualOverflowRect = [&] () {
-        childVisualOverflowRect = child->visualOverflowRectForPropagation(&style());
+        childVisualOverflowRect = child.visualOverflowRectForPropagation(&style());
         childVisualOverflowRect->move(delta);
     };
     // If this block is flowed inside a flow thread, make sure its overflow is propagated to the containing fragments.
     if (fragmentedFlow) {
         computeChildVisualOverflowRect();
-        fragmentedFlow->addFragmentsVisualOverflow(this, *childVisualOverflowRect);
+        fragmentedFlow->addFragmentsVisualOverflow(*this, *childVisualOverflowRect);
     } else {
         // Update our visual overflow in case the child spills out the block, but only if we were going to paint
         // the child block ourselves.
-        if (child->hasSelfPaintingLayer())
+        if (child.hasSelfPaintingLayer())
             return;
     }
     if (!childVisualOverflowRect)
@@ -5241,9 +5238,8 @@ void RenderBox::addVisualOverflow(const LayoutRect& rect)
 void RenderBox::clearOverflow()
 {
     m_overflow = nullptr;
-    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
-    if (fragmentedFlow)
-        fragmentedFlow->clearFragmentsOverflow(this);
+    if (auto* fragmentedFlow = enclosingFragmentedFlow())
+        fragmentedFlow->clearFragmentsOverflow(*this);
 }
     
 bool RenderBox::percentageLogicalHeightIsResolvable() const

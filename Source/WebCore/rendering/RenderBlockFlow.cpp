@@ -199,14 +199,14 @@ void RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats()
     if (m_floatingObjects)
         m_floatingObjects->setHorizontalWritingMode(isHorizontalWritingMode());
 
-    HashSet<RenderBox*> oldIntrudingFloatSet;
+    WeakHashSet<RenderBox> oldIntrudingFloatSet;
     if (!childrenInline() && m_floatingObjects) {
         const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
         auto end = floatingObjectSet.end();
         for (auto it = floatingObjectSet.begin(); it != end; ++it) {
             FloatingObject* floatingObject = it->get();
             if (!floatingObject->isDescendant())
-                oldIntrudingFloatSet.add(&floatingObject->renderer());
+                oldIntrudingFloatSet.add(floatingObject->renderer());
         }
     }
 
@@ -214,7 +214,7 @@ void RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats()
     if (avoidsFloats() || isDocumentElementRenderer() || isRenderView() || isFloatingOrOutOfFlowPositioned() || isTableCell()) {
         if (m_floatingObjects)
             m_floatingObjects->clear();
-        if (!oldIntrudingFloatSet.isEmpty())
+        if (!oldIntrudingFloatSet.isEmptyIgnoringNullReferences())
             markAllDescendantsWithFloatsForLayout();
         return;
     }
@@ -304,17 +304,17 @@ void RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats()
         }
 
         markLinesDirtyInBlockRange(changeLogicalTop, changeLogicalBottom);
-    } else if (!oldIntrudingFloatSet.isEmpty()) {
+    } else if (!oldIntrudingFloatSet.isEmptyIgnoringNullReferences()) {
         // If there are previously intruding floats that no longer intrude, then children with floats
         // should also get layout because they might need their floating object lists cleared.
-        if (m_floatingObjects->set().size() < oldIntrudingFloatSet.size())
+        if (m_floatingObjects->set().size() < oldIntrudingFloatSet.computeSize())
             markAllDescendantsWithFloatsForLayout();
         else {
             const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
             auto end = floatingObjectSet.end();
-            for (auto it = floatingObjectSet.begin(); it != end && !oldIntrudingFloatSet.isEmpty(); ++it)
-                oldIntrudingFloatSet.remove(&(*it)->renderer());
-            if (!oldIntrudingFloatSet.isEmpty())
+            for (auto it = floatingObjectSet.begin(); it != end && !oldIntrudingFloatSet.isEmptyIgnoringNullReferences(); ++it)
+                oldIntrudingFloatSet.remove((*it)->renderer());
+            if (!oldIntrudingFloatSet.isEmptyIgnoringNullReferences())
                 markAllDescendantsWithFloatsForLayout();
         }
     }
@@ -938,7 +938,7 @@ void RenderBlockFlow::simplifiedNormalFlowLayout()
     }
 
     bool shouldUpdateOverflow = false;
-    ListHashSet<LegacyRootInlineBox*> lineBoxes;
+    WeakListHashSet<LegacyRootInlineBox> lineBoxes;
     for (InlineWalker walker(*this); !walker.atEnd(); walker.advance()) {
         RenderObject& renderer = *walker.current();
         if (!renderer.isOutOfFlowPositioned() && (renderer.isReplacedOrInlineBlock() || renderer.isFloating())) {
@@ -946,7 +946,7 @@ void RenderBlockFlow::simplifiedNormalFlowLayout()
             box.layoutIfNeeded();
             shouldUpdateOverflow = true;
             if (box.inlineBoxWrapper())
-                lineBoxes.add(&box.inlineBoxWrapper()->root());
+                lineBoxes.add(box.inlineBoxWrapper()->root());
         } else if (is<RenderText>(renderer) || is<RenderInline>(renderer))
             renderer.clearNeedsLayout();
     }
@@ -960,10 +960,8 @@ void RenderBlockFlow::simplifiedNormalFlowLayout()
     }
 
     GlyphOverflowAndFallbackFontsMap textBoxDataMap;
-    for (auto it = lineBoxes.begin(), end = lineBoxes.end(); it != end; ++it) {
-        LegacyRootInlineBox* box = *it;
-        box->computeOverflow(box->lineTop(), box->lineBottom(), textBoxDataMap);
-    }
+    for (auto& box : lineBoxes)
+        box.computeOverflow(box.lineTop(), box.lineBottom(), textBoxDataMap);
 }
 
 void RenderBlockFlow::computeAndSetLineLayoutPath()
@@ -2160,7 +2158,7 @@ bool RenderBlockFlow::hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule pag
 
     RenderFragmentContainer* startFragment = nullptr;
     RenderFragmentContainer* endFragment = nullptr;
-    fragmentedFlow->getFragmentRangeForBox(this, startFragment, endFragment);
+    fragmentedFlow->getFragmentRangeForBox(*this, startFragment, endFragment);
     return (endFragment && fragment != endFragment);
 }
 
@@ -2511,7 +2509,7 @@ void RenderBlockFlow::addOverflowFromFloats()
     for (auto it = floatingObjectSet.begin(); it != end; ++it) {
         const auto& floatingObject = *it->get();
         if (floatingObject.isDescendant())
-            addOverflowFromChild(&floatingObject.renderer(), floatingObject.locationOffsetOfBorderBox());
+            addOverflowFromChild(floatingObject.renderer(), floatingObject.locationOffsetOfBorderBox());
     }
 }
 
@@ -3156,7 +3154,7 @@ LayoutUnit RenderBlockFlow::addOverhangingFloats(RenderBlockFlow& child, bool ma
             
             // Since the float doesn't overhang, it didn't get put into our list. We need to add its overflow in to the child now.
             if (floatingObject.isDescendant())
-                child.addOverflowFromChild(&renderer, floatingObject.locationOffsetOfBorderBox());
+                child.addOverflowFromChild(renderer, floatingObject.locationOffsetOfBorderBox());
         }
     }
     return lowestFloatLogicalBottom;

@@ -406,12 +406,12 @@ void RenderFragmentContainer::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-void RenderFragmentContainer::ensureOverflowForBox(const RenderBox* box, RefPtr<RenderOverflow>& overflow, bool forceCreation) const
+void RenderFragmentContainer::ensureOverflowForBox(const RenderBox& box, RefPtr<RenderOverflow>& overflow, bool forceCreation) const
 {
     ASSERT(m_fragmentedFlow->renderFragmentContainerList().contains(*this));
     ASSERT(isValid());
 
-    RenderBoxFragmentInfo* boxInfo = renderBoxFragmentInfo(box);
+    auto* boxInfo = renderBoxFragmentInfo(&box);
     if (!boxInfo && !forceCreation)
         return;
 
@@ -420,14 +420,14 @@ void RenderFragmentContainer::ensureOverflowForBox(const RenderBox* box, RefPtr<
         return;
     }
     
-    LayoutRect borderBox = box->borderBoxRectInFragment(this);
+    LayoutRect borderBox = box.borderBoxRectInFragment(this);
     LayoutRect clientBox;
     ASSERT(m_fragmentedFlow->objectShouldFragmentInFlowFragment(box, this));
 
     if (!borderBox.isEmpty()) {
         borderBox = rectFlowPortionForBox(box, borderBox);
         
-        clientBox = box->clientBoxRectInFragment(this);
+        clientBox = box.clientBoxRectInFragment(*this);
         clientBox = rectFlowPortionForBox(box, clientBox);
         
         m_fragmentedFlow->flipForWritingModeLocalCoordinates(borderBox);
@@ -441,7 +441,7 @@ void RenderFragmentContainer::ensureOverflowForBox(const RenderBox* box, RefPtr<
         overflow = adoptRef(new RenderOverflow(clientBox, borderBox));
 }
 
-LayoutRect RenderFragmentContainer::rectFlowPortionForBox(const RenderBox* box, const LayoutRect& rect) const
+LayoutRect RenderFragmentContainer::rectFlowPortionForBox(const RenderBox& box, const LayoutRect& rect) const
 {
     LayoutRect mappedRect = m_fragmentedFlow->mapFromLocalToFragmentedFlow(box, rect);
 
@@ -464,7 +464,7 @@ LayoutRect RenderFragmentContainer::rectFlowPortionForBox(const RenderBox* box, 
     return m_fragmentedFlow->mapFromFragmentedFlowToLocal(box, mappedRect);
 }
 
-void RenderFragmentContainer::addLayoutOverflowForBox(const RenderBox* box, const LayoutRect& rect)
+void RenderFragmentContainer::addLayoutOverflowForBox(const RenderBox& box, const LayoutRect& rect)
 {
     if (rect.isEmpty())
         return;
@@ -478,7 +478,7 @@ void RenderFragmentContainer::addLayoutOverflowForBox(const RenderBox* box, cons
     fragmentOverflow->addLayoutOverflow(rect);
 }
 
-void RenderFragmentContainer::addVisualOverflowForBox(const RenderBox* box, const LayoutRect& rect)
+void RenderFragmentContainer::addVisualOverflowForBox(const RenderBox& box, const LayoutRect& rect)
 {
     if (rect.isEmpty())
         return;
@@ -503,7 +503,7 @@ LayoutRect RenderFragmentContainer::visualOverflowRectForBox(const RenderBoxMode
 
     if (is<RenderBox>(box)) {
         RefPtr<RenderOverflow> overflow;
-        ensureOverflowForBox(&downcast<RenderBox>(box), overflow, true);
+        ensureOverflowForBox(downcast<RenderBox>(box), overflow, true);
 
         ASSERT(overflow);
         return overflow->visualOverflowRect();
@@ -514,25 +514,25 @@ LayoutRect RenderFragmentContainer::visualOverflowRectForBox(const RenderBoxMode
 }
 
 // FIXME: This doesn't work for writing modes.
-LayoutRect RenderFragmentContainer::layoutOverflowRectForBoxForPropagation(const RenderBox* box)
+LayoutRect RenderFragmentContainer::layoutOverflowRectForBoxForPropagation(const RenderBox& box)
 {
     // Only propagate interior layout overflow if we don't clip it.
-    LayoutRect rect = box->borderBoxRectInFragment(this);
+    LayoutRect rect = box.borderBoxRectInFragment(this);
     rect = rectFlowPortionForBox(box, rect);
-    if (!box->hasNonVisibleOverflow()) {
+    if (!box.hasNonVisibleOverflow()) {
         RefPtr<RenderOverflow> overflow;
         ensureOverflowForBox(box, overflow, true);
         ASSERT(overflow);
         rect.unite(overflow->layoutOverflowRect());
     }
 
-    bool hasTransform = box->isTransformed();
-    if (box->isInFlowPositioned() || hasTransform) {
+    bool hasTransform = box.isTransformed();
+    if (box.isInFlowPositioned() || hasTransform) {
         if (hasTransform)
-            rect = box->layer()->currentTransform().mapRect(rect);
+            rect = box.layer()->currentTransform().mapRect(rect);
 
-        if (box->isInFlowPositioned())
-            rect.move(box->offsetForInFlowPosition());
+        if (box.isInFlowPositioned())
+            rect.move(box.offsetForInFlowPosition());
     }
 
     return rect;

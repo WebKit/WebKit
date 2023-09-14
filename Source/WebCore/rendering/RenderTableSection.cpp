@@ -514,8 +514,8 @@ void RenderTableSection::relayoutCellIfFlexed(RenderTableCell& cell, int rowInde
 
     if (!cellChildrenFlex) {
         if (TrackedRendererListHashSet* percentHeightDescendants = cell.percentHeightDescendants()) {
-            for (auto* descendant : *percentHeightDescendants) {
-                if (flexAllChildren || shouldFlexCellChild(cell, *descendant)) {
+            for (auto& descendant : *percentHeightDescendants) {
+                if (flexAllChildren || shouldFlexCellChild(cell, descendant)) {
                     cellChildrenFlex = true;
                     break;
                 }
@@ -660,13 +660,13 @@ void RenderTableSection::computeOverflowFromCells(unsigned totalRows, unsigned n
     // Now that our height has been determined, add in overflow from cells.
     for (unsigned r = 0; r < totalRows; r++) {
         for (unsigned c = 0; c < nEffCols; c++) {
-            CellStruct& cs = cellAt(r, c);
-            RenderTableCell* cell = cs.primaryCell();
+            auto& cs = cellAt(r, c);
+            auto* cell = cs.primaryCell();
             if (!cell || cs.inColSpan)
                 continue;
             if (r < totalRows - 1 && cell == primaryCellAt(r + 1, c))
                 continue;
-            addOverflowFromChild(cell);
+            addOverflowFromChild(*cell);
 #if ASSERT_ENABLED
             hasOverflowingCell |= cell->hasVisualOverflow();
 #endif
@@ -1287,7 +1287,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
             // To make sure we properly repaint the section, we repaint all the overflowing cells that we collected.
             auto cells = copyToVector(m_overflowingCells);
 
-            HashSet<RenderTableCell*> spanningCells;
+            WeakHashSet<RenderTableCell> spanningCells;
 
             for (unsigned r = dirtiedRows.start; r < dirtiedRows.end; r++) {
                 RenderTableRow* row = m_grid[r].rowRenderer;
@@ -1302,7 +1302,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
                             continue;
 
                         if (current.cells[i]->rowSpan() > 1 || current.cells[i]->colSpan() > 1) {
-                            if (!spanningCells.add(current.cells[i]).isNewEntry)
+                            if (!spanningCells.add(*current.cells[i]).isNewEntry)
                                 continue;
                         }
 
