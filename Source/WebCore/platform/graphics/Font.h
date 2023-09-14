@@ -187,7 +187,7 @@ public:
 #if PLATFORM(IOS_FAMILY)
     bool shouldNotBeUsedForArabic() const { return m_shouldNotBeUsedForArabic; };
 #endif
-#if PLATFORM(COCOA)
+#if USE(CORE_TEXT)
     CTFontRef getCTFont() const { return m_platformData.font(); }
     RetainPtr<CFDictionaryRef> getCFStringAttributes(bool enableKerning, FontOrientation, const AtomString& locale) const;
     bool supportsSmallCaps() const;

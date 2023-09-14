@@ -185,10 +185,10 @@ bool WidthIterator::hasExtraSpacing() const
     return (m_font.letterSpacing() || m_font.wordSpacing() || m_expansion) && !m_run.spacingDisabled();
 }
 
-static void resetGlyphBuffer(GlyphBuffer& glyphBuffer, GlyphBufferStringOffset resetCharacterIndex)
+static void resetGlyphBuffer(GlyphBuffer& glyphBuffer, GlyphBufferStringOffset index)
 {
-    ASSERT(resetCharacterIndex < glyphBuffer.size());
-    glyphBuffer.shrink(resetCharacterIndex);
+    ASSERT(index < glyphBuffer.size());
+    glyphBuffer.shrink(index);
 }
 
 static void addToGlyphBuffer(GlyphBuffer& glyphBuffer, Glyph glyph, const Font& font, float width, GlyphBufferStringOffset currentCharacterIndex, UChar32 character)
@@ -211,25 +211,25 @@ struct SmallCapsState {
     bool isLastSmallCaps { false };
     bool shouldSynthesizeCharacter { false };
 
-    FontVariantCaps fontVariantCaps { FontVariantCaps::Normal };
-    bool dontSynthesizeSmallCaps { false };
-    bool engageAllSmallCapsProcessing { false };
+    const FontVariantCaps fontVariantCaps { FontVariantCaps::Normal };
+    const bool dontSynthesizeSmallCaps { false };
+    const bool engageAllSmallCapsProcessing { false };
 
     SmallCapsState(const FontCascadeDescription& fontDescription)
+        : fontVariantCaps { fontDescription.variantCaps() }
+        , dontSynthesizeSmallCaps { !fontDescription.hasAutoFontSynthesisSmallCaps() }
+        , engageAllSmallCapsProcessing { fontVariantCaps == FontVariantCaps::AllSmall || fontVariantCaps == FontVariantCaps::AllPetite }
     {
-        fontVariantCaps = fontDescription.variantCaps();
-        dontSynthesizeSmallCaps = !fontDescription.hasAutoFontSynthesisSmallCaps();
-        engageAllSmallCapsProcessing = fontVariantCaps == FontVariantCaps::AllSmall || fontVariantCaps == FontVariantCaps::AllPetite;
     }
 
-    void setSmallCapsData(const Font* font, bool isSmallCaps, const FontDescription& fontDescription)
+    void setSmallCapsData(const Font* font, const FontDescription& fontDescription)
     {
         ASSERT(font);
         this->font = font;
         synthesizedFont = &font->noSynthesizableFeaturesFont();
         smallSynthesizedFont = synthesizedFont->smallCapsFont(fontDescription);
-        this->isLastSmallCaps = this->isSmallCaps;
-        this->isSmallCaps = isSmallCaps;
+        isLastSmallCaps = isSmallCaps;
+        isSmallCaps = true;
     }
 
     void clear()
@@ -327,7 +327,7 @@ void WidthIterator::startNewFontRangeIfNeeded(AdvanceInternalState& advanceInter
             if (advanceInternalState.fontChanged())
                 smallCapsState.clear();
             if (smallCapsState.shouldSynthesizeCharacter)
-                smallCapsState.setSmallCapsData(advanceInternalState.font, true, fontDescription);
+                smallCapsState.setSmallCapsData(advanceInternalState.font, fontDescription);
         }
 
         advanceInternalState.nextRangeFont = fontForRange(advanceInternalState.font, smallCapsState, smallCapsState.isSmallCaps);
@@ -343,7 +343,7 @@ static bool resetFontRangeIfNeeded(AdvanceInternalState& advanceInternalState, S
 
     if (!smallCapsState.synthesizedFont && smallCapsState.shouldSynthesizeCharacter) {
         // Rather than synthesize each character individually, we should synthesize the entire "run" if any character requires synthesis.
-        smallCapsState.setSmallCapsData(advanceInternalState.font, true, fontDescription);
+        smallCapsState.setSmallCapsData(advanceInternalState.font, fontDescription);
         textIterator.reset(advanceInternalState.indexOfFontTransition);
         resetGlyphBuffer(advanceInternalState.glyphBuffer, advanceInternalState.lastGlyphCount);
         return true;
@@ -386,7 +386,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
     advanceInternalState.updateFont(glyphData.font ? glyphData.font : &primaryFont);
     auto capitalizedCharacter = capitalized(character);
     if (shouldSynthesizeSmallCaps(smallCapsState.dontSynthesizeSmallCaps, advanceInternalState.font, character, capitalizedCharacter, smallCapsState.fontVariantCaps, smallCapsState.engageAllSmallCapsProcessing))
-        smallCapsState.setSmallCapsData(advanceInternalState.font, true, fontDescription);
+        smallCapsState.setSmallCapsData(advanceInternalState.font, fontDescription);
     advanceInternalState.rangeFont = fontForRange(advanceInternalState.font, smallCapsState, smallCapsState.isSmallCaps);
     advanceInternalState.nextRangeFont = advanceInternalState.rangeFont;
 
@@ -415,13 +415,14 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         advanceInternalState.updateFont(glyphData.font ? glyphData.font : &primaryFont);
         smallCapsState.shouldSynthesizeCharacter = shouldSynthesizeSmallCaps(smallCapsState.dontSynthesizeSmallCaps, advanceInternalState.font, character, capitalizedCharacter, smallCapsState.fontVariantCaps, smallCapsState.engageAllSmallCapsProcessing);
         updateCharacterAndSmallCapsIfNeeded(smallCapsState, capitalizedCharacter, characterToWrite);
-        if (rtl())
-            characterToWrite = u_charMirror(characterToWrite);
 
         advanceInternalState.rangeFont = fontForRange(advanceInternalState.lastFont, smallCapsState, smallCapsState.isLastSmallCaps);
         startNewFontRangeIfNeeded(advanceInternalState, smallCapsState, fontDescription);
         if (resetFontRangeIfNeeded(advanceInternalState, smallCapsState, fontDescription, textIterator))
             continue;
+
+        if (rtl())
+            characterToWrite = u_charMirror(characterToWrite);
 
         Glyph glyph;
         glyph = advanceInternalState.nextRangeFont->glyphForCharacter(characterToWrite);

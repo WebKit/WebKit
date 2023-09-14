@@ -281,7 +281,6 @@ void Font::platformCharWidthInit()
 
 bool Font::variantCapsSupportedForSynthesis(FontVariantCaps fontVariantCaps) const
 {
-#if (PLATFORM(IOS_FAMILY) && TARGET_OS_IOS) || PLATFORM(MAC)
     switch (fontVariantCaps) {
     case FontVariantCaps::Small:
         return supportsSmallCaps();
@@ -295,21 +294,8 @@ bool Font::variantCapsSupportedForSynthesis(FontVariantCaps fontVariantCaps) con
         // Synthesis only supports the variant-caps values listed above.
         return true;
     }
-#else
-    switch (fontVariantCaps) {
-    case FontVariantCaps::Small:
-    case FontVariantCaps::Petite:
-    case FontVariantCaps::AllSmall:
-    case FontVariantCaps::AllPetite:
-        return false;
-    default:
-        // Synthesis only supports the variant-caps values listed above.
-        return true;
-    }
-#endif
 }
 
-#if (PLATFORM(IOS_FAMILY) && TARGET_OS_IOS) || PLATFORM(MAC)
 static RetainPtr<CFDictionaryRef> smallCapsOpenTypeDictionary(CFStringRef key, int rawValue)
 {
     RetainPtr<CFNumberRef> value = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &rawValue));
@@ -400,7 +386,6 @@ bool Font::supportsAllPetiteCaps() const
     }
     return m_supportsAllPetiteCaps == SupportsFeature::Yes;
 }
-#endif
 
 static RefPtr<Font> createDerivativeFont(CTFontRef font, float size, FontOrientation orientation, CTFontSymbolicTraits fontTraits, bool syntheticBold, bool syntheticItalic, FontWidthVariant fontWidthVariant, TextRenderingMode textRenderingMode, const FontCustomPlatformData* customPlatformData)
 {
