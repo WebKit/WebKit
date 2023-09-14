@@ -38,6 +38,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebKit {
 
@@ -140,7 +141,7 @@ private:
 
     WeakPtr<PlaybackSessionManagerProxy> m_manager;
     PlaybackSessionContextIdentifier m_contextId;
-    HashSet<WebCore::PlaybackSessionModelClient*> m_clients;
+    WeakHashSet<WebCore::PlaybackSessionModelClient> m_clients;
     double m_playbackStartedTime { 0 };
     bool m_playbackStartedTimeNeedsUpdate { false };
     double m_duration { 0 };

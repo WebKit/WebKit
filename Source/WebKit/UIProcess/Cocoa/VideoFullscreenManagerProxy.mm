@@ -199,14 +199,14 @@ VideoFullscreenModelContext::~VideoFullscreenModelContext() = default;
 
 void VideoFullscreenModelContext::addClient(VideoFullscreenModelClient& client)
 {
-    ASSERT(!m_clients.contains(&client));
-    m_clients.add(&client);
+    ASSERT(!m_clients.contains(client));
+    m_clients.add(client);
 }
 
 void VideoFullscreenModelContext::removeClient(VideoFullscreenModelClient& client)
 {
-    ASSERT(m_clients.contains(&client));
-    m_clients.remove(&client);
+    ASSERT(m_clients.contains(client));
+    m_clients.remove(client);
 }
 
 void VideoFullscreenModelContext::setPlayerLayer(RetainPtr<WebAVPlayerLayer>&& playerLayer)
@@ -222,8 +222,9 @@ void VideoFullscreenModelContext::setVideoDimensions(const WebCore::FloatSize& v
 
     m_videoDimensions = videoDimensions;
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, videoDimensions);
-    for (auto& client : copyToVector(m_clients))
-        client->videoDimensionsChanged(videoDimensions);
+    m_clients.forEach([&](auto& client) {
+        client.videoDimensionsChanged(videoDimensions);
+    });
 }
 
 void VideoFullscreenModelContext::requestCloseAllMediaPresentations(bool finishedWithMedia, CompletionHandler<void()>&& completionHandler)
@@ -383,22 +384,25 @@ void VideoFullscreenModelContext::didExitPictureInPicture()
 void VideoFullscreenModelContext::willEnterPictureInPicture()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-    for (auto& client : copyToVector(m_clients))
-        client->willEnterPictureInPicture();
+    m_clients.forEach([&](auto& client) {
+        client.willEnterPictureInPicture();
+    });
 }
 
 void VideoFullscreenModelContext::failedToEnterPictureInPicture()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-    for (auto& client : copyToVector(m_clients))
-        client->failedToEnterPictureInPicture();
+    m_clients.forEach([&](auto& client) {
+        client.failedToEnterPictureInPicture();
+    });
 }
 
 void VideoFullscreenModelContext::willExitPictureInPicture()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-    for (auto& client : copyToVector(m_clients))
-        client->willExitPictureInPicture();
+    m_clients.forEach([&](auto& client) {
+        client.willExitPictureInPicture();
+    });
 }
 
 #if !RELEASE_LOG_DISABLED

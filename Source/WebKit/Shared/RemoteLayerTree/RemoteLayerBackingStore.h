@@ -32,6 +32,7 @@
 #include <WebCore/Region.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/WeakPtr.h>
 
 OBJC_CLASS CALayer;
 
@@ -81,7 +82,7 @@ struct BufferAndBackendInfo {
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, BufferAndBackendInfo&);
 };
 
-class RemoteLayerBackingStore {
+class RemoteLayerBackingStore : public CanMakeWeakPtr<RemoteLayerBackingStore> {
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStore);
     WTF_MAKE_FAST_ALLOCATED;
 public:

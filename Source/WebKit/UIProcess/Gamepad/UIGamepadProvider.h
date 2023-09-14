@@ -31,6 +31,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebKit {
 
@@ -79,7 +80,7 @@ private:
     void scheduleGamepadStateSync();
     void gamepadSyncTimerFired();
 
-    HashSet<WebProcessPool*> m_processPoolsUsingGamepads;
+    WeakHashSet<WebProcessPool> m_processPoolsUsingGamepads;
 
     Vector<std::unique_ptr<UIGamepad>> m_gamepads;
 

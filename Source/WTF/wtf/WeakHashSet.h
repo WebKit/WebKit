@@ -95,6 +95,15 @@ public:
     const_iterator end() const { return WeakHashSetConstIterator(*this, m_set.end()); }
 
     template <typename U>
+    const_iterator find(const U& value) const
+    {
+        increaseOperationCountSinceLastCleanup();
+        if (auto* pointer = value.weakPtrFactory().m_impl.pointer(); pointer && *pointer)
+            return WeakHashSetConstIterator(*this, m_set.find(pointer));
+        return end();
+    }
+
+    template <typename U>
     AddResult add(const U& value)
     {
         amortizedCleanupIfNeeded();
@@ -105,10 +114,16 @@ public:
     bool remove(const U& value)
     {
         amortizedCleanupIfNeeded();
-        auto& weakPtrImpl = value.weakPtrFactory().m_impl;
-        if (auto* pointer = weakPtrImpl.pointer(); pointer && *pointer)
+        if (auto* pointer = value.weakPtrFactory().m_impl.pointer(); pointer && *pointer)
             return m_set.remove(*pointer);
         return false;
+    }
+
+    bool remove(const_iterator iterator)
+    {
+        bool removed = m_set.remove(iterator.m_position);
+        amortizedCleanupIfNeeded();
+        return removed;
     }
 
     void clear()
@@ -121,8 +136,7 @@ public:
     bool contains(const U& value) const
     {
         increaseOperationCountSinceLastCleanup();
-        auto& weakPtrImpl = value.weakPtrFactory().m_impl;
-        if (auto* pointer = weakPtrImpl.pointer(); pointer && *pointer)
+        if (auto* pointer = value.weakPtrFactory().m_impl.pointer(); pointer && *pointer)
             return m_set.contains(*pointer);
         return false;
     }

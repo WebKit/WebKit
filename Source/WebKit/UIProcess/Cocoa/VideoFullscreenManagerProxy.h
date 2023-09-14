@@ -137,7 +137,7 @@ private:
     RetainPtr<WebAVPlayerLayerView> m_playerView;
 #endif
 
-    HashSet<WebCore::VideoFullscreenModelClient*> m_clients;
+    WeakHashSet<WebCore::VideoFullscreenModelClient> m_clients;
     WebCore::FloatSize m_videoDimensions;
     bool m_hasVideo { false };
 

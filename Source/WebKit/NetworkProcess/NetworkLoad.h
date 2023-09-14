@@ -41,7 +41,7 @@ namespace WebKit {
 class NetworkLoadScheduler;
 class NetworkProcess;
 
-class NetworkLoad final : private NetworkDataTaskClient {
+class NetworkLoad final : public NetworkDataTaskClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     NetworkLoad(NetworkLoadClient&, NetworkLoadParameters&&, NetworkSession&);

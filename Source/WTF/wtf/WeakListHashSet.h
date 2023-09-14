@@ -324,6 +324,24 @@ public:
         return *it;
     }
 
+    T& takeFirst()
+    {
+        auto it = begin();
+        auto& first = *it;
+        remove(it);
+        return first;
+    }
+
+    T* tryTakeFirst()
+    {
+        auto it = begin();
+        if (it == end())
+            return nullptr;
+        auto* first = it.get();
+        remove(it);
+        return first;
+    }
+
     T& last()
     {
         auto it = end();

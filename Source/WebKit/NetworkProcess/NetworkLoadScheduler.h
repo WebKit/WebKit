@@ -31,7 +31,7 @@
 #include <tuple>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/ListHashSet.h>
+#include <wtf/WeakListHashSet.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -76,7 +76,7 @@ private:
 
     struct PendingMainResourcePreconnectInfo {
         unsigned pendingPreconnects {1};
-        ListHashSet<NetworkLoad *> pendingLoads;
+        WeakListHashSet<NetworkLoad> pendingLoads;
     };
     // Maps (protocolHostAndPort, userAgent) => PendingMainResourcePreconnectInfo.
     using PendingPreconnectMap = HashMap<std::tuple<String, String>, PendingMainResourcePreconnectInfo>;

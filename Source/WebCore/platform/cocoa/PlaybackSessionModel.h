@@ -114,7 +114,7 @@ public:
 #endif
 };
 
-class PlaybackSessionModelClient {
+class PlaybackSessionModelClient : public CanMakeWeakPtr<PlaybackSessionModelClient> {
 public:
     virtual ~PlaybackSessionModelClient() { };
     virtual void durationChanged(double) { }
