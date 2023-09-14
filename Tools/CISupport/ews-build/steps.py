@@ -2070,11 +2070,11 @@ class DetermineLabelOwner(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
 
         owner = None
         label = builder_name.lower()
-        for event in reversed(label_events):  # traverse list backwards for most recent label
+        for event in reversed(label_events):
             if event['label']['name'] == label:
                 owner = event['actor']['login']
                 yield self._addToLog('stdio', f'Label: {label}, Owner: {owner}\n')
-                if owner == 'webkit-commit-queue':
+                if owner == 'webkit-commit-queue' or owner == 'webkit-ews-buildbot':
                     label = 'safe-merge-queue'
                     continue
                 else:

@@ -6083,7 +6083,7 @@ class TestDetermineLabelOwner(BuildStepMixinAdditions, unittest.TestCase):
                                     },
                                     {
                                         "actor": {
-                                            "login": "webkit-commit-queue"
+                                            "login": "webkit-ews-buildbot"
                                         },
                                         "label": {
                                             "name": "merge-queue"
