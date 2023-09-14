@@ -5425,6 +5425,17 @@
    },
    {
       "emails" : [
+         "mike@w3.org",
+         "sideshowbarker@gmail.com"
+      ],
+      "github" : "sideshowbarker",
+      "name" : "Michael[tm] Smith",
+      "nicks" : [
+         "sideshowbarker"
+      ]
+   },
+   {
+      "emails" : [
          "mpakulavelrutka@gmail.com",
          "m.pakula@samsung.com"
       ],
