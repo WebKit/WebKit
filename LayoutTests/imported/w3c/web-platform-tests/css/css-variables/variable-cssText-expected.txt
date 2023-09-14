@@ -9,4 +9,5 @@ PASS target7
 PASS target8
 PASS target9
 PASS target10
+FAIL target11 assert_equals: expected "color: var(--prop)  /* kept comment */ var(--prop);" but got "color: var(--prop)  var(--prop);"
 

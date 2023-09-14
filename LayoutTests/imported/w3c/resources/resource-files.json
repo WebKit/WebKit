@@ -3948,6 +3948,8 @@
         "web-platform-tests/css/css-variables/variable-reference-38-ref.html",
         "web-platform-tests/css/css-variables/variable-reference-40-ref.html",
         "web-platform-tests/css/css-variables/variable-reference-visited-ref.html",
+        "web-platform-tests/css/css-variables/wide-keyword-fallback-001-ref.html",
+        "web-platform-tests/css/css-variables/wide-keyword-fallback-002-ref.html",
         "web-platform-tests/css/css-variables/wide-keyword-fallback-ref.html",
         "web-platform-tests/css/css-writing-modes/abs-pos-border-offset-001-ref.html",
         "web-platform-tests/css/css-writing-modes/abs-pos-border-offset-002-ref.html",

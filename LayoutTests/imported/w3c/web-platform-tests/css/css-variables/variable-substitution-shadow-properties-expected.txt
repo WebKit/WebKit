@@ -1,4 +1,5 @@
 
 PASS box-shadow
+PASS box-shadow-with-comment
 PASS text-shadow
-box-shadow text-shadow
+box-shadow box-shadow text-shadow
