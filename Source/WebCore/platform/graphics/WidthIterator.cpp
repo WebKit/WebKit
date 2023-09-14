@@ -336,7 +336,7 @@ void WidthIterator::startNewFontRangeIfNeeded(AdvanceInternalState& advanceInter
 }
 
 template <typename TextIterator>
-static bool resetFontRangeIfNeeded(AdvanceInternalState& advanceInternalState, SmallCapsState& smallCapsState, const FontCascadeDescription& fontDescription, TextIterator textIterator)
+static bool resetFontRangeIfNeeded(AdvanceInternalState& advanceInternalState, SmallCapsState& smallCapsState, const FontCascadeDescription& fontDescription, TextIterator& textIterator)
 {
     if (smallCapsState.skipSmallCapsProcessing())
         return false;
