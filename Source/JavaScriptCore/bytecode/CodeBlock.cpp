@@ -2835,6 +2835,8 @@ void CodeBlock::updateAllNonLazyValueProfilePredictionsAndCountLiveness(const Co
     numberOfSamplesInProfiles = 0; // If this divided by ValueProfile::numberOfBuckets equals numberOfValueProfiles() then value profiles are full.
 
     unsigned index = 0;
+    UnlinkedCodeBlock* unlinkedCodeBlock = this->unlinkedCodeBlock();
+    bool isBuiltinFunction = unlinkedCodeBlock->isBuiltinFunction();
     forEachValueProfile([&](ValueProfile& profile, bool isArgument) {
         unsigned numSamples = profile.totalNumberOfSamples();
         static_assert(ValueProfile::numberOfBuckets == 1);
@@ -2843,13 +2845,17 @@ void CodeBlock::updateAllNonLazyValueProfilePredictionsAndCountLiveness(const Co
         numberOfSamplesInProfiles += numSamples;
         if (isArgument) {
             profile.computeUpdatedPrediction(locker);
-            unlinkedCodeBlock()->unlinkedValueProfile(index++).update(profile);
+            if (!isBuiltinFunction)
+                unlinkedCodeBlock->unlinkedValueProfile(index).update(profile);
+            ++index;
             return;
         }
         if (profile.numberOfSamples() || profile.isSampledBefore())
             numberOfLiveNonArgumentValueProfiles++;
         profile.computeUpdatedPrediction(locker);
-        unlinkedCodeBlock()->unlinkedValueProfile(index++).update(profile);
+        if (!isBuiltinFunction)
+            unlinkedCodeBlock->unlinkedValueProfile(index).update(profile);
+        ++index;
     });
 
     if (m_metadata) {
@@ -2886,10 +2892,13 @@ void CodeBlock::updateAllArrayProfilePredictions(const ConcurrentJSLocker& locke
         return;
 
     unsigned index = 0;
-
+    UnlinkedCodeBlock* unlinkedCodeBlock = this->unlinkedCodeBlock();
+    bool isBuiltinFunction = unlinkedCodeBlock->isBuiltinFunction();
     auto process = [&] (ArrayProfile& profile) {
         profile.computeUpdatedPrediction(locker, this);
-        unlinkedCodeBlock()->unlinkedArrayProfile(index++).update(profile);
+        if (!isBuiltinFunction)
+            unlinkedCodeBlock->unlinkedArrayProfile(index).update(profile);
+        ++index;
     };
 
     m_metadata->forEach<OpGetById>([&] (auto& metadata) {
