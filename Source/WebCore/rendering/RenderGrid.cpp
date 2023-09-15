@@ -140,7 +140,7 @@ bool RenderGrid::implicitGridLinesDefinitionDidChange(const RenderStyle& oldStyl
         || oldStyle.implicitNamedGridColumnLines().map != style().implicitNamedGridColumnLines().map;
 }
 
-// This method optimizes the gutters computation by skiping the available size
+// This method optimizes the gutters computation by skipping the available size
 // call if gaps are fixed size (it's only needed for percentages).
 std::optional<LayoutUnit> RenderGrid::availableSpaceForGutters(GridTrackSizingDirection direction) const
 {
@@ -172,7 +172,7 @@ void RenderGrid::repeatTracksSizingIfNeeded(LayoutUnit availableSpaceForColumns,
     // condition to detect whether child's min-content contribution has changed or not.
     // The complication with repeating the track sizing algorithm for flex max-sizing is that
     // it might change a grid item's status of participating in Baseline Alignment for
-    // a cyclic sizing dependncy case, which should be definitively excluded. See
+    // a cyclic sizing dependency case, which should be definitively excluded. See
     // https://github.com/w3c/csswg-drafts/issues/3046 for details.
     // FIXME: we are avoiding repeating the track sizing algorithm for grid item with baseline alignment
     // here in the case of using flex max-sizing functions. We probably also need to investigate whether
@@ -308,16 +308,16 @@ void RenderGrid::layoutGrid(bool relayoutChildren)
         m_trackSizingAlgorithm.setAvailableSpace(ForColumns, availableSpaceForColumns);
         performGridItemsPreLayout(m_trackSizingAlgorithm, ShouldUpdateGridAreaLogicalSize::Yes);
 
-        // 1- First, the track sizing algorithm is used to resolve the sizes of the grid columns. At this point the
+        // 1. First, the track sizing algorithm is used to resolve the sizes of the grid columns. At this point the
         // logical width is always definite as the above call to updateLogicalWidth() properly resolves intrinsic
         // sizes. We cannot do the same for heights though because many code paths inside updateLogicalHeight() require
         // a previous call to setLogicalHeight() to resolve heights properly (like for positioned items for example).
         computeTrackSizesForDefiniteSize(ForColumns, availableSpaceForColumns);
 
-        // 1.5- Compute Content Distribution offsets for column tracks
+        // 1.5. Compute Content Distribution offsets for column tracks
         computeContentPositionAndDistributionOffset(ForColumns, m_trackSizingAlgorithm.freeSpace(ForColumns).value(), nonCollapsedTracks(ForColumns));
 
-        // 2- Next, the track sizing algorithm resolves the sizes of the grid rows,
+        // 2. Next, the track sizing algorithm resolves the sizes of the grid rows,
         // using the grid column sizes calculated in the previous step.
         bool shouldRecomputeHeight = false;
         if (!hasDefiniteLogicalHeight) {
@@ -345,7 +345,7 @@ void RenderGrid::layoutGrid(bool relayoutChildren)
         if (!hasDefiniteLogicalHeight)
             m_trackSizingAlgorithm.setFreeSpace(ForRows, logicalHeight() - trackBasedLogicalHeight);
 
-        // 2.5- Compute Content Distribution offsets for rows tracks
+        // 2.5. Compute Content Distribution offsets for rows tracks
         computeContentPositionAndDistributionOffset(ForRows, m_trackSizingAlgorithm.freeSpace(ForRows).value(), nonCollapsedTracks(ForRows));
 
         if (!aspectRatioBlockSizeDependentGridItems.isEmpty()) {
@@ -353,7 +353,7 @@ void RenderGrid::layoutGrid(bool relayoutChildren)
             updateLogicalWidth();
         }
 
-        // 3- If the min-content contribution of any grid items have changed based on the row
+        // 3. If the min-content contribution of any grid items have changed based on the row
         // sizes calculated in step 2, steps 1 and 2 are repeated with the new min-content
         // contribution (once only).
         repeatTracksSizingIfNeeded(availableSpaceForColumns, contentLogicalHeight());
@@ -431,16 +431,16 @@ void RenderGrid::layoutMasonry(bool relayoutChildren)
         m_trackSizingAlgorithm.setAvailableSpace(ForColumns, availableSpaceForColumns);
         performGridItemsPreLayout(m_trackSizingAlgorithm, ShouldUpdateGridAreaLogicalSize::Yes);
 
-        // 1- First, the track sizing algorithm is used to resolve the sizes of the grid columns. At this point the
+        // 1. First, the track sizing algorithm is used to resolve the sizes of the grid columns. At this point the
         // logical width is always definite as the above call to updateLogicalWidth() properly resolves intrinsic
         // sizes. We cannot do the same for heights though because many code paths inside updateLogicalHeight() require
         // a previous call to setLogicalHeight() to resolve heights properly (like for positioned items for example).
         computeTrackSizesForDefiniteSize(ForColumns, availableSpaceForColumns);
 
-        // 1.5- Compute Content Distribution offsets for column tracks
+        // 1.5. Compute Content Distribution offsets for column tracks
         computeContentPositionAndDistributionOffset(ForColumns, m_trackSizingAlgorithm.freeSpace(ForColumns).value(), nonCollapsedTracks(ForColumns));
 
-        // 2- Next, the track sizing algorithm resolves the sizes of the grid rows,
+        // 2. Next, the track sizing algorithm resolves the sizes of the grid rows,
         // using the grid column sizes calculated in the previous step.
         bool shouldRecomputeHeight = false;
         if (!hasDefiniteLogicalHeight) {
@@ -483,7 +483,7 @@ void RenderGrid::layoutMasonry(bool relayoutChildren)
         if (!hasDefiniteLogicalHeight || areMasonryRows())
             m_trackSizingAlgorithm.setFreeSpace(ForRows, logicalHeight() - trackBasedLogicalHeight);
 
-        // 2.5- Compute Content Distribution offsets for rows tracks
+        // 2.5. Compute Content Distribution offsets for rows tracks
         computeContentPositionAndDistributionOffset(ForRows, m_trackSizingAlgorithm.freeSpace(ForRows).value(), nonCollapsedTracks(ForRows));
 
         if (!aspectRatioBlockSizeDependentGridItems.isEmpty()) {
@@ -614,11 +614,11 @@ LayoutUnit RenderGrid::guttersSize(GridTrackSizingDirection direction, unsigned 
             --nonEmptyTracksAfterEndLine;
         }
         if (nonEmptyTracksAfterEndLine) {
-            // We shouldn't count the gap twice if the span starts and ends in a collapsed track bewtween two non-empty tracks.
+            // We shouldn't count the gap twice if the span starts and ends in a collapsed track between two non-empty tracks.
             if (!nonEmptyTracksBeforeStartLine)
                 gapAccumulator += gap;
         } else if (nonEmptyTracksBeforeStartLine) {
-            // We shouldn't count the gap if the the span starts and ends in a collapsed but there isn't non-empty tracks afterwards (it's at the end of the grid).
+            // We shouldn't count the gap if the span starts and ends in a collapsed but there isn't non-empty tracks afterwards (it's at the end of the grid).
             gapAccumulator -= gap;
         }
     }
@@ -1018,13 +1018,13 @@ LayoutUnit RenderGrid::masonryContentSize() const
 void RenderGrid::performGridItemsPreLayout(const GridTrackSizingAlgorithm& algorithm, const ShouldUpdateGridAreaLogicalSize shouldUpdateGridAreaLogicalSize) const
 {
     ASSERT(!algorithm.grid().needsItemsPlacement());
-    // FIXME: We need a way when we are calling this during intrinsic size compuation before performing
+    // FIXME: We need a way when we are calling this during intrinsic size computation before performing
     // the layout. Maybe using the PreLayout phase ?
     for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         if (child->isOutOfFlowPositioned())
             continue;
         // Orthogonal items should be laid out in order to properly compute content-sized tracks that may depend on item's intrinsic size.
-        // We also need to properly estimate its grid area size, since it may affect to the baseline shims if such item particiaptes in baseline alignment. 
+        // We also need to properly estimate its grid area size, since it may affect to the baseline shims if such item participates in baseline alignment.
         if (GridLayoutFunctions::isOrthogonalChild(*this, *child)) {
             updateGridAreaLogicalSize(*child, algorithm.estimatedGridAreaBreadthForChild(*child, ForColumns), algorithm.estimatedGridAreaBreadthForChild(*child, ForRows));
             child->layoutIfNeeded();
@@ -1305,7 +1305,7 @@ void RenderGrid::updateGridAreaForAspectRatioItems(const Vector<RenderBox*>& aut
 
     for (auto& autoGridItem : autoGridItems) {
         updateGridAreaLogicalSize(*autoGridItem, gridAreaBreadthForChildIncludingAlignmentOffsets(*autoGridItem, ForColumns), gridAreaBreadthForChildIncludingAlignmentOffsets(*autoGridItem, ForRows));
-        // For an item wtih aspect-ratio, if it has stretch alignment that stretches to the definite row, we also need to transfer the size before laying out the grid item.
+        // For an item with aspect-ratio, if it has stretch alignment that stretches to the definite row, we also need to transfer the size before laying out the grid item.
         if (autoGridItem->hasStretchedLogicalHeight())
             applyStretchAlignmentToChildIfNeeded(*autoGridItem);
     }
@@ -1456,7 +1456,7 @@ LayoutUnit RenderGrid::gridAreaBreadthForChildIncludingAlignmentOffsets(const Re
 
 void RenderGrid::populateGridPositionsForDirection(GridTrackSizingDirection direction)
 {
-    // Since we add alignment offsets and track gutters, grid lines are not always adjacent. Hence we will have to
+    // Since we add alignment offsets and track gutters, grid lines are not always adjacent. Hence, we will have to
     // assume from now on that we just store positions of the initial grid lines of each track,
     // except the last one, which is the only one considered as a final grid line of a track.
 
@@ -2190,9 +2190,9 @@ void RenderGrid::gridAreaPositionForInFlowChild(const RenderBox& child, GridTrac
     start = positions[span.startLine()];
     end = positions[span.endLine()];
     // The 'positions' vector includes distribution offset (because of content
-    // alignment) and gutters so we need to subtract them to get the actual
+    // alignment) and gutters, so we need to subtract them to get the actual
     // end position for a given track (this does not have to be done for the
-    // last track as there are no more positions's elements after it, nor for
+    // last track as there are no more positions' elements after it, nor for
     // collapsed tracks).
     if (span.endLine() < positions.size() - 1
         && !(currentGrid().hasAutoRepeatEmptyTracks(direction)
@@ -2399,7 +2399,7 @@ unsigned RenderGrid::numTracks(GridTrackSizingDirection direction) const
 {
     // Due to limitations in our internal representation, we cannot know the number of columns from
     // currentGrid *if* there is no row (because currentGrid would be empty). That's why in that case we need
-    // to get it from the style. Note that we know for sure that there are't any implicit tracks,
+    // to get it from the style. Note that we know for sure that there aren't any implicit tracks,
     // because not having rows implies that there are no "normal" children (out-of-flow children are
     // not stored in currentGrid).
     ASSERT(!currentGrid().needsItemsPlacement());
