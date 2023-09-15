@@ -1466,10 +1466,8 @@ void IDBTransaction::connectionClosedFromServer(const IDBError& error)
     m_abortQueue.clear();
     m_transactionOperationMap.clear();
 
-    m_idbError = error;
     m_domError = error.toDOMException();
-    m_database->didAbortTransaction(*this);
-    fireOnAbort();
+    didAbort(error);
 }
 
 template<typename Visitor>
