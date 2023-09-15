@@ -71,6 +71,7 @@ private:
     enum MayOverConstrainLine : uint8_t { No, Yes, OnlyWhenFirstFloatOnLine };
     bool tryPlacingFloatBox(const Box&, MayOverConstrainLine);
     Result handleInlineContent(const InlineItemRange& needsLayoutRange, const LineCandidate&);
+    Result processLineBreakingResult(const LineCandidate&, const InlineItemRange& layoutRange, const InlineContentBreaker::Result&);
     UsedConstraints adjustedLineRectWithCandidateInlineContent(const LineCandidate&) const;
     size_t rebuildLineWithInlineContent(const InlineItemRange& needsLayoutRange, const InlineItem& lastInlineItemToAdd);
     size_t rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange);
