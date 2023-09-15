@@ -1806,20 +1806,20 @@ WeakPtr<RenderBox> RenderGrid::getBaselineChild(ItemPosition alignment) const
     ASSERT(alignment == ItemPosition::Baseline || alignment == ItemPosition::LastBaseline);
     const RenderBox* baselineChild = nullptr;
     unsigned numColumns = currentGrid().numTracks(ForColumns);
-    unsigned numRows = currentGrid().numTracks(ForRows);
-
+    auto rowIndexDeterminingBaseline = alignment == ItemPosition::Baseline ? 0 : currentGrid().numTracks(ForRows) - 1;
     for (size_t column = 0; column < numColumns; column++) {
-        auto cell = currentGrid().cell(0, column);
-        if (alignment == ItemPosition::LastBaseline)
-            cell = currentGrid().cell(numRows - 1, numColumns - column - 1);
+        auto cell = currentGrid().cell(rowIndexDeterminingBaseline, alignment == ItemPosition::Baseline ? column : numColumns - column - 1);
 
         for (auto& child : cell) {
             ASSERT(child.get());
             // If an item participates in baseline alignment, we select such item.
-            if (isBaselineAlignmentForChild(*child, GridColumnAxis, AllowedBaseLine::FirstLine)) {
-                // FIXME: self-baseline and content-baseline alignment not implemented yet.
-                baselineChild = child.get();
-                break;
+            if (isBaselineAlignmentForChild(*child, GridColumnAxis, AllowedBaseLine::BothLines)) {
+                auto gridItemAlignment = selfAlignmentForChild(GridAxis::GridColumnAxis, *child).position();
+                if (rowIndexDeterminingBaseline == GridLayoutFunctions::alignmentContextForBaselineAlignment(gridSpanForChild(*child, ForRows), gridItemAlignment)) {
+                    // FIXME: self-baseline and content-baseline alignment not implemented yet.
+                    baselineChild = child.get();
+                    break;
+                }
             }
             if (!baselineChild)
                 baselineChild = child.get();
