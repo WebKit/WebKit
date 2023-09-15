@@ -1,0 +1,42 @@
+<style>
+    .box {
+        width: 100px;
+        height: 100px;
+        display: inline-block;
+        margin: 20px;
+    }
+    .css-drop-shadow {
+        filter: drop-shadow(30px 30px 0px black);
+        background-color: red;
+    }
+    .svg-drop-shadow-1 {
+        filter: url(#svgDropShadow-1);
+        background-color: green;
+    }
+    .svg-drop-shadow-2 {
+        filter: url(#svgDropShadow-2);
+        background-color: blue;
+    }
+</style>
+<body>
+    <div class="box css-drop-shadow">
+    </div>
+    <div class="box svg-drop-shadow-1">
+    </div>
+    <div class="box svg-drop-shadow-2">
+    </div>
+    <svg style="position: absolute; top: -999999px" xmlns="http://www.w3.org/2000/svg">
+        <filter id="svgDropShadow-1">
+            <feOffset dx="30" dy="30" result="offset"/>
+            <feFlood flood-color="black"/>
+            <feComposite in2="offset" operator="in"/>
+            <feMerge>
+                <feMergeNode/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+        <filter id="svgDropShadow-2">
+            <feDropShadow dx="30" dy="30" stdDeviation="0" flood-color="black"/>
+        </filter>
+    </svg>
+</body>

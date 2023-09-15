@@ -118,6 +118,16 @@ inline RectEdges<T>& operator+=(RectEdges<T>& a, const RectEdges<T>& b)
 }
 
 template<typename T>
+inline RectEdges<T> unionEdges(const RectEdges<T>& a, const RectEdges<T>& b)
+{
+    auto top    = std::max(a.top(),    b.top());
+    auto right  = std::max(a.right(),  b.right());
+    auto bottom = std::max(a.bottom(), b.bottom());
+    auto left   = std::max(a.left(),   b.left());
+    return { top, right, bottom, left };
+}
+
+template<typename T>
 TextStream& operator<<(TextStream& ts, const RectEdges<T>& edges)
 {
     ts << "[top " << edges.top() << " right " << edges.right() << " bottom " << edges.bottom() << " left " << edges.left() << "]";

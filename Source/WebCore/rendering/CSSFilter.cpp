@@ -206,7 +206,17 @@ static IntOutsets calculateReferenceFilterOutsets(const ReferenceFilterOperation
     if (!filterElement)
         return { };
 
-    return SVGFilter::calculateOutsets(*filterElement, targetBoundingBox);
+    auto filterRegion = SVGLengthContext::resolveRectangle<SVGFilterElement>(filterElement, filterElement->filterUnits(), targetBoundingBox);
+    auto primitiveOutsets = SVGFilter::calculateOutsets(*filterElement, targetBoundingBox);
+
+    ASSERT(filterRegion.contains(targetBoundingBox));
+    auto topLeftOutsets = targetBoundingBox.location() - filterRegion.location();
+    auto bottomRightOutsets = filterRegion.maxXMaxYCorner() - targetBoundingBox.maxXMaxYCorner();
+
+    auto filterElementOutsets = IntOutsets { topLeftOutsets.height(), bottomRightOutsets.width(), bottomRightOutsets.height(), topLeftOutsets.width() };
+
+    // Return the union of the filterElement outsets and and the primitives outsets.
+    return unionEdges(primitiveOutsets, filterElementOutsets);
 }
 
 static RefPtr<SVGFilter> createReferenceFilter(CSSFilter& filter, const ReferenceFilterOperation& filterOperation, RenderElement& renderer, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
@@ -367,6 +377,15 @@ void CSSFilter::setFilterRegion(const FloatRect& filterRegion)
 {
     Filter::setFilterRegion(filterRegion);
     clampFilterRegionIfNeeded();
+
+    for (auto& function : m_functions) {
+        if (!function->isSVGFilter())
+            continue;
+
+        auto& filter = downcast<SVGFilter>(function.get());
+        filter.setFilterRegion(filterRegion);
+        filter.clampFilterRegionIfNeeded();
+    }
 }
 
 bool CSSFilter::isIdentity(RenderElement& renderer, const FilterOperations& operations)
