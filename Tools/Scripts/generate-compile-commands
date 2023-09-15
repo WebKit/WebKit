@@ -41,7 +41,7 @@ parser = argparse.ArgumentParser(description='Generate compile_commands.json',
                   make r EXPORT_COMPILE_COMMANDS=YES
                   generate-compile-commands WebKitBuild/Release
 
-                  https://trac.webkit.org/wiki/Clangd
+                  https://docs.webkit.org/Build%%20%%26%%20Debug/BuildOptions.html#building-with-compile_commandsjson
                   """)
 
 parser.add_argument('built_products_dir', metavar='built-products-dir', help='path to the build directory containing generated compile commands (ex: WebKitBuild/Release)')
