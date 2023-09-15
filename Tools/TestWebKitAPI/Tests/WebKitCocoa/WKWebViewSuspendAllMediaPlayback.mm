@@ -78,8 +78,7 @@ TEST(WKWebViewSuspendAllMediaPlayback, AfterLoading)
     TestWebKitAPI::Util::run(&isPlaying);
 }
 
-// FIX ME: Un-disable test when https://bugs.webkit.org/show_bug.cgi?id=261529 is resolved
-TEST(WKWebViewSuspendAllMediaPlayback, DISABLED_PauseWhenResume)
+TEST(WKWebViewSuspendAllMediaPlayback, PauseWhenResume)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
