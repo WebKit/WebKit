@@ -47,19 +47,19 @@ public:
 #if PLATFORM(COCOA)
     bool isPropertyAllowed(ASCIILiteral propertyName, WebPage*);
 
-    void createTab(NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void createTab(WebPage*, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    void query(WebPage*, NSDictionary *queryInfo, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void query(WebPage*, NSDictionary *info, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     void get(double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void getCurrent(WebPage*, Ref<WebExtensionCallbackHandler>&&);
     void getSelected(WebPage*, double windowID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    void duplicate(double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void update(WebPage*, double tabID, NSDictionary *updateProperties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void duplicate(double tabID, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void update(WebPage*, double tabID, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void remove(NSObject *tabIDs, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    void reload(WebPage*, double tabID, NSDictionary *reloadProperties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void reload(WebPage*, double tabID, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void goBack(WebPage*, double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void goForward(WebPage*, double tabID, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
@@ -85,6 +85,7 @@ public:
 private:
     static bool parseTabCreateOptions(NSDictionary *, WebExtensionTabParameters&, NSString *sourceKey, NSString **outExceptionString);
     static bool parseTabUpdateOptions(NSDictionary *, WebExtensionTabParameters&, NSString *sourceKey, NSString **outExceptionString);
+    static bool parseTabDuplicateOptions(NSDictionary *, WebExtensionTabParameters&, NSString *sourceKey, NSString **outExceptionString);
     static bool parseTabQueryOptions(NSDictionary *, WebExtensionTabQueryParameters&, NSString *sourceKey, NSString **outExceptionString);
 
     RefPtr<WebExtensionAPIEvent> m_onActivated;

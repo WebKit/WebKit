@@ -54,10 +54,10 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
     static constexpr CGRect CGRectNaN = { { NaN, NaN }, { NaN, NaN } };
 
     auto *creationOptions = [[_WKWebExtensionWindowCreationOptions alloc] _init];
-    creationOptions.desiredWindowType = creationParameters.type ? toAPI(creationParameters.type.value()) : _WKWebExtensionWindowTypeNormal;
-    creationOptions.desiredWindowState = creationParameters.state ? toAPI(creationParameters.state.value()) : _WKWebExtensionWindowStateNormal;
-    creationOptions.shouldFocus = creationParameters.focused && creationParameters.focused.value();
-    creationOptions.shouldUsePrivateBrowsing = creationParameters.privateBrowsing && creationParameters.privateBrowsing.value();
+    creationOptions.desiredWindowType = toAPI(creationParameters.type.value_or(WebExtensionWindow::Type::Normal));
+    creationOptions.desiredWindowState = toAPI(creationParameters.state.value_or(WebExtensionWindow::State::Normal));
+    creationOptions.shouldFocus = creationParameters.focused.value_or(true);
+    creationOptions.shouldUsePrivateBrowsing = creationParameters.privateBrowsing.value_or(false);
 
     if (creationParameters.frame) {
         CGRect desiredFrame = creationParameters.frame.value();
@@ -83,8 +83,13 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
     if (creationParameters.tabs) {
         for (auto& tabParameters : creationParameters.tabs.value()) {
             if (tabParameters.identifier) {
-                if (auto tab = getTab(tabParameters.identifier.value()); tab && tab->isValid())
-                    [tabs addObject:tab->delegate()];
+                auto tab = getTab(tabParameters.identifier.value());
+                if (!tab) {
+                    completionHandler(std::nullopt, toErrorString(@"windows.create()", nil, @"tab '%llu' was not found", tabParameters.identifier.value().toUInt64()));
+                    return;
+                }
+
+                [tabs addObject:tab->delegate()];
             } else if (tabParameters.url)
                 [urls addObject:static_cast<NSURL *>(tabParameters.url.value())];
         }

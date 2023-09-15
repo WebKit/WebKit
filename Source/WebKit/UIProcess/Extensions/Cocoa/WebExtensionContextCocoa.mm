@@ -1165,32 +1165,38 @@ RefPtr<WebExtensionWindow> WebExtensionContext::getWindow(WebExtensionWindowIden
     if (!isValid(identifier))
         return nullptr;
 
+    RefPtr<WebExtensionWindow> result;
+
     if (isCurrent(identifier)) {
-        for (auto& tab : openTabs()) {
-            for (WKWebView *webView in tab->webViews()) {
-                if (webView._page->identifier() == webPageProxyIdentifier)
-                    return tab->window();
-            }
+        if (webPageProxyIdentifier) {
+            if (auto tab = getTab(webPageProxyIdentifier.value()))
+                result = tab->window();
         }
 
-        // FIXME: <https://webkit.org/b/260154> Use the page identifier to get the current window for popup pages.
+        if (!result)
+            result = frontmostWindow();
+    } else
+        result = m_windowMap.get(identifier);
 
-        return frontmostWindow();
-    }
+    if (!result) {
+        if (isCurrent(identifier)) {
+            if (webPageProxyIdentifier)
+                RELEASE_LOG_ERROR(Extensions, "Current window for page %{public}llu was not found", webPageProxyIdentifier.value().toUInt64());
+            else
+                RELEASE_LOG_ERROR(Extensions, "Current window not found (no frontmost window)");
+        } else
+            RELEASE_LOG_ERROR(Extensions, "Window %{public}llu was not found", identifier.toUInt64());
 
-    auto* window = m_windowMap.get(identifier);
-    if (!window) {
-        RELEASE_LOG_ERROR(Extensions, "Window %{public}llu was not found", identifier.toUInt64());
         return nullptr;
     }
 
-    if (!window->isValid()) {
-        RELEASE_LOG_ERROR(Extensions, "Window %{public}llu has nil delegate; reference not removed via didCloseWindow: before release", identifier.toUInt64());
-        m_windowMap.remove(identifier);
+    if (!result->isValid()) {
+        RELEASE_LOG_ERROR(Extensions, "Window %{public}llu has nil delegate; reference not removed via didCloseWindow: before release", result->identifier().toUInt64());
+        m_windowMap.remove(result->identifier());
         return nullptr;
     }
 
-    return window;
+    return result;
 }
 
 Ref<WebExtensionTab> WebExtensionContext::getOrCreateTab(_WKWebExtensionTab *delegate)
@@ -1235,10 +1241,34 @@ RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebPageProxyIdentifier webPa
     if (identifier)
         return getTab(identifier.value());
 
-    if (auto window = getWindow(WebExtensionWindowConstants::CurrentIdentifier, webPageProxyIdentifier))
-        return window->activeTab();
+    RefPtr<WebExtensionTab> result;
 
-    return nullptr;
+    for (auto& tab : openTabs()) {
+        for (WKWebView *webView in tab->webViews()) {
+            if (webView._page->identifier() == webPageProxyIdentifier) {
+                result = tab.ptr();
+                break;
+            }
+        }
+
+        if (result)
+            break;
+    }
+
+    // FIXME: <https://webkit.org/b/260154> Use the page identifier to get the current tab for popup pages.
+
+    if (!result) {
+        RELEASE_LOG_ERROR(Extensions, "Tab for page %{public}llu was not found", webPageProxyIdentifier.toUInt64());
+        return nullptr;
+    }
+
+    if (!result->isValid()) {
+        RELEASE_LOG_ERROR(Extensions, "Tab %{public}llu has nil delegate; reference not removed via didCloseTab: before release", result->identifier().toUInt64());
+        m_tabMap.remove(result->identifier());
+        return nullptr;
+    }
+
+    return result;
 }
 
 void WebExtensionContext::populateWindowsAndTabs()

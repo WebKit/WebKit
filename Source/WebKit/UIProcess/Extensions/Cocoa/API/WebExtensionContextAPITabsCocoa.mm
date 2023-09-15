@@ -40,9 +40,222 @@
 #import "WebExtensionUtilities.h"
 #import "WebExtensionWindowIdentifier.h"
 #import "WebPageProxy.h"
+#import "_WKWebExtensionControllerDelegatePrivate.h"
 #import "_WKWebExtensionTabCreationOptionsInternal.h"
 
 namespace WebKit {
+
+void WebExtensionContext::tabsCreate(WebPageProxyIdentifier webPageProxyIdentifier, const WebExtensionTabParameters& parameters, CompletionHandler<void(std::optional<WebExtensionTabParameters>, WebExtensionTab::Error)>&& completionHandler)
+{
+    ASSERT(!parameters.audible);
+    ASSERT(!parameters.loading);
+    ASSERT(!parameters.privateBrowsing);
+    ASSERT(!parameters.readerModeAvailable);
+    ASSERT(!parameters.size);
+    ASSERT(!parameters.title);
+
+    static NSString * const apiName = @"tabs.create()";
+
+    auto delegate = extensionController()->delegate();
+    if (![delegate respondsToSelector:@selector(webExtensionController:openNewTabWithOptions:forExtensionContext:completionHandler:)]) {
+        completionHandler(std::nullopt, toErrorString(apiName, nil, @"it is not implemented"));
+        return;
+    }
+
+    auto *creationOptions = [[_WKWebExtensionTabCreationOptions alloc] _init];
+    creationOptions.shouldActivate = parameters.active.value_or(true);
+    creationOptions.shouldSelect = creationOptions.shouldActivate ?: parameters.selected.value_or(false);
+    creationOptions.shouldPin = parameters.pinned.value_or(false);
+    creationOptions.shouldMute = parameters.muted.value_or(false);
+    creationOptions.shouldShowReaderMode = parameters.showingReaderMode.value_or(false);
+
+    auto window = getWindow(parameters.windowIdentifier.value_or(WebExtensionWindowConstants::CurrentIdentifier), webPageProxyIdentifier);
+    if (!window) {
+        completionHandler(std::nullopt, toErrorString(apiName, nil, @"window not found"));
+        return;
+    }
+
+    creationOptions.desiredWindow = window->delegate();
+    creationOptions.desiredIndex = parameters.index.value_or(window->tabs().size());
+
+    if (parameters.parentTabIdentifier) {
+        auto tab = getTab(parameters.parentTabIdentifier.value());
+        if (!tab) {
+            completionHandler(std::nullopt, toErrorString(apiName, nil, @"parent tab not found"));
+            return;
+        }
+
+        creationOptions.desiredParentTab = tab->delegate();
+    }
+
+    if (parameters.url)
+        creationOptions.desiredURL = parameters.url.value();
+
+    [delegate webExtensionController:extensionController()->wrapper() openNewTabWithOptions:creationOptions forExtensionContext:wrapper() completionHandler:^(id<_WKWebExtensionTab> newTab, NSError *error) {
+        if (error) {
+            RELEASE_LOG_ERROR(Extensions, "Error for open new tab: %{private}@", error);
+            completionHandler(std::nullopt, error.localizedDescription);
+            return;
+        }
+
+        if (!newTab) {
+            completionHandler(std::nullopt, std::nullopt);
+            return;
+        }
+
+        THROW_UNLESS([newTab conformsToProtocol:@protocol(_WKWebExtensionTab)], @"Object returned by webExtensionController:openNewTabWithOptions:forExtensionContext:completionHandler: does not conform to the _WKWebExtensionTab protocol");
+
+        completionHandler(getOrCreateTab(newTab)->parameters(), std::nullopt);
+    }];
+}
+
+void WebExtensionContext::tabsUpdate(WebExtensionTabIdentifier tabIdentifier, const WebExtensionTabParameters& parameters, CompletionHandler<void(std::optional<WebExtensionTabParameters>, WebExtensionTab::Error)>&& completionHandler)
+{
+    ASSERT(!parameters.audible);
+    ASSERT(!parameters.index);
+    ASSERT(!parameters.loading);
+    ASSERT(!parameters.privateBrowsing);
+    ASSERT(!parameters.readerModeAvailable);
+    ASSERT(!parameters.showingReaderMode);
+    ASSERT(!parameters.size);
+    ASSERT(!parameters.title);
+    ASSERT(!parameters.windowIdentifier);
+
+    auto tab = getTab(tabIdentifier);
+    if (!tab) {
+        completionHandler(std::nullopt, toErrorString(@"tabs.update()", nil, @"tab not found"));
+        return;
+    }
+
+    auto updateActiveAndSelected = [&](CompletionHandler<void(WebExtensionTab::Error)>&& stepCompletionHandler) {
+        if (parameters.active.value_or(false) && !tab->isActive()) {
+            tab->activate(WTFMove(stepCompletionHandler));
+            return;
+        }
+
+        if (!parameters.selected) {
+            stepCompletionHandler(std::nullopt);
+            return;
+        }
+
+        bool shouldSelect = parameters.selected.value();
+        if (shouldSelect && !tab->isSelected()) {
+            // If active is not explicitly set to false, activate the tab. This matches Firefox.
+            if (parameters.active.value_or(true))
+                tab->activate(WTFMove(stepCompletionHandler));
+            else
+                tab->select(WTFMove(stepCompletionHandler));
+            return;
+        }
+
+        if (!shouldSelect && tab->isSelected()) {
+            tab->deselect(WTFMove(stepCompletionHandler));
+            return;
+        }
+
+        stepCompletionHandler(std::nullopt);
+    };
+
+    auto updateURL = [&](CompletionHandler<void(WebExtensionTab::Error)>&& stepCompletionHandler) {
+        if (!parameters.url) {
+            stepCompletionHandler(std::nullopt);
+            return;
+        }
+
+        tab->loadURL(parameters.url.value(), WTFMove(stepCompletionHandler));
+    };
+
+    auto updatePinned = [&](CompletionHandler<void(WebExtensionTab::Error)>&& stepCompletionHandler) {
+        if (!parameters.pinned || parameters.pinned.value() == tab->isPinned()) {
+            stepCompletionHandler(std::nullopt);
+            return;
+        }
+
+        if (parameters.pinned.value())
+            tab->pin(WTFMove(stepCompletionHandler));
+        else
+            tab->unpin(WTFMove(stepCompletionHandler));
+    };
+
+    auto updateMuted = [&](CompletionHandler<void(WebExtensionTab::Error)>&& stepCompletionHandler) {
+        if (!parameters.muted || parameters.muted.value() == tab->isMuted()) {
+            stepCompletionHandler(std::nullopt);
+            return;
+        }
+
+        if (parameters.muted.value())
+            tab->mute(WTFMove(stepCompletionHandler));
+        else
+            tab->unmute(WTFMove(stepCompletionHandler));
+    };
+
+    auto updateParentTab = [&](CompletionHandler<void(WebExtensionTab::Error)>&& stepCompletionHandler) {
+        auto currentParentTab = tab->parentTab();
+        auto newParentTab = parameters.parentTabIdentifier ? getTab(parameters.parentTabIdentifier.value()) : nullptr;
+
+        if (currentParentTab == newParentTab) {
+            stepCompletionHandler(std::nullopt);
+            return;
+        }
+
+        tab->setParentTab(newParentTab, WTFMove(stepCompletionHandler));
+    };
+
+    updateActiveAndSelected([&](WebExtensionTab::Error activeOrSelectedError) {
+        if (activeOrSelectedError) {
+            completionHandler(std::nullopt, activeOrSelectedError);
+            return;
+        }
+
+        updateURL([&](WebExtensionTab::Error urlError) {
+            if (urlError) {
+                completionHandler(std::nullopt, urlError);
+                return;
+            }
+
+            updatePinned([&](WebExtensionTab::Error pinnedError) {
+                if (pinnedError) {
+                    completionHandler(std::nullopt, pinnedError);
+                    return;
+                }
+
+                updateMuted([&](WebExtensionTab::Error mutedError) {
+                    if (mutedError) {
+                        completionHandler(std::nullopt, mutedError);
+                        return;
+                    }
+
+                    updateParentTab([&](WebExtensionTab::Error parentError) {
+                        if (parentError) {
+                            completionHandler(std::nullopt, parentError);
+                            return;
+                        }
+
+                        completionHandler(tab->parameters(), std::nullopt);
+                    });
+                });
+            });
+        });
+    });
+}
+
+void WebExtensionContext::tabsDuplicate(WebExtensionTabIdentifier tabIdentifier, const WebExtensionTabParameters& parameters, CompletionHandler<void(std::optional<WebExtensionTabParameters>, WebExtensionTab::Error)>&& completionHandler)
+{
+    auto tab = getTab(tabIdentifier);
+    if (!tab) {
+        completionHandler(std::nullopt, toErrorString(@"tabs.duplicate()", nil, @"tab not found"));
+        return;
+    }
+
+    tab->duplicate(parameters, [completionHandler = WTFMove(completionHandler)](RefPtr<WebExtensionTab> newTab, WebExtensionTab::Error error) mutable {
+        if (error) {
+            completionHandler(std::nullopt, error);
+            return;
+        }
+
+        completionHandler(newTab->parameters(), std::nullopt);
+    });
+}
 
 void WebExtensionContext::tabsGet(WebExtensionTabIdentifier tabIdentifier, CompletionHandler<void(std::optional<WebExtensionTabParameters>, WebExtensionTab::Error)>&& completionHandler)
 {
@@ -57,17 +270,14 @@ void WebExtensionContext::tabsGet(WebExtensionTabIdentifier tabIdentifier, Compl
 
 void WebExtensionContext::tabsGetCurrent(WebPageProxyIdentifier webPageProxyIdentifier, CompletionHandler<void(std::optional<WebExtensionTabParameters>, WebExtensionTab::Error)>&& completionHandler)
 {
-    for (auto& tab : openTabs()) {
-        for (WKWebView *webView in tab->webViews()) {
-            if (webView._page->identifier() == webPageProxyIdentifier) {
-                completionHandler(tab->parameters(), std::nullopt);
-                return;
-            }
-        }
+    auto tab = getTab(webPageProxyIdentifier);
+    if (!tab) {
+        // No error is reported when the page isn't a tab (e.g. the background page).
+        completionHandler(std::nullopt, std::nullopt);
+        return;
     }
 
-    // No error is reported when the page isn't a tab (e.g. the background page).
-    completionHandler(std::nullopt, std::nullopt);
+    completionHandler(tab->parameters(), std::nullopt);
 }
 
 void WebExtensionContext::tabsQuery(WebPageProxyIdentifier webPageProxyIdentifier, const WebExtensionTabQueryParameters& queryParameters, CompletionHandler<void(Vector<WebExtensionTabParameters>, WebExtensionTab::Error)>&& completionHandler)

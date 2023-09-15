@@ -249,6 +249,25 @@ bool WebExtensionAPITabs::parseTabUpdateOptions(NSDictionary *options, WebExtens
     return true;
 }
 
+bool WebExtensionAPITabs::parseTabDuplicateOptions(NSDictionary *options, WebExtensionTabParameters& parameters, NSString *sourceKey, NSString **outExceptionString)
+{
+    static NSDictionary<NSString *, id> *types = @{
+        activeKey: @YES.class,
+        indexKey: NSNumber.class,
+    };
+
+    if (!validateDictionary(options, sourceKey, nil, types, outExceptionString))
+        return false;
+
+    if (NSNumber *active = objectForKey<NSNumber>(options, activeKey))
+        parameters.active = active.boolValue;
+
+    if (NSNumber *index = objectForKey<NSNumber>(options, indexKey))
+        parameters.index = index.unsignedIntegerValue;
+
+    return true;
+}
+
 bool WebExtensionAPITabs::parseTabQueryOptions(NSDictionary *options, WebExtensionTabQueryParameters& parameters, NSString *sourceKey, NSString **outExceptionString)
 {
     static NSDictionary<NSString *, id> *types = @{
@@ -381,15 +400,27 @@ bool WebExtensionAPITabs::isPropertyAllowed(ASCIILiteral name, WebPage*)
     return false;
 }
 
-void WebExtensionAPITabs::createTab(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPITabs::createTab(WebPage* page, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/create
 
     WebExtensionTabParameters parameters;
-    if (!parseTabCreateOptions(options, parameters, @"properties", outExceptionString))
+    if (!parseTabCreateOptions(properties, parameters, @"properties", outExceptionString))
         return;
 
-    // FIXME: <https://webkit.org/b/260994> Implement.
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsCreate(page->webPageProxyIdentifier(), WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebExtensionTabParameters> tabParameters, WebExtensionTab::Error error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        if (!tabParameters) {
+            callback->call();
+            return;
+        }
+
+        callback->call(toWebAPI(tabParameters.value()));
+    }, extensionContext().identifier().toUInt64());
 }
 
 void WebExtensionAPITabs::query(WebPage* page, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
@@ -461,11 +492,11 @@ void WebExtensionAPITabs::getSelected(WebPage* page, double windowID, Ref<WebExt
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/getSelected
 
     auto windowIdentifer = toWebExtensionWindowIdentifier(windowID);
-    if (!isValid(windowIdentifer, outExceptionString))
+    if (windowIdentifer && !isValid(windowIdentifer, outExceptionString))
         return;
 
     WebExtensionTabQueryParameters parameters;
-    parameters.windowIdentifier = windowIdentifer;
+    parameters.windowIdentifier = windowIdentifer.value_or(WebExtensionWindowConstants::CurrentIdentifier);
     parameters.active = true;
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsQuery(page->webPageProxyIdentifier(), WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Vector<WebExtensionTabParameters> tabs, WebExtensionTab::Error error) {
@@ -485,7 +516,7 @@ void WebExtensionAPITabs::getSelected(WebPage* page, double windowID, Ref<WebExt
     }, extensionContext().identifier().toUInt64());
 }
 
-void WebExtensionAPITabs::duplicate(double tabID, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPITabs::duplicate(double tabID, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/duplicate
 
@@ -493,10 +524,26 @@ void WebExtensionAPITabs::duplicate(double tabID, Ref<WebExtensionCallbackHandle
     if (!isValid(tabIdentifer, outExceptionString))
         return;
 
-    // FIXME: <https://webkit.org/b/260994> Implement.
+    WebExtensionTabParameters parameters;
+    if (properties && !parseTabDuplicateOptions(properties, parameters, @"properties", outExceptionString))
+        return;
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsDuplicate(tabIdentifer.value(), WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebExtensionTabParameters> tabParameters, WebExtensionTab::Error error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        if (!tabParameters) {
+            callback->call();
+            return;
+        }
+
+        callback->call(toWebAPI(tabParameters.value()));
+    }, extensionContext().identifier().toUInt64());
 }
 
-void WebExtensionAPITabs::update(WebPage* page, double tabID, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPITabs::update(WebPage* page, double tabID, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/update
 
@@ -505,10 +552,22 @@ void WebExtensionAPITabs::update(WebPage* page, double tabID, NSDictionary *opti
         return;
 
     WebExtensionTabParameters parameters;
-    if (!parseTabUpdateOptions(options, parameters, @"properties", outExceptionString))
+    if (!parseTabUpdateOptions(properties, parameters, @"properties", outExceptionString))
         return;
 
-    // FIXME: <https://webkit.org/b/260994> Implement.
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsUpdate(tabIdentifer.value(), WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebExtensionTabParameters> tabParameters, WebExtensionTab::Error error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        if (!tabParameters) {
+            callback->call();
+            return;
+        }
+
+        callback->call(toWebAPI(tabParameters.value()));
+    }, extensionContext().identifier().toUInt64());
 }
 
 void WebExtensionAPITabs::remove(NSObject *tabIDs, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
@@ -552,7 +611,7 @@ void WebExtensionAPITabs::remove(NSObject *tabIDs, Ref<WebExtensionCallbackHandl
     }, extensionContext().identifier().toUInt64());
 }
 
-void WebExtensionAPITabs::reload(WebPage* page, double tabID, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPITabs::reload(WebPage* page, double tabID, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/reload
 
@@ -564,12 +623,12 @@ void WebExtensionAPITabs::reload(WebPage* page, double tabID, NSDictionary *opti
         bypassCacheKey: @YES.class,
     };
 
-    if (!validateDictionary(options, @"properties", nil, types, outExceptionString))
+    if (properties && !validateDictionary(properties, @"properties", nil, types, outExceptionString))
         return;
 
     using ReloadFromOrigin = WebExtensionContext::ReloadFromOrigin;
 
-    NSNumber *bypassCacheNumber = objectForKey<NSNumber>(options, bypassCacheKey);
+    NSNumber *bypassCacheNumber = objectForKey<NSNumber>(properties, bypassCacheKey);
     ReloadFromOrigin reloadFromOrigin = bypassCacheNumber.boolValue ? ReloadFromOrigin::Yes : ReloadFromOrigin::No;
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsReload(page->webPageProxyIdentifier(), tabIdentifer, reloadFromOrigin), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebExtensionTab::Error error) {

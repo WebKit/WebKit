@@ -71,7 +71,6 @@ public:
         All        = Audible | Loading | Muted | Pinned | ReaderMode | Size | Title | URL | ZoomFactor,
     };
 
-    enum class ExtendSelection : bool { No, Yes };
     enum class AssumeWindowMatches : bool { No, Yes };
 
     using Error = std::optional<String>;
@@ -92,6 +91,7 @@ public:
     size_t index() const;
 
     RefPtr<WebExtensionTab> parentTab() const;
+    void setParentTab(RefPtr<WebExtensionTab>, CompletionHandler<void(Error)>&&);
 
     WKWebView *mainWebView() const;
     NSArray *webViews() const;
@@ -100,8 +100,12 @@ public:
 
     bool isActive() const;
     bool isSelected() const;
-    bool isPinned() const;
     bool isPrivate() const;
+
+    void pin(CompletionHandler<void(Error)>&&);
+    void unpin(CompletionHandler<void(Error)>&&);
+
+    bool isPinned() const;
 
     void toggleReaderMode(CompletionHandler<void(Error)>&&);
 
@@ -135,9 +139,10 @@ public:
     void goForward(CompletionHandler<void(Error)>&&);
 
     void activate(CompletionHandler<void(Error)>&&);
-    void select(ExtendSelection, CompletionHandler<void(Error)>&&);
+    void select(CompletionHandler<void(Error)>&&);
+    void deselect(CompletionHandler<void(Error)>&&);
 
-    void duplicate(CompletionHandler<void(RefPtr<WebExtensionTab>, Error)>&&);
+    void duplicate(const WebExtensionTabParameters&, CompletionHandler<void(RefPtr<WebExtensionTab>, Error)>&&);
 
     void close(CompletionHandler<void(Error)>&&);
 
@@ -153,11 +158,14 @@ private:
     WeakObjCPtr<_WKWebExtensionTab> m_delegate;
     bool m_respondsToWindow : 1 { false };
     bool m_respondsToParentTab : 1 { false };
+    bool m_respondsToSetParentTab : 1 { false };
     bool m_respondsToMainWebView : 1 { false };
     bool m_respondsToWebViews : 1 { false };
     bool m_respondsToTabTitle : 1 { false };
     bool m_respondsToIsSelected : 1 { false };
     bool m_respondsToIsPinned : 1 { false };
+    bool m_respondsToPin : 1 { false };
+    bool m_respondsToUnpin : 1 { false };
     bool m_respondsToIsReaderModeAvailable : 1 { false };
     bool m_respondsToIsShowingReaderMode : 1 { false };
     bool m_respondsToToggleReaderMode : 1 { false };
@@ -179,6 +187,7 @@ private:
     bool m_respondsToGoForward : 1 { false };
     bool m_respondsToActivate : 1 { false };
     bool m_respondsToSelect : 1 { false };
+    bool m_respondsToDeselect : 1 { false };
     bool m_respondsToDuplicate : 1 { false };
     bool m_respondsToClose : 1 { false };
 };

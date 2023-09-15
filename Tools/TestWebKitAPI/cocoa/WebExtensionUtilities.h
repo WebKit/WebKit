@@ -62,6 +62,11 @@
 @property (nonatomic, weak) id<_WKWebExtensionWindow> window;
 @property (nonatomic, strong) WKWebView *mainWebView;
 
+@property (nonatomic, weak) id<_WKWebExtensionTab> parentTab;
+
+@property (nonatomic, getter=isPinned) bool pinned;
+@property (nonatomic, getter=isMuted) bool muted;
+@property (nonatomic, getter=isSelected) bool selected;
 @property (nonatomic, getter=isShowingReaderMode) bool showingReaderMode;
 
 @property (nonatomic, copy) void (^toggleReaderMode)(void);
@@ -71,6 +76,7 @@
 @property (nonatomic, copy) void (^reloadFromOrigin)(void);
 @property (nonatomic, copy) void (^goBack)(void);
 @property (nonatomic, copy) void (^goForward)(void);
+@property (nonatomic, copy) void (^duplicate)(_WKWebExtensionTabCreationOptions *, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *));
 
 @end
 

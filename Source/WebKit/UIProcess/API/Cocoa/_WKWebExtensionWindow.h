@@ -72,7 +72,7 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
 /*!
  @abstract Called when the active tab is needed for the window.
  @param context The context in which the web extension is running.
- @return The active tab in the window.
+ @return The active tab in the window, which represents the frontmost tab currently in view.
  @discussion Defaults to `nil` if not implemented.
  */
 - (nullable id <_WKWebExtensionTab>)activeTabForWebExtensionContext:(_WKWebExtensionContext *)context;

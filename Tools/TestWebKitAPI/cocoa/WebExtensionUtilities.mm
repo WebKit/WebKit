@@ -221,6 +221,93 @@
     completionHandler(nil);
 }
 
+- (id<_WKWebExtensionTab>)parentTabForWebExtensionContext:(_WKWebExtensionContext *)context
+{
+    return _parentTab;
+}
+
+- (void)setParentTab:(id<_WKWebExtensionTab>)parentTab forWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+{
+    _parentTab = parentTab;
+
+    completionHandler(nil);
+}
+
+- (BOOL)isPinnedForWebExtensionContext:(_WKWebExtensionContext *)context
+{
+    return _pinned;
+}
+
+- (void)pinForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+{
+    _pinned = YES;
+
+    completionHandler(nil);
+}
+
+- (void)unpinForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+{
+    _pinned = NO;
+
+    completionHandler(nil);
+}
+
+- (BOOL)isMutedForWebExtensionContext:(_WKWebExtensionContext *)context
+{
+    return _muted;
+}
+
+- (void)muteForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+{
+    _muted = YES;
+
+    completionHandler(nil);
+}
+
+- (void)unmuteForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+{
+    _muted = NO;
+
+    completionHandler(nil);
+}
+
+- (void)duplicateForWebExtensionContext:(_WKWebExtensionContext *)context withOptions:(_WKWebExtensionTabCreationOptions *)options completionHandler:(void (^)(id<_WKWebExtensionTab>, NSError *))completionHandler
+{
+    if (_duplicate)
+        _duplicate(options, completionHandler);
+    else
+        completionHandler(nil, nil);
+}
+
+- (void)activateForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+{
+    if (auto *window = dynamic_objc_cast<TestWebExtensionWindow>(_window))
+        window.activeTab = self;
+
+    _selected = YES;
+
+    completionHandler(nil);
+}
+
+- (BOOL)isSelectedForWebExtensionContext:(_WKWebExtensionContext *)context
+{
+    return _selected || dynamic_objc_cast<TestWebExtensionWindow>(_window).activeTab == self;
+}
+
+- (void)selectForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+{
+    _selected = YES;
+
+    completionHandler(nil);
+}
+
+- (void)deselectForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+{
+    _selected = NO;
+
+    completionHandler(nil);
+}
+
 - (void)closeForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
 {
     if (auto *window = dynamic_objc_cast<TestWebExtensionWindow>(_window))

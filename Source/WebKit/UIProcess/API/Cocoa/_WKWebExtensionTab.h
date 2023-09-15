@@ -79,8 +79,21 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @param context The context in which the web extension is running.
  @return The parent tab of the tab, if the tab was opened from another tab.
  @discussion Defaults to `nil` if not implemented.
+ @seealso setParentTab:forWebExtensionContext:completionHandler:
  */
 - (nullable id <_WKWebExtensionTab>)parentTabForWebExtensionContext:(_WKWebExtensionContext *)context;
+
+/*!
+ @abstract Called to set or clear the parent tab for the tab.
+ @param parentTab The tab that should be set as the parent of the tab. If \c nil is provided, the current
+ parent tab should be cleared.
+ @param context The context in which the web extension is running.
+ @param completionHandler A block that must be called upon completion. It takes a single error argument,
+ which should be provided if any errors occurred.
+ @discussion No action is performed if not implemented.
+ @seealso parentTabForWebExtensionContext:
+ */
+- (void)setParentTab:(nullable id <_WKWebExtensionTab>)parentTab forWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
 
 /*!
  @abstract Called when the main web view for the tab is needed.
@@ -95,6 +108,7 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @param context The context in which the web extension is running.
  @return An array of web views for the tab.
  @discussion Defaults to an array containing the main web view if not implemented.
+ @seealso mainWebViewForWebExtensionContext:
  */
 - (NSArray<WKWebView *> *)webViewsForWebExtensionContext:(_WKWebExtensionContext *)context;
 
@@ -107,14 +121,6 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
 - (nullable NSString *)tabTitleForWebExtensionContext:(_WKWebExtensionContext *)context;
 
 /*!
- @abstract Called when the selected state of the tab is needed.
- @param context The context in which the web extension is running.
- @return `YES` if the tab is selected, `NO` otherwise.
- @discussion Defaults to `YES` for the active tab and `NO` for other tabs if not implemented.
- */
-- (BOOL)isSelectedForWebExtensionContext:(_WKWebExtensionContext *)context;
-
-/*!
  @abstract Called when the pinned state of the tab is needed.
  @param context The context in which the web extension is running.
  @return `YES` if the tab is pinned, `NO` otherwise.
@@ -123,10 +129,35 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
 - (BOOL)isPinnedForWebExtensionContext:(_WKWebExtensionContext *)context;
 
 /*!
+ @abstract Called to pin the tab.
+ @param context The context in which the web extension is running.
+ @param completionHandler A block that must be called upon completion. It takes a single error argument,
+ which should be provided if any errors occurred.
+ @discussion This is equivalent to the user selecting to pin the tab through a menu item. When a tab is pinned,
+ it should be moved to the front of the tab bar and usually reduced in size. No action is performed if not implemented.
+ @seealso isPinnedForWebExtensionContext:
+ @seealso pinForWebExtensionContext:completionHandler:
+ */
+- (void)pinForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+
+/*!
+ @abstract Called to unpin the tab.
+ @param context The context in which the web extension is running.
+ @param completionHandler A block that must be called upon completion. It takes a single error argument,
+ which should be provided if any errors occurred.
+ @discussion This is equivalent to the user selecting to unpin the tab through a menu item. When a tab is unpinned,
+ it should be restored to a normal size and position in the tab bar. No action is performed if not implemented.
+ @seealso isPinnedForWebExtensionContext:
+ @seealso pinForWebExtensionContext:completionHandler:
+ */
+- (void)unpinForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+
+/*!
  @abstract Called to check if reader mode is available for the tab.
  @param context The context in which the web extension is running.
  @return `YES` if reader mode is available for the tab, `NO` otherwise.
  @discussion Defaults to `NO` if not implemented.
+ @seealso isShowingReaderModeForWebExtensionContext:
  */
 - (BOOL)isReaderModeAvailableForWebExtensionContext:(_WKWebExtensionContext *)context;
 
@@ -135,6 +166,7 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @param context The context in which the web extension is running.
  @return `YES` if the tab is showing reader mode, `NO` otherwise.
  @discussion Defaults to `NO` if not implemented.
+ @seealso isReaderModeAvailableForWebExtensionContext:
  */
 - (BOOL)isShowingReaderModeForWebExtensionContext:(_WKWebExtensionContext *)context;
 
@@ -144,6 +176,8 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @param completionHandler A block that must be called upon completion. It takes a single error argument,
  which should be provided if any errors occurred.
  @discussion No action is performed if not implemented.
+ @seealso isReaderModeAvailableForWebExtensionContext:
+ @seealso isShowingReaderModeForWebExtensionContext:
  */
 - (void)toggleReaderModeForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
 
@@ -169,6 +203,8 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @param completionHandler A block that must be called upon completion. It takes a single error argument,
  which should be provided if any errors occurred.
  @discussion No action is performed if not implemented.
+ @seealso isMutedForWebExtensionContext:
+ @seealso unmuteForWebExtensionContext:completionHandler:
  */
 - (void)muteForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
 
@@ -178,6 +214,8 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @param completionHandler A block that must be called upon completion. It takes a single error argument,
  which should be provided if any errors occurred.
  @discussion No action is performed if not implemented.
+ @seealso isMutedForWebExtensionContext:
+ @seealso muteForWebExtensionContext:completionHandler:
  */
 - (void)unmuteForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
 
@@ -194,6 +232,7 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @param context The context in which the web extension is running.
  @return The zoom factor of the tab.
  @discussion Defaults to `pageZoom` for the main web view if not implemented.
+ @seealso setZoomFactor:forWebExtensionContext:completionHandler:
  */
 - (double)zoomFactorForWebExtensionContext:(_WKWebExtensionContext *)context;
 
@@ -202,8 +241,9 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @param zoomFactor The desired zoom factor for the tab.
  @param context The context in which the web extension is running.
  @param completionHandler A block that must be called upon completion. It takes a single error argument,
- which should be provided if any errors occured.
- @discussion Sets `pageZoom` for the main web view if not implemented..
+ which should be provided if any errors occurred.
+ @discussion Sets `pageZoom` for the main web view if not implemented.
+ @seealso zoomFactorForWebExtensionContext:
  */
 - (void)setZoomFactor:(double)zoomFactor forWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
 
@@ -236,7 +276,7 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @abstract Called to detect the locale of the webpage currently loaded in the tab.
  @param context The context in which the web extension is running.
  @param completionHandler A block that must be called upon completion. The block takes two arguments:
- the detected locale (or \c nil if the locale is unknown) and an error, which should be provided if any errors occured.
+ the detected locale (or \c nil if the locale is unknown) and an error, which should be provided if any errors occurred.
  @discussion No action is performed if not implemented.
  */
 - (void)detectWebpageLocaleForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSLocale * _Nullable locale, NSError * _Nullable error))completionHandler;
@@ -246,7 +286,7 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @param url The URL to be loaded in the tab.
  @param context The context in which the web extension is running.
  @param completionHandler A block that must be called upon completion. It takes a single error argument,
- which should be provided if any errors occured.
+ which should be provided if any errors occurred.
  @discussion If the tab is already loading a page, calling this method should stop the current page from loading and start
  loading the new URL. Loads the URL in the main web view via `loadRequest:` if not implemented.
  */
@@ -256,7 +296,7 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @abstract Called to reload the current page in the tab.
  @param context The context in which the web extension is running.
  @param completionHandler A block that must be called upon completion. It takes a single error argument,
- which should be provided if any errors occured.
+ which should be provided if any errors occurred.
  @discussion Reloads the main web view via `reload` if not implemented.
  */
 - (void)reloadForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
@@ -265,7 +305,7 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @abstract Called to reload the current page in the tab, bypassing the cache.
  @param context The context in which the web extension is running.
  @param completionHandler A block that must be called upon completion. It takes a single error argument,
- which should be provided if any errors occured.
+ which should be provided if any errors occurred.
  @discussion Reloads the main web view via `reloadFromOrigin` if not implemented.
  */
 - (void)reloadFromOriginForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
@@ -274,7 +314,7 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @abstract Called to navigate the tab to the previous page in its history.
  @param context The context in which the web extension is running.
  @param completionHandler A block that must be called upon completion. It takes a single error argument,
- which should be provided if any errors occured.
+ which should be provided if any errors occurred.
  @discussion Navigates to the previous page in the main web view via `goBack` if not implemented.
  */
 - (void)goBackForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
@@ -283,7 +323,7 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @abstract Called to navigate the tab to the next page in its history.
  @param context The context in which the web extension is running.
  @param completionHandler A block that must be called upon completion. It takes a single error argument,
- which should be provided if any errors occured.
+ which should be provided if any errors occurred.
  @discussion Navigates to the next page in the main web view via `goForward` if not implemented.
  */
 - (void)goForwardForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
@@ -300,24 +340,44 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
 - (void)activateForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
 
 /*!
- @abstract Called to select the tab, potentially extending the current selection to include multiple tabs.
+ @abstract Called when the selected state of the tab is needed.
  @param context The context in which the web extension is running.
- @param extendSelection A boolean value that determines whether the selection should be extended. If set to \c YES,
- the selection should contain the tab along with any previously selected tabs without changing the active tab.
- If set to \c NO, the selection should be cleared, and the tab should be the active tab and only one selected.
+ @return `YES` if the tab is selected, `NO` otherwise.
+ @discussion Defaults to `YES` for the active tab and `NO` for other tabs if not implemented.
+ */
+- (BOOL)isSelectedForWebExtensionContext:(_WKWebExtensionContext *)context;
+
+/*!
+ @abstract Called to select the tab, adding it to the current tab selection.
+ @param context The context in which the web extension is running.
  @param completionHandler A block that must be called upon completion. It takes a single error argument,
  which should be provided if any errors occurred.
- @discussion This is equivalent to the user clicking on the tab in a tab bar. No action is performed if not implemented.
- @seealso activateForWebExtensionContext:completionHandler:
+ @discussion This is equivalent to the user command-clicking on the tab to add it to a selection.
+ The method should add the tab to the current selection without changing the active tab. No action is performed if not implemented.
+ @seealso isSelectedForWebExtensionContext:
+ @seealso deselectForWebExtensionContext:completionHandler:
  */
-- (void)selectForWebExtensionContext:(_WKWebExtensionContext *)context extendSelection:(BOOL)extendSelection completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+- (void)selectForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+
+/*!
+ @abstract Called to deselect the tab, removing it from the current tab selection.
+ @param context The context in which the web extension is running.
+ @param completionHandler A block that must be called upon completion. It takes a single error argument,
+ which should be provided if any errors occurred.
+ @discussion This is equivalent to the user command-clicking on an already selected tab to remove it from the selection.
+ The method should remove the tab from the current selection without changing the active tab. If the tab is the active tab, it should
+ remain selected and active or another tab should become selected and active in its place. No action is performed if not implemented.
+ @seealso isSelectedForWebExtensionContext:
+ @seealso selectForWebExtensionContext:completionHandler:
+ */
+- (void)deselectForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
 
 /*!
  @abstract Called to duplicate the tab.
  @param context The context in which the web extension is running.
  @param options The tab creation options influencing the duplicated tab's properties.
  @param completionHandler A block that must be called upon completion. It takes two arguments:
- the duplicated tab (or \c nil if no tab was created) and an error, which should be provided if any errors occured.
+ the duplicated tab (or \c nil if no tab was created) and an error, which should be provided if any errors occurred.
  @discussion This is equivalent to the user selecting to duplicate the tab through a menu item, with the specified options.
  No action is performed if not implemented.
  */

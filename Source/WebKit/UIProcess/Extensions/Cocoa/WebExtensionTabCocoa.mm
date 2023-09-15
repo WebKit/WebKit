@@ -52,11 +52,14 @@ WebExtensionTab::WebExtensionTab(const WebExtensionContext& context, _WKWebExten
     , m_delegate(delegate)
     , m_respondsToWindow([delegate respondsToSelector:@selector(windowForWebExtensionContext:)])
     , m_respondsToParentTab([delegate respondsToSelector:@selector(parentTabForWebExtensionContext:)])
+    , m_respondsToSetParentTab([delegate respondsToSelector:@selector(setParentTab:forWebExtensionContext:completionHandler:)])
     , m_respondsToMainWebView([delegate respondsToSelector:@selector(mainWebViewForWebExtensionContext:)])
     , m_respondsToWebViews([delegate respondsToSelector:@selector(webViewsForWebExtensionContext:)])
     , m_respondsToTabTitle([delegate respondsToSelector:@selector(tabTitleForWebExtensionContext:)])
     , m_respondsToIsSelected([delegate respondsToSelector:@selector(isSelectedForWebExtensionContext:)])
     , m_respondsToIsPinned([delegate respondsToSelector:@selector(isPinnedForWebExtensionContext:)])
+    , m_respondsToPin([delegate respondsToSelector:@selector(pinForWebExtensionContext:completionHandler:)])
+    , m_respondsToUnpin([delegate respondsToSelector:@selector(unpinForWebExtensionContext:completionHandler:)])
     , m_respondsToIsReaderModeAvailable([delegate respondsToSelector:@selector(isReaderModeAvailableForWebExtensionContext:)])
     , m_respondsToIsShowingReaderMode([delegate respondsToSelector:@selector(isShowingReaderModeForWebExtensionContext:)])
     , m_respondsToToggleReaderMode([delegate respondsToSelector:@selector(toggleReaderModeForWebExtensionContext:completionHandler:)])
@@ -77,7 +80,8 @@ WebExtensionTab::WebExtensionTab(const WebExtensionContext& context, _WKWebExten
     , m_respondsToGoBack([delegate respondsToSelector:@selector(goBackForWebExtensionContext:completionHandler:)])
     , m_respondsToGoForward([delegate respondsToSelector:@selector(goForwardForWebExtensionContext:completionHandler:)])
     , m_respondsToActivate([delegate respondsToSelector:@selector(activateForWebExtensionContext:completionHandler:)])
-    , m_respondsToSelect([delegate respondsToSelector:@selector(selectForWebExtensionContext:extendSelection:completionHandler:)])
+    , m_respondsToSelect([delegate respondsToSelector:@selector(selectForWebExtensionContext:completionHandler:)])
+    , m_respondsToDeselect([delegate respondsToSelector:@selector(deselectForWebExtensionContext:completionHandler:)])
     , m_respondsToDuplicate([delegate respondsToSelector:@selector(duplicateForWebExtensionContext:withOptions:completionHandler:)])
     , m_respondsToClose([delegate respondsToSelector:@selector(closeForWebExtensionContext:completionHandler:)])
 {
@@ -270,6 +274,24 @@ RefPtr<WebExtensionTab> WebExtensionTab::parentTab() const
     return m_extensionContext->getOrCreateTab(parentTab);
 }
 
+void WebExtensionTab::setParentTab(RefPtr<WebExtensionTab> parentTab, CompletionHandler<void(Error)>&& completionHandler)
+{
+    if (!isValid() || !m_respondsToSetParentTab) {
+        completionHandler(toErrorString(@"tabs.update()", nil, @"it is not implemented for 'openerTabId'"));
+        return;
+    }
+
+    [m_delegate setParentTab:(parentTab ? parentTab->delegate() : nil) forWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+        if (error) {
+            RELEASE_LOG_ERROR(Extensions, "Error for setPartentTab: %{private}@", error);
+            completionHandler(error.localizedDescription);
+            return;
+        }
+
+        completionHandler(std::nullopt);
+    }];
+}
+
 WKWebView *WebExtensionTab::mainWebView() const
 {
     if (!isValid() || !m_respondsToMainWebView)
@@ -338,6 +360,42 @@ bool WebExtensionTab::isSelected() const
         return isActive();
 
     return [m_delegate isSelectedForWebExtensionContext:m_extensionContext->wrapper()];
+}
+
+void WebExtensionTab::pin(CompletionHandler<void(Error)>&& completionHandler)
+{
+    if (!isValid() || !m_respondsToPin) {
+        completionHandler(toErrorString(@"tabs.update()", nil, @"it is not implemented for 'pinned' set to `true`"));
+        return;
+    }
+
+    [m_delegate pinForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+        if (error) {
+            RELEASE_LOG_ERROR(Extensions, "Error for pin: %{private}@", error);
+            completionHandler(error.localizedDescription);
+            return;
+        }
+
+        completionHandler(std::nullopt);
+    }];
+}
+
+void WebExtensionTab::unpin(CompletionHandler<void(Error)>&& completionHandler)
+{
+    if (!isValid() || !m_respondsToUnpin) {
+        completionHandler(toErrorString(@"tabs.update()", nil, @"it is not implemented for 'pinned' set to `false`"));
+        return;
+    }
+
+    [m_delegate unpinForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+        if (error) {
+            RELEASE_LOG_ERROR(Extensions, "Error for unpin: %{private}@", error);
+            completionHandler(error.localizedDescription);
+            return;
+        }
+
+        completionHandler(std::nullopt);
+    }];
 }
 
 bool WebExtensionTab::isPinned() const
@@ -511,7 +569,7 @@ bool WebExtensionTab::isLoadingComplete() const
 void WebExtensionTab::detectWebpageLocale(CompletionHandler<void(NSLocale *, Error)>&& completionHandler)
 {
     if (!isValid() || !m_respondsToDetectWebpageLocale) {
-        completionHandler(nil, std::nullopt);
+        completionHandler(nil, toErrorString(@"tabs.detectLanguage()", nil, @"it is not implemented"));
         return;
     }
 
@@ -640,14 +698,14 @@ void WebExtensionTab::activate(CompletionHandler<void(Error)>&& completionHandle
     }];
 }
 
-void WebExtensionTab::select(ExtendSelection extend, CompletionHandler<void(Error)>&& completionHandler)
+void WebExtensionTab::select(CompletionHandler<void(Error)>&& completionHandler)
 {
     if (!isValid() || !m_respondsToSelect) {
         completionHandler(toErrorString(@"tabs.update()", nil, @"it is not implemented for 'highlighted' or 'selected' set to `true`"));
         return;
     }
 
-    [m_delegate selectForWebExtensionContext:m_extensionContext->wrapper() extendSelection:(extend == ExtendSelection::Yes) completionHandler:^(NSError *error) {
+    [m_delegate selectForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for select: %{private}@", error);
             completionHandler(error.localizedDescription);
@@ -658,21 +716,58 @@ void WebExtensionTab::select(ExtendSelection extend, CompletionHandler<void(Erro
     }];
 }
 
-void WebExtensionTab::duplicate(CompletionHandler<void(RefPtr<WebExtensionTab>, Error)>&& completionHandler)
+void WebExtensionTab::deselect(CompletionHandler<void(Error)>&& completionHandler)
 {
+    if (!isValid() || !m_respondsToDeselect) {
+        completionHandler(toErrorString(@"tabs.update()", nil, @"it is not implemented for 'highlighted' or 'selected' set to `false`"));
+        return;
+    }
+
+    [m_delegate deselectForWebExtensionContext:m_extensionContext->wrapper() completionHandler:^(NSError *error) {
+        if (error) {
+            RELEASE_LOG_ERROR(Extensions, "Error for deselect: %{private}@", error);
+            completionHandler(error.localizedDescription);
+            return;
+        }
+
+        completionHandler(std::nullopt);
+    }];
+}
+
+void WebExtensionTab::duplicate(const WebExtensionTabParameters& parameters, CompletionHandler<void(RefPtr<WebExtensionTab>, Error)>&& completionHandler)
+{
+    ASSERT(!parameters.audible);
+    ASSERT(!parameters.loading);
+    ASSERT(!parameters.muted);
+    ASSERT(!parameters.parentTabIdentifier);
+    ASSERT(!parameters.pinned);
+    ASSERT(!parameters.privateBrowsing);
+    ASSERT(!parameters.readerModeAvailable);
+    ASSERT(!parameters.showingReaderMode);
+    ASSERT(!parameters.size);
+    ASSERT(!parameters.title);
+    ASSERT(!parameters.url);
+
     if (!isValid() || !m_respondsToDuplicate) {
         completionHandler(nullptr, toErrorString(@"tabs.duplicate()", nil, @"it is not implemented"));
         return;
     }
 
-    auto window = this->window();
-    auto index = this->index();
+    auto window = parameters.windowIdentifier ? m_extensionContext->getWindow(parameters.windowIdentifier.value()) : this->window();
 
-    _WKWebExtensionTabCreationOptions *options = [[_WKWebExtensionTabCreationOptions alloc] _init];
-    options.desiredWindow = window ? window->delegate() : nil;
-    options.desiredIndex = index != notFound ? index + 1 : 0;
+    size_t index = 0;
+    if (parameters.index)
+        index = parameters.index.value();
+    else if (auto currentIndex = this->index(); currentIndex != notFound)
+        index = currentIndex + 1;
 
-    [m_delegate duplicateForWebExtensionContext:m_extensionContext->wrapper() withOptions:options completionHandler:^(id<_WKWebExtensionTab> duplicatedTab, NSError *error) {
+    _WKWebExtensionTabCreationOptions *duplicateOptions = [[_WKWebExtensionTabCreationOptions alloc] _init];
+    duplicateOptions.shouldActivate = parameters.active.value_or(true);
+    duplicateOptions.shouldSelect = duplicateOptions.shouldActivate ?: parameters.selected.value_or(false);
+    duplicateOptions.desiredWindow = window ? window->delegate() : nil;
+    duplicateOptions.desiredIndex = index;
+
+    [m_delegate duplicateForWebExtensionContext:m_extensionContext->wrapper() withOptions:duplicateOptions completionHandler:^(id<_WKWebExtensionTab> duplicatedTab, NSError *error) {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for duplicate: %{private}@", error);
             completionHandler(nullptr, error.localizedDescription);
