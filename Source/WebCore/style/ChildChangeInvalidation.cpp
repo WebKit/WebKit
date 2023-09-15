@@ -53,7 +53,8 @@ void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElemen
             return isChild;
         case MatchElement::HasDescendant:
         case MatchElement::HasSiblingDescendant:
-        case MatchElement::HasNonSubjectOrScopeBreaking:
+        case MatchElement::HasNonSubject:
+        case MatchElement::HasScopeBreaking:
             return true;
         default:
             ASSERT_NOT_REACHED();
@@ -90,7 +91,7 @@ void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElemen
         return false;
     };
 
-    auto addHasInvalidation = [&](const Vector<InvalidationRuleSet>* invalidationRuleSets)  {
+    auto addHasInvalidation = [&](const Vector<InvalidationRuleSet>* invalidationRuleSets) {
         if (!invalidationRuleSets)
             return;
         for (auto& invalidationRuleSet : *invalidationRuleSets) {
@@ -108,9 +109,17 @@ void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElemen
     Invalidator::invalidateWithMatchElementRuleSets(changedElement, matchElementRuleSets);
 }
 
+void ChildChangeInvalidation::invalidateForChangeOutsideHasScope()
+{
+    if (auto* invalidationRuleSet = parentElement().styleResolver().ruleSets().scopeBreakingHasPseudoClassInvalidationRuleSet())
+        Invalidator::invalidateWithScopeBreakingHasPseudoClassRuleSet(parentElement(), invalidationRuleSet);
+}
+
 void ChildChangeInvalidation::invalidateForHasBeforeMutation()
 {
     ASSERT(m_needsHasInvalidation);
+
+    invalidateForChangeOutsideHasScope();
 
     MatchingHasSelectors matchingHasSelectors;
 
@@ -161,6 +170,8 @@ void ChildChangeInvalidation::invalidateForHasAfterMutation()
 {
     ASSERT(m_needsHasInvalidation);
 
+    invalidateForChangeOutsideHasScope();
+
     MatchingHasSelectors matchingHasSelectors;
 
     traverseAddedElements([&](auto& changedElement) {
@@ -208,9 +219,10 @@ void ChildChangeInvalidation::invalidateForHasAfterMutation()
 
 static bool needsDescendantTraversal(const RuleFeatureSet& features)
 {
-    if (features.usesMatchElement(MatchElement::HasNonSubjectOrScopeBreaking))
-        return true;
-    return features.usesMatchElement(MatchElement::HasDescendant) || features.usesMatchElement(MatchElement::HasSiblingDescendant);
+    return features.usesMatchElement(MatchElement::HasNonSubject)
+        || features.usesMatchElement(MatchElement::HasScopeBreaking)
+        || features.usesMatchElement(MatchElement::HasDescendant)
+        || features.usesMatchElement(MatchElement::HasSiblingDescendant);
 };
 
 template<typename Function>

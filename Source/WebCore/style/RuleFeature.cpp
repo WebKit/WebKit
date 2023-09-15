@@ -57,7 +57,8 @@ static bool isSiblingOrSubject(MatchElement matchElement)
     case MatchElement::HasChild:
     case MatchElement::HasDescendant:
     case MatchElement::HasSiblingDescendant:
-    case MatchElement::HasNonSubjectOrScopeBreaking:
+    case MatchElement::HasNonSubject:
+    case MatchElement::HasScopeBreaking:
         return false;
     }
     ASSERT_NOT_REACHED();
@@ -72,11 +73,41 @@ bool isHasPseudoClassMatchElement(MatchElement matchElement)
     case MatchElement::HasSibling:
     case MatchElement::HasSiblingDescendant:
     case MatchElement::HasAnySibling:
-    case MatchElement::HasNonSubjectOrScopeBreaking:
+    case MatchElement::HasNonSubject:
+    case MatchElement::HasScopeBreaking:
         return true;
     default:
         return false;
     }
+}
+
+static bool isScopeBreaking(MatchElement matchElement)
+{
+    switch (matchElement) {
+    case MatchElement::HasAnySibling:
+    case MatchElement::HasScopeBreaking:
+        return true;
+    case MatchElement::Subject:
+    case MatchElement::IndirectSibling:
+    case MatchElement::DirectSibling:
+    case MatchElement::AnySibling:
+    case MatchElement::HasSibling:
+    case MatchElement::Host:
+    case MatchElement::HostChild:
+    case MatchElement::Parent:
+    case MatchElement::Ancestor:
+    case MatchElement::ParentSibling:
+    case MatchElement::AncestorSibling:
+    case MatchElement::ParentAnySibling:
+    case MatchElement::AncestorAnySibling:
+    case MatchElement::HasChild:
+    case MatchElement::HasDescendant:
+    case MatchElement::HasSiblingDescendant:
+    case MatchElement::HasNonSubject:
+        return false;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 RuleAndSelector::RuleAndSelector(const RuleData& ruleData)
@@ -155,13 +186,19 @@ static MatchElement computeNextHasPseudoClassMatchElement(MatchElement matchElem
     if (canBreakScope == CanBreakScope::No)
         return matchElement;
 
-    // :has(:is(foo bar)) can be affected by changes outside the :has scope.
+    // `:has(:is(foo bar))` can be affected by changes outside the :has scope.
     if (relation == CSSSelector::RelationType::DescendantSpace || relation == CSSSelector::RelationType::Child)
-        return MatchElement::HasNonSubjectOrScopeBreaking;
+        return MatchElement::HasScopeBreaking;
 
-    // :has(~ :is(.x ~ .y)) must look at previous siblings of the :scope scope too.
-    if (matchElement == MatchElement::HasSibling && (relation == CSSSelector::RelationType::IndirectAdjacent || relation == CSSSelector::RelationType::DirectAdjacent))
-        return MatchElement::HasAnySibling;
+    if (relation == CSSSelector::RelationType::IndirectAdjacent || relation == CSSSelector::RelationType::DirectAdjacent) {
+        // `:has(~ :is(.x ~ .y))` must look at previous siblings of the :scope scope too.
+        if (matchElement == MatchElement::HasSibling)
+            return MatchElement::HasAnySibling;
+
+        // `:has(~ :is(.x ~ .y)) .z` must be treated as scope breaking, rather than HasAnySibling like the previous case.
+        if (matchElement == MatchElement::HasNonSubject)
+            return MatchElement::HasScopeBreaking;
+    }
 
     return matchElement;
 }
@@ -192,7 +229,8 @@ MatchElement computeHasPseudoClassMatchElement(const CSSSelector& hasSelector)
     case MatchElement::HasSibling:
     case MatchElement::HasSiblingDescendant:
     case MatchElement::HasAnySibling:
-    case MatchElement::HasNonSubjectOrScopeBreaking:
+    case MatchElement::HasNonSubject:
+    case MatchElement::HasScopeBreaking:
     case MatchElement::Host:
     case MatchElement::HostChild:
         ASSERT_NOT_REACHED();
@@ -220,7 +258,7 @@ static MatchElement computeSubSelectorMatchElement(MatchElement matchElement, co
 
         if (type == CSSSelector::PseudoClassType::Has) {
             if (matchElement != MatchElement::Subject)
-                return MatchElement::HasNonSubjectOrScopeBreaking;
+                return MatchElement::HasNonSubject;
             return computeHasPseudoClassMatchElement(childSelector);
         }
 
@@ -232,9 +270,9 @@ static MatchElement computeSubSelectorMatchElement(MatchElement matchElement, co
     }
 
     return matchElement;
-};
+}
 
-void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& selectorFeatures, const CSSSelector& firstSelector, MatchElement matchElement, IsNegation isNegation, CanBreakScope canBreakScope)
+DoesBreakScope RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& selectorFeatures, const CSSSelector& firstSelector, MatchElement matchElement, IsNegation isNegation, CanBreakScope canBreakScope)
 {
     const CSSSelector* selector = &firstSelector;
     do {
@@ -278,12 +316,10 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
 
             for (const CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
                 auto subSelectorMatchElement = computeSubSelectorMatchElement(matchElement, *selector, *subSelector);
-                if (!selectorFeatures.hasSiblingSelector && selector->isSiblingSelector())
-                    selectorFeatures.hasSiblingSelector = true;
-                recursivelyCollectFeaturesFromSelector(selectorFeatures, *subSelector, subSelectorMatchElement, subSelectorIsNegation, canBreakScope);
+                auto doesBreakScope = recursivelyCollectFeaturesFromSelector(selectorFeatures, *subSelector, subSelectorMatchElement, subSelectorIsNegation, canBreakScope);
 
                 if (selector->match() == CSSSelector::Match::PseudoClass && selector->pseudoClassType() == CSSSelector::PseudoClassType::Has)
-                    selectorFeatures.hasPseudoClasses.append({ subSelector, subSelectorMatchElement, isNegation });
+                    selectorFeatures.hasPseudoClasses.append({ subSelector, subSelectorMatchElement, isNegation, doesBreakScope });
             }
         }
 
@@ -295,6 +331,8 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
 
         selector = selector->tagHistory();
     } while (selector);
+
+    return isScopeBreaking(matchElement) ? DoesBreakScope::Yes : DoesBreakScope::No;
 }
 
 PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoClassType pseudoClass, InvalidationKeyType keyType, const AtomString& keyString)
@@ -387,11 +425,14 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
     }
 
     for (auto& entry : selectorFeatures.hasPseudoClasses) {
-        auto& [selector, matchElement, isNegation] = entry;
+        auto& [selector, matchElement, isNegation, doesBreakScope] = entry;
         // The selector argument points to a selector inside :has() selector list instead of :has() itself.
         hasPseudoClassRules.ensure(makePseudoClassInvalidationKey(CSSSelector::PseudoClassType::Has, *selector), [] {
             return makeUnique<Vector<RuleFeatureWithInvalidationSelector>>();
         }).iterator->value->append({ ruleData, matchElement, isNegation, selector });
+
+        if (doesBreakScope == DoesBreakScope::Yes)
+            scopeBreakingHasPseudoClassRules.append({ ruleData });
 
         setUsesMatchElement(matchElement);
     }
@@ -428,6 +469,7 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
     pseudoClassTypes.add(other.pseudoClassTypes.begin(), other.pseudoClassTypes.end());
 
     addMap(hasPseudoClassRules, other.hasPseudoClassRules);
+    scopeBreakingHasPseudoClassRules.appendVector(other.scopeBreakingHasPseudoClassRules);
 
     for (size_t i = 0; i < usedMatchElements.size(); ++i)
         usedMatchElements[i] = usedMatchElements[i] || other.usedMatchElements[i];
@@ -455,6 +497,7 @@ void RuleFeatureSet::clear()
     idRules.clear();
     classRules.clear();
     hasPseudoClassRules.clear();
+    scopeBreakingHasPseudoClassRules.clear();
     classesAffectingHost.clear();
     attributeRules.clear();
     attributesAffectingHost.clear();
@@ -469,6 +512,7 @@ void RuleFeatureSet::shrinkToFit()
 {
     siblingRules.shrinkToFit();
     uncommonAttributeRules.shrinkToFit();
+    scopeBreakingHasPseudoClassRules.shrinkToFit();
     for (auto& rules : idRules.values())
         rules->shrinkToFit();
     for (auto& rules : classRules.values())
