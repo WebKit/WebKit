@@ -58,50 +58,78 @@ enum class SpaceDistributionLimit : uint8_t  {
 class GridTrackSizingAlgorithmStrategy;
 class GridItemWithSpan;
 
-class GridTrack {
+class GridTrack : public CanMakeWeakPtr<GridTrack> {
 public:
     GridTrack() = default;
+    GridTrack(const GridTrack&);
+    GridTrack(GridTrack&&);
+    GridTrack& operator=(const GridTrack&);
+    GridTrack& operator=(GridTrack&&);
 
     LayoutUnit baseSize() const;
     LayoutUnit unclampedBaseSize() const;
     void setBaseSize(LayoutUnit);
 
     const LayoutUnit& growthLimit() const;
-    bool growthLimitIsInfinite() const { return m_growthLimit == infinity; }
+    bool growthLimitIsInfinite() const { return m_data.growthLimit == infinity; }
     void setGrowthLimit(LayoutUnit);
 
-    bool infiniteGrowthPotential() const { return growthLimitIsInfinite() || m_infinitelyGrowable; }
+    bool infiniteGrowthPotential() const { return growthLimitIsInfinite() || m_data.infinitelyGrowable; }
     LayoutUnit growthLimitIfNotInfinite() const;
 
-    const LayoutUnit& plannedSize() const { return m_plannedSize; }
-    void setPlannedSize(LayoutUnit plannedSize) { m_plannedSize = plannedSize; }
+    const LayoutUnit& plannedSize() const { return m_data.plannedSize; }
+    void setPlannedSize(LayoutUnit plannedSize) { m_data.plannedSize = plannedSize; }
 
-    const LayoutUnit& tempSize() const { return m_tempSize; }
+    const LayoutUnit& tempSize() const { return m_data.tempSize; }
     void setTempSize(const LayoutUnit&);
     void growTempSize(const LayoutUnit&);
 
-    bool infinitelyGrowable() const { return m_infinitelyGrowable; }
-    void setInfinitelyGrowable(bool infinitelyGrowable) { m_infinitelyGrowable = infinitelyGrowable; }
+    bool infinitelyGrowable() const { return m_data.infinitelyGrowable; }
+    void setInfinitelyGrowable(bool infinitelyGrowable) { m_data.infinitelyGrowable = infinitelyGrowable; }
 
     void setGrowthLimitCap(std::optional<LayoutUnit>);
-    std::optional<LayoutUnit> growthLimitCap() const { return m_growthLimitCap; }
+    std::optional<LayoutUnit> growthLimitCap() const { return m_data.growthLimitCap; }
 
     const GridTrackSize& cachedTrackSize() const;
     void setCachedTrackSize(const GridTrackSize&);
 
 private:
-    bool isGrowthLimitBiggerThanBaseSize() const { return growthLimitIsInfinite() || m_growthLimit >= std::max(m_baseSize, 0_lu); }
+    bool isGrowthLimitBiggerThanBaseSize() const { return growthLimitIsInfinite() || m_data.growthLimit >= std::max(m_data.baseSize, 0_lu); }
 
     void ensureGrowthLimitIsBiggerThanBaseSize();
 
-    LayoutUnit m_baseSize { 0 };
-    LayoutUnit m_growthLimit { 0 };
-    LayoutUnit m_plannedSize { 0 };
-    LayoutUnit m_tempSize { 0 };
-    std::optional<LayoutUnit> m_growthLimitCap;
-    bool m_infinitelyGrowable { false };
-    std::optional<GridTrackSize> m_cachedTrackSize;
+    struct Data {
+        LayoutUnit baseSize { 0 };
+        LayoutUnit growthLimit { 0 };
+        LayoutUnit plannedSize { 0 };
+        LayoutUnit tempSize { 0 };
+        std::optional<LayoutUnit> growthLimitCap;
+        bool infinitelyGrowable { false };
+        std::optional<GridTrackSize> cachedTrackSize;
+    } m_data;
 };
+
+inline GridTrack::GridTrack(const GridTrack& other)
+    : m_data(other.m_data)
+{
+}
+
+inline GridTrack::GridTrack(GridTrack&& other)
+    : m_data(WTFMove(other.m_data))
+{
+}
+
+inline GridTrack& GridTrack::operator=(const GridTrack& other)
+{
+    m_data = other.m_data;
+    return *this;
+}
+
+inline GridTrack& GridTrack::operator=(GridTrack&& other)
+{
+    m_data = WTFMove(other.m_data);
+    return *this;
+}
 
 class GridTrackSizingAlgorithm final {
     friend class GridTrackSizingAlgorithmStrategy;
@@ -173,7 +201,7 @@ private:
     template <TrackSizeComputationVariant variant, TrackSizeComputationPhase phase> void increaseSizesToAccommodateSpanningItems(const GridItemsSpanGroupRange& gridItemsWithSpan);
     template <TrackSizeComputationVariant variant> void increaseSizesToAccommodateSpanningItems(const GridItemsSpanGroupRange& gridItemsWithSpan);
     LayoutUnit itemSizeForTrackSizeComputationPhase(TrackSizeComputationPhase, RenderBox&) const;
-    template <TrackSizeComputationVariant variant, TrackSizeComputationPhase phase> void distributeSpaceToTracks(Vector<GridTrack*>& tracks, Vector<GridTrack*>* growBeyondGrowthLimitsTracks, LayoutUnit& freeSpace) const;
+    template <TrackSizeComputationVariant variant, TrackSizeComputationPhase phase> void distributeSpaceToTracks(Vector<WeakPtr<GridTrack>>& tracks, Vector<WeakPtr<GridTrack>>* growBeyondGrowthLimitsTracks, LayoutUnit& freeSpace) const;
 
     void computeBaselineAlignmentContext();
     void updateBaselineAlignmentContext(const RenderBox&, GridAxis);
@@ -197,7 +225,7 @@ private:
     void stretchFlexibleTracks(std::optional<LayoutUnit> freeSpace);
     void stretchAutoTracks();
 
-    void accumulateIntrinsicSizesForTrack(GridTrack&, GridIterator&, Vector<GridItemWithSpan>& itemsSortedByIncreasingSpan, Vector<GridItemWithSpan>& itemsCrossingFlexibleTracks, HashSet<RenderBox*>& itemsSet);
+    void accumulateIntrinsicSizesForTrack(GridTrack&, GridIterator&, Vector<GridItemWithSpan>& itemsSortedByIncreasingSpan, Vector<GridItemWithSpan>& itemsCrossingFlexibleTracks, WeakHashSet<RenderBox>& itemsSet);
 
     bool copyUsedTrackSizesForSubgrid();
 
@@ -301,7 +329,7 @@ protected:
     LayoutUnit computeTrackBasedSize() const { return m_algorithm.computeTrackBasedSize(); }
     GridTrackSizingDirection direction() const { return m_algorithm.m_direction; }
     double findFrUnitSize(const GridSpan& tracksSpan, LayoutUnit leftOverSpace) const { return m_algorithm.findFrUnitSize(tracksSpan, leftOverSpace); }
-    void distributeSpaceToTracks(Vector<GridTrack*>& tracks, LayoutUnit& availableLogicalSpace) const { m_algorithm.distributeSpaceToTracks<TrackSizeComputationVariant::NotCrossingFlexibleTracks, MaximizeTracks>(tracks, nullptr, availableLogicalSpace); }
+    void distributeSpaceToTracks(Vector<WeakPtr<GridTrack>>& tracks, LayoutUnit& availableLogicalSpace) const { m_algorithm.distributeSpaceToTracks<TrackSizeComputationVariant::NotCrossingFlexibleTracks, MaximizeTracks>(tracks, nullptr, availableLogicalSpace); }
     const RenderGrid* renderGrid() const { return m_algorithm.m_renderGrid; }
     std::optional<LayoutUnit> availableSpace() const { return m_algorithm.availableSpace(); }
 
