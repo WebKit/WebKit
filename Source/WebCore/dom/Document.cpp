@@ -3018,27 +3018,27 @@ AppHighlightStorage& Document::appHighlightStorage()
     return *m_appHighlightStorage;
 }
 #endif
-void Document::collectRangeDataFromRegister(Vector<WeakPtr<HighlightRangeData>>& rangesData, const HighlightRegister& highlightRegister)
+void Document::collectRangeDataFromRegister(Vector<WeakPtr<HighlightRange>>& highlightRanges, const HighlightRegister& highlightRegister)
 {
     for (auto& highlight : highlightRegister.map()) {
-        for (auto& rangeData : highlight.value->rangesData()) {
-            if (rangeData->startPosition().isNotNull() && rangeData->endPosition().isNotNull() && !rangeData->range().isLiveRange())
+        for (auto& highlightRange : highlight.value->highlightRanges()) {
+            if (highlightRange->startPosition().isNotNull() && highlightRange->endPosition().isNotNull() && !highlightRange->range().isLiveRange())
                 continue;
 
-            if (auto* liveRange = dynamicDowncast<Range>(rangeData->range()); liveRange && !liveRange->didChangeHighlight())
+            if (auto* liveRange = dynamicDowncast<Range>(highlightRange->range()); liveRange && !liveRange->didChangeHighlight())
                 continue;
 
-            auto simpleRange = makeSimpleRange(rangeData->range());
+            auto simpleRange = makeSimpleRange(highlightRange->range());
             if (&simpleRange.startContainer().treeScope() != &simpleRange.endContainer().treeScope())
                 continue;
-            rangesData.append(rangeData.get());
+            highlightRanges.append(highlightRange.get());
         }
     }
 
     // One range can belong to multiple highlights so resetting a range's flag cannot be done in the loops above.
     for (auto& highlight : highlightRegister.map()) {
-        for (auto& rangeData : highlight.value->rangesData()) {
-            if (auto* liveRange = dynamicDowncast<Range>(rangeData->range()); liveRange && liveRange->didChangeHighlight())
+        for (auto& highlightRange : highlight.value->highlightRanges()) {
+            if (auto* liveRange = dynamicDowncast<Range>(highlightRange->range()); liveRange && liveRange->didChangeHighlight())
                 liveRange->resetDidChangeHighlight();
         }
     }
@@ -3046,27 +3046,27 @@ void Document::collectRangeDataFromRegister(Vector<WeakPtr<HighlightRangeData>>&
 
 void Document::updateHighlightPositions()
 {
-    Vector<WeakPtr<HighlightRangeData>> rangesData;
+    Vector<WeakPtr<HighlightRange>> highlightRanges;
     if (m_highlightRegister)
-        collectRangeDataFromRegister(rangesData, *m_highlightRegister.get());
+        collectRangeDataFromRegister(highlightRanges, *m_highlightRegister.get());
     if (m_fragmentHighlightRegister)
-        collectRangeDataFromRegister(rangesData, *m_fragmentHighlightRegister.get());
+        collectRangeDataFromRegister(highlightRanges, *m_fragmentHighlightRegister.get());
 #if ENABLE(APP_HIGHLIGHTS)
     if (m_appHighlightRegister)
-        collectRangeDataFromRegister(rangesData, *m_appHighlightRegister.get());
+        collectRangeDataFromRegister(highlightRanges, *m_appHighlightRegister.get());
 #endif
 
-    for (auto& weakRangeData : rangesData) {
-        if (auto* rangeData = weakRangeData.get()) {
-            VisibleSelection visibleSelection(makeSimpleRange(rangeData->range()));
+    for (auto& weakRangeData : highlightRanges) {
+        if (auto* highlightRange = weakRangeData.get()) {
+            VisibleSelection visibleSelection(makeSimpleRange(highlightRange->range()));
             auto startPosition = visibleSelection.visibleStart().deepEquivalent();
             auto endPosition = visibleSelection.visibleEnd().deepEquivalent();
             if (!weakRangeData.get())
                 continue;
             if (!startPosition.isNull())
-                rangeData->setStartPosition(WTFMove(startPosition));
+                highlightRange->setStartPosition(WTFMove(startPosition));
             if (!endPosition.isNull())
-                rangeData->setEndPosition(WTFMove(endPosition));
+                highlightRange->setEndPosition(WTFMove(endPosition));
         }
     }
 }

@@ -119,15 +119,15 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
                     continue;
                 if (renderStyle->textDecorationsInEffect().isEmpty() && phase == PaintPhase::Decoration)
                     continue;
-                for (auto& rangeData : highlightRegister->map().get(highlightName)->rangesData()) {
-                    if (!highlightData.setRenderRange(rangeData))
+                for (auto& highlightRange : highlightRegister->map().get(highlightName)->highlightRanges()) {
+                    if (!highlightData.setRenderRange(highlightRange))
                         continue;
-                    if (auto* staticRange = dynamicDowncast<StaticRange>(rangeData->range()); staticRange
+                    if (auto* staticRange = dynamicDowncast<StaticRange>(highlightRange->range()); staticRange
                         && (!staticRange->computeValidity() || staticRange->collapsed()))
                         continue;
                     // FIXME: Potentially move this check elsewhere, to where we collect this range information.
                     auto hasRenderer = [&] {
-                        IntersectingNodeRange nodes(makeSimpleRange(rangeData->range()));
+                        IntersectingNodeRange nodes(makeSimpleRange(highlightRange->range()));
                         for (auto& iterator : nodes) {
                             if (iterator.renderer())
                                 return true;
@@ -163,8 +163,8 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
     if (renderer.document().settings().scrollToTextFragmentEnabled()) {
         if (auto fragmentHighlightRegister = renderer.document().fragmentHighlightRegisterIfExists()) {
             for (auto& highlight : fragmentHighlightRegister->map()) {
-                for (auto& rangeData : highlight.value->rangesData()) {
-                    if (!highlightData.setRenderRange(rangeData))
+                for (auto& highlightRange : highlight.value->highlightRanges()) {
+                    if (!highlightData.setRenderRange(highlightRange))
                         continue;
 
                     auto [highlightStart, highlightEnd] = highlightData.rangeForTextBox(renderer, selectableRange);
@@ -179,8 +179,8 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
     if (auto appHighlightRegister = renderer.document().appHighlightRegisterIfExists()) {
         if (appHighlightRegister->highlightsVisibility() == HighlightVisibility::Visible) {
             for (auto& highlight : appHighlightRegister->map()) {
-                for (auto& rangeData : highlight.value->rangesData()) {
-                    if (!highlightData.setRenderRange(rangeData))
+                for (auto& highlightRange : highlight.value->highlightRanges()) {
+                    if (!highlightData.setRenderRange(highlightRange))
                         continue;
 
                     auto [highlightStart, highlightEnd] = highlightData.rangeForTextBox(renderer, selectableRange);

@@ -6753,7 +6753,7 @@ unsigned Internals::numberOfAppHighlights()
         return 0;
     unsigned numHighlights = 0;
     for (auto& highlight : appHighlightRegister->map())
-        numHighlights += highlight.value->rangesData().size();
+        numHighlights += highlight.value->highlightRanges().size();
     return numHighlights;
 }
 #endif

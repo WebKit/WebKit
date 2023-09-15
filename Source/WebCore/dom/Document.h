@@ -150,7 +150,7 @@ class HTMLMapElement;
 class HTMLMediaElement;
 class HTMLMetaElement;
 class HTMLVideoElement;
-class HighlightRangeData;
+class HighlightRange;
 class HighlightRegister;
 class HitTestLocation;
 class HitTestRequest;
@@ -1901,7 +1901,7 @@ private:
 
     void platformSuspendOrStopActiveDOMObjects();
 
-    void collectRangeDataFromRegister(Vector<WeakPtr<HighlightRangeData>>&, const HighlightRegister&);
+    void collectRangeDataFromRegister(Vector<WeakPtr<HighlightRange>>&, const HighlightRegister&);
 
     bool isBodyPotentiallyScrollable(HTMLBodyElement&);
 

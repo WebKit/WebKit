@@ -95,13 +95,13 @@ void HighlightData::setRenderRange(const RenderRange& renderRange)
     m_renderRange = renderRange;
 }
 
-bool HighlightData::setRenderRange(const HighlightRangeData& rangeData)
+bool HighlightData::setRenderRange(const HighlightRange& highlightRange)
 {
-    if (rangeData.startPosition().isNull() || rangeData.endPosition().isNull())
+    if (highlightRange.startPosition().isNull() || highlightRange.endPosition().isNull())
         return false;
     
-    auto startPosition = rangeData.startPosition();
-    auto endPosition = rangeData.endPosition();
+    auto startPosition = highlightRange.startPosition();
+    auto endPosition = highlightRange.endPosition();
     
     if (!startPosition.containerNode() || !endPosition.containerNode())
         return false;
