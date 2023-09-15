@@ -378,7 +378,8 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
         }
         break;
     }
-    case MatchElement::HasNonSubjectOrScopeBreaking: {
+    case MatchElement::HasNonSubject:
+    case MatchElement::HasScopeBreaking: {
         SelectorMatchingState selectorMatchingState;
         invalidateStyleForDescendants(*element.document().documentElement(), &selectorMatchingState);
         break;
@@ -468,6 +469,13 @@ void Invalidator::invalidateWithMatchElementRuleSets(Element& element, const Mat
         Invalidator invalidator(matchElementAndRuleSet.value);
         invalidator.invalidateStyleWithMatchElement(element, matchElementAndRuleSet.key);
     }
+}
+
+void Invalidator::invalidateWithScopeBreakingHasPseudoClassRuleSet(Element& element, const RuleSet* ruleSet)
+{
+    SetForScope isInvalidating(element.styleResolver().ruleSets().isInvalidatingStyleWithRuleSets(), true);
+    Invalidator invalidator({ ruleSet });
+    invalidator.invalidateStyleWithMatchElement(element, MatchElement::HasScopeBreaking);
 }
 
 void Invalidator::invalidateAllStyle(Scope& scope)
