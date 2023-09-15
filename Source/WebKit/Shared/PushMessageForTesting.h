@@ -30,6 +30,11 @@
 
 namespace WebKit::WebPushD {
 
+enum class PushMessageDisposition : bool {
+    Legacy,
+    Notification,
+};
+
 struct PushMessageForTesting {
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<PushMessageForTesting> decode(Decoder&);
@@ -37,13 +42,14 @@ struct PushMessageForTesting {
     String targetAppCodeSigningIdentifier;
     String pushPartitionString;
     URL registrationURL;
-    String message;
+    String payload;
+    PushMessageDisposition disposition;
 };
 
 template<class Encoder>
 void PushMessageForTesting::encode(Encoder& encoder) const
 {
-    encoder << targetAppCodeSigningIdentifier << pushPartitionString << registrationURL << message;
+    encoder << targetAppCodeSigningIdentifier << pushPartitionString << registrationURL << payload << disposition;
 }
 
 template<class Decoder>
@@ -64,16 +70,23 @@ std::optional<PushMessageForTesting> PushMessageForTesting::decode(Decoder& deco
     if (!registrationURL)
         return std::nullopt;
 
-    std::optional<String> message;
-    decoder >> message;
-    if (!message)
+    std::optional<String> payload;
+    decoder >> payload;
+    if (!payload)
         return std::nullopt;
+
+    std::optional<PushMessageDisposition> disposition;
+    decoder >> disposition;
+    if (!disposition)
+        return std::nullopt;
+
 
     return { {
         WTFMove(*targetAppCodeSigningIdentifier),
         WTFMove(*pushPartitionString),
         WTFMove(*registrationURL),
-        WTFMove(*message),
+        WTFMove(*payload),
+        WTFMove(*disposition),
     } };
 }
 

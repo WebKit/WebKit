@@ -210,7 +210,7 @@ void PushClientConnection::deletePushAndNotificationRegistration(const String& o
     WebPushDaemon::singleton().deletePushAndNotificationRegistration(*this, originString, WTFMove(replySender));
 }
 
-void PushClientConnection::injectPushMessageForTesting(PushMessageForTesting&& message, CompletionHandler<void(bool)>&& replySender)
+void PushClientConnection::injectPushMessageForTesting(PushMessageForTesting&& message, CompletionHandler<void(const String&)>&& replySender)
 {
     WebPushDaemon::singleton().injectPushMessageForTesting(*this, WTFMove(message), WTFMove(replySender));
 }

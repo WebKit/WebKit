@@ -1197,6 +1197,345 @@ TEST_F(WebPushDTest, NotificationClickExtendsITPCleanupTimerBy30Days)
     EXPECT_FALSE(v->hasPushSubscription());
 }
 
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+
+static constexpr ASCIILiteral json0 = ""_s;
+static constexpr ASCIILiteral json1 = "not really a string"_s;
+static constexpr ASCIILiteral json2 = "\"a string\""_s;
+static constexpr ASCIILiteral json3 = "4"_s;
+static constexpr ASCIILiteral json4 = "{ }"_s;
+static constexpr ASCIILiteral json5 = R"JSONRESOURCE(
+{
+    "default_action_url": "foo"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json6 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json7 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": ""
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json8 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": 4
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json9 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "app_badge": ""
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json10 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "app_badge": -1
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json11 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "app_badge": { }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json12 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "app_badge": 10
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json13 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "options": 0
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json14 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "options": { }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json15 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "options": {
+        "dir": 0
+    }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json16 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "options": {
+        "dir": "auto"
+    }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json17 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "options": {
+        "dir": "ltr"
+    }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json18 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "options": {
+        "dir": "rtl"
+    }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json19 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "options": {
+        "dir": "nonsense"
+    }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json20 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "options": {
+        "lang": { }
+    }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json21 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "options": {
+        "lang": "language"
+    }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json22 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "options": {
+        "body": { }
+    }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json23 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "options": {
+        "body": "world"
+    }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json24 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "options": {
+        "tag": { }
+    }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json25 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "options": {
+        "tag": "world"
+    }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json26 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "options": {
+        "icon": 0
+    }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json27 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "options": {
+        "icon": "world"
+    }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json28 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "options": {
+        "icon": "https://example.com/icon.png"
+    }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json29 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "options": {
+        "silent": 0
+    }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json30 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "options": {
+        "silent": true
+    }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json31 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "options": {
+        "silent": false
+    }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json32 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "app_badge": "20"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json33 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "app_badge": "18446744073709551615"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json34 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "app_badge": "18446744073709551616"
+}
+)JSONRESOURCE"_s;
+
+static constexpr ASCIILiteral errors[] = {
+    "does not contain valid JSON"_s,
+    "top level JSON value is not an object"_s,
+    "'default_action_url' member is specified but does not represent a valid URL"_s,
+    "'title' member is missing or is an empty string"_s,
+    "'title' member is specified but is not a string"_s,
+    "'app_badge' member is specified as a string that did not parse to to an unsigned long long"_s,
+    "'app_badge' member is specified as an number but is not a valid unsigned long long"_s,
+    "'options' member is specified but is not an object"_s,
+    "'app_badge' member is specified but is not a string or a number"_s,
+    "'options' JSON is not valid: 'dir' member is specified but is not a valid NotificationDirection"_s,
+    "'options' JSON is not valid: 'dir' member is specified but is not a string"_s,
+    "'options' JSON is not valid: 'lang' member is specified but is not a string"_s,
+    "'options' JSON is not valid: 'body' member is specified but is not a string"_s,
+    "'options' JSON is not valid: 'tag' member is specified but is not a string"_s,
+    "'options' JSON is not valid: 'icon' member is specified but is not a string"_s,
+    "'options' JSON is not valid: 'icon' member is specified but does not represent a valid URL"_s,
+    "'options' JSON is not valid: 'silent' member is specified but is not a boolean"_s,
+    "'app_badge' member is specified as a string that did not parse to a valid unsigned long long"_s
+};
+
+static std::pair<ASCIILiteral, ASCIILiteral> jsonAndErrors[] = {
+    { json0, errors[0] },
+    { json1, errors[0] },
+    { json2, errors[1] },
+    { json3, errors[1] },
+    { json4, errors[2] },
+    { json5, errors[2] },
+    { json6, errors[3] },
+    { json7, errors[3] },
+    { json8, errors[4] },
+    { json9, { " "_s } },
+    { json10, errors[6] },
+    { json11, errors[8] },
+    { json12, { " "_s } },
+    { json13, errors[7] },
+    { json14, { " "_s } },
+    { json15, errors[10] },
+    { json16, { " "_s } },
+    { json17, { " "_s } },
+    { json18, { " "_s } },
+    { json19, errors[9] },
+    { json20, errors[11] },
+    { json21, { " "_s } },
+    { json22, errors[12] },
+    { json23, { " "_s } },
+    { json24, errors[13] },
+    { json25, { " "_s } },
+    { json26, errors[14] },
+    { json27, errors[15] },
+    { json28, { " "_s } },
+    { json29, errors[16] },
+    { json30, { " "_s } },
+    { json31, { " "_s } },
+    { json32, { " "_s } },
+    { json33, { " "_s } },
+    { json34, errors[17] },
+    { { }, { } }
+};
+
+// Directly message the daemon to do JSON parsing validation on the declarative message
+TEST(WebPushD, DeclarativeParsing)
+{
+    setUpTestWebPushD();
+
+    auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
+    auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
+    bool done = false;
+
+    WebKit::WebPushD::PushMessageForTesting message;
+    message.targetAppCodeSigningIdentifier = "com.apple.WebKit.TestWebKtAPI"_s;
+    message.registrationURL = URL("https://example.com"_s);
+    message.disposition = WebKit::WebPushD::PushMessageDisposition::Notification;
+
+    unsigned i = 0;
+    while (!jsonAndErrors[i].first.isNull()) {
+        message.payload = jsonAndErrors[i].first;
+        done = false;
+        sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(message), [&](const String& error) {
+            if (!error.isEmpty())
+                EXPECT_TRUE(error.endsWith(jsonAndErrors[i].second));
+            else
+                EXPECT_FALSE(strcmp(jsonAndErrors[i].second, " "));
+
+            done = true;
+        });
+        TestWebKitAPI::Util::run(&done);
+        ++i;
+    }
+}
+
+#endif // ENABLE(DECLARATIVE_WEB_PUSH)
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(NOTIFICATIONS) && ENABLE(NOTIFICATION_EVENT) && (PLATFORM(MAC)

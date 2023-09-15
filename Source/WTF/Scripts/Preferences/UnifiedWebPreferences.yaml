@@ -2172,6 +2172,22 @@ DeclarativeShadowDOMInDOMParserEnabled:
     WebCore:
       default: false
 
+DeclarativeWebPush:
+  type: bool
+  status: unstable
+  category: dom
+  defaultsOverridable: true
+  condition: ENABLE(DECLARATIVE_WEB_PUSH)
+  humanReadableName: "Declarative Web Push"
+  humanReadableDescription: "Enable Declarative Web Push"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 DefaultARIAForCustomElementsEnabled:
   type: bool
   status: stable

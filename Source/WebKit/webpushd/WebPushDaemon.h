@@ -69,6 +69,7 @@ public:
     void connectionAdded(xpc_connection_t);
     void connectionRemoved(xpc_connection_t);
 
+    void setMachServiceName(const String& machServiceName) { m_machServiceName = machServiceName; }
     void startMockPushService();
     void startPushService(const String& incomingPushServiceName, const String& pushDatabasePath);
     void handleIncomingPush(const WebCore::PushSubscriptionSetIdentifier&, WebKit::WebPushMessage&&);
@@ -76,7 +77,7 @@ public:
     // Message handlers
     void setPushAndNotificationsEnabledForOrigin(PushClientConnection&, const String& originString, bool, CompletionHandler<void()>&& replySender);
     void deletePushAndNotificationRegistration(PushClientConnection&, const String& originString, CompletionHandler<void(const String&)>&& replySender);
-    void injectPushMessageForTesting(PushClientConnection&, const PushMessageForTesting&, CompletionHandler<void(bool)>&&);
+    void injectPushMessageForTesting(PushClientConnection&, const PushMessageForTesting&, CompletionHandler<void(const String&)>&&);
     void injectEncryptedPushMessageForTesting(PushClientConnection&, const String&, CompletionHandler<void(bool)>&&);
     void getPendingPushMessages(PushClientConnection&, CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender);
     void getPushTopicsForTesting(CompletionHandler<void(Vector<String>, Vector<String>)>&&);
@@ -119,6 +120,7 @@ private:
     
     WebCore::Timer m_incomingPushTransactionTimer;
     OSObjectPtr<os_transaction_t> m_incomingPushTransaction;
+    String m_machServiceName;
 };
 
 } // namespace WebPushD

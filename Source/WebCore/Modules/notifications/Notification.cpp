@@ -116,7 +116,7 @@ ExceptionOr<Ref<Notification>> Notification::createForServiceWorker(ScriptExecut
 
 Ref<Notification> Notification::create(ScriptExecutionContext& context, NotificationData&& data)
 {
-    Options options { data.direction, WTFMove(data.language), WTFMove(data.body), WTFMove(data.tag), WTFMove(data.iconURL), JSC::jsNull(), data.silent };
+    Options options { data.direction, WTFMove(data.language), WTFMove(data.body), WTFMove(data.tag), WTFMove(data.iconURL), JSC::jsNull(), nullptr, nullptr, data.silent };
 
     auto notification = adoptRef(*new Notification(context, data.notificationID, WTFMove(data.title), WTFMove(options), SerializedScriptValue::createFromWireBytes(WTFMove(data.data))));
     notification->suspendIfNeeded();

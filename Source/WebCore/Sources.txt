@@ -284,6 +284,8 @@ Modules/notifications/Notification.cpp
 Modules/notifications/NotificationController.cpp
 Modules/notifications/NotificationData.cpp
 Modules/notifications/NotificationEvent.cpp
+Modules/notifications/NotificationJSONParser.cpp
+Modules/notifications/NotificationPayload.cpp
 Modules/notifications/NotificationResourcesLoader.cpp
 Modules/paymentrequest/MerchantValidationEvent.cpp
 Modules/paymentrequest/PaymentAddress.cpp
