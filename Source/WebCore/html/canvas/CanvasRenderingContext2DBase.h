@@ -98,6 +98,8 @@ public:
     virtual ~CanvasRenderingContext2DBase();
 
     const CanvasRenderingContext2DSettings& getContextAttributes() const { return m_settings; }
+    using RenderingMode = WebCore::RenderingMode;
+    std::optional<RenderingMode> getEffectiveRenderingModeForTesting();
 
     double lineWidth() const { return state().lineWidth; }
     void setLineWidth(double);

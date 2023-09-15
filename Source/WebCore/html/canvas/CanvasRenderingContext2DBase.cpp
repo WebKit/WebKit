@@ -2881,8 +2881,6 @@ OptionSet<ImageBufferOptions> CanvasRenderingContext2DBase::adjustImageBufferOpt
     if (!m_settings.renderingModeForTesting)
         return bufferOptions;
     switch (*m_settings.renderingModeForTesting) {
-    case CanvasRenderingContext2DSettings::RenderingMode::Default:
-        break;
     case CanvasRenderingContext2DSettings::RenderingMode::Unaccelerated:
         bufferOptions.remove(ImageBufferOptions::Accelerated);
         bufferOptions.add(ImageBufferOptions::AvoidBackendSizeCheckForTesting);
@@ -2893,6 +2891,16 @@ OptionSet<ImageBufferOptions> CanvasRenderingContext2DBase::adjustImageBufferOpt
         break;
     }
     return bufferOptions;
+}
+
+std::optional<CanvasRenderingContext2DBase::RenderingMode> CanvasRenderingContext2DBase::getEffectiveRenderingModeForTesting()
+{
+    if (auto* buffer = canvasBase().buffer()) {
+        bool success = buffer->ensureBackendCreated(); // FIXME: Ensure we get the response for now, since the backend might change (!).
+        ASSERT_UNUSED(success, success);
+        return buffer->renderingMode();
+    }
+    return std::nullopt;
 }
 
 } // namespace WebCore
