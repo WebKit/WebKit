@@ -1,3 +1,12 @@
+================
+WebKitGTK 2.42.0
+================
+
+What's new in WebKitGTK 2.42.0?
+
+  - Temporary disable frame rate throttling to fix render updates stoping due to frame rate change.
+  - Translation updates: Swedish.
+
 =================
 WebKitGTK 2.41.92
 =================
