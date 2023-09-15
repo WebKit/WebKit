@@ -1,5 +1,5 @@
 
-FAIL Property alignment-baseline has initial value baseline assert_equals: expected "baseline" but got "auto"
+PASS Property alignment-baseline has initial value baseline
 PASS Property alignment-baseline does not inherit
 FAIL Property baseline-shift has initial value 0px assert_equals: expected "0px" but got "baseline"
 PASS Property baseline-shift does not inherit

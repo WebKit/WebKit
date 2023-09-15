@@ -2,7 +2,7 @@ Computed style of an element whose parent's 'display' value is 'none':
 align-content: normal
 align-items: normal
 align-self: auto
-alignment-baseline: auto
+alignment-baseline: baseline
 appearance: none
 background-attachment: scroll
 background-clip: border-box

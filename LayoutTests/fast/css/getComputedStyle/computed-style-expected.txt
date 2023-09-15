@@ -3,7 +3,7 @@ Attributes that are exposed in the CSS computed style object:
 align-content: normal;
 align-items: normal;
 align-self: auto;
-alignment-baseline: auto;
+alignment-baseline: baseline;
 appearance: none;
 background-attachment: scroll;
 background-clip: border-box;

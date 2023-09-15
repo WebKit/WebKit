@@ -4,7 +4,7 @@ rect: style.getPropertyValue(align-items) : normal
 rect: style.getPropertyCSSValue(align-items) : [object CSSValueList]
 rect: style.getPropertyValue(align-self) : auto
 rect: style.getPropertyCSSValue(align-self) : [object CSSValueList]
-rect: style.getPropertyValue(alignment-baseline) : auto
+rect: style.getPropertyValue(alignment-baseline) : baseline
 rect: style.getPropertyCSSValue(alignment-baseline) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(appearance) : none
 rect: style.getPropertyCSSValue(appearance) : [object CSSPrimitiveValue]
@@ -498,7 +498,7 @@ g: style.getPropertyValue(align-items) : normal
 g: style.getPropertyCSSValue(align-items) : [object CSSValueList]
 g: style.getPropertyValue(align-self) : auto
 g: style.getPropertyCSSValue(align-self) : [object CSSValueList]
-g: style.getPropertyValue(alignment-baseline) : auto
+g: style.getPropertyValue(alignment-baseline) : baseline
 g: style.getPropertyCSSValue(alignment-baseline) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(appearance) : none
 g: style.getPropertyCSSValue(appearance) : [object CSSPrimitiveValue]

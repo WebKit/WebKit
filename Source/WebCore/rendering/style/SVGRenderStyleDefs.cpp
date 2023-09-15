@@ -302,7 +302,6 @@ bool StyleLayoutData::operator==(const StyleLayoutData& other) const
 TextStream& operator<<(TextStream& ts, AlignmentBaseline value)
 {
     switch (value) {
-    case AlignmentBaseline::Auto: ts << "auto"; break;
     case AlignmentBaseline::Baseline: ts << "baseline"; break;
     case AlignmentBaseline::BeforeEdge: ts << "before-edge"; break;
     case AlignmentBaseline::TextBeforeEdge: ts << "text-before-edge"; break;

@@ -1895,7 +1895,7 @@ template<> constexpr WindRule fromCSSValueID(CSSValueID valueID)
 }
 
 #define TYPE AlignmentBaseline
-#define FOR_EACH(CASE) CASE(AfterEdge) CASE(Alphabetic) CASE(Auto) CASE(Baseline) \
+#define FOR_EACH(CASE) CASE(AfterEdge) CASE(Alphabetic) CASE(Baseline) \
     CASE(BeforeEdge) CASE(Central) CASE(Hanging) CASE(Ideographic) CASE(Mathematical) \
     CASE(Middle) CASE(TextAfterEdge) CASE(TextBeforeEdge)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
