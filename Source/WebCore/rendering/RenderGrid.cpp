@@ -33,14 +33,12 @@
 #include "GridPositionsResolver.h"
 #include "GridTrackSizingAlgorithm.h"
 #include "LayoutRepainter.h"
-#include "RenderBoxInlines.h"
 #include "RenderChildIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
-#include <cstdlib>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
