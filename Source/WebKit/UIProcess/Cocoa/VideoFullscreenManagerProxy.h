@@ -45,6 +45,7 @@
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS WKLayerHostView;
+OBJC_CLASS WKVideoView;
 OBJC_CLASS WebAVPlayerLayer;
 OBJC_CLASS WebAVPlayerLayerView;
 
@@ -78,6 +79,9 @@ public:
 #if PLATFORM(IOS_FAMILY)
     WebAVPlayerLayerView *playerView() const { return m_playerView.get(); }
     void setPlayerView(RetainPtr<WebAVPlayerLayerView>&& playerView) { m_playerView = WTFMove(playerView); }
+
+    WKVideoView *videoView() const { return m_videoView.get(); }
+    void setVideoView(RetainPtr<WKVideoView>&& videoView) { m_videoView = WTFMove(videoView); }
 #endif
 
     void requestCloseAllMediaPresentations(bool finishedWithMedia, CompletionHandler<void()>&&);
@@ -137,6 +141,7 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<WebAVPlayerLayerView> m_playerView;
+    RetainPtr<WKVideoView> m_videoView;
 #endif
 
     HashSet<WebCore::VideoFullscreenModelClient*> m_clients;
@@ -177,7 +182,7 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     AVPlayerViewController *playerViewController(PlaybackSessionContextIdentifier) const;
-    RetainPtr<WebAVPlayerLayerView> createViewWithID(PlaybackSessionContextIdentifier, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingScaleFactor);
+    RetainPtr<WKVideoView> createViewWithID(PlaybackSessionContextIdentifier, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingScaleFactor);
 #endif
 
     PlatformLayerContainer createLayerWithID(PlaybackSessionContextIdentifier, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingScaleFactor);
