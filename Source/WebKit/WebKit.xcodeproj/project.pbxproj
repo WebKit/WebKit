@@ -6977,6 +6977,8 @@
 		CDAC20F423FC383A0021DEE3 /* RemoteCDMProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteCDMProxyMessages.h; sourceTree = "<group>"; };
 		CDAC20F523FC383B0021DEE3 /* RemoteCDMInstanceProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteCDMInstanceProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		CDB2A1ED2697925C006B235C /* GPUProcessProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUProcessProxyCocoa.mm; sourceTree = "<group>"; };
+		CDB96AD32AB379C9007A90D3 /* WKVideoView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKVideoView.h; path = ios/WKVideoView.h; sourceTree = "<group>"; };
+		CDB96AD42AB379CA007A90D3 /* WKVideoView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKVideoView.mm; path = ios/WKVideoView.mm; sourceTree = "<group>"; };
 		CDBB49F4240D8AC60017C292 /* RemoteAudioSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteAudioSession.h; sourceTree = "<group>"; };
 		CDBB49F5240D8AC60017C292 /* RemoteAudioSession.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioSession.cpp; sourceTree = "<group>"; };
 		CDBB49F6240D8C950017C292 /* RemoteAudioSessionProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioSessionProxy.h; sourceTree = "<group>"; };
@@ -9766,6 +9768,8 @@
 				F4E727222A547E2100CE34FD /* WKTouchEventsGestureRecognizerTypes.h */,
 				316B8B622054B55800BD4A62 /* WKUSDPreviewView.h */,
 				316B8B612054B55800BD4A62 /* WKUSDPreviewView.mm */,
+				CDB96AD32AB379C9007A90D3 /* WKVideoView.h */,
+				CDB96AD42AB379CA007A90D3 /* WKVideoView.mm */,
 				2D1E8221216FFF5000A15265 /* WKWebEvent.h */,
 				2D1E8222216FFF5100A15265 /* WKWebEvent.mm */,
 				463010012984778C00715DB1 /* WKWebGeolocationPolicyDecider.h */,

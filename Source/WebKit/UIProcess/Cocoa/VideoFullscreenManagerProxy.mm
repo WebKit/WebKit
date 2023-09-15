@@ -35,6 +35,7 @@
 #import "PlaybackSessionManagerProxy.h"
 #import "VideoFullscreenManagerMessages.h"
 #import "VideoFullscreenManagerProxyMessages.h"
+#import "WKVideoView.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <QuartzCore/CoreAnimation.h>
@@ -712,22 +713,22 @@ RetainPtr<WKLayerHostView> VideoFullscreenManagerProxy::createLayerHostViewWithI
 }
 
 #if PLATFORM(IOS_FAMILY)
-RetainPtr<WebAVPlayerLayerView> VideoFullscreenManagerProxy::createViewWithID(PlaybackSessionContextIdentifier contextId, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingDeviceScaleFactor)
+RetainPtr<WKVideoView> VideoFullscreenManagerProxy::createViewWithID(PlaybackSessionContextIdentifier contextId, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingDeviceScaleFactor)
 {
     auto& [model, interface] = ensureModelAndInterface(contextId);
     addClientForContext(contextId);
 
     RetainPtr<WKLayerHostView> view = createLayerHostViewWithID(contextId, videoLayerID, initialSize, hostingDeviceScaleFactor);
 
-    if (!model->playerView()) {
+    if (!model->videoView()) {
         ALWAYS_LOG(LOGIDENTIFIER, model->logIdentifier(), ", Creating AVPlayerLayerView");
-        auto playerView = adoptNS([allocWebAVPlayerLayerViewInstance() init]);
+        auto initialFrame = CGRectMake(0, 0, initialSize.width(), initialSize.height());
+        auto playerView = adoptNS([allocWebAVPlayerLayerViewInstance() initWithFrame:initialFrame]);
 
         RetainPtr playerLayer { (WebAVPlayerLayer *)[playerView layer] };
 
         [playerLayer setVideoDimensions:nativeSize];
         [playerLayer setFullscreenModel:model.get()];
-
         [playerLayer setVideoSublayer:[view layer]];
 
         // The videoView may already be reparented in fullscreen, so only parent the view
@@ -735,15 +736,15 @@ RetainPtr<WebAVPlayerLayerView> VideoFullscreenManagerProxy::createViewWithID(Pl
         if (![[view layer] superlayer])
             [playerLayer addSublayer:[view layer]];
 
+        auto videoView = adoptNS([[WKVideoView alloc] initWithFrame:initialFrame]);
+        [videoView addSubview:playerView.get()];
+
         model->setPlayerLayer(WTFMove(playerLayer));
         model->setPlayerView(playerView.get());
-
-        [playerView setFrame:CGRectMake(0, 0, initialSize.width(), initialSize.height())];
-        [playerView setNeedsLayout];
-        [playerView layoutIfNeeded];
+        model->setVideoView(videoView.get());
     }
 
-    return model->playerView();
+    return model->videoView();
 }
 #endif
 
