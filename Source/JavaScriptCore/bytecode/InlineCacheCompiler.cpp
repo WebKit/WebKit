@@ -3308,6 +3308,32 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
 
     dataLogLnIf(InlineCacheCompilerInternal::verbose, "Optimized cases: ", listDump(cases));
 
+    auto finishCodeGeneration = [&](RefPtr<PolymorphicAccessJITStubRoutine>&& stub) {
+        poly.m_stubRoutine = WTFMove(stub);
+        poly.m_watchpoints = WTFMove(m_watchpoints);
+        dataLogLnIf(InlineCacheCompilerInternal::verbose, "Returning: ", poly.m_stubRoutine->code());
+
+        poly.m_list = WTFMove(cases);
+        poly.m_list.shrinkToFit();
+
+        AccessGenerationResult::Kind resultKind;
+        if (generatedMegamorphicCode)
+            resultKind = AccessGenerationResult::GeneratedMegamorphicCode;
+        else if (poly.m_list.size() >= Options::maxAccessVariantListSize())
+            resultKind = AccessGenerationResult::GeneratedFinalCode;
+        else
+            resultKind = AccessGenerationResult::GeneratedNewCode;
+
+        return AccessGenerationResult(resultKind, poly.m_stubRoutine->code().code());
+    };
+
+    if (generatedMegamorphicCode && JITCode::isBaselineCode(codeBlock->jitType())) {
+        ASSERT(codeBlock->useDataIC());
+        auto stub = vm().m_sharedJITStubs->getMegamorphic(m_stubInfo->accessType);
+        if (stub)
+            return finishCodeGeneration(WTFMove(stub));
+    }
+
     auto allocator = makeDefaultScratchAllocator();
     m_allocator = &allocator;
     m_scratchGPR = allocator.allocateScratchGPR();
@@ -3381,25 +3407,6 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     }
     if (needsSymbolPropertyCheck || needsStringPropertyCheck || needsInt32PropertyCheck)
         canBeShared = false;
-
-    auto finishCodeGeneration = [&](RefPtr<PolymorphicAccessJITStubRoutine>&& stub) {
-        poly.m_stubRoutine = WTFMove(stub);
-        poly.m_watchpoints = WTFMove(m_watchpoints);
-        dataLogLnIf(InlineCacheCompilerInternal::verbose, "Returning: ", poly.m_stubRoutine->code());
-
-        poly.m_list = WTFMove(cases);
-        poly.m_list.shrinkToFit();
-
-        AccessGenerationResult::Kind resultKind;
-        if (generatedMegamorphicCode)
-            resultKind = AccessGenerationResult::GeneratedMegamorphicCode;
-        else if (poly.m_list.size() >= Options::maxAccessVariantListSize())
-            resultKind = AccessGenerationResult::GeneratedFinalCode;
-        else
-            resultKind = AccessGenerationResult::GeneratedNewCode;
-
-        return AccessGenerationResult(resultKind, poly.m_stubRoutine->code().code());
-    };
 
     CCallHelpers jit(codeBlock);
     m_jit = &jit;
@@ -3686,6 +3693,11 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
         "%s", toCString("Access stub for ", *codeBlock, " ", m_stubInfo->codeOrigin, "with start: ", m_stubInfo->startLocation, " with return point ", successLabel, ": ", listDump(cases)).data());
 
     stub = createICJITStubRoutine(code, WTFMove(keys), WTFMove(weakStructures), vm(), codeBlock, doesCalls, cellsToMark, WTFMove(m_callLinkInfos), codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
+
+    if (generatedMegamorphicCode && JITCode::isBaselineCode(codeBlock->jitType())) {
+        ASSERT(codeBlock->useDataIC());
+        vm().m_sharedJITStubs->setMegamorphic(m_stubInfo->accessType, *stub);
+    }
 
     if (codeBlock->useDataIC()) {
         if (canBeShared)

@@ -562,8 +562,15 @@ public:
         return nullptr;
     }
 
+    RefPtr<PolymorphicAccessJITStubRoutine> getMegamorphic(AccessType);
+    void setMegamorphic(AccessType, Ref<PolymorphicAccessJITStubRoutine>);
+
 private:
     HashSet<Hash::Key, Hash, Hash::KeyTraits> m_stubs;
+
+    RefPtr<PolymorphicAccessJITStubRoutine> m_getByValMegamorphic;
+    RefPtr<PolymorphicAccessJITStubRoutine> m_getByValWithThisMegamorphic;
+    RefPtr<PolymorphicAccessJITStubRoutine> m_putByValMegamorphic;
 };
 
 } // namespace JSC
