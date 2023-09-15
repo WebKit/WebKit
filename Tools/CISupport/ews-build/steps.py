@@ -70,6 +70,26 @@ DEFAULT_REMOTE = 'origin'
 LAYOUT_TESTS_URL = '{}{}/blob/{}/LayoutTests/'.format(GITHUB_URL, GITHUB_PROJECTS[0], DEFAULT_BRANCH)
 MAX_COMMITS_IN_PR_SERIES = 50
 QUEUES_WITH_PUSH_ACCESS = ('commit-queue', 'merge-queue', 'unsafe-merge-queue')
+THRESHOLD_FOR_EXCESSIVE_LOGS = 1000000
+
+
+class ParseByLineLogObserver(logobserver.LineConsumerLogObserver):
+    """A pretty wrapper for LineConsumerLogObserver to avoid
+       repeatedly setting up generator processors."""
+    def __init__(self, consumeLineFunc):
+        if not callable(consumeLineFunc):
+            raise Exception("Error: ParseByLineLogObserver requires consumeLineFunc to be callable.")
+        self.consumeLineFunc = consumeLineFunc
+        super(ParseByLineLogObserver, self).__init__(self.consumeLineGenerator)
+
+    def consumeLineGenerator(self):
+        """The generator LineConsumerLogObserver expects."""
+        try:
+            while True:
+                stream, line = yield
+                self.consumeLineFunc(line)
+        except GeneratorExit:
+            return
 
 
 class BufferLogHeaderObserver(logobserver.BufferLogObserver):
@@ -2701,16 +2721,23 @@ def customBuildFlag(platform, fullPlatform):
     return ['--' + platform]
 
 
-class BuildLogLineObserver(logobserver.LogLineObserver, object):
-    def __init__(self, errorReceived, searchString='rror:', includeRelatedLines=True):
+class BuildLogLineObserver(ParseByLineLogObserver):
+    def __init__(self, errorReceived, searchString='rror:', includeRelatedLines=True, thresholdExceedCallBack=None):
         self.errorReceived = errorReceived
         self.searchString = searchString
         self.includeRelatedLines = includeRelatedLines
         self.error_context_buffer = []
         self.whitespace_re = re.compile(r'^[\s]*$')
-        super().__init__()
+        self.line_count = 0
+        self.thresholdExceedCallBack = thresholdExceedCallBack
+        super().__init__(self.parseOutputLine)
 
-    def outLineReceived(self, line):
+    def parseOutputLine(self, line):
+        self.line_count += 1
+        if self.line_count == THRESHOLD_FOR_EXCESSIVE_LOGS:
+            self.thresholdExceedCallBack()
+            return
+
         if not self.errorReceived:
             return
 
@@ -2743,6 +2770,7 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
 
     def __init__(self, skipUpload=False, **kwargs):
         self.skipUpload = skipUpload
+        self.cancelled_due_to_huge_logs = False
         super().__init__(logEnviron=False, **kwargs)
 
     def doStepIf(self, step):
@@ -2754,9 +2782,9 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
         architecture = self.getProperty('architecture')
 
         if platform in ['wincairo']:
-            self.addLogObserver('stdio', BuildLogLineObserver(self.errorReceived, searchString='error ', includeRelatedLines=False))
+            self.addLogObserver('stdio', BuildLogLineObserver(self.errorReceived, searchString='error ', includeRelatedLines=False, thresholdExceedCallBack=self.handleExcessiveLogging))
         else:
-            self.addLogObserver('stdio', BuildLogLineObserver(self.errorReceived))
+            self.addLogObserver('stdio', BuildLogLineObserver(self.errorReceived, thresholdExceedCallBack=self.handleExcessiveLogging))
 
         additionalArguments = self.getProperty('additionalArguments')
         for additionalArgument in (additionalArguments or []):
@@ -2790,6 +2818,12 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
 
     def errorReceived(self, error):
         self._addToLog('errors', error + '\n')
+
+    def handleExcessiveLogging(self):
+        build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
+        print(f'Stopping build due to excessive logging: {build_url}\n\n')
+        self.cancelled_due_to_huge_logs = True
+        self.build.stopBuild(reason=f'Stopped due to excessive logging. Log limit: {THRESHOLD_FOR_EXCESSIVE_LOGS}', results=FAILURE)
 
     def evaluateCommand(self, cmd):
         if cmd.didFail():
@@ -2832,6 +2866,8 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
             if self.getProperty('fast_commit_queue'):
                 return {'step': 'Skipped compiling WebKit in fast-cq mode'}
             return {'step': 'Skipped compiling WebKit'}
+        if self.results == CANCELLED and self.cancelled_due_to_huge_logs:
+            return {'step': 'Cancelled step due to huge logs', 'build': 'Cancelled build due to huge logs'}
         return shell.Compile.getResultSummary(self)
 
 
