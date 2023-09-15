@@ -894,8 +894,10 @@ void Heap::removeDeadHeapSnapshotNodes(HeapProfiler& heapProfiler)
 
 void Heap::updateObjectCounts()
 {
-    if (m_collectionScope && m_collectionScope.value() == CollectionScope::Full)
+    if (m_collectionScope && m_collectionScope.value() == CollectionScope::Full) {
+        m_totalBytesVisitedAfterLastFullCollect = m_totalBytesVisited;
         m_totalBytesVisited = 0;
+    }
 
     m_totalBytesVisitedThisCycle = bytesVisited();
     
@@ -1649,6 +1651,8 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
         m_verifier->verify(HeapVerifier::Phase::AfterGC);
     }
 
+    auto endingCollectionScope = *m_collectionScope;
+
     didFinishCollection();
     
     if (m_currentRequest.didFinishEndPhase)
@@ -1679,7 +1683,8 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
     m_lastGCStartTime = m_currentGCStartTime;
     m_lastGCEndTime = MonotonicTime::now();
     m_totalGCTime += m_lastGCEndTime - m_lastGCStartTime;
-        
+    if (endingCollectionScope == CollectionScope::Full)
+        m_lastFullGCEndTime = m_lastGCEndTime;
     return changePhase(conn, CollectorPhase::NotRunning);
 }
 
@@ -2283,7 +2288,7 @@ void Heap::willStartCollection()
 #if ENABLE(RESOURCE_USAGE)
         m_externalMemorySize = 0;
 #endif
-
+        m_shouldDoOpportunisticFullCollection = false;
         if (m_fullActivityCallback)
             m_fullActivityCallback->willCollect();
     } else {
@@ -2384,9 +2389,11 @@ void Heap::updateAllocationLimits()
         // To avoid pathological GC churn in very small and very large heaps, we set
         // the new allocation limit based on the current size of the heap, with a
         // fixed minimum.
-        m_maxHeapSize = std::max(minHeapSize(m_heapType, m_ramSize), proportionalHeapSize(currentHeapSize, m_ramSize));
-        if (verbose)
-            dataLog("Full: maxHeapSize = ", m_maxHeapSize, "\n");
+        if (!m_isInOpportunisticTask) {
+            m_maxHeapSize = std::max(minHeapSize(m_heapType, m_ramSize), proportionalHeapSize(currentHeapSize, m_ramSize));
+            if (verbose)
+                dataLog("Full: maxHeapSize = ", m_maxHeapSize, "\n");
+        }
         m_maxEdenSize = m_maxHeapSize - currentHeapSize;
         if (verbose)
             dataLog("Full: maxEdenSize = ", m_maxEdenSize, "\n");
@@ -3209,6 +3216,12 @@ void Heap::verifyGC()
     });
 
     m_verifierSlotVisitor = nullptr;
+}
+
+void Heap::scheduleOpportunisticFullCollectionIfNeeded()
+{
+    if (shouldDoFullCollection())
+        m_shouldDoOpportunisticFullCollection = true;
 }
 
 #define DEFINE_DYNAMIC_ISO_SUBSPACE_MEMBER_SLOW(name, heapCellType, type) \
