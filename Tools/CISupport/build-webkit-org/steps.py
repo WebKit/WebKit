@@ -22,7 +22,7 @@
 
 from buildbot.plugins import steps, util
 from buildbot.process import buildstep, logobserver, properties
-from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION, RETRY
+from buildbot.process.results import Results, SUCCESS, FAILURE, CANCELLED, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.steps import master, shell, transfer, trigger
 from buildbot.steps.source import git
 from twisted.internet import defer
@@ -45,6 +45,7 @@ RESULTS_SERVER_API_KEY = 'RESULTS_SERVER_API_KEY'
 S3URL = 'https://s3-us-west-2.amazonaws.com/'
 WithProperties = properties.WithProperties
 Interpolate = properties.Interpolate
+THRESHOLD_FOR_EXCESSIVE_LOGS = 1000000
 
 
 class CustomFlagsMixin(object):
@@ -330,6 +331,8 @@ class CompileWebKit(shell.Compile, CustomFlagsMixin):
     description = ["compiling"]
     descriptionDone = ["compiled"]
     warningPattern = ".*arning: .*"
+    cancelled_due_to_huge_logs = False
+    line_count = 0
 
     def start(self):
         platform = self.getProperty('platform')
@@ -373,10 +376,21 @@ class CompileWebKit(shell.Compile, CustomFlagsMixin):
         return kwargs
 
     def parseOutputLine(self, line):
+        self.line_count += 1
+        if self.line_count == THRESHOLD_FOR_EXCESSIVE_LOGS:
+            self.handleExcessiveLogging()
+            return
+
         if "arning:" in line:
             self._addToLog('warnings', line + '\n')
         if "rror:" in line:
             self._addToLog('errors', line + '\n')
+
+    def handleExcessiveLogging(self):
+        build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
+        print(f'Stopping build due to excessive logging: {build_url}\n\n')
+        self.cancelled_due_to_huge_logs = True
+        self.build.stopBuild(reason=f'Stopped due to excessive logging. Log limit: {THRESHOLD_FOR_EXCESSIVE_LOGS}', results=FAILURE)
 
     @defer.inlineCallbacks
     def _addToLog(self, logName, message):
@@ -392,16 +406,25 @@ class CompileWebKit(shell.Compile, CustomFlagsMixin):
             self.build.addStepsAfterCurrentStep([ArchiveMinifiedBuiltProduct(), UploadMinifiedBuiltProduct(), TransferToS3(terminate_build=True)])
         return rc
 
+    def getResultSummary(self):
+        if self.results == FAILURE:
+            return {'step': f'Failed {self.name}'}
+        if self.results == CANCELLED and self.cancelled_due_to_huge_logs:
+            return {'step': 'Cancelled step due to huge logs', 'build': 'Cancelled build due to huge logs'}
+        return shell.Compile.getResultSummary(self)
+
 
 class CompileLLINTCLoop(CompileWebKit):
     command = ["perl", "Tools/Scripts/build-jsc", "--cloop", WithProperties("--%(configuration)s")]
 
 
 class Compile32bitJSC(CompileWebKit):
+    name = 'compile-jsc-32bit'
     command = ["perl", "Tools/Scripts/build-jsc", "--32-bit", WithProperties("--%(configuration)s")]
 
 
 class CompileJSCOnly(CompileWebKit):
+    name = 'compile-jsc'
     command = ["perl", "Tools/Scripts/build-jsc", WithProperties("--%(configuration)s")]
 
 

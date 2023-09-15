@@ -471,7 +471,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
             ) + 2
             + ExpectShell.log('stdio', stdout='1 error generated.'),
         )
-        self.expectOutcome(result=FAILURE, state_string='compiled (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Failed compile-webkit')
         return self.runStep()
 
 
@@ -511,7 +511,7 @@ class TestCompileJSCOnly(BuildStepMixinAdditions, unittest.TestCase):
             ) + 2
             + ExpectShell.log('stdio', stdout='1 error generated.'),
         )
-        self.expectOutcome(result=FAILURE, state_string='compiled (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Failed compile-jsc')
         return self.runStep()
 
 
