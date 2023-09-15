@@ -389,11 +389,11 @@ bool WebVTTParser::checkAndStoreStyleSheet(StringView line)
     StringBuilder sanitizedStyleSheetBuilder;
     
     for (const auto& rule : childRules) {
-        if (!rule->isStyleRule())
+        auto styleRule = dynamicDowncast<StyleRule>(rule);
+        if (!styleRule)
             return true;
-        const auto& styleRule = downcast<StyleRule>(rule);
 
-        const auto& selectorList = styleRule.selectorList();
+        const auto& selectorList = styleRule->selectorList();
         if (selectorList.listSize() != 1)
             return true;
         auto selector = selectorList.selectorAt(0);
@@ -403,10 +403,10 @@ bool WebVTTParser::checkAndStoreStyleSheet(StringView line)
         if (!isCue)
             return true;
 
-        if (styleRule.properties().isEmpty())
+        if (styleRule->properties().isEmpty())
             continue;
 
-        sanitizedStyleSheetBuilder.append(selectorText, " { ", styleRule.properties().asText(), "  }\n");
+        sanitizedStyleSheetBuilder.append(selectorText, " { ", styleRule->properties().asText(), "  }\n");
     }
 
     // It would be more stylish to parse the stylesheet only once instead of serializing a sanitized version.
@@ -584,7 +584,7 @@ bool WebVTTParser::collectTimeStamp(VTTScanner& input, MediaTime& timeStamp)
 
     // Steps 5 - 7 - Collect a sequence of characters that are 0-9.
     // If not 2 characters or value is greater than 59, interpret as hours.
-    int value1;
+    unsigned value1;
     unsigned value1Digits = input.scanDigits(value1);
     if (!value1Digits)
         return false;
@@ -592,12 +592,12 @@ bool WebVTTParser::collectTimeStamp(VTTScanner& input, MediaTime& timeStamp)
         mode = hours;
 
     // Steps 8 - 11 - Collect the next sequence of 0-9 after ':' (must be 2 chars).
-    int value2;
+    unsigned value2;
     if (!input.scan(':') || input.scanDigits(value2) != 2)
         return false;
 
     // Step 12 - Detect whether this timestamp includes hours.
-    int value3;
+    unsigned value3;
     if (mode == hours || input.match(':')) {
         if (!input.scan(':') || input.scanDigits(value3) != 2)
             return false;
@@ -608,7 +608,7 @@ bool WebVTTParser::collectTimeStamp(VTTScanner& input, MediaTime& timeStamp)
     }
 
     // Steps 13 - 17 - Collect next sequence of 0-9 after '.' (must be 3 chars).
-    int value4;
+    unsigned value4;
     if (!input.scan('.') || input.scanDigits(value4) != 3)
         return false;
     if (value2 > 59 || value3 > 59)

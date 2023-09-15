@@ -8,12 +8,22 @@
 
 #ifndef mtl_msl_utils_h
 #define mtl_msl_utils_h
+
+#include <memory>
+
+#include "compiler/translator/msl/TranslatorMSL.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/renderer/ProgramImpl.h"
 #include "libANGLE/renderer/metal/mtl_common.h"
 
 namespace rx
 {
+struct CompiledShaderStateMtl : angle::NonCopyable
+{
+    sh::TranslatorMetalReflection translatorMetalReflection = {};
+};
+using SharedCompiledShaderStateMtl = std::shared_ptr<CompiledShaderStateMtl>;
+
 namespace mtl
 {
 struct SamplerBinding
@@ -34,19 +44,19 @@ struct TranslatedShaderInfo
     std::array<uint32_t, kMaxGLUBOBindings> actualUBOBindings;
     std::array<uint32_t, kMaxShaderXFBs> actualXFBBindings;
     bool hasUBOArgumentBuffer;
-    bool hasInvariantOrAtan;
+    bool hasInvariant;
 };
-void MSLGetShaderSource(const gl::Context *context,
-                        const gl::ProgramState &programState,
+
+void MSLGetShaderSource(const gl::ProgramState &programState,
                         const gl::ProgramLinkedResources &resources,
                         gl::ShaderMap<std::string> *shaderSourcesOut);
 
-angle::Result MTLGetMSL(const gl::Context *glContext,
-                        const gl::ProgramState &programState,
+angle::Result MTLGetMSL(Context *context,
+                        const gl::ProgramExecutable &executable,
                         const gl::Caps &glCaps,
                         const gl::ShaderMap<std::string> &shaderSources,
-                        gl::ShaderMap<TranslatedShaderInfo> *mslShaderInfoOut,
-                        size_t xfbBufferCount);
+                        const gl::ShaderMap<SharedCompiledShaderStateMtl> &shadersState,
+                        gl::ShaderMap<TranslatedShaderInfo> *mslShaderInfoOut);
 
 // Get equivalent shadow compare mode that is used in translated msl shader.
 uint MslGetShaderShadowCompareMode(GLenum mode, GLenum func);

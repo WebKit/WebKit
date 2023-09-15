@@ -363,15 +363,24 @@ void main()
         }
     }
 
-    void CheckDrawResult()
+    enum class DrawIDOptionOverride
+    {
+        Default,
+        NoDrawID,
+        UseDrawID,
+    };
+
+    void CheckDrawResult(DrawIDOptionOverride overrideDrawID)
     {
         for (uint32_t y = 0; y < kCountY; ++y)
         {
             for (uint32_t x = 0; x < kCountX; ++x)
             {
-                uint32_t center_x             = x * kTilePixelSize[0] + kTilePixelSize[0] / 2;
-                uint32_t center_y             = y * kTilePixelSize[1] + kTilePixelSize[1] / 2;
-                uint32_t quadID               = IsDrawIDTest() ? y * kCountX + x : 0;
+                uint32_t center_x = x * kTilePixelSize[0] + kTilePixelSize[0] / 2;
+                uint32_t center_y = y * kTilePixelSize[1] + kTilePixelSize[1] / 2;
+                uint32_t quadID = IsDrawIDTest() && overrideDrawID != DrawIDOptionOverride::NoDrawID
+                                      ? y * kCountX + x
+                                      : 0;
                 uint32_t colorID              = quadID % 3u;
                 std::array<GLColor, 3> colors = {GLColor(255, 0, 0, 255), GLColor(0, 255, 0, 255),
                                                  GLColor(0, 0, 255, 255)};
@@ -595,7 +604,7 @@ TEST_P(MultiDrawTest, MultiDrawArrays)
     SetupProgram();
     DoDrawArrays();
     EXPECT_GL_NO_ERROR();
-    CheckDrawResult();
+    CheckDrawResult(DrawIDOptionOverride::Default);
 }
 
 // Tests basic functionality of glMultiDrawElementsANGLE
@@ -606,7 +615,44 @@ TEST_P(MultiDrawTest, MultiDrawElements)
     SetupProgram();
     DoDrawElements();
     EXPECT_GL_NO_ERROR();
-    CheckDrawResult();
+    CheckDrawResult(DrawIDOptionOverride::Default);
+}
+
+// Tests that glMultiDrawArraysANGLE followed by glDrawArrays works.  gl_DrawID in the second call
+// must be 0.
+TEST_P(MultiDrawTest, MultiDrawArraysThenDrawArrays)
+{
+    ANGLE_SKIP_TEST_IF(!requestExtensions());
+
+    // http://anglebug.com/5265
+    ANGLE_SKIP_TEST_IF(IsInstancedTest() && IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
+
+    SetupBuffers();
+    SetupProgram();
+    DoDrawArrays();
+    EXPECT_GL_NO_ERROR();
+    CheckDrawResult(DrawIDOptionOverride::Default);
+
+    if (IsInstancedTest())
+    {
+        ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_instanced_arrays") &&
+                           !IsGLExtensionEnabled("GL_ANGLE_instanced_arrays"));
+        if (IsGLExtensionEnabled("GL_EXT_instanced_arrays"))
+        {
+            glDrawArraysInstancedEXT(GL_TRIANGLES, 0, 3 * kTriCount, 4);
+        }
+        else
+        {
+            glDrawArraysInstancedANGLE(GL_TRIANGLES, 0, 3 * kTriCount, 4);
+        }
+        ASSERT_GL_NO_ERROR();
+    }
+    else
+    {
+        glDrawArrays(GL_TRIANGLES, 0, 3 * kTriCount);
+        ASSERT_GL_NO_ERROR();
+    }
+    CheckDrawResult(DrawIDOptionOverride::NoDrawID);
 }
 
 // Tests basic functionality of glMultiDrawArraysIndirectEXT

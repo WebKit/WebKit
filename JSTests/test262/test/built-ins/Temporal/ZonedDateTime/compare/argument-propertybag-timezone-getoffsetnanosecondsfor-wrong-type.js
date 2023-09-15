@@ -16,11 +16,23 @@ includes: [temporalHelpers.js]
   Symbol(),
   3600_000_000_000n,
   {},
-  { valueOf() { return 3600_000_000_000; } },
+  {
+    valueOf() {
+      return 3600_000_000_000;
+    }
+  }
 ].forEach((wrongOffset) => {
   const timeZone = TemporalHelpers.specificOffsetTimeZone(wrongOffset);
   const datetime = new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone);
 
-  assert.throws(TypeError, () => Temporal.ZonedDateTime.compare({ year: 2000, month: 5, day: 2, hour: 12, timeZone }, datetime));
-  assert.throws(TypeError, () => Temporal.ZonedDateTime.compare(datetime, { year: 2000, month: 5, day: 2, hour: 12, timeZone }));
+  assert.throws(
+    TypeError,
+    () => Temporal.ZonedDateTime.compare({ year: 2000, month: 5, day: 2, hour: 12, timeZone }, datetime),
+    `invalid offset: ${String(wrongOffset)} (${typeof wrongOffset})`
+  );
+  assert.throws(
+    TypeError,
+    () => Temporal.ZonedDateTime.compare(datetime, { year: 2000, month: 5, day: 2, hour: 12, timeZone }),
+    `invalid offset: ${String(wrongOffset)} (${typeof wrongOffset})`
+  );
 });

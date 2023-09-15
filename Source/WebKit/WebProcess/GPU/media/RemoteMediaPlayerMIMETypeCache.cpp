@@ -52,7 +52,7 @@ bool RemoteMediaPlayerMIMETypeCache::isEmpty() const
     return m_hasPopulatedSupportedTypesCacheFromGPUProcess && m_supportedTypesCache.isEmpty();
 }
 
-HashSet<String, ASCIICaseInsensitiveHash>& RemoteMediaPlayerMIMETypeCache::supportedTypes()
+HashSet<String>& RemoteMediaPlayerMIMETypeCache::supportedTypes()
 {
     ASSERT(isMainRunLoop());
     if (!m_hasPopulatedSupportedTypesCacheFromGPUProcess) {

@@ -163,7 +163,7 @@ private:
 
     void placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidth);
     void populateExplicitGridAndOrderIterator();
-    std::unique_ptr<GridArea> createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(const RenderBox&, GridTrackSizingDirection, const GridSpan&) const;
+    GridArea createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(const RenderBox&, GridTrackSizingDirection, const GridSpan&) const;
     void placeSpecifiedMajorAxisItemsOnGrid(const Vector<RenderBox*>&);
     void placeAutoMajorAxisItemsOnGrid(const Vector<RenderBox*>&);
     void placeItemUsingMasonryPositioning(Grid&, RenderBox*) const;

@@ -571,8 +571,9 @@ Seconds ScriptExecutionContext::minimumDOMTimerInterval() const
 
 void ScriptExecutionContext::didChangeTimerAlignmentInterval()
 {
+    auto& eventLoop = this->eventLoop();
     for (auto& timer : m_timeouts.values())
-        timer->didChangeAlignmentInterval();
+        eventLoop.didChangeTimerAlignmentInterval(timer->timer());
 }
 
 Seconds ScriptExecutionContext::domTimerAlignmentInterval(bool) const

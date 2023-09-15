@@ -1,0 +1,6 @@
+
+PASS document.cookie set/overwrite/delete observed by CookieStore
+PASS CookieStore set/overwrite/delete observed by document.cookie
+FAIL CookieStore agrees with document.cookie on encoding non-ASCII cookies assert_equals: Cookie we wrote using document.cookie in cookie jar expected (string) "DOCUMENT-🍪=🔵" but got (undefined) undefined
+FAIL document.cookie agrees with CookieStore on encoding non-ASCII cookies assert_equals: Empty cookie jar after CookieStore delete expected (undefined) undefined but got (string) "DOCUMENT-🍪=🔵"
+

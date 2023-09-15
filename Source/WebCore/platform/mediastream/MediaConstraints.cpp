@@ -163,7 +163,7 @@ void FlattenedConstraint::merge(const MediaConstraint& constraint)
 
 void FlattenedConstraint::append(const MediaConstraint& constraint)
 {
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     ++m_generation;
 #endif
 

@@ -81,7 +81,7 @@ void MediaKeySystemPermissionRequestManager::sendMediaKeySystemRequest(MediaKeyS
 
     m_ongoingMediaKeySystemRequests.add(userRequest.identifier(), userRequest);
 
-    WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
+    auto webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
     auto* topLevelDocumentOrigin = userRequest.topLevelDocumentOrigin();

@@ -98,9 +98,9 @@ GraphicsContextCairo* GraphicsContextCairo::platformContext() const
     return const_cast<GraphicsContextCairo*>(this);
 }
 
-void GraphicsContextCairo::save()
+void GraphicsContextCairo::save(GraphicsContextState::Purpose purpose)
 {
-    GraphicsContext::save();
+    GraphicsContext::save(purpose);
 
     m_cairoStateStack.append(CairoState());
     m_cairoState = &m_cairoStateStack.last();
@@ -108,12 +108,12 @@ void GraphicsContextCairo::save()
     cairo_save(m_cr.get());
 }
 
-void GraphicsContextCairo::restore()
+void GraphicsContextCairo::restore(GraphicsContextState::Purpose purpose)
 {
     if (!stackSize())
         return;
 
-    GraphicsContext::restore();
+    GraphicsContext::restore(purpose);
 
     if (m_cairoStateStack.isEmpty())
         return;
@@ -273,7 +273,7 @@ void GraphicsContextCairo::didUpdateState(GraphicsContextState& state)
         if (dropShadow && state.shadowsIgnoreTransforms()) {
             // Meaning that this graphics context is associated with a CanvasRenderingContext
             // We flip the height since CG and HTML5 Canvas have opposite Y axis
-            m_state.m_style = GraphicsDropShadow({ dropShadow->offset.width(), -dropShadow->offset.height() }, dropShadow->radius, dropShadow->color, dropShadow->radiusMode);
+            m_state.m_style = GraphicsDropShadow { { dropShadow->offset.width(), -dropShadow->offset.height() }, dropShadow->radius, dropShadow->color, dropShadow->radiusMode };
         }
     }
 

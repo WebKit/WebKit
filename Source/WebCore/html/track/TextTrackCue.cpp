@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Google Inc.  All rights reserved.
+ * Copyright (C) 2011-2018 Google Inc.  All rights reserved.
  * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -279,8 +279,7 @@ void TextTrackCue::setId(const AtomString& id)
 
 void TextTrackCue::setStartTime(double value)
 {
-    // TODO(93143): Add spec-compliant behavior for negative time values.
-    if (m_startTime.toDouble() == value || value < 0)
+    if (m_startTime.toDouble() == value)
         return;
 
     setStartTime(MediaTime::createWithDouble(value));
@@ -295,8 +294,7 @@ void TextTrackCue::setStartTime(const MediaTime& value)
     
 void TextTrackCue::setEndTime(double value)
 {
-    // TODO(93143): Add spec-compliant behavior for negative time values.
-    if (m_endTime.toDouble() == value || value < 0)
+    if (m_endTime.toDouble() == value)
         return;
 
     setEndTime(MediaTime::createWithDouble(value));

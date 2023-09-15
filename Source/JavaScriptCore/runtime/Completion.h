@@ -79,7 +79,7 @@ JS_EXPORT_PRIVATE JSValue linkAndEvaluateModule(JSGlobalObject*, const Identifie
 
 JS_EXPORT_PRIVATE JSInternalPromise* importModule(JSGlobalObject*, const Identifier& moduleName, JSValue referrer, JSValue parameters, JSValue scriptFetcher);
 
-JS_EXPORT_PRIVATE HashMap<RefPtr<UniquedStringImpl>, String> retrieveAssertionsFromDynamicImportOptions(JSGlobalObject*, JSValue, const Vector<RefPtr<UniquedStringImpl>>& supportedAssertions);
-JS_EXPORT_PRIVATE std::optional<ScriptFetchParameters::Type> retrieveTypeAssertion(JSGlobalObject*, const HashMap<RefPtr<UniquedStringImpl>, String>&);
+JS_EXPORT_PRIVATE HashMap<RefPtr<UniquedStringImpl>, String> retrieveImportAttributesFromDynamicImportOptions(JSGlobalObject*, JSValue, const Vector<RefPtr<UniquedStringImpl>>& supportedAssertions);
+JS_EXPORT_PRIVATE std::optional<ScriptFetchParameters::Type> retrieveTypeImportAttribute(JSGlobalObject*, const HashMap<RefPtr<UniquedStringImpl>, String>&);
 
 } // namespace JSC

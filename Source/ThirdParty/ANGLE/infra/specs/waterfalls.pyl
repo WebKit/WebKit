@@ -227,6 +227,7 @@
           'mac_retina_amd_gpu_experimental',
         ],
         'test_suites': {
+          'gtest_tests': 'mac_amd_and_intel_gtests',
         },
       },
       'mac-exp-intel': {
@@ -235,6 +236,16 @@
           'mac_mini_intel_gpu_experimental',
         ],
         'test_suites': {
+          'gtest_tests': 'mac_amd_and_intel_gtests',
+        },
+      },
+      'mac-exp-nvidia': {
+        'os_type': 'mac',
+        'mixins': [
+          'mac_retina_nvidia_gpu_experimental',
+        ],
+        'test_suites': {
+          'gtest_tests': 'mac_nvidia_gtests',
         },
       },
       'mac-intel': {

@@ -33,7 +33,7 @@
 #include "PODIntervalTree.h"
 #include "RenderBlockFlow.h"
 #include "RenderFragmentContainer.h"
-#include <wtf/ListHashSet.h>
+#include <wtf/WeakListHashSet.h>
 
 namespace WebCore {
 
@@ -43,9 +43,9 @@ class RenderStyle;
 class RenderFragmentContainer;
 class LegacyRootInlineBox;
 
-typedef ListHashSet<RenderFragmentContainer*> RenderFragmentContainerList;
-typedef Vector<RenderLayer*> RenderLayerList;
-typedef HashMap<const LegacyRootInlineBox*, RenderFragmentContainer*> ContainingFragmentMap;
+typedef WeakListHashSet<RenderFragmentContainer> RenderFragmentContainerList;
+typedef Vector<WeakPtr<RenderLayer>> RenderLayerList;
+typedef HashMap<const LegacyRootInlineBox*, WeakPtr<RenderFragmentContainer>> ContainingFragmentMap;
 
 // RenderFragmentedFlow is used to collect all the render objects that participate in a
 // flow thread. It will also help in doing the layout. However, it will not render
@@ -70,7 +70,7 @@ public:
     void deleteLines() override;
 
     virtual void addFragmentToThread(RenderFragmentContainer*) = 0;
-    virtual void removeFragmentFromThread(RenderFragmentContainer*);
+    void removeFragmentFromThread(RenderFragmentContainer&);
     const RenderFragmentContainerList& renderFragmentContainerList() const { return m_fragmentList; }
 
     void updateLogicalWidth() final;
@@ -78,12 +78,12 @@ public:
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
-    bool hasFragments() const { return m_fragmentList.size(); }
+    bool hasFragments() const { return !m_fragmentList.isEmptyIgnoringNullReferences(); }
     virtual void fragmentChangedWritingMode(RenderFragmentContainer*) { }
 
     void validateFragments();
     void invalidateFragments(MarkingBehavior = MarkContainingBlockChain);
-    bool hasValidFragmentInfo() const { return !m_fragmentsInvalidated && !m_fragmentList.isEmpty(); }
+    bool hasValidFragmentInfo() const { return !m_fragmentsInvalidated && !m_fragmentList.isEmptyIgnoringNullReferences(); }
     
     // Called when a descendant box's layout is finished and it has been positioned within its container.
     virtual void fragmentedFlowDescendantBoxLaidOut(RenderBox*) { }
@@ -111,7 +111,7 @@ public:
 
     virtual RenderFragmentContainer* mapFromFlowToFragment(TransformState&) const;
 
-    void logicalWidthChangedInFragmentsForBlock(const RenderBlock*, bool&);
+    void logicalWidthChangedInFragmentsForBlock(const RenderBlock&, bool&);
 
     LayoutUnit contentLogicalWidthOfFirstFragment() const;
     LayoutUnit contentLogicalHeightOfFirstFragment() const;
@@ -121,15 +121,15 @@ public:
     RenderFragmentContainer* lastFragment() const;
 
     virtual void setFragmentRangeForBox(const RenderBox&, RenderFragmentContainer*, RenderFragmentContainer*);
-    bool getFragmentRangeForBox(const RenderBox*, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
-    bool computedFragmentRangeForBox(const RenderBox*, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
+    bool getFragmentRangeForBox(const RenderBox&, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
+    bool computedFragmentRangeForBox(const RenderBox&, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
     bool hasCachedFragmentRangeForBox(const RenderBox&) const;
 
     // Check if the object is in fragment and the fragment is part of this flow thread.
     bool objectInFlowFragment(const RenderObject*, const RenderFragmentContainer*) const;
     
     // Check if the object should be painted in this fragment and if the fragment is part of this flow thread.
-    bool objectShouldFragmentInFlowFragment(const RenderObject*, const RenderFragmentContainer*) const;
+    bool objectShouldFragmentInFlowFragment(const RenderObject&, const RenderFragmentContainer*) const;
 
     void markFragmentsForOverflowLayoutIfNeeded();
 
@@ -145,15 +145,15 @@ public:
     LayoutUnit offsetFromLogicalTopOfFirstFragment(const RenderBlock*) const;
     void clearRenderBoxFragmentInfoAndCustomStyle(const RenderBox&, const RenderFragmentContainer*, const RenderFragmentContainer*, const RenderFragmentContainer*, const RenderFragmentContainer*);
 
-    void addFragmentsVisualEffectOverflow(const RenderBox*);
-    void addFragmentsVisualOverflowFromTheme(const RenderBlock*);
-    void addFragmentsOverflowFromChild(const RenderBox*, const RenderBox*, const LayoutSize&);
-    void addFragmentsLayoutOverflow(const RenderBox*, const LayoutRect&);
-    void addFragmentsVisualOverflow(const RenderBox*, const LayoutRect&);
-    void clearFragmentsOverflow(const RenderBox*);
+    void addFragmentsVisualEffectOverflow(const RenderBox&);
+    void addFragmentsVisualOverflowFromTheme(const RenderBlock&);
+    void addFragmentsOverflowFromChild(const RenderBox&, const RenderBox&, const LayoutSize&);
+    void addFragmentsLayoutOverflow(const RenderBox&, const LayoutRect&);
+    void addFragmentsVisualOverflow(const RenderBox&, const LayoutRect&);
+    void clearFragmentsOverflow(const RenderBox&);
 
-    LayoutRect mapFromFragmentedFlowToLocal(const RenderBox*, const LayoutRect&) const;
-    LayoutRect mapFromLocalToFragmentedFlow(const RenderBox*, const LayoutRect&) const;
+    LayoutRect mapFromFragmentedFlowToLocal(const RenderBox&, const LayoutRect&) const;
+    LayoutRect mapFromLocalToFragmentedFlow(const RenderBox&, const LayoutRect&) const;
 
     void flipForWritingModeLocalCoordinates(LayoutRect&) const;
 
@@ -162,7 +162,7 @@ public:
 
     bool fragmentInRange(const RenderFragmentContainer* targetFragment, const RenderFragmentContainer* startFragment, const RenderFragmentContainer* endFragment) const;
 
-    bool absoluteQuadsForBox(Vector<FloatQuad>&, bool*, const RenderBox*) const;
+    bool absoluteQuadsForBox(Vector<FloatQuad>&, bool*, const RenderBox&) const;
 
     void layout() override;
 
@@ -200,7 +200,7 @@ protected:
     void updateFragmentsFragmentedFlowPortionRect();
     bool shouldRepaint(const LayoutRect&) const;
 
-    bool getFragmentRangeForBoxFromCachedInfo(const RenderBox*, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
+    bool getFragmentRangeForBoxFromCachedInfo(const RenderBox&, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
 
     void removeRenderBoxFragmentInfo(RenderBox&);
     void removeLineFragmentInfo(const RenderBlockFlow&);

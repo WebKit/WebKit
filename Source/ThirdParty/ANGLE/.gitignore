@@ -1,6 +1,13 @@
 .DS_Store
+.cipd
+.gclient*
+.git_cl_description_backup
+.idea/
 .vs
 .vscode
+.reproxy_cache
+.sw*
+.*.sw*
 *.Makefile
 *.ncb
 *.nvuser
@@ -22,11 +29,6 @@
 *.vcxproj.user
 *.vsp
 *~
-.*.sw*
-.sw*
-.cipd
-.gclient*
-.git_cl_description_backup
 /src/tests/third_party/gles_conformance_tests
 /testing
 /third_party/abseil-cpp
@@ -57,8 +59,11 @@
 /third_party/jsoncpp
 /third_party/kotlin_stdlib
 /third_party/libdrm
+/third_party/libc++/src
+/third_party/libc++abi/src
 /third_party/libjpeg_turbo
 /third_party/libpng/src
+/third_party/libunwind/src
 /third_party/llvm-build
 /third_party/markupsafe
 /third_party/meson
@@ -70,6 +75,7 @@
 /third_party/proguard/lib
 /third_party/protobuf
 /third_party/Python-Markdown
+/third_party/siso
 /third_party/qemu-linux-x64
 /third_party/qemu-mac-x64
 /third_party/r8/d8
@@ -122,7 +128,6 @@ Release_ARM/
 Release_Win32/
 Release_x64/
 TestResults.qpa
-.idea/
 
 # Any temporary files will confuse code generation.
 !scripts/code_generation_hashes/*

@@ -121,9 +121,9 @@ public:
 
     // Scan a set of ASCII digits from the input. Return the number of digits
     // scanned, and set |number| to the computed value. If the digits make up a
-    // number that does not fit the 'int' type, |number| is set to INT_MAX.
+    // number that does not fit the 'unsigned' type, |number| is set to UINT_MAX.
     // Note: Does not handle sign.
-    unsigned scanDigits(int& number);
+    unsigned scanDigits(unsigned& number);
 
     // Scan a floating point value on one of the forms: \d+\.? \d+\.\d+ \.\d+
     bool scanFloat(float& number, bool* isNegative = nullptr);

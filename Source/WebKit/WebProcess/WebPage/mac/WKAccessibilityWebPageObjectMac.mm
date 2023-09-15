@@ -105,14 +105,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray *)accessibilityAttributeNames
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    return m_attributeNames.autorelease();
+    return m_attributeNames.get();
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray *)accessibilityParameterizedAttributeNames
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    return m_parameterizedAttributeNames.autorelease();
+    return m_parameterizedAttributeNames.get();
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -161,7 +161,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     if (!WebCore::AXObjectCache::accessibilityEnabled())
         WebCore::AXObjectCache::enableAccessibility();
-    
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (WebCore::AXObjectCache::isIsolatedTreeEnabled())
+        WebCore::AXObjectCache::initializeAXThreadIfNeeded();
+#endif
+
     if ([attribute isEqualToString:NSAccessibilityParentAttribute])
         return m_parent.get();
     

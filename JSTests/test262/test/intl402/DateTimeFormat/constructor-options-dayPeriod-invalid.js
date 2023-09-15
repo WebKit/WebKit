@@ -2,12 +2,12 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-initializedatetimeformat
+esid: sec-createdatetimeformat
 description: >
   Checks error cases for the options argument to the DateTimeFormat constructor.
 info: |
   [[DayPeriod]]    `"dayPeriod"`    `"narrow"`, `"short"`, `"long"`
-  InitializeDateTimeFormat ( dateTimeFormat, locales, options )
+  CreateDateTimeFormat ( dateTimeFormat, locales, options, required, defaults )
 
   ...
 features: [Intl.DateTimeFormat-dayPeriod]

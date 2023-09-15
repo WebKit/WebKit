@@ -149,7 +149,7 @@ public:
      * and handles the conversion.
      *
      * @param status the error code.
-     * @param resultLength a ponter to receive the length, can be NULL.
+     * @param resultLength a pointer to receive the length, can be NULL.
      * @return a pointer to the string, or NULL.
      *
      * @stable ICU 2.4 
@@ -196,18 +196,18 @@ public:
      * Compares this enumeration to other to check if both are equal
      *
      * @param that The other string enumeration to compare this object to
-     * @return TRUE if the enumerations are equal. FALSE if not.
+     * @return true if the enumerations are equal. false if not.
      * @stable ICU 3.6 
      */
-    virtual UBool operator==(const StringEnumeration& that)const;
+    virtual bool operator==(const StringEnumeration& that)const;
     /**
      * Compares this enumeration to other to check if both are not equal
      *
      * @param that The other string enumeration to compare this object to
-     * @return TRUE if the enumerations are equal. FALSE if not.
+     * @return true if the enumerations are equal. false if not.
      * @stable ICU 3.6 
      */
-    virtual UBool operator!=(const StringEnumeration& that)const;
+    virtual bool operator!=(const StringEnumeration& that)const;
 
 protected:
     /**

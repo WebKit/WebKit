@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 337
+#define ANGLE_SH_VERSION 339
 
 enum ShShaderSpec
 {
@@ -396,9 +396,8 @@ struct ShCompileOptions
     // if gl_FragColor is not written.
     uint64_t initFragmentOutputVariables : 1;
 
-    // Unused.  Kept to avoid unnecessarily changing the layout of this structure and tripping up
-    // the fuzzer's hash->bug map.
-    uint64_t unused : 1;
+    // Always write explicit location layout qualifiers for fragment outputs.
+    uint64_t explicitFragmentLocations : 1;
 
     // Insert explicit casts for float/double/unsigned/signed int on macOS 10.15 with Intel driver
     uint64_t addExplicitBoolCasts : 1;
@@ -429,6 +428,9 @@ struct ShCompileOptions
 
     // Use fragment shaders to compute and set coverage mask based on the alpha value
     uint64_t emulateAlphaToCoverage : 1;
+
+    // Rescope globals that are only used in one function to be function-local.
+    uint64_t rescopeGlobalVariables : 1;
 
     ShCompileOptionsMetal metal;
     ShPixelLocalStorageOptions pls;

@@ -117,7 +117,6 @@
                                    GLsizei count, GLboolean transpose, const GLfloat *value);      \
     void programUniformMatrix4x3fv(ShaderProgramID programPacked, UniformLocation locationPacked,  \
                                    GLsizei count, GLboolean transpose, const GLfloat *value);      \
-    void sampleMaski(GLuint maskNumber, GLbitfield mask);                                          \
     void texStorage2DMultisample(TextureType targetPacked, GLsizei samples, GLenum internalformat, \
                                  GLsizei width, GLsizei height, GLboolean fixedsamplelocations);   \
     void useProgramStages(ProgramPipelineID pipelinePacked, GLbitfield stages,                     \

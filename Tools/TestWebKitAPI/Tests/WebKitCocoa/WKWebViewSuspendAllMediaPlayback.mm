@@ -77,3 +77,35 @@ TEST(WKWebViewSuspendAllMediaPlayback, AfterLoading)
 
     TestWebKitAPI::Util::run(&isPlaying);
 }
+
+// FIX ME: Un-disable test when https://bugs.webkit.org/show_bug.cgi?id=261529 is resolved
+TEST(WKWebViewSuspendAllMediaPlayback, DISABLED_PauseWhenResume)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+#if TARGET_OS_IPHONE
+    configuration.get().allowsInlineMediaPlayback = YES;
+#endif
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get() addToWindow:YES]);
+
+    [webView synchronouslyLoadTestPageNamed:@"video-with-audio"];
+
+    __block bool completionHandlerCalled = false;
+    auto completionHandler = ^{
+        completionHandlerCalled = true;
+    };
+
+    [webView suspendAllMediaPlayback:completionHandler];
+    TestWebKitAPI::Util::run(&completionHandlerCalled);
+
+    completionHandlerCalled = false;
+    [webView pauseAllMediaPlaybackWithCompletionHandler:completionHandler];
+    TestWebKitAPI::Util::run(&completionHandlerCalled);
+
+    completionHandlerCalled = false;
+    [webView resumeAllMediaPlayback:completionHandler];
+    TestWebKitAPI::Util::run(&completionHandlerCalled);
+
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"document.querySelector('video').paused"] boolValue]);
+
+}

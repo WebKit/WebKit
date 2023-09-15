@@ -16,6 +16,7 @@
     <d:testDescription xmlns="http://www.w3.org/1999/xhtml" href="http://www.w3.org/TR/SVG11/fonts.html#SVGFontsOverview">
       <p>
         This tests the behaviour of CSS font matching based on font-variant attribute.
+        Font-variant should not affect font selection.
       </p>
       <p>
         The first line of text tests that the small-caps font is used for the second text element.
@@ -23,11 +24,6 @@
       <p>
         The second line of text tests that the order of font specification does not effect the selection
         of these fonts.
-      </p>
-      <p>
-        The third line of text tests that the correct font is selected when a font in the list does not support
-        the variant required. Note that the fonts provide no x-height so scaling
-        (allowed by CSS) cannot be used to simulate a small cap from a regular font.
       </p>
       <p>
         The last line tests if small-caps are synthesized.
@@ -40,21 +36,16 @@
     </d:operatorScript>
     <d:passCriteria xmlns="http://www.w3.org/1999/xhtml">
       <p>
-        The first line of text should be 'square' 'triangle'.
+        The first line of text should be 'triangle', 'small square' (synthesized).
       </p>
       <p>
-        The second line of text should be 'square' 'triangle'.
+        The second line of text should be 'triangle', 'small square' (synthesized).
       </p>
       <p>
-        The third line of text should be 'square', 'diamond', 'square', 'diamond'.
-        Note that the fonts provide no x-height so scaling
-        (allowed by CSS) cannot be used to simulate a small cap from a regular font.
+        The third line of text should be 'diamond', 'small square' (synthesized), 'diamond', 'small square' (synthesized).
       </p>
       <p>
-        The last line of test can be 'square', 'a', 'a' (from a fallback font),
-        'diamond'. The first 'a'
-        can be replaced with a smallcaps 'A', if there is a smallcaps font installed
-        or  if synthesis is supported.
+        The fourth line of text should be 'diamond', 'small square' (synthesized), 'diamond', 'small square' (synthesized).
       </p>
     </d:passCriteria>
   </d:SVGTestCase>
@@ -69,17 +60,11 @@
   <g id="test-body-content" font-family="SVGFreeSansASCII,sans-serif" font-size="18">
     <defs>
       <font horiz-adv-x="500">
-        <font-face font-family="SVGFont1" units-per-em="1000" ascent="800" descent="200" alphabetic="200"/>
-        <missing-glyph horiz-adv-x="500" d="M0 0L500 0L500 1000L0 1000M50 50L50 950L450 950L450 50Z"/>
-        <glyph unicode=" " glyph-name="space"/>
-        <glyph unicode="a" glyph-name="square" d="M0 250L500 250L500 750L0 750Z"/>
-      </font>
-
-      <font horiz-adv-x="500">
         <font-face font-family="SVGFont1" font-variant="small-caps" units-per-em="1000" ascent="800" descent="200" alphabetic="200"/>
         <missing-glyph horiz-adv-x="500" d="M0 0L500 0L500 1000L0 1000M50 50L50 950L450 950L450 50Z"/>
         <glyph unicode=" " glyph-name="space"/>
         <glyph unicode="a" glyph-name="upward-triangle" d="M0 0L500 0L250 900Z"/>
+        <glyph unicode="A" glyph-name="square" d="M0 250L500 250L500 750L0 750Z"/>
       </font>
 
       <font horiz-adv-x="500">
@@ -87,20 +72,15 @@
         <missing-glyph horiz-adv-x="500" d="M0 0L500 0L500 1000L0 1000M50 50L50 950L450 950L450 50Z"/>
         <glyph unicode=" " glyph-name="space"/>
         <glyph unicode="a" glyph-name="upward-triangle" d="M0 0L500 0L250 900Z"/>
-      </font>
-
-      <font horiz-adv-x="500">
-        <font-face font-family="SVGFont2" units-per-em="1000" ascent="800" descent="200" alphabetic="200"/>
-        <missing-glyph horiz-adv-x="500" d="M0 0L500 0L500 1000L0 1000M50 50L50 950L450 950L450 50Z"/>
-        <glyph unicode=" " glyph-name="space"/>
-        <glyph unicode="a" glyph-name="square" d="M0 250L500 250L500 750L0 750Z"/>
+        <glyph unicode="A" glyph-name="square" d="M0 250L500 250L500 750L0 750Z"/>
       </font>
 
       <font horiz-adv-x="500">
         <font-face font-family="SVGFont4" font-variant="normal" units-per-em="1000" ascent="800" descent="200" alphabetic="200"/>
         <missing-glyph horiz-adv-x="500" d="M0 0L500 0L500 1000L0 1000M50 50L50 950L450 950L450 50Z"/>
         <glyph unicode=" " glyph-name="space"/>
-        <glyph unicode="a" glyph-name="square" d="M0 250L500 250L500 750L0 750Z"/>
+        <glyph unicode="a" glyph-name="diamond" d="M0 500L250 250L500 500L250 750Z"/>
+        <glyph unicode="A" glyph-name="square" d="M0 250L500 250L500 750L0 750Z"/>
       </font>
 
       <font horiz-adv-x="500">
@@ -108,6 +88,7 @@
         <missing-glyph horiz-adv-x="500" d="M0 0L500 0L500 1000L0 1000M50 50L50 950L450 950L450 50Z"/>
         <glyph unicode=" " glyph-name="space"/>
         <glyph unicode="a" glyph-name="diamond" d="M0 500L250 250L500 500L250 750Z"/>
+        <glyph unicode="A" glyph-name="square" d="M0 250L500 250L500 750L0 750Z"/>
       </font>
 
     </defs>

@@ -142,6 +142,12 @@ TextStream& TextStream::operator<<(StringView string)
     return *this;
 }
 
+TextStream& TextStream::operator<<(const HexNumberBuffer& buffer)
+{
+    m_text.append(makeString(buffer));
+    return *this;
+}
+
 TextStream& TextStream::operator<<(const FormatNumberRespectingIntegers& numberToFormat)
 {
     if (hasFractions(numberToFormat.value)) {

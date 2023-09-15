@@ -72,7 +72,7 @@ header: "RemoteLayerTreeTransaction.h"
 #endif
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    CoverageRectChanged
+    VisibleRectChanged
 #endif
 };
 
@@ -244,6 +244,6 @@ struct WebKit::LayerProperties {
 #endif
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    [OptionalTupleBit=WebKit::LayerChange::CoverageRectChanged] WebCore::FloatRect coverageRect;
+    [OptionalTupleBit=WebKit::LayerChange::VisibleRectChanged] WebCore::FloatRect visibleRect;
 #endif
 };

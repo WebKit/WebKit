@@ -19,7 +19,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/conformance_requirements.yaml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/drawing-images-to-the-canvas.yaml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/drawing-rectangles-to-the-canvas.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/fill-and-stroke-styles.yaml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/filters.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/layers.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/line-styles.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/path-objects.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/pixel-manipulation.yaml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/reset.yaml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/scroll.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/shadows.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/text.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/the-canvas-state.yaml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/transformations.yaml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml-new/video.yaml

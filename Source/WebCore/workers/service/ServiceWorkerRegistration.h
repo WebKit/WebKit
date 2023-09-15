@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "ActiveDOMObject.h"
+#include "CookieStoreManager.h"
 #include "EventTarget.h"
 #include "JSDOMPromiseDeferredForward.h"
 #include "Notification.h"
@@ -104,6 +105,8 @@ public:
     void getNotifications(const GetNotificationOptions& filter, DOMPromiseDeferred<IDLSequence<IDLInterface<Notification>>>);
 #endif
 
+    CookieStoreManager& cookies();
+
 private:
     ServiceWorkerRegistration(ScriptExecutionContext&, Ref<ServiceWorkerContainer>&&, ServiceWorkerRegistrationData&&);
 
@@ -125,6 +128,8 @@ private:
     RefPtr<ServiceWorker> m_activeWorker;
 
     std::unique_ptr<NavigationPreloadManager> m_navigationPreload;
+
+    RefPtr<CookieStoreManager> m_cookieStoreManager;
 };
 
 WebCoreOpaqueRoot root(ServiceWorkerRegistration*);

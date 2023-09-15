@@ -25,6 +25,7 @@
 #include "CacheValidation.h"
 #include "CachedResourceClient.h"
 #include "FrameLoaderTypes.h"
+#include "LoaderMalloc.h"
 #include "ResourceCryptographicDigest.h"
 #include "ResourceError.h"
 #include "ResourceLoadPriority.h"
@@ -428,7 +429,7 @@ private:
 };
 
 class CachedResource::Callback {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:
     Callback(CachedResource&, CachedResourceClient&);
 

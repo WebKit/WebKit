@@ -3,9 +3,9 @@
 
 /*---
 esid: sec-temporal.timezone
-description: RangeError thrown when constructor invoked with no argument
+description: TypeError thrown when constructor invoked with no argument
 features: [Temporal]
 ---*/
 
-assert.throws(RangeError, () => new Temporal.TimeZone());
-assert.throws(RangeError, () => new Temporal.TimeZone(undefined));
+assert.throws(TypeError, () => new Temporal.TimeZone());
+assert.throws(TypeError, () => new Temporal.TimeZone(undefined));

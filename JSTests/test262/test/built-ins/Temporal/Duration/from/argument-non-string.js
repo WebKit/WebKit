@@ -7,9 +7,9 @@ description: Appropriate error thrown if primitive input cannot convert to a val
 features: [Temporal]
 ---*/
 
-assert.throws(RangeError, () => Temporal.Duration.from(undefined), "undefined");
-assert.throws(RangeError, () => Temporal.Duration.from(null), "null");
-assert.throws(RangeError, () => Temporal.Duration.from(true), "boolean");
+assert.throws(TypeError, () => Temporal.Duration.from(undefined), "undefined");
+assert.throws(TypeError, () => Temporal.Duration.from(null), "null");
+assert.throws(TypeError, () => Temporal.Duration.from(true), "boolean");
 assert.throws(TypeError, () => Temporal.Duration.from(Symbol()), "Symbol");
-assert.throws(RangeError, () => Temporal.Duration.from(5), "number");
-assert.throws(RangeError, () => Temporal.Duration.from(5n), "bigint");
+assert.throws(TypeError, () => Temporal.Duration.from(5), "number");
+assert.throws(TypeError, () => Temporal.Duration.from(5n), "bigint");

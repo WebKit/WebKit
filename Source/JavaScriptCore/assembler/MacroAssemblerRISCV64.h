@@ -751,6 +751,13 @@ public:
         m_assembler.maskRegister<32>(dest);
     }
 
+    void addUnsignedRightShift32(RegisterID src1, RegisterID src2, TrustedImm32 amount, RegisterID dest)
+    {
+        // dest = src1 + (src2 >> amount)
+        urshift32(src2, amount, dataTempRegister);
+        add32(src1, dataTempRegister, dest);
+    }
+
     void urshift64(RegisterID shiftAmount, RegisterID dest)
     {
         urshift64(dest, shiftAmount, dest);
@@ -935,6 +942,11 @@ public:
         }
     }
 
+    void loadPair32(Address src, RegisterID dest1, RegisterID dest2)
+    {
+        loadPair32(src.base, TrustedImm32(src.offset), dest1, dest2);
+    }
+
     void loadPair64(RegisterID src, RegisterID dest1, RegisterID dest2)
     {
         loadPair64(src, TrustedImm32(0), dest1, dest2);
@@ -950,6 +962,11 @@ public:
             load64(Address(src, offset.m_value), dest1);
             load64(Address(src, offset.m_value + 8), dest2);
         }
+    }
+
+    void loadPair64(Address src, RegisterID dest1, RegisterID dest2)
+    {
+        loadPair64(src.base, TrustedImm32(src.offset), dest1, dest2);
     }
 
     void store8(RegisterID src, Address address)
@@ -1213,6 +1230,13 @@ public:
         m_assembler.sdInsn(temp.memory(), immRegister, Imm::S<0>());
     }
 
+    void transfer32(Address src, Address dest)
+    {
+        auto temp = temps<Data>();
+        load32(src, temp.data());
+        store32(temp.data(), dest);
+    }
+
     void transfer64(Address src, Address dest)
     {
         auto temp = temps<Data>();
@@ -1236,6 +1260,11 @@ public:
         store32(src2, Address(dest, offset.m_value + 4));
     }
 
+    void storePair32(RegisterID src1, RegisterID src2, Address dest)
+    {
+        storePair32(src1, src2, dest.base, TrustedImm32(dest.offset));
+    }
+
     void storePair64(RegisterID src1, RegisterID src2, RegisterID dest)
     {
         storePair64(src1, src2, dest, TrustedImm32(0));
@@ -1245,6 +1274,11 @@ public:
     {
         store64(src1, Address(dest, offset.m_value));
         store64(src2, Address(dest, offset.m_value + 8));
+    }
+
+    void storePair64(RegisterID src1, RegisterID src2, Address dest)
+    {
+        storePair64(src1, src2, dest.base, TrustedImm32(dest.offset));
     }
 
     void zeroExtend8To32(RegisterID src, RegisterID dest)
@@ -1800,6 +1834,10 @@ public:
         m_assembler.fmvInsn<RISCV64Assembler::FMVType::D, RISCV64Assembler::FMVType::X>(dest, src);
     }
 
+    static bool supportsCountPopulation() { return false; }
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(countPopulation32);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(countPopulation64);
+
     // The RISC-V V vector extension is not yet standardized
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(moveVector);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(loadVector);
@@ -2350,6 +2388,15 @@ public:
     Jump branch32WithUnalignedHalfWords(RelationalCondition cond, BaseIndex address, TrustedImm32 imm)
     {
         return branch32(cond, address, imm);
+    }
+
+    Jump branch32WithMemory16(RelationalCondition cond, Address left, RegisterID right)
+    {
+        auto temp = temps<Data, Memory>();
+        MacroAssemblerHelpers::load16OnCondition(*this, cond, left, temp.data());
+        m_assembler.signExtend<32>(temp.data(), temp.data());
+        m_assembler.signExtend<32>(temp.memory(), right);
+        return makeBranch(cond, temp.data(), temp.memory());
     }
 
     Jump branchAdd32(ResultCondition cond, RegisterID src, RegisterID dest)

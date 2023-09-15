@@ -1,11 +1,11 @@
 
 PASS unsupported_scheme
 PASS data_url
-PASS about_blank
-PASS example_invalid
-PASS port_81
-PASS https_port_80
-PASS https_port_8000
-PASS http_post_8012
-PASS javascript_url
+FAIL about_blank The operation is insecure.
+FAIL example_invalid The operation is insecure.
+FAIL port_81 The operation is insecure.
+FAIL https_port_80 The operation is insecure.
+FAIL https_port_8000 The operation is insecure.
+FAIL http_post_8012 The operation is insecure.
+FAIL javascript_url The operation is insecure.
 

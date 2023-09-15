@@ -1,11 +1,11 @@
 
 PASS unsupported_scheme
 PASS data_url
-PASS javascript_url
-PASS about_blank
-PASS opera_com
-PASS port_81
-PASS https_port_80
-PASS https_port_8000
-PASS http_port_8012
+FAIL javascript_url URL of the shared worker is cross-origin
+FAIL about_blank URL of the shared worker is cross-origin
+FAIL opera_com URL of the shared worker is cross-origin
+FAIL port_81 URL of the shared worker is cross-origin
+FAIL https_port_80 URL of the shared worker is cross-origin
+FAIL https_port_8000 URL of the shared worker is cross-origin
+FAIL http_port_8012 URL of the shared worker is cross-origin
 

@@ -1,0 +1,8 @@
+
+
+Harness Error (FAIL), message = 1 duplicate test name: "sending 2D canvas ImageBitmap to http://127.0.0.1:8800"
+
+PASS sending 2D canvas ImageBitmap to http://localhost:8800
+PASS sending 2D canvas ImageBitmap to http://127.0.0.1:8800
+PASS sending 2D canvas ImageBitmap to http://127.0.0.1:8800
+

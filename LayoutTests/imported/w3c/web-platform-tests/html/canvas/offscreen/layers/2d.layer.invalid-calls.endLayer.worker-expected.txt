@@ -1,0 +1,5 @@
+
+FAIL Raises exception on lone endLayer calls. assert_throws_dom: function "function() {
+    ctx.endLayer();
+  }" threw object "TypeError: ctx.endLayer is not a function. (In 'ctx.endLayer()', 'ctx.endLayer' is undefined)" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
+

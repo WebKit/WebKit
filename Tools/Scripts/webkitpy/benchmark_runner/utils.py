@@ -1,10 +1,23 @@
-import imp
 import inspect
 import logging
 import os
 import shutil
 
 from webkitpy.common.memoized import memoized
+
+
+try:
+    import importlib.util
+    import importlib.machinery
+
+    def load_source(modname, filename):
+        loader = importlib.machinery.SourceFileLoader(modname, filename)
+        spec = importlib.util.spec_from_file_location(modname, filename, loader=loader)
+        module = importlib.util.module_from_spec(spec)
+        loader.exec_module(module)
+        return module
+except ImportError:
+    from imp import load_source
 
 
 _log = logging.getLogger(__name__)
@@ -21,7 +34,7 @@ def load_subclasses(dirname, base_class_name, base_class_file, loader):
     filelist += [f for f in os.listdir(dirname) if f.endswith('.py') and f not in ['__init__.py'] + filelist]
     for filename in filelist:
         module_name = os.path.splitext(filename)[0]
-        module = imp.load_source(module_name, os.path.join(dirname, filename))
+        module = load_source(module_name, os.path.join(dirname, filename))
         for item_name in dir(module):
             item = getattr(module, item_name)
             if is_subclass(item, base_class_name):

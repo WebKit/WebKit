@@ -1,0 +1,284 @@
+#!/usr/bin/env python3
+
+# Copyright (C) 2023 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+import webkitpy
+from webkitcorepy import arguments, Terminal
+
+import argparse
+import logging
+import os
+import sys
+
+import re
+import requests
+from urllib.parse import urlparse
+
+
+def init():
+    parser = argparse.ArgumentParser(description='Export test names in the order they were run for a specific worker from stdio input.')
+
+    # data source
+    parser.add_argument('input_source',
+                        help='Specifies the source to query for layout test results data. Can be a file or URL.',
+                        type=str)
+
+    # optional flags
+    parser.add_argument('-t', '--test-path',
+                        dest='test_path',
+                        help='Name of the test for which to search. Omitting the test name will export all workers as separate files (unless --combine-workers is used).',
+                        default='',
+                        type=str)
+    parser.add_argument('-o', '--output-path',
+                        dest='output_path',
+                        help='Specifies the file name for the tests output file. Defaults to run_tests.txt in current directory. If there will be multiple output files (workers), this will be treated as a directory.',
+                        default='run_tests.txt',
+                        type=str)
+    parser.add_argument('-l', '--long',
+                        action='store_true',
+                        help='Lengthens the worker output such that it doesn\'t truncate at the requested test. Good for getting a full test list. This has no effect when the test name is omitted.',
+                        required=False)
+    parser.add_argument('--stdio-export-path',
+                        dest="stdio_export_path",
+                        help='Specifies a path to which to save the raw stdio received from the server. This has no effect when loading data from a file.',
+                        required=False)
+    parser.add_argument('--combine-workers',
+                        action='store_true',
+                        help='Exports one file containing all tests in the order they were run (regardless of worker number).',
+                        required=False)
+    parser.add_argument('--no-warn',
+                        action='store_true',
+                        help='Does not warn or prompt the user before performing any actions. Potentially destructive due to bypassing file overwrite prompts. Good for automation. Will cause the script to quit if user input required.',
+                        required=False)
+
+    # logging
+    arguments.LoggingGroup(parser, loggers=[logging.getLogger()])
+    logging.basicConfig(format="%(message)s")
+
+    return parser.parse_args()
+
+
+# logging shortcuts
+def info(msg=""):
+    logging.info(msg)
+def warning(msg=""):
+    logging.warning(f'WARNING: {msg}')
+def error(msg=""):
+    logging.error(f'ERROR: {msg}')
+
+
+def graceful_exit(code=0):
+    info()
+    sys.exit(code)
+
+
+# Ensures a directory exists by checking and attempting to create if it doesn't exist (recursively).
+# Returns true if it exists at the end of the attempt, false if not.
+def ensure_directory_exists(dir):
+    os.makedirs(dir, exist_ok=True)
+    return os.path.isdir(dir)
+
+
+# Takes a string and exports to specified file path.
+# Prompts the user for a new file path if there's an IO error.
+def export_file(path, data, no_warn = False):
+    while True:
+        try:
+            path = os.path.abspath(os.path.expanduser(path))
+            dir = os.path.dirname(path)
+            if os.path.isfile(path) and not no_warn: # file exists
+                choice = Terminal.choose(f'A file already exists at the location {path}. Is it okay to overwrite it?', default='No').lower()
+                if choice.lower() != 'y' and choice.lower() != 'yes':
+                    raise ValueError()
+            if not ensure_directory_exists(dir): # directory doesn't exist
+                warning(f'Directory does not exist at {dir} and an error occurred while attempting to create it. Check permissions/spelling and try again.')
+                raise IOError()
+
+            # write file
+            with open(path, "w") as f:
+                f.write(data)
+                info(f'Exported file to "{path}".')
+
+            # return the path to which data was written
+            return path
+        except IsADirectoryError:
+            warning(f'The specified path "{path}" is a directory. Try entering a new file path.')
+        except OSError:
+            warning(f'The specified location "{path}" is read-only. Try entering a new file path.')
+        except ValueError:
+            pass
+        except Exception as e:
+            warning(f'Unable to write file: {e.args[1]}. Try entering a new file path.')
+
+        # only executes if file not written
+        path = input(f'New file path (enter nothing to quit): ')
+        if path == '':
+            error('User quit without writing file.')
+            graceful_exit(os.EX_DATAERR) # refactor notice: https://github.com/WebKit/WebKit/pull/17298#discussion_r1312400457
+
+
+# Takes a dict of workers' test lists and exports the requested one(s) to a specified file path.
+def export_worker(path, data, num=-1, no_warn = False):
+    path = os.path.abspath(os.path.expanduser(path))
+    dir, filename = os.path.split(path)
+    if num > -1: # one worker
+        info(f'Exporting test run log from worker {num}...')
+        if not os.path.isfile(path) and ensure_directory_exists(dir) and os.path.isdir(path):
+            path += f'/worker_{num}_tests.txt' # if not a file, directory exists, and path is a directory, add a standard file name
+        exp = data.get(f'{num}')
+        export_file(path, '\n'.join(exp), no_warn)
+        info(f'Finished exporting worker {num}\'s test run log to "{path}".')
+    else: # all workers
+        num_workers = len(data.keys())
+        if not no_warn:
+            choice = Terminal.choose(f'{num_workers} worker file(s) are about to be output. Is it okay to bypass individual file overwrite confirmation messages?', default='No').lower()
+            if choice.find('y') > -1 or choice.find('yes') > -1:
+                no_warn = True
+        info(f'Exporting {num_workers} worker test run log file(s)...')
+
+        # attempt to create path if it doesn't exist
+        if filename.find('.') == -1 and ensure_directory_exists(path): # if not passing a file name, treat as a directory
+            dir, filename = (path, f"worker_.txt") # update directory/filename
+        else:
+            ensure_directory_exists(dir) # make sure the target directory exists
+
+        # export each worker separately
+        farr = filename.split(".")
+        for n in data.keys():
+            ftmparr = farr[:]
+            ftmparr[0] += str(n)
+            worker = data.get(n)
+            export_file(f'{dir}/{".".join(ftmparr)}', '\n'.join(worker), no_warn)
+        info(f'Finished exporting worker test run logs to "{dir}".')
+
+
+# Parses a raw stdio log into a str containing a readable list of tests.
+# Used when exporting a combined worker list.
+def parse_raw_stdio_into_test_names(raw, target_test='', long=False):
+    info("Parsing into chronological list of tests...")
+    data = raw.split("\n")
+    tests = []
+    i = 0
+    for line in data:
+        m = re.findall(r"worker\/(\d+) ([^\"\s].*\.(htm|html|pl|py|svg|xht|xhtml|xml)([?]?.*)) (passed|failed)", line)
+        if len(m) > 0:
+            # continue
+            i += 1
+            test_name = m[0][1]
+            tests.append(test_name)
+            if not long and test_name == target_test:
+                info(f'Found requested test (last of {i}), skipping remaining tests.')
+                break
+    info(f'Processed {i} tests total.')
+    return "\n".join(tests)
+
+
+# Parses a raw stdio log into a dict of lists containing test lists.
+# Used when exporting one worker, or all as separate files.
+def parse_raw_stdio_into_workers(raw, target_test='', long=False):
+    info("Parsing into workers...")
+    data = raw.split("\n")
+    workers = {}
+    target_worker = -1
+    i = 0
+    for line in data:
+        m = re.findall(r"worker\/(\d+) ([^\"\s]+.+.(htm|html|pl|py|svg|xht|xhtml|xml)([?]?.*)) (passed|failed)", line)
+        if len(m) > 0:
+            worker, test_name = (str(m[0][0]), m[0][1])
+            i += 1
+            if type(workers.get(worker)) != list:
+                workers.update({f'{worker}': []})
+            workers[worker].append(test_name)
+            if test_name == target_test:
+                info(f'Found requested test in worker {worker} (test run #{len(workers[worker])} in that worker).')
+                target_worker = worker
+                if long:
+                    info(f'Continuing to sort tests by worker (--long).')
+                    continue
+                break
+    info(f'Finished parsing tests ({i} total).')
+    return (workers, int(target_worker))
+
+
+# Loads the stdio input for analysis from a file.
+# Returns a str with the contents of the stdio log.
+def load_from_file(path):
+    info("Loading data from file...")
+    if not os.path.isfile(path):
+        error(f'Could not find a file at the specified path "{path}".')
+        graceful_exit(os.EX_DATAERR)
+    text = ""
+    with open(path) as file:
+        for line in file:
+            text += line
+    return text
+
+
+# Loads the stdio input for analysis from a build URL.
+# Returns a str with the contents of the stdio log.
+def load_from_buildbot(url):
+    url = url.replace('/#/', '/api/v2/') + ("/raw" if "/logs/stdio" in url else "/steps/layout-test/logs/stdio/raw")
+    try: # validation
+        uobj = urlparse(url)
+        if not all([uobj.scheme, uobj.netloc]):
+            raise IOError()
+    except:
+        error("Invalid URL specified: %s.", url)
+        graceful_exit(os.EX_DATAERR)
+
+    info("Loading from URL (this may take a moment)...")
+
+    try: # more validation
+        data = requests.get(url)
+    except Exception as e:
+        error('Unable to load data: ' + e.args[0] + '. Check your spelling and try again.')
+        graceful_exit(os.EX_DATAERR)
+
+    return data.text
+
+
+def main():
+    options = init()
+    info()
+
+    if options.input_source.find('https://') == 0 or options.input_source.find('http://') == 0: # user entered url
+        stdio_text = load_from_buildbot(options.input_source)
+        if options.stdio_export_path is not None: # export raw stdio [--stdio-export-path]
+            ex_path = export_file(options.stdio_export_path, stdio_text, options.no_warn)
+            info(f'Exported stdio file to "{ex_path}".')
+    else: # user entered file path
+        stdio_text = load_from_file(options.input_source)
+
+    if not options.combine_workers: # export by worker
+        parsed_data, worker = parse_raw_stdio_into_workers(stdio_text, options.test_path, options.long)
+        export_worker(options.output_path, parsed_data, worker, options.no_warn)
+    else: # combine test list
+        test_names = parse_raw_stdio_into_test_names(stdio_text, options.test_path, options.long)
+        ex_path = export_file(options.output_path, test_names, options.no_warn)
+        info(f'Exported combined test run log to "{ex_path}".')
+
+    graceful_exit()
+
+if '__main__' == __name__:
+    main()

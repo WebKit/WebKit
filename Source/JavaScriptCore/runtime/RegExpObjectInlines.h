@@ -33,6 +33,11 @@
 
 namespace JSC {
 
+inline Structure* RegExpObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(RegExpObjectType, StructureFlags), info());
+}
+
 ALWAYS_INLINE unsigned getRegExpObjectLastIndexAsUnsigned(
     JSGlobalObject* globalObject, RegExpObject* regExpObject, const String& input)
 {
@@ -157,7 +162,7 @@ JSValue collectMatches(VM& vm, JSGlobalObject* globalObject, JSString* string, c
 
     bool hasException = false;
     unsigned arrayIndex = 0;
-    auto iterate = [&] () {
+    auto iterate = [&]() ALWAYS_INLINE_LAMBDA {
         size_t end = result.end;
         size_t length = end - result.start;
         array->putDirectIndex(globalObject, arrayIndex++, jsSubstringOfResolved(vm, string, result.start, length));

@@ -26,7 +26,6 @@
 .color-picker {
     position: relative;
     width: var(--color-picker-width);
-    height: 236px;
     padding: 5px;
 
     --color-picker-hue-offset-start: 41px;
@@ -107,4 +106,34 @@
 
 .color-picker > .color-inputs-wrapper > .pick-color-from-screen.active {
     color: var(--glyph-color-active);
+}
+
+.color-picker > .variable-color-swatches {
+    padding: 8px 0 0;
+}
+
+.color-picker > .variable-color-swatches > ul{
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 2px;
+    padding: 0;
+    margin: 2px 0 0;
+    max-height: 45px;
+    overflow-y: auto;
+}
+
+.color-picker > .variable-color-swatches > ul > li {
+    height: 1em;
+}
+
+.color-picker > .variable-color-swatches > ul > li > .inline-swatch {
+    --inline-swatch-margin-right-override: 0;
+    --inline-swatch-vertical-align-override: 0;
+}
+
+.color-picker > .variable-color-swatches > h2 {
+    margin: 0;
+    font-size: 1.15em;
 }

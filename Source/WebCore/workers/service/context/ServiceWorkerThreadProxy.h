@@ -54,7 +54,7 @@ class ServiceWorkerInspectorProxy;
 struct ServiceWorkerContextData;
 enum class WorkerThreadMode : bool;
 
-class ServiceWorkerThreadProxy final : public ThreadSafeRefCounted<ServiceWorkerThreadProxy>, public WorkerLoaderProxy, public WorkerDebuggerProxy, public WorkerBadgeProxy {
+class ServiceWorkerThreadProxy final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ServiceWorkerThreadProxy, WTF::DestructionThread::Main>, public WorkerLoaderProxy, public WorkerDebuggerProxy, public WorkerBadgeProxy {
 public:
     template<typename... Args> static Ref<ServiceWorkerThreadProxy> create(Args&&... args)
     {
@@ -97,6 +97,8 @@ public:
 
     WEBCORE_EXPORT void setLastNavigationWasAppInitiated(bool);
     WEBCORE_EXPORT bool lastNavigationWasAppInitiated();
+
+    WEBCORE_EXPORT void setInspectable(bool);
 
 private:
     WEBCORE_EXPORT ServiceWorkerThreadProxy(UniqueRef<Page>&&, ServiceWorkerContextData&&, ServiceWorkerData&&, String&& userAgent, WorkerThreadMode, CacheStorageProvider&, std::unique_ptr<NotificationClient>&&);

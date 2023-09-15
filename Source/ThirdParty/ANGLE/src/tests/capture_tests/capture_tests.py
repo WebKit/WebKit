@@ -123,6 +123,9 @@ def main():
 
     logging.basicConfig(level=args.log.upper())
 
+    angle_test_util.Initialize('angle_end2end_tests')
+    assert not angle_test_util.IsAndroid(), 'capture_tests not yet supported on Android'
+
     test_name = 'CapturedTest.MultiFrame/ES3_Vulkan'
     had_error = False
     try:

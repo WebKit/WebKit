@@ -62,7 +62,6 @@ Ref<NetworkDataTask> NetworkDataTaskDataURL::create(NetworkSession& session, Net
 NetworkDataTaskDataURL::NetworkDataTaskDataURL(NetworkSession& session, NetworkDataTaskClient& client, const NetworkLoadParameters& parameters)
     : NetworkDataTask(session, client, parameters.request, parameters.storedCredentialsPolicy, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect, parameters.isMainFrameNavigation)
 {
-    m_session->registerNetworkDataTask(*this);
 }
 
 NetworkDataTaskDataURL::~NetworkDataTaskDataURL()
@@ -78,7 +77,7 @@ void NetworkDataTaskDataURL::resume()
 
     m_state = State::Running;
 
-    DataURLDecoder::decode(firstRequest().url(), { }, [this, protectedThis = Ref { *this }](auto decodeResult) mutable {
+    DataURLDecoder::decode(firstRequest().url(), { }, DataURLDecoder::ShouldValidatePadding::Yes, [this, protectedThis = Ref { *this }](auto decodeResult) mutable {
         if (m_state == State::Canceling || m_state == State::Completed)
             return;
 

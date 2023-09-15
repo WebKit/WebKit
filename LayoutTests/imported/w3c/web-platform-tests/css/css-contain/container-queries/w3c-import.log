@@ -129,6 +129,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/iframe-in-container-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/iframe-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/ineligible-containment.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/inheritance-from-container.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/inline-size-and-min-width.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/inline-size-bfc-floats-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/inline-size-bfc-floats-ref.html

@@ -55,6 +55,7 @@
 #include "LayoutIntegrationLineLayout.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "MotionPath.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderBlockInlines.h"
@@ -206,7 +207,7 @@ RenderFragmentContainer* RenderBox::clampToStartAndEndFragments(RenderFragmentCo
     // they overflow into, which makes no sense when this block doesn't exist in |fragment| at all.
     RenderFragmentContainer* startFragment = nullptr;
     RenderFragmentContainer* endFragment = nullptr;
-    if (!fragmentedFlow->getFragmentRangeForBox(this, startFragment, endFragment))
+    if (!fragmentedFlow->getFragmentRangeForBox(*this, startFragment, endFragment))
         return fragment;
 
     if (fragment->logicalTopForFragmentedFlowContent() < startFragment->logicalTopForFragmentedFlowContent())
@@ -226,19 +227,16 @@ bool RenderBox::hasFragmentRangeInFragmentedFlow() const
     return fragmentedFlow->hasCachedFragmentRangeForBox(*this);
 }
 
-LayoutRect RenderBox::clientBoxRectInFragment(RenderFragmentContainer* fragment) const
+LayoutRect RenderBox::clientBoxRectInFragment(const RenderFragmentContainer& fragment) const
 {
-    if (!fragment)
-        return clientBoxRect();
-
-    LayoutRect clientBox = borderBoxRectInFragment(fragment);
+    LayoutRect clientBox = borderBoxRectInFragment(&fragment);
     clientBox.setLocation(clientBox.location() + LayoutSize(borderLeft(), borderTop()));
     clientBox.setSize(clientBox.size() - LayoutSize(borderLeft() + borderRight() + verticalScrollbarWidth(), borderTop() + borderBottom() + horizontalScrollbarHeight()));
 
     return clientBox;
 }
 
-LayoutRect RenderBox::borderBoxRectInFragment(RenderFragmentContainer*, RenderBoxFragmentInfoFlags) const
+LayoutRect RenderBox::borderBoxRectInFragment(const RenderFragmentContainer*, RenderBoxFragmentInfoFlags) const
 {
     return borderBoxRect();
 }
@@ -503,8 +501,33 @@ void RenderBox::updateFromStyle()
             setHasNonVisibleOverflow();
         }
     }
-    setHasTransformRelatedProperty(styleToUse.hasTransformRelatedProperty());
+    setHasTransformRelatedProperty(computeHasTransformRelatedProperty(styleToUse));
     setHasReflection(styleToUse.boxReflect());
+}
+
+bool RenderBox::computeHasTransformRelatedProperty(const RenderStyle& styleToUse) const
+{
+    if (styleToUse.hasTransformRelatedProperty())
+        return true;
+
+    if (!settings().css3DTransformBackfaceVisibilityInteroperabilityEnabled())
+        return false;
+
+    if (styleToUse.backfaceVisibility() != BackfaceVisibility::Hidden)
+        return false;
+
+    if (!element())
+        return false;
+
+    auto* parent = element()->parentElement();
+    if (!parent)
+        return false;
+
+    auto* parentRenderer = parent->renderer();
+    if (!parentRenderer)
+        return false;
+
+    return parentRenderer->style().preserves3D();
 }
 
 void RenderBox::layout()
@@ -628,7 +651,7 @@ void RenderBox::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& accu
 void RenderBox::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
     RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
-    if (fragmentedFlow && fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, this))
+    if (fragmentedFlow && fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, *this))
         return;
 
     auto localRect = FloatRect { 0, 0, width(), height() };
@@ -637,7 +660,7 @@ void RenderBox::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 
 void RenderBox::applyTransform(TransformationMatrix& t, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
-    style.applyTransform(t, boundingBox, options);
+    style.applyTransform(t, TransformOperationData(boundingBox, this), options);
 }
 
 void RenderBox::constrainLogicalMinMaxSizesByAspectRatio(LayoutUnit& computedMinSize, LayoutUnit& computedMaxSize, LayoutUnit computedSize, MinimumSizeIsAutomaticContentBased minimumSizeType, ConstrainDimension dimension) const
@@ -1931,8 +1954,8 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
         pushTransparencyLayer = true;
 
         // Don't render a masked element until all the mask images have loaded, to prevent a flash of unmasked content.
-        if (auto* maskBoxImage = style().maskBoxImage().image())
-            allMaskImagesLoaded &= maskBoxImage->isLoaded();
+        if (auto* maskBorder = style().maskBorder().image())
+            allMaskImagesLoaded &= maskBorder->isLoaded();
 
         allMaskImagesLoaded &= style().maskLayers().imagesAreLoaded();
 
@@ -1943,7 +1966,7 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
 
     if (allMaskImagesLoaded) {
         BackgroundPainter { *this, paintInfo }.paintFillLayers(Color(), style().maskLayers(), paintRect, BackgroundBleedNone, compositeOp);
-        BorderPainter { *this, paintInfo }.paintNinePieceImage(paintRect, style(), style().maskBoxImage(), compositeOp);
+        BorderPainter { *this, paintInfo }.paintNinePieceImage(paintRect, style(), style().maskBorder(), compositeOp);
     }
     
     if (pushTransparencyLayer)
@@ -1952,12 +1975,12 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
 
 LayoutRect RenderBox::maskClipRect(const LayoutPoint& paintOffset)
 {
-    const NinePieceImage& maskBoxImage = style().maskBoxImage();
-    if (maskBoxImage.image()) {
+    const NinePieceImage& maskBorder = style().maskBorder();
+    if (maskBorder.image()) {
         LayoutRect borderImageRect = borderBoxRect();
         
         // Apply outsets to the border box.
-        borderImageRect.expand(style().maskBoxImageOutsets());
+        borderImageRect.expand(style().maskBorderOutsets());
         return borderImageRect;
     }
     
@@ -1987,7 +2010,7 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
         return;
 
     if ((style().borderImage().image() && style().borderImage().image()->data() == image) ||
-        (style().maskBoxImage().image() && style().maskBoxImage().image()->data() == image)) {
+        (style().maskBorder().image() && style().maskBorder().image()->data() == image)) {
         repaint();
         return;
     }
@@ -3090,20 +3113,20 @@ RenderBoxFragmentInfo* RenderBox::renderBoxFragmentInfo(RenderFragmentContainer*
 static bool shouldFlipBeforeAfterMargins(const RenderStyle& containingBlockStyle, const RenderStyle* childStyle)
 {
     ASSERT(containingBlockStyle.isHorizontalWritingMode() != childStyle->isHorizontalWritingMode());
-    WritingMode childWritingMode = childStyle->writingMode();
+    auto childBlockFlowDirection = childStyle->blockFlowDirection();
     bool shouldFlip = false;
-    switch (containingBlockStyle.writingMode()) {
-    case WritingMode::TopToBottom:
-        shouldFlip = (childWritingMode == WritingMode::RightToLeft);
+    switch (containingBlockStyle.blockFlowDirection()) {
+    case BlockFlowDirection::TopToBottom:
+        shouldFlip = (childBlockFlowDirection == BlockFlowDirection::RightToLeft);
         break;
-    case WritingMode::BottomToTop:
-        shouldFlip = (childWritingMode == WritingMode::RightToLeft);
+    case BlockFlowDirection::BottomToTop:
+        shouldFlip = (childBlockFlowDirection == BlockFlowDirection::RightToLeft);
         break;
-    case WritingMode::RightToLeft:
-        shouldFlip = (childWritingMode == WritingMode::BottomToTop);
+    case BlockFlowDirection::RightToLeft:
+        shouldFlip = (childBlockFlowDirection == BlockFlowDirection::BottomToTop);
         break;
-    case WritingMode::LeftToRight:
-        shouldFlip = (childWritingMode == WritingMode::BottomToTop);
+    case BlockFlowDirection::LeftToRight:
+        shouldFlip = (childBlockFlowDirection == BlockFlowDirection::BottomToTop);
         break;
     }
 
@@ -3520,6 +3543,7 @@ LayoutUnit RenderBox::computeReplacedLogicalWidthUsing(SizeType widthType, Lengt
     case LengthType::Intrinsic:
     case LengthType::MinIntrinsic:
     case LengthType::Auto:
+    case LengthType::Normal:
     case LengthType::Content:
     case LengthType::Relative:
     case LengthType::Undefined:
@@ -4963,7 +4987,7 @@ VisiblePosition RenderBox::positionForPoint(const LayoutPoint& point, const Rend
     for (auto& renderer : childrenOfType<RenderBox>(*this)) {
         if (is<RenderFragmentedFlow>(*this)) {
             ASSERT(fragment);
-            if (!downcast<RenderFragmentedFlow>(*this).objectShouldFragmentInFlowFragment(&renderer, fragment))
+            if (!downcast<RenderFragmentedFlow>(*this).objectShouldFragmentInFlowFragment(renderer, fragment))
                 continue;
         }
 
@@ -5070,7 +5094,7 @@ void RenderBox::addVisualEffectOverflow()
     addVisualOverflow(applyVisualEffectOverflow(borderBoxRect()));
 
     if (auto* fragmentedFlow = enclosingFragmentedFlow())
-        fragmentedFlow->addFragmentsVisualEffectOverflow(this);
+        fragmentedFlow->addFragmentsVisualEffectOverflow(*this);
 }
 
 LayoutRect RenderBox::applyVisualEffectOverflow(const LayoutRect& borderBox) const
@@ -5117,20 +5141,20 @@ LayoutRect RenderBox::applyVisualEffectOverflow(const LayoutRect& borderBox) con
     return LayoutRect(overflowMinX, overflowMinY, overflowMaxX - overflowMinX, overflowMaxY - overflowMinY);
 }
 
-void RenderBox::addOverflowFromChild(const RenderBox* child, const LayoutSize& delta)
+void RenderBox::addOverflowFromChild(const RenderBox& child, const LayoutSize& delta)
 {
     // Never allow flow threads to propagate overflow up to a parent.
-    if (child->isRenderFragmentedFlow())
+    if (child.isRenderFragmentedFlow())
         return;
 
-    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
+    auto* fragmentedFlow = enclosingFragmentedFlow();
     if (fragmentedFlow)
-        fragmentedFlow->addFragmentsOverflowFromChild(this, child, delta);
+        fragmentedFlow->addFragmentsOverflowFromChild(*this, child, delta);
 
     // Only propagate layout overflow from the child if the child isn't clipping its overflow.  If it is, then
     // its overflow is internal to it, and we don't care about it. layoutOverflowRectForPropagation takes care of this
     // and just propagates the border box rect instead.
-    LayoutRect childLayoutOverflowRect = child->layoutOverflowRectForPropagation(&style());
+    LayoutRect childLayoutOverflowRect = child.layoutOverflowRectForPropagation(&style());
     childLayoutOverflowRect.move(delta);
     addLayoutOverflow(childLayoutOverflowRect);
 
@@ -5145,17 +5169,17 @@ void RenderBox::addOverflowFromChild(const RenderBox* child, const LayoutSize& d
 
     std::optional<LayoutRect> childVisualOverflowRect;
     auto computeChildVisualOverflowRect = [&] () {
-        childVisualOverflowRect = child->visualOverflowRectForPropagation(&style());
+        childVisualOverflowRect = child.visualOverflowRectForPropagation(&style());
         childVisualOverflowRect->move(delta);
     };
     // If this block is flowed inside a flow thread, make sure its overflow is propagated to the containing fragments.
     if (fragmentedFlow) {
         computeChildVisualOverflowRect();
-        fragmentedFlow->addFragmentsVisualOverflow(this, *childVisualOverflowRect);
+        fragmentedFlow->addFragmentsVisualOverflow(*this, *childVisualOverflowRect);
     } else {
         // Update our visual overflow in case the child spills out the block, but only if we were going to paint
         // the child block ourselves.
-        if (child->hasSelfPaintingLayer())
+        if (child.hasSelfPaintingLayer())
             return;
     }
     if (!childVisualOverflowRect)
@@ -5214,9 +5238,8 @@ void RenderBox::addVisualOverflow(const LayoutRect& rect)
 void RenderBox::clearOverflow()
 {
     m_overflow = nullptr;
-    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
-    if (fragmentedFlow)
-        fragmentedFlow->clearFragmentsOverflow(this);
+    if (auto* fragmentedFlow = enclosingFragmentedFlow())
+        fragmentedFlow->clearFragmentsOverflow(*this);
 }
     
 bool RenderBox::percentageLogicalHeightIsResolvable() const
@@ -5299,14 +5322,14 @@ LayoutRect RenderBox::visualOverflowRectForPropagation(const RenderStyle* parent
     // If the writing modes of the child and parent match, then we don't have to 
     // do anything fancy. Just return the result.
     LayoutRect rect = visualOverflowRect();
-    if (parentStyle->writingMode() == style().writingMode())
+    if (parentStyle->blockFlowDirection() == style().blockFlowDirection())
         return rect;
     
     // We are putting ourselves into our parent's coordinate space.  If there is a flipped block mismatch
     // in a particular axis, then we have to flip the rect along that axis.
-    if (style().writingMode() == WritingMode::RightToLeft || parentStyle->writingMode() == WritingMode::RightToLeft)
+    if (style().blockFlowDirection() == BlockFlowDirection::RightToLeft || parentStyle->blockFlowDirection() == BlockFlowDirection::RightToLeft)
         rect.setX(width() - rect.maxX());
-    else if (style().writingMode() == WritingMode::BottomToTop || parentStyle->writingMode() == WritingMode::BottomToTop)
+    else if (style().blockFlowDirection() == BlockFlowDirection::BottomToTop || parentStyle->blockFlowDirection() == BlockFlowDirection::BottomToTop)
         rect.setY(height() - rect.maxY());
 
     return rect;
@@ -5367,14 +5390,14 @@ LayoutRect RenderBox::layoutOverflowRectForPropagation(const RenderStyle* parent
     
     // If the writing modes of the child and parent match, then we don't have to 
     // do anything fancy. Just return the result.
-    if (parentStyle->writingMode() == style().writingMode())
+    if (parentStyle->blockFlowDirection() == style().blockFlowDirection())
         return rect;
     
     // We are putting ourselves into our parent's coordinate space.  If there is a flipped block mismatch
     // in a particular axis, then we have to flip the rect along that axis.
-    if (style().writingMode() == WritingMode::RightToLeft || parentStyle->writingMode() == WritingMode::RightToLeft)
+    if (style().blockFlowDirection() == BlockFlowDirection::RightToLeft || parentStyle->blockFlowDirection() == BlockFlowDirection::RightToLeft)
         rect.setX(width() - rect.maxX());
-    else if (style().writingMode() == WritingMode::BottomToTop || parentStyle->writingMode() == WritingMode::BottomToTop)
+    else if (style().blockFlowDirection() == BlockFlowDirection::BottomToTop || parentStyle->blockFlowDirection() == BlockFlowDirection::BottomToTop)
         rect.setY(height() - rect.maxY());
 
     return rect;

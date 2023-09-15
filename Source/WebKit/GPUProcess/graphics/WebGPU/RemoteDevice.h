@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "GPUConnectionToWebProcess.h"
 #include "RemoteQueue.h"
 #include "RemoteVideoFrameIdentifier.h"
 #include "SharedVideoFrame.h"
@@ -38,6 +39,10 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
+
+#if ENABLE(VIDEO)
+#include "RemoteVideoFrameObjectHeap.h"
+#endif
 
 typedef struct __CVBuffer* CVPixelBufferRef;
 
@@ -60,6 +65,7 @@ namespace WebKit {
 
 class RemoteGPU;
 class SharedMemoryHandle;
+struct SharedVideoFrame;
 
 namespace WebGPU {
 struct BindGroupDescriptor;
@@ -78,18 +84,12 @@ struct ShaderModuleDescriptor;
 struct TextureDescriptor;
 }
 
-#if ENABLE(VIDEO) && PLATFORM(COCOA)
-using PerformWithMediaPlayerOnMainThread = Function<void(std::variant<WebCore::MediaPlayerIdentifier, WebKit::RemoteVideoFrameReference>, Function<void(RefPtr<WebCore::VideoFrame>)>&&)>;
-#else
-using PerformWithMediaPlayerOnMainThread = Function<void()>;
-#endif
-
 class RemoteDevice final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteDevice> create(PerformWithMediaPlayerOnMainThread& performWithMediaPlayerOnMainThread, WebCore::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
+    static Ref<RemoteDevice> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
     {
-        return adoptRef(*new RemoteDevice(performWithMediaPlayerOnMainThread, device, objectHeap, WTFMove(streamConnection), identifier, queueIdentifier));
+        return adoptRef(*new RemoteDevice(gpuConnectionToWebProcess, device, objectHeap, WTFMove(streamConnection), identifier, queueIdentifier));
     }
 
     ~RemoteDevice();
@@ -101,7 +101,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteDevice(PerformWithMediaPlayerOnMainThread&, WebCore::WebGPU::Device&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier, WebGPUIdentifier queueIdentifier);
+    RemoteDevice(GPUConnectionToWebProcess&, WebCore::WebGPU::Device&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier, WebGPUIdentifier queueIdentifier);
 
     RemoteDevice(const RemoteDevice&) = delete;
     RemoteDevice(RemoteDevice&&) = delete;
@@ -150,10 +150,13 @@ private:
     Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;
     Ref<RemoteQueue> m_queue;
-    PerformWithMediaPlayerOnMainThread& m_performWithMediaPlayerOnMainThread;
-#if PLATFORM(COCOA) && ENABLE(VIDEO)
+#if ENABLE(VIDEO)
+    Ref<RemoteVideoFrameObjectHeap> m_videoFrameObjectHeap;
+#if PLATFORM(COCOA)
     SharedVideoFrameReader m_sharedVideoFrameReader;
 #endif
+#endif
+    GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
 };
 
 } // namespace WebKit

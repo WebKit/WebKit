@@ -8,47 +8,28 @@ if (window.testRunner) {
     testRunner.waitUntilDone();
 }
 
-let step = 0;
-
-function handleKeyUp(event)
-{
-    switch (step++) {
-    case 0:
-        console.assert(event.key === "a");
-        UIHelper.keyDown("\b"); // Backspace
-        return;
-    case 1:
-        console.assert(event.key === "Backspace");
-        internals.startTrackingRepaints();
-        UIHelper.toggleCapsLock();
-        return;
-    case 2: {
-        console.assert(event.key === "CapsLock");
-        document.getElementById("result").textContent = internals.repaintRectsAsText();
-        internals.stopTrackingRepaints();
-        testRunner.notifyDone();
-        return;
-    }
-    }
-}
-
-function runTest()
+async function runTest()
 {
     if (!window.testRunner)
         return;
-
     let input = document.getElementById("input");
-    function handleFocus() {
-        function handleCapsLockEnabled(event) {
-            console.assert(event.key === "CapsLock");
-            input.addEventListener("keyup", handleKeyUp, false);
-            UIHelper.keyDown("a");
-        }
-        input.addEventListener("keydown", handleCapsLockEnabled, { once: true });
-        UIHelper.toggleCapsLock();
-    }
-    input.addEventListener("focus", handleFocus, { once: true });
-    UIHelper.activateElement(input);
+    await UIHelper.activateElementAndWaitForInputSession(input);
+    await UIHelper.toggleCapsLock();
+
+    await UIHelper.callFunctionAndWaitForEvent(async () => {
+        await UIHelper.keyDown("a");
+    }, input, "keyup");
+
+    await UIHelper.callFunctionAndWaitForEvent(async () => {
+        await UIHelper.keyDown("\b");
+    }, input, "keyup");
+
+    await UIHelper.ensureStablePresentationUpdate();
+    internals.startTrackingRepaints();
+    await UIHelper.toggleCapsLock();
+    document.getElementById("result").textContent = internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+    testRunner.notifyDone();
 }
 </script>
 </head>

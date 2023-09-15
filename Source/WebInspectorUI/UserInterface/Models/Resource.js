@@ -201,6 +201,9 @@ WI.Resource = class Resource extends WI.SourceCode
 
             if (shouldBeBlocked || localResourceOverride?.type === WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork)
                 classes.push("skip-network");
+
+            if (localResourceOverride?.localResource.mappedFilePath)
+                classes.push("mapped-file");
         }
 
         if (resource.type === WI.Resource.Type.Other) {

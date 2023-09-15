@@ -251,8 +251,25 @@ void AuxiliaryProcess::didReceiveMemoryPressureEvent(bool isCritical)
 
 #endif // !PLATFORM(COCOA)
 
+bool AuxiliaryProcess::allowsFirstPartyForCookies(const URL& firstParty, Function<bool()>&& domainCheck)
+{
+    // FIXME: This should probably not be necessary. If about:blank is the first party for cookies,
+    // we should set it to be the inherited origin then remove this exception.
+    if (firstParty.isAboutBlank())
+        return true;
+
+    if (firstParty.isNull())
+        return true; // FIXME: This shouldn't be allowed.
+
+    return domainCheck();
+}
+
 bool AuxiliaryProcess::allowsFirstPartyForCookies(const WebCore::RegistrableDomain& firstPartyDomain, HashSet<WebCore::RegistrableDomain>& allowedFirstPartiesForCookies)
 {
+    // FIXME: This shouldn't be needed but it is hit sometimes at least with PDFs.
+    if (firstPartyDomain.isEmpty())
+        return true;
+
     if (!std::remove_reference_t<decltype(allowedFirstPartiesForCookies)>::isValidValue(firstPartyDomain)) {
         ASSERT_NOT_REACHED();
         return false;

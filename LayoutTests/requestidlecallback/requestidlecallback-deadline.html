@@ -1,0 +1,33 @@
+<!DOCTYPE html><!-- webkit-test-runner [ RequestIdleCallbackEnabled=true ] -->
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+
+description('This tests that the deadline can be reached.');
+
+jsTestIsAsync = true;
+
+function synchronouslyWait(milliseconds) {
+    let start = performance.now();
+    while (performance.now() - start < milliseconds);
+}
+
+let didRunIdleCallback = false;
+onload = () => {
+    requestIdleCallback((idleDeadline) => {
+        window.idleDeadline = idleDeadline;
+        shouldBe('idleDeadline.timeRemaining()', '0');
+        shouldBeTrue('idleDeadline.didTimeout');
+        didRunIdleCallback = true;
+    }, {timeout: 20});
+    synchronouslyWait(50);
+    setTimeout(() => {
+        shouldBeTrue('didRunIdleCallback');
+        finishJSTest();
+    }, 100);
+}
+
+</script>
+</body>
+</html>

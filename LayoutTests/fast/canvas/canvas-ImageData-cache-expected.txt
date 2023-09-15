@@ -1,0 +1,10 @@
+PASS () => readPixelWithImageData(ctx) is 1,1,1
+PASS () => readPixelWithImageData(ctx) is 1,1,1
+PASS () => readPixelWithImageData(ctx) is 1,1,1
+PASS () => readPixelWithImageData(ctx) is 0,0,255
+PASS () => readPixelWithImageData(ctx) is 0,0,255
+PASS () => readPixelWithImageData(ctx) is 0,0,255
+PASS () => readPixelWithImageData(ctx) is 0,0,0
+PASS () => readPixelWithImageData(ctx) is 0,0,0
+PASS () => readPixelWithImageData(ctx) is 0,0,0
+

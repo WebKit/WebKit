@@ -24,7 +24,6 @@
 #include "GRefPtrGStreamer.h"
 #include "MediaRecorderPrivate.h"
 #include "SharedBuffer.h"
-#include <gst/transcoder/gsttranscoder.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Condition.h>
 #include <wtf/Forward.h>
@@ -37,29 +36,30 @@ class ContentType;
 class MediaStreamTrackPrivate;
 struct MediaRecorderPrivateOptions;
 
-class MediaRecorderPrivateGStreamer final : public MediaRecorderPrivate, public CanMakeWeakPtr<MediaRecorderPrivateGStreamer> {
+class MediaRecorderPrivateBackend : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaRecorderPrivateBackend, WTF::DestructionThread::Main> {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    static std::unique_ptr<MediaRecorderPrivateGStreamer> create(MediaStreamPrivate&, const MediaRecorderPrivateOptions&);
-    explicit MediaRecorderPrivateGStreamer(MediaStreamPrivate&, const MediaRecorderPrivateOptions&);
-    ~MediaRecorderPrivateGStreamer();
+    using SelectTracksCallback = Function<void(MediaRecorderPrivate::AudioVideoSelectedTracks)>;
+    static RefPtr<MediaRecorderPrivateBackend> create(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)
+    {
+        return adoptRef(*new MediaRecorderPrivateBackend(stream, options));
+    }
 
-    static bool isTypeSupported(const ContentType&);
+    ~MediaRecorderPrivateBackend();
 
-protected:
     bool preparePipeline();
 
-private:
-    void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) final { };
-    void audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final { };
+    void fetchData(MediaRecorderPrivate::FetchDataCallback&&);
+    void startRecording(MediaRecorderPrivate::StartRecordingCallback&&);
+    void stopRecording(CompletionHandler<void()>&&);
+    void pauseRecording(CompletionHandler<void()>&&);
+    void resumeRecording(CompletionHandler<void()>&&);
+    const String& mimeType() const;
 
-    void fetchData(FetchDataCallback&&) final;
-    void startRecording(StartRecordingCallback&&) final;
-    void stopRecording(CompletionHandler<void()>&&) final;
-    void pauseRecording(CompletionHandler<void()>&&) final;
-    void resumeRecording(CompletionHandler<void()>&&) final;
-    const String& mimeType() const final;
+    void setSelectTracksCallback(SelectTracksCallback&& callback) { m_selectTracksCallback = WTFMove(callback); }
+
+private:
+    MediaRecorderPrivateBackend(MediaStreamPrivate&, const MediaRecorderPrivateOptions&);
 
     void setSource(GstElement*);
     void setSink(GstElement*);
@@ -88,6 +88,30 @@ private:
 
     MediaStreamPrivate& m_stream;
     const MediaRecorderPrivateOptions& m_options;
+    std::optional<SelectTracksCallback> m_selectTracksCallback;
+};
+
+class MediaRecorderPrivateGStreamer final : public MediaRecorderPrivate {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static std::unique_ptr<MediaRecorderPrivateGStreamer> create(MediaStreamPrivate&, const MediaRecorderPrivateOptions&);
+    explicit MediaRecorderPrivateGStreamer(Ref<MediaRecorderPrivateBackend>&&);
+    ~MediaRecorderPrivateGStreamer() = default;
+
+    static bool isTypeSupported(const ContentType&);
+
+private:
+    void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) final { };
+    void audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final { };
+
+    void fetchData(FetchDataCallback&&) final;
+    void startRecording(StartRecordingCallback&&) final;
+    void stopRecording(CompletionHandler<void()>&&) final;
+    void pauseRecording(CompletionHandler<void()>&&) final;
+    void resumeRecording(CompletionHandler<void()>&&) final;
+    const String& mimeType() const final;
+
+    Ref<MediaRecorderPrivateBackend> m_recorder;
 };
 
 } // namespace WebCore

@@ -143,7 +143,10 @@ String CSSFontFaceSrcResourceValue::customCSSText() const
 
 bool CSSFontFaceSrcResourceValue::equals(const CSSFontFaceSrcResourceValue& other) const
 {
-    return m_location.specifiedURLString == m_location.specifiedURLString && m_format == other.m_format && m_technologies == other.m_technologies;
+    return m_location == other.m_location
+        && m_format == other.m_format
+        && m_technologies == other.m_technologies
+        && m_loadedFromOpaqueSource == other.m_loadedFromOpaqueSource;
 }
 
 }

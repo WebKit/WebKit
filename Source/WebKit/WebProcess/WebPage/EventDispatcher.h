@@ -104,7 +104,7 @@ private:
     void touchEventWithoutCallback(WebCore::PageIdentifier, const WebTouchEvent&);
 #endif
 #if ENABLE(MAC_GESTURE_EVENTS)
-    void gestureEvent(WebCore::PageIdentifier, const WebGestureEvent&);
+    void gestureEvent(WebCore::PageIdentifier, const WebGestureEvent&, CompletionHandler<void(WebEventType, bool)>&&);
 #endif
 
     // This is called on the main thread.
@@ -117,7 +117,7 @@ private:
     void dispatchTouchEvents();
 #endif
 #if ENABLE(MAC_GESTURE_EVENTS)
-    void dispatchGestureEvent(WebCore::PageIdentifier, const WebGestureEvent&);
+    void dispatchGestureEvent(WebCore::PageIdentifier, const WebGestureEvent&, CompletionHandler<void(WebEventType, bool)>&&);
 #endif
 
     static void sendDidReceiveEvent(WebCore::PageIdentifier, WebEventType, bool didHandleEvent);

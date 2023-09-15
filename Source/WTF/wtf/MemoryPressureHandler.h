@@ -97,10 +97,11 @@ public:
     {
         auto memoryPressureStatus = m_memoryPressureStatus.load();
         return memoryPressureStatus == MemoryPressureStatus::SystemWarning
+            || memoryPressureStatus == MemoryPressureStatus::ProcessLimitWarning
 #if PLATFORM(MAC)
             || m_memoryUsagePolicy == MemoryUsagePolicy::Conservative
 #endif
-            || memoryPressureStatus == MemoryPressureStatus::ProcessLimitWarning;
+            || m_isSimulatingMemoryWarning;
     }
 
     bool isUnderMemoryPressure() const
@@ -113,6 +114,7 @@ public:
 #endif
             || m_isSimulatingMemoryPressure;
     }
+    bool isSimulatingMemoryWarning() const { return m_isSimulatingMemoryWarning; }
     bool isSimulatingMemoryPressure() const { return m_isSimulatingMemoryPressure; }
     void setMemoryPressureStatus(MemoryPressureStatus);
 
@@ -230,6 +232,8 @@ public:
 
     WTF_EXPORT_PRIVATE void releaseMemory(Critical, Synchronous = Synchronous::No);
 
+    WTF_EXPORT_PRIVATE void beginSimulatedMemoryWarning();
+    WTF_EXPORT_PRIVATE void endSimulatedMemoryWarning();
     WTF_EXPORT_PRIVATE void beginSimulatedMemoryPressure();
     WTF_EXPORT_PRIVATE void endSimulatedMemoryPressure();
 
@@ -268,6 +272,7 @@ private:
 
     std::atomic<MemoryPressureStatus> m_memoryPressureStatus { MemoryPressureStatus::Normal };
     bool m_installed { false };
+    bool m_isSimulatingMemoryWarning { false };
     bool m_isSimulatingMemoryPressure { false };
     bool m_shouldLogMemoryMemoryPressureEvents { true };
 

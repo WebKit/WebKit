@@ -1,22 +1,5 @@
-CONSOLE MESSAGE: A VideoFrame was destroyed without having been closed explicitly
-CONSOLE MESSAGE: A VideoFrame was destroyed without having been closed explicitly
-CONSOLE MESSAGE: A VideoFrame was destroyed without having been closed explicitly
-CONSOLE MESSAGE: A VideoFrame was destroyed without having been closed explicitly
-CONSOLE MESSAGE: A VideoFrame was destroyed without having been closed explicitly
 
 
-Harness Error (TIMEOUT), message = null
-
-PASS Verify frames can be passed within the same agent clusters
 FAIL Verify frames cannot be passed accross the different agent clusters assert_false: expected false got true
-PASS Verify frames can be passed back and forth between main and worker
-PASS Verify frames cannot be passed to sharedworker
-PASS Verify frames cannot be passed to serviceworker
-FAIL Verify frames can be transferred within the same agent clusters assert_true: expected true got false
-PASS Verify frames cannot be transferred accross the different agent clusters
-PASS Verify frames can be transferred back and forth between main and worker
-PASS Verify frames cannot be transferred to a sharedworker
-PASS Verify frames cannot be transferred to serviceworker
-TIMEOUT Verify frames is unavailable in sharedworker Test timed out
-NOTRUN Verify frames is unavailable in serviceworker
+FAIL Verify frames cannot be transferred accross the different agent clusters assert_false: expected false got true
 

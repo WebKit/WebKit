@@ -1,13 +1,11 @@
 Anchor text is wrapped with <i> tag permalink
 This one uses <span>. permalink
-asdf
-
 
 <circle>
 
-Harness Error (TIMEOUT), message = null
-
-NOTRUN Clicking on anchor with embedded inline element should navigate instead of opening details
+PASS Clicking on anchor with embedded inline element should navigate instead of opening details
 PASS Expected <a> containing <i> to navigate
-NOTRUN Expected <a> containing <span> to navigate
+PASS Expected <a> containing <span> to navigate
+PASS Expected <a>, inside svg, containing <circle> to navigate
+PASS Expected <a>, inside svg, containing <text> to navigate
 

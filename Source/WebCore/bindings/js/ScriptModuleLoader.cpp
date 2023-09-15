@@ -334,10 +334,10 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
     auto getTypeFromAssertions = [&]() -> JSC::ScriptFetchParameters::Type {
         auto scope = DECLARE_THROW_SCOPE(vm);
 
-        auto assertions = JSC::retrieveAssertionsFromDynamicImportOptions(&globalObject, parametersValue, { vm.propertyNames->type.impl() });
+        auto assertions = JSC::retrieveImportAttributesFromDynamicImportOptions(&globalObject, parametersValue, { vm.propertyNames->type.impl() });
         RETURN_IF_EXCEPTION(scope, { });
 
-        auto type = JSC::retrieveTypeAssertion(&globalObject, assertions);
+        auto type = JSC::retrieveTypeImportAttribute(&globalObject, assertions);
         RETURN_IF_EXCEPTION(scope, { });
 
         return type.value_or(JSC::ScriptFetchParameters::Type::JavaScript);

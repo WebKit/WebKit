@@ -65,9 +65,8 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
         if (this._detailsSidebarPanelConstructors.length) {
             let showToolTip = WI.UIString("Show the details sidebar (%s)").format(WI.detailsSidebarKeyboardShortcut.displayName);
             let hideToolTip = WI.UIString("Hide the details sidebar (%s)").format(WI.detailsSidebarKeyboardShortcut.displayName);
-            let image = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "Images/ToggleLeftSidebar.svg" : "Images/ToggleRightSidebar.svg";
 
-            this._showDetailsSidebarItem = new WI.ActivateButtonNavigationItem("toggle-details-sidebar", showToolTip, hideToolTip, image, 16, 16);
+            this._showDetailsSidebarItem = new WI.ActivateButtonNavigationItem("toggle-details-sidebar", showToolTip, hideToolTip, "Images/ToggleRightSidebar.svg", 16, 16);
             this._showDetailsSidebarItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.toggleDetailsSidebar, this);
             this._showDetailsSidebarItem.activated = !WI.detailsSidebar.collapsed;
             this._showDetailsSidebarItem.enabled = false;
@@ -75,7 +74,8 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
 
             this._contentBrowser.navigationBar.addNavigationItem(new WI.DividerNavigationItem);
             this._contentBrowser.navigationBar.addNavigationItem(this._showDetailsSidebarItem);
-
+            
+            WI.detailsSidebar.addEventListener(WI.Sidebar.Event.PositionDidChange, this._detailsSidebarPositionDidChange, this);
             WI.detailsSidebar.addEventListener(WI.Sidebar.Event.CollapsedStateDidChange, this._detailsSidebarCollapsedStateDidChange, this);
             WI.detailsSidebar.addEventListener(WI.Sidebar.Event.SidebarPanelSelected, this._detailsSidebarPanelSelected, this);
         }
@@ -238,6 +238,16 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
      }
 
     // Private
+    
+    _detailsSidebarPositionDidChange()
+    {
+        if (WI.layoutMode === WI.LayoutMode.Narrow)
+            this._showDetailsSidebarItem.image = "Images/ToggleBottomSidebar.svg";
+        else if (WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL)
+            this._showDetailsSidebarItem.image = "Images/ToggleLeftSidebar.svg";
+        else
+            this._showDetailsSidebarItem.image = "Images/ToggleRightSidebar.svg";
+    }
 
     _navigationSidebarCollapsedStateDidChange(event)
     {

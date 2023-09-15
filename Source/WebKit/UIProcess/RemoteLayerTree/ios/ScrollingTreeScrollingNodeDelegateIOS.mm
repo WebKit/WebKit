@@ -46,10 +46,6 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/SetForScope.h>
 
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-#import <WebCore/WebCoreCALayerExtras.h>
-#endif
-
 @implementation WKScrollingNodeScrollViewDelegate
 
 - (instancetype)initWithScrollingTreeNodeDelegate:(WebKit::ScrollingTreeScrollingNodeDelegateIOS*)delegate
@@ -222,12 +218,8 @@ void ScrollingTreeScrollingNodeDelegateIOS::resetScrollViewDelegate()
 
 void ScrollingTreeScrollingNodeDelegateIOS::commitStateBeforeChildren(const ScrollingStateScrollingNode& scrollingStateNode)
 {
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer)) {
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer))
         m_scrollLayer = static_cast<CALayer*>(scrollingStateNode.scrollContainerLayer());
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-        m_interactionRegionsLayer = static_cast<CALayer*>(scrollingStateNode.interactionRegionsLayer());
-#endif
-    }
 }
 
 void ScrollingTreeScrollingNodeDelegateIOS::updateScrollViewForOverscrollBehavior(UIScrollView *scrollView, const WebCore::OverscrollBehavior horizontalOverscrollBehavior, WebCore::OverscrollBehavior verticalOverscrollBehavior, AllowOverscrollToPreventScrollPropagation allowPropogation)
@@ -356,10 +348,6 @@ void ScrollingTreeScrollingNodeDelegateIOS::repositionScrollingLayers()
 
     [scrollView() setContentOffset:scrollingNode().currentScrollOffset()];
     END_BLOCK_OBJC_EXCEPTIONS
-
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    [m_interactionRegionsLayer _web_setLayerBoundsOrigin:scrollingNode().currentScrollOffset()];
-#endif
 }
 
 void ScrollingTreeScrollingNodeDelegateIOS::scrollWillStart() const

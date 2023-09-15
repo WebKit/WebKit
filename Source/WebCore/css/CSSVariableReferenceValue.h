@@ -29,7 +29,6 @@
 
 #pragma once
 
-#include "CSSParserContext.h"
 #include "CSSValue.h"
 #include "CSSValueKeywords.h"
 
@@ -38,21 +37,27 @@ namespace WebCore {
 class CSSParserToken;
 class CSSParserTokenRange;
 class CSSVariableData;
+struct CSSParserContext;
 
 namespace Style {
 class BuilderState;
 }
 
+enum CSSPropertyID : uint16_t;
+
 class CSSVariableReferenceValue : public CSSValue {
 public:
     static Ref<CSSVariableReferenceValue> create(const CSSParserTokenRange&, const CSSParserContext&);
-    static Ref<CSSVariableReferenceValue> create(Ref<CSSVariableData>&&, const CSSParserContext& = strictCSSParserContext());
+    static Ref<CSSVariableReferenceValue> create(Ref<CSSVariableData>&&);
 
     bool equals(const CSSVariableReferenceValue&) const;
     String customCSSText() const;
 
     RefPtr<CSSVariableData> resolveVariableReferences(Style::BuilderState&) const;
-    const CSSParserContext& context() const { return m_context; }
+    const CSSParserContext& context() const;
+
+    RefPtr<CSSValue> resolveSingleValue(Style::BuilderState&, CSSPropertyID) const;
+    RefPtr<CSSValue> resolveSubstitutionValue(Style::BuilderState&, CSSPropertyID, CSSPropertyID shorthandID) const;
 
     // The maximum number of tokens that may be produced by a var() reference or var() fallback value.
     // https://drafts.csswg.org/css-variables/#long-variables
@@ -61,16 +66,37 @@ public:
     const CSSVariableData& data() const { return m_data.get(); }
 
 private:
-    explicit CSSVariableReferenceValue(Ref<CSSVariableData>&&, const CSSParserContext&);
+    explicit CSSVariableReferenceValue(Ref<CSSVariableData>&&);
 
     std::optional<Vector<CSSParserToken>> resolveTokenRange(CSSParserTokenRange, Style::BuilderState&) const;
     bool resolveVariableReference(CSSParserTokenRange, CSSValueID, Vector<CSSParserToken>&, Style::BuilderState&) const;
     enum class FallbackResult : uint8_t { None, Valid, Invalid };
     std::pair<FallbackResult, Vector<CSSParserToken>> resolveVariableFallback(const AtomString& variableName, CSSParserTokenRange, CSSValueID functionId, Style::BuilderState&) const;
 
+    void cacheSimpleReference();
+    RefPtr<CSSVariableData> tryResolveSimpleReference(Style::BuilderState&) const;
+
+    template<typename ParseFunction> RefPtr<CSSValue> resolveAndCacheValue(Style::BuilderState&, CSSPropertyID, CSSPropertyID shorthandID, ParseFunction&&) const;
+
     Ref<CSSVariableData> m_data;
     mutable String m_stringValue;
-    const CSSParserContext m_context;
+
+    // For quicky resolving simple var(--foo) values.
+    struct SimpleReference {
+        AtomString name;
+        CSSValueID functionId;
+    };
+    std::optional<SimpleReference> m_simpleReference;
+
+    struct ResolvedValue {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+        RefPtr<CSSValue> value;
+        CSSPropertyID propertyID;
+        CSSPropertyID shorthandID;
+        RefPtr<CSSVariableData> dependencyData;
+    };
+    mutable std::unique_ptr<ResolvedValue> m_cachedResolvedValue;
 };
 
 } // namespace WebCore

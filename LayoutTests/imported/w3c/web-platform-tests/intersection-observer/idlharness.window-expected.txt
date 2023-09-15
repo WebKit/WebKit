@@ -22,7 +22,7 @@ PASS IntersectionObserver must be primary interface of observer
 PASS Stringification of observer
 PASS IntersectionObserver interface: observer must inherit property "root" with the proper type
 PASS IntersectionObserver interface: observer must inherit property "rootMargin" with the proper type
-FAIL IntersectionObserver interface: observer must inherit property "thresholds" with the proper type assert_true: Value should be frozen expected true got false
+PASS IntersectionObserver interface: observer must inherit property "thresholds" with the proper type
 PASS IntersectionObserver interface: observer must inherit property "observe(Element)" with the proper type
 PASS IntersectionObserver interface: calling observe(Element) on observer with too few arguments must throw TypeError
 PASS IntersectionObserver interface: observer must inherit property "unobserve(Element)" with the proper type

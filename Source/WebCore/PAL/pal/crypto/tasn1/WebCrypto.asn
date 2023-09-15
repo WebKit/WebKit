@@ -31,6 +31,8 @@ PrivateKeyAlgorithmIdentifier ::= AlgorithmIdentifier
 
 PrivateKey ::= OCTET STRING
 
+CurvePrivateKey ::= OCTET STRING
+
 Attributes ::= SET OF Attribute
 
 Attribute ::= SEQUENCE {

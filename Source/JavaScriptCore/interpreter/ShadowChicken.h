@@ -151,16 +151,7 @@ public:
         {
         }
         
-        bool operator==(const Frame& other) const
-        {
-            return callee == other.callee
-                && frame == other.frame
-                && thisValue == other.thisValue
-                && scope == other.scope
-                && codeBlock == other.codeBlock
-                && callSiteIndex.bits() == other.callSiteIndex.bits()
-                && isTailDeleted == other.isTailDeleted;
-        }
+        friend bool operator==(const Frame&, const Frame&) = default;
         
         void dump(PrintStream&) const;
         

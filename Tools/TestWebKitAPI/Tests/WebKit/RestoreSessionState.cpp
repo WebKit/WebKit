@@ -37,6 +37,7 @@
 namespace TestWebKitAPI {
 
 static bool didFinishLoad;
+static bool didDecideNavigationPolicy;
 
 static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*)
 {
@@ -48,6 +49,16 @@ static void decidePolicyForNavigationAction(WKPageRef page, WKFrameRef frame, WK
     WKRetainPtr<WKFramePolicyListenerRef> retainedListener(listener);
     RunLoop::main().dispatch([retainedListener = WTFMove(retainedListener)] {
         WKFramePolicyListenerUse(retainedListener.get());
+    });
+}
+
+static void decidePolicyForNavigationActionIgnore(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKFrameRef originatingFrame, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
+{
+    WKRetainPtr<WKFramePolicyListenerRef> retainedListener(listener);
+    RunLoop::main().dispatch([retainedListener = WTFMove(retainedListener), page = WTFMove(page)] {
+        EXPECT_NOT_NULL(adoptWK(WKPageCopyPendingAPIRequestURL(page)));
+        WKFramePolicyListenerIgnore(retainedListener.get());
+        didDecideNavigationPolicy = true;
     });
 }
 
@@ -155,7 +166,27 @@ TEST(WebKit, PendingURLAfterRestoreSessionState)
     auto expectedURL = adoptWK(Util::createURLForResource("simple-form", "html"));
     EXPECT_WK_STREQ(adoptWK(WKURLCopyString(expectedURL.get())).get(), adoptWK(WKURLCopyString(pendingURL.get())).get());
 }
-    
+
+TEST(WebKit, ClearedPendingURLAfterCancelingRestoreSessionState)
+{
+    auto context = adoptWK(WKContextCreateWithConfiguration(nullptr));
+    PlatformWebView webView(context.get());
+    setPageLoaderClient(webView.page());
+
+    WKPagePolicyClientV1 policyClient;
+    memset(&policyClient, 0, sizeof(policyClient));
+    policyClient.base.version = 1;
+    policyClient.decidePolicyForNavigationAction = decidePolicyForNavigationActionIgnore;
+    WKPageSetPagePolicyClient(webView.page(), &policyClient.base);
+
+    auto data = createSessionStateData(context.get());
+    EXPECT_NOT_NULL(data);
+    auto sessionState = adoptWK(WKSessionStateCreateFromData(data.get()));
+    WKPageRestoreFromSessionState(webView.page(), sessionState.get());
+    Util::run(&didDecideNavigationPolicy);
+    didDecideNavigationPolicy = false;
+    EXPECT_NULL(adoptWK(WKPageCopyPendingAPIRequestURL(webView.page())));
+}
 } // namespace TestWebKitAPI
 
 #endif

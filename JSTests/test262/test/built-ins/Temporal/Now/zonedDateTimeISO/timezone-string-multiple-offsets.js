@@ -3,11 +3,11 @@
 
 /*---
 esid: sec-temporal.now.zoneddatetimeiso
-description: Time zone strings with UTC offset fractional part are not confused with time fractional part
+description: Time zone parsing from ISO strings uses the bracketed offset, not the ISO string offset
 features: [Temporal]
 ---*/
 
-const timeZone = "2021-08-19T17:30:45.123456789+01:46[+01:45:30.987654321]";
+const timeZone = "2021-08-19T17:30:45.123456789-12:12[+01:46]";
 
 const result = Temporal.Now.zonedDateTimeISO(timeZone);
-assert.sameValue(result.timeZoneId, "+01:45:30.987654321", "Time zone string determined from bracket name");
+assert.sameValue(result.timeZoneId, "+01:46", "Time zone string determined from bracket name");

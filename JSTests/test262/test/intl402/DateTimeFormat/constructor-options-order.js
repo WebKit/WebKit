@@ -2,26 +2,21 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-initializedatetimeformat
+esid: sec-createdatetimeformat
 description: Checks the order of getting options for the DateTimeFormat constructor.
 includes: [compareArray.js]
 ---*/
 
 const expected = [
-  // ToDateTimeOptions step 4.
-  "weekday", "year", "month", "day",
-  // ToDateTimeOptions step 5.
-  "hour", "minute", "second",
-
-  // InitializeDateTimeFormat step 4.
+  // CreateDateTimeFormat step 4.
   "localeMatcher",
-  // InitializeDateTimeFormat step 6.
+  // CreateDateTimeFormat step 12.
   "hour12",
-  // InitializeDateTimeFormat step 7.
+  // CreateDateTimeFormat step 13.
   "hourCycle",
-  // InitializeDateTimeFormat step 17.
+  // CreateDateTimeFormat step 29.
   "timeZone",
-  // InitializeDateTimeFormat step 22.
+  // CreateDateTimeFormat step 36.
   "weekday",
   "era",
   "year",
@@ -31,7 +26,7 @@ const expected = [
   "minute",
   "second",
   "timeZoneName",
-  // InitializeDateTimeFormat step 25.
+  // CreateDateTimeFormat step 37.
   "formatMatcher",
 ];
 

@@ -26,5 +26,5 @@
 #import "common/platform.h"
 
 #if ANGLE_ENABLE_EAGL
-#    import "libANGLE/renderer/gl/eagl/FunctionsEAGL.mm"
+#import "libANGLE/renderer/gl/eagl/FunctionsEAGL.mm"
 #endif

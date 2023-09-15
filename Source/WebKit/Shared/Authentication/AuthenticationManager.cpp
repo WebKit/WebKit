@@ -57,7 +57,14 @@ const char* AuthenticationManager::supplementName()
 AuthenticationManager::AuthenticationManager(NetworkProcess& process)
     : m_process(process)
 {
-    m_process.addMessageReceiver(Messages::AuthenticationManager::messageReceiverName(), *this);
+    process.addMessageReceiver(Messages::AuthenticationManager::messageReceiverName(), *this);
+}
+
+AuthenticationManager::~AuthenticationManager() = default;
+
+inline CheckedRef<NetworkProcess> AuthenticationManager::checkedProcess() const
+{
+    return m_process;
 }
 
 AuthenticationChallengeIdentifier AuthenticationManager::addChallengeToChallengeMap(UniqueRef<Challenge>&& challenge)
@@ -117,7 +124,7 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(PAL::SessionID ses
     std::optional<SecurityOriginData> topOriginData;
     if (topOrigin)
         topOriginData = *topOrigin;
-    m_process.send(Messages::NetworkProcessProxy::DidReceiveAuthenticationChallenge(sessionID, pageID, topOriginData, authenticationChallenge, negotiatedLegacyTLS == NegotiatedLegacyTLS::Yes, challengeID));
+    checkedProcess()->send(Messages::NetworkProcessProxy::DidReceiveAuthenticationChallenge(sessionID, pageID, topOriginData, authenticationChallenge, negotiatedLegacyTLS == NegotiatedLegacyTLS::Yes, challengeID));
 }
 
 void AuthenticationManager::didReceiveAuthenticationChallenge(IPC::MessageSender& download, const WebCore::AuthenticationChallenge& authenticationChallenge, ChallengeCompletionHandler&& completionHandler)
@@ -145,7 +152,7 @@ void AuthenticationManager::completeAuthenticationChallenge(AuthenticationChalle
 
 void AuthenticationManager::negotiatedLegacyTLS(WebPageProxyIdentifier pageID) const
 {
-    m_process.send(Messages::NetworkProcessProxy::NegotiatedLegacyTLS(pageID));
+    checkedProcess()->send(Messages::NetworkProcessProxy::NegotiatedLegacyTLS(pageID));
 }
 
 } // namespace WebKit

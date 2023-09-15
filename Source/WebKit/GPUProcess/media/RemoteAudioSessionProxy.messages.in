@@ -31,8 +31,8 @@ messages -> RemoteAudioSessionProxy NotRefCounted {
     TryToSetActive(bool active) -> (bool suceeded) Synchronous
     SetIsPlayingToBluetoothOverride(std::optional<bool> value)
 
-    TriggerBeginInterruptionForTesting()
-    TriggerEndInterruptionForTesting()
+    [EnabledIf='allowTestOnlyIPC()'] TriggerBeginInterruptionForTesting()
+    [EnabledIf='allowTestOnlyIPC()'] TriggerEndInterruptionForTesting()
 
     BeginInterruptionRemote()
     EndInterruptionRemote(WebCore::AudioSession::MayResume flags)

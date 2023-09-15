@@ -102,7 +102,7 @@ void AuthenticatorCoordinator::create(const Document& document, const PublicKeyC
     using namespace AuthenticatorCoordinatorInternal;
 
     const auto& callerOrigin = document.securityOrigin();
-    auto* frame = document.frame();
+    RefPtr frame = document.frame();
     ASSERT(frame);
     // The following implements https://www.w3.org/TR/webauthn-2/#createCredential as of 28 June 2022.
     // Step 1, 3, 16 are handled by the caller.
@@ -200,7 +200,7 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
     using namespace AuthenticatorCoordinatorInternal;
 
     auto& callerOrigin = document.securityOrigin();
-    auto* frame = document.frame();
+    RefPtr frame = document.frame();
     const auto& options = requestOptions.publicKey.value();
     ASSERT(frame);
     // The following implements https://www.w3.org/TR/webauthn/#createCredential as of 5 December 2017.

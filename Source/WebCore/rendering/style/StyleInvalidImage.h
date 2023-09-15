@@ -39,6 +39,7 @@ public:
 
     bool operator==(const StyleImage&) const final { return false; }
     bool equals(const StyleInvalidImage&) const { return false; }
+    bool canRender(const RenderElement*, float) const final { return false; }
 
     static constexpr bool isFixedSize = true;
 
@@ -55,7 +56,7 @@ private:
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
     bool knownToBeOpaque(const RenderElement&) const { return false; }
 
-    RefPtr<Image> image(const RenderElement*, const FloatSize&) const final;
+    RefPtr<Image> image(const RenderElement*, const FloatSize&, bool isForFirstLine) const final;
     Ref<CSSValue> computedStyleValue(const RenderStyle&) const;
 };
 

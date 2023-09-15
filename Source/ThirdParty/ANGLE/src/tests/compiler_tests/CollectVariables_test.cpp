@@ -11,7 +11,7 @@
 
 #include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
-#include "compiler/translator/TranslatorGLSL.h"
+#include "compiler/translator/glsl/TranslatorGLSL.h"
 #include "gtest/gtest.h"
 
 using namespace sh;

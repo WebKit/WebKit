@@ -117,7 +117,6 @@ NetworkProcess/NetworkSocketChannel.cpp
 NetworkProcess/PingLoad.cpp
 NetworkProcess/PreconnectTask.cpp
 
-NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp
 NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp
 
 NetworkProcess/Cookies/WebCookieManager.cpp
@@ -221,7 +220,6 @@ Shared/IPCConnectionTester.cpp
 Shared/IPCStreamTester.cpp
 Shared/IPCTester.cpp
 Shared/IPCTesterReceiver.cpp
-Shared/LayerTreeContext.cpp
 Shared/LoadParameters.cpp
 Shared/PersistencyUtils.cpp
 Shared/PrintInfo.cpp
@@ -237,8 +235,6 @@ Shared/ShareableResource.cpp
 Shared/SharedStringHashStore.cpp
 Shared/SharedStringHashTableReadOnly.cpp
 Shared/SharedStringHashTable.cpp
-Shared/TouchBarMenuData.cpp
-Shared/TouchBarMenuItemData.cpp
 Shared/URLSchemeTaskParameters.cpp
 Shared/UserData.cpp
 Shared/UserContentControllerParameters.cpp
@@ -512,7 +508,6 @@ UIProcess/API/C/WKInspector.cpp
 UIProcess/API/C/WKKeyValueStorageManager.cpp
 UIProcess/API/C/WKMediaKeySystemPermissionCallback.cpp
 UIProcess/API/C/WKMessageListener.cpp
-UIProcess/API/C/WKMockDisplay.cpp
 UIProcess/API/C/WKMockMediaDevice.cpp
 UIProcess/API/C/WKNavigationActionRef.cpp
 UIProcess/API/C/WKNavigationDataRef.cpp
@@ -554,6 +549,7 @@ UIProcess/Automation/WebAutomationSession.cpp @no-unify
 UIProcess/Downloads/DownloadProxy.cpp
 UIProcess/Downloads/DownloadProxyMap.cpp
 
+UIProcess/Extensions/WebExtensionAlarm.cpp
 UIProcess/Extensions/WebExtensionContext.cpp
 UIProcess/Extensions/WebExtensionController.cpp
 UIProcess/Extensions/WebExtensionControllerConfiguration.cpp
@@ -851,6 +847,7 @@ WebProcess/WebPage/WebCookieJar.cpp
 WebProcess/WebPage/WebDocumentLoader.cpp
 WebProcess/WebPage/WebFoundTextRangeController.cpp
 WebProcess/WebPage/WebFrame.cpp
+WebProcess/WebPage/WebHistoryItemClient.cpp
 WebProcess/WebPage/WebOpenPanelResultListener.cpp
 WebProcess/WebPage/WebPage.cpp @no-unify
 WebProcess/WebPage/WebPageGroupProxy.cpp
@@ -880,6 +877,7 @@ RemoteGraphicsContextGLMessageReceiver.cpp
 RemoteGraphicsContextGLProxyMessageReceiver.cpp
 PlatformXRSystemMessageReceiver.cpp
 PlatformXRSystemProxyMessageReceiver.cpp
+PushClientConnectionMessageReceiver.cpp
 RemoteAdapterMessageReceiver.cpp
 RemoteBarcodeDetectorMessageReceiver.cpp
 RemoteBindGroupMessageReceiver.cpp

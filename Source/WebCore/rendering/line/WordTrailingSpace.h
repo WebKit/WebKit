@@ -40,7 +40,7 @@ struct WordTrailingSpace {
             m_state = WordTrailingSpaceState::Initialized;
     }
 
-    std::optional<float> width(HashSet<const Font*>& fallbackFonts)
+    std::optional<float> width(WeakHashSet<const Font>& fallbackFonts)
     {
         if (m_state == WordTrailingSpaceState::Initialized)
             return m_width;

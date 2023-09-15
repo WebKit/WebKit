@@ -458,10 +458,6 @@ TEST_P(PointSpritesTest, PointSizeAboveMaxIsClamped)
     // framebuffer. http://anglebug.com/2113
     ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL());
 
-    // If the center of the point ends up being outside the renderable surface, no point gets
-    // rendered at all on AMD. http://anglebug.com/2113
-    ANGLE_SKIP_TEST_IF(IsAMD() && IsVulkan());
-
     // TODO(anglebug.com/5491)
     ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
@@ -478,13 +474,27 @@ TEST_P(PointSpritesTest, PointSizeAboveMaxIsClamped)
         return;
     }
 
+    // Create a renderbuffer that has height and width equal to the max point size.
+    GLRenderbuffer renderbuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, static_cast<GLsizei>(maxPointSize),
+                          static_cast<GLsizei>(maxPointSize));
+    // Switch the render target from the default window surface to the newly created renderbuffer so
+    // that the test can handle implementations with a very large max point size.
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderbuffer);
+
+    glViewport(0, 0, maxPointSize, maxPointSize);
+    ASSERT_GL_NO_ERROR();
+
     constexpr char kVS[] =
-        "attribute vec4 vPosition;\n"
+        "attribute vec2 vPosition;\n"
         "uniform float uPointSize;\n"
         "void main()\n"
         "{\n"
         "    gl_PointSize = uPointSize;\n"
-        "    gl_Position  = vPosition;\n"
+        "    gl_Position  = vec4(vPosition, 0, 1);\n"
         "}\n";
     ANGLE_GL_PROGRAM(program, kVS, essl1_shaders::fs::Red());
     glUseProgram(program);
@@ -496,10 +506,10 @@ TEST_P(PointSpritesTest, PointSizeAboveMaxIsClamped)
     glUniform1f(pointSizeLoc, testPointSize);
     ASSERT_GL_NO_ERROR();
 
-    // The point will be a square centered at gl_Position. We'll offset it from the center of the
-    // viewport on the x axis so that the left edge of the point square is at the center of the
-    // viewport.
-    GLfloat pointXPosition = (0.5f * maxPointSize) * (2.0f / (GLfloat)getWindowWidth());
+    // The point will be a square centered at gl_Position. As the framebuffer is the same size as
+    // the square, setting the center of the point on the right edge of the viewport will result in
+    // the left edge of the point square to be at the center of the viewport.
+    GLfloat pointXPosition = 1;
 
     GLBuffer vertexBuffer;
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.get());
@@ -510,17 +520,19 @@ TEST_P(PointSpritesTest, PointSizeAboveMaxIsClamped)
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-    glClearColor(0, 0, 0, 0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // Clear the framebuffer to green
+    glClearColor(0, 1, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
 
+    // Draw the red point
     glDrawArrays(GL_POINTS, 0, 1);
     ASSERT_GL_NO_ERROR();
 
-    // Pixel on the right of the viewport center should be covered by the point.
-    EXPECT_PIXEL_NEAR(getWindowWidth() / 2 + 2, getWindowHeight() / 2, 255, 0, 0, 255, 4);
+    // Pixels to the right of the framebuffer center should be covered by the point.
+    EXPECT_PIXEL_NEAR(maxPointSize / 2 + 2, maxPointSize / 2, 255, 0, 0, 255, 1);
 
-    // Pixel on the left of the viewport center should not be covered by the point.
-    EXPECT_PIXEL_NEAR(getWindowWidth() / 2 - 2, getWindowHeight() / 2, 0, 0, 0, 0, 4);
+    // Pixels to the left of the framebuffer center should not be covered by the point.
+    EXPECT_PIXEL_NEAR(maxPointSize / 2 - 2, maxPointSize / 2, 0, 255, 0, 255, 1);
 }
 
 // Use this to select which configurations (e.g. which renderer, which GLES

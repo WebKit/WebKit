@@ -1,12 +1,12 @@
 
-FAIL SharedArrayBuffer cloning via IndexedDB: basic case assert_throws: function "() => {
-      store.put({ key: 1, property: new SharedArrayBuffer() });
-    }" threw object "ReferenceError: Can't find variable: SharedArrayBuffer" that is not a DOMException DataCloneError: property "code" is equal to undefined, expected 25
-FAIL SharedArrayBuffer cloning via the IndexedDB: is interleaved correctly assert_throws: function "() => {
+FAIL SharedArrayBuffer cloning via IndexedDB: basic case assert_throws_dom: function "() => {
+      store.put({ key: 1, property: sab });
+    }" did not throw
+FAIL SharedArrayBuffer cloning via the IndexedDB: is interleaved correctly assert_throws_dom: function "() => {
       store.put({ key: 1, property: [
         { get x() { getter1Called = true; return 5; } },
-        new SharedArrayBuffer(),
+        sab,
         { get x() { getter2Called = true; return 5; } }
       ]});
-    }" threw object "ReferenceError: Can't find variable: SharedArrayBuffer" that is not a DOMException DataCloneError: property "code" is equal to undefined, expected 25
+    }" did not throw
 

@@ -645,7 +645,7 @@
 		CDA62AE2125F87C2007FD118 /* WebFullScreenController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA62AE0125F87C2007FD118 /* WebFullScreenController.h */; };
 		CEDA12DB152CBE6800D9E08D /* WebAlternativeTextClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEDA12D9152CBE6800D9E08D /* WebAlternativeTextClient.mm */; };
 		CEDA12DC152CBE6800D9E08D /* WebAlternativeTextClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CEDA12DA152CBE6800D9E08D /* WebAlternativeTextClient.h */; };
-		DD7AF5D1298C53160059E87E /* migrate-headers.py in Headers */ = {isa = PBXBuildFile; fileRef = DD7AF5D0298C52FC0059E87E /* migrate-headers.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		DD7AF5D1298C53160059E87E /* xcfilelist-copy.py in Headers */ = {isa = PBXBuildFile; fileRef = DD7AF5D0298C52FC0059E87E /* xcfilelist-copy.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD89682009AA87240097E7F0 /* WebElementDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = DD89681E09AA87240097E7F0 /* WebElementDictionary.h */; };
 		DD89682109AA87240097E7F0 /* WebElementDictionary.mm in Sources */ = {isa = PBXBuildFile; fileRef = DD89681F09AA87240097E7F0 /* WebElementDictionary.mm */; };
 		E13E782C1E5A7365001849D1 /* WebCreateFragmentInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = E13E782B1E5A7365001849D1 /* WebCreateFragmentInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -659,6 +659,8 @@
 		F4F665C21DD67672007714B4 /* WebAutocapitalizeTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = F4F665C11DD67672007714B4 /* WebAutocapitalizeTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F834AAD70E64B1C700E2737C /* WebTextIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = F834AAD50E64B1C700E2737C /* WebTextIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F834AAD80E64B1C700E2737C /* WebTextIterator.mm in Sources */ = {isa = PBXBuildFile; fileRef = F834AAD60E64B1C700E2737C /* WebTextIterator.mm */; };
+		FA96E4B02AAAFA920090C5A3 /* LegacyHistoryItemClient.h in Headers */ = {isa = PBXBuildFile; fileRef = FA96E4AE2AAAFA920090C5A3 /* LegacyHistoryItemClient.h */; };
+		FA96E4B12AAAFA920090C5A3 /* LegacyHistoryItemClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = FA96E4AF2AAAFA920090C5A3 /* LegacyHistoryItemClient.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -1459,7 +1461,7 @@
 		DD2170FC29A58B300057233A /* MigratedHeaders-input.xcfilelist */ = {isa = PBXFileReference; lastKnownFileType = text.xcfilelist; path = "MigratedHeaders-input.xcfilelist"; sourceTree = "<group>"; };
 		DD2170FD29A58B300057233A /* MigratedHeaders-output.xcfilelist */ = {isa = PBXFileReference; lastKnownFileType = text.xcfilelist; path = "MigratedHeaders-output.xcfilelist"; sourceTree = "<group>"; };
 		DD6502D72A26BD730018CF04 /* ExtraPrivateSymbolsForTAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ExtraPrivateSymbolsForTAPI.h; path = mac/ExtraPrivateSymbolsForTAPI.h; sourceTree = "<group>"; };
-		DD7AF5D0298C52FC0059E87E /* migrate-headers.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = "migrate-headers.py"; path = "scripts/migrate-headers.py"; sourceTree = "<group>"; };
+		DD7AF5D0298C52FC0059E87E /* xcfilelist-copy.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = "xcfilelist-copy.py"; path = "scripts/xcfilelist-copy.py"; sourceTree = "<group>"; };
 		DD89681E09AA87240097E7F0 /* WebElementDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebElementDictionary.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		DD89681F09AA87240097E7F0 /* WebElementDictionary.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebElementDictionary.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		DDF74CA627EED8500011F633 /* migrate-header-rule */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = "migrate-header-rule"; path = "scripts/migrate-header-rule"; sourceTree = "<group>"; };
@@ -1509,6 +1511,8 @@
 		F834AAD60E64B1C700E2737C /* WebTextIterator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebTextIterator.mm; sourceTree = "<group>"; };
 		F8CA15B5029A39D901000122 /* WebAuthenticationPanel.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebAuthenticationPanel.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F8CA15B6029A39D901000122 /* WebAuthenticationPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebAuthenticationPanel.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		FA96E4AE2AAAFA920090C5A3 /* LegacyHistoryItemClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyHistoryItemClient.h; sourceTree = "<group>"; };
+		FA96E4AF2AAAFA920090C5A3 /* LegacyHistoryItemClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LegacyHistoryItemClient.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1553,7 +1557,7 @@
 				7C671116251C2459004F4536 /* generate-unified-sources.sh */,
 				7C671117251C2459004F4536 /* generate-webkitversion.pl */,
 				DDF74CA627EED8500011F633 /* migrate-header-rule */,
-				DD7AF5D0298C52FC0059E87E /* migrate-headers.py */,
+				DD7AF5D0298C52FC0059E87E /* xcfilelist-copy.py */,
 				7C671118251C2459004F4536 /* postprocess-header-rule */,
 				7C671119251C2483004F4536 /* check-xcfilelists.sh */,
 				6508A4A7099B375F00BCBF45 /* Default Delegates */,
@@ -2493,6 +2497,8 @@
 				A10C1D4418202FFB0036883A /* ios */,
 				B82958D1132707D0000D0E79 /* CorrectionPanel.h */,
 				B82958D2132707D0000D0E79 /* CorrectionPanel.mm */,
+				FA96E4AE2AAAFA920090C5A3 /* LegacyHistoryItemClient.h */,
+				FA96E4AF2AAAFA920090C5A3 /* LegacyHistoryItemClient.mm */,
 				5CB05C7F29CA0E7000CC1AA0 /* LegacySocketProvider.cpp */,
 				5CB05C7E29CA0E7000CC1AA0 /* LegacySocketProvider.h */,
 				5CA46E7721F1451D00CE86B4 /* NetworkStorageSessionMap.cpp */,
@@ -2829,8 +2835,8 @@
 				93D437991D57ABEF00AB85EA /* ExceptionHandlers.h in Headers */,
 				1A60519417502A5D00BC62F5 /* HistoryPropertyList.h in Headers */,
 				9364006F23996E81001E185E /* InProcessIDBServer.h in Headers */,
+				FA96E4B02AAAFA920090C5A3 /* LegacyHistoryItemClient.h in Headers */,
 				5CB05C8229CA0E7000CC1AA0 /* LegacySocketProvider.h in Headers */,
-				DD7AF5D1298C53160059E87E /* migrate-headers.py in Headers */,
 				5CA46E7821F1451D00CE86B4 /* NetworkStorageSessionMap.h in Headers */,
 				E1531BD82187B954002E3F81 /* NSURLDownloadSPI.h in Headers */,
 				93D4379B1D57ABEF00AB85EA /* ObjCEventListener.h in Headers */,
@@ -3071,6 +3077,7 @@
 				A10C1D761820300E0036883A /* WebVisiblePosition.h in Headers */,
 				A10C1D781820300E0036883A /* WebVisiblePositionInternal.h in Headers */,
 				1AC7176F1A26568A002E3115 /* WebVisitedLinkStore.h in Headers */,
+				DD7AF5D1298C53160059E87E /* xcfilelist-copy.py in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3184,7 +3191,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nEXP_GENERATED=\"${SCRIPT_OUTPUT_FILE_0}\"\n\n[[ -z \"${EXP_GENERATED}\" ]] && exit 1\n\nif [[ \"${WK_PLATFORM_NAME}\" != \"macosx\" ]]; then\n    EXP_WEBKIT_PLATFORM=\"${SCRIPT_INPUT_FILE_2}\"\nelse\n    EXP_WEBKIT_PLATFORM=\"${SCRIPT_INPUT_FILE_1}\"\nfi\n\ncat \"${SCRIPT_INPUT_FILE_0}\" > \"${EXP_GENERATED}\"\ncat \"${EXP_WEBKIT_PLATFORM}\" >> \"${EXP_GENERATED}\"\n\nif [ \"${WK_PLATFORM_NAME}\" != \"macosx\" ]; then\n    echo >> \"${EXP_GENERATED}\"\n    echo \"# Reexported from migrated WebCore headers\" >> \"${EXP_GENERATED}\"\n    cat \"${SCRIPT_INPUT_FILE_3}\" >> \"${EXP_GENERATED}\"\nfi\n\nif [[ \"${WK_BUILD_FOR_TESTING}\" == \"YES\" ]]; then\n    cat \"${SCRIPT_INPUT_FILE_4}\" >> \"${EXP_GENERATED}\"\nfi\n";
+			shellScript = "set -e\nexec > \"${SCRIPT_OUTPUT_FILE_0}\"\n\ncat \"${SCRIPT_INPUT_FILE_0}\"\n\nif [[ \"${WK_PLATFORM_NAME}\" == \"macosx\" ]]; then\n    cat \"${SCRIPT_INPUT_FILE_1}\"\nelse\n    cat \"${SCRIPT_INPUT_FILE_2}\"\nfi\n\necho\necho \"# Reexported from migrated WebCore headers\"\ncat \"${SCRIPT_INPUT_FILE_3}\"\n\nif [[ \"${WK_BUILD_FOR_TESTING}\" == \"YES\" ]]; then\n    cat \"${SCRIPT_INPUT_FILE_4}\"\nfi\n";
 		};
 		3713F018142905B70036387F /* Check For Inappropriate Objective-C Class Names */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3196,13 +3203,15 @@
 			);
 			name = "Check For Inappropriate Objective-C Class Names";
 			outputPaths = (
+				"$(TARGET_TEMP_DIR)/check-for-inappropriate-objc-class-names.timestamp",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../Tools/Scripts/check-for-inappropriate-objc-class-names DOM Web _Web || exit $?\nfi";
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../Tools/Scripts/check-for-inappropriate-objc-class-names DOM Web _Web || exit $?\nfi\n";
 		};
 		532424B1254905FE00A6975B /* Check For Inappropriate Files In Framework */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -3217,7 +3226,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\n# For a while, these files were incorrectly included in the builds (see\n# https://bugs.webkit.org/show_bug.cgi?id=218268). Manually delete them\n# from anyone's build directory so that the check performed by\n# check-for-inappropriate-files-in-framework won't fail. This step can be\n# removed after a reasonable amount of time has passed and we can assume\n# everyone's performed a clean build by now.\n\nFRAMEWORK_DIR=\"${TARGET_BUILD_DIR}/${PRODUCT_NAME}.framework\"\nRESOURCES_DIR=\"${FRAMEWORK_DIR}/Resources\"\n\nrm -f \"${RESOURCES_DIR}/Sources.txt\"\nrm -f \"${RESOURCES_DIR}/SourcesCocoa.txt\"\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-files-in-framework ]; then\n    ../../Tools/Scripts/check-for-inappropriate-files-in-framework || exit $?\nfi\n\nexit 0\n";
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-files-in-framework ]; then\n    ../../Tools/Scripts/check-for-inappropriate-files-in-framework || exit $?\nfi\n\nexit 0\n";
 		};
 		537CF83A22EFBFB100C6EBB3 /* Check .xcfilelists */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3227,15 +3236,17 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/DerivedSources.make",
 			);
 			name = "Check .xcfilelists";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"$(TARGET_TEMP_DIR)/check-xcfilelists.timestamp",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "scripts/check-xcfilelists.sh\n";
+			shellScript = "scripts/check-xcfilelists.sh && touch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 		537CF84222EFC4E400C6EBB3 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3367,7 +3378,7 @@
 				"$(SRCROOT)/MigratedHeaders-input.xcfilelist",
 			);
 			inputPaths = (
-				"$(SRCROOT)/scripts/migrate-headers.py",
+				"$(SRCROOT)/scripts/xcfilelist-copy.py",
 				"$(SRCROOT)/scripts/migrate-header-rule",
 			);
 			name = "Migrate WebCore Headers and Generate Export List";
@@ -3393,6 +3404,7 @@
 				B82958D4132707D0000D0E79 /* CorrectionPanel.mm in Sources */,
 				1A60519317502A5D00BC62F5 /* HistoryPropertyList.mm in Sources */,
 				9364006E23996E81001E185E /* InProcessIDBServer.cpp in Sources */,
+				FA96E4B12AAAFA920090C5A3 /* LegacyHistoryItemClient.mm in Sources */,
 				A10C1D601820300E0036883A /* PopupMenuIOS.mm in Sources */,
 				5C40CD2122D8F9C000E9DAD5 /* PopupMenuMac.mm in Sources */,
 				A10C1D611820300E0036883A /* SearchPopupMenuIOS.cpp in Sources */,

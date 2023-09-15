@@ -5,6 +5,7 @@
 group("java_data") {
   data = [
     "current/bin/java",
+    "current/bin/java.chromium",
     "current/conf/",
     "current/jmods/",
     "current/lib/",

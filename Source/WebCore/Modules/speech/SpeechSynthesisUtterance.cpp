@@ -40,17 +40,21 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SpeechSynthesisUtterance);
     
 Ref<SpeechSynthesisUtterance> SpeechSynthesisUtterance::create(ScriptExecutionContext& context, const String& text)
 {
-    return adoptRef(*new SpeechSynthesisUtterance(context, text, { }));
+    auto utterance = adoptRef(*new SpeechSynthesisUtterance(context, text, { }));
+    utterance->suspendIfNeeded();
+    return utterance;
 }
 
 Ref<SpeechSynthesisUtterance> SpeechSynthesisUtterance::create(ScriptExecutionContext& context, const String& text, SpeechSynthesisUtterance::UtteranceCompletionHandler&& completion)
 {
-    return adoptRef(*new SpeechSynthesisUtterance(context, text, WTFMove(completion)));
+    auto utterance = adoptRef(*new SpeechSynthesisUtterance(context, text, WTFMove(completion)));
+    utterance->suspendIfNeeded();
+    return utterance;
 }
 
 SpeechSynthesisUtterance::SpeechSynthesisUtterance(ScriptExecutionContext& context, const String& text, UtteranceCompletionHandler&& completion)
-    : m_platformUtterance(PlatformSpeechSynthesisUtterance::create(*this))
-    , m_scriptExecutionContext(context)
+    : ActiveDOMObject(&context)
+    , m_platformUtterance(PlatformSpeechSynthesisUtterance::create(*this))
     , m_completionHandler(WTFMove(completion))
 {
     m_platformUtterance->setText(text);
@@ -99,6 +103,26 @@ void SpeechSynthesisUtterance::errorEventOccurred(const AtomString& type, Speech
     }
 
     dispatchEvent(SpeechSynthesisErrorEvent::create(type, { { this, 0, 0, static_cast<float>((MonotonicTime::now() - startTime()).seconds()), { } }, errorCode }));
+}
+
+void SpeechSynthesisUtterance::incrementActivityCountForEventDispatch()
+{
+    ++m_activityCountForEventDispatch;
+}
+
+void SpeechSynthesisUtterance::decrementActivityCountForEventDispatch()
+{
+    --m_activityCountForEventDispatch;
+}
+
+const char* SpeechSynthesisUtterance::activeDOMObjectName() const
+{
+    return "SpeechSynthesisUtterance";
+}
+
+bool SpeechSynthesisUtterance::virtualHasPendingActivity() const
+{
+    return m_activityCountForEventDispatch && hasEventListeners();
 }
 
 

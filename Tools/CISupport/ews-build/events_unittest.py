@@ -23,7 +23,7 @@
 
 import unittest
 
-from events import CommitClassifier
+from .events import CommitClassifier
 
 
 class TestCommitClassifier(unittest.TestCase):

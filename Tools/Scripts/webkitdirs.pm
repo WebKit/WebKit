@@ -131,6 +131,7 @@ BEGIN {
        &isInspectorFrontend
        &isJSCOnly
        &isLinux
+       &isMacCatalystWebKit
        &isPlayStation
        &isWPE
        &isWinCairo
@@ -193,12 +194,15 @@ BEGIN {
        &splitVersionString
        &tsanIsEnabled
        &ubsanIsEnabled
+       &usesCryptexPath
        &willUseAppleTVDeviceSDK
        &willUseAppleTVSimulatorSDK
        &willUseIOSDeviceSDK
        &willUseIOSSimulatorSDK
        &willUseWatchDeviceSDK
        &willUseWatchSimulatorSDK
+       &willUseVisionDeviceSDK
+       &willUseVisionSimulatorSDK
        &winVersion
        &wrapperPrefixIfNeeded
        &xcodeSDK
@@ -219,6 +223,7 @@ use constant {
     iOS         => "iOS",
     tvOS        => "tvOS",
     watchOS     => "watchOS",
+    visionOS    => "visionOS",
     Mac         => "Mac",
     MacCatalyst => "MacCatalyst",
     JSCOnly     => "JSCOnly",
@@ -725,6 +730,8 @@ sub argumentsForConfiguration()
     push(@args, '--tvos-simulator') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq 'appletvsimulator');
     push(@args, '--watchos-device') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq 'watchos');
     push(@args, '--watchos-simulator') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq 'watchsimulator');
+    push(@args, '--visionos-device') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq 'xros');
+    push(@args, '--visionos-simulator') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq 'xrsimulator');
     push(@args, '--maccatalyst') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq 'maccatalyst');
     push(@args, '--32-bit') if ($architecture eq "x86" and !isWin64());
     push(@args, '--64-bit') if (isWin64());
@@ -812,6 +819,8 @@ sub isValidXcodeSDKPlatformName($) {
         macosx
         watchos
         watchsimulator
+        xros
+        xrsimulator
         maccatalyst
     );
     return grep { $_ eq $name } @platforms;
@@ -872,6 +881,12 @@ sub determineXcodeSDKPlatformName {
     }
     if (checkForArgumentAndRemoveFromARGV("--watchos-simulator")) {
         $xcodeSDKPlatformName ||= "watchsimulator";
+    }
+    if (checkForArgumentAndRemoveFromARGV("--visionos-device")) {
+        $xcodeSDKPlatformName ||= "xros";
+    }
+    if (checkForArgumentAndRemoveFromARGV("--visionos-simulator")) {
+        $xcodeSDKPlatformName ||= "xrsimulator";
     }
     if (checkForArgumentAndRemoveFromARGV("--maccatalyst")) {
         $xcodeSDKPlatformName ||= "maccatalyst";
@@ -1608,6 +1623,8 @@ sub determinePortName()
             $portName = tvOS;
         } elsif (willUseWatchDeviceSDK() || willUseWatchSimulatorSDK()) {
             $portName = watchOS;
+        } elsif (willUseVisionDeviceSDK() || willUseVisionSimulatorSDK()) {
+            $portName = visionOS;
         } elsif (willUseMacCatalystSDK()) {
             $portName = MacCatalyst;
         } else {
@@ -1822,9 +1839,14 @@ sub isWatchOSWebKit()
     return portName() eq watchOS;
 }
 
+sub isVisionOSWebKit()
+{
+    return portName() eq visionOS;
+}
+
 sub isEmbeddedWebKit()
 {
-    return isIOSWebKit() || isTVOSWebKit() || isWatchOSWebKit();
+    return isIOSWebKit() || isTVOSWebKit() || isWatchOSWebKit() || isVisionOSWebKit;
 }
 
 sub isAppleWebKit()
@@ -1845,6 +1867,11 @@ sub isMacCatalystWebKit()
 sub isAppleCocoaWebKit()
 {
     return isAppleMacWebKit() || isEmbeddedWebKit() || isMacCatalystWebKit();
+}
+
+sub usesCryptexPath
+{
+    return isAppleMacWebKit() || isMacCatalystWebKit() || isIOSWebKit();
 }
 
 sub simulatorDeviceFromJSON
@@ -1925,6 +1952,16 @@ sub willUseWatchDeviceSDK()
 sub willUseWatchSimulatorSDK()
 {
     return xcodeSDKPlatformName() eq "watchsimulator";
+}
+
+sub willUseVisionDeviceSDK()
+{
+    return xcodeSDKPlatformName() eq "xros";
+}
+
+sub willUseVisionSimulatorSDK()
+{
+    return xcodeSDKPlatformName() eq "xrsimulator";
 }
 
 sub willUseMacCatalystSDK()
@@ -2628,7 +2665,6 @@ sub generateBuildSystemFromCMakeProject
     my @args;
     push @args, "-DPORT=\"$port\"";
     push @args, "-DCMAKE_INSTALL_PREFIX=\"$prefixPath\"" if $prefixPath;
-    push @args, "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON";
     if ($config =~ /release/i) {
         push @args, "-DCMAKE_BUILD_TYPE=Release";
     } elsif ($config =~ /debug/i) {

@@ -355,13 +355,24 @@ void SourceBufferPrivateRemote::setAppendWindowEnd(const MediaTime& appendWindow
     gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::SetAppendWindowEnd(appendWindowEnd), m_remoteSourceBufferIdentifier);
 }
 
-void SourceBufferPrivateRemote::seekToTime(const MediaTime& mediaTime)
+void SourceBufferPrivateRemote::computeSeekTime(const WebCore::SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
+{
+    auto gpuProcessConnection = m_gpuProcessConnection.get();
+    if (!isGPURunning()) {
+        completionHandler(MediaTime::invalidTime());
+        return;
+    }
+
+    gpuProcessConnection->connection().sendWithAsyncReply(Messages::RemoteSourceBufferProxy::ComputeSeekTime(target), WTFMove(completionHandler), m_remoteSourceBufferIdentifier);
+}
+
+void SourceBufferPrivateRemote::seekToTime(const MediaTime& time)
 {
     auto gpuProcessConnection = m_gpuProcessConnection.get();
     if (!isGPURunning())
         return;
 
-    gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::SeekToTime(mediaTime), m_remoteSourceBufferIdentifier);
+    gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::SeekToTime(time), m_remoteSourceBufferIdentifier);
 }
 
 void SourceBufferPrivateRemote::updateTrackIds(Vector<std::pair<AtomString, AtomString>>&& trackIdPairs)

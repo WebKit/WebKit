@@ -51,6 +51,8 @@ TEST(BlendStateExt, Init)
 
         ASSERT_EQ(blendStateExt.getUsesAdvancedBlendEquationMask().to_ulong(), 0u);
 
+        ASSERT_EQ(blendStateExt.getUsesExtendedBlendFactorMask().to_ulong(), 0u);
+
         ASSERT_EQ(blendStateExt.getSrcColorBits(), sourceColorAlpha[c]);
         ASSERT_EQ(blendStateExt.getSrcAlphaBits(), sourceColorAlpha[c]);
         ASSERT_EQ(blendStateExt.getDstColorBits(), 0u);

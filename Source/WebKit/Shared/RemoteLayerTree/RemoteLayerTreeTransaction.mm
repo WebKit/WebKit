@@ -219,8 +219,8 @@ static void dumpChangedLayers(TextStream& ts, const LayerPropertiesMap& changedL
             ts.dumpProperty("eventRegion", layerProperties.eventRegion);
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-        if (layerProperties.changedProperties & LayerChange::CoverageRectChanged)
-            ts.dumpProperty("coverageRect", layerProperties.coverageRect);
+        if (layerProperties.changedProperties & LayerChange::VisibleRectChanged)
+            ts.dumpProperty("visibleRect", layerProperties.visibleRect);
 #endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
         if (layerProperties.changedProperties & LayerChange::SeparatedChanged)

@@ -98,8 +98,6 @@ public:
     void visit(AST::BreakStatement&) override;
     void visit(AST::ContinueStatement&) override;
 
-    void visit(AST::TypeName&) override;
-
     void visit(AST::Parameter&) override;
     void visitArgumentBufferParameter(AST::Parameter&);
 
@@ -204,7 +202,7 @@ void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)
     }
 
     if (functionDefinition.maybeReturnType())
-        checkErrorAndVisit(*functionDefinition.maybeReturnType());
+        visit(functionDefinition.maybeReturnType()->inferredType());
     else
         m_stringBuilder.append("void");
 
@@ -258,7 +256,7 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
 
         for (auto& member : structDecl.members()) {
             auto& name = member.name();
-            auto* type = member.type().resolvedType();
+            auto* type = member.type().inferredType();
             if (isPrimitiveReference(type, Types::Primitive::TextureExternal)) {
                 m_stringBuilder.append(m_indent, "texture2d<float> __", name, "_FirstPlane;\n");
                 m_stringBuilder.append(m_indent, "texture2d<float> __", name, "_SecondPlane;\n");
@@ -288,7 +286,7 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
             }
 
             m_stringBuilder.append(m_indent);
-            visit(member.type());
+            visit(member.type().inferredType());
             m_stringBuilder.append(" ", name);
             for (auto &attribute : member.attributes()) {
                 m_stringBuilder.append(" ");
@@ -394,6 +392,8 @@ bool FunctionDefinitionWriter::emitPackedVector(const Types::Vector& vector)
     case Types::Primitive::Void:
     case Types::Primitive::Sampler:
     case Types::Primitive::TextureExternal:
+    case Types::Primitive::AccessMode:
+    case Types::Primitive::TexelFormat:
         RELEASE_ASSERT_NOT_REACHED();
     }
     return true;
@@ -553,11 +553,6 @@ void FunctionDefinitionWriter::visit(AST::AlignAttribute&)
 }
 
 // Types
-void FunctionDefinitionWriter::visit(AST::TypeName& type)
-{
-    visit(type.resolvedType());
-}
-
 void FunctionDefinitionWriter::visit(const Type* type)
 {
     using namespace WGSL::Types;
@@ -583,6 +578,9 @@ void FunctionDefinitionWriter::visit(const Type* type)
             case Types::Primitive::TextureExternal:
                 m_stringBuilder.append("texture_external");
                 break;
+            case Types::Primitive::AccessMode:
+            case Types::Primitive::TexelFormat:
+                RELEASE_ASSERT_NOT_REACHED();
             }
         },
         [&](const Vector& vector) {
@@ -607,7 +605,6 @@ void FunctionDefinitionWriter::visit(const Type* type)
         },
         [&](const Texture& texture) {
             const char* type;
-            const char* mode = "sample";
             switch (texture.kind) {
             case Types::Texture::Kind::Texture1d:
                 type = "texture1d";
@@ -630,27 +627,66 @@ void FunctionDefinitionWriter::visit(const Type* type)
             case Types::Texture::Kind::TextureMultisampled2d:
                 type = "texture2d_ms";
                 break;
-
-            case Types::Texture::Kind::TextureStorage1d:
-                type = "texture1d";
-                mode = "write";
-                break;
-            case Types::Texture::Kind::TextureStorage2d:
-                type = "texture2d";
-                mode = "write";
-                break;
-            case Types::Texture::Kind::TextureStorage2dArray:
-                type = "texture2d_aray";
-                mode = "write";
-                break;
-            case Types::Texture::Kind::TextureStorage3d:
-                type = "texture3d";
-                mode = "write";
-                break;
             }
             m_stringBuilder.append(type, "<");
             visit(texture.element);
-            m_stringBuilder.append(", access::", mode, ">");
+            m_stringBuilder.append(", access::sample>");
+        },
+        [&](const TextureStorage& texture) {
+            const char* base;
+            const char* type;
+            const char* mode;
+            switch (texture.kind) {
+            case Types::TextureStorage::Kind::TextureStorage1d:
+                base = "texture1d";
+                break;
+            case Types::TextureStorage::Kind::TextureStorage2d:
+                base = "texture2d";
+                break;
+            case Types::TextureStorage::Kind::TextureStorage2dArray:
+                base = "texture2d_aray";
+                break;
+            case Types::TextureStorage::Kind::TextureStorage3d:
+                base = "texture3d";
+                break;
+            }
+            switch (texture.format) {
+            case TexelFormat::BGRA8unorm:
+            case TexelFormat::RGBA8unorm:
+            case TexelFormat::RGBA8snorm:
+            case TexelFormat::RGBA16float:
+            case TexelFormat::R32float:
+            case TexelFormat::RG32float:
+            case TexelFormat::RGBA32float:
+                type = "float";
+                break;
+            case TexelFormat::RGBA8uint:
+            case TexelFormat::RGBA16uint:
+            case TexelFormat::R32uint:
+            case TexelFormat::RG32uint:
+            case TexelFormat::RGBA32uint:
+                type = "uint";
+                break;
+            case TexelFormat::RGBA8sint:
+            case TexelFormat::RGBA16sint:
+            case TexelFormat::R32sint:
+            case TexelFormat::RG32sint:
+            case TexelFormat::RGBA32sint:
+                type = "int";
+                break;
+            }
+            switch (texture.access) {
+            case AccessMode::Read:
+                mode = "read";
+                break;
+            case AccessMode::Write:
+                mode = "write";
+                break;
+            case AccessMode::ReadWrite:
+                mode = "read_write";
+                break;
+            }
+            m_stringBuilder.append(base, "<", type, ", access::", mode, ">");
         },
         [&](const Reference& reference) {
             const char* addressSpace = nullptr;
@@ -684,6 +720,9 @@ void FunctionDefinitionWriter::visit(const Type* type)
         [&](const Function&) {
             RELEASE_ASSERT_NOT_REACHED();
         },
+        [&](const TypeConstructor&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
         [&](const Bottom&) {
             RELEASE_ASSERT_NOT_REACHED();
         });
@@ -691,7 +730,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
 
 void FunctionDefinitionWriter::visit(AST::Parameter& parameter)
 {
-    visit(parameter.typeName());
+    visit(parameter.typeName().inferredType());
     m_stringBuilder.append(" ", parameter.name());
     for (auto& attribute : parameter.attributes()) {
         m_stringBuilder.append(" ");
@@ -702,7 +741,7 @@ void FunctionDefinitionWriter::visit(AST::Parameter& parameter)
 void FunctionDefinitionWriter::visitArgumentBufferParameter(AST::Parameter& parameter)
 {
     m_stringBuilder.append("constant ");
-    visit(parameter.typeName());
+    visit(parameter.typeName().inferredType());
     m_stringBuilder.append("& ", parameter.name());
     for (auto& attribute : parameter.attributes()) {
         m_stringBuilder.append(" ");
@@ -745,8 +784,8 @@ static void visitArguments(FunctionDefinitionWriter* writer, AST::CallExpression
 
 void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call)
 {
-    auto isArray = is<AST::ArrayTypeName>(call.target());
-    auto isStruct = !isArray && std::holds_alternative<Types::Struct>(*call.target().resolvedType());
+    auto isArray = is<AST::ArrayTypeExpression>(call.target());
+    auto isStruct = !isArray && std::holds_alternative<Types::Struct>(*call.target().inferredType());
     if (isArray || isStruct) {
         if (isStruct) {
             visit(type);
@@ -776,7 +815,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
         return;
     }
 
-    if (is<AST::NamedTypeName>(call.target())) {
+    if (is<AST::IdentifierExpression>(call.target())) {
         static constexpr std::pair<ComparableASCIILiteral, void(*)(FunctionDefinitionWriter*, AST::CallExpression&)> builtinMappings[] {
             { "textureLoad", [](FunctionDefinitionWriter* writer, AST::CallExpression& call) {
                 auto& texture = call.arguments()[0];
@@ -868,7 +907,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             } },
         };
         static constexpr SortedArrayMap builtins { builtinMappings };
-        const auto& targetName = downcast<AST::NamedTypeName>(call.target()).name().id();
+        const auto& targetName = downcast<AST::IdentifierExpression>(call.target()).identifier().id();
         if (auto mappedBuiltin = builtins.get(targetName)) {
             mappedBuiltin(this, call);
             return;
@@ -877,13 +916,50 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
         static constexpr std::pair<ComparableASCIILiteral, ASCIILiteral> baseTypesMappings[] {
             { "f32", "float"_s },
             { "i32", "int"_s },
-            { "u32", "unsigned"_s }
+            { "u32", "uint"_s },
+            { "vec2f", "float2"_s },
+            { "vec2i", "int2"_s },
+            { "vec2u", "uint2"_s },
+            { "vec3f", "float3"_s },
+            { "vec3i", "int3"_s },
+            { "vec3u", "uint3"_s },
+            { "vec4f", "float4"_s },
+            { "vec4i", "int4"_s },
+            { "vec4u", "uint4"_s }
         };
         static constexpr SortedArrayMap baseTypes { baseTypesMappings };
 
-        if (AST::ParameterizedTypeName::stringViewToKind(targetName).has_value())
+        // FIXME: in order to remove this hack we need to distinguish in the declarations
+        // file between functions and value constructors
+        static constexpr ComparableASCIILiteral constructorNames[] {
+            "mat2x2",
+            "mat2x3",
+            "mat2x4",
+            "mat3x2",
+            "mat3x3",
+            "mat3x4",
+            "mat4x2",
+            "mat4x3",
+            "mat4x4",
+            "texture_1d",
+            "texture_2d",
+            "texture_2d_array",
+            "texture_3d",
+            "texture_cube",
+            "texture_cube_array",
+            "texture_multisampled_2d",
+            "texturetorage_1d",
+            "texturetorage_2d",
+            "texturetorage_2d_array",
+            "texturetorage_3d",
+            "vec2",
+            "vec3",
+            "vec4",
+        };
+        static constexpr SortedArraySet constructors { constructorNames };
+        if (constructors.contains(targetName)) {
             visit(type);
-        else if (auto mappedName = baseTypes.get(targetName))
+        } else if (auto mappedName = baseTypes.get(targetName))
             m_stringBuilder.append(mappedName);
         else
             m_stringBuilder.append(targetName);
@@ -961,9 +1037,10 @@ void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
         break;
 
     case AST::BinaryOperation::LeftShift:
+        m_stringBuilder.append(" << ");
+        break;
     case AST::BinaryOperation::RightShift:
-        // FIXME: Implement these
-        RELEASE_ASSERT_NOT_REACHED();
+        m_stringBuilder.append(" >> ");
         break;
 
     case AST::BinaryOperation::Equal:

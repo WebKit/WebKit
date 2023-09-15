@@ -38,6 +38,7 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/FrameLoader.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/PolicyChecker.h>
 
 #define WebFrameLoaderClient_PREFIX_PARAMETERS "%p - [webFrame=%p, webFrameID=%" PRIu64 ", webPage=%p, webPageID=%" PRIu64 "] WebFrameLoaderClient::"
@@ -87,11 +88,11 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         return;
     }
 
-    auto* requestingFrame = WebProcess::singleton().webFrame(*requester.frameID);
+    RefPtr requestingFrame = WebProcess::singleton().webFrame(*requester.frameID);
 
     auto originatingFrameID = *requester.frameID;
     std::optional<WebCore::FrameIdentifier> parentFrameID;
-    if (auto* parentFrame = requestingFrame ? requestingFrame->parentFrame() : nullptr)
+    if (auto parentFrame = requestingFrame ? requestingFrame->parentFrame() : nullptr)
         parentFrameID = parentFrame->frameID();
 
     FrameInfoData originatingFrameInfoData {
@@ -130,7 +131,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         navigationAction.shouldOpenExternalURLsPolicy(),
         navigationAction.downloadAttribute(),
         mouseEventData ? mouseEventData->locationInRootViewCoordinates : FloatPoint(),
-        !redirectResponse.isNull(), /* isRedirect */
+        redirectResponse,
         navigationAction.treatAsSameOriginNavigation(),
         navigationAction.hasOpenedFrames(),
         navigationAction.openedByDOMWithOpener(),
@@ -152,7 +153,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
 
     // Notify the UIProcess.
     if (policyDecisionMode == PolicyDecisionMode::Synchronous) {
-        auto sendResult = webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationActionSync(m_frame->info(), documentLoader ? documentLoader->navigationID() : 0, navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.resourceRequest(), request, IPC::FormDataReference { request.httpBody() }, redirectResponse));
+        auto sendResult = webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationActionSync(m_frame->info(), documentLoader ? documentLoader->navigationID() : 0, navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.resourceRequest(), request, IPC::FormDataReference { request.httpBody() }));
         if (!sendResult.succeeded()) {
             WebFrameLoaderClient_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because of failing to send sync IPC with error %" PUBLIC_LOG_STRING, IPC::errorAsString(sendResult.error));
             m_frame->didReceivePolicyDecision(listenerID, requestIdentifier, PolicyDecision { });
@@ -166,7 +167,10 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     }
 
     ASSERT(policyDecisionMode == PolicyDecisionMode::Asynchronous);
-    webPage->sendWithAsyncReply(Messages::WebPageProxy::DecidePolicyForNavigationActionAsync(m_frame->info(), documentLoader ? documentLoader->navigationID() : 0, navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.resourceRequest(), request, IPC::FormDataReference { request.httpBody() }, redirectResponse), [thisPointerForLog = this, frame = m_frame, listenerID, requestIdentifier] (PolicyDecision&& policyDecision) {
+    webPage->sendWithAsyncReply(Messages::WebPageProxy::DecidePolicyForNavigationActionAsync(m_frame->info(), documentLoader ? documentLoader->navigationID() : 0, navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.resourceRequest(), request, IPC::FormDataReference { request.httpBody() }), [thisPointerForLog = this, frame = m_frame, listenerID, requestIdentifier] (PolicyDecision&& policyDecision) {
+#if RELEASE_LOG_DISABLED
+        UNUSED_PARAM(thisPointerForLog);
+#endif
         RELEASE_LOG(Network, WebFrameLoaderClient_PREFIX_PARAMETERS "dispatchDecidePolicyForNavigationAction: Got policyAction %u from async IPC", thisPointerForLog, frame.ptr(), frame->frameID().object().toUInt64(), frame->page(), frame->page() ? frame->page()->identifier().toUInt64() : 0, (unsigned)policyDecision.policyAction);
 
         frame->didReceivePolicyDecision(listenerID, requestIdentifier, WTFMove(policyDecision));
@@ -176,10 +180,8 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
 void WebFrameLoaderClient::broadcastFrameRemovalToOtherProcesses()
 {
     auto* webPage = m_frame->page();
-    if (!webPage) {
-        ASSERT_NOT_REACHED();
+    if (!webPage)
         return;
-    }
     webPage->send(Messages::WebPageProxy::BroadcastFrameRemovalToOtherProcesses(m_frame->frameID()));
 }
 

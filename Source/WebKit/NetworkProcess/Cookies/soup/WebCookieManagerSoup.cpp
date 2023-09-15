@@ -39,7 +39,7 @@ using namespace WebCore;
 
 void WebCookieManager::platformSetHTTPCookieAcceptPolicy(PAL::SessionID sessionID, HTTPCookieAcceptPolicy policy, CompletionHandler<void()>&& completionHandler)
 {
-    if (auto* storageSession = m_process.storageSession(sessionID))
+    if (auto* storageSession = protectedProcess()->storageSession(sessionID))
         storageSession->setCookieAcceptPolicy(policy);
 
     completionHandler();
@@ -47,13 +47,13 @@ void WebCookieManager::platformSetHTTPCookieAcceptPolicy(PAL::SessionID sessionI
 
 void WebCookieManager::setCookiePersistentStorage(PAL::SessionID sessionID, const String& storagePath, SoupCookiePersistentStorageType storageType)
 {
-    if (auto* networkSession = m_process.networkSession(sessionID))
+    if (auto* networkSession = protectedProcess()->networkSession(sessionID))
         static_cast<NetworkSessionSoup&>(*networkSession).setCookiePersistentStorage(storagePath, storageType);
 }
 
 void WebCookieManager::replaceCookies(PAL::SessionID sessionID, const Vector<WebCore::Cookie>& cookies, CompletionHandler<void()>&& completionHandler)
 {
-    if (auto* storageSession = m_process.storageSession(sessionID))
+    if (auto* storageSession = protectedProcess()->storageSession(sessionID))
         storageSession->replaceCookies(cookies);
     completionHandler();
 }

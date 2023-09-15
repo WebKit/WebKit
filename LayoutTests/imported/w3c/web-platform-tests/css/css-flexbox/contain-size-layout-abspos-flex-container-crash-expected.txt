@@ -1,9 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x8
-  RenderBlock {HTML} at (0,0) size 800x8
-layer at (8,8) size 100x100
-  RenderFlexibleBox {DIV} at (0,0) size 100x100
-    RenderBlock (anonymous) at (0,0) size 8x100
-      RenderText {#text} at (0,0) size 8x17
-        text run at (0,0) width 8: "x"

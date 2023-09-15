@@ -184,12 +184,11 @@ assert INCLUDE_REGEX.findall(b' #  include <foo>  //comment\n#include "bar"') ==
 IGNORED_INCLUDES = {
     b'absl/container/flat_hash_map.h',
     b'absl/container/flat_hash_set.h',
-    b'compiler/translator/TranslatorESSL.h',
-    b'compiler/translator/TranslatorGLSL.h',
-    b'compiler/translator/TranslatorHLSL.h',
-    b'compiler/translator/TranslatorMetal.h',
-    b'compiler/translator/TranslatorMetalDirect.h',
-    b'compiler/translator/TranslatorVulkan.h',
+    b'compiler/translator/glsl/TranslatorESSL.h',
+    b'compiler/translator/glsl/TranslatorGLSL.h',
+    b'compiler/translator/hlsl/TranslatorHLSL.h',
+    b'compiler/translator/msl/TranslatorMSL.h',
+    b'compiler/translator/spirv/TranslatorSPIRV.h',
     b'contrib/optimizations/slide_hash_neon.h',
     b'dirent_on_windows.h',
     b'dlopen_fuchsia.h',
@@ -280,6 +279,7 @@ IGNORED_INCLUDE_PREFIXES = {
 
 IGNORED_DIRECTORIES = {
     '//buildtools/third_party/libc++',
+    '//third_party/libc++/src',
     '//third_party/abseil-cpp',
     '//third_party/SwiftShader',
 }

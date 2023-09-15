@@ -47,9 +47,11 @@
         testOutput += "\nOpening dialog1.\n";
         document.getElementById("displayBtn").click();
         setTimeout(async () => {
+            let focus = null;
+
             await waitFor(() => {
-                newBtn = accessibilityController.accessibleElementById("new");
-                return newBtn && newBtn.isFocused;
+                focus = accessibilityController.focusedElement;
+                return focus && focus.domIdentifier == "new" && focus.isFocused;
             });
             testOutput += "PASS: #new button is focused.\n";
 
@@ -60,8 +62,8 @@
             document.getElementById("dialog1").ariaModal = false;
 
             await waitFor(() => {
-                closeBtn = accessibilityController.accessibleElementById("close");
-                return closeBtn && closeBtn.isFocused;
+                focus = accessibilityController.focusedElement;
+                return focus && focus.domIdentifier == "close" && focus.isFocused;
             });
             testOutput += "PASS: #close button is focused.\n";
 
@@ -72,8 +74,8 @@
             document.getElementById("dialog1").ariaModal = true;
 
             await waitFor(() => {
-                okBtn = accessibilityController.accessibleElementById("ok");
-                return okBtn && okBtn.isFocused;
+                focus = accessibilityController.focusedElement;
+                return focus && focus.domIdentifier == "ok" && focus.isFocused;
             });
             testOutput += "PASS: #ok button is focused.\n";
 
@@ -81,16 +83,15 @@
             finishJSTest();
         });
     }
-    
+
     function backgroundAccessible() {
         const displayBtn = accessibilityController.accessibleElementById("displayBtn");
         const bgContent = accessibilityController.accessibleElementById("bgContent");
         if (!displayBtn || !bgContent)
             return false;
-        
         return !displayBtn.isIgnored && !bgContent.isIgnored;
     }
-    
+
     function toggleDialog(dialog, sh) {
         if (sh == "show") {
             dialog.style.display = "block";

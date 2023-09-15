@@ -441,11 +441,9 @@ bool ScrollingTree::updateTreeFromStateNodeRecursive(const ScrollingStateNode* s
     node->removeAllChildren();
 
     // Now update the children if we have any.
-    if (auto children = stateNode->children()) {
-        for (auto& child : *children) {
-            if (!updateTreeFromStateNodeRecursive(child.get(), state))
-                return false;
-        }
+    for (auto& child : stateNode->children()) {
+        if (!updateTreeFromStateNodeRecursive(child.ptr(), state))
+            return false;
     }
 
     if (!node->commitStateAfterChildren(*stateNode))

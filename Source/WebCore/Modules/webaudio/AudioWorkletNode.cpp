@@ -147,7 +147,7 @@ AudioWorkletNode::~AudioWorkletNode()
     {
         Locker locker { m_processLock };
         if (m_processor) {
-            if (auto* workletProxy = context().audioWorklet().proxy()) {
+            if (RefPtr workletProxy = context().audioWorklet().proxy()) {
                 workletProxy->postTaskForModeToWorkletGlobalScope([processor = WTFMove(m_processor)](ScriptExecutionContext& context) {
                     downcast<AudioWorkletGlobalScope>(context).processorIsNoLongerNeeded(*processor);
                 }, WorkerRunLoop::defaultMode());
@@ -171,7 +171,7 @@ void AudioWorkletNode::initializeAudioParameters(const Vector<AudioParamDescript
 
     if (paramValues) {
         for (auto& paramValue : *paramValues) {
-            if (auto* audioParam = m_parameters->map().get(paramValue.key))
+            if (RefPtr audioParam = m_parameters->map().get(paramValue.key))
                 audioParam->setValue(paramValue.value);
         }
     }

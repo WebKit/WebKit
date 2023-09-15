@@ -48,6 +48,9 @@ class ThreadTimers {
 public:
     ThreadTimers();
 
+    // Fire timers for this length of time, and then quit to let the run loop process user input events.
+    static constexpr auto maxDurationOfFiringTimers { 16_ms };
+
     // On a thread different then main, we should set the thread's instance of the SharedTimer.
     void setSharedTimer(SharedTimer*);
 

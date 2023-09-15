@@ -48,15 +48,15 @@ class NetworkProcess;
 
 class NetworkDataTaskBlob final : public NetworkDataTask, public WebCore::FileStreamClient {
 public:
-    static Ref<NetworkDataTask> create(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& request, const Vector<RefPtr<WebCore::BlobDataFileReference>>& fileReferences)
+    static Ref<NetworkDataTask> create(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& request, const Vector<RefPtr<WebCore::BlobDataFileReference>>& fileReferences, const RefPtr<WebCore::SecurityOrigin>& topOrigin)
     {
-        return adoptRef(*new NetworkDataTaskBlob(session, client, request, fileReferences));
+        return adoptRef(*new NetworkDataTaskBlob(session, client, request, fileReferences, topOrigin));
     }
 
     ~NetworkDataTaskBlob();
 
 private:
-    NetworkDataTaskBlob(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, const Vector<RefPtr<WebCore::BlobDataFileReference>>&);
+    NetworkDataTaskBlob(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, const Vector<RefPtr<WebCore::BlobDataFileReference>>&, const RefPtr<WebCore::SecurityOrigin>& topOrigin);
 
     void cancel() override;
     void resume() override;

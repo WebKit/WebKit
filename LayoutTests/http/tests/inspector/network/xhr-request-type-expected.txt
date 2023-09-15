@@ -6,12 +6,15 @@ Bug 68646 Bug 257407
 -- Running test case: Resource.Type.XHR.Same.As.Main.Resource.Url
 PASS: Resource should be XHR type.
 PASS: Resource should be a GET request.
+PASS: Resource should have main resource URL.
 PASS: Resource should have a 200 response.
 PASS: Resource should receive main resource in response.
 
 -- Running test case: Resource.Type.XHR.Another.Url
 PASS: Resource should be XHR type.
 PASS: Resource should be a GET request.
+PASS: Resource should have echo URL.
 PASS: Resource should have a 200 response.
-PASS: Resource should receive json in response.
+PASS: Resource should have a 200 response.
+PASS: Resource should receive text in response.
 

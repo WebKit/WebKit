@@ -44,7 +44,7 @@ class RenderBox;
 //   * Have compatible baseline alignment preferences (i.e., the baselines that want to align are on the same
 //     side of the alignment context).
 //
-// Once the BaselineGroup is instantiated, defined by a 'block-direction' (WritingMode) and a 'baseline-preference'
+// Once the BaselineGroup is instantiated, defined by a 'block flow direction' and a 'baseline-preference'
 // (first/last baseline), it's ready to collect the items that will participate in the Baseline Alignment logic.
 //
 class BaselineGroup {
@@ -59,21 +59,21 @@ public:
 
 private:
     friend class BaselineAlignmentState;
-    BaselineGroup(WritingMode blockFlow, ItemPosition childPreference);
+    BaselineGroup(BlockFlowDirection, ItemPosition childPreference);
 
     // Determines whether a baseline-sharing group is compatible with an item, based on its 'block-flow' and
     // 'baseline-preference'
-    bool isCompatible(WritingMode, ItemPosition) const;
+    bool isCompatible(BlockFlowDirection, ItemPosition) const;
 
     // Determines whether the baseline-sharing group's associated block-flow is opposite (LR vs RL) to particular
     // item's writing-mode.
-    bool isOppositeBlockFlow(WritingMode blockFlow) const;
+    bool isOppositeBlockFlow(BlockFlowDirection) const;
 
     // Determines whether the baseline-sharing group's associated block-flow is orthogonal (vertical vs horizontal)
     // to particular item's writing-mode.
-    bool isOrthogonalBlockFlow(WritingMode blockFlow) const;
+    bool isOrthogonalBlockFlow(BlockFlowDirection) const;
 
-    WritingMode m_blockFlow;
+    BlockFlowDirection m_blockFlow;
     ItemPosition m_preference;
     LayoutUnit m_maxAscent;
     WeakHashSet<RenderBox> m_items;

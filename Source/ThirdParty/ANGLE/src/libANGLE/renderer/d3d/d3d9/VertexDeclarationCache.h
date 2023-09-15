@@ -15,7 +15,7 @@
 namespace gl
 {
 class VertexDataManager;
-class Program;
+class ProgramExecutable;
 }  // namespace gl
 
 namespace rx
@@ -29,7 +29,7 @@ class VertexDeclarationCache
     angle::Result applyDeclaration(const gl::Context *context,
                                    IDirect3DDevice9 *device,
                                    const std::vector<TranslatedAttribute> &attributes,
-                                   gl::Program *program,
+                                   gl::ProgramExecutable *executable,
                                    GLint start,
                                    GLsizei instances,
                                    GLsizei *repeatDraw);

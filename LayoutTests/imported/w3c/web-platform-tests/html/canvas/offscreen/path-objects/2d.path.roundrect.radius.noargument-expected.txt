@@ -1,0 +1,7 @@
+2d.path.roundrect.radius.noargument
+
+Check that roundRect draws a rectangle when no radii are provided.
+
+
+FAIL Check that roundRect draws a rectangle when no radii are provided. Not enough arguments
+

@@ -1,4 +1,4 @@
-# Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2017-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from buildbot.plugins import steps, util
-from buildbot.process import buildstep, factory, logobserver, properties
+from buildbot.process import buildstep, logobserver, properties
 from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.steps import master, shell, transfer, trigger
 from buildbot.steps.source import git
@@ -32,8 +32,6 @@ import os
 import re
 import socket
 import sys
-import urllib
-from pathlib import Path
 
 if sys.version_info < (3, 5):
     print('ERROR: Please use Python 3. This code is not compatible with Python 2.')
@@ -297,7 +295,7 @@ class InstallWinCairoDependencies(shell.ShellCommandNewStyle):
     name = 'wincairo-requirements'
     description = ['updating wincairo dependencies']
     descriptionDone = ['updated wincairo dependencies']
-    command = ['python', './Tools/Scripts/update-webkit-wincairo-libs.py']
+    command = ['python3', './Tools/Scripts/update-webkit-wincairo-libs.py']
     haltOnFailure = True
 
 
@@ -1529,4 +1527,9 @@ class RebootWithUpdatedCrossTargetImage(shell.ShellCommandNewStyle):
     @defer.inlineCallbacks
     def run(self):
         rc = yield super().run()
-        defer.returnValue(FAILURE)
+        # The command reboot return success when it instructs the machine to reboot,
+        # but the machine can still take a while to stop services and actually reboot.
+        # Retry the build if reboot end sucesfully before the connection is lost.
+        if rc == SUCCESS:
+            self.build.buildFinished(['Rebooting with updated image, retrying build'], RETRY)
+        defer.returnValue(rc)

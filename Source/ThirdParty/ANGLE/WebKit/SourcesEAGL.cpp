@@ -29,5 +29,4 @@
 #    include "libANGLE/renderer/gl/eagl/ContextEAGL.cpp"
 #    include "libANGLE/renderer/gl/eagl/DeviceEAGL.cpp"
 #    include "libANGLE/renderer/gl/eagl/PbufferSurfaceEAGL.cpp"
-#    include "libANGLE/renderer/gl/eagl/RendererEAGL.cpp"
 #endif

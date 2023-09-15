@@ -197,7 +197,7 @@ absl::optional<H264ProfileLevelId> ParseSdpForH264ProfileLevelId(
   // FIXME: We might want to return std::nullopt and propagate an error in case of bad parsing.
   return (profile_level_id_it == params.end())
              ? defaultProfileLevelId()
-             : ParseH264ProfileLevelId(profile_level_id_it->second.c_str()).value_or(defaultProfileLevelId());
+             : ParseH264ProfileLevelId(profile_level_id_it->second.c_str());
 }
 #else
 absl::optional<H264ProfileLevelId> ParseSdpForH264ProfileLevelId(

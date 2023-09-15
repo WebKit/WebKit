@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<div>
+    <button id="button-1" aria-labelledby="label1">Button One</button>
+    <button id="button-2">Button Two</button>
+    <p id="label1">Label for Button One</p>
+    <p id="label2"><span>Label for Button Two</span></p>
+</div>
+
+<script>
+let output = "This test ensures that aria-labelledby elements return the right AXDescription when their labels are updated.\n\n";
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var button1 = accessibilityController.accessibleElementById("button-1");
+    var button2 = accessibilityController.accessibleElementById("button-2");
+    var label1 = accessibilityController.accessibleElementById("label1");
+    var label2 = accessibilityController.accessibleElementById("label2");
+
+    output += expect("button1.description", "'AXDescription: Label for Button One'");
+    output += expect("button1.title", "'AXTitle: '");
+    output += expect("button2.description", "'AXDescription: '");
+
+    setTimeout(async function() {
+        document.getElementById("button-2").setAttribute("aria-labelledby", "label2");
+        await waitFor(() => button2.description === "AXDescription: Label for Button Two");
+        output += expect("button2.description", "'AXDescription: Label for Button Two'");
+        output += expect("button2.title", "'AXTitle: '");
+
+        document.getElementById("label1").innerText += "!";
+        await waitFor(() => button1.description === "AXDescription: Label for Button One!");
+        output += expect("button1.description", "'AXDescription: Label for Button One!'");
+        output += expect("button1.title", "'AXTitle: '");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

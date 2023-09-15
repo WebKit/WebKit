@@ -130,6 +130,7 @@ TextureState::TextureState(TextureType type)
       mUsage(GL_NONE),
       mHasProtectedContent(false),
       mRenderabilityValidation(true),
+      mTilingMode(gl::TilingMode::Optimal),
       mImageDescs((IMPLEMENTATION_MAX_TEXTURE_LEVELS + 1) * (type == TextureType::CubeMap ? 6 : 1)),
       mCropRect(0, 0, 0, 0),
       mGenerateMipmapHint(GL_FALSE),
@@ -1128,6 +1129,16 @@ void Texture::setRenderabilityValidation(Context *context, bool renderabilityVal
 {
     mState.mRenderabilityValidation = renderabilityValidation;
     signalDirtyState(DIRTY_BIT_RENDERABILITY_VALIDATION_ANGLE);
+}
+
+void Texture::setTilingMode(Context *context, GLenum tilingMode)
+{
+    mState.mTilingMode = gl::FromGLenum<gl::TilingMode>(tilingMode);
+}
+
+GLenum Texture::getTilingMode() const
+{
+    return gl::ToGLenum(mState.mTilingMode);
 }
 
 const TextureState &Texture::getTextureState() const

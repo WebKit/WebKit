@@ -92,15 +92,13 @@ void CachedFrameBase::restore()
     if (m_isMainFrame)
         m_view->setParentVisible(true);
 
-    RefPtr frame = dynamicDowncast<LocalFrame>(m_view->frame());
-    if (!frame)
-        return;
+    Ref frame = m_view->frame();
     {
         Style::PostResolutionCallbackDisabler disabler(*m_document);
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
         NavigationDisabler disableNavigation { nullptr }; // Disable navigation globally.
 
-        m_cachedFrameScriptData->restore(*frame);
+        m_cachedFrameScriptData->restore(frame);
 
         if (m_document->svgExtensions())
             m_document->accessSVGExtensions().unpauseAnimations();
@@ -131,7 +129,7 @@ void CachedFrameBase::restore()
         if (auto* domWindow = m_document->domWindow()) {
             // FIXME: Use Document::hasListenerType(). See <rdar://problem/9615482>.
             if (domWindow->scrollEventListenerCount() && frame->page())
-                frame->page()->chrome().client().setNeedsScrollNotifications(*frame, true);
+                frame->page()->chrome().client().setNeedsScrollNotifications(frame, true);
         }
     }
 #endif
@@ -217,8 +215,7 @@ void CachedFrame::open()
     ASSERT(m_view);
     ASSERT(m_document);
 
-    if (auto* localFrame = dynamicDowncast<LocalFrame>(m_view->frame()))
-        localFrame->loader().open(*this);
+    m_view->frame().loader().open(*this);
 }
 
 void CachedFrame::clear()
@@ -257,8 +254,8 @@ void CachedFrame::destroy()
 
     m_document->domWindow()->willDestroyCachedFrame();
 
-    auto* localFrame = dynamicDowncast<LocalFrame>(m_view->frame());
-    if (!m_isMainFrame && m_view->frame().page() && localFrame) {
+    Ref localFrame = m_view->frame();
+    if (!m_isMainFrame && m_view->frame().page()) {
         localFrame->loader().detachViewsAndDocumentLoader();
         localFrame->detachFromPage();
     }

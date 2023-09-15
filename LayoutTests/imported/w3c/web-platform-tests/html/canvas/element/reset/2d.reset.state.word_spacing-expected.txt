@@ -1,0 +1,6 @@
+2d.reset.state.word_spacing
+check that the state is reset
+Actual output:
+
+FAIL check that the state is reset assert_true: ctx.wordSpacing == default_value expected true got false
+

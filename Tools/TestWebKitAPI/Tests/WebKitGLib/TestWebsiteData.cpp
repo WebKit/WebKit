@@ -163,6 +163,7 @@ public:
     GList* m_dataList { nullptr };
 };
 
+#if !ENABLE(2022_GLIB_API)
 static void loadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent, WebViewTest* test)
 {
     if (loadEvent != WEBKIT_LOAD_FINISHED)
@@ -170,6 +171,7 @@ static void loadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent, WebVi
     g_signal_handlers_disconnect_by_func(webView, reinterpret_cast<void*>(loadChanged), test);
     g_main_loop_quit(test->m_mainLoop);
 }
+#endif
 
 static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
 {
@@ -428,6 +430,9 @@ static void testWebsiteDataEphemeral(WebViewTest* test, gconstpointer)
 static void testWebsiteDataCache(WebsiteDataTest* test, gconstpointer)
 {
     static const WebKitWebsiteDataTypes cacheTypes = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
+
+    test->clear(cacheTypes, 0);
+
     GList* dataList = test->fetch(cacheTypes);
     g_assert_null(dataList);
 
@@ -435,9 +440,9 @@ static void testWebsiteDataCache(WebsiteDataTest* test, gconstpointer)
     test->waitUntilLoadFinished();
 
     // Disk cache delays the storing of initial resources for 1 second to avoid
-    // affecting early page load. So, wait 1 second here to make sure resources
+    // affecting early page load. So, wait here to make sure resources
     // have already been stored.
-    test->wait(1);
+    test->wait(2);
 
     dataList = test->fetch(cacheTypes);
     g_assert_nonnull(dataList);
@@ -941,68 +946,23 @@ static void testWebViewHandleCorruptedLocalStorage(WebsiteDataTest* test, gconst
     g_assert_cmpstr(fooValue.get(), ==, "");
 
     // Creating a second web view and loading a web page with the same url to read the item from localStorage.
+#if ENABLE(2022_GLIB_API)
+    auto webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+#if PLATFORM(WPE)
+        "backend", Test::createWebViewBackend(),
+#endif
+        "web-context", webkit_web_view_get_context(test->m_webView),
+        "network-session", test->m_networkSession.get(),
+        nullptr));
+    g_assert_true(webkit_web_view_get_network_session(webView.get()) == test->m_networkSession.get());
+#else
     auto webView = Test::adoptView(Test::createWebView(test->m_webContext.get()));
+#endif
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webView.get()));
     webkit_web_view_load_html(webView.get(), html, "http://example.com");
     test->waitUntilLoadFinished(webView.get());
     fooValue = waitForFooChanged(webView.get());
     g_assert_cmpstr(fooValue.get(), ==, "value");
-}
-
-class MemoryPressureTest : public WebViewTest {
-public:
-    MAKE_GLIB_TEST_FIXTURE_WITH_SETUP_TEARDOWN(MemoryPressureTest, setup, teardown);
-
-    static void setup()
-    {
-        WebKitMemoryPressureSettings* settings = webkit_memory_pressure_settings_new();
-        webkit_memory_pressure_settings_set_memory_limit(settings, 1);
-        webkit_memory_pressure_settings_set_poll_interval(settings, 0.001);
-        webkit_memory_pressure_settings_set_kill_threshold(settings, 1);
-        webkit_memory_pressure_settings_set_strict_threshold(settings, 0.75);
-        webkit_memory_pressure_settings_set_conservative_threshold(settings, 0.5);
-#if ENABLE(2022_GLIB_API)
-        webkit_network_session_set_memory_pressure_settings(settings);
-#else
-        webkit_website_data_manager_set_memory_pressure_settings(settings);
-#endif
-        webkit_memory_pressure_settings_free(settings);
-    }
-
-    static void teardown()
-    {
-#if ENABLE(2022_GLIB_API)
-        webkit_network_session_set_memory_pressure_settings(nullptr);
-#else
-        webkit_website_data_manager_set_memory_pressure_settings(nullptr);
-#endif
-    }
-
-    static gboolean loadFailedCallback(WebKitWebView* webView, WebKitLoadEvent loadEvent, const char* failingURI, GError* error, MemoryPressureTest* test)
-    {
-        g_signal_handlers_disconnect_by_func(webView, reinterpret_cast<void*>(loadFailedCallback), test);
-        g_main_loop_quit(test->m_mainLoop);
-
-        return TRUE;
-    }
-
-    void waitUntilLoadFailed()
-    {
-        g_signal_connect(m_webView, "load-failed", G_CALLBACK(MemoryPressureTest::loadFailedCallback), this);
-        g_main_loop_run(m_mainLoop);
-    }
-};
-
-static void testMemoryPressureSettings(MemoryPressureTest* test, gconstpointer)
-{
-    // We have set a memory limit of 1MB with a kill threshold of 1 and a poll interval of 0.001.
-    // The network process will use around 2MB to load the test. The MemoryPressureHandler will
-    // kill the process as soon as it detects that it's using more than 1MB, so the network process
-    // won't be able to complete the resource load. This causes an internal error and the load-failed
-    // signal is emitted.
-    GUniquePtr<char> fileURL(g_strdup_printf("file://%s/simple.html", Test::getResourcesDir(Test::WebKit2Resources).data()));
-    test->loadURI(fileURL.get());
-    test->waitUntilLoadFailed();
 }
 
 void beforeAll()
@@ -1029,7 +989,6 @@ void beforeAll()
     WebsiteDataTest::add("WebKitWebsiteData", "service-worker-registrations", testWebsiteDataServiceWorkerRegistrations);
     WebsiteDataTest::add("WebKitWebsiteData", "dom-cache", testWebsiteDataDOMCache);
     WebsiteDataTest::add("WebKitWebsiteData", "handle-corrupted-local-storage", testWebViewHandleCorruptedLocalStorage);
-    MemoryPressureTest::add("WebKitWebsiteData", "memory-pressure", testMemoryPressureSettings);
     WebsiteDataTest::add("WebKitWebsiteData", "origin-and-total-storage-ratio", testWebsiteDataOriginAndTotalStorageRatio);
 }
 

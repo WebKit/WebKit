@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBASSEMBLY_B3JIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT)
 
 #include "B3Common.h"
 #include "B3Procedure.h"
@@ -48,8 +48,10 @@ namespace JSC {
 
 namespace Wasm {
 
+class BBQDisassembler;
 class MemoryInformation;
 class OptimizingJITCallee;
+class TierUpCount;
 
 struct CompilationContext {
     std::unique_ptr<CCallHelpers> jsEntrypointJIT;
@@ -68,4 +70,4 @@ void computePCToCodeOriginMap(CompilationContext&, LinkBuffer&);
 
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMBLY_B3JIT)
+#endif // ENABLE(WEBASSEMBLY_OMGJIT)

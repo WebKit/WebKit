@@ -46,7 +46,7 @@ public:
     RemoteMediaPlayerMIMETypeCache(RemoteMediaPlayerManager&, WebCore::MediaPlayerEnums::MediaEngineIdentifier);
     ~RemoteMediaPlayerMIMETypeCache() = default;
 
-    HashSet<String, ASCIICaseInsensitiveHash>& supportedTypes();
+    HashSet<String>& supportedTypes();
     WebCore::MediaPlayerEnums::SupportsType supportsTypeAndCodecs(const WebCore::MediaEngineSupportParameters&);
     void addSupportedTypes(const Vector<String>&);
     bool isEmpty() const;
@@ -57,7 +57,7 @@ private:
 
     using SupportedTypesAndCodecsKey = std::tuple<String, bool, bool, bool>;
     std::optional<HashMap<SupportedTypesAndCodecsKey, WebCore::MediaPlayerEnums::SupportsType>> m_supportsTypeAndCodecsCache;
-    HashSet<String, ASCIICaseInsensitiveHash> m_supportedTypesCache;
+    HashSet<String> m_supportedTypesCache;
     bool m_hasPopulatedSupportedTypesCacheFromGPUProcess { false };
 };
 

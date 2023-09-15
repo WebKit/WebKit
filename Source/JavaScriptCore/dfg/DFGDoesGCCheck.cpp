@@ -69,7 +69,7 @@ void DoesGCCheck::verifyCanGC(VM& vm)
 
         CallFrame* callFrame = vm.topCallFrame;
         if (callFrame) {
-            if (!callFrame->isWasmFrame())
+            if (!callFrame->isNativeCalleeFrame())
                 dataLogLn(" in ", callFrame->codeBlock());
             VMInspector::dumpStack(&vm, callFrame);
         }

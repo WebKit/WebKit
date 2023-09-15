@@ -63,6 +63,7 @@ class DatabaseProvider;
 class DiagnosticLoggingClient;
 class DragClient;
 class EditorClient;
+class HistoryItemClient;
 class InspectorClient;
 class LocalFrameLoaderClient;
 class MediaRecorderProvider;
@@ -108,6 +109,7 @@ public:
         UniqueRef<StorageProvider>&&,
         UniqueRef<ModelPlayerProvider>&&,
         Ref<BadgeClient>&&,
+        Ref<HistoryItemClient>&&,
 #if ENABLE(CONTEXT_MENUS)
         UniqueRef<ContextMenuClient>&&,
 #endif
@@ -194,6 +196,7 @@ public:
 #endif
 
     Ref<BadgeClient> badgeClient;
+    Ref<HistoryItemClient> historyItemClient;
 
     ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
 };

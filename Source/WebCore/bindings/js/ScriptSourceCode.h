@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008, Google Inc. All rights reserved.
+ * Copyright (c) 2023, Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -45,8 +46,8 @@ namespace WebCore {
 
 class ScriptSourceCode {
 public:
-    ScriptSourceCode(const String& source, URL&& url = URL(), const TextPosition& startPosition = TextPosition(), JSC::SourceProviderSourceType sourceType = JSC::SourceProviderSourceType::Program)
-        : m_provider(JSC::StringSourceProvider::create(source, JSC::SourceOrigin { url }, url.string(), startPosition, sourceType))
+    ScriptSourceCode(const String& source, JSC::SourceTaintedOrigin sourceTaintedOrigin, URL&& url = URL(), const TextPosition& startPosition = TextPosition(), JSC::SourceProviderSourceType sourceType = JSC::SourceProviderSourceType::Program)
+        : m_provider(JSC::StringSourceProvider::create(source, JSC::SourceOrigin { url }, url.string(), sourceTaintedOrigin, startPosition, sourceType))
         , m_code(m_provider.copyRef(), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt())
     {
     }
@@ -64,8 +65,8 @@ public:
     {
     }
 
-    ScriptSourceCode(const String& source, URL&& url, const TextPosition& startPosition, JSC::SourceProviderSourceType sourceType, Ref<JSC::ScriptFetcher>&& scriptFetcher)
-        : m_provider(JSC::StringSourceProvider::create(source, JSC::SourceOrigin { url, WTFMove(scriptFetcher) }, url.string(), startPosition, sourceType))
+    ScriptSourceCode(const String& source, JSC::SourceTaintedOrigin sourceTaintedOrigin, URL&& url, const TextPosition& startPosition, JSC::SourceProviderSourceType sourceType, Ref<JSC::ScriptFetcher>&& scriptFetcher)
+        : m_provider(JSC::StringSourceProvider::create(source, JSC::SourceOrigin { url, WTFMove(scriptFetcher) }, url.string(), sourceTaintedOrigin, startPosition, sourceType))
         , m_code(m_provider.copyRef(), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt())
     {
     }

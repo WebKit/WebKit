@@ -89,10 +89,10 @@ private:
 class FormattedNumber {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static FormattedNumber fixedPrecision(double number, unsigned significantFigures = 6, TrailingZerosTruncatingPolicy trailingZerosTruncatingPolicy = TruncateTrailingZeros)
+    static FormattedNumber fixedPrecision(double number, unsigned significantFigures = 6, TrailingZerosPolicy trailingZerosTruncatingPolicy = TrailingZerosPolicy::Truncate)
     {
         FormattedNumber numberFormatter;
-        numberToFixedPrecisionString(number, significantFigures, numberFormatter.m_buffer, trailingZerosTruncatingPolicy == TruncateTrailingZeros);
+        numberToFixedPrecisionString(number, significantFigures, numberFormatter.m_buffer, trailingZerosTruncatingPolicy == TrailingZerosPolicy::Truncate);
         numberFormatter.m_length = std::strlen(&numberFormatter.m_buffer[0]);
         return numberFormatter;
     }

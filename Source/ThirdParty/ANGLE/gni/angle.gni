@@ -57,7 +57,9 @@ if (angle_has_build) {
     import("//build/config/win/visual_studio_version.gni")
   }
 
-  if (is_castos || ozone_platform_headless) {
+  if (is_chromeos) {
+    angle_vulkan_display_mode = "offscreen"
+  } else if (is_castos || ozone_platform_headless) {
     angle_vulkan_display_mode = "headless"
   }
 
@@ -416,6 +418,14 @@ template("angle_shared_library") {
     configs += invoker.configs
     configs -= invoker.suppressed_configs
 
+    if (is_apple) {
+      # If a "build with ARC" config is present, remove it.
+      if (filter_include(configs, [ "//build/config/compiler:enable_arc" ]) !=
+          []) {
+        configs -= [ "//build/config/compiler:enable_arc" ]
+      }
+    }
+
     public_configs += [ angle_root + ":shared_library_public_config" ]
 
     if (is_android) {
@@ -460,6 +470,14 @@ template("angle_source_set") {
 
     configs += invoker.configs
     configs -= invoker.suppressed_configs
+
+    if (is_apple) {
+      # If a "build with ARC" config is present, remove it.
+      if (filter_include(configs, [ "//build/config/compiler:enable_arc" ]) !=
+          []) {
+        configs -= [ "//build/config/compiler:enable_arc" ]
+      }
+    }
   }
 }
 
@@ -478,6 +496,14 @@ template("angle_static_library") {
 
     configs += invoker.configs
     configs -= invoker.suppressed_configs
+
+    if (is_apple) {
+      # If a "build with ARC" config is present, remove it.
+      if (filter_include(configs, [ "//build/config/compiler:enable_arc" ]) !=
+          []) {
+        configs -= [ "//build/config/compiler:enable_arc" ]
+      }
+    }
   }
 }
 
@@ -494,6 +520,14 @@ if (angle_standalone || build_with_chromium) {
 
       configs += invoker.configs
       configs -= invoker.suppressed_configs
+
+      if (is_apple) {
+        # If a "build with ARC" config is present, remove it.
+        if (filter_include(configs, [ "//build/config/compiler:enable_arc" ]) !=
+            []) {
+          configs -= [ "//build/config/compiler:enable_arc" ]
+        }
+      }
 
       if (is_ios) {
         # shared libraries are hidden inside ios_framework_bundle, but we include headers from them

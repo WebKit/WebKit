@@ -41,8 +41,12 @@ public:
     bool equals(const CSSValuePair&) const;
 
 private:
+    friend bool CSSValue::addHash(Hasher&) const;
+
     enum class IdenticalValueSerialization : bool { DoNotCoalesce, Coalesce };
     CSSValuePair(Ref<CSSValue>, Ref<CSSValue>, IdenticalValueSerialization);
+
+    bool addDerivedHash(Hasher&) const;
 
     // FIXME: Store coalesce bit in CSSValue to cut down on object size.
     bool m_coalesceIdenticalValues { true };

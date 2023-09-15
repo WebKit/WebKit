@@ -48,11 +48,6 @@ ServiceWorkerRegistrationKey ServiceWorkerRegistrationKey::emptyKey()
     return { };
 }
 
-bool ServiceWorkerRegistrationKey::operator==(const ServiceWorkerRegistrationKey& other) const
-{
-    return m_topOrigin == other.m_topOrigin && m_scope == other.m_scope;
-}
-
 ServiceWorkerRegistrationKey ServiceWorkerRegistrationKey::isolatedCopy() const &
 {
     return { m_topOrigin.isolatedCopy(), m_scope.isolatedCopy() };

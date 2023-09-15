@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+ // https://html.spec.whatwg.org/#texttrackcue
+
 [
     Conditional=VIDEO,
     CustomIsReachable,
@@ -33,17 +35,18 @@
     LegacyFactoryFunctionEnabledBySetting=GenericCueAPIEnabled,
     Exposed=Window
 ] interface TextTrackCue : EventTarget {
-    [CallWith=CurrentDocument] constructor(double startTime, double endTime, DocumentFragment cueNode);
-
-    readonly attribute TextTrack track;
+    readonly attribute TextTrack? track;
 
     attribute [AtomString] DOMString id;
     attribute double startTime;
+    // FIXME: Add 'unrestricted' to 'endTime' to align with the specification. See: https://bugs.webkit.org/show_bug.cgi?id=260765
     attribute double endTime;
     attribute boolean pauseOnExit;
 
     attribute EventHandler onenter;
     attribute EventHandler onexit;
 
+    // FIXME: Add 'unrestricted' to 'endTime' to align with the specification. See: https://bugs.webkit.org/show_bug.cgi?id=260765
+    [CallWith=CurrentDocument] constructor(double startTime, double endTime, DocumentFragment cueNode);
     [EnabledBySetting=GenericCueAPIEnabled] DocumentFragment getCueAsHTML();
 };

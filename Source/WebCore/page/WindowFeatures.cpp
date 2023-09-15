@@ -53,24 +53,10 @@ static bool isSeparator(UChar character, FeatureMode mode)
 
 WindowFeatures parseWindowFeatures(StringView featuresString)
 {
-    // The IE rule is: all features except for channelmode and fullscreen default to YES, but
-    // if the user specifies a feature string, all features default to NO. (There is no public
-    // standard that applies to this method.)
-    //
-    // <http://msdn.microsoft.com/workshop/author/dhtml/reference/methods/open_0.asp>
-    // We always allow a window to be resized, which is consistent with Firefox.
-
     WindowFeatures features;
 
     if (featuresString.isEmpty())
         return features;
-
-    features.menuBarVisible = false;
-    features.statusBarVisible = false;
-    features.toolBarVisible = false;
-    features.locationBarVisible = false;
-    features.scrollbarsVisible = false;
-    features.noopener = false;
 
     processFeaturesString(featuresString, FeatureMode::Window, [&features](StringView key, StringView value) {
         setWindowFeature(features, key, value);
@@ -147,6 +133,8 @@ static void setWindowFeature(WindowFeatures& features, StringView key, StringVie
         features.width = numericValue;
     else if (equalLettersIgnoringASCIICase(key, "height"_s) || equalLettersIgnoringASCIICase(key, "innerheight"_s))
         features.height = numericValue;
+    else if (equalLettersIgnoringASCIICase(key, "popup"_s))
+        features.popup = numericValue;
     else if (equalLettersIgnoringASCIICase(key, "menubar"_s))
         features.menuBarVisible = numericValue;
     else if (equalLettersIgnoringASCIICase(key, "toolbar"_s))
@@ -159,12 +147,17 @@ static void setWindowFeature(WindowFeatures& features, StringView key, StringVie
         features.fullscreen = numericValue;
     else if (equalLettersIgnoringASCIICase(key, "scrollbars"_s))
         features.scrollbarsVisible = numericValue;
+    else if (equalLettersIgnoringASCIICase(key, "resizable"_s))
+        features.resizable = numericValue;
     else if (equalLettersIgnoringASCIICase(key, "noopener"_s))
         features.noopener = numericValue;
     else if (equalLettersIgnoringASCIICase(key, "noreferrer"_s))
         features.noreferrer = numericValue;
-    else if (numericValue == 1)
-        features.additionalFeatures.append(key.toString());
+    else if (key.length() || value.length()) {
+        features.hasAdditionalFeatures = true;
+        if (numericValue == 1)
+            features.additionalFeatures.append(key.toString());
+    }
 }
 
 WindowFeatures parseDialogFeatures(StringView dialogFeaturesString, const FloatRect& screenAvailableRect)

@@ -1,4 +1,5 @@
 
 PASS  ErrorEvent and Worker.dispatchEvent()
 PASS initErrorEvent
+PASS ErrorEvent constructor called as normal function
 

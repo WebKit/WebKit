@@ -63,7 +63,10 @@ enum class SubjectMessage
 
     // Indicates a separable program's textures or images changed in the ProgramExecutable.
     ProgramTextureOrImageBindingChanged,
-    // Indicates a separable program was successfully re-linked.
+    // Indicates a program or pipeline is being re-linked.  This is used to make sure the Context or
+    // ProgramPipeline that reference the program/pipeline wait for it to finish linking.
+    ProgramUnlinked,
+    // Indicates a program or pipeline was successfully re-linked.
     ProgramRelinked,
     // Indicates a separable program's sampler uniforms were updated.
     SamplerUniformsUpdated,

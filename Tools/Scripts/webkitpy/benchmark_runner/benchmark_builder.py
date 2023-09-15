@@ -2,6 +2,7 @@ import logging
 import tempfile
 import os
 import re
+import requests
 import shutil
 import subprocess
 import sys
@@ -10,11 +11,6 @@ import tarfile
 from webkitpy.benchmark_runner.utils import get_path_from_project_root, force_remove
 from webkitpy.benchmark_runner.github_downloader import GithubDownloadTask
 from zipfile import ZipFile
-
-if sys.version_info > (3, 0):
-    from urllib.request import urlretrieve
-else:
-    from urllib import urlretrieve
 
 
 _log = logging.getLogger(__name__)
@@ -87,7 +83,11 @@ class BenchmarkBuilder(object):
 
         archive_path = os.path.join(self._web_root, 'archive.' + archive_type)
         _log.info('Downloading %s to %s' % (archive_url, archive_path))
-        urlretrieve(archive_url, archive_path)
+        with requests.get(archive_url, stream=True, allow_redirects=True) as response:
+            response.raise_for_status()
+            with open(archive_path, 'wb') as archive_file:
+                for chunk in response.iter_content(chunk_size=1024):
+                    archive_file.write(chunk)
 
         if archive_type == 'zip':
             with ZipFile(archive_path, 'r') as archive:
@@ -138,6 +138,7 @@ class BenchmarkBuilder(object):
             shutil.copytree(os.path.join(temp_extract_path, relpath_in_repo), self._dest)
 
     def _apply_patch(self, patch):
+        _log.info('Applying patch %s' % (patch))
         old_working_directory = os.getcwd()
         os.chdir(self._dest)
         error_code = subprocess.call(['patch', '-p1', '-f', '-i', get_path_from_project_root(patch)])

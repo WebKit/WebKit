@@ -140,6 +140,10 @@ NS_ASSUME_NONNULL_END
 @end
 #endif
 
+#if PLATFORM(WATCHOS)
+#import <AVKit/AVPlayerViewController.h> // not part of AVKit's umbrella header
+#endif
+
 @interface AVPlayerController ()
 typedef NS_ENUM(NSInteger, AVPlayerControllerStatus) {
     AVPlayerControllerStatusUnknown = 0,

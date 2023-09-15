@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>backdrop-filter interpolation</title>
+    <title>-webkit-backdrop-filter interpolation</title>
     <link rel="help" href="https://drafts.fxtf.org/filter-effects-2/#BackdropFilterProperty">
     <meta name="assert" content="lacuna matches spec.">
     <script src="/resources/testharness.js"></script>
@@ -19,7 +19,7 @@
       'use strict';
 
       test_interpolation({
-        property: 'backdrop-filter',
+        property: '-webkit-backdrop-filter',
         from: 'none', // lacuna is 0px
         to: 'blur(10px)'
       }, [
@@ -30,7 +30,7 @@
       ]);
 
       test_interpolation({
-        property: 'backdrop-filter',
+        property: '-webkit-backdrop-filter',
         from: 'brightness(0)',
         to: 'none' // lacuna is 1
       }, [
@@ -41,7 +41,7 @@
       ]);
 
       test_interpolation({
-        property: 'backdrop-filter',
+        property: '-webkit-backdrop-filter',
         from: 'contrast(0)',
         to: 'none' // lacuna is 1
       }, [
@@ -52,7 +52,7 @@
       ]);
 
       test_interpolation({
-        property: 'backdrop-filter',
+        property: '-webkit-backdrop-filter',
         from: 'none', // lacuna is drop-shadow(0px 0px 0px transparent)
         to: 'drop-shadow(20px 10px green)'
       }, [
@@ -63,7 +63,7 @@
       ]);
 
       test_interpolation({
-        property: 'backdrop-filter',
+        property: '-webkit-backdrop-filter',
         from: 'none', // lacuna is 0
         to: 'grayscale(1)'
       }, [
@@ -74,7 +74,7 @@
       ]);
 
       test_interpolation({
-        property: 'backdrop-filter',
+        property: '-webkit-backdrop-filter',
         from: 'none', // lacuna is 0deg
         to: 'hue-rotate(360deg)'
       }, [
@@ -85,7 +85,7 @@
       ]);
 
       test_interpolation({
-        property: 'backdrop-filter',
+        property: '-webkit-backdrop-filter',
         from: 'none', // lacuna is 0
         to: 'invert(1)'
       }, [
@@ -96,7 +96,7 @@
       ]);
 
       test_interpolation({
-        property: 'backdrop-filter',
+        property: '-webkit-backdrop-filter',
         from: 'opacity(0)',
         to: 'none' // lacuna is 1
       }, [
@@ -107,7 +107,7 @@
       ]);
 
       test_interpolation({
-        property: 'backdrop-filter',
+        property: '-webkit-backdrop-filter',
         from: 'saturate(0)',
         to: 'none' // lacuna is 1
       }, [
@@ -118,7 +118,7 @@
       ]);
 
       test_interpolation({
-        property: 'backdrop-filter',
+        property: '-webkit-backdrop-filter',
         from: 'none', // lacuna is 0
         to: 'sepia(1)'
       }, [
@@ -129,7 +129,7 @@
       ]);
 
       test_no_interpolation({
-        property: 'backdrop-filter',
+        property: '-webkit-backdrop-filter',
         from: 'url("#svgfilter")',
         to: 'none', // lacuna is not defined
       });

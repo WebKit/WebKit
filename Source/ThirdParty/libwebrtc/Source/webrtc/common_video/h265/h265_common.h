@@ -14,7 +14,6 @@
 #include <memory>
 #include <vector>
 
-#include "common_video/h264/h264_common.h"
 #include "rtc_base/buffer.h"
 
 namespace webrtc {
@@ -28,8 +27,8 @@ const size_t kNaluLongStartSequenceSize = 4;
 // not the first NALU of an access unit or an SPS or PPS block.
 const size_t kNaluShortStartSequenceSize = 3;
 
-// The size of the NALU type byte (1).
-const size_t kNaluTypeSize = 1;
+// The size of the NALU type byte (2).
+const size_t kNaluTypeSize = 2;
 
 enum NaluType : uint8_t {
   kTrailN = 0,
@@ -57,10 +56,19 @@ enum NaluType : uint8_t {
   kFU = 49
 };
 
-enum SliceType : uint8_t { kP = 0, kB = 1, kI = 2, kSp = 3, kSi = 4 };
+enum SliceType : uint8_t { kB = 0, kP = 1, kI = 2 };
+
+struct NaluIndex {
+  // Start index of NALU, including start sequence.
+  size_t start_offset;
+  // Start index of NALU payload, typically type header.
+  size_t payload_start_offset;
+  // Length of NALU payload, in bytes, counting from payload_start_offset.
+  size_t payload_size;
+};
 
 // Returns a vector of the NALU indices in the given buffer.
-std::vector<H264::NaluIndex> FindNaluIndices(const uint8_t* buffer,
+std::vector<NaluIndex> FindNaluIndices(const uint8_t* buffer,
                                        size_t buffer_size);
 
 // Get the NAL type from the header byte immediately following start sequence.
@@ -86,6 +94,8 @@ std::vector<uint8_t> ParseRbsp(const uint8_t* data, size_t length);
 // bytes in order to escape any data the could be interpreted as a start
 // sequence.
 void WriteRbsp(const uint8_t* bytes, size_t length, rtc::Buffer* destination);
+
+uint32_t Log2(uint32_t value);
 }  // namespace H265
 }  // namespace webrtc
 

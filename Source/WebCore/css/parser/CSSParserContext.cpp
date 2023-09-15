@@ -104,47 +104,9 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , cssTextUnderlinePositionLeftRightEnabled { document.settings().cssTextUnderlinePositionLeftRightEnabled() }
     , cssTextWrapNewValuesEnabled { document.settings().cssTextWrapNewValuesEnabled() }
     , cssWordBreakAutoEnabled { document.settings().cssWordBreakAutoEnabled() }
+    , sidewaysWritingModesEnabled { document.settings().sidewaysWritingModesEnabled() }
     , propertySettings { CSSPropertySettings { document.settings() } }
 {
-}
-
-bool operator==(const CSSParserContext& a, const CSSParserContext& b)
-{
-    return a.baseURL == b.baseURL
-        && a.charset == b.charset
-        && a.mode == b.mode
-        && a.enclosingRuleType == b.enclosingRuleType
-        && a.isHTMLDocument == b.isHTMLDocument
-        && a.hasDocumentSecurityOrigin == b.hasDocumentSecurityOrigin
-        && a.isContentOpaque == b.isContentOpaque
-        && a.useSystemAppearance == b.useSystemAppearance
-        && a.shouldIgnoreImportRules == b.shouldIgnoreImportRules
-        && a.colorContrastEnabled == b.colorContrastEnabled
-        && a.colorMixEnabled == b.colorMixEnabled
-        && a.constantPropertiesEnabled == b.constantPropertiesEnabled
-        && a.counterStyleAtRuleImageSymbolsEnabled == b.counterStyleAtRuleImageSymbolsEnabled
-        && a.cssColor4 == b.cssColor4
-        && a.relativeColorSyntaxEnabled == b.relativeColorSyntaxEnabled
-        && a.springTimingFunctionEnabled == b.springTimingFunctionEnabled
-#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
-        && a.transformStyleOptimized3DEnabled == b.transformStyleOptimized3DEnabled
-#endif
-        && a.useLegacyBackgroundSizeShorthandBehavior == b.useLegacyBackgroundSizeShorthandBehavior
-        && a.focusVisibleEnabled == b.focusVisibleEnabled
-        && a.hasPseudoClassEnabled == b.hasPseudoClassEnabled
-        && a.cascadeLayersEnabled == b.cascadeLayersEnabled
-        && a.overflowClipEnabled == b.overflowClipEnabled
-        && a.gradientPremultipliedAlphaInterpolationEnabled == b.gradientPremultipliedAlphaInterpolationEnabled
-        && a.gradientInterpolationColorSpacesEnabled == b.gradientInterpolationColorSpacesEnabled
-        && a.subgridEnabled == b.subgridEnabled
-        && a.masonryEnabled == b.masonryEnabled
-        && a.cssNestingEnabled == b.cssNestingEnabled
-        && a.cssPaintingAPIEnabled == b.cssPaintingAPIEnabled
-        && a.cssTextUnderlinePositionLeftRightEnabled == b.cssTextUnderlinePositionLeftRightEnabled
-        && a.cssTextWrapNewValuesEnabled == b.cssTextWrapNewValuesEnabled
-        && a.cssWordBreakAutoEnabled == b.cssWordBreakAutoEnabled
-        && a.propertySettings == b.propertySettings
-    ;
 }
 
 void add(Hasher& hasher, const CSSParserContext& context)
@@ -176,7 +138,8 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.cssTextUnderlinePositionLeftRightEnabled  << 22
         | context.cssTextWrapNewValuesEnabled               << 23
         | context.cssWordBreakAutoEnabled                   << 24
-        | (uint64_t)context.mode                            << 25; // This is multiple bits, so keep it last.
+        | context.sidewaysWritingModesEnabled               << 25
+        | (uint64_t)context.mode                            << 26; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
 }
 

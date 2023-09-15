@@ -74,10 +74,7 @@ bool ScrollingCoordinator::coordinatesScrollingForFrameView(const LocalFrameView
     ASSERT(isMainThread());
     ASSERT(m_page);
 
-    auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame());
-    if (!localFrame)
-        return false;
-
+    Ref localFrame = frameView.frame();
     if (!localFrame->isMainFrame() && !m_page->settings().scrollingTreeIncludesFrames()
 #if PLATFORM(MAC) || USE(NICOSIA)
         && !m_page->settings().asyncFrameScrollingEnabled()
@@ -214,16 +211,14 @@ void ScrollingCoordinator::frameViewFixedObjectsDidChange(LocalFrameView& frameV
 
 GraphicsLayer* ScrollingCoordinator::scrollContainerLayerForFrameView(LocalFrameView& frameView)
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame());
-    if (auto* renderView = localFrame ? localFrame->contentRenderer() : nullptr)
+    if (auto* renderView = frameView.frame().contentRenderer())
         return renderView->compositor().scrollContainerLayer();
     return nullptr;
 }
 
 GraphicsLayer* ScrollingCoordinator::scrolledContentsLayerForFrameView(LocalFrameView& frameView)
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame());
-    if (auto* renderView = localFrame ? localFrame->contentRenderer() : nullptr)
+    if (auto* renderView = frameView.frame().contentRenderer())
         return renderView->compositor().scrolledContentsLayer();
     return nullptr;
 }
@@ -231,8 +226,7 @@ GraphicsLayer* ScrollingCoordinator::scrolledContentsLayerForFrameView(LocalFram
 GraphicsLayer* ScrollingCoordinator::headerLayerForFrameView(LocalFrameView& frameView)
 {
 #if HAVE(RUBBER_BANDING)
-    auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame());
-    if (auto* renderView = localFrame ? localFrame->contentRenderer() : nullptr)
+    if (auto* renderView = frameView.frame().contentRenderer())
         return renderView->compositor().headerLayer();
     return nullptr;
 #else
@@ -244,8 +238,7 @@ GraphicsLayer* ScrollingCoordinator::headerLayerForFrameView(LocalFrameView& fra
 GraphicsLayer* ScrollingCoordinator::footerLayerForFrameView(LocalFrameView& frameView)
 {
 #if HAVE(RUBBER_BANDING)
-    auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame());
-    if (auto* renderView = localFrame ? localFrame->contentRenderer() : nullptr)
+    if (auto* renderView = frameView.frame().contentRenderer())
         return renderView->compositor().footerLayer();
     return nullptr;
 #else
@@ -256,16 +249,14 @@ GraphicsLayer* ScrollingCoordinator::footerLayerForFrameView(LocalFrameView& fra
 
 GraphicsLayer* ScrollingCoordinator::counterScrollingLayerForFrameView(LocalFrameView& frameView)
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame());
-    if (auto* renderView = localFrame ? localFrame->contentRenderer() : nullptr)
+    if (auto* renderView = frameView.frame().contentRenderer())
         return renderView->compositor().fixedRootBackgroundLayer();
     return nullptr;
 }
 
 GraphicsLayer* ScrollingCoordinator::insetClipLayerForFrameView(LocalFrameView& frameView)
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame());
-    if (auto* renderView = localFrame ? localFrame->contentRenderer() : nullptr)
+    if (auto* renderView = frameView.frame().contentRenderer())
         return renderView->compositor().clipLayer();
     return nullptr;
 }
@@ -273,10 +264,8 @@ GraphicsLayer* ScrollingCoordinator::insetClipLayerForFrameView(LocalFrameView& 
 GraphicsLayer* ScrollingCoordinator::contentShadowLayerForFrameView(LocalFrameView& frameView)
 {
 #if HAVE(RUBBER_BANDING)
-    auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame());
-    if (auto* renderView = localFrame ? localFrame->contentRenderer() : nullptr)
+    if (auto* renderView = frameView.frame().contentRenderer())
         return renderView->compositor().layerForContentShadow();
-    
     return nullptr;
 #else
     UNUSED_PARAM(frameView);
@@ -286,8 +275,7 @@ GraphicsLayer* ScrollingCoordinator::contentShadowLayerForFrameView(LocalFrameVi
 
 GraphicsLayer* ScrollingCoordinator::rootContentsLayerForFrameView(LocalFrameView& frameView)
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame());
-    if (auto* renderView = localFrame ? localFrame->contentRenderer() : nullptr)
+    if (auto* renderView = frameView.frame().contentRenderer())
         return renderView->compositor().rootContentsLayer();
     return nullptr;
 }
@@ -337,10 +325,9 @@ void ScrollingCoordinator::updateSynchronousScrollingReasons(LocalFrameView& fra
     if (hasVisibleSlowRepaintViewportConstrainedObjects(frameView))
         newSynchronousScrollingReasons.add(SynchronousScrollingReason::HasNonLayerViewportConstrainedObjects);
 
-    auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame());
+    Ref localFrame = frameView.frame();
     auto* localMainFrame = dynamicDowncast<LocalFrame>(localFrame->mainFrame()); 
-    if (localFrame
-        && localMainFrame
+    if (localMainFrame
         && localMainFrame->document()
         && localFrame->document()->isImageDocument())
         newSynchronousScrollingReasons.add(SynchronousScrollingReason::IsImageDocument);

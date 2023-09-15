@@ -55,7 +55,7 @@ public:
     ~MediaPlayerPrivateMediaFoundation();
     static void registerMediaEngine(MediaEngineRegistrar);
 
-    static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types);
+    static void getSupportedTypes(HashSet<String>& types);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
     static bool isAvailable();
 
@@ -75,7 +75,7 @@ public:
     void setPageIsVisible(bool) final;
 
     bool seeking() const final;
-    void seek(float) final;
+    void seekToTarget(const SeekTarget&) final;
 
     void setRate(float) final;
 

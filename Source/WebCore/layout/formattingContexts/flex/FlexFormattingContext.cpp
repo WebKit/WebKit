@@ -172,52 +172,6 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
     return logicalFlexItemList;
 }
 
-static inline BoxGeometry::HorizontalMargin horizontalMargin(const FlexRect& rect, FlexDirection flexDirection)
-{
-    auto marginValue = BoxGeometry::HorizontalMargin { };
-    switch (flexDirection) {
-    case FlexDirection::Row:
-        marginValue = { rect.marginLeft(), rect.marginRight() };
-        break;
-    case FlexDirection::RowReverse:
-        marginValue = { rect.marginRight(), rect.marginLeft() };
-        break;
-    case FlexDirection::Column:
-        marginValue = { rect.marginTop(), rect.marginBottom() };
-        break;
-    case FlexDirection::ColumnReverse:
-        marginValue = { rect.marginBottom(), rect.marginTop() };
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-    return marginValue;
-}
-
-static inline BoxGeometry::VerticalMargin verticalMargin(const FlexRect& rect, FlexDirection flexDirection)
-{
-    auto marginValue = BoxGeometry::VerticalMargin { };
-    switch (flexDirection) {
-    case FlexDirection::Row:
-        marginValue = { rect.marginTop(), rect.marginBottom() };
-        break;
-    case FlexDirection::RowReverse:
-        marginValue = { rect.marginBottom(), rect.marginTop() };
-        break;
-    case FlexDirection::Column:
-        marginValue = { rect.marginLeft(), rect.marginRight() };
-        break;
-    case FlexDirection::ColumnReverse:
-        marginValue = { rect.marginRight(), rect.marginLeft() };
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-    return marginValue;
-}
-
 void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexItems& logicalFlexItemList, const FlexLayout::LogicalFlexItemRects& logicalRects, const ConstraintsForFlexContent& constraints)
 {
     auto& formattingState = this->formattingState();

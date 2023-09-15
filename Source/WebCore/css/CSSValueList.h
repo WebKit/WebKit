@@ -74,6 +74,8 @@ public:
     const CSSValue* itemWithoutBoundsCheck(unsigned index) const { return &(*this)[index]; }
 
 protected:
+    friend bool CSSValue::addHash(Hasher&) const;
+
     CSSValueContainingVector(ClassType, ValueSeparator);
     CSSValueContainingVector(ClassType, ValueSeparator, CSSValueListBuilder);
     CSSValueContainingVector(ClassType, ValueSeparator, Ref<CSSValue>);
@@ -81,6 +83,8 @@ protected:
     CSSValueContainingVector(ClassType, ValueSeparator, Ref<CSSValue>, Ref<CSSValue>, Ref<CSSValue>);
     CSSValueContainingVector(ClassType, ValueSeparator, Ref<CSSValue>, Ref<CSSValue>, Ref<CSSValue>, Ref<CSSValue>);
     ~CSSValueContainingVector();
+
+    bool addDerivedHash(Hasher&) const;
 
 private:
     unsigned m_size { 0 };
@@ -110,6 +114,8 @@ public:
     bool equals(const CSSValueList&) const;
 
 private:
+    friend void add(Hasher&, const CSSValueList&);
+
     explicit CSSValueList(ValueSeparator);
     CSSValueList(ValueSeparator, CSSValueListBuilder);
     CSSValueList(ValueSeparator, Ref<CSSValue>);
@@ -134,6 +140,8 @@ inline const CSSValue& CSSValueContainingVector::operator[](unsigned index) cons
         return *m_inlineStorage[index];
     return *m_additionalStorage[index - maxInlineSize];
 }
+
+void add(Hasher&, const CSSValueContainingVector&);
 
 } // namespace WebCore
 

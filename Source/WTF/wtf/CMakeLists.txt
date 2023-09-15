@@ -91,7 +91,6 @@ set(WTF_PUBLIC_HEADERS
     FunctionDispatcher.h
     FunctionPtr.h
     FunctionTraits.h
-    GenerateProfiles.h
     GenericHashKey.h
     GenericTimeMixin.h
     GetPtr.h
@@ -392,6 +391,9 @@ set(WTF_PUBLIC_HEADERS
     text/StringConcatenateNumbers.h
     text/StringHash.h
     text/StringHasher.h
+    text/StringHasherInlines.h
+    text/SuperFastHash.h
+    text/WYHash.h
     text/StringImpl.h
     text/StringOperators.h
     text/StringParsingBuffer.h

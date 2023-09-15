@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -299,7 +299,7 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void reportZappedCellAndCras
     MarkedBlock* foundBlock = nullptr;
     if (foundBlockHandle) {
         foundBlock = &foundBlockHandle->block();
-        subspaceHash = StringHasher::computeHash(foundBlockHandle->subspace()->name());
+        subspaceHash = SuperFastHash::computeHash(foundBlockHandle->subspace()->name());
         cellSize = foundBlockHandle->cellSize();
 
         variousState |= static_cast<uint64_t>(foundBlockHandle->isFreeListed()) << 0;
@@ -335,7 +335,7 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void reportZappedCellAndCras
             return IterationStatus::Continue;
         });
         if (foundPreciseAllocation) {
-            subspaceHash = StringHasher::computeHash(foundPreciseAllocation->subspace()->name());
+            subspaceHash = SuperFastHash::computeHash(foundPreciseAllocation->subspace()->name());
             cellSize = foundPreciseAllocation->cellSize();
 
             variousState |= static_cast<uint64_t>(isFreeListed) << 0;

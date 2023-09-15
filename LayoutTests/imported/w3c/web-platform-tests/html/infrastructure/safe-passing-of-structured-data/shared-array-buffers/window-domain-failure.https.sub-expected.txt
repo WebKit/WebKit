@@ -1,0 +1,7 @@
+Blocked access to external URL https://www1.localhost:9443/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/iframe-domain-failure.sub.html
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT SharedArrayBuffer and a same-origin-domain (but not same-origin) iframe Test timed out
+

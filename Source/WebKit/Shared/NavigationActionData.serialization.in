@@ -31,7 +31,7 @@ struct WebKit::NavigationActionData {
     WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy;
     WTF::String downloadAttribute;
     WebCore::FloatPoint clickLocationInRootViewCoordinates;
-    bool isRedirect;
+    WebCore::ResourceResponse redirectResponse;
     bool treatAsSameOriginNavigation;
     bool hasOpenedFrames;
     bool openedByDOMWithOpener;

@@ -16,9 +16,17 @@ includes: [temporalHelpers.js]
   Symbol(),
   3600_000_000_000n,
   {},
-  { valueOf() { return 3600_000_000_000; } },
+  {
+    valueOf() {
+      return 3600_000_000_000;
+    }
+  }
 ].forEach((wrongOffset) => {
   const timeZone = TemporalHelpers.specificOffsetTimeZone(wrongOffset);
 
-  assert.throws(TypeError, () => Temporal.ZonedDateTime.from({ year: 2000, month: 5, day: 2, hour: 12, timeZone }));
+  assert.throws(
+    TypeError,
+    () => Temporal.ZonedDateTime.from({ year: 2000, month: 5, day: 2, hour: 12, timeZone }),
+    `invalid offset: ${String(wrongOffset)} (${typeof wrongOffset})`
+  );
 });

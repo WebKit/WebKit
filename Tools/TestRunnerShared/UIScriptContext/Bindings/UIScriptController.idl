@@ -315,6 +315,7 @@ interface UIScriptController {
     readonly attribute double zoomScale;
     readonly attribute double minimumZoomScale;
     readonly attribute double maximumZoomScale;
+    readonly attribute boolean isZoomingOrScrolling;
 
     // Overides the "in stable state" behavior of WKWebView (only applies to iOS)
     // When false, content rect updates to the web process have inStableState=false, as if a scroll or zoom were in progress.
@@ -324,6 +325,7 @@ interface UIScriptController {
     readonly attribute object contentVisibleRect;
     readonly attribute object selectionStartGrabberViewRect;
     readonly attribute object selectionEndGrabberViewRect;
+    readonly attribute object selectionEndGrabberViewShapePathDescription;
     readonly attribute object selectionCaretViewRect;
     readonly attribute object selectionCaretViewRectInGlobalCoordinates;
     readonly attribute object selectionRangeViewRects;
@@ -366,6 +368,8 @@ interface UIScriptController {
     undefined overridePreference(DOMString preference, DOMString value);
 
     undefined setSafeAreaInsets(double top, double right, double bottom, double left);
+
+    undefined setAppAccentColor(unsigned short red, unsigned short green, unsigned short blue);
 
     undefined firstResponderSuppressionForWebView(boolean shouldSuppress);
     undefined makeWindowContentViewFirstResponder();

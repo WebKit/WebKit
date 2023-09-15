@@ -110,7 +110,6 @@ MediaSource::MediaSource(ScriptExecutionContext& context)
     , m_sourceBuffers(SourceBufferList::create(scriptExecutionContext()))
     , m_activeSourceBuffers(SourceBufferList::create(scriptExecutionContext()))
     , m_duration(MediaTime::invalidTime())
-    , m_pendingSeekTime(MediaTime::invalidTime())
 #if !RELEASE_LOG_DISABLED
     , m_logger(downcast<Document>(context).logger())
 #endif
@@ -177,6 +176,8 @@ MediaTime MediaSource::duration() const
 
 MediaTime MediaSource::currentTime() const
 {
+    if (m_pendingSeekTarget)
+        return m_pendingSeekTarget->time;
     return m_mediaElement ? m_mediaElement->currentMediaTime() : MediaTime::zeroTime();
 }
 
@@ -185,24 +186,31 @@ const PlatformTimeRanges& MediaSource::buffered() const
     return m_buffered;
 }
 
-void MediaSource::seekToTime(const MediaTime& time)
+void MediaSource::waitForTarget(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
 {
-    if (isClosed())
+    if (isClosed()) {
+        completionHandler(MediaTime::invalidTime());
         return;
+    }
 
-    ALWAYS_LOG(LOGIDENTIFIER, time);
+    ALWAYS_LOG(LOGIDENTIFIER, target.time);
 
     // 2.4.3 Seeking
     // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#mediasource-seeking
 
-    m_pendingSeekTime = time;
-    m_private->setIsSeeking(true);
+    if (m_seekCompletedHandler) {
+        ALWAYS_LOG(LOGIDENTIFIER, "Previous seeking to ", m_pendingSeekTarget->time, "pending, cancelling it");
+        m_seekCompletedHandler(MediaTime::invalidTime());
+    }
+    m_seekCompletedHandler = WTFMove(completionHandler);
+    m_pendingSeekTarget = target;
 
     // Run the following steps as part of the "Wait until the user agent has established whether or not the
     // media data for the new playback position is available, and, if it is, until it has decoded enough data
     // to play back that position" step of the seek algorithm:
     // ↳ If new playback position is not in any TimeRange of HTMLMediaElement.buffered
-    if (!hasBufferedTime(time)) {
+    if (!hasBufferedTime(target.time)) {
+        ALWAYS_LOG(LOGIDENTIFIER, "No data at seeked time, waiting");
         // 1. If the HTMLMediaElement.readyState attribute is greater than HAVE_METADATA,
         // then set the HTMLMediaElement.readyState attribute to HAVE_METADATA.
         m_private->setReadyState(MediaPlayer::ReadyState::HaveMetadata);
@@ -210,19 +218,12 @@ void MediaSource::seekToTime(const MediaTime& time)
         // 2. The media element waits until an appendBuffer() or an appendStream() call causes the coded
         // frame processing algorithm to set the HTMLMediaElement.readyState attribute to a value greater
         // than HAVE_METADATA.
-        m_private->waitForSeekCompleted();
-
         monitorSourceBuffers();
 
         return;
     }
     // ↳ Otherwise
     // Continue
-
-// https://bugs.webkit.org/show_bug.cgi?id=125157 broke seek on MediaPlayerPrivateGStreamerMSE
-#if !USE(GSTREAMER)
-    m_private->waitForSeekCompleted();
-#endif
     completeSeek();
 }
 
@@ -230,28 +231,70 @@ void MediaSource::completeSeek()
 {
     if (isClosed())
         return;
-
     // 2.4.3 Seeking, ctd.
     // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#mediasource-seeking
 
-    ASSERT(m_pendingSeekTime.isValid());
+    ASSERT(m_pendingSeekTarget && m_seekCompletedHandler);
 
-    ALWAYS_LOG(LOGIDENTIFIER, m_pendingSeekTime);
+    ALWAYS_LOG(LOGIDENTIFIER, m_pendingSeekTarget->time);
 
     // 2. The media element resets all decoders and initializes each one with data from the appropriate
     // initialization segment.
     // 3. The media element feeds coded frames from the active track buffers into the decoders starting
     // with the closest random access point before the new playback position.
-    MediaTime pendingSeekTime = m_pendingSeekTime;
-    m_pendingSeekTime = MediaTime::invalidTime();
-    m_private->setIsSeeking(false);
+    auto seekTarget = *m_pendingSeekTarget;
+    m_pendingSeekTarget.reset();
+
+    struct SeeksCallbackAggregator final : public RefCounted<SeeksCallbackAggregator> {
+        SeeksCallbackAggregator(MediaTime target, MediaSource& source, CompletionHandler<void(const MediaTime&)>&& completionHandler)
+            : time(target)
+            , mediaSource(source)
+            , completionHandler(WTFMove(completionHandler))
+        {
+            ASSERT(this->completionHandler);
+        }
+
+        ~SeeksCallbackAggregator()
+        {
+            auto seekTime = time;
+            for (auto& result : seekResults) {
+                if (result.isInvalid()) {
+                    completionHandler(MediaTime::invalidTime());
+                    return;
+                }
+                if (abs(time - result) > abs(time - seekTime))
+                    seekTime = result;
+            }
+            completionHandler(seekTime);
+
+            // 4. Resume the seek algorithm at the "Await a stable state" step.
+            mediaSource->monitorSourceBuffers();
+        }
+
+        MediaTime time;
+        Ref<MediaSource> mediaSource;
+        CompletionHandler<void(const MediaTime&)> completionHandler;
+        Vector<MediaTime> seekResults;
+    };
+
+    auto callbackAggregator = adoptRef(*new SeeksCallbackAggregator(seekTarget.time, *this, WTFMove(m_seekCompletedHandler)));
+
+    for (auto& sourceBuffer : *m_activeSourceBuffers) {
+        sourceBuffer->computeSeekTime(seekTarget, [callbackAggregator](const MediaTime& seekTime) {
+            callbackAggregator->seekResults.append(seekTime);
+        });
+    }
+}
+
+void MediaSource::seekToTime(const MediaTime& time, CompletionHandler<void()>&& completionHandler)
+{
+    if (isClosed()) {
+        completionHandler();
+        return;
+    }
     for (auto& sourceBuffer : *m_activeSourceBuffers)
-        sourceBuffer->seekToTime(pendingSeekTime);
-
-    // 4. Resume the seek algorithm at the "Await a stable state" step.
-    m_private->seekCompleted();
-
-    monitorSourceBuffers();
+        sourceBuffer->seekToTime(time);
+    completionHandler();
 }
 
 Ref<TimeRanges> MediaSource::seekable()
@@ -413,7 +456,7 @@ void MediaSource::monitorSourceBuffers()
         // 3. Playback may resume at this point if it was previously suspended by a transition to HAVE_CURRENT_DATA.
         m_private->setReadyState(MediaPlayer::ReadyState::HaveEnoughData);
 
-        if (m_pendingSeekTime.isValid())
+        if (m_pendingSeekTarget)
             completeSeek();
 
         // 4. Abort these steps.
@@ -428,7 +471,7 @@ void MediaSource::monitorSourceBuffers()
         // 3. Playback may resume at this point if it was previously suspended by a transition to HAVE_CURRENT_DATA.
         m_private->setReadyState(MediaPlayer::ReadyState::HaveFutureData);
 
-        if (m_pendingSeekTime.isValid())
+        if (m_pendingSeekTarget)
             completeSeek();
 
         // 4. Abort these steps.
@@ -445,7 +488,7 @@ void MediaSource::monitorSourceBuffers()
     // advance the media timeline.
     m_private->setReadyState(MediaPlayer::ReadyState::HaveCurrentData);
 
-    if (m_pendingSeekTime.isValid())
+    if (m_pendingSeekTarget)
         completeSeek();
 
     // 4. Abort these steps.
@@ -743,7 +786,7 @@ ExceptionOr<void> MediaSource::removeSourceBuffer(SourceBuffer& buffer)
     ASSERT(scriptExecutionContext());
     if (!scriptExecutionContext()->activeDOMObjectsAreStopped()) {
         // 4. Let SourceBuffer audioTracks list equal the AudioTrackList object returned by sourceBuffer.audioTracks.
-        auto* audioTracks = buffer.audioTracksIfExists();
+        RefPtr audioTracks = buffer.audioTracksIfExists();
 
         // 5. If the SourceBuffer audioTracks list is not empty, then run the following steps:
         if (audioTracks && audioTracks->length()) {
@@ -783,7 +826,7 @@ ExceptionOr<void> MediaSource::removeSourceBuffer(SourceBuffer& buffer)
         }
 
         // 6. Let SourceBuffer videoTracks list equal the VideoTrackList object returned by sourceBuffer.videoTracks.
-        auto* videoTracks = buffer.videoTracksIfExists();
+        RefPtr videoTracks = buffer.videoTracksIfExists();
 
         // 7. If the SourceBuffer videoTracks list is not empty, then run the following steps:
         if (videoTracks && videoTracks->length()) {
@@ -823,7 +866,7 @@ ExceptionOr<void> MediaSource::removeSourceBuffer(SourceBuffer& buffer)
         }
 
         // 8. Let SourceBuffer textTracks list equal the TextTrackList object returned by sourceBuffer.textTracks.
-        auto* textTracks = buffer.textTracksIfExists();
+        RefPtr textTracks = buffer.textTracksIfExists();
 
         // 9. If the SourceBuffer textTracks list is not empty, then run the following steps:
         if (textTracks && textTracks->length()) {
@@ -978,6 +1021,9 @@ void MediaSource::detachFromElement(HTMLMediaElement& element)
 
     m_private = nullptr;
     m_mediaElement = nullptr;
+
+    if (m_seekCompletedHandler)
+        m_seekCompletedHandler(MediaTime::invalidTime());
 }
 
 void MediaSource::sourceBufferDidChangeActiveState(SourceBuffer&, bool)
@@ -1043,6 +1089,8 @@ void MediaSource::stop()
 
     if (m_mediaElement)
         m_mediaElement->detachMediaSource();
+    if (m_seekCompletedHandler)
+        m_seekCompletedHandler(MediaTime::invalidTime());
     m_readyState = ReadyState::Closed;
     m_private = nullptr;
 }
@@ -1083,6 +1131,8 @@ void MediaSource::onReadyStateChange(ReadyState oldState, ReadyState newState)
         updateBufferedIfNeeded(true /* force */);
     } else {
         ASSERT(isClosed());
+        if (m_seekCompletedHandler)
+            m_seekCompletedHandler(MediaTime::invalidTime());
         scheduleEvent(eventNames().sourcecloseEvent);
     }
 

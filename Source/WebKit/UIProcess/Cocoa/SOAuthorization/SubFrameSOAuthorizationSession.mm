@@ -103,7 +103,7 @@ void SubFrameSOAuthorizationSession::beforeStart()
 void SubFrameSOAuthorizationSession::didFinishLoad()
 {
     AUTHORIZATIONSESSION_RELEASE_LOG("didFinishLoad");
-    auto* frame = WebFrameProxy::webFrame(m_frameID);
+    RefPtr frame = WebFrameProxy::webFrame(m_frameID);
     ASSERT(frame);
     if (m_requestsToLoad.isEmpty() || m_requestsToLoad.first().first != frame->url())
         return;
@@ -121,11 +121,11 @@ void SubFrameSOAuthorizationSession::appendRequestToLoad(URL&& url, Supplement&&
 void SubFrameSOAuthorizationSession::loadRequestToFrame()
 {
     AUTHORIZATIONSESSION_RELEASE_LOG("loadRequestToFrame");
-    auto* page = this->page();
+    RefPtr page = this->page();
     if (!page || m_requestsToLoad.isEmpty())
         return;
 
-    if (auto* frame = WebFrameProxy::webFrame(m_frameID)) {
+    if (RefPtr frame = WebFrameProxy::webFrame(m_frameID)) {
         page->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
         auto& url = m_requestsToLoad.first().first;
         WTF::switchOn(m_requestsToLoad.first().second, [&](const Vector<uint8_t>& data) {

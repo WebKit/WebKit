@@ -83,9 +83,7 @@ struct Config {
     bool isThreadSuspendResumeSignalConfigured;
     int sigThreadSuspendResume;
 #endif
-#if OS(UNIX)
     SignalHandlers signalHandlers;
-#endif
     PtrTagLookup* ptrTagLookupHead;
 
     uint64_t spaceForExtensions[1];

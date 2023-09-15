@@ -89,7 +89,7 @@ WebXRRigidTransform::WebXRRigidTransform(const DOMPointInit& position, const DOM
 {
     TransformationMatrix translation;
     translation.translate3d(position.x, position.y, position.z);
-    auto rotation = TransformationMatrix::fromQuaternion(orientation.x, orientation.y, orientation.z, orientation.w);
+    auto rotation = TransformationMatrix::fromQuaternion({ orientation.x, orientation.y, orientation.z, orientation.w });
     m_rawTransform = translation * rotation;
 }
 
@@ -110,7 +110,7 @@ WebXRRigidTransform::WebXRRigidTransform(const TransformationMatrix& transform)
 
     m_position = DOMPointReadOnly::create(decomp.translateX, decomp.translateY, decomp.translateZ, 1.0f);
 
-    DOMPointInit orientationInit { -decomp.quaternionX, -decomp.quaternionY, -decomp.quaternionZ, decomp.quaternionW };
+    DOMPointInit orientationInit { decomp.quaternion.x, decomp.quaternion.y, decomp.quaternion.z, decomp.quaternion.w };
     normalizeQuaternion(orientationInit);
     m_orientation = DOMPointReadOnly::create(orientationInit);
 }

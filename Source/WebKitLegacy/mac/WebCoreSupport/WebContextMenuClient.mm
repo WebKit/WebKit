@@ -212,9 +212,7 @@ RetainPtr<NSImage> WebContextMenuClient::imageForCurrentSharingServicePickerItem
     if (!buffer)
         return nil;
 
-    auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frameView->frame());
-    if (!localFrame)
-        return nil;
+    Ref localFrame = frameView->frame();
 
     auto oldSelection = localFrame->selection().selection();
     localFrame->selection().setSelection(*makeRangeSelectingNode(*node), FrameSelection::SetSelectionOption::DoNotSetFocus);

@@ -27,8 +27,6 @@
 
 #include "APIObject.h"
 #include "CallbackID.h"
-#include "Connection.h"
-#include "ContentAsStringIncludesChildFrames.h"
 #include "ContentWorldShared.h"
 #include "DataReference.h"
 #include "DownloadID.h"
@@ -46,7 +44,6 @@
 #include "PDFPluginIdentifier.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
-#include "SharedMemory.h"
 #include "StorageNamespaceIdentifier.h"
 #include "TransactionID.h"
 #include "UserContentControllerIdentifier.h"
@@ -58,22 +55,20 @@
 #include "WebUndoStepID.h"
 #include "WebsitePoliciesData.h"
 #include <JavaScriptCore/InspectorFrontendChannel.h>
-#include <WebCore/ActivityState.h>
 #include <WebCore/AppHighlight.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DictationContext.h>
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/DisabledAdaptations.h>
 #include <WebCore/DragActions.h>
+#include <WebCore/FocusOptions.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/FrameLoaderTypes.h>
-#include <WebCore/HTMLMenuItemElement.h>
 #include <WebCore/HighlightVisibility.h>
 #include <WebCore/IntSizeHash.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/MediaControlsContextMenuItem.h>
 #include <WebCore/MediaKeySystemRequest.h>
-#include <WebCore/Page.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PageOverlay.h>
 #include <WebCore/PlatformLayerIdentifier.h>
@@ -89,8 +84,6 @@
 #include <WebCore/TextManipulationController.h>
 #include <WebCore/TextManipulationItem.h>
 #include <WebCore/UserActivity.h>
-#include <WebCore/UserContentTypes.h>
-#include <WebCore/UserInterfaceLayoutDirection.h>
 #include <WebCore/UserMediaRequestIdentifier.h>
 #include <WebCore/UserScriptTypes.h>
 #include <WebCore/VisibilityState.h>
@@ -206,12 +199,12 @@ class DragData;
 class WeakPtrImplWithEventTargetData;
 class FontAttributeChanges;
 class FontChanges;
+class Frame;
+class FrameView;
 class FrameSelection;
 class GraphicsContext;
 class HTMLElement;
 class HTMLImageElement;
-class HTMLMenuElement;
-class HTMLMenuItemElement;
 class HTMLPlugInElement;
 class HTMLVideoElement;
 class IgnoreSelectionChangeForScope;
@@ -239,7 +232,9 @@ class SubstituteData;
 class TextCheckingRequest;
 class VisiblePosition;
 
-enum class SyntheticClickType : uint8_t;
+enum class LayoutMilestone : uint16_t;
+
+enum class ActivityState : uint16_t;
 enum class COEPDisposition : bool;
 enum class CaretAnimatorType : uint8_t;
 enum class CreateNewGroupForHighlight : bool;
@@ -256,11 +251,14 @@ enum class MediaProducerMediaState : uint32_t;
 enum class MediaProducerMutedState : uint8_t;
 enum class SelectionDirection : uint8_t;
 enum class ShouldTreatAsContinuingLoad : uint8_t;
+enum class SyntheticClickType : uint8_t;
 enum class TextIndicatorPresentationTransition : uint8_t;
 enum class TextGranularity : uint8_t;
+enum class UserContentInjectedFrames : bool;
+enum class UserInterfaceLayoutDirection : bool;
+enum class ViolationReportType : uint8_t;
 enum class WheelEventProcessingSteps : uint8_t;
 enum class WritingDirection : uint8_t;
-enum class ViolationReportType : uint8_t;
 
 using MediaProducerMediaStateFlags = OptionSet<MediaProducerMediaState>;
 using MediaProducerMutedStateFlags = OptionSet<MediaProducerMutedState>;
@@ -281,6 +279,7 @@ struct InteractionRegion;
 struct KeypressCommand;
 struct MediaUsageInfo;
 struct PromisedAttachmentInfo;
+struct RemoteMouseEventData;
 struct RequestStorageAccessResult;
 struct RunJavaScriptParameters;
 struct TextCheckingResult;
@@ -315,6 +314,7 @@ class PluginView;
 class RemoteMediaSessionCoordinator;
 class RemoteRenderingBackendProxy;
 class RemoteWebInspectorUI;
+class SharedMemoryHandle;
 class TextCheckingControllerProxy;
 class UserMediaPermissionRequestManager;
 class ViewGestureGeometryCollector;
@@ -326,6 +326,7 @@ class WebDateTimeChooser;
 class WebDocumentLoader;
 class WebEvent;
 class WebFoundTextRangeController;
+class WebHistoryItemClient;
 class PlaybackSessionManager;
 class VideoFullscreenManager;
 class WebBackForwardListItem;
@@ -354,6 +355,7 @@ class WebUserContentController;
 class WebWheelEvent;
 class RemoteLayerTreeTransaction;
 
+enum class ContentAsStringIncludesChildFrames : bool;
 enum class DragControllerAction : uint8_t;
 enum class FindOptions : uint16_t;
 enum class FindDecorationStyle : uint8_t;
@@ -371,6 +373,7 @@ struct FrameTreeNodeData;
 struct FocusedElementInformation;
 struct FontInfo;
 struct FrameTreeNodeData;
+struct GoToBackForwardItemParameters;
 struct InsertTextOptions;
 struct InteractionInformationAtPosition;
 struct InteractionInformationRequest;
@@ -404,7 +407,7 @@ class PlatformXRSystemProxy;
 using SnapshotOptions = uint32_t;
 using WKEventModifiers = uint32_t;
 
-class WebPage : public API::ObjectImpl<API::Object::Type::BundlePage>, public IPC::MessageReceiver, public IPC::MessageSender {
+class WebPage : public API::ObjectImpl<API::Object::Type::BundlePage>, public IPC::MessageReceiver, public IPC::MessageSender, public CanMakeCheckedPtr {
 public:
     static Ref<WebPage> create(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
@@ -436,7 +439,7 @@ public:
 
     void scrollMainFrameIfNotAtMaxScrollPosition(const WebCore::IntSize& scrollOffset);
 
-    bool scrollBy(uint32_t scrollDirection, WebCore::ScrollGranularity);
+    bool scrollBy(WebCore::ScrollDirection, WebCore::ScrollGranularity);
 
     void centerSelectionInVisibleArea();
 
@@ -457,6 +460,7 @@ public:
 
     void layoutIfNeeded();
     void updateRendering();
+    bool hasRootFrames();
     bool shouldTriggerRenderingUpdate(unsigned rescheduledRenderingUpdateCount) const;
     void finalizeRenderingUpdate(OptionSet<WebCore::FinalizeRenderingUpdateFlags>);
 
@@ -527,11 +531,6 @@ public:
     std::optional<WebCore::PointerCharacteristics> pointerCharacteristicsOfPrimaryPointingDevice() const;
     OptionSet<WebCore::PointerCharacteristics> pointerCharacteristicsOfAllAvailablePointingDevices() const;
 
-    void didInsertMenuElement(WebCore::HTMLMenuElement&);
-    void didRemoveMenuElement(WebCore::HTMLMenuElement&);
-    void didInsertMenuItemElement(WebCore::HTMLMenuItemElement&);
-    void didRemoveMenuItemElement(WebCore::HTMLMenuItemElement&);
-
     void animationDidFinishForElement(const WebCore::Element&);
 
     const String& overrideContentSecurityPolicy() const { return m_overrideContentSecurityPolicy; }
@@ -546,7 +545,7 @@ public:
     inline void setHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds);
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    WebColorChooser* activeColorChooser() const { return m_activeColorChooser; }
+    WebColorChooser* activeColorChooser() const;
     void setActiveColorChooser(WebColorChooser*);
     void didChooseColor(const WebCore::Color&);
     void didEndColorPicker();
@@ -964,7 +963,7 @@ public:
 
 #if ENABLE(CONTEXT_MENUS)
     WebContextMenu& contextMenu();
-    WebContextMenu* contextMenuAtPointInWindow(const WebCore::IntPoint&);
+    WebContextMenu* contextMenuAtPointInWindow(WebCore::FrameIdentifier, const WebCore::IntPoint&);
 #endif
 
     static bool canHandleRequest(const WebCore::ResourceRequest&);
@@ -1110,8 +1109,8 @@ public:
 
     void beginPrinting(WebCore::FrameIdentifier, const PrintInfo&);
     void beginPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo) { beginPrinting(frameID, printInfo); }
-    void endPrinting();
-    void endPrintingDuringDOMPrintOperation() { endPrinting(); }
+    void endPrinting(CompletionHandler<void()>&& = [] { });
+    void endPrintingDuringDOMPrintOperation(CompletionHandler<void()>&& completionHandler) { endPrinting(WTFMove(completionHandler)); }
     void computePagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&&);
     void computePagesForPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&& completionHandler) { computePagesForPrinting(frameID, printInfo, WTFMove(completionHandler)); }
     void computePagesForPrintingImpl(WebCore::FrameIdentifier, const PrintInfo&, Vector<WebCore::IntRect>& pageRects, double& totalScaleFactor, WebCore::FloatBoxExtent& computedMargin);
@@ -1133,8 +1132,8 @@ public:
     void drawToPDF(WebCore::FrameIdentifier, const std::optional<WebCore::FloatRect>&, bool allowTransparentBackground,  CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
 
 #if PLATFORM(GTK)
-    void drawPagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(std::optional<SharedMemory::Handle>&&, WebCore::ResourceError&&)>&&);
-    void drawPagesForPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(std::optional<SharedMemory::Handle>&&, WebCore::ResourceError&&)>&& completionHandler) { drawPagesForPrinting(frameID, printInfo, WTFMove(completionHandler)); }
+    void drawPagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(std::optional<SharedMemoryHandle>&&, WebCore::ResourceError&&)>&&);
+    void drawPagesForPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(std::optional<SharedMemoryHandle>&&, WebCore::ResourceError&&)>&& completionHandler) { drawPagesForPrinting(frameID, printInfo, WTFMove(completionHandler)); }
 #endif
 
     void addResourceRequest(WebCore::ResourceLoaderIdentifier, const WebCore::ResourceRequest&);
@@ -1172,23 +1171,18 @@ public:
     void handleAlternativeTextUIResult(const String&);
 #endif
 
-    // For testing purpose.
-    void simulateMouseDown(int button, WebCore::IntPoint, int clickCount, WKEventModifiers, WallTime);
-    void simulateMouseUp(int button, WebCore::IntPoint, int clickCount, WKEventModifiers, WallTime);
-    void simulateMouseMotion(WebCore::IntPoint, WallTime);
-
 #if ENABLE(CONTEXT_MENUS)
     void startWaitingForContextMenuToShow() { m_waitingForContextMenuToShow = true; }
 #endif
 
-    void handleWheelEvent(const WebWheelEvent&, const OptionSet<WebCore::WheelEventProcessingSteps>&, std::optional<bool> willStartSwipe, CompletionHandler<void(WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>, bool handled)>&&);
-    bool wheelEvent(const WebWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>, EventDispatcher::WheelEventOrigin);
+    void handleWheelEvent(WebCore::FrameIdentifier, const WebWheelEvent&, const OptionSet<WebCore::WheelEventProcessingSteps>&, std::optional<bool> willStartSwipe, CompletionHandler<void(WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>, bool handled)>&&);
+    bool wheelEvent(const WebCore::FrameIdentifier&, const WebWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>, EventDispatcher::WheelEventOrigin);
 
     void wheelEventHandlersChanged(bool);
     void recomputeShortCircuitHorizontalWheelEventsState();
 
 #if ENABLE(MAC_GESTURE_EVENTS)
-    void gestureEvent(const WebGestureEvent&);
+    void gestureEvent(const WebGestureEvent&, CompletionHandler<void(WebEventType, bool)>&&);
 #endif
 
     void updateVisibilityState(bool isInitialState = false);
@@ -1444,7 +1438,6 @@ public:
     SendSyncResult<T> sendSyncWithDelayedReply(T&& message, OptionSet<IPC::SendSyncOption> sendSyncOptions = { })
     {
         cancelCurrentInteractionInformationRequest();
-        sendSyncOptions = sendSyncOptions | IPC::SendSyncOption::InformPlatformProcessWillSuspend;
         return sendSync(WTFMove(message), Seconds::infinity(), sendSyncOptions);
     }
 
@@ -1523,7 +1516,7 @@ public:
 
 #if ENABLE(APP_BOUND_DOMAINS)
     void notifyPageOfAppBoundBehavior();
-    void setIsNavigatingToAppBoundDomain(std::optional<NavigatingToAppBoundDomain>, WebFrame*);
+    void setIsNavigatingToAppBoundDomain(std::optional<NavigatingToAppBoundDomain>, WebFrame&);
     bool needsInAppBrowserPrivacyQuirks() { return m_needsInAppBrowserPrivacyQuirks; }
 #endif
 
@@ -1574,12 +1567,12 @@ public:
     WebCore::HighlightVisibility appHighlightsVisiblility() const { return m_appHighlightsVisible; }
 
     bool createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight, WebCore::HighlightRequestOriginatedInApp);
-    void restoreAppHighlightsAndScrollToIndex(Vector<SharedMemory::Handle>&&, const std::optional<unsigned> index);
+    void restoreAppHighlightsAndScrollToIndex(Vector<SharedMemoryHandle>&&, const std::optional<unsigned> index);
     void setAppHighlightsVisibility(const WebCore::HighlightVisibility);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    void dispatchWheelEventWithoutScrolling(const WebWheelEvent&, CompletionHandler<void(bool)>&&);
+    void dispatchWheelEventWithoutScrolling(WebCore::FrameIdentifier, const WebWheelEvent&, CompletionHandler<void(bool)>&&);
 #endif
 
 #if ENABLE(PDFKIT_PLUGIN)
@@ -1684,13 +1677,6 @@ private:
 
     void getPlatformEditorStateCommon(const WebCore::LocalFrame&, EditorState&) const;
 
-#if HAVE(TOUCH_BAR)
-    void sendTouchBarMenuDataAddedUpdate(WebCore::HTMLMenuElement&);
-    void sendTouchBarMenuDataRemovedUpdate(WebCore::HTMLMenuElement&);
-    void sendTouchBarMenuItemDataAddedUpdate(WebCore::HTMLMenuItemElement&);
-    void sendTouchBarMenuItemDataRemovedUpdate(WebCore::HTMLMenuItemElement&);
-#endif
-
     bool didReceiveSyncWebPageMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
     void updateSizeForCSSDefaultViewportUnits();
@@ -1785,7 +1771,8 @@ private:
     void navigateToPDFLinkWithSimulatedClick(const String& url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint);
     void getPDFFirstPageSize(WebCore::FrameIdentifier, CompletionHandler<void(WebCore::FloatSize)>&&);
     void reload(uint64_t navigationID, OptionSet<WebCore::ReloadOption> reloadOptions, SandboxExtension::Handle&&);
-    void goToBackForwardItem(uint64_t navigationID, const WebCore::BackForwardItemIdentifier&, WebCore::FrameLoadType, WebCore::ShouldTreatAsContinuingLoad, std::optional<WebsitePoliciesData>&&, bool lastNavigationWasAppInitiated, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume, std::optional<String> topPrivatelyControlledDomain);
+    void goToBackForwardItem(GoToBackForwardItemParameters&&);
+    [[noreturn]] void goToBackForwardItemWaitingForProcessLaunch(GoToBackForwardItemParameters&&, WebKit::WebPageProxyIdentifier);
     void tryRestoreScrollPosition();
     void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&, CompletionHandler<void()>&&);
     void updateIsInWindow(bool isInitialState = false);
@@ -1805,15 +1792,15 @@ private:
 
     void setNeedsFontAttributes(bool);
 
-    void mouseEvent(const WebMouseEvent&, std::optional<Vector<SandboxExtension::Handle>>&& sandboxExtensions);
-    void keyEvent(const WebKeyboardEvent&);
+    void mouseEvent(WebCore::FrameIdentifier, const WebMouseEvent&, std::optional<Vector<SandboxExtension::Handle>>&& sandboxExtensions, CompletionHandler<void(WebEventType, bool, std::optional<WebCore::RemoteMouseEventData>)>&&);
+    void keyEvent(WebCore::FrameIdentifier, const WebKeyboardEvent&, CompletionHandler<void(WebEventType, bool)>&&);
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     void touchEventSync(const WebTouchEvent&, CompletionHandler<void(bool)>&&);
     void resetPotentialTapSecurityOrigin();
     void updatePotentialTapSecurityOrigin(const WebTouchEvent&, bool wasHandled);
 #elif ENABLE(TOUCH_EVENTS)
-    void touchEvent(const WebTouchEvent&);
+    void touchEvent(const WebTouchEvent&, CompletionHandler<void(WebEventType, bool)>&&);
 #endif
 
     void cancelPointer(WebCore::PointerID, const WebCore::IntPoint&);
@@ -1948,7 +1935,6 @@ private:
     void scrollTextRangeToVisible(const WebFoundTextRange&);
     void clearAllDecoratedFoundText();
     void didBeginTextSearchOperation();
-    void didEndTextSearchOperation();
 
     void requestRectForFoundTextRange(const WebFoundTextRange&, CompletionHandler<void(WebCore::FloatRect)>&&);
     void addLayerForFindOverlay(CompletionHandler<void(WebCore::PlatformLayerIdentifier)>&&);
@@ -2284,7 +2270,7 @@ private:
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    WebColorChooser* m_activeColorChooser { nullptr };
+    WeakPtr<WebColorChooser> m_activeColorChooser;
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -2376,11 +2362,12 @@ private:
 
     unsigned m_cachedPageCount { 0 };
 
-    struct DeferredDidReceiveMouseEvent {
+    struct DeferredMouseEventCompletionHandler {
         WebEventType type { WebEventType::NoType };
         bool handled { false };
+        CompletionHandler<void(WebEventType, bool, std::optional<WebCore::RemoteMouseEventData>)> completionHandler;
     };
-    std::optional<DeferredDidReceiveMouseEvent> m_deferredDidReceiveMouseEvent;
+    std::optional<DeferredMouseEventCompletionHandler> m_deferredMouseEventCompletionHandler;
 
     HashSet<WebCore::ResourceLoaderIdentifier> m_trackedNetworkResourceRequestIdentifiers;
 
@@ -2523,7 +2510,7 @@ private:
     WallTime m_loadCommitTime;
 #endif
 
-    WebCore::UserInterfaceLayoutDirection m_userInterfaceLayoutDirection { WebCore::UserInterfaceLayoutDirection::LTR };
+    WebCore::UserInterfaceLayoutDirection m_userInterfaceLayoutDirection;
 
     const String m_overrideContentSecurityPolicy;
     const std::optional<double> m_cpuLimit;
@@ -2619,6 +2606,8 @@ private:
 #if ENABLE(APP_HIGHLIGHTS)
     WebCore::HighlightVisibility m_appHighlightsVisible { WebCore::HighlightVisibility::Hidden };
 #endif
+
+    Ref<WebHistoryItemClient> m_historyItemClient;
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     HashSet<String> m_linkDecorationFilteringData;

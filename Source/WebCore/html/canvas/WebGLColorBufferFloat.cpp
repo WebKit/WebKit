@@ -28,6 +28,7 @@
 #if ENABLE(WEBGL)
 #include "WebGLColorBufferFloat.h"
 
+#include "WebGLExtensionAnyInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -48,11 +49,6 @@ WebGLColorBufferFloat::WebGLColorBufferFloat(WebGLRenderingContextBase& context)
 }
 
 WebGLColorBufferFloat::~WebGLColorBufferFloat() = default;
-
-WebGLExtension::ExtensionName WebGLColorBufferFloat::getName() const
-{
-    return WebGLColorBufferFloatName;
-}
 
 bool WebGLColorBufferFloat::supported(GraphicsContextGL& context)
 {

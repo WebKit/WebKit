@@ -7,12 +7,13 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-
 #include "modules/video_coding/h265_vps_sps_pps_tracker.h"
 
+#include <memory>
 #include <string>
 #include <utility>
 
+#include "absl/types/variant.h"
 #include "common_video/h264/h264_common.h"
 #include "common_video/h265/h265_common.h"
 #include "common_video/h265/h265_pps_parser.h"
@@ -21,6 +22,7 @@
 #include "modules/video_coding/codecs/h264/include/h264_globals.h"
 #include "modules/video_coding/codecs/h265/include/h265_globals.h"
 #include "modules/video_coding/packet_buffer.h"
+#include "modules/rtp_rtcp/source/frame_object.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
@@ -31,15 +33,14 @@ namespace {
 const uint8_t start_code_h265[] = {0, 0, 0, 1};
 }  // namespace
 
-H265VpsSpsPpsTracker::FixedBitstream H265VpsSpsPpsTracker::CopyAndFixBitstream(rtc::ArrayView<const uint8_t> bitstream,
-                                   RTPVideoHeader* video_header_pointer) {
-  const uint8_t* data = bitstream.data();
-  const size_t data_size = bitstream.size();
-  RTPVideoHeader& video_header = *video_header_pointer;
-  RTC_DCHECK(video_header.codec == kVideoCodecH265);
+H265VpsSpsPpsTracker::FixedBitstream H265VpsSpsPpsTracker::CopyAndFixBitstream(
+    rtc::ArrayView<const uint8_t> bitstream,
+    RTPVideoHeader* video_header) {
+  RTC_DCHECK(video_header);
+  RTC_DCHECK(video_header->codec == kVideoCodecH265);
 
   auto& h265_header =
-      absl::get<RTPVideoHeaderH265>(video_header.video_type_header);
+      absl::get<RTPVideoHeaderH265>(video_header->video_type_header);
 
   bool append_vps_sps_pps = false;
   auto vps = vps_data_.end();
@@ -55,8 +56,8 @@ H265VpsSpsPpsTracker::FixedBitstream H265VpsSpsPpsTracker::CopyAndFixBitstream(r
       }
       case H265::NaluType::kSps: {
         sps_data_[nalu.sps_id].vps_id = nalu.vps_id;
-        sps_data_[nalu.sps_id].width = video_header.width;
-        sps_data_[nalu.sps_id].height = video_header.height;
+        sps_data_[nalu.sps_id].width = video_header->width;
+        sps_data_[nalu.sps_id].height = video_header->height;
         break;
       }
       case H265::NaluType::kPps: {
@@ -69,7 +70,7 @@ H265VpsSpsPpsTracker::FixedBitstream H265VpsSpsPpsTracker::CopyAndFixBitstream(r
         // If this is the first packet of an IDR, make sure we have the required
         // SPS/PPS and also calculate how much extra space we need in the buffer
         // to prepend the SPS/PPS to the bitstream with start codes.
-        if (video_header.is_first_packet_in_frame) {
+        if (video_header->is_first_packet_in_frame) {
           if (nalu.pps_id == -1) {
             RTC_LOG(LS_WARNING) << "No PPS id in IDR nalu.";
             return {kRequestKeyframe};
@@ -99,8 +100,8 @@ H265VpsSpsPpsTracker::FixedBitstream H265VpsSpsPpsTracker::CopyAndFixBitstream(r
           // Since the first packet of every keyframe should have its width and
           // height set we set it here in the case of it being supplied out of
           // band.
-          video_header.width = sps->second.width;
-          video_header.height = sps->second.height;
+          video_header->width = sps->second.width;
+          video_header->height = sps->second.height;
 
           // If the VPS/SPS/PPS was supplied out of band then we will have saved
           // the actual bitstream in |data|.
@@ -132,9 +133,9 @@ H265VpsSpsPpsTracker::FixedBitstream H265VpsSpsPpsTracker::CopyAndFixBitstream(r
   }
 
   if (h265_header.packetization_type == kH265AP) {
-    const uint8_t* nalu_ptr = data + 1;
-    while (nalu_ptr < data + data_size) {
-      RTC_DCHECK(video_header.is_first_packet_in_frame);
+    const uint8_t* nalu_ptr = bitstream.data() + 1;
+    while (nalu_ptr < bitstream.data() + bitstream.size()) {
+      RTC_DCHECK(video_header->is_first_packet_in_frame);
       required_size += sizeof(start_code_h265);
 
       // The first two bytes describe the length of a segment.
@@ -145,13 +146,14 @@ H265VpsSpsPpsTracker::FixedBitstream H265VpsSpsPpsTracker::CopyAndFixBitstream(r
       nalu_ptr += segment_length;
     }
   } else {
-    if (video_header.is_first_packet_in_frame)
+    // TODO: in h.264 this is "h264_header.nalus_length > 0"
+    if (video_header->is_first_packet_in_frame)
       required_size += sizeof(start_code_h265);
-    required_size += data_size;
+    required_size += bitstream.size();
   }
 
   // Then we copy to the new buffer.
-  FixedBitstream fixed;
+  H265VpsSpsPpsTracker::FixedBitstream fixed;
   fixed.bitstream.EnsureCapacity(required_size);
 
   if (append_vps_sps_pps) {
@@ -183,7 +185,7 @@ H265VpsSpsPpsTracker::FixedBitstream H265VpsSpsPpsTracker::CopyAndFixBitstream(r
     pps_info.vps_id = vps->first;
     pps_info.sps_id = sps->first;
     pps_info.pps_id = pps->first;
-    if (h265_header.nalus_length + 2 <= kMaxNalusPerPacket) {
+    if (h265_header.nalus_length + 3 <= kMaxNalusPerPacket) {
       h265_header.nalus[h265_header.nalus_length++] = vps_info;
       h265_header.nalus[h265_header.nalus_length++] = sps_info;
       h265_header.nalus[h265_header.nalus_length++] = pps_info;
@@ -195,16 +197,16 @@ H265VpsSpsPpsTracker::FixedBitstream H265VpsSpsPpsTracker::CopyAndFixBitstream(r
 
   // Copy the rest of the bitstream and insert start codes.
   if (h265_header.packetization_type == kH265AP) {
-    const uint8_t* nalu_ptr = data + 1;
-    while (nalu_ptr < data + data_size) {
+    const uint8_t* nalu_ptr = bitstream.data() + 1;
+    while (nalu_ptr < bitstream.data() + bitstream.size()) {
       fixed.bitstream.AppendData(start_code_h265);
 
       // The first two bytes describe the length of a segment.
       uint16_t segment_length = nalu_ptr[0] << 8 | nalu_ptr[1];
       nalu_ptr += 2;
 
-      size_t copy_end = nalu_ptr - data + segment_length;
-      if (copy_end > data_size) {
+      size_t copy_end = nalu_ptr - bitstream.data() + segment_length;
+      if (copy_end > bitstream.size()) {
         return {kDrop};
       }
 
@@ -212,7 +214,8 @@ H265VpsSpsPpsTracker::FixedBitstream H265VpsSpsPpsTracker::CopyAndFixBitstream(r
       nalu_ptr += segment_length;
     }
   } else {
-    if (video_header.is_first_packet_in_frame) {
+    // For h.264 it is "h264_header.nalus_length > 0"
+    if (video_header->is_first_packet_in_frame) {
       fixed.bitstream.AppendData(start_code_h265);
     }
     fixed.bitstream.AppendData(bitstream.data(), bitstream.size());

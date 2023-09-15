@@ -96,6 +96,7 @@ struct CSSParserContext {
     bool cssTextUnderlinePositionLeftRightEnabled { false };
     bool cssTextWrapNewValuesEnabled { false };
     bool cssWordBreakAutoEnabled { false };
+    bool sidewaysWritingModesEnabled { false };
 
     // Settings, those affecting properties.
     CSSPropertySettings propertySettings;
@@ -103,9 +104,9 @@ struct CSSParserContext {
     CSSParserContext(CSSParserMode, const URL& baseURL = URL());
     WEBCORE_EXPORT CSSParserContext(const Document&, const URL& baseURL = URL(), const String& charset = emptyString());
     ResolvedURL completeURL(const String&) const;
-};
 
-bool operator==(const CSSParserContext&, const CSSParserContext&);
+    bool operator==(const CSSParserContext&) const = default;
+};
 
 void add(Hasher&, const CSSParserContext&);
 

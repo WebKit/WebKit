@@ -114,7 +114,7 @@ if (isAppleCocoaWebKit() && !isCMakeBuild()) {
 }
 
 if (checkForArgumentAndRemoveFromARGV("--reset")) {
-    for my $fileName (qw(Architecture ASan Configuration Coverage ForceOptimizationLevel LTO TSan UBSan Workspace)) {
+    for my $fileName (qw(Architecture ASan Configuration Coverage ForceOptimizationLevel LibFuzzer LTO TSan UBSan Workspace)) {
         unlink File::Spec->catfile($baseProductDir, $fileName);
     }
     printCurrentSettings();
@@ -196,7 +196,7 @@ sub printCurrentSettings()
     $result .= " LibFuzzer" if libFuzzerIsEnabled();
     $result .= " Coverage" if coverageIsEnabled();
     $result .= " LTOMode:" . ltoMode() if ltoMode();
-    $result .= " ForceOptimizationLevel:O" . forceOptimizationLevel() if forceOptimizationLevel();
+    $result .= " ForceOptimizationLevel:O" . forceOptimizationLevel() if defined forceOptimizationLevel();
     $result .= " Workspace:" . configuredXcodeWorkspace() if configuredXcodeWorkspace();
 
     print STDERR $result, "\n";

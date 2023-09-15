@@ -1,8 +1,0 @@
-
-FAIL Test default context creation parameters: srgb/uint8 assert_equals: expected (string) "uint8" but got (undefined) undefined
-FAIL Test CanvasColorSpace value srgb assert_equals: expected (string) "uint8" but got (undefined) undefined
-FAIL Test CanvasPixelFormat value uint8 assert_equals: expected (string) "uint8" but got (undefined) undefined
-FAIL Test CanvasPixelFormat value float16 assert_equals: expected (string) "float16" but got (undefined) undefined
-FAIL Test supported color settings srgb/uint8 assert_equals: expected (string) "uint8" but got (undefined) undefined
-FAIL Test supported color settings srgb/float16 assert_equals: expected (string) "float16" but got (undefined) undefined
-

@@ -116,32 +116,32 @@ PASS rem(10deg,6deg) should be used-value-equivalent to 4deg
 PASS rem(10grad,6grad) should be used-value-equivalent to 4grad
 PASS rem(10rad,6rad) should be used-value-equivalent to 4rad
 PASS rem(10turn,6turn) should be used-value-equivalent to 4turn
-FAIL round(10%,1px) should be used-value-equivalent to 8px assert_not_equals: round(10%,1px) isn't valid in 'margin-left'; got the default value instead. got disallowed value "0px"
-FAIL round(10%,5px) should be used-value-equivalent to 10px assert_not_equals: round(10%,5px) isn't valid in 'margin-left'; got the default value instead. got disallowed value "0px"
+PASS round(10%,1px) should be used-value-equivalent to 8px
+PASS round(10%,5px) should be used-value-equivalent to 10px
 PASS round(2rem,5px) should be used-value-equivalent to 30px
 PASS round(100px,1rem) should be used-value-equivalent to 96px
 PASS round(10s,6000ms) should be used-value-equivalent to 12s
 PASS round(10000ms,6s) should be used-value-equivalent to 12s
-FAIL mod(10%,1px) should be used-value-equivalent to 0.5px assert_not_equals: mod(10%,1px) isn't valid in 'margin-left'; got the default value instead. got disallowed value "0px"
-FAIL mod(10%,5px) should be used-value-equivalent to 2.5px assert_not_equals: mod(10%,5px) isn't valid in 'margin-left'; got the default value instead. got disallowed value "0px"
+PASS mod(10%,1px) should be used-value-equivalent to 0.5px
+PASS mod(10%,5px) should be used-value-equivalent to 2.5px
 PASS mod(2rem,5px) should be used-value-equivalent to 2px
 PASS mod(100px,1rem) should be used-value-equivalent to 4px
 PASS mod(10s,6000ms) should be used-value-equivalent to 4s
 PASS mod(10000ms,6s) should be used-value-equivalent to 4s
-FAIL mod(18px,100% / 15) should be used-value-equivalent to 3px assert_not_equals: mod(18px,100% / 15) isn't valid in 'margin-left'; got the default value instead. got disallowed value "0px"
-FAIL mod(-18px,100% / 10) should be used-value-equivalent to 4.5px assert_not_equals: mod(-18px,100% / 10) isn't valid in 'margin-left'; got the default value instead. got disallowed value "0px"
+PASS mod(18px,100% / 15) should be used-value-equivalent to 3px
+PASS mod(-18px,100% / 10) should be used-value-equivalent to 4.5px
 PASS mod(18%,5%) should be used-value-equivalent to 3%
 PASS mod(-19%,5%) should be used-value-equivalent to 1%
 PASS mod(18vw,5vw) should be used-value-equivalent to 3vw
 PASS mod(-18vw,5vw) should be used-value-equivalent to 2vw
-FAIL rem(10%,1px) should be used-value-equivalent to 0.5px assert_not_equals: rem(10%,1px) isn't valid in 'margin-left'; got the default value instead. got disallowed value "0px"
-FAIL rem(10%,5px) should be used-value-equivalent to 2.5px assert_not_equals: rem(10%,5px) isn't valid in 'margin-left'; got the default value instead. got disallowed value "0px"
+PASS rem(10%,1px) should be used-value-equivalent to 0.5px
+PASS rem(10%,5px) should be used-value-equivalent to 2.5px
 PASS rem(2rem,5px) should be used-value-equivalent to 2px
 PASS rem(100px,1rem) should be used-value-equivalent to 4px
 PASS rem(10s,6000ms) should be used-value-equivalent to 4s
 PASS rem(10000ms,6s) should be used-value-equivalent to 4s
-FAIL rem(18px,100% / 15) should be used-value-equivalent to 3px assert_not_equals: rem(18px,100% / 15) isn't valid in 'margin-left'; got the default value instead. got disallowed value "0px"
-FAIL rem(-18px,100% / 15) should be used-value-equivalent to -3px assert_not_equals: rem(-18px,100% / 15) isn't valid in 'margin-left'; got the default value instead. got disallowed value "0px"
+PASS rem(18px,100% / 15) should be used-value-equivalent to 3px
+PASS rem(-18px,100% / 15) should be used-value-equivalent to -3px
 PASS rem(18vw,5vw) should be used-value-equivalent to 3vw
 PASS rem(-18vw,5vw) should be used-value-equivalent to -3vw
 PASS calc(round(1px + 0%, 1px + 0%)) should be used-value-equivalent to 1px

@@ -37,6 +37,7 @@
 #include "BytecodeOperandsForCheckpoint.h"
 #include "CacheableIdentifierInlines.h"
 #include "CallLinkStatus.h"
+#include "CallVariantInlines.h"
 #include "CheckPrivateBrandStatus.h"
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
@@ -69,6 +70,7 @@
 #include "JSModuleNamespaceObject.h"
 #include "JSPromiseConstructor.h"
 #include "JSSetIterator.h"
+#include "MapConstructor.h"
 #include "NullSetterFunction.h"
 #include "NumberConstructor.h"
 #include "ObjectConstructor.h"
@@ -78,6 +80,7 @@
 #include "PutByIdFlags.h"
 #include "PutByStatus.h"
 #include "RegExpPrototype.h"
+#include "SetConstructor.h"
 #include "SetPrivateBrandStatus.h"
 #include "StackAlignment.h"
 #include "StringConstructor.h"
@@ -1673,6 +1676,11 @@ unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountInclu
         return UINT_MAX;
     }
 
+    if (codeBlock->couldBeTainted() != m_codeBlock->couldBeTainted()) {
+        VERBOSE_LOG("    Failing because taintedness of callee does not match the caller");
+        return UINT_MAX;
+    }
+
     if (!Options::useArityFixupInlining()) {
         if (codeBlock->numParameters() > static_cast<unsigned>(argumentCountIncludingThis)) {
             VERBOSE_LOG("    Failing because of arity mismatch.\n");
@@ -2673,6 +2681,30 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
 
             RELEASE_ASSERT_NOT_REACHED();
             return CallOptimizationResult::DidNothing;
+        }
+
+        case ArraySpliceIntrinsic: {
+            // Currently we only handle extracting pattern `array.splice(x, y)` in a super fast manner.
+            if (argumentCountIncludingThis != 3)
+                return CallOptimizationResult::DidNothing;
+
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantCache)
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return CallOptimizationResult::DidNothing;
+
+            ArrayMode arrayMode = getArrayMode(Array::Read);
+            if (!arrayMode.isJSArray())
+                return CallOptimizationResult::DidNothing;
+
+            insertChecks();
+
+            Node* result = addToGraph(ArraySpliceExtract, OpInfo(), OpInfo(prediction),
+                get(virtualRegisterForArgumentIncludingThis(0, registerOffset)),
+                get(virtualRegisterForArgumentIncludingThis(1, registerOffset)),
+                get(virtualRegisterForArgumentIncludingThis(2, registerOffset)));
+            setResult(result);
+            return CallOptimizationResult::Inlined;
         }
 
         case ArrayIndexOfIntrinsic: {
@@ -4619,6 +4651,26 @@ bool ByteCodeParser::handleConstantFunction(
         return true;
     }
 
+    if (function->classInfo() == MapConstructor::info() && kind == CodeForConstruct) {
+        auto* structure = function->globalObject()->mapStructureConcurrently();
+        if (argumentCountIncludingThis <= 1 && structure) {
+            insertChecks();
+            Node* resultNode = addToGraph(NewMap, OpInfo(m_graph.registerStructure(structure)));
+            set(result, resultNode);
+            return true;
+        }
+    }
+
+    if (function->classInfo() == SetConstructor::info() && kind == CodeForConstruct) {
+        auto* structure = function->globalObject()->setStructureConcurrently();
+        if (argumentCountIncludingThis <= 1 && structure) {
+            insertChecks();
+            Node* resultNode = addToGraph(NewSet, OpInfo(m_graph.registerStructure(structure)));
+            set(result, resultNode);
+            return true;
+        }
+    }
+
     if (function->classInfo() == SymbolConstructor::info() && kind == CodeForCall) {
         insertChecks();
 
@@ -5223,31 +5275,48 @@ void ByteCodeParser::handleGetById(
         return;
     }
 
+    ASSERT(type == AccessType::GetById || type == AccessType::GetByIdDirect || !variant.callLinkStatus());
+
+    auto const getGetter = [&] {
+        if (JSValue getterValue = m_graph.tryGetConstantGetter(loadedValue))
+            return weakJSConstant(getterValue);
+
+        return addToGraph(GetGetter, loadedValue);
+    };
+
+    if (variant.intrinsic() != NoIntrinsic) {
+        auto const addChecks = [&] {
+            Node* getter = getGetter();
+            addToGraph(CheckIsConstant, OpInfo(m_graph.freeze(variant.intrinsicFunction())), getter);
+        };
+
+        if (handleIntrinsicGetter(destination, prediction, variant, base, addChecks)) {
+            if (UNLIKELY(m_graph.compilation()))
+                m_graph.compilation()->noticeInlinedGetById();
+            addToGraph(Phantom, base);
+            return;
+        }
+
+        // We couldn't handle this as an intrinsic and can't emit a direct call
+        // to the intrinsic function--bail and emit a regular GetById
+        if (!variant.callLinkStatus()) {
+            set(destination,
+                addToGraph(getById, OpInfo(identifier), OpInfo(prediction), base));
+            return;
+        }
+    }
+
     if (UNLIKELY(m_graph.compilation()))
         m_graph.compilation()->noticeInlinedGetById();
 
-    ASSERT(type == AccessType::GetById || type == AccessType::GetByIdDirect || !variant.callLinkStatus());
-    if (!variant.callLinkStatus() && variant.intrinsic() == NoIntrinsic) {
+    if (!variant.callLinkStatus()) {
         set(destination, loadedValue);
-        return;
-    }
-    
-    Node* getter = nullptr;
-    if (JSValue getterValue = m_graph.tryGetConstantGetter(loadedValue))
-        getter = weakJSConstant(getterValue);
-    else
-        getter = addToGraph(GetGetter, loadedValue);
-
-    if (handleIntrinsicGetter(destination, prediction, variant, base,
-            [&] () {
-                addToGraph(CheckIsConstant, OpInfo(m_graph.freeze(variant.intrinsicFunction())), getter);
-            })) {
-        addToGraph(Phantom, base);
         return;
     }
 
     // Make a call. We don't try to get fancy with using the smallest operand number because
     // the stack layout phase should compress the stack anyway.
+    Node* getter = getGetter();
     
     unsigned numberOfParameters = 0;
     numberOfParameters++; // The 'this' argument.

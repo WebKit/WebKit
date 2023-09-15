@@ -91,6 +91,7 @@ protected:
     GRefPtr<GstPad> m_webrtcSinkPad;
     RefPtr<UniqueSSRCGenerator> m_ssrcGenerator;
     GUniquePtr<GstStructure> m_parameters;
+    GRefPtr<GstElement> m_fallbackSource;
 
 private:
     void sourceMutedChanged();

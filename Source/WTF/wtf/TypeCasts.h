@@ -52,7 +52,7 @@ struct TypeCastTraits<ExpectedType, ArgType, true /* isBaseType */> {
 
 // Type checking function, to use before casting with downcast<>().
 template <typename ExpectedType, typename ArgType>
-inline bool is(ArgType& source)
+inline bool is(const ArgType& source)
 {
     static_assert(std::is_base_of_v<ArgType, ExpectedType>, "Unnecessary type check");
     return TypeCastTraits<const ExpectedType, const ArgType>::isOfType(source);

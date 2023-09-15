@@ -27,7 +27,7 @@
 
 messages -> RemoteCDMInstanceSessionProxy NotRefCounted {
     SetLogIdentifier(uint64_t logIdentifier)
-    RequestLicense(WebCore::CDMInstanceSession::LicenseType type, AtomString initDataType, RefPtr<WebCore::SharedBuffer> initData) -> (RefPtr<WebCore::SharedBuffer> message, String sessionId, bool needsIndividualization, bool succeeded)
+    RequestLicense(WebCore::CDMInstanceSession::LicenseType type, WebCore::CDMInstanceSession::KeyGroupingStrategy keyGroupingStrategy, AtomString initDataType, RefPtr<WebCore::SharedBuffer> initData) -> (RefPtr<WebCore::SharedBuffer> message, String sessionId, bool needsIndividualization, bool succeeded)
     UpdateLicense(String sessionId, WebCore::CDMInstanceSession::LicenseType type, RefPtr<WebCore::SharedBuffer> response) -> (bool sessionWasClosed, std::optional<WebCore::CDMInstanceSession::KeyStatusVector> changedKeys, std::optional<double> changedExpiration, std::optional<WebCore::CDMInstanceSession::Message> message, bool succeeded)
     LoadSession(WebCore::CDMInstanceSession::LicenseType type, String sessionId, String origin) -> (std::optional<WebCore::CDMInstanceSession::KeyStatusVector> changedKeys, std::optional<double> changedExpiration, std::optional<WebCore::CDMInstanceSession::Message> message, bool succeeded, enum:uint8_t WebCore::CDMInstanceSession::SessionLoadFailure loadFailure)
     CloseSession(String sessionId) -> ()

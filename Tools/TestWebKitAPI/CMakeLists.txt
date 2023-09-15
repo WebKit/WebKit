@@ -96,12 +96,15 @@ set(TestWTF_SOURCES
     Tests/WTF/ScopedLambda.cpp
     Tests/WTF/SentinelLinkedList.cpp
     Tests/WTF/SetForScope.cpp
+    Tests/WTF/Signals.cpp
     Tests/WTF/StackTraceTest.cpp
     Tests/WTF/StdLibExtrasTests.cpp
     Tests/WTF/StringBuilder.cpp
     Tests/WTF/StringCommon.cpp
     Tests/WTF/StringConcatenate.cpp
     Tests/WTF/StringHasher.cpp
+    Tests/WTF/SuperFastHash.cpp
+    Tests/WTF/WYHash.cpp
     Tests/WTF/StringImpl.cpp
     Tests/WTF/StringOperators.cpp
     Tests/WTF/StringParsingBuffer.cpp

@@ -41,17 +41,13 @@
 
 namespace WebCore {
 
-Lock WorkerOrWorkletThread::s_workerOrWorkletThreadsLock;
-
-Lock& WorkerOrWorkletThread::workerOrWorkletThreadsLock()
+ThreadSafeWeakHashSet<WorkerOrWorkletThread>& WorkerOrWorkletThread::workerOrWorkletThreads()
 {
-    return s_workerOrWorkletThreadsLock;
-}
-
-HashSet<WorkerOrWorkletThread*>& WorkerOrWorkletThread::workerOrWorkletThreads()
-{
-    ASSERT(workerOrWorkletThreadsLock().isHeld());
-    static NeverDestroyed<HashSet<WorkerOrWorkletThread*>> workerOrWorkletThreads;
+    static LazyNeverDestroyed<ThreadSafeWeakHashSet<WorkerOrWorkletThread>> workerOrWorkletThreads;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        workerOrWorkletThreads.construct();
+    });
     return workerOrWorkletThreads;
 }
 
@@ -70,15 +66,12 @@ WorkerOrWorkletThread::WorkerOrWorkletThread(const String& inspectorIdentifier, 
     : m_inspectorIdentifier(inspectorIdentifier)
     , m_runLoop(constructRunLoop(workerThreadMode))
 {
-    Locker locker { workerOrWorkletThreadsLock() };
-    workerOrWorkletThreads().add(this);
+    workerOrWorkletThreads().add(*this);
 }
 
 WorkerOrWorkletThread::~WorkerOrWorkletThread()
 {
-    Locker locker { workerOrWorkletThreadsLock() };
-    ASSERT(workerOrWorkletThreads().contains(this));
-    workerOrWorkletThreads().remove(this);
+    workerOrWorkletThreads().remove(*this);
 }
 
 void WorkerOrWorkletThread::dispatch(Function<void()>&& func)
@@ -88,12 +81,10 @@ void WorkerOrWorkletThread::dispatch(Function<void()>&& func)
     });
 }
 
-#if ASSERT_ENABLED
-void WorkerOrWorkletThread::assertIsCurrent() const
+bool WorkerOrWorkletThread::isCurrent() const
 {
-    return WTF::assertIsCurrent(*thread());
+    return thread() ? thread()->uid() == Thread::current().uid() : false;
 }
-#endif
 
 void WorkerOrWorkletThread::startRunningDebuggerTasks()
 {
@@ -199,7 +190,7 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
     g_main_context_pop_thread_default(mainContext.get());
 #endif
 
-    if (!m_childThreads.isEmpty()) {
+    if (!m_childThreads.isEmptyIgnoringNullReferences()) {
         m_runWhenLastChildThreadIsGone = [this, protectedThis = WTFMove(protectedThis)]() mutable {
             destroyWorkerGlobalScope(WTFMove(protectedThis));
         };
@@ -210,7 +201,7 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
 
 void WorkerOrWorkletThread::destroyWorkerGlobalScope(Ref<WorkerOrWorkletThread>&& protectedThis)
 {
-    ASSERT(m_childThreads.isEmpty());
+    ASSERT(m_childThreads.isEmptyIgnoringNullReferences());
 
     RefPtr<Thread> protector = m_thread;
 
@@ -353,9 +344,8 @@ void WorkerOrWorkletThread::resume()
 
 void WorkerOrWorkletThread::releaseFastMallocFreeMemoryInAllThreads()
 {
-    Locker locker { workerOrWorkletThreadsLock() };
-    for (auto* workerOrWorkletThread : workerOrWorkletThreads()) {
-        workerOrWorkletThread->runLoop().postTask([] (ScriptExecutionContext&) {
+    for (auto& workerOrWorkletThread : workerOrWorkletThreads()) {
+        workerOrWorkletThread.runLoop().postTask([] (ScriptExecutionContext&) {
             WTF::releaseFastMallocFreeMemory();
         });
     }
@@ -363,13 +353,13 @@ void WorkerOrWorkletThread::releaseFastMallocFreeMemoryInAllThreads()
 
 void WorkerOrWorkletThread::addChildThread(WorkerOrWorkletThread& childThread)
 {
-    m_childThreads.add(&childThread);
+    m_childThreads.add(childThread);
 }
 
 void WorkerOrWorkletThread::removeChildThread(WorkerOrWorkletThread& childThread)
 {
-    m_childThreads.remove(&childThread);
-    if (m_childThreads.isEmpty() && m_runWhenLastChildThreadIsGone)
+    m_childThreads.remove(childThread);
+    if (m_childThreads.isEmptyIgnoringNullReferences() && m_runWhenLastChildThreadIsGone)
         std::exchange(m_runWhenLastChildThreadIsGone, nullptr)();
 }
 

@@ -71,14 +71,14 @@ ExceptionOr<void> SpeechRecognition::startRecognition()
     if (!m_connection)
         return Exception { UnknownError, "Recognition does not have a valid connection"_s };
 
-    auto& document = downcast<Document>(*scriptExecutionContext());
-    auto* frame = document.frame();
+    Ref document = downcast<Document>(*scriptExecutionContext());
+    RefPtr frame = document->frame();
     if (!frame)
         return Exception { UnknownError, "Recognition is not in a valid frame"_s };
 
-    auto optionalFrameIdentifier = document.frameID();
+    auto optionalFrameIdentifier = document->frameID();
     auto frameIdentifier = optionalFrameIdentifier ? *optionalFrameIdentifier : FrameIdentifier { };
-    m_connection->start(identifier(), m_lang, m_continuous, m_interimResults, m_maxAlternatives, ClientOrigin { document.topOrigin().data(), document.securityOrigin().data() }, frameIdentifier);
+    m_connection->start(identifier(), m_lang, m_continuous, m_interimResults, m_maxAlternatives, ClientOrigin { document->topOrigin().data(), document->securityOrigin().data() }, frameIdentifier);
     m_state = State::Starting;
     return { };
 }

@@ -25,7 +25,7 @@
 
 [
     Conditional=WEBGL,
-    GenerateIsReachable=ImplWebGLRenderingContext,
+    GenerateIsReachable,
     LegacyNoInterfaceObject,
 ] interface EXTTextureCompressionBPTC {
     const unsigned long COMPRESSED_RGBA_BPTC_UNORM_EXT = 0x8E8C;

@@ -50,10 +50,7 @@ static inline std::optional<StyleColor> computeStyleColor(const RefPtr<CSSPrimit
     if (!color)
         return std::nullopt;
 
-    // FIXME: This should call state.colorFromPrimitiveValue(*color) instead, but doing so is
-    // blocked on fixing an issue where we don't respect ::first-line in StyleImage correctly.
-    // See https://webkit.org/b/247127.
-    return StyleColor { state.colorFromPrimitiveValueWithResolvedCurrentColor(*color) };
+    return state.colorFromPrimitiveValue(*color);
 }
 
 static decltype(auto) computeStops(const CSSGradientColorStopList& stops, Style::BuilderState& state)
@@ -283,12 +280,6 @@ static void writeColorStop(StringBuilder& builder, const CSSGradientColorStop& s
     appendSpaceSeparatedOptionalCSSPtrText(builder, stop.color, stop.position);
 }
 
-static bool operator==(const CSSGradientPosition& a, const CSSGradientPosition& b)
-{
-    return compareCSSValue(a.first, b.first)
-        && compareCSSValue(a.second, b.second);
-}
-
 static bool operator==(const std::optional<CSSGradientPosition>& a, const std::optional<CSSGradientPosition>& b)
 {
     return (!a && !b) || (a && b && *a == *b);
@@ -365,14 +356,9 @@ String CSSLinearGradientValue::customCSSText() const
     return result.toString();
 }
 
-static bool operator==(const CSSLinearGradientValue::Angle& a, const CSSLinearGradientValue::Angle& b)
+bool operator==(const CSSLinearGradientValue::Angle& a, const CSSLinearGradientValue::Angle& b)
 {
     return compareCSSValue(a.value, b.value);
-}
-
-bool operator==(const CSSLinearGradientValue::Data& a, const CSSLinearGradientValue::Data& b)
-{
-    return a.gradientLine == b.gradientLine;
 }
 
 bool CSSLinearGradientValue::equals(const CSSLinearGradientValue& other) const
@@ -440,14 +426,9 @@ String CSSPrefixedLinearGradientValue::customCSSText() const
     return result.toString();
 }
 
-static bool operator==(const CSSPrefixedLinearGradientValue::Angle& a, const CSSPrefixedLinearGradientValue::Angle& b)
+bool operator==(const CSSPrefixedLinearGradientValue::Angle& a, const CSSPrefixedLinearGradientValue::Angle& b)
 {
     return compareCSSValue(a.value, b.value);
-}
-
-bool operator==(const CSSPrefixedLinearGradientValue::Data& a, const CSSPrefixedLinearGradientValue::Data& b)
-{
-    return a.gradientLine == b.gradientLine;
 }
 
 bool CSSPrefixedLinearGradientValue::equals(const CSSPrefixedLinearGradientValue& other) const
@@ -616,59 +597,30 @@ String CSSRadialGradientValue::customCSSText() const
     return result.toString();
 }
 
-static bool operator==(const CSSRadialGradientValue::Shape& a, const CSSRadialGradientValue::Shape& b)
-{
-    return a.shape == b.shape
-        && a.position == b.position;
-}
-
-static bool operator==(const CSSRadialGradientValue::Extent& a, const CSSRadialGradientValue::Extent& b)
-{
-    return a.extent == b.extent
-        && a.position == b.position;
-}
-
-static bool operator==(const CSSRadialGradientValue::Length& a, const CSSRadialGradientValue::Length& b)
+bool operator==(const CSSRadialGradientValue::Length& a, const CSSRadialGradientValue::Length& b)
 {
     return compareCSSValue(a.length, b.length)
         && a.position == b.position;
 }
 
-static bool operator==(const CSSRadialGradientValue::CircleOfLength& a, const CSSRadialGradientValue::CircleOfLength& b)
+bool operator==(const CSSRadialGradientValue::CircleOfLength& a, const CSSRadialGradientValue::CircleOfLength& b)
 {
     return compareCSSValue(a.length, b.length)
         && a.position == b.position;
 }
 
-static bool operator==(const CSSRadialGradientValue::CircleOfExtent& a, const CSSRadialGradientValue::CircleOfExtent& b)
-{
-    return a.extent == b.extent
-        && a.position == b.position;
-}
-
-static bool operator==(const CSSRadialGradientValue::Size& a, const CSSRadialGradientValue::Size& b)
+bool operator==(const CSSRadialGradientValue::Size& a, const CSSRadialGradientValue::Size& b)
 {
     return compareCSSValue(a.size.first, b.size.first)
         && compareCSSValue(a.size.second, b.size.second)
         && a.position == b.position;
 }
 
-static bool operator==(const CSSRadialGradientValue::EllipseOfSize& a, const CSSRadialGradientValue::EllipseOfSize& b)
+bool operator==(const CSSRadialGradientValue::EllipseOfSize& a, const CSSRadialGradientValue::EllipseOfSize& b)
 {
     return compareCSSValue(a.size.first, b.size.first)
         && compareCSSValue(a.size.second, b.size.second)
         && a.position == b.position;
-}
-
-static bool operator==(const CSSRadialGradientValue::EllipseOfExtent& a, const CSSRadialGradientValue::EllipseOfExtent& b)
-{
-    return a.extent == b.extent
-        && a.position == b.position;
-}
-
-bool operator==(const CSSRadialGradientValue::Data& a, const CSSRadialGradientValue::Data& b)
-{
-    return a.gradientBox == b.gradientBox;
 }
 
 bool CSSRadialGradientValue::equals(const CSSRadialGradientValue& other) const
@@ -748,21 +700,10 @@ String CSSPrefixedRadialGradientValue::customCSSText() const
     return result.toString();
 }
 
-static bool operator==(const CSSPrefixedRadialGradientValue::ShapeAndExtent& a, const CSSPrefixedRadialGradientValue::ShapeAndExtent& b)
-{
-    return a.shape == b.shape
-        && a.extent == b.extent;
-}
-static bool operator==(const CSSPrefixedRadialGradientValue::MeasuredSize& a, const CSSPrefixedRadialGradientValue::MeasuredSize& b)
+bool operator==(const CSSPrefixedRadialGradientValue::MeasuredSize& a, const CSSPrefixedRadialGradientValue::MeasuredSize& b)
 {
     return compareCSSValue(a.size.first, b.size.first)
         && compareCSSValue(a.size.second, b.size.second);
-}
-
-bool operator==(const CSSPrefixedRadialGradientValue::Data& a, const CSSPrefixedRadialGradientValue::Data& b)
-{
-    return a.gradientBox == b.gradientBox
-        && a.position == b.position;
 }
 
 bool CSSPrefixedRadialGradientValue::equals(const CSSPrefixedRadialGradientValue& other) const
@@ -847,15 +788,9 @@ String CSSConicGradientValue::customCSSText() const
     return result.toString();
 }
 
-static bool operator==(const CSSConicGradientValue::Angle& a, const CSSConicGradientValue::Angle& b)
+bool operator==(const CSSConicGradientValue::Angle& a, const CSSConicGradientValue::Angle& b)
 {
     return compareCSSValuePtr(a.value, b.value);
-}
-
-bool operator==(const CSSConicGradientValue::Data& a, const CSSConicGradientValue::Data& b)
-{
-    return a.angle == b.angle
-        && a.position == b.position;
 }
 
 bool CSSConicGradientValue::equals(const CSSConicGradientValue& other) const

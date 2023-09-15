@@ -320,6 +320,7 @@ void ArgumentCoder<Length>::encode(Encoder& encoder, const Length& length)
 
     switch (length.type()) {
     case LengthType::Auto:
+    case LengthType::Normal:
     case LengthType::Content:
     case LengthType::Undefined:
         break;
@@ -355,6 +356,7 @@ bool ArgumentCoder<Length>::decode(Decoder& decoder, Length& length)
         return false;
 
     switch (type) {
+    case LengthType::Normal:
     case LengthType::Auto:
     case LengthType::Content:
     case LengthType::Undefined:
@@ -716,16 +718,6 @@ bool ArgumentCoder<Cursor>::decode(Decoder& decoder, Cursor& cursor)
     return true;
 }
 
-void ArgumentCoder<DiagnosticLoggingDictionary>::encode(Encoder& encoder, const DiagnosticLoggingDictionary& dictionary)
-{
-    encoder << dictionary.dictionary;
-}
-
-bool ArgumentCoder<DiagnosticLoggingDictionary>::decode(Decoder& decoder, DiagnosticLoggingDictionary& dictionary)
-{
-    return decoder.decode(dictionary.dictionary);
-}
-
 void ArgumentCoder<ResourceError>::encode(Encoder& encoder, const ResourceError& resourceError)
 {
     encoder << resourceError.type();
@@ -756,172 +748,6 @@ bool ArgumentCoder<ResourceError>::decode(Decoder& decoder, ResourceError& resou
     resourceError.setType(type);
     if (isSanitized)
         resourceError.setAsSanitized();
-
-    return true;
-}
-
-#if PLATFORM(IOS_FAMILY)
-
-void ArgumentCoder<InspectorOverlay::Highlight>::encode(Encoder& encoder, const InspectorOverlay::Highlight& highlight)
-{
-    encoder << static_cast<uint32_t>(highlight.type);
-    encoder << highlight.usePageCoordinates;
-    encoder << highlight.contentColor;
-    encoder << highlight.contentOutlineColor;
-    encoder << highlight.paddingColor;
-    encoder << highlight.borderColor;
-    encoder << highlight.marginColor;
-    encoder << highlight.quads;
-    encoder << highlight.gridHighlightOverlays;
-    encoder << highlight.flexHighlightOverlays;
-}
-
-bool ArgumentCoder<InspectorOverlay::Highlight>::decode(Decoder& decoder, InspectorOverlay::Highlight& highlight)
-{
-    uint32_t type;
-    if (!decoder.decode(type))
-        return false;
-    highlight.type = (InspectorOverlay::Highlight::Type)type;
-
-    if (!decoder.decode(highlight.usePageCoordinates))
-        return false;
-    if (!decoder.decode(highlight.contentColor))
-        return false;
-    if (!decoder.decode(highlight.contentOutlineColor))
-        return false;
-    if (!decoder.decode(highlight.paddingColor))
-        return false;
-    if (!decoder.decode(highlight.borderColor))
-        return false;
-    if (!decoder.decode(highlight.marginColor))
-        return false;
-    if (!decoder.decode(highlight.quads))
-        return false;
-    if (!decoder.decode(highlight.gridHighlightOverlays))
-        return false;
-    if (!decoder.decode(highlight.flexHighlightOverlays))
-        return false;
-    return true;
-}
-
-#endif
-
-void ArgumentCoder<FixedPositionViewportConstraints>::encode(Encoder& encoder, const FixedPositionViewportConstraints& viewportConstraints)
-{
-    encoder << viewportConstraints.alignmentOffset();
-    encoder << viewportConstraints.anchorEdges();
-
-    encoder << viewportConstraints.viewportRectAtLastLayout();
-    encoder << viewportConstraints.layerPositionAtLastLayout();
-}
-
-bool ArgumentCoder<FixedPositionViewportConstraints>::decode(Decoder& decoder, FixedPositionViewportConstraints& viewportConstraints)
-{
-    FloatSize alignmentOffset;
-    if (!decoder.decode(alignmentOffset))
-        return false;
-    
-    ViewportConstraints::AnchorEdges anchorEdges;
-    if (!decoder.decode(anchorEdges))
-        return false;
-
-    FloatRect viewportRectAtLastLayout;
-    if (!decoder.decode(viewportRectAtLastLayout))
-        return false;
-
-    FloatPoint layerPositionAtLastLayout;
-    if (!decoder.decode(layerPositionAtLastLayout))
-        return false;
-
-    viewportConstraints = FixedPositionViewportConstraints();
-    viewportConstraints.setAlignmentOffset(alignmentOffset);
-    viewportConstraints.setAnchorEdges(anchorEdges);
-
-    viewportConstraints.setViewportRectAtLastLayout(viewportRectAtLastLayout);
-    viewportConstraints.setLayerPositionAtLastLayout(layerPositionAtLastLayout);
-    
-    return true;
-}
-
-void ArgumentCoder<StickyPositionViewportConstraints>::encode(Encoder& encoder, const StickyPositionViewportConstraints& viewportConstraints)
-{
-    encoder << viewportConstraints.alignmentOffset();
-    encoder << viewportConstraints.anchorEdges();
-
-    encoder << viewportConstraints.leftOffset();
-    encoder << viewportConstraints.rightOffset();
-    encoder << viewportConstraints.topOffset();
-    encoder << viewportConstraints.bottomOffset();
-
-    encoder << viewportConstraints.constrainingRectAtLastLayout();
-    encoder << viewportConstraints.containingBlockRect();
-    encoder << viewportConstraints.stickyBoxRect();
-
-    encoder << viewportConstraints.stickyOffsetAtLastLayout();
-    encoder << viewportConstraints.layerPositionAtLastLayout();
-}
-
-bool ArgumentCoder<StickyPositionViewportConstraints>::decode(Decoder& decoder, StickyPositionViewportConstraints& viewportConstraints)
-{
-    FloatSize alignmentOffset;
-    if (!decoder.decode(alignmentOffset))
-        return false;
-    
-    ViewportConstraints::AnchorEdges anchorEdges;
-    if (!decoder.decode(anchorEdges))
-        return false;
-    
-    float leftOffset;
-    if (!decoder.decode(leftOffset))
-        return false;
-
-    float rightOffset;
-    if (!decoder.decode(rightOffset))
-        return false;
-
-    float topOffset;
-    if (!decoder.decode(topOffset))
-        return false;
-
-    float bottomOffset;
-    if (!decoder.decode(bottomOffset))
-        return false;
-    
-    FloatRect constrainingRectAtLastLayout;
-    if (!decoder.decode(constrainingRectAtLastLayout))
-        return false;
-
-    FloatRect containingBlockRect;
-    if (!decoder.decode(containingBlockRect))
-        return false;
-
-    FloatRect stickyBoxRect;
-    if (!decoder.decode(stickyBoxRect))
-        return false;
-
-    FloatSize stickyOffsetAtLastLayout;
-    if (!decoder.decode(stickyOffsetAtLastLayout))
-        return false;
-    
-    FloatPoint layerPositionAtLastLayout;
-    if (!decoder.decode(layerPositionAtLastLayout))
-        return false;
-
-    viewportConstraints = StickyPositionViewportConstraints();
-    viewportConstraints.setAlignmentOffset(alignmentOffset);
-    viewportConstraints.setAnchorEdges(anchorEdges);
-
-    viewportConstraints.setLeftOffset(leftOffset);
-    viewportConstraints.setRightOffset(rightOffset);
-    viewportConstraints.setTopOffset(topOffset);
-    viewportConstraints.setBottomOffset(bottomOffset);
-    
-    viewportConstraints.setConstrainingRectAtLastLayout(constrainingRectAtLastLayout);
-    viewportConstraints.setContainingBlockRect(containingBlockRect);
-    viewportConstraints.setStickyBoxRect(stickyBoxRect);
-
-    viewportConstraints.setStickyOffsetAtLastLayout(stickyOffsetAtLastLayout);
-    viewportConstraints.setLayerPositionAtLastLayout(layerPositionAtLastLayout);
 
     return true;
 }

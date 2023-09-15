@@ -19,7 +19,7 @@ layer at (8,26) size 201x42 clip at (9,27) size 199x40
       RenderText {#text} at (0,0) size 25x17
         text run at (0,0) width 25: "text"
 layer at (213,26) size 201x42 clip at (214,27) size 199x40
-  RenderTextControl {TEXTAREA} at (205,18) size 201x42 [color=#575757] [bgcolor=#FFFFFF] [border: (1px solid #575757)]
+  RenderTextControl {TEXTAREA} at (205,18) size 201x42 [color=color(srgb 0.34117648 0.34117648 0.34117648)] [bgcolor=#FFFFFF] [border: (1px solid color(srgb 0.34117648 0.34117648 0.34117648))]
     RenderBlock {DIV} at (3,3) size 195x18
     RenderBlock {DIV} at (3,3) size 195x18 [color=#640000]
       RenderText {#text} at (0,0) size 90x17
@@ -31,7 +31,7 @@ layer at (418,26) size 201x42 clip at (419,27) size 199x40
       RenderText {#text} at (0,0) size 48x17
         text run at (0,0) width 48: "default"
 layer at (8,72) size 201x42 clip at (9,73) size 199x40
-  RenderTextControl {TEXTAREA} at (0,64) size 201x42 [color=#575757] [bgcolor=#FFFFFF] [border: (1px solid #575757)]
+  RenderTextControl {TEXTAREA} at (0,64) size 201x42 [color=color(srgb 0.34117648 0.34117648 0.34117648)] [bgcolor=#FFFFFF] [border: (1px solid color(srgb 0.34117648 0.34117648 0.34117648))]
     RenderBlock {DIV} at (3,3) size 195x18
     RenderBlock {DIV} at (3,3) size 195x18 [color=#A9A9A9]
       RenderText {#text} at (0,0) size 113x17

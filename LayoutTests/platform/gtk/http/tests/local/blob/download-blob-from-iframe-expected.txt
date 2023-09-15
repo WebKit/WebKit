@@ -1,0 +1,60 @@
+Download started.
+Downloading URL with suggested filename "testBlobFileName.html"
+Download completed.
+Download started.
+Download failed.
+Failed: WebKitBlobResource, code=1, description=
+Download started.
+Download failed.
+Failed: WebKitBlobResource, code=1, description=
+Download started.
+Download failed.
+Failed: WebKitBlobResource, code=1, description=
+Download started.
+Download failed.
+Failed: WebKitBlobResource, code=1, description=
+Download started.
+Download failed.
+Failed: WebKitBlobResource, code=1, description=
+Download started.
+Download failed.
+Failed: WebKitBlobResource, code=1, description=
+Download started.
+Downloading URL with suggested filename "testBlobFileName.html"
+Download completed.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Opening https://localhost:8443 as main frame with iframe origin https://localhost:8443, creating blob
+PASS Opened window
+PASS iframe: created blob
+Opening https://localhost:8443 as main frame with iframe origin https://localhost:8443, downloading blob
+PASS Opened window
+PASS iframe: downloading blob
+Opening http://localhost:8000 as main frame with iframe origin https://localhost:8443, downloading blob
+PASS Opened window
+PASS iframe: downloading blob
+Opening http://127.0.0.1:8000 as main frame with iframe origin https://localhost:8443, downloading blob
+PASS Opened window
+PASS iframe: downloading blob
+Opening https://127.0.0.1:8443 as main frame with iframe origin https://localhost:8443, downloading blob
+PASS Opened window
+PASS iframe: downloading blob
+Opening https://127.0.0.1:8443 as main frame with iframe origin https://localhost:8443, creating blob
+PASS Opened window
+PASS iframe: created blob
+Opening https://localhost:8443 as main frame with iframe origin https://localhost:8443, downloading blob
+PASS Opened window
+PASS iframe: downloading blob
+Opening http://localhost:8000 as main frame with iframe origin https://localhost:8443, downloading blob
+PASS Opened window
+PASS iframe: downloading blob
+Opening http://127.0.0.1:8000 as main frame with iframe origin https://localhost:8443, downloading blob
+PASS Opened window
+PASS iframe: downloading blob
+Opening https://127.0.0.1:8443 as main frame with iframe origin https://localhost:8443, downloading blob
+PASS Opened window
+PASS iframe: downloading blob
+
+PASS Test for creating blob in iframe and then downloading to it in same-origin iframe and same-origin, same-site, and cross-site main frames.
+

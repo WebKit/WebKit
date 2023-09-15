@@ -52,7 +52,7 @@ ScrollingThread::ScrollingThread()
 
 bool ScrollingThread::isCurrentThread()
 {
-    return ScrollingThread::singleton().m_runLoop.ptr() == &RunLoop::current();
+    return ScrollingThread::singleton().m_runLoop->isCurrent();
 }
 
 void ScrollingThread::dispatch(Function<void ()>&& function)

@@ -28,7 +28,7 @@ typedef unrestricted float GLfloat;
 [
     LegacyNoInterfaceObject,
     Conditional=WEBGL,
-    GenerateIsReachable=ImplWebGLRenderingContext,
+    GenerateIsReachable,
 ] interface EXTPolygonOffsetClamp {
     const unsigned long POLYGON_OFFSET_CLAMP_EXT = 0x8E1B;
 

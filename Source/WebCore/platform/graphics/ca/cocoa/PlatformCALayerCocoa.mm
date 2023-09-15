@@ -319,7 +319,6 @@ void PlatformCALayerCocoa::commonInit()
         m_customSublayers = makeUnique<PlatformCALayerList>(tileController->containerLayers());
     }
 
-#if HAVE(CALAYER_USES_WEBKIT_BEHAVIOR)
     if (m_owner && m_owner->platformCALayerUseCSS3DTransformInteroperability() && [m_layer respondsToSelector:@selector(setUsesWebKitBehavior:)]) {
         [m_layer setUsesWebKitBehavior:YES];
         if (m_layerType == LayerTypeTransformLayer) {
@@ -327,7 +326,6 @@ void PlatformCALayerCocoa::commonInit()
         } else
             [m_layer setSortsSublayers:NO];
     }
-#endif
 
     END_BLOCK_OBJC_EXCEPTIONS
 }
@@ -699,7 +697,7 @@ bool PlatformCALayerCocoa::backingStoreAttached() const
 }
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-void PlatformCALayerCocoa::setCoverageRect(const FloatRect&)
+void PlatformCALayerCocoa::setVisibleRect(const FloatRect&)
 {
 }
 #endif
@@ -1064,11 +1062,7 @@ void PlatformCALayerCocoa::updateCustomAppearance(GraphicsLayer::CustomAppearanc
 #if HAVE(RUBBER_BANDING)
     switch (appearance) {
     case GraphicsLayer::CustomAppearance::None:
-        ScrollbarThemeMac::removeOverhangAreaBackground(platformLayer());
         ScrollbarThemeMac::removeOverhangAreaShadow(platformLayer());
-        break;
-    case GraphicsLayer::CustomAppearance::ScrollingOverhang:
-        ScrollbarThemeMac::setUpOverhangAreaBackground(platformLayer());
         break;
     case GraphicsLayer::CustomAppearance::ScrollingShadow:
         ScrollbarThemeMac::setUpOverhangAreaShadow(platformLayer());

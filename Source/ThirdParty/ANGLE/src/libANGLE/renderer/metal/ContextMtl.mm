@@ -23,6 +23,7 @@
 #include "libANGLE/renderer/metal/CompilerMtl.h"
 #include "libANGLE/renderer/metal/DisplayMtl.h"
 #include "libANGLE/renderer/metal/FrameBufferMtl.h"
+#include "libANGLE/renderer/metal/ProgramExecutableMtl.h"
 #include "libANGLE/renderer/metal/ProgramMtl.h"
 #include "libANGLE/renderer/metal/QueryMtl.h"
 #include "libANGLE/renderer/metal/RenderBufferMtl.h"
@@ -681,12 +682,13 @@ angle::Result ContextMtl::drawArraysProvokingVertexImpl(const gl::Context *conte
     gl::DrawElementsType convertedType = gl::DrawElementsType::UnsignedInt;
     gl::PrimitiveMode outIndexMode     = gl::PrimitiveMode::InvalidEnum;
 
-    mtl::BufferRef drawIdxBuffer = mProvokingVertexHelper.generateIndexBuffer(
+    mtl::BufferRef drawIdxBuffer;
+    ANGLE_TRY(mProvokingVertexHelper.generateIndexBuffer(
         mtl::GetImpl(context), first, count, mode, convertedType, outIndexCount, outIndexOffset,
-        outIndexMode);
+        outIndexMode, drawIdxBuffer));
     GLsizei outIndexCounti32     = static_cast<GLsizei>(outIndexCount);
     const uint8_t *mappedIndices = drawIdxBuffer->mapReadOnly(this);
-    if (!drawIdxBuffer || !mappedIndices)
+    if (!mappedIndices)
     {
         return angle::Result::Stop;
     }
@@ -804,14 +806,10 @@ angle::Result ContextMtl::drawElementsImpl(const gl::Context *context,
     {
         size_t outIndexCount      = 0;
         gl::PrimitiveMode newMode = gl::PrimitiveMode::InvalidEnum;
-        drawIdxBuffer             = mProvokingVertexHelper.preconditionIndexBuffer(
+        ANGLE_TRY(mProvokingVertexHelper.preconditionIndexBuffer(
             mtl::GetImpl(context), idxBuffer, count, convertedOffset,
             mState.isPrimitiveRestartEnabled(), mode, convertedType, outIndexCount,
-            provokingVertexAdditionalOffset, newMode);
-        if (!drawIdxBuffer)
-        {
-            return angle::Result::Stop;
-        }
+            provokingVertexAdditionalOffset, newMode, drawIdxBuffer));
         // Line strips and triangle strips are rewritten to flat line arrays and tri arrays.
         convertedCounti32 = (uint32_t)outIndexCount;
         mode              = newMode;
@@ -1114,10 +1112,10 @@ angle::Result ContextMtl::popDebugGroup(const gl::Context *context)
 
 // State sync with dirty bits.
 angle::Result ContextMtl::syncState(const gl::Context *context,
-                                    const gl::state::DirtyBits &dirtyBits,
-                                    const gl::state::DirtyBits &bitMask,
-                                    const gl::state::ExtendedDirtyBits &extendedDirtyBits,
-                                    const gl::state::ExtendedDirtyBits &extendedBitMask,
+                                    const gl::state::DirtyBits dirtyBits,
+                                    const gl::state::DirtyBits bitMask,
+                                    const gl::state::ExtendedDirtyBits extendedDirtyBits,
+                                    const gl::state::ExtendedDirtyBits extendedBitMask,
                                     gl::Command command)
 {
     const gl::State &glState = context->getState();
@@ -1137,8 +1135,10 @@ angle::Result ContextMtl::syncState(const gl::Context *context,
     gl::state::DirtyBits mergedDirtyBits = gl::state::DirtyBits(dirtyBits) & ~resetBlendBitsMask;
     mergedDirtyBits.set(gl::state::DIRTY_BIT_BLEND_ENABLED, (dirtyBits & checkBlendBitsMask).any());
 
-    for (size_t dirtyBit : mergedDirtyBits)
+    for (auto iter = mergedDirtyBits.begin(), endIter = mergedDirtyBits.end(); iter != endIter;
+         ++iter)
     {
+        size_t dirtyBit = *iter;
         switch (dirtyBit)
         {
             case gl::state::DIRTY_BIT_SCISSOR_TEST_ENABLED:
@@ -1303,11 +1303,19 @@ angle::Result ContextMtl::syncState(const gl::Context *context,
             case gl::state::DIRTY_BIT_DISPATCH_INDIRECT_BUFFER_BINDING:
                 break;
             case gl::state::DIRTY_BIT_PROGRAM_BINDING:
-                mProgram = mtl::GetImpl(glState.getProgram());
+                static_assert(
+                    gl::state::DIRTY_BIT_PROGRAM_EXECUTABLE > gl::state::DIRTY_BIT_PROGRAM_BINDING,
+                    "Dirty bit order");
+                iter.setLaterBit(gl::state::DIRTY_BIT_PROGRAM_EXECUTABLE);
                 break;
             case gl::state::DIRTY_BIT_PROGRAM_EXECUTABLE:
+            {
+                const gl::ProgramExecutable *executable = mState.getProgramExecutable();
+                ASSERT(executable);
+                mExecutable = mtl::GetImpl(executable);
                 updateProgramExecutable(context);
                 break;
+            }
             case gl::state::DIRTY_BIT_TEXTURE_BINDINGS:
                 invalidateCurrentTextures();
                 break;
@@ -1366,7 +1374,7 @@ angle::Result ContextMtl::syncState(const gl::Context *context,
 }
 
 void ContextMtl::updateExtendedState(const gl::State &glState,
-                                     const gl::state::ExtendedDirtyBits &extendedDirtyBits)
+                                     const gl::state::ExtendedDirtyBits extendedDirtyBits)
 {
     for (size_t extendedDirtyBit : extendedDirtyBits)
     {
@@ -1472,6 +1480,11 @@ ShaderImpl *ContextMtl::createShader(const gl::ShaderState &state)
 ProgramImpl *ContextMtl::createProgram(const gl::ProgramState &state)
 {
     return new ProgramMtl(state);
+}
+
+ProgramExecutableImpl *ContextMtl::createProgramExecutable(const gl::ProgramExecutable *executable)
+{
+    return new ProgramExecutableMtl(executable);
 }
 
 // Framebuffer creation
@@ -1764,10 +1777,10 @@ const mtl::FormatCaps &ContextMtl::getNativeFormatCaps(MTLPixelFormat mtlFormat)
 
 angle::Result ContextMtl::getIncompleteTexture(const gl::Context *context,
                                                gl::TextureType type,
+                                               gl::SamplerFormat format,
                                                gl::Texture **textureOut)
 {
-    return mIncompleteTextures.getIncompleteTexture(context, type, gl::SamplerFormat::Float,
-                                                    nullptr, textureOut);
+    return mIncompleteTextures.getIncompleteTexture(context, type, format, nullptr, textureOut);
 }
 
 void ContextMtl::endRenderEncoding(mtl::RenderCommandEncoder *encoder)
@@ -1838,13 +1851,17 @@ void ContextMtl::flushCommandBufferIfNeeded()
 {
     if (mRenderPassesSinceFlush >= mtl::kMaxRenderPassesPerCommandBuffer)
     {
-        // WaitUntilScheduled here is intended to help the CPU-GPU pipeline and
-        // helps to keep the number of inflight render passes in the system to a
-        // minimum.
+#if defined(ANGLE_PLATFORM_MACOS)
+        // Ensure that we don't accumulate too many unflushed render passes. Don't wait until they
+        // are submitted, other components handle backpressure so don't create uneccessary CPU/GPU
+        // synchronization.
+        flushCommandBuffer(mtl::NoWait);
+#else
+        // WaitUntilScheduled is used on iOS to avoid regressing untested devices.
         flushCommandBuffer(mtl::WaitUntilScheduled);
+#endif
     }
-
-    if (mCmdBuffer.needsFlushForDrawCallLimits())
+    else if (mCmdBuffer.needsFlushForDrawCallLimits())
     {
         flushCommandBuffer(mtl::NoWait);
     }
@@ -1917,22 +1934,16 @@ mtl::RenderCommandEncoder *ContextMtl::getRenderPassCommandEncoder(const mtl::Re
     const mtl::ContextDevice &metalDevice = getMetalDevice();
     if (mtl::DeviceHasMaximumRenderTargetSize(metalDevice))
     {
-        ANGLE_MTL_OBJC_SCOPE
+        NSUInteger maxSize = mtl::GetMaxRenderTargetSizeForDeviceInBytes(metalDevice);
+        NSUInteger renderTargetSize =
+            ComputeTotalSizeUsedForMTLRenderPassDescriptor(desc, this, metalDevice);
+        if (renderTargetSize > maxSize)
         {
-            MTLRenderPassDescriptor *objCDesc = [MTLRenderPassDescriptor renderPassDescriptor];
-            desc.convertToMetalDesc(objCDesc, getNativeCaps().maxColorAttachments);
-            NSUInteger maxSize = mtl::GetMaxRenderTargetSizeForDeviceInBytes(metalDevice);
-            NSUInteger renderTargetSize =
-                ComputeTotalSizeUsedForMTLRenderPassDescriptor(objCDesc, this, metalDevice);
-            if (renderTargetSize > maxSize)
-            {
-                std::stringstream errorStream;
-                errorStream << "This set of render targets requires " << renderTargetSize
-                            << " bytes of pixel storage. This device supports " << maxSize
-                            << " bytes.";
-                ANGLE_MTL_HANDLE_ERROR(this, errorStream.str().c_str(), GL_INVALID_OPERATION);
-                return nil;
-            }
+            std::stringstream errorStream;
+            errorStream << "This set of render targets requires " << renderTargetSize
+                        << " bytes of pixel storage. This device supports " << maxSize << " bytes.";
+            ANGLE_MTL_HANDLE_ERROR(this, errorStream.str().c_str(), GL_INVALID_OPERATION);
+            return nullptr;
         }
     }
     return &mRenderEncoder.restart(desc, getNativeCaps().maxColorAttachments);
@@ -2198,7 +2209,7 @@ void ContextMtl::updateFrontFace(const gl::State &glState)
 // PrimitiveMode is not POINTS.
 bool ContextMtl::requiresIndexRewrite(const gl::State &state, gl::PrimitiveMode mode)
 {
-    return mode != gl::PrimitiveMode::Points && mProgram->hasFlatAttribute() &&
+    return mode != gl::PrimitiveMode::Points && mExecutable->hasFlatAttribute() &&
            (state.getProvokingVertex() == gl::ProvokingVertexConvention::LastVertexConvention);
 }
 
@@ -2501,7 +2512,7 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
                                         bool xfbPass,
                                         bool *isNoOp)
 {
-    ASSERT(mProgram);
+    ASSERT(mExecutable);
     *isNoOp = false;
     // instances=0 means no instanced draw.
     GLsizei instanceCount = instances ? instances : 1;
@@ -2647,8 +2658,9 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
     }
     else
     {
-        ANGLE_TRY(mProgram->setupDraw(context, &mRenderEncoder, mRenderPipelineDesc,
-                                      isPipelineDescChanged, textureChanged, uniformBuffersDirty));
+        ANGLE_TRY(mExecutable->setupDraw(context, &mRenderEncoder, mRenderPipelineDesc,
+                                         isPipelineDescChanged, textureChanged,
+                                         uniformBuffersDirty));
     }
 
     return angle::Result::Continue;

@@ -42,6 +42,7 @@
 #import "TextCheckingController.h"
 #import "TransactionID.h"
 #import "UIKitSPI.h"
+#import "WKMouseInteraction.h"
 #import <WebKit/WKActionSheetAssistant.h>
 #import <WebKit/WKAirPlayRoutePicker.h>
 #import <WebKit/WKContactPicker.h>
@@ -123,9 +124,7 @@ class WebPageProxy;
 @class WKFormInputSession;
 @class WKFormSelectControl;
 @class WKHighlightLongPressGestureRecognizer;
-@class WKHoverGestureRecognizer;
 @class WKImageAnalysisGestureRecognizer;
-@class WKMouseGestureRecognizer;
 @class WKInspectorNodeSearchGestureRecognizer;
 @class WKTargetedPreviewContainer;
 @class WKTextRange;
@@ -136,6 +135,7 @@ class WebPageProxy;
 #endif
 
 @class UIPointerInteraction;
+@class UIPointerRegion;
 @class UITargetedPreview;
 @class _UILookupGestureRecognizer;
 @class _UIHighlightView;
@@ -326,11 +326,8 @@ struct ImageAnalysisContextMenuActionData {
 #endif
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-    RetainPtr<WKMouseGestureRecognizer> _mouseGestureRecognizer;
+    RetainPtr<WKMouseInteraction> _mouseInteraction;
     WebCore::MouseEventPolicy _mouseEventPolicy;
-#if ENABLE(PENCIL_HOVER)
-    RetainPtr<WKMouseGestureRecognizer> _pencilHoverGestureRecognizer;
-#endif
 #endif
 
 #if HAVE(PENCILKIT_TEXT_INPUT)
@@ -339,8 +336,8 @@ struct ImageAnalysisContextMenuActionData {
 
 #if HAVE(UI_POINTER_INTERACTION)
     RetainPtr<UIPointerInteraction> _pointerInteraction;
-    BOOL _hasOutstandingPointerInteractionRequest;
-    std::optional<std::pair<WebKit::InteractionInformationRequest, BlockPtr<void(UIPointerRegion *)>>> _deferredPointerInteractionRequest;
+    RetainPtr<UIPointerRegion> _lastPointerRegion;
+    BOOL _pointerInteractionRegionNeedsUpdate;
 #endif
 
     RetainPtr<UIWKTextInteractionAssistant> _textInteractionAssistant;
@@ -415,6 +412,7 @@ struct ImageAnalysisContextMenuActionData {
     WebKit::WebAutocorrectionContext _lastAutocorrectionContext;
     WebKit::WKAutoCorrectionData _autocorrectionData;
     WebKit::InteractionInformationAtPosition _positionInformation;
+    std::optional<WebCore::TextIndicatorData> _positionInformationLinkIndicator;
     WebKit::FocusedElementInformation _focusedElementInformation;
     RetainPtr<NSObject<WKFormPeripheral>> _inputPeripheral;
     BlockPtr<void(::WebEvent *, BOOL)> _keyWebEventHandler;
@@ -577,6 +575,9 @@ struct ImageAnalysisContextMenuActionData {
     , WKTouchActionGestureRecognizerDelegate
 #if HAVE(UIFINDINTERACTION)
     , UITextSearching
+#endif
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    , WKMouseInteractionDelegate
 #endif
 >
 
@@ -831,10 +832,13 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)beginTextRecognitionForVideoInElementFullscreen:(WebKit::ShareableBitmap::Handle&&)bitmapHandle bounds:(WebCore::FloatRect)bounds;
 - (void)cancelTextRecognitionForVideoInElementFullscreen;
 
+- (BOOL)_tryToHandlePressesEvent:(UIPressesEvent *)event;
+
 @end
 
 @interface WKContentView (WKTesting)
 
+- (void)selectWordBackwardForTesting;
 - (void)_simulateElementAction:(_WKElementActionType)actionType atLocation:(CGPoint)location;
 - (void)_simulateLongPressActionAtLocation:(CGPoint)location;
 - (void)_simulateTextEntered:(NSString *)text;

@@ -11,13 +11,17 @@
 
 #include "libANGLE/Device.h"
 #include "libANGLE/renderer/DisplayImpl.h"
+#include "libANGLE/renderer/ShareGroupImpl.h"
 
 #include "libANGLE/renderer/d3d/RendererD3D.h"
 
 namespace rx
 {
 class ShareGroupD3D : public ShareGroupImpl
-{};
+{
+  public:
+    ShareGroupD3D(const egl::ShareGroupState &state) : ShareGroupImpl(state) {}
+};
 
 class DisplayD3D : public DisplayImpl, public d3d::Context
 {
@@ -60,7 +64,7 @@ class DisplayD3D : public DisplayImpl, public d3d::Context
                                                          EGLClientBuffer buffer,
                                                          const egl::AttributeMap &attribs) override;
 
-    ShareGroupImpl *createShareGroup() override;
+    ShareGroupImpl *createShareGroup(const egl::ShareGroupState &state) override;
 
     egl::Error makeCurrent(egl::Display *display,
                            egl::Surface *drawSurface,

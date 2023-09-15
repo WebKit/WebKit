@@ -33,6 +33,7 @@
 
 #include "BlobData.h"
 #include "BlobRegistry.h"
+#include "SecurityOriginData.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/URLHash.h>
@@ -53,7 +54,7 @@ class WEBCORE_EXPORT BlobRegistryImpl {
 public:
     virtual ~BlobRegistryImpl();
 
-    BlobData* getBlobDataFromURL(const URL&) const;
+    BlobData* getBlobDataFromURL(const URL&, const std::optional<SecurityOriginData>& topOrigin = std::nullopt) const;
 
     Ref<ResourceHandle> createResourceHandle(const ResourceRequest&, ResourceHandleClient*);
 
@@ -61,13 +62,13 @@ public:
 
     void registerInternalFileBlobURL(const URL&, Ref<BlobDataFileReference>&&, const String& contentType);
     void registerInternalBlobURL(const URL&, Vector<BlobPart>&&, const String& contentType);
-    void registerBlobURL(const URL&, const URL& srcURL, const PolicyContainer&);
+    void registerBlobURL(const URL&, const URL& srcURL, const PolicyContainer&, const std::optional<SecurityOriginData>& topOrigin);
     void registerInternalBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType, const PolicyContainer&);
     void registerInternalBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end, const String& contentType);
-    void unregisterBlobURL(const URL&);
+    void unregisterBlobURL(const URL&, const std::optional<WebCore::SecurityOriginData>& topOrigin);
 
-    void registerBlobURLHandle(const URL&);
-    void unregisterBlobURLHandle(const URL&);
+    void registerBlobURLHandle(const URL&, const std::optional<WebCore::SecurityOriginData>& topOrigin);
+    void unregisterBlobURLHandle(const URL&, const std::optional<WebCore::SecurityOriginData>& topOrigin);
 
     unsigned long long blobSize(const URL&);
 
@@ -79,20 +80,21 @@ public:
     };
 
     bool populateBlobsForFileWriting(const Vector<String>& blobURLs, Vector<BlobForFileWriting>&);
-    Vector<RefPtr<BlobDataFileReference>> filesInBlob(const URL&) const;
+    Vector<RefPtr<BlobDataFileReference>> filesInBlob(const URL&, const std::optional<WebCore::SecurityOriginData>& topOrigin = std::nullopt) const;
 
     void setFileDirectory(String&&);
-    void setPartitioningEnabled(bool enabled) { m_isPartitioningEnabled = enabled; }
+    void setPartitioningEnabled(bool);
 
 private:
-    void registerBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType, const PolicyContainer&);
-    void addBlobData(const String& url, RefPtr<BlobData>&&);
+    void registerBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType, const PolicyContainer&, const std::optional<SecurityOriginData>& topOrigin = std::nullopt);
+    void addBlobData(const String& url, RefPtr<BlobData>&&, const std::optional<WebCore::SecurityOriginData>& topOrigin = std::nullopt);
     Ref<DataSegment> createDataSegment(Vector<uint8_t>&&, BlobData&);
 
     HashCountedSet<String> m_blobReferences;
     MemoryCompactRobinHoodHashMap<String, RefPtr<BlobData>> m_blobs;
+    using URLToTopOriginHashMap = MemoryCompactRobinHoodHashMap<String, WebCore::SecurityOriginData>;
+    std::optional<URLToTopOriginHashMap> m_allowedBlobURLTopOrigins;
     String m_fileDirectory;
-    bool m_isPartitioningEnabled { false };
 };
 
 inline void BlobRegistryImpl::setFileDirectory(String&& filePath)

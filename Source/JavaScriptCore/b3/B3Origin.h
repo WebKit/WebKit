@@ -46,7 +46,7 @@ public:
 
     const void* data() const { return m_data; }
 
-    bool operator==(const Origin& other) const { return m_data == other.m_data; }
+    friend bool operator==(Origin, Origin) = default;
 
     // You should avoid using this. Use OriginDump instead.
     void dump(PrintStream&) const;

@@ -458,7 +458,7 @@ void LegacyLineLayout::setMarginsForRubyRun(BidiRun* run, RenderRubyRun& rendere
 static inline void setLogicalWidthForTextRun(LegacyRootInlineBox* lineBox, BidiRun* run, RenderText& renderer, float xPos, const LineInfo& lineInfo,
     GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache, WordMeasurements& wordMeasurements)
 {
-    HashSet<const Font*> fallbackFonts;
+    WeakHashSet<const Font> fallbackFonts;
     GlyphOverflow glyphOverflow;
 
     const FontCascade& font = lineStyle(*renderer.parent(), lineInfo).fontCascade();
@@ -528,9 +528,9 @@ static inline void setLogicalWidthForTextRun(LegacyRootInlineBox* lineBox, BidiR
     ASSERT(hyphenWidth >= 0);
 
     run->box()->setLogicalWidth(measuredWidth + hyphenWidth);
-    if (!fallbackFonts.isEmpty()) {
+    if (!fallbackFonts.isEmptyIgnoringNullReferences()) {
         ASSERT(run->box()->behavesLikeText());
-        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(downcast<LegacyInlineTextBox>(run->box()), std::make_pair(Vector<const Font*>(), GlyphOverflow())).iterator;
+        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(downcast<LegacyInlineTextBox>(run->box()), std::make_pair(Vector<WeakPtr<const Font>>(), GlyphOverflow())).iterator;
         ASSERT(it->value.first.isEmpty());
         it->value.first = copyToVector(fallbackFonts);
         run->box()->parent()->clearDescendantsHaveSameLineHeightAndBaseline();
@@ -544,7 +544,7 @@ static inline void setLogicalWidthForTextRun(LegacyRootInlineBox* lineBox, BidiR
 
     if (!glyphOverflow.isEmpty()) {
         ASSERT(run->box()->behavesLikeText());
-        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(downcast<LegacyInlineTextBox>(run->box()), std::make_pair(Vector<const Font*>(), GlyphOverflow())).iterator;
+        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(downcast<LegacyInlineTextBox>(run->box()), std::make_pair(Vector<WeakPtr<const Font>>(), GlyphOverflow())).iterator;
         it->value.second = glyphOverflow;
         run->box()->clearKnownToHaveNoOverflow();
     }
@@ -2158,12 +2158,12 @@ void LegacyLineLayout::addOverflowFromInlineChildren()
         m_flow.addLayoutOverflow(curr->paddedLayoutOverflowRect(endPadding));
         RenderFragmentContainer* fragment = m_flow.enclosingFragmentedFlow() ? curr->containingFragment() : nullptr;
         if (fragment)
-            fragment->addLayoutOverflowForBox(&m_flow, curr->paddedLayoutOverflowRect(endPadding));
+            fragment->addLayoutOverflowForBox(m_flow, curr->paddedLayoutOverflowRect(endPadding));
         if (!m_flow.hasNonVisibleOverflow()) {
             LayoutRect childVisualOverflowRect = curr->visualOverflowRect(curr->lineTop(), curr->lineBottom());
             m_flow.addVisualOverflow(childVisualOverflowRect);
             if (fragment)
-                fragment->addVisualOverflowForBox(&m_flow, childVisualOverflowRect);
+                fragment->addVisualOverflowForBox(m_flow, childVisualOverflowRect);
         }
     }
 }

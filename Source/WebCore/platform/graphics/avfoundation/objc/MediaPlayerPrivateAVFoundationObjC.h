@@ -144,7 +144,7 @@ private:
     // engine support
     class Factory;
     static bool isAvailable();
-    static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types);
+    static void getSupportedTypes(HashSet<String>& types);
     static MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters&);
     static bool supportsKeySystem(const String& keySystem, const String& mimeType);
     static HashSet<SecurityOriginData> originsInMediaCache(const String&);
@@ -212,7 +212,7 @@ private:
     double effectiveRate() const final;
     void setPreservesPitch(bool) final;
     void setPitchCorrectionAlgorithm(MediaPlayer::PitchCorrectionAlgorithm) final;
-    void seekToTime(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance) final;
+    void seekToTargetInternal(const SeekTarget&) final;
     unsigned long long totalBytes() const final;
     const PlatformTimeRanges& platformBufferedTimeRanges() const final;
     MediaTime platformMinTimeSeekable() const final;

@@ -72,7 +72,6 @@ RemoteDOMWindow& RemoteFrame::window() const
 
 void RemoteFrame::didFinishLoadInAnotherProcess()
 {
-    // FIXME: We also need to set this to false if the load fails in another process.
     m_preventsParentFromBeingComplete = false;
 
     if (auto* ownerElement = this->ownerElement())

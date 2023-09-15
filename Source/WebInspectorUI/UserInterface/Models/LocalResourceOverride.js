@@ -37,6 +37,10 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
         console.assert(isPassthrough === undefined || typeof isPassthrough === "boolean", isPassthrough);
         console.assert(disabled === undefined || typeof disabled === "boolean", disabled);
 
+        console.assert(type !== WI.LocalResourceOverride.InterceptType.ResponseMappedDirectory || localResource.isMappedToDirectory, localResource);
+        console.assert(type !== WI.LocalResourceOverride.InterceptType.ResponseMappedDirectory || isRegex, isRegex);
+        console.assert(type !== WI.LocalResourceOverride.InterceptType.ResponseMappedDirectory || isPassthrough, isPassthrough);
+
         super();
 
         this._url = WI.urlWithoutFragment(url);
@@ -54,7 +58,7 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
 
     // Static
 
-    static create(url, type, {requestURL, requestMethod, requestHeaders, requestData, responseMIMEType, responseContent, responseBase64Encoded, responseStatusCode, responseStatusText, responseHeaders, resourceErrorType, isCaseSensitive, isRegex, isPassthrough, disabled} = {})
+    static create(url, type, {requestURL, requestMethod, requestHeaders, requestData, responseMIMEType, responseContent, responseBase64Encoded, responseStatusCode, responseStatusText, responseHeaders, mappedFilePath, resourceErrorType, isCaseSensitive, isRegex, isPassthrough, disabled} = {})
     {
         let localResource = new WI.LocalResource({
             request: {
@@ -71,6 +75,7 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
                 content: responseContent,
                 base64Encoded: responseBase64Encoded,
             },
+            mappedFilePath,
         });
         return new WI.LocalResourceOverride(url, type, localResource, {resourceErrorType, isCaseSensitive, isRegex, isPassthrough, disabled});
     }
@@ -83,6 +88,7 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
             return WI.UIString("Request Override", "Request Override @ Local Override Network Stage", "Text indicating that the local override replaces the request of the network activity.");
 
         case WI.LocalResourceOverride.InterceptType.Response:
+        case WI.LocalResourceOverride.InterceptType.ResponseMappedDirectory:
         case WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork:
             return WI.UIString("Response Override", "Response Override @ Local Override Network Stage", "Text indicating that the local override replaces the response of the network activity.");
         }
@@ -101,10 +107,9 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
             return WI.UIString("Request", "Request @ Local Override Type", "Text indicating that the local override intercepts the request phase of network activity.");
 
         case WI.LocalResourceOverride.InterceptType.Response:
-            return WI.UIString("Response", "Response @ Local Override Type", "Text indicating that the local override intercepts the response phase of network activity.");
-
+        case WI.LocalResourceOverride.InterceptType.ResponseMappedDirectory:
         case WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork:
-            return WI.UIString("Response (skip network)", "Response (skip network) @ Local Override Type", "Text indicating that the local override will skip all network activity and instead immediately serve the response.");
+            return WI.UIString("Response", "Response @ Local Override Type", "Text indicating that the local override intercepts the response phase of network activity.");
         }
 
         console.assert(false, "Unknown type: ", type);
@@ -183,6 +188,23 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
         return this._urlComponents;
     }
 
+    get networkStage()
+    {
+        switch (this._type) {
+        case WI.LocalResourceOverride.InterceptType.Block:
+        case WI.LocalResourceOverride.InterceptType.Request:
+        case WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork:
+            return WI.NetworkManager.NetworkStage.Request;
+
+        case WI.LocalResourceOverride.InterceptType.Response:
+        case WI.LocalResourceOverride.InterceptType.ResponseMappedDirectory:
+            return WI.NetworkManager.NetworkStage.Response;
+        }
+
+        console.assert(false, "not reached");
+        return null;
+    }
+
     get resourceErrorType()
     {
         return this._resourceErrorType;
@@ -215,6 +237,18 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
         this.dispatchEventToListeners(WI.LocalResourceOverride.Event.DisabledChanged);
     }
 
+    get displayType()
+    {
+        let displayType = WI.LocalResourceOverride.displayNameForType(this._type);
+
+        if (this._localResource.isMappedToDirectory)
+            displayType = WI.UIString("%s (directory)", "%s (directory) @ Local Override Type", "Label modifier indicating that the local override maps to a directory on disk.").format(displayType);
+        else if (this._localResource.mappedFilePath)
+            displayType = WI.UIString("%s (file)", "%s (file) @ Local Override Type", "Label modifier indicating that the local override maps to a file on disk.").format(displayType);
+
+        return displayType;
+    }
+
     get displayName()
     {
         return this.displayURL();
@@ -245,6 +279,15 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
         return redirectURL;
     }
 
+    generateSubpathForMappedDirectory(url)
+    {
+        console.assert(this._type === WI.LocalResourceOverride.InterceptType.ResponseMappedDirectory, this);
+        console.assert(this._isRegex, this);
+        console.assert(this._localResource.url, this._localResource);
+
+        return url.replace(this._urlRegex, this._localResource.url);
+    }
+
     get canMapToFile()
     {
         if (!WI.LocalResource.canMapToFile())
@@ -256,6 +299,7 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
             return false;
 
         case WI.LocalResourceOverride.InterceptType.Response:
+        case WI.LocalResourceOverride.InterceptType.ResponseMappedDirectory:
         case WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork:
             return true;
         }
@@ -312,6 +356,7 @@ WI.LocalResourceOverride.InterceptType = {
     Block: "block",
     Request: "request",
     Response: "response",
+    ResponseMappedDirectory: "response-mapped-directory",
     ResponseSkippingNetwork: "response-skipping-network",
 };
 

@@ -141,7 +141,9 @@ MACRO_INSTRUCTIONS =
      "bcd2i",
      "movdz",
      "pop",
+     "popv",
      "push",
+     "pushv",
      "move",
      "sxi2q",
      "zxi2q",
@@ -379,6 +381,10 @@ X86_INSTRUCTIONS =
      "fence",
     ]
 
+X86_SIMD_INSTRUCTIONS =
+    [
+    ]
+
 ARM_INSTRUCTIONS =
     [
      "adci",
@@ -448,6 +454,14 @@ ARM64_INSTRUCTIONS =
      "storepaird",
     ]
 
+ARM64_SIMD_INSTRUCTIONS =
+    [
+     "umovb",
+     "umovh",
+     "umovi",
+     "umovq",
+    ]
+
 RISC_INSTRUCTIONS =
     [
      "smulli",  # Multiply two 32-bit words and produce a 64-bit word
@@ -496,7 +510,7 @@ CXX_INSTRUCTIONS =
      "cloopDo",              # no operands
     ]
 
-INSTRUCTIONS = MACRO_INSTRUCTIONS + X86_INSTRUCTIONS + ARM_INSTRUCTIONS + ARM64_INSTRUCTIONS + RISC_INSTRUCTIONS + MIPS_INSTRUCTIONS + CXX_INSTRUCTIONS
+INSTRUCTIONS = MACRO_INSTRUCTIONS + X86_INSTRUCTIONS + X86_SIMD_INSTRUCTIONS + ARM_INSTRUCTIONS + ARM64_INSTRUCTIONS + ARM64_SIMD_INSTRUCTIONS + RISC_INSTRUCTIONS + MIPS_INSTRUCTIONS + CXX_INSTRUCTIONS
 
 INSTRUCTION_SET = INSTRUCTIONS.to_set
 

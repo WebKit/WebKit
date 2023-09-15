@@ -38,5 +38,4 @@ enum HighlightType {
     setlike<AbstractRange>;
     attribute long priority;
     attribute HighlightType type;
-    // FIXME: Add readonly attribute CSSStyleDeclaration style;
 };

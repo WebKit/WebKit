@@ -231,15 +231,23 @@ PlaybackSessionInterfaceContext& PlaybackSessionManager::ensureInterface(Playbac
 
 void PlaybackSessionManager::removeContext(PlaybackSessionContextIdentifier contextId)
 {
-    auto& [model, interface] = ensureModelAndInterface(contextId);
+    auto [model, interface] = m_contextMap.get(contextId);
+    ASSERT(model);
+    ASSERT(interface);
+    if (!model || !interface)
+        return;
 
-    RefPtr<HTMLMediaElement> mediaElement = model->mediaElement();
-    model->setMediaElement(nullptr);
     model->removeClient(*interface);
     interface->invalidate();
-    if (mediaElement)
-        m_mediaElements.remove(*mediaElement);
     m_contextMap.remove(contextId);
+
+    RefPtr mediaElement = model->mediaElement();
+    ASSERT(mediaElement);
+    if (!mediaElement)
+        return;
+
+    model->setMediaElement(nullptr);
+    m_mediaElements.remove(*mediaElement);
 }
 
 void PlaybackSessionManager::addClientForContext(PlaybackSessionContextIdentifier contextId)
@@ -498,8 +506,7 @@ void PlaybackSessionManager::selectLegibleMediaOption(PlaybackSessionContextIden
 
 void PlaybackSessionManager::handleControlledElementIDRequest(PlaybackSessionContextIdentifier contextId)
 {
-    auto element = ensureModel(contextId).mediaElement();
-    if (element)
+    if (RefPtr element = ensureModel(contextId).mediaElement())
         m_page->send(Messages::PlaybackSessionManagerProxy::HandleControlledElementIDResponse(contextId, element->getIdAttribute()));
 }
 

@@ -47,6 +47,7 @@
 #import "PaymentAuthorizationViewController.h"
 #import "PrintInfo.h"
 #import "ProvisionalPageProxy.h"
+#import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeHost.h"
 #import "RemoteLayerTreeNode.h"
 #import "RemoteLayerTreeTransaction.h"
@@ -56,7 +57,6 @@
 #import "TapHandlingResult.h"
 #import "UIKitSPI.h"
 #import "UserData.h"
-#import "UserInterfaceIdiom.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "ViewUpdateDispatcherMessages.h"
 #import "WKBrowsingContextControllerInternal.h"
@@ -79,6 +79,7 @@
 #import <WebCore/UserAgent.h>
 #import <WebCore/ValidationBubble.h>
 #import <pal/spi/ios/MobileGestaltSPI.h>
+#import <pal/system/ios/UserInterfaceIdiom.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/text/TextStream.h>
 
@@ -873,19 +874,19 @@ static FloatSize fullscreenPreferencesScreenSize(CGFloat preferredWidth)
 FloatSize WebPageProxy::availableScreenSize()
 {
 #if PLATFORM(VISION)
-    return fullscreenPreferencesScreenSize(m_preferences->mediaPreferredFullscreenWidth());
-#else
-    return WebCore::availableScreenSize();
+    if (PAL::currentUserInterfaceIdiomIsVisionOrVisionLegacy())
+        return fullscreenPreferencesScreenSize(m_preferences->mediaPreferredFullscreenWidth());
 #endif
+    return WebCore::availableScreenSize();
 }
 
 FloatSize WebPageProxy::overrideScreenSize()
 {
 #if PLATFORM(VISION)
-    return fullscreenPreferencesScreenSize(m_preferences->mediaPreferredFullscreenWidth());
-#else
-    return WebCore::overrideScreenSize();
+    if (PAL::currentUserInterfaceIdiomIsVisionOrVisionLegacy())
+        return fullscreenPreferencesScreenSize(m_preferences->mediaPreferredFullscreenWidth());
 #endif
+    return WebCore::overrideScreenSize();
 }
 
 float WebPageProxy::textAutosizingWidth()
@@ -1324,7 +1325,7 @@ static bool desktopClassBrowsingSupported()
     static bool supportsDesktopClassBrowsing = false;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        supportsDesktopClassBrowsing = !currentUserInterfaceIdiomIsSmallScreen();
+        supportsDesktopClassBrowsing = !PAL::currentUserInterfaceIdiomIsSmallScreen();
     });
     return supportsDesktopClassBrowsing;
 }

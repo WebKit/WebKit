@@ -30,7 +30,8 @@ class MSLOutputTest : public MatchOutputCodeTest
   public:
     MSLOutputTest() : MatchOutputCodeTest(GL_FRAGMENT_SHADER, SH_MSL_METAL_OUTPUT)
     {
-        ShCompileOptions defaultCompileOptions = {};
+        ShCompileOptions defaultCompileOptions       = {};
+        defaultCompileOptions.rescopeGlobalVariables = true;
         setDefaultCompileOptions(defaultCompileOptions);
     }
 };
@@ -634,4 +635,216 @@ TEST_F(MSLOutputTest, AnonymousStruct)
     // TODO(anglebug.com/6395): This success condition is expected to fail now.
     // When WebKit build is able to run the tests, this should be changed to something else.
     //    ASSERT_TRUE(foundInCode(SH_MSL_METAL_OUTPUT, "__unnamed"));
+}
+
+TEST_F(MSLOutputTest, GlobalRescopingSimple)
+{
+    const std::string &shaderString =
+        R"(#version 300 es
+        precision mediump float;
+
+        // Should rescope uf into main
+
+        float uf;
+        out vec4 my_FragColor;
+
+        void main()
+        {
+            uf += 1.0f;
+            my_FragColor = vec4(uf, 0.0, 0.0, 1.0);
+        })";
+    compile(shaderString);
+}
+
+TEST_F(MSLOutputTest, GlobalRescopingNoRescope)
+{
+    const std::string &shaderString =
+        R"(#version 300 es
+        precision mediump float;
+
+        // Should not rescope any variable
+
+        float uf;
+        out vec4 my_FragColor;
+        void modifyGlobal()
+        {
+            uf = 1.0f;
+        }
+        void main()
+        {
+            modifyGlobal();
+            my_FragColor = vec4(uf, 0.0, 0.0, 1.0);
+        })";
+    compile(shaderString);
+}
+
+TEST_F(MSLOutputTest, GlobalRescopingInitializer)
+{
+    const std::string &shaderString =
+        R"(#version 300 es
+        precision mediump float;
+
+        // Should rescope uf into main
+
+        float uf = 1.0f;
+        out vec4 my_FragColor;
+
+        void main()
+        {
+            uf += 1.0;
+            my_FragColor = vec4(uf, 0.0, 0.0, 1.0);
+        })";
+    compile(shaderString);
+}
+
+TEST_F(MSLOutputTest, GlobalRescopingInitializerNoRescope)
+{
+    const std::string &shaderString =
+        R"(#version 300 es
+        precision mediump float;
+
+        // Should not rescope any variable
+
+        float uf = 1.0f;
+        out vec4 my_FragColor;
+
+        void modifyGlobal()
+        {
+            uf =+ 1.0f;
+        }
+        void main()
+        {
+            modifyGlobal();
+            my_FragColor = vec4(uf, 0.0, 0.0, 1.0);
+        })";
+    compile(shaderString);
+}
+
+TEST_F(MSLOutputTest, GlobalRescopingNestedFunction)
+{
+    const std::string &shaderString =
+        R"(#version 300 es
+        precision mediump float;
+
+        // Should rescope a info modifyGlobal
+
+        float a = 1.0f;
+        float uf = 1.0f;
+        out vec4 my_FragColor;
+
+        void modifyGlobal()
+        {
+            uf =+ a;
+        }
+        void main()
+        {
+            modifyGlobal();
+            my_FragColor = vec4(uf, 0.0, 0.0, 1.0);
+        })";
+    compile(shaderString);
+}
+
+TEST_F(MSLOutputTest, GlobalRescopingMultipleUses)
+{
+    const std::string &shaderString =
+        R"(#version 300 es
+        precision mediump float;
+
+        // Should rescope uf into main
+
+        float uf = 1.0f;
+        out vec4 my_FragColor;
+
+        void main()
+        {
+            uf =+ 1.0;
+            if (uf > 0.0)
+            {
+                uf =- 0.5;
+            }
+            my_FragColor = vec4(uf, 0.0, 0.0, 1.0);
+        })";
+    compile(shaderString);
+}
+
+TEST_F(MSLOutputTest, GlobalRescopingGloballyReferencedVar)
+{
+    const std::string &shaderString =
+        R"(#version 300 es
+        precision mediump float;
+
+        // Should rescope uf into main
+
+        const float a = 1.0f;
+        float uf = a;
+        out vec4 my_FragColor;
+
+        void main()
+        {
+            my_FragColor = vec4(uf, 0.0, a, 0.0);
+        })";
+    compile(shaderString);
+}
+
+TEST_F(MSLOutputTest, GlobalRescopingDeclarationAfterFunction)
+{
+    const std::string &shaderString =
+        R"(#version 300 es
+        precision mediump float;
+
+        // Should rescope c and b into main
+
+        float a = 1.0f;
+        float c = 1.0f;
+        out vec4 my_FragColor;
+
+        void modifyGlobal()
+        {
+            a =+ 1.0f;
+        }
+
+        float b = 1.0f;
+
+        void main()
+        {
+            modifyGlobal();
+            my_FragColor = vec4(a, b, c, 0.0);
+        }
+
+        )";
+    compile(shaderString);
+}
+
+TEST_F(MSLOutputTest, ReusedOutVarName)
+{
+    const std::string &shaderString =
+        R"(#version 300 es
+        precision mediump float;
+
+        out vec4 my_FragColor;
+
+        void funcWith1Out(
+        out float outC) {
+            outC = 1.0;
+        }
+
+        void funcWith4Outs(
+        out float outA,
+        out float outB,
+        out float outC,
+        out float outD) {
+            outA = 1.0;
+            outB = 1.0;
+            outD = 1.0;
+        }
+
+
+        void main()
+        {
+            funcWith1Out(my_FragColor.g);
+            funcWith4Outs(my_FragColor.r, my_FragColor.g, my_FragColor.b, my_FragColor.a);
+        }
+
+        )";
+    compile(shaderString);
 }

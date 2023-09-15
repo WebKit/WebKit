@@ -98,8 +98,10 @@ namespace WebCore {
     macro(connect) \
     macro(connectionstatechange) \
     macro(connecting) \
+    macro(contentvisibilityautostatechange) \
     macro(contextmenu) \
     macro(controllerchange) \
+    macro(cookiechange) \
     macro(coordinatorstatechange) \
     macro(copy) \
     DOM_EVENT_NAME_APPLE_PAY_COUPON_CODE_CHANGED(macro) \
@@ -314,7 +316,6 @@ namespace WebCore {
     macro(volumechange) \
     macro(waiting) \
     macro(waitingforkey) \
-    macro(webglcontextchanged) \
     macro(webglcontextcreationerror) \
     macro(webglcontextlost) \
     macro(webglcontextrestored) \

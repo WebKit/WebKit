@@ -595,7 +595,7 @@ class SimulatedDevice(object):
             return True
         exit_code = self.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'launch', self.udid, service], return_exit_code=True)
         time.sleep(.7)
-        self.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'terminate', self.udid, service])
+        exit_code |= self.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'terminate', self.udid, service], return_exit_code=True)
         if exit_code == 0:
             return True
         return False

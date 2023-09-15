@@ -18,3 +18,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/crashtests/contain-nested-crash-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/crashtests/contain-nested-crash-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/crashtests/contain-nested-crash-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/crashtests/contain-nested-relayout-boundary.html

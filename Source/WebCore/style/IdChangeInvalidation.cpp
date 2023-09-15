@@ -59,20 +59,31 @@ void IdChangeInvalidation::invalidateStyle(const AtomString& changedId)
 
     m_element.invalidateStyle();
 
-    // This could be easily optimized for fine-grained descendant invalidation similar to ClassChangeInvalidation.
-    // However using ids for dynamic styling is rare and this is probably not worth the memory cost of the required data structures.
-    auto& ruleSets = m_element.styleResolver().ruleSets();
-    bool mayAffectDescendantStyle = ruleSets.features().idsMatchingAncestorsInRules.contains(changedId);
-    if (mayAffectDescendantStyle)
-        m_element.invalidateStyleForSubtree();
-    else
-        m_element.invalidateStyle();
+    auto collect = [&](auto& ruleSets, std::optional<MatchElement> onlyMatchElement = { }) {
+        // This could be easily optimized for fine-grained descendant invalidation similar to ClassChangeInvalidation.
+        // However using ids for dynamic styling is rare and this is probably not worth the memory cost of the required data structures.
+        bool mayAffectDescendantStyle = ruleSets.features().idsMatchingAncestorsInRules.contains(changedId);
+        if (mayAffectDescendantStyle)
+            m_element.invalidateStyleForSubtree();
+        else
+            m_element.invalidateStyle();
 
-    // Invalidation rulesets exist for :has() / :nth-child() / :nth-last-child.
-    if (auto* invalidationRuleSets = ruleSets.idInvalidationRuleSets(changedId)) {
-        for (auto& invalidationRuleSet : *invalidationRuleSets)
-            Invalidator::addToMatchElementRuleSets(m_matchElementRuleSets, invalidationRuleSet);
-    }
+        // Invalidation rulesets exist for :has() / :nth-child() / :nth-last-child.
+        if (auto* invalidationRuleSets = ruleSets.idInvalidationRuleSets(changedId)) {
+            for (auto& invalidationRuleSet : *invalidationRuleSets) {
+                if (onlyMatchElement && invalidationRuleSet.matchElement != onlyMatchElement)
+                    continue;
+
+                Invalidator::addToMatchElementRuleSets(m_matchElementRuleSets, invalidationRuleSet);
+            }
+        }
+    };
+
+    collect(m_element.styleResolver().ruleSets());
+
+    if (auto* shadowRoot = m_element.shadowRoot())
+        collect(shadowRoot->styleScope().resolver().ruleSets(), MatchElement::Host);
+
 }
 
 void IdChangeInvalidation::invalidateStyleWithRuleSets()

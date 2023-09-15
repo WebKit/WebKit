@@ -193,7 +193,7 @@ void Notification::show(CompletionHandler<void()>&& callback)
     if (m_state != Idle)
         return;
 
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return;
 
@@ -201,7 +201,7 @@ void Notification::show(CompletionHandler<void()>&& callback)
     if (!client)
         return;
 
-    if (client->checkPermission(context) != Permission::Granted) {
+    if (client->checkPermission(context.get()) != Permission::Granted) {
         switch (m_notificationSource) {
         case NotificationSource::DedicatedWorker:
         case NotificationSource::Document:
@@ -221,7 +221,7 @@ void Notification::show(CompletionHandler<void()>&& callback)
     m_resourcesLoader->start([this, client, callback = scope.release()](RefPtr<NotificationResources>&& resources) mutable {
         CompletionHandlerCallingScope scope { WTFMove(callback) };
 
-        auto* context = scriptExecutionContext();
+        RefPtr context = scriptExecutionContext();
 
         m_resources = WTFMove(resources);
         if (m_state == Idle && context && client->show(*context, data(), this->resources(), scope.release()))
@@ -247,7 +247,7 @@ void Notification::close()
 
 NotificationClient* Notification::clientFromContext()
 {
-    if (auto* context = scriptExecutionContext())
+    if (RefPtr context = scriptExecutionContext())
         return context->notificationClient();
     return nullptr;
 }
@@ -284,7 +284,7 @@ void Notification::finalize()
 
 void Notification::dispatchShowEvent()
 {
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return;
 
@@ -299,7 +299,7 @@ void Notification::dispatchShowEvent()
 
 void Notification::dispatchClickEvent()
 {
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return;
 
@@ -315,7 +315,7 @@ void Notification::dispatchClickEvent()
 
 void Notification::dispatchCloseEvent()
 {
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return;
 
@@ -329,7 +329,7 @@ void Notification::dispatchCloseEvent()
 
 void Notification::dispatchErrorEvent()
 {
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return;
 
@@ -376,7 +376,7 @@ void Notification::requestPermission(Document& document, RefPtr<NotificationPerm
         return resolvePromiseAndCallback(Permission::Denied);
     }
 
-    auto* window = document.frame() ? document.frame()->window() : nullptr;
+    RefPtr window = document.frame() ? document.frame()->window() : nullptr;
     if (!window || !window->consumeTransientActivation()) {
         document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Notification prompting can only be done from a user gesture."_s);
         return resolvePromiseAndCallback(Permission::Denied);

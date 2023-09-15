@@ -29,7 +29,7 @@
 
 class BuiltinsGeneratorTemplates:
 
-    DefaultCopyright = "2016 Apple Inc. All rights reserved."
+    DefaultCopyright = "2016-2023 Apple Inc. All rights reserved."
     LicenseText = (
     """Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
@@ -132,7 +132,7 @@ public:
     explicit ${objectName}BuiltinsWrapper(JSC::VM& vm)
         : m_vm(vm)
         ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_FUNCTION_NAME(INITIALIZE_BUILTIN_NAMES)
-#define INITIALIZE_BUILTIN_SOURCE_MEMBERS(name, functionName, overriddenName, length) , m_##name##Source(JSC::makeSource(StringImpl::createWithoutCopying(s_##name, length), { }))
+#define INITIALIZE_BUILTIN_SOURCE_MEMBERS(name, functionName, overriddenName, length) , m_##name##Source(JSC::makeSource(StringImpl::createWithoutCopying(s_##name, length), { }, JSC::SourceTaintedOrigin::Untainted))
         ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_CODE(INITIALIZE_BUILTIN_SOURCE_MEMBERS)
 #undef INITIALIZE_BUILTIN_SOURCE_MEMBERS
     {

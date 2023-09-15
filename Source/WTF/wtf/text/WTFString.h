@@ -49,7 +49,7 @@ WTF_EXPORT_PRIVATE float charactersToFloat(const UChar*, size_t, size_t& parsedL
 
 template<bool isSpecialCharacter(UChar), typename CharacterType> bool containsOnly(const CharacterType*, size_t);
 
-enum TrailingZerosTruncatingPolicy { KeepTrailingZeros, TruncateTrailingZeros };
+enum class TrailingZerosPolicy : bool { Keep, Truncate };
 
 class String final {
     WTF_MAKE_FAST_ALLOCATED;
@@ -142,8 +142,8 @@ public:
     WTF_EXPORT_PRIVATE static String number(float);
     WTF_EXPORT_PRIVATE static String number(double);
 
-    WTF_EXPORT_PRIVATE static String numberToStringFixedPrecision(float, unsigned precision = 6, TrailingZerosTruncatingPolicy = TruncateTrailingZeros);
-    WTF_EXPORT_PRIVATE static String numberToStringFixedPrecision(double, unsigned precision = 6, TrailingZerosTruncatingPolicy = TruncateTrailingZeros);
+    WTF_EXPORT_PRIVATE static String numberToStringFixedPrecision(float, unsigned precision = 6, TrailingZerosPolicy = TrailingZerosPolicy::Truncate);
+    WTF_EXPORT_PRIVATE static String numberToStringFixedPrecision(double, unsigned precision = 6, TrailingZerosPolicy = TrailingZerosPolicy::Truncate);
     WTF_EXPORT_PRIVATE static String numberToStringFixedWidth(double, unsigned decimalPlaces);
 
     AtomString toExistingAtomString() const;
@@ -599,7 +599,7 @@ inline String operator"" _str(const UChar* characters, size_t length)
 
 } // namespace WTF
 
-using WTF::KeepTrailingZeros;
+using WTF::TrailingZerosPolicy;
 using WTF::String;
 using WTF::charactersToDouble;
 using WTF::charactersToFloat;

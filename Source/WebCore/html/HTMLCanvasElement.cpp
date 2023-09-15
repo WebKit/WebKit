@@ -50,7 +50,6 @@
 #include "ImageBitmapRenderingContextSettings.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
-#include "InMemoryDisplayList.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMConvertDictionary.h"
 #include "JSNodeCustomInlines.h"
@@ -584,9 +583,10 @@ void HTMLCanvasElement::reset()
     int w = limitToOnlyHTMLNonNegative(attributeWithoutSynchronization(widthAttr), defaultWidth);
     int h = limitToOnlyHTMLNonNegative(attributeWithoutSynchronization(heightAttr), defaultHeight);
 
-    resetGraphicsContextState();
     if (is<CanvasRenderingContext2D>(m_context))
         downcast<CanvasRenderingContext2D>(*m_context).reset();
+    else
+        resetGraphicsContextState();
 
     IntSize oldSize = size();
     IntSize newSize(w, h);
@@ -722,9 +722,11 @@ ExceptionOr<UncachedString> HTMLCanvasElement::toDataURL(const String& mimeType,
         return UncachedString { dataURL(imageData->pixelBuffer(), encodingMIMEType, quality) };
 #endif
 
-    if (document().quirks().shouldEnableCanvas2DAdvancedPrivacyProtectionQuirk()) {
-        if (auto url = document().quirks().advancedPrivacyProtectionSubstituteDataURLForText(lastFillText()); !url.isNull())
-            return UncachedString { url };
+    if (auto url = document().quirks().advancedPrivacyProtectionSubstituteDataURLForScriptWithFeatures(lastFillText(), width(), height()); !url.isNull()) {
+        RELEASE_LOG(FingerprintingMitigation, "HTMLCanvasElement::toDataURL: Quirking returned URL for identified fingerprinting script");
+        auto consoleMessage = "Detected fingerprinting script. Quirking value returned from HTMLCanvasElement.toDataURL()"_s;
+        canvasBaseScriptExecutionContext()->addConsoleMessage(MessageSource::Rendering, MessageLevel::Info, consoleMessage);
+        return UncachedString { url };
     }
 
     makeRenderingResultsAvailable();
@@ -803,7 +805,7 @@ RefPtr<ImageData> HTMLCanvasElement::getImageData()
     if (pixelBuffer)
         postProcessPixelBufferResults(*pixelBuffer);
 
-    return ImageData::create(static_reference_cast<ByteArrayPixelBuffer>(pixelBuffer.releaseNonNull()));
+    return ImageData::create(downcast<ByteArrayPixelBuffer>(pixelBuffer.releaseNonNull()));
 #else
     return nullptr;
 #endif
@@ -874,23 +876,13 @@ SecurityOrigin* HTMLCanvasElement::securityOrigin() const
     return &document().securityOrigin();
 }
 
-void HTMLCanvasElement::setUsesDisplayListDrawing(bool usesDisplayListDrawing)
-{
-    m_usesDisplayListDrawing = usesDisplayListDrawing;
-}
-
-void HTMLCanvasElement::setAvoidIOSurfaceSizeCheckInWebProcessForTesting()
-{
-    m_avoidBackendSizeCheckForTesting = true;
-}
-
 void HTMLCanvasElement::createImageBuffer() const
 {
     ASSERT(!hasCreatedImageBuffer());
 
     m_hasCreatedImageBuffer = true;
     m_didClearImageBuffer = true;
-    setImageBuffer(allocateImageBuffer(m_usesDisplayListDrawing.value_or(false), m_avoidBackendSizeCheckForTesting));
+    setImageBuffer(allocateImageBuffer());
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
     if (m_context && m_context->is2d()) {
@@ -965,7 +957,7 @@ bool HTMLCanvasElement::virtualHasPendingActivity() const
 {
 #if ENABLE(WEBGL)
     if (is<WebGLRenderingContextBase>(m_context)) {
-        // WebGL rendering context may fire contextlost / contextchange / contextrestored events at any point.
+        // WebGL rendering context may fire contextlost / contextrestored events at any point.
         return m_hasRelevantWebGLEventListener && !downcast<WebGLRenderingContextBase>(*m_context).isContextUnrecoverablyLost();
     }
 #endif
@@ -977,8 +969,7 @@ void HTMLCanvasElement::eventListenersDidChange()
 {
 #if ENABLE(WEBGL)
     auto& eventNames = WebCore::eventNames();
-    m_hasRelevantWebGLEventListener = hasEventListeners(eventNames.webglcontextchangedEvent)
-        || hasEventListeners(eventNames.webglcontextlostEvent)
+    m_hasRelevantWebGLEventListener = hasEventListeners(eventNames.webglcontextlostEvent)
         || hasEventListeners(eventNames.webglcontextrestoredEvent);
 #endif
 }

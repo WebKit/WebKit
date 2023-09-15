@@ -59,14 +59,7 @@ public:
 
         bool ignoreInitialScaleForLayoutWidth { false };
 
-        bool operator==(const Parameters& other) const
-        {
-            return width == other.width && height == other.height
-                && initialScale == other.initialScale && initialScaleIgnoringLayoutScaleFactor == other.initialScaleIgnoringLayoutScaleFactor && minimumScale == other.minimumScale && maximumScale == other.maximumScale
-                && allowsUserScaling == other.allowsUserScaling && allowsShrinkToFit == other.allowsShrinkToFit && avoidsUnsafeArea == other.avoidsUnsafeArea
-                && widthIsSet == other.widthIsSet && heightIsSet == other.heightIsSet && initialScaleIsSet == other.initialScaleIsSet
-                && ignoreInitialScaleForLayoutWidth == other.ignoreInitialScaleForLayoutWidth;
-        }
+        friend bool operator==(const Parameters&, const Parameters&) = default;
     };
 
     WEBCORE_EXPORT ViewportConfiguration();

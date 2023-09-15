@@ -53,16 +53,10 @@ public:
     void encode(IPC::Encoder&) const;
     static std::optional<ScrollingAccelerationCurve> decode(IPC::Decoder&);
 
-    bool operator==(const ScrollingAccelerationCurve& other) const
+    friend bool operator==(const ScrollingAccelerationCurve& a, const ScrollingAccelerationCurve& b)
     {
-        return m_parameters.gainLinear == other.m_parameters.gainLinear
-            && m_parameters.gainParabolic == other.m_parameters.gainParabolic
-            && m_parameters.gainCubic == other.m_parameters.gainCubic
-            && m_parameters.gainQuartic == other.m_parameters.gainQuartic
-            && m_parameters.tangentSpeedLinear == other.m_parameters.tangentSpeedLinear
-            && m_parameters.tangentSpeedParabolicRoot == other.m_parameters.tangentSpeedParabolicRoot
-            && m_parameters.resolution == other.m_parameters.resolution
-            && m_parameters.frameRate == other.m_parameters.frameRate;
+        // Does not check m_intermediates.
+        return a.m_parameters == b.m_parameters;
     }
     
 private:
@@ -72,7 +66,7 @@ private:
 
     float evaluateQuartic(float) const;
 
-    struct {
+    struct Parameters {
         float gainLinear { 0 };
         float gainParabolic { 0 };
         float gainCubic { 0 };
@@ -84,7 +78,10 @@ private:
         // of the curve, just required to use it; they should be plumbed separately.
         float resolution { 0 };
         float frameRate { 0 };
-    } m_parameters;
+
+        friend bool operator==(const Parameters&, const Parameters&) = default;
+    };
+    Parameters m_parameters;
 
     struct ComputedIntermediateValues {
         float tangentStartX { 0 };

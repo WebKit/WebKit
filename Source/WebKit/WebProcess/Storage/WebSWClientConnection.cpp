@@ -396,7 +396,7 @@ void WebSWClientConnection::notifyRecordResponseBodyEnd(RetrieveRecordResponseBo
 
 void WebSWClientConnection::focusServiceWorkerClient(ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(std::optional<ServiceWorkerClientData>&&)>&& callback)
 {
-    auto* client = Document::allDocumentsMap().get(clientIdentifier);
+    RefPtr client = Document::allDocumentsMap().get(clientIdentifier);
     auto* page = client ? client->page() : nullptr;
     if (!page) {
         callback({ });
@@ -404,14 +404,14 @@ void WebSWClientConnection::focusServiceWorkerClient(ScriptExecutionContextIdent
     }
 
     WebPage::fromCorePage(*page)->sendWithAsyncReply(Messages::WebPageProxy::FocusFromServiceWorker { }, [clientIdentifier, callback = WTFMove(callback)]() mutable {
-        auto* client = Document::allDocumentsMap().get(clientIdentifier);
-        auto* frame = client ? client->frame() : nullptr;
+        RefPtr client = Document::allDocumentsMap().get(clientIdentifier);
+        RefPtr frame = client ? client->frame() : nullptr;
         auto* page = frame ? frame->page() : nullptr;
         if (!page) {
             callback({ });
             return;
         }
-        page->focusController().setFocusedFrame(frame);
+        page->focusController().setFocusedFrame(frame.get());
         callback(ServiceWorkerClientData::from(*client));
     });
 }

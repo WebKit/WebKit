@@ -1,0 +1,3 @@
+
+PASS The deadline after an expired timer must not be negative
+

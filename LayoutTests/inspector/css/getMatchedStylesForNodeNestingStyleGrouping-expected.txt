@@ -31,7 +31,9 @@ PASS: Rule should have no groupings.
 -- Running test case: CSS.getMatchedStyleForNode.NestingStyleGrouping.NestedRulePropertyWithImplicitAmpersand
 PASS: Should have 4 authored rules.
 - Testing rule #0
-PASS: Selector text should be ".innerA".
+FAIL: Selector text should be ".innerA".
+    Expected: ".innerA"
+    Actual: "& .innerA"
 PASS: Rule should not be an implicitly nested rule.
 PASS: "color" property value should be "green".
 PASS: Rule should have 1 grouping(s).

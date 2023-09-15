@@ -471,6 +471,20 @@ TEST(UIPasteboardTests, PerformAsDataOwnerWithManagedURL)
         [destination waitForNextPresentationUpdate];
         EXPECT_EQ(gLastKnownDataOwner, _UIDataOwnerUser);
     }
+    {
+        auto destination = setUpWebViewForPasteboardTests(@"simple2");
+        [destination _setDataOwnerForPaste:_UIDataOwnerUndefined];
+        [destination paste:nil];
+        [destination waitForNextPresentationUpdate];
+        EXPECT_EQ(gLastKnownDataOwner, _UIDataOwnerUser);
+    }
+    {
+        auto destination = setUpWebViewForPasteboardTests(@"simple");
+        [destination _setDataOwnerForPaste:_UIDataOwnerShared];
+        [destination paste:nil];
+        [destination waitForNextPresentationUpdate];
+        EXPECT_EQ(gLastKnownDataOwner, _UIDataOwnerShared);
+    }
 }
 
 #endif // PLATFORM(IOS) || PLATFORM(VISION)

@@ -1,7 +1,0 @@
-2d.text.drawing.style.spacing
-
-Testing letter spacing and word spacing
-
-
-FAIL Testing letter spacing and word spacing assert_equals: ctx.letterSpacing === '0px' (got [undefined], expected 0px[string]) expected (string) "0px" but got (undefined) undefined
-

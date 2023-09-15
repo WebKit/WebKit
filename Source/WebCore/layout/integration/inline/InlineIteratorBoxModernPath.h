@@ -228,7 +228,7 @@ public:
     TextDirection direction() const { return bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR; }
     bool isFirstLine() const { return !box().lineIndex(); }
 
-    bool operator==(const BoxModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_boxIndex == other.m_boxIndex; }
+    friend bool operator==(const BoxModernPath&, const BoxModernPath&) = default;
 
     bool atEnd() const { return !m_inlineContent || m_boxIndex == boxes().size(); }
     const InlineDisplay::Box& box() const { return boxes()[m_boxIndex]; }

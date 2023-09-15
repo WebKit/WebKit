@@ -372,7 +372,6 @@ static void testWebProcessExtensionFormSubmissionSteps(FormSubmissionTest* test,
     test->loadHtml("<form id=\"" FORM_SUBMISSION_TEST_ID "\" target=\"target_frame\">"
         "<input type=\"text\" name=\"foo\" value=\"first\">"
         "<input type=\"text\" name=\"bar\" value=\"second\">"
-        "<input type=\"submit\" id=\"submit_button\">"
         "</form>"
         "<iframe name=\"target_frame\"></iframe>", nullptr);
     test->waitUntilLoadFinished();
@@ -387,6 +386,14 @@ static void testWebProcessExtensionFormSubmissionSteps(FormSubmissionTest* test,
     g_assert_true(test->m_willCompleteCallbackExecuted);
     test->m_willCompleteCallbackExecuted = false;
 
+    test->loadHtml("<form id=\"" FORM_SUBMISSION_TEST_ID "\" target=\"target_frame\">"
+        "<input type=\"text\" name=\"foo\" value=\"first\">"
+        "<input type=\"text\" name=\"bar\" value=\"second\">"
+        "<input type=\"submit\" id=\"submit_button\">"
+        "</form>"
+        "<iframe name=\"target_frame\"></iframe>", nullptr);
+    test->waitUntilLoadFinished();
+
     static const char* manuallySubmitFormScript =
         "var button = document.getElementById(\"submit_button\");"
         "button.click();";
@@ -395,11 +402,6 @@ static void testWebProcessExtensionFormSubmissionSteps(FormSubmissionTest* test,
     g_assert_true(test->m_willCompleteCallbackExecuted);
     test->m_willSendDOMEventCallbackExecuted = false;
     test->m_willCompleteCallbackExecuted = false;
-
-    test->loadHtml("<form id=\"" FORM_SUBMISSION_TEST_ID "\" target=\"target_frame\">"
-        "</form>"
-        "<iframe name=\"target_frame\"></iframe>", nullptr);
-    test->waitUntilLoadFinished();
 }
 
 static void webViewPageIDChanged(WebKitWebView* webView, GParamSpec*, bool* pageIDChangedEmitted)
@@ -560,10 +562,13 @@ public:
     bool contextUserMessageReceived(WebKitUserMessage* message)
     {
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(message));
-        if (!g_strcmp0(m_expectedContextMessageName.data(), webkit_user_message_get_name(message))) {
-            m_receivedContextMessage = message;
-            quitMainLoop();
+        if (m_expectedContextMessageNames.isEmpty())
+            return false;
 
+        if (m_expectedContextMessageNames.contains(webkit_user_message_get_name(message))) {
+            m_receivedContextMessages.append(message);
+            if (m_receivedContextMessages.size() == m_expectedContextMessageNames.size())
+                quitMainLoop();
             return true;
         }
 
@@ -584,20 +589,27 @@ public:
         return waitUntilViewMessagesReceived({ messageName }).first().get();
     }
 
-    WebKitUserMessage* waitUntilContextMessageReceived(const char* messageName)
+    const Vector<GRefPtr<WebKitUserMessage>>& waitUntilContextMessagesReceived(Vector<CString>&& messageNames)
     {
-        m_expectedContextMessageName = messageName;
+        m_expectedContextMessageNames = WTFMove(messageNames);
+        m_receivedContextMessages = { };
         g_main_loop_run(m_mainLoop);
-        m_expectedContextMessageName = { };
-        return m_receivedContextMessage.get();
+        m_expectedContextMessageNames = { };
+        return m_receivedContextMessages;
     }
 
-    Vector<GRefPtr<WebKitUserMessage>> m_receivedViewMessages;
-    GRefPtr<WebKitUserMessage> m_receivedContextMessage;
-    GUniqueOutPtr<GError> m_receivedError;
+    WebKitUserMessage* waitUntilContextMessageReceived(const char* messageName)
+    {
+        return waitUntilContextMessagesReceived({ messageName }).first().get();
+    }
+
     Vector<CString> m_expectedViewMessageNames;
-    CString m_expectedViewMessageName;
-    CString m_expectedContextMessageName;
+    Vector<GRefPtr<WebKitUserMessage>> m_receivedViewMessages;
+
+    Vector<CString> m_expectedContextMessageNames;
+    Vector<GRefPtr<WebKitUserMessage>> m_receivedContextMessages;
+
+    GUniqueOutPtr<GError> m_receivedError;
 };
 
 static bool readFileDescriptor(int fd, char** contents, gsize* length)
@@ -748,13 +760,16 @@ static void testWebProcessExtensionUserMessages(UserMessageTest* test, gconstpoi
 
     // Request to start a ping to all processes.
     test->sendMessageToAllExtensions(webkit_user_message_new("Test.RequestPing", nullptr));
+
     // We should received two ping requests.
-    GRefPtr<WebKitUserMessage> ping1 = test->waitUntilContextMessageReceived("Ping");
-    GRefPtr<WebKitUserMessage> ping2 = test->waitUntilContextMessageReceived("Ping");
-    webkit_user_message_send_reply(ping1.get(), webkit_user_message_new("Pong", nullptr));
-    test->waitUntilContextMessageReceived("Test.FinishedPingRequest");
-    webkit_user_message_send_reply(ping2.get(), webkit_user_message_new("Pong", nullptr));
-    test->waitUntilContextMessageReceived("Test.FinishedPingRequest");
+    auto messages = test->waitUntilContextMessagesReceived({ "Ping", "Ping" });
+    g_assert_cmpuint(messages.size(), ==, 2);
+
+    for (auto& message : messages)
+        webkit_user_message_send_reply(message.get(), webkit_user_message_new("Pong", nullptr));
+
+    messages = test->waitUntilContextMessagesReceived({ "Test.FinishedPingRequest", "Test.FinishedPingRequest" });
+    g_assert_cmpuint(messages.size(), ==, 2);
 }
 
 static void testWebProcessExtensionWindowObjectCleared(UserMessageTest* test, gconstpointer)
@@ -781,6 +796,8 @@ static void testWebProcessExtensionWindowObjectCleared(UserMessageTest* test, gc
 
 void beforeAll()
 {
+    Test::shouldInitializeWebProcessExtensions = true;
+
     WebViewTest::add("WebKitWebProcessExtension", "dom-document-title", testWebProcessExtensionGetTitle);
 #if PLATFORM(GTK)
     WebViewTest::add("WebKitWebProcessExtension", "dom-input-element-is-user-edited", testWebProcessExtensionInputElementIsUserEdited);

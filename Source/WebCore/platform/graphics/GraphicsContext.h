@@ -172,9 +172,12 @@ public:
     // to the platform context's state.
     virtual void didUpdateState(GraphicsContextState&) = 0;
 
-    WEBCORE_EXPORT virtual void save();
-    WEBCORE_EXPORT virtual void restore();
-    
+    WEBCORE_EXPORT virtual void save(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore);
+    WEBCORE_EXPORT virtual void restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore);
+
+    void unwindStateStack(unsigned count);
+    void unwindStateStack() { unwindStateStack(stackSize()); }
+
     unsigned stackSize() const { return m_stack.size(); }
 
 #if USE(CG)

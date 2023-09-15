@@ -72,7 +72,7 @@ void FileSystemEntry::getParent(ScriptExecutionContext& context, RefPtr<FileSyst
         return;
 
     filesystem().getParent(context, *this, [this, pendingActivity = makePendingActivity(*this), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback)](auto&& result) mutable {
-        auto* document = this->document();
+        RefPtr document = this->document();
         if (!document)
             return;
 

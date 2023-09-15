@@ -32,40 +32,12 @@
 
 namespace WebKit {
 
-class RemoteGraphicsContextGLInitializationState {
-public:
+struct RemoteGraphicsContextGLInitializationState {
     String availableExtensions;
     String requestableExtensions;
     GCGLenum externalImageTarget { 0 };
     GCGLenum externalImageBindingQuery { 0 };
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<RemoteGraphicsContextGLInitializationState> decode(Decoder&);
 };
-
-template<class Encoder>
-void RemoteGraphicsContextGLInitializationState::encode(Encoder& encoder) const
-{
-    encoder << availableExtensions;
-    encoder << requestableExtensions;
-    encoder << externalImageTarget;
-    encoder << externalImageBindingQuery;
-}
-
-template<class Decoder>
-std::optional<RemoteGraphicsContextGLInitializationState> RemoteGraphicsContextGLInitializationState::decode(Decoder& decoder)
-{
-    RemoteGraphicsContextGLInitializationState initializationState;
-    if (!decoder.decode(initializationState.availableExtensions))
-        return std::nullopt;
-    if (!decoder.decode(initializationState.requestableExtensions))
-        return std::nullopt;
-    if (!decoder.decode(initializationState.externalImageTarget))
-        return std::nullopt;
-    if (!decoder.decode(initializationState.externalImageBindingQuery))
-        return std::nullopt;
-    return initializationState;
-}
 
 } // namespace WebKit
 

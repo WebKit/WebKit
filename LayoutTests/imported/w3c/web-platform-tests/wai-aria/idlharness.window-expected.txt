@@ -1,0 +1,91 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Element includes ARIAMixin: member names are unique
+PASS Element includes ParentNode: member names are unique
+PASS Element includes NonDocumentTypeChildNode: member names are unique
+PASS Element includes ChildNode: member names are unique
+PASS Element includes Slottable: member names are unique
+PASS Element interface: attribute role
+PASS Element interface: attribute ariaAtomic
+PASS Element interface: attribute ariaAutoComplete
+PASS Element interface: attribute ariaBusy
+PASS Element interface: attribute ariaChecked
+PASS Element interface: attribute ariaColCount
+PASS Element interface: attribute ariaColIndex
+FAIL Element interface: attribute ariaColIndexText assert_true: The prototype object must have a property "ariaColIndexText" expected true got false
+PASS Element interface: attribute ariaColSpan
+PASS Element interface: attribute ariaCurrent
+FAIL Element interface: attribute ariaDescription assert_true: The prototype object must have a property "ariaDescription" expected true got false
+PASS Element interface: attribute ariaDisabled
+PASS Element interface: attribute ariaExpanded
+PASS Element interface: attribute ariaHasPopup
+PASS Element interface: attribute ariaHidden
+PASS Element interface: attribute ariaInvalid
+PASS Element interface: attribute ariaKeyShortcuts
+PASS Element interface: attribute ariaLabel
+PASS Element interface: attribute ariaLevel
+PASS Element interface: attribute ariaLive
+PASS Element interface: attribute ariaModal
+PASS Element interface: attribute ariaMultiLine
+PASS Element interface: attribute ariaMultiSelectable
+PASS Element interface: attribute ariaOrientation
+PASS Element interface: attribute ariaPlaceholder
+PASS Element interface: attribute ariaPosInSet
+PASS Element interface: attribute ariaPressed
+PASS Element interface: attribute ariaReadOnly
+PASS Element interface: attribute ariaRequired
+PASS Element interface: attribute ariaRoleDescription
+PASS Element interface: attribute ariaRowCount
+PASS Element interface: attribute ariaRowIndex
+FAIL Element interface: attribute ariaRowIndexText assert_true: The prototype object must have a property "ariaRowIndexText" expected true got false
+PASS Element interface: attribute ariaRowSpan
+PASS Element interface: attribute ariaSelected
+PASS Element interface: attribute ariaSetSize
+PASS Element interface: attribute ariaSort
+PASS Element interface: attribute ariaValueMax
+PASS Element interface: attribute ariaValueMin
+PASS Element interface: attribute ariaValueNow
+PASS Element interface: attribute ariaValueText
+PASS Element interface: element must inherit property "role" with the proper type
+FAIL Element interface: element must inherit property "ariaAtomic" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaAutoComplete" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaBusy" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaChecked" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaColCount" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaColIndex" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaColIndexText" with the proper type assert_inherits: property "ariaColIndexText" not found in prototype chain
+FAIL Element interface: element must inherit property "ariaColSpan" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaCurrent" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaDescription" with the proper type assert_inherits: property "ariaDescription" not found in prototype chain
+FAIL Element interface: element must inherit property "ariaDisabled" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaExpanded" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaHasPopup" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaHidden" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaInvalid" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaKeyShortcuts" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaLabel" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaLevel" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaLive" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaModal" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaMultiLine" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaMultiSelectable" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaOrientation" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaPlaceholder" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaPosInSet" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaPressed" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaReadOnly" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaRequired" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaRoleDescription" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaRowCount" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaRowIndex" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaRowIndexText" with the proper type assert_inherits: property "ariaRowIndexText" not found in prototype chain
+FAIL Element interface: element must inherit property "ariaRowSpan" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaSelected" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaSetSize" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaSort" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaValueMax" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaValueMin" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaValueNow" with the proper type assert_equals: expected "string" but got "object"
+FAIL Element interface: element must inherit property "ariaValueText" with the proper type assert_equals: expected "string" but got "object"
+

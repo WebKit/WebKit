@@ -1017,6 +1017,20 @@ OverscrollBehavior RenderLayerScrollableArea::verticalOverscrollBehavior() const
     return OverscrollBehavior::Auto;
 }
 
+Color RenderLayerScrollableArea::scrollbarThumbColorStyle() const
+{
+    if (auto* renderer = m_layer.renderBox())
+        return renderer->style().effectiveScrollbarThumbColor();
+    return { };
+}
+
+Color RenderLayerScrollableArea::scrollbarTrackColorStyle() const
+{
+    if (auto* renderer = m_layer.renderBox())
+        return renderer->style().effectiveScrollbarTrackColor();
+    return { };
+}
+
 ScrollbarGutter RenderLayerScrollableArea::scrollbarGutterStyle()  const
 {
     if (auto* renderer = m_layer.renderBox())
@@ -1117,7 +1131,7 @@ void RenderLayerScrollableArea::computeScrollOrigin()
     ASSERT(box);
 
     int scrollableLeftOverflow = roundToInt(overflowLeft() - box->borderLeft());
-    if (shouldPlaceVerticalScrollbarOnLeft() /*|| box->style().writingMode() == WritingMode::RightToLeft*/)
+    if (shouldPlaceVerticalScrollbarOnLeft() /*|| box->style().blockFlowDirection() == BlockFlowDirection::RightToLeft*/)
         scrollableLeftOverflow -= verticalScrollbarWidth(IgnoreOverlayScrollbarSize, box->style().isHorizontalWritingMode());
     int scrollableTopOverflow = roundToInt(overflowTop() - box->borderTop());
     setScrollOrigin(IntPoint(-scrollableLeftOverflow, -scrollableTopOverflow));

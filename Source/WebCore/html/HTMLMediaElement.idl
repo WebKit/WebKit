@@ -23,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+ // https://html.spec.whatwg.org/multipage/media.html#media-elements
+
+ // FIXME: Add 'enum' for 'CanPlayTypeResult'. See: https://bugs.webkit.org/show_bug.cgi?id=260739
+
 typedef (
 #if defined(ENABLE_MEDIA_STREAM) && ENABLE_MEDIA_STREAM
     MediaStream or
@@ -41,7 +45,7 @@ typedef (
 ] interface HTMLMediaElement : HTMLElement {
 
     // error state
-    readonly attribute MediaError error;
+    readonly attribute MediaError? error;
 
     // network state
     [CEReactions=NotNeeded, Reflect, URL] attribute USVString src;
@@ -59,6 +63,7 @@ typedef (
     readonly attribute TimeRanges buffered;
     undefined load();
 
+    // FIXME: Use 'CanPlayTypeResult' enum for below. See: https://bugs.webkit.org/show_bug.cgi?id=260739
     DOMString canPlayType(DOMString type);
 
     // ready state
@@ -71,12 +76,16 @@ typedef (
     readonly attribute boolean seeking;
 
     // playback state
+    // FIXME: Remove 'unrestricted' from 'currentTime' below to align with the specification. See: https://bugs.webkit.org/show_bug.cgi?id=260738
     [ImplementedAs=currentTimeForBindings] attribute unrestricted double currentTime;
+    // FIXME: Remove 'unrestricted' from 'fastSeek' below to align with the specification. See: https://bugs.webkit.org/show_bug.cgi?id=260738
+    undefined fastSeek(unrestricted double time);
     readonly attribute unrestricted double duration;
     Date getStartDate();
     readonly attribute boolean paused;
     attribute double defaultPlaybackRate;
     attribute double playbackRate;
+    [CEReactions=NotNeeded] attribute boolean preservesPitch;
     readonly attribute TimeRanges played;
     readonly attribute TimeRanges seekable;
     readonly attribute boolean ended;
@@ -84,7 +93,6 @@ typedef (
     [CEReactions=NotNeeded, Reflect] attribute boolean loop;
     Promise<undefined> play();
     undefined pause();
-    undefined fastSeek(unrestricted double time);
 
     // controls
     [CEReactions=NotNeeded] attribute boolean controls;
@@ -92,11 +100,8 @@ typedef (
     attribute boolean muted;
     [CEReactions=NotNeeded, Reflect=muted] attribute boolean defaultMuted;
 
-    // WebKit extensions
-    [CEReactions=NotNeeded] attribute boolean webkitPreservesPitch;
-
-    readonly attribute boolean webkitHasClosedCaptions;
-    attribute boolean webkitClosedCaptionsVisible;
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250871
+    [CEReactions=NotNeeded, ImplementedAs=preservesPitch] attribute boolean webkitPreservesPitch;
 
     // The number of bytes consumed by the media decoder.
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitAudioDecodedByteCount;
@@ -109,10 +114,11 @@ typedef (
     [Conditional=ENCRYPTED_MEDIA, EnabledBySetting=EncryptedMediaAPIEnabled, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] attribute EventHandler onwaitingforkey;
     [Conditional=ENCRYPTED_MEDIA, EnabledBySetting=EncryptedMediaAPIEnabled, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] Promise<undefined> setMediaKeys(MediaKeys? mediaKeys);
 
+    // tracks
     TextTrack addTextTrack([AtomString] DOMString kind, optional [AtomString] DOMString label = "", optional [AtomString] DOMString language = "");
-    [ImplementedAs=ensureAudioTracks] readonly attribute AudioTrackList audioTracks;
-    [ImplementedAs=ensureTextTracks] readonly attribute TextTrackList textTracks;
-    [ImplementedAs=ensureVideoTracks] readonly attribute VideoTrackList videoTracks;
+    [SameObject, ImplementedAs=ensureAudioTracks] readonly attribute AudioTrackList audioTracks;
+    [SameObject, ImplementedAs=ensureTextTracks] readonly attribute TextTrackList textTracks;
+    [SameObject, ImplementedAs=ensureVideoTracks] readonly attribute VideoTrackList videoTracks;
 
     [Reflect] attribute DOMString mediaGroup;
 

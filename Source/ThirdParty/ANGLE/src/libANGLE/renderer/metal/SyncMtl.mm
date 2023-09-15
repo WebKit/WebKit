@@ -122,6 +122,13 @@ angle::Result Sync::clientWait(ContextMtl *contextMtl,
                                         cvRef->notify_one();
                                       }];
 
+    // Passing EGL_FOREVER_KHR overflows std::chrono::nanoseconds.
+    const uint64_t nanosecondsPerDay = 86400000000000;
+    if (timeout > nanosecondsPerDay)
+    {
+        timeout = nanosecondsPerDay;
+    }
+
     if (!mCv->wait_for(lg, std::chrono::nanoseconds(timeout),
                        [this] { return mMetalSharedEvent.get().signaledValue >= mSignalValue; }))
     {

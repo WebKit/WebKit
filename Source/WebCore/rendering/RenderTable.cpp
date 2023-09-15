@@ -152,7 +152,7 @@ void RenderTable::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     }
 
     // If border was changed, invalidate collapsed borders cache.
-    if (oldStyle && oldStyle->border() != style().border())
+    if (oldStyle && !oldStyle->borderIsEquivalentForPainting(style()))
         invalidateCollapsedBorders();
 }
 
@@ -699,12 +699,12 @@ void RenderTable::addOverflowFromChildren()
     }
 
     // Add overflow from our caption.
-    for (unsigned i = 0; i < m_captions.size(); i++) 
-        addOverflowFromChild(m_captions[i].get());
+    for (unsigned i = 0; i < m_captions.size(); i++)
+        addOverflowFromChild(*m_captions[i]);
 
     // Add overflow from our sections.
-    for (RenderTableSection* section = topSection(); section; section = sectionBelow(section))
-        addOverflowFromChild(section);
+    for (auto* section = topSection(); section; section = sectionBelow(section))
+        addOverflowFromChild(*section);
 }
 
 void RenderTable::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

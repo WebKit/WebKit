@@ -240,6 +240,8 @@ public:
     WEBCORE_EXPORT String toJSONString() const;
     WEBCORE_EXPORT Ref<JSON::Object> toJSONObject() const;
 
+    friend bool operator==(const FloatRect&, const FloatRect&) = default;
+
 private:
     FloatPoint m_location;
     FloatSize m_size;
@@ -279,11 +281,6 @@ inline FloatRect operator+(const FloatRect& a, const FloatRect& b)
     FloatRect c = a;
     c += b;
     return c;
-}
-
-inline bool operator==(const FloatRect& a, const FloatRect& b)
-{
-    return a.location() == b.location() && a.size() == b.size();
 }
 
 inline bool areEssentiallyEqual(const FloatRect& a, const FloatRect& b)

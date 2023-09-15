@@ -54,20 +54,20 @@ void InjectedBundleClient::willDestroyPage(InjectedBundle& bundle, WebPage& page
     m_client.willDestroyPage(toAPI(&bundle), toAPI(&page), m_client.base.clientInfo);
 }
 
-void InjectedBundleClient::didReceiveMessage(InjectedBundle& bundle, const String& messageName, API::Object* messageBody)
+void InjectedBundleClient::didReceiveMessage(InjectedBundle& bundle, const String& messageName, RefPtr<API::Object>&& messageBody)
 {
     if (!m_client.didReceiveMessage)
         return;
 
-    m_client.didReceiveMessage(toAPI(&bundle), toAPI(messageName.impl()), toAPI(messageBody), m_client.base.clientInfo);
+    m_client.didReceiveMessage(toAPI(&bundle), toAPI(messageName.impl()), toAPI(messageBody.get()), m_client.base.clientInfo);
 }
 
-void InjectedBundleClient::didReceiveMessageToPage(InjectedBundle& bundle, WebPage& page, const String& messageName, API::Object* messageBody)
+void InjectedBundleClient::didReceiveMessageToPage(InjectedBundle& bundle, WebPage& page, const String& messageName, RefPtr<API::Object>&& messageBody)
 {
     if (!m_client.didReceiveMessageToPage)
         return;
 
-    m_client.didReceiveMessageToPage(toAPI(&bundle), toAPI(&page), toAPI(messageName.impl()), toAPI(messageBody), m_client.base.clientInfo);
+    m_client.didReceiveMessageToPage(toAPI(&bundle), toAPI(&page), toAPI(messageName.impl()), toAPI(messageBody.get()), m_client.base.clientInfo);
 }
 
 } // namespace WebKit

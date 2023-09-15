@@ -18,4 +18,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/support/dark-frame-opaque.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/support/dark-frame-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/support/dark-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/support/prefers-color-scheme-blue-purple.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/support/prefers-color-scheme.svg

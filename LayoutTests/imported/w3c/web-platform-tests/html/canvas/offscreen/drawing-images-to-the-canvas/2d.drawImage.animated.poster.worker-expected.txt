@@ -1,3 +1,0 @@
-
-PASS drawImage() of an APNG draws the poster frame
-

@@ -3,27 +3,23 @@
 
 /*---
 esid: sec-temporal.plainmonthday.prototype.equals
-description: A number is converted to a string, then to Temporal.PlainMonthDay
+description: A number is invalid in place of an ISO string for Temporal.PlainMonthDay
 features: [Temporal]
 ---*/
 
 const instance = new Temporal.PlainMonthDay(11, 18);
 
-const arg = 1118;
-
-const result = instance.equals(arg);
-assert.sameValue(result, true, "1118 is a valid ISO string for PlainMonthDay");
-
 const numbers = [
   1,
+  1118,
   -1118,
   12345,
 ];
 
 for (const arg of numbers) {
   assert.throws(
-    RangeError,
+    TypeError,
     () => instance.equals(arg),
-    `Number ${arg} does not convert to a valid ISO string for PlainMonthDay`
+    "A number is not a valid ISO string for PlainMonthDay"
   );
 }

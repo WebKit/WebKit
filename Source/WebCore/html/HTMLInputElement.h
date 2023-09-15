@@ -191,6 +191,7 @@ public:
     bool shouldAppearChecked() const;
     bool matchesIndeterminatePseudoClass() const final;
     bool shouldAppearIndeterminate() const final;
+    void setDefaultCheckedState(bool);
 
     bool sizeShouldIncludeDecoration(int& preferredSize) const;
     float decorationWidth() const;
@@ -453,6 +454,7 @@ private:
     short m_maxResults { -1 };
     bool m_isChecked : 1 { false };
     bool m_dirtyCheckednessFlag : 1 { false };
+    bool m_isDefaultChecked : 1 { false };
     bool m_isIndeterminate : 1 { false };
     bool m_hasType : 1 { false };
     bool m_isActivatedSubmit : 1 { false };

@@ -9,7 +9,8 @@
     "SrcType": [
         "SrcIs2D",
         "SrcIs2DArray",
-        "SrcIs3D"
+        "SrcIs3D",
+        "SrcIsYUV"
     ],
     "SrcFormat": [
         "SrcIsFloat",

@@ -1,4 +1,5 @@
 
+PASS BroadcastChannel constructor called as normal function
 PASS postMessage results in correct event
 PASS messages are delivered in port creation order
 PASS messages aren't delivered to a closed port

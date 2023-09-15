@@ -185,7 +185,6 @@ namespace JSC {
 
         static constexpr GPRReg s_metadataGPR = LLInt::Registers::metadataTableGPR;
         static constexpr GPRReg s_constantsGPR = LLInt::Registers::pbGPR;
-        static constexpr JITConstantPool::Constant s_globalObjectConstant { 0 };
 
     private:
         void privateCompileMainPass();
@@ -242,6 +241,7 @@ namespace JSC {
         // Assuming s_constantsGPR is available.
         static void loadGlobalObject(CCallHelpers&, GPRReg);
         static void loadConstant(CCallHelpers&, unsigned constantIndex, GPRReg);
+        static void emitMaterializeMetadataAndConstantPoolRegisters(CCallHelpers&);
 
         void loadCodeBlockConstant(VirtualRegister, JSValueRegs);
         void loadCodeBlockConstantPayload(VirtualRegister, RegisterID);
@@ -314,6 +314,7 @@ namespace JSC {
         void emitWriteBarrier(GPRReg owner);
 
         template<typename Bytecode> void emitValueProfilingSite(const Bytecode&, JSValueRegs);
+        template<typename Bytecode> void emitValueProfilingSite(const Bytecode&, BytecodeIndex, JSValueRegs);
 
         template<typename Op>
         static inline constexpr bool isProfiledOp = std::is_same_v<decltype(Op::Metadata::m_profile), ValueProfile>;
@@ -332,10 +333,13 @@ namespace JSC {
         template <typename Bytecode>
         void emitArrayProfilingSiteWithCell(const Bytecode&, ptrdiff_t, RegisterID cellGPR, RegisterID scratchGPR);
 
+        void emitArrayProfilingSiteWithCellAndProfile(RegisterID cellGPR, RegisterID profileGPR, RegisterID scratchGPR);
+
         template<typename Op>
         ECMAMode ecmaMode(Op);
 
         void emitGetVirtualRegister(VirtualRegister src, JSValueRegs dst);
+        void emitGetVirtualRegisters(std::initializer_list<std::tuple<VirtualRegister, JSValueRegs>>);
         void emitGetVirtualRegisterPayload(VirtualRegister src, RegisterID dst);
         void emitPutVirtualRegister(VirtualRegister dst, JSValueRegs src);
 
@@ -680,6 +684,7 @@ namespace JSC {
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_private_name_callSlowOperationThenCheckExceptionGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_from_scopeGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_resolve_scopeGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_instanceof_callSlowOperationThenCheckExceptionGenerator(VM&);
         template <ResolveType>
         static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpGetFromScopeThunk(VM&);
         template <ResolveType>

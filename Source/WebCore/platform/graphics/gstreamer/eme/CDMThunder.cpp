@@ -495,7 +495,7 @@ void CDMInstanceSessionThunder::errorCallback(RefPtr<SharedBuffer>&& message)
     m_sessionChangedCallbacks.clear();
 }
 
-void CDMInstanceSessionThunder::requestLicense(LicenseType licenseType, const AtomString& initDataType, Ref<SharedBuffer>&& initDataSharedBuffer,
+void CDMInstanceSessionThunder::requestLicense(LicenseType licenseType, KeyGroupingStrategy, const AtomString& initDataType, Ref<SharedBuffer>&& initDataSharedBuffer,
     LicenseCallback&& callback)
 {
     ASSERT(isMainThread());

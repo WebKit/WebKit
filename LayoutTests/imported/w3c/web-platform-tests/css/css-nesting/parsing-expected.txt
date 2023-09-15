@@ -1,80 +1,33 @@
 
-PASS .foo {
-  & { color: green; }
-}
-PASS .foo { //color: red; color: green; }
-PASS .foo {
-  &.bar { color: green; }
-}
-PASS .foo {
-  & .bar { color: green; }
-}
-PASS .foo {
-  & > .bar { color: green; }
-}
-PASS .foo {
-  > .bar { color: green; }
-}
-PASS .foo {
-  > & .bar { color: green; }
-}
-PASS .foo {
-  + .bar & { color: green; }
-}
-PASS .foo {
-  .test > & .bar { color: green; }
-}
-PASS .foo {
-  + .bar, .foo, > .lol { color: green; }
-}
-PASS .foo {
-  &:is(.bar, &.baz) { color: green; }
-}
-PASS .foo {
-  .bar& { color: green; }
-}
-PASS .foo {
-  .bar & { color: green; }
-}
-PASS .foo {
-  .bar > & { color: green; }
-}
-PASS .foo, .bar {
-  & + .baz, &.qux { color: green; }
-}
-PASS .foo {
-  & .bar & .baz & .qux { color: green; }
-}
-PASS .foo {
-  @media (min-width: 50px) {
-  & { color: green; }
-}
-}
-PASS .foo {
-  @media (min-width: 50px) { color: green; }
-}
-PASS main {
-  & > section, & > article {
-  & > header { color: green; }
-}
-}
-PASS .foo {
-  :has(div) { color: green; }
-}
-PASS .foo {
-  .bar {
-  && { color: green; }
-}
-}
-PASS .foo {
- color: red; ident { color: green; }
-}
-PASS .foo {
- //color: comment; & { color: green; }
-}
-PASS .foo {
- .bar {
-  functionalnotation(div) { color: green; }
-
-}
+PASS .foo { & { color: green; }}
+PASS .foo { &.bar { color: green; }}
+PASS .foo { & .bar { color: green; }}
+PASS .foo { & > .bar { color: green; }}
+PASS .foo { > .bar { color: green; }}
+PASS .foo { > & .bar { color: green; }}
+PASS .foo { + .bar & { color: green; }}
+PASS .foo { + .bar, .foo, > .baz { color: green; }}
+PASS .foo { .foo { color: green; }}
+PASS .foo { .test > & .bar { color: green; }}
+PASS .foo { .foo, .foo & { color: green; }}
+PASS .foo { :is(.bar, .baz) { color: green; }}
+PASS .foo { &:is(.bar, .baz) { color: green; }}
+PASS .foo { :is(.bar, &.baz) { color: green; }}
+PASS .foo { &:is(.bar, &.baz) { color: green; }}
+PASS .foo { div& { color: green; }}
+PASS INVALID: .foo { &div { color: green; }}
+PASS .foo { .class& { color: green; }}
+PASS .foo { &.class { color: green; }}
+PASS .foo { [attr]& { color: green; }}
+PASS .foo { &[attr] { color: green; }}
+PASS .foo { #id& { color: green; }}
+PASS .foo { &#id { color: green; }}
+PASS .foo { :hover& { color: green; }}
+PASS .foo { &:hover { color: green; }}
+PASS .foo { :is(div)& { color: green; }}
+PASS .foo { &:is(div) { color: green; }}
+PASS .foo { & .bar & .baz & .qux { color: green; }}
+PASS .foo { && { color: green; }}
+PASS .foo { & > section, & > article { color: green; }}
+PASS .foo, .bar { & + .baz, &.qux { color: green; }}
 

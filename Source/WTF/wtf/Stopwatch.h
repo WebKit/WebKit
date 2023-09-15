@@ -32,7 +32,7 @@
 
 namespace WTF {
 
-class Stopwatch : public RefCounted<Stopwatch> {
+class Stopwatch final : public RefCounted<Stopwatch> {
 public:
     static Ref<Stopwatch> create()
     {
@@ -45,6 +45,7 @@ public:
 
     Seconds elapsedTime() const;
     Seconds elapsedTimeSince(MonotonicTime) const;
+    std::tuple<Seconds, MonotonicTime> elapsedTimeAndTimestamp() const;
 
     std::optional<Seconds> fromMonotonicTime(MonotonicTime) const;
 
@@ -82,10 +83,16 @@ inline void Stopwatch::stop()
 
 inline Seconds Stopwatch::elapsedTime() const
 {
-    if (!isActive())
-        return m_elapsedTime;
+    return std::get<0>(elapsedTimeAndTimestamp());
+}
 
-    return m_elapsedTime + (MonotonicTime::now() - m_lastStartTime);
+inline std::tuple<Seconds, MonotonicTime> Stopwatch::elapsedTimeAndTimestamp() const
+{
+    auto timestamp = MonotonicTime::now();
+    if (!isActive())
+        return std::tuple { m_elapsedTime, timestamp };
+
+    return std::tuple { m_elapsedTime + (timestamp - m_lastStartTime), timestamp };
 }
 
 inline Seconds Stopwatch::elapsedTimeSince(MonotonicTime timeStamp) const

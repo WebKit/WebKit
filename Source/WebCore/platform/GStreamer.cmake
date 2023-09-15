@@ -13,11 +13,15 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     )
 
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+        platform/audio/gstreamer/AudioDestinationGStreamer.h
+
+        platform/gstreamer/GStreamerCodecUtilities.h
         platform/gstreamer/GStreamerElementHarness.h
         platform/graphics/gstreamer/GRefPtrGStreamer.h
         platform/graphics/gstreamer/GStreamerCommon.h
         platform/graphics/gstreamer/GUniquePtrGStreamer.h
 
+        platform/mediastream/gstreamer/GStreamerWebRTCProvider.h
         platform/mediastream/libwebrtc/gstreamer/GStreamerVideoDecoderFactory.h
         platform/mediastream/libwebrtc/gstreamer/GStreamerVideoEncoderFactory.h
         platform/mediastream/libwebrtc/gstreamer/LibWebRTCProviderGStreamer.h

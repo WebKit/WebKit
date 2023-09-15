@@ -45,7 +45,7 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
-#if ENABLE(WEBASSEMBLY_B3JIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT)
 #include "B3Type.h"
 #endif
 
@@ -59,7 +59,6 @@ namespace JSC {
 
 namespace Wasm {
 
-#if ENABLE(B3_JIT)
 #define CREATE_ENUM_VALUE(name, id, ...) name = id,
 enum class ExtSIMDOpType : uint32_t {
     FOR_EACH_WASM_EXT_SIMD_OP(CREATE_ENUM_VALUE)
@@ -242,13 +241,13 @@ constexpr Type simdScalarType(SIMDLane lane)
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
-#endif
 
 using FunctionArgCount = uint32_t;
 using StructFieldCount = uint32_t;
 using RecursionGroupCount = uint32_t;
 using ProjectionIndex = uint32_t;
 using DisplayCount = uint32_t;
+using SupertypeCount = uint32_t;
 
 inline Width Type::width() const
 {
@@ -260,7 +259,7 @@ inline Width Type::width() const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-#if ENABLE(WEBASSEMBLY_B3JIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT)
 #define CREATE_CASE(name, id, b3type, ...) case TypeKind::name: return b3type;
 inline B3::Type toB3Type(Type type)
 {
@@ -299,10 +298,13 @@ constexpr size_t typeKindSizeInBytes(TypeKind kind)
     case TypeKind::Struct:
     case TypeKind::Void:
     case TypeKind::Sub:
+    case TypeKind::Subfinal:
     case TypeKind::Rec:
     case TypeKind::Eqref:
     case TypeKind::Anyref:
     case TypeKind::Nullref:
+    case TypeKind::Nullfuncref:
+    case TypeKind::Nullexternref:
     case TypeKind::I31ref: {
         break;
     }
@@ -487,7 +489,7 @@ public:
     StorageType type;
     Mutability mutability;
 
-    bool operator==(const FieldType& rhs) const { return type == rhs.type && mutability == rhs.mutability; }
+    friend bool operator==(const FieldType&, const FieldType&) = default;
 };
 
 class StructType {
@@ -614,30 +616,38 @@ static_assert(sizeof(ProjectionIndex) <= sizeof(TypeIndex));
 // A Subtype represents a type that is declared to be a subtype of another type
 // definition.
 //
-// The representation assumes a single supertype. The binary format is designed to allow
-// multiple supertypes, but these are not supported in the initial GC proposal.
+// The representation allows multiple supertypes for simplicity, as it needs to
+// support 0 or 1 supertypes. More than 1 supertype is not supported in the initial
+// GC proposal.
 class Subtype {
 public:
-    Subtype(TypeIndex* payload)
+    Subtype(TypeIndex* payload, SupertypeCount count, bool isFinal)
         : m_payload(payload)
+        , m_supertypeCount(count)
+        , m_final(isFinal)
     {
     }
 
     void cleanup();
 
-    TypeIndex superType() const { return const_cast<Subtype*>(this)->getSuperType(); }
+    SupertypeCount supertypeCount() const { return m_supertypeCount; }
+    bool isFinal() const { return m_final; }
+    TypeIndex firstSuperType() const { return superType(0); }
+    TypeIndex superType(SupertypeCount i) const { return const_cast<Subtype*>(this)->getSuperType(i); }
     TypeIndex underlyingType() const { return const_cast<Subtype*>(this)->getUnderlyingType(); }
 
     WTF::String toString() const;
     void dump(WTF::PrintStream& out) const;
 
-    TypeIndex& getSuperType() { return *storage(1); }
+    TypeIndex& getSuperType(SupertypeCount i) { return *storage(1 + i); }
     TypeIndex& getUnderlyingType() { return *storage(0); }
     TypeIndex* storage(uint32_t i) { return i + m_payload; }
     TypeIndex* storage(uint32_t i) const { return const_cast<Subtype*>(this)->storage(i); }
 
 private:
     TypeIndex* m_payload;
+    SupertypeCount m_supertypeCount;
+    bool m_final;
 };
 
 // An RTT encodes subtyping information in a way that is suitable for executing
@@ -719,13 +729,17 @@ class TypeDefinition : public ThreadSafeRefCounted<TypeDefinition> {
         RELEASE_ASSERT(kind == TypeDefinitionKind::RecursionGroup);
     }
 
+    TypeDefinition(TypeDefinitionKind kind, SupertypeCount count, bool isFinal)
+        : m_typeHeader { Subtype { static_cast<TypeIndex*>(payload()), count, isFinal } }
+    {
+        RELEASE_ASSERT(kind == TypeDefinitionKind::Subtype);
+    }
+
     TypeDefinition(TypeDefinitionKind kind)
         : m_typeHeader { ArrayType { static_cast<FieldType*>(payload()) } }
     {
         if (kind == TypeDefinitionKind::Projection)
             m_typeHeader = { Projection { static_cast<TypeIndex*>(payload()) } };
-        else if (kind == TypeDefinitionKind::Subtype)
-            m_typeHeader = { Subtype { static_cast<TypeIndex*>(payload()) } };
         else
             RELEASE_ASSERT(kind == TypeDefinitionKind::ArrayType);
     }
@@ -785,7 +799,7 @@ private:
     static RefPtr<TypeDefinition> tryCreateArrayType();
     static RefPtr<TypeDefinition> tryCreateRecursionGroup(RecursionGroupCount);
     static RefPtr<TypeDefinition> tryCreateProjection();
-    static RefPtr<TypeDefinition> tryCreateSubtype();
+    static RefPtr<TypeDefinition> tryCreateSubtype(SupertypeCount, bool);
 
     static Type substitute(Type, TypeIndex);
 
@@ -863,12 +877,12 @@ public:
 
     static const TypeDefinition& signatureForLLIntBuiltin(LLIntBuiltin);
 
-    static RefPtr<TypeDefinition> typeDefinitionForFunction(const Vector<Type, 1>& returnTypes, const Vector<Type>& argumentTypes);
+    static RefPtr<TypeDefinition> typeDefinitionForFunction(const Vector<Type, 16>& returnTypes, const Vector<Type, 16>& argumentTypes);
     static RefPtr<TypeDefinition> typeDefinitionForStruct(const Vector<FieldType>& fields);
     static RefPtr<TypeDefinition> typeDefinitionForArray(FieldType);
     static RefPtr<TypeDefinition> typeDefinitionForRecursionGroup(const Vector<TypeIndex>& types);
     static RefPtr<TypeDefinition> typeDefinitionForProjection(TypeIndex, ProjectionIndex);
-    static RefPtr<TypeDefinition> typeDefinitionForSubtype(TypeIndex, TypeIndex);
+    static RefPtr<TypeDefinition> typeDefinitionForSubtype(const Vector<TypeIndex>&, TypeIndex, bool);
     ALWAYS_INLINE const TypeDefinition* thunkFor(Type type) const { return thunkTypes[linearizeType(type.kind)]; }
 
     static void addCachedUnrolling(TypeIndex, TypeIndex);
@@ -902,7 +916,7 @@ private:
     RefPtr<TypeDefinition> m_I32_I32;
     RefPtr<TypeDefinition> m_I32_RefI32I32;
     RefPtr<TypeDefinition> m_Ref_RefI32I32;
-    RefPtr<TypeDefinition> m_Ref_I32I32I32I32;
+    RefPtr<TypeDefinition> m_Arrayref_I32I32I32I32;
     RefPtr<TypeDefinition> m_Anyref_Externref;
     Lock m_lock;
 };

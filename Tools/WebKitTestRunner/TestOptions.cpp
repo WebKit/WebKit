@@ -94,7 +94,6 @@ const TestFeatures& TestOptions::defaults()
             { "DirectoryUploadEnabled", true },
             { "EventHandlerDrivenSmoothKeyboardScrollingEnabled", eventHandlerDrivenSmoothKeyboardScrollingEnabledValue },
             { "ExposeSpeakersEnabled", true },
-            { "FrameFlatteningEnabled", false },
             { "FullScreenEnabled", true },
             { "GenericCueAPIEnabled", false },
             { "HiddenPageCSSAnimationSuspensionEnabled", false },
@@ -135,6 +134,9 @@ const TestFeatures& TestOptions::defaults()
             { "WebAuthenticationEnabled", true },
 #if ENABLE(WEBGL) && PLATFORM(COCOA)
             { "WebGLUsingMetal", true },
+#endif
+#if ENABLE(WEBGL)
+            { "WebGLDraftExtensionsEnabled", true },
 #endif
             { "WebRTCRemoteVideoFrameEnabled", true },
             { "XSSAuditorEnabled", false },
@@ -187,6 +189,7 @@ const TestFeatures& TestOptions::defaults()
             { "noUseRemoteLayerTree", false },
             { "useThreadedScrolling", false },
             { "suppressInputAccessoryView", false },
+            { "enhancedWindowingEnabled", false },
         };
         features.doubleTestRunnerFeatures = {
             { "contentInset.top", 0 },
@@ -247,6 +250,7 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         { "useRemoteLayerTree", TestHeaderKeyType::BoolTestRunner },
         { "useThreadedScrolling", TestHeaderKeyType::BoolTestRunner },
         { "suppressInputAccessoryView", TestHeaderKeyType::BoolTestRunner },
+        { "enhancedWindowingEnabled", TestHeaderKeyType::BoolTestRunner },
     
         { "contentInset.top", TestHeaderKeyType::DoubleTestRunner },
         { "obscuredInset.top", TestHeaderKeyType::DoubleTestRunner },

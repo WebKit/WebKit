@@ -77,11 +77,11 @@ struct WebProcessCreationParameters;
 
 class InjectedBundle : public API::ObjectImpl<API::Object::Type::Bundle> {
 public:
-    static RefPtr<InjectedBundle> create(WebProcessCreationParameters&, API::Object* initializationUserData);
+    static RefPtr<InjectedBundle> create(WebProcessCreationParameters&, RefPtr<API::Object>&& initializationUserData);
 
     ~InjectedBundle();
 
-    bool initialize(const WebProcessCreationParameters&, API::Object* initializationUserData);
+    bool initialize(const WebProcessCreationParameters&, RefPtr<API::Object>&& initializationUserData);
 
     void setBundleParameter(const String&, const IPC::DataReference&);
     void setBundleParameters(const IPC::DataReference&);
@@ -118,10 +118,10 @@ public:
     size_t javaScriptObjectsCount();
 
     // Callback hooks
-    void didCreatePage(WebPage*);
-    void willDestroyPage(WebPage*);
-    void didReceiveMessage(const String&, API::Object*);
-    void didReceiveMessageToPage(WebPage*, const String&, API::Object*);
+    void didCreatePage(WebPage&);
+    void willDestroyPage(WebPage&);
+    void didReceiveMessage(const String&, RefPtr<API::Object>&&);
+    void didReceiveMessageToPage(WebPage&, const String&, RefPtr<API::Object>&&);
 
     static void reportException(JSContextRef, JSValueRef exception);
 

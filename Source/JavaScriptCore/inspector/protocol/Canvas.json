@@ -2,7 +2,7 @@
     "domain": "Canvas",
     "description": "Canvas domain allows tracking of canvases that have an associated graphics context. Tracks canvases in the DOM and CSS canvases created with -webkit-canvas.",
     "debuggableTypes": ["page", "web-page"],
-    "targetTypes": ["page"],
+    "targetTypes": ["page", "worker"],
     "types": [
         {
             "id": "CanvasId",
@@ -62,6 +62,8 @@
             "properties": [
                 { "name": "canvasId", "$ref": "CanvasId", "description": "Canvas identifier." },
                 { "name": "contextType", "$ref": "ContextType", "description": "The type of rendering context backing the canvas." },
+                { "name": "width", "type": "number", "description": "Width of the canvas in pixels." },
+                { "name": "height", "type": "number", "description": "Height of the canvas in pixels." },
                 { "name": "nodeId", "$ref": "DOM.NodeId", "optional": true, "description": "The corresponding DOM node id." },
                 { "name": "cssCanvasName", "type": "string", "optional": true, "description": "The CSS canvas identifier, for canvases created with <code>document.getCSSCanvasContext</code>." },
                 { "name": "contextAttributes", "$ref": "ContextAttributes", "optional": true, "description": "Context attributes for rendering contexts." },
@@ -93,6 +95,7 @@
         {
             "name": "requestNode",
             "description": "Gets the NodeId for the canvas node with the given CanvasId.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId", "description": "Canvas identifier." }
             ],
@@ -113,6 +116,7 @@
         {
             "name": "requestClientNodes",
             "description": "Gets all <code>-webkit-canvas</code> nodes or active <code>HTMLCanvasElement</code> for a <code>WebGPUDevice</code>.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId" }
             ],
@@ -209,6 +213,14 @@
             ]
         },
         {
+            "name": "canvasSizeChanged",
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId", "description": "Identifier of canvas that changed." },
+                { "name": "width", "type": "number", "description": "Width of the canvas in pixels." },
+                { "name": "height", "type": "number", "description": "Height of the canvas in pixels." }
+            ]
+        },
+        {
             "name": "canvasMemoryChanged",
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId", "description": "Identifier of canvas that changed." },
@@ -224,6 +236,7 @@
         },
         {
             "name": "clientNodesChanged",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId", "description": "Identifier of canvas that changed." }
             ]

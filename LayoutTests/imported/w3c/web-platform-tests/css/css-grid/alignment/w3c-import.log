@@ -18,6 +18,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-align-baseline-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-align-baseline-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-align-baseline-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-align-baseline-005-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-align-baseline-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-align-baseline-fieldset-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-align-baseline-fieldset-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-align-baseline-fieldset-003.html
@@ -31,6 +33,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-align-baseline-line-clamp-001.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-align-baseline-line-clamp-002.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-align-baseline-line-clamp-003.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-align-baseline-multicol-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-align-baseline-multicol-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-align-baseline-multicol-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-align-baseline-overflow-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-align-baseline-overflow-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-align-baseline-overflow-003.html

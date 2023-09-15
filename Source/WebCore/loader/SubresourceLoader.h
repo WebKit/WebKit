@@ -119,7 +119,7 @@ private:
 
     class RequestCountTracker {
 #if !COMPILER(MSVC)
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 #endif
     public:
         RequestCountTracker(CachedResourceLoader&, const CachedResource&);

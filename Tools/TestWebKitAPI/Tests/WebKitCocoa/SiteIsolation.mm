@@ -24,6 +24,7 @@
  */
 
 #import "config.h"
+#import "FrameTreeChecks.h"
 #import "HTTPServer.h"
 #import "TestNavigationDelegate.h"
 #import "Utilities.h"
@@ -58,12 +59,6 @@ static void enableWindowOpenPSON(WKWebViewConfiguration *configuration)
         }
     }
 }
-
-enum RemoteFrameTag { RemoteFrame };
-struct ExpectedFrameTree {
-    std::variant<RemoteFrameTag, String> remoteOrOrigin;
-    Vector<ExpectedFrameTree> children { };
-};
 
 static bool frameTreesMatch(_WKFrameTreeNode *actualRoot, const ExpectedFrameTree& expectedRoot)
 {
@@ -119,7 +114,7 @@ static void checkFrameTreesInProcesses(NSSet<_WKFrameTreeNode *> *actualTrees, V
     EXPECT_TRUE(frameTreesMatch(actualTrees, WTFMove(expectedFrameTrees)));
 }
 
-static void checkFrameTreesInProcesses(WKWebView *webView, Vector<ExpectedFrameTree>&& expectedFrameTrees)
+void checkFrameTreesInProcesses(WKWebView *webView, Vector<ExpectedFrameTree>&& expectedFrameTrees)
 {
     checkFrameTreesInProcesses(frameTrees(webView).get(), WTFMove(expectedFrameTrees));
 }
@@ -749,6 +744,28 @@ TEST(SiteIsolation, GrandchildIframe)
     // (add an onload in the response to /webkit and verify that it is actually called. It is not right now.)
 }
 
+TEST(SiteIsolation, GrandchildIframeSameOriginAsGrandparent)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe id='webkit_frame' src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "<iframe src='https://example.com/example_grandchild'></iframe>\">"_s } },
+        { "/example_grandchild"_s, { "<script>alert('grandchild loaded successfully')</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "grandchild loaded successfully");
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s, { { RemoteFrame, { { "https://example.com"_s } } } } },
+        { RemoteFrame, { { "https://webkit.org"_s, { { RemoteFrame } } } } }
+    });
+}
+
 TEST(SiteIsolation, ChildNavigatingToNewDomain)
 {
     HTTPServer server({
@@ -1095,20 +1112,39 @@ TEST(SiteIsolation, IframeRedirectSameSite)
 TEST(SiteIsolation, IframeRedirectCrossSite)
 {
     HTTPServer server({
-        { "/example"_s, { "<iframe src='https://webkit.org/webkit'></iframe>"_s } },
-        { "/webkit"_s, { 302, { { "Location"_s, "https://apple.com/apple"_s } }, "redirecting..."_s } },
-        { "/apple"_s, { "arrived!"_s } }
+        { "/example1"_s, { "<iframe src='https://webkit.org/webkit1'></iframe>"_s } },
+        { "/webkit1"_s, { 302, { { "Location"_s, "https://apple.com/apple1"_s } }, "redirecting..."_s } },
+        { "/apple1"_s, { "arrived!"_s } },
+        { "/example2"_s, { "<iframe src='https://webkit.org/webkit2'></iframe>"_s } },
+        { "/webkit2"_s, { 302, { { "Location"_s, "https://webkit.org/webkit3"_s } }, "redirecting..."_s } },
+        { "/webkit3"_s, { 302, { { "Location"_s, "https://example.com/example3"_s } }, "redirecting..."_s } },
+        { "/example3"_s, { "arrived!"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
 
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
     [navigationDelegate allowAnyTLSCertificate];
     auto configuration = server.httpsProxyConfiguration();
-    // FIXME: call enableSiteIsolation here and make that work.
+    enableSiteIsolation(configuration);
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
     webView.get().navigationDelegate = navigationDelegate.get();
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example1"]]];
     [navigationDelegate waitForDidFinishNavigation];
-    // FIXME: Call checkFrameTreesInProcesses here and make sure the frames are in reasonable processes.
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s,
+            { { RemoteFrame } }
+        }, { RemoteFrame,
+            { { "https://apple.com"_s } }
+        }
+    });
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example2"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s,
+            { { "https://example.com"_s } }
+        }
+    });
 }
 
 TEST(SiteIsolation, NavigationWithIFrames)
@@ -1190,5 +1226,119 @@ TEST(SiteIsolation, RemoveFrames)
         { "https://webkit.org"_s }
     });
 }
+
+TEST(SiteIsolation, ProvisionalLoadFailure)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { HTTPResponse::TerminateConnection::Yes } },
+        { "/apple"_s,  { "hello"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s, { { "https://example.com"_s } } }
+    });
+
+    [webView evaluateJavaScript:@"var iframe = document.createElement('iframe');document.body.appendChild(iframe);iframe.src = 'https://apple.com/apple'" completionHandler:nil];
+    Vector<ExpectedFrameTree> expectedFrameTreesAfterAddingApple { {
+        "https://example.com"_s, { { "https://example.com"_s }, { RemoteFrame } }
+    }, {
+        RemoteFrame, { { RemoteFrame }, { "https://apple.com"_s } }
+    } };
+    while (!frameTreesMatch(frameTrees(webView.get()).get(), Vector<ExpectedFrameTree> { expectedFrameTreesAfterAddingApple }))
+        Util::spinRunLoop();
+
+    [webView evaluateJavaScript:@"iframe.src = 'https://webkit.org/webkit'" completionHandler:nil];
+
+    // FIXME: This could use the iframe's load event handler, but LocalDOMWindow::dispatchLoadEvent has no analog in RemoteDOMWindow so it's never called.
+    Util::runFor(0.5_s);
+    checkFrameTreesInProcesses(webView.get(), WTFMove(expectedFrameTreesAfterAddingApple));
+}
+
+TEST(SiteIsolation, MultipleReloads)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s,  { "hello"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s, { { RemoteFrame } } },
+        { RemoteFrame, { { "https://webkit.org"_s } } }
+    });
+
+    [webView reload];
+    Util::runFor(0.1_s);
+    [webView reload];
+    [navigationDelegate waitForDidFinishNavigation];
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s, { { RemoteFrame } } },
+        { RemoteFrame, { { "https://webkit.org"_s } } }
+    });
+}
+
+#if PLATFORM(MAC)
+TEST(SiteIsolation, PropagateMouseEventsToSubframe)
+{
+    auto mainframeHTML = "<script>"
+    "    window.eventTypes = [];"
+    "    window.addEventListener('message', function(event) {"
+    "        window.eventTypes.push(event.data);"
+    "    });"
+    "</script>"
+    "<iframe src='https://domain2.com/subframe'></iframe>"_s;
+
+    auto subframeHTML = "<script>"
+    "    addEventListener('mousemove', window.parent.postMessage('mousemove', '*'));"
+    "    addEventListener('mousedown', (event) => { window.parent.postMessage('mousedown,' + event.pageX + ',' + event.pageY, '*') });"
+    "    addEventListener('mouseup', (event) => { window.parent.postMessage('mouseup,' + event.pageX + ',' + event.pageY, '*') });"
+    "</script>"_s;
+
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { subframeHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    CGPoint eventLocationInWindow = [webView convertPoint:CGPointMake(50, 50) toView:nil];
+    [webView mouseEnterAtPoint:eventLocationInWindow];
+    [webView mouseDownAtPoint:eventLocationInWindow simulatePressure:NO];
+    [webView mouseUpAtPoint:eventLocationInWindow];
+    [webView waitForPendingMouseEvents];
+
+    NSArray<NSString *> *eventTypes = [webView objectByEvaluatingJavaScript:@"window.eventTypes"];
+    EXPECT_EQ(3U, eventTypes.count);
+    EXPECT_WK_STREQ("mousemove", eventTypes[0]);
+    EXPECT_WK_STREQ("mousedown,40,40", eventTypes[1]);
+    EXPECT_WK_STREQ("mouseup,40,40", eventTypes[2]);
+}
+#endif
 
 }

@@ -51,8 +51,7 @@ public:
     bool affectedByRadius() const { return m_affectedByRadius; }
     void setAffectedByRadius(bool affectedByRadius) { m_affectedByRadius = affectedByRadius; }
     
-    bool operator==(const ClipRect& other) const { return rect() == other.rect() && affectedByRadius() == other.affectedByRadius(); }
-    bool operator==(const LayoutRect& otherRect) const { return rect() == otherRect; }
+    friend bool operator==(const ClipRect&, const ClipRect&) = default;
     
     void intersect(const LayoutRect& other);
     void intersect(const ClipRect& other);

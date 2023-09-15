@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "ASTTypeName.h"
 #include "Types.h"
 #include <wtf/FixedVector.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 
 namespace WGSL {
 
@@ -38,6 +38,29 @@ struct Type;
 namespace AST {
 class Identifier;
 }
+
+class TypeCache {
+public:
+    enum KeyKind : uint8_t {
+        Vector = 1,
+        Matrix,
+        Array,
+        Texture,
+        TextureStorage,
+        Reference,
+    };
+
+    using EncodedKey = std::tuple<uint8_t, uint8_t, uint16_t, uint32_t, uintptr_t>;
+
+    template<typename Key>
+    const Type* find(const Key&) const;
+
+    template<typename Key>
+    void insert(const Key&, const Type*);
+
+private:
+    HashMap<EncodedKey, const Type*> m_storage;
+};
 
 class TypeStore {
 public:
@@ -55,42 +78,24 @@ public:
     const Type* f32Type() const { return m_f32; }
     const Type* samplerType() const { return m_sampler; }
     const Type* textureExternalType() const { return m_textureExternal; }
+    const Type* accessModeType() const { return m_accessMode; }
+    const Type* texelFormatType() const { return m_texelFormat; }
 
-    const Type* structType(AST::Structure&);
+    const Type* structType(AST::Structure&, HashMap<String, const Type*>&& = { });
     const Type* arrayType(const Type*, std::optional<unsigned>);
     const Type* vectorType(const Type*, uint8_t);
     const Type* matrixType(const Type*, uint8_t columns, uint8_t rows);
     const Type* textureType(const Type*, Types::Texture::Kind);
+    const Type* textureStorageType(Types::TextureStorage::Kind, TexelFormat, AccessMode);
     const Type* functionType(Vector<const Type*>&&, const Type*);
     const Type* referenceType(AddressSpace, const Type*, AccessMode);
-
-    const Type* constructType(AST::ParameterizedTypeName::Base, const Type*);
+    const Type* typeConstructorType(ASCIILiteral, std::function<const Type*(AST::ElaboratedTypeExpression&)>&&);
 
 private:
-    class TypeCache {
-    public:
-        template<typename Key>
-        const Type* find(const Key&) const;
-
-        template<typename Key>
-        void insert(const Key&, const Type*);
-
-    private:
-        HashMap<std::pair<const Type*, uint64_t>, const Type*> m_storage;
-    };
-
     template<typename TypeKind, typename... Arguments>
     const Type* allocateType(Arguments&&...);
 
-    template<typename TargetConstructor, typename Base, typename... Arguments>
-    void allocateConstructor(TargetConstructor, Base, Arguments&&...);
-
-    struct TypeConstructor {
-        std::function<const Type*(const Type*)> construct;
-    };
-
     Vector<std::unique_ptr<const Type>> m_types;
-    FixedVector<TypeConstructor> m_typeConstrutors;
     TypeCache m_cache;
 
     const Type* m_bottom;
@@ -103,6 +108,8 @@ private:
     const Type* m_f32;
     const Type* m_sampler;
     const Type* m_textureExternal;
+    const Type* m_accessMode;
+    const Type* m_texelFormat;
 };
 
 } // namespace WGSL

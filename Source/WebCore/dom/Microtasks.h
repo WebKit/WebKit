@@ -45,6 +45,8 @@ public:
 
     WEBCORE_EXPORT void addCheckpointTask(std::unique_ptr<EventLoopTask>&&);
 
+    bool isEmpty() const { return m_microtaskQueue.isEmpty(); }
+
 private:
     JSC::VM& vm() const { return m_vm.get(); }
 

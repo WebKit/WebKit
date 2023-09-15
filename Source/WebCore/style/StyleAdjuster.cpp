@@ -113,6 +113,7 @@ static void addIntrinsicMargins(RenderStyle& style)
 }
 #endif
 
+// https://www.w3.org/TR/css-display-3/#transformations
 static DisplayType equivalentBlockDisplay(const RenderStyle& style)
 {
     switch (auto display = style.display()) {
@@ -123,6 +124,7 @@ static DisplayType equivalentBlockDisplay(const RenderStyle& style)
     case DisplayType::Grid:
     case DisplayType::FlowRoot:
     case DisplayType::ListItem:
+    case DisplayType::RubyBlock:
         return display;
     case DisplayType::InlineTable:
         return DisplayType::Table;
@@ -132,6 +134,8 @@ static DisplayType equivalentBlockDisplay(const RenderStyle& style)
         return DisplayType::Flex;
     case DisplayType::InlineGrid:
         return DisplayType::Grid;
+    case DisplayType::Ruby:
+        return DisplayType::RubyBlock;
 
     case DisplayType::Inline:
     case DisplayType::InlineBlock:
@@ -143,7 +147,10 @@ static DisplayType equivalentBlockDisplay(const RenderStyle& style)
     case DisplayType::TableColumn:
     case DisplayType::TableCell:
     case DisplayType::TableCaption:
+    case DisplayType::RubyBase:
+    case DisplayType::RubyAnnotation:
         return DisplayType::Block;
+
     case DisplayType::Contents:
         ASSERT_NOT_REACHED();
         return DisplayType::Contents;
@@ -153,6 +160,57 @@ static DisplayType equivalentBlockDisplay(const RenderStyle& style)
     }
     ASSERT_NOT_REACHED();
     return DisplayType::Block;
+}
+
+// https://www.w3.org/TR/css-display-3/#transformations
+static DisplayType equivalentInlineDisplay(const RenderStyle& style)
+{
+    switch (auto display = style.display()) {
+    case DisplayType::Block:
+        return DisplayType::InlineBlock;
+    case DisplayType::Table:
+        return DisplayType::InlineTable;
+    case DisplayType::Box:
+        return DisplayType::InlineBox;
+    case DisplayType::Flex:
+        return DisplayType::InlineFlex;
+    case DisplayType::Grid:
+        return DisplayType::InlineGrid;
+    case DisplayType::RubyBlock:
+        return DisplayType::Ruby;
+
+    case DisplayType::Inline:
+    case DisplayType::InlineBlock:
+    case DisplayType::InlineTable:
+    case DisplayType::InlineBox:
+    case DisplayType::InlineFlex:
+    case DisplayType::InlineGrid:
+    case DisplayType::Ruby:
+    case DisplayType::RubyBase:
+    case DisplayType::RubyAnnotation:
+        return display;
+
+    case DisplayType::FlowRoot:
+    case DisplayType::ListItem:
+    case DisplayType::TableRowGroup:
+    case DisplayType::TableHeaderGroup:
+    case DisplayType::TableFooterGroup:
+    case DisplayType::TableRow:
+    case DisplayType::TableColumnGroup:
+    case DisplayType::TableColumn:
+    case DisplayType::TableCell:
+    case DisplayType::TableCaption:
+        return DisplayType::Inline;
+
+    case DisplayType::Contents:
+        ASSERT_NOT_REACHED();
+        return DisplayType::Contents;
+    case DisplayType::None:
+        ASSERT_NOT_REACHED();
+        return DisplayType::None;
+    }
+    ASSERT_NOT_REACHED();
+    return DisplayType::Inline;
 }
 
 static bool isOutermostSVGElement(const Element* element)
@@ -291,6 +349,22 @@ OptionSet<EventListenerRegionType> Adjuster::computeEventListenerRegionTypes(con
     return types;
 }
 
+static bool isOverflowClipOrVisible(Overflow overflow)
+{
+    return overflow == Overflow::Clip || overflow == Overflow::Visible;
+}
+
+static bool shouldInlinifyForRuby(const RenderStyle& style, const RenderStyle& parentBoxStyle)
+{
+    auto parentDisplay = parentBoxStyle.display();
+    auto hasRubyParent = parentDisplay == DisplayType::Ruby
+        || parentDisplay == DisplayType::RubyBlock
+        || parentDisplay == DisplayType::RubyAnnotation
+        || parentDisplay == DisplayType::RubyBase;
+
+    return hasRubyParent && !style.hasOutOfFlowPosition() && !style.isFloating();
+}
+
 void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearanceStyle) const
 {
     if (style.display() == DisplayType::Contents)
@@ -349,10 +423,10 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             style.setWritingMode(m_parentStyle.writingMode());
 
         // FIXME: Since we don't support block-flow on flexible boxes yet, disallow setting
-        // of block-flow to anything other than WritingMode::TopToBottom.
+        // of block-flow to anything other than WritingMode::HorizontalTb.
         // https://bugs.webkit.org/show_bug.cgi?id=46418 - Flexible box support.
-        if (style.writingMode() != WritingMode::TopToBottom && (style.display() == DisplayType::Box || style.display() == DisplayType::InlineBox))
-            style.setWritingMode(WritingMode::TopToBottom);
+        if (style.writingMode() != WritingMode::HorizontalTb && (style.display() == DisplayType::Box || style.display() == DisplayType::InlineBox))
+            style.setWritingMode(WritingMode::HorizontalTb);
 
         // https://www.w3.org/TR/css-display/#transformations
         // "A parent with a grid or flex display value blockifies the box’s display type."
@@ -360,6 +434,10 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             style.setFloating(Float::None);
             style.setEffectiveDisplay(equivalentBlockDisplay(style));
         }
+
+        // https://www.w3.org/TR/css-ruby-1/#anon-gen-inlinize
+        if (shouldInlinifyForRuby(style, m_parentBoxStyle))
+            style.setEffectiveDisplay(equivalentInlineDisplay(style));
     }
 
     auto hasAutoZIndex = [](const RenderStyle& style, const RenderStyle& parentBoxStyle, const Element* element) {
@@ -394,7 +472,10 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     // Same for the additional translation component present in RenderSVGTransformableContainer (that stems from <use> x/y
     // properties, that are transferred to the internal RenderSVGTransformableContainer), or for the viewBox-induced transformation
     // in RenderSVGViewportContainer. They all need to return true for 'hasTransformRelatedProperty'.
-    auto hasTransformRelatedProperty = [](const RenderStyle& style, const Element* element) {
+    auto hasTransformRelatedProperty = [](const RenderStyle& style, const Element* element, const RenderStyle& parentStyle) {
+        if (element && element->document().settings().css3DTransformBackfaceVisibilityInteroperabilityEnabled() && style.backfaceVisibility() == BackfaceVisibility::Hidden && parentStyle.preserves3D())
+            return true;
+
         if (style.hasTransformRelatedProperty())
             return true;
 
@@ -416,7 +497,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     if (style.hasAutoUsedZIndex()) {
         if ((m_element && m_document.documentElement() == m_element)
             || style.hasOpacity()
-            || hasTransformRelatedProperty(style, m_element)
+            || hasTransformRelatedProperty(style, m_element, m_parentStyle)
             || style.hasMask()
             || style.clipPath()
             || style.boxReflect()
@@ -468,41 +549,48 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     else
         style.setTextDecorationsInEffect(style.textDecorationLine());
 
-    auto overflowReplacement = [] (Overflow overflow, Overflow overflowInOtherDimension) -> std::optional<Overflow> {
-        if (overflow != Overflow::Visible && overflow != Overflow::Clip) {
-            if (overflowInOtherDimension == Overflow::Visible)
-                return Overflow::Auto;
-            if (overflowInOtherDimension == Overflow::Clip)
-                return Overflow::Hidden;
-        }
-        return std::nullopt;
-    };
+    bool overflowIsClipOrVisible = isOverflowClipOrVisible(style.overflowX()) && isOverflowClipOrVisible(style.overflowX());
 
-    // If either overflow value is not visible, change to auto. Similarly if either overflow
-    // value is not clip, change to hidden.
-    // FIXME: Once we implement pagination controls, overflow-x should default to hidden
-    // if overflow-y is set to -webkit-paged-x or -webkit-page-y. For now, we'll let it
-    // default to auto so we can at least scroll through the pages.
-    if (auto replacement = overflowReplacement(style.overflowY(), style.overflowX()))
-        style.setOverflowX(*replacement);
-    else if (auto replacement = overflowReplacement(style.overflowX(), style.overflowY()))
-        style.setOverflowY(*replacement);
+    if (!overflowIsClipOrVisible && (style.display() == DisplayType::Table || style.display() == DisplayType::InlineTable)) {
+        // Tables only support overflow:hidden and overflow:visible and ignore anything else,
+        // see https://drafts.csswg.org/css2/#overflow. As a table is not a block
+        // container box the rules for resolving conflicting x and y values in CSS Overflow Module
+        // Level 3 do not apply. Arguably overflow-x and overflow-y aren't allowed on tables but
+        // all UAs allow it.
+        if (style.overflowX() != Overflow::Hidden)
+            style.setOverflowX(Overflow::Visible);
+        if (style.overflowY() != Overflow::Hidden)
+            style.setOverflowY(Overflow::Visible);
+        // If we are left with conflicting overflow values for the x and y axes on a table then resolve
+        // both to Overflow::Visible. This is interoperable behaviour but is not specced anywhere.
+        if (style.overflowX() == Overflow::Visible)
+            style.setOverflowY(Overflow::Visible);
+        else if (style.overflowY() == Overflow::Visible)
+            style.setOverflowX(Overflow::Visible);
+    } else if (!isOverflowClipOrVisible(style.overflowY())) {
+        // FIXME: Once we implement pagination controls, overflow-x should default to hidden
+        // if overflow-y is set to -webkit-paged-x or -webkit-page-y. For now, we'll let it
+        // default to auto so we can at least scroll through the pages.
+        // Values of 'clip' and 'visible' can only be used with 'clip' and 'visible'.
+        // If they aren't, 'clip' and 'visible' is reset.
+        if (style.overflowX() == Overflow::Visible)
+            style.setOverflowX(Overflow::Auto);
+        else if (style.overflowX() == Overflow::Clip)
+            style.setOverflowX(Overflow::Hidden);
+    } else if (!isOverflowClipOrVisible(style.overflowX())) {
+        // Values of 'clip' and 'visible' can only be used with 'clip' and 'visible'.
+        // If they aren't, 'clip' and 'visible' is reset.
+        if (style.overflowY() == Overflow::Visible)
+            style.setOverflowY(Overflow::Auto);
+        else if (style.overflowY() == Overflow::Clip)
+            style.setOverflowY(Overflow::Hidden);
+    }
 
     // Call setStylesForPaginationMode() if a pagination mode is set for any non-root elements. If these
     // styles are specified on a root element, then they will be incorporated in
     // Style::createForm_document.
     if ((style.overflowY() == Overflow::PagedX || style.overflowY() == Overflow::PagedY) && !(m_element && (m_element->hasTagName(htmlTag) || m_element->hasTagName(bodyTag))))
         style.setColumnStylesFromPaginationMode(WebCore::paginationModeForRenderStyle(style));
-
-    // Table rows, sections and the table itself will support overflow:hidden and will ignore scroll/auto.
-    // FIXME: Eventually table sections will support auto and scroll.
-    if (style.display() == DisplayType::Table || style.display() == DisplayType::InlineTable
-        || style.display() == DisplayType::TableRowGroup || style.display() == DisplayType::TableRow) {
-        if (style.overflowX() != Overflow::Visible && style.overflowX() != Overflow::Hidden && style.overflowX() != Overflow::Clip)
-            style.setOverflowX(Overflow::Visible);
-        if (style.overflowY() != Overflow::Visible && style.overflowY() != Overflow::Hidden && style.overflowY() != Overflow::Clip)
-            style.setOverflowY(Overflow::Visible);
-    }
 
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     // Touch overflow scrolling creates a stacking context.
@@ -604,9 +692,13 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             adjustForTextAutosizing(style, *m_element);
 #endif
     }
+    if (isSkippedContentRoot(style, m_element) && m_parentStyle.contentVisibility() != ContentVisibility::Hidden)
+        style.setSkippedContentReason(style.contentVisibility());
 
-    if (isSkippedContentRoot(style, m_element))
-        style.setEffectiveSkippedContent(true);
+    if (style.contentVisibility() == ContentVisibility::Auto) {
+        style.containIntrinsicWidthAddAuto();
+        style.containIntrinsicHeightAddAuto();
+    }
 
     adjustForSiteSpecificQuirks(style);
 }

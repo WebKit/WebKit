@@ -35,7 +35,9 @@
 #import "APIData.h"
 #import "CocoaHelpers.h"
 #import "FoundationSPI.h"
+#import "Logging.h"
 #import "_WKWebExtensionInternal.h"
+#import "_WKWebExtensionLocalization.h"
 #import "_WKWebExtensionPermission.h"
 #import <CoreFoundation/CFBundle.h>
 #import <UniformTypeIdentifiers/UTCoreTypes.h>
@@ -77,6 +79,7 @@ static NSString * const browserActionManifestKey = @"browser_action";
 static NSString * const pageActionManifestKey = @"page_action";
 
 static NSString * const defaultIconManifestKey = @"default_icon";
+static NSString * const defaultLocaleManifestKey = @"default_locale";
 static NSString * const defaultTitleManifestKey = @"default_title";
 static NSString * const defaultPopupManifestKey = @"default_popup";
 
@@ -141,15 +144,19 @@ WebExtension::WebExtension(NSURL *resourceBaseURL, NSError **outError)
 }
 
 WebExtension::WebExtension(NSDictionary *manifest, NSDictionary *resources)
-    : m_manifest([manifest copy])
-    , m_resources([resources mutableCopy])
-    , m_parsedManifest(true)
+    : m_resources([resources mutableCopy] ?: [NSMutableDictionary dictionary])
 {
     ASSERT(manifest);
+    ASSERT([NSJSONSerialization isValidJSONObject:manifest]);
+
+    NSData *manifestData = [NSJSONSerialization dataWithJSONObject:manifest options:0 error:nullptr];
+    RELEASE_ASSERT(manifestData);
+
+    [m_resources setObject:manifestData forKey:@"manifest.json"];
 }
 
 WebExtension::WebExtension(NSDictionary *resources)
-    : m_resources([resources mutableCopy])
+    : m_resources([resources mutableCopy] ?: [NSMutableDictionary dictionary])
 {
 }
 
@@ -187,7 +194,14 @@ NSDictionary *WebExtension::manifest()
     if (!parseManifest(manifestData))
         return nil;
 
-    // FIXME: <https://webkit.org/b/246488> Handle manifest localization.
+    NSString *defaultLocale = [m_manifest objectForKey:defaultLocaleManifestKey];
+    m_defaultLocale = [NSLocale localeWithLocaleIdentifier:defaultLocale];
+
+    m_localization = [[_WKWebExtensionLocalization alloc] initWithWebExtension:*this];
+
+    m_manifest = [m_localization.get() localizedDictionaryForDictionary:m_manifest.get()];
+    ASSERT(m_manifest);
+
     // FIXME: Handle Safari version compatibility check.
     // Likely do this version checking when the extension is added to the WKWebExtensionController,
     // since that will need delegated to the app.
@@ -205,6 +219,11 @@ double WebExtension::manifestVersion()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/manifest_version
 
     return objectForKey<NSNumber>(manifest(), manifestVersionManifestKey).doubleValue;
+}
+
+Ref<API::Data> WebExtension::serializeLocalization()
+{
+    return API::Data::createWithoutCopying([NSJSONSerialization dataWithJSONObject:m_localization.get().localizationDictionary options:0 error:nullptr]);
 }
 
 #if PLATFORM(MAC)
@@ -281,8 +300,10 @@ NSURL *WebExtension::resourceFileURLForPath(NSString *path)
     NSURL *resourceURL = [NSURL fileURLWithPath:path.stringByRemovingPercentEncoding isDirectory:NO relativeToURL:m_resourceBaseURL.get()].URLByStandardizingPath;
 
     // Don't allow escaping the base URL with "../".
-    if (![resourceURL.absoluteString hasPrefix:m_resourceBaseURL.get().absoluteString])
+    if (![resourceURL.absoluteString hasPrefix:m_resourceBaseURL.get().absoluteString]) {
+        RELEASE_LOG_ERROR(Extensions, "Resource URL path escape attempt: %{private}@", resourceURL);
         return nil;
+    }
 
     return resourceURL;
 }
@@ -330,6 +351,9 @@ NSData *WebExtension::resourceDataForPath(NSString *path, CacheResult cacheResul
 
     if (NSString *cachedString = objectForKey<NSString>(m_resources, path))
         return [cachedString dataUsingEncoding:NSUTF8StringEncoding];
+
+    if (NSDictionary *cachedDictionary = objectForKey<NSDictionary>(m_resources, path))
+        return [NSJSONSerialization dataWithJSONObject:cachedDictionary options:0 error:nullptr];
 
     if ([path isEqualToString:generatedBackgroundPageFilename])
         return [generatedBackgroundContent() dataUsingEncoding:NSUTF8StringEncoding];
@@ -555,6 +579,8 @@ void WebExtension::recordError(NSError *error, SuppressNotification suppressNoti
     if (!m_errors)
         m_errors = [NSMutableArray array];
 
+    RELEASE_LOG_ERROR(Extensions, "Error recorded: %{private}@", error);
+
     [m_errors addObject:error];
 
     if (suppressNotification == SuppressNotification::Yes)
@@ -583,6 +609,22 @@ NSString *WebExtension::webProcessDisplayName()
 ALLOW_NONLITERAL_FORMAT_BEGIN
     return [NSString stringWithFormat:WEB_UI_STRING("%@ Web Extension", "Extension's process name that appears in Activity Monitor where the parameter is the name of the extension"), displayShortName()];
 ALLOW_NONLITERAL_FORMAT_END
+}
+
+_WKWebExtensionLocalization *WebExtension::localization()
+{
+    if (!manifestParsedSuccessfully())
+        return nil;
+
+    return m_localization.get();
+}
+
+NSLocale *WebExtension::defaultLocale()
+{
+    if (!manifestParsedSuccessfully())
+        return nil;
+
+    return m_defaultLocale.get();
 }
 
 NSString *WebExtension::displayName()

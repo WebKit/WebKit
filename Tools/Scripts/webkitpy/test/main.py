@@ -135,7 +135,7 @@ class Tester(object):
         self._options = None
         self.upload_style = 'release'
 
-    def add_tree(self, top_directory, starting_subdirectory=None):
+    def add_tree(self, top_directory, starting_subdirectory):
         self.finder.add_tree(top_directory, starting_subdirectory)
 
     def skip(self, names, reason, bugid):

@@ -61,7 +61,7 @@ struct PossiblyQuotedIdentifier {
         std::array<uint8_t, 3> computeSpecificityTuple() const;
         unsigned specificityForPage() const;
 
-        void visitAllSimpleSelectors(auto& apply) const;
+        bool visitAllSimpleSelectors(auto& apply) const;
 
         bool hasExplicitNestingParent() const;
         void resolveNestingParentSelectors(const CSSSelectorList& parent);
@@ -83,7 +83,9 @@ struct PossiblyQuotedIdentifier {
             Begin, // css3: E[foo^="bar"]
             End, // css3: E[foo$="bar"]
             PagePseudoClass,
-            NestingParent // &
+            NestingParent, // &
+            ForgivingUnknown,
+            ForgivingUnknownNestContaining
         };
 
         enum class RelationType : uint8_t {
@@ -147,7 +149,7 @@ struct PossiblyQuotedIdentifier {
             Not,
             Root,
             Scope,
-            RelativeScope, // Like :scope but for internal use with relative selectors like :has(> foo).
+            HasScope, // for internal use, matches the :has() scope
             WindowInactive,
             CornerPresent,
             Decrement,
@@ -325,8 +327,9 @@ struct PossiblyQuotedIdentifier {
 
     private:
         unsigned m_relation : 4 { static_cast<unsigned>(RelationType::DescendantSpace) }; // enum RelationType.
-        mutable unsigned m_match : 4 { static_cast<unsigned>(Match::Unknown) }; // enum Match.
+        mutable unsigned m_match : 5 { static_cast<unsigned>(Match::Unknown) }; // enum Match.
         mutable unsigned m_pseudoType : 8 { 0 }; // PseudoType.
+        // 17 bits
         unsigned m_isLastInSelectorList : 1 { false };
         unsigned m_isFirstInTagHistory : 1 { true };
         unsigned m_isLastInTagHistory : 1 { true };
@@ -334,6 +337,7 @@ struct PossiblyQuotedIdentifier {
         unsigned m_isForPage : 1 { false };
         unsigned m_tagIsForNamespaceRule : 1 { false };
         unsigned m_caseInsensitiveAttributeValueMatching : 1 { false };
+        // 24 bits
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
         unsigned m_destructorHasBeenCalled : 1 { false };
 #endif

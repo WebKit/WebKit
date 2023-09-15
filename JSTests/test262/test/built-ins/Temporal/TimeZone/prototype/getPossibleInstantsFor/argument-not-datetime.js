@@ -8,11 +8,11 @@ features: [Temporal]
 ---*/
 
 const timeZone = Temporal.TimeZone.from("UTC");
-assert.throws(RangeError, () => timeZone.getPossibleInstantsFor(undefined), "undefined");
-assert.throws(RangeError, () => timeZone.getPossibleInstantsFor(null), "null");
-assert.throws(RangeError, () => timeZone.getPossibleInstantsFor(true), "boolean");
+assert.throws(TypeError, () => timeZone.getPossibleInstantsFor(undefined), "undefined");
+assert.throws(TypeError, () => timeZone.getPossibleInstantsFor(null), "null");
+assert.throws(TypeError, () => timeZone.getPossibleInstantsFor(true), "boolean");
 assert.throws(RangeError, () => timeZone.getPossibleInstantsFor(""), "empty string");
 assert.throws(TypeError, () => timeZone.getPossibleInstantsFor(Symbol()), "Symbol");
-assert.throws(RangeError, () => timeZone.getPossibleInstantsFor(5), "number");
-assert.throws(RangeError, () => timeZone.getPossibleInstantsFor(5n), "bigint");
+assert.throws(TypeError, () => timeZone.getPossibleInstantsFor(5), "number");
+assert.throws(TypeError, () => timeZone.getPossibleInstantsFor(5n), "bigint");
 assert.throws(TypeError, () => timeZone.getPossibleInstantsFor({}), "plain object");

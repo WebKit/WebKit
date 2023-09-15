@@ -168,7 +168,7 @@ public:
         out.print("]");
     }
 
-    inline constexpr bool operator==(const RegisterSetBuilder& other) const { return m_bits == other.m_bits && m_upperBits == other.m_upperBits; }
+    friend constexpr bool operator==(const RegisterSetBuilder&, const RegisterSetBuilder&) = default;
 
 protected:
     inline constexpr void setAny(Reg reg) { ASSERT(!reg.isFPR()); add(reg, IgnoreVectors); }
@@ -335,10 +335,7 @@ public:
             return *this;
         }
 
-        inline constexpr bool operator==(const iterator& other) const
-        {
-            return m_iter == other.m_iter;
-        }
+        friend constexpr bool operator==(const iterator&, const iterator&) = default;
 
     private:
         RegisterBitSet::iterator m_iter;
@@ -415,7 +412,7 @@ public:
         out.print("]");
     }
 
-    inline constexpr bool operator==(const RegisterSet& other) const { return m_bits == other.m_bits && m_upperBits == other.m_upperBits; }
+    friend constexpr bool operator==(const RegisterSet&, const RegisterSet&) = default;
 
 private:
     RegisterBitSet m_bits = { };
@@ -463,7 +460,7 @@ public:
 
     inline constexpr unsigned hash() const { return m_bits.hash(); }
     inline uint64_t bitsForDebugging() const { return *m_bits.storage(); }
-    inline constexpr bool operator==(const ScalarRegisterSet& other) const { return m_bits == other.m_bits; }
+    friend constexpr bool operator==(const ScalarRegisterSet&, const ScalarRegisterSet&) = default;
 
     inline constexpr RegisterSet toRegisterSet() const WARN_UNUSED_RETURN
     {

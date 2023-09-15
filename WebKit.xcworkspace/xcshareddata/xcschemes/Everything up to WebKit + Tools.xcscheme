@@ -126,9 +126,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1A50DB38110A3C13000D3FE5"
-               BuildableName = "Framework, XPC Services, and daemons"
-               BlueprintName = "Framework, XPC Services, and daemons"
+               BlueprintIdentifier = "CD0C36D52639D39A004E35D8"
+               BuildableName = "Everything"
+               BlueprintName = "Everything"
                ReferencedContainer = "container:Source/WebKit/WebKit.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

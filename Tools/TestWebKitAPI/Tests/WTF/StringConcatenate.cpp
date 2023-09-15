@@ -145,31 +145,31 @@ TEST(WTF, StringConcatenate_Double)
 TEST(WTF, StringConcatenate_FormattedDoubleFixedPrecision)
 {
     EXPECT_STREQ("hello 17890 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.0) , " world").utf8().data());
-    EXPECT_STREQ("hello 17890.0 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.0, 6, KeepTrailingZeros) , " world").utf8().data());
-    EXPECT_STREQ("hello 1.79e+4 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.0, 3, KeepTrailingZeros) , " world").utf8().data());
-    EXPECT_STREQ("hello 17890.000 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.0, 8, KeepTrailingZeros) , " world").utf8().data());
+    EXPECT_STREQ("hello 17890.0 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.0, 6, TrailingZerosPolicy::Keep) , " world").utf8().data());
+    EXPECT_STREQ("hello 1.79e+4 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.0, 3, TrailingZerosPolicy::Keep) , " world").utf8().data());
+    EXPECT_STREQ("hello 17890.000 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.0, 8, TrailingZerosPolicy::Keep) , " world").utf8().data());
     EXPECT_STREQ("hello 17890 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.0, 8) , " world").utf8().data());
 
     EXPECT_STREQ("hello 17890.5 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.5) , " world").utf8().data());
-    EXPECT_STREQ("hello 1.79e+4 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.5, 3, KeepTrailingZeros) , " world").utf8().data());
-    EXPECT_STREQ("hello 17890.500 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.5, 8, KeepTrailingZeros) , " world").utf8().data());
+    EXPECT_STREQ("hello 1.79e+4 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.5, 3, TrailingZerosPolicy::Keep) , " world").utf8().data());
+    EXPECT_STREQ("hello 17890.500 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.5, 8, TrailingZerosPolicy::Keep) , " world").utf8().data());
     EXPECT_STREQ("hello 17890.5 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.5, 8) , " world").utf8().data());
 
     EXPECT_STREQ("hello -17890 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.0) , " world").utf8().data());
-    EXPECT_STREQ("hello -17890.0 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.0, 6, KeepTrailingZeros) , " world").utf8().data());
-    EXPECT_STREQ("hello -1.79e+4 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.0, 3, KeepTrailingZeros) , " world").utf8().data());
-    EXPECT_STREQ("hello -17890.000 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.0, 8, KeepTrailingZeros) , " world").utf8().data());
+    EXPECT_STREQ("hello -17890.0 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.0, 6, TrailingZerosPolicy::Keep) , " world").utf8().data());
+    EXPECT_STREQ("hello -1.79e+4 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.0, 3, TrailingZerosPolicy::Keep) , " world").utf8().data());
+    EXPECT_STREQ("hello -17890.000 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.0, 8, TrailingZerosPolicy::Keep) , " world").utf8().data());
     EXPECT_STREQ("hello -17890 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.0, 8) , " world").utf8().data());
 
     EXPECT_STREQ("hello -17890.5 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.5) , " world").utf8().data());
-    EXPECT_STREQ("hello -1.79e+4 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.5, 3, KeepTrailingZeros) , " world").utf8().data());
-    EXPECT_STREQ("hello -17890.500 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.5, 8, KeepTrailingZeros) , " world").utf8().data());
+    EXPECT_STREQ("hello -1.79e+4 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.5, 3, TrailingZerosPolicy::Keep) , " world").utf8().data());
+    EXPECT_STREQ("hello -17890.500 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.5, 8, TrailingZerosPolicy::Keep) , " world").utf8().data());
     EXPECT_STREQ("hello -17890.5 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.5, 8) , " world").utf8().data());
 
     EXPECT_STREQ("hello 0 world", makeString("hello ", FormattedNumber::fixedPrecision(0.0) , " world").utf8().data());
-    EXPECT_STREQ("hello 0.00000 world", makeString("hello ", FormattedNumber::fixedPrecision(0.0, 6, KeepTrailingZeros) , " world").utf8().data());
-    EXPECT_STREQ("hello 0.00 world", makeString("hello ", FormattedNumber::fixedPrecision(0.0, 3, KeepTrailingZeros) , " world").utf8().data());
-    EXPECT_STREQ("hello 0.0000000 world", makeString("hello ", FormattedNumber::fixedPrecision(0.0, 8, KeepTrailingZeros) , " world").utf8().data());
+    EXPECT_STREQ("hello 0.00000 world", makeString("hello ", FormattedNumber::fixedPrecision(0.0, 6, TrailingZerosPolicy::Keep) , " world").utf8().data());
+    EXPECT_STREQ("hello 0.00 world", makeString("hello ", FormattedNumber::fixedPrecision(0.0, 3, TrailingZerosPolicy::Keep) , " world").utf8().data());
+    EXPECT_STREQ("hello 0.0000000 world", makeString("hello ", FormattedNumber::fixedPrecision(0.0, 8, TrailingZerosPolicy::Keep) , " world").utf8().data());
     EXPECT_STREQ("hello 0 world", makeString("hello ", FormattedNumber::fixedPrecision(0.0, 8) , " world").utf8().data());
 }
 

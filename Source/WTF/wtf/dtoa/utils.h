@@ -52,7 +52,6 @@ inline void abort_noreturn() { abort(); }
 #endif
 #endif
 
-
 // Double operations detection based on target architecture.
 // Linux uses a 80bit wide floating point stack on x86. This induces double
 // rounding, which in turn leads to wrong results.
@@ -162,6 +161,15 @@ typedef uint16_t uc16;
 #define DC_DISALLOW_IMPLICIT_CONSTRUCTORS(TypeName) \
   TypeName();                                    \
   DC_DISALLOW_COPY_AND_ASSIGN(TypeName)
+#endif
+
+// On Cocoa platforms, CoreUtils.h has Min() and Max() macros that sometimes get included above here.
+#ifdef Min
+#undef Min
+#endif
+
+#ifdef Max
+#undef Max
 #endif
 
 namespace WTF {

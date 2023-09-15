@@ -468,11 +468,12 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearchWithCache(VM& vm, JSGloba
             return nullptr;
         }
 
-        vm.stringReplaceCache.set(source, regExp, result, globalObject->regExpGlobalData().ovector());
+        vm.stringReplaceCache.set(source, regExp, result, globalObject->regExpGlobalData().matchResult(), globalObject->regExpGlobalData().ovector());
     } else {
         result = entry->m_result;
         auto lastMatch = entry->m_lastMatch;
-        globalObject->regExpGlobalData().resetResultFromCache(globalObject, regExp, string, WTFMove(lastMatch));
+        auto matchResult = entry->m_matchResult;
+        globalObject->regExpGlobalData().resetResultFromCache(globalObject, regExp, string, matchResult, WTFMove(lastMatch));
     }
 
     // regExp->numSubpatterns() + 1 for pattern args, + 2 for match start and string

@@ -21,9 +21,7 @@ enum VideoCodecType {
   kVideoCodecVP9,
   kVideoCodecAV1,
   kVideoCodecH264,
-#ifndef DISABLE_H265
   kVideoCodecH265,
-#endif
   kVideoCodecMultiplex,
 };
 

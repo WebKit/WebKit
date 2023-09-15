@@ -242,6 +242,22 @@ void Worker::dispatchEvent(Event& event)
     }
 }
 
+void Worker::reportError(const String& errorMessage)
+{
+    if (m_wasTerminated)
+        return;
+
+    queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [this, errorMessage] {
+        if (m_wasTerminated)
+            return;
+
+        auto event = Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No);
+        AbstractWorker::dispatchEvent(event);
+        if (!event->defaultPrevented() && scriptExecutionContext())
+            scriptExecutionContext()->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Error, errorMessage));
+    });
+}
+
 #if ENABLE(WEB_RTC)
 void Worker::createRTCRtpScriptTransformer(RTCRtpScriptTransform& transform, MessageWithMessagePorts&& options)
 {

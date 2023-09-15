@@ -24,14 +24,14 @@
 #if USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
 
 messages -> LibWebRTCCodecsProxy NotRefCounted {
-    CreateDecoder(WebKit::VideoDecoderIdentifier id, enum:uint8_t WebKit::VideoCodecType codecType, bool useRemoteFrames, bool enableAdditionalLogging)
+    CreateDecoder(WebKit::VideoDecoderIdentifier id, enum:uint8_t WebKit::VideoCodecType codecType, String codecString, bool useRemoteFrames, bool enableAdditionalLogging) -> (bool success);
     ReleaseDecoder(WebKit::VideoDecoderIdentifier id)
     FlushDecoder(WebKit::VideoDecoderIdentifier id)
     SetDecoderFormatDescription(WebKit::VideoDecoderIdentifier id, IPC::DataReference description, uint16_t width, uint16_t height)
     DecodeFrame(WebKit::VideoDecoderIdentifier id, int64_t timeStamp, IPC::DataReference data)
     SetFrameSize(WebKit::VideoDecoderIdentifier id, uint16_t width, uint16_t height)
 
-    CreateEncoder(WebKit::VideoEncoderIdentifier id, enum:uint8_t WebKit::VideoCodecType codecType, Vector<std::pair<String, String>> parameters, bool useLowLatency, bool useAnnexB);
+    CreateEncoder(WebKit::VideoEncoderIdentifier id, enum:uint8_t WebKit::VideoCodecType codecType, String codecString, Vector<std::pair<String, String>> parameters, bool useLowLatency, bool useAnnexB) -> (bool success);
     ReleaseEncoder(WebKit::VideoEncoderIdentifier id)
     InitializeEncoder(WebKit::VideoEncoderIdentifier id, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate)
     EncodeFrame(WebKit::VideoEncoderIdentifier id, struct WebKit::SharedVideoFrame buffer, int64_t timeStamp, std::optional<uint64_t> duration, bool shouldEncodeAsKeyFrame)

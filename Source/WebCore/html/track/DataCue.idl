@@ -24,11 +24,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+ // https://wicg.github.io/datacue/#datacue-interface
+
 [
     Conditional=VIDEO,
     Exposed=Window
 ] interface DataCue : TextTrackCue {
     [CallWith=CurrentDocument] constructor(unrestricted double startTime, unrestricted double endTime, ArrayBuffer data);
+    // FIXME: Remove 'unrestricted' from 'startTime' to align with the specification: See: https://bugs.webkit.org/show_bug.cgi?id=260764
     [CallWith=CurrentDocument] constructor(unrestricted double startTime, unrestricted double endTime, any value, optional DOMString type);
 
     attribute ArrayBuffer data;

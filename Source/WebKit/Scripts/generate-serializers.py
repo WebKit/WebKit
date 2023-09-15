@@ -22,6 +22,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
 import re
 import sys
 
@@ -596,7 +597,7 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
     result.append('    static constexpr bool value = true;')
     result.append('};')
     result.append('template<uint64_t firstBit, uint64_t secondBit, uint64_t... remainingBits> struct BitsInIncreasingOrder<firstBit, secondBit, remainingBits...> {')
-    result.append('    static constexpr bool value = firstBit < secondBit && BitsInIncreasingOrder<secondBit, remainingBits...>::value;')
+    result.append('    static constexpr bool value = firstBit == secondBit >> 1 && BitsInIncreasingOrder<secondBit, remainingBits...>::value;')
     result.append('};')
     result.append('')
     result.append('template<bool, bool> struct VirtualTableAndRefCountOverhead;')
@@ -879,7 +880,7 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers, t
     return '\n'.join(result)
 
 
-def parse_serialized_types(file, file_name):
+def parse_serialized_types(file):
     serialized_types = []
     serialized_enums = []
     typedefs = []
@@ -990,7 +991,7 @@ def parse_serialized_types(file, file_name):
         if match:
             struct_or_class, name = match.groups()
             continue
-        match = re.search(r'using (.*) = (.*)', line)
+        match = re.search(r'using (.*) = ([^;]*)', line)
         if match:
             typedefs.append(match.groups())
             continue
@@ -1037,9 +1038,19 @@ def main(argv):
     headers = []
     header_set = set()
     file_extension = argv[1]
-    for i in range(3, len(argv)):
-        with open(argv[2] + argv[i]) as file:
-            new_types, new_enums, new_headers, new_typedefs = parse_serialized_types(file, argv[i])
+    skip = False
+    directory = None
+    for i in range(2, len(argv)):
+        if skip:
+            directory = argv[i]
+            skip = False
+            continue
+        if argv[i] == 'DIRECTORY':
+            skip = True
+            continue
+        path = os.path.sep.join([directory, argv[i]])
+        with open(path) as file:
+            new_types, new_enums, new_headers, new_typedefs = parse_serialized_types(file)
             for type in new_types:
                 serialized_types.append(type)
             for enum in new_enums:

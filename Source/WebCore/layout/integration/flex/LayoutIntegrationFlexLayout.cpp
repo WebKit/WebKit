@@ -48,10 +48,10 @@ FlexLayout::FlexLayout(RenderFlexibleBox& flexBoxRenderer)
 }
 
 // FIXME: Merge these with the other integration layout functions.
-static inline Layout::Edges flexBoxLogicalBorder(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, WritingMode writingMode)
+static inline Layout::Edges flexBoxLogicalBorder(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, BlockFlowDirection blockFlowDirection)
 {
     UNUSED_PARAM(isLeftToRightInlineDirection);
-    UNUSED_PARAM(writingMode);
+    UNUSED_PARAM(blockFlowDirection);
 
     auto borderLeft = renderer.borderLeft();
     auto borderRight = renderer.borderRight();
@@ -61,10 +61,10 @@ static inline Layout::Edges flexBoxLogicalBorder(const RenderBoxModelObject& ren
     return { { borderLeft, borderRight }, { borderTop, borderBottom } };
 }
 
-static inline Layout::Edges flexBoxLogicalPadding(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, WritingMode writingMode)
+static inline Layout::Edges flexBoxLogicalPadding(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, BlockFlowDirection blockFlowDirection)
 {
     UNUSED_PARAM(isLeftToRightInlineDirection);
-    UNUSED_PARAM(writingMode);
+    UNUSED_PARAM(blockFlowDirection);
 
     auto paddingLeft = renderer.paddingLeft();
     auto paddingRight = renderer.paddingRight();
@@ -80,11 +80,11 @@ void FlexLayout::updateFormattingRootGeometryAndInvalidate()
         auto& flexBoxRenderer = this->flexBoxRenderer();
 
         auto isLeftToRightInlineDirection = flexBoxRenderer.style().isLeftToRightDirection();
-        auto writingMode = flexBoxRenderer.style().writingMode();
+        auto blockFlowDirection = writingModeToBlockFlowDirection(flexBoxRenderer.style().writingMode());
 
-        root.setContentBoxWidth(writingMode == WritingMode::TopToBottom ? flexBoxRenderer.contentWidth() : flexBoxRenderer.contentHeight());
-        root.setPadding(flexBoxLogicalPadding(flexBoxRenderer, isLeftToRightInlineDirection, writingMode));
-        root.setBorder(flexBoxLogicalBorder(flexBoxRenderer, isLeftToRightInlineDirection, writingMode));
+        root.setContentBoxWidth(blockFlowDirection == BlockFlowDirection::TopToBottom ? flexBoxRenderer.contentWidth() : flexBoxRenderer.contentHeight());
+        root.setPadding(flexBoxLogicalPadding(flexBoxRenderer, isLeftToRightInlineDirection, blockFlowDirection));
+        root.setBorder(flexBoxLogicalBorder(flexBoxRenderer, isLeftToRightInlineDirection, blockFlowDirection));
         root.setHorizontalMargin({ });
         root.setVerticalMargin({ });
     };

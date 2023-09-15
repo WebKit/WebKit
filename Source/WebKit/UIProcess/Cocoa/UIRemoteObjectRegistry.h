@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RemoteObjectRegistry.h"
+#include <wtf/CheckedRef.h>
 
 namespace WebKit {
 
@@ -34,15 +35,17 @@ class WebPageProxy;
 class UIRemoteObjectRegistry final : public RemoteObjectRegistry {
 public:
     UIRemoteObjectRegistry(_WKRemoteObjectRegistry *, WebPageProxy&);
-    
+    ~UIRemoteObjectRegistry();
+
     void sendInvocation(const RemoteObjectInvocation&) final;
 
 private:
+    Ref<WebPageProxy> protectedPage();
     IPC::MessageSender& messageSender() final;
     uint64_t messageDestinationID() final;
     std::unique_ptr<ProcessThrottler::BackgroundActivity> backgroundActivity(ASCIILiteral) final;
 
-    WebPageProxy& m_page;
+    CheckedRef<WebPageProxy> m_page;
 };
 
 } // namespace WebKit

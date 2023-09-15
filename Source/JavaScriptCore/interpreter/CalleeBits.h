@@ -31,11 +31,8 @@
 
 namespace JSC {
 
-namespace Wasm {
-class Callee;
-}
-
 class JSCell;
+class NativeCallee;
 
 class CalleeBits {
 public:
@@ -59,48 +56,42 @@ public:
         return *this;
     }
 
-#if ENABLE(WEBASSEMBLY)
-    static void* boxWasm(Wasm::Callee* callee)
+    static void* boxNativeCallee(NativeCallee* callee)
     {
 #if USE(JSVALUE64)
-        CalleeBits result { static_cast<int64_t>((bitwise_cast<uintptr_t>(callee) - lowestAccessibleAddress()) | JSValue::WasmTag) };
-        ASSERT(result.isWasm());
+        CalleeBits result { static_cast<int64_t>((bitwise_cast<uintptr_t>(callee) - lowestAccessibleAddress()) | JSValue::NativeCalleeTag) };
+        ASSERT(result.isNativeCallee());
         return result.rawPtr();
 #elif USE(JSVALUE32_64)
         return bitwise_cast<void*>(bitwise_cast<uintptr_t>(callee) - lowestAccessibleAddress());
 #endif
     }
-#endif
 
-    bool isWasm() const
+    bool isNativeCallee() const
     {
-#if !ENABLE(WEBASSEMBLY)
-        return false;
-#elif USE(JSVALUE64)
-        return (reinterpret_cast<uintptr_t>(m_ptr) & JSValue::WasmMask) == JSValue::WasmTag;
+#if USE(JSVALUE64)
+        return (reinterpret_cast<uintptr_t>(m_ptr) & JSValue::NativeCalleeMask) == JSValue::NativeCalleeTag;
 #elif USE(JSVALUE32_64)
-        return m_tag == JSValue::WasmTag;
+        return m_tag == JSValue::NativeCalleeTag;
 #endif
     }
-    bool isCell() const { return !isWasm(); }
+    bool isCell() const { return !isNativeCallee(); }
 
     JSCell* asCell() const
     {
-        ASSERT(!isWasm());
+        ASSERT(!isNativeCallee());
         return static_cast<JSCell*>(m_ptr);
     }
 
-#if ENABLE(WEBASSEMBLY)
-    Wasm::Callee* asWasmCallee() const
+    NativeCallee* asNativeCallee() const
     {
-        ASSERT(isWasm());
+        ASSERT(isNativeCallee());
 #if USE(JSVALUE64)
-        return bitwise_cast<Wasm::Callee*>((bitwise_cast<uintptr_t>(m_ptr) & ~JSValue::WasmTag) + lowestAccessibleAddress());
+        return bitwise_cast<NativeCallee*>(static_cast<uintptr_t>(bitwise_cast<uintptr_t>(m_ptr) & ~JSValue::NativeCalleeTag) + lowestAccessibleAddress());
 #elif USE(JSVALUE32_64)
-        return bitwise_cast<Wasm::Callee*>(bitwise_cast<uintptr_t>(m_ptr) + lowestAccessibleAddress());
+        return bitwise_cast<NativeCallee*>(bitwise_cast<uintptr_t>(m_ptr) + lowestAccessibleAddress());
 #endif
     }
-#endif
 
     void* rawPtr() const { return m_ptr; }
 

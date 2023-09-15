@@ -416,7 +416,10 @@ public:
         m_entryScopeServices.add(service);
     }
 
-    JS_EXPORT_PRIVATE void performOpportunisticallyScheduledTasks(MonotonicTime deadline);
+    enum class SchedulerOptions : uint8_t {
+        HasImminentlyScheduledWork = 1 << 0,
+    };
+    JS_EXPORT_PRIVATE void performOpportunisticallyScheduledTasks(MonotonicTime deadline, OptionSet<SchedulerOptions>);
 
 private:
     VMIdentifier m_identifier;
@@ -494,6 +497,7 @@ public:
     ALWAYS_INLINE GCClient::IsoSubspace& unlinkedFunctionExecutableSpace() { return clientHeap.unlinkedFunctionExecutableSpace; }
 
     VMType vmType;
+    bool m_mightBeExecutingTaintedCode { false };
     ClientData* clientData { nullptr };
     EntryFrame* topEntryFrame { nullptr };
     // NOTE: When throwing an exception while rolling back the call frame, this may be equal to
@@ -579,6 +583,10 @@ public:
     StringSplitCache stringSplitCache;
     Vector<unsigned> stringSplitIndice;
     StringReplaceCache stringReplaceCache;
+
+    bool mightBeExecutingTaintedCode() const { return m_mightBeExecutingTaintedCode; }
+    bool* addressOfMightBeExecutingTaintedCode() { return &m_mightBeExecutingTaintedCode; }
+    void setMightBeExecutingTaintedCode(bool value = true) { m_mightBeExecutingTaintedCode = value; }
 
     AtomStringTable* atomStringTable() const { return m_atomStringTable; }
     WTF::SymbolRegistry& symbolRegistry() { return m_symbolRegistry; }
@@ -920,11 +928,20 @@ public:
     DrainMicrotaskDelayScope drainMicrotaskDelayScope() { return DrainMicrotaskDelayScope { *this }; }
     JS_EXPORT_PRIVATE void drainMicrotasks();
     void setOnEachMicrotaskTick(WTF::Function<void(VM&)>&& func) { m_onEachMicrotaskTick = WTFMove(func); }
+// <<<<<<< HEAD
     
     WTF::Function<String(VM&, Vector<StackFrame>& stackTrace, unsigned &line, unsigned &column, String& sourceURL, JSC::JSObject*)>& onComputeErrorInfo() { return m_onComputeErrorInfo; }
     void setOnComputeErrorInfo(WTF::Function<String(VM&, Vector<StackFrame>& stackTrace, unsigned &line, unsigned &column, String& sourceURL, JSC::JSObject*)>&& func) { m_onComputeErrorInfo = WTFMove(func); }
     
-    void finalizeSynchronousJSExecution() { ASSERT(currentThreadIsHoldingAPILock()); m_currentWeakRefVersion++; }
+    // void finalizeSynchronousJSExecution() { ASSERT(currentThreadIsHoldingAPILock()); m_currentWeakRefVersion++; }
+// =======
+    void finalizeSynchronousJSExecution()
+    {
+        ASSERT(currentThreadIsHoldingAPILock());
+        m_currentWeakRefVersion++;
+        setMightBeExecutingTaintedCode(false);
+    }
+// >>>>>>> upstream/main
     uintptr_t currentWeakRefVersion() const { return m_currentWeakRefVersion; }
 
     void setGlobalConstRedeclarationShouldThrow(bool globalConstRedeclarationThrow) { m_globalConstRedeclarationShouldThrow = globalConstRedeclarationThrow; }

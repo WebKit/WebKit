@@ -17,6 +17,8 @@
 namespace gl
 {
 class Context;
+class PrivateState;
+class ErrorSet;
 
 bool ValidateBeginQuery(const Context *context,
                         angle::EntryPoint entryPoint,
@@ -539,25 +541,29 @@ bool ValidateVertexAttribDivisor(const Context *context,
                                  angle::EntryPoint entryPoint,
                                  GLuint index,
                                  GLuint divisor);
-bool ValidateVertexAttribI4i(const Context *context,
+bool ValidateVertexAttribI4i(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              GLint x,
                              GLint y,
                              GLint z,
                              GLint w);
-bool ValidateVertexAttribI4iv(const Context *context,
+bool ValidateVertexAttribI4iv(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               const GLint *v);
-bool ValidateVertexAttribI4ui(const Context *context,
+bool ValidateVertexAttribI4ui(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               GLuint x,
                               GLuint y,
                               GLuint z,
                               GLuint w);
-bool ValidateVertexAttribI4uiv(const Context *context,
+bool ValidateVertexAttribI4uiv(const PrivateState &state,
+                               ErrorSet *errors,
                                angle::EntryPoint entryPoint,
                                GLuint index,
                                const GLuint *v);

@@ -72,8 +72,14 @@ void ImageBitmapBacking::disconnect()
     // FIXME: Rather than storing both the ImageBuffer and the
     // SerializedImageBuffer here, with only one valid at a time,
     // we should have a separate object for the serialized state
-    if (m_bitmapData)
-        m_serializedBitmap = ImageBuffer::sinkIntoSerializedImageBuffer(WTFMove(m_bitmapData));
+    if (m_bitmapData) {
+        if (m_bitmapData->hasOneRef())
+            m_serializedBitmap = ImageBuffer::sinkIntoSerializedImageBuffer(WTFMove(m_bitmapData));
+        else {
+            m_serializedBitmap = ImageBuffer::sinkIntoSerializedImageBuffer(m_bitmapData->clone());
+            m_bitmapData = nullptr;
+        }
+    }
     ASSERT(!m_bitmapData);
 }
 
@@ -82,15 +88,7 @@ void ImageBitmapBacking::connect(ScriptExecutionContext& context)
     ASSERT(!m_bitmapData);
     if (!m_serializedBitmap)
         return;
-
-    if (is<WorkerGlobalScope>(context) && downcast<WorkerGlobalScope>(context).workerClient()) {
-        auto* client = downcast<WorkerGlobalScope>(context).workerClient();
-        m_bitmapData = client->sinkIntoImageBuffer(WTFMove(m_serializedBitmap));
-    } else if (is<Document>(context)) {
-        ASSERT(downcast<Document>(context).page());
-        m_bitmapData = downcast<Document>(context).page()->chrome().sinkIntoImageBuffer(WTFMove(m_serializedBitmap));
-    } else
-        m_bitmapData = SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(m_serializedBitmap));
+    m_bitmapData = SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(m_serializedBitmap), context.graphicsClient());
 }
 
 } // namespace WebCore

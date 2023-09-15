@@ -187,6 +187,7 @@
     ],
     "From GL_ANGLE_rgbx_internal_format":
     [
-        [ "GL_RGBX8_ANGLE", "GL_RGB", "GL_UNSIGNED_BYTE" ]
+        [ "GL_RGBX8_ANGLE", "GL_RGB", "GL_UNSIGNED_BYTE" ],
+        [ "GL_RGBX8_SRGB_ANGLEX", "GL_RGB", "GL_UNSIGNED_BYTE" ]
     ]
 }

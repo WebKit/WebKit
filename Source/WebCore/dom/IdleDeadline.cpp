@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "LocalDOMWindow.h"
 #include "Performance.h"
+#include "WindowEventLoop.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -36,21 +37,12 @@ namespace WebCore {
 DOMHighResTimeStamp IdleDeadline::timeRemaining(Document& document) const
 {
     RefPtr window { document.domWindow() };
-    if (!window)
+    if (!window || m_didTimeout == DidTimeout::Yes)
         return 0;
-    return window->performance().relativeTimeFromTimeOriginInReducedResolution(m_deadline);
-}
-
-bool IdleDeadline::didTimeout(Document& document) const
-{
-    RefPtr window { document.domWindow() };
-    if (!window)
-        return true;
-
-    // Reduce the resolution before the comparision to prevent resolution leakage.
-    auto deadline = window->performance().relativeTimeFromTimeOriginInReducedResolution(m_deadline);
-    auto now = window->performance().now();
-    return deadline >= now;
+    auto& performance = window->performance();
+    auto now = performance.now();
+    auto deadline = performance.relativeTimeFromTimeOriginInReducedResolution(document.windowEventLoop().computeIdleDeadline() - performance.timeResolution());
+    return deadline < now ? 0 : deadline - now;
 }
 
 } // namespace WebCore

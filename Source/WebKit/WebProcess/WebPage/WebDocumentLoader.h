@@ -41,7 +41,7 @@ public:
     void setNavigationID(uint64_t);
 
     enum class CanIncludeCurrentDocumentLoader : bool { No, Yes };
-    static WebDocumentLoader* loaderForWebsitePolicies(const WebCore::LocalFrame&, CanIncludeCurrentDocumentLoader = CanIncludeCurrentDocumentLoader::Yes);
+    static RefPtr<WebDocumentLoader> loaderForWebsitePolicies(const WebCore::LocalFrame&, CanIncludeCurrentDocumentLoader = CanIncludeCurrentDocumentLoader::Yes);
 
 private:
     WebDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);

@@ -36,11 +36,7 @@ public:
     AbsolutePositionConstraints() = default;
     WEBCORE_EXPORT AbsolutePositionConstraints(const FloatSize&, const FloatPoint&);
 
-    bool operator==(const AbsolutePositionConstraints& other) const
-    {
-        return alignmentOffset() == other.alignmentOffset()
-            && layerPositionAtLastLayout() == other.layerPositionAtLastLayout();
-    }
+    friend bool operator==(const AbsolutePositionConstraints&, const AbsolutePositionConstraints&) = default;
 
     FloatSize alignmentOffset() const { return m_alignmentOffset; }
     void setAlignmentOffset(FloatSize offset) { m_alignmentOffset = offset; }
@@ -83,9 +79,16 @@ public:
     FloatSize alignmentOffset() const { return m_alignmentOffset; }
     void setAlignmentOffset(FloatSize offset) { m_alignmentOffset = offset; }
 
+    friend bool operator==(const ViewportConstraints&, const ViewportConstraints&) = default;
+
 protected:
     ViewportConstraints()
         : m_anchorEdges(0)
+    { }
+
+    ViewportConstraints(FloatSize&& alignmentOffset, AnchorEdges&& anchorEdges)
+        : m_alignmentOffset(WTFMove(alignmentOffset))
+        , m_anchorEdges(WTFMove(anchorEdges))
     { }
 
     FloatSize m_alignmentOffset;
@@ -97,6 +100,12 @@ public:
     FixedPositionViewportConstraints()
         : ViewportConstraints()
     { }
+
+    FixedPositionViewportConstraints(FloatSize&& alignmentOffset, AnchorEdges&& anchorEdges, FloatRect&& viewportRectAtLastLayout, FloatPoint&& layerPositionAtLastLayout)
+        : ViewportConstraints(WTFMove(alignmentOffset), WTFMove(anchorEdges))
+        , m_viewportRectAtLastLayout(WTFMove(viewportRectAtLastLayout))
+        , m_layerPositionAtLastLayout(WTFMove(layerPositionAtLastLayout))
+    { }
     
     WEBCORE_EXPORT FloatPoint layerPositionForViewportRect(const FloatRect& viewportRect) const;
 
@@ -106,13 +115,7 @@ public:
     const FloatPoint& layerPositionAtLastLayout() const { return m_layerPositionAtLastLayout; }
     void setLayerPositionAtLastLayout(FloatPoint position) { m_layerPositionAtLastLayout = position; }
 
-    bool operator==(const FixedPositionViewportConstraints& other) const
-    {
-        return m_alignmentOffset == other.m_alignmentOffset
-            && m_anchorEdges == other.m_anchorEdges
-            && m_viewportRectAtLastLayout == other.m_viewportRectAtLastLayout
-            && m_layerPositionAtLastLayout == other.m_layerPositionAtLastLayout;
-    }
+    friend bool operator==(const FixedPositionViewportConstraints&, const FixedPositionViewportConstraints&) = default;
 
 private:
     ConstraintType constraintType() const override { return FixedPositionConstraint; };
@@ -128,6 +131,19 @@ public:
         , m_rightOffset(0)
         , m_topOffset(0)
         , m_bottomOffset(0)
+    { }
+
+    StickyPositionViewportConstraints(FloatSize&& alignmentOffset, AnchorEdges&& anchorEdges, float leftOffset, float rightOffset, float topOffset, float bottomOffset, FloatRect&& constrainingRectAtLastLayout, FloatRect&& containingBlockRect, FloatRect&& stickyBoxRect, FloatSize&& stickyOffsetAtLastLayout, FloatPoint&& layerPositionAtLastLayout)
+        : ViewportConstraints(WTFMove(alignmentOffset), WTFMove(anchorEdges))
+        , m_leftOffset(leftOffset)
+        , m_rightOffset(rightOffset)
+        , m_topOffset(topOffset)
+        , m_bottomOffset(bottomOffset)
+        , m_constrainingRectAtLastLayout(WTFMove(constrainingRectAtLastLayout))
+        , m_containingBlockRect(WTFMove(containingBlockRect))
+        , m_stickyBoxRect(WTFMove(stickyBoxRect))
+        , m_stickyOffsetAtLastLayout(WTFMove(stickyOffsetAtLastLayout))
+        , m_layerPositionAtLastLayout(WTFMove(layerPositionAtLastLayout))
     { }
 
     FloatSize computeStickyOffset(const FloatRect& constrainingRect) const;
@@ -163,20 +179,7 @@ public:
     FloatRect stickyBoxRect() const { return m_stickyBoxRect; }
     void setStickyBoxRect(const FloatRect& rect) { m_stickyBoxRect = rect; }
 
-    bool operator==(const StickyPositionViewportConstraints& other) const
-    {
-        return m_alignmentOffset == other.m_alignmentOffset
-            && m_anchorEdges == other.m_anchorEdges
-            && m_leftOffset == other.m_leftOffset
-            && m_rightOffset == other.m_rightOffset
-            && m_topOffset == other.m_topOffset
-            && m_bottomOffset == other.m_bottomOffset
-            && m_constrainingRectAtLastLayout == other.m_constrainingRectAtLastLayout
-            && m_containingBlockRect == other.m_containingBlockRect
-            && m_stickyBoxRect == other.m_stickyBoxRect
-            && m_stickyOffsetAtLastLayout == other.m_stickyOffsetAtLastLayout
-            && m_layerPositionAtLastLayout == other.m_layerPositionAtLastLayout;
-    }
+    friend bool operator==(const StickyPositionViewportConstraints&, const StickyPositionViewportConstraints&) = default;
 
 private:
     ConstraintType constraintType() const override { return StickyPositionConstraint; };

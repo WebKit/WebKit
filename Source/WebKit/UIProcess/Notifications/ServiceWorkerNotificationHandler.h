@@ -50,8 +50,6 @@ public:
 private:
     explicit ServiceWorkerNotificationHandler() = default;
 
-    void requestSystemNotificationPermission(const String&, CompletionHandler<void(bool)>&&) final;
-
     WebsiteDataStore* dataStoreForNotificationID(const WTF::UUID&);
 
     HashMap<WTF::UUID, PAL::SessionID> m_notificationToSessionMap;

@@ -266,7 +266,8 @@ void BytecodeGeneratorification::run()
                     storage.identifierIndex, // identifier
                     GetPutInfo(DoNotThrowIfNotFound, ResolvedClosureVar, InitializationMode::NotInitialization, m_bytecodeGenerator.ecmaMode()), // info
                     0, // local scope depth
-                    storage.scopeOffset.offset() // scope offset
+                    storage.scopeOffset.offset(), // scope offset
+                    m_bytecodeGenerator.nextValueProfileIndex()
                 );
             });
         });

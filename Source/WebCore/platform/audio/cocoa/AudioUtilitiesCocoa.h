@@ -27,6 +27,8 @@
 
 #if ENABLE(WEB_AUDIO)
 
+#include "AudioStreamDescription.h"
+
 namespace WebCore {
 class AudioBus;
 

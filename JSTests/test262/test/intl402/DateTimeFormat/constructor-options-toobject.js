@@ -2,15 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-initializedatetimeformat
+esid: sec-createdatetimeformat
 description: >
   Tests that Intl.DateTimeFormat contructor converts the options argument
   to an object using `ToObject` (7.1.13).
-info: |
-  12.1.2 ToDateTimeOptions
 
-  1. If options is undefined, let options be null; otherwise let options be ?
-  ToObject(options).
 ---*/
 
 const toObjectResults = [

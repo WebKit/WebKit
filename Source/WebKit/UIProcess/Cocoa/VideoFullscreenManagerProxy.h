@@ -67,13 +67,11 @@ public:
     }
     virtual ~VideoFullscreenModelContext();
 
-    void invalidate() { m_manager = nullptr; }
-
     PlatformView *layerHostView() const { return m_layerHostView.get(); }
     void setLayerHostView(RetainPtr<PlatformView>&& layerHostView) { m_layerHostView = WTFMove(layerHostView); }
 
     WebAVPlayerLayer *playerLayer() const { return m_playerLayer.get(); }
-    void setPlayerLayer(RetainPtr<WebAVPlayerLayer>&& playerLayer) { m_playerLayer = WTFMove(playerLayer); }
+    void setPlayerLayer(RetainPtr<WebAVPlayerLayer>&&);
 
 #if PLATFORM(IOS_FAMILY)
     WebAVPlayerLayerView *playerView() const { return m_playerView.get(); }
@@ -129,7 +127,7 @@ private:
     WTFLogChannel& logChannel() const;
 #endif
 
-    VideoFullscreenManagerProxy* m_manager;
+    WeakPtr<VideoFullscreenManagerProxy> m_manager;
     Ref<PlaybackSessionModelContext> m_playbackSessionModel;
     PlaybackSessionContextIdentifier m_contextId;
     RetainPtr<PlatformView> m_layerHostView;
@@ -139,7 +137,7 @@ private:
     RetainPtr<WebAVPlayerLayerView> m_playerView;
 #endif
 
-    HashSet<WebCore::VideoFullscreenModelClient*> m_clients;
+    WeakHashSet<WebCore::VideoFullscreenModelClient> m_clients;
     WebCore::FloatSize m_videoDimensions;
     bool m_hasVideo { false };
 
@@ -148,8 +146,15 @@ private:
 #endif
 };
 
-class VideoFullscreenManagerProxy : public RefCounted<VideoFullscreenManagerProxy>, private IPC::MessageReceiver {
+class VideoFullscreenManagerProxy
+    : public RefCounted<VideoFullscreenManagerProxy>
+    , public CanMakeWeakPtr<VideoFullscreenManagerProxy>
+    , private IPC::MessageReceiver {
 public:
+    using CanMakeWeakPtr<VideoFullscreenManagerProxy>::WeakPtrImplType;
+    using CanMakeWeakPtr<VideoFullscreenManagerProxy>::WeakValueType;
+    using CanMakeWeakPtr<VideoFullscreenManagerProxy>::weakPtrFactory;
+
     static Ref<VideoFullscreenManagerProxy> create(WebPageProxy&, PlaybackSessionManagerProxy&);
     virtual ~VideoFullscreenManagerProxy();
 
@@ -251,7 +256,7 @@ private:
     bool m_mockVideoPresentationModeEnabled { false };
     WebCore::FloatSize m_mockPictureInPictureWindowSize { DefaultMockPictureInPictureWindowWidth, DefaultMockPictureInPictureWindowHeight };
 
-    WebPageProxy* m_page;
+    WeakPtr<WebPageProxy> m_page;
     Ref<PlaybackSessionManagerProxy> m_playbackSessionManagerProxy;
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;

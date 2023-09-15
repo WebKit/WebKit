@@ -67,13 +67,13 @@ void WebFoundTextRangeController::findTextRangesForStringMatches(const String& s
     uint64_t order = 0;
     Vector<WebFoundTextRange> foundTextRanges;
     for (auto& simpleRange : findMatches) {
-        auto& document = simpleRange.startContainer().document();
+        Ref document = simpleRange.startContainer().document();
 
-        auto* element = document.documentElement();
+        RefPtr element = document->documentElement();
         if (!element)
             continue;
 
-        auto currentFrameName = document.frame()->tree().uniqueName();
+        auto currentFrameName = document->frame()->tree().uniqueName();
         if (frameName != currentFrameName) {
             frameName = currentFrameName;
             order++;
@@ -151,7 +151,7 @@ void WebFoundTextRangeController::scrollTextRangeToVisible(const WebFoundTextRan
     if (!simpleRange)
         return;
 
-    auto* document = documentForFoundTextRange(range);
+    RefPtr document = documentForFoundTextRange(range);
     if (!document)
         return;
 
@@ -189,12 +189,6 @@ void WebFoundTextRangeController::didBeginTextSearchOperation()
     m_findPageOverlay->setNeedsDisplay();
 }
 
-void WebFoundTextRangeController::didEndTextSearchOperation()
-{
-    if (m_findPageOverlay)
-        m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*m_findPageOverlay, WebCore::PageOverlay::FadeMode::Fade);
-}
-
 void WebFoundTextRangeController::addLayerForFindOverlay(CompletionHandler<void(WebCore::PlatformLayerIdentifier)>&& completionHandler)
 {
     if (!m_findPageOverlay) {
@@ -222,7 +216,7 @@ void WebFoundTextRangeController::requestRectForFoundTextRange(const WebFoundTex
         return;
     }
 
-    auto* frameView = simpleRange->startContainer().document().frame()->view();
+    RefPtr frameView = simpleRange->startContainer().document().frame()->view();
     completionHandler(frameView->contentsToRootView(unionRect(WebCore::RenderObject::absoluteTextRects(*simpleRange))));
 }
 
@@ -348,8 +342,8 @@ void WebFoundTextRangeController::setTextIndicatorWithRange(const WebCore::Simpl
 
 void WebFoundTextRangeController::flashTextIndicatorAndUpdateSelectionWithRange(const WebCore::SimpleRange& range)
 {
-    auto& document = range.startContainer().document();
-    document.selection().setSelection(WebCore::VisibleSelection(range), WebCore::FrameSelection::defaultSetSelectionOptions(WebCore::UserTriggered::Yes));
+    Ref document = range.startContainer().document();
+    document->selection().setSelection(WebCore::VisibleSelection(range), WebCore::FrameSelection::defaultSetSelectionOptions(WebCore::UserTriggered::Yes));
 
     if (auto textIndicator = createTextIndicatorForRange(range, WebCore::TextIndicatorPresentationTransition::Bounce))
         m_webPage->setTextIndicator(textIndicator->data());
@@ -358,14 +352,14 @@ void WebFoundTextRangeController::flashTextIndicatorAndUpdateSelectionWithRange(
 Vector<WebCore::FloatRect> WebFoundTextRangeController::rectsForTextMatchesInRect(WebCore::IntRect clipRect)
 {
     Vector<WebCore::FloatRect> rects;
-    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_webPage->corePage()->mainFrame());
+    RefPtr localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_webPage->corePage()->mainFrame());
     if (!localMainFrame)
         return rects;
 
     RefPtr mainFrameView = localMainFrame->view();
 
-    for (WebCore::Frame* frame = localMainFrame; frame; frame = frame->tree().traverseNext()) {
-        auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
+    for (RefPtr<Frame> frame = localMainFrame; frame; frame = frame->tree().traverseNext()) {
+        auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(*frame);
         if (!localFrame)
             continue;
         RefPtr document = localFrame->document();
@@ -405,11 +399,12 @@ WebCore::Document* WebFoundTextRangeController::documentForFoundTextRange(const 
 std::optional<WebCore::SimpleRange> WebFoundTextRangeController::simpleRangeFromFoundTextRange(WebFoundTextRange range)
 {
     return m_cachedFoundRanges.ensure(range, [&] () -> std::optional<WebCore::SimpleRange> {
-        auto* document = documentForFoundTextRange(range);
+        RefPtr document = documentForFoundTextRange(range);
         if (!document)
             return std::nullopt;
 
-        return resolveCharacterRange(makeRangeSelectingNodeContents(*document->documentElement()), { range.location, range.length }, WebCore::findIteratorOptions());
+        Ref documentElement = *document->documentElement();
+        return resolveCharacterRange(makeRangeSelectingNodeContents(documentElement), { range.location, range.length }, WebCore::findIteratorOptions());
     }).iterator->value;
 }
 

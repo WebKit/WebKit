@@ -9,17 +9,31 @@ PASS: treeitem1.isExpanded === true
 PASS: treeitem1.hierarchicalLevel === 0
 PASS: treeitem1.isAttributeSupported('AXValue') === true
 PASS: canSetDisclosing === true
+treeitem1 text:
+	AXTitle:
+	AXDescription: Animals
+	AXHelp:
+
 PASS: treeitem2.role === 'AXRole: AXRow'
 PASS: treeitem2.subrole === 'AXSubrole: AXOutlineRow'
 PASS: treeitem2.isExpanded === false
 PASS: treeitem2.hierarchicalLevel === 1
 PASS: treeitem2.disclosedByRow().isEqual(treeitem1) === true
 PASS: canSetDisclosing === false
+treeitem2 text:
+	AXTitle:
+	AXDescription: Birds
+	AXHelp:
+
 PASS: treeitem3.stringValue === 'AXValue: Birds'
 PASS: canSetDisclosing === false
 PASS: treeitem3.role === 'AXRole: AXRow'
 PASS: treeitem3.subrole === 'AXSubrole: AXOutlineRow'
 PASS: treeitem3.isExpanded === true
+treeitem3 text:
+	AXTitle:
+	AXDescription: Cats
+	AXHelp:
 PASS: treeitem3.isSelected === false
 PASS: treeitem3.isSelected === true
 PASS: selectedRow.isEqual(treeitem3) === true

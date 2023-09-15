@@ -42,11 +42,6 @@ EXTColorBufferHalfFloat::EXTColorBufferHalfFloat(WebGLRenderingContextBase& cont
 
 EXTColorBufferHalfFloat::~EXTColorBufferHalfFloat() = default;
 
-WebGLExtension::ExtensionName EXTColorBufferHalfFloat::getName() const
-{
-    return EXTColorBufferHalfFloatName;
-}
-
 bool EXTColorBufferHalfFloat::supported(GraphicsContextGL& context)
 {
     return context.supportsExtension("GL_OES_texture_half_float"_s)

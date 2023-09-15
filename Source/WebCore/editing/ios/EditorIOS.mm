@@ -307,11 +307,11 @@ void Editor::confirmMarkedText()
 {
     // FIXME: This is a hacky workaround for the keyboard calling this method too late -
     // after the selection and focus have already changed. See <rdar://problem/5975559>.
-    Element* focused = document().focusedElement();
-    Node* composition = compositionNode();
-    if (composition && focused && focused != composition && !composition->isDescendantOrShadowDescendantOf(focused)) {
+    RefPtr focused = document().focusedElement();
+    RefPtr composition = compositionNode();
+    if (composition && focused && !composition->isDescendantOrShadowDescendantOf(*focused)) {
         cancelComposition();
-        document().setFocusedElement(focused);
+        document().setFocusedElement(focused.get());
     } else
         confirmComposition();
 }

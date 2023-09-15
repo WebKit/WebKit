@@ -319,11 +319,11 @@ bool SVGPathBlender::blendArcToSegment(float progress)
 
 static inline PathCoordinateMode coordinateModeOfCommand(const SVGPathSegType& type)
 {
-    if (type < PathSegMoveToAbs)
+    if (type < SVGPathSegType::MoveToAbs)
         return AbsoluteCoordinates;
 
     // Odd number = relative command
-    if (type % 2)
+    if (enumToUnderlyingType(type) % 2)
         return RelativeCoordinates;
 
     return AbsoluteCoordinates;
@@ -331,11 +331,11 @@ static inline PathCoordinateMode coordinateModeOfCommand(const SVGPathSegType& t
 
 static inline bool isSegmentEqual(const SVGPathSegType& fromType, const SVGPathSegType& toType, const PathCoordinateMode& fromMode, const PathCoordinateMode& toMode)
 {
-    if (fromType == toType && (fromType == PathSegUnknown || fromType == PathSegClosePath))
+    if (fromType == toType && (fromType == SVGPathSegType::Unknown || fromType == SVGPathSegType::ClosePath))
         return true;
 
-    unsigned short from = fromType;
-    unsigned short to = toType;
+    auto from = enumToUnderlyingType(fromType);
+    auto to = enumToUnderlyingType(toType);
     if (fromMode == toMode)
         return from == to;
     if (fromMode == AbsoluteCoordinates)
@@ -375,54 +375,54 @@ bool SVGPathBlender::canBlendPaths()
             return false;
 
         switch (toCommand) {
-        case PathSegMoveToRel:
-        case PathSegMoveToAbs:
+        case SVGPathSegType::MoveToRel:
+        case SVGPathSegType::MoveToAbs:
             if (!blendMoveToSegment(progress))
                 return false;
             break;
-        case PathSegLineToRel:
-        case PathSegLineToAbs:
+        case SVGPathSegType::LineToRel:
+        case SVGPathSegType::LineToAbs:
             if (!blendLineToSegment(progress))
                 return false;
             break;
-        case PathSegLineToHorizontalRel:
-        case PathSegLineToHorizontalAbs:
+        case SVGPathSegType::LineToHorizontalRel:
+        case SVGPathSegType::LineToHorizontalAbs:
             if (!blendLineToHorizontalSegment(progress))
                 return false;
             break;
-        case PathSegLineToVerticalRel:
-        case PathSegLineToVerticalAbs:
+        case SVGPathSegType::LineToVerticalRel:
+        case SVGPathSegType::LineToVerticalAbs:
             if (!blendLineToVerticalSegment(progress))
                 return false;
             break;
-        case PathSegClosePath:
+        case SVGPathSegType::ClosePath:
             break;
-        case PathSegCurveToCubicRel:
-        case PathSegCurveToCubicAbs:
+        case SVGPathSegType::CurveToCubicRel:
+        case SVGPathSegType::CurveToCubicAbs:
             if (!blendCurveToCubicSegment(progress))
                 return false;
             break;
-        case PathSegCurveToCubicSmoothRel:
-        case PathSegCurveToCubicSmoothAbs:
+        case SVGPathSegType::CurveToCubicSmoothRel:
+        case SVGPathSegType::CurveToCubicSmoothAbs:
             if (!blendCurveToCubicSmoothSegment(progress))
                 return false;
             break;
-        case PathSegCurveToQuadraticRel:
-        case PathSegCurveToQuadraticAbs:
+        case SVGPathSegType::CurveToQuadraticRel:
+        case SVGPathSegType::CurveToQuadraticAbs:
             if (!blendCurveToQuadraticSegment(progress))
                 return false;
             break;
-        case PathSegCurveToQuadraticSmoothRel:
-        case PathSegCurveToQuadraticSmoothAbs:
+        case SVGPathSegType::CurveToQuadraticSmoothRel:
+        case SVGPathSegType::CurveToQuadraticSmoothAbs:
             if (!blendCurveToQuadraticSmoothSegment(progress))
                 return false;
             break;
-        case PathSegArcRel:
-        case PathSegArcAbs:
+        case SVGPathSegType::ArcRel:
+        case SVGPathSegType::ArcAbs:
             if (!blendArcToSegment(progress))
                 return false;
             break;
-        case PathSegUnknown:
+        case SVGPathSegType::Unknown:
             return false;
         }
 
@@ -464,55 +464,55 @@ bool SVGPathBlender::blendAnimatedPath(float progress)
             return false;
 
         switch (toCommand) {
-        case PathSegMoveToRel:
-        case PathSegMoveToAbs:
+        case SVGPathSegType::MoveToRel:
+        case SVGPathSegType::MoveToAbs:
             if (!blendMoveToSegment(progress))
                 return false;
             break;
-        case PathSegLineToRel:
-        case PathSegLineToAbs:
+        case SVGPathSegType::LineToRel:
+        case SVGPathSegType::LineToAbs:
             if (!blendLineToSegment(progress))
                 return false;
             break;
-        case PathSegLineToHorizontalRel:
-        case PathSegLineToHorizontalAbs:
+        case SVGPathSegType::LineToHorizontalRel:
+        case SVGPathSegType::LineToHorizontalAbs:
             if (!blendLineToHorizontalSegment(progress))
                 return false;
             break;
-        case PathSegLineToVerticalRel:
-        case PathSegLineToVerticalAbs:
+        case SVGPathSegType::LineToVerticalRel:
+        case SVGPathSegType::LineToVerticalAbs:
             if (!blendLineToVerticalSegment(progress))
                 return false;
             break;
-        case PathSegClosePath:
+        case SVGPathSegType::ClosePath:
             m_consumer->closePath();
             break;
-        case PathSegCurveToCubicRel:
-        case PathSegCurveToCubicAbs:
+        case SVGPathSegType::CurveToCubicRel:
+        case SVGPathSegType::CurveToCubicAbs:
             if (!blendCurveToCubicSegment(progress))
                 return false;
             break;
-        case PathSegCurveToCubicSmoothRel:
-        case PathSegCurveToCubicSmoothAbs:
+        case SVGPathSegType::CurveToCubicSmoothRel:
+        case SVGPathSegType::CurveToCubicSmoothAbs:
             if (!blendCurveToCubicSmoothSegment(progress))
                 return false;
             break;
-        case PathSegCurveToQuadraticRel:
-        case PathSegCurveToQuadraticAbs:
+        case SVGPathSegType::CurveToQuadraticRel:
+        case SVGPathSegType::CurveToQuadraticAbs:
             if (!blendCurveToQuadraticSegment(progress))
                 return false;
             break;
-        case PathSegCurveToQuadraticSmoothRel:
-        case PathSegCurveToQuadraticSmoothAbs:
+        case SVGPathSegType::CurveToQuadraticSmoothRel:
+        case SVGPathSegType::CurveToQuadraticSmoothAbs:
             if (!blendCurveToQuadraticSmoothSegment(progress))
                 return false;
             break;
-        case PathSegArcRel:
-        case PathSegArcAbs:
+        case SVGPathSegType::ArcRel:
+        case SVGPathSegType::ArcAbs:
             if (!blendArcToSegment(progress))
                 return false;
             break;
-        case PathSegUnknown:
+        case SVGPathSegType::Unknown:
             return false;
         }
 

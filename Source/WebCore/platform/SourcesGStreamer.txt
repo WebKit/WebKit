@@ -38,10 +38,13 @@ Modules/mediastream/gstreamer/GStreamerWebRTCUtils.cpp
 
 Modules/webaudio/MediaStreamAudioSourceGStreamer.cpp
 
+platform/audio/gstreamer/AudioDecoderGStreamer.cpp
 platform/audio/gstreamer/AudioDestinationGStreamer.cpp
+platform/audio/gstreamer/AudioEncoderGStreamer.cpp
 platform/audio/gstreamer/AudioFileReaderGStreamer.cpp
 platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp
 platform/audio/gstreamer/FFTFrameGStreamer.cpp
+platform/audio/gstreamer/PlatformRawAudioDataGStreamer.cpp
 platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp @no-unify
 
 platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp

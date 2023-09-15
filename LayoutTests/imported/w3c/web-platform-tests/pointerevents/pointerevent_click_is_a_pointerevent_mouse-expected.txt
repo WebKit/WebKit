@@ -2,11 +2,16 @@
 
 Harness Error (TIMEOUT), message = null
 
-FAIL click using mouse is a PointerEvent assert_equals: click should use a PointerEvent constructor expected function "function PointerEvent() {
+FAIL click using mouse is a PointerEvent with correct properties assert_equals: click should use a PointerEvent constructor expected function "function PointerEvent() {
     [native code]
 }" but got function "function MouseEvent() {
     [native code]
 }"
-TIMEOUT click in a subframe using mouse is a PointerEvent Test timed out
-NOTRUN Click event triggered by a non-pointing device should have -1 as the pointerId
+FAIL click using mouse is a PointerEvent with correct properties when no other PointerEvent listeners are present assert_equals: click should use a PointerEvent constructor expected function "function PointerEvent() {
+    [native code]
+}" but got function "function MouseEvent() {
+    [native code]
+}"
+TIMEOUT click using mouse is a PointerEvent with correct properties in a subframe Test timed out
+NOTRUN click using mouse is a PointerEvent with correct properties using non-pointing device
 

@@ -1,3 +1,0 @@
-
-PASS MessageChannel/MessagePort should not work after a worker self.close()
-

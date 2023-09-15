@@ -2,6 +2,8 @@
 
 putImageData() throws TypeError if arguments are not finite
 
+Defined in "Web IDL" (draft)
+
 
 PASS putImageData() throws TypeError if arguments are not finite
 

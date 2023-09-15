@@ -32,6 +32,7 @@
 #include "DMABufColorSpace.h"
 #include "GBMDevice.h"
 #include <gbm.h>
+#include <wtf/SafeStrerror.h>
 
 namespace WebCore {
 
@@ -101,7 +102,6 @@ RefPtr<GBMBufferSwapchain::Buffer> GBMBufferSwapchain::getBuffer(const BufferDes
         if (!m_array.object[i]) {
             // If no buffer was spawned yet at this location, we do that, and return it.
             auto buffer = adoptRef(*new Buffer(m_handleGenerator++, description));
-            m_array.object[i] = buffer.copyRef();
 
             // Fill out the buffer's description and plane information for known and supported formats.
             buffer->m_description.format.numPlanes = description.format.numPlanes;
@@ -111,7 +111,7 @@ RefPtr<GBMBufferSwapchain::Buffer> GBMBufferSwapchain::getBuffer(const BufferDes
                 buffer->m_planes[i].height = description.format.planeHeight(i, description.height);
             }
 
-            uint32_t boFlags = 0;
+            uint32_t boFlags = GBM_BO_USE_RENDERING;
             if (description.flags & BufferDescription::LinearStorage)
                 boFlags |= GBM_BO_USE_LINEAR;
 
@@ -121,11 +121,17 @@ RefPtr<GBMBufferSwapchain::Buffer> GBMBufferSwapchain::getBuffer(const BufferDes
             for (unsigned i = 0; i < buffer->m_description.format.numPlanes; ++i) {
                 auto& plane = buffer->m_planes[i];
                 plane.bo = gbm_bo_create(device, plane.width, plane.height, uint32_t(plane.fourcc), boFlags);
+                if (!plane.bo) {
+                    WTFLogAlways("Failed to get GBM buffer from swap chain: error creating plane %u of size %dx%d and format %u: %s\n",
+                        i, plane.width, plane.height, uint32_t(plane.fourcc), safeStrerror(errno).data());
+                    return nullptr;
+                }
                 plane.stride = gbm_bo_get_stride(plane.bo);
             }
 
             // Lock the buffer and return it.
             buffer->m_state.locked = true;
+            m_array.object[i] = buffer.copyRef();
             return buffer;
         }
 

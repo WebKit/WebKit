@@ -42,7 +42,11 @@
 #include <wtf/WeakHashSet.h>
 
 OBJC_CLASS NSError;
-OBJC_CLASS _WKWebExtensionController;
+OBJC_PROTOCOL(_WKWebExtensionControllerDelegatePrivate);
+
+#ifdef __OBJC__
+#import "_WKWebExtensionController.h"
+#endif
 
 namespace WebKit {
 
@@ -107,10 +111,11 @@ public:
 
 #ifdef __OBJC__
     _WKWebExtensionController *wrapper() const { return (_WKWebExtensionController *)API::ObjectImpl<API::Object::Type::WebExtensionController>::wrapper(); }
+    _WKWebExtensionControllerDelegatePrivate *delegate() const { return (_WKWebExtensionControllerDelegatePrivate *)wrapper().delegate; }
 #endif
 
 private:
-    // IPC::MessageReceiver.
+    // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     void addProcessPool(WebProcessPool&);
@@ -119,7 +124,7 @@ private:
     void addUserContentController(WebUserContentControllerProxy&);
     void removeUserContentController(WebUserContentControllerProxy&);
 
-    // MARK: webNavigation support.
+    // Web Navigation
     void didStartProvisionalLoadForFrame(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL targetURL);
     void didCommitLoadForFrame(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
     void didFinishLoadForFrame(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);

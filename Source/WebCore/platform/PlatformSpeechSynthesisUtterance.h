@@ -29,10 +29,11 @@
 
 #include "PlatformSpeechSynthesisVoice.h"
 #include <wtf/MonotonicTime.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
     
-class PlatformSpeechSynthesisUtteranceClient {
+class PlatformSpeechSynthesisUtteranceClient : public CanMakeWeakPtr<PlatformSpeechSynthesisUtteranceClient> {
 };
     
 class PlatformSpeechSynthesisUtterance : public RefCounted<PlatformSpeechSynthesisUtterance> {
@@ -63,7 +64,7 @@ public:
     MonotonicTime startTime() const { return m_startTime; }
     void setStartTime(MonotonicTime startTime) { m_startTime = startTime; }
     
-    PlatformSpeechSynthesisUtteranceClient* client() const { return m_client; }
+    PlatformSpeechSynthesisUtteranceClient* client() const { return m_client.get(); }
     void setClient(PlatformSpeechSynthesisUtteranceClient* client) { m_client = client; }
 
 #if PLATFORM(COCOA)
@@ -74,7 +75,7 @@ public:
 private:
     explicit PlatformSpeechSynthesisUtterance(PlatformSpeechSynthesisUtteranceClient&);
 
-    PlatformSpeechSynthesisUtteranceClient* m_client;
+    WeakPtr<PlatformSpeechSynthesisUtteranceClient> m_client;
     String m_text;
     String m_lang;
     RefPtr<PlatformSpeechSynthesisVoice> m_voice;

@@ -33,6 +33,7 @@
 
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginPreflightChecker.h"
+#include "LoaderMalloc.h"
 #include "ResourceLoaderIdentifier.h"
 #include "ResourceResponse.h"
 #include "SecurityOrigin.h"
@@ -46,7 +47,7 @@ namespace WebCore {
     class ThreadableLoaderClient;
 
     class DocumentThreadableLoader : public RefCounted<DocumentThreadableLoader>, public ThreadableLoader, public CachedRawResourceClient {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
     public:
         static void loadResourceSynchronously(Document&, ResourceRequest&&, ThreadableLoaderClient&, const ThreadableLoaderOptions&, RefPtr<SecurityOrigin>&&, std::unique_ptr<ContentSecurityPolicy>&&, std::optional<CrossOriginEmbedderPolicy>&&);
         static void loadResourceSynchronously(Document&, ResourceRequest&&, ThreadableLoaderClient&, const ThreadableLoaderOptions&);

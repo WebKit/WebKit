@@ -479,6 +479,29 @@ void main()
     }
 }
 
+// Test that changing only the clip depth mode syncs the state correctly
+TEST_P(ClipControlTest, DepthModeSimple)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_clip_control"));
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    const GLint colorUniformLocation = glGetUniformLocation(program, essl1_shaders::ColorUniform());
+    glUseProgram(program);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glEnable(GL_DEPTH_TEST);
+
+    glUniform4fv(colorUniformLocation, 1, GLColor::red.toNormalizedVector().data());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0);
+
+    glClipControlEXT(GL_LOWER_LEFT_EXT, GL_ZERO_TO_ONE_EXT);
+
+    glUniform4fv(colorUniformLocation, 1, GLColor::green.toNormalizedVector().data());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0);
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
 class ClipControlTestES3 : public ClipControlTest
 {};
 

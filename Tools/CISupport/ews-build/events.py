@@ -33,13 +33,13 @@ from buildbot.process.results import SUCCESS, FAILURE, CANCELLED, WARNINGS, SKIP
 from buildbot.util import httpclientservice, service
 from buildbot.www.hooks.github import GitHubEventHandler
 from rapidfuzz import fuzz
-from steps import GitHub
+from .steps import GitHub
 from twisted.internet import defer, reactor, task
 from twisted.internet.defer import succeed
 from twisted.python import log
 
-from twisted_additions import TwistedAdditions
-from utils import load_password
+from .twisted_additions import TwistedAdditions
+from .utils import load_password
 
 custom_suffix = '-uat' if load_password('BUILDBOT_UAT') else ''
 

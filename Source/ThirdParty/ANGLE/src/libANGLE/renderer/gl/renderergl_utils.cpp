@@ -50,11 +50,6 @@ bool IsMesa(const FunctionsGL *functions, std::array<int, 3> *version)
 {
     ASSERT(version);
 
-    if (functions->standard != STANDARD_GL_DESKTOP)
-    {
-        return false;
-    }
-
     std::string nativeVersionString(GetString(functions, GL_VERSION));
     size_t pos = nativeVersionString.find("Mesa");
     if (pos == std::string::npos)
@@ -148,10 +143,10 @@ bool IsMaliG31OrOlder(const FunctionsGL *functions)
     return number != 0 && number <= 31;
 }
 
-bool IsMaliG72OrG76(const FunctionsGL *functions)
+bool IsMaliG72OrG76OrG51(const FunctionsGL *functions)
 {
     int number = getMaliGNumber(functions);
-    return number == 72 || number == 76;
+    return number == 72 || number == 76 || number == 51;
 }
 
 bool IsMaliValhall(const FunctionsGL *functions)
@@ -176,7 +171,7 @@ int GetAndroidSdkLevel()
     return info.androidSdkLevel;
 }
 
-bool IsAndroidEmulator(const FunctionsGL *functions)
+[[maybe_unused]] bool IsAndroidEmulator(const FunctionsGL *functions)
 {
     constexpr char androidEmulator[] = "Android Emulator";
     const char *nativeGLRenderer     = GetString(functions, GL_RENDERER);
@@ -1566,11 +1561,12 @@ void GenerateCaps(const FunctionsGL *functions,
     // This functionality is supported on macOS but the extension
     // strings are not listed there for historical reasons.
     extensions->textureMirrorClampToEdgeEXT =
-        IsMac() || functions->isAtLeastGL(gl::Version(4, 4)) ||
-        functions->hasGLExtension("GL_ARB_texture_mirror_clamp_to_edge") ||
-        functions->hasGLExtension("GL_EXT_texture_mirror_clamp") ||
-        functions->hasGLExtension("GL_ATI_texture_mirror_once") ||
-        functions->hasGLESExtension("GL_EXT_texture_mirror_clamp_to_edge");
+        !features.disableTextureMirrorClampToEdge.enabled &&
+        (IsMac() || functions->isAtLeastGL(gl::Version(4, 4)) ||
+         functions->hasGLExtension("GL_ARB_texture_mirror_clamp_to_edge") ||
+         functions->hasGLExtension("GL_EXT_texture_mirror_clamp") ||
+         functions->hasGLExtension("GL_ATI_texture_mirror_once") ||
+         functions->hasGLESExtension("GL_EXT_texture_mirror_clamp_to_edge"));
 
     extensions->multiDrawIndirectEXT = true;
     extensions->instancedArraysANGLE = functions->isAtLeastGL(gl::Version(3, 1)) ||
@@ -2020,6 +2016,15 @@ void GenerateCaps(const FunctionsGL *functions,
                                      functions->hasGLESExtension("GL_EXT_clip_control");
     }
 
+    if (features.disableRenderSnorm.enabled)
+    {
+        extensions->renderSnormEXT = false;
+    }
+
+    constexpr uint32_t kRequiredClipDistances                = 8;
+    constexpr uint32_t kRequiredCullDistances                = 8;
+    constexpr uint32_t kRequiredCombinedClipAndCullDistances = 8;
+
     // GL_APPLE_clip_distance cannot be implemented on top of GL_EXT_clip_cull_distance,
     // so require either native support or desktop GL.
     extensions->clipDistanceAPPLE = functions->isAtLeastGL(gl::Version(3, 0)) ||
@@ -2027,6 +2032,13 @@ void GenerateCaps(const FunctionsGL *functions,
     if (extensions->clipDistanceAPPLE)
     {
         caps->maxClipDistances = QuerySingleGLInt(functions, GL_MAX_CLIP_DISTANCES_APPLE);
+
+        if (caps->maxClipDistances < kRequiredClipDistances)
+        {
+            WARN() << "Disabling GL_APPLE_clip_distance because only " << caps->maxClipDistances
+                   << " clip distances are supported by the driver.";
+            extensions->clipDistanceAPPLE = false;
+        }
     }
 
     // GL_EXT_clip_cull_distance spec requires shader interface blocks to support
@@ -2042,11 +2054,23 @@ void GenerateCaps(const FunctionsGL *functions,
         caps->maxCullDistances = QuerySingleGLInt(functions, GL_MAX_CULL_DISTANCES_EXT);
         caps->maxCombinedClipAndCullDistances =
             QuerySingleGLInt(functions, GL_MAX_COMBINED_CLIP_AND_CULL_DISTANCES_EXT);
+
+        if (caps->maxClipDistances < kRequiredClipDistances ||
+            caps->maxCullDistances < kRequiredCullDistances ||
+            caps->maxCombinedClipAndCullDistances < kRequiredCombinedClipAndCullDistances)
+        {
+            WARN() << "Disabling GL_EXT_clip_cull_distance because only " << caps->maxClipDistances
+                   << " clip distances, " << caps->maxCullDistances << " cull distances and "
+                   << caps->maxCombinedClipAndCullDistances
+                   << " combined clip/cull distances are supported by the driver.";
+            extensions->clipCullDistanceEXT = false;
+        }
     }
 
     // Same as GL_EXT_clip_cull_distance but with cull distance support being optional.
     extensions->clipCullDistanceANGLE =
-        functions->isAtLeastGL(gl::Version(3, 0)) || extensions->clipCullDistanceEXT;
+        (functions->isAtLeastGL(gl::Version(3, 0)) || extensions->clipCullDistanceEXT) &&
+        caps->maxClipDistances >= kRequiredClipDistances;
     ASSERT(!extensions->clipCullDistanceANGLE || caps->maxClipDistances > 0);
 
     // GL_OES_shader_image_atomic
@@ -2086,7 +2110,9 @@ void GenerateCaps(const FunctionsGL *functions,
                                        functions->hasGLExtension("GL_MESA_framebuffer_flip_y");
 
     // GL_KHR_parallel_shader_compile
-    extensions->parallelShaderCompileKHR = true;
+    extensions->parallelShaderCompileKHR = !features.disableNativeParallelCompile.enabled &&
+                                           (functions->maxShaderCompilerThreadsKHR != nullptr ||
+                                            functions->maxShaderCompilerThreadsARB != nullptr);
 
     // GL_ANGLE_logic_op
     extensions->logicOpANGLE = functions->isAtLeastGL(gl::Version(2, 0));
@@ -2303,18 +2329,6 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
 
     ANGLE_FEATURE_CONDITION(features, queryCounterBitsGeneratesErrors, IsNexus5X(vendor, device));
 
-    ANGLE_FEATURE_CONDITION(features, dontRelinkProgramsInParallel,
-                            IsAndroid() || (IsWindows() && isIntel));
-
-    // TODO(jie.a.chen@intel.com): Clean up the bugs.
-    // anglebug.com/3031
-    // crbug.com/922936
-    // crbug.com/1184692
-    // crbug.com/1202928
-    ANGLE_FEATURE_CONDITION(features, disableWorkerContexts,
-                            (IsWindows() && (isIntel || isAMD)) || (IsLinux() && isNvidia) ||
-                                IsIOS() || IsAndroid() || IsAndroidEmulator(functions));
-
     bool limitMaxTextureSize = isIntel && IsLinux() && GetLinuxOSVersion() < OSVersion(5, 0, 0);
     ANGLE_FEATURE_CONDITION(features, limitWebglMaxTextureSizeTo4096,
                             IsAndroid() || limitMaxTextureSize);
@@ -2509,11 +2523,14 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     // http://crbug.com/594016
     bool isLinuxVivante = IsLinux() && IsVivante(device);
 
+    // http://anglebug.com/8304
+    bool isWindowsNVIDIA = IsWindows() && IsNvidia(vendor);
+
     // Temporarily disable on all of Android. http://crbug.com/1417485
     ANGLE_FEATURE_CONDITION(features, disableMultisampledRenderToTexture,
                             isAdreno4xxOnAndroidLessThan51 || isAdreno4xxOnAndroid70 ||
                                 isAdreno5xxOnAndroidLessThan70 || isAdreno5xxOnAndroid71 ||
-                                isLinuxVivante || IsAndroid());
+                                isLinuxVivante || IsAndroid() || isWindowsNVIDIA);
 
     // http://crbug.com/1181068
     ANGLE_FEATURE_CONDITION(features, uploadTextureDataInChunks, IsApple());
@@ -2536,6 +2553,9 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
 
     // https://anglebug.com/7880
     ANGLE_FEATURE_CONDITION(features, emulateClipDistanceState, isQualcomm);
+
+    // https://anglebug.com/8308
+    ANGLE_FEATURE_CONDITION(features, explicitFragmentLocations, isQualcomm);
 
     // Desktop GLSL-only fragment synchronization extensions. These are injected internally by the
     // compiler to make pixel local storage coherent.
@@ -2567,10 +2587,25 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     ANGLE_FEATURE_CONDITION(features, bindCompleteFramebufferForTimerQueries, isMali);
 
     // https://crbug.com/1434317
-    ANGLE_FEATURE_CONDITION(features, disableClipControl, IsMaliG72OrG76(functions));
+    ANGLE_FEATURE_CONDITION(features, disableClipControl, IsMaliG72OrG76OrG51(functions));
+
+    // https://anglebug.com/8315
+    ANGLE_FEATURE_CONDITION(features, disableRenderSnorm,
+                            isMesa && (mesaVersion < (std::array<int, 3>{21, 3, 0}) ||
+                                       functions->standard == STANDARD_GL_ES));
+
+    // https://anglebug.com/8319
+    ANGLE_FEATURE_CONDITION(features, disableTextureMirrorClampToEdge,
+                            functions->standard == STANDARD_GL_ES && isMesa);
 
     // http://anglebug.com/8172
     ANGLE_FEATURE_CONDITION(features, disableBaseInstanceVertex, IsMaliValhall(functions));
+
+    // http://crbug.com/1420130
+    ANGLE_FEATURE_CONDITION(features, scalarizeVecAndMatConstructorArgs, isMali);
+
+    // http://crbug.com/1456243
+    ANGLE_FEATURE_CONDITION(features, ensureNonEmptyBufferIsBoundForDraw, IsApple() || IsAndroid());
 }
 
 void InitializeFrontendFeatures(const FunctionsGL *functions, angle::FrontendFeatures *features)
@@ -2871,9 +2906,17 @@ angle::Result CheckError(const gl::Context *context,
                          const char *function,
                          unsigned int line)
 {
-    const FunctionsGL *functions = GetFunctionsGL(context);
+    return HandleError(context, GetFunctionsGL(context)->getError(), call, file, function, line);
+}
 
-    GLenum error = functions->getError();
+angle::Result HandleError(const gl::Context *context,
+                          GLenum error,
+                          const char *call,
+                          const char *file,
+                          const char *function,
+                          unsigned int line)
+{
+    const FunctionsGL *functions = GetFunctionsGL(context);
     if (ANGLE_UNLIKELY(error != GL_NO_ERROR))
     {
         ContextGL *contextGL = GetImplAs<ContextGL>(context);

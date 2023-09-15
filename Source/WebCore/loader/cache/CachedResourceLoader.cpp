@@ -93,7 +93,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-#include "Device.h"
+#import <pal/system/ios/Device.h>
 #endif
 
 #undef CACHEDRESOURCELOADER_RELEASE_LOG
@@ -449,11 +449,7 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
         // These resource can inject script into the current document (Script,
         // XSL) or exfiltrate the content of the current document (CSS).
         if (auto* frame = this->frame()) {
-            if (m_document && !MixedContentChecker::canRunInsecureContent(*frame, m_document->securityOrigin(), url))
-                return false;
-            auto& top = frame->tree().top();
-            auto* localTop = dynamicDowncast<LocalFrame>(top);
-            if (&top != frame && localTop && localTop->document() && !MixedContentChecker::canRunInsecureContent(*localTop, localTop->document()->securityOrigin(), url))
+            if (m_document && !MixedContentChecker::frameAndAncestorsCanRunInsecureContent(*frame, m_document->securityOrigin(), url))
                 return false;
         }
         break;
@@ -471,11 +467,7 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
     case CachedResource::Type::FontResource: {
         // These resources can corrupt only the frame's pixels.
         if (auto* frame = this->frame()) {
-            if (m_document && !MixedContentChecker::canDisplayInsecureContent(*frame, m_document->securityOrigin(), contentTypeFromResourceType(type), url, MixedContentChecker::AlwaysDisplayInNonStrictMode::Yes))
-                return false;
-            auto& topFrame = frame->tree().top();
-            auto* localTopFrame = dynamicDowncast<LocalFrame>(topFrame);
-            if (!localTopFrame || !localTopFrame->document() || !MixedContentChecker::canDisplayInsecureContent(*localTopFrame, localTopFrame->document()->securityOrigin(), contentTypeFromResourceType(type), url))
+            if (m_document && !MixedContentChecker::frameAndAncestorsCanDisplayInsecureContent(*frame, contentTypeFromResourceType(type), url))
                 return false;
         }
         break;
@@ -1062,8 +1054,8 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
             return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "Resource blocked by content blocker"_s, ResourceError::Type::AccessControl });
         }
 #endif
-        if (!madeHTTPS && type == CachedResource::Type::MainResource)
-            madeHTTPS = frame.loader().upgradeRequestforHTTPSOnlyIfNeeded(frame.document() ? frame.document()->url() : URL { }, request.resourceRequest());
+        if (!madeHTTPS && type == CachedResource::Type::MainResource && frame.loader().shouldUpgradeRequestforHTTPSOnly(frame.document() ? frame.document()->url() : URL { }, request.resourceRequest()) && m_documentLoader->frameLoader())
+            return makeUnexpected(m_documentLoader->frameLoader()->client().httpNavigationWithHTTPSOnlyError(request.resourceRequest()));
 
         if (madeHTTPS
             && type == CachedResource::Type::MainResource
@@ -1110,10 +1102,8 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
 
     // See if we can use an existing resource from the cache.
     CachedResourceHandle<CachedResource> resource;
-    if (auto* document = this->document()) {
+    if (auto* document = this->document())
         request.setDomainForCachePartition(*document);
-        request.resourceRequest().setFirstPartyForCookies(document->firstPartyForCookies());
-    }
 
     if (request.allowsCaching())
         resource = memoryCache.resourceForRequest(request.resourceRequest(), page.sessionID());

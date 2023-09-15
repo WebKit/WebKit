@@ -146,8 +146,7 @@ Ref<FetchResponse> FetchResponse::error(ScriptExecutionContext& context)
 
 ExceptionOr<Ref<FetchResponse>> FetchResponse::redirect(ScriptExecutionContext& context, const String& url, int status)
 {
-    // FIXME: Tighten the URL parsing algorithm according https://url.spec.whatwg.org/#concept-url-parser.
-    URL requestURL = context.completeURL(url);
+    URL requestURL = context.completeURL(url, ScriptExecutionContext::ForceUTF8::Yes);
     if (!requestURL.isValid())
         return Exception { TypeError, makeString("Redirection URL '", requestURL.string(), "' is invalid") };
     if (requestURL.hasCredentials())
@@ -189,7 +188,7 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::clone()
 
     // If loading, let's create a stream so that data is teed on both clones.
     if (isLoading() && !m_readableStreamSource) {
-        auto* context = scriptExecutionContext();
+        RefPtr context = scriptExecutionContext();
 
         auto* globalObject = context ? context->globalObject() : nullptr;
         if (!globalObject)

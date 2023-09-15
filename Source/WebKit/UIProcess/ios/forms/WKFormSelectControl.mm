@@ -28,7 +28,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "UserInterfaceIdiom.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WKFormPopover.h"
@@ -36,6 +35,7 @@
 #import "WKFormSelectPopover.h"
 #import "WebPageProxy.h"
 #import <UIKit/UIPickerView.h>
+#import <pal/system/ios/UserInterfaceIdiom.h>
 #import <wtf/RetainPtr.h>
 
 using namespace WebKit;
@@ -87,7 +87,7 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSiz
     }
 #endif
 
-    if (!currentUserInterfaceIdiomIsSmallScreen())
+    if (!PAL::currentUserInterfaceIdiomIsSmallScreen())
         control = adoptNS([[WKSelectPopover alloc] initWithView:view hasGroups:hasGroups]);
     else if (view.focusedElementInformation.isMultiSelect || hasGroups)
         control = adoptNS([[WKMultipleSelectPicker alloc] initWithView:view]);

@@ -203,7 +203,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (void)pasteWithCompletionHandler:(void (^)(void))completionHandler;
 - (void)requestAutocorrectionRectsForString:(NSString *)input withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForInput))completionHandler;
 - (void)requestAutocorrectionContextWithCompletionHandler:(void (^)(UIWKAutocorrectionContext *autocorrectionContext))completionHandler;
-- (void)selectWordBackward;
 - (void)selectPositionAtPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler;
 - (void)selectTextWithGranularity:(UITextGranularity)granularity atPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler;
 - (void)updateSelectionWithExtentPoint:(CGPoint)point completionHandler:(void (^)(BOOL selectionEndIsMoving))completionHandler;
@@ -349,6 +348,25 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 @optional
 - (void)addTextAlternatives:(NSTextAlternatives *)alternatives;
 - (void)removeEmojiAlternatives;
+@end
+
+@interface NSTextBlock : NSObject
+@end
+
+@interface NSTextTable : NSTextBlock
+@end
+
+@interface NSTextTableBlock : NSTextBlock
+- (NSTextTable *)table;
+- (NSInteger)startingColumn;
+- (NSInteger)startingRow;
+- (NSUInteger)numberOfColumns;
+- (NSInteger)columnSpan;
+- (NSInteger)rowSpan;
+@end
+
+@interface NSParagraphStyle ()
+- (NSArray<NSTextBlock *> *)textBlocks;
 @end
 
 @interface UIResponder (Internal)

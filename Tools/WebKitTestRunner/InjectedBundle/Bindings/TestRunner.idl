@@ -26,6 +26,7 @@
 interface TestRunner {
     readonly attribute boolean isWebKit2;
     readonly attribute boolean isIOSFamily;
+    readonly attribute boolean isMac;
     readonly attribute boolean isKeyboardImmediatelyAvailable;
 
     // The basics.
@@ -424,8 +425,6 @@ interface TestRunner {
 
     undefined injectUserScript(DOMString string);
     readonly attribute unsigned long userScriptInjectedCount;
-
-    undefined sendDisplayConfigurationChangedMessageForTesting();
 
     undefined setServiceWorkerFetchTimeout(double seconds);
 

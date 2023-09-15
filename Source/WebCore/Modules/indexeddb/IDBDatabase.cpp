@@ -317,7 +317,7 @@ void IDBDatabase::stop()
     removeAllEventListeners();
 
     for (auto& id : copyToVector(m_activeTransactions.keys())) {
-        if (auto* transaction = m_activeTransactions.get(id))
+        if (RefPtr transaction = m_activeTransactions.get(id))
             transaction->stop();
     }
 

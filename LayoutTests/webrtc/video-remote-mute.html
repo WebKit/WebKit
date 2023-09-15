@@ -14,21 +14,6 @@
 video = document.getElementById("video");
 canvas = document.getElementById("canvas");
 
-function isVideoBlack()
-{
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    imageData = canvas.getContext('2d').getImageData(10, 325, 250, 1);
-    data = imageData.data;
-    for (var cptr = 0; cptr < canvas.width * canvas.height; ++cptr) {
-        if (data[4 * cptr] || data[4 * cptr + 1] || data[4 * cptr + 2])
-            return false;
-    }
-    return true;
-}
-
 var track;
 promise_test((test) => {
     if (window.testRunner)
@@ -48,16 +33,13 @@ promise_test((test) => {
         track = remoteStream.getVideoTracks()[0];
         return video.play();
     }).then(() => {
-         assert_false(isVideoBlack());
+        return checkVideoBlack(false, canvas, video, "enabled track is black");
     }).then(() => {
         track.enabled = false;
-        return waitFor(500);
+        return checkVideoBlack(true, canvas, video, "disabled track is not black");
     }).then(() => {
-        assert_true(isVideoBlack());
         track.enabled = true;
-        return waitFor(500);
-    }).then(() => {
-        assert_false(isVideoBlack());
+        return checkVideoBlack(false, canvas, video, "enabled track is black");
     });
 }, "Incoming muted/unmuted video track");
         </script>

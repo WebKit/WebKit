@@ -140,34 +140,45 @@ static Path pathFromRectElement(const SVGElement& element)
 
     auto& style = renderer->style();
     SVGLengthContext lengthContext(&element);
-    float width = lengthContext.valueForLength(style.width(), SVGLengthMode::Width);
-    if (width <= 0)
+    auto size = FloatSize {
+        lengthContext.valueForLength(style.width(), SVGLengthMode::Width),
+        lengthContext.valueForLength(style.height(), SVGLengthMode::Height)
+    };
+
+    if (size.isEmpty())
         return { };
 
-    float height = lengthContext.valueForLength(style.height(), SVGLengthMode::Height);
-    if (height <= 0)
-        return { };
+    auto location = FloatPoint {
+        lengthContext.valueForLength(style.svgStyle().x(), SVGLengthMode::Width),
+        lengthContext.valueForLength(style.svgStyle().y(), SVGLengthMode::Height)
+    };
+
+    auto radii = FloatSize {
+        lengthContext.valueForLength(style.svgStyle().rx(), SVGLengthMode::Width),
+        lengthContext.valueForLength(style.svgStyle().ry(), SVGLengthMode::Height)
+    };
+
+    // Per SVG spec: if one of radii.x() and radii.y() is auto or negative, then the other corner
+    // radius value is used. If both are auto or negative, then they are both set to 0.
+    if (style.svgStyle().rx().isAuto() || radii.width() < 0)
+        radii.setWidth(std::max(0.f, radii.height()));
+    if (style.svgStyle().ry().isAuto() || radii.height() < 0)
+        radii.setHeight(std::max(0.f, radii.width()));
 
     Path path;
-    float x = lengthContext.valueForLength(style.svgStyle().x(), SVGLengthMode::Width);
-    float y = lengthContext.valueForLength(style.svgStyle().y(), SVGLengthMode::Height);
-    float rx = lengthContext.valueForLength(style.svgStyle().rx(), SVGLengthMode::Width);
-    float ry = lengthContext.valueForLength(style.svgStyle().ry(), SVGLengthMode::Height);
-    bool hasRx = rx > 0;
-    bool hasRy = ry > 0;
-    if (hasRx || hasRy) {
-        if (!hasRx)
-            rx = ry;
-        else if (!hasRy)
-            ry = rx;
-        // FIXME: We currently enforce using beziers here, as at least on CoreGraphics/Lion, as
-        // the native method uses a different line dash origin, causing svg/custom/dashOrigin.svg to fail.
-        // See bug https://bugs.webkit.org/show_bug.cgi?id=79932 which tracks this issue.
-        path.addRoundedRect(FloatRect(x, y, width, height), FloatSize(rx, ry), PathRoundedRect::Strategy::PreferBezier);
+    if (radii.width() <= 0 && radii.height() <= 0) {
+        path.addRect({ location, size });
         return path;
     }
 
-    path.addRect(FloatRect(x, y, width, height));
+    // The used values of ‘rx’ and 'ry' for a ‘rect’ are never more than 50% of the used
+    // value of width for the same shape.
+    radii.constrainedBetween(radii, size / 2);
+
+    // FIXME: We currently enforce using beziers here, as at least on CoreGraphics/Lion, as
+    // the native method uses a different line dash origin, causing svg/custom/dashOrigin.svg to fail.
+    // See bug https://bugs.webkit.org/show_bug.cgi?id=79932 which tracks this issue.
+    path.addRoundedRect(FloatRect { location, size }, radii, PathRoundedRect::Strategy::PreferBezier);
     return path;
 }
 

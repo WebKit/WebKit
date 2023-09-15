@@ -12,7 +12,7 @@ static char gDefaultMetallibSrc[] = R"(
 # 1 "temp_master_source.metal"
 # 1 "<built-in>" 1
 # 1 "<built-in>" 3
-# 399 "<built-in>" 3
+# 482 "<built-in>" 3
 # 1 "<command line>" 1
 # 1 "<built-in>" 2
 # 1 "temp_master_source.metal" 2
@@ -1568,6 +1568,7 @@ enum
     B8G8R8A8_UNORM,
     B8G8R8A8_UNORM_SRGB,
     B8G8R8X8_UNORM,
+    B8G8R8X8_UNORM_SRGB,
     BC1_RGBA_UNORM_BLOCK,
     BC1_RGBA_UNORM_SRGB_BLOCK,
     BC1_RGB_UNORM_BLOCK,
@@ -1703,6 +1704,7 @@ enum
     R8G8B8A8_UNORM_SRGB,
     R8G8B8A8_USCALED,
     R8G8B8X8_UNORM,
+    R8G8B8X8_UNORM_SRGB,
     R8G8B8_SINT,
     R8G8B8_SNORM,
     R8G8B8_SSCALED,

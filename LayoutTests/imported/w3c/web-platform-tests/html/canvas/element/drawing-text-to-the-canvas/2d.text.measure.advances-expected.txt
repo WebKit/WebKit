@@ -1,6 +1,0 @@
-2d.text.measure.advances
-Testing width advances
-Actual output:
-
-FAIL Testing width advances undefined is not an object (evaluating 'ctx.measureText('Hello').advances[0]')
-

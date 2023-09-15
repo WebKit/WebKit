@@ -424,6 +424,7 @@
 (allow mach-lookup (global-name "org.webkit.pcmtestdaemon.service"))
 
 (allow mach-lookup (global-name "com.apple.webkit.webpushd.service"))
+(allow mach-lookup (global-name "com.apple.webkit.webpushd.relocatable.service"))
 (allow mach-lookup (global-name "org.webkit.webpushtestdaemon.service"))
 
 (deny mach-lookup (with no-report)
@@ -721,7 +722,9 @@
         SYS_shared_region_map_and_slide_2_np
 #endif
         SYS_sigaction
+#if ASAN_ENABLED
         SYS_sigaltstack
+#endif
         SYS_sigprocmask
         SYS_sigreturn
         SYS_socketpair
@@ -849,4 +852,8 @@
     (global-name "com.apple.webprivacyd")
     (global-name "com.apple.WebPrivacy.Service"))
 
+#endif
+
+#if ENABLE(LLVM_PROFILE_GENERATION)
+(allow file-write* (subpath "/private/tmp/WebKitPGO"))
 #endif

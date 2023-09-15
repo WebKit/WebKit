@@ -79,6 +79,7 @@ void HTMLOutputElement::attributeChanged(const QualifiedName& name, const AtomSt
 
 void HTMLOutputElement::reset()
 {
+    setInteractedWithSinceLastFormSubmitEvent(false);
     stringReplaceAll(defaultValue());
     m_defaultValueOverride = { };
 }

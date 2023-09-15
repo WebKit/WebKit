@@ -102,7 +102,7 @@ class GtkPortTest(port_testcase.PortTestCase):
     def test_gtk4_expectations_binary_only(self):
         port = self.make_port()
         port._filesystem = MockFileSystem({
-            "/mock-build/lib/libwebkit2gtk-5.0.so": ""
+            "/mock-build/lib/libwebkitgtk-6.0.so": ""
         })
         with OutputCapture() as _:
             self.assertEqual(port.expectations_files(),
@@ -129,7 +129,7 @@ class GtkPortTest(port_testcase.PortTestCase):
         port = self.make_port()
         port._filesystem = MockFileSystem({
             "/mock-build/lib/libwebkit2gtk-4.0.so": "",
-            "/mock-build/lib/libwebkit2gtk-5.0.so": ""
+            "/mock-build/lib/libwebkitgtk-6.0.so": ""
         })
 
         with OutputCapture() as captured:

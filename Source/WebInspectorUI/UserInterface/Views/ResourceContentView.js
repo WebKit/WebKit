@@ -70,7 +70,9 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
                 this._importLocalResourceOverrideButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleImportLocalResourceOverride, this);
 
                 if (resource.localResourceOverride.canMapToFile) {
-                    this._mapLocalResourceOverrideToFileButtonNavigationItem = new WI.ButtonNavigationItem("map-local-resource-override", WI.UIString("Map to File"), "Images/Disk.svg", 15, 15);
+                    const mapLocalResourceOverrideToFileTooltip = WI.UIString("Map to File", "Map to File @ Resource Preview", "Navigation item that changes the local override to fetch its content from a file on disk.");
+                    const mapLocalResourceOverrideToDirectoryTooltip = WI.UIString("Map to Directory", "Map to Directory @ Resource Preview", "Navigation item that changes the local override to fetch its content from a directory on disk.");
+                    this._mapLocalResourceOverrideToFileButtonNavigationItem = new WI.ButtonNavigationItem("map-local-resource-override", resource.localResourceOverride.type === WI.LocalResourceOverride.InterceptType.ResponseMappedDirectory ? mapLocalResourceOverrideToDirectoryTooltip : mapLocalResourceOverrideToFileTooltip, "Images/Disk.svg", 15, 15);
                     this._mapLocalResourceOverrideToFileButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
                     this._mapLocalResourceOverrideToFileButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
                     this._mapLocalResourceOverrideToFileButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleMapLocalResourceOverrideToFile, this);
@@ -390,10 +392,10 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
     _handleMapLocalResourceOverrideToFile(event)
     {
         WI.FileUtilities.import((files) => {
-            console.assert(files.length === 1, files);
-
-            this.resource.mappedFilePath = files[0].getPath();
-        });
+            this.resource.mappedFilePath = WI.FileUtilities.longestCommonPrefix(files, {
+                directory: this.resource.localResourceOverride.type === WI.LocalResourceOverride.InterceptType.ResponseMappedDirectory,
+            });
+        }, {directory: true});
     }
 
     _handleMappedFilePathChanged(event)

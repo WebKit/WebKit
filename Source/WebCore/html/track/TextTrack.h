@@ -41,7 +41,6 @@ class TextTrack;
 class TextTrackList;
 class TextTrackClient;
 class TextTrackCueList;
-class VTTRegion;
 class VTTRegionList;
 
 class TextTrack : public TrackBase, public EventTarget, public ActiveDOMObject {
@@ -88,8 +87,6 @@ public:
     virtual ExceptionOr<void> removeCue(TextTrackCue&);
 
     VTTRegionList* regions();
-    void addRegion(Ref<VTTRegion>&&);
-    ExceptionOr<void> removeRegion(VTTRegion&);
 
     void cueWillChange(TextTrackCue&);
     void cueDidChange(TextTrackCue&);

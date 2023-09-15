@@ -1,0 +1,4 @@
+EVENT(loadstart)
+EXPECTED (stripExtension(relativeURL(video.currentSrc)) == 'content/test'), OBSERVED 'content/error2' FAIL
+END OF TEST
+

@@ -100,11 +100,9 @@ enum class NodeKind : uint8_t {
 
     TypeAlias,
 
-    // TypeName
-    ArrayTypeName,
-    NamedTypeName,
-    ParameterizedTypeName,
-    ReferenceTypeName,
+    ArrayTypeExpression,
+    ElaboratedTypeExpression,
+    ReferenceTypeExpression,
 
     Variable,
 

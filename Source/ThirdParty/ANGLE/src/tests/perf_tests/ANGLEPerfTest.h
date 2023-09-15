@@ -139,9 +139,7 @@ class ANGLEPerfTest : public testing::Test, angle::NonCopyable
     bool mSkipTest;
     std::string mSkipTestReason;
     std::unique_ptr<perf_test::PerfResultReporter> mReporter;
-    int mWarmupSteps;
     int mStepsToRun;
-    int mTrialTimeLimitSeconds;
     int mTrialNumStepsPerformed;
     int mTotalNumStepsPerformed;
     int mIterationsPerStep;

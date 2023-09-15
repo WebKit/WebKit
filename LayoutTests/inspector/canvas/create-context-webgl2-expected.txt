@@ -21,6 +21,14 @@ PASS: Canvas context should be WebGL2.
 
 PASS: Removed canvas has expected ID.
 
+-- Running test case: Canvas.CreateContextWebGL2.Offscreen
+PASS: Canvas context should be WebGL2.
+  0: getContext - [native code]
+  1: createOffscreenCanvas - inspector/canvas/resources/create-context-utilities.js:36:36
+  2: Global Code - [program code]
+
+PASS: Removed canvas has expected ID.
+
 -- Running test case: Canvas.CreateContextWebGL2.CSSCanvas
 Create CSS canvas from -webkit-canvas(css-canvas).
 PASS: Canvas context should be WebGL2.

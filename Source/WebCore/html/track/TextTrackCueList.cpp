@@ -97,8 +97,6 @@ TextTrackCueList& TextTrackCueList::activeCues()
 void TextTrackCueList::add(Ref<TextTrackCue>&& cue)
 {
     ASSERT(!m_vector.contains(cue.ptr()));
-    ASSERT(cue->startMediaTime() >= MediaTime::zeroTime());
-    ASSERT(cue->endMediaTime() >= MediaTime::zeroTime());
 
     RefPtr<TextTrackCue> cueRefPtr { WTFMove(cue) };
     unsigned insertionPosition = std::upper_bound(m_vector.begin(), m_vector.end(), cueRefPtr, cueSortsBefore) - m_vector.begin();

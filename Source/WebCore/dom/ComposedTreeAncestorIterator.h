@@ -42,7 +42,7 @@ public:
     Element& operator*() { return get(); }
     Element* operator->() { return &get(); }
 
-    bool operator==(const ComposedTreeAncestorIterator& other) const { return m_current == other.m_current; }
+    friend bool operator==(ComposedTreeAncestorIterator, ComposedTreeAncestorIterator) = default;
 
     ComposedTreeAncestorIterator& operator++() { return traverseParent(); }
 
@@ -52,7 +52,7 @@ public:
 private:
     void traverseParentInShadowTree();
 
-    Node* m_current { 0 };
+    Node* m_current { nullptr };
 };
 
 inline ComposedTreeAncestorIterator::ComposedTreeAncestorIterator()

@@ -3,12 +3,16 @@
 
 /*---
 esid: sec-temporal.plaindatetime.prototype.with
-description: The options argument is passed through to Calendar#dateFromFields as-is.
+description: >
+  The options argument is copied and the copy is passed to
+  Calendar#dateFromFields.
 includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const options = {};
+const options = {
+  extra: "property",
+};
 let calledDateFromFields = 0;
 class Calendar extends Temporal.Calendar {
   constructor() {
@@ -16,7 +20,9 @@ class Calendar extends Temporal.Calendar {
   }
   dateFromFields(fields, optionsArg) {
     ++calledDateFromFields;
-    assert.sameValue(optionsArg, options, "should pass options object through");
+    assert.notSameValue(optionsArg, options, "should pass copied options object");
+    assert.sameValue(optionsArg.extra, "property", "should copy all properties from options object");
+    assert.sameValue(Object.getPrototypeOf(optionsArg), null, "Copy has null prototype");
     return super.dateFromFields(fields, optionsArg);
   }
 };

@@ -372,13 +372,6 @@ struct FeaturesMtl : FeatureSetBase
         &members, "http://crbug.com/1423136"
     };
 
-    FeatureInfo disableMetalOnGpuFamily1 = {
-        "disableMetalOnGpuFamily1",
-        FeatureCategory::MetalFeatures,
-        "GPUs that don't support Mac GPU family 2 or greater are unsupported by the Metal backend.",
-        &members, "http://anglebug.com/7952"
-    };
-
     FeatureInfo disableMetalOnNvidia = {
         "disableMetalOnNvidia",
         FeatureCategory::MetalFeatures,
@@ -391,6 +384,20 @@ struct FeaturesMtl : FeatureSetBase
         FeatureCategory::MetalFeatures,
         "Flush after calls to StreamVertexData to work around driver bugs.",
         &members,
+    };
+
+    FeatureInfo requireGpuFamily2 = {
+        "requireGpuFamily2",
+        FeatureCategory::MetalFeatures,
+        "Mac GPU Family 2 is required to support all the features of OpenGL ES 2.0",
+        &members, "http://anglebug.com/7952"
+    };
+
+    FeatureInfo requireMsl21 = {
+        "requireMsl21",
+        FeatureCategory::MetalFeatures,
+        "MSL 2.1 is required to support all the features of OpenGL ES 2.0",
+        &members, "http://anglebug.com/8258"
     };
 
 };

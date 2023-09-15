@@ -478,7 +478,7 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToPrecision, (JSGlobalObject* globalObje
     if (significantFigures < 1 || significantFigures > 100)
         return throwVMRangeError(globalObject, scope, "toPrecision() argument must be between 1 and 100"_s);
 
-    return JSValue::encode(jsString(vm, String::numberToStringFixedPrecision(x, significantFigures, KeepTrailingZeros)));
+    return JSValue::encode(jsString(vm, String::numberToStringFixedPrecision(x, significantFigures, TrailingZerosPolicy::Keep)));
 }
 
 JSString* NumericStrings::addJSString(VM& vm, int i)

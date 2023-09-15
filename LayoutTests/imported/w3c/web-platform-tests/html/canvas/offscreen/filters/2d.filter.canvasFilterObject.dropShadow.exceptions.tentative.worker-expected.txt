@@ -1,0 +1,3 @@
+
+FAIL Test exceptions on CanvasFilter() dropShadow object Can't find variable: CanvasFilter
+

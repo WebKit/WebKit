@@ -1,0 +1,20 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator]
+install-name: /System/Library/Frameworks/AudioToolbox.framework/AudioToolbox
+current-version: 1000
+reexported-libraries:
+-       targets: [i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator]
+        libraries: [/System/Library/PrivateFrameworks/AudioToolboxCore.framework/AudioToolboxCore]
+exports:
+-       targets: [i386-ios-simulator]
+        symbols: [_AudioUnitRender, _AudioUnitUninitialize]
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator]
+install-name: /System/Library/PrivateFrameworks/AudioToolboxCore.framework/AudioToolboxCore
+exports:
+-       targets: [i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator]
+        symbols: [_AudioUnitRender, _AudioUnitUninitialize]
+...

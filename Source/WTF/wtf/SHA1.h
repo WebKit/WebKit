@@ -38,6 +38,11 @@
 #include <CommonCrypto/CommonDigest.h>
 #endif
 
+// On Cocoa platforms, CoreUtils.h has a SHA1() macro that sometimes get included above here.
+#ifdef SHA1
+#undef SHA1
+#endif
+
 namespace WTF {
 
 class SHA1 {

@@ -33,8 +33,8 @@ from buildbot.process import buildstep, factory, properties
 from buildbot.util import identifiers as buildbot_identifiers
 from buildbot.worker import Worker
 
-from factories import *
-import wkbuild
+from .factories import *
+from . import wkbuild
 
 main_filter = ChangeFilter(branch=["main", None])
 
@@ -46,7 +46,9 @@ def pickLatestBuild(builder, requests):
     return max(requests, key=operator.attrgetter("submittedAt"))
 
 
-def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
+def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path=None):
+    if not master_prefix_path:
+        master_prefix_path = os.path.dirname(os.path.abspath(__file__))
     with open(os.path.join(master_prefix_path, 'config.json')) as config_json:
         config = json.load(config_json)
     if is_test_mode_enabled:

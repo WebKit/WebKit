@@ -231,6 +231,13 @@ static std::optional<WellFormedUnit> wellFormedUnitIdentifier(StringView unitIde
     return WellFormedUnit(numeratorUnit.value(), denominatorUnit.value());
 }
 
+#if HAVE(ICU_U_NUMBER_FORMATTER)
+// We intentionally avoid using ICU's UNUM_APPROXIMATELY_SIGN_FIELD and define the same value here.
+// UNUM_APPROXIMATELY_SIGN_FIELD can be defined in the header after ICU 71. But dylib ICU can be newer while ICU header version is old.
+// We can define UNUM_APPROXIMATELY_SIGN_FIELD here so that we can support old ICU header + newer ICU library combination.
+static constexpr UNumberFormatFields UNUM_APPROXIMATELY_SIGN_FIELD = static_cast<UNumberFormatFields>(UNUM_COMPACT_FIELD + 1);
+#endif
+
 static ASCIILiteral partTypeString(UNumberFormatFields field, IntlNumberFormat::Style style, bool sign, IntlMathematicalValue::NumberType type)
 {
     switch (field) {
@@ -270,6 +277,10 @@ static ASCIILiteral partTypeString(UNumberFormatFields field, IntlNumberFormat::
         return "unit"_s;
     case UNUM_COMPACT_FIELD:
         return "compact"_s;
+IGNORE_GCC_WARNINGS_BEGIN("switch")
+    case UNUM_APPROXIMATELY_SIGN_FIELD:
+        return "approximatelySign"_s;
+IGNORE_GCC_WARNINGS_END
 #endif
     // These should not show up because there is no way to specify them in NumberFormat options.
     // If they do, they don't fit well into any of known part types, so consider it an "unknown".
@@ -376,31 +387,6 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     setNumberFormatDigitOptions(globalObject, this, options, minimumFractionDigitsDefault, maximumFractionDigitsDefault, m_notation);
     RETURN_IF_EXCEPTION(scope, void());
 
-    m_roundingIncrement = intlNumberOption(globalObject, options, vm.propertyNames->roundingIncrement, 1, 5000, 1);
-    RETURN_IF_EXCEPTION(scope, void());
-    static constexpr const unsigned roundingIncrementCandidates[] = {
-        1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000
-    };
-    if (std::none_of(roundingIncrementCandidates, roundingIncrementCandidates + std::size(roundingIncrementCandidates),
-        [&](unsigned candidate) {
-            return candidate == m_roundingIncrement;
-        })) {
-        throwRangeError(globalObject, scope, "roundingIncrement must be one of 1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000"_s);
-        return;
-    }
-    if (m_roundingIncrement != 1) {
-        if (m_roundingType != IntlRoundingType::FractionDigits) {
-            throwTypeError(globalObject, scope, "rounding type is not fraction-digits while roundingIncrement is specified"_s);
-            return;
-        }
-        // FIXME: The proposal has m_maximumFractionDigits != m_minimumFractionDigits check here, but it breaks the use case.
-        // We intentionally do not follow to that here until the issue is fixed.
-        // https://github.com/tc39/proposal-intl-numberformat-v3/issues/97
-    }
-
-    m_trailingZeroDisplay = intlOption<TrailingZeroDisplay>(globalObject, options, vm.propertyNames->trailingZeroDisplay, { { "auto"_s, TrailingZeroDisplay::Auto }, { "stripIfInteger"_s, TrailingZeroDisplay::StripIfInteger } }, "trailingZeroDisplay must be either \"auto\" or \"stripIfInteger\""_s, TrailingZeroDisplay::Auto);
-    RETURN_IF_EXCEPTION(scope, void());
-
     m_compactDisplay = intlOption<CompactDisplay>(globalObject, options, Identifier::fromString(vm, "compactDisplay"_s), { { "short"_s, CompactDisplay::Short }, { "long"_s, CompactDisplay::Long } }, "compactDisplay must be either \"short\" or \"long\""_s, CompactDisplay::Short);
     RETURN_IF_EXCEPTION(scope, void());
 
@@ -414,19 +400,6 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     m_signDisplay = intlOption<SignDisplay>(globalObject, options, Identifier::fromString(vm, "signDisplay"_s), { { "auto"_s, SignDisplay::Auto }, { "never"_s, SignDisplay::Never }, { "always"_s, SignDisplay::Always }, { "exceptZero"_s, SignDisplay::ExceptZero }, { "negative"_s, SignDisplay::Negative } }, "signDisplay must be either \"auto\", \"never\", \"always\", \"exceptZero\", or \"negative\""_s, SignDisplay::Auto);
     RETURN_IF_EXCEPTION(scope, void());
 
-    m_roundingMode = intlOption<RoundingMode>(globalObject, options, vm.propertyNames->roundingMode, {
-            { "ceil"_s, RoundingMode::Ceil },
-            { "floor"_s, RoundingMode::Floor },
-            { "expand"_s, RoundingMode::Expand },
-            { "trunc"_s, RoundingMode::Trunc },
-            { "halfCeil"_s, RoundingMode::HalfCeil },
-            { "halfFloor"_s, RoundingMode::HalfFloor },
-            { "halfExpand"_s, RoundingMode::HalfExpand },
-            { "halfTrunc"_s, RoundingMode::HalfTrunc },
-            { "halfEven"_s, RoundingMode::HalfEven }
-        }, "roundingMode must be either \"ceil\", \"floor\", \"expand\", \"trunc\", \"halfCeil\", \"halfFloor\", \"halfExpand\", \"halfTrunc\", or \"halfEven\""_s, RoundingMode::HalfExpand);
-    RETURN_IF_EXCEPTION(scope, void());
-
     CString dataLocaleWithExtensions = makeString(resolved.dataLocale, "-u-nu-"_s, m_numberingSystem).utf8();
     dataLogLnIf(IntlNumberFormatInternal::verbose, "dataLocaleWithExtensions:(", dataLocaleWithExtensions , ")");
 
@@ -437,48 +410,6 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     // https://github.com/unicode-org/icu/blob/master/docs/userguide/format_parse/numbers/skeletons.md
 
     StringBuilder skeletonBuilder;
-
-    switch (m_roundingMode) {
-    case RoundingMode::Ceil:
-        skeletonBuilder.append("rounding-mode-ceiling");
-        break;
-    case RoundingMode::Floor:
-        skeletonBuilder.append("rounding-mode-floor");
-        break;
-    case RoundingMode::Expand:
-        skeletonBuilder.append("rounding-mode-up");
-        break;
-    case RoundingMode::Trunc:
-        skeletonBuilder.append("rounding-mode-down");
-        break;
-    case RoundingMode::HalfCeil: {
-        // Only ICU69~ supports half-ceiling. Ignore this option if linked ICU does not support it.
-        // https://github.com/unicode-org/icu/commit/e8dfea9bb6bb27596731173b352759e44ad06b21
-        if (WTF::ICU::majorVersion() >= 69)
-            skeletonBuilder.append("rounding-mode-half-ceiling");
-        else
-            skeletonBuilder.append("rounding-mode-half-up"); // Default option.
-        break;
-    }
-    case RoundingMode::HalfFloor: {
-        // Only ICU69~ supports half-ceil. Ignore this option if linked ICU does not support it.
-        // https://github.com/unicode-org/icu/commit/e8dfea9bb6bb27596731173b352759e44ad06b21
-        if (WTF::ICU::majorVersion() >= 69)
-            skeletonBuilder.append("rounding-mode-half-floor");
-        else
-            skeletonBuilder.append("rounding-mode-half-up"); // Default option.
-        break;
-    }
-    case RoundingMode::HalfExpand:
-        skeletonBuilder.append("rounding-mode-half-up");
-        break;
-    case RoundingMode::HalfTrunc:
-        skeletonBuilder.append("rounding-mode-half-down");
-        break;
-    case RoundingMode::HalfEven:
-        skeletonBuilder.append("rounding-mode-half-even");
-        break;
-    }
 
     switch (m_style) {
     case Style::Decimal:
@@ -536,19 +467,6 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     }
 
     appendNumberFormatDigitOptionsToSkeleton(this, skeletonBuilder);
-
-    // Configure this just after precision.
-    // https://github.com/unicode-org/icu/blob/main/docs/userguide/format_parse/numbers/skeletons.md#trailing-zero-display
-    switch (m_trailingZeroDisplay) {
-    case TrailingZeroDisplay::Auto:
-        break;
-    case TrailingZeroDisplay::StripIfInteger:
-        // Only ICU69~ supports trailing zero display. Ignore this option if linked ICU does not support it.
-        // https://github.com/unicode-org/icu/commit/b79c299f90d4023ac237db3d0335d568bf21cd36
-        if (WTF::ICU::majorVersion() >= 69)
-            skeletonBuilder.append("/w");
-        break;
-    }
 
     // https://github.com/unicode-org/icu/blob/master/docs/userguide/format_parse/numbers/skeletons.md#notation
     switch (m_notation) {
@@ -1162,14 +1080,17 @@ JSValue IntlNumberFormat::formatRangeToParts(JSGlobalObject* globalObject, doubl
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format a range"_s);
 
-    bool equal = numberFieldsPracticallyEqual(formattedValue, status);
-    if (U_FAILURE(status)) {
-        throwTypeError(globalObject, scope, "Failed to format number range"_s);
-        return { };
-    }
+    // After ICU 71, approximatelySign is supported. We use the old path only for < 71.
+    if (WTF::ICU::majorVersion() < 71) {
+        bool equal = numberFieldsPracticallyEqual(formattedValue, status);
+        if (U_FAILURE(status)) {
+            throwTypeError(globalObject, scope, "Failed to format number range"_s);
+            return { };
+        }
 
-    if (equal)
-        RELEASE_AND_RETURN(scope, formatToParts(globalObject, start, jsNontrivialString(vm, "shared"_s)));
+        if (equal)
+            RELEASE_AND_RETURN(scope, formatToParts(globalObject, start, jsNontrivialString(vm, "shared"_s)));
+    }
 
     JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
     if (!parts) {
@@ -1212,14 +1133,17 @@ JSValue IntlNumberFormat::formatRangeToParts(JSGlobalObject* globalObject, IntlM
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format a range"_s);
 
-    bool equal = numberFieldsPracticallyEqual(formattedValue, status);
-    if (U_FAILURE(status)) {
-        throwTypeError(globalObject, scope, "Failed to format number range"_s);
-        return { };
-    }
+    // After ICU 71, approximatelySign is supported. We use the old path only for < 71.
+    if (WTF::ICU::majorVersion() < 71) {
+        bool equal = numberFieldsPracticallyEqual(formattedValue, status);
+        if (U_FAILURE(status)) {
+            throwTypeError(globalObject, scope, "Failed to format number range"_s);
+            return { };
+        }
 
-    if (equal)
-        RELEASE_AND_RETURN(scope, formatToParts(globalObject, WTFMove(start), jsNontrivialString(vm, "shared"_s)));
+        if (equal)
+            RELEASE_AND_RETURN(scope, formatToParts(globalObject, WTFMove(start), jsNontrivialString(vm, "shared"_s)));
+    }
 
     JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
     if (!parts) {
@@ -1364,12 +1288,12 @@ ASCIILiteral IntlNumberFormat::roundingModeString(RoundingMode roundingMode)
     return { };
 }
 
-ASCIILiteral IntlNumberFormat::trailingZeroDisplayString(TrailingZeroDisplay trailingZeroDisplay)
+ASCIILiteral IntlNumberFormat::trailingZeroDisplayString(IntlTrailingZeroDisplay trailingZeroDisplay)
 {
     switch (trailingZeroDisplay) {
-    case TrailingZeroDisplay::Auto:
+    case IntlTrailingZeroDisplay::Auto:
         return "auto"_s;
-    case TrailingZeroDisplay::StripIfInteger:
+    case IntlTrailingZeroDisplay::StripIfInteger:
         return "stripIfInteger"_s;
     }
     ASSERT_NOT_REACHED();

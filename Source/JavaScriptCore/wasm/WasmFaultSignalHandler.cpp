@@ -26,14 +26,13 @@
 #include "config.h"
 #include "WasmFaultSignalHandler.h"
 
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=259108 Support signal handlers on Windows
-#if ENABLE(WEBASSEMBLY) && OS(UNIX)
+#if ENABLE(WEBASSEMBLY)
 
 #include "ExecutableAllocator.h"
 #include "LLIntData.h"
 #include "MachineContext.h"
+#include "NativeCalleeRegistry.h"
 #include "WasmCallee.h"
-#include "WasmCalleeRegistry.h"
 #include "WasmCapabilities.h"
 #include "WasmContext.h"
 #include "WasmExceptionType.h"
@@ -79,10 +78,12 @@ static SignalAction trapHandler(Signal signal, SigInfo& sigInfo, PlatformRegiste
             auto didFaultInWasm = [](void* faultingInstruction) {
                 if (LLInt::isWasmLLIntPC(faultingInstruction))
                     return true;
-                auto& calleeRegistry = CalleeRegistry::singleton();
+                auto& calleeRegistry = NativeCalleeRegistry::singleton();
                 Locker locker { calleeRegistry.getLock() };
                 for (auto* callee : calleeRegistry.allCallees()) {
-                    auto [start, end] = callee->range();
+                    if (callee->category() != NativeCallee::Category::Wasm)
+                        continue;
+                    auto [start, end] = static_cast<Wasm::Callee*>(callee)->range();
                     dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "function start: ", RawPointer(start), " end: ", RawPointer(end));
                     if (start <= faultingInstruction && faultingInstruction < end) {
                         dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "found match");
@@ -133,5 +134,5 @@ void prepareSignalingMemory()
     
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMBLY) && OS(UNIX)
+#endif // ENABLE(WEBASSEMBLY)
 

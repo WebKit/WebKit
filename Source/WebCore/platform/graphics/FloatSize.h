@@ -156,6 +156,8 @@ public:
     WEBCORE_EXPORT String toJSONString() const;
     WEBCORE_EXPORT Ref<JSON::Object> toJSONObject() const;
 
+    friend bool operator==(const FloatSize&, const FloatSize&) = default;
+
 private:
     float m_width { 0 };
     float m_height { 0 };
@@ -218,11 +220,6 @@ constexpr FloatSize operator/(const FloatSize& a, float b)
 constexpr FloatSize operator/(float a, const FloatSize& b)
 {
     return FloatSize(a / b.width(), a / b.height());
-}
-
-inline bool operator==(const FloatSize& a, const FloatSize& b)
-{
-    return a.width() == b.width() && a.height() == b.height();
 }
 
 inline bool areEssentiallyEqual(const FloatSize& a, const FloatSize& b)

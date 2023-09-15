@@ -28,10 +28,11 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "UserInterfaceIdiom.h"
-#import <WebCore/Device.h>
-#import <pal/ios/ManagedConfigurationSoftLink.h>
 #import <pal/spi/ios/ManagedConfigurationSPI.h>
+#import <pal/system/ios/Device.h>
+#import <pal/system/ios/UserInterfaceIdiom.h>
+
+#import <pal/ios/ManagedConfigurationSoftLink.h>
 
 namespace WebKit {
 
@@ -39,7 +40,7 @@ namespace WebKit {
 
 bool defaultTextAutosizingUsesIdempotentMode()
 {
-    return !currentUserInterfaceIdiomIsSmallScreen();
+    return !PAL::currentUserInterfaceIdiomIsSmallScreen();
 }
 
 #endif
@@ -68,7 +69,7 @@ void setAllowsDeprecatedSynchronousXMLHttpRequestDuringUnload(bool allowsRequest
 
 bool defaultMediaSourceEnabled()
 {
-    return !WebCore::deviceClassIsSmallScreen();
+    return !PAL::deviceClassIsSmallScreen();
 }
 
 #endif

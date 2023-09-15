@@ -31,12 +31,9 @@
 #include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/FetchOptions.h>
 #include <WebCore/NetworkLoadInformation.h>
+#include <pal/SessionID.h>
 #include <variant>
 #include <wtf/WeakPtr.h>
-
-namespace PAL {
-class SessionID;
-}
 
 namespace WebCore {
 class ContentSecurityPolicy;

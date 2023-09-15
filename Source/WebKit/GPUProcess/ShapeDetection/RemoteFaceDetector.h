@@ -42,7 +42,7 @@ class FaceDetector;
 }
 
 namespace WebKit {
-class RemoteResourceCache;
+class RemoteRenderingBackend;
 
 namespace ShapeDetection {
 class ObjectHeap;
@@ -52,15 +52,15 @@ class RemoteFaceDetector : public IPC::StreamMessageReceiver {
 public:
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteFaceDetector> create(Ref<WebCore::ShapeDetection::FaceDetector>&& faceDetector, ShapeDetection::ObjectHeap& objectHeap, RemoteResourceCache& remoteResourceCache, ShapeDetectionIdentifier identifier, WebCore::ProcessIdentifier webProcessIdentifier)
+    static Ref<RemoteFaceDetector> create(Ref<WebCore::ShapeDetection::FaceDetector>&& faceDetector, ShapeDetection::ObjectHeap& objectHeap, RemoteRenderingBackend& backend, ShapeDetectionIdentifier identifier, WebCore::ProcessIdentifier webProcessIdentifier)
     {
-        return adoptRef(*new RemoteFaceDetector(WTFMove(faceDetector), objectHeap, remoteResourceCache, identifier, webProcessIdentifier));
+        return adoptRef(*new RemoteFaceDetector(WTFMove(faceDetector), objectHeap, backend, identifier, webProcessIdentifier));
     }
 
     virtual ~RemoteFaceDetector();
 
 private:
-    RemoteFaceDetector(Ref<WebCore::ShapeDetection::FaceDetector>&&, ShapeDetection::ObjectHeap&, RemoteResourceCache&, ShapeDetectionIdentifier, WebCore::ProcessIdentifier);
+    RemoteFaceDetector(Ref<WebCore::ShapeDetection::FaceDetector>&&, ShapeDetection::ObjectHeap&, RemoteRenderingBackend&, ShapeDetectionIdentifier, WebCore::ProcessIdentifier);
 
     RemoteFaceDetector(const RemoteFaceDetector&) = delete;
     RemoteFaceDetector(RemoteFaceDetector&&) = delete;
@@ -75,7 +75,7 @@ private:
 
     Ref<WebCore::ShapeDetection::FaceDetector> m_backing;
     ShapeDetection::ObjectHeap& m_objectHeap;
-    RemoteResourceCache& m_remoteResourceCache;
+    RemoteRenderingBackend& m_backend;
     const ShapeDetectionIdentifier m_identifier;
     const WebCore::ProcessIdentifier m_webProcessIdentifier;
 };

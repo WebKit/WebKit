@@ -120,8 +120,10 @@ private:
     template<typename Message> bool sendToServiceWorker(Message&&);
     template<typename Message> bool sendToClient(Message&&);
 
+    RefPtr<NetworkResourceLoader> protectedLoader() const;
+
     WeakPtr<WebSWServerConnection> m_swServerConnection;
-    NetworkResourceLoader& m_loader;
+    WeakPtr<NetworkResourceLoader> m_loader;
     WeakPtr<WebSWServerToContextConnection> m_serviceWorkerConnection;
     WebCore::FetchIdentifier m_fetchIdentifier;
     WebCore::SWServerConnectionIdentifier m_serverConnectionIdentifier;

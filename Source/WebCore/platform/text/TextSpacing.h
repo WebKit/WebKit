@@ -30,19 +30,15 @@
 namespace WebCore {
 
 struct TextSpacingTrim {
+    enum class TrimType : bool {
+        Auto = 0,
+        SpaceAll // equivalent to None in text-spacing shorthand
+    };
 
-enum class TrimType: uint8_t {
-    Auto = 0,
-    SpaceAll // equivalent to None in text-spacing shorthand
-};
-
-bool isAuto() const { return m_trim == TrimType::Auto; }
-bool isSpaceAll() const { return m_trim == TrimType::SpaceAll; }
-bool operator==(const TextSpacingTrim& other) const
-{
-    return m_trim == other.m_trim;
-}
-TrimType m_trim { TrimType::SpaceAll };
+    bool isAuto() const { return m_trim == TrimType::Auto; }
+    bool isSpaceAll() const { return m_trim == TrimType::SpaceAll; }
+    friend bool operator==(const TextSpacingTrim&, const TextSpacingTrim&) = default;
+    TrimType m_trim { TrimType::SpaceAll };
 };
 
 inline WTF::TextStream& operator<<(WTF::TextStream& ts, const TextSpacingTrim& value)
@@ -58,18 +54,15 @@ inline WTF::TextStream& operator<<(WTF::TextStream& ts, const TextSpacingTrim& v
 }
 
 struct TextAutospace {
-enum class TextAutospaceType: uint8_t {
-    Auto = 0,
-    NoAutospace // equivalent to None in text-spacing shorthand
-};
+    enum class TextAutospaceType : bool {
+        Auto = 0,
+        NoAutospace // equivalent to None in text-spacing shorthand
+    };
 
-bool isAuto() const { return m_autoSpace == TextAutospaceType::Auto; }
-bool isNoAutospace() const { return m_autoSpace == TextAutospaceType::NoAutospace; }
-bool operator==(const TextAutospace& other) const
-{
-    return m_autoSpace == other.m_autoSpace;
-}
-TextAutospaceType m_autoSpace { TextAutospaceType::NoAutospace };
+    bool isAuto() const { return m_autoSpace == TextAutospaceType::Auto; }
+    bool isNoAutospace() const { return m_autoSpace == TextAutospaceType::NoAutospace; }
+    friend bool operator==(const TextAutospace&, const TextAutospace&) = default;
+    TextAutospaceType m_autoSpace { TextAutospaceType::NoAutospace };
 };
 
 inline WTF::TextStream& operator<<(WTF::TextStream& ts, const TextAutospace& value)

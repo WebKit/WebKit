@@ -27,6 +27,7 @@
 #include "ServiceWorkerRegistration.h"
 
 #if ENABLE(SERVICE_WORKER)
+#include "CookieStoreManager.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventLoop.h"
@@ -336,6 +337,13 @@ void ServiceWorkerRegistration::getNotifications(const GetNotificationOptions& f
 }
 
 #endif // ENABLE(NOTIFICATION_EVENT)
+
+CookieStoreManager& ServiceWorkerRegistration::cookies()
+{
+    if (!m_cookieStoreManager)
+        m_cookieStoreManager = CookieStoreManager::create();
+    return *m_cookieStoreManager;
+}
 
 } // namespace WebCore
 

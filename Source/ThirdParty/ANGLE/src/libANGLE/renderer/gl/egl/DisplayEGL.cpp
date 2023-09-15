@@ -65,47 +65,23 @@ std::vector<EGLint> RenderableTypesFromPlatformAttrib(const rx::FunctionsEGL *eg
     return renderableTypes;
 }
 
-class WorkerContextEGL final : public rx::WorkerContext
+template <typename... Rest>
+egl::AttributeMap MergeAttributeMaps(const egl::AttributeMap &a)
 {
-  public:
-    WorkerContextEGL(EGLContext context, rx::FunctionsEGL *functions, EGLSurface pbuffer);
-    ~WorkerContextEGL() override;
-
-    bool makeCurrent() override;
-    void unmakeCurrent() override;
-
-  private:
-    EGLContext mContext;
-    rx::FunctionsEGL *mFunctions;
-    EGLSurface mPbuffer;
-};
-
-WorkerContextEGL::WorkerContextEGL(EGLContext context,
-                                   rx::FunctionsEGL *functions,
-                                   EGLSurface pbuffer)
-    : mContext(context), mFunctions(functions), mPbuffer(pbuffer)
-{}
-
-WorkerContextEGL::~WorkerContextEGL()
-{
-    mFunctions->destroyContext(mContext);
+    return a;
 }
 
-bool WorkerContextEGL::makeCurrent()
+template <typename... Rest>
+egl::AttributeMap MergeAttributeMaps(const egl::AttributeMap &a, Rest... rest)
 {
-    if (mFunctions->makeCurrent(mPbuffer, mContext) == EGL_FALSE)
+    egl::AttributeMap result(a);
+    for (const auto &attrib : MergeAttributeMaps(rest...))
     {
-        ERR() << "Unable to make the EGL context current.";
-        return false;
+        ASSERT(!result.contains(attrib.first));
+        result.insert(attrib.first, attrib.second);
     }
-    return true;
+    return result;
 }
-
-void WorkerContextEGL::unmakeCurrent()
-{
-    mFunctions->makeCurrent(EGL_NO_SURFACE, EGL_NO_CONTEXT);
-}
-
 }  // namespace
 
 namespace rx
@@ -143,8 +119,7 @@ const char *DisplayEGL::getEGLPath() const
 
 egl::Error DisplayEGL::initializeContext(EGLContext shareContext,
                                          const egl::AttributeMap &eglAttributes,
-                                         EGLContext *outContext,
-                                         native_egl::AttributeVector *outAttribs) const
+                                         EGLContext *outContext) const
 {
     gl::Version eglVersion(mEGL->majorVersion, mEGL->minorVersion);
 
@@ -227,7 +202,6 @@ egl::Error DisplayEGL::initializeContext(EGLContext shareContext,
             if (context != EGL_NO_CONTEXT)
             {
                 *outContext = context;
-                *outAttribs = std::move(attribVector);
                 return egl::NoError();
             }
 
@@ -240,12 +214,96 @@ egl::Error DisplayEGL::initializeContext(EGLContext shareContext,
         if (context != EGL_NO_CONTEXT)
         {
             *outContext = context;
-            *outAttribs = std::move(attribVector);
             return egl::NoError();
         }
     }
 
     return egl::Error(mEGL->getError(), "eglCreateContext failed");
+}
+
+egl::Error DisplayEGL::findConfig(egl::Display *display,
+                                  bool forMockPbuffer,
+                                  EGLConfig *outConfig,
+                                  std::vector<EGLint> *outConfigAttribs)
+{
+    const EGLAttrib platformAttrib      = mDisplayAttributes.get(EGL_PLATFORM_ANGLE_TYPE_ANGLE,
+                                                                 EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE);
+    std::vector<EGLint> renderableTypes = RenderableTypesFromPlatformAttrib(mEGL, platformAttrib);
+    if (renderableTypes.empty())
+    {
+        return egl::EglNotInitialized() << "No available renderable types.";
+    }
+
+    EGLint surfaceType = EGL_DONT_CARE;
+    if (forMockPbuffer)
+    {
+        surfaceType = EGL_PBUFFER_BIT;
+    }
+    else if (!mSupportsSurfaceless)
+    {
+        surfaceType = EGL_WINDOW_BIT | EGL_PBUFFER_BIT;
+    }
+
+    egl::AttributeMap rootAttribs;
+    rootAttribs.insert(EGL_SURFACE_TYPE, surfaceType);
+
+    egl::AttributeMap rgba888Attribs;
+    rgba888Attribs.insert(EGL_RED_SIZE, 8);
+    rgba888Attribs.insert(EGL_GREEN_SIZE, 8);
+    rgba888Attribs.insert(EGL_BLUE_SIZE, 8);
+    rgba888Attribs.insert(EGL_ALPHA_SIZE, 8);
+
+    egl::AttributeMap rgb565Attribs;
+    rgb565Attribs.insert(EGL_RED_SIZE, 5);
+    rgb565Attribs.insert(EGL_GREEN_SIZE, 6);
+    rgb565Attribs.insert(EGL_BLUE_SIZE, 5);
+    rgb565Attribs.insert(EGL_BUFFER_SIZE, 16);
+
+    egl::AttributeMap ds248Attribs;
+    ds248Attribs.insert(EGL_DEPTH_SIZE, 24);
+    ds248Attribs.insert(EGL_STENCIL_SIZE, 8);
+
+    egl::AttributeMap d16Attribs;
+    ds248Attribs.insert(EGL_DEPTH_SIZE, 16);
+
+    egl::AttributeMap attributePermutations[] = {
+        // First try RGBA8 + any depth/stencil
+        MergeAttributeMaps(rootAttribs, rgba888Attribs, ds248Attribs),
+        MergeAttributeMaps(rootAttribs, rgba888Attribs, d16Attribs),
+        // Fall back to RGB565 + any depth/stencil
+        MergeAttributeMaps(rootAttribs, rgb565Attribs, ds248Attribs),
+        MergeAttributeMaps(rootAttribs, rgb565Attribs, d16Attribs),
+        // Accept no depth stencil if that's all there is
+        MergeAttributeMaps(rootAttribs, rgba888Attribs),
+        MergeAttributeMaps(rootAttribs, rgb565Attribs),
+    };
+
+    for (const egl::AttributeMap &attributePermutation : attributePermutations)
+    {
+        for (EGLint renderableType : renderableTypes)
+        {
+            egl::AttributeMap configAttribs = attributePermutation;
+            configAttribs.insert(EGL_RENDERABLE_TYPE, renderableType);
+
+            std::vector<EGLint> attribVector = configAttribs.toIntVector();
+
+            EGLConfig config = EGL_NO_CONFIG_KHR;
+            EGLint numConfig = 0;
+            if (mEGL->chooseConfig(attribVector.data(), &config, 1, &numConfig) == EGL_TRUE &&
+                numConfig > 0)
+            {
+                *outConfig = config;
+                if (outConfigAttribs)
+                {
+                    *outConfigAttribs = configAttribs.toIntVector();
+                }
+                return egl::NoError();
+            }
+        }
+    }
+
+    return egl::EglNotInitialized()
+           << "Failed to find a usable config. Last error: " << egl::Error(mEGL->getError());
 }
 
 egl::Error DisplayEGL::initialize(egl::Display *display)
@@ -282,88 +340,18 @@ egl::Error DisplayEGL::initialize(egl::Display *display)
 
     if (!mSupportsNoConfigContexts)
     {
-        const EGLAttrib platformAttrib = mDisplayAttributes.get(EGL_PLATFORM_ANGLE_TYPE_ANGLE, 0);
-        std::vector<EGLint> renderableTypes =
-            RenderableTypesFromPlatformAttrib(mEGL, platformAttrib);
-        if (renderableTypes.empty())
-        {
-            return egl::EglNotInitialized() << "No available renderable types.";
-        }
-
-        const EGLint surfaceTypes[] = {EGL_WINDOW_BIT | EGL_PBUFFER_BIT, EGL_DONT_CARE};
-
-        egl::AttributeMap configAttribs;
-        // Choose RGBA8888
-        configAttribs.insert(EGL_RED_SIZE, 8);
-        configAttribs.insert(EGL_GREEN_SIZE, 8);
-        configAttribs.insert(EGL_BLUE_SIZE, 8);
-        configAttribs.insert(EGL_ALPHA_SIZE, 8);
-
-        // Choose D24S8
-        // EGL1.5 spec Section 2.2 says that depth, multisample and stencil buffer depths
-        // must match for contexts to be compatible.
-        configAttribs.insert(EGL_DEPTH_SIZE, 24);
-        configAttribs.insert(EGL_STENCIL_SIZE, 8);
-
-        for (EGLint surfaceType : surfaceTypes)
-        {
-            configAttribs.insert(EGL_SURFACE_TYPE, surfaceType);
-
-            for (EGLint renderableType : renderableTypes)
-            {
-                configAttribs.insert(EGL_RENDERABLE_TYPE, renderableType);
-
-                std::vector<EGLint> attribVector = configAttribs.toIntVector();
-
-                EGLint numConfig = 0;
-                if (mEGL->chooseConfig(attribVector.data(), &mConfig, 1, &numConfig) == EGL_TRUE)
-                {
-                    break;
-                }
-            }
-        }
-
-        if (mConfig == EGL_NO_CONFIG_KHR)
-        {
-            return egl::EglNotInitialized()
-                   << "eglChooseConfig failed with " << egl::Error(mEGL->getError());
-        }
-
-        mConfigAttribList = configAttribs.toIntVector();
+        ANGLE_TRY(findConfig(display, false, &mConfig, &mConfigAttribList));
     }
 
     // A mock pbuffer is only needed if surfaceless contexts are not supported.
-    mSupportsSurfaceless = mEGL->hasExtension("EGL_KHR_surfaceless_context");
     if (!mSupportsSurfaceless)
     {
-        // clang-format off
-        constexpr const EGLint pbufferConfigAttribs[] =
-        {
-            // We want RGBA8 and DEPTH24_STENCIL8
-            EGL_SURFACE_TYPE, EGL_PBUFFER_BIT,
-            EGL_RED_SIZE, 8,
-            EGL_GREEN_SIZE, 8,
-            EGL_BLUE_SIZE, 8,
-            EGL_ALPHA_SIZE, 8,
-            EGL_DEPTH_SIZE, 24,
-            EGL_STENCIL_SIZE, 8,
-            EGL_NONE,
-        };
+        EGLConfig pbufferConfig;
+        ANGLE_TRY(findConfig(display, true, &pbufferConfig, nullptr));
 
         constexpr const int mockPbufferAttribs[] = {
-            EGL_WIDTH, 1,
-            EGL_HEIGHT, 1,
-            EGL_NONE,
+            EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE,
         };
-        // clang-format on
-
-        EGLint numConfig;
-        EGLConfig pbufferConfig;
-        if (!mEGL->chooseConfig(pbufferConfigAttribs, &pbufferConfig, 1, &numConfig) ||
-            numConfig < 1)
-        {
-            return egl::EglNotInitialized() << "Failed to find a config for the mock pbuffer.";
-        }
 
         mMockPbuffer = mEGL->createPbufferSurface(pbufferConfig, mockPbufferAttribs);
         if (mMockPbuffer == EGL_NO_SURFACE)
@@ -561,7 +549,7 @@ ContextImpl *DisplayEGL::createContext(const gl::State &state,
 template <typename T>
 void DisplayEGL::getConfigAttrib(EGLConfig config, EGLint attribute, T *value) const
 {
-    EGLint tmp;
+    EGLint tmp         = *value;
     EGLBoolean success = mEGL->getConfigAttrib(config, attribute, &tmp);
     ASSERT(success == EGL_TRUE);
     *value = tmp;
@@ -668,10 +656,20 @@ egl::ConfigSet DisplayEGL::generateConfigs()
                 continue;
             }
         }
-        else
+        else if (config.colorBufferType == EGL_LUMINANCE_BUFFER ||
+                 config.colorBufferType == EGL_YUV_BUFFER_EXT)
         {
+            // YUV and luminance EGL configs are not exposed, the frontened has not implemented
+            // them.
             continue;
         }
+        else
+        {
+            WARN() << "Unknown EGL color buffer type " << gl::FmtHex(config.colorBufferType)
+                   << ", skipping.";
+            continue;
+        }
+
         config.depthStencilFormat = gl::GetConfigDepthStencilBufferFormat(&config);
 
         config.matchNativePixmap  = EGL_NONE;
@@ -935,7 +933,6 @@ egl::Error DisplayEGL::createRenderer(EGLContext shareContext,
                                       std::shared_ptr<RendererEGL> *outRenderer)
 {
     EGLContext context = EGL_NO_CONTEXT;
-    native_egl::AttributeVector attribs;
 
     // If isExternalContext is true, the external context is current, so we don't need to make the
     // mMockPbuffer current.
@@ -947,12 +944,10 @@ egl::Error DisplayEGL::createRenderer(EGLContext shareContext,
         // restoring GL context state? http://anglebug.com/5509
         context = mEGL->getCurrentContext();
         ASSERT(context != EGL_NO_CONTEXT);
-        // TODO(penghuang): get the version from the current context. http://anglebug.com/5509
-        attribs = {EGL_CONTEXT_MAJOR_VERSION, 2, EGL_CONTEXT_MINOR_VERSION, 0, EGL_NONE};
     }
     else
     {
-        ANGLE_TRY(initializeContext(shareContext, mDisplayAttributes, &context, &attribs));
+        ANGLE_TRY(initializeContext(shareContext, mDisplayAttributes, &context));
         if (mEGL->makeCurrent(mMockPbuffer, context) == EGL_FALSE)
         {
             return egl::EglNotInitialized()
@@ -964,7 +959,7 @@ egl::Error DisplayEGL::createRenderer(EGLContext shareContext,
     functionsGL->initialize(mDisplayAttributes);
 
     outRenderer->reset(new RendererEGL(std::move(functionsGL), mDisplayAttributes, this, context,
-                                       attribs, isExternalContext));
+                                       isExternalContext));
 
     CurrentNativeContext &currentContext =
         mCurrentNativeContexts[angle::GetCurrentThreadUniqueId()];
@@ -984,19 +979,6 @@ egl::Error DisplayEGL::createRenderer(EGLContext shareContext,
     }
 
     return egl::NoError();
-}
-
-WorkerContext *DisplayEGL::createWorkerContext(std::string *infoLog,
-                                               EGLContext sharedContext,
-                                               const native_egl::AttributeVector workerAttribs)
-{
-    EGLContext context = mEGL->createContext(mConfig, sharedContext, workerAttribs.data());
-    if (context == EGL_NO_CONTEXT)
-    {
-        *infoLog += "Unable to create the EGL context.";
-        return nullptr;
-    }
-    return new WorkerContextEGL(context, mEGL, EGL_NO_SURFACE);
 }
 
 void DisplayEGL::initializeFrontendFeatures(angle::FrontendFeatures *features) const

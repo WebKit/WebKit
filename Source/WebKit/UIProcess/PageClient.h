@@ -32,6 +32,7 @@
 #include "PasteboardAccessIntent.h"
 #include "SameDocumentNavigationType.h"
 #include "ShareableBitmap.h"
+#include "VisibleContentRectUpdateInfo.h"
 #include "WebColorPicker.h"
 #include "WebDateTimePicker.h"
 #include "WebPopupMenuProxy.h"
@@ -677,6 +678,10 @@ public:
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     virtual void didEnterFullscreen() = 0;
     virtual void didExitFullscreen() = 0;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    virtual std::optional<WebKit::VisibleContentRectUpdateInfo> createVisibleContentRectUpdateInfo() = 0;
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)

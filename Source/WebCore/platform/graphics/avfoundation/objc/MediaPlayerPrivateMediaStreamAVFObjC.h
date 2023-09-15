@@ -69,7 +69,7 @@ public:
 
     // MediaPlayer Factory Methods
     static bool isAvailable();
-    static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types);
+    static void getSupportedTypes(HashSet<String>& types);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
     MediaPlayer::NetworkState networkState() const override;
@@ -133,7 +133,8 @@ private:
     MediaTime durationMediaTime() const override;
     MediaTime currentMediaTime() const override;
 
-    bool seeking() const override { return false; }
+    void seekToTarget(const SeekTarget&) final { };
+    bool seeking() const final { return false; }
 
     const PlatformTimeRanges& seekable() const override;
     const PlatformTimeRanges& buffered() const override;
@@ -233,7 +234,7 @@ private:
     MediaStreamTrackPrivate* activeVideoTrack() const;
 
     LayerHostingContextID hostingContextID() const final;
-    void setVideoInlineSizeFenced(const FloatSize&, WTF::MachSendRight&&) final;
+    void setVideoLayerSizeFenced(const FloatSize&, WTF::MachSendRight&&) final;
 
     ThreadSafeWeakPtr<MediaPlayer> m_player;
     RefPtr<MediaStreamPrivate> m_mediaStreamPrivate;

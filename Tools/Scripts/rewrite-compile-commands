@@ -1,0 +1,94 @@
+#!/usr/bin/env python3
+
+# Copyright (C) 2023 Igalia S.L.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#     * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#     * Neither the name of Apple Inc. ("Apple") nor the names of
+# its contributors may be used to endorse or promote products derived
+# from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import argparse
+import json
+import os
+import re
+
+parser = argparse.ArgumentParser(
+    description='This tool takes the compile_commands.json output by CMake and expands any UnifiedSources in it to regular sources.'
+)
+parser.add_argument('input_file')
+parser.add_argument('output_file')
+parser.add_argument('source_dir')
+parser.add_argument('build_dir')
+
+args = parser.parse_args()
+source_dir = args.source_dir
+build_dir = args.build_dir
+
+generated_compile_commands = []
+
+with open(args.input_file) as f:
+    compile_commands = json.load(f)
+
+for entry in compile_commands:
+    entry_file = entry['file']
+    if not 'UnifiedSource' in entry_file:
+        generated_compile_commands.append(entry)
+        continue
+
+    # The paths we expect are in the style of:
+    # - WebKit/WebKitBuild/Release/DerivedSources/WebKit/unified-sources/UnifiedSource-54928a2b-29.cpp
+    # - WebKit/WebKitBuild/Release/WebCore/DerivedSources/unified-sources/UnifiedSource-42f7b70e-5.cpp
+    # And Windows too:
+    # - WebKit\WebKitBuild\Release\WebCore\DerivedSources\unified-sources\UnifiedSource-42f7b70e-5.cpp
+    # So we extract the parent folders to map them to the source folders.
+    parent_dir_1, parent_dir_2 = entry_file.rsplit(os.path.sep, maxsplit=4)[1:3]
+    search_directories = [
+        os.path.join(build_dir, parent_dir_1, parent_dir_2),
+    ]
+
+    if parent_dir_1 == 'DerivedSources':
+        search_directories.append(os.path.join(source_dir, 'Source', parent_dir_2))
+    else:
+        search_directories.append(os.path.join(source_dir, 'Source', parent_dir_1))
+
+    with open(entry_file) as f:
+        for line in f.readlines():
+            include_path = line[10:-2]  # Extract header from `#include "HEADER"\n`
+            for d in search_directories:
+                include_file = os.path.join(d, include_path)
+
+                if os.path.exists(include_file):
+                    generated_compile_commands.append({
+                        "directory": entry["directory"],
+                        "command": entry["command"].replace(entry_file, include_file),
+                        "file": include_file,
+                    })
+                    break
+
+output_directory = os.path.dirname(args.output_file)
+if not os.path.isdir(output_directory):
+    os.makedirs(output_directory)
+
+with open(args.output_file, 'w') as f:
+    json.dump(generated_compile_commands, f, indent=2)

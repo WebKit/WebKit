@@ -297,7 +297,7 @@ LoadImageFunctionInfo BGRX8_ANGLEX_to_B8G8R8A8_UNORM(GLenum type)
     switch (type)
     {
         case GL_UNSIGNED_BYTE:
-            return LoadImageFunctionInfo(LoadToNative<GLubyte, 4>, false);
+            return LoadImageFunctionInfo(LoadToNative3To4<GLubyte, 0xFF>, true);
         default:
             UNREACHABLE();
             return LoadImageFunctionInfo(UnreachableLoadFunction, true);
@@ -309,7 +309,31 @@ LoadImageFunctionInfo BGRX8_ANGLEX_to_B8G8R8X8_UNORM(GLenum type)
     switch (type)
     {
         case GL_UNSIGNED_BYTE:
-            return LoadImageFunctionInfo(LoadToNative<GLubyte, 4>, false);
+            return LoadImageFunctionInfo(LoadToNative3To4<GLubyte, 0xFF>, true);
+        default:
+            UNREACHABLE();
+            return LoadImageFunctionInfo(UnreachableLoadFunction, true);
+    }
+}
+
+LoadImageFunctionInfo BGRX8_SRGB_ANGLEX_to_B8G8R8A8_UNORM_SRGB(GLenum type)
+{
+    switch (type)
+    {
+        case GL_UNSIGNED_BYTE:
+            return LoadImageFunctionInfo(LoadToNative3To4<GLubyte, 0xFF>, true);
+        default:
+            UNREACHABLE();
+            return LoadImageFunctionInfo(UnreachableLoadFunction, true);
+    }
+}
+
+LoadImageFunctionInfo BGRX8_SRGB_ANGLEX_to_B8G8R8X8_UNORM_SRGB(GLenum type)
+{
+    switch (type)
+    {
+        case GL_UNSIGNED_BYTE:
+            return LoadImageFunctionInfo(LoadToNative3To4<GLubyte, 0xFF>, true);
         default:
             UNREACHABLE();
             return LoadImageFunctionInfo(UnreachableLoadFunction, true);
@@ -3670,12 +3694,36 @@ LoadImageFunctionInfo RGBX8_ANGLE_to_R8G8B8X8_UNORM(GLenum type)
     }
 }
 
+LoadImageFunctionInfo RGBX8_SRGB_ANGLEX_to_R8G8B8A8_UNORM_SRGB(GLenum type)
+{
+    switch (type)
+    {
+        case GL_UNSIGNED_BYTE:
+            return LoadImageFunctionInfo(LoadToNative3To4<GLubyte, 0xFF>, true);
+        default:
+            UNREACHABLE();
+            return LoadImageFunctionInfo(UnreachableLoadFunction, true);
+    }
+}
+
+LoadImageFunctionInfo RGBX8_SRGB_ANGLEX_to_R8G8B8X8_UNORM_SRGB(GLenum type)
+{
+    switch (type)
+    {
+        case GL_UNSIGNED_BYTE:
+            return LoadImageFunctionInfo(LoadToNative3To4<GLubyte, 0xFF>, true);
+        default:
+            UNREACHABLE();
+            return LoadImageFunctionInfo(UnreachableLoadFunction, true);
+    }
+}
+
 LoadImageFunctionInfo SR8_EXT_to_R8_UNORM_SRGB(GLenum type)
 {
     switch (type)
     {
         case GL_UNSIGNED_BYTE:
-            return LoadImageFunctionInfo(LoadToNative<GLbyte, 1>, false);
+            return LoadImageFunctionInfo(LoadToNative<GLubyte, 1>, false);
         default:
             UNREACHABLE();
             return LoadImageFunctionInfo(UnreachableLoadFunction, true);
@@ -3687,7 +3735,7 @@ LoadImageFunctionInfo SRG8_EXT_to_R8G8_UNORM_SRGB(GLenum type)
     switch (type)
     {
         case GL_UNSIGNED_BYTE:
-            return LoadImageFunctionInfo(LoadToNative<GLbyte, 2>, false);
+            return LoadImageFunctionInfo(LoadToNative<GLubyte, 2>, false);
         default:
             UNREACHABLE();
             return LoadImageFunctionInfo(UnreachableLoadFunction, true);
@@ -3711,7 +3759,7 @@ LoadImageFunctionInfo SRGB8_to_R8G8B8_UNORM_SRGB(GLenum type)
     switch (type)
     {
         case GL_UNSIGNED_BYTE:
-            return LoadImageFunctionInfo(LoadToNative<GLbyte, 3>, false);
+            return LoadImageFunctionInfo(LoadToNative<GLubyte, 3>, false);
         default:
             UNREACHABLE();
             return LoadImageFunctionInfo(UnreachableLoadFunction, true);
@@ -3880,6 +3928,19 @@ LoadFunctionMap GetLoadFunctionsMap(GLenum internalFormat, FormatID angleFormat)
                     return BGRX8_ANGLEX_to_B8G8R8A8_UNORM;
                 case FormatID::B8G8R8X8_UNORM:
                     return BGRX8_ANGLEX_to_B8G8R8X8_UNORM;
+                default:
+                    break;
+            }
+            break;
+        }
+        case GL_BGRX8_SRGB_ANGLEX:
+        {
+            switch (angleFormat)
+            {
+                case FormatID::B8G8R8A8_UNORM_SRGB:
+                    return BGRX8_SRGB_ANGLEX_to_B8G8R8A8_UNORM_SRGB;
+                case FormatID::B8G8R8X8_UNORM_SRGB:
+                    return BGRX8_SRGB_ANGLEX_to_B8G8R8X8_UNORM_SRGB;
                 default:
                     break;
             }
@@ -5460,6 +5521,19 @@ LoadFunctionMap GetLoadFunctionsMap(GLenum internalFormat, FormatID angleFormat)
                     return RGBX8_ANGLE_to_R8G8B8A8_UNORM;
                 case FormatID::R8G8B8X8_UNORM:
                     return RGBX8_ANGLE_to_R8G8B8X8_UNORM;
+                default:
+                    break;
+            }
+            break;
+        }
+        case GL_RGBX8_SRGB_ANGLEX:
+        {
+            switch (angleFormat)
+            {
+                case FormatID::R8G8B8A8_UNORM_SRGB:
+                    return RGBX8_SRGB_ANGLEX_to_R8G8B8A8_UNORM_SRGB;
+                case FormatID::R8G8B8X8_UNORM_SRGB:
+                    return RGBX8_SRGB_ANGLEX_to_R8G8B8X8_UNORM_SRGB;
                 default:
                     break;
             }

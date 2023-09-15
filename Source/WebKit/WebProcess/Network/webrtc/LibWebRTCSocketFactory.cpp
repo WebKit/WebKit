@@ -50,15 +50,15 @@ static inline rtc::SocketAddress prepareSocketAddress(const rtc::SocketAddress& 
 void LibWebRTCSocketFactory::setConnection(RefPtr<IPC::Connection>&& connection)
 {
     ASSERT(!WTF::isMainRunLoop());
-    m_connection = WTFMove(connection);
+    m_connection = connection.copyRef();
     if (!m_connection)
         return;
 
-    m_connection->send(Messages::NetworkRTCProvider::SetPlatformTCPSocketsEnabled(DeprecatedGlobalSettings::webRTCPlatformTCPSocketsEnabled()), 0);
-    m_connection->send(Messages::NetworkRTCProvider::SetPlatformUDPSocketsEnabled(DeprecatedGlobalSettings::webRTCPlatformUDPSocketsEnabled()), 0);
+    connection->send(Messages::NetworkRTCProvider::SetPlatformTCPSocketsEnabled(DeprecatedGlobalSettings::webRTCPlatformTCPSocketsEnabled()), 0);
+    connection->send(Messages::NetworkRTCProvider::SetPlatformUDPSocketsEnabled(DeprecatedGlobalSettings::webRTCPlatformUDPSocketsEnabled()), 0);
 
     while (!m_pendingMessageTasks.isEmpty())
-        m_pendingMessageTasks.takeFirst()(*m_connection);
+        m_pendingMessageTasks.takeFirst()(*connection);
 }
 
 IPC::Connection* LibWebRTCSocketFactory::connection()

@@ -40,14 +40,14 @@ from mock import call, patch
 from twisted.internet import defer, error, reactor
 from twisted.python import failure, log
 from twisted.trial import unittest
-import send_email
+from . import send_email
 
-from layout_test_failures import LayoutTestFailures
-from steps import (AddReviewerToCommitMessage, AnalyzeAPITestsResults, AnalyzeCompileWebKitResults,
+from .layout_test_failures import LayoutTestFailures
+from .steps import (AddReviewerToCommitMessage, AnalyzeAPITestsResults, AnalyzeCompileWebKitResults,
                    AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, BugzillaMixin,
                    Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckStatusOnEWSQueues, CheckStyle,
                    CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CommitPatch, CompileJSCWithoutChange,
-                   CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors,
+                   CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors, DetermineLabelOwner,
                    DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
                    EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
                    FetchBranches, FindModifiedLayoutTests, GitHub, GitHubMixin, GenerateS3URL,
@@ -420,7 +420,7 @@ class TestGitHubMixin(unittest.TestCase):
 
 class TestStepNameShouldBeValidIdentifier(BuildStepMixinAdditions, unittest.TestCase):
     def test_step_names_are_valid(self):
-        import steps
+        from . import steps
         build_step_classes = inspect.getmembers(steps, inspect.isclass)
         for build_step in build_step_classes:
             if 'name' in vars(build_step[1]):
@@ -1344,6 +1344,7 @@ class TestCompileWebKitWithoutChange(BuildStepMixinAdditions, unittest.TestCase)
 class TestAnalyzeCompileWebKitResults(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
+        GitHub.credentials = lambda user=None: ('webkit-commit-queue', 'password')
         return self.setUpBuildStep()
 
     def tearDown(self):
@@ -2243,7 +2244,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
         )
         self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('build_summary'), 'Found test failures')
+        self.assertEqual(self.getProperty('build_summary'), 'Found test failures in stress mode')
         return rc
 
     def test_success(self):
@@ -2346,7 +2347,7 @@ class TestRunWebKitTestsInStressGuardmallocMode(BuildStepMixinAdditions, unittes
         )
         self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('build_summary'), 'Found test failures')
+        self.assertEqual(self.getProperty('build_summary'), 'Found test failures in stress mode')
         return rc
 
 
@@ -3466,6 +3467,19 @@ class TestCleanWorkingDirectory(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Cleaned working directory')
         return self.runStep()
 
+    def test_success_wpe(self):
+        self.setupStep(CleanWorkingDirectory())
+        self.setProperty('platform', 'wpe')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/clean-webkit', '--keep-jhbuild-directory'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Cleaned working directory')
+        return self.runStep()
+
     def test_failure(self):
         self.setupStep(CleanWorkingDirectory())
         self.expectRemoteCommands(
@@ -4428,12 +4442,12 @@ class current_hostname(object):
         self.saved_hostname = None
 
     def __enter__(self):
-        import steps
+        from . import steps
         self.saved_hostname = steps.CURRENT_HOSTNAME
         steps.CURRENT_HOSTNAME = self.hostname
 
     def __exit__(self, type, value, tb):
-        import steps
+        from . import steps
         steps.CURRENT_HOSTNAME = self.saved_hostname
 
 
@@ -4452,7 +4466,8 @@ class TestGenerateS3URL(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('architecture', 'x86_64')
         self.setProperty('change_id', '1234')
 
-    def test_success(self):
+    def disabled_test_success(self):
+        # TODO: Figure out how to pass logs to unit-test for MasterShellCommand steps
         self.configureStep()
         self.expectLocalCommands(
             ExpectMasterShellCommand(command=['python3',
@@ -4479,8 +4494,13 @@ class TestGenerateS3URL(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to generate S3 URL')
-        with current_hostname(EWS_BUILD_HOSTNAME):
-            return self.runStep()
+
+        try:
+            with current_hostname(EWS_BUILD_HOSTNAME), open(os.devnull, 'w') as null:
+                sys.stdout = null
+                return self.runStep()
+        finally:
+            sys.stdout = sys.__stdout__
 
     def test_skipped(self):
         self.configureStep()
@@ -4566,7 +4586,7 @@ class TestUploadFileToS3(BuildStepMixinAdditions, unittest.TestCase):
                         env=dict(UPLOAD_URL='https://test-s3-url'),
                         logEnviron=False,
                         command=['python3', 'Tools/Scripts/upload-file-to-url', '--filename', 'WebKitBuild/release.zip'],
-                        timeout=300,
+                        timeout=360,
                         )
             + 0,
         )
@@ -4581,7 +4601,7 @@ class TestUploadFileToS3(BuildStepMixinAdditions, unittest.TestCase):
                         env=dict(UPLOAD_URL='https://test-s3-url'),
                         logEnviron=False,
                         command=['python3', 'Tools/Scripts/upload-file-to-url', '--filename', 'WebKitBuild/release.zip'],
-                        timeout=300,
+                        timeout=360,
                         )
             + ExpectShell.log('stdio', stdout='''Uploading WebKitBuild/release.zip
 response: <Response [403]>, 403, Forbidden
@@ -5374,7 +5394,7 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='Deleted branch main (was 57015967fef9).'),
             ExpectShell(command=['git', 'branch', 'main'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout="Switched to a new branch 'main'"),
-            ExpectShell(command=['/bin/sh', '-c', "git branch | grep -v ' main$' | xargs git branch -D || true"], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['/bin/sh', '-c', "git branch | grep -v ' main$' | grep -v 'HEAD detached at' | xargs git branch -D || true"], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['/bin/sh', '-c', "git remote | grep -v 'origin$' | xargs -L 1 git remote rm || true"], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
@@ -5406,7 +5426,7 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='Deleted branch main (was 57015967fef9).'),
             ExpectShell(command=['git', 'branch', 'main'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout="Switched to a new branch 'main'"),
-            ExpectShell(command=['sh', '-c', "git branch | grep -v ' main$' | xargs git branch -D || exit 0"], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['sh', '-c', "git branch | grep -v ' main$' | grep -v 'HEAD detached at' | xargs git branch -D || exit 0"], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['sh', '-c', "git remote | grep -v 'origin$' | xargs -L 1 git remote rm || exit 0"], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
@@ -5437,7 +5457,7 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='Deleted branch master (was 57015967fef9).'),
             ExpectShell(command=['git', 'branch', 'master'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout="Switched to a new branch 'master'"),
-            ExpectShell(command=['/bin/sh', '-c', "git branch | grep -v ' master$' | xargs git branch -D || true"], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['/bin/sh', '-c', "git branch | grep -v ' master$' | grep -v 'HEAD detached at' | xargs git branch -D || true"], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['/bin/sh', '-c', "git remote | grep -v 'origin$' | xargs -L 1 git remote rm || true"], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
@@ -5468,7 +5488,7 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='Deleted branch main (was 57015967fef9).'),
             ExpectShell(command=['git', 'branch', 'main'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout="Switched to a new branch 'main'"),
-            ExpectShell(command=['/bin/sh', '-c', "git branch | grep -v ' main$' | xargs git branch -D || true"], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['/bin/sh', '-c', "git branch | grep -v ' main$' | grep -v 'HEAD detached at' | xargs git branch -D || true"], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['/bin/sh', '-c', "git remote | grep -v 'origin$' | xargs -L 1 git remote rm || true"], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
@@ -5500,7 +5520,7 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='Deleted branch main (was 57015967fef9).'),
             ExpectShell(command=['git', 'branch', 'main'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout="Switched to a new branch 'main'"),
-            ExpectShell(command=['/bin/sh', '-c', "git branch | grep -v ' main$' | xargs git branch -D || true"], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['/bin/sh', '-c', "git branch | grep -v ' main$' | grep -v 'HEAD detached at' | xargs git branch -D || true"], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['/bin/sh', '-c', "git remote | grep -v 'origin$' | xargs -L 1 git remote rm || true"], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
@@ -5710,6 +5730,19 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(self.getProperty('fast_commit_queue'), None, 'fast_commit_queue is unexpectedly set')
         self.assertEqual(self.getProperty('build_finish_summary'), message)
         self.assertEqual(self.getProperty('comment_text'), message)
+        return rc
+
+    def test_skipped_branch(self):
+        self.setupStep(ValidateChange(verifyBugClosed=False, branches=[r'main']))
+        ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: self.get_pr(pr_number=pull_request)
+        self.setProperty('github.number', '1234')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
+        self.setProperty('github.base.ref', 'safari-123-branch')
+
+        self.expectOutcome(result=FAILURE, state_string="Changes to 'safari-123-branch' are not tested")
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('fast_commit_queue'), None, 'fast_commit_queue is unexpectedly set')
         return rc
 
 
@@ -6023,6 +6056,75 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
         return rc
 
 
+class TestDetermineLabelOwner(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success_merge_queue(self):
+        self.setupStep(DetermineLabelOwner())
+        self.setProperty('github.number', 17518)
+        self.setProperty('buildername', 'Merge-Queue')
+        response = {"data": {
+                    "repository": {
+                        "pullRequest": {
+                            "timelineItems": {
+                                "nodes": [
+                                    {
+                                        "actor": {
+                                            "login": "JonWBedard"
+                                        },
+                                        "label": {
+                                            "name": "safe-merge-queue"
+                                        },
+                                        "createdAt": "2023-09-07T00:24:06Z"
+                                    },
+                                    {
+                                        "actor": {
+                                            "login": "webkit-ews-buildbot"
+                                        },
+                                        "label": {
+                                            "name": "merge-queue"
+                                        },
+                                        "createdAt": "2023-09-11T20:53:23Z"}]}}}}}
+        GitHubMixin.query_graph_ql = lambda self, query: response
+        self.expectOutcome(result=SUCCESS, state_string='Owner of PR 17518 determined to be JonWBedard\n')
+        self.runStep()
+        self.assertEqual(self.getProperty('owners'), ['JonWBedard'])
+
+    def test_failure(self):
+        self.setupStep(DetermineLabelOwner())
+        self.setProperty('github.number', 17518)
+        self.setProperty('buildername', 'Merge-Queue')
+        response = {"data": {
+                    "repository": {
+                        "pullRequest": {
+                            "timelineItems": {
+                                "nodes": [
+                                    {
+                                        "actor": {
+                                            "login": "JonWBedard"
+                                        },
+                                        "label": {
+                                            "name": "Tools / Tests"
+                                        },
+                                        "createdAt": "2023-09-07T00:24:06Z"
+                                    },
+                                    {
+                                        "actor": {
+                                            "login": "webkit-commit-queue"
+                                        },
+                                        "label": {
+                                            "name": "merging-blocked"
+                                        },
+                                        "createdAt": "2023-09-11T20:53:23Z"}]}}}}}
+        GitHubMixin.query_graph_ql = lambda self, query: response
+        self.expectOutcome(result=FAILURE, state_string="Unable to determine owner of PR 17518\n")
+        self.runStep()
+
+
 class TestDetermineLandedIdentifier(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
@@ -6032,7 +6134,7 @@ class TestDetermineLandedIdentifier(BuildStepMixinAdditions, unittest.TestCase):
         return self.tearDownBuildStep()
 
     def mock_commits_webkit_org(self, identifier=None):
-        return patch('steps.TwistedAdditions.request', lambda *args, **kwargs: TwistedAdditions.Response(
+        return patch('ews-build.steps.TwistedAdditions.request', lambda *args, **kwargs: TwistedAdditions.Response(
             status_code=200,
             content=json.dumps(dict(identifier=identifier) if identifier else dict(status='Not Found')).encode('utf-8'),
         ))

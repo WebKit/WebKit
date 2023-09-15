@@ -607,11 +607,6 @@ const FeatureSchema& scripting()
 
             if (!frame.script().canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
                 return MatchingIdentifiers { CSSValueNone };
-
-            auto* frameView = frame.view();
-            if (frameView && frameView->mediaType() == printAtom())
-                return MatchingIdentifiers { CSSValueInitialOnly };
-
             return MatchingIdentifiers { CSSValueEnabled };
         }
     };

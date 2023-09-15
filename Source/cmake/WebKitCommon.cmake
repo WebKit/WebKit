@@ -13,6 +13,12 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
         message(STATUS "The CMake build type is: ${CMAKE_BUILD_TYPE}")
     endif ()
 
+    # Exporting compile commands is available for Ninja and Makefile generators
+    # See https://cmake.org/cmake/help/latest/variable/CMAKE_EXPORT_COMPILE_COMMANDS.html
+    if (DEVELOPER_MODE AND (CMAKE_GENERATOR MATCHES "Makefile" OR CMAKE_GENERATOR MATCHES "Ninja"))
+        set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+    endif ()
+
     option(ENABLE_JAVASCRIPTCORE "Enable building JavaScriptCore" ON)
     option(ENABLE_WEBCORE "Enable building JavaScriptCore" ON)
     option(ENABLE_WEBKIT "Enable building WebKit" ON)
@@ -37,8 +43,6 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     # Determine which port will be built
     # -----------------------------------------------------------------------------
     set(ALL_PORTS
-        Efl
-        FTW
         GTK
         JSCOnly
         Mac
@@ -232,6 +236,23 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     if (ENABLE_WEBCORE)
         # TODO Enforce version requirement for gperf
         find_package(Gperf 3.0.1 REQUIRED)
+    endif ()
+
+    # -----------------------------------------------------------------------------
+    # Generate a usable compile_commands.json when using unified builds
+    # -----------------------------------------------------------------------------
+    if (CMAKE_EXPORT_COMPILE_COMMANDS AND ENABLE_UNIFIED_BUILDS)
+        add_custom_target(RewriteCompileCommands
+            ALL
+            BYPRODUCTS DeveloperTools/compile_commands.json
+            DEPENDS "${CMAKE_BINARY_DIR}/compile_commands.json"
+            COMMAND "${PYTHON_EXECUTABLE}"
+                    "${CMAKE_SOURCE_DIR}/Tools/Scripts/rewrite-compile-commands"
+                    "${CMAKE_BINARY_DIR}/compile_commands.json"
+                    "${CMAKE_BINARY_DIR}/DeveloperTools/compile_commands.json"
+                    "${CMAKE_SOURCE_DIR}"
+                    "${CMAKE_BINARY_DIR}"
+        )
     endif ()
 
     # -----------------------------------------------------------------------------

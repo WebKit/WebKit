@@ -145,6 +145,20 @@ PASS Setting font-variant-east-asian to normal should not prevent the font short
 PASS Setting font-variant-east-asian to normal should not prevent the font shorthand from serializing in computed style
 PASS Setting font-variant-east-asian to full-width should prevent the font shorthand from serializing in specified style
 PASS Setting font-variant-east-asian to full-width should prevent the font shorthand from serializing in computed style
+PASS Setting font-variant-emoji to initial should prevent the font shorthand from serializing in specified style
+PASS Setting font-variant-emoji to initial should not prevent the font shorthand from serializing in computed style
+PASS Setting font-variant-emoji to inherit should prevent the font shorthand from serializing in specified style
+PASS Setting font-variant-emoji to inherit should not prevent the font shorthand from serializing in computed style
+PASS Setting font-variant-emoji to unset should prevent the font shorthand from serializing in specified style
+PASS Setting font-variant-emoji to unset should not prevent the font shorthand from serializing in computed style
+PASS Setting font-variant-emoji to revert should prevent the font shorthand from serializing in specified style
+PASS Setting font-variant-emoji to revert should not prevent the font shorthand from serializing in computed style
+PASS Setting font-variant-emoji to revert-layer should prevent the font shorthand from serializing in specified style
+PASS Setting font-variant-emoji to revert-layer should not prevent the font shorthand from serializing in computed style
+PASS Setting font-variant-emoji to normal should not prevent the font shorthand from serializing in specified style
+PASS Setting font-variant-emoji to normal should not prevent the font shorthand from serializing in computed style
+PASS Setting font-variant-emoji to text should prevent the font shorthand from serializing in specified style
+PASS Setting font-variant-emoji to text should prevent the font shorthand from serializing in computed style
 PASS Setting font-feature-settings to initial should prevent the font shorthand from serializing in specified style
 PASS Setting font-feature-settings to initial should not prevent the font shorthand from serializing in computed style
 PASS Setting font-feature-settings to inherit should prevent the font shorthand from serializing in specified style

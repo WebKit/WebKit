@@ -42,11 +42,6 @@ EXTFloatBlend::EXTFloatBlend(WebGLRenderingContextBase& context)
 
 EXTFloatBlend::~EXTFloatBlend() = default;
 
-WebGLExtension::ExtensionName EXTFloatBlend::getName() const
-{
-    return EXTFloatBlendName;
-}
-
 bool EXTFloatBlend::supported(GraphicsContextGL& context)
 {
     return context.supportsExtension("GL_EXT_float_blend"_s);

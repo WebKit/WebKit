@@ -32,8 +32,12 @@ import sys
 
 def upload(filename, url):
     if not os.path.isfile(filename):
-        print(f'File not found: {filename}')
-        sys.exit(-1)
+        print(f'ERROR: File not found: {filename}')
+        return -1
+
+    if not url: 
+        print(f'Error: missing url, either pass --url or set UPLOAD_URL environment variable.')
+        return -1
 
     filesize = os.stat(filename).st_size // 1024 ;
     print(f'Uploading {filename}, size: {filesize} KB')
@@ -41,7 +45,7 @@ def upload(filename, url):
     with open(filename, 'rb') as f:
         try:
             data = f.read()
-            response = requests.put(url, data=data, timeout=180)
+            response = requests.put(url, data=data, timeout=5*60)
         except Exception as e:
            print(f'Exception: {e}')
            sys.exit(-1)
@@ -52,6 +56,7 @@ def upload(filename, url):
 
 
 def main():
+    print(f'Starting to upload')
     parser = argparse.ArgumentParser(add_help=True)
     parser.add_argument('--filename', action="store", required=True, help='Path to the file. [path/to/123456.zip]')
     parser.add_argument('--url', action="store", required=False, help='url to upload to')

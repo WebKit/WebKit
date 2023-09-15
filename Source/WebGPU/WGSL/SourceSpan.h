@@ -54,13 +54,7 @@ struct SourceSpan {
         : SourceSpan(start.line, start.lineOffset, start.offset, end.offset - start.offset)
     { }
 
-    constexpr bool operator==(const SourceSpan& other) const
-    {
-        return (line == other.line
-            && lineOffset == other.lineOffset
-            && offset == other.offset
-            && length == other.length);
-    }
+    friend constexpr bool operator==(const SourceSpan&, const SourceSpan&) = default;
 };
 
 }

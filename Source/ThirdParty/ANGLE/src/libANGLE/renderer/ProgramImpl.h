@@ -76,17 +76,16 @@ class ProgramImpl : angle::NonCopyable
     virtual void destroy(const gl::Context *context) {}
 
     virtual std::unique_ptr<LinkEvent> load(const gl::Context *context,
-                                            gl::BinaryInputStream *stream,
-                                            gl::InfoLog &infoLog)                 = 0;
+                                            gl::BinaryInputStream *stream)        = 0;
     virtual void save(const gl::Context *context, gl::BinaryOutputStream *stream) = 0;
     virtual void setBinaryRetrievableHint(bool retrievable)                       = 0;
     virtual void setSeparable(bool separable)                                     = 0;
 
+    virtual void prepareForLink(const gl::ShaderMap<ShaderImpl *> &shaders) {}
     virtual std::unique_ptr<LinkEvent> link(const gl::Context *context,
                                             const gl::ProgramLinkedResources &resources,
-                                            gl::InfoLog &infoLog,
-                                            const gl::ProgramMergedVaryings &mergedVaryings) = 0;
-    virtual GLboolean validate(const gl::Caps &caps, gl::InfoLog *infoLog)                   = 0;
+                                            gl::ProgramMergedVaryings &&mergedVaryings) = 0;
+    virtual GLboolean validate(const gl::Caps &caps)                                    = 0;
 
     virtual void setUniform1fv(GLint location, GLsizei count, const GLfloat *v) = 0;
     virtual void setUniform2fv(GLint location, GLsizei count, const GLfloat *v) = 0;

@@ -6,7 +6,7 @@
 // Regardless of the shader type, the following AST transformations are applied:
 // - Add declaration of View_ID_OVR.
 // - Replace every occurrence of gl_ViewID_OVR with ViewID_OVR, mark ViewID_OVR as internal and
-// declare it as a flat varying.
+// declare it with the same qualifier.
 //
 // If the shader type is a vertex shader, the following AST transformations are applied:
 // - Replace every occurrence of gl_InstanceID with InstanceID, mark InstanceID as internal and set
@@ -15,13 +15,9 @@
 // should be executed before any variables get collected so that usage of gl_InstanceID is recorded.
 // - If the output is ESSL or GLSL and the selectViewInNvGLSLVertexShader option is
 // enabled, the expression
-// "if (multiviewBaseViewLayerIndex < 0) {
-//      gl_ViewportIndex = int(ViewID_OVR);
-//  } else {
-//      gl_Layer = int(ViewID_OVR) + multiviewBaseViewLayerIndex;
-//  }"
-// is added after ViewID and InstanceID are initialized. Also, MultiviewRenderPath is added as a
-// uniform.
+//   gl_Layer = int(ViewID_OVR) + multiviewBaseViewLayerIndex;
+// is added after ViewID and InstanceID are initialized. Also, multiviewBaseViewLayerIndex is added
+// as a uniform.
 //
 
 #ifndef COMPILER_TRANSLATOR_TREEOPS_DECLAREANDINITBUILTINSFORINSTANCEDMULTIVIEW_H_

@@ -48,15 +48,10 @@ public:
     RemoteDisplayListRecorderProxy(RemoteImageBufferProxy&, RemoteRenderingBackendProxy&, const WebCore::FloatRect& initialClip, const WebCore::AffineTransform&);
     ~RemoteDisplayListRecorderProxy() = default;
 
-    void convertToLuminanceMask() final;
-    void transformToColorSpace(const WebCore::DestinationColorSpace&) final;
-    void flushContext(const IPC::Semaphore&);
-    void flushContextSync();
     void disconnect();
 
 private:
     template<typename T> void send(T&& message);
-    template<typename T> void sendSync(T&& message);
 
     friend class WebCore::DrawGlyphsRecorder;
 
@@ -158,7 +153,7 @@ private:
 #endif
 
     WebCore::RenderingResourceIdentifier m_destinationBufferIdentifier;
-    WeakPtr<RemoteImageBufferProxy> m_imageBuffer;
+    ThreadSafeWeakPtr<RemoteImageBufferProxy> m_imageBuffer;
     WeakPtr<RemoteRenderingBackendProxy> m_renderingBackend;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     std::unique_ptr<SharedVideoFrameWriter> m_sharedVideoFrameWriter;

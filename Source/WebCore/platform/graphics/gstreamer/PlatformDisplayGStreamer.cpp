@@ -20,6 +20,8 @@
 #include "config.h"
 #include "PlatformDisplay.h"
 
+#if USE(GSTREAMER_GL)
+
 #include "GLContext.h"
 #include "GStreamerCommon.h"
 #define GST_USE_UNSTABLE_API
@@ -73,3 +75,5 @@ GstGLContext* PlatformDisplay::gstGLContext() const
 }
 
 } // namespace WebCore
+
+#endif

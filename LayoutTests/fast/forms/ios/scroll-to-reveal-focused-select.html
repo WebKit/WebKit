@@ -29,19 +29,6 @@ select {
 <script>
 jsTestIsAsync = true;
 
-async function tapAtLocationAndWaitForScrollingToEnd(x, y)
-{
-    const uiScript = `
-    let doneCount = 0;
-    function checkDone() {
-        if (++doneCount == 2)
-            uiController.uiScriptComplete();
-    }
-    uiController.didEndZoomingCallback = checkDone;
-    uiController.singleTapAtPoint(${x}, ${y}, checkDone);`;
-    return new Promise(resolve => testRunner.runUIScript(uiScript, resolve));
-}
-
 async function run()
 {
     description("Verifies that focusing a select element after user interaction scrolls to reveal the select element. "
@@ -57,11 +44,12 @@ async function run()
     await UIHelper.waitForContextMenuToHide();
 
     // Focus the second select element.
-    await tapAtLocationAndWaitForScrollingToEnd(160, 120);
+    await UIHelper.activateAt(160, 120);
     await UIHelper.waitForContextMenuToShow();
+    await UIHelper.waitForZoomingOrScrollingToEnd();
 
     shouldBe("document.activeElement", "document.getElementById('bottom')");
-    shouldBeGreaterThanOrEqual("pageYOffset", "1000");
+    shouldBeGreaterThanOrEqual("pageYOffset", "900");
 
     document.activeElement.blur();
     await UIHelper.waitForContextMenuToHide();

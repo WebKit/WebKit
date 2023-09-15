@@ -14,6 +14,8 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/Context.inl.h"
 #include "libANGLE/capture/capture_gl_2_autogen.h"
+#include "libANGLE/context_private_call_gl_autogen.h"
+#include "libANGLE/context_private_call_gles_autogen.h"
 #include "libANGLE/entry_points_utils.h"
 #include "libANGLE/validationEGL.h"
 #include "libANGLE/validationES.h"
@@ -65,13 +67,14 @@ void GL_APIENTRY GL_VertexAttrib1d(GLuint index, GLdouble x)
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateVertexAttrib1d(context, angle::EntryPoint::GLVertexAttrib1d, index, x));
+        bool isCallValid = (context->skipValidation() ||
+                            ValidateVertexAttrib1d(context->getPrivateState(),
+                                                   context->getMutableErrorSetForValidation(),
+                                                   angle::EntryPoint::GLVertexAttrib1d, index, x));
         if (isCallValid)
         {
-            context->vertexAttrib1d(index, x);
+            ContextPrivateVertexAttrib1d(context->getMutablePrivateState(),
+                                         context->getMutablePrivateStateCache(), index, x);
         }
         ANGLE_CAPTURE_GL(VertexAttrib1d, isCallValid, context, index, x);
     }
@@ -90,13 +93,15 @@ void GL_APIENTRY GL_VertexAttrib1dv(GLuint index, const GLdouble *v)
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateVertexAttrib1dv(context, angle::EntryPoint::GLVertexAttrib1dv, index, v));
+             ValidateVertexAttrib1dv(context->getPrivateState(),
+                                     context->getMutableErrorSetForValidation(),
+                                     angle::EntryPoint::GLVertexAttrib1dv, index, v));
         if (isCallValid)
         {
-            context->vertexAttrib1dv(index, v);
+            ContextPrivateVertexAttrib1dv(context->getMutablePrivateState(),
+                                          context->getMutablePrivateStateCache(), index, v);
         }
         ANGLE_CAPTURE_GL(VertexAttrib1dv, isCallValid, context, index, v);
     }
@@ -114,13 +119,14 @@ void GL_APIENTRY GL_VertexAttrib1s(GLuint index, GLshort x)
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateVertexAttrib1s(context, angle::EntryPoint::GLVertexAttrib1s, index, x));
+        bool isCallValid = (context->skipValidation() ||
+                            ValidateVertexAttrib1s(context->getPrivateState(),
+                                                   context->getMutableErrorSetForValidation(),
+                                                   angle::EntryPoint::GLVertexAttrib1s, index, x));
         if (isCallValid)
         {
-            context->vertexAttrib1s(index, x);
+            ContextPrivateVertexAttrib1s(context->getMutablePrivateState(),
+                                         context->getMutablePrivateStateCache(), index, x);
         }
         ANGLE_CAPTURE_GL(VertexAttrib1s, isCallValid, context, index, x);
     }
@@ -139,13 +145,15 @@ void GL_APIENTRY GL_VertexAttrib1sv(GLuint index, const GLshort *v)
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateVertexAttrib1sv(context, angle::EntryPoint::GLVertexAttrib1sv, index, v));
+             ValidateVertexAttrib1sv(context->getPrivateState(),
+                                     context->getMutableErrorSetForValidation(),
+                                     angle::EntryPoint::GLVertexAttrib1sv, index, v));
         if (isCallValid)
         {
-            context->vertexAttrib1sv(index, v);
+            ContextPrivateVertexAttrib1sv(context->getMutablePrivateState(),
+                                          context->getMutablePrivateStateCache(), index, v);
         }
         ANGLE_CAPTURE_GL(VertexAttrib1sv, isCallValid, context, index, v);
     }
@@ -164,13 +172,15 @@ void GL_APIENTRY GL_VertexAttrib2d(GLuint index, GLdouble x, GLdouble y)
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateVertexAttrib2d(context, angle::EntryPoint::GLVertexAttrib2d, index, x, y));
+             ValidateVertexAttrib2d(context->getPrivateState(),
+                                    context->getMutableErrorSetForValidation(),
+                                    angle::EntryPoint::GLVertexAttrib2d, index, x, y));
         if (isCallValid)
         {
-            context->vertexAttrib2d(index, x, y);
+            ContextPrivateVertexAttrib2d(context->getMutablePrivateState(),
+                                         context->getMutablePrivateStateCache(), index, x, y);
         }
         ANGLE_CAPTURE_GL(VertexAttrib2d, isCallValid, context, index, x, y);
     }
@@ -189,13 +199,15 @@ void GL_APIENTRY GL_VertexAttrib2dv(GLuint index, const GLdouble *v)
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateVertexAttrib2dv(context, angle::EntryPoint::GLVertexAttrib2dv, index, v));
+             ValidateVertexAttrib2dv(context->getPrivateState(),
+                                     context->getMutableErrorSetForValidation(),
+                                     angle::EntryPoint::GLVertexAttrib2dv, index, v));
         if (isCallValid)
         {
-            context->vertexAttrib2dv(index, v);
+            ContextPrivateVertexAttrib2dv(context->getMutablePrivateState(),
+                                          context->getMutablePrivateStateCache(), index, v);
         }
         ANGLE_CAPTURE_GL(VertexAttrib2dv, isCallValid, context, index, v);
     }
@@ -214,13 +226,15 @@ void GL_APIENTRY GL_VertexAttrib2s(GLuint index, GLshort x, GLshort y)
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateVertexAttrib2s(context, angle::EntryPoint::GLVertexAttrib2s, index, x, y));
+             ValidateVertexAttrib2s(context->getPrivateState(),
+                                    context->getMutableErrorSetForValidation(),
+                                    angle::EntryPoint::GLVertexAttrib2s, index, x, y));
         if (isCallValid)
         {
-            context->vertexAttrib2s(index, x, y);
+            ContextPrivateVertexAttrib2s(context->getMutablePrivateState(),
+                                         context->getMutablePrivateStateCache(), index, x, y);
         }
         ANGLE_CAPTURE_GL(VertexAttrib2s, isCallValid, context, index, x, y);
     }
@@ -239,13 +253,15 @@ void GL_APIENTRY GL_VertexAttrib2sv(GLuint index, const GLshort *v)
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateVertexAttrib2sv(context, angle::EntryPoint::GLVertexAttrib2sv, index, v));
+             ValidateVertexAttrib2sv(context->getPrivateState(),
+                                     context->getMutableErrorSetForValidation(),
+                                     angle::EntryPoint::GLVertexAttrib2sv, index, v));
         if (isCallValid)
         {
-            context->vertexAttrib2sv(index, v);
+            ContextPrivateVertexAttrib2sv(context->getMutablePrivateState(),
+                                          context->getMutablePrivateStateCache(), index, v);
         }
         ANGLE_CAPTURE_GL(VertexAttrib2sv, isCallValid, context, index, v);
     }
@@ -264,13 +280,15 @@ void GL_APIENTRY GL_VertexAttrib3d(GLuint index, GLdouble x, GLdouble y, GLdoubl
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateVertexAttrib3d(context, angle::EntryPoint::GLVertexAttrib3d, index, x, y, z));
+             ValidateVertexAttrib3d(context->getPrivateState(),
+                                    context->getMutableErrorSetForValidation(),
+                                    angle::EntryPoint::GLVertexAttrib3d, index, x, y, z));
         if (isCallValid)
         {
-            context->vertexAttrib3d(index, x, y, z);
+            ContextPrivateVertexAttrib3d(context->getMutablePrivateState(),
+                                         context->getMutablePrivateStateCache(), index, x, y, z);
         }
         ANGLE_CAPTURE_GL(VertexAttrib3d, isCallValid, context, index, x, y, z);
     }
@@ -289,13 +307,15 @@ void GL_APIENTRY GL_VertexAttrib3dv(GLuint index, const GLdouble *v)
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateVertexAttrib3dv(context, angle::EntryPoint::GLVertexAttrib3dv, index, v));
+             ValidateVertexAttrib3dv(context->getPrivateState(),
+                                     context->getMutableErrorSetForValidation(),
+                                     angle::EntryPoint::GLVertexAttrib3dv, index, v));
         if (isCallValid)
         {
-            context->vertexAttrib3dv(index, v);
+            ContextPrivateVertexAttrib3dv(context->getMutablePrivateState(),
+                                          context->getMutablePrivateStateCache(), index, v);
         }
         ANGLE_CAPTURE_GL(VertexAttrib3dv, isCallValid, context, index, v);
     }
@@ -314,13 +334,15 @@ void GL_APIENTRY GL_VertexAttrib3s(GLuint index, GLshort x, GLshort y, GLshort z
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateVertexAttrib3s(context, angle::EntryPoint::GLVertexAttrib3s, index, x, y, z));
+             ValidateVertexAttrib3s(context->getPrivateState(),
+                                    context->getMutableErrorSetForValidation(),
+                                    angle::EntryPoint::GLVertexAttrib3s, index, x, y, z));
         if (isCallValid)
         {
-            context->vertexAttrib3s(index, x, y, z);
+            ContextPrivateVertexAttrib3s(context->getMutablePrivateState(),
+                                         context->getMutablePrivateStateCache(), index, x, y, z);
         }
         ANGLE_CAPTURE_GL(VertexAttrib3s, isCallValid, context, index, x, y, z);
     }
@@ -339,13 +361,15 @@ void GL_APIENTRY GL_VertexAttrib3sv(GLuint index, const GLshort *v)
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateVertexAttrib3sv(context, angle::EntryPoint::GLVertexAttrib3sv, index, v));
+             ValidateVertexAttrib3sv(context->getPrivateState(),
+                                     context->getMutableErrorSetForValidation(),
+                                     angle::EntryPoint::GLVertexAttrib3sv, index, v));
         if (isCallValid)
         {
-            context->vertexAttrib3sv(index, v);
+            ContextPrivateVertexAttrib3sv(context->getMutablePrivateState(),
+                                          context->getMutablePrivateStateCache(), index, v);
         }
         ANGLE_CAPTURE_GL(VertexAttrib3sv, isCallValid, context, index, v);
     }
@@ -364,13 +388,15 @@ void GL_APIENTRY GL_VertexAttrib4Nbv(GLuint index, const GLbyte *v)
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateVertexAttrib4Nbv(context, angle::EntryPoint::GLVertexAttrib4Nbv, index, v));
+             ValidateVertexAttrib4Nbv(context->getPrivateState(),
+                                      context->getMutableErrorSetForValidation(),
+                                      angle::EntryPoint::GLVertexAttrib4Nbv, index, v));
         if (isCallValid)
         {
-            context->vertexAttrib4Nbv(index, v);
+            ContextPrivateVertexAttrib4Nbv(context->getMutablePrivateState(),
+                                           context->getMutablePrivateStateCache(), index, v);
         }
         ANGLE_CAPTURE_GL(VertexAttrib4Nbv, isCallValid, context, index, v);
     }
@@ -389,13 +415,15 @@ void GL_APIENTRY GL_VertexAttrib4Niv(GLuint index, const GLint *v)
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateVertexAttrib4Niv(context, angle::EntryPoint::GLVertexAttrib4Niv, index, v));
+             ValidateVertexAttrib4Niv(context->getPrivateState(),
+                                      context->getMutableErrorSetForValidation(),
+                                      angle::EntryPoint::GLVertexAttrib4Niv, index, v));
         if (isCallValid)
         {
-            context->vertexAttrib4Niv(index, v);
+            ContextPrivateVertexAttrib4Niv(context->getMutablePrivateState(),
+                                           context->getMutablePrivateStateCache(), index, v);
         }
         ANGLE_CAPTURE_GL(VertexAttrib4Niv, isCallValid, context, index, v);
     }
@@ -414,13 +442,15 @@ void GL_APIENTRY GL_VertexAttrib4Nsv(GLuint index, const GLshort *v)
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateVertexAttrib4Nsv(context, angle::EntryPoint::GLVertexAttrib4Nsv, index, v));
+             ValidateVertexAttrib4Nsv(context->getPrivateState(),
+                                      context->getMutableErrorSetForValidation(),
+                                      angle::EntryPoint::GLVertexAttrib4Nsv, index, v));
         if (isCallValid)
         {
-            context->vertexAttrib4Nsv(index, v);
+            ContextPrivateVertexAttrib4Nsv(context->getMutablePrivateState(),
+                                           context->getMutablePrivateStateCache(), index, v);
         }
         ANGLE_CAPTURE_GL(VertexAttrib4Nsv, isCallValid, context, index, v);
     }
@@ -439,13 +469,16 @@ void GL_APIENTRY GL_VertexAttrib4Nub(GLuint index, GLubyte x, GLubyte y, GLubyte
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateVertexAttrib4Nub(context, angle::EntryPoint::GLVertexAttrib4Nub,
-                                                     index, x, y, z, w));
+        bool isCallValid =
+            (context->skipValidation() ||
+             ValidateVertexAttrib4Nub(context->getPrivateState(),
+                                      context->getMutableErrorSetForValidation(),
+                                      angle::EntryPoint::GLVertexAttrib4Nub, index, x, y, z, w));
         if (isCallValid)
         {
-            context->vertexAttrib4Nub(index, x, y, z, w);
+            ContextPrivateVertexAttrib4Nub(context->getMutablePrivateState(),
+                                           context->getMutablePrivateStateCache(), index, x, y, z,
+                                           w);
         }
         ANGLE_CAPTURE_GL(VertexAttrib4Nub, isCallValid, context, index, x, y, z, w);
     }
@@ -464,13 +497,15 @@ void GL_APIENTRY GL_VertexAttrib4Nubv(GLuint index, const GLubyte *v)
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateVertexAttrib4Nubv(context, angle::EntryPoint::GLVertexAttrib4Nubv, index, v));
+             ValidateVertexAttrib4Nubv(context->getPrivateState(),
+                                       context->getMutableErrorSetForValidation(),
+                                       angle::EntryPoint::GLVertexAttrib4Nubv, index, v));
         if (isCallValid)
         {
-            context->vertexAttrib4Nubv(index, v);
+            ContextPrivateVertexAttrib4Nubv(context->getMutablePrivateState(),
+                                            context->getMutablePrivateStateCache(), index, v);
         }
         ANGLE_CAPTURE_GL(VertexAttrib4Nubv, isCallValid, context, index, v);
     }
@@ -489,13 +524,15 @@ void GL_APIENTRY GL_VertexAttrib4Nuiv(GLuint index, const GLuint *v)
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateVertexAttrib4Nuiv(context, angle::EntryPoint::GLVertexAttrib4Nuiv, index, v));
+             ValidateVertexAttrib4Nuiv(context->getPrivateState(),
+                                       context->getMutableErrorSetForValidation(),
+                                       angle::EntryPoint::GLVertexAttrib4Nuiv, index, v));
         if (isCallValid)
         {
-            context->vertexAttrib4Nuiv(index, v);
+            ContextPrivateVertexAttrib4Nuiv(context->getMutablePrivateState(),
+                                            context->getMutablePrivateStateCache(), index, v);
         }
         ANGLE_CAPTURE_GL(VertexAttrib4Nuiv, isCallValid, context, index, v);
     }
@@ -514,13 +551,15 @@ void GL_APIENTRY GL_VertexAttrib4Nusv(GLuint index, const GLushort *v)
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateVertexAttrib4Nusv(context, angle::EntryPoint::GLVertexAttrib4Nusv, index, v));
+             ValidateVertexAttrib4Nusv(context->getPrivateState(),
+                                       context->getMutableErrorSetForValidation(),
+                                       angle::EntryPoint::GLVertexAttrib4Nusv, index, v));
         if (isCallValid)
         {
-            context->vertexAttrib4Nusv(index, v);
+            ContextPrivateVertexAttrib4Nusv(context->getMutablePrivateState(),
+                                            context->getMutablePrivateStateCache(), index, v);
         }
         ANGLE_CAPTURE_GL(VertexAttrib4Nusv, isCallValid, context, index, v);
     }
@@ -539,13 +578,15 @@ void GL_APIENTRY GL_VertexAttrib4bv(GLuint index, const GLbyte *v)
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateVertexAttrib4bv(context, angle::EntryPoint::GLVertexAttrib4bv, index, v));
+             ValidateVertexAttrib4bv(context->getPrivateState(),
+                                     context->getMutableErrorSetForValidation(),
+                                     angle::EntryPoint::GLVertexAttrib4bv, index, v));
         if (isCallValid)
         {
-            context->vertexAttrib4bv(index, v);
+            ContextPrivateVertexAttrib4bv(context->getMutablePrivateState(),
+                                          context->getMutablePrivateStateCache(), index, v);
         }
         ANGLE_CAPTURE_GL(VertexAttrib4bv, isCallValid, context, index, v);
     }
@@ -564,13 +605,15 @@ void GL_APIENTRY GL_VertexAttrib4d(GLuint index, GLdouble x, GLdouble y, GLdoubl
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateVertexAttrib4d(context, angle::EntryPoint::GLVertexAttrib4d,
-                                                   index, x, y, z, w));
+        bool isCallValid =
+            (context->skipValidation() ||
+             ValidateVertexAttrib4d(context->getPrivateState(),
+                                    context->getMutableErrorSetForValidation(),
+                                    angle::EntryPoint::GLVertexAttrib4d, index, x, y, z, w));
         if (isCallValid)
         {
-            context->vertexAttrib4d(index, x, y, z, w);
+            ContextPrivateVertexAttrib4d(context->getMutablePrivateState(),
+                                         context->getMutablePrivateStateCache(), index, x, y, z, w);
         }
         ANGLE_CAPTURE_GL(VertexAttrib4d, isCallValid, context, index, x, y, z, w);
     }
@@ -589,13 +632,15 @@ void GL_APIENTRY GL_VertexAttrib4dv(GLuint index, const GLdouble *v)
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateVertexAttrib4dv(context, angle::EntryPoint::GLVertexAttrib4dv, index, v));
+             ValidateVertexAttrib4dv(context->getPrivateState(),
+                                     context->getMutableErrorSetForValidation(),
+                                     angle::EntryPoint::GLVertexAttrib4dv, index, v));
         if (isCallValid)
         {
-            context->vertexAttrib4dv(index, v);
+            ContextPrivateVertexAttrib4dv(context->getMutablePrivateState(),
+                                          context->getMutablePrivateStateCache(), index, v);
         }
         ANGLE_CAPTURE_GL(VertexAttrib4dv, isCallValid, context, index, v);
     }
@@ -614,13 +659,15 @@ void GL_APIENTRY GL_VertexAttrib4iv(GLuint index, const GLint *v)
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateVertexAttrib4iv(context, angle::EntryPoint::GLVertexAttrib4iv, index, v));
+             ValidateVertexAttrib4iv(context->getPrivateState(),
+                                     context->getMutableErrorSetForValidation(),
+                                     angle::EntryPoint::GLVertexAttrib4iv, index, v));
         if (isCallValid)
         {
-            context->vertexAttrib4iv(index, v);
+            ContextPrivateVertexAttrib4iv(context->getMutablePrivateState(),
+                                          context->getMutablePrivateStateCache(), index, v);
         }
         ANGLE_CAPTURE_GL(VertexAttrib4iv, isCallValid, context, index, v);
     }
@@ -639,13 +686,15 @@ void GL_APIENTRY GL_VertexAttrib4s(GLuint index, GLshort x, GLshort y, GLshort z
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            ValidateVertexAttrib4s(context, angle::EntryPoint::GLVertexAttrib4s,
-                                                   index, x, y, z, w));
+        bool isCallValid =
+            (context->skipValidation() ||
+             ValidateVertexAttrib4s(context->getPrivateState(),
+                                    context->getMutableErrorSetForValidation(),
+                                    angle::EntryPoint::GLVertexAttrib4s, index, x, y, z, w));
         if (isCallValid)
         {
-            context->vertexAttrib4s(index, x, y, z, w);
+            ContextPrivateVertexAttrib4s(context->getMutablePrivateState(),
+                                         context->getMutablePrivateStateCache(), index, x, y, z, w);
         }
         ANGLE_CAPTURE_GL(VertexAttrib4s, isCallValid, context, index, x, y, z, w);
     }
@@ -664,13 +713,15 @@ void GL_APIENTRY GL_VertexAttrib4sv(GLuint index, const GLshort *v)
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateVertexAttrib4sv(context, angle::EntryPoint::GLVertexAttrib4sv, index, v));
+             ValidateVertexAttrib4sv(context->getPrivateState(),
+                                     context->getMutableErrorSetForValidation(),
+                                     angle::EntryPoint::GLVertexAttrib4sv, index, v));
         if (isCallValid)
         {
-            context->vertexAttrib4sv(index, v);
+            ContextPrivateVertexAttrib4sv(context->getMutablePrivateState(),
+                                          context->getMutablePrivateStateCache(), index, v);
         }
         ANGLE_CAPTURE_GL(VertexAttrib4sv, isCallValid, context, index, v);
     }
@@ -689,13 +740,15 @@ void GL_APIENTRY GL_VertexAttrib4ubv(GLuint index, const GLubyte *v)
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateVertexAttrib4ubv(context, angle::EntryPoint::GLVertexAttrib4ubv, index, v));
+             ValidateVertexAttrib4ubv(context->getPrivateState(),
+                                      context->getMutableErrorSetForValidation(),
+                                      angle::EntryPoint::GLVertexAttrib4ubv, index, v));
         if (isCallValid)
         {
-            context->vertexAttrib4ubv(index, v);
+            ContextPrivateVertexAttrib4ubv(context->getMutablePrivateState(),
+                                           context->getMutablePrivateStateCache(), index, v);
         }
         ANGLE_CAPTURE_GL(VertexAttrib4ubv, isCallValid, context, index, v);
     }
@@ -714,13 +767,15 @@ void GL_APIENTRY GL_VertexAttrib4uiv(GLuint index, const GLuint *v)
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateVertexAttrib4uiv(context, angle::EntryPoint::GLVertexAttrib4uiv, index, v));
+             ValidateVertexAttrib4uiv(context->getPrivateState(),
+                                      context->getMutableErrorSetForValidation(),
+                                      angle::EntryPoint::GLVertexAttrib4uiv, index, v));
         if (isCallValid)
         {
-            context->vertexAttrib4uiv(index, v);
+            ContextPrivateVertexAttrib4uiv(context->getMutablePrivateState(),
+                                           context->getMutablePrivateStateCache(), index, v);
         }
         ANGLE_CAPTURE_GL(VertexAttrib4uiv, isCallValid, context, index, v);
     }
@@ -739,13 +794,15 @@ void GL_APIENTRY GL_VertexAttrib4usv(GLuint index, const GLushort *v)
 
     if (context)
     {
-        SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             ValidateVertexAttrib4usv(context, angle::EntryPoint::GLVertexAttrib4usv, index, v));
+             ValidateVertexAttrib4usv(context->getPrivateState(),
+                                      context->getMutableErrorSetForValidation(),
+                                      angle::EntryPoint::GLVertexAttrib4usv, index, v));
         if (isCallValid)
         {
-            context->vertexAttrib4usv(index, v);
+            ContextPrivateVertexAttrib4usv(context->getMutablePrivateState(),
+                                           context->getMutablePrivateStateCache(), index, v);
         }
         ANGLE_CAPTURE_GL(VertexAttrib4usv, isCallValid, context, index, v);
     }

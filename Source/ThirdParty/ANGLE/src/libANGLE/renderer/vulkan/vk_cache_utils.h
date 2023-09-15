@@ -60,8 +60,8 @@ enum class ImageLayout;
 class PipelineCacheAccess;
 class RenderPassCommandBufferHelper;
 
-using RefCountedDescriptorSetLayout    = RefCounted<DescriptorSetLayout>;
-using RefCountedPipelineLayout         = RefCounted<PipelineLayout>;
+using RefCountedDescriptorSetLayout    = AtomicRefCounted<DescriptorSetLayout>;
+using RefCountedPipelineLayout         = AtomicRefCounted<PipelineLayout>;
 using RefCountedSamplerYcbcrConversion = RefCounted<SamplerYcbcrConversion>;
 
 // Packed Vk resource descriptions.
@@ -192,6 +192,10 @@ class alignas(4) RenderPassDesc final
         return static_cast<gl::SrgbWriteControlMode>(mSrgbWriteControl);
     }
 
+    bool isLegacyDitherEnabled() const { return mLegacyDitherEnabled; }
+
+    void setLegacyDither(bool enabled);
+
     // Get the number of attachments in the Vulkan render pass, i.e. after removing disabled
     // color attachments.
     size_t attachmentCount() const;
@@ -236,8 +240,11 @@ class alignas(4) RenderPassDesc final
     uint8_t mUnresolveDepth : 1;
     uint8_t mUnresolveStencil : 1;
 
+    // Dithering state when using VK_EXT_legacy_dithering
+    uint8_t mLegacyDitherEnabled : 1;
+
     // Available space for expansion.
-    uint8_t mPadding1 : 2;
+    uint8_t mPadding1 : 1;
     uint8_t mPadding2;
 
     // Whether each color attachment has a corresponding resolve attachment.  Color resolve
@@ -671,6 +678,18 @@ ANGLE_ENABLE_STRUCT_PADDING_WARNINGS
 
 using GraphicsPipelineDynamicStateList = angle::FixedVector<VkDynamicState, 22>;
 
+enum class PipelineRobustness
+{
+    NonRobust,
+    Robust,
+};
+
+enum class PipelineProtectedAccess
+{
+    Unprotected,
+    Protected,
+};
+
 // State changes are applied through the update methods. Each update method can also have a
 // sibling method that applies the update without marking a state transition. The non-transition
 // update methods are used for internal shader pipelines. Not every non-transition update method
@@ -690,7 +709,10 @@ class GraphicsPipelineDesc final
     size_t hash(GraphicsPipelineSubset subset) const;
     bool keyEqual(const GraphicsPipelineDesc &other, GraphicsPipelineSubset subset) const;
 
-    void initDefaults(const ContextVk *contextVk, GraphicsPipelineSubset subset);
+    void initDefaults(const Context *context,
+                      GraphicsPipelineSubset subset,
+                      PipelineRobustness contextRobustness,
+                      PipelineProtectedAccess contextProtectedAccess);
 
     // For custom comparisons.
     template <typename T>
@@ -856,6 +878,11 @@ class GraphicsPipelineDesc final
     void updateEmulatedDitherControl(GraphicsPipelineTransitionBits *transition, uint16_t value);
     uint32_t getEmulatedDitherControl() const { return mShaders.shaders.emulatedDitherControl; }
 
+    bool isLegacyDitherEnabled() const
+    {
+        return mSharedNonVertexInput.renderPass.isLegacyDitherEnabled();
+    }
+
     void updateNonZeroStencilWriteMaskWorkaround(GraphicsPipelineTransitionBits *transition,
                                                  bool enabled);
 
@@ -984,8 +1011,9 @@ struct PackedPushConstantRange
 static_assert(sizeof(PackedPushConstantRange) == sizeof(uint32_t), "Unexpected Size");
 
 template <typename T>
-using DescriptorSetArray              = angle::PackedEnumMap<DescriptorSetIndex, T>;
-using DescriptorSetLayoutPointerArray = DescriptorSetArray<BindingPointer<DescriptorSetLayout>>;
+using DescriptorSetArray = angle::PackedEnumMap<DescriptorSetIndex, T>;
+using DescriptorSetLayoutPointerArray =
+    DescriptorSetArray<AtomicBindingPointer<DescriptorSetLayout>>;
 
 class PipelineLayoutDesc final
 {
@@ -1705,7 +1733,6 @@ class DescriptorSetDescBuilder final
 
     void updateUniformsAndXfb(Context *context,
                               const gl::ProgramExecutable &executable,
-                              const ProgramExecutableVk &executableVk,
                               const WriteDescriptorDescs &writeDescriptorDescs,
                               const BufferHelper *currentUniformBuffer,
                               const BufferHelper &emptyBuffer,
@@ -1790,7 +1817,6 @@ class DescriptorSetDescBuilder final
 
 // Specialized update for textures.
 void UpdatePreCacheActiveTextures(const gl::ProgramExecutable &executable,
-                                  const ProgramExecutableVk &executableVk,
                                   const std::vector<gl::SamplerBinding> &samplerBindings,
                                   const gl::ActiveTextureMask &activeTextures,
                                   const gl::ActiveTextureArray<TextureVk *> &textures,
@@ -1964,6 +1990,7 @@ class SharedCacheKeyManager
     void addKey(const SharedCacheKeyT &key);
     // Iterate over the descriptor array and release the descriptor and cache.
     void releaseKeys(ContextVk *contextVk);
+    void releaseKeys(RendererVk *rendererVk);
     // Iterate over the descriptor array and destroy the descriptor and cache.
     void destroyKeys(RendererVk *renderer);
     void clear();
@@ -2238,6 +2265,14 @@ class RenderPassCache final : angle::NonCopyable
                                        const vk::AttachmentOpsArray &attachmentOps,
                                        const vk::RenderPass **renderPassOut);
 
+    static void InitializeOpsForCompatibleRenderPass(const vk::RenderPassDesc &desc,
+                                                     vk::AttachmentOpsArray *opsOut);
+    static angle::Result MakeRenderPass(vk::Context *context,
+                                        const vk::RenderPassDesc &desc,
+                                        const vk::AttachmentOpsArray &ops,
+                                        vk::RenderPass *renderPass,
+                                        vk::RenderPassPerfCounters *renderPassCounters);
+
   private:
     angle::Result getRenderPassWithOpsImpl(ContextVk *contextVk,
                                            const vk::RenderPassDesc &desc,
@@ -2394,7 +2429,7 @@ class GraphicsPipelineCache final : public HasCacheStats<VulkanCacheType::Graphi
         return true;
     }
 
-    angle::Result createPipeline(ContextVk *contextVk,
+    angle::Result createPipeline(vk::Context *context,
                                  vk::PipelineCacheAccess *pipelineCache,
                                  const vk::RenderPass &compatibleRenderPass,
                                  const vk::PipelineLayout &pipelineLayout,
@@ -2405,7 +2440,7 @@ class GraphicsPipelineCache final : public HasCacheStats<VulkanCacheType::Graphi
                                  const vk::GraphicsPipelineDesc **descPtrOut,
                                  vk::PipelineHelper **pipelineOut);
 
-    angle::Result linkLibraries(ContextVk *contextVk,
+    angle::Result linkLibraries(vk::Context *context,
                                 vk::PipelineCacheAccess *pipelineCache,
                                 const vk::GraphicsPipelineDesc &desc,
                                 const vk::PipelineLayout &pipelineLayout,
@@ -2447,9 +2482,10 @@ class DescriptorSetLayoutCache final : angle::NonCopyable
     angle::Result getDescriptorSetLayout(
         vk::Context *context,
         const vk::DescriptorSetLayoutDesc &desc,
-        vk::BindingPointer<vk::DescriptorSetLayout> *descriptorSetLayoutOut);
+        vk::AtomicBindingPointer<vk::DescriptorSetLayout> *descriptorSetLayoutOut);
 
   private:
+    mutable std::mutex mMutex;
     std::unordered_map<vk::DescriptorSetLayoutDesc, vk::RefCountedDescriptorSetLayout> mPayload;
     CacheStats mCacheStats;
 };
@@ -2462,12 +2498,14 @@ class PipelineLayoutCache final : public HasCacheStats<VulkanCacheType::Pipeline
 
     void destroy(RendererVk *rendererVk);
 
-    angle::Result getPipelineLayout(vk::Context *context,
-                                    const vk::PipelineLayoutDesc &desc,
-                                    const vk::DescriptorSetLayoutPointerArray &descriptorSetLayouts,
-                                    vk::BindingPointer<vk::PipelineLayout> *pipelineLayoutOut);
+    angle::Result getPipelineLayout(
+        vk::Context *context,
+        const vk::PipelineLayoutDesc &desc,
+        const vk::DescriptorSetLayoutPointerArray &descriptorSetLayouts,
+        vk::AtomicBindingPointer<vk::PipelineLayout> *pipelineLayoutOut);
 
   private:
+    mutable std::mutex mMutex;
     std::unordered_map<vk::PipelineLayoutDesc, vk::RefCountedPipelineLayout> mPayload;
 };
 

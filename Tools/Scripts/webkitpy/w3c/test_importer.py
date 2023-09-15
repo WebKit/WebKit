@@ -67,13 +67,21 @@
 """
 
 import argparse
+import itertools
 import json
 import logging
 import mimetypes
 
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
+
 from webkitpy.common.host import Host
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
+from webkitpy.port.factory import PortFactory
+from webkitpy.layout_tests.controllers.layout_test_finder_legacy import LayoutTestFinder
 from webkitpy.w3c.common import TEMPLATED_TEST_HEADER, WPT_GH_URL, WPTPaths
 from webkitpy.w3c.test_parser import TestParser
 from webkitpy.w3c.test_converter import convert_for_webkit
@@ -113,8 +121,8 @@ def configure_logging():
 def parse_args(args):
     description = """
 To import a web-platform-tests test suite named xyz, use: 'import-w3c-tests web-platform-tests/xyz'.
-To import a web-platform-tests suite from a specific folder, use 'import-w3c-tests xyz -l -s my-folder-containing-web-platform-tests-folder'"""
-    parser = argparse.ArgumentParser(prog='import-w3c-tests [web-platform-tests/test-suite-name...]', description=description, formatter_class=argparse.RawDescriptionHelpFormatter)
+To import a web-platform-tests suite from a specific folder, use 'import-w3c-tests xyz -s my-folder-containing-web-platform-tests-folder'"""
+    parser = argparse.ArgumentParser(description=description, formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument('-n', '--no-overwrite', dest='overwrite', action='store_false', default=True,
         help='Flag to prevent duplicate test files from overwriting existing tests. By default, they will be overwritten')
@@ -139,10 +147,13 @@ To import a web-platform-tests suite from a specific folder, use 'import-w3c-tes
          help='Ignore the import-expectations.json file. All tests will be imported. This option only applies when tests are downloaded from W3C repository')
 
     parser.add_argument('--clean-dest-dir', action='store_true', dest='clean_destination_directory', default=False,
-         help='Clean destination directory. All files in the destination directory will be deleted except for WebKit specific files (test expectations, .gitignore...) before new tests import. Dangling test expectations (expectation file that is no longer related to a test) are removed after tests import.')
+        help='Clean destination directory. All files in the destination directory will be deleted except for WebKit specific files (test expectations, .gitignore...) before new tests import. Dangling test expectations (expectation file that is no longer related to a test) are removed after tests import.')
 
-    options, args = parser.parse_known_args(args)
-    return options, args
+    parser.add_argument('test_paths', metavar='web-platform-tests/test_path', nargs='*',
+        help='directories to import')
+
+    args = parser.parse_args(args)
+    return args, args.test_paths
 
 
 class TestImporter(object):
@@ -153,6 +164,7 @@ class TestImporter(object):
         self.options = options
         self.test_paths = test_paths if test_paths else []
 
+        self.port = PortFactory(host).get()
         self.filesystem = self.host.filesystem
 
         webkit_finder = WebKitFinder(self.filesystem)
@@ -169,7 +181,6 @@ class TestImporter(object):
         self._potential_test_resource_files = []
 
         self.import_list = []
-        self._importing_downloaded_tests = self.source_directory is None
 
         self._test_resource_files_json_path = self.filesystem.join(self.layout_tests_w3c_path, "resources", "resource-files.json")
         self._test_resource_files = json.loads(self.filesystem.read_text_file(self._test_resource_files_json_path)) if self.filesystem.exists(self._test_resource_files_json_path) else None
@@ -190,12 +201,28 @@ class TestImporter(object):
     def do_import(self):
         if not self.source_directory:
             _log.info('Downloading W3C test repositories')
-            self.source_directory = self.filesystem.join(self.tests_download_path, 'to-be-imported')
             self.filesystem.maybe_make_directory(self.tests_download_path)
-            self.filesystem.maybe_make_directory(self.source_directory)
-            self.test_downloader().download_tests(self.source_directory, self.test_paths, self.options.use_tip_of_tree)
+            self.test_downloader().download_tests(self.options.use_tip_of_tree)
+            self.source_directory = self.tests_download_path
+
+        for test_path in self.test_paths:
+            if test_path != "web-platform-tests" and not test_path.startswith(
+                "web-platform-tests" + self.filesystem.sep
+            ):
+                _log.error(
+                    "All test paths must start with 'web-platform-tests%s'; %r does not"
+                    % (self.filesystem.sep, test_path)
+                )
+                return
 
         test_paths = self.test_paths if self.test_paths else [test_repository['name'] for test_repository in self.test_downloader().test_repositories]
+
+        test_paths = (
+            [p.rstrip(self.filesystem.sep) + self.filesystem.sep for p in test_paths]
+            if test_paths
+            else []
+        )
+
         for test_path in test_paths:
             self.find_importable_tests(self.filesystem.join(self.source_directory, test_path))
 
@@ -203,7 +230,7 @@ class TestImporter(object):
             for test_path in test_paths:
                 self.clean_destination_directory(test_path)
             if self._test_resource_files:
-                test_paths_tuple = tuple(p.rstrip(self.filesystem.sep) + self.filesystem.sep for p in test_paths)
+                test_paths_tuple = tuple(test_paths)
                 self._test_resource_files["files"] = [t for t in self._test_resource_files["files"]
                                                       if not t.startswith(test_paths_tuple)]
                 if self._tests_options:
@@ -214,8 +241,7 @@ class TestImporter(object):
         for test_path in test_paths:
             self.remove_dangling_expectations(test_path)
 
-        if self._importing_downloaded_tests:
-            self.generate_git_submodules_description_for_all_repositories()
+        self.generate_git_submodules_description_for_all_repositories()
 
         self.test_downloader().update_import_expectations(self.test_paths)
 
@@ -241,12 +267,25 @@ class TestImporter(object):
             self._test_downloader = TestDownloader(self.tests_download_path, self.host, download_options)
         return self._test_downloader
 
-    def should_skip_file(self, filename):
-        # For some reason the w3c repo contains random perl scripts we don't care about.
-        if filename.endswith('.pl'):
+    def should_skip_path(self, path):
+        rel_path = Path(path).relative_to(self.source_directory)
+        if rel_path.suffix == ".pl":
             return True
-        if filename.startswith('.'):
-            return not filename == '.htaccess'
+
+        if rel_path.name.startswith(".") and rel_path.name != ".htaccess":
+            return True
+
+        downloader = self.test_downloader()
+        paths_to_skip = {Path(p) for p in downloader.paths_to_skip}
+        paths_to_import = {Path(p) for p in downloader.paths_to_import}
+
+        for parent in itertools.chain([rel_path], rel_path.parents):
+            if parent in paths_to_skip:
+                return True
+
+            if parent in paths_to_import:
+                return False
+
         return False
 
     def _is_baseline(self, filesystem, dirname, filename):
@@ -267,30 +306,22 @@ class TestImporter(object):
     def remove_dangling_expectations(self, filename):
         #FIXME: Clean also the expected files stored in all platform specific folders.
         directory = self.filesystem.join(self.destination_directory, filename)
+        tests = LayoutTestFinder(self.port, None).find_tests_by_path([directory])
+        baselines_for_tests = {self.port.expected_filename(test.test_path, '.txt') for test in tests}
         for relative_path in self.filesystem.files_under(directory, file_filter=self._is_baseline):
             path = self.filesystem.join(directory, relative_path)
-            if self.filesystem.glob(path.replace('-expected.txt', '*')) == [path]:
+            if path not in baselines_for_tests:
                 self.filesystem.remove(path)
 
     def _source_root_directory_for_path(self, path):
-        if not self._importing_downloaded_tests:
-            return self.source_directory
         for test_repository in self.test_downloader().load_test_repositories(self.filesystem):
             source_directory = self.filesystem.join(self.source_directory, test_repository['name'])
             if path.startswith(source_directory):
                 return source_directory
 
     def find_importable_tests(self, directory):
-        def should_keep_subdir(filesystem, path):
-            if self._importing_downloaded_tests:
-                return True
-            subdir = path[len(directory):]
-            DIRS_TO_SKIP = ('work-in-progress', 'tools', 'support')
-            should_skip = filesystem.basename(subdir).startswith('.') or (subdir in DIRS_TO_SKIP)
-            return not should_skip
-
         source_root_directory = self._source_root_directory_for_path(directory)
-        directories = self.filesystem.dirs_under(directory, should_keep_subdir)
+        directories = self.filesystem.dirs_under(directory)
         for root in directories:
             _log.info('Scanning ' + root + '...')
             total_tests = 0
@@ -305,10 +336,10 @@ class TestImporter(object):
                     continue
                 # FIXME: This block should really be a separate function, but the early-continues make that difficult.
 
-                if self.should_skip_file(filename):
-                    continue
-
                 fullpath = self.filesystem.join(root, filename)
+
+                if self.should_skip_path(fullpath):
+                    continue
 
                 mimetype = mimetypes.guess_type(fullpath)
                 if not 'html' in str(mimetype[0]) and not 'application/xhtml+xml' in str(mimetype[0]) and not 'application/xml' in str(mimetype[0]):

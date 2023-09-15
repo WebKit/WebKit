@@ -32,6 +32,7 @@
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/FunctionConstructor.h>
 #include <JavaScriptCore/IdentifierInlines.h>
+#include <JavaScriptCore/SourceProvider.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
@@ -75,6 +76,7 @@ JSLazyEventListener::JSLazyEventListener(CreationArguments&& arguments, const UR
     , m_sourceURL(sourceURL)
     , m_sourcePosition(convertZeroToOne(sourcePosition))
     , m_originalNode(WTFMove(arguments.node))
+    , m_sourceTaintedOrigin(JSC::computeNewSourceTaintedOriginFromStack(arguments.document.vm(), arguments.document.vm().topCallFrame))
 {
 #ifndef NDEBUG
     eventListenerCounter.increment();
@@ -164,7 +166,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
     JSObject* jsFunction = constructFunctionSkippingEvalEnabledCheck(
         lexicalGlobalObject, args, Identifier::fromString(vm, m_functionName),
         SourceOrigin { m_sourceURL, CachedScriptFetcher::create(document.charset()) },
-        m_sourceURL.string(), m_sourcePosition, overrideLineNumber);
+        m_sourceURL.string(), m_sourceTaintedOrigin, m_sourcePosition, overrideLineNumber);
     if (UNLIKELY(scope.exception())) {
         reportCurrentException(lexicalGlobalObject);
         scope.clearException();

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RemoteObjectRegistry.h"
+#include <wtf/CheckedRef.h>
 
 namespace WebKit {
 
@@ -42,7 +43,7 @@ private:
     IPC::MessageSender& messageSender() final;
     uint64_t messageDestinationID() final;
 
-    WebPage& m_page;
+    CheckedRef<WebPage> m_page;
 };
 
 } // namespace WebKit

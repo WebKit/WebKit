@@ -69,6 +69,11 @@ namespace WebKit {
 using namespace WebKit;
 using namespace WebCore;
 
+static constexpr float ZoomForFullscreenWindow = 1.0;
+#if PLATFORM(VISION)
+static constexpr float ZoomForVisionFullscreenVideoWindow = 1.36;
+#endif
+
 static CGSize sizeExpandedToSize(CGSize initial, CGSize other)
 {
     return CGSizeMake(std::max(initial.width, other.width),  std::max(initial.height, other.height));
@@ -96,7 +101,7 @@ static void replaceViewWithView(UIView *view, UIView *otherView)
 
 static bool useSpatialFullScreenTransition()
 {
-    return [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomReality;
+    return [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomVision;
 }
 
 static void resizeScene(UIWindowScene *scene, CGSize size, CompletionHandler<void()>&& completionHandler)
@@ -491,6 +496,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 
 @property (nonatomic, readonly) CGFloat depthDisplacement;
 @property (nonatomic, readonly) CGFloat windowAlpha;
+@property (nonatomic, readonly) CGPoint offset2D;
 
 - (instancetype)initWithOrnament:(MRUIPlatterOrnament *)ornament;
 
@@ -505,6 +511,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 
     _depthDisplacement = ornament._depthDisplacement;
     _windowAlpha = ornament.viewController.view.window.alpha;
+    _offset2D = ornament.offset2D;
 
     return self;
 }
@@ -515,6 +522,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 
 @property (nonatomic, readonly) CATransform3D transform3D;
 @property (nonatomic, readonly) Class windowClass;
+@property (nonatomic, readonly) CGSize sceneSize;
 @property (nonatomic, readonly) CGSize sceneMinimumSize;
 @property (nonatomic, readonly) RSSSceneChromeOptions sceneChromeOptions;
 @property (nonatomic, readonly) MRUISceneResizingBehavior sceneResizingBehavior;
@@ -540,6 +548,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     _preferredDarkness = UIApplication.sharedApplication.mrui_activeStage.preferredDarkness;
 
     UIWindowScene *windowScene = window.windowScene;
+    _sceneSize = windowScene.coordinateSpace.bounds.size;
     _sceneMinimumSize = windowScene.sizeRestrictions.minimumSize;
     _sceneChromeOptions = windowScene.mrui_placement.preferredChromeOptions;
     _sceneResizingBehavior = windowScene.mrui_placement.preferredResizingBehavior;
@@ -598,7 +607,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 {
     NSMethodSignature *signature = [super methodSignatureForSelector:aSelector];
     if (!signature)
-        signature = [(NSObject *)_originalDelegate methodSignatureForSelector:aSelector];
+        signature = [(NSObject *)_originalDelegate.get() methodSignatureForSelector:aSelector];
     return signature;
 }
 
@@ -816,6 +825,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
         [_window setAlpha:0];
         [_window setClipsToBounds:YES];
         [_window _setContinuousCornerRadius:kFullScreenWindowCornerRadius];
+        [_window _setPreferredGroundingShadowVisibility:_UIPlatterGroundingShadowVisibilityVisible];
         [_window setNeedsLayout];
         [_window layoutIfNeeded];
     }
@@ -837,7 +847,6 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     [_fullscreenViewController setDelegate:self];
     _fullscreenViewController.get().view.frame = _rootViewController.get().view.bounds;
 #if PLATFORM(VISION)
-    [_fullscreenViewController setSceneDimmed:[self _prefersSceneDimming]];
     [_fullscreenViewController hideCustomControls:manager->isVideoElement()];
 #endif
     [self _updateLocationInfo];
@@ -889,6 +898,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
         [webView setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
         [webView setFrame:[_window bounds]];
         [webView _setMinimumEffectiveDeviceWidth:0];
+        [webView _setViewScale:1.f];
         [webView _overrideLayoutParametersWithMinimumLayoutSize:[_window bounds].size maximumUnobscuredSizeOverride:[_window bounds].size];
         [_window insertSubview:webView.get() atIndex:0];
         [webView setNeedsLayout];
@@ -898,10 +908,18 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
             manager->setAnimatingFullScreen(true);
 
         WebCore::ViewportArguments arguments { WebCore::ViewportArguments::CSSDeviceAdaptation };
-        arguments.zoom = 1;
-        arguments.minZoom = 1;
-        arguments.maxZoom = 1;
-        arguments.userZoom = 1;
+        arguments.zoom = WebKit::ZoomForFullscreenWindow;
+        arguments.minZoom = WebKit::ZoomForFullscreenWindow;
+        arguments.maxZoom = WebKit::ZoomForFullscreenWindow;
+        arguments.userZoom = WebKit::ZoomForFullscreenWindow;
+#if PLATFORM(VISION)
+        if (manager->isVideoElement()) {
+            arguments.zoom = WebKit::ZoomForVisionFullscreenVideoWindow;
+            arguments.minZoom = WebKit::ZoomForVisionFullscreenVideoWindow;
+            arguments.maxZoom = WebKit::ZoomForVisionFullscreenVideoWindow;
+            arguments.userZoom = WebKit::ZoomForVisionFullscreenVideoWindow;
+        }
+#endif
         page->setOverrideViewportArguments(arguments);
 
         page->forceRepaint([protectedSelf = retainPtr(self), self, logIdentifier = logIdentifier] {
@@ -1638,7 +1656,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     return YES;
 }
 
-- (BOOL)_prefersSceneDimming
+- (BOOL)prefersSceneDimming
 {
     if (![self _sceneDimmingEnabled])
         return NO;
@@ -1679,7 +1697,31 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
         OBJC_ALWAYS_LOG(logIdentifier, "resize completed");
         [_lastKnownParentWindow setFrame:adjustedOriginalWindowFrame];
         [_window setFrame:adjustedFullscreenWindowFrame];
+
+        [self _updateOrnamentOffsetsForTemporarySceneSize:[_window windowScene].coordinateSpace.bounds.size];
     });
+}
+
+- (void)_updateOrnamentOffsetsForTemporarySceneSize:(CGSize)newSceneSize
+{
+    CGSize originalSceneSize = [_parentWindowState sceneSize];
+
+    CGFloat sceneWidthDifference = newSceneSize.width - originalSceneSize.width;
+    CGFloat sceneHeightDifference = newSceneSize.height - originalSceneSize.height;
+
+    // The temporary scene size will always be greater than or equal to the original scene size,
+    // and the position of the original scene will always be centered relative to the new size.
+
+    ASSERT(sceneWidthDifference >= 0);
+    ASSERT(sceneHeightDifference >= 0);
+
+    for (MRUIPlatterOrnament *ornament in [_parentWindowState ornamentProperties]) {
+        CGPoint originalOffset2D = [[[_parentWindowState ornamentProperties] objectForKey:ornament] offset2D];
+        ornament.offset2D = CGPointMake(
+            originalOffset2D.x + sceneWidthDifference * (0.5 - ornament.sceneAnchorPoint.x),
+            originalOffset2D.y + sceneHeightDifference * (0.5 - ornament.sceneAnchorPoint.y)
+        );
+    }
 }
 
 - (void)_setOrnamentsHidden:(BOOL)hidden
@@ -1704,10 +1746,11 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 
     inWindow.transform3D = CATransform3DTranslate(originalState.transform3D, 0, 0, kIncomingWindowZOffset);
 
-    if ([self _prefersSceneDimming]) {
+    MRUIStage *stage = UIApplication.sharedApplication.mrui_activeStage;
+    if (self.prefersSceneDimming
+        || (!enter && stage.preferredDarkness != originalState.preferredDarkness)) {
         [UIView animateWithDuration:kDarknessAnimationDuration animations:^{
-            MRUIStage *stage = UIApplication.sharedApplication.mrui_activeStage;
-            stage.preferredDarkness = enter ? MRUIDarknessPreferenceVeryDark : originalState.preferredDarkness;
+            stage.preferredDarkness = enter ? MRUIDarknessPreferenceDark : originalState.preferredDarkness;
         } completion:nil];
     }
 
@@ -1757,6 +1800,9 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
                 scene.mrui_placement.preferredResizingBehavior = [originalState sceneResizingBehavior];
                 if (auto delegate = dynamic_objc_cast<WKFullscreenWindowSceneDelegate>(scene.delegate))
                     scene.delegate = [delegate originalDelegate];
+
+                for (MRUIPlatterOrnament *ornament in [originalState ornamentProperties])
+                    ornament.offset2D = [[[originalState ornamentProperties] objectForKey:ornament] offset2D];
             }
 
             scene.mrui_placement.preferredChromeOptions = [originalState sceneChromeOptions];
@@ -1773,15 +1819,16 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     } completion:completion.get()];
 }
 
-- (void)toggleDimming
+- (void)toggleSceneDimming
 {
-    BOOL updatedPrefersSceneDimming = ![self _prefersSceneDimming];
+    BOOL updatedPrefersSceneDimming = !self.prefersSceneDimming;
 
     [[NSUserDefaults standardUserDefaults] setBool:updatedPrefersSceneDimming forKey:kPrefersFullScreenDimmingKey];
-    [_fullscreenViewController setSceneDimmed:updatedPrefersSceneDimming];
 
-    MRUIStage *stage = UIApplication.sharedApplication.mrui_activeStage;
-    stage.preferredDarkness = updatedPrefersSceneDimming ? MRUIDarknessPreferenceVeryDark : [_parentWindowState preferredDarkness];
+    if (self.isFullScreen) {
+        MRUIStage *stage = UIApplication.sharedApplication.mrui_activeStage;
+        stage.preferredDarkness = updatedPrefersSceneDimming ? MRUIDarknessPreferenceDark : [_parentWindowState preferredDarkness];
+    }
 }
 
 #endif // PLATFORM(VISION)

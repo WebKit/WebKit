@@ -9,13 +9,13 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (10,55) size 192x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 192x18
             chunk 1 text run 1 at (10.00,70.00) startOffset 0 endOffset 26 width 192.00: "StartIndex: 0. NumChars: 9"
-        RenderSVGText {text} at (10,84) size 427x55 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 427x54
+        RenderSVGText {text} at (10,84) size 428x55 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 428x54
             chunk 1 text run 1 at (10.00,128.00) startOffset 0 endOffset 4 width 91.20: "abc "
-            chunk 1 text run 1 at (101.20,128.00) startOffset 0 endOffset 4 width 81.37 RTL: " \x{5D3}\x{5D4}\x{5D5}"
-            chunk 1 text run 1 at (182.57,128.00) startOffset 0 endOffset 3 width 81.00: "123"
-            chunk 1 text run 1 at (263.57,128.00) startOffset 0 endOffset 4 width 92.40 RTL: "\x{5D0}\x{5D1}\x{5D2} "
-            chunk 1 text run 1 at (355.97,128.00) startOffset 0 endOffset 4 width 80.40: " def"
+            chunk 1 text run 1 at (101.20,128.00) startOffset 0 endOffset 4 width 82.80 RTL: " \x{5D3}\x{5D4}\x{5D5}"
+            chunk 1 text run 1 at (184.00,128.00) startOffset 0 endOffset 3 width 81.00: "123"
+            chunk 1 text run 1 at (265.00,128.00) startOffset 0 endOffset 4 width 92.40 RTL: "\x{5D0}\x{5D1}\x{5D2} "
+            chunk 1 text run 1 at (357.40,128.00) startOffset 0 endOffset 4 width 80.40: " def"
         RenderSVGContainer {g} at (16,366) size 718x34
           RenderSVGRect {rect} at (16,366) size 168x34 [fill={[type=SOLID] [color=#0000FF]}] [x=10.00] [y=160.00] [width=100.00] [height=20.00]
           RenderSVGText {text} at (15,160) size 90x19 contains 1 chunk(s)

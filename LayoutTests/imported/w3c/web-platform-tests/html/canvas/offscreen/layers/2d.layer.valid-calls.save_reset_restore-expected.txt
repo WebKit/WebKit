@@ -1,0 +1,7 @@
+2d.layer.valid-calls.save_reset_restore
+
+No exception raised on save() + reset() + restore().
+
+
+FAIL No exception raised on save() + reset() + restore(). ctx.reset is not a function. (In 'ctx.reset()', 'ctx.reset' is undefined)
+

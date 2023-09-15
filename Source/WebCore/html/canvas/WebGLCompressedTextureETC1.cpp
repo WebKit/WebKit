@@ -44,11 +44,6 @@ WebGLCompressedTextureETC1::WebGLCompressedTextureETC1(WebGLRenderingContextBase
 
 WebGLCompressedTextureETC1::~WebGLCompressedTextureETC1() = default;
 
-WebGLExtension::ExtensionName WebGLCompressedTextureETC1::getName() const
-{
-    return WebGLCompressedTextureETC1Name;
-}
-
 bool WebGLCompressedTextureETC1::supported(GraphicsContextGL& context)
 {
     return context.supportsExtension("GL_OES_compressed_ETC1_RGB8_texture"_s);

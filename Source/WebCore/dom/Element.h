@@ -106,11 +106,11 @@ using ElementName = NodeName;
 using ExplicitlySetAttrElementsMap = HashMap<QualifiedName, Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>>;
 
 // https://drafts.csswg.org/css-contain/#relevant-to-the-user
-enum class ContentRelevancyStatus : uint8_t {
+enum class ContentRelevancy : uint8_t {
     OnScreen = 1 << 0,
     Focused = 1 << 1,
     IsInTopLayer = 1 << 2,
-    // FIXME: add Selected (see https://bugs.webkit.org/show_bug.cgi?id=258194).
+    Selected = 1 << 3,
 };
 
 namespace Style {
@@ -737,10 +737,8 @@ public:
 
     bool isRelevantToUser() const;
 
-    void contentVisibilityViewportChange(bool);
-
-    OptionSet<ContentRelevancyStatus> contentRelevancyStatus() const;
-    void setContentRelevancyStatus(OptionSet<ContentRelevancyStatus>);
+    std::optional<OptionSet<ContentRelevancy>> contentRelevancy() const;
+    void setContentRelevancy(OptionSet<ContentRelevancy>);
 
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);
@@ -767,6 +765,8 @@ protected:
     void ensureFormAssociatedCustomElement();
 
     void updateLabel(TreeScope&, const AtomString& oldForAttributeValue, const AtomString& newForAttributeValue);
+
+    static AtomString makeTargetBlankIfHasDanglingMarkup(const AtomString& target);
 
 private:
     LocalFrame* documentFrameWithNonNullView() const;

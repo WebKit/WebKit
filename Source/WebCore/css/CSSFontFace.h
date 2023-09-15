@@ -138,7 +138,7 @@ public:
     struct UnicodeRange {
         UChar32 from;
         UChar32 to;
-        bool operator==(const UnicodeRange& other) const { return from == other.from && to == other.to; }
+        friend bool operator==(const UnicodeRange&, const UnicodeRange&) = default;
     };
 
     bool rangesMatchCodePoint(UChar32) const;

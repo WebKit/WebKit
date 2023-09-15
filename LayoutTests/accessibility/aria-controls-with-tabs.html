@@ -48,12 +48,12 @@ if (window.accessibilityController) {
 
         // Reset KB focus and verify that neither tab is selected.
         document.getElementById("elementOutsideTabs").focus();
-        output += expect("tab1.isSelected", "false");
-        output += expect("tab2.isSelected", "false");
+        output += await expectAsync("tab1.isSelected", "false");
+        output += await expectAsync("tab2.isSelected", "false");
 
         // Now we set aria-selected to be true on tab1 so that it should become selected
         document.getElementById("tab_1").setAttribute("aria-selected", "true");
-        output += expect("tab1.isSelected", "true");
+        output += await expectAsync("tab1.isSelected", "true");
 
         debug(output);
         finishJSTest();

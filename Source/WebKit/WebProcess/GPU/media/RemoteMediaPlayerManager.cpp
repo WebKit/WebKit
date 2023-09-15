@@ -67,7 +67,7 @@ public:
         return m_manager.createRemoteMediaPlayer(player, m_remoteEngineIdentifier);
     }
 
-    void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types) const final
+    void getSupportedTypes(HashSet<String>& types) const final
     {
         return m_manager.getSupportedTypes(m_remoteEngineIdentifier, types);
     }
@@ -174,7 +174,7 @@ std::unique_ptr<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRem
     proxyConfiguration.documentSecurityOrigin = documentSecurityOrigin;
 
     proxyConfiguration.presentationSize = player->presentationSize();
-    proxyConfiguration.videoInlineSize = player->videoInlineSize();
+    proxyConfiguration.videoLayerSize = player->videoLayerSize();
 
     proxyConfiguration.allowedMediaContainerTypes = player->allowedMediaContainerTypes();
     proxyConfiguration.allowedMediaCodecTypes = player->allowedMediaCodecTypes();
@@ -210,7 +210,7 @@ MediaPlayerIdentifier RemoteMediaPlayerManager::findRemotePlayerId(const MediaPl
     return { };
 }
 
-void RemoteMediaPlayerManager::getSupportedTypes(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, HashSet<String, ASCIICaseInsensitiveHash>& result)
+void RemoteMediaPlayerManager::getSupportedTypes(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, HashSet<String>& result)
 {
     result = typeCache(remoteEngineIdentifier).supportedTypes();
 }

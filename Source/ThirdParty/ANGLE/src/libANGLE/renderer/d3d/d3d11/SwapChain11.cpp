@@ -286,7 +286,7 @@ EGLint SwapChain11::resetOffscreenColorBuffer(DisplayD3D *displayD3D,
         {
             IDXGIResource *offscreenTextureResource = nullptr;
             HRESULT hr                              = mOffscreenTexture.get()->QueryInterface(
-                                             __uuidof(IDXGIResource), (void **)&offscreenTextureResource);
+                __uuidof(IDXGIResource), (void **)&offscreenTextureResource);
 
             // Fall back to no share handle on failure
             if (FAILED(hr))
@@ -907,7 +907,7 @@ EGLint SwapChain11::present(DisplayD3D *displayD3D, EGLint x, EGLint y, EGLint w
     }
 
     UINT swapInterval = mSwapInterval;
-#if ANGLE_VSYNC == ANGLE_DISABLED
+#if !ANGLE_VSYNC
     swapInterval = 0;
 #endif
 

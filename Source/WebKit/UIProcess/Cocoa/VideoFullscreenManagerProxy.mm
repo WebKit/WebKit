@@ -189,7 +189,7 @@ void VideoFullscreenManagerProxy::applicationDidBecomeActive()
 #pragma mark - VideoFullscreenModelContext
 
 VideoFullscreenModelContext::VideoFullscreenModelContext(VideoFullscreenManagerProxy& manager, PlaybackSessionModelContext& playbackSessionModel, PlaybackSessionContextIdentifier contextId)
-    : m_manager(&manager)
+    : m_manager(manager)
     , m_playbackSessionModel(playbackSessionModel)
     , m_contextId(contextId)
 {
@@ -199,14 +199,20 @@ VideoFullscreenModelContext::~VideoFullscreenModelContext() = default;
 
 void VideoFullscreenModelContext::addClient(VideoFullscreenModelClient& client)
 {
-    ASSERT(!m_clients.contains(&client));
-    m_clients.add(&client);
+    ASSERT(!m_clients.contains(client));
+    m_clients.add(client);
 }
 
 void VideoFullscreenModelContext::removeClient(VideoFullscreenModelClient& client)
 {
-    ASSERT(m_clients.contains(&client));
-    m_clients.remove(&client);
+    ASSERT(m_clients.contains(client));
+    m_clients.remove(client);
+}
+
+void VideoFullscreenModelContext::setPlayerLayer(RetainPtr<WebAVPlayerLayer>&& playerLayer)
+{
+    m_playerLayer = WTFMove(playerLayer);
+    [m_playerLayer setVideoDimensions:m_videoDimensions];
 }
 
 void VideoFullscreenModelContext::setVideoDimensions(const WebCore::FloatSize& videoDimensions)
@@ -216,8 +222,9 @@ void VideoFullscreenModelContext::setVideoDimensions(const WebCore::FloatSize& v
 
     m_videoDimensions = videoDimensions;
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, videoDimensions);
-    for (auto& client : copyToVector(m_clients))
-        client->videoDimensionsChanged(videoDimensions);
+    m_clients.forEach([&](auto& client) {
+        client.videoDimensionsChanged(videoDimensions);
+    });
 }
 
 void VideoFullscreenModelContext::requestCloseAllMediaPresentations(bool finishedWithMedia, CompletionHandler<void()>&& completionHandler)
@@ -377,22 +384,25 @@ void VideoFullscreenModelContext::didExitPictureInPicture()
 void VideoFullscreenModelContext::willEnterPictureInPicture()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-    for (auto& client : copyToVector(m_clients))
-        client->willEnterPictureInPicture();
+    m_clients.forEach([&](auto& client) {
+        client.willEnterPictureInPicture();
+    });
 }
 
 void VideoFullscreenModelContext::failedToEnterPictureInPicture()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-    for (auto& client : copyToVector(m_clients))
-        client->failedToEnterPictureInPicture();
+    m_clients.forEach([&](auto& client) {
+        client.failedToEnterPictureInPicture();
+    });
 }
 
 void VideoFullscreenModelContext::willExitPictureInPicture()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-    for (auto& client : copyToVector(m_clients))
-        client->willExitPictureInPicture();
+    m_clients.forEach([&](auto& client) {
+        client.willExitPictureInPicture();
+    });
 }
 
 #if !RELEASE_LOG_DISABLED
@@ -425,7 +435,7 @@ Ref<VideoFullscreenManagerProxy> VideoFullscreenManagerProxy::create(WebPageProx
 }
 
 VideoFullscreenManagerProxy::VideoFullscreenManagerProxy(WebPageProxy& page, PlaybackSessionManagerProxy& playbackSessionManagerProxy)
-    : m_page(&page)
+    : m_page(page)
     , m_playbackSessionManagerProxy(playbackSessionManagerProxy)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -610,7 +620,7 @@ void VideoFullscreenManagerProxy::forEachSession(Function<void(VideoFullscreenMo
 
 void VideoFullscreenManagerProxy::requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier identifier, CompletionHandler<void(ShareableBitmap::Handle&&)>&& completionHandler)
 {
-    auto* gpuProcess = GPUProcessProxy::singletonIfCreated();
+    RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated();
     if (!gpuProcess) {
         completionHandler({ });
         return;
@@ -640,7 +650,8 @@ void VideoFullscreenManagerProxy::addVideoInPictureInPictureDidChangeObserver(co
 void VideoFullscreenManagerProxy::hasVideoInPictureInPictureDidChange(bool value)
 {
     ALWAYS_LOG(LOGIDENTIFIER, value);
-    m_page->uiClient().hasVideoInPictureInPictureDidChange(m_page, value);
+    RefPtr page = m_page.get();
+    page->uiClient().hasVideoInPictureInPictureDidChange(page.get(), value);
     m_pipChangeObservers.forEach([value] (auto& observer) { observer(value); });
 }
 

@@ -71,13 +71,13 @@ void StyleCanvasImage::load(CachedResourceLoader&, const ResourceLoaderOptions&)
 {
 }
 
-RefPtr<Image> StyleCanvasImage::image(const RenderElement* renderer, const FloatSize&) const
+RefPtr<Image> StyleCanvasImage::image(const RenderElement* renderer, const FloatSize&, bool) const
 {
     if (!renderer)
         return &Image::nullImage();
 
     ASSERT(clients().contains(const_cast<RenderElement&>(*renderer)));
-    auto* element = this->element(renderer->document());
+    RefPtr element = this->element(renderer->document());
     if (!element || !element->buffer())
         return nullptr;
     return element->copiedImage();

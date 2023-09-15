@@ -27,10 +27,11 @@
 #pragma once
 
 #include <array>
+#include <wtf/DebugHeap.h>
 
 namespace JSC {
 
-DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringSplitCache);
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER_AND_EXPORT(StringSplitCache, WTF_INTERNAL);
 
 class JSImmutableButterfly;
 

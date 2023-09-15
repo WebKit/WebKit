@@ -71,8 +71,6 @@ JIT::JIT(VM& vm, CodeBlock* codeBlock, BytecodeIndex loopOSREntryBytecodeIndex)
     , m_profiledCodeBlock(codeBlock)
     , m_unlinkedCodeBlock(codeBlock->unlinkedCodeBlock())
 {
-    auto globalObjectConstant = addToConstantPool(JITConstantPool::Type::GlobalObject);
-    ASSERT_UNUSED(globalObjectConstant, globalObjectConstant == s_globalObjectConstant);
 }
 
 JIT::~JIT()
@@ -231,9 +229,8 @@ void JIT::privateCompileMainPass()
 #if ASSERT_ENABLED
         if (opcodeID != op_catch) {
             loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
-            loadPtr(Address(regT0, CodeBlock::offsetOfMetadataTable()), regT1);
-            loadPtr(Address(regT0, CodeBlock::offsetOfJITData()), regT2);
-
+            ASSERT(static_cast<ptrdiff_t>(CodeBlock::offsetOfJITData() + sizeof(void*)) == CodeBlock::offsetOfMetadataTable());
+            loadPairPtr(Address(regT0, CodeBlock::offsetOfJITData()), regT2, regT1);
             m_consistencyCheckCalls.append(nearCall());
         }
 #endif
@@ -667,9 +664,14 @@ void JIT::privateCompileSlowCases()
 
 void JIT::emitMaterializeMetadataAndConstantPoolRegisters()
 {
-    loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
-    loadPtr(Address(regT0, CodeBlock::offsetOfMetadataTable()), s_metadataGPR);
-    loadPtr(Address(regT0, CodeBlock::offsetOfJITData()), s_constantsGPR);
+    emitMaterializeMetadataAndConstantPoolRegisters(*this);
+}
+
+void JIT::emitMaterializeMetadataAndConstantPoolRegisters(CCallHelpers& jit)
+{
+    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), s_constantsGPR);
+    ASSERT(static_cast<ptrdiff_t>(CodeBlock::offsetOfJITData() + sizeof(void*)) == CodeBlock::offsetOfMetadataTable());
+    jit.loadPairPtr(Address(s_constantsGPR, CodeBlock::offsetOfJITData()), s_constantsGPR, s_metadataGPR);
 }
 
 void JIT::emitSaveCalleeSaves()
@@ -701,8 +703,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::consistencyCheckGenerator(VM&)
         jit.subPtr(TrustedImm32(delta), expectedStackPointerGPR);
 
     jit.loadPtr(addressFor(CallFrameSlot::codeBlock), expectedConstantsGPR);
-    jit.loadPtr(Address(expectedConstantsGPR, CodeBlock::offsetOfMetadataTable()), expectedMetadataGPR);
-    jit.loadPtr(Address(expectedConstantsGPR, CodeBlock::offsetOfJITData()), expectedConstantsGPR);
+    ASSERT(static_cast<ptrdiff_t>(CodeBlock::offsetOfJITData() + sizeof(void*)) == CodeBlock::offsetOfMetadataTable());
+    jit.loadPairPtr(Address(expectedConstantsGPR, CodeBlock::offsetOfJITData()), expectedConstantsGPR, expectedMetadataGPR);
 
     auto stackPointerOK = jit.branchPtr(Equal, expectedStackPointerGPR, stackPointerRegister);
     jit.breakpoint();
@@ -758,7 +760,7 @@ std::tuple<std::unique_ptr<LinkBuffer>, RefPtr<BaselineJITCode>> JIT::compileAnd
             m_stringSwitchJumpTables = FixedVector<StringJumpTable>(m_unlinkedCodeBlock->numberOfUnlinkedStringSwitchJumpTables());
     }
 
-    if (UNLIKELY(Options::dumpDisassembly() || (m_vm->m_perBytecodeProfiler && Options::disassembleBaselineForProfiler()))) {
+    if (UNLIKELY(Options::dumpDisassembly() || Options::dumpBaselineDisassembly() || (m_vm->m_perBytecodeProfiler && Options::disassembleBaselineForProfiler()))) {
         // FIXME: build a disassembler off of UnlinkedCodeBlock.
         m_disassembler = makeUnique<JITDisassembler>(m_profiledCodeBlock);
     }
@@ -986,7 +988,7 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
             jitCodeMapBuilder.append(BytecodeIndex(bytecodeOffset), patchBuffer.locationOf<JSEntryPtrTag>(m_labels[bytecodeOffset]));
     }
 
-    if (UNLIKELY(Options::dumpDisassembly())) {
+    if (UNLIKELY(Options::dumpDisassembly() || Options::dumpBaselineDisassembly())) {
         m_disassembler->dump(patchBuffer);
         patchBuffer.didAlreadyDisassemble();
     }
@@ -1003,7 +1005,7 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
         pcToCodeOriginMap = makeUnique<PCToCodeOriginMap>(WTFMove(m_pcToCodeOriginMapBuilder), patchBuffer);
     
     // FIXME: Make a version of CodeBlockWithJITType that knows about UnlinkedCodeBlock.
-    CodeRef<JSEntryPtrTag> result = FINALIZE_CODE(
+    CodeRef<JSEntryPtrTag> result = FINALIZE_BASELINE_CODE(
         patchBuffer, JSEntryPtrTag,
         "Baseline JIT code for %s", toCString(CodeBlockWithJITType(m_profiledCodeBlock, JITType::BaselineJIT)).data());
     

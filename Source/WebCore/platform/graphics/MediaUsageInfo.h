@@ -67,44 +67,7 @@ struct MediaUsageInfo {
     bool isInViewport { false };
 #endif
 
-    bool operator==(const MediaUsageInfo& other) const
-    {
-        return mediaURL == other.mediaURL
-            && hasSource == other.hasSource
-            && isPlaying == other.isPlaying
-            && canShowControlsManager == other.canShowControlsManager
-            && canShowNowPlayingControls == other.canShowNowPlayingControls
-            && isSuspended == other.isSuspended
-            && isInActiveDocument == other.isInActiveDocument
-            && isFullscreen == other.isFullscreen
-            && isMuted == other.isMuted
-            && isMediaDocumentInMainFrame == other.isMediaDocumentInMainFrame
-            && isVideo == other.isVideo
-            && isAudio == other.isAudio
-            && hasAudio == other.hasAudio
-            && hasVideo == other.hasVideo
-            && hasRenderer == other.hasRenderer
-            && audioElementWithUserGesture == other.audioElementWithUserGesture
-            && userHasPlayedAudioBefore == other.userHasPlayedAudioBefore
-            && isElementRectMostlyInMainFrame == other.isElementRectMostlyInMainFrame
-            && playbackPermitted == other.playbackPermitted
-            && pageMediaPlaybackSuspended == other.pageMediaPlaybackSuspended
-            && isMediaDocumentAndNotOwnerElement == other.isMediaDocumentAndNotOwnerElement
-            && pageExplicitlyAllowsElementToAutoplayInline == other.pageExplicitlyAllowsElementToAutoplayInline
-            && requiresFullscreenForVideoPlaybackAndFullscreenNotPermitted == other.requiresFullscreenForVideoPlaybackAndFullscreenNotPermitted
-            && isVideoAndRequiresUserGestureForVideoRateChange == other.isVideoAndRequiresUserGestureForVideoRateChange
-            && isAudioAndRequiresUserGestureForAudioRateChange == other.isAudioAndRequiresUserGestureForAudioRateChange
-            && isVideoAndRequiresUserGestureForVideoDueToLowPowerMode == other.isVideoAndRequiresUserGestureForVideoDueToLowPowerMode
-            && noUserGestureRequired == other.noUserGestureRequired
-            && requiresPlaybackAndIsNotPlaying == other.requiresPlaybackAndIsNotPlaying
-            && hasEverNotifiedAboutPlaying == other.hasEverNotifiedAboutPlaying
-            && outsideOfFullscreen == other.outsideOfFullscreen
-            && isLargeEnoughForMainContent == other.isLargeEnoughForMainContent
-#if PLATFORM(COCOA) && !HAVE(CGS_FIX_FOR_RADAR_97530095)
-            && isInViewport == other.isInViewport
-#endif
-            ;
-    }
+    friend bool operator==(const MediaUsageInfo&, const MediaUsageInfo&) = default;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<MediaUsageInfo> decode(Decoder&);

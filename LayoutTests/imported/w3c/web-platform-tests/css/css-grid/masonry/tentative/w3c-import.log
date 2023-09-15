@@ -14,4 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/masonry-columns-item-containing-block-is-grid-content-width-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/masonry-columns-item-containing-block-is-grid-content-width.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-template-columns-computed-withcontent.html

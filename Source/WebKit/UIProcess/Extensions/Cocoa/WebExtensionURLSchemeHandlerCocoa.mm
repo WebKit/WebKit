@@ -38,6 +38,7 @@
 #import "WebExtensionContext.h"
 #import "WebExtensionController.h"
 #import "WebURLSchemeTask.h"
+#import "_WKWebExtensionLocalization.h"
 #import <UniformTypeIdentifiers/UTType.h>
 #import <wtf/BlockPtr.h>
 
@@ -95,7 +96,16 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
         if (!mimeType)
             mimeType = @"application/octet-stream";
 
-        // FIXME: <https://webkit.org/b/246488> Support localization of CSS files.
+        if ([mimeType isEqualToString:@"text/css"]) {
+            _WKWebExtensionLocalization *localization = extensionContext->extension().localization();
+            if (!localization.uniqueIdentifier)
+                localization.uniqueIdentifier = extensionContext->uniqueIdentifier();
+
+            // FIXME: <https://webkit.org/b/252628> Only attempt to localize CSS files if we notice a localization wildcard in the file's NSData.
+            NSString *stylesheetContents = [[NSString alloc] initWithData:fileData encoding:NSUTF8StringEncoding];
+            stylesheetContents = [localization localizedStringForString:stylesheetContents];
+            fileData = [stylesheetContents dataUsingEncoding:NSUTF8StringEncoding];
+        }
 
         // FIXME: <https://webkit.org/b/246490> Include the Content-Security-Policy header for the extension.
         NSHTTPURLResponse *urlResponse = [[NSHTTPURLResponse alloc] initWithURL:requestURL statusCode:200 HTTPVersion:nil headerFields:@{

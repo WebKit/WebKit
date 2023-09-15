@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body, html {
+    margin: 0;
+    font-size: 20px;
+}
+
+div {
+    width: 100px;
+    height: 100px;
+    border: 1px solid tomato;
+    margin: 0;
+    overflow: hidden;
+    text-align: center;
+    box-sizing: border-box;
+    padding-top: 38px;
+}
+
+div#container-with-cursor-pointer {
+    cursor: pointer;
+}
+
+div#container-with-cursor-text {
+    cursor: text;
+}
+</style>
+</head>
+<body>
+<div id="container"></div>
+<div id="editable-container" contenteditable></div>
+<div id="container-with-cursor-pointer"></div>
+<div id="container-with-text">Hello</div>
+<div id="container-with-link"><a href="https://webkit.org">Hello</div>
+<div id="container-with-cursor-text"></div>
+</body>
+</html>

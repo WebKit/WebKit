@@ -1,0 +1,11 @@
+2d.layer.invalid-calls.save-beginLayer-restore
+
+Raises exception on save() + beginLayer() + restore().
+
+
+FAIL Raises exception on save() + beginLayer() + restore(). assert_throws_dom: function "function() {
+    ctx.save();
+    ctx.beginLayer();
+    ctx.restore();
+  }" threw object "TypeError: ctx.beginLayer is not a function. (In 'ctx.beginLayer()', 'ctx.beginLayer' is undefined)" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
+

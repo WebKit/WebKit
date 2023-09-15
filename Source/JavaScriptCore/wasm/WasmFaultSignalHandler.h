@@ -29,7 +29,7 @@ namespace JSC {
 
 namespace Wasm {
 
-#if ENABLE(WEBASSEMBLY) && OS(UNIX)
+#if ENABLE(WEBASSEMBLY)
 void activateSignalingMemory();
 void prepareSignalingMemory();
 #else

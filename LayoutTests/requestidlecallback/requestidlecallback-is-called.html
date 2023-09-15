@@ -10,35 +10,38 @@ jsTestIsAsync = true;
 
 requestIdleCallbackIsCalled = false;
 const iframe = document.createElement('iframe');
-const logs = [];
+const logsA = [];
+const logsB = [];
 
 iframe.onload = () => {
     requestIdleCallback(() => {
         requestIdleCallbackIsCalled = true;
-        logs.push('1.A1');
+        logsA.push('1.A1');
     });
 
     iframe.contentWindow.requestIdleCallback(() => {
         requestIdleCallbackIsCalled = true;
-        logs.push('2.B1');
+        logsB.push('2.B1');
     });
 
     iframe.contentWindow.requestIdleCallback(() => {
         requestIdleCallbackIsCalled = true;
-        logs.push('3.B2');
+        logsB.push('3.B2');
     });
 
     requestIdleCallback(() => {
         requestIdleCallbackIsCalled = true;
-        logs.push('4.A2');
+        logsA.push('4.A2');
     });
 }
 document.body.appendChild(iframe);
 
 setTimeout(() => {
     shouldBeTrue('requestIdleCallbackIsCalled');
-    shouldBe('logs.length', '4');
-    shouldBeEqualToString('logs.join(", ")', '1.A1, 2.B1, 4.A2, 3.B2');
+    shouldBe('logsA.length', '2');
+    shouldBeEqualToString('logsA.join(", ")', '1.A1, 4.A2');
+    shouldBe('logsB.length', '2');
+    shouldBeEqualToString('logsB.join(", ")', '2.B1, 3.B2');
     finishJSTest();
 }, 200);
 

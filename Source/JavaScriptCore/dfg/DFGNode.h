@@ -1943,6 +1943,7 @@ public:
         case GetArgument:
         case ArrayPop:
         case ArrayPush:
+        case ArraySpliceExtract:
         case RegExpExec:
         case RegExpExecNonGlobalOrSticky:
         case RegExpTest:
@@ -2250,6 +2251,8 @@ public:
         case NewAsyncGenerator:
         case NewInternalFieldObject:
         case NewStringObject:
+        case NewMap:
+        case NewSet:
             return true;
         default:
             return false;

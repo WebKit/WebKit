@@ -11673,6 +11673,81 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
 }
 
+// Test workaround in Vulkan backend for mismatched texture buffer and sampler formats
+TEST_P(TextureBufferTestES31, TexBufferFormatMismatch)
+{
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_buffer"));
+
+    auto runTestCase = [&](auto texData, GLenum format, const char *samplerType) {
+        std::stringstream fsStream;
+        fsStream << R"(#version 310 es
+    #extension GL_EXT_texture_buffer : require
+    precision mediump float;
+    uniform highp )"
+                 << samplerType << R"( s;
+    out vec4 colorOut;
+    void main()
+    {
+        colorOut = vec4(texelFetch(s, 0).r, 0, 0, 1);
+    })";
+        ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), fsStream.str().c_str());
+
+        GLBuffer buffer;
+        glBindBuffer(GL_TEXTURE_BUFFER, buffer);
+
+        glBufferData(GL_TEXTURE_BUFFER, sizeof(texData), texData.data(), GL_DYNAMIC_DRAW);
+        glTexBufferEXT(GL_TEXTURE_BUFFER, format, buffer);
+
+        drawQuad(program, essl31_shaders::PositionAttrib(), 0.5);
+        EXPECT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    };
+
+    const std::array<uint8_t, 4> kTexData8n{255};  // 8-bit normalized {1,0,0,0}
+    const std::array<uint8_t, 4> kTexData8i{1};    // 8-bit (u)int {1,0,0,0}
+
+    // Test all 8-bit formats from EXT_texture_buffer.txt Table texbo.1
+    for (auto format :
+         {GL_R8, GL_R8I, GL_R8UI, GL_RG8, GL_RG8I, GL_RG8UI, GL_RGBA8, GL_RGBA8I, GL_RGBA8UI})
+    {
+        // float sampler
+        runTestCase(kTexData8n, format, "samplerBuffer");
+        // integer samplers
+        runTestCase(kTexData8i, format, "isamplerBuffer");
+        runTestCase(kTexData8i, format, "usamplerBuffer");
+    }
+
+    const uint16_t kHalfFloatOne = 0x3C00;
+    const std::array<uint16_t, 4> kTexData16f{kHalfFloatOne};  // 16-bit float {1,0,0,0}
+    const std::array<uint16_t, 4> kTexData16i{1};              // 16-bit (u)int {1,0,0,0}
+
+    // Test all 16-bit formats from EXT_texture_buffer.txt Table texbo.1
+    for (auto format : {GL_R16F, GL_R16I, GL_R16UI, GL_RG16F, GL_RG16I, GL_RG16UI, GL_RGBA16F,
+                        GL_RGBA16I, GL_RGBA16UI})
+    {
+        // float sampler
+        runTestCase(kTexData16f, format, "samplerBuffer");
+        // integer samplers
+        runTestCase(kTexData16i, format, "isamplerBuffer");
+        runTestCase(kTexData16i, format, "usamplerBuffer");
+    }
+
+    const std::array<GLfloat, 4> kTexData32f{1.0f};  // 32-bit float {1,0,0,0}
+    const std::array<uint32_t, 4> kTexData32i{1};    // 32-bit (u)int {1,0,0,0}
+
+    // Test all 32-bit formats from EXT_texture_buffer.txt Table texbo.1
+    for (auto format : {GL_R32F, GL_R32I, GL_R32UI, GL_RG32F, GL_RG32I, GL_RG32UI, GL_RGB32F,
+                        GL_RGB32I, GL_RGB32UI, GL_RGBA32F, GL_RGBA32I, GL_RGBA32UI})
+    {
+        // float sampler
+        runTestCase(kTexData32f, format, "samplerBuffer");
+        // integer samplers
+        runTestCase(kTexData32i, format, "isamplerBuffer");
+        runTestCase(kTexData32i, format, "usamplerBuffer");
+    }
+}
+
 // Test that the correct error is generated if texture buffer support used anyway when not enabled.
 TEST_P(TextureBufferTestES31, TestErrorWhenNotEnabled)
 {

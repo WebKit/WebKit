@@ -183,7 +183,7 @@ private:
         ASSERT_UNUSED(offset, m_pointer + offset <= threadGlobalTimerHeap().data() + threadGlobalTimerHeap().size());
     }
 
-    friend bool operator==(TimerHeapIterator, TimerHeapIterator);
+    friend bool operator==(TimerHeapIterator, TimerHeapIterator) = default;
     friend bool operator<(TimerHeapIterator, TimerHeapIterator);
     friend bool operator>(TimerHeapIterator, TimerHeapIterator);
     friend bool operator<=(TimerHeapIterator, TimerHeapIterator);
@@ -198,7 +198,6 @@ private:
     RefPtr<ThreadTimerHeapItem>* m_pointer;
 };
 
-inline bool operator==(TimerHeapIterator a, TimerHeapIterator b) { return a.m_pointer == b.m_pointer; }
 inline bool operator<(TimerHeapIterator a, TimerHeapIterator b) { return a.m_pointer < b.m_pointer; }
 inline bool operator>(TimerHeapIterator a, TimerHeapIterator b) { return a.m_pointer > b.m_pointer; }
 inline bool operator<=(TimerHeapIterator a, TimerHeapIterator b) { return a.m_pointer <= b.m_pointer; }
@@ -478,8 +477,8 @@ void TimerBase::setNextFireTime(MonotonicTime newTime)
     // Keep heap valid while changing the next-fire time.
     MonotonicTime oldTime = nextFireTime();
     // Don't realign zero-delay timers.
-    if (newTime) {
-        if (auto newAlignedTime = alignedFireTime(newTime))
+    if (auto* alignment = m_alignment.get(); newTime && alignment) {
+        if (auto newAlignedTime = alignment->alignedFireTime(m_hasReachedMaxNestingLevel, newTime))
             newTime = newAlignedTime.value();
     }
 

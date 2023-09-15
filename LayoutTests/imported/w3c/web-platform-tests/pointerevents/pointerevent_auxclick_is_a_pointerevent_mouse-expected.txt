@@ -2,5 +2,6 @@
 
 Harness Error (TIMEOUT), message = null
 
-TIMEOUT auxclick using mouse is a PointerEvent Test timed out
+TIMEOUT auxclick using mouse is a PointerEvent with correct properties Test timed out
+NOTRUN auxclick using mouse is a PointerEvent with correct properties when no other PointerEvent listeners are present
 

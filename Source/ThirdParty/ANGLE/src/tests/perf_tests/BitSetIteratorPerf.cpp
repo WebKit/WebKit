@@ -30,7 +30,7 @@ class BitSetIteratorPerfTest : public ANGLEPerfTest
 
 template <typename T>
 BitSetIteratorPerfTest<T>::BitSetIteratorPerfTest()
-    : ANGLEPerfTest(::testing::UnitTest::GetInstance()->current_test_case()->name(), "", "_run", 1)
+    : ANGLEPerfTest(::testing::UnitTest::GetInstance()->current_test_suite()->name(), "", "_run", 1)
 {}
 
 template <typename T>

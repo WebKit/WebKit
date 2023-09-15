@@ -70,7 +70,7 @@ private:
     PermissionState m_state;
     PermissionDescriptor m_descriptor;
     MainThreadPermissionObserverIdentifier m_mainThreadPermissionObserverIdentifier;
-    std::atomic<bool> m_hasChangeEventListener;
+    bool m_hasChangeEventListener { false };
 };
 
 } // namespace WebCore

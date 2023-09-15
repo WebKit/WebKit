@@ -63,10 +63,7 @@ public:
 
     bool isPercentage() const { return m_type == LengthType && m_length.isPercentOrCalculated(); }
 
-    bool operator==(const GridLength& o) const
-    {
-        return m_type == o.m_type && m_flex == o.m_flex && m_length == o.m_length;
-    }
+    friend bool operator==(const GridLength&, const GridLength&) = default;
 
     bool isContentSized() const { return m_type == LengthType && (m_length.isAuto() || m_length.isMinContent() || m_length.isMaxContent()); }
     bool isAuto() const { return m_type == LengthType && m_length.isAuto(); }

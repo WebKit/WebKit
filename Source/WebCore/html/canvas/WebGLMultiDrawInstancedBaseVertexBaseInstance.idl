@@ -33,7 +33,7 @@ typedef (Uint32Array or sequence<GLuint>) Uint32List;
 [
     LegacyNoInterfaceObject,
     Conditional=WEBGL,
-    GenerateIsReachable=ImplWebGLRenderingContext,
+    GenerateIsReachable,
 ] interface WebGLMultiDrawInstancedBaseVertexBaseInstance {
   undefined multiDrawArraysInstancedBaseInstanceWEBGL(
       GLenum mode,

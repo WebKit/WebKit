@@ -299,6 +299,63 @@ private:
     bool m_isValid { false };
 };
 
+class GstMappedAudioBuffer {
+    WTF_MAKE_NONCOPYABLE(GstMappedAudioBuffer);
+public:
+
+    GstMappedAudioBuffer(GstBuffer* buffer, GstAudioInfo info, GstMapFlags flags)
+    {
+        m_isValid = gst_audio_buffer_map(&m_buffer, &info, buffer, flags);
+    }
+
+    GstMappedAudioBuffer(GRefPtr<GstSample> sample, GstMapFlags flags)
+    {
+        GstAudioInfo info;
+
+        if (!gst_audio_info_from_caps(&info, gst_sample_get_caps(sample.get()))) {
+            m_isValid = false;
+            return;
+        }
+
+        m_isValid = gst_audio_buffer_map(&m_buffer, &info, gst_sample_get_buffer(sample.get()), flags);
+    }
+
+    GstAudioBuffer* get()
+    {
+        if (!m_isValid) {
+            GST_INFO("Invalid buffer, returning NULL");
+
+            return nullptr;
+        }
+
+        return &m_buffer;
+    }
+
+    GstAudioInfo* info()
+    {
+        if (!m_isValid) {
+            GST_INFO("Invalid frame, returning NULL");
+
+            return nullptr;
+        }
+
+        return &m_buffer.info;
+    }
+
+    ~GstMappedAudioBuffer()
+    {
+        if (m_isValid)
+            gst_audio_buffer_unmap(&m_buffer);
+        m_isValid = false;
+    }
+
+    explicit operator bool() const { return m_isValid; }
+
+private:
+    GstAudioBuffer m_buffer;
+    bool m_isValid { false };
+};
+
 
 void connectSimpleBusMessageCallback(GstElement*, Function<void(GstMessage*)>&& = [](GstMessage*) { });
 void disconnectSimpleBusMessageCallback(GstElement*);
@@ -329,10 +386,13 @@ PlatformVideoColorSpace videoColorSpaceFromCaps(const GstCaps*);
 PlatformVideoColorSpace videoColorSpaceFromInfo(const GstVideoInfo&);
 void fillVideoInfoColorimetryFromColorSpace(GstVideoInfo*, const PlatformVideoColorSpace&);
 
+void configureAudioDecoderForHarnessing(const GRefPtr<GstElement>&);
 void configureVideoDecoderForHarnessing(const GRefPtr<GstElement>&);
 
 bool gstObjectHasProperty(GstElement*, const char* name);
 bool gstObjectHasProperty(GstPad*, const char* name);
+
+GRefPtr<GstBuffer> wrapSpanData(const std::span<const uint8_t>&);
 
 } // namespace WebCore
 
@@ -407,7 +467,6 @@ public:
         {
             return m_iter == other.m_iter && m_done == other.m_done;
         }
-        bool operator!=(const iterator& other) const { return !(*this == other); }
 
     private:
         GstIterator* m_iter;

@@ -11,6 +11,7 @@
 # The path of all the files added to angle_code_affecting_program_serialize
 # must be relative to angle_root.
 
+import("compiler.gni")
 import("libANGLE/renderer/d3d/d3d_backend.gni")
 import("libANGLE/renderer/gl/gl_backend.gni")
 import("libANGLE/renderer/metal/metal_backend.gni")
@@ -21,7 +22,24 @@ import("libGLESv2.gni")
 angle_code_affecting_program_serialize = libangle_common_sources
 angle_code_affecting_program_serialize += libangle_headers
 angle_code_affecting_program_serialize += libangle_sources
+angle_code_affecting_program_serialize += libangle_gl_sources
 angle_code_affecting_program_serialize += libangle_includes
+angle_code_affecting_program_serialize += angle_translator_exported_headers
+angle_code_affecting_program_serialize += angle_translator_sources
+angle_code_affecting_program_serialize += angle_translator_glsl_base_sources
+angle_code_affecting_program_serialize +=
+    angle_translator_glsl_and_vulkan_base_sources
+angle_code_affecting_program_serialize += angle_translator_essl_sources
+angle_code_affecting_program_serialize += angle_translator_glsl_sources
+angle_code_affecting_program_serialize += angle_translator_glsl_apple_sources
+angle_code_affecting_program_serialize += angle_translator_hlsl_sources
+angle_code_affecting_program_serialize += angle_translator_lib_spirv_sources
+angle_code_affecting_program_serialize +=
+    angle_translator_essl_symbol_table_sources
+angle_code_affecting_program_serialize +=
+    angle_translator_glsl_symbol_table_sources
+angle_code_affecting_program_serialize += angle_translator_lib_msl_sources
+angle_code_affecting_program_serialize += angle_preprocessor_sources
 
 vulkan_backend_dir = "libANGLE/renderer/vulkan/"
 angle_code_affecting_program_serialize +=

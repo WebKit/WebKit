@@ -60,14 +60,14 @@ void RemoteCDMInstanceSession::setLogIdentifier(const void* logIdentifier)
 }
 #endif
 
-void RemoteCDMInstanceSession::requestLicense(LicenseType type, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)
+void RemoteCDMInstanceSession::requestLicense(LicenseType type, KeyGroupingStrategy keyGroupingStrategy, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)
 {
     if (!m_factory) {
         callback(SharedBuffer::create(), emptyString(), false, Failed);
         return;
     }
 
-    m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::RequestLicense(type, initDataType, WTFMove(initData)), [callback = WTFMove(callback)] (RefPtr<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, bool succeeded) mutable {
+    m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::RequestLicense(type, keyGroupingStrategy, initDataType, WTFMove(initData)), [callback = WTFMove(callback)] (RefPtr<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, bool succeeded) mutable {
         if (!message) {
             callback(SharedBuffer::create(), emptyString(), false, Failed);
             return;

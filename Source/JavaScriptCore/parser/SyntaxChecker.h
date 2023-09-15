@@ -89,7 +89,7 @@ public:
         TemplateExpressionListResult, TemplateExpr,
         TaggedTemplateExpr, YieldExpr, AwaitExpr,
         ModuleNameResult, PrivateIdentifier,
-        ImportSpecifierResult, ImportSpecifierListResult, ImportAssertionListResult,
+        ImportSpecifierResult, ImportSpecifierListResult, ImportAttributesListResult,
         ExportSpecifierResult, ExportSpecifierListResult,
 
         NewTargetExpr = MetaPropertyBit | 0,
@@ -131,7 +131,7 @@ public:
     typedef int ModuleName;
     typedef int ImportSpecifier;
     typedef int ImportSpecifierList;
-    typedef int ImportAssertionList;
+    typedef int ImportAttributesList;
     typedef int ExportSpecifier;
     typedef int ExportSpecifierList;
     typedef int Statement;
@@ -287,13 +287,13 @@ public:
     ImportSpecifier createImportSpecifier(const JSTokenLocation&, const Identifier&, const Identifier&) { return ImportSpecifierResult; }
     ImportSpecifierList createImportSpecifierList() { return ImportSpecifierListResult; }
     void appendImportSpecifier(ImportSpecifierList, ImportSpecifier) { }
-    ImportAssertionList createImportAssertionList() { return ImportAssertionListResult; }
-    void appendImportAssertion(ImportAssertionList, const Identifier&, const Identifier&) { }
-    int createImportDeclaration(const JSTokenLocation&, ImportSpecifierList, ModuleName, ImportAssertionList) { return StatementResult; }
-    int createExportAllDeclaration(const JSTokenLocation&, ModuleName, ImportAssertionList) { return StatementResult; }
+    ImportAttributesList createImportAttributesList() { return ImportAttributesListResult; }
+    void appendImportAssertion(ImportAttributesList, const Identifier&, const Identifier&) { }
+    int createImportDeclaration(const JSTokenLocation&, ImportSpecifierList, ModuleName, ImportAttributesList) { return StatementResult; }
+    int createExportAllDeclaration(const JSTokenLocation&, ModuleName, ImportAttributesList) { return StatementResult; }
     int createExportDefaultDeclaration(const JSTokenLocation&, int, const Identifier&) { return StatementResult; }
     int createExportLocalDeclaration(const JSTokenLocation&, int) { return StatementResult; }
-    int createExportNamedDeclaration(const JSTokenLocation&, ExportSpecifierList, ModuleName, ImportAssertionList) { return StatementResult; }
+    int createExportNamedDeclaration(const JSTokenLocation&, ExportSpecifierList, ModuleName, ImportAttributesList) { return StatementResult; }
     ExportSpecifier createExportSpecifier(const JSTokenLocation&, const Identifier&, const Identifier&) { return ExportSpecifierResult; }
     ExportSpecifierList createExportSpecifierList() { return ExportSpecifierListResult; }
     void appendExportSpecifier(ExportSpecifierList, ExportSpecifier) { }

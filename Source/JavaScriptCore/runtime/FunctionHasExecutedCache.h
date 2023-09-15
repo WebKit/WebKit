@@ -43,10 +43,7 @@ public:
         };
 
         FunctionRange() {}
-        bool operator==(const FunctionRange& other) const 
-        {
-            return m_start == other.m_start && m_end == other.m_end;
-        }
+        friend bool operator==(const FunctionRange&, const FunctionRange&) = default;
         unsigned hash() const
         {
             return m_start * m_end;

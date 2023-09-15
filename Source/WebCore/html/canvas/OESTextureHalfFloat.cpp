@@ -28,6 +28,7 @@
 #if ENABLE(WEBGL)
 #include "OESTextureHalfFloat.h"
 
+#include "WebGLExtensionAnyInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -45,11 +46,6 @@ OESTextureHalfFloat::OESTextureHalfFloat(WebGLRenderingContextBase& context)
 }
 
 OESTextureHalfFloat::~OESTextureHalfFloat() = default;
-
-WebGLExtension::ExtensionName OESTextureHalfFloat::getName() const
-{
-    return OESTextureHalfFloatName;
-}
 
 bool OESTextureHalfFloat::supported(GraphicsContextGL& context)
 {

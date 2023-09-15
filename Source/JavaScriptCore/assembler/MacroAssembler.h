@@ -780,6 +780,11 @@ public:
         loadPair32(src, offset, dest1, dest2);
     }
 
+    void loadPairPtr(Address src, RegisterID dest1, RegisterID dest2)
+    {
+        loadPair32(src, dest1, dest2);
+    }
+
 #if ENABLE(FAST_TLS_JIT)
     void loadFromTLSPtr(uint32_t offset, RegisterID dst)
     {
@@ -850,6 +855,11 @@ public:
     void storePairPtr(RegisterID src1, RegisterID src2, RegisterID dest, TrustedImm32 offset)
     {
         storePair32(src1, src2, dest, offset);
+    }
+
+    void storePairPtr(RegisterID src1, RegisterID src2, Address dest)
+    {
+        storePair32(src1, src2, dest);
     }
 
     Jump branchPtr(RelationalCondition cond, RegisterID left, RegisterID right)
@@ -1149,6 +1159,11 @@ public:
         loadPair64(src, offset, dest1, dest2);
     }
 
+    void loadPairPtr(Address src, RegisterID dest1, RegisterID dest2)
+    {
+        loadPair64(src, dest1, dest2);
+    }
+
 #if ENABLE(FAST_TLS_JIT)
     void loadFromTLSPtr(uint32_t offset, RegisterID dst)
     {
@@ -1198,6 +1213,11 @@ public:
     void storePairPtr(RegisterID src1, RegisterID src2, RegisterID dest, TrustedImm32 offset)
     {
         storePair64(src1, src2, dest, offset);
+    }
+
+    void storePairPtr(RegisterID src1, RegisterID src2, Address dest)
+    {
+        storePair64(src1, src2, dest);
     }
 
     void comparePtr(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID dest)

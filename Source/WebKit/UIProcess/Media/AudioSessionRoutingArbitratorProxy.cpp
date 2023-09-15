@@ -67,9 +67,14 @@ void AudioSessionRoutingArbitratorProxy::endRoutingArbitration()
 
 #endif // ENABLE(AVAUDIO_ROUTING_ARBITER)
 
+Ref<WebProcessProxy> AudioSessionRoutingArbitratorProxy::protectedProcess()
+{
+    return m_process.get();
+}
+
 Logger& AudioSessionRoutingArbitratorProxy::logger()
 {
-    return m_process.logger();
+    return m_process->logger();
 }
 
 WTFLogChannel& AudioSessionRoutingArbitratorProxy::logChannel() const

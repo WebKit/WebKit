@@ -151,7 +151,7 @@ void GPUCanvasContextCocoa::reshape(int width, int height)
     m_height = height;
 
     auto configuration = WTFMove(m_configuration);
-    ASSERT(!isConfigured());
+    m_configuration.reset();
     if (configuration) {
         GPUCanvasConfiguration canvasConfiguration {
             configuration->device.ptr(),

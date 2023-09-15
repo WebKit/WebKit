@@ -279,18 +279,22 @@ void Recorder::drawPattern(ImageBuffer& imageBuffer, const FloatRect& destRect, 
     recordDrawPattern(imageBuffer.renderingResourceIdentifier(), destRect, tileRect, patternTransform, phase, spacing, options);
 }
 
-void Recorder::save()
+void Recorder::save(GraphicsContextState::Purpose purpose)
 {
+    ASSERT(purpose == GraphicsContextState::Purpose::SaveRestore);
+
     appendStateChangeItemIfNecessary();
-    GraphicsContext::save();
+    GraphicsContext::save(purpose);
     recordSave();
     m_stateStack.append(m_stateStack.last());
 }
 
-void Recorder::restore()
+void Recorder::restore(GraphicsContextState::Purpose purpose)
 {
+    ASSERT(purpose == GraphicsContextState::Purpose::SaveRestore);
+
     appendStateChangeItemIfNecessary();
-    GraphicsContext::restore();
+    GraphicsContext::restore(purpose);
 
     if (!m_stateStack.size())
         return;
@@ -350,10 +354,8 @@ void Recorder::beginTransparencyLayer(float opacity)
     appendStateChangeItemIfNecessary();
     recordBeginTransparencyLayer(opacity);
 
-    GraphicsContext::save();
+    GraphicsContext::save(GraphicsContextState::Purpose::TransparencyLayer);
     m_stateStack.append(m_stateStack.last().cloneForTransparencyLayer());
-    
-    m_state.didBeginTransparencyLayer();
 }
 
 void Recorder::endTransparencyLayer()
@@ -364,7 +366,7 @@ void Recorder::endTransparencyLayer()
     recordEndTransparencyLayer();
 
     m_stateStack.removeLast();
-    GraphicsContext::restore();
+    GraphicsContext::restore(GraphicsContextState::Purpose::TransparencyLayer);
 }
 
 void Recorder::drawRect(const FloatRect& rect, float borderThickness)

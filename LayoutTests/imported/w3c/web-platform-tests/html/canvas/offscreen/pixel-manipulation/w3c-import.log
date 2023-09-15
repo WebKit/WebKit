@@ -22,6 +22,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.create1.zero.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.create2.basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.create2.basic.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.create2.double.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.create2.double.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.create2.initial.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.create2.initial.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.create2.large.html
@@ -38,6 +40,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.basic.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.clamp.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.clamp.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.double.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.double.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.invalid.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.large.crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.large.crash.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.length.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.length.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.nonfinite.html
@@ -54,6 +62,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.order.rows.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.range.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.range.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.rounding.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.rounding.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.source.negative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.source.negative.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.source.outside.html
@@ -81,6 +91,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.object.undefined.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.object.undefined.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.put.alpha.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.put.alpha.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.put.alpha.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.put.basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.put.basic.worker.js

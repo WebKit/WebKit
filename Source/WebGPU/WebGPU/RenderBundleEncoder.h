@@ -92,6 +92,7 @@ private:
     uint64_t m_debugGroupStackSize { 0 };
     uint64_t m_currentCommandIndex { 0 };
     id<MTLBuffer> m_indexBuffer { nil };
+    id<MTLRenderPipelineState> m_currentPipelineState { nil };
     MTLPrimitiveType m_primitiveType { MTLPrimitiveTypeTriangle };
     MTLIndexType m_indexType { MTLIndexTypeUInt16 };
     NSUInteger m_indexBufferOffset { 0 };

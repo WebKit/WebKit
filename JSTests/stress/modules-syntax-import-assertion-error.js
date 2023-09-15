@@ -1,4 +1,4 @@
-//@requireOptions("--useImportAssertion=true")
+//@requireOptions("--useImportAttributes=true")
 
 function shouldThrow(func, errorMessage) {
     var errorThrown = false;

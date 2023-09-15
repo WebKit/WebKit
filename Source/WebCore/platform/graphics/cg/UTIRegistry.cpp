@@ -112,9 +112,8 @@ void setAdditionalSupportedImageTypes(const Vector<String>& imageTypes)
     MIMETypeRegistry::additionalSupportedImageMIMETypes().clear();
     for (const auto& imageType : imageTypes) {
         additionalSupportedImageTypes().add(imageType);
-        auto mimeType = MIMETypeForImageType(imageType);
-        if (!mimeType.isEmpty())
-            MIMETypeRegistry::additionalSupportedImageMIMETypes().add(mimeType);
+        auto mimeTypes = RequiredMIMETypesFromUTI(imageType);
+        MIMETypeRegistry::additionalSupportedImageMIMETypes().add(mimeTypes.begin(), mimeTypes.end());
     }
 }
 

@@ -40,7 +40,6 @@
 #include "InspectorApplicationCacheAgent.h"
 #include "InspectorCPUProfilerAgent.h"
 #include "InspectorCSSAgent.h"
-#include "InspectorCanvasAgent.h"
 #include "InspectorClient.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMStorageAgent.h"
@@ -63,6 +62,7 @@
 #include "LocalFrame.h"
 #include "Page.h"
 #include "PageAuditAgent.h"
+#include "PageCanvasAgent.h"
 #include "PageConsoleAgent.h"
 #include "PageDOMDebuggerAgent.h"
 #include "PageDebugger.h"
@@ -183,7 +183,7 @@ void InspectorController::createLazyAgents()
 #endif
     m_agents.append(makeUnique<PageHeapAgent>(pageContext));
     m_agents.append(makeUnique<PageAuditAgent>(pageContext));
-    m_agents.append(makeUnique<InspectorCanvasAgent>(pageContext));
+    m_agents.append(makeUnique<PageCanvasAgent>(pageContext));
     m_agents.append(makeUnique<InspectorTimelineAgent>(pageContext));
     m_agents.append(makeUnique<InspectorAnimationAgent>(pageContext));
 

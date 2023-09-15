@@ -52,8 +52,6 @@ public:
     void setOpener(Frame* opener) { m_opener = opener; }
     Frame* opener() const { return m_opener.get(); }
 
-    WEBCORE_EXPORT void didFinishLoadInAnotherProcess();
-
     const RemoteFrameClient& client() const { return m_client.get(); }
     RemoteFrameClient& client() { return m_client.get(); }
 
@@ -71,6 +69,7 @@ private:
     bool preventsParentFromBeingComplete() const final;
     void changeLocation(FrameLoadRequest&&) final;
     void broadcastFrameRemovalToOtherProcesses() final;
+    void didFinishLoadInAnotherProcess() final;
 
     FrameView* virtualView() const final;
     DOMWindow* virtualWindow() const final;

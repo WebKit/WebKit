@@ -260,11 +260,9 @@ void HTMLFormElement::submitIfPossible(Event* event, HTMLFormControlElement* sub
     m_isSubmittingOrPreparingForSubmission = true;
     m_shouldSubmit = false;
 
-    if (UserGestureIndicator::processingUserGesture()) {
-        for (auto& element : m_listedElements) {
-            if (auto* formControlElement = dynamicDowncast<HTMLFormControlElement>(*element))
-                formControlElement->setInteractedWithSinceLastFormSubmitEvent(false);
-        }
+    for (auto& element : m_listedElements) {
+        if (auto* formControlElement = dynamicDowncast<HTMLFormControlElement>(*element))
+            formControlElement->setInteractedWithSinceLastFormSubmitEvent(true);
     }
 
     bool shouldValidate = document().page() && document().page()->settings().interactiveFormValidationEnabled() && !noValidate();
@@ -480,7 +478,7 @@ void HTMLFormElement::attributeChanged(const QualifiedName& name, const AtomStri
         if (!m_attributes.action().isEmpty()) {
             if (RefPtr f = document().frame()) {
                 if (auto* topFrame = dynamicDowncast<LocalFrame>(f->tree().top()))
-                    MixedContentChecker::checkFormForMixedContent(*topFrame, topFrame->document()->securityOrigin(), document().completeURL(m_attributes.action()));
+                    MixedContentChecker::checkFormForMixedContent(*topFrame, document().completeURL(m_attributes.action()));
             }
         }
         break;
@@ -735,12 +733,12 @@ AtomString HTMLFormElement::effectiveTarget(const Event* event, HTMLFormControlE
     if (RefPtr submitter = overrideSubmitter ? overrideSubmitter : findSubmitter(event)) {
         auto& targetValue = submitter->attributeWithoutSynchronization(formtargetAttr);
         if (!targetValue.isNull())
-            return targetValue;
+            return makeTargetBlankIfHasDanglingMarkup(targetValue);
     }
 
     auto targetValue = target();
     if (!targetValue.isNull())
-        return targetValue;
+        return makeTargetBlankIfHasDanglingMarkup(targetValue);
 
     return document().baseTarget();
 }

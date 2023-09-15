@@ -162,6 +162,7 @@ namespace JSC { namespace FTL {
     macro(Structure_previousOrRareData, Structure::previousOrRareDataOffset()) \
     macro(Structure_propertyHash, Structure::propertyHashOffset()) \
     macro(Structure_prototype, Structure::prototypeOffset()) \
+    macro(Structure_seenProperties, Structure::seenPropertiesOffset()) \
     macro(StructureRareData_cachedEnumerableStrings, StructureRareData::offsetOfCachedPropertyNames(CachedPropertyNamesKind::EnumerableStrings)) \
     macro(StructureRareData_cachedStrings, StructureRareData::offsetOfCachedPropertyNames(CachedPropertyNamesKind::Strings)) \
     macro(StructureRareData_cachedSymbols, StructureRareData::offsetOfCachedPropertyNames(CachedPropertyNamesKind::Symbols)) \
@@ -170,11 +171,15 @@ namespace JSC { namespace FTL {
     macro(StructureRareData_specialPropertyCache, StructureRareData::offsetOfSpecialPropertyCache()) \
     macro(SpecialPropertyCache_cachedToStringTagValue, SpecialPropertyCache::offsetOfCache(CachedSpecialPropertyKey::ToStringTag) + SpecialPropertyCacheEntry::offsetOfValue()) \
     macro(HashMapImpl_capacity, HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfCapacity()) \
+    macro(HashMapImpl_deleteCount, HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfDeleteCount()) \
+    macro(HashMapImpl_keyCount, HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfKeyCount()) \
     macro(HashMapImpl_buffer,  HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfBuffer()) \
+    macro(HashMapImpl_tail,  HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfTail()) \
     macro(HashMapImpl_head,  HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfHead()) \
     macro(HashMapBucket_value, HashMapBucket<HashMapBucketDataKeyValue>::offsetOfValue()) \
     macro(HashMapBucket_key, HashMapBucket<HashMapBucketDataKeyValue>::offsetOfKey()) \
     macro(HashMapBucket_next, HashMapBucket<HashMapBucketDataKeyValue>::offsetOfNext()) \
+    macro(HashMapBucket_prev, HashMapBucket<HashMapBucketDataKeyValue>::offsetOfPrev()) \
     macro(VM_heap_barrierThreshold, VM::offsetOfHeapBarrierThreshold()) \
     macro(VM_heap_mutatorShouldBeFenced, VM::offsetOfHeapMutatorShouldBeFenced()) \
     macro(VM_exception, VM::exceptionOffset()) \

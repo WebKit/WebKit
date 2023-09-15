@@ -16,9 +16,7 @@
       <dep package="glib-networking"/>
       <dep package="atk"/>
       <dep package="at-spi2-atk"/>
-      <if condition-unset="USE_SOUP2">
-        <dep package="libsoup3"/>
-      </if>
+      <dep package="libsoup"/>
     </dependencies>
   </metamodule>
 
@@ -33,9 +31,7 @@
       <dep package="glib-networking"/>
       <dep package="atk"/>
       <dep package="at-spi2-atk"/>
-      <if condition-unset="USE_SOUP2">
-        <dep package="libsoup3"/>
-      </if>
+      <dep package="libsoup"/>
     </dependencies>
   </metamodule>
 
@@ -108,21 +104,19 @@
     </branch>
   </autotools>
 
-  <if condition-unset="USE_SOUP2">
-    <meson id="libsoup3" mesonargs="-Dgssapi=disabled -Dvapi=disabled -Dntlm=disabled -Dsysprof=disabled -Dautobahn=disabled -Dpkcs11_tests=disabled">
-      <pkg-config>libsoup-3.0.pc</pkg-config>
-      <dependencies>
-        <dep package="glib"/>
-        <dep package="glib-networking"/>
-        <dep package="libpsl"/>
-      </dependencies>
-      <branch module="/sources/libsoup/3.2/libsoup-${version}.tar.xz"
-              version="3.2.2"
-              repo="download.gnome.org"
-              hash="sha256:83673c685b910fb7d39f1f28eee5afbefb71c05798fc350ac3bf1b885e1efaa1">
-      </branch>
-    </meson>
-  </if>
+  <meson id="libsoup" mesonargs="-Dgssapi=disabled -Dvapi=disabled -Dntlm=disabled -Dsysprof=disabled -Dautobahn=disabled -Dpkcs11_tests=disabled">
+    <pkg-config>libsoup-3.0.pc</pkg-config>
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="glib-networking"/>
+      <dep package="libpsl"/>
+    </dependencies>
+    <branch module="/sources/libsoup/3.0/libsoup-${version}.tar.xz"
+            version="3.0.7"
+            repo="download.gnome.org"
+            hash="sha256:ebdf90cf3599c11acbb6818a9d9e3fc9d2c68e56eb829b93962972683e1bf7c8">
+    </branch>
+  </meson>
 
   <autotools id="libpsl" autogenargs="--enable-runtime=libicu --enable-builtin=libicu">
     <pkg-config>libpsl.pc</pkg-config>
@@ -247,9 +241,9 @@
                     -DJPEGXL_ENABLE_SKCMS=ON">
     <pkg-config>libjxl.pc</pkg-config>
     <branch module="libjxl/libjxl.git"
-            version="0.6.1"
-            tag="v0.6.1"
-            checkoutdir="libjxl-0.6.1"
+            version="0.7.0"
+            tag="v0.7.0"
+            checkoutdir="libjxl-0.7.0"
             repo="github.com">
       <patch file="libjxl-add-cmake-flag-provision-dependencies.patch" strip="1"/>
     </branch>

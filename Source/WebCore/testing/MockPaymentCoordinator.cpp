@@ -114,6 +114,7 @@ bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const
 {
     if (request.shippingContact().pkContact())
         m_shippingAddress = request.shippingContact().toApplePayPaymentContact(request.version());
+    m_supportedCountries = request.supportedCountries();
     m_shippingMethods = request.shippingMethods();
     m_requiredBillingContactFields = request.requiredBillingContactFields();
     m_requiredShippingContactFields = request.requiredShippingContactFields();

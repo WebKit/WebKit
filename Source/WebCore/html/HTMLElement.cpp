@@ -1249,7 +1249,7 @@ static ExceptionOr<bool> checkPopoverValidity(HTMLElement& element, PopoverVisib
     if (!element.isConnected())
         return Exception { InvalidStateError, "Element is not connected"_s };
 
-    if (expectedDocument && element.document() != *expectedDocument)
+    if (expectedDocument && &element.document() != expectedDocument)
         return Exception { InvalidStateError, "Invalid when the document changes while showing or hiding a popover element"_s };
 
     if (is<HTMLDialogElement>(element) && downcast<HTMLDialogElement>(element).isModal())

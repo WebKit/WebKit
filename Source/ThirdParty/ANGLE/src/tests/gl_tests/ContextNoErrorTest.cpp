@@ -43,6 +43,9 @@ class ContextNoErrorTest : public ANGLETest<>
     GLuint mNaughtyTexture = 0;
 };
 
+class ContextNoErrorTestES3 : public ContextNoErrorTest
+{};
+
 class ContextNoErrorPPOTest31 : public ContextNoErrorTest
 {
   protected:
@@ -352,7 +355,70 @@ TEST_P(ContextNoErrorTest, InvalidTextureType)
     ASSERT_GL_NO_ERROR();
 }
 
+// Tests that we can draw with a program that is relinking when GL_KHR_no_error is enabled.
+TEST_P(ContextNoErrorTestES3, DrawWithRelinkedProgram)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_KHR_no_error"));
+
+    int w = getWindowWidth();
+    int h = getWindowHeight();
+    glViewport(0, 0, w, h);
+
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    constexpr char kVS[] = R"(#version 300 es
+void main()
+{
+    vec2 position = vec2(-1, -1);
+    if (gl_VertexID == 1)
+        position = vec2(3, -1);
+    else if (gl_VertexID == 2)
+        position = vec2(-1, 3);
+    gl_Position = vec4(position, 0, 1);
+})";
+
+    GLuint vs    = CompileShader(GL_VERTEX_SHADER, kVS);
+    GLuint red   = CompileShader(GL_FRAGMENT_SHADER, essl3_shaders::fs::Red());
+    GLuint bad   = CompileShader(GL_FRAGMENT_SHADER, essl1_shaders::fs::Blue());
+    GLuint green = CompileShader(GL_FRAGMENT_SHADER, essl3_shaders::fs::Green());
+
+    GLuint program = glCreateProgram();
+    glAttachShader(program, vs);
+    glAttachShader(program, red);
+    glLinkProgram(program);
+
+    // Use the program once; it's executable will be installed.
+    glUseProgram(program);
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, w / 4, h);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Make it fail compilation, the draw should continue to use the old executable
+    glDetachShader(program, red);
+    glAttachShader(program, bad);
+    glLinkProgram(program);
+
+    glScissor(w / 4, 0, w / 2 - w / 4, h);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Relink the program while it's bound.  It should finish compiling before the following draw is
+    // attempted.
+    glDetachShader(program, bad);
+    glAttachShader(program, green);
+    glLinkProgram(program);
+
+    glScissor(w / 2, 0, w - w / 2, h);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, w / 2, h, GLColor::red);
+    EXPECT_PIXEL_RECT_EQ(w / 2, 0, w - w / 2, h, GLColor::green);
+    ASSERT_GL_NO_ERROR();
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(ContextNoErrorTest);
+
+ANGLE_INSTANTIATE_TEST_ES3(ContextNoErrorTestES3);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ContextNoErrorPPOTest31);
 ANGLE_INSTANTIATE_TEST_ES31(ContextNoErrorPPOTest31);

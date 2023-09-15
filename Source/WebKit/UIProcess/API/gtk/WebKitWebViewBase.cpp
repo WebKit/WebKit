@@ -316,6 +316,7 @@ struct _WebKitWebViewBasePrivate {
     unsigned long toplevelIsActiveID { 0 };
     unsigned long toplevelWindowStateChangedID { 0 };
     unsigned long toplevelWindowUnrealizedID { 0 };
+    GdkToplevelState toplevelWindowState;
 #else
     unsigned long toplevelFocusInEventID { 0 };
     unsigned long toplevelFocusOutEventID { 0 };
@@ -329,7 +330,8 @@ struct _WebKitWebViewBasePrivate {
     RunLoop::Timer updateActivityStateTimer;
 
 #if ENABLE(FULLSCREEN_API)
-    bool fullScreenModeActive { false };
+    WebFullScreenManagerProxy::FullscreenState fullScreenState;
+    bool windowWasAlreadyInFullScreen;
     std::unique_ptr<PAL::SleepDisabler> sleepDisabler;
 #endif
 
@@ -369,6 +371,12 @@ struct _WebKitWebViewBasePrivate {
 WEBKIT_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_WIDGET)
 #else
 WEBKIT_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_CONTAINER)
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+static void webkitWebViewBaseDidEnterFullScreen(WebKitWebViewBase*);
+static void webkitWebViewBaseDidExitFullScreen(WebKitWebViewBase*);
+static void webkitWebViewBaseRequestExitFullScreen(WebKitWebViewBase*);
 #endif
 
 static void webkitWebViewBaseScheduleUpdateActivityState(WebKitWebViewBase* webViewBase, OptionSet<ActivityState> flagsToUpdate)
@@ -413,17 +421,40 @@ static gboolean toplevelWindowFocusOutEvent(GtkWidget*, GdkEventFocus*, WebKitWe
 static gboolean toplevelWindowStateEvent(GtkWidget*, GdkEventWindowState* event, WebKitWebViewBase* webViewBase)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
+#if ENABLE(FULLSCREEN_API)
+    if (event->changed_mask & GDK_WINDOW_STATE_FULLSCREEN) {
+        bool fullscreen = event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN;
+        switch (priv->fullScreenState) {
+        case WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen:
+            if (fullscreen)
+                webkitWebViewBaseDidEnterFullScreen(webViewBase);
+            break;
+        case WebFullScreenManagerProxy::FullscreenState::ExitingFullscreen:
+            if (!fullscreen)
+                webkitWebViewBaseDidExitFullScreen(webViewBase);
+            break;
+        case WebFullScreenManagerProxy::FullscreenState::InFullscreen:
+            if (!fullscreen && webkitWebViewBaseIsFullScreen(webViewBase))
+                webkitWebViewBaseRequestExitFullScreen(webViewBase);
+            break;
+        case WebFullScreenManagerProxy::FullscreenState::NotInFullscreen:
+            break;
+        }
+    }
+#endif
     if (!(event->changed_mask & GDK_WINDOW_STATE_ICONIFIED))
         return FALSE;
 
     bool visible = !(event->new_window_state & GDK_WINDOW_STATE_ICONIFIED);
-    if ((visible && priv->activityState & ActivityState::IsVisible) || (!visible && !(priv->activityState & ActivityState::IsVisible)))
-        return FALSE;
-
-    if (visible)
+    if (visible) {
+        if (priv->activityState & ActivityState::IsVisible || !gtk_widget_get_mapped(GTK_WIDGET(webViewBase)))
+            return FALSE;
         priv->activityState.add(ActivityState::IsVisible);
-    else
+    } else {
+        if (!(priv->activityState & ActivityState::IsVisible))
+            return FALSE;
         priv->activityState.remove(ActivityState::IsVisible);
+    }
     webkitWebViewBaseScheduleUpdateActivityState(webViewBase, ActivityState::IsVisible);
 
     return FALSE;
@@ -840,6 +871,14 @@ static void webkitWebViewBaseChildAllocate(GtkWidget* child, gpointer userData)
 }
 #endif
 
+static void webkitWebViewBaseSetSize(WebKitWebViewBase* webViewBase, const IntSize& size)
+{
+    auto* priv = webViewBase->priv;
+    priv->viewSize = size;
+    if (auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(priv->pageProxy->drawingArea()))
+        drawingArea->setSize(priv->viewSize);
+}
+
 #if USE(GTK4)
 static void webkitWebViewBaseSizeAllocate(GtkWidget* widget, int width, int height, int baseline)
 #else
@@ -899,10 +938,7 @@ static void webkitWebViewBaseSizeAllocate(GtkWidget* widget, GtkAllocation* allo
     }
 #endif
 
-    priv->viewSize = viewRect.size();
-
-    if (auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(priv->pageProxy->drawingArea()))
-        drawingArea->setSize(priv->viewSize);
+    webkitWebViewBaseSetSize(webViewBase, viewRect.size());
 }
 
 #if USE(GTK4)
@@ -942,6 +978,11 @@ static void webkitWebViewBaseMap(GtkWidget* widget)
 
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    if (priv->viewSize.isEmpty()) {
+        auto size = webkitWebViewBaseGetViewSize(webViewBase);
+        if (!size.isEmpty())
+            webkitWebViewBaseSetSize(webViewBase, size);
+    }
     OptionSet<ActivityState> flagsToUpdate;
     if (!(priv->activityState & ActivityState::IsVisible))
         flagsToUpdate.add(ActivityState::IsVisible);
@@ -1071,12 +1112,12 @@ static gboolean webkitWebViewBaseKeyPressEvent(GtkWidget* widget, GdkEventKey* k
         return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->key_press_event(widget, keyEvent);
 
 #if ENABLE(FULLSCREEN_API)
-    if (priv->fullScreenModeActive) {
+    if (webkitWebViewBaseIsFullScreen(webViewBase)) {
         switch (keyval) {
         case GDK_KEY_Escape:
         case GDK_KEY_f:
         case GDK_KEY_F:
-            priv->pageProxy->fullScreenManager()->requestExitFullScreen();
+            webkitWebViewBaseRequestExitFullScreen(webViewBase);
             return GDK_EVENT_STOP;
         default:
             break;
@@ -1146,12 +1187,12 @@ static gboolean webkitWebViewBaseKeyPressed(WebKitWebViewBase* webViewBase, unsi
         return gtk_event_controller_key_forward(GTK_EVENT_CONTROLLER_KEY(controller), priv->dialog);
 
 #if ENABLE(FULLSCREEN_API)
-    if (priv->fullScreenModeActive) {
+    if (webkitWebViewBaseIsFullScreen(webViewBase)) {
         switch (keyval) {
         case GDK_KEY_Escape:
         case GDK_KEY_f:
         case GDK_KEY_F:
-            priv->pageProxy->fullScreenManager()->requestExitFullScreen();
+            webkitWebViewBaseRequestExitFullScreen(webViewBase);
             return GDK_EVENT_STOP;
         default:
             break;
@@ -1918,11 +1959,37 @@ static void toplevelWindowIsActiveChanged(GtkWindow* window, GParamSpec*, WebKit
 
 static void toplevelWindowStateChanged(GdkSurface* surface, GParamSpec*, WebKitWebViewBase* webViewBase)
 {
-    auto state = gdk_toplevel_get_state(GDK_TOPLEVEL(surface));
-    bool visible = !(state & GDK_TOPLEVEL_STATE_MINIMIZED);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    auto state = gdk_toplevel_get_state(GDK_TOPLEVEL(surface));
+    auto changedMask = priv->toplevelWindowState ^ state;
+    priv->toplevelWindowState = state;
+#if ENABLE(FULLSCREEN_API)
+    if (changedMask & GDK_TOPLEVEL_STATE_FULLSCREEN) {
+        bool fullscreen = state & GDK_TOPLEVEL_STATE_FULLSCREEN;
+        switch (priv->fullScreenState) {
+        case WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen:
+            if (fullscreen)
+                webkitWebViewBaseDidEnterFullScreen(webViewBase);
+            break;
+        case WebFullScreenManagerProxy::FullscreenState::ExitingFullscreen:
+            if (!fullscreen)
+                webkitWebViewBaseDidExitFullScreen(webViewBase);
+            break;
+        case WebFullScreenManagerProxy::FullscreenState::InFullscreen:
+            if (!fullscreen && webkitWebViewBaseIsFullScreen(webViewBase))
+                webkitWebViewBaseRequestExitFullScreen(webViewBase);
+            break;
+        case WebFullScreenManagerProxy::FullscreenState::NotInFullscreen:
+            break;
+        }
+    }
+#endif
+    if (!(changedMask & GDK_TOPLEVEL_STATE_MINIMIZED))
+        return;
+
+    bool visible = !(state & GDK_TOPLEVEL_STATE_MINIMIZED);
     if (visible) {
-        if (priv->activityState & ActivityState::IsVisible)
+        if (priv->activityState & ActivityState::IsVisible || !gtk_widget_get_mapped(GTK_WIDGET(webViewBase)))
             return;
         priv->activityState.add(ActivityState::IsVisible);
     } else {
@@ -1937,8 +2004,10 @@ static void toplevelWindowRealized(WebKitWebViewBase* webViewBase)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     g_clear_signal_handler(&priv->toplevelWindowRealizedID, priv->toplevelOnScreenWindow);
+    auto* surface = gtk_native_get_surface(GTK_NATIVE(priv->toplevelOnScreenWindow));
+    priv->toplevelWindowState = gdk_toplevel_get_state(GDK_TOPLEVEL(surface));
     priv->toplevelWindowStateChangedID =
-        g_signal_connect(gtk_native_get_surface(GTK_NATIVE(priv->toplevelOnScreenWindow)), "notify::state", G_CALLBACK(toplevelWindowStateChanged), webViewBase);
+        g_signal_connect(surface, "notify::state", G_CALLBACK(toplevelWindowStateChanged), webViewBase);
 }
 
 static void toplevelWindowUnrealized(WebKitWebViewBase* webViewBase)
@@ -1971,8 +2040,10 @@ static void webkitWebViewBaseRoot(GtkWidget* widget)
     priv->toplevelIsActiveID =
         g_signal_connect(priv->toplevelOnScreenWindow, "notify::is-active", G_CALLBACK(toplevelWindowIsActiveChanged), widget);
     if (gtk_widget_get_realized(GTK_WIDGET(priv->toplevelOnScreenWindow))) {
+        auto* surface = gtk_native_get_surface(GTK_NATIVE(priv->toplevelOnScreenWindow));
+        priv->toplevelWindowState = gdk_toplevel_get_state(GDK_TOPLEVEL(surface));
         priv->toplevelWindowStateChangedID =
-            g_signal_connect(gtk_native_get_surface(GTK_NATIVE(priv->toplevelOnScreenWindow)), "notify::state", G_CALLBACK(toplevelWindowStateChanged), widget);
+            g_signal_connect(surface, "notify::state", G_CALLBACK(toplevelWindowStateChanged), widget);
     } else {
         priv->toplevelWindowRealizedID =
             g_signal_connect_swapped(priv->toplevelOnScreenWindow, "realize", G_CALLBACK(toplevelWindowRealized), widget);
@@ -2585,50 +2656,107 @@ void webkitWebViewBasePropagateWheelEvent(WebKitWebViewBase* webkitWebViewBase, 
 #endif
 }
 
+#if ENABLE(FULLSCREEN_API)
+static bool webkitWebViewBaseToplevelOnScreenWindowIsFullScreen(WebKitWebViewBase* webkitWebViewBase)
+{
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+    if (!priv->toplevelOnScreenWindow)
+        return false;
+
+#if USE(GTK4)
+    if (auto* surface = gtk_native_get_surface(GTK_NATIVE(priv->toplevelOnScreenWindow)))
+        return gdk_toplevel_get_state(GDK_TOPLEVEL(surface)) & GDK_TOPLEVEL_STATE_FULLSCREEN;
+#else
+    if (auto* window = gtk_widget_get_window(GTK_WIDGET(priv->toplevelOnScreenWindow)))
+        return gdk_window_get_state(window) & GDK_WINDOW_STATE_FULLSCREEN;
+#endif
+    return false;
+}
+
+void webkitWebViewBaseWillEnterFullScreen(WebKitWebViewBase* webkitWebViewBase)
+{
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+    ASSERT(priv->fullScreenState == WebFullScreenManagerProxy::FullscreenState::NotInFullscreen);
+    if (auto* fullScreenManagerProxy = priv->pageProxy->fullScreenManager())
+        fullScreenManagerProxy->willEnterFullScreen();
+    priv->fullScreenState = WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen;
+}
+
 void webkitWebViewBaseEnterFullScreen(WebKitWebViewBase* webkitWebViewBase)
 {
-#if ENABLE(FULLSCREEN_API)
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
-    ASSERT(!priv->fullScreenModeActive);
+    ASSERT(priv->fullScreenState == WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen);
 
-    WebFullScreenManagerProxy* fullScreenManagerProxy = priv->pageProxy->fullScreenManager();
-    fullScreenManagerProxy->willEnterFullScreen();
+    if (webkitWebViewBaseToplevelOnScreenWindowIsFullScreen(webkitWebViewBase)) {
+        priv->windowWasAlreadyInFullScreen = true;
+        webkitWebViewBaseDidEnterFullScreen(webkitWebViewBase);
+        return;
+    }
 
-    GtkWidget* topLevelWindow = gtk_widget_get_toplevel(GTK_WIDGET(webkitWebViewBase));
-    if (gtk_widget_is_toplevel(topLevelWindow))
-        gtk_window_fullscreen(GTK_WINDOW(topLevelWindow));
-    fullScreenManagerProxy->didEnterFullScreen();
-    priv->fullScreenModeActive = true;
+    priv->windowWasAlreadyInFullScreen = false;
+
+    if (priv->toplevelOnScreenWindow)
+        gtk_window_fullscreen(priv->toplevelOnScreenWindow);
+}
+
+static void webkitWebViewBaseDidEnterFullScreen(WebKitWebViewBase* webkitWebViewBase)
+{
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+    ASSERT(priv->fullScreenState == WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen);
+    if (auto* fullScreenManagerProxy = priv->pageProxy->fullScreenManager())
+        fullScreenManagerProxy->didEnterFullScreen();
+    priv->fullScreenState = WebFullScreenManagerProxy::FullscreenState::InFullscreen;
     priv->sleepDisabler = PAL::SleepDisabler::create(String::fromUTF8(_("Website running in fullscreen mode")), PAL::SleepDisabler::Type::Display);
-#endif
+}
+
+void webkitWebViewBaseWillExitFullScreen(WebKitWebViewBase* webkitWebViewBase)
+{
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+    ASSERT(priv->fullScreenState == WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen || priv->fullScreenState == WebFullScreenManagerProxy::FullscreenState::InFullscreen);
+    if (auto* fullScreenManagerProxy = priv->pageProxy->fullScreenManager())
+        fullScreenManagerProxy->willExitFullScreen();
+    priv->fullScreenState = WebFullScreenManagerProxy::FullscreenState::ExitingFullscreen;
 }
 
 void webkitWebViewBaseExitFullScreen(WebKitWebViewBase* webkitWebViewBase)
 {
-#if ENABLE(FULLSCREEN_API)
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
-    ASSERT(priv->fullScreenModeActive);
+    ASSERT(priv->fullScreenState == WebFullScreenManagerProxy::FullscreenState::ExitingFullscreen);
 
-    WebFullScreenManagerProxy* fullScreenManagerProxy = priv->pageProxy->fullScreenManager();
-    fullScreenManagerProxy->willExitFullScreen();
+    if (!webkitWebViewBaseToplevelOnScreenWindowIsFullScreen(webkitWebViewBase) || priv->windowWasAlreadyInFullScreen) {
+        webkitWebViewBaseDidExitFullScreen(webkitWebViewBase);
+        return;
+    }
 
-    GtkWidget* topLevelWindow = gtk_widget_get_toplevel(GTK_WIDGET(webkitWebViewBase));
-    if (gtk_widget_is_toplevel(topLevelWindow))
-        gtk_window_unfullscreen(GTK_WINDOW(topLevelWindow));
-    fullScreenManagerProxy->didExitFullScreen();
-    priv->fullScreenModeActive = false;
+    if (priv->toplevelOnScreenWindow)
+        gtk_window_unfullscreen(priv->toplevelOnScreenWindow);
+}
+
+static void webkitWebViewBaseDidExitFullScreen(WebKitWebViewBase* webkitWebViewBase)
+{
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+    ASSERT(priv->fullScreenState == WebFullScreenManagerProxy::FullscreenState::ExitingFullscreen);
+    if (auto* fullScreenManagerProxy = priv->pageProxy->fullScreenManager())
+        fullScreenManagerProxy->didExitFullScreen();
+    priv->fullScreenState = WebFullScreenManagerProxy::FullscreenState::NotInFullscreen;
     priv->sleepDisabler = nullptr;
-#endif
+}
+
+static void webkitWebViewBaseRequestExitFullScreen(WebKitWebViewBase* webkitWebViewBase)
+{
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+    ASSERT(priv->fullScreenState == WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen || priv->fullScreenState == WebFullScreenManagerProxy::FullscreenState::InFullscreen);
+    if (auto* fullScreenManagerProxy = priv->pageProxy->fullScreenManager())
+        fullScreenManagerProxy->requestExitFullScreen();
 }
 
 bool webkitWebViewBaseIsFullScreen(WebKitWebViewBase* webkitWebViewBase)
 {
-#if ENABLE(FULLSCREEN_API)
-    return webkitWebViewBase->priv->fullScreenModeActive;
-#else
-    return false;
-#endif
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+    return priv->fullScreenState == WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen || priv->fullScreenState == WebFullScreenManagerProxy::FullscreenState::InFullscreen;
+
 }
+#endif // ENABLE(FULLSCREEN_API)
 
 void webkitWebViewBaseSetInspectorViewSize(WebKitWebViewBase* webkitWebViewBase, unsigned size)
 {
@@ -2817,12 +2945,6 @@ void webkitWebViewBaseExitAcceleratedCompositingMode(WebKitWebViewBase* webkitWe
 {
     ASSERT(webkitWebViewBase->priv->acceleratedBackingStore);
     webkitWebViewBase->priv->acceleratedBackingStore->update(LayerTreeContext());
-}
-
-bool webkitWebViewBaseMakeGLContextCurrent(WebKitWebViewBase* webkitWebViewBase)
-{
-    ASSERT(webkitWebViewBase->priv->acceleratedBackingStore);
-    return webkitWebViewBase->priv->acceleratedBackingStore->makeContextCurrent();
 }
 
 void webkitWebViewBaseWillSwapWebProcess(WebKitWebViewBase* webkitWebViewBase)
@@ -3193,12 +3315,12 @@ void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase* webViewBase, KeyEven
         }
 
 #if ENABLE(FULLSCREEN_API)
-        if (priv->fullScreenModeActive) {
+        if (webkitWebViewBaseIsFullScreen(webViewBase)) {
             switch (keyval) {
             case GDK_KEY_Escape:
             case GDK_KEY_f:
             case GDK_KEY_F:
-                priv->pageProxy->fullScreenManager()->requestExitFullScreen();
+                webkitWebViewBaseRequestExitFullScreen(webViewBase);
                 return;
             default:
                 break;

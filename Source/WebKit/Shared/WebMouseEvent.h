@@ -74,6 +74,7 @@ public:
     WebMouseEventButton button() const { return static_cast<WebMouseEventButton>(m_button); }
     unsigned short buttons() const { return m_buttons; }
     const WebCore::IntPoint& position() const { return m_position; } // Relative to the view.
+    void setPosition(const WebCore::IntPoint& position) { m_position = position; }
     const WebCore::IntPoint& globalPosition() const { return m_globalPosition; }
     float deltaX() const { return m_deltaX; }
     float deltaY() const { return m_deltaY; }

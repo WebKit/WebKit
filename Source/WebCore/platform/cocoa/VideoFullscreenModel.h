@@ -97,7 +97,7 @@ public:
 #endif
 };
 
-class VideoFullscreenModelClient {
+class VideoFullscreenModelClient : public CanMakeWeakPtr<VideoFullscreenModelClient> {
 public:
     virtual ~VideoFullscreenModelClient() = default;
     virtual void hasVideoChanged(bool) { }

@@ -1,0 +1,6 @@
+2d.text.measure.width.space
+Space characters are converted to U+0020 and NOT collapsed
+Actual output:
+
+PASS Space characters are converted to U+0020 and NOT collapsed
+

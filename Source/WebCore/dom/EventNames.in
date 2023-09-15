@@ -14,10 +14,12 @@ BufferedChangeEvent conditional=MANAGED_MEDIA_SOURCE
 ClipboardEvent
 CloseEvent
 CompositionEvent
+CookieChangeEvent
 CSSAnimationEvent
 CSSTransitionEvent
 CustomEvent
 DragEvent
+ExtendableCookieChangeEvent conditional=SERVICE_WORKER
 ExtendableEvent conditional=SERVICE_WORKER
 ExtendableMessageEvent conditional=SERVICE_WORKER
 ErrorEvent
@@ -101,3 +103,4 @@ XRInputSourcesChangeEvent conditional=WEBXR
 XRReferenceSpaceEvent conditional=WEBXR
 XRSessionEvent conditional=WEBXR
 NotificationEvent conditional=NOTIFICATION_EVENT
+ContentVisibilityAutoStateChangeEvent

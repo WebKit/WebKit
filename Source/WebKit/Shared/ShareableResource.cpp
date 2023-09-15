@@ -37,29 +37,11 @@ using namespace WebCore;
 
 ShareableResourceHandle::ShareableResourceHandle() = default;
 
-void ShareableResourceHandle::encode(IPC::Encoder& encoder) &&
+ShareableResourceHandle::ShareableResourceHandle(SharedMemory::Handle&& handle, unsigned offset, unsigned size)
+    : m_handle(WTFMove(handle))
+    , m_offset(offset)
+    , m_size(size)
 {
-    encoder << WTFMove(m_handle);
-    encoder << m_offset;
-    encoder << m_size;
-}
-
-bool ShareableResourceHandle::decode(IPC::Decoder& decoder, ShareableResourceHandle& handle)
-{
-    SharedMemory::Handle memoryHandle;
-    if (UNLIKELY(!decoder.decode(memoryHandle)))
-        return false;
-    if (UNLIKELY(!decoder.decode(handle.m_offset)))
-        return false;
-    if (UNLIKELY(!decoder.decode(handle.m_size)))
-        return false;
-    auto neededSize = Checked<unsigned> { handle.m_offset } + handle.m_size;
-    if (UNLIKELY(neededSize.hasOverflowed()))
-        return false;
-    if (memoryHandle.size() < neededSize)
-        return false;
-    handle.m_handle = WTFMove(memoryHandle);
-    return true;
 }
 
 RefPtr<SharedBuffer> ShareableResource::wrapInSharedBuffer()
@@ -119,11 +101,7 @@ auto ShareableResource::createHandle() -> std::optional<Handle>
     if (!memoryHandle)
         return std::nullopt;
 
-    Handle handle;
-    handle.m_handle = WTFMove(*memoryHandle);
-    handle.m_offset = m_offset;
-    handle.m_size = m_size;
-    return { WTFMove(handle) };
+    return { Handle { WTFMove(*memoryHandle), m_offset, m_size } };
 }
 
 const uint8_t* ShareableResource::data() const

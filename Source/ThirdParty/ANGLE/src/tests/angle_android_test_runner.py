@@ -30,7 +30,30 @@ def AddCommonParserArgs(parser):
         '--suite',
         help='Test suite to run.',
         required=True,
-        choices=['angle_end2end_tests', 'angle_perftests', 'angle_trace_tests'])
+        choices=[
+            'angle_end2end_tests',
+            'angle_perftests',
+            'angle_trace_tests',
+            # dEQP - grep \"angle_deqp infra/specs/gn_isolate_map.pyl
+            'angle_deqp_egl_tests',
+            'angle_deqp_gl46_tests',
+            'angle_deqp_gles2_tests',
+            'angle_deqp_gles31_rotate180_tests',
+            'angle_deqp_gles31_rotate270_tests',
+            'angle_deqp_gles31_rotate90_tests',
+            'angle_deqp_gles31_tests',
+            'angle_deqp_gles3_rotate180_tests',
+            'angle_deqp_gles3_rotate270_tests',
+            'angle_deqp_gles3_rotate90_tests',
+            'angle_deqp_gles3_tests',
+            'angle_deqp_khr_gles2_tests',
+            'angle_deqp_khr_gles31_tests',
+            'angle_deqp_khr_gles32_tests',
+            'angle_deqp_khr_gles3_tests',
+            'angle_deqp_khr_noctx_gles2_tests',
+            'angle_deqp_khr_noctx_gles32_tests',
+            'angle_deqp_khr_single_gles32_tests',
+        ])
     parser.add_argument('-l', '--log', help='Logging level.', default='info')
     parser.add_argument('--list-tests', help='List tests.', action='store_true')
     parser.add_argument(
@@ -55,6 +78,10 @@ def RunAndroidTestSuite(args, extra_args):
         return rc
 
     tests = angle_test_util.GetTestsFromOutput(output)
+    if not tests:
+        logging.fatal('Could not find test list from test output:\n%s' % output)
+        return 1
+
     if args.filter:
         tests = angle_test_util.FilterTests(tests, args.filter)
 
@@ -66,6 +93,10 @@ def RunAndroidTestSuite(args, extra_args):
         traces = set(android_helper.GetTraceFromTestName(test) for test in tests)
         android_helper.PrepareRestrictedTraces(traces)
 
+        if args.prepare_only:
+            print('Prepared traces: %s' % traces)
+            return 0
+
     flags = ['--gtest_filter=' + args.filter] if args.filter else []
     return android_helper.RunTests(args.suite, flags + extra_args)[0]
 
@@ -76,6 +107,7 @@ def main():
     parser.add_argument('--output-directory', required=True)
     parser.add_argument('--wrapper-script-args')
     parser.add_argument('--runtime-deps-path')
+    parser.add_argument('--prepare-only', action='store_true')
     AddCommonParserArgs(parser)
 
     args, extra_args = parser.parse_known_args()

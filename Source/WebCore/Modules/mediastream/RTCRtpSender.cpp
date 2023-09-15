@@ -132,7 +132,7 @@ void RTCRtpSender::replaceTrack(RefPtr<MediaStreamTrack>&& withTrack, Ref<Deferr
             return;
         }
 
-        auto* context = m_connection->scriptExecutionContext();
+        RefPtr context = m_connection->scriptExecutionContext();
         if (!context)
             return;
 

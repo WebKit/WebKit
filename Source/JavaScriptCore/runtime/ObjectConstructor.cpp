@@ -339,7 +339,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorAssign, (JSGlobalObject* globalObject,
                 break;
             }
             JSObject* source = asObject(sourceValue);
-            if (!source->staticPropertiesReified() || !source->structure()->canPerformFastPropertyEnumeration()) {
+            if (!source->staticPropertiesReified() || !source->structure()->canPerformFastPropertyEnumerationCommon() || source->canHaveExistingOwnIndexedProperties()) {
                 willBatch = false;
                 break;
             }
@@ -387,7 +387,9 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorAssign, (JSGlobalObject* globalObject,
                 RETURN_IF_EXCEPTION(scope, { });
             }
 
-            if (objectAssignFast(vm, target, source, properties, values))
+            bool objectAssignFastSucceeded = objectAssignFast(globalObject, target, source, properties, values);
+            RETURN_IF_EXCEPTION(scope, { });
+            if (objectAssignFastSucceeded)
                 continue;
         }
 
@@ -417,18 +419,21 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorEntries, (JSGlobalObject* globalObject
     {
         Vector<RefPtr<UniquedStringImpl>, 8> properties;
         MarkedArgumentBuffer values;
-        bool canUseFastPath = target->fastForEachPropertyWithSideEffectFreeFunctor(vm, [&](const PropertyTableEntry& entry) -> bool {
-            if (entry.attributes() & PropertyAttribute::DontEnum)
+        bool canUseFastPath = false;
+        if (!target->canHaveExistingOwnIndexedProperties()) {
+            canUseFastPath = target->fastForEachPropertyWithSideEffectFreeFunctor(vm, [&](const PropertyTableEntry& entry) -> bool {
+                if (entry.attributes() & PropertyAttribute::DontEnum)
+                    return true;
+
+                if (entry.key()->isSymbol())
+                    return true;
+
+                properties.append(entry.key());
+                values.appendWithCrashOnOverflow(target->getDirect(entry.offset()));
+
                 return true;
-
-            if (entry.key()->isSymbol())
-                return true;
-
-            properties.append(entry.key());
-            values.appendWithCrashOnOverflow(target->getDirect(entry.offset()));
-
-            return true;
-        });
+            });
+        }
 
         if (canUseFastPath) {
             Structure* arrayStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
@@ -561,7 +566,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorValues, (JSGlobalObject* globalObject,
     }
 
     {
-        MarkedArgumentBuffer values;
+        MarkedArgumentBuffer namedPropertyValues;
         bool canUseFastPath = target->fastForEachPropertyWithSideEffectFreeFunctor(vm, [&](const PropertyTableEntry& entry) -> bool {
             if (entry.attributes() & PropertyAttribute::DontEnum)
                 return true;
@@ -569,18 +574,27 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorValues, (JSGlobalObject* globalObject,
             if (entry.key()->isSymbol())
                 return true;
 
-            values.appendWithCrashOnOverflow(target->getDirect(entry.offset()));
+            namedPropertyValues.appendWithCrashOnOverflow(target->getDirect(entry.offset()));
             return true;
         });
 
         if (canUseFastPath) {
             Structure* arrayStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
+            MarkedArgumentBuffer indexedPropertyValues;
+            target->forEachIndexedProperty(globalObject, [&](unsigned, JSValue value) {
+                indexedPropertyValues.appendWithCrashOnOverflow(value);
+                return IterationStatus::Continue;
+            });
+            RETURN_IF_EXCEPTION(scope, { });
+
             {
                 ObjectInitializationScope initializationScope(vm);
                 JSArray* result = nullptr;
-                if (LIKELY(result = JSArray::tryCreateUninitializedRestricted(initializationScope, nullptr, arrayStructure, values.size()))) {
-                    for (unsigned i = 0; i < values.size(); ++i)
-                        result->initializeIndex(initializationScope, i, values.at(i));
+                if (LIKELY(result = JSArray::tryCreateUninitializedRestricted(initializationScope, nullptr, arrayStructure, indexedPropertyValues.size() + namedPropertyValues.size()))) {
+                    for (unsigned i = 0; i < indexedPropertyValues.size(); ++i)
+                        result->initializeIndex(initializationScope, i, indexedPropertyValues.at(i));
+                    for (unsigned i = 0; i < namedPropertyValues.size(); ++i)
+                        result->initializeIndex(initializationScope, indexedPropertyValues.size() + i, namedPropertyValues.at(i));
                     return JSValue::encode(result);
                 }
             }

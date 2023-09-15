@@ -88,6 +88,7 @@ class Object;
 
 namespace PAL {
 class SessionID;
+enum class UserInterfaceIdiom : uint8_t;
 }
 
 namespace WebCore {
@@ -157,7 +158,6 @@ struct WebsiteData;
 struct WebsiteDataStoreParameters;
 
 enum class RemoteWorkerType : uint8_t;
-enum class UserInterfaceIdiom : uint8_t;
 enum class WebsiteDataType : uint32_t;
 
 #if PLATFORM(IOS_FAMILY)
@@ -479,7 +479,7 @@ private:
     void setEnhancedAccessibility(bool);
     void remotePostMessage(WebCore::FrameIdentifier, std::optional<WebCore::SecurityOriginData>, const WebCore::MessageWithMessagePorts&);
 
-    void renderTreeAsText(WebCore::FrameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag>, CompletionHandler<void(String)>&&);
+    void renderTreeAsText(WebCore::FrameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag>, CompletionHandler<void(String&&)>&&);
 
     void startMemorySampler(SandboxExtension::Handle&&, const String&, const double);
     void stopMemorySampler();
@@ -585,9 +585,11 @@ private:
     void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
 #endif
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK)
     void setScreenProperties(const WebCore::ScreenProperties&);
+#endif
 
+#if PLATFORM(COCOA)
     enum class IsInProcessInitialization : bool { No, Yes };
     void updateProcessName(IsInProcessInitialization);
 #endif
@@ -606,7 +608,7 @@ private:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    void userInterfaceIdiomDidChange(UserInterfaceIdiom);
+    void userInterfaceIdiomDidChange(PAL::UserInterfaceIdiom);
 
     bool shouldFreezeOnSuspension() const;
     void updateFreezerStatus();

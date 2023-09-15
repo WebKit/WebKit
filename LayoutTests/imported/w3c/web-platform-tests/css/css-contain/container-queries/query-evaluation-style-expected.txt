@@ -1,0 +1,33 @@
+
+FAIL style((--foo: bar)) assert_equals: expected "true" but got "false"
+PASS style((--baz: qux))
+PASS style((unknown))
+PASS unknown((--foo: bar))
+PASS style(not (--foo: bar))
+FAIL style(not (--baz: qux)) assert_equals: expected "true" but got "false"
+PASS style(not (unknown))
+FAIL style((--foo: bar) and (--foo: bar)) assert_equals: expected "true" but got "false"
+FAIL style((--foo: bar) and (--foo: bar) and (--foo: bar)) assert_equals: expected "true" but got "false"
+PASS style((--baz: qux) and (--baz: qux))
+PASS style((--baz: qux) and (--foo: bar) and (--foo: bar))
+PASS style((--foo: bar) and (--baz: qux) and (--foo: bar))
+PASS style((--foo: bar) and (--foo: bar) and (--baz: qux))
+PASS style((unknown) and (--foo: bar) and (--foo: bar))
+PASS style((--foo: bar) and (unknown) and (--foo: bar))
+PASS style((--foo: bar) and (--foo: bar) and (unknown))
+FAIL style((--foo: bar) or (--foo: bar)) assert_equals: expected "true" but got "false"
+FAIL style((--foo: bar) or (--foo: bar) or (--foo: bar)) assert_equals: expected "true" but got "false"
+PASS style((--baz: qux) or (--baz: qux))
+FAIL style((--baz: qux) or (--foo: bar) or (--foo: bar)) assert_equals: expected "true" but got "false"
+FAIL style((--foo: bar) or (--baz: qux) or (--foo: bar)) assert_equals: expected "true" but got "false"
+FAIL style((--foo: bar) or (--foo: bar) or (--baz: qux)) assert_equals: expected "true" but got "false"
+FAIL style((unknown) or (--foo: bar) or (--foo: bar)) assert_equals: expected "true" but got "false"
+FAIL style((--foo: bar) or (unknown) or (--foo: bar)) assert_equals: expected "true" but got "false"
+FAIL style((--foo: bar) or (--foo: bar) or (unknown)) assert_equals: expected "true" but got "false"
+FAIL style((unknown) or (--baz: qux) or (--foo: bar)) assert_equals: expected "true" but got "false"
+PASS style(not ((--foo: bar) and (--foo: bar)))
+FAIL style(not ((--foo: bar) and (--baz: qux))) assert_equals: expected "true" but got "false"
+PASS style((--foo: bar) and (not ((--baz: qux) or (--foo: bar))))
+FAIL style((--baz: qux) or (not ((--baz: qux) and (--foo: bar)))) assert_equals: expected "true" but got "false"
+PASS style((--baz: qux) or ((--baz: qux) and (--foo: bar)))
+

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WasmTierUpCount.h"
 
-#if ENABLE(WEBASSEMBLY_B3JIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT)
 
 #include "WasmOSREntryData.h"
 
@@ -52,4 +52,4 @@ OSREntryData& TierUpCount::osrEntryData(uint32_t loopIndex)
 
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMBLY_B3JIT)
+#endif // ENABLE(WEBASSEMBLY_OMGJIT)

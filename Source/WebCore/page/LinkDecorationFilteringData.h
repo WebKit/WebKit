@@ -66,27 +66,6 @@ struct LinkDecorationFilteringData {
         linkDecoration = WTFMove(data.linkDecoration);
         return *this;
     }
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << domain;
-        encoder << linkDecoration;
-    }
-
-    template<class Decoder> static std::optional<LinkDecorationFilteringData> decode(Decoder& decoder)
-    {
-        std::optional<RegistrableDomain> domain;
-        decoder >> domain;
-        if (!domain)
-            return std::nullopt;
-
-        std::optional<String> linkDecoration;
-        decoder >> linkDecoration;
-        if (!linkDecoration)
-            return std::nullopt;
-
-        return { { WTFMove(*domain), WTFMove(*linkDecoration) } };
-    }
 };
 
 }

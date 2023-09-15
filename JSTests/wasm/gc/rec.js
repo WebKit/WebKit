@@ -183,7 +183,7 @@ function testRecDeclaration() {
       (module
         (rec (type (func)) (type (struct)))
         (elem declare funcref (ref.func 0))
-        (func)
+        (func (type 0))
         (func (export "f") (result (ref 0)) (ref.func 0))
       )
     `);

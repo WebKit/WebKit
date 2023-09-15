@@ -11,14 +11,14 @@ for (let i = 0; i < 10; i++) {
   instantiate(`(module (type (func)))`);
   let m1 = instantiate(`
     (module
-      (type (struct))
+      (type (sub (struct)))
       (type (sub 0 (struct (field i32))))
       (global (export "g") (ref null 1) (ref.null 1))
     )
   `);
   instantiate(`
     (module
-      (type (struct))
+      (type (sub (struct)))
       (type (sub 0 (struct (field i32))))
       (global (import "m" "g") (ref null 1))
     )

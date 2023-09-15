@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+<body>
+<p>
+Tests that an iframe without "allow-scripts" can not navigate
+itself to a javascript URL.
+</p>
+<iframe id="ifr" sandbox="allow-same-origin" srcdoc="<a href='javascript:alert(`FAIL`)'>Click Me</a>"></iframe>
+<script>
+    ifr.addEventListener("load", () => {
+        ifr.contentDocument.getElementsByTagName("a")[0].click();
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+</script>
+</body>

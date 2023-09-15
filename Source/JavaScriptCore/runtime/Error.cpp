@@ -133,7 +133,7 @@ public:
         if (!m_foundStartCallFrame)
             return IterationStatus::Continue;
 
-        if (visitor->isWasmFrame())
+        if (visitor->isNativeCalleeFrame())
             return IterationStatus::Continue;
 
         if (visitor->isImplementationVisibilityPrivate())
@@ -168,7 +168,7 @@ std::unique_ptr<Vector<StackFrame>> getStackTrace(JSGlobalObject*, VM& vm, JSObj
 
     size_t framesToSkip = useCurrentFrame ? 0 : 1;
     std::unique_ptr<Vector<StackFrame>> stackTrace = makeUnique<Vector<StackFrame>>();
-    vm.interpreter.getStackTrace(obj, *stackTrace, framesToSkip, globalObject->stackTraceLimit().value());
+    vm.interpreter.getStackTrace(obj, *stackTrace, framesToSkip, globalObject->stackTraceLimit().value_or(0));
     return stackTrace;
 }
 

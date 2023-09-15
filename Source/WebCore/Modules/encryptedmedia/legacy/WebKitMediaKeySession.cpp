@@ -232,7 +232,7 @@ void WebKitMediaKeySession::sendError(MediaKeyErrorCode errorCode, uint32_t syst
 
 String WebKitMediaKeySession::mediaKeysStorageDirectory() const
 {
-    auto* document = downcast<Document>(scriptExecutionContext());
+    RefPtr document = downcast<Document>(scriptExecutionContext());
     if (!document)
         return emptyString();
 

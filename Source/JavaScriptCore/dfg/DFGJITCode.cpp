@@ -86,6 +86,13 @@ static bool attemptToWatch(CodeBlock* codeBlock, WatchpointSet& set, CodeBlockJe
 
 bool JITData::tryInitialize(VM& vm, CodeBlock* codeBlock, const JITCode& jitCode)
 {
+    // We share the same layout for particular fields in all JITData to make our data IC assume this.
+    ASSERT(BaselineJITData::offsetOfGlobalObject() == JITData::offsetOfGlobalObject());
+    ASSERT(BaselineJITData::offsetOfStackOffset() == JITData::offsetOfStackOffset());
+
+    m_globalObject = codeBlock->globalObject();
+    m_stackOffset = codeBlock->stackPointerOffset() * sizeof(Register);
+
     unsigned indexOfWatchpoints = 0;
     bool success = true;
     for (unsigned i = 0; i < jitCode.m_linkerIR.size(); ++i) {
@@ -112,69 +119,58 @@ bool JITData::tryInitialize(VM& vm, CodeBlock* codeBlock, const JITCode& jitCode
             break;
         }
         case LinkerIR::Type::HavingABadTimeWatchpointSet: {
-            auto* globalObject = codeBlock->globalObject();
             auto& watchpoint = m_watchpoints[indexOfWatchpoints++];
-            success &= attemptToWatch(codeBlock, globalObject->havingABadTimeWatchpointSet(), watchpoint);
+            success &= attemptToWatch(codeBlock, m_globalObject->havingABadTimeWatchpointSet(), watchpoint);
             break;
         }
         case LinkerIR::Type::MasqueradesAsUndefinedWatchpointSet: {
-            auto* globalObject = codeBlock->globalObject();
             auto& watchpoint = m_watchpoints[indexOfWatchpoints++];
-            success &= attemptToWatch(codeBlock, globalObject->masqueradesAsUndefinedWatchpointSet(), watchpoint);
+            success &= attemptToWatch(codeBlock, m_globalObject->masqueradesAsUndefinedWatchpointSet(), watchpoint);
             break;
         }
         case LinkerIR::Type::ArrayIteratorProtocolWatchpointSet: {
-            auto* globalObject = codeBlock->globalObject();
             auto& watchpoint = m_watchpoints[indexOfWatchpoints++];
-            success &= attemptToWatch(codeBlock, globalObject->arrayIteratorProtocolWatchpointSet(), watchpoint);
+            success &= attemptToWatch(codeBlock, m_globalObject->arrayIteratorProtocolWatchpointSet(), watchpoint);
             break;
         }
         case LinkerIR::Type::NumberToStringWatchpointSet: {
-            auto* globalObject = codeBlock->globalObject();
             auto& watchpoint = m_watchpoints[indexOfWatchpoints++];
-            success &= attemptToWatch(codeBlock, globalObject->numberToStringWatchpointSet(), watchpoint);
+            success &= attemptToWatch(codeBlock, m_globalObject->numberToStringWatchpointSet(), watchpoint);
             break;
         }
         case LinkerIR::Type::StructureCacheClearedWatchpointSet: {
-            auto* globalObject = codeBlock->globalObject();
             auto& watchpoint = m_watchpoints[indexOfWatchpoints++];
-            success &= attemptToWatch(codeBlock, globalObject->structureCacheClearedWatchpointSet(), watchpoint);
+            success &= attemptToWatch(codeBlock, m_globalObject->structureCacheClearedWatchpointSet(), watchpoint);
             break;
         }
         case LinkerIR::Type::StringSymbolReplaceWatchpointSet: {
-            auto* globalObject = codeBlock->globalObject();
             auto& watchpoint = m_watchpoints[indexOfWatchpoints++];
-            success &= attemptToWatch(codeBlock, globalObject->stringSymbolReplaceWatchpointSet(), watchpoint);
+            success &= attemptToWatch(codeBlock, m_globalObject->stringSymbolReplaceWatchpointSet(), watchpoint);
             break;
         }
         case LinkerIR::Type::RegExpPrimordialPropertiesWatchpointSet: {
-            auto* globalObject = codeBlock->globalObject();
             auto& watchpoint = m_watchpoints[indexOfWatchpoints++];
-            success &= attemptToWatch(codeBlock, globalObject->regExpPrimordialPropertiesWatchpointSet(), watchpoint);
+            success &= attemptToWatch(codeBlock, m_globalObject->regExpPrimordialPropertiesWatchpointSet(), watchpoint);
             break;
         }
         case LinkerIR::Type::ArraySpeciesWatchpointSet: {
-            auto* globalObject = codeBlock->globalObject();
             auto& watchpoint = m_watchpoints[indexOfWatchpoints++];
-            success &= attemptToWatch(codeBlock, globalObject->arraySpeciesWatchpointSet(), watchpoint);
+            success &= attemptToWatch(codeBlock, m_globalObject->arraySpeciesWatchpointSet(), watchpoint);
             break;
         }
         case LinkerIR::Type::ArrayPrototypeChainIsSaneWatchpointSet: {
-            auto* globalObject = codeBlock->globalObject();
             auto& watchpoint = m_watchpoints[indexOfWatchpoints++];
-            success &= attemptToWatch(codeBlock, globalObject->arrayPrototypeChainIsSaneWatchpointSet(), watchpoint);
+            success &= attemptToWatch(codeBlock, m_globalObject->arrayPrototypeChainIsSaneWatchpointSet(), watchpoint);
             break;
         }
         case LinkerIR::Type::StringPrototypeChainIsSaneWatchpointSet: {
-            auto* globalObject = codeBlock->globalObject();
             auto& watchpoint = m_watchpoints[indexOfWatchpoints++];
-            success &= attemptToWatch(codeBlock, globalObject->stringPrototypeChainIsSaneWatchpointSet(), watchpoint);
+            success &= attemptToWatch(codeBlock, m_globalObject->stringPrototypeChainIsSaneWatchpointSet(), watchpoint);
             break;
         }
         case LinkerIR::Type::ObjectPrototypeChainIsSaneWatchpointSet: {
-            auto* globalObject = codeBlock->globalObject();
             auto& watchpoint = m_watchpoints[indexOfWatchpoints++];
-            success &= attemptToWatch(codeBlock, globalObject->objectPrototypeChainIsSaneWatchpointSet(), watchpoint);
+            success &= attemptToWatch(codeBlock, m_globalObject->objectPrototypeChainIsSaneWatchpointSet(), watchpoint);
             break;
         }
         case LinkerIR::Type::Invalid:
@@ -199,6 +195,11 @@ JITCode::~JITCode()
 }
 
 CommonData* JITCode::dfgCommon()
+{
+    return &common;
+}
+
+const CommonData* JITCode::dfgCommon() const
 {
     return &common;
 }

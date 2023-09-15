@@ -251,18 +251,18 @@ const DestinationColorSpace& GraphicsContextCG::colorSpace() const
     return *m_colorSpace;
 }
 
-void GraphicsContextCG::save()
+void GraphicsContextCG::save(GraphicsContextState::Purpose purpose)
 {
-    GraphicsContext::save();
+    GraphicsContext::save(purpose);
     CGContextSaveGState(contextForState());
 }
 
-void GraphicsContextCG::restore()
+void GraphicsContextCG::restore(GraphicsContextState::Purpose purpose)
 {
     if (!stackSize())
         return;
 
-    GraphicsContext::restore();
+    GraphicsContext::restore(purpose);
     CGContextRestoreGState(contextForState());
     m_userToDeviceTransformKnownToBeIdentity = false;
 }
@@ -1054,13 +1054,12 @@ void GraphicsContextCG::beginTransparencyLayer(float opacity)
 {
     GraphicsContext::beginTransparencyLayer(opacity);
 
-    save();
+    save(GraphicsContextState::Purpose::TransparencyLayer);
 
     CGContextRef context = platformContext();
     CGContextSetAlpha(context, opacity);
     CGContextBeginTransparencyLayer(context, 0);
     
-    m_state.didBeginTransparencyLayer();
     m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
@@ -1071,7 +1070,7 @@ void GraphicsContextCG::endTransparencyLayer()
     CGContextRef context = platformContext();
     CGContextEndTransparencyLayer(context);
 
-    restore();
+    restore(GraphicsContextState::Purpose::TransparencyLayer);
 }
 
 static void applyShadowOffsetWorkaroundIfNeeded(CGContextRef context, CGFloat& xOffset, CGFloat& yOffset)

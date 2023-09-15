@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,7 +109,7 @@ protected:
 
 #define RETURN_IF_EXCEPTION(scope__, value__) do { \
         JSC::VM& vm = (scope__).vm(); \
-        ASSERT(!!(scope__).exception() == vm.traps().needHandling(JSC::VMTraps::NeedExceptionHandling)); \
+        EXCEPTION_ASSERT(!!(scope__).exception() == vm.traps().needHandling(JSC::VMTraps::NeedExceptionHandling)); \
         if (UNLIKELY(vm.traps().maybeNeedHandling())) { \
             if (vm.hasExceptionsAfterHandlingTraps()) \
                 return value__; \

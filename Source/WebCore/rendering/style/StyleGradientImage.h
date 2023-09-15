@@ -45,28 +45,42 @@ public:
     struct LinearData {
         CSSLinearGradientValue::Data data;
         CSSGradientRepeat repeating;
+
+        friend bool operator==(const LinearData&, const LinearData&) = default;
     };
     struct PrefixedLinearData {
         CSSPrefixedLinearGradientValue::Data data;
         CSSGradientRepeat repeating;
+
+        friend bool operator==(const PrefixedLinearData&, const PrefixedLinearData&) = default;
     };
     struct DeprecatedLinearData {
         CSSDeprecatedLinearGradientValue::Data data;
+
+        friend bool operator==(const DeprecatedLinearData&, const DeprecatedLinearData&) = default;
     };
     struct RadialData {
         CSSRadialGradientValue::Data data;
         CSSGradientRepeat repeating;
+
+        friend bool operator==(const RadialData&, const RadialData&) = default;
     };
     struct PrefixedRadialData {
         CSSPrefixedRadialGradientValue::Data data;
         CSSGradientRepeat repeating;
+
+        friend bool operator==(const PrefixedRadialData&, const PrefixedRadialData&) = default;
     };
     struct DeprecatedRadialData {
         CSSDeprecatedRadialGradientValue::Data data;
+
+        friend bool operator==(const DeprecatedRadialData&, const DeprecatedRadialData&) = default;
     };
     struct ConicData {
         CSSConicGradientValue::Data data;
         CSSGradientRepeat repeating;
+
+        friend bool operator==(const ConicData&, const ConicData&) = default;
     };
 
     using Data = std::variant<LinearData, DeprecatedLinearData, PrefixedLinearData, RadialData, DeprecatedRadialData, PrefixedRadialData, ConicData>;
@@ -88,19 +102,19 @@ private:
     Ref<CSSValue> computedStyleValue(const RenderStyle&) const final;
     bool isPending() const final;
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
-    RefPtr<Image> image(const RenderElement*, const FloatSize&) const final;
+    RefPtr<Image> image(const RenderElement*, const FloatSize&, bool isForFirstLine) const final;
     bool knownToBeOpaque(const RenderElement&) const final;
     FloatSize fixedSize(const RenderElement&) const final;
     void didAddClient(RenderElement&) final { }
     void didRemoveClient(RenderElement&) final { }
 
-    Ref<Gradient> createGradient(const LinearData&, const RenderElement&, const FloatSize&) const;
-    Ref<Gradient> createGradient(const PrefixedLinearData&, const RenderElement&, const FloatSize&) const;
-    Ref<Gradient> createGradient(const DeprecatedLinearData&, const RenderElement&, const FloatSize&) const;
-    Ref<Gradient> createGradient(const RadialData&, const RenderElement&, const FloatSize&) const;
-    Ref<Gradient> createGradient(const PrefixedRadialData&, const RenderElement&, const FloatSize&) const;
-    Ref<Gradient> createGradient(const DeprecatedRadialData&, const RenderElement&, const FloatSize&) const;
-    Ref<Gradient> createGradient(const ConicData&, const RenderElement&, const FloatSize&) const;
+    Ref<Gradient> createGradient(const LinearData&, const RenderElement&, const FloatSize&, const RenderStyle&) const;
+    Ref<Gradient> createGradient(const PrefixedLinearData&, const RenderElement&, const FloatSize&, const RenderStyle&) const;
+    Ref<Gradient> createGradient(const DeprecatedLinearData&, const RenderElement&, const FloatSize&, const RenderStyle&) const;
+    Ref<Gradient> createGradient(const RadialData&, const RenderElement&, const FloatSize&, const RenderStyle&) const;
+    Ref<Gradient> createGradient(const PrefixedRadialData&, const RenderElement&, const FloatSize&, const RenderStyle&) const;
+    Ref<Gradient> createGradient(const DeprecatedRadialData&, const RenderElement&, const FloatSize&, const RenderStyle&) const;
+    Ref<Gradient> createGradient(const ConicData&, const RenderElement&, const FloatSize&, const RenderStyle&) const;
 
     template<typename GradientAdapter> GradientColorStops computeStops(GradientAdapter&, const CSSToLengthConversionData&, const RenderStyle&, float maxLengthForRepeat, CSSGradientRepeat) const;
     template<typename GradientAdapter> GradientColorStops computeStopsForDeprecatedVariants(GradientAdapter&, const CSSToLengthConversionData&, const RenderStyle&) const;

@@ -149,7 +149,7 @@ DebuggerScope* DebuggerCallFrame::scope(VM& vm)
 
     if (!m_scope) {
         JSScope* scope;
-        CodeBlock* codeBlock = m_validMachineFrame->isWasmFrame() ? nullptr : m_validMachineFrame->codeBlock();
+        CodeBlock* codeBlock = m_validMachineFrame->isNativeCalleeFrame() ? nullptr : m_validMachineFrame->codeBlock();
         if (isTailDeleted())
             scope = m_shadowChickenFrame.scope;
         else if (codeBlock && codeBlock->scopeRegister().isValid())
@@ -192,7 +192,7 @@ JSValue DebuggerCallFrame::thisValue(VM& vm) const
         codeBlock = m_shadowChickenFrame.codeBlock;
     } else {
         thisValue = m_validMachineFrame->thisValue();
-        codeBlock = m_validMachineFrame->isWasmFrame() ? nullptr : m_validMachineFrame->codeBlock();
+        codeBlock = m_validMachineFrame->isNativeCalleeFrame() ? nullptr : m_validMachineFrame->codeBlock();
     }
 
     if (!thisValue)
@@ -219,7 +219,7 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(VM& vm, const String& scri
             if (debuggerCallFrame->isTailDeleted())
                 codeBlock = debuggerCallFrame->m_shadowChickenFrame.codeBlock;
             else
-                codeBlock = callFrame->isWasmFrame() ? nullptr : callFrame->codeBlock();
+                codeBlock = callFrame->isNativeCalleeFrame() ? nullptr : callFrame->codeBlock();
         }
 
         if (callFrame && codeBlock)
@@ -251,7 +251,7 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(VM& vm, const String& scri
     JSScope::collectClosureVariablesUnderTDZ(scope(vm)->jsScope(), variablesUnderTDZ, privateNameEnvironment);
 
     ECMAMode ecmaMode = codeBlock->ownerExecutable()->isInStrictContext() ? ECMAMode::strict() : ECMAMode::sloppy();
-    auto* eval = DirectEvalExecutable::create(globalObject, makeSource(script, callFrame->callerSourceOrigin(vm)), codeBlock->unlinkedCodeBlock()->derivedContextType(), codeBlock->unlinkedCodeBlock()->needsClassFieldInitializer(), codeBlock->unlinkedCodeBlock()->privateBrandRequirement(), codeBlock->unlinkedCodeBlock()->isArrowFunction(), codeBlock->ownerExecutable()->isInsideOrdinaryFunction(), evalContextType, &variablesUnderTDZ, &privateNameEnvironment, ecmaMode);
+    auto* eval = DirectEvalExecutable::create(globalObject, makeSource(script, callFrame->callerSourceOrigin(vm), SourceTaintedOrigin::Untainted), codeBlock->unlinkedCodeBlock()->derivedContextType(), codeBlock->unlinkedCodeBlock()->needsClassFieldInitializer(), codeBlock->unlinkedCodeBlock()->privateBrandRequirement(), codeBlock->unlinkedCodeBlock()->isArrowFunction(), codeBlock->ownerExecutable()->isInsideOrdinaryFunction(), evalContextType, &variablesUnderTDZ, &privateNameEnvironment, ecmaMode);
     if (UNLIKELY(catchScope.exception())) {
         exception = catchScope.exception();
         catchScope.clearException();
@@ -318,7 +318,7 @@ SourceID DebuggerCallFrame::sourceIDForCallFrame(CallFrame* callFrame)
 {
     if (!callFrame)
         return noSourceID;
-    if (callFrame->isWasmFrame())
+    if (callFrame->isNativeCalleeFrame())
         return noSourceID;
     CodeBlock* codeBlock = callFrame->codeBlock();
     if (!codeBlock)

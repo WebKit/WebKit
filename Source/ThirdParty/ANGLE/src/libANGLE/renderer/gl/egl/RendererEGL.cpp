@@ -15,12 +15,10 @@ RendererEGL::RendererEGL(std::unique_ptr<FunctionsGL> functionsGL,
                          const egl::AttributeMap &attribMap,
                          DisplayEGL *display,
                          EGLContext context,
-                         const native_egl::AttributeVector attribs,
                          bool isExternalContext)
     : RendererGL(std::move(functionsGL), attribMap, display),
       mDisplay(display),
       mContext(context),
-      mAttribs(attribs),
       mIsExternalContext(isExternalContext)
 {}
 
@@ -36,11 +34,6 @@ RendererEGL::~RendererEGL()
 EGLContext RendererEGL::getContext() const
 {
     return mContext;
-}
-
-WorkerContext *RendererEGL::createWorkerContext(std::string *infoLog)
-{
-    return mDisplay->createWorkerContext(infoLog, mContext, mAttribs);
 }
 
 }  // namespace rx

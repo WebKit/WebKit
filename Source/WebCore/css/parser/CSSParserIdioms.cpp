@@ -47,7 +47,6 @@ bool isValueAllowedInMode(unsigned short id, CSSParserMode mode)
 #endif
     case CSSValueInternalDocumentTextColor:
     case CSSValueInternalThCenter:
-    case CSSValueInternalVariableValue:
         return isUASheetBehavior(mode);
     default:
         return true;

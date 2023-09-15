@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-bool WebExtensionAPIExtension::isPropertyAllowed(String name, WebPage*)
+bool WebExtensionAPIExtension::isPropertyAllowed(ASCIILiteral name, WebPage*)
 {
     // This method was removed in manifest version 3.
     if (name == "getURL"_s)
@@ -46,6 +46,8 @@ bool WebExtensionAPIExtension::isPropertyAllowed(String name, WebPage*)
 
 NSURL *WebExtensionAPIExtension::getURL(NSString *resourcePath, NSString **errorString)
 {
+    // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/extension/getURL
+
     URL baseURL = extensionContext().baseURL();
     return resourcePath.length ? URL { baseURL, resourcePath } : baseURL;
 }

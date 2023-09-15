@@ -68,7 +68,7 @@ void RenderTableCol::styleDidChange(StyleDifference diff, const RenderStyle* old
     // If border was changed, notify table.
     if (!oldStyle)
         return;
-    if (oldStyle->border() != style().border()) {
+    if (!oldStyle->borderIsEquivalentForPainting(style())) {
         table->invalidateCollapsedBorders();
         return;
     }

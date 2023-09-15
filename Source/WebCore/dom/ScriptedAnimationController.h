@@ -37,6 +37,7 @@
 namespace WebCore {
 
 class Document;
+class ImminentlyScheduledWorkScope;
 class Page;
 class RequestAnimationFrameCallback;
 class UserGestureToken;
@@ -78,6 +79,7 @@ private:
     struct CallbackData {
         Ref<RequestAnimationFrameCallback> callback;
         RefPtr<UserGestureToken> userGestureTokenToForward;
+        RefPtr<ImminentlyScheduledWorkScope> scheduledWorkScope;
     };
     Vector<CallbackData> m_callbackDataList;
 

@@ -67,7 +67,7 @@ void ResponsivenessTimer::timerFired()
     if (!m_isResponsive)
         return;
 
-    Ref protectedClient { m_client };
+    Ref protectedClient { m_client.get() };
 
     if (!mayBecomeUnresponsive()) {
         m_waitingForTimer = true;
@@ -75,11 +75,11 @@ void ResponsivenessTimer::timerFired()
         return;
     }
 
-    m_client.willChangeIsResponsive();
+    protectedClient->willChangeIsResponsive();
     m_isResponsive = false;
-    m_client.didChangeIsResponsive();
+    protectedClient->didChangeIsResponsive();
 
-    m_client.didBecomeUnresponsive();
+    protectedClient->didBecomeUnresponsive();
 }
     
 void ResponsivenessTimer::start()
@@ -119,7 +119,7 @@ bool ResponsivenessTimer::mayBecomeUnresponsive() const
     if (isLibgmallocEnabled)
         return false;
 
-    return m_client.mayBecomeUnresponsive();
+    return m_client->mayBecomeUnresponsive();
 #endif
 }
 
@@ -134,14 +134,14 @@ void ResponsivenessTimer::startWithLazyStop()
 void ResponsivenessTimer::stop()
 {
     if (!m_isResponsive) {
-        Ref protectedClient { m_client };
+        Ref protectedClient { m_client.get() };
 
         // We got a life sign from the web process.
-        m_client.willChangeIsResponsive();
+        protectedClient->willChangeIsResponsive();
         m_isResponsive = true;
-        m_client.didChangeIsResponsive();
+        protectedClient->didChangeIsResponsive();
 
-        m_client.didBecomeResponsive();
+        protectedClient->didBecomeResponsive();
     }
 
     m_waitingForTimer = false;

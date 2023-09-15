@@ -96,12 +96,11 @@ void PopulateRtpWithCodecSpecifics(const CodecSpecificInfo& info,
           info.codecSpecific.H264.packetization_mode;
       return;
     }
-#ifndef DISABLE_H265
+#ifdef WEBRTC_USE_H265
     case kVideoCodecH265: {
       auto& h265_header = rtp->video_type_header.emplace<RTPVideoHeaderH265>();
       h265_header.packetization_mode =
           info.codecSpecific.H265.packetization_mode;
-      rtp->simulcastIdx = spatial_index.value_or(0);
       return;
     }
 #endif
@@ -348,7 +347,7 @@ void RtpPayloadParams::SetGeneric(const CodecSpecificInfo* codec_specific_info,
                       is_keyframe, rtp_video_header);
       }
       return;
-#ifndef DISABLE_H265
+#ifdef WEBRTC_USE_H265
     case VideoCodecType::kVideoCodecH265:
       // FIXME: Implement H265 to generic descriptor.
       return;
@@ -416,7 +415,7 @@ absl::optional<FrameDependencyStructure> RtpPayloadParams::GenericStructure(
     }
     case VideoCodecType::kVideoCodecAV1:
     case VideoCodecType::kVideoCodecH264:
-#ifndef DISABLE_H265
+#ifdef WEBRTC_USE_H265
     case VideoCodecType::kVideoCodecH265:
 #endif
     case VideoCodecType::kVideoCodecMultiplex:

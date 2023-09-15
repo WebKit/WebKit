@@ -103,6 +103,7 @@ const char kVp8CodecName[] = "VP8";
 const char kVp9CodecName[] = "VP9";
 const char kAv1CodecName[] = "AV1";
 const char kH264CodecName[] = "H264";
+const char kH265CodecName[] = "H265";
 
 // RFC 6184 RTP Payload Format for H.264 video
 const char kH264FmtpProfileLevelId[] = "profile-level-id";
@@ -112,6 +113,13 @@ const char kH264FmtpSpropParameterSets[] = "sprop-parameter-sets";
 const char kH264FmtpSpsPpsIdrInKeyframe[] = "sps-pps-idr-in-keyframe";
 const char kH264ProfileLevelConstrainedBaseline[] = "42e01f";
 const char kH264ProfileLevelConstrainedHigh[] = "640c1f";
+#ifdef WEBRTC_USE_H265
+// RFC 7798 RTP Payload Format for H.265 video
+const char kH265FmtpProfileSpace[] = "profile-space";
+const char kH265FmtpProfileId[] = "profile-id";
+const char kH265FmtpTierFlag[] = "tier-flag";
+const char kH265FmtpLevelId[] = "level-id";
+#endif
 
 const char kVP9ProfileId[] = "profile-id";
 

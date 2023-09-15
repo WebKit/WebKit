@@ -106,6 +106,46 @@ static NSDictionary *toNSDictionary(UIEdgeInsets insets)
     };
 }
 
+static RetainPtr<NSDictionary> toNSDictionary(CGPathRef path)
+{
+    auto pathElementTypeToString = [](CGPathElementType type) {
+        switch (type) {
+        case kCGPathElementMoveToPoint:
+            return @"MoveToPoint";
+
+        case kCGPathElementAddLineToPoint:
+            return @"AddLineToPoint";
+
+        case kCGPathElementAddQuadCurveToPoint:
+            return @"AddQuadCurveToPoint";
+
+        case kCGPathElementAddCurveToPoint:
+            return @"AddCurveToPoint";
+
+        case kCGPathElementCloseSubpath:
+            return @"CloseSubpath";
+
+        default:
+            return @"Unknown";
+        }
+    };
+
+    auto attributes = adoptNS([[NSMutableDictionary alloc] init]);
+
+    CGPathApplyWithBlock(path, ^(const CGPathElement *element) {
+        if (!element)
+            return;
+
+        NSString *typeString = pathElementTypeToString(element->type);
+        [attributes setObject:@{
+            @"x": @(element->points->x),
+            @"y": @(element->points->y),
+        } forKey:typeString];
+    });
+
+    return attributes;
+}
+
 static Vector<String> parseModifierArray(JSContextRef context, JSValueRef arrayValue)
 {
     if (!arrayValue)
@@ -225,6 +265,11 @@ void UIScriptControllerIOS::simulateAccessibilitySettingsChangeNotification(JSVa
 double UIScriptControllerIOS::zoomScale() const
 {
     return webView().scrollView.zoomScale;
+}
+
+bool UIScriptControllerIOS::isZoomingOrScrolling() const
+{
+    return webView().zoomingOrScrolling;
 }
 
 static CGPoint globalToContentCoordinates(TestRunnerWKWebView *webView, long x, long y)
@@ -565,11 +610,13 @@ static void setModifierFlagsForUIPhysicalKeyboardEvent(UIPhysicalKeyboardEvent *
         keyboardEvent._modifierFlags = modifierFlags;
 }
 
-static UIPhysicalKeyboardEvent *createUIPhysicalKeyboardEvent(NSString *hidInputString, NSString *uiEventInputString, UIKeyModifierFlags modifierFlags, UIKeyboardInputFlags inputFlags, bool isKeyDown)
+enum class IsKeyDown : bool { No, Yes };
+
+static UIPhysicalKeyboardEvent *createUIPhysicalKeyboardEvent(NSString *hidInputString, NSString *uiEventInputString, UIKeyModifierFlags modifierFlags, UIKeyboardInputFlags inputFlags, IsKeyDown isKeyDown)
 {
     auto* keyboardEvent = [getUIPhysicalKeyboardEventClass() _eventWithInput:uiEventInputString inputFlags:inputFlags];
     setModifierFlagsForUIPhysicalKeyboardEvent(keyboardEvent, modifierFlags);
-    auto hidEvent = createHIDKeyEvent(hidInputString, keyboardEvent.timestamp, isKeyDown);
+    auto hidEvent = createHIDKeyEvent(hidInputString, keyboardEvent.timestamp, isKeyDown == IsKeyDown::Yes);
     [keyboardEvent _setHIDEvent:hidEvent.get() keyboard:nullptr];
     return keyboardEvent;
 }
@@ -880,6 +927,21 @@ JSObjectRef UIScriptControllerIOS::selectionEndGrabberViewRect() const
     clipSelectionViewRectToContentView(frameInContentViewCoordinates, contentView);
     auto jsContext = m_context->jsContext();
     return JSValueToObject(jsContext, [JSValue valueWithObject:toNSDictionary(frameInContentViewCoordinates) inContext:[JSContext contextWithJSGlobalContextRef:jsContext]].JSValueRef, nullptr);
+}
+
+JSObjectRef UIScriptControllerIOS::selectionEndGrabberViewShapePathDescription() const
+{
+    UIView *handleView = nil;
+
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+    if (auto view = textSelectionDisplayInteraction().handleViews.lastObject; !isHiddenOrHasHiddenAncestor(view))
+        handleView = view;
+#else
+    UIView *contentView = platformContentView();
+    handleView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView.endGrabber"];
+#endif
+
+    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary((CGPathRef)[handleView valueForKeyPath:@"stemView.shapeLayer.path"]).get() inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 }
 
 JSObjectRef UIScriptControllerIOS::selectionCaretViewRect(id<UICoordinateSpace> coordinateSpace) const
@@ -1301,9 +1363,15 @@ void UIScriptControllerIOS::setKeyboardInputModeIdentifier(JSStringRef identifie
 void UIScriptControllerIOS::toggleCapsLock(JSValueRef callback)
 {
     m_capsLockOn = !m_capsLockOn;
-    auto *keyboardEvent = createUIPhysicalKeyboardEvent(@"capsLock", [NSString string], m_capsLockOn ? UIKeyModifierAlphaShift : 0,
-        kUIKeyboardInputModifierFlagsChanged, m_capsLockOn);
-    [[UIApplication sharedApplication] handleKeyUIEvent:keyboardEvent];
+    auto uiKeyModifierFlag = m_capsLockOn ? UIKeyModifierAlphaShift : 0;
+    auto *keyboardEventDown = createUIPhysicalKeyboardEvent(@"capsLock", @"", uiKeyModifierFlag, kUIKeyboardInputModifierFlagsChanged, IsKeyDown::Yes);
+    auto *keyboardEventUp = createUIPhysicalKeyboardEvent(@"capsLock", @"", uiKeyModifierFlag, kUIKeyboardInputModifierFlagsChanged, IsKeyDown::No);
+    auto *pressInfo = [[UIApplication sharedApplication] _pressInfoForPhysicalKeyboardEvent:keyboardEventDown];
+    auto press = adoptNS([[UIPress alloc] init]);
+    [press _loadStateFromPressInfo:pressInfo];
+    auto *presses = [NSSet setWithObject:press.get()];
+    [platformContentView() pressesBegan:presses withEvent:keyboardEventDown];
+    [platformContentView() pressesEnded:presses withEvent:keyboardEventUp];
     doAsyncTask(callback);
 }
 

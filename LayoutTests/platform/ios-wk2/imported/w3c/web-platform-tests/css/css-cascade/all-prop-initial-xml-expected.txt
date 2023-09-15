@@ -109,6 +109,7 @@ PASS content
 PASS content-visibility
 PASS counter-increment
 PASS counter-reset
+PASS counter-set
 PASS cursor
 PASS cx
 PASS cy
@@ -143,6 +144,7 @@ PASS font-synthesis-weight
 PASS font-variant-alternates
 PASS font-variant-caps
 PASS font-variant-east-asian
+PASS font-variant-emoji
 PASS font-variant-ligatures
 PASS font-variant-numeric
 PASS font-variant-position
@@ -198,6 +200,11 @@ PASS margin-trim
 PASS marker-end
 PASS marker-mid
 PASS marker-start
+PASS mask-border-outset
+PASS mask-border-repeat
+PASS mask-border-slice
+PASS mask-border-source
+PASS mask-border-width
 PASS mask-clip
 PASS mask-composite
 PASS mask-image
@@ -388,11 +395,6 @@ PASS -webkit-line-clamp
 PASS -webkit-line-grid
 PASS -webkit-line-snap
 PASS -webkit-locale
-PASS -webkit-mask-box-image-outset
-PASS -webkit-mask-box-image-repeat
-PASS -webkit-mask-box-image-slice
-PASS -webkit-mask-box-image-source
-PASS -webkit-mask-box-image-width
 PASS -webkit-mask-clip
 PASS -webkit-mask-composite
 PASS -webkit-mask-position-x

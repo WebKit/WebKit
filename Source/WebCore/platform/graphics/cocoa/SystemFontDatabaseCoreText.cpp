@@ -31,6 +31,7 @@
 #include "FontCascadeDescription.h"
 #include "FontMetricsNormalization.h"
 
+#include <pal/system/ios/UserInterfaceIdiom.h>
 #include <wtf/cf/TypeCastsCF.h>
 
 namespace WebCore {
@@ -380,6 +381,22 @@ static inline FontSelectionValue cssWeightOfSystemFontDescriptor(CTFontDescripto
     return FontSelectionValue(normalizeCTWeight(result));
 }
 
+static CTFontTextStylePlatform fontPlatform()
+{
+#if PLATFORM(VISION)
+    // FIXME (rdar://113714083): Adopt the real versions of these when they're in the SDK.
+    static constexpr CTFontTextStylePlatform WKCTFontTextStylePlatformVision = (CTFontTextStylePlatform)5;
+    static constexpr CTFontTextStylePlatform WKCTFontTextStylePlatformVisionLegacy = (CTFontTextStylePlatform)6;
+    if (PAL::currentUserInterfaceIdiomIsVisionLegacy())
+        return WKCTFontTextStylePlatformVisionLegacy;
+    if (PAL::currentUserInterfaceIdiomIsVisionOrVisionLegacy())
+        return WKCTFontTextStylePlatformVision;
+    return kCTFontTextStylePlatformPhone;
+#else
+    return kCTFontTextStylePlatformDefault;
+#endif
+}
+
 auto SystemFontDatabase::platformSystemFontShorthandInfo(FontShorthand fontShorthand) -> SystemFontShorthandInfo
 {
     auto interrogateFontDescriptorShorthandItem = [] (CTFontDescriptorRef fontDescriptor, const String& family) {
@@ -392,7 +409,7 @@ auto SystemFontDatabase::platformSystemFontShorthandInfo(FontShorthand fontShort
 
     auto interrogateTextStyleShorthandItem = [] (CFStringRef textStyle) {
         CGFloat weight = 0;
-        float size = CTFontDescriptorGetTextStyleSize(textStyle, contentSizeCategory(), kCTFontTextStylePlatformDefault, &weight, nullptr);
+        float size = CTFontDescriptorGetTextStyleSize(textStyle, contentSizeCategory(), fontPlatform(), &weight, nullptr);
         auto cssWeight = normalizeCTWeight(weight);
         return SystemFontShorthandInfo { textStyle, size, FontSelectionValue(cssWeight) };
     };

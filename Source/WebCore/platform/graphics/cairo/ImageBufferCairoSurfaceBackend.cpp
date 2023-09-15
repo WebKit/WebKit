@@ -113,9 +113,7 @@ void ImageBufferCairoSurfaceBackend::putPixelBuffer(const PixelBuffer& pixelBuff
 {
     ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, cairo_image_surface_get_data(m_surface.get()));
 
-    IntRect srcRectScaled = toBackendCoordinates(srcRect);
-    IntPoint destPointScaled = toBackendCoordinates(destPoint);
-    cairo_surface_mark_dirty_rectangle(m_surface.get(), destPointScaled.x(), destPointScaled.y(), srcRectScaled.width(), srcRectScaled.height());
+    cairo_surface_mark_dirty_rectangle(m_surface.get(), destPoint.x(), destPoint.y(), srcRect.width(), srcRect.height());
 }
 
 String ImageBufferCairoSurfaceBackend::debugDescription() const

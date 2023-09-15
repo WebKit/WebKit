@@ -70,12 +70,6 @@ SWServer::Connection::~Connection()
         request.callback({ });
 }
 
-HashSet<SWServer*>& SWServer::allServers()
-{
-    static NeverDestroyed<HashSet<SWServer*>> servers;
-    return servers;
-}
-
 SWServer::~SWServer()
 {
     // Destroy the remaining connections before the SWServer gets destroyed since they have a raw pointer
@@ -93,8 +87,6 @@ SWServer::~SWServer()
     }
     for (auto& runningWorker : runningWorkers)
         runningWorker->terminate();
-
-    allServers().remove(this);
 }
 
 SWServerWorker* SWServer::workerByID(ServiceWorkerIdentifier identifier) const
@@ -388,7 +380,7 @@ void SWServer::Connection::removeServiceWorkerRegistrationInServer(ServiceWorker
     m_server.removeClientServiceWorkerRegistration(*this, identifier);
 }
 
-SWServer::SWServer(SWServerDelegate& delegate, UniqueRef<SWOriginStore>&& originStore, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID sessionID, bool shouldRunServiceWorkersOnMainThreadForTesting, bool hasServiceWorkerEntitlement, std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue)
+SWServer::SWServer(SWServerDelegate& delegate, UniqueRef<SWOriginStore>&& originStore, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID sessionID, bool shouldRunServiceWorkersOnMainThreadForTesting, bool hasServiceWorkerEntitlement, std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue, ServiceWorkerIsInspectable inspectable)
     : m_delegate(delegate)
     , m_originStore(WTFMove(originStore))
     , m_sessionID(sessionID)
@@ -396,6 +388,7 @@ SWServer::SWServer(SWServerDelegate& delegate, UniqueRef<SWOriginStore>&& origin
     , m_shouldRunServiceWorkersOnMainThreadForTesting(shouldRunServiceWorkersOnMainThreadForTesting)
     , m_hasServiceWorkerEntitlement(hasServiceWorkerEntitlement)
     , m_overrideServiceWorkerRegistrationCountTestingValue(overrideServiceWorkerRegistrationCountTestingValue)
+    , m_isInspectable(inspectable)
 {
     RELEASE_LOG_IF(registrationDatabaseDirectory.isEmpty(), ServiceWorker, "No path to store the service worker registrations");
 
@@ -421,7 +414,6 @@ SWServer::SWServer(SWServerDelegate& delegate, UniqueRef<SWOriginStore>&& origin
         registrationStoreImportComplete();
 
     UNUSED_PARAM(registrationDatabaseDirectory);
-    allServers().add(this);
 }
 
 unsigned SWServer::maxRegistrationCount()
@@ -866,6 +858,8 @@ void SWServer::contextConnectionCreated(SWServerToContextConnection& contextConn
 
     for (auto& connection : m_connections.values())
         connection->contextConnectionCreated(contextConnection);
+
+    contextConnection.setInspectable(m_isInspectable);
 
     auto pendingContextDatas = m_pendingContextDatas.take(contextConnection.registrableDomain());
     for (auto& data : pendingContextDatas) {
@@ -1711,6 +1705,17 @@ void SWServer::postMessageToServiceWorkerClient(ScriptExecutionContextIdentifier
 Vector<ServiceWorkerClientPendingMessage> SWServer::releaseServiceWorkerClientPendingMessage(ScriptExecutionContextIdentifier contextIdentifier)
 {
     return m_clientPendingMessagesById.take(contextIdentifier);
+}
+
+void SWServer::setInspectable(ServiceWorkerIsInspectable inspectable)
+{
+    if (m_isInspectable == inspectable)
+        return;
+
+    m_isInspectable = inspectable;
+
+    for (auto* connection : m_contextConnections.values())
+        connection->setInspectable(inspectable);
 }
 
 void SWServer::Connection::startBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, Vector<BackgroundFetchRequest>&& requests, BackgroundFetchOptions&& options, ExceptionOrBackgroundFetchInformationCallback&& callback)

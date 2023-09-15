@@ -158,10 +158,10 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderImportModule(JSGlobalObject* g
     auto specifier = specifierValue->value(globalObject);
     RETURN_IF_EXCEPTION(scope, reject(scope));
 
-    auto assertions = JSC::retrieveAssertionsFromDynamicImportOptions(globalObject, parameters, { vm.propertyNames->type.impl() });
+    auto attributes = JSC::retrieveImportAttributesFromDynamicImportOptions(globalObject, parameters, { vm.propertyNames->type.impl() });
     RETURN_IF_EXCEPTION(scope, reject(scope));
 
-    auto type = JSC::retrieveTypeAssertion(globalObject, assertions);
+    auto type = JSC::retrieveTypeImportAttribute(globalObject, attributes);
     RETURN_IF_EXCEPTION(scope, reject(scope));
 
     parameters = jsUndefined();

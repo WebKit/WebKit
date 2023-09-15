@@ -51,8 +51,10 @@ struct ScheduleContext {
 #endif
 };
 
-WEBCORE_EXPORT void decode(const URL&, const ScheduleContext&, DecodeCompletionHandler&&);
-WEBCORE_EXPORT std::optional<Result> decode(const URL&);
+enum class ShouldValidatePadding : bool { No, Yes };
+
+WEBCORE_EXPORT void decode(const URL&, const ScheduleContext&, ShouldValidatePadding, DecodeCompletionHandler&&);
+WEBCORE_EXPORT std::optional<Result> decode(const URL&, ShouldValidatePadding = ShouldValidatePadding::Yes);
 
 }
 

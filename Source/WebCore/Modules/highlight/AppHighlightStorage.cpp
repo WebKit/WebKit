@@ -57,7 +57,7 @@ static RefPtr<Node> findNodeByPathIndex(const Node& parent, unsigned pathIndex, 
     if (!is<ContainerNode>(parent))
         return nullptr;
 
-    for (auto* child = downcast<ContainerNode>(parent).firstChild(); child; child = child->nextSibling()) {
+    for (RefPtr child = downcast<ContainerNode>(parent).firstChild(); child; child = child->nextSibling()) {
         if (nodeName != child->nodeName())
             continue;
 
@@ -174,7 +174,7 @@ static unsigned computePathIndex(const Node& node)
 {
     String nodeName = node.nodeName();
     unsigned index = 0;
-    for (auto* previousSibling = node.previousSibling(); previousSibling; previousSibling = previousSibling->previousSibling()) {
+    for (RefPtr previousSibling = node.previousSibling(); previousSibling; previousSibling = previousSibling->previousSibling()) {
         if (previousSibling->nodeName() == nodeName)
             index++;
     }

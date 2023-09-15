@@ -25,7 +25,7 @@
 
 [
     Conditional=WEBGL,
-    GenerateIsReachable=ImplWebGLRenderingContext,
+    GenerateIsReachable,
     LegacyNoInterfaceObject,
 ] interface EXTTextureCompressionRGTC {
     const unsigned long COMPRESSED_RED_RGTC1_EXT = 0x8DBB;

@@ -52,7 +52,6 @@
 #import "TextCheckingControllerProxy.h"
 #import "UIKitSPI.h"
 #import "UserData.h"
-#import "UserInterfaceIdiom.h"
 #import "ViewGestureGeometryCollector.h"
 #import "VisibleContentRectUpdateInfo.h"
 #import "WKAccessibilityWebPageObjectIOS.h"
@@ -110,6 +109,7 @@
 #import <WebCore/HTMLSummaryElement.h>
 #import <WebCore/HTMLTextAreaElement.h>
 #import <WebCore/HTMLVideoElement.h>
+#import <WebCore/HandleMouseEventResult.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/Image.h>
@@ -156,6 +156,7 @@
 #import <WebCore/UserGestureIndicator.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WebEvent.h>
+#import <pal/system/ios/UserInterfaceIdiom.h>
 #import <wtf/MathExtras.h>
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/Scope.h>
@@ -766,10 +767,9 @@ void WebPage::generateSyntheticEditingCommand(SyntheticEditingCommandType comman
 void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::FloatPoint& location, OptionSet<WebEventModifier> modifiers, WebCore::PointerID pointerId)
 {
     auto& respondingDocument = nodeRespondingToClick.document();
-    auto isFirstSyntheticClickOnPage = !m_hasHandledSyntheticClick;
     m_hasHandledSyntheticClick = true;
 
-    if (!respondingDocument.settings().contentChangeObserverEnabled() || respondingDocument.quirks().shouldDisableContentChangeObserver() || respondingDocument.quirks().shouldIgnoreContentObservationForSyntheticClick(isFirstSyntheticClickOnPage)) {
+    if (!respondingDocument.settings().contentChangeObserverEnabled() || respondingDocument.quirks().shouldDisableContentChangeObserver()) {
         completeSyntheticClick(nodeRespondingToClick, location, modifiers, WebCore::SyntheticClickType::OneFingerTap, pointerId);
         return;
     }
@@ -887,7 +887,7 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     // FIXME: Pass caps lock state.
     auto platformModifiers = platform(modifiers);
 
-    bool handledPress = localMainFrame->eventHandler().handleMousePressEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::Type::MousePressed, 1, platformModifiers, WallTime::now(), WebCore::ForceAtClick, syntheticClickType, pointerId));
+    bool handledPress = localMainFrame->eventHandler().handleMousePressEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::Type::MousePressed, 1, platformModifiers, WallTime::now(), WebCore::ForceAtClick, syntheticClickType, pointerId)).wasHandled();
     if (m_isClosed)
         return;
 
@@ -896,7 +896,7 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     else if (!handledPress)
         clearSelectionAfterTapIfNeeded();
 
-    bool handledRelease = localMainFrame->eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::Type::MouseReleased, 1, platformModifiers, WallTime::now(), WebCore::ForceAtClick, syntheticClickType, pointerId));
+    bool handledRelease = localMainFrame->eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::Type::MouseReleased, 1, platformModifiers, WallTime::now(), WebCore::ForceAtClick, syntheticClickType, pointerId)).wasHandled();
     if (m_isClosed)
         return;
 
@@ -2599,7 +2599,10 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, Com
         auto position = makeDeprecatedLegacyPosition(range->start).previous();
         if (position.isNull() || position == makeDeprecatedLegacyPosition(range->start))
             break;
-        range = { { wordRangeFromPosition(position)->start, range->end } };
+        auto startRange = wordRangeFromPosition(position);
+        if (!startRange)
+            continue;
+        range = { { startRange->start, range->end } };
         textForRange = plainTextForContext(range);
     }
 
@@ -3829,8 +3832,7 @@ void WebPage::dynamicViewportSizeUpdate(const DynamicViewportSizeUpdate& target)
 
         HitTestResult hitTestResult = HitTestResult(unobscuredContentRectCenter);
 
-        auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frameView.frame());
-        if (auto* document = localFrame ? localFrame->document() : nullptr)
+        if (auto* document = frameView.frame().document())
             document->hitTest(HitTestRequest(), hitTestResult);
 
         if (Node* node = hitTestResult.innerNode()) {
@@ -3982,10 +3984,7 @@ void WebPage::dynamicViewportSizeUpdate(const DynamicViewportSizeUpdate& target)
     frameView.updateLayoutAndStyleIfNeededRecursive();
 
     // FIXME: Move settings from Frame to Frame and remove this check.
-    auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame());
-    if (!localFrame)
-        return;
-    auto& settings = localFrame->settings();
+    auto& settings = frameView.frame().settings();
     LayoutRect documentRect = IntRect(frameView.scrollOrigin(), frameView.contentsSize());
     auto layoutViewportSize = LocalFrameView::expandedLayoutViewportSize(frameView.baseLayoutViewportSize(), LayoutSize(documentRect.size()), settings.layoutViewportHeightExpansionFactor());
     LayoutRect layoutViewportRect = LocalFrameView::computeUpdatedLayoutViewportRect(frameView.layoutViewportRect(), documentRect, LayoutSize(newUnobscuredContentRect.size()), LayoutRect(newUnobscuredContentRect), layoutViewportSize, frameView.minStableLayoutViewportOrigin(), frameView.maxStableLayoutViewportOrigin(), LayoutViewportConstraint::ConstrainedToDocumentRect);
@@ -4484,8 +4483,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
         frameView.setLayoutViewportOverrideRect(LayoutRect(visibleContentRectUpdateInfo.layoutViewportRect()));
         if (selectionIsInsideFixedPositionContainer(*localMainFrame)) {
             // Ensure that the next layer tree commit contains up-to-date caret/selection rects.
-            if (auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame()))
-                localFrame->selection().setCaretRectNeedsUpdate();
+            frameView.frame().selection().setCaretRectNeedsUpdate();
             scheduleFullEditorStateUpdate();
         }
 
@@ -4947,12 +4945,27 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
         }
     }
 
-    auto makeString = [] (const VisiblePosition& start, const VisiblePosition& end) -> AttributedString {
+    auto isTextObscured = [] (const VisiblePosition& visiblePosition) {
+        if (RefPtr textControl = enclosingTextFormControl(visiblePosition.deepEquivalent())) {
+            if (auto* input = dynamicDowncast<HTMLInputElement>(textControl.get())) {
+                if (input->isAutoFilledAndObscured())
+                    return true;
+            }
+        }
+        return false;
+    };
+
+    auto makeString = [&isTextObscured] (const VisiblePosition& start, const VisiblePosition& end) -> AttributedString {
         auto range = makeSimpleRange(start, end);
         if (!range || range->collapsed())
             return { };
         // FIXME: This should return editing-offset-compatible attributed strings if that option is requested.
-        return WebCore::AttributedString::fromNSAttributedString(adoptNS([[NSAttributedString alloc] initWithString:WebCore::plainTextReplacingNoBreakSpace(*range, TextIteratorBehavior::EmitsOriginalText)]));
+
+        auto isObscured = isTextObscured(start);
+        TextIteratorBehaviors textBehaviors = { };
+        if (!isObscured)
+            textBehaviors = TextIteratorBehavior::EmitsOriginalText;
+        return WebCore::AttributedString::fromNSAttributedString(adoptNS([[NSAttributedString alloc] initWithString:WebCore::plainTextReplacingNoBreakSpace(*range, textBehaviors)]));
     };
 
     DocumentEditingContext context;
@@ -5082,7 +5095,7 @@ void WebPage::textInputContextsInRect(FloatRect searchRect, CompletionHandler<vo
 
 void WebPage::focusTextInputContextAndPlaceCaret(const ElementContext& elementContext, const IntPoint& point, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto target = elementForContext(elementContext);
+    RefPtr target = elementForContext(elementContext);
     if (!target) {
         completionHandler(false);
         return;
@@ -5196,7 +5209,7 @@ void WebPage::animationDidFinishForElement(const WebCore::Element& animatedEleme
 
 FloatSize WebPage::screenSizeForFingerprintingProtections(const LocalFrame&, FloatSize defaultSize) const
 {
-    if (!currentUserInterfaceIdiomIsSmallScreen())
+    if (!PAL::currentUserInterfaceIdiomIsSmallScreen())
         return m_viewportConfiguration.minimumLayoutSize();
 
     static constexpr std::array fixedSizes {

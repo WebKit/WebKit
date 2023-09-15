@@ -143,10 +143,11 @@ bool OSAllocator::protect(void* address, size_t bytes, bool readable, bool writa
             protection = PAGE_READWRITE;
         else
             protection = PAGE_READONLY;
-        return VirtualAlloc(address, bytes, MEM_COMMIT, protection);
+    } else {
+        ASSERT(!readable && !writable);
+        protection = PAGE_NOACCESS;
     }
-    ASSERT(!readable && !writable);
-    return VirtualFree(address, bytes, MEM_DECOMMIT);
+    return VirtualAlloc(address, bytes, MEM_COMMIT, protection);
 }
 
 } // namespace WTF

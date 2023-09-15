@@ -53,7 +53,7 @@ protected:
 
     ContextProvider();
 
-    const ContextValue& introduceVariable(const String&, const ContextValue&);
+    const ContextValue* introduceVariable(const String&, const ContextValue&);
     const ContextValue* readVariable(const String&) const;
 
 private:
@@ -62,7 +62,7 @@ private:
         Context(const Context *const parent);
 
         const ContextValue* lookup(const String&) const;
-        const ContextValue& add(const String&, const ContextValue&);
+        const ContextValue* add(const String&, const ContextValue&);
 
     private:
         const Context* m_parent { nullptr };

@@ -32,8 +32,6 @@
 #include "IDBGetResult.h"
 #include "ServerOpenDBRequest.h"
 #include "UniqueIDBDatabaseTransaction.h"
-#include <wtf/CrossThreadQueue.h>
-#include <wtf/CrossThreadTask.h>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
 #include <wtf/HashCountedSet.h>
@@ -128,8 +126,7 @@ private:
     void performCurrentOpenOperation();
     void performCurrentOpenOperationAfterSpaceCheck(bool isGranted);
     void performCurrentDeleteOperation();
-    enum class RequestType { Delete, Any };
-    RefPtr<ServerOpenDBRequest> takeNextRunnableRequest(RequestType = RequestType::Any);
+    RefPtr<ServerOpenDBRequest> takeNextRunnableRequest();
     void addOpenDatabaseConnection(Ref<UniqueIDBDatabaseConnection>&&);
     bool hasAnyOpenConnections() const;
     bool allConnectionsAreClosedOrClosing() const;
@@ -149,12 +146,10 @@ private:
     void didDeleteBackingStore(uint64_t deletedVersion);
     void close();
 
-    bool isCurrentlyInUse() const;
     void clearStalePendingOpenDBRequests();
 
     void clearTransactionsOnConnection(UniqueIDBDatabaseConnection&);
 
-    IDBServer* m_server;
     WeakPtr<UniqueIDBDatabaseManager> m_manager;
     IDBDatabaseIdentifier m_identifier;
 
@@ -178,8 +173,6 @@ private:
     // These sets help to decide which transactions can be started and which must be deferred.
     HashCountedSet<uint64_t> m_objectStoreTransactionCounts;
     HashSet<uint64_t> m_objectStoreWriteTransactions;
-
-    HashSet<IDBResourceIdentifier> m_cursorPrefetches;
 };
 
 } // namespace IDBServer

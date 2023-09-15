@@ -42,11 +42,6 @@ EXTBlendMinMax::EXTBlendMinMax(WebGLRenderingContextBase& context)
 
 EXTBlendMinMax::~EXTBlendMinMax() = default;
 
-WebGLExtension::ExtensionName EXTBlendMinMax::getName() const
-{
-    return EXTBlendMinMaxName;
-}
-
 bool EXTBlendMinMax::supported(GraphicsContextGL& context)
 {
     return context.supportsExtension("GL_EXT_blend_minmax"_s);

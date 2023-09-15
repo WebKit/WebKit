@@ -1,0 +1,26 @@
+Tests 8.1 Role Attribute role token list selection and 9.1 Roles - handling author errors.
+
+x
+x
+x
+x
+x  x x
+x
+x
+x
+x
+x
+
+FAIL fallback role w/ region with no label assert_equals: <nav role="region group" data-testname="fallback role w/ region with no label" data-expectedrole="group" class="ex">x</nav> expected "group" but got "navigation"
+PASS fallback role w/ region with label
+PASS aria 1.1 switch role w/ fallback to aria 1.0 checkbox role
+PASS div[role=button] ignoring invalid foo role token
+PASS unknown[role=button] ignoring invalid foo role token
+PASS button ignoring single invalid role token
+PASS button ignoring multiple invalid role tokens
+PASS div[role=button] ignoring invalid foo role token including punctuation-contaminated known link role
+PASS div[role=button] ignoring invalid unicode diacritics etc on link and group role tokens
+PASS div[role=button] ignoring tab char
+PASS div[role=button] ignoring line break
+PASS div[role=button] ignoring braille whitespace char
+

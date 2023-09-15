@@ -593,7 +593,6 @@ public:
 
     enum class CustomAppearance : uint8_t {
         None,
-        ScrollingOverhang,
         ScrollingShadow
     };
     virtual void setCustomAppearance(CustomAppearance customAppearance) { m_customAppearance = customAppearance; }
@@ -850,7 +849,6 @@ template<> struct EnumTraits<WebCore::GraphicsLayer::CustomAppearance> {
     using values = EnumValues<
         WebCore::GraphicsLayer::CustomAppearance,
         WebCore::GraphicsLayer::CustomAppearance::None,
-        WebCore::GraphicsLayer::CustomAppearance::ScrollingOverhang,
         WebCore::GraphicsLayer::CustomAppearance::ScrollingShadow
     >;
 };

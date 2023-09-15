@@ -35,11 +35,12 @@ class HighPerformanceGraphicsUsageSampler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit HighPerformanceGraphicsUsageSampler(WebProcessPool&);
+    ~HighPerformanceGraphicsUsageSampler();
 
 private:
     void timerFired();
 
-    WebProcessPool& m_webProcessPool;
+    CheckedRef<WebProcessPool> m_webProcessPool;
     RunLoop::Timer m_timer;
 };
 

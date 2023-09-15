@@ -117,15 +117,14 @@ void DrawingAreaWC::attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier fram
 
 void DrawingAreaWC::updatePreferences(const WebPreferencesStore& store)
 {
-    Settings& settings = m_webPage.corePage()->settings();
+    Settings& settings = m_webPage->corePage()->settings();
     settings.setAcceleratedCompositingForFixedPositionEnabled(settings.acceleratedCompositingEnabled());
     settings.setForceCompositingMode(store.getBoolValueForKey(WebPreferencesKey::siteIsolationEnabledKey()));
 }
 
 bool DrawingAreaWC::shouldUseTiledBackingForFrameView(const WebCore::LocalFrameView& frameView) const
 {
-    auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frameView.frame());
-    return localFrame && localFrame->isRootFrame();
+    return frameView.frame().isRootFrame();
 }
 
 void DrawingAreaWC::setLayerTreeStateIsFrozen(bool isFrozen)
@@ -142,12 +141,12 @@ void DrawingAreaWC::setLayerTreeStateIsFrozen(bool isFrozen)
 void DrawingAreaWC::updateGeometryWC(uint64_t backingStoreStateID, IntSize viewSize)
 {
     m_backingStoreStateID = backingStoreStateID;
-    m_webPage.setSize(viewSize);
+    m_webPage->setSize(viewSize);
 }
 
 void DrawingAreaWC::setNeedsDisplay()
 {
-    m_dirtyRegion = m_webPage.bounds();
+    m_dirtyRegion = m_webPage->bounds();
     m_scrollRect = { };
     m_scrollOffset = { };
     triggerRenderingUpdate();
@@ -158,7 +157,7 @@ void DrawingAreaWC::setNeedsDisplayInRect(const IntRect& rect)
     if (isCompositingMode())
         return;
     IntRect dirtyRect = rect;
-    dirtyRect.intersect(m_webPage.bounds());
+    dirtyRect.intersect(m_webPage->bounds());
     m_dirtyRegion.unite(dirtyRect);
     triggerRenderingUpdate();
 }
@@ -227,7 +226,7 @@ static void flushLayerImageBuffers(WCUpdateInfo& info)
 
 bool DrawingAreaWC::isCompositingMode()
 {
-    auto& mainWebFrame = m_webPage.mainWebFrame();
+    auto& mainWebFrame = m_webPage->mainWebFrame();
     if (!mainWebFrame.isRootFrame())
         return true;
     return rootLayerInfoWithFrameIdentifier(mainWebFrame.frameID())->contentLayer;
@@ -248,12 +247,13 @@ void DrawingAreaWC::updateRendering()
     ASSERT(!m_waitDidUpdate);
     m_waitDidUpdate = true;
 
-    m_webPage.updateRendering();
-    m_webPage.flushPendingEditorStateUpdate();
+    Ref webPage = m_webPage.get();
+    webPage->updateRendering();
+    webPage->flushPendingEditorStateUpdate();
 
     OptionSet<FinalizeRenderingUpdateFlags> flags;
-    m_webPage.finalizeRenderingUpdate(flags);
-    m_webPage.didUpdateRendering();
+    webPage->finalizeRenderingUpdate(flags);
+    webPage->didUpdateRendering();
 
     willStartRenderingUpdateDisplay();
 
@@ -279,7 +279,7 @@ void DrawingAreaWC::sendUpdateAC()
         bool willCallDisplayDidRefresh = isMainFrame || (!didProcessMainFrame && isLastFrame);
         IntSize size;
         if (isMainFrame)
-            size = m_webPage.size();
+            size = m_webPage->size();
         else
             size = frame->size();
         rootLayer.layer->setSize(size);
@@ -337,9 +337,10 @@ void DrawingAreaWC::sendUpdateNonAC()
         return;
     }
     IntRect bounds = m_dirtyRegion.bounds();
-    ASSERT(m_webPage.bounds().contains(bounds));
+    Ref webPage = m_webPage.get();
+    ASSERT(webPage->bounds().contains(bounds));
     IntSize bitmapSize = bounds.size();
-    float deviceScaleFactor = m_webPage.corePage()->deviceScaleFactor();
+    float deviceScaleFactor = webPage->corePage()->deviceScaleFactor();
     bitmapSize.scale(deviceScaleFactor);
 
     auto image = createImageBuffer(bitmapSize);
@@ -351,8 +352,8 @@ void DrawingAreaWC::sendUpdateNonAC()
     m_dirtyRegion = { };
 
     UpdateInfo updateInfo;
-    updateInfo.viewSize = m_webPage.size();
-    updateInfo.deviceScaleFactor = m_webPage.corePage()->deviceScaleFactor();
+    updateInfo.viewSize = webPage->size();
+    updateInfo.deviceScaleFactor = webPage->corePage()->deviceScaleFactor();
     updateInfo.updateRectBounds = bounds;
     updateInfo.updateRects = rects;
     updateInfo.scrollRect = m_scrollRect;
@@ -364,7 +365,7 @@ void DrawingAreaWC::sendUpdateNonAC()
     graphicsContext.applyDeviceScaleFactor(deviceScaleFactor);
     graphicsContext.translate(-bounds.x(), -bounds.y());
     for (const auto& rect : rects)
-        m_webPage.drawRect(image->context(), rect);
+        webPage->drawRect(image->context(), rect);
     image->flushDrawingContextAsync();
 
     m_commitQueue->dispatch([this, weakThis = WeakPtr(*this), stateID = m_backingStoreStateID, updateInfo = WTFMove(updateInfo), image = WTFMove(image)]() mutable {
@@ -410,8 +411,8 @@ void DrawingAreaWC::commitLayerUpdateInfo(WCLayerUpdateInfo&& info)
 RefPtr<ImageBuffer> DrawingAreaWC::createImageBuffer(FloatSize size)
 {
     if (WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM))
-        return m_webPage.ensureRemoteRenderingBackendProxy().createImageBuffer(size, RenderingMode::Unaccelerated, RenderingPurpose::DOM, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
-    return ImageBuffer::create<UnacceleratedImageBufferShareableBackend>(size, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, RenderingPurpose::DOM, nullptr);
+        return Ref { m_webPage.get() }->ensureRemoteRenderingBackendProxy().createImageBuffer(size, RenderingMode::Unaccelerated, RenderingPurpose::DOM, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    return ImageBuffer::create<UnacceleratedImageBufferShareableBackend>(size, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, RenderingPurpose::DOM, { });
 }
 
 void DrawingAreaWC::displayDidRefresh()

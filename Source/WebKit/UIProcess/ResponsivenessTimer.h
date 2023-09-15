@@ -26,13 +26,14 @@
 #ifndef ResponsivenessTimer_h
 #define ResponsivenessTimer_h
 
+#include <wtf/CheckedRef.h>
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
 
 class ResponsivenessTimer {
 public:
-    class Client {
+    class Client : public CanMakeThreadSafeCheckedPtr {
     public:
         virtual ~Client() { }
         virtual void didBecomeUnresponsive() = 0;
@@ -80,7 +81,7 @@ private:
 
     bool mayBecomeUnresponsive() const;
 
-    ResponsivenessTimer::Client& m_client;
+    CheckedRef<ResponsivenessTimer::Client> m_client;
 
     RunLoop::Timer m_timer;
     MonotonicTime m_restartFireTime;

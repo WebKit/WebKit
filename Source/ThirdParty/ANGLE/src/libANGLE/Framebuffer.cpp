@@ -19,6 +19,7 @@
 #include "libANGLE/FramebufferAttachment.h"
 #include "libANGLE/PixelLocalStorage.h"
 #include "libANGLE/Renderbuffer.h"
+#include "libANGLE/ShareGroup.h"
 #include "libANGLE/Surface.h"
 #include "libANGLE/Texture.h"
 #include "libANGLE/angletypes.h"
@@ -1294,14 +1295,27 @@ const FramebufferStatus &Framebuffer::checkStatusImpl(const Context *context) co
         // We can skip syncState on several back-ends.
         if (mImpl->shouldSyncStateBeforeCheckStatus())
         {
-            // This binding is not totally correct. It is ok because the parameter isn't used in
-            // the GL back-end and the GL back-end is the only user of syncStateBeforeCheckStatus.
-            angle::Result err = syncState(context, GL_FRAMEBUFFER, Command::Other);
-            if (err != angle::Result::Continue)
             {
-                mCachedStatus =
-                    FramebufferStatus::Incomplete(0, err::kFramebufferIncompleteInternalError);
-                return mCachedStatus.value();
+                angle::Result err = syncAllDrawAttachmentState(context, Command::Other);
+                if (err != angle::Result::Continue)
+                {
+                    mCachedStatus =
+                        FramebufferStatus::Incomplete(0, err::kFramebufferIncompleteInternalError);
+                    return mCachedStatus.value();
+                }
+            }
+
+            {
+                // This binding is not totally correct. It is ok because the parameter isn't used in
+                // the GL back-end and the GL back-end is the only user of
+                // syncStateBeforeCheckStatus.
+                angle::Result err = syncState(context, GL_FRAMEBUFFER, Command::Other);
+                if (err != angle::Result::Continue)
+                {
+                    mCachedStatus =
+                        FramebufferStatus::Incomplete(0, err::kFramebufferIncompleteInternalError);
+                    return mCachedStatus.value();
+                }
             }
         }
 
@@ -2098,11 +2112,12 @@ void Framebuffer::setAttachmentImpl(const Context *context,
             if (!resource)
             {
                 mFloat32ColorAttachmentBits.reset(colorIndex);
+                mSharedExponentColorAttachmentBits.reset(colorIndex);
                 mState.mColorAttachmentsMask.reset(colorIndex);
             }
             else
             {
-                updateFloat32ColorAttachmentBits(
+                updateFloat32AndSharedExponentColorAttachmentBits(
                     colorIndex, resource->getAttachmentFormat(binding, textureIndex).info);
                 mState.mColorAttachmentsMask.set(colorIndex);
             }
@@ -2222,13 +2237,13 @@ void Framebuffer::onSubjectStateChange(angle::SubjectIndex index, angle::Subject
     // Mark the appropriate init flag.
     mState.mResourceNeedsInit.set(index, attachment->initState() == InitState::MayNeedInit);
 
-    // Update mFloat32ColorAttachmentBits Cache
+    // Update mFloat32ColorAttachmentBits and mSharedExponentColorAttachmentBits cache
     if (index < DIRTY_BIT_COLOR_ATTACHMENT_MAX)
     {
         ASSERT(index != DIRTY_BIT_DEPTH_ATTACHMENT);
         ASSERT(index != DIRTY_BIT_STENCIL_ATTACHMENT);
-        updateFloat32ColorAttachmentBits(index - DIRTY_BIT_COLOR_ATTACHMENT_0,
-                                         attachment->getFormat().info);
+        updateFloat32AndSharedExponentColorAttachmentBits(index - DIRTY_BIT_COLOR_ATTACHMENT_0,
+                                                          attachment->getFormat().info);
     }
 }
 
@@ -2735,5 +2750,41 @@ PixelLocalStorage &Framebuffer::getPixelLocalStorage(const Context *context)
 std::unique_ptr<PixelLocalStorage> Framebuffer::detachPixelLocalStorage()
 {
     return std::move(mPixelLocalStorage);
+}
+
+angle::Result Framebuffer::syncAllDrawAttachmentState(const Context *context, Command command) const
+{
+    for (size_t drawbufferIdx = 0; drawbufferIdx < mState.getDrawBufferCount(); ++drawbufferIdx)
+    {
+        ANGLE_TRY(syncAttachmentState(context, command, mState.getDrawBuffer(drawbufferIdx)));
+    }
+
+    ANGLE_TRY(syncAttachmentState(context, command, mState.getDepthAttachment()));
+    ANGLE_TRY(syncAttachmentState(context, command, mState.getStencilAttachment()));
+
+    return angle::Result::Continue;
+}
+
+angle::Result Framebuffer::syncAttachmentState(const Context *context,
+                                               Command command,
+                                               const FramebufferAttachment *attachment) const
+{
+    if (!attachment)
+    {
+        return angle::Result::Continue;
+    }
+
+    // Only texture attachments can sync state. Renderbuffer and Surface attachments are always
+    // synchronized.
+    if (attachment->type() == GL_TEXTURE)
+    {
+        Texture *texture = attachment->getTexture();
+        if (texture->hasAnyDirtyBitExcludingBoundAsAttachmentBit())
+        {
+            ANGLE_TRY(texture->syncState(context, command));
+        }
+    }
+
+    return angle::Result::Continue;
 }
 }  // namespace gl

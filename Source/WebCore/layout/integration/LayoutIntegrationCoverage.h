@@ -39,16 +39,16 @@ namespace LayoutIntegration {
 class LineLayout;
 
 enum class AvoidanceReason : uint64_t {
-    FlowHasMarginTrim                            = 1LLU  << 0,
+    // Unused                                    = 1LLU  << 0,
     // Unused                                    = 1LLU  << 1,
     // Unused                                    = 1LLU  << 2,
     ContentIsRuby                                = 1LLU  << 3,
     // Unused                                    = 1LLU  << 4,
     // Unused                                    = 1LLU  << 5,
-    FlowHasLineClamp                             = 1LLU  << 6,
+    // Unused                                    = 1LLU  << 6,
     // Unused                                    = 1LLU  << 7,
     // Unused                                    = 1LLU  << 8,
-    FlowHasNonSupportedChild                     = 1LLU  << 9,
+    FlowIsInitialContainingBlock                 = 1LLU  << 9,
     // Unused                                    = 1LLU  << 10,
     // Unused                                    = 1LLU  << 11,
     // Unused                                    = 1LLU  << 12,
@@ -56,7 +56,7 @@ enum class AvoidanceReason : uint64_t {
     // Unused                                    = 1LLU  << 14,
     // Unused                                    = 1LLU  << 15,
     // Unused                                    = 1LLU  << 16,
-    FlowHasUnsupportedWritingMode                = 1LLU  << 17,
+    // Unused                                    = 1LLU  << 17,
     // Unused                                    = 1LLU  << 18,
     // Unused                                    = 1LLU  << 19,
     FlowHasLineAlignEdges                        = 1LLU  << 20,
@@ -78,7 +78,7 @@ enum class AvoidanceReason : uint64_t {
     // Unused                                    = 1LLU  << 36,
     // Unused                                    = 1LLU  << 37,
     // Unused                                    = 1LLU  << 38,
-    FlowTextIsSVGInlineText                      = 1LLU  << 39,
+    // Unused                                    = 1LLU  << 39,
     // Unused                                    = 1LLU  << 40,
     FeatureIsDisabled                            = 1LLU  << 41,
     // Unused                                    = 1LLU  << 42,
@@ -86,15 +86,15 @@ enum class AvoidanceReason : uint64_t {
     // Unused                                    = 1LLU  << 44,
     // Unused                                    = 1LLU  << 45,
     // Unused                                    = 1LLU  << 46,
-    MultiColumnFlowHasVerticalWritingMode        = 1LLU  << 47,
+    MultiColumnFlowHasUnsupportedWritingMode     = 1LLU  << 47,
     // Unused                                    = 1LLU  << 48,
     // Unused                                    = 1LLU  << 49,
-    MultiColumnFlowIsFloating                    = 1LLU  << 50,
+    MultiColumnFlowHasFloatingOrOutOfFlowChild   = 1LLU  << 50,
     // Unused                                    = 1LLU  << 51,
     // Unused                                    = 1LLU  << 52,
     // Unused                                    = 1LLU  << 53,
     // Unused                                    = 1LLU  << 54,
-    ChildBoxIsFloatingOrPositioned               = 1LLU  << 55,
+    // Unused                                    = 1LLU  << 55,
     ContentIsSVG                                 = 1LLU  << 56,
     // Unused                                    = 1LLU  << 57,
     // Unused                                    = 1LLU  << 58,
@@ -105,8 +105,7 @@ enum class AvoidanceReason : uint64_t {
 };
 
 bool canUseForLineLayout(const RenderBlockFlow&);
-bool canUseForLineLayoutAfterStyleChange(const RenderBlockFlow&, StyleDifference);
-bool canUseForLineLayoutAfterInlineBoxStyleChange(const RenderInline&, StyleDifference);
+bool canUseForLineLayoutAfterBlockStyleChange(const RenderBlockFlow&, StyleDifference);
 bool canUseForPreferredWidthComputation(const RenderBlockFlow&);
 enum class TypeOfChangeForInvalidation : uint8_t {
     NodeInsertion,

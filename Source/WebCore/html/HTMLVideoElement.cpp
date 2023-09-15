@@ -294,7 +294,7 @@ RefPtr<ImageBuffer> HTMLVideoElement::createBufferForPainting(const FloatSize& s
     if (document().settings().displayListDrawingEnabled())
         bufferOptions.add(ImageBufferOptions::UseDisplayList);
 
-    return ImageBuffer::create(size, RenderingPurpose::MediaPainting, 1, colorSpace, pixelFormat, bufferOptions, { hostWindow });
+    return ImageBuffer::create(size, RenderingPurpose::MediaPainting, 1, colorSpace, pixelFormat, bufferOptions, hostWindow);
 }
 
 void HTMLVideoElement::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& destRect)

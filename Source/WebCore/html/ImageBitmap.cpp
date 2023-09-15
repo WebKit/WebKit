@@ -30,6 +30,7 @@
 #include "Blob.h"
 #include "CSSStyleImageValue.h"
 #include "CachedImage.h"
+#include "EventLoop.h"
 #include "ExceptionCode.h"
 #include "ExceptionOr.h"
 #include "FileReaderLoader.h"
@@ -48,8 +49,8 @@
 #include "LayoutSize.h"
 #include "LocalFrameView.h"
 #include "RenderElement.h"
+#include "SVGImageElement.h"
 #include "SharedBuffer.h"
-#include "SuspendableTimer.h"
 #include "WebCodecsVideoFrame.h"
 #include "WorkerClient.h"
 #include "WorkerGlobalScope.h"
@@ -95,17 +96,7 @@ RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scrip
     }
 
     auto bufferOptions = bufferOptionsForRendingMode(renderingMode);
-
-    GraphicsClient* client = nullptr;
-    if (scriptExecutionContext.isDocument()) {
-        auto& document = downcast<Document>(scriptExecutionContext);
-        if (document.view() && document.view()->root()) {
-            client = document.view()->root()->hostWindow();
-        }
-    } else if (scriptExecutionContext.isWorkerGlobalScope())
-        client = downcast<WorkerGlobalScope>(scriptExecutionContext).workerClient();
-
-    return ImageBuffer::create(size, RenderingPurpose::Canvas, resolutionScale, *imageBufferColorSpace, PixelFormat::BGRA8, bufferOptions, { client });
+    return ImageBuffer::create(size, RenderingPurpose::Canvas, resolutionScale, *imageBufferColorSpace, PixelFormat::BGRA8, bufferOptions, scriptExecutionContext.graphicsClient());
 }
 
 void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, ImageBitmapOptions&& options, ImageBitmapCompletionHandler&& completionHandler)
@@ -334,8 +325,25 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     // 2. If image is not completely available, then return a promise rejected with
     // an "InvalidStateError" DOMException and abort these steps.
 
-    auto* cachedImage = imageElement->cachedImage();
-    if (!cachedImage || !imageElement->complete()) {
+    if (!imageElement->complete()) {
+        completionHandler(Exception { InvalidStateError, "Cannot create ImageBitmap that is not completely available"_s });
+        return;
+    }
+
+    createCompletionHandler(scriptExecutionContext, imageElement->cachedImage(), imageElement->renderer(), WTFMove(options), rect, WTFMove(completionHandler));
+}
+
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, RefPtr<SVGImageElement>& imageElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
+{
+    createCompletionHandler(scriptExecutionContext, imageElement->cachedImage(), imageElement->renderer(), WTFMove(options), rect, WTFMove(completionHandler));
+}
+
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, CachedImage* cachedImage, RenderElement* renderer, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmapCompletionHandler&& completionHandler)
+{
+    // 2. If image is not completely available, then return a promise rejected with
+    // an "InvalidStateError" DOMException and abort these steps.
+
+    if (!cachedImage) {
         completionHandler(Exception { InvalidStateError, "Cannot create ImageBitmap that is not completely available"_s });
         return;
     }
@@ -345,7 +353,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     //    resizeHeight options are not specified, then return a promise rejected with
     //    an "InvalidStateError" DOMException and abort these steps.
 
-    auto imageSize = cachedImage->imageSizeForRenderer(imageElement->renderer(), 1.0f);
+    auto imageSize = cachedImage->imageSizeForRenderer(renderer, 1.0f);
     if ((!imageSize.width() || !imageSize.height()) && (!options.resizeWidth || !options.resizeHeight)) {
         completionHandler(Exception { InvalidStateError, "Cannot create ImageBitmap from a source with no intrinsic size without providing resize dimensions"_s });
         return;
@@ -387,7 +395,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
         return;
     }
 
-    auto imageForRenderer = cachedImage->imageForRenderer(imageElement->renderer());
+    auto imageForRenderer = cachedImage->imageForRenderer(renderer);
     if (!imageForRenderer) {
         completionHandler(Exception { InvalidStateError, "Cannot create ImageBitmap from image that can't be rendered"_s });
         return;
@@ -735,9 +743,7 @@ private:
         , m_options(WTFMove(options))
         , m_rect(WTFMove(rect))
         , m_completionHandler(WTFMove(completionHandler))
-        , m_createImageBitmapTimer(&scriptExecutionContext, *this, &PendingImageBitmap::createImageBitmapAndCallCompletionHandler)
     {
-        m_createImageBitmapTimer.suspendIfNeeded();
     }
 
     void start(ScriptExecutionContext& scriptExecutionContext)
@@ -779,9 +785,11 @@ private:
 
     void createImageBitmapAndCallCompletionHandlerSoon(RefPtr<ArrayBuffer>&& arrayBuffer)
     {
-        ASSERT(!m_createImageBitmapTimer.isActive());
         m_arrayBufferToProcess = WTFMove(arrayBuffer);
-        m_createImageBitmapTimer.startOneShot(0_s);
+        scriptExecutionContext()->eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakThis = WeakPtr { *this }] {
+            if (weakThis)
+                weakThis->createImageBitmapAndCallCompletionHandler();
+        });
     }
 
     void createImageBitmapAndCallCompletionHandler()
@@ -803,7 +811,6 @@ private:
     ImageBitmapOptions m_options;
     std::optional<IntRect> m_rect;
     ImageBitmap::ImageBitmapCompletionHandler m_completionHandler;
-    SuspendableTimer m_createImageBitmapTimer;
     RefPtr<ArrayBuffer> m_arrayBufferToProcess;
 };
 
@@ -888,7 +895,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     // If no cropping, resizing, flipping, etc. are needed, then simply use the
     // resulting ImageBuffer directly.
     auto alphaPremultiplication = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha);
-    if (sourceRectangle.returnValue().location().isZero() && sourceRectangle.returnValue().size() == imageData->size() && sourceRectangle.returnValue().size() == outputSize && options.orientation == ImageBitmapOptions::Orientation::None) {
+    if (sourceRectangle.returnValue().location().isZero() && sourceRectangle.returnValue().size() == imageData->size() && sourceRectangle.returnValue().size() == outputSize && options.orientation != ImageBitmapOptions::Orientation::FlipY) {
         bitmapData->putPixelBuffer(imageData->pixelBuffer(), sourceRectangle.releaseReturnValue(), { }, alphaPremultiplication);
 
         OptionSet<SerializationState> serializationState = SerializationState::OriginClean;

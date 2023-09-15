@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: WebSocket connection failed: The page at https://localhost:8443/websocket/tests/hybi/resources/non-document-mixed-content-blocked-embedded-http.https.html was blocked from connecting insecurely to ws://127.0.0.1:8880/websocket/tests/hybi/simple either because the protocol is insecure or the page is embedded from an insecure page.
-
-Test topFrame http with embedded https with embedded http blocks worker connecting to insecure webSocket.
-
-

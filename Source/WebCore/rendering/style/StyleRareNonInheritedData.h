@@ -35,6 +35,7 @@
 #include "PathOperation.h"
 #include "RotateTransformOperation.h"
 #include "ScaleTransformOperation.h"
+#include "ScopedName.h"
 #include "ScrollTypes.h"
 #include "ScrollbarGutter.h"
 #include "ShapeValue.h"
@@ -130,7 +131,7 @@ public:
     
     RefPtr<StyleReflection> boxReflect;
 
-    NinePieceImage maskBoxImage;
+    NinePieceImage maskBorder;
 
     LengthSize pageSize;
 
@@ -152,7 +153,7 @@ public:
     RefPtr<TranslateTransformOperation> translate;
     RefPtr<PathOperation> offsetPath;
 
-    Vector<AtomString> containerNames;
+    Vector<Style::ScopedName> containerNames;
 
     GapLength columnGap;
     GapLength rowGap;

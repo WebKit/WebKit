@@ -55,14 +55,14 @@ UIGamepadProvider::UIGamepadProvider()
 
 UIGamepadProvider::~UIGamepadProvider()
 {
-    if (!m_processPoolsUsingGamepads.isEmpty())
+    if (!m_processPoolsUsingGamepads.isEmptyIgnoringNullReferences())
         GamepadProvider::singleton().stopMonitoringGamepads(*this);
 }
 
 void UIGamepadProvider::gamepadSyncTimerFired()
 {
-    auto webPageProxy = platformWebPageProxyForGamepadInput();
-    if (!webPageProxy || !m_processPoolsUsingGamepads.contains(&webPageProxy->process().processPool()))
+    RefPtr webPageProxy = platformWebPageProxyForGamepadInput();
+    if (!webPageProxy || !m_processPoolsUsingGamepads.contains(webPageProxy->process().processPool()))
         return;
 
     webPageProxy->gamepadActivity(snapshotGamepads(), m_shouldMakeGamepadsVisibleOnSync ? EventMakesGamepadsVisible::Yes : EventMakesGamepadsVisible::No);
@@ -74,7 +74,7 @@ void UIGamepadProvider::scheduleGamepadStateSync()
     if (!m_isMonitoringGamepads || m_gamepadSyncTimer.isActive())
         return;
 
-    if (m_gamepads.isEmpty() || m_processPoolsUsingGamepads.isEmpty()) {
+    if (m_gamepads.isEmpty() || m_processPoolsUsingGamepads.isEmptyIgnoringNullReferences()) {
         m_gamepadSyncTimer.stop();
         return;
     }
@@ -95,7 +95,7 @@ void UIGamepadProvider::platformGamepadConnected(PlatformGamepad& gamepad, Event
     scheduleGamepadStateSync();
 
     for (auto& pool : m_processPoolsUsingGamepads)
-        pool->gamepadConnected(*m_gamepads[gamepad.index()], eventVisibility);
+        pool.gamepadConnected(*m_gamepads[gamepad.index()], eventVisibility);
 }
 
 void UIGamepadProvider::platformGamepadDisconnected(PlatformGamepad& gamepad)
@@ -108,7 +108,7 @@ void UIGamepadProvider::platformGamepadDisconnected(PlatformGamepad& gamepad)
     scheduleGamepadStateSync();
 
     for (auto& pool : m_processPoolsUsingGamepads)
-        pool->gamepadDisconnected(*disconnectedGamepad);
+        pool.gamepadDisconnected(*disconnectedGamepad);
 }
 
 void UIGamepadProvider::platformGamepadInputActivity(EventMakesGamepadsVisible eventVisibility)
@@ -131,8 +131,8 @@ void UIGamepadProvider::platformGamepadInputActivity(EventMakesGamepadsVisible e
 
 void UIGamepadProvider::processPoolStartedUsingGamepads(WebProcessPool& pool)
 {
-    ASSERT(!m_processPoolsUsingGamepads.contains(&pool));
-    m_processPoolsUsingGamepads.add(&pool);
+    ASSERT(!m_processPoolsUsingGamepads.contains(pool));
+    m_processPoolsUsingGamepads.add(pool);
 
     if (!m_isMonitoringGamepads && platformWebPageProxyForGamepadInput())
         startMonitoringGamepads();
@@ -140,8 +140,8 @@ void UIGamepadProvider::processPoolStartedUsingGamepads(WebProcessPool& pool)
 
 void UIGamepadProvider::processPoolStoppedUsingGamepads(WebProcessPool& pool)
 {
-    ASSERT(m_processPoolsUsingGamepads.contains(&pool));
-    m_processPoolsUsingGamepads.remove(&pool);
+    ASSERT(m_processPoolsUsingGamepads.contains(pool));
+    m_processPoolsUsingGamepads.remove(pool);
 
     if (m_isMonitoringGamepads && !platformWebPageProxyForGamepadInput())
         platformStopMonitoringInput();
@@ -149,7 +149,7 @@ void UIGamepadProvider::processPoolStoppedUsingGamepads(WebProcessPool& pool)
 
 void UIGamepadProvider::viewBecameActive(WebPageProxy& page)
 {
-    if (!m_processPoolsUsingGamepads.contains(&page.process().processPool()))
+    if (!m_processPoolsUsingGamepads.contains(page.process().processPool()))
         return;
 
     if (!m_isMonitoringGamepads)
@@ -161,7 +161,7 @@ void UIGamepadProvider::viewBecameActive(WebPageProxy& page)
 
 void UIGamepadProvider::viewBecameInactive(WebPageProxy& page)
 {
-    auto pageForGamepadInput = platformWebPageProxyForGamepadInput();
+    RefPtr pageForGamepadInput = platformWebPageProxyForGamepadInput();
     if (pageForGamepadInput == &page)
         platformStopMonitoringInput();
 }
@@ -172,7 +172,7 @@ void UIGamepadProvider::startMonitoringGamepads()
         return;
 
     m_isMonitoringGamepads = true;
-    ASSERT(!m_processPoolsUsingGamepads.isEmpty());
+    ASSERT(!m_processPoolsUsingGamepads.isEmptyIgnoringNullReferences());
     GamepadProvider::singleton().startMonitoringGamepads(*this);
 }
 
@@ -183,7 +183,7 @@ void UIGamepadProvider::stopMonitoringGamepads()
 
     m_isMonitoringGamepads = false;
 
-    ASSERT(m_processPoolsUsingGamepads.isEmpty());
+    ASSERT(m_processPoolsUsingGamepads.isEmptyIgnoringNullReferences());
     GamepadProvider::singleton().stopMonitoringGamepads(*this);
 
     m_gamepads.clear();

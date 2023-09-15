@@ -1,0 +1,6 @@
+Tests the #comp_label portions of the AccName Name Computation algorithm.
+
+x
+
+PASS label valid on group
+

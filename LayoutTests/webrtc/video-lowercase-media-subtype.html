@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Lowercase media subtype name in SDP</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video1" playsinline autoplay=""></video>
+        <video id="video2" playsinline autoplay=""></video>
+        <script>
+promise_test(async (test) => {
+    const localStream = await navigator.mediaDevices.getUserMedia({video:true });
+
+    const pc1 = new RTCPeerConnection();
+    const pc2 = new RTCPeerConnection();
+
+    pc2.addTrack(localStream.getVideoTracks()[0], localStream);
+    pc1.addTransceiver("video", {direction:"recvonly"});
+
+    const codecs = RTCRtpSender.getCapabilities("video").codecs;
+    const h264Codec = codecs.filter(codec => { return codec.mimeType === "video/H264"; })[0];
+    pc1.getTransceivers().forEach((transceiver) => { transceiver.setCodecPreferences([h264Codec]); });
+
+    pc1.onicecandidate = (e) => pc2.addIceCandidate(e.candidate);
+    pc2.onicecandidate = (e) => pc1.addIceCandidate(e.candidate);
+
+    await pc1.setLocalDescription();
+    let desc = pc1.localDescription;
+
+    const regex = /H264/i;
+    desc.sdp = desc.sdp.replace(regex, "h264");
+    await pc2.setRemoteDescription(desc);
+
+    const answer = await pc2.createAnswer();
+    await pc1.setRemoteDescription(answer);
+
+    answer.sdp = answer.sdp.replace(regex, "h264");
+    await pc2.setLocalDescription(answer);
+
+    video1.srcObject = new MediaStream([pc1.getReceivers()[0].track]);
+    await video1.play();
+}, "Video exchange with lower case h264 on encoding side");
+
+promise_test(async (test) => {
+    const localStream = await navigator.mediaDevices.getUserMedia({video:true });
+
+    const pc1 = new RTCPeerConnection();
+    const pc2 = new RTCPeerConnection();
+
+    pc1.addTrack(localStream.getVideoTracks()[0], localStream);
+    const remoteStreamPromise = new Promise((resolve, reject) => {
+        pc2.ontrack = (e) => resolve(e.streams[0]);
+        setTimeout(() => reject("no remote track"), 5000);
+    });
+
+    const codecs = RTCRtpSender.getCapabilities("video").codecs;
+    const h264Codec = codecs.filter(codec => { return codec.mimeType === "video/H264"; })[0];
+    pc1.getTransceivers().forEach((transceiver) => { transceiver.setCodecPreferences([h264Codec]); });
+
+    pc1.onicecandidate = (e) => pc2.addIceCandidate(e.candidate);
+    pc2.onicecandidate = (e) => pc1.addIceCandidate(e.candidate);
+
+    await pc1.setLocalDescription();
+    let desc = pc1.localDescription;
+
+    const regex = /H264/i;
+    desc.sdp = desc.sdp.replace(regex, "h264");
+    await pc2.setRemoteDescription(desc);
+
+    const answer = await pc2.createAnswer();
+    await pc1.setRemoteDescription(answer);
+
+    answer.sdp = answer.sdp.replace(regex, "h264");
+    await pc2.setLocalDescription(answer);
+
+    video2.srcObject = await remoteStreamPromise;
+    await video2.play();
+}, "Video exchange with lower case h264 on decoding side");
+        </script>
+    </body>
+</html>

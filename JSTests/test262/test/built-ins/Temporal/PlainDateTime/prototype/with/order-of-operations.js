@@ -12,22 +12,22 @@ const expected = [
   // RejectObjectWithCalendarOrTimeZone
   "get fields.calendar",
   "get fields.timeZone",
+  // CopyDataProperties
+  "ownKeys options",
+  "getOwnPropertyDescriptor options.overflow",
+  "get options.overflow",
+  "getOwnPropertyDescriptor options.extra",
+  "get options.extra",
   // CalendarFields
   "get this.calendar.fields",
   "call this.calendar.fields",
   // PrepareTemporalFields on receiver
   "get this.calendar.day",
   "call this.calendar.day",
-  "get this.hour",
-  "get this.microsecond",
-  "get this.millisecond",
-  "get this.minute",
   "get this.calendar.month",
   "call this.calendar.month",
   "get this.calendar.monthCode",
   "call this.calendar.monthCode",
-  "get this.nanosecond",
-  "get this.second",
   "get this.calendar.year",
   "call this.calendar.year",
   // PrepareTemporalFields on argument
@@ -65,15 +65,10 @@ const expected = [
   "get this.calendar.mergeFields",
   "call this.calendar.mergeFields",
   // InterpretTemporalDateTimeFields
-  "get options.overflow",
   "get options.overflow.toString",
   "call options.overflow.toString",
   "get this.calendar.dateFromFields",
   "call this.calendar.dateFromFields",
-  // inside Calendar.p.dateFromFields
-  "get options.overflow",
-  "get options.overflow.toString",
-  "call options.overflow.toString",
 ];
 const actual = [];
 
@@ -102,7 +97,10 @@ const fields = TemporalHelpers.propertyBagObserver(actual, {
   nanosecond: 1.7,
 }, "fields");
 
-const options = TemporalHelpers.propertyBagObserver(actual, { overflow: "constrain" }, "options");
+const options = TemporalHelpers.propertyBagObserver(actual, {
+  overflow: "constrain",
+  extra: "property",
+}, "options");
 
 instance.with(fields, options);
 assert.compareArray(actual, expected, "order of operations");

@@ -17,7 +17,10 @@ sys.stdout.write(
     '<html>\r\n'
     '<head><meta name=\'referrer\' content=\'{}\'></head>\r\n'
     '<body>\r\n'
-    '<iframe src=\'postReferrer.py\'></iframe>\r\n'
+    '<script>\r\n'
+    'onmessage = (msg) => top.postMessage(msg.data, "*");\r\n'
+    'window.open("postReferrer.py", "innerPopup", "popup");\r\n'
+    '</script>\r\n'
     '</body>\r\n'
     '</html>\r\n'.format(http_value, meta_value)
 )

@@ -266,7 +266,7 @@ void EncoderOvershootDetector::UpdateHistograms() {
       RTC_HISTOGRAMS_COUNTS_10000(index, overshoot_histogram_prefix + "H264",
                                   average_overshoot_percent);
       break;
-#ifndef DISABLE_H265
+#ifdef WEBRTC_USE_H265
     case VideoCodecType::kVideoCodecH265:
       RTC_HISTOGRAMS_COUNTS_10000(index, rmse_histogram_prefix + "H265",
                                   bitrate_rmse);

@@ -150,6 +150,8 @@ public:
     // Note that output is undefined when all points are colinear.
     bool isCounterclockwise() const;
 
+    friend bool operator==(const FloatQuad&, const FloatQuad&) = default;
+
 private:
     FloatPoint m_p1;
     FloatPoint m_p2;
@@ -167,11 +169,6 @@ inline FloatQuad& operator-=(FloatQuad& a, const FloatSize& b)
 {
     a.move(-b.width(), -b.height());
     return a;
-}
-
-inline bool operator==(const FloatQuad& a, const FloatQuad& b)
-{
-    return a.p1() == b.p1() && a.p2() == b.p2() && a.p3() == b.p3() && a.p4() == b.p4();
 }
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FloatQuad&);

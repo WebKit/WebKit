@@ -95,6 +95,8 @@ public:
         void shrink(float topWidth, float bottomWidth, float leftWidth, float rightWidth) { expand(-topWidth, -bottomWidth, -leftWidth, -rightWidth); }
         void shrink(float size) { shrink(size, size, size, size); }
 
+        friend bool operator==(const Radii&, const Radii&) = default;
+
     private:
         FloatSize m_topLeft;
         FloatSize m_topRight;
@@ -145,20 +147,12 @@ public:
 
     bool intersectionIsRectangular(const FloatRect&) const;
 
+    friend bool operator==(const FloatRoundedRect&, const FloatRoundedRect&) = default;
+
 private:
     FloatRect m_rect;
     Radii m_radii;
 };
-
-inline bool operator==(const FloatRoundedRect::Radii& a, const FloatRoundedRect::Radii& b)
-{
-    return a.topLeft() == b.topLeft() && a.topRight() == b.topRight() && a.bottomLeft() == b.bottomLeft() && a.bottomRight() == b.bottomRight();
-}
-
-inline bool operator==(const FloatRoundedRect& a, const FloatRoundedRect& b)
-{
-    return a.rect() == b.rect() && a.radii() == b.radii();
-}
 
 inline float calcBorderRadiiConstraintScaleFor(const FloatRect& rect, const FloatRoundedRect::Radii& radii)
 {

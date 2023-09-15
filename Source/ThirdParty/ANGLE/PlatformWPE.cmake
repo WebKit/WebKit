@@ -1,6 +1,11 @@
 list(APPEND ANGLE_DEFINITIONS ANGLE_PLATFORM_LINUX EGL_NO_PLATFORM_SPECIFIC_TYPES)
 include(linux.cmake)
 
+if (USE_OPENGL)
+    # Enable GLSL compiler output.
+    list(APPEND ANGLE_DEFINITIONS ANGLE_ENABLE_GLSL)
+endif ()
+
 if (USE_ANGLE_EGL OR ENABLE_WEBGL)
     list(APPEND ANGLE_SOURCES
         ${gl_backend_sources}

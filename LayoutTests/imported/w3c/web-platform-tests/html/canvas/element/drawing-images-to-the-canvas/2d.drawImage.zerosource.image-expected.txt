@@ -4,6 +4,5 @@ Actual output:
 Expected output:
 
 
-
 PASS drawImage with zero-sized source rectangle from image draws nothing without exception
 

@@ -27,6 +27,7 @@
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
 #include "ThreadableLoaderClient.h"
+#include "Timer.h"
 #include "URLKeepingBlobAlive.h"
 #include "UserGestureIndicator.h"
 #include <wtf/URL.h>
@@ -254,7 +255,7 @@ private:
 
     std::optional<ExceptionCode> m_exceptionCode;
     RefPtr<UserGestureToken> m_userGestureToken;
-    std::atomic<bool> m_hasRelevantEventListener;
+    bool m_hasRelevantEventListener { false };
     TaskCancellationGroup m_abortErrorGroup;
     bool m_wasDidSendDataCalledForTotalBytes { false };
 };

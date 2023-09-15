@@ -82,7 +82,7 @@ private:
         return makeUnique<MediaPlayerPrivateGStreamerMSE>(player);
     }
 
-    void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types) const final
+    void getSupportedTypes(HashSet<String>& types) const final
     {
         return MediaPlayerPrivateGStreamerMSE::getSupportedTypes(types);
     }
@@ -158,13 +158,13 @@ MediaTime MediaPlayerPrivateGStreamerMSE::durationMediaTime() const
     return m_mediaTimeDuration;
 }
 
-void MediaPlayerPrivateGStreamerMSE::seek(const MediaTime& time)
+void MediaPlayerPrivateGStreamerMSE::seekToTarget(const SeekTarget& target)
 {
-    GST_DEBUG_OBJECT(pipeline(), "Requested seek to %s", time.toString().utf8().data());
-    doSeek(time, m_playbackRate);
+    GST_DEBUG_OBJECT(pipeline(), "Requested seek to %s", target.time.toString().utf8().data());
+    doSeek(target, m_playbackRate);
 }
 
-bool MediaPlayerPrivateGStreamerMSE::doSeek(const MediaTime& position, float rate)
+bool MediaPlayerPrivateGStreamerMSE::doSeek(const SeekTarget& target, float rate)
 {
     // This method should only be called outside of MediaPlayerPrivateGStreamerMSE by MediaPlayerPrivateGStreamer::setRate().
 
@@ -178,7 +178,7 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const MediaTime& position, float rat
     if (rate <= 0)
         rate = 1.0;
 
-    m_seekTime = position;
+    m_seekTarget = target;
     m_isSeeking = true;
     m_isWaitingForPreroll = true;
     m_isEndReached = false;
@@ -186,11 +186,17 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const MediaTime& position, float rat
     // Important: In order to ensure correct propagation whether pre-roll has happened or not, we send the seek directly
     // to the source element, rather than letting playbin do the routing.
     gst_element_seek(m_source.get(), rate, GST_FORMAT_TIME, m_seekFlags,
-        GST_SEEK_TYPE_SET, toGstClockTime(m_seekTime), GST_SEEK_TYPE_NONE, 0);
+        GST_SEEK_TYPE_SET, toGstClockTime(target.time), GST_SEEK_TYPE_NONE, 0);
     invalidateCachedPosition();
 
     // Notify MediaSource and have new frames enqueued (when they're available).
-    m_mediaSource->seekToTime(m_seekTime);
+    // Seek should only continue once the seekToTarget completionhandler has run.
+    // This will also add support for fastSeek once done (see webkit.org/b/260607)
+    m_mediaSource->waitForTarget(target, [this, weakThis = WeakPtr { this }](const MediaTime& time) {
+        if (!weakThis)
+            return;
+        m_mediaSource->seekToTime(time, [] { });
+    });
     return true;
 }
 
@@ -268,8 +274,7 @@ void MediaPlayerPrivateGStreamerMSE::asyncStateChangeDone()
         m_isSeeking = false;
         GST_DEBUG("Seek complete because of preroll. currentMediaTime = %s", currentMediaTime().toString().utf8().data());
         // By calling timeChanged(), m_isSeeking will be checked an a "seeked" event will be emitted.
-        if (auto player = m_player.get())
-            player->timeChanged();
+        timeChanged(currentMediaTime());
     }
 
     propagateReadyStateToPlayer();
@@ -351,7 +356,7 @@ void MediaPlayerPrivateGStreamerMSE::startSource(const Vector<RefPtr<MediaSource
     webKitMediaSrcEmitStreams(WEBKIT_MEDIA_SRC(m_source.get()), tracks);
 }
 
-void MediaPlayerPrivateGStreamerMSE::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
+void MediaPlayerPrivateGStreamerMSE::getSupportedTypes(HashSet<String>& types)
 {
     GStreamerRegistryScannerMSE::getSupportedDecodingTypes(types);
 }

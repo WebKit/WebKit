@@ -10,7 +10,7 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_SHAREGROUPVK_H_
 #define LIBANGLE_RENDERER_VULKAN_SHAREGROUPVK_H_
 
-#include "libANGLE/renderer/DisplayImpl.h"
+#include "libANGLE/renderer/ShareGroupImpl.h"
 #include "libANGLE/renderer/vulkan/ResourceVk.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
@@ -21,7 +21,6 @@ namespace rx
 constexpr VkDeviceSize kMaxTotalEmptyBufferBytes = 16 * 1024 * 1024;
 
 class RendererVk;
-using ContextVkSet = std::set<ContextVk *>;
 
 class TextureUpload
 {
@@ -71,23 +70,25 @@ class UpdateDescriptorSetsBuilder final : angle::NonCopyable
 class ShareGroupVk : public ShareGroupImpl
 {
   public:
-    ShareGroupVk();
+    ShareGroupVk(const egl::ShareGroupState &state);
     void onDestroy(const egl::Display *display) override;
 
+    void onContextAdd() override;
+
     FramebufferCache &getFramebufferCache() { return mFramebufferCache; }
+
+    bool hasAnyContextWithRobustness() const { return mState.hasAnyContextWithRobustness(); }
 
     // PipelineLayoutCache and DescriptorSetLayoutCache can be shared between multiple threads
     // accessing them via shared contexts. The ShareGroup locks around gl entrypoints ensuring
     // synchronous update to the caches.
     PipelineLayoutCache &getPipelineLayoutCache() { return mPipelineLayoutCache; }
     DescriptorSetLayoutCache &getDescriptorSetLayoutCache() { return mDescriptorSetLayoutCache; }
-    const ContextVkSet &getContexts() const { return mContexts; }
-    vk::MetaDescriptorPool &getMetaDescriptorPool(DescriptorSetIndex descriptorSetIndex)
+    const egl::ContextMap &getContexts() const { return mState.getContexts(); }
+    vk::DescriptorSetArray<vk::MetaDescriptorPool> &getMetaDescriptorPools()
     {
-        return mMetaDescriptorPools[descriptorSetIndex];
+        return mMetaDescriptorPools;
     }
-
-    size_t getContextCount() const { return mContexts.size(); }
 
     // Used to flush the mutable textures more often.
     angle::Result onMutableTextureUpload(ContextVk *contextVk, TextureVk *newTexture);
@@ -101,9 +102,6 @@ class ShareGroupVk : public ShareGroupImpl
 
     void calculateTotalBufferCount(size_t *bufferCount, VkDeviceSize *totalSize) const;
     void logBufferPools() const;
-
-    void addContext(ContextVk *contextVk);
-    void removeContext(ContextVk *contextVk);
 
     // Temporary workaround until VkSemaphore(s) will be used between different priorities.
     angle::Result unifyContextsPriority(ContextVk *newContextVk);
@@ -139,26 +137,31 @@ class ShareGroupVk : public ShareGroupImpl
     // Descriptor set caches
     vk::DescriptorSetArray<vk::MetaDescriptorPool> mMetaDescriptorPools;
 
-    // The list of contexts within the share group
-    ContextVkSet mContexts;
-
-    // Priority of all Contexts in the mContexts
+    // Priority of all Contexts in the context set
     egl::ContextPriority mContextsPriority;
     bool mIsContextsPriorityLocked;
 
     // Storage for vkUpdateDescriptorSets
     UpdateDescriptorSetsBuilder mUpdateDescriptorSetsBuilder;
 
-    // The per shared group buffer pools that all buffers should sub-allocate from.
-    enum class SuballocationAlgorithm : uint8_t
-    {
+// The per shared group buffer pools that all buffers should sub-allocate from.
+#if ANGLE_VMA_VERSION < 3000000
+    enum class SuballocationAlgorithm : uint8_t{
         Buddy       = 0,
         General     = 1,
         InvalidEnum = 2,
         EnumCount   = InvalidEnum,
     };
-    angle::PackedEnumMap<SuballocationAlgorithm, vk::BufferPoolPointerArray> mDefaultBufferPools;
     angle::PackedEnumMap<BufferUsageType, size_t> mSizeLimitForBuddyAlgorithm;
+#else
+    enum class SuballocationAlgorithm : uint8_t
+    {
+        General     = 0,
+        InvalidEnum = 1,
+        EnumCount   = InvalidEnum,
+    };
+#endif
+    angle::PackedEnumMap<SuballocationAlgorithm, vk::BufferPoolPointerArray> mDefaultBufferPools;
 
     // The system time when last pruneEmptyBuffer gets called.
     double mLastPruneTime;
@@ -171,10 +174,6 @@ class ShareGroupVk : public ShareGroupImpl
 
     // Texture update manager used to flush uploaded mutable textures.
     TextureUpload mTextureUpload;
-
-    // If true, it is expected that a BufferBlock may still in used by textures that outlived
-    // ShareGroup. The non-empty BufferBlock will be put into RendererVk's orphan list instead.
-    bool mOrphanNonEmptyBufferBlock;
 };
 }  // namespace rx
 

@@ -25,6 +25,7 @@
 #include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
 #include "Element.h"
+#include "LoaderMalloc.h"
 #include "Timer.h"
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
@@ -44,7 +45,7 @@ enum class RelevantMutation : bool { No, Yes };
 enum class LazyImageLoadState : uint8_t { None, Deferred, LoadImmediately, FullImage };
 
 class ImageLoader : public CachedImageClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:
     virtual ~ImageLoader();
 
@@ -93,7 +94,6 @@ private:
     void resetLazyImageLoading(Document&);
 
     virtual void dispatchLoadEvent() = 0;
-    virtual String sourceURI(const AtomString&) const = 0;
 
     void updatedHasPendingEvent();
     void didUpdateCachedImage(RelevantMutation, CachedResourceHandle<CachedImage>&&);

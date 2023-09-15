@@ -115,7 +115,7 @@ bool InjectedBundle::decodeBundleParameters(API::Data* bundleParameterDataPtr)
     return true;
 }
 
-bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, API::Object* initializationUserData)
+bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, RefPtr<API::Object>&& initializationUserData)
 {
     if (auto sandboxExtension = std::exchange(m_sandboxExtension, nullptr)) {
         if (!sandboxExtension->consumePermanently()) {
@@ -160,7 +160,7 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
 
     // Update list of valid classes for the parameter coder
     if (additionalClassesForParameterCoderFunction)
-        additionalClassesForParameterCoderFunction(toAPI(this), toAPI(initializationUserData));
+        additionalClassesForParameterCoderFunction(toAPI(this), toAPI(initializationUserData.get()));
 
 #if PLATFORM(MAC)
     // Swizzle [NSEvent modiferFlags], since it always returns 0 when the WindowServer is blocked.
@@ -172,7 +172,7 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
     if (initializeFunction) {
         if (!decodeBundleParameters(parameters.bundleParameterData.get()))
             return false;
-        initializeFunction(toAPI(this), toAPI(initializationUserData));
+        initializeFunction(toAPI(this), toAPI(initializationUserData.get()));
         return true;
     }
 
@@ -206,7 +206,7 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
     if ([instance respondsToSelector:@selector(webProcessPlugIn:initializeWithObject:)]) {
         RetainPtr<id> objCInitializationUserData;
         if (initializationUserData && initializationUserData->type() == API::Object::Type::ObjCObjectGraph)
-            objCInitializationUserData = static_cast<ObjCObjectGraph*>(initializationUserData)->rootObject();
+            objCInitializationUserData = static_cast<ObjCObjectGraph*>(initializationUserData.get())->rootObject();
         [instance webProcessPlugIn:plugInController initializeWithObject:objCInitializationUserData.get()];
     }
 

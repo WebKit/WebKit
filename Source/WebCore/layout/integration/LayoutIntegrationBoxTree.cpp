@@ -193,8 +193,12 @@ UniqueRef<Layout::Box> BoxTree::createLayoutBox(RenderObject& renderer)
             ? (isCombinedText ? textRenderer.originalText() : textRenderer.text())
             : RenderBlock::updateSecurityDiscCharacters(style, isCombinedText ? textRenderer.originalText() : textRenderer.text());
         auto canUseSimpleFontCodePath = textRenderer.canUseSimpleFontCodePath();
-        auto canUseSimplifiedTextMeasuring = canUseSimpleFontCodePath && Layout::TextUtil::canUseSimplifiedTextMeasuring(text, style, firstLineStyle.get());
-        return makeUniqueRef<Layout::InlineTextBox>(text, isCombinedText, canUseSimplifiedTextMeasuring, canUseSimpleFontCodePath, WTFMove(style), WTFMove(firstLineStyle));
+        auto canUseSimplifiedTextMeasuring = textRenderer.canUseSimplifiedTextMeasuring();
+        if (!canUseSimplifiedTextMeasuring) {
+            canUseSimplifiedTextMeasuring = canUseSimpleFontCodePath && Layout::TextUtil::canUseSimplifiedTextMeasuring(text, style, firstLineStyle.get());
+            textRenderer.setCanUseSimplifiedTextMeasuring(*canUseSimplifiedTextMeasuring);
+        }
+        return makeUniqueRef<Layout::InlineTextBox>(text, isCombinedText, *canUseSimplifiedTextMeasuring, canUseSimpleFontCodePath, WTFMove(style), WTFMove(firstLineStyle));
     }
 
     auto& renderElement = downcast<RenderElement>(renderer);

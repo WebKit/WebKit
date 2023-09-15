@@ -193,28 +193,6 @@ angle::Result TransformFeedbackVk::bindIndexedBuffer(
     return angle::Result::Continue;
 }
 
-void TransformFeedbackVk::updateDescriptorSetLayout(
-    ContextVk *contextVk,
-    const ShaderInterfaceVariableInfoMap &variableInfoMap,
-    size_t xfbBufferCount,
-    vk::DescriptorSetLayoutDesc *descSetLayoutOut) const
-{
-    if (!contextVk->getFeatures().emulateTransformFeedback.enabled)
-    {
-        return;
-    }
-
-    for (uint32_t bufferIndex = 0; bufferIndex < xfbBufferCount; ++bufferIndex)
-    {
-        const uint32_t binding = variableInfoMap.getEmulatedXfbBufferBinding(bufferIndex);
-
-        ASSERT(binding != std::numeric_limits<uint32_t>::max());
-
-        descSetLayoutOut->update(binding, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1,
-                                 VK_SHADER_STAGE_VERTEX_BIT, nullptr);
-    }
-}
-
 void TransformFeedbackVk::getBufferOffsets(ContextVk *contextVk,
                                            GLint drawCallFirstVertex,
                                            int32_t *offsetsOut,

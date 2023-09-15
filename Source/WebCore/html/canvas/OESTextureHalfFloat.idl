@@ -27,7 +27,7 @@
 [
     LegacyNoInterfaceObject,
     Conditional=WEBGL,
-    GenerateIsReachable=ImplWebGLRenderingContext,
+    GenerateIsReachable,
 ] interface OESTextureHalfFloat {
     const GLenum HALF_FLOAT_OES = 0x8D61;
 };

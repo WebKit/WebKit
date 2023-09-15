@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<body>
+<script>
+
+let handle;
+let timeout;
+
+function openURL(blobURL)
+{
+    handle = window.open(blobURL, "iframe-blob");
+    if (!handle)
+        window.top.postMessage({ "from": "iframe", "status": "fail", "message": "iframe: WindowProxy handle is null (probably opened blob url with noopener)", "url": blobURL }, "*");
+
+    timeout = setTimeout((blobURL, handle) => {
+        window.top.postMessage({ "from": "iframe", "status": "donefail", "message": "iframe: Could not open blob url, timed out", "url": blobURL }, "*");
+        if (handle) {
+            handle.close();
+            handle = undefined;
+        }
+    }, 1000, blobURL, handle);
+}
+
+window.addEventListener('message', (e) => {
+    if (timeout) {
+        clearTimeout(timeout);
+        timeout = undefined;
+    }
+    if (handle) {
+        handle.close();
+        handle = undefined;
+    }
+
+    if (e.data.from && e.data.from == "blob") {
+        if (e.data.status != "done")
+            window.top.postMessage({ "from": "iframe", "status": "donefail", "message": `iframe: ${e.data.message}` }, '*');
+        else
+            window.top.postMessage({ "from": "iframe", "status": "done", "message": `iframe: open() succeeded. Received message from blob: ${e.data.message}`, "url": e.data.url }, "*");
+    } else
+        window.top.postMessage({ "from": "iframe", "status": "donefail", "message": `iframe: Received unexpected message: ${e.data.message}` }, '*');
+});
+
+if (window.location.search) {
+    let params = new URLSearchParams(document.location.search);
+    let blobURL = decodeURI(params.get("url"));
+
+    fetch(blobURL).then(() => {
+        window.top.postMessage({ "from": "iframe", "status": "pass", "message": `iframe: Fetched Blob`, "url": blobURL }, "*");
+        openURL(blobURL);
+    }).catch((e) => {
+        window.top.postMessage({ "from": "iframe", "status": "fail", "message": `iframe: Fetching blob failed: ${e.message}`, "url": blobURL }, "*");
+        openURL(blobURL);
+    });
+} else {
+    const documentContent = '<script>'
+    + 'const bc = new BroadcastChannel("blob-bc");'
+    + 'const message = { "from": "blob", "status": "done", "message": `successfully navigated, have opener: ${!!window.opener}`, "url": window.location.href };'
+    + 'bc.postMessage(message);'
+    + '</' + 'script>';
+    let blob = new Blob([documentContent], { "type" : "text/html" });
+    window.top.postMessage({ "from": "iframe", "status": "done", "message": "iframe: created blob", "url": URL.createObjectURL(blob) }, "*");;
+}
+
+</script>
+</body>
+</html>

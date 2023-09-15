@@ -1,0 +1,6 @@
+PASS contentWidth is 1280
+PASS contentWidth * scale is 820
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

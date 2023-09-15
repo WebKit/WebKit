@@ -90,7 +90,7 @@ public:
             set(std::min<T>(x1(), interval.x1()), std::max<T>(x2(), interval.x2()));
     }
 
-    bool operator==(const ShapeInterval<T>& other) const { return x1() == other.x1() && x2() == other.x2(); }
+    friend bool operator==(const ShapeInterval<T>&, const ShapeInterval<T>&) = default;
 
 private:
     T m_x1;

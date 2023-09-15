@@ -96,6 +96,7 @@ public:
     static LengthSize convertRadius(BuilderState&, const CSSValue&);
     static LengthPoint convertPosition(BuilderState&, const CSSValue&);
     static LengthPoint convertPositionOrAuto(BuilderState&, const CSSValue&);
+    static LengthPoint convertPositionOrAutoOrNormal(BuilderState&, const CSSValue&);
     static OptionSet<TextDecorationLine> convertTextDecorationLine(BuilderState&, const CSSValue&);
     static OptionSet<TextTransform> convertTextTransform(BuilderState&, const CSSValue&);
     template<typename T> static T convertNumber(BuilderState&, const CSSValue&);
@@ -119,6 +120,7 @@ public:
     static TextAlignMode convertTextAlign(BuilderState&, const CSSValue&);
     static TextAlignLast convertTextAlignLast(BuilderState&, const CSSValue&);
     static RefPtr<PathOperation> convertPathOperation(BuilderState&, const CSSValue&);
+    static RefPtr<PathOperation> convertRayPathOperation(BuilderState&, const CSSValue&);
     static Resize convertResize(BuilderState&, const CSSValue&);
     static int convertMarqueeRepetition(BuilderState&, const CSSValue&);
     static int convertMarqueeSpeed(BuilderState&, const CSSValue&);
@@ -199,7 +201,7 @@ public:
     static OffsetRotation convertOffsetRotate(BuilderState&, const CSSValue&);
 
     static OptionSet<Containment> convertContain(BuilderState&, const CSSValue&);
-    static Vector<AtomString> convertContainerName(BuilderState&, const CSSValue&);
+    static Vector<Style::ScopedName> convertContainerName(BuilderState&, const CSSValue&);
 
     static OptionSet<MarginTrimType> convertMarginTrim(BuilderState&, const CSSValue&);
 
@@ -240,7 +242,7 @@ inline Length BuilderConverter::convertLength(const BuilderState& builderState, 
 
     if (primitiveValue.isLength()) {
         Length length = primitiveValue.computeLength<Length>(conversionData);
-        length.setHasQuirk(primitiveValue.primitiveType() == CSSUnitType::CSS_QUIRKY_EMS);
+        length.setHasQuirk(primitiveValue.primitiveType() == CSSUnitType::CSS_QUIRKY_EM);
         return length;
     }
 
@@ -478,6 +480,15 @@ inline LengthPoint BuilderConverter::convertPosition(BuilderState& builderState,
     return LengthPoint(lengthX, lengthY);
 }
 
+inline LengthPoint BuilderConverter::convertPositionOrAutoOrNormal(BuilderState& builderState, const CSSValue& value)
+{
+    if (value.isPair())
+        return convertPosition(builderState, value);
+    if (value.valueID() == CSSValueNormal)
+        return { { LengthType::Normal }, { LengthType::Normal } };
+    return { };
+}
+
 inline LengthPoint BuilderConverter::convertPositionOrAuto(BuilderState& builderState, const CSSValue& value)
 {
     if (value.isPair())
@@ -706,6 +717,39 @@ inline TextAlignLast BuilderConverter::convertTextAlignLast(BuilderState& builde
     return parentStyle.textAlignLast();
 }
 
+inline RefPtr<PathOperation> BuilderConverter::convertRayPathOperation(BuilderState& builderState, const CSSValue& value)
+{
+    auto& rayValue = downcast<CSSRayValue>(value);
+
+    auto size = RayPathOperation::Size::ClosestCorner;
+    switch (rayValue.size()) {
+    case CSSValueClosestCorner:
+        size = RayPathOperation::Size::ClosestCorner;
+        break;
+    case CSSValueClosestSide:
+        size = RayPathOperation::Size::ClosestSide;
+        break;
+    case CSSValueFarthestCorner:
+        size = RayPathOperation::Size::FarthestCorner;
+        break;
+    case CSSValueFarthestSide:
+        size = RayPathOperation::Size::FarthestSide;
+        break;
+    case CSSValueSides:
+        size = RayPathOperation::Size::Sides;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    auto position = rayValue.position();
+    if (position)
+        return RayPathOperation::create(rayValue.angle()->computeDegrees(), size, rayValue.isContaining(), convertPosition(builderState, *position));
+
+    return RayPathOperation::create(rayValue.angle()->computeDegrees(), size, rayValue.isContaining());
+}
+
 inline RefPtr<PathOperation> BuilderConverter::convertPathOperation(BuilderState& builderState, const CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
@@ -727,41 +771,18 @@ inline RefPtr<PathOperation> BuilderConverter::convertPathOperation(BuilderState
     }
 
     if (is<CSSRayValue>(value)) {
-        auto& rayValue = downcast<CSSRayValue>(value);
-
-        RayPathOperation::Size size = RayPathOperation::Size::ClosestCorner;
-        switch (rayValue.size()) {
-        case CSSValueClosestCorner:
-            size = RayPathOperation::Size::ClosestCorner;
-            break;
-        case CSSValueClosestSide:
-            size = RayPathOperation::Size::ClosestSide;
-            break;
-        case CSSValueFarthestCorner:
-            size = RayPathOperation::Size::FarthestCorner;
-            break;
-        case CSSValueFarthestSide:
-            size = RayPathOperation::Size::FarthestSide;
-            break;
-        case CSSValueSides:
-            size = RayPathOperation::Size::Sides;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            return nullptr;
-        }
-
-        return RayPathOperation::create(rayValue.angle()->computeDegrees(), size, rayValue.isContaining());
+        return convertRayPathOperation(builderState, value);
     }
 
     RefPtr<PathOperation> operation;
     auto referenceBox = CSSBoxType::BoxMissing;
     auto processSingleValue = [&](const CSSValue& singleValue) {
         ASSERT(!is<CSSValueList>(singleValue));
-        if (!singleValue.isValueID()) {
-            operation = ShapePathOperation::create(basicShapeForValue(builderState.cssToLengthConversionData(),
-                singleValue, builderState.style().effectiveZoom()));
-        } else
+        if (is<CSSRayValue>(singleValue))
+            operation = convertRayPathOperation(builderState, singleValue);
+        else if (!singleValue.isValueID())
+            operation = ShapePathOperation::create(basicShapeForValue(builderState.cssToLengthConversionData(), singleValue, builderState.style().effectiveZoom()));
+        else
             referenceBox = fromCSSValue<CSSBoxType>(singleValue);
     };
 
@@ -772,7 +793,7 @@ inline RefPtr<PathOperation> BuilderConverter::convertPathOperation(BuilderState
         processSingleValue(value);
 
     if (operation)
-        downcast<ShapePathOperation>(*operation).setReferenceBox(referenceBox);
+        operation->setReferenceBox(referenceBox);
     else {
         ASSERT(referenceBox != CSSBoxType::BoxMissing);
         operation = BoxPathOperation::create(referenceBox);
@@ -883,6 +904,8 @@ inline RefPtr<StyleReflection> BuilderConverter::convertReflection(BuilderState&
     auto& reflectValue = downcast<CSSReflectValue>(value);
 
     NinePieceImage mask(NinePieceImage::Type::Mask);
+    mask.setFill(true);
+
     builderState.styleMap().mapNinePieceImage(reflectValue.mask(), mask);
 
     auto reflection = StyleReflection::create();
@@ -966,7 +989,7 @@ inline float BuilderConverter::convertTextStrokeWidth(BuilderState& builderState
             result *= 3;
         else if (primitiveValue.valueID() == CSSValueThick)
             result *= 5;
-        auto emsValue = CSSPrimitiveValue::create(result, CSSUnitType::CSS_EMS);
+        auto emsValue = CSSPrimitiveValue::create(result, CSSUnitType::CSS_EM);
         width = convertComputedLength<float>(builderState, emsValue);
         break;
     }
@@ -1906,7 +1929,7 @@ inline OffsetRotation BuilderConverter::convertOffsetRotate(BuilderState&, const
     return OffsetRotation(hasAuto, angleInDegrees);
 }
 
-inline Vector<AtomString> BuilderConverter::convertContainerName(BuilderState&, const CSSValue& value)
+inline Vector<Style::ScopedName> BuilderConverter::convertContainerName(BuilderState& state, const CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
         ASSERT(value.valueID() == CSSValueNone);
@@ -1915,8 +1938,8 @@ inline Vector<AtomString> BuilderConverter::convertContainerName(BuilderState&, 
     if (!is<CSSValueList>(value))
         return { };
 
-    return WTF::map(downcast<CSSValueList>(value), [](auto& item) {
-        return AtomString { downcast<CSSPrimitiveValue>(item).stringValue() };
+    return WTF::map(downcast<CSSValueList>(value), [&](auto& item) {
+        return Style::ScopedName { AtomString { downcast<CSSPrimitiveValue>(item).stringValue() }, state.styleScopeOrdinal() };
     });
 }
 

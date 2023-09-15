@@ -1,0 +1,16 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [i386-watchos-simulator, x86_64-watchos-simulator, arm64-watchos-simulator]
+install-name: /System/Library/Frameworks/IOSurface.framework/IOSurface
+exports:
+-       targets: [i386-watchos-simulator, x86_64-watchos-simulator, arm64-watchos-simulator]
+        symbols: [_IOSurfaceAlignProperty, _IOSurfaceCopyValue, _IOSurfaceCreate, _IOSurfaceCreateMachPort, _IOSurfaceGetAllocSize,
+                _IOSurfaceGetBaseAddress, _IOSurfaceGetBytesPerElementOfPlane, _IOSurfaceGetBytesPerRow, _IOSurfaceGetBytesPerRowOfPlane,
+                _IOSurfaceGetHeight, _IOSurfaceGetHeightOfPlane, _IOSurfaceGetID, _IOSurfaceGetPixelFormat, _IOSurfaceGetPlaneCount,
+                _IOSurfaceGetPropertyAlignment, _IOSurfaceGetPropertyMaximum, _IOSurfaceGetSeed, _IOSurfaceGetWidth, _IOSurfaceGetWidthOfPlane,
+                _IOSurfaceIncrementUseCount, _IOSurfaceIsInUse, _IOSurfaceLock, _IOSurfaceLookupFromMachPort, _IOSurfaceSetPurgeable,
+                _IOSurfaceSetValue, _IOSurfaceUnlock, _kIOSurfaceAllocSize, _kIOSurfaceBytesPerElement, _kIOSurfaceBytesPerRow,
+                _kIOSurfaceCacheMode, _kIOSurfaceColorSpace, _kIOSurfaceElementHeight, _kIOSurfaceHeight, _kIOSurfaceName,
+                _kIOSurfacePixelFormat, _kIOSurfacePlaneBytesPerRow, _kIOSurfacePlaneHeight, _kIOSurfacePlaneInfo, _kIOSurfacePlaneOffset,
+                _kIOSurfacePlaneSize, _kIOSurfacePlaneWidth, _kIOSurfaceWidth]
+...

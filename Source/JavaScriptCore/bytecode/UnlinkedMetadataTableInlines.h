@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,16 +37,17 @@ ALWAYS_INLINE UnlinkedMetadataTable::UnlinkedMetadataTable()
     , m_isFinalized(false)
     , m_isLinked(false)
     , m_is32Bit(false)
-    , m_rawBuffer(static_cast<uint8_t*>(MetadataTableMalloc::zeroedMalloc(sizeof(LinkingData) + s_offset32TableSize)))
+    , m_rawBuffer(static_cast<uint8_t*>(MetadataTableMalloc::zeroedMalloc(s_offset32TableSize)))
 {
 }
 
-ALWAYS_INLINE UnlinkedMetadataTable::UnlinkedMetadataTable(bool is32Bit)
-    : m_hasMetadata(false)
+ALWAYS_INLINE UnlinkedMetadataTable::UnlinkedMetadataTable(bool is32Bit, unsigned numValueProfiles, unsigned lastOffset)
+    : m_hasMetadata(true)
     , m_isFinalized(false)
     , m_isLinked(false)
     , m_is32Bit(is32Bit)
-    , m_rawBuffer(static_cast<uint8_t*>(MetadataTableMalloc::zeroedMalloc(sizeof(LinkingData) + (is32Bit ? s_offset16TableSize + s_offset32TableSize : s_offset16TableSize))))
+    , m_numValueProfiles(numValueProfiles)
+    , m_rawBuffer(static_cast<uint8_t*>(MetadataTableMalloc::zeroedMalloc((sizeof(ValueProfile) * numValueProfiles) + sizeof(LinkingData) + lastOffset)))
 {
 }
 
@@ -62,7 +63,7 @@ ALWAYS_INLINE UnlinkedMetadataTable::UnlinkedMetadataTable(EmptyTag)
 ALWAYS_INLINE UnlinkedMetadataTable::~UnlinkedMetadataTable()
 {
     ASSERT(!m_isLinked);
-    if (m_hasMetadata || !m_isFinalized)
+    if (m_hasMetadata)
         MetadataTableMalloc::free(m_rawBuffer);
 }
 
@@ -73,6 +74,14 @@ ALWAYS_INLINE unsigned UnlinkedMetadataTable::addEntry(OpcodeID opcodeID)
     return preprocessBuffer()[opcodeID]++;
 }
 
+ALWAYS_INLINE unsigned UnlinkedMetadataTable::addValueProfile()
+{
+    ASSERT(!m_isFinalized);
+    m_hasMetadata = true;
+    // Preinecrement because we want the first value profile's offset to be 1, since it's negative indexed.
+    return ++m_numValueProfiles;
+}
+
 template <typename Bytecode>
 ALWAYS_INLINE unsigned UnlinkedMetadataTable::numEntries()
 {
@@ -81,7 +90,7 @@ ALWAYS_INLINE unsigned UnlinkedMetadataTable::numEntries()
     return preprocessBuffer()[opcodeID];
 }
 
-ALWAYS_INLINE size_t UnlinkedMetadataTable::sizeInBytes()
+ALWAYS_INLINE size_t UnlinkedMetadataTable::sizeInBytesForGC()
 {
     if (m_isFinalized && !m_hasMetadata)
         return 0;
@@ -91,7 +100,7 @@ ALWAYS_INLINE size_t UnlinkedMetadataTable::sizeInBytes()
     return s_offset16TableSize;
 }
 
-ALWAYS_INLINE size_t UnlinkedMetadataTable::sizeInBytes(MetadataTable& metadataTable)
+ALWAYS_INLINE size_t UnlinkedMetadataTable::sizeInBytesForGC(MetadataTable& metadataTable)
 {
     ASSERT(m_isFinalized);
 
@@ -119,20 +128,23 @@ ALWAYS_INLINE RefPtr<MetadataTable> UnlinkedMetadataTable::link()
 
     unsigned totalSize = this->totalSize();
     unsigned offsetTableSize = this->offsetTableSize();
+    unsigned valueProfileSize = m_numValueProfiles * sizeof(ValueProfile);
     uint8_t* buffer;
     if (!m_isLinked) {
         m_isLinked = true;
-        m_rawBuffer = buffer = reinterpret_cast<uint8_t*>(MetadataTableMalloc::realloc(m_rawBuffer, sizeof(LinkingData) + totalSize));
+        buffer = m_rawBuffer;
     } else {
 #if ENABLE(METADATA_STATISTICS)
         MetadataStatistics::numberOfCopiesFromLinking++;
         MetadataStatistics::linkingCopyMemory += sizeof(LinkingData) + totalSize;
 #endif
         buffer = reinterpret_cast<uint8_t*>(MetadataTableMalloc::malloc(sizeof(LinkingData) + totalSize));
-        memcpy(buffer, m_rawBuffer, sizeof(LinkingData) + offsetTableSize);
+        memcpy(buffer + valueProfileSize + sizeof(LinkingData), m_rawBuffer + valueProfileSize + sizeof(LinkingData), offsetTableSize);
     }
-    memset(buffer + sizeof(LinkingData) + offsetTableSize, 0, totalSize - offsetTableSize);
-    return adoptRef(*new (buffer + sizeof(LinkingData)) MetadataTable(*this));
+    // FIXME: Is this needed since we'll clear the data in the CodeBlock Constructor... Plus I could see caching value profiles being profitable.
+    memset(buffer, 0, valueProfileSize);
+    memset(buffer + valueProfileSize + sizeof(LinkingData) + offsetTableSize, 0, totalSize - offsetTableSize - valueProfileSize);
+    return adoptRef(*new (buffer + valueProfileSize + sizeof(LinkingData)) MetadataTable(*this));
 }
 
 ALWAYS_INLINE void UnlinkedMetadataTable::unlink(MetadataTable& metadataTable)
@@ -144,10 +156,9 @@ ALWAYS_INLINE void UnlinkedMetadataTable::unlink(MetadataTable& metadataTable)
     if (metadataTable.buffer() == buffer()) {
         ASSERT(m_isLinked);
         m_isLinked = false;
-        m_rawBuffer = static_cast<uint8_t*>(MetadataTableMalloc::realloc(m_rawBuffer, sizeof(LinkingData) + offsetTableSize()));
         return;
     }
-    MetadataTableMalloc::free(&metadataTable.linkingData());
+    MetadataTableMalloc::free(metadataTable.valueProfilesEnd() + -static_cast<ptrdiff_t>(numValueProfiles()));
 }
 
 } // namespace JSC

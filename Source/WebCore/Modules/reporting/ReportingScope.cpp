@@ -65,7 +65,7 @@ void ReportingScope::registerReportingObserver(ReportingObserver& observer)
 
 void ReportingScope::unregisterReportingObserver(ReportingObserver& observer)
 {
-    m_reportingObservers.removeFirstMatching([&observer](auto item) {
+    m_reportingObservers.removeFirstMatching([&observer](auto& item) {
         return item.ptr() == &observer;
     });
 }
@@ -157,7 +157,7 @@ void ReportingScope::generateTestReport(String&& message, String&& group)
     URL testReportURL;
     String reportURL { ""_s };
 
-    auto* document = dynamicDowncast<Document>(scriptExecutionContext());
+    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
     if (document) {
         testReportURL = document->url();
         reportURL = testReportURL.strippedForUseAsReferrer();

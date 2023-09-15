@@ -180,14 +180,6 @@ ForcedSupportsHighDynamicRangeValue:
     WebCore:
       default: ForcedAccessibilityValue::System
 
-FrameFlattening:
-  type: uint32_t
-  refinedType: FrameFlattening
-  webcoreOnChange: setNeedsRelayoutAllFrames
-  defaultValue:
-    WebCore:
-      default: FrameFlattening::Disabled
-
 GeolocationFloorLevelEnabled:
   type: bool
   defaultValue:

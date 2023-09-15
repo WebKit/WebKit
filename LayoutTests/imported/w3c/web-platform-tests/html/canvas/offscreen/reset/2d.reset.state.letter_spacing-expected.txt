@@ -1,0 +1,7 @@
+2d.reset.state.letter_spacing
+
+check that the state is reset
+
+
+FAIL check that the state is reset assert_true: ctx.letterSpacing == default_value expected true got false
+

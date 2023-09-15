@@ -241,7 +241,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
             continue;
 
         if (m_fallbackFonts)
-            m_fallbackFonts->add(font);
+            m_fallbackFonts->add(*font);
 
         Vector<FloatSize> baseAdvances;
         Vector<FloatPoint> origins;

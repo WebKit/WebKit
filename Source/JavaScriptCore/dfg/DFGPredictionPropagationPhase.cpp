@@ -978,6 +978,7 @@ private:
         case GetByValMegamorphic:
         case ArrayPop:
         case ArrayPush:
+        case ArraySpliceExtract:
         case RegExpExec:
         case RegExpExecNonGlobalOrSticky:
         case RegExpTest:
@@ -1295,7 +1296,17 @@ private:
             setPrediction(SpecRegExpObject);
             break;
         }
-            
+
+        case NewMap: {
+            setPrediction(SpecMapObject);
+            break;
+        }
+
+        case NewSet: {
+            setPrediction(SpecSetObject);
+            break;
+        }
+
         case PushWithScope:
         case CreateActivation: {
             setPrediction(SpecObjectOther);

@@ -37,7 +37,7 @@ exec_script_whitelist = angle_dotfile_settings.exec_script_whitelist +
                         ]
 
 default_args = {
-  clang_use_chrome_plugins = true
+  clang_use_chrome_plugins = false
   build_angle_deqp_tests = true
   use_sysroot = true
 

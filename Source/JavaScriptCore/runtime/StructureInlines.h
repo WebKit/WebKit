@@ -30,6 +30,7 @@
 #include "JSArrayBufferView.h"
 #include "JSCJSValueInlines.h"
 #include "JSGlobalObject.h"
+#include "JSObjectInlines.h"
 #include "PropertyTable.h"
 #include "StringPrototype.h"
 #include "Structure.h"
@@ -40,32 +41,6 @@
 #include <wtf/Threading.h>
 
 namespace JSC {
-
-class DeferredStructureTransitionWatchpointFire final : public DeferredWatchpointFire {
-    WTF_MAKE_NONCOPYABLE(DeferredStructureTransitionWatchpointFire);
-public:
-    DeferredStructureTransitionWatchpointFire(VM& vm, Structure* structure)
-        : DeferredWatchpointFire()
-        , m_vm(vm)
-        , m_structure(structure)
-    {
-    }
-
-    ~DeferredStructureTransitionWatchpointFire()
-    {
-        if (watchpointsToFire().state() == IsWatched)
-            fireAllSlow();
-    }
-
-    const Structure* structure() const { return m_structure; }
-
-
-private:
-    JS_EXPORT_PRIVATE void fireAllSlow();
-
-    VM& m_vm;
-    const Structure* m_structure;
-};
 
 inline Structure* Structure::create(VM& vm, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingModeIncludingHistory, unsigned inlineCapacity)
 {
@@ -784,7 +759,7 @@ inline Structure* Structure::nonPropertyTransition(VM& vm, Structure* structure,
     return nonPropertyTransitionSlow(vm, structure, transitionKind, deferred);
 }
 
-inline Structure* Structure::addPropertyTransitionToExistingStructureImpl(Structure* structure, UniquedStringImpl* uid, unsigned attributes, PropertyOffset& offset)
+ALWAYS_INLINE Structure* Structure::addPropertyTransitionToExistingStructureImpl(Structure* structure, UniquedStringImpl* uid, unsigned attributes, PropertyOffset& offset)
 {
     ASSERT(!structure->isDictionary());
     ASSERT(structure->isObject());
@@ -848,25 +823,30 @@ inline void Structure::clearCachedPrototypeChain()
     rareData()->clearCachedPropertyNameEnumerator();
 }
 
-ALWAYS_INLINE bool Structure::canPerformFastPropertyEnumeration() const
+ALWAYS_INLINE bool Structure::canPerformFastPropertyEnumerationCommon() const
 {
     if (typeInfo().overridesGetOwnPropertySlot())
         return false;
     if (typeInfo().overridesAnyFormOfGetOwnPropertyNames())
         return false;
-    // FIXME: Indexed properties can be handled.
-    // https://bugs.webkit.org/show_bug.cgi?id=185358
-
-    if (hasIndexedProperties(indexingType()))
-        return false;
     if (hasAnyKindOfGetterSetterProperties())
-        return false;
-    if (hasReadOnlyOrGetterSetterPropertiesExcludingProto())
         return false;
     if (isUncacheableDictionary())
         return false;
     // Cannot perform fast [[Put]] to |target| if the property names of the |source| contain "__proto__".
     if (hasUnderscoreProtoPropertyExcludingOriginalProto())
+        return false;
+    return true;
+}
+
+ALWAYS_INLINE bool Structure::canPerformFastPropertyEnumeration() const
+{
+    if (!canPerformFastPropertyEnumerationCommon())
+        return false;
+    // FIXME: Indexed properties can be handled.
+    // https://bugs.webkit.org/show_bug.cgi?id=185358
+
+    if (hasIndexedProperties(indexingType()))
         return false;
     return true;
 }

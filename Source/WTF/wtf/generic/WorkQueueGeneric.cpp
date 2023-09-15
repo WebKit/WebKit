@@ -36,20 +36,19 @@ namespace WTF {
 
 WorkQueueBase::WorkQueueBase(RunLoop& runLoop)
     : m_runLoop(&runLoop)
+    , m_threadID(mainThreadID)
 {
 }
 
 void WorkQueueBase::platformInitialize(const char* name, Type, QOS qos)
 {
     m_runLoop = RunLoop::create(name, ThreadType::Unknown, qos).ptr();
-#if ASSERT_ENABLED
     BinarySemaphore semaphore;
     m_runLoop->dispatch([&] {
         m_threadID = Thread::current().uid();
         semaphore.signal();
     });
     semaphore.wait();
-#endif
 }
 
 void WorkQueueBase::platformInvalidate()
@@ -77,21 +76,9 @@ void WorkQueueBase::dispatchAfter(Seconds delay, Function<void()>&& function)
     });
 }
 
-WorkQueue::WorkQueue(RunLoop& loop)
-    : WorkQueueBase(loop)
+WorkQueue::WorkQueue(MainTag)
+    : WorkQueueBase(RunLoop::main())
 {
 }
-
-Ref<WorkQueue> WorkQueue::constructMainWorkQueue()
-{
-    return adoptRef(*new WorkQueue(RunLoop::main()));
-}
-
-#if ASSERT_ENABLED
-ThreadLikeAssertion WorkQueue::threadLikeAssertion() const
-{
-    return createThreadLikeAssertion(m_threadID);
-}
-#endif
 
 }

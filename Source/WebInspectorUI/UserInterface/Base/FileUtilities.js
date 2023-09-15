@@ -48,6 +48,31 @@ WI.FileUtilities = class FileUtilities {
         return "web-inspector:///" + encodeURIComponent(FileUtilities.sanitizeFilename(filename));
     }
 
+    static longestCommonPrefix(files, {directory} = {})
+    {
+        let longestCommonPrefix = files[0].getPath();
+
+        for (let i = 1; i < files.length; ++i) {
+            let path = files[i].getPath();
+            for (let j = 0; j < longestCommonPrefix.length; ++j) {
+                if (longestCommonPrefix[j] !== path[j]) {
+                    longestCommonPrefix = longestCommonPrefix.substring(0, j);
+                    break;
+                }
+            }
+        }
+
+        if ((directory || files.length > 1) && !longestCommonPrefix.endsWith("/")) {
+            let lastSlashIndex = longestCommonPrefix.lastIndexOf("/");
+            console.assert(lastSlashIndex);
+            if (lastSlashIndex)
+                longestCommonPrefix = longestCommonPrefix.substring(0, lastSlashIndex);
+            longestCommonPrefix += "/";
+        }
+
+        return longestCommonPrefix;
+    }
+
     static canSave(saveMode)
     {
         console.assert(Object.values(WI.FileUtilities.SaveMode).includes(saveMode), saveMode);
@@ -145,12 +170,13 @@ WI.FileUtilities = class FileUtilities {
         InspectorFrontendHost.save(saveDatas, !!forceSaveAs);
     }
 
-    static import(callback, {multiple} = {})
+    static import(callback, {multiple, directory} = {})
     {
         let inputElement = document.createElement("input");
         inputElement.type = "file";
         inputElement.value = null;
-        inputElement.multiple = !!multiple;
+        inputElement.multiple = !!multiple || !!directory;
+        inputElement.webkitdirectory = !!directory;
         inputElement.addEventListener("change", (event) => {
             callback(inputElement.files);
         });

@@ -2604,6 +2604,60 @@ TEST(WKDownload, BlobResponseNoFilename)
     });
 }
 
+TEST(WKDownload, BlobDownload)
+{
+    NSString *html = @"<html><script>"
+    "function createBlob() {"
+    "    var b = new Blob([1,2,3]);"
+    "    return URL.createObjectURL(b);"
+    "}"
+    "</script></html>";
+    auto *script = @"createBlob()";
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+
+    auto webView = adoptNS([TestWKWebView new]);
+
+    auto delegate = adoptNS([TestDownloadDelegate new]);
+
+    [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView setNavigationDelegate:delegate.get()];
+
+    __block bool doneEvaluatingJavaScript = false;
+    __block RetainPtr<NSURL> blobURL;
+    [webView evaluateJavaScript:script completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_WK_STREQ(@"", [error.userInfo objectForKey:_WKJavaScriptExceptionMessageErrorKey]);
+        EXPECT_WK_STREQ(@"", error.domain);
+        EXPECT_EQ(0, error.code);
+
+        EXPECT_TRUE([value isKindOfClass:[NSString class]]);
+        EXPECT_NOT_NULL(value);
+        blobURL = adoptNS([[NSURL alloc] initWithString:value]);
+        doneEvaluatingJavaScript = true;
+    }];
+    Util::run(&doneEvaluatingJavaScript);
+
+    __block bool done = false;
+    delegate.get().decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *response, NSString *suggestedFilename, void (^completionHandler)(NSURL *)) {
+        EXPECT_WK_STREQ(response.URL.scheme, "blob");
+        EXPECT_WK_STREQ(suggestedFilename, "Unknown");
+        completionHandler(expectedDownloadFile);
+    };
+
+    __block WKDownload *blobDownload = nil;
+    [webView startDownloadUsingRequest:[NSURLRequest requestWithURL:blobURL.get()] completionHandler:^(WKDownload *download) {
+        blobDownload = download;
+        download.delegate = delegate.get();
+        delegate.get().downloadDidFinish = ^(WKDownload *download) {
+            done = download == blobDownload;
+        };
+    }];
+    Util::run(&done);
+    checkFileContents(expectedDownloadFile, "123"_s);
+}
+
 TEST(WKDownload, SubframeOriginator)
 {
     constexpr auto grandchildFrameHTML = "<script>"

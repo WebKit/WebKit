@@ -48,3 +48,12 @@
 .sidebar.collapsed {
     display: none;
 }
+
+body.narrow .sidebar.trailing {
+    border-top: 1px solid var(--border-color);
+    min-height: 200px; /* keep in sync with WI.Sidebar.AbsoluteMinimumHeight in Sidebar.js */
+}
+
+body:not(.narrow) .sidebar > .resizer.horizontal-rule {
+    display: none;
+}

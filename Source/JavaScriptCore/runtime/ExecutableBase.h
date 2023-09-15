@@ -101,7 +101,7 @@ public:
         return type() == NativeExecutableType;
     }
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(vm, globalObject, proto, TypeInfo(CellType, StructureFlags), info()); }
+    inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_EXPORT_INFO;
 
@@ -201,14 +201,9 @@ public:
     }
 
     // Intrinsics are only for calls, currently.
-    Intrinsic intrinsic() const;
+    inline Intrinsic intrinsic() const;
         
-    Intrinsic intrinsicFor(CodeSpecializationKind kind) const
-    {
-        if (isCall(kind))
-            return intrinsic();
-        return NoIntrinsic;
-    }
+    inline Intrinsic intrinsicFor(CodeSpecializationKind) const;
 
     ImplementationVisibility implementationVisibility() const;
 

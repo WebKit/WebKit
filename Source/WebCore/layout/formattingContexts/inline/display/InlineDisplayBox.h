@@ -187,6 +187,7 @@ struct Box {
     const Layout::Box& layoutBox() const { return m_layoutBox; }
     const RenderStyle& style() const { return !lineIndex() ? layoutBox().firstLineStyle() : layoutBox().style(); }
 
+    void moveToLine(unsigned lineIndex) { m_lineIndex = lineIndex; }
     size_t lineIndex() const { return m_lineIndex; }
     // These functions tell you whether this display box is the first/last for the associated inline level box (Layout::Box) and not whether it's the first/last box on the line.
     // (e.g. always true for atomic boxes, but inline boxes spanning over multiple lines can produce individual first/last boxes).
@@ -201,7 +202,7 @@ private:
     FloatRect m_unflippedVisualRect;
     FloatRect m_inkOverflow;
 
-    const unsigned m_lineIndex { 0 };
+    unsigned m_lineIndex { 0 };
 
     float m_horizontalExpansion { 0 };
     

@@ -3,10 +3,10 @@
 
 /*---
 esid: sec-temporal.zoneddatetime.prototype.withcalendar
-description: RangeError thrown when calendar argument not given
+description: TypeError thrown when calendar argument not given
 features: [Temporal]
 ---*/
 
 const zonedDateTime = new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, "UTC");
-assert.throws(RangeError, () => zonedDateTime.withCalendar(), "missing argument");
-assert.throws(RangeError, () => zonedDateTime.withCalendar(undefined), "undefined argument");
+assert.throws(TypeError, () => zonedDateTime.withCalendar(), "missing argument");
+assert.throws(TypeError, () => zonedDateTime.withCalendar(undefined), "undefined argument");

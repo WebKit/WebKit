@@ -289,7 +289,7 @@ function testI31Table() {
     const m2 = instantiate(`
       (module
         (type (array i32))
-        (func (export "makeArray") (result (ref 0)) (array.new_canon_default 0 (i32.const 5))))
+        (func (export "makeArray") (result (ref 0)) (array.new_default 0 (i32.const 5))))
     `);
     assert.eq(m.exports.t.get(0), 42);
     assert.throws(

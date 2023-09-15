@@ -213,13 +213,13 @@ RenderFragmentContainer* LegacyRootInlineBox::containingFragment() const
 {
     ContainingFragmentMap& fragmentMap = containingFragmentMap(blockFlow());
     bool hasContainingFragment = fragmentMap.contains(this);
-    RenderFragmentContainer* fragment = hasContainingFragment ? fragmentMap.get(this) : nullptr;
+    RenderFragmentContainer* fragment = hasContainingFragment ? fragmentMap.get(this).get() : nullptr;
 
 #ifndef NDEBUG
     if (hasContainingFragment) {
         RenderFragmentedFlow* fragmentedFlow = blockFlow().enclosingFragmentedFlow();
         const RenderFragmentContainerList& fragmentList = fragmentedFlow->renderFragmentContainerList();
-        ASSERT_WITH_SECURITY_IMPLICATION(fragmentList.contains(fragment));
+        ASSERT_WITH_SECURITY_IMPLICATION(fragmentList.contains(*fragment));
     }
 #endif
 
@@ -691,7 +691,7 @@ void LegacyRootInlineBox::ascentAndDescentForBox(LegacyInlineBox& box, GlyphOver
         return;
     }
 
-    Vector<const Font*>* usedFonts = nullptr;
+    Vector<WeakPtr<const Font>>* usedFonts = nullptr;
     GlyphOverflow* glyphOverflow = nullptr;
     if (is<LegacyInlineTextBox>(box)) {
         GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(&downcast<LegacyInlineTextBox>(box));

@@ -382,8 +382,11 @@ class Manager(object):
         child_processes_option_value = self._options.child_processes
         uploads = []
 
+
         for device_type in device_type_list:
             self._options.child_processes = min(self._port.max_child_processes(device_type=device_type), int(child_processes_option_value or self._port.default_child_processes(device_type=device_type)))
+        # Adding an option to only boot 1 child process/simulator instance upon retry or follow-up test runs after the preceeding test run completes.
+            child_processes_option_value = 1
 
             _log.info('')
             if not self._options.child_processes:

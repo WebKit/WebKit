@@ -16,10 +16,6 @@ const valid = [
   ["\u221201:00", "-01:00"],
   ["\u22120650", "-06:50"],
   ["\u221208", "-08:00"],
-  ["+01:00:00", "+01:00"],
-  ["-010000", "-01:00"],
-  ["+03:30:00.000000001", "+03:30:00.000000001"],
-  ["-033000.1", "-03:30:00.1"],
   ["UTC"],
 ];
 for (const [zone, id = zone] of valid) {
@@ -28,7 +24,7 @@ for (const [zone, id = zone] of valid) {
   assert.sameValue(result.id, id, `id for ${zone} should be ${id}`);
 }
 
-const invalid = ["+00:01.1", "-01.1"];
+const invalid = ["+00:01.1", "-01.1", "+01:00:00", "-010000", "+03:30:00.000000001", "-033000.1"];
 for (const zone of invalid) {
   assert.throws(RangeError, () => new Temporal.TimeZone(zone), `should throw for ${zone}`);
 }

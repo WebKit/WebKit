@@ -41,6 +41,7 @@
 #include "Logging.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollAnimator.h"
+#include "ScrollbarColor.h"
 #include "ScrollbarGutter.h"
 #include "ScrollbarTheme.h"
 #include "ScrollbarsControllerMock.h"
@@ -143,7 +144,7 @@ bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granula
 
     auto scrollDelta = step * stepCount;
     
-    if (direction == ScrollUp || direction == ScrollLeft)
+    if (direction == ScrollDirection::ScrollUp || direction == ScrollDirection::ScrollLeft)
         scrollDelta = -scrollDelta;
 
     return scrollAnimator().singleAxisScroll(axis, scrollDelta, ScrollAnimator::ScrollBehavior::RespectScrollSnap);
@@ -509,6 +510,16 @@ String ScrollableArea::horizontalScrollbarStateForTesting() const
 String ScrollableArea::verticalScrollbarStateForTesting() const
 {
     return scrollbarsController().verticalScrollbarStateForTesting();
+}
+
+Color ScrollableArea::scrollbarThumbColorStyle() const
+{
+    return { };
+}
+
+Color ScrollableArea::scrollbarTrackColorStyle() const
+{
+    return { };
 }
 
 ScrollbarGutter ScrollableArea::scrollbarGutterStyle() const

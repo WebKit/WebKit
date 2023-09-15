@@ -134,6 +134,9 @@ public:
     void setContentBoxSize(const LayoutSize&);
 
     void setHorizontalMargin(HorizontalMargin);
+    void setMarginStart(LayoutUnit);
+    void setMarginEnd(LayoutUnit);
+
     void setVerticalMargin(VerticalMargin);
 
     void setBorder(Layout::Edges);
@@ -287,6 +290,22 @@ inline void BoxGeometry::setHorizontalMargin(HorizontalMargin margin)
     setHasValidHorizontalMargin();
 #endif
     m_horizontalMargin = margin;
+}
+
+inline void BoxGeometry::setMarginStart(LayoutUnit marginStart)
+{
+#if ASSERT_ENABLED
+    setHasValidHorizontalMargin();
+#endif
+    m_horizontalMargin = { marginStart, m_horizontalMargin.end };
+}
+
+inline void BoxGeometry::setMarginEnd(LayoutUnit marginEnd)
+{
+#if ASSERT_ENABLED
+    setHasValidHorizontalMargin();
+#endif
+    m_horizontalMargin = { m_horizontalMargin.start, marginEnd };
 }
 
 inline void BoxGeometry::setVerticalMargin(VerticalMargin margin)

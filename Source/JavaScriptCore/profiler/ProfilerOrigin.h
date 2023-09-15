@@ -60,8 +60,8 @@ public:
     
     Bytecodes* bytecodes() const { return m_bytecodes; }
     BytecodeIndex bytecodeIndex() const { return m_bytecodeIndex; }
-    
-    bool operator==(const Origin&) const;
+
+    friend bool operator==(const Origin&, const Origin&) = default;
     unsigned hash() const;
     
     bool isHashTableDeletedValue() const;
@@ -73,12 +73,6 @@ private:
     Bytecodes* m_bytecodes;
     BytecodeIndex m_bytecodeIndex;
 };
-
-inline bool Origin::operator==(const Origin& other) const
-{
-    return m_bytecodes == other.m_bytecodes
-        && m_bytecodeIndex == other.m_bytecodeIndex;
-}
 
 inline unsigned Origin::hash() const
 {

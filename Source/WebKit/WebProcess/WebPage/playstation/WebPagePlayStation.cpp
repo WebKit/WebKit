@@ -27,6 +27,7 @@
 #include "WebPage.h"
 
 #include <WebCore/NotImplemented.h>
+#include <WebCore/Page.h>
 #include <WebCore/PointerCharacteristics.h>
 #include <WebCore/Settings.h>
 #include <WebCore/UserAgent.h>

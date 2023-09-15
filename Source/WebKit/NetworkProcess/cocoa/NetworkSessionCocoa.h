@@ -116,7 +116,6 @@ public:
     const String& dataConnectionServiceType() const;
 #endif
 
-    static bool allowsSpecificHTTPSCertificateForHost(const WebCore::AuthenticationChallenge&);
     void setClientAuditToken(const WebCore::AuthenticationChallenge&);
 
     void continueDidReceiveChallenge(SessionWrapper&, const WebCore::AuthenticationChallenge&, NegotiatedLegacyTLS, NetworkDataTaskCocoa::TaskIdentifier, RefPtr<NetworkDataTaskCocoa>, CompletionHandler<void(WebKit::AuthenticationChallengeDisposition, const WebCore::Credential&)>&&);
@@ -184,7 +183,7 @@ private:
     void removeWebSocketTask(SessionSet&, WebSocketTask&) final;
 #endif
 
-    void dataTaskWithRequest(WebPageProxyIdentifier, WebCore::ResourceRequest&&, CompletionHandler<void(DataTaskIdentifier)>&&) final;
+    void dataTaskWithRequest(WebPageProxyIdentifier, WebCore::ResourceRequest&&, const std::optional<WebCore::SecurityOriginData>& topOrigin, CompletionHandler<void(DataTaskIdentifier)>&&) final;
     void cancelDataTask(DataTaskIdentifier) final;
     void addWebPageNetworkParameters(WebPageProxyIdentifier, WebPageNetworkParameters&&) final;
     void removeWebPageNetworkParameters(WebPageProxyIdentifier) final;

@@ -48,9 +48,10 @@ Ref<HTMLBaseElement> HTMLBaseElement::create(const QualifiedName& tagName, Docum
 
 void HTMLBaseElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == hrefAttr || name == targetAttr)
-        document().processBaseElement();
-    else
+    if (name == hrefAttr || name == targetAttr) {
+        if (isConnected())
+            document().processBaseElement();
+    } else
         HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
@@ -86,9 +87,7 @@ String HTMLBaseElement::href() const
     if (url.isNull())
         url = emptyAtom();
 
-    // Same logic as openFunc() in XMLDocumentParserLibxml2.cpp. Keep them in sync.
-    auto* encoding = document().decoder() ? document().decoder()->encodingForURLParsing() : nullptr;
-    URL urlRecord(document().fallbackBaseURL(), url, encoding);
+    auto urlRecord = document().completeURL(url, document().fallbackBaseURL());
     if (!urlRecord.isValid())
         return url;
 

@@ -290,9 +290,10 @@ static void pathElementApplierCallback(void* info, const CGPathElement* element)
     }
 }
 
-void PathCG::applyElements(const PathElementApplier& applier) const
+bool PathCG::applyElements(const PathElementApplier& applier) const
 {
     CGPathApply(platformPath(), (void*)&applier, pathElementApplierCallback);
+    return true;
 }
 
 bool PathCG::isEmpty() const
@@ -305,10 +306,11 @@ FloatPoint PathCG::currentPoint() const
     return CGPathGetCurrentPoint(platformPath());
 }
 
-void PathCG::transform(const AffineTransform& transform)
+bool PathCG::transform(const AffineTransform& transform)
 {
     CGAffineTransform transformCG = transform;
     m_platformPath = adoptCF(CGPathCreateMutableCopyByTransformingPath(platformPath(), &transformCG));
+    return true;
 }
 
 static void copyClosingSubpathsApplierFunction(void* info, const CGPathElement* element)

@@ -1329,7 +1329,7 @@ void UIDelegate::UIClient::checkUserMediaPermissionForOrigin(WebPageProxy& page,
         return;
     }
 
-    const auto* mainFrame = frame.page()->mainFrame();
+    RefPtr mainFrame = frame.page()->mainFrame();
 
     if ([delegate respondsToSelector:@selector(_webView:includeSensitiveMediaDeviceDetails:)]) {
         auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:includeSensitiveMediaDeviceDetails:));

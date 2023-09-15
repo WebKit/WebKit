@@ -50,37 +50,37 @@ PASS CookieStore interface: calling delete(USVString) on self.cookieStore with t
 PASS CookieStore interface: self.cookieStore must inherit property "delete(CookieStoreDeleteOptions)" with the proper type
 PASS CookieStore interface: calling delete(CookieStoreDeleteOptions) on self.cookieStore with too few arguments must throw TypeError
 PASS CookieStore interface: self.cookieStore must inherit property "onchange" with the proper type
-FAIL CookieStoreManager interface: existence and properties of interface object assert_own_property: self does not have own property "CookieStoreManager" expected property "CookieStoreManager" missing
-FAIL CookieStoreManager interface object length assert_own_property: self does not have own property "CookieStoreManager" expected property "CookieStoreManager" missing
-FAIL CookieStoreManager interface object name assert_own_property: self does not have own property "CookieStoreManager" expected property "CookieStoreManager" missing
-FAIL CookieStoreManager interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CookieStoreManager" expected property "CookieStoreManager" missing
-FAIL CookieStoreManager interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CookieStoreManager" expected property "CookieStoreManager" missing
-FAIL CookieStoreManager interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CookieStoreManager" expected property "CookieStoreManager" missing
-FAIL CookieStoreManager interface: operation subscribe(sequence<CookieStoreGetOptions>) assert_own_property: self does not have own property "CookieStoreManager" expected property "CookieStoreManager" missing
-FAIL CookieStoreManager interface: operation getSubscriptions() assert_own_property: self does not have own property "CookieStoreManager" expected property "CookieStoreManager" missing
-FAIL CookieStoreManager interface: operation unsubscribe(sequence<CookieStoreGetOptions>) assert_own_property: self does not have own property "CookieStoreManager" expected property "CookieStoreManager" missing
-FAIL CookieStoreManager must be primary interface of self.registration.cookies assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL Stringification of self.registration.cookies assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CookieStoreManager interface: self.registration.cookies must inherit property "subscribe(sequence<CookieStoreGetOptions>)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CookieStoreManager interface: calling subscribe(sequence<CookieStoreGetOptions>) on self.registration.cookies with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CookieStoreManager interface: self.registration.cookies must inherit property "getSubscriptions()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CookieStoreManager interface: self.registration.cookies must inherit property "unsubscribe(sequence<CookieStoreGetOptions>)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CookieStoreManager interface: calling unsubscribe(sequence<CookieStoreGetOptions>) on self.registration.cookies with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CookieChangeEvent interface: existence and properties of interface object assert_own_property: self does not have own property "CookieChangeEvent" expected property "CookieChangeEvent" missing
-FAIL CookieChangeEvent interface object length assert_own_property: self does not have own property "CookieChangeEvent" expected property "CookieChangeEvent" missing
-FAIL CookieChangeEvent interface object name assert_own_property: self does not have own property "CookieChangeEvent" expected property "CookieChangeEvent" missing
-FAIL CookieChangeEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CookieChangeEvent" expected property "CookieChangeEvent" missing
-FAIL CookieChangeEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CookieChangeEvent" expected property "CookieChangeEvent" missing
-FAIL CookieChangeEvent interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CookieChangeEvent" expected property "CookieChangeEvent" missing
-FAIL CookieChangeEvent interface: attribute changed assert_own_property: self does not have own property "CookieChangeEvent" expected property "CookieChangeEvent" missing
-FAIL CookieChangeEvent interface: attribute deleted assert_own_property: self does not have own property "CookieChangeEvent" expected property "CookieChangeEvent" missing
-FAIL CookieChangeEvent must be primary interface of new CookieChangeEvent("change") assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: CookieChangeEvent"
-FAIL Stringification of new CookieChangeEvent("change") assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: CookieChangeEvent"
-FAIL CookieChangeEvent interface: new CookieChangeEvent("change") must inherit property "changed" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: CookieChangeEvent"
-FAIL CookieChangeEvent interface: new CookieChangeEvent("change") must inherit property "deleted" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: CookieChangeEvent"
+PASS CookieStoreManager interface: existence and properties of interface object
+PASS CookieStoreManager interface object length
+PASS CookieStoreManager interface object name
+PASS CookieStoreManager interface: existence and properties of interface prototype object
+PASS CookieStoreManager interface: existence and properties of interface prototype object's "constructor" property
+PASS CookieStoreManager interface: existence and properties of interface prototype object's @@unscopables property
+PASS CookieStoreManager interface: operation subscribe(sequence<CookieStoreGetOptions>)
+PASS CookieStoreManager interface: operation getSubscriptions()
+PASS CookieStoreManager interface: operation unsubscribe(sequence<CookieStoreGetOptions>)
+PASS CookieStoreManager must be primary interface of self.registration.cookies
+PASS Stringification of self.registration.cookies
+PASS CookieStoreManager interface: self.registration.cookies must inherit property "subscribe(sequence<CookieStoreGetOptions>)" with the proper type
+PASS CookieStoreManager interface: calling subscribe(sequence<CookieStoreGetOptions>) on self.registration.cookies with too few arguments must throw TypeError
+PASS CookieStoreManager interface: self.registration.cookies must inherit property "getSubscriptions()" with the proper type
+PASS CookieStoreManager interface: self.registration.cookies must inherit property "unsubscribe(sequence<CookieStoreGetOptions>)" with the proper type
+PASS CookieStoreManager interface: calling unsubscribe(sequence<CookieStoreGetOptions>) on self.registration.cookies with too few arguments must throw TypeError
+PASS CookieChangeEvent interface: existence and properties of interface object
+PASS CookieChangeEvent interface object length
+PASS CookieChangeEvent interface object name
+PASS CookieChangeEvent interface: existence and properties of interface prototype object
+PASS CookieChangeEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS CookieChangeEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS CookieChangeEvent interface: attribute changed
+PASS CookieChangeEvent interface: attribute deleted
+PASS CookieChangeEvent must be primary interface of new CookieChangeEvent("change")
+PASS Stringification of new CookieChangeEvent("change")
+PASS CookieChangeEvent interface: new CookieChangeEvent("change") must inherit property "changed" with the proper type
+PASS CookieChangeEvent interface: new CookieChangeEvent("change") must inherit property "deleted" with the proper type
 PASS ExtendableCookieChangeEvent interface: existence and properties of interface object
-FAIL ServiceWorkerRegistration interface: attribute cookies assert_true: The prototype object must have a property "cookies" expected true got false
-FAIL ServiceWorkerRegistration interface: self.registration must inherit property "cookies" with the proper type assert_inherits: property "cookies" not found in prototype chain
+PASS ServiceWorkerRegistration interface: attribute cookies
+PASS ServiceWorkerRegistration interface: self.registration must inherit property "cookies" with the proper type
 PASS Window interface: attribute cookieStore
 PASS Window interface: self must inherit property "cookieStore" with the proper type
 

@@ -364,7 +364,6 @@ set(JavaScriptCore_BUILTINS_SOURCES
     ${JAVASCRIPTCORE_DIR}/builtins/AsyncFunctionPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/AsyncIteratorPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/AsyncGeneratorPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/DatePrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/FunctionPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/GeneratorPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/GlobalObject.js
@@ -608,6 +607,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     assembler/AssemblerCommon.h
     assembler/AssemblyComments.h
     assembler/CPU.h
+    assembler/CPUInlines.h
     assembler/CodeLocation.h
     assembler/FastJITPermissions.h
     assembler/JITOperationList.h
@@ -624,6 +624,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     assembler/MacroAssemblerRISCV64.h
     assembler/MacroAssemblerX86Common.h
     assembler/MacroAssemblerX86_64.h
+    assembler/OSCheck.h
     assembler/Printer.h
     assembler/RISCV64Assembler.h
     assembler/RISCV64Registers.h
@@ -651,6 +652,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/CallLinkInfo.h
     bytecode/CallMode.h
     bytecode/CallVariant.h
+    bytecode/CallVariantInlines.h
     bytecode/ChainedWatchpoint.h
     bytecode/CheckPrivateBrandStatus.h
     bytecode/CheckPrivateBrandVariant.h
@@ -934,6 +936,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     parser/SourceProvider.h
     parser/SourceProviderCache.h
     parser/SourceProviderCacheItem.h
+    parser/SourceTaintedOrigin.h
     parser/UnlinkedSourceCode.h
     parser/VariableEnvironment.h
 
@@ -1098,6 +1101,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSCJSValueInlines.h
     runtime/JSCPtrTag.h
     runtime/JSCallee.h
+    runtime/JSCalleeInlines.h
     runtime/JSCast.h
     runtime/JSCell.h
     runtime/JSCellInlines.h
@@ -1120,6 +1124,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSGlobalObjectFunctions.h
     runtime/JSGlobalObjectInlines.h
     runtime/JSGlobalProxy.h
+    runtime/JSGlobalProxyInlines.h
     runtime/JSImmutableButterfly.h
     runtime/JSInternalFieldObjectImpl.h
     runtime/JSInternalFieldObjectImplInlines.h
@@ -1174,6 +1179,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/MemoryStatistics.h
     runtime/Microtask.h
     runtime/ModuleProgramExecutable.h
+    runtime/NativeCallee.h
     runtime/NativeExecutable.h
     runtime/NativeFunction.h
     runtime/NullGetterFunction.h

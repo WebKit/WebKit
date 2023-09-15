@@ -291,7 +291,9 @@ public:
 
     static void setCachedProcessSuspensionDelayForTesting(Seconds);
 
+#if !PLATFORM(COCOA)
     void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);
+#endif
     void allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo&);
 
     DeviceIdHashSaltStorage& deviceIdHashSaltStorage() { return m_deviceIdHashSaltStorage.get(); }
@@ -448,6 +450,13 @@ public:
     void setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit);
 #endif
 
+    void addPage(WebPageProxy&);
+    void removePage(WebPageProxy&);
+
+#if ENABLE(SERVICE_WORKER)
+    void updateServiceWorkerInspectability();
+#endif
+
     HashSet<RefPtr<WebProcessPool>> processPools(size_t limit = std::numeric_limits<size_t>::max()) const;
 
     void setServiceWorkerOverridePreferences(WebPreferences* preferences) { m_serviceWorkerOverridePreferences = preferences; }
@@ -483,6 +492,7 @@ private:
 
     WebsiteDataStore();
     static WorkQueue& websiteDataStoreIOQueue();
+    Ref<NetworkProcessProxy> protectedNetworkProcess() const;
 
     // FIXME: Only Cocoa ports respect ShouldCreateDirectory, so you cannot rely on it to create
     // directories. This is confusing.
@@ -560,6 +570,7 @@ private:
 #endif
 
     WeakHashSet<WebProcessProxy> m_processes;
+    WeakHashSet<WebPageProxy> m_pages;
 
     bool m_isTrackingPreventionStateExplicitlySet { false };
 
@@ -590,6 +601,8 @@ private:
 
     RefPtr<WebPreferences> m_serviceWorkerOverridePreferences;
     CompletionHandler<void(String&&)> m_completionHandlerForRemovalFromNetworkProcess;
+
+    bool m_inspectionForServiceWorkersAllowed { true };
 };
 
 }

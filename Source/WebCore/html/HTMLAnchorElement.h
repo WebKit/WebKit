@@ -59,6 +59,8 @@ public:
 
     WEBCORE_EXPORT String origin() const;
 
+    WEBCORE_EXPORT void setProtocol(StringView value);
+
     WEBCORE_EXPORT String text();
     void setText(String&&);
 

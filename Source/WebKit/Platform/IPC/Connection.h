@@ -472,6 +472,9 @@ public:
 
     CompletionHandler<void(Decoder*)> takeAsyncReplyHandler(AsyncReplyID);
 
+    template<typename T, typename C> static void callReply(IPC::Decoder&, C&& completionHandler);
+    template<typename T, typename C> static void cancelReply(C&& completionHandler);
+
 private:
     Connection(Identifier, bool isServer);
     void platformInitialize(Identifier);
@@ -531,9 +534,6 @@ private:
 
     // Only valid between open() and invalidate().
     SerialFunctionDispatcher& dispatcher();
-
-    template<typename T, typename C> static void callReply(IPC::Decoder&, C&& completionHandler);
-    template<typename T, typename C> static void cancelReply(C&& completionHandler);
 
     class SyncMessageState;
     struct SyncMessageStateRelease {
@@ -684,7 +684,7 @@ template<typename T>
 Error Connection::send(UniqueID connectionID, T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> qos)
 {
     Locker locker { s_connectionMapLock };
-    auto* connection = connectionMap().get(connectionID);
+    RefPtr connection = connectionMap().get(connectionID);
     if (!connection)
         return Error::NoConnectionForIdentifier;
     return connection->send(WTFMove(message), destinationID, sendOptions, qos);
@@ -735,6 +735,7 @@ template<typename T> Connection::SendSyncResult<T> Connection::sendSync(T&& mess
 
 template<typename T> Error Connection::waitForAndDispatchImmediately(uint64_t destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)
 {
+    static_assert(T::canDispatchOutOfOrder, "Can only use waitForAndDispatchImmediately on messages declared with CanDispatchOutOfOrder");
     auto decoderOrError = waitForMessage(T::name(), destinationID, timeout, waitForOptions);
     if (!decoderOrError.decoder)
         return decoderOrError.error;
@@ -749,6 +750,7 @@ template<typename T> Error Connection::waitForAndDispatchImmediately(uint64_t de
 
 template<typename T> Error Connection::waitForAsyncReplyAndDispatchImmediately(AsyncReplyID replyID, Timeout timeout)
 {
+    static_assert(T::replyCanDispatchOutOfOrder, "Can only use waitForAsyncReplyAndDispatchImmediately on messages declared with ReplyCanDispatchOutOfOrder");
     auto decoderOrError = waitForMessage(T::asyncMessageReplyName(), replyID.toUInt64(), timeout, { });
     if (!decoderOrError.decoder)
         return decoderOrError.error;

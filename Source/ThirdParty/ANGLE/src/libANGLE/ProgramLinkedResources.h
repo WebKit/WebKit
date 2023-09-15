@@ -11,9 +11,12 @@
 #ifndef LIBANGLE_UNIFORMLINKER_H_
 #define LIBANGLE_UNIFORMLINKER_H_
 
+#include <GLSLANG/ShaderVars.h>
+
 #include "angle_gl.h"
 #include "common/PackedEnums.h"
 #include "common/angleutils.h"
+#include "libANGLE/Uniform.h"
 #include "libANGLE/VaryingPacking.h"
 
 #include <functional>
@@ -37,18 +40,78 @@ class Context;
 class InfoLog;
 struct InterfaceBlock;
 enum class LinkMismatchError;
-struct LinkedUniform;
 class ProgramState;
 class ProgramPipelineState;
 class ProgramBindings;
 class ProgramAliasedBindings;
 class Shader;
 struct ShaderVariableBuffer;
-struct UnusedUniform;
 struct VariableLocation;
+struct Version;
 
 using AtomicCounterBuffer = ShaderVariableBuffer;
 using ShaderUniform       = std::pair<ShaderType, const sh::ShaderVariable *>;
+
+// The link operation is responsible for finishing the link of uniform and interface blocks.
+// This way it can filter out unreferenced resources and still have access to the info.
+// TODO(jmadill): Integrate uniform linking/filtering as well as interface blocks.
+struct UnusedUniform
+{
+    UnusedUniform(std::string name,
+                  bool isSampler,
+                  bool isImage,
+                  bool isAtomicCounter,
+                  bool isFragmentInOut)
+    {
+        this->name            = name;
+        this->isSampler       = isSampler;
+        this->isImage         = isImage;
+        this->isAtomicCounter = isAtomicCounter;
+        this->isFragmentInOut = isFragmentInOut;
+    }
+
+    std::string name;
+    bool isSampler;
+    bool isImage;
+    bool isAtomicCounter;
+    bool isFragmentInOut;
+};
+
+struct UsedUniform : public sh::ShaderVariable
+{
+    UsedUniform();
+    UsedUniform(GLenum type,
+                GLenum precision,
+                const std::string &name,
+                const std::vector<unsigned int> &arraySizes,
+                const int binding,
+                const int offset,
+                const int location,
+                const int bufferIndex,
+                const sh::BlockMemberInfo &blockInfo);
+    UsedUniform(const UsedUniform &other);
+    UsedUniform &operator=(const UsedUniform &other);
+    ~UsedUniform();
+
+    bool isSampler() const { return typeInfo->isSampler; }
+    bool isImage() const { return typeInfo->isImageType; }
+    bool isAtomicCounter() const { return IsAtomicCounterType(type); }
+    size_t getElementSize() const { return typeInfo->externalSize; }
+
+    void setActive(ShaderType shaderType, bool used, uint32_t _id)
+    {
+        activeVariable.setActive(shaderType, used, _id);
+    }
+
+    ActiveVariable activeVariable;
+    const UniformTypeInfo *typeInfo;
+
+    // Identifies the containing buffer backed resource -- interface block or atomic counter buffer.
+    int bufferIndex;
+    sh::BlockMemberInfo blockInfo;
+    std::vector<unsigned int> outerArraySizes;
+    unsigned int outerArrayOffset;
+};
 
 class UniformLinker final : angle::NonCopyable
 {
@@ -62,6 +125,8 @@ class UniformLinker final : angle::NonCopyable
               const ProgramAliasedBindings &uniformLocationBindings);
 
     void getResults(std::vector<LinkedUniform> *uniforms,
+                    std::vector<std::string> *uniformNames,
+                    std::vector<std::string> *uniformMappedNames,
                     std::vector<UnusedUniform> *unusedUniformsOutOrNull,
                     std::vector<VariableLocation> *uniformLocationsOutOrNull);
 
@@ -73,10 +138,10 @@ class UniformLinker final : angle::NonCopyable
                                            InfoLog &infoLog) const;
     bool flattenUniformsAndCheckCapsForShader(ShaderType shaderType,
                                               const Caps &caps,
-                                              std::vector<LinkedUniform> &samplerUniforms,
-                                              std::vector<LinkedUniform> &imageUniforms,
-                                              std::vector<LinkedUniform> &atomicCounterUniforms,
-                                              std::vector<LinkedUniform> &inputAttachmentUniforms,
+                                              std::vector<UsedUniform> &samplerUniforms,
+                                              std::vector<UsedUniform> &imageUniforms,
+                                              std::vector<UsedUniform> &atomicCounterUniforms,
+                                              std::vector<UsedUniform> &inputAttachmentUniforms,
                                               std::vector<UnusedUniform> &unusedUniforms,
                                               InfoLog &infoLog);
 
@@ -93,7 +158,7 @@ class UniformLinker final : angle::NonCopyable
 
     ShaderBitSet mActiveShaderStages;
     const ShaderMap<std::vector<sh::ShaderVariable>> &mShaderUniforms;
-    std::vector<LinkedUniform> mUniforms;
+    std::vector<UsedUniform> mUniforms;
     std::vector<UnusedUniform> mUnusedUniforms;
     std::vector<VariableLocation> mUniformLocations;
 };
@@ -156,6 +221,8 @@ class UniformBlockLinker final : public InterfaceBlockLinker
 
     void init(std::vector<InterfaceBlock> *blocksOut,
               std::vector<LinkedUniform> *uniformsOut,
+              std::vector<std::string> *uniformNamesOut,
+              std::vector<std::string> *uniformMappedNamesOut,
               std::vector<std::string> *unusedInterfaceBlocksOut);
 
   private:
@@ -167,7 +234,9 @@ class UniformBlockLinker final : public InterfaceBlockLinker
                                           ShaderType shaderType,
                                           int blockIndex) const override;
 
-    std::vector<LinkedUniform> *mUniformsOut = nullptr;
+    std::vector<LinkedUniform> *mUniformsOut         = nullptr;
+    std::vector<std::string> *mUniformNamesOut       = nullptr;
+    std::vector<std::string> *mUniformMappedNamesOut = nullptr;
 };
 
 class ShaderStorageBlockLinker final : public InterfaceBlockLinker
@@ -205,31 +274,6 @@ class AtomicCounterBufferLinker final : angle::NonCopyable
     std::vector<AtomicCounterBuffer> *mAtomicCounterBuffersOut = nullptr;
 };
 
-// The link operation is responsible for finishing the link of uniform and interface blocks.
-// This way it can filter out unreferenced resources and still have access to the info.
-// TODO(jmadill): Integrate uniform linking/filtering as well as interface blocks.
-struct UnusedUniform
-{
-    UnusedUniform(std::string name,
-                  bool isSampler,
-                  bool isImage,
-                  bool isAtomicCounter,
-                  bool isFragmentInOut)
-    {
-        this->name            = name;
-        this->isSampler       = isSampler;
-        this->isImage         = isImage;
-        this->isAtomicCounter = isAtomicCounter;
-        this->isFragmentInOut = isFragmentInOut;
-    }
-
-    std::string name;
-    bool isSampler;
-    bool isImage;
-    bool isAtomicCounter;
-    bool isFragmentInOut;
-};
-
 struct ProgramLinkedResources
 {
     ProgramLinkedResources();
@@ -237,6 +281,8 @@ struct ProgramLinkedResources
 
     void init(std::vector<InterfaceBlock> *uniformBlocksOut,
               std::vector<LinkedUniform> *uniformsOut,
+              std::vector<std::string> *uniformNamesOut,
+              std::vector<std::string> *uniformMappedNamesOut,
               std::vector<InterfaceBlock> *shaderStorageBlocksOut,
               std::vector<BufferVariable> *bufferVariablesOut,
               std::vector<AtomicCounterBuffer> *atomicCounterBuffersOut);
@@ -251,9 +297,11 @@ struct ProgramLinkedResources
 
 struct LinkingVariables final : private angle::NonCopyable
 {
-    LinkingVariables(const Context *context, const ProgramState &state);
-    LinkingVariables(const ProgramPipelineState &state);
+    LinkingVariables();
     ~LinkingVariables();
+
+    void initForProgram(const ProgramState &state);
+    void initForProgramPipeline(const ProgramPipelineState &state);
 
     ShaderMap<std::vector<sh::ShaderVariable>> outputVaryings;
     ShaderMap<std::vector<sh::ShaderVariable>> inputVaryings;
@@ -279,8 +327,7 @@ class ProgramLinkedResourcesLinker final : angle::NonCopyable
         : mCustomEncoderFactory(customEncoderFactory)
     {}
 
-    void linkResources(const Context *context,
-                       const ProgramState &programState,
+    void linkResources(const ProgramState &programState,
                        const ProgramLinkedResources &resources) const;
 
   private:
@@ -323,7 +370,9 @@ LinkMismatchError LinkValidateProgramVariables(const sh::ShaderVariable &variabl
                                                std::string *mismatchedStructOrBlockMemberName);
 void AddProgramVariableParentPrefix(const std::string &parentName,
                                     std::string *mismatchedFieldName);
-bool LinkValidateProgramInterfaceBlocks(const Context *context,
+bool LinkValidateProgramInterfaceBlocks(const Caps &caps,
+                                        const Version &clientVersion,
+                                        bool webglCompatibility,
                                         ShaderBitSet activeProgramStages,
                                         const ProgramLinkedResources &resources,
                                         InfoLog &infoLog,

@@ -1,10 +1,12 @@
-diff --git a/resources/benchmark-report.mjs b/resources/benchmark-report.mjs
-index 4a71c5a..b85d066 100644
---- a/resources/benchmark-report.mjs
-+++ b/resources/benchmark-report.mjs
-@@ -1,5 +1,56 @@
- // This file can be customized to report results as needed.
- 
+diff --git a/resources/benchmark-runner.mjs b/resources/benchmark-runner.mjs
+index 1ad7104..22809a0 100644
+--- a/resources/benchmark-runner.mjs
++++ b/resources/benchmark-runner.mjs
+@@ -595,3 +595,54 @@ export class BenchmarkRunner {
+             metric.computeAggregatedMetrics();
+     }
+ }
++
 +window.onload = function () {
 +    const originalDidFinishLastIteration = benchmarkClient.didFinishLastIteration;
 +    benchmarkClient.didFinishLastIteration = function (...args) {
@@ -55,7 +57,3 @@ index 4a71c5a..b85d066 100644
 +    }
 +    document.querySelector(".start-tests-button").click();
 +};
-+
- (function () {
-     if (!window.testRunner && location.search !== "?webkit" && location.hash !== "#webkit")
-         return;

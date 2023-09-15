@@ -9,9 +9,9 @@ CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has bee
 PASS cross-origin HTMLImageElement: origin unclear getImageData
 PASS cross-origin HTMLImageElement: origin unclear 2dContext.drawImage
 PASS cross-origin HTMLImageElement: origin unclear bitmaprenderer.transferFromImageBitmap
-FAIL cross-origin SVGImageElement: origin unclear getImageData promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL cross-origin SVGImageElement: origin unclear 2dContext.drawImage promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL cross-origin SVGImageElement: origin unclear bitmaprenderer.transferFromImageBitmap promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS cross-origin SVGImageElement: origin unclear getImageData
+PASS cross-origin SVGImageElement: origin unclear 2dContext.drawImage
+PASS cross-origin SVGImageElement: origin unclear bitmaprenderer.transferFromImageBitmap
 PASS cross-origin HTMLVideoElement: origin unclear getImageData
 PASS cross-origin HTMLVideoElement: origin unclear 2dContext.drawImage
 PASS cross-origin HTMLVideoElement: origin unclear bitmaprenderer.transferFromImageBitmap
@@ -21,9 +21,6 @@ PASS redirected to cross-origin HTMLVideoElement: origin unclear bitmaprenderer.
 PASS redirected to same-origin HTMLVideoElement: origin unclear getImageData
 PASS redirected to same-origin HTMLVideoElement: origin unclear 2dContext.drawImage
 PASS redirected to same-origin HTMLVideoElement: origin unclear bitmaprenderer.transferFromImageBitmap
-PASS redirected to same-origin HTMLVideoElement via a cross-origin URL: origin unclear getImageData
-PASS redirected to same-origin HTMLVideoElement via a cross-origin URL: origin unclear 2dContext.drawImage
-PASS redirected to same-origin HTMLVideoElement via a cross-origin URL: origin unclear bitmaprenderer.transferFromImageBitmap
 PASS unclean HTMLCanvasElement: origin unclear getImageData
 PASS unclean HTMLCanvasElement: origin unclear 2dContext.drawImage
 PASS unclean HTMLCanvasElement: origin unclear bitmaprenderer.transferFromImageBitmap

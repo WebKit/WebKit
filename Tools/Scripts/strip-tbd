@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+
+import argparse
+import collections
+import yaml
+import os
+import tempfile
+
+parser = argparse.ArgumentParser(description='subset of strip(1) for manipulating symbol tables in text-based API stubs')
+parser.add_argument('input', type=argparse.FileType('r'), nargs='+', help='TBDs to strip')
+group = parser.add_mutually_exclusive_group()
+group.add_argument('-s', type=argparse.FileType('r'), dest='save_list', help='save the symbols listed in the file given')
+group.add_argument('-R', type=argparse.FileType('r'), dest='remove_list', help='remove the symbols listed in the file given')
+
+OPTS = parser.parse_args()
+SELECTED_SYMBOLS = set()
+STRIP_SELECTED = bool(OPTS.remove_list)
+
+fd = OPTS.save_list or OPTS.remove_list
+if fd:
+    for line in fd:
+        line = line.strip()
+        if line and not line.startswith('#'):
+            SELECTED_SYMBOLS.add(line)
+
+# FIXME: handle JSON-based TBD format (v5)
+class TBD(yaml.YAMLObject):
+    yaml_tag = '!tapi-tbd'
+
+    def __repr__(self):
+        return 'TBD(version={tbd-version}, {install-name})'.format_map(self.__dict__)
+
+    @classmethod
+    def to_yaml(cls, dumper, data):
+        dumper.sort_keys = False
+        mapping = super().to_yaml(dumper, data)
+        # Selectively enable flow layout to mimic LLVM formatting.
+        def walk_and_set_flow_style(node):
+            if isinstance(node, yaml.nodes.SequenceNode):
+                only_scalar = True
+                for n in node.value:
+                    only_scalar &= walk_and_set_flow_style(n)
+                if only_scalar:
+                    node.flow_style = True
+                return False
+            elif isinstance(node, yaml.nodes.MappingNode):
+                for k, v in node.value:
+                    walk_and_set_flow_style(v)
+                return False
+            else:
+                node.flow_style = True
+                return True
+        walk_and_set_flow_style(mapping)
+        return mapping
+
+for tbd_fd in OPTS.input:
+    updated_tbds = []
+    for tbd in yaml.unsafe_load_all(tbd_fd):
+        new_exports = []
+        while getattr(tbd, 'exports', None):
+            export_list = tbd.exports.pop()
+            write_back = False
+
+            for key, predicate in (
+                # field name     # whether value represents a selected symbol
+                ('symbols',      lambda x: x in SELECTED_SYMBOLS),
+                ('weak-symbols', lambda x: x in SELECTED_SYMBOLS),
+                ('objc-classes', lambda x: f'_OBJC_CLASS_$_{x}' in SELECTED_SYMBOLS or f'_OBJC_METACLASS_$_{x}' in SELECTED_SYMBOLS),
+                ('objc-ivars',   lambda x: f'_OBJC_IVAR_$_{x}' in SELECTED_SYMBOLS),
+            ):
+                if not key in export_list:
+                    continue
+                filtered = [name for name in export_list[key] if predicate(name) ^ STRIP_SELECTED]
+                if filtered:
+                    export_list[key] = filtered
+                    write_back = True
+                else:
+                    del export_list[key]
+
+            if write_back:
+                new_exports.append(export_list)
+        tbd.exports = new_exports
+        updated_tbds.append(tbd)
+
+    output_dir, output_basename = os.path.split(tbd_fd.name)
+    output_fd, output_name = tempfile.mkstemp(prefix=f'.{output_basename}', dir=output_dir)
+    output_fd = os.fdopen(output_fd, 'w')
+    yaml.dump_all(updated_tbds, output_fd, width=120, indent=8, explicit_start=True, explicit_end=True)
+    os.replace(output_name, tbd_fd.name)

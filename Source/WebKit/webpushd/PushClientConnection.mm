@@ -24,9 +24,10 @@
  */
 
 #import "config.h"
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+
 #import "PushClientConnection.h"
 
-#import "AppBundleRequest.h"
 #import "CodeSigning.h"
 #import "DaemonEncoder.h"
 #import "DaemonUtilities.h"
@@ -34,6 +35,7 @@
 #import "WebPushDaemonConnectionConfiguration.h"
 #import "WebPushDaemonConstants.h"
 #import <JavaScriptCore/ConsoleTypes.h>
+#import <WebCore/PushPermissionState.h>
 #import <wtf/HexNumber.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/Entitlements.h>
@@ -47,17 +49,17 @@ using WebKit::Daemon::Encoder;
 
 namespace WebPushD {
 
-Ref<ClientConnection> ClientConnection::create(xpc_connection_t connection)
+Ref<PushClientConnection> PushClientConnection::create(xpc_connection_t connection)
 {
-    return adoptRef(*new ClientConnection(connection));
+    return adoptRef(*new PushClientConnection(connection));
 }
 
-ClientConnection::ClientConnection(xpc_connection_t connection)
+PushClientConnection::PushClientConnection(xpc_connection_t connection)
     : m_xpcConnection(connection)
 {
 }
 
-void ClientConnection::updateConnectionConfiguration(const WebPushDaemonConnectionConfiguration& configuration)
+void PushClientConnection::updateConnectionConfiguration(WebPushDaemonConnectionConfiguration&& configuration)
 {
     if (configuration.hostAppAuditTokenData)
         setHostAppAuditTokenData(*configuration.hostAppAuditTokenData);
@@ -67,7 +69,7 @@ void ClientConnection::updateConnectionConfiguration(const WebPushDaemonConnecti
     m_useMockBundlesForTesting = configuration.useMockBundlesForTesting;
 }
 
-void ClientConnection::setHostAppAuditTokenData(const Vector<uint8_t>& tokenData)
+void PushClientConnection::setHostAppAuditTokenData(const Vector<uint8_t>& tokenData)
 {
     audit_token_t token;
     if (tokenData.size() != sizeof(token)) {
@@ -85,10 +87,15 @@ void ClientConnection::setHostAppAuditTokenData(const Vector<uint8_t>& tokenData
     }
 
     m_hostAppAuditToken = WTFMove(token);
-    Daemon::singleton().broadcastAllConnectionIdentities();
+    WebPushDaemon::singleton().broadcastAllConnectionIdentities();
 }
 
-WebCore::PushSubscriptionSetIdentifier ClientConnection::subscriptionSetIdentifier()
+void PushClientConnection::getPushTopicsForTesting(CompletionHandler<void(Vector<String>, Vector<String>)>&& completionHandler)
+{
+    WebPushDaemon::singleton().getPushTopicsForTesting(WTFMove(completionHandler));
+}
+
+WebCore::PushSubscriptionSetIdentifier PushClientConnection::subscriptionSetIdentifier()
 {
     return {
         hostAppCodeSigningIdentifier(),
@@ -97,7 +104,7 @@ WebCore::PushSubscriptionSetIdentifier ClientConnection::subscriptionSetIdentifi
     };
 }
 
-const String& ClientConnection::hostAppCodeSigningIdentifier()
+const String& PushClientConnection::hostAppCodeSigningIdentifier()
 {
     if (!m_hostAppCodeSigningIdentifier) {
 #if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK)
@@ -114,7 +121,7 @@ const String& ClientConnection::hostAppCodeSigningIdentifier()
     return *m_hostAppCodeSigningIdentifier;
 }
 
-String ClientConnection::bundleIdentifierFromAuditToken(audit_token_t audit_token)
+String PushClientConnection::bundleIdentifierFromAuditToken(audit_token_t audit_token)
 {
 #if PLATFORM(MAC)
     LSSessionID sessionID = (LSSessionID)audit_token_to_asid(audit_token);
@@ -133,7 +140,7 @@ String ClientConnection::bundleIdentifierFromAuditToken(audit_token_t audit_toke
     return WebKit::codeSigningIdentifier(audit_token);
 }
 
-bool ClientConnection::hostAppHasPushEntitlement()
+bool PushClientConnection::hostAppHasPushEntitlement()
 {
     if (!m_hostAppHasPushEntitlement)
         m_hostAppHasPushEntitlement = hostHasEntitlement("com.apple.private.webkit.webpush"_s);
@@ -141,12 +148,12 @@ bool ClientConnection::hostAppHasPushEntitlement()
     return *m_hostAppHasPushEntitlement;
 }
 
-bool ClientConnection::hostAppHasPushInjectEntitlement()
+bool PushClientConnection::hostAppHasPushInjectEntitlement()
 {
     return hostHasEntitlement("com.apple.private.webkit.webpush.inject"_s);
 }
 
-bool ClientConnection::hostHasEntitlement(ASCIILiteral entitlement)
+bool PushClientConnection::hostHasEntitlement(ASCIILiteral entitlement)
 {
     if (!m_hostAppAuditToken)
         return false;
@@ -157,7 +164,7 @@ bool ClientConnection::hostHasEntitlement(ASCIILiteral entitlement)
 #endif
 }
 
-void ClientConnection::setDebugModeIsEnabled(bool enabled)
+void PushClientConnection::setDebugModeIsEnabled(bool enabled)
 {
     if (enabled == m_debugModeEnabled)
         return;
@@ -166,7 +173,7 @@ void ClientConnection::setDebugModeIsEnabled(bool enabled)
     broadcastDebugMessage(makeString("Turned Debug Mode ", m_debugModeEnabled ? "on" : "off"));
 }
 
-void ClientConnection::broadcastDebugMessage(const String& message)
+void PushClientConnection::broadcastDebugMessage(const String& message)
 {
     String messageIdentifier;
     auto signingIdentifier = hostAppCodeSigningIdentifier();
@@ -175,83 +182,92 @@ void ClientConnection::broadcastDebugMessage(const String& message)
     else
         messageIdentifier = makeString("[", signingIdentifier, " (", String::number(identifier()), ")] ");
 
-    Daemon::singleton().broadcastDebugMessage(makeString(messageIdentifier, message));
+    WebPushDaemon::singleton().broadcastDebugMessage(makeString(messageIdentifier, message));
 }
 
-void ClientConnection::sendDebugMessage(const String& message)
+void PushClientConnection::sendDebugMessage(const String& message)
 {
-    // FIXME: We currently send the debug message twice.
-    // After getting all debug message clients onto the encoder/decoder mechanism, remove the old style message.
     auto dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
-    xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolDebugMessageLevelKey, static_cast<uint64_t>(JSC::MessageLevel::Info));
     xpc_dictionary_set_string(dictionary.get(), WebKit::WebPushD::protocolDebugMessageKey, message.utf8().data());
     xpc_connection_send_message(m_xpcConnection.get(), dictionary.get());
-
-    sendDaemonMessage<DaemonMessageType::DebugMessage>(message);
 }
 
-void ClientConnection::enqueueAppBundleRequest(std::unique_ptr<AppBundleRequest>&& request)
-{
-    RELEASE_ASSERT(m_xpcConnection);
-    m_pendingBundleRequests.append(WTFMove(request));
-    maybeStartNextAppBundleRequest();
-}
-
-void ClientConnection::maybeStartNextAppBundleRequest()
-{
-    RELEASE_ASSERT(m_xpcConnection);
-
-    if (m_currentBundleRequest || m_pendingBundleRequests.isEmpty())
-        return;
-
-    m_currentBundleRequest = m_pendingBundleRequests.takeFirst();
-    m_currentBundleRequest->start();
-}
-
-void ClientConnection::didCompleteAppBundleRequest(AppBundleRequest& request)
-{
-    // If our connection was closed there should be no in-progress bundle requests.
-    RELEASE_ASSERT(m_xpcConnection);
-
-    ASSERT(m_currentBundleRequest.get() == &request);
-    m_currentBundleRequest = nullptr;
-
-    maybeStartNextAppBundleRequest();
-}
-
-void ClientConnection::connectionClosed()
+void PushClientConnection::connectionClosed()
 {
     broadcastDebugMessage("Connection closed"_s);
 
     RELEASE_ASSERT(m_xpcConnection);
     m_xpcConnection = nullptr;
-
-    if (m_currentBundleRequest) {
-        m_currentBundleRequest->cancel();
-        m_currentBundleRequest = nullptr;
-    }
-
-    Deque<std::unique_ptr<AppBundleRequest>> pendingBundleRequests;
-    pendingBundleRequests.swap(m_pendingBundleRequests);
-    for (auto& requst : pendingBundleRequests)
-        requst->cancel();
 }
 
-template<DaemonMessageType messageType, typename... Args>
-void ClientConnection::sendDaemonMessage(Args&&... args) const
+void PushClientConnection::setPushAndNotificationsEnabledForOrigin(const String& originString, bool enabled, CompletionHandler<void()>&& replySender)
 {
-    if (!m_xpcConnection)
-        return;
+    WebPushDaemon::singleton().setPushAndNotificationsEnabledForOrigin(*this, originString, enabled, WTFMove(replySender));
+}
 
-    Encoder encoder;
-    encoder.encode(std::forward<Args>(args)...);
+void PushClientConnection::deletePushAndNotificationRegistration(const String& originString, CompletionHandler<void(const String&)>&& replySender)
+{
+    WebPushDaemon::singleton().deletePushAndNotificationRegistration(*this, originString, WTFMove(replySender));
+}
 
-    auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-    xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolVersionKey, WebKit::WebPushD::protocolVersionValue);
-    xpc_dictionary_set_value(dictionary.get(), WebKit::WebPushD::protocolEncodedMessageKey, WebKit::vectorToXPCData(encoder.takeBuffer()).get());
-    xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolMessageTypeKey, static_cast<uint64_t>(messageType));
+void PushClientConnection::injectPushMessageForTesting(PushMessageForTesting&& message, CompletionHandler<void(bool)>&& replySender)
+{
+    WebPushDaemon::singleton().injectPushMessageForTesting(*this, WTFMove(message), WTFMove(replySender));
+}
 
-    xpc_connection_send_message(m_xpcConnection.get(), dictionary.get());
+void PushClientConnection::injectEncryptedPushMessageForTesting(const String& message, CompletionHandler<void(bool)>&& replySender)
+{
+    WebPushDaemon::singleton().injectEncryptedPushMessageForTesting(*this, message, WTFMove(replySender));
+}
+
+void PushClientConnection::getPendingPushMessages(CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender)
+{
+    WebPushDaemon::singleton().getPendingPushMessages(*this, WTFMove(replySender));
+}
+
+void PushClientConnection::subscribeToPushService(URL&& scopeURL, const Vector<uint8_t>& applicationServerKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&& replySender)
+{
+    WebPushDaemon::singleton().subscribeToPushService(*this, WTFMove(scopeURL), applicationServerKey, WTFMove(replySender));
+}
+
+void PushClientConnection::unsubscribeFromPushService(URL&& scopeURL, std::optional<WebCore::PushSubscriptionIdentifier> identifier, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&& replySender)
+{
+    WebPushDaemon::singleton().unsubscribeFromPushService(*this, WTFMove(scopeURL), WTFMove(identifier), WTFMove(replySender));
+}
+
+void PushClientConnection::getPushSubscription(URL&& scopeURL, CompletionHandler<void(const Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&& replySender)
+{
+    WebPushDaemon::singleton().getPushSubscription(*this, WTFMove(scopeURL), WTFMove(replySender));
+}
+
+void PushClientConnection::incrementSilentPushCount(WebCore::SecurityOriginData&& origin, CompletionHandler<void(unsigned)>&& replySender)
+{
+    WebPushDaemon::singleton().incrementSilentPushCount(*this, WTFMove(origin), WTFMove(replySender));
+}
+
+void PushClientConnection::removeAllPushSubscriptions(CompletionHandler<void(unsigned)>&& replySender)
+{
+    WebPushDaemon::singleton().removeAllPushSubscriptions(*this, WTFMove(replySender));
+}
+
+void PushClientConnection::removePushSubscriptionsForOrigin(WebCore::SecurityOriginData&& origin, CompletionHandler<void(unsigned)>&& replySender)
+{
+    WebPushDaemon::singleton().removePushSubscriptionsForOrigin(*this, WTFMove(origin), WTFMove(replySender));
+}
+
+void PushClientConnection::setPublicTokenForTesting(const String& publicToken, CompletionHandler<void()>&& replySender)
+{
+    WebPushDaemon::singleton().setPublicTokenForTesting(publicToken, WTFMove(replySender));
+}
+
+void PushClientConnection::getPushPermissionState(URL&&, CompletionHandler<void(const Expected<uint8_t, WebCore::ExceptionData>&)>&& replySender)
+{
+    // FIXME: This doesn't actually get called right now, since the permission is currently checked
+    // in WebProcess. However, we've left this stub in for now because there is a chance that we
+    // will move the permission check into webpushd when supporting other platforms.
+    replySender(static_cast<uint8_t>(WebCore::PushPermissionState::Denied));
 }
 
 } // namespace WebPushD
+
+#endif // ENABLE(BUILT_IN_NOTIFICATIONS)

@@ -33,6 +33,7 @@
 #include "StyleProperties.h"
 #include "StyleRule.h"
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -42,9 +43,7 @@ CSSFontPaletteValuesRule::CSSFontPaletteValuesRule(StyleRuleFontPaletteValues& f
 {
 }
 
-CSSFontPaletteValuesRule::~CSSFontPaletteValuesRule()
-{
-}
+CSSFontPaletteValuesRule::~CSSFontPaletteValuesRule() = default;
 
 String CSSFontPaletteValuesRule::name() const
 {
@@ -53,7 +52,10 @@ String CSSFontPaletteValuesRule::name() const
 
 String CSSFontPaletteValuesRule::fontFamily() const
 {
-    return m_fontPaletteValuesRule->fontFamily();
+    auto serialize = [] (auto& family) {
+        return serializeFontFamily(family.string());
+    };
+    return makeStringByJoining(m_fontPaletteValuesRule->fontFamilies().map(serialize).span(), ", "_s);
 }
 
 String CSSFontPaletteValuesRule::basePalette() const
@@ -87,9 +89,9 @@ String CSSFontPaletteValuesRule::overrideColors() const
 String CSSFontPaletteValuesRule::cssText() const
 {
     StringBuilder builder;
-    builder.append("@font-palette-values ", m_fontPaletteValuesRule->name(), " { ");
-    if (!m_fontPaletteValuesRule->fontFamily().isNull())
-        builder.append("font-family: ", m_fontPaletteValuesRule->fontFamily(), "; ");
+    builder.append("@font-palette-values ", name(), " { ");
+    if (!m_fontPaletteValuesRule->fontFamilies().isEmpty())
+        builder.append("font-family: ", fontFamily(), "; ");
 
     if (m_fontPaletteValuesRule->basePalette()) {
         switch (m_fontPaletteValuesRule->basePalette()->type) {

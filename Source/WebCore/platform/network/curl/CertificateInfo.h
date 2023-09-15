@@ -57,12 +57,7 @@ public:
 
     static Certificate makeCertificate(const uint8_t*, size_t);
 
-    bool operator==(const CertificateInfo& other) const
-    {
-        return verificationError() == other.verificationError()
-            && certificateChain() == other.certificateChain();
-    }
-    bool operator!=(const CertificateInfo& other) const { return !(*this == other); }
+    friend bool operator==(const CertificateInfo&, const CertificateInfo&) = default;
 
 private:
     int m_verificationError { 0 };

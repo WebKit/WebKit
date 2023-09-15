@@ -44,6 +44,7 @@
 #include "PseudoClassChangeInvalidation.h"
 #include "QualifiedName.h"
 #include "Quirks.h"
+#include "RenderBlock.h"
 #include "Settings.h"
 #include <wtf/LoggerHelper.h>
 

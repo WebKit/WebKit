@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,29 +25,21 @@
 
 #pragma once
 
-#include "GraphicsContext.h"
-#include "InMemoryDisplayList.h"
+#include "DisplayListItems.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class FloatRect;
+class GraphicsContext;
 
 namespace DisplayList {
 
+class DisplayList;
 class ResourceHeap;
 
-enum class StopReplayReason : uint8_t {
-    ReplayedAllItems,
-    MissingCachedResource,
-    InvalidItemOrExtent,
-    OutOfMemory
-};
-
 struct ReplayResult {
-    std::unique_ptr<InMemoryDisplayList> trackedDisplayList;
-    size_t numberOfBytesRead { 0 };
+    std::unique_ptr<DisplayList> trackedDisplayList;
     std::optional<RenderingResourceIdentifier> missingCachedResourceIdentifier;
     StopReplayReason reasonForStopping { StopReplayReason::ReplayedAllItems };
 };
@@ -55,23 +47,17 @@ struct ReplayResult {
 class Replayer {
     WTF_MAKE_NONCOPYABLE(Replayer);
 public:
-    WEBCORE_EXPORT Replayer(GraphicsContext&, const DisplayList&, const ResourceHeap* = nullptr);
+    WEBCORE_EXPORT Replayer(GraphicsContext&, const DisplayList&);
+    WEBCORE_EXPORT Replayer(GraphicsContext&, const Vector<Item>&, const ResourceHeap&);
     ~Replayer() = default;
 
     WEBCORE_EXPORT ReplayResult replay(const FloatRect& initialClip = { }, bool trackReplayList = false);
 
 private:
-    struct ApplyItemResult {
-        std::optional<StopReplayReason> stopReason;
-        std::optional<RenderingResourceIdentifier> resourceIdentifier;
-    };
-    ApplyItemResult applyItem(ItemHandle);
-
     GraphicsContext& m_context;
-    const DisplayList& m_displayList;
+    const Vector<Item>& m_items;
     const ResourceHeap& m_resourceHeap;
 };
 
-}
-}
-
+} // namespace DisplayList
+} // namespace WebCore

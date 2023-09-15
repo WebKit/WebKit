@@ -85,12 +85,6 @@
 
 6008 VULKAN NVIDIA LINUX :  KHR-GLES32.core.framebuffer_completeness.cube_map_layered_attachment_valid_size_and_format = SKIP
 
-// https://gitlab.khronos.org/Tracker/vk-gl-cts/-/issues/4292
-5978 VULKAN WIN NVIDIA : KHR-GLES32.core.texture_border_clamp.Texture2DDC16Linear = SKIP
-5978 VULKAN WIN NVIDIA : KHR-GLES32.core.texture_border_clamp.Texture2DDC32FLinear = SKIP
-5978 VULKAN PIXEL6 : KHR-GLES32.core.texture_border_clamp.Texture2DDC16Linear = SKIP
-5978 VULKAN PIXEL6 : KHR-GLES32.core.texture_border_clamp.Texture2DDC32FLinear = SKIP
-
 // Lack of border clamp support on older drivers.
 3577 VULKAN LINUX NVIDIA : KHR-GLES32.core.texture_border_clamp.* = SKIP
 3577 VULKAN LINUX NVIDIA : KHR-GLES32.core.gpu_shader5.*clamp*_border = SKIP

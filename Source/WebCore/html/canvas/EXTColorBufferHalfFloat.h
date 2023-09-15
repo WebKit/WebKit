@@ -26,16 +26,19 @@
 #pragma once
 
 #include "WebGLExtension.h"
+#include "WebGLRenderingContextBase.h"
+#include <wtf/IsoMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class EXTColorBufferHalfFloat final : public WebGLExtension {
+class EXTColorBufferHalfFloat final : public RefCounted<EXTColorBufferHalfFloat>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(EXTColorBufferHalfFloat);
+    WTF_MAKE_NONCOPYABLE(EXTColorBufferHalfFloat);
 public:
     explicit EXTColorBufferHalfFloat(WebGLRenderingContextBase&);
-    virtual ~EXTColorBufferHalfFloat();
-
-    ExtensionName getName() const override;
+    ~EXTColorBufferHalfFloat();
 
     static bool supported(GraphicsContextGL&);
 };

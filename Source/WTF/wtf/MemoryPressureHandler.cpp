@@ -172,6 +172,10 @@ MemoryUsagePolicy MemoryPressureHandler::policyForFootprint(size_t footprint)
 
 MemoryUsagePolicy MemoryPressureHandler::currentMemoryUsagePolicy()
 {
+    if (m_isSimulatingMemoryWarning)
+        return MemoryUsagePolicy::Conservative;
+    if (m_isSimulatingMemoryPressure)
+        return MemoryUsagePolicy::Strict;
     return policyForFootprint(memoryFootprint());
 }
 
@@ -249,6 +253,23 @@ ASCIILiteral MemoryPressureHandler::processStateDescription()
         }
     }
     return "unknown"_s;
+}
+
+void MemoryPressureHandler::beginSimulatedMemoryWarning()
+{
+    if (m_isSimulatingMemoryWarning)
+        return;
+    m_isSimulatingMemoryWarning = true;
+    memoryPressureStatusChanged();
+    respondToMemoryPressure(Critical::No, Synchronous::Yes);
+}
+
+void MemoryPressureHandler::endSimulatedMemoryWarning()
+{
+    if (!m_isSimulatingMemoryWarning)
+        return;
+    m_isSimulatingMemoryWarning = false;
+    memoryPressureStatusChanged();
 }
 
 void MemoryPressureHandler::beginSimulatedMemoryPressure()

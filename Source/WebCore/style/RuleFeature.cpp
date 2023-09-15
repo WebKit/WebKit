@@ -44,12 +44,16 @@ static bool isSiblingOrSubject(MatchElement matchElement)
     case MatchElement::DirectSibling:
     case MatchElement::AnySibling:
     case MatchElement::HasSibling:
+    case MatchElement::HasAnySibling:
     case MatchElement::Host:
+    case MatchElement::HostChild:
         return true;
     case MatchElement::Parent:
     case MatchElement::Ancestor:
     case MatchElement::ParentSibling:
     case MatchElement::AncestorSibling:
+    case MatchElement::ParentAnySibling:
+    case MatchElement::AncestorAnySibling:
     case MatchElement::HasChild:
     case MatchElement::HasDescendant:
     case MatchElement::HasSiblingDescendant:
@@ -67,6 +71,7 @@ bool isHasPseudoClassMatchElement(MatchElement matchElement)
     case MatchElement::HasDescendant:
     case MatchElement::HasSibling:
     case MatchElement::HasSiblingDescendant:
+    case MatchElement::HasAnySibling:
     case MatchElement::HasNonSubjectOrScopeBreaking:
         return true;
     default:
@@ -121,8 +126,7 @@ static MatchElement computeNextMatchElement(MatchElement matchElement, CSSSelect
         case CSSSelector::RelationType::ShadowPartDescendant:
             return MatchElement::Host;
         case CSSSelector::RelationType::ShadowSlotted:
-            // FIXME: Implement accurate invalidation.
-            return matchElement;
+            return MatchElement::HostChild;
         };
     }
     switch (relation) {
@@ -138,8 +142,7 @@ static MatchElement computeNextMatchElement(MatchElement matchElement, CSSSelect
     case CSSSelector::RelationType::ShadowPartDescendant:
         return MatchElement::Host;
     case CSSSelector::RelationType::ShadowSlotted:
-        // FIXME: Implement accurate invalidation.
-        return matchElement;
+        return MatchElement::HostChild;
     };
     ASSERT_NOT_REACHED();
     return matchElement;
@@ -149,11 +152,17 @@ static MatchElement computeNextHasPseudoClassMatchElement(MatchElement matchElem
 {
     ASSERT(isHasPseudoClassMatchElement(matchElement));
 
+    if (canBreakScope == CanBreakScope::No)
+        return matchElement;
+
     // :has(:is(foo bar)) can be affected by changes outside the :has scope.
-    if (canBreakScope == CanBreakScope::Yes) {
-        if (relation == CSSSelector::RelationType::DescendantSpace || relation == CSSSelector::RelationType::Child)
-            return MatchElement::HasNonSubjectOrScopeBreaking;
-    }
+    if (relation == CSSSelector::RelationType::DescendantSpace || relation == CSSSelector::RelationType::Child)
+        return MatchElement::HasNonSubjectOrScopeBreaking;
+
+    // :has(~ :is(.x ~ .y)) must look at previous siblings of the :scope scope too.
+    if (matchElement == MatchElement::HasSibling && (relation == CSSSelector::RelationType::IndirectAdjacent || relation == CSSSelector::RelationType::DirectAdjacent))
+        return MatchElement::HasAnySibling;
+
     return matchElement;
 }
 
@@ -175,13 +184,17 @@ MatchElement computeHasPseudoClassMatchElement(const CSSSelector& hasSelector)
         return MatchElement::HasSibling;
     case MatchElement::ParentSibling:
     case MatchElement::AncestorSibling:
+    case MatchElement::ParentAnySibling:
+    case MatchElement::AncestorAnySibling:
         return MatchElement::HasSiblingDescendant;
     case MatchElement::HasChild:
     case MatchElement::HasDescendant:
     case MatchElement::HasSibling:
     case MatchElement::HasSiblingDescendant:
+    case MatchElement::HasAnySibling:
     case MatchElement::HasNonSubjectOrScopeBreaking:
     case MatchElement::Host:
+    case MatchElement::HostChild:
         ASSERT_NOT_REACHED();
         break;
     }
@@ -193,8 +206,13 @@ static MatchElement computeSubSelectorMatchElement(MatchElement matchElement, co
     if (selector.match() == CSSSelector::Match::PseudoClass) {
         auto type = selector.pseudoClassType();
         // For :nth-child(n of .some-subselector) where an element change may affect other elements similar to sibling combinators.
-        if (type == CSSSelector::PseudoClassType::NthChild || type == CSSSelector::PseudoClassType::NthLastChild)
+        if (type == CSSSelector::PseudoClassType::NthChild || type == CSSSelector::PseudoClassType::NthLastChild) {
+            if (matchElement == MatchElement::Parent)
+                return MatchElement::ParentAnySibling;
+            if (matchElement == MatchElement::Ancestor)
+                return MatchElement::AncestorAnySibling;
             return MatchElement::AnySibling;
+        }
 
         // Similarly for :host().
         if (type == CSSSelector::PseudoClassType::Host)
@@ -224,7 +242,7 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
             idsInRules.add(selector->value());
             if (matchElement == MatchElement::Parent || matchElement == MatchElement::Ancestor)
                 idsMatchingAncestorsInRules.add(selector->value());
-            else if (isHasPseudoClassMatchElement(matchElement) || matchElement == MatchElement::AnySibling)
+            else if (isHasPseudoClassMatchElement(matchElement) || matchElement == MatchElement::AnySibling || matchElement == MatchElement::Host || matchElement == MatchElement::HostChild)
                 selectorFeatures.ids.append({ selector, matchElement, isNegation });
         } else if (selector->match() == CSSSelector::Match::Class)
             selectorFeatures.classes.append({ selector, matchElement, isNegation });

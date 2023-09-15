@@ -28,8 +28,6 @@
 #if ENABLE(WEBGL)
 #include "OESVertexArrayObject.h"
 
-#include "WebGLRenderingContext.h"
-
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
@@ -38,18 +36,13 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(OESVertexArrayObject);
 
-OESVertexArrayObject::OESVertexArrayObject(WebGLRenderingContextBase& context)
+OESVertexArrayObject::OESVertexArrayObject(WebGLRenderingContext& context)
     : WebGLExtension(context)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_OES_vertex_array_object"_s);
 }
 
 OESVertexArrayObject::~OESVertexArrayObject() = default;
-
-WebGLExtension::ExtensionName OESVertexArrayObject::getName() const
-{
-    return OESVertexArrayObjectName;
-}
 
 bool OESVertexArrayObject::supported(GraphicsContextGL& context)
 {
@@ -58,77 +51,65 @@ bool OESVertexArrayObject::supported(GraphicsContextGL& context)
 
 RefPtr<WebGLVertexArrayObjectOES> OESVertexArrayObject::createVertexArrayOES()
 {
-    auto context = WebGLExtensionScopedContext(this);
-    if (context.isLost())
+    if (isContextLost())
         return nullptr;
-
-    auto object = WebGLVertexArrayObjectOES::create(*context, WebGLVertexArrayObjectOES::Type::User);
-    context->addContextObject(object.get());
-    return object;
+    auto& context = this->context();
+    return WebGLVertexArrayObjectOES::createUser(context);
 }
 
 void OESVertexArrayObject::deleteVertexArrayOES(WebGLVertexArrayObjectOES* arrayObject)
 {
-    auto context = WebGLExtensionScopedContext(this);
-    if (context.isLost())
+    if (isContextLost())
         return;
+    auto& context = this->context();
 
-    Locker locker { context->objectGraphLock() };
+    Locker locker { context.objectGraphLock() };
 
     if (!arrayObject)
         return;
 
-    if (!arrayObject->validate(context->contextGroup(), *context)) {
-        context->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "delete", "object does not belong to this context");
+    if (!arrayObject->validate(context)) {
+        context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "delete", "object does not belong to this context");
         return;
     }
 
     if (arrayObject->isDeleted())
         return;
 
-    if (!arrayObject->isDefaultObject() && arrayObject == context.downcast<WebGLRenderingContext>()->m_boundVertexArrayObject)
-        context.downcast<WebGLRenderingContext>()->setBoundVertexArrayObject(locker, nullptr);
+    if (!arrayObject->isDefaultObject() && arrayObject == context.m_boundVertexArrayObject)
+        context.setBoundVertexArrayObject(locker, nullptr);
 
-    arrayObject->deleteObject(locker, context->graphicsContextGL());
+    arrayObject->deleteObject(locker, context.graphicsContextGL());
 }
 
 GCGLboolean OESVertexArrayObject::isVertexArrayOES(WebGLVertexArrayObjectOES* arrayObject)
 {
-    auto context = WebGLExtensionScopedContext(this);
-    if (context.isLost())
+    if (isContextLost())
         return false;
-
-    if (!arrayObject || !arrayObject->validate(context->contextGroup(), *context))
+    auto& context = this->context();
+    if (!context.validateIsWebGLObject(arrayObject))
         return false;
-
-    if (!arrayObject->hasEverBeenBound())
-        return false;
-    if (arrayObject->isDeleted())
-        return false;
-
-    return context->graphicsContextGL()->isVertexArray(arrayObject->object());
+    return context.graphicsContextGL()->isVertexArray(arrayObject->object());
 }
 
 void OESVertexArrayObject::bindVertexArrayOES(WebGLVertexArrayObjectOES* arrayObject)
 {
-    auto context = WebGLExtensionScopedContext(this);
-    if (context.isLost())
+    if (isContextLost())
         return;
-
-    Locker locker { context->objectGraphLock() };
+    auto& context = this->context();
+    Locker locker { context.objectGraphLock() };
 
     // Checks for already deleted objects and objects from other contexts. 
-    if (!context->validateNullableWebGLObject("bindVertexArrayOES", arrayObject))
+    if (!context.validateNullableWebGLObject("bindVertexArrayOES", arrayObject))
         return;
 
-    auto* contextGL = context->graphicsContextGL();
+    auto* contextGL = context.graphicsContextGL();
     if (arrayObject && !arrayObject->isDefaultObject() && arrayObject->object()) {
         contextGL->bindVertexArray(arrayObject->object());
-        arrayObject->setHasEverBeenBound();
-        context.downcast<WebGLRenderingContext>()->setBoundVertexArrayObject(locker, arrayObject);
+        context.setBoundVertexArrayObject(locker, arrayObject);
     } else {
         contextGL->bindVertexArray(0);
-        context.downcast<WebGLRenderingContext>()->setBoundVertexArrayObject(locker, nullptr);
+        context.setBoundVertexArrayObject(locker, nullptr);
     }
 }
 

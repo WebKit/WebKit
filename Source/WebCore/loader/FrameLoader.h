@@ -35,6 +35,7 @@
 #include "FrameLoaderStateMachine.h"
 #include "FrameLoaderTypes.h"
 #include "LayoutMilestone.h"
+#include "LoaderMalloc.h"
 #include "PageIdentifier.h"
 #include "PrivateClickMeasurement.h"
 #include "ReferrerPolicy.h"
@@ -97,7 +98,7 @@ WEBCORE_EXPORT bool isReload(FrameLoadType);
 using ContentPolicyDecisionFunction = Function<void(PolicyAction, PolicyCheckIdentifier)>;
 
 class FrameLoader final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
     WTF_MAKE_NONCOPYABLE(FrameLoader);
 public:
     FrameLoader(LocalFrame&, UniqueRef<LocalFrameLoaderClient>&&);
@@ -131,6 +132,7 @@ public:
 #endif
     ResourceLoaderIdentifier loadResourceSynchronously(const ResourceRequest&, ClientCredentialPolicy, const FetchOptions&, const HTTPHeaderMap&, ResourceError&, ResourceResponse&, RefPtr<SharedBuffer>& data);
 
+    bool shouldUpgradeRequestforHTTPSOnly(const URL& originalURL, ResourceRequest&) const;
     bool upgradeRequestforHTTPSOnlyIfNeeded(const URL&, ResourceRequest&) const;
     WEBCORE_EXPORT void changeLocation(const URL&, const AtomString& target, Event*, const ReferrerPolicy&, ShouldOpenExternalURLsPolicy, std::optional<NewFrameOpenerPolicy> = std::nullopt, const AtomString& downloadAttribute = nullAtom(), std::optional<PrivateClickMeasurement>&& = std::nullopt);
     void changeLocation(FrameLoadRequest&&, Event* = nullptr, std::optional<PrivateClickMeasurement>&& = std::nullopt);
@@ -268,6 +270,7 @@ public:
     WEBCORE_EXPORT bool isComplete() const;
 
     void commitProvisionalLoad();
+    void provisionalLoadFailedInAnotherProcess();
 
     void setLoadsSynchronously(bool loadsSynchronously) { m_loadsSynchronously = loadsSynchronously; }
     bool loadsSynchronously() const { return m_loadsSynchronously; }

@@ -1,4 +1,4 @@
-This is a link. This is a wiki-style link. This is a link with visible edges.
+This is a link. This is a wiki-style link. This is a link with visible edges. This is a JavaScript link. This link does nothing.
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
@@ -19,7 +19,9 @@ This is a link. This is a wiki-style link. This is a link with visible edges.
         (guard (250,-10) width=29 height=39)
         (borderRadius 0.00),
         (interaction (250,0) width=29 height=19)
-        (borderRadius 0.00)])
+        (borderRadius 0.00),
+        (interaction (456,-4) width=38 height=27)
+        (borderRadius 8.00)])
       )
     )
   )

@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<body>
+<script>
+
+let blobHandle;
+let bcHandle;
+let timeout;
+
+function openURL(blobURL)
+{
+    blobHandle = window.open(blobURL, "mainframe-blob");
+    if (!blobHandle)
+        window.opener.postMessage({ "from": "mainframe", "status": "fail", "message": "main frame: WindowProxy handle is null (probably opened blob url with noopener)", "url": blobURL }, "*");
+    else
+        timeout = setTimeout((blobURL, blobHandle, bcHandle) => {
+            window.opener.postMessage({ "from": "mainframe", "status": "donefail", "message": "main frame: Could not open blob url, timed out", "url": blobURL }, "*");
+            blobHandle.close();
+            bcHandle.close();
+        }, 1000, blobURL, blobHandle, bcHandle);
+}
+
+function createBroadcastChannelProxy()
+{
+    bcHandle = window.open(`https://localhost:8443/local/blob/resources/broadcast-channel-proxy.html`, "test-main-frame-bc-proxy");
+    if (!bcHandle)
+        window.opener.postMessage({ "from": "mainframe", "status": "fail", "message": "main frame: Opening broadcast channel proxy failed" }, '*');
+}
+
+function fetchAndOpenBlobURL(blobURL)
+{
+   fetch(blobURL).then(() => {
+       window.opener.postMessage({ "from": "mainframe", "status": "pass", "message": "main frame: Fetched Blob", "url": blobURL }, "*");
+       openURL(blobURL);
+   }).catch((e) => {
+       window.opener.postMessage({ "from": "mainframe", "status": "fail", "message": `main frame: Fetching blob failed: ${e.message}`, "url": blobURL }, "*");
+       openURL(blobURL);
+   });
+}
+
+let iframeDone = false;
+window.addEventListener('message', (e) => {
+    if (blobHandle && timeout) {
+        clearTimeout(timeout);
+        timeout = undefined;
+        blobHandle.close();
+        blobHandle = undefined;
+    }
+    if (!e.data.from || (e.data.from !== "iframe" && e.data.from !== "blob")) {
+        window.opener.postMessage({ "from": "mainframe", "status": "donefail", "message": `unexpected message: ${e.data}`, "url": e.data.url }, '*');
+        return;
+    }
+
+    if (e.data.from == "blob" && !iframeDone) {
+        // We received this from the broadcast proxy, forward it on to the iframe so we can handle it correctly
+        iframe.contentWindow.postMessage(e.data, "*");
+        return;
+    }
+
+    if (e.data.from == "blob") {
+        if (blobHandle) {
+            blobHandle.close();
+            blobHandle = undefined;
+        }
+        if (bcHandle) {
+            bcHandle.close();
+            bcHandle = undefined;
+        }
+
+        if (e.data.status != "done")
+            window.opener.postMessage({ "from": "mainframe", "status": "donefail", "message": `main frame: ${e.data.message}`, "url": e.data.url }, '*');
+        else
+            window.opener.postMessage({ "from": "mainframe", "status": "done", "message": `main frame: open() succeeded. Received message from blob: ${e.data.message}`, "url": e.data.url }, "*");
+        return;
+    }
+
+    if (e.data.status && (e.data.status == "pass" || e.data.status == "fail")) {
+        window.opener.postMessage(e.data, '*');
+        return;
+    }
+
+    if (!e.data.url) {
+        window.opener.postMessage({ "from": "mainframe", "status": "donefail", "message": "main frame: message does not have blob URL" }, '*');
+        return;
+    }
+
+    if (e.data.status && (e.data.status === "done" || e.data.status === "donefail")) {
+        if (e.data.status === "done")
+            e.data.status = "pass";
+        if (e.data.status === "donefail")
+            e.data.status = "fail";
+        window.opener.postMessage(e.data, '*');
+        iframeDone = true;
+
+        fetchAndOpenBlobURL(e.data.url);
+    }
+});
+
+createBroadcastChannelProxy()
+let iframeURL = "https://localhost:8443/local/blob/resources/iframe-for-creating-and-navigating-to-blob.html";
+if (window.location.search !== "") {
+    let params = new URLSearchParams(document.location.search);
+    iframeURL += `?url=${params.get("url")}`;
+}
+
+let iframe = document.createElement("iframe");
+iframe.src = iframeURL;
+document.body.appendChild(iframe);
+</script>
+</body>
+</html>

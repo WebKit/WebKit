@@ -73,7 +73,7 @@ public:
 
     // MediaPlayer Factory Methods
     static bool isAvailable();
-    static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types);
+    static void getSupportedTypes(HashSet<String>& types);
     static MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters&);
 
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
@@ -91,8 +91,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     void setNetworkState(MediaPlayer::NetworkState);
 
     void seekInternal();
-    void waitForSeekCompleted();
-    void seekCompleted();
+    void maybeCompleteSeek();
     void setLoadingProgresssed(bool flag) { m_loadingProgressed = flag; }
     void setHasAvailableVideoFrame(bool);
     bool hasAvailableVideoFrame() const override;
@@ -163,7 +162,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 #endif
 
     enum SeekState {
-        WaitingToSeek,
         Seeking,
         WaitingForAvailableFame,
         SeekCompleted,
@@ -208,8 +206,8 @@ private:
     MediaTime startTime() const override;
     MediaTime initialTime() const override;
 
-    void seekWithTolerance(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold) override;
-    bool seeking() const override;
+    void seekToTarget(const SeekTarget&) final;
+    bool seeking() const final;
     void setRateDouble(double) override;
     double rate() const override;
     double effectiveRate() const override;
@@ -239,7 +237,7 @@ private:
     void notifyActiveSourceBuffersChanged() override;
 
     void setPresentationSize(const IntSize&) final;
-    void setVideoInlineSizeFenced(const FloatSize&, WTF::MachSendRight&&) final;
+    void setVideoLayerSizeFenced(const FloatSize&, WTF::MachSendRight&&) final;
 
     void updateDisplayLayerAndDecompressionSession();
 
@@ -299,19 +297,7 @@ private:
 
     friend class MediaSourcePrivateAVFObjC;
 
-    struct PendingSeek {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
-        PendingSeek(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)
-            : targetTime(targetTime)
-            , negativeThreshold(negativeThreshold)
-            , positiveThreshold(positiveThreshold)
-        {
-        }
-        MediaTime targetTime;
-        MediaTime negativeThreshold;
-        MediaTime positiveThreshold;
-    };
-    std::unique_ptr<PendingSeek> m_pendingSeek;
+    std::optional<SeekTarget> m_pendingSeek;
 
     ThreadSafeWeakPtr<MediaPlayer> m_player;
     WeakPtrFactory<MediaPlayerPrivateMediaSourceAVFObjC> m_sizeChangeObserverWeakPtrFactory;
@@ -349,7 +335,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     double m_rate;
     bool m_playing;
     bool m_synchronizerSeeking;
-    SeekState m_seekCompleted { SeekCompleted };
+    SeekState m_seekState { SeekCompleted };
     mutable bool m_loadingProgressed;
 #if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     bool m_hasBeenAskedToPaintGL { false };

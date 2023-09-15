@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>media-can-play-type-case-sensitive</title>
+    <script src="video-test.js"></script>
+    <script>
+        window.addEventListener('load', event => {
+            mediaElement = document.createElement('video');
+            run(`mediaElement.canPlayType('audio/mp4; codecs="fLaC"')`);
+            testExpected(`mediaElement.canPlayType('audio/mp4; codecs="FlAc"')`, '');
+            run(`mediaElement.canPlayType('video/mp4; codecs="avc1"')`);
+            testExpected(`mediaElement.canPlayType('video/mp4; codecs="AvC1"')`, '');
+            run(`mediaElement.canPlayType('video/ogg; codecs="vorbis"')`);
+            testExpected(`mediaElement.canPlayType('video/ogg; codecs="vOrBiS"')`, '');
+            endTest();
+        });
+    </script>
+</head>
+<body>
+    <div>Tests that subsequent tests of incorrectly cased codecs do not incorrectly report they are supported</div>
+</body>
+</html>

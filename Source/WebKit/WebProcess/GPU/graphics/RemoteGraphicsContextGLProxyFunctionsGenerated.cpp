@@ -2992,11 +2992,33 @@ void RemoteGraphicsContextGLProxy::drawElementsInstancedBaseVertexBaseInstanceAN
     }
 }
 
+void RemoteGraphicsContextGLProxy::clipControlEXT(GCGLenum origin, GCGLenum depth)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::ClipControlEXT(origin, depth));
+    if (sendResult != IPC::Error::NoError) {
+        markContextLost();
+        return;
+    }
+}
+
 void RemoteGraphicsContextGLProxy::provokingVertexANGLE(GCGLenum provokeMode)
 {
     if (isContextLost())
         return;
     auto sendResult = send(Messages::RemoteGraphicsContextGL::ProvokingVertexANGLE(provokeMode));
+    if (sendResult != IPC::Error::NoError) {
+        markContextLost();
+        return;
+    }
+}
+
+void RemoteGraphicsContextGLProxy::polygonModeANGLE(GCGLenum face, GCGLenum mode)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::PolygonModeANGLE(face, mode));
     if (sendResult != IPC::Error::NoError) {
         markContextLost();
         return;

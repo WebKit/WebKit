@@ -629,6 +629,8 @@ static bool canMatchHoverOrActiveInQuirksMode(const SelectorChecker::LocalContex
             return true;
         case CSSSelector::Match::NestingParent:
         case CSSSelector::Match::Unknown:
+        case CSSSelector::Match::ForgivingUnknown:
+        case CSSSelector::Match::ForgivingUnknownNestContaining:
             ASSERT_NOT_REACHED();
             break;
         }
@@ -694,6 +696,13 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             caseSensitive = false;
 
         return anyAttributeMatches(element, selector, attr, caseSensitive);
+    }
+
+    if (selector.match() == CSSSelector::Match::ForgivingUnknown || selector.match() == CSSSelector::Match::ForgivingUnknownNestContaining)
+        return false;
+
+    if (selector.match() == CSSSelector::Match::NestingParent) {
+        return false;
     }
 
     if (selector.match() == CSSSelector::Match::PseudoClass) {
@@ -1074,14 +1083,15 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return matchesVolumeLockedPseudoClass(element);
 #endif
 
-        case CSSSelector::PseudoClassType::Scope:
-        case CSSSelector::PseudoClassType::RelativeScope: {
+        case CSSSelector::PseudoClassType::Scope: {
             const Node* contextualReferenceNode = !checkingContext.scope ? element.document().documentElement() : checkingContext.scope;
+            return &element == contextualReferenceNode;
+        }
+        case CSSSelector::PseudoClassType::HasScope: {
+            bool matches = &element == checkingContext.hasScope || checkingContext.matchesAllHasScopes;
 
-            bool matches = &element == contextualReferenceNode || checkingContext.matchesAllScopes;
-
-            if (!matches && checkingContext.scope) {
-                if (element.isDescendantOf(*checkingContext.scope))
+            if (!matches && checkingContext.hasScope) {
+                if (element.isDescendantOf(*checkingContext.hasScope))
                     checkingContext.matchedInsideScope = true;
             }
 
@@ -1309,7 +1319,8 @@ bool SelectorChecker::matchHasPseudoClass(CheckingContext& checkingContext, cons
     }
 
     CheckingContext hasCheckingContext(SelectorChecker::Mode::ResolvingStyle);
-    hasCheckingContext.scope = &element;
+    hasCheckingContext.scope = checkingContext.scope;
+    hasCheckingContext.hasScope = &element;
 
     bool matchedInsideScope = false;
 
@@ -1408,6 +1419,34 @@ bool SelectorChecker::matchHasPseudoClass(CheckingContext& checkingContext, cons
 
     if (cache)
         cache->add(Style::makeHasPseudoClassCacheKey(element, hasSelector), matchTypeForCache());
+
+    auto relationNeededForHasInvalidation = [](Style::Relation::Type type) {
+        switch (type) {
+        case Style::Relation::ChildrenAffectedByForwardPositionalRules:
+        case Style::Relation::ChildrenAffectedByBackwardPositionalRules:
+        case Style::Relation::ChildrenAffectedByFirstChildRules:
+        case Style::Relation::ChildrenAffectedByLastChildRules:
+            return true;
+        case Style::Relation::AffectedByEmpty:
+        case Style::Relation::AffectedByPreviousSibling:
+        case Style::Relation::DescendantsAffectedByPreviousSibling:
+        case Style::Relation::AffectsNextSibling:
+        case Style::Relation::DescendantsAffectedByForwardPositionalRules:
+        case Style::Relation::DescendantsAffectedByBackwardPositionalRules:
+        case Style::Relation::FirstChild:
+        case Style::Relation::LastChild:
+        case Style::Relation::NthChildIndex:
+        case Style::Relation::Unique:
+            return false;
+        }
+        ASSERT_NOT_REACHED();
+        return false;
+    };
+
+    for (auto& relation : hasCheckingContext.styleRelations) {
+        if (relationNeededForHasInvalidation(relation.type))
+            checkingContext.styleRelations.append(relation);
+    }
 
     return result;
 }

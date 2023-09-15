@@ -731,7 +731,9 @@ std::optional<String> URLParser::maybeCanonicalizeScheme(StringView scheme)
         return std::nullopt;
     }
 
-    return scheme.convertToASCIILowercase();
+    return scheme.convertToASCIILowercase().removeCharacters([](auto character) {
+        return isTabOrNewline(character);
+    });
 }
 
 bool URLParser::isSpecialScheme(StringView schemeArg)

@@ -27,8 +27,8 @@
 
 #if USE(LIBWEBRTC)
 
-#include "NWSPI.h"
 #include <optional>
+#include <pal/spi/cocoa/NetworkSPI.h>
 #include <webrtc/rtc_base/dscp.h>
 #include <wtf/Forward.h>
 

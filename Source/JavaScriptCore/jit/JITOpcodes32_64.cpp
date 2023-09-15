@@ -44,8 +44,10 @@ namespace JSC {
 
 void JIT::compileOpEqCommon(VirtualRegister src1, VirtualRegister src2)
 {
-    emitGetVirtualRegister(src1, jsRegT10);
-    emitGetVirtualRegister(src2, jsRegT32);
+    emitGetVirtualRegisters({
+        { src1, jsRegT10 },
+        { src2, jsRegT32 }
+    });
     addSlowCase(branch32(NotEqual, jsRegT10.tagGPR(), jsRegT32.tagGPR()));
     addSlowCase(branchIfCell(jsRegT10));
     addSlowCase(branch32(Below, jsRegT10.tagGPR(), TrustedImm32(JSValue::LowestTag)));
@@ -160,8 +162,10 @@ void JIT::emitSlow_op_jneq(const JSInstruction* currentInstruction, Vector<SlowC
 
 void JIT::compileOpStrictEqCommon(VirtualRegister src1,  VirtualRegister src2)
 {
-    emitGetVirtualRegister(src1, jsRegT10);
-    emitGetVirtualRegister(src2, jsRegT32);
+    emitGetVirtualRegisters({
+        { src1, jsRegT10 },
+        { src2, jsRegT32 }
+    });
 
     // Bail if the tags differ, or are double.
     addSlowCase(branch32(NotEqual, jsRegT10.tagGPR(), jsRegT32.tagGPR()));

@@ -33,6 +33,7 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSize.h>
 #include <stdint.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TypeCasts.h>
@@ -52,6 +53,7 @@ using PlatformDisplayID = uint32_t;
 namespace WebKit {
 
 class LayerTreeContext;
+class RemotePageDrawingAreaProxy;
 class WebPageProxy;
 class WebProcessProxy;
 
@@ -82,8 +84,6 @@ public:
 
     // FIXME: These should be pure virtual.
     virtual void setBackingStoreIsDiscardable(bool) { }
-
-    virtual void waitForBackingStoreUpdateOnNextPaint() { }
 
     const WebCore::IntSize& size() const { return m_size; }
     bool setSize(const WebCore::IntSize&, const WebCore::IntSize& scrollOffset = { });
@@ -134,12 +134,17 @@ public:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
+    virtual void addRemotePageDrawingAreaProxy(RemotePageDrawingAreaProxy&) { }
+    virtual void removeRemotePageDrawingAreaProxy(RemotePageDrawingAreaProxy&) { }
+
 protected:
     DrawingAreaProxy(DrawingAreaType, WebPageProxy&);
 
+    Ref<WebPageProxy> protectedWebPageProxy() const;
+
     DrawingAreaType m_type;
     DrawingAreaIdentifier m_identifier;
-    WebPageProxy& m_webPageProxy;
+    CheckedRef<WebPageProxy> m_webPageProxy;
 
     WebCore::IntSize m_size;
     WebCore::IntSize m_scrollOffset;

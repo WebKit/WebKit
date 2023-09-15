@@ -27,10 +27,6 @@
               (drawsContent 1)
               (event region
                 (rect (0,0) width=200 height=200)
-
-              (interaction regions [
-                (occlusion (0,0) width=200 height=200)
-                (borderRadius 0.00)])
               )
             )
           )
@@ -58,10 +54,6 @@
               (contentsOpaque 1)
               (event region
                 (rect (0,0) width=200 height=200)
-
-              (interaction regions [
-                (occlusion (0,0) width=200 height=200)
-                (borderRadius 0.00)])
               )
             )
           )

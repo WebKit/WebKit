@@ -1384,6 +1384,7 @@ set(webrtc_SOURCES
     Source/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer.cc
     Source/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer_generic.cc
     Source/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer_h264.cc
+    Source/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer_h265.cc
     Source/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer_raw.cc
     Source/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer_vp8.cc
     Source/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer_vp9.cc
@@ -2081,6 +2082,7 @@ target_compile_definitions(webrtc PRIVATE
   WEBRTC_POSIX
   WEBRTC_USE_BUILTIN_ISAC_FIX=1
   WEBRTC_USE_BUILTIN_ISAC_FLOAT=0
+  WEBRTC_USE_H265=1
   WTF_USE_DYNAMIC_ANNOTATIONS=1
   _GNU_SOURCE
 )

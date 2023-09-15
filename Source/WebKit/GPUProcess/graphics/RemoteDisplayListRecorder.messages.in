@@ -79,8 +79,6 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
     FillPathSegment(WebCore::PathSegment segment) StreamBatched
     FillPath(WebCore::Path path)
     FillEllipse(WebCore::FloatRect rect)
-    ConvertToLuminanceMask()
-    TransformToColorSpace(WebCore::DestinationColorSpace colorSpace)
 #if ENABLE(VIDEO)
     PaintFrameForMedia(WebCore::MediaPlayerIdentifier identifier, WebCore::FloatRect destination)
 #endif
@@ -102,8 +100,6 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
     ApplyFillPattern()
 #endif
     ApplyDeviceScaleFactor(float scaleFactor)
-    FlushContext(IPC::Semaphore semaphore) NotStreamEncodable
-    FlushContextSync() -> () Synchronous
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     PaintVideoFrame(struct WebKit::SharedVideoFrame frame, WebCore::FloatRect rect, bool shouldDiscardAlpha) NotStreamEncodable

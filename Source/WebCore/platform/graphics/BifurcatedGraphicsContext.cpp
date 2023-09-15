@@ -62,22 +62,22 @@ const DestinationColorSpace& BifurcatedGraphicsContext::colorSpace() const
     return m_primaryContext.colorSpace();
 }
 
-void BifurcatedGraphicsContext::save()
+void BifurcatedGraphicsContext::save(GraphicsContextState::Purpose purpose)
 {
     // FIXME: Consider not using the BifurcatedGraphicsContext's state stack at all,
     // and making all of the state getters and setters virtual.
-    GraphicsContext::save();
-    m_primaryContext.save();
-    m_secondaryContext.save();
+    GraphicsContext::save(purpose);
+    m_primaryContext.save(purpose);
+    m_secondaryContext.save(purpose);
 
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
-void BifurcatedGraphicsContext::restore()
+void BifurcatedGraphicsContext::restore(GraphicsContextState::Purpose purpose)
 {
-    GraphicsContext::restore();
-    m_primaryContext.restore();
-    m_secondaryContext.restore();
+    GraphicsContext::restore(purpose);
+    m_primaryContext.restore(purpose);
+    m_secondaryContext.restore(purpose);
 
     VERIFY_STATE_SYNCHRONIZATION();
 }
@@ -154,8 +154,7 @@ void BifurcatedGraphicsContext::beginTransparencyLayer(float opacity)
     m_primaryContext.beginTransparencyLayer(opacity);
     m_secondaryContext.beginTransparencyLayer(opacity);
 
-    GraphicsContext::save();
-    m_state.didBeginTransparencyLayer();
+    GraphicsContext::save(GraphicsContextState::Purpose::TransparencyLayer);
 
     VERIFY_STATE_SYNCHRONIZATION();
 }
@@ -166,7 +165,7 @@ void BifurcatedGraphicsContext::endTransparencyLayer()
     m_primaryContext.endTransparencyLayer();
     m_secondaryContext.endTransparencyLayer();
 
-    GraphicsContext::restore();
+    GraphicsContext::restore(GraphicsContextState::Purpose::TransparencyLayer);
 
     VERIFY_STATE_SYNCHRONIZATION();
 }

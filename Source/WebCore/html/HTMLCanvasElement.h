@@ -124,8 +124,6 @@ public:
 
     SecurityOrigin* securityOrigin() const final;
 
-    WEBCORE_EXPORT void setUsesDisplayListDrawing(bool);
-
     // FIXME: Only some canvas rendering contexts need an ImageBuffer.
     // It would be better to have the contexts own the buffers.
     void setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&&) final;
@@ -138,12 +136,13 @@ public:
 
     bool isControlledByOffscreen() const;
 
-    WEBCORE_EXPORT void setAvoidIOSurfaceSizeCheckInWebProcessForTesting();
-
     void queueTaskKeepingObjectAlive(TaskSource, Function<void()>&&) final;
     void dispatchEvent(Event&) final;
 
     CSSParserContext& cssParserContext();
+
+    using HTMLElement::ref;
+    using HTMLElement::deref;
 
 private:
     HTMLCanvasElement(const QualifiedName&, Document&);
@@ -190,10 +189,6 @@ private:
     std::unique_ptr<CanvasRenderingContext> m_context;
     mutable RefPtr<Image> m_copiedImage; // FIXME: This is temporary for platforms that have to copy the image buffer to render (and for CSSCanvasValue).
     std::unique_ptr<CSSParserContext> m_cssParserContext;
-
-    std::optional<bool> m_usesDisplayListDrawing;
-    
-    bool m_avoidBackendSizeCheckForTesting { false };
     bool m_ignoreReset { false };
     // m_hasCreatedImageBuffer means we tried to malloc the buffer. We didn't necessarily get it.
     mutable bool m_hasCreatedImageBuffer { false };

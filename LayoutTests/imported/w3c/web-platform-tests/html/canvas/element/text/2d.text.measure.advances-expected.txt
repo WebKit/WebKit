@@ -1,0 +1,6 @@
+2d.text.measure.advances
+Testing width advances
+Actual output:
+
+FAIL Testing width advances promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'ctx.measureText('Hello').advances[0]')"
+

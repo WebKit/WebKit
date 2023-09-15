@@ -1,4 +1,4 @@
-#!/usr/bin/env python -u
+#!/usr/bin/env python3 -u
 
 # Copyright (C) 2019 Apple Inc. All rights reserved.
 #
@@ -46,6 +46,7 @@ except:
     print("ERROR: numpy package is not installed. Run `pip install numpy`")
     sys.exit(1)
 
+
 def readJSONFile(path):
     with open(path, 'r') as contents:
         result = json.loads(contents.read())
@@ -53,6 +54,7 @@ def readJSONFile(path):
             del result['debugOutput']
         return result
 
+Speedometer3 = "Speedometer3"
 Speedometer2 = "Speedometer2"
 JetStream3 = "JetStream3"
 JetStream2 = "JetStream2"
@@ -62,8 +64,38 @@ PLUM3 = "PLUM3"
 MotionMark = "MotionMark"
 MotionMark1_1 = "MotionMark-1.1"
 MotionMark1_1_1 = "MotionMark-1.1.1"
+MotionMark1_2 = "MotionMark-1.2"
 
 unitMarker = "__unit__"
+
+
+def speedometer3Breakdown(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+    result = {}
+    result[unitMarker] = "ms"
+    for test in breakdown._results["Speedometer-3"]["tests"].keys():
+        result[test] = breakdown._results["Speedometer-3"]["tests"][test]["metrics"]["Time"]["Total"]["current"]
+    return result
+
+def speedometer3BreakdownSyncAsync(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+    result = {}
+    result[unitMarker] = "ms"
+    for test in breakdown._results["Speedometer-3"]["tests"].keys():
+        syncTime = None
+        asyncTime = None
+        for value in breakdown._results["Speedometer-3"]["tests"][test]["tests"].values():
+            syncArray = value["tests"]["Sync"]["metrics"]["Time"][None]["current"]
+            asyncArray = value["tests"]["Async"]["metrics"]["Time"][None]["current"]
+            if not syncTime:
+                syncTime = syncArray
+                asyncTime = asyncArray
+            else:
+                syncTime = [x + y for x, y in zip(syncTime, syncArray)]
+                asyncTime = [x + y for x, y in zip(asyncTime, asyncArray)]
+        result[test + "-sync"] = syncTime
+        result[test + "-async"] = asyncTime
+    return result
 
 def speedometer2Breakdown(jsonObject):
     breakdown = BenchmarkResults(jsonObject)
@@ -137,8 +169,10 @@ def motionMarkBreakdown(jsonObject):
         name = "MotionMark"
     elif detectMotionMark1_1(jsonObject):
         name = "MotionMark-1.1"
-    else:
+    elif detectMotionMark1_1_1(jsonObject):
         name = "MotionMark-1.1.1"
+    elif detectMotionMark1_2(jsonObject):
+        name = "MotionMark-1.2"
 
     for test in breakdown._results[name]["tests"].keys():
         result[test] = breakdown._results[name]["tests"][test]["metrics"]["Score"][None]["current"]
@@ -393,13 +427,24 @@ def JetStream3Results(payload):
 
     return results
 
+
 def detectSpeedometer2(payload):
     return "Speedometer-2" in payload
+
+def detectSpeedometer3(payload):
+    return "Speedometer-3" in payload
 
 def Speedometer2Results(payload):
     assert detectSpeedometer2(payload)
     results = []
     for arr in payload["Speedometer-2"]["metrics"]["Score"]["current"]:
+        results.append(numpy.mean(arr))
+    return results
+
+def Speedometer3Results(payload):
+    assert detectSpeedometer3(payload)
+    results = []
+    for arr in payload["Speedometer-3"]["metrics"]["Score"]["current"]:
         results.append(numpy.mean(arr))
     return results
 
@@ -466,14 +511,20 @@ def detectMotionMark1_1(payload):
 def detectMotionMark1_1_1(payload):
     return "MotionMark-1.1.1" in payload
 
+def detectMotionMark1_2(payload):
+    return "MotionMark-1.2" in payload
+
+
 def motionMarkResults(payload):
-    assert detectMotionMark(payload) or detectMotionMark1_1(payload) or detectMotionMark1_1_1(payload)
+    assert any(validMotionMarkDetector(payload) for validMotionMarkDetector in [detectMotionMark, detectMotionMark1_1, detectMotionMark1_1_1, detectMotionMark1_2])
     if detectMotionMark(payload):
         payload = payload["MotionMark"]
     elif detectMotionMark1_1(payload):
         payload = payload["MotionMark-1.1"]
-    else:
+    elif detectMotionMark1_1_1(payload):
         payload = payload["MotionMark-1.1.1"]
+    else:
+        payload = payload["MotionMark-1.2"]
     testNames = list(payload["tests"].keys())
     numTests = len(payload["tests"][testNames[0]]["metrics"]["Score"]["current"])
     results = []
@@ -492,6 +543,8 @@ def detectBenchmark(payload):
         return JetStream2
     if detectSpeedometer2(payload):
         return Speedometer2
+    if detectSpeedometer3(payload):
+        return Speedometer3
     if detectPLT5(payload):
         return PLT5
     if detectCompetitivePLT(payload):
@@ -504,28 +557,17 @@ def detectBenchmark(payload):
         return MotionMark1_1
     if detectMotionMark1_1_1(payload):
         return MotionMark1_1
+    if detectMotionMark1_2(payload):
+        return MotionMark1_2
     return None
 
 def biggerIsBetter(benchmarkType):
-    if benchmarkType == JetStream3:
+    if benchmarkType in [JetStream2, JetStream3, Speedometer2, Speedometer3, MotionMark, MotionMark1_1, MotionMark1_1_1, MotionMark1_2]:
         return True
-    if benchmarkType == JetStream2:
-        return True
-    if benchmarkType == Speedometer2:
-        return True
-    if benchmarkType == MotionMark:
-        return True
-    if benchmarkType == MotionMark1_1:
-        return True
-    if benchmarkType == PLT5:
+    elif benchmarkType in [PLT5, CompetitivePLT, PLUM3]:
         return False
-    if benchmarkType == CompetitivePLT:
-        return False
-    if benchmarkType == PLUM3:
-        return False
-
-    print("Should not be reached.")
-    assert False
+    else:
+        raise Exception('An unknown benchmark type was passed into biggerIsBetter: {}. It should not be possible to hit this.'.format(benchmarkType))
 
 def ttest(benchmarkType, a, b):
     # We use two-tailed Welch's
@@ -643,7 +685,18 @@ def main():
         if args.csv:
             writeCSV(speedometer2Breakdown(a), speedometer2Breakdown(b), args.csv)
 
-    elif typeA == MotionMark or typeA == MotionMark1_1 or typeA == MotionMark1_1_1:
+    elif typeA == Speedometer3:
+        if args.breakdown:
+            if args.detailed_breakdown:
+                dumpBreakdowns(speedometer3BreakdownSyncAsync(a), speedometer3BreakdownSyncAsync(b))
+            else:
+                dumpBreakdowns(speedometer3Breakdown(a), speedometer3Breakdown(b))
+
+        ttest(typeA, Speedometer3Results(a), Speedometer3Results(b))
+
+        if args.csv:
+            writeCSV(speedometer3Breakdown(a), speedometer3Breakdown(b), args.csv)
+    elif any(typeA == validMotionMarkTest for validMotionMarkTest in [MotionMark, MotionMark1_1, MotionMark1_1_1, MotionMark1_2]):
         if args.breakdown:
             dumpBreakdowns(motionMarkBreakdown(a), motionMarkBreakdown(b))
 

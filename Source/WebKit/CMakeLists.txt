@@ -40,6 +40,7 @@ set(WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/CoreIPCSupport"
     "${WEBKIT_DIR}/Shared/Databases"
     "${WEBKIT_DIR}/Shared/Databases/IndexedDB"
+    "${WEBKIT_DIR}/Shared/Extensions"
     "${WEBKIT_DIR}/Shared/FileAPI"
     "${WEBKIT_DIR}/Shared/Gamepad"
     "${WEBKIT_DIR}/Shared/Notifications"
@@ -138,6 +139,7 @@ set(WebKit_MESSAGES_IN_FILES
 
     GPUProcess/graphics/RemoteDisplayListRecorder
     GPUProcess/graphics/RemoteGraphicsContextGL
+    GPUProcess/graphics/RemoteImageBuffer
     GPUProcess/graphics/RemoteRenderingBackend
 
     GPUProcess/graphics/WebGPU/RemoteAdapter
@@ -335,12 +337,15 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/WebStorage/StorageAreaMap
 
     WebProcess/XR/PlatformXRSystemProxy
+
+    webpushd/PushClientConnection
 )
 
 set(WebKit_SERIALIZATION_IN_FILES
     GPUProcess/GPUProcessSessionParameters.serialization.in
 
     GPUProcess/graphics/PathSegment.serialization.in
+    GPUProcess/graphics/RemoteGraphicsContextGLInitializationState.serialization.in
     GPUProcess/graphics/RemoteRenderingBackendCreationParameters.serialization.in
 
     GPUProcess/graphics/WebGPU/RemoteGPURequestAdapterResponse.serialization.in
@@ -368,6 +373,8 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/FrameTreeCreationParameters.serialization.in
     Shared/FrameTreeNodeData.serialization.in
     Shared/GPUProcessConnectionParameters.serialization.in
+    Shared/GPUProcessPreferencesForWebProcess.serialization.in
+    Shared/GoToBackForwardItemParameters.serialization.in
     Shared/LayerTreeContext.serialization.in
     Shared/LocalFrameCreationParameters.serialization.in
     Shared/Model.serialization.in
@@ -380,6 +387,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/SameDocumentNavigationType.serialization.in
     Shared/SessionState.serialization.in
     Shared/ShareableBitmap.serialization.in
+    Shared/ShareableResource.serialization.in
     Shared/TextFlags.serialization.in
     Shared/TextRecognitionResult.serialization.in
     Shared/UpdateInfo.serialization.in
@@ -491,7 +499,31 @@ set(WebKit_SERIALIZATION_IN_FILES
     WebProcess/GPU/media/RemoteMediaPlayerConfiguration.serialization.in
     WebProcess/GPU/media/RemoteMediaPlayerState.serialization.in
 
+    WebProcess/GPU/webrtc/SharedVideoFrame.serialization.in
+
     WebProcess/WebCoreSupport/WebSpeechSynthesisVoice.serialization.in
+)
+
+set(WebCore_GENERATED_SERIALIZATION_IN_FILES
+    HTTPHeaderNames.serialization.in
+)
+
+set(WebCore_SERIALIZATION_IN_FILES
+    ActivityState.serialization.in
+    DragActions.serialization.in
+    InbandTextTrackPrivate.serialization.in
+    LayoutMilestones.serialization.in
+    MDNSRegisterError.serialization.in
+    MediaPlaybackTargetContext.serialization.in
+    MediaProducer.serialization.in
+    PlatformEvent.serialization.in
+    PlatformMediaSession.serialization.in
+    PlatformScreen.serialization.in
+    PlatformWheelEvent.serialization.in
+    PlaybackSessionModel.serialization.in
+    ProtectionSpaceBase.serialization.in
+    ScrollTypes.serialization.in
+    WebGPU.serialization.in
 )
 
 set(WebKit_FRAMEWORKS
@@ -666,6 +698,14 @@ macro(GENERATE_MESSAGE_SOURCES _output_source _inputs)
 endmacro()
 GENERATE_MESSAGE_SOURCES(WebKit_DERIVED_SOURCES "${WebKit_MESSAGES_IN_FILES}")
 
+set(WebKit_SERIALIZATION_DEPENDENCIES ${WebKit_SERIALIZATION_IN_FILES})
+foreach (in_file ${WebCore_GENERATED_SERIALIZATION_IN_FILES})
+    list(APPEND WebKit_SERIALIZATION_DEPENDENCIES "${WebCore_DERIVED_SOURCES_DIR}/${in_file}")
+endforeach ()
+foreach (in_file ${WebCore_SERIALIZATION_IN_FILES})
+    list(APPEND WebKit_SERIALIZATION_DEPENDENCIES "${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore/${in_file}")
+endforeach ()
+
 list(APPEND WebKit_DERIVED_SOURCES
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.h
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.cpp
@@ -681,8 +721,8 @@ add_custom_command(
         ${WebKit_DERIVED_SOURCES_DIR}/WebKitPlatformGeneratedSerializers.cpp
     MAIN_DEPENDENCY ${WEBKIT_DIR}/Scripts/generate-serializers.py
     DEPENDS
-        ${WebKit_SERIALIZATION_IN_FILES}
-    COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-serializers.py cpp ${WEBKIT_DIR}/ ${WebKit_SERIALIZATION_IN_FILES}
+        ${WebKit_SERIALIZATION_DEPENDENCIES}
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-serializers.py cpp DIRECTORY ${WEBKIT_DIR} ${WebKit_SERIALIZATION_IN_FILES} DIRECTORY ${WebCore_DERIVED_SOURCES_DIR} ${WebCore_GENERATED_SERIALIZATION_IN_FILES} DIRECTORY ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore ${WebCore_SERIALIZATION_IN_FILES}
     WORKING_DIRECTORY ${WebKit_DERIVED_SOURCES_DIR}
     VERBATIM
 )

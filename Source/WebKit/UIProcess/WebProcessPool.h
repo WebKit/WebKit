@@ -45,6 +45,7 @@
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/SharedStringHash.h>
 #include <pal/SessionID.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -137,6 +138,7 @@ enum class ProcessSwapRequestedByClient : bool;
 class WebProcessPool final
     : public API::ObjectImpl<API::Object::Type::ProcessPool>
     , public IPC::MessageReceiver
+    , public CanMakeCheckedPtr
 #if PLATFORM(MAC)
     , private PAL::SystemSleepListener::Client
 #endif
@@ -211,8 +213,8 @@ public:
 
     Ref<WebPageProxy> createWebPage(PageClient&, Ref<API::PageConfiguration>&&);
 
-    void pageBeginUsingWebsiteDataStore(WebPageProxyIdentifier, WebsiteDataStore&);
-    void pageEndUsingWebsiteDataStore(WebPageProxyIdentifier, WebsiteDataStore&);
+    void pageBeginUsingWebsiteDataStore(WebPageProxy&, WebsiteDataStore&);
+    void pageEndUsingWebsiteDataStore(WebPageProxy&, WebsiteDataStore&);
     bool hasPagesUsingWebsiteDataStore(WebsiteDataStore&) const;
 
     const String& injectedBundlePath() const { return m_configuration->injectedBundlePath(); }
@@ -449,8 +451,7 @@ public:
     bool hasForegroundWebProcesses() const { return m_foregroundWebProcessCounter.value(); }
     bool hasBackgroundWebProcesses() const { return m_backgroundWebProcessCounter.value(); }
 
-    enum class DidCreateNewProcess : bool { No, Yes };
-    void processForNavigation(WebPageProxy&, WebFrameProxy&, const API::Navigation&, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient, WebProcessProxy::LockdownMode, const FrameInfoData&, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral, DidCreateNewProcess)>&&);
+    void processForNavigation(WebPageProxy&, WebFrameProxy&, const API::Navigation&, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient, WebProcessProxy::LockdownMode, const FrameInfoData&, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&&);
 
     void didReachGoodTimeToPrewarm();
     bool hasPrewarmedProcess() const { return m_prewarmedProcess.get(); }
@@ -463,7 +464,6 @@ public:
     void setMockMediaDeviceIsEphemeral(const String&, bool);
     void resetMockMediaDevices();
 
-    void sendDisplayConfigurationChangedMessageForTesting();
     void clearCurrentModifierStateForTesting();
 
 #if ENABLE(TRACKING_PREVENTION)

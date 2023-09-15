@@ -101,7 +101,7 @@ private:
     {
 #ifndef GST_DISABLE_GST_DEBUG
         GUniquePtr<char> versionString(gst_version_string());
-        GST_DEBUG("BaseSinkPositionFlushWorkaroundProbe: running GStreamer %s, the bug fix is was merged in 1.23 and is expected to ship in 1.24.0.", versionString.get());
+        GST_DEBUG("BaseSinkPositionFlushWorkaroundProbe: running %s, the bug fix was merged in 1.23 and is expected to ship in 1.24.0.", versionString.get());
 #endif
         WorkaroundMode mode = getWorkAroundModeFromEnvironment("WEBKIT_GST_WORKAROUND_BASE_SINK_POSITION_FLUSH", WEBKIT_GST_WORKAROUND_BASE_SINK_POSITION_FLUSH_DEFAULT_MODE);
         if (mode == WorkaroundMode::ForceEnable) {
@@ -280,7 +280,6 @@ bool AppSinkFlushCapsWorkaroundProbe::s_isNeeded;
 
 static void registerAppsinkWithWorkaroundsIfNeededCallOnce()
 {
-    ASSERT(isMainThread());
     // If any workarounds are needed in this system, override GStreamer appsink for a version containing any needed workarounds.
     GST_DEBUG_CATEGORY_INIT(webkit_workarounds_debug, "webkitworkarounds", 0, "WebKit GStreamer Workarounds");
     GST_DEBUG("Checking for potentially needed GStreamer workarounds...");

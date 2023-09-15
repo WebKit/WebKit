@@ -30,7 +30,6 @@
 
 #import "MessageSenderInlines.h"
 #import "SmartMagnificationControllerMessages.h"
-#import "UserInterfaceIdiom.h"
 #import "ViewGestureGeometryCollectorMessages.h"
 #import "WKContentView.h"
 #import "WKScrollView.h"
@@ -38,6 +37,7 @@
 #import "WebPageMessages.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import <pal/system/ios/UserInterfaceIdiom.h>
 
 static const float smartMagnificationPanScrollThresholdZoomedOut = 60;
 static const float smartMagnificationPanScrollThresholdIPhone = 100;
@@ -120,7 +120,7 @@ void SmartMagnificationController::didCollectGeometryForSmartMagnificationGestur
     float minimumScrollDistance;
     if ([m_contentView bounds].size.width <= m_webPageProxy.unobscuredContentRect().width())
         minimumScrollDistance = smartMagnificationPanScrollThresholdZoomedOut;
-    else if (currentUserInterfaceIdiomIsSmallScreen())
+    else if (PAL::currentUserInterfaceIdiomIsSmallScreen())
         minimumScrollDistance = smartMagnificationPanScrollThresholdIPhone;
     else
         minimumScrollDistance = smartMagnificationPanScrollThresholdIPad;

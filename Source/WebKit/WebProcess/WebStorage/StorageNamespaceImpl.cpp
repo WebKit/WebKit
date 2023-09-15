@@ -89,7 +89,7 @@ Ref<StorageNamespace> StorageNamespaceImpl::copy(Page& newPage)
     ASSERT(m_storageNamespaceID);
     ASSERT(m_storageType == StorageType::Session);
 
-    auto* webPage = WebPage::fromCorePage(newPage);
+    RefPtr webPage = WebPage::fromCorePage(newPage);
     return adoptRef(*new StorageNamespaceImpl(m_storageType, webPage->identifier(), m_topLevelOrigin.get(), m_quotaInBytes, webPage->sessionStorageNamespaceIdentifier()));
 }
 

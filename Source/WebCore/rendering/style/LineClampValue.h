@@ -48,10 +48,7 @@ public:
 
     constexpr bool isNone() const { return m_value == -1; }
 
-    constexpr bool operator==(const LineClampValue& o) const
-    {
-        return value() == o.value() && isPercentage() == o.isPercentage();
-    }
+    friend constexpr bool operator==(const LineClampValue&, const LineClampValue&) = default;
     
 private:
     LineClamp m_type;

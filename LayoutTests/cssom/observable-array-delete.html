@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests for ObservableArray's [[Delete]]");
+
+let sheet1 = null;
+let sheet2 = null;
+let sheet3 = null;
+
+function runTest() {
+    "use strict";
+
+    sheet1 = new CSSStyleSheet()
+    sheet1.replaceSync('div { color: red }')
+    document.adoptedStyleSheets.push(sheet1)
+
+    sheet2 = new CSSStyleSheet()
+    sheet2.replaceSync('div { color: blue }')
+    document.adoptedStyleSheets.push(sheet2)
+
+    sheet3 = new CSSStyleSheet()
+    sheet3.replaceSync('div { color: green }')
+    document.adoptedStyleSheets.push(sheet3)
+
+    shouldBe("document.adoptedStyleSheets.length", "3");
+
+    shouldBeFalse("delete document.adoptedStyleSheets.length;");
+
+    shouldBeFalse("delete document.adoptedStyleSheets[0]");
+    shouldBeFalse("delete document.adoptedStyleSheets[1]");
+    shouldBeFalse("delete document.adoptedStyleSheets[3]");
+
+    shouldBe("document.adoptedStyleSheets.length", "3");
+
+    shouldBeTrue("delete document.adoptedStyleSheets[2]");
+    shouldBe("document.adoptedStyleSheets.length", "2");
+    shouldBe("document.adoptedStyleSheets[0]", "sheet1");
+    shouldBe("document.adoptedStyleSheets[1]", "sheet2");
+    shouldBeUndefined("document.adoptedStyleSheets[2]");
+
+    shouldBeTrue("delete document.adoptedStyleSheets['1']");
+    shouldBe("document.adoptedStyleSheets.length", "1");
+    shouldBe("document.adoptedStyleSheets[0]", "sheet1");
+    shouldBeUndefined("document.adoptedStyleSheets[1]");
+
+    shouldBeTrue("delete document.adoptedStyleSheets[0]");
+    shouldBe("document.adoptedStyleSheets.length", "0");
+    shouldBeUndefined("document.adoptedStyleSheets[0]");
+
+    evalAndLog("document.adoptedStyleSheets.foo = 1");
+    shouldBeTrue("delete document.adoptedStyleSheets.foo;");
+    shouldBeUndefined("document.adoptedStyleSheets.foo");
+}
+
+runTest();
+</script>
+</body>

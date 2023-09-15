@@ -28,7 +28,7 @@ PASS Property marker-mid inherits
 PASS Property marker-end has initial value none
 PASS Property marker-end inherits
 PASS Property paint-order has initial value normal
-FAIL Property paint-order inherits assert_equals: expected "markers stroke" but got "normal"
+PASS Property paint-order inherits
 PASS Property color-interpolation has initial value srgb
 PASS Property color-interpolation inherits
 PASS Property shape-rendering has initial value auto

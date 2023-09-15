@@ -44,6 +44,7 @@
     readonly attribute sequence<ApplePayShippingMethod> shippingMethods;
     readonly attribute MockPaymentContactFields requiredBillingContactFields;
     readonly attribute MockPaymentContactFields requiredShippingContactFields;
+    readonly attribute sequence<DOMString> supportedCountries;
 
     readonly attribute ApplePaySetupConfiguration setupConfiguration;
 

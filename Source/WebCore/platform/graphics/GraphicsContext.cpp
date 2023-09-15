@@ -61,17 +61,22 @@ GraphicsContext::~GraphicsContext()
     ASSERT(!m_transparencyLayerCount);
 }
 
-void GraphicsContext::save()
+void GraphicsContext::save(GraphicsContextState::Purpose purpose)
 {
+    ASSERT(purpose == GraphicsContextState::Purpose::SaveRestore || purpose == GraphicsContextState::Purpose::TransparencyLayer);
     m_stack.append(m_state);
+    m_state.repurpose(purpose);
 }
 
-void GraphicsContext::restore()
+void GraphicsContext::restore(GraphicsContextState::Purpose purpose)
 {
     if (m_stack.isEmpty()) {
         LOG_ERROR("ERROR void GraphicsContext::restore() stack is empty");
         return;
     }
+
+    ASSERT_UNUSED(purpose, purpose == m_state.purpose());
+    ASSERT_UNUSED(purpose, purpose == GraphicsContextState::Purpose::SaveRestore || purpose == GraphicsContextState::Purpose::TransparencyLayer);
 
     m_state = m_stack.last();
     m_stack.removeLast();
@@ -80,6 +85,23 @@ void GraphicsContext::restore()
     // Canvas elements will immediately save() again, but that goes into inline capacity.
     if (m_stack.isEmpty())
         m_stack.clear();
+}
+
+void GraphicsContext::unwindStateStack(unsigned count)
+{
+    ASSERT(count <= stackSize());
+    while (count-- > 0) {
+        switch (m_state.purpose()) {
+        case GraphicsContextState::Purpose::SaveRestore:
+            restore();
+            break;
+        case GraphicsContextState::Purpose::TransparencyLayer:
+            endTransparencyLayer();
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    }
 }
 
 void GraphicsContext::mergeLastChanges(const GraphicsContextState& state, const std::optional<GraphicsContextState>& lastDrawingState)

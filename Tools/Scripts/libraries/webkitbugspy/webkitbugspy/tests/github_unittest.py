@@ -264,6 +264,18 @@ class TestGitHub(unittest.TestCase):
             self.assertTrue(issue.opened)
             self.assertEqual(issue.comments[-1].content, 'Need to revert, fix broke the build')
 
+    def test_duplicate(self):
+        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
+            GITHUB_EXAMPLE_COM_USERNAME='tcontributor',
+            GITHUB_EXAMPLE_COM_TOKEN='token',
+        )):
+            tracker = github.Tracker(self.URL)
+            issue = tracker.issue(1)
+            self.assertTrue(issue.opened)
+            self.assertTrue(issue.close(original=tracker.issue(2)))
+            self.assertFalse(issue.opened)
+            self.assertEqual(issue.comments[-1].content, 'Duplicate of #2')
+
     def test_labels(self):
         with mocks.GitHub(self.URL.split('://')[1]) as mocked:
             self.assertDictEqual(github.Tracker(self.URL).labels, mocked.DEFAULT_LABELS)

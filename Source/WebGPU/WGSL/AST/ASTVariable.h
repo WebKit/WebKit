@@ -30,7 +30,6 @@
 #include "ASTDeclaration.h"
 #include "ASTExpression.h"
 #include "ASTIdentifier.h"
-#include "ASTTypeName.h"
 #include "ASTVariableQualifier.h"
 
 namespace WGSL {
@@ -59,22 +58,22 @@ public:
     Identifier& name() { return m_name; }
     Attribute::List& attributes() { return m_attributes; }
     VariableQualifier* maybeQualifier() { return m_qualifier; }
-    TypeName* maybeTypeName() { return m_type; }
+    Expression* maybeTypeName() { return m_type; }
     Expression* maybeInitializer() { return m_initializer; }
-    TypeName* maybeReferenceType() { return m_referenceType; }
+    Expression* maybeReferenceType() { return m_referenceType; }
     const Type* storeType() const
     {
         if (m_type)
-            return m_type->resolvedType();
+            return m_type->inferredType();
         return m_initializer->inferredType();
     }
 
 private:
-    Variable(SourceSpan span, VariableFlavor flavor, Identifier&& name, TypeName::Ptr type, Expression::Ptr initializer)
+    Variable(SourceSpan span, VariableFlavor flavor, Identifier&& name, Expression::Ptr type, Expression::Ptr initializer)
         : Variable(span, flavor, WTFMove(name), { }, type, initializer, { })
     { }
 
-    Variable(SourceSpan span, VariableFlavor flavor, Identifier&& name, VariableQualifier::Ptr qualifier, TypeName::Ptr type, Expression::Ptr initializer, Attribute::List&& attributes)
+    Variable(SourceSpan span, VariableFlavor flavor, Identifier&& name, VariableQualifier::Ptr qualifier, Expression::Ptr type, Expression::Ptr initializer, Attribute::List&& attributes)
         : Declaration(span)
         , m_name(WTFMove(name))
         , m_attributes(WTFMove(attributes))
@@ -91,10 +90,10 @@ private:
     // Each of the following may be null
     // But at least one of type and initializer must be non-null
     VariableQualifier::Ptr m_qualifier;
-    TypeName::Ptr m_type;
+    Expression::Ptr m_type;
     Expression::Ptr m_initializer;
     VariableFlavor m_flavor;
-    TypeName::Ptr m_referenceType { nullptr };
+    Expression::Ptr m_referenceType { nullptr };
 };
 
 } // namespace AST

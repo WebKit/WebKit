@@ -35,9 +35,9 @@ namespace WebCore {
 static UITraitCollection *adjustedTraitCollection(UITraitCollection *traitCollection)
 {
 #if PLATFORM(VISION)
-    // Use the iPad idiom instead of the Reality idiom, since some system colors are transparent
-    // in the Reality idiom, and are not web-compatible.
-    if (traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomReality)
+    // Use the iPad idiom instead of the Vision idiom, since some system colors are transparent
+    // in the Vision idiom, and are not web-compatible.
+    if (traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomVision)
         return [PAL::getUITraitCollectionClass() traitCollectionWithTraitsFromCollections:@[ traitCollection, [PAL::getUITraitCollectionClass() traitCollectionWithUserInterfaceIdiom:UIUserInterfaceIdiomPad] ]];
 #endif
     return traitCollection;

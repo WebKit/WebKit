@@ -69,7 +69,7 @@ void WriteShaderVar(gl::BinaryOutputStream *stream, const sh::ShaderVariable &va
     stream->writeInt(var.precision);
     stream->writeString(var.name);
     stream->writeString(var.mappedName);
-    stream->writeIntVector(var.arraySizes);
+    stream->writeVector(var.arraySizes);
     stream->writeBool(var.staticUse);
     stream->writeBool(var.active);
     stream->writeInt<size_t>(var.fields.size());
@@ -106,7 +106,7 @@ void LoadShaderVar(gl::BinaryInputStream *stream, sh::ShaderVariable *var)
     var->precision = stream->readInt<GLenum>();
     stream->readString(&var->name);
     stream->readString(&var->mappedName);
-    stream->readIntVector<unsigned int>(&var->arraySizes);
+    stream->readVector(&var->arraySizes);
     var->staticUse      = stream->readBool();
     var->active         = stream->readBool();
     size_t elementCount = stream->readInt<size_t>();
@@ -181,7 +181,18 @@ void LoadShInterfaceBlock(gl::BinaryInputStream *stream, sh::InterfaceBlock *blo
 }
 
 CompiledShaderState::CompiledShaderState(gl::ShaderType type)
-    : shaderType(type), shaderVersion(100), numViews(-1), geometryShaderInvocations(1)
+    : shaderType(type),
+      shaderVersion(100),
+      hasClipDistance(false),
+      hasDiscard(false),
+      enablesPerSampleShading(false),
+      numViews(-1),
+      geometryShaderInvocations(1),
+      tessControlShaderVertices(0),
+      tessGenMode(0),
+      tessGenSpacing(0),
+      tessGenVertexOrder(0),
+      tessGenPointMode(0)
 {
     localSize.fill(-1);
 }
@@ -467,7 +478,7 @@ void CompiledShaderState::serialize(gl::BinaryOutputStream &stream) const
             UNREACHABLE();
     }
 
-    stream.writeIntVector(compiledBinary);
+    stream.writeVector(compiledBinary);
 }
 
 void CompiledShaderState::deserialize(gl::BinaryInputStream &stream)
@@ -671,6 +682,6 @@ void CompiledShaderState::deserialize(gl::BinaryInputStream &stream)
             UNREACHABLE();
     }
 
-    stream.readIntVector<unsigned int>(&compiledBinary);
+    stream.readVector(&compiledBinary);
 }
 }  // namespace gl

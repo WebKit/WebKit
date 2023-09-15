@@ -88,7 +88,7 @@ void RTCDtlsTransport::onStateChanged(RTCDtlsTransportState state, Vector<Ref<JS
 
         if (m_state != state) {
             m_state = state;
-            if (auto* connection = m_iceTransport->connection())
+            if (RefPtr connection = m_iceTransport->connection())
                 connection->updateConnectionState();
             dispatchEvent(Event::create(eventNames().statechangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
         }

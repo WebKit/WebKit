@@ -237,6 +237,19 @@ void handleMessage(Connection& connection, Decoder& decoder, T* object, MF U::* 
 }
 
 template<typename MessageType, typename T, typename U, typename MF>
+void handleMessageWithoutUsingIPCConnection(Decoder& decoder, T* object, MF U::* function)
+{
+    using ValidationType = MethodSignatureValidation<MF>;
+    static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
+
+    auto arguments = decoder.decode<typename MessageType::Arguments>();
+    if (UNLIKELY(!arguments))
+        return;
+
+    callMemberFunction(object, function, WTFMove(*arguments));
+}
+
+template<typename MessageType, typename T, typename U, typename MF>
 bool handleMessageSynchronous(Connection& connection, Decoder& decoder, UniqueRef<Encoder>& replyEncoder, T* object, MF U::* function)
 {
     using ValidationType = MethodSignatureValidation<MF>;
@@ -318,6 +331,29 @@ void handleMessageAsync(Connection& connection, Decoder& decoder, T* object, MF 
         callMemberFunction(object, function, connection, WTFMove(*arguments), WTFMove(completionHandler));
     else
         callMemberFunction(object, function, WTFMove(*arguments), WTFMove(completionHandler));
+}
+
+template<typename MessageType, typename T, typename U, typename MF>
+void handleMessageAsyncWithoutUsingIPCConnection(Decoder& decoder, Function<void(UniqueRef<Encoder>&&)>&& replyHandler, T* object, MF U::* function)
+{
+    using ValidationType = MethodSignatureValidation<MF>;
+    static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
+
+    auto arguments = decoder.decode<typename MessageType::Arguments>();
+    if (UNLIKELY(!arguments))
+        return;
+
+    static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename MessageType::ReplyArguments>);
+    using CompletionHandlerType = typename ValidationType::CompletionHandlerType;
+
+    CompletionHandlerType completionHandler {
+        [destinationID = decoder.destinationID(), replyHandler = WTFMove(replyHandler), object = Ref { *object }] (auto&&... args) mutable {
+            auto encoder = makeUniqueRef<Encoder>(MessageType::asyncMessageReplyName(), destinationID);
+            (encoder.get() << ... << std::forward<decltype(args)>(args));
+            replyHandler(WTFMove(encoder));
+        }, MessageType::callbackThread };
+
+    callMemberFunction(object, function, WTFMove(*arguments), WTFMove(completionHandler));
 }
 
 template<typename MessageType, typename T, typename U, typename MF>

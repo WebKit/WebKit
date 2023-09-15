@@ -34,17 +34,15 @@
 #import "MediaUtilities.h"
 #import "VideoFrame.h"
 #import "VideoFrameMetadata.h"
-
 #import <AVFoundation/AVSampleBufferDisplayLayer.h>
 #import <QuartzCore/CALayer.h>
 #import <QuartzCore/CATransaction.h>
-
+#import <pal/avfoundation/MediaTimeAVFoundation.h>
+#import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/MainThread.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/cf/TypeCastsCF.h>
 
-#import <pal/avfoundation/MediaTimeAVFoundation.h>
-#import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
@@ -365,7 +363,7 @@ static void setSampleBufferAsDisplayImmediately(CMSampleBufferRef sampleBuffer)
     }
 }
 
-static inline CGAffineTransform videoTransformationMatrix(VideoFrame& videoFrame)
+static inline CGAffineTransform transformationMatrixForVideoFrame(VideoFrame& videoFrame)
 {
     auto size = videoFrame.presentationSize();
     size_t width = static_cast<size_t>(size.width());
@@ -388,7 +386,7 @@ static inline CGAffineTransform videoTransformationMatrix(VideoFrame& videoFrame
 void LocalSampleBufferDisplayLayer::enqueueVideoFrame(VideoFrame& videoFrame)
 {
     bool isReconfiguring = false;
-    auto affineTransform = videoTransformationMatrix(videoFrame);
+    auto affineTransform = transformationMatrixForVideoFrame(videoFrame);
     if (!CGAffineTransformEqualToTransform(affineTransform, m_affineTransform)) {
         m_affineTransform = affineTransform;
         m_videoFrameRotation = videoFrame.rotation();

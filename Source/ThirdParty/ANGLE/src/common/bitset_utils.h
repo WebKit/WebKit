@@ -119,9 +119,6 @@ class BitSetT final
     constexpr explicit BitSetT(BitsT value);
     constexpr explicit BitSetT(std::initializer_list<ParamT> init);
 
-    constexpr BitSetT(const BitSetT &other);
-    constexpr BitSetT &operator=(const BitSetT &other);
-
     constexpr bool operator==(const BitSetT &other) const;
     constexpr bool operator!=(const BitSetT &other) const;
 
@@ -202,17 +199,6 @@ constexpr BitSetT<N, BitsT, ParamT>::BitSetT(std::initializer_list<ParamT> init)
         mBits |= Bit<BitsT>(element);
     }
     ASSERT(mBits == (mBits & Mask(N).bits()));
-}
-
-template <size_t N, typename BitsT, typename ParamT>
-constexpr BitSetT<N, BitsT, ParamT>::BitSetT(const BitSetT &other) : mBits(other.mBits)
-{}
-
-template <size_t N, typename BitsT, typename ParamT>
-constexpr BitSetT<N, BitsT, ParamT> &BitSetT<N, BitsT, ParamT>::operator=(const BitSetT &other)
-{
-    mBits = other.mBits;
-    return *this;
 }
 
 template <size_t N, typename BitsT, typename ParamT>
@@ -470,6 +456,7 @@ using BitSet16 = BitSetT<N, uint16_t>;
 
 template <size_t N>
 using BitSet32 = BitSetT<N, uint32_t>;
+static_assert(std::is_trivially_copyable<BitSet32<32>>(), "must be memcpy-able");
 
 template <size_t N>
 using BitSet64 = BitSetT<N, uint64_t>;
@@ -524,8 +511,6 @@ class BitSetArray final
     constexpr BitSetArray();
     constexpr explicit BitSetArray(uint64_t value);
     constexpr explicit BitSetArray(std::initializer_list<param_type> init);
-
-    constexpr BitSetArray(const BitSetArray<N> &other);
 
     class Reference final
     {
@@ -660,7 +645,6 @@ class BitSetArray final
     }
 
     // Assignment operators
-    constexpr BitSetArray &operator=(const BitSetArray &other);
     constexpr BitSetArray &operator&=(const BitSetArray &other);
     constexpr BitSetArray &operator|=(const BitSetArray &other);
     constexpr BitSetArray &operator^=(const BitSetArray &other);
@@ -717,6 +701,7 @@ class BitSetArray final
 
     std::array<BaseBitSet, kArraySize> mBaseBitSetArray;
 };
+static_assert(std::is_trivially_copyable<BitSetArray<32>>(), "must be memcpy-able");
 
 template <std::size_t N>
 constexpr BitSetArray<N>::BitSetArray()
@@ -760,15 +745,6 @@ constexpr BitSetArray<N>::BitSetArray(std::initializer_list<param_type> init)
         size_t index  = element >> kShiftForDivision;
         size_t offset = element & kDefaultBitSetSizeMinusOne;
         mBaseBitSetArray[index].set(offset, true);
-    }
-}
-
-template <size_t N>
-constexpr BitSetArray<N>::BitSetArray(const BitSetArray<N> &other)
-{
-    for (std::size_t index = 0; index < kArraySize; index++)
-    {
-        mBaseBitSetArray[index] = other.mBaseBitSetArray[index];
     }
 }
 
@@ -830,16 +806,6 @@ template <std::size_t N>
 std::size_t BitSetArray<N>::Iterator::operator*() const
 {
     return (mIndex * priv::kDefaultBitSetSize) + *mCurrentIterator;
-}
-
-template <std::size_t N>
-constexpr BitSetArray<N> &BitSetArray<N>::operator=(const BitSetArray<N> &other)
-{
-    for (std::size_t index = 0; index < kArraySize; index++)
-    {
-        mBaseBitSetArray[index] = other.mBaseBitSetArray[index];
-    }
-    return *this;
 }
 
 template <std::size_t N>

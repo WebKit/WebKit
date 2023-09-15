@@ -23,6 +23,7 @@
 import os
 import re
 import sys
+import shutil
 
 from .command import Command
 from webkitbugspy import radar
@@ -181,16 +182,26 @@ class InstallHooks(Command):
 
         trailers_to_strip = ['Identifier'] + ([identifier_template.split(':', 1)[0]] if identifier_template else [])
         source_remotes = repository.source_remotes() or ['origin']
+        perl = 'perl'
+        if sys.version_info >= (3, 3):
+            perl = shutil.which('perl')
 
+        installed_hooks = 0
         for hook in hook_names:
             source_path = os.path.join(hooks, hook)
             if not os.path.isfile(source_path):
                 continue
+            target = os.path.join(repository.common_directory, 'hooks', hook)
+            if os.path.islink(target):
+                sys.stderr.write("'{}' is a symlink, refusing to overwrite it\n".format(hook))
+                continue
+
             log.info("Configuring and copying hook '{}' for this repository".format(hook))
             with open(source_path, 'r') as f:
                 from jinja2 import Template
                 contents = Template(f.read()).render(
-                    location=source_path,
+                    location=os.path.relpath(source_path, repository.root_path),
+                    perl=repr(perl),
                     python=os.path.basename(sys.executable),
                     prefer_radar=bool(radar.Tracker.radarclient()),
                     default_pre_push_mode="'{}'".format(getattr(args, 'mode', cls.MODES[0])),
@@ -201,13 +212,15 @@ class InstallHooks(Command):
                     source_remotes=source_remotes,
                 )
 
-            target = os.path.join(repository.common_directory, 'hooks', hook)
             if not os.path.exists(os.path.dirname(target)):
                 os.makedirs(os.path.dirname(target))
             with open(target, 'w') as f:
                 f.write(contents)
                 f.write('\n')
             os.chmod(target, 0o775)
+            installed_hooks += 1
 
-        print('Successfully installed {} repository hooks'.format(len(hook_names)))
+        print('Successfully installed {} of {} repository hooks'.format(installed_hooks, len(hook_names)))
+        if installed_hooks != len(hook_names):
+            print('    {} repository hooks skipped because of existing symlinks'.format(len(hook_names) - installed_hooks))
         return 0

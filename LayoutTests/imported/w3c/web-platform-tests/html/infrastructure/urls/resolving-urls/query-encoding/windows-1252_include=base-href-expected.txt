@@ -1,3 +1,3 @@
 
-FAIL <base href> assert_true: expected substring %E5 got http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/resource.py?q=%C3%A5&encoding=windows-1252&type= expected true got false
+PASS <base href>
 

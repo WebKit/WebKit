@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "DeprecatedGlobalValues.h"
+#import "FrameTreeChecks.h"
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -7233,6 +7234,15 @@ TEST(ProcessSwap, DISABLED_SameSiteWindowWithOpenerNavigateToFile)
     EXPECT_TRUE(!!pid3);
     EXPECT_NE(pid2, pid3);
 
+    using namespace TestWebKitAPI;
+    checkFrameTreesInProcesses(webView.get(), {
+        { "pson://www.webkit.org"_s }, { RemoteFrame }
+    });
+
+    checkFrameTreesInProcesses(createdWebView.get(), {
+        { RemoteFrame }, { "file://"_s }
+    });
+
     [createdWebView goBack];
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -7994,7 +8004,7 @@ static void checkSettingsControlledByLockdownMode(WKWebView *webView, ShouldBeEn
 
     // Confirm unstable settings are always off in Lockdown Mode.
     EXPECT_EQ(runJSCheck("!!navigator.requestCookieConsent"_s), false);
-    EXPECT_EQ(runJSCheck("!!window.requestIdleCallback"_s), false);
+    EXPECT_EQ(runJSCheck("!!document.undoManager"_s), false);
 }
 
 @interface LockdownMessageHandler : NSObject <WKScriptMessageHandler, WKNavigationDelegate>
@@ -8747,6 +8757,70 @@ TEST(ProcessSwap, ChangeViewSizeDuringNavigationActionPolicyDecision)
 }
 
 #endif // PLATFORM(IOS_FAMILY)
+
+TEST(ProcessSwap, NewProcessAfterNavigatingToCrossOriginThroughAboutPage)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer server({
+        { "/source.html"_s, { ""_s } },
+        { "/destination.html"_s, { ""_s } },
+    });
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadRequest:server.request("/source.html"_s)];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+
+    auto pid1 = [webView _webProcessIdentifier];
+
+    [webView synchronouslyLoadRequest:server.requestWithLocalhost("/destination.html"_s)];
+
+    auto pid2 = [webView _webProcessIdentifier];
+    EXPECT_NE(pid1, pid2);
+}
+
+TEST(ProcessSwap, ReuseProcessAfterNavigatingToSameOriginThroughAboutPage)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer server({
+        { "/source.html"_s, { ""_s } },
+        { "/destination.html"_s, { ""_s } },
+    });
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadRequest:server.request("/source.html"_s)];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+
+    auto pid1 = [webView _webProcessIdentifier];
+
+    [webView synchronouslyLoadRequest:server.request("/destination.html"_s)];
+
+    auto pid2 = [webView _webProcessIdentifier];
+    EXPECT_EQ(pid1, pid2);
+}
+
+TEST(ProcessSwap, ReuseProcessAfterNavigatingFromAboutPage)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer server({
+        { "/destination.html"_s, { ""_s } },
+    });
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+
+    auto pid1 = [webView _webProcessIdentifier];
+
+    [webView synchronouslyLoadRequest:server.request("/destination.html"_s)];
+
+    auto pid2 = [webView _webProcessIdentifier];
+    EXPECT_EQ(pid1, pid2);
+}
 
 // The WebProcess cache cannot be enabled on devices with too little RAM so we need to disable
 // tests relying on it on iOS. The WebProcess cache is disabled by default on iOS anyway.

@@ -40,7 +40,10 @@ public:
     void build(InlineItemPosition startPosition);
 
 private:
-    void collectInlineItems(InlineItems&, FormattingState::OutOfFlowBoxList&, InlineItemPosition startPosition);
+    void collectInlineItems(InlineItems&, InlineItemPosition startPosition);
+    using LayoutQueue = Vector<CheckedRef<const Box>>;
+    LayoutQueue initializeLayoutQueue(InlineItemPosition startPosition);
+    bool traverseUntilDamaged(LayoutQueue&, const Box& subtreeRoot, const Box& firstDamagedLayoutBox);
     void breakAndComputeBidiLevels(InlineItems&);
     void computeInlineTextItemWidths(InlineItems&);
 
@@ -57,6 +60,7 @@ private:
     // FIXME: We should not need this here. This is only required by the out of flow boxes.
     InlineFormattingState& m_formattingState;
     bool m_contentRequiresVisualReordering { false };
+    bool m_isNonBidiTextAndForcedLineBreakOnlyContent { true };
 };
 
 }

@@ -428,14 +428,6 @@ void webkitDownloadCancelled(WebKitDownload* download)
 
 void webkitDownloadFinished(WebKitDownload* download)
 {
-    if (download->priv->isCancelled) {
-        // Since cancellation is asynchronous, didFinish might be called even
-        // if the download was cancelled. User cancelled the download,
-        // so we should fail with cancelled error even if the download
-        // actually finished successfully.
-        webkitDownloadCancelled(download);
-        return;
-    }
     if (download->priv->timer)
         g_timer_stop(download->priv->timer.get());
     g_signal_emit(download, signals[FINISHED], 0, nullptr);
@@ -602,7 +594,7 @@ void webkit_download_cancel(WebKitDownload* download)
 
     download->priv->isCancelled = true;
     download->priv->download->cancel([download = Ref { *download->priv->download }] (auto*) {
-        download->client().didFinish(download.get());
+        download->client().legacyDidCancel(download.get());
     });
 }
 

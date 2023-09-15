@@ -27,6 +27,7 @@
 #include "config.h"
 #include "EventHandler.h"
 
+#include "HandleMouseEventResult.h"
 #include "MouseEventWithHitTestResults.h"
 
 namespace WebCore {

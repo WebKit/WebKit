@@ -393,7 +393,7 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
 
     auto tryCreatePageReservation = [] (size_t reservationSize) {
 #if OS(LINUX)
-        // If we use uncommitted reservation, mmap operation is recorded with small page size in perf command's output.
+        // On Linux, if we use uncommitted reservation, mmap operation is recorded with small page size in perf command's output.
         // This makes the following JIT code logging broken and some of JIT code is not recorded correctly.
         // To avoid this problem, we use committed reservation if we need perf JITDump logging.
         if (Options::logJITCodeForPerf())

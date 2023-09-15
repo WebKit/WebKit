@@ -45,6 +45,8 @@ static void testWebKitDOMClientRectDivClientRectsPositionAndLength(WebViewTest* 
 
 void beforeAll()
 {
+    Test::shouldInitializeWebProcessExtensions = true;
+
     WebViewTest::add("WebKitDOMClientRect", "div-bounding-client-rect-position", testWebKitDOMClientRectDivBoundingClientRectPosition);
     WebViewTest::add("WebKitDOMClientRect", "div-client-rects-position-and-length", testWebKitDOMClientRectDivClientRectsPositionAndLength);
 }

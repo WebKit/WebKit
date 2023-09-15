@@ -22,6 +22,7 @@
 
 #if USE(GSTREAMER)
 
+#include "HEVCUtilities.h"
 #include <gst/pbutils/codec-utils.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/WTFString.h>
@@ -64,6 +65,40 @@ std::pair<const char*, const char*> GStreamerCodecUtilities::parseH264ProfileAnd
 
     GST_DEBUG("Codec %s translates to H.264 profile %s and level %s", codec.utf8().data(), GST_STR_NULL(profile), GST_STR_NULL(level));
     return { profile, level };
+}
+
+const char* GStreamerCodecUtilities::parseHEVCProfile(const String& codec)
+{
+    ensureDebugCategoryInitialized();
+
+    GST_DEBUG("Parsing HEVC codec string: %s", codec.ascii().data());
+    auto parameters = parseHEVCCodecParameters(codec);
+    if (!parameters) {
+        GST_WARNING("Invalid HEVC codec: %s", codec.ascii().data());
+        return nullptr;
+    }
+
+    if (parameters->generalProfileSpace > 3) {
+        GST_WARNING("Invalid general_profile_space: %u", parameters->generalProfileSpace);
+        return nullptr;
+    }
+
+    if (parameters->generalProfileIDC > 0x1F) {
+        GST_WARNING("Invalid general_profile_idc: %u", parameters->generalProfileIDC);
+        return nullptr;
+    }
+
+    uint8_t profileTierLevel[11] = { 0, };
+    memset(profileTierLevel, 0, 11);
+    profileTierLevel[0] = parameters->generalProfileIDC;
+
+    if (profileTierLevel[0] >= 4) {
+        auto& constraints = parameters->generalConstraintIndicatorFlags;
+        for (unsigned i = 5, j = 0; i < 10; i++, j++)
+            profileTierLevel[i] = constraints[j];
+    }
+
+    return gst_codec_utils_h265_get_profile(profileTierLevel, sizeof(profileTierLevel));
 }
 
 uint8_t GStreamerCodecUtilities::parseVP9Profile(const String& codec)

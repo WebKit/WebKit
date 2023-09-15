@@ -49,7 +49,7 @@ class WebCompiledContentRuleListData;
 class WebUserMessageHandlerDescriptorProxy;
 enum class InjectUserScriptImmediately : bool;
 
-class WebUserContentController final : public WebCore::UserContentProvider, private IPC::MessageReceiver {
+class WebUserContentController final : public WebCore::UserContentProvider, public IPC::MessageReceiver {
 public:
     static Ref<WebUserContentController> getOrCreate(UserContentControllerIdentifier);
     virtual ~WebUserContentController();

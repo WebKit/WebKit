@@ -49,9 +49,9 @@ public:
 
     void addPath(const PathCG&, const AffineTransform&);
 
-    void applyElements(const PathElementApplier&) const final;
+    bool applyElements(const PathElementApplier&) const final;
 
-    void transform(const AffineTransform&);
+    bool transform(const AffineTransform&) final;
 
     bool contains(const FloatPoint&, WindRule) const;
     bool strokeContains(const FloatPoint&, const Function<void(GraphicsContext&)>& strokeStyleApplier) const;

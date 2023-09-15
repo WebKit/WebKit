@@ -1,0 +1,8 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [x86_64-tvos-simulator, arm64-tvos-simulator]
+install-name: /System/Library/PrivateFrameworks/FontServices.framework/libFontParser.dylib
+exports:
+-       targets: [x86_64-tvos-simulator, arm64-tvos-simulator]
+        symbols: [_FPFontCopyPostScriptName, _FPFontCopySFNTData, _FPFontCreateFontsFromData]
+...

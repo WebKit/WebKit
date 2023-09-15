@@ -1,0 +1,23 @@
+<!doctype html>
+<meta charset="utf-8">
+
+<script>function document() {}</script>
+<script>function window() {}</script>
+<script>function location() {}</script>
+<script>function top() {}</script>
+<p>!! Per spec (https://tc39.es/ecma262/#sec-globaldeclarationinstantiation), only TypeError exceptions should be thrown for preceding scripts.
+<p>This test ensures that non-configurable global properties aren't overwriten by function declarations.</p>
+
+<pre id="theConsole"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+for (const prop of ["document", "window", "location", "top"]) {
+    const actual = typeof globalThis[prop];
+    if (actual === "object")
+        theConsole.append(`PASS: typeof globalThis["${prop}"] is "object"\n`);
+    else
+        theConsole.append(`FAIL: typeof globalThis["${prop}"] should be "object", was: "${actual}"\n`);
+}
+</script>

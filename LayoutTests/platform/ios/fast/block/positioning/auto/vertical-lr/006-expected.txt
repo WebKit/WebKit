@@ -12,10 +12,10 @@ layer at (0,0) size 800x600
           text run at (61,0) width 260: "padding on the top side of the box stack."
 layer at (104,8) size 40x584
   RenderBlock (relative positioned) {DIV} at (96,0) size 40x584
-    RenderText {#text} at (0,19) size 39x565
-      text run at (0,19) width 565: "The black box's left should be aligned with the last line in this paragraph and its top side"
-      text run at (20,310) width 4 RTL: "."
-      text run at (20,314) width 270: "should begin after the end of this sentence"
+    RenderText {#text} at (1,19) size 39x565
+      text run at (1,19) width 565: "The black box's left should be aligned with the last line in this paragraph and its top side"
+      text run at (21,310) width 4 RTL: "."
+      text run at (21,314) width 270: "should begin after the end of this sentence"
     RenderText {#text} at (0,0) size 0x0
 layer at (124,78) size 340x240
   RenderBlock (positioned) {SPAN} at (20,70) size 340x241 [border: (20px solid #000000)]

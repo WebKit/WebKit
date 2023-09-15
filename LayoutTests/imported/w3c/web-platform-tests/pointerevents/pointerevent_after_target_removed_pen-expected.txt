@@ -1,7 +1,6 @@
+child
 done
 
-FAIL pointer events from pen at parent after child is removed at pointerdown assert_equals: received events expected "pointerenter,pointerover,pointerout,pointerleave" but got "pointerenter"
-FAIL mouse events from pen at parent after child is removed at pointerdown assert_equals: received events expected "mouseenter,mouseover,mouseout,mouseleave" but got "mouseenter"
-FAIL pointer events from pen at parent after child is removed at pointerup assert_equals: received events expected "pointerenter,pointerover,pointerout,pointerleave" but got "pointerenter"
-FAIL mouse events from pen at parent after child is removed at pointerup assert_equals: received events expected "mouseenter,mouseover,mouseout,mouseleave" but got "mouseenter"
+FAIL PointerEvents from pen received before/after child removal at pointerdown assert_equals: events received expected "pointerover@child,pointerenter@parent,pointerenter@child,pointerdown@child,(child-removed),pointerup@parent,pointerdown@parent,pointerup@parent,pointerout@parent,pointerleave@parent" but got "pointerover@child,pointerenter@parent,pointerenter@child,pointerdown@child,(child-removed),pointerup@parent,pointerout@child,pointerleave@child"
+FAIL PointerEvents from pen received before/after child removal at pointerup assert_equals: events received expected "pointerover@child,pointerenter@parent,pointerenter@child,pointerdown@child,pointerup@child,(child-removed),pointerdown@parent,pointerup@parent,pointerout@parent,pointerleave@parent" but got "pointerover@child,pointerenter@parent,pointerenter@child,pointerdown@child,pointerup@child,(child-removed),pointerout@child,pointerleave@child"
 

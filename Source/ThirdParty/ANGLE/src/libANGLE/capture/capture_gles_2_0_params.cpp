@@ -401,7 +401,7 @@ void CaptureGetProgramInfoLog_infoLog(const State &glState,
 {
     gl::Program *programObj = GetProgramForCapture(glState, program);
     ASSERT(programObj);
-    paramCapture->readBufferSizeBytes = programObj->getExecutable().getInfoLogLength() + 1;
+    paramCapture->readBufferSizeBytes = programObj->getInfoLogLength() + 1;
 }
 
 void CaptureGetProgramiv_params(const State &glState,

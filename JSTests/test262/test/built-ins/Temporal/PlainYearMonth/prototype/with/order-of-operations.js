@@ -12,6 +12,12 @@ const expected = [
   // RejectObjectWithCalendarOrTimeZone
   "get fields.calendar",
   "get fields.timeZone",
+  // CopyDataProperties
+  "ownKeys options",
+  "getOwnPropertyDescriptor options.overflow",
+  "get options.overflow",
+  "getOwnPropertyDescriptor options.extra",
+  "get options.extra",
   // CalendarFields
   "get this.calendar.fields",
   "call this.calendar.fields",
@@ -39,7 +45,6 @@ const expected = [
   "get this.calendar.yearMonthFromFields",
   "call this.calendar.yearMonthFromFields",
   // inside Calendar.p.yearMonthFromFields
-  "get options.overflow",
   "get options.overflow.toString",
   "call options.overflow.toString",
 ];
@@ -56,7 +61,10 @@ const fields = TemporalHelpers.propertyBagObserver(actual, {
   monthCode: "M01",
 }, "fields");
 
-const options = TemporalHelpers.propertyBagObserver(actual, { overflow: "constrain" }, "options");
+const options = TemporalHelpers.propertyBagObserver(actual, {
+  overflow: "constrain",
+  extra: "property",
+}, "options");
 
 instance.with(fields, options);
 assert.compareArray(actual, expected, "order of operations");

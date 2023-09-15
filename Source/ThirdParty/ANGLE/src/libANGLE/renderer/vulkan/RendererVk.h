@@ -574,11 +574,11 @@ class RendererVk : angle::NonCopyable
         return mSupportedVulkanShaderStageMask;
     }
 
-    angle::Result getFormatDescriptorCountForVkFormat(ContextVk *contextVk,
+    angle::Result getFormatDescriptorCountForVkFormat(vk::Context *context,
                                                       VkFormat format,
                                                       uint32_t *descriptorCountOut);
 
-    angle::Result getFormatDescriptorCountForExternalFormat(ContextVk *contextVk,
+    angle::Result getFormatDescriptorCountForExternalFormat(vk::Context *context,
                                                             uint64_t format,
                                                             uint32_t *descriptorCountOut);
 
@@ -923,6 +923,7 @@ class RendererVk : angle::NonCopyable
     VkPhysicalDeviceSwapchainMaintenance1FeaturesEXT mSwapchainMaintenance1Features;
     VkPhysicalDeviceLegacyDitheringFeaturesEXT mDitheringFeatures;
     VkPhysicalDeviceDrmPropertiesEXT mDrmProperties;
+    VkPhysicalDeviceTimelineSemaphoreFeaturesKHR mTimelineSemaphoreFeatures;
 
     angle::PackedEnumBitSet<gl::ShadingRate, uint8_t> mSupportedFragmentShadingRates;
     std::vector<VkQueueFamilyProperties> mQueueFamilyProperties;
@@ -931,7 +932,6 @@ class RendererVk : angle::NonCopyable
     VkDeviceSize mMaxVertexAttribStride;
     uint32_t mDefaultUniformBufferSize;
     VkDevice mDevice;
-    AtomicSerialFactory mShaderSerialFactory;
     VkDeviceSize mMaxCopyBytesUsingCPUWhenPreservingBufferData;
 
     bool mDeviceLost;

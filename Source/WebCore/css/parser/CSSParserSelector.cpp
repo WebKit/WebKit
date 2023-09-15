@@ -152,6 +152,18 @@ CSSParserSelector* CSSParserSelector::leftmostSimpleSelector()
     return selector;
 }
 
+bool CSSParserSelector::hasExplicitNestingParent() const
+{
+    auto selector = this;
+    while (selector) {
+        if (selector->selector()->hasExplicitNestingParent())
+            return true;
+
+        selector = selector->tagHistory();
+    }
+    return false;
+}
+
 static bool selectorListMatchesPseudoElement(const CSSSelectorList* selectorList)
 {
     if (!selectorList)

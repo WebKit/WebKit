@@ -17,7 +17,7 @@ PASS  leading white space (single space)
 PASS  middle white space (single space)
 PASS  trailing white space (single space)
 PASS  leading white space (double space) 2
-PASS  middle white space (double space) 2
+FAIL  middle white space (double space) 2 assert_equals: Expected Value should match actual value expected "value1  value2" but got "value1 value2"
 PASS  trailing white space (double space) 2
 PASS !important
 PASS !important 2
@@ -40,7 +40,7 @@ PASS  leading white space (single space) (Computed Style)
 PASS  middle white space (single space) (Computed Style)
 PASS  trailing white space (single space) (Computed Style)
 PASS  leading white space (double space) 2 (Computed Style)
-PASS  middle white space (double space) 2 (Computed Style)
+FAIL  middle white space (double space) 2 (Computed Style) assert_equals: Expected Value should match actual value expected "value1  value2" but got "value1 value2"
 PASS  trailing white space (double space) 2 (Computed Style)
 PASS !important (Computed Style)
 PASS !important 2 (Computed Style)
@@ -63,7 +63,7 @@ PASS  leading white space (single space) (Cascading)
 PASS  middle white space (single space) (Cascading)
 PASS  trailing white space (single space) (Cascading)
 PASS  leading white space (double space) 2 (Cascading)
-PASS  middle white space (double space) 2 (Cascading)
+FAIL  middle white space (double space) 2 (Cascading) assert_equals: Expected Value should match actual value expected "value1  value2" but got "value1 value2"
 PASS  trailing white space (double space) 2 (Cascading)
 PASS !important (Cascading)
 PASS !important 2 (Cascading)

@@ -55,7 +55,7 @@ public:
 
     bool canPreview(const String& mimeType) const;
 
-    void begin(const URL&, const WebCore::SystemPreviewInfo&, CompletionHandler<void()>&&);
+    void begin(const URL&, const WebCore::SecurityOriginData& topOrigin, const WebCore::SystemPreviewInfo&, CompletionHandler<void()>&&);
     void updateProgress(float);
     void loadStarted(const URL& localFileURL);
     void loadCompleted(const URL& localFileURL);
@@ -80,9 +80,7 @@ private:
         Initial,
         Began,
         Loading,
-        Failed,
-        Succeeded,
-        Ended
+        Viewing
     };
 
     State m_state { State::Initial };

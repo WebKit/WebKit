@@ -17,8 +17,13 @@
 namespace gl
 {
 class Context;
+class PrivateState;
+class ErrorSet;
 
-bool ValidateActiveTexture(const Context *context, angle::EntryPoint entryPoint, GLenum texture);
+bool ValidateActiveTexture(const PrivateState &state,
+                           ErrorSet *errors,
+                           angle::EntryPoint entryPoint,
+                           GLenum texture);
 bool ValidateAttachShader(const Context *context,
                           angle::EntryPoint entryPoint,
                           ShaderProgramID programPacked,
@@ -44,22 +49,29 @@ bool ValidateBindTexture(const Context *context,
                          angle::EntryPoint entryPoint,
                          TextureType targetPacked,
                          TextureID texturePacked);
-bool ValidateBlendColor(const Context *context,
+bool ValidateBlendColor(const PrivateState &state,
+                        ErrorSet *errors,
                         angle::EntryPoint entryPoint,
                         GLfloat red,
                         GLfloat green,
                         GLfloat blue,
                         GLfloat alpha);
-bool ValidateBlendEquation(const Context *context, angle::EntryPoint entryPoint, GLenum mode);
-bool ValidateBlendEquationSeparate(const Context *context,
+bool ValidateBlendEquation(const PrivateState &state,
+                           ErrorSet *errors,
+                           angle::EntryPoint entryPoint,
+                           GLenum mode);
+bool ValidateBlendEquationSeparate(const PrivateState &state,
+                                   ErrorSet *errors,
                                    angle::EntryPoint entryPoint,
                                    GLenum modeRGB,
                                    GLenum modeAlpha);
-bool ValidateBlendFunc(const Context *context,
+bool ValidateBlendFunc(const PrivateState &state,
+                       ErrorSet *errors,
                        angle::EntryPoint entryPoint,
                        GLenum sfactor,
                        GLenum dfactor);
-bool ValidateBlendFuncSeparate(const Context *context,
+bool ValidateBlendFuncSeparate(const PrivateState &state,
+                               ErrorSet *errors,
                                angle::EntryPoint entryPoint,
                                GLenum sfactorRGB,
                                GLenum dfactorRGB,
@@ -81,15 +93,23 @@ bool ValidateCheckFramebufferStatus(const Context *context,
                                     angle::EntryPoint entryPoint,
                                     GLenum target);
 bool ValidateClear(const Context *context, angle::EntryPoint entryPoint, GLbitfield mask);
-bool ValidateClearColor(const Context *context,
+bool ValidateClearColor(const PrivateState &state,
+                        ErrorSet *errors,
                         angle::EntryPoint entryPoint,
                         GLfloat red,
                         GLfloat green,
                         GLfloat blue,
                         GLfloat alpha);
-bool ValidateClearDepthf(const Context *context, angle::EntryPoint entryPoint, GLfloat d);
-bool ValidateClearStencil(const Context *context, angle::EntryPoint entryPoint, GLint s);
-bool ValidateColorMask(const Context *context,
+bool ValidateClearDepthf(const PrivateState &state,
+                         ErrorSet *errors,
+                         angle::EntryPoint entryPoint,
+                         GLfloat d);
+bool ValidateClearStencil(const PrivateState &state,
+                          ErrorSet *errors,
+                          angle::EntryPoint entryPoint,
+                          GLint s);
+bool ValidateColorMask(const PrivateState &state,
+                       ErrorSet *errors,
                        angle::EntryPoint entryPoint,
                        GLboolean red,
                        GLboolean green,
@@ -143,7 +163,8 @@ bool ValidateCreateProgram(const Context *context, angle::EntryPoint entryPoint)
 bool ValidateCreateShader(const Context *context,
                           angle::EntryPoint entryPoint,
                           ShaderType typePacked);
-bool ValidateCullFace(const Context *context,
+bool ValidateCullFace(const PrivateState &state,
+                      ErrorSet *errors,
                       angle::EntryPoint entryPoint,
                       CullFaceMode modePacked);
 bool ValidateDeleteBuffers(const Context *context,
@@ -168,9 +189,16 @@ bool ValidateDeleteTextures(const Context *context,
                             angle::EntryPoint entryPoint,
                             GLsizei n,
                             const TextureID *texturesPacked);
-bool ValidateDepthFunc(const Context *context, angle::EntryPoint entryPoint, GLenum func);
-bool ValidateDepthMask(const Context *context, angle::EntryPoint entryPoint, GLboolean flag);
-bool ValidateDepthRangef(const Context *context,
+bool ValidateDepthFunc(const PrivateState &state,
+                       ErrorSet *errors,
+                       angle::EntryPoint entryPoint,
+                       GLenum func);
+bool ValidateDepthMask(const PrivateState &state,
+                       ErrorSet *errors,
+                       angle::EntryPoint entryPoint,
+                       GLboolean flag);
+bool ValidateDepthRangef(const PrivateState &state,
+                         ErrorSet *errors,
                          angle::EntryPoint entryPoint,
                          GLfloat n,
                          GLfloat f);
@@ -178,7 +206,10 @@ bool ValidateDetachShader(const Context *context,
                           angle::EntryPoint entryPoint,
                           ShaderProgramID programPacked,
                           ShaderProgramID shaderPacked);
-bool ValidateDisable(const Context *context, angle::EntryPoint entryPoint, GLenum cap);
+bool ValidateDisable(const PrivateState &state,
+                     ErrorSet *errors,
+                     angle::EntryPoint entryPoint,
+                     GLenum cap);
 bool ValidateDisableVertexAttribArray(const Context *context,
                                       angle::EntryPoint entryPoint,
                                       GLuint index);
@@ -193,7 +224,10 @@ bool ValidateDrawElements(const Context *context,
                           GLsizei count,
                           DrawElementsType typePacked,
                           const void *indices);
-bool ValidateEnable(const Context *context, angle::EntryPoint entryPoint, GLenum cap);
+bool ValidateEnable(const PrivateState &state,
+                    ErrorSet *errors,
+                    angle::EntryPoint entryPoint,
+                    GLenum cap);
 bool ValidateEnableVertexAttribArray(const Context *context,
                                      angle::EntryPoint entryPoint,
                                      GLuint index);
@@ -212,7 +246,10 @@ bool ValidateFramebufferTexture2D(const Context *context,
                                   TextureTarget textargetPacked,
                                   TextureID texturePacked,
                                   GLint level);
-bool ValidateFrontFace(const Context *context, angle::EntryPoint entryPoint, GLenum mode);
+bool ValidateFrontFace(const PrivateState &state,
+                       ErrorSet *errors,
+                       angle::EntryPoint entryPoint,
+                       GLenum mode);
 bool ValidateGenBuffers(const Context *context,
                         angle::EntryPoint entryPoint,
                         GLsizei n,
@@ -363,9 +400,16 @@ bool ValidateGetVertexAttribiv(const Context *context,
                                GLuint index,
                                GLenum pname,
                                const GLint *params);
-bool ValidateHint(const Context *context, angle::EntryPoint entryPoint, GLenum target, GLenum mode);
+bool ValidateHint(const PrivateState &state,
+                  ErrorSet *errors,
+                  angle::EntryPoint entryPoint,
+                  GLenum target,
+                  GLenum mode);
 bool ValidateIsBuffer(const Context *context, angle::EntryPoint entryPoint, BufferID bufferPacked);
-bool ValidateIsEnabled(const Context *context, angle::EntryPoint entryPoint, GLenum cap);
+bool ValidateIsEnabled(const PrivateState &state,
+                       ErrorSet *errors,
+                       angle::EntryPoint entryPoint,
+                       GLenum cap);
 bool ValidateIsFramebuffer(const Context *context,
                            angle::EntryPoint entryPoint,
                            FramebufferID framebufferPacked);
@@ -381,15 +425,20 @@ bool ValidateIsShader(const Context *context,
 bool ValidateIsTexture(const Context *context,
                        angle::EntryPoint entryPoint,
                        TextureID texturePacked);
-bool ValidateLineWidth(const Context *context, angle::EntryPoint entryPoint, GLfloat width);
+bool ValidateLineWidth(const PrivateState &state,
+                       ErrorSet *errors,
+                       angle::EntryPoint entryPoint,
+                       GLfloat width);
 bool ValidateLinkProgram(const Context *context,
                          angle::EntryPoint entryPoint,
                          ShaderProgramID programPacked);
-bool ValidatePixelStorei(const Context *context,
+bool ValidatePixelStorei(const PrivateState &state,
+                         ErrorSet *errors,
                          angle::EntryPoint entryPoint,
                          GLenum pname,
                          GLint param);
-bool ValidatePolygonOffset(const Context *context,
+bool ValidatePolygonOffset(const PrivateState &state,
+                           ErrorSet *errors,
                            angle::EntryPoint entryPoint,
                            GLfloat factor,
                            GLfloat units);
@@ -409,11 +458,13 @@ bool ValidateRenderbufferStorage(const Context *context,
                                  GLenum internalformat,
                                  GLsizei width,
                                  GLsizei height);
-bool ValidateSampleCoverage(const Context *context,
+bool ValidateSampleCoverage(const PrivateState &state,
+                            ErrorSet *errors,
                             angle::EntryPoint entryPoint,
                             GLfloat value,
                             GLboolean invert);
-bool ValidateScissor(const Context *context,
+bool ValidateScissor(const PrivateState &state,
+                     ErrorSet *errors,
                      angle::EntryPoint entryPoint,
                      GLint x,
                      GLint y,
@@ -432,28 +483,36 @@ bool ValidateShaderSource(const Context *context,
                           GLsizei count,
                           const GLchar *const *string,
                           const GLint *length);
-bool ValidateStencilFunc(const Context *context,
+bool ValidateStencilFunc(const PrivateState &state,
+                         ErrorSet *errors,
                          angle::EntryPoint entryPoint,
                          GLenum func,
                          GLint ref,
                          GLuint mask);
-bool ValidateStencilFuncSeparate(const Context *context,
+bool ValidateStencilFuncSeparate(const PrivateState &state,
+                                 ErrorSet *errors,
                                  angle::EntryPoint entryPoint,
                                  GLenum face,
                                  GLenum func,
                                  GLint ref,
                                  GLuint mask);
-bool ValidateStencilMask(const Context *context, angle::EntryPoint entryPoint, GLuint mask);
-bool ValidateStencilMaskSeparate(const Context *context,
+bool ValidateStencilMask(const PrivateState &state,
+                         ErrorSet *errors,
+                         angle::EntryPoint entryPoint,
+                         GLuint mask);
+bool ValidateStencilMaskSeparate(const PrivateState &state,
+                                 ErrorSet *errors,
                                  angle::EntryPoint entryPoint,
                                  GLenum face,
                                  GLuint mask);
-bool ValidateStencilOp(const Context *context,
+bool ValidateStencilOp(const PrivateState &state,
+                       ErrorSet *errors,
                        angle::EntryPoint entryPoint,
                        GLenum fail,
                        GLenum zfail,
                        GLenum zpass);
-bool ValidateStencilOpSeparate(const Context *context,
+bool ValidateStencilOpSeparate(const PrivateState &state,
+                               ErrorSet *errors,
                                angle::EntryPoint entryPoint,
                                GLenum face,
                                GLenum sfail,
@@ -609,41 +668,49 @@ bool ValidateUseProgram(const Context *context,
 bool ValidateValidateProgram(const Context *context,
                              angle::EntryPoint entryPoint,
                              ShaderProgramID programPacked);
-bool ValidateVertexAttrib1f(const Context *context,
+bool ValidateVertexAttrib1f(const PrivateState &state,
+                            ErrorSet *errors,
                             angle::EntryPoint entryPoint,
                             GLuint index,
                             GLfloat x);
-bool ValidateVertexAttrib1fv(const Context *context,
+bool ValidateVertexAttrib1fv(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              const GLfloat *v);
-bool ValidateVertexAttrib2f(const Context *context,
+bool ValidateVertexAttrib2f(const PrivateState &state,
+                            ErrorSet *errors,
                             angle::EntryPoint entryPoint,
                             GLuint index,
                             GLfloat x,
                             GLfloat y);
-bool ValidateVertexAttrib2fv(const Context *context,
+bool ValidateVertexAttrib2fv(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              const GLfloat *v);
-bool ValidateVertexAttrib3f(const Context *context,
+bool ValidateVertexAttrib3f(const PrivateState &state,
+                            ErrorSet *errors,
                             angle::EntryPoint entryPoint,
                             GLuint index,
                             GLfloat x,
                             GLfloat y,
                             GLfloat z);
-bool ValidateVertexAttrib3fv(const Context *context,
+bool ValidateVertexAttrib3fv(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              const GLfloat *v);
-bool ValidateVertexAttrib4f(const Context *context,
+bool ValidateVertexAttrib4f(const PrivateState &state,
+                            ErrorSet *errors,
                             angle::EntryPoint entryPoint,
                             GLuint index,
                             GLfloat x,
                             GLfloat y,
                             GLfloat z,
                             GLfloat w);
-bool ValidateVertexAttrib4fv(const Context *context,
+bool ValidateVertexAttrib4fv(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              const GLfloat *v);
@@ -655,7 +722,8 @@ bool ValidateVertexAttribPointer(const Context *context,
                                  GLboolean normalized,
                                  GLsizei stride,
                                  const void *pointer);
-bool ValidateViewport(const Context *context,
+bool ValidateViewport(const PrivateState &state,
+                      ErrorSet *errors,
                       angle::EntryPoint entryPoint,
                       GLint x,
                       GLint y,

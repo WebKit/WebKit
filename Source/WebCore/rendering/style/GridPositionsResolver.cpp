@@ -181,12 +181,17 @@ void NamedLineCollectionBase::ensureInheritedNamedIndices()
 
 bool NamedLineCollectionBase::contains(unsigned line) const
 {
+    ASSERT(hasNamedLines());
+
     if (line > m_lastLine)
         return false;
 
     auto contains = [](const Vector<unsigned>* Indices, unsigned line) {
         return Indices && Indices->find(line) != notFound;
     };
+
+    if (contains(m_implicitNamedLinesIndices, line))
+        return true;
 
     if (!m_autoRepeatTrackListLength || line < m_insertionPoint)
         return contains(m_namedLinesIndices, line);
@@ -264,11 +269,13 @@ NamedLineCollection::NamedLineCollection(const RenderGrid& initialGrid, const St
         // relative to our grid).
         bool appended = false;
         NamedLineCollectionBase parentCollection(*parent, name, currentSide, nameIsAreaName);
-        for (unsigned i = search.startLine(); i <= search.endLine(); i++) {
-            if (parentCollection.contains(i)) {
-                ensureInheritedNamedIndices();
-                appended = true;
-                m_inheritedNamedLinesIndices.append(convertToInitialSpace(i));
+        if (parentCollection.hasNamedLines()) {
+            for (unsigned i = search.startLine(); i <= search.endLine(); i++) {
+                if (parentCollection.contains(i)) {
+                    ensureInheritedNamedIndices();
+                    appended = true;
+                    m_inheritedNamedLinesIndices.append(convertToInitialSpace(i));
+                }
             }
         }
 
@@ -293,14 +300,14 @@ NamedLineCollection::NamedLineCollection(const RenderGrid& initialGrid, const St
     }
 }
 
-bool NamedLineCollection::hasExplicitNamedLines() const
+bool NamedLineCollectionBase::hasExplicitNamedLines() const
 {
     if (m_namedLinesIndices)
         return true;
     return m_autoRepeatNamedLinesIndices && (!m_isSubgrid || m_autoRepeatLines);
 }
 
-bool NamedLineCollection::hasNamedLines() const
+bool NamedLineCollectionBase::hasNamedLines() const
 {
     return hasExplicitNamedLines() || m_implicitNamedLinesIndices;
 }
@@ -308,23 +315,6 @@ bool NamedLineCollection::hasNamedLines() const
 unsigned NamedLineCollection::lastLine() const
 {
     return m_lastLine;
-}
-
-bool NamedLineCollection::contains(unsigned line) const
-{
-    ASSERT(hasNamedLines());
-
-    if (line > m_lastLine)
-        return false;
-
-    auto contains = [](const Vector<unsigned>* Indices, unsigned line) {
-        return Indices && Indices->find(line) != notFound;
-    };
-
-    if (contains(m_implicitNamedLinesIndices, line))
-        return true;
-
-    return NamedLineCollectionBase::contains(line);
 }
 
 int NamedLineCollection::firstExplicitPosition() const

@@ -70,8 +70,8 @@ platform/graphics/angle/PlatformDisplayANGLE.cpp @no-unify
 
 platform/graphics/wpe/SystemFontDatabaseWPE.cpp
 
-platform/graphics/egl/GLContext.cpp
-platform/graphics/egl/GLContextLibWPE.cpp
+platform/graphics/egl/GLContext.cpp @no-unify
+platform/graphics/egl/GLContextLibWPE.cpp @no-unify
 
 platform/graphics/gbm/GBMBufferSwapchain.cpp
 platform/graphics/gbm/GBMDevice.cpp

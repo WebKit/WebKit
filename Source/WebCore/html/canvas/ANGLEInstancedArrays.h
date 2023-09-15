@@ -26,16 +26,19 @@
 #pragma once
 
 #include "WebGLExtension.h"
+#include "WebGLRenderingContextBase.h"
+#include <wtf/IsoMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class ANGLEInstancedArrays final : public WebGLExtension {
+class ANGLEInstancedArrays final : public RefCounted<ANGLEInstancedArrays>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(ANGLEInstancedArrays);
+    WTF_MAKE_NONCOPYABLE(ANGLEInstancedArrays);
 public:
     explicit ANGLEInstancedArrays(WebGLRenderingContextBase&);
-    virtual ~ANGLEInstancedArrays();
-
-    ExtensionName getName() const override;
+    ~ANGLEInstancedArrays();
 
     static bool supported(GraphicsContextGL&);
 

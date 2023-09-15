@@ -2,18 +2,18 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-initializedatetimeformat
+esid: sec-createdatetimeformat
 description: >
   Checks the order of getting "calendar" and "numberingSystem" options in the
   DateTimeFormat is between "localeMatcher" and "hour12" options.
 info: |
-  4. Let _matcher_ be ? GetOption(_options_, `"localeMatcher"`, `"string"`, &laquo; `"lookup"`, `"best fit"` &raquo;, `"best fit"`).
+  5. Let _matcher_ be ? GetOption(_options_, `"localeMatcher"`, ~string~, &laquo; `"lookup"`, `"best fit"` &raquo;, `"best fit"`).
   ...
-  6. Let _calendar_ be ? GetOption(_options_, `"calendar"`, `"string"`, *undefined*, *undefined*).
+  7. Let _calendar_ be ? GetOption(_options_, `"calendar"`, ~string~ , ~empty~, *undefined*).
   ...
-  9. Let _numberingSystem_ be ? GetOption(_options_, `"numberingSystem"`, `"string"`, *undefined*, *undefined*).
+  10. Let _numberingSystem_ be ? GetOption(_options_, `"numberingSystem"`, ~string~, ~empty~, *undefined*).
   ...
-  12. Let _hour12_ be ? GetOption(_options_, `"hour12"`, `"boolean"`, *undefined*, *undefined*).
+  13. Let _hour12_ be ? GetOption(_options_, `"hour12"`, ~boolean~, ~empty~, *undefined*).
 includes: [compareArray.js]
 ---*/
 

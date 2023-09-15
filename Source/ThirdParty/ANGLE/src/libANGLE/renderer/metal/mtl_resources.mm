@@ -78,12 +78,10 @@ MTLResourceOptions resourceOptionsForStorageMode(MTLStorageMode storageMode)
             return MTLResourceStorageModePrivate;
         case MTLStorageModeMemoryless:
             return MTLResourceStorageModeMemoryless;
-//#if TARGET_OS_SIMULATOR
         default:
             // TODO(http://anglebug.com/8012): Remove me once hacked SDKs are fixed.
             UNREACHABLE();
             return MTLResourceStorageModeShared;
-//#endif
     }
 }
 

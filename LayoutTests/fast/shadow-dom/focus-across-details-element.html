@@ -8,13 +8,13 @@ It should traverse focusable elements in the increasing numerical order and then
 <div id="test-content">
 <div id="first" tabindex="1" onfocus="log(this)">1. Focusable element with tabindex=1</div>
 <details open>
-    <div tabindex="6" onfocus="log(this)">6. Focusable element in details with tabindex=6</div>
-    <summary><div tabindex="4" onfocus="log(this)">4. Focusable element in summary with tabindex=4</div></summary>
-    <div tabindex="2" onfocus="log(this)">2. Focusable element in details with tabindex=2</div>
+    <div tabindex="6" onfocus="log(this)">4. Focusable element in details with tabindex=6</div>
+    <summary><div tabindex="4" onfocus="log(this)">2. Focusable element in summary with tabindex=4</div></summary>
+    <div tabindex="2" onfocus="log(this)">3. Focusable element in details with tabindex=2</div>
 </details>
 <details open>
-    <div tabindex="5" onfocus="log(this)">5. Focusable element in details with tabindex=5</div>
-    <div tabindex="3" onfocus="log(this)">3. Focusable element in details with tabindex=3</div>
+    <div tabindex="5" onfocus="log(this)">6. Focusable element in details with tabindex=5</div>
+    <div tabindex="3" onfocus="log(this)">5. Focusable element in details with tabindex=3</div>
 </details>
 </div>
 <pre></pre>

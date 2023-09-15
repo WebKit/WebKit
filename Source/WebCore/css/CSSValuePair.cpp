@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "CSSValuePair.h"
+#include <wtf/Hasher.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -62,6 +63,12 @@ bool CSSValuePair::equals(const CSSValuePair& other) const
         && m_coalesceIdenticalValues == other.m_coalesceIdenticalValues
         && m_first->equals(other.m_first)
         && m_second->equals(other.m_second);
+}
+
+bool CSSValuePair::addDerivedHash(Hasher& hasher) const
+{
+    add(hasher, m_valueSeparator, m_coalesceIdenticalValues);
+    return m_first->addHash(hasher) && m_second->addHash(hasher);
 }
 
 } // namespace WebCore

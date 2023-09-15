@@ -57,6 +57,15 @@ public:
 #endif
     }
 
+    bool isMac() const
+    {
+#if PLATFORM(MAC)
+        return true;
+#else
+        return false;
+#endif
+    }
+
     bool isKeyboardImmediatelyAvailable()
     {
 #if PLATFORM(VISION)
@@ -542,8 +551,6 @@ public:
 
     size_t userScriptInjectedCount() const;
     void injectUserScript(JSStringRef);
-
-    void sendDisplayConfigurationChangedMessageForTesting();
 
     void setServiceWorkerFetchTimeout(double seconds);
 

@@ -27,6 +27,7 @@
 #define WebProgressTrackerClient_h
 
 #include <WebCore/ProgressTrackerClient.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
@@ -42,7 +43,7 @@ private:
     void progressEstimateChanged(WebCore::LocalFrame& originatingProgressFrame) override;
     void progressFinished(WebCore::LocalFrame& originatingProgressFrame) override;
 
-    WebPage& m_webPage;
+    WeakPtr<WebPage> m_webPage;
 };
 
 } // namespace WebKit

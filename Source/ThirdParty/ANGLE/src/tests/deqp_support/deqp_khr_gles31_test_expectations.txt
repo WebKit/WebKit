@@ -62,14 +62,6 @@
 4128 VULKAN NVIDIA : KHR-GLES31.core.shader_storage_buffer_object.advanced-unsizedArrayLength-vs-*-matR* = SKIP
 4128 VULKAN NVIDIA : KHR-GLES31.core.shader_storage_buffer_object.advanced-unsizedArrayLength-fs-*-matR* = SKIP
 
-// https://gitlab.khronos.org/Tracker/vk-gl-cts/-/issues/4292
-5978 SWIFTSHADER : KHR-GLES31.core.texture_border_clamp.Texture2DDC16Linear = SKIP
-5978 SWIFTSHADER : KHR-GLES31.core.texture_border_clamp.Texture2DDC32FLinear = SKIP
-5978 VULKAN WIN NVIDIA : KHR-GLES31.core.texture_border_clamp.Texture2DDC16Linear = SKIP
-5978 VULKAN WIN NVIDIA : KHR-GLES31.core.texture_border_clamp.Texture2DDC32FLinear = SKIP
-5978 VULKAN PIXEL6 : KHR-GLES31.core.texture_border_clamp.Texture2DDC16Linear = SKIP
-5978 VULKAN PIXEL6 : KHR-GLES31.core.texture_border_clamp.Texture2DDC32FLinear = SKIP
-
 ////
 //// SwANGLE expectations
 ////

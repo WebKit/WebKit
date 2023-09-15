@@ -4061,7 +4061,7 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, const RefPtr<UniquedStringImpl
 {
     unsigned i = 0;
     Structure* structure = this->structure();
-    if (!(structure->isDictionary() || (structure->transitionCountEstimate() + size) > Structure::s_maxTransitionLength || !structure->canPerformFastPropertyEnumeration())) {
+    if (!(structure->isDictionary() || (structure->transitionCountEstimate() + size) > Structure::s_maxTransitionLength || !structure->canPerformFastPropertyEnumerationCommon())) {
         Vector<PropertyOffset, 16> offsets;
         offsets.reserveInitialCapacity(size);
 
@@ -4149,6 +4149,12 @@ ASCIILiteral JSObject::putDirectToDictionaryWithoutExtensibility(VM& vm, Propert
     }
 
     return NonExtensibleObjectPropertyDefineError;
+}
+
+NEVER_INLINE void JSObject::putDirectForJSONSlow(VM& vm, PropertyName propertyName, JSValue value)
+{
+    PutPropertySlot slot(this);
+    putDirectInternal<PutModeDefineOwnPropertyForJSONSlow>(vm, propertyName, value, 0, slot);
 }
 
 } // namespace JSC

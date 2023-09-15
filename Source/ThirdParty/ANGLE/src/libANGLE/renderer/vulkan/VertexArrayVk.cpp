@@ -144,9 +144,17 @@ size_t GetVertexCount(BufferVk *srcBuffer, const gl::VertexBinding &binding, uin
     size_t numVertices = 1;
     bytes -= srcFormatSize;
 
+    GLuint stride = binding.getStride();
+    if (stride == 0)
+    {
+        stride = srcFormatSize;
+    }
+
     // Count how many strides fit remaining space.
     if (bytes > 0)
-        numVertices += static_cast<size_t>(bytes) / binding.getStride();
+    {
+        numVertices += static_cast<size_t>(bytes) / stride;
+    }
 
     return numVertices;
 }
@@ -722,7 +730,8 @@ angle::Result VertexArrayVk::syncDirtyAttrib(ContextVk *contextVk,
         {
             BufferVk *bufferVk                  = vk::GetImpl(bufferGL);
             const angle::Format &intendedFormat = vertexFormat.getIntendedFormat();
-            bool bindingIsAligned               = BindingIsAligned(
+            size_t numVertices    = GetVertexCount(bufferVk, binding, intendedFormat.pixelBytes);
+            bool bindingIsAligned = BindingIsAligned(
                 binding, intendedFormat, intendedFormat.channelCount, attrib.relativeOffset);
 
             if (renderer->getFeatures().compressVertexData.enabled &&
@@ -733,7 +742,8 @@ angle::Result VertexArrayVk::syncDirtyAttrib(ContextVk *contextVk,
             }
 
             bool needsConversion =
-                vertexFormat.getVertexLoadRequiresConversion(compressed) || !bindingIsAligned;
+                numVertices > 0 &&
+                (vertexFormat.getVertexLoadRequiresConversion(compressed) || !bindingIsAligned);
 
             if (needsConversion)
             {
@@ -796,7 +806,7 @@ angle::Result VertexArrayVk::syncDirtyAttrib(ContextVk *contextVk,
             }
             else
             {
-                if (bufferVk->getSize() == 0)
+                if (numVertices == 0)
                 {
                     vk::BufferHelper &emptyBuffer = contextVk->getEmptyBuffer();
 

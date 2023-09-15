@@ -1,0 +1,11 @@
+
+PASS XMLHttpRequest: open() - case-sensitive methods test (XUNICORN)
+PASS XMLHttpRequest: open() - case-sensitive methods test (xUNIcorn)
+PASS XMLHttpRequest: open() - case-sensitive methods test (chiCKEN)
+PASS XMLHttpRequest: open() - case-sensitive methods test (PATCH)
+FAIL XMLHttpRequest: open() - case-sensitive methods test (patCH) assert_equals: expected "patCH" but got "PATCH"
+PASS XMLHttpRequest: open() - case-sensitive methods test (copy)
+PASS XMLHttpRequest: open() - case-sensitive methods test (COpy)
+PASS XMLHttpRequest: open() - case-sensitive methods test (inDEX)
+PASS XMLHttpRequest: open() - case-sensitive methods test (movE)
+

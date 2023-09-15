@@ -14,4 +14,11 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/resources/squares.jpg
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/resources/squares_1.jpg
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/resources/squares_2.jpg
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/resources/squares_3.jpg
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/resources/squares_4.jpg
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/resources/squares_5.jpg
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/resources/squares_6.jpg
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/resources/squares_7.jpg
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/resources/squares_8.jpg

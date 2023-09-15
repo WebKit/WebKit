@@ -54,7 +54,7 @@ class SessionID;
 }
 
 namespace WebCore {
-enum class MDNSRegisterError;
+enum class MDNSRegisterError : uint8_t;
 }
 
 namespace WebKit {

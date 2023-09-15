@@ -269,14 +269,6 @@ Decimal::EncodedData::EncodedData(Sign sign, int exponent, uint64_t coefficient)
     m_exponent = static_cast<int16_t>(exponent);
 }
 
-bool Decimal::EncodedData::operator==(const EncodedData& another) const
-{
-    return m_sign == another.m_sign
-        && m_formatClass == another.m_formatClass
-        && m_exponent == another.m_exponent
-        && m_coefficient == another.m_coefficient;
-}
-
 Decimal::Decimal(int32_t i32)
     : m_data(i32 < 0 ? Negative : Positive, 0, i32 < 0 ? static_cast<uint64_t>(-static_cast<int64_t>(i32)) : static_cast<uint64_t>(i32))
 {

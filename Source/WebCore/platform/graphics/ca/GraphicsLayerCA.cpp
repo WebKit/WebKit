@@ -29,6 +29,7 @@
 #if USE(CA)
 
 #include "Animation.h"
+#include "DisplayList.h"
 #include "DisplayListRecorderImpl.h"
 #include "DisplayListReplayer.h"
 #include "FloatConversion.h"
@@ -38,7 +39,6 @@
 #include "GraphicsLayerFactory.h"
 #include "HTMLVideoElement.h"
 #include "Image.h"
-#include "InMemoryDisplayList.h"
 #include "Logging.h"
 #include "Model.h"
 #include "PlatformCAAnimationCocoa.h"
@@ -365,7 +365,7 @@ Ref<PlatformCAAnimation> GraphicsLayerCA::createPlatformCAAnimation(PlatformCAAn
     return PlatformCAAnimationCocoa::create(type, keyPath);
 }
 
-typedef HashMap<const GraphicsLayerCA*, std::pair<FloatRect, std::unique_ptr<DisplayList::InMemoryDisplayList>>> LayerDisplayListHashMap;
+typedef HashMap<const GraphicsLayerCA*, std::pair<FloatRect, std::unique_ptr<DisplayList::DisplayList>>> LayerDisplayListHashMap;
 
 static LayerDisplayListHashMap& layerDisplayListMap()
 {
@@ -1319,10 +1319,14 @@ void GraphicsLayerCA::setContentsToVideoElement(HTMLVideoElement& videoElement, 
 {
 #if HAVE(AVKIT)
     if (auto hostingContextID = videoElement.layerHostingContextID()) {
-        if (hostingContextID != m_layerHostingContextID) {
-            m_contentsLayer = createPlatformVideoLayer(videoElement, this);
-            m_layerHostingContextID = hostingContextID;
+        if (m_contentsLayer && !m_contentsDisplayDelegate
+            && m_layerHostingContextID == hostingContextID
+            && m_contentsLayerPurpose == purpose) {
+                return;
         }
+
+        m_contentsLayer = createPlatformVideoLayer(videoElement, this);
+        m_layerHostingContextID = hostingContextID;
         m_contentsLayerPurpose = purpose;
         m_contentsDisplayDelegate = nullptr;
         updateVideoGravity();
@@ -1871,7 +1875,7 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
     if (usesDisplayListDrawing() && m_drawsContent && (!m_hasEverPainted || hadDirtyRects)) {
         TraceScope tracingScope(DisplayListRecordStart, DisplayListRecordEnd);
 
-        m_displayList = makeUnique<DisplayList::InMemoryDisplayList>();
+        m_displayList = makeUnique<DisplayList::DisplayList>();
         
         FloatRect initialClip(boundsOrigin(), size());
 
@@ -1903,7 +1907,7 @@ void GraphicsLayerCA::platformCALayerPaintContents(PlatformCALayer*, GraphicsCon
         
         if (UNLIKELY(isTrackingDisplayListReplay())) {
             auto replayList = replayer.replay(clip, isTrackingDisplayListReplay()).trackedDisplayList;
-            layerDisplayListMap().add(this, std::pair<FloatRect, std::unique_ptr<DisplayList::InMemoryDisplayList>>(clip, WTFMove(replayList)));
+            layerDisplayListMap().add(this, std::pair<FloatRect, std::unique_ptr<DisplayList::DisplayList>>(clip, WTFMove(replayList)));
         } else
             replayer.replay(clip);
 
@@ -2730,7 +2734,7 @@ void GraphicsLayerCA::updateCoverage(const CommitState& commitState)
     }
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    m_layer->setCoverageRect(m_coverageRect);
+    m_layer->setVisibleRect(m_visibleRect);
 #endif
 
     bool requiresBacking = m_intersectsCoverageRect

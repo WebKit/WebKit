@@ -57,8 +57,7 @@ static ExceptionOr<String> computeReferrer(ScriptExecutionContext& context, cons
     if (referrer.isEmpty())
         return "no-referrer"_str;
 
-    // FIXME: Tighten the URL parsing algorithm according https://url.spec.whatwg.org/#concept-url-parser.
-    URL referrerURL = context.completeURL(referrer);
+    URL referrerURL = context.completeURL(referrer, ScriptExecutionContext::ForceUTF8::Yes);
     if (!referrerURL.isValid())
         return Exception { TypeError, "Referrer is not a valid URL."_s };
 
@@ -177,7 +176,6 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
 {
     ASSERT(scriptExecutionContext());
 
-    // FIXME: Tighten the URL parsing algorithm according to https://url.spec.whatwg.org/#concept-url-parser.
     URL requestURL = scriptExecutionContext()->completeURL(url, ScriptExecutionContext::ForceUTF8::Yes);
     if (!requestURL.isValid() || requestURL.hasCredentials())
         return Exception { TypeError, "URL is not valid or contains user credentials."_s };

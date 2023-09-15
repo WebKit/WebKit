@@ -11,30 +11,58 @@
 #ifndef COMMON_VIDEO_H265_H265_SPS_PARSER_H_
 #define COMMON_VIDEO_H265_H265_SPS_PARSER_H_
 
+#include <vector>
+
 #include "absl/types/optional.h"
+#include "api/array_view.h"
+#include "rtc_base/bitstream_reader.h"
+
+namespace rtc {
+class BitBuffer;
+}
 
 namespace webrtc {
-
-class BitstreamReader;
 
 // A class for parsing out sequence parameter set (SPS) data from an H265 NALU.
 class H265SpsParser {
  public:
+  struct ShortTermRefPicSet {
+    ShortTermRefPicSet();
+
+    uint32_t inter_ref_pic_set_prediction_flag = 0;
+    std::vector<uint32_t> used_by_curr_pic_flag;
+    std::vector<uint32_t> use_delta_flag;
+    uint32_t num_negative_pics = 0;
+    uint32_t num_positive_pics = 0;
+    std::vector<uint32_t> delta_poc_s0_minus1;
+    std::vector<uint32_t> used_by_curr_pic_s0_flag;
+    std::vector<uint32_t> delta_poc_s1_minus1;
+    std::vector<uint32_t> used_by_curr_pic_s1_flag;
+  };
+
   // The parsed state of the SPS. Only some select values are stored.
   // Add more as they are actually needed.
   struct SpsState {
     SpsState();
 
+    uint32_t sps_max_sub_layers_minus1;
+    uint32_t chroma_format_idc = 0;
+    uint32_t separate_colour_plane_flag = 0;
+    uint32_t pic_width_in_luma_samples = 0;
+    uint32_t pic_height_in_luma_samples = 0;
+    uint32_t log2_max_pic_order_cnt_lsb_minus4 = 0;
+    std::vector<uint32_t> sps_max_dec_pic_buffering_minus1;
+    uint32_t log2_min_luma_coding_block_size_minus3 = 0;
+    uint32_t log2_diff_max_min_luma_coding_block_size = 0;
+    uint32_t sample_adaptive_offset_enabled_flag = 0;
+    uint32_t num_short_term_ref_pic_sets = 0;
+    std::vector<H265SpsParser::ShortTermRefPicSet> short_term_ref_pic_set;
+    uint32_t long_term_ref_pics_present_flag = 0;
+    uint32_t num_long_term_ref_pics_sps = 0;
+    std::vector<uint32_t> used_by_curr_pic_lt_sps_flag;
+    uint32_t sps_temporal_mvp_enabled_flag = 0;
     uint32_t width = 0;
     uint32_t height = 0;
-    uint32_t delta_pic_order_always_zero_flag = 0;
-    uint32_t separate_colour_plane_flag = 0;
-    uint32_t frame_mbs_only_flag = 0;
-    uint32_t log2_max_frame_num_minus4 = 0;
-    uint32_t log2_max_pic_order_cnt_lsb_minus4 = 0;
-    uint32_t pic_order_cnt_type = 0;
-    uint32_t max_num_ref_frames = 0;
-    uint32_t vui_params_present = 0;
     uint32_t id = 0;
     uint32_t vps_id = 0;
   };
@@ -42,10 +70,18 @@ class H265SpsParser {
   // Unpack RBSP and parse SPS state from the supplied buffer.
   static absl::optional<SpsState> ParseSps(const uint8_t* data, size_t length);
 
+  static bool ParseScalingListData(BitstreamReader& reader);
+
+  static absl::optional<ShortTermRefPicSet> ParseShortTermRefPicSet(
+        uint32_t st_rps_idx, uint32_t num_short_term_ref_pic_sets,
+        const std::vector<ShortTermRefPicSet>& ref_pic_sets,
+        SpsState& sps, BitstreamReader& reader);
+
  protected:
-  // Parse the SPS state, up till the VUI part, for a bit buffer where RBSP
-  // decoding has already been performed.
-  static absl::optional<SpsState> ParseSpsUpToVui(BitstreamReader* buffer);
+ // Parse the SPS state, for a bit buffer where RBSP decoding has already been
+ // performed.
+  static absl::optional<SpsState> ParseSpsInternal(
+      rtc::ArrayView<const uint8_t> buffer);
 };
 
 }  // namespace webrtc

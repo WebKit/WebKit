@@ -17,8 +17,8 @@
 // This transformation basically duplicates such functions, removes the
 // sampler/image/atomic_counter parameters and uses the opaque uniforms used by the caller.
 
-#ifndef COMPILER_TRANSLATOR_TREEOPS_VULKAN_MONOMORPHIZEUNSUPPORTEDFUNCTIONS_H_
-#define COMPILER_TRANSLATOR_TREEOPS_VULKAN_MONOMORPHIZEUNSUPPORTEDFUNCTIONS_H_
+#ifndef COMPILER_TRANSLATOR_TREEOPS_MONOMORPHIZEUNSUPPORTEDFUNCTIONS_H_
+#define COMPILER_TRANSLATOR_TREEOPS_MONOMORPHIZEUNSUPPORTEDFUNCTIONS_H_
 
 #include "common/angleutils.h"
 #include "compiler/translator/Compiler.h"
@@ -51,4 +51,4 @@ using UnsupportedFunctionArgsBitSet = angle::PackedEnumBitSet<UnsupportedFunctio
                                                     UnsupportedFunctionArgsBitSet);
 }  // namespace sh
 
-#endif  // COMPILER_TRANSLATOR_TREEOPS_VULKAN_MONOMORPHIZEUNSUPPORTEDFUNCTIONS_H_
+#endif  // COMPILER_TRANSLATOR_TREEOPS_MONOMORPHIZEUNSUPPORTEDFUNCTIONS_H_

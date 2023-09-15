@@ -84,12 +84,9 @@ ExceptionOr<void> VTTRegion::setWidth(double value)
     return { };
 }
 
-ExceptionOr<void> VTTRegion::setLines(int value)
+void VTTRegion::setLines(unsigned value)
 {
-    if (value < 0)
-        return Exception { IndexSizeError };
     m_lines = value;
-    return { };
 }
 
 ExceptionOr<void> VTTRegion::setRegionAnchorX(double value)
@@ -130,22 +127,9 @@ static const AtomString& upKeyword()
     return upKeyword;
 }
 
-const AtomString& VTTRegion::scroll() const
+void VTTRegion::setScroll(const ScrollSetting value)
 {
-    return m_scroll ? upKeyword() : emptyAtom();
-}
-
-ExceptionOr<void> VTTRegion::setScroll(const AtomString& value)
-{
-    if (value.isEmpty()) {
-        m_scroll = false;
-        return { };
-    }
-    if (value == upKeyword()) {
-        m_scroll = true;
-        return { };
-    }
-    return Exception { SyntaxError };
+    m_scroll = value;
 }
 
 void VTTRegion::updateParametersFromRegion(const VTTRegion& other)
@@ -224,11 +208,11 @@ void VTTRegion::parseSettingValue(RegionSetting setting, VTTScanner& input)
         break;
     }
     case Lines: {
-        int number;
+        unsigned number;
         if (input.scanDigits(number) && parsedEntireRun(input, valueRun))
             m_lines = number;
         else
-            LOG(Media, "VTTRegion::parseSettingValue, invalid Height");
+            LOG(Media, "VTTRegion::parseSettingValue, invalid Lines");
         break;
     }
     case RegionAnchor: {
@@ -249,7 +233,7 @@ void VTTRegion::parseSettingValue(RegionSetting setting, VTTScanner& input)
     }
     case Scroll:
         if (input.scanRun(valueRun, upKeyword()))
-            m_scroll = true;
+            m_scroll = ScrollSetting::Up;
         else
             LOG(Media, "VTTRegion::parseSettingValue, invalid Scroll");
         break;
@@ -287,7 +271,7 @@ void VTTRegion::displayLastTextTrackCueBox()
         return;
 
     // If it's a scrolling region, add the scrolling class.
-    if (isScrollingRegion())
+    if (scroll() == ScrollSetting::Up)
         m_cueContainer->classList().add(textTrackCueContainerScrollingClass());
 
     float regionBottom = m_regionDisplayTree->boundingClientRect().maxY();
@@ -392,7 +376,7 @@ void VTTRegion::startTimer()
     if (m_scrollTimer.isActive())
         return;
 
-    Seconds duration = isScrollingRegion() ? scrollTime : 0_s;
+    Seconds duration = scroll() == ScrollSetting::Up ? scrollTime : 0_s;
     m_scrollTimer.startOneShot(duration);
 }
 

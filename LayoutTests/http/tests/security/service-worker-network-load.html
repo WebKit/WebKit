@@ -1,0 +1,79 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+<script src="resources/network-load.js"></script>
+<script>
+
+var count = 0;
+var iframesToCreate = 8;
+window.onmessage = function(e) {
+	if (++count == iframesToCreate) {
+		if (window.testRunner)
+	    	testRunner.notifyDone();
+		else
+			alert("Done!");
+	}
+};
+	
+
+function with_iframe(url) {
+  return new Promise(function(resolve) {
+      var frame = document.createElement('iframe');
+      frame.src = url;
+      document.body.appendChild(frame);
+    });
+}
+
+function service_register(url, scope) {
+  var options = { scope: scope };
+  return service_unregister(scope)
+    .then(function() {
+        return navigator.serviceWorker.register(url, options);
+      })
+}
+
+function service_unregister(scope) {
+  var absoluteScope = (new URL(scope, window.location).href);
+  return navigator.serviceWorker.getRegistration(scope)
+    .then(function(registration) {
+        if (registration && registration.scope === absoluteScope)
+          return registration.unregister();
+      })
+}
+
+function wating_stat(test, worker, state) {
+  return new Promise(test.step_func(function(resolve) {
+      worker.addEventListener('statechange', test.step_func(function() {
+            resolve(state);
+        }));
+    }));
+}
+
+trigger(t => {
+    var script = 'resources/network-load-sw.js';
+    var scope = 'resources/network-load-sw';
+
+    return service_register(script, scope)
+      .then(reg => {
+          return wating_stat(t, reg.installing, 'activated');
+        })
+      .then(frame => {
+          setTimeout(() => with_iframe(scope + 'asdf.py') , 1);
+          setTimeout(() => with_iframe(scope + 'asdf.py') , 0.9);
+          setTimeout(() => with_iframe(scope + 'asdf.py') , 1.0);
+          setTimeout(() => with_iframe(scope + 'asdf.py') , 1.0);
+          setTimeout(() => with_iframe(scope + 'asdf.py') , 1.1);
+          setTimeout(() => with_iframe(scope + 'asdf.py') , 1.2);
+          setTimeout(() => with_iframe(scope + 'asdf.py') , 1.3);
+          
+          return with_iframe(scope + 'asdf.py');
+        })
+  }, 'asdfasdf')
+
+</script>
+

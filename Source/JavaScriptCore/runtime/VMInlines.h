@@ -82,13 +82,13 @@ inline CallFrame* VM::topJSCallFrame() const
     CallFrame* frame = topCallFrame;
     if (UNLIKELY(!frame))
         return frame;
-    if (LIKELY(!frame->isWasmFrame() && !frame->isStackOverflowFrame()))
+    if (LIKELY(!frame->isNativeCalleeFrame() && !frame->isStackOverflowFrame()))
         return frame;
     EntryFrame* entryFrame = topEntryFrame;
     do {
         frame = frame->callerFrame(entryFrame);
         ASSERT(!frame || !frame->isStackOverflowFrame());
-    } while (frame && frame->isWasmFrame());
+    } while (frame && frame->isNativeCalleeFrame());
     return frame;
 }
 

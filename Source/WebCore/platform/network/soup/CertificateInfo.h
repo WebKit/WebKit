@@ -71,7 +71,6 @@ public:
 
         return m_certificate && other.m_certificate && g_tls_certificate_is_same(m_certificate.get(), other.m_certificate.get());
     }
-    bool operator!=(const CertificateInfo& other) const { return !(*this == other); }
 
 private:
     GRefPtr<GTlsCertificate> m_certificate;

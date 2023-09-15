@@ -73,7 +73,7 @@ public:
     String namedGridLine() const;
     WEBCORE_EXPORT int spanPosition() const;
 
-    bool operator==(const GridPosition& other) const;
+    friend bool operator==(const GridPosition&, const GridPosition&) = default;
 
     bool shouldBeResolvedAgainstOppositePosition() const { return isAuto() || isSpan(); }
 

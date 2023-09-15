@@ -1,0 +1,3 @@
+
+FAIL check that the state is reset assert_true: ctx.fontKerning == default_value expected true got false
+

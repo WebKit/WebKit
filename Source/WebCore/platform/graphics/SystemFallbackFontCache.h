@@ -43,7 +43,7 @@ enum class IsForPlatformFont : bool;
     
 struct CharacterFallbackMapKey {
     AtomString locale;
-    UChar32 character { 0 };
+    String string;
     bool isForPlatformFont { false };
     ResolvedEmojiPolicy resolvedEmojiPolicy { ResolvedEmojiPolicy::NoPreference };
 
@@ -52,13 +52,13 @@ struct CharacterFallbackMapKey {
 
 inline void add(Hasher& hasher, const CharacterFallbackMapKey& key)
 {
-    add(hasher, key.locale, key.character, key.isForPlatformFont, key.resolvedEmojiPolicy);
+    add(hasher, key.locale, key.string, key.isForPlatformFont, key.resolvedEmojiPolicy);
 }
 
 struct CharacterFallbackMapKeyHash {
     static unsigned hash(const CharacterFallbackMapKey& key) { return computeHash(key); }
     static bool equal(const CharacterFallbackMapKey& a, const CharacterFallbackMapKey& b) { return a == b; }
-    static const bool safeToCompareToEmptyOrDeleted = true;
+    static const bool safeToCompareToEmptyOrDeleted = false;
 };
 
 class SystemFallbackFontCache {
@@ -69,13 +69,13 @@ public:
 
     SystemFallbackFontCache() = default;
 
-    RefPtr<Font> systemFallbackFontForCharacter(const Font*, UChar32 character, const FontDescription&, ResolvedEmojiPolicy, IsForPlatformFont);
+    RefPtr<Font> systemFallbackFontForCharacterCluster(const Font*, StringView, const FontDescription&, ResolvedEmojiPolicy, IsForPlatformFont);
     void remove(Font*);
 
 private:
     struct CharacterFallbackMapKeyHashTraits : SimpleClassHashTraits<CharacterFallbackMapKey> {
-        static void constructDeletedValue(CharacterFallbackMapKey& slot) { new (NotNull, &slot) CharacterFallbackMapKey { { }, U_SENTINEL, { } }; }
-        static bool isDeletedValue(const CharacterFallbackMapKey& key) { return key.character == U_SENTINEL; }
+        static void constructDeletedValue(CharacterFallbackMapKey& slot) { new (NotNull, &slot) CharacterFallbackMapKey { { }, WTF::HashTableDeletedValue, { } }; }
+        static bool isDeletedValue(const CharacterFallbackMapKey& key) { return key.string.isHashTableDeletedValue(); }
     };
 
     // Fonts are not ref'd to avoid cycles.

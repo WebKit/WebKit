@@ -48,7 +48,9 @@ enum class StyleColorOptions : uint8_t {
 };
 
 struct StyleColorMix;
-struct StyleCurrentColor { };
+struct StyleCurrentColor {
+    friend constexpr bool operator==(const StyleCurrentColor&, const StyleCurrentColor&) = default;
+};
 
 class StyleColor {
 public:
@@ -120,7 +122,7 @@ public:
 
     WEBCORE_EXPORT Color resolveColor(const Color& colorPropertyValue) const;
 
-    friend bool operator==(const StyleColor&, const StyleColor&);
+    friend bool operator==(const StyleColor&, const StyleColor&) = default;
     friend WEBCORE_EXPORT String serializationForCSS(const StyleColor&);
     friend void serializationForCSS(StringBuilder&, const StyleColor&);
     friend WTF::TextStream& operator<<(WTF::TextStream&, const StyleColor&);
@@ -146,39 +148,20 @@ struct StyleColorMix {
     struct Component {
         StyleColor color;
         std::optional<double> percentage;
+
+        friend bool operator==(const Component&, const Component&) = default;
     };
+
+    friend bool operator==(const StyleColorMix&, const StyleColorMix&) = default;
 
     ColorInterpolationMethod colorInterpolationMethod;
     Component mixComponents1;
     Component mixComponents2;
 };
 
-inline bool operator==(const StyleColorMix::Component& a, const StyleColorMix::Component& b)
-{
-    return a.color == b.color
-        && a.percentage == b.percentage;
-}
-
-inline bool operator==(const StyleColorMix& a, const StyleColorMix& b)
-{
-    return a.colorInterpolationMethod == b.colorInterpolationMethod
-        && a.mixComponents1 == b.mixComponents1
-        && a.mixComponents2 == b.mixComponents2;
-}
-
 inline bool operator==(const UniqueRef<StyleColorMix>& a, const UniqueRef<StyleColorMix>& b)
 {
     return a.get() == b.get();
-}
-
-constexpr bool operator==(const StyleCurrentColor&, const StyleCurrentColor&)
-{
-    return true;
-}
-
-inline bool operator==(const StyleColor& a, const StyleColor& b)
-{
-    return a.m_color == b.m_color;
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, const StyleColorMix&);

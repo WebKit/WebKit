@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,10 +35,10 @@
 OBJC_CLASS WebMediaSessionHelper;
 
 #if defined(__OBJC__) && __OBJC__
-extern NSString* WebUIApplicationWillResignActiveNotification;
-extern NSString* WebUIApplicationWillEnterForegroundNotification;
-extern NSString* WebUIApplicationDidBecomeActiveNotification;
-extern NSString* WebUIApplicationDidEnterBackgroundNotification;
+extern NSString *WebUIApplicationWillResignActiveNotification;
+extern NSString *WebUIApplicationWillEnterForegroundNotification;
+extern NSString *WebUIApplicationDidBecomeActiveNotification;
+extern NSString *WebUIApplicationDidEnterBackgroundNotification;
 #endif
 
 namespace WebCore {

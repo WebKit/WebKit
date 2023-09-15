@@ -1342,7 +1342,7 @@ unsigned int GetMaxViewportAndScissorRectanglesPerPipeline(D3D_FEATURE_LEVEL fea
 
 bool IsMultiviewSupported(D3D_FEATURE_LEVEL featureLevel)
 {
-    // The ANGLE_multiview extension can always be supported in D3D11 through geometry shaders.
+    // The multiview extensions can always be supported in D3D11 through geometry shaders.
     switch (featureLevel)
     {
         case D3D_FEATURE_LEVEL_11_1:

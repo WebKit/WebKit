@@ -145,18 +145,14 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
                         if (markedTexts.isEmpty() || markedTexts.last().priority <= currentPriority)
                             markedTexts.append({ highlightStart, highlightEnd, MarkedText::Type::Highlight, nullptr, highlightName, currentPriority });
                         else {
-                            // Find the first correct place to insert highlight.
-                            bool wasInserted = false;
-                            for (int index = markedTexts.size() - 1; index >= 0; index--) {
-                                if (markedTexts[index].priority <= currentPriority) {
-                                    markedTexts.insert(index + 1, { highlightStart, highlightEnd, MarkedText::Type::Highlight, nullptr, highlightName, currentPriority });
-                                    wasInserted = true;
-                                    break;
-                                }
-                            }
-                            // Insert at front of vector if lower priority than everything in markedTexts.
-                            if (!wasInserted)
-                                markedTexts.insert(0, { highlightStart, highlightEnd, MarkedText::Type::Highlight, nullptr, highlightName, currentPriority });
+                            // Gets the first place such that it > currentPriority.
+                            auto it = std::upper_bound(markedTexts.begin(), markedTexts.end(), currentPriority, [](const auto targetMarkedTextPriority, const auto& markedText) {
+                                return targetMarkedTextPriority > markedText.priority;
+                            });
+
+                            unsigned insertIndex = (it == markedTexts.end() ? 0 : std::distance(markedTexts.begin(), it) - 1);
+
+                            markedTexts.insert(insertIndex, { highlightStart, highlightEnd, MarkedText::Type::Highlight, nullptr, highlightName, currentPriority });
                         }
                     }
                 }

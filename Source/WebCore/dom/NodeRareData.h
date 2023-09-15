@@ -293,8 +293,6 @@ public:
     OptionSet<UseType> useTypes() const
     {
         OptionSet<UseType> result;
-        if (m_unusualTabIndex)
-            result.add(UseType::TabIndex);
         if (m_nodeLists)
             result.add(UseType::NodeList);
         if (m_mutationObserverData)

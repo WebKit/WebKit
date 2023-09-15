@@ -56,6 +56,7 @@ using namespace WebCore;
 
 DrawingAreaCoordinatedGraphics::DrawingAreaCoordinatedGraphics(WebPage& webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaType::CoordinatedGraphics, parameters.drawingAreaIdentifier, webPage)
+    , m_isPaintingSuspended(!(parameters.activityState & ActivityState::IsVisible))
     , m_exitCompositingTimer(RunLoop::main(), this, &DrawingAreaCoordinatedGraphics::exitAcceleratedCompositingMode)
     , m_discardPreviousLayerTreeHostTimer(RunLoop::main(), this, &DrawingAreaCoordinatedGraphics::discardPreviousLayerTreeHost)
     , m_displayTimer(RunLoop::main(), this, &DrawingAreaCoordinatedGraphics::displayTimerFired)
@@ -68,12 +69,6 @@ DrawingAreaCoordinatedGraphics::DrawingAreaCoordinatedGraphics(WebPage& webPage,
 #endif
 
     updatePreferences(parameters.store);
-
-    if (m_alwaysUseCompositing) {
-        enterAcceleratedCompositingMode(nullptr);
-        if (!parameters.isProcessSwap)
-            sendEnterAcceleratedCompositingModeIfNeeded();
-    }
 }
 
 DrawingAreaCoordinatedGraphics::~DrawingAreaCoordinatedGraphics() = default;
@@ -85,7 +80,7 @@ void DrawingAreaCoordinatedGraphics::setNeedsDisplay()
         return;
     }
 
-    setNeedsDisplayInRect(m_webPage.bounds());
+    setNeedsDisplayInRect(m_webPage->bounds());
 }
 
 void DrawingAreaCoordinatedGraphics::setNeedsDisplayInRect(const IntRect& rect)
@@ -99,7 +94,7 @@ void DrawingAreaCoordinatedGraphics::setNeedsDisplayInRect(const IntRect& rect)
     }
 
     IntRect dirtyRect = rect;
-    dirtyRect.intersect(m_webPage.bounds());
+    dirtyRect.intersect(m_webPage->bounds());
     if (dirtyRect.isEmpty())
         return;
 
@@ -166,9 +161,12 @@ void DrawingAreaCoordinatedGraphics::scroll(const IntRect& scrollRect, const Int
 
 void DrawingAreaCoordinatedGraphics::forceRepaint()
 {
+    if (m_inUpdateGeometry)
+        return;
+
     if (!m_layerTreeHost) {
         m_isWaitingForDidUpdate = false;
-        m_dirtyRegion = m_webPage.bounds();
+        m_dirtyRegion = m_webPage->bounds();
         display();
         return;
     }
@@ -177,7 +175,7 @@ void DrawingAreaCoordinatedGraphics::forceRepaint()
         return;
 
     setNeedsDisplay();
-    m_webPage.layoutIfNeeded();
+    Ref { m_webPage.get() }->layoutIfNeeded();
     if (!m_layerTreeHost)
         return;
 
@@ -229,7 +227,7 @@ void DrawingAreaCoordinatedGraphics::setLayerTreeStateIsFrozen(bool isFrozen)
 
 void DrawingAreaCoordinatedGraphics::updatePreferences(const WebPreferencesStore& store)
 {
-    Settings& settings = m_webPage.corePage()->settings();
+    Settings& settings = m_webPage->corePage()->settings();
 #if PLATFORM(WAYLAND)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland
         && &PlatformDisplay::sharedDisplayForCompositing() == &PlatformDisplay::sharedDisplay()) {
@@ -285,11 +283,21 @@ void DrawingAreaCoordinatedGraphics::didChangeViewportAttributes(ViewportAttribu
     else if (m_previousLayerTreeHost)
         m_previousLayerTreeHost->didChangeViewportAttributes(WTFMove(attrs));
 }
+
+bool DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingModeIfNeeded()
+{
+    ASSERT(!m_layerTreeHost);
+    if (!m_alwaysUseCompositing)
+        return false;
+
+    enterAcceleratedCompositingMode(nullptr);
+    return true;
+}
 #endif
 
 void DrawingAreaCoordinatedGraphics::setDeviceScaleFactor(float deviceScaleFactor)
 {
-    m_webPage.setDeviceScaleFactor(deviceScaleFactor);
+    Ref { m_webPage.get() }->setDeviceScaleFactor(deviceScaleFactor);
 }
 
 bool DrawingAreaCoordinatedGraphics::supportsAsyncScrolling() const
@@ -384,7 +392,7 @@ RefPtr<DisplayRefreshMonitor> DrawingAreaCoordinatedGraphics::createDisplayRefre
 void DrawingAreaCoordinatedGraphics::activityStateDidChange(OptionSet<ActivityState> changed, ActivityStateChangeID, CompletionHandler<void()>&& completionHandler)
 {
     if (changed & ActivityState::IsVisible) {
-        if (m_webPage.isVisible())
+        if (m_webPage->isVisible())
             resumePainting();
         else
             suspendPainting();
@@ -403,8 +411,9 @@ void DrawingAreaCoordinatedGraphics::attachViewOverlayGraphicsLayer(WebCore::Fra
 void DrawingAreaCoordinatedGraphics::updateGeometry(const IntSize& size, CompletionHandler<void()>&& completionHandler)
 {
     SetForScope inUpdateGeometry(m_inUpdateGeometry, true);
-    m_webPage.setSize(size);
-    m_webPage.layoutIfNeeded();
+    Ref webPage = m_webPage.get();
+    webPage->setSize(size);
+    webPage->layoutIfNeeded();
 
     if (!m_layerTreeHost)
         m_dirtyRegion = IntRect(IntPoint(), size);
@@ -412,9 +421,9 @@ void DrawingAreaCoordinatedGraphics::updateGeometry(const IntSize& size, Complet
     LayerTreeContext previousLayerTreeContext;
     if (m_layerTreeHost) {
         previousLayerTreeContext = m_layerTreeHost->layerTreeContext();
-        m_layerTreeHost->sizeDidChange(m_webPage.size());
+        m_layerTreeHost->sizeDidChange(webPage->size());
     } else if (m_previousLayerTreeHost)
-        m_previousLayerTreeHost->sizeDidChange(m_webPage.size());
+        m_previousLayerTreeHost->sizeDidChange(m_webPage->size());
 
     if (m_layerTreeHost) {
         auto layerTreeContext = m_layerTreeHost->layerTreeContext();
@@ -423,9 +432,11 @@ void DrawingAreaCoordinatedGraphics::updateGeometry(const IntSize& size, Complet
             send(Messages::DrawingAreaProxy::UpdateAcceleratedCompositingMode(0, layerTreeContext));
     } else {
         UpdateInfo updateInfo;
-        updateInfo.viewSize = m_webPage.size();
-        updateInfo.deviceScaleFactor = m_webPage.corePage()->deviceScaleFactor();
-        display(updateInfo);
+        if (m_isPaintingSuspended) {
+            updateInfo.viewSize = webPage->size();
+            updateInfo.deviceScaleFactor = webPage->corePage()->deviceScaleFactor();
+        } else
+            display(updateInfo);
         if (!m_layerTreeHost)
             send(Messages::DrawingAreaProxy::Update(0, WTFMove(updateInfo)));
     }
@@ -463,7 +474,7 @@ void DrawingAreaCoordinatedGraphics::displayDidRefresh()
 void DrawingAreaCoordinatedGraphics::adjustTransientZoom(double scale, FloatPoint origin)
 {
     if (!m_transientZoom) {
-        auto* frameView = m_webPage.localMainFrameView();
+        RefPtr frameView = m_webPage->localMainFrameView();
         if (!frameView)
             return;
 
@@ -483,7 +494,8 @@ void DrawingAreaCoordinatedGraphics::adjustTransientZoom(double scale, FloatPoin
     FloatPoint unscrolledOrigin(origin);
     unscrolledOrigin.moveBy(-m_transientZoomInitialOrigin);
 
-    m_webPage.scalePage(scale / m_webPage.viewScaleFactor(), roundedIntPoint(-unscrolledOrigin));
+    Ref webPage = m_webPage.get();
+    webPage->scalePage(scale / webPage->viewScaleFactor(), roundedIntPoint(-unscrolledOrigin));
 }
 
 void DrawingAreaCoordinatedGraphics::commitTransientZoom(double scale, FloatPoint origin)
@@ -494,7 +506,8 @@ void DrawingAreaCoordinatedGraphics::commitTransientZoom(double scale, FloatPoin
     FloatPoint unscrolledOrigin(origin);
     unscrolledOrigin.moveBy(-m_transientZoomInitialOrigin);
 
-    m_webPage.scalePage(scale / m_webPage.viewScaleFactor(), roundedIntPoint(-unscrolledOrigin));
+    Ref webPage = m_webPage.get();
+    webPage->scalePage(scale / webPage->viewScaleFactor(), roundedIntPoint(-unscrolledOrigin));
 
     m_transientZoom = false;
 }
@@ -530,7 +543,7 @@ void DrawingAreaCoordinatedGraphics::suspendPainting()
 
     m_isPaintingSuspended = true;
 
-    m_webPage.corePage()->suspendScriptedAnimations();
+    m_webPage->corePage()->suspendScriptedAnimations();
 }
 
 void DrawingAreaCoordinatedGraphics::resumePainting()
@@ -549,14 +562,14 @@ void DrawingAreaCoordinatedGraphics::resumePainting()
     // FIXME: We shouldn't always repaint everything here.
     setNeedsDisplay();
 
-    m_webPage.corePage()->resumeScriptedAnimations();
+    m_webPage->corePage()->resumeScriptedAnimations();
 }
 
 void DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLayer)
 {
 #if PLATFORM(GTK)
     if (!m_alwaysUseCompositing) {
-        m_webPage.corePage()->settings().setForceCompositingMode(true);
+        m_webPage->corePage()->settings().setForceCompositingMode(true);
         m_alwaysUseCompositing = true;
     }
 #endif
@@ -568,7 +581,7 @@ void DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode(GraphicsLay
     auto changeWindowScreen = [&] {
         // In order to ensure that we get a unique DisplayRefreshMonitor per-DrawingArea (necessary because ThreadedDisplayRefreshMonitor
         // is driven by the ThreadedCompositor of the drawing area), give each page a unique DisplayID derived from DrawingArea's unique ID.
-        m_webPage.windowScreenDidChange(m_layerTreeHost->displayID(), std::nullopt);
+        Ref { m_webPage.get() }->windowScreenDidChange(m_layerTreeHost->displayID(), std::nullopt);
     };
 
     ASSERT(!m_layerTreeHost);
@@ -643,17 +656,18 @@ void DrawingAreaCoordinatedGraphics::exitAcceleratedCompositingMode()
     m_discardPreviousLayerTreeHostTimer.startOneShot(5_s);
 
     // Always use the primary display ID (0) when not in accelerated compositing mode.
-    m_webPage.windowScreenDidChange(0, std::nullopt);
+    Ref webPage = m_webPage.get();
+    webPage->windowScreenDidChange(0, std::nullopt);
 
-    m_dirtyRegion = m_webPage.bounds();
+    m_dirtyRegion = webPage->bounds();
 
     if (m_inUpdateGeometry)
         return;
 
     UpdateInfo updateInfo;
     if (m_isPaintingSuspended) {
-        updateInfo.viewSize = m_webPage.size();
-        updateInfo.deviceScaleFactor = m_webPage.corePage()->deviceScaleFactor();
+        updateInfo.viewSize = webPage->size();
+        updateInfo.deviceScaleFactor = webPage->corePage()->deviceScaleFactor();
     } else
         display(updateInfo);
 
@@ -751,9 +765,10 @@ void DrawingAreaCoordinatedGraphics::display(UpdateInfo& updateInfo)
     ASSERT(!m_isPaintingSuspended || m_inUpdateGeometry);
     ASSERT(!m_layerTreeHost);
 
-    m_webPage.updateRendering();
-    m_webPage.finalizeRenderingUpdate({ });
-    m_webPage.flushPendingEditorStateUpdate();
+    Ref webPage = m_webPage.get();
+    webPage->updateRendering();
+    webPage->finalizeRenderingUpdate({ });
+    webPage->flushPendingEditorStateUpdate();
 
     // The layout may have put the page into accelerated compositing mode. If the LayerTreeHost is
     // in charge of displaying, we have nothing more to do.
@@ -763,14 +778,14 @@ void DrawingAreaCoordinatedGraphics::display(UpdateInfo& updateInfo)
     if (m_dirtyRegion.isEmpty())
         return;
 
-    updateInfo.viewSize = m_webPage.size();
-    updateInfo.deviceScaleFactor = m_webPage.corePage()->deviceScaleFactor();
+    updateInfo.viewSize = webPage->size();
+    updateInfo.deviceScaleFactor = webPage->corePage()->deviceScaleFactor();
 
     IntRect bounds = m_dirtyRegion.bounds();
-    ASSERT(m_webPage.bounds().contains(bounds));
+    ASSERT(webPage->bounds().contains(bounds));
 
     IntSize bitmapSize = bounds.size();
-    float deviceScaleFactor = m_webPage.corePage()->deviceScaleFactor();
+    float deviceScaleFactor = webPage->corePage()->deviceScaleFactor();
     bitmapSize.scale(deviceScaleFactor);
     auto bitmap = ShareableBitmap::create({ bitmapSize });
     if (!bitmap)
@@ -804,11 +819,11 @@ void DrawingAreaCoordinatedGraphics::display(UpdateInfo& updateInfo)
 
     for (const auto& rect : rects) {
         if (graphicsContext)
-            m_webPage.drawRect(*graphicsContext, rect);
+            webPage->drawRect(*graphicsContext, rect);
         updateInfo.updateRects.append(rect);
     }
 
-    m_webPage.didUpdateRendering();
+    webPage->didUpdateRendering();
 
     // Layout can trigger more calls to setNeedsDisplay and we don't want to process them
     // until the UI process has painted the update, so we stop the timer here.
@@ -820,8 +835,14 @@ void DrawingAreaCoordinatedGraphics::forceUpdate()
     if (m_isWaitingForDidUpdate || m_layerTreeHost)
         return;
 
-    m_dirtyRegion = m_webPage.bounds();
+    m_dirtyRegion = m_webPage->bounds();
     display();
+}
+
+void DrawingAreaCoordinatedGraphics::didDiscardBackingStore()
+{
+    // Ensure the next update will cover the entire view, since the UI process discarded its backing store.
+    m_dirtyRegion = m_webPage->bounds();
 }
 
 } // namespace WebKit

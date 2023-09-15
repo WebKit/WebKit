@@ -71,9 +71,6 @@ bool MatchedDeclarationsCache::isCacheable(const Element& element, const RenderS
         return false;
     if (style.writingMode() != RenderStyle::initialWritingMode() || style.direction() != RenderStyle::initialDirection())
         return false;
-    // The cache assumes static knowledge about which properties are inherited.
-    if (style.hasExplicitlyInheritedProperties())
-        return false;
     if (style.usesContainerUnits())
         return false;
 

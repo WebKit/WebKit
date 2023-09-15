@@ -155,11 +155,14 @@ JSC::JSValue forwardAddToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::
 template<typename WrapperClass, typename ItemType>
 JSC::JSValue forwardDeleteToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike, ItemType&& item)
 {
+    // Initialize backingSet before removing value so assertion below actually holds.
+    auto& backingSet = getAndInitializeBackingSet(lexicalGlobalObject, setLike);
+
     auto isDeleted = setLike.wrapped().removeFromSetLike(std::forward<ItemType>(item));
     UNUSED_PARAM(isDeleted);
 
     auto& vm = JSC::getVM(&lexicalGlobalObject);
-    auto result = forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().deletePrivateName());
+    auto result = forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, backingSet, vm.propertyNames->builtinNames().deletePrivateName());
     ASSERT_UNUSED(result, result.asBoolean() == isDeleted);
     return result;
 }

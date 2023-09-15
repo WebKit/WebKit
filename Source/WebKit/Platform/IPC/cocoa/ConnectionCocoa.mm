@@ -402,7 +402,7 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header, 
             return nullptr;
         }
 
-        return Decoder::create(body, bodySize, { });
+        return Decoder::create({ body, bodySize }, { });
     }
 
     mach_msg_body_t* body = reinterpret_cast<mach_msg_body_t*>(header + 1);
@@ -450,9 +450,9 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header, 
         size_t messageBodySize = descriptor->out_of_line.size;
         descriptor->out_of_line.deallocate = false; // We are taking ownership of the memory.
 
-        return Decoder::create(messageBody, messageBodySize, [](const uint8_t* buffer, size_t length) {
+        return Decoder::create({ messageBody, messageBodySize }, [](DataReference buffer) {
             // FIXME: <rdar://problem/62086358> bufferDeallocator block ignores mach_msg_ool_descriptor_t->deallocate
-            vm_deallocate(mach_task_self(), reinterpret_cast<vm_address_t>(buffer), length);
+            vm_deallocate(mach_task_self(), reinterpret_cast<vm_address_t>(buffer.data()), buffer.size_bytes());
         }, WTFMove(attachments));
     }
 
@@ -465,7 +465,7 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header, 
         return nullptr;
     }
 
-    return Decoder::create(messageBody, messageBodySize, WTFMove(attachments));
+    return Decoder::create({ messageBody, messageBodySize }, WTFMove(attachments));
 }
 
 // The receive buffer size should always include the maximum trailer size.

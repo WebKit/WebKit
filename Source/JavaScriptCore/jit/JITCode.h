@@ -199,6 +199,7 @@ public:
     virtual unsigned offsetOf(void* pointerIntoCode) = 0;
     
     virtual DFG::CommonData* dfgCommon();
+    virtual const DFG::CommonData* dfgCommon() const;
     virtual DFG::JITCode* dfg();
     virtual FTL::JITCode* ftl();
     virtual FTL::ForOSREntryJITCode* ftlForOSREntry();

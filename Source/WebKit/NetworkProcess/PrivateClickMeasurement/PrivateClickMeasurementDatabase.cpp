@@ -74,10 +74,10 @@ constexpr auto createPCMObservedDomain = "CREATE TABLE PCMObservedDomains ("
 constexpr auto insertObservedDomainQuery = "INSERT INTO PCMObservedDomains (registrableDomain) VALUES (?)"_s;
 constexpr auto clearAllPrivateClickMeasurementQuery = "DELETE FROM PCMObservedDomains WHERE domainID LIKE ?"_s;
 
-static HashSet<Database*>& allDatabases()
+static WeakHashSet<Database>& allDatabases()
 {
     ASSERT(!RunLoop::isMain());
-    static NeverDestroyed<HashSet<Database*>> set;
+    static NeverDestroyed<WeakHashSet<Database>> set;
     return set;
 }
 
@@ -88,14 +88,14 @@ Database::Database(const String& storageDirectory)
     openDatabaseAndCreateSchemaIfNecessary();
     enableForeignKeys();
     addDestinationTokenColumnsIfNecessary();
-    allDatabases().add(this);
+    allDatabases().add(*this);
 }
 
 Database::~Database()
 {
     ASSERT(!RunLoop::isMain());
     close();
-    allDatabases().remove(this);
+    allDatabases().remove(*this);
 }
 
 const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& Database::expectedTableAndIndexQueries()
@@ -123,8 +123,8 @@ std::span<const ASCIILiteral> Database::sortedTables()
 void Database::interruptAllDatabases()
 {
     ASSERT(!RunLoop::isMain());
-    for (auto database : allDatabases())
-        database->interrupt();
+    for (auto& database : allDatabases())
+        database.interrupt();
 }
 
 bool Database::createUniqueIndices()

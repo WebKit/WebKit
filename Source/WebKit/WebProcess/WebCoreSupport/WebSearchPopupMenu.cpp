@@ -52,11 +52,11 @@ void WebSearchPopupMenu::saveRecentSearches(const AtomString& name, const Vector
     if (name.isEmpty())
         return;
 
-    WebPage* page = m_popup->page();
+    RefPtr page = m_popup->page();
     if (!page)
         return;
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::SaveRecentSearches(name, searchItems), page->identifier());
+    RefPtr { WebProcess::singleton().parentProcessConnection() }->send(Messages::WebPageProxy::SaveRecentSearches(name, searchItems), page->identifier());
 }
 
 void WebSearchPopupMenu::loadRecentSearches(const AtomString& name, Vector<RecentSearch>& resultItems)
@@ -64,11 +64,11 @@ void WebSearchPopupMenu::loadRecentSearches(const AtomString& name, Vector<Recen
     if (name.isEmpty())
         return;
 
-    WebPage* page = m_popup->page();
+    RefPtr page = m_popup->page();
     if (!page)
         return;
 
-    auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::LoadRecentSearches(name), page->identifier());
+    auto sendResult = RefPtr { WebProcess::singleton().parentProcessConnection() }->sendSync(Messages::WebPageProxy::LoadRecentSearches(name), page->identifier());
     if (sendResult.succeeded())
         std::tie(resultItems) = sendResult.takeReply();
 }

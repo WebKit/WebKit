@@ -29,8 +29,6 @@ const expected = [
   "call options.timeZoneName.toString",
   "get this.timeZone.getOffsetNanosecondsFor",
   "call this.timeZone.getOffsetNanosecondsFor",
-  "get this.timeZone.getOffsetNanosecondsFor",
-  "call this.timeZone.getOffsetNanosecondsFor",
   "get this.timeZone.id",
   "get this.calendar.id",
 ];
@@ -73,8 +71,6 @@ const expectedForFractionalSecondDigits = [
   "get options.timeZoneName",
   "get options.timeZoneName.toString",
   "call options.timeZoneName.toString",
-  "get this.timeZone.getOffsetNanosecondsFor",
-  "call this.timeZone.getOffsetNanosecondsFor",
   "get this.timeZone.getOffsetNanosecondsFor",
   "call this.timeZone.getOffsetNanosecondsFor",
   "get this.timeZone.id",

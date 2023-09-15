@@ -1,7 +1,7 @@
 2d.text.measure.width.basic
 
-The width of character is same as font used for OffscreenCanvas
+The width of character is same as font used
 
 
-PASS The width of character is same as font used for OffscreenCanvas
+PASS The width of character is same as font used
 

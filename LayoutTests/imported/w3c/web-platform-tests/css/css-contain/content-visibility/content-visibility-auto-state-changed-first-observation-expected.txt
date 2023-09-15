@@ -1,0 +1,4 @@
+
+PASS ContentVisibilityAutoStateChange fires once when added (not skipped)
+PASS ContentVisibilityAutoStateChange fires once when added (skipped)
+

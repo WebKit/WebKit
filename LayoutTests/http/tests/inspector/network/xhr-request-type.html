@@ -6,7 +6,7 @@
 <script>
 function triggerXHR(path) {
     const x = new XMLHttpRequest();
-    x.open("GET", path || location.href, false);
+    x.open("GET", path || location.href, true);
     x.send();
 }
 
@@ -20,13 +20,14 @@ function test()
         suite.addTestCase({
             name, description,
             async test() {
-                const completeEvent = InspectorTest.awaitEvent("Completed");
                 InspectorTest.evaluateInPage(expression);
-                const event = await WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+                const [event] = await Promise.all([
+                    WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                    WI.Resource.awaitEvent(WI.Resource.Event.LoadingDidFinish),
+                ]);
                 const resource = event.data.resource;
                 InspectorTest.expectEqual(resource.type, WI.Resource.Type.XHR, "Resource should be XHR type.");
                 InspectorTest.expectEqual(resource.requestMethod, "GET", "Resource should be a GET request.");
-                await resource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
                 const content = await resource.requestContentFromBackend()
                 resourceHandler(resource, content);
             }
@@ -38,6 +39,7 @@ function test()
         description: "XHR with the same URL as main resource.",
         expression: "triggerXHR()",
         resourceHandler(resource, content) {
+            InspectorTest.expectEqual(resource.url, 'http://127.0.0.1:8000/inspector/network/xhr-request-type.html', "Resource should have main resource URL.");
             InspectorTest.expectEqual(resource.statusCode, 200, "Resource should have a 200 response.");
             InspectorTest.expectThat(content.body.includes("Tests that XHRs with the same url as a main resource have correct type"), "Resource should receive main resource in response.");
         }
@@ -46,10 +48,12 @@ function test()
     addTestCase({
         name: "Resource.Type.XHR.Another.Url",
         description: "XHR with the same URL as main resource.",
-        expression: "triggerXHR('/inspector/network/resources/data.json')",
+        expression: "triggerXHR('resources/echo.py?mimetype=text/plain&content=Hello!')",
         resourceHandler(resource, content) {
+            InspectorTest.expectEqual(resource.url, 'http://127.0.0.1:8000/inspector/network/resources/echo.py?mimetype=text/plain&content=Hello!', "Resource should have echo URL.");
             InspectorTest.expectEqual(resource.statusCode, 200, "Resource should have a 200 response.");
-            InspectorTest.expectEqual(content.body, `{"json": true, "value": 42}\n`, "Resource should receive json in response.");
+            InspectorTest.expectEqual(resource.mimeType, 'text/plain', "Resource should have a 200 response.");
+            InspectorTest.expectEqual(content.body, `Hello!`, "Resource should receive text in response.");
         }
     });
 

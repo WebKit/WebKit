@@ -1,6 +1,0 @@
-2d.text.measure.rtl.text
-Measurement should follow canvas direction instead text direction
-Actual output:
-
-PASS Measurement should follow canvas direction instead text direction
-

@@ -56,8 +56,8 @@ public:
 
     MockMediaPlayerMediaSource& player() const { return m_player; }
 
-    void seekToTime(const MediaTime&);
-    MediaTime seekToTime(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
+    void waitForTarget(const SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) final;
+    void seekToTime(const MediaTime&, CompletionHandler<void()>&&) final;
     MediaTime currentMediaTime() const;
 
     std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics();
@@ -87,8 +87,6 @@ private:
     void unmarkEndOfStream() override;
     MediaPlayer::ReadyState readyState() const override;
     void setReadyState(MediaPlayer::ReadyState) override;
-    void waitForSeekCompleted() override;
-    void seekCompleted() override;
 
     void sourceBufferPrivateDidChangeActiveState(MockSourceBufferPrivate*, bool active);
     void removeSourceBuffer(SourceBufferPrivate*);

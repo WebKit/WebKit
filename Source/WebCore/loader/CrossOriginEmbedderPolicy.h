@@ -62,13 +62,10 @@ struct CrossOriginEmbedderPolicy {
     void encode(WTF::Persistence::Encoder&) const;
     static std::optional<CrossOriginEmbedderPolicy> decode(WTF::Persistence::Decoder &);
 
+    friend bool operator==(const CrossOriginEmbedderPolicy&, const CrossOriginEmbedderPolicy&) = default;
+
     void addPolicyHeadersTo(ResourceResponse&) const;
 };
-
-inline bool operator==(const CrossOriginEmbedderPolicy& a, const CrossOriginEmbedderPolicy& b)
-{
-    return a.value == b.value && a.reportOnlyValue == b.reportOnlyValue && a.reportingEndpoint == b.reportingEndpoint && a.reportOnlyReportingEndpoint == b.reportOnlyReportingEndpoint;
-}
 
 enum class COEPDisposition : bool { Reporting , Enforce };
 

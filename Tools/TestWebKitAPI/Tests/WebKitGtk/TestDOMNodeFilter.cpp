@@ -43,6 +43,8 @@ static void testWebKitDOMNodeFilterNodeIterator(WebViewTest* test, gconstpointer
 
 void beforeAll()
 {
+    Test::shouldInitializeWebProcessExtensions = true;
+
     WebViewTest::add("WebKitDOMNodeFilter", "tree-walker", testWebKitDOMNodeFilterTreeWalker);
     WebViewTest::add("WebKitDOMNodeFilter", "node-iterator", testWebKitDOMNodeFilterNodeIterator);
 }

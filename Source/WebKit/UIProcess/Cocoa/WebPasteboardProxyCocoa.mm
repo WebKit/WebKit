@@ -101,14 +101,14 @@ std::optional<WebPasteboardProxy::PasteboardAccessType> WebPasteboardProxy::acce
 {
     MESSAGE_CHECK_WITH_RETURN_VALUE(!pasteboardName.isEmpty(), std::nullopt);
 
-    auto* process = webProcessProxyForConnection(connection);
+    RefPtr process = webProcessProxyForConnection(connection);
     MESSAGE_CHECK_WITH_RETURN_VALUE(process, std::nullopt);
 
     for (auto& page : process->pages()) {
         if (!page)
             continue;
-        auto& preferences = page->preferences();
-        if (!preferences.domPasteAllowed() || !preferences.javaScriptCanAccessClipboard())
+        Ref preferences = page->preferences();
+        if (!preferences->domPasteAllowed() || !preferences->javaScriptCanAccessClipboard())
             continue;
 
         // If a web page already allows JavaScript to programmatically read pasteboard data,

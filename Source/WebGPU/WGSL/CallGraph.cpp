@@ -111,11 +111,11 @@ void CallGraphBuilder::visit(AST::CallExpression& call)
     for (auto& argument : call.arguments())
         AST::Visitor::visit(argument);
 
-    if (!is<AST::NamedTypeName>(call.target()))
+    if (!is<AST::IdentifierExpression>(call.target()))
         return;
 
-    auto& target = downcast<AST::NamedTypeName>(call.target());
-    auto it = m_callGraph.m_functionsByName.find(target.name());
+    auto& target = downcast<AST::IdentifierExpression>(call.target());
+    auto it = m_callGraph.m_functionsByName.find(target.identifier());
     if (it == m_callGraph.m_functionsByName.end())
         return;
 

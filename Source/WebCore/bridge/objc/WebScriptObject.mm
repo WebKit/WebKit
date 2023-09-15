@@ -386,8 +386,8 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
     JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
     UNUSED_PARAM(scope);
-    
-    JSC::JSValue returnValue = JSExecState::profiledEvaluate(globalObject, JSC::ProfilingReason::Other, makeSource(String(script), { }), JSC::JSValue());
+
+    JSC::JSValue returnValue = JSExecState::profiledEvaluate(globalObject, JSC::ProfilingReason::Other, makeSource(String(script), { }, JSC::SourceTaintedOrigin::Untainted), JSC::JSValue());
 
     id resultObj = [WebScriptObject _convertValueToObjcValue:returnValue originRootObject:[self _originRootObject] rootObject:[self _rootObject]];
     

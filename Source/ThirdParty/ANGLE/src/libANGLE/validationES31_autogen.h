@@ -17,6 +17,8 @@
 namespace gl
 {
 class Context;
+class PrivateState;
+class ErrorSet;
 
 bool ValidateActiveShaderProgram(const Context *context,
                                  angle::EntryPoint entryPoint,
@@ -369,7 +371,8 @@ bool ValidateProgramUniformMatrix4x3fv(const Context *context,
                                        GLsizei count,
                                        GLboolean transpose,
                                        const GLfloat *value);
-bool ValidateSampleMaski(const Context *context,
+bool ValidateSampleMaski(const PrivateState &state,
+                         ErrorSet *errors,
                          angle::EntryPoint entryPoint,
                          GLuint maskNumber,
                          GLbitfield mask);

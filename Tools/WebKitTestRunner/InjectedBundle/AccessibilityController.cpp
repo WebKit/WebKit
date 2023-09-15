@@ -107,7 +107,7 @@ Ref<AccessibilityUIElement> AccessibilityController::rootElement()
 void AccessibilityController::executeOnAXThreadAndWait(Function<void()>&& function)
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (m_useMockAXThread) {
+    if (m_accessibilityIsolatedTreeMode) {
         std::atomic<bool> complete = false;
         AXThread::dispatch([&function, &complete] {
             function();
@@ -128,7 +128,7 @@ void AccessibilityController::executeOnAXThreadAndWait(Function<void()>&& functi
 void AccessibilityController::executeOnAXThread(Function<void()>&& function)
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (m_useMockAXThread) {
+    if (m_accessibilityIsolatedTreeMode) {
         AXThread::dispatch([function = WTFMove(function)] {
             function();
         });

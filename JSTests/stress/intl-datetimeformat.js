@@ -719,8 +719,6 @@ shouldBe(JSON.stringify(Intl.DateTimeFormat('zh', { era: 'short', year: 'numeric
 }
 {
     const expected = [
-      "second",
-      "fractionalSecondDigits",
       "localeMatcher",
       "second",
       "fractionalSecondDigits",

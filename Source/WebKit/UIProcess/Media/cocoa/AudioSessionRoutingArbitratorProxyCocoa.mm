@@ -44,12 +44,13 @@ AudioSessionRoutingArbitratorProxy::AudioSessionRoutingArbitratorProxy(WebProces
 {
     m_logIdentifier = m_token->logIdentifier();
     SharedRoutingArbitrator::sharedInstance().setLogger(logger());
-    m_process.addMessageReceiver(Messages::AudioSessionRoutingArbitratorProxy::messageReceiverName(), destinationId(), *this);
+    proxy.addMessageReceiver(Messages::AudioSessionRoutingArbitratorProxy::messageReceiverName(), destinationId(), *this);
 }
 
 AudioSessionRoutingArbitratorProxy::~AudioSessionRoutingArbitratorProxy()
 {
-    m_process.removeMessageReceiver(Messages::AudioSessionRoutingArbitratorProxy::messageReceiverName(), destinationId());
+    CheckedRef checkedProcess = m_process.get();
+    checkedProcess->removeMessageReceiver(Messages::AudioSessionRoutingArbitratorProxy::messageReceiverName(), destinationId());
 }
 
 void AudioSessionRoutingArbitratorProxy::processDidTerminate()

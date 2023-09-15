@@ -113,12 +113,8 @@ void RemoteScrollingCoordinatorProxyIOS::connectStateNodeLayers(ScrollingStateTr
         if (currNode->hasChangedProperty(ScrollingStateNode::Property::Layer)) {
             auto platformLayerID = PlatformLayerID { currNode->layer() };
             auto remoteLayerTreeNode = layerTreeHost.nodeForID(platformLayerID);
-            if (remoteLayerTreeNode) {
+            if (remoteLayerTreeNode)
                 currNode->setLayer(remoteLayerTreeNode->layer());
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-                currNode->setInteractionRegionsLayer(remoteLayerTreeNode->interactionRegionsLayer());
-#endif
-            }
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
             if (platformLayerID && (currNode->isFixedNode() || currNode->isStickyNode()))
                 m_fixedScrollingNodeLayerIDs.add(platformLayerID);
@@ -132,12 +128,8 @@ void RemoteScrollingCoordinatorProxyIOS::connectStateNodeLayers(ScrollingStateTr
             if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer)) {
                 auto platformLayerID = PlatformLayerID { scrollingStateNode.scrollContainerLayer() };
                 auto remoteLayerTreeNode = layerTreeHost.nodeForID(platformLayerID);
-                if (remoteLayerTreeNode) {
+                if (remoteLayerTreeNode)
                     scrollingStateNode.setScrollContainerLayer(remoteLayerTreeNode->layer());
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-                    scrollingStateNode.setInteractionRegionsLayer(remoteLayerTreeNode->interactionRegionsLayer());
-#endif
-                }
             }
 
             if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer))
@@ -151,12 +143,8 @@ void RemoteScrollingCoordinatorProxyIOS::connectStateNodeLayers(ScrollingStateTr
             if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer)) {
                 auto platformLayerID = PlatformLayerID { scrollingStateNode.scrollContainerLayer() };
                 auto remoteLayerTreeNode = layerTreeHost.nodeForID(platformLayerID);
-                if (remoteLayerTreeNode) {
+                if (remoteLayerTreeNode)
                     scrollingStateNode.setScrollContainerLayer(remoteLayerTreeNode->layer());
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-                    scrollingStateNode.setInteractionRegionsLayer(remoteLayerTreeNode->interactionRegionsLayer());
-#endif
-                }
             }
 
             if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer))

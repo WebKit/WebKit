@@ -142,7 +142,7 @@ public:
     bool paused() const final;
     bool ended() const final;
     bool seeking() const override { return m_isSeeking; }
-    void seek(const MediaTime&) override;
+    void seekToTarget(const SeekTarget&) override;
     void setRate(float) override;
     double rate() const final;
     void setPreservesPitch(bool) final;
@@ -164,8 +164,6 @@ public:
     double currentTimeDouble() const final { return currentMediaTime().toDouble(); }
     MediaTime currentMediaTime() const override;
     const PlatformTimeRanges& buffered() const override;
-    void seek(float time) final { seek(MediaTime::createWithFloat(time)); }
-    void seekDouble(double time) final { seek(MediaTime::createWithDouble(time)); }
     float maxTimeSeekable() const final { return maxMediaTimeSeekable().toFloat(); }
     MediaTime maxMediaTimeSeekable() const override;
     double minTimeSeekable() const final { return minMediaTimeSeekable().toFloat(); }
@@ -315,7 +313,7 @@ protected:
     void ensureAudioSourceProvider();
     void checkPlayingConsistency();
 
-    virtual bool doSeek(const MediaTime& position, float rate);
+    virtual bool doSeek(const SeekTarget& position, float rate);
     void invalidateCachedPosition() const;
     void ensureSeekFlags();
 
@@ -324,7 +322,7 @@ protected:
     static void audioChangedCallback(MediaPlayerPrivateGStreamer*);
     static void textChangedCallback(MediaPlayerPrivateGStreamer*);
 
-    void timeChanged();
+    void timeChanged(const MediaTime&); // If MediaTime is valid, indicates that a seek has completed.
     void loadingFailed(MediaPlayer::NetworkState, MediaPlayer::ReadyState = MediaPlayer::ReadyState::HaveNothing, bool forceNotifications = false);
     void loadStateChanged();
 
@@ -343,6 +341,18 @@ protected:
     bool m_didErrorOccur { false };
     mutable bool m_isEndReached { false };
     mutable std::optional<bool> m_isLiveStream;
+
+    // m_isPaused represents:
+    // A) In MSE streams, whether playback or pause has last been requested with pause() and play(),
+    //    defaulting to true before playback starts.
+    // B) In live streams, whether at an unspecified point in time after the main thread tick in
+    //    which play() or pause() are called, whether the playback was paused or resumed.
+    // C) In regular non-live streams, it represents whether playback has ended with a EOS with
+    //    looping set to false since the pipeline successfully pre-rolled.
+    //
+    // FIXME m_isPaused should represent something useful and consistent for all the possible cases
+    // (regular playback, live playback, MSE, WebRTC) or be deleted from MediaPlayerPrivateGStreamer.
+    // https://bugs.webkit.org/show_bug.cgi?id=260385
     bool m_isPaused { true };
     float m_playbackRate { 1 };
     GstState m_currentState { GST_STATE_NULL };
@@ -351,7 +361,7 @@ protected:
     bool m_shouldResetPipeline { false };
     bool m_isSeeking { false };
     bool m_isSeekPending { false };
-    MediaTime m_seekTime;
+    SeekTarget m_seekTarget;
     GRefPtr<GstElement> m_source { nullptr };
     bool m_areVolumeAndMuteInitialized { false };
 
@@ -445,7 +455,7 @@ private:
     bool isMediaStreamPlayer() const;
 
     friend class MediaPlayerFactoryGStreamer;
-    static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
+    static void getSupportedTypes(HashSet<String>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
     void syncOnClock(bool sync);

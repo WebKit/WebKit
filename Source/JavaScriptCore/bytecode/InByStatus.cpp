@@ -169,6 +169,13 @@ InByStatus InByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurren
             if (access.usesPolyProto())
                 return InByStatus(TakesSlowPath);
 
+            if (!access.requiresIdentifierNameMatch()) {
+                // FIXME: We could use this for indexed loads in the future. This is pretty solid profiling
+                // information, and probably better than ArrayProfile when it's available.
+                // https://bugs.webkit.org/show_bug.cgi?id=204215
+                return InByStatus(TakesSlowPath);
+            }
+
             Structure* structure = access.structure();
             if (!structure) {
                 // The null structure cases arise due to array.length. We have no way of creating a

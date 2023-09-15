@@ -55,8 +55,8 @@ public:
 
     void play() override;
     void pause() override;
-    void seek(const MediaTime&) override;
-    bool doSeek(const MediaTime&, float rate) override;
+    void seekToTarget(const SeekTarget&) override;
+    bool doSeek(const SeekTarget&, float rate) override;
 
     void updatePipelineState(GstState);
 
@@ -91,7 +91,7 @@ public:
 
 private:
     friend class MediaPlayerFactoryGStreamerMSE;
-    static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
+    static void getSupportedTypes(HashSet<String>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
     friend class AppendPipeline;

@@ -39,11 +39,6 @@ WebNotificationManagerMessageHandler::WebNotificationManagerMessageHandler(WebPa
 {
 }
 
-void WebNotificationManagerMessageHandler::requestSystemNotificationPermission(const String&, CompletionHandler<void(bool)>&&)
-{
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
 void WebNotificationManagerMessageHandler::showNotification(IPC::Connection& connection, const WebCore::NotificationData& data, RefPtr<WebCore::NotificationResources>&& resources, CompletionHandler<void()>&& callback)
 {
     RELEASE_LOG(Push, "WebNotificationManagerMessageHandler showNotification called");

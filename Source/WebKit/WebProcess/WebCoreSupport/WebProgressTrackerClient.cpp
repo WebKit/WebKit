@@ -47,17 +47,19 @@ void WebProgressTrackerClient::progressStarted(LocalFrame& originatingProgressFr
     if (!originatingProgressFrame.isMainFrame())
         return;
 
-    m_webPage.setMainFrameProgressCompleted(false);
-    m_webPage.send(Messages::WebPageProxy::DidStartProgress());
+    Ref page = *m_webPage;
+    page->setMainFrameProgressCompleted(false);
+    page->send(Messages::WebPageProxy::DidStartProgress());
 }
 
 void WebProgressTrackerClient::progressEstimateChanged(LocalFrame& originatingProgressFrame)
 {
     if (!originatingProgressFrame.isMainFrame())
         return;
-    
-    double progress = m_webPage.corePage()->progress().estimatedProgress();
-    m_webPage.send(Messages::WebPageProxy::DidChangeProgress(progress));
+
+    Ref page = *m_webPage;
+    double progress = page->corePage()->progress().estimatedProgress();
+    page->send(Messages::WebPageProxy::DidChangeProgress(progress));
 }
 
 void WebProgressTrackerClient::progressFinished(LocalFrame& originatingProgressFrame)
@@ -65,12 +67,13 @@ void WebProgressTrackerClient::progressFinished(LocalFrame& originatingProgressF
     if (!originatingProgressFrame.isMainFrame())
         return;
 
-    m_webPage.setMainFrameProgressCompleted(true);
+    Ref webPage = *m_webPage;
+    webPage->setMainFrameProgressCompleted(true);
 
     // Notify the bundle client.
-    m_webPage.injectedBundleLoaderClient().didFinishProgress(m_webPage);
+    webPage->injectedBundleLoaderClient().didFinishProgress(webPage);
 
-    m_webPage.send(Messages::WebPageProxy::DidFinishProgress());
+    webPage->send(Messages::WebPageProxy::DidFinishProgress());
 }
 
 } // namespace WebKit

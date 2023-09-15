@@ -69,17 +69,11 @@ void RemoteResourceCacheProxy::cacheImageBuffer(RemoteImageBufferProxy& imageBuf
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
-RemoteImageBufferProxy* RemoteResourceCacheProxy::cachedImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier) const
+RefPtr<RemoteImageBufferProxy> RemoteResourceCacheProxy::cachedImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_imageBuffers.get(renderingResourceIdentifier).get();
 }
 
-void RemoteResourceCacheProxy::releaseImageBuffer(RemoteImageBufferProxy& imageBuffer)
-{
-    forgetImageBuffer(imageBuffer.renderingResourceIdentifier());
-
-    m_remoteRenderingBackendProxy.releaseRenderingResource(imageBuffer.renderingResourceIdentifier());
-}
 
 void RemoteResourceCacheProxy::forgetImageBuffer(RenderingResourceIdentifier identifier)
 {
@@ -273,10 +267,11 @@ void RemoteResourceCacheProxy::clearImageBufferBackends()
 {
     // Get a copy of m_imageBuffers.values() because clearBackend()
     // may release some of the cached ImageBuffers.
-    for (auto& imageBuffer : copyToVector(m_imageBuffers.values())) {
-        if (!imageBuffer)
+    for (auto& weakImageBuffer : copyToVector(m_imageBuffers.values())) {
+        auto protectedImageBuffer = weakImageBuffer.get();
+        if (!protectedImageBuffer)
             continue;
-        imageBuffer->clearBackend();
+        protectedImageBuffer->clearBackend();
     }
 }
 
@@ -330,10 +325,11 @@ void RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed()
 {
     clearImageBufferBackends();
 
-    for (auto& imageBuffer : m_imageBuffers.values()) {
-        if (!imageBuffer)
+    for (auto& weakImageBuffer : m_imageBuffers.values()) {
+        auto protectedImageBuffer = weakImageBuffer.get();
+        if (!protectedImageBuffer)
             continue;
-        m_remoteRenderingBackendProxy.createRemoteImageBuffer(*imageBuffer);
+        m_remoteRenderingBackendProxy.createRemoteImageBuffer(*protectedImageBuffer);
     }
 
     clearRenderingResourceMap();
@@ -347,7 +343,7 @@ void RemoteResourceCacheProxy::releaseMemory()
     clearFontMap();
     clearFontCustomPlatformDataMap();
 
-    m_remoteRenderingBackendProxy.releaseAllRemoteResources();
+    m_remoteRenderingBackendProxy.releaseAllDrawingResources();
 }
 
 void RemoteResourceCacheProxy::releaseAllImageResources()

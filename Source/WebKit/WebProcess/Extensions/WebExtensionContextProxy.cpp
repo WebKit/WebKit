@@ -57,7 +57,8 @@ Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(const WebExt
     auto updateProperties = [&](WebExtensionContextProxy& context) {
         context.m_baseURL = parameters.baseURL;
         context.m_uniqueIdentifier = parameters.uniqueIdentifier;
-        context.m_manifest = parseManifest(parameters.manifestJSON.get());
+        context.m_localization = parseLocalization(parameters.localizationJSON.get());
+        context.m_manifest = parseJSON(parameters.manifestJSON.get());
         context.m_manifestVersion = parameters.manifestVersion;
         context.m_testingMode = parameters.testingMode;
     };

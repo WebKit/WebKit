@@ -29,6 +29,7 @@
 
 namespace WebCore {
 
+class Frame;
 enum class RenderAsTextFlag : uint16_t;
 
 class FrameView : public ScrollView {
@@ -36,6 +37,7 @@ public:
     enum class Type : bool { Local, Remote };
     virtual Type viewType() const = 0;
     virtual void writeRenderTreeAsText(TextStream&, OptionSet<RenderAsTextFlag>) = 0;
+    virtual Frame& frame() const = 0;
 };
 
 }

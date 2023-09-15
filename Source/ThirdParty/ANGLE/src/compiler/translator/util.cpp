@@ -282,6 +282,9 @@ GLenum GLVariableType(const TType &type)
 
             return kBoolGLType[type.getNominalSize() - 1];
 
+        case EbtYuvCscStandardEXT:
+            return GL_UNSIGNED_INT;
+
         case EbtSampler2D:
             return GL_SAMPLER_2D;
         case EbtSampler3D:
@@ -808,11 +811,11 @@ bool IsOutputHLSL(ShShaderOutput output)
     }
     return false;
 }
-bool IsOutputVulkan(ShShaderOutput output)
+bool IsOutputSPIRV(ShShaderOutput output)
 {
     return output == SH_SPIRV_VULKAN_OUTPUT;
 }
-bool IsOutputMetalDirect(ShShaderOutput output)
+bool IsOutputMSL(ShShaderOutput output)
 {
     return output == SH_MSL_METAL_OUTPUT;
 }
@@ -1025,6 +1028,27 @@ size_t FindFieldIndex(const TFieldList &fieldList, const char *fieldName)
     }
     UNREACHABLE();
     return 0;
+}
+
+Declaration ViewDeclaration(TIntermDeclaration &declNode)
+{
+    ASSERT(declNode.getChildCount() == 1);
+    TIntermNode *childNode = declNode.getChildNode(0);
+    ASSERT(childNode);
+    TIntermSymbol *symbolNode;
+    if ((symbolNode = childNode->getAsSymbolNode()))
+    {
+        return {*symbolNode, nullptr};
+    }
+    else
+    {
+        TIntermBinary *initNode = childNode->getAsBinaryNode();
+        ASSERT(initNode);
+        ASSERT(initNode->getOp() == TOperator::EOpInitialize);
+        symbolNode = initNode->getLeft()->getAsSymbolNode();
+        ASSERT(symbolNode);
+        return {*symbolNode, initNode->getRight()};
+    }
 }
 
 }  // namespace sh

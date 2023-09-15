@@ -363,6 +363,38 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsI
     return *lastRun;
 }
 
+RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForStyleBasedRubyChild(RenderElement& parent, const RenderObject& child, RenderObject*& beforeChild)
+{
+    if (!child.isText() && child.style().display() == DisplayType::Ruby && parent.style().display() == DisplayType::RubyBlock)
+        return parent;
+
+    if (parent.style().display() != DisplayType::Ruby) {
+        auto rubyContainer = createRenderer<RenderInline>(parent.document(), RenderStyle::createAnonymousStyleWithDisplay(parent.style(), DisplayType::Ruby));
+        WeakPtr newParent = rubyContainer.get();
+        m_builder.attach(parent, WTFMove(rubyContainer), beforeChild);
+        beforeChild = nullptr;
+        return *newParent;
+    }
+
+    if (!child.isText() && (child.style().display() == DisplayType::RubyBase || child.style().display() == DisplayType::RubyAnnotation))
+        return parent;
+
+    if (beforeChild && beforeChild->parent()->style().display() == DisplayType::RubyBase)
+        return *beforeChild->parent();
+
+    auto* previous = beforeChild ? beforeChild->previousSibling() : parent.lastChild();
+    if (previous && previous->style().display() == DisplayType::RubyBase) {
+        beforeChild = nullptr;
+        return downcast<RenderElement>(*previous);
+    }
+
+    auto rubyBase = createRenderer<RenderInline>(parent.document(), RenderStyle::createAnonymousStyleWithDisplay(parent.style(), DisplayType::RubyBase));
+    WeakPtr newParent = rubyBase.get();
+    m_builder.inlineBuilder().attach(downcast<RenderInline>(parent), WTFMove(rubyBase), beforeChild);
+    beforeChild = nullptr;
+    return *newParent;
+}
+
 RenderRubyBase& RenderTreeBuilder::Ruby::rubyBaseSafe(RenderRubyRun& rubyRun)
 {
     auto* base = rubyRun.rubyBase();

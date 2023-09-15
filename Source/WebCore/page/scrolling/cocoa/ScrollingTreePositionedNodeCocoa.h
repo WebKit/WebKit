@@ -48,9 +48,6 @@ private:
     CALayer *layer() const override { return m_layer.get(); }
 
     RetainPtr<CALayer> m_layer;
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    RetainPtr<CALayer> m_interactionRegionsLayer;
-#endif
 };
 
 } // namespace WebCore

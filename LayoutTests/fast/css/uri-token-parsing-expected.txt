@@ -23,7 +23,7 @@ Rules from the stylesheet:
 #s { background-image: url("url(s)"); }
 #t { mask-image: url("url(t)"); }
 #u { border-image: url("url(u)") 1 2 3 4 fill stretch round; }
-#v { -webkit-mask-box-image: url("url(v)") 1 2 3 4 fill stretch round; }
+#v { mask-border: url("url(v)") 1 2 3 4 fill stretch round; }
 #w { content: url("w\d w"); }
 #x { content: url(" x x\9 x "); }
 #y { content: url("y y\9 y"); }
@@ -48,7 +48,7 @@ Expected result:
 #s { background-image: url("url(s)"); }
 #t { mask-image: url("url(t)"); }
 #u { border-image: url("url(u)") 1 2 3 4 fill stretch round; }
-#v { -webkit-mask-box-image: url("url(v)") 1 2 3 4 fill stretch round; }
+#v { mask-border: url("url(v)") 1 2 3 4 fill stretch round; }
 #w { content: url("w\d w"); }
 #x { content: url(" x x\9 x "); }
 #y { content: url("y y\9 y"); }

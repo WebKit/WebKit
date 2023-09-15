@@ -44,21 +44,21 @@ using namespace WebCore;
 #pragma mark - PlaybackSessionModelContext
 
 PlaybackSessionModelContext::PlaybackSessionModelContext(PlaybackSessionManagerProxy& manager, PlaybackSessionContextIdentifier contextId)
-    : m_manager(&manager)
+    : m_manager(manager)
     , m_contextId(contextId)
 {
 }
 
 void PlaybackSessionModelContext::addClient(PlaybackSessionModelClient& client)
 {
-    ASSERT(!m_clients.contains(&client));
-    m_clients.add(&client);
+    ASSERT(!m_clients.contains(client));
+    m_clients.add(client);
 }
 
 void PlaybackSessionModelContext::removeClient(PlaybackSessionModelClient& client)
 {
-    ASSERT(m_clients.contains(&client));
-    m_clients.remove(&client);
+    ASSERT(m_clients.contains(client));
+    m_clients.remove(client);
 }
 
 void PlaybackSessionModelContext::sendRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType command, const WebCore::PlatformMediaSession::RemoteCommandArgument& argument)
@@ -228,8 +228,8 @@ void PlaybackSessionModelContext::durationChanged(double duration)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, duration);
     m_duration = duration;
-    for (auto* client : m_clients)
-        client->durationChanged(duration);
+    for (auto& client : m_clients)
+        client.durationChanged(duration);
 }
 
 void PlaybackSessionModelContext::currentTimeChanged(double currentTime)
@@ -240,16 +240,16 @@ void PlaybackSessionModelContext::currentTimeChanged(double currentTime)
     if (m_playbackStartedTimeNeedsUpdate)
         playbackStartedTimeChanged(currentTime);
 
-    for (auto* client : m_clients)
-        client->currentTimeChanged(currentTime, anchorTime);
+    for (auto& client : m_clients)
+        client.currentTimeChanged(currentTime, anchorTime);
 }
 
 void PlaybackSessionModelContext::bufferedTimeChanged(double bufferedTime)
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, bufferedTime);
     m_bufferedTime = bufferedTime;
-    for (auto* client : m_clients)
-        client->bufferedTimeChanged(bufferedTime);
+    for (auto& client : m_clients)
+        client.bufferedTimeChanged(bufferedTime);
 }
 
 void PlaybackSessionModelContext::rateChanged(OptionSet<WebCore::PlaybackSessionModel::PlaybackState> playbackState, double playbackRate, double defaultPlaybackRate)
@@ -258,8 +258,8 @@ void PlaybackSessionModelContext::rateChanged(OptionSet<WebCore::PlaybackSession
     m_playbackState = playbackState;
     m_playbackRate = playbackRate;
     m_defaultPlaybackRate = defaultPlaybackRate;
-    for (auto* client : m_clients)
-        client->rateChanged(m_playbackState, m_playbackRate, m_defaultPlaybackRate);
+    for (auto& client : m_clients)
+        client.rateChanged(m_playbackState, m_playbackRate, m_defaultPlaybackRate);
 }
 
 void PlaybackSessionModelContext::seekableRangesChanged(WebCore::TimeRanges& seekableRanges, double lastModifiedTime, double liveUpdateInterval)
@@ -268,23 +268,23 @@ void PlaybackSessionModelContext::seekableRangesChanged(WebCore::TimeRanges& see
     m_seekableRanges = seekableRanges;
     m_seekableTimeRangesLastModifiedTime = lastModifiedTime;
     m_liveUpdateInterval = liveUpdateInterval;
-    for (auto* client : m_clients)
-        client->seekableRangesChanged(seekableRanges, lastModifiedTime, liveUpdateInterval);
+    for (auto& client : m_clients)
+        client.seekableRangesChanged(seekableRanges, lastModifiedTime, liveUpdateInterval);
 }
 
 void PlaybackSessionModelContext::canPlayFastReverseChanged(bool canPlayFastReverse)
 {
     m_canPlayFastReverse = canPlayFastReverse;
-    for (auto* client : m_clients)
-        client->canPlayFastReverseChanged(canPlayFastReverse);
+    for (auto& client : m_clients)
+        client.canPlayFastReverseChanged(canPlayFastReverse);
 }
 
 void PlaybackSessionModelContext::audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& audioMediaSelectionOptions, uint64_t audioMediaSelectedIndex)
 {
     m_audioMediaSelectionOptions = audioMediaSelectionOptions;
     m_audioMediaSelectedIndex = audioMediaSelectedIndex;
-    for (auto* client : m_clients)
-        client->audioMediaSelectionOptionsChanged(audioMediaSelectionOptions, audioMediaSelectedIndex);
+    for (auto& client : m_clients)
+        client.audioMediaSelectionOptionsChanged(audioMediaSelectionOptions, audioMediaSelectedIndex);
 }
 
 void PlaybackSessionModelContext::legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& legibleMediaSelectionOptions, uint64_t legibleMediaSelectedIndex)
@@ -292,24 +292,24 @@ void PlaybackSessionModelContext::legibleMediaSelectionOptionsChanged(const Vect
     m_legibleMediaSelectionOptions = legibleMediaSelectionOptions;
     m_legibleMediaSelectedIndex = legibleMediaSelectedIndex;
 
-    for (auto* client : m_clients)
-        client->legibleMediaSelectionOptionsChanged(legibleMediaSelectionOptions, legibleMediaSelectedIndex);
+    for (auto& client : m_clients)
+        client.legibleMediaSelectionOptionsChanged(legibleMediaSelectionOptions, legibleMediaSelectedIndex);
 }
 
 void PlaybackSessionModelContext::audioMediaSelectionIndexChanged(uint64_t selectedIndex)
 {
     m_audioMediaSelectedIndex = selectedIndex;
 
-    for (auto* client : m_clients)
-        client->audioMediaSelectionIndexChanged(selectedIndex);
+    for (auto& client : m_clients)
+        client.audioMediaSelectionIndexChanged(selectedIndex);
 }
 
 void PlaybackSessionModelContext::legibleMediaSelectionIndexChanged(uint64_t selectedIndex)
 {
     m_legibleMediaSelectedIndex = selectedIndex;
 
-    for (auto* client : m_clients)
-        client->legibleMediaSelectionIndexChanged(selectedIndex);
+    for (auto& client : m_clients)
+        client.legibleMediaSelectionIndexChanged(selectedIndex);
 }
 
 void PlaybackSessionModelContext::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType type, const String& localizedName)
@@ -318,43 +318,43 @@ void PlaybackSessionModelContext::externalPlaybackChanged(bool enabled, Playback
     m_externalPlaybackTargetType = type;
     m_externalPlaybackLocalizedDeviceName = localizedName;
 
-    for (auto* client : m_clients)
-        client->externalPlaybackChanged(enabled, type, localizedName);
+    for (auto& client : m_clients)
+        client.externalPlaybackChanged(enabled, type, localizedName);
 }
 
 void PlaybackSessionModelContext::wirelessVideoPlaybackDisabledChanged(bool wirelessVideoPlaybackDisabled)
 {
     m_wirelessVideoPlaybackDisabled = wirelessVideoPlaybackDisabled;
-    for (auto* client : m_clients)
-        client->wirelessVideoPlaybackDisabledChanged(wirelessVideoPlaybackDisabled);
+    for (auto& client : m_clients)
+        client.wirelessVideoPlaybackDisabledChanged(wirelessVideoPlaybackDisabled);
 }
 
 void PlaybackSessionModelContext::mutedChanged(bool muted)
 {
     m_muted = muted;
-    for (auto* client : m_clients)
-        client->mutedChanged(muted);
+    for (auto& client : m_clients)
+        client.mutedChanged(muted);
 }
 
 void PlaybackSessionModelContext::volumeChanged(double volume)
 {
     m_volume = volume;
-    for (auto* client : m_clients)
-        client->volumeChanged(volume);
+    for (auto& client : m_clients)
+        client.volumeChanged(volume);
 }
 
 void PlaybackSessionModelContext::pictureInPictureSupportedChanged(bool supported)
 {
     m_pictureInPictureSupported = supported;
-    for (auto* client : m_clients)
-        client->isPictureInPictureSupportedChanged(supported);
+    for (auto& client : m_clients)
+        client.isPictureInPictureSupportedChanged(supported);
 }
 
 void PlaybackSessionModelContext::pictureInPictureActiveChanged(bool active)
 {
     m_pictureInPictureActive = active;
-    for (auto* client : m_clients)
-        client->pictureInPictureActiveChanged(active);
+    for (auto& client : m_clients)
+        client.pictureInPictureActiveChanged(active);
 }
 
 #if !RELEASE_LOG_DISABLED
@@ -377,7 +377,7 @@ Ref<PlaybackSessionManagerProxy> PlaybackSessionManagerProxy::create(WebPageProx
 }
 
 PlaybackSessionManagerProxy::PlaybackSessionManagerProxy(WebPageProxy& page)
-    : m_page(&page)
+    : m_page(page)
 #if !RELEASE_LOG_DISABLED
     , m_logger(page.logger())
     , m_logIdentifier(page.logIdentifier())

@@ -33,6 +33,8 @@
 #include <WebKit/_WKWebExtensionControllerDelegatePrivate.h>
 #include <WebKit/_WKWebExtensionControllerPrivate.h>
 #include <WebKit/_WKWebExtensionPrivate.h>
+#include <WebKit/_WKWebExtensionTab.h>
+#include <WebKit/_WKWebExtensionWindow.h>
 
 #ifdef __OBJC__
 
@@ -53,9 +55,56 @@
 
 @end
 
+@interface TestWebExtensionTab : NSObject <_WKWebExtensionTab>
+
+- (instancetype)initWithWindow:(id<_WKWebExtensionWindow>)window extensionController:(_WKWebExtensionController *)extensionController;
+
+@property (nonatomic, weak) id<_WKWebExtensionWindow> window;
+@property (nonatomic, strong) WKWebView *mainWebView;
+
+@property (nonatomic, weak) id<_WKWebExtensionTab> parentTab;
+
+@property (nonatomic, getter=isPinned) bool pinned;
+@property (nonatomic, getter=isMuted) bool muted;
+@property (nonatomic, getter=isSelected) bool selected;
+@property (nonatomic, getter=isShowingReaderMode) bool showingReaderMode;
+
+@property (nonatomic, copy) void (^toggleReaderMode)(void);
+@property (nonatomic, copy) NSLocale *(^detectWebpageLocale)(void);
+
+@property (nonatomic, copy) void (^reload)(void);
+@property (nonatomic, copy) void (^reloadFromOrigin)(void);
+@property (nonatomic, copy) void (^goBack)(void);
+@property (nonatomic, copy) void (^goForward)(void);
+@property (nonatomic, copy) void (^duplicate)(_WKWebExtensionTabCreationOptions *, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *));
+
+@end
+
+@interface TestWebExtensionWindow : NSObject <_WKWebExtensionWindow>
+
+@property (nonatomic, copy) NSArray<id<_WKWebExtensionTab>> *tabs;
+@property (nonatomic, strong) id<_WKWebExtensionTab> activeTab;
+
+- (void)closeTab:(id<_WKWebExtensionTab>)tab;
+
+@property (nonatomic) _WKWebExtensionWindowState windowState;
+@property (nonatomic) _WKWebExtensionWindowType windowType;
+
+@property (nonatomic) CGRect frame;
+@property (nonatomic) CGRect screenFrame;
+
+@property (nonatomic, getter=isUsingPrivateBrowsing) BOOL usingPrivateBrowsing;
+
+@property (nonatomic, copy) void (^didFocus)(void);
+@property (nonatomic, copy) void (^didClose)(void);
+
+@end
+
 #else // not __OBJC__
 
 OBJC_CLASS TestWebExtensionManager;
+OBJC_CLASS TestWebExtensionTab;
+OBJC_CLASS TestWebExtensionWindow;
 
 #endif // __OBJC__
 
@@ -63,7 +112,8 @@ namespace TestWebKitAPI::Util {
 
 #ifdef __OBJC__
 
-inline NSString *constructScript(NSArray *lines) { return [lines componentsJoinedByString:@";\n"]; }
+inline NSString *constructScript(NSArray *lines) { return [lines componentsJoinedByString:@"\n"]; }
+inline NSString *constructJSArrayOfStrings(NSArray *elements) { return [NSString stringWithFormat:@"['%@']", [elements componentsJoinedByString:@"', '"]]; }
 
 #endif
 

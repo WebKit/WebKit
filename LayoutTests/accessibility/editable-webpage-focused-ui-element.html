@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body dir="auto" style="overflow-wrap: break-word; -webkit-nbsp-mode: space; line-break: after-white-space;">
+
+<script>
+var output = "This test ensures that the focused UI element is not an ignored element.\n\n";
+
+// Note that ideally this test would use <!-- webkit-test-runner [ editable=true ] --> to simulate
+// a fully-editable webpage, i.e. in the style of Mail message bodies. However, there is a bug in
+// that option that prevents it from being set in the web process (it returns early in WebPageProxy::setEditable
+// because there is no running process to send the message to at the time the test options are processed). For now,
+// use Internals::setSelectionFromNone to force the <body> to be the focused element, as happens in WebPage::setEditable(true).
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += evalAndReturn("internals.setSelectionFromNone();");
+    setTimeout(async function() {
+        // Wait for focus to sync to the <body> and update the AX tree as a result of setSelectionFromNone().
+        await sleep(100);
+
+        output += expect("accessibilityController.focusedElement.role.toLowerCase().includes('webarea')", "true");
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

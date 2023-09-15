@@ -62,6 +62,7 @@
 #import <UIKit/UIPickerView_Private.h>
 #import <UIKit/UIPopoverPresentationController_Private.h>
 #import <UIKit/UIPresentationController_Private.h>
+#import <UIKit/UIPress_Private.h>
 #import <UIKit/UIPrintPageRenderer_Private.h>
 #import <UIKit/UIResponder_Private.h>
 #import <UIKit/UIScene_Private.h>
@@ -125,8 +126,6 @@
 #import <UIKit/UIDragPreview_Private.h>
 #import <UIKit/UIDragSession.h>
 #import <UIKit/UIDropInteraction.h>
-#import <UIKit/UIPreviewInteraction.h>
-#import <UIKit/UIURLDragPreviewView.h>
 #import <UIKit/_UITextDragCaretView.h>
 #endif
 
@@ -142,11 +141,6 @@
 
 #if HAVE(UI_POINTER_INTERACTION)
 #import <UIKit/UIPointerInteraction_ForWebKitOnly.h>
-#import <UIKit/UIPointerStyle_Private.h>
-#endif
-
-#if HAVE(UIKIT_HOVER_EVENT_PROTOCOL)
-#import <UIKit/UIHoverEvent_RequiresApproval.h>
 #endif
 
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
@@ -154,8 +148,9 @@
 #import <UIKit/_UIInvalidatable.h>
 #endif
 
-// FIXME: STAGING for rdar://75546704 Remove later.
-#define UIWKSelectionFlipped 2
+#if PLATFORM(VISION)
+#import <UIKit/UIView+SpatialComputing.h>
+#endif
 
 #else // USE(APPLE_INTERNAL_SDK)
 
@@ -219,6 +214,8 @@ typedef struct __IOHIDEvent* IOHIDEventRef;
 typedef struct __GSKeyboard* GSKeyboardRef;
 WTF_EXTERN_C_END
 
+@class UIPressInfo;
+
 @interface UIApplication ()
 - (UIInterfaceOrientation)interfaceOrientation;
 - (void)_cancelAllTouches;
@@ -226,7 +223,6 @@ WTF_EXTERN_C_END
 - (BOOL)isSuspendedUnderLock;
 - (void)_enqueueHIDEvent:(IOHIDEventRef)event;
 - (void)_handleHIDEvent:(IOHIDEventRef)event;
-- (void)handleKeyUIEvent:(UIEvent *)event;
 - (BOOL)_appAdoptsUISceneLifecycle;
 @end
 
@@ -278,8 +274,6 @@ typedef NS_ENUM(NSInteger, _UIDatePickerOverlayAnchor) {
 - (void)setOrientation:(UIDeviceOrientation)orientation animated:(BOOL)animated;
 @property (nonatomic, readonly, retain) NSString *buildVersion;
 @end
-
-static const UIUserInterfaceIdiom UIUserInterfaceIdiomWatch = (UIUserInterfaceIdiom)4;
 
 typedef enum {
     kUIKeyboardInputRepeat                 = 1 << 0,
@@ -380,21 +374,6 @@ typedef enum {
 - (UIFontTrait)traits;
 @end
 
-typedef enum {
-    UIAllCorners = 0xFF,
-} UIRectCorners;
-
-#if HAVE(UIKIT_HOVER_EVENT_PROTOCOL)
-
-@protocol _UIHoverEventRespondable <NSObject>
-- (void)_hoverEntered:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
-- (void)_hoverMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
-- (void)_hoverExited:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
-- (void)_hoverCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
-@end
-
-#endif // HAVE(UIKIT_HOVER_EVENT_PROTOCOL)
-
 @interface UIImagePickerController ()
 @property (nonatomic, setter=_setAllowsMultipleSelection:) BOOL _allowsMultipleSelection;
 @property (nonatomic, setter=_setRequiresPickingConfirmation:) BOOL _requiresPickingConfirmation;
@@ -410,25 +389,11 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 + (UIImage *)_imageWithCGSVGDocument:(CGSVGDocumentRef)cgSVGDocument;
 @end
 
-@interface UIKeyCommand ()
-@property (nonatomic, readonly) UIEvent *_triggeringEvent;
-@end
-
 @protocol UIKeyboardImplGeometryDelegate
 @property (nonatomic, readwrite, getter=isMinimized) BOOL minimized;
-- (void)prepareForImplBoundsHeightChange:(CGFloat)endDelta suppressNotification:(BOOL)suppressNotification;
-- (void)implBoundsHeightChangeDone:(CGFloat)endDelta suppressNotification:(BOOL)suppressNotification;
-- (BOOL)shouldSaveMinimizationState;
-- (BOOL)canDismiss;
-- (BOOL)isActive;
 @end
 
 @protocol UIKeyboardCandidateListDelegate <NSObject>
-@optional
-- (void)setCandidateList:(id)candidateList updateCandidateView:(BOOL)updateCandidateView;
-- (void)candidateListAcceptCandidate:(id)candidateList;
-- (void)candidateListSelectionDidChange:(id)candidateList;
-- (void)candidateListShouldBeDismissed:(id)candidateList;
 @end
 
 @interface UIKeyboard : UIView <UIKeyboardImplGeometryDelegate>
@@ -443,7 +408,6 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 @end
 
 @interface UIKeyboardImpl : UIView <UIKeyboardCandidateListDelegate>
-- (BOOL)smartInsertDeleteIsEnabled;
 + (BOOL)smartInsertDeleteIsEnabled;
 - (void)updateForChangedSelection;
 - (void)setCorrectionLearningAllowed:(BOOL)allowed;
@@ -500,8 +464,8 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 @end
 
 @interface UIPickerContentView ()
-+(CGFloat)_checkmarkOffset;
--(CGFloat)labelWidthForBounds:(CGRect)bounds;
++ (CGFloat)_checkmarkOffset;
+- (CGFloat)labelWidthForBounds:(CGRect)bounds;
 @property (nonatomic, getter=isChecked) BOOL checked;
 @property (nonatomic, readonly) UILabel *titleLabel;
 @end
@@ -517,7 +481,6 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 @end
 
 @interface UIResponder ()
-- (void)_handleKeyUIEvent:(UIEvent *)event;
 - (void)_wheelChangedWithEvent:(UIEvent *)event;
 - (void)_beginPinningInputViews;
 - (void)_endPinningInputViews;
@@ -531,19 +494,8 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 @property (nonatomic, readonly, retain) FBSDisplayConfiguration *displayConfiguration;
 @end
 
-#if PLATFORM(IOS) && !defined(__IPHONE_13_4)
-typedef enum {
-    UIAxisNeither = 0,
-    UIAxisHorizontal = 1 << 0,
-    UIAxisVertical = 1 << 1,
-    UIAxisBoth = (UIAxisHorizontal | UIAxisVertical),
-} UIAxis;
-#endif
-
 @interface UIScrollView ()
 - (void)_stopScrollingAndZoomingAnimations;
-- (void)_zoomToCenter:(CGPoint)center scale:(CGFloat)scale duration:(CFTimeInterval)duration force:(BOOL)force;
-- (void)_zoomToCenter:(CGPoint)center scale:(CGFloat)scale duration:(CFTimeInterval)duration;
 - (double)_horizontalVelocity;
 - (double)_verticalVelocity;
 - (void)_flashScrollIndicatorsForAxes:(UIAxis)axes persistingPreviousFlashes:(BOOL)persisting;
@@ -685,26 +637,16 @@ typedef enum {
 @end
 #endif
 
-@protocol UIViewControllerContextTransitioningEx <UIViewControllerContextTransitioning>
-- (void)__runAlongsideAnimations;
-- (void)_interactivityDidChange:(BOOL)isInteractive;
-@property (nonatomic, assign, setter=_setAllowUserInteraction:, getter=_allowUserInteraction) BOOL _allowUserInteraction;
-@property (nonatomic, assign, setter=_setPercentOffset:) CGFloat _percentOffset;
-@end
-
-@interface _UIViewControllerTransitionContext : NSObject <UIViewControllerContextTransitioningEx>
+@interface _UIViewControllerTransitionContext : NSObject <UIViewControllerContextTransitioning>
 @end
 
 // FIXME: Separate the parts we are simply re-declaring from the ones we are overriding.
 @interface _UIViewControllerTransitionContext (Details)
-- (void) _setTransitionIsInFlight:(BOOL)flag;
-@property (nonatomic, assign, setter=_setAllowUserInteraction:, getter=_allowUserInteraction) BOOL _allowUserInteraction;
+- (void)_setTransitionIsInFlight:(BOOL)flag;
 @property (nonatomic, assign, setter=_setAnimator:) id <UIViewControllerAnimatedTransitioning> _animator;
 @property (nonatomic, assign, setter=_setContainerView:) UIView *containerView;
 @property (nonatomic, assign, setter=_setInteractor:) id <UIViewControllerInteractiveTransitioning> _interactor;
-@property (nonatomic, assign, setter=_setPercentOffset:) CGFloat _percentOffset;
 @property (nonatomic, copy, setter=_setCompletionHandler:)  void (^_completionHandler)(_UIViewControllerTransitionContext *context, BOOL transitionCompleted);
-@property (nonatomic, retain, setter=_setContainerViews:) NSArray *_containerViews;
 @end
 
 @interface _UIViewControllerOneToOneTransitionContext : _UIViewControllerTransitionContext
@@ -720,12 +662,7 @@ typedef enum {
 @end
 
 @protocol UIViewControllerAnimatedTransitioningEx <UIViewControllerAnimatedTransitioning>
-- (BOOL)interactionAborted;
-- (UINavigationControllerOperation) operation;
-- (UIPercentDrivenInteractiveTransition *)interactionController;
-- (void)setInteractionAborted:(BOOL)aborted;
-- (void)setInteractionController:(UIPercentDrivenInteractiveTransition *)controller;
-- (void)setOperation:(UINavigationControllerOperation)operation;
+- (UINavigationControllerOperation)operation;
 @optional
 - (UIWindow *)window;
 @end
@@ -734,31 +671,35 @@ typedef enum {
 @property (nonatomic) BOOL allowsCustomPresentationStyle;
 @end
 
-typedef NS_ENUM (NSInteger, _UIBackdropMaskViewFlags) {
-    _UIBackdropMaskViewNone = 0,
-    _UIBackdropMaskViewGrayscaleTint = 1 << 0,
-    _UIBackdropMaskViewColorTint = 1 << 1,
-    _UIBackdropMaskViewFilters = 1 << 2,
-    _UIBackdropMaskViewAll = _UIBackdropMaskViewGrayscaleTint | _UIBackdropMaskViewColorTint | _UIBackdropMaskViewFilters,
-};
-
 @interface UIView ()
 + (BOOL)_isInAnimationBlock;
 - (CGSize)size;
 - (void)setFrameOrigin:(CGPoint)origin;
 - (void)setSize:(CGSize)size;
-@property (nonatomic, assign, setter=_setBackdropMaskViewFlags:) NSInteger _backdropMaskViewFlags;
 - (void)_populateArchivedSubviews:(NSMutableSet *)encodedViews;
 - (void)safeAreaInsetsDidChange;
 @property (nonatomic, setter=_setContinuousCornerRadius:) CGFloat _continuousCornerRadius;
 - (void)insertSubview:(UIView *)view above:(UIView *)sibling;
-- (void)viewWillMoveToSuperview:(UIView *)newSuperview;
 - (void)_didRemoveSubview:(UIView *)subview;
 - (CGSize)convertSize:(CGSize)size toView:(UIView *)view;
 - (void)_removeAllAnimations:(BOOL)includeSubviews;
 - (UIColor *)_inheritedInteractionTintColor;
 - (NSString *)recursiveDescription;
 @end
+
+#if PLATFORM(VISION)
+
+typedef NS_ENUM(NSInteger, _UIPlatterGroundingShadowVisibility) {
+    _UIPlatterGroundingShadowVisibilityAutomatic = 0,
+    _UIPlatterGroundingShadowVisibilityVisible = 1,
+    _UIPlatterGroundingShadowVisibilityHidden = 2
+};
+
+@interface UIView (SpatialComputing)
+@property (nonatomic, setter=_setPreferredGroundingShadowVisibility:) _UIPlatterGroundingShadowVisibility _preferredGroundingShadowVisibility;
+@end
+
+#endif
 
 typedef NS_ENUM(NSInteger, UIWKSelectionTouch) {
     UIWKSelectionTouchStarted = 0,
@@ -837,10 +778,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 @property (nonatomic, readonly, assign) UITapGestureRecognizer *singleTapGesture;
 @end
 
-@interface UITextInteraction ()
-@property (class, nonatomic, readonly) CGFloat _maximumBeamSnappingLength;
-@end
-
 @class UIWKDocumentRequest;
 @class UIWKDocumentContext;
 
@@ -874,7 +811,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (void)insertTextPlaceholderWithSize:(CGSize)size completionHandler:(void (^)(UITextPlaceholder *))completionHandler;
 - (void)removeTextPlaceholder:(UITextPlaceholder *)placeholder willInsertText:(BOOL)willInsertText completionHandler:(void (^)(void))completionHandler;
 
-- (void)clearSelection;
 - (void)replaceDictatedText:(NSString *)oldText withText:(NSString *)newText;
 - (void)requestDictationContext:(void (^)(NSString *selectedText, NSString *prefixText, NSString *postfixText))completionHandler;
 - (BOOL)pointIsNearMarkedText:(CGPoint)point;
@@ -883,7 +819,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (void)replaceText:(NSString *)text withText:(NSString *)word;
 - (void)selectWordForReplacement;
 - (BOOL)isReplaceAllowed;
-- (void)selectWordBackward;
 - (UIView *)unscaledView;
 - (CGFloat)inverseScale;
 - (CGRect)unobscuredContentRect;
@@ -961,17 +896,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (BOOL)interactiveTransition:(_UINavigationInteractiveTransitionBase *)interactiveTransition gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer;
 - (BOOL)interactiveTransition:(_UINavigationInteractiveTransitionBase *)interactiveTransition gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch;
 - (UIPanGestureRecognizer *)gestureRecognizerForInteractiveTransition:(_UINavigationInteractiveTransitionBase *)interactiveTransition WithTarget:(id)target action:(SEL)action;
-@end
-
-@interface _UISheetDetent : NSObject
-@property (class, nonatomic, readonly) _UISheetDetent *_mediumDetent;
-@property (class, nonatomic, readonly) _UISheetDetent *_largeDetent;
-@end
-
-@interface _UISheetPresentationController : UIPresentationController
-@property (nonatomic, copy, setter=_setDetents:) NSArray<_UISheetDetent *> *_detents;
-@property (nonatomic, setter=_setWantsBottomAttachedInCompactHeight:) BOOL _wantsBottomAttachedInCompactHeight;
-@property (nonatomic, setter=_setWidthFollowsPreferredContentSizeWhenBottomAttached:) BOOL _widthFollowsPreferredContentSizeWhenBottomAttached;
 @end
 
 @class BKSAnimationFenceHandle;
@@ -1122,10 +1046,6 @@ WTF_EXTERN_C_END
 -(void)remove;
 @end
 
-@interface UIURLDragPreviewView : UIView
-+ (instancetype)viewWithTitle:(NSString *)title URL:(NSURL *)url;
-@end
-
 @interface _UIParallaxTransitionPanGestureRecognizer : UIScreenEdgePanGestureRecognizer
 @end
 
@@ -1141,12 +1061,6 @@ WTF_EXTERN_C_END
 @property (nonatomic, readonly) UIKeyboardPreferencesController<TIPreferencesControllerActions> *preferencesActions;
 @end
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-@interface UIMenuItem (UIMenuController_SPI)
-@property (nonatomic) BOOL dontDismiss;
-@end
-ALLOW_DEPRECATED_DECLARATIONS_END
-
 @interface UIAutoRotatingWindow : UIApplicationRotationFollowingWindow
 @end
 
@@ -1156,30 +1070,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 @end
 
 @interface _UIVisualEffectLayerConfig : NSObject
-+ (instancetype)layerWithFillColor:(UIColor *)fillColor opacity:(CGFloat)opacity filterType:(NSString *)filterType;
-- (void)configureLayerView:(UIView *)view;
-@end
-
-@interface _UIVisualEffectTintLayerConfig : _UIVisualEffectLayerConfig
-+ (instancetype)layerWithTintColor:(UIColor *)tintColor;
-+ (instancetype)layerWithTintColor:(UIColor *)tintColor filterType:(NSString *)filterType NS_AVAILABLE_IOS(9_0);
-@end
-
-@interface _UIVisualEffectConfig : NSObject
-@property (nonatomic, readonly) _UIVisualEffectLayerConfig *contentConfig;
-+ (_UIVisualEffectConfig *)configWithContentConfig:(_UIVisualEffectLayerConfig *)contentConfig;
-@end
-
-typedef NSInteger UICompositingMode;
-
-@interface UIVisualEffect ()
-+ (UIVisualEffect *)emptyEffect;
-+ (UIVisualEffect *)effectCombiningEffects:(NSArray<UIVisualEffect *> *)effects;
-+ (UIVisualEffect *)effectCompositingColor:(UIColor *)color withMode:(UICompositingMode)compositingMode alpha:(CGFloat)alpha;
-@end
-
-@interface UIColorEffect : UIVisualEffect
-+ (UIColorEffect *)colorEffectSaturate:(CGFloat)saturationAmount;
 @end
 
 @interface UIPopoverPresentationController ()
@@ -1232,10 +1122,6 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @interface _UIContextMenuStyle : NSObject <NSCopying>
 @property (nonatomic) _UIContextMenuLayout preferredLayout;
 @property (nonatomic) UIEdgeInsets preferredEdgeInsets;
-@property (nonatomic) BOOL hasInteractivePreview;
-@property (nonatomic) BOOL prefersCenteredPreviewWhenActionsAreAbsent;
-@property (nonatomic) BOOL ignoresDefaultSizingRules;
-@property (nonatomic, strong) NSArray *preferredBackgroundEffects;
 + (instancetype)defaultStyle;
 @end
 
@@ -1246,7 +1132,6 @@ typedef NS_ENUM(NSUInteger, UIMenuOptionsPrivate) {
 };
 
 @interface UIContextMenuInteraction ()
-@property (nonatomic, readonly) UIGestureRecognizer *gestureRecognizerForFailureRelationships;
 - (void)_presentMenuAtLocation:(CGPoint)location;
 @end
 
@@ -1269,17 +1154,8 @@ typedef NS_ENUM(NSUInteger, UIMenuOptionsPrivate) {
 @property (readonly) BOOL isLowConfidence;
 @end
 
-@interface UIPointerStyle ()
-+ (instancetype)_systemPointerStyle;
-@end
-
 @interface UIPointerInteraction ()
 @property (nonatomic, assign, getter=_pausesPointerUpdatesWhilePanning, setter=_setPausesPointerUpdatesWhilePanning:) BOOL pausesPointerUpdatesWhilePanning;
-@end
-
-@protocol UIPointerInteractionDelegate_ForWebKitOnly <UIPointerInteractionDelegate>
-@optional
-- (void)_pointerInteraction:(UIPointerInteraction *)interaction regionForRequest:(UIPointerRegionRequest *)request defaultRegion:(UIPointerRegion *)defaultRegion completion:(void(^)(UIPointerRegion *region))completion;
 @end
 
 #if PLATFORM(WATCHOS)
@@ -1316,6 +1192,7 @@ typedef NS_ENUM(NSUInteger, UIMenuOptionsPrivate) {
 @property (nonatomic, readonly, getter=_isInLiveResize) BOOL _inLiveResize;
 @end
 
+extern NSNotificationName const _UIWindowSceneDidBeginLiveResizeNotification;
 extern NSNotificationName const _UIWindowSceneDidEndLiveResizeNotification;
 
 #endif // HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
@@ -1387,7 +1264,7 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 - (void)translate:(NSString *)text fromRect:(CGRect)presentationRect;
 @end
 
- @interface UIColor (IPI)
+@interface UIColor (IPI)
 + (UIColor *)insertionPointColor;
 @end
 
@@ -1426,6 +1303,14 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 - (void)prepareKeyboardInputModeFromPreferences:(UIKeyboardInputMode *)lastUsedMode;
 - (void)syncInputManagerToAcceptedAutocorrection:(TIKeyboardCandidate *)autocorrection forInput:(TIKeyboardInput *)inputEvent;
 @property (nonatomic, readonly) UIKeyboardInputMode *currentInputModeInPreference;
+@end
+
+@interface UIApplication (IPI)
+- (UIPressInfo *)_pressInfoForPhysicalKeyboardEvent:(UIPhysicalKeyboardEvent *)physicalKeyboardEvent;
+@end
+
+@interface UIPress (IPI)
+- (void)_loadStateFromPressInfo:(UIPressInfo *)pressInfo;
 @end
 
 @class CALayerHost;
@@ -1535,9 +1420,6 @@ BOOL UIKeyboardEnabledInputModesAllowOneToManyShortcuts(void);
 BOOL UIKeyboardEnabledInputModesAllowChineseTransliterationForText(NSString *);
 BOOL UIKeyboardIsRightToLeftInputModeActive(void);
 
-extern const float UITableCellDefaultFontSize;
-extern const float UITableViewCellDefaultFontSize;
-
 extern NSString * const UIWindowDidMoveToScreenNotification;
 extern NSString * const UIWindowDidRotateNotification;
 extern NSString * const UIWindowNewScreenUserInfoKey;
@@ -1553,15 +1435,9 @@ void _UIApplicationLoadWebKit(void);
 
 void UIImageDataWriteToSavedPhotosAlbum(NSData *imageData, id completionTarget, SEL completionSelector, void *contextInfo);
 
-UIImage* _UIImageGetWebKitPhotoLibraryIcon(void);
-UIImage* _UIImageGetWebKitTakePhotoOrVideoIcon(void);
-
 extern const float UIWebViewGrowsAndShrinksToFitHeight;
 extern const float UIWebViewScalesToFitScale;
 extern const float UIWebViewStandardViewportWidth;
-
-extern NSString *const UIKeyInputPageUp;
-extern NSString *const UIKeyInputPageDown;
 
 extern const NSString *UIPreviewDataLink;
 extern const NSString *UIPreviewDataDDResult;
@@ -1570,14 +1446,9 @@ extern const NSString *UIPreviewDataDDContext;
 extern const NSString *UIPreviewDataAttachmentList;
 extern const NSString *UIPreviewDataAttachmentIndex;
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED < 130000
-extern NSString * const UIPreviewDataAttachmentListSourceIsManaged;
-#else
 extern NSString * const UIPreviewDataAttachmentListIsContentManaged;
-#endif
 
 UIEdgeInsets UIEdgeInsetsAdd(UIEdgeInsets lhs, UIEdgeInsets rhs, UIRectEdge);
-UIEdgeInsets UIEdgeInsetsSubtract(UIEdgeInsets lhs, UIEdgeInsets rhs, UIRectEdge);
 
 extern NSString *const UIBacklightLevelChangedNotification;
 

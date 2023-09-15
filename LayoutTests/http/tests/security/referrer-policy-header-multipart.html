@@ -10,7 +10,7 @@ description("Tests support for Referrer-Policy HTTP header (multipart).");
 jsTestIsAsync = true;
 
 if (window.testRunner)
-    testRunner.setStatisticsShouldDowngradeReferrer(false, () => { runTests(true /* multipart */); });
+    testRunner.setStatisticsShouldDowngradeReferrer(false, async () => { await runTests(true /* multipart */); });
 </script>
 </body>
 </html>

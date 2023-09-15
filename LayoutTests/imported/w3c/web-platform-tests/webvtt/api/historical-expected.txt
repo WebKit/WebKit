@@ -1,0 +1,8 @@
+
+PASS VTTCue regionId member must be nuked
+FAIL TextTrack regions member must be nuked assert_false: expected false got true
+PASS TextTrack addRegion member must be nuked
+PASS TextTrack removeRegion member must be nuked
+FAIL VTTRegion track member must be nuked assert_false: expected false got true
+PASS VTTRegionList interface must be nuked
+

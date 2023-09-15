@@ -86,9 +86,7 @@ InlineItemsBuilder::InlineItemsBuilder(const ElementBox& formattingContextRoot, 
 void InlineItemsBuilder::build(InlineItemPosition startPosition)
 {
     InlineItems inlineItems;
-    FormattingState::OutOfFlowBoxList outOfFlowBoxes;
-
-    collectInlineItems(inlineItems, outOfFlowBoxes, startPosition);
+    collectInlineItems(inlineItems, startPosition);
 
     if (!root().style().isLeftToRightDirection() || contentRequiresVisualReordering()) {
         // FIXME: Add support for partial, yet paragraph level bidi content handling.
@@ -109,7 +107,6 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
         m_formattingState.appendInlineItems(WTFMove(inlineItems));
     };
     adjustInlineFormattingStateWithNewInlineItems();
-    m_formattingState.setOutOfFlowBoxes(WTFMove(outOfFlowBoxes));
 
 #if ASSERT_ENABLED
     // Check if we've got matching inline box start/end pairs and unique inline level items (non-text, non-inline box items).
@@ -131,22 +128,34 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
 #endif
 }
 
-using LayoutQueue = Vector<CheckedRef<const Box>>;
-
-static bool traverseUntilDamaged(LayoutQueue& layoutQueue, const Box& root, const Box& firstDamagedLayoutBox)
+static bool requiresVisualReordering(const Box& layoutBox)
 {
-    if (&root == &firstDamagedLayoutBox)
+    if (is<InlineTextBox>(layoutBox))
+        return TextUtil::containsStrongDirectionalityText(downcast<InlineTextBox>(layoutBox).content());
+    if (layoutBox.isInlineBox() && layoutBox.isInFlow()) {
+        auto& style = layoutBox.style();
+        return !style.isLeftToRightDirection() || (style.rtlOrdering() == Order::Logical && style.unicodeBidi() != UnicodeBidi::Normal);
+    }
+    return false;
+}
+
+bool InlineItemsBuilder::traverseUntilDamaged(LayoutQueue& layoutQueue, const Box& subtreeRoot, const Box& firstDamagedLayoutBox)
+{
+    if (&subtreeRoot == &firstDamagedLayoutBox)
         return true;
 
-    auto shouldSkipSubtree = root.establishesFormattingContext();
-    if (!shouldSkipSubtree && is<ElementBox>(root) && downcast<ElementBox>(root).hasChild()) {
-        auto& firstChild = *downcast<ElementBox>(root).firstChild();
+    m_contentRequiresVisualReordering = m_contentRequiresVisualReordering || requiresVisualReordering(subtreeRoot);
+    m_isNonBidiTextAndForcedLineBreakOnlyContent = m_isNonBidiTextAndForcedLineBreakOnlyContent && !m_contentRequiresVisualReordering && (subtreeRoot.isInlineTextBox() || subtreeRoot.isLineBreakBox());
+
+    auto shouldSkipSubtree = subtreeRoot.establishesFormattingContext();
+    if (!shouldSkipSubtree && is<ElementBox>(subtreeRoot) && downcast<ElementBox>(subtreeRoot).hasChild()) {
+        auto& firstChild = *downcast<ElementBox>(subtreeRoot).firstChild();
         layoutQueue.append(firstChild);
         if (traverseUntilDamaged(layoutQueue, firstChild, firstDamagedLayoutBox))
             return true;
         layoutQueue.takeLast();
     }
-    if (auto* nextSibling = root.nextSibling()) {
+    if (auto* nextSibling = subtreeRoot.nextSibling()) {
         layoutQueue.takeLast();
         layoutQueue.append(*nextSibling);
         if (traverseUntilDamaged(layoutQueue, *nextSibling, firstDamagedLayoutBox))
@@ -155,16 +164,18 @@ static bool traverseUntilDamaged(LayoutQueue& layoutQueue, const Box& root, cons
     return false;
 }
 
-static LayoutQueue initializeLayoutQueue(const ElementBox& formattingContextRoot, InlineItemPosition startPosition, const InlineItems& currentInlineItems)
+InlineItemsBuilder::LayoutQueue InlineItemsBuilder::initializeLayoutQueue(InlineItemPosition startPosition)
 {
-    if (!formattingContextRoot.firstChild()) {
+    auto& root = this->root();
+    if (!root.firstChild()) {
         // There should always be at least one inflow child in this inline formatting context.
         ASSERT_NOT_REACHED();
         return { };
     }
 
     if (!startPosition)
-        return { *formattingContextRoot.firstChild() };
+        return { *root.firstChild() };
+
     // For partial layout we need to build the layout queue up to the point where the new content is in order
     // to be able to produce non-content type of trailing inline items.
     // e.g <div><span<span>text</span></span> produces
@@ -173,29 +184,30 @@ static LayoutQueue initializeLayoutQueue(const ElementBox& formattingContextRoot
     // <div><span><span>text more_text</span></span> should produce
     // [inline box start][inline box start][text][ ][more_text][inline box end][inline box end]
     // where we start processing the content at the new layout box and continue with whatever we have on the stack (layout queue).
-    if (startPosition.index >= currentInlineItems.size()) {
+    auto& existingInlineItems = m_formattingState.inlineItems();
+    if (startPosition.index >= existingInlineItems.size()) {
         ASSERT_NOT_REACHED();
-        return { *formattingContextRoot.firstChild() };
+        return { *root.firstChild() };
     }
 
-    auto& firstDamagedLayoutBox = currentInlineItems[startPosition.index].layoutBox();
-    auto& firstChild = *formattingContextRoot.firstChild();
+    auto& firstDamagedLayoutBox = existingInlineItems[startPosition.index].layoutBox();
+    auto& firstChild = *root.firstChild();
     LayoutQueue layoutQueue;
     layoutQueue.append(firstChild);
     traverseUntilDamaged(layoutQueue, firstChild, firstDamagedLayoutBox);
 
     if (layoutQueue.isEmpty()) {
         ASSERT_NOT_REACHED();
-        layoutQueue.append(*formattingContextRoot.firstChild());
+        layoutQueue.append(*root.firstChild());
     }
     return layoutQueue;
 }
 
-void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, FormattingState::OutOfFlowBoxList& outOfFlowBoxes, InlineItemPosition startPosition)
+void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, InlineItemPosition startPosition)
 {
     // Traverse the tree and create inline items out of inline boxes and leaf nodes. This essentially turns the tree inline structure into a flat one.
     // <span>text<span></span><img></span> -> [InlineBoxStart][InlineLevelBox][InlineBoxStart][InlineBoxEnd][InlineLevelBox][InlineBoxEnd]
-    auto layoutQueue = initializeLayoutQueue(root(), startPosition, m_formattingState.inlineItems());
+    auto layoutQueue = initializeLayoutQueue(startPosition);
 
     auto partialContentOffset = [&](auto& inlineTextBox) -> std::optional<size_t> {
         if (!startPosition)
@@ -233,9 +245,8 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, Formatting
         while (!layoutQueue.isEmpty()) {
             auto layoutBox = layoutQueue.takeLast();
             if (layoutBox->isOutOfFlowPositioned()) {
-                // Let's not construct InlineItems for out-of-flow content as they don't participate in the inline layout.
-                // However to be able to static positioning them, we need to compute their approximate positions.
-                outOfFlowBoxes.append(layoutBox);
+                m_isNonBidiTextAndForcedLineBreakOnlyContent = false;
+                inlineItems.append({ layoutBox, InlineItem::Type::Opaque });
             } else if (layoutBox->isInlineTextBox()) {
                 auto& inlineTextBox = downcast<InlineTextBox>(layoutBox);
                 handleTextContent(inlineTextBox, inlineItems, partialContentOffset(inlineTextBox));
@@ -243,9 +254,12 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, Formatting
                 handleInlineLevelBox(layoutBox, inlineItems);
             else if (layoutBox->isInlineBox())
                 handleInlineBoxEnd(layoutBox, inlineItems);
-            else if (layoutBox->isFloatingPositioned())
+            else if (layoutBox->isFloatingPositioned()) {
                 inlineItems.append({ layoutBox, InlineItem::Type::Float });
-            else
+                m_isNonBidiTextAndForcedLineBreakOnlyContent = false;
+            } else if (layoutBox->isRubyAnnotationBox()) {
+                // Does not participate in inline layout.
+            } else
                 ASSERT_NOT_REACHED();
 
             if (auto* nextSibling = layoutBox->nextSibling()) {
@@ -254,6 +268,8 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, Formatting
             }
         }
     }
+    m_formattingState.setIsNonBidiTextAndForcedLineBreakOnlyContent(m_isNonBidiTextAndForcedLineBreakOnlyContent);
+    m_formattingState.setContentRequiresVisualReordering(m_contentRequiresVisualReordering);
 }
 
 static void replaceNonPreservedNewLineAndTabCharactersAndAppend(const InlineTextBox& inlineTextBox, StringBuilder& paragraphContentBuilder)
@@ -458,8 +474,12 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
         } else if (inlineItem.isFloat()) {
             // Floats are not part of the inline content which make them opaque to bidi.
             inlineItemOffsetList.uncheckedAppend({ });
+        } else if (inlineItem.isOpaque()) {
+            // opaque items are also opaque to bidi.
+            inlineItemOffsetList.uncheckedAppend({ });
         } else
             ASSERT_NOT_IMPLEMENTED_YET();
+
     }
 }
 
@@ -634,7 +654,8 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
     if (inlineTextBox.isCombined())
         return inlineItems.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, { }, contentLength, UBIDI_DEFAULT_LTR, false, { }));
 
-    m_contentRequiresVisualReordering = m_contentRequiresVisualReordering || TextUtil::containsStrongDirectionalityText(text);
+    m_contentRequiresVisualReordering = m_contentRequiresVisualReordering || requiresVisualReordering(inlineTextBox);
+    m_isNonBidiTextAndForcedLineBreakOnlyContent = m_isNonBidiTextAndForcedLineBreakOnlyContent && !m_contentRequiresVisualReordering;
     auto& style = inlineTextBox.style();
     auto shouldPreserveSpacesAndTabs = TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox);
     auto shouldPreserveNewline = TextUtil::shouldPreserveNewline(inlineTextBox);
@@ -726,24 +747,30 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
 void InlineItemsBuilder::handleInlineBoxStart(const Box& inlineBox, InlineItems& inlineItems)
 {
     inlineItems.append({ inlineBox, InlineItem::Type::InlineBoxStart });
-    auto& style = inlineBox.style();
-    m_contentRequiresVisualReordering = m_contentRequiresVisualReordering || !style.isLeftToRightDirection() || (style.rtlOrdering() == Order::Logical && style.unicodeBidi() != UnicodeBidi::Normal);
+    m_contentRequiresVisualReordering = m_contentRequiresVisualReordering || requiresVisualReordering(inlineBox);
+    m_isNonBidiTextAndForcedLineBreakOnlyContent = false;
 }
 
 void InlineItemsBuilder::handleInlineBoxEnd(const Box& inlineBox, InlineItems& inlineItems)
 {
     inlineItems.append({ inlineBox, InlineItem::Type::InlineBoxEnd });
+    ASSERT(!m_isNonBidiTextAndForcedLineBreakOnlyContent);
+    m_isNonBidiTextAndForcedLineBreakOnlyContent = false;
     // Inline box end item itself can not trigger bidi content.
     ASSERT(contentRequiresVisualReordering() || inlineBox.style().isLeftToRightDirection() || inlineBox.style().rtlOrdering() == Order::Visual || inlineBox.style().unicodeBidi() == UnicodeBidi::Normal);
 }
 
 void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItems& inlineItems)
 {
-    if (layoutBox.isAtomicInlineLevelBox())
+    if (layoutBox.isAtomicInlineLevelBox()) {
+        m_isNonBidiTextAndForcedLineBreakOnlyContent = false;
         return inlineItems.append({ layoutBox, InlineItem::Type::Box });
+    }
 
-    if (layoutBox.isLineBreakBox())
+    if (layoutBox.isLineBreakBox()) {
+        m_isNonBidiTextAndForcedLineBreakOnlyContent = m_isNonBidiTextAndForcedLineBreakOnlyContent && !layoutBox.isWordBreakOpportunity();
         return inlineItems.append({ layoutBox, layoutBox.isWordBreakOpportunity() ? InlineItem::Type::WordBreakOpportunity : InlineItem::Type::HardLineBreak });
+    }
 
     ASSERT_NOT_REACHED();
 }

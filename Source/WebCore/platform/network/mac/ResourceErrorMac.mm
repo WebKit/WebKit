@@ -28,23 +28,11 @@
 
 #import <CoreFoundation/CFError.h>
 #import <Foundation/Foundation.h>
+#import <pal/spi/cocoa/NetworkSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/URL.h>
 #import <wtf/text/WTFString.h>
-
-static bool failureIsDueToTrackerBlocking(NSError *error)
-{
-#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    for (NSError *underlyingError in error.underlyingErrors) {
-        if ([[underlyingError.userInfo objectForKey:@"_NSURLErrorBlockedTrackerFailureKey"] boolValue])
-            return true;
-    }
-#else
-    UNUSED_PARAM(error);
-#endif
-    return false;
-}
 
 @interface NSError (WebExtras)
 - (NSString *)_web_localizedDescription;
@@ -220,7 +208,6 @@ void ResourceError::platformLazyInit()
     m_localizedDescription = m_failingURL.string();
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     m_localizedDescription = [m_platformError _web_localizedDescription];
-    m_blockedKnownTracker = failureIsDueToTrackerBlocking(m_platformError.get());
     END_BLOCK_OBJC_EXCEPTIONS
 
     m_dataIsUpToDate = true;
@@ -262,5 +249,32 @@ ResourceError::operator CFErrorRef() const
 {
     return cfError();
 }
+
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+
+bool ResourceError::blockedKnownTracker() const
+{
+    for (NSError *underlyingError in nsError().underlyingErrors) {
+        if ([underlyingError.userInfo[@"_NSURLErrorBlockedTrackerFailureKey"] boolValue])
+            return true;
+    }
+    return false;
+}
+
+String ResourceError::blockedTrackerHostName() const
+{
+    ASSERT(blockedKnownTracker());
+
+    for (NSError *underlyingError in nsError().underlyingErrors) {
+        if (id failingPath = underlyingError.userInfo[@"_NSURLErrorNWPathKey"]) {
+            auto failingEndpoint = adoptNS(nw_path_copy_effective_remote_endpoint(failingPath));
+            if (auto* hostName = nw_endpoint_get_known_tracker_name(failingEndpoint.get()))
+                return String::fromUTF8(hostName);
+        }
+    }
+    return { };
+}
+
+#endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 
 } // namespace WebCore

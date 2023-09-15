@@ -9,4 +9,5 @@ FAIL Response.body is null for responses with status=304 (method=GET) assert_equ
 FAIL Response.body is null for responses with status=304 (method=POST) assert_equals: the body should be null expected null but got object "[object ReadableStream]"
 FAIL Response.body is null for responses with status=304 (method=OPTIONS) assert_equals: the body should be null expected null but got object "[object ReadableStream]"
 FAIL Response.body is null for responses with method=HEAD assert_equals: the body should be null expected null but got object "[object ReadableStream]"
+PASS Null body status with subresource integrity should abort
 

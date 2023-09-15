@@ -157,7 +157,8 @@ private:
             | static_cast<unsigned>(description.widthVariant()) << 4
             | static_cast<unsigned>(description.nonCJKGlyphOrientation()) << 3
             | static_cast<unsigned>(description.orientation()) << 2;
-        unsigned second = static_cast<unsigned>(description.variantEastAsianRuby()) << 26
+        unsigned second = static_cast<unsigned>(description.variantEmoji()) << 27
+            | static_cast<unsigned>(description.variantEastAsianRuby()) << 26
             | static_cast<unsigned>(description.variantEastAsianWidth()) << 24
             | static_cast<unsigned>(description.variantEastAsianVariant()) << 21
             // variantAlternates is in the Rare object, it can't be a bitfield.
@@ -227,14 +228,14 @@ struct FontCascadeCacheKey {
     Vector<FontFamilyName, 3> families;
     unsigned fontSelectorId;
     unsigned fontSelectorVersion;
+
+    friend bool operator==(const FontCascadeCacheKey&, const FontCascadeCacheKey&) = default;
 };
 
 inline void add(Hasher& hasher, const FontCascadeCacheKey& key)
 {
     add(hasher, key.fontDescriptionKey, key.families, key.fontSelectorId, key.fontSelectorVersion);
 }
-
-bool operator==(const FontCascadeCacheKey&, const FontCascadeCacheKey&);
 
 struct FontCascadeCacheEntry {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;

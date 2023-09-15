@@ -23,7 +23,7 @@
 from buildbot.process import factory
 from buildbot.steps import trigger
 
-from steps import *
+from .steps import *
 
 
 class Factory(factory.BuildFactory):

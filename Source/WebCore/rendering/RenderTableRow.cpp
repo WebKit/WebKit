@@ -90,7 +90,7 @@ void RenderTableRow::styleDidChange(StyleDifference diff, const RenderStyle* old
 
     // If border was changed, notify table.
     if (RenderTable* table = this->table()) {
-        if (oldStyle && oldStyle->border() != style().border())
+        if (oldStyle && !oldStyle->borderIsEquivalentForPainting(style()))
             table->invalidateCollapsedBorders();
 
         if (oldStyle && diff == StyleDifference::Layout && needsLayout() && table->collapseBorders() && borderWidthChanged(oldStyle, &style())) {

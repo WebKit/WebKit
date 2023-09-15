@@ -234,7 +234,6 @@ public:
 
     const ScalarRegisterSet& liveRegistersForCall();
 
-    CallSiteIndex callSiteIndexForExceptionHandlingOrOriginal();
     DisposableCallSiteIndex callSiteIndexForExceptionHandling();
 
     const HandlerInfo& originalExceptionHandler();
@@ -286,6 +285,7 @@ public:
     AccessGenerationResult regenerate(const GCSafeConcurrentJSLocker&, PolymorphicAccess&, CodeBlock*);
 
 private:
+    CallSiteIndex callSiteIndexForExceptionHandlingOrOriginal();
     const ScalarRegisterSet& liveRegistersToPreserveAtExceptionHandlingCallSite();
 
     void emitDOMJITGetter(GetterSetterAccessCase&, const DOMJIT::GetterSetter*, GPRReg baseForGetGPR);

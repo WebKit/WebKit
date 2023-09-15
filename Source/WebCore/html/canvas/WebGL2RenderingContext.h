@@ -45,7 +45,7 @@ class WebGLVertexArrayObject;
 class WebGL2RenderingContext final : public WebGLRenderingContextBase {
     WTF_MAKE_ISO_ALLOCATED(WebGL2RenderingContext);
 public:
-    static std::unique_ptr<WebGL2RenderingContext> create(CanvasBase&, Ref<GraphicsContextGL>&&, GraphicsContextGLAttributes);
+    static std::unique_ptr<WebGL2RenderingContext> create(CanvasBase&, GraphicsContextGLAttributes);
 
     ~WebGL2RenderingContext();
 
@@ -78,18 +78,6 @@ public:
     WebGLAny getTexParameter(GCGLenum target, GCGLenum pname) final;
     void texStorage2D(GCGLenum target, GCGLsizei levels, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height);
     void texStorage3D(GCGLenum target, GCGLsizei levels, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLsizei depth);
-
-    using TexImageSource = std::variant<RefPtr<ImageBitmap>, RefPtr<ImageData>, RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>
-#if ENABLE(VIDEO)
-        , RefPtr<HTMLVideoElement>
-#endif
-#if ENABLE(OFFSCREEN_CANVAS)
-        , RefPtr<OffscreenCanvas>
-#endif
-#if ENABLE(WEB_CODECS)
-        , RefPtr<WebCodecsVideoFrame>
-#endif
-    >;
 
     // Must override the WebGL 1.0 signatures to add extra validation.
     void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, RefPtr<ArrayBufferView>&&) override;
@@ -254,7 +242,7 @@ public:
     GCGLboolean isVertexArray(WebGLVertexArrayObject* vertexArray);
     void bindVertexArray(WebGLVertexArrayObject* vertexArray);
     
-    WebGLExtension* getExtension(const String&) final;
+    std::optional<WebGLExtensionAny> getExtension(const String&) final;
     std::optional<Vector<String>> getSupportedExtensions() final;
     WebGLAny getParameter(GCGLenum pname) final;
 
@@ -272,11 +260,11 @@ public:
     bool isTransformFeedbackActiveAndNotPaused();
 
 private:
-    WebGL2RenderingContext(CanvasBase&, Ref<GraphicsContextGL>&&, GraphicsContextGLAttributes);
+    using WebGLRenderingContextBase::WebGLRenderingContextBase;
 
     bool isWebGL2() const final { return true; }
 
-    void initializeNewContext() final;
+    void initializeContextState() final;
 
     RefPtr<ArrayBufferView> arrayBufferViewSliceFactory(const char* const functionName, const ArrayBufferView& data, unsigned startByte, unsigned bytelength);
     RefPtr<ArrayBufferView> sliceArrayBufferView(const char* const functionName, const ArrayBufferView& data, GCGLuint srcOffset, GCGLuint length);
@@ -298,8 +286,6 @@ private:
     std::optional<std::span<const T>> validateClearBuffer(const char* functionName, GCGLenum buffer, TypedList<TypedArrayType, T>& values, GCGLuint srcOffset);
     bool validateFramebufferTarget(GCGLenum target) final;
     WebGLFramebuffer* getFramebufferBinding(GCGLenum target) final;
-    WebGLFramebuffer* getReadFramebufferBinding() final;
-    void restoreCurrentFramebuffer() final;
     bool validateNonDefaultFramebufferAttachment(const char* functionName, GCGLenum attachment);
     enum ActiveQueryKey { SamplesPassed = 0, PrimitivesWritten = 1, TimeElapsed = 2, NumKeys = 3 };
     std::optional<ActiveQueryKey> validateQueryTarget(const char* functionName, GCGLenum target);
@@ -335,17 +321,17 @@ private:
     };
     void updateBuffersToAutoClear(ClearBufferCaller, GCGLenum buffer, GCGLint drawbuffer);
 
-    RefPtr<WebGLFramebuffer> m_readFramebufferBinding;
-    RefPtr<WebGLTransformFeedback> m_boundTransformFeedback;
+    WebGLBindingPoint<WebGLFramebuffer> m_readFramebufferBinding;
+    WebGLBindingPoint<WebGLTransformFeedback> m_boundTransformFeedback;
     RefPtr<WebGLTransformFeedback> m_defaultTransformFeedback;
 
-    RefPtr<WebGLBuffer> m_boundCopyReadBuffer;
-    RefPtr<WebGLBuffer> m_boundCopyWriteBuffer;
-    RefPtr<WebGLBuffer> m_boundPixelPackBuffer;
-    RefPtr<WebGLBuffer> m_boundPixelUnpackBuffer;
-    RefPtr<WebGLBuffer> m_boundTransformFeedbackBuffer;
-    RefPtr<WebGLBuffer> m_boundUniformBuffer;
-    Vector<RefPtr<WebGLBuffer>> m_boundIndexedUniformBuffers;
+    WebGLBindingPoint<WebGLBuffer, GraphicsContextGL::COPY_READ_BUFFER> m_boundCopyReadBuffer;
+    WebGLBindingPoint<WebGLBuffer, GraphicsContextGL::COPY_WRITE_BUFFER> m_boundCopyWriteBuffer;
+    WebGLBindingPoint<WebGLBuffer, GraphicsContextGL::PIXEL_PACK_BUFFER> m_boundPixelPackBuffer;
+    WebGLBindingPoint<WebGLBuffer, GraphicsContextGL::PIXEL_UNPACK_BUFFER> m_boundPixelUnpackBuffer;
+    WebGLBindingPoint<WebGLBuffer, GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER> m_boundTransformFeedbackBuffer;
+    WebGLBindingPoint<WebGLBuffer, GraphicsContextGL::UNIFORM_BUFFER> m_boundUniformBuffer;
+    Vector<WebGLBindingPoint<WebGLBuffer, GraphicsContextGL::UNIFORM_BUFFER>> m_boundIndexedUniformBuffers;
 
     RefPtr<WebGLQuery> m_activeQueries[ActiveQueryKey::NumKeys];
 

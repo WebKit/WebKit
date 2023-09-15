@@ -87,15 +87,7 @@ void LibWebRTCSocket::signalReadPacket(const uint8_t* data, size_t size, rtc::So
 
 void LibWebRTCSocket::signalSentPacket(int rtcPacketID, int64_t sendTimeMs)
 {
-    if (m_beingSentPacketSizes.isEmpty())
-        return;
-
-    m_availableSendingBytes += m_beingSentPacketSizes.takeFirst();
     SignalSentPacket(this, rtc::SentPacket(rtcPacketID, sendTimeMs));
-    if (m_shouldSignalReadyToSend) {
-        m_shouldSignalReadyToSend = false;
-        SignalReadyToSend(this);
-    }
 }
 
 void LibWebRTCSocket::signalConnect()
@@ -115,22 +107,10 @@ void LibWebRTCSocket::signalUsedInterface(String&& name)
     LibWebRTCNetworkManager::signalUsedInterface(m_contextIdentifier, WTFMove(name));
 }
 
-bool LibWebRTCSocket::willSend(size_t size)
-{
-    if (size > m_availableSendingBytes) {
-        m_shouldSignalReadyToSend = true;
-        setError(EWOULDBLOCK);
-        return false;
-    }
-    m_availableSendingBytes -= size;
-    m_beingSentPacketSizes.append(size);
-    return true;
-}
-
 int LibWebRTCSocket::SendTo(const void *value, size_t size, const rtc::SocketAddress& address, const rtc::PacketOptions& options)
 {
     auto* connection = m_factory.connection();
-    if (!connection || !willSend(size))
+    if (!connection)
         return -1;
 
     if (m_isSuspended)
@@ -144,7 +124,7 @@ int LibWebRTCSocket::SendTo(const void *value, size_t size, const rtc::SocketAdd
 
 int LibWebRTCSocket::Close()
 {
-    auto* connection = m_factory.connection();
+    RefPtr connection = m_factory.connection();
     if (!connection || m_state == STATE_CLOSED)
         return 0;
 

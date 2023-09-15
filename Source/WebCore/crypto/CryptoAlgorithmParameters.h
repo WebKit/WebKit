@@ -53,6 +53,7 @@ public:
         RsaKeyGenParams,
         RsaOaepParams,
         RsaPssParams,
+        X25519Params,
     };
 
     // FIXME: Consider merging name and identifier.

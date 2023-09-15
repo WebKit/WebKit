@@ -193,10 +193,30 @@ void PathStream::applySegments(const PathSegmentApplier& applier) const
         applier(segment);
 }
 
-void PathStream::applyElements(const PathElementApplier& applier) const
+bool PathStream::applyElements(const PathElementApplier& applier) const
 {
+    for (auto& segment : m_segmentsData->segments) {
+        if (!segment.canApplyElements())
+            return false;
+    }
+
     for (auto& segment : m_segmentsData->segments)
         segment.applyElements(applier);
+
+    return true;
+}
+
+bool PathStream::transform(const AffineTransform& transform)
+{
+    for (auto& segment : m_segmentsData->segments) {
+        if (!segment.canTransform())
+            return false;
+    }
+
+    for (auto& segment : m_segmentsData.access().segments)
+        segment.transform(transform);
+
+    return true;
 }
 
 std::optional<PathSegment> PathStream::singleSegment() const
@@ -249,6 +269,12 @@ bool PathStream::isClosed() const
 
 FloatPoint PathStream::currentPoint() const
 {
+    if (m_segmentsData->segments.isEmpty())
+        return { };
+
+    if (auto result = m_segmentsData->segments.last().tryGetEndPointWithoutContext())
+        return result.value();
+
     FloatPoint lastMoveToPoint;
     FloatPoint currentPoint;
 

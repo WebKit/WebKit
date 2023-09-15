@@ -38,4 +38,12 @@ double parseDouble(const LChar* string, size_t length, size_t& parsedLength)
     return doubleValue;
 }
 
+double parseDouble(const UChar* string, size_t length, size_t& parsedLength)
+{
+    double doubleValue = 0;
+    auto result = fast_float::from_chars(reinterpret_cast<const char16_t*>(string), reinterpret_cast<const char16_t*>(string) + length, doubleValue);
+    parsedLength = result.ptr - reinterpret_cast<const char16_t*>(string);
+    return doubleValue;
+}
+
 } // namespace WTF

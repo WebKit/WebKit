@@ -43,6 +43,7 @@
 
 OBJC_CLASS AVSampleBufferAudioRenderer;
 OBJC_CLASS AVSampleBufferDisplayLayer;
+OBJC_CLASS AVSampleBufferRenderSynchronizer;
 
 typedef struct __CVBuffer *CVPixelBufferRef;
 
@@ -118,8 +119,8 @@ private:
     MediaTime startTime() const final { return MediaTime::zeroTime(); }
     MediaTime initialTime() const final { return MediaTime::zeroTime(); }
 
-    void seek(const MediaTime&) final;
-    bool seeking() const final { return m_seeking; }
+    void seekToTarget(const SeekTarget&) final;
+    bool seeking() const final { return false; }
 
     void setRateDouble(double) final;
     double rate() const final { return m_rate; }
@@ -251,7 +252,7 @@ private:
 
     friend class MediaPlayerFactoryWebM;
     static bool isAvailable();
-    static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
+    static void getSupportedTypes(HashSet<String>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
     ThreadSafeWeakPtr<MediaPlayer> m_player;
@@ -308,7 +309,6 @@ private:
     bool m_hasAudio { false };
     bool m_hasVideo { false };
     bool m_hasAvailableVideoFrame { false };
-    bool m_seeking { false };
     bool m_visible { false };
     bool m_loadingProgressed { false };
     bool m_loadFinished { false };

@@ -50,11 +50,6 @@ WebGLCompressedTextureS3TC::WebGLCompressedTextureS3TC(WebGLRenderingContextBase
 
 WebGLCompressedTextureS3TC::~WebGLCompressedTextureS3TC() = default;
 
-WebGLExtension::ExtensionName WebGLCompressedTextureS3TC::getName() const
-{
-    return WebGLCompressedTextureS3TCName;
-}
-
 bool WebGLCompressedTextureS3TC::supported(GraphicsContextGL& context)
 {
     return context.supportsExtension("GL_EXT_texture_compression_dxt1"_s)

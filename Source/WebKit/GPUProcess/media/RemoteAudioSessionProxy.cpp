@@ -145,6 +145,11 @@ RemoteAudioSessionProxyManager& RemoteAudioSessionProxy::audioSessionManager()
     return m_gpuConnection.gpuProcess().audioSessionManager();
 }
 
+bool RemoteAudioSessionProxy::allowTestOnlyIPC()
+{
+    return m_gpuConnection.allowTestOnlyIPC();
+}
+
 IPC::Connection& RemoteAudioSessionProxy::connection()
 {
     return m_gpuConnection.connection();

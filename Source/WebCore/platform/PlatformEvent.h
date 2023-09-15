@@ -148,19 +148,3 @@ protected:
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::PlatformEvent::Modifier> {
-    using values = EnumValues<
-        WebCore::PlatformEvent::Modifier,
-        WebCore::PlatformEvent::Modifier::AltKey,
-        WebCore::PlatformEvent::Modifier::ControlKey,
-        WebCore::PlatformEvent::Modifier::MetaKey,
-        WebCore::PlatformEvent::Modifier::ShiftKey,
-        WebCore::PlatformEvent::Modifier::CapsLockKey,
-        WebCore::PlatformEvent::Modifier::AltGraphKey
-    >;
-};
-
-} // namespace WTF

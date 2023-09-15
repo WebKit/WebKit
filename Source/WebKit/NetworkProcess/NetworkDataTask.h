@@ -172,6 +172,7 @@ protected:
     String m_lastHTTPMethod;
     String m_pendingDownloadLocation;
     WebCore::ResourceRequest m_firstRequest;
+    WebCore::ResourceRequest m_previousRequest;
     bool m_shouldClearReferrerOnHTTPSToHTTPRedirect { true };
     String m_suggestedFilename;
     bool m_dataTaskIsForMainFrameNavigation { false };

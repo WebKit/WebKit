@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "ArrayPrototype.h"
+#include "CPUInlines.h"
 #include "CacheableIdentifierInlines.h"
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"
@@ -1530,6 +1531,13 @@ private:
                 if (node->numChildren() == 4)
                     fixEdge<Int32Use>(m_graph.varArgChild(node, 2));
             }
+            break;
+        }
+
+        case ArraySpliceExtract: {
+            fixEdge<ArrayUse>(node->child1());
+            fixEdge<Int32Use>(node->child2());
+            fixEdge<Int32Use>(node->child3());
             break;
         }
 
@@ -3072,6 +3080,8 @@ private:
         case NewAsyncGenerator:
         case NewInternalFieldObject:
         case NewRegexp:
+        case NewMap:
+        case NewSet:
         case IsTypedArrayView:
         case IsEmpty:
         case TypeOfIsUndefined:

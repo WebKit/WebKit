@@ -1,0 +1,14 @@
+
+PASS Initial font-size for ::before
+PASS Initial font-size for ::after
+PASS Initial font-size for ::marker
+PASS Initial font-size for ::first-line
+PASS Initial font-size for ::first-letter
+PASS Initial font-size for ::backdrop
+PASS font-size for ::before depending on container
+PASS font-size for ::after depending on container
+PASS font-size for ::marker depending on container
+PASS font-size for ::first-line depending on container
+PASS font-size for ::first-letter depending on container
+PASS font-size for ::backdrop depending on container
+

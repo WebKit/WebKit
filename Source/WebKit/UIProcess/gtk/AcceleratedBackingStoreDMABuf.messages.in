@@ -21,7 +21,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> AcceleratedBackingStoreDMABuf NotRefCounted {
-    Configure(UnixFileDescriptor backFD, UnixFileDescriptor frontFD, UnixFileDescriptor displayFD, WebCore::IntSize size, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier)
-    ConfigureSHM(WebKit::ShareableBitmap::Handle backBufferHandle, WebKit::ShareableBitmap::Handle frontBufferHandle, WebKit::ShareableBitmap::Handle displayBufferHandle)
-    Frame()
+    DidCreateBuffer(uint64_t id, UnixFileDescriptor fd, WebCore::IntSize size, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier)
+    DidCreateBufferSHM(uint64_t id, WebKit::ShareableBitmap::Handle handle)
+    DidDestroyBuffer(uint64_t id)
+    Frame(uint64_t id)
 }

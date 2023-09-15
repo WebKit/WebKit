@@ -32,6 +32,13 @@ from webkitpy.tool.commands.applywatchlistlocal import ApplyWatchListLocal
 
 
 class ApplyWatchListLocalTest(CommandsTest):
+    def assertRaisesRegex(self, *args, **kwargs):
+        try:
+            return super(ApplyWatchListLocalTest, self).assertRaisesRegex(*args, **kwargs)
+        except AttributeError:
+            # Python 2
+            return self.assertRaisesRegexp(*args, **kwargs)
+
     def test_args_parsing(self):
         expected_logs = """MockWatchList: determine_cc_and_messages
 No bug was updated because no id was given.
@@ -56,4 +63,4 @@ Message2."
         self.assert_execute_outputs(ApplyWatchListLocal(), ['50002'], expected_logs=expected_logs)
 
     def test_args_parsing_with_two_bugs(self):
-        self._assertRaisesRegexp(Exception, 'Too many arguments given: 1234 5678', self.assert_execute_outputs, ApplyWatchListLocal(), ['1234', '5678'])
+        self.assertRaisesRegex(Exception, 'Too many arguments given: 1234 5678', self.assert_execute_outputs, ApplyWatchListLocal(), ['1234', '5678'])

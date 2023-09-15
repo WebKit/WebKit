@@ -22,7 +22,6 @@ namespace rx
 class FunctionsEGL;
 class FunctionsEGLDL;
 class RendererEGL;
-class WorkerContext;
 
 class DisplayEGL : public DisplayGL
 {
@@ -40,10 +39,6 @@ class DisplayEGL : public DisplayGL
     void setBlobCacheFuncs(EGLSetBlobFuncANDROID set, EGLGetBlobFuncANDROID get) override;
 
     virtual void destroyNativeContext(EGLContext context);
-
-    virtual WorkerContext *createWorkerContext(std::string *infoLog,
-                                               EGLContext sharedContext,
-                                               const native_egl::AttributeVector workerAttribs);
 
     egl::Error initialize(egl::Display *display) override;
     void terminate() override;
@@ -124,8 +119,7 @@ class DisplayEGL : public DisplayGL
 
     egl::Error initializeContext(EGLContext shareContext,
                                  const egl::AttributeMap &eglAttributes,
-                                 EGLContext *outContext,
-                                 native_egl::AttributeVector *outAttribs) const;
+                                 EGLContext *outContext) const;
 
     void generateExtensions(egl::DisplayExtensions *outExtensions) const override;
 
@@ -145,6 +139,11 @@ class DisplayEGL : public DisplayGL
                                     T *value,
                                     const char *extension,
                                     const U &defaultValue) const;
+
+    egl::Error findConfig(egl::Display *display,
+                          bool forMockPbuffer,
+                          EGLConfig *outConfig,
+                          std::vector<EGLint> *outConfigAttribs);
 
     std::shared_ptr<RendererEGL> mRenderer;
     std::map<EGLAttrib, std::weak_ptr<RendererEGL>> mVirtualizationGroups;

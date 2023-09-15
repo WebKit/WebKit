@@ -2,14 +2,14 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-initializedatetimeformat
+esid: sec-createdatetimeformat
 description: >
     Checks error cases for the options argument to the DateTimeFormat constructor.
 info: |
-    InitializeDateTimeFormat ( dateTimeFormat, locales, options )
+    CreateDateTimeFormat ( dateTimeFormat, locales, options, required, defaults )
 
     ...
-    28. Let dateStyle be ? GetOption(options, "dateStyle", "string", « "full", "long", "medium", "short" », undefined).
+    39. Let dateStyle be ? GetOption(options, "dateStyle", "string", « "full", "long", "medium", "short" », undefined).
 features: [Intl.DateTimeFormat-datetimestyle]
 ---*/
 

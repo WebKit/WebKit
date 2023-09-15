@@ -266,9 +266,9 @@ JSInternalPromise* importModule(JSGlobalObject* globalObject, const Identifier& 
     return globalObject->moduleLoader()->requestImportModule(globalObject, moduleName, referrer, parameters, scriptFetcher);
 }
 
-HashMap<RefPtr<UniquedStringImpl>, String> retrieveAssertionsFromDynamicImportOptions(JSGlobalObject* globalObject, JSValue options, const Vector<RefPtr<UniquedStringImpl>>& supportedAssertions)
+HashMap<RefPtr<UniquedStringImpl>, String> retrieveImportAttributesFromDynamicImportOptions(JSGlobalObject* globalObject, JSValue options, const Vector<RefPtr<UniquedStringImpl>>& supportedImportAttributes)
 {
-    // https://tc39.es/proposal-import-assertions/#sec-evaluate-import-call
+    // https://tc39.es/proposal-import-attributes/#sec-evaluate-import-call
 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -282,59 +282,65 @@ HashMap<RefPtr<UniquedStringImpl>, String> retrieveAssertionsFromDynamicImportOp
         return { };
     }
 
-    JSValue assertions = optionsObject->get(globalObject, vm.propertyNames->builtinNames().assertPublicName());
+    JSValue attributes = optionsObject->get(globalObject, vm.propertyNames->withKeyword);
     RETURN_IF_EXCEPTION(scope, { });
 
-    if (assertions.isUndefined())
+    if (attributes.isUndefined())
         return { };
 
-    auto* assertionsObject = jsDynamicCast<JSObject*>(assertions);
-    if (UNLIKELY(!assertionsObject)) {
-        throwTypeError(globalObject, scope, "dynamic import's options.assert should be an object"_s);
+    auto* attributesObject = jsDynamicCast<JSObject*>(attributes);
+    if (UNLIKELY(!attributesObject)) {
+        throwTypeError(globalObject, scope, "dynamic import's options.with should be an object"_s);
         return { };
     }
 
     PropertyNameArray properties(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
-    assertionsObject->methodTable()->getOwnPropertyNames(assertionsObject, globalObject, properties, DontEnumPropertiesMode::Exclude);
+    attributesObject->methodTable()->getOwnPropertyNames(attributesObject, globalObject, properties, DontEnumPropertiesMode::Exclude);
     RETURN_IF_EXCEPTION(scope, { });
 
     HashMap<RefPtr<UniquedStringImpl>, String> result;
     for (auto& key : properties) {
-        JSValue value = assertionsObject->get(globalObject, key);
+        JSValue value = attributesObject->get(globalObject, key);
         RETURN_IF_EXCEPTION(scope, { });
 
         if (UNLIKELY(!value.isString())) {
-            throwTypeError(globalObject, scope, "dynamic import's options.assert includes non string property"_s);
+            throwTypeError(globalObject, scope, "dynamic import's options.with includes non string property"_s);
             return { };
         }
 
         String valueString = value.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
 
-        if (supportedAssertions.contains(key.impl()))
-            result.add(key.impl(), WTFMove(valueString));
+        result.add(key.impl(), WTFMove(valueString));
+    }
+
+    for (auto& [key, value] : result) {
+        if (UNLIKELY(!supportedImportAttributes.contains(key.get()))) {
+            throwTypeError(globalObject, scope, makeString("dynamic import's options.with includes unsupported attribute \""_s, StringView(key.get()), "\""_s));
+            return { };
+        }
     }
 
     return result;
 }
 
-std::optional<ScriptFetchParameters::Type> retrieveTypeAssertion(JSGlobalObject* globalObject, const HashMap<RefPtr<UniquedStringImpl>, String>& assertions)
+std::optional<ScriptFetchParameters::Type> retrieveTypeImportAttribute(JSGlobalObject* globalObject, const HashMap<RefPtr<UniquedStringImpl>, String>& attributes)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (assertions.isEmpty())
+    if (attributes.isEmpty())
         return { };
 
-    auto iterator = assertions.find(vm.propertyNames->type.impl());
-    if (iterator == assertions.end())
+    auto iterator = attributes.find(vm.propertyNames->type.impl());
+    if (iterator == attributes.end())
         return { };
 
     String value = iterator->value;
     if (auto result = ScriptFetchParameters::parseType(value))
         return result;
 
-    throwTypeError(globalObject, scope, makeString("Import assertion type \""_s, value, "\" is not valid"_s));
+    throwTypeError(globalObject, scope, makeString("Import attribute type \""_s, value, "\" is not valid"_s));
     return { };
 }
 

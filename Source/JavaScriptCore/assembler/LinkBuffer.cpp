@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,10 +32,7 @@
 #include "Disassembler.h"
 #include "JITCode.h"
 #include "Options.h"
-
-#if OS(LINUX)
 #include "PerfLog.h"
-#endif
 
 namespace JSC {
 
@@ -57,17 +54,19 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImp
 {
     CodeRef<LinkBufferPtrTag> result = finalizeCodeWithoutDisassemblyImpl();
 
-#if OS(LINUX)
+#if OS(LINUX) || OS(DARWIN)
     if (Options::logJITCodeForPerf()) {
         StringPrintStream out;
         va_list argList;
-        va_start(argList, format);
         va_start(argList, format);
         out.vprintf(format, argList);
         va_end(argList);
         PerfLog::log(out.toCString(), result.code().untaggedPtr<const uint8_t*>(), result.size());
     }
 #endif
+
+    if (!dumpDisassembly && !Options::logJIT())
+        return result;
 
     bool justDumpingHeader = !dumpDisassembly || m_alreadyDisassembled;
 
@@ -95,11 +94,10 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImp
         out.vprintf(format, argList);
 
     va_end(argList);
-    out.printf(":\n");
 
     uint8_t* executableAddress = result.code().untaggedPtr<uint8_t*>();
-    out.printf("    Code at [%p, %p)%s\n", executableAddress, executableAddress + result.size(), justDumpingHeader ? "." : ":");
-    
+    out.printf(": [%p, %p) %zu bytes%s\n", executableAddress, executableAddress + result.size(), result.size(), justDumpingHeader ? "." : ":");
+
     CString header = out.toCString();
     
     if (justDumpingHeader) {
@@ -142,7 +140,7 @@ static std::once_flag flag;
     return *threadSpecificBranchCompactionLinkBufferPtr;
 }
 
-DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BranchCompactionLinkBuffer);
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER_AND_EXPORT(BranchCompactionLinkBuffer, WTF_INTERNAL);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BranchCompactionLinkBuffer);
 
 class BranchCompactionLinkBuffer {

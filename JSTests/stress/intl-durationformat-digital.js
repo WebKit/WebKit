@@ -16,8 +16,7 @@ if (Intl.DurationFormat) {
             style: 'digital'
         });
         shouldBeOneOf(fmt.format({ years: 1, months: 2, weeks: 3, days: 4, hours: 10, minutes: 34, seconds: 33, milliseconds: 32 }), [
-            `1y, 2mo, 3w, 4d, 10.34.33`,
-            `1y, 2m, 3w, 4d, 10.34.33`,
+            `1 yr, 2 mths, 3 wks, 4 days, 10.34.33`,
         ]);
     }
     {
@@ -25,8 +24,7 @@ if (Intl.DurationFormat) {
             style: 'digital'
         });
         shouldBeOneOf(fmt.format({ years: 1, months: 2, weeks: 3, days: 4, hours: 10, minutes: 34, seconds: 33, milliseconds: 32 }), [
-            `1y, 2mo, 3w, 4d, 10.34.33`,
-            `1y, 2m, 3w, 4d, 10.34.33`,
+            `1 yr, 2 mths, 3 wks, 4 days, 10.34.33`,
         ]);
     }
     {
@@ -34,8 +32,7 @@ if (Intl.DurationFormat) {
             style: 'digital'
         });
         shouldBeOneOf(fmt.format({ years: 1, months: 2, weeks: 3, days: 4, hours: 10, minutes: 34, seconds: 33, milliseconds: 32 }), [
-            `一y, 二mo, 三w, 四d, 一〇:三四:三三`,
-            `一y, 二m, 三w, 四d, 一〇:三四:三三`,
+            `一 yr, 二 mths, 三 wks, 四 days, 一〇:三四:三三`,
         ]);
     }
     {
@@ -43,8 +40,7 @@ if (Intl.DurationFormat) {
             style: 'digital'
         });
         shouldBeOneOf(fmt.format({ years: 1, months: 2, weeks: 3, days: 4, hours: 10, minutes: 34, seconds: 33, milliseconds: 32 }), [
-            `1y, 2mo, 3w, 4d, 10:34:33`,
-            `1y, 2m, 3w, 4d, 10:34:33`,
+            `1 yr, 2 mths, 3 wks, 4 days, 10:34:33`,
         ]);
     }
     {
@@ -52,8 +48,7 @@ if (Intl.DurationFormat) {
             style: 'digital'
         });
         shouldBeOneOf(fmt.format({ years: 1, months: 2, weeks: 3, days: 4, hours: 10, minutes: 34, seconds: 33, milliseconds: 32 }), [
-            `1y, 2mo, 3w, 4d, 10:34:33`,
-            `1y, 2m, 3w, 4d, 10:34:33`,
+            `1 yr, 2 mths, 3 wks, 4 days, 10:34:33`,
         ]);
     }
     {
@@ -65,8 +60,7 @@ if (Intl.DurationFormat) {
         });
 
         shouldBeOneOf(fmt.format({ years: 1, months: 2, weeks: 3, days: 4, hours: 10, minutes: 34, seconds: 33, milliseconds: 32 }), [
-            `1y, 2mo, 3w, 4d, 10:34:33.032000000`,
-            `1y, 2m, 3w, 4d, 10:34:33.032000000`,
+            `1 yr, 2 mths, 3 wks, 4 days, 10:34:33.032000000`,
         ]);
     }
     {
@@ -78,8 +72,7 @@ if (Intl.DurationFormat) {
         });
 
         shouldBeOneOf(fmt.format({ years: 1, months: 2, weeks: 3, days: 4, hours: 10, minutes: 34, seconds: 33, milliseconds: 32 }), [
-            `1y, 2mo, 3w, 4d, 10:34:33.03`,
-            `1y, 2m, 3w, 4d, 10:34:33.03`,
+            `1 yr, 2 mths, 3 wks, 4 days, 10:34:33.03`,
         ]);
     }
     {

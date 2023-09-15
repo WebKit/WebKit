@@ -79,21 +79,21 @@ static void changeWordCase(WebPage* page, NSString *(*changeCase)(NSString *))
 
 void WebEditorClient::uppercaseWord()
 {
-    changeWordCase(m_page.get(), [] (NSString *string) {
+    changeWordCase(RefPtr { m_page.get() }.get(), [] (NSString *string) {
         return [string uppercaseString];
     });
 }
 
 void WebEditorClient::lowercaseWord()
 {
-    changeWordCase(m_page.get(), [] (NSString *string) {
+    changeWordCase(RefPtr { m_page.get() }.get(), [] (NSString *string) {
         return [string lowercaseString];
     });
 }
 
 void WebEditorClient::capitalizeWord()
 {
-    changeWordCase(m_page.get(), [] (NSString *string) {
+    changeWordCase(RefPtr { m_page.get() }.get(), [] (NSString *string) {
         return [string capitalizedString];
     });
 }
@@ -107,19 +107,19 @@ void WebEditorClient::showSubstitutionsPanel(bool)
 
 bool WebEditorClient::substitutionsPanelIsShowing()
 {
-    auto sendResult = m_page->sendSync(Messages::WebPageProxy::SubstitutionsPanelIsShowing());
+    auto sendResult = Ref { *m_page }->sendSync(Messages::WebPageProxy::SubstitutionsPanelIsShowing());
     auto [isShowing] = sendResult.takeReplyOr(false);
     return isShowing;
 }
 
 void WebEditorClient::toggleSmartInsertDelete()
 {
-    m_page->send(Messages::WebPageProxy::toggleSmartInsertDelete());
+    Ref { *m_page }->send(Messages::WebPageProxy::toggleSmartInsertDelete());
 }
 
 bool WebEditorClient::isAutomaticQuoteSubstitutionEnabled()
 {
-    if (m_page->isControlledByAutomation())
+    if (Ref { *m_page }->isControlledByAutomation())
         return false;
 
     return WebProcess::singleton().textCheckerState().isAutomaticQuoteSubstitutionEnabled;
@@ -127,7 +127,7 @@ bool WebEditorClient::isAutomaticQuoteSubstitutionEnabled()
 
 void WebEditorClient::toggleAutomaticQuoteSubstitution()
 {
-    m_page->send(Messages::WebPageProxy::toggleAutomaticQuoteSubstitution());
+    Ref { *m_page }->send(Messages::WebPageProxy::toggleAutomaticQuoteSubstitution());
 }
 
 bool WebEditorClient::isAutomaticLinkDetectionEnabled()
@@ -137,7 +137,7 @@ bool WebEditorClient::isAutomaticLinkDetectionEnabled()
 
 void WebEditorClient::toggleAutomaticLinkDetection()
 {
-    m_page->send(Messages::WebPageProxy::toggleAutomaticLinkDetection());
+    Ref { *m_page }->send(Messages::WebPageProxy::toggleAutomaticLinkDetection());
 }
 
 bool WebEditorClient::isAutomaticDashSubstitutionEnabled()
@@ -150,7 +150,7 @@ bool WebEditorClient::isAutomaticDashSubstitutionEnabled()
 
 void WebEditorClient::toggleAutomaticDashSubstitution()
 {
-    m_page->send(Messages::WebPageProxy::toggleAutomaticDashSubstitution());
+    Ref { *m_page }->send(Messages::WebPageProxy::toggleAutomaticDashSubstitution());
 }
 
 bool WebEditorClient::isAutomaticTextReplacementEnabled()
@@ -163,7 +163,7 @@ bool WebEditorClient::isAutomaticTextReplacementEnabled()
 
 void WebEditorClient::toggleAutomaticTextReplacement()
 {
-    m_page->send(Messages::WebPageProxy::toggleAutomaticTextReplacement());
+    Ref { *m_page }->send(Messages::WebPageProxy::toggleAutomaticTextReplacement());
 }
 
 bool WebEditorClient::isAutomaticSpellingCorrectionEnabled()

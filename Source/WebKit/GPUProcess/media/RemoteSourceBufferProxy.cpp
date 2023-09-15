@@ -64,8 +64,16 @@ RemoteSourceBufferProxy::RemoteSourceBufferProxy(GPUConnectionToWebProcess& conn
 RemoteSourceBufferProxy::~RemoteSourceBufferProxy()
 {
     m_sourceBufferPrivate->detach();
-    if (m_connectionToWebProcess)
-        m_connectionToWebProcess->messageReceiverMap().removeMessageReceiver(Messages::RemoteSourceBufferProxy::messageReceiverName(), m_identifier.toUInt64());
+    disconnect();
+}
+
+void RemoteSourceBufferProxy::disconnect()
+{
+    if (!m_connectionToWebProcess)
+        return;
+
+    m_connectionToWebProcess->messageReceiverMap().removeMessageReceiver(Messages::RemoteSourceBufferProxy::messageReceiverName(), m_identifier.toUInt64());
+    m_connectionToWebProcess = nullptr;
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&& segment, CompletionHandler<void(ReceiveResult)>&& completionHandler)
@@ -334,9 +342,14 @@ void RemoteSourceBufferProxy::setAppendWindowEnd(const MediaTime& appendWindowEn
     m_sourceBufferPrivate->setAppendWindowEnd(appendWindowEnd);
 }
 
-void RemoteSourceBufferProxy::seekToTime(const MediaTime& mediaTime)
+void RemoteSourceBufferProxy::computeSeekTime(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
 {
-    m_sourceBufferPrivate->seekToTime(mediaTime);
+    m_sourceBufferPrivate->computeSeekTime(target, WTFMove(completionHandler));
+}
+
+void RemoteSourceBufferProxy::seekToTime(const MediaTime& time)
+{
+    m_sourceBufferPrivate->seekToTime(time);
 }
 
 void RemoteSourceBufferProxy::updateTrackIds(Vector<std::pair<TrackPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier>>&& identifierPairs)

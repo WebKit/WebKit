@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/parsing/alignment-baseline-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/parsing/alignment-baseline-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/parsing/alignment-baseline-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/parsing/baseline-shift-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/parsing/baseline-shift-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/parsing/baseline-shift-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/parsing/dominant-baseline-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/parsing/dominant-baseline-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/parsing/dominant-baseline-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/parsing/line-height-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/parsing/line-height-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/parsing/line-height-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/parsing/vertical-align-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/parsing/vertical-align-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-inline/parsing/vertical-align-valid.html

@@ -756,6 +756,27 @@ TEST_P(MultisampleResolveTest, DISABLED_ResolveSubpassMSImage)
     angle::Sleep(2000);
 }
 
+// This is a test that must be verified visually.
+//
+// Tests that clear of the default framebuffer with multisample applies to the window.
+TEST_P(MultisampleTestES3, DISABLED_ClearMSAAReachesWindow)
+{
+    ANGLE_GL_PROGRAM(blueProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+
+    // Draw blue.
+    drawQuad(blueProgram, essl1_shaders::PositionAttrib(), 0.5f);
+    swapBuffers();
+
+    // Use glClear to clear to red.  Regression test for the Vulkan backend where this clear
+    // remained "deferred" and didn't make it to the window on swap.
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    swapBuffers();
+
+    // Wait for visual verification.
+    angle::Sleep(2000);
+}
+
 // These colors match the shader in resolveToFBO which returns (0.5, 0.6, 0.7, 0.8).
 const GLColor MultisampleResolveTest::kEXPECTED_R8(128, 0, 0, 255);
 const GLColor MultisampleResolveTest::kEXPECTED_RG8(128, 153, 0, 255);

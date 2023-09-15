@@ -6,7 +6,7 @@ esid: sec-temporal.plaindatetime.prototype.with
 description: Verify the result of calendar.fields() is treated correctly.
 info: |
     sec-temporal.plaindatetime.prototype.with step 9:
-      9. Let _fieldNames_ be ? CalendarFields(_calendar_, « *"day"*, *"hour"*, *"microsecond"*, *"millisecond"*, *"minute"*, *"month"*, *"monthCode"*, *"nanosecond"*, *"second"*, *"year"* »).
+      9. Let _fieldNames_ be ? CalendarFields(_calendar_, « *"day"*, *"month"*, *"monthCode"*, *"year"* »).
     sec-temporal-calendarfields step 4:
       4. Let _result_ be ? IterableToList(_fieldsArray_).
 includes: [compareArray.js, temporalHelpers.js]
@@ -15,14 +15,8 @@ features: [Temporal]
 
 const expected = [
   "day",
-  "hour",
-  "microsecond",
-  "millisecond",
-  "minute",
   "month",
   "monthCode",
-  "nanosecond",
-  "second",
   "year",
 ];
 

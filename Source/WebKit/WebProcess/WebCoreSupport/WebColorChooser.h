@@ -39,7 +39,7 @@ namespace WebKit {
 
 class WebPage;
 
-class WebColorChooser : public WebCore::ColorChooser {
+class WebColorChooser : public WebCore::ColorChooser, public CanMakeWeakPtr<WebColorChooser> {
 public:
     WebColorChooser(WebPage*, WebCore::ColorChooserClient*, const WebCore::Color&);
     virtual ~WebColorChooser();

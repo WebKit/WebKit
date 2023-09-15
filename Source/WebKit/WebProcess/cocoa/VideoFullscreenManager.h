@@ -76,8 +76,6 @@ public:
     }
     virtual ~VideoFullscreenInterfaceContext();
 
-    void invalidate() { m_manager = nullptr; }
-
     LayerHostingContext* layerHostingContext() { return m_layerHostingContext.get(); }
     void setLayerHostingContext(std::unique_ptr<LayerHostingContext>&&);
 
@@ -108,7 +106,7 @@ private:
 
     VideoFullscreenInterfaceContext(VideoFullscreenManager&, PlaybackSessionContextIdentifier);
 
-    VideoFullscreenManager* m_manager;
+    WeakPtr<VideoFullscreenManager> m_manager;
     PlaybackSessionContextIdentifier m_contextId;
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     AnimationType m_animationType { AnimationType::None };
@@ -119,8 +117,15 @@ private:
     RetainPtr<CALayer> m_rootLayer;
 };
 
-class VideoFullscreenManager : public RefCounted<VideoFullscreenManager>, private IPC::MessageReceiver {
+class VideoFullscreenManager
+    : public RefCounted<VideoFullscreenManager>
+    , public CanMakeWeakPtr<VideoFullscreenManager>
+    , private IPC::MessageReceiver {
 public:
+    using CanMakeWeakPtr<VideoFullscreenManager>::WeakPtrImplType;
+    using CanMakeWeakPtr<VideoFullscreenManager>::WeakValueType;
+    using CanMakeWeakPtr<VideoFullscreenManager>::weakPtrFactory;
+
     static Ref<VideoFullscreenManager> create(WebPage&, PlaybackSessionManager&);
     virtual ~VideoFullscreenManager();
 

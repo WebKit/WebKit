@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO)
 
 messages -> RemoteAudioDestinationManager NotRefCounted {
-    CreateAudioDestination(WebKit::RemoteAudioDestinationIdentifier identifier, String inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore renderSemaphore)
+    CreateAudioDestination(WebKit::RemoteAudioDestinationIdentifier identifier, String inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore renderSemaphore, WebKit::SharedMemory::Handle frameCount)
     DeleteAudioDestination(WebKit::RemoteAudioDestinationIdentifier identifier)
 
     StartAudioDestination(WebKit::RemoteAudioDestinationIdentifier identifier) -> (bool isPlaying)

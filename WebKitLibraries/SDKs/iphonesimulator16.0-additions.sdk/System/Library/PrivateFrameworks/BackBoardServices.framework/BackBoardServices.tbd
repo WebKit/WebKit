@@ -1,0 +1,18 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator]
+install-name: /System/Library/PrivateFrameworks/BackBoardServices.framework/BackBoardServices
+reexported-libraries:
+-       targets: [i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator]
+        libraries: [/System/Library/PrivateFrameworks/AssertionServices.framework/AssertionServices]
+exports:
+-       targets: [i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator]
+        objc-classes: [BKSMousePointerService]
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator]
+install-name: /System/Library/PrivateFrameworks/AssertionServices.framework/AssertionServices
+current-version: 803.120.4
+exports: []
+...

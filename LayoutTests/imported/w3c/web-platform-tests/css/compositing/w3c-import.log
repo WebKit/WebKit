@@ -1,0 +1,49 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/Blending_in_a_group_with_filter-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/Blending_in_a_group_with_filter.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/Blending_in_a_group_with_opacity-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/Blending_in_a_group_with_opacity.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/Text_with_SVG_background-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/Text_with_SVG_background.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/canvas-composite-modes.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/compositing_simple_div-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/compositing_simple_div-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/compositing_simple_div.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/line-with-svg-background-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/line-with-svg-background.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/opacity-and-transform-animation-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-background-transparency-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-background-transparency-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-background-transparency.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-blend-mode-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-blend-mode-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-blend-mode.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-filter-background-clip-text-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-filter-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-filter-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-filter.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-opacity-change-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-opacity-change-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-opacity-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-opacity-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-opacity-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/root-element-opacity.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/text-with-svg-background-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/text-with-svg-background.html

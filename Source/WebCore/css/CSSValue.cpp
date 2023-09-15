@@ -80,6 +80,7 @@
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "DeprecatedCSSOMValueList.h"
 #include "EventTarget.h"
+#include <wtf/Hasher.h>
 
 namespace WebCore {
 
@@ -197,6 +198,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSRayValue>(*this));
     case RectClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSRectValue>(*this));
+    case RectShapeClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSRectShapeValue>(*this));
     case ReflectClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSReflectValue>(*this));
     case ShadowClass:
@@ -217,6 +220,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSValuePair>(*this));
     case VariableReferenceClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSVariableReferenceValue>(*this));
+    case XywhShapeClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSXywhValue>(*this));
 #if ENABLE(CSS_PAINTING_API)
     case PaintImageClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSPaintImageValue>(*this));
@@ -281,6 +286,25 @@ bool CSSValue::equals(const CSSValue& other) const
     return false;
 }
 
+bool CSSValue::addHash(Hasher& hasher) const
+{
+    // To match equals() a single item list could have the same hash as the item.
+    // FIXME: Some Style::Builder functions can only handle list values.
+
+    add(hasher, classType());
+
+    return visitDerived([&](auto& typedThis) {
+        return typedThis.addDerivedHash(hasher);
+    });
+}
+
+// FIXME: Add custom hash functions for all derived classes and remove this function.
+bool CSSValue::addDerivedHash(Hasher& hasher) const
+{
+    add(hasher, this);
+    return false;
+}
+
 bool CSSValue::isCSSLocalURL(StringView relativeURL)
 {
     return relativeURL.isEmpty() || relativeURL.startsWith('#');
@@ -337,6 +361,11 @@ Ref<DeprecatedCSSOMValue> CSSValue::createDeprecatedCSSOMWrapper(CSSStyleDeclara
     default:
         return DeprecatedCSSOMComplexValue::create(*this, styleDeclaration);
     }
+}
+
+void add(Hasher& hasher, const CSSValue& value)
+{
+    value.addHash(hasher);
 }
 
 }

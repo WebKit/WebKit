@@ -42,11 +42,6 @@ EXTTextureNorm16::EXTTextureNorm16(WebGLRenderingContextBase& context)
 
 EXTTextureNorm16::~EXTTextureNorm16() = default;
 
-WebGLExtension::ExtensionName EXTTextureNorm16::getName() const
-{
-    return EXTTextureNorm16Name;
-}
-
 bool EXTTextureNorm16::supported(GraphicsContextGL& context)
 {
     return context.supportsExtension("GL_EXT_texture_norm16"_s);

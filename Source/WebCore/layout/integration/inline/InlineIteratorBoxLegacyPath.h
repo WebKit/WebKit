@@ -129,7 +129,7 @@ public:
     TextDirection direction() const { return bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR; }
     bool isFirstLine() const { return !rootInlineBox().prevRootBox(); }
 
-    bool operator==(const BoxLegacyPath& other) const { return m_inlineBox == other.m_inlineBox; }
+    friend bool operator==(BoxLegacyPath, BoxLegacyPath) = default;
 
     bool atEnd() const { return !m_inlineBox; }
 

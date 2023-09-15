@@ -1,0 +1,11 @@
+
+
+PASS Verify chunks can be passed within the same agent clusters
+FAIL Verify chunks cannot be passed accross the different agent clusters assert_false: expected false got true
+PASS Verify chunks can be passed back and forth between main and worker
+PASS Verify chunks can be passed back and forth between main and data-url worker
+FAIL Verify chunks cannot be passed to sharedworker assert_equals: expected "NOT_RECEIVED" but got "RECEIVED"
+FAIL Verify chunks cannot be passed to serviceworker assert_equals: expected "NOT_RECEIVED" but got "RECEIVED"
+PASS Verify chunks is unavailable in sharedworker
+PASS Verify chunks is unavailable in serviceworker
+

@@ -62,7 +62,7 @@ public:
 
     size_t findBit(size_t startIndex, bool value) const;
 
-    bool operator==(const FixedBitVector&) const;
+    friend bool operator==(const FixedBitVector&, const FixedBitVector&) = default;
 
     unsigned hash() const;
 
@@ -153,11 +153,6 @@ ALWAYS_INLINE bool FixedBitVector::test(size_t bitIndex)
 ALWAYS_INLINE size_t FixedBitVector::findBit(size_t startIndex, bool value) const
 {
     return m_bitVector.findBit(startIndex, value);
-}
-
-ALWAYS_INLINE bool FixedBitVector::operator==(const FixedBitVector& other) const
-{
-    return m_bitVector == other.m_bitVector;
 }
 
 ALWAYS_INLINE unsigned FixedBitVector::hash() const

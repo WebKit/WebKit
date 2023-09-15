@@ -42,7 +42,7 @@ Vector<Ref<FileSystemEntry>> HTMLInputElementEntriesAPI::webkitEntries(ScriptExe
     if (input.hasAttributeWithoutSynchronization(webkitdirectoryAttr))
         return { };
 
-    auto* fileList = input.files();
+    RefPtr fileList = input.files();
     if (!fileList)
         return { };
 

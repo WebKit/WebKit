@@ -35,8 +35,8 @@
 
 namespace WebCore {
 
-WebGLVertexArrayObjectBase::WebGLVertexArrayObjectBase(WebGLRenderingContextBase& context, Type type)
-    : WebGLContextObject(context)
+WebGLVertexArrayObjectBase::WebGLVertexArrayObjectBase(WebGLRenderingContextBase& context, PlatformGLObject object, Type type)
+    : WebGLObject(context, object)
     , m_type(type)
 {
     m_vertexAttribState.resize(context.getMaxVertexAttribs());

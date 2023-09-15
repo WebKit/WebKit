@@ -80,7 +80,7 @@ void WebResourceLoadObserver::requestStorageAccessUnderOpener(const RegistrableD
     if (domainInNeedOfStorageAccess != openerDomain
         && !openerDocument.hasRequestedPageSpecificStorageAccessWithUserInteraction(domainInNeedOfStorageAccess)
         && !openerUrl.isAboutBlank()) {
-        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RequestStorageAccessUnderOpener(domainInNeedOfStorageAccess, openerPage.identifier(), openerDomain), 0);
+        Ref { WebProcess::singleton().ensureNetworkProcessConnection().connection() }->send(Messages::NetworkConnectionToWebProcess::RequestStorageAccessUnderOpener(domainInNeedOfStorageAccess, openerPage.identifier(), openerDomain), 0);
         
         openerPage.addDomainWithPageLevelStorageAccess(openerDomain, domainInNeedOfStorageAccess);
 
@@ -112,7 +112,7 @@ void WebResourceLoadObserver::scheduleNotificationIfNeeded()
 void WebResourceLoadObserver::updateCentralStatisticsStore(CompletionHandler<void()>&& completionHandler)
 {
     m_notificationTimer.stop();
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::ResourceLoadStatisticsUpdated(takeStatistics()), WTFMove(completionHandler));
+    Ref { WebProcess::singleton().ensureNetworkProcessConnection().connection() }->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::ResourceLoadStatisticsUpdated(takeStatistics()), WTFMove(completionHandler));
 }
 
 
@@ -276,7 +276,7 @@ void WebResourceLoadObserver::logSubresourceLoading(const LocalFrame* frame, con
     bool isRedirect = is3xxRedirect(redirectResponse);
     const URL& redirectedFromURL = redirectResponse.url();
     const URL& targetURL = newRequest.url();
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(frame->mainFrame());
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(frame->mainFrame());
     if (!localMainFrame)
         return;
     const URL& topFrameURL = frame ? localMainFrame->document()->url() : URL();
@@ -367,18 +367,18 @@ void WebResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const 
         statistics.mostRecentUserInteractionTime = newTime;
     }
 
-    if (auto* frame = document.frame()) {
-        if (auto* opener = dynamicDowncast<LocalFrame>(frame->loader().opener())) {
-            if (auto* openerDocument = opener->document()) {
+    if (RefPtr frame = document.frame()) {
+        if (RefPtr opener = dynamicDowncast<LocalFrame>(frame->loader().opener())) {
+            if (RefPtr openerDocument = opener->document()) {
                 if (auto* openerPage = openerDocument->page())
-                    requestStorageAccessUnderOpener(topFrameDomain, *WebPage::fromCorePage(*openerPage), *openerDocument);
+                    requestStorageAccessUnderOpener(topFrameDomain, Ref { *WebPage::fromCorePage(*openerPage) }, *openerDocument);
             }
         }
     }
 
     // We notify right away in case of a user interaction instead of waiting the usual 5 seconds because we want
     // to update cookie blocking state as quickly as possible.
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::LogUserInteraction(topFrameDomain), 0);
+    Ref { WebProcess::singleton().ensureNetworkProcessConnection().connection() }->send(Messages::NetworkConnectionToWebProcess::LogUserInteraction(topFrameDomain), 0);
 
 #if !RELEASE_LOG_DISABLED
     if (shouldLogUserInteraction) {
@@ -432,13 +432,15 @@ bool WebResourceLoadObserver::hasCrossPageStorageAccess(const SubFrameDomain& su
 void WebResourceLoadObserver::setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, SubFrameDomain>&& domains, CompletionHandler<void()>&& completionHandler)
 {
     for (auto& topDomain : domains.keys()) {
-        m_domainsWithCrossPageStorageAccess.ensure(topDomain, [] { return HashSet<RegistrableDomain> { };
-            }).iterator->value.add(domains.get(topDomain));
+        m_domainsWithCrossPageStorageAccess.ensure(topDomain, [] {
+            return HashSet<RegistrableDomain> { };
+        }).iterator->value.add(domains.get(topDomain));
 
         // Some sites have quirks where multiple login domains require storage access.
         if (auto additionalLoginDomain = WebCore::NetworkStorageSession::findAdditionalLoginDomain(topDomain, domains.get(topDomain))) {
-            m_domainsWithCrossPageStorageAccess.ensure(topDomain, [] { return HashSet<RegistrableDomain> { };
-                }).iterator->value.add(*additionalLoginDomain);
+            m_domainsWithCrossPageStorageAccess.ensure(topDomain, [] {
+                return HashSet<RegistrableDomain> { };
+            }).iterator->value.add(*additionalLoginDomain);
         }
     }
     completionHandler();

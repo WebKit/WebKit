@@ -27,8 +27,8 @@
 
 #include "ASTAttribute.h"
 #include "ASTBuilder.h"
+#include "ASTExpression.h"
 #include "ASTIdentifier.h"
-#include "ASTTypeName.h"
 #include <wtf/ReferenceWrapperVector.h>
 
 namespace WGSL::AST {
@@ -41,11 +41,11 @@ public:
 
     NodeKind kind() const final;
     Identifier& name() { return m_name; }
-    TypeName& type() { return m_type; }
+    Expression& type() { return m_type; }
     Attribute::List& attributes() { return m_attributes; }
 
 private:
-    StructureMember(SourceSpan span, Identifier&& name, TypeName::Ref&& type, Attribute::List&& attributes)
+    StructureMember(SourceSpan span, Identifier&& name, Expression::Ref&& type, Attribute::List&& attributes)
         : Node(span)
         , m_name(WTFMove(name))
         , m_attributes(WTFMove(attributes))
@@ -54,7 +54,7 @@ private:
 
     Identifier m_name;
     Attribute::List m_attributes;
-    TypeName::Ref m_type;
+    Expression::Ref m_type;
 };
 
 } // namespace WGSL::AST

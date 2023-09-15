@@ -38,6 +38,8 @@ static constexpr Seconds kWaitForAbsenceTimeout = 300_ms;
 
 struct MockTestMessageWithConnection {
     static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr IPC::MessageName name()  { return static_cast<IPC::MessageName>(123); }
     auto&& arguments() { return WTFMove(m_arguments); }
     MockTestMessageWithConnection(IPC::Connection::Handle&& handle)

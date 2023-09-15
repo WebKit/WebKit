@@ -38,6 +38,7 @@
 #include "InitializeThreading.h"
 #include "JITCompilation.h"
 #include "LinkBuffer.h"
+#include "Options.h"
 #include "ProbeContext.h"
 #include "PureNaN.h"
 #include <regex>

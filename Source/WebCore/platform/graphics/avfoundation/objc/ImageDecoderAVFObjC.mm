@@ -427,6 +427,10 @@ bool ImageDecoderAVFObjC::storeSampleBuffer(CMSampleBufferRef sampleBuffer)
 
     auto presentationTime = PAL::toMediaTime(PAL::CMSampleBufferGetOutputPresentationTimeStamp(sampleBuffer));
     auto iter = m_sampleData.presentationOrder().findSampleWithPresentationTime(presentationTime);
+    if (iter == m_sampleData.presentationOrder().end()) {
+        RELEASE_LOG_ERROR(Images, "ImageDecoderAVFObjC::storeSampleBuffer(%p) - could not find sample buffer entry with specified presentation time", this);
+        return false;
+    }
 
     if (m_imageRotationSession)
         pixelBuffer = m_imageRotationSession->rotate(pixelBuffer.get());
@@ -434,11 +438,6 @@ bool ImageDecoderAVFObjC::storeSampleBuffer(CMSampleBufferRef sampleBuffer)
     CGImageRef rawImage = nullptr;
     if (noErr != VTCreateCGImageFromCVPixelBuffer(pixelBuffer.get(), nullptr, &rawImage)) {
         RELEASE_LOG_ERROR(Images, "ImageDecoderAVFObjC::storeSampleBuffer(%p) - could not create CGImage from pixelBuffer", this);
-        return false;
-    }
-
-    if (iter == m_sampleData.presentationOrder().end()) {
-        RELEASE_LOG_ERROR(Images, "ImageDecoderAVFObjC::storeSampleBuffer(%p) - could not find sample buffer entry with specified presentation time", this);
         return false;
     }
 

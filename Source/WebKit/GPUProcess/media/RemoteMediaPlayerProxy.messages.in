@@ -40,8 +40,7 @@ messages -> RemoteMediaPlayerProxy {
     SetVolume(double volume)
     SetMuted(bool muted)
 
-    Seek(MediaTime time)
-    SeekWithTolerance(MediaTime time, MediaTime negativeTolerance, MediaTime positiveTolerance)
+    SeekToTarget(struct WebCore::SeekTarget target)
 
     SetPreload(enum:uint8_t WebCore::MediaPlayerEnums::Preload preload)
     SetPrivateBrowsingMode(bool privateMode)
@@ -67,7 +66,7 @@ messages -> RemoteMediaPlayerProxy {
     SetPresentationSize(WebCore::IntSize size)
 
 #if PLATFORM(COCOA)
-    SetVideoInlineSizeFenced(WebCore::FloatSize size, MachSendRight machSendRight)
+    SetVideoLayerSizeFenced(WebCore::FloatSize size, MachSendRight machSendRight)
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

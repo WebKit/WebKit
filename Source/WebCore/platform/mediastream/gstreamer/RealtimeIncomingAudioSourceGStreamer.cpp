@@ -55,6 +55,7 @@ const RealtimeMediaSourceSettings& RealtimeIncomingAudioSourceGStreamer::setting
 
 void RealtimeIncomingAudioSourceGStreamer::dispatchSample(GRefPtr<GstSample>&& sample)
 {
+    ASSERT(isMainThread());
     auto presentationTime = MediaTime(GST_TIME_AS_USECONDS(GST_BUFFER_PTS(gst_sample_get_buffer(sample.get()))), G_USEC_PER_SEC);
     GStreamerAudioStreamDescription description;
     GStreamerAudioData frames(WTFMove(sample), description.getInfo());

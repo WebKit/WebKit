@@ -14,6 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.canvas.clear.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.canvas.clear.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.canvas.copy.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.canvas.copy.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.canvas.destination-atop.html
@@ -36,6 +38,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.canvas.source-over.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.canvas.xor.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.canvas.xor.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.clip.clear.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.clip.copy.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.clip.destination-atop.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.clip.destination-in.html
@@ -56,6 +59,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.globalAlpha.imagepattern.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.globalAlpha.invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.globalAlpha.range.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.image.clear.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.image.clear.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.image.copy.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.image.copy.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.image.destination-atop.html
@@ -87,6 +92,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.operation.nullsuffix.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.operation.over.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.operation.unrecognised.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.solid.clear.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.solid.clear.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.solid.copy.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.solid.copy.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.solid.destination-atop.html
@@ -109,6 +116,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.solid.source-over.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.solid.xor.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.solid.xor.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.transparent.clear.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.transparent.clear.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.transparent.copy.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.transparent.copy.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.transparent.destination-atop.html

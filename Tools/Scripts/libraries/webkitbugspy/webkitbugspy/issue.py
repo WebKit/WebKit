@@ -54,6 +54,8 @@ class Issue(object):
     def __init__(self, id, tracker):
         self.id = int(id)
         self.tracker = tracker
+        self._original = None
+        self._duplicates = None
 
         self._link = None
         self._title = None
@@ -120,10 +122,24 @@ class Issue(object):
             return False
         return bool(self.tracker.set(self, opened=True, why=why))
 
-    def close(self, why=None):
+    def close(self, why=None, original=None):
         if not self.opened:
             return False
-        return bool(self.tracker.set(self, opened=False, why=why))
+        if original and (self.tracker.NAME != original.tracker.NAME or getattr(self.tracker, 'url', None) != getattr(original.tracker, 'url', None)):
+            raise ValueError('Cannot dupe {} to {}'.format(self.link, original.link))
+        return bool(self.tracker.set(self, opened=False, why=why, original=original))
+
+    @property
+    def original(self):
+        if self._opened is None:
+            self.tracker.populate(self, 'opened')
+        return self._original
+
+    @property
+    def duplicates(self):
+        if self._duplicates is None:
+            self.tracker.populate(self, 'duplicates')
+        return self._duplicates
 
     @property
     def assignee(self):
@@ -202,11 +218,15 @@ class Issue(object):
         return self._classification
 
     @property
-    def redacted(self):
-        match_string = ''
+    def _redaction_match(self):
+        result = ''
         for member in ('title', 'project', 'component', 'version', 'classification'):
-            match_string += ';{}:{}'.format(member, getattr(self, member, ''))
-        match_string += ';keywords:{}'.format(','.join(self.keywords or []))
+            result += ';{}:{}'.format(member, getattr(self, member, ''))
+        return '{};keywords:{}'.format(result, ','.join(self.keywords or []))
+
+    @property
+    def redacted(self):
+        match_string = self._redaction_match
 
         for key, value in self.tracker._redact_exemption.items():
             if key.search(match_string) and value:
@@ -216,12 +236,19 @@ class Issue(object):
                     reason="is a {}".format(self.tracker.NAME) if key.pattern == '.*' else "matches '{}'".format(key.pattern),
                 )
 
-        for key, value in self.tracker._redact.items():
-            if key.search(match_string):
-                return self.tracker.Redaction(
-                    redacted=value,
-                    reason="is a {}".format(self.tracker.NAME) if key.pattern == '.*' else "matches '{}'".format(key.pattern),
-                )
+        match_strings = [match_string]
+        if self.original:
+            match_strings.append(self.original._redaction_match)
+        for dupe in self.duplicates or []:
+            match_strings.append(dupe._redaction_match)
+
+        for m_string in match_strings:
+            for key, value in self.tracker._redact.items():
+                if key.search(m_string):
+                    return self.tracker.Redaction(
+                        redacted=value,
+                        reason="is a {}".format(self.tracker.NAME) if key.pattern == '.*' else "matches '{}'".format(key.pattern),
+                    )
         return self.tracker.Redaction(redacted=False)
 
     def set_component(self, project=None, component=None, version=None):

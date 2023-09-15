@@ -94,6 +94,7 @@ public:
 
     // Messages to be sent.
     RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, bool avoidBackendSizeCheck = false);
+    void releaseImageBuffer(WebCore::RenderingResourceIdentifier);
     bool getPixelBufferForImageBuffer(WebCore::RenderingResourceIdentifier, const WebCore::PixelBufferFormat& destinationFormat, const WebCore::IntRect& srcRect, std::span<uint8_t> result);
     void putPixelBufferForImageBuffer(WebCore::RenderingResourceIdentifier, const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat);
     RefPtr<ShareableBitmap> getShareableBitmap(WebCore::RenderingResourceIdentifier, WebCore::PreserveResolution);
@@ -104,7 +105,7 @@ public:
     void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&);
     void cacheGradient(Ref<WebCore::Gradient>&&);
     void cacheFilter(Ref<WebCore::Filter>&&);
-    void releaseAllRemoteResources();
+    void releaseAllDrawingResources();
     void releaseAllImageResources();
     void releaseRenderingResource(WebCore::RenderingResourceIdentifier);
     void markSurfacesVolatile(Vector<WebCore::RenderingResourceIdentifier>&&, CompletionHandler<void(bool madeAllVolatile)>&&);
@@ -114,13 +115,13 @@ public:
         RefPtr<WebCore::ImageBuffer> back;
         RefPtr<WebCore::ImageBuffer> secondaryBack;
     };
-    
+
     struct LayerPrepareBuffersData {
         BufferSet buffers;
         bool supportsPartialRepaint { true };
         bool hasEmptyDirtyRegion { false };
     };
-    
+
 #if PLATFORM(COCOA)
     struct SwapBuffersResult {
         BufferSet buffers;
@@ -147,20 +148,16 @@ public:
     IPC::StreamClientConnection& streamConnection();
     IPC::Connection* connection() { return m_connection.get(); }
 
-    template<typename T, typename C>
-    void sendToStreamWithAsyncReply(T&& message, C&& completionHandler)
-    {
-        streamConnection().sendWithAsyncReply(WTFMove(message), WTFMove(completionHandler), renderingBackendIdentifier(), Seconds::infinity());
-    }
-
     SerialFunctionDispatcher& dispatcher() { return m_dispatcher; }
 
     static constexpr Seconds defaultTimeout = 15_s;
 private:
     explicit RemoteRenderingBackendProxy(const RemoteRenderingBackendCreationParameters&, SerialFunctionDispatcher&);
 
-    template<typename T> auto send(T&& message);
-    template<typename T> auto sendSync(T&& message);
+    template<typename T, typename U, typename V> auto send(T&& message, ObjectIdentifierGeneric<U, V>);
+    template<typename T> auto send(T&& message) { return send(WTFMove(message), renderingBackendIdentifier()); }
+    template<typename T, typename U, typename V> auto sendSync(T&& message, ObjectIdentifierGeneric<U, V>);
+    template<typename T> auto sendSync(T&& message) { return sendSync(WTFMove(message), renderingBackendIdentifier()); }
 
     // Connection::Client
     void didClose(IPC::Connection&) final;
@@ -183,9 +180,7 @@ private:
 
     // SerialFunctionDispatcher
     void dispatch(Function<void()>&& function) final { m_dispatcher.dispatch(WTFMove(function)); }
-#if ASSERT_ENABLED
-    void assertIsCurrent() const final { m_dispatcher.assertIsCurrent(); }
-#endif
+    bool isCurrent() const final { return m_dispatcher.isCurrent(); }
     RefPtr<IPC::Connection> m_connection;
     RefPtr<IPC::StreamClientConnection> m_streamConnection;
     RemoteRenderingBackendCreationParameters m_parameters;

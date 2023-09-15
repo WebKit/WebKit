@@ -113,10 +113,6 @@ InlineRect LineBox::logicalBorderBoxForAtomicInlineLevelBox(const Box& layoutBox
     auto verticalMargin = boxGeometry.marginBefore() + boxGeometry.marginAfter();
     logicalRect.expandVertically(-verticalMargin);
 
-    // FIXME: The overhang adjustment should be based on the computed value.
-    if (auto* rubyAdjustments = layoutBox.rubyAdjustments())
-        logicalRect.moveHorizontally(-rubyAdjustments->overhang.start);
-
     return logicalRect;
 }
 
@@ -128,6 +124,13 @@ InlineRect LineBox::logicalBorderBoxForInlineBox(const Box& layoutBox, const Box
     logicalRect.expandVertically(verticalBorderAndPadding);
     logicalRect.moveVertically(-(boxGeometry.borderBefore() + boxGeometry.paddingBefore().value_or(0_lu)));
     return logicalRect;
+}
+
+InlineRect LineBox::logicalRectForOpaqueBox(const Line::Run& opaqueRun, const BoxGeometry& boxGeometry) const
+{
+    ASSERT(opaqueRun.isOpaque());
+    ASSERT(opaqueRun.layoutBox().style().isOriginalDisplayInlineType());
+    return { { }, m_rootInlineBox.logicalLeft() + opaqueRun.logicalLeft(), boxGeometry.borderBoxWidth(), boxGeometry.borderBoxHeight() };
 }
 
 } // namespace Layout

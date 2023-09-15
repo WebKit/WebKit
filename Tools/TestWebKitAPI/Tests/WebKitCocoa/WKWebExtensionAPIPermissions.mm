@@ -53,6 +53,45 @@ static void runScriptWithUserGesture(const String& script, WKWebView *background
     TestWebKitAPI::Util::run(&callbackComplete);
 }
 
+TEST(WKWebExtensionAPIPermissions, Errors)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ @"alarms", @"activeTab" ],
+        @"optional_permissions": @[ @"webNavigation", @"cookies" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"host_permissions": @[ @"*://*.apple.com/*" ]
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"await browser.test.assertRejects(browser.permissions.remove({ permissions: ['webRequest'] }), /only permissions specified in the manifest may be removed/i)",
+        @"await browser.test.assertRejects(browser.permissions.remove({ origins: ['https://example.com/'] }), /only permissions specified in the manifest may be removed/i)",
+
+        @"await browser.test.assertRejects(browser.permissions.remove({ permissions: ['alarms'] }), /required permissions cannot be removed/i)",
+        @"await browser.test.assertRejects(browser.permissions.remove({ origins: ['*://*.apple.com/*'] }), /required permissions cannot be removed/i)",
+
+        @"browser.test.assertThrows(() => browser.permissions.contains({ permissions: ['bad'] }), /'bad' is not a valid permission/i)",
+        @"browser.test.assertThrows(() => browser.permissions.contains({ origins: ['bad'] }), /'bad' is not a valid pattern/i)",
+
+        @"await browser.test.assertRejects(browser.permissions.request({ permissions: ['cookies'] }), /must be called during a user gesture/i)",
+
+        @"browser.test.assertThrows(() => browser.permissions.contains(null), /'permissions' value is invalid, because an object is expected/i)",
+        @"browser.test.assertThrows(() => browser.permissions.contains('string'), /'permissions' value is invalid, because an object is expected/i)",
+        @"browser.test.assertThrows(() => browser.permissions.contains(123), /'permissions' value is invalid, because an object is expected/i)",
+
+        @"browser.test.assertThrows(() => browser.permissions.contains({ permissions: 'notAnArray' }), /'permissions' is expected to be an array, but a string was provided/i)",
+        @"browser.test.assertThrows(() => browser.permissions.contains({ permissions: { name: 'storage' } }), /'permissions' is expected to be an array, but an object was provided/i)",
+        @"browser.test.assertThrows(() => browser.permissions.contains({ permissions: 123 }), /'permissions' is expected to be an array, but a number was provided/i)",
+
+        @"browser.test.assertThrows(() => browser.permissions.contains({ origins: 'notAnArray' }), /'origins' is expected to be an array, but a string was provided/i)",
+        @"browser.test.assertThrows(() => browser.permissions.contains({ origins: { domain: 'https://example.com/' } }), /'origins' is expected to be an array, but an object was provided/i)",
+        @"browser.test.assertThrows(() => browser.permissions.contains({ origins: 123 }), /'origins' is expected to be an array, but a number was provided/i)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(manifest, @{ @"background.js": backgroundScript });
+}
 
 TEST(WKWebExtensionAPIPermissions, PermissionsTest)
 {
@@ -76,10 +115,10 @@ TEST(WKWebExtensionAPIPermissions, PermissionsTest)
         @"browser.test.assertTrue(await browser.permissions.remove({'permissions': ['cookies']}))",
 
         // Removing functional permissions should fail.
-        @"browser.test.assertRejects(browser.permissions.remove({'permissions': ['alarms']}))",
-        @"browser.test.assertRejects(browser.permissions.remove({'permissions': ['alarms', 'activeTab']}))",
-        @"browser.test.assertRejects(browser.permissions.remove({'permissions': ['cookies', 'activeTab']}))",
-        @"browser.test.assertRejects(browser.permissions.remove({'permissions': ['scripting']}))",
+        @"await browser.test.assertRejects(browser.permissions.remove({'permissions': ['alarms']}))",
+        @"await browser.test.assertRejects(browser.permissions.remove({'permissions': ['alarms', 'activeTab']}))",
+        @"await browser.test.assertRejects(browser.permissions.remove({'permissions': ['cookies', 'activeTab']}))",
+        @"await browser.test.assertRejects(browser.permissions.remove({'permissions': ['scripting']}))",
 
         // getALL() should return all named permissions and granted match patterns.
         @"let permissions = {'origins': ['*://webkit.org/*'], 'permissions': ['alarms', 'activeTab']}",

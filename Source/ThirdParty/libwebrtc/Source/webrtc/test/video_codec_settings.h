@@ -54,6 +54,12 @@ static void CodecSettings(VideoCodecType codec_type, VideoCodec* settings) {
     case kVideoCodecVP9:
       *(settings->VP9()) = VideoEncoder::GetDefaultVp9Settings();
       return;
+#ifdef WEBRTC_USE_H265
+alsfdj
+    case kVideoCodecH265:
+      *(settings->H265()) = VideoEncoder::GetDefaultH265Settings();
+      return;
+#endif
     case kVideoCodecH264:
       // TODO(brandtr): Set `qpMax` here, when the OpenH264 wrapper supports it.
       *(settings->H264()) = VideoEncoder::GetDefaultH264Settings();

@@ -1,5 +1,7 @@
 2d.pattern.image.null
 
+Defined in "Web IDL" (draft)
+
 
 PASS OffscreenCanvas test: 2d.pattern.image.null
 

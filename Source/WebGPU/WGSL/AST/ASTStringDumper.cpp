@@ -396,7 +396,7 @@ void StringDumper::visit(ForStatement& statement)
 }
 
 // Types
-void StringDumper::visit(ArrayTypeName& type)
+void StringDumper::visit(ArrayTypeExpression& type)
 {
     m_out.print("array");
     if (type.maybeElementType()) {
@@ -410,19 +410,20 @@ void StringDumper::visit(ArrayTypeName& type)
     }
 }
 
-void StringDumper::visit(NamedTypeName& type)
+void StringDumper::visit(ElaboratedTypeExpression& type)
 {
-    m_out.print(type.name());
-}
-
-void StringDumper::visit(ParameterizedTypeName& type)
-{
-    m_out.print(ParameterizedTypeName::baseToString(type.base()), "<");
-    visit(type.elementType());
+    m_out.print(type.base(), "<");
+    bool first = true;
+    for (auto& argument : type.arguments()) {
+        if (!first)
+            m_out.print(", ");
+        first = false;
+        visit(argument);
+    }
     m_out.print(">");
 }
 
-void StringDumper::visit(ReferenceTypeName& type)
+void StringDumper::visit(ReferenceTypeExpression& type)
 {
     visit(type.type());
     m_out.print("&");

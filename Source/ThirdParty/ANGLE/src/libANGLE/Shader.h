@@ -57,8 +57,15 @@ class BinaryOutputStream;
 // We defer the compile until link time, or until properties are queried.
 enum class CompileStatus
 {
+    // Compilation never done, or has failed.
     NOT_COMPILED,
+    // Compile is in progress.
     COMPILE_REQUESTED,
+    // Compilation job is done, but is being resolved.  This enum value is there to allow access to
+    // compiled state during resolve without triggering threading-related assertions (which ensure
+    // no compile job is in progress).
+    IS_RESOLVING,
+    // Compilation was successful.
     COMPILED,
 };
 
@@ -71,81 +78,16 @@ class ShaderState final : angle::NonCopyable
     const std::string &getLabel() const { return mLabel; }
 
     const std::string &getSource() const { return mSource; }
-    bool isCompiledToBinary() const { return !mCompiledShaderState.compiledBinary.empty(); }
-    const std::string &getTranslatedSource() const { return mCompiledShaderState.translatedSource; }
-    const sh::BinaryBlob &getCompiledBinary() const { return mCompiledShaderState.compiledBinary; }
-
-    ShaderType getShaderType() const { return mCompiledShaderState.shaderType; }
-    int getShaderVersion() const { return mCompiledShaderState.shaderVersion; }
-
-    const std::vector<sh::ShaderVariable> &getInputVaryings() const
-    {
-        return mCompiledShaderState.inputVaryings;
-    }
-    const std::vector<sh::ShaderVariable> &getOutputVaryings() const
-    {
-        return mCompiledShaderState.outputVaryings;
-    }
-    const std::vector<sh::ShaderVariable> &getUniforms() const
-    {
-        return mCompiledShaderState.uniforms;
-    }
-    const std::vector<sh::InterfaceBlock> &getUniformBlocks() const
-    {
-        return mCompiledShaderState.uniformBlocks;
-    }
-    const std::vector<sh::InterfaceBlock> &getShaderStorageBlocks() const
-    {
-        return mCompiledShaderState.shaderStorageBlocks;
-    }
-    const std::vector<sh::ShaderVariable> &getActiveAttributes() const
-    {
-        return mCompiledShaderState.activeAttributes;
-    }
-    const std::vector<sh::ShaderVariable> &getAllAttributes() const
-    {
-        return mCompiledShaderState.allAttributes;
-    }
-    const std::vector<sh::ShaderVariable> &getActiveOutputVariables() const
-    {
-        return mCompiledShaderState.activeOutputVariables;
-    }
-
     bool compilePending() const { return mCompileStatus == CompileStatus::COMPILE_REQUESTED; }
-
-    const sh::WorkGroupSize &getLocalSize() const { return mCompiledShaderState.localSize; }
-
-    bool hasClipDistance() const { return mCompiledShaderState.hasClipDistance; }
-    bool hasDiscard() const { return mCompiledShaderState.hasDiscard; }
-    bool enablesPerSampleShading() const { return mCompiledShaderState.enablesPerSampleShading; }
-    rx::SpecConstUsageBits getSpecConstUsageBits() const
-    {
-        return mCompiledShaderState.specConstUsageBits;
-    }
-
-    int getNumViews() const { return mCompiledShaderState.numViews; }
-
-    Optional<PrimitiveMode> getGeometryShaderInputPrimitiveType() const
-    {
-        return mCompiledShaderState.geometryShaderInputPrimitiveType;
-    }
-
-    Optional<PrimitiveMode> getGeometryShaderOutputPrimitiveType() const
-    {
-        return mCompiledShaderState.geometryShaderOutputPrimitiveType;
-    }
-
-    Optional<GLint> getGeometryShaderMaxVertices() const
-    {
-        return mCompiledShaderState.geometryShaderMaxVertices;
-    }
-
-    Optional<GLint> getGeometryShaderInvocations() const
-    {
-        return mCompiledShaderState.geometryShaderInvocations;
-    }
-
     CompileStatus getCompileStatus() const { return mCompileStatus; }
+
+    ShaderType getShaderType() const { return mCompiledState->shaderType; }
+
+    const SharedCompiledShaderState &getCompiledState() const
+    {
+        ASSERT(!compilePending());
+        return mCompiledState;
+    }
 
   private:
     friend class Shader;
@@ -154,7 +96,7 @@ class ShaderState final : angle::NonCopyable
     std::string mSource;
     size_t mSourceHash = 0;
 
-    gl::CompiledShaderState mCompiledShaderState;
+    SharedCompiledShaderState mCompiledState;
 
     // Indicates if this shader has been successfully compiled
     CompileStatus mCompileStatus = CompileStatus::NOT_COMPILED;
@@ -174,7 +116,7 @@ class Shader final : angle::NonCopyable, public LabeledObject
     angle::Result setLabel(const Context *context, const std::string &label) override;
     const std::string &getLabel() const override;
 
-    ShaderType getType() const { return mType; }
+    ShaderType getType() const { return mState.getShaderType(); }
     ShaderProgramID getHandle() const;
 
     rx::ShaderImpl *getImplementation() const { return mImplementation.get(); }
@@ -200,7 +142,6 @@ class Shader final : angle::NonCopyable, public LabeledObject
                                           GLsizei bufSize,
                                           GLsizei *length,
                                           char *buffer);
-    const sh::BinaryBlob &getCompiledBinary(const Context *context);
 
     size_t getSourceHash() const;
 
@@ -208,56 +149,15 @@ class Shader final : angle::NonCopyable, public LabeledObject
     bool isCompiled(const Context *context);
     bool isCompleted();
 
+    // Return the compiled shader state for the program.  The program holds a reference to this
+    // state, so the shader is free to recompile, get deleted, etc.
+    const SharedCompiledShaderState &getCompiledState() const { return mState.getCompiledState(); }
+
     void addRef();
     void release(const Context *context);
     unsigned int getRefCount() const;
     bool isFlaggedForDeletion() const;
     void flagForDeletion();
-    bool hasClipDistance() const { return mState.mCompiledShaderState.hasClipDistance; }
-    bool hasDiscard() const { return mState.mCompiledShaderState.hasDiscard; }
-    bool enablesPerSampleShading() const
-    {
-        return mState.mCompiledShaderState.enablesPerSampleShading;
-    }
-    BlendEquationBitSet getAdvancedBlendEquations() const
-    {
-        return mState.mCompiledShaderState.advancedBlendEquations;
-    }
-    rx::SpecConstUsageBits getSpecConstUsageBits() const
-    {
-        return mState.mCompiledShaderState.specConstUsageBits;
-    }
-
-    int getShaderVersion(const Context *context);
-
-    const std::vector<sh::ShaderVariable> &getInputVaryings(const Context *context);
-    const std::vector<sh::ShaderVariable> &getOutputVaryings(const Context *context);
-    const std::vector<sh::ShaderVariable> &getUniforms(const Context *context);
-    const std::vector<sh::InterfaceBlock> &getUniformBlocks(const Context *context);
-    const std::vector<sh::InterfaceBlock> &getShaderStorageBlocks(const Context *context);
-    const std::vector<sh::ShaderVariable> &getActiveAttributes(const Context *context);
-    const std::vector<sh::ShaderVariable> &getAllAttributes(const Context *context);
-    const std::vector<sh::ShaderVariable> &getActiveOutputVariables(const Context *context);
-
-    // Returns mapped name of a transform feedback varying. The original name may contain array
-    // brackets with an index inside, which will get copied to the mapped name. The varying must be
-    // known to be declared in the shader.
-    std::string getTransformFeedbackVaryingMappedName(const Context *context,
-                                                      const std::string &tfVaryingName);
-
-    const sh::WorkGroupSize &getWorkGroupSize(const Context *context);
-
-    int getNumViews(const Context *context);
-
-    Optional<PrimitiveMode> getGeometryShaderInputPrimitiveType(const Context *context);
-    Optional<PrimitiveMode> getGeometryShaderOutputPrimitiveType(const Context *context);
-    int getGeometryShaderInvocations(const Context *context);
-    Optional<GLint> getGeometryShaderMaxVertices(const Context *context);
-    int getTessControlShaderVertices(const Context *context);
-    GLenum getTessGenMode(const Context *context);
-    GLenum getTessGenSpacing(const Context *context);
-    GLenum getTessGenVertexOrder(const Context *context);
-    GLenum getTessGenPointMode(const Context *context);
 
     const ShaderState &getState() const { return mState; }
 
@@ -314,7 +214,6 @@ class Shader final : angle::NonCopyable, public LabeledObject
     std::unique_ptr<rx::ShaderImpl> mImplementation;
     const gl::Limitations mRendererLimitations;
     const ShaderProgramID mHandle;
-    const ShaderType mType;
     unsigned int mRefCount;  // Number of program objects this shader is attached to
     bool mDeleteStatus;  // Flag to indicate that the shader can be deleted when no longer in use
     std::string mInfoLog;

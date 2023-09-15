@@ -1296,16 +1296,24 @@ TEST_P(EGLContextSharingTestNoSyncTextureUploads, NoSync)
 {
     EGLDisplay display = getEGLWindow()->getDisplay();
     EGLConfig config   = getEGLWindow()->getConfig();
-    EGLSurface surface = getEGLWindow()->getSurface();
 
     const EGLint inShareGroupContextAttribs[] = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE};
+    const EGLint pbufferAttributes[]          = {EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE};
 
-    mContexts[0] = eglCreateContext(display, config, nullptr, inShareGroupContextAttribs);
-    mContexts[1] = eglCreateContext(display, config, mContexts[0], inShareGroupContextAttribs);
-    ASSERT_EGL_SUCCESS();
+    constexpr size_t kThreadCount    = 2;
+    EGLSurface surface[kThreadCount] = {EGL_NO_SURFACE, EGL_NO_SURFACE};
 
-    ASSERT_NE(EGL_NO_CONTEXT, mContexts[0]);
-    ASSERT_NE(EGL_NO_CONTEXT, mContexts[1]);
+    for (size_t t = 0; t < kThreadCount; ++t)
+    {
+        mContexts[t] = eglCreateContext(display, config, t == 0 ? EGL_NO_CONTEXT : mContexts[0],
+                                        inShareGroupContextAttribs);
+        ASSERT_EGL_SUCCESS();
+        ASSERT_NE(EGL_NO_CONTEXT, mContexts[t]);
+
+        surface[t] = eglCreatePbufferSurface(display, config, pbufferAttributes);
+        EXPECT_EGL_SUCCESS();
+        ASSERT_NE(EGL_NO_SURFACE, surface[t]);
+    }
 
     GLTexture textureFromCtx0;
     constexpr size_t kTextureCount = 10;
@@ -1329,7 +1337,7 @@ TEST_P(EGLContextSharingTestNoSyncTextureUploads, NoSync)
         ThreadSynchronization<Step> threadSynchronization(&currentStep, &mutex, &condVar);
 
         ASSERT_TRUE(threadSynchronization.waitForStep(Step::Start));
-        ASSERT_EGL_TRUE(eglMakeCurrent(display, surface, surface, mContexts[0]));
+        ASSERT_EGL_TRUE(eglMakeCurrent(display, surface[0], surface[0], mContexts[0]));
         ASSERT_EGL_SUCCESS();
         threadSynchronization.nextStep(Step::Ctx0Current);
 
@@ -1366,13 +1374,15 @@ TEST_P(EGLContextSharingTestNoSyncTextureUploads, NoSync)
 
         threadSynchronization.nextStep(Step::TexturesDone);
         ASSERT_TRUE(threadSynchronization.waitForStep(Step::Finish));
+        ASSERT_EGL_TRUE(eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+        ASSERT_EGL_SUCCESS();
     });
 
     std::thread samplingThread = std::thread([&]() {
         ThreadSynchronization<Step> threadSynchronization(&currentStep, &mutex, &condVar);
 
         ASSERT_TRUE(threadSynchronization.waitForStep(Step::Ctx0Current));
-        ASSERT_EGL_TRUE(eglMakeCurrent(display, surface, surface, mContexts[1]));
+        ASSERT_EGL_TRUE(eglMakeCurrent(display, surface[1], surface[1], mContexts[1]));
         ASSERT_EGL_SUCCESS();
         threadSynchronization.nextStep(Step::Ctx1Current);
 
@@ -1412,6 +1422,8 @@ TEST_P(EGLContextSharingTestNoSyncTextureUploads, NoSync)
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
 
         threadSynchronization.nextStep(Step::Finish);
+        ASSERT_EGL_TRUE(eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+        ASSERT_EGL_SUCCESS();
     });
 
     creatingThread.join();
@@ -1419,6 +1431,12 @@ TEST_P(EGLContextSharingTestNoSyncTextureUploads, NoSync)
 
     ASSERT_NE(currentStep, Step::Abort);
     ASSERT_EGL_SUCCESS();
+
+    for (size_t t = 0; t < kThreadCount; ++t)
+    {
+        ASSERT_EGL_TRUE(eglDestroySurface(display, surface[t]));
+        ASSERT_EGL_SUCCESS();
+    }
 }
 
 }  // anonymous namespace

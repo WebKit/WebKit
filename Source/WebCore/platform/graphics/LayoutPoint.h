@@ -56,6 +56,8 @@ public:
     void moveBy(const LayoutPoint& offset) { move(offset.x(), offset.y()); }
     template<typename T, typename U> void move(T dx, U dy) { m_x += dx; m_y += dy; }
     
+    friend bool operator==(const LayoutPoint&, const LayoutPoint&) = default;
+
     void scale(float s)
     {
         m_x *= s;
@@ -146,11 +148,6 @@ inline LayoutPoint operator-(const LayoutPoint& a, const LayoutSize& b)
 inline LayoutPoint operator-(const LayoutPoint& point)
 {
     return LayoutPoint(-point.x(), -point.y());
-}
-
-inline bool operator==(const LayoutPoint& a, const LayoutPoint& b)
-{
-    return a.x() == b.x() && a.y() == b.y();
 }
 
 inline LayoutPoint toLayoutPoint(const LayoutSize& size)

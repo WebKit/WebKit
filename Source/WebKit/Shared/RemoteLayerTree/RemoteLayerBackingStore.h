@@ -32,6 +32,7 @@
 #include <WebCore/Region.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/WeakPtr.h>
 
 OBJC_CLASS CALayer;
 
@@ -81,7 +82,7 @@ struct BufferAndBackendInfo {
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, BufferAndBackendInfo&);
 };
 
-class RemoteLayerBackingStore {
+class RemoteLayerBackingStore : public CanMakeWeakPtr<RemoteLayerBackingStore> {
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStore);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -110,20 +111,7 @@ public:
         UseCGDisplayListImageCache useCGDisplayListImageCache { UseCGDisplayListImageCache::No };
 #endif
 
-        bool operator==(const Parameters& other) const
-        {
-            return (type == other.type
-                && size == other.size
-                && colorSpace == other.colorSpace
-                && scale == other.scale
-                && deepColor == other.deepColor
-                && isOpaque == other.isOpaque
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-                && includeDisplayList == other.includeDisplayList
-                && useCGDisplayListImageCache == other.useCGDisplayListImageCache
-#endif
-                );
-        }
+        friend bool operator==(const Parameters&, const Parameters&) = default;
     };
 
     void ensureBackingStore(const Parameters&);

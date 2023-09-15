@@ -104,7 +104,7 @@ private:
 };
 
 JSC_DECLARE_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame*, void*));
-JSC_DECLARE_JIT_OPERATION(operationDebugPrintSpeculationFailure, void, (CallFrame*, void*, void*));
+JSC_DECLARE_JIT_OPERATION(operationDebugPrintSpeculationFailure, void, (Probe::Context&));
 JSC_DECLARE_JIT_OPERATION(operationMaterializeOSRExitSideState, void, (VM*, const OSRExitBase*, EncodedJSValue*));
 
 // === OSRExit ===
@@ -133,7 +133,6 @@ struct OSRExit : public OSRExitBase {
 
 private:
     static void emitRestoreArguments(CCallHelpers&, VM&, const Operands<ValueRecovery>&);
-    friend void JIT_OPERATION_ATTRIBUTES operationDebugPrintSpeculationFailure(CallFrame*, void*, void*);
 };
 
 struct SpeculationFailureDebugInfo {

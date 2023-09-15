@@ -1,3 +1,3 @@
 
-FAIL SharedArrayBuffer cannot cross agent clusters, service worker edition Can't find variable: SharedArrayBuffer
+FAIL SharedArrayBuffer cannot cross agent clusters, service worker edition assert_unreached: Got an unexpected message from the service worker: worker onmessage was reached when in state "we are expecting a messageerror due to the window sending us a SAB" and data null Reached unreachable code
 

@@ -29,6 +29,8 @@ static void testWebKitWebEditorSelectionChanged(WebViewTest* test, gconstpointer
 
 void beforeAll()
 {
+    Test::shouldInitializeWebProcessExtensions = true;
+
     WebViewTest::add("WebKitWebEditor", "selection-changed", testWebKitWebEditorSelectionChanged);
 }
 

@@ -25,7 +25,7 @@
 
 [
     Conditional=WEBGL,
-    GenerateIsReachable=ImplWebGLRenderingContext,
+    GenerateIsReachable,
     LegacyNoInterfaceObject,
 ] interface WebGLCompressedTextureS3TC {
     const unsigned long COMPRESSED_RGB_S3TC_DXT1_EXT = 0x83F0;

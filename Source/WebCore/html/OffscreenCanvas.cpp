@@ -68,16 +68,7 @@ RefPtr<ImageBuffer> DetachedOffscreenCanvas::takeImageBuffer(ScriptExecutionCont
 {
     if (!m_buffer)
         return nullptr;
-    GraphicsClient* client = nullptr;
-    if (is<WorkerGlobalScope>(context)) {
-        client = downcast<WorkerGlobalScope>(context).workerClient();
-        ASSERT(client);
-    } else if (is<Document>(context)) {
-        ASSERT(downcast<Document>(context).page());
-        client = &downcast<Document>(context).page()->chrome();
-    }
-    ASSERT(client);
-    return client->sinkIntoImageBuffer(WTFMove(m_buffer));
+    return SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(m_buffer), context.graphicsClient());
 }
 
 WeakPtr<HTMLCanvasElement, WeakPtrImplWithEventTargetData> DetachedOffscreenCanvas::takePlaceholderCanvas()
@@ -114,9 +105,9 @@ Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecu
         clone->setOriginTainted();
 
     callOnMainThread([detachedCanvas = WTFMove(detachedCanvas), placeholderData = Ref { *clone->m_placeholderData }] () mutable {
-        placeholderData->canvas = detachedCanvas->takePlaceholderCanvas();
-        if (placeholderData->canvas) {
-            auto& placeholderContext = downcast<PlaceholderRenderingContext>(*placeholderData->canvas->renderingContext());
+        if (RefPtr canvas = detachedCanvas->takePlaceholderCanvas().get()) {
+            placeholderData->canvas = canvas;
+            auto& placeholderContext = downcast<PlaceholderRenderingContext>(*canvas->renderingContext());
             auto& imageBufferPipe = placeholderContext.imageBufferPipe();
             if (imageBufferPipe)
                 placeholderData->bufferPipeSource = imageBufferPipe->source();
@@ -318,7 +309,7 @@ ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
             return { RefPtr<ImageBitmap> { nullptr } };
 
         if (!m_hasCreatedImageBuffer) {
-            auto buffer = allocateImageBuffer(false, false);
+            auto buffer = allocateImageBuffer();
             if (!buffer)
                 return { RefPtr<ImageBitmap> { nullptr } };
             return { ImageBitmap::create(ImageBitmapBacking(WTFMove(buffer))) };
@@ -354,7 +345,7 @@ ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
         // store from this canvas (or its context), but for now we'll just
         // create a new bitmap and paint into it.
 
-        auto imageBitmap = ImageBitmap::create(allocateImageBuffer(false, false));
+        auto imageBitmap = ImageBitmap::create(allocateImageBuffer());
         if (!imageBitmap->buffer())
             return { RefPtr<ImageBitmap> { nullptr } };
 
@@ -480,6 +471,7 @@ void OffscreenCanvas::setPlaceholderCanvas(HTMLCanvasElement& canvas)
 {
     ASSERT(!m_context);
     ASSERT(isMainThread());
+    Ref protectedCanvas { canvas };
     m_placeholderData->canvas = canvas;
     auto& placeholderContext = downcast<PlaceholderRenderingContext>(*canvas.renderingContext());
     auto& imageBufferPipe = placeholderContext.imageBufferPipe();
@@ -491,10 +483,11 @@ void OffscreenCanvas::pushBufferToPlaceholder()
 {
     callOnMainThread([placeholderData = Ref { *m_placeholderData }] () mutable {
         Locker locker { placeholderData->bufferLock };
-        if (placeholderData->canvas && placeholderData->canvas->document().page() && placeholderData->pendingCommitBuffer) {
-            GraphicsClient& client = placeholderData->canvas->document().page()->chrome();
-            auto imageBuffer = client.sinkIntoImageBuffer(WTFMove(placeholderData->pendingCommitBuffer));
-            placeholderData->canvas->setImageBufferAndMarkDirty(WTFMove(imageBuffer));
+        if (RefPtr canvas = placeholderData->canvas.get()) {
+            if (placeholderData->pendingCommitBuffer) {
+                auto imageBuffer = SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(placeholderData->pendingCommitBuffer), canvas->document().graphicsClient());
+                canvas->setImageBufferAndMarkDirty(WTFMove(imageBuffer));
+            }
         }
         placeholderData->pendingCommitBuffer = nullptr;
     });
@@ -539,7 +532,7 @@ void OffscreenCanvas::scheduleCommitToPlaceholderCanvas()
 void OffscreenCanvas::createImageBuffer() const
 {
     m_hasCreatedImageBuffer = true;
-    setImageBuffer(allocateImageBuffer(false, false));
+    setImageBuffer(allocateImageBuffer());
 }
 
 void OffscreenCanvas::setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&& buffer)

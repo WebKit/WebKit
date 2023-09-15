@@ -26,6 +26,7 @@
 #import "config.h"
 #import "UTIUtilities.h"
 
+#import <wtf/HashSet.h>
 #import <wtf/Lock.h>
 #import <wtf/MainThread.h>
 #import <wtf/SortedArrayMap.h>
@@ -44,6 +45,20 @@ String MIMETypeFromUTI(const String& uti)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return adoptCF(UTTypeCopyPreferredTagWithClass(uti.createCFString().get(), kUTTagClassMIMEType)).get();
 ALLOW_DEPRECATED_DECLARATIONS_END
+}
+
+HashSet<String> RequiredMIMETypesFromUTI(const String& uti)
+{
+    HashSet<String> mimeTypes;
+
+    auto mainMIMEType = MIMETypeFromUTI(uti);
+    if (!mainMIMEType.isEmpty())
+        mimeTypes.add(mainMIMEType);
+
+    if (equalLettersIgnoringASCIICase(uti, "com.adobe.photoshop-image"_s))
+        mimeTypes.add("application/x-photoshop"_s);
+
+    return mimeTypes;
 }
 
 RetainPtr<CFStringRef> mimeTypeFromUTITree(CFStringRef uti)

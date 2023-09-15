@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AvailableLineWidthOverride.h"
 #include "BlockLayoutState.h"
 #include "FloatingState.h"
 
@@ -46,12 +47,20 @@ public:
 
     LayoutUnit nestedListMarkerOffset(const ElementBox& listMarkerBox) const { return m_nestedListMarkerOffsets.get(&listMarkerBox); }
 
+    void setAvailableLineWidthOverride(AvailableLineWidthOverride availableLineWidthOverride) { m_availableLineWidthOverride = availableLineWidthOverride; }
+    const AvailableLineWidthOverride& availableLineWidthOverride() const { return m_availableLineWidthOverride; }
+
+    void setClampedLineIndex(size_t lineIndex) { m_clampedLineIndex = lineIndex; }
+    std::optional<size_t> clampedLineIndex() const { return m_clampedLineIndex; }
+
 private:
     BlockLayoutState& m_parentBlockLayoutState;
     InlineLayoutUnit m_clearGapBeforeFirstLine { 0.f };
     InlineLayoutUnit m_clearGapAfterLastLine { 0.f };
+    std::optional<size_t> m_clampedLineIndex { };
     // FIXME: This is required by the integaration codepath.
     HashMap<const ElementBox*, LayoutUnit> m_nestedListMarkerOffsets;
+    AvailableLineWidthOverride m_availableLineWidthOverride;
 };
 
 inline InlineLayoutState::InlineLayoutState(BlockLayoutState& parentBlockLayoutState, HashMap<const ElementBox*, LayoutUnit>&& nestedListMarkerOffsets)

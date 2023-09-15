@@ -4,15 +4,29 @@ CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has bee
 CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
 CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
 CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
 Setting fillStyle to a pattern of an unclean canvas makes the canvas origin-unclean
 
 
-PASS cross-origin HTMLImageElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean
-FAIL cross-origin SVGImageElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean assert_throws_dom: function "function() { canvas.toDataURL(); }" did not throw
-PASS cross-origin HTMLVideoElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean
-PASS redirected to cross-origin HTMLVideoElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean
-PASS redirected to same-origin HTMLVideoElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean
-PASS redirected to same-origin HTMLVideoElement via a cross-origin URL: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean
-PASS unclean HTMLCanvasElement: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean
-FAIL unclean ImageBitmap: Setting fillStyle to an origin-unclear pattern makes the canvas origin-unclean promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS cross-origin HTMLImageElement: Setting fillStyle to an origin-unclean pattern makes the canvas origin-unclean
+PASS cross-origin SVGImageElement: Setting fillStyle to an origin-unclean pattern makes the canvas origin-unclean
+PASS cross-origin HTMLVideoElement: Setting fillStyle to an origin-unclean pattern makes the canvas origin-unclean
+PASS redirected to cross-origin HTMLVideoElement: Setting fillStyle to an origin-unclean pattern makes the canvas origin-unclean
+PASS redirected to same-origin HTMLVideoElement: Setting fillStyle to an origin-unclean pattern makes the canvas origin-unclean
+PASS unclean HTMLCanvasElement: Setting fillStyle to an origin-unclean pattern makes the canvas origin-unclean
+PASS unclean ImageBitmap: Setting fillStyle to an origin-unclean pattern makes the canvas origin-unclean
+PASS cross-origin HTMLImageElement: Setting fillStyle to an origin-unclean offscreen canvas pattern makes the canvas origin-unclean
+PASS cross-origin SVGImageElement: Setting fillStyle to an origin-unclean offscreen canvas pattern makes the canvas origin-unclean
+PASS cross-origin HTMLVideoElement: Setting fillStyle to an origin-unclean offscreen canvas pattern makes the canvas origin-unclean
+PASS redirected to cross-origin HTMLVideoElement: Setting fillStyle to an origin-unclean offscreen canvas pattern makes the canvas origin-unclean
+PASS redirected to same-origin HTMLVideoElement: Setting fillStyle to an origin-unclean offscreen canvas pattern makes the canvas origin-unclean
+PASS unclean HTMLCanvasElement: Setting fillStyle to an origin-unclean offscreen canvas pattern makes the canvas origin-unclean
+PASS unclean ImageBitmap: Setting fillStyle to an origin-unclean offscreen canvas pattern makes the canvas origin-unclean
 

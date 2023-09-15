@@ -1,0 +1,11 @@
+
+EVENT(canplay)
+EVENT(addtrack)
+EXPECTED (video.textTracks.length == '1') OK
+RUN(video.textTracks[0].mode = 'showing')
+RUN(video.currentTime = 1)
+EVENT(seeked)
+EXPECTED (window.internals.shadowRoot(video).querySelector('span[pseudo=cue]') != 'null') OK
+EXPECTED (video.offsetHeight >= window.internals.shadowRoot(video).querySelector('span[pseudo=cue]').offsetHeight == 'true') OK
+END OF TEST
+

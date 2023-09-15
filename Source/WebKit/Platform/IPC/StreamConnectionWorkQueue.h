@@ -53,9 +53,7 @@ public:
 
     // SerialFunctionDispatcher
     void dispatch(WTF::Function<void()>&&) final;
-#if ASSERT_ENABLED
-    void assertIsCurrent() const final;
-#endif
+    bool isCurrent() const final;
 
 private:
     void startProcessingThread() WTF_REQUIRES_LOCK(m_lock);
@@ -71,14 +69,6 @@ private:
     Deque<Function<void()>> m_functions WTF_GUARDED_BY_LOCK(m_lock);
     WTF::Function<void()> m_cleanupFunction WTF_GUARDED_BY_LOCK(m_lock);
     Vector<Ref<StreamServerConnection>> m_connections WTF_GUARDED_BY_LOCK(m_lock);
-    friend void assertIsCurrent(const StreamConnectionWorkQueue&);
 };
-
-inline void assertIsCurrent(const StreamConnectionWorkQueue& queue) WTF_ASSERTS_ACQUIRED_CAPABILITY(queue)
-{
-#if ASSERT_ENABLED
-    queue.assertIsCurrent();
-#endif
-}
 
 }

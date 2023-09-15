@@ -1024,13 +1024,14 @@ angle::Result TextureGL::copySubTextureHelper(const gl::Context *context,
     bool sourceFormatContainSupersetOfDestFormat =
         (sourceFormat == destFormat.format && sourceFormat != GL_BGRA_EXT) ||
         (sourceFormat == GL_RGBA && destFormat.format == GL_RGB);
+    bool sourceSRGB = sourceFormatInfo.colorEncoding == GL_SRGB;
 
     GLenum sourceComponentType = sourceFormatInfo.componentType;
     GLenum destComponentType   = destFormat.componentType;
     bool destSRGB              = destFormat.colorEncoding == GL_SRGB;
     if (!unpackFlipY && unpackPremultiplyAlpha == unpackUnmultiplyAlpha && !needsLumaWorkaround &&
         sourceFormatContainSupersetOfDestFormat && sourceComponentType == destComponentType &&
-        !destSRGB && sourceGL->getType() == gl::TextureType::_2D)
+        !destSRGB && !sourceSRGB && sourceGL->getType() == gl::TextureType::_2D)
     {
         bool copySucceeded = false;
         ANGLE_TRY(blitter->copyTexSubImage(context, sourceGL, sourceLevel, this, target, level,
@@ -1056,7 +1057,7 @@ angle::Result TextureGL::copySubTextureHelper(const gl::Context *context,
             context, sourceGL, sourceLevel, sourceComponentType, mTextureID, target, level,
             destComponentType, sourceImageDesc.size, sourceArea, destOffset, needsLumaWorkaround,
             sourceLevelInfo.sourceFormat, unpackFlipY, unpackPremultiplyAlpha,
-            unpackUnmultiplyAlpha, &copySucceeded));
+            unpackUnmultiplyAlpha, sourceSRGB, &copySucceeded));
         if (copySucceeded)
         {
             contextGL->markWorkSubmitted();

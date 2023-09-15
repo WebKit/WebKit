@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include <optional>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -45,7 +46,7 @@ struct PolicyContainer;
 class ThreadableBlobRegistry {
 public:
     static void registerBlobURL(SecurityOrigin*, PolicyContainer&&, const URL&, const URL& srcURL, const std::optional<SecurityOriginData>& topOrigin);
-    static void registerBlobURL(SecurityOrigin*, PolicyContainer&&, const URL&, const URLKeepingBlobAlive& srcURL);
+    static void registerBlobURL(SecurityOrigin*, PolicyContainer&&, const URLKeepingBlobAlive&, const URL& srcURL);
     static void registerInternalFileBlobURL(const URL&, const String& path, const String& replacementPath, const String& contentType);
     static void registerInternalBlobURL(const URL&, Vector<BlobPart>&& blobParts, const String& contentType);
     static void registerInternalBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, const String& fileBackedPath, const String& contentType);

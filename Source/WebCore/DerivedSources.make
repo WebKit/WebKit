@@ -292,12 +292,17 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/contact-picker/Navigator+Contacts.idl \
     $(WebCore)/Modules/cookie-consent/Navigator+CookieConsent.idl \
     $(WebCore)/Modules/cookie-consent/RequestCookieConsentOptions.idl \
+    $(WebCore)/Modules/cookie-store/CookieChangeEvent.idl \
+    $(WebCore)/Modules/cookie-store/CookieChangeEventInit.idl \
     $(WebCore)/Modules/cookie-store/CookieInit.idl \
     $(WebCore)/Modules/cookie-store/CookieListItem.idl \
     $(WebCore)/Modules/cookie-store/CookieSameSite.idl \
     $(WebCore)/Modules/cookie-store/CookieStore.idl \
     $(WebCore)/Modules/cookie-store/CookieStoreGetOptions.idl \
     $(WebCore)/Modules/cookie-store/CookieStoreDeleteOptions.idl \
+    $(WebCore)/Modules/cookie-store/CookieStoreManager.idl \
+    $(WebCore)/Modules/cookie-store/ExtendableCookieChangeEvent.idl \
+    $(WebCore)/Modules/cookie-store/ExtendableCookieChangeEventInit.idl \
     $(WebCore)/Modules/cookie-store/LocalDOMWindow+CookieStore.idl \
     $(WebCore)/Modules/credentialmanagement/BasicCredential.idl \
     $(WebCore)/Modules/credentialmanagement/CredentialCreationOptions.idl \
@@ -712,10 +717,14 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialType.idl \
     $(WebCore)/Modules/webauthn/ResidentKeyRequirement.idl \
     $(WebCore)/Modules/webauthn/UserVerificationRequirement.idl \
+    $(WebCore)/Modules/webcodecs/AacEncoderConfig.idl \
+    $(WebCore)/Modules/webcodecs/AudioSampleFormat.idl \
     $(WebCore)/Modules/webcodecs/AvcEncoderConfig.idl \
     $(WebCore)/Modules/webcodecs/BitrateMode.idl \
+    $(WebCore)/Modules/webcodecs/FlacEncoderConfig.idl \
     $(WebCore)/Modules/webcodecs/LatencyMode.idl \
     $(WebCore)/Modules/webcodecs/HardwareAcceleration.idl \
+    $(WebCore)/Modules/webcodecs/OpusEncoderConfig.idl \
     $(WebCore)/Modules/webcodecs/PlaneLayout.idl \
     $(WebCore)/Modules/webcodecs/VideoColorPrimaries.idl \
     $(WebCore)/Modules/webcodecs/VideoColorSpace.idl \
@@ -724,6 +733,12 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webcodecs/VideoPixelFormat.idl \
     $(WebCore)/Modules/webcodecs/VideoTransferCharacteristics.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsAlphaOption.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioData.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioDataOutputCallback.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsEncodedAudioChunk.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsEncodedAudioChunkMetadata.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsEncodedAudioChunkOutputCallback.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsEncodedAudioChunkType.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunk.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunkMetadata.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunkOutputCallback.idl \
@@ -731,6 +746,13 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webcodecs/WebCodecsErrorCallback.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsCodecState.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsSvcOutputMetadata.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioData.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioDecoder.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioDecoderConfig.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioDecoderSupport.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioEncoder.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioEncoderConfig.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioEncoderSupport.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoDecoder.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoDecoderConfig.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoDecoderSupport.idl \
@@ -754,6 +776,24 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webdriver/Navigator+WebDriver.idl \
     $(WebCore)/Modules/websockets/CloseEvent.idl \
     $(WebCore)/Modules/websockets/WebSocket.idl \
+    $(WebCore)/Modules/webtransport/WebTransport.idl \
+    $(WebCore)/Modules/webtransport/WebTransportBidirectionalStream.idl \
+    $(WebCore)/Modules/webtransport/WebTransportCloseInfo.idl \
+    $(WebCore)/Modules/webtransport/WebTransportCongestionControl.idl \
+    $(WebCore)/Modules/webtransport/WebTransportDatagramDuplexStream.idl \
+    $(WebCore)/Modules/webtransport/WebTransportDatagramStats.idl \
+    $(WebCore)/Modules/webtransport/WebTransportError.idl \
+    $(WebCore)/Modules/webtransport/WebTransportErrorOptions.idl \
+    $(WebCore)/Modules/webtransport/WebTransportErrorSource.idl \
+    $(WebCore)/Modules/webtransport/WebTransportHash.idl \
+    $(WebCore)/Modules/webtransport/WebTransportOptions.idl \
+    $(WebCore)/Modules/webtransport/WebTransportReceiveStream.idl \
+    $(WebCore)/Modules/webtransport/WebTransportReceiveStreamStats.idl \
+    $(WebCore)/Modules/webtransport/WebTransportReliabilityMode.idl \
+    $(WebCore)/Modules/webtransport/WebTransportSendStream.idl \
+    $(WebCore)/Modules/webtransport/WebTransportSendStreamOptions.idl \
+    $(WebCore)/Modules/webtransport/WebTransportSendStreamStats.idl \
+    $(WebCore)/Modules/webtransport/WebTransportStats.idl \
     $(WebCore)/Modules/webxr/Navigator+WebXR.idl \
     $(WebCore)/Modules/webxr/WebXRBoundedReferenceSpace.idl \
     $(WebCore)/Modules/webxr/WebXRFrame+HandInput.idl \
@@ -851,6 +891,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/crypto/parameters/EcdhKeyDeriveParams.idl \
     $(WebCore)/crypto/parameters/EcdsaParams.idl \
     $(WebCore)/crypto/parameters/HkdfParams.idl \
+    $(WebCore)/crypto/parameters/X25519Params.idl \
     $(WebCore)/crypto/parameters/HmacKeyParams.idl \
     $(WebCore)/crypto/parameters/Pbkdf2Params.idl \
     $(WebCore)/crypto/parameters/RsaHashedImportParams.idl \
@@ -965,6 +1006,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/ClipboardEvent.idl \
     $(WebCore)/dom/Comment.idl \
     $(WebCore)/dom/CompositionEvent.idl \
+    $(WebCore)/dom/ContentVisibilityAutoStateChangeEvent.idl \
     $(WebCore)/dom/CustomElementRegistry.idl \
     $(WebCore)/dom/CustomEvent.idl \
     $(WebCore)/dom/DOMException.idl \
@@ -1145,7 +1187,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/HTMLMediaElement+AudioOutput.idl \
     $(WebCore)/html/HTMLMediaElement.idl \
     $(WebCore)/html/HTMLMenuElement.idl \
-    $(WebCore)/html/HTMLMenuItemElement.idl \
     $(WebCore)/html/HTMLMetaElement.idl \
     $(WebCore)/html/HTMLMeterElement.idl \
     $(WebCore)/html/HTMLModElement.idl \
@@ -1230,18 +1271,24 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/canvas/CanvasTextDrawingStyles.idl \
     $(WebCore)/html/canvas/CanvasTransform.idl \
     $(WebCore)/html/canvas/CanvasUserInterface.idl \
+    $(WebCore)/html/canvas/EXTBlendFuncExtended.idl \
     $(WebCore)/html/canvas/EXTBlendMinMax.idl \
+    $(WebCore)/html/canvas/EXTClipControl.idl \
     $(WebCore)/html/canvas/EXTColorBufferFloat.idl \
     $(WebCore)/html/canvas/EXTColorBufferHalfFloat.idl \
+    $(WebCore)/html/canvas/EXTConservativeDepth.idl \
+    $(WebCore)/html/canvas/EXTDepthClamp.idl \
     $(WebCore)/html/canvas/EXTDisjointTimerQuery.idl \
     $(WebCore)/html/canvas/EXTDisjointTimerQueryWebGL2.idl \
     $(WebCore)/html/canvas/EXTFloatBlend.idl \
     $(WebCore)/html/canvas/EXTFragDepth.idl \
     $(WebCore)/html/canvas/EXTPolygonOffsetClamp.idl \
+    $(WebCore)/html/canvas/EXTRenderSnorm.idl \
     $(WebCore)/html/canvas/EXTShaderTextureLOD.idl \
     $(WebCore)/html/canvas/EXTTextureCompressionBPTC.idl \
     $(WebCore)/html/canvas/EXTTextureCompressionRGTC.idl \
     $(WebCore)/html/canvas/EXTTextureFilterAnisotropic.idl \
+    $(WebCore)/html/canvas/EXTTextureMirrorClampToEdge.idl \
     $(WebCore)/html/canvas/EXTTextureNorm16.idl \
     $(WebCore)/html/canvas/EXTsRGB.idl \
     $(WebCore)/html/canvas/GPUCanvasContext.idl \
@@ -1249,9 +1296,12 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/canvas/ImageBitmapRenderingContextSettings.idl \
     $(WebCore)/html/canvas/ImageSmoothingQuality.idl \
     $(WebCore)/html/canvas/KHRParallelShaderCompile.idl \
+    $(WebCore)/html/canvas/NVShaderNoperspectiveInterpolation.idl \
     $(WebCore)/html/canvas/OESDrawBuffersIndexed.idl \
     $(WebCore)/html/canvas/OESElementIndexUint.idl \
     $(WebCore)/html/canvas/OESFBORenderMipmap.idl \
+    $(WebCore)/html/canvas/OESSampleVariables.idl \
+    $(WebCore)/html/canvas/OESShaderMultisampleInterpolation.idl \
     $(WebCore)/html/canvas/OESStandardDerivatives.idl \
     $(WebCore)/html/canvas/OESTextureFloat.idl \
     $(WebCore)/html/canvas/OESTextureFloatLinear.idl \
@@ -1284,15 +1334,18 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/canvas/WebGLLoseContext.idl \
     $(WebCore)/html/canvas/WebGLMultiDraw.idl \
     $(WebCore)/html/canvas/WebGLMultiDrawInstancedBaseVertexBaseInstance.idl \
+    $(WebCore)/html/canvas/WebGLPolygonMode.idl \
     $(WebCore)/html/canvas/WebGLProgram.idl \
     $(WebCore)/html/canvas/WebGLProvokingVertex.idl \
     $(WebCore)/html/canvas/WebGLQuery.idl \
+    $(WebCore)/html/canvas/WebGLRenderSharedExponent.idl \
     $(WebCore)/html/canvas/WebGLRenderbuffer.idl \
     $(WebCore)/html/canvas/WebGLRenderingContext.idl \
     $(WebCore)/html/canvas/WebGLRenderingContextBase.idl \
     $(WebCore)/html/canvas/WebGLSampler.idl \
     $(WebCore)/html/canvas/WebGLShader.idl \
     $(WebCore)/html/canvas/WebGLShaderPrecisionFormat.idl \
+    $(WebCore)/html/canvas/WebGLStencilTexturing.idl \
     $(WebCore)/html/canvas/WebGLSync.idl \
     $(WebCore)/html/canvas/WebGLTexture.idl \
     $(WebCore)/html/canvas/WebGLTimerQueryEXT.idl \
@@ -1917,6 +1970,7 @@ USER_AGENT_STYLE_SHEETS = \
     $(WebCore)/css/plugIns.css \
     $(WebCore)/css/popover.css \
     $(WebCore)/css/quirks.css \
+    $(WebCore)/css/ruby.css \
     $(WebCore)/css/svg.css \
     $(WebCore)/html/shadow/mac/imageControlsMac.css \
     $(WebCore)/html/shadow/attachmentElementShadow.css \
@@ -1984,6 +2038,7 @@ MODERN_MEDIA_CONTROLS_SCRIPTS = \
     $(WebCore)/Modules/modern-media-controls/controls/invalid-placard.js \
     $(WebCore)/Modules/modern-media-controls/controls/pip-placard.js \
     $(WebCore)/Modules/modern-media-controls/controls/vision-slider.js \
+    $(WebCore)/Modules/modern-media-controls/controls/vision-volume-container.js \
     $(WebCore)/Modules/modern-media-controls/controls/vision-media-controls.js \
     $(WebCore)/Modules/modern-media-controls/controls/vision-layout-traits.js \
     $(WebCore)/Modules/modern-media-controls/controls/watchos-activity-indicator.js \

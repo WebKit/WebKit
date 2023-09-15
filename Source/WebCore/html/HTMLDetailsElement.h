@@ -27,6 +27,16 @@ namespace WebCore {
 
 class HTMLSlotElement;
 
+enum class DetailsState : bool {
+    Open,
+    Closed,
+};
+
+struct DetailsToggleEventData {
+    DetailsState oldState;
+    DetailsState newState;
+};
+
 class HTMLDetailsElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLDetailsElement);
 public:
@@ -37,6 +47,12 @@ public:
     bool isOpen() const { return m_isOpen; }
     bool isActiveSummary(const HTMLSummaryElement&) const;
 
+    void queueDetailsToggleEventTask(DetailsState oldState, DetailsState newState);
+
+    std::optional<DetailsToggleEventData> queuedToggleEventData() const { return m_queuedToggleEventData; }
+    void setQueuedToggleEventData(DetailsToggleEventData data) { m_queuedToggleEventData = data; }
+    void clearQueuedToggleEventData() { m_queuedToggleEventData = std::nullopt; }
+
 private:
     HTMLDetailsElement(const QualifiedName&, Document&);
 
@@ -44,14 +60,14 @@ private:
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
-    bool hasCustomFocusLogic() const final { return true; }
     bool isInteractiveContent() const final { return true; }
 
     bool m_isOpen { false };
     WeakPtr<HTMLSlotElement, WeakPtrImplWithEventTargetData> m_summarySlot;
     WeakPtr<HTMLSummaryElement, WeakPtrImplWithEventTargetData> m_defaultSummary;
     RefPtr<HTMLSlotElement> m_defaultSlot;
-    bool m_isToggleEventTaskQueued { false };
+
+    std::optional<DetailsToggleEventData> m_queuedToggleEventData;
 };
 
 } // namespace WebCore
