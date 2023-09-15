@@ -4540,6 +4540,11 @@ void Page::opportunisticallyRunIdleCallbacks()
     });
 }
 
+void Page::willChangeLocationInCompletelyLoadedSubframe()
+{
+    commonVM().heap.scheduleOpportunisticFullCollectionIfNeeded();
+}
+
 void Page::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
 {
     OptionSet<JSC::VM::SchedulerOptions> options;

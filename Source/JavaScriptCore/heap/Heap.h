@@ -328,6 +328,7 @@ public:
     JS_EXPORT_PRIVATE GCActivityCallback* fullActivityCallback();
     JS_EXPORT_PRIVATE GCActivityCallback* edenActivityCallback();
     JS_EXPORT_PRIVATE void setGarbageCollectionTimerEnabled(bool);
+    JS_EXPORT_PRIVATE void scheduleOpportunisticFullCollectionIfNeeded();
 
     JS_EXPORT_PRIVATE IncrementalSweeper& sweeper();
 
@@ -770,10 +771,13 @@ private:
     size_t m_maxEdenSize;
     size_t m_maxEdenSizeWhenCritical;
     size_t m_maxHeapSize;
+    size_t m_totalBytesVisitedAfterLastFullCollect { 0 };
     size_t m_totalBytesVisited { 0 };
     size_t m_totalBytesVisitedThisCycle { 0 };
     double m_incrementBalance { 0 };
     
+    bool m_shouldDoOpportunisticFullCollection { false };
+    bool m_isInOpportunisticTask { false };
     bool m_shouldDoFullCollection { false };
     Markable<CollectionScope, EnumMarkableTraits<CollectionScope>> m_collectionScope;
     Markable<CollectionScope, EnumMarkableTraits<CollectionScope>> m_lastCollectionScope;
@@ -906,6 +910,7 @@ private:
     MonotonicTime m_lastGCStartTime;
     MonotonicTime m_lastGCEndTime;
     MonotonicTime m_currentGCStartTime;
+    MonotonicTime m_lastFullGCEndTime;
     Seconds m_totalGCTime;
     
     uintptr_t m_barriersExecuted { 0 };

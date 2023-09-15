@@ -480,6 +480,8 @@ public:
     void didCommitLoad();
     void didFinishLoad();
 
+    void willChangeLocationInCompletelyLoadedSubframe();
+
     bool delegatesScaling() const { return m_delegatesScaling; }
     WEBCORE_EXPORT void setDelegatesScaling(bool);
 
