@@ -106,8 +106,8 @@
 
     ::testing::internal::AssertHelper(::testing::TestPartResult::kNonFatalFailure, sourceURL.UTF8String, lineNumber, "") = ::testing::Message()
         << message.UTF8String << ":\n"
-        << "  " << actualValue.UTF8String << "\n"
-        << "  " << expectedValue.UTF8String;
+        << "  Actual: " << actualValue.UTF8String << "\n"
+        << "Expected: " << expectedValue.UTF8String;
 }
 
 - (void)_webExtensionController:(_WKWebExtensionController *)controller recordTestMessage:(NSString *)message andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber forExtensionContext:(_WKWebExtensionContext *)context
