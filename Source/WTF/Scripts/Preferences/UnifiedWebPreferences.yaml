@@ -5418,7 +5418,7 @@ ReportingEnabled:
 
 RequestIdleCallbackEnabled:
   type: bool
-  status: stable
+  status: preview
   category: dom
   humanReadableName: "requestIdleCallback"
   humanReadableDescription: "Enable requestIdleCallback support"
@@ -5426,7 +5426,6 @@ RequestIdleCallbackEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "USE(CF)": true
       default: false
     WebCore:
       default: false
