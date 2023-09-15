@@ -189,7 +189,11 @@
 <div role="directory"                data-role="list" data-platform="atspi,mac" class="ex">X</div><!-- FIXME: should be directory -->
 <div role="document"                 data-role="document" data-platform="atspi,mac" class="ex">X</div>
 <div role="figure"                   data-role="figure" data-platform="atspi,mac" class="ex">X</div>
-<div role="form"                     data-role="form" data-platform="atspi,mac" class="ex">X</div>
+<div role="form"                     data-role="generic" data-platform="atspi,mac" class="ex" data-note=":not([aria-label]:not([aria-labelledby])">X</div>
+<div role="form"                     data-role="form" data-platform="atspi,mac" class="ex" aria-label="x" data-note="[aria-label]">X</div>
+<div role="form"                     data-role="form" data-platform="atspi,mac" class="ex" aria-labelledby="form-label" data-note="[aria-labelledby]">
+    <h2 id="form-label">X</h2>
+</div>
 <div role="graphics-document"        data-role="document" data-platform="atspi,mac" class="ex">X</div>
 <div role="graphics-object"          data-role="group" data-platform="atspi,mac" class="ex">X</div>
 <div role="graphics-symbol"          data-role="image" data-platform="atspi,mac" class="ex">X</div>
