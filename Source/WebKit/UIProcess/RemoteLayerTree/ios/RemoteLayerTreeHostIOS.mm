@@ -32,9 +32,9 @@
 #import "RemoteLayerTreeViews.h"
 #import "UIKitSPI.h"
 #import "VideoFullscreenManagerProxy.h"
+#import "WKVideoView.h"
 #import "WebPageProxy.h"
 #import <UIKit/UIScrollView.h>
-#import <WebCore/WebAVPlayerLayerView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
