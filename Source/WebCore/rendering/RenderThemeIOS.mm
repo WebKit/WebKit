@@ -1764,7 +1764,7 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
 
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
 
-constexpr auto nativeControlBorderWidth = 1.0f;
+constexpr auto nativeControlBorderInlineSize = 1.0f;
 
 constexpr auto checkboxRadioBorderWidth = 1.5f;
 constexpr auto checkboxRadioBorderDisabledOpacity = 0.3f;
@@ -2040,43 +2040,61 @@ bool RenderThemeIOS::paintProgressBarWithFormControlRefresh(const RenderObject& 
     GraphicsContextStateSaver stateSaver(context);
 
     auto styleColorOptions = renderer.styleColorOptions();
+    auto isHorizontalWritingMode = renderer.style().isHorizontalWritingMode();
 
-    constexpr auto barHeight = 4.0f;
-    FloatRoundedRect::Radii barCornerRadii(2.5f, 1.5f);
+    constexpr auto barBlockSize = 4.0f;
 
-    if (rect.height() < barHeight) {
+    constexpr auto barCornerRadiusInlineSize = 2.5f;
+    constexpr auto barCornerRadiusBlockSize = 1.5f;
+
+    FloatRoundedRect::Radii barCornerRadii(
+        isHorizontalWritingMode ? barCornerRadiusInlineSize : barCornerRadiusBlockSize,
+        isHorizontalWritingMode ? barCornerRadiusBlockSize : barCornerRadiusInlineSize
+    );
+
+    auto logicalRect = isHorizontalWritingMode ? rect : rect.transposedRect();
+
+    float rectInlineSize = logicalRect.width();
+    float rectInlineStart = logicalRect.x();
+    float rectBlockSize = logicalRect.height();
+    float rectBlockStart = logicalRect.y();
+
+    if (rectBlockSize < barBlockSize) {
         // The rect is smaller than the standard progress bar. We clip to the
         // element's rect to avoid leaking pixels outside the repaint rect.
         context.clip(rect);
     }
 
-    float barTop = rect.y() + (rect.height() - barHeight) / 2.0f;
+    float trackInlineStart = rectInlineStart + nativeControlBorderInlineSize;
+    float trackBlockStart = rectBlockStart + (rectBlockSize - barBlockSize) / 2.0f;
+    float trackInlineSize = rectInlineSize - 2 * nativeControlBorderInlineSize;
 
-    FloatRect trackRect(rect.x() + nativeControlBorderWidth, barTop, rect.width() - 2 * nativeControlBorderWidth, barHeight);
-    FloatRoundedRect roundedTrackRect(trackRect, barCornerRadii);
+    FloatRect trackRect(trackInlineStart, trackBlockStart, trackInlineSize, barBlockSize);
+    FloatRoundedRect roundedTrackRect(isHorizontalWritingMode ? trackRect : trackRect.transposedRect(), barCornerRadii);
 
     FloatRoundedRect roundedTrackBorderRect(roundedTrackRect);
-    roundedTrackBorderRect.inflateWithRadii(nativeControlBorderWidth);
+    roundedTrackBorderRect.inflateWithRadii(nativeControlBorderInlineSize);
     context.fillRoundedRect(roundedTrackBorderRect, systemColor(CSSValueWebkitControlBackground, styleColorOptions));
 
     context.fillRoundedRect(roundedTrackRect, systemColor(CSSValueAppleSystemOpaqueFill, styleColorOptions));
 
-    float barWidth;
-    float barLeft = trackRect.x();
+    float barInlineSize;
+    float barInlineStart = trackInlineStart;
+    float barBlockStart = trackBlockStart;
     float alpha = 1.0f;
 
     if (renderProgress.isDeterminate()) {
-        barWidth = clampTo<float>(renderProgress.position(), 0.0f, 1.0f) * trackRect.width();
+        barInlineSize = clampTo<float>(renderProgress.position(), 0.0f, 1.0f) * trackInlineSize;
 
         if (!renderProgress.style().isLeftToRightDirection())
-            barLeft = trackRect.maxX() - barWidth;
+            barInlineStart = trackInlineStart + trackInlineSize - barInlineSize;
     } else {
         Seconds elapsed = MonotonicTime::now() - renderProgress.animationStartTime();
         float position = fmodf(elapsed.value(), 1.0f);
         bool reverseDirection = static_cast<int>(elapsed.value()) % 2;
 
         if (Theme::singleton().userPrefersReducedMotion()) {
-            barWidth = trackRect.width();
+            barInlineSize = trackInlineSize;
 
             float difference = position * (reducedMotionProgressAnimationMaxOpacity - reducedMotionProgressAnimationMinOpacity);
             if (reverseDirection)
@@ -2084,20 +2102,20 @@ bool RenderThemeIOS::paintProgressBarWithFormControlRefresh(const RenderObject& 
             else
                 alpha = reducedMotionProgressAnimationMinOpacity + difference;
         } else {
-            barWidth = 0.25f * trackRect.width();
+            barInlineSize = 0.25f * trackInlineSize;
 
-            float offset = position * (trackRect.width() + barWidth);
+            float offset = position * (trackInlineSize + barInlineSize);
             if (reverseDirection)
-                barLeft = trackRect.maxX() - offset;
+                barInlineStart = trackInlineStart + trackInlineSize - offset;
             else
-                barLeft -= barWidth - offset;
+                barInlineStart -= barInlineSize - offset;
 
             context.clipRoundedRect(roundedTrackRect);
         }
     }
 
-    FloatRect barRect(barLeft, barTop, barWidth, barHeight);
-    context.fillRoundedRect(FloatRoundedRect(barRect, barCornerRadii), controlTintColor(renderer.style(), styleColorOptions).colorWithAlphaMultipliedBy(alpha));
+    FloatRect barRect(barInlineStart, barBlockStart, barInlineSize, barBlockSize);
+    context.fillRoundedRect(FloatRoundedRect(isHorizontalWritingMode ? barRect : barRect.transposedRect(), barCornerRadii), controlTintColor(renderer.style(), styleColorOptions).colorWithAlphaMultipliedBy(alpha));
 
     return false;
 }
@@ -2127,7 +2145,7 @@ bool RenderThemeIOS::paintMeter(const RenderObject& renderer, const PaintInfo& p
     FloatRoundedRect roundedFillRect(rect, FloatRoundedRect::Radii(cornerRadius));
     context.fillRoundedRect(roundedFillRect, systemColor(CSSValueWebkitControlBackground, styleColorOptions));
 
-    roundedFillRect.inflateWithRadii(-nativeControlBorderWidth);
+    roundedFillRect.inflateWithRadii(-nativeControlBorderInlineSize);
     context.fillRoundedRect(roundedFillRect, systemColor(CSSValueAppleSystemOpaqueTertiaryFill, styleColorOptions));
 
     context.clipRoundedRect(roundedFillRect);
@@ -2312,7 +2330,7 @@ bool RenderThemeIOS::paintSliderTrackWithFormControlRefresh(const RenderObject& 
     FloatRoundedRect innerBorder(trackClip, cornerRadii);
 
     FloatRoundedRect outerBorder(innerBorder);
-    outerBorder.inflateWithRadii(nativeControlBorderWidth);
+    outerBorder.inflateWithRadii(nativeControlBorderInlineSize);
     context.fillRoundedRect(outerBorder, systemColor(CSSValueWebkitControlBackground, styleColorOptions));
 
     context.fillRoundedRect(innerBorder, systemColor(CSSValueAppleSystemOpaqueFill, styleColorOptions));
