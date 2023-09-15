@@ -129,16 +129,16 @@ PASS grid-row.span <custom-ident>
 PASS grid-row.span <integer> <custom-ident>
 FAIL grid-row.reset assert_equals: reset expected "auto" but got "auto / auto"
 PASS grid-area
-FAIL grid-area.initial assert_equals: initial value of grid-area should be auto expected "auto" but got "auto / auto / auto / auto"
-FAIL grid-area.auto assert_equals: auto expected "auto" but got "auto / auto / auto / auto"
+PASS grid-area.initial
+PASS grid-area.auto
 PASS grid-area.<custom-ident>
-FAIL grid-area.<integer> start assert_equals: <integer> start expected "1 / 2" but got "1 / 2 / auto / auto"
+PASS grid-area.<integer> start
 PASS grid-area.<integer>
 PASS grid-area.<integer> <ident>
 PASS grid-area.span <integer>
 PASS grid-area.span <custom-ident>
 PASS grid-area.span <integer> <custom-ident>
-FAIL grid-area.reset assert_equals: reset expected "auto" but got "auto / auto / auto / auto"
+PASS grid-area.reset
 I T
 IT
 I

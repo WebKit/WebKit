@@ -108,6 +108,7 @@ String CSSComputedStyleDeclaration::getPropertyValue(CSSPropertyID propertyID) c
 {
     auto canUseShorthandSerializerForPropertyValue = [&]() {
         switch (propertyID) {
+        case CSSPropertyGridArea:
         case CSSPropertyGridTemplate:
             return true;
         default:
