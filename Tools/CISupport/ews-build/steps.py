@@ -2074,7 +2074,9 @@ class DetermineLabelOwner(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
             yield self._addToLog('stdio', 'Unable to fetch PR number.\n')
             return defer.returnValue(FAILURE)
 
-        query_body = '{repository(owner:"Webkit", name:"WebKit") { pullRequest(number: %s) {timelineItems(itemTypes: LABELED_EVENT, last: 5) {nodes {... on LabeledEvent {actor { login } label { name } createdAt } } } } } }' % pr_number
+        project = self.getProperty('project') or GITHUB_PROJECTS[0]
+        owner, name = project.split('/', 1)
+        query_body = '{repository(owner:"%s", name:"%s") { pullRequest(number: %s) {timelineItems(itemTypes: LABELED_EVENT, last: 5) {nodes {... on LabeledEvent {actor { login } label { name } createdAt } } } } } }' % (owner, name, pr_number)
         query = {'query': query_body}
 
         response = yield self.query_graph_ql(query)
