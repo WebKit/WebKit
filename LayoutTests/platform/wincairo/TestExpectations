@@ -550,6 +550,7 @@ fast/gradients/conic-from-angle.html [ Pass ]
 fast/gradients/conic-two-hints.html [ Pass ]
 fast/gradients/conic-gradient-alpha.html [ ImageOnlyFailure ]
 
+fast/forms/vertical-writing-mode/meter.html [ ImageOnlyFailure ]
 fast/forms/vertical-writing-mode/progress.html [ ImageOnlyFailure ]
 
 [ Debug ] animations/CSSKeyframesRule-name-null.html [ Pass Timeout ]
