@@ -419,13 +419,6 @@ public:
             return IterationStatus::Continue;
 
         if (m_results.size() < m_results.capacity()) {
-// <<<<<<< HEAD
-//             if (visitor->isWasmFrame()) {
-//                 m_results.uncheckedAppend(StackFrame(visitor->wasmFunctionIndexOrName()));
-// #if USE(ALLOW_LINE_AND_COLUMN_NUMBER_IN_BUILTINS)
-//             } else if (!!visitor->codeBlock()) {
-// #else 
-// =======
             if (visitor->isNativeCalleeFrame()) {
                 auto* nativeCallee = visitor->callee().asNativeCallee();
                 switch (nativeCallee->category()) {
@@ -438,7 +431,8 @@ public:
                 }
                 }
 #if USE(ALLOW_LINE_AND_COLUMN_NUMBER_IN_BUILTINS)
-// >>>>>>> upstream/main
+            } else if (!!visitor->codeBlock()) {
+#else
             } else if (!!visitor->codeBlock() && !visitor->codeBlock()->unlinkedCodeBlock()->isBuiltinFunction()) {
 #endif
                 m_results.uncheckedAppend(

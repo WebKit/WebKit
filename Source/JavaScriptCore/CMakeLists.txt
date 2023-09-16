@@ -1038,6 +1038,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ErrorConstructor.h
     runtime/ErrorHandlingScope.h
     runtime/ErrorInstance.h
+    runtime/ErrorInstanceInlines.h
     runtime/ErrorPrototype.h
     runtime/ErrorType.h
     runtime/EvalExecutable.h
@@ -1392,6 +1393,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/Operands.h
     domjit/DOMJITHeapRange.h
     runtime/JSModuleNamespaceObject.h
+    runtime/JSModuleNamespaceObjectInlines.h
     runtime/SamplingProfiler.h
     runtime/GeneratorFunctionPrototype.h
     runtime/AsyncFunctionPrototype.h

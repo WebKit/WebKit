@@ -86,11 +86,7 @@ JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef th
     startingLineNumber = std::max(1, startingLineNumber);
 
     auto sourceURL = sourceURLString ? URL({ }, sourceURLString->string()) : URL();
-// <<<<<<< HEAD
-    // SourceCode source = makeSource(script->rawString(), SourceOrigin { sourceURL }, sourceURL.string(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()));
-// =======
     SourceCode source = makeSource(script->string(), SourceOrigin { sourceURL }, SourceTaintedOrigin::Untainted, sourceURL.string(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()));
-// >>>>>>> upstream/main
 
     return JSEvaluateScriptInternal(locker, ctx, thisObject, source, exception);
 }
@@ -107,11 +103,7 @@ bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourc
     startingLineNumber = std::max(1, startingLineNumber);
 
     auto sourceURL = sourceURLString ? URL({ }, sourceURLString->string()) : URL();
-// <<<<<<< HEAD
-    // SourceCode source = makeSource(script->rawString(), SourceOrigin { sourceURL }, sourceURL.string(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()));
-// =======
     SourceCode source = makeSource(script->string(), SourceOrigin { sourceURL }, SourceTaintedOrigin::Untainted, sourceURL.string(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()));
-// >>>>>>> upstream/main
     
     JSValue syntaxException;
     bool isValidSyntax = checkSyntax(globalObject, source, &syntaxException);

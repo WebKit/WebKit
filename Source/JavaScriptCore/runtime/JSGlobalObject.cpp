@@ -31,17 +31,7 @@
 #include "JSGlobalObject.h"
 
 #include "AggregateError.h"
-// <<<<<<< HEAD
-// #include "AggregateErrorConstructor.h"
-// #include "AggregateErrorPrototype.h"
-// #include "ArrayConstructor.h"
-// #include "ArrayIteratorPrototype.h"
-// #include "ArrayPrototype.h"
 #include "InternalFieldTuple.h"
-// #include "AsyncFromSyncIteratorPrototype.h"
-// #include "AsyncFunctionConstructor.h"
-// #include "AsyncFunctionPrototype.h"
-// =======
 #include "AggregateErrorConstructorInlines.h"
 #include "AggregateErrorPrototypeInlines.h"
 #include "ArrayConstructorInlines.h"

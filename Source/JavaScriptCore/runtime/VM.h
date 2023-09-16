@@ -928,20 +928,17 @@ public:
     DrainMicrotaskDelayScope drainMicrotaskDelayScope() { return DrainMicrotaskDelayScope { *this }; }
     JS_EXPORT_PRIVATE void drainMicrotasks();
     void setOnEachMicrotaskTick(WTF::Function<void(VM&)>&& func) { m_onEachMicrotaskTick = WTFMove(func); }
-// <<<<<<< HEAD
     
     WTF::Function<String(VM&, Vector<StackFrame>& stackTrace, unsigned &line, unsigned &column, String& sourceURL, JSC::JSObject*)>& onComputeErrorInfo() { return m_onComputeErrorInfo; }
     void setOnComputeErrorInfo(WTF::Function<String(VM&, Vector<StackFrame>& stackTrace, unsigned &line, unsigned &column, String& sourceURL, JSC::JSObject*)>&& func) { m_onComputeErrorInfo = WTFMove(func); }
     
-    // void finalizeSynchronousJSExecution() { ASSERT(currentThreadIsHoldingAPILock()); m_currentWeakRefVersion++; }
-// =======
     void finalizeSynchronousJSExecution()
     {
         ASSERT(currentThreadIsHoldingAPILock());
         m_currentWeakRefVersion++;
         setMightBeExecutingTaintedCode(false);
     }
-// >>>>>>> upstream/main
+    
     uintptr_t currentWeakRefVersion() const { return m_currentWeakRefVersion; }
 
     void setGlobalConstRedeclarationShouldThrow(bool globalConstRedeclarationThrow) { m_globalConstRedeclarationShouldThrow = globalConstRedeclarationThrow; }

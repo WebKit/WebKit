@@ -77,19 +77,11 @@ class UnlinkedFunctionCodeBlock;
         const SourceOrigin& sourceOrigin() const { return m_sourceOrigin; }
 
         // This is NOT the path that should be used for computing relative paths from a script. Use SourceOrigin's URL for that, the values may or may not be the same...
-// <<<<<<< HEAD
-// =======
         const String& sourceURL() const { return m_sourceURL; }
         const String& sourceURLStripped();
         const String& preRedirectURL() const { return m_preRedirectURL; }
         const String& sourceURLDirective() const { return m_sourceURLDirective; }
         const String& sourceMappingURLDirective() const { return m_sourceMappingURLDirective; }
-// >>>>>>> upstream/main
-
-        JS_EXPORT_PRIVATE const String& sourceURL() const { return m_sourceURL; }
-        JS_EXPORT_PRIVATE const String& preRedirectURL() const { return m_preRedirectURL; }
-        JS_EXPORT_PRIVATE const String& sourceURLDirective() const { return m_sourceURLDirective; }
-        JS_EXPORT_PRIVATE const String& sourceMappingURLDirective() const { return m_sourceMappingURLDirective; }
 
         JS_EXPORT_PRIVATE TextPosition startPosition() const { return m_startPosition; }
         JS_EXPORT_PRIVATE SourceProviderSourceType sourceType() const { return m_sourceType; }
@@ -101,17 +93,12 @@ class UnlinkedFunctionCodeBlock;
             return m_id;
         }
 
-// <<<<<<< HEAD
-        // JS_EXPORT_PRIVATE void setSourceURLDirective(const String& sourceURLDirective) { m_sourceURLDirective = sourceURLDirective; }
-        // JS_EXPORT_PRIVATE void setSourceMappingURLDirective(const String& sourceMappingURLDirective) { m_sourceMappingURLDirective = sourceMappingURLDirective; }
-// =======
         void setSourceURLDirective(const String& sourceURLDirective) { m_sourceURLDirective = sourceURLDirective; }
         void setSourceMappingURLDirective(const String& sourceMappingURLDirective) { m_sourceMappingURLDirective = sourceMappingURLDirective; }
         void setSourceTaintedOrigin(SourceTaintedOrigin taintedness) { m_taintedness = taintedness; }
 
         SourceTaintedOrigin sourceTaintedOrigin() const { return m_taintedness; }
         bool couldBeTainted() const { return m_taintedness != SourceTaintedOrigin::Untainted; }
-// >>>>>>> upstream/main
 
     private:
         JS_EXPORT_PRIVATE void getID();
@@ -132,11 +119,7 @@ class UnlinkedFunctionCodeBlock;
     class JS_EXPORT_PRIVATE StringSourceProvider : public SourceProvider {
         WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StringSourceProvider);
     public:
-// <<<<<<< HEAD
-        // JS_EXPORT_PRIVATE static Ref<StringSourceProvider> create(const String& source, const SourceOrigin& sourceOrigin, String sourceURL, const TextPosition& startPosition = TextPosition(), SourceProviderSourceType sourceType = SourceProviderSourceType::Program)
-// =======
         static Ref<StringSourceProvider> create(const String& source, const SourceOrigin& sourceOrigin, String sourceURL, SourceTaintedOrigin taintedness, const TextPosition& startPosition = TextPosition(), SourceProviderSourceType sourceType = SourceProviderSourceType::Program)
-// >>>>>>> upstream/main
         {
             return adoptRef(*new StringSourceProvider(source, sourceOrigin, taintedness, WTFMove(sourceURL), startPosition, sourceType));
         }
@@ -152,13 +135,8 @@ class UnlinkedFunctionCodeBlock;
         }
 
     protected:
-// <<<<<<< HEAD
-    //    JS_EXPORT_PRIVATE StringSourceProvider(const String& source, const SourceOrigin& sourceOrigin, String&& sourceURL, const TextPosition& startPosition, SourceProviderSourceType sourceType)
-    //         : SourceProvider(sourceOrigin, WTFMove(sourceURL), String(), startPosition, sourceType)
-// =======
         StringSourceProvider(const String& source, const SourceOrigin& sourceOrigin, SourceTaintedOrigin taintedness, String&& sourceURL, const TextPosition& startPosition, SourceProviderSourceType sourceType)
             : SourceProvider(sourceOrigin, WTFMove(sourceURL), String(), taintedness, startPosition, sourceType)
-// >>>>>>> upstream/main
             , m_source(source.isNull() ? *StringImpl::empty() : *source.impl())
         {
         }
@@ -193,7 +171,7 @@ class UnlinkedFunctionCodeBlock;
     
     private:
         JS_EXPORT_PRIVATE SyntheticSourceProvider(SyntheticSourceGenerator&& generator, const SourceOrigin& sourceOrigin, String&& sourceURL, String&& preRedirectURL = String())
-            : SourceProvider(sourceOrigin, WTFMove(sourceURL), WTFMove(preRedirectURL), TextPosition(), SourceProviderSourceType::Synthetic)
+            : SourceProvider(sourceOrigin, WTFMove(sourceURL), WTFMove(preRedirectURL), SourceTaintedOrigin::Untainted, TextPosition(), SourceProviderSourceType::Synthetic)
             , m_source("[native code]"_s)
             , m_generator(WTFMove(generator))
         {
