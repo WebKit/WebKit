@@ -6697,3 +6697,9 @@ imported/w3c/web-platform-tests/css/css-inline/baseline-source/baseline-source-f
 imported/w3c/web-platform-tests/css/css-inline/baseline-source/baseline-source-first-003.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-inline/baseline-source/baseline-source-last-002.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-inline/baseline-source/baseline-source-last-003.html [ Pass Failure ]
+
+# These tests are only expected to work on some ports.
+fast/dom/non-visual-mode.html [ Pass ImageOnlyFailure ]
+fast/images/non-visual-mode.html [ Pass ImageOnlyFailure ]
+fast/text/non-visual-mode.html [ Pass ImageOnlyFailure ]
+fast/transforms/non-visual-mode.html [ Pass ImageOnlyFailure ]

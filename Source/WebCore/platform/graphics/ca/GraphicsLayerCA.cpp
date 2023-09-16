@@ -710,8 +710,11 @@ void GraphicsLayerCA::setDrawsContent(bool drawsContent)
     if (drawsContent == m_drawsContent)
         return;
 
+    auto oldDrawsContent = this->drawsContent();
     GraphicsLayer::setDrawsContent(drawsContent);
-    noteLayerPropertyChanged(DrawsContentChanged | DebugIndicatorsChanged);
+    auto newDrawsContent = this->drawsContent();
+    if (oldDrawsContent != newDrawsContent)
+        noteLayerPropertyChanged(DrawsContentChanged | DebugIndicatorsChanged);
 }
 
 void GraphicsLayerCA::setContentsVisible(bool contentsVisible)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -133,6 +133,8 @@ public:
     virtual TransformationMatrix transformMatrixForProperty(AnimatedProperty) const { return { }; }
 
     virtual bool layerContainsBitmapOnly(const GraphicsLayer*) const { return false; }
+
+    virtual bool nonVisualModeEnabled() { return false; }
 
 #ifndef NDEBUG
     // RenderLayerBacking overrides this to verify that it is not

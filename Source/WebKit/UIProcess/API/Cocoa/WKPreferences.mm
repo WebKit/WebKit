@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1394,6 +1394,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 - (BOOL)_appNapEnabled
 {
     return _preferences->pageVisibilityBasedProcessSuppressionEnabled();
+}
+
+- (void)_setNonVisualModeEnabled:(BOOL)enabled
+{
+    _preferences->setNonVisualModeEnabled(enabled);
+}
+
+- (BOOL)_nonVisualModeEnabled
+{
+    return _preferences->nonVisualModeEnabled();
 }
 
 #endif // PLATFORM(MAC)

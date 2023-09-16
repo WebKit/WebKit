@@ -2878,3 +2878,9 @@ webkit.org/b/261531 [ Monterey ] imported/w3c/web-platform-tests/css/css-transfo
 webkit.org/b/261531 [ Monterey ] imported/w3c/web-platform-tests/css/css-transforms/transform3d-sorting-003.html [ ImageOnlyFailure ]
 webkit.org/b/261531 [ Monterey ] imported/w3c/web-platform-tests/css/css-transforms/transform3d-scale-004.html [ ImageOnlyFailure ]
 webkit.org/b/261531 [ Monterey ] imported/w3c/web-platform-tests/css/css-transforms/preserve3d-and-filter-no-perspective.html [ ImageOnlyFailure ]
+
+# These tests are only expected to work on some ports.
+fast/dom/non-visual-mode.html [ Pass ]
+fast/images/non-visual-mode.html [ Pass ]
+fast/text/non-visual-mode.html [ Pass ]
+fast/transforms/non-visual-mode.html [ Pass ]
