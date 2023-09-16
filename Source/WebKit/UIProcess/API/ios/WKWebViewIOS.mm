@@ -4392,7 +4392,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (!_page || !_perProcessState.committedFindLayerID)
         return nil;
 
-    return downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).remoteLayerTreeHost().layerForID(_perProcessState.committedFindLayerID);
+    if (auto* drawingArea = _page->drawingArea())
+        return downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea).remoteLayerTreeHost().layerForID(_perProcessState.committedFindLayerID);
+
+    return nil;
 }
 
 #endif // HAVE(UIFINDINTERACTION)
