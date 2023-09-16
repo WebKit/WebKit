@@ -61,75 +61,47 @@ class GridItemWithSpan;
 class GridTrack : public CanMakeWeakPtr<GridTrack> {
 public:
     GridTrack() = default;
-    GridTrack(const GridTrack&);
-    GridTrack(GridTrack&&);
-    GridTrack& operator=(const GridTrack&);
-    GridTrack& operator=(GridTrack&&);
 
     LayoutUnit baseSize() const;
     LayoutUnit unclampedBaseSize() const;
     void setBaseSize(LayoutUnit);
 
     const LayoutUnit& growthLimit() const;
-    bool growthLimitIsInfinite() const { return m_data.growthLimit == infinity; }
+    bool growthLimitIsInfinite() const { return m_growthLimit == infinity; }
     void setGrowthLimit(LayoutUnit);
 
-    bool infiniteGrowthPotential() const { return growthLimitIsInfinite() || m_data.infinitelyGrowable; }
+    bool infiniteGrowthPotential() const { return growthLimitIsInfinite() || m_infinitelyGrowable; }
     LayoutUnit growthLimitIfNotInfinite() const;
 
-    const LayoutUnit& plannedSize() const { return m_data.plannedSize; }
-    void setPlannedSize(LayoutUnit plannedSize) { m_data.plannedSize = plannedSize; }
+    const LayoutUnit& plannedSize() const { return m_plannedSize; }
+    void setPlannedSize(LayoutUnit plannedSize) { m_plannedSize = plannedSize; }
 
-    const LayoutUnit& tempSize() const { return m_data.tempSize; }
+    const LayoutUnit& tempSize() const { return m_tempSize; }
     void setTempSize(const LayoutUnit&);
     void growTempSize(const LayoutUnit&);
 
-    bool infinitelyGrowable() const { return m_data.infinitelyGrowable; }
-    void setInfinitelyGrowable(bool infinitelyGrowable) { m_data.infinitelyGrowable = infinitelyGrowable; }
+    bool infinitelyGrowable() const { return m_infinitelyGrowable; }
+    void setInfinitelyGrowable(bool infinitelyGrowable) { m_infinitelyGrowable = infinitelyGrowable; }
 
     void setGrowthLimitCap(std::optional<LayoutUnit>);
-    std::optional<LayoutUnit> growthLimitCap() const { return m_data.growthLimitCap; }
+    std::optional<LayoutUnit> growthLimitCap() const { return m_growthLimitCap; }
 
     const GridTrackSize& cachedTrackSize() const;
     void setCachedTrackSize(const GridTrackSize&);
 
 private:
-    bool isGrowthLimitBiggerThanBaseSize() const { return growthLimitIsInfinite() || m_data.growthLimit >= std::max(m_data.baseSize, 0_lu); }
+    bool isGrowthLimitBiggerThanBaseSize() const { return growthLimitIsInfinite() || m_growthLimit >= std::max(m_baseSize, 0_lu); }
 
     void ensureGrowthLimitIsBiggerThanBaseSize();
 
-    struct Data {
-        LayoutUnit baseSize { 0 };
-        LayoutUnit growthLimit { 0 };
-        LayoutUnit plannedSize { 0 };
-        LayoutUnit tempSize { 0 };
-        std::optional<LayoutUnit> growthLimitCap;
-        bool infinitelyGrowable { false };
-        std::optional<GridTrackSize> cachedTrackSize;
-    } m_data;
+    LayoutUnit m_baseSize { 0 };
+    LayoutUnit m_growthLimit { 0 };
+    LayoutUnit m_plannedSize { 0 };
+    LayoutUnit m_tempSize { 0 };
+    std::optional<LayoutUnit> m_growthLimitCap;
+    bool m_infinitelyGrowable { false };
+    std::optional<GridTrackSize> m_cachedTrackSize;
 };
-
-inline GridTrack::GridTrack(const GridTrack& other)
-    : m_data(other.m_data)
-{
-}
-
-inline GridTrack::GridTrack(GridTrack&& other)
-    : m_data(WTFMove(other.m_data))
-{
-}
-
-inline GridTrack& GridTrack::operator=(const GridTrack& other)
-{
-    m_data = other.m_data;
-    return *this;
-}
-
-inline GridTrack& GridTrack::operator=(GridTrack&& other)
-{
-    m_data = WTFMove(other.m_data);
-    return *this;
-}
 
 class GridTrackSizingAlgorithm final {
     friend class GridTrackSizingAlgorithmStrategy;

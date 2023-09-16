@@ -878,9 +878,9 @@ TriState EditingStyle::triStateOfStyle(const VisibleSelection& selection) const
 
     TriState state = TriState::False;
     bool nodeIsStart = true;
-    for (Node* node = selection.start().deprecatedNode(); node; node = NodeTraversal::next(*node)) {
+    for (auto node = selection.start().protectedDeprecatedNode(); node; node = NodeTraversal::next(*node)) {
         if (node->renderer() && node->hasEditableStyle()) {
-            ComputedStyleExtractor computedStyle(node);
+            ComputedStyleExtractor computedStyle(node.get());
             TriState nodeState = triStateOfStyle(computedStyle, node->isTextNode() ? EditingStyle::DoNotIgnoreTextOnlyProperties : EditingStyle::IgnoreTextOnlyProperties);
             if (nodeIsStart) {
                 state = nodeState;
@@ -1276,7 +1276,7 @@ Ref<EditingStyle> EditingStyle::wrappingStyleForSerialization(Node& context, boo
         // Styles that Mail blockquotes contribute should only be placed on the Mail blockquote,
         // to help us differentiate those styles from ones that the user has applied.
         // This helps us get the color of content pasted into blockquotes right.
-        wrappingStyle->removeStyleAddedByNode(enclosingNodeOfType(firstPositionInOrBeforeNode(&context), isMailBlockquote, CanCrossEditingBoundary));
+        wrappingStyle->removeStyleAddedByNode(enclosingNodeOfType(firstPositionInOrBeforeNode(&context), isMailBlockquote, CanCrossEditingBoundary).get());
 
         // Call collapseTextDecorationProperties first or otherwise it'll copy the value over from in-effect to text-decorations.
         wrappingStyle->collapseTextDecorationProperties();
@@ -1606,7 +1606,7 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
 
     Position position = selection.start().downstream();
 
-    Node* node = position.deprecatedNode();
+    auto node = position.protectedDeprecatedNode();
     if (!node)
         return WritingDirection::Natural;
 
@@ -1629,19 +1629,19 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
                 return *direction;
             }
         }
-        node = selection.visibleStart().deepEquivalent().deprecatedNode();
+        node = selection.visibleStart().deepEquivalent().protectedDeprecatedNode();
     }
 
     // The selection is either a caret with no typing attributes or a range in which no embedding is added, so just use the start position
     // to decide.
-    Node* block = enclosingBlock(node);
+    RefPtr block = enclosingBlock(node.get());
     auto foundDirection = WritingDirection::Natural;
 
     for (; node != block; node = node->parentNode()) {
         if (!node->isStyledElement())
             continue;
 
-        ComputedStyleExtractor computedStyle(node);
+        ComputedStyleExtractor computedStyle(node.get());
         RefPtr<CSSValue> unicodeBidi = computedStyle.propertyValue(CSSPropertyUnicodeBidi);
         if (!is<CSSPrimitiveValue>(unicodeBidi))
             continue;

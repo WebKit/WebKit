@@ -74,11 +74,13 @@ private:
 
         bool isEmpty() { return !m_firstNodeInserted; }
         Node* firstNodeInserted() const { return m_firstNodeInserted.get(); }
+        RefPtr<Node> protectedFirstNodeInserted() const { return m_firstNodeInserted; }
         Node* lastLeafInserted() const
         {
             ASSERT(m_lastNodeInserted);
             return m_lastNodeInserted->lastDescendant();
         }
+        RefPtr<Node> protectedLastLeafInserted() const { return lastLeafInserted(); }
         Node* pastLastLeaf() const
         {
             ASSERT(m_lastNodeInserted);

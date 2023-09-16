@@ -1399,7 +1399,7 @@ Vector<std::pair<unsigned, unsigned>> RenderText::draggedContentRangesBetweenOff
         return { };
 
     Vector<std::pair<unsigned, unsigned>> draggedContentRanges;
-    for (auto* marker : markers) {
+    for (auto& marker : markers) {
         unsigned markerStart = std::max(marker->startOffset(), startOffset);
         unsigned markerEnd = std::min(marker->endOffset(), endOffset);
         if (markerStart >= markerEnd || markerStart > endOffset || markerEnd < startOffset)

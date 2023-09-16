@@ -72,7 +72,7 @@ static inline OptionSet<DocumentMarker::MarkerType> markerTypesForReplacement()
     return { DocumentMarker::Replacement, DocumentMarker::SpellCheckingExemption };
 }
 
-static bool markersHaveIdenticalDescription(const Vector<RenderedDocumentMarker*>& markers)
+static bool markersHaveIdenticalDescription(const Vector<WeakPtr<RenderedDocumentMarker>>& markers)
 {
     if (markers.isEmpty())
         return true;
@@ -417,7 +417,7 @@ void AlternativeTextController::respondToChangedSelection(const VisibleSelection
 
     Node* node = position.containerNode();
     ASSERT(node);
-    for (auto* marker : node->document().markers().markersFor(*node)) {
+    for (auto& marker : node->document().markers().markersFor(*node)) {
         ASSERT(marker);
         if (respondToMarkerAtEndOfWord(*marker, position))
             break;
@@ -472,7 +472,7 @@ void AlternativeTextController::markCorrection(const SimpleRange& replacedRange,
 void AlternativeTextController::recordSpellcheckerResponseForModifiedCorrection(const SimpleRange& rangeOfCorrection, const String& corrected, const String& correction)
 {
     DocumentMarkerController& markers = rangeOfCorrection.startContainer().document().markers();
-    Vector<RenderedDocumentMarker*> correctedOnceMarkers = markers.markersInRange(rangeOfCorrection, DocumentMarker::Autocorrected);
+    auto correctedOnceMarkers = markers.markersInRange(rangeOfCorrection, DocumentMarker::Autocorrected);
     if (correctedOnceMarkers.isEmpty())
         return;
 
@@ -727,7 +727,7 @@ void AlternativeTextController::applyDictationAlternative(const String& alternat
     auto selection = editor.selectedRange();
     if (!selection || !editor.shouldInsertText(alternativeString, *selection, EditorInsertAction::Pasted))
         return;
-    for (auto* marker : selection->startContainer().document().markers().markersInRange(*selection, DocumentMarker::DictationAlternatives))
+    for (auto& marker : selection->startContainer().document().markers().markersInRange(*selection, DocumentMarker::DictationAlternatives))
         removeDictationAlternativesForMarker(*marker);
     applyAlternativeTextToRange(*selection, alternativeString, AlternativeTextType::DictationAlternatives, markerTypesForAppliedDictationAlternative());
 #else

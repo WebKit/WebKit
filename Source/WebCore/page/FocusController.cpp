@@ -589,18 +589,18 @@ bool FocusController::relinquishFocusToChrome(FocusDirection direction)
 bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, KeyboardEvent* event, bool initialFocus)
 {
     LocalFrame& frame = focusedOrMainFrame();
-    Document* document = frame.document();
+    RefPtr document = frame.document();
 
-    Node* currentNode = document->focusNavigationStartingNode(direction);
+    RefPtr<Node> currentNode = document->focusNavigationStartingNode(direction);
     // FIXME: Not quite correct when it comes to focus transitions leaving/entering the WebView itself
     bool caretBrowsing = frame.settings().caretBrowsingEnabled();
 
     if (caretBrowsing && !currentNode)
-        currentNode = frame.selection().selection().start().deprecatedNode();
+        currentNode = frame.selection().selection().start().protectedDeprecatedNode();
 
     document->updateLayoutIgnorePendingStylesheets();
 
-    RefPtr<Element> element = findFocusableElementAcrossFocusScope(direction, FocusNavigationScope::scopeOf(currentNode ? *currentNode : *document), currentNode, event);
+    RefPtr<Element> element = findFocusableElementAcrossFocusScope(direction, FocusNavigationScope::scopeOf(currentNode ? *currentNode : *document), currentNode.get(), event);
 
     if (!element) {
         // We didn't find a node to focus, so we should try to pass focus to Chrome.

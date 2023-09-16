@@ -124,8 +124,8 @@ static std::optional<SimpleRange> findRangeByIdentifyingStartAndEndPositions(con
     if (!endContainer)
         return std::nullopt;
 
-    auto start = makeContainerOffsetPosition(startContainer.get(), range.startOffset());
-    auto end = makeContainerOffsetPosition(endContainer.get(), range.endOffset());
+    auto start = makeContainerOffsetPosition(WTFMove(startContainer), range.startOffset());
+    auto end = makeContainerOffsetPosition(WTFMove(endContainer), range.endOffset());
     if (start.isOrphan() || end.isOrphan())
         return std::nullopt;
 

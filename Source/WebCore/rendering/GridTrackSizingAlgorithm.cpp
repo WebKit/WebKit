@@ -42,74 +42,74 @@ namespace WebCore {
 LayoutUnit GridTrack::baseSize() const
 {
     ASSERT(isGrowthLimitBiggerThanBaseSize());
-    return std::max(m_data.baseSize, 0_lu);
+    return std::max(m_baseSize, 0_lu);
 }
 
 LayoutUnit GridTrack::unclampedBaseSize() const
 {
     ASSERT(isGrowthLimitBiggerThanBaseSize());
-    return m_data.baseSize;
+    return m_baseSize;
 }
 
 const LayoutUnit& GridTrack::growthLimit() const
 {
     ASSERT(isGrowthLimitBiggerThanBaseSize());
-    ASSERT(!m_data.growthLimitCap || m_data.growthLimitCap.value() >= m_data.growthLimit || baseSize() >= m_data.growthLimitCap.value());
-    return m_data.growthLimit;
+    ASSERT(!m_growthLimitCap || m_growthLimitCap.value() >= m_growthLimit || baseSize() >= m_growthLimitCap.value());
+    return m_growthLimit;
 }
 
 void GridTrack::setBaseSize(LayoutUnit baseSize)
 {
-    m_data.baseSize = baseSize;
+    m_baseSize = baseSize;
     ensureGrowthLimitIsBiggerThanBaseSize();
 }
 
 void GridTrack::setGrowthLimit(LayoutUnit growthLimit)
 {
-    m_data.growthLimit = growthLimit == infinity ? growthLimit : std::min(growthLimit, m_data.growthLimitCap.value_or(growthLimit));
+    m_growthLimit = growthLimit == infinity ? growthLimit : std::min(growthLimit, m_growthLimitCap.value_or(growthLimit));
     ensureGrowthLimitIsBiggerThanBaseSize();
 }
 
 LayoutUnit GridTrack::growthLimitIfNotInfinite() const
 {
     ASSERT(isGrowthLimitBiggerThanBaseSize());
-    return m_data.growthLimit == infinity ? baseSize() : m_data.growthLimit;
+    return m_growthLimit == infinity ? baseSize() : m_growthLimit;
 }
 
 void GridTrack::setTempSize(const LayoutUnit& tempSize)
 {
     ASSERT(tempSize >= 0);
     ASSERT(growthLimitIsInfinite() || growthLimit() >= tempSize);
-    m_data.tempSize = tempSize;
+    m_tempSize = tempSize;
 }
 
 void GridTrack::growTempSize(const LayoutUnit& tempSize)
 {
     ASSERT(tempSize >= 0);
-    m_data.tempSize += tempSize;
+    m_tempSize += tempSize;
 }
 
 void GridTrack::setGrowthLimitCap(std::optional<LayoutUnit> growthLimitCap)
 {
     ASSERT(!growthLimitCap || growthLimitCap.value() >= 0);
-    m_data.growthLimitCap = growthLimitCap;
+    m_growthLimitCap = growthLimitCap;
 }
 
 const GridTrackSize& GridTrack::cachedTrackSize() const
 {
-    RELEASE_ASSERT(m_data.cachedTrackSize);
-    return *m_data.cachedTrackSize;
+    RELEASE_ASSERT(m_cachedTrackSize);
+    return *m_cachedTrackSize;
 }
 
 void GridTrack::setCachedTrackSize(const GridTrackSize& cachedTrackSize)
 {
-    m_data.cachedTrackSize = cachedTrackSize;
+    m_cachedTrackSize = cachedTrackSize;
 }
 
 void GridTrack::ensureGrowthLimitIsBiggerThanBaseSize()
 {
-    if (m_data.growthLimit != infinity && m_data.growthLimit < std::max(m_data.baseSize, 0_lu))
-        m_data.growthLimit = std::max(m_data.baseSize, 0_lu);
+    if (m_growthLimit != infinity && m_growthLimit < std::max(m_baseSize, 0_lu))
+        m_growthLimit = std::max(m_baseSize, 0_lu);
 }
 
 // Static helper methods.

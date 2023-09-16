@@ -1041,8 +1041,8 @@ void Range::textNodeSplit(Text& oldNode)
 
 ExceptionOr<void> Range::expand(const String& unit)
 {
-    auto start = VisiblePosition { makeContainerOffsetPosition(&startContainer(), startOffset()) };
-    auto end = VisiblePosition { makeContainerOffsetPosition(&endContainer(), endOffset()) };
+    auto start = VisiblePosition { makeContainerOffsetPosition(protectedStartContainer(), startOffset()) };
+    auto end = VisiblePosition { makeContainerOffsetPosition(protectedEndContainer(), endOffset()) };
     if (unit == "word"_s) {
         start = startOfWord(start);
         end = endOfWord(end);

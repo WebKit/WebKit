@@ -151,7 +151,7 @@ static Position positionAvoidingPrecedingNodes(Position position)
 
         if (nextPosition == position)
             break;
-        if (enclosingBlock(nextPosition.containerNode()) != enclosingBlockNode)
+        if (enclosingBlock(nextPosition.protectedContainerNode()) != enclosingBlockNode)
             break;
         if (VisiblePosition(position) != VisiblePosition(nextPosition))
             break;
@@ -1092,8 +1092,8 @@ static bool isInlineNodeWithStyle(const Node* node)
 
 inline Node* nodeToSplitToAvoidPastingIntoInlineNodesWithStyle(const Position& insertionPos)
 {
-    Node* containgBlock = enclosingBlock(insertionPos.containerNode());
-    return highestEnclosingNodeOfType(insertionPos, isInlineNodeWithStyle, CannotCrossEditingBoundary, containgBlock);
+    auto containingBlock = enclosingBlock(insertionPos.protectedContainerNode());
+    return highestEnclosingNodeOfType(insertionPos, isInlineNodeWithStyle, CannotCrossEditingBoundary, containingBlock.get());
 }
 
 bool ReplaceSelectionCommand::willApplyCommand()
@@ -1149,7 +1149,7 @@ void ReplaceSelectionCommand::doApply()
     bool selectionEndWasEndOfParagraph = isEndOfParagraph(visibleEnd);
     bool selectionStartWasStartOfParagraph = isStartOfParagraph(visibleStart);
 
-    RefPtr startBlock { enclosingBlock(visibleStart.deepEquivalent().deprecatedNode()) };
+    RefPtr startBlock { enclosingBlock(visibleStart.deepEquivalent().protectedDeprecatedNode()) };
 
     Position insertionPos = selection.start();
     bool shouldHandleMailBlockquote = enclosingNodeOfType(insertionPos, isMailBlockquote, CanCrossEditingBoundary) && !m_ignoreMailBlockquote;
@@ -1232,7 +1232,7 @@ void ReplaceSelectionCommand::doApply()
     if (endBR)
         originalVisPosBeforeEndBR = VisiblePosition(positionBeforeNode(endBR.get())).previous();
     
-    RefPtr<Node> insertionBlock = enclosingBlock(insertionPos.deprecatedNode());
+    RefPtr<Node> insertionBlock = enclosingBlock(insertionPos.protectedDeprecatedNode());
     
     // Adjust insertionPos to prevent nesting.
     // If the start was in a Mail blockquote, we will have already handled adjusting insertionPos above.
@@ -1314,7 +1314,7 @@ void ReplaceSelectionCommand::doApply()
     if (refNode)
         fragment.removeNode(*refNode);
 
-    RefPtr blockStart { enclosingBlock(insertionPos.deprecatedNode()) };
+    RefPtr blockStart { enclosingBlock(insertionPos.protectedDeprecatedNode()) };
     bool isInsertingIntoList = (isListHTMLElement(refNode.get()) || (isLegacyAppleStyleSpan(refNode.get()) && isListHTMLElement(refNode->firstChild())))
     && blockStart && blockStart->renderer()->isListItem() && blockStart->parentNode()->hasEditableStyle();
     if (isInsertingIntoList)
@@ -1397,8 +1397,8 @@ void ReplaceSelectionCommand::doApply()
         applyCommandToComposite(SimplifyMarkupCommand::create(document(), insertedNodes.firstNodeInserted(), insertedNodes.pastLastLeaf()));
 
     // Setup m_startOfInsertedContent and m_endOfInsertedContent. This should be the last two lines of code that access insertedNodes.
-    m_startOfInsertedContent = firstPositionInOrBeforeNode(insertedNodes.firstNodeInserted());
-    m_endOfInsertedContent = lastPositionInOrAfterNode(insertedNodes.lastLeafInserted());
+    m_startOfInsertedContent = firstPositionInOrBeforeNode(insertedNodes.protectedFirstNodeInserted().get());
+    m_endOfInsertedContent = lastPositionInOrAfterNode(insertedNodes.protectedLastLeafInserted().get());
 
     // Determine whether or not we should merge the end of inserted content with what's after it before we do
     // the start merge so that the start merge doesn't effect our decision.
@@ -1410,8 +1410,8 @@ void ReplaceSelectionCommand::doApply()
         // We need to handle the case where we need to merge the end
         // but our destination node is inside an inline that is the last in the block.
         // We insert a placeholder before the newly inserted content to avoid being merged into the inline.
-        Node* destinationNode = destination.deepEquivalent().deprecatedNode();
-        if (m_shouldMergeEnd && destinationNode != enclosingInline(destinationNode) && enclosingInline(destinationNode)->nextSibling())
+        auto destinationNode = destination.deepEquivalent().protectedDeprecatedNode();
+        if (m_shouldMergeEnd && destinationNode != enclosingInline(destinationNode.get()) && enclosingInline(destinationNode.get())->nextSibling())
             insertNodeBefore(HTMLBRElement::create(document()), *refNode);
         
         // Merging the first paragraph of inserted content with the content that came
@@ -1445,7 +1445,7 @@ void ReplaceSelectionCommand::doApply()
         if (selectionEndWasEndOfParagraph || !isEndOfParagraph(endOfInsertedContent) || next.isNull()) {
             if (!isStartOfParagraph(endOfInsertedContent)) {
                 setEndingSelection(endOfInsertedContent);
-                RefPtr enclosingNode = enclosingBlock(endOfInsertedContent.deepEquivalent().deprecatedNode());
+                RefPtr enclosingNode = enclosingBlock(endOfInsertedContent.deepEquivalent().protectedDeprecatedNode());
                 if (isListItem(enclosingNode.get())) {
                     auto newListItem = HTMLLIElement::create(document());
                     insertNodeAfter(newListItem.copyRef(), *enclosingNode);

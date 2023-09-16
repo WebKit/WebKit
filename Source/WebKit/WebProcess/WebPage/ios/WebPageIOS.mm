@@ -383,7 +383,7 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
 #if USE(DICTATION_ALTERNATIVES)
     if (selectedRange) {
         auto markers = frame.document()->markers().markersInRange(*selectedRange, DocumentMarker::MarkerType::DictationAlternatives);
-        postLayoutData.dictationContextsForSelection = WTF::map(markers, [] (auto* marker) {
+        postLayoutData.dictationContextsForSelection = WTF::map(markers, [] (auto& marker) {
             return std::get<DocumentMarker::DictationData>(marker->data()).context;
         });
     }
@@ -1410,8 +1410,8 @@ static bool insideImageOverlay(const VisiblePosition& position)
 
 static std::optional<SimpleRange> expandForImageOverlay(const SimpleRange& range)
 {
-    VisiblePosition expandedStart(makeContainerOffsetPosition(&range.startContainer(), range.startOffset()));
-    VisiblePosition expandedEnd(makeContainerOffsetPosition(&range.endContainer(), range.endOffset()));
+    VisiblePosition expandedStart(makeContainerOffsetPosition(range.protectedStartContainer(), range.startOffset()));
+    VisiblePosition expandedEnd(makeContainerOffsetPosition(range.protectedEndContainer(), range.endOffset()));
 
     for (auto start = expandedStart; insideImageOverlay(start); start = start.previous()) {
         if (RefPtr container = start.deepEquivalent().containerNode(); is<Text>(container)) {
@@ -1891,7 +1891,7 @@ void WebPage::extendSelectionForReplacement(CompletionHandler<void()>&& completi
     if (!container)
         return;
 
-    auto markerRanges = document->markers().markersFor(*container, { DocumentMarker::DictationAlternatives, DocumentMarker::CorrectionIndicator }).map([&](auto* marker) {
+    auto markerRanges = document->markers().markersFor(*container, { DocumentMarker::DictationAlternatives, DocumentMarker::CorrectionIndicator }).map([&](auto& marker) {
         return makeSimpleRange(*container, *marker);
     });
 

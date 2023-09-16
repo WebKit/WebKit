@@ -588,7 +588,7 @@ void CompositeEditCommand::insertNodeAt(Ref<Node>&& insertChild, const Position&
     // For editing positions like [table, 0], insert before the table,
     // likewise for replaced elements, brs, etc.
     Position p = editingPosition.parentAnchoredEquivalent();
-    RefPtr refChild { p.deprecatedNode() };
+    auto refChild = p.protectedDeprecatedNode();
     int offset = p.deprecatedEditingOffset();
     
     if (canHaveChildrenForEditing(*refChild)) {
@@ -796,7 +796,7 @@ Position CompositeEditCommand::replaceSelectedTextInNode(const String& text)
     return Position(textNode.get(), start.offsetInContainerNode() + text.length());
 }
 
-static Vector<RenderedDocumentMarker> copyMarkers(const Vector<RenderedDocumentMarker*>& markerPointers)
+static Vector<RenderedDocumentMarker> copyMarkers(const Vector<WeakPtr<RenderedDocumentMarker>>& markerPointers)
 {
     return markerPointers.map([](auto& markerPointer) {
         return *markerPointer;
@@ -974,7 +974,7 @@ void CompositeEditCommand::rebalanceWhitespaceOnTextSubstring(Text& textNode, in
 
 void CompositeEditCommand::prepareWhitespaceAtPositionForSplit(Position& position)
 {
-    RefPtr node { position.deprecatedNode() };
+    auto node = position.protectedDeprecatedNode();
     if (!is<Text>(node))
         return;
     Text& textNode = downcast<Text>(*node);
@@ -1102,7 +1102,7 @@ void CompositeEditCommand::deleteInsignificantText(const Position& start, const 
         return;
 
     Vector<Ref<Text>> nodes;
-    for (Node* node = start.deprecatedNode(); node; node = NodeTraversal::next(*node)) {
+    for (RefPtr node = start.protectedDeprecatedNode(); node; node = NodeTraversal::next(*node)) {
         if (is<Text>(*node))
             nodes.append(downcast<Text>(*node));
         if (node == end.deprecatedNode())
@@ -1239,10 +1239,10 @@ RefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(co
                 // the rest of this function. If not, we can bail here.
                 return nullptr;
             }
-        } else if (enclosingBlock(upstreamEnd.deprecatedNode()) != upstreamStart.deprecatedNode()) {
+        } else if (enclosingBlock(upstreamEnd.protectedDeprecatedNode()) != upstreamStart.deprecatedNode()) {
             // The visibleEnd. If it is an ancestor of the paragraph start, then
             // we can bail as we have a full block to work with.
-            if (upstreamStart.deprecatedNode()->isDescendantOf(enclosingBlock(upstreamEnd.deprecatedNode())))
+            if (upstreamStart.deprecatedNode()->isDescendantOf(enclosingBlock(upstreamEnd.protectedDeprecatedNode()).get()))
                 return nullptr;
         } else if (isEndOfEditableOrNonEditableContent(visibleEnd)) {
             // At the end of the editable region. We can bail here as well.
@@ -1298,7 +1298,7 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(const Position& start, 
         Vector<RefPtr<Node>> ancestors;
         
         // Insert each node from innerNode to outerNode (excluded) in a list.
-        for (Node* n = start.deprecatedNode(); n && n != outerNode; n = n->parentNode())
+        for (RefPtr n = start.protectedDeprecatedNode(); n && n != outerNode; n = n->parentNode())
             ancestors.append(n);
 
         // Clone every node between start.deprecatedNode() and outerBlock.
@@ -1325,7 +1325,7 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(const Position& start, 
             outerNode = outerNode->parentNode();
         }
 
-        RefPtr<Node> startNode = start.deprecatedNode();
+        auto startNode = start.protectedDeprecatedNode();
         for (RefPtr<Node> node = NodeTraversal::nextSkippingChildren(*startNode, outerNode.get()); node; node = NodeTraversal::nextSkippingChildren(*node, outerNode.get())) {
             // Move lastNode up in the tree as much as node was moved up in the
             // tree by NodeTraversal::nextSkippingChildren, so that the relative depth between
@@ -1357,7 +1357,7 @@ void CompositeEditCommand::cleanupAfterDeletion(VisiblePosition destination)
     if (!caretAfterDelete.equals(destination) && isStartOfParagraph(caretAfterDelete) && isEndOfParagraph(caretAfterDelete)) {
         // Note: We want the rightmost candidate.
         Position position = caretAfterDelete.deepEquivalent().downstream();
-        RefPtr node { position.deprecatedNode() };
+        auto node = position.protectedDeprecatedNode();
         ASSERT(node);
         // Normally deletion will leave a br as a placeholder.
         if (is<HTMLBRElement>(*node))
@@ -1600,7 +1600,8 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
     auto emptyListItem = enclosingEmptyListItem(endingSelection().visibleStart());
     auto listNode = emptyListItem->parentNode();
     auto style = EditingStyle::create(endingSelection().start());
-    style->mergeTypingStyle(document());
+    Ref document = this->document();
+    style->mergeTypingStyle(document);
 
     RefPtr<Element> newBlock;
     if (RefPtr blockEnclosingList = listNode->parentNode()) {
@@ -1612,14 +1613,14 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
                 // e.g. <ul><li> <ul><li><br></li></ul> hello</li></ul> should become <ul><li> <div><br></div> hello</li></ul> at the end
                 splitElement(downcast<HTMLLIElement>(*blockEnclosingList), *listNode);
                 removeNodePreservingChildren(*listNode->parentNode());
-                newBlock = HTMLLIElement::create(document());
+                newBlock = HTMLLIElement::create(document);
             }
             // If listNode does NOT appear at the end of the outer list item, then behave as if in a regular paragraph.
         } else if (blockEnclosingList->hasTagName(olTag) || blockEnclosingList->hasTagName(ulTag))
-            newBlock = HTMLLIElement::create(document());
+            newBlock = HTMLLIElement::create(document);
     }
     if (!newBlock)
-        newBlock = createDefaultParagraphElement(document());
+        newBlock = createDefaultParagraphElement(document);
 
     RefPtr<Node> previousListNode = emptyListItem->isElementNode() ? ElementTraversal::previousSibling(*emptyListItem): emptyListItem->previousSibling();
     RefPtr<Node> nextListNode = emptyListItem->isElementNode() ? ElementTraversal::nextSibling(*emptyListItem): emptyListItem->nextSibling();
@@ -1693,8 +1694,8 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
         removeNodeAndPruneAncestors(*caretPos.deprecatedNode());
     else if (is<Text>(*caretPos.deprecatedNode())) {
         ASSERT(caretPos.deprecatedEditingOffset() == 0);
-        Text& textNode = downcast<Text>(*caretPos.deprecatedNode());
-        RefPtr parentNode { textNode.parentNode() };
+        auto textNode = downcast<Text>(caretPos.protectedDeprecatedNode().releaseNonNull());
+        RefPtr parentNode { textNode->parentNode() };
         // The preserved newline must be the first thing in the node, since otherwise the previous
         // paragraph would be quoted, and we verified that it wasn't above.
         deleteTextFromNode(textNode, 0, 1);

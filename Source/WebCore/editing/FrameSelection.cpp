@@ -270,13 +270,13 @@ void FrameSelection::moveWithoutValidationTo(const Position& base, const Positio
 
 void DragCaretController::setCaretPosition(const VisiblePosition& position)
 {
-    if (Node* node = m_position.deepEquivalent().deprecatedNode())
-        invalidateCaretRect(node);
+    if (auto node = m_position.deepEquivalent().protectedDeprecatedNode())
+        invalidateCaretRect(node.get());
     m_position = position;
     setCaretRectNeedsUpdate();
     Document* document = nullptr;
-    if (Node* node = m_position.deepEquivalent().deprecatedNode()) {
-        invalidateCaretRect(node);
+    if (auto node = m_position.deepEquivalent().protectedDeprecatedNode()) {
+        invalidateCaretRect(node.get());
         document = &node->document();
     }
     if (m_position.isNull() || m_position.isOrphan())
@@ -2949,8 +2949,8 @@ void FrameSelection::updateFromAssociatedLiveRange()
         disassociateLiveRange();
     else {
         // Don't use VisibleSelection's constructor that takes a SimpleRange, because it uses makeDeprecatedLegacyPosition instead of makeContainerOffsetPosition.
-        auto start = makeContainerOffsetPosition(&m_associatedLiveRange->startContainer(), m_associatedLiveRange->startOffset());
-        auto end = makeContainerOffsetPosition(&m_associatedLiveRange->endContainer(), m_associatedLiveRange->endOffset());
+        auto start = makeContainerOffsetPosition(m_associatedLiveRange->protectedStartContainer(), m_associatedLiveRange->startOffset());
+        auto end = makeContainerOffsetPosition(m_associatedLiveRange->protectedEndContainer(), m_associatedLiveRange->endOffset());
         setSelection({ start, end });
     }
 }

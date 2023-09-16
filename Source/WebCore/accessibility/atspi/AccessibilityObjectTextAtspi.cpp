@@ -850,7 +850,7 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
     }
 
     VisiblePosition offsetPosition = m_coreObject->visiblePositionForIndex(adjustInputOffset(*utf16Offset, m_hasListMarkerAtStart));
-    auto* childNode = offsetPosition.deepEquivalent().deprecatedNode();
+    auto childNode = offsetPosition.deepEquivalent().protectedDeprecatedNode();
     if (!childNode)
         return { WTFMove(defaultAttributes), -1, -1 };
 

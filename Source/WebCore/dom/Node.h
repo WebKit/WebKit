@@ -130,6 +130,7 @@ public:
     virtual NodeType nodeType() const = 0;
     virtual size_t approximateMemoryCost() const { return sizeof(*this); }
     ContainerNode* parentNode() const;
+    inline RefPtr<ContainerNode> protectedParentNode() const; // Defined in ContainerNode.h.
     static ptrdiff_t parentNodeMemoryOffset() { return OBJECT_OFFSETOF(Node, m_parentNode); }
     inline Element* parentElement() const;
     Node* previousSibling() const { return m_previous; }

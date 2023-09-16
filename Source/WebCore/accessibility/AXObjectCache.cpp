@@ -194,11 +194,11 @@ void AccessibilityReplacedText::postTextStateChangeNotification(AXObjectCache* c
         return;
 
     VisiblePosition position = selection.start();
-    auto* node = highestEditableRoot(position.deepEquivalent(), HasEditableAXRole);
+    auto node = highestEditableRoot(position.deepEquivalent(), HasEditableAXRole);
     if (m_replacedText.length())
-        cache->postTextReplacementNotification(node, AXTextEditTypeDelete, m_replacedText, type, text, position);
+        cache->postTextReplacementNotification(node.get(), AXTextEditTypeDelete, m_replacedText, type, text, position);
     else
-        cache->postTextStateChangeNotification(node, type, text, position);
+        cache->postTextStateChangeNotification(node.get(), type, text, position);
 }
 
 bool AXObjectCache::gAccessibilityEnabled = false;
@@ -1923,14 +1923,14 @@ void AXObjectCache::postTextStateChangeNotification(Node* node, const AXTextStat
 
 void AXObjectCache::postTextStateChangeNotification(const Position& position, const AXTextStateChangeIntent& intent, const VisibleSelection& selection)
 {
-    Node* node = position.deprecatedNode();
+    auto node = position.protectedDeprecatedNode();
     if (!node)
         return;
 
     stopCachingComputedObjectAttributes();
 
 #if PLATFORM(COCOA) || USE(ATSPI)
-    AccessibilityObject* object = getOrCreate(node);
+    AccessibilityObject* object = getOrCreate(node.get());
     if (object && object->accessibilityIsIgnored()) {
 #if PLATFORM(COCOA)
         if (position.atLastEditingPositionForNode()) {
@@ -1949,7 +1949,7 @@ void AXObjectCache::postTextStateChangeNotification(const Position& position, co
 
     postTextStateChangeNotification(object, intent, selection);
 #else
-    postTextStateChangeNotification(node, intent, selection);
+    postTextStateChangeNotification(node.get(), intent, selection);
 #endif
 }
 
@@ -3483,12 +3483,12 @@ CharacterOffset AXObjectCache::startCharacterOffsetOfParagraph(const CharacterOf
     if (isRenderedAsNonInlineTableImageOrHR(&startNode))
         return startOrEndCharacterOffsetForRange(rangeForNodeContents(startNode), true);
     
-    auto* startBlock = enclosingBlock(&startNode);
+    auto startBlock = enclosingBlock(&startNode);
     int offset = characterOffset.startIndex + characterOffset.offset;
-    auto* highestRoot = highestEditableRoot(firstPositionInOrBeforeNode(&startNode));
+    auto highestRoot = highestEditableRoot(firstPositionInOrBeforeNode(&startNode));
     Position::AnchorType type = Position::PositionIsOffsetInAnchor;
     
-    auto& node = *findStartOfParagraph(&startNode, highestRoot, startBlock, offset, type, boundaryCrossingRule);
+    auto& node = *findStartOfParagraph(&startNode, highestRoot.get(), startBlock.get(), offset, type, boundaryCrossingRule);
     
     if (type == Position::PositionIsOffsetInAnchor)
         return characterOffsetForNodeAndOffset(node, offset, TraverseOptionIncludeStart);
@@ -3501,16 +3501,16 @@ CharacterOffset AXObjectCache::endCharacterOffsetOfParagraph(const CharacterOffs
     if (characterOffset.isNull())
         return CharacterOffset();
     
-    Node* startNode = characterOffset.node;
-    if (isRenderedAsNonInlineTableImageOrHR(startNode))
+    RefPtr startNode = characterOffset.node;
+    if (isRenderedAsNonInlineTableImageOrHR(startNode.get()))
         return startOrEndCharacterOffsetForRange(rangeForNodeContents(*startNode), false);
     
-    Node* stayInsideBlock = enclosingBlock(startNode);
+    auto stayInsideBlock = enclosingBlock(startNode.get());
     int offset = characterOffset.startIndex + characterOffset.offset;
-    Node* highestRoot = highestEditableRoot(firstPositionInOrBeforeNode(startNode));
+    auto highestRoot = highestEditableRoot(firstPositionInOrBeforeNode(startNode.get()));
     Position::AnchorType type = Position::PositionIsOffsetInAnchor;
     
-    auto& node = *findEndOfParagraph(startNode, highestRoot, stayInsideBlock, offset, type, boundaryCrossingRule);
+    auto& node = *findEndOfParagraph(startNode.get(), highestRoot.get(), stayInsideBlock.get(), offset, type, boundaryCrossingRule);
     if (type == Position::PositionIsOffsetInAnchor) {
         if (node.isTextNode()) {
             CharacterOffset startOffset = startOrEndCharacterOffsetForRange(rangeForNodeContents(node), true);

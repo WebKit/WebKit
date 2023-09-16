@@ -256,7 +256,7 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle& style)
     while (paragraphStart.isNotNull() && paragraphStart != beyondEnd) {
         StyleChange styleChange(&style, paragraphStart.deepEquivalent());
         if (styleChange.cssStyle() || m_removeOnly) {
-            RefPtr<Node> block = enclosingBlock(paragraphStart.deepEquivalent().deprecatedNode());
+            RefPtr<Node> block = enclosingBlock(paragraphStart.deepEquivalent().protectedDeprecatedNode());
             if (!m_removeOnly) {
                 RefPtr<Node> newBlock = moveParagraphContentsToNewBlockIfNecessary(paragraphStart.deepEquivalent());
                 if (newBlock)
@@ -354,7 +354,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
         beyondEnd = NodeTraversal::next(*end.deprecatedNode());
     
     start = start.upstream(); // Move upstream to ensure we do not add redundant spans.
-    RefPtr startNode { start.deprecatedNode() };
+    auto startNode = start.protectedDeprecatedNode();
 
     if (!startNode)
         return;
@@ -671,8 +671,8 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle& style)
     RefPtr<EditingStyle> styleToApply = &style;
     if (textDirection) {
         // Avoid applying the unicode-bidi and direction properties beneath ancestors that already have them.
-        auto embeddingStartNode = highestEmbeddingAncestor(start.deprecatedNode(), enclosingBlock(start.deprecatedNode()));
-        auto embeddingEndNode = highestEmbeddingAncestor(end.deprecatedNode(), enclosingBlock(end.deprecatedNode()));
+        auto embeddingStartNode = highestEmbeddingAncestor(start.deprecatedNode(), enclosingBlock(start.protectedDeprecatedNode()).get());
+        auto embeddingEndNode = highestEmbeddingAncestor(end.deprecatedNode(), enclosingBlock(end.protectedDeprecatedNode()).get());
 
         if (embeddingStartNode || embeddingEndNode) {
             Position embeddingApplyStart = embeddingStartNode ? positionInParentAfterNode(embeddingStartNode.get()) : start;
@@ -699,7 +699,7 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle& style)
 
 void ApplyStyleCommand::fixRangeAndApplyInlineStyle(EditingStyle& style, const Position& start, const Position& end)
 {
-    RefPtr startNode { start.deprecatedNode() };
+    auto startNode = start.protectedDeprecatedNode();
 
     if (start.deprecatedEditingOffset() >= caretMaxOffset(*startNode)) {
         startNode = NodeTraversal::next(*startNode);
@@ -707,7 +707,7 @@ void ApplyStyleCommand::fixRangeAndApplyInlineStyle(EditingStyle& style, const P
             return;
     }
 
-    RefPtr pastEndNode { end.deprecatedNode() };
+    auto pastEndNode = end.protectedDeprecatedNode();
     if (end.deprecatedEditingOffset() >= caretMaxOffset(*pastEndNode))
         pastEndNode = NodeTraversal::nextSkippingChildren(*pastEndNode);
 
@@ -1121,7 +1121,7 @@ void ApplyStyleCommand::removeInlineStyle(EditingStyle& style, const Position& s
     Position s = start.isNull() || start.isOrphan() ? pushDownStart : start;
     Position e = end.isNull() || end.isOrphan() ? pushDownEnd : end;
 
-    RefPtr<Node> node = start.deprecatedNode();
+    auto node = start.protectedDeprecatedNode();
     while (node) {
         RefPtr<Node> next;
         if (editingIgnoresContent(*node)) {
@@ -1296,7 +1296,7 @@ bool ApplyStyleCommand::mergeStartWithPreviousIfIdentical(const Position& start,
     unsigned startOffset = startChild->computeNodeIndex();
     unsigned endOffset = end.deprecatedEditingOffset() + (startNode == end.deprecatedNode() ? startOffset : 0);
     updateStartEnd({ startNode.get(), startOffset, Position::PositionIsOffsetInAnchor },
-        { end.deprecatedNode(), endOffset, Position::PositionIsOffsetInAnchor });
+        { end.protectedDeprecatedNode(), endOffset, Position::PositionIsOffsetInAnchor });
     return true;
 }
 
@@ -1422,6 +1422,7 @@ void ApplyStyleCommand::applyInlineStyleChange(Node& passedStart, Node& passedEn
     RefPtr<Node> endNode = &passedEnd;
     ASSERT(startNode->isConnected());
     ASSERT(endNode->isConnected());
+    auto document = protectedDocument();
 
     // Find appropriate font and span elements top-down.
     RefPtr<HTMLFontElement> fontContainer;
@@ -1451,7 +1452,7 @@ void ApplyStyleCommand::applyInlineStyleChange(Node& passedStart, Node& passedEn
             if (styleChange.applyFontSize())
                 setNodeAttribute(*fontContainer, sizeAttr, styleChange.fontSize());
         } else {
-            auto fontElement = createFontElement(document());
+            auto fontElement = createFontElement(document);
             if (styleChange.applyFontColor())
                 fontElement->setAttributeWithoutSynchronization(colorAttr, styleChange.fontColor());
             if (styleChange.applyFontFace())
@@ -1471,31 +1472,31 @@ void ApplyStyleCommand::applyInlineStyleChange(Node& passedStart, Node& passedEn
             } else
                 setNodeAttribute(*styleContainer, styleAttr, styleToMerge->asTextAtom());
         } else {
-            auto styleElement = createStyleSpanElement(document());
+            auto styleElement = createStyleSpanElement(document);
             styleElement->setAttribute(styleAttr, styleToMerge->asTextAtom());
             surroundNodeRangeWithElement(*startNode, *endNode, WTFMove(styleElement));
         }
     }
 
     if (styleChange.applyBold())
-        surroundNodeRangeWithElement(*startNode, *endNode, createHTMLElement(document(), bTag));
+        surroundNodeRangeWithElement(*startNode, *endNode, createHTMLElement(document, bTag));
 
     if (styleChange.applyItalic())
-        surroundNodeRangeWithElement(*startNode, *endNode, createHTMLElement(document(), iTag));
+        surroundNodeRangeWithElement(*startNode, *endNode, createHTMLElement(document, iTag));
 
     if (styleChange.applyUnderline())
-        surroundNodeRangeWithElement(*startNode, *endNode, createHTMLElement(document(), uTag));
+        surroundNodeRangeWithElement(*startNode, *endNode, createHTMLElement(document, uTag));
 
     if (styleChange.applyLineThrough())
-        surroundNodeRangeWithElement(*startNode, *endNode, createHTMLElement(document(), strikeTag));
+        surroundNodeRangeWithElement(*startNode, *endNode, createHTMLElement(document, strikeTag));
 
     if (styleChange.applySubscript())
-        surroundNodeRangeWithElement(*startNode, *endNode, createHTMLElement(document(), subTag));
+        surroundNodeRangeWithElement(*startNode, *endNode, createHTMLElement(document, subTag));
     else if (styleChange.applySuperscript())
-        surroundNodeRangeWithElement(*startNode, *endNode, createHTMLElement(document(), supTag));
+        surroundNodeRangeWithElement(*startNode, *endNode, createHTMLElement(document, supTag));
 
     if (m_styledInlineElement && addStyledElement == AddStyledElement)
-        surroundNodeRangeWithElement(*startNode, *endNode, m_styledInlineElement->cloneElementWithoutChildren(document()));
+        surroundNodeRangeWithElement(*startNode, *endNode, m_styledInlineElement->cloneElementWithoutChildren(document));
 }
 
 float ApplyStyleCommand::computedFontSize(Node* node)

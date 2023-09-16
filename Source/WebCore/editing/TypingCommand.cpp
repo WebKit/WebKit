@@ -670,8 +670,8 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
 
         const VisiblePosition& visibleStart = endingSelection().visibleStart();
         const VisiblePosition& previousPosition = visibleStart.previous(CannotCrossEditingBoundary);
-        Node* enclosingTableCell = enclosingNodeOfType(visibleStart.deepEquivalent(), &isTableCell);
-        const Node* enclosingTableCellForPreviousPosition = enclosingNodeOfType(previousPosition.deepEquivalent(), &isTableCell);
+        auto enclosingTableCell = enclosingNodeOfType(visibleStart.deepEquivalent(), &isTableCell);
+        auto enclosingTableCellForPreviousPosition = enclosingNodeOfType(previousPosition.deepEquivalent(), &isTableCell);
         if (previousPosition.isNull() || enclosingTableCell != enclosingTableCellForPreviousPosition) {
             // When the caret is at the start of the editable area in an empty list item, break out of the list item.
             if (auto deleteListSelection = shouldBreakOutOfEmptyListItem(); !deleteListSelection.isNone()) {
@@ -692,7 +692,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
         }
 
         // If we have a caret selection at the beginning of a cell, we have nothing to do.
-        if (enclosingTableCell && visibleStart == firstPositionInNode(enclosingTableCell))
+        if (enclosingTableCell && visibleStart == firstPositionInNode(enclosingTableCell.get()))
             return;
 
         // If the caret is at the start of a paragraph after a table, move content into the last table cell.
@@ -791,8 +791,8 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool sh
 
         Position downstreamEnd = endingSelection().end().downstream();
         VisiblePosition visibleEnd = endingSelection().visibleEnd();
-        Node* enclosingTableCell = enclosingNodeOfType(visibleEnd.deepEquivalent(), &isTableCell);
-        if (enclosingTableCell && visibleEnd == lastPositionInNode(enclosingTableCell))
+        auto enclosingTableCell = enclosingNodeOfType(visibleEnd.deepEquivalent(), &isTableCell);
+        if (enclosingTableCell && visibleEnd == lastPositionInNode(enclosingTableCell.get()))
             return;
         if (visibleEnd == endOfParagraph(visibleEnd))
             downstreamEnd = visibleEnd.next(CannotCrossEditingBoundary).deepEquivalent().downstream();

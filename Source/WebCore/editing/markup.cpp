@@ -897,7 +897,7 @@ static Node* ancestorToRetainStructureAndAppearanceForBlock(Node* commonAncestor
 
 static inline Node* ancestorToRetainStructureAndAppearance(Node* commonAncestor)
 {
-    return ancestorToRetainStructureAndAppearanceForBlock(enclosingBlock(commonAncestor));
+    return ancestorToRetainStructureAndAppearanceForBlock(enclosingBlock(commonAncestor).get());
 }
 
 static bool propertyMissingOrEqualToNone(const StyleProperties* style, CSSPropertyID propertyID)
@@ -941,8 +941,8 @@ static Node* highestAncestorToWrapMarkup(const Position& start, const Position& 
         // the structure and appearance of the copied markup.
         specialCommonAncestor = ancestorToRetainStructureAndAppearance(&commonAncestor);
 
-        if (auto* parentListNode = enclosingNodeOfType(start, isListItem)) {
-            if (!editingIgnoresContent(*parentListNode) && VisibleSelection::selectionFromContentsOfNode(parentListNode) == VisibleSelection(start, end)) {
+        if (auto parentListNode = enclosingNodeOfType(start, isListItem)) {
+            if (!editingIgnoresContent(*parentListNode) && VisibleSelection::selectionFromContentsOfNode(parentListNode.get()) == VisibleSelection(start, end)) {
                 specialCommonAncestor = parentListNode->parentNode();
                 while (specialCommonAncestor && !isListHTMLElement(specialCommonAncestor))
                     specialCommonAncestor = specialCommonAncestor->parentNode();
@@ -1131,6 +1131,7 @@ static void restoreAttachmentElementsInFragment(DocumentFragment& fragment)
     if (!DeprecatedGlobalSettings::attachmentElementEnabled())
         return;
 
+    RefPtr ownerDocument = fragment.ownerDocument();
     // When creating a fragment we must strip the webkit-attachment-path attribute after restoring the File object.
     Vector<Ref<HTMLAttachmentElement>> attachments;
     for (auto& attachment : descendantsOfType<HTMLAttachmentElement>(fragment))
@@ -1142,9 +1143,9 @@ static void restoreAttachmentElementsInFragment(DocumentFragment& fragment)
         auto attachmentPath = attachment->attachmentPath();
         auto blobURL = attachment->blobURL();
         if (!attachmentPath.isEmpty())
-            attachment->setFile(File::create(fragment.ownerDocument(), attachmentPath));
+            attachment->setFile(File::create(ownerDocument.get(), attachmentPath));
         else if (!blobURL.isEmpty())
-            attachment->setFile(File::deserialize(fragment.ownerDocument(), { }, blobURL, attachment->attachmentType(), attachment->attachmentTitle()));
+            attachment->setFile(File::deserialize(ownerDocument.get(), { }, blobURL, attachment->attachmentType(), attachment->attachmentTitle()));
 
         // Remove temporary attributes that were previously added in StyledMarkupAccumulator::appendCustomAttributes.
         attachment->removeAttribute(webkitattachmentidAttr);
@@ -1161,7 +1162,7 @@ static void restoreAttachmentElementsInFragment(DocumentFragment& fragment)
         if (attachmentIdentifier.isEmpty())
             continue;
 
-        auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, *fragment.ownerDocument());
+        auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, *ownerDocument);
         attachment->setUniqueIdentifier(attachmentIdentifier);
         image->setAttachmentElement(WTFMove(attachment));
         image->removeAttribute(webkitattachmentidAttr);
@@ -1306,7 +1307,7 @@ Ref<DocumentFragment> createFragmentFromText(const SimpleRange& context, const S
         && !block->hasTagName(bodyTag)
         && !block->hasTagName(htmlTag)
         // Avoid using table as paragraphs due to its special treatment in Position::upstream/downstream.
-        && !isRenderedTable(block)
+        && !isRenderedTable(block.get())
         && block != editableRootForPosition(start);
     bool useLineBreak = enclosingTextFormControl(start);
 

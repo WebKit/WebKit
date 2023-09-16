@@ -70,7 +70,8 @@ FontCascade::FontCascade(FontCascadeDescription&& fd, float letterSpacing, float
 }
 
 FontCascade::FontCascade(const FontCascade& other)
-    : m_fontDescription(other.m_fontDescription)
+    : CanMakeWeakPtr<FontCascade>()
+    , m_fontDescription(other.m_fontDescription)
     , m_fonts(other.m_fonts)
     , m_letterSpacing(other.m_letterSpacing)
     , m_wordSpacing(other.m_wordSpacing)

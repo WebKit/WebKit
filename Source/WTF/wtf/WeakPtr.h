@@ -288,6 +288,14 @@ protected:
             initializeWeakPtrFactory();
     }
 
+    CanMakeWeakPtr(const CanMakeWeakPtr&)
+    {
+        if (initializationMode == WeakPtrFactoryInitialization::Eager)
+            initializeWeakPtrFactory();
+    }
+
+    CanMakeWeakPtr& operator=(const CanMakeWeakPtr&) { return *this; }
+
     void initializeWeakPtrFactory()
     {
         m_weakPtrFactory.initializeIfNeeded(static_cast<T&>(*this));

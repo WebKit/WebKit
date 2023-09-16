@@ -2873,7 +2873,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (void)showNodeForTextMarker:(AXTextMarkerRef)textMarker
 {
     auto visiblePosition = visiblePositionForTextMarker(self.axBackingObject->axObjectCache(), textMarker);
-    Node* node = visiblePosition.deepEquivalent().deprecatedNode();
+    auto node = visiblePosition.deepEquivalent().protectedDeprecatedNode();
     if (!node)
         return;
     node->showNode();
@@ -2883,7 +2883,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (void)showNodeTreeForTextMarker:(AXTextMarkerRef)textMarker
 {
     auto visiblePosition = visiblePositionForTextMarker(self.axBackingObject->axObjectCache(), textMarker);
-    Node* node = visiblePosition.deepEquivalent().deprecatedNode();
+    auto node = visiblePosition.deepEquivalent().protectedDeprecatedNode();
     if (!node)
         return;
     node->showTreeForThis();

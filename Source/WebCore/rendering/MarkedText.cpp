@@ -199,7 +199,7 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
     if (!renderer.textNode())
         return { };
 
-    Vector<RenderedDocumentMarker*> markers = renderer.document().markers().markersFor(*renderer.textNode());
+    auto markers = renderer.document().markers().markersFor(*renderer.textNode());
 
     auto markedTextTypeForMarkerType = [] (DocumentMarker::MarkerType type) {
         switch (type) {
@@ -227,7 +227,7 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
 
     // Give any document markers that touch this run a chance to draw before the text has been drawn.
     // Note end() points at the last char, not one past it like endOffset and ranges do.
-    for (auto* marker : markers) {
+    for (auto& marker : markers) {
         // Collect either the background markers or the foreground markers, but not both
         switch (marker->type()) {
         case DocumentMarker::Grammar:
@@ -283,7 +283,7 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
 #endif
         case DocumentMarker::TextMatch: {
             auto [clampedStart, clampedEnd] = selectableRange.clamp(marker->startOffset(), marker->endOffset());
-            markedTexts.uncheckedAppend({ clampedStart, clampedEnd, markedTextTypeForMarkerType(marker->type()), marker });
+            markedTexts.uncheckedAppend({ clampedStart, clampedEnd, markedTextTypeForMarkerType(marker->type()), marker.get() });
             break;
         }
         case DocumentMarker::Replacement:

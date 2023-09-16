@@ -327,7 +327,7 @@ void WebPage::dictationAlternativesAtSelection(CompletionHandler<void(Vector<Dic
 
     auto markers = document->markers().markersInRange(*expandedSelectionRange, DocumentMarker::DictationAlternatives);
     contexts.reserveInitialCapacity(markers.size());
-    for (auto* marker : markers) {
+    for (auto& marker : markers) {
         if (std::holds_alternative<DocumentMarker::DictationData>(marker->data()))
             contexts.uncheckedAppend(std::get<DocumentMarker::DictationData>(marker->data()).context);
     }

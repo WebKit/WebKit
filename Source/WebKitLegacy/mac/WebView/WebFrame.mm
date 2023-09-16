@@ -1701,7 +1701,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
     for (WebCore::Node* node = root; node; node = WebCore::NodeTraversal::next(*node)) {
         auto markers = document->markers().markersFor(*node);
-        for (auto* marker : markers) {
+        for (auto& marker : markers) {
             if (marker->type() != WebCore::DocumentMarker::DictationResult)
                 continue;
 
