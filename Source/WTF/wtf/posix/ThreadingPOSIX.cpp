@@ -333,7 +333,7 @@ bool Thread::establishHandle(NewThreadContext* context, std::optional<size_t> st
     UNUSED_PARAM(qos);
 #endif
 #if !HAVE(SCHEDULING_POLICIES)
-    UNUSED_PARAM(schedulingPolicy)
+    UNUSED_PARAM(schedulingPolicy);
 #endif
 #endif
 
