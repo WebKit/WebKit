@@ -629,7 +629,7 @@ void EventHandler::selectClosestContextualWordOrLinkFromHitTestResult(const HitT
 
 bool EventHandler::handleMousePressEventDoubleClick(const MouseEventWithHitTestResults& event)
 {
-    if (event.event().button() != LeftButton)
+    if (event.event().button() != MouseButton::Left)
         return false;
 
     if (m_frame.selection().isRange()) {
@@ -650,7 +650,7 @@ bool EventHandler::handleMousePressEventDoubleClick(const MouseEventWithHitTestR
 
 bool EventHandler::handleMousePressEventTripleClick(const MouseEventWithHitTestResults& event)
 {
-    if (event.event().button() != LeftButton)
+    if (event.event().button() != MouseButton::Left)
         return false;
     
     RefPtr targetNode = event.targetNode();
@@ -762,7 +762,7 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
 
     bool handled = updateSelectionForMouseDownDispatchingSelectStart(targetNode.get(), newSelection, granularity);
 
-    if (event.event().button() == MiddleButton) {
+    if (event.event().button() == MouseButton::Middle) {
         // Ignore handled, since we want to paste to where the caret was placed anyway.
         handled = handlePasteGlobalSelection(event.event()) || handled;
     }
@@ -927,7 +927,7 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
         return true;
 
     RefPtr targetNode = event.targetNode();
-    if (event.event().button() != LeftButton || !targetNode)
+    if (event.event().button() != MouseButton::Left || !targetNode)
         return false;
 
     RenderObject* renderer = targetNode->renderer();
@@ -971,7 +971,7 @@ bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
     if (!document)
         return false;
 
-    if (event.button() != LeftButton || event.clickCount() != 1)
+    if (event.button() != MouseButton::Left || event.clickCount() != 1)
         return false;
 
     auto* view = m_frame.view();
@@ -1153,7 +1153,7 @@ bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& e
             && m_dragStartPosition == event.event().position()
 #endif
             && m_frame.selection().isRange()
-            && event.event().button() != RightButton) {
+            && event.event().button() != MouseButton::Right) {
         VisibleSelection newSelection;
         RefPtr node = event.targetNode();
         bool caretBrowsing = m_frame.settings().caretBrowsingEnabled();
@@ -1176,7 +1176,7 @@ bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& e
         handled = true;
     }
 
-    if (event.event().button() == MiddleButton) {
+    if (event.event().button() == MouseButton::Middle) {
         // Ignore handled, since we want to paste to where the caret was placed anyway.
         handled = handlePasteGlobalSelection(event.event()) || handled;
     }
@@ -1946,7 +1946,7 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& platfor
 
     m_clickCount = platformMouseEvent.clickCount();
     bool swallowMouseUpEvent = !dispatchMouseEvent(eventNames().mouseupEvent, mouseEvent.targetNode(), m_clickCount, platformMouseEvent, FireMouseOverOut::No);
-    bool swallowClickEvent = platformMouseEvent.button() != RightButton && mouseEvent.targetNode() == m_clickNode && !dispatchMouseEvent(eventNames().clickEvent, mouseEvent.targetNode(), m_clickCount, platformMouseEvent, FireMouseOverOut::Yes);
+    bool swallowClickEvent = platformMouseEvent.button() != MouseButton::Right && mouseEvent.targetNode() == m_clickNode && !dispatchMouseEvent(eventNames().clickEvent, mouseEvent.targetNode(), m_clickCount, platformMouseEvent, FireMouseOverOut::Yes);
 
     if (m_lastScrollbarUnderMouse)
         swallowMouseUpEvent = m_lastScrollbarUnderMouse->mouseUp(platformMouseEvent);
@@ -2280,7 +2280,7 @@ HandleMouseEventResult EventHandler::handleMouseReleaseEvent(const PlatformMouse
         return true;
 
     bool swallowMouseUpEvent = !dispatchMouseEvent(eventNames().mouseupEvent, mouseEvent.targetNode(), m_clickCount, platformMouseEvent, FireMouseOverOut::No);
-    bool contextMenuEvent = platformMouseEvent.button() == RightButton;
+    bool contextMenuEvent = platformMouseEvent.button() == MouseButton::Right;
 
     auto nodeToClick = targetNodeForClickEvent(m_clickNode.get(), mouseEvent.targetNode());
     bool swallowClickEvent = m_clickCount > 0 && !contextMenuEvent && nodeToClick && !dispatchMouseEvent(eventNames().clickEvent, nodeToClick.get(), m_clickCount, platformMouseEvent, FireMouseOverOut::Yes);
@@ -2390,7 +2390,7 @@ bool EventHandler::dispatchDragEvent(const AtomString& eventType, Element& dragT
     auto dragEvent = DragEvent::create(eventType, Event::CanBubble::Yes, Event::IsCancelable::Yes, Event::IsComposed::Yes,
         event.timestamp().approximateMonotonicTime(), &m_frame.windowProxy(), 0,
         event.globalPosition(), event.position(), event.movementDelta().x(), event.movementDelta().y(),
-        event.modifiers(), 0, 0, nullptr, event.force(), SyntheticClickType::NoTap, &dataTransfer);
+        event.modifiers(), MouseButton::Left, 0, nullptr, event.force(), SyntheticClickType::NoTap, &dataTransfer);
 
     dragTarget.dispatchEvent(dragEvent);
 
@@ -3471,7 +3471,7 @@ bool EventHandler::sendContextMenuEventForKey()
 #else
     PlatformEvent::Type eventType = PlatformEvent::Type::MousePressed;
 #endif
-    PlatformMouseEvent platformMouseEvent(position, globalPosition, RightButton, eventType, 1, { }, WallTime::now(), ForceAtClick, SyntheticClickType::NoTap);
+    PlatformMouseEvent platformMouseEvent(position, globalPosition, MouseButton::Right, eventType, 1, { }, WallTime::now(), ForceAtClick, SyntheticClickType::NoTap);
 
     return sendContextMenuEvent(platformMouseEvent);
 }
@@ -3557,7 +3557,7 @@ void EventHandler::fakeMouseMoveEventTimerFired()
         return;
 
     auto modifiers = PlatformKeyboardEvent::currentStateOfModifierKeys();
-    PlatformMouseEvent fakeMouseMoveEvent(valueOrDefault(m_lastKnownMousePosition), m_lastKnownMouseGlobalPosition, NoButton, PlatformEvent::Type::MouseMoved, 0, modifiers, WallTime::now(), 0, SyntheticClickType::NoTap);
+    PlatformMouseEvent fakeMouseMoveEvent(valueOrDefault(m_lastKnownMousePosition), m_lastKnownMouseGlobalPosition, MouseButton::None, PlatformEvent::Type::MouseMoved, 0, modifiers, WallTime::now(), 0, SyntheticClickType::NoTap);
     mouseMoved(fakeMouseMoveEvent);
 }
 #endif // !ENABLE(IOS_TOUCH_EVENTS)
@@ -4176,7 +4176,7 @@ RefPtr<Element> EventHandler::draggedElement() const
 
 bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDragHysteresis checkDragHysteresis)
 {
-    if (event.event().button() != LeftButton || event.event().type() != PlatformEvent::Type::MouseMoved) {
+    if (event.event().button() != MouseButton::Left || event.event().type() != PlatformEvent::Type::MouseMoved) {
         // If we allowed the other side of the bridge to handle a drag
         // last time, then m_mousePressed might still be set. So we
         // clear it now to make sure the next move after a drag

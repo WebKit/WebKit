@@ -77,7 +77,7 @@ WebMouseEventButton mouseButton(const WebCore::NavigationAction& navigationActio
     auto& mouseEventData = navigationAction.mouseEventData();
     if (mouseEventData && mouseEventData->buttonDown && mouseEventData->isTrusted)
         return static_cast<WebMouseEventButton>(mouseEventData->button);
-    return WebMouseEventButton::NoButton;
+    return WebMouseEventButton::None;
 }
 
 WebMouseEventSyntheticClickType syntheticClickType(const WebCore::NavigationAction& navigationAction)

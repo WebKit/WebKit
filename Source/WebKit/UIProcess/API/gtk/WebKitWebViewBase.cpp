@@ -202,15 +202,15 @@ struct MotionEvent {
             modifiers.add(WebEventModifier::MetaKey);
 
         if (state & GDK_BUTTON1_MASK) {
-            button = WebMouseEventButton::LeftButton;
+            button = WebMouseEventButton::Left;
             buttons |= 1;
         }
         if (state & GDK_BUTTON2_MASK) {
-            button = WebMouseEventButton::MiddleButton;
+            button = WebMouseEventButton::Middle;
             buttons |= 4;
         }
         if (state & GDK_BUTTON3_MASK) {
-            button = WebMouseEventButton::RightButton;
+            button = WebMouseEventButton::Right;
             buttons |= 2;
         }
     }
@@ -224,7 +224,7 @@ struct MotionEvent {
 
     FloatPoint position;
     FloatPoint globalPosition;
-    WebMouseEventButton button { WebMouseEventButton::NoButton };
+    WebMouseEventButton button { WebMouseEventButton::None };
     unsigned short buttons { 0 };
     OptionSet<WebEventModifier> modifiers;
 };
@@ -3216,19 +3216,19 @@ void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, Mouse
         return;
     }
 
-    WebMouseEventButton webEventButton = WebMouseEventButton::NoButton;
+    WebMouseEventButton webEventButton = WebMouseEventButton::None;
     switch (button) {
     case 0:
-        webEventButton = WebMouseEventButton::NoButton;
+        webEventButton = WebMouseEventButton::None;
         break;
     case 1:
-        webEventButton = WebMouseEventButton::LeftButton;
+        webEventButton = WebMouseEventButton::Left;
         break;
     case 2:
-        webEventButton = WebMouseEventButton::MiddleButton;
+        webEventButton = WebMouseEventButton::Middle;
         break;
     case 3:
-        webEventButton = WebMouseEventButton::RightButton;
+        webEventButton = WebMouseEventButton::Right;
         break;
     }
 
@@ -3247,7 +3247,7 @@ void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, Mouse
         webEventType = WebEventType::MouseDown;
         priv->inputMethodFilter.cancelComposition();
 #if !USE(GTK4)
-        if (webEventButton == WebMouseEventButton::RightButton) {
+        if (webEventButton == WebMouseEventButton::Right) {
             GUniquePtr<GdkEvent> event(gdk_event_new(GDK_BUTTON_PRESS));
             event->button.window = gtk_widget_get_window(GTK_WIDGET(webViewBase));
             g_object_ref(event->button.window);
@@ -3276,11 +3276,11 @@ void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, Mouse
     case MouseEventType::Motion:
         webEventType = WebEventType::MouseMove;
         if (buttons & GDK_BUTTON1_MASK)
-            webEventButton = WebMouseEventButton::LeftButton;
+            webEventButton = WebMouseEventButton::Left;
         else if (buttons & GDK_BUTTON2_MASK)
-            webEventButton = WebMouseEventButton::MiddleButton;
+            webEventButton = WebMouseEventButton::Middle;
         else if (buttons & GDK_BUTTON3_MASK)
-            webEventButton = WebMouseEventButton::RightButton;
+            webEventButton = WebMouseEventButton::Right;
 
         if (priv->lastMotionEvent)
             movementDelta = FloatPoint(x, y) - priv->lastMotionEvent->globalPosition;

@@ -198,16 +198,16 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(struct wpe_input_pointer_even
         ASSERT_NOT_REACHED();
     }
 
-    WebMouseEventButton button = WebMouseEventButton::NoButton;
+    WebMouseEventButton button = WebMouseEventButton::None;
     switch (event->type) {
     case wpe_input_pointer_event_type_motion:
     case wpe_input_pointer_event_type_button:
         if (event->button == 1)
-            button = WebMouseEventButton::LeftButton;
+            button = WebMouseEventButton::Left;
         else if (event->button == 2)
-            button = WebMouseEventButton::RightButton;
+            button = WebMouseEventButton::Right;
         else if (event->button == 3)
-            button = WebMouseEventButton::MiddleButton;
+            button = WebMouseEventButton::Middle;
         break;
     case wpe_input_pointer_event_type_null:
         ASSERT_NOT_REACHED();

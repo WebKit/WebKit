@@ -3248,7 +3248,7 @@ void WebPageProxy::handleMouseEvent(const NativeWebMouseEvent& event)
         return;
 
 #if ENABLE(CONTEXT_MENU_EVENT)
-    if (event.button() == WebMouseEventButton::RightButton && event.type() == WebEventType::MouseDown) {
+    if (event.button() == WebMouseEventButton::Right && event.type() == WebEventType::MouseDown) {
         ASSERT(m_contextMenuPreventionState != EventPreventionState::Waiting);
         m_contextMenuPreventionState = EventPreventionState::Waiting;
     }
@@ -3304,7 +3304,7 @@ void WebPageProxy::processNextQueuedMouseEvent()
     std::optional<Vector<SandboxExtension::Handle>> sandboxExtensions;
 
 #if PLATFORM(MAC)
-    bool eventMayStartDrag = !m_currentDragOperation && eventType == WebEventType::MouseMove && event.button() != WebMouseEventButton::NoButton;
+    bool eventMayStartDrag = !m_currentDragOperation && eventType == WebEventType::MouseMove && event.button() != WebMouseEventButton::None;
     if (eventMayStartDrag)
         sandboxExtensions = SandboxExtension::createHandlesForMachLookup({ "com.apple.iconservices"_s, "com.apple.iconservices.store"_s }, process().auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
 #endif
@@ -8573,7 +8573,7 @@ void WebPageProxy::didReceiveEvent(WebEventType eventType, bool handled)
         MESSAGE_CHECK(m_process, eventType == event.type());
 
 #if ENABLE(CONTEXT_MENU_EVENT)
-        if (event.button() == WebMouseEventButton::RightButton) {
+        if (event.button() == WebMouseEventButton::Right) {
             if (event.type() == WebEventType::MouseDown) {
                 ASSERT(m_contextMenuPreventionState == EventPreventionState::Waiting);
                 m_contextMenuPreventionState = handled ? EventPreventionState::Prevented : EventPreventionState::Allowed;

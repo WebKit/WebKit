@@ -86,13 +86,13 @@ WebKitNavigationType toWebKitNavigationType(WebCore::NavigationType type)
 unsigned toWebKitMouseButton(WebKit::WebMouseEventButton button)
 {
     switch (button) {
-    case WebKit::WebMouseEventButton::NoButton:
+    case WebKit::WebMouseEventButton::None:
         return 0;
-    case WebKit::WebMouseEventButton::LeftButton:
+    case WebKit::WebMouseEventButton::Left:
         return 1;
-    case WebKit::WebMouseEventButton::MiddleButton:
+    case WebKit::WebMouseEventButton::Middle:
         return 2;
-    case WebKit::WebMouseEventButton::RightButton:
+    case WebKit::WebMouseEventButton::Right:
         return 3;
     }
     ASSERT_NOT_REACHED();

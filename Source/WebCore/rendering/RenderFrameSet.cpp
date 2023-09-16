@@ -562,7 +562,7 @@ bool RenderFrameSet::userResize(MouseEvent& event)
     if (!m_isResizing) {
         if (needsLayout())
             return false;
-        if (event.type() == eventNames().mousedownEvent && event.button() == LeftButton) {
+        if (event.type() == eventNames().mousedownEvent && event.button() == MouseButton::Left) {
             FloatPoint localPos = absoluteToLocal(event.absoluteLocation(), UseTransforms);
             startResizing(m_cols, localPos.x());
             startResizing(m_rows, localPos.y());
@@ -572,11 +572,11 @@ bool RenderFrameSet::userResize(MouseEvent& event)
             }
         }
     } else {
-        if (event.type() == eventNames().mousemoveEvent || (event.type() == eventNames().mouseupEvent && event.button() == LeftButton)) {
+        if (event.type() == eventNames().mousemoveEvent || (event.type() == eventNames().mouseupEvent && event.button() == MouseButton::Left)) {
             FloatPoint localPos = absoluteToLocal(event.absoluteLocation(), UseTransforms);
             continueResizing(m_cols, localPos.x());
             continueResizing(m_rows, localPos.y());
-            if (event.type() == eventNames().mouseupEvent && event.button() == LeftButton) {
+            if (event.type() == eventNames().mouseupEvent && event.button() == MouseButton::Left) {
                 setIsResizing(false);
                 return true;
             }

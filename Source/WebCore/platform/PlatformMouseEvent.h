@@ -36,10 +36,12 @@ namespace WebCore {
 const double ForceAtClick = 1;
 const double ForceAtForceClick = 2;
 
-    // These button numbers match the ones used in the DOM API, 0 through 2, except for NoButton which isn't specified.
-    // We use -2 for NoButton because -1 is a valid value in the DOM API for Pointer Events for pointermove events that
-    // indicate that the pressed mouse button hasn't changed since the last event.
-    enum MouseButton : int8_t { LeftButton = 0, MiddleButton, RightButton, NoButton = -2 };
+    // These button numbers match the ones used in the DOM API, 0 through 2, except for None and Other which aren't specified.
+    // We reserve -2 for the former and -1 to represent pointermove events that indicate that the pressed mouse button hasn't
+    // changed since the last event, as specified in the DOM API for Pointer Events.
+    // https://w3c.github.io/uievents/#dom-mouseevent-button
+    // https://w3c.github.io/pointerevents/#the-button-property
+    enum class MouseButton : int8_t { None = -2, PointerMove, Left, Middle, Right, Other };
     enum class SyntheticClickType : uint8_t { NoTap, OneFingerTap, TwoFingerTap };
 
     class PlatformMouseEvent : public PlatformEvent {
@@ -94,7 +96,7 @@ const double ForceAtForceClick = 2;
 #endif
 
     protected:
-        MouseButton m_button { MouseButton::NoButton };
+        MouseButton m_button { MouseButton::None };
         SyntheticClickType m_syntheticClickType { SyntheticClickType::NoTap };
 
         IntPoint m_position;

@@ -83,7 +83,7 @@ void ResourceUsageOverlay::initialize()
 
 bool ResourceUsageOverlay::mouseEvent(PageOverlay&, const PlatformMouseEvent& event)
 {
-    if (event.button() != LeftButton)
+    if (event.button() != MouseButton::Left)
         return false;
 
     switch (event.type()) {

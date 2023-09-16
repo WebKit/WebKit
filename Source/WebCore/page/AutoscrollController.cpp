@@ -206,7 +206,7 @@ void AutoscrollController::handleMouseReleaseEvent(const PlatformMouseEvent& mou
 {
     switch (m_autoscrollType) {
     case AutoscrollForPan:
-        if (mouseEvent.button() == MiddleButton)
+        if (mouseEvent.button() == MouseButton::Middle)
             m_autoscrollType = AutoscrollForPanCanStop;
         break;
     case AutoscrollForPanCanStop:

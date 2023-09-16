@@ -55,7 +55,7 @@ static AtomString pointerEventType(const AtomString& mouseEventType)
     return nullAtom();
 }
 
-RefPtr<PointerEvent> PointerEvent::create(short button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
+RefPtr<PointerEvent> PointerEvent::create(MouseButton button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
 {
     auto type = pointerEventType(mouseEvent.type());
     if (type.isEmpty())
@@ -64,7 +64,7 @@ RefPtr<PointerEvent> PointerEvent::create(short button, const MouseEvent& mouseE
     return create(type, button, mouseEvent, pointerId, pointerType);
 }
 
-Ref<PointerEvent> PointerEvent::create(const AtomString& type, short button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
+Ref<PointerEvent> PointerEvent::create(const AtomString& type, MouseButton button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
 {
     return adoptRef(*new PointerEvent(type, button, mouseEvent, pointerId, pointerType));
 }
@@ -91,7 +91,7 @@ PointerEvent::PointerEvent(const AtomString& type, Init&& initializer)
 {
 }
 
-PointerEvent::PointerEvent(const AtomString& type, short button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
+PointerEvent::PointerEvent(const AtomString& type, MouseButton button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
     : MouseEvent(type, typeCanBubble(type), typeIsCancelable(type), typeIsComposed(type), mouseEvent.view(), mouseEvent.detail(), mouseEvent.screenLocation(),
         { mouseEvent.clientX(), mouseEvent.clientY() }, mouseEvent.movementX(), mouseEvent.movementY(), mouseEvent.modifierKeys(), button, mouseEvent.buttons(),
         mouseEvent.syntheticClickType(), mouseEvent.relatedTarget())
@@ -102,7 +102,7 @@ PointerEvent::PointerEvent(const AtomString& type, short button, const MouseEven
 }
 
 PointerEvent::PointerEvent(const AtomString& type, PointerID pointerId, const String& pointerType, IsPrimary isPrimary)
-    : MouseEvent(type, typeCanBubble(type), typeIsCancelable(type), typeIsComposed(type), nullptr, 0, { }, { }, 0, 0, { }, 0, 0, SyntheticClickType::NoTap, nullptr)
+    : MouseEvent(type, typeCanBubble(type), typeIsCancelable(type), typeIsComposed(type), nullptr, 0, { }, { }, 0, 0, { }, MouseButton::Left, 0, SyntheticClickType::NoTap, nullptr)
     , m_pointerId(pointerId)
     , m_pointerType(pointerType)
     , m_isPrimary(isPrimary == IsPrimary::Yes)

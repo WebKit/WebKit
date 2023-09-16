@@ -56,7 +56,7 @@ protected:
 
     WebPageProxy& m_webPage;
     WebCore::FloatPoint m_position;
-    WebMouseEventButton m_button { WebMouseEventButton::NoButton };
+    WebMouseEventButton m_button { WebMouseEventButton::None };
     unsigned short m_buttons { 0 };
     OptionSet<WebEventModifier> m_modifiers;
     WebCore::FloatPoint m_initialPoint;

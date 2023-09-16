@@ -2517,7 +2517,7 @@ void Node::defaultEventHandler(Event& event)
         }
 #if ENABLE(PAN_SCROLLING)
     } else if (eventType == eventNames.mousedownEvent && is<MouseEvent>(event)) {
-        if (downcast<MouseEvent>(event).button() == MiddleButton) {
+        if (downcast<MouseEvent>(event).button() == MouseButton::Middle) {
             if (enclosingLinkEventParentOrSelf())
                 return;
 
