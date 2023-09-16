@@ -3382,14 +3382,14 @@ static std::optional<PositionCoordinates> positionFromTwoValues(CSSPrimitiveValu
 //   [ center | [ left | right ] <length-percentage>? ] &&
 //   [ center | [ top | bottom ] <length-percentage>? ]
 //
-static std::optional<PositionCoordinates> backgroundPositionFromThreeValues(const std::array<CSSPrimitiveValue*, 5>& values)
+static std::optional<PositionCoordinates> backgroundPositionFromThreeValues(std::array<RefPtr<CSSPrimitiveValue>, 5>&& values)
 {
     RefPtr<CSSValue> resultX;
     RefPtr<CSSValue> resultY;
 
-    CSSPrimitiveValue* center = nullptr;
-    for (int i = 0; values[i]; i++) {
-        CSSPrimitiveValue* currentValue = values[i];
+    RefPtr<CSSPrimitiveValue> center;
+    for (int i = 0; values[i]; ++i) {
+        auto& currentValue = values[i];
         if (!currentValue->isValueID())
             return std::nullopt;
 
@@ -3397,15 +3397,16 @@ static std::optional<PositionCoordinates> backgroundPositionFromThreeValues(cons
         if (id == CSSValueCenter) {
             if (center)
                 return std::nullopt;
-            center = currentValue;
+            center = WTFMove(currentValue);
             continue;
         }
 
         RefPtr<CSSValue> result;
-        if (values[i + 1] && !values[i + 1]->isValueID())
-            result = CSSValuePair::create(*currentValue, *values[++i]);
-        else
-            result = currentValue;
+        if (auto& nextValue = values[i + 1]; nextValue && !nextValue->isValueID()) {
+            result = CSSValuePair::create(currentValue.releaseNonNull(), nextValue.releaseNonNull());
+            ++i;
+        } else
+            result = WTFMove(currentValue);
 
         if (id == CSSValueLeft || id == CSSValueRight) {
             if (resultX)
@@ -3424,9 +3425,9 @@ static std::optional<PositionCoordinates> backgroundPositionFromThreeValues(cons
         if (resultX && resultY)
             return std::nullopt;
         if (!resultX)
-            resultX = center;
+            resultX = WTFMove(center);
         else
-            resultY = center;
+            resultY = WTFMove(center);
     }
 
     ASSERT(resultX && resultY);
@@ -3443,13 +3444,13 @@ static std::optional<PositionCoordinates> backgroundPositionFromThreeValues(cons
 //   [ [ left | right ] <length-percentage> ] &&
 //   [ [ top | bottom ] <length-percentage> ]
 //
-static std::optional<PositionCoordinates> positionFromFourValues(const std::array<CSSPrimitiveValue*, 5>& values)
+static std::optional<PositionCoordinates> positionFromFourValues(std::array<RefPtr<CSSPrimitiveValue>, 5>&& values)
 {
     RefPtr<CSSValue> resultX;
     RefPtr<CSSValue> resultY;
 
-    for (int i = 0; values[i]; i++) {
-        CSSPrimitiveValue* currentValue = values[i];
+    for (int i = 0; values[i]; ++i) {
+        auto& currentValue = values[i];
         if (!currentValue->isValueID())
             return std::nullopt;
 
@@ -3458,10 +3459,11 @@ static std::optional<PositionCoordinates> positionFromFourValues(const std::arra
             return std::nullopt;
 
         RefPtr<CSSValue> result;
-        if (values[i + 1] && !values[i + 1]->isValueID())
-            result = CSSValuePair::create(*currentValue, *values[++i]);
-        else
-            result = currentValue;
+        if (auto& nextValue = values[i + 1]; nextValue && !nextValue->isValueID()) {
+            result = CSSValuePair::create(currentValue.releaseNonNull(), nextValue.releaseNonNull());
+            ++i;
+        } else
+            result = WTFMove(currentValue);
 
         if (id == CSSValueLeft || id == CSSValueRight) {
             if (resultX)
@@ -3496,21 +3498,21 @@ std::optional<PositionCoordinates> consumePositionCoordinates(CSSParserTokenRang
 
     auto value4 = consumePositionComponent(range, parserMode, unitless, negativePercentagePolicy);
 
-    std::array<CSSPrimitiveValue*, 5> values {
-        value1.get(),
-        value2.get(),
-        value3.get(),
-        value4.get(),
+    std::array<RefPtr<CSSPrimitiveValue>, 5> values {
+        WTFMove(value1),
+        WTFMove(value2),
+        WTFMove(value3),
+        value4.copyRef(),
         nullptr
     };
 
     if (value4)
-        return positionFromFourValues(values);
+        return positionFromFourValues(WTFMove(values));
 
     if (positionSyntax != PositionSyntax::BackgroundPosition)
         return std::nullopt;
 
-    return backgroundPositionFromThreeValues(values);
+    return backgroundPositionFromThreeValues(WTFMove(values));
 }
 
 RefPtr<CSSValue> consumePosition(CSSParserTokenRange& range, CSSParserMode parserMode, UnitlessQuirk unitless, PositionSyntax positionSyntax)

@@ -32,6 +32,7 @@
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
 #include "MediaQuery.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -57,7 +58,9 @@ private:
     bool mediaConditionMatches(const MQ::MediaQuery&);
     unsigned effectiveSizeDefaultValue();
 
-    const Document& m_document;
+    Ref<const Document> protectedDocument() const;
+
+    CheckedRef<const Document> m_document;
     Vector<MQ::MediaQueryResult> m_dynamicMediaQueryResults;
     float m_length { 0 };
     bool m_lengthWasSet { false };

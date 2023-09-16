@@ -86,11 +86,11 @@ bool SizesAttributeParser::calculateLengthInPixels(CSSParserTokenRange range, fl
     if (type == DimensionToken) {
         if (!CSSPrimitiveValue::isLength(startToken.unitType()))
             return false;
-        result = computeLength(startToken.numericValue(), startToken.unitType(), m_document);
+        result = computeLength(startToken.numericValue(), startToken.unitType(), protectedDocument());
         if (result >= 0)
             return true;
     } else if (type == FunctionToken) {
-        SizesCalcParser calcParser(range, m_document);
+        SizesCalcParser calcParser(range, protectedDocument());
         if (!calcParser.isValid())
             return false;
         result = calcParser.result();
@@ -106,11 +106,12 @@ bool SizesAttributeParser::calculateLengthInPixels(CSSParserTokenRange range, fl
 bool SizesAttributeParser::mediaConditionMatches(const MQ::MediaQuery& mediaCondition)
 {
     // A Media Condition cannot have a media type other than screen.
-    auto* renderer = m_document.renderView();
+    auto document = protectedDocument();
+    auto* renderer = document->renderView();
     if (!renderer)
         return false;
     auto& style = renderer->style();
-    return MQ::MediaQueryEvaluator { screenAtom(), m_document, &style }.evaluate(mediaCondition);
+    return MQ::MediaQueryEvaluator { screenAtom(), document, &style }.evaluate(mediaCondition);
 }
 
 bool SizesAttributeParser::parse(CSSParserTokenRange range)
@@ -132,7 +133,7 @@ bool SizesAttributeParser::parse(CSSParserTokenRange range)
         float length;
         if (!calculateLengthInPixels(range.makeSubRange(lengthTokenStart, lengthTokenEnd), length))
             continue;
-        auto mediaCondition = MQ::MediaQueryParser::parseCondition(range.makeSubRange(mediaConditionStart, lengthTokenStart), MediaQueryParserContext(m_document));
+        auto mediaCondition = MQ::MediaQueryParser::parseCondition(range.makeSubRange(mediaConditionStart, lengthTokenStart), MediaQueryParserContext(protectedDocument()));
         if (!mediaCondition)
             continue;
         bool matches = mediaConditionMatches(*mediaCondition);
@@ -157,11 +158,16 @@ float SizesAttributeParser::effectiveSize()
 
 unsigned SizesAttributeParser::effectiveSizeDefaultValue()
 {
-    auto* renderer = m_document.renderView();
+    auto* renderer = protectedDocument()->renderView();
     if (!renderer)
         return 0;
     auto& style = renderer->style();
     return clampTo<float>(CSSPrimitiveValue::computeNonCalcLengthDouble({ style, &style, renderer->parentStyle(), renderer }, CSSUnitType::CSS_VW, 100.0));
+}
+
+Ref<const Document> SizesAttributeParser::protectedDocument() const
+{
+    return m_document.get();
 }
 
 } // namespace WebCore
