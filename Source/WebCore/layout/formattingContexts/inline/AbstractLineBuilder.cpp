@@ -73,5 +73,11 @@ std::optional<InlineLayoutUnit> AbstractLineBuilder::eligibleOverflowWidthAsLead
     return { };
 }
 
+void AbstractLineBuilder::setIntrinsicWidthMode(IntrinsicWidthMode intrinsicWidthMode)
+{
+    m_intrinsicWidthMode = intrinsicWidthMode;
+    m_inlineContentBreaker.setIsMinimumInIntrinsicWidthMode(m_intrinsicWidthMode == IntrinsicWidthMode::Minimum);
+}
+
 }
 }
