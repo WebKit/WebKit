@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - runner: macos-11
+          - runner: macos-12
             lto_flag: ""
             cpu: haswell
             label: bun-webkit-macos-amd64-debug
@@ -31,14 +31,14 @@ jobs:
             brew_prefix: /opt/homebrew/opt
             package_json_arch: "arm64"
             CMAKE_BUILD_TYPE: Debug
-          - runner: macos-11
+          - runner: macos-12
             lto_flag: -flto='full'
             cpu: haswell
             label: bun-webkit-macos-amd64-lto
             brew_prefix: /usr/local/opt
             package_json_arch: "x64"
             CMAKE_BUILD_TYPE: Release
-          - runner: macos-11
+          - runner: macos-12
             lto_flag: ""
             cpu: haswell
             label: bun-webkit-macos-amd64
@@ -81,7 +81,7 @@ jobs:
           CMAKE_CXX_COMPILER: "${{matrix.brew_prefix}}/llvm@16/bin/clang++"
           CMAKE_C_FLAGS: "-fuse-ld=lld -fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden -fvisibility-inlines-hidden -O3"
           CMAKE_CXX_FLAGS: "-fuse-ld=lld -I${{matrix.brew_prefix}}/llvm/include -fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden -fvisibility-inlines-hidden -O3"
-          CMAKE_OSX_DEPLOYMENT_TARGET: "11.0"
+          CMAKE_OSX_DEPLOYMENT_TARGET: "12.0"
           CMAKE_BUILD_TYPE: ${{matrix.CMAKE_BUILD_TYPE}}
           PACKAGE_JSON_ARCH: ${{matrix.package_json_arch}}
           PACKAGE_JSON_LABEL: ${{matrix.label}}
