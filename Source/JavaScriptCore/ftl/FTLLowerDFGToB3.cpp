@@ -16929,16 +16929,6 @@ IGNORE_CLANG_WARNINGS_END
         }
     }
 
-    void compileDateSet()
-    {
-        LValue base = lowDateObject(m_node->child1());
-        LValue arg = lowDouble(m_node->child2());
-        LValue time = m_out.add(m_out.doubleTrunc(arg), m_out.constDouble(0));
-        LValue result = m_out.select(m_out.doubleGreaterThanOrUnordered(m_out.doubleAbs(arg), m_out.constDouble(WTF::maxECMAScriptTime)), m_out.constDouble(PNaN), time);
-        m_out.storeDouble(result, base, m_heaps.DateInstance_internalNumber);
-        setDouble(result);
-    }
-
     void compileLoopHint()
     {
         if (LIKELY(!Options::returnEarlyFromInfiniteLoopsForFuzzing()))
