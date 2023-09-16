@@ -261,7 +261,7 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
         , { isFirstFormattedLine() ? LineLayoutResult::IsFirstLast::FirstFormattedLine::WithinIFC : LineLayoutResult::IsFirstLast::FirstFormattedLine::No, isLastLine }
         , result.nonSpanningInlineLevelBoxCount
         , { }
-        , lineContent.range.isEmpty() ? std::make_optional(m_lineLogicalRect.top() + m_candidateInlineContentEnclosingHeight) : std::nullopt
+        , lineContent.range.isEmpty() ? std::make_optional(m_lineLogicalRect.top() + m_candidateContentMaximumHeight) : std::nullopt
     };
 }
 
@@ -277,7 +277,7 @@ void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const Use
     m_overflowingLogicalWidth = { };
     m_partialLeadingTextItem = { };
     m_initialLetterClearGap = { };
-    m_candidateInlineContentEnclosingHeight = { };
+    m_candidateContentMaximumHeight = { };
 
     auto createLineSpanningInlineBoxes = [&] {
         auto isRootLayoutBox = [&](auto& elementBox) {
@@ -437,7 +437,6 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
     layoutInlineAndFloatContent();
 
     auto comutePlacedInlineItemRange = [&] {
-        ASSERT(placedInlineItemCount || !m_placedFloats.isEmpty() || isLineConstrainedByFloat());
         lineContent.range = { needsLayoutRange.start, { needsLayoutRange.startIndex() + placedInlineItemCount, { } } };
         if (!placedInlineItemCount || placedInlineItemCount == m_placedFloats.size() || !lineContent.partialTrailingContentLength)
             return;
@@ -750,24 +749,21 @@ LineBuilder::UsedConstraints LineBuilder::adjustedLineRectWithCandidateInlineCon
     auto& inlineContent = lineCandidate.inlineContent;
     if (isInIntrinsicWidthMode())
         return { m_lineLogicalRect };
-    auto maximumLineLogicalHeight = m_lineLogicalRect.height();
     // FIXME: Use InlineFormattingGeometry::inlineLevelBoxAffectsLineBox instead.
+    auto candidateContentHeight = InlineLayoutUnit { };
     auto lineBoxContain = formattingContext().root().style().lineBoxContain();
     for (auto& run : inlineContent.continuousContent().runs()) {
         auto& inlineItem = run.inlineItem;
-        if (inlineItem.isBox() && lineBoxContain.contains(LineBoxContain::Replaced))
-            maximumLineLogicalHeight = std::max(maximumLineLogicalHeight, InlineLayoutUnit { formattingContext().geometryForBox(run.inlineItem.layoutBox()).marginBoxHeight() });
-        else if (inlineItem.isText()) {
+        if (inlineItem.isText()) {
             auto& styleToUse = isFirstFormattedLine() ? inlineItem.firstLineStyle() : inlineItem.style();
-            maximumLineLogicalHeight = std::max<InlineLayoutUnit>(maximumLineLogicalHeight, styleToUse.computedLineHeight());
-        }
+            candidateContentHeight = std::max<InlineLayoutUnit>(candidateContentHeight, styleToUse.computedLineHeight());
+        } else if (inlineItem.isBox() && lineBoxContain.contains(LineBoxContain::Replaced))
+            candidateContentHeight = std::max(candidateContentHeight, InlineLayoutUnit { formattingContext().geometryForBox(inlineItem.layoutBox()).marginBoxHeight() });
     }
-    if (maximumLineLogicalHeight == m_lineLogicalRect.height())
+    if (candidateContentHeight <= m_lineLogicalRect.height())
         return { m_lineLogicalRect };
 
-    auto adjustedLineRect = m_lineLogicalRect;
-    adjustedLineRect.setHeight(maximumLineLogicalHeight);
-    return floatConstrainedRect(adjustedLineRect, m_lineMarginStart);
+    return floatConstrainedRect({ m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), candidateContentHeight }, m_lineMarginStart);
 }
 
 std::optional<LineBuilder::InitialLetterOffsets> LineBuilder::adjustLineRectForInitialLetterIfApplicable(const Box& floatBox)
@@ -959,11 +955,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
         return { inlineContent.trailingLineBreak() ? InlineContentBreaker::IsEndOfLine::Yes : InlineContentBreaker::IsEndOfLine::No };
     }
 
-    // While the floats are not considered to be on the line, they make the line contentful for line breaking.
     auto usedConstraints = adjustedLineRectWithCandidateInlineContent(lineCandidate);
-    // Note that adjusted line height never shrinks.
-    m_candidateInlineContentEnclosingHeight = usedConstraints.logicalRect.height();
-
     auto availableWidthForCandidateContent = [&] {
         auto lineIndex = m_previousLine ? (m_previousLine->lineIndex + 1) : 0lu;
         // If width constraint overrides exist (e.g. text-wrap: balance), modify the available width accordingly.
@@ -993,8 +985,9 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
         // Sometimes in order to put this content on the line, we have to avoid additional float boxes (when the new content is taller than any previous content and we have vertically stacked floats on this line)
         // which means we need to adjust the line rect to accommodate such new constraints.
         m_lineLogicalRect = usedConstraints.logicalRect;
+        m_lineIsConstrainedByFloat.add(usedConstraints.isConstrainedByFloat);
     }
-    m_lineIsConstrainedByFloat.add(usedConstraints.isConstrainedByFloat);
+    m_candidateContentMaximumHeight = usedConstraints.logicalRect.height();
     return processLineBreakingResult(lineCandidate, layoutRange, lineBreakingResult);
 }
 

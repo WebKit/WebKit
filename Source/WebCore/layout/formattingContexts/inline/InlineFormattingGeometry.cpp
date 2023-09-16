@@ -68,11 +68,10 @@ InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineLayou
         // Floats must have prevented us placing any content on the line.
         // Move next line below the intrusive float(s).
         ASSERT(lineLayoutResult.inlineContent.isEmpty() || lineLayoutResult.inlineContent[0].isLineSpanningInlineBoxStart());
-        ASSERT(lineLayoutResult.floatContent.hasIntrusiveFloat);
         auto nextLineLogicalTop = [&]() -> LayoutUnit {
             if (auto nextLineLogicalTopCandidate = lineLayoutResult.hintForNextLineTopToAvoidIntrusiveFloat)
                 return LayoutUnit { *nextLineLogicalTopCandidate };
-            // We have to have a hit when intrusive floats prevented any inline content placement.
+            // We have to have a hint when intrusive floats prevented any inline content placement.
             ASSERT_NOT_REACHED();
             return LayoutUnit { lineLogicalRect.top() + formattingContext().root().style().computedLineHeight() };
         };

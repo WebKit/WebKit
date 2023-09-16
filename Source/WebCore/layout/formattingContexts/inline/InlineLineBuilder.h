@@ -110,7 +110,7 @@ private:
     InlineRect m_lineLogicalRect;
     InlineLayoutUnit m_lineMarginStart { 0.f };
     InlineLayoutUnit m_initialIntrusiveFloatsWidth { 0.f };
-    InlineLayoutUnit m_candidateInlineContentEnclosingHeight { 0.f };
+    InlineLayoutUnit m_candidateContentMaximumHeight { 0.f };
     const InlineItems& m_inlineItems;
     LineLayoutResult::PlacedFloatList m_placedFloats;
     LineLayoutResult::SuspendedFloatList m_suspendedFloats;
