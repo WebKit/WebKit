@@ -24,26 +24,26 @@
  */
 
 #include "config.h"
-#include "RenderSelectionInfo.h"
+#include "RenderSelectionGeometry.h"
 
 #include "RenderText.h"
 
 namespace WebCore {
 
-RenderSelectionInfoBase::RenderSelectionInfoBase(RenderObject& renderer)
+RenderSelectionGeometryBase::RenderSelectionGeometryBase(RenderObject& renderer)
     : m_renderer(renderer)
     , m_repaintContainer(renderer.containerForRepaint().renderer)
     , m_state(renderer.selectionState())
 {
 }
 
-void RenderSelectionInfoBase::repaintRectangle(const LayoutRect& repaintRect)
+void RenderSelectionGeometryBase::repaintRectangle(const LayoutRect& repaintRect)
 {
     m_renderer.repaintUsingContainer(m_repaintContainer, enclosingIntRect(repaintRect));
 }
 
-RenderSelectionInfo::RenderSelectionInfo(RenderObject& renderer, bool clipToVisibleContent)
-    : RenderSelectionInfoBase(renderer)
+RenderSelectionGeometry::RenderSelectionGeometry(RenderObject& renderer, bool clipToVisibleContent)
+    : RenderSelectionGeometryBase(renderer)
 {
     if (renderer.canUpdateSelectionOnRootLineBoxes()) {
         if (is<RenderText>(renderer))
@@ -53,18 +53,18 @@ RenderSelectionInfo::RenderSelectionInfo(RenderObject& renderer, bool clipToVisi
     }
 }
 
-void RenderSelectionInfo::repaint()
+void RenderSelectionGeometry::repaint()
 {
     repaintRectangle(m_rect);
 }
 
-RenderBlockSelectionInfo::RenderBlockSelectionInfo(RenderBlock& renderer)
-    : RenderSelectionInfoBase(renderer)
+RenderBlockSelectionGeometry::RenderBlockSelectionGeometry(RenderBlock& renderer)
+    : RenderSelectionGeometryBase(renderer)
     , m_rects(renderer.canUpdateSelectionOnRootLineBoxes() ? renderer.selectionGapRectsForRepaint(m_repaintContainer) : GapRects())
 {
 }
 
-void RenderBlockSelectionInfo::repaint()
+void RenderBlockSelectionGeometry::repaint()
 {
     repaintRectangle(m_rects);
 }

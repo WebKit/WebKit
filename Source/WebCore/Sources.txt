@@ -2620,7 +2620,7 @@ rendering/RenderScrollbar.cpp
 rendering/RenderScrollbarPart.cpp
 rendering/RenderScrollbarTheme.cpp
 rendering/RenderSearchField.cpp
-rendering/RenderSelectionInfo.cpp
+rendering/RenderSelectionGeometry.cpp
 rendering/RenderSlider.cpp
 rendering/RenderTable.cpp
 rendering/RenderTableCaption.cpp
