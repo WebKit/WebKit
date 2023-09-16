@@ -42,6 +42,7 @@
 #include "WebBroadcastChannelRegistry.h"
 #include "WebCacheStorageProvider.h"
 #include "WebCompiledContentRuleListData.h"
+#include "WebCookieJar.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebDatabaseProvider.h"
 #include "WebDocumentLoader.h"
@@ -163,6 +164,7 @@ void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextDat
         pageConfiguration.socketProvider = WebSocketProvider::create(m_webPageProxyID);
         pageConfiguration.broadcastChannelRegistry = WebProcess::singleton().broadcastChannelRegistry();
         pageConfiguration.userContentProvider = m_userContentController;
+        pageConfiguration.cookieJar = WebCookieJar::create();
 #if ENABLE(WEB_RTC)
         pageConfiguration.webRTCProvider = makeUniqueRef<RemoteWorkerLibWebRTCProvider>();
 #endif
