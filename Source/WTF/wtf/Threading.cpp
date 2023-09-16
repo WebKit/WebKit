@@ -250,7 +250,7 @@ void Thread::entryPoint(NewThreadContext* newThreadContext)
     function();
 }
 
-Ref<Thread> Thread::create(const char* name, Function<void()>&& entryPoint, ThreadType threadType, QOS qos)
+Ref<Thread> Thread::create(const char* name, Function<void()>&& entryPoint, ThreadType threadType, QOS qos, SchedulingPolicy schedulingPolicy)
 {
     WTF::initialize();
     Ref<Thread> thread = adoptRef(*new Thread());
@@ -263,7 +263,7 @@ Ref<Thread> Thread::create(const char* name, Function<void()>&& entryPoint, Thre
     context->ref();
     {
         MutexLocker locker(context->mutex);
-        bool success = thread->establishHandle(context.ptr(), stackSize(threadType), qos);
+        bool success = thread->establishHandle(context.ptr(), stackSize(threadType), qos, schedulingPolicy);
         RELEASE_ASSERT(success);
         context->stage = NewThreadContext::Stage::EstablishedHandle;
 

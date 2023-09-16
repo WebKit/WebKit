@@ -261,9 +261,28 @@ dispatch_qos_class_t Thread::dispatchQOSClass(QOS qos)
 }
 #endif
 
-#if OS(LINUX)
-static int schedPolicy(Thread::QOS qos)
+static int schedPolicy(Thread::SchedulingPolicy schedulingPolicy)
 {
+    switch (schedulingPolicy) {
+    case Thread::SchedulingPolicy::FIFO:
+        return SCHED_FIFO;
+    case Thread::SchedulingPolicy::Realtime:
+        return SCHED_RR;
+    case Thread::SchedulingPolicy::Other:
+        return SCHED_OTHER;
+    }
+    ASSERT_NOT_REACHED();
+    return SCHED_OTHER;
+}
+
+#if OS(LINUX)
+static int schedPolicy(Thread::QOS qos, Thread::SchedulingPolicy schedulingPolicy)
+{
+    // A specific scheduling policy can override the implied policy from QOS
+    auto policy = schedPolicy(schedulingPolicy);
+    if (policy != SCHED_OTHER)
+        return policy;
+
     switch (qos) {
     case Thread::QOS::UserInteractive:
         return SCHED_RR;
@@ -279,13 +298,16 @@ static int schedPolicy(Thread::QOS qos)
 }
 #endif
 
-bool Thread::establishHandle(NewThreadContext* context, std::optional<size_t> stackSize, QOS qos)
+bool Thread::establishHandle(NewThreadContext* context, std::optional<size_t> stackSize, QOS qos, SchedulingPolicy schedulingPolicy)
 {
     pthread_t threadHandle;
     pthread_attr_t attr;
     pthread_attr_init(&attr);
 #if HAVE(QOS_CLASSES)
     pthread_attr_set_qos_class_np(&attr, dispatchQOSClass(qos), 0);
+#endif
+#if HAVE(SCHEDULING_POLICIES)
+    pthread_attr_setschedpolicy(&attr, schedPolicy(schedulingPolicy));
 #endif
     if (stackSize)
         pthread_attr_setstacksize(&attr, stackSize.value());
@@ -297,7 +319,7 @@ bool Thread::establishHandle(NewThreadContext* context, std::optional<size_t> st
     }
 
 #if OS(LINUX)
-    int policy = schedPolicy(qos);
+    int policy = schedPolicy(qos, schedulingPolicy);
     if (policy == SCHED_RR)
         RealTimeThreads::singleton().registerThread(*this);
     else {
@@ -306,8 +328,13 @@ bool Thread::establishHandle(NewThreadContext* context, std::optional<size_t> st
         if (error)
             LOG_ERROR("Failed to set sched policy %d for thread %ld: %s", policy, threadHandle, safeStrerror(error).data());
     }
-#elif !HAVE(QOS_CLASSES)
+#else
+#if !HAVE(QOS_CLASSES)
     UNUSED_PARAM(qos);
+#endif
+#if !HAVE(SCHEDULING_POLICIES)
+    UNUSED_PARAM(schedulingPolicy)
+#endif
 #endif
 
     establishPlatformSpecificHandle(threadHandle);
