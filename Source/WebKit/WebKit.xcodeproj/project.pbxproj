@@ -1113,7 +1113,6 @@
 		517B5F7F275E97B6002DC22D /* WebPushDaemon.h in Headers */ = {isa = PBXBuildFile; fileRef = 512CD69D2723393A00F7F8EC /* WebPushDaemon.h */; };
 		517B5F95275EBA63002DC22D /* PushMessageForTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = 517B5F94275EBA62002DC22D /* PushMessageForTesting.h */; };
 		517B5F97275EC5E5002DC22D /* WebPushMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 517B5F96275EC5E5002DC22D /* WebPushMessage.h */; };
-		517B5F99275EC601002DC22D /* WebPushMessageCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517B5F98275EC600002DC22D /* WebPushMessageCocoa.mm */; };
 		517CF0E3163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517CF0E1163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp */; };
 		517CF0E3163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517CF0E1163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp */; };
 		517CF0E4163A486C00C2950E /* NetworkProcessConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 517CF0E2163A486C00C2950E /* NetworkProcessConnectionMessages.h */; };
@@ -1125,6 +1124,7 @@
 		518D2CAE12D5153B003BB93B /* WebBackForwardListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 518D2CAC12D5153B003BB93B /* WebBackForwardListItem.h */; };
 		518E8EF916B2091C00E91429 /* AuthenticationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 518E8EF416B2091C00E91429 /* AuthenticationManager.h */; };
 		519261782950EA3F00A975D1 /* WKSecurityOriginPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 519261772950EA3E00A975D1 /* WKSecurityOriginPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5192DDB92AB54ED700E88DE7 /* WebPushMessageCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517B5F98275EC600002DC22D /* WebPushMessageCocoa.mm */; };
 		51933DEF1965EB31008AC3EA /* MenuUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 51933DEB1965EB24008AC3EA /* MenuUtilities.h */; };
 		519DFBE7281387C1003FF6AD /* WKNotificationPrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 519DFBE528138756003FF6AD /* WKNotificationPrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51A555F6128C6C47009ABCEC /* WKContextMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A555F4128C6C47009ABCEC /* WKContextMenuItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4949,6 +4949,7 @@
 		51452702271FBA36000467B6 /* NotificationManagerMessageHandlerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NotificationManagerMessageHandlerMessageReceiver.cpp; sourceTree = "<group>"; };
 		51452706271FBEC1000467B6 /* WebNotificationManagerMessageHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebNotificationManagerMessageHandler.cpp; sourceTree = "<group>"; };
 		51452707271FBEC1000467B6 /* WebNotificationManagerMessageHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNotificationManagerMessageHandler.h; sourceTree = "<group>"; };
+		514899722AB4BCFC00943741 /* PushMessageForTesting.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = PushMessageForTesting.serialization.in; sourceTree = "<group>"; };
 		51489CC12370DACC0044E68A /* WKFindResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFindResult.h; sourceTree = "<group>"; };
 		51489CC22370DACC0044E68A /* WKFindResult.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKFindResult.mm; sourceTree = "<group>"; };
 		51489CC6237237780044E68A /* WKFindResultInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFindResultInternal.h; sourceTree = "<group>"; };
@@ -8089,6 +8090,7 @@
 				0FEC6E05280915CF008082AC /* ProcessTerminationReason.cpp */,
 				463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */,
 				517B5F94275EBA62002DC22D /* PushMessageForTesting.h */,
+				514899722AB4BCFC00943741 /* PushMessageForTesting.serialization.in */,
 				9B1229D023FF2A5E008CA751 /* RemoteAudioDestinationIdentifier.h */,
 				5C80B3DD23690F100086E6DE /* RemoteWorkerInitializationData.cpp */,
 				5C80B3DB23690D8D0086E6DE /* RemoteWorkerInitializationData.h */,
@@ -17045,6 +17047,7 @@
 				7B9FC5D228A53018007570E7 /* PlatformUnifiedSource4.cpp in Sources */,
 				7B9FC5DC28A53C24007570E7 /* PlatformUnifiedSource5.cpp in Sources */,
 				5C9E0F992A577EDD00FC2664 /* WebKitPlatformGeneratedSerializers.mm in Sources */,
+				5192DDB92AB54ED700E88DE7 /* WebPushMessageCocoa.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17509,7 +17512,6 @@
 				BCEE7AD012817988009827DA /* WebProcessProxyMessageReceiver.cpp in Sources */,
 				517B5F7A275E97A4002DC22D /* WebPushDaemon.mm in Sources */,
 				517B5F79275E97A1002DC22D /* WebPushDaemonMain.mm in Sources */,
-				517B5F99275EC601002DC22D /* WebPushMessageCocoa.mm in Sources */,
 				51BE6C5B2AA92519001745C1 /* WebPushToolConnection.mm in Sources */,
 				51BE6C572AA92480001745C1 /* WebPushToolMain.mm in Sources */,
 				51F060E11654318500F3281B /* WebResourceLoaderMessageReceiver.cpp in Sources */,

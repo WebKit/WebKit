@@ -124,6 +124,8 @@ Modules/model-element/scenekit/SceneKitModelLoaderClient.mm
 Modules/model-element/scenekit/SceneKitModelLoaderUSD.mm
 Modules/model-element/scenekit/SceneKitModelPlayer.mm
 Modules/notifications/NotificationDataCocoa.mm
+Modules/notifications/NotificationOptionsPayloadCocoa.mm
+Modules/notifications/NotificationPayloadCocoa.mm
 Modules/push-api/cocoa/PushCryptoCocoa.cpp
 Modules/plugins/YouTubePluginReplacement.cpp
 Modules/speech/cocoa/SpeechRecognizerCocoa.mm

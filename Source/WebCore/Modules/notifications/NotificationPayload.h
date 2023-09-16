@@ -28,7 +28,7 @@
 #if ENABLE(DECLARATIVE_WEB_PUSH)
 
 #include "ExceptionOr.h"
-#include "NotificationOptions.h"
+#include "NotificationOptionsPayload.h"
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
@@ -40,9 +40,14 @@ struct NotificationPayload {
     URL defaultActionURL;
     String title;
     std::optional<unsigned long long> appBadge;
-    std::optional<NotificationOptions> options;
+    std::optional<NotificationOptionsPayload> options;
 
     WEBCORE_EXPORT static ExceptionOr<NotificationPayload> parseJSON(const String&);
+
+#if PLATFORM(COCOA)
+    WEBCORE_EXPORT static std::optional<NotificationPayload> fromDictionary(NSDictionary *);
+    WEBCORE_EXPORT NSDictionary *dictionaryRepresentation() const;
+#endif
 };
 
 } // namespace WebCore

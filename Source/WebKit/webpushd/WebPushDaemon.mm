@@ -266,7 +266,7 @@ void WebPushDaemon::deletePushAndNotificationRegistration(PushClientConnection& 
     });
 }
 
-void WebPushDaemon::injectPushMessageForTesting(PushClientConnection& connection, const PushMessageForTesting& message, CompletionHandler<void(const String&)>&& replySender)
+void WebPushDaemon::injectPushMessageForTesting(PushClientConnection& connection, PushMessageForTesting&& message, CompletionHandler<void(const String&)>&& replySender)
 {
     if (!connection.hostAppHasPushInjectEntitlement()) {
         String error = "Attempting to inject a push message from an unentitled process"_s;
@@ -284,6 +284,7 @@ void WebPushDaemon::injectPushMessageForTesting(PushClientConnection& connection
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     // Validate a Notification disposition message now by trying to parse it
+    // Only for the testing/development push service for now
     if (m_machServiceName == "org.webkit.webpushtestdaemon.service"_s) {
         if (message.disposition == PushMessageDisposition::Notification) {
             auto exceptionOrPayload = WebCore::NotificationPayload::parseJSON(message.payload);
@@ -291,6 +292,8 @@ void WebPushDaemon::injectPushMessageForTesting(PushClientConnection& connection
                 replySender(exceptionOrPayload.exception().message());
                 return;
             }
+
+            message.parsedPayload = exceptionOrPayload.returnValue();
         }
     }
 #endif // ENABLE(DECLARATIVE_WEB_PUSH)
@@ -301,7 +304,7 @@ void WebPushDaemon::injectPushMessageForTesting(PushClientConnection& connection
     auto addResult = m_testingPushMessages.ensure(message.targetAppCodeSigningIdentifier, [] {
         return Deque<PushMessageForTesting> { };
     });
-    addResult.iterator->value.append(message);
+    addResult.iterator->value.append(WTFMove(message));
 
     notifyClientPushMessageIsAvailable(PushSubscriptionSetIdentifier { .bundleIdentifier = message.targetAppCodeSigningIdentifier, .pushPartition = message.pushPartitionString });
 
@@ -410,7 +413,11 @@ void WebPushDaemon::getPendingPushMessages(PushClientConnection& connection, Com
     if (iterator != m_testingPushMessages.end()) {
         for (auto& message : iterator->value) {
             auto data = message.payload.utf8();
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+            resultMessages.append(WebKit::WebPushMessage { Vector<uint8_t> { reinterpret_cast<const uint8_t*>(data.data()), data.length() }, message.pushPartitionString, message.registrationURL, WTFMove(message.parsedPayload) });
+#else
             resultMessages.append(WebKit::WebPushMessage { Vector<uint8_t> { reinterpret_cast<const uint8_t*>(data.data()), data.length() }, message.pushPartitionString, message.registrationURL });
+#endif
         }
         m_testingPushMessages.remove(iterator);
     }

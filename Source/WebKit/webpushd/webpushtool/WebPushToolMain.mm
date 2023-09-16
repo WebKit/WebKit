@@ -85,7 +85,12 @@ static std::unique_ptr<PushMessageForTesting> pushMessageFromArguments(NSEnumera
     if (!message)
         return nullptr;
 
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    PushMessageForTesting pushMessage = { appIdentifier, pushPartition, registrationURL, message, WebKit::WebPushD::PushMessageDisposition::Legacy, std::nullopt };
+#else
     PushMessageForTesting pushMessage = { appIdentifier, pushPartition, registrationURL, message, WebKit::WebPushD::PushMessageDisposition::Legacy };
+#endif
+
     return makeUniqueWithoutFastMallocCheck<PushMessageForTesting>(WTFMove(pushMessage));
 }
 

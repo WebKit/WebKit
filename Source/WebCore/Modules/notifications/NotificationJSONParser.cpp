@@ -148,7 +148,7 @@ ExceptionOr<NotificationPayload> NotificationJSONParser::parseNotificationPayloa
         }
     }
 
-    std::optional<NotificationOptions> notificationOptions;
+    std::optional<NotificationOptionsPayload> notificationOptions;
     if (auto value = object.getValue(optionsKey())) {
         if (value->type() != JSON::Value::Type::Object)
             return Exception { SyntaxError, makeString("Push message with Notification disposition: '"_s, optionsKey(), "' member is specified but is not an object"_s) };
@@ -166,7 +166,7 @@ ExceptionOr<NotificationPayload> NotificationJSONParser::parseNotificationPayloa
     return NotificationPayload { WTFMove(defaultActionURL), WTFMove(title), WTFMove(appBadge), WTFMove(notificationOptions) };
 }
 
-ExceptionOr<NotificationOptions> NotificationJSONParser::parseNotificationOptions(const JSON::Object& object)
+ExceptionOr<NotificationOptionsPayload> NotificationJSONParser::parseNotificationOptions(const JSON::Object& object)
 {
     NotificationDirection direction = NotificationDirection::Auto;
     if (auto value = object.getValue(dirKey())) {
@@ -218,8 +218,9 @@ ExceptionOr<NotificationOptions> NotificationJSONParser::parseNotificationOption
     }
 
     RefPtr<JSON::Value> dataValue = object.getValue(dataKey());
+    String dataString = dataValue ? dataValue->toJSONString() : nullString();
 
-    return NotificationOptions { direction, WTFMove(lang), WTFMove(body), WTFMove(tag), iconURL.string(), JSC::jsNull(), nullptr, WTFMove(dataValue), WTFMove(silent) };
+    return NotificationOptionsPayload { direction, WTFMove(lang), WTFMove(body), WTFMove(tag), iconURL.string(), WTFMove(dataString), WTFMove(silent) };
 }
 
 } // namespace WebCore

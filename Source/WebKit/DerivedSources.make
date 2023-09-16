@@ -527,6 +527,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Pasteboard.serialization.in \
 	Shared/PlatformPopupMenuData.serialization.in \
 	Shared/PolicyDecision.serialization.in \
+	Shared/PushMessageForTesting.serialization.in \
 	Shared/RemoteWorkerType.serialization.in \
 	Shared/SameDocumentNavigationType.serialization.in \
 	Shared/SessionState.serialization.in \

@@ -167,6 +167,8 @@ class SerializedEnum(object):
     def is_nested(self):
         return 'Nested' in self.attributes
 
+    def is_webkit_platform(self):
+        return 'WebKitPlatform' in self.attributes
 
 class MemberVariable(object):
     def __init__(self, type, name, condition, attributes, namespace=None, is_subclass=False):
@@ -739,7 +741,7 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
             result.append('#endif')
 
     for enum in serialized_enums:
-        if generating_webkit_platform_impl:
+        if enum.is_webkit_platform() != generating_webkit_platform_impl:
             continue
         if enum.underlying_type == 'bool':
             continue
@@ -918,7 +920,7 @@ def parse_serialized_types(file):
                 type = SerializedType(struct_or_class, namespace, name, parent_class_name, members, type_condition, attributes, metadata)
                 serialized_types.append(type)
                 if namespace is not None and (attributes is None or ('CustomHeader' not in attributes and 'Nested' not in attributes)):
-                    if namespace == 'WebKit':
+                    if namespace == 'WebKit' or namespace == 'WebKit::WebPushD':
                         headers.append(ConditionalHeader('"' + name + '.h"', type_condition))
                     elif namespace == 'WTF':
                         headers.append(ConditionalHeader('<wtf/' + name + '.h>', type_condition))

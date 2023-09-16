@@ -77,7 +77,7 @@ public:
     // Message handlers
     void setPushAndNotificationsEnabledForOrigin(PushClientConnection&, const String& originString, bool, CompletionHandler<void()>&& replySender);
     void deletePushAndNotificationRegistration(PushClientConnection&, const String& originString, CompletionHandler<void(const String&)>&& replySender);
-    void injectPushMessageForTesting(PushClientConnection&, const PushMessageForTesting&, CompletionHandler<void(const String&)>&&);
+    void injectPushMessageForTesting(PushClientConnection&, PushMessageForTesting&&, CompletionHandler<void(const String&)>&&);
     void injectEncryptedPushMessageForTesting(PushClientConnection&, const String&, CompletionHandler<void(bool)>&&);
     void getPendingPushMessages(PushClientConnection&, CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender);
     void getPushTopicsForTesting(CompletionHandler<void(Vector<String>, Vector<String>)>&&);

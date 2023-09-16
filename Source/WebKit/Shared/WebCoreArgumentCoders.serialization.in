@@ -1644,12 +1644,6 @@ enum class WebCore::InputMode : uint8_t {
     Search
 };
 
-enum class WebCore::NotificationDirection : uint8_t {
-    Auto,
-    Ltr,
-    Rtl
-};
-
 enum class WebCore::IndexedDB::GetAllType : bool
 
 enum class WebCore::WorkerType : bool
@@ -5896,3 +5890,22 @@ struct WebCore::LinkDecorationFilteringData {
     WebCore::RegistrableDomain domain;
     String linkDecoration;
 };
+
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+[WebKitPlatform] struct WebCore::NotificationPayload {
+    URL defaultActionURL;
+    String title;
+    std::optional<unsigned long long> appBadge;
+    std::optional<WebCore::NotificationOptionsPayload> options;
+};
+
+[WebKitPlatform] struct WebCore::NotificationOptionsPayload {
+    WebCore::NotificationDirection dir;
+    String lang;
+    String body;
+    String tag;
+    String icon;
+    String dataJSONString;
+    std::optional<bool> silent;
+};
+#endif // ENABLE(DECLARATIVE_WEB_PUSH)

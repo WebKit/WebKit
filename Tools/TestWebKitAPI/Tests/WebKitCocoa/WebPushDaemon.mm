@@ -31,6 +31,7 @@
 #import "MessageSenderInlines.h"
 #import "PlatformUtilities.h"
 #import "PushClientConnectionMessages.h"
+#import "PushMessageForTesting.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestNotificationProvider.h"
@@ -1503,17 +1504,35 @@ static std::pair<ASCIILiteral, ASCIILiteral> jsonAndErrors[] = {
     { { }, { } }
 };
 
+static size_t expectedSuccessfulMessages()
+{
+    size_t result = 0;
+    for (size_t i = 0; !jsonAndErrors[i].first.isNull(); ++i) {
+        if (!strcmp(jsonAndErrors[i].second, " "))
+            ++result;
+    }
+
+    return result;
+}
+
 // Directly message the daemon to do JSON parsing validation on the declarative message
 TEST(WebPushD, DeclarativeParsing)
 {
     setUpTestWebPushD();
 
     auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
+
+    auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+    dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
+    dataStoreConfiguration.get().webPushDaemonUsesMockBundlesForTesting = YES;
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+    clearWebsiteDataStore(dataStore.get());
+
     auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
-    bool done = false;
+    static bool done = false;
 
     WebKit::WebPushD::PushMessageForTesting message;
-    message.targetAppCodeSigningIdentifier = "com.apple.WebKit.TestWebKtAPI"_s;
+    message.targetAppCodeSigningIdentifier = "com.apple.WebKit.TestWebKitAPI"_s;
     message.registrationURL = URL("https://example.com"_s);
     message.disposition = WebKit::WebPushD::PushMessageDisposition::Notification;
 
@@ -1532,6 +1551,22 @@ TEST(WebPushD, DeclarativeParsing)
         TestWebKitAPI::Util::run(&done);
         ++i;
     }
+
+    // Now retrieve the successfully parsed messages like a client would,
+    // but validate they make sense like you only can in internals.
+    done = false;
+    [dataStore _getPendingPushMessages:^(NSArray<NSDictionary *> *messages) {
+        EXPECT_EQ(messages.count, expectedSuccessfulMessages());
+
+        for (NSDictionary *message in messages) {
+            auto webPushMessage = WebKit::WebPushMessage::fromDictionary(message);
+            EXPECT_TRUE(webPushMessage.has_value());
+            EXPECT_TRUE(!!webPushMessage->notificationPayload);
+        }
+
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
 }
 
 #endif // ENABLE(DECLARATIVE_WEB_PUSH)

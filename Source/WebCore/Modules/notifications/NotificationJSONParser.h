@@ -28,7 +28,7 @@
 #if ENABLE(DECLARATIVE_WEB_PUSH)
 
 #include "ExceptionOr.h"
-#include "NotificationOptions.h"
+#include "NotificationOptionsPayload.h"
 #include "NotificationPayload.h"
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
@@ -38,7 +38,7 @@ namespace WebCore {
 class NotificationJSONParser {
 public:
     WEBCORE_EXPORT static ExceptionOr<NotificationPayload> parseNotificationPayload(const JSON::Object&);
-    WEBCORE_EXPORT static ExceptionOr<NotificationOptions> parseNotificationOptions(const JSON::Object&);
+    WEBCORE_EXPORT static ExceptionOr<NotificationOptionsPayload> parseNotificationOptions(const JSON::Object&);
 };
 
 } // namespace WebCore
