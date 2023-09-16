@@ -9,7 +9,7 @@ description: >
 features: [BigInt, Symbol, Temporal]
 ---*/
 
-const rangeErrorTests = [
+const primitiveTests = [
   [null, "null"],
   [true, "boolean"],
   ["", "empty string"],
@@ -18,8 +18,12 @@ const rangeErrorTests = [
   [1n, "bigint"],
 ];
 
-for (const [timeZone, description] of rangeErrorTests) {
-  assert.throws(RangeError, () => Temporal.ZonedDateTime.from({ year: 2000, month: 5, day: 2, timeZone }), `${description} does not convert to a valid ISO string`);
+for (const [timeZone, description] of primitiveTests) {
+  assert.throws(
+    typeof timeZone === 'string' ? RangeError : TypeError,
+    () => Temporal.ZonedDateTime.from({ year: 2000, month: 5, day: 2, timeZone }),
+    `${description} does not convert to a valid ISO string`
+  );
 }
 
 const typeErrorTests = [

@@ -1,0 +1,18 @@
+Tests synonym roles image/img and none/presentation via Core-AAM Computed Role.
+
+x
+x
+x
+x
+x
+x
+x
+
+PASS none role == computedrole none
+PASS synonym presentation role == computedrole none
+PASS image role == computedrole image
+PASS synonym img role == computedrole image
+PASS list role == computedrole list
+PASS directory role == computedrole list
+PASS div w/directory role == computedrole list
+

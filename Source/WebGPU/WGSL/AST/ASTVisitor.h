@@ -104,12 +104,9 @@ public:
     virtual void visit(AST::Structure&);
     virtual void visit(AST::StructureMember&);
 
-    // Types
-    virtual void visit(AST::TypeName&);
-    virtual void visit(AST::ArrayTypeName&);
-    virtual void visit(AST::NamedTypeName&);
-    virtual void visit(AST::ParameterizedTypeName&);
-    virtual void visit(AST::ReferenceTypeName&);
+    virtual void visit(AST::ArrayTypeExpression&);
+    virtual void visit(AST::ElaboratedTypeExpression&);
+    virtual void visit(AST::ReferenceTypeExpression&);
 
     virtual void visit(AST::Variable&);
     virtual void visit(AST::VariableQualifier&);

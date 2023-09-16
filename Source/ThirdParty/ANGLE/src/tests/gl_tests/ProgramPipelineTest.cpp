@@ -151,8 +151,16 @@ void ProgramPipelineXFBTest31::bindProgramPipelineWithXFBVaryings(
     const std::vector<std::string> &tfVaryings,
     GLenum bufferMode)
 {
-    mVertProg = glCreateShaderProgramv(GL_VERTEX_SHADER, 1, &vertString);
-    ASSERT_NE(mVertProg, 0u);
+    GLShader vertShader(GL_VERTEX_SHADER);
+    mVertProg = glCreateProgram();
+
+    glShaderSource(vertShader, 1, &vertString, nullptr);
+    glCompileShader(vertShader);
+    glProgramParameteri(mVertProg, GL_PROGRAM_SEPARABLE, GL_TRUE);
+    glAttachShader(mVertProg, vertShader);
+    glLinkProgram(mVertProg);
+    EXPECT_GL_NO_ERROR();
+
     mFragProg = glCreateShaderProgramv(GL_FRAGMENT_SHADER, 1, &fragString);
     ASSERT_NE(mFragProg, 0u);
 
@@ -1245,8 +1253,6 @@ TEST_P(ProgramPipelineXFBTest31, VaryingIOBlockSeparableProgramWithXFB)
     // Only the Vulkan backend supports PPOs
     ANGLE_SKIP_TEST_IF(!IsVulkan());
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_io_blocks"));
-    // http://anglebug.com/5486
-    ANGLE_SKIP_TEST_IF(IsVulkan());
 
     constexpr char kVS[] =
         R"(#version 310 es
@@ -1254,12 +1260,13 @@ TEST_P(ProgramPipelineXFBTest31, VaryingIOBlockSeparableProgramWithXFB)
 
         precision highp float;
         in vec4 inputAttribute;
-        out Block_inout { vec4 value; } user_out;
+        out Block_inout { vec4 value; vec4 value2; } user_out;
 
         void main()
         {
             gl_Position    = inputAttribute;
             user_out.value = vec4(4.0, 5.0, 6.0, 7.0);
+            user_out.value2 = vec4(8.0, 9.0, 10.0, 11.0);
         })";
 
     constexpr char kFS[] =
@@ -1268,7 +1275,7 @@ TEST_P(ProgramPipelineXFBTest31, VaryingIOBlockSeparableProgramWithXFB)
 
         precision highp float;
         layout(location = 0) out mediump vec4 color;
-        in Block_inout { vec4 value; } user_in;
+        in Block_inout { vec4 value; vec4 value2; } user_in;
 
         void main()
         {
@@ -1276,8 +1283,15 @@ TEST_P(ProgramPipelineXFBTest31, VaryingIOBlockSeparableProgramWithXFB)
         })";
     std::vector<std::string> tfVaryings;
     tfVaryings.push_back("Block_inout.value");
+    tfVaryings.push_back("Block_inout.value2");
     bindProgramPipelineWithXFBVaryings(kVS, kFS, tfVaryings, GL_INTERLEAVED_ATTRIBS);
     glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, mTransformFeedbackBuffer);
+
+    // Make sure reconfiguring the vertex shader's transform feedback varyings without a link does
+    // not affect the pipeline.  Same with changing buffer modes
+    std::vector<const char *> tfVaryingsBogus = {"some", "invalid[0]", "names"};
+    glTransformFeedbackVaryings(mVertProg, static_cast<GLsizei>(tfVaryingsBogus.size()),
+                                tfVaryingsBogus.data(), GL_SEPARATE_ATTRIBS);
 
     glBeginTransformFeedback(GL_TRIANGLES);
     drawQuadWithPPO("inputAttribute", 0.5f, 1.0f);
@@ -1287,11 +1301,11 @@ TEST_P(ProgramPipelineXFBTest31, VaryingIOBlockSeparableProgramWithXFB)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 
     void *mappedBuffer =
-        glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(float) * 4, GL_MAP_READ_BIT);
+        glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(float) * 8, GL_MAP_READ_BIT);
     ASSERT_NE(nullptr, mappedBuffer);
 
     float *mappedFloats = static_cast<float *>(mappedBuffer);
-    for (unsigned int cnt = 0; cnt < 4; ++cnt)
+    for (unsigned int cnt = 0; cnt < 8; ++cnt)
     {
         EXPECT_EQ(4 + cnt, mappedFloats[cnt]);
     }
@@ -1480,9 +1494,9 @@ void main()
     my_FragColor = texture(tex, texCoord);
 })";
 
-    std::array<GLColor, kWidth *kHeight> redColor = {
+    std::array<GLColor, kWidth * kHeight> redColor = {
         {GLColor::red, GLColor::red, GLColor::red, GLColor::red}};
-    std::array<GLColor, kWidth *kHeight> greenColor = {
+    std::array<GLColor, kWidth * kHeight> greenColor = {
         {GLColor::green, GLColor::green, GLColor::green, GLColor::green}};
 
     // Create a red texture and bind to texture unit 0

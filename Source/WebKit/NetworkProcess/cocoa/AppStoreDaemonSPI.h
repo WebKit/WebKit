@@ -36,6 +36,8 @@
 
 #else // USE(APPLE_INTERNAL_SDK)
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface ASDInstallWebAttributionParamsConfig : NSObject <NSSecureCoding>
 typedef NS_ENUM(NSInteger, ASDInstallWebAttributionContext) {
     AttributionTypeDefault = 0,
@@ -54,6 +56,8 @@ typedef NS_ENUM(NSInteger, ASDInstallWebAttributionContext) {
 - (void)addInstallWebAttributionParamsWithConfig:(ASDInstallWebAttributionParamsConfig *)config completionHandler:(nullable void (^)(NSError *error))completionHandler;
 @end
 #endif
+
+NS_ASSUME_NONNULL_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
 #endif // HAVE(SKADNETWORK_v4)

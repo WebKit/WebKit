@@ -53,7 +53,7 @@ private:
     RefPtr<WebExtensionAPIEvent> m_onAdded;
     RefPtr<WebExtensionAPIEvent> m_onRemoved;
 
-    void parseDetailsDictionary(NSDictionary *, HashSet<String>& permissions, HashSet<String>& origins);
+    bool parseDetailsDictionary(NSDictionary *, HashSet<String>& permissions, HashSet<String>& origins, NSString *callingAPIName, NSString **outExceptionString);
     bool verifyRequestedPermissions(HashSet<String>& permissions, HashSet<Ref<WebExtensionMatchPattern>>& matchPatterns, NSString *callingAPIName, NSString **outExceptionString);
     bool validatePermissionsDetails(HashSet<String>& permissions, HashSet<String>& origins, HashSet<Ref<WebExtensionMatchPattern>>& matchPatterns, NSString *callingAPIName, NSString **outExceptionString);
 #endif

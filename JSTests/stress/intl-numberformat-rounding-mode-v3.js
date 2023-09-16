@@ -98,4 +98,4 @@ let options = {
 };
 
 new Intl.NumberFormat(undefined, options);
-shouldBe("signDisplay,roundingMode", read.join(","));
+shouldBe("roundingMode,signDisplay", read.join(","));

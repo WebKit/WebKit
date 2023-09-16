@@ -174,7 +174,7 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
 
     AtomString attr = element().imageSourceURL();
 
-    LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " updateFromElement, current URI is " << sourceURI(attr));
+    LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " updateFromElement, current URL is " << attr);
 
     // Avoid loading a URL we already failed to load.
     if (!m_failedLoadURL.isEmpty() && attr == m_failedLoadURL)
@@ -205,7 +205,7 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
         if (m_image && attr == m_pendingURL)
             imageURL = m_image->url();
         else {
-            imageURL = document.completeURL(sourceURI(attr));
+            imageURL = document.completeURL(attr);
             m_pendingURL = attr;
         }
         ResourceRequest resourceRequest(imageURL);

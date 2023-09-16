@@ -26,7 +26,6 @@
 #include "config.h"
 #include <wtf/threads/Signals.h>
 
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=259108 Support signal handlers on Windows
 #if OS(UNIX)
 
 #if HAVE(MACH_EXCEPTIONS)
@@ -317,13 +316,13 @@ inline void setExceptionPorts(const AbstractLocker& threadGroupLocker, Thread& t
 
 static ThreadGroup& activeThreads()
 {
-    static LazyNeverDestroyed<Ref<ThreadGroup>> activeThreads;
+    static LazyNeverDestroyed<std::shared_ptr<ThreadGroup>> activeThreads;
     static std::once_flag initializeKey;
     std::call_once(initializeKey, [&] {
         Config::AssertNotFrozenScope assertScope;
         activeThreads.construct(ThreadGroup::create());
     });
-    return activeThreads.get();
+    return (*activeThreads.get());
 }
 
 void registerThreadForMachExceptionHandling(Thread& thread)
@@ -335,6 +334,38 @@ void registerThreadForMachExceptionHandling(Thread& thread)
 }
 
 #endif // HAVE(MACH_EXCEPTIONS)
+
+inline std::tuple<int, std::optional<int>> toSystemSignal(Signal signal)
+{
+    switch (signal) {
+    case Signal::AccessFault: return std::make_tuple(SIGSEGV, SIGBUS);
+    case Signal::IllegalInstruction: return std::make_tuple(SIGILL, std::nullopt);
+    case Signal::Usr: return std::make_tuple(SIGUSR2, std::nullopt);
+    case Signal::FloatingPoint: return std::make_tuple(SIGFPE, std::nullopt);
+    case Signal::Breakpoint: return std::make_tuple(SIGTRAP, std::nullopt);
+#if !OS(DARWIN)
+    case Signal::Abort: return std::make_tuple(SIGABRT, std::nullopt);
+#endif
+    default: break;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+inline Signal fromSystemSignal(int signal)
+{
+    switch (signal) {
+    case SIGSEGV: return Signal::AccessFault;
+    case SIGBUS: return Signal::AccessFault;
+    case SIGFPE: return Signal::FloatingPoint;
+    case SIGTRAP: return Signal::Breakpoint;
+    case SIGILL: return Signal::IllegalInstruction;
+    case SIGUSR2: return Signal::Usr;
+#if !OS(DARWIN)
+    case SIGABRT: return Signal::Abort;
+#endif
+    default: return Signal::Unknown;
+    }
+}
 
 inline size_t offsetForSystemSignal(int sig)
 {

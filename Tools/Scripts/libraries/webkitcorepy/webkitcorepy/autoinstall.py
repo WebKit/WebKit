@@ -636,7 +636,9 @@ class AutoInstall(object):
 
     @classmethod
     def install_everything(cls):
-        for packages in cls.packages.values():
+        # Iterate over a copy, as implicit_deps can lead to new packages being
+        # registered during installation
+        for packages in list(cls.packages.values()):
             for package in packages:
                 package.install()
         return None

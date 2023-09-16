@@ -29,17 +29,17 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "ArgumentCoders.h"
-#include "RemoteImageBuffer.h"
-#include "RemoteResourceCache.h"
+#include "RemoteRenderingBackend.h"
 #include <WebCore/DetectedFaceInterface.h>
 #include <WebCore/FaceDetectorInterface.h>
+#include <WebCore/ImageBuffer.h>
 
 namespace WebKit {
 
-RemoteFaceDetector::RemoteFaceDetector(Ref<WebCore::ShapeDetection::FaceDetector>&& faceDetector, ShapeDetection::ObjectHeap& objectHeap, RemoteResourceCache& remoteResourceCache, ShapeDetectionIdentifier identifier, WebCore::ProcessIdentifier webProcessIdentifier)
+RemoteFaceDetector::RemoteFaceDetector(Ref<WebCore::ShapeDetection::FaceDetector>&& faceDetector, ShapeDetection::ObjectHeap& objectHeap, RemoteRenderingBackend& backend, ShapeDetectionIdentifier identifier, WebCore::ProcessIdentifier webProcessIdentifier)
     : m_backing(WTFMove(faceDetector))
     , m_objectHeap(objectHeap)
-    , m_remoteResourceCache(remoteResourceCache)
+    , m_backend(backend)
     , m_identifier(identifier)
     , m_webProcessIdentifier(webProcessIdentifier)
 {
@@ -49,13 +49,13 @@ RemoteFaceDetector::~RemoteFaceDetector() = default;
 
 void RemoteFaceDetector::detect(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedFace>&&)>&& completionHandler)
 {
-    auto imageBuffer = m_remoteResourceCache.cachedImageBuffer({ renderingResourceIdentifier, m_webProcessIdentifier });
-    if (!imageBuffer) {
+    auto sourceImage = m_backend.imageBuffer(renderingResourceIdentifier);
+    if (!sourceImage) {
         completionHandler({ });
         return;
     }
 
-    m_backing->detect(*imageBuffer, WTFMove(completionHandler));
+    m_backing->detect(*sourceImage, WTFMove(completionHandler));
 }
 
 } // namespace WebKit

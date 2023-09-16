@@ -718,6 +718,7 @@ parser/Parser.cpp @no-unify
 parser/ParserArena.cpp
 parser/SourceProvider.cpp
 parser/SourceProviderCache.cpp
+parser/SourceTaintedOrigin.cpp
 parser/UnlinkedSourceCode.cpp
 parser/VariableEnvironment.cpp
 
@@ -973,6 +974,8 @@ runtime/MemoryMode.cpp
 runtime/MemoryStatistics.cpp
 runtime/ModuleProgramExecutable.cpp
 runtime/NarrowingNumberPredictionFuzzerAgent.cpp
+runtime/NativeCallee.cpp
+runtime/NativeCalleeRegistry.cpp
 runtime/NativeErrorConstructor.cpp
 runtime/NativeErrorPrototype.cpp
 runtime/NativeExecutable.cpp
@@ -1100,8 +1103,6 @@ tools/Integrity.cpp
 tools/JSDollarVM.cpp
 tools/VMInspector.cpp
 
-wasm/WasmAirIRGenerator32_64.cpp @no-unify
-wasm/WasmAirIRGenerator64.cpp @no-unify
 wasm/WasmB3IRGenerator.cpp
 wasm/WasmBBQDisassembler.cpp
 wasm/WasmBBQJIT.cpp @no-unify
@@ -1110,9 +1111,9 @@ wasm/WasmBinding.cpp
 wasm/WasmBranchHintsSectionParser.cpp
 wasm/WasmCallee.cpp
 wasm/WasmCalleeGroup.cpp
-wasm/WasmCalleeRegistry.cpp
 wasm/WasmCallingConvention.cpp
 wasm/WasmCompilationMode.cpp
+wasm/WasmConstExprGenerator.cpp
 wasm/WasmContext.cpp
 wasm/WasmEntryPlan.cpp
 wasm/WasmFaultSignalHandler.cpp

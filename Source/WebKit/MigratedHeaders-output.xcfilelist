@@ -1,4 +1,4 @@
-# migrate-headers.py matches each line of input to the corresponding line in
+# xcfilelist-copy.py matches each line of input to the corresponding line in
 # MigratedHeaders-input.xcfilelist, so the order of file names must match.
 
 $(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/AbstractPasteboard.h

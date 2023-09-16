@@ -1,6 +1,16 @@
+CONSOLE MESSAGE: NotSupportedError: Shared workers are not supported
+
+Harness Error (FAIL), message = NotSupportedError: Shared workers are not supported
 
 PASS Opaque origin should be serialized to "null"
 PASS BroadcastChannel messages from opaque origins should be self-contained
 PASS BroadcastChannel messages from data URL dedicated workers should be self-contained
-FAIL BroadcastChannel messages from data URL shared workers should be self-contained promise_test: Unhandled rejection with value: object "NotSupportedError: Shared workers are not supported"
+TIMEOUT BroadcastChannel messages from data URL shared workers should be self-contained Test timed out
+
+Harness Error (FAIL), message = NotSupportedError: Shared workers are not supported
+
+PASS Opaque origin should be serialized to "null"
+PASS BroadcastChannel messages from opaque origins should be self-contained
+PASS BroadcastChannel messages from data URL dedicated workers should be self-contained
+TIMEOUT BroadcastChannel messages from data URL shared workers should be self-contained Test timed out
 

@@ -60,7 +60,7 @@ private:
 
     Ref<SVGAnimatedLength> m_x { SVGAnimatedLength::create(this, SVGLengthMode::Width) };
     Ref<SVGAnimatedLength> m_y { SVGAnimatedLength::create(this, SVGLengthMode::Height) };
-    HashSet<StyleCursorImage*> m_clients;
+    WeakHashSet<StyleCursorImage> m_clients;
 };
 
 } // namespace WebCore

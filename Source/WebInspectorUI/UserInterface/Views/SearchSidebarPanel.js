@@ -42,7 +42,7 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
         this._inputElement = this._inputContainer.appendChild(document.createElement("input"));
         this._inputElement.type = "search";
         this._inputElement.spellcheck = false;
-        this._inputElement.addEventListener("search", this._searchFieldChanged.bind(this));
+        this._inputElement.addEventListener("change", this._searchFieldChanged.bind(this));
         this._inputElement.addEventListener("input", this._searchFieldInput.bind(this));
         this._inputElement.setAttribute("results", 5);
         this._inputElement.setAttribute("autosave", "inspector-search-autosave");

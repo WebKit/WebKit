@@ -175,6 +175,32 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(IndexedResizableTypedArrayUint32Store) \
     macro(IndexedResizableTypedArrayFloat32Store) \
     macro(IndexedResizableTypedArrayFloat64Store) \
+    macro(IndexedInt32InHit) \
+    macro(IndexedDoubleInHit) \
+    macro(IndexedContiguousInHit) \
+    macro(IndexedArrayStorageInHit) \
+    macro(IndexedScopedArgumentsInHit) \
+    macro(IndexedDirectArgumentsInHit) \
+    macro(IndexedTypedArrayInt8InHit) \
+    macro(IndexedTypedArrayUint8InHit) \
+    macro(IndexedTypedArrayUint8ClampedInHit) \
+    macro(IndexedTypedArrayInt16InHit) \
+    macro(IndexedTypedArrayUint16InHit) \
+    macro(IndexedTypedArrayInt32InHit) \
+    macro(IndexedTypedArrayUint32InHit) \
+    macro(IndexedTypedArrayFloat32InHit) \
+    macro(IndexedTypedArrayFloat64InHit) \
+    macro(IndexedResizableTypedArrayInt8InHit) \
+    macro(IndexedResizableTypedArrayUint8InHit) \
+    macro(IndexedResizableTypedArrayUint8ClampedInHit) \
+    macro(IndexedResizableTypedArrayInt16InHit) \
+    macro(IndexedResizableTypedArrayUint16InHit) \
+    macro(IndexedResizableTypedArrayInt32InHit) \
+    macro(IndexedResizableTypedArrayUint32InHit) \
+    macro(IndexedResizableTypedArrayFloat32InHit) \
+    macro(IndexedResizableTypedArrayFloat64InHit) \
+    macro(IndexedStringInHit) \
+    macro(IndexedNoIndexingInMiss) \
 
 
 class AccessCase : public ThreadSafeRefCounted<AccessCase> {
@@ -424,17 +450,7 @@ public:
 
             bool isHashTableDeletedValue() const { return m_wrapped == bitwise_cast<PolymorphicAccessJITStubRoutine*>(static_cast<uintptr_t>(1)); }
 
-            friend bool operator==(const Key& a, const Key& b)
-            {
-                return a.m_wrapped == b.m_wrapped
-                    && a.m_baseGPR == b.m_baseGPR
-                    && a.m_valueGPR == b.m_valueGPR
-                    && a.m_extraGPR == b.m_extraGPR
-                    && a.m_extra2GPR == b.m_extra2GPR
-                    && a.m_stubInfoGPR == b.m_stubInfoGPR
-                    && a.m_arrayProfileGPR == b.m_arrayProfileGPR
-                    && a.m_usedRegisters == b.m_usedRegisters;
-            }
+            friend bool operator==(const Key&, const Key&) = default;
 
             PolymorphicAccessJITStubRoutine* m_wrapped { nullptr };
             GPRReg m_baseGPR;
@@ -546,8 +562,15 @@ public:
         return nullptr;
     }
 
+    RefPtr<PolymorphicAccessJITStubRoutine> getMegamorphic(AccessType);
+    void setMegamorphic(AccessType, Ref<PolymorphicAccessJITStubRoutine>);
+
 private:
     HashSet<Hash::Key, Hash, Hash::KeyTraits> m_stubs;
+
+    RefPtr<PolymorphicAccessJITStubRoutine> m_getByValMegamorphic;
+    RefPtr<PolymorphicAccessJITStubRoutine> m_getByValWithThisMegamorphic;
+    RefPtr<PolymorphicAccessJITStubRoutine> m_putByValMegamorphic;
 };
 
 } // namespace JSC

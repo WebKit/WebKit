@@ -1450,10 +1450,20 @@
         assertIsCurrent(workQueue());
         m_context->drawElementsInstancedBaseVertexBaseInstanceANGLE(mode, count, type, static_cast<GCGLintptr>(offset), instanceCount, baseVertex, baseInstance);
     }
+    void clipControlEXT(uint32_t origin, uint32_t depth)
+    {
+        assertIsCurrent(workQueue());
+        m_context->clipControlEXT(origin, depth);
+    }
     void provokingVertexANGLE(uint32_t provokeMode)
     {
         assertIsCurrent(workQueue());
         m_context->provokingVertexANGLE(provokeMode);
+    }
+    void polygonModeANGLE(uint32_t face, uint32_t mode)
+    {
+        assertIsCurrent(workQueue());
+        m_context->polygonModeANGLE(face, mode);
     }
     void polygonOffsetClampEXT(float factor, float units, float clamp)
     {

@@ -12,7 +12,7 @@ features: [BigInt, Symbol, Temporal]
 const timeZone = new Temporal.TimeZone("UTC");
 const instance = new Temporal.Calendar("iso8601");
 
-const rangeErrorTests = [
+const primitiveTests = [
   [undefined, "undefined"],
   [null, "null"],
   [true, "boolean"],
@@ -21,9 +21,17 @@ const rangeErrorTests = [
   [1n, "bigint"],
 ];
 
-for (const [arg, description] of rangeErrorTests) {
-  assert.throws(RangeError, () => instance.dateUntil(arg, new Temporal.PlainDate(1977, 11, 19)), `${description} does not convert to a valid ISO string (first argument)`);
-  assert.throws(RangeError, () => instance.dateUntil(new Temporal.PlainDate(1977, 11, 19), arg), `${description} does not convert to a valid ISO string (first argument)`);
+for (const [arg, description] of primitiveTests) {
+  assert.throws(
+    typeof arg === 'string' ? RangeError : TypeError,
+    () => instance.dateUntil(arg, new Temporal.PlainDate(1977, 11, 19)),
+    `${description} does not convert to a valid ISO string (first argument)`
+  );
+  assert.throws(
+    typeof arg === 'string' ? RangeError : TypeError,
+    () => instance.dateUntil(new Temporal.PlainDate(1977, 11, 19), arg),
+    `${description} does not convert to a valid ISO string (second argument)`
+  );
 }
 
 const typeErrorTests = [
@@ -34,6 +42,6 @@ const typeErrorTests = [
 ];
 
 for (const [arg, description] of typeErrorTests) {
-  assert.throws(TypeError, () => instance.dateUntil(arg, new Temporal.PlainDate(1977, 11, 19)), `${description} is not a valid property bag and does not convert to a string (second argument)`);
+  assert.throws(TypeError, () => instance.dateUntil(arg, new Temporal.PlainDate(1977, 11, 19)), `${description} is not a valid property bag and does not convert to a string (first argument)`);
   assert.throws(TypeError, () => instance.dateUntil(new Temporal.PlainDate(1977, 11, 19), arg), `${description} is not a valid property bag and does not convert to a string (second argument)`);
 }

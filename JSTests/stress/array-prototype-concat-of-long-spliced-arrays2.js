@@ -1,3 +1,5 @@
+//@ $skipModes << :lockdown if $memoryLimited
+
 function shouldEqual(actual, expected) {
     if (actual != expected) {
         throw "ERROR: expect " + expected + ", actual " + actual;

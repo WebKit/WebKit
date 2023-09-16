@@ -23,11 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <UserNotifications/UNUserNotificationCenter.h>
+#import <WebKit/_WKWebsiteDataStoreDelegate.h>
+
 @class BrowserWindowController;
 @class ExtensionManagerWindowController;
 @class SettingsController;
 
-@interface BrowserAppDelegate : NSObject <NSApplicationDelegate> {
+@interface BrowserAppDelegate : NSObject <NSApplicationDelegate, _WKWebsiteDataStoreDelegate, UNUserNotificationCenterDelegate> {
     NSMutableSet *_browserWindowControllers;
     SettingsController *_settingsController;
     ExtensionManagerWindowController *_extensionManagerWindowController;
@@ -46,6 +49,8 @@
 - (void)browserWindowWillClose:(NSWindow *)window;
 
 - (void)didChangeSettings;
+
++ (NSNumber *)currentBadge;
 
 @property (readonly, nonatomic) WKUserContentController *userContentContoller;
 @property (readonly, nonatomic) SettingsController *settingsController;

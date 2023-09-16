@@ -3,7 +3,7 @@
 Test the functionality of ColorMatrix filters in CanvasFilter objects
 
 
-FAIL Test the functionality of ColorMatrix filters in CanvasFilter objects assert_throws_js: function "function() { new CanvasFilter({filter: "colorMatrix", values: undefined}); }" threw object "ReferenceError: Can't find variable: CanvasFilter" ("ReferenceError") expected instance of function "function TypeError() {
+FAIL Test the functionality of ColorMatrix filters in CanvasFilter objects assert_throws_js: function "function() { new CanvasFilter({filter: 'colorMatrix', values: undefined}); }" threw object "ReferenceError: Can't find variable: CanvasFilter" ("ReferenceError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
 

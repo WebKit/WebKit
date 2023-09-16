@@ -5,19 +5,22 @@ if (window.testRunner) {
     testRunner.waitUntilDone();
     testRunner.dumpAsText();
 }
-function test() {
-    try {
-        if (window.internals) {
-            const host = internals.windowLocationHost(testFrame.contentWindow);
-            document.body.innerHTML = host === "" ? "PASS" : "FAIL, got " + host;
-        }
-    } catch (e) {
-        console.log(e);
-    }
 
-    if (window.testRunner)
-        testRunner.notifyDone();
+onload = () => {
+     setTimeout(() => {
+         try {
+             if (window.internals) {
+                 const host = internals.windowLocationHost(testFrame.contentWindow);
+                 document.body.innerHTML = host === "" ? "PASS" : "FAIL, got " + host;
+             }
+         } catch (e) {
+             console.log(e);
+         }
+
+         if (window.testRunner)
+             testRunner.notifyDone();
+     }, 100);
 }
 </script>
-<iframe id="testFrame" onload="test()" src="about://example.org"></iframe>
+<iframe id="testFrame" src="about://example.org"></iframe>
 </body>

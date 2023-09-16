@@ -32,16 +32,18 @@
 
 namespace WebCore {
 
+class WebGLTimerQueryEXT;
+
 class WebGLRenderingContext final : public WebGLRenderingContextBase {
     WTF_MAKE_ISO_ALLOCATED(WebGLRenderingContext);
 public:
-    static std::unique_ptr<WebGLRenderingContext> create(CanvasBase&, Ref<GraphicsContextGL>&&, GraphicsContextGLAttributes);
+    static std::unique_ptr<WebGLRenderingContext> create(CanvasBase&, GraphicsContextGLAttributes);
 
     ~WebGLRenderingContext();
 
     bool isWebGL1() const final { return true; }
 
-    WebGLExtension* getExtension(const String&) final;
+    std::optional<WebGLExtensionAny> getExtension(const String&) final;
     std::optional<Vector<String>> getSupportedExtensions() final;
 
     WebGLAny getFramebufferAttachmentParameter(GCGLenum target, GCGLenum attachment, GCGLenum pname) final;
@@ -58,11 +60,13 @@ public:
 protected:
     friend class EXTDisjointTimerQuery;
 
-    RefPtr<WebGLTimerQueryEXT> m_activeQuery;
+    WebGLBindingPoint<WebGLTimerQueryEXT, GraphicsContextGL::TIME_ELAPSED_EXT> m_activeQuery;
 
 private:
-    WebGLRenderingContext(CanvasBase&, Ref<GraphicsContextGL>&&, GraphicsContextGLAttributes);
+    using WebGLRenderingContextBase::WebGLRenderingContextBase;
 };
+
+WebCoreOpaqueRoot root(const WebGLExtension<WebGLRenderingContext>*);
 
 } // namespace WebCore
 

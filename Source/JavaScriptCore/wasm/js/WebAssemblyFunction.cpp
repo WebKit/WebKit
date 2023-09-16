@@ -388,12 +388,12 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
     // 2. We need to know to restore the previous wasm context.
     ASSERT(!m_jsToWasmICCallee);
     m_jsToWasmICCallee = Wasm::JSToWasmICCallee::create();
-    jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxWasm(m_jsToWasmICCallee.get())), scratchJSR.payloadGPR());
+    jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(m_jsToWasmICCallee.get())), scratchJSR.payloadGPR());
     // We do not need to set up |this| in this IC since the caller of this IC itself already set up arguments and its |this| should be WebAssemblyFunction,
     // which anchors JSWebAssemblyInstance correctly from GC.
 #if USE(JSVALUE32_64)
     jit.storePtr(scratchJSR.payloadGPR(), CCallHelpers::addressFor(CallFrameSlot::callee));
-    jit.store32(CCallHelpers::TrustedImm32(JSValue::WasmTag), CCallHelpers::addressFor(CallFrameSlot::callee).withOffset(TagOffset));
+    jit.store32(CCallHelpers::TrustedImm32(JSValue::NativeCalleeTag), CCallHelpers::addressFor(CallFrameSlot::callee).withOffset(TagOffset));
     jit.storePtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::addressFor(CallFrameSlot::codeBlock));
 #else
     static_assert(CallFrameSlot::codeBlock + 1 == CallFrameSlot::callee);

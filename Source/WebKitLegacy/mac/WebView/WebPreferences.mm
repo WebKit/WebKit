@@ -1853,27 +1853,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:forceLowPower forKey:WebKitForceWebGLUsesLowPowerPreferenceKey];
 }
 
-- (BOOL)isFrameFlatteningEnabled
-{
-    return [self _unsignedIntValueForKey:WebKitFrameFlatteningPreferenceKey] != WebKitFrameFlatteningDisabled;
-}
-
-- (void)setFrameFlatteningEnabled:(BOOL)flattening
-{
-    WebKitFrameFlattening value = flattening ? WebKitFrameFlatteningFullyEnabled : WebKitFrameFlatteningDisabled;
-    [self _setUnsignedIntValue:value forKey:WebKitFrameFlatteningPreferenceKey];
-}
-
-- (WebKitFrameFlattening)frameFlattening
-{
-    return static_cast<WebKitFrameFlattening>([self _unsignedIntValueForKey:WebKitFrameFlatteningPreferenceKey]);
-}
-
-- (void)setFrameFlattening:(WebKitFrameFlattening)flattening
-{
-    [self _setUnsignedIntValue:flattening forKey:WebKitFrameFlatteningPreferenceKey];
-}
-
 - (BOOL)asyncFrameScrollingEnabled
 {
     return [self _boolValueForKey:WebKitAsyncFrameScrollingEnabledPreferenceKey];
@@ -2664,16 +2643,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitCSSOMViewScrollingAPIEnabledPreferenceKey];
 }
 
-- (BOOL)menuItemElementEnabled
-{
-    return [self _boolValueForKey:WebKitMenuItemElementEnabledPreferenceKey];
-}
-
-- (void)setMenuItemElementEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitMenuItemElementEnabledPreferenceKey];
-}
-
 - (BOOL)mediaUserGestureInheritsFromDocument
 {
     return [self _boolValueForKey:WebKitMediaUserGestureInheritsFromDocument];
@@ -3095,16 +3064,6 @@ static RetainPtr<NSString>& classIBCreatorID()
 - (void)setAspectRatioOfImgFromWidthAndHeightEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey];
-}
-
-- (BOOL)referrerPolicyAttributeEnabled
-{
-    return [self _boolValueForKey:WebKitReferrerPolicyAttributeEnabledPreferenceKey];
-}
-
-- (void)setReferrerPolicyAttributeEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitReferrerPolicyAttributeEnabledPreferenceKey];
 }
 
 - (BOOL)coreMathMLEnabled

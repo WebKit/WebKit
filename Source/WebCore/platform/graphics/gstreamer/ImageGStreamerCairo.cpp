@@ -171,6 +171,8 @@ ImageGStreamer::~ImageGStreamer()
     // cairo_surface_t was created using cairo_image_surface_create_for_data().
     if (m_frameMapped)
         gst_video_frame_unmap(&m_videoFrame);
+
+    m_sample.clear();
 }
 
 } // namespace WebCore

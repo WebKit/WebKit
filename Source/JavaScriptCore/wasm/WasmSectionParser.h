@@ -66,7 +66,7 @@ private:
     PartialResult WARN_UNUSED_RETURN parseTableHelper(bool isImport);
     enum class LimitsType { Memory, Table };
     PartialResult WARN_UNUSED_RETURN parseResizableLimits(uint32_t& initial, std::optional<uint32_t>& maximum, bool& isShared, LimitsType);
-    PartialResult WARN_UNUSED_RETURN parseInitExpr(uint8_t&, uint64_t&, v128_t&, Type& initExprType);
+    PartialResult WARN_UNUSED_RETURN parseInitExpr(uint8_t&, bool&, uint64_t&, v128_t&, Type, Type& initExprType);
     PartialResult WARN_UNUSED_RETURN parseI32InitExpr(std::optional<I32InitExpr>&, ASCIILiteral failMessage);
 
     PartialResult WARN_UNUSED_RETURN parseFunctionType(uint32_t position, RefPtr<TypeDefinition>&);
@@ -75,7 +75,7 @@ private:
     PartialResult WARN_UNUSED_RETURN parseStructType(uint32_t position, RefPtr<TypeDefinition>&);
     PartialResult WARN_UNUSED_RETURN parseArrayType(uint32_t position, RefPtr<TypeDefinition>&);
     PartialResult WARN_UNUSED_RETURN parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition>&);
-    PartialResult WARN_UNUSED_RETURN parseSubtype(uint32_t position, RefPtr<TypeDefinition>&, Vector<TypeIndex>&);
+    PartialResult WARN_UNUSED_RETURN parseSubtype(uint32_t position, RefPtr<TypeDefinition>&, Vector<TypeIndex>&, bool);
 
     PartialResult WARN_UNUSED_RETURN validateElementTableIdx(uint32_t, TableElementType);
     PartialResult WARN_UNUSED_RETURN parseI32InitExprForElementSection(std::optional<I32InitExpr>&);
@@ -87,7 +87,7 @@ private:
     PartialResult WARN_UNUSED_RETURN parseI32InitExprForDataSection(std::optional<I32InitExpr>&);
 
     static bool checkStructuralSubtype(const TypeDefinition&, const TypeDefinition&);
-    static bool checkSubtypeValidity(const TypeDefinition&, const TypeDefinition&);
+    PartialResult WARN_UNUSED_RETURN checkSubtypeValidity(const TypeDefinition&, RefPtr<const TypeDefinition>);
 
     size_t m_offsetInSource;
     Ref<ModuleInformation> m_info;

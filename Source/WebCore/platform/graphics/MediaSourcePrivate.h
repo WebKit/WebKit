@@ -65,20 +65,16 @@ public:
     virtual MediaPlayer::ReadyState readyState() const = 0;
     virtual void setReadyState(MediaPlayer::ReadyState) = 0;
 
-    virtual void setIsSeeking(bool isSeeking) { m_isSeeking = isSeeking; }
-    virtual void waitForSeekCompleted() = 0;
-    virtual void seekCompleted() = 0;
+    virtual void waitForTarget(const SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) = 0;
+    virtual void seekToTime(const MediaTime&, CompletionHandler<void()>&&) = 0;
 
     virtual void setTimeFudgeFactor(const MediaTime& fudgeFactor) { m_timeFudgeFactor = fudgeFactor; }
     MediaTime timeFudgeFactor() const { return m_timeFudgeFactor; }
-
-    bool isSeeking() const { return m_isSeeking; }
 
     bool hasFutureTime(const MediaTime& currentTime, const MediaTime& duration, const PlatformTimeRanges&) const;
 
 private:
     MediaTime m_timeFudgeFactor;
-    bool m_isSeeking { false };
 };
 
 String convertEnumerationToString(MediaSourcePrivate::AddStatus);

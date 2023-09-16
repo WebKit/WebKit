@@ -169,7 +169,6 @@ public:
     BarProp& toolbar();
     WEBCORE_EXPORT Navigator& navigator();
     Navigator* optionalNavigator() const { return m_navigator.get(); }
-    Navigator& clientInformation() { return navigator(); }
 
     WEBCORE_EXPORT static void overrideTransientActivationDurationForTesting(std::optional<Seconds>&&);
     void setLastActivationTimestamp(MonotonicTime lastActivationTimestamp) { m_lastActivationTimestamp = lastActivationTimestamp; }
@@ -230,8 +229,6 @@ public:
 
     String status() const;
     void setStatus(const String&);
-    String defaultStatus() const;
-    void setDefaultStatus(const String&);
 
     WindowProxy* opener() const;
     void disownOpener();
@@ -462,7 +459,6 @@ private:
     mutable RefPtr<VisualViewport> m_visualViewport;
 
     String m_status;
-    String m_defaultStatus;
 
 #if PLATFORM(IOS_FAMILY)
     unsigned m_scrollEventListenerCount { 0 };
@@ -473,7 +469,7 @@ private:
 #endif
 
 #if ENABLE(GAMEPAD)
-    unsigned m_gamepadEventListenerCount { 0 };
+    uint64_t m_gamepadEventListenerCount { 0 };
 #endif
 
     mutable RefPtr<Storage> m_sessionStorage;
@@ -505,11 +501,6 @@ private:
 inline String LocalDOMWindow::status() const
 {
     return m_status;
-}
-
-inline String LocalDOMWindow::defaultStatus() const
-{
-    return m_defaultStatus;
 }
 
 WebCoreOpaqueRoot root(LocalDOMWindow*);

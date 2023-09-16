@@ -28,11 +28,11 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "Device.h"
 #import "SystemVersion.h"
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
+#import <pal/system/ios/Device.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -58,7 +58,7 @@ static inline bool isClassicPhone()
 
 ASCIILiteral osNameForUserAgent()
 {
-    if (deviceHasIPadCapability() && !isClassicPhone())
+    if (PAL::deviceHasIPadCapability() && !isClassicPhone())
         return "OS"_s;
     return "iPhone OS"_s;
 }
@@ -73,7 +73,7 @@ static StringView deviceNameForUserAgent()
     }
 
     static NeverDestroyed<String> name = [] {
-        auto name = deviceName();
+        auto name = PAL::deviceName();
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
         size_t location = name.find(" Simulator"_s);
         if (location != notFound)
@@ -94,8 +94,7 @@ String standardUserAgentWithApplicationName(const String& applicationName, const
 
 #if USE(STATIC_IPAD_USER_AGENT_VALUE)
     UNUSED_PARAM(userAgentOSVersion);
-    UNUSED_PARAM(separator);
-    return makeString("Mozilla/5.0 (iPad; CPU OS 16_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.3 Mobile/15E148 Safari/604.1");
+    return makeString("Mozilla/5.0 (iPad; CPU OS 16_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko)", separator, applicationName);
 #else
     if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DoesNotOverrideUAFromNSUserDefault)) {
         if (auto override = dynamic_cf_cast<CFStringRef>(adoptCF(CFPreferencesCopyAppValue(CFSTR("UserAgent"), CFSTR("com.apple.WebFoundation"))))) {

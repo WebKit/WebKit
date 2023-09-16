@@ -42,7 +42,7 @@ SuspendableWorkQueue::SuspendableWorkQueue(const char* name, QOS qos, ShouldLog 
     ASSERT(isMainThread());
 }
 
-inline const char* SuspendableWorkQueue::stateString(State state)
+const char* SuspendableWorkQueue::stateString(State state)
 {
     switch (state) {
     case State::Running:

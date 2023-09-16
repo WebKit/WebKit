@@ -317,5 +317,10 @@
         "_2x2": "GL_SHADING_RATE_2X2_PIXELS_QCOM",
         "_4x2": "GL_SHADING_RATE_4X2_PIXELS_QCOM",
         "_4x4": "GL_SHADING_RATE_4X4_PIXELS_QCOM"
+    },
+    "TilingMode":
+    {
+        "Optimal": "GL_OPTIMAL_TILING_EXT",
+        "Linear": "GL_LINEAR_TILING_EXT"
     }
 }

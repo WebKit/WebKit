@@ -30,7 +30,6 @@
 #import <WebCore/CommonAtomStrings.h>
 #import <WebCore/WebCoreJITOperations.h>
 #import <mutex>
-#import <wtf/GenerateProfiles.h>
 #import <wtf/MainThread.h>
 #import <wtf/RefCounted.h>
 #import <wtf/WorkQueue.h>
@@ -38,6 +37,10 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import <WebCore/WebCoreThreadSystemInterface.h>
+#endif
+
+#if ENABLE(LLVM_PROFILE_GENERATION)
+extern "C" char __llvm_profile_filename[] = "/private/tmp/WebKitPGO/WebKit_%m_pid%p%c.profraw";
 #endif
 
 namespace WebKit {
@@ -61,8 +64,6 @@ static void runInitializationCode(void* = nullptr)
     WTF::RefCountedBase::enableThreadingChecksGlobally();
 
     WebCore::populateJITOperations();
-
-    WTF::registerProfileGenerationCallback<WebKitProfileTag>("WebKit");
 }
 
 void InitializeWebKit2()

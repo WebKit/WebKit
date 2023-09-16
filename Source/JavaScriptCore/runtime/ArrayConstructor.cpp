@@ -115,7 +115,7 @@ static ALWAYS_INLINE bool isArraySlowInline(JSGlobalObject* globalObject, ProxyO
     while (true) {
         if (UNLIKELY(proxy->isRevoked())) {
             auto* callFrame = vm.topJSCallFrame();
-            auto* callee = callFrame && !callFrame->isWasmFrame() ? callFrame->jsCallee() : nullptr;
+            auto* callee = callFrame && !callFrame->isNativeCalleeFrame() ? callFrame->jsCallee() : nullptr;
             ASCIILiteral calleeName = "Array.isArray"_s;
             auto* function = callee ? jsDynamicCast<JSFunction*>(callee) : nullptr;
             // If this function is from a different globalObject than the one passed in above,

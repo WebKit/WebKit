@@ -678,6 +678,8 @@ void beforeAll()
     kServer = new WebKitTestServer();
     kServer->run(serverCallback);
 
+    Test::shouldInitializeWebProcessExtensions = true;
+
     Test::add("WebKitWebView", "new-with-user-content-manager", testWebViewNewWithUserContentManager);
     WebViewTest::add("WebKitUserContentManager", "injected-style-sheet", testUserContentManagerInjectedStyleSheet);
     WebViewTest::add("WebKitUserContentManager", "injected-script", testUserContentManagerInjectedScript);

@@ -40,14 +40,18 @@ class BitBucket(Scm):
         def PullRequest(self, data):
             if not data:
                 return None
+            author = self.repository.contributors.create(
+                data['author']['user']['displayName'],
+                data['author']['user'].get('emailAddress', None),
+                bitbucket=data['author']['user'].get('name', None),
+            )
+
             result = PullRequest(
                 number=data['id'],
                 title=data.get('title'),
                 body=data.get('description'),
-                author=self.repository.contributors.create(
-                    data['author']['user']['displayName'],
-                    data['author']['user'].get('emailAddress', None),
-                ), head=data['fromRef']['displayId'],
+                author=author,
+                head=data['fromRef']['displayId'],
                 hash=data['fromRef'].get('latestCommit', None),
                 base=data['toRef']['displayId'],
                 opened=True if data.get('open') else (False if data.get('closed') else None),
@@ -64,6 +68,7 @@ class BitBucket(Scm):
                 reviewer = self.repository.contributors.create(
                     rdata['user']['displayName'],
                     rdata['user'].get('emailAddress', None),
+                    bitbucket=rdata['user'].get('name', None),
                 )
                 result._reviewers.append(reviewer)
                 if rdata.get('approved', False) and (not needs_status or reviewer.status == Contributor.REVIEWER):
@@ -231,7 +236,10 @@ class BitBucket(Scm):
                 pull_request.body, pull_request.commits = pull_request.parse_body(data.get('description'))
             user = data.get('author', {}).get('user', {})
             if user.get('displayName') and user.get('emailAddress'):
-                pull_request.author = self.repository.contributors.create(user['displayName'], user['emailAddress'])
+                pull_request.author = self.repository.contributors.create(
+                    user['displayName'], user['emailAddress'],
+                    bitbucket=user.get('name', None),
+                )
             pull_request.head = data.get('fromRef', {}).get('displayId', pull_request.base)
             pull_request.base = data.get('toRef', {}).get('displayId', pull_request.base)
             pull_request.generator = self
@@ -265,8 +273,12 @@ class BitBucket(Scm):
                 if not comment or not user or not comment.get('text'):
                     continue
 
+                author = self.repository.contributors.create(
+                    user['displayName'], user['emailAddress'],
+                    bitbucket=user.get('name', None),
+                )
                 yield PullRequest.Comment(
-                    author=self.repository.contributors.create(user['displayName'], user['emailAddress']),
+                    author=author,
                     timestamp=comment.get('updatedDate', comment.get('createdDate')) // 1000,
                     content=comment.get('text'),
                 )
@@ -548,6 +560,11 @@ class BitBucket(Scm):
                 break
             order += 1
 
+        author = self.contributors.create(
+            commit_data.get('committer', {}).get('displayName', None),
+            commit_data.get('committer', {}).get('emailAddress', None),
+            bitbucket=commit_data.get('committer', {}).get('name', None),
+        )
         return Commit(
             repository_id=self.id,
             hash=commit_data['id'],
@@ -557,10 +574,8 @@ class BitBucket(Scm):
             branch=branch,
             timestamp=timestamp,
             order=order,
-            author=self.contributors.create(
-                commit_data.get('committer', {}).get('displayName', None),
-                commit_data.get('committer', {}).get('emailAddress', None),
-            ), message=commit_data['message'] if include_log else None,
+            author=author,
+            message=commit_data['message'] if include_log else None,
         )
 
     def find(self, argument, include_log=True, include_identifier=True):

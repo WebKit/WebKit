@@ -56,7 +56,25 @@
 	<string>Recording video on behalf of websites</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Recording audio on behalf of websites</string>
+	<key>LSEnvironment</key>
+	<dict>
+		<key>__XPC_DYLD_FRAMEWORK_PATH</key>
+		<string>${BUILT_PRODUCTS_DIR}</string>
+		<key>DYLD_FRAMEWORK_PATH</key>
+		<string>${BUILT_PRODUCTS_DIR}</string>
+	</dict>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Recognizing captured audio on behalf of websites</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>x-webkit-app-launch</string>
+			</array>
+			<key>LSHandlerRank</key>
+			<string>none</string>
+		</dict>
+	</array>
 </dict>
 </plist>

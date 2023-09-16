@@ -42,34 +42,34 @@ void ReplayFrame2(void)
     glGenBuffers(1, (GLuint *)gReadBuffer);
     UpdateBufferID(1, 0);
     glBindBuffer(GL_ARRAY_BUFFER, gBufferMap[1]);
-    CreateProgram(1);
-    CreateShader(GL_VERTEX_SHADER, 2);
-    glShaderSource(gShaderProgramMap[2], 1, glShaderSource_string_0, (const GLint *)&gBinaryData[0]);
-    glCompileShader(gShaderProgramMap[2]);
-    glGetShaderiv(gShaderProgramMap[2], GL_COMPILE_STATUS, (GLint *)gReadBuffer);
-    CreateShader(GL_FRAGMENT_SHADER, 3);
-    glShaderSource(gShaderProgramMap[3], 1, glShaderSource_string_1, (const GLint *)&gBinaryData[16]);
-    glCompileShader(gShaderProgramMap[3]);
-    glGetShaderiv(gShaderProgramMap[3], GL_COMPILE_STATUS, (GLint *)gReadBuffer);
-    glAttachShader(gShaderProgramMap[1], gShaderProgramMap[2]);
-    glDeleteShader(gShaderProgramMap[2]);
-    glAttachShader(gShaderProgramMap[1], gShaderProgramMap[3]);
-    glDeleteShader(gShaderProgramMap[3]);
-    glLinkProgram(gShaderProgramMap[1]);
+    CreateProgram(3);
+    CreateShader(GL_VERTEX_SHADER, 4);
+    glShaderSource(gShaderProgramMap[4], 1, glShaderSource_string_0, (const GLint *)&gBinaryData[0]);
+    glCompileShader(gShaderProgramMap[4]);
+    glGetShaderiv(gShaderProgramMap[4], GL_COMPILE_STATUS, (GLint *)gReadBuffer);
+    CreateShader(GL_FRAGMENT_SHADER, 5);
+    glShaderSource(gShaderProgramMap[5], 1, glShaderSource_string_1, (const GLint *)&gBinaryData[16]);
+    glCompileShader(gShaderProgramMap[5]);
+    glGetShaderiv(gShaderProgramMap[5], GL_COMPILE_STATUS, (GLint *)gReadBuffer);
+    glAttachShader(gShaderProgramMap[3], gShaderProgramMap[4]);
+    glDeleteShader(gShaderProgramMap[4]);
+    glAttachShader(gShaderProgramMap[3], gShaderProgramMap[5]);
+    glDeleteShader(gShaderProgramMap[5]);
+    glLinkProgram(gShaderProgramMap[3]);
     glGetError();
-    glGetProgramiv(gShaderProgramMap[1], GL_LINK_STATUS, (GLint *)gReadBuffer);
-    glBindAttribLocation(gShaderProgramMap[1], 0, "attr1");
-    glLinkProgram(gShaderProgramMap[1]);
+    glGetProgramiv(gShaderProgramMap[3], GL_LINK_STATUS, (GLint *)gReadBuffer);
+    glBindAttribLocation(gShaderProgramMap[3], 0, "attr1");
+    glLinkProgram(gShaderProgramMap[3]);
     glGetError();
-    glGetProgramiv(gShaderProgramMap[1], GL_LINK_STATUS, (GLint *)gReadBuffer);
-    glUseProgram(gShaderProgramMap[1]);
-    UpdateCurrentProgram(1);
+    glGetProgramiv(gShaderProgramMap[3], GL_LINK_STATUS, (GLint *)gReadBuffer);
+    glUseProgram(gShaderProgramMap[3]);
+    UpdateCurrentProgram(3);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_UNSIGNED_BYTE, GL_FALSE, 1, 0);
     glDrawArrays(GL_TRIANGLES, 0, 3);
     glGetError();
-    glDeleteProgram(gShaderProgramMap[1]);
-    DeleteUniformLocations(gShaderProgramMap[1]);
+    glDeleteProgram(gShaderProgramMap[3]);
+    DeleteUniformLocations(gShaderProgramMap[3]);
     UpdateResourceIDBuffer(0, gBufferMap[1]);
 glDeleteBuffers(1, gResourceIDBuffer);
 }
@@ -98,6 +98,10 @@ void SetupReplay(void)
 {
     InitReplay();
     SetupReplayContextShared();
+    if (gReplayResourceMode == angle::ReplayResourceMode::All)
+    {
+        SetupReplayContextSharedInactive();
+    }
     SetCurrentContextID(1);
     SetupReplayContext1();
 

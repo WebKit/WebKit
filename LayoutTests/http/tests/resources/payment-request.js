@@ -25,7 +25,7 @@ function validPaymentMethod()
     return {
         supportedMethods: 'https://apple.com/apple-pay',
         data: {
-            version: 2,
+            version: 3,
             merchantIdentifier: '',
             countryCode: 'US',
             supportedNetworks: ['visa', 'masterCard'],

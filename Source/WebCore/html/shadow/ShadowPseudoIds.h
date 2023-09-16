@@ -75,8 +75,6 @@ const AtomString& webkitMeterOptimumValue();
 const AtomString& webkitMeterSuboptimumValue();
 const AtomString& webkitMeterEvenLessGoodValue();
 
-const AtomString& webkitPluginReplacement();
-
 const AtomString& webkitProgressBar();
 const AtomString& webkitProgressValue();
 const AtomString& webkitProgressInnerElement();

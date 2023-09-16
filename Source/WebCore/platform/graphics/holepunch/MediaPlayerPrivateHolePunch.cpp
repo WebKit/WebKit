@@ -102,9 +102,9 @@ RefPtr<TextureMapperPlatformLayerProxy> MediaPlayerPrivateHolePunch::proxy() con
 }
 #endif
 
-static HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeCache()
+static HashSet<String>& mimeTypeCache()
 {
-    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> cache;
+    static NeverDestroyed<HashSet<String>> cache;
     static bool typeListInitialized = false;
 
     if (typeListInitialized)
@@ -122,7 +122,7 @@ static HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeCache()
     return cache;
 }
 
-void MediaPlayerPrivateHolePunch::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
+void MediaPlayerPrivateHolePunch::getSupportedTypes(HashSet<String>& types)
 {
     types = mimeTypeCache();
 }
@@ -151,7 +151,7 @@ private:
         return makeUnique<MediaPlayerPrivateHolePunch>(player);
     }
 
-    void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types) const final
+    void getSupportedTypes(HashSet<String>& types) const final
     {
         return MediaPlayerPrivateHolePunch::getSupportedTypes(types);
     }

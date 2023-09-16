@@ -16,10 +16,11 @@ onmessage = (msg) => {
     finishJSTest();
 }
 
-onload = () => {
+onload = async () => {
     frame = document.createElement("iframe");
     frame.src = "resources/serve-referrer-policy-and-meta-tag.py?http_value=no-referrer&meta_value=";
     document.body.appendChild(frame);
+    await new Promise(resolve => frame.onload = resolve);
 }
 </script>
 </body>

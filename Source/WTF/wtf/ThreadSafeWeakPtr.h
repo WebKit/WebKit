@@ -62,6 +62,18 @@ public:
             delete this;
     }
 
+    size_t weakReferenceCount() const
+    {
+        Locker locker { m_lock };
+        return m_weakReferenceCount;
+    }
+
+    bool hasOneRef() const
+    {
+        Locker locker { m_lock };
+        return m_strongReferenceCount == 1;
+    }
+
     void strongRef() const
     {
         Locker locker { m_lock };
@@ -156,6 +168,7 @@ class ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr {
 public:
     void ref() const { m_controlBlock.strongRef(); }
     void deref() const { m_controlBlock.template strongDeref<T, destructionThread>(); }
+    bool hasOneRef() const { return m_controlBlock.hasOneRef(); }
 protected:
     ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr() = default;
     ThreadSafeWeakPtrControlBlock& controlBlock() const { return m_controlBlock; }

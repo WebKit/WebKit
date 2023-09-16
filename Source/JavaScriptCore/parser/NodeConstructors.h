@@ -881,18 +881,18 @@ namespace JSC {
     {
     }
 
-    inline ImportDeclarationNode::ImportDeclarationNode(const JSTokenLocation& location, ImportSpecifierListNode* importSpecifierList, ModuleNameNode* moduleName, ImportAssertionListNode* importAssertionList)
+    inline ImportDeclarationNode::ImportDeclarationNode(const JSTokenLocation& location, ImportSpecifierListNode* importSpecifierList, ModuleNameNode* moduleName, ImportAttributesListNode* importAttributesList)
         : ModuleDeclarationNode(location)
         , m_specifierList(importSpecifierList)
         , m_moduleName(moduleName)
-        , m_assertionList(importAssertionList)
+        , m_attributesList(importAttributesList)
     {
     }
 
-    inline ExportAllDeclarationNode::ExportAllDeclarationNode(const JSTokenLocation& location, ModuleNameNode* moduleName, ImportAssertionListNode* importAssertionList)
+    inline ExportAllDeclarationNode::ExportAllDeclarationNode(const JSTokenLocation& location, ModuleNameNode* moduleName, ImportAttributesListNode* importAttributesList)
         : ModuleDeclarationNode(location)
         , m_moduleName(moduleName)
-        , m_assertionList(importAssertionList)
+        , m_attributesList(importAttributesList)
     {
     }
 
@@ -909,11 +909,11 @@ namespace JSC {
     {
     }
 
-    inline ExportNamedDeclarationNode::ExportNamedDeclarationNode(const JSTokenLocation& location, ExportSpecifierListNode* exportSpecifierList, ModuleNameNode* moduleName, ImportAssertionListNode* importAssertionList)
+    inline ExportNamedDeclarationNode::ExportNamedDeclarationNode(const JSTokenLocation& location, ExportSpecifierListNode* exportSpecifierList, ModuleNameNode* moduleName, ImportAttributesListNode* importAttributesList)
         : ModuleDeclarationNode(location)
         , m_specifierList(exportSpecifierList)
         , m_moduleName(moduleName)
-        , m_assertionList(importAssertionList)
+        , m_attributesList(importAttributesList)
     {
     }
 

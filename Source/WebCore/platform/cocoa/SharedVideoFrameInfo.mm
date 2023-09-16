@@ -76,6 +76,9 @@ bool SharedVideoFrameInfo::isReadWriteSupported() const
 
 size_t SharedVideoFrameInfo::storageSize() const
 {
+    if (m_storageSize)
+        return m_storageSize;
+
     size_t sizePlaneA;
     if (!WTF::safeMultiply(m_bytesPerRow, m_height, sizePlaneA))
         return 0;
@@ -91,7 +94,8 @@ size_t SharedVideoFrameInfo::storageSize() const
     if (m_bufferType == kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar && !WTF::safeAdd(sizePlaneA, size, size))
         return 0;
 
-    return size;
+    const_cast<SharedVideoFrameInfo*>(this)->m_storageSize = size;
+    return m_storageSize;
 }
 
 void SharedVideoFrameInfo::encode(uint8_t* destination)
@@ -106,7 +110,7 @@ void SharedVideoFrameInfo::encode(uint8_t* destination)
     encoder << m_heightPlaneB;
     encoder << m_bytesPerRowPlaneB;
     encoder << m_bytesPerRowPlaneAlpha;
-    ASSERT(sizeof(SharedVideoFrameInfo) == encoder.bufferSize());
+    ASSERT(sizeof(SharedVideoFrameInfo) == encoder.bufferSize() + sizeof(size_t));
     std::memcpy(destination, encoder.buffer(), encoder.bufferSize());
 }
 

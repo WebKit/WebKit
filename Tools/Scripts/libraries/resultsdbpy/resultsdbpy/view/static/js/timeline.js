@@ -464,6 +464,13 @@ class TimelineFromEndpoint {
                 response.json().then(json => {
                     if (myDispatch !== this.latestDispatch)
                         return;
+                    else if (json.length === 0) {
+                        this.ref.setState({
+                            error: "No results found for the requested test under the selected configuration.",
+                            description: "This could be because the selected configuration is not tested (check test expectations), no builds were completed, or the test does not exist."
+                        });
+                        return;
+                    }
 
                     let oldestUuid = Date.now() / 10;
                     let newestUuid = 0;
@@ -487,6 +494,12 @@ class TimelineFromEndpoint {
                         CommitBank.add(oldestUuid, newestUuid);
 
                     self.ref.setState(params.limit ? parseInt(params.limit[params.limit.length - 1]) : DEFAULT_LIMIT);
+                }).catch(error => {
+                    const bugsLink = '<a href="https://bugs.webkit.org/enter_bug.cgi?product=WebKit&component=Tools%20%2F%20Tests&version=Other">file a bug</a>';
+                    this.ref.setState({
+                        error: "Error: unexpected data format.",
+                        description: `This could be due to too large of a request or a server error.<br>If this error persists, please ${bugsLink}.`
+                    });
                 });
             }).catch(error => {
                 if (myDispatch === this.latestDispatch)

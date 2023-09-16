@@ -222,7 +222,7 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
 
 static void resolveWithTypeAndData(Ref<DeferredPromise>&& promise, FetchBodyConsumer::Type type, const String& contentType, const unsigned char* data, unsigned length)
 {
-    auto* context = promise->scriptExecutionContext();
+    RefPtr context = promise->scriptExecutionContext();
 
     switch (type) {
     case FetchBodyConsumer::Type::ArrayBuffer:
@@ -240,7 +240,7 @@ static void resolveWithTypeAndData(Ref<DeferredPromise>&& promise, FetchBodyCons
         promise->resolve<IDLDOMString>(TextResourceDecoder::textFromUTF8(data, length));
         return;
     case FetchBodyConsumer::Type::FormData:
-        if (auto formData = FetchBodyConsumer::packageFormData(context, contentType, data, length))
+        if (auto formData = FetchBodyConsumer::packageFormData(context.get(), contentType, data, length))
             promise->resolve<IDLInterface<DOMFormData>>(*formData);
         else
             promise->reject(TypeError);

@@ -32,7 +32,8 @@ typedef NS_ENUM(NSInteger, _WKLegacyErrorCode) {
     _WKErrorCodeFrameLoadInterruptedByPolicyChange WK_API_AVAILABLE(macos(10.11), ios(9.0)) = 102,
     _WKErrorCodeFrameLoadBlockedByContentBlocker WK_API_AVAILABLE(macos(13.3), ios(16.4)) = 104,
     _WKErrorCodeFrameLoadBlockedByRestrictions WK_API_AVAILABLE(macos(10.15), ios(13.0)) = 106,
-    _WKErrorCodeHTTPSUpgradeRedirectLoop WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)) = 304,
+    _WKErrorCodeHTTPSUpgradeRedirectLoop WK_API_AVAILABLE(macos(14.0), ios(17.0)) = 304,
+    _WKErrorCodeHTTPNavigationWithHTTPSOnly WK_API_AVAILABLE(macos(14.0), ios(17.0)) = 305,
     _WKLegacyErrorPlugInWillHandleLoad = 204,
 } WK_API_AVAILABLE(macos(10.11), ios(8.3));
 

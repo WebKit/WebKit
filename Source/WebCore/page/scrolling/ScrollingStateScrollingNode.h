@@ -42,11 +42,7 @@ struct ScrollbarHoverState {
     bool mouseIsOverHorizontalScrollbar { false };
     bool mouseIsOverVerticalScrollbar { false };
 
-    bool operator==(const ScrollbarHoverState& other) const
-    {
-        return mouseIsOverHorizontalScrollbar == other.mouseIsOverHorizontalScrollbar
-            && mouseIsOverVerticalScrollbar == other.mouseIsOverVerticalScrollbar;
-    }
+    friend bool operator==(const ScrollbarHoverState&, const ScrollbarHoverState&) = default;
 };
 
 struct MouseLocationState {

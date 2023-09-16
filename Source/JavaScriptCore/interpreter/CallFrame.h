@@ -66,7 +66,7 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
         { }
 
         explicit operator bool() const { return !!m_bits; }
-        bool operator==(const CallSiteIndex& other) const { return m_bits == other.m_bits; }
+        friend bool operator==(CallSiteIndex, CallSiteIndex) = default;
 
         unsigned hash() const { return intHash(m_bits); }
         static CallSiteIndex deletedValue() { return fromBits(s_invalidIndex - 1); }
@@ -218,16 +218,18 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
         unsigned unsafeCallSiteAsRawBits() const;
         CallSiteIndex callSiteIndex() const;
         CallSiteIndex unsafeCallSiteIndex() const;
+        void setCallSiteIndex(CallSiteIndex);
 
 #if ENABLE(WEBASSEMBLY)
         Wasm::Instance* wasmInstance() const;
 #endif
 
+        JSCell* codeOwnerCell() const;
+
     private:
         unsigned callSiteBitsAsBytecodeOffset() const;
-#if ENABLE(WEBASSEMBLY)
-        JS_EXPORT_PRIVATE JSGlobalObject* lexicalGlobalObjectFromWasmCallee(VM&) const;
-#endif
+        JS_EXPORT_PRIVATE JSGlobalObject* lexicalGlobalObjectFromNativeCallee(VM&) const;
+        JS_EXPORT_PRIVATE JSCell* codeOwnerCellSlow() const;
     public:
 
         // This will try to get you the bytecode offset, but you should be aware that
@@ -316,7 +318,7 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
 
         void convertToStackOverflowFrame(VM&, CodeBlock* codeBlockToKeepAliveUntilFrameIsUnwound);
         bool isStackOverflowFrame() const;
-        bool isWasmFrame() const;
+        bool isNativeCalleeFrame() const;
 
         void setArgumentCountIncludingThis(int count) { static_cast<Register*>(this)[static_cast<int>(CallFrameSlot::argumentCountIncludingThis)].payload() = count; }
         inline void setCallee(JSObject*);

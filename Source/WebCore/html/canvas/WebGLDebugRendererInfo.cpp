@@ -41,11 +41,6 @@ WebGLDebugRendererInfo::WebGLDebugRendererInfo(WebGLRenderingContextBase& contex
 
 WebGLDebugRendererInfo::~WebGLDebugRendererInfo() = default;
 
-WebGLExtension::ExtensionName WebGLDebugRendererInfo::getName() const
-{
-    return WebGLDebugRendererInfoName;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

@@ -36,6 +36,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "LocalDOMWindow.h"
 #include "Page.h"
+#include "VisibilityState.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

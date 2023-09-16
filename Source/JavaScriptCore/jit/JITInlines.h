@@ -295,13 +295,19 @@ ALWAYS_INLINE bool JIT::isOperandConstantChar(VirtualRegister src)
 }
 
 template<typename Bytecode>
-inline void JIT::emitValueProfilingSite(const Bytecode& bytecode, JSValueRegs value)
+inline void JIT::emitValueProfilingSite(const Bytecode& bytecode, BytecodeIndex bytecodeIndex, JSValueRegs value)
 {
     if (!shouldEmitProfiling())
         return;
 
-    ptrdiff_t offset = m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode) + valueProfileOffsetFor<Bytecode>(m_bytecodeIndex.checkpoint()) + ValueProfile::offsetOfFirstBucket();
+    ptrdiff_t offset = -static_cast<ptrdiff_t>(valueProfileOffsetFor<Bytecode>(bytecode, bytecodeIndex.checkpoint())) * sizeof(ValueProfile) + ValueProfile::offsetOfFirstBucket() - sizeof(UnlinkedMetadataTable::LinkingData);
     storeValue(value, Address(s_metadataGPR, offset));
+}
+
+template<typename Bytecode>
+inline void JIT::emitValueProfilingSite(const Bytecode& bytecode, JSValueRegs value)
+{
+    emitValueProfilingSite(bytecode, m_bytecodeIndex, value);
 }
 
 template <typename Bytecode>
@@ -319,6 +325,14 @@ inline void JIT::emitArrayProfilingSiteWithCell(const Bytecode& bytecode, Regist
     emitArrayProfilingSiteWithCell(bytecode, Bytecode::Metadata::offsetOfArrayProfile() + ArrayProfile::offsetOfLastSeenStructureID(), cellGPR, scratchGPR);
 }
 
+inline void JIT::emitArrayProfilingSiteWithCellAndProfile(RegisterID cellGPR, RegisterID profileGPR, RegisterID scratchGPR)
+{
+    if (shouldEmitProfiling()) {
+        load32(Address(cellGPR, JSCell::structureIDOffset()), scratchGPR);
+        store32(scratchGPR, Address(profileGPR, ArrayProfile::offsetOfLastSeenStructureID()));
+    }
+}
+
 ALWAYS_INLINE int32_t JIT::getOperandConstantInt(VirtualRegister src)
 {
     return getConstantOperand(src).asInt32();
@@ -330,6 +344,60 @@ ALWAYS_INLINE double JIT::getOperandConstantDouble(VirtualRegister src)
     return getConstantOperand(src).asDouble();
 }
 #endif
+
+ALWAYS_INLINE void JIT::emitGetVirtualRegisters(std::initializer_list<std::tuple<VirtualRegister, JSValueRegs>> tuples)
+{
+    ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
+#if USE(JSVALUE64)
+    Vector<std::tuple<VirtualRegister, JSValueRegs>, 8> targets;
+#if ASSERT_ENABLED
+    ScalarRegisterSet registerSet;
+#endif
+    for (auto [ src, dst ] : tuples) {
+#if ASSERT_ENABLED
+        ASSERT(!registerSet.contains(dst.payloadGPR(), IgnoreVectors));
+        registerSet.add(dst.payloadGPR(), IgnoreVectors);
+#endif
+        if (src.isConstant())
+            emitGetVirtualRegister(src, dst);
+        else
+            targets.append(std::tuple { src, dst });
+    }
+
+    std::sort(targets.begin(), targets.end(),
+        [](const auto& lhs, const auto& rhs) {
+            auto [lsrc, ldst] = lhs;
+            auto [rsrc, rdst] = rhs;
+            UNUSED_PARAM(ldst);
+            UNUSED_PARAM(rdst);
+            return lsrc.offset() < rsrc.offset();
+        });
+
+    unsigned index = 0;
+    while (index < targets.size()) {
+        if ((index + 1) == targets.size()) {
+            auto [src, dst] = targets[index];
+            emitGetVirtualRegister(src, dst);
+            ++index;
+            continue;
+        }
+
+        auto [src1, dst1] = targets[index];
+        auto [src2, dst2] = targets[index + 1];
+        if ((src1.offset() + 1) == src2.offset()) {
+            loadPair64(addressFor(src1), dst1.payloadGPR(), dst2.payloadGPR());
+            index += 2;
+            continue;
+        }
+
+        emitGetVirtualRegister(src1, dst1);
+        ++index;
+    }
+#else
+    for (auto [ src, dst ] : tuples)
+        emitGetVirtualRegister(src, dst);
+#endif
+}
 
 ALWAYS_INLINE void JIT::emitGetVirtualRegister(VirtualRegister src, JSValueRegs dst)
 {
@@ -492,7 +560,7 @@ ALWAYS_INLINE void JIT::loadConstant(CCallHelpers& jit, JITConstantPool::Constan
 
 ALWAYS_INLINE void JIT::loadGlobalObject(CCallHelpers& jit, GPRReg result)
 {
-    loadConstant(jit, s_globalObjectConstant, result);
+    jit.loadPtr(Address(s_constantsGPR, BaselineJITData::offsetOfGlobalObject()), result);
 }
 
 ALWAYS_INLINE void JIT::loadConstant(JITConstantPool::Constant constantIndex, GPRReg result)

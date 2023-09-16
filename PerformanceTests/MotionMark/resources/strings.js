@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 var Strings = {
-    version: "1.3",
+    version: "1.2",
     text: {
         testName: "Test Name",
         score: "Score",
@@ -49,7 +49,6 @@ var Strings = {
         score: "score",
         scoreLowerBound: "scoreLowerBound",
         scoreUpperBound: "scoreUpperBound",
-        fps: "fps",
         bootstrap: "bootstrap",
         measurements: {
             average: "average",

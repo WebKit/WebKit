@@ -86,6 +86,13 @@ class BufferBlock final : angle::NonCopyable
     {
         mDescriptorSetCacheManager.addKey(sharedCacheKey);
     }
+    void releaseAllCachedDescriptorSetCacheKeys(RendererVk *renderer)
+    {
+        if (!mDescriptorSetCacheManager.empty())
+        {
+            mDescriptorSetCacheManager.releaseKeys(renderer);
+        }
+    }
 
   private:
     mutable std::mutex mVirtualBlockMutex;

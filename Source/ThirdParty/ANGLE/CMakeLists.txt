@@ -57,6 +57,7 @@ set(EGL_LIBRARY_TYPE STATIC)
 # + angle_(renderer) (Backend and OS specific)
 
 set(ANGLE_PRIVATE_INCLUDE_DIRECTORIES
+    "${CMAKE_CURRENT_SOURCE_DIR}/WebKit"
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/KHR"
     "${CMAKE_CURRENT_SOURCE_DIR}/src"

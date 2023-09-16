@@ -32,9 +32,11 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#import "_WKWebExtensionUtilities.h"
+#import "WebExtensionUtilities.h"
 #import <WebKit/WebNSURLExtras.h>
 #import <wtf/RetainPtr.h>
+
+using namespace WebKit;
 
 typedef NS_ENUM(NSInteger, PredicateType) {
     PredicateTypeHostContains,
@@ -59,28 +61,28 @@ typedef NS_ENUM(NSInteger, PredicateType) {
     PredicateTypePorts,
 };
 
-static NSString *urlKey = @"url";
+static NSString * const urlKey = @"url";
 
-static NSString *hostContainsKey = @"hostContains";
-static NSString *hostEqualsKey = @"hostEquals";
-static NSString *hostPrefixKey = @"hostPrefix";
-static NSString *hostSuffixKey = @"hostSuffix";
-static NSString *pathContainsKey = @"pathContains";
-static NSString *pathEqualsKey = @"pathEquals";
-static NSString *pathPrefixKey = @"pathPrefix";
-static NSString *pathSuffixKey = @"pathSuffix";
-static NSString *queryContainsKey = @"queryContains";
-static NSString *queryEqualsKey = @"queryEquals";
-static NSString *queryPrefixKey = @"queryPrefix";
-static NSString *querySuffixKey = @"querySuffix";
-static NSString *urlContainsKey = @"urlContains";
-static NSString *urlEqualsKey = @"urlEquals";
-static NSString *urlMatchesKey = @"urlMatches";
-static NSString *originAndPathMatchesKey = @"originAndPathMatches";
-static NSString *urlPrefixKey = @"urlPrefix";
-static NSString *urlSuffixKey = @"urlSuffix";
-static NSString *schemesKey = @"schemes";
-static NSString *portsKey = @"ports";
+static NSString * const hostContainsKey = @"hostContains";
+static NSString * const hostEqualsKey = @"hostEquals";
+static NSString * const hostPrefixKey = @"hostPrefix";
+static NSString * const hostSuffixKey = @"hostSuffix";
+static NSString * const pathContainsKey = @"pathContains";
+static NSString * const pathEqualsKey = @"pathEquals";
+static NSString * const pathPrefixKey = @"pathPrefix";
+static NSString * const pathSuffixKey = @"pathSuffix";
+static NSString * const queryContainsKey = @"queryContains";
+static NSString * const queryEqualsKey = @"queryEquals";
+static NSString * const queryPrefixKey = @"queryPrefix";
+static NSString * const querySuffixKey = @"querySuffix";
+static NSString * const urlContainsKey = @"urlContains";
+static NSString * const urlEqualsKey = @"urlEquals";
+static NSString * const urlMatchesKey = @"urlMatches";
+static NSString * const originAndPathMatchesKey = @"originAndPathMatches";
+static NSString * const urlPrefixKey = @"urlPrefix";
+static NSString * const urlSuffixKey = @"urlSuffix";
+static NSString * const schemesKey = @"schemes";
+static NSString * const portsKey = @"ports";
 
 @interface _WKWebExtensionWebNavigationURLPredicate : NSObject
 - (instancetype)init NS_UNAVAILABLE;
@@ -141,16 +143,16 @@ static NSString *portsKey = @"ports";
     case PredicateTypeURLEquals:
     case PredicateTypeURLPrefix:
     case PredicateTypeURLSuffix:
-        ASSERT([rawValue isKindOfClass:[NSString class]]);
+        ASSERT([rawValue isKindOfClass:NSString.class]);
         _value = [rawValue copy];
         break;
 
     case PredicateTypeURLMatches:
     case PredicateTypeOriginAndPathMatches:
-        ASSERT([rawValue isKindOfClass:[NSString class]]);
-        _value = [NSRegularExpression regularExpressionWithPattern:rawValue options:0 error:nil];
-        if (!_value) {
-            *outErrorMessage = [NSString stringWithFormat:@"\"%@\" is not a valid regular expression.", rawValue];
+        ASSERT([rawValue isKindOfClass:NSString.class]);
+
+        if (!(_value = [NSRegularExpression regularExpressionWithPattern:rawValue options:0 error:nil])) {
+            *outErrorMessage = toErrorString(nil, originAndPathMatchesKey, @"'%@' is not a valid regular expression", rawValue);
             return nil;
         }
 
@@ -162,53 +164,47 @@ static NSString *portsKey = @"ports";
         break;
 
     case PredicateTypePorts: {
-        NSMutableIndexSet *ports = [[NSMutableIndexSet alloc] init];
         ASSERT([rawValue isKindOfClass:[NSArray class]]);
-        const NSInteger maximumPortNumber = 65535;
+
+        NSMutableIndexSet *ports = [[NSMutableIndexSet alloc] init];
+
+        constexpr NSInteger maximumPortNumber = 65535;
+        static NSOrderedSet *expectedPortOrRangeTypes = [NSOrderedSet orderedSetWithObjects:NSNumber.class, @[ NSNumber.class ], nil];
+
         for (id portOrRange in rawValue) {
+            if (!validateObject(portOrRange, portsKey, expectedPortOrRangeTypes, outErrorMessage))
+                return nil;
+
             if (NSNumber *number = dynamic_objc_cast<NSNumber>(portOrRange)) {
                 NSInteger integerValue = number.integerValue;
-                if ([number isKindOfClass:@YES.class]) {
-                    *outErrorMessage = [NSString stringWithFormat:@"Array elements of '%@\' filters must be integers or arrays.", typeString];
-                    return nil;
-                }
-
                 if (integerValue < 0 || integerValue > maximumPortNumber) {
-                    *outErrorMessage = [NSString stringWithFormat:@"%zd is not a valid port number.", integerValue];
+                    *outErrorMessage = toErrorString(nil, portsKey, @"'%zd' is not a valid port", integerValue);
                     return nil;
                 }
 
                 [ports addIndex:(NSUInteger)integerValue];
             } else if (NSArray<NSNumber *> *rangeArray = dynamic_objc_cast<NSArray>(portOrRange)) {
                 if (rangeArray.count != 2) {
-                    *outErrorMessage = @"Port range arrays must contain 2 integers.";
+                    *outErrorMessage = toErrorString(nil, portsKey, @"a port range must specify 2 numbers");
                     return nil;
                 }
 
                 for (NSNumber *number in rangeArray) {
-                    if (![number isKindOfClass:NSNumber.class] || [number isKindOfClass:@YES.class]) {
-                        *outErrorMessage = @"Port range arrays must contain 2 integers.";
-                        return nil;
-                    }
-
                     NSInteger integerValue = number.integerValue;
                     if (integerValue < 0 || integerValue > maximumPortNumber) {
-                        *outErrorMessage = [NSString stringWithFormat:@"%zd is not a valid port number.", integerValue];
+                        *outErrorMessage = toErrorString(nil, portsKey, @"'%zd' is not a valid port", integerValue);
                         return nil;
                     }
                 }
 
                 NSUInteger firstPort = rangeArray[0].unsignedIntegerValue;
                 NSUInteger lastPort = rangeArray[1].unsignedIntegerValue;
-                if (firstPort > lastPort) {
-                    *outErrorMessage = [NSString stringWithFormat:@"%zd-%zu is not a valid port range.", firstPort, lastPort];
+                if (firstPort >= lastPort) {
+                    *outErrorMessage = toErrorString(nil, portsKey, @"'%zd-%zd' is not a valid port range", firstPort, lastPort);
                     return nil;
                 }
 
                 [ports addIndexesInRange:NSMakeRange(firstPort, lastPort - firstPort + 1)];
-            } else {
-                *outErrorMessage = [NSString stringWithFormat:@"Values in '%@' array must be integers or arrays of integers.", typeString];
-                return nil;
             }
         }
 
@@ -298,59 +294,36 @@ static NSString *portsKey = @"ports";
         urlKey: @[ [NSDictionary class] ],
     };
 
-    if (![_WKWebExtensionUtilities validateContentsOfDictionary:dictionary requiredKeys:requiredKeys optionalKeys:nil keyToExpectedValueType:types outExceptionString:outErrorMessage])
+    if (!validateDictionary(dictionary, @"filters", requiredKeys, types, outErrorMessage))
         return nil;
 
-    static NSArray<NSString *> *optionalURLDictionaryKeys = @[
-        hostContainsKey,
-        hostEqualsKey,
-        hostPrefixKey,
-        hostSuffixKey,
-        pathContainsKey,
-        pathEqualsKey,
-        pathPrefixKey,
-        pathSuffixKey,
-        queryContainsKey,
-        queryEqualsKey,
-        queryPrefixKey,
-        querySuffixKey,
-        urlContainsKey,
-        urlEqualsKey,
-        urlMatchesKey,
-        originAndPathMatchesKey,
-        urlPrefixKey,
-        urlSuffixKey,
-        schemesKey,
-        portsKey,
-    ];
-
-    static NSDictionary<NSString *, id> *URLDictionaryTypes = @{
-        hostContainsKey: [NSString class],
-        hostEqualsKey: [NSString class],
-        hostPrefixKey: [NSString class],
-        hostSuffixKey: [NSString class],
-        pathContainsKey: [NSString class],
-        pathEqualsKey: [NSString class],
-        pathPrefixKey: [NSString class],
-        pathSuffixKey: [NSString class],
-        queryContainsKey: [NSString class],
-        queryEqualsKey: [NSString class],
-        queryPrefixKey: [NSString class],
-        querySuffixKey: [NSString class],
-        urlContainsKey: [NSString class],
-        urlEqualsKey: [NSString class],
-        urlMatchesKey: [NSString class],
-        originAndPathMatchesKey: [NSString class],
-        urlPrefixKey: [NSString class],
-        urlSuffixKey: [NSString class],
-        schemesKey: @[ [NSString class] ],
-        portsKey: [NSArray class], // Array of (integer or (array of integer))
+    static NSDictionary<NSString *, id> *urlTypes = @{
+        hostContainsKey: NSString.class,
+        hostEqualsKey: NSString.class,
+        hostPrefixKey: NSString.class,
+        hostSuffixKey: NSString.class,
+        pathContainsKey: NSString.class,
+        pathEqualsKey: NSString.class,
+        pathPrefixKey: NSString.class,
+        pathSuffixKey: NSString.class,
+        queryContainsKey: NSString.class,
+        queryEqualsKey: NSString.class,
+        queryPrefixKey: NSString.class,
+        querySuffixKey: NSString.class,
+        urlContainsKey: NSString.class,
+        urlEqualsKey: NSString.class,
+        urlMatchesKey: NSString.class,
+        originAndPathMatchesKey: NSString.class,
+        urlPrefixKey: NSString.class,
+        urlSuffixKey: NSString.class,
+        schemesKey: @[ NSString.class ],
+        portsKey: NSArray.class, // Array of (integer or (array of integer))
     };
 
     NSMutableArray<NSArray<_WKWebExtensionWebNavigationURLPredicate *> *> *predicateGroups = [[NSMutableArray alloc] init];
 
     for (NSDictionary<NSString *, id> *urlDictionary in dictionary[urlKey]) {
-        if (![_WKWebExtensionUtilities validateContentsOfDictionary:urlDictionary requiredKeys:nil optionalKeys:optionalURLDictionaryKeys keyToExpectedValueType:URLDictionaryTypes outExceptionString:outErrorMessage])
+        if (!validateDictionary(urlDictionary, urlKey, nil, urlTypes, outErrorMessage))
             return nil;
 
         NSMutableArray<_WKWebExtensionWebNavigationURLPredicate *> *predicates = [[NSMutableArray alloc] init];

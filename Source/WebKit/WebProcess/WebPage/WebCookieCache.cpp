@@ -28,6 +28,7 @@
 
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
+#include "WebCookieJar.h"
 #include "WebProcess.h"
 
 namespace WebKit {
@@ -47,8 +48,10 @@ String WebCookieCache::cookiesForDOM(const URL& firstParty, const SameSiteInfo& 
 {
     if (!m_hostsWithInMemoryStorage.contains<StringViewHashTranslator>(url.host())) {
         auto host = url.host().toString();
-        bool subscribeToCookieChangeNotifications = true;
-        auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::DomCookiesForHost(url, subscribeToCookieChangeNotifications), 0);
+#if HAVE(COOKIE_CHANGE_LISTENER_API)
+        WebProcess::singleton().cookieJar().addChangeListener(host, *this);
+#endif
+        auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::DomCookiesForHost(url), 0);
         if (!sendResult.succeeded())
             return { };
 
@@ -67,7 +70,7 @@ void WebCookieCache::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo
         inMemoryStorageSession().setCookiesFromDOM(firstParty, sameSiteInfo, url, frameID, pageID, ApplyTrackingPrevention::No, cookieString, shouldRelaxThirdPartyCookieBlocking);
 }
 
-void WebCookieCache::cookiesAdded(const String& host, const Vector<Cookie>& cookies)
+void WebCookieCache::cookiesAdded(const String& host, const Vector<WebCore::Cookie>& cookies)
 {
     if (!m_hostsWithInMemoryStorage.contains(host))
         return;
@@ -93,8 +96,8 @@ void WebCookieCache::allCookiesDeleted()
 void WebCookieCache::clear()
 {
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
-    if (!m_hostsWithInMemoryStorage.isEmpty())
-        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UnsubscribeFromCookieChangeNotifications(m_hostsWithInMemoryStorage), 0);
+    for (auto& host : m_hostsWithInMemoryStorage)
+        WebProcess::singleton().cookieJar().removeChangeListener(host, *this);
 #endif
     m_hostsWithInMemoryStorage.clear();
     m_inMemoryStorageSession = nullptr;
@@ -108,7 +111,7 @@ void WebCookieCache::clearForHost(const String& host)
 
     inMemoryStorageSession().deleteCookiesForHostnames(Vector<String> { removedHost }, [] { });
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UnsubscribeFromCookieChangeNotifications(HashSet<String> { removedHost }), 0);
+    WebProcess::singleton().cookieJar().removeChangeListener(removedHost, *this);
 #endif
 }
 

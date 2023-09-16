@@ -50,6 +50,8 @@ static void testWebKitFrameSubframe(WebViewTest* test, gconstpointer)
 
 void beforeAll()
 {
+    Test::shouldInitializeWebProcessExtensions = true;
+
     WebViewTest::add("WebKitFrame", "main-frame", testWebKitFrameMainFrame);
     WebViewTest::add("WebKitFrame", "uri", testWebKitFrameURI);
     WebViewTest::add("WebKitFrame", "javascript-context", testWebKitFrameJavaScriptContext);

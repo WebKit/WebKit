@@ -39,12 +39,12 @@ namespace WebCore {
 
 bool CryptoKeyOKP::isPlatformSupportedCurve(NamedCurve namedCurve)
 {
-    return namedCurve == NamedCurve::Ed25519;
+    return namedCurve == NamedCurve::Ed25519 || namedCurve == NamedCurve::X25519;
 }
 
 std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve namedCurve, bool extractable, CryptoKeyUsageBitmap usages)
 {
-    if (namedCurve != NamedCurve::Ed25519)
+    if (namedCurve != NamedCurve::Ed25519 && namedCurve != NamedCurve::X25519)
         return { };
 
     ccec25519pubkey ccPublicKey;
@@ -72,6 +72,34 @@ std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmI
     auto privateKey = CryptoKeyOKP::create(identifier, namedCurve, CryptoKeyType::Private, Vector<uint8_t>(ccPrivateKey), extractable, usages);
     ASSERT(privateKey);
     return CryptoKeyPair { WTFMove(publicKey), WTFMove(privateKey) };
+}
+
+bool CryptoKeyOKP::platformCheckPairedKeys(CryptoAlgorithmIdentifier identifier, NamedCurve namedCurve, const Vector<uint8_t>& privateKey, const Vector<uint8_t>& publicKey)
+{
+    if (namedCurve != NamedCurve::Ed25519 && namedCurve != NamedCurve::X25519)
+        return false;
+
+    if (privateKey.size() != 32 || publicKey.size() != 32)
+        return false;
+
+    ccec25519pubkey ccPublicKey;
+    static_assert(sizeof(ccPublicKey) == 32);
+
+    switch (identifier) {
+    case CryptoAlgorithmIdentifier::Ed25519: {
+        auto* di = ccsha512_di();
+        cced25519_make_pub(di, ccPublicKey, privateKey.data());
+        break;
+    }
+    case CryptoAlgorithmIdentifier::X25519:
+        cccurve25519_make_pub(ccPublicKey, privateKey.data());
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    return !std::memcmp(ccPublicKey, publicKey.data(), sizeof(ccPublicKey));
 }
 
 // Per https://www.ietf.org/rfc/rfc5280.txt

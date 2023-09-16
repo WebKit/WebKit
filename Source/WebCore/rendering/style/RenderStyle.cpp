@@ -36,6 +36,7 @@
 #include "FontSelector.h"
 #include "InlineIteratorTextBox.h"
 #include "InlineTextBoxStyle.h"
+#include "MotionPath.h"
 #include "Pagination.h"
 #include "PathTraversalState.h"
 #include "QuotesData.h"
@@ -219,12 +220,12 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
     m_nonInheritedFlags.usesContainerUnits = false;
     m_nonInheritedFlags.hasExplicitlyInheritedProperties = false;
     m_nonInheritedFlags.disallowsFastPathInheritance = false;
+    m_nonInheritedFlags.hasContentNone = false;
     m_nonInheritedFlags.isUnique = false;
     m_nonInheritedFlags.emptyState = false;
     m_nonInheritedFlags.firstChildState = false;
     m_nonInheritedFlags.lastChildState = false;
     m_nonInheritedFlags.isLink = false;
-    m_nonInheritedFlags.hasContentNone = false;
     m_nonInheritedFlags.styleType = static_cast<unsigned>(PseudoId::None);
     m_nonInheritedFlags.pseudoBits = static_cast<unsigned>(PseudoId::None);
 
@@ -385,21 +386,28 @@ void RenderStyle::fastPathInheritFrom(const RenderStyle& inheritParent)
 inline void RenderStyle::NonInheritedFlags::copyNonInheritedFrom(const NonInheritedFlags& other)
 {
     // Only some flags are copied because NonInheritedFlags contains things that are not actually style data.
-    clear = other.clear;
-    disallowsFastPathInheritance = other.disallowsFastPathInheritance;
     effectiveDisplay = other.effectiveDisplay;
-    floating = other.floating;
-    hasExplicitlyInheritedProperties = other.hasExplicitlyInheritedProperties;
     originalDisplay = other.originalDisplay;
     overflowX = other.overflowX;
     overflowY = other.overflowY;
+    verticalAlign = other.verticalAlign;
+    clear = other.clear;
     position = other.position;
+    unicodeBidi = other.unicodeBidi;
+    floating = other.floating;
     tableLayout = other.tableLayout;
     textDecorationLine = other.textDecorationLine;
-    unicodeBidi = other.unicodeBidi;
-    usesContainerUnits = other.usesContainerUnits;
+    hasExplicitlySetDirection = other.hasExplicitlySetDirection;
+    hasExplicitlySetWritingMode = other.hasExplicitlySetWritingMode;
+#if ENABLE(DARK_MODE_CSS)
+    hasExplicitlySetColorScheme = other.hasExplicitlySetColorScheme;
+#endif
     usesViewportUnits = other.usesViewportUnits;
-    verticalAlign = other.verticalAlign;
+    usesContainerUnits = other.usesContainerUnits;
+    hasExplicitlyInheritedProperties = other.hasExplicitlyInheritedProperties;
+    disallowsFastPathInheritance = other.disallowsFastPathInheritance;
+    hasContentNone = other.hasContentNone;
+    isUnique = other.isUnique;
 }
 
 void RenderStyle::copyNonInheritedFrom(const RenderStyle& other)
@@ -1144,7 +1152,7 @@ static bool rareDataChangeRequiresLayerRepaint(const StyleRareNonInheritedData& 
 #endif
 
     // FIXME: In SVG this needs to trigger a layout.
-    if (first.maskBoxImage != second.maskBoxImage)
+    if (first.maskBorder != second.maskBorder)
         return true;
 
     return false;
@@ -1216,7 +1224,8 @@ static bool rareDataChangeRequiresRepaint(const StyleRareNonInheritedData& first
 
 static bool rareInheritedDataChangeRequiresRepaint(const StyleRareInheritedData& first, const StyleRareInheritedData& second)
 {
-    return first.userModify != second.userModify
+    return first.effectiveInert != second.effectiveInert
+        || first.userModify != second.userModify
         || first.userSelect != second.userSelect
         || first.appleColorFilter != second.appleColorFilter
         || first.imageRendering != second.imageRendering
@@ -1360,6 +1369,9 @@ bool RenderStyle::changeRequiresRecompositeLayer(const RenderStyle& other, Optio
             || m_nonInheritedData->rareData->overscrollBehaviorY != other.m_nonInheritedData->rareData->overscrollBehaviorY)
             return true;
     }
+
+    if (m_rareInheritedData.ptr() != other.m_rareInheritedData.ptr() && m_rareInheritedData->effectiveInert != other.m_rareInheritedData->effectiveInert)
+        return true;
 
     return false;
 }
@@ -1614,25 +1626,25 @@ void RenderStyle::unapplyTransformOrigin(TransformationMatrix& transform, const 
         transform.translate3d(-originTranslate.x(), -originTranslate.y(), -originTranslate.z());
 }
 
-void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
+void RenderStyle::applyTransform(TransformationMatrix& transform, const TransformOperationData& transformData, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
     if (!options.contains(RenderStyle::TransformOperationOption::TransformOrigin) || !affectedByTransformOrigin()) {
-        applyCSSTransform(transform, boundingBox, options);
+        applyCSSTransform(transform, transformData, options);
         return;
     }
 
-    auto originTranslate = computeTransformOrigin(boundingBox);
+    auto originTranslate = computeTransformOrigin(transformData.boundingBox());
     applyTransformOrigin(transform, originTranslate);
-    applyCSSTransform(transform, boundingBox, options);
+    applyCSSTransform(transform, transformData, options);
     unapplyTransformOrigin(transform, originTranslate);
 }
 
-void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRect& boundingBox) const
+void RenderStyle::applyTransform(TransformationMatrix& transform, const TransformOperationData& transformData) const
 {
-    applyTransform(transform, boundingBox, allTransformOperations());
+    applyTransform(transform, transformData, allTransformOperations());
 }
 
-void RenderStyle::applyCSSTransform(TransformationMatrix& transform, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
+void RenderStyle::applyCSSTransform(TransformationMatrix& transform, const TransformOperationData& operationData, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
     // https://www.w3.org/TR/css-transforms-2/#ctm
     // The transformation matrix is computed from the transform, transform-origin, translate, rotate, scale, and offset properties as follows:
@@ -1640,7 +1652,7 @@ void RenderStyle::applyCSSTransform(TransformationMatrix& transform, const Float
 
     // 2. Translate by the computed X, Y, and Z values of transform-origin.
     // (implemented in applyTransformOrigin)
-
+    auto& boundingBox = operationData.boundingBox();
     // 3. Translate by the computed X, Y, and Z values of translate.
     if (options.contains(RenderStyle::TransformOperationOption::Translate)) {
         if (TransformOperation* translate = m_nonInheritedData->rareData->translate.get())
@@ -1661,7 +1673,7 @@ void RenderStyle::applyCSSTransform(TransformationMatrix& transform, const Float
 
     // 6. Translate and rotate by the transform specified by offset.
     if (options.contains(RenderStyle::TransformOperationOption::Offset))
-        applyMotionPathTransform(transform, boundingBox);
+        MotionPath::applyMotionPathTransform(*this, operationData, transform);
 
     // 7. Multiply by each of the transform functions in transform from left to right.
     auto& transformOperations = m_nonInheritedData->miscData->transform->operations;
@@ -1670,58 +1682,6 @@ void RenderStyle::applyCSSTransform(TransformationMatrix& transform, const Float
 
     // 8. Translate by the negated computed X, Y and Z values of transform-origin.
     // (implemented in unapplyTransformOrigin)
-}
-
-static PathTraversalState getTraversalStateAtDistance(const Path& path, const Length& distance)
-{
-    auto pathLength = path.length();
-    auto distanceValue = floatValueForLength(distance, pathLength);
-
-    float resolvedLength = 0;
-    if (path.isClosed()) {
-        if (pathLength) {
-            resolvedLength = fmod(distanceValue, pathLength);
-            if (resolvedLength < 0)
-                resolvedLength += pathLength;
-        }
-    } else
-        resolvedLength = clampTo<float>(distanceValue, 0, pathLength);
-
-    ASSERT(resolvedLength >= 0);
-    return path.traversalStateAtLength(resolvedLength);
-}
-
-void RenderStyle::applyMotionPathTransform(TransformationMatrix& transform, const FloatRect& boundingBox) const
-{
-    if (!offsetPath())
-        return;
-
-    auto transformOrigin = computeTransformOrigin(boundingBox).xy();
-    auto anchor = transformOrigin;
-    if (!offsetAnchor().x().isAuto())
-        anchor = floatPointForLengthPoint(offsetAnchor(), boundingBox.size()) + boundingBox.location();
-    
-    // Shift element to the point on path specified by offset-path and offset-distance.
-    auto path = offsetPath()->getPath(boundingBox);
-    if (!path)
-        return;
-    auto traversalState = getTraversalStateAtDistance(*path, offsetDistance());
-    transform.translate(traversalState.current().x(), traversalState.current().y());
-
-    // Shift element to the anchor specified by offset-anchor.
-    transform.translate(-anchor.x(), -anchor.y());
-
-    auto shiftToOrigin = anchor - transformOrigin;
-    transform.translate(shiftToOrigin.width(), shiftToOrigin.height());
-
-    // Apply rotation.
-    auto rotation = offsetRotate();
-    if (rotation.hasAuto())
-        transform.rotate(traversalState.normalAngle() + rotation.angle());
-    else
-        transform.rotate(rotation.angle());
-
-    transform.translate(-shiftToOrigin.width(), -shiftToOrigin.height());
 }
 
 void RenderStyle::setPageScaleTransform(float scale)
@@ -2050,12 +2010,12 @@ float RenderStyle::letterSpacing() const
 
 TextSpacingTrim RenderStyle::textSpacingTrim() const
 {
-    return m_rareInheritedData->textSpacingTrim;
+    return fontDescription().textSpacingTrim();
 }
 
 TextAutospace RenderStyle::textAutospace() const
 {
-    return m_rareInheritedData->textAutospace;
+    return fontDescription().textAutospace();
 }
 
 bool RenderStyle::setFontDescription(FontCascadeDescription&& description)
@@ -2170,6 +2130,26 @@ void RenderStyle::setLetterSpacing(float letterSpacing)
     fontCascade().update(selector);
 
     setLetterSpacingWithoutUpdatingFontDescription(letterSpacing);
+}
+
+void RenderStyle::setTextSpacingTrim(TextSpacingTrim value)
+{
+    auto selector = fontCascade().fontSelector();
+    auto description = fontDescription();
+    description.setTextSpacingTrim(value);
+
+    setFontDescription(WTFMove(description));
+    fontCascade().update(selector);
+}
+
+void RenderStyle::setTextAutospace(TextAutospace value)
+{
+    auto selector = fontCascade().fontSelector();
+    auto description = fontDescription();
+    description.setTextAutospace(value);
+
+    setFontDescription(WTFMove(description));
+    fontCascade().update(selector);
 }
 
 void RenderStyle::setLetterSpacingWithoutUpdatingFontDescription(float letterSpacing)
@@ -2404,25 +2384,28 @@ Color RenderStyle::colorResolvingCurrentColor(CSSPropertyID colorProperty, bool 
         return visitedLink ? visitedLinkColor() : color();
     }
 
-    return colorResolvingCurrentColor(result);
+    return colorResolvingCurrentColor(result, visitedLink);
 }
 
-Color RenderStyle::colorResolvingCurrentColor(const StyleColor& color) const
+Color RenderStyle::colorResolvingCurrentColor(const StyleColor& color, bool visitedLink) const
 {
-    return color.resolveColor(this->color());
+    return color.resolveColor(visitedLink ? visitedLinkColor() : this->color());
 }
 
-Color RenderStyle::visitedDependentColor(CSSPropertyID colorProperty) const
+Color RenderStyle::visitedDependentColor(CSSPropertyID colorProperty, OptionSet<PaintBehavior> paintBehavior) const
 {
     Color unvisitedColor = colorResolvingCurrentColor(colorProperty, false);
     if (insideLink() != InsideLink::InsideVisited)
+        return unvisitedColor;
+
+    if (paintBehavior.contains(PaintBehavior::DontShowVisitedLinks))
         return unvisitedColor;
 
 #if ENABLE(CSS_COMPOSITING)
     if (isInSubtreeWithBlendMode())
         return unvisitedColor;
 #endif
-    
+
     Color visitedColor = colorResolvingCurrentColor(colorProperty, true);
 
     // FIXME: Technically someone could explicitly specify the color transparent, but for now we'll just
@@ -2437,12 +2420,12 @@ Color RenderStyle::visitedDependentColor(CSSPropertyID colorProperty) const
     return visitedColor.colorWithAlpha(unvisitedColor.alphaAsFloat());
 }
 
-Color RenderStyle::visitedDependentColorWithColorFilter(CSSPropertyID colorProperty) const
+Color RenderStyle::visitedDependentColorWithColorFilter(CSSPropertyID colorProperty, OptionSet<PaintBehavior> paintBehavior) const
 {
     if (!hasAppleColorFilter())
-        return visitedDependentColor(colorProperty);
+        return visitedDependentColor(colorProperty, paintBehavior);
 
-    return colorByApplyingColorFilter(visitedDependentColor(colorProperty));
+    return colorByApplyingColorFilter(visitedDependentColor(colorProperty, paintBehavior));
 }
 
 Color RenderStyle::colorByApplyingColorFilter(const Color& color) const
@@ -2468,16 +2451,38 @@ Color RenderStyle::effectiveAccentColor() const
     return colorResolvingCurrentColor(accentColor());
 }
 
+Color RenderStyle::effectiveScrollbarThumbColor() const
+{
+    if (!scrollbarColor().has_value())
+        return { };
+
+    if (hasAppleColorFilter())
+        return colorByApplyingColorFilter(colorResolvingCurrentColor(scrollbarColor().value().thumbColor));
+
+    return colorResolvingCurrentColor(scrollbarColor().value().thumbColor);
+}
+
+Color RenderStyle::effectiveScrollbarTrackColor() const
+{
+    if (!scrollbarColor().has_value())
+        return { };
+
+    if (hasAppleColorFilter())
+        return colorByApplyingColorFilter(colorResolvingCurrentColor(scrollbarColor().value().trackColor));
+
+    return colorResolvingCurrentColor(scrollbarColor().value().trackColor);
+}
+
 const BorderValue& RenderStyle::borderBefore() const
 {
-    switch (writingMode()) {
-    case WritingMode::TopToBottom:
+    switch (blockFlowDirection()) {
+    case BlockFlowDirection::TopToBottom:
         return borderTop();
-    case WritingMode::BottomToTop:
+    case BlockFlowDirection::BottomToTop:
         return borderBottom();
-    case WritingMode::LeftToRight:
+    case BlockFlowDirection::LeftToRight:
         return borderLeft();
-    case WritingMode::RightToLeft:
+    case BlockFlowDirection::RightToLeft:
         return borderRight();
     }
     ASSERT_NOT_REACHED();
@@ -2486,14 +2491,14 @@ const BorderValue& RenderStyle::borderBefore() const
 
 const BorderValue& RenderStyle::borderAfter() const
 {
-    switch (writingMode()) {
-    case WritingMode::TopToBottom:
+    switch (blockFlowDirection()) {
+    case BlockFlowDirection::TopToBottom:
         return borderBottom();
-    case WritingMode::BottomToTop:
+    case BlockFlowDirection::BottomToTop:
         return borderTop();
-    case WritingMode::LeftToRight:
+    case BlockFlowDirection::LeftToRight:
         return borderRight();
-    case WritingMode::RightToLeft:
+    case BlockFlowDirection::RightToLeft:
         return borderLeft();
     }
     ASSERT_NOT_REACHED();
@@ -2516,14 +2521,14 @@ const BorderValue& RenderStyle::borderEnd() const
 
 float RenderStyle::borderBeforeWidth() const
 {
-    switch (writingMode()) {
-    case WritingMode::TopToBottom:
+    switch (blockFlowDirection()) {
+    case BlockFlowDirection::TopToBottom:
         return borderTopWidth();
-    case WritingMode::BottomToTop:
+    case BlockFlowDirection::BottomToTop:
         return borderBottomWidth();
-    case WritingMode::LeftToRight:
+    case BlockFlowDirection::LeftToRight:
         return borderLeftWidth();
-    case WritingMode::RightToLeft:
+    case BlockFlowDirection::RightToLeft:
         return borderRightWidth();
     }
     ASSERT_NOT_REACHED();
@@ -2532,14 +2537,14 @@ float RenderStyle::borderBeforeWidth() const
 
 float RenderStyle::borderAfterWidth() const
 {
-    switch (writingMode()) {
-    case WritingMode::TopToBottom:
+    switch (blockFlowDirection()) {
+    case BlockFlowDirection::TopToBottom:
         return borderBottomWidth();
-    case WritingMode::BottomToTop:
+    case BlockFlowDirection::BottomToTop:
         return borderTopWidth();
-    case WritingMode::LeftToRight:
+    case BlockFlowDirection::LeftToRight:
         return borderRightWidth();
-    case WritingMode::RightToLeft:
+    case BlockFlowDirection::RightToLeft:
         return borderLeftWidth();
     }
     ASSERT_NOT_REACHED();
@@ -2623,7 +2628,7 @@ std::pair<FontOrientation, NonCJKGlyphOrientation> RenderStyle::fontAndGlyphOrie
 {
     // FIXME: TextOrientationSideways should map to sideways-left in vertical-lr, which is not supported yet.
 
-    if (isHorizontalWritingMode())
+    if (typographicMode() == TypographicMode::Horizontal)
         return { FontOrientation::Horizontal, NonCJKGlyphOrientation::Mixed };
 
     switch (textOrientation()) {
@@ -2992,7 +2997,7 @@ float RenderStyle::outlineOffset() const
 
 bool RenderStyle::shouldPlaceVerticalScrollbarOnLeft() const
 {
-    return (!isLeftToRightDirection() && isHorizontalWritingMode()) || writingMode() == WritingMode::RightToLeft;
+    return (!isLeftToRightDirection() && isHorizontalWritingMode()) || blockFlowDirection() == BlockFlowDirection::RightToLeft;
 }
 
 std::span<const PaintType, 3> RenderStyle::paintTypesForPaintOrder(PaintOrder order)

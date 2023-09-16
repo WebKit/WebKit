@@ -35,11 +35,6 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourceContainer);
 
-static inline SVGDocumentExtensions& svgExtensionsFromElement(SVGElement& element)
-{
-    return element.document().accessSVGExtensions();
-}
-
 RenderSVGResourceContainer::RenderSVGResourceContainer(SVGElement& element, RenderStyle&& style)
     : LegacyRenderSVGHiddenContainer(element, WTFMove(style))
     , m_id(element.getIdAttribute())
@@ -101,7 +96,7 @@ void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode 
 {
     // FIXME: Style invalidation should either be a pre-layout task or this function
     // should never get called while in layout. See webkit.org/b/208903.
-    if ((m_clients.isEmpty() && m_clientLayers.isEmpty()) || m_isInvalidating)
+    if ((m_clients.isEmptyIgnoringNullReferences() && m_clientLayers.isEmptyIgnoringNullReferences()) || m_isInvalidating)
         return;
 
     SetForScope isInvalidating(m_isInvalidating, true);
@@ -110,20 +105,20 @@ void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode 
     bool markForInvalidation = mode != ParentOnlyInvalidation;
     auto* root = SVGRenderSupport::findTreeRootObject(*this);
 
-    for (auto* client : m_clients) {
+    for (auto& client : m_clients) {
         // We should not mark any client outside the current root for invalidation
-        if (root != SVGRenderSupport::findTreeRootObject(*client))
+        if (root != SVGRenderSupport::findTreeRootObject(client))
             continue;
 
-        if (is<RenderSVGResourceContainer>(*client)) {
-            downcast<RenderSVGResourceContainer>(*client).removeAllClientsFromCache(markForInvalidation);
+        if (is<RenderSVGResourceContainer>(client)) {
+            downcast<RenderSVGResourceContainer>(client).removeAllClientsFromCache(markForInvalidation);
             continue;
         }
 
         if (markForInvalidation)
-            markClientForInvalidation(*client, mode);
+            markClientForInvalidation(client, mode);
 
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*client, needsLayout);
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(client, needsLayout);
     }
 
     markAllClientLayersForInvalidation();
@@ -131,30 +126,30 @@ void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode 
 
 void RenderSVGResourceContainer::markAllClientLayersForInvalidation()
 {
-    if (m_clientLayers.isEmpty())
+    if (m_clientLayers.isEmptyIgnoringNullReferences())
         return;
 
-    auto& document = (*m_clientLayers.begin())->renderer().document();
+    auto& document = (*m_clientLayers.begin()).renderer().document();
     if (!document.view() || document.renderTreeBeingDestroyed())
         return;
 
     auto inLayout = document.view()->layoutContext().isInLayout();
-    for (auto* clientLayer : m_clientLayers) {
+    for (auto& clientLayer : m_clientLayers) {
         // FIXME: We should not get here while in layout. See webkit.org/b/208903.
         // Repaint should also be triggered through some other means.
         if (inLayout) {
-            clientLayer->renderer().repaint();
+            clientLayer.renderer().repaint();
             continue;
         }
-        if (auto* enclosingElement = clientLayer->enclosingElement())
+        if (auto* enclosingElement = clientLayer.enclosingElement())
             enclosingElement->invalidateStyleAndLayerComposition();
-        clientLayer->renderer().repaint();
+        clientLayer.renderer().repaint();
     }
 }
 
 void RenderSVGResourceContainer::markClientForInvalidation(RenderObject& client, InvalidationMode mode)
 {
-    ASSERT(!m_clients.isEmpty());
+    ASSERT(!m_clients.isEmptyIgnoringNullReferences());
 
     switch (mode) {
     case LayoutAndBoundariesInvalidation:
@@ -172,24 +167,22 @@ void RenderSVGResourceContainer::markClientForInvalidation(RenderObject& client,
 
 void RenderSVGResourceContainer::addClient(RenderElement& client)
 {
-    m_clients.add(&client);
+    m_clients.add(client);
 }
 
 void RenderSVGResourceContainer::removeClient(RenderElement& client)
 {
     removeClientFromCache(client, false);
-    m_clients.remove(&client);
+    m_clients.remove(client);
 }
 
-void RenderSVGResourceContainer::addClientRenderLayer(RenderLayer* client)
+void RenderSVGResourceContainer::addClientRenderLayer(RenderLayer& client)
 {
-    ASSERT(client);
     m_clientLayers.add(client);
 }
 
-void RenderSVGResourceContainer::removeClientRenderLayer(RenderLayer* client)
+void RenderSVGResourceContainer::removeClientRenderLayer(RenderLayer& client)
 {
-    ASSERT(client);
     m_clientLayers.remove(client);
 }
 

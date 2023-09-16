@@ -213,7 +213,15 @@ WKArrayRef WKBundlePageCopyContextMenuItems(WKBundlePageRef pageRef)
 WKArrayRef WKBundlePageCopyContextMenuAtPointInWindow(WKBundlePageRef pageRef, WKPoint point)
 {
 #if ENABLE(CONTEXT_MENUS)
-    WebKit::WebContextMenu* contextMenu = WebKit::toImpl(pageRef)->contextMenuAtPointInWindow(WebKit::toIntPoint(point));
+    WebCore::Page* page = WebKit::toImpl(pageRef)->corePage();
+    if (!page)
+        return nullptr;
+
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
+    if (!localMainFrame)
+        return nullptr;
+
+    WebKit::WebContextMenu* contextMenu = WebKit::toImpl(pageRef)->contextMenuAtPointInWindow(localMainFrame->frameID(), WebKit::toIntPoint(point));
     if (!contextMenu)
         return nullptr;
 
@@ -305,37 +313,6 @@ void* WKAccessibilityFocusedUIElement()
     return WebKit::WebProcess::accessibilityFocusedUIElement();
 #else
     return 0;
-#endif
-}
-
-bool WKAccessibilityCanUseSecondaryAXThread(WKBundlePageRef pageRef)
-{
-#if ENABLE(ACCESSIBILITY) && ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (!pageRef)
-        return false;
-
-    WebCore::Page* page = WebKit::toImpl(pageRef)->corePage();
-    if (!page)
-        return false;
-    
-    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
-    if (!localMainFrame)
-        return false;
-
-    auto& core = *localMainFrame;
-    if (!core.document())
-        return false;
-
-    WebCore::AXObjectCache::enableAccessibility();
-
-    auto* axObjectCache = core.document()->axObjectCache();
-    if (!axObjectCache)
-        return false;
-
-    return axObjectCache->usedOnAXThread();
-#else
-    UNUSED_PARAM(pageRef);
-    return false;
 #endif
 }
 
@@ -580,19 +557,16 @@ void WKBundlePageFlushPendingEditorStateUpdate(WKBundlePageRef page)
     WebKit::toImpl(page)->flushPendingEditorStateUpdate();
 }
 
-void WKBundlePageSimulateMouseDown(WKBundlePageRef page, int button, WKPoint position, int clickCount, WKEventModifiers modifiers, double time)
+void WKBundlePageSimulateMouseDown(WKBundlePageRef, int, WKPoint, int, WKEventModifiers, double)
 {
-    WebKit::toImpl(page)->simulateMouseDown(button, WebKit::toIntPoint(position), clickCount, modifiers, WallTime::fromRawSeconds(time));
 }
 
-void WKBundlePageSimulateMouseUp(WKBundlePageRef page, int button, WKPoint position, int clickCount, WKEventModifiers modifiers, double time)
+void WKBundlePageSimulateMouseUp(WKBundlePageRef, int, WKPoint, int, WKEventModifiers, double)
 {
-    WebKit::toImpl(page)->simulateMouseUp(button, WebKit::toIntPoint(position), clickCount, modifiers, WallTime::fromRawSeconds(time));
 }
 
-void WKBundlePageSimulateMouseMotion(WKBundlePageRef page, WKPoint position, double time)
+void WKBundlePageSimulateMouseMotion(WKBundlePageRef, WKPoint, double)
 {
-    WebKit::toImpl(page)->simulateMouseMotion(WebKit::toIntPoint(position), WallTime::fromRawSeconds(time));
 }
 
 uint64_t WKBundlePageGetRenderTreeSize(WKBundlePageRef pageRef)

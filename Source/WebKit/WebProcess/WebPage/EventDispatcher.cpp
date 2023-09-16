@@ -80,10 +80,10 @@ void EventDispatcher::addScrollingTreeForPage(WebPage& webPage)
     ASSERT(webPage.scrollingCoordinator());
     ASSERT(!m_scrollingTrees.contains(webPage.identifier()));
 
-    auto& scrollingCoordinator = downcast<AsyncScrollingCoordinator>(*webPage.scrollingCoordinator());
-    auto* scrollingTree = dynamicDowncast<ThreadedScrollingTree>(scrollingCoordinator.scrollingTree());
+    Ref scrollingCoordinator = downcast<AsyncScrollingCoordinator>(*webPage.scrollingCoordinator());
+    RefPtr scrollingTree = dynamicDowncast<ThreadedScrollingTree>(scrollingCoordinator->scrollingTree());
     ASSERT(scrollingTree);
-    m_scrollingTrees.set(webPage.identifier(), scrollingTree);
+    m_scrollingTrees.set(webPage.identifier(), WTFMove(scrollingTree));
 }
 
 void EventDispatcher::removeScrollingTreeForPage(WebPage& webPage)
@@ -105,7 +105,7 @@ void EventDispatcher::internalWheelEvent(PageIdentifier pageID, const WebWheelEv
     auto processingSteps = OptionSet<WebCore::WheelEventProcessingSteps> { WheelEventProcessingSteps::SynchronousScrolling, WheelEventProcessingSteps::BlockingDOMEventDispatch };
 
     ensureOnMainRunLoop([pageID] {
-        if (auto* webPage = WebProcess::singleton().webPage(pageID)) {
+        if (RefPtr webPage = WebProcess::singleton().webPage(pageID)) {
             if (auto* corePage = webPage->corePage()) {
                 if (auto* keyboardScrollingAnimator = corePage->currentKeyboardScrollingAnimator())
                     keyboardScrollingAnimator->stopScrollingImmediately();
@@ -191,10 +191,10 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
 }
 
 #if ENABLE(MAC_GESTURE_EVENTS)
-void EventDispatcher::gestureEvent(PageIdentifier pageID, const WebKit::WebGestureEvent& gestureEvent)
+void EventDispatcher::gestureEvent(PageIdentifier pageID, const WebKit::WebGestureEvent& gestureEvent, CompletionHandler<void(WebEventType, bool)>&& completionHandler)
 {
-    RunLoop::main().dispatch([this, pageID, gestureEvent] {
-        dispatchGestureEvent(pageID, gestureEvent);
+    RunLoop::main().dispatch([this, pageID, gestureEvent, completionHandler = WTFMove(completionHandler)] () mutable {
+        dispatchGestureEvent(pageID, gestureEvent, WTFMove(completionHandler));
     });
 }
 #endif
@@ -250,7 +250,7 @@ void EventDispatcher::dispatchTouchEvents()
     }
 
     for (auto& slot : localCopy) {
-        if (auto* webPage = WebProcess::singleton().webPage(slot.key))
+        if (RefPtr webPage = WebProcess::singleton().webPage(slot.key))
             webPage->dispatchAsynchronousTouchEvents(WTFMove(slot.value));
     }
 }
@@ -268,26 +268,28 @@ void EventDispatcher::dispatchWheelEvent(PageIdentifier pageID, const WebWheelEv
 {
     ASSERT(RunLoop::isMain());
 
-    WebPage* webPage = WebProcess::singleton().webPage(pageID);
+    RefPtr webPage = WebProcess::singleton().webPage(pageID);
     if (!webPage)
         return;
 
-    bool handled = webPage->wheelEvent(wheelEvent, processingSteps, wheelEventOrigin);
+    bool handled = false;
+    if (webPage->mainFrame())
+        handled = webPage->wheelEvent(webPage->mainFrame()->frameID(), wheelEvent, processingSteps, wheelEventOrigin);
 
     if (processingSteps.contains(WheelEventProcessingSteps::SynchronousScrolling) && wheelEventOrigin == EventDispatcher::WheelEventOrigin::UIProcess)
         sendDidReceiveEvent(pageID, wheelEvent.type(), handled);
 }
 
 #if ENABLE(MAC_GESTURE_EVENTS)
-void EventDispatcher::dispatchGestureEvent(PageIdentifier pageID, const WebGestureEvent& gestureEvent)
+void EventDispatcher::dispatchGestureEvent(PageIdentifier pageID, const WebGestureEvent& gestureEvent, CompletionHandler<void(WebEventType, bool)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
-    WebPage* webPage = WebProcess::singleton().webPage(pageID);
+    RefPtr webPage = WebProcess::singleton().webPage(pageID);
     if (!webPage)
-        return;
+        return completionHandler(gestureEvent.type(), false);
 
-    webPage->gestureEvent(gestureEvent);
+    webPage->gestureEvent(gestureEvent, WTFMove(completionHandler));
 }
 #endif
 

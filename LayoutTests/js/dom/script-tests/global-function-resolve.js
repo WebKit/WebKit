@@ -10,8 +10,6 @@ var functionNames = [
     'confirm',
     'console',
     'crypto',
-    'defaultStatus',
-    'defaultstatus',
     'description',
     'devicePixelRatio',
     'dispatchEvent',

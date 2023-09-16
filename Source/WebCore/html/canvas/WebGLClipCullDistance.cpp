@@ -42,11 +42,6 @@ WebGLClipCullDistance::WebGLClipCullDistance(WebGLRenderingContextBase& context)
 
 WebGLClipCullDistance::~WebGLClipCullDistance() = default;
 
-WebGLExtension::ExtensionName WebGLClipCullDistance::getName() const
-{
-    return WebGLClipCullDistanceName;
-}
-
 bool WebGLClipCullDistance::supported(GraphicsContextGL& context)
 {
     return context.supportsExtension("GL_ANGLE_clip_cull_distance"_s);

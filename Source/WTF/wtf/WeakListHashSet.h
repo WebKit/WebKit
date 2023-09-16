@@ -146,7 +146,7 @@ public:
             return *this;
         }
 
-        WeakListHashSetIterator& operator--()
+        WeakListHashSetConstIterator& operator--()
         {
             Base::advanceBackwards();
             return *this;
@@ -184,7 +184,7 @@ public:
         increaseOperationCountSinceLastCleanup();
         auto& weakPtrImpl = value.weakPtrFactory().m_impl;
         if (auto* pointer = weakPtrImpl.pointer(); pointer && *pointer)
-            return WeakListHashSetIterator(*this, m_set.find(*pointer));
+            return WeakListHashSetConstIterator(*this, m_set.find(*pointer));
         return end();
     }
 
@@ -256,7 +256,7 @@ public:
     void clear()
     {
         m_set.clear();
-        m_operationCountSinceLastCleanup = 0;
+        cleanupHappened();
     }
 
     unsigned capacity() const { return m_set.capacity(); }
@@ -282,7 +282,7 @@ public:
         if (result)
             increaseOperationCountSinceLastCleanup(count);
         else
-            m_operationCountSinceLastCleanup = 0;
+            cleanupHappened();
         return result;
     }
 
@@ -294,19 +294,75 @@ public:
 
     void checkConsistency() { } // To be implemented.
 
-    void removeNullReferences()
+    bool removeNullReferences()
     {
+        bool didRemove = false;
         auto it = m_set.begin();
         while (it != m_set.end()) {
             auto currentIt = it;
             ++it;
-            if (!currentIt->get())
+            if (!currentIt->get()) {
                 m_set.remove(currentIt);
+                didRemove = true;
+            }
         }
-        m_operationCountSinceLastCleanup = 0;
+        cleanupHappened();
+        return didRemove;
+    }
+
+    T& first()
+    {
+        auto it = begin();
+        ASSERT(it != end());
+        return *it;
+    }
+
+    const T& first() const
+    {
+        auto it = begin();
+        ASSERT(it != end());
+        return *it;
+    }
+
+    T& takeFirst()
+    {
+        auto it = begin();
+        auto& first = *it;
+        remove(it);
+        return first;
+    }
+
+    T* tryTakeFirst()
+    {
+        auto it = begin();
+        if (it == end())
+            return nullptr;
+        auto* first = it.get();
+        remove(it);
+        return first;
+    }
+
+    T& last()
+    {
+        auto it = end();
+        --it;
+        return *it;
+    }
+
+    const T& last() const
+    {
+        auto it = end();
+        --it;
+        return *it;
     }
 
 private:
+    ALWAYS_INLINE void cleanupHappened() const
+    {
+        m_operationCountSinceLastCleanup = 0;
+        m_maxOperationCountWithoutCleanup = std::min(std::numeric_limits<unsigned>::max() / 2, m_set.size()) * 2;
+    }
+
     ALWAYS_INLINE unsigned increaseOperationCountSinceLastCleanup(unsigned count = 1) const
     {
         unsigned currentCount = m_operationCountSinceLastCleanup += count;
@@ -316,12 +372,13 @@ private:
     ALWAYS_INLINE void amortizedCleanupIfNeeded(unsigned count = 1) const
     {
         unsigned currentCount = increaseOperationCountSinceLastCleanup(count);
-        if (currentCount / 2 > m_set.size())
+        if (currentCount > m_maxOperationCountWithoutCleanup)
             const_cast<WeakListHashSet&>(*this).removeNullReferences();
     }
 
     WeakPtrImplSet m_set;
     mutable unsigned m_operationCountSinceLastCleanup { 0 };
+    mutable unsigned m_maxOperationCountWithoutCleanup { 0 };
 };
 
 template<typename MapFunction, typename T, typename WeakMapImpl>

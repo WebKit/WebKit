@@ -1,11 +1,11 @@
-Blocked access to external URL http://www2.localhost:8800/html/semantics/scripting-1/the-script-element/css-module/resources/basic.css?pipe=header(Access-Control-Allow-Origin,*)
-Blocked access to external URL http://www2.localhost:8800/html/semantics/scripting-1/the-script-element/css-module/resources/parse-error.css?pipe=header(Access-Control-Allow-Origin,*)
-Blocked access to external URL http://www2.localhost:8800/html/semantics/scripting-1/the-script-element/css-module/resources/basic.css
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
 css-module-crossorigin
 
 
 
-FAIL Imported CSS module, cross-origin with CORS assert_equals: Unexpected _log value expected "imported CSS: #test { background-color: rgb(255, 0, 0); }" but got ""
-PASS Imported CSS module, cross-origin, missing CORS ACAO header
-FAIL Imported CSS module with parse error, cross-origin, with CORS assert_equals: Unexpected _log value expected "imported CSS rules count: 0" but got ""
+FAIL Imported CSS module, cross-origin with CORS assert_equals: Unexpected _log value expected "imported CSS: #test { background-color: rgb(255, 0, 0); }" but got "10-0"
+FAIL Imported CSS module, cross-origin, missing CORS ACAO header assert_equals: Unexpected _log value expected "error" but got "10-0"
+FAIL Imported CSS module with parse error, cross-origin, with CORS assert_equals: Unexpected _log value expected "imported CSS rules count: 0" but got "10-0"
 

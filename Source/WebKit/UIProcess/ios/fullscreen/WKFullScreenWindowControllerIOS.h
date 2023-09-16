@@ -32,6 +32,9 @@
 @interface WKFullScreenWindowController : NSObject <UIViewControllerTransitioningDelegate>
 @property (readonly, retain, nonatomic) UIView *webViewPlaceholder;
 @property (readonly, assign, nonatomic) BOOL isFullScreen;
+#if PLATFORM(VISION)
+@property (readonly, assign, nonatomic) BOOL prefersSceneDimming;
+#endif
 
 - (id)initWithWebView:(WKWebView *)webView;
 - (void)enterFullScreen:(CGSize)videoDimensions;
@@ -45,6 +48,10 @@
 - (void)close;
 - (void)webViewDidRemoveFromSuperviewWhileInFullscreen;
 - (void)videoControlsManagerDidChange;
+
+#if PLATFORM(VISION)
+- (void)toggleSceneDimming;
+#endif
 
 @end
 

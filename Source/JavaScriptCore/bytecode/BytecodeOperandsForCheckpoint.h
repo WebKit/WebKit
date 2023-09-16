@@ -31,61 +31,26 @@
 
 namespace JSC {
 
-template<typename BytecodeMetadata>
-ValueProfile* valueProfileForImpl(BytecodeMetadata& metadata, unsigned checkpointIndex)
-{
-    UNUSED_PARAM(checkpointIndex);
-    if constexpr (BytecodeMetadata::opcodeID == op_iterator_open) {
-        switch (checkpointIndex) {
-        case OpIteratorOpen::symbolCall: return &metadata.m_iteratorProfile;
-        case OpIteratorOpen::getNext: return &metadata.m_nextProfile;
-        default: RELEASE_ASSERT_NOT_REACHED();
-        }
-
-    } else if constexpr (BytecodeMetadata::opcodeID == op_iterator_next) {
-        switch (checkpointIndex) {
-        case OpIteratorNext::computeNext: return &metadata.m_nextResultProfile;
-        case OpIteratorNext::getDone: return &metadata.m_doneProfile;
-        case OpIteratorNext::getValue: return &metadata.m_valueProfile;
-        default: RELEASE_ASSERT_NOT_REACHED();
-        }
-    } else 
-        return &metadata.m_profile;
-}
-
 template <typename Bytecode>
-uintptr_t valueProfileOffsetFor(unsigned checkpointIndex)
+unsigned valueProfileOffsetFor(const Bytecode& bytecode, unsigned checkpointIndex)
 {
     UNUSED_PARAM(checkpointIndex);
     if constexpr (Bytecode::opcodeID == op_iterator_open) {
         switch (checkpointIndex) {
-        case OpIteratorOpen::symbolCall: return Bytecode::Metadata::offsetOfIteratorProfile();
-        case OpIteratorOpen::getNext: return Bytecode::Metadata::offsetOfNextProfile();
+        case OpIteratorOpen::symbolCall: return bytecode.m_iteratorValueProfile;
+        case OpIteratorOpen::getNext: return bytecode.m_nextValueProfile;
         default: RELEASE_ASSERT_NOT_REACHED();
         }
 
     } else if constexpr (Bytecode::opcodeID == op_iterator_next) {
         switch (checkpointIndex) {
-        case OpIteratorNext::computeNext: return Bytecode::Metadata::offsetOfNextResultProfile();
-        case OpIteratorNext::getDone: return Bytecode::Metadata::offsetOfDoneProfile();
-        case OpIteratorNext::getValue: return Bytecode::Metadata::offsetOfValueProfile();
+        case OpIteratorNext::computeNext: return bytecode.m_nextResultValueProfile;
+        case OpIteratorNext::getDone: return bytecode.m_doneValueProfile;
+        case OpIteratorNext::getValue: return bytecode.m_valueValueProfile;
         default: RELEASE_ASSERT_NOT_REACHED();
         }
     } else 
-        return Bytecode::Metadata::offsetOfProfile();
-}
-
-template<typename BytecodeMetadata>
-bool hasValueProfileFor(BytecodeMetadata& metadata, unsigned checkpointIndex)
-{
-    return valueProfileForImpl(metadata, checkpointIndex);
-}
-
-template<typename BytecodeMetadata>
-ValueProfile& valueProfileFor(BytecodeMetadata& metadata, unsigned checkpointIndex)
-{
-    ASSERT(hasValueProfileFor(metadata, checkpointIndex));
-    return *valueProfileForImpl(metadata, checkpointIndex);
+        return bytecode.m_valueProfile;
 }
 
 template<typename Bytecode>

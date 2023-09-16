@@ -243,9 +243,9 @@ enum class Float : uint8_t {
 };
 
 enum class UsedFloat : uint8_t {
-    None,
-    Left,
-    Right,
+    None  = 1 << 0,
+    Left  = 1 << 1,
+    Right = 1 << 2
 };
 
 // Box decoration attributes. Not inherited.
@@ -819,7 +819,6 @@ enum class CursorVisibility : bool {
 };
 #endif
 
-// The order of this enum must match the order of the display values in CSSValueKeywords.in.
 enum class DisplayType : uint8_t {
     Inline,
     Block,
@@ -843,6 +842,10 @@ enum class DisplayType : uint8_t {
     Grid,
     InlineGrid,
     FlowRoot,
+    Ruby,
+    RubyBlock,
+    RubyBase,
+    RubyAnnotation,
     None
 };
 

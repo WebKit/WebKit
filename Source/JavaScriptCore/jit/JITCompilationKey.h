@@ -64,11 +64,7 @@ public:
     
     JITCompilationMode mode() const { return m_mode; }
     
-    bool operator==(const JITCompilationKey& other) const
-    {
-        return m_codeBlock == other.m_codeBlock
-            && m_mode == other.m_mode;
-    }
+    friend bool operator==(const JITCompilationKey&, const JITCompilationKey&) = default;
     
     unsigned hash() const
     {

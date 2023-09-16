@@ -54,6 +54,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLTableElement.h"
+#include "HandleMouseEventResult.h"
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
 #include "ImageOverlay.h"

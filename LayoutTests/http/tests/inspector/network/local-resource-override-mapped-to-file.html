@@ -60,6 +60,7 @@ function test()
             InspectorTest.log(`Local Resource Override Content: '${localResourceCurrentRevision.base64Encoded ? "[base64] " : ""}${localResourceCurrentRevision.content}'`)
 
             WI.networkManager.removeLocalResourceOverride(localResourceOverride);
+            WI.LocalResource.resetPathsThatFailedToLoadFromFileSystem();
         }
     });
 
@@ -97,6 +98,7 @@ function test()
             InspectorTest.log(`Local Resource Override Content: '${localResourceCurrentRevision.base64Encoded ? "[base64] " : ""}${localResourceCurrentRevision.content}'`)
 
             WI.networkManager.removeLocalResourceOverride(localResourceOverride);
+            WI.LocalResource.resetPathsThatFailedToLoadFromFileSystem();
         }
     });
 
@@ -134,6 +136,7 @@ function test()
             InspectorTest.log(`Local Resource Override Content: '${localResourceCurrentRevision.base64Encoded ? "[base64] " : ""}${localResourceCurrentRevision.content}'`)
 
             WI.networkManager.removeLocalResourceOverride(localResourceOverride);
+            WI.LocalResource.resetPathsThatFailedToLoadFromFileSystem();
         }
     });
 
@@ -170,6 +173,7 @@ function test()
             InspectorTest.log(`Local Resource Override Content: '${localResourceCurrentRevision.base64Encoded ? "[base64] " : ""}${localResourceCurrentRevision.content}'`)
 
             WI.networkManager.removeLocalResourceOverride(localResourceOverride);
+            WI.LocalResource.resetPathsThatFailedToLoadFromFileSystem();
         }
     });
 

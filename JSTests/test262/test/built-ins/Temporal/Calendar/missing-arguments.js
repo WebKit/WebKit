@@ -7,5 +7,5 @@ description: RangeError thrown when constructor invoked with no argument
 features: [Temporal]
 ---*/
 
-assert.throws(RangeError, () => new Temporal.Calendar());
-assert.throws(RangeError, () => new Temporal.Calendar(undefined));
+assert.throws(TypeError, () => new Temporal.Calendar());
+assert.throws(TypeError, () => new Temporal.Calendar(undefined));

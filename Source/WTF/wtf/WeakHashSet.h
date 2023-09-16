@@ -95,6 +95,15 @@ public:
     const_iterator end() const { return WeakHashSetConstIterator(*this, m_set.end()); }
 
     template <typename U>
+    const_iterator find(const U& value) const
+    {
+        increaseOperationCountSinceLastCleanup();
+        if (auto* pointer = value.weakPtrFactory().m_impl.pointer(); pointer && *pointer)
+            return WeakHashSetConstIterator(*this, m_set.find(pointer));
+        return end();
+    }
+
+    template <typename U>
     AddResult add(const U& value)
     {
         amortizedCleanupIfNeeded();
@@ -105,24 +114,29 @@ public:
     bool remove(const U& value)
     {
         amortizedCleanupIfNeeded();
-        auto& weakPtrImpl = value.weakPtrFactory().m_impl;
-        if (auto* pointer = weakPtrImpl.pointer(); pointer && *pointer)
+        if (auto* pointer = value.weakPtrFactory().m_impl.pointer(); pointer && *pointer)
             return m_set.remove(*pointer);
         return false;
+    }
+
+    bool remove(const_iterator iterator)
+    {
+        bool removed = m_set.remove(iterator.m_position);
+        amortizedCleanupIfNeeded();
+        return removed;
     }
 
     void clear()
     {
         m_set.clear();
-        m_operationCountSinceLastCleanup = 0;
+        cleanupHappened();
     }
 
     template <typename U>
     bool contains(const U& value) const
     {
         increaseOperationCountSinceLastCleanup();
-        auto& weakPtrImpl = value.weakPtrFactory().m_impl;
-        if (auto* pointer = weakPtrImpl.pointer(); pointer && *pointer)
+        if (auto* pointer = value.weakPtrFactory().m_impl.pointer(); pointer && *pointer)
             return m_set.contains(*pointer);
         return false;
     }
@@ -146,7 +160,7 @@ public:
         if (result)
             increaseOperationCountSinceLastCleanup(count);
         else
-            m_operationCountSinceLastCleanup = 0;
+            cleanupHappened();
         return result;
     }
 
@@ -177,10 +191,17 @@ public:
 #endif
 
 private:
-    ALWAYS_INLINE void removeNullReferences()
+    ALWAYS_INLINE void cleanupHappened() const
     {
-        m_set.removeIf([] (auto& value) { return !value.get(); });
         m_operationCountSinceLastCleanup = 0;
+        m_maxOperationCountWithoutCleanup = std::min(std::numeric_limits<unsigned>::max() / 2, m_set.size()) * 2;
+    }
+
+    ALWAYS_INLINE bool removeNullReferences()
+    {
+        bool didRemove = m_set.removeIf([] (auto& value) { return !value.get(); });
+        cleanupHappened();
+        return didRemove;
     }
 
     ALWAYS_INLINE unsigned increaseOperationCountSinceLastCleanup(unsigned count = 1) const
@@ -192,12 +213,13 @@ private:
     ALWAYS_INLINE void amortizedCleanupIfNeeded() const
     {
         unsigned currentCount = increaseOperationCountSinceLastCleanup();
-        if (currentCount / 2 > m_set.size())
+        if (currentCount > m_maxOperationCountWithoutCleanup)
             const_cast<WeakHashSet&>(*this).removeNullReferences();
     }
 
     WeakPtrImplSet m_set;
     mutable unsigned m_operationCountSinceLastCleanup { 0 };
+    mutable unsigned m_maxOperationCountWithoutCleanup { 0 };
 };
 
 template<typename MapFunction, typename T, typename WeakMapImpl>

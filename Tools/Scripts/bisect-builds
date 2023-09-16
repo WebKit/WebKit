@@ -134,12 +134,12 @@ def download_archive(options, revision):
     api_url = get_api_archive_url(options)
     s3_url = get_s3_location_for_revision(api_url, revision)
     print('Downloading r{}: {}'.format(revision, s3_url))
-    command = ['python', '../CISupport/download-built-product', '--{}'.format(options.configuration), '--platform', options.platform, s3_url]
+    command = ['python3', '../CISupport/download-built-product', '--{}'.format(options.configuration), '--platform', options.platform, s3_url]
     subprocess.check_call(command)
 
 
 def extract_archive(options):
-    command = ['python', '../CISupport/built-product-archive', '--{}'.format(options.configuration), '--platform', options.platform, 'extract']
+    command = ['python3', '../CISupport/built-product-archive', '--{}'.format(options.configuration), '--platform', options.platform, 'extract']
     subprocess.check_call(command)
 
 

@@ -51,7 +51,7 @@ struct BasicBlockKey {
     { }
 
     bool isHashTableDeletedValue() const { return m_startOffset == -2 && m_endOffset == -2; }
-    bool operator==(const BasicBlockKey& other) const { return m_startOffset == other.m_startOffset && m_endOffset == other.m_endOffset; }
+    friend bool operator==(const BasicBlockKey&, const BasicBlockKey&) = default;
     unsigned hash() const { return m_startOffset + m_endOffset + 1; }
 
     int m_startOffset;

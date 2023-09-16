@@ -126,8 +126,11 @@ class Constructor
         "#{name.to_s}[#{arguments.map(&:to_s).join(", ")}]"
     end
 
+    def concrete_type
+        "m_types.#{name}Type(#{arguments.map { |a| a.respond_to? :to_cpp and a.to_cpp or a}.join ", "})"
+    end
     def to_cpp
-        "AbstractType { m_types.#{name}Type(#{arguments.map { |a| a.respond_to? :to_cpp and a.to_cpp or a}.join ", "}) }"
+        "AbstractType { #{concrete_type} }"
     end
 end
 
@@ -221,6 +224,7 @@ end
 
 module DSL
     @context = binding()
+    @aliases = {}
     @operators = {}
     @TypeVariable = VariableKind.new(:TypeVariable)
     @NumericVariable = VariableKind.new(:NumericVariable)
@@ -247,8 +251,17 @@ module DSL
         end
     end
 
+    def self.type_alias(name, type)
+      @aliases[name] = type
+    end
+
     def self.to_cpp
         out = []
+
+        @aliases.each do |name, type|
+            out << "introduceType(AST::Identifier::make(\"#{name}\"_s), #{type.concrete_type});"
+        end
+
         @operators.each do |name, overloads|
             out << "m_overloadedOperations.add(\"#{name}\"_s, Vector<OverloadCandidate>({"
             overloads.each { |function| out << "#{function.to_cpp(name)}," }

@@ -54,7 +54,7 @@ struct MockStreamTestMessage1 {
     static constexpr bool isSync = false;
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isStreamBatched = false;
-    static constexpr IPC::MessageName name()  { return IPC::MessageName::RemoteRenderingBackend_ReleaseAllResources; }
+    static constexpr IPC::MessageName name()  { return IPC::MessageName::RemoteRenderingBackend_ReleaseAllDrawingResources; }
     std::tuple<> arguments() { return { }; }
 };
 

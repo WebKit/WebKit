@@ -116,6 +116,9 @@
 
 #if PLATFORM(COCOA)
     Vector<String> mediaMIMETypes;
+#endif
+
+#if PLATFORM(COCOA) || PLATFORM(GTK)
     WebCore::ScreenProperties screenProperties;
 #endif
 
@@ -164,7 +167,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    WebKit::UserInterfaceIdiom currentUserInterfaceIdiom;
+    PAL::UserInterfaceIdiom currentUserInterfaceIdiom;
     bool supportsPictureInPicture;
     WebCore::RenderThemeIOS::CSSValueToSystemColorMap cssValueToSystemColorMap;
     WebCore::Color focusRingColor;

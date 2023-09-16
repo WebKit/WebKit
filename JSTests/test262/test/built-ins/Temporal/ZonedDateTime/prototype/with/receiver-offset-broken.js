@@ -3,18 +3,16 @@
 
 /*---
 esid: sec-temporal.zoneddatetime.protoype.with
-description: TypeError thrown when the offset field of the receiver is broken
+description: >
+  TypeError thrown when the offset field of the argument or the object returned
+  from mergeFields is broken
 info: |
-    10. Let _fieldNames_ be ? CalendarFields(_calendar_, « *"day"*, *"hour"*, *"microsecond"*, *"millisecond"*, *"minute"*, *"month"*, *"monthCode"*, *"nanosecond"*, *"second"*, *"year"* »).
-    11. Append *"offset"* to _fieldNames_.
-    12. Let _partialZonedDateTime_ be ? PreparePartialTemporalFields(_temporalZonedDateTimeLike_, _fieldNames_).
-    ...
-    17. Append *"timeZone"* to _fieldNames_.
-    18. Let _fields_ be ? PrepareTemporalFields(_zonedDateTime_, _fieldNames_, « *"timeZone"*, *"offset"* »).
-    19. Set _fields_ to ? CalendarMergeFields(_calendar_, _fields_, _partialZonedDateTime_).
-    20. Set _fields_ to ? PrepareTemporalFields(_fields_, _fieldNames_, « *"timeZone"*, *"offset"* »).
-    21. Let _offsetString_ be ! Get(_fields_, *"offset"*).
-    22. Assert: Type(_offsetString_) is String.
+    7. Let _fieldNames_ be ? CalendarFields(_calendar_, « *"day"*, *"month"*, *"monthCode"*, *"year"* »).
+    8. Append *"hour"*, *"microsecond"*, *"millisecond"*, *"minute"*, *"nanosecond"*, *"offset"*, and *"second"* to _fieldNames_.
+    9. Let _fields_ be ? PrepareTemporalFields(_zonedDateTime_, _fieldNames_, « *"offset"* »).
+    10. Let _partialZonedDateTime_ be ? PrepareTemporalFields(_temporalZonedDateTimeLike_, _fieldNames_, ~partial~).
+    11. Set _fields_ to ? CalendarMergeFields(_calendar_, _fields_, _partialZonedDateTime_).
+    12. Set _fields_ to ? PrepareTemporalFields(_fields_, _fieldNames_, « *"offset"* »).
 features: [Temporal]
 ---*/
 
@@ -43,34 +41,16 @@ class ObservedCalendar extends Temporal.Calendar {
 const calendar = new ObservedCalendar();
 const dateTime = new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, "UTC", calendar);
 
-// Test throw in step 12
+// Test throw in step 10
 
 assert.throws(TypeError, () => dateTime.with({ offset: Symbol("can't convert to string") }), "conversion failure on ZonedDateTime-like");
 assert.sameValue(calendar.mergeFieldsCalled, 0, "calendar.mergeFields should not be called");
 
 calendar.resetCalls();
 
-// Test throw in step 20 (before sabotaging the ZonedDateTime instance)
+// Test throw in step 12 (before sabotaging the ZonedDateTime instance)
 
 assert.throws(TypeError, () => dateTime.with({ year: 2002 }), "conversion failure on sabotaged return value from mergeFields");
 assert.sameValue(calendar.mergeFieldsCalled, 1, "calendar.mergeFields was called once");
-
-calendar.resetCalls();
-
-// Test throw in step 18
-
-Object.defineProperty(dateTime, "offset", { value: Symbol("can't convert to string"), configurable: true });
-
-assert.throws(TypeError, () => dateTime.with({ year: 2002 }), "conversion failure on sabotaged offset field of receiver");
-assert.sameValue(calendar.mergeFieldsCalled, 0, "calendar.mergeFields should not be called");
-
-calendar.resetCalls();
-
-// Test offset being required in step 18
-
-Object.defineProperty(dateTime, "offset", { value: undefined });
-
-assert.throws(TypeError, () => dateTime.with({ year: 2002 }), "offset property is required on receiver");
-assert.sameValue(calendar.mergeFieldsCalled, 0, "calendar.mergeFields should not be called");
 
 calendar.resetCalls();

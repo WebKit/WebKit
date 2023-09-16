@@ -45,10 +45,7 @@ public:
 
     bool isVisible() const;
 
-    bool operator==(const BorderValue& o) const
-    {
-        return m_width == o.m_width && m_style == o.m_style && m_color == o.m_color;
-    }
+    friend bool operator==(const BorderValue&, const BorderValue&) = default;
 
     void setColor(const StyleColor& color)
     {

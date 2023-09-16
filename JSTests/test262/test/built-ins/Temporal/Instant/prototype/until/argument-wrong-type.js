@@ -11,7 +11,7 @@ features: [BigInt, Symbol, Temporal]
 
 const instance = new Temporal.Instant(0n);
 
-const rangeErrorTests = [
+const primitiveTests = [
   [undefined, "undefined"],
   [null, "null"],
   [true, "boolean"],
@@ -23,8 +23,14 @@ const rangeErrorTests = [
   [Temporal.Instant, "Temporal.Instant, object"],
 ];
 
-for (const [arg, description] of rangeErrorTests) {
-  assert.throws(RangeError, () => instance.until(arg), `${description} does not convert to a valid ISO string`);
+for (const [arg, description] of primitiveTests) {
+  assert.throws(
+    typeof arg === "string" || (typeof arg === "object" && arg !== null) || typeof arg === "function"
+      ? RangeError
+      : TypeError,
+    () => instance.until(arg),
+    `${description} does not convert to a valid ISO string`
+  );
 }
 
 const typeErrorTests = [

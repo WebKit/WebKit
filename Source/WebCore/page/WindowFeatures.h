@@ -39,24 +39,77 @@ namespace WebCore {
 class FloatRect;
 
 struct WindowFeatures {
+    bool hasAdditionalFeatures { false };
+
     std::optional<float> x;
     std::optional<float> y;
     std::optional<float> width;
     std::optional<float> height;
 
-    bool menuBarVisible { true };
-    bool statusBarVisible { true };
-    bool toolBarVisible { true };
-    bool locationBarVisible { true };
-    bool scrollbarsVisible { true };
-    bool resizable { true };
+    std::optional<bool> popup;
+    std::optional<bool> menuBarVisible;
+    std::optional<bool> statusBarVisible;
+    std::optional<bool> toolBarVisible;
+    std::optional<bool> locationBarVisible;
+    std::optional<bool> scrollbarsVisible;
+    std::optional<bool> resizable;
 
-    bool fullscreen { false };
-    bool dialog { false };
-    bool noopener { false };
-    bool noreferrer { false };
+    std::optional<bool> fullscreen;
+    std::optional<bool> dialog;
+    std::optional<bool> noopener { std::nullopt };
+    std::optional<bool> noreferrer { std::nullopt };
 
     Vector<String> additionalFeatures { };
+
+    bool wantsNoOpener() const { return (noopener && *noopener) || (noreferrer && *noreferrer); }
+    bool wantsNoReferrer() const { return (noreferrer && *noreferrer); }
+
+    // Follow the HTML standard on how to parse the window features indicated here:
+    // https://html.spec.whatwg.org/multipage/nav-history-apis.html#apis-for-creating-and-navigating-browsing-contexts-by-name
+    bool wantsPopup() const
+    {
+        // If the WindowFeatures string contains nothing more than noopener and noreferrer we
+        // consider the string to be empty and thus return false based on the algorithm above.
+        if (!hasAdditionalFeatures
+            && !x
+            && !y
+            && !width
+            && !height
+            && !popup
+            && !menuBarVisible
+            && !statusBarVisible
+            && !toolBarVisible
+            && !locationBarVisible
+            && !scrollbarsVisible
+            && !resizable)
+            return false;
+
+        // If popup is defined, return its value as a boolean.
+        if (popup)
+            return *popup;
+
+        // If location (default to false) and toolbar (default to false) are false return true.
+        if ((!locationBarVisible || !*locationBarVisible) && (!toolBarVisible || !*toolBarVisible))
+            return true;
+
+        // If menubar (default to false) is false return true.
+        if (!menuBarVisible || !*menuBarVisible)
+            return true;
+
+        // If resizable (default to true) is false return true.
+        if (resizable && !*resizable)
+            return true;
+
+        // If scrollbars (default to false) is false return false.
+        if (!scrollbarsVisible || !*scrollbarsVisible)
+            return true;
+
+        // If status (default to false) is false return true.
+        if (!statusBarVisible || !*statusBarVisible)
+            return true;
+
+        return false;
+    }
 };
 
 WindowFeatures parseWindowFeatures(StringView windowFeaturesString);

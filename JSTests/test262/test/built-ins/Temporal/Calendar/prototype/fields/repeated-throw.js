@@ -4,7 +4,7 @@
 /*---
 esid: sec-temporal.calendar.prototype.fields
 description: >
-  Temporal.Calendar.prototype.fields will throw if its input iterable yields 
+  Temporal.Calendar.prototype.fields will throw if its input iterable yields
   the same value twice.
 info: |
   ## 12.4.21 Temporal.Calendar.prototype.fields ( fields )
@@ -38,9 +38,8 @@ assert.throws(
     RangeError, () => cal.fields(fields), "repeated valid value should throw");
 assert.sameValue(i, 2, "Should stop at 2");
 
-// Test all valid value will throw while repeate
-[ "nanosecond", "microsecond", "millisecond", "second",
-  "minute", "hour", "day", "monthCode", "month", "year" ].forEach((f) => {
+// Test all valid values will throw when repeated
+[ "day", "monthCode", "month", "year" ].forEach((f) => {
   i = 0;
   const fields2 = {
     *[Symbol.iterator]() {

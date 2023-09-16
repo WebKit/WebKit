@@ -1,0 +1,69 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/basic-gestures.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+.outer-scroll { height: 100vh; }
+.inner-scroll { height: 100vh; overflow-y: auto; }
+.box { height: 100vh; }
+</style>
+<script>
+window.jsTestIsAsync = true;
+
+async function runTest() {
+    if (!window.testRunner) {
+        finishJSTest();
+        return;
+    }
+
+    description("Tests that toggling `inert` doesn't prevent scrolling.");
+
+    globalThis.outerScrollElement = document.querySelector(".outer-scroll");
+    globalThis.innerScrollElement = document.querySelector(".inner-scroll");
+
+    let scrollStartX = outerScrollElement.offsetLeft + (outerScrollElement.offsetWidth / 2);
+    let scrollStartY = outerScrollElement.offsetTop + (outerScrollElement.offsetHeight / 2) + 50;
+    let scrollEndX = scrollStartX;
+    let scrollEndY = scrollStartY - 100;
+
+    shouldBeZero("window.scrollY");
+    shouldBeZero("outerScrollElement.scrollTop");
+    shouldBeZero("innerScrollElement.scrollTop");
+
+    debug("Setting pointer-events: none through inert.");
+    outerScrollElement.inert = true;
+    await UIHelper.renderingUpdate();
+    await touchAndDragFromPointToPoint(scrollStartX, scrollStartY, scrollEndX, scrollEndY);
+    await liftUpAtPoint(scrollEndX, scrollEndY);
+    shouldBeNonZero("window.scrollY");
+    shouldBeZero("outerScrollElement.scrollTop");
+    shouldBeZero("innerScrollElement.scrollTop");
+
+    await UIHelper.immediateScrollTo(0, 0);
+
+    debug("Removing pointer-events: none by removing inert.");
+    outerScrollElement.inert = false;
+    await UIHelper.renderingUpdate();
+    await touchAndDragFromPointToPoint(scrollStartX, scrollStartY, scrollEndX, scrollEndY);
+    await liftUpAtPoint(scrollEndX, scrollEndY);
+    shouldBeZero("window.scrollY");
+    shouldBeZero("outerScrollElement.scrollTop");
+    shouldBeNonZero("innerScrollElement.scrollTop");
+
+    finishJSTest();
+}
+</script>
+<body onload="runTest()">
+    <div class="outer-scroll">
+        <div class="inner-scroll">
+            <div class="box" style="background-color: red;"></div>
+            <div class="box" style="background-color: green;"></div>
+            <div class="box" style="background-color: blue;"></div>
+        </div>
+    </div>
+    <p id="description"></p>
+    <div id="console"></div>
+</body>
+</html>

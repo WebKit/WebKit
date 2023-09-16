@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ BlobRegistryTopOriginPartitioningEnabled=true ] -->
+<html>
+<head>
+<script src="../../../../resources/testharness.js"></script>
+<script src="../../../../resources/testharnessreport.js"></script>
+<script src="../../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+var test = async_test("Test for creating blob in iframe and then downloading to it in same-origin iframe and same-origin, same-site, and cross-site main frames.");
+
+if (window.testRunner)
+  testRunner.setShouldLogDownloadCallbacks(true);
+
+let blobURL = "";
+let timeoutId;
+let handle;
+let shouldDownloadSameOriginBlob = true;
+let shouldDownloadSameSiteBlob = true;
+let shouldDownloadCrossSiteBlob = true;
+let shouldDownloadSecondCrossSiteBlob = true;
+let shouldCreateCrossSiteBlob = true;
+
+function openBlobCreatingFrame(origin)
+{
+    debug(`Opening ${origin} as main frame with iframe origin https://localhost:8443, creating blob`);
+    handle = open(`${origin}/local/blob/resources/main-frame-with-iframe-downloading-blob.html`, "test-main-frame-create-blob");
+    assert_true(!!handle, `Opening ${origin} for blob creation failed`);
+    timeoutId = setTimeout(() => window.postMessage({ "status": "donefail", "message": `Opening ${origin} timed out.` }, '*'), 2000);
+}
+
+function openBlobDownloadingFrame(origin)
+{
+    debug(`Opening ${origin} as main frame with iframe origin https://localhost:8443, downloading blob`);
+    handle = open(`${origin}/local/blob/resources/main-frame-with-iframe-downloading-blob.html?url=${blobURL}`, "test-main-frame-download-blob");
+    assert_true(!!handle, `Opening ${origin} main frame for downloading blob failed`);
+    timeoutId = setTimeout(() => window.postMessage({ "status": "donefail", "message": `Opening ${origin} timed out.` }, '*'), 2000);
+}
+
+window.onload = () => {
+    // Load main frame from localhost, iframe is loaded from localhost, blob is partitioned as https://localhost:8443 under https://localhost:8443. Blob is accessible from https://localhost:8443.
+    openBlobCreatingFrame(`https://localhost:8443`);
+}
+
+window.addEventListener("message", (e) => {
+    if (timeoutId) {
+        clearTimeout(timeoutId);
+        timeoutId = undefined;
+        handle = undefined;
+    } else if (handle == e.source) {
+        // If the timeout callback was already called, then don't handle this message, it's too late.
+        return;
+    }
+
+    if (e.data.status) {
+        if (e.data.status == "pass" || e.data.status == "done")
+            testPassed(`${e.data.message}`);
+        else if (e.data.status == "fail" || e.data.status == "donefail")
+            testFailed(`${e.data.message}`);
+        else
+            testFailed(`Unexpected status: ${e.data.status}`);
+        if (e.data.status == "done" || e.data.status == "donefail") {
+            if (shouldDownloadSameOriginBlob) {
+                assert_true(e.data.url && e.data.url !== "", `Blob URL is not defined in same-origin download`);
+                blobURL = encodeURI(e.data.url);
+                openBlobDownloadingFrame(`https://localhost:8443`);
+                shouldDownloadSameOriginBlob = false;
+            } else if (shouldDownloadSameSiteBlob) {
+                assert_true(e.data.url && e.data.url !== "", `Blob URL is not defined in same-site download`);
+                blobURL = encodeURI(e.data.url);
+                openBlobDownloadingFrame(`http://localhost:8000`);
+                shouldDownloadSameSiteBlob = false;
+            } else if (shouldDownloadCrossSiteBlob) {
+                assert_true(e.data.url && e.data.url !== "", `Blob URL is not defined in first cross-site download`);
+                blobURL = encodeURI(e.data.url);
+                openBlobDownloadingFrame(`http://127.0.0.1:8000`);
+                shouldDownloadCrossSiteBlob = false;
+            } else if (shouldDownloadSecondCrossSiteBlob) {
+                assert_true(e.data.url && e.data.url !== "", `Blob URL is not defined in second cross-site download`);
+                blobURL = encodeURI(e.data.url);
+                openBlobDownloadingFrame(`https://127.0.0.1:8443`);
+                shouldDownloadSecondCrossSiteBlob = false;
+            } else if (shouldCreateCrossSiteBlob) {
+                // Load main frame from localhost, iframe is loaded from localhost, blob is partitioned as https://localhost:8443 under https://127.0.0.1:8443. Blob is not accessible from https://localhost:8443.
+                openBlobCreatingFrame(`https://127.0.0.1:8443`);
+                shouldCreateCrossSiteBlob = false;
+                shouldDownloadSameOriginBlob = true;
+                shouldDownloadSameSiteBlob = true;
+                shouldDownloadCrossSiteBlob = true;
+                shouldDownloadSecondCrossSiteBlob = true;
+            } else {
+                test.done();
+            }
+        }
+    } else
+        testFailed(`Unexpected message: ${e.data}`);
+});
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

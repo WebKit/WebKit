@@ -1,4 +1,28 @@
 class PrivateMembersTestClassParent {
+    instancePublicProperty = 'instancePublicPropertyValue parent';
+    #instancePrivateProperty = 'instancePrivatePropertyValue parent';
+    instancePublicMethod() { parent }
+    #instancePrivateMethod() { parent }
+    get instancePublicGetter() { parent }
+    set instancePublicSetter(x) { parent }
+    get instancePublicGetterSetter() { parent }
+    set instancePublicGetterSetter(x) { parent }
+    get #instancePrivateGetter() { parent }
+    set #instancePrivateSetter(x) { parent }
+    get #instancePrivateGetterSetter() { parent }
+    set #instancePrivateGetterSetter(x) { parent }
+    static classPublicProperty = 'classPublicPropertyValue parent';
+    static #classPrivateProperty = 'classPrivatePropertyValue parent';
+    static classPublicMethod() { parent }
+    static #classPrivateMethod() { parent }
+    static get classPublicGetter() { parent }
+    static set classPublicSetter(x) { parent }
+    static get classPublicGetterSetter() { parent }
+    static set classPublicGetterSetter(x) { parent }
+    static get #classPrivateGetter() { parent }
+    static set #classPrivateSetter(x) { parent }
+    static get #classPrivateGetterSetter() { parent }
+    static set #classPrivateGetterSetter(x) { parent }
     parentInstancePublicProperty = 'parentInstancePublicPropertyValue';
     #parentInstancePrivateProperty = 'parentInstancePrivatePropertyValue';
     parentInstancePublicMethod() { }
@@ -27,6 +51,30 @@ class PrivateMembersTestClassParent {
 }
 
 class PrivateMembersTestClassChild extends PrivateMembersTestClassParent {
+    instancePublicProperty = 'instancePublicPropertyValue child';
+    #instancePrivateProperty = 'instancePrivatePropertyValue child';
+    instancePublicMethod() { child }
+    #instancePrivateMethod() { child }
+    get instancePublicGetter() { child }
+    set instancePublicSetter(x) { child }
+    get instancePublicGetterSetter() { child }
+    set instancePublicGetterSetter(x) { child }
+    get #instancePrivateGetter() { child }
+    set #instancePrivateSetter(x) { child }
+    get #instancePrivateGetterSetter() { child }
+    set #instancePrivateGetterSetter(x) { child }
+    static classPublicProperty = 'classPublicPropertyValue child';
+    static #classPrivateProperty = 'classPrivatePropertyValue child';
+    static classPublicMethod() { child }
+    static #classPrivateMethod() { child }
+    static get classPublicGetter() { child }
+    static set classPublicSetter(x) { child }
+    static get classPublicGetterSetter() { child }
+    static set classPublicGetterSetter(x) { child }
+    static get #classPrivateGetter() { child }
+    static set #classPrivateSetter(x) { child }
+    static get #classPrivateGetterSetter() { child }
+    static set #classPrivateGetterSetter(x) { child }
     childInstancePublicProperty = 'childInstancePublicPropertyValue';
     #childInstancePrivateProperty = 'childInstancePrivatePropertyValue';
     childInstancePublicMethod() { }

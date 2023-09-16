@@ -159,11 +159,6 @@ StyleColor BuilderState::colorFromPrimitiveValue(const CSSPrimitiveValue& value,
     return { WebCore::Style::colorFromPrimitiveValue(document(), m_style, value, forVisitedLink) };
 }
 
-Color BuilderState::colorFromPrimitiveValueWithResolvedCurrentColor(const CSSPrimitiveValue& value) const
-{
-    return WebCore::Style::colorFromPrimitiveValueWithResolvedCurrentColor(document(), m_style, value);
-}
-
 void BuilderState::registerContentAttribute(const AtomString& attributeLocalName)
 {
     if (style().styleType() == PseudoId::Before || style().styleType() == PseudoId::After)
@@ -177,7 +172,7 @@ void BuilderState::adjustStyleForInterCharacterRuby()
 
     m_style.setTextAlign(TextAlignMode::Center);
     if (m_style.isHorizontalWritingMode())
-        m_style.setWritingMode(WritingMode::LeftToRight);
+        m_style.setWritingMode(WritingMode::VerticalLr);
 }
 
 void BuilderState::updateFont()

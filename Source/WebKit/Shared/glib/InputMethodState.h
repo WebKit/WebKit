@@ -69,14 +69,11 @@ struct InputMethodState {
     void encode(IPC::Encoder&) const;
     static std::optional<InputMethodState> decode(IPC::Decoder&);
 
+    friend bool operator==(const InputMethodState&, const InputMethodState&) = default;
+
     Purpose purpose { Purpose::FreeForm };
     OptionSet<Hint> hints;
 };
-
-inline bool operator==(const InputMethodState& a, const InputMethodState& b)
-{
-    return a.purpose == b.purpose && a.hints == b.hints;
-}
 
 } // namespace WebKit
 

@@ -9,7 +9,7 @@ description: >
 features: [BigInt, Symbol, Temporal]
 ---*/
 
-const rangeErrorTests = [
+const primitiveTests = [
   [undefined, "undefined"],
   [null, "null"],
   [true, "boolean"],
@@ -18,9 +18,17 @@ const rangeErrorTests = [
   [1n, "bigint"],
 ];
 
-for (const [arg, description] of rangeErrorTests) {
-  assert.throws(RangeError, () => Temporal.PlainDate.compare(arg, new Temporal.PlainDate(1976, 11, 18)), `${description} does not convert to a valid ISO string (first argument)`);
-  assert.throws(RangeError, () => Temporal.PlainDate.compare(new Temporal.PlainDate(1976, 11, 18), arg), `${description} does not convert to a valid ISO string (second argument)`);
+for (const [arg, description] of primitiveTests) {
+  assert.throws(
+    typeof arg === 'string' ? RangeError : TypeError,
+    () => Temporal.PlainDate.compare(arg, new Temporal.PlainDate(1976, 11, 18)),
+    `${description} does not convert to a valid ISO string (first argument)`
+  );
+  assert.throws(
+    typeof arg === 'string' ? RangeError : TypeError,
+    () => Temporal.PlainDate.compare(new Temporal.PlainDate(1976, 11, 18), arg),
+    `${description} does not convert to a valid ISO string (second argument)`
+  );
 }
 
 const typeErrorTests = [

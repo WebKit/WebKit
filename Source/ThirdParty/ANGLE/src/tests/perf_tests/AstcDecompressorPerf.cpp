@@ -70,7 +70,7 @@ void AstcDecompressorPerfTest::step()
 std::string AstcDecompressorPerfTest::getName()
 {
     std::stringstream ss;
-    ss << UnitTest::GetInstance()->current_test_case()->name() << "/" << GetParam();
+    ss << UnitTest::GetInstance()->current_test_suite()->name() << "/" << GetParam();
     return ss.str();
 }
 

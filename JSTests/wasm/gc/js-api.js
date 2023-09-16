@@ -61,7 +61,7 @@ function testArray() {
     (module
       (type (array i32))
       (func (export "make") (result (ref 0))
-        (array.new_canon 0 (i32.const 42) (i32.const 5)))
+        (array.new 0 (i32.const 42) (i32.const 5)))
     )
   `);
   const arr = m.exports.make();
@@ -73,7 +73,7 @@ function testStruct() {
     (module
       (type (struct (field i32)))
       (func (export "make") (result (ref 0))
-        (struct.new_canon 0 (i32.const 42)))
+        (struct.new 0 (i32.const 42)))
     )
   `);
   const struct = m.exports.make();

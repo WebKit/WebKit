@@ -591,11 +591,6 @@ public:
     virtual void shouldAllowDeviceOrientationAndMotionAccess(LocalFrame&, bool /* mayPrompt */, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& callback) { callback(DeviceOrientationOrMotionPermissionState::Denied); }
 #endif
 
-    virtual void didInsertMenuElement(HTMLMenuElement&) { }
-    virtual void didRemoveMenuElement(HTMLMenuElement&) { }
-    virtual void didInsertMenuItemElement(HTMLMenuItemElement&) { }
-    virtual void didRemoveMenuItemElement(HTMLMenuItemElement&) { }
-
     virtual void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel) { }
 
     virtual bool userIsInteracting() const { return false; }
@@ -639,7 +634,7 @@ public:
 #endif
 
 #if USE(SYSTEM_PREVIEW)
-    virtual void beginSystemPreview(const URL&, const SystemPreviewInfo&, CompletionHandler<void()>&&) { }
+    virtual void beginSystemPreview(const URL&, const SecurityOriginData&, const SystemPreviewInfo&, CompletionHandler<void()>&&) { }
 #endif
 
     virtual void requestCookieConsent(CompletionHandler<void(CookieConsentDecisionResult)>&&) = 0;

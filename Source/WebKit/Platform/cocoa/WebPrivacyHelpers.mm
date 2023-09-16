@@ -29,10 +29,10 @@
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 
 #import "Logging.h"
-#import "NWSPI.h"
 #import <WebCore/DNS.h>
 #import <WebCore/LinkDecorationFilteringData.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <pal/spi/cocoa/NetworkSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RobinHoodHashMap.h>
@@ -44,6 +44,49 @@
 SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
 SOFT_LINK_OPTIONAL(libnetwork, nw_context_set_tracker_lookup_callback, void, __cdecl, (nw_context_t, nw_context_tracker_lookup_callback_t))
 #endif
+
+namespace WebKit {
+
+static bool canUseWebPrivacyFramework()
+{
+#if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
+    return PAL::isWebPrivacyFrameworkAvailable();
+#else
+    // On macOS Monterey where WebPrivacy is present as a staged framework, attempts to soft-link the framework may fail.
+    // Instead of using dlopen, we instead check for the presence of `WPResources`; the call to dlopen is not necessary because
+    // we weak-link against the framework, so the class should be present as long as the framework has been successfully linked.
+    // FIXME: This workaround can be removed once we drop support for macOS Monterey, and we can use the standard soft-linking
+    // helpers from WebPrivacySoftLink.
+    static bool hasWPResourcesClass = [&] {
+        return !!PAL::getWPResourcesClass();
+    }();
+    return hasWPResourcesClass;
+#endif
+}
+
+static NSNotificationName resourceDataChangedNotificationName()
+{
+#if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
+    return PAL::get_WebPrivacy_WPResourceDataChangedNotificationName();
+#else
+    // FIXME: This workaround can be removed once we drop support for macOS Monterey, and we can use the standard soft-linking
+    // helpers from WebPrivacySoftLink.
+    return @"WPResourceDataChangedNotificationName";
+#endif
+}
+
+static NSString *notificationUserInfoResourceTypeKey()
+{
+#if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
+    return PAL::get_WebPrivacy_WPNotificationUserInfoResourceTypeKey();
+#else
+    // FIXME: This workaround can be removed once we drop support for macOS Monterey, and we can use the standard soft-linking
+    // helpers from WebPrivacySoftLink.
+    return @"ResourceType";
+#endif
+}
+
+} // namespace WebKit
 
 @interface WKWebPrivacyNotificationListener : NSObject
 
@@ -58,8 +101,8 @@ SOFT_LINK_OPTIONAL(libnetwork, nw_context_set_tracker_lookup_callback, void, __c
     if (!(self = [super init]))
         return nil;
 
-    if (PAL::isWebPrivacyFrameworkAvailable())
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdate:) name:PAL::get_WebPrivacy_WPResourceDataChangedNotificationName() object:nil];
+    if (WebKit::canUseWebPrivacyFramework())
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdate:) name:WebKit::resourceDataChangedNotificationName() object:nil];
     return self;
 }
 
@@ -70,15 +113,15 @@ SOFT_LINK_OPTIONAL(libnetwork, nw_context_set_tracker_lookup_callback, void, __c
 
 - (void)dealloc
 {
-    if (PAL::isWebPrivacyFrameworkAvailable())
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:PAL::get_WebPrivacy_WPResourceDataChangedNotificationName() object:nil];
+    if (WebKit::canUseWebPrivacyFramework())
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:WebKit::resourceDataChangedNotificationName() object:nil];
     [super dealloc];
 }
 
 - (void)didUpdate:(NSNotification *)notification
 {
-    ASSERT(PAL::isWebPrivacyFrameworkAvailable());
-    auto type = dynamic_objc_cast<NSNumber>([notification.userInfo objectForKey:PAL::get_WebPrivacy_WPNotificationUserInfoResourceTypeKey()]);
+    ASSERT(WebKit::canUseWebPrivacyFramework());
+    auto type = dynamic_objc_cast<NSNumber>([notification.userInfo objectForKey:WebKit::notificationUserInfoResourceTypeKey()]);
     if (!type)
         return;
 
@@ -120,7 +163,7 @@ void LinkDecorationFilteringController::setCachedStrings(Vector<WebCore::LinkDec
 
 void LinkDecorationFilteringController::updateStrings(CompletionHandler<void()>&& callback)
 {
-    if (!PAL::isWebPrivacyFrameworkAvailable()) {
+    if (!WebKit::canUseWebPrivacyFramework()) {
         callback();
         return;
     }
@@ -153,7 +196,7 @@ void LinkDecorationFilteringController::updateStrings(CompletionHandler<void()>&
 using LinkFilteringRulesCallback = CompletionHandler<void(Vector<WebCore::LinkDecorationFilteringData>&&)>;
 void requestLinkDecorationFilteringData(LinkFilteringRulesCallback&& callback)
 {
-    if (!PAL::isWebPrivacyFrameworkAvailable()) {
+    if (!WebKit::canUseWebPrivacyFramework()) {
         callback({ });
         return;
     }
@@ -258,7 +301,7 @@ public:
     {
         static std::once_flag onceFlag;
         std::call_once(onceFlag, [&] {
-            if (!PAL::isWebPrivacyFrameworkAvailable())
+            if (!WebKit::canUseWebPrivacyFramework())
                 return;
 
             auto options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
@@ -388,7 +431,7 @@ public:
     {
         static std::once_flag onceFlag;
         std::call_once(onceFlag, [&] {
-            if (!PAL::isWebPrivacyFrameworkAvailable())
+            if (!WebKit::canUseWebPrivacyFramework())
                 return;
 
             static BOOL canRequestTrackerDomainNames = [] {

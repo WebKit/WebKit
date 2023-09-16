@@ -18,5 +18,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/animations/clip-path-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/animations/clip-path-interpolation-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/animations/clip-path-interpolation-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/animations/clip-path-interpolation-shape.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/animations/clip-path-interpolation-xywh-rect.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/animations/mask-image-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/animations/mask-no-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/animations/mask-position-interpolation.html

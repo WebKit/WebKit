@@ -27,6 +27,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "Logging.h"
 #include "WebFrame.h"
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JavaScriptCore.h>
@@ -97,7 +98,7 @@ enum class NullOrEmptyString {
     NullStringAsEmptyString
 };
 
-inline WebFrame* toWebFrame(JSContextRef context)
+inline RefPtr<WebFrame> toWebFrame(JSContextRef context)
 {
     ASSERT(context);
     return WebFrame::frameForContext(JSContextGetGlobalContext(context));
@@ -106,7 +107,7 @@ inline WebFrame* toWebFrame(JSContextRef context)
 inline WebPage* toWebPage(JSContextRef context)
 {
     ASSERT(context);
-    auto* frame = toWebFrame(context);
+    auto frame = toWebFrame(context);
     return frame ? frame->page() : nullptr;
 }
 
@@ -171,6 +172,8 @@ NSString *toNSString(JSStringRef);
 inline JSObjectRef toJSError(JSContextRef context, NSString *string)
 {
     ASSERT(context);
+
+    RELEASE_LOG_ERROR(Extensions, "Exception thrown: %{public}@", string);
 
     JSValueRef messageArgument = toJSValueRef(context, string, NullOrEmptyString::NullStringAsEmptyString);
     return JSObjectMakeError(context, 1, &messageArgument, nullptr);

@@ -86,11 +86,15 @@ public:
     float contentLogicalWidth() const { return m_contentLogicalWidth; }
 
     size_t firstBoxIndex() const { return m_firstBoxIndex; }
+    size_t lastBoxIndex() const { return firstBoxIndex() + boxCount() - 1; }
     size_t boxCount() const { return m_boxCount; }
     bool isFirstAfterPageBreak() const { return m_isFirstAfterPageBreak; }
 
     void moveVertically(float offset);
     void setEllipsisVisualRect(const FloatRect& ellipsisVisualRect) { m_ellipsisVisualRect = ellipsisVisualRect; }
+
+    bool hasContentAfterEllipsisBox() const { return m_hasContentAfterEllipsisBox; }
+    void setHasContentAfterEllipsisBox() { m_hasContentAfterEllipsisBox = true; }
 
     void setFirstBoxIndex(size_t firstBoxIndex) { m_firstBoxIndex = firstBoxIndex; }
     void setBoxCount(size_t boxCount) { m_boxCount = boxCount; }
@@ -125,6 +129,7 @@ private:
     bool m_isHorizontal : 1 { true };
     bool m_isFirstAfterPageBreak : 1 { false };
     bool m_isTruncatedInBlockDirection : 1 { false };
+    bool m_hasContentAfterEllipsisBox : 1 { false };
     // This is visual rect ignoring block direction.
     std::optional<FloatRect> m_ellipsisVisualRect { };
 };
@@ -162,7 +167,7 @@ inline FloatRect Line::visibleRectIgnoringBlockDirection() const
 {
     if (m_isTruncatedInBlockDirection)
         return { };
-    if (!hasEllipsis())
+    if (!hasEllipsis() || hasContentAfterEllipsisBox())
         return m_inkOverflow;
     if (m_isLeftToRightDirection) {
         auto visibleLineBoxRight = std::min(m_lineBoxRect.maxX(), m_ellipsisVisualRect->maxX());

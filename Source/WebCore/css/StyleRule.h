@@ -196,10 +196,10 @@ private:
 
 class StyleRuleFontPaletteValues final : public StyleRuleBase {
 public:
-    static Ref<StyleRuleFontPaletteValues> create(const AtomString& name, const AtomString& fontFamily, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&&);
+    static Ref<StyleRuleFontPaletteValues> create(const AtomString& name, Vector<AtomString>&& fontFamilies, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&&);
 
     const AtomString& name() const { return m_name; }
-    const AtomString& fontFamily() const { return m_fontFamily; }
+    const Vector<AtomString>& fontFamilies() const { return m_fontFamilies; }
     const FontPaletteValues& fontPaletteValues() const { return m_fontPaletteValues; }
     std::optional<FontPaletteIndex> basePalette() const { return m_fontPaletteValues.basePalette(); }
     const Vector<FontPaletteValues::OverriddenColor>& overrideColors() const { return m_fontPaletteValues.overrideColors(); }
@@ -207,11 +207,11 @@ public:
     Ref<StyleRuleFontPaletteValues> copy() const { return adoptRef(*new StyleRuleFontPaletteValues(*this)); }
 
 private:
-    StyleRuleFontPaletteValues(const AtomString& name, const AtomString& fontFamily, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&& overrideColors);
+    StyleRuleFontPaletteValues(const AtomString& name, Vector<AtomString>&& fontFamilies, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&& overrideColors);
     StyleRuleFontPaletteValues(const StyleRuleFontPaletteValues&) = default;
 
     AtomString m_name;
-    AtomString m_fontFamily;
+    Vector<AtomString> m_fontFamilies;
     FontPaletteValues m_fontPaletteValues;
 };
 

@@ -92,7 +92,7 @@ void loadPendingResources(RenderStyle& style, Document& document, const Element*
 
     loadPendingImage(document, style.listStyleImage(), element);
     loadPendingImage(document, style.borderImageSource(), element);
-    loadPendingImage(document, style.maskBoxImageSource(), element);
+    loadPendingImage(document, style.maskBorderSource(), element);
 
     if (auto* reflection = style.boxReflect())
         loadPendingImage(document, reflection->mask().image(), element);

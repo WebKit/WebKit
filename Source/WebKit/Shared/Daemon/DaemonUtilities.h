@@ -25,13 +25,19 @@
 
 #pragma once
 
+#include <wtf/OSObjectPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/spi/darwin/XPCSPI.h>
+
+namespace IPC {
+class Encoder;
+}
 
 namespace WebKit {
 
 void startListeningForMachServiceConnections(const char* serviceName, ASCIILiteral entitlement, void(*connectionAdded)(xpc_connection_t), void(*connectionRemoved)(xpc_connection_t), void(*eventHandler)(xpc_object_t));
 RetainPtr<xpc_object_t> vectorToXPCData(Vector<uint8_t>&&);
+OSObjectPtr<xpc_object_t> encoderToXPCData(UniqueRef<IPC::Encoder>&&);
 
 } // namespace WebKit

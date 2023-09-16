@@ -64,7 +64,7 @@ void StyleNamedImage::load(CachedResourceLoader&, const ResourceLoaderOptions&)
 {
 }
 
-RefPtr<Image> StyleNamedImage::image(const RenderElement* renderer, const FloatSize& size) const
+RefPtr<Image> StyleNamedImage::image(const RenderElement* renderer, const FloatSize& size, bool) const
 {
     if (!renderer)
         return &Image::nullImage();

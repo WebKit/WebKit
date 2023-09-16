@@ -124,16 +124,6 @@ void MockMediaSourcePrivate::setReadyState(MediaPlayer::ReadyState readyState)
     m_player.setReadyState(readyState);
 }
 
-void MockMediaSourcePrivate::waitForSeekCompleted()
-{
-    m_player.waitForSeekCompleted();
-}
-
-void MockMediaSourcePrivate::seekCompleted()
-{
-    m_player.seekCompleted();
-}
-
 void MockMediaSourcePrivate::sourceBufferPrivateDidChangeActiveState(MockSourceBufferPrivate* buffer, bool active)
 {
     if (active && !m_activeSourceBuffers.contains(buffer))
@@ -163,22 +153,20 @@ bool MockMediaSourcePrivate::hasVideo() const
     return std::any_of(m_activeSourceBuffers.begin(), m_activeSourceBuffers.end(), MockSourceBufferPrivateHasVideo);
 }
 
-void MockMediaSourcePrivate::seekToTime(const MediaTime& time)
+void MockMediaSourcePrivate::waitForTarget(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
 {
     if (m_client)
-        m_client->seekToTime(time);
+        m_client->waitForTarget(target, WTFMove(completionHandler));
+    else
+        completionHandler(MediaTime::invalidTime());
 }
 
-MediaTime MockMediaSourcePrivate::seekToTime(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)
+void MockMediaSourcePrivate::seekToTime(const MediaTime& time, CompletionHandler<void()>&& completionHandler)
 {
-    MediaTime seekTime = targetTime;
-    for (auto& buffer : m_activeSourceBuffers) {
-        MediaTime sourceSeekTime = buffer->fastSeekTimeForMediaTime(targetTime, negativeThreshold, positiveThreshold);
-        if (abs(targetTime - sourceSeekTime) > abs(targetTime - seekTime))
-            seekTime = sourceSeekTime;
-    }
-
-    return seekTime;
+    if (m_client)
+        m_client->seekToTime(time, WTFMove(completionHandler));
+    else
+        completionHandler();
 }
 
 MediaTime MockMediaSourcePrivate::currentMediaTime() const

@@ -22,19 +22,14 @@ class RendererWGL : public RendererGL
     RendererWGL(std::unique_ptr<FunctionsGL> functionsGL,
                 const egl::AttributeMap &attribMap,
                 DisplayWGL *display,
-                HGLRC context,
-                HGLRC sharedContext,
-                const std::vector<int> workerContextAttribs);
+                HGLRC context);
     ~RendererWGL() override;
 
     HGLRC getContext() const;
 
   private:
-    WorkerContext *createWorkerContext(std::string *infoLog) override;
     DisplayWGL *mDisplay;
     HGLRC mContext;
-    HGLRC mSharedContext;
-    const std::vector<int> mWorkerContextAttribs;
 };
 }  // namespace rx
 

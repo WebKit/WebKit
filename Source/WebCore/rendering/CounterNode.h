@@ -23,6 +23,7 @@
 
 #include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
+#include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 
 // This implements a counter tree that is used for finding parents in counters() lookup,
@@ -41,10 +42,13 @@ class RenderElement;
 
 class CounterNode : public RefCounted<CounterNode>, public CanMakeCheckedPtr {
 public:
-    static Ref<CounterNode> create(RenderElement&, bool isReset, int value);
+    enum class Type : uint8_t { Increment, Reset, Set };
+
+    static Ref<CounterNode> create(RenderElement&, OptionSet<Type>, int value);
     ~CounterNode();
-    bool actsAsReset() const { return m_hasResetType || !m_parent; }
-    bool hasResetType() const { return m_hasResetType; }
+    bool actsAsReset() const { return hasResetType() || !m_parent; }
+    bool hasResetType() const { return m_type.contains(Type::Reset); }
+    bool hasSetType() const { return m_type.contains(Type::Set); }
     int value() const { return m_value; }
     int countInParent() const { return m_countInParent; }
     RenderElement& owner() const { return m_owner; }
@@ -69,14 +73,14 @@ public:
     void removeChild(CounterNode&);
 
 private:
-    CounterNode(RenderElement&, bool isReset, int value);
+    CounterNode(RenderElement&, OptionSet<Type>, int value);
     int computeCountInParent() const;
     // Invalidates the text in the renderer of this counter, if any,
     // and in the renderers of all descendants of this counter, if any.
     void resetThisAndDescendantsRenderers();
     void recount();
 
-    bool m_hasResetType;
+    OptionSet<Type> m_type { };
     int m_value;
     int m_countInParent { 0 };
     RenderElement& m_owner;

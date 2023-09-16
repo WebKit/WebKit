@@ -158,16 +158,18 @@ class Clone(Command):
                 milestone = None
                 continue
             if milestone.isRestricted:
-                for group in milestone.restrictedAccessGroup.split(','):
-                    if rdar.me().username in rdar.library.AppleDirectoryQuery.member_dsid_list_for_group_name(group):
+                for group in milestone.restrictedAccessGroups:
+                    name = group.name[4:] if group.name.startswith('DS: ') else group.name
+                    if rdar.me().username in rdar.library.AppleDirectoryQuery.member_dsid_list_for_group_name(name):
                         break
                 else:
                     sys.stderr.write("You do not have read access to '{}', pick another\n".format(milestone.name))
                     milestone = None
                     continue
             if milestone.isProtected:
-                for group in milestone.protectedAccessGroup.split(','):
-                    if rdar.me().username in rdar.library.AppleDirectoryQuery.member_dsid_list_for_group_name(group):
+                for group in milestone.protectedAccessGroups:
+                    name = group.name[4:] if group.name.startswith('DS: ') else group.name
+                    if rdar.me().username in rdar.library.AppleDirectoryQuery.member_dsid_list_for_group_name(name):
                         break
                 else:
                     sys.stderr.write("You do not have write access to '{}', pick another\n".format(milestone.name))

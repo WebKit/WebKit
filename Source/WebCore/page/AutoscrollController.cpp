@@ -98,7 +98,7 @@ void AutoscrollController::stopAutoscrollTimer(bool rendererIsBeingDestroyed)
 
     auto* frame = scrollable->document().frame();
     if (autoscrollInProgress() && frame && frame->eventHandler().mouseDownWasInSubframe()) {
-        if (auto subframe = frame->eventHandler().subframeForTargetNode(frame->eventHandler().mousePressNode()))
+        if (auto subframe = dynamicDowncast<LocalFrame>(frame->eventHandler().subframeForTargetNode(frame->eventHandler().mousePressNode())))
             subframe->eventHandler().stopAutoscrollTimer(rendererIsBeingDestroyed);
         return;
     }

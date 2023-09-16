@@ -89,7 +89,7 @@ Protocol::ErrorStringOr<std::tuple<Protocol::Runtime::SyntaxErrorType, String /*
     JSLockHolder lock(m_vm);
 
     ParserError error;
-    checkSyntax(m_vm, JSC::makeSource(expression, { }), error);
+    checkSyntax(m_vm, JSC::makeSource(expression, { }, SourceTaintedOrigin::Untainted), error);
 
     std::optional<Protocol::Runtime::SyntaxErrorType> result;
     String message;

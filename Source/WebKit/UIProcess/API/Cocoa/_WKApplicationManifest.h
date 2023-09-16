@@ -51,7 +51,7 @@ typedef NS_ENUM(NSInteger, _WKApplicationManifestOrientation) {
     _WKApplicationManifestOrientationPortrait,
     _WKApplicationManifestOrientationPortraitPrimary,
     _WKApplicationManifestOrientationPortraitSecondary,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(14.0), ios(17.0));
 
 typedef NS_ENUM(NSInteger, _WKApplicationManifestIconPurpose) {
     _WKApplicationManifestIconPurposeAny = (1 << 0),
@@ -72,9 +72,9 @@ WK_CLASS_AVAILABLE(macos(10.13.4), ios(11.3))
 @property (nonatomic, readonly, copy) NSArray<_WKApplicationManifestIcon *> *icons WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 #if TARGET_OS_IPHONE
-@property (nonatomic, readonly, nullable, copy) UIColor *backgroundColor WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic, readonly, nullable, copy) UIColor *backgroundColor WK_API_AVAILABLE(ios(17.0));
 #else
-@property (nonatomic, readonly, nullable, copy) NSColor *backgroundColor WK_API_AVAILABLE(macos(WK_MAC_TBA));
+@property (nonatomic, readonly, nullable, copy) NSColor *backgroundColor WK_API_AVAILABLE(macos(14.0));
 #endif
 
 #if TARGET_OS_IPHONE

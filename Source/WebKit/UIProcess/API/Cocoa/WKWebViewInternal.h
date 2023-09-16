@@ -235,6 +235,7 @@ struct PerWebProcessState {
 
     BOOL _findInteractionEnabled;
 #if HAVE(UIFINDINTERACTION)
+    RetainPtr<UIView> _findOverlay;
     RetainPtr<UIFindInteraction> _findInteraction;
 #endif
 
@@ -364,7 +365,10 @@ RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails&)
 
 #if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
 @interface WKWebView (FullScreenAPI_Internal)
--(WKFullScreenWindowController *)fullScreenWindowController;
+- (WKFullScreenWindowController *)fullScreenWindowController;
+#if PLATFORM(VISION)
+- (UIMenu *)fullScreenWindowSceneDimmingAction;
+#endif
 @end
 #endif
 

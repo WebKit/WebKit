@@ -397,7 +397,8 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
 
         geometry.clip(LayoutRect(pixelSnappedRect));
         RefPtr<Image> image;
-        if (!geometry.destinationRect.isEmpty() && (image = bgImage->image(backgroundObject ? backgroundObject : &m_renderer, geometry.tileSize))) {
+        bool isFirstLine = box && box->lineBox()->isFirst();
+        if (!geometry.destinationRect.isEmpty() && (image = bgImage->image(backgroundObject ? backgroundObject : &m_renderer, geometry.tileSize, isFirstLine))) {
             context.setDrawLuminanceMask(bgLayer.maskMode() == MaskMode::Luminance);
 
             if (is<BitmapImage>(image))

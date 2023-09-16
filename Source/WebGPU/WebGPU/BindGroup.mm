@@ -419,7 +419,7 @@ static MTLResourceUsage resourceUsageForBindingAcccess(BindGroupLayout::BindingA
 
 Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor)
 {
-    if (descriptor.nextInChain)
+    if (descriptor.nextInChain || !descriptor.layout)
         return BindGroup::createInvalid(*this);
 
     // FIXME: We have to validate that the bind group is compatible with the bind group layout.

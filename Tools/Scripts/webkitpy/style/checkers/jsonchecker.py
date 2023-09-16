@@ -88,7 +88,7 @@ class JSONFeaturesChecker(JSONChecker):
 
             features_list = features_definition['features']
             previous_feature_name = ''
-            for i in xrange(len(features_list)):
+            for i in range(len(features_list)):
                 feature = features_list[i]
                 feature_name = 'Feature %s' % i
                 if 'name' not in feature or not feature['name']:

@@ -47,11 +47,6 @@ WebGLCompressedTexturePVRTC::WebGLCompressedTexturePVRTC(WebGLRenderingContextBa
 
 WebGLCompressedTexturePVRTC::~WebGLCompressedTexturePVRTC() = default;
 
-WebGLExtension::ExtensionName WebGLCompressedTexturePVRTC::getName() const
-{
-    return WebGLCompressedTexturePVRTCName;
-}
-
 bool WebGLCompressedTexturePVRTC::supported(GraphicsContextGL& context)
 {
     return context.supportsExtension("GL_IMG_texture_compression_pvrtc"_s);

@@ -5,3 +5,16 @@
 # Platform-specific directories. Skipped globally, then re-enabled here.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
+# Failing after OS migration rdar://112624778 (Migrate macOS Sonoma test expectations to OpenSource, add expectation files to Down-Levels (259373))
+fast/dom/SelectorAPI/caseID.html [ Pass Failure ]
+fast/selectors/style-invalidation-hover-change-descendants.html [ Pass Failure ]
+fast/selectors/style-invalidation-hover-change-siblings.html [ Pass Failure ]
+fullscreen/fullscreen-no-scrollbars-on-ancestor-root.html [ Pass ImageOnlyFailure ]
+http/tests/appcache/remove-cache.html [ Timeout Failure ]
+imported/w3c/web-platform-tests/content-security-policy/reporting/report-original-url-on-mixed-content-frame.https.sub.html [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-content-box-002.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-backgrounds/background-size-percentage-root.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/selectors/invalidation/nth-child-in-shadow-root.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/selectors/invalidation/nth-last-child-in-shadow-root.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/animations/animate-elem-16-t-drt.html [ Pass Timeout ]
+imported/w3c/web-platform-tests/xhr/request-content-length.any.worker.html [ Pass Failure ]

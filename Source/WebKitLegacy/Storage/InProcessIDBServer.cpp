@@ -96,11 +96,11 @@ InProcessIDBServer::InProcessIDBServer(PAL::SessionID sessionID, const String& d
 {
     ASSERT(isMainThread());
     m_connectionToServer = IDBClient::IDBConnectionToServer::create(*this);
-    dispatchTask([this, protectedThis = Ref { *this }, sessionID, directory = databaseDirectoryPath.isolatedCopy(), spaceRequester = storageQuotaManagerSpaceRequester(*this)] () mutable {
+    dispatchTask([this, protectedThis = Ref { *this }, directory = databaseDirectoryPath.isolatedCopy(), spaceRequester = storageQuotaManagerSpaceRequester(*this)] () mutable {
         m_connectionToClient = IDBServer::IDBConnectionToClient::create(*this);
 
         Locker locker { m_serverLock };
-        m_server = makeUnique<IDBServer::IDBServer>(sessionID, directory, WTFMove(spaceRequester), m_serverLock);
+        m_server = makeUnique<IDBServer::IDBServer>(directory, WTFMove(spaceRequester), m_serverLock);
         m_server->registerConnection(*m_connectionToClient);
     });
 }

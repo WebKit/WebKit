@@ -20,4 +20,4 @@ assert.sameValue(calendar.dateFromFieldsCallCount, 1, "dateFromFields should be 
 calendar.dateFromFieldsCallCount = 0;
 
 Temporal.ZonedDateTime.compare(arg2, arg1);
-assert.sameValue(calendar.dateFromFieldsCallCount, 1, "dateFromFields should be called on the property bag's calendar (first argument)");
+assert.sameValue(calendar.dateFromFieldsCallCount, 1, "dateFromFields should be called on the property bag's calendar (second argument)");

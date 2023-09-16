@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+ // https://html.spec.whatwg.org/multipage/media.html#audiotrack
+
 [
     Conditional=VIDEO,
     ExportMacro=WEBCORE_EXPORT,
@@ -33,7 +35,7 @@
     [EnabledConditionallyReadWriteBySetting=MediaSourceEnabled] attribute [AtomString] DOMString kind;
     readonly attribute DOMString label;
     [EnabledConditionallyReadWriteBySetting=MediaSourceEnabled] attribute [AtomString] DOMString language;
-    [EnabledBySetting=TrackConfigurationEnabled] readonly attribute AudioTrackConfiguration configuration;
-
     attribute boolean enabled;
+
+    [EnabledBySetting=TrackConfigurationEnabled] readonly attribute AudioTrackConfiguration configuration;
 };

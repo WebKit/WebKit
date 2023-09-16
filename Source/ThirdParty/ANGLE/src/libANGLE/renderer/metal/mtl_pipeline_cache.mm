@@ -92,11 +92,12 @@ angle::Result ValidateRenderPipelineState(ContextMtl *context,
 }
 
 angle::Result CreateRenderPipelineState(ContextMtl *context,
-                                        const RenderPipelineKey &key,
+                                        const PipelineKey &key,
                                         AutoObjCPtr<id<MTLRenderPipelineState>> *outRenderPipeline)
 {
     ANGLE_MTL_OBJC_SCOPE
     {
+        ASSERT(key.isRenderPipeline());
         if (!key.vertexShader)
         {
             // Render pipeline without vertex shader is invalid.
@@ -138,20 +139,85 @@ angle::Result CreateRenderPipelineState(ContextMtl *context,
     }
 }
 
+angle::Result CreateComputePipelineState(
+    ContextMtl *context,
+    const PipelineKey &key,
+    AutoObjCPtr<id<MTLComputePipelineState>> *outComputePipeline)
+{
+    ANGLE_MTL_OBJC_SCOPE
+    {
+        ASSERT(!key.isRenderPipeline());
+        if (!key.computeShader)
+        {
+            ANGLE_MTL_HANDLE_ERROR(context, "Compute pipeline without a shader is invalid.",
+                                   GL_INVALID_OPERATION);
+            return angle::Result::Stop;
+        }
+
+        const mtl::ContextDevice &metalDevice = context->getMetalDevice();
+
+        // Create pipeline state
+        NSError *err  = nil;
+        auto newState = metalDevice.newComputePipelineStateWithFunction(key.computeShader, &err);
+        if (err)
+        {
+            ANGLE_MTL_HANDLE_ERROR(context, mtl::FormatMetalErrorMessage(err).c_str(),
+                                   GL_INVALID_OPERATION);
+            return angle::Result::Stop;
+        }
+
+        *outComputePipeline = newState;
+        return angle::Result::Continue;
+    }
+}
+
 }  // namespace
 
-bool RenderPipelineKey::operator==(const RenderPipelineKey &rhs) const
+bool PipelineKey::isRenderPipeline() const
 {
-    return std::tie(vertexShader, fragmentShader, pipelineDesc) ==
-           std::tie(rhs.vertexShader, rhs.fragmentShader, rhs.pipelineDesc);
+    if (vertexShader)
+    {
+        ASSERT(!computeShader);
+        return true;
+    }
+    else
+    {
+        ASSERT(computeShader);
+        return false;
+    }
 }
 
-size_t RenderPipelineKey::hash() const
+bool PipelineKey::operator==(const PipelineKey &rhs) const
 {
-    return angle::HashMultiple(vertexShader.get(), fragmentShader.get(), pipelineDesc);
+    if (isRenderPipeline() != rhs.isRenderPipeline())
+    {
+        return false;
+    }
+
+    if (isRenderPipeline())
+    {
+        return std::tie(vertexShader, fragmentShader, pipelineDesc) ==
+               std::tie(rhs.vertexShader, rhs.fragmentShader, rhs.pipelineDesc);
+    }
+    else
+    {
+        return computeShader == rhs.computeShader;
+    }
 }
 
-PipelineCache::PipelineCache() : mRenderPiplineCache(kMaxPipelines) {}
+size_t PipelineKey::hash() const
+{
+    if (isRenderPipeline())
+    {
+        return angle::HashMultiple(vertexShader.get(), fragmentShader.get(), pipelineDesc);
+    }
+    else
+    {
+        return angle::HashMultiple(computeShader.get());
+    }
+}
+
+PipelineCache::PipelineCache() : mPipelineCache(kMaxPipelines) {}
 
 angle::Result PipelineCache::getRenderPipeline(
     ContextMtl *context,
@@ -160,26 +226,56 @@ angle::Result PipelineCache::getRenderPipeline(
     const RenderPipelineDesc &desc,
     AutoObjCPtr<id<MTLRenderPipelineState>> *outRenderPipeline)
 {
-    RenderPipelineKey key;
+    PipelineKey key;
     key.vertexShader.retainAssign(vertexShader);
     key.fragmentShader.retainAssign(fragmentShader);
     key.pipelineDesc = desc;
 
-    auto iter = mRenderPiplineCache.Get(key);
-    if (iter != mRenderPiplineCache.end())
+    auto iter = mPipelineCache.Get(key);
+    if (iter != mPipelineCache.end())
     {
-        *outRenderPipeline = iter->second;
+        // Should be no way that this key matched a compute pipeline entry
+        ASSERT(iter->second.renderPipeline);
+        *outRenderPipeline = iter->second.renderPipeline;
         return angle::Result::Continue;
     }
 
-    angle::TrimCache(kMaxPipelines, kGCLimit, "render pipeline", &mRenderPiplineCache);
+    angle::TrimCache(kMaxPipelines, kGCLimit, "render pipeline", &mPipelineCache);
 
-    AutoObjCPtr<id<MTLRenderPipelineState>> newPipeline;
-    ANGLE_TRY(CreateRenderPipelineState(context, key, &newPipeline));
+    PipelineVariant newPipeline;
+    ANGLE_TRY(CreateRenderPipelineState(context, key, &newPipeline.renderPipeline));
 
-    iter = mRenderPiplineCache.Put(std::move(key), std::move(newPipeline));
+    iter = mPipelineCache.Put(std::move(key), std::move(newPipeline));
 
-    *outRenderPipeline = iter->second;
+    *outRenderPipeline = iter->second.renderPipeline;
+    return angle::Result::Continue;
+}
+
+angle::Result PipelineCache::getComputePipeline(
+    ContextMtl *context,
+    id<MTLFunction> computeShader,
+    AutoObjCPtr<id<MTLComputePipelineState>> *outComputePipeline)
+{
+    PipelineKey key;
+    key.computeShader.retainAssign(computeShader);
+
+    auto iter = mPipelineCache.Get(key);
+    if (iter != mPipelineCache.end())
+    {
+        // Should be no way that this key matched a render pipeline entry
+        ASSERT(iter->second.computePipeline);
+        *outComputePipeline = iter->second.computePipeline;
+        return angle::Result::Continue;
+    }
+
+    angle::TrimCache(kMaxPipelines, kGCLimit, "render pipeline", &mPipelineCache);
+
+    PipelineVariant newPipeline;
+    ANGLE_TRY(CreateComputePipelineState(context, key, &newPipeline.computePipeline));
+
+    iter = mPipelineCache.Put(std::move(key), std::move(newPipeline));
+
+    *outComputePipeline = iter->second.computePipeline;
     return angle::Result::Continue;
 }
 

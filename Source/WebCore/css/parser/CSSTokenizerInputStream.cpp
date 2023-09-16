@@ -31,6 +31,7 @@
 #include "CSSTokenizerInputStream.h"
 
 namespace WebCore {
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSTokenizerInputStream);
 
 CSSTokenizerInputStream::CSSTokenizerInputStream(const String& input)
     : m_offset(0)

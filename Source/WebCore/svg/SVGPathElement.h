@@ -96,10 +96,6 @@ public:
     Ref<SVGPathSegList>& pathSegList() { return m_pathSegList->baseVal(); }
     RefPtr<SVGPathSegList>& animatedPathSegList() { return m_pathSegList->animVal(); }
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=15412 - Implement normalized path segment lists!
-    RefPtr<SVGPathSegList> normalizedPathSegList() { return nullptr; }
-    RefPtr<SVGPathSegList> animatedNormalizedPathSegList() { return nullptr; }
-
     const SVGPathByteStream& pathByteStream() const { return m_pathSegList->currentPathByteStream(); }
     Path path() const { return m_pathSegList->currentPath(); }
     size_t approximateMemoryCost() const final { return m_pathSegList->approximateMemoryCost(); }

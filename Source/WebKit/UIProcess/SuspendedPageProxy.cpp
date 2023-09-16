@@ -55,9 +55,9 @@ static HashSet<SuspendedPageProxy*>& allSuspendedPages()
 RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(WebProcessPool& processPool, const RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode)
 {
     for (auto* suspendedPage : allSuspendedPages()) {
-        auto& process = suspendedPage->process();
-        if (&process.processPool() == &processPool && process.registrableDomain() == registrableDomain && process.websiteDataStore() == &dataStore && process.crossOriginMode() != CrossOriginMode::Isolated && process.lockdownMode() == lockdownMode && !process.wasTerminated())
-            return &process;
+        Ref process = suspendedPage->process();
+        if (&process->processPool() == &processPool && process->registrableDomain() == registrableDomain && process->websiteDataStore() == &dataStore && process->crossOriginMode() != CrossOriginMode::Isolated && process->lockdownMode() == lockdownMode && !process->wasTerminated())
+            return process;
     }
     return nullptr;
 }
@@ -139,6 +139,11 @@ SuspendedPageProxy::~SuspendedPageProxy()
     m_process->removeSuspendedPageProxy(*this);
 }
 
+Ref<WebPageProxy> SuspendedPageProxy::protectedPage() const
+{
+    return m_page.get();
+}
+
 HashMap<WebCore::RegistrableDomain, WeakPtr<RemotePageProxy>> SuspendedPageProxy::takeRemotePageMap()
 {
     return std::exchange(m_remotePageMap, { });
@@ -146,7 +151,7 @@ HashMap<WebCore::RegistrableDomain, WeakPtr<RemotePageProxy>> SuspendedPageProxy
 
 void SuspendedPageProxy::didDestroyNavigation(uint64_t navigationID)
 {
-    m_page.didDestroyNavigationShared(m_process.copyRef(), navigationID);
+    protectedPage()->didDestroyNavigationShared(m_process.copyRef(), navigationID);
 }
 
 WebBackForwardCache& SuspendedPageProxy::backForwardCache() const

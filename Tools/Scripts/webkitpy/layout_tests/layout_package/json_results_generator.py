@@ -38,10 +38,15 @@ _log = logging.getLogger(__name__)
 
 _JSON_PREFIX = "ADD_RESULTS("
 _JSON_SUFFIX = ");"
+_JSON_PREFIX_B = b"ADD_RESULTS("
+_JSON_SUFFIX_B = b");"
 
 
 def has_json_wrapper(string):
-    return string.startswith(_JSON_PREFIX) and string.endswith(_JSON_SUFFIX)
+    if isinstance(string, bytes):
+        return string.startswith(_JSON_PREFIX_B) and string.endswith(_JSON_SUFFIX_B)
+    else:
+        return string.startswith(_JSON_PREFIX) and string.endswith(_JSON_SUFFIX)
 
 
 def strip_json_wrapper(json_content):

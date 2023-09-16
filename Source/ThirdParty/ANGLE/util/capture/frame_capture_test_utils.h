@@ -50,6 +50,12 @@ class TraceLibrary : angle::NonCopyable, angle::TraceCallbacks
         return (mTraceLibrary != nullptr) && (mTraceLibrary->getNative() != nullptr);
     }
 
+    void setReplayResourceMode(const bool resourceMode)
+    {
+        mTraceFunctions->SetReplayResourceMode(
+            (resourceMode ? ReplayResourceMode::All : ReplayResourceMode::Active));
+    }
+
     void setBinaryDataDir(const char *dataDir)
     {
         mBinaryDataDir = dataDir;

@@ -497,6 +497,13 @@ struct FeaturesVk : FeatureSetBase
         &members, "http://anglebug.com/5281"
     };
 
+    FeatureInfo allowMultisampledRenderToTextureEmulation = {
+        "allowMultisampledRenderToTextureEmulation",
+        FeatureCategory::VulkanWorkarounds,
+        "Allow emulation of EXT_multisampled_render_to_texture",
+        &members, "http://anglebug.com/8291"
+    };
+
     FeatureInfo enableMultisampledRenderToTexture = {
         "enableMultisampledRenderToTexture",
         FeatureCategory::VulkanWorkarounds,
@@ -1241,6 +1248,20 @@ struct FeaturesVk : FeatureSetBase
         FeatureCategory::VulkanWorkarounds,
         "Enable use of VK_KHR_portability_enumeration extension",
         &members, "http://anglebug.com/8229"
+    };
+
+    FeatureInfo supportsTimelineSemaphore = {
+        "supportsTimelineSemaphore",
+        FeatureCategory::VulkanFeatures,
+        "VkDevice supports the VK_KHR_timeline_semaphore extension",
+        &members,
+    };
+
+    FeatureInfo enableParallelCompileAndLink = {
+        "enableParallelCompileAndLink",
+        FeatureCategory::VulkanFeatures,
+        "Expose the GL_KHR_parallel_shader_compile extension",
+        &members, "http://anglebug.com/8297"
     };
 
 };

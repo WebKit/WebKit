@@ -1444,10 +1444,7 @@ public:
         Tmp operator*() const { return TmpMapper::tmpFromAbsoluteIndex(*m_indexIterator); }
         IndexToTmpIteratorAdaptor& operator++() { ++m_indexIterator; return *this; }
 
-        bool operator==(const IndexToTmpIteratorAdaptor& other) const
-        {
-            return m_indexIterator == other.m_indexIterator;
-        }
+        friend bool operator==(const IndexToTmpIteratorAdaptor&, const IndexToTmpIteratorAdaptor&) = default;
 
     private:
         IndexIterator m_indexIterator;

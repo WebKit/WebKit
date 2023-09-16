@@ -5,7 +5,7 @@
  *                     2000 Simon Hausmann <hausmann@kde.org>
  *                     2000 Stefan Schimanski <1Stein@gmx.de>
  *                     2001 George Staikos <staikos@kde.org>
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2005 Alexey Proskuryakov <ap@nypop.com>
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
@@ -328,6 +328,11 @@ void LocalFrame::changeLocation(FrameLoadRequest&& request)
 void LocalFrame::broadcastFrameRemovalToOtherProcesses()
 {
     loader().client().broadcastFrameRemovalToOtherProcesses();
+}
+
+void LocalFrame::didFinishLoadInAnotherProcess()
+{
+    loader().provisionalLoadFailedInAnotherProcess();
 }
 
 void LocalFrame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsReason reason)
@@ -708,7 +713,7 @@ void LocalFrame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserS
 
     document->setAsRunningUserScripts();
     loader().client().willInjectUserScript(world);
-    m_script->evaluateInWorldIgnoringException(ScriptSourceCode(script.source(), URL(script.url())), world);
+    m_script->evaluateInWorldIgnoringException(ScriptSourceCode(script.source(), JSC::SourceTaintedOrigin::Untainted, URL(script.url())), world);
 }
 
 void LocalFrame::addUserScriptAwaitingNotification(DOMWrapperWorld& world, const UserScript& script)
@@ -749,7 +754,7 @@ LocalFrame* LocalFrame::frameForWidget(const Widget& widget)
 
     // Assume all widgets are either a FrameView or owned by a RenderWidget.
     // FIXME: That assumption is not right for scroll bars!
-    return dynamicDowncast<LocalFrame>(downcast<LocalFrameView>(widget).frame());
+    return &downcast<LocalFrameView>(widget).frame();
 }
 
 void LocalFrame::clearTimers(LocalFrameView *view, Document *document)
@@ -759,8 +764,7 @@ void LocalFrame::clearTimers(LocalFrameView *view, Document *document)
     view->layoutContext().unscheduleLayout();
     if (auto* timelines = document->timelinesController())
         timelines->suspendAnimations();
-    if (auto* localFrame = dynamicDowncast<LocalFrame>(view->frame()))
-        localFrame->eventHandler().stopAutoscrollTimer();
+    view->frame().eventHandler().stopAutoscrollTimer();
 }
 
 void LocalFrame::clearTimers()

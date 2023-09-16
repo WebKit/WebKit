@@ -103,13 +103,16 @@ inline int CID(const Context *context)
     return context == nullptr ? 0 : static_cast<int>(context->id().value);
 }
 
-bool GeneratePixelLocalStorageActiveError(const Context *context, angle::EntryPoint entryPoint);
+bool GeneratePixelLocalStorageActiveError(const PrivateState &state,
+                                          ErrorSet *errors,
+                                          angle::EntryPoint entryPoint);
 
-ANGLE_INLINE bool ValidatePixelLocalStorageInactive(const Context *context,
+ANGLE_INLINE bool ValidatePixelLocalStorageInactive(const PrivateState &state,
+                                                    ErrorSet *errors,
                                                     angle::EntryPoint entryPoint)
 {
-    return context->getState().getPixelLocalStorageActivePlanes() == 0 ||
-           GeneratePixelLocalStorageActiveError(context, entryPoint);
+    return state.getPixelLocalStorageActivePlanes() == 0 ||
+           GeneratePixelLocalStorageActiveError(state, errors, entryPoint);
 }
 }  // namespace gl
 

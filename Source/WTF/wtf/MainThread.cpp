@@ -37,6 +37,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Threading.h>
+#include <wtf/WorkQueue.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 namespace WTF {

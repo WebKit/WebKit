@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x98
+  RenderBlock {HTML} at (0,0) size 800x98
+    RenderBody {BODY} at (8,8) size 784x82
+      RenderAttachment {ATTACHMENT} at (1,1) size 266x80
+        RenderGrid {DIV} at (0,0) size 266x80 [bgcolor=#0000000C]
+          RenderGrid {DIV} at (0,0) size 68x80
+            RenderAttachment {ATTACHMENT} at (8,14) size 52x52
+          RenderGrid {DIV} at (68,0) size 198x80
+            RenderGrid {DIV} at (4,40) size 170x0
+      RenderText {#text} at (268,54) size 4x18
+        text run at (268,54) width 4: " "
+      RenderImage {IMG} at (272,48) size 20x20
+      RenderText {#text} at (0,0) size 0x0
+layer at (9,9) size 266x80
+  RenderBlock (relative positioned) {DIV} at (0,0) size 266x80 [color=#00000000]
+layer at (247,9) size 28x26
+  RenderButton {BUTTON} at (238,0) size 28x26 [color=#000000D8] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]

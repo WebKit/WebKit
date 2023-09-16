@@ -73,7 +73,7 @@ struct ApplePayRequestBase {
 #endif
 };
 
-ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document&, unsigned version, ApplePayRequestBase&, const PaymentCoordinator&);
+ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document&, unsigned version, const ApplePayRequestBase&, const PaymentCoordinator&);
 
 } // namespace WebCore
 

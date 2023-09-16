@@ -43,7 +43,7 @@ struct CSSCounterStyleDescriptors {
     struct Symbol {
         bool isCustomIdent { false };
         String text;
-        bool operator==(const Symbol& other) const { return isCustomIdent == other.isCustomIdent && text == other.text; }
+        friend bool operator==(const Symbol&, const Symbol&) = default;
         String cssText() const;
     };
     using AdditiveSymbols = Vector<std::pair<Symbol, unsigned>>;
@@ -72,13 +72,13 @@ struct CSSCounterStyleDescriptors {
     struct Pad {
         unsigned m_padMinimumLength = 0;
         Symbol m_padSymbol;
-        bool operator==(const Pad& other) const { return m_padMinimumLength == other.m_padMinimumLength && m_padSymbol == other.m_padSymbol; }
+        friend bool operator==(const Pad&, const Pad&) = default;
         String cssText() const;
     };
     struct NegativeSymbols {
         Symbol m_prefix = { false, "-"_s };
         Symbol m_suffix;
-        bool operator==(const NegativeSymbols& other) const { return m_prefix == other.m_prefix && m_suffix == other.m_suffix; }
+        friend bool operator==(const NegativeSymbols&, const NegativeSymbols&) = default;
     };
     enum class ExplicitlySetDescriptors: uint16_t {
         System = 1 << 0,
@@ -97,6 +97,7 @@ struct CSSCounterStyleDescriptors {
     static CSSCounterStyleDescriptors create(AtomString name, const StyleProperties&);
     bool operator==(const CSSCounterStyleDescriptors& other) const
     {
+        // Intentionally doesn't check m_isExtendedResolved.
         return m_name == other.m_name
             && m_system == other.m_system
             && m_negativeSymbols == other.m_negativeSymbols

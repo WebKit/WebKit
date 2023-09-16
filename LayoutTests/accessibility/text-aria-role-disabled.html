@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ AriaTextRoleEnabled=false ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="text-div" role="text">
+Foo
+<button id="button">Hello</button>
+Bar
+</div>
+
+<script>
+var output = "This test ensures that role='text' doesn't work when the feature flag is disabled.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    const platform = accessibilityController.platformName;
+    if (platform !== "ios")
+        output += expect("accessibilityController.accessibleElementById('text-div').role", `${platform === "mac" ? "'AXRole: AXGroup'" : "'AXRole: AXSection'"}`);
+    // If role="text" works, this button will not be exposed as an accessibility element. So expect it to be exposed with the correct role.
+    output += expect("accessibilityController.accessibleElementById('button').role.toLowerCase().includes('button')", "true");
+
+    debug(output);
+    finishJSTest();
+}
+</script>
+</body>
+</html>
+

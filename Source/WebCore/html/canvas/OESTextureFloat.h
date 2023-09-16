@@ -26,16 +26,18 @@
 #pragma once
 
 #include "WebGLExtension.h"
+#include "WebGLRenderingContextBase.h"
+#include <wtf/IsoMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class OESTextureFloat final : public WebGLExtension {
+class OESTextureFloat final : public RefCounted<OESTextureFloat>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(OESTextureFloat);
 public:
     explicit OESTextureFloat(WebGLRenderingContextBase&);
-    virtual ~OESTextureFloat();
-
-    ExtensionName getName() const override;
+    ~OESTextureFloat();
 
     static bool supported(GraphicsContextGL&);
 };

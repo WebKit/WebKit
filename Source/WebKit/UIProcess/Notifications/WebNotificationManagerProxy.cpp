@@ -56,8 +56,8 @@ Ref<WebNotificationManagerProxy> WebNotificationManagerProxy::create(WebProcessP
 WebNotificationManagerProxy& WebNotificationManagerProxy::sharedServiceWorkerManager()
 {
     ASSERT(isMainRunLoop());
-    static WebNotificationManagerProxy* sharedManager = new WebNotificationManagerProxy(nullptr);
-    return *sharedManager;
+    static NeverDestroyed<Ref<WebNotificationManagerProxy>> sharedManager = adoptRef(*new WebNotificationManagerProxy(nullptr));
+    return sharedManager->get();
 }
 
 WebNotificationManagerProxy::WebNotificationManagerProxy(WebProcessPool* processPool)
@@ -243,7 +243,7 @@ void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* glob
         // Handle both.
 
         std::optional<WTF::UUID> coreNotificationID;
-        auto* intValue = globalNotificationIDs->at<API::UInt64>(i);
+        RefPtr intValue = globalNotificationIDs->at<API::UInt64>(i);
         if (intValue) {
             auto it = m_globalNotificationMap.find(intValue->value());
             if (it == m_globalNotificationMap.end())
@@ -251,7 +251,7 @@ void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* glob
 
             coreNotificationID = it->value;
         } else {
-            auto* dataValue = globalNotificationIDs->at<API::Data>(i);
+            RefPtr dataValue = globalNotificationIDs->at<API::Data>(i);
             if (!dataValue)
                 continue;
 

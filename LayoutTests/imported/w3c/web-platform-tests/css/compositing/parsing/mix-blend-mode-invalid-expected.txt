@@ -1,0 +1,5 @@
+
+PASS e.style['mix-blend-mode'] = "auto" should not set the property value
+PASS e.style['mix-blend-mode'] = "normal luminosity" should not set the property value
+PASS e.style['mix-blend-mode'] = "normal, luminosity" should not set the property value
+

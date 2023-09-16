@@ -1,3 +1,3 @@
 
-FAIL cookieStore.getAll returns the cookie written by cookieStore.set promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
+FAIL cookieStore.getAll returns the cookie written by cookieStore.set promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
 

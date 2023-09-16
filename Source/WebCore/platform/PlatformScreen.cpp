@@ -26,9 +26,10 @@
 #include "config.h"
 #include "PlatformScreen.h"
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK)
 
 #include "ScreenProperties.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -71,4 +72,4 @@ const ScreenData* screenData(PlatformDisplayID screenDisplayID)
 
 } // namespace WebCore
 
-#endif // PLATFORM(COCOA)
+#endif // PLATFORM(COCOA) || PLATFORM(GTK)

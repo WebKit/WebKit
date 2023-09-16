@@ -62,7 +62,7 @@ void SwapChain9::release()
 
 static DWORD convertInterval(EGLint interval)
 {
-#if ANGLE_VSYNC == ANGLE_DISABLED
+#if !ANGLE_VSYNC
     return D3DPRESENT_INTERVAL_IMMEDIATE;
 #else
     switch (interval)

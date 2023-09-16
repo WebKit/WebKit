@@ -65,6 +65,7 @@ class WebsiteDataStore;
 
 struct GPUProcessConnectionParameters;
 struct GPUProcessCreationParameters;
+struct GPUProcessPreferencesForWebProcess;
 
 class GPUProcessProxy final : public AuxiliaryProcessProxy, private ProcessThrottlerClient {
     WTF_MAKE_FAST_ALLOCATED;
@@ -76,8 +77,7 @@ public:
     ~GPUProcessProxy();
 
     void createGPUProcessConnection(WebProcessProxy&, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&);
-    void updateWebGPUEnabled(WebProcessProxy&, bool webGPUEnabled);
-    void updateDOMRenderingEnabled(WebProcessProxy&, bool isDOMRenderingEnabled);
+    void updatePreferencesForWebProcess(WebProcessProxy&, const GPUProcessPreferencesForWebProcess&);
 
     ProcessThrottler& throttler() final { return m_throttler; }
     void updateProcessAssertion();

@@ -34,6 +34,7 @@
 #include "HTMLNames.h"
 #include "SelectorPseudoTypeMap.h"
 #include <memory>
+#include <queue>
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -156,7 +157,7 @@ SelectorSpecificity simpleSelectorSpecificity(const CSSSelector& simpleSelector)
         case CSSSelector::PseudoClassType::NthLastChild:
         case CSSSelector::PseudoClassType::Host:
             return SelectorSpecificityIncrement::ClassB + maxSpecificity(simpleSelector.selectorList());
-        case CSSSelector::PseudoClassType::RelativeScope:
+        case CSSSelector::PseudoClassType::HasScope:
             return 0;
         default:
             return SelectorSpecificityIncrement::ClassB;
@@ -181,6 +182,8 @@ SelectorSpecificity simpleSelectorSpecificity(const CSSSelector& simpleSelector)
             return maxSpecificity(simpleSelector.selectorList());
         return SelectorSpecificityIncrement::ClassC;
     case CSSSelector::Match::Unknown:
+    case CSSSelector::Match::ForgivingUnknown:
+    case CSSSelector::Match::ForgivingUnknownNestContaining:
         return 0;
     }
     ASSERT_NOT_REACHED();
@@ -397,11 +400,13 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
         if (cs->match() == Match::Id) {
             builder.append('#');
             serializeIdentifier(cs->serializingValue(), builder);
-        } else if (cs->match() == CSSSelector::Match::NestingParent) {
+        } else if (cs->match() == Match::NestingParent) {
             builder.append('&');
-        } else if (cs->match() == CSSSelector::Match::Class) {
+        } else if (cs->match() == Match::Class) {
             builder.append('.');
             serializeIdentifier(cs->serializingValue(), builder);
+        } else if (cs->match() == Match::ForgivingUnknown || cs->match() == Match::ForgivingUnknownNestContaining) {
+            builder.append(cs->value());
         } else if (cs->match() == Match::PseudoClass) {
             switch (cs->pseudoClassType()) {
 #if ENABLE(FULLSCREEN_API)
@@ -675,7 +680,7 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             case CSSSelector::PseudoClassType::Scope:
                 builder.append(":scope");
                 break;
-            case CSSSelector::PseudoClassType::RelativeScope:
+            case CSSSelector::PseudoClassType::HasScope:
                 // Remove the space from the start to generate a relative selector string like in ":has(> foo)".
                 return makeString(separator.substring(1), rightSide);
             case CSSSelector::PseudoClassType::SingleButton:
@@ -979,23 +984,32 @@ CSSSelector::CSSSelector(const CSSSelector& other)
     }
 }
 
-void CSSSelector::visitAllSimpleSelectors(auto& apply) const
+bool CSSSelector::visitAllSimpleSelectors(auto& apply) const
 {
-    // Effective C++ advices for this cast to deal with generic const/non-const member function.
-    apply(*const_cast<CSSSelector*>(this));
+    std::queue<const CSSSelector*> worklist;
+    worklist.push(this);
+    while (!worklist.empty()) {
+        auto current = worklist.front();
+        worklist.pop();
 
-    // Visit the selector list member (if any) recursively (such as: :has(<list>), :is(<list>),...)
-    if (auto selectorList = this->selectorList()) {
-        auto next = selectorList->first();
-        while (next) {
-            next->visitAllSimpleSelectors(apply);
-            next = CSSSelectorList::next(next);
+        // Effective C++ advices for this cast to deal with generic const/non-const member function.
+        if (apply(*const_cast<CSSSelector*>(current)))
+            return true;
+
+        // Visit the selector list member (if any) recursively (such as: :has(<list>), :is(<list>),...)
+        if (auto selectorList = current->selectorList()) {
+            auto next = selectorList->first();
+            while (next) {
+                worklist.push(next);
+                next = CSSSelectorList::next(next);
+            }
         }
-    }
 
-    // Visit the next simple selector recursively
-    if (auto next = tagHistory())
-        next->visitAllSimpleSelectors(apply); 
+        // Visit the next simple selector
+        if (auto next = current->tagHistory())
+            worklist.push(next);
+    }
+    return false;
 }
 
 void CSSSelector::resolveNestingParentSelectors(const CSSSelectorList& parent)
@@ -1007,6 +1021,7 @@ void CSSSelector::resolveNestingParentSelectors(const CSSSelectorList& parent)
             selector.setPseudoClassType(PseudoClassType::Is);
             selector.setSelectorList(makeUnique<CSSSelectorList>(parent));
         }
+        return false;
     };
 
     visitAllSimpleSelectors(replaceParentSelector);
@@ -1020,6 +1035,7 @@ void CSSSelector::replaceNestingParentByPseudoClassScope()
             selector.setMatch(Match::PseudoClass);
             selector.setPseudoClassType(PseudoClassType::Scope);
         }
+        return false;
     };
 
     visitAllSimpleSelectors(replaceParentSelector); 
@@ -1027,16 +1043,17 @@ void CSSSelector::replaceNestingParentByPseudoClassScope()
 
 bool CSSSelector::hasExplicitNestingParent() const
 {
-    bool result = false;
+    auto checkForExplicitParent = [] (const CSSSelector& selector) {
+        if (selector.match() == Match::NestingParent)
+            return true;
 
-    auto checkForExplicitParent = [&result] (const CSSSelector& selector) {
-        if (selector.match() == CSSSelector::Match::NestingParent)
-            result = true;
+        if (selector.match() == Match::ForgivingUnknownNestContaining)
+            return true;
+
+        return false;
     };
 
-    visitAllSimpleSelectors(checkForExplicitParent);
-
-    return result;
+    return visitAllSimpleSelectors(checkForExplicitParent);
 }
 
 } // namespace WebCore

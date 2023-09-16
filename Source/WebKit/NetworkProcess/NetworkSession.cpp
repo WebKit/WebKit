@@ -142,6 +142,9 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     , m_allowsServerPreconnect(parameters.allowsServerPreconnect)
     , m_shouldRunServiceWorkersOnMainThreadForTesting(parameters.shouldRunServiceWorkersOnMainThreadForTesting)
     , m_overrideServiceWorkerRegistrationCountTestingValue(parameters.overrideServiceWorkerRegistrationCountTestingValue)
+#if ENABLE(SERVICE_WORKER)
+    , m_inspectionForServiceWorkersAllowed(parameters.inspectionForServiceWorkersAllowed)
+#endif
     , m_storageManager(createNetworkStorageManager(networkProcess, parameters))
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
     , m_notificationManager(*this, parameters.webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration { parameters.webPushDaemonConnectionConfiguration })
@@ -592,13 +595,13 @@ std::unique_ptr<WebSocketTask> NetworkSession::createWebSocketTask(WebPageProxyI
 
 void NetworkSession::registerNetworkDataTask(NetworkDataTask& task)
 {
-    // Unregistration happens automatically in ThreadSafeWeakHashSet::amortizedCleanupIfNeeded.
+    ASSERT(!m_dataTaskSet.contains(task));
     m_dataTaskSet.add(task);
+}
 
-    // FIXME: This is not in a good place. It should probably be in the NetworkDataTask constructor.
-#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
-    task.setEmulatedConditions(m_bytesPerSecondLimit);
-#endif
+void NetworkSession::unregisterNetworkDataTask(NetworkDataTask& task)
+{
+    m_dataTaskSet.remove(task);
 }
 
 NetworkLoadScheduler& NetworkSession::networkLoadScheduler()
@@ -676,7 +679,8 @@ SWServer& NetworkSession::ensureSWServer()
         // There should already be a registered path for this PAL::SessionID.
         // If there's not, then where did this PAL::SessionID come from?
         ASSERT(m_sessionID.isEphemeral() || !path.isEmpty());
-        m_swServer = makeUnique<SWServer>(*this, makeUniqueRef<WebSWOriginStore>(), info.processTerminationDelayEnabled, WTFMove(path), m_sessionID, shouldRunServiceWorkersOnMainThreadForTesting(), m_networkProcess->parentProcessHasServiceWorkerEntitlement(), overrideServiceWorkerRegistrationCountTestingValue());
+        auto inspectable = m_inspectionForServiceWorkersAllowed ? ServiceWorkerIsInspectable::Yes : ServiceWorkerIsInspectable::No;
+        m_swServer = makeUnique<SWServer>(*this, makeUniqueRef<WebSWOriginStore>(), info.processTerminationDelayEnabled, WTFMove(path), m_sessionID, shouldRunServiceWorkersOnMainThreadForTesting(), m_networkProcess->parentProcessHasServiceWorkerEntitlement(), overrideServiceWorkerRegistrationCountTestingValue(), inspectable);
     }
     return *m_swServer;
 }
@@ -697,6 +701,11 @@ WebSharedWorkerServer& NetworkSession::ensureSharedWorkerServer()
     if (!m_sharedWorkerServer)
         m_sharedWorkerServer = makeUnique<WebSharedWorkerServer>(*this);
     return *m_sharedWorkerServer;
+}
+
+Ref<NetworkStorageManager> NetworkSession::protectedStorageManager()
+{
+    return m_storageManager.copyRef();
 }
 
 CacheStorage::Engine& NetworkSession::ensureCacheEngine()
@@ -815,6 +824,18 @@ void NetworkSession::clickBackgroundFetch(const String& identifier, CompletionHa
 {
     ensureBackgroundFetchStore().clickBackgroundFetch(identifier, WTFMove(callback));
 }
+
+void NetworkSession::setInspectionForServiceWorkersAllowed(bool inspectable)
+{
+    if (m_inspectionForServiceWorkersAllowed == inspectable)
+        return;
+
+    m_inspectionForServiceWorkersAllowed = inspectable;
+
+    if (m_swServer)
+        m_swServer->setInspectable(inspectable ? ServiceWorkerIsInspectable::Yes : ServiceWorkerIsInspectable::No);
+}
+
 #endif // ENABLE(SERVICE_WORKER)
 
 } // namespace WebKit

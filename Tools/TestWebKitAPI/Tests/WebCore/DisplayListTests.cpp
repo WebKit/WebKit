@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,18 +27,13 @@
 
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListItems.h>
-#include <WebCore/DisplayListIterator.h>
 #include <WebCore/Filter.h>
 #include <WebCore/Gradient.h>
-#include <WebCore/InMemoryDisplayList.h>
 
 namespace TestWebKitAPI {
 using namespace WebCore;
 using DisplayList::DisplayList;
 using namespace DisplayList;
-
-constexpr size_t globalItemBufferCapacity = 1 << 12;
-static uint8_t globalItemBuffer[globalItemBufferCapacity];
 
 static Ref<Gradient> createGradient()
 {
@@ -61,7 +56,7 @@ static Path createComplexPath()
 
 TEST(DisplayListTests, AppendItems)
 {
-    InMemoryDisplayList list;
+    DisplayList list;
 
     EXPECT_TRUE(list.isEmpty());
 
@@ -69,170 +64,54 @@ TEST(DisplayListTests, AppendItems)
     auto path = createComplexPath();
 
     for (int i = 0; i < 50; ++i) {
-        list.append<SetStrokeThickness>(1.5);
-        list.append<FillPath>(path);
-        list.append<FillRectWithGradient>(FloatRect { 1., 1., 10., 10. }, gradient);
-        list.append<SetInlineFillColor>(Color::red);
+        list.append(SetStrokeThickness(1.5));
+        list.append(FillPath(path));
+        list.append(FillRectWithGradient(FloatRect { 1., 1., 10., 10. }, gradient));
+        list.append(SetInlineFillColor(Color::red));
 #if ENABLE(INLINE_PATH_DATA)
-        list.append<StrokeLine>(PathDataLine { { 0., 0. }, { 10., 15. } });
+        list.append(StrokeLine(PathDataLine { { 0., 0. }, { 10., 15. } }));
 #endif
     }
 
     EXPECT_FALSE(list.isEmpty());
 
     bool observedUnexpectedItem = false;
-    for (auto displayListItem : list) {
-        auto handle = displayListItem->item;
-        switch (handle.type()) {
-        case ItemType::SetStrokeThickness: {
-            EXPECT_FALSE(handle.isDrawingItem());
-            EXPECT_TRUE(handle.is<SetStrokeThickness>());
-            auto& item = handle.get<SetStrokeThickness>();
+    for (const auto& item : list.items()) {
+        WTF::switchOn(item,
+        [&](const SetStrokeThickness& item) {
             EXPECT_EQ(item.thickness(), 1.5);
-            break;
-        }
-        case ItemType::FillPath: {
-            EXPECT_TRUE(handle.isDrawingItem());
-            EXPECT_TRUE(handle.is<FillPath>());
-            auto& item = handle.get<FillPath>();
+        }, [&](const FillPath& item) {
             EXPECT_EQ(item.path(), path);
-            break;
-        }
-        case ItemType::FillRectWithGradient: {
-            EXPECT_TRUE(handle.isDrawingItem());
-            EXPECT_TRUE(handle.is<FillRectWithGradient>());
-            auto& item = handle.get<FillRectWithGradient>();
+        }, [&](const FillRectWithGradient& item) {
             EXPECT_EQ(item.rect(), FloatRect(1., 1., 10., 10.));
             EXPECT_EQ(item.gradient().ptr(), gradient.ptr());
-            break;
-        }
-        case ItemType::SetInlineFillColor: {
-            EXPECT_FALSE(handle.isDrawingItem());
-            EXPECT_TRUE(handle.is<SetInlineFillColor>());
-            auto& item = handle.get<SetInlineFillColor>();
+        }, [&](const SetInlineFillColor& item) {
             EXPECT_EQ(item.color(), Color::red);
-            break;
-        }
 #if ENABLE(INLINE_PATH_DATA)
-        case ItemType::StrokeLine: {
-            EXPECT_TRUE(handle.isDrawingItem());
-            EXPECT_TRUE(handle.is<StrokeLine>());
-            auto& item = handle.get<StrokeLine>();
+        }, [&](const StrokeLine& item) {
             EXPECT_EQ(item.start(), FloatPoint(0, 0));
             EXPECT_EQ(item.end(), FloatPoint(10., 15.));
-            break;
-        }
 #endif
-        default: {
+        }, [&](const auto& item) {
             observedUnexpectedItem = true;
-            break;
-        }
-        }
+        });
     }
 
     EXPECT_FALSE(observedUnexpectedItem);
-    EXPECT_GT(list.sizeInBytes(), 0U);
 
     list.clear();
-
-    observedUnexpectedItem = false;
-    for (auto itemAndExtent : list) {
-        UNUSED_PARAM(itemAndExtent);
-        observedUnexpectedItem = true;
-    }
-
     EXPECT_TRUE(list.isEmpty());
-    EXPECT_EQ(list.sizeInBytes(), 0U);
-    EXPECT_FALSE(observedUnexpectedItem);
 
-    list.append<FillRectWithColor>(FloatRect { 0, 0, 100, 100 }, Color::black);
-
-    for (auto displayListItem : list) {
-        auto handle = displayListItem->item;
-        EXPECT_EQ(handle.type(), ItemType::FillRectWithColor);
-        EXPECT_TRUE(handle.is<FillRectWithColor>());
-
-        auto& item = handle.get<FillRectWithColor>();
-        EXPECT_EQ(*item.color().tryGetAsSRGBABytes(), Color::black);
-        EXPECT_EQ(item.rect(), FloatRect(0, 0, 100, 100));
-    }
-
+    list.append(FillRectWithColor(FloatRect { 0, 0, 100, 100 }, Color::black));
     EXPECT_FALSE(list.isEmpty());
-    EXPECT_GT(list.sizeInBytes(), 0U);
-}
 
-TEST(DisplayListTests, ItemBufferClient)
-{
-    Vector<StrokePath> strokePathItems;
-    static ItemBufferIdentifier globalBufferIdentifier = ItemBufferIdentifier::generate();
+    auto* item = get_if<FillRectWithColor>(&list.items()[0]);
+    EXPECT_TRUE(item != nullptr);
 
-    class StrokePathReader : public ItemBufferReadingClient {
-    public:
-        StrokePathReader(const Vector<StrokePath>& items)
-            : m_items(items)
-        {
-        }
-
-    private:
-        std::optional<ItemHandle> WARN_UNUSED_RETURN decodeItem(const uint8_t* data, size_t dataLength, ItemType type, uint8_t* handleLocation) final
-        {
-            EXPECT_EQ(type, ItemType::StrokePath);
-            EXPECT_EQ(dataLength, sizeof(size_t));
-            new (handleLocation + sizeof(uint64_t)) StrokePath(m_items[*reinterpret_cast<const size_t*>(data)]);
-            return {{ handleLocation }};
-        }
-
-        const Vector<StrokePath>& m_items;
-    };
-
-    class StrokePathWriter : public ItemBufferWritingClient {
-    public:
-        StrokePathWriter(Vector<StrokePath>& items)
-            : m_items(items)
-        {
-        }
-
-    private:
-        ItemBufferHandle createItemBuffer(size_t capacity) final
-        {
-            EXPECT_LT(capacity, globalItemBufferCapacity);
-            return { globalBufferIdentifier, globalItemBuffer, globalItemBufferCapacity };
-        }
-
-        RefPtr<FragmentedSharedBuffer> encodeItemOutOfLine(const DisplayListItem& displayListItem) const final
-        {
-            auto index = m_items.size();
-            m_items.append(std::get<StrokePath>(displayListItem));
-            return SharedBuffer::create(reinterpret_cast<uint8_t*>(&index), sizeof(size_t));
-        }
-
-        Vector<StrokePath>& m_items;
-    };
-
-    DisplayList list;
-    StrokePathWriter writer { strokePathItems };
-    list.setItemBufferWritingClient(&writer);
-
-    auto path = createComplexPath();
-    list.append<SetInlineStrokeColor>(Color::blue);
-    list.append<StrokePath>(path);
-    list.append<SetInlineStrokeColor>(Color::red);
-    list.append<StrokePath>(path);
-
-    DisplayList shallowCopy {{ ItemBufferHandle { globalBufferIdentifier, globalItemBuffer, list.sizeInBytes() } }};
-    StrokePathReader reader { strokePathItems };
-    shallowCopy.setItemBufferReadingClient(&reader);
-
-    Vector<ItemType> itemTypes;
-    for (auto displayListItem : shallowCopy)
-        itemTypes.append(displayListItem->item.type());
-
-    EXPECT_FALSE(shallowCopy.isEmpty());
-    EXPECT_EQ(itemTypes.size(), 4U);
-    EXPECT_EQ(itemTypes[0], ItemType::SetInlineStrokeColor);
-    EXPECT_EQ(itemTypes[1], ItemType::StrokePath);
-    EXPECT_EQ(itemTypes[2], ItemType::SetInlineStrokeColor);
-    EXPECT_EQ(itemTypes[3], ItemType::StrokePath);
+    if (item) {
+        EXPECT_EQ(item->color().tryGetAsSRGBABytes(), Color::black);
+        EXPECT_EQ(item->rect(), FloatRect(0, 0, 100, 100));
+    }
 }
 
 } // namespace TestWebKitAPI

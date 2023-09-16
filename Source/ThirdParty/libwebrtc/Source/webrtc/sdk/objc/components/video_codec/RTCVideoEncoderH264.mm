@@ -392,7 +392,11 @@ NSUInteger GetMaxSampleRate(const webrtc::H264ProfileLevelId &profile_level_id) 
     _packetizationMode = RTCH264PacketizationModeNonInterleaved;
     _profile_level_id =
         webrtc::ParseSdpForH264ProfileLevelId([codecInfo nativeSdpVideoFormat].parameters);
-    _useBaseline = !_profile_level_id || ![(__bridge NSString *)ExtractProfile(*_profile_level_id) containsString: @"High"];
+      if (!_profile_level_id) {
+        return nil;
+      }
+
+    _useBaseline = ![(__bridge NSString *)ExtractProfile(*_profile_level_id) containsString: @"High"];
 #if ENABLE_VCP_FOR_H264_BASELINE
     _useVCP = true;
 #else

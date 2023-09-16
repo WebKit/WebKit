@@ -52,15 +52,15 @@ public:
 
     const ListenerVector& listeners() const { return m_listeners; }
 
-    void addListener(WebPage*, RefPtr<WebExtensionCallbackHandler>, NSDictionary *filter, NSString **exceptionString);
+    void addListener(WebPage*, RefPtr<WebExtensionCallbackHandler>, NSDictionary *filter, NSString **outExceptionString);
     void removeListener(WebPage*, RefPtr<WebExtensionCallbackHandler>);
     bool hasListener(RefPtr<WebExtensionCallbackHandler>);
 
 private:
     explicit WebExtensionAPIWebNavigationEvent(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context, WebExtensionEventListenerType type)
         : WebExtensionAPIObject(forMainWorld, runtime, context)
+        , m_type(type)
     {
-        m_type = type;
     }
 
     WebExtensionEventListenerType m_type;

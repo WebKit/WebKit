@@ -52,6 +52,9 @@ public:
     bool collapsed() const final { return m_start == m_end; }
     WEBCORE_EXPORT Node* commonAncestorContainer() const;
 
+    void resetDidChangeHighlight() { m_didChangeHighlight = false; }
+    bool didChangeHighlight() const { return m_didChangeHighlight; }
+
     WEBCORE_EXPORT ExceptionOr<void> setStart(Ref<Node>&&, unsigned offset);
     WEBCORE_EXPORT ExceptionOr<void> setEnd(Ref<Node>&&, unsigned offset);
     WEBCORE_EXPORT ExceptionOr<void> setStartBefore(Node&);
@@ -133,6 +136,7 @@ private:
     RangeBoundaryPoint m_start;
     RangeBoundaryPoint m_end;
     bool m_isAssociatedWithSelection { false };
+    bool m_didChangeHighlight { false };
 };
 
 WEBCORE_EXPORT SimpleRange makeSimpleRange(const Range&);

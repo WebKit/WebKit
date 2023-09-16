@@ -139,7 +139,7 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
                 return;
             }
 
-            auto* window = document.frame() ? document.frame()->window() : nullptr;
+            RefPtr window = document.frame() ? document.frame()->window() : nullptr;
             if (!window || !window->consumeTransientActivation()) {
 #if !RELEASE_LOG_DISABLED
                 Seconds lastActivationDuration = window ? MonotonicTime::now() - window->lastActivationTimestamp() : Seconds::infinity();

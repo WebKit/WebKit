@@ -38,7 +38,6 @@ enum class CompilationMode : uint8_t {
     JSToWasmICMode,
     WasmToJSMode,
 };
-static constexpr unsigned numberOfRepatchableMode = 5;
 
 const char* makeString(CompilationMode);
 

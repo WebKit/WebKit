@@ -250,6 +250,8 @@ static void testMultiprocessWebViewCreateReadyClose(UIClientMultiprocessTest* te
 
 void beforeAll()
 {
+    Test::shouldInitializeWebProcessExtensions = true;
+
     MultiprocessTest::add("WebKitWebContext", "process-per-web-view", testProcessPerWebView);
     UIClientMultiprocessTest::add("WebKitWebView", "multiprocess-create-ready-close", testMultiprocessWebViewCreateReadyClose);
 }

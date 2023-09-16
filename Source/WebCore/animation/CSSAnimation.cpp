@@ -49,7 +49,7 @@ Ref<CSSAnimation> CSSAnimation::create(const Styleable& owningElement, const Ani
 
 CSSAnimation::CSSAnimation(const Styleable& element, const Animation& backingAnimation)
     : DeclarativeAnimation(element, backingAnimation)
-    , m_animationName(backingAnimation.name().string)
+    , m_animationName(backingAnimation.name().name)
 {
 }
 

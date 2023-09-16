@@ -30,17 +30,15 @@ class ProgramVk : public ProgramImpl
     void destroy(const gl::Context *context) override;
 
     std::unique_ptr<LinkEvent> load(const gl::Context *context,
-                                    gl::BinaryInputStream *stream,
-                                    gl::InfoLog &infoLog) override;
+                                    gl::BinaryInputStream *stream) override;
     void save(const gl::Context *context, gl::BinaryOutputStream *stream) override;
     void setBinaryRetrievableHint(bool retrievable) override;
     void setSeparable(bool separable) override;
 
     std::unique_ptr<LinkEvent> link(const gl::Context *context,
                                     const gl::ProgramLinkedResources &resources,
-                                    gl::InfoLog &infoLog,
-                                    const gl::ProgramMergedVaryings &mergedVaryings) override;
-    GLboolean validate(const gl::Caps &caps, gl::InfoLog *infoLog) override;
+                                    gl::ProgramMergedVaryings &&mergedVaryings) override;
+    GLboolean validate(const gl::Caps &caps) override;
 
     angle::Result syncState(const gl::Context *context,
                             const gl::Program::DirtyBits &dirtyBits) override;
@@ -98,26 +96,11 @@ class ProgramVk : public ProgramImpl
     void getUniformiv(const gl::Context *context, GLint location, GLint *params) const override;
     void getUniformuiv(const gl::Context *context, GLint location, GLuint *params) const override;
 
-    bool areShaderUniformsDirty(gl::ShaderType shaderType) const
+    const ProgramExecutableVk *getExecutable() const
     {
-        return mExecutable.mDefaultUniformBlocksDirty[shaderType];
+        return vk::GetImpl(&mState.getExecutable());
     }
-    void setShaderUniformDirtyBit(gl::ShaderType shaderType)
-    {
-        if (!mExecutable.mDefaultUniformBlocks[shaderType]->uniformData.empty())
-        {
-            mExecutable.mDefaultUniformBlocksDirty.set(shaderType);
-        }
-    }
-    void clearShaderUniformDirtyBit(gl::ShaderType shaderType)
-    {
-        mExecutable.mDefaultUniformBlocksDirty.reset(shaderType);
-    }
-
-    const ProgramExecutableVk &getExecutable() const { return mExecutable; }
-    ProgramExecutableVk &getExecutable() { return mExecutable; }
-
-    const SpvProgramInterfaceInfo &getSpvProgramInterfaceInfo() { return mSpvProgramInterfaceInfo; }
+    ProgramExecutableVk *getExecutable() { return vk::GetImpl(&mState.getExecutable()); }
 
   private:
     template <int cols, int rows>
@@ -127,26 +110,15 @@ class ProgramVk : public ProgramImpl
                             const GLfloat *value);
 
     void reset(ContextVk *contextVk);
-    angle::Result initDefaultUniformBlocks(const gl::Context *glContext);
-    void generateUniformLayoutMapping(const gl::Context *context,
-                                      gl::ShaderMap<sh::BlockLayoutMap> &layoutMap,
-                                      gl::ShaderMap<size_t> &requiredBufferSize);
-    void initDefaultUniformLayoutMapping(gl::ShaderMap<sh::BlockLayoutMap> &layoutMap);
 
     template <class T>
     void getUniformImpl(GLint location, T *v, GLenum entryPointType) const;
 
     template <typename T>
     void setUniformImpl(GLint location, GLsizei count, const T *v, GLenum entryPointType);
-    void linkResources(const gl::Context *context, const gl::ProgramLinkedResources &resources);
 
     angle::Result createGraphicsPipelineWithDefaultState(const gl::Context *context,
                                                          vk::PipelineCacheAccess *pipelineCache);
-
-    // We keep the SPIR-V code to use for draw call pipeline creation.
-    SpvProgramInterfaceInfo mSpvProgramInterfaceInfo;
-
-    ProgramExecutableVk mExecutable;
 };
 
 }  // namespace rx

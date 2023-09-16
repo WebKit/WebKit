@@ -42,6 +42,12 @@ enum class GraphicsContextGLWebGLVersion : uint8_t {
     WebGL2
 };
 
+enum class GraphicsContextGLSimulatedCreationFailure : uint8_t {
+    None,
+    IPCBufferOOM,
+    CreationTimeout
+};
+
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 using PlatformGPUID = uint64_t;
 #endif
@@ -59,8 +65,6 @@ struct GraphicsContextGLAttributes {
     PowerPreference powerPreference { PowerPreference::Default };
 
     // Additional attributes.
-    bool shareResources { true };
-    bool noExtensions { false };
     float devicePixelRatio { 1 };
     PowerPreference initialPowerPreference { PowerPreference::Default };
     using WebGLVersion = GraphicsContextGLWebGLVersion;
@@ -76,7 +80,8 @@ struct GraphicsContextGLAttributes {
     bool xrCompatible { false };
 #endif
     bool failPlatformContextCreationForTesting { false };
-    unsigned remoteIPCBufferSizeLog2ForTesting { 0 }; // Not serialized.
+    using SimulatedCreationFailure = GraphicsContextGLSimulatedCreationFailure;
+    SimulatedCreationFailure failContextCreationForTesting { SimulatedCreationFailure::None }; // Not serialized.
 
     PowerPreference effectivePowerPreference() const
     {

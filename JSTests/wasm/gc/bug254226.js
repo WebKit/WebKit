@@ -18,8 +18,8 @@ function testNestedStruct() {
     (type $outer (struct (field (ref $inner)) (field (ref $inner))))
 
     (func $new (export "new") (result (ref $outer))
-       (struct.new_canon $outer (struct.new_canon $inner (i32.const 41) (i32.const 42))
-                                (struct.new_canon $inner (i32.const 43) (i32.const 45))))
+       (struct.new $outer (struct.new $inner (i32.const 41) (i32.const 42))
+                          (struct.new $inner (i32.const 43) (i32.const 45))))
 
     (func (export "get_field0_0") (result i32)
        (call $new)
@@ -52,8 +52,8 @@ function testNestedStructWithLocal() {
   (func $new (export "new") (result (ref $outer))
     (local i32)
     (local.set 0 (i32.const 42))
-    (struct.new_canon $outer (struct.new_canon $inner (i32.const 3) (array.new_canon_default $bvec (i32.const 1)))
-                             (struct.new_canon $inner (local.get 0) (array.new_canon_default $bvec (i32.const 6)))))
+    (struct.new $outer (struct.new $inner (i32.const 3) (array.new_default $bvec (i32.const 1)))
+                       (struct.new $inner (local.get 0) (array.new_default $bvec (i32.const 6)))))
 
   (func (export "get_field0_0") (result i32)
     (call $new)

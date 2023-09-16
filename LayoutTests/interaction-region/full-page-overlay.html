@@ -14,35 +14,19 @@
             width: 100%;
             height: 100%;
             z-index: 1;
-            opacity: 0.5;
             background-color: purple;
-        }
-
-        .tappable-overlay {
-            cursor: pointer;
         }
 
         .spacer {
             height: 5000px;
         }
-
-        #fixed-overlay {
-            position: fixed;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            background: rgba(0, 0, 0, 0.3);
-        }
     </style>
     <script src="../resources/ui-helper.js"></script>
 </head>
 <body>
-<div class="tappable-overlay overlay"></div>
 <div class="spacer">
     <div id="dynamic" class="overlay"></div>
 </div>
-<div id="fixed-overlay"></div>
 
 <pre id="results"></pre>
 <script>

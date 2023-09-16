@@ -27,6 +27,7 @@
 #include "FrameRateAligner.h"
 
 namespace WebCore {
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FrameRateAligner);
 
 FrameRateAligner::FrameRateAligner() = default;
 

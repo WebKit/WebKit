@@ -1266,7 +1266,9 @@
         SYS_sendto
         SYS_setrlimit
         SYS_setsockopt
+#if ASAN_ENABLED
         SYS_sigaltstack
+#endif
         SYS_sigprocmask
 #if !PLATFORM(MAC)
         SYS_shared_region_map_and_slide_2_np
@@ -1285,3 +1287,8 @@
 
 (when (defined? 'SYS_map_with_linking_np)
     (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
+
+
+#if ENABLE(LLVM_PROFILE_GENERATION)
+(allow file-write* (subpath "/private/tmp/WebKitPGO"))
+#endif

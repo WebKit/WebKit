@@ -47,6 +47,25 @@ class PlatformMediaSessionManager;
 enum class DelayCallingUpdateNowPlaying : bool { No, Yes };
 struct NowPlayingInfo;
 
+enum class PlatformMediaSessionRemoteControlCommandType : uint8_t {
+    NoCommand,
+    PlayCommand,
+    PauseCommand,
+    StopCommand,
+    TogglePlayPauseCommand,
+    BeginSeekingBackwardCommand,
+    EndSeekingBackwardCommand,
+    BeginSeekingForwardCommand,
+    EndSeekingForwardCommand,
+    SeekToPlaybackPositionCommand,
+    SkipForwardCommand,
+    SkipBackwardCommand,
+    NextTrackCommand,
+    PreviousTrackCommand,
+    BeginScrubbingCommand,
+    EndScrubbingCommand,
+};
+
 class PlatformMediaSession
     : public CanMakeWeakPtr<PlatformMediaSession>
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -127,24 +146,7 @@ public:
         template<class Decoder> static std::optional<RemoteCommandArgument> decode(Decoder&);
     };
 
-    enum RemoteControlCommandType : uint8_t {
-        NoCommand,
-        PlayCommand,
-        PauseCommand,
-        StopCommand,
-        TogglePlayPauseCommand,
-        BeginSeekingBackwardCommand,
-        EndSeekingBackwardCommand,
-        BeginSeekingForwardCommand,
-        EndSeekingForwardCommand,
-        SeekToPlaybackPositionCommand,
-        SkipForwardCommand,
-        SkipBackwardCommand,
-        NextTrackCommand,
-        PreviousTrackCommand,
-        BeginScrubbingCommand,
-        EndScrubbingCommand,
-    };
+    using RemoteControlCommandType = PlatformMediaSessionRemoteControlCommandType;
     bool canReceiveRemoteControlCommands() const;
     virtual void didReceiveRemoteControlCommand(RemoteControlCommandType, const RemoteCommandArgument&);
     bool supportsSeeking() const;
@@ -386,28 +388,6 @@ template <> struct EnumTraits<WebCore::PlatformMediaSession::EndInterruptionFlag
     WebCore::PlatformMediaSession::EndInterruptionFlags,
     WebCore::PlatformMediaSession::EndInterruptionFlags::NoFlags,
     WebCore::PlatformMediaSession::EndInterruptionFlags::MayResumePlaying
-    >;
-};
-
-template <> struct EnumTraits<WebCore::PlatformMediaSession::RemoteControlCommandType> {
-    using values = EnumValues <
-    WebCore::PlatformMediaSession::RemoteControlCommandType,
-    WebCore::PlatformMediaSession::RemoteControlCommandType::NoCommand,
-    WebCore::PlatformMediaSession::RemoteControlCommandType::PlayCommand,
-    WebCore::PlatformMediaSession::RemoteControlCommandType::PauseCommand,
-    WebCore::PlatformMediaSession::RemoteControlCommandType::StopCommand,
-    WebCore::PlatformMediaSession::RemoteControlCommandType::TogglePlayPauseCommand,
-    WebCore::PlatformMediaSession::RemoteControlCommandType::BeginSeekingBackwardCommand,
-    WebCore::PlatformMediaSession::RemoteControlCommandType::EndSeekingBackwardCommand,
-    WebCore::PlatformMediaSession::RemoteControlCommandType::BeginSeekingForwardCommand,
-    WebCore::PlatformMediaSession::RemoteControlCommandType::EndSeekingForwardCommand,
-    WebCore::PlatformMediaSession::RemoteControlCommandType::SeekToPlaybackPositionCommand,
-    WebCore::PlatformMediaSession::RemoteControlCommandType::SkipForwardCommand,
-    WebCore::PlatformMediaSession::RemoteControlCommandType::SkipBackwardCommand,
-    WebCore::PlatformMediaSession::RemoteControlCommandType::NextTrackCommand,
-    WebCore::PlatformMediaSession::RemoteControlCommandType::PreviousTrackCommand,
-    WebCore::PlatformMediaSession::RemoteControlCommandType::BeginScrubbingCommand,
-    WebCore::PlatformMediaSession::RemoteControlCommandType::EndScrubbingCommand
     >;
 };
 

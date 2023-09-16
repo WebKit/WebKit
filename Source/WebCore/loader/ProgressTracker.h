@@ -43,7 +43,7 @@ struct ProgressItem;
 
 class ProgressTracker {
     WTF_MAKE_NONCOPYABLE(ProgressTracker);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:
     explicit ProgressTracker(Page&, UniqueRef<ProgressTrackerClient>&&);
     ~ProgressTracker();

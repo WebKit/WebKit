@@ -350,7 +350,8 @@ static angle::Result InitializeCompressedTextureContents(const gl::Context *cont
 
 bool PreferStagedTextureUploads(const gl::Context *context,
                                 const TextureRef &texture,
-                                const Format &textureObjFormat)
+                                const Format &textureObjFormat,
+                                StagingPurpose purpose)
 {
     // The simulator MUST upload all textures as staged.
     if (TARGET_OS_SIMULATOR)
@@ -367,9 +368,16 @@ bool PreferStagedTextureUploads(const gl::Context *context,
         return false;
     }
 
+    // If the intended internal format is luminance, we can still
+    // initialize the texture using the GPU. However, if we're
+    // uploading data to it, we avoid using a staging buffer, due to
+    // the (current) need to re-pack the data from L8 -> RGBA8 and LA8
+    // -> RGBA8. This could be better optimized by emulating L8
+    // textures with R8 and LA8 with RG8, and using swizzlig for the
+    // resulting textures.
     if (intendedInternalFormat.isLUMA())
     {
-        return false;
+        return (purpose == StagingPurpose::Initialization);
     }
 
     if (features.disableStagedInitializationOfPackedTextureFormats.enabled)
@@ -401,13 +409,22 @@ angle::Result InitializeTextureContents(const gl::Context *context,
 
     const gl::InternalFormat &intendedInternalFormat = textureObjFormat.intendedInternalFormat();
 
-    bool preferGPUInitialization = PreferStagedTextureUploads(context, texture, textureObjFormat);
+    bool preferGPUInitialization = PreferStagedTextureUploads(context, texture, textureObjFormat,
+                                                              StagingPurpose::Initialization);
 
     // This function is called in many places to initialize the content of a texture.
     // So it's better we do the initial check here instead of let the callers do it themselves:
     if (!textureObjFormat.valid())
     {
         return angle::Result::Continue;
+    }
+
+    if ((textureObjFormat.hasDepthOrStencilBits() && !textureObjFormat.getCaps().depthRenderable) ||
+        !textureObjFormat.getCaps().colorRenderable)
+    {
+        // Texture is not appropriately color- or depth-renderable, so do not attempt
+        // to use GPU initialization (clears for initialization).
+        preferGPUInitialization = false;
     }
 
     gl::Extents size = texture->size(index);
@@ -826,18 +843,20 @@ AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
     const mtl::ContextDevice &metalDevice,
     const std::string &source,
     const std::map<std::string, std::string> &substitutionMacros,
-    bool enableFastMath,
+    bool disableFastMath,
+    bool usesInvariance,
     AutoObjCPtr<NSError *> *error)
 {
     return CreateShaderLibrary(metalDevice, source.c_str(), source.size(), substitutionMacros,
-                               enableFastMath, error);
+                               disableFastMath, usesInvariance, error);
 }
 
 AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(const mtl::ContextDevice &metalDevice,
                                                 const std::string &source,
                                                 AutoObjCPtr<NSError *> *error)
 {
-    return CreateShaderLibrary(metalDevice, source.c_str(), source.size(), {}, true, error);
+    // Use fast math, but conservatively assume the shader uses invariance.
+    return CreateShaderLibrary(metalDevice, source.c_str(), source.size(), {}, false, true, error);
 }
 
 AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
@@ -845,7 +864,8 @@ AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
     const char *source,
     size_t sourceLen,
     const std::map<std::string, std::string> &substitutionMacros,
-    bool enableFastMath,
+    bool disableFastMath,
+    bool usesInvariance,
     AutoObjCPtr<NSError *> *errorOut)
 {
     ANGLE_MTL_OBJC_SCOPE
@@ -856,16 +876,35 @@ AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
                                                      encoding:NSUTF8StringEncoding
                                                  freeWhenDone:NO];
         auto options     = [[[MTLCompileOptions alloc] init] ANGLE_MTL_AUTORELEASE];
+
         // Mark all positions in VS with attribute invariant as non-optimizable
-#if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) ||        \
-    (defined(__IPHONE_14_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_14_0) || \
-    (defined(__TVOS_14_0) && __TV_OS_VERSION_MIN_REQUIRED >= __TVOS_14_0)
-        options.preserveInvariance = true;
-#else
-        // No preserveInvariance available compiling from source, so just disable fastmath.
-        options.fastMathEnabled = false;
+        bool canPerserveInvariance = false;
+#if defined(__MAC_11_0) || defined(__IPHONE_14_0) || defined(__TVOS_14_0)
+        if (ANGLE_APPLE_AVAILABLE_XCI(11.0, 14.0, 14.0))
+        {
+            canPerserveInvariance      = true;
+            options.preserveInvariance = usesInvariance;
+        }
 #endif
-        options.fastMathEnabled &= enableFastMath;
+
+        // If either:
+        //   - fastmath is force-disabled
+        // or:
+        //   - preserveInvariance is not available when compiling from
+        //     source, and the sources use invariance
+        // Disable fastmath.
+        //
+        // Write this logic out as if-tests rather than a nested
+        // logical expression to make it clearer.
+        if (disableFastMath)
+        {
+            options.fastMathEnabled = false;
+        }
+        else if (usesInvariance && !canPerserveInvariance)
+        {
+            options.fastMathEnabled = false;
+        }
+
         options.languageVersion = GetUserSetOrHighestMSLVersion(options.languageVersion);
 
         if (!substitutionMacros.empty())
@@ -892,7 +931,8 @@ AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
 
 std::string CompileShaderLibraryToFile(const std::string &source,
                                        const std::map<std::string, std::string> &macros,
-                                       bool enableFastMath)
+                                       bool disableFastMath,
+                                       bool usesInvariance)
 {
     auto tmpDir = angle::GetTempDirectory();
     if (!tmpDir.valid())
@@ -936,10 +976,14 @@ std::string CompileShaderLibraryToFile(const std::string &source,
         // a space cause problems)?
         metalToAirArgv.push_back(macro.first + "=" + macro.second);
     }
-    // TODO: is this right, not sure if enableFastMath is same as -ffast-math.
-    if (enableFastMath)
+    // TODO: is this right, not sure if MTLCompileOptions.fastMathEnabled is same as -ffast-math.
+    if (!disableFastMath)
     {
         metalToAirArgv.push_back("-ffast-math");
+    }
+    if (usesInvariance)
+    {
+        metalToAirArgv.push_back("-fpreserve-invariance");
     }
     Process metalToAirProcess(metalToAirArgv);
     int exitCode = -1;
@@ -1595,7 +1639,24 @@ static NSUInteger getNextLocationForFormat(const FormatCaps &caps,
     return currentRenderTargetSize;
 }
 
-NSUInteger ComputeTotalSizeUsedForMTLRenderPassDescriptor(const MTLRenderPassDescriptor *descriptor,
+static NSUInteger getNextLocationForAttachment(const mtl::RenderPassAttachmentDesc &attachment,
+                                               const Context *context,
+                                               NSUInteger currentRenderTargetSize)
+{
+    mtl::TextureRef texture =
+        attachment.implicitMSTexture ? attachment.implicitMSTexture : attachment.texture;
+
+    if (texture)
+    {
+        MTLPixelFormat pixelFormat = texture->pixelFormat();
+        bool isMsaa                = texture->samples();
+        const FormatCaps &caps     = context->getDisplay()->getNativeFormatCaps(pixelFormat);
+        currentRenderTargetSize = getNextLocationForFormat(caps, isMsaa, currentRenderTargetSize);
+    }
+    return currentRenderTargetSize;
+}
+
+NSUInteger ComputeTotalSizeUsedForMTLRenderPassDescriptor(const mtl::RenderPassDesc &descriptor,
                                                           const Context *context,
                                                           const mtl::ContextDevice &device)
 {
@@ -1603,48 +1664,25 @@ NSUInteger ComputeTotalSizeUsedForMTLRenderPassDescriptor(const MTLRenderPassDes
 
     for (NSUInteger i = 0; i < GetMaxNumberOfRenderTargetsForDevice(device); i++)
     {
-        MTLPixelFormat pixelFormat = descriptor.colorAttachments[i].texture.pixelFormat;
-        bool isMsaa                = descriptor.colorAttachments[i].texture.sampleCount > 1;
-        if (pixelFormat != MTLPixelFormatInvalid)
-        {
-            const FormatCaps &caps = context->getDisplay()->getNativeFormatCaps(pixelFormat);
-            currentRenderTargetSize =
-                getNextLocationForFormat(caps, isMsaa, currentRenderTargetSize);
-        }
+        currentRenderTargetSize = getNextLocationForAttachment(descriptor.colorAttachments[i],
+                                                               context, currentRenderTargetSize);
     }
-    if (descriptor.depthAttachment.texture.pixelFormat ==
-        descriptor.stencilAttachment.texture.pixelFormat)
+    if (descriptor.depthAttachment.texture == descriptor.stencilAttachment.texture)
     {
-        bool isMsaa = descriptor.depthAttachment.texture.sampleCount > 1;
-        if (descriptor.depthAttachment.texture.pixelFormat != MTLPixelFormatInvalid)
-        {
-            const FormatCaps &caps = context->getDisplay()->getNativeFormatCaps(
-                descriptor.depthAttachment.texture.pixelFormat);
-            currentRenderTargetSize =
-                getNextLocationForFormat(caps, isMsaa, currentRenderTargetSize);
-        }
+        currentRenderTargetSize = getNextLocationForAttachment(descriptor.depthAttachment, context,
+                                                               currentRenderTargetSize);
     }
     else
     {
-        if (descriptor.depthAttachment.texture.pixelFormat != MTLPixelFormatInvalid)
-        {
-            bool isMsaa            = descriptor.depthAttachment.texture.sampleCount > 1;
-            const FormatCaps &caps = context->getDisplay()->getNativeFormatCaps(
-                descriptor.depthAttachment.texture.pixelFormat);
-            currentRenderTargetSize =
-                getNextLocationForFormat(caps, isMsaa, currentRenderTargetSize);
-        }
-        if (descriptor.stencilAttachment.texture.pixelFormat != MTLPixelFormatInvalid)
-        {
-            bool isMsaa            = descriptor.stencilAttachment.texture.sampleCount > 1;
-            const FormatCaps &caps = context->getDisplay()->getNativeFormatCaps(
-                descriptor.stencilAttachment.texture.pixelFormat);
-            currentRenderTargetSize =
-                getNextLocationForFormat(caps, isMsaa, currentRenderTargetSize);
-        }
+        currentRenderTargetSize = getNextLocationForAttachment(descriptor.depthAttachment, context,
+                                                               currentRenderTargetSize);
+        currentRenderTargetSize = getNextLocationForAttachment(descriptor.stencilAttachment,
+                                                               context, currentRenderTargetSize);
     }
+
     return currentRenderTargetSize;
 }
+
 NSUInteger ComputeTotalSizeUsedForMTLRenderPipelineDescriptor(
     const MTLRenderPipelineDescriptor *descriptor,
     const Context *context,

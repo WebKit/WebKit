@@ -1,0 +1,24 @@
+Tests grid and related roles.
+
+x x
+x x
+x x x
+x x x
+x
+x
+x
+
+PASS role is grid
+PASS role is row (in grid)
+PASS role is columnheader (in row, in grid)
+PASS role is rowheader (in row, in grid)
+PASS role is gridcell (in row, in grid)
+PASS role is rowgroup (in grid)
+PASS role is row (in rowgroup, in grid)
+PASS role is columnheader (in row, in rowgroup, in grid)
+PASS role is rowheader (in row, in rowgroup, in grid)
+PASS role is gridcell (in row, in rowgroup, in grid)
+FAIL orphaned gridcell outside the context of row assert_equals: <div role="gridcell" data-testname="orphaned gridcell outside the context of row" data-expectedrole="none" class="ex">x</div> expected "none" but got "gridcell"
+FAIL orphaned rowheader outside the context of row assert_equals: <div role="rowheader" data-testname="orphaned rowheader outside the context of row" data-expectedrole="none" class="ex">x</div> expected "none" but got "rowheader"
+FAIL orphaned columnheader outside the context of row assert_equals: <div role="columnheader" data-testname="orphaned columnheader outside the context of row" data-expectedrole="none" class="ex">x</div> expected "none" but got "columnheader"
+

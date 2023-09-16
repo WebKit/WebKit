@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 Igalia S.L. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,7 +74,7 @@ class SimulatedXRDevice final : public PlatformXR::Device {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     SimulatedXRDevice();
-    ~SimulatedXRDevice();
+    virtual ~SimulatedXRDevice();
     void setViews(Vector<FrameData::View>&&);
     void setNativeBoundsGeometry(const Vector<FakeXRBoundsPoint>&);
     void setViewerOrigin(const std::optional<FrameData::Pose>&);

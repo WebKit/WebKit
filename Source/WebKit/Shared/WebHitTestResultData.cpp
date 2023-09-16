@@ -100,7 +100,7 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, b
             }
 
             imageText = [&]() -> String {
-                if (auto* element = dynamicDowncast<Element>(target.get())) {
+                if (RefPtr element = dynamicDowncast<Element>(target.get())) {
                     auto& title = element->attributeWithoutSynchronization(HTMLNames::titleAttr);
                     if (!title.isEmpty())
                         return title;
@@ -152,15 +152,15 @@ WebHitTestResultData::~WebHitTestResultData()
 
 IntRect WebHitTestResultData::elementBoundingBoxInWindowCoordinates(const WebCore::HitTestResult& hitTestResult)
 {
-    Node* node = hitTestResult.innerNonSharedNode();
+    RefPtr node = hitTestResult.innerNonSharedNode();
     if (!node)
         return IntRect();
 
-    auto* frame = node->document().frame();
+    RefPtr frame = node->document().frame();
     if (!frame)
         return IntRect();
 
-    auto* view = frame->view();
+    RefPtr view = frame->view();
     if (!view)
         return IntRect();
 

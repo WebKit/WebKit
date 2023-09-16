@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/HexNumber.h>
 #include <wtf/Markable.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
@@ -77,6 +78,7 @@ public:
     WTF_EXPORT_PRIVATE TextStream& operator<<(const String&);
     WTF_EXPORT_PRIVATE TextStream& operator<<(ASCIILiteral);
     WTF_EXPORT_PRIVATE TextStream& operator<<(StringView);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(const HexNumberBuffer&);
     // Deprecated. Use the NumberRespectingIntegers FormattingFlag instead.
     WTF_EXPORT_PRIVATE TextStream& operator<<(const FormatNumberRespectingIntegers&);
 
@@ -84,6 +86,9 @@ public:
     WTF_EXPORT_PRIVATE TextStream& operator<<(id);
 #ifdef __OBJC__
     WTF_EXPORT_PRIVATE TextStream& operator<<(NSArray *);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(CGRect);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(CGSize);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(CGPoint);
 #endif
 #endif
 

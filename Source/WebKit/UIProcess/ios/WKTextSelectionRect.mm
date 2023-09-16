@@ -126,7 +126,9 @@
         return nil;
 
     auto scaledQuad = _selectionGeometry.quad();
+#if !HAVE(REDESIGNED_TEXT_CURSOR)
     scaledQuad.scale(_scaleFactor);
+#endif
     return adoptNS([[WKTextSelectionRectCustomHandleInfo alloc] initWithFloatQuad:scaledQuad isHorizontal:_selectionGeometry.isHorizontal()]).autorelease();
 }
 

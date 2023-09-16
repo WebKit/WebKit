@@ -88,6 +88,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cocoa/NSURLFileTypeMappingsSPI.h
     spi/cocoa/NSUserDefaultsSPI.h
     spi/cocoa/NSXPCConnectionSPI.h
+    spi/cocoa/NetworkSPI.h
     spi/cocoa/NotifySPI.h
     spi/cocoa/PassKitInstallmentsSPI.h
     spi/cocoa/PassKitSPI.h

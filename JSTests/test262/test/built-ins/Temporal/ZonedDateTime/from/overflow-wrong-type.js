@@ -49,12 +49,10 @@ assert.throws(RangeError, () => Temporal.ZonedDateTime.from(propertyBag, { overf
 assert.throws(RangeError, () => Temporal.ZonedDateTime.from(propertyBag, { overflow: 2 }), "number");
 assert.throws(RangeError, () => Temporal.ZonedDateTime.from(propertyBag, { overflow: {} }), "plain object");
 
-// toString property is read once by Calendar.dateFromFields() in the builtin
-// calendars, to get the option value for the date part, and then once again
-// internally to get the option value for the time part.
+// toString property should only be read and converted to a string once, because
+// a copied object with the resulting string on it is passed to
+// Calendar.dateFromFields().
 const expected = [
-  "get overflow.toString",
-  "call overflow.toString",
   "get overflow.toString",
   "call overflow.toString",
 ];

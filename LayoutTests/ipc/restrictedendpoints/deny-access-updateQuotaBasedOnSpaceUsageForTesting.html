@@ -1,19 +1,20 @@
-<!DOCTYPE html>
+<!DOCTYPE html> <!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=false ] -->
 <title>Test that calling updateQuotaBasedOnSpaceUsageForTesting (which should be blocked behind AllowTestOnlyIPC) kills the calling process if AllowTestOnlyIPC isn't set</title>
+<script src="../../resources/ipc.js"></script>
 <script src="../../resources/testharness.js"></script>
 <script src="../../resources/testharnessreport.js"></script>
 <body>
 <script>
+    testRunner.dumpAsText();
 
-function sleep(delay) { return new Promise((resolve) => { setTimeout(resolve, delay); }); }
+    if (window.internals && window.IPC) {
+        window.internals.updateQuotaBasedOnSpaceUsage();
 
-promise_test(async t => {
-    if (!window.internals)
-        return Promise.reject("Test requires internals");
-
-    window.internals.updateQuotaBasedOnSpaceUsage();
-    await sleep(500);
-}, "Send updateQuotaBasedOnSpaceUsage without AllowTestOnlyIPC being set");
-
+        asyncFlush('Networking').then(() => {
+            console.log("Should Have Crashed!");
+        });
+    } else {
+        testRunner.notifyDone();
+    }
 </script>
 </body>

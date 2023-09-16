@@ -42,7 +42,7 @@ Ref<RenderBundleEncoder> Device::createRenderBundleEncoder(const WGPURenderBundl
 
     MTLIndirectCommandBufferDescriptor *icbDescriptor = [MTLIndirectCommandBufferDescriptor new];
     icbDescriptor.inheritBuffers = NO;
-    icbDescriptor.inheritPipelineState = YES;
+    icbDescriptor.inheritPipelineState = NO;
 
     return RenderBundleEncoder::create(icbDescriptor, *this);
 }
@@ -154,6 +154,11 @@ Ref<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& 
         m_recordedCommands.clear();
     }
 
+    if (!m_currentPipelineState)
+        return RenderBundle::createInvalid(m_device);
+
+    m_currentPipelineState = nil;
+
     auto renderBundle = RenderBundle::create(m_indirectCommandBuffer, WTFMove(m_resources), m_device);
     renderBundle->setLabel(String::fromUTF8(descriptor.label));
 
@@ -224,10 +229,13 @@ void RenderBundleEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& gro
         return;
     }
 
+    if (!m_currentPipelineState)
+        return;
+
     for (const auto& resource : group.resources())
         m_resources.append(resource);
 
-    [icbCommand setVertexBuffer:group.vertexArgumentBuffer() offset:0 atIndex:m_device->vertexBufferIndexForBindGroup(groupIndex)];
+    [icbCommand setVertexBuffer:group.vertexArgumentBuffer() offset:0 atIndex:m_device->vertexBufferIndexForBindGroup(groupIndex, m_icbDescriptor.maxVertexBufferBindCount)];
     [icbCommand setFragmentBuffer:group.fragmentArgumentBuffer() offset:0 atIndex:groupIndex];
 }
 
@@ -247,9 +255,13 @@ void RenderBundleEncoder::setIndexBuffer(const Buffer& buffer, WGPUIndexFormat f
 
 void RenderBundleEncoder::setPipeline(const RenderPipeline& pipeline)
 {
-    if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand())
-        [icbCommand setRenderPipelineState:pipeline.renderPipelineState()];
-    else {
+    if (!pipeline.renderPipelineState())
+        return;
+
+    if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
+        m_currentPipelineState = pipeline.renderPipelineState();
+        [icbCommand setRenderPipelineState:m_currentPipelineState];
+    } else {
         m_recordedCommands.append([&pipeline, protectedThis = Ref { *this }] {
             protectedThis->setPipeline(pipeline);
         });

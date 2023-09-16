@@ -1,5 +1,6 @@
 import json
 import logging
+import shutil
 import sys
 import os
 from collections import defaultdict, OrderedDict
@@ -151,6 +152,9 @@ class BenchmarkRunner(object):
             self._browser_driver.prepare_initial_env(self._config)
             for iteration in range(1, count + 1):
                 _log.info('Start the iteration {current_iteration} of {iterations} for current benchmark'.format(current_iteration=iteration, iterations=count))
+                if self._pgo_profile_output_dir:
+                    shutil.rmtree(self._pgo_profile_output_dir, ignore_errors=True)
+                    os.mkdir(self._pgo_profile_output_dir)
                 try:
                     self._browser_driver.prepare_env(self._config)
                     if 'entry_point' in self._plan:
@@ -176,6 +180,8 @@ class BenchmarkRunner(object):
 
                 finally:
                     self._browser_driver.restore_env()
+                if self._pgo_profile_output_dir:
+                    shutil.copytree(self._pgo_profile_output_dir, self._diagnose_dir, dirs_exist_ok=True)
 
                 _log.info('End the iteration {current_iteration} of {iterations} for current benchmark'.format(current_iteration=iteration, iterations=count))
         finally:

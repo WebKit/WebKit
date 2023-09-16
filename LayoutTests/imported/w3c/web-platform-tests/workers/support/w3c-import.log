@@ -71,3 +71,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/sync_xhr_target.xml
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/throw-on-message-Worker.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/support/window-sw-shared-name.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/support/worker-request-animation-frame.js

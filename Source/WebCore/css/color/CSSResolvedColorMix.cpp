@@ -104,7 +104,7 @@ template<typename InterpolationMethod> static Color mixColorComponentsUsingColor
     if (mixPercentages.alphaMultiplier && !std::isnan(mixedColor.alpha))
         mixedColor.alpha *= (*mixPercentages.alphaMultiplier / 100.0);
 
-    return makeCanonicalColor(mixedColor);
+    return makeCanonicalColor(mixedColor, { Color::Flags::UseColorFunctionSerialization });
 }
 
 Color mix(const CSSResolvedColorMix& colorMix)

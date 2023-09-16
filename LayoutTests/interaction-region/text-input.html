@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<style>
+    * {
+        margin: 40px;
+    }
+    input {
+        width: 100px;
+        height: 40px;
+        padding: 5px;
+    }
+    .styled {
+        display: block;
+        border-radius: 0;
+        border: 1px gray solid;
+    }
+</style>
+<script src="../resources/ui-helper.js"></script>
+<body>
+<form>
+    <input placeholder="Search" type="search">
+    <input placeholder="Password" type="password">
+    <input type="text">
+
+    <input class="styled" placeholder="Search" type="search">
+    <input class="styled" placeholder="Password" type="password">
+    <input class="styled" type="text">
+</form>
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = async function () {
+    if (window.internals)
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+};
+</script>
+</body>
+</html>

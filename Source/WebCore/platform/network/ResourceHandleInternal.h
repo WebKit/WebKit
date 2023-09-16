@@ -77,6 +77,7 @@ public:
     RefPtr<NetworkingContext> m_context;
     ResourceHandleClient* m_client;
     ResourceRequest m_firstRequest;
+    ResourceRequest m_previousRequest;
     String m_lastHTTPMethod;
     String m_partition;
 

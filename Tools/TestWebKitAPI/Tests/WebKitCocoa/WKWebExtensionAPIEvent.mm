@@ -31,6 +31,21 @@
 
 namespace TestWebKitAPI {
 
+static auto *eventManifest = @{ @"manifest_version": @3, @"background": @{ @"scripts": @[ @"background.js" ], @"persistent": @NO } };
+
+TEST(WKWebExtensionAPIEvent, Errors)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertThrows(() => browser.test.testEvent.addListener('bad'), /'listener' value is invalid, because a function is expected/i)",
+        @"browser.test.assertThrows(() => browser.test.testEvent.removeListener('bad'), /'listener' value is invalid, because a function is expected/i)",
+        @"browser.test.assertThrows(() => browser.test.testEvent.hasListener('bad'), /'listener' value is invalid, because a function is expected/i)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(eventManifest, @{ @"background.js": backgroundScript });
+}
+
 TEST(WKWebExtensionAPIEvent, TestEventListener)
 {
     auto *backgroundScript = Util::constructScript(@[
@@ -49,9 +64,7 @@ TEST(WKWebExtensionAPIEvent, TestEventListener)
         @"browser.test.fireTestEvent()"
     ]);
 
-    auto *manifest = @{ @"manifest_version": @3, @"background": @{ @"scripts": @[ @"background.js" ], @"persistent": @NO } };
-
-    Util::loadAndRunExtension(manifest, @{ @"background.js": backgroundScript });
+    Util::loadAndRunExtension(eventManifest, @{ @"background.js": backgroundScript });
 }
 
 } // namespace TestWebKitAPI

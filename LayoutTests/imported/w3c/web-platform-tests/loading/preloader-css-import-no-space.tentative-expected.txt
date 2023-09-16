@@ -1,0 +1,3 @@
+
+PASS Imported inline CSS with no space is not blocked on pending CSS
+

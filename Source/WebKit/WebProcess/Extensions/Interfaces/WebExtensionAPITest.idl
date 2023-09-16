@@ -61,8 +61,17 @@
     // Asserts the promise is rejected.
     [NeedsScriptContext, ProcessArgumentsLeftToRight] any assertRejects(any promise, [Optional, ValuesAllowed] any expectedError, [Optional] DOMString message);
 
+    // Asserts the promise is resolved.
+    [NeedsScriptContext] any assertResolves(any promise, [Optional] DOMString message);
+
     // Asserts the function throws an exception.
     [NeedsScriptContext, ProcessArgumentsLeftToRight] void assertThrows(any function, [Optional, ValuesAllowed] any expectedError, [Optional] DOMString message);
+
+    // Asserts the function does not thow an exception.
+    [NeedsScriptContext] any assertSafe(any function, [Optional] DOMString message);
+
+    // Asserts the function does not thow an exception and the result promise is resolved.
+    [NeedsScriptContext] any assertSafeResolve(any function, [Optional] DOMString message);
 
     // Temporary webNavigation event for bring-up.
     // FIXME: Remove this.

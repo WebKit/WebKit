@@ -38,9 +38,13 @@ public:
             std::variant<Ref<Gradient>, RenderingResourceIdentifier> gradient;
             AffineTransform spaceTransform;
 
+            friend bool operator==(const LogicalGradient&, const LogicalGradient&);
+
             template<typename Encoder> void encode(Encoder&) const;
             template<typename Decoder> static std::optional<LogicalGradient> decode(Decoder&);
         };
+
+        friend bool operator==(const Brush&, const Brush&);
 
         using Variant = std::variant<LogicalGradient, Ref<Pattern>>;
         Variant brush;
@@ -64,6 +68,8 @@ public:
 
     bool isInlineColor() const { return !m_brush && m_color.tryGetAsSRGBABytes(); }
     bool isVisible() const { return m_brush || m_color.isVisible(); }
+
+    friend bool operator==(const SourceBrush&, const SourceBrush&) = default;
 
 private:
     Color m_color { Color::black };
@@ -103,11 +109,6 @@ inline bool operator==(const SourceBrush::Brush& a, const SourceBrush::Brush& b)
             return false;
         }
     );
-}
-
-inline bool operator==(const SourceBrush& a, const SourceBrush& b)
-{
-    return a.color() == b.color() && a.brush() == b.brush();
 }
 
 template<class Encoder>

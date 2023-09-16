@@ -88,11 +88,9 @@ class StructureMember;
 
 class TypeAlias;
 
-class TypeName;
-class ArrayTypeName;
-class NamedTypeName;
-class ParameterizedTypeName;
-class ReferenceTypeName;
+class ArrayTypeExpression;
+class ElaboratedTypeExpression;
+class ReferenceTypeExpression;
 
 class Variable;
 class VariableQualifier;

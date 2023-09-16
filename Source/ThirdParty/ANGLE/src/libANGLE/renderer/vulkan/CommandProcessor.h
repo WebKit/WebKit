@@ -129,6 +129,12 @@ class CommandProcessorTask
 {
   public:
     CommandProcessorTask() { initTask(); }
+    ~CommandProcessorTask()
+    {
+        // Render passes are cached in RenderPassCache.  The handle stored in the task references a
+        // render pass that is managed by that cache.
+        mRenderPass.release();
+    }
 
     void initTask();
 
@@ -189,7 +195,7 @@ class CommandProcessorTask
     }
     const VkPresentInfoKHR &getPresentInfo() const { return mPresentInfo; }
     SwapchainStatus *getSwapchainStatus() const { return mSwapchainStatus; }
-    const RenderPass *getRenderPass() const { return mRenderPass; }
+    const RenderPass &getRenderPass() const { return mRenderPass; }
     OutsideRenderPassCommandBufferHelper *getOutsideRenderPassCommandBuffer() const
     {
         return mOutsideRenderPassCommandBuffer;
@@ -211,7 +217,7 @@ class CommandProcessorTask
     // ProcessCommands
     OutsideRenderPassCommandBufferHelper *mOutsideRenderPassCommandBuffer;
     RenderPassCommandBufferHelper *mRenderPassCommandBuffer;
-    const RenderPass *mRenderPass;
+    RenderPass mRenderPass;
 
     // Flush data
     VkSemaphore mSemaphore;

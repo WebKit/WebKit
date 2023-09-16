@@ -176,7 +176,7 @@ void ShadowChicken::update(VM& vm, CallFrame* callFrame)
             callFrame, vm, [&] (StackVisitor& visitor) -> IterationStatus {
                 if (visitor->isInlinedDFGFrame())
                     return IterationStatus::Continue;
-                if (visitor->isWasmFrame()) {
+                if (visitor->isNativeCalleeFrame()) {
                     // FIXME: Make shadow chicken work with Wasm.
                     // https://bugs.webkit.org/show_bug.cgi?id=165441
                     return IterationStatus::Continue;
@@ -301,7 +301,7 @@ void ShadowChicken::update(VM& vm, CallFrame* callFrame)
                 return IterationStatus::Continue;
             }
 
-            if (visitor->isWasmFrame()) {
+            if (visitor->isNativeCalleeFrame()) {
                 // FIXME: Make shadow chicken work with Wasm.
                 return IterationStatus::Continue;
             }
@@ -328,7 +328,7 @@ void ShadowChicken::update(VM& vm, CallFrame* callFrame)
             bool foundFrame = advanceIndexInLogTo(callFrame, callFrame->jsCallee(), callFrame->callerFrame());
             bool isTailDeleted = false;
             JSScope* scope = nullptr;
-            CodeBlock* codeBlock = callFrame->isWasmFrame() ? nullptr : callFrame->codeBlock();
+            CodeBlock* codeBlock = callFrame->isNativeCalleeFrame() ? nullptr : callFrame->codeBlock();
             JSValue scopeValue = callFrame->bytecodeIndex() && codeBlock && codeBlock->scopeRegister().isValid()
                 ? callFrame->registers()[codeBlock->scopeRegister().offset()].jsValue()
                 : jsUndefined();

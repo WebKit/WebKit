@@ -29,6 +29,7 @@ function runTest() {
     shouldThrow("context.createDelay(180)");
     shouldThrow("context.createDelay(0)");
     shouldThrow("context.createDelay(-1)");
+    shouldThrow("context.createDelay(NaN)");
 
     var delay = context.createDelay(179);
     delay.delayTime.value = delayTimeSeconds;

@@ -161,6 +161,7 @@
     // Table info.
     DOMString attributesOfColumnHeaders();
     DOMString attributesOfRowHeaders();
+    object columns();
     DOMString attributesOfColumns();
     DOMString attributesOfRows();
     DOMString attributesOfVisibleCells();
@@ -304,6 +305,7 @@
     readonly attribute boolean isSearchField;
     readonly attribute boolean isTextArea;
     readonly attribute boolean isMarkAnnotation;
+    readonly attribute boolean supportsExpanded;
 
     readonly attribute boolean hasDocumentRoleAncestor;
     readonly attribute boolean hasWebApplicationAncestor;
@@ -311,6 +313,7 @@
     readonly attribute boolean isInDescriptionListTerm;
 
     readonly attribute boolean hasContainedByFieldsetTrait;
+    readonly attribute boolean hasTextEntryTrait;
     AccessibilityUIElement fieldsetAncestorElement();
     AccessibilityUIElement focusableAncestor();
     AccessibilityUIElement editableAncestor();

@@ -90,11 +90,15 @@ ALWAYS_INLINE void RegExpGlobalData::recordMatch(VM& vm, JSGlobalObject* owner, 
     m_cachedResult.record(vm, owner, regExp, string, result);
 }
 
-inline void RegExpGlobalData::resetResultFromCache(JSGlobalObject* owner, RegExp* regExp, JSString* string, Vector<int>&& vector)
+inline MatchResult RegExpGlobalData::matchResult() const
 {
-    MatchResult result(vector[0], vector[1]);
+    return m_cachedResult.result();
+}
+
+inline void RegExpGlobalData::resetResultFromCache(JSGlobalObject* owner, RegExp* regExp, JSString* string, MatchResult matchResult, Vector<int>&& vector)
+{
     m_ovector = WTFMove(vector);
-    m_cachedResult.record(getVM(owner), owner, regExp, string, result);
+    m_cachedResult.record(getVM(owner), owner, regExp, string, matchResult);
 }
 
 }

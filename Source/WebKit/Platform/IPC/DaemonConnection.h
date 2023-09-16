@@ -44,6 +44,8 @@ using EncodedMessage = Vector<uint8_t>;
 class Connection : public CanMakeWeakPtr<Connection> {
 public:
     Connection() = default;
+    virtual ~Connection() = default;
+
 #if PLATFORM(COCOA)
     explicit Connection(RetainPtr<xpc_connection_t>&& connection)
         : m_connection(WTFMove(connection)) { }
@@ -53,6 +55,7 @@ public:
 protected:
     mutable RetainPtr<xpc_connection_t> m_connection;
 #endif
+    virtual void initializeConnectionIfNeeded() const { }
 };
 
 template<typename Traits>
@@ -74,7 +77,7 @@ public:
     const CString& machServiceName() const { return m_machServiceName; }
 
 private:
-    void initializeConnectionIfNeeded() const;
+    void initializeConnectionIfNeeded() const override;
 
     const CString m_machServiceName;
 };

@@ -28,8 +28,14 @@
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
 
 #include "DaemonConnection.h"
+#include "MessageSender.h"
 #include "WebPushDaemonConnectionConfiguration.h"
 #include "WebPushDaemonConstants.h"
+
+namespace IPC {
+class Decoder;
+class Encoder;
+}
 
 namespace WebKit {
 
@@ -45,7 +51,7 @@ struct ConnectionTraits {
     static constexpr const char* protocolEncodedMessageKey { WebPushD::protocolEncodedMessageKey };
 };
 
-class Connection : public Daemon::ConnectionToMachService<ConnectionTraits> {
+class Connection : public Daemon::ConnectionToMachService<ConnectionTraits>, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     Connection(CString&& machServiceName, NetworkNotificationManager&, WebPushDaemonConnectionConfiguration&&);
@@ -56,8 +62,8 @@ public:
 private:
     void newConnectionWasInitialized() const final;
 #if PLATFORM(COCOA)
-    RetainPtr<xpc_object_t> dictionaryFromMessage(MessageType, Daemon::EncodedMessage&&) const final;
-    void connectionReceivedEvent(xpc_object_t) final;
+    RetainPtr<xpc_object_t> dictionaryFromMessage(MessageType, Daemon::EncodedMessage&&) const final { return nullptr; }
+    void connectionReceivedEvent(xpc_object_t) final { }
 #endif
     void sendDebugModeIsEnabledMessageIfNecessary() const;
 
@@ -66,14 +72,14 @@ private:
     NetworkNotificationManager& m_notificationManager;
     WebPushDaemonConnectionConfiguration m_configuration;
 
-    template<MessageType messageType, typename... Args>
-    void sendMessage(Args&&...) const;
-    template<MessageType messageType, typename... Args, typename... ReplyArgs>
-    void sendMessageWithReply(CompletionHandler<void(ReplyArgs...)>&&, Args&&...) const;
+    // IPC::MessageSender
+    IPC::Connection* messageSenderConnection() const final { return nullptr; }
+    uint64_t messageSenderDestinationID() const final { return 0; }
+    bool performSendWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&&) const final;
+    bool performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&&, CompletionHandler<void(IPC::Decoder*)>&&) const final;
 };
 
 } // namespace WebPushD
 } // namespace WebKit
 
 #endif // ENABLE(BUILT_IN_NOTIFICATIONS)
-

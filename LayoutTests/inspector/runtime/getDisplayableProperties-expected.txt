@@ -132,23 +132,74 @@ Internal Properties:
     "boundThis"       =>  null (object null)  []
     "boundArgs"       =>  "Array" (object array)  []
 
--- Running test case: Runtime.getDisplayableProperties.Private.Instance
+-- Running test case: Runtime.getDisplayableProperties.Private.Instance.Parent
 Evaluating expression...
 Getting displayable properties...
 Properties:
+    "#instancePrivateProperty"        =>  "instancePrivatePropertyValue parent" (string)  [writable | enumerable | configurable | isOwn | isPrivate]
     "#parentInstancePrivateProperty"  =>  "parentInstancePrivatePropertyValue" (string)  [writable | enumerable | configurable | isOwn | isPrivate]
+    "instancePublicProperty"          =>  "instancePublicPropertyValue parent" (string)  [writable | enumerable | configurable | isOwn]
+    "parentInstancePublicProperty"    =>  "parentInstancePublicPropertyValue" (string)  [writable | enumerable | configurable | isOwn]
+    "__proto__"                       =>  "PrivateMembersTestClassParent" (object)  [writable | configurable | isOwn]
+
+-- Running test case: Runtime.getDisplayableProperties.Private.Instance.Child
+Evaluating expression...
+Getting displayable properties...
+Properties:
+    "#instancePrivateProperty"        =>  "instancePrivatePropertyValue parent" (string)  [writable | enumerable | configurable | isOwn | isPrivate]
+    "#parentInstancePrivateProperty"  =>  "parentInstancePrivatePropertyValue" (string)  [writable | enumerable | configurable | isOwn | isPrivate]
+    "#instancePrivateProperty"        =>  "instancePrivatePropertyValue child" (string)  [writable | enumerable | configurable | isOwn | isPrivate]
     "#childInstancePrivateProperty"   =>  "childInstancePrivatePropertyValue" (string)  [writable | enumerable | configurable | isOwn | isPrivate]
+    "instancePublicProperty"          =>  "instancePublicPropertyValue child" (string)  [writable | enumerable | configurable | isOwn]
     "parentInstancePublicProperty"    =>  "parentInstancePublicPropertyValue" (string)  [writable | enumerable | configurable | isOwn]
     "childInstancePublicProperty"     =>  "childInstancePublicPropertyValue" (string)  [writable | enumerable | configurable | isOwn]
     "__proto__"                       =>  "PrivateMembersTestClassChild" (object)  [writable | configurable | isOwn]
 
--- Running test case: Runtime.getDisplayableProperties.Private.Constructor
+-- Running test case: Runtime.getDisplayableProperties.Private.Constructor.Parent
 Evaluating expression...
 Getting displayable properties...
 Properties:
+    "#classPrivateProperty"          =>  "classPrivatePropertyValue parent" (string)  [writable | enumerable | configurable | isOwn | isPrivate]
+    "#parentClassPrivateProperty"    =>  "parentClassPrivatePropertyValue" (string)  [writable | enumerable | configurable | isOwn | isPrivate]
+    "length"                         =>  0 (number)  [configurable | isOwn]
+    "prototype"                      =>  "PrivateMembersTestClassParent" (object)  [isOwn]
+    "classPublicMethod"              =>  "classPublicMethod() { parent }" (function)  [writable | configurable | isOwn]
+    "classPublicGetter"              =>  get "get classPublicGetter() { parent }" (function)  [configurable | isOwn]
+    "classPublicGetter"              =>  set undefined (undefined)  [configurable | isOwn]
+    "classPublicSetter"              =>  get undefined (undefined)  [configurable | isOwn]
+    "classPublicSetter"              =>  set "set classPublicSetter(x) { parent }" (function)  [configurable | isOwn]
+    "classPublicGetterSetter"        =>  get "get classPublicGetterSetter() { parent }" (function)  [configurable | isOwn]
+    "classPublicGetterSetter"        =>  set "set classPublicGetterSetter(x) { parent }" (function)  [configurable | isOwn]
+    "parentClassPublicMethod"        =>  "parentClassPublicMethod() { }" (function)  [writable | configurable | isOwn]
+    "parentClassPublicGetter"        =>  get "get parentClassPublicGetter() { }" (function)  [configurable | isOwn]
+    "parentClassPublicGetter"        =>  set undefined (undefined)  [configurable | isOwn]
+    "parentClassPublicSetter"        =>  get undefined (undefined)  [configurable | isOwn]
+    "parentClassPublicSetter"        =>  set "set parentClassPublicSetter(x) { }" (function)  [configurable | isOwn]
+    "parentClassPublicGetterSetter"  =>  get "get parentClassPublicGetterSetter() { }" (function)  [configurable | isOwn]
+    "parentClassPublicGetterSetter"  =>  set "set parentClassPublicGetterSetter(x) { }" (function)  [configurable | isOwn]
+    "toString"                       =>  "toString() { return \"<redacted>\"; }" (function)  [writable | configurable | isOwn]
+    "classPublicProperty"            =>  "classPublicPropertyValue parent" (string)  [writable | enumerable | configurable | isOwn]
+    "parentClassPublicProperty"      =>  "parentClassPublicPropertyValue" (string)  [writable | enumerable | configurable | isOwn]
+    "name"                           =>  "PrivateMembersTestClassParent" (string)  [configurable | isOwn]
+    "arguments"                      =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "caller"                         =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
+    "__proto__"                      =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
+
+-- Running test case: Runtime.getDisplayableProperties.Private.Constructor.Child
+Evaluating expression...
+Getting displayable properties...
+Properties:
+    "#classPrivateProperty"         =>  "classPrivatePropertyValue child" (string)  [writable | enumerable | configurable | isOwn | isPrivate]
     "#childClassPrivateProperty"    =>  "childClassPrivatePropertyValue" (string)  [writable | enumerable | configurable | isOwn | isPrivate]
     "length"                        =>  0 (number)  [configurable | isOwn]
     "prototype"                     =>  "PrivateMembersTestClassChild" (object)  [isOwn]
+    "classPublicMethod"             =>  "classPublicMethod() { child }" (function)  [writable | configurable | isOwn]
+    "classPublicGetter"             =>  get "get classPublicGetter() { child }" (function)  [configurable | isOwn]
+    "classPublicGetter"             =>  set undefined (undefined)  [configurable | isOwn]
+    "classPublicSetter"             =>  get undefined (undefined)  [configurable | isOwn]
+    "classPublicSetter"             =>  set "set classPublicSetter(x) { child }" (function)  [configurable | isOwn]
+    "classPublicGetterSetter"       =>  get "get classPublicGetterSetter() { child }" (function)  [configurable | isOwn]
+    "classPublicGetterSetter"       =>  set "set classPublicGetterSetter(x) { child }" (function)  [configurable | isOwn]
     "childClassPublicMethod"        =>  "childClassPublicMethod() { }" (function)  [writable | configurable | isOwn]
     "childClassPublicGetter"        =>  get "get childClassPublicGetter() { }" (function)  [configurable | isOwn]
     "childClassPublicGetter"        =>  set undefined (undefined)  [configurable | isOwn]
@@ -157,17 +208,46 @@ Properties:
     "childClassPublicGetterSetter"  =>  get "get childClassPublicGetterSetter() { }" (function)  [configurable | isOwn]
     "childClassPublicGetterSetter"  =>  set "set childClassPublicGetterSetter(x) { }" (function)  [configurable | isOwn]
     "toString"                      =>  "toString() { return \"<redacted>\"; }" (function)  [writable | configurable | isOwn]
+    "classPublicProperty"           =>  "classPublicPropertyValue child" (string)  [writable | enumerable | configurable | isOwn]
     "childClassPublicProperty"      =>  "childClassPublicPropertyValue" (string)  [writable | enumerable | configurable | isOwn]
     "name"                          =>  "PrivateMembersTestClassChild" (string)  [configurable | isOwn]
     "arguments"                     =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
     "caller"                        =>  "TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context." (object error)  [wasThrown]
     "__proto__"                     =>  "<redacted>" (function class)  [writable | configurable | isOwn]
 
--- Running test case: Runtime.getDisplayableProperties.Private.Prototype
+-- Running test case: Runtime.getDisplayableProperties.Private.Prototype.Parent
+Evaluating expression...
+Getting displayable properties...
+Properties:
+    "constructor"                       =>  "<redacted>" (function class)  [writable | configurable | isOwn]
+    "instancePublicMethod"              =>  "instancePublicMethod() { parent }" (function)  [writable | configurable | isOwn]
+    "instancePublicGetter"              =>  get "get instancePublicGetter() { parent }" (function)  [configurable | isOwn]
+    "instancePublicGetter"              =>  set undefined (undefined)  [configurable | isOwn]
+    "instancePublicSetter"              =>  get undefined (undefined)  [configurable | isOwn]
+    "instancePublicSetter"              =>  set "set instancePublicSetter(x) { parent }" (function)  [configurable | isOwn]
+    "instancePublicGetterSetter"        =>  get "get instancePublicGetterSetter() { parent }" (function)  [configurable | isOwn]
+    "instancePublicGetterSetter"        =>  set "set instancePublicGetterSetter(x) { parent }" (function)  [configurable | isOwn]
+    "parentInstancePublicMethod"        =>  "parentInstancePublicMethod() { }" (function)  [writable | configurable | isOwn]
+    "parentInstancePublicGetter"        =>  get "get parentInstancePublicGetter() { }" (function)  [configurable | isOwn]
+    "parentInstancePublicGetter"        =>  set undefined (undefined)  [configurable | isOwn]
+    "parentInstancePublicSetter"        =>  get undefined (undefined)  [configurable | isOwn]
+    "parentInstancePublicSetter"        =>  set "set parentInstancePublicSetter(x) { }" (function)  [configurable | isOwn]
+    "parentInstancePublicGetterSetter"  =>  get "get parentInstancePublicGetterSetter() { }" (function)  [configurable | isOwn]
+    "parentInstancePublicGetterSetter"  =>  set "set parentInstancePublicGetterSetter(x) { }" (function)  [configurable | isOwn]
+    "__proto__"                         =>  "Object" (object)  [writable | configurable | isOwn]
+
+-- Running test case: Runtime.getDisplayableProperties.Private.Prototype.Child
 Evaluating expression...
 Getting displayable properties...
 Properties:
     "constructor"                      =>  "<redacted>" (function class)  [writable | configurable | isOwn]
+    "instancePublicMethod"             =>  "instancePublicMethod() { child }" (function)  [writable | configurable | isOwn]
+    "instancePublicGetter"             =>  get "get instancePublicGetter() { child }" (function)  [configurable | isOwn]
+    "instancePublicGetter"             =>  set undefined (undefined)  [configurable | isOwn]
+    "instancePublicSetter"             =>  get undefined (undefined)  [configurable | isOwn]
+    "instancePublicSetter"             =>  set "set instancePublicSetter(x) { child }" (function)  [configurable | isOwn]
+    "instancePublicGetterSetter"       =>  get "get instancePublicGetterSetter() { child }" (function)  [configurable | isOwn]
+    "instancePublicGetterSetter"       =>  set "set instancePublicGetterSetter(x) { child }" (function)  [configurable | isOwn]
     "childInstancePublicMethod"        =>  "childInstancePublicMethod() { }" (function)  [writable | configurable | isOwn]
     "childInstancePublicGetter"        =>  get "get childInstancePublicGetter() { }" (function)  [configurable | isOwn]
     "childInstancePublicGetter"        =>  set undefined (undefined)  [configurable | isOwn]

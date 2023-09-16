@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+ // https://html.spec.whatwg.org/multipage/media.html#htmlvideoelement
+
 [
     Conditional=VIDEO,
     ExportMacro=WEBCORE_EXPORT,
@@ -34,8 +36,9 @@
     readonly attribute unsigned long videoWidth;
     readonly attribute unsigned long videoHeight;
     [CEReactions=NotNeeded, Reflect, URL] attribute USVString poster;
-
     [CEReactions=NotNeeded, Reflect] attribute boolean playsInline;
+
+    // Non-standard
     readonly attribute boolean webkitSupportsFullscreen;
     readonly attribute boolean webkitDisplayingFullscreen;
 

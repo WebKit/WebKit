@@ -31,6 +31,7 @@
 #include "config.h"
 #include "SQLiteFileSystem.h"
 
+#include "Logging.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
 #include <pal/crypto/CryptoDigest.h>

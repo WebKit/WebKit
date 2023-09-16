@@ -86,7 +86,7 @@ String WebRemoteFrameClient::renderTreeAsText(size_t baseIndent, OptionSet<WebCo
 {
     auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebProcessProxy::RenderTreeAsText(m_frame->frameID(), baseIndent, behavior), 0);
     if (!sendResult.succeeded())
-        return { };
+        return "Test Error - sending WebProcessProxy::RenderTreeAsText failed"_s;
     auto [result] = sendResult.takeReply();
     return result;
 }

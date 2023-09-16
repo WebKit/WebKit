@@ -122,6 +122,10 @@ TEST_P(EGLContextASANTest, DestroyContextInUse)
         std::condition_variable *mCondVar;
     };
 
+    // Unmake current to release the "surface".
+    EXPECT_EGL_TRUE(eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+    EXPECT_EGL_SUCCESS();
+
     std::thread deletingThread = std::thread([&]() {
         AbortOnFailure abortOnFailure(&currentStep, &mutex, &condVar);
 
@@ -189,6 +193,10 @@ TEST_P(EGLContextASANTest, DestroyContextInUse)
     continuingThread.join();
 
     ASSERT_NE(currentStep, Step::Abort);
+
+    // Make default context and surface current again.
+    EXPECT_TRUE(getEGLWindow()->makeCurrent());
+    EXPECT_EGL_SUCCESS();
 
     // cleanup
     ASSERT_GL_NO_ERROR();

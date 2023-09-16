@@ -32,12 +32,16 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "Logging.h"
+
 namespace WebKit {
 
 void WebExtensionAPIRuntimeBase::reportErrorForCallbackHandler(WebExtensionCallbackHandler& callback, NSString *errorMessage, JSGlobalContextRef contextRef)
 {
     ASSERT(errorMessage.length);
     ASSERT(contextRef);
+
+    RELEASE_LOG_ERROR(Extensions, "Callback error reported: %{public}@", errorMessage);
 
     JSContext *context = [JSContext contextWithJSGlobalContextRef:contextRef];
 
@@ -50,6 +54,8 @@ void WebExtensionAPIRuntimeBase::reportErrorForCallbackHandler(WebExtensionCallb
         // Log the error to the console if it wasn't checked in the callback.
         JSValue *consoleErrorFunction = context.globalObject[@"console"][@"error"];
         [consoleErrorFunction callWithArguments:@[ [JSValue valueWithNewErrorFromMessage:[NSString stringWithFormat:@"Unchecked runtime.lastError: %@", errorMessage] inContext:context] ]];
+
+        RELEASE_LOG_DEBUG(Extensions, "Unchecked runtime.lastError");
     }
 
     m_lastErrorAccessed = false;

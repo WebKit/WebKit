@@ -211,10 +211,16 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
     NSInteger eventNumber = synthesizedMouseEventMagicEventNumber;
 
     switch (interaction) {
-    case MouseInteraction::Move:
+    case MouseInteraction::Move: {
         ASSERT(dragEventType);
-        [eventsToBeSent addObject:[NSEvent mouseEventWithType:dragEventType location:locationInWindow modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:eventNumber clickCount:0 pressure:0.0f]];
+        NSEvent *event = [NSEvent mouseEventWithType:dragEventType location:locationInWindow modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:eventNumber clickCount:0 pressure:0.0f];
+        CGEventRef cgEvent = event.CGEvent;
+        CGEventSetIntegerValueField(cgEvent, kCGMouseEventDeltaX, locationInWindow.x() - m_lastClickPosition.x());
+        CGEventSetIntegerValueField(cgEvent, kCGMouseEventDeltaY, -1 * (locationInWindow.y() - m_lastClickPosition.y()));
+        event = [NSEvent eventWithCGEvent:cgEvent];
+        [eventsToBeSent addObject:event];
         break;
+    }
     case MouseInteraction::Down:
         ASSERT(downEventType);
 
@@ -248,6 +254,7 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
         [eventsToBeSent addObject:[NSEvent mouseEventWithType:downEventType location:locationInWindow modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:eventNumber clickCount:2 pressure:WebCore::ForceAtClick]];
         [eventsToBeSent addObject:[NSEvent mouseEventWithType:upEventType location:locationInWindow modifierFlags:modifiers timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:eventNumber clickCount:2 pressure:0.0f]];
     }
+    updateClickCount(button, locationInWindow);
 
     sendSynthesizedEventsToPage(page, eventsToBeSent.get());
 }

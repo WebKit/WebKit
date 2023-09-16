@@ -1,0 +1,41 @@
+<html> <!-- webkit-test-runner [ runSingly=true ] -->
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body {
+    font-family: system-ui;
+}
+
+#focus-ring {
+    border-radius: 4px;
+    margin: 4px;
+    width: 200px;
+    height: 200px;
+    font-size: 16px;
+    text-align: center;
+    line-height: 200px;
+    color: white;
+}
+</style>
+</head>
+<body>
+<div id="focus-ring"></div>
+<script>
+function runTest() {
+    let container = document.getElementById("focus-ring");
+    container.style.backgroundColor = "-webkit-focus-ring-color";
+    container.textContent = getComputedStyle(container).backgroundColor;
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    (async function() {
+        await UIHelper.setAppAccentColor(230, 110, 2);
+        internals.setUseSystemAppearance(false);
+        runTest();
+        testRunner.notifyDone();
+    })();
+} else
+    runTest();
+</script>
+</html>

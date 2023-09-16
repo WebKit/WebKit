@@ -76,7 +76,6 @@ public:
     void didReceiveAllPendingSamples();
     void appendParsingFailed();
 
-    bool isSeeking() const final;
     MediaTime currentMediaTime() const final;
     MediaTime duration() const final;
 

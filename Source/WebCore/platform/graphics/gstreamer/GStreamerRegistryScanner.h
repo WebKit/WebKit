@@ -40,7 +40,7 @@ class GStreamerRegistryScanner {
 public:
     static bool singletonNeedsInitialization();
     static GStreamerRegistryScanner& singleton();
-    static void getSupportedDecodingTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
+    static void getSupportedDecodingTypes(HashSet<String>&);
 
     explicit GStreamerRegistryScanner(bool isMediaSource = false);
     ~GStreamerRegistryScanner() = default;
@@ -52,7 +52,7 @@ public:
         Encoding
     };
 
-    const HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeSet(Configuration) const;
+    const HashSet<String>& mimeTypeSet(Configuration) const;
     bool isContainerTypeSupported(Configuration, const String& containerType) const;
 
     struct RegistryLookupResult {
@@ -74,11 +74,6 @@ public:
         friend bool operator==(const RegistryLookupResult& lhs, const RegistryLookupResult& rhs)
         {
             return lhs.isSupported == rhs.isSupported && lhs.isUsingHardware == rhs.isUsingHardware;
-        }
-
-        friend bool operator!=(const RegistryLookupResult& lhs, const RegistryLookupResult& rhs)
-        {
-            return !(lhs == rhs);
         }
     };
     RegistryLookupResult isDecodingSupported(MediaConfiguration& mediaConfiguration) const { return isConfigurationSupported(Configuration::Decoding, mediaConfiguration); };
@@ -102,7 +97,7 @@ public:
     MediaPlayerEnums::SupportsType isContentTypeSupported(Configuration, const ContentType&, const Vector<ContentType>& contentTypesRequiringHardwareSupport) const;
     bool areAllCodecsSupported(Configuration, const Vector<String>& codecs, bool shouldCheckForHardwareUse = false) const;
 
-    CodecLookupResult areCapsSupported(Configuration, const GRefPtr<GstCaps>&, bool shouldCheckForHardwareUse);
+    CodecLookupResult areCapsSupported(Configuration, const GRefPtr<GstCaps>&, bool shouldCheckForHardwareUse) const;
 
 #if USE(GSTREAMER_WEBRTC)
     RTCRtpCapabilities audioRtpCapabilities(Configuration);
@@ -164,9 +159,10 @@ protected:
     };
     void fillMimeTypeSetFromCapsMapping(const ElementFactories&, const Vector<GstCapsWebKitMapping>&);
 
-    CodecLookupResult isAVC1CodecSupported(Configuration, const String& codec, bool shouldCheckForHardwareUse) const;
-
 private:
+    CodecLookupResult isAVC1CodecSupported(Configuration, const String& codec, bool shouldCheckForHardwareUse) const;
+    CodecLookupResult isHEVCCodecSupported(Configuration, const String& codec, bool shouldCheckForHardwareUse) const;
+
     const char* configurationNameForLogging(Configuration) const;
     bool supportsFeatures(const String& features) const;
 
@@ -197,9 +193,9 @@ private:
 #endif
 
     bool m_isMediaSource { false };
-    HashSet<String, ASCIICaseInsensitiveHash> m_decoderMimeTypeSet;
+    HashSet<String> m_decoderMimeTypeSet;
     HashMap<AtomString, RegistryLookupResult> m_decoderCodecMap;
-    HashSet<String, ASCIICaseInsensitiveHash> m_encoderMimeTypeSet;
+    HashSet<String> m_encoderMimeTypeSet;
     HashMap<AtomString, RegistryLookupResult> m_encoderCodecMap;
 };
 

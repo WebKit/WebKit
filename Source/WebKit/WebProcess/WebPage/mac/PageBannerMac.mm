@@ -115,7 +115,7 @@ void PageBanner::showIfHidden()
 
     // This will re-create a parent layer in the WebCore layer tree, and we will re-add
     // m_layer as a child of it. 
-    addToPage(m_type, m_webPage.get());
+    addToPage(m_type, RefPtr { m_webPage.get() }.get());
 }
 
 void PageBanner::didChangeDeviceScaleFactor(float scaleFactor)
@@ -129,7 +129,7 @@ bool PageBanner::mouseEvent(const WebMouseEvent& mouseEvent)
     if (m_isHidden)
         return false;
 
-    auto* frameView = m_webPage->localMainFrameView();
+    RefPtr frameView = m_webPage->localMainFrameView();
     if (!frameView)
         return false;
 

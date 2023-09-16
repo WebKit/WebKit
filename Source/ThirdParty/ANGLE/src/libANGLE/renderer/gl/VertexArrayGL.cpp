@@ -646,6 +646,7 @@ angle::Result VertexArrayGL::updateAttribEnabled(const gl::Context *context, siz
 
 angle::Result VertexArrayGL::updateAttribPointer(const gl::Context *context, size_t attribIndex)
 {
+    const angle::FeaturesGL &features = GetFeaturesGL(context);
 
     const VertexAttribute &attrib = mState.getVertexAttribute(attribIndex);
 
@@ -687,8 +688,16 @@ angle::Result VertexArrayGL::updateAttribPointer(const gl::Context *context, siz
     // is not NULL.
 
     StateManagerGL *stateManager = GetStateManagerGL(context);
-    GLuint bufferId              = GetNativeBufferID(arrayBuffer);
+    BufferGL *bufferGL           = GetImplAs<BufferGL>(arrayBuffer);
+    GLuint bufferId              = bufferGL->getBufferID();
     stateManager->bindBuffer(gl::BufferBinding::Array, bufferId);
+    if (features.ensureNonEmptyBufferIsBoundForDraw.enabled && bufferGL->getBufferSize() == 0)
+    {
+        constexpr uint32_t data = 0;
+        ANGLE_TRY(bufferGL->setData(context, gl::BufferBinding::Array, &data, sizeof(data),
+                                    gl::BufferUsage::StaticDraw));
+        ASSERT(bufferGL->getBufferSize() > 0);
+    }
     ANGLE_TRY(callVertexAttribPointer(context, static_cast<GLuint>(attribIndex), attrib,
                                       binding.getStride(), binding.getOffset()));
 

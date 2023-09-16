@@ -347,12 +347,10 @@ void PathCairo::applySegments(const PathSegmentApplier& applier) const
     });
 }
 
-void PathCairo::applyElements(const PathElementApplier& applier) const
+bool PathCairo::applyElements(const PathElementApplier& applier) const
 {
-    if (m_elementsStream) {
-        m_elementsStream->applyElements(applier);
-        return;
-    }
+    if (m_elementsStream && m_elementsStream->applyElements(applier))
+        return true;
 
     CairoUniquePtr<cairo_path_t> pathCopy(cairo_copy_path(platformPath()));
     cairo_path_data_t* data;
@@ -387,6 +385,8 @@ void PathCairo::applyElements(const PathElementApplier& applier) const
             break;
         }
     }
+
+    return true;
 }
 
 bool PathCairo::isEmpty() const
@@ -403,13 +403,16 @@ FloatPoint PathCairo::currentPoint() const
     return FloatPoint(x, y);
 }
 
-void PathCairo::transform(const AffineTransform& transform)
+bool PathCairo::transform(const AffineTransform& transform)
 {
+    if (m_elementsStream && !m_elementsStream->transform(transform))
+        m_elementsStream = nullptr;
+
     cairo_matrix_t matrix = toCairoMatrix(transform);
     cairo_matrix_invert(&matrix);
     cairo_transform(platformPath(), &matrix);
 
-    m_elementsStream = nullptr;
+    return true;
 }
 
 bool PathCairo::contains(const FloatPoint &point, WindRule rule) const

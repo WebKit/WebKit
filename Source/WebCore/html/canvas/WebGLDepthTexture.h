@@ -26,16 +26,18 @@
 #pragma once
 
 #include "WebGLExtension.h"
+#include "WebGLRenderingContextBase.h"
+#include <wtf/IsoMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class WebGLDepthTexture final : public WebGLExtension {
+class WebGLDepthTexture final : public RefCounted<WebGLDepthTexture>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(WebGLDepthTexture);
 public:
     explicit WebGLDepthTexture(WebGLRenderingContextBase&);
-    virtual ~WebGLDepthTexture();
-
-    ExtensionName getName() const override;
+    ~WebGLDepthTexture();
 
     static bool supported(GraphicsContextGL&);
 };

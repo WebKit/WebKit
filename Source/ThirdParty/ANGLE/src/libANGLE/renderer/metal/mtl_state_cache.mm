@@ -219,6 +219,16 @@ void ToObjC(const RenderPassStencilAttachmentDesc &desc,
     ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, clearStencil);
 }
 
+MTLColorWriteMask AdjustColorWriteMaskForSharedExponent(MTLColorWriteMask mask)
+{
+    // For RGB9_E5 color buffers, ANGLE frontend validation ignores alpha writemask value.
+    // Metal validation is more strict and allows only all-enabled or all-disabled.
+    ASSERT((mask == MTLColorWriteMaskAll) ||
+           (mask == (MTLColorWriteMaskAll ^ MTLColorWriteMaskAlpha)) ||
+           (mask == MTLColorWriteMaskAlpha) || (mask == MTLColorWriteMaskNone));
+    return (mask & MTLColorWriteMaskBlue) ? MTLColorWriteMaskAll : MTLColorWriteMaskNone;
+}
+
 }  // namespace
 
 // StencilDesc implementation
@@ -553,6 +563,11 @@ void RenderPipelineColorAttachmentDesc::reset(MTLPixelFormat format, MTLColorWri
 {
     this->pixelFormat = format;
 
+    if (format == MTLPixelFormatRGB9E5Float)
+    {
+        _writeMask = AdjustColorWriteMaskForSharedExponent(_writeMask);
+    }
+
     BlendDesc::reset(_writeMask);
 }
 
@@ -561,11 +576,11 @@ void RenderPipelineColorAttachmentDesc::reset(MTLPixelFormat format, const Blend
     this->pixelFormat = format;
 
     BlendDesc::operator=(blendDesc);
-}
 
-void RenderPipelineColorAttachmentDesc::update(const BlendDesc &blendDesc)
-{
-    BlendDesc::operator=(blendDesc);
+    if (format == MTLPixelFormatRGB9E5Float)
+    {
+        writeMask = AdjustColorWriteMaskForSharedExponent(writeMask);
+    }
 }
 
 // RenderPipelineOutputDesc implementation
@@ -744,7 +759,8 @@ void RenderPassDesc::populateRenderPipelineOutputDesc(const BlendDescArray &blen
 
         if (texture)
         {
-            if (renderPassColorAttachment.blendable)
+            if (renderPassColorAttachment.blendable &&
+                blendDescArray[i].writeMask != MTLColorWriteMaskNone)
             {
                 // Copy parameters from blend state
                 outputDescriptor.colorAttachments[i].reset(texture->pixelFormat(),
@@ -752,8 +768,19 @@ void RenderPassDesc::populateRenderPipelineOutputDesc(const BlendDescArray &blen
             }
             else
             {
-                // Disable blending if the attachment's render target doesn't support blending.
-                // Force default blending state to reduce the number of unique states.
+                // Disable blending if the attachment's render target doesn't support blending
+                // or if all its color channels are masked out. The latter is needed because:
+                //
+                // * When blending is enabled and *Source1* blend factors are used, Metal
+                //   requires a fragment shader to bind both primary and secondary outputs
+                //
+                // * ANGLE frontend validation allows draw calls on draw buffers without
+                //   bound fragment outputs if all their color channels are masked out
+                //
+                // * When all color channels are masked out, blending has no effect anyway
+                //
+                // Besides disabling blending, use default values for factors and
+                // operations to reduce the number of unique pipeline states.
                 outputDescriptor.colorAttachments[i].reset(texture->pixelFormat(),
                                                            blendDescArray[i].writeMask);
             }
@@ -869,225 +896,6 @@ void RenderPassDesc::convertToMetalDesc(MTLRenderPassDescriptor *objCDesc,
     }
 }
 
-// RenderPipelineCache implementation
-RenderPipelineCache::RenderPipelineCache() {}
-
-RenderPipelineCache::~RenderPipelineCache()
-{
-    clearPipelineStates();
-}
-
-void RenderPipelineCache::setVertexShader(ContextMtl *context, id<MTLFunction> shader)
-{
-    mVertexShader.retainAssign(shader);
-
-    if (!shader)
-    {
-        clearPipelineStates();
-        return;
-    }
-
-    recreatePipelineStates(context);
-}
-
-void RenderPipelineCache::setFragmentShader(ContextMtl *context, id<MTLFunction> shader)
-{
-    mFragmentShader.retainAssign(shader);
-
-    if (!shader)
-    {
-        clearPipelineStates();
-        return;
-    }
-
-    recreatePipelineStates(context);
-}
-
-bool RenderPipelineCache::hasDefaultAttribs(const RenderPipelineDesc &rpdesc) const
-{
-    const VertexDesc &desc = rpdesc.vertexDescriptor;
-    for (uint8_t i = 0; i < desc.numAttribs; ++i)
-    {
-        if (desc.attributes[i].bufferIndex == kDefaultAttribsBindingIndex)
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::getRenderPipelineState(
-    ContextMtl *context,
-    const RenderPipelineDesc &desc)
-{
-    auto insertDefaultAttribLayout = hasDefaultAttribs(desc);
-    int tableIdx                   = insertDefaultAttribLayout ? 1 : 0;
-    auto &table                    = mRenderPipelineStates[tableIdx];
-    auto ite                       = table.find(desc);
-    if (ite == table.end())
-    {
-        return insertRenderPipelineState(context, desc, insertDefaultAttribLayout);
-    }
-
-    return ite->second;
-}
-
-AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::insertRenderPipelineState(
-    ContextMtl *context,
-    const RenderPipelineDesc &desc,
-    bool insertDefaultAttribLayout)
-{
-    AutoObjCPtr<id<MTLRenderPipelineState>> newState =
-        createRenderPipelineState(context, desc, insertDefaultAttribLayout);
-    if (!newState)
-    {
-        return nil;
-    }
-
-    int tableIdx = insertDefaultAttribLayout ? 1 : 0;
-    auto re      = mRenderPipelineStates[tableIdx].insert(std::make_pair(desc, newState));
-    if (!re.second)
-    {
-        return nil;
-    }
-
-    return re.first->second;
-}
-
-static bool ValidateRenderPipelineState(const MTLRenderPipelineDescriptor *descriptor,
-                                        ContextMtl *context,
-                                        const mtl::ContextDevice &device)
-{
-
-    // Ensure there is at least one valid render target.
-    bool hasValidRenderTarget              = false;
-    const NSUInteger maxColorRenderTargets = GetMaxNumberOfRenderTargetsForDevice(device);
-    for (NSUInteger i = 0; i < maxColorRenderTargets; ++i)
-    {
-        auto colorAttachment = descriptor.colorAttachments[i];
-        if (colorAttachment && colorAttachment.pixelFormat != MTLPixelFormatInvalid)
-        {
-            hasValidRenderTarget = true;
-            break;
-        }
-    }
-
-    if (!hasValidRenderTarget && descriptor.depthAttachmentPixelFormat != MTLPixelFormatInvalid)
-    {
-        hasValidRenderTarget = true;
-    }
-
-    if (!hasValidRenderTarget && descriptor.stencilAttachmentPixelFormat != MTLPixelFormatInvalid)
-    {
-        hasValidRenderTarget = true;
-    }
-
-    if (!hasValidRenderTarget &&
-        !context->getDisplay()->getFeatures().allowRenderpassWithoutAttachment.enabled)
-    {
-        ANGLE_MTL_HANDLE_ERROR(
-            context, "Render pipeline requires at least one render target for this device.",
-            GL_INVALID_OPERATION);
-        return false;
-    }
-
-    // Ensure the device can support the storage requirement for render targets.
-    if (DeviceHasMaximumRenderTargetSize(device))
-    {
-        // TODO: Is the use of NSUInteger in 32 bit systems ok without any overflow checking?
-        NSUInteger maxSize = GetMaxRenderTargetSizeForDeviceInBytes(device);
-        NSUInteger renderTargetSize =
-            ComputeTotalSizeUsedForMTLRenderPipelineDescriptor(descriptor, context, device);
-        if (renderTargetSize > maxSize)
-        {
-            std::stringstream errorStream;
-            errorStream << "This set of render targets requires " << renderTargetSize
-                        << " bytes of pixel storage. This device supports " << maxSize << " bytes.";
-            ANGLE_MTL_HANDLE_ERROR(context, errorStream.str().c_str(), GL_INVALID_OPERATION);
-            return false;
-        }
-    }
-
-    return true;
-}
-
-AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelineState(
-    ContextMtl *context,
-    const RenderPipelineDesc &desc,
-    bool insertDefaultAttribLayout)
-{
-    ANGLE_MTL_OBJC_SCOPE
-    {
-        const mtl::ContextDevice &metalDevice = context->getMetalDevice();
-
-        auto objCDesc = desc.createMetalDesc(mVertexShader, mFragmentShader);
-
-        if (!ValidateRenderPipelineState(objCDesc, context, metalDevice))
-        {
-            return nil;
-        }
-
-        if (!ValidateRenderPipelineState(objCDesc, context, metalDevice))
-        {
-            return nil;
-        }
-
-        // Special attribute slot for default attribute
-        if (insertDefaultAttribLayout)
-        {
-            auto defaultAttribLayoutObjCDesc = adoptObjCObj<MTLVertexBufferLayoutDescriptor>(
-                [[MTLVertexBufferLayoutDescriptor alloc] init]);
-            defaultAttribLayoutObjCDesc.get().stepFunction = MTLVertexStepFunctionConstant;
-            defaultAttribLayoutObjCDesc.get().stepRate     = 0;
-            defaultAttribLayoutObjCDesc.get().stride = kDefaultAttributeSize * kMaxVertexAttribs;
-
-            [objCDesc.get().vertexDescriptor.layouts setObject:defaultAttribLayoutObjCDesc
-                                            atIndexedSubscript:kDefaultAttribsBindingIndex];
-        }
-        // Create pipeline state
-        NSError *err  = nil;
-        auto newState = metalDevice.newRenderPipelineStateWithDescriptor(objCDesc, &err);
-        if (err)
-        {
-            ANGLE_MTL_HANDLE_ERROR(context, mtl::FormatMetalErrorMessage(err).c_str(),
-                                   GL_INVALID_OPERATION);
-            return nil;
-        }
-
-        return newState;
-    }
-}
-
-void RenderPipelineCache::recreatePipelineStates(ContextMtl *context)
-{
-    for (int hasDefaultAttrib = 0; hasDefaultAttrib <= 1; ++hasDefaultAttrib)
-    {
-        for (auto &ite : mRenderPipelineStates[hasDefaultAttrib])
-        {
-            if (ite.second == nil)
-            {
-                continue;
-            }
-
-            ite.second = createRenderPipelineState(context, ite.first, hasDefaultAttrib);
-        }
-    }
-}
-
-void RenderPipelineCache::clear()
-{
-    mVertexShader   = nil;
-    mFragmentShader = nil;
-    clearPipelineStates();
-}
-
-void RenderPipelineCache::clearPipelineStates()
-{
-    mRenderPipelineStates[0].clear();
-    mRenderPipelineStates[1].clear();
-}
-
 // ProvokingVertexPipelineDesc
 ProvokingVertexComputePipelineDesc::ProvokingVertexComputePipelineDesc()
 {
@@ -1099,7 +907,7 @@ ProvokingVertexComputePipelineDesc::ProvokingVertexComputePipelineDesc(
     memcpy(this, &src, sizeof(*this));
 }
 ProvokingVertexComputePipelineDesc::ProvokingVertexComputePipelineDesc(
-    const ProvokingVertexComputePipelineDesc &&src)
+    ProvokingVertexComputePipelineDesc &&src)
 {
     memcpy(this, &src, sizeof(*this));
 }
@@ -1123,135 +931,6 @@ size_t ProvokingVertexComputePipelineDesc::hash() const
 {
     return angle::ComputeGenericHash(*this);
 }
-
-ProvokingVertexComputePipelineCache::ProvokingVertexComputePipelineCache() : mComputeShader(nullptr)
-{}
-
-ProvokingVertexComputePipelineCache::ProvokingVertexComputePipelineCache(
-    ProvokingVertexCacheSpecializeShaderFactory *specializedShaderFactory)
-    : mComputeShader(nullptr), mSpecializedShaderFactory(specializedShaderFactory)
-{}
-
-void ProvokingVertexComputePipelineCache::setComputeShader(ContextMtl *context,
-                                                           id<MTLFunction> shader)
-{
-    mComputeShader.retainAssign(shader);
-    if (!shader)
-    {
-        clearPipelineStates();
-        return;
-    }
-
-    recreatePipelineStates(context);
-}
-
-void ProvokingVertexComputePipelineCache::clearPipelineStates()
-{
-    mComputePipelineStates.clear();
-}
-
-void ProvokingVertexComputePipelineCache::clear()
-{
-    clearPipelineStates();
-}
-
-AutoObjCPtr<id<MTLComputePipelineState>>
-ProvokingVertexComputePipelineCache::getComputePipelineState(
-    ContextMtl *context,
-    const ProvokingVertexComputePipelineDesc &desc)
-{
-    auto &table = mComputePipelineStates;
-    auto ite    = table.find(desc);
-    if (ite == table.end())
-    {
-        return insertComputePipelineState(context, desc);
-    }
-
-    return ite->second;
-}
-
-AutoObjCPtr<id<MTLComputePipelineState>>
-ProvokingVertexComputePipelineCache::insertComputePipelineState(
-    ContextMtl *context,
-    const ProvokingVertexComputePipelineDesc &desc)
-{
-    AutoObjCPtr<id<MTLComputePipelineState>> newState = createComputePipelineState(context, desc);
-
-    auto re = mComputePipelineStates.insert(std::make_pair(desc, newState));
-    if (!re.second)
-    {
-        return nil;
-    }
-
-    return re.first->second;
-}
-
-void ProvokingVertexComputePipelineCache::recreatePipelineStates(ContextMtl *context)
-{
-
-    for (auto &ite : mComputePipelineStates)
-    {
-        if (ite.second == nil)
-        {
-            continue;
-        }
-
-        ite.second = createComputePipelineState(context, ite.first);
-    }
-}
-
-AutoObjCPtr<id<MTLComputePipelineState>>
-ProvokingVertexComputePipelineCache::createComputePipelineState(
-    ContextMtl *context,
-    const ProvokingVertexComputePipelineDesc &originalDesc)
-{
-    ANGLE_MTL_OBJC_SCOPE
-    {
-        // Disable coverage if the render pipeline's sample count is only 1.
-        ProvokingVertexComputePipelineDesc desc = originalDesc;
-
-        id<MTLFunction> computeFunction = nil;
-        // Special case for transform feedback shader, we've already created it! See
-        // getTransformFeedbackRenderPipeline
-        if (mSpecializedShaderFactory &&
-            mSpecializedShaderFactory->hasSpecializedShader(gl::ShaderType::Compute, desc))
-        {
-            if (IsError(mSpecializedShaderFactory->getSpecializedShader(
-                    context, gl::ShaderType::Compute, desc, &computeFunction)))
-            {
-                return nil;
-            }
-        }
-        else
-        {
-            // Non-specialized version
-            computeFunction = mComputeShader;
-        }
-
-        if (!computeFunction)
-        {
-            ANGLE_MTL_HANDLE_ERROR(context, "Render pipeline without vertex shader is invalid.",
-                                   GL_INVALID_OPERATION);
-            return nil;
-        }
-
-        const mtl::ContextDevice &metalDevice = context->getMetalDevice();
-
-        // Convert to Objective-C desc:
-        NSError *err  = nil;
-        auto newState = metalDevice.newComputePipelineStateWithFunction(computeFunction, &err);
-        if (err)
-        {
-            ANGLE_MTL_HANDLE_ERROR(context, mtl::FormatMetalErrorMessage(err).c_str(),
-                                   GL_INVALID_OPERATION);
-            return nil;
-        }
-
-        return newState;
-    }
-}
-
-ProvokingVertexComputePipelineCache::~ProvokingVertexComputePipelineCache() {}
 
 // StateCache implementation
 StateCache::StateCache(const angle::FeaturesMtl &features) : mFeatures(features) {}

@@ -39,7 +39,6 @@
 #include "MacroAssemblerCodeRef.h"
 #include <wtf/DataLog.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/Noncopyable.h>
 
 namespace JSC {
 
@@ -432,19 +431,10 @@ private:
     static size_t s_profileCummulativeLinkedCounts[numberOfProfiles];
 };
 
-#if OS(LINUX)
 #define FINALIZE_CODE_IF(condition, linkBufferReference, resultPtrTag, ...) \
-    (UNLIKELY((condition) || JSC::Options::logJIT()) \
-        ? (linkBufferReference).finalizeCodeWithDisassembly<resultPtrTag>((condition), __VA_ARGS__) \
-        : (UNLIKELY(JSC::Options::logJITCodeForPerf()) \
-            ? (linkBufferReference).finalizeCodeWithDisassembly<resultPtrTag>(false, __VA_ARGS__) \
-            : (linkBufferReference).finalizeCodeWithoutDisassembly<resultPtrTag>()))
-#else
-#define FINALIZE_CODE_IF(condition, linkBufferReference, resultPtrTag, ...) \
-    (UNLIKELY((condition) || JSC::Options::logJIT()) \
+    (UNLIKELY((condition) || JSC::Options::logJIT() || JSC::Options::logJITCodeForPerf()) \
         ? (linkBufferReference).finalizeCodeWithDisassembly<resultPtrTag>((condition), __VA_ARGS__) \
         : (linkBufferReference).finalizeCodeWithoutDisassembly<resultPtrTag>())
-#endif
 
 #define FINALIZE_CODE_FOR(codeBlock, linkBufferReference, resultPtrTag, ...)  \
     FINALIZE_CODE_IF((shouldDumpDisassemblyFor(codeBlock) || Options::asyncDisassembly()), linkBufferReference, resultPtrTag, __VA_ARGS__)
@@ -467,6 +457,9 @@ private:
 
 #define FINALIZE_CODE(linkBufferReference, resultPtrTag, ...)  \
     FINALIZE_CODE_IF((JSC::Options::asyncDisassembly() || JSC::Options::dumpDisassembly()), linkBufferReference, resultPtrTag, __VA_ARGS__)
+
+#define FINALIZE_BASELINE_CODE(linkBufferReference, resultPtrTag, ...)  \
+    FINALIZE_CODE_IF((JSC::Options::asyncDisassembly() || JSC::Options::dumpDisassembly() || Options::dumpBaselineDisassembly()), linkBufferReference, resultPtrTag, __VA_ARGS__)
 
 #define FINALIZE_DFG_CODE(linkBufferReference, resultPtrTag, ...)  \
     FINALIZE_CODE_IF((JSC::Options::asyncDisassembly() || JSC::Options::dumpDisassembly() || Options::dumpDFGDisassembly()), linkBufferReference, resultPtrTag, __VA_ARGS__)

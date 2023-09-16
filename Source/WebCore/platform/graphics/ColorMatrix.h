@@ -50,21 +50,11 @@ public:
         return m_matrix[(row * ColumnCount) + column];
     }
 
+    friend bool operator==(const ColorMatrix&, const ColorMatrix&) = default;
+
 private:
     std::array<float, RowCount * ColumnCount> m_matrix;
 };
-
-template<size_t ColumnCount, size_t RowCount>
-constexpr bool operator==(const ColorMatrix<ColumnCount, RowCount>& a, const ColorMatrix<ColumnCount, RowCount>& b)
-{
-    for (size_t row = 0; row < RowCount; ++row) {
-        for (size_t column = 0; column < ColumnCount; ++column) {
-            if (a.at(row, column) != b.at(row, column))
-                return false;
-        }
-    }
-    return true;
-}
 
 constexpr ColorMatrix<3, 3> brightnessColorMatrix(float amount)
 {

@@ -35,9 +35,10 @@ class CSSTransition;
 class RenderStyle;
 class WebAnimation;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ElementAnimationRareData);
 class ElementAnimationRareData {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ElementAnimationRareData);
     WTF_MAKE_NONCOPYABLE(ElementAnimationRareData);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ElementAnimationRareData(PseudoId);
     ~ElementAnimationRareData();

@@ -60,6 +60,15 @@ private:
     }
 };
 
+LibWebRTCProvider::LibWebRTCProvider(WebPage& webPage)
+    : m_webPage(webPage)
+{
+    m_useNetworkThreadWithSocketServer = false;
+    m_supportsMDNS = true;
+}
+
+LibWebRTCProvider::~LibWebRTCProvider() = default;
+
 rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(ScriptExecutionContextIdentifier identifier, webrtc::PeerConnectionObserver& observer, rtc::PacketSocketFactory* socketFactory, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
 {
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA) && !PLATFORM(MACCATALYST)
@@ -155,9 +164,10 @@ void LibWebRTCProvider::startedNetworkThread()
 
 std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> LibWebRTCProvider::createSocketFactory(String&& userAgent, ScriptExecutionContextIdentifier identifier, bool isFirstParty, RegistrableDomain&& domain)
 {
-    auto factory = makeUnique<RTCSocketFactory>(m_webPage.webPageProxyIdentifier(), WTFMove(userAgent), identifier, isFirstParty, WTFMove(domain));
+    Ref webPage { m_webPage.get() };
+    auto factory = makeUnique<RTCSocketFactory>(webPage->webPageProxyIdentifier(), WTFMove(userAgent), identifier, isFirstParty, WTFMove(domain));
 
-    auto* page = m_webPage.corePage();
+    auto* page = webPage->corePage();
     if (!page || !page->settings().webRTCSocketsProxyingEnabled())
         factory->disableRelay();
 

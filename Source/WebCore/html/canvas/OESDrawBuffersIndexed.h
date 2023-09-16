@@ -26,16 +26,18 @@
 #pragma once
 
 #include "WebGLExtension.h"
+#include "WebGLRenderingContextBase.h"
+#include <wtf/IsoMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class OESDrawBuffersIndexed final : public WebGLExtension {
+class OESDrawBuffersIndexed final : public RefCounted<OESDrawBuffersIndexed>, public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(OESDrawBuffersIndexed);
 public:
     explicit OESDrawBuffersIndexed(WebGLRenderingContextBase&);
-    virtual ~OESDrawBuffersIndexed();
-
-    ExtensionName getName() const final;
+    ~OESDrawBuffersIndexed();
 
     static bool supported(GraphicsContextGL&);
 

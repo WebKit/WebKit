@@ -4,17 +4,10 @@
 accessibility/mac/resolved-text-editing.html [ Crash Pass ]
 
 # Timeouts
-accessibility/aria-controls-with-tabs.html [ Timeout ]
 accessibility/frame-disconnect-textmarker-cache-crash.html [ Timeout ]
-accessibility/mac/combobox-activedescendant-notifications.html [ Timeout ]
-accessibility/mac/relationships-in-frames.html [ Timeout ]
-
-# Times out because `innerText` changes on linked <label>s don't update cached AXTitle value.
-accessibility/multiple-label-input.html [ Timeout ]
 
 # Text failures
-accessibility/aria-current.html [ Failure ]
-accessibility/dialog-showModal.html [ Failure ]
+accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Failure ]
 accessibility/dynamically-ignored-canvas.html [ Failure ]
 accessibility/element-reflection-ariacontrols.html [ Failure ]
 accessibility/element-reflection-ariadetails.html [ Failure ]
@@ -36,7 +29,6 @@ accessibility/mac/search-predicate-from-ignored-element.html [ Failure ]
 accessibility/mac/search-predicate-immediate-descendants-only.html [ Failure ]
 accessibility/mac/set-value-editable-types.html [ Failure ]
 accessibility/mac/setting-attributes-is-asynchronous.html [ Failure ]
-accessibility/mac/title-attribute-used-as-last-resort.html [ Failure ]
 accessibility/mac/attributed-string/attributed-string-has-completion-annotation.html [ Failure ]
 accessibility/mac/text-input-marked-range.html [ Failure ]
 accessibility/mac/text-input-marked-text-marker-range.html [ Failure ]
@@ -52,9 +44,5 @@ accessibility/mac/grid-selected-cells.html [ Failure ]
 accessibility/table-cells.html [ Failure ]
 accessibility/mac/document-links.html [ Failure ]
 
-# Fails because aria-labelledby text changes don't update in isolated tree mode
-accessibility/aria-labelledby-on-password-input.html [ Failure ]
-
-accessibility/aria-selected-menu-items.html [ Failure ]
 accessibility/aria-owns-hierarchy-remap.html [ Failure ]
 accessibility/element-reflection-ariaactivedescendant.html [ Failure ]

@@ -33,7 +33,7 @@ namespace WebKit {
 
 std::unique_ptr<ProcessThrottler::BackgroundActivity> UIRemoteObjectRegistry::backgroundActivity(ASCIILiteral name)
 {
-    return m_page.process().throttler().backgroundActivity(name).moveToUniquePtr();
+    return protectedPage()->process().throttler().backgroundActivity(name).moveToUniquePtr();
 }
 
 UIRemoteObjectRegistry::UIRemoteObjectRegistry(_WKRemoteObjectRegistry *remoteObjectRegistry, WebPageProxy& page)
@@ -42,22 +42,29 @@ UIRemoteObjectRegistry::UIRemoteObjectRegistry(_WKRemoteObjectRegistry *remoteOb
 {
 }
 
+UIRemoteObjectRegistry::~UIRemoteObjectRegistry() = default;
+
+Ref<WebPageProxy> UIRemoteObjectRegistry::protectedPage()
+{
+    return m_page.get();
+}
+
 void UIRemoteObjectRegistry::sendInvocation(const RemoteObjectInvocation& invocation)
 {
     // For backward-compatibility, support invoking injected bundle methods before having done any load in the WebView.
-    m_page.launchInitialProcessIfNecessary();
+    protectedPage()->launchInitialProcessIfNecessary();
 
     RemoteObjectRegistry::sendInvocation(invocation);
 }
 
 IPC::MessageSender& UIRemoteObjectRegistry::messageSender()
 {
-    return m_page;
+    return m_page.get();
 }
 
 uint64_t UIRemoteObjectRegistry::messageDestinationID()
 {
-    return m_page.webPageID().toUInt64();
+    return protectedPage()->webPageID().toUInt64();
 }
 
 } // namespace WebKit

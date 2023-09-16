@@ -3,7 +3,7 @@
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"
 
-const N = 4095 + 32
+const N = 1000;
 
 let wat = `
 (module

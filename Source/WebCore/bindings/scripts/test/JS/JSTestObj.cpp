@@ -1793,6 +1793,8 @@ static JSC_DECLARE_CUSTOM_GETTER(jsTestObjConstructor_TestSubObj);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestObjConstructor_testStaticReadonlyObj);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestObj_enumAttr);
 static JSC_DECLARE_CUSTOM_SETTER(setJSTestObj_enumAttr);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestObj_nullableEnumAttr);
+static JSC_DECLARE_CUSTOM_SETTER(setJSTestObj_nullableEnumAttr);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestObj_byteAttr);
 static JSC_DECLARE_CUSTOM_SETTER(setJSTestObj_byteAttr);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestObj_octetAttr);
@@ -2208,6 +2210,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "readOnlyStringAttr"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestObj_readOnlyStringAttr, 0 } },
     { "readOnlyTestObjAttr"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestObj_readOnlyTestObjAttr, 0 } },
     { "enumAttr"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestObj_enumAttr, setJSTestObj_enumAttr } },
+    { "nullableEnumAttr"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestObj_nullableEnumAttr, setJSTestObj_nullableEnumAttr } },
     { "byteAttr"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestObj_byteAttr, setJSTestObj_byteAttr } },
     { "octetAttr"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestObj_octetAttr, setJSTestObj_octetAttr } },
     { "shortAttr"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestObj_shortAttr, setJSTestObj_shortAttr } },
@@ -2977,6 +2980,48 @@ static inline bool setJSTestObj_enumAttrSetter(JSGlobalObject& lexicalGlobalObje
 JSC_DEFINE_CUSTOM_SETTER(setJSTestObj_enumAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObj_enumAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
+}
+
+static inline JSValue jsTestObj_nullableEnumAttrGetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto& impl = thisObject.wrapped();
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLNullable<IDLEnumeration<TestObj::EnumType>>>(lexicalGlobalObject, throwScope, impl.nullableEnumAttr())));
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsTestObj_nullableEnumAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
+{
+    return IDLAttribute<JSTestObj>::get<jsTestObj_nullableEnumAttrGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
+}
+
+static inline bool setJSTestObj_nullableEnumAttrSetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject, JSValue value)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    UNUSED_PARAM(vm);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto& impl = thisObject.wrapped();
+    if (value.isUndefinedOrNull()) {
+        invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
+            return impl.setNullableEnumAttr(std::nullopt);
+        });
+        return true;
+    }
+
+    auto optionalNativeValue = parseEnumeration<TestObj::EnumType>(lexicalGlobalObject, value);
+    RETURN_IF_EXCEPTION(throwScope, false);
+    if (UNLIKELY(!optionalNativeValue))
+        return false;
+    auto nativeValue = optionalNativeValue.value();
+    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
+        return impl.setNullableEnumAttr(WTFMove(nativeValue));
+    });
+    return true;
+}
+
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObj_nullableEnumAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
+{
+    return IDLAttribute<JSTestObj>::set<setJSTestObj_nullableEnumAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
 }
 
 static inline JSValue jsTestObj_byteAttrGetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject)

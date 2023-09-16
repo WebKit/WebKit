@@ -78,19 +78,19 @@ UserMediaRequest::~UserMediaRequest()
 
 SecurityOrigin* UserMediaRequest::userMediaDocumentOrigin() const
 {
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     return context ? context->securityOrigin() : nullptr;
 }
 
 SecurityOrigin* UserMediaRequest::topLevelDocumentOrigin() const
 {
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     return context ? &context->topOrigin() : nullptr;
 }
 
 void UserMediaRequest::start()
 {
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     ASSERT(context);
     if (!context) {
         deny(MediaAccessDenialReason::UserMediaDisabled);
@@ -182,14 +182,14 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
                 return;
             }
 
-            if (auto* audioTrack = stream->getFirstAudioTrack()) {
+            if (RefPtr audioTrack = stream->getFirstAudioTrack()) {
 #if USE(AUDIO_SESSION)
                 AudioSession::sharedSession().tryToSetActive(true);
 #endif
                 if (std::holds_alternative<MediaTrackConstraints>(m_audioConstraints))
                     audioTrack->setConstraints(std::get<MediaTrackConstraints>(WTFMove(m_audioConstraints)));
             }
-            if (auto* videoTrack = stream->getFirstVideoTrack()) {
+            if (RefPtr videoTrack = stream->getFirstVideoTrack()) {
                 if (std::holds_alternative<MediaTrackConstraints>(m_videoConstraints))
                     videoTrack->setConstraints(std::get<MediaTrackConstraints>(WTFMove(m_videoConstraints)));
             }

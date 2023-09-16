@@ -5,69 +5,66 @@
 </head>
     <body>
         <p>This test verifies that the function WebCore::currentCapsLockState() returns true when Caps Lock is on.</p>
-        <input type="password"></input>
+        <input id="input" type="password"></input>
         <div id="log"></div>
         
         <script>
             function log(msg) {
                 document.getElementById("log").innerHTML+= msg + "<br>";
             }
-        
-            function keyDown(e) {
-                if (e.key == "q")
-                    return;
-                if (window.internals) {
-                    log(messages[messageCount++]);
-                    if (window.internals.capsLockIsOn())
-                        log("CapsLock is on.");
-                    else
-                        log("CapsLock is not on.");
-                }
+
+            function TestCase(message, testFunction) {
+                this.message = message;
+                this.testFunction = testFunction;
             }
 
-            function keyUp(e) {
-                if (e.key == "q")
-                    testRunner.notifyDone();
-                if (window.internals) {
-                    if (window.internals.capsLockIsOn())
-                        log("CapsLock is on.");
-                    else
-                        log("CapsLock is not on.");
-                }
+            function makeTestCase(message, testFunction) {
+                return new TestCase(message, testFunction);
             }
 
-            var messages = ["1. Press Caps Lock key when view is active, make view inactive, make view active again, press Caps Lock key.",
-                            "2. Press Caps Lock key in inactive view, make view active, press Caps Lock key.",
-                            "3. Press Caps Lock key when view is active, press Caps Lock key when view is active.",
-                            "4. Press Caps Lock key when view is inactive, press Caps Lock key when view inactive."];
-            var messageCount = 0;
-        
-            var input = document.getElementsByTagName("input")[0];
-            input.addEventListener('keydown', keyDown, false);
-            input.addEventListener('keyup', keyUp, false);
-            input.focus();
+            async function toggleCapsLockandLogCapsLockState() {
+                await UIHelper.toggleCapsLock();
+                await UIHelper.ensureStablePresentationUpdate();
+                if (window.internals.capsLockIsOn())
+                    log("CapsLock is on.");
+                else
+                    log("CapsLock is not on.");
+            }
+
+            const testCases = [
+                makeTestCase("1. Press Caps Lock key when view is active, make view inactive, make view active again, press Caps Lock key.", async () => {
+                    await toggleCapsLockandLogCapsLockState();
+                    testRunner.setWindowIsKey(false);
+                    testRunner.setWindowIsKey(true);
+                    await toggleCapsLockandLogCapsLockState();
+                }),
+                makeTestCase("2. Press Caps Lock key in inactive view, make view active, press Caps Lock key.", async () => {
+                    testRunner.setWindowIsKey(false);
+                    await toggleCapsLockandLogCapsLockState();
+                    testRunner.setWindowIsKey(true);
+                    await toggleCapsLockandLogCapsLockState();
+                }),
+                makeTestCase("3. Press Caps Lock key when view is active, press Caps Lock key when view is active.", async () => {
+                    testRunner.setWindowIsKey(true);
+                    await toggleCapsLockandLogCapsLockState();
+                    await toggleCapsLockandLogCapsLockState();
+                }),
+                makeTestCase("4. Press Caps Lock key when view is inactive, press Caps Lock key when view inactive.", async () => {
+                    testRunner.setWindowIsKey(false);
+                    await toggleCapsLockandLogCapsLockState();
+                    await toggleCapsLockandLogCapsLockState();
+                }),
+            ];
 
             async function runTest()
             {
-                await UIHelper.toggleCapsLock();
-                testRunner.setWindowIsKey(false);
-                testRunner.setWindowIsKey(true);
-                await UIHelper.toggleCapsLock();
-                
-                testRunner.setWindowIsKey(false);
-                await UIHelper.toggleCapsLock();
-                testRunner.setWindowIsKey(true);
-                await UIHelper.toggleCapsLock();
-
-                testRunner.setWindowIsKey(true);
-                await UIHelper.toggleCapsLock();
-                await UIHelper.toggleCapsLock();
-
-                testRunner.setWindowIsKey(false);
-                await UIHelper.toggleCapsLock();
-                await UIHelper.toggleCapsLock();
-
-                eventSender.keyDown("q", []);
+                await UIHelper.activateElementAndWaitForInputSession(document.getElementById("input"));
+                for (const testCase of testCases) {
+                    await UIHelper.ensureStablePresentationUpdate();
+                    log(testCase.message);
+                    await testCase.testFunction();
+                }
+                testRunner.notifyDone();
             }
 
             if (window.testRunner) {

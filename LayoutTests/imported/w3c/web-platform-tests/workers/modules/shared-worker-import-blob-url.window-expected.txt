@@ -1,6 +1,6 @@
 
 PASS Static import.
-FAIL Static import (cross-origin). promise_test: Unhandled rejection with value: "Importing a module script failed."
+FAIL Static import (cross-origin). promise_test: Unhandled rejection with value: "unknown error"
 PASS Static import (redirect).
 PASS Nested static import.
 PASS Static import and then dynamic import.

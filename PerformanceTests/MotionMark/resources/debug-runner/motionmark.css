@@ -331,10 +331,6 @@ label.tree-label {
     color: hsl(11, 100%, 66%);
 }
 
-#frame-rate-detection span {
-    color: red;
-}
-
 @media screen and (max-device-width: 414px),
     screen and (max-device-height: 414px) and (orientation: landscape) {
     #intro .body > div:first-of-type {

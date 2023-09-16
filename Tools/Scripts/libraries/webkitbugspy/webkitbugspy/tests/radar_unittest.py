@@ -229,6 +229,17 @@ class TestRadar(unittest.TestCase):
             self.assertTrue(issue.opened)
             self.assertEqual(issue.comments[-1].content, 'Need to revert, fix broke the build')
 
+    def test_duplicate(self):
+        with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES):
+            tracker = radar.Tracker()
+            issue = tracker.issue(1)
+            self.assertTrue(issue.opened)
+            self.assertTrue(issue.close(original=tracker.issue(2)))
+            self.assertFalse(issue.opened)
+            self.assertEqual(issue.original, tracker.issue(2))
+
+            self.assertEqual(tracker.issue(1).original, tracker.issue(2))
+
     def test_projects(self):
         with mocks.Radar(projects=mocks.PROJECTS):
             self.assertDictEqual(
@@ -372,6 +383,22 @@ What version of 'WebKit Text' should the bug be associated with?:
                 project='WebKit',
                 redact={'version:Other': True},
             ).issue(1).redacted, radar.Tracker.Redaction(True, "matches 'version:Other'"))
+
+    def test_redacted_duplicate(self):
+        with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES, projects=mocks.PROJECTS):
+            tracker = radar.Tracker(project='WebKit', redact={'component:Text': True})
+            self.assertEqual(tracker.issue(1).redacted, radar.Tracker.Redaction(True, "matches 'component:Text'"))
+            self.assertEqual(tracker.issue(2).redacted, False)
+            tracker.issue(1).close(original=tracker.issue(2))
+            self.assertEqual(tracker.issue(2).redacted, radar.Tracker.Redaction(True, "matches 'component:Text'"))
+
+    def test_redacted_original(self):
+        with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES, projects=mocks.PROJECTS):
+            tracker = radar.Tracker(project='WebKit', redact={'component:Text': True})
+            self.assertEqual(tracker.issue(1).redacted, radar.Tracker.Redaction(True, "matches 'component:Text'"))
+            self.assertEqual(tracker.issue(2).redacted, False)
+            tracker.issue(2).close(original=tracker.issue(1))
+            self.assertEqual(tracker.issue(2).redacted, radar.Tracker.Redaction(True, "matches 'component:Text'"))
 
     def test_redaction_exception(self):
         with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES, projects=mocks.PROJECTS):

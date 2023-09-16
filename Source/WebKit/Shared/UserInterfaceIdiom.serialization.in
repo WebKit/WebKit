@@ -22,10 +22,12 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-enum class WebKit::UserInterfaceIdiom : uint8_t {
+header: <pal/system/ios/UserInterfaceIdiom.h>
+enum class PAL::UserInterfaceIdiom : uint8_t {
     Default,
     SmallScreen,
-    Reality
+    Vision,
+    VisionLegacy
 };
 
 #endif

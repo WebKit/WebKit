@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "HeapInlines.h"
 #include "HeapIterationScope.h"
 #include "JSCInlines.h"
+#include "JSWebAssemblyModule.h"
 #include "MarkedSpaceInlines.h"
 #include "StackVisitor.h"
 #include "VMEntryRecord.h"
@@ -433,10 +434,14 @@ SUPPRESS_ASAN void VMInspector::dumpRegisters(CallFrame* callFrame)
     }
 
     // Dumping from low memory to high memory.
-    bool isWasm = callFrame->isWasmFrame();
-    CodeBlock* codeBlock = isWasm ? nullptr : callFrame->codeBlock();
+    JSCell* owner = callFrame->codeOwnerCell();
+    CodeBlock* codeBlock = jsDynamicCast<CodeBlock*>(owner);
     unsigned numCalleeLocals = codeBlock ? codeBlock->numCalleeLocals() : 0;
     unsigned numVars = codeBlock ? codeBlock->numVars() : 0;
+    bool isWasm = false;
+#if ENABLE(WEBASSEMBLY)
+    isWasm = owner->inherits<JSWebAssemblyModule>();
+#endif
 
     const Register* it;
     const Register* callFrameTop = callFrame->registers();
@@ -697,7 +702,7 @@ void VMInspector::dumpSubspaceHashes(VM* vm)
     unsigned count = 0;
     vm->heap.objectSpace().forEachSubspace([&] (const Subspace& subspace) -> IterationStatus {
         const char* name = subspace.name();
-        unsigned hash = StringHasher::computeHash(name);
+        unsigned hash = SuperFastHash::computeHash(name);
         void* hashAsPtr = reinterpret_cast<void*>(static_cast<uintptr_t>(hash));
         dataLogLn("    [", count++, "] ", name, " Hash:", RawPointer(hashAsPtr));
         return IterationStatus::Continue;

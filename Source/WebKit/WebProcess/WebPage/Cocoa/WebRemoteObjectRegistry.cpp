@@ -36,7 +36,7 @@ WebRemoteObjectRegistry::WebRemoteObjectRegistry(_WKRemoteObjectRegistry *remote
     : RemoteObjectRegistry(remoteObjectRegistry)
     , m_page(page)
 {
-    WebProcess::singleton().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), m_page.identifier(), *this);
+    WebProcess::singleton().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), page.identifier(), *this);
     page.setRemoteObjectRegistry(this);
 }
 
@@ -47,20 +47,21 @@ WebRemoteObjectRegistry::~WebRemoteObjectRegistry()
 
 void WebRemoteObjectRegistry::close()
 {
-    if (m_page.remoteObjectRegistry() == this) {
-        WebProcess::singleton().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), m_page.identifier());
-        m_page.setRemoteObjectRegistry(nullptr);
+    Ref page { m_page.get() };
+    if (page->remoteObjectRegistry() == this) {
+        WebProcess::singleton().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), page->identifier());
+        page->setRemoteObjectRegistry(nullptr);
     }
 }
 
 IPC::MessageSender& WebRemoteObjectRegistry::messageSender()
 {
-    return m_page;
+    return m_page.get();
 }
 
 uint64_t WebRemoteObjectRegistry::messageDestinationID()
 {
-    return m_page.webPageProxyIdentifier().toUInt64();
+    return m_page.get().webPageProxyIdentifier().toUInt64();
 }
 
 } // namespace WebKit

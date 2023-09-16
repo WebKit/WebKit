@@ -246,6 +246,10 @@ void ProgramCachePopulateANGLE(Thread *thread,
                                EGLint binarysize);
 EGLint ProgramCacheResizeANGLE(Thread *thread, egl::Display *dpyPacked, EGLint limit, EGLint mode);
 const char *QueryStringiANGLE(Thread *thread, egl::Display *dpyPacked, EGLint name, EGLint index);
+void AcquireExternalContextANGLE(Thread *thread,
+                                 egl::Display *dpyPacked,
+                                 SurfaceID drawAndReadPacked);
+void ReleaseExternalContextANGLE(Thread *thread, egl::Display *dpyPacked);
 EGLBoolean SwapBuffersWithFrameTokenANGLE(Thread *thread,
                                           egl::Display *dpyPacked,
                                           SurfaceID surfacePacked,

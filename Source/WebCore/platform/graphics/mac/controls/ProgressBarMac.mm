@@ -67,8 +67,14 @@ IntOutsets ProgressBarMac::cellOutsets(NSControlSize controlSize, const ControlS
 
 FloatRect ProgressBarMac::rectForBounds(const FloatRect& bounds, const ControlStyle& style) const
 {
-    int minimumProgressBarHeight = sizeForSystemFont(style).height();
-    if (bounds.height() > minimumProgressBarHeight)
+    auto isVerticalWritingMode = style.states.contains(ControlStyle::State::VerticalWritingMode);
+
+    auto logicalBounds = bounds;
+    if (isVerticalWritingMode)
+        logicalBounds.setSize(bounds.size().transposedSize());
+
+    int minimumProgressBarBlockSize = sizeForSystemFont(style).height();
+    if (logicalBounds.height() > minimumProgressBarBlockSize)
         return bounds;
 
     auto controlSize = controlSizeForFont(style);
@@ -76,7 +82,13 @@ FloatRect ProgressBarMac::rectForBounds(const FloatRect& bounds, const ControlSt
     auto outsets = cellOutsets(controlSize, style);
 
     size.scale(style.zoomFactor);
-    size.setWidth(bounds.width());
+
+    if (isVerticalWritingMode) {
+        outsets = { outsets.left(), outsets.top(), outsets.right(), outsets.bottom() };
+        size.setWidth(size.height());
+        size.setHeight(bounds.height());
+    } else
+        size.setWidth(bounds.width());
 
     // Make enough room for the shadow.
     return inflatedRect(bounds, size, outsets, style);
@@ -86,7 +98,12 @@ void ProgressBarMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
 {
     LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
 
+    auto isVerticalWritingMode = style.states.contains(ControlStyle::State::VerticalWritingMode);
+
     auto inflatedRect = rectForBounds(borderRect.rect(), style);
+    if (isVerticalWritingMode)
+        inflatedRect.setSize(inflatedRect.size().transposedSize());
+
     auto imageBuffer = context.createImageBuffer(inflatedRect.size(), deviceScaleFactor);
     if (!imageBuffer)
         return;
@@ -125,6 +142,13 @@ void ProgressBarMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
     }];
 
     GraphicsContextStateSaver stateSaver(context);
+
+    if (isVerticalWritingMode) {
+        context.translate(inflatedRect.height(), 0);
+        context.translate(inflatedRect.location());
+        context.rotate(piOverTwoFloat);
+        context.translate(-inflatedRect.location());
+    }
 
     if (style.states.contains(ControlStyle::State::RightToLeft)) {
         context.translate(2 * inflatedRect.x() + inflatedRect.width(), 0);

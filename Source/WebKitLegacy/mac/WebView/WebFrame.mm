@@ -696,7 +696,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     JSC::JSLockHolder jscLock(lexicalGlobalObject);
 #endif
 
-    JSC::JSValue result = _private->coreFrame->script().executeScriptIgnoringException(string, forceUserGesture);
+    JSC::JSValue result = _private->coreFrame->script().executeScriptIgnoringException(string, JSC::SourceTaintedOrigin::Untainted, forceUserGesture);
 
     if (!_private->coreFrame) // In case the script removed our frame from the page.
         return @"";

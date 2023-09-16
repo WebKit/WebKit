@@ -32,6 +32,8 @@ PASS Property background-image value 'image-set(url('http://web-platform.test/ex
 PASS Property background-image value '-webkit-image-set(url('http://web-platform.test/example.png') calc(6dppx / 3))'
 PASS Property background-image value 'image-set(url('http://web-platform.test/example.png') calc(100dpi - 4dpi))'
 PASS Property background-image value '-webkit-image-set(url('http://web-platform.test/example.png') calc(100dpi - 4dpi))'
-FAIL Property background-image value 'image-set(url('http://web-platform.test/example.png') calc(37dpcm + 0.79532dpcm))' assert_equals: expected "image-set(url(\"http://web-platform.test/example.png\") 1dppx)" but got "image-set(url(\"http://web-platform.test/example.png\") 1.000001dppx)"
-FAIL Property background-image value '-webkit-image-set(url('http://web-platform.test/example.png') calc(37dpcm + 0.79532dpcm))' assert_equals: expected "image-set(url(\"http://web-platform.test/example.png\") 1dppx)" but got "image-set(url(\"http://web-platform.test/example.png\") 1.000001dppx)"
+PASS Property background-image value 'image-set(url('http://web-platform.test/example.png') calc(37dpcm + 0.79532dpcm))'
+PASS Property background-image value '-webkit-image-set(url('http://web-platform.test/example.png') calc(37dpcm + 0.79532dpcm))'
+PASS Property background-image value 'image-set(url('http://web-platform.test/example.png') calc(-1 * 1x))'
+PASS Property background-image value '-webkit-image-set(url('http://web-platform.test/example.png') calc(-1 * 1x))'
 

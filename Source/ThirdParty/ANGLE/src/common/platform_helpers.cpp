@@ -162,4 +162,13 @@ bool IsWindows11OrLater()
     return IsWindowsVersionOrLater(kVersionWindows11);
 }
 
+bool Is64Bit()
+{
+#if defined(ANGLE_IS_64_BIT_CPU)
+    return true;
+#else
+    return false;
+#endif  // defined(ANGLE_IS_64_BIT_CPU)
+}
+
 }  // namespace angle

@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+ // https://html.spec.whatwg.org/#videotrack
+
 [
     Conditional=VIDEO,
     GenerateIsReachable,
@@ -32,7 +34,6 @@
     [EnabledConditionallyReadWriteBySetting=MediaSourceEnabled] attribute [AtomString] DOMString kind;
     readonly attribute DOMString label;
     [EnabledConditionallyReadWriteBySetting=MediaSourceEnabled] attribute [AtomString] DOMString language;
-
     attribute boolean selected;
 
     [EnabledBySetting=TrackConfigurationEnabled] readonly attribute VideoTrackConfiguration configuration;

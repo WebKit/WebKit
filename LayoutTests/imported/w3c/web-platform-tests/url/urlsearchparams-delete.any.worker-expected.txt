@@ -6,4 +6,5 @@ PASS Removing non-existent param removes ? from URL
 PASS Changing the query of a URL with an opaque path can impact the path
 PASS Changing the query of a URL with an opaque path can impact the path if the URL has no fragment
 PASS Two-argument delete()
+PASS Two-argument delete() respects undefined as second arg
 

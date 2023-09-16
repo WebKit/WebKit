@@ -356,6 +356,8 @@ void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
 
         layoutPositionedObjects(relayoutChildren || isDocumentElementRenderer());
 
+        updateDescendantTransformsAfterLayout();
+
         computeOverflow(oldClientAfterEdge);
     }
 

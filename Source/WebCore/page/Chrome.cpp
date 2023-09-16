@@ -198,7 +198,7 @@ Page* Chrome::createWindow(LocalFrame& frame, const WindowFeatures& features, co
     if (!newPage)
         return nullptr;
 
-    if (!features.noopener && !features.noreferrer)
+    if (!features.wantsNoOpener())
         m_page.storageNamespaceProvider().copySessionStorageNamespace(m_page, *newPage);
 
     return newPage;

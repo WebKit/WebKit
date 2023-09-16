@@ -60,10 +60,7 @@ public:
         return m_offset;
     }
     
-    bool operator==(const GenericOffset& other) const
-    {
-        return m_offset == other.m_offset;
-    }
+    friend bool operator==(GenericOffset, GenericOffset) = default;
     bool operator<(const GenericOffset& other) const
     {
         return m_offset < other.m_offset;

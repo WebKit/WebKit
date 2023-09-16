@@ -80,7 +80,7 @@ typedef NS_ENUM(NSUInteger, _WKContentSecurityPolicyModeForExtension) {
 @property (nonatomic, setter=_setInvisibleAutoplayNotPermitted:) BOOL _invisibleAutoplayNotPermitted WK_API_AVAILABLE(macos(10.12), ios(10.0));
 @property (nonatomic, setter=_setMediaDataLoadsAutomatically:) BOOL _mediaDataLoadsAutomatically WK_API_AVAILABLE(macos(10.12), ios(10.0));
 @property (nonatomic, setter=_setAttachmentElementEnabled:) BOOL _attachmentElementEnabled WK_API_AVAILABLE(macos(10.12), ios(10.0));
-@property (nonatomic, setter=_setAttachmentWideLayoutEnabled:) BOOL _attachmentWideLayoutEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setAttachmentWideLayoutEnabled:) BOOL _attachmentWideLayoutEnabled WK_API_AVAILABLE(macos(14.0), ios(17.0));
 @property (nonatomic, setter=_setAttachmentFileWrapperClass:) Class _attachmentFileWrapperClass WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 @property (nonatomic, setter=_setInitialCapitalizationEnabled:) BOOL _initialCapitalizationEnabled WK_API_AVAILABLE(macos(10.12), ios(10.0));
 @property (nonatomic, setter=_setApplePayEnabled:) BOOL _applePayEnabled WK_API_AVAILABLE(macos(10.12), ios(10.0));
@@ -102,7 +102,7 @@ typedef NS_ENUM(NSUInteger, _WKContentSecurityPolicyModeForExtension) {
 @property (nonatomic, copy, setter=_setAllowedNetworkHosts:) NSSet<NSString *> *_allowedNetworkHosts WK_API_AVAILABLE(macos(12.0), ios(15.0));
 @property (nonatomic, setter=_setLoadsSubresources:) BOOL _loadsSubresources WK_API_AVAILABLE(macos(11.0), ios(14.0));
 @property (nonatomic, setter=_setIgnoresAppBoundDomains:) BOOL _ignoresAppBoundDomains WK_API_AVAILABLE(macos(11.0), ios(14.0));
-@property (nonatomic, setter=_setClientNavigationsRunAtForegroundPriority:) BOOL _clientNavigationsRunAtForegroundPriority WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(13.4));
+@property (nonatomic, setter=_setClientNavigationsRunAtForegroundPriority:) BOOL _clientNavigationsRunAtForegroundPriority WK_API_AVAILABLE(macos(13.5), ios(13.4));
 
 #if TARGET_OS_IPHONE
 @property (nonatomic, setter=_setAlwaysRunsAtForegroundPriority:) BOOL _alwaysRunsAtForegroundPriority WK_API_DEPRECATED_WITH_REPLACEMENT("_clientNavigationsRunAtForegroundPriority", ios(9.0, 14.0));
@@ -119,7 +119,7 @@ typedef NS_ENUM(NSUInteger, _WKContentSecurityPolicyModeForExtension) {
 @property (nonatomic, setter=_setShowsURLsInToolTips:) BOOL _showsURLsInToolTips WK_API_AVAILABLE(macos(10.12));
 @property (nonatomic, setter=_setServiceControlsEnabled:) BOOL _serviceControlsEnabled WK_API_AVAILABLE(macos(10.12));
 @property (nonatomic, setter=_setImageControlsEnabled:) BOOL _imageControlsEnabled WK_API_AVAILABLE(macos(13.0));
-@property (nonatomic, setter=_setContextMenuQRCodeDetectionEnabled:) BOOL _contextMenuQRCodeDetectionEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA));
+@property (nonatomic, setter=_setContextMenuQRCodeDetectionEnabled:) BOOL _contextMenuQRCodeDetectionEnabled WK_API_AVAILABLE(macos(14.0));
 @property (nonatomic, readwrite, setter=_setRequiresUserActionForEditingControlsManager:) BOOL _requiresUserActionForEditingControlsManager WK_API_AVAILABLE(macos(10.12));
 @property (nonatomic, readwrite, setter=_setCPULimit:) double _cpuLimit WK_API_AVAILABLE(macos(10.13.4));
 @property (nonatomic, readwrite, setter=_setPageGroup:) WKPageGroupRef _pageGroup WK_API_DEPRECATED_WITH_REPLACEMENT("_groupIdentifier", macos(10.13.4, WK_MAC_TBA));
@@ -144,10 +144,10 @@ typedef NS_ENUM(NSUInteger, _WKContentSecurityPolicyModeForExtension) {
 
 @property (nonatomic, setter=_setAppHighlightsEnabled:) BOOL _appHighlightsEnabled WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
-@property (nonatomic, setter=_setAllowTestOnlyIPC:) BOOL _allowTestOnlyIPC WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setAllowTestOnlyIPC:) BOOL _allowTestOnlyIPC WK_API_AVAILABLE(macos(14.0), ios(17.0));
 
 // Default value is YES on macOS and NO on iOS.
-@property (nonatomic, setter=_setDelaysWebProcessLaunchUntilFirstLoad:) BOOL _delaysWebProcessLaunchUntilFirstLoad WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setDelaysWebProcessLaunchUntilFirstLoad:) BOOL _delaysWebProcessLaunchUntilFirstLoad WK_API_AVAILABLE(macos(14.0), ios(17.0));
 
 // The maximum Lab color difference allowed between two consecutive page top snapshots.
 // Expects 0 (disables page top color sampling entirely) or any positive number.
@@ -162,7 +162,7 @@ typedef NS_ENUM(NSUInteger, _WKContentSecurityPolicyModeForExtension) {
 
 @property (nonatomic, setter=_setContentSecurityPolicyModeForExtension:) _WKContentSecurityPolicyModeForExtension _contentSecurityPolicyModeForExtension WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
-@property (nonatomic, setter=_setMarkedTextInputEnabled:) BOOL _markedTextInputEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setMarkedTextInputEnabled:) BOOL _markedTextInputEnabled WK_API_AVAILABLE(macos(14.0), ios(17.0));
 @end
 
 #if TARGET_OS_IPHONE

@@ -77,12 +77,9 @@ public:
     static bool isEnabled();
     static bool canUseFor(const RenderBlockFlow&);
     static bool canUseForPreferredWidthComputation(const RenderBlockFlow&);
-    static bool canUseForAfterStyleChange(const RenderBlockFlow&, StyleDifference);
-    static bool canUseForAfterInlineBoxStyleChange(const RenderInline&, StyleDifference);
+    static bool canUseForAfterBlockStyleChange(const RenderBlockFlow&, StyleDifference);
     static bool shouldInvalidateLineLayoutPathAfterContentChange(const RenderBlockFlow& parent, const RenderObject& rendererWithNewContent, const LineLayout&);
     static bool shouldInvalidateLineLayoutPathAfterTreeMutation(const RenderBlockFlow& parent, const RenderObject& renderer, const LineLayout&, bool isRemoval);
-
-    bool shouldSwitchToLegacyOnInvalidation() const;
 
     void updateInlineContentConstraints();
     void updateInlineContentDimensions();
@@ -137,6 +134,7 @@ public:
     bool hasOutOfFlowContent() const;
     bool contentNeedsVisualReordering() const;
     bool isDamaged() const { return m_lineDamage && m_lineDamage->type() != Layout::InlineDamage::Type::Invalid; }
+    OptionSet<Layout::InlineDamage::Reason> damageReasons() const { return !m_lineDamage || m_lineDamage->type() == Layout::InlineDamage::Type::Invalid ? OptionSet<Layout::InlineDamage::Reason>() : m_lineDamage->reasons(); }
 #ifndef NDEBUG
     bool hasDetachedContent() const { return m_lineDamage && m_lineDamage->hasDetachedContent(); }
 #endif

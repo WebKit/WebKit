@@ -99,8 +99,8 @@ void AsyncAudioDecoder::DecodingTask::decode()
 
 void AsyncAudioDecoder::DecodingTask::notifyComplete()
 {
-    if (auto* audioBuffer = this->audioBuffer())
-        callback()(Ref { *audioBuffer });
+    if (RefPtr audioBuffer = this->audioBuffer())
+        callback()(audioBuffer.releaseNonNull());
     else
         callback()(Exception { EncodingError, "Decoding failed"_s });
 

@@ -53,10 +53,10 @@ WebContextMenu::~WebContextMenu()
 void WebContextMenu::show()
 {
     ContextMenuController& controller = m_page->corePage()->contextMenuController();
-    auto* frame = controller.hitTestResult().innerNodeFrame();
+    RefPtr frame = controller.hitTestResult().innerNodeFrame();
     if (!frame)
         return;
-    auto* view = frame->view();
+    RefPtr view = frame->view();
     if (!view)
         return;
 
@@ -90,7 +90,8 @@ void WebContextMenu::menuItemsWithUserData(Vector<WebContextMenuItemData> &menuI
     // Give the bundle client a chance to process the menu.
     const Vector<ContextMenuItem>& coreItems = menu->items();
 
-    if (m_page->injectedBundleContextMenuClient().getCustomMenuFromDefaultItems(*m_page, controller.hitTestResult(), coreItems, menuItems, controller.context(), userData))
+    RefPtr page = m_page.get();
+    if (page->injectedBundleContextMenuClient().getCustomMenuFromDefaultItems(*page, controller.hitTestResult(), coreItems, menuItems, controller.context(), userData))
         return;
     menuItems = kitItems(coreItems);
 }

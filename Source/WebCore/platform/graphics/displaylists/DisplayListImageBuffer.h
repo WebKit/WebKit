@@ -25,9 +25,9 @@
 
 #pragma once
 
+#include "DisplayList.h"
 #include "DisplayListDrawingContext.h"
 #include "ImageBuffer.h"
-#include "InMemoryDisplayList.h"
 
 namespace WebCore {
 namespace DisplayList {
@@ -49,21 +49,13 @@ public:
     ImageBuffer(const ImageBufferBackend::Parameters& parameters, const ImageBufferBackend::Info& info, std::unique_ptr<ImageBufferBackend>&& backend)
         : WebCore::ImageBuffer(parameters, info, WTFMove(backend))
         , m_drawingContext(logicalSize(), baseTransform(), colorSpace())
-        , m_writingClient(makeUnique<InMemoryDisplayList::WritingClient>())
-        , m_readingClient(makeUnique<InMemoryDisplayList::ReadingClient>())
     {
-        m_drawingContext.displayList().setItemBufferWritingClient(m_writingClient.get());
-        m_drawingContext.displayList().setItemBufferReadingClient(m_readingClient.get());
     }
 
     ImageBuffer(const ImageBufferBackend::Parameters& parameters, const ImageBufferBackend::Info& info)
         : WebCore::ImageBuffer(parameters, info)
         , m_drawingContext(logicalSize(), baseTransform(), colorSpace())
-        , m_writingClient(makeUnique<InMemoryDisplayList::WritingClient>())
-        , m_readingClient(makeUnique<InMemoryDisplayList::ReadingClient>())
     {
-        m_drawingContext.displayList().setItemBufferWritingClient(m_writingClient.get());
-        m_drawingContext.displayList().setItemBufferReadingClient(m_readingClient.get());
     }
 
     ~ImageBuffer()
@@ -84,8 +76,6 @@ public:
 
 protected:
     DrawingContext m_drawingContext;
-    std::unique_ptr<ItemBufferWritingClient> m_writingClient;
-    std::unique_ptr<ItemBufferReadingClient> m_readingClient;
 };
 
 } // DisplayList

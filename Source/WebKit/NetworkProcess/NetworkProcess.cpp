@@ -339,7 +339,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 #endif
 
     for (auto [processIdentifier, domain] : parameters.allowedFirstPartiesForCookies) {
-        if (auto* connection = webProcessConnection(processIdentifier))
+        if (RefPtr connection = webProcessConnection(processIdentifier))
             connection->addAllowedFirstPartyForCookies(domain);
         addAllowedFirstPartyForCookies(processIdentifier, WTFMove(domain), LoadedWebArchive::No, [] { });
     }
@@ -399,7 +399,7 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
     connection.setOnLineState(NetworkStateNotifier::singleton().onLine());
 
     if (auto* session = networkSession(sessionID))
-        session->storageManager().startReceivingMessageFromConnection(connection.connection());
+        session->storageManager().startReceivingMessageFromConnection(Ref { connection.connection() });
 }
 
 void NetworkProcess::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, WebCore::RegistrableDomain&& firstPartyForCookies, LoadedWebArchive loadedWebArchive, CompletionHandler<void()>&& completionHandler)
@@ -426,14 +426,16 @@ void NetworkProcess::webProcessWillLoadWebArchive(WebCore::ProcessIdentifier pro
     }).iterator->value.first = LoadedWebArchive::Yes;
 }
 
+bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const URL& firstParty)
+{
+    return AuxiliaryProcess::allowsFirstPartyForCookies(firstParty, [&] {
+        RegistrableDomain firstPartyDomain(firstParty);
+        return allowsFirstPartyForCookies(processIdentifier, firstPartyDomain);
+    });
+}
+
 bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const RegistrableDomain& firstPartyDomain)
 {
-#if PLATFORM(GTK)
-    // FIXME: This shouldn't be needed but is hit for some web socket tests on GTK.
-    if (firstPartyDomain.isEmpty())
-        return true;
-#endif
-
     if (!decltype(m_allowedFirstPartiesForCookies)::isValidKey(processIdentifier)) {
         ASSERT_NOT_REACHED();
         return false;
@@ -583,10 +585,10 @@ void NetworkProcess::destroySession(PAL::SessionID sessionID, CompletionHandler<
 
     if (auto session = m_networkSessions.take(sessionID)) {
         session->invalidateAndCancel();
-        auto& storageManager = session->storageManager();
-        m_closingStorageManagers.add(&storageManager);
-        storageManager.close([this, protectedThis = Ref { *this }, storageManager = &storageManager, completionHandler = std::exchange(completionHandler, { })]() mutable {
-            m_closingStorageManagers.remove(storageManager);
+        Ref storageManager = session->storageManager();
+        m_closingStorageManagers.add(storageManager.copyRef());
+        storageManager->close([this, protectedThis = Ref { *this }, storageManager, completionHandler = std::exchange(completionHandler, { })]() mutable {
+            m_closingStorageManagers.remove(storageManager.ptr());
             completionHandler();
             stopRunLoopIfNecessary();
         });
@@ -2089,9 +2091,9 @@ void NetworkProcess::closeITPDatabase(PAL::SessionID sessionID, CompletionHandle
 
 #endif // ENABLE(TRACKING_PREVENTION)
 
-void NetworkProcess::downloadRequest(PAL::SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, const String& suggestedFilename)
+void NetworkProcess::downloadRequest(PAL::SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, const String& suggestedFilename)
 {
-    downloadManager().startDownload(sessionID, downloadID, request, isNavigatingToAppBoundDomain, suggestedFilename);
+    downloadManager().startDownload(sessionID, downloadID, request, topOrigin, isNavigatingToAppBoundDomain, suggestedFilename);
 }
 
 void NetworkProcess::resumeDownload(PAL::SessionID sessionID, DownloadID downloadID, const IPC::DataReference& resumeData, const String& path, WebKit::SandboxExtension::Handle&& sandboxExtensionHandle, CallDownloadDidStart callDownloadDidStart)
@@ -2110,6 +2112,11 @@ void NetworkProcess::publishDownloadProgress(DownloadID downloadID, const URL& u
     downloadManager().publishDownloadProgress(downloadID, url, WTFMove(sandboxExtensionHandle));
 }
 #endif
+
+void NetworkProcess::continueWillSendRequest(DownloadID downloadID, WebCore::ResourceRequest&& request)
+{
+    downloadManager().continueWillSendRequest(downloadID, WTFMove(request));
+}
 
 void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTask, ResponseCompletionHandler&& completionHandler, const ResourceResponse& response)
 {
@@ -2135,10 +2142,10 @@ void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTas
     }, destinationID);
 }
 
-void NetworkProcess::dataTaskWithRequest(WebPageProxyIdentifier pageID, PAL::SessionID sessionID, WebCore::ResourceRequest&& request, IPC::FormDataReference&& httpBody, CompletionHandler<void(DataTaskIdentifier)>&& completionHandler)
+void NetworkProcess::dataTaskWithRequest(WebPageProxyIdentifier pageID, PAL::SessionID sessionID, WebCore::ResourceRequest&& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, IPC::FormDataReference&& httpBody, CompletionHandler<void(DataTaskIdentifier)>&& completionHandler)
 {
     request.setHTTPBody(httpBody.takeData());
-    networkSession(sessionID)->dataTaskWithRequest(pageID, WTFMove(request), WTFMove(completionHandler));
+    networkSession(sessionID)->dataTaskWithRequest(pageID, WTFMove(request), topOrigin, WTFMove(completionHandler));
 }
 
 void NetworkProcess::cancelDataTask(DataTaskIdentifier identifier, PAL::SessionID sessionID)
@@ -2563,17 +2570,6 @@ void NetworkProcess::deletePushAndNotificationRegistration(PAL::SessionID sessio
     callback("Cannot find network session"_s);
 }
 
-void NetworkProcess::getOriginsWithPushAndNotificationPermissions(PAL::SessionID sessionID, CompletionHandler<void(const Vector<WebCore::SecurityOriginData>&)>&& callback)
-{
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
-    if (auto* session = networkSession(sessionID)) {
-        session->notificationManager().getOriginsWithPushAndNotificationPermissions(WTFMove(callback));
-        return;
-    }
-#endif
-    callback({ });
-}
-
 void NetworkProcess::hasPushSubscriptionForTesting(PAL::SessionID sessionID, URL&& scopeURL, CompletionHandler<void(bool)>&& callback)
 {
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
@@ -2992,5 +2988,15 @@ void NetworkProcess::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
 #endif
 }
 #endif
+
+#if ENABLE(SERVICE_WORKER)
+
+void NetworkProcess::setInspectionForServiceWorkersAllowed(PAL::SessionID sessionID, bool inspectable)
+{
+    if (auto* session = networkSession(sessionID))
+        session->setInspectionForServiceWorkersAllowed(inspectable);
+}
+
+#endif // ENABLE(SERVICE_WORKER)
 
 } // namespace WebKit

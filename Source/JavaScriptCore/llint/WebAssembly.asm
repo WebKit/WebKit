@@ -152,7 +152,7 @@ macro checkSwitchToJIT(increment, action)
 end
 
 macro checkSwitchToJITForPrologue(codeBlockRegister)
-    if WEBASSEMBLY_B3JIT
+    if WEBASSEMBLY_OMGJIT
     checkSwitchToJIT(
         5,
         macro()
@@ -201,7 +201,7 @@ end
 end
 
 macro checkSwitchToJITForLoop()
-    if WEBASSEMBLY_B3JIT
+    if WEBASSEMBLY_OMGJIT
     checkSwitchToJIT(
         1,
         macro()
@@ -229,7 +229,7 @@ macro checkSwitchToJITForLoop()
 end
 
 macro checkSwitchToJITForEpilogue()
-    if WEBASSEMBLY_B3JIT
+    if WEBASSEMBLY_OMGJIT
     checkSwitchToJIT(
         10,
         macro ()
@@ -371,7 +371,7 @@ macro wasmPrologue()
     storep wasmInstance, CodeBlock[cfr]
     loadp Callee[cfr], ws0
 if JSVALUE64
-    andp ~(constexpr JSValue::WasmTag), ws0
+    andp ~(constexpr JSValue::NativeCalleeTag), ws0
 end
     leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, ws1
     loadp [ws1], ws1
@@ -457,7 +457,7 @@ end
 
 # Tier up immediately, while saving full vectors in argument FPRs
 macro wasmPrologueSIMD()
-if WEBASSEMBLY_B3JIT and not ARMv7
+if WEBASSEMBLY_OMGJIT and not ARMv7
     preserveCallerPCAndCFR()
     preserveCalleeSavesUsedByWasm()
     reloadMemoryRegistersFromInstance(wasmInstance, ws0, ws1)
@@ -465,7 +465,7 @@ if WEBASSEMBLY_B3JIT and not ARMv7
     storep wasmInstance, CodeBlock[cfr]
     loadp Callee[cfr], ws0
 if JSVALUE64
-    andp ~(constexpr JSValue::WasmTag), ws0
+    andp ~(constexpr JSValue::NativeCalleeTag), ws0
 end
     leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, ws1
     loadp [ws1], ws1

@@ -105,7 +105,7 @@ class TestInstallHooks(testing.PathTestCase):
 
         self.assertEqual(
             captured.stdout.getvalue(),
-            'Successfully installed 1 repository hooks\n',
+            'Successfully installed 1 of 1 repository hooks\n',
         )
         self.assertEqual(captured.stderr.getvalue(), '')
         self.assertEqual(
@@ -141,7 +141,7 @@ class TestInstallHooks(testing.PathTestCase):
 
         self.assertEqual(
             captured.stdout.getvalue(),
-            'Successfully installed 1 repository hooks\n',
+            'Successfully installed 1 of 1 repository hooks\n',
         )
         self.assertEqual(captured.stderr.getvalue(), '')
         self.assertEqual(
@@ -182,7 +182,7 @@ print('Hello, world!\\n')
 
         self.assertEqual(
             captured.stdout.getvalue(),
-            'Successfully installed 1 repository hooks\n',
+            'Successfully installed 1 of 1 repository hooks\n',
         )
         self.assertEqual(captured.stderr.getvalue(), '')
         self.assertEqual(

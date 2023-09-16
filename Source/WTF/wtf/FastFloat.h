@@ -25,10 +25,12 @@
 
 #pragma once
 
+#include <unicode/utypes.h>
 #include <wtf/ASCIICType.h>
 
 namespace WTF {
 
 WTF_EXPORT_PRIVATE double parseDouble(const LChar* string, size_t length, size_t& parsedLength);
+WTF_EXPORT_PRIVATE double parseDouble(const UChar* string, size_t length, size_t& parsedLength);
 
 } // namespace WTF

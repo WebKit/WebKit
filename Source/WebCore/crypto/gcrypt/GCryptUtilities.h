@@ -39,6 +39,9 @@ namespace WebCore {
 
 namespace CryptoConstants {
 
+static const std::array<uint8_t, 12> s_ed25519Identifier { { "1.3.101.112" } };
+static const std::array<uint8_t, 12> s_x25519Identifier { { "1.3.101.110" } };
+
 static const std::array<uint8_t, 18> s_ecPublicKeyIdentifier { { "1.2.840.10045.2.1" } };
 static const std::array<uint8_t, 13> s_ecDHIdentifier { { "1.3.132.1.12" } };
 
@@ -55,6 +58,7 @@ static const std::array<uint8_t, 1> s_asn1Version0 { { 0x00 } };
 static const std::array<uint8_t, 1> s_asn1Version1 { { 0x01 } };
 
 static const std::array<uint8_t, 1> s_ecUncompressedFormatLeadingByte { { 0x04 } };
+static const std::array<uint8_t, 1> s_x25519UncompressedFormatLeadingByte { { 0x40 } };
 
 template<size_t N>
 static inline bool matches(const void* lhs, size_t size, const std::array<uint8_t, N>& rhs)

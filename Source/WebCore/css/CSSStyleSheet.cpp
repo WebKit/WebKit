@@ -57,8 +57,9 @@ static Style::Scope& styleScopeFor(ContainerNode& treeScope)
     return downcast<Document>(treeScope).styleScope();
 }
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleSheetCSSRuleList);
 class StyleSheetCSSRuleList final : public CSSRuleList {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleSheetCSSRuleList);
 public:
     StyleSheetCSSRuleList(CSSStyleSheet* sheet) : m_styleSheet(sheet) { }
     
@@ -73,6 +74,7 @@ private:
 
     CSSStyleSheet* m_styleSheet;
 };
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleSheetCSSRuleList);
 
 #if ASSERT_ENABLED
 static bool isAcceptableCSSStyleSheetParent(Node* parentNode)

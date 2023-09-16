@@ -26,26 +26,10 @@
 
 namespace WebCore {
 
-// Type definitions for the byte stream data
-typedef union {
-    bool value;
-    unsigned char bytes[sizeof(bool)];
-} BoolByte;
-
-typedef union {
-    float value;
-    unsigned char bytes[sizeof(float)];
-} FloatByte;
-
-typedef union {
-    unsigned short value;
-    unsigned char bytes[sizeof(unsigned short)];
-} UnsignedShortByte;
-
 class SVGPathByteStream {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef Vector<unsigned char> Data;
+    typedef Vector<uint8_t> Data;
     typedef Data::const_iterator DataIterator;
 
     SVGPathByteStream() { }
@@ -86,7 +70,7 @@ public:
         return *this;
     }
 
-    bool operator==(const SVGPathByteStream& other) const { return m_data == other.m_data; }
+    friend bool operator==(const SVGPathByteStream&, const SVGPathByteStream&) = default;
 
     std::unique_ptr<SVGPathByteStream> copy() const
     {
@@ -96,7 +80,8 @@ public:
     DataIterator begin() const { return m_data.begin(); }
     DataIterator end() const { return m_data.end(); }
 
-    void append(unsigned char byte) { m_data.append(byte); }
+    void append(uint8_t byte) { m_data.append(byte); }
+    void append(std::span<const uint8_t> bytes) { m_data.append(bytes); }
     void append(const SVGPathByteStream& other) { m_data.appendVector(other.m_data); }
     void clear() { m_data.clear(); }
     bool isEmpty() const { return m_data.isEmpty(); }

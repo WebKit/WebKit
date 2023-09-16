@@ -45,15 +45,7 @@ struct StylePropertyMetadata {
 
     CSSPropertyID shorthandID() const;
     
-    bool operator==(const StylePropertyMetadata& other) const
-    {
-        return m_propertyID == other.m_propertyID
-            && m_isSetFromShorthand == other.m_isSetFromShorthand
-            && m_indexInShorthandsVector == other.m_indexInShorthandsVector
-            && m_important == other.m_important
-            && m_implicit == other.m_implicit
-            && m_inherited == other.m_inherited;
-    }
+    friend bool operator==(const StylePropertyMetadata&, const StylePropertyMetadata&) = default;
 
     uint16_t m_propertyID : 10;
     uint16_t m_isSetFromShorthand : 1;

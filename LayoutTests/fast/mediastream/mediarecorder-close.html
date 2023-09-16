@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div>PASS if not crashing</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+onload = async () => {
+  for (let i = 0; i < 25; i++) {
+    await caches.has('a');
+    const stream = await navigator.mediaDevices.getUserMedia({video: true});
+    const mediaRecorder = new MediaRecorder(stream);
+    location.hash = 'x';
+    mediaRecorder.start();
+  }
+};
+</script>
+</body>
+</html>

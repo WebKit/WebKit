@@ -1,0 +1,30 @@
+Tests for ObservableArray's [[Delete]]
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.adoptedStyleSheets.length is 3
+PASS delete document.adoptedStyleSheets.length; is false
+PASS delete document.adoptedStyleSheets[0] is false
+PASS delete document.adoptedStyleSheets[1] is false
+PASS delete document.adoptedStyleSheets[3] is false
+PASS document.adoptedStyleSheets.length is 3
+PASS delete document.adoptedStyleSheets[2] is true
+PASS document.adoptedStyleSheets.length is 2
+PASS document.adoptedStyleSheets[0] is sheet1
+PASS document.adoptedStyleSheets[1] is sheet2
+PASS document.adoptedStyleSheets[2] is undefined.
+PASS delete document.adoptedStyleSheets['1'] is true
+PASS document.adoptedStyleSheets.length is 1
+PASS document.adoptedStyleSheets[0] is sheet1
+PASS document.adoptedStyleSheets[1] is undefined.
+PASS delete document.adoptedStyleSheets[0] is true
+PASS document.adoptedStyleSheets.length is 0
+PASS document.adoptedStyleSheets[0] is undefined.
+document.adoptedStyleSheets.foo = 1
+PASS delete document.adoptedStyleSheets.foo; is true
+PASS document.adoptedStyleSheets.foo is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

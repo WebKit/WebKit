@@ -30,6 +30,7 @@
 
 #include "CryptoAlgorithm.h"
 #include "CryptoAlgorithmRegistry.h"
+#include "CryptoAlgorithmX25519Params.h"
 #include "JSAesCbcCfbParams.h"
 #include "JSAesCtrParams.h"
 #include "JSAesGcmParams.h"
@@ -51,6 +52,7 @@
 #include "JSRsaKeyGenParams.h"
 #include "JSRsaOaepParams.h"
 #include "JSRsaPssParams.h"
+#include "JSX25519Params.h"
 #include <JavaScriptCore/JSONObject.h>
 
 namespace WebCore {
@@ -102,6 +104,13 @@ static bool isSafeCurvesEnabled(JSGlobalObject& state)
     return context && context->settingsValues().webCryptoSafeCurvesEnabled;
 }
 
+static bool isX25519Enabled(JSGlobalObject& state)
+{
+    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(&state);
+    auto* context = globalObject.scriptExecutionContext();
+    return context && context->settingsValues().webCryptoX25519Enabled;
+}
+
 static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAlgorithmParameters(JSGlobalObject& state, SubtleCrypto::AlgorithmIdentifier algorithmIdentifier, Operations operation)
 {
     VM& vm = state.vm();
@@ -124,6 +133,9 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
         return Exception { NotSupportedError };
 
     if (*identifier == CryptoAlgorithmIdentifier::Ed25519 && !isSafeCurvesEnabled(state))
+        return Exception { NotSupportedError };
+
+    if (*identifier == CryptoAlgorithmIdentifier::X25519 && !isX25519Enabled(state))
         return Exception { NotSupportedError };
 
     std::unique_ptr<CryptoAlgorithmParameters> result;
@@ -255,6 +267,11 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
             result = makeUnique<CryptoAlgorithmEcKeyParams>(params);
             break;
         }
+        case CryptoAlgorithmIdentifier::X25519: {
+            auto result = makeUnique<CryptoAlgorithmParameters>();
+            result->identifier = identifier.value();
+            return result;
+        }
         case CryptoAlgorithmIdentifier::Ed25519:
             result = makeUnique<CryptoAlgorithmParameters>(params);
             break;
@@ -275,6 +292,19 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
             auto params = convertDictionary<CryptoAlgorithmEcdhKeyDeriveParams>(state, newValue);
             RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
             result = makeUnique<CryptoAlgorithmEcdhKeyDeriveParams>(params);
+            break;
+        }
+        case CryptoAlgorithmIdentifier::X25519: {
+            // Remove this hack once https://bugs.webkit.org/show_bug.cgi?id=169333 is fixed.
+            JSValue nameValue = value.get()->get(&state, Identifier::fromString(vm, "name"_s));
+            JSValue publicValue = value.get()->get(&state, Identifier::fromString(vm, "public"_s));
+            JSObject* newValue = constructEmptyObject(&state);
+            newValue->putDirect(vm, Identifier::fromString(vm, "name"_s), nameValue);
+            newValue->putDirect(vm, Identifier::fromString(vm, "publicKey"_s), publicValue);
+
+            auto params = convertDictionary<CryptoAlgorithmX25519Params>(state, newValue);
+            RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+            result = makeUnique<CryptoAlgorithmX25519Params>(params);
             break;
         }
         case CryptoAlgorithmIdentifier::HKDF: {
@@ -344,6 +374,11 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
             RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
             result = makeUnique<CryptoAlgorithmEcKeyParams>(params);
             break;
+        }
+        case CryptoAlgorithmIdentifier::X25519: {
+            auto result = makeUnique<CryptoAlgorithmParameters>();
+            result->identifier = identifier.value();
+            return result;
         }
         case CryptoAlgorithmIdentifier::HKDF:
         case CryptoAlgorithmIdentifier::PBKDF2:
@@ -530,6 +565,7 @@ static bool isSupportedExportKey(JSGlobalObject& state, CryptoAlgorithmIdentifie
     case CryptoAlgorithmIdentifier::HMAC:
     case CryptoAlgorithmIdentifier::ECDSA:
     case CryptoAlgorithmIdentifier::ECDH:
+    case CryptoAlgorithmIdentifier::X25519:
     case CryptoAlgorithmIdentifier::Ed25519:
         return true;
     default:

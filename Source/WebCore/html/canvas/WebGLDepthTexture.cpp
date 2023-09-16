@@ -42,11 +42,6 @@ WebGLDepthTexture::WebGLDepthTexture(WebGLRenderingContextBase& context)
 
 WebGLDepthTexture::~WebGLDepthTexture() = default;
 
-WebGLExtension::ExtensionName WebGLDepthTexture::getName() const
-{
-    return WebGLDepthTextureName;
-}
-
 bool WebGLDepthTexture::supported(GraphicsContextGL& context)
 {
     return context.supportsExtension("GL_OES_depth_texture"_s);

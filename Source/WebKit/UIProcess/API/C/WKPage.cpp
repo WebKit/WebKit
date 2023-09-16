@@ -110,6 +110,7 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include "DefaultWebBrowserChecks.h"
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
@@ -530,6 +531,13 @@ void WKPageTerminate(WKPageRef pageRef)
     CRASH_IF_SUSPENDED;
     Ref<WebProcessProxy> protectedProcessProxy(toImpl(pageRef)->process());
     protectedProcessProxy->requestTermination(ProcessTerminationReason::RequestedByClient);
+}
+
+void WKPageResetProcessState(WKPageRef pageRef)
+{
+    CRASH_IF_SUSPENDED;
+    Ref<WebProcessProxy> protectedProcessProxy(toImpl(pageRef)->process());
+    protectedProcessProxy->resetState();
 }
 
 WKStringRef WKPageGetSessionHistoryURLValueType()
@@ -1302,9 +1310,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     // for backwards compatibility.
     OptionSet<WebCore::LayoutMilestone> milestones;
     if (loaderClient->client().didFirstLayoutForFrame)
-        milestones.add(WebCore::DidFirstLayout);
+        milestones.add(WebCore::LayoutMilestone::DidFirstLayout);
     if (loaderClient->client().didFirstVisuallyNonEmptyLayoutForFrame)
-        milestones.add(WebCore::DidFirstVisuallyNonEmptyLayout);
+        milestones.add(WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout);
 
     if (milestones)
         webPageProxy->send(Messages::WebPage::ListenForLayoutMilestones(milestones));
@@ -1591,6 +1599,8 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
         
             if (m_client.createNewPage_deprecatedForUseWithV1 || m_client.createNewPage_deprecatedForUseWithV0) {
                 API::Dictionary::MapType map;
+                map.set("wantsPopup"_s, API::Boolean::create(windowFeatures.wantsPopup()));
+                map.set("hasAdditionalFeatures"_s, API::Boolean::create(windowFeatures.hasAdditionalFeatures));
                 if (windowFeatures.x)
                     map.set("x"_s, API::Double::create(*windowFeatures.x));
                 if (windowFeatures.y)
@@ -1599,14 +1609,24 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
                     map.set("width"_s, API::Double::create(*windowFeatures.width));
                 if (windowFeatures.height)
                     map.set("height"_s, API::Double::create(*windowFeatures.height));
-                map.set("menuBarVisible"_s, API::Boolean::create(windowFeatures.menuBarVisible));
-                map.set("statusBarVisible"_s, API::Boolean::create(windowFeatures.statusBarVisible));
-                map.set("toolBarVisible"_s, API::Boolean::create(windowFeatures.toolBarVisible));
-                map.set("locationBarVisible"_s, API::Boolean::create(windowFeatures.locationBarVisible));
-                map.set("scrollbarsVisible"_s, API::Boolean::create(windowFeatures.scrollbarsVisible));
-                map.set("resizable"_s, API::Boolean::create(windowFeatures.resizable));
-                map.set("fullscreen"_s, API::Boolean::create(windowFeatures.fullscreen));
-                map.set("dialog"_s, API::Boolean::create(windowFeatures.dialog));
+                if (windowFeatures.popup)
+                    map.set("popup"_s, API::Boolean::create(*windowFeatures.popup));
+                if (windowFeatures.menuBarVisible)
+                    map.set("menuBarVisible"_s, API::Boolean::create(*windowFeatures.menuBarVisible));
+                if (windowFeatures.statusBarVisible)
+                    map.set("statusBarVisible"_s, API::Boolean::create(*windowFeatures.statusBarVisible));
+                if (windowFeatures.toolBarVisible)
+                    map.set("toolBarVisible"_s, API::Boolean::create(*windowFeatures.toolBarVisible));
+                if (windowFeatures.locationBarVisible)
+                    map.set("locationBarVisible"_s, API::Boolean::create(*windowFeatures.locationBarVisible));
+                if (windowFeatures.scrollbarsVisible)
+                    map.set("scrollbarsVisible"_s, API::Boolean::create(*windowFeatures.scrollbarsVisible));
+                if (windowFeatures.resizable)
+                    map.set("resizable"_s, API::Boolean::create(*windowFeatures.resizable));
+                if (windowFeatures.fullscreen)
+                    map.set("fullscreen"_s, API::Boolean::create(*windowFeatures.fullscreen));
+                if (windowFeatures.dialog)
+                    map.set("dialog"_s, API::Boolean::create(*windowFeatures.dialog));
                 Ref<API::Dictionary> featuresMap = API::Dictionary::create(WTFMove(map));
 
                 if (m_client.createNewPage_deprecatedForUseWithV1) {
@@ -2593,7 +2613,13 @@ void WKPageSetPageStateClient(WKPageRef pageRef, WKPageStateClientBase* client)
 void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, void* context, WKPageRunJavaScriptFunction callback)
 {
     CRASH_IF_SUSPENDED;
-    toImpl(pageRef)->runJavaScriptInMainFrame({ toImpl(scriptRef)->string(), URL { }, false, std::nullopt, true }, [context, callback] (auto&& result) {
+#if PLATFORM(COCOA)
+    auto removeTransientActivation = shouldEvaluateJavaScriptWithoutTransientActivation() ? RemoveTransientActivation::Yes : RemoveTransientActivation::No;
+#else
+    auto removeTransientActivation = RemoveTransientActivation::Yes;
+#endif
+
+    toImpl(pageRef)->runJavaScriptInMainFrame({ toImpl(scriptRef)->string(), JSC::SourceTaintedOrigin::Untainted, URL { }, false, std::nullopt, true, removeTransientActivation }, [context, callback] (auto&& result) {
         if (result.has_value())
             callback(toAPI(result.value().get()), nullptr, context);
         else

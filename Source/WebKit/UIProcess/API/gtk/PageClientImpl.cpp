@@ -402,9 +402,9 @@ void PageClientImpl::enterFullScreen()
     if (isFullScreen())
         return;
 
-    if (WEBKIT_IS_WEB_VIEW(m_viewWidget))
-        webkitWebViewEnterFullScreen(WEBKIT_WEB_VIEW(m_viewWidget));
-    else
+    webkitWebViewBaseWillEnterFullScreen(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
+
+    if (!WEBKIT_IS_WEB_VIEW(m_viewWidget) || !webkitWebViewEnterFullScreen(WEBKIT_WEB_VIEW(m_viewWidget)))
         webkitWebViewBaseEnterFullScreen(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 
@@ -416,9 +416,9 @@ void PageClientImpl::exitFullScreen()
     if (!isFullScreen())
         return;
 
-    if (WEBKIT_IS_WEB_VIEW(m_viewWidget))
-        webkitWebViewExitFullScreen(WEBKIT_WEB_VIEW(m_viewWidget));
-    else
+    webkitWebViewBaseWillExitFullScreen(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
+
+    if (!WEBKIT_IS_WEB_VIEW(m_viewWidget) || !webkitWebViewExitFullScreen(WEBKIT_WEB_VIEW(m_viewWidget)))
         webkitWebViewBaseExitFullScreen(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 

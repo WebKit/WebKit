@@ -54,6 +54,8 @@ function destroyCanvases() {
 
     window.contexts = [];
 
+    window.worker?.postMessage({name: `destroyContexts`, args: []});
+
     // Force GC to make sure the canvas element is destroyed, otherwise the frontend
     // does not receive Canvas.canvasRemoved events.
     destroyCanvasesInterval = setInterval(() => { GCController.collect(); }, 0);
@@ -120,15 +122,14 @@ TestPage.registerInitializer(() => {
         return suite;
     };
 
-    InspectorTest.CreateContextUtilities.addSimpleTestCase = function({name, description, expression, contextType}) {
+    InspectorTest.CreateContextUtilities.addSimpleTestCase = function({name, description, expression, contextType, skipDestroy}) {
         suite.addTestCase({
             name: suite.name + "." + name,
             description,
             test(resolve, reject) {
                 awaitCanvasAdded(contextType)
                 .then((canvas) => {
-                    if (canvas.cssCanvasName) {
-                        InspectorTest.log("CSS canvas will not be destroyed");
+                    if (skipDestroy) {
                         resolve();
                         return;
                     }

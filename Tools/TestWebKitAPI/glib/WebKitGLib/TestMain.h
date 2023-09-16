@@ -113,6 +113,8 @@ public:
 
     static const char* dataDirectory();
 
+    static bool shouldInitializeWebProcessExtensions;
+
     static void initializeWebProcessExtensionsCallback(WebKitWebContext* context, Test* test)
     {
         test->initializeWebProcessExtensions();
@@ -141,11 +143,14 @@ public:
             nullptr)));
 #endif
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_webContext.get()));
+
+        if (shouldInitializeWebProcessExtensions) {
 #if ENABLE(2022_GLIB_API)
-        g_signal_connect(m_webContext.get(), "initialize-web-process-extensions", G_CALLBACK(initializeWebProcessExtensionsCallback), this);
+            g_signal_connect(m_webContext.get(), "initialize-web-process-extensions", G_CALLBACK(initializeWebProcessExtensionsCallback), this);
 #else
-        g_signal_connect(m_webContext.get(), "initialize-web-extensions", G_CALLBACK(initializeWebProcessExtensionsCallback), this);
+            g_signal_connect(m_webContext.get(), "initialize-web-extensions", G_CALLBACK(initializeWebProcessExtensionsCallback), this);
 #endif
+        }
     }
 
     virtual ~Test()

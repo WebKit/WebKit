@@ -1,12 +1,14 @@
 
-FAIL SharedArrayBuffer cloning via the Notifications API's data member: basic case assert_throws: function "() => {
-    new Notification("Bob: Hi", { data: new SharedArrayBuffer() });
-  }" threw object "ReferenceError: Can't find variable: SharedArrayBuffer" that is not a DOMException DataCloneError: property "code" is equal to undefined, expected 25
-FAIL SharedArrayBuffer cloning via the Notifications API's data member: is interleaved correctly assert_throws: function "() => {
+FAIL SharedArrayBuffer cloning via the Notifications API's data member: basic case assert_throws_dom: function "() => {
+    // See https://github.com/whatwg/html/issues/5380 for why not `new SharedArrayBuffer()`
+    const sab = new WebAssembly.Memory({ shared:true, initial:1, maximum:1 }).buffer;
+    new Notification("Bob: Hi", { data: sab });
+  }" did not throw
+FAIL SharedArrayBuffer cloning via the Notifications API's data member: is interleaved correctly assert_throws_dom: function "() => {
     new Notification("Bob: Hi", { data: [
       { get x() { getter1Called = true; return 5; } },
-      new SharedArrayBuffer(),
+      sab,
       { get x() { getter2Called = true; return 5; } }
     ]});
-  }" threw object "ReferenceError: Can't find variable: SharedArrayBuffer" that is not a DOMException DataCloneError: property "code" is equal to undefined, expected 25
+  }" did not throw
 

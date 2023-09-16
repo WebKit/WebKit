@@ -1,0 +1,7 @@
+2d.path.isPointInpath.multi.path
+
+Verify the winding rule in isPointInPath works for path object.
+
+
+PASS Verify the winding rule in isPointInPath works for path object.
+

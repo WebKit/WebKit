@@ -471,9 +471,12 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         if (!origin.isNull())
             loadParameters.sourceOrigin = SecurityOrigin::createFromString(origin);
     }
-    if (isMainFrameNavigation)
-        loadParameters.topOrigin = SecurityOrigin::create(request.url());
-    else if (document)
+    if (isMainFrameNavigation) {
+        if (request.url().protocolIsBlob() && resourceLoader.documentLoader() && !resourceLoader.documentLoader()->triggeringAction().isEmpty() && resourceLoader.documentLoader()->triggeringAction().requester())
+            loadParameters.topOrigin = resourceLoader.documentLoader()->triggeringAction().requester()->topOrigin.ptr();
+        else
+            loadParameters.topOrigin = SecurityOrigin::create(request.url());
+    } else if (document)
         loadParameters.topOrigin = &document->topOrigin();
 
     if (document)
@@ -530,7 +533,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         existingNetworkResourceLoadIdentifierToResume = std::exchange(m_existingNetworkResourceLoadIdentifierToResume, std::nullopt);
     WEBLOADERSTRATEGY_RELEASE_LOG("scheduleLoad: Resource is being scheduled with the NetworkProcess (priority=%d, existingNetworkResourceLoadIdentifierToResume=%" PRIu64 ")", static_cast<int>(resourceLoader.request().priority()), valueOrDefault(existingNetworkResourceLoadIdentifierToResume).toUInt64());
 
-    if (frame && !frame->settings().siteIsolationEnabled() && loadParameters.request.allowCookies() && !WebProcess::singleton().allowsFirstPartyForCookies(loadParameters.request.firstPartyForCookies()))
+    if (frame && !frame->settings().siteIsolationEnabled() && !WebProcess::singleton().allowsFirstPartyForCookies(loadParameters.request.firstPartyForCookies()))
         RELEASE_LOG_FAULT(IPC, "scheduleLoad: Process will terminate due to failed allowsFirstPartyForCookies check");
 
     if (WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(loadParameters, existingNetworkResourceLoadIdentifierToResume), 0) != IPC::Error::NoError) {
@@ -811,15 +814,15 @@ bool WebLoaderStrategy::usePingLoad() const
 
 void WebLoaderStrategy::startPingLoad(LocalFrame& frame, ResourceRequest& request, const HTTPHeaderMap& originalRequestHeaders, const FetchOptions& options, ContentSecurityPolicyImposition policyCheck, PingLoadCompletionHandler&& completionHandler)
 {
-    auto* webFrame = WebFrame::fromCoreFrame(frame);
-    auto* document = frame.document();
+    auto webFrame = WebFrame::fromCoreFrame(frame);
+    RefPtr document = frame.document();
     if (!document || !webFrame) {
         if (completionHandler)
             completionHandler(internalError(request.url()), { });
         return;
     }
 
-    auto* webPage = webFrame->page();
+    RefPtr webPage = webFrame->page();
     if (!webPage) {
         if (completionHandler)
             completionHandler(internalError(request.url()), { });

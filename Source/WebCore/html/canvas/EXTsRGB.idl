@@ -25,7 +25,7 @@
 
 [
     Conditional=WEBGL,
-    GenerateIsReachable=ImplWebGLRenderingContext,
+    GenerateIsReachable,
     LegacyNoInterfaceObject,
 ] interface EXTsRGB {
     const unsigned long SRGB_EXT = 0x8C40;

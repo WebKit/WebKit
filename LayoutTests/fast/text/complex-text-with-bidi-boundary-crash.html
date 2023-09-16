@@ -1,0 +1,14 @@
+<style>
+div {
+  float: left;
+  word-break: break-word;
+}
+</style>
+<!-- PASS if no crash or assert -->
+<div id=container></div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+document.body.offsetHeight;
+container.append('\u0890\ud802\udc00');
+</script>

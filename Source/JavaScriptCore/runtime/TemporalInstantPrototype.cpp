@@ -260,7 +260,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncToLocaleString, (JSGlobalOb
     IntlDateTimeFormat* formatter = IntlDateTimeFormat::create(vm, globalObject->dateTimeFormatStructure());
     RETURN_IF_EXCEPTION(scope, { });
 
-    formatter->initializeDateTimeFormat(globalObject, callFrame->argument(0), callFrame->argument(1));
+    formatter->initializeDateTimeFormat(globalObject, callFrame->argument(0), callFrame->argument(1), IntlDateTimeFormat::RequiredComponent::Any, IntlDateTimeFormat::Defaults::Date);
     RETURN_IF_EXCEPTION(scope, { });
 
     // FIXME: change IntlDateTimeFormat to use epochNanoseconds

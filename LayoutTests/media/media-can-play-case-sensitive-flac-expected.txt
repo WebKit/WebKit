@@ -1,0 +1,6 @@
+Tests that both flac and fLaC are reported as playable in a mp4 container.
+EXPECTED (mediaElement.canPlayType('audio/mp4; codecs="flac"') == 'probably') OK
+EXPECTED (mediaElement.canPlayType('audio/mp4; codecs="fLaC"') == 'probably') OK
+EXPECTED (mediaElement.canPlayType('audio/mp4; codecs="FlAc"') == '') OK
+END OF TEST
+

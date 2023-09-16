@@ -98,7 +98,7 @@ public:
         virtual void sourceConfigurationChanged() { }
 
         // Observer state queries.
-        virtual bool preventSourceFromStopping() { return false; }
+        virtual bool preventSourceFromEnding() { return false; }
 
         virtual void hasStartedProducingData() { }
     };

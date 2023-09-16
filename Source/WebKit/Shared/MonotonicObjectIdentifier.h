@@ -60,10 +60,7 @@ public:
         return MonotonicObjectIdentifier { *identifier };
     }
 
-    bool operator==(const MonotonicObjectIdentifier& other) const
-    {
-        return m_identifier == other.m_identifier;
-    }
+    friend bool operator==(MonotonicObjectIdentifier, MonotonicObjectIdentifier) = default;
 
     bool operator>(const MonotonicObjectIdentifier& other) const
     {

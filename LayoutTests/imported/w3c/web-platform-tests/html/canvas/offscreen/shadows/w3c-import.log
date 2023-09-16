@@ -17,12 +17,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.alpha.1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.alpha.1.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.alpha.2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.alpha.2.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.alpha.2.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.alpha.3.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.alpha.3.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.alpha.3.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.alpha.4.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.alpha.4.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.alpha.4.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.alpha.5.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.alpha.5.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.alpha.5.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.attributes.shadowBlur.initial.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.attributes.shadowBlur.initial.worker.js
@@ -42,7 +46,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.attributes.shadowOffset.invalid.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.attributes.shadowOffset.valid.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.attributes.shadowOffset.valid.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.blur.high-manual.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.blur.high.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.blur.low-manual.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.blur.low.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.canvas.alpha.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.canvas.alpha.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.canvas.alpha.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.canvas.basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.canvas.basic.worker.js
@@ -73,6 +82,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.enable.y.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.enable.y.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.gradient.alpha.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.gradient.alpha.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.gradient.alpha.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.gradient.basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.gradient.basic.worker.js
@@ -81,6 +91,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.gradient.transparent.2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.gradient.transparent.2.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.image.alpha.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.image.alpha.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.image.alpha.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.image.basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.image.basic.worker.js
@@ -103,6 +114,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.outside.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.outside.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.pattern.alpha.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.pattern.alpha.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.pattern.alpha.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.pattern.basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.pattern.basic.worker.js

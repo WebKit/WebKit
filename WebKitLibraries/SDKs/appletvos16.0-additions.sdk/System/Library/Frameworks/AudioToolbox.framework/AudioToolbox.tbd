@@ -1,0 +1,16 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-tvos, arm64e-tvos]
+install-name: /System/Library/Frameworks/AudioToolbox.framework/AudioToolbox
+current-version: 1000
+reexported-libraries:
+-       targets: [arm64-tvos, arm64e-tvos]
+        libraries: [/System/Library/PrivateFrameworks/AudioToolboxCore.framework/AudioToolboxCore]
+exports: []
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-tvos, arm64e-tvos]
+install-name: /System/Library/PrivateFrameworks/AudioToolboxCore.framework/AudioToolboxCore
+exports: []
+...

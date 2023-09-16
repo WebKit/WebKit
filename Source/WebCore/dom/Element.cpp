@@ -769,17 +769,10 @@ Vector<String> Element::getAttributeNames() const
 
 bool Element::hasFocusableStyle() const
 {
-    if (renderer() && renderer()->isSkippedContent()) {
-        auto* candidate = this;
-        while ((candidate = candidate->parentElementInComposedTree())) {
-            if (candidate->renderer() && candidate->renderStyle()->contentVisibility() == ContentVisibility::Hidden)
-                return false;
-        }
-    }
-
     auto isFocusableStyle = [](const RenderStyle* style) {
         return style && style->display() != DisplayType::None && style->display() != DisplayType::Contents
-            && style->visibility() == Visibility::Visible && !style->effectiveInert();
+            && style->visibility() == Visibility::Visible && !style->effectiveInert()
+            && (style->skippedContentReason().value_or(ContentVisibility::Visible) != ContentVisibility::Hidden || style->contentVisibility() != ContentVisibility::Visible);
     };
 
     if (renderStyle())
@@ -958,15 +951,16 @@ void Element::setBeingDragged(bool value)
 
 inline ScrollAlignment toScrollAlignmentForInlineDirection(std::optional<ScrollLogicalPosition> position, WritingMode writingMode, bool isLTR)
 {
+    auto blockFlowDirection = writingModeToBlockFlowDirection(writingMode);
     switch (position.value_or(ScrollLogicalPosition::Nearest)) {
     case ScrollLogicalPosition::Start: {
-        switch (writingMode) {
-        case WritingMode::TopToBottom:
-        case WritingMode::BottomToTop: {
+        switch (blockFlowDirection) {
+        case BlockFlowDirection::TopToBottom:
+        case BlockFlowDirection::BottomToTop: {
             return isLTR ? ScrollAlignment::alignLeftAlways : ScrollAlignment::alignRightAlways;
         }
-        case WritingMode::LeftToRight:
-        case WritingMode::RightToLeft: {
+        case BlockFlowDirection::LeftToRight:
+        case BlockFlowDirection::RightToLeft: {
             return isLTR ? ScrollAlignment::alignTopAlways : ScrollAlignment::alignBottomAlways;
         }
         default:
@@ -977,13 +971,13 @@ inline ScrollAlignment toScrollAlignmentForInlineDirection(std::optional<ScrollL
     case ScrollLogicalPosition::Center:
         return ScrollAlignment::alignCenterAlways;
     case ScrollLogicalPosition::End: {
-        switch (writingMode) {
-        case WritingMode::TopToBottom:
-        case WritingMode::BottomToTop: {
+        switch (blockFlowDirection) {
+        case BlockFlowDirection::TopToBottom:
+        case BlockFlowDirection::BottomToTop: {
             return isLTR ? ScrollAlignment::alignRightAlways : ScrollAlignment::alignLeftAlways;
         }
-        case WritingMode::LeftToRight:
-        case WritingMode::RightToLeft: {
+        case BlockFlowDirection::LeftToRight:
+        case BlockFlowDirection::RightToLeft: {
             return isLTR ? ScrollAlignment::alignBottomAlways : ScrollAlignment::alignTopAlways;
         }
         default:
@@ -1001,16 +995,17 @@ inline ScrollAlignment toScrollAlignmentForInlineDirection(std::optional<ScrollL
 
 inline ScrollAlignment toScrollAlignmentForBlockDirection(std::optional<ScrollLogicalPosition> position, WritingMode writingMode)
 {
+    auto blockFlowDirection = writingModeToBlockFlowDirection(writingMode);
     switch (position.value_or(ScrollLogicalPosition::Start)) {
     case ScrollLogicalPosition::Start: {
-        switch (writingMode) {
-        case WritingMode::TopToBottom:
+        switch (blockFlowDirection) {
+        case BlockFlowDirection::TopToBottom:
             return ScrollAlignment::alignTopAlways;
-        case WritingMode::BottomToTop:
+        case BlockFlowDirection::BottomToTop:
             return ScrollAlignment::alignBottomAlways;
-        case WritingMode::LeftToRight:
+        case BlockFlowDirection::LeftToRight:
             return ScrollAlignment::alignLeftAlways;
-        case WritingMode::RightToLeft:
+        case BlockFlowDirection::RightToLeft:
             return ScrollAlignment::alignRightAlways;
         default:
             ASSERT_NOT_REACHED();
@@ -1020,14 +1015,14 @@ inline ScrollAlignment toScrollAlignmentForBlockDirection(std::optional<ScrollLo
     case ScrollLogicalPosition::Center:
         return ScrollAlignment::alignCenterAlways;
     case ScrollLogicalPosition::End: {
-        switch (writingMode) {
-        case WritingMode::TopToBottom:
+        switch (blockFlowDirection) {
+        case BlockFlowDirection::TopToBottom:
             return ScrollAlignment::alignBottomAlways;
-        case WritingMode::BottomToTop:
+        case BlockFlowDirection::BottomToTop:
             return ScrollAlignment::alignTopAlways;
-        case WritingMode::LeftToRight:
+        case BlockFlowDirection::LeftToRight:
             return ScrollAlignment::alignRightAlways;
-        case WritingMode::RightToLeft:
+        case BlockFlowDirection::RightToLeft:
             return ScrollAlignment::alignLeftAlways;
         default:
             ASSERT_NOT_REACHED();
@@ -1072,7 +1067,7 @@ static std::optional<std::pair<RenderElement*, LayoutRect>> listBoxElementScroll
 
 void Element::scrollIntoView(std::optional<std::variant<bool, ScrollIntoViewOptions>>&& arg)
 {
-    document().contentVisibilityDocumentState().updateContentRelevancyStatusForScrollIfNeeded(*this);
+    document().updateContentRelevancyForScrollIfNeeded(*this);
 
     document().updateLayoutIgnorePendingStylesheets();
 
@@ -1139,7 +1134,7 @@ void Element::scrollIntoView(bool alignToTop)
 
 void Element::scrollIntoViewIfNeeded(bool centerIfNeeded)
 {
-    document().contentVisibilityDocumentState().updateContentRelevancyStatusForScrollIfNeeded(*this);
+    document().updateContentRelevancyForScrollIfNeeded(*this);
 
     document().updateLayoutIgnorePendingStylesheets();
 
@@ -1247,7 +1242,7 @@ void Element::scrollByUnits(int units, ScrollGranularity granularity)
     if (!renderer->hasNonVisibleOverflow())
         return;
 
-    auto direction = units < 0 ? ScrollUp : ScrollDown;
+    auto direction = units < 0 ? ScrollDirection::ScrollUp : ScrollDirection::ScrollDown;
     auto* stopElement = this;
     downcast<RenderBox>(*renderer).scroll(direction, granularity, std::abs(units), &stopElement);
 }
@@ -1692,10 +1687,10 @@ static bool layoutOverflowRectContainsAllDescendants(const RenderBox& renderBox)
 
     // If there are any position:fixed inside of us, game over.
     if (auto* viewPositionedObjects = renderBox.view().positionedObjects()) {
-        for (auto* positionedBox : *viewPositionedObjects) {
-            if (positionedBox == &renderBox)
+        for (auto& positionedBox : *viewPositionedObjects) {
+            if (&positionedBox == &renderBox)
                 continue;
-            if (positionedBox->isFixedPositioned() && renderBox.element()->contains(positionedBox->element()))
+            if (positionedBox.isFixedPositioned() && renderBox.element()->contains(positionedBox.element()))
                 return false;
         }
     }
@@ -1708,10 +1703,10 @@ static bool layoutOverflowRectContainsAllDescendants(const RenderBox& renderBox)
     // This renderer may have positioned descendants whose containing block is some ancestor.
     if (auto* containingBlock = RenderObject::containingBlockForPositionType(PositionType::Absolute, renderBox)) {
         if (auto* positionedObjects = containingBlock->positionedObjects()) {
-            for (auto* positionedBox : *positionedObjects) {
-                if (positionedBox == &renderBox)
+            for (auto& positionedBox : *positionedObjects) {
+                if (&positionedBox == &renderBox)
                     continue;
-                if (renderBox.element()->contains(positionedBox->element()))
+                if (renderBox.element()->contains(positionedBox.element()))
                     return false;
             }
         }
@@ -1743,7 +1738,7 @@ LayoutRect Element::absoluteEventBounds(bool& boundsIncludeAllDescendantElements
             if (RenderFragmentedFlow* fragmentedFlow = box.enclosingFragmentedFlow()) {
                 bool wasFixed = false;
                 Vector<FloatQuad> quads;
-                if (fragmentedFlow->absoluteQuadsForBox(quads, &wasFixed, &box)) {
+                if (fragmentedFlow->absoluteQuadsForBox(quads, &wasFixed, box)) {
                     result = LayoutRect(unitedBoundingBoxes(quads));
                     computedBounds = true;
                 } else {
@@ -3531,9 +3526,9 @@ void Element::focus(const FocusOptions& options)
         return;
     }
 
-    document->contentVisibilityDocumentState().updateContentRelevancyStatusForScrollIfNeeded(*this);
+    document->updateContentRelevancyForScrollIfNeeded(*this);
 
-    RefPtr<Element> newTarget = this;
+    RefPtr newTarget { this };
 
     // If we don't have renderer yet, isFocusable will compute it without style update.
     // FIXME: Expand it to avoid style update in all cases.
@@ -3652,7 +3647,7 @@ void Element::dispatchFocusInEventIfNeeded(RefPtr<Element>&& oldFocusedElement)
 {
     if (!document().hasListenerType(Document::ListenerType::FocusIn))
         return;
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed() || !isInWebProcess());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
     dispatchScopedEvent(FocusEvent::create(eventNames().focusinEvent, Event::CanBubble::Yes, Event::IsCancelable::No, document().windowProxy(), 0, WTFMove(oldFocusedElement)));
 }
 
@@ -3660,7 +3655,7 @@ void Element::dispatchFocusOutEventIfNeeded(RefPtr<Element>&& newFocusedElement)
 {
     if (!document().hasListenerType(Document::ListenerType::FocusOut))
         return;
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed() || !isInWebProcess());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
     dispatchScopedEvent(FocusEvent::create(eventNames().focusoutEvent, Event::CanBubble::Yes, Event::IsCancelable::No, document().windowProxy(), 0, WTFMove(newFocusedElement)));
 }
 
@@ -3873,7 +3868,7 @@ void Element::addToTopLayer()
     document().addTopLayerElement(*this);
     setNodeFlag(NodeFlag::IsInTopLayer);
 
-    document().scheduleContentRelevancyUpdate(ContentRelevancyStatus::IsInTopLayer);
+    document().scheduleContentRelevancyUpdate(ContentRelevancy::IsInTopLayer);
 
     // Invalidate inert state
     invalidateStyleInternal();
@@ -3907,7 +3902,7 @@ void Element::removeFromTopLayer()
     document().removeTopLayerElement(*this);
     clearNodeFlag(NodeFlag::IsInTopLayer);
 
-    document().scheduleContentRelevancyUpdate(ContentRelevancyStatus::IsInTopLayer);
+    document().scheduleContentRelevancyUpdate(ContentRelevancy::IsInTopLayer);
 
     // Invalidate inert state
     invalidateStyleInternal();
@@ -3970,6 +3965,8 @@ const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
 {
     ASSERT(isConnected());
 
+    document().styleScope().flushPendingUpdate();
+
     bool isInDisplayNoneTree = false;
 
     // Traverse the ancestor chain to find the rootmost element that has invalid computed style.
@@ -3998,17 +3995,18 @@ const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
             }
             if (mode == ResolveComputedStyleMode::RenderedOnly && existing->display() == DisplayType::None) {
                 isInDisplayNoneTree = true;
-                return nullptr;
+                // Invalid ancestor style may still affect this display:none style.
+                rootmost = nullptr;
             }
         }
         return rootmost;
     }();
 
-    if (isInDisplayNoneTree)
-        return nullptr;
-
-    if (!rootmostInvalidElement)
+    if (!rootmostInvalidElement) {
+        if (isInDisplayNoneTree)
+            return nullptr;
         return existingComputedStyle();
+    }
 
     auto* ancestorWithValidStyle = rootmostInvalidElement->parentElementInComposedTree();
 
@@ -4025,6 +4023,11 @@ const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
     // FIXME: This is not as efficient as it could be. For example if an ancestor has a non-inherited style change but
     // the styles are otherwise clean we would not need to re-resolve descendants.
     for (auto& element : makeReversedRange(elementsRequiringComputedStyle)) {
+        if (computedStyle && computedStyle->containerType() != ContainerType::Normal) {
+            // If we find a query container we need to bail out and do full style update to resolve it.
+            if (document().updateStyleIfNeeded())
+                return this->computedStyle();
+        };
         auto style = document().styleForElementIgnoringPendingStylesheets(*element, computedStyle);
         computedStyle = style.get();
         ElementRareData& rareData = element->ensureElementRareData();
@@ -5383,25 +5386,28 @@ bool Element::isPopoverShowing() const
 // https://drafts.csswg.org/css-contain/#relevant-to-the-user
 bool Element::isRelevantToUser() const
 {
-    return hasRareData() && elementRareData()->contentRelevancyStatus();
+    if (auto relevancy = contentRelevancy())
+        return !relevancy->isEmpty();
+    return false;
 }
 
-OptionSet<ContentRelevancyStatus> Element::contentRelevancyStatus() const
+std::optional<OptionSet<ContentRelevancy>> Element::contentRelevancy() const
 {
     if (!hasRareData())
-        return { };
-    return elementRareData()->contentRelevancyStatus();
+        return std::nullopt;
+    return elementRareData()->contentRelevancy();
 }
 
-void Element::setContentRelevancyStatus(OptionSet<ContentRelevancyStatus> contentRelvancyStatus)
+void Element::setContentRelevancy(OptionSet<ContentRelevancy> contentRelevancy)
 {
-    ensureElementRareData().setContentRelevancyStatus(contentRelvancyStatus);
+    ensureElementRareData().setContentRelevancy(contentRelevancy);
 }
 
-void Element::contentVisibilityViewportChange(bool)
+AtomString Element::makeTargetBlankIfHasDanglingMarkup(const AtomString& target)
 {
-    ASSERT(renderStyle() && renderStyle()->contentVisibility() == ContentVisibility::Auto);
-    document().scheduleContentRelevancyUpdate(ContentRelevancyStatus::OnScreen);
+    if ((target.contains('\n') || target.contains('\r') || target.contains('\t')) && target.contains('<'))
+        return "_blank"_s;
+    return target;
 }
 
 } // namespace WebCore

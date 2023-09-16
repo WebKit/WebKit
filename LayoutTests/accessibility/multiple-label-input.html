@@ -36,6 +36,13 @@ if (window.accessibilityController) {
         });
         output += `${newText}\n`;
 
+        output += evalAndReturn("document.getElementById('label3').innerHTML = 'decision';");
+        await waitFor(() => {
+            newText = platformTextAlternatives(input);
+            return newText.includes("decision");
+        });
+        output += `${newText}\n`;
+
         debug(output);
         finishJSTest();
     }, 0);

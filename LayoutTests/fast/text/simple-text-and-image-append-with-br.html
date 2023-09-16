@@ -1,0 +1,20 @@
+<style>
+img {
+  width: 20px;
+  height: 20px;
+  background-color: green;
+}
+</style>
+<div id=container>existing content<br></div>
+<script>
+for (let i = 0; i < 100; ++i) {
+  container.appendChild(document.createElement("img"));
+  container.appendChild(document.createTextNode("some"));
+  container.appendChild(document.createElement("img"));
+  container.appendChild(document.createTextNode("and"));
+  container.appendChild(document.createElement("img"));
+  container.appendChild(document.createTextNode("text"));
+  container.appendChild(document.createElement("br"));
+  document.body.offsetHeight;
+}
+</script>

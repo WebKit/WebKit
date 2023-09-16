@@ -287,7 +287,7 @@ bool GridIterator::isEmptyAreaEnough(unsigned rowSpan, unsigned columnSpan) cons
     return true;
 }
 
-std::unique_ptr<GridArea> GridIterator::nextEmptyGridArea(unsigned fixedTrackSpan, unsigned varyingTrackSpan)
+std::optional<GridArea> GridIterator::nextEmptyGridArea(unsigned fixedTrackSpan, unsigned varyingTrackSpan)
 {
     if (m_grid.maxRows())
         ASSERT(m_grid.numTracks(ForRows));
@@ -297,7 +297,7 @@ std::unique_ptr<GridArea> GridIterator::nextEmptyGridArea(unsigned fixedTrackSpa
     ASSERT(varyingTrackSpan >= 1);
 
     if (!m_grid.hasGridItems())
-        return nullptr;
+        return { };
 
     unsigned rowSpan = (m_direction == ForColumns) ? varyingTrackSpan : fixedTrackSpan;
     unsigned columnSpan = (m_direction == ForColumns) ? fixedTrackSpan : varyingTrackSpan;
@@ -306,13 +306,13 @@ std::unique_ptr<GridArea> GridIterator::nextEmptyGridArea(unsigned fixedTrackSpa
     const unsigned endOfVaryingTrackIndex = (m_direction == ForColumns) ? m_grid.numTracks(ForRows) : m_grid.numTracks(ForColumns);
     for (; varyingTrackIndex < endOfVaryingTrackIndex; ++varyingTrackIndex) {
         if (isEmptyAreaEnough(rowSpan, columnSpan)) {
-            std::unique_ptr<GridArea> result = makeUnique<GridArea>(GridSpan::translatedDefiniteGridSpan(m_rowIndex, m_rowIndex + rowSpan), GridSpan::translatedDefiniteGridSpan(m_columnIndex, m_columnIndex + columnSpan));
+            auto result = GridArea { GridSpan::translatedDefiniteGridSpan(m_rowIndex, m_rowIndex + rowSpan), GridSpan::translatedDefiniteGridSpan(m_columnIndex, m_columnIndex + columnSpan) };
             // Advance the iterator to avoid an infinite loop where we would return the same grid area over and over.
             ++varyingTrackIndex;
             return result;
         }
     }
-    return nullptr;
+    return { };
 }
 
 GridIterator GridIterator::createForSubgrid(const RenderGrid& subgrid, const GridIterator& outer)

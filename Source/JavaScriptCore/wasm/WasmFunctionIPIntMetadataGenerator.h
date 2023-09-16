@@ -31,6 +31,7 @@
 #include "HandlerInfo.h"
 #include "InstructionStream.h"
 #include "MacroAssemblerCodeRef.h"
+#include "SIMDInfo.h"
 #include "WasmHandlerInfo.h"
 #include "WasmIPIntGenerator.h"
 #include "WasmLLIntTierUpCounter.h"
@@ -79,6 +80,8 @@ public:
     const uint8_t* getBytecode() const { return m_bytecode; }
     const uint8_t* getMetadata() const { return m_metadata.data(); }
 
+    HashMap<WasmInstructionStream::Offset, LLIntTierUpCounter::OSREntryData>& tierUpCounter() { return m_tierUpCounter; }
+
     unsigned addSignature(const TypeDefinition&);
 
 private:
@@ -86,8 +89,10 @@ private:
     void addBlankSpace(uint32_t size);
     void addRawValue(uint64_t value);
     void addLEB128ConstantInt32AndLength(uint32_t value, uint32_t length);
+    void addCondensedLocalIndexAndLength(uint32_t index, uint32_t length);
     void addLEB128ConstantAndLengthForType(Type, uint64_t value, uint32_t length);
-    void addReturnData(const Vector<Type>& types);
+    void addLEB128V128Constant(v128_t value, uint32_t length);
+    void addReturnData(const Vector<Type, 16>& types);
 
     uint32_t m_functionIndex;
     bool m_tailCallClobbersInstance { false };
@@ -103,9 +108,14 @@ private:
     unsigned m_numArguments { 0 };
     unsigned m_numArgumentsOnStack { 0 };
     unsigned m_nonArgLocalOffset { 0 };
-    Vector<uint32_t> m_argumentLocations { };
+    Vector<uint8_t, 16> m_argumINTBytecode { };
 
     Vector<const TypeDefinition*> m_signatures;
+    HashMap<WasmInstructionStream::Offset, LLIntTierUpCounter::OSREntryData> m_tierUpCounter;
+
+    // Optimization to skip large numbers of blocks
+
+    Vector<uint32_t> m_repeatedControlFlowInstructionMetadataOffsets;
 };
 
 } } // namespace JSC::Wasm

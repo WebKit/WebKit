@@ -56,7 +56,7 @@ public:
 
     virtual void layoutInFlowContent(const ConstraintsForInFlowContent&) { };
     void layoutOutOfFlowContent(const ConstraintsForOutOfFlowContent&);
-    virtual IntrinsicWidthConstraints computedIntrinsicWidthConstraints() = 0;
+    virtual IntrinsicWidthConstraints computedIntrinsicWidthConstraints() { return { }; }
     virtual LayoutUnit usedContentHeight() const { return { }; }
 
     const ElementBox& root() const { return m_root; }

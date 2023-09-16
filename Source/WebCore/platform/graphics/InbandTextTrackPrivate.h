@@ -31,6 +31,12 @@
 
 namespace WebCore {
 
+enum class InbandTextTrackPrivateMode : uint8_t {
+    Disabled,
+    Hidden,
+    Showing
+};
+
 class InbandTextTrackPrivate : public TrackPrivateBase {
 public:
     enum class CueFormat : uint8_t {
@@ -45,11 +51,7 @@ public:
     virtual void setClient(InbandTextTrackPrivateClient& client) { m_client = client; }
     void clearClient() { m_client = nullptr; }
 
-    enum class Mode : uint8_t {
-        Disabled,
-        Hidden,
-        Showing
-    };
+    using Mode = InbandTextTrackPrivateMode;
     virtual void setMode(Mode mode) { m_mode = mode; };
     virtual InbandTextTrackPrivate::Mode mode() const { return m_mode; }
 
@@ -114,41 +116,6 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::InbandTextTrackPrivate)
 static bool isType(const WebCore::TrackPrivateBase& track) { return track.type() == WebCore::TrackPrivateBase::Type::Text; }
 SPECIALIZE_TYPE_TRAITS_END()
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::InbandTextTrackPrivate::CueFormat> {
-    using values = EnumValues<
-        WebCore::InbandTextTrackPrivate::CueFormat,
-        WebCore::InbandTextTrackPrivate::CueFormat::Data,
-        WebCore::InbandTextTrackPrivate::CueFormat::Generic,
-        WebCore::InbandTextTrackPrivate::CueFormat::WebVTT
-    >;
-};
-
-template<> struct EnumTraits<WebCore::InbandTextTrackPrivate::Mode> {
-    using values = EnumValues<
-        WebCore::InbandTextTrackPrivate::Mode,
-        WebCore::InbandTextTrackPrivate::Mode::Disabled,
-        WebCore::InbandTextTrackPrivate::Mode::Hidden,
-        WebCore::InbandTextTrackPrivate::Mode::Showing
-    >;
-};
-
-template<> struct EnumTraits<WebCore::InbandTextTrackPrivate::Kind> {
-    using values = EnumValues<
-        WebCore::InbandTextTrackPrivate::Kind,
-        WebCore::InbandTextTrackPrivate::Kind::Subtitles,
-        WebCore::InbandTextTrackPrivate::Kind::Captions,
-        WebCore::InbandTextTrackPrivate::Kind::Descriptions,
-        WebCore::InbandTextTrackPrivate::Kind::Chapters,
-        WebCore::InbandTextTrackPrivate::Kind::Metadata,
-        WebCore::InbandTextTrackPrivate::Kind::Forced,
-        WebCore::InbandTextTrackPrivate::Kind::None
-    >;
-};
-
-} // namespace WTF
 
 #endif // ENABLE(VIDEO)
 

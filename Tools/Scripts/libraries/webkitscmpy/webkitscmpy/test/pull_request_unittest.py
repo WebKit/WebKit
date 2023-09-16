@@ -75,6 +75,21 @@ Reviewed by Tim Contributor.
         self.assertEqual(commits[0].hash, '11aa76f9fc380e9fe06157154f32b304e8dc4749')
         self.assertEqual(commits[0].message, '[scoping] Bug to fix\n\nReviewed by Tim Contributor.')
 
+    def test_parse_body_single(self):
+        body, commits = PullRequest.parse_body('''#### 11aa76f9fc380e9fe06157154f32b304e8dc4749
+```
+[scoping] Bug to fix
+
+Reviewed by Tim Contributor.
+```<!--EWS-Status-Bubble-Start-->
+...
+<!--EWS-Status-Bubble-End-->''')
+        self.assertIsNone(body)
+        self.assertEqual(len(commits), 1)
+        self.assertEqual(commits[0].hash, '11aa76f9fc380e9fe06157154f32b304e8dc4749')
+        self.assertEqual(commits[0].message, '[scoping] Bug to fix\n\nReviewed by Tim Contributor.')
+
+
     def test_create_body_multiple_linked(self):
         self.assertEqual(
             PullRequest.create_body(None, [Commit(
@@ -254,6 +269,23 @@ Reviewed by Tim Contributor.
 
 Reviewed by Tim Contributor.
 </pre>''')
+        self.assertEqual(body, 'Comment body')
+        self.assertEqual(len(commits), 1)
+        self.assertEqual(commits[0].hash, '11aa76f9fc380e9fe06157154f32b304e8dc4749')
+        self.assertEqual(commits[0].message, '[scoping] Bug to fix\n\nReviewed by Tim Contributor.')
+
+    def test_parse_html_body_single_ews(self):
+        body, commits = PullRequest.parse_body('''Comment body
+
+----------------------------------------------------------------------
+#### 11aa76f9fc380e9fe06157154f32b304e8dc4749
+<pre>
+[scoping] Bug to fix
+
+Reviewed by Tim Contributor.
+</pre><!--EWS-Status-Bubble-Start-->
+...
+<!--EWS-Status-Bubble-End-->''')
         self.assertEqual(body, 'Comment body')
         self.assertEqual(len(commits), 1)
         self.assertEqual(commits[0].hash, '11aa76f9fc380e9fe06157154f32b304e8dc4749')

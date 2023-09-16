@@ -2744,6 +2744,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case ArraySpliceExtract:
+        clobberWorld();
+        makeBytecodeTopForNode(node);
+        break;
+
     case ArrayIndexOf: {
         setNonCellTypeForNode(node, SpecInt32Only);
         break;
@@ -3265,7 +3270,15 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case NewRegexp:
         setForNode(node, m_graph.globalObjectFor(node->origin.semantic)->regExpStructure());
         break;
-            
+
+    case NewMap:
+        setForNode(node, node->structure());
+        break;
+
+    case NewSet:
+        setForNode(node, node->structure());
+        break;
+
     case ToThis: {
         AbstractValue& source = forNode(node->child1());
         AbstractValue& destination = forNode(node);

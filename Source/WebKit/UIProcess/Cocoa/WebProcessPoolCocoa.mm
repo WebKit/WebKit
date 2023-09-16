@@ -43,7 +43,6 @@
 #import "SandboxExtension.h"
 #import "SandboxUtilities.h"
 #import "TextChecker.h"
-#import "UserInterfaceIdiom.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WebBackForwardCache.h"
 #import "WebMemoryPressureHandler.h"
@@ -71,8 +70,8 @@
 #import <pal/Logging.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cf/CFNotificationCenterSPI.h>
-#import <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
+#import <pal/system/ios/UserInterfaceIdiom.h>
 #import <sys/param.h>
 #import <wtf/FileSystem.h>
 #import <wtf/ProcessPrivilege.h>
@@ -85,6 +84,8 @@
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 #import <wtf/text/TextStream.h>
+
+#import <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 #import <JavaScriptCore/RemoteInspector.h>
@@ -476,6 +477,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     auto metalFEDirectory = WebsiteDataStore::cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.WebContent/com.apple.metalfe"_s);
     if (auto metalFEDirectoryHandle = SandboxExtension::createHandleForReadWriteDirectory(metalFEDirectory))
         parameters.metalCacheDirectoryExtensionHandles.append(WTFMove(*metalFEDirectoryHandle));
+    auto gpuArchiverDirectory = WebsiteDataStore::cacheDirectoryInContainerOrHomeDirectory("Library/Caches/com.apple.WebKit.WebContent/com.apple.gpuarchiver"_s);
+    if (auto gpuArchiverDirectoryHandle = SandboxExtension::createHandleForReadWriteDirectory(gpuArchiverDirectory))
+        parameters.metalCacheDirectoryExtensionHandles.append(WTFMove(*gpuArchiverDirectoryHandle));
 #endif
 
     parameters.systemHasBattery = systemHasBattery();
@@ -483,7 +487,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     parameters.strictSecureDecodingForAllObjCEnabled = IPC::strictSecureDecodingForAllObjCEnabled();
 
 #if PLATFORM(IOS_FAMILY)
-    parameters.currentUserInterfaceIdiom = currentUserInterfaceIdiom();
+    parameters.currentUserInterfaceIdiom = PAL::currentUserInterfaceIdiom();
     parameters.supportsPictureInPicture = supportsPictureInPicture();
     parameters.cssValueToSystemColorMap = RenderThemeIOS::cssValueToSystemColorMap();
     parameters.focusRingColor = RenderThemeIOS::systemFocusRingColor();
@@ -781,7 +785,7 @@ void WebProcessPool::registerNotificationObservers()
     }
 #elif !PLATFORM(MACCATALYST)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    // FIXME: <https://webkit.org/b/246488> Adopt UIScreenBrightnessDidChangeNotification.
+    // FIXME: <https://webkit.org/b/255833> Adopt UIScreenBrightnessDidChangeNotification.
     addCFNotificationObserver(backlightLevelDidChangeCallback, (__bridge CFStringRef)UIBacklightLevelChangedNotification);
 ALLOW_DEPRECATED_DECLARATIONS_END
 #if PLATFORM(IOS) || PLATFORM(VISION)
@@ -805,8 +809,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     if (![UIApplication sharedApplication]) {
         m_applicationLaunchObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
-            if (WebKit::updateCurrentUserInterfaceIdiom())
-                sendToAllProcesses(Messages::WebProcess::UserInterfaceIdiomDidChange(WebKit::currentUserInterfaceIdiom()));
+            if (PAL::updateCurrentUserInterfaceIdiom())
+                sendToAllProcesses(Messages::WebProcess::UserInterfaceIdiomDidChange(PAL::currentUserInterfaceIdiom()));
         }];
     }
 #endif
@@ -1063,8 +1067,16 @@ void WebProcessPool::setProcessesShouldSuspend(bool shouldSuspend)
         return;
 
     m_processesShouldSuspend = shouldSuspend;
-    for (auto& process : m_processes)
+    for (auto& process : m_processes) {
         process->throttler().setAllowsActivities(!m_processesShouldSuspend);
+
+#if ENABLE(WEBXR) && !USE(OPENXR)
+        if (!m_processesShouldSuspend) {
+            for (auto& page : process->pages())
+                page->restartXRSessionActivityOnProcessResumeIfNeeded();
+        }
+#endif
+    }
 }
 
 #endif
@@ -1137,7 +1149,7 @@ void WebProcessPool::registerDisplayConfigurationCallback()
         });
 }
 
-static void webProcessPoolHighDynamicRangeDidChangeCallback(CMNotificationCenterRef, const void*, CFStringRef notificationName, const void*, CFTypeRef)
+static void webProcessPoolHighDynamicRangeDidChangeCallback(CFNotificationCenterRef, void*, CFNotificationName, const void*, CFDictionaryRef)
 {
     RunLoop::main().dispatch([] {
         auto properties = WebCore::collectScreenProperties();
@@ -1158,14 +1170,7 @@ void WebProcessPool::registerHighDynamicRangeChangeCallback()
             || !PAL::canLoad_MediaToolbox_kMTSupportNotification_ShouldPlayHDRVideoChanged())
             return;
 
-        auto center = PAL::softLink_CoreMedia_CMNotificationCenterGetDefaultLocalCenter();
-        auto notification = PAL::get_MediaToolbox_kMTSupportNotification_ShouldPlayHDRVideoChanged();
-        auto object = PAL::softLinkMediaToolboxMT_GetShouldPlayHDRVideoNotificationSingleton();
-
-        // Note: CMNotificationCenterAddListener requires a non-null listener pointer. Just use the singleton
-        // object itself as the "listener", since the notification method is a static global and doesn't need
-        // the listener pointer at all.
-        PAL::softLink_CoreMedia_CMNotificationCenterAddListener(center, object, webProcessPoolHighDynamicRangeDidChangeCallback, notification, object, 0);
+        CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), nullptr, webProcessPoolHighDynamicRangeDidChangeCallback, kMTSupportNotification_ShouldPlayHDRVideoChanged, MT_GetShouldPlayHDRVideoNotificationSingleton(), static_cast<CFNotificationSuspensionBehavior>(0));
     });
 }
 

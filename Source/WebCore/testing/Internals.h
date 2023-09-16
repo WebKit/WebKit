@@ -62,6 +62,7 @@ OBJC_CLASS VKCImageAnalysis;
 
 namespace WebCore {
 
+class AccessibilityObject;
 class AbstractRange;
 class AnimationTimeline;
 class ArtworkImageLoader;
@@ -298,6 +299,8 @@ public:
     // For animations testing, we need a way to get at pseudo elements.
     ExceptionOr<RefPtr<Element>> pseudoElement(Element&, const String&);
 
+    double preferredRenderingUpdateInterval();
+
     Node* treeScopeRootNode(Node&);
     Node* parentTreeScope(Node&);
 
@@ -514,9 +517,13 @@ public:
 
     ExceptionOr<void> garbageCollectDocumentResources() const;
 
+    bool isUnderMemoryWarning();
+    bool isUnderMemoryPressure();
+
+    void beginSimulatedMemoryWarning();
+    void endSimulatedMemoryWarning();
     void beginSimulatedMemoryPressure();
     void endSimulatedMemoryPressure();
-    bool isUnderMemoryPressure();
 
     ExceptionOr<void> insertAuthorCSS(const String&) const;
     ExceptionOr<void> insertUserCSS(const String&) const;
@@ -680,6 +687,7 @@ public:
     void enableMockMediaCapabilities();
 
 #if ENABLE(SPEECH_SYNTHESIS)
+    void simulateSpeechSynthesizerVoiceListChange();
     void enableMockSpeechSynthesizer();
     void enableMockSpeechSynthesizerForMediaElement(HTMLMediaElement&);
     ExceptionOr<void> setSpeechUtteranceDuration(double);
@@ -757,6 +765,7 @@ public:
     ExceptionOr<Ref<DOMRect>> selectionBounds();
     ExceptionOr<RefPtr<StaticRange>> selectedRange();
     void setSelectionWithoutValidation(Ref<Node> baseNode, unsigned baseOffset, RefPtr<Node> extentNode, unsigned extentOffset);
+    void setSelectionFromNone();
 
     ExceptionOr<bool> isPluginUnavailabilityIndicatorObscured(Element&);
     ExceptionOr<String> unavailablePluginReplacementText(Element&);
@@ -896,7 +905,6 @@ public:
 
 #if ENABLE(WEBGL)
     enum class SimulatedWebGLContextEvent {
-        ContextChange,
         GPUStatusFailure,
         Timeout
     };
@@ -1377,7 +1385,6 @@ public:
     String modelInlinePreviewUUIDForModelElement(const HTMLModelElement&) const;
 #endif
 
-    void avoidIOSurfaceSizeCheckInWebProcess(HTMLCanvasElement&);
     bool hasSleepDisabler() const;
 
     void acceptTypedArrays(Int32Array&);
@@ -1394,10 +1401,16 @@ public:
         
     bool isUsingUISideCompositing() const;
 
+    bool readyToRetrieveComputedRoleOrLabel(Element&) const;
+    String getComputedLabel(Element&) const;
+    String getComputedRole(Element&) const;
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;
     LocalFrame* frame() const;
+
+    AccessibilityObject* axObjectForElement(Element&) const;
 
     void updatePageActivityState(OptionSet<ActivityState> statesToChange, bool newValue);
 

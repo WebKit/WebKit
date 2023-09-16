@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <style>
 :invalid {
   background-color: #ff0000;
@@ -70,8 +70,29 @@ number.focus();
 debug('A bad input should be cleared by value="".');
 shouldBeEqualToString('number.value = ""; document.execCommand("SelectAll"); document.getSelection().toString()', '');
 
+number.value = '';
+debug("' ' is not a badInput.");
+document.execCommand('InsertText', false, ' ');
+shouldBeFalse('number.validity.badInput');
+shouldBeEqualToString('number.value', '');
+debug("' +' is a badInput.");
+document.execCommand('InsertText', false, '+');
+shouldBeTrue('number.validity.badInput');
+shouldBeEqualToString('number.value', '');
+debug("' +1' is not a badInput.");
+document.execCommand('InsertText', false, '1');
+shouldBeFalse('number.validity.badInput');
+shouldBeEqualToString('number.value', '1');
+debug("' +1.' is not a badInput.");
+document.execCommand('InsertText', false, '.');
+shouldBeFalse('number.validity.badInput');
+shouldBeEqualToString('number.value', '1');
+debug("' +1. ' is not a badInput.");
+document.execCommand('InsertText', false, ' ');
+shouldBeFalse('number.validity.badInput');
+shouldBeEqualToString('number.value', '1');
+
 document.getElementById('parent').innerHTML = '';
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

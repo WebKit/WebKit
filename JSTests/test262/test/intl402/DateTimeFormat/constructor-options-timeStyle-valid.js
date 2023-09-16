@@ -2,15 +2,15 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-initializedatetimeformat
+esid: sec-createdatetimeformat
 description: >
     Checks handling of the options argument to the DateTimeFormat constructor.
 info: |
-    InitializeDateTimeFormat ( dateTimeFormat, locales, options )
+    CreateDateTimeFormat ( dateTimeFormat, locales, options, required, default )
 
     ...
-    30. Let timeStyle be ? GetOption(options, "timeStyle", "string", « "full", "long", "medium", "short" », undefined).
-    31. If timeStyle is not undefined, set dateTimeFormat.[[TimeStyle]] to timeStyle.
+    41. Let timeStyle be ? GetOption(options, "timeStyle", string, « "full", "long", "medium", "short" », undefined).
+    42. Set dateTimeFormat.[[TimeStyle]] to timeStyle.
 features: [Intl.DateTimeFormat-datetimestyle]
 ---*/
 

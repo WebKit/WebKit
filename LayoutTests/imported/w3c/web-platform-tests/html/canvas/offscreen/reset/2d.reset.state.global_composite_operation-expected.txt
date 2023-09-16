@@ -1,0 +1,7 @@
+2d.reset.state.global_composite_operation
+
+check that the state is reset
+
+
+PASS check that the state is reset
+

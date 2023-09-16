@@ -1,5 +1,5 @@
 //@ requireOptions("--useWebAssemblyTailCalls=true", "--maximumWasmCalleeSizeForInlining=0")
-//@ skip if $architecture == 'arm'
+//@ skip
 import * as assert from "../assert.js";
 import Builder from "../Builder.js";
 

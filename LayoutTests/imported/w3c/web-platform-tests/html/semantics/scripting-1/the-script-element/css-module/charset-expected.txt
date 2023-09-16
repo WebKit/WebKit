@@ -1,8 +1,9 @@
-CONSOLE MESSAGE: TypeError: 'text/css' is not a valid JavaScript MIME type.
-CONSOLE MESSAGE: ReferenceError: Can't find variable: unreachable
-CONSOLE MESSAGE: TypeError: 'text/css' is not a valid JavaScript MIME type.
-CONSOLE MESSAGE: ReferenceError: Can't find variable: unreachable
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: unreachable
+Harness Error (FAIL), message = SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
 
 

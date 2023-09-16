@@ -31,10 +31,10 @@ assert.sameValue(`${ tz.getInstantFor(dt) }`, "-001000-10-29T04:46:38.271986102Z
 
 // year 0 leap day
 var dt = Temporal.PlainDateTime.from("0000-02-29T00:00");
-var tz = Temporal.TimeZone.from("-00:01:15");
-assert.sameValue(`${ tz.getInstantFor(dt) }`, "0000-02-29T00:01:15Z");
+var tz = Temporal.TimeZone.from("-00:01");
+assert.sameValue(`${ tz.getInstantFor(dt) }`, "0000-02-29T00:01:00Z");
 dt = Temporal.PlainDateTime.from("+000000-02-29T00:00");
-assert.sameValue(`${ tz.getInstantFor(dt) }`, "0000-02-29T00:01:15Z");
+assert.sameValue(`${ tz.getInstantFor(dt) }`, "0000-02-29T00:01:00Z");
 
 // outside of Instant range
 var max = Temporal.PlainDateTime.from("+275760-09-13T23:59:59.999999999");

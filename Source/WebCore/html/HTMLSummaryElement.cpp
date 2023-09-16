@@ -31,6 +31,8 @@
 #include "MouseEvent.h"
 #include "PlatformMouseEvent.h"
 #include "RenderBlockFlow.h"
+#include "SVGAElement.h"
+#include "SVGElementTypeHelpers.h"
 #include "ShadowRoot.h"
 #include "SlotAssignment.h"
 #include <wtf/IsoMallocInlines.h>
@@ -96,12 +98,15 @@ bool HTMLSummaryElement::isActiveSummary() const
     return details->isActiveSummary(*this);
 }
 
-static bool isClickableControl(EventTarget* target)
+static bool isInSummaryInteractiveContent(EventTarget* target)
 {
     if (!is<Element>(target))
         return false;
-    auto& element = downcast<Element>(*target);
-    return is<HTMLFormControlElement>(element) || is<HTMLFormControlElement>(element.shadowHost());
+    for (RefPtr element = downcast<Element>(target); element && !is<HTMLSummaryElement>(element); element = element->parentOrShadowHostElement()) {
+        if ((is<HTMLElement>(element) && downcast<HTMLElement>(element)->isInteractiveContent()) || is<SVGAElement>(element))
+            return true;
+    }
+    return false;
 }
 
 int HTMLSummaryElement::defaultTabIndex() const
@@ -118,7 +123,7 @@ void HTMLSummaryElement::defaultEventHandler(Event& event)
 {
     if (isActiveSummary()) {
         auto& eventNames = WebCore::eventNames();
-        if (event.type() == eventNames.DOMActivateEvent && !isClickableControl(event.target())) {
+        if (event.type() == eventNames.DOMActivateEvent && !isInSummaryInteractiveContent(event.target())) {
             if (RefPtr<HTMLDetailsElement> details = detailsElement())
                 details->toggleOpen();
             event.setDefaultHandled();

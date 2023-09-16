@@ -46,11 +46,6 @@ WebGLCompressedTextureS3TCsRGB::WebGLCompressedTextureS3TCsRGB(WebGLRenderingCon
 
 WebGLCompressedTextureS3TCsRGB::~WebGLCompressedTextureS3TCsRGB() = default;
 
-WebGLExtension::ExtensionName WebGLCompressedTextureS3TCsRGB::getName() const
-{
-    return WebGLCompressedTextureS3TCsRGBName;
-}
-
 bool WebGLCompressedTextureS3TCsRGB::supported(GraphicsContextGL& context)
 {
     return context.supportsExtension("GL_EXT_texture_compression_s3tc_srgb"_s);

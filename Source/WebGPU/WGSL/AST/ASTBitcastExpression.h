@@ -26,7 +26,6 @@
 #pragma once
 
 #include "ASTExpression.h"
-#include "ASTTypeName.h"
 
 namespace WGSL::AST {
 
@@ -37,13 +36,13 @@ public:
     Expression& expression() { return m_expression.get(); }
 
 private:
-    BitcastExpression(SourceSpan span, TypeName::Ref&& castToType, Expression::Ref&& expression)
+    BitcastExpression(SourceSpan span, Expression::Ref&& castToType, Expression::Ref&& expression)
         : Expression(span)
         , m_castToType(WTFMove(castToType))
         , m_expression(WTFMove(expression))
     { }
 
-    TypeName::Ref m_castToType;
+    Expression::Ref m_castToType;
     Expression::Ref m_expression;
 };
 

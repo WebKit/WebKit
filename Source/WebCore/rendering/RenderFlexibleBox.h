@@ -32,6 +32,8 @@
 
 #include "OrderIterator.h"
 #include "RenderBlock.h"
+#include "RenderStyleInlines.h"
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -46,6 +48,8 @@ public:
     RenderFlexibleBox(Element&, RenderStyle&&);
     RenderFlexibleBox(Document&, RenderStyle&&);
     virtual ~RenderFlexibleBox();
+
+    using Direction = BlockFlowDirection;
 
     bool isFlexibleBox() const override { return true; }
 
@@ -66,6 +70,30 @@ public:
     void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
 
     bool isHorizontalFlow() const;
+    inline Direction crossAxisDirection() const
+    {
+        switch (writingModeToBlockFlowDirection(style().writingMode())) {
+        case BlockFlowDirection::TopToBottom:
+            if (style().isRowFlexDirection())
+                return (style().flexWrap() == FlexWrap::Reverse) ? Direction::BottomToTop : Direction::TopToBottom;
+            return (style().flexWrap() == FlexWrap::Reverse) ? Direction::RightToLeft : Direction::LeftToRight;
+        case BlockFlowDirection::BottomToTop:
+            if (style().isRowFlexDirection())
+                return (style().flexWrap() == FlexWrap::Reverse) ? Direction::TopToBottom : Direction::BottomToTop;
+            return (style().flexWrap() == FlexWrap::Reverse) ? Direction::RightToLeft : Direction::LeftToRight;
+        case BlockFlowDirection::LeftToRight:
+            if (style().isRowFlexDirection())
+                return (style().flexWrap() == FlexWrap::Reverse) ? Direction::RightToLeft : Direction::LeftToRight;
+            return (style().flexWrap() == FlexWrap::Reverse) ? Direction::BottomToTop : Direction::TopToBottom;
+        case BlockFlowDirection::RightToLeft:
+            if (style().isRowFlexDirection())
+                return (style().flexWrap() == FlexWrap::Reverse) ? Direction::LeftToRight : Direction::RightToLeft;
+            return (style().flexWrap() == FlexWrap::Reverse) ? Direction::BottomToTop : Direction::TopToBottom;
+        default:
+            ASSERT_NOT_REACHED();
+            return Direction::TopToBottom;
+        }
+    }
 
     const OrderIterator& orderIterator() const { return m_orderIterator; }
 
@@ -119,7 +147,10 @@ private:
     typedef Vector<LayoutRect, 8> ChildFrameRects;
 
     struct LineState;
-    
+
+    using FlexLineStates = Vector<LineState>;
+    using FlexItems = Vector<FlexItem>;
+
     bool mainAxisIsChildInlineAxis(const RenderBox&) const;
     bool isColumnFlow() const;
     bool isColumnOrRowReverse() const;
@@ -140,7 +171,7 @@ private:
     LayoutUnit crossAxisContentExtent() const;
     LayoutUnit mainAxisContentExtent(LayoutUnit contentLogicalHeight);
     std::optional<LayoutUnit> computeMainAxisExtentForChild(RenderBox& child, SizeType, const Length& size);
-    WritingMode transformedWritingMode() const;
+    BlockFlowDirection transformedBlockFlowDirection() const;
     LayoutUnit flowAwareBorderStart() const;
     LayoutUnit flowAwareBorderEnd() const;
     LayoutUnit flowAwareBorderBefore() const;
@@ -181,7 +212,7 @@ private:
     bool useChildOverridingMainSizeForPercentageResolution(const RenderBox&);
 
     void layoutFlexItems(bool relayoutChildren);
-    LayoutUnit autoMarginOffsetInMainAxis(const Vector<FlexItem>&, LayoutUnit& availableFreeSpace);
+    LayoutUnit autoMarginOffsetInMainAxis(const FlexItems&, LayoutUnit& availableFreeSpace);
     void updateAutoMarginsInMainAxis(RenderBox& child, LayoutUnit autoMarginOffset);
     void initializeMarginTrimState(); 
     // Start margin parallel with the cross axis
@@ -198,7 +229,7 @@ private:
     bool isChildEligibleForMarginTrim(MarginTrimType, const RenderBox&) const final;
     bool hasAutoMarginsInCrossAxis(const RenderBox& child) const;
     bool updateAutoMarginsInCrossAxis(RenderBox& child, LayoutUnit availableAlignmentSpace);
-    void repositionLogicalHeightDependentFlexItems(Vector<LineState>&, LayoutUnit gapBetweenLines);
+    void repositionLogicalHeightDependentFlexItems(FlexLineStates&, LayoutUnit gapBetweenLines);
     
     LayoutUnit availableAlignmentSpaceForChild(LayoutUnit lineCrossAxisExtent, const RenderBox& child);
     LayoutUnit marginBoxAscentForChild(const RenderBox& child);
@@ -209,21 +240,21 @@ private:
     LayoutUnit adjustChildSizeForAspectRatioCrossAxisMinAndMax(const RenderBox& child, LayoutUnit childSize);
     FlexItem constructFlexItem(RenderBox&, bool relayoutChildren);
     
-    void freezeInflexibleItems(FlexSign, Vector<FlexItem>& children, LayoutUnit& remainingFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink);
-    bool resolveFlexibleLengths(FlexSign, Vector<FlexItem>&, LayoutUnit initialFreeSpace, LayoutUnit& remainingFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink);
+    void freezeInflexibleItems(FlexSign, FlexItems&, LayoutUnit& remainingFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink);
+    bool resolveFlexibleLengths(FlexSign, FlexItems&, LayoutUnit initialFreeSpace, LayoutUnit& remainingFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink);
     void freezeViolations(Vector<FlexItem*>&, LayoutUnit& availableFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink);
     
     void resetAutoMarginsAndLogicalTopInCrossAxis(RenderBox& child);
     void setOverridingMainSizeForChild(RenderBox&, LayoutUnit);
     void prepareChildForPositionedLayout(RenderBox& child);
-    void layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vector<FlexItem>&, LayoutUnit availableFreeSpace, bool relayoutChildren, Vector<LineState>&, LayoutUnit gapBetweenItems);
-    void layoutColumnReverse(const Vector<FlexItem>&, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace, LayoutUnit gapBetweenItems);
-    void alignFlexLines(Vector<LineState>&, LayoutUnit gapBetweenLines);
-    void alignChildren(Vector<LineState>&);
+    void layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, FlexItems&, LayoutUnit availableFreeSpace, bool relayoutChildren, FlexLineStates&, LayoutUnit gapBetweenItems);
+    void layoutColumnReverse(const FlexItems&, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace, LayoutUnit gapBetweenItems);
+    void alignFlexLines(FlexLineStates&, LayoutUnit gapBetweenLines);
+    void alignChildren(FlexLineStates&);
     void applyStretchAlignmentToChild(RenderBox& child, LayoutUnit lineCrossAxisExtent);
     void performBaselineAlignment(LineState&);
-    void flipForRightToLeftColumn(const Vector<LineState>& linesState);
-    void flipForWrapReverse(const Vector<LineState>&, LayoutUnit crossAxisStartEdge);
+    void flipForRightToLeftColumn(const FlexLineStates& linesState);
+    void flipForWrapReverse(const FlexLineStates&, LayoutUnit crossAxisStartEdge);
     
     void appendChildFrameRects(ChildFrameRects&);
     void repaintChildrenDuringLayoutIfMoved(const ChildFrameRects&);
@@ -247,17 +278,17 @@ private:
     // need an additional layout pass for correct stretch alignment handling, as
     // the first layout likely did not use the correct value for percentage
     // sizing of children.
-    HashSet<const RenderBox*> m_relaidOutChildren;
+    WeakHashSet<const RenderBox> m_relaidOutChildren;
 
     mutable OrderIterator m_orderIterator { *this };
     std::optional<size_t> m_numberOfInFlowChildrenOnFirstLine { };
     std::optional<size_t> m_numberOfInFlowChildrenOnLastLine { };
 
     struct MarginTrimItems {
-        HashSet<const RenderBox*> m_itemsAtFlexLineStart;
-        HashSet<const RenderBox*> m_itemsAtFlexLineEnd;
-        HashSet<const RenderBox*> m_itemsOnFirstFlexLine;
-        HashSet<const RenderBox*> m_itemsOnLastFlexLine;
+        WeakHashSet<const RenderBox> m_itemsAtFlexLineStart;
+        WeakHashSet<const RenderBox> m_itemsAtFlexLineEnd;
+        WeakHashSet<const RenderBox> m_itemsOnFirstFlexLine;
+        WeakHashSet<const RenderBox> m_itemsOnLastFlexLine;
     } m_marginTrimItems;
 
     // This is SizeIsUnknown outside of layoutBlock()

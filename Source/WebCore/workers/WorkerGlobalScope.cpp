@@ -229,6 +229,11 @@ IDBClient::IDBConnectionProxy* WorkerGlobalScope::idbConnectionProxy()
     return m_connectionProxy.get();
 }
 
+GraphicsClient* WorkerGlobalScope::graphicsClient()
+{
+    return workerClient();
+}
+
 void WorkerGlobalScope::stopIndexedDatabase()
 {
     if (m_connectionProxy)
@@ -335,7 +340,7 @@ ExceptionOr<int> WorkerGlobalScope::setTimeout(std::unique_ptr<ScheduledAction> 
 
     action->addArguments(WTFMove(arguments));
 
-    return DOMTimer::install(*this, WTFMove(action), Seconds::fromMilliseconds(timeout), true);
+    return DOMTimer::install(*this, WTFMove(action), Seconds::fromMilliseconds(timeout), DOMTimer::Type::SingleShot);
 }
 
 void WorkerGlobalScope::clearTimeout(int timeoutId)
@@ -353,7 +358,7 @@ ExceptionOr<int> WorkerGlobalScope::setInterval(std::unique_ptr<ScheduledAction>
 
     action->addArguments(WTFMove(arguments));
 
-    return DOMTimer::install(*this, WTFMove(action), Seconds::fromMilliseconds(timeout), false);
+    return DOMTimer::install(*this, WTFMove(action), Seconds::fromMilliseconds(timeout), DOMTimer::Type::Repeating);
 }
 
 void WorkerGlobalScope::clearInterval(int timeoutId)
@@ -635,6 +640,11 @@ void WorkerGlobalScope::addImportedScriptSourceProvider(const URL& url, ScriptBu
     m_importedScriptsSourceProviders.ensure(url, [] {
         return WeakHashSet<ScriptBufferSourceProvider> { };
     }).iterator->value.add(provider);
+}
+
+void WorkerGlobalScope::reportErrorToWorkerObject(const String& errorMessage)
+{
+    thread().workerReportingProxy().reportErrorToWorkerObject(errorMessage);
 }
 
 void WorkerGlobalScope::clearDecodedScriptData()

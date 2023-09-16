@@ -96,7 +96,7 @@ void LibWebRTCVPXVideoEncoder::create(Type type, const VideoEncoder::Config& con
             callback(UniqueRef<VideoEncoder> { WTFMove(encoder) });
 
             VideoEncoder::ActiveConfiguration configuration;
-            configuration.colorSpace = PlatformVideoColorSpace { PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Iec6196621, PlatformVideoMatrixCoefficients::Smpte170m, false };
+            configuration.colorSpace = PlatformVideoColorSpace { PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Bt709, PlatformVideoMatrixCoefficients::Bt709, false };
             descriptionCallback(WTFMove(configuration));
         });
     });

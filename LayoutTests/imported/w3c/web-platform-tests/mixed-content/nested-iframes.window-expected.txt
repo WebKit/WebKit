@@ -1,4 +1,4 @@
 
-FAIL HTTP fetch assert_false: success expected false got true
+PASS HTTP fetch
 PASS HTTPS fetch
 

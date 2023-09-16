@@ -91,14 +91,14 @@ namespace WebKit {
 using namespace WebCore;
 using namespace JSC;
 
-RefPtr<InjectedBundle> InjectedBundle::create(WebProcessCreationParameters& parameters, API::Object* initializationUserData)
+RefPtr<InjectedBundle> InjectedBundle::create(WebProcessCreationParameters& parameters, RefPtr<API::Object>&& initializationUserData)
 {
     TraceScope scope(TracePointCode::CreateInjectedBundleStart, TracePointCode::CreateInjectedBundleEnd);
     
     auto bundle = adoptRef(*new InjectedBundle(parameters));
 
     bundle->m_sandboxExtension = SandboxExtension::create(WTFMove(parameters.injectedBundlePathExtensionHandle));
-    if (!bundle->initialize(parameters, initializationUserData))
+    if (!bundle->initialize(parameters, WTFMove(initializationUserData)))
         return nullptr;
 
     return bundle;
@@ -262,24 +262,24 @@ void InjectedBundle::reportException(JSContextRef context, JSValueRef exception)
     WebCore::reportException(globalObject, toJS(globalObject, exception));
 }
 
-void InjectedBundle::didCreatePage(WebPage* page)
+void InjectedBundle::didCreatePage(WebPage& page)
 {
-    m_client->didCreatePage(*this, *page);
+    m_client->didCreatePage(*this, page);
 }
 
-void InjectedBundle::willDestroyPage(WebPage* page)
+void InjectedBundle::willDestroyPage(WebPage& page)
 {
-    m_client->willDestroyPage(*this, *page);
+    m_client->willDestroyPage(*this, page);
 }
 
-void InjectedBundle::didReceiveMessage(const String& messageName, API::Object* messageBody)
+void InjectedBundle::didReceiveMessage(const String& messageName, RefPtr<API::Object>&& messageBody)
 {
-    m_client->didReceiveMessage(*this, messageName, messageBody);
+    m_client->didReceiveMessage(*this, messageName, WTFMove(messageBody));
 }
 
-void InjectedBundle::didReceiveMessageToPage(WebPage* page, const String& messageName, API::Object* messageBody)
+void InjectedBundle::didReceiveMessageToPage(WebPage& page, const String& messageName, RefPtr<API::Object>&& messageBody)
 {
-    m_client->didReceiveMessageToPage(*this, *page, messageName, messageBody);
+    m_client->didReceiveMessageToPage(Ref { *this }, page, messageName, WTFMove(messageBody));
 }
 
 void InjectedBundle::setUserStyleSheetLocation(const String& location)

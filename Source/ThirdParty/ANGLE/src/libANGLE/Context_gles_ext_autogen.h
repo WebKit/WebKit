@@ -105,7 +105,6 @@
     void bufferStorage(BufferBinding targetPacked, GLsizeiptr size, const void *data,              \
                        GLbitfield flags);                                                          \
     /* GL_EXT_clip_control */                                                                      \
-    void clipControl(ClipOrigin originPacked, ClipDepthMode depthPacked);                          \
     /* GL_EXT_clip_cull_distance */                                                                \
     /* GL_EXT_color_buffer_float */                                                                \
     /* GL_EXT_color_buffer_half_float */                                                           \
@@ -187,7 +186,6 @@
     /* GL_EXT_multisampled_render_to_texture2 */                                                   \
     /* GL_EXT_occlusion_query_boolean */                                                           \
     /* GL_EXT_polygon_offset_clamp */                                                              \
-    void polygonOffsetClamp(GLfloat factor, GLfloat units, GLfloat clamp);                         \
     /* GL_EXT_primitive_bounding_box */                                                            \
     /* GL_EXT_protected_textures */                                                                \
     /* GL_EXT_pvrtc_sRGB */                                                                        \
@@ -222,6 +220,8 @@
     /* GL_EXT_tessellation_shader */                                                               \
     /* GL_EXT_texture_border_clamp */                                                              \
     /* GL_EXT_texture_buffer */                                                                    \
+    /* GL_EXT_texture_compression_astc_decode_mode */                                              \
+    /* GL_EXT_texture_compression_astc_decode_mode_rgb9e5 */                                       \
     /* GL_EXT_texture_compression_bptc */                                                          \
     /* GL_EXT_texture_compression_dxt1 */                                                          \
     /* GL_EXT_texture_compression_rgtc */                                                          \
@@ -272,7 +272,6 @@
     /* GL_NV_pack_subimage */                                                                      \
     /* GL_NV_pixel_buffer_object */                                                                \
     /* GL_NV_polygon_mode */                                                                       \
-    void polygonModeNV(GLenum face, PolygonMode modePacked);                                       \
     /* GL_NV_read_depth */                                                                         \
     /* GL_NV_read_depth_stencil */                                                                 \
     /* GL_NV_read_stencil */                                                                       \
@@ -342,7 +341,6 @@
     /* GL_OVR_multiview2 */                                                                        \
     /* GL_QCOM_render_shared_exponent */                                                           \
     /* GL_QCOM_shading_rate */                                                                     \
-    void shadingRateQCOM(GLenum rate);                                                             \
     /* GL_WEBGL_video_texture */                                                                   \
                                                                                                    \
     /* ANGLE Extensions */                                                                         \
@@ -384,7 +382,6 @@
     /* GL_ANGLE_get_serialized_context_string */                                                   \
     /* GL_ANGLE_get_tex_level_parameter */                                                         \
     /* GL_ANGLE_logic_op */                                                                        \
-    void logicOpANGLE(LogicalOperation opcodePacked);                                              \
     /* GL_ANGLE_lossy_etc_decode */                                                                \
     /* GL_ANGLE_memory_object_flags */                                                             \
     void texStorageMemFlags2D(TextureType targetPacked, GLsizei levels, GLenum internalFormat,     \
@@ -423,11 +420,9 @@
                                     const GLsizei *instanceCounts, GLsizei drawcount);             \
     /* GL_ANGLE_multiview_multisample */                                                           \
     /* GL_ANGLE_polygon_mode */                                                                    \
-    void polygonMode(GLenum face, PolygonMode modePacked);                                         \
     /* GL_ANGLE_program_binary */                                                                  \
     /* GL_ANGLE_program_cache_control */                                                           \
     /* GL_ANGLE_provoking_vertex */                                                                \
-    void provokingVertex(ProvokingVertexConvention provokeModePacked);                             \
     /* GL_ANGLE_read_only_depth_stencil_feedback_loops */                                          \
     /* GL_ANGLE_relaxed_vertex_attribute_type */                                                   \
     /* GL_ANGLE_renderability_validation */                                                        \
@@ -636,7 +631,6 @@
                         GLboolean unpackFlipY, GLboolean unpackPremultiplyAlpha,                   \
                         GLboolean unpackUnmultiplyAlpha);                                          \
     /* GL_CHROMIUM_framebuffer_mixed_samples */                                                    \
-    void coverageModulation(GLenum components);                                                    \
     /* GL_CHROMIUM_lose_context */                                                                 \
     void loseContext(GraphicsResetStatus currentPacked, GraphicsResetStatus otherPacked);          \
     /* GL_CHROMIUM_sync_query */                                                                   \

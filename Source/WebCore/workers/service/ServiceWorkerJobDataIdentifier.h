@@ -35,16 +35,13 @@ struct ServiceWorkerJobDataIdentifier {
     SWServerConnectionIdentifier connectionIdentifier;
     ServiceWorkerJobIdentifier jobIdentifier;
 
+    friend bool operator==(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerJobDataIdentifier&) = default;
+
     String loggingString() const
     {
         return connectionIdentifier.loggingString() + "-" + jobIdentifier.loggingString();
     }
 };
-
-inline bool operator==(const ServiceWorkerJobDataIdentifier& a, const ServiceWorkerJobDataIdentifier& b)
-{
-    return a.connectionIdentifier == b.connectionIdentifier && a.jobIdentifier == b.jobIdentifier;
-}
 
 } // namespace WebCore
 

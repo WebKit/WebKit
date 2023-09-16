@@ -1,12 +1,14 @@
 
-FAIL em units respond to changes assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS em units respond to changes
 PASS rem units respond to changes
-FAIL ex units respond to changes assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL rex units respond to changes assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL ch units respond to changes assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL rch units respond to changes assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL lh units respond to changes assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS ex units respond to changes
+PASS rex units respond to changes
+PASS ch units respond to changes
+FAIL cap units respond to changes assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS rch units respond to changes
+PASS lh units respond to changes
 PASS rlh units respond to changes
-FAIL ic units respond to changes assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL ric units respond to changes assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS ic units respond to changes
+PASS ric units respond to changes
+FAIL rcap units respond to changes assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
 

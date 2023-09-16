@@ -25,7 +25,7 @@
 
 [
     Conditional=WEBGL,
-    GenerateIsReachable=ImplWebGLRenderingContext,
+    GenerateIsReachable,
     LegacyNoInterfaceObject,
 ] interface WebGLDebugRendererInfo {
     const unsigned long UNMASKED_VENDOR_WEBGL = 0x9245;

@@ -153,7 +153,7 @@ JSObjectRef JSObjectMakeFunction(JSContextRef ctx, JSStringRef name, unsigned pa
     }
 
     auto sourceURL = sourceURLString ? URL({ }, sourceURLString->string()) : URL();
-    JSObject* result = constructFunction(globalObject, args, nameID, SourceOrigin { sourceURL }, sourceURL.string(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()));
+    JSObject* result = constructFunction(globalObject, args, nameID, SourceOrigin { sourceURL }, sourceURL.string(), SourceTaintedOrigin::Untainted, TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()));
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
         result = nullptr;
     return toRef(result);

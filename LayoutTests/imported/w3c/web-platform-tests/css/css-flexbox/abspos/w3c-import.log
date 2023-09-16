@@ -27,6 +27,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/abspos-autopos-vrl-rtl-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/abspos-autopos-vrl-rtl.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/abspos-descendent-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/dynamic-align-self-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/dynamic-align-self-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-002.html

@@ -97,7 +97,7 @@ spargs=(
 )
 
 mmargs=(
-    --plan motionmark1.1
+    --plan motionmark
     --diagnose-directory="$BASE/motionmark"
     --generate-pgo-profiles
     --count 1

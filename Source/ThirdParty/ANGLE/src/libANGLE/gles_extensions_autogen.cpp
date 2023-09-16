@@ -169,6 +169,8 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_EXT_texture_buffer"] = enableableExtension(&Extensions::textureBufferEXT);
         map["GL_OES_texture_buffer"] = enableableExtension(&Extensions::textureBufferOES);
         map["GL_OES_texture_compression_astc"] = enableableExtension(&Extensions::textureCompressionAstcOES);
+        map["GL_EXT_texture_compression_astc_decode_mode"] = enableableExtension(&Extensions::textureCompressionAstcDecodeModeEXT);
+        map["GL_EXT_texture_compression_astc_decode_mode_rgb9e5"] = enableableExtension(&Extensions::textureCompressionAstcDecodeModeRgb9e5EXT);
         map["GL_KHR_texture_compression_astc_hdr"] = enableableExtension(&Extensions::textureCompressionAstcHdrKHR);
         map["GL_KHR_texture_compression_astc_ldr"] = enableableExtension(&Extensions::textureCompressionAstcLdrKHR);
         map["GL_KHR_texture_compression_astc_sliced_3d"] = enableableExtension(&Extensions::textureCompressionAstcSliced3dKHR);

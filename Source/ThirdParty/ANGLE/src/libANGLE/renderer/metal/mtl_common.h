@@ -51,6 +51,7 @@ class Surface;
     PROC(MemoryObject)           \
     PROC(Query)                  \
     PROC(Program)                \
+    PROC(ProgramExecutable)      \
     PROC(Sampler)                \
     PROC(Semaphore)              \
     PROC(Texture)                \
@@ -178,13 +179,13 @@ constexpr gl::Version kMaxSupportedGLVersion = gl::Version(3, 0);
 #if (TARGET_OS_OSX && (__MAC_OS_X_VERSION_MAX_ALLOWED < 110000)) || TARGET_OS_MACCATALYST
 constexpr MTLBlitOption kBlitOptionRowLinearPVRTC = MTLBlitOptionNone;
 #else
-constexpr MTLBlitOption kBlitOptionRowLinearPVRTC          = MTLBlitOptionRowLinearPVRTC;
+constexpr MTLBlitOption kBlitOptionRowLinearPVRTC = MTLBlitOptionRowLinearPVRTC;
 #endif
 
 #if defined(__MAC_10_14) && (TARGET_OS_OSX || TARGET_OS_MACCATALYST)
 constexpr MTLBarrierScope kBarrierScopeRenderTargets = MTLBarrierScopeRenderTargets;
 #else
-constexpr MTLBarrierScope kBarrierScopeRenderTargets       = MTLBarrierScope(0);
+constexpr MTLBarrierScope kBarrierScopeRenderTargets = MTLBarrierScope(0);
 #endif
 
 #if defined(__IPHONE_13_0) || defined(__MAC_10_15)
@@ -196,10 +197,10 @@ constexpr MTLRenderStages kRenderStageVertex   = MTLRenderStageVertex;
 constexpr MTLRenderStages kRenderStageFragment = MTLRenderStageFragment;
 #else
 #    define ANGLE_MTL_SWIZZLE_AVAILABLE 0
-using TextureSwizzleChannels                               = int;
-using RenderStages                                         = int;
-constexpr RenderStages kRenderStageVertex                  = 1;
-constexpr RenderStages kRenderStageFragment                = 2;
+using TextureSwizzleChannels                = int;
+using RenderStages                          = int;
+constexpr RenderStages kRenderStageVertex   = 1;
+constexpr RenderStages kRenderStageFragment = 2;
 #endif
 
 enum class PixelType

@@ -31,6 +31,7 @@
 #import "ContentType.h"
 #import "SourceBufferParserWebM.h"
 #import "WebMAudioUtilitiesCocoa.h"
+#import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/cocoa/AudioToolboxSPI.h>
 #import <wtf/SortedArrayMap.h>
 
@@ -92,8 +93,9 @@ static bool isMultichannelOpusAvailable()
 }
 #endif
 
-bool AVAssetMIMETypeCache::canDecodeExtendedType(const ContentType& type)
+bool AVAssetMIMETypeCache::canDecodeExtendedType(const ContentType& typeParameter)
 {
+    ContentType type = typeParameter;
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 #if ENABLE(OPUS)
     // Disclaim support for 'opus' if multi-channel decode is not available.
@@ -102,12 +104,18 @@ bool AVAssetMIMETypeCache::canDecodeExtendedType(const ContentType& type)
         return false;
 #endif
 
+    // Some platforms will disclaim support for 'flac', and only support the MP4RA registered `fLaC`
+    // codec string for flac, so convert the former to the latter before querying.
+    if ((type.containerType() == "video/mp4"_s || type.containerType() == "audio/mp4"_s)
+        && type.codecs().contains("flac"_s))
+        type = ContentType(makeStringByReplacingAll(type.raw(), "flac"_s, "fLaC"_s));
+
     ASSERT(isAvailable());
 
 #if HAVE(AVURLASSET_ISPLAYABLEEXTENDEDMIMETYPEWITHOPTIONS)
-    if (PAL::canLoad_AVFoundation_AVURLAssetExtendedMIMETypePlayabilityTreatSupportedPlaylistMIMETypesAsISOBMFFMediaDataContainersKey()
+    if (PAL::canLoad_AVFoundation_AVURLAssetExtendedMIMETypePlayabilityTreatPlaylistMIMETypesAsISOBMFFMediaDataContainersKey()
         && [PAL::getAVURLAssetClass() respondsToSelector:@selector(isPlayableExtendedMIMEType:options:)]) {
-        if ([PAL::getAVURLAssetClass() isPlayableExtendedMIMEType:type.raw() options:@{ AVURLAssetExtendedMIMETypePlayabilityTreatSupportedPlaylistMIMETypesAsISOBMFFMediaDataContainersKey: @YES }])
+        if ([PAL::getAVURLAssetClass() isPlayableExtendedMIMEType:type.raw() options:@{ AVURLAssetExtendedMIMETypePlayabilityTreatPlaylistMIMETypesAsISOBMFFMediaDataContainersKey: @YES }])
             return true;
     } else
 #endif
@@ -188,7 +196,7 @@ void AVAssetMIMETypeCache::addSupportedTypes(const Vector<String>& types)
         m_cacheTypeCallback(types);
 }
 
-void AVAssetMIMETypeCache::initializeCache(HashSet<String, ASCIICaseInsensitiveHash>& cache)
+void AVAssetMIMETypeCache::initializeCache(HashSet<String>& cache)
 {
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
     if (!isAvailable())

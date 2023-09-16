@@ -89,6 +89,7 @@
 
 #define LOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", isMainResource=%d, destination=%u, isSynchronous=%d] NetworkResourceLoader::" fmt, this, m_parameters.webPageProxyID.toUInt64(), m_parameters.webPageID.toUInt64(), m_parameters.webFrameID.object().toUInt64(), m_parameters.identifier.toUInt64(), isMainResource(), static_cast<unsigned>(m_parameters.options.destination), isSynchronous(), ##__VA_ARGS__)
 #define LOADER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(Network, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", isMainResource=%d, destination=%u, isSynchronous=%d] NetworkResourceLoader::" fmt, this, m_parameters.webPageProxyID.toUInt64(), m_parameters.webPageID.toUInt64(), m_parameters.webFrameID.object().toUInt64(), m_parameters.identifier.toUInt64(), isMainResource(), static_cast<unsigned>(m_parameters.options.destination), isSynchronous(), ##__VA_ARGS__)
+#define LOADER_RELEASE_LOG_FAULT(fmt, ...) RELEASE_LOG_FAULT(Network, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", isMainResource=%d, destination=%u, isSynchronous=%d] NetworkResourceLoader::" fmt, this, m_parameters.webPageProxyID.toUInt64(), m_parameters.webPageID.toUInt64(), m_parameters.webFrameID.object().toUInt64(), m_parameters.identifier.toUInt64(), isMainResource(), static_cast<unsigned>(m_parameters.options.destination), isSynchronous(), ##__VA_ARGS__)
 
 namespace WebKit {
 using namespace WebCore;
@@ -142,7 +143,11 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
 
     if (synchronousReply || m_parameters.shouldRestrictHTTPResponseAccess || m_parameters.options.keepAlive) {
         NetworkLoadChecker::LoadType requestLoadType = isMainFrameLoad() ? NetworkLoadChecker::LoadType::MainFrame : NetworkLoadChecker::LoadType::Other;
-        m_networkLoadChecker = makeUnique<NetworkLoadChecker>(connection.networkProcess(), this,  &connection.schemeRegistry(), FetchOptions { m_parameters.options }, sessionID(), m_parameters.webPageProxyID, HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() }, URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(), m_parameters.preflightPolicy, originalRequest().httpReferrer(), m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections, shouldCaptureExtraNetworkLoadMetrics(), requestLoadType);
+        m_networkLoadChecker = makeUnique<NetworkLoadChecker>(Ref { connection.networkProcess() }.get(), this,  &connection.schemeRegistry(), FetchOptions { m_parameters.options },
+            sessionID(), m_parameters.webPageProxyID, HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() },
+            URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(),
+            m_parameters.preflightPolicy, originalRequest().httpReferrer(), m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections,
+            shouldCaptureExtraNetworkLoadMetrics(), requestLoadType);
         if (m_parameters.cspResponseHeaders)
             m_networkLoadChecker->setCSPResponseHeaders(ContentSecurityPolicyResponseHeaders { m_parameters.cspResponseHeaders.value() });
         m_networkLoadChecker->setParentCrossOriginEmbedderPolicy(m_parameters.parentCrossOriginEmbedderPolicy);
@@ -226,7 +231,7 @@ void NetworkResourceLoader::startRequest(const ResourceRequest& newRequest)
                 [this] (NetworkLoadChecker::RedirectionTriplet& triplet) {
                     LOADER_RELEASE_LOG("start: NetworkLoadChecker::check returned a synthetic redirect");
                     this->m_isWaitingContinueWillSendRequestForCachedRedirect = true;
-                    this->willSendRedirectedRequest(WTFMove(triplet.request), WTFMove(triplet.redirectRequest), WTFMove(triplet.redirectResponse), [](auto) { });
+                    this->willSendRedirectedRequest(WTFMove(triplet.request), WTFMove(triplet.redirectRequest), WTFMove(triplet.redirectResponse));
                 },
                 [this] (ResourceRequest& request) {
                     LOADER_RELEASE_LOG("start: NetworkLoadChecker::check is done");
@@ -366,8 +371,10 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
         return;
     }
 
-    if (request.url().protocolIsBlob())
-        parameters.blobFileReferences = networkSession->blobRegistry().filesInBlob(originalRequest().url());
+    if (request.url().protocolIsBlob()) {
+        ASSERT(parameters.topOrigin);
+        parameters.blobFileReferences = networkSession->blobRegistry().filesInBlob(originalRequest().url(), parameters.topOrigin ? std::optional { parameters.topOrigin->data() } : std::nullopt);
+    }
 
     if (m_parameters.pageHasResourceLoadClient) {
         std::optional<IPC::FormDataReference> httpBody;
@@ -531,7 +538,7 @@ void NetworkResourceLoader::convertToDownload(DownloadID downloadID, const Resou
 
     // This can happen if the resource came from the disk cache.
     if (!m_networkLoad) {
-        m_connection->networkProcess().downloadManager().startDownload(sessionID(), downloadID, request, m_parameters.isNavigatingToAppBoundDomain);
+        m_connection->networkProcess().downloadManager().startDownload(sessionID(), downloadID, request, m_parameters.topOrigin ? std::optional { m_parameters.topOrigin->data() } : std::nullopt, m_parameters.isNavigatingToAppBoundDomain);
         abort();
         return;
     }
@@ -989,6 +996,12 @@ void NetworkResourceLoader::sendDidReceiveResponsePotentiallyInNewBrowsingContex
     }
 
     auto loader = m_connection->takeNetworkResourceLoader(coreIdentifier());
+    if (!loader) {
+        LOADER_RELEASE_LOG_FAULT("sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup: Failed to find loader with identifier %" PRIu64 ", m_isKeptAlive=%d, needsContinueDidReceiveResponseMessage=%d", coreIdentifier().toUInt64(), m_isKeptAlive, needsContinueDidReceiveResponseMessage);
+        send(Messages::WebResourceLoader::DidReceiveResponse { response, privateRelayed, needsContinueDidReceiveResponseMessage, computeResponseMetrics(response) });
+        return;
+    }
+
     ASSERT(loader == this);
     auto existingNetworkResourceLoadIdentifierToResume = loader->identifier();
     if (auto* session = m_connection->networkSession())
@@ -1108,8 +1121,12 @@ void NetworkResourceLoader::didFailLoading(const ResourceError& error)
     if (m_parameters.pageHasResourceLoadClient)
         m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ResourceLoadDidCompleteWithError(m_parameters.webPageProxyID, resourceLoadInfo(), { }, error), 0);
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    if (error.blockedKnownTracker())
-        m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::DidBlockLoadToKnownTracker(m_parameters.webPageProxyID, error.failingURL()), 0);
+    if (error.blockedKnownTracker()) {
+        auto effectiveBlockedURL = error.failingURL();
+        if (auto hostName = error.blockedTrackerHostName(); !hostName.isEmpty())
+            effectiveBlockedURL.setHost(hostName);
+        m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::DidBlockLoadToKnownTracker(m_parameters.webPageProxyID, WTFMove(effectiveBlockedURL)), 0);
+    }
 #endif
     cleanup(LoadResult::Failure);
 }
@@ -1148,17 +1165,17 @@ std::optional<Seconds> NetworkResourceLoader::validateCacheEntryForMaxAgeCapVali
     return std::nullopt;
 }
 
-void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
+void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse)
 {
-    willSendRedirectedRequestInternal(WTFMove(request), WTFMove(redirectRequest), WTFMove(redirectResponse), IsFromServiceWorker::No, WTFMove(completionHandler));
+    willSendRedirectedRequestInternal(WTFMove(request), WTFMove(redirectRequest), WTFMove(redirectResponse), IsFromServiceWorker::No);
 }
 
 void NetworkResourceLoader::willSendServiceWorkerRedirectedRequest(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse)
 {
-    willSendRedirectedRequestInternal(WTFMove(request), WTFMove(redirectRequest), WTFMove(redirectResponse), IsFromServiceWorker::Yes, [] (auto) { });
+    willSendRedirectedRequestInternal(WTFMove(request), WTFMove(redirectRequest), WTFMove(redirectResponse), IsFromServiceWorker::Yes);
 }
 
-void NetworkResourceLoader::willSendRedirectedRequestInternal(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse, IsFromServiceWorker isFromServiceWorker, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
+void NetworkResourceLoader::willSendRedirectedRequestInternal(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse, IsFromServiceWorker isFromServiceWorker)
 {
     LOADER_RELEASE_LOG("willSendRedirectedRequest:");
     ++m_redirectCount;
@@ -1167,10 +1184,8 @@ void NetworkResourceLoader::willSendRedirectedRequestInternal(ResourceRequest&& 
         m_firstResponseURL = redirectResponse.url();
 
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter && !m_contentFilter->continueAfterWillSendRequest(redirectRequest, redirectResponse)) {
-        m_networkLoad = nullptr;
-        return completionHandler({ });
-    }
+    if (m_contentFilter && !m_contentFilter->continueAfterWillSendRequest(redirectRequest, redirectResponse))
+        return;
 #endif
 
     std::optional<WebCore::PCM::AttributionTriggerData> privateClickMeasurementAttributionTriggerData;
@@ -1189,12 +1204,12 @@ void NetworkResourceLoader::willSendRedirectedRequestInternal(ResourceRequest&& 
 
     if (isMainResource() && shouldInterruptNavigationForCrossOriginEmbedderPolicy(redirectResponse)) {
         this->didFailLoading(ResourceError { errorDomainWebKitInternal, 0, redirectRequest.url(), "Redirection was blocked by Cross-Origin-Embedder-Policy"_s, ResourceError::Type::AccessControl });
-        return completionHandler({ });
+        return;
     }
 
     if (auto error = doCrossOriginOpenerHandlingOfResponse(redirectResponse)) {
         didFailLoading(*error);
-        return completionHandler({ });
+        return;
     }
 
     if (auto authorization = request.httpHeaderField(WebCore::HTTPHeaderName::Authorization); !authorization.isNull()
@@ -1211,54 +1226,47 @@ void NetworkResourceLoader::willSendRedirectedRequestInternal(ResourceRequest&& 
         m_networkLoadChecker->storeRedirectionIfNeeded(request, redirectResponse);
 
         LOADER_RELEASE_LOG("willSendRedirectedRequest: Checking redirect using NetworkLoadChecker");
-        auto continueAfterRedirectionCheck = [
-            this,
-            protectedThis = Ref { *this },
-            storedCredentialsPolicy = m_networkLoadChecker->storedCredentialsPolicy(),
-            privateClickMeasurementAttributionTriggerData = WTFMove(privateClickMeasurementAttributionTriggerData),
-            completionHandler = WTFMove(completionHandler)
-        ] (auto&& result) mutable {
+        m_networkLoadChecker->checkRedirection(WTFMove(request), WTFMove(redirectRequest), WTFMove(redirectResponse), this, [protectedThis = Ref { *this }, this, storedCredentialsPolicy = m_networkLoadChecker->storedCredentialsPolicy(), privateClickMeasurementAttributionTriggerData = WTFMove(privateClickMeasurementAttributionTriggerData)](auto&& result) mutable {
             if (!result.has_value()) {
                 if (result.error().isCancellation()) {
                     LOADER_RELEASE_LOG("willSendRedirectedRequest: NetworkLoadChecker::checkRedirection returned with a cancellation");
-                    return completionHandler({ });
+                    return;
                 }
 
                 LOADER_RELEASE_LOG_ERROR("willSendRedirectedRequest: NetworkLoadChecker::checkRedirection returned an error");
                 this->didFailLoading(result.error());
-                return completionHandler({ });
+                return;
             }
 
             LOADER_RELEASE_LOG("willSendRedirectedRequest: NetworkLoadChecker::checkRedirection is done");
             if (m_parameters.options.redirect == FetchOptions::Redirect::Manual) {
                 this->didFinishWithRedirectResponse(WTFMove(result->request), WTFMove(result->redirectRequest), WTFMove(result->redirectResponse));
-                return completionHandler({ });
+                return;
             }
 
             if (this->isSynchronous()) {
                 if (storedCredentialsPolicy != m_networkLoadChecker->storedCredentialsPolicy()) {
                     // We need to restart the load to update the session according the new credential policy.
                     LOADER_RELEASE_LOG("willSendRedirectedRequest: Restarting network load due to credential policy change for synchronous load");
-                    this->restartNetworkLoad(WTFMove(result->redirectRequest), WTFMove(completionHandler));
+                    this->restartNetworkLoad(WTFMove(result->redirectRequest));
                     return;
                 }
 
                 // We do not support prompting for credentials for synchronous loads. If we ever change this policy then
                 // we need to take care to prompt if and only if request and redirectRequest are not mixed content.
-                this->continueWillSendRequest(WTFMove(result->redirectRequest), false, WTFMove(completionHandler));
+                this->continueWillSendRequest(WTFMove(result->redirectRequest), false);
                 return;
             }
 
             m_shouldRestartLoad = storedCredentialsPolicy != m_networkLoadChecker->storedCredentialsPolicy();
-            this->continueWillSendRedirectedRequest(WTFMove(result->request), WTFMove(result->redirectRequest), WTFMove(result->redirectResponse), WTFMove(privateClickMeasurementAttributionTriggerData), WTFMove(completionHandler));
-        };
-        m_networkLoadChecker->checkRedirection(WTFMove(request), WTFMove(redirectRequest), WTFMove(redirectResponse), this, WTFMove(continueAfterRedirectionCheck));
+            this->continueWillSendRedirectedRequest(WTFMove(result->request), WTFMove(result->redirectRequest), WTFMove(result->redirectResponse), WTFMove(privateClickMeasurementAttributionTriggerData));
+        });
         return;
     }
-    continueWillSendRedirectedRequest(WTFMove(request), WTFMove(redirectRequest), WTFMove(redirectResponse), WTFMove(privateClickMeasurementAttributionTriggerData), WTFMove(completionHandler));
+    continueWillSendRedirectedRequest(WTFMove(request), WTFMove(redirectRequest), WTFMove(redirectResponse), WTFMove(privateClickMeasurementAttributionTriggerData));
 }
 
-void NetworkResourceLoader::continueWillSendRedirectedRequest(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse, std::optional<WebCore::PCM::AttributionTriggerData>&& privateClickMeasurementAttributionTriggerData, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
+void NetworkResourceLoader::continueWillSendRedirectedRequest(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse, std::optional<WebCore::PCM::AttributionTriggerData>&& privateClickMeasurementAttributionTriggerData)
 {
     redirectRequest.setIsAppInitiated(request.isAppInitiated());
 
@@ -1272,15 +1280,13 @@ void NetworkResourceLoader::continueWillSendRedirectedRequest(ResourceRequest&& 
     }
 
     if (m_isKeptAlive) {
-        continueWillSendRequest(WTFMove(redirectRequest), false, WTFMove(completionHandler));
+        continueWillSendRequest(WTFMove(redirectRequest), false);
         return;
     }
 
     // We send the request body separately because the ResourceRequest body normally does not get encoded when sent over IPC, as an optimization.
     // However, we really need the body here because a redirect cross-site may cause a process-swap and the request to start again in a new WebContent process.
-    sendWithAsyncReply(Messages::WebResourceLoader::WillSendRequest(redirectRequest, IPC::FormDataReference { redirectRequest.httpBody() }, sanitizeResponseIfPossible(WTFMove(redirectResponse), ResourceResponse::SanitizationType::Redirection)), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (ResourceRequest&& newRequest, bool isAllowedToAskUserForCredentials) mutable {
-        continueWillSendRequest(WTFMove(newRequest), isAllowedToAskUserForCredentials, WTFMove(completionHandler));
-    });
+    send(Messages::WebResourceLoader::WillSendRequest(redirectRequest, IPC::FormDataReference { redirectRequest.httpBody() }, sanitizeResponseIfPossible(WTFMove(redirectResponse), ResourceResponse::SanitizationType::Redirection)));
 }
 
 void NetworkResourceLoader::didFinishWithRedirectResponse(WebCore::ResourceRequest&& request, WebCore::ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse)
@@ -1318,26 +1324,22 @@ ResourceResponse NetworkResourceLoader::sanitizeResponseIfPossible(ResourceRespo
     if (!m_parameters.shouldRestrictHTTPResponseAccess)
         return WTFMove(response);
 
-    if (shouldSanitizeResponse(m_connection->networkProcess(), pageID(), parameters().options, originalRequest().url()))
+    if (shouldSanitizeResponse(Ref { m_connection->networkProcess() }.get(), pageID(), parameters().options, originalRequest().url()))
         response.sanitizeHTTPHeaderFields(type);
 
     return WTFMove(response);
 }
 
-void NetworkResourceLoader::restartNetworkLoad(WebCore::ResourceRequest&& newRequest, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
+void NetworkResourceLoader::restartNetworkLoad(WebCore::ResourceRequest&& newRequest)
 {
     LOADER_RELEASE_LOG("restartNetworkLoad: (hasNetworkLoad=%d)", !!m_networkLoad);
 
     if (m_networkLoad) {
         LOADER_RELEASE_LOG("restartNetworkLoad: Cancelling existing network load so we can restart the load.");
         m_networkLoad->cancel();
-        m_networkLoad = nullptr;
     }
 
-    completionHandler({ });
-
-    if (!newRequest.isEmpty())
-        startNetworkLoad(WTFMove(newRequest), FirstLoad::No);
+    startNetworkLoad(WTFMove(newRequest), FirstLoad::No);
 }
 
 #if ENABLE(SERVICE_WORKER)
@@ -1349,7 +1351,7 @@ static bool shouldTryToMatchRegistrationOnRedirection(const FetchOptions& option
 }
 #endif
 
-void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest, bool isAllowedToAskUserForCredentials, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
+void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest, bool isAllowedToAskUserForCredentials)
 {
     LOADER_RELEASE_LOG("continueWillSendRequest: (isAllowedToAskUserForCredentials=%d)", isAllowedToAskUserForCredentials);
 
@@ -1358,7 +1360,7 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
         auto redirection = std::exchange(m_redirectionForCurrentNavigation, { });
         auto redirectRequest = newRequest.redirectedRequest(*redirection, parameters().shouldClearReferrerOnHTTPSToHTTPRedirect);
         m_shouldRestartLoad = true;
-        willSendRedirectedRequest(WTFMove(newRequest), WTFMove(redirectRequest), WTFMove(*redirection), WTFMove(completionHandler));
+        willSendRedirectedRequest(WTFMove(newRequest), WTFMove(redirectRequest), WTFMove(*redirection));
         return;
     }
 
@@ -1370,7 +1372,7 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
             LOADER_RELEASE_LOG("continueWillSendRequest: Created a ServiceWorkerFetchTask to handle the redirect (fetchIdentifier=%" PRIu64 ")", serviceWorkerFetchTask->fetchIdentifier().toUInt64());
             m_networkLoad = nullptr;
             m_serviceWorkerFetchTask = WTFMove(serviceWorkerFetchTask);
-            return completionHandler({ });
+            return;
         }
         LOADER_RELEASE_LOG("continueWillSendRequest: Navigation is not using service workers");
         m_shouldRestartLoad = !!m_serviceWorkerFetchTask;
@@ -1379,7 +1381,7 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
     if (m_serviceWorkerFetchTask) {
         LOADER_RELEASE_LOG("continueWillSendRequest: Continuing fetch task with redirect (fetchIdentifier=%" PRIu64 ")", m_serviceWorkerFetchTask->fetchIdentifier().toUInt64());
         m_serviceWorkerFetchTask->continueFetchTaskWith(WTFMove(newRequest));
-        return completionHandler({ });
+        return;
     }
 #endif
 
@@ -1390,7 +1392,7 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
             m_networkLoad->updateRequestAfterRedirection(newRequest);
 
         LOADER_RELEASE_LOG("continueWillSendRequest: Restarting network load");
-        restartNetworkLoad(WTFMove(newRequest), WTFMove(completionHandler));
+        restartNetworkLoad(WTFMove(newRequest));
         return;
     }
 
@@ -1399,7 +1401,7 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
         if (!newRequest.url().protocolIsInHTTPFamily() && !newRequest.url().protocolIsAbout() && m_redirectCount) {
             LOADER_RELEASE_LOG_ERROR("continueWillSendRequest: Failing load because it redirected to a scheme that is not HTTP(S)");
             didFailLoading(ResourceError { String { }, 0, newRequest.url(), "Redirection to URL with a scheme that is not HTTP(S)"_s, ResourceError::Type::AccessControl });
-            return completionHandler({ });
+            return;
         }
     }
 
@@ -1419,7 +1421,8 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
             retrieveCacheEntry(newRequest);
         else
             startNetworkLoad(WTFMove(newRequest), FirstLoad::Yes);
-        return completionHandler({ });
+
+        return;
     }
 
     if (m_networkLoad) {
@@ -1428,7 +1431,7 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
         if (m_parameters.pageHasResourceLoadClient && !newRequest.isNull())
             m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ResourceLoadDidPerformHTTPRedirection(m_parameters.webPageProxyID, resourceLoadInfo(), m_redirectResponse, newRequest), 0);
 
-        completionHandler(WTFMove(newRequest));
+        m_networkLoad->continueWillSendRequest(WTFMove(newRequest));
     }
 }
 
@@ -1689,7 +1692,7 @@ void NetworkResourceLoader::dispatchWillSendRequestForCacheEntry(ResourceRequest
     LOG(NetworkCache, "(NetworkProcess) Executing cached redirect");
 
     m_isWaitingContinueWillSendRequestForCachedRedirect = true;
-    willSendRedirectedRequest(WTFMove(request), ResourceRequest { *entry->redirectRequest() }, ResourceResponse { entry->response() }, [](auto) { });
+    willSendRedirectedRequest(WTFMove(request), ResourceRequest { *entry->redirectRequest() }, ResourceResponse { entry->response() });
 }
 
 IPC::Connection* NetworkResourceLoader::messageSenderConnection() const
@@ -1984,7 +1987,7 @@ void NetworkResourceLoader::serviceWorkerDidNotHandle(ServiceWorkerFetchTask* fe
             m_networkLoad->updateRequestAfterRedirection(newRequest);
 
         LOADER_RELEASE_LOG("serviceWorkerDidNotHandle: Restarting network load for redirect");
-        restartNetworkLoad(WTFMove(newRequest), [] (auto) { });
+        restartNetworkLoad(WTFMove(newRequest));
         return;
     }
     start();

@@ -29,6 +29,8 @@
 #if ENABLE(APPLE_PAY)
 
 #include "MessageReceiverMap.h"
+#include "MessageSenderInlines.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebPageProxy.h"
 #include "WebPaymentCoordinatorMessages.h"
 #include "WebPaymentCoordinatorProxyMessages.h"

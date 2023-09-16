@@ -1,0 +1,6 @@
+2d.text.drawing.style.measure.rtl.text
+Measurement should follow canvas direction instead text direction
+Actual output:
+
+PASS Measurement should follow canvas direction instead text direction
+

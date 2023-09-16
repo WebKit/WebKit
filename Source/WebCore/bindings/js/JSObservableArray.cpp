@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022, 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,24 @@
 using namespace WebCore;
 
 namespace JSC {
+
+// https://webidl.spec.whatwg.org/#observable-array-exotic-object-set-the-length
+static bool observableArraySetLength(JSObservableArray* object, JSGlobalObject* lexicalGlobalObject, ThrowScope& scope, JSValue value)
+{
+    auto length = value.toUInt32(lexicalGlobalObject);
+    RETURN_IF_EXCEPTION(scope, false);
+    auto lengthNumber = value.toNumber(lexicalGlobalObject);
+    RETURN_IF_EXCEPTION(scope, false);
+    if (length != lengthNumber) {
+        throwRangeError(lexicalGlobalObject, scope, "Invalid length"_s);
+        return false;
+    }
+    auto& concreteArray = object->getConcreteArray();
+    if (length > concreteArray.length())
+        return false;
+    concreteArray.shrinkTo(length);
+    return true;
+}
 
 const ClassInfo JSObservableArray::s_info = { "JSObservableArray"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSObservableArray) };
 
@@ -90,7 +108,7 @@ bool JSObservableArray::getOwnPropertySlot(JSObject* object, JSGlobalObject* lex
     VM& vm = lexicalGlobalObject->vm();
     JSObservableArray* thisObject = jsCast<JSObservableArray*>(object);
     if (propertyName == vm.propertyNames->length) {
-        slot.setCacheableCustom(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, arrayLengthGetter);
+        slot.setCacheableCustom(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::DontEnum, arrayLengthGetter);
         return true;
     }
 
@@ -121,38 +139,87 @@ bool JSObservableArray::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, P
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObservableArray* thisObject = jsCast<JSObservableArray*>(cell);
+    auto* thisObject = jsCast<JSObservableArray*>(cell);
     if (propertyName == vm.propertyNames->length)
-        return false;
+        return observableArraySetLength(thisObject, lexicalGlobalObject, scope, value);
 
-    if (std::optional<uint32_t> index = parseIndex(propertyName))
-        return thisObject->getConcreteArray().setValueAt(lexicalGlobalObject, index.value(), value);
+    if (auto index = parseIndex(propertyName))
+        return putByIndex(cell, lexicalGlobalObject, *index, value, slot.isStrictMode());
 
     RELEASE_AND_RETURN(scope, JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, slot));
 }
 
+// https://webidl.spec.whatwg.org/#observable-array-exotic-object-set-the-indexed-value
 bool JSObservableArray::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index, JSValue value, bool)
 {
-    JSObservableArray* thisObject = jsCast<JSObservableArray*>(cell);
-    return thisObject->getConcreteArray().setValueAt(lexicalGlobalObject, index, value);
+    auto* thisObject = jsCast<JSObservableArray*>(cell);
+    auto& concreteArray = thisObject->getConcreteArray();
+    if (index > concreteArray.length())
+        return false;
+    return concreteArray.setValueAt(lexicalGlobalObject, index, value);
 }
 
+// https://webidl.spec.whatwg.org/#es-observable-array-deleteProperty
 bool JSObservableArray::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObservableArray* thisObject = jsCast<JSObservableArray*>(cell);
-    if (std::optional<uint32_t> index = parseIndex(propertyName))
-        return thisObject->getConcreteArray().deleteValueAt(lexicalGlobalObject, index.value());
+    if (propertyName == vm.propertyNames->length)
+        return false;
 
+    if (auto index = parseIndex(propertyName))
+        return deletePropertyByIndex(cell, lexicalGlobalObject, *index);
+
+    auto* thisObject = jsCast<JSObservableArray*>(cell);
     RELEASE_AND_RETURN(scope, JSObject::deleteProperty(thisObject, lexicalGlobalObject, propertyName, slot));
 }
 
-bool JSObservableArray::deletePropertyByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index)
+// https://webidl.spec.whatwg.org/#es-observable-array-deleteProperty
+bool JSObservableArray::deletePropertyByIndex(JSCell* cell, JSGlobalObject*, unsigned index)
 {
-    JSObservableArray* thisObject = jsCast<JSObservableArray*>(cell);
-    return thisObject->getConcreteArray().deleteValueAt(lexicalGlobalObject, index);
+    auto* thisObject = jsCast<JSObservableArray*>(cell);
+    auto& concreteArray = thisObject->getConcreteArray();
+    if (!concreteArray.length() || index != concreteArray.length() - 1)
+        return false;
+    concreteArray.removeLast();
+    return true;
+}
+
+// https://webidl.spec.whatwg.org/#es-observable-array-defineProperty
+bool JSObservableArray::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, const PropertyDescriptor& descriptor, bool throwException)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSObservableArray* thisObject = jsCast<JSObservableArray*>(object);
+    if (propertyName == vm.propertyNames->length) {
+        if (descriptor.isAccessorDescriptor())
+            return typeError(globalObject, scope, throwException, "Not allowed to change access mechanism for 'length' property"_s);
+        if (descriptor.configurablePresent() && descriptor.configurable())
+            return typeError(globalObject, scope, throwException, "'length' property must be not configurable"_s);
+        if (descriptor.enumerablePresent() && descriptor.enumerable())
+            return typeError(globalObject, scope, throwException, "'length' property must be not enumerable"_s);
+        if (descriptor.writablePresent() && !descriptor.writable())
+            return typeError(globalObject, scope, throwException, "'length' property must be writable"_s);
+        if (descriptor.value())
+            return observableArraySetLength(thisObject, globalObject, scope, descriptor.value());
+        return true;
+    }
+    if (std::optional<uint32_t> index = parseIndex(propertyName)) {
+        if (descriptor.isAccessorDescriptor())
+            return typeError(globalObject, scope, throwException, "Not allowed to change access mechanism for an indexed property"_s);
+        if (descriptor.configurablePresent() && !descriptor.configurable())
+            return typeError(globalObject, scope, throwException, "Indexed property must be configurable"_s);
+        if (descriptor.enumerablePresent() && !descriptor.enumerable())
+            return typeError(globalObject, scope, throwException, "Indexed property must be enumerable"_s);
+        if (descriptor.writablePresent() && !descriptor.writable())
+            return typeError(globalObject, scope, throwException, "Indexed property must be writable"_s);
+        if (descriptor.value())
+            return putByIndex(object, globalObject, *index, descriptor.value(), throwException);
+        return true;
+    }
+    RELEASE_AND_RETURN(scope, Base::defineOwnProperty(object, globalObject, propertyName, descriptor, throwException));
 }
 
 JSC::GCClient::IsoSubspace* JSObservableArray::subspaceForImpl(JSC::VM& vm)

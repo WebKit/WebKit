@@ -261,8 +261,6 @@ void HTMLPlugInElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     if (!m_pluginReplacement || !document().page() || displayState() != PreparingPluginReplacement)
         return;
     
-    root.setResetStyleInheritance(true);
-
     m_pluginReplacement->installReplacement(root);
 
     setDisplayState(DisplayingPluginReplacement);

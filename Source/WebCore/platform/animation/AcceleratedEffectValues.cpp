@@ -30,6 +30,7 @@
 
 #include "IntSize.h"
 #include "LengthFunctions.h"
+#include "MotionPath.h"
 #include "Path.h"
 #include "RenderStyleInlines.h"
 
@@ -165,7 +166,7 @@ AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const
         if (!offsetAnchor.x().isAuto())
             anchor = floatPointForLengthPoint(offsetAnchor, borderBoxRect.size()) + borderBoxRect.location();
 
-        auto path = offsetPath->getPath(borderBoxRect);
+        auto path = offsetPath->getPath(FloatRect(borderBoxRect));
         offsetDistance = { path ? path->length() : 0.0f, LengthType:: Fixed };
     }
 

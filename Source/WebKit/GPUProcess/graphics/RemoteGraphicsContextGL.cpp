@@ -29,7 +29,6 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 
 #include "GPUConnectionToWebProcess.h"
-#include "QualifiedRenderingResourceIdentifier.h"
 #include "RemoteGraphicsContextGLInitializationState.h"
 #include "RemoteGraphicsContextGLMessages.h"
 #include "RemoteGraphicsContextGLProxyMessages.h"
@@ -166,12 +165,6 @@ void RemoteGraphicsContextGL::forceContextLost()
     send(Messages::RemoteGraphicsContextGLProxy::WasLost());
 }
 
-void RemoteGraphicsContextGL::dispatchContextChangedNotification()
-{
-    assertIsCurrent(workQueue());
-    send(Messages::RemoteGraphicsContextGLProxy::WasChanged());
-}
-
 void RemoteGraphicsContextGL::createAndBindEGLImage(GCGLenum target, WebCore::GraphicsContextGL::EGLImageSource source, CompletionHandler<void(uint64_t handle, WebCore::IntSize size)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
@@ -216,36 +209,22 @@ void RemoteGraphicsContextGL::markContextChanged()
     m_context->markContextChanged();
 }
 
-void RemoteGraphicsContextGL::paintRenderingResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer, CompletionHandler<void()>&& completionHandler)
-{
-    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
-    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
-    paintRenderingResultsToCanvasWithQualifiedIdentifier({ imageBuffer, m_webProcessIdentifier });
-    completionHandler();
-}
-
-void RemoteGraphicsContextGL::paintRenderingResultsToCanvasWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageBuffer)
+void RemoteGraphicsContextGL::paintRenderingResultsToCanvas(WebCore::RenderingResourceIdentifier imageBufferIdentifier, CompletionHandler<void()>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     m_context->withDrawingBufferAsNativeImage([&](NativeImage& image) {
-        paintNativeImageToImageBuffer(image, imageBuffer);
+        paintNativeImageToImageBuffer(image, imageBufferIdentifier);
     });
-}
-
-void RemoteGraphicsContextGL::paintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer, CompletionHandler<void()>&& completionHandler)
-{
-    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
-    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
-    paintCompositedResultsToCanvasWithQualifiedIdentifier({ imageBuffer, m_webProcessIdentifier });
     completionHandler();
 }
 
-void RemoteGraphicsContextGL::paintCompositedResultsToCanvasWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageBuffer)
+void RemoteGraphicsContextGL::paintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier imageBufferIdentifier, CompletionHandler<void()>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     m_context->withDisplayBufferAsNativeImage([&](NativeImage& image) {
-        paintNativeImageToImageBuffer(image, imageBuffer);
+        paintNativeImageToImageBuffer(image, imageBufferIdentifier);
     });
+    completionHandler();
 }
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
@@ -259,7 +238,7 @@ void RemoteGraphicsContextGL::paintCompositedResultsToVideoFrame(CompletionHandl
 }
 #endif
 
-void RemoteGraphicsContextGL::paintNativeImageToImageBuffer(NativeImage& image, QualifiedRenderingResourceIdentifier target)
+void RemoteGraphicsContextGL::paintNativeImageToImageBuffer(NativeImage& image, RenderingResourceIdentifier imageBufferIdentifier)
 {
     assertIsCurrent(workQueue());
     // FIXME: We do not have functioning read/write fences in RemoteRenderingBackend. Thus this is synchronous,
@@ -269,7 +248,7 @@ void RemoteGraphicsContextGL::paintNativeImageToImageBuffer(NativeImage& image, 
     bool isFinished = false;
 
     m_renderingBackend->dispatch([&]() mutable {
-        if (auto imageBuffer = m_renderingBackend->remoteResourceCache().cachedImageBuffer(target)) {
+        if (auto imageBuffer = m_renderingBackend->imageBuffer(imageBufferIdentifier)) {
             // Here we do not try to play back pending commands for imageBuffer. Currently this call is only made for empty
             // image buffers and there's no good way to add display lists.
             GraphicsContextGL::paintToCanvas(image, imageBuffer->backendSize(), imageBuffer->context());
@@ -300,15 +279,6 @@ void RemoteGraphicsContextGL::simulateEventForTesting(WebCore::GraphicsContextGL
             if (auto connectionToWeb = gpuConnectionToWebProcess.get())
                 connectionToWeb->releaseGraphicsContextGLForTesting(identifier);
         });
-        return;
-    }
-    if (event == WebCore::GraphicsContextGL::SimulatedEventForTesting::ContextChange) {
-#if PLATFORM(MAC)
-        callOnMainRunLoop([weakConnection = m_gpuConnectionToWebProcess]() {
-            if (auto connection = weakConnection.get())
-                connection->dispatchDisplayWasReconfiguredForTesting();
-        });
-#endif
         return;
     }
     m_context->simulateEventForTesting(event);

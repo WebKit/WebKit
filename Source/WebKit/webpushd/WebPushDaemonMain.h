@@ -25,8 +25,13 @@
 
 #pragma once
 
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+
 namespace WebKit {
 
 int WebPushDaemonMain(int, char**);
 
 } // namespace WebKit
+
+#endif // ENABLE(BUILT_IN_NOTIFICATIONS)
+

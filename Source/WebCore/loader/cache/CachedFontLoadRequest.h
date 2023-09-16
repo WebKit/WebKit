@@ -37,7 +37,7 @@ namespace WebCore {
 class FontCreationContext;
 
 class CachedFontLoadRequest final : public FontLoadRequest, public CachedFontClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:
     CachedFontLoadRequest(CachedFont& font)
         : m_font(&font)

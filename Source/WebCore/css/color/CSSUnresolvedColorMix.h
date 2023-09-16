@@ -43,9 +43,13 @@ class RenderStyle;
 
 struct CSSUnresolvedColorMix {
     struct Component {
+        friend bool operator==(const Component&, const Component&);
+
         Ref<CSSPrimitiveValue> color;
         RefPtr<CSSPrimitiveValue> percentage;
     };
+
+    friend bool operator==(const CSSUnresolvedColorMix&, const CSSUnresolvedColorMix&) = default;
 
     ColorInterpolationMethod colorInterpolationMethod;
     Component mixComponents1;
@@ -56,7 +60,5 @@ void serializationForCSS(StringBuilder&, const CSSUnresolvedColorMix&);
 String serializationForCSS(const CSSUnresolvedColorMix&);
 
 StyleColor createStyleColor(const CSSUnresolvedColorMix&, const Document&, RenderStyle&, Style::ForVisitedLink);
-
-bool operator==(const CSSUnresolvedColorMix&, const CSSUnresolvedColorMix&);
 
 } // namespace WebCore

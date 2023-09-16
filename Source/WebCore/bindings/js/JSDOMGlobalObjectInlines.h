@@ -32,6 +32,11 @@
 
 namespace WebCore {
 
+inline JSC::Structure* JSDOMGlobalObject::createStructure(JSC::VM& vm, JSC::JSValue prototype)
+{
+    return JSC::Structure::create(vm, 0, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), info());
+}
+
 inline JSDOMStructureMap& JSDOMGlobalObject::structures(NoLockingNecessaryTag)
 {
     ASSERT(!vm().heap.mutatorShouldBeFenced());

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,6 @@
 #include "Decoder.h"
 
 #include "ArgumentCoders.h"
-#include "DataReference.h"
 #include "Logging.h"
 #include "MessageFlags.h"
 #include <stdio.h>
@@ -35,50 +34,45 @@
 
 namespace IPC {
 
-static const uint8_t* copyBuffer(const uint8_t* buffer, size_t bufferSize)
+static uint8_t* copyBuffer(DataReference buffer)
 {
     uint8_t* bufferCopy;
+    const size_t bufferSize = buffer.size_bytes();
     if (!tryFastMalloc(bufferSize).getValue(bufferCopy)) {
         RELEASE_LOG_FAULT(IPC, "Decoder::copyBuffer: tryFastMalloc(%lu) failed", bufferSize);
         return nullptr;
     }
 
-    memcpy(bufferCopy, buffer, bufferSize);
+    memcpy(bufferCopy, buffer.data(), bufferSize);
     return bufferCopy;
 }
 
-std::unique_ptr<Decoder> Decoder::create(const uint8_t* buffer, size_t bufferSize, Vector<Attachment>&& attachments)
+std::unique_ptr<Decoder> Decoder::create(DataReference buffer, Vector<Attachment>&& attachments)
 {
-    ASSERT(buffer);
-    if (UNLIKELY(!buffer)) {
-        RELEASE_LOG_FAULT(IPC, "Decoder::create() called with a null buffer (bufferSize: %lu)", bufferSize);
-        return nullptr;
-    }
-    return Decoder::create(copyBuffer(buffer, bufferSize), bufferSize, [](const uint8_t* ptr, size_t) { fastFree(const_cast<uint8_t*>(ptr)); }, WTFMove(attachments)); // NOLINT
+    return Decoder::create({ copyBuffer(buffer), buffer.size() }, [](DataReference buffer) { fastFree(const_cast<uint8_t*>(buffer.data())); }, WTFMove(attachments)); // NOLINT
 }
 
-std::unique_ptr<Decoder> Decoder::create(const uint8_t* buffer, size_t bufferSize, BufferDeallocator&& bufferDeallocator, Vector<Attachment>&& attachments)
+std::unique_ptr<Decoder> Decoder::create(DataReference buffer, BufferDeallocator&& bufferDeallocator, Vector<Attachment>&& attachments)
 {
     ASSERT(bufferDeallocator);
-    ASSERT(buffer);
-    if (UNLIKELY(!buffer)) {
-        RELEASE_LOG_FAULT(IPC, "Decoder::create() called with a null buffer (bufferSize: %lu)", bufferSize);
+    ASSERT(!!buffer.data());
+    if (UNLIKELY(!buffer.data())) {
+        RELEASE_LOG_FAULT(IPC, "Decoder::create() called with a null buffer (buffer size: %lu)", buffer.size_bytes());
         return nullptr;
     }
-    auto decoder = std::unique_ptr<Decoder>(new Decoder(buffer, bufferSize, WTFMove(bufferDeallocator), WTFMove(attachments)));
+    auto decoder = std::unique_ptr<Decoder>(new Decoder(buffer, WTFMove(bufferDeallocator), WTFMove(attachments)));
     if (!decoder->isValid())
         return nullptr;
     return decoder;
 }
 
-Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, BufferDeallocator&& bufferDeallocator, Vector<Attachment>&& attachments)
+Decoder::Decoder(DataReference buffer, BufferDeallocator&& bufferDeallocator, Vector<Attachment>&& attachments)
     : m_buffer { buffer }
-    , m_bufferPos { m_buffer }
-    , m_bufferEnd { m_buffer + bufferSize }
+    , m_bufferPosition { m_buffer.begin() }
     , m_bufferDeallocator { WTFMove(bufferDeallocator) }
     , m_attachments { WTFMove(attachments) }
 {
-    if (UNLIKELY(reinterpret_cast<uintptr_t>(m_buffer) % alignof(uint64_t))) {
+    if (UNLIKELY(reinterpret_cast<uintptr_t>(m_buffer.data()) % alignof(uint64_t))) {
         markInvalid();
         return;
     }
@@ -93,12 +87,11 @@ Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, BufferDeallocator&& b
         return;
 }
 
-Decoder::Decoder(const uint8_t* stream, size_t streamSize, uint64_t destinationID)
+Decoder::Decoder(DataReference stream, uint64_t destinationID)
     : m_buffer { stream }
-    , m_bufferPos { m_buffer }
-    , m_bufferEnd { m_buffer + streamSize }
+    , m_bufferPosition { m_buffer.begin() }
     , m_bufferDeallocator { nullptr }
-    , m_destinationID(destinationID)
+    , m_destinationID { destinationID }
 {
     if (UNLIKELY(!decode(m_messageName)))
         return;
@@ -106,9 +99,8 @@ Decoder::Decoder(const uint8_t* stream, size_t streamSize, uint64_t destinationI
 
 Decoder::~Decoder()
 {
-    ASSERT(m_buffer);
-    if (m_bufferDeallocator)
-        m_bufferDeallocator(m_buffer, m_bufferEnd - m_buffer);
+    if (isValid())
+        markInvalid();
     // FIXME: We need to dispose of the mach ports in cases of failure.
 }
 
@@ -148,7 +140,7 @@ std::unique_ptr<Decoder> Decoder::unwrapForTesting(Decoder& decoder)
     if (!decoder.decode(wrappedMessage))
         return nullptr;
 
-    std::unique_ptr<Decoder> wrappedDecoder = Decoder::create(wrappedMessage.data(), wrappedMessage.size(), WTFMove(attachments));
+    auto wrappedDecoder = Decoder::create(wrappedMessage, WTFMove(attachments));
     wrappedDecoder->setIsAllowedWhenWaitingForSyncReplyOverride(true);
     return wrappedDecoder;
 }

@@ -2606,7 +2606,7 @@ void StateManagerGL::setProvokingVertex(GLenum mode)
     }
 }
 
-void StateManagerGL::setClipDistancesEnable(const gl::State::ClipDistanceEnableBits &enables)
+void StateManagerGL::setClipDistancesEnable(const gl::ClipDistanceEnableBits &enables)
 {
     if (enables == mEnabledClipDistances)
     {
@@ -2614,7 +2614,7 @@ void StateManagerGL::setClipDistancesEnable(const gl::State::ClipDistanceEnableB
     }
     ASSERT(mMaxClipDistances <= gl::IMPLEMENTATION_MAX_CLIP_DISTANCES);
 
-    gl::State::ClipDistanceEnableBits diff = enables ^ mEnabledClipDistances;
+    gl::ClipDistanceEnableBits diff = enables ^ mEnabledClipDistances;
     for (size_t i : diff)
     {
         if (enables.test(i))
@@ -2731,10 +2731,9 @@ void StateManagerGL::updateMultiviewBaseViewLayerIndexUniformImpl(
     }
 }
 
-void StateManagerGL::updateEmulatedClipDistanceState(
-    const gl::ProgramExecutable *executable,
-    const gl::Program *program,
-    const gl::State::ClipDistanceEnableBits enables) const
+void StateManagerGL::updateEmulatedClipDistanceState(const gl::ProgramExecutable *executable,
+                                                     const gl::Program *program,
+                                                     const gl::ClipDistanceEnableBits enables) const
 {
     ASSERT(mFeatures.emulateClipDistanceState.enabled);
     if (executable && executable->hasClipDistance())

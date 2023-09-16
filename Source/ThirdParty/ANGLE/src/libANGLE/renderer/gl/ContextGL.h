@@ -52,6 +52,8 @@ class ContextGL : public ContextImpl
     CompilerImpl *createCompiler() override;
     ShaderImpl *createShader(const gl::ShaderState &data) override;
     ProgramImpl *createProgram(const gl::ProgramState &data) override;
+    ProgramExecutableImpl *createProgramExecutable(
+        const gl::ProgramExecutable *executable) override;
 
     // Framebuffer creation
     FramebufferImpl *createFramebuffer(const gl::FramebufferState &data) override;
@@ -237,10 +239,10 @@ class ContextGL : public ContextImpl
 
     // State sync with dirty bits.
     angle::Result syncState(const gl::Context *context,
-                            const gl::state::DirtyBits &dirtyBits,
-                            const gl::state::DirtyBits &bitMask,
-                            const gl::state::ExtendedDirtyBits &extendedDirtyBits,
-                            const gl::state::ExtendedDirtyBits &extendedBitMask,
+                            const gl::state::DirtyBits dirtyBits,
+                            const gl::state::DirtyBits bitMask,
+                            const gl::state::ExtendedDirtyBits extendedDirtyBits,
+                            const gl::state::ExtendedDirtyBits extendedBitMask,
                             gl::Command command) override;
 
     // Disjoint timer queries

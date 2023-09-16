@@ -38,7 +38,7 @@
     [CEReactions=NotNeeded] attribute [AtomString] DOMString? crossOrigin;
     [CEReactions=NotNeeded, Reflect, EnabledBySetting=LinkPreloadResponsiveImagesEnabled] attribute DOMString imageSrcset;
     [CEReactions=NotNeeded, Reflect, EnabledBySetting=LinkPreloadResponsiveImagesEnabled] attribute DOMString imageSizes;
-    [EnabledBySetting=ReferrerPolicyAttributeEnabled, ImplementedAs=referrerPolicyForBindings, CEReactions=NotNeeded] attribute [AtomString] DOMString referrerPolicy;
+    [CEReactions=NotNeeded, ImplementedAs=referrerPolicyForBindings] attribute [AtomString] DOMString referrerPolicy;
     [CEReactions=NotNeeded, EnabledBySetting=FetchPriorityEnabled, ImplementedAs=fetchPriorityForBindings] attribute [AtomString] DOMString fetchPriority;
 
     // DOM Level 2 Style

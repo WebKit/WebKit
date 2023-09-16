@@ -4,7 +4,7 @@ rect: style.getPropertyValue(align-items) : normal
 rect: style.getPropertyCSSValue(align-items) : [object CSSValueList]
 rect: style.getPropertyValue(align-self) : auto
 rect: style.getPropertyCSSValue(align-self) : [object CSSValueList]
-rect: style.getPropertyValue(alignment-baseline) : auto
+rect: style.getPropertyValue(alignment-baseline) : baseline
 rect: style.getPropertyCSSValue(alignment-baseline) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(appearance) : none
 rect: style.getPropertyCSSValue(appearance) : [object CSSPrimitiveValue]
@@ -470,16 +470,6 @@ rect: style.getPropertyValue(-webkit-line-snap) : none
 rect: style.getPropertyCSSValue(-webkit-line-snap) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-locale) : auto
 rect: style.getPropertyCSSValue(-webkit-locale) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-mask-box-image-outset) : 0
-rect: style.getPropertyCSSValue(-webkit-mask-box-image-outset) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-mask-box-image-repeat) : stretch
-rect: style.getPropertyCSSValue(-webkit-mask-box-image-repeat) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-mask-box-image-slice) : 0 fill
-rect: style.getPropertyCSSValue(-webkit-mask-box-image-slice) : [object CSSValue]
-rect: style.getPropertyValue(-webkit-mask-box-image-source) : none
-rect: style.getPropertyCSSValue(-webkit-mask-box-image-source) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-mask-box-image-width) : auto
-rect: style.getPropertyCSSValue(-webkit-mask-box-image-width) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-mask-clip) : border-box
 rect: style.getPropertyCSSValue(-webkit-mask-clip) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-mask-composite) : source-over
@@ -508,7 +498,7 @@ g: style.getPropertyValue(align-items) : normal
 g: style.getPropertyCSSValue(align-items) : [object CSSValueList]
 g: style.getPropertyValue(align-self) : auto
 g: style.getPropertyCSSValue(align-self) : [object CSSValueList]
-g: style.getPropertyValue(alignment-baseline) : auto
+g: style.getPropertyValue(alignment-baseline) : baseline
 g: style.getPropertyCSSValue(alignment-baseline) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(appearance) : none
 g: style.getPropertyCSSValue(appearance) : [object CSSPrimitiveValue]
@@ -974,16 +964,6 @@ g: style.getPropertyValue(-webkit-line-snap) : none
 g: style.getPropertyCSSValue(-webkit-line-snap) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-locale) : auto
 g: style.getPropertyCSSValue(-webkit-locale) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-mask-box-image-outset) : 0
-g: style.getPropertyCSSValue(-webkit-mask-box-image-outset) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-mask-box-image-repeat) : stretch
-g: style.getPropertyCSSValue(-webkit-mask-box-image-repeat) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-mask-box-image-slice) : 0 fill
-g: style.getPropertyCSSValue(-webkit-mask-box-image-slice) : [object CSSValue]
-g: style.getPropertyValue(-webkit-mask-box-image-source) : none
-g: style.getPropertyCSSValue(-webkit-mask-box-image-source) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-mask-box-image-width) : auto
-g: style.getPropertyCSSValue(-webkit-mask-box-image-width) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-mask-clip) : border-box
 g: style.getPropertyCSSValue(-webkit-mask-clip) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-mask-composite) : source-over

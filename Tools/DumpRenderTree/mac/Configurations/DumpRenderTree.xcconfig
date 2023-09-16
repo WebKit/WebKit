@@ -25,7 +25,7 @@
 
 OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_$(WK_COCOA_TOUCH));
 OTHER_LDFLAGS_cocoatouch = -framework JavaScriptCore;
-OTHER_LDFLAGS_ = -lWebCoreTestSupport -force_load $(BUILT_PRODUCTS_DIR)/libDumpRenderTree.a -framework Carbon -framework Cocoa -framework JavaScriptCore -framework OpenGL -framework QuartzCore -framework WebKit;
+OTHER_LDFLAGS_ = -lWebCoreTestSupport -force_load $(BUILT_PRODUCTS_DIR)/libDumpRenderTree.a -framework Carbon -framework Cocoa -framework JavaScriptCore -framework OpenGL -framework QuartzCore -framework WebCore -framework WebKit;
 
 LD_RUNPATH_SEARCH_PATHS = "@loader_path/.";
 STRIP_STYLE = debugging;

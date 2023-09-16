@@ -109,10 +109,6 @@ public:
 
     WTF_EXPORT_PRIVATE void threadWillExit();
 
-#if ASSERT_ENABLED
-    void assertIsCurrent() const final;
-#endif
-
 #if USE(GLIB_EVENT_LOOP)
     WTF_EXPORT_PRIVATE GMainContext* mainContext() const { return m_mainContext.get(); }
     enum class Event { WillDispatch, DidDispatch };

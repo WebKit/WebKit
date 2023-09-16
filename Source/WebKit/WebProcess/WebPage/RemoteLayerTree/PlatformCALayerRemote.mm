@@ -649,10 +649,10 @@ bool PlatformCALayerRemote::backingStoreAttached() const
 }
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-void PlatformCALayerRemote::setCoverageRect(const FloatRect& value)
+void PlatformCALayerRemote::setVisibleRect(const FloatRect& value)
 {
-    m_properties.coverageRect = value;
-    m_properties.notePropertiesChanged(LayerChange::CoverageRectChanged);
+    m_properties.visibleRect = value;
+    m_properties.notePropertiesChanged(LayerChange::VisibleRectChanged);
 }
 #endif
 

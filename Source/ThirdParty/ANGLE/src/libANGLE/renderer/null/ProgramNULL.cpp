@@ -19,8 +19,7 @@ ProgramNULL::ProgramNULL(const gl::ProgramState &state) : ProgramImpl(state) {}
 ProgramNULL::~ProgramNULL() {}
 
 std::unique_ptr<LinkEvent> ProgramNULL::load(const gl::Context *context,
-                                             gl::BinaryInputStream *stream,
-                                             gl::InfoLog &infoLog)
+                                             gl::BinaryInputStream *stream)
 {
     return std::make_unique<LinkEventDone>(angle::Result::Continue);
 }
@@ -33,13 +32,12 @@ void ProgramNULL::setSeparable(bool separable) {}
 
 std::unique_ptr<LinkEvent> ProgramNULL::link(const gl::Context *contextImpl,
                                              const gl::ProgramLinkedResources &resources,
-                                             gl::InfoLog &infoLog,
-                                             const gl::ProgramMergedVaryings & /*mergedVaryings*/)
+                                             gl::ProgramMergedVaryings && /*mergedVaryings*/)
 {
     return std::make_unique<LinkEventDone>(angle::Result::Continue);
 }
 
-GLboolean ProgramNULL::validate(const gl::Caps &caps, gl::InfoLog *infoLog)
+GLboolean ProgramNULL::validate(const gl::Caps &caps)
 {
     return GL_TRUE;
 }

@@ -1,6 +1,6 @@
 
 PASS SVG <a>
 TIMEOUT SVG <feImage> Test timed out
-FAIL SVG <image> assert_equals: expected "%26%23229%3B" but got "%C3%A5"
+PASS SVG <image>
 PASS SVG <use>
 

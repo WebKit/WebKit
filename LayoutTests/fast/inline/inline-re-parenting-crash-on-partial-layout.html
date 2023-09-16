@@ -1,0 +1,15 @@
+PASS if no crash or assert.
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+document.body.offsetTop;
+
+let documentElement = document.documentElement;
+documentElement.append(document.createTextNode("PASS if no crash or assert."));
+let remove_this = document.createElement('div');
+documentElement.append(remove_this);
+documentElement.append(document.createElement('q'));
+document.body.offsetTop;
+remove_this.remove();
+</script>

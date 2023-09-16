@@ -112,10 +112,7 @@ private:
             }
         }
         
-        bool operator==(const AnimatableFeature& other) const
-        {
-            return m_feature == other.m_feature && m_cssPropertyID == other.m_cssPropertyID;
-        }
+        friend bool operator==(const AnimatableFeature&, const AnimatableFeature&) = default;
     };
 
     Vector<AnimatableFeature, 1> m_animatableFeatures;

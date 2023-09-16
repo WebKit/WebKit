@@ -24,9 +24,9 @@
 from buildbot.process import factory
 from buildbot.steps import trigger
 
-from steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canonicalize, CommitPatch,
+from .steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canonicalize, CommitPatch,
                    CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance,
-                   CheckStatusOnEWSQueues, CheckStyle, CleanGitRepo, CompileJSC, CompileWebKit, ConfigureBuild,
+                   CheckStatusOnEWSQueues, CheckStyle, CleanGitRepo, CompileJSC, CompileWebKit, ConfigureBuild, DetermineLabelOwner,
                    DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedLayoutTests,
                    InstallGtkDependencies, InstallHooks, InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch,
                    MapBranchAlias, RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS,
@@ -39,6 +39,7 @@ from steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canon
 
 class Factory(factory.BuildFactory):
     findModifiedLayoutTests = False
+    branches = None
 
     def __init__(self, platform, configuration=None, architectures=None, buildOnly=True, triggers=None, triggered_by=None, remotes=None, additionalArguments=None, checkRelevance=False, **kwargs):
         factory.BuildFactory.__init__(self)
@@ -47,7 +48,7 @@ class Factory(factory.BuildFactory):
             self.addStep(CheckChangeRelevance())
         if self.findModifiedLayoutTests:
             self.addStep(FindModifiedLayoutTests())
-        self.addStep(ValidateChange())
+        self.addStep(ValidateChange(branches=self.branches))
         self.addStep(PrintConfiguration())
         self.addStep(CleanGitRepo())
         self.addStep(CheckOutSource())
@@ -253,6 +254,8 @@ class macOSWK2Factory(TestFactory):
 
 
 class WinCairoFactory(Factory):
+    branches = [r'main']
+
     def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=True, triggers=triggers, additionalArguments=additionalArguments)
         self.addStep(KillOldProcesses())
@@ -261,7 +264,7 @@ class WinCairoFactory(Factory):
 
 
 class GTKBuildFactory(BuildFactory):
-    pass
+    branches = [r'main', r'webkit.+']
 
 
 class GTKTestsFactory(TestFactory):
@@ -269,7 +272,7 @@ class GTKTestsFactory(TestFactory):
 
 
 class WPEBuildFactory(BuildFactory):
-    pass
+    branches = [r'main', r'webkit.+']
 
 
 class WPETestsFactory(TestFactory):
@@ -325,6 +328,7 @@ class MergeQueueFactoryBase(factory.BuildFactory):
         super(MergeQueueFactoryBase, self).__init__()
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=None, remotes=None, additionalArguments=additionalArguments))
         self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
+        self.addStep(DetermineLabelOwner())
         self.addStep(ValidateCommitterAndReviewer())
         self.addStep(PrintConfiguration())
         self.addStep(CleanGitRepo())

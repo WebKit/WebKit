@@ -389,6 +389,7 @@ public:
         case TypeKind::RefNull:
         case TypeKind::Rec:
         case TypeKind::Sub:
+        case TypeKind::Subfinal:
         case TypeKind::Struct:
         case TypeKind::Structref:
         case TypeKind::Externref:
@@ -397,6 +398,8 @@ public:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
         case TypeKind::Nullref:
+        case TypeKind::Nullfuncref:
+        case TypeKind::Nullexternref:
             return sizeof(EncodedJSValue);
         case TypeKind::Void:
             return 0;
@@ -420,6 +423,7 @@ public:
         case TypeKind::RefNull:
         case TypeKind::Rec:
         case TypeKind::Sub:
+        case TypeKind::Subfinal:
         case TypeKind::Struct:
         case TypeKind::Structref:
         case TypeKind::Externref:
@@ -428,6 +432,8 @@ public:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
         case TypeKind::Nullref:
+        case TypeKind::Nullfuncref:
+        case TypeKind::Nullexternref:
             return TypeKind::I64;
         case TypeKind::Void:
             RELEASE_ASSERT_NOT_REACHED();
@@ -1428,6 +1434,8 @@ public:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
         case TypeKind::Nullref:
+        case TypeKind::Nullfuncref:
+        case TypeKind::Nullexternref:
             result = Value::fromRef(type.kind, static_cast<EncodedJSValue>(value));
             LOG_INSTRUCTION("RefConst", makeString(type.kind), RESULT(result));
             break;
@@ -1710,6 +1718,7 @@ public:
             case TypeKind::RefNull:
             case TypeKind::Rec:
             case TypeKind::Sub:
+            case TypeKind::Subfinal:
             case TypeKind::Struct:
             case TypeKind::Structref:
             case TypeKind::Externref:
@@ -1718,6 +1727,8 @@ public:
             case TypeKind::Eqref:
             case TypeKind::Anyref:
             case TypeKind::Nullref:
+            case TypeKind::Nullfuncref:
+            case TypeKind::Nullexternref:
                 m_jit.load64(Address(wasmScratchGPR), resultLocation.asGPR());
                 break;
             case TypeKind::Void:
@@ -1825,6 +1836,7 @@ public:
             case TypeKind::RefNull:
             case TypeKind::Rec:
             case TypeKind::Sub:
+            case TypeKind::Subfinal:
             case TypeKind::Struct:
             case TypeKind::Structref:
             case TypeKind::Externref:
@@ -1833,6 +1845,8 @@ public:
             case TypeKind::Eqref:
             case TypeKind::Anyref:
             case TypeKind::Nullref:
+            case TypeKind::Nullfuncref:
+            case TypeKind::Nullexternref:
                 m_jit.store64(valueLocation.asGPR(), Address(wasmScratchGPR));
                 break;
             case TypeKind::Void:
@@ -6700,12 +6714,12 @@ public:
         m_jit.emitFunctionPrologue();
         m_topLevel = ControlData(*this, BlockType::TopLevel, signature, 0);
 
-        m_jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxWasm(&m_callee)), wasmScratchGPR);
+        m_jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(&m_callee)), wasmScratchGPR);
         static_assert(CallFrameSlot::codeBlock + 1 == CallFrameSlot::callee);
         if constexpr (is32Bit()) {
             CCallHelpers::Address calleeSlot { GPRInfo::callFrameRegister, CallFrameSlot::callee * sizeof(Register) };
             m_jit.storePtr(wasmScratchGPR, calleeSlot.withOffset(PayloadOffset));
-            m_jit.store32(CCallHelpers::TrustedImm32(JSValue::WasmTag), calleeSlot.withOffset(TagOffset));
+            m_jit.store32(CCallHelpers::TrustedImm32(JSValue::NativeCalleeTag), calleeSlot.withOffset(TagOffset));
             m_jit.storePtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::addressFor(CallFrameSlot::codeBlock));
         } else
             m_jit.storePairPtr(GPRInfo::wasmContextInstancePointer, wasmScratchGPR, GPRInfo::callFrameRegister, CCallHelpers::TrustedImm32(CallFrameSlot::codeBlock * sizeof(Register)));
@@ -6813,6 +6827,7 @@ public:
             case TypeKind::Func:
             case TypeKind::Array:
             case TypeKind::Sub:
+            case TypeKind::Subfinal:
             case TypeKind::V128:
                 clear(ClearMode::Zero, type, m_locals[i]);
                 break;
@@ -6825,6 +6840,8 @@ public:
             case TypeKind::Eqref:
             case TypeKind::Anyref:
             case TypeKind::Nullref:
+            case TypeKind::Nullfuncref:
+            case TypeKind::Nullexternref:
                 clear(ClearMode::JSNull, type, m_locals[i]);
                 break;
             default:
@@ -6858,12 +6875,12 @@ public:
         auto label = m_jit.label();
         m_jit.emitFunctionPrologue();
 
-        m_jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxWasm(&m_callee)), wasmScratchGPR);
+        m_jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(&m_callee)), wasmScratchGPR);
         static_assert(CallFrameSlot::codeBlock + 1 == CallFrameSlot::callee);
         if constexpr (is32Bit()) {
             CCallHelpers::Address calleeSlot { GPRInfo::callFrameRegister, CallFrameSlot::callee * sizeof(Register) };
             m_jit.storePtr(wasmScratchGPR, calleeSlot.withOffset(PayloadOffset));
-            m_jit.store32(CCallHelpers::TrustedImm32(JSValue::WasmTag), calleeSlot.withOffset(TagOffset));
+            m_jit.store32(CCallHelpers::TrustedImm32(JSValue::NativeCalleeTag), calleeSlot.withOffset(TagOffset));
             m_jit.storePtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::addressFor(CallFrameSlot::codeBlock));
         } else
             m_jit.storePairPtr(GPRInfo::wasmContextInstancePointer, wasmScratchGPR, GPRInfo::callFrameRegister, CCallHelpers::TrustedImm32(CallFrameSlot::codeBlock * sizeof(Register)));
@@ -6924,6 +6941,8 @@ public:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
         case TypeKind::Nullref:
+        case TypeKind::Nullfuncref:
+        case TypeKind::Nullexternref:
             return B3::Type(B3::Int64);
         case TypeKind::F32:
             return B3::Type(B3::Float);
@@ -7173,8 +7192,11 @@ public:
                 case TypeKind::Eqref:
                 case TypeKind::Anyref:
                 case TypeKind::Nullref:
+                case TypeKind::Nullfuncref:
+                case TypeKind::Nullexternref:
                 case TypeKind::Rec:
                 case TypeKind::Sub:
+                case TypeKind::Subfinal:
                 case TypeKind::Array:
                 case TypeKind::Struct:
                 case TypeKind::Func: {
@@ -7778,10 +7800,11 @@ public:
     void emitCCall(Func function, const Vector<Value, N>& arguments)
     {
         // Currently, we assume the Wasm calling convention is the same as the C calling convention
-        Vector<Type, 1> resultTypes;
-        Vector<Type> argumentTypes;
+        Vector<Type, 16> resultTypes;
+        Vector<Type, 16> argumentTypes;
+        argumentTypes.reserveInitialCapacity(arguments.size());
         for (const Value& value : arguments)
-            argumentTypes.append(Type { value.type(), 0u });
+            argumentTypes.uncheckedAppend(Type { value.type(), 0u });
         RefPtr<TypeDefinition> functionType = TypeInformation::typeDefinitionForFunction(resultTypes, argumentTypes);
         CallInformation callInfo = wasmCallingConvention().callInformationFor(*functionType, CallRole::Caller);
         Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), callInfo.headerAndArgumentStackSizeInBytes);
@@ -7806,10 +7829,11 @@ public:
         ASSERT(result.isTemp());
 
         // Currently, we assume the Wasm calling convention is the same as the C calling convention
-        Vector<Type, 1> resultTypes = { Type { result.type(), 0u } };
-        Vector<Type> argumentTypes;
+        Vector<Type, 16> resultTypes = { Type { result.type(), 0u } };
+        Vector<Type, 16> argumentTypes;
+        argumentTypes.reserveInitialCapacity(arguments.size());
         for (const Value& value : arguments)
-            argumentTypes.append(Type { value.type(), 0u });
+            argumentTypes.uncheckedAppend(Type { value.type(), 0u });
         RefPtr<TypeDefinition> functionType = TypeInformation::typeDefinitionForFunction(resultTypes, argumentTypes);
         CallInformation callInfo = wasmCallingConvention().callInformationFor(*functionType, CallRole::Caller);
         Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), callInfo.headerAndArgumentStackSizeInBytes);
@@ -7841,8 +7865,11 @@ public:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
         case TypeKind::Nullref:
+        case TypeKind::Nullfuncref:
+        case TypeKind::Nullexternref:
         case TypeKind::Rec:
         case TypeKind::Sub:
+        case TypeKind::Subfinal:
         case TypeKind::Array:
         case TypeKind::Struct:
         case TypeKind::Func: {
@@ -9349,6 +9376,8 @@ private:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
         case TypeKind::Nullref:
+        case TypeKind::Nullfuncref:
+        case TypeKind::Nullexternref:
             m_jit.store64(TrustedImm64(constant.asRef()), loc.asAddress());
             break;
         case TypeKind::I64:
@@ -9390,6 +9419,8 @@ private:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
         case TypeKind::Nullref:
+        case TypeKind::Nullfuncref:
+        case TypeKind::Nullexternref:
             m_jit.move(TrustedImm64(constant.asRef()), loc.asGPR());
             break;
         case TypeKind::F32:
@@ -9432,6 +9463,8 @@ private:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
         case TypeKind::Nullref:
+        case TypeKind::Nullfuncref:
+        case TypeKind::Nullexternref:
             m_jit.store64(src.asGPR(), dst.asAddress());
             break;
         case TypeKind::V128:
@@ -9481,6 +9514,8 @@ private:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
         case TypeKind::Nullref:
+        case TypeKind::Nullfuncref:
+        case TypeKind::Nullexternref:
             m_jit.transfer64(src.asAddress(), dst.asAddress());
             break;
         case TypeKind::V128: {
@@ -9522,6 +9557,8 @@ private:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
         case TypeKind::Nullref:
+        case TypeKind::Nullfuncref:
+        case TypeKind::Nullexternref:
             m_jit.move(src.asGPR(), dst.asGPR());
             break;
         case TypeKind::F32:
@@ -9572,6 +9609,8 @@ private:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
         case TypeKind::Nullref:
+        case TypeKind::Nullfuncref:
+        case TypeKind::Nullexternref:
             m_jit.load64(src.asAddress(), dst.asGPR());
             break;
         case TypeKind::V128:
@@ -10294,4 +10333,4 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(Compilati
 
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMBLY_B3JIT)
+#endif // ENABLE(WEBASSEMBLY_OMGJIT)

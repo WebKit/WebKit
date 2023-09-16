@@ -89,6 +89,50 @@ FPRS =
      "fr"
     ]
 
+VECS =
+    [
+     "v0",
+     "v0_b",
+     "v0_h",
+     "v0_i",
+     "v0_q",
+     "v1",
+     "v1_b",
+     "v1_h",
+     "v1_i",
+     "v1_q",
+     "v2",
+     "v2_b",
+     "v2_h",
+     "v2_i",
+     "v2_q",
+     "v3",
+     "v3_b",
+     "v3_h",
+     "v3_i",
+     "v3_q",
+     "v4",
+     "v4_b",
+     "v4_h",
+     "v4_i",
+     "v4_q",
+     "v5",
+     "v5_b",
+     "v5_h",
+     "v5_i",
+     "v5_q",
+     "v6",
+     "v6_b",
+     "v6_h",
+     "v6_i",
+     "v6_q",
+     "v7",
+     "v7_b",
+     "v7_h",
+     "v7_i",
+     "v7_q",
+    ]
+
 WASM_GPRS =
     [
      "wa0",
@@ -122,10 +166,11 @@ WASM_SCRATCHS =
      "ws3",
     ]
 
-REGISTERS = GPRS + FPRS + WASM_GPRS + WASM_FPRS + WASM_SCRATCHS
+REGISTERS = GPRS + FPRS + VECS + WASM_GPRS + WASM_FPRS + WASM_SCRATCHS
 
 GPR_PATTERN = Regexp.new('\\A((' + GPRS.join(')|(') + '))\\Z')
 FPR_PATTERN = Regexp.new('\\A((' + FPRS.join(')|(') + '))\\Z')
+VEC_PATTERN = Regexp.new('\\A((' + VECS.join(')|(') + '))\\Z')
 WASM_GPR_PATTERN = Regexp.new('\\A((' + WASM_GPRS.join(')|(') + '))\\Z')
 WASM_FPR_PATTERN = Regexp.new('\\A((' + WASM_FPRS.join(')|(') + '))\\Z')
 

@@ -44,7 +44,7 @@ CMAKE_DEPENDENT_OPTION(USE_LD_LLD "Use LLD linker" ON
                        "TRY_USE_LD_LLD;NOT WIN32" OFF)
 if (USE_LD_LLD)
     execute_process(COMMAND ${CMAKE_C_COMPILER} -fuse-ld=lld -Wl,--version ERROR_QUIET OUTPUT_VARIABLE LD_VERSION)
-    if (LD_VERSION MATCHES "^LLD ")
+    if (LD_VERSION MATCHES "(^|[ \t])LLD ")
         string(APPEND CMAKE_EXE_LINKER_FLAGS " -fuse-ld=lld")
         string(APPEND CMAKE_SHARED_LINKER_FLAGS " -fuse-ld=lld")
         string(APPEND CMAKE_MODULE_LINKER_FLAGS " -fuse-ld=lld")
@@ -213,6 +213,17 @@ if (NOT PORT STREQUAL "GTK" AND NOT PORT STREQUAL "WPE")
     set(LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib" CACHE PATH "Absolute path to library installation directory")
     set(EXEC_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/bin" CACHE PATH "Absolute path to executable installation directory")
     set(LIBEXEC_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/bin" CACHE PATH "Absolute path to install executables executed by the library")
+endif ()
+
+set(ENABLE_ASSERTS "AUTO" CACHE STRING "Enable or disable assertions regardless of build type")
+set_property(CACHE ENABLE_ASSERTS PROPERTY STRINGS "AUTO" "ON" "OFF")
+
+if (ENABLE_ASSERTS STREQUAL "AUTO")
+    # The default value is handled by the NDEBUG define which is generally set by the toolchain module used by CMake.
+elseif (ENABLE_ASSERTS)
+    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-DASSERT_ENABLED=1)
+elseif (NOT ENABLE_ASSERTS)
+    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-DASSERT_ENABLED=0)
 endif ()
 
 # Check whether features.h header exists.

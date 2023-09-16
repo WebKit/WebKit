@@ -189,7 +189,7 @@ async function runTest() {
 
     for (let i = stack.length - 2; -1 < i; --i) {
         debug(`back to ${String(i)}th input`);
-        await UIHelper.moveToPrevByKeyboardAccessoryBar();
+        await UIHelper.moveToPreviousByKeyboardAccessoryBar();
         const { documentOrShadowRoot, inputElement, } = stack[i];
         const activeElement = documentOrShadowRoot.activeElement;
         debug(`documentOrShadowRoot.activeElement's placeholder attribute: ${activeElement.getAttribute('placeholder')}`);

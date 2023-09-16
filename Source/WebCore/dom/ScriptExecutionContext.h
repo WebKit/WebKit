@@ -72,6 +72,7 @@ class EventQueue;
 class EventLoopTaskGroup;
 class EventTarget;
 class FontLoadRequest;
+class GraphicsClient;
 class MessagePort;
 class NotificationClient;
 class PublicURLManager;
@@ -96,7 +97,7 @@ namespace IDBClient {
 class IDBConnectionProxy;
 }
 
-class ScriptExecutionContext : public SecurityContext, public CanMakeWeakPtr<ScriptExecutionContext>, public CanMakeCheckedPtr {
+class ScriptExecutionContext : public SecurityContext, public CanMakeCheckedPtr, public TimerAlignment {
 public:
     explicit ScriptExecutionContext(ScriptExecutionContextIdentifier = { });
     virtual ~ScriptExecutionContext();
@@ -128,6 +129,8 @@ public:
     virtual IDBClient::IDBConnectionProxy* idbConnectionProxy() = 0;
 
     virtual SocketProvider* socketProvider() = 0;
+
+    virtual GraphicsClient* graphicsClient() { return nullptr; }
 
     virtual std::optional<uint64_t> noiseInjectionHashSalt() const = 0;
 
@@ -250,6 +253,9 @@ public:
 
     void didChangeTimerAlignmentInterval();
     virtual Seconds domTimerAlignmentInterval(bool hasReachedMaxNestingLevel) const;
+
+    // TimerAlignment
+    WEBCORE_EXPORT std::optional<MonotonicTime> alignedFireTime(bool hasReachedMaxNestingLevel, MonotonicTime fireTime) const final;
 
     virtual EventTarget* errorEventTarget() = 0;
 

@@ -1,3 +1,0 @@
-
-PASS MessageChannel/MessagePort created and used after a worker self.close()
-

@@ -32,6 +32,10 @@
 
 namespace WebKit {
 
+void GPUProcess::platformInitializeGPUProcess(GPUProcessCreationParameters&)
+{
+}
+
 void GPUProcess::initializeProcess(const AuxiliaryProcessInitializationParameters&)
 {
 }

@@ -108,6 +108,15 @@
     content: url(../Images/ClippingIcons.svg#range-light);
 }
 
+.resource-icon.override.mapped-file .icon {
+    content: url(../Images/Disk.svg#light);
+}
+
+body:not(.window-inactive, .window-docked-inactive) :is(.table, .data-grid):focus-within .selected .resource-icon.override.mapped-file .icon,
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .selected.resource-icon.override.mapped-file .icon {
+    content: url(../Images/Disk.svg#dark);
+}
+
 .resource-icon.override.skip-network .icon {
     content: url(../Images/SkipNetwork.svg#light);
 }
@@ -197,6 +206,10 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .
 
     .resource-icon.resource-type-range .icon {
         content: url(../Images/ClippingIcons.svg#range-dark);
+    }
+
+    .resource-icon.override.mapped-file .icon {
+        content: url(../Images/Disk.svg#dark);
     }
 
     .resource-icon.override.skip-network .icon {

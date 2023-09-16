@@ -47,6 +47,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-dom-clippathunits.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-dom-href.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-dom-id.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-inset-stroke-001.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-inset-stroke-002.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-invalid.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-negative-scale.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-no-content-001.svg

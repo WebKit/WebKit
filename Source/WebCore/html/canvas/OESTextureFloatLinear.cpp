@@ -42,11 +42,6 @@ OESTextureFloatLinear::OESTextureFloatLinear(WebGLRenderingContextBase& context)
 
 OESTextureFloatLinear::~OESTextureFloatLinear() = default;
 
-WebGLExtension::ExtensionName OESTextureFloatLinear::getName() const
-{
-    return OESTextureFloatLinearName;
-}
-
 bool OESTextureFloatLinear::supported(GraphicsContextGL& context)
 {
     return context.supportsExtension("GL_OES_texture_float_linear"_s);

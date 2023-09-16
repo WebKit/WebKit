@@ -60,6 +60,8 @@ static void testWebProcessAutocleanups(WebViewTest* test, gconstpointer)
 
 void beforeAll()
 {
+    Test::shouldInitializeWebProcessExtensions = true;
+
     WebViewTest::add("Autocleanups", "ui-process-autocleanups", testUIProcessAutocleanups);
     WebViewTest::add("Autocleanups", "web-process-autocleanups", testWebProcessAutocleanups);
 }

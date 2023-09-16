@@ -342,7 +342,7 @@ static void maybeCopyNodeAttributesToFragment(const Node& node, DocumentFragment
 
 void Editor::replaceNodeFromPasteboard(Node& node, const String& pasteboardName, EditAction action)
 {
-    if (node.document() != m_document)
+    if (&node.document() != &m_document)
         return;
 
     auto range = makeRangeSelectingNode(node);

@@ -3,7 +3,8 @@
 
 /*---
 esid: sec-temporal.instant.prototype.tostring
-description: Passing a TimeZone to options calls getOffsetNanosecondsFor twice, but not toString
+description: >
+  Passing a TimeZone to options calls getOffsetNanosecondsFor, but not toString
 includes: [compareArray.js, temporalHelpers.js]
 features: [Temporal]
 ---*/
@@ -13,8 +14,6 @@ const expected = [
   "has timeZone.getOffsetNanosecondsFor",
   "has timeZone.getPossibleInstantsFor",
   "has timeZone.id",
-  "get timeZone.getOffsetNanosecondsFor",
-  "call timeZone.getOffsetNanosecondsFor",
   "get timeZone.getOffsetNanosecondsFor",
   "call timeZone.getOffsetNanosecondsFor",
 ];

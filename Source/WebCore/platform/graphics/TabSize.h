@@ -60,13 +60,10 @@ struct TabSize {
 
     operator bool() const { return value(); }
 
+    friend bool operator==(const TabSize&, const TabSize&) = default;
+
     float m_value;
     bool m_isSpaces;
 };
-
-inline bool operator==(const TabSize& a, const TabSize& b)
-{
-    return (a.m_value == b.m_value) && (a.m_isSpaces == b.m_isSpaces);
-}
 
 } // namespace WebCore

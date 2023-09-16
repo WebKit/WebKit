@@ -1,0 +1,7 @@
+Tests the #comp_name_from_content portions of the AccName Name Computation algorithm.
+
+label
+
+
+PASS heading name from content
+

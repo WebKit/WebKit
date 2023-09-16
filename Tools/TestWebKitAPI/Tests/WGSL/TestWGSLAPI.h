@@ -34,11 +34,11 @@
     } while (false)
 
 namespace WGSL {
-class CompilationMessage;
+struct FailedCheck;
 }
 
 namespace TestWGSLAPI {
 
-void logCompilationError(WGSL::CompilationMessage& error);
+void logCompilationError(WGSL::FailedCheck& error);
 
 } // namespace TestWGSLAPI

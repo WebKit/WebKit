@@ -90,6 +90,6 @@
 #endif
 
 /* PLATFORM(VISION) */
-#if defined(TARGET_OS_XR) && TARGET_OS_XR
+#if defined(TARGET_OS_VISION) && TARGET_OS_VISION
 #define WTF_PLATFORM_VISION 1
 #endif

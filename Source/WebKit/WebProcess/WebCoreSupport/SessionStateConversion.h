@@ -29,6 +29,7 @@
 
 namespace WebCore {
 class HistoryItem;
+class HistoryItemClient;
 };
 
 namespace WebKit {
@@ -36,6 +37,6 @@ namespace WebKit {
 struct BackForwardListItemState;
 
 BackForwardListItemState toBackForwardListItemState(const WebCore::HistoryItem&);
-Ref<WebCore::HistoryItem> toHistoryItem(const BackForwardListItemState&);
+Ref<WebCore::HistoryItem> toHistoryItem(WebCore::HistoryItemClient&, const BackForwardListItemState&);
 
 } // namespace WebKit

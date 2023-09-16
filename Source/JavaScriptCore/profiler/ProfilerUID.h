@@ -60,10 +60,7 @@ public:
         return m_uid;
     }
     
-    bool operator==(const UID& other) const
-    {
-        return m_uid == other.m_uid;
-    }
+    friend bool operator==(UID, UID) = default;
     
     explicit operator bool() const
     {

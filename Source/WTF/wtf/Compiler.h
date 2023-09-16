@@ -194,6 +194,23 @@
 #define ALWAYS_INLINE_EXCEPT_MSVC ALWAYS_INLINE
 #endif
 
+
+/* ALWAYS_INLINE_LAMBDA */
+
+/* In GCC functions marked with no_sanitize_address cannot call functions that are marked with always_inline and not marked with no_sanitize_address.
+ * Therefore we need to give up on the enforcement of ALWAYS_INLINE_LAMBDA when bulding with ASAN. https://gcc.gnu.org/bugzilla/show_bug.cgi?id=67368 */
+#if !defined(ALWAYS_INLINE_LAMBDA) && (COMPILER(GCC) || COMPILER(CLANG)) && defined(NDEBUG) && !COMPILER(MINGW) && !(COMPILER(GCC) && ASAN_ENABLED)
+#define ALWAYS_INLINE_LAMBDA __attribute__((__always_inline__))
+#endif
+
+#if !defined(ALWAYS_INLINE_LAMBDA) && COMPILER(MSVC) && defined(NDEBUG)
+#define ALWAYS_INLINE_LAMBDA [[msvc::forceinline]]
+#endif
+
+#if !defined(ALWAYS_INLINE_LAMBDA)
+#define ALWAYS_INLINE_LAMBDA
+#endif
+
 /* WTF_EXTERN_C_{BEGIN, END} */
 
 #ifdef __cplusplus
@@ -257,7 +274,7 @@
 
 /* NO_RETURN */
 
-#if !defined(NO_RETURN) && COMPILER(GCC_COMPATIBLE)
+#if !defined(NO_RETURN) && (COMPILER(GCC) || COMPILER(CLANG))
 #define NO_RETURN __attribute((__noreturn__))
 #endif
 
@@ -304,7 +321,7 @@
 
 /* NO_RETURN_WITH_VALUE */
 
-#if !defined(NO_RETURN_WITH_VALUE) && !COMPILER(MSVC)
+#if !defined(NO_RETURN_WITH_VALUE) && (COMPILER(GCC) || COMPILER(CLANG))
 #define NO_RETURN_WITH_VALUE NO_RETURN
 #endif
 
@@ -356,7 +373,7 @@
 
 /* UNUSED_FUNCTION */
 
-#if !defined(UNUSED_FUNCTION) && COMPILER(GCC_COMPATIBLE)
+#if !defined(UNUSED_FUNCTION) && (COMPILER(GCC) || COMPILER(CLANG))
 #define UNUSED_FUNCTION __attribute__((unused))
 #endif
 
@@ -376,12 +393,23 @@
 
 /* REFERENCED_FROM_ASM */
 
-#if !defined(REFERENCED_FROM_ASM) && COMPILER(GCC_COMPATIBLE)
+#if !defined(REFERENCED_FROM_ASM) && (COMPILER(GCC) || COMPILER(CLANG))
 #define REFERENCED_FROM_ASM __attribute__((__used__))
 #endif
 
 #if !defined(REFERENCED_FROM_ASM)
 #define REFERENCED_FROM_ASM
+#endif
+
+/* NO_REORDER */
+
+#if !defined(NO_REORDER) && COMPILER(GCC)
+#define NO_REORDER \
+    __attribute__((__no_reorder__))
+#endif
+
+#if !defined(NO_REORDER)
+#define NO_REORDER
 #endif
 
 /* UNLIKELY */

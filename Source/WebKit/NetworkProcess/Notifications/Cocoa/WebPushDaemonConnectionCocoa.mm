@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,23 +28,15 @@
 
 #if PLATFORM(COCOA) && ENABLE(BUILT_IN_NOTIFICATIONS)
 
-#import "DaemonDecoder.h"
-#import "DaemonEncoder.h"
 #import "DaemonUtilities.h"
+#import "Decoder.h"
 #import "HandleMessage.h"
+#import "MessageSenderInlines.h"
+#import "PushClientConnectionMessages.h"
 #import "WebPushDaemonConstants.h"
 #import <wtf/spi/darwin/XPCSPI.h>
 
 namespace WebKit::WebPushD { 
-
-using Daemon::EncodedMessage;
-
-static void addVersionAndEncodedMessageToDictionary(Vector<uint8_t>&& message, xpc_object_t dictionary)
-{
-    ASSERT(xpc_get_type(dictionary) == XPC_TYPE_DICTIONARY);
-    xpc_dictionary_set_uint64(dictionary, WebPushD::protocolVersionKey, WebPushD::protocolVersionValue);
-    xpc_dictionary_set_value(dictionary, WebPushD::protocolEncodedMessageKey, vectorToXPCData(WTFMove(message)).get());
-}
 
 void Connection::newConnectionWasInitialized() const
 {
@@ -52,66 +44,45 @@ void Connection::newConnectionWasInitialized() const
     if (networkSession().sessionID().isEphemeral())
         return;
 
-    Daemon::Encoder encoder;
-    encoder.encode(m_configuration);
-    Daemon::Connection::send(dictionaryFromMessage(WebPushD::MessageType::UpdateConnectionConfiguration, encoder.takeBuffer()).get());
+    sendWithoutUsingIPCConnection(Messages::PushClientConnection::UpdateConnectionConfiguration(m_configuration));
 }
 
-namespace MessageInfo {
-
-#define FUNCTION(mf) struct mf { static constexpr auto MemberFunction = &WebKit::WebPushD::Connection::mf;
-#define ARGUMENTS(...) using ArgsTuple = std::tuple<__VA_ARGS__>;
-#define END };
-
-FUNCTION(debugMessage)
-ARGUMENTS(String)
-END
-
-} // namespace MessageInfo
-
-template<typename Info>
-void handleWebPushDaemonMessage(WebKit::WebPushD::Connection* connection, std::span<const uint8_t> encodedMessage)
+static OSObjectPtr<xpc_object_t> messageDictionaryFromEncoder(UniqueRef<IPC::Encoder>&& encoder)
 {
-    WebKit::Daemon::Decoder decoder(encodedMessage);
+    auto xpcData = encoderToXPCData(WTFMove(encoder));
+    auto dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    xpc_dictionary_set_uint64(dictionary.get(), WebPushD::protocolVersionKey, WebPushD::protocolVersionValue);
+    xpc_dictionary_set_value(dictionary.get(), WebPushD::protocolEncodedMessageKey, xpcData.get());
 
-    std::optional<typename Info::ArgsTuple> arguments;
-    decoder >> arguments;
-    if (UNLIKELY(!arguments))
-        return;
-
-    IPC::callMemberFunction(connection, Info::MemberFunction, WTFMove(*arguments));
-}
-
-void Connection::connectionReceivedEvent(xpc_object_t request)
-{
-    if (xpc_get_type(request) != XPC_TYPE_DICTIONARY)
-        return;
-
-    if (xpc_dictionary_get_uint64(request, protocolVersionKey) != protocolVersionValue) {
-        RELEASE_LOG(Push, "Received request that was not the current protocol version");
-        return;
-    }
-
-    auto messageType { static_cast<DaemonMessageType>(xpc_dictionary_get_uint64(request, protocolMessageTypeKey)) };
-    size_t dataSize { 0 };
-    const void* data = xpc_dictionary_get_data(request, protocolEncodedMessageKey, &dataSize);
-    std::span<const uint8_t> encodedMessage { static_cast<const uint8_t*>(data), dataSize };
-
-    ASSERT(!daemonMessageTypeSendsReply(messageType));
-
-    switch (messageType) {
-    case DaemonMessageType::DebugMessage:
-        handleWebPushDaemonMessage<MessageInfo::debugMessage>(this, encodedMessage);
-        break;
-    };
-}
-
-RetainPtr<xpc_object_t> Connection::dictionaryFromMessage(MessageType messageType, EncodedMessage&& message) const
-{
-    auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-    addVersionAndEncodedMessageToDictionary(WTFMove(message), dictionary.get());
-    xpc_dictionary_set_uint64(dictionary.get(), protocolMessageTypeKey, static_cast<uint64_t>(messageType));
     return dictionary;
+}
+
+bool Connection::performSendWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& encoder) const
+{
+    auto dictionary = messageDictionaryFromEncoder(WTFMove(encoder));
+    Daemon::Connection::send(dictionary.get());
+
+    return true;
+}
+
+bool Connection::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& encoder, CompletionHandler<void(IPC::Decoder*)>&& completionHandler) const
+{
+    auto dictionary = messageDictionaryFromEncoder(WTFMove(encoder));
+    Daemon::Connection::sendWithReply(dictionary.get(), [completionHandler = WTFMove(completionHandler)] (xpc_object_t reply) mutable {
+        if (xpc_get_type(reply) != XPC_TYPE_DICTIONARY)
+            return completionHandler(nullptr);
+
+        if (xpc_dictionary_get_uint64(reply, WebPushD::protocolVersionKey) != WebPushD::protocolVersionValue)
+            return completionHandler(nullptr);
+
+        size_t dataSize { 0 };
+        const uint8_t* data = static_cast<const uint8_t *>(xpc_dictionary_get_data(reply, WebPushD::protocolEncodedMessageKey, &dataSize));
+        auto decoder = IPC::Decoder::create({ data, dataSize }, { });
+
+        completionHandler(decoder.get());
+    });
+
+    return true;
 }
 
 } // namespace WebKit::WebPushD

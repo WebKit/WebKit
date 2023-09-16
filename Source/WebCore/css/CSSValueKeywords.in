@@ -135,6 +135,13 @@ full-width
 proportional-width
 ruby
 
+// font-variant-emoji
+//
+// normal
+// text
+emoji
+unicode
+
 //
 // CSS_PROP_FONT_WEIGHT:
 //
@@ -526,7 +533,11 @@ flow-root
 flow
 -webkit-inline-flex
 -webkit-flex
-//none
+// ruby
+block-ruby
+ruby-base
+ruby-text
+// none
 //
 // CSS_PROP_CURSOR:
 // The order here must match the order of the CursorType enum in RenderStyleConstants.h.
@@ -950,7 +961,6 @@ exclude
 // Variables Implementation
 //
 var
--internal-variable-value
 
 //
 // Environment Variables
@@ -1110,7 +1120,7 @@ manual
 // auto
 touch enable-if=ENABLE_OVERFLOW_SCROLLING_TOUCH
 
-// -webkit-writing-mode
+// writing-mode
 // SVG compatibility
 lr
 rl
@@ -1120,8 +1130,11 @@ rl-tb
 tb-rl
 // Standard values from CSS3
 horizontal-tb
-vertical-rl
 vertical-lr
+vertical-rl
+sideways-lr
+sideways-rl
+// Non-standard
 horizontal-bt
 
 // -webkit-ruby-position
@@ -1420,6 +1433,7 @@ fill-box
 
 // motion path
 path
+xywh
 
 calc
 -webkit-calc

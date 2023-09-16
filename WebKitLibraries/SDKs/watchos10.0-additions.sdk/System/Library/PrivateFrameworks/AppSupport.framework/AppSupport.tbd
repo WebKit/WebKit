@@ -1,0 +1,19 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [armv7k-watchos, arm64-watchos, arm64e-watchos, arm64_32-watchos]
+install-name: /System/Library/PrivateFrameworks/AppSupport.framework/AppSupport
+current-version: 29
+reexported-libraries:
+-       targets: [armv7k-watchos, arm64-watchos, arm64e-watchos, arm64_32-watchos]
+        libraries: [/System/Library/PrivateFrameworks/CorePhoneNumbers.framework/CorePhoneNumbers]
+exports:
+-       targets: [armv7k-watchos, arm64-watchos, arm64e-watchos, arm64_32-watchos]
+        symbols: [_CPCopyBundleIdentifierAndTeamFromAuditToken]
+        objc-classes: [CPNetworkObserver]
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [armv7k-watchos, arm64-watchos, arm64e-watchos, arm64_32-watchos]
+install-name: /System/Library/PrivateFrameworks/CorePhoneNumbers.framework/CorePhoneNumbers
+exports: []
+...

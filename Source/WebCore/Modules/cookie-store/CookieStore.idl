@@ -30,7 +30,7 @@ typedef sequence<CookieListItem> CookieList;
 [
     ActiveDOMObject,
     EnabledBySetting=CookieStoreAPIEnabled,
-    Exposed=(Window),
+    Exposed=(ServiceWorker,Window),
     SecureContext
 ] interface CookieStore : EventTarget {
     Promise<CookieListItem?> get(USVString name);

@@ -31,10 +31,10 @@
 #include "DataReference.h"
 #include "LibWebRTCNetworkMessages.h"
 #include "Logging.h"
-#include "NWSPI.h"
 #include "NetworkRTCUtilitiesCocoa.h"
 #include <WebCore/STUNMessageParsing.h>
 #include <dispatch/dispatch.h>
+#include <pal/spi/cocoa/NetworkSPI.h>
 #include <wtf/BlockPtr.h>
 
 namespace WebKit {

@@ -56,6 +56,8 @@ enum TokenType : uint8_t {
     TokLParen, TokRParen, TokComma, TokTrue, TokFalse,
     TokNull, TokEnd, TokDot, TokAssign, TokSemi, TokError, TokErrorSpace };
 
+enum class JSONIdentifierHint : uint8_t { MaybeIdentifier, Unknown };
+
 struct JSONPPathEntry {
     Identifier m_pathEntryName;
     int m_pathIndex;
@@ -139,6 +141,7 @@ private:
         }
         
         TokenType next();
+        TokenType nextMaybeIdentifier();
         
 #if !ASSERT_ENABLED
         using LiteralParserTokenPtr = const LiteralParserToken<CharType>*;
@@ -178,8 +181,10 @@ private:
         String getErrorMessage() { return m_lexErrorMessage; }
         
     private:
+        template<JSONIdentifierHint>
         TokenType lex(LiteralParserToken<CharType>&);
         ALWAYS_INLINE TokenType lexIdentifier(LiteralParserToken<CharType>&);
+        template<JSONIdentifierHint>
         ALWAYS_INLINE TokenType lexString(LiteralParserToken<CharType>&, CharType terminator);
         TokenType lexStringSlow(LiteralParserToken<CharType>&, const CharType* runStart, CharType terminator);
         ALWAYS_INLINE TokenType lexNumber(LiteralParserToken<CharType>&);

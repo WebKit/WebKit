@@ -344,14 +344,6 @@ bool HTMLImageElement::hasLazyLoadableAttributeValue(StringView attributeValue)
     return equalLettersIgnoringASCIICase(attributeValue, "lazy"_s);
 }
 
-enum CrossOriginState { NotSet, UseCredentials, Anonymous };
-static CrossOriginState parseCrossoriginState(const AtomString& crossoriginValue)
-{
-    if (crossoriginValue.isNull())
-        return NotSet;
-    return equalLettersIgnoringASCIICase(crossoriginValue, "use-credentials"_s) ? UseCredentials : Anonymous;
-}
-
 void HTMLImageElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
@@ -385,16 +377,15 @@ void HTMLImageElement::attributeChanged(const QualifiedName& name, const AtomStr
         if (!hasLazyLoadableAttributeValue(newValue))
             loadDeferredImage();
         break;
-    case AttributeNames::referrerpolicyAttr:
-        if (document().settings().referrerPolicyAttributeEnabled()) {
-            auto oldReferrerPolicy = parseReferrerPolicy(oldValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
-            auto newReferrerPolicy = parseReferrerPolicy(newValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
-            if (oldReferrerPolicy != newReferrerPolicy)
-                m_imageLoader->updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
-        }
+    case AttributeNames::referrerpolicyAttr: {
+        auto oldReferrerPolicy = parseReferrerPolicy(oldValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
+        auto newReferrerPolicy = parseReferrerPolicy(newValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
+        if (oldReferrerPolicy != newReferrerPolicy)
+            m_imageLoader->updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
         break;
+    }
     case AttributeNames::crossoriginAttr:
-        if (parseCrossoriginState(oldValue) != parseCrossoriginState(newValue))
+        if (parseCORSSettingsAttribute(oldValue) != parseCORSSettingsAttribute(newValue))
             m_imageLoader->updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
         break;
     case AttributeNames::nameAttr: {
@@ -1015,9 +1006,7 @@ String HTMLImageElement::referrerPolicyForBindings() const
 
 ReferrerPolicy HTMLImageElement::referrerPolicy() const
 {
-    if (document().settings().referrerPolicyAttributeEnabled())
-        return parseReferrerPolicy(attributeWithoutSynchronization(referrerpolicyAttr), ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
-    return ReferrerPolicy::EmptyString;
+    return parseReferrerPolicy(attributeWithoutSynchronization(referrerpolicyAttr), ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
 }
 
 HTMLSourceElement* HTMLImageElement::sourceElement() const

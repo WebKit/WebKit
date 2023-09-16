@@ -59,7 +59,7 @@ public:
     size_t byteSize() const { return bytesForWidth(width()); }
     Width width() const { return m_width ? conservativeWidth(reg()) : conservativeWidthWithoutVectors(reg()); }
     int offsetAsIndex() const { ASSERT(!(offset() % sizeof(CPURegister))); return offset() / static_cast<int>(sizeof(CPURegister)); }
-    
+
     bool operator==(const RegisterAtOffset& other) const
     {
         return reg() == other.reg() && offset() == other.offset() && width() == other.width();

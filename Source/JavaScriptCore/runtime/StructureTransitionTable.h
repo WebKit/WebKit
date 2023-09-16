@@ -190,10 +190,7 @@ class StructureTransitionTable {
             TransitionPropertyAttributes attributes() const { return (m_encodedData >> attributesShift) & UINT8_MAX; }
             TransitionKind transitionKind() const { return static_cast<TransitionKind>(m_encodedData >> transitionKindShift); }
 
-            friend bool operator==(const Key& a, const Key& b)
-            {
-                return a.m_encodedData == b.m_encodedData;
-            }
+            friend bool operator==(Key, Key) = default;
 
         private:
             uintptr_t m_encodedData { 0 };

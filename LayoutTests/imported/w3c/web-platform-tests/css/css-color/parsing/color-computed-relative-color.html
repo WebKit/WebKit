@@ -297,7 +297,7 @@
   test_computed_value(`color`, `lab(from lab(25 20 50) l a b)`, `lab(25 20 50)`);
   test_computed_value(`color`, `lab(from lab(25 20 50) l a b / alpha)`, `lab(25 20 50)`);
   test_computed_value(`color`, `lab(from lab(25 20 50 / 40%) l a b / alpha)`, `lab(25 20 50 / 0.4)`);
-  test_computed_value(`color`, `lab(from lab(200 300 400 / 500%) l a b / alpha)`, `lab(200 300 400)`);
+  test_computed_value(`color`, `lab(from lab(200 300 400 / 500%) l a b / alpha)`, `lab(100 300 400)`);
   test_computed_value(`color`, `lab(from lab(-200 -300 -400 / -500%) l a b / alpha)`, `lab(0 -300 -400 / 0)`);
 
   // Test nesting relative colors.
@@ -327,7 +327,7 @@
   test_computed_value(`color`, `lab(from lab(25 20 50 / 40%) l 35 b / alpha)`, `lab(25 35 50 / 0.4)`);
   test_computed_value(`color`, `lab(from lab(25 20 50 / 40%) l a 35 / alpha)`, `lab(25 20 35 / 0.4)`);
   test_computed_value(`color`, `lab(from lab(25 20 50 / 40%) l a b / .35)`, `lab(25 20 50 / 0.35)`);
-  test_computed_value(`color`, `lab(from lab(0.7 45 30 / 40%) 200 300 400 / 500)`, `lab(200 300 400)`);
+  test_computed_value(`color`, `lab(from lab(0.7 45 30 / 40%) 200 300 400 / 500)`, `lab(100 300 400)`);
   test_computed_value(`color`, `lab(from lab(0.7 45 30 / 40%) -200 -300 -400 / -500)`, `lab(0 -300 -400 / 0)`);
 
   // Testing valid permutation (types match).
@@ -438,7 +438,7 @@
   test_computed_value(`color`, `lch(from lch(0.7 45 30) l c h)`, `lch(0.7 45 30)`);
   test_computed_value(`color`, `lch(from lch(0.7 45 30) l c h / alpha)`, `lch(0.7 45 30)`);
   test_computed_value(`color`, `lch(from lch(0.7 45 30 / 40%) l c h / alpha)`, `lch(0.7 45 30 / 0.4)`);
-  test_computed_value(`color`, `lch(from lch(200 300 400 / 500%) l c h / alpha)`, `lch(200 300 40)`);
+  test_computed_value(`color`, `lch(from lch(200 300 400 / 500%) l c h / alpha)`, `lch(100 300 40)`);
   test_computed_value(`color`, `lch(from lch(-200 -300 -400 / -500%) l c h / alpha)`, `lch(0 0 320 / 0)`);
 
   // Test nesting relative colors.
@@ -475,7 +475,7 @@
   test_computed_value(`color`, `lch(from lch(0.7 45 30 / 40%) l c 25 / alpha)`, `lch(0.7 45 25 / 0.4)`);
   test_computed_value(`color`, `lch(from lch(0.7 45 30 / 40%) l c 25deg / alpha)`, `lch(0.7 45 25 / 0.4)`);
   test_computed_value(`color`, `lch(from lch(0.7 45 30 / 40%) l c h / .25)`, `lch(0.7 45 30 / 0.25)`);
-  test_computed_value(`color`, `lch(from lch(0.7 45 30 / 40%) 200 300 400 / 500)`, `lch(200 300 40)`);
+  test_computed_value(`color`, `lch(from lch(0.7 45 30 / 40%) 200 300 400 / 500)`, `lch(100 300 40)`);
   test_computed_value(`color`, `lch(from lch(0.7 45 30 / 40%) -200 -300 -400 / -500)`, `lch(0 0 320 / 0)`);
   test_computed_value(`color`, `lch(from lch(0.7 45 30 / 40%) 50 120 400deg / 500)`, `lch(50 120 40)`);
   test_computed_value(`color`, `lch(from lch(0.7 45 30 / 40%) 50 120 -400deg / -500)`, `lch(50 120 320 / 0)`);

@@ -52,8 +52,7 @@ public:
     ~RemoteResourceCacheProxy();
 
     void cacheImageBuffer(RemoteImageBufferProxy&);
-    RemoteImageBufferProxy* cachedImageBuffer(WebCore::RenderingResourceIdentifier) const;
-    void releaseImageBuffer(RemoteImageBufferProxy&);
+    RefPtr<RemoteImageBufferProxy> cachedImageBuffer(WebCore::RenderingResourceIdentifier) const;
     void forgetImageBuffer(WebCore::RenderingResourceIdentifier);
 
     WebCore::NativeImage* cachedNativeImage(WebCore::RenderingResourceIdentifier) const;
@@ -77,7 +76,7 @@ public:
     void clear();
 
 private:
-    using ImageBufferHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<RemoteImageBufferProxy>>;
+    using ImageBufferHashMap = HashMap<WebCore::RenderingResourceIdentifier, ThreadSafeWeakPtr<RemoteImageBufferProxy>>;
     using RenderingResourceHashMap = HashMap<WebCore::RenderingResourceIdentifier, ThreadSafeWeakPtr<WebCore::RenderingResource>>;
     using FontHashMap = HashMap<WebCore::RenderingResourceIdentifier, uint64_t>;
 

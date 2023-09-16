@@ -38,6 +38,9 @@
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(WEB_CODECS)
+#include "WebCodecsAudioData.h"
+#include "WebCodecsAudioInternalData.h"
+#include "WebCodecsEncodedAudioChunk.h"
 #include "WebCodecsEncodedVideoChunk.h"
 #include "WebCodecsVideoFrame.h"
 #endif
@@ -126,6 +129,8 @@ private:
 #if ENABLE(WEB_CODECS)
         , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& = { }
         , Vector<WebCodecsVideoFrameData>&& = { }
+        , Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>>&& = { }
+        , Vector<WebCodecsAudioInternalData>&& = { }
 #endif
         );
 
@@ -145,6 +150,8 @@ private:
 #if ENABLE(WEB_CODECS)
         , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& = { }
         , Vector<WebCodecsVideoFrameData>&& = { }
+        , Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>>&& = { }
+        , Vector<WebCodecsAudioInternalData>&& = { }
 #endif
         );
 
@@ -169,6 +176,8 @@ private:
 #if ENABLE(WEB_CODECS)
     Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>> m_serializedVideoChunks;
     Vector<WebCodecsVideoFrameData> m_serializedVideoFrames;
+    Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>> m_serializedAudioChunks;
+    Vector<WebCodecsAudioInternalData> m_serializedAudioData;
 #endif
     Vector<URLKeepingBlobAlive> m_blobHandles;
     size_t m_memoryCost { 0 };
@@ -200,6 +209,12 @@ void SerializedScriptValue::encode(Encoder& encoder) const
         encoder << videoChunk->data();
 
     // FIXME: encode video frames
+
+    encoder << static_cast<uint64_t>(m_serializedAudioChunks.size());
+    for (const auto& audioChunk : m_serializedAudioChunks)
+        encoder << audioChunk->data();
+
+    // FIXME: encode audio data
 #endif
 }
 
@@ -267,6 +282,21 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::decode(Decoder& decoder)
     }
     // FIXME: decode video frames
     Vector<WebCodecsVideoFrameData> serializedVideoFrames;
+
+    uint64_t serializedAudioChunksSize;
+    if (!decoder.decode(serializedAudioChunksSize))
+        return nullptr;
+
+    Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>> serializedAudioChunks;
+    while (serializedAudioChunksSize--) {
+        std::optional<WebCodecsEncodedAudioChunkData> audioChunkData;
+        decoder >> audioChunkData;
+        if (!audioChunkData)
+            return nullptr;
+        serializedAudioChunks.append(WebCodecsEncodedAudioChunkStorage::create(WTFMove(*audioChunkData)));
+    }
+    // FIXME: decode audio data
+    Vector<WebCodecsAudioInternalData> serializedAudioData;
 #endif
 
     return adoptRef(*new SerializedScriptValue(WTFMove(data), WTFMove(arrayBufferContentsArray)
@@ -275,9 +305,9 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::decode(Decoder& decoder)
 #endif
 #if ENABLE(WEB_CODECS)
         , WTFMove(serializedVideoChunks)
-#endif
-#if ENABLE(WEB_CODECS)
         , WTFMove(serializedVideoFrames)
+        , WTFMove(serializedAudioChunks)
+        , WTFMove(serializedAudioData)
 #endif
         ));
 }

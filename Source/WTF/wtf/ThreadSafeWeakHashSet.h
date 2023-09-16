@@ -26,7 +26,7 @@
 #pragma once
 
 #include <wtf/Algorithms.h>
-#include <wtf/HashSet.h>
+#include <wtf/HashMap.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WTF {
@@ -100,44 +100,45 @@ public:
         if (!retainedControlBlock)
             return;
         amortizedCleanupIfNeeded();
-        m_set.add({ WTFMove(retainedControlBlock), static_cast<const T*>(&value) });
+        m_map.add(static_cast<const T*>(&value), WTFMove(retainedControlBlock));
     }
 
     template<typename U, std::enable_if_t<std::is_convertible_v<U*, T*>>* = nullptr>
     bool remove(const U& value)
     {
         Locker locker { m_lock };
-        ControlBlockRefPtr retainedControlBlock { &value.controlBlock() };
-        if (!retainedControlBlock)
-            return false;
         amortizedCleanupIfNeeded();
-        return m_set.remove({ WTFMove(retainedControlBlock), static_cast<const T*>(&value) });
+        auto it = m_map.find(static_cast<const T*>(&value));
+        if (it == m_map.end())
+            return false;
+        bool wasDeleted = it->value && it->value->objectHasStartedDeletion();
+        bool result = m_map.remove(it);
+        return !wasDeleted && result;
     }
 
     void clear()
     {
         Locker locker { m_lock };
-        m_set.clear();
-        m_operationCountSinceLastCleanup = 0;
+        m_map.clear();
+        cleanupHappened();
     }
 
     template<typename U, std::enable_if_t<std::is_convertible_v<U*, T*>>* = nullptr>
     bool contains(const U& value) const
     {
         Locker locker { m_lock };
-        ControlBlockRefPtr retainedControlBlock { &value.controlBlock() };
-        if (!retainedControlBlock)
-            return false;
         amortizedCleanupIfNeeded();
-        return m_set.contains({ WTFMove(retainedControlBlock), static_cast<const T*>(&value) });
+        auto it = m_map.find(static_cast<const T*>(&value));
+        if (it == m_map.end())
+            return false;
+        return it->value && !it->value->objectHasStartedDeletion();
     }
 
     bool isEmptyIgnoringNullReferences() const
     {
         Locker locker { m_lock };
         amortizedCleanupIfNeeded();
-        for (auto& pair : m_set) {
-            auto& controlBlock = pair.first;
+        for (auto& controlBlock : m_map.values()) {
             if (!controlBlock->objectHasStartedDeletion())
                 return false;
         }
@@ -149,17 +150,17 @@ public:
         Vector<Ref<T>> strongReferences;
         {
             Locker locker { m_lock };
-            strongReferences.reserveInitialCapacity(m_set.size());
-            m_set.removeIf([&] (auto& pair) {
-                auto& controlBlock = pair.first;
-                auto* objectOfCorrectType = pair.second;
+            strongReferences.reserveInitialCapacity(m_map.size());
+            m_map.removeIf([&] (auto& pair) {
+                auto& controlBlock = pair.value;
+                auto* objectOfCorrectType = pair.key;
                 if (auto refPtr = controlBlock->template makeStrongReferenceIfPossible<T>(objectOfCorrectType)) {
                     strongReferences.uncheckedAppend(refPtr.releaseNonNull());
                     return false;
                 }
                 return true;
             });
-            m_operationCountSinceLastCleanup = 0;
+            cleanupHappened();
         }
         return strongReferences;
     }
@@ -171,27 +172,41 @@ public:
             callback(item.get());
     }
 
+    unsigned sizeIncludingEmptyEntriesForTesting()
+    {
+        Locker locker { m_lock };
+        return m_map.size();
+    }
+
 private:
+    ALWAYS_INLINE void cleanupHappened() const WTF_REQUIRES_LOCK(m_lock)
+    {
+        m_operationCountSinceLastCleanup = 0;
+        m_maxOperationCountWithoutCleanup = std::min(std::numeric_limits<unsigned>::max() / 2, m_map.size()) * 2;
+    }
+
     ALWAYS_INLINE void moveFrom(ThreadSafeWeakHashSet&& other)
     {
         Locker locker { m_lock };
         Locker otherLocker { other.m_lock };
-        m_set = std::exchange(other.m_set, { });
+        m_map = std::exchange(other.m_map, { });
         m_operationCountSinceLastCleanup = std::exchange(other.m_operationCountSinceLastCleanup, 0);
+        m_maxOperationCountWithoutCleanup = std::exchange(other.m_maxOperationCountWithoutCleanup, 0);
     }
 
     ALWAYS_INLINE void amortizedCleanupIfNeeded() const WTF_REQUIRES_LOCK(m_lock)
     {
-        if (++m_operationCountSinceLastCleanup / 2 > m_set.size()) {
-            m_set.removeIf([] (auto& pair) {
-                return pair.first->objectHasStartedDeletion();
+        if (++m_operationCountSinceLastCleanup > m_maxOperationCountWithoutCleanup) {
+            m_map.removeIf([] (auto& pair) {
+                return pair.value->objectHasStartedDeletion();
             });
-            m_operationCountSinceLastCleanup = 0;
+            cleanupHappened();
         }
     }
 
-    mutable HashSet<std::pair<ControlBlockRefPtr, const T*>> m_set WTF_GUARDED_BY_LOCK(m_lock);
+    mutable HashMap<const T*, ControlBlockRefPtr> m_map WTF_GUARDED_BY_LOCK(m_lock);
     mutable unsigned m_operationCountSinceLastCleanup WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+    mutable unsigned m_maxOperationCountWithoutCleanup WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     mutable Lock m_lock;
 };
 

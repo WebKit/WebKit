@@ -32,6 +32,7 @@
 #include "config.h"
 #include "StyleColor.h"
 
+#include "CSSColorMixSerialization.h"
 #include "CSSResolvedColorMix.h"
 #include "CSSUnresolvedColor.h"
 #include "ColorNormalization.h"
@@ -233,22 +234,9 @@ Color resolveColor(const StyleColorMix& colorMix, const Color& currentColor)
 
 // MARK: - Serialization
 
-static void serializationForCSS(StringBuilder& builder, const StyleColorMix::Component& component)
-{
-    serializationForCSS(builder, component.color);
-    if (component.percentage)
-        builder.append(' ', *component.percentage, '%');
-}
-
 void serializationForCSS(StringBuilder& builder, const StyleColorMix& colorMix)
 {
-    builder.append("color-mix(in ");
-    serializationForCSS(builder, colorMix.colorInterpolationMethod);
-    builder.append(", ");
-    serializationForCSS(builder, colorMix.mixComponents1);
-    builder.append(", ");
-    serializationForCSS(builder, colorMix.mixComponents2);
-    builder.append(')');
+    serializationForCSSColorMix<StyleColorMix>(builder, colorMix);
 }
 
 void serializationForCSS(StringBuilder& builder, const StyleCurrentColor&)

@@ -28,6 +28,7 @@
 #if ENABLE(WEBGL)
 #include "OESTextureFloat.h"
 
+#include "WebGLExtensionAnyInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -49,11 +50,6 @@ OESTextureFloat::OESTextureFloat(WebGLRenderingContextBase& context)
 }
 
 OESTextureFloat::~OESTextureFloat() = default;
-
-WebGLExtension::ExtensionName OESTextureFloat::getName() const
-{
-    return OESTextureFloatName;
-}
 
 bool OESTextureFloat::supported(GraphicsContextGL& context)
 {

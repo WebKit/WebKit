@@ -21,7 +21,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import loadConfig
+from . import loadConfig
 import os
 import unittest
 
@@ -649,6 +649,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         'Merge-Queue': [
             'configure-build',
             'validate-change',
+            'determine-label-owner',
             'validate-commiter-and-reviewer',
             'configuration',
             'clean-up-git-repo',
@@ -679,6 +680,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         'Unsafe-Merge-Queue': [
             'configure-build',
             'validate-change',
+            'determine-label-owner',
             'validate-commiter-and-reviewer',
             'configuration',
             'clean-up-git-repo',

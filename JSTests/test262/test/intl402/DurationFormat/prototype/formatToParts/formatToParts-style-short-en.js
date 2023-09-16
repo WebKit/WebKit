@@ -53,15 +53,15 @@ const expected = [
     { type: "literal", value: ", " },
     { type: "integer", value: "123", unit: "millisecond" },
     { type: "literal", value: " ", unit: "millisecond" },
-    { type: "unit", value: "msec", unit: "millisecond" },
+    { type: "unit", value: "ms", unit: "millisecond" },
     { type: "literal", value: ", " },
     { type: "integer", value: "456", unit: "microsecond" },
     { type: "literal", value: " ", unit: "microsecond" },
-    { type: "unit", value: "μsec", unit: "microsecond" },
-    { type: "literal", value: " and " },
+    { type: "unit", value: "μs", unit: "microsecond" },
+    { type: "literal", value: ", " },
     { type: "integer", value: "789", unit: "nanosecond" },
     { type: "literal", value: " ", unit: "nanosecond" },
-    { type: "unit", value: "nsec", unit: "nanosecond" },
+    { type: "unit", value: "ns", unit: "nanosecond" },
   ];
 
 let df = new Intl.DurationFormat('en', { style });

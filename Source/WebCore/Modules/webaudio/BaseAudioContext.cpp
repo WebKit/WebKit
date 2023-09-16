@@ -272,7 +272,7 @@ bool BaseAudioContext::wouldTaintOrigin(const URL& url) const
     if (url.protocolIsData())
         return false;
 
-    if (auto* document = this->document())
+    if (RefPtr document = this->document())
         return !document->securityOrigin().canRequest(url, OriginAccessPatternsForWebProcess::singleton());
 
     return false;
@@ -875,13 +875,13 @@ void BaseAudioContext::postTask(Function<void()>&& task)
 
 const SecurityOrigin* BaseAudioContext::origin() const
 {
-    auto* context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     return context ? context->securityOrigin() : nullptr;
 }
 
 void BaseAudioContext::addConsoleMessage(MessageSource source, MessageLevel level, const String& message)
 {
-    if (auto* context = scriptExecutionContext())
+    if (RefPtr context = scriptExecutionContext())
         context->addConsoleMessage(source, level, message);
 }
 

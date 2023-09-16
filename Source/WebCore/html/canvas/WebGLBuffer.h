@@ -20,14 +20,14 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
 #if ENABLE(WEBGL)
 
-#include "WebGLSharedObject.h"
+#include "WebGLObject.h"
 #include <wtf/RefPtr.h>
 
 namespace JSC {
@@ -37,22 +37,29 @@ class ArrayBufferView;
 
 namespace WebCore {
 
-class WebGLBuffer final : public WebGLSharedObject {
+class WebGLBuffer final : public WebGLObject {
 public:
-    static Ref<WebGLBuffer> create(WebGLRenderingContextBase&);
+    static RefPtr<WebGLBuffer> create(WebGLRenderingContextBase&);
     virtual ~WebGLBuffer();
 
     GCGLenum getTarget() const { return m_target; }
-    void setTarget(GCGLenum target) { m_target = target; }
-    bool hasEverBeenBound() const { return object() && m_target; }
-
+    void didBind(GCGLenum target);
+    bool isUsable() const { return object() && !isDeleted(); }
+    bool isInitialized() const { return m_target; }
 private:
-    WebGLBuffer(WebGLRenderingContextBase&);
+    WebGLBuffer(WebGLRenderingContextBase&, PlatformGLObject);
 
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
 
     GCGLenum m_target { 0 };
 };
+
+inline void WebGLBuffer::didBind(GCGLenum target)
+{
+    if (m_target)
+        return;
+    m_target = target;
+}
 
 } // namespace WebCore
 

@@ -10,12 +10,12 @@ features: [Temporal]
 const timeZone = Temporal.TimeZone.from("UTC");
 let called = false;
 timeZone.getOffsetNanosecondsFor = () => called = true;
-assert.throws(RangeError, () => timeZone.getPlainDateTimeFor(undefined), "undefined");
-assert.throws(RangeError, () => timeZone.getPlainDateTimeFor(null), "null");
-assert.throws(RangeError, () => timeZone.getPlainDateTimeFor(true), "boolean");
+assert.throws(TypeError, () => timeZone.getPlainDateTimeFor(undefined), "undefined");
+assert.throws(TypeError, () => timeZone.getPlainDateTimeFor(null), "null");
+assert.throws(TypeError, () => timeZone.getPlainDateTimeFor(true), "boolean");
 assert.throws(RangeError, () => timeZone.getPlainDateTimeFor(""), "empty string");
 assert.throws(TypeError, () => timeZone.getPlainDateTimeFor(Symbol()), "Symbol");
-assert.throws(RangeError, () => timeZone.getPlainDateTimeFor(5), "number");
-assert.throws(RangeError, () => timeZone.getPlainDateTimeFor(5n), "bigint");
+assert.throws(TypeError, () => timeZone.getPlainDateTimeFor(5), "number");
+assert.throws(TypeError, () => timeZone.getPlainDateTimeFor(5n), "bigint");
 assert.throws(RangeError, () => timeZone.getPlainDateTimeFor({}), "plain object");
 assert.sameValue(called, false);

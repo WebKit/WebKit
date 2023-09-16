@@ -28,6 +28,7 @@
 #include "config.h"
 #include "WorkerMessagingProxy.h"
 
+#include "BadgeClient.h"
 #include "CacheStorageProvider.h"
 #include "Chrome.h"
 #include "ContentSecurityPolicy.h"
@@ -327,6 +328,17 @@ void WorkerMessagingProxy::postExceptionToWorkerObject(const String& errorMessag
         // We don't bother checking the askedToTerminate() flag here, because exceptions should *always* be reported even if the thread is terminated.
         // This is intentionally different than the behavior in MessageWorkerTask, because terminated workers no longer deliver messages (section 4.6 of the WebWorker spec), but they do report exceptions.
         ActiveDOMObject::queueTaskToDispatchEvent(*workerObject, TaskSource::DOMManipulation, ErrorEvent::create(errorMessage, sourceURL, lineNumber, columnNumber, { }));
+    });
+}
+
+void WorkerMessagingProxy::reportErrorToWorkerObject(const String& errorMessage)
+{
+    if (!m_scriptExecutionContext)
+        return;
+
+    m_scriptExecutionContext->postTask([this,  errorMessage =  errorMessage.isolatedCopy()] (auto&) {
+        if (RefPtr workerObject = this->workerObject())
+            workerObject->reportError(errorMessage);
     });
 }
 

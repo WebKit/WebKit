@@ -110,21 +110,33 @@ function test()
     });
 
     addTestCase({
-        name: "Runtime.getDisplayableProperties.Private.Instance",
+        name: "Runtime.getDisplayableProperties.Private.Instance.Parent",
+        expression: `new PrivateMembersTestClassParent`,
+    });
+
+    addTestCase({
+        name: "Runtime.getDisplayableProperties.Private.Instance.Child",
         expression: `new PrivateMembersTestClassChild`,
-        ownProperties: true,
     });
 
     addTestCase({
-        name: "Runtime.getDisplayableProperties.Private.Constructor",
+        name: "Runtime.getDisplayableProperties.Private.Constructor.Parent",
+        expression: `PrivateMembersTestClassParent`,
+    });
+
+    addTestCase({
+        name: "Runtime.getDisplayableProperties.Private.Constructor.Child",
         expression: `PrivateMembersTestClassChild`,
-        ownProperties: true,
     });
 
     addTestCase({
-        name: "Runtime.getDisplayableProperties.Private.Prototype",
+        name: "Runtime.getDisplayableProperties.Private.Prototype.Parent",
+        expression: `PrivateMembersTestClassParent.prototype`,
+    });
+
+    addTestCase({
+        name: "Runtime.getDisplayableProperties.Private.Prototype.Child",
         expression: `PrivateMembersTestClassChild.prototype`,
-        ownProperties: true,
     });
 
     addTestCase({

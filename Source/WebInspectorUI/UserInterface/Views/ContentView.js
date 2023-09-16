@@ -274,7 +274,7 @@ WI.ContentView = class ContentView extends WI.View
             return representedObject.sourceCode;
 
         if (representedObject instanceof WI.LocalResourceOverride) {
-            if (representedObject.type === WI.LocalResourceOverride.InterceptType.Response || representedObject.type === WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork)
+            if (representedObject.type === WI.LocalResourceOverride.InterceptType.Response || representedObject.type === WI.LocalResourceOverride.InterceptType.ResponseMappedDirectory || representedObject.type === WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork)
                 return representedObject.localResource;
             return representedObject;
         }

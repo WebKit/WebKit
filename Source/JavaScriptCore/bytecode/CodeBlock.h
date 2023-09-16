@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -158,6 +158,8 @@ public:
 private:
     void setNumParameters(unsigned newValue, bool allocateArgumentValueProfiles);
 public:
+
+    bool couldBeTainted() const { return m_couldBeTainted; }
 
     unsigned numberOfArgumentsToSkip() const { return m_numberOfArgumentsToSkip; }
 
@@ -408,6 +410,8 @@ public:
         ValueProfile& result = m_argumentValueProfiles[argumentIndex];
         return result;
     }
+
+    ValueProfile& valueProfileForOffset(unsigned profileOffset) { return m_metadata->valueProfileForOffset(profileOffset); }
 
     ValueProfile* tryGetValueProfileForBytecodeIndex(BytecodeIndex);
     ValueProfile& valueProfileForBytecodeIndex(BytecodeIndex);
@@ -720,7 +724,7 @@ public:
     unsigned numberOfDFGCompiles() { return 0; }
 #endif
 
-    bool shouldOptimizeNow();
+    bool shouldOptimizeNowFromBaseline();
     void updateAllNonLazyValueProfilePredictions(const ConcurrentJSLocker&);
     void updateAllLazyValueProfilePredictions(const ConcurrentJSLocker&);
     void updateAllArrayProfilePredictions(const ConcurrentJSLocker&);
@@ -856,6 +860,8 @@ public:
 
     bool loopHintsAreEligibleForFuzzingEarlyReturn() { return m_unlinkedCode->loopHintsAreEligibleForFuzzingEarlyReturn(); }
 
+    double optimizationThresholdScalingFactor() const;
+
 protected:
     void finalizeLLIntInlineCaches();
 #if ENABLE(JIT)
@@ -879,8 +885,6 @@ private:
     CodeBlock* specialOSREntryBlockOrNull();
     
     void noticeIncomingCall(CallFrame* callerFrame);
-    
-    double optimizationThresholdScalingFactor();
 
     void updateAllNonLazyValueProfilePredictionsAndCountLiveness(const ConcurrentJSLocker&, unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles);
 
@@ -930,7 +934,8 @@ private:
     const unsigned m_numCalleeLocals;
     const unsigned m_numVars;
     unsigned m_numParameters;
-    unsigned m_numberOfArgumentsToSkip { 0 };
+    unsigned m_numberOfArgumentsToSkip : 31 { 0 };
+    unsigned m_couldBeTainted : 1 { 0 };
     uint32_t m_osrExitCounter { 0 };
     union {
         unsigned m_debuggerRequests;
@@ -962,6 +967,7 @@ public:
     void* m_jitData { nullptr };
 private:
 #endif
+    RefPtr<MetadataTable> m_metadata;
 #if ENABLE(DFG_JIT)
     // This is relevant to non-DFG code blocks that serve as the profiled code block
     // for DFG code blocks.
@@ -984,8 +990,6 @@ private:
     uint16_t m_optimizationDelayCounter { 0 };
     uint16_t m_reoptimizationRetryCounter { 0 };
 
-    RefPtr<MetadataTable> m_metadata;
-
     ApproximateTime m_creationTime;
     double m_previousCounter { 0 };
 
@@ -996,7 +1000,8 @@ private:
     HashSet<UniquedStringImpl*> m_cachedIdentifierUids;
 #endif
 };
-#if defined(NDEBUG) && COMPILER(GCC_COMPATIBLE)
+/* This check is for normal Release builds; ASSERT_ENABLED changes the size. */
+#if defined(NDEBUG) && !defined(ASSERT_ENABLED) && COMPILER(GCC_COMPATIBLE)
 static_assert(sizeof(CodeBlock) <= 240, "Keep it small for memory saving");
 #endif
 

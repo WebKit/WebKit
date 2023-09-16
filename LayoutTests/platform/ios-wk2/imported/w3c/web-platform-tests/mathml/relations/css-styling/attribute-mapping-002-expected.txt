@@ -2,7 +2,7 @@
 PASS mathvariant on the math element is not mapped to CSS text-transform
 FAIL scriptlevel on the math element is mapped to math-depth(...) assert_equals: no attribute expected "0" but got ""
 FAIL invalid scriptlevel values on the math element are not mapped to math-depth(...) assert_equals: no attribute expected "0" but got ""
-FAIL displaystyle on the math element is mapped to CSS math-style assert_equals: no attribute expected "compact" but got "normal"
+PASS displaystyle on the math element is mapped to CSS math-style
 PASS mathvariant on the annotation element is not mapped to CSS text-transform
 FAIL scriptlevel on the annotation element is mapped to math-depth(...) assert_equals: no attribute expected "0" but got ""
 FAIL invalid scriptlevel values on the annotation element are not mapped to math-depth(...) assert_equals: no attribute expected "0" but got ""

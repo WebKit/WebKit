@@ -74,11 +74,6 @@ WebGLCompressedTextureASTC::WebGLCompressedTextureASTC(WebGLRenderingContextBase
 }
 
 WebGLCompressedTextureASTC::~WebGLCompressedTextureASTC() = default;
-
-WebGLExtension::ExtensionName WebGLCompressedTextureASTC::getName() const
-{
-    return WebGLCompressedTextureASTCName;
-}
     
 Vector<String> WebGLCompressedTextureASTC::getSupportedProfiles()
 {

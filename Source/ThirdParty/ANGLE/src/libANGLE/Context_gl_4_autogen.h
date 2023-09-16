@@ -103,14 +103,6 @@
     void scissorArrayv(GLuint first, GLsizei count, const GLint *v);                               \
     void scissorIndexed(GLuint index, GLint left, GLint bottom, GLsizei width, GLsizei height);    \
     void scissorIndexedv(GLuint index, const GLint *v);                                            \
-    void vertexAttribL1d(GLuint index, GLdouble x);                                                \
-    void vertexAttribL1dv(GLuint index, const GLdouble *v);                                        \
-    void vertexAttribL2d(GLuint index, GLdouble x, GLdouble y);                                    \
-    void vertexAttribL2dv(GLuint index, const GLdouble *v);                                        \
-    void vertexAttribL3d(GLuint index, GLdouble x, GLdouble y, GLdouble z);                        \
-    void vertexAttribL3dv(GLuint index, const GLdouble *v);                                        \
-    void vertexAttribL4d(GLuint index, GLdouble x, GLdouble y, GLdouble z, GLdouble w);            \
-    void vertexAttribL4dv(GLuint index, const GLdouble *v);                                        \
     void vertexAttribLPointer(GLuint index, GLint size, GLenum type, GLsizei stride,               \
                               const void *pointer);                                                \
     void viewportArrayv(GLuint first, GLsizei count, const GLfloat *v);                            \

@@ -135,6 +135,19 @@ class Bugzilla(Base, mocks.Requests):
                         )),
                     )
                 issue['opened'] = data['status'] == 'REOPENED'
+                dupe_of = data.get('dupe_of', None)
+                if dupe_of:
+                    if dupe_of not in self.issues:
+                        return mocks.Response(
+                            url=url,
+                            headers={'Content-Type': 'text/json'},
+                            status_code=400,
+                            text=json.dumps(dict(
+                                error=True,
+                                message='Bug #{} does not exist'.format(dupe_of),
+                            )),
+                        )
+                    issue['original'] = self.issues[dupe_of]
             if data.get('comment'):
                 issue['comments'].append(
                     Issue.Comment(user=user, timestamp=int(time.time()), content=data['comment']['body']),
@@ -182,6 +195,7 @@ class Bugzilla(Base, mocks.Requests):
                 creation_time=self.time_string(issue['timestamp']),
                 status='REOPENED' if issue['opened'] else 'RESOLVED',
                 resolution='' if issue['opened'] else 'FIXED',
+                dupe_of=issue['original']['id'] if issue.get('original', None) else None,
                 creator=self.users[issue['creator'].name].username,
                 product=issue.get('project'),
                 component=issue.get('component'),
@@ -351,6 +365,42 @@ class Bugzilla(Base, mocks.Requests):
             url=url,
         )
 
+    def _bug_html(self, url, id):
+        if id not in self.issues:
+            return mocks.Response(
+                url=url,
+                headers={'Content-Type': 'text/html; charset=UTF-8'},
+                status_code=404,
+                text='<!DOCTYPE html>\n'
+                     '<html lang="en">\n'
+                     '<head><title>Missing Bug ID</title></head>\n'
+                     '</html>\n',
+            )
+        issue = self.issues[id]
+        duplicates = [value for value, candidate in self.issues.items() if (candidate.get('original') or {}).get('id') == id]
+        html = '<!DOCTYPE html>\n' \
+               '<html lang="en">\n' \
+               '<head><title>{id} {title}</title></head>\n'\
+               '<body>\n'.format(
+                   id=id,
+                   title=issue['title'],
+               )
+        if duplicates:
+            html += '<th class="field_label"><label>Duplicates ({})</label>:</th>\n'.format(len(duplicates))
+            html += '<td class="field_value">\n'
+            html += '<span id="duplicates">\n'
+            for duplicate in duplicates:
+                html += '<a class="bz_bug_link bz_closed">{}</a>\n'.format(duplicate)
+            html += '</td>\n'
+            html += '</span>\n'
+
+        return mocks.Response(
+            url=url,
+            headers={'Content-Type': 'text/html; charset=UTF-8'},
+            status_code=200,
+            text=html + '</body>\n</html>\n',
+        )
+
     def request(self, method, url, data=None, params=None, auth=None, json=None, **kwargs):
         if not url.startswith('http://') and not url.startswith('https://'):
             return mocks.Response.create404(url)
@@ -393,4 +443,8 @@ class Bugzilla(Base, mocks.Requests):
         match = re.match(r'{}/rest/bug(?P<credentials>\?login=\S+\&password=\S+)?$'.format(self.hosts[0]), stripped_url)
         if match and method == 'POST':
             return self._create(url, match.group('credentials'), json)
+
+        match = re.match(r'{}/show_bug.cgi\?(?P<credentials>login=\S+\&password=\S+\&)?id=(?P<id>\d+)$'.format(self.hosts[0]), stripped_url)
+        if match and method == 'GET':
+            return self._bug_html(url, int(match.group('id')))
         return mocks.Response.create404(url)

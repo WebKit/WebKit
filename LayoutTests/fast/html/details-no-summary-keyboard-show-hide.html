@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<details id="details"><input></details>
+<script src="../../resources/js-test.js"></script>
+<script>
+function openAttribute(id) {
+    return document.getElementById(id).open;
+}
+
+ description("This test verifies that auto-generated &lt;summary&gt; in a &lt;details&gt; element is keyboard accessible.");
+
+ if (window.eventSender) {
+     eventSender.keyDown("\t");
+
+    shouldBeFalse('openAttribute("details")');
+    debug("Toggle &lt;display&gt; using Enter key:");
+    eventSender.keyDown("\r");
+    shouldBeTrue('openAttribute("details")');
+    eventSender.keyDown("\r");
+    shouldBeFalse('openAttribute("details")');
+
+    debug("Toggle &lt;display&gt; using Spacebar key:");
+    eventSender.keyDown(" ");
+    shouldBeTrue('openAttribute("details")');
+    eventSender.keyDown(" ");
+    shouldBeFalse('openAttribute("details")');
+} else
+    debug('There are tests using eventSender.');
+</script>
+</body>
+</html>

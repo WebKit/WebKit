@@ -521,6 +521,7 @@ angle::Result UploadTextureContents(const gl::Context *context,
                                     const uint8_t *data,
                                     size_t bytesPerRow,
                                     size_t bytesPer2DImage,
+                                    bool avoidStagingBuffers,
                                     const mtl::TextureRef &texture)
 
 {
@@ -528,7 +529,9 @@ angle::Result UploadTextureContents(const gl::Context *context,
     ContextMtl *contextMtl       = mtl::GetImpl(context);
     const mtl::Format &mtlFormat = contextMtl->getPixelFormat(textureAngleFormat.id);
 
-    bool preferGPUInitialization = PreferStagedTextureUploads(context, texture, mtlFormat);
+    bool preferGPUInitialization =
+        !avoidStagingBuffers &&
+        PreferStagedTextureUploads(context, texture, mtlFormat, mtl::StagingPurpose::Upload);
     if (texture->isCPUAccessible() && !preferGPUInitialization)
     {
         // If texture is CPU accessible, just call replaceRegion() directly.
@@ -1365,7 +1368,7 @@ angle::Result TextureMtl::generateMipmapCPU(const gl::Context *context)
             // Upload to texture
             ANGLE_TRY(UploadTextureContents(
                 context, angleFormat, MTLRegionMake3D(0, 0, 0, dstWidth, dstHeight, dstDepth), mip,
-                slice, dstLevelData.get(), dstRowPitch, dstDepthPitch, mNativeTexture));
+                slice, dstLevelData.get(), dstRowPitch, dstDepthPitch, false, mNativeTexture));
 
             prevLevelWidth      = dstWidth;
             prevLevelHeight     = dstHeight;
@@ -1694,10 +1697,10 @@ angle::Result TextureMtl::redefineImage(const gl::Context *context,
             default:
                 UNREACHABLE();
         }
-    }
 
-    // Make sure emulated channels are properly initialized
-    ANGLE_TRY(checkForEmulatedChannels(context, mtlFormat, imageDef.image));
+        // Make sure emulated channels are properly initialized in this newly allocated texture.
+        ANGLE_TRY(checkForEmulatedChannels(context, mtlFormat, imageDef.image));
+    }
 
     // Tell context to rebind textures
     contextMtl->invalidateCurrentTextures();
@@ -1902,7 +1905,7 @@ angle::Result TextureMtl::setPerSliceSubImage(const gl::Context *context,
             clientData += offset;
             ANGLE_TRY(UploadTextureContents(context, mFormat.actualAngleFormat(), mtlArea,
                                             mtl::kZeroNativeMipLevel, slice, clientData,
-                                            pixelsRowPitch, pixelsDepthPitch, image));
+                                            pixelsRowPitch, pixelsDepthPitch, false, image));
         }
         else
         {
@@ -1918,7 +1921,7 @@ angle::Result TextureMtl::setPerSliceSubImage(const gl::Context *context,
     {
         ANGLE_TRY(UploadTextureContents(context, mFormat.actualAngleFormat(), mtlArea,
                                         mtl::kZeroNativeMipLevel, slice, pixels, pixelsRowPitch,
-                                        pixelsDepthPitch, image));
+                                        pixelsDepthPitch, false, image));
     }
     return angle::Result::Continue;
 }
@@ -1991,6 +1994,10 @@ angle::Result TextureMtl::convertAndSetPerSliceSubImage(const gl::Context *conte
         const angle::Format &dstFormat         = angle::Format::Get(mFormat.actualFormatId);
         const size_t dstRowPitch               = dstFormat.pixelBytes * mtlArea.size.width;
 
+        // It is very important to avoid allocating a new buffer for each row during these
+        // uploads.
+        const bool kAvoidStagingBuffers = true;
+
         // Check if original image data is compressed:
         if (mFormat.intendedAngleFormat().isBlock)
         {
@@ -2013,7 +2020,7 @@ angle::Result TextureMtl::convertAndSetPerSliceSubImage(const gl::Context *conte
                 // Upload to texture
                 ANGLE_TRY(UploadTextureContents(
                     context, dstFormat, mtlArea, mtl::kZeroNativeMipLevel, slice,
-                    decompressBuf.data(), dstRowPitch, dstDepthPitch, image));
+                    decompressBuf.data(), dstRowPitch, dstDepthPitch, kAvoidStagingBuffers, image));
             }
             else
             {
@@ -2021,9 +2028,9 @@ angle::Result TextureMtl::convertAndSetPerSliceSubImage(const gl::Context *conte
                 ASSERT(mtlArea.size.width == static_cast<unsigned int>(image->sizeAt0().width));
                 ASSERT(mtlArea.size.height == static_cast<unsigned int>(image->sizeAt0().height));
                 const size_t dstDepthPitch = dstRowPitch * mtlArea.size.height;
-                ANGLE_TRY(UploadTextureContents(context, dstFormat, mtlArea,
-                                                mtl::kZeroNativeMipLevel, slice, pixels,
-                                                dstRowPitch, dstDepthPitch, image));
+                ANGLE_TRY(UploadTextureContents(
+                    context, dstFormat, mtlArea, mtl::kZeroNativeMipLevel, slice, pixels,
+                    dstRowPitch, dstDepthPitch, kAvoidStagingBuffers, image));
             }
         }  // if (mFormat.intendedAngleFormat().isBlock)
         else
@@ -2067,9 +2074,9 @@ angle::Result TextureMtl::convertAndSetPerSliceSubImage(const gl::Context *conte
                     }
 
                     // Upload to texture
-                    ANGLE_TRY(UploadTextureContents(context, dstFormat, mtlRow,
-                                                    mtl::kZeroNativeMipLevel, slice,
-                                                    conversionRow.data(), dstRowPitch, 0, image));
+                    ANGLE_TRY(UploadTextureContents(
+                        context, dstFormat, mtlRow, mtl::kZeroNativeMipLevel, slice,
+                        conversionRow.data(), dstRowPitch, 0, kAvoidStagingBuffers, image));
                 }
             }
         }  // if (mFormat.intendedAngleFormat().isBlock)
@@ -2277,6 +2284,10 @@ angle::Result TextureMtl::copySubImageCPU(const gl::Context *context,
             UNREACHABLE();
     }
 
+    // It is very important to avoid allocating a new buffer for each row during these
+    // uploads.
+    const bool kAvoidStagingBuffers = true;
+
     // Copy row by row:
     for (int r = 0; r < clippedSourceArea.height; ++r)
     {
@@ -2292,7 +2303,8 @@ angle::Result TextureMtl::copySubImageCPU(const gl::Context *context,
 
         // Upload to texture
         ANGLE_TRY(UploadTextureContents(context, dstFormat, mtlDstRowArea, mtl::kZeroNativeMipLevel,
-                                        dstSlice, conversionRow.data(), dstRowPitch, 0, image));
+                                        dstSlice, conversionRow.data(), dstRowPitch, 0,
+                                        kAvoidStagingBuffers, image));
     }
 
     return angle::Result::Continue;
@@ -2432,7 +2444,7 @@ angle::Result TextureMtl::copySubTextureCPU(const gl::Context *context,
 
     // Upload to texture
     ANGLE_TRY(UploadTextureContents(context, dstAngleFormat, mtlDstArea, mtl::kZeroNativeMipLevel,
-                                    0, conversionDst.data(), convRowPitch, 0, image));
+                                    0, conversionDst.data(), convRowPitch, 0, false, image));
 
     return angle::Result::Continue;
 }

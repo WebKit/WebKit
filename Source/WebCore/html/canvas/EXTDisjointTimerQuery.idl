@@ -26,7 +26,7 @@
 [
     LegacyNoInterfaceObject,
     Conditional=WEBGL,
-    GenerateIsReachable=ImplWebGLRenderingContext
+    GenerateIsReachable
 ] interface EXTDisjointTimerQuery {
   const unsigned long QUERY_COUNTER_BITS_EXT      = 0x8864;
   const unsigned long CURRENT_QUERY_EXT           = 0x8865;

@@ -549,6 +549,20 @@ AriaReflectionForElementReferencesEnabled:
     WebCore:
       default: true
 
+AriaTextRoleEnabled:
+  type: bool
+  status: preview
+  category: dom
+  humanReadableName: "Non-standard ARIA text role"
+  humanReadableDescription: "Enable support for non-standard ARIA text role"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 AspectRatioEnabled:
   type: bool
   status: mature
@@ -780,13 +794,16 @@ BeaconAPIEnabled:
 
 BlobRegistryTopOriginPartitioningEnabled:
   type: bool
-  status: unstable
+  status: preview
+  category: security
   humanReadableName: "Partition Blob URL Registry"
   humanReadableDescription: "Partition Blob URL Registry by Top-Level Origin"
-  webcoreBinding: none
-  exposed: [ WebKit ]
   defaultValue:
+    WebKitLegacy:
+      default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 BlockIOKitInWebContentSandbox:
@@ -846,6 +863,21 @@ BroadcastChannelOriginPartitioningEnabled:
     WebCore:
       default: true
 
+BuiltInCDMKeyGroupingStrategyEnabled:
+  type: bool
+  status: unstable
+  category: media
+  humanReadableName: "Built-in CDM key grouping strategy"
+  humanReadableDescription: "Enable built-in CDM key grouping strategy"
+  condition: ENABLE(ENCRYPTED_MEDIA)
+  defaultValue:
+    WebCore:
+      default: false
+    WebKit:
+      default: false
+    WebKitLegacy:
+      default: false
+
 BuiltInNotificationsEnabled:
   type: bool
   status: unstable
@@ -873,6 +905,20 @@ CFNetworkNetworkLoaderEnabled:
     WebKit:
       default: false
 
+CSS3DTransformBackfaceVisibilityInteroperabilityEnabled:
+  type: bool
+  status: preview
+  category: css
+  humanReadableName: "CSS 3D Transform Interoperability for backface-visibility"
+  humanReadableDescription: "Enable 3D transform behavior for backface-visibility that is specification-compliant but backwards incompatible"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSS3DTransformInteroperabilityEnabled:
   type: bool
   status: stable
@@ -886,6 +932,20 @@ CSS3DTransformInteroperabilityEnabled:
       default: true
     WebCore:
       default: true
+
+CSSBasedRubyEnabled:
+  type: bool
+  status: unstable
+  category: css
+  humanReadableName: "CSS based Ruby implementation in IFC"
+  humanReadableDescription: "CSS based Ruby implementation in IFC"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 CSSCascadeLayersEnabled:
   type: bool
@@ -1053,6 +1113,20 @@ CSSFontFaceSizeAdjustEnabled:
       default: true
     WebCore:
       default: true
+
+CSSFontVariantEmojiEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS font-variant-emoji property"
+  humanReadableDescription: "Enable the font-variant-emoji CSS property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 CSSGradientInterpolationColorSpacesEnabled:
   type: bool
@@ -1495,6 +1569,19 @@ CanvasFiltersEnabled:
     WebCore:
       default: false
 
+CanvasFingerprintingQuirkEnabled:
+  type: bool
+  status: stable
+  category: dom
+  humanReadableName: "Enable Canvas fingerprinting-related quirk"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 CanvasUsesAcceleratedDrawing:
   type: bool
   status: embedder
@@ -1794,6 +1881,21 @@ CookieStoreAPIExtendedAttributesEnabled:
   status: testable
   humanReadableName: "Cookie Store API Extended Attributes"
   humanReadableDescription: "Enable Extended Attributes of the Cookie Store API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+CookieStoreAPIServiceWorkerEnabled:
+  type: bool
+  category: dom
+  condition: ENABLE(SERVICE_WORKER)
+  status: testable
+  humanReadableName: "Cookie Store API for Service Workers"
+  humanReadableDescription: "Enable Cookie Store API for Service Workers"
   defaultValue:
     WebKitLegacy:
       default: false
@@ -2147,6 +2249,20 @@ DeprecationReportingEnabled:
     WebCore:
       default: false
 
+DetailsNameAttributeEnabled:
+  type: bool
+  status: preview
+  category: html
+  humanReadableName: "HTML <details name> attribute"
+  humanReadableDescription: "Enable HTML <details name> attribute"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 DeveloperExtrasEnabled:
   type: bool
   status: embedder
@@ -2425,7 +2541,6 @@ EventHandlerDrivenSmoothKeyboardScrollingEnabled:
       default: false
     WebKit:
       "PLATFORM(MAC)": WebKit::defaultScrollAnimatorEnabled()
-      "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
     WebCore:
       default: false
@@ -2581,17 +2696,17 @@ FetchMetadataEnabled:
 
 FetchPriorityEnabled:
   type: bool
-  status: testable
+  status: stable
   category: networking
   humanReadableName: "Fetch Priority"
   humanReadableDescription: "Enable Fetch Priority support"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 FileReaderAPIEnabled:
   type: bool
@@ -2721,19 +2836,6 @@ FormAssociatedCustomElementsEnabled:
     WebCore:
       default: true
 
-# FIXME: This should be reconciled with 'FrameFlattening'.
-FrameFlatteningEnabled:
-  type: bool
-  status: embedder
-  humanReadableName: "Frame flattening"
-  humanReadableDescription: "Enable frame flattening, which adjusts the height of an iframe to fit its contents"
-  webcoreBinding: custom
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      "PLATFORM(IOS_FAMILY)": true
-      default: false
-
 FullScreenEnabled:
   type: bool
   status: embedder
@@ -2784,11 +2886,11 @@ FullscreenSceneDimmingEnabled:
   condition: PLATFORM(VISION)
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 GStreamerEnabled:
   type: bool
@@ -3041,6 +3143,19 @@ IPCTestingAPIEnabled:
   defaultValue:
     WebKit:
       default: false
+
+IgnoreInvalidMessageWhenIPCTestingAPIEnabled:
+  type: bool
+  status: internal
+  category: security
+  humanReadableName: "Ignore Invalid IPC Messages For Testing"
+  humanReadableDescription: "Prevents invalid IPC messages from terminating the caller"
+  webcoreBinding: none
+  condition: ENABLE(IPC_TESTING_API)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: true
 
 ImageAnalysisDuringFindInPageEnabled:
   type: bool
@@ -3869,17 +3984,17 @@ LinkPreloadEnabled:
 
 LinkPreloadResponsiveImagesEnabled:
   type: bool
-  status: testable
+  status: stable
   category: networking
   humanReadableName: "Link preload responsive images"
   humanReadableDescription: "Enable link preload responsive images"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 LinkSanitizerEnabled:
   type: bool
@@ -4453,17 +4568,6 @@ MediaVideoCodecIDsAllowedInLockdownMode:
     WebKit:
       default: '"avc1,zavc,qavc,cavc"'
 
-MenuItemElementEnabled:
-  type: bool
-  status: embedder
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 MinimumFontSize:
   type: double
   status: embedder
@@ -4997,20 +5101,6 @@ PerformanceNavigationTimingAPIEnabled:
     WebCore:
       default: true
 
-PerformanceResourceTimingSensitivePropertiesEnabled:
-  type: bool
-  status: stable
-  category: dom
-  humanReadableName: "PerformanceResourceTiming.transferSize, encodedBodySize, and decodedBodySize"
-  humanReadableDescription: "Enable all properties of PerformanceResourceTiming API"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 PermissionsAPIEnabled:
   type: bool
   status: stable
@@ -5201,9 +5291,12 @@ ProcessSwapOnCrossSiteWindowOpenEnabled:
    category: networking
    humanReadableName: "Swap Processes on Cross-Site Window Open"
    humanReadableDescription: "Swap WebContent Processes on cross-site window.open"
-   webcoreBinding: none
    exposed: [ WebKit ]
    defaultValue:
+     WebCore:
+       default: false
+     WebKitLegacy:
+       default: false
      WebKit:
        default: false
 
@@ -5246,20 +5339,6 @@ ReadableByteStreamAPIEnabled:
       default: false
     WebKit:
       default: false
-
-# FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
-ReferrerPolicyAttributeEnabled:
-  type: bool
-  status: mature
-  humanReadableName: "Referrer Policy attribute"
-  humanReadableDescription: "Enable Referrer Policy attribute"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
-    WebCore:
-      default: true
 
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 RemotePlaybackEnabled:
@@ -5323,7 +5402,7 @@ ReportingEnabled:
 
 RequestIdleCallbackEnabled:
   type: bool
-  status: unstable
+  status: stable
   category: dom
   humanReadableName: "requestIdleCallback"
   humanReadableDescription: "Enable requestIdleCallback support"
@@ -5331,6 +5410,7 @@ RequestIdleCallbackEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "USE(CF)": true
       default: false
     WebCore:
       default: false
@@ -6184,6 +6264,20 @@ ShrinksStandaloneImagesToFit:
       default: true
     WebCore:
       default: true
+
+SidewaysWritingModesEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "Sideways writing modes"
+  humanReadableDescription: "Enable support for sideways writing modes"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 SiteIsolationEnabled:
   type: bool
@@ -7349,22 +7443,20 @@ WebCodecsAV1Enabled:
       "USE(GSTREAMER)": true
       default: false
 
-WebCodecsEnabled:
+WebCodecsAudioEnabled:
   type: bool
-  status: stable
+  status: preview
   category: media
-  humanReadableName: "WebCodecs API"
-  humanReadableDescription: "Enable WebCodecs API"
+  humanReadableName: "WebCodecs Audio API"
+  humanReadableDescription: "Enable WebCodecs Audio API"
   condition: ENABLE(WEB_CODECS)
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(COCOA)": true
       "USE(GSTREAMER)": true
       default: false
     WebCore:
-      "PLATFORM(COCOA)": true
       "USE(GSTREAMER)": true
       default: false
 
@@ -7379,8 +7471,29 @@ WebCodecsHEVCEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "USE(GSTREAMER)": true
       default: false
     WebCore:
+      "USE(GSTREAMER)": true
+      default: false
+
+WebCodecsVideoEnabled:
+  type: bool
+  status: stable
+  category: media
+  humanReadableName: "WebCodecs Video API"
+  humanReadableDescription: "Enable WebCodecs Video API"
+  condition: ENABLE(WEB_CODECS)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "PLATFORM(COCOA)": true
+      "USE(GSTREAMER)": true
+      default: false
+    WebCore:
+      "PLATFORM(COCOA)": true
+      "USE(GSTREAMER)": true
       default: false
 
 WebCryptoSafeCurvesEnabled:
@@ -7391,18 +7504,33 @@ WebCryptoSafeCurvesEnabled:
   humanReadableDescription: "Enable Web Crypto Safe Curves"
   defaultValue:
     WebKitLegacy:
-      "PLATFORM(COCOA)": true
+      "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
     WebKit:
-      "PLATFORM(COCOA)": true
+      "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
     WebCore:
-      "PLATFORM(COCOA)": true
+      "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)": true
+      default: false
+
+WebCryptoX25519Enabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "Web Crypto X25519 algorithm"
+  humanReadableDescription: "Enable Web Crypto X25519 algorithm"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
       default: false
 
 WebGLDraftExtensionsEnabled:
   type: bool
-  status: unstable
+  status: testable
+  category: dom
   humanReadableName: "WebGL Draft Extensions"
   humanReadableDescription: "Enable WebGL extensions that are still in draft status"
   defaultValue:
@@ -7650,7 +7778,6 @@ WebRTCMediaPipelineAdditionalLoggingEnabled:
   type: bool
   status: internal
   category: media
-  condition: USE(LIBWEBRTC)
   humanReadableName: "WebRTC Media Pipeline Additional Logging"
   humanReadableDescription: "Enable WebRTC Media Pipeline Additional Logging"
   defaultValue:
@@ -7844,6 +7971,20 @@ WebSocketEnabled:
     WebCore:
       "PLATFORM(WATCHOS)": false
       default: true
+
+WebTransportEnabled:
+  type: bool
+  status: testable
+  category: networking
+  humanReadableName: "WebTransport"
+  humanReadableDescription: "Enable WebTransport"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 WebXRAugmentedRealityModuleEnabled:
   type: bool

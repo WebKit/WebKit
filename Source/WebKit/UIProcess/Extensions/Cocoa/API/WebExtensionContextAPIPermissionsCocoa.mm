@@ -46,8 +46,8 @@
 
 namespace WebKit {
 
-static NSString *permissionsKey = @"permissions";
-static NSString *originsKey = @"origins";
+static NSString * const permissionsKey = @"permissions";
+static NSString * const originsKey = @"origins";
 
 void WebExtensionContext::permissionsGetAll(CompletionHandler<void(Vector<String>, Vector<String>)>&& completionHandler)
 {
@@ -163,8 +163,8 @@ void WebExtensionContext::firePermissionsEventListenerIfNecessary(WebExtensionEv
     ASSERT(type == WebExtensionEventListenerType::PermissionsOnAdded || type == WebExtensionEventListenerType::PermissionsOnRemoved);
 
     HashSet<String> origins = toStrings(matchPatterns);
-    auto listenerTypes = WebExtensionContext::EventListenerTypeSet { type };
-    wakeUpBackgroundContentIfNecessaryToFireEvents(listenerTypes, [&] {
+
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
         sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchPermissionsEvent(type, permissions, origins));
     });
 }

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -44,6 +44,8 @@
 		CDC2792D2935418400151088 /* looping2s.html in Resources */ = {isa = PBXBuildFile; fileRef = CDC279292935417100151088 /* looping2s.html */; };
 		CDC2792E2935418400151088 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = CDC279262935417100151088 /* index.html */; };
 		DD403C5828500FE300D899FC /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD1DAFC11D70E12D00017CF0 /* WebKit.framework */; };
+		DDC9E8CC2A91DEDE00B015C1 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD954C942A90280800C6843C /* UIKit.framework */; };
+		DDC9E8CD2A91E0F400B015C1 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD954C942A90280800C6843C /* UIKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -114,6 +116,7 @@
 		CDC279272935417100151088 /* looping.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = looping.html; sourceTree = "<group>"; };
 		CDC279282935417100151088 /* test.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.mp4; sourceTree = "<group>"; };
 		CDC279292935417100151088 /* looping2s.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = looping2s.html; sourceTree = "<group>"; };
+		DD954C942A90280800C6843C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +125,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD498B421D76348000681FA7 /* MobileMiniBrowser.framework in Frameworks */,
+				DDC9E8CD2A91E0F400B015C1 /* UIKit.framework in Frameworks */,
 				4484520429424D840059B0FE /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -137,6 +141,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DDC9E8CC2A91DEDE00B015C1 /* UIKit.framework in Frameworks */,
 				DD403C5828500FE300D899FC /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -190,6 +195,7 @@
 		CD1DAFC01D70E12D00017CF0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DD954C942A90280800C6843C /* UIKit.framework */,
 				CD1DAFC11D70E12D00017CF0 /* WebKit.framework */,
 			);
 			name = Frameworks;
@@ -244,8 +250,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CD498B501D763D7600681FA7 /* AppDelegate.h in Headers */,
 				CD498B4A1D763D4800681FA7 /* MobileMiniBrowser.h in Headers */,
+				CD498B501D763D7600681FA7 /* AppDelegate.h in Headers */,
 				457D0F7A29088D9000AE5914 /* SettingsViewController.h in Headers */,
 				CD498B4E1D763D7600681FA7 /* TabViewController.h in Headers */,
 				CD498B4F1D763D7600681FA7 /* WebViewController.h in Headers */,
@@ -431,7 +437,10 @@
 		};
 		DD2A1D0A2888D1D300342472 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+				xros,
+			);
 			target = CD1DAF911D709E3600017CF0 /* MobileMiniBrowser */;
 			targetProxy = DD2A1D092888D1D300342472 /* PBXContainerItemProxy */;
 		};

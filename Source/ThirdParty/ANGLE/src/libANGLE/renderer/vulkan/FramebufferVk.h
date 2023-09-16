@@ -132,22 +132,10 @@ class FramebufferVk : public FramebufferImpl
 
     bool hasDeferredClears() const { return !mDeferredClears.empty(); }
     angle::Result flushDeferredClears(ContextVk *contextVk);
-    void setReadOnlyDepthFeedbackLoopMode(bool readOnlyDepthFeedbackModeEnabled)
-    {
-        mReadOnlyDepthFeedbackLoopMode = readOnlyDepthFeedbackModeEnabled;
-    }
-    void setReadOnlyStencilFeedbackLoopMode(bool readOnlyStencilFeedbackModeEnabled)
-    {
-        mReadOnlyStencilFeedbackLoopMode = readOnlyStencilFeedbackModeEnabled;
-    }
-    bool isReadOnlyDepthFeedbackLoopMode() const { return mReadOnlyDepthFeedbackLoopMode; }
-    bool isReadOnlyStencilFeedbackLoopMode() const { return mReadOnlyStencilFeedbackLoopMode; }
-    void updateRenderPassDepthReadOnlyMode(ContextVk *contextVk,
-                                           vk::RenderPassCommandBufferHelper *renderPass);
-    void updateRenderPassStencilReadOnlyMode(ContextVk *contextVk,
-                                             vk::RenderPassCommandBufferHelper *renderPass);
 
     void switchToFramebufferFetchMode(ContextVk *contextVk, bool hasFramebufferFetch);
+
+    bool updateLegacyDither(ContextVk *contextVk);
 
     void removeColorResolveAttachment(uint32_t colorIndexGL);
 
@@ -266,10 +254,6 @@ class FramebufferVk : public FramebufferImpl
     RenderTargetVk *getReadPixelsRenderTarget(GLenum format) const;
     VkImageAspectFlagBits getReadPixelsAspectFlags(GLenum format) const;
 
-    void updateRenderPassDepthStencilReadOnlyMode(ContextVk *contextVk,
-                                                  VkImageAspectFlags dsAspectFlags,
-                                                  vk::RenderPassCommandBufferHelper *renderPass);
-
     VkClearValue getCorrectedColorClearValue(size_t colorIndexGL,
                                              const VkClearColorValue &clearColor) const;
 
@@ -303,12 +287,6 @@ class FramebufferVk : public FramebufferImpl
     vk::Framebuffer mCurrentFramebuffer;
 
     vk::ClearValuesArray mDeferredClears;
-
-    // Tracks if we are in depth/stencil *read-only* feedback loop.  This is specially allowed as
-    // both usages (attachment and texture) are read-only.  When switching away from read-only
-    // feedback loop, the render pass is broken is to accommodate the new writable layout.
-    bool mReadOnlyDepthFeedbackLoopMode;
-    bool mReadOnlyStencilFeedbackLoopMode;
 
     // Whether any of the color attachments are an external image such as dmabuf, AHB etc.  In such
     // cases, some optimizations are disabled such as deferred clears because the results need to be

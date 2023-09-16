@@ -3149,12 +3149,28 @@ void GraphicsContextGLANGLE::multiDrawElementsInstancedBaseVertexBaseInstanceANG
     checkGPUStatus();
 }
 
+void GraphicsContextGLANGLE::clipControlEXT(GCGLenum origin, GCGLenum depth)
+{
+    if (!makeContextCurrent())
+        return;
+
+    GL_ClipControlEXT(origin, depth);
+}
+
 void GraphicsContextGLANGLE::provokingVertexANGLE(GCGLenum provokeMode)
 {
     if (!makeContextCurrent())
         return;
 
     GL_ProvokingVertexANGLE(provokeMode);
+}
+
+void GraphicsContextGLANGLE::polygonModeANGLE(GCGLenum face, GCGLenum mode)
+{
+    if (!makeContextCurrent())
+        return;
+
+    GL_PolygonModeANGLE(face, mode);
 }
 
 void GraphicsContextGLANGLE::polygonOffsetClampEXT(GCGLfloat factor, GCGLfloat units, GCGLfloat clamp)
@@ -3167,19 +3183,10 @@ void GraphicsContextGLANGLE::polygonOffsetClampEXT(GCGLfloat factor, GCGLfloat u
 
 void GraphicsContextGLANGLE::simulateEventForTesting(SimulatedEventForTesting event)
 {
-    if (event == SimulatedEventForTesting::ContextChange) {
-        dispatchContextChangedNotification();
-        return;
-    }
     if (event == SimulatedEventForTesting::GPUStatusFailure || event == SimulatedEventForTesting::DisplayBufferAllocationFailure) {
         m_failNextStatusCheck = true;
         return;
     }
-}
-
-bool GraphicsContextGLANGLE::isGLES2Compliant() const
-{
-    return m_isForWebGL2;
 }
 
 void GraphicsContextGLANGLE::paintRenderingResultsToCanvas(ImageBuffer& imageBuffer)

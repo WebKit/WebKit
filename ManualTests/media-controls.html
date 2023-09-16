@@ -163,20 +163,6 @@ var TESTS = {
     },
     html: '<video src={video} autoplay></video><br><button onclick="test(true)">Toggle Controls</button>',
 },
-'closed-captions': {
-    title: 'Closed-captioned video',
-    description: '<p>If supported, should show a "CC" button, which should toggle display of closed captions.</p>' +
-                 '<p>The state of the button should reflect the state of closed-captioning in the video (on at the start of the test).</p>',
-    js: function() {
-        var video = document.getElementsByTagName('video')[0];
-        video.webkitClosedCaptionsVisible = true;
-        video.addEventListener('canplaythrough', function()
-        {
-            video.webkitClosedCaptionsVisible = true;
-        }, false);
-    },
-    html: '<video controls src={video-captioned}></video>',
-},
 'invalid': {
     title: 'Video with invalid media',
     description: 'Should have "Rewind" and "Play" buttons, and "Loading..." status ' +

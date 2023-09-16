@@ -9,7 +9,7 @@ features: [Temporal]
 
 class SubminuteTimeZone extends Temporal.TimeZone {
   constructor() {
-    super("-00:00:01.111111111");
+    super("UTC");
   }
   get id() {
     return "Custom/Subminute";

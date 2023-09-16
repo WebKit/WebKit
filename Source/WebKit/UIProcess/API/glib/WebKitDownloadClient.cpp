@@ -93,19 +93,28 @@ private:
 
     void didFail(DownloadProxy& downloadProxy, const ResourceError& error, API::Data*) override
     {
+        if (webkitDownloadIsCancelled(m_download.get()))
+            return;
+
         ASSERT(m_download);
-        if (webkitDownloadIsCancelled(m_download.get())) {
-            // Cancellation takes precedence over other errors.
-            webkitDownloadCancelled(m_download.get());
-        } else
-            webkitDownloadFailed(m_download.get(), error);
+        webkitDownloadFailed(m_download.get(), error);
         m_download = nullptr;
     }
 
     void didFinish(DownloadProxy& downloadProxy) override
     {
+        if (webkitDownloadIsCancelled(m_download.get()))
+            return;
+
         ASSERT(m_download);
         webkitDownloadFinished(m_download.get());
+        m_download = nullptr;
+    }
+
+    void legacyDidCancel(WebKit::DownloadProxy&) override
+    {
+        ASSERT(m_download);
+        webkitDownloadCancelled(m_download.get());
         m_download = nullptr;
     }
 

@@ -61,8 +61,10 @@ enum class PutByKind {
 };
 
 enum class DelByKind {
-    ById,
-    ByVal
+    ByIdStrict,
+    ByIdSloppy,
+    ByValStrict,
+    ByValSloppy,
 };
 
 enum class InByKind {
@@ -76,6 +78,7 @@ void repatchGetBy(JSGlobalObject*, CodeBlock*, JSValue, CacheableIdentifier, con
 void repatchArrayPutByVal(JSGlobalObject*, CodeBlock*, JSValue base, JSValue index, StructureStubInfo&, PutByKind);
 void repatchPutBy(JSGlobalObject*, CodeBlock*, JSValue, Structure*, CacheableIdentifier, const PutPropertySlot&, StructureStubInfo&, PutByKind);
 void repatchDeleteBy(JSGlobalObject*, CodeBlock*, DeletePropertySlot&, JSValue, Structure*, CacheableIdentifier, StructureStubInfo&, DelByKind, ECMAMode);
+void repatchArrayInByVal(JSGlobalObject*, CodeBlock*, JSValue base, JSValue index, StructureStubInfo&, InByKind);
 void repatchInBy(JSGlobalObject*, CodeBlock*, JSObject*, CacheableIdentifier, bool wasFound, const PropertySlot&, StructureStubInfo&, InByKind);
 void repatchHasPrivateBrand(JSGlobalObject*, CodeBlock*, JSObject*, CacheableIdentifier, bool wasFound,  StructureStubInfo&);
 void repatchCheckPrivateBrand(JSGlobalObject*, CodeBlock*, JSObject*, CacheableIdentifier, StructureStubInfo&);

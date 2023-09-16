@@ -20,6 +20,7 @@
 #include "libANGLE/renderer/gl/FunctionsGL.h"
 #include "libANGLE/renderer/gl/MemoryObjectGL.h"
 #include "libANGLE/renderer/gl/PLSProgramCache.h"
+#include "libANGLE/renderer/gl/ProgramExecutableGL.h"
 #include "libANGLE/renderer/gl/ProgramGL.h"
 #include "libANGLE/renderer/gl/ProgramPipelineGL.h"
 #include "libANGLE/renderer/gl/QueryGL.h"
@@ -69,6 +70,11 @@ ShaderImpl *ContextGL::createShader(const gl::ShaderState &data)
 ProgramImpl *ContextGL::createProgram(const gl::ProgramState &data)
 {
     return new ProgramGL(data, getFunctions(), getFeaturesGL(), getStateManager(), mRenderer);
+}
+
+ProgramExecutableImpl *ContextGL::createProgramExecutable(const gl::ProgramExecutable *executable)
+{
+    return new ProgramExecutableGL(executable);
 }
 
 FramebufferImpl *ContextGL::createFramebuffer(const gl::FramebufferState &data)
@@ -884,10 +890,10 @@ angle::Result ContextGL::popDebugGroup(const gl::Context *context)
 }
 
 angle::Result ContextGL::syncState(const gl::Context *context,
-                                   const gl::state::DirtyBits &dirtyBits,
-                                   const gl::state::DirtyBits &bitMask,
-                                   const gl::state::ExtendedDirtyBits &extendedDirtyBits,
-                                   const gl::state::ExtendedDirtyBits &extendedBitMask,
+                                   const gl::state::DirtyBits dirtyBits,
+                                   const gl::state::DirtyBits bitMask,
+                                   const gl::state::ExtendedDirtyBits extendedDirtyBits,
+                                   const gl::state::ExtendedDirtyBits extendedBitMask,
                                    gl::Command command)
 {
     return mRenderer->getStateManager()->syncState(context, dirtyBits, bitMask, extendedDirtyBits,

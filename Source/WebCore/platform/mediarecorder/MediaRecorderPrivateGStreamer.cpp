@@ -30,6 +30,7 @@
 #include "MediaStreamPrivate.h"
 #include "VideoEncoderPrivateGStreamer.h"
 #include <gst/app/gstappsink.h>
+#include <gst/transcoder/gsttranscoder.h>
 #include <wtf/Scope.h>
 
 namespace WebCore {
@@ -46,21 +47,73 @@ std::unique_ptr<MediaRecorderPrivateGStreamer> MediaRecorderPrivateGStreamer::cr
         GST_DEBUG_CATEGORY_INIT(webkit_media_recorder_debug, "webkitmediarecorder", 0, "WebKit MediaStream recorder");
     });
 
-    auto recorder = makeUnique<MediaRecorderPrivateGStreamer>(stream, options);
+    auto recorder = MediaRecorderPrivateBackend::create(stream, options);
     if (!recorder->preparePipeline())
         return nullptr;
 
-    return recorder;
+    return makeUnique<MediaRecorderPrivateGStreamer>(recorder.releaseNonNull());
 }
 
-MediaRecorderPrivateGStreamer::MediaRecorderPrivateGStreamer(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)
+MediaRecorderPrivateGStreamer::MediaRecorderPrivateGStreamer(Ref<MediaRecorderPrivateBackend>&& recorder)
+    : m_recorder(WTFMove(recorder))
+{
+    m_recorder->setSelectTracksCallback([this](auto selectedTracks) {
+        if (selectedTracks.audioTrack) {
+            setAudioSource(&selectedTracks.audioTrack->source());
+            checkTrackState(*selectedTracks.audioTrack);
+        }
+        if (selectedTracks.videoTrack) {
+            setVideoSource(&selectedTracks.videoTrack->source());
+            checkTrackState(*selectedTracks.videoTrack);
+        }
+    });
+}
+
+void MediaRecorderPrivateGStreamer::startRecording(StartRecordingCallback&& callback)
+{
+    m_recorder->startRecording(WTFMove(callback));
+}
+
+void MediaRecorderPrivateGStreamer::stopRecording(CompletionHandler<void()>&& completionHandler)
+{
+    m_recorder->stopRecording(WTFMove(completionHandler));
+}
+
+void MediaRecorderPrivateGStreamer::fetchData(FetchDataCallback&& completionHandler)
+{
+    m_recorder->fetchData(WTFMove(completionHandler));
+}
+
+void MediaRecorderPrivateGStreamer::pauseRecording(CompletionHandler<void()>&& completionHandler)
+{
+    m_recorder->pauseRecording(WTFMove(completionHandler));
+}
+
+void MediaRecorderPrivateGStreamer::resumeRecording(CompletionHandler<void()>&& completionHandler)
+{
+    m_recorder->resumeRecording(WTFMove(completionHandler));
+}
+
+const String& MediaRecorderPrivateGStreamer::mimeType() const
+{
+    return m_recorder->mimeType();
+}
+
+bool MediaRecorderPrivateGStreamer::isTypeSupported(const ContentType& contentType)
+{
+    auto& scanner = GStreamerRegistryScanner::singleton();
+    return scanner.isContentTypeSupported(GStreamerRegistryScanner::Configuration::Encoding, contentType, { }) > MediaPlayerEnums::SupportsType::IsNotSupported;
+}
+
+MediaRecorderPrivateBackend::MediaRecorderPrivateBackend(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)
     : m_stream(stream)
     , m_options(options)
 {
 }
 
-MediaRecorderPrivateGStreamer::~MediaRecorderPrivateGStreamer()
+MediaRecorderPrivateBackend::~MediaRecorderPrivateBackend()
 {
+    m_selectTracksCallback.reset();
     if (m_src)
         webkitMediaStreamSrcSignalEndOfStream(WEBKIT_MEDIA_STREAM_SRC(m_src.get()));
     if (m_transcoder) {
@@ -69,7 +122,7 @@ MediaRecorderPrivateGStreamer::~MediaRecorderPrivateGStreamer()
     }
 }
 
-void MediaRecorderPrivateGStreamer::startRecording(StartRecordingCallback&& callback)
+void MediaRecorderPrivateBackend::startRecording(MediaRecorderPrivate::StartRecordingCallback&& callback)
 {
     if (!m_pipeline)
         preparePipeline();
@@ -78,7 +131,7 @@ void MediaRecorderPrivateGStreamer::startRecording(StartRecordingCallback&& call
     gst_transcoder_run_async(m_transcoder.get());
 }
 
-void MediaRecorderPrivateGStreamer::stopRecording(CompletionHandler<void()>&& completionHandler)
+void MediaRecorderPrivateBackend::stopRecording(CompletionHandler<void()>&& completionHandler)
 {
     GST_DEBUG_OBJECT(m_transcoder.get(), "Stop requested, pushing EOS event");
 
@@ -99,24 +152,31 @@ void MediaRecorderPrivateGStreamer::stopRecording(CompletionHandler<void()>&& co
     bool isEOS = false;
     while (!isEOS) {
         LockHolder lock(m_eosLock);
-        m_eosCondition.waitFor(m_eosLock, 200_ms, [weakThis = WeakPtr { this }]() -> bool {
-            if (!weakThis)
-                return true;
-            return weakThis->m_eos;
+        m_eosCondition.waitFor(m_eosLock, 200_ms, [weakThis = ThreadSafeWeakPtr { *this }]() -> bool {
+            if (auto strongThis = weakThis.get())
+                return strongThis->m_eos;
+            return true;
         });
         isEOS = m_eos;
     }
 }
 
-void MediaRecorderPrivateGStreamer::fetchData(FetchDataCallback&& completionHandler)
+void MediaRecorderPrivateBackend::fetchData(MediaRecorderPrivate::FetchDataCallback&& completionHandler)
 {
-    Locker locker { m_dataLock };
-    GST_DEBUG_OBJECT(m_transcoder.get(), "Transfering %zu encoded bytes", m_data.size());
-    auto buffer = m_data.take();
-    completionHandler(WTFMove(buffer), mimeType(), m_position);
+    callOnMainThread([this, weakThis = ThreadSafeWeakPtr { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+        auto strongThis = weakThis.get();
+        if (!strongThis) {
+            completionHandler(nullptr, mimeType(), 0);
+            return;
+        }
+        Locker locker { m_dataLock };
+        GST_DEBUG_OBJECT(m_transcoder.get(), "Transfering %zu encoded bytes", m_data.size());
+        auto buffer = m_data.take();
+        completionHandler(WTFMove(buffer), mimeType(), m_position);
+    });
 }
 
-void MediaRecorderPrivateGStreamer::pauseRecording(CompletionHandler<void()>&& completionHandler)
+void MediaRecorderPrivateBackend::pauseRecording(CompletionHandler<void()>&& completionHandler)
 {
     GST_INFO_OBJECT(m_transcoder.get(), "Pausing");
     if (m_pipeline)
@@ -130,7 +190,7 @@ void MediaRecorderPrivateGStreamer::pauseRecording(CompletionHandler<void()>&& c
     completionHandler();
 }
 
-void MediaRecorderPrivateGStreamer::resumeRecording(CompletionHandler<void()>&& completionHandler)
+void MediaRecorderPrivateBackend::resumeRecording(CompletionHandler<void()>&& completionHandler)
 {
     GST_INFO_OBJECT(m_transcoder.get(), "Resuming");
     auto selectedTracks = MediaRecorderPrivate::selectTracks(stream());
@@ -143,7 +203,7 @@ void MediaRecorderPrivateGStreamer::resumeRecording(CompletionHandler<void()>&& 
     completionHandler();
 }
 
-const String& MediaRecorderPrivateGStreamer::mimeType() const
+const String& MediaRecorderPrivateBackend::mimeType() const
 {
     static NeverDestroyed<const String> MP4AUDIOMIMETYPE(MAKE_STATIC_STRING_IMPL("audio/mp4"));
     static NeverDestroyed<const String> MP4VIDEOMIMETYPE(MAKE_STATIC_STRING_IMPL("video/mp4"));
@@ -152,13 +212,7 @@ const String& MediaRecorderPrivateGStreamer::mimeType() const
     return selectedTracks.videoTrack ? MP4VIDEOMIMETYPE : MP4AUDIOMIMETYPE;
 }
 
-bool MediaRecorderPrivateGStreamer::isTypeSupported(const ContentType& contentType)
-{
-    auto& scanner = GStreamerRegistryScanner::singleton();
-    return scanner.isContentTypeSupported(GStreamerRegistryScanner::Configuration::Encoding, contentType, { }) > MediaPlayerEnums::SupportsType::IsNotSupported;
-}
-
-GRefPtr<GstEncodingContainerProfile> MediaRecorderPrivateGStreamer::containerProfile()
+GRefPtr<GstEncodingContainerProfile> MediaRecorderPrivateBackend::containerProfile()
 {
     auto selectedTracks = MediaRecorderPrivate::selectTracks(m_stream);
     auto mimeType = this->mimeType();
@@ -239,38 +293,36 @@ GRefPtr<GstEncodingContainerProfile> MediaRecorderPrivateGStreamer::containerPro
     return profile;
 }
 
-void MediaRecorderPrivateGStreamer::setSource(GstElement* element)
+void MediaRecorderPrivateBackend::setSource(GstElement* element)
 {
     auto selectedTracks = MediaRecorderPrivate::selectTracks(stream());
     bool onlyTrack = (selectedTracks.audioTrack && !selectedTracks.videoTrack) || (selectedTracks.videoTrack && !selectedTracks.audioTrack);
     auto* src = WEBKIT_MEDIA_STREAM_SRC(element);
-    if (selectedTracks.audioTrack) {
+    if (selectedTracks.audioTrack)
         webkitMediaStreamSrcAddTrack(src, selectedTracks.audioTrack, onlyTrack);
-        setAudioSource(&selectedTracks.audioTrack->source());
-        checkTrackState(*selectedTracks.audioTrack);
-    }
-    if (selectedTracks.videoTrack) {
+    if (selectedTracks.videoTrack)
         webkitMediaStreamSrcAddTrack(src, selectedTracks.videoTrack, onlyTrack);
-        setVideoSource(&selectedTracks.videoTrack->source());
-        checkTrackState(*selectedTracks.videoTrack);
+    if (m_selectTracksCallback) {
+        auto& callback = *m_selectTracksCallback;
+        callback(selectedTracks);
     }
     m_src = element;
 }
 
-void MediaRecorderPrivateGStreamer::setSink(GstElement* element)
+void MediaRecorderPrivateBackend::setSink(GstElement* element)
 {
     static GstAppSinkCallbacks callbacks = {
         nullptr,
         [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
             auto sample = adoptGRef(gst_app_sink_pull_preroll(sink));
             if (sample)
-                static_cast<MediaRecorderPrivateGStreamer*>(userData)->processSample(WTFMove(sample));
+                static_cast<MediaRecorderPrivateBackend*>(userData)->processSample(WTFMove(sample));
             return gst_app_sink_is_eos(sink) ? GST_FLOW_EOS : GST_FLOW_OK;
         },
         [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
             auto sample = adoptGRef(gst_app_sink_pull_sample(sink));
             if (sample)
-                static_cast<MediaRecorderPrivateGStreamer*>(userData)->processSample(WTFMove(sample));
+                static_cast<MediaRecorderPrivateBackend*>(userData)->processSample(WTFMove(sample));
             return gst_app_sink_is_eos(sink) ? GST_FLOW_EOS : GST_FLOW_OK;
         },
         // new_event
@@ -286,7 +338,7 @@ void MediaRecorderPrivateGStreamer::setSink(GstElement* element)
     m_sink = element;
 }
 
-void MediaRecorderPrivateGStreamer::configureVideoEncoder(GstElement* element)
+void MediaRecorderPrivateBackend::configureVideoEncoder(GstElement* element)
 {
     auto format = adoptGRef(gst_encoding_profile_get_format(GST_ENCODING_PROFILE(m_videoEncodingProfile.get())));
     g_object_set(element, "format", format.get(), nullptr);
@@ -303,7 +355,7 @@ void MediaRecorderPrivateGStreamer::configureVideoEncoder(GstElement* element)
         g_object_set(element, "bitrate", bitrate / 1024, nullptr);
 }
 
-bool MediaRecorderPrivateGStreamer::preparePipeline()
+bool MediaRecorderPrivateBackend::preparePipeline()
 {
     auto profile = containerProfile();
     if (!profile)
@@ -313,11 +365,11 @@ bool MediaRecorderPrivateGStreamer::preparePipeline()
     gst_transcoder_set_avoid_reencoding(m_transcoder.get(), true);
     m_pipeline = gst_transcoder_get_pipeline(m_transcoder.get());
 
-    g_signal_connect_swapped(m_pipeline.get(), "source-setup", G_CALLBACK(+[](MediaRecorderPrivateGStreamer* recorder, GstElement* sourceElement) {
+    g_signal_connect_swapped(m_pipeline.get(), "source-setup", G_CALLBACK(+[](MediaRecorderPrivateBackend* recorder, GstElement* sourceElement) {
         recorder->setSource(sourceElement);
     }), this);
 
-    g_signal_connect_swapped(m_pipeline.get(), "element-setup", G_CALLBACK(+[](MediaRecorderPrivateGStreamer* recorder, GstElement* element) {
+    g_signal_connect_swapped(m_pipeline.get(), "element-setup", G_CALLBACK(+[](MediaRecorderPrivateBackend* recorder, GstElement* element) {
         if (WEBKIT_IS_VIDEO_ENCODER(element)) {
             recorder->configureVideoEncoder(element);
             return;
@@ -334,18 +386,18 @@ bool MediaRecorderPrivateGStreamer::preparePipeline()
         GST_WARNING("%s details: %" GST_PTR_FORMAT, error->message, details);
     }), nullptr);
 
-    g_signal_connect_swapped(m_signalAdapter.get(), "done", G_CALLBACK(+[](MediaRecorderPrivateGStreamer* recorder) {
+    g_signal_connect_swapped(m_signalAdapter.get(), "done", G_CALLBACK(+[](MediaRecorderPrivateBackend* recorder) {
         recorder->notifyEOS();
     }), this);
 
-    g_signal_connect_swapped(m_signalAdapter.get(), "position-updated", G_CALLBACK(+[](MediaRecorderPrivateGStreamer* recorder, GstClockTime position) {
+    g_signal_connect_swapped(m_signalAdapter.get(), "position-updated", G_CALLBACK(+[](MediaRecorderPrivateBackend* recorder, GstClockTime position) {
         recorder->notifyPosition(position);
     }), this);
 
     return true;
 }
 
-void MediaRecorderPrivateGStreamer::processSample(GRefPtr<GstSample>&& sample)
+void MediaRecorderPrivateBackend::processSample(GRefPtr<GstSample>&& sample)
 {
     auto* sampleBuffer = gst_sample_get_buffer(sample.get());
     GstMappedBuffer buffer(sampleBuffer, GST_MAP_READ);
@@ -355,7 +407,7 @@ void MediaRecorderPrivateGStreamer::processSample(GRefPtr<GstSample>&& sample)
     m_data.append(buffer.data(), buffer.size());
 }
 
-void MediaRecorderPrivateGStreamer::notifyEOS()
+void MediaRecorderPrivateBackend::notifyEOS()
 {
     GST_DEBUG("EOS received");
     LockHolder lock(m_eosLock);

@@ -65,12 +65,19 @@ public:
     static constexpr ChangeFlags basicChangeFlags { Change::StrokeThickness, Change::StrokeBrush, Change::FillBrush };
     static constexpr ChangeFlags strokeChangeFlags { Change::StrokeThickness, Change::StrokeBrush };
 
+    enum class Purpose : uint8_t {
+        Initial,
+        SaveRestore,
+        TransparencyLayer
+    };
+
     WEBCORE_EXPORT GraphicsContextState(const ChangeFlags& = { }, InterpolationQuality = InterpolationQuality::Default);
+
+    void repurpose(Purpose);
+    GraphicsContextState clone(Purpose) const;
 
     ChangeFlags changes() const { return m_changeFlags; }
     void didApplyChanges() { m_changeFlags = { }; }
-
-    GraphicsContextState cloneForRecording() const;
 
     SourceBrush& fillBrush() { return m_fillBrush; }
     const SourceBrush& fillBrush() const { return m_fillBrush; }
@@ -137,7 +144,7 @@ public:
     void mergeLastChanges(const GraphicsContextState&, const std::optional<GraphicsContextState>& lastDrawingState = std::nullopt);
     void mergeAllChanges(const GraphicsContextState&);
 
-    void didBeginTransparencyLayer();
+    Purpose purpose() const { return m_purpose; }
 
     WTF::TextStream& dump(WTF::TextStream&) const;
 
@@ -191,6 +198,8 @@ private:
 #if HAVE(OS_DARK_MODE_SUPPORT)
     bool m_useDarkAppearance { false };
 #endif
+
+    Purpose m_purpose { Purpose::Initial };
 };
 
 template<class Encoder>

@@ -65,6 +65,7 @@ public:
     }
     ~NetworkProcessConnection();
     
+    Ref<IPC::Connection> protectedConnection() { return m_connection; }
     IPC::Connection& connection() { return m_connection.get(); }
 
     void didReceiveNetworkProcessConnectionMessage(IPC::Connection&, IPC::Decoder&);
@@ -88,8 +89,8 @@ public:
     bool cookiesEnabled() const;
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
-    void cookiesAdded(const String& host, const Vector<WebCore::Cookie>&);
-    void cookiesDeleted(const String& host, const Vector<WebCore::Cookie>&);
+    void cookiesAdded(const String& host, Vector<WebCore::Cookie>&&);
+    void cookiesDeleted(const String& host, Vector<WebCore::Cookie>&&);
     void allCookiesDeleted();
 #endif
 

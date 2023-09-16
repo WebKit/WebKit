@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WasmB3IRGenerator.h"
 
-#if ENABLE(WEBASSEMBLY_B3JIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT)
 
 #include "AirCode.h"
 #include "AllowMacroScratchRegisterUsageIf.h"
@@ -76,7 +76,7 @@
 #include <wtf/StdLibExtras.h>
 
 #if !ENABLE(WEBASSEMBLY)
-#error ENABLE(WEBASSEMBLY_B3JIT) is enabled, but ENABLE(WEBASSEMBLY) is not.
+#error ENABLE(WEBASSEMBLY_OMGJIT) is enabled, but ENABLE(WEBASSEMBLY) is not.
 #endif
 
 void dumpProcedure(void* ptr)
@@ -1101,7 +1101,7 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, OptimizingJITCallee&
         AllowMacroScratchRegisterUsage allowScratch(jit);
         code.emitDefaultPrologue(jit);
         GPRReg scratchGPR = wasmCallingConvention().prologueScratchGPRs[0];
-        jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxWasm(m_callee)), scratchGPR);
+        jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(m_callee)), scratchGPR);
         static_assert(CallFrameSlot::codeBlock + 1 == CallFrameSlot::callee);
         jit.storePairPtr(GPRInfo::wasmContextInstancePointer, scratchGPR, GPRInfo::callFrameRegister, CCallHelpers::TrustedImm32(CallFrameSlot::codeBlock * sizeof(Register)));
     });
@@ -3389,6 +3389,8 @@ void B3IRGenerator::emitRefTestOrCast(CastKind castKind, ExpressionType referenc
         // Casts to these types cannot fail as they are the top types of their respective hierarchies, and static type-checking does not allow cross-hierarchy casts.
         break;
     case Wasm::TypeKind::Nullref:
+    case Wasm::TypeKind::Nullfuncref:
+    case Wasm::TypeKind::Nullexternref:
         // Casts to any bottom type should always fail.
         if (castKind == CastKind::Cast) {
             B3::PatchpointValue* throwException = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, origin());
@@ -4267,7 +4269,7 @@ auto B3IRGenerator::addDelegateToUnreachable(ControlType& target, ControlType& d
 auto B3IRGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& args, Stack&) -> PartialResult
 {
     TRACE_CF("THROW");
-    PatchpointValue* patch = m_proc.add<PatchpointValue>(B3::Void, origin());
+    PatchpointValue* patch = m_proc.add<PatchpointValue>(B3::Void, origin(), cloningForbidden(Patchpoint));
     patch->effects.terminal = true;
     patch->append(instanceValue(), ValueRep::reg(GPRInfo::argumentGPR0));
     for (unsigned i = 0; i < args.size(); ++i) {
@@ -4293,7 +4295,7 @@ auto B3IRGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& ar
 auto B3IRGenerator::addRethrow(unsigned, ControlType& data) -> PartialResult
 {
     TRACE_CF("RETHROW");
-    PatchpointValue* patch = m_proc.add<PatchpointValue>(B3::Void, origin());
+    PatchpointValue* patch = m_proc.add<PatchpointValue>(B3::Void, origin(), cloningForbidden(Patchpoint));
     patch->clobber(RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
     patch->effects.terminal = true;
     patch->append(instanceValue(), ValueRep::reg(GPRInfo::argumentGPR0));
@@ -5616,4 +5618,4 @@ void computePCToCodeOriginMap(CompilationContext& context, LinkBuffer& linkBuffe
 
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMBLY_B3JIT)
+#endif // ENABLE(WEBASSEMBLY_OMGJIT)

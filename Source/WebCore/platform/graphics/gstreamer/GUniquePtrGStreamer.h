@@ -50,6 +50,7 @@ WTF_DEFINE_GPTR_DELETER(GstFlowCombiner, gst_flow_combiner_free)
 WTF_DEFINE_GPTR_DELETER(GstByteReader, gst_byte_reader_free)
 WTF_DEFINE_GPTR_DELETER(GstVideoConverter, gst_video_converter_free)
 WTF_DEFINE_GPTR_DELETER(GstAudioConverter, gst_audio_converter_free)
+WTF_DEFINE_GPTR_DELETER(GstAudioInfo, gst_audio_info_free)
 
 #if defined(BUILDING_WebCore) && USE(GSTREAMER_WEBRTC)
 WTF_DEFINE_GPTR_DELETER(GstWebRTCSessionDescription, gst_webrtc_session_description_free)

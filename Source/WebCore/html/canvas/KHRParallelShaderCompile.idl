@@ -26,7 +26,7 @@
 [
     LegacyNoInterfaceObject,
     Conditional=WEBGL,
-    GenerateIsReachable=ImplWebGLRenderingContext
+    GenerateIsReachable
 ] interface KHRParallelShaderCompile {
     const unsigned long COMPLETION_STATUS_KHR = 0x91B1;
 };

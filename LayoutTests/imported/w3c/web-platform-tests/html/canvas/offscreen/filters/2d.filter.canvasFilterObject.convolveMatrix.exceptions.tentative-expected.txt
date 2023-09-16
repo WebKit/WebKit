@@ -3,7 +3,7 @@
 Test exceptions on CanvasFilter() convolveMatrix
 
 
-FAIL Test exceptions on CanvasFilter() convolveMatrix assert_throws_js: function "function() { new CanvasFilter({filter: "convolveMatrix"}); }" threw object "ReferenceError: Can't find variable: CanvasFilter" ("ReferenceError") expected instance of function "function TypeError() {
+FAIL Test exceptions on CanvasFilter() convolveMatrix assert_throws_js: function "function() { new CanvasFilter({filter: 'convolveMatrix'}); }" threw object "ReferenceError: Can't find variable: CanvasFilter" ("ReferenceError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
 

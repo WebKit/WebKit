@@ -1,0 +1,7 @@
+2d.reset.basic
+
+reset clears to transparent black
+
+
+PASS reset clears to transparent black
+

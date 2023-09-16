@@ -31,7 +31,7 @@ features: [Temporal]
 // This code path is encountered if the time zone offset is negative and its
 // absolute value in nanoseconds is greater than the nanosecond field of the
 // exact time's epoch parts
-const tz = new Temporal.TimeZone("-00:00:00.000000002");
+const tz = TemporalHelpers.specificOffsetTimeZone(-2);
 const datetime = new Temporal.ZonedDateTime(1001n, tz);
 
 const pdt = datetime.toPlainDateTime();

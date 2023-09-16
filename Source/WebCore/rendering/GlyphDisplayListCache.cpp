@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,97 +27,8 @@
 #include "GlyphDisplayListCache.h"
 
 #include "DisplayListItems.h"
-#include "DisplayListIterator.h"
 
 namespace WebCore {
-
-static bool canShareDisplayListWithItem(DisplayList::ItemType itemType)
-{
-    using DisplayList::ItemType;
-
-    switch (itemType) {
-    case ItemType::Translate:
-    case ItemType::Scale:
-    case ItemType::ConcatenateCTM:
-    case ItemType::DrawDecomposedGlyphs:
-    case ItemType::DrawImageBuffer:
-    case ItemType::DrawNativeImage:
-    case ItemType::BeginTransparencyLayer:
-    case ItemType::EndTransparencyLayer:
-        return true;
-    case ItemType::Save:
-    case ItemType::Restore:
-    case ItemType::Rotate:
-    case ItemType::SetCTM:
-    case ItemType::SetInlineFillColor:
-    case ItemType::SetInlineStrokeColor:
-    case ItemType::SetStrokeThickness:
-    case ItemType::SetState:
-    case ItemType::SetLineCap:
-    case ItemType::SetLineDash:
-    case ItemType::SetLineJoin:
-    case ItemType::SetMiterLimit:
-    case ItemType::ClearShadow:
-    case ItemType::Clip:
-    case ItemType::ClipRoundedRect:
-    case ItemType::ClipOut:
-    case ItemType::ClipOutRoundedRect:
-    case ItemType::ClipToImageBuffer:
-    case ItemType::ClipOutToPath:
-    case ItemType::ClipPath:
-    case ItemType::ResetClip:
-    case ItemType::DrawControlPart:
-    case ItemType::DrawFilteredImageBuffer:
-    case ItemType::DrawSystemImage:
-    case ItemType::DrawGlyphs:
-    case ItemType::DrawPattern:
-    case ItemType::DrawRect:
-    case ItemType::DrawLine:
-    case ItemType::DrawLinesForText:
-    case ItemType::DrawDotsForDocumentMarker:
-    case ItemType::DrawEllipse:
-    case ItemType::DrawPath:
-    case ItemType::DrawFocusRingPath:
-    case ItemType::DrawFocusRingRects:
-    case ItemType::FillRect:
-    case ItemType::FillRectWithColor:
-    case ItemType::FillRectWithGradient:
-    case ItemType::FillCompositedRect:
-    case ItemType::FillRoundedRect:
-    case ItemType::FillRectWithRoundedHole:
-#if ENABLE(INLINE_PATH_DATA)
-    case ItemType::FillLine:
-    case ItemType::FillArc:
-    case ItemType::FillQuadCurve:
-    case ItemType::FillBezierCurve:
-#endif
-    case ItemType::FillPathSegment:
-    case ItemType::FillPath:
-    case ItemType::FillEllipse:
-#if ENABLE(VIDEO)
-    case ItemType::PaintFrameForMedia:
-#endif
-    case ItemType::StrokeRect:
-    case ItemType::StrokeLine:
-#if ENABLE(INLINE_PATH_DATA)
-    case ItemType::StrokeArc:
-    case ItemType::StrokeQuadCurve:
-    case ItemType::StrokeBezierCurve:
-#endif
-    case ItemType::StrokePathSegment:
-    case ItemType::StrokePath:
-    case ItemType::StrokeEllipse:
-    case ItemType::ClearRect:
-#if USE(CG)
-    case ItemType::ApplyStrokePattern:
-    case ItemType::ApplyFillPattern:
-#endif
-    case ItemType::ApplyDeviceScaleFactor:
-        return false;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
-}
 
 struct GlyphDisplayListCacheKey {
     const TextRun& textRun;
@@ -162,19 +73,11 @@ unsigned GlyphDisplayListCache::size() const
     return m_entries.size();
 }
 
-size_t GlyphDisplayListCache::sizeInBytes() const
-{
-    size_t sizeInBytes = 0;
-    for (auto entry : m_entries)
-        sizeInBytes += entry->displayList().sizeInBytes();
-    return sizeInBytes;
-}
-
 DisplayList::DisplayList* GlyphDisplayListCache::get(const void* run, const FontCascade& font, GraphicsContext& context, const TextRun& textRun)
 {
     if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
         if (!m_entries.isEmpty()) {
-            LOG(MemoryPressure, "GlyphDisplayListCache::%s - Under memory pressure - size: %d - sizeInBytes: %ld", __FUNCTION__, size(), sizeInBytes());
+            LOG(MemoryPressure, "GlyphDisplayListCache::%s - Under memory pressure - size: %d", __FUNCTION__, size());
             clear();
         }
         return nullptr;
@@ -211,10 +114,17 @@ void GlyphDisplayListCache::remove(const void* run)
     m_entriesForLayoutRun.remove(run);
 }
 
-bool GlyphDisplayListCache::canShareDisplayList(const DisplayList::InMemoryDisplayList& displayList)
+bool GlyphDisplayListCache::canShareDisplayList(const DisplayList::DisplayList& displayList)
 {
-    for (auto displayListItem : displayList) {
-        if (!canShareDisplayListWithItem(displayListItem.value().item.type()))
+    for (auto& item : displayList.items()) {
+        if (!(std::holds_alternative<DisplayList::Translate>(item)
+            || std::holds_alternative<DisplayList::Scale>(item)
+            || std::holds_alternative<DisplayList::ConcatenateCTM>(item)
+            || std::holds_alternative<DisplayList::DrawDecomposedGlyphs>(item)
+            || std::holds_alternative<DisplayList::DrawImageBuffer>(item)
+            || std::holds_alternative<DisplayList::DrawNativeImage>(item)
+            || std::holds_alternative<DisplayList::BeginTransparencyLayer>(item)
+            || std::holds_alternative<DisplayList::EndTransparencyLayer>(item)))
             return false;
     }
     return true;

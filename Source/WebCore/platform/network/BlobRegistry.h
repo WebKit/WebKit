@@ -40,6 +40,7 @@ class BlobDataFileReference;
 class BlobPart;
 class BlobRegistry;
 class BlobRegistryImpl;
+class SecurityOriginData;
 
 struct PolicyContainer;
 
@@ -56,7 +57,7 @@ public:
     virtual void registerInternalBlobURL(const URL&, Vector<BlobPart>&&, const String& contentType) = 0;
     
     // Registers a new blob URL referring to the blob data identified by the specified srcURL.
-    virtual void registerBlobURL(const URL&, const URL& srcURL, const PolicyContainer&) = 0;
+    virtual void registerBlobURL(const URL&, const URL& srcURL, const PolicyContainer&, const std::optional<SecurityOriginData>& topOrigin) = 0;
 
     // Registers a new blob URL referring to the blob data identified by the specified srcURL or, if none found, referring to the file found at the given path.
     virtual void registerInternalBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType) = 0;
@@ -64,10 +65,10 @@ public:
     // Negative start and end values select from the end.
     virtual void registerInternalBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end, const String& contentType) = 0;
 
-    virtual void unregisterBlobURL(const URL&) = 0;
+    virtual void unregisterBlobURL(const URL&, const std::optional<SecurityOriginData>& topOrigin) = 0;
 
-    virtual void registerBlobURLHandle(const URL&) = 0;
-    virtual void unregisterBlobURLHandle(const URL&) = 0;
+    virtual void registerBlobURLHandle(const URL&, const std::optional<SecurityOriginData>& topOrigin) = 0;
+    virtual void unregisterBlobURLHandle(const URL&, const std::optional<SecurityOriginData>& topOrigin) = 0;
 
     virtual unsigned long long blobSize(const URL&) = 0;
 

@@ -79,6 +79,8 @@ async function runFullCycleTest(t, options) {
   await checkEncoderSupport(t, encoder_config);
   let decoder = new VideoDecoder({
     output(frame) {
+      t.add_cleanup(() => { frame.close() });
+
       assert_equals(frame.visibleRect.width, w, "visibleRect.width");
       assert_equals(frame.visibleRect.height, h, "visibleRect.height");
       assert_equals(frame.timestamp, next_ts++, "decode timestamp");

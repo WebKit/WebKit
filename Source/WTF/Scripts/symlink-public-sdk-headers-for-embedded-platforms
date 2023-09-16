@@ -1,0 +1,66 @@
+#!/usr/bin/env python3
+
+import filecmp
+import os
+import shutil
+
+# The public SDKs for some embedded platforms are missing cross-platform
+# headers that WebKit uses. The xcfilelists given to this script pair a
+# framework or header directory from another SDK (i.e. macOS or iOS) with an
+# output path in $(WK_DERIVED_SDK_HEADERS_DIR). Symlink the SDK header to its
+# destination, where the rest of the build can use it.
+
+srcs = open(os.environ['SCRIPT_INPUT_FILE_LIST_0'])
+dsts = open(os.environ['SCRIPT_OUTPUT_FILE_LIST_0'])
+
+def ln_sfh(src, dst):
+    print(src, '->', dst)
+    os.symlink(src, f'{dst}.new')
+    os.replace(f'{dst}.new', dst)
+
+
+def framework_copied_by_c_x_f_e_d(src, dst):
+    def diff(dcmp):
+        return dcmp.left_only or dcmp.right_only or \
+            any(not file.endswith('.tbd') for file in dcmp.diff_files) or \
+            any(diff(subdcmp) for subdcmp in dcmp.subdirs.values())
+    return not diff(filecmp.dircmp(src, dst))
+
+
+for src, dst in zip(srcs, dsts):
+    src = src.rstrip()
+    dst = dst.rstrip()
+
+    src_name = os.path.basename(src)
+    dst_name = os.path.basename(dst)
+    if src_name != dst_name:
+        raise SystemExit(f'error: Input lines do not have matching filenames ("{src_name}" and "{dst_name}). '
+                         'Are the xcfilelist entries in the right order?')
+
+    # Old versions of configure-xcode-for-embedded-development would copy
+    # headers and modules into the system's base SDKs. If we detect that we're
+    # on a SDK that has been mutated, symlink *those* files instead of files
+    # from the source SDKs. This avoids introducing duplicate headers into
+    # compilation units.
+    # FIXME: Remove this and the filecmp logic below once iOS/watchOS/tvOS bots
+    # are not using an old, mutated SDK (Fall 2023).
+    sdkroot_dst = dst.replace(os.environ['WK_DERIVED_SDK_HEADERS_DIR'], os.environ['SDKROOT'])
+
+    if os.path.isfile(src):
+        if os.path.exists(sdkroot_dst) and filecmp.cmp(src, sdkroot_dst):
+            src = sdkroot_dst
+        ln_sfh(src, dst)
+    else:
+        if os.path.exists(sdkroot_dst) and framework_copied_by_c_x_f_e_d(src, sdkroot_dst):
+            src = sdkroot_dst
+
+        # The build system is not tracking the contents of the tree, so delete
+        # it first to remove any stale files.
+        shutil.rmtree(dst, ignore_errors=True)
+        # Directories being copied may be framework bundles, which contain
+        # platform-specific TBDs. Ignore them when copying.
+        shutil.copytree(
+            src, dst,
+            ignore=lambda _, names: {name for name in names if name.endswith('.tbd')},
+            copy_function=ln_sfh
+        )

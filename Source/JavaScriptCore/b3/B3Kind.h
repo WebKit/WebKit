@@ -175,6 +175,29 @@ public:
         ASSERT(hasIsSensitiveToNaN());
         m_isSensitiveToNaN = isSensitiveToNaN;
     }
+
+    static constexpr bool hasCloningForbidden(Opcode opcode)
+    {
+        switch (opcode) {
+        case Patchpoint:
+            return true;
+        default:
+            return false;
+        }
+    }
+    bool hasCloningForbidden() const
+    {
+        return hasCloningForbidden(m_opcode);
+    }
+    bool isCloningForbidden() const
+    {
+        return m_cloningForbidden;
+    }
+    void setIsCloningForbidden(bool isCloningForbidden)
+    {
+        ASSERT(hasCloningForbidden());
+        m_cloningForbidden = isCloningForbidden;
+    }
     
     // Rules for adding new properties:
     // - Put the accessors here.
@@ -184,13 +207,7 @@ public:
     // - Try not to increase the size of Kind too much. But it wouldn't be the end of the
     //   world if it bloated to 64 bits.
     
-    bool operator==(const Kind& other) const
-    {
-        return m_opcode == other.m_opcode
-            && m_isChill == other.m_isChill
-            && m_traps == other.m_traps
-            && m_isSensitiveToNaN == other.m_isSensitiveToNaN;
-    }
+    friend bool operator==(const Kind&, const Kind&) = default;
     
     void dump(PrintStream&) const;
     
@@ -198,7 +215,7 @@ public:
     {
         // It's almost certainly more important that this hash function is cheap to compute than
         // anything else. We can live with some kind hash collisions.
-        return m_opcode + (static_cast<unsigned>(m_isChill) << 16) + (static_cast<unsigned>(m_traps) << 7) + (static_cast<unsigned>(m_isSensitiveToNaN) << 24);
+        return m_opcode + (static_cast<unsigned>(m_isChill) << 16) + (static_cast<unsigned>(m_traps) << 7) + (static_cast<unsigned>(m_isSensitiveToNaN) << 24) + (static_cast<unsigned>(m_cloningForbidden) << 13);
     }
     
     Kind(WTF::HashTableDeletedValueType)
@@ -217,6 +234,7 @@ private:
     bool m_isChill : 1 { false };
     bool m_traps : 1 { false };
     bool m_isSensitiveToNaN : 1 { false };
+    bool m_cloningForbidden : 1 { false };
 };
 
 // For every flag 'foo' you add, it's customary to create a Kind B3::foo(Kind) function that makes
@@ -242,6 +260,12 @@ inline Kind trapping(Kind kind)
 inline Kind sensitiveToNaN(Kind kind)
 {
     kind.setIsSensitiveToNaN(true);
+    return kind;
+}
+
+inline Kind cloningForbidden(Kind kind)
+{
+    kind.setIsCloningForbidden(true);
     return kind;
 }
 

@@ -47,7 +47,7 @@ public:
 
     virtual ~InjectedBundleDOMWindowExtension();
     
-    WebFrame* frame() const;
+    RefPtr<WebFrame> frame() const;
     InjectedBundleScriptWorld* world() const;
 
 private:

@@ -34,6 +34,7 @@
 
 #import "CocoaHelpers.h"
 #import "JSWebExtensionWrappable.h"
+#import "Logging.h"
 #import "WebExtensionAPIRuntime.h"
 #import <JavaScriptCore/JSObjectRef.h>
 
@@ -107,6 +108,8 @@ void WebExtensionCallbackHandler::reportError(NSString *message)
 
     if (!m_rejectFunction)
         return;
+
+    RELEASE_LOG_ERROR(Extensions, "Promise rejected: %{public}@", message);
 
     JSValue *error = [JSValue valueWithNewErrorFromMessage:message inContext:[JSContext contextWithJSGlobalContextRef:m_globalContext.get()]];
 
@@ -190,20 +193,33 @@ NSString *toNSString(JSContextRef context, JSValueRef value, NullStringPolicy nu
         FALLTHROUGH;
 
     case NullStringPolicy::NoNullString:
+        // Don't try to convert other objects into strings.
+        if (!JSValueIsString(context, value))
+            return nil;
+
         JSRetainPtr<JSStringRef> string(Adopt, JSValueToStringCopy(context, value, 0));
         return CFBridgingRelease(JSStringCopyCFString(nullptr, string.get()));
     }
 }
 
-NSDictionary *toNSDictionary(JSContextRef context, JSValueRef value)
+NSDictionary *toNSDictionary(JSContextRef context, JSValueRef valueRef)
 {
     ASSERT(context);
 
-    if (!JSValueIsObject(context, value))
+    if (!JSValueIsObject(context, valueRef))
         return nil;
 
-    JSObjectRef object = JSValueToObject(context, value, nullptr);
+    JSObjectRef object = JSValueToObject(context, valueRef, nullptr);
     if (!object)
+        return nil;
+
+    // Don't try to convert functions.
+    if (JSObjectIsFunction(context, object))
+        return nil;
+
+    // Don't try to convert promises or regular expressions.
+    JSValue *value = [JSValue valueWithJSValueRef:valueRef inContext:[JSContext contextWithJSGlobalContextRef:JSContextGetGlobalContext(context)]];
+    if (value._isThenable || value._isRegularExpression)
         return nil;
 
     JSPropertyNameArrayRef propertyNames = JSObjectCopyPropertyNames(context, object);

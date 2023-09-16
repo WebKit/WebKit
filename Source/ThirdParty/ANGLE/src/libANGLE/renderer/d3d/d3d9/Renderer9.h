@@ -36,6 +36,7 @@ class Blit9;
 class Context9;
 class IndexDataManager;
 class ProgramD3D;
+class ProgramExecutableD3D;
 class RenderTarget9;
 class StreamingIndexBufferInterface;
 class StaticIndexBufferInterface;
@@ -129,7 +130,7 @@ class Renderer9 : public RendererD3D
     angle::Result applyRenderTarget(const gl::Context *context,
                                     const RenderTarget9 *colorRenderTarget,
                                     const RenderTarget9 *depthStencilRenderTarget);
-    void applyUniforms(ProgramD3D *programD3D);
+    void applyUniforms(ProgramExecutableD3D *executableD3D);
     bool applyPrimitiveType(gl::PrimitiveMode primitiveType,
                             GLsizei elementCount,
                             bool usesPointSize);

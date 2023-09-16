@@ -47,8 +47,8 @@ messages -> WebPage LegacyReceiver {
     ViewWillEndLiveResize()
 
     ExecuteEditCommandWithCallback(String name, String argument) -> ()
-    KeyEvent(WebKit::WebKeyboardEvent event)
-    MouseEvent(WebKit::WebMouseEvent event, std::optional<Vector<WebKit::SandboxExtension::Handle>> sandboxExtensions)
+    KeyEvent(WebCore::FrameIdentifier frameID, WebKit::WebKeyboardEvent event) -> (enum:int8_t WebKit::WebEventType eventType, bool handled)
+    MouseEvent(WebCore::FrameIdentifier frameID, WebKit::WebMouseEvent event, std::optional<Vector<WebKit::SandboxExtension::Handle>> sandboxExtensions) -> (enum:int8_t WebKit::WebEventType eventType, bool handled, struct std::optional<WebCore::RemoteMouseEventData> remoteMouseEventData)
 
 #if ENABLE(NOTIFICATIONS)
     ClearNotificationPermissionState()
@@ -158,7 +158,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ResetPotentialTapSecurityOrigin()
 #endif
 #if !ENABLE(IOS_TOUCH_EVENTS) && ENABLE(TOUCH_EVENTS)
-    TouchEvent(WebKit::WebTouchEvent event)
+    TouchEvent(WebKit::WebTouchEvent event) -> (enum:int8_t WebKit::WebEventType eventType, bool handled)
 #endif
 
     CancelPointer(WebCore::PointerID pointerId, WebCore::IntPoint documentPoint)
@@ -179,10 +179,11 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     DidEndDateTimePicker();
 #endif
 
-    ScrollBy(uint32_t scrollDirection, enum:uint8_t WebCore::ScrollGranularity scrollGranularity)
+    ScrollBy(enum:uint8_t WebCore::ScrollDirection scrollDirection, enum:uint8_t WebCore::ScrollGranularity scrollGranularity)
     CenterSelectionInVisibleArea()
 
-    GoToBackForwardItem(uint64_t navigationID, WebCore::BackForwardItemIdentifier backForwardItemID, enum:uint8_t WebCore::FrameLoadType backForwardType, enum:uint8_t WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<WebKit::WebsitePoliciesData> websitePolicies, bool lastNavigationWasAppInitiated, std::optional<WebKit::NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume, std::optional<String> topPrivatelyControlledDomain)
+    GoToBackForwardItem(struct WebKit::GoToBackForwardItemParameters parameters)
+    GoToBackForwardItemWaitingForProcessLaunch(struct WebKit::GoToBackForwardItemParameters parameters, WebKit::WebPageProxyIdentifier pageID)
     TryRestoreScrollPosition()
 
     LoadURLInFrame(URL url, String referrer, WebCore::FrameIdentifier frameID)
@@ -342,7 +343,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ScrollTextRangeToVisible(struct WebKit::WebFoundTextRange range)
     ClearAllDecoratedFoundText();
     DidBeginTextSearchOperation();
-    DidEndTextSearchOperation();
 
     RequestRectForFoundTextRange(struct WebKit::WebFoundTextRange range) -> (WebCore::FloatRect rect)
     AddLayerForFindOverlay() -> (WebCore::PlatformLayerIdentifier findLayerID)
@@ -442,19 +442,19 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     # Printing.
     BeginPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo)
     BeginPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
-    EndPrinting()
-    EndPrintingDuringDOMPrintOperation() AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
+    EndPrinting() -> ()
+    EndPrintingDuringDOMPrintOperation() -> () AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
     ComputePagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, WebCore::RectEdges<float> computedPageMargin)
     ComputePagesForPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, WebCore::RectEdges<float> computedPageMargin) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
 #if PLATFORM(COCOA)
-    DrawRectToImage(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize) -> (WebKit::ShareableBitmap::Handle image)
+    DrawRectToImage(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize) -> (WebKit::ShareableBitmap::Handle image) ReplyCanDispatchOutOfOrder
     DrawRectToImageDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize) -> (WebKit::ShareableBitmap::Handle image) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
     DrawPagesToPDF(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, uint32_t first, uint32_t count) -> (RefPtr<WebCore::SharedBuffer> data)
     DrawPagesToPDFDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, uint32_t first, uint32_t count) -> (RefPtr<WebCore::SharedBuffer> data) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
 #if PLATFORM(IOS_FAMILY)
     ComputePagesForPrintingiOS(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (size_t pageCount) Synchronous
-    DrawToPDFiOS(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, size_t pageCount) -> (RefPtr<WebCore::SharedBuffer> data)
-    DrawToImage(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (WebKit::ShareableBitmap::Handle data)
+    DrawToPDFiOS(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, size_t pageCount) -> (RefPtr<WebCore::SharedBuffer> data) ReplyCanDispatchOutOfOrder
+    DrawToImage(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (WebKit::ShareableBitmap::Handle data) ReplyCanDispatchOutOfOrder
 #endif
     DrawToPDF(WebCore::FrameIdentifier frameID, std::optional<WebCore::FloatRect> rect, bool allowTransparentBackground) -> (RefPtr<WebCore::SharedBuffer> data)
 #endif
@@ -686,9 +686,9 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetAppHighlightsVisibility(enum:bool WebCore::HighlightVisibility highlightVisibility)
 #endif
 
-    HandleWheelEvent(WebKit::WebWheelEvent event, OptionSet<WebCore::WheelEventProcessingSteps> processingSteps, std::optional<bool> willStartSwipe) -> (uint64_t scrollingNodeID, std::optional<WebCore::WheelScrollGestureState> gestureState, bool handled)
+    HandleWheelEvent(WebCore::FrameIdentifier frameID, WebKit::WebWheelEvent event, OptionSet<WebCore::WheelEventProcessingSteps> processingSteps, std::optional<bool> willStartSwipe) -> (uint64_t scrollingNodeID, std::optional<WebCore::WheelScrollGestureState> gestureState, bool handled)
 #if PLATFORM(IOS_FAMILY)
-    DispatchWheelEventWithoutScrolling(WebKit::WebWheelEvent event) -> (bool handled)
+    DispatchWheelEventWithoutScrolling(WebCore::FrameIdentifier frameID, WebKit::WebWheelEvent event) -> (bool handled)
 #endif
 
     LastNavigationWasAppInitiated() -> (bool wasAppBound)

@@ -53,8 +53,9 @@
 #endif
 
 #if PLATFORM(GTK)
-#include "GtkSettingsManager.h"
 #include "AcceleratedBackingStoreDMABuf.h"
+#include "GtkSettingsManager.h"
+#include "ScreenManager.h"
 #endif
 
 
@@ -147,6 +148,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
 #if PLATFORM(GTK)
     parameters.gtkSettings = GtkSettingsManager::singleton().settingsState();
+    parameters.screenProperties = ScreenManager::singleton().collectScreenProperties();
 #endif
 }
 

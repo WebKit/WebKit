@@ -42,6 +42,8 @@ OBJC_CLASS NSError;
 OBJC_CLASS NSURL;
 OBJC_CLASS WebCoreFPSContentKeySessionDelegate;
 
+OBJC_PROTOCOL(WebContentKeyGrouping);
+
 #if !RELEASE_LOG_DISABLED
 namespace WTF {
 class Logger;
@@ -94,7 +96,7 @@ public:
     NSURL *storageURL() const { return m_storageURL.get(); }
     bool persistentStateAllowed() const { return m_persistentStateAllowed; }
     SharedBuffer* serverCertificate() const { return m_serverCertificate.get(); }
-    AVContentKeySession* contentKeySession();
+    AVContentKeySession *contentKeySession();
 
     RetainPtr<AVContentKeyRequest> takeUnexpectedKeyRequestForInitializationData(const AtomString& initDataType, SharedBuffer& initData);
 
@@ -154,7 +156,7 @@ public:
     virtual ~CDMInstanceSessionFairPlayStreamingAVFObjC();
 
     // CDMInstanceSession
-    void requestLicense(LicenseType, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
+    void requestLicense(LicenseType, KeyGroupingStrategy, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) final;
     void updateLicense(const String&, LicenseType, Ref<SharedBuffer>&&, LicenseUpdateCallback&&) final;
     void loadSession(LicenseType, const String&, const String&, LoadSessionCallback&&) final;
     void closeSession(const String&, CloseSessionCallback&&) final;
@@ -179,13 +181,13 @@ public:
 
     using Keys = CDMInstanceFairPlayStreamingAVFObjC::Keys;
     Keys keyIDs();
-    AVContentKeySession* contentKeySession() { return m_session ? m_session.get() : m_instance->contentKeySession(); }
-    AVContentKeyReportGroup* contentKeyReportGroup() { return m_group.get(); }
+    AVContentKeySession *contentKeySession() { return m_session ? m_session.get() : m_instance->contentKeySession(); }
+    WebContentKeyGrouping *contentKeyReportGroup() { return m_group.get(); }
 
     struct Request {
         AtomString initType;
         Vector<RetainPtr<AVContentKeyRequest>> requests;
-        bool operator==(const Request& other) const { return initType == other.initType && requests == other.requests; }
+        friend bool operator==(const Request&, const Request&) = default;
     };
 
     bool hasRequest(AVContentKeyRequest*) const;
@@ -194,7 +196,7 @@ public:
     KeyStatusVector copyKeyStatuses() const;
 
 private:
-    bool ensureSessionOrGroup();
+    bool ensureSessionOrGroup(KeyGroupingStrategy);
     bool isLicenseTypeSupported(LicenseType) const;
 
     void updateKeyStatuses(std::optional<PlatformDisplayID> = std::nullopt);
@@ -213,7 +215,7 @@ private:
     void updateProtectionStatusForDisplayID(PlatformDisplayID);
 
     Ref<CDMInstanceFairPlayStreamingAVFObjC> m_instance;
-    RetainPtr<AVContentKeyReportGroup> m_group;
+    RetainPtr<WebContentKeyGrouping> m_group;
     RetainPtr<AVContentKeySession> m_session;
     std::optional<Request> m_currentRequest;
     RetainPtr<WebCoreFPSContentKeySessionDelegate> m_delegate;
@@ -240,7 +242,7 @@ private:
 #endif
 };
 
-}
+} // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CDM_INSTANCE(WebCore::CDMInstanceFairPlayStreamingAVFObjC, WebCore::CDMInstance::ImplementationType::FairPlayStreaming)
 

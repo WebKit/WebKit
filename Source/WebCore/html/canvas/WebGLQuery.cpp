@@ -28,30 +28,31 @@
 #if ENABLE(WEBGL)
 #include "WebGLQuery.h"
 
-#include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
 
 namespace WebCore {
     
-Ref<WebGLQuery> WebGLQuery::create(WebGLRenderingContextBase& ctx)
+RefPtr<WebGLQuery> WebGLQuery::create(WebGLRenderingContextBase& context)
 {
-    return adoptRef(*new WebGLQuery(ctx));
+    auto object = context.graphicsContextGL()->createQuery();
+    if (!object)
+        return nullptr;
+    return adoptRef(*new WebGLQuery { context, object });
 }
 
 WebGLQuery::~WebGLQuery()
 {
-    if (!contextGroup())
+    if (!m_context)
         return;
 
     runDestructor();
 }
 
-WebGLQuery::WebGLQuery(WebGLRenderingContextBase& ctx)
-    : WebGLSharedObject(ctx)
+WebGLQuery::WebGLQuery(WebGLRenderingContextBase& context, PlatformGLObject object)
+    : WebGLObject(context, object)
 {
-    setObject(ctx.graphicsContextGL()->createQuery());
 }
 
 void WebGLQuery::deleteObjectImpl(const AbstractLocker&, GraphicsContextGL* context3d, PlatformGLObject object)

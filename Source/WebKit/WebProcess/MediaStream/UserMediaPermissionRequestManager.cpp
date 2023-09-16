@@ -79,7 +79,7 @@ void UserMediaPermissionRequestManager::sendUserMediaRequest(UserMediaRequest& u
 
     m_ongoingUserMediaRequests.add(userRequest.identifier(), userRequest);
 
-    WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
+    auto webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
     auto* topLevelDocumentOrigin = userRequest.topLevelDocumentOrigin();

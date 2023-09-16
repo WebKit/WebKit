@@ -87,10 +87,7 @@ struct ExpansionBehavior {
     {
     }
 
-    bool operator==(const ExpansionBehavior& other) const
-    {
-        return left == other.left && right == other.right;
-    }
+    friend bool operator==(const ExpansionBehavior&, const ExpansionBehavior&) = default;
 
     static ExpansionBehavior defaultBehavior()
     {
@@ -169,16 +166,7 @@ enum class FontVariantNumericOrdinal : bool { Normal, Yes };
 enum class FontVariantNumericSlashedZero : bool { Normal, Yes };
 
 struct FontVariantAlternatesValues {
-    bool operator==(const FontVariantAlternatesValues& other) const
-    {
-        return stylistic == other.stylistic
-            && styleset == other.styleset
-            && characterVariant == other.characterVariant
-            && swash == other.swash
-            && ornaments == other.ornaments
-            && annotation == other.annotation
-            && historicalForms == other.historicalForms;
-    }
+    friend bool operator==(const FontVariantAlternatesValues&, const FontVariantAlternatesValues&) = default;
 
     String stylistic;
     Vector<String> styleset;
@@ -213,10 +201,7 @@ class FontVariantAlternates {
     using Values = FontVariantAlternatesValues;
 
 public:
-    bool operator==(const FontVariantAlternates& other) const
-    {
-        return m_values == other.m_values;
-    }
+    friend bool operator==(const FontVariantAlternates&, const FontVariantAlternates&) = default;
 
     bool isNormal() const
     {
@@ -277,6 +262,13 @@ enum class FontVariantEastAsianRuby : uint8_t {
     Yes
 };
 
+enum class FontVariantEmoji : uint8_t {
+    Normal,
+    Text,
+    Emoji,
+    Unicode,
+};
+
 struct FontVariantSettings {
     FontVariantSettings()
         : commonLigatures(FontVariantLigatures::Normal)
@@ -294,6 +286,7 @@ struct FontVariantSettings {
         , eastAsianVariant(FontVariantEastAsianVariant::Normal)
         , eastAsianWidth(FontVariantEastAsianWidth::Normal)
         , eastAsianRuby(FontVariantEastAsianRuby::Normal)
+        , emoji(FontVariantEmoji::Normal)
     {
     }
 
@@ -312,7 +305,8 @@ struct FontVariantSettings {
         FontVariantAlternates alternates,
         FontVariantEastAsianVariant eastAsianVariant,
         FontVariantEastAsianWidth eastAsianWidth,
-        FontVariantEastAsianRuby eastAsianRuby)
+        FontVariantEastAsianRuby eastAsianRuby,
+        FontVariantEmoji emoji)
             : commonLigatures(commonLigatures)
             , discretionaryLigatures(discretionaryLigatures)
             , historicalLigatures(historicalLigatures)
@@ -328,6 +322,7 @@ struct FontVariantSettings {
             , eastAsianVariant(eastAsianVariant)
             , eastAsianWidth(eastAsianWidth)
             , eastAsianRuby(eastAsianRuby)
+            , emoji(emoji)
     {
     }
 
@@ -347,27 +342,11 @@ struct FontVariantSettings {
             && alternates.isNormal()
             && eastAsianVariant == FontVariantEastAsianVariant::Normal
             && eastAsianWidth == FontVariantEastAsianWidth::Normal
-            && eastAsianRuby == FontVariantEastAsianRuby::Normal;
+            && eastAsianRuby == FontVariantEastAsianRuby::Normal
+            && emoji == FontVariantEmoji::Normal;
     }
 
-    bool operator==(const FontVariantSettings& other) const
-    {
-        return commonLigatures == other.commonLigatures
-            && discretionaryLigatures == other.discretionaryLigatures
-            && historicalLigatures == other.historicalLigatures
-            && contextualAlternates == other.contextualAlternates
-            && position == other.position
-            && caps == other.caps
-            && numericFigure == other.numericFigure
-            && numericSpacing == other.numericSpacing
-            && numericFraction == other.numericFraction
-            && numericOrdinal == other.numericOrdinal
-            && numericSlashedZero == other.numericSlashedZero
-            && alternates == other.alternates
-            && eastAsianVariant == other.eastAsianVariant
-            && eastAsianWidth == other.eastAsianWidth
-            && eastAsianRuby == other.eastAsianRuby;
-    }
+    friend bool operator==(const FontVariantSettings&, const FontVariantSettings&) = default;
 
     FontVariantLigatures commonLigatures;
     FontVariantLigatures discretionaryLigatures;
@@ -384,6 +363,7 @@ struct FontVariantSettings {
     FontVariantEastAsianVariant eastAsianVariant;
     FontVariantEastAsianWidth eastAsianWidth;
     FontVariantEastAsianRuby eastAsianRuby;
+    FontVariantEmoji emoji;
 };
 
 struct FontVariantLigaturesValues {
@@ -484,13 +464,6 @@ enum class AllowUserInstalledFonts : bool { No, Yes };
 
 using FeaturesMap = HashMap<FontTag, int, FourCharacterTagHash, FourCharacterTagHashTraits>;
 FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&, RefPtr<FontFeatureValues>);
-
-enum class FontVariantEmoji : uint8_t {
-    Normal,
-    Text,
-    Emoji,
-    Unicode,
-};
 
 enum class ResolvedEmojiPolicy : uint8_t {
     NoPreference,

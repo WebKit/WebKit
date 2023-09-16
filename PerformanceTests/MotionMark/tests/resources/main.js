@@ -66,9 +66,8 @@ Controller = Utilities.createClass(
         // In start() the timestamps are offset by the start timestamp
         this._startTimestamp = 0;
         this._endTimestamp = options["test-interval"];
-        this._targetFrameRate = options["frame-rate"] || 60;
         // Default data series: timestamp, complexity, estimatedFrameLength
-        var sampleSize = options["sample-capacity"] || (this._targetFrameRate * options["test-interval"] / 1000);
+        var sampleSize = options["sample-capacity"] || (60 * options["test-interval"] / 1000);
         this._sampler = new Sampler(options["series-count"] || 3, sampleSize, this);
         this._marks = {};
 
@@ -235,7 +234,7 @@ Controller = Utilities.createClass(
             controllerSamples.setFieldInDatum(sample, Strings.json.complexity, samples[1][i]);
 
             if (i == 0)
-                controllerSamples.setFieldInDatum(sample, Strings.json.frameLength, 1000/this._targetFrameRate);
+                controllerSamples.setFieldInDatum(sample, Strings.json.frameLength, 1000/60);
             else
                 controllerSamples.setFieldInDatum(sample, Strings.json.frameLength, timestamp - samples[0][i - 1]);
 
@@ -278,7 +277,7 @@ AdaptiveController = Utilities.createSubclass(Controller,
         // Data series: timestamp, complexity, estimatedIntervalFrameLength
         Controller.call(this, benchmark, options);
 
-        // All tests start at 0, so we expect to see the target fps quickly.
+        // All tests start at 0, so we expect to see 60 fps quickly.
         this._samplingTimestamp = options["test-interval"] / 2;
         this._startedSampling = false;
         this._targetFrameRate = options["frame-rate"];
@@ -335,10 +334,8 @@ AdaptiveController = Utilities.createSubclass(Controller,
 RampController = Utilities.createSubclass(Controller,
     function(benchmark, options)
     {
-        this.targetFPS = options["frame-rate"] || 60;
-
         // The tier warmup takes at most 5 seconds
-        options["sample-capacity"] = (options["test-interval"] / 1000 + 5) * this.targetFPS;
+        options["sample-capacity"] = (options["test-interval"] / 1000 + 5) * 60;
         Controller.call(this, benchmark, options);
 
         // Initially start with a tier test to find the bounds
@@ -364,17 +361,6 @@ RampController = Utilities.createSubclass(Controller,
         this._minimumComplexityEstimator = new Experiment;
         // Estimates all frames within an interval
         this._intervalFrameLengthEstimator = new Experiment;
-
-        // Used for regression calculations in the ramps
-        this.frameLengthDesired = 1000/this.targetFPS;
-        // Add some tolerance; frame lengths shorter than this are considered to be @ the desired frame length
-        this.frameLengthDesiredThreshold = 1000/(this.targetFPS - 2);
-        // During tier sampling get at least this slow to find the right complexity range
-        this.frameLengthTierThreshold = 1000/(this.targetFPS * 0.5);
-        // Try to make each ramp get this slow so that we can cross the break point
-        this.frameLengthRampLowerThreshold = 1000/(this.targetFPS * 0.75);
-        // Do not let the regression calculation at the maximum complexity of a ramp get slower than this threshold
-        this.frameLengthRampUpperThreshold = 1000/(this.targetFPS / 3);
     }, {
 
     // If the engine can handle the tier's complexity at the desired frame rate, test for a short
@@ -386,6 +372,17 @@ RampController = Utilities.createSubclass(Controller,
     numberOfFramesRequiredInInterval: 9,
 
     rampWarmupLength: 200,
+
+    // Used for regression calculations in the ramps
+    frameLengthDesired: 1000/60,
+    // Add some tolerance; frame lengths shorter than this are considered to be @ the desired frame length
+    frameLengthDesiredThreshold: 1000/58,
+    // During tier sampling get at least this slow to find the right complexity range
+    frameLengthTierThreshold: 1000/30,
+    // Try to make each ramp get this slow so that we can cross the break point
+    frameLengthRampLowerThreshold: 1000/45,
+    // Do not let the regression calculation at the maximum complexity of a ramp get slower than this threshold
+    frameLengthRampUpperThreshold: 1000/20,
 
     start: function(startTimestamp, stage)
     {
@@ -418,14 +415,14 @@ RampController = Utilities.createSubclass(Controller,
             var currentComplexity = stage.complexity();
             var currentFrameLength = this._frameLengthEstimator.estimate;
             if (currentFrameLength < this.frameLengthTierThreshold) {
-                var isAnimatingAtTargetFPS = currentFrameLength < this.frameLengthDesiredThreshold;
+                var isAnimatingAt60FPS = currentFrameLength < this.frameLengthDesiredThreshold;
                 var hasFinishedSlowTierTest = timestamp > this._tierStartTimestamp + this.tierSlowTestLength;
 
-                if (!isAnimatingAtTargetFPS && !hasFinishedSlowTierTest)
+                if (!isAnimatingAt60FPS && !hasFinishedSlowTierTest)
                     return;
 
-                // We're measuring at the target fps, so quickly move on to the next tier, or
-                // we're slower than the target fps, but we've let this tier run long enough to
+                // We're measuring at 60 fps, so quickly move on to the next tier, or
+                // we've slower than 60 fps, but we've let this tier run long enough to
                 // get an estimate
                 this._lastTierComplexity = currentComplexity;
                 this._lastTierFrameLength = currentFrameLength;
@@ -462,7 +459,7 @@ RampController = Utilities.createSubclass(Controller,
             this._minimumComplexityEstimator.sample(this._minimumComplexity);
 
             // Sometimes this last tier will drop the frame length well below the threshold.
-            // Avoid going down that far since it means fewer measurements are taken in the target fps area.
+            // Avoid going down that far since it means fewer measurements are taken in the 60 fps area.
             // Interpolate a maximum complexity that gets us around the lowest threshold.
             // Avoid doing this calculation if we never get out of the first tier (where this._lastTierComplexity is undefined).
             if (this._lastTierComplexity && this._lastTierComplexity != currentComplexity)
@@ -515,7 +512,7 @@ RampController = Utilities.createSubclass(Controller,
         if (intervalFrameLengthMean < this.frameLengthDesiredThreshold && this._intervalFrameLengthEstimator.cdf(this.frameLengthDesiredThreshold) > .9) {
             this._possibleMinimumComplexity = Math.max(this._possibleMinimumComplexity, currentComplexity);
         } else if (intervalFrameLengthStandardDeviation > 2) {
-            // In the case where we might have found a previous interval where the target fps was reached. We hit a significant blip,
+            // In the case where we might have found a previous interval where 60fps was reached. We hit a significant blip,
             // so we should resample this area in the next ramp.
             this._possibleMinimumComplexity = 1;
         }

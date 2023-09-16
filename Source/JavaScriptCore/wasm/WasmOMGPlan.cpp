@@ -26,13 +26,13 @@
 #include "config.h"
 #include "WasmOMGPlan.h"
 
-#if ENABLE(WEBASSEMBLY_B3JIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT)
 
 #include "JITCompilation.h"
 #include "LinkBuffer.h"
+#include "NativeCalleeRegistry.h"
 #include "WasmB3IRGenerator.h"
 #include "WasmCallee.h"
-#include "WasmCalleeRegistry.h"
 #include "WasmIRGeneratorHelpers.h"
 #include "WasmNameSection.h"
 #include "WasmTypeDefinitionInlines.h"
@@ -150,7 +150,7 @@ void OMGPlan::work(CompilationEffort)
         entrypoint = callee->entrypoint();
 
         if (context.pcToCodeOriginMap)
-            CalleeRegistry::singleton().addPCToCodeOriginMap(callee.ptr(), WTFMove(context.pcToCodeOriginMap));
+            NativeCalleeRegistry::singleton().addPCToCodeOriginMap(callee.ptr(), WTFMove(context.pcToCodeOriginMap));
 
         // We want to make sure we publish our callee at the same time as we link our callsites. This enables us to ensure we
         // always call the fastest code. Any function linked after us will see our new code and the new callsites, which they
@@ -179,7 +179,13 @@ void OMGPlan::work(CompilationEffort)
                 bbqCallee->setReplacement(callee.copyRef());
                 bbqCallee->tierUpCount()->m_compilationStatusForOMG = TierUpCount::CompilationStatus::Compiled;
             }
-            if (m_calleeGroup->m_llintCallees) {
+            if (Options::useWasmIPInt() && m_calleeGroup->m_ipintCallees) {
+                IPIntCallee& ipintCallee = m_calleeGroup->m_ipintCallees->at(m_functionIndex).get();
+                Locker locker { ipintCallee.tierUpCounter().m_lock };
+                ipintCallee.setReplacement(callee.copyRef(), mode());
+                ipintCallee.tierUpCounter().m_compilationStatus = LLIntTierUpCounter::CompilationStatus::Compiled;
+            }
+            if (!Options::useWasmIPInt() && m_calleeGroup->m_llintCallees) {
                 LLIntCallee& llintCallee = m_calleeGroup->m_llintCallees->at(m_functionIndex).get();
                 Locker locker { llintCallee.tierUpCounter().m_lock };
                 llintCallee.setReplacement(callee.copyRef(), mode());
@@ -195,4 +201,4 @@ void OMGPlan::work(CompilationEffort)
 
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMBLY_B3JIT)
+#endif // ENABLE(WEBASSEMBLY_OMGJIT)

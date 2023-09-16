@@ -39,6 +39,7 @@
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSParserToken);
 
 template<typename CharacterType>
 CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned length)
@@ -60,7 +61,7 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
         case 'c':
             switch (toASCIILower(data[1])) {
             case 'h':
-                return CSSUnitType::CSS_CHS;
+                return CSSUnitType::CSS_CH;
             case 'm':
                 return CSSUnitType::CSS_CM;
             }
@@ -68,9 +69,9 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
         case 'e':
             switch (toASCIILower(data[1])) {
             case 'm':
-                return CSSUnitType::CSS_EMS;
+                return CSSUnitType::CSS_EM;
             case 'x':
-                return CSSUnitType::CSS_EXS;
+                return CSSUnitType::CSS_EX;
             }
             break;
         case 'f':
@@ -91,7 +92,7 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
             break;
         case 'l':
             if (toASCIILower(data[1]) == 'h' && DeprecatedGlobalSettings::lineHeightUnitsEnabled())
-                return CSSUnitType::CSS_LHS;
+                return CSSUnitType::CSS_LH;
             break;
         case 'm':
             switch (toASCIILower(data[1])) {
@@ -128,6 +129,10 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
     case 3:
         switch (toASCIILower(data[0])) {
         case 'c':
+            if (toASCIILower(data[1]) == 'a') {
+                if (toASCIILower(data[2]) == 'p')
+                    return CSSUnitType::CSS_CAP;
+            }
             if (toASCIILower(data[1]) == 'q') {
                 switch (toASCIILower(data[2])) {
                 case 'b':
@@ -189,13 +194,23 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
                 if (toASCIILower(data[2]) == 'd')
                     return CSSUnitType::CSS_RAD;
                 break;
+            case 'c':
+                if (toASCIILower(data[2]) == 'h')
+                    return CSSUnitType::CSS_RCH;
+                break;
             case 'e':
                 if (toASCIILower(data[2]) == 'm')
-                    return CSSUnitType::CSS_REMS;
+                    return CSSUnitType::CSS_REM;
+                if (toASCIILower(data[2]) == 'x')
+                    return CSSUnitType::CSS_REX;
+                break;
+            case 'i':
+                if (toASCIILower(data[2]) == 'c')
+                    return CSSUnitType::CSS_RIC;
                 break;
             case 'l':
                 if (toASCIILower(data[2]) == 'h' && DeprecatedGlobalSettings::lineHeightUnitsEnabled())
-                    return CSSUnitType::CSS_RLHS;
+                    return CSSUnitType::CSS_RLH;
                 break;
             }
             break;
@@ -237,6 +252,10 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
             if (toASCIILower(data[1]) == 'r' && toASCIILower(data[2]) == 'a' && toASCIILower(data[3]) == 'd')
                 return CSSUnitType::CSS_GRAD;
             break;
+        case 'r':
+            if (toASCIILower(data[1]) == 'c' && toASCIILower(data[2]) == 'a' && toASCIILower(data[3]) == 'p')
+                return CSSUnitType::CSS_RCAP;
+            break;
         case 't':
             if (toASCIILower(data[1]) == 'u' && toASCIILower(data[2]) == 'r' && toASCIILower(data[3]) == 'n')
                 return CSSUnitType::CSS_TURN;
@@ -263,7 +282,7 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
         switch (toASCIILower(data[0])) {
         case '_':
             if (toASCIILower(data[1]) == '_' && toASCIILower(data[2]) == 'q' && toASCIILower(data[3]) == 'e' && toASCIILower(data[4]) == 'm')
-                return CSSUnitType::CSS_QUIRKY_EMS;
+                return CSSUnitType::CSS_QUIRKY_EM;
             break;
         case 'c':
             if (toASCIILower(data[1]) == 'q' && toASCIILower(data[2]) == 'm') {

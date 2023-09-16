@@ -32,6 +32,8 @@
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakHashSet.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 namespace WTF {
@@ -43,14 +45,13 @@ namespace WebCore {
 class WorkerDebuggerProxy;
 class WorkerLoaderProxy;
 
-class WorkerOrWorkletThread : public SerialFunctionDispatcher, public ThreadSafeRefCounted<WorkerOrWorkletThread> {
+class WorkerOrWorkletThread : public SerialFunctionDispatcher, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WorkerOrWorkletThread> {
 public:
     virtual ~WorkerOrWorkletThread();
 
+    // SerialFunctionDispatcher methods
     void dispatch(Function<void()>&&) final;
-#if ASSERT_ENABLED
-    void assertIsCurrent() const final;
-#endif
+    bool isCurrent() const final;
 
     Thread* thread() const { return m_thread.get(); }
 
@@ -71,8 +72,7 @@ public:
 
     const String& inspectorIdentifier() const { return m_inspectorIdentifier; }
 
-    static HashSet<WorkerOrWorkletThread*>& workerOrWorkletThreads() WTF_REQUIRES_LOCK(workerOrWorkletThreadsLock());
-    static Lock& workerOrWorkletThreadsLock() WTF_RETURNS_LOCK(s_workerOrWorkletThreadsLock);
+    static ThreadSafeWeakHashSet<WorkerOrWorkletThread>& workerOrWorkletThreads();
     static void releaseFastMallocFreeMemoryInAllThreads();
 
     void addChildThread(WorkerOrWorkletThread&);
@@ -92,8 +92,6 @@ private:
     virtual bool shouldWaitForWebInspectorOnStartup() const { return false; }
     void destroyWorkerGlobalScope(Ref<WorkerOrWorkletThread>&& protectedThis);
 
-    static Lock s_workerOrWorkletThreadsLock;
-
     String m_inspectorIdentifier;
     Lock m_threadCreationAndGlobalScopeLock;
     RefPtr<WorkerOrWorkletGlobalScope> m_globalScope;
@@ -102,7 +100,7 @@ private:
     Function<void(const String&)> m_evaluateCallback;
     Function<void()> m_stoppedCallback;
     BinarySemaphore m_suspensionSemaphore;
-    HashSet<WorkerOrWorkletThread*> m_childThreads;
+    ThreadSafeWeakHashSet<WorkerOrWorkletThread> m_childThreads;
     Function<void()> m_runWhenLastChildThreadIsGone;
     bool m_isSuspended { false };
     bool m_pausedForDebugger { false };

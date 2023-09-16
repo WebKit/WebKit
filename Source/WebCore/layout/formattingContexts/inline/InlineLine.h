@@ -40,34 +40,37 @@ enum class IntrinsicWidthMode;
 class Line {
 public:
     Line(const InlineFormattingContext&);
-    ~Line();
+    ~Line() = default;
 
     void initialize(const Vector<InlineItem>& lineSpanningInlineBoxes, bool isFirstFormattedLine);
 
     void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
+    // Reserved for TextOnlySimpleLineBuilder
+    void appendTextFast(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
 
     bool hasContent() const;
     bool hasContentOrListMarker() const;
 
-    bool contentNeedsBidiReordering() const { return m_hasNonDefaultBidiLevelRun; }
-
     InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
     InlineLayoutUnit contentLogicalRight() const { return lastRunLogicalRight() + m_clonedEndDecorationWidthForInlineBoxRuns; }
+
+    bool contentNeedsBidiReordering() const { return m_hasNonDefaultBidiLevelRun; }
     size_t nonSpanningInlineLevelBoxCount() const { return m_nonSpanningInlineLevelBoxCount; }
+    InlineLayoutUnit hangingTrailingContentWidth() const { return m_hangingContent.trailingWidth(); }
+    bool isHangingTrailingContentWhitespace() const { return !!m_hangingContent.trailingWhitespaceLength(); }
+
 
     InlineLayoutUnit trimmableTrailingWidth() const { return m_trimmableTrailingContent.width(); }
     bool isTrailingRunFullyTrimmable() const { return m_trimmableTrailingContent.isTrailingRunFullyTrimmable(); }
-
-    InlineLayoutUnit hangingTrailingContentWidth() const { return m_hangingContent.trailingWidth(); }
-    bool isHangingTrailingContentWhitespace() const { return !!m_hangingContent.trailingWhitespaceLength(); }
 
     std::optional<InlineLayoutUnit> trailingSoftHyphenWidth() const { return m_trailingSoftHyphenWidth; }
     void addTrailingHyphen(InlineLayoutUnit hyphenLogicalWidth);
 
     enum class TrailingContentAction : uint8_t { Remove, Preserve };
-    void handleTrailingTrimmableContent(TrailingContentAction);
+    InlineLayoutUnit handleTrailingTrimmableContent(TrailingContentAction);
     void handleTrailingHangingContent(std::optional<IntrinsicWidthMode>, InlineLayoutUnit horizontalAvailableSpace, bool isLastFormattedLine);
     void handleOverflowingNonBreakingSpace(TrailingContentAction, InlineLayoutUnit overflowingWidth);
+    const Box* removeOverflowingOurOfFlowContent();
     void resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel);
     void applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace);
 
@@ -84,7 +87,8 @@ public:
             ListMarkerOutside,
             InlineBoxStart,
             InlineBoxEnd,
-            LineSpanningInlineBoxStart
+            LineSpanningInlineBoxStart,
+            Opaque
         };
 
         bool isText() const { return m_type == Type::Text || isWordSeparator() || isNonBreakingSpace(); }
@@ -102,9 +106,11 @@ public:
         bool isInlineBoxStart() const { return m_type == Type::InlineBoxStart; }
         bool isLineSpanningInlineBoxStart() const { return m_type == Type::LineSpanningInlineBoxStart; }
         bool isInlineBoxEnd() const { return m_type == Type::InlineBoxEnd; }
+        bool isOpaque() const { return m_type == Type::Opaque; }
 
         bool isContentful() const { return (isText() && textContent()->length) || isBox() || isLineBreak() || isListMarker(); }
         bool isGenerated() const { return isListMarker(); }
+        static bool isContentfulOrHasDecoration(const Run&, const InlineFormattingContext&);
 
         const Box& layoutBox() const { return *m_layoutBox; }
         struct Text {
@@ -184,16 +190,29 @@ public:
     using InlineBoxListWithClonedDecorationEnd = HashMap<const Box*, InlineLayoutUnit>;
     const InlineBoxListWithClonedDecorationEnd& inlineBoxListWithClonedDecorationEnd() const { return m_inlineBoxListWithClonedDecorationEnd; }
 
+    struct Result {
+        RunList runs;
+        InlineLayoutUnit contentLogicalWidth { 0.f };
+        InlineLayoutUnit contentLogicalRight { 0.f };
+        bool isHangingTrailingContentWhitespace { false };
+        InlineLayoutUnit hangingTrailingContentWidth { 0.f };
+        bool contentNeedsBidiReordering { false };
+        size_t nonSpanningInlineLevelBoxCount { 0 };
+    };
+    Result close();
+
+    static bool restoreTrimmedTrailingWhitespace(InlineLayoutUnit trimmedTrailingWhitespaceWidth, RunList&);
+
 private:
     InlineLayoutUnit lastRunLogicalRight() const { return m_runs.isEmpty() ? 0.0f : m_runs.last().logicalRight(); }
 
     void appendTextContent(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
-    void appendNonReplacedInlineLevelBox(const InlineItem&, const RenderStyle&, InlineLayoutUnit marginBoxLogicalWidth);
-    void appendReplacedInlineLevelBox(const InlineItem&, const RenderStyle&, InlineLayoutUnit marginBoxLogicalWidth);
+    void appendGenericInlineLevelBox(const InlineItem&, const RenderStyle&, InlineLayoutUnit marginBoxLogicalWidth);
     void appendInlineBoxStart(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
     void appendInlineBoxEnd(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
     void appendLineBreak(const InlineItem&, const RenderStyle&);
     void appendWordBreakOpportunity(const InlineItem&, const RenderStyle&);
+    void appendOpaqueBox(const InlineItem&, const RenderStyle&);
 
     InlineLayoutUnit addBorderAndPaddingEndForInlineBoxDecorationClone(const InlineItem& inlineBoxStartItem);
     InlineLayoutUnit removeBorderAndPaddingEndForInlineBoxDecorationClone(const InlineItem& inlineBoxEndItem);

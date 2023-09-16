@@ -35,17 +35,12 @@
 #import "WebPageProxy.h"
 #import "WebProcess.h"
 #import "_WKWebExtensionWebNavigationURLFilter.h"
-#import <JavaScriptCore/APICast.h>
-#import <JavaScriptCore/ScriptCallStack.h>
-#import <JavaScriptCore/ScriptCallStackFactory.h>
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 namespace WebKit {
 
-class JSWebExtensionWrappable;
-
-void WebExtensionAPIWebNavigationEvent::invokeListenersWithArgument(id argument1, NSURL *targetURL)
+void WebExtensionAPIWebNavigationEvent::invokeListenersWithArgument(id argument, NSURL *targetURL)
 {
     if (m_listeners.isEmpty())
         return;
@@ -55,21 +50,20 @@ void WebExtensionAPIWebNavigationEvent::invokeListenersWithArgument(id argument1
         if (filter && ![filter matchesURL:targetURL])
             continue;
 
-        listener.first->call(argument1);
+        listener.first->call(argument);
     }
 }
 
-void WebExtensionAPIWebNavigationEvent::addListener(WebPage* page, RefPtr<WebExtensionCallbackHandler> listener, NSDictionary *filter, NSString **exceptionString)
+void WebExtensionAPIWebNavigationEvent::addListener(WebPage* page, RefPtr<WebExtensionCallbackHandler> listener, NSDictionary *filter, NSString **outExceptionString)
 {
     _WKWebExtensionWebNavigationURLFilter *parsedFilter;
     if (filter) {
-        parsedFilter = [[_WKWebExtensionWebNavigationURLFilter alloc] initWithDictionary:filter outErrorMessage:exceptionString];
+        parsedFilter = [[_WKWebExtensionWebNavigationURLFilter alloc] initWithDictionary:filter outErrorMessage:outExceptionString];
         if (!parsedFilter)
             return;
     }
 
-    FilterAndCallbackPair filterPair = FilterAndCallbackPair(listener, parsedFilter);
-    m_listeners.append(filterPair);
+    m_listeners.append({ listener, parsedFilter });
 
     if (!page)
         return;

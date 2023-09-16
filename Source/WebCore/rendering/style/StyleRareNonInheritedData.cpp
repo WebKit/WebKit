@@ -54,7 +54,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     // counterDirectives
     , willChange(RenderStyle::initialWillChange())
     // boxReflect
-    , maskBoxImage(NinePieceImage::Type::Mask)
+    , maskBorder(NinePieceImage::Type::Mask)
     // pageSize
     , shapeOutside(RenderStyle::initialShapeOutside())
     , shapeMargin(RenderStyle::initialShapeMargin())
@@ -138,7 +138,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , counterDirectives(o.counterDirectives)
     , willChange(o.willChange)
     , boxReflect(o.boxReflect)
-    , maskBoxImage(o.maskBoxImage)
+    , maskBorder(o.maskBorder)
     , pageSize(o.pageSize)
     , shapeOutside(o.shapeOutside)
     , shapeMargin(o.shapeMargin)
@@ -229,7 +229,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && counterDirectives.map == o.counterDirectives.map
         && arePointingToEqualData(willChange, o.willChange)
         && arePointingToEqualData(boxReflect, o.boxReflect)
-        && maskBoxImage == o.maskBoxImage
+        && maskBorder == o.maskBorder
         && pageSize == o.pageSize
         && arePointingToEqualData(shapeOutside, o.shapeOutside)
         && shapeMargin == o.shapeMargin

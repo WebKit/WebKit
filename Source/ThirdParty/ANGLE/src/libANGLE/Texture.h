@@ -187,6 +187,8 @@ class TextureState final : private angle::NonCopyable
 
     const std::string &getLabel() const { return mLabel; }
 
+    gl::TilingMode getTilingMode() const { return mTilingMode; }
+
   private:
     // Texture needs access to the ImageDesc functions.
     friend class Texture;
@@ -243,6 +245,9 @@ class TextureState final : private angle::NonCopyable
     bool mHasProtectedContent;
 
     bool mRenderabilityValidation;
+
+    // GL_EXT_memory_object
+    gl::TilingMode mTilingMode;
 
     std::vector<ImageDesc> mImageDescs;
 
@@ -365,6 +370,9 @@ class Texture final : public RefCountObject<TextureID>,
     bool hasProtectedContent() const override;
 
     void setRenderabilityValidation(Context *context, bool renderabilityValidation);
+
+    void setTilingMode(Context *context, GLenum tilingMode);
+    GLenum getTilingMode() const;
 
     const TextureState &getState() const { return mState; }
 

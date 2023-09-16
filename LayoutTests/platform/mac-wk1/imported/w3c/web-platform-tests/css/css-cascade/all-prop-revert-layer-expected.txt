@@ -103,6 +103,7 @@ PASS container-type
 PASS content
 PASS counter-increment
 PASS counter-reset
+PASS counter-set
 PASS cursor
 PASS cx
 PASS cy

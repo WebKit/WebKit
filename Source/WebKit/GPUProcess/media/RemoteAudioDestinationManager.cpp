@@ -92,6 +92,11 @@ public:
     }
 
 #if PLATFORM(COCOA)
+    void setSharedMemory(SharedMemory::Handle&& handle)
+    {
+        m_frameCount = SharedMemory::map(WTFMove(handle), SharedMemory::Protection::ReadWrite);
+    }
+
     void audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&& handle)
     {
         if (m_isPlaying) {
@@ -132,6 +137,15 @@ public:
 
 private:
 #if PLATFORM(COCOA)
+    void incrementTotalFrameCount(UInt32 numberOfFrames)
+    {
+        static_assert(std::atomic<UInt32>::is_always_lock_free, "Shared memory atomic usage assumes lock free primitives are used");
+        if (m_frameCount) {
+            RELEASE_ASSERT(m_frameCount->size() == sizeof(std::atomic<uint32_t>));
+            WTF::atomicExchangeAdd(static_cast<uint32_t*>(m_frameCount->data()), numberOfFrames);
+        }
+    }
+
     OSStatus render(double sampleTime, uint64_t hostTime, UInt32 numberOfFrames, AudioBufferList* ioData)
     {
         ASSERT(!isMainRunLoop());
@@ -142,12 +156,8 @@ private:
             status = noErr;
         }
 
-        unsigned requestedSamplesCount = m_extraRequestedFrames;
-        for (; requestedSamplesCount < numberOfFrames; requestedSamplesCount += WebCore::AudioUtilities::renderQuantumSize) {
-            // Ask the audio thread in the WebContent process to render a quantum.
-            m_renderSemaphore.signal();
-        }
-        m_extraRequestedFrames = requestedSamplesCount - numberOfFrames;
+        incrementTotalFrameCount(numberOfFrames);
+        m_renderSemaphore.signal();
 
         return status;
     }
@@ -157,10 +167,10 @@ private:
 
 #if PLATFORM(COCOA)
     WebCore::AudioOutputUnitAdaptor m_audioOutputUnitAdaptor;
+    RefPtr<SharedMemory> m_frameCount;
     const uint32_t m_numOutputChannels;
     std::unique_ptr<ConsumerSharedCARingBuffer> m_ringBuffer;
     uint64_t m_startFrame { 0 };
-    unsigned m_extraRequestedFrames { 0 };
 #endif
 };
 
@@ -171,11 +181,16 @@ RemoteAudioDestinationManager::RemoteAudioDestinationManager(GPUConnectionToWebP
 
 RemoteAudioDestinationManager::~RemoteAudioDestinationManager() = default;
 
-void RemoteAudioDestinationManager::createAudioDestination(RemoteAudioDestinationIdentifier identifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore)
+void RemoteAudioDestinationManager::createAudioDestination(RemoteAudioDestinationIdentifier identifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, SharedMemory::Handle&& handle)
 {
     MESSAGE_CHECK(!m_gpuConnectionToWebProcess.isLockdownModeEnabled(), "Received a createAudioDestination() message from a webpage in Lockdown mode.");
 
     auto destination = makeUniqueRef<RemoteAudioDestination>(m_gpuConnectionToWebProcess, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate, hardwareSampleRate, WTFMove(renderSemaphore));
+#if PLATFORM(COCOA)
+    destination->setSharedMemory(WTFMove(handle));
+#else
+    UNUSED_PARAM(handle);
+#endif
     m_audioDestinations.add(identifier, WTFMove(destination));
 }
 

@@ -344,6 +344,15 @@ bool IsSwiftshaderDevice()
     return HasSystemDeviceID(kVendorID_GOOGLE, kDeviceID_Swiftshader);
 }
 
+bool IsSwiftShaderSupported()
+{
+#if defined(ANGLE_ENABLE_SWIFTSHADER)
+    return true;
+#else
+    return false;
+#endif
+}
+
 bool IsNVIDIA()
 {
 #if defined(ANGLE_PLATFORM_ANDROID)
@@ -360,15 +369,6 @@ bool IsQualcomm()
 {
     return IsNexus5X() || IsNexus9() || IsPixelXL() || IsPixel2() || IsPixel2XL() || IsPixel4() ||
            IsPixel4XL();
-}
-
-bool Is64Bit()
-{
-#if defined(ANGLE_IS_64_BIT_CPU)
-    return true;
-#else
-    return false;
-#endif  // defined(ANGLE_IS_64_BIT_CPU)
 }
 
 bool HasMesa()
@@ -394,17 +394,24 @@ bool IsConfigAllowlisted(const SystemInfo &systemInfo, const PlatformParameters 
             return true;
     }
 
-    // TODO: http://crbug.com/swiftshader/145
-    // Swiftshader does not currently have all the robustness features
-    // we need for ANGLE. In particular, it is unable to detect and recover
-    // from infinitely looping shaders. That bug is the tracker for fixing
-    // that and when resolved we can remove the following code.
-    // This test will disable tests marked with the config WithRobustness
-    // when run with the swiftshader Vulkan driver and on Android.
-    if ((param.isSwiftshader() || IsSwiftshaderDevice()) &&
-        param.eglParameters.robustness == EGL_TRUE)
+    if (param.isSwiftshader() || IsSwiftshaderDevice())
     {
-        return false;
+        if (!IsSwiftShaderSupported())
+        {
+            return false;
+        }
+
+        // TODO: http://crbug.com/swiftshader/145
+        // Swiftshader does not currently have all the robustness features
+        // we need for ANGLE. In particular, it is unable to detect and recover
+        // from infinitely looping shaders. That bug is the tracker for fixing
+        // that and when resolved we can remove the following code.
+        // This test will disable tests marked with the config WithRobustness
+        // when run with the swiftshader Vulkan driver and on Android.
+        if (param.eglParameters.robustness == EGL_TRUE)
+        {
+            return false;
+        }
     }
 
 // Skip test configs that target the desktop OpenGL frontend when it's not enabled.

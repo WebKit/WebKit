@@ -235,19 +235,6 @@ void FinishAndCheckForContextLoss()
         FAIL() << "Context lost";
     }
 }
-
-int EstimateStepsToRun(double trialTime, int stepsPerformed, int stepAlignment)
-{
-    double scale   = gTrialTimeSeconds / trialTime;
-    int stepsToRun = static_cast<int>(static_cast<double>(stepsPerformed) * scale);
-    stepsToRun     = std::max(1, stepsToRun);
-    if (stepAlignment != 1)
-    {
-        stepsToRun = rx::roundUp(stepsToRun, stepAlignment);
-    }
-
-    return stepsToRun;
-}
 }  // anonymous namespace
 
 TraceEvent::TraceEvent(char phaseIn,
@@ -271,9 +258,7 @@ ANGLEPerfTest::ANGLEPerfTest(const std::string &name,
       mStory(story),
       mGPUTimeNs(0),
       mSkipTest(false),
-      mWarmupSteps(gWarmupSteps),
       mStepsToRun(std::max(gStepsPerTrial, gMaxStepsPerformed)),
-      mTrialTimeLimitSeconds(gTrialTimeSeconds),
       mTrialNumStepsPerformed(0),
       mTotalNumStepsPerformed(0),
       mIterationsPerStep(iterationsPerStep),
@@ -293,7 +278,6 @@ ANGLEPerfTest::ANGLEPerfTest(const std::string &name,
     mReporter->RegisterImportantMetric(".gpu_time", units);
     mReporter->RegisterFyiMetric(".trial_steps", "count");
     mReporter->RegisterFyiMetric(".total_steps", "count");
-    mReporter->RegisterFyiMetric(".steps_to_run", "count");
 }
 
 ANGLEPerfTest::~ANGLEPerfTest() {}
@@ -313,14 +297,6 @@ void ANGLEPerfTest::run()
         // GTEST_SKIP returns.
     }
 
-    if (mStepsToRun <= 0)
-    {
-        // We don't call finish between calibration steps when calibrating non-Render tests. The
-        // Render tests will have already calibrated when this code is run.
-        calibrateStepsToRun();
-        ASSERT(mStepsToRun > 0);
-    }
-
     uint32_t numTrials = OneFrame() ? 1 : gTestTrials;
     if (gVerboseLogging)
     {
@@ -329,7 +305,7 @@ void ANGLEPerfTest::run()
 
     for (uint32_t trial = 0; trial < numTrials; ++trial)
     {
-        runTrial(mTrialTimeLimitSeconds, mStepsToRun, RunTrialPolicy::RunContinuously);
+        runTrial(gTrialTimeSeconds, mStepsToRun, RunTrialPolicy::RunContinuously);
         processResults();
         if (gVerboseLogging)
         {
@@ -438,7 +414,26 @@ void ANGLEPerfTest::runTrial(double maxRunTime, int maxStepsToRun, RunTrialPolic
     computeGPUTime();
 }
 
-void ANGLEPerfTest::SetUp() {}
+void ANGLEPerfTest::SetUp()
+{
+    if (gWarmup)
+    {
+        // Trace tests run with glFinish for a loop (getStepAlignment == frameCount).
+        int warmupSteps = getStepAlignment();
+        if (gVerboseLogging)
+        {
+            printf("Warmup: %d steps\n", warmupSteps);
+        }
+
+        // Note: time limit only has an effect if more than warmupSteps rendered within that time
+        runTrial(gTrialTimeSeconds, warmupSteps, RunTrialPolicy::FinishEveryStep);
+
+        if (gVerboseLogging)
+        {
+            printf("Warmup took %.2lf seconds.\n", mTrialTimer.getElapsedWallClockTime());
+        }
+    }
+}
 
 void ANGLEPerfTest::TearDown() {}
 
@@ -486,15 +481,8 @@ void ANGLEPerfTest::processResults()
         printf("Ran %0.2lf iterations per second\n", fps);
     }
 
-    if (gCalibration)
-    {
-        mReporter->AddResult(".steps_to_run", static_cast<size_t>(mStepsToRun));
-    }
-    else
-    {
-        mReporter->AddResult(".trial_steps", static_cast<size_t>(mTrialNumStepsPerformed));
-        mReporter->AddResult(".total_steps", static_cast<size_t>(mTotalNumStepsPerformed));
-    }
+    mReporter->AddResult(".trial_steps", static_cast<size_t>(mTrialNumStepsPerformed));
+    mReporter->AddResult(".total_steps", static_cast<size_t>(mTotalNumStepsPerformed));
 
     if (!mProcessMemoryUsageKBSamples.empty())
     {
@@ -598,76 +586,6 @@ void ANGLEPerfTest::processMemoryResult(const char *metric, uint64_t resultKB)
 double ANGLEPerfTest::normalizedTime(size_t value) const
 {
     return static_cast<double>(value) / static_cast<double>(mTrialNumStepsPerformed);
-}
-
-void ANGLEPerfTest::calibrateStepsToRun()
-{
-    ASSERT(mTrialTimeLimitSeconds > 0);
-    ASSERT(gWarmupTrials > 0);
-
-    Timer calibrationTimer;
-    calibrationTimer.start();
-
-    if (isRenderTest())
-    {
-        // To compute an accurate value for "mStepsToRun" we do a two-pass calibration. The
-        // first pass runs for "gCalibrationTimeSeconds" and calls glFinish every step. The
-        // estimated steps to run using this method is very inaccurate but is guaranteed to
-        // complete in a fixed amount of time. Using that estimate we then run a second pass
-        // and call Finish after running the estimated number of steps. We can then iterate
-        // on the number of steps to improve on our estimate for "mStepsToRun".
-
-        // Run initially for "gMaxTrialTime" using the run trial policy.
-        runTrial(mTrialTimeLimitSeconds, std::numeric_limits<int>::max(),
-                 RunTrialPolicy::FinishEveryStep);
-
-        if (gVerboseLogging)
-        {
-            printf("Calibration trial 0: %d steps in %.2lf seconds.\n", mTrialNumStepsPerformed,
-                   mTrialTimer.getElapsedWallClockTime());
-        }
-
-        for (int trial = 1; trial < gWarmupTrials; ++trial)
-        {
-            // Compute an intermediate steps to run for the next warm-up trial.
-            int stepsToRun = EstimateStepsToRun(mTrialTimer.getElapsedWallClockTime(),
-                                                mTrialNumStepsPerformed, getStepAlignment());
-            runTrial(mTrialTimeLimitSeconds, stepsToRun, RunTrialPolicy::RunContinuously);
-
-            if (gVerboseLogging)
-            {
-                printf("Calibration trial %d: %d steps in %.2lf seconds.\n", trial,
-                       mTrialNumStepsPerformed, mTrialTimer.getElapsedWallClockTime());
-            }
-        }
-    }
-    else
-    {
-        while (calibrationTimer.getElapsedWallClockTime() + mTrialTimeLimitSeconds <
-               gCalibrationTimeSeconds)
-        {
-            runTrial(gCalibrationTimeSeconds, std::numeric_limits<int>::max(),
-                     RunTrialPolicy::RunContinuously);
-        }
-    }
-
-    // Compute a final steps to run with the data from the final warm-up trial.
-    mStepsToRun = EstimateStepsToRun(mTrialTimer.getElapsedWallClockTime(), mTrialNumStepsPerformed,
-                                     getStepAlignment());
-
-    if (gVerboseLogging)
-    {
-        printf("Running %d steps after calibration.\n", mStepsToRun);
-    }
-
-    // Calibration allows the perf test runner script to save some time.
-    if (gCalibration)
-    {
-        processResults();
-    }
-
-    // Increase the time limit slightly to ensure we run the calibrated step count.
-    mTrialTimeLimitSeconds++;
 }
 
 int ANGLEPerfTest::getStepAlignment() const
@@ -872,8 +790,6 @@ void ANGLERenderTest::SetUp()
         return;
     }
 
-    ANGLEPerfTest::SetUp();
-
     // Set a consistent CPU core affinity and high priority.
     StabilizeCPUForBenchmarking();
 
@@ -1026,27 +942,8 @@ void ANGLERenderTest::SetUp()
 
     mTestTrialResults.reserve(gTestTrials);
 
-    if (mStepsToRun <= 0 && mWarmupSteps <= 0)
-    {
-        calibrateStepsToRun();
-    }
-    else
-    {
-        if (gVerboseLogging)
-        {
-            printf("Warmup: %d trials, %d steps per trial\n", gWarmupTrials, mWarmupSteps);
-        }
-
-        for (int warmupTrial = 0; warmupTrial < gWarmupTrials; ++warmupTrial)
-        {
-            runTrial(mTrialTimeLimitSeconds, mWarmupSteps, RunTrialPolicy::RunContinuously);
-            if (gVerboseLogging)
-            {
-                printf("Warm-up trial took %.2lf seconds.\n",
-                       mTrialTimer.getElapsedWallClockTime());
-            }
-        }
-    }
+    // Runs warmup if enabled
+    ANGLEPerfTest::SetUp();
 
     initPerfCounters();
 }

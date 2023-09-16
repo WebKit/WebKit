@@ -61,7 +61,6 @@ public:
     virtual CSSUnitType primitiveType() const = 0;
 
     virtual void collectComputedStyleDependencies(ComputedStyleDependencies&) const = 0;
-    virtual bool convertingToLengthRequiresNonNullStyle(int lengthConversion) const = 0;
 
     CalculationCategory category() const { return m_category; }
 

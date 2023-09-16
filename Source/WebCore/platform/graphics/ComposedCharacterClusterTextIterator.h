@@ -63,14 +63,29 @@ public:
         m_currentIndex += advanceLength;
     }
 
+    void reset(unsigned index)
+    {
+        ASSERT(index >= m_originalIndex);
+        if (index >= m_lastIndex)
+            return;
+        m_currentIndex = index;
+    }
+
+    const UChar* remainingCharacters() const
+    {
+        auto relativeIndex = m_currentIndex - m_originalIndex;
+        return m_characters + relativeIndex;
+    }
+
     unsigned currentIndex() const { return m_currentIndex; }
+    const UChar* characters() const { return m_characters; }
 
 private:
     CachedTextBreakIterator m_iterator;
-    const UChar* m_characters;
-    unsigned m_originalIndex { 0 };
+    const UChar* const m_characters;
+    const unsigned m_originalIndex { 0 };
     unsigned m_currentIndex { 0 };
-    unsigned m_lastIndex { 0 };
+    const unsigned m_lastIndex { 0 };
 };
 
-}
+} // namespace WebCore

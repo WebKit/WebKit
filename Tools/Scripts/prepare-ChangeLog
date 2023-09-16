@@ -783,8 +783,8 @@ sub get_function_line_ranges($$)
     return () unless $first_line =~ m|^#!(?:/usr/bin/env\s+)?(\S+)|;
     my $interpreter = $1;
 
-    return get_function_line_ranges_for_perl($file_handle, $file_name) if $interpreter =~ /perl$/;
-    return get_function_line_ranges_for_python($file_handle, $file_name) if $interpreter =~ /python$/;
+    return get_function_line_ranges_for_perl($file_handle, $file_name) if $interpreter =~ /perl[0-9\.]*$/;
+    return get_function_line_ranges_for_python($file_handle, $file_name) if $interpreter =~ /python[0-9\.]*$/;
 
     return ();
 }

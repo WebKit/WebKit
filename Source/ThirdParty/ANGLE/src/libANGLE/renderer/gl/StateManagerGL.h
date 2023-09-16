@@ -271,7 +271,7 @@ class StateManagerGL final : angle::NonCopyable
 
     void setProvokingVertex(GLenum mode);
 
-    void setClipDistancesEnable(const gl::State::ClipDistanceEnableBits &enables);
+    void setClipDistancesEnable(const gl::ClipDistanceEnableBits &enables);
 
     void setLogicOpEnabled(bool enabled);
     void setLogicOp(gl::LogicalOperation opcode);
@@ -345,7 +345,7 @@ class StateManagerGL final : angle::NonCopyable
 
     void updateEmulatedClipDistanceState(const gl::ProgramExecutable *executable,
                                          const gl::Program *program,
-                                         const gl::State::ClipDistanceEnableBits enables) const;
+                                         const gl::ClipDistanceEnableBits enables) const;
 
     void updateMultiviewBaseViewLayerIndexUniformImpl(
         const gl::Program *program,
@@ -542,7 +542,7 @@ class StateManagerGL final : angle::NonCopyable
 
     GLenum mProvokingVertex;
 
-    gl::State::ClipDistanceEnableBits mEnabledClipDistances;
+    gl::ClipDistanceEnableBits mEnabledClipDistances;
     const size_t mMaxClipDistances;
 
     bool mLogicOpEnabled;

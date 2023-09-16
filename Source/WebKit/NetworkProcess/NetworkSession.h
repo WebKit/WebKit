@@ -125,6 +125,7 @@ public:
     WebCore::NetworkStorageSession* networkStorageSession() const;
 
     void registerNetworkDataTask(NetworkDataTask&);
+    void unregisterNetworkDataTask(NetworkDataTask&);
 
     void destroyPrivateClickMeasurementStore(CompletionHandler<void()>&&);
 
@@ -230,6 +231,7 @@ public:
     WebSharedWorkerServer& ensureSharedWorkerServer();
 
     NetworkStorageManager& storageManager() { return m_storageManager.get(); }
+    Ref<NetworkStorageManager> protectedStorageManager();
     CacheStorage::Engine& ensureCacheEngine();
     void clearCacheEngine();
 
@@ -246,7 +248,7 @@ public:
 
     virtual void removeNetworkWebsiteData(std::optional<WallTime>, std::optional<HashSet<WebCore::RegistrableDomain>>&&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
 
-    virtual void dataTaskWithRequest(WebPageProxyIdentifier, WebCore::ResourceRequest&&, CompletionHandler<void(DataTaskIdentifier)>&&) { }
+    virtual void dataTaskWithRequest(WebPageProxyIdentifier, WebCore::ResourceRequest&&, const std::optional<WebCore::SecurityOriginData>& topOrigin, CompletionHandler<void(DataTaskIdentifier)>&&) { }
     virtual void cancelDataTask(DataTaskIdentifier) { }
     virtual void addWebPageNetworkParameters(WebPageProxyIdentifier, WebPageNetworkParameters&&) { }
     virtual void removeWebPageNetworkParameters(WebPageProxyIdentifier) { }
@@ -267,12 +269,17 @@ public:
 #endif
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    std::optional<int64_t> bytesPerSecondLimit() const { return m_bytesPerSecondLimit; }
     void setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit);
 #endif
 
 #if HAVE(NW_PROXY_CONFIG)
     virtual void clearProxyConfigData() { }
     virtual void setProxyConfigData(Vector<std::pair<Vector<uint8_t>, WTF::UUID>>&&) { };
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+    void setInspectionForServiceWorkersAllowed(bool);
 #endif
                                     
 protected:
@@ -359,6 +366,7 @@ protected:
     std::optional<ServiceWorkerInfo> m_serviceWorkerInfo;
     std::unique_ptr<WebCore::SWServer> m_swServer;
     RefPtr<BackgroundFetchStoreImpl> m_backgroundFetchStore;
+    bool m_inspectionForServiceWorkersAllowed { true };
 #endif
     std::unique_ptr<WebSharedWorkerServer> m_sharedWorkerServer;
 

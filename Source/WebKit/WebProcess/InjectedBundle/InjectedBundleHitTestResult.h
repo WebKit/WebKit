@@ -47,8 +47,8 @@ public:
 
     RefPtr<InjectedBundleNodeHandle> nodeHandle() const;
     RefPtr<InjectedBundleNodeHandle> urlElementHandle() const;
-    WebFrame* frame() const;
-    WebFrame* targetFrame() const;
+    RefPtr<WebFrame> frame() const;
+    RefPtr<WebFrame> targetFrame() const;
 
     String absoluteImageURL() const;
     String absolutePDFURL() const;

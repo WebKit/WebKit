@@ -73,18 +73,18 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
 @end
 
 @implementation WKWebInspectorUIProxyObjCAdapter {
-    WebKit::WebInspectorUIProxy* _inspectorProxy;
+    WeakPtr<WebKit::WebInspectorUIProxy> _inspectorProxy;
 }
 
 - (WKInspectorRef)inspectorRef
 {
-    return toAPI(_inspectorProxy);
+    return toAPI(_inspectorProxy.get());
 }
 
 - (_WKInspector *)inspector
 {
-    if (_inspectorProxy)
-        return wrapper(*_inspectorProxy);
+    if (RefPtr proxy = _inspectorProxy.get())
+        return wrapper(*proxy);
     return nil;
 }
 
@@ -108,39 +108,39 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
 
 - (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect
 {
-    if (_inspectorProxy)
-        return NSMakeRect(0, _inspectorProxy->sheetRect().height(), _inspectorProxy->sheetRect().width(), 0);
+    if (RefPtr proxy = _inspectorProxy.get())
+        return NSMakeRect(0, proxy->sheetRect().height(), proxy->sheetRect().width(), 0);
     return rect;
 }
 
 - (void)windowDidMove:(NSNotification *)notification
 {
-    if (_inspectorProxy)
-        _inspectorProxy->windowFrameDidChange();
+    if (RefPtr proxy = _inspectorProxy.get())
+        proxy->windowFrameDidChange();
 }
 
 - (void)windowDidResize:(NSNotification *)notification
 {
-    if (_inspectorProxy)
-        _inspectorProxy->windowFrameDidChange();
+    if (RefPtr proxy = _inspectorProxy.get())
+        proxy->windowFrameDidChange();
 }
 
 - (void)windowWillClose:(NSNotification *)notification
 {
-    if (_inspectorProxy)
-        _inspectorProxy->close();
+    if (RefPtr proxy = _inspectorProxy.get())
+        proxy->close();
 }
 
 - (void)windowDidEnterFullScreen:(NSNotification *)notification
 {
-    if (_inspectorProxy)
-        _inspectorProxy->windowFullScreenDidChange();
+    if (RefPtr proxy = _inspectorProxy.get())
+        proxy->windowFullScreenDidChange();
 }
 
 - (void)windowDidExitFullScreen:(NSNotification *)notification
 {
-    if (_inspectorProxy)
-        _inspectorProxy->windowFullScreenDidChange();
+    if (RefPtr proxy = _inspectorProxy.get())
+        proxy->windowFullScreenDidChange();
 }
 
 - (void)inspectedViewFrameDidChange:(NSNotification *)notification
@@ -151,8 +151,8 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
     // of the time the views will already have the correct frames because of autoresizing masks.
 
     dispatch_after(DISPATCH_TIME_NOW, dispatch_get_main_queue(), ^{
-        if (_inspectorProxy)
-            _inspectorProxy->inspectedViewFrameDidChange();
+        if (RefPtr proxy = _inspectorProxy.get())
+            proxy->inspectedViewFrameDidChange();
     });
 }
 
@@ -169,8 +169,8 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
         return;
 
     dispatch_after(DISPATCH_TIME_NOW, dispatch_get_main_queue(), ^{
-        if (_inspectorProxy)
-            _inspectorProxy->inspectedViewFrameDidChange();
+        if (RefPtr proxy = _inspectorProxy.get())
+            proxy->inspectedViewFrameDidChange();
     });
 }
 
@@ -178,14 +178,14 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
 
 - (void)inspectorViewControllerDidBecomeActive:(WKInspectorViewController *)inspectorViewController
 {
-    if (_inspectorProxy)
-        _inspectorProxy->didBecomeActive();
+    if (RefPtr proxy = _inspectorProxy.get())
+        proxy->didBecomeActive();
 }
 
 - (void)inspectorViewControllerInspectorDidCrash:(WKInspectorViewController *)inspectorViewController
 {
-    if (_inspectorProxy)
-        _inspectorProxy->closeForCrash();
+    if (RefPtr proxy = _inspectorProxy.get())
+        proxy->closeForCrash();
 }
 
 - (BOOL)inspectorViewControllerInspectorIsUnderTest:(WKInspectorViewController *)inspectorViewController
@@ -195,20 +195,20 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
 
 - (void)inspectorViewController:(WKInspectorViewController *)inspectorViewController willMoveToWindow:(NSWindow *)newWindow
 {
-    if (_inspectorProxy)
-        _inspectorProxy->attachmentWillMoveFromWindow(inspectorViewController.webView.window);
+    if (RefPtr proxy = _inspectorProxy.get())
+        proxy->attachmentWillMoveFromWindow(inspectorViewController.webView.window);
 }
 
 - (void)inspectorViewControllerDidMoveToWindow:(WKInspectorViewController *)inspectorViewController
 {
-    if (_inspectorProxy)
-        _inspectorProxy->attachmentDidMoveToWindow(inspectorViewController.webView.window);
+    if (RefPtr proxy = _inspectorProxy.get())
+        proxy->attachmentDidMoveToWindow(inspectorViewController.webView.window);
 }
 
 - (void)inspectorViewController:(WKInspectorViewController *)inspectorViewController openURLExternally:(NSURL *)url
 {
-    if (_inspectorProxy)
-        _inspectorProxy->openURLExternally(url.absoluteString);
+    if (RefPtr proxy = _inspectorProxy.get())
+        proxy->openURLExternally(url.absoluteString);
 }
 
 @end
@@ -457,7 +457,7 @@ WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
     [[NSNotificationCenter defaultCenter] addObserver:m_objCAdapter.get() selector:@selector(inspectedViewFrameDidChange:) name:NSViewFrameDidChangeNotification object:inspectedView];
 
     auto configuration = inspectedPage()->uiClient().configurationForLocalInspector(*inspectedPage(),  *this);
-    m_inspectorViewController = adoptNS([[WKInspectorViewController alloc] initWithConfiguration: WebKit::wrapper(configuration.get()) inspectedPage:inspectedPage()]);
+    m_inspectorViewController = adoptNS([[WKInspectorViewController alloc] initWithConfiguration: WebKit::wrapper(configuration.get()) inspectedPage:inspectedPage().get()]);
     [m_inspectorViewController.get() setDelegate:m_objCAdapter.get()];
 
     WebPageProxy *inspectorPage = [m_inspectorViewController webView]->_page.get();
@@ -476,7 +476,7 @@ void WebInspectorUIProxy::platformCreateFrontendWindow()
         savedWindowFrame = NSRectFromString(savedWindowFrameString);
     }
 
-    m_inspectorWindow = WebInspectorUIProxy::createFrontendWindow(savedWindowFrame, InspectionTargetType::Local, inspectedPage());
+    m_inspectorWindow = WebInspectorUIProxy::createFrontendWindow(savedWindowFrame, InspectionTargetType::Local, inspectedPage().get());
     [m_inspectorWindow setDelegate:m_objCAdapter.get()];
 
     WKWebView *inspectorView = [m_inspectorViewController webView];

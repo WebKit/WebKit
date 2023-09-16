@@ -128,6 +128,7 @@ class Debug : angle::NonCopyable
     };
 
     bool mOutputEnabled;
+    mutable std::mutex mMutex;
     GLDEBUGPROCKHR mCallbackFunction;
     const void *mCallbackUserParam;
     mutable std::deque<Message> mMessages;

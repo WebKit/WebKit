@@ -193,7 +193,7 @@ static Ref<Protocol::ScriptProfiler::Samples> buildSamples(VM& vm, Vector<Sampli
             frames->addItem(WTFMove(frameObject));
         }
         Ref<Protocol::ScriptProfiler::StackTrace> inspectorStackTrace = Protocol::ScriptProfiler::StackTrace::create()
-            .setTimestamp(stackTrace.timestamp.seconds())
+            .setTimestamp(stackTrace.stopwatchTimestamp.seconds())
             .setStackFrames(WTFMove(frames))
             .release();
         stackTraces->addItem(WTFMove(inspectorStackTrace));
@@ -207,7 +207,7 @@ static Ref<Protocol::ScriptProfiler::Samples> buildSamples(VM& vm, Vector<Sampli
 
 void InspectorScriptProfilerAgent::trackingComplete()
 {
-    auto timestamp = m_environment.executionStopwatch().elapsedTime().seconds();
+    auto stopwatchTimestamp = m_environment.executionStopwatch().elapsedTime().seconds();
 
 #if ENABLE(SAMPLING_PROFILER)
     if (m_enabledSamplingProfiler) {
@@ -226,11 +226,11 @@ void InspectorScriptProfilerAgent::trackingComplete()
 
         m_enabledSamplingProfiler = false;
 
-        m_frontendDispatcher->trackingComplete(timestamp, WTFMove(samples));
+        m_frontendDispatcher->trackingComplete(stopwatchTimestamp, WTFMove(samples));
     } else
-        m_frontendDispatcher->trackingComplete(timestamp, nullptr);
+        m_frontendDispatcher->trackingComplete(stopwatchTimestamp, nullptr);
 #else
-    m_frontendDispatcher->trackingComplete(timestamp, nullptr);
+    m_frontendDispatcher->trackingComplete(stopwatchTimestamp, nullptr);
 #endif // ENABLE(SAMPLING_PROFILER)
 }
 

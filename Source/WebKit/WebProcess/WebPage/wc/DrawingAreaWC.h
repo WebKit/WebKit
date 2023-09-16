@@ -53,6 +53,7 @@ private:
     void triggerRenderingUpdate() override;
     void didChangeViewportAttributes(WebCore::ViewportAttributes&&) override { }
     void deviceOrPageScaleFactorChanged() override { }
+    bool enterAcceleratedCompositingModeIfNeeded() override { return false; }
     void setLayerTreeStateIsFrozen(bool) override;
     bool layerTreeStateIsFrozen() const override { return m_isRenderingSuspended; }
 #if USE(GRAPHICS_LAYER_TEXTURE_MAPPER)    

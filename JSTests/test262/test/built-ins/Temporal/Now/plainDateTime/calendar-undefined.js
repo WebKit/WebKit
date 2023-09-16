@@ -7,5 +7,5 @@ description: Throws when the calendar argument is undefined
 features: [Temporal]
 ---*/
 
-assert.throws(RangeError, () => Temporal.Now.plainDateTime(), "implicit");
-assert.throws(RangeError, () => Temporal.Now.plainDateTime(undefined), "implicit");
+assert.throws(TypeError, () => Temporal.Now.plainDateTime(), "implicit");
+assert.throws(TypeError, () => Temporal.Now.plainDateTime(undefined), "implicit");

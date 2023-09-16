@@ -42,11 +42,6 @@ KHRParallelShaderCompile::KHRParallelShaderCompile(WebGLRenderingContextBase& co
 
 KHRParallelShaderCompile::~KHRParallelShaderCompile() = default;
 
-WebGLExtension::ExtensionName KHRParallelShaderCompile::getName() const
-{
-    return KHRParallelShaderCompileName;
-}
-
 bool KHRParallelShaderCompile::supported(GraphicsContextGL& context)
 {
     return context.supportsExtension("GL_KHR_parallel_shader_compile"_s);

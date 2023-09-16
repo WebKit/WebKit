@@ -29,6 +29,7 @@
 #include "NetworkProcessSupplement.h"
 #include <pal/SessionID.h>
 #include <stdint.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/WallTime.h>
@@ -66,6 +67,8 @@ public:
     void notifyCookiesDidChange(PAL::SessionID);
 
 private:
+    Ref<NetworkProcess> protectedProcess();
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
@@ -91,7 +94,7 @@ private:
     void startObservingCookieChanges(PAL::SessionID);
     void stopObservingCookieChanges(PAL::SessionID);
 
-    NetworkProcess& m_process;
+    CheckedRef<NetworkProcess> m_process;
 };
 
 #if PLATFORM(COCOA)

@@ -299,7 +299,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
 {
     auto scrollSnapType = scrollingElementStyle.scrollSnapType();
     const auto& boxesWithScrollSnapPositions = scrollingElementBox.view().boxesWithScrollSnapPositions();
-    if (scrollSnapType.strictness == ScrollSnapStrictness::None || boxesWithScrollSnapPositions.isEmpty()) {
+    if (scrollSnapType.strictness == ScrollSnapStrictness::None || boxesWithScrollSnapPositions.isEmptyIgnoringNullReferences()) {
         scrollableArea.clearSnapOffsets();
         return;
     }
@@ -346,24 +346,24 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
     // The bounds of the scrolling container's snap port, where the top left of the scrolling container's border box is the origin.
     auto scrollSnapPort = computeScrollSnapPortOrAreaRect(viewportRectInBorderBoxCoordinates, scrollingElementStyle.scrollPadding(), InsetOrOutset::Inset);
     LOG_WITH_STREAM(ScrollSnap, stream << "Computing scroll snap offsets for " << scrollableArea << " in snap port " << scrollSnapPort);
-    for (auto* child : boxesWithScrollSnapPositions) {
-        if (child->enclosingScrollableContainerForSnapping() != &scrollingElementBox)
+    for (auto& child : boxesWithScrollSnapPositions) {
+        if (child.enclosingScrollableContainerForSnapping() != &scrollingElementBox)
             continue;
 
         // The bounds of the child element's snap area, where the top left of the scrolling container's border box is the origin.
         // The snap area is the bounding box of the child element's border box, after applying transformations.
         OptionSet<MapCoordinatesMode> options = { UseTransforms, IgnoreStickyOffsets };
-        auto scrollSnapArea = LayoutRect(child->localToContainerQuad(FloatQuad(child->borderBoundingBox()), &scrollingElementBox, options).boundingBox());
+        auto scrollSnapArea = LayoutRect(child.localToContainerQuad(FloatQuad(child.borderBoundingBox()), &scrollingElementBox, options).boundingBox());
 
         // localToContainerQuad will transform the scroll snap area by the scroll position, except in the case that this position is
         // coming from a ScrollView. We want the transformed area, but without scroll position taken into account.
         if (!scrollableArea.isScrollView())
             scrollSnapArea.moveBy(scrollPosition);
 
-        scrollSnapArea = computeScrollSnapPortOrAreaRect(scrollSnapArea, child->style().scrollMargin(), InsetOrOutset::Outset);
+        scrollSnapArea = computeScrollSnapPortOrAreaRect(scrollSnapArea, child.style().scrollMargin(), InsetOrOutset::Outset);
         LOG_WITH_STREAM(ScrollSnap, stream << "    Considering scroll snap target area " << scrollSnapArea);
-        auto alignment = child->style().scrollSnapAlign();
-        auto stop = child->style().scrollSnapStop();
+        auto alignment = child.style().scrollSnapAlign();
+        auto stop = child.style().scrollSnapStop();
 
         // From https://drafts.csswg.org/css-scroll-snap-1/#scroll-snap-align:
         // "Start and end alignments are resolved with respect to the writing mode of the snap container unless the
@@ -371,9 +371,9 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
         // mode of the box itself."
         bool areaXAxisFlipped = scrollerXAxisFlipped;
         bool areaYAxisFlipped = scrollerYAxisFlipped;
-        bool areaHasVerticalWritingMode = isVerticalWritingMode(child->style().writingMode());
+        bool areaHasVerticalWritingMode = isVerticalWritingMode(child.style().writingMode());
         if ((areaHasVerticalWritingMode && scrollSnapArea.height() > scrollSnapPort.height()) || (!areaHasVerticalWritingMode && scrollSnapArea.width() > scrollSnapPort.width()))
-            std::tie(areaXAxisFlipped, areaYAxisFlipped) = axesFlippedForWritingModeAndDirection(child->style().writingMode(), child->style().direction());
+            std::tie(areaXAxisFlipped, areaYAxisFlipped) = axesFlippedForWritingModeAndDirection(child.style().writingMode(), child.style().direction());
 
         ScrollSnapAxisAlignType xAlign = scrollerHasVerticalWritingMode ? alignment.blockAlign : alignment.inlineAlign;
         ScrollSnapAxisAlignType yAlign = scrollerHasVerticalWritingMode ? alignment.inlineAlign : alignment.blockAlign;
@@ -387,8 +387,8 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
         LayoutRect scrollSnapAreaAsOffsets(scrollableArea.scrollOffsetFromPosition(roundedIntPoint(snapAreaOriginRelativeToBorderEdge)), scrollSnapArea.size());
         snapAreas.append(scrollSnapAreaAsOffsets);
         
-        auto isFocused = child->element() ? focusedElement == child->element() : false;
-        auto identifier = child->element() ? child->element()->identifier() : ObjectIdentifier<ElementIdentifierType>(0);
+        auto isFocused = child.element() ? focusedElement == child.element() : false;
+        auto identifier = child.element() ? child.element()->identifier() : ObjectIdentifier<ElementIdentifierType>(0);
         snapAreasIDs.append(identifier);
         if (snapsHorizontally) {
             auto absoluteScrollXPosition = computeScrollSnapAlignOffset(scrollSnapArea.x(), scrollSnapArea.maxX(), xAlign, areaXAxisFlipped) - computeScrollSnapAlignOffset(scrollSnapPort.x(), scrollSnapPort.maxX(), xAlign, areaXAxisFlipped);

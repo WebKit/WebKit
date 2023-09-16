@@ -15,9 +15,11 @@ void ResetReplayContextShared(void);
 void ResetReplayContext1(void);
 void ReplayFrame4(void);
 void SetupReplayContextShared(void);
+void SetupReplayContextSharedInactive(void);
 void InitReplay(void);
 
 // Global variables
 
 extern const char *const glShaderSource_string_0[];
 extern const char *const glShaderSource_string_1[];
+extern const char *const glShaderSource_string_2[];

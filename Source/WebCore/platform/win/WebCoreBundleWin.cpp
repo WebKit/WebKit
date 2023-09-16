@@ -63,12 +63,6 @@ String webKitBundlePath(StringView path)
 String webKitBundlePath(StringView name, StringView type, StringView directory)
 {
     auto fileName = makeString(name, '.', type);
-
-    // CF seems to search in .lproj directories for files as well but since
-    // there's only one file there just flag it here
-    if (name == "mediaControlsLocalizedStrings"_s)
-        return webKitBundlePath(FileSystem::pathByAppendingComponent("en.lproj"_s, fileName));
-
     return webKitBundlePath(FileSystem::pathByAppendingComponent(directory, fileName));
 }
 

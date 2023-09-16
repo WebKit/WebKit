@@ -25,6 +25,7 @@
 #include "SVGImageElement.h"
 
 #include "CSSPropertyNames.h"
+#include "HTMLParserIdioms.h"
 #include "LegacyRenderSVGImage.h"
 #include "NodeName.h"
 #include "RenderImageResource.h"
@@ -64,20 +65,7 @@ Ref<SVGImageElement> SVGImageElement::create(const QualifiedName& tagName, Docum
 
 CachedImage* SVGImageElement::cachedImage() const
 {
-    const RenderImageResource* resource = nullptr;
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (auto* renderer = dynamicDowncast<RenderSVGImage>(this->renderer()); renderer && renderer->imageResource().cachedImage())
-        resource = &renderer->imageResource();
-#endif
-    if (!resource) {
-        if (auto* renderer = dynamicDowncast<LegacyRenderSVGImage>(this->renderer()); renderer && renderer->imageResource().cachedImage())
-            resource = &renderer->imageResource();
-    }
-
-    if (!resource)
-        return nullptr;
-
-    return resource->cachedImage();
+    return m_imageLoader.image();
 }
 
 bool SVGImageElement::renderingTaintsOrigin() const
@@ -117,6 +105,10 @@ void SVGImageElement::attributeChanged(const QualifiedName& name, const AtomStri
         break;
     case AttributeNames::heightAttr:
         m_height->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError, SVGLengthNegativeValuesMode::Forbid));
+        break;
+    case AttributeNames::crossoriginAttr:
+        if (parseCORSSettingsAttribute(oldValue) != parseCORSSettingsAttribute(newValue))
+            m_imageLoader.updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
         break;
     default:
         break;
@@ -205,6 +197,16 @@ Node::InsertedIntoAncestorResult SVGImageElement::insertedIntoAncestor(Insertion
 const AtomString& SVGImageElement::imageSourceURL() const
 {
     return getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr);
+}
+
+void SVGImageElement::setCrossOrigin(const AtomString& value)
+{
+    setAttributeWithoutSynchronization(HTMLNames::crossoriginAttr, value);
+}
+
+String SVGImageElement::crossOrigin() const
+{
+    return parseCORSSettingsAttribute(attributeWithoutSynchronization(HTMLNames::crossoriginAttr));
 }
 
 void SVGImageElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const

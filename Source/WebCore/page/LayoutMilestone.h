@@ -32,7 +32,7 @@ namespace WebCore {
 // FIXME: Some of these milestones are about layout, and others are about painting.
 // We should either re-name them to something more generic, or split them into
 // two enums -- one for painting and one for layout.
-enum LayoutMilestone : uint16_t {
+enum class LayoutMilestone : uint16_t {
     DidFirstLayout                                      = 1 << 0,
     DidFirstVisuallyNonEmptyLayout                      = 1 << 1,
     DidHitRelevantRepaintedObjectsAreaThreshold         = 1 << 2,
@@ -44,21 +44,3 @@ enum LayoutMilestone : uint16_t {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::LayoutMilestone> {
-    using values = EnumValues<
-        WebCore::LayoutMilestone,
-        WebCore::LayoutMilestone::DidFirstLayout,
-        WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout,
-        WebCore::LayoutMilestone::DidHitRelevantRepaintedObjectsAreaThreshold,
-        WebCore::LayoutMilestone::DidFirstLayoutAfterSuppressedIncrementalRendering,
-        WebCore::LayoutMilestone::DidFirstPaintAfterSuppressedIncrementalRendering,
-        WebCore::LayoutMilestone::ReachedSessionRestorationRenderTreeSizeThreshold,
-        WebCore::LayoutMilestone::DidRenderSignificantAmountOfText,
-        WebCore::LayoutMilestone::DidFirstMeaningfulPaint
-    >;
-};
-
-} // namespace WTF

@@ -36,54 +36,101 @@
 
 namespace WebKit {
 
-bool WebExtensionAPINamespace::isPropertyAllowed(String name, WebPage*)
+bool WebExtensionAPINamespace::isPropertyAllowed(ASCIILiteral name, WebPage*)
 {
-    if (name == "permissions"_s)
-        return true;
-
     // This property is only allowed in testing contexts.
     if (name == "test"_s)
         return extensionContext().inTestingMode();
 
-    if (name == "webNavigation"_s)
-        return [objectForKey<NSArray>(extensionContext().manifest(), @"permissions", true, NSString.class) containsObject:_WKWebExtensionPermissionWebNavigation];
+    // FIXME: https://webkit.org/b/259914 This should be a hasPermission: call to extensionContext() and updated with actually granted permissions from the UI process.
+    auto *permissions = objectForKey<NSArray>(extensionContext().manifest(), @"permissions", true, NSString.class);
+    return [permissions containsObject:name.createNSString().get()];
+}
 
-    ASSERT_NOT_REACHED();
-    return false;
+WebExtensionAPIAlarms& WebExtensionAPINamespace::alarms()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms
+
+    if (!m_alarms)
+        m_alarms = WebExtensionAPIAlarms::create(forMainWorld(), runtime(), extensionContext());
+
+    return *m_alarms;
 }
 
 WebExtensionAPIExtension& WebExtensionAPINamespace::extension()
 {
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/extension
+
     if (!m_extension)
         m_extension = WebExtensionAPIExtension::create(forMainWorld(), runtime(), extensionContext());
+
     return *m_extension;
+}
+
+WebExtensionAPILocalization& WebExtensionAPINamespace::i18n()
+{
+    if (!m_i18n)
+        m_i18n = WebExtensionAPILocalization::create(forMainWorld(), runtime(), extensionContext());
+    return *m_i18n;
 }
 
 WebExtensionAPIPermissions& WebExtensionAPINamespace::permissions()
 {
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/permissions
+
     if (!m_permissions)
         m_permissions = WebExtensionAPIPermissions::create(forMainWorld(), runtime(), extensionContext());
+
     return *m_permissions;
 }
 
 WebExtensionAPIRuntime& WebExtensionAPINamespace::runtime()
 {
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime
+
     if (!m_runtime)
         m_runtime = WebExtensionAPIRuntime::create(forMainWorld(), extensionContext());
+
     return *m_runtime;
+}
+
+WebExtensionAPITabs& WebExtensionAPINamespace::tabs()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs
+
+    if (!m_tabs)
+        m_tabs = WebExtensionAPITabs::create(forMainWorld(), runtime(), extensionContext());
+
+    return *m_tabs;
 }
 
 WebExtensionAPITest& WebExtensionAPINamespace::test()
 {
+    // Documentation: None (Testing Only)
+
     if (!m_test)
         m_test = WebExtensionAPITest::create(forMainWorld(), runtime(), extensionContext());
+
     return *m_test;
+}
+
+WebExtensionAPIWindows& WebExtensionAPINamespace::windows()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows
+
+    if (!m_windows)
+        m_windows = WebExtensionAPIWindows::create(forMainWorld(), runtime(), extensionContext());
+
+    return *m_windows;
 }
 
 WebExtensionAPIWebNavigation& WebExtensionAPINamespace::webNavigation()
 {
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webNavigation
+
     if (!m_webNavigation)
         m_webNavigation = WebExtensionAPIWebNavigation::create(forMainWorld(), runtime(), extensionContext());
+
     return *m_webNavigation;
 }
 

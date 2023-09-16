@@ -7,6 +7,7 @@ Revision: cbc9cc966d2b3cae8906d2d30e761904342b5aba
 License: MIT
 License File: LICENSE
 Security Critical: No
+Shipped: yes
 
 Description:
     compute shader decode etc to rgba.

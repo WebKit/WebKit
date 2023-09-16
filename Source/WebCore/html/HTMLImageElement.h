@@ -175,6 +175,8 @@ public:
 
     bool originClean(const SecurityOrigin&) const;
 
+    void collectExtraStyleForPresentationalHints(MutableStyleProperties&);
+
 protected:
     constexpr static auto CreateHTMLImageElement = CreateHTMLElement | NodeFlag::HasCustomStyleResolveCallbacks;
     HTMLImageElement(const QualifiedName&, Document&, HTMLFormElement* = nullptr);
@@ -190,7 +192,6 @@ private:
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
-    void collectExtraStyleForPresentationalHints(MutableStyleProperties&) override;
     void invalidateAttributeMapping();
 
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document& targetDocument) final;

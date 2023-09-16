@@ -655,6 +655,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/counter-scoping-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/counter-scoping-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/counter-scoping-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/counter-scoping-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/counter-scoping-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/quote-scoping-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/quote-scoping-001.html

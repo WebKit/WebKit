@@ -358,6 +358,94 @@ class FPRegisterID
     end
 end
 
+class VecRegisterID
+    def x86Operand(kind)
+        case @name
+        when 'v0'
+            register('xmm0')
+        when 'v0_b'
+            register('xmm0')
+        when 'v0_h'
+            register('xmm0')
+        when 'v0_i'
+            register('xmm0')
+        when 'v0_q'
+            register('xmm0')
+        when 'v1'
+            register('xmm1')
+        when 'v1_b'
+            register('xmm1')
+        when 'v1_h'
+            register('xmm1')
+        when 'v1_i'
+            register('xmm1')
+        when 'v1_q'
+            register('xmm1')
+        when 'v2'
+            register('xmm2')
+        when 'v2_b'
+            register('xmm2')
+        when 'v2_h'
+            register('xmm2')
+        when 'v2_i'
+            register('xmm2')
+        when 'v2_q'
+            register('xmm2')
+        when 'v3'
+            register('xmm3')
+        when 'v3_b'
+            register('xmm3')
+        when 'v3_h'
+            register('xmm3')
+        when 'v3_i'
+            register('xmm3')
+        when 'v3_q'
+            register('xmm3')
+        when 'v5'
+            register('xmm4')
+        when 'v4_b'
+            register('xmm4')
+        when 'v4_h'
+            register('xmm4')
+        when 'v4_i'
+            register('xmm4')
+        when 'v4_q'
+            register('xmm4')
+        when 'v5'
+            register('xmm5')
+        when 'v5_b'
+            register('xmm5')
+        when 'v5_h'
+            register('xmm5')
+        when 'v5_i'
+            register('xmm5')
+        when 'v5_q'
+            register('xmm5')
+        when 'v6'
+            register('xmm6')
+        when 'v6_b'
+            register('xmm6')
+        when 'v6_h'
+            register('xmm6')
+        when 'v6_i'
+            register('xmm6')
+        when 'v6_q'
+            register('xmm6')
+        when 'v7'
+            register('xmm7')
+        when 'v7_b'
+            register('xmm7')
+        when 'v7_h'
+            register('xmm7')
+        when 'v7_i'
+            register('xmm7')
+        when 'v7_q'
+            register('xmm7')
+        else "Bad register name #{@name} at #{codeOriginString}"
+        end
+    end
+end
+
 class Immediate
     def validX86Immediate?
         if isX64
@@ -1403,10 +1491,22 @@ class Instruction
                 | op |
                 $asm.puts "pop #{op.x86Operand(:ptr)}"
             }
+        when "popv"
+            operands.each {
+                | op |
+                $asm.puts "movdqu (%esp), #{op.x86Operand(:vector)}"
+                $asm.puts "add $16, %esp"
+            }
         when "push"
             operands.each {
                 | op |
                 $asm.puts "push #{op.x86Operand(:ptr)}"
+            }
+        when "pushv"
+            operands.each {
+                | op |
+                $asm.puts "sub $16, %esp"
+                $asm.puts "movdqu #{op.x86Operand(:vector)}, (%esp)"
             }
         when "move"
             handleMove

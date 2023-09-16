@@ -26,12 +26,18 @@
 #pragma once
 
 #include "IntersectionObserver.h"
-#include <wtf/WeakHashSet.h>
+#include <wtf/WeakHashMap.h>
 
 namespace WebCore {
 
 class Document;
 class Element;
+
+enum class DidUpdateAnyContentRelevancy : bool { No, Yes };
+// https://drafts.csswg.org/css-contain/#proximity-to-the-viewport
+enum class ViewportProximity : bool { Far, Near };
+
+enum class HadInitialVisibleContentVisibilityDetermination : bool { No, Yes };
 
 class ContentVisibilityDocumentState {
     WTF_MAKE_FAST_ALLOCATED;
@@ -39,20 +45,25 @@ public:
     static void observe(Element&);
     static void unobserve(Element&);
 
-    void updateContentRelevancyStatusForScrollIfNeeded(const Element& scrollAnchor);
+    void updateContentRelevancyForScrollIfNeeded(const Element& scrollAnchor);
 
     bool hasObservationTargets() const { return m_observer && m_observer->hasObservationTargets(); }
 
-    bool updateRelevancyOfContentVisibilityElements(const OptionSet<ContentRelevancyStatus>&);
+    DidUpdateAnyContentRelevancy updateRelevancyOfContentVisibilityElements(OptionSet<ContentRelevancy>) const;
+    HadInitialVisibleContentVisibilityDetermination determineInitialVisibleContentVisibility() const;
 
-    void updateOnScreenObservationTarget(const Element&, bool);
+    void updateViewportProximity(const Element&, ViewportProximity);
 
 private:
+    bool checkRelevancyOfContentVisibilityElement(Element&, OptionSet<ContentRelevancy>) const;
+
+    void removeViewportProximity(const Element&);
+
     IntersectionObserver* intersectionObserver(Document&);
 
     RefPtr<IntersectionObserver> m_observer;
 
-    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_onScreenObservationTargets;
+    WeakHashMap<Element, ViewportProximity, WeakPtrImplWithEventTargetData> m_elementViewportProximities;
 };
 
 } // namespace

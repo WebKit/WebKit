@@ -69,10 +69,7 @@ public:
 
     uint16_t bits() const { return m_bits; }
 
-    bool operator==(const VariableEnvironmentEntry& other) const
-    {
-        return m_bits == other.m_bits;
-    }
+    friend bool operator==(VariableEnvironmentEntry, VariableEnvironmentEntry) = default;
 
     void dump(PrintStream&) const;
 
@@ -119,10 +116,7 @@ public:
 
     uint16_t bits() const { return m_bits; }
 
-    bool operator==(const PrivateNameEntry& other) const
-    {
-        return m_bits == other.m_bits;
-    }
+    friend bool operator==(PrivateNameEntry, PrivateNameEntry) = default;
 
     enum Traits : uint16_t {
         None = 0,

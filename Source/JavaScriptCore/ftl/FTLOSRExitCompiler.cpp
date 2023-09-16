@@ -153,8 +153,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
         debugInfo->codeBlock = jit.codeBlock();
         debugInfo->kind = exit.m_kind;
         debugInfo->bytecodeIndex = exit.m_codeOrigin.bytecodeIndex();
-
-        jit.debugCall(vm, operationDebugPrintSpeculationFailure, debugInfo);
+        jit.probe(tagCFunction<JITProbePtrTag>(operationDebugPrintSpeculationFailure), debugInfo, SavedFPWidth::DontSaveVectors);
     }
 
     // The first thing we need to do is restablish our frame in the case of an exception.

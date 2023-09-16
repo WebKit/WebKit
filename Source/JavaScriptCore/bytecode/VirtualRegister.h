@@ -78,7 +78,7 @@ public:
     int offset() const { return m_virtualRegister; }
     int offsetInBytes() const { return m_virtualRegister * sizeof(Register); }
 
-    bool operator==(VirtualRegister other) const { return m_virtualRegister == other.m_virtualRegister; }
+    friend bool operator==(VirtualRegister, VirtualRegister) = default;
     bool operator<(VirtualRegister other) const { return m_virtualRegister < other.m_virtualRegister; }
     bool operator>(VirtualRegister other) const { return m_virtualRegister > other.m_virtualRegister; }
     bool operator<=(VirtualRegister other) const { return m_virtualRegister <= other.m_virtualRegister; }

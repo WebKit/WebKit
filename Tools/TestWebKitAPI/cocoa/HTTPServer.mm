@@ -314,6 +314,8 @@ static ASCIILiteral statusText(unsigned statusCode)
         return "Moved Permanently"_s;
     case 302:
         return "Found"_s;
+    case 303:
+        return "See Other"_s;
     case 404:
         return "Not Found"_s;
     case 503:

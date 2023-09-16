@@ -118,6 +118,7 @@ private:
     bool m_isPlayingToBluetoothOverrideChanged { false };
     std::optional<RemoteAudioSessionConfiguration> m_configuration;
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
+    bool m_isInterruptedForTesting { false };
 };
 
 }

@@ -29,6 +29,7 @@
 #if ENABLE(BUBBLEWRAP_SANDBOX)
 #include "BubblewrapLauncher.h"
 #include <WebCore/PlatformDisplay.h>
+#include <gio/gunixinputstream.h>
 #include <wtf/UniStdExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -130,6 +131,55 @@ std::optional<CString> XDGDBusProxy::accessibilityProxy(const char* baseDirector
 #endif
 }
 
+static void waitUntilSyncedOrDie(GSubprocess* subprocess, int syncFd)
+{
+    GRefPtr<GMainContext> context = adoptGRef(g_main_context_new());
+    g_main_context_push_thread_default(context.get());
+
+    struct AsyncData {
+        int opsFinished = 0;
+        GUniqueOutPtr<GError> error;
+    } data;
+    GRefPtr<GCancellable> cancellable = adoptGRef(g_cancellable_new());
+
+    g_subprocess_wait_check_async(subprocess, cancellable.get(), +[](GObject* source, GAsyncResult* result, gpointer data) {
+        GUniqueOutPtr<GError> error;
+        auto* asyncData = static_cast<AsyncData*>(data);
+        g_subprocess_wait_check_finish(G_SUBPROCESS(source), result, &error.outPtr());
+        if (error && !g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
+            g_propagate_error(&asyncData->error.outPtr(), error.release());
+        asyncData->opsFinished++;
+    }, &data);
+
+    GRefPtr<GInputStream> inputStream = adoptGRef(g_unix_input_stream_new(syncFd, FALSE));
+    char out;
+    g_input_stream_read_async(inputStream.get(), &out, 1, G_PRIORITY_DEFAULT, cancellable.get(), +[](GObject* source, GAsyncResult* result, gpointer data) {
+        GUniqueOutPtr<GError> error;
+        auto* asyncData = static_cast<AsyncData*>(data);
+        g_input_stream_read_finish(G_INPUT_STREAM(source), result, &error.outPtr());
+        if (error && !g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
+            g_propagate_error(&asyncData->error.outPtr(), error.release());
+        asyncData->opsFinished++;
+    }, &data);
+
+    // As soon as one operation finishes, cancel the other. There are two cases:
+    //
+    // * Normal case: read op finishes, indicating xdg-dbus-proxy is ready. Now we can cancel the
+    //   wait op, which was used to check if process launching failed. It didn't.
+    // * Error case: wait op finishes. Cancel the read op so it doesn't hang forever, then crash.
+    while (data.opsFinished != 2) {
+        g_main_context_iteration(context.get(), TRUE);
+        if (data.opsFinished == 1 && cancellable) {
+            g_cancellable_cancel(cancellable.get());
+            cancellable = nullptr;
+        }
+    }
+    g_main_context_pop_thread_default(context.get());
+
+    if (data.error)
+        g_error("Failed to fully launch dbus-proxy: %s", data.error->message);
+}
+
 bool XDGDBusProxy::launch()
 {
     if (m_syncFD)
@@ -184,16 +234,11 @@ bool XDGDBusProxy::launch()
     launchOptions.processType = ProcessLauncher::ProcessType::DBusProxy;
 
     GUniqueOutPtr<GError> error;
-    GRefPtr<GSubprocess> process = bubblewrapSpawn(launcher.get(), launchOptions, argv, &error.outPtr());
-    if (!process)
+    GRefPtr<GSubprocess> subprocess = bubblewrapSpawn(launcher.get(), launchOptions, argv, &error.outPtr());
+    if (!subprocess)
         g_error("Failed to start dbus proxy: %s", error->message);
 
-    // We need to ensure the proxy has created the socket.
-    // FIXME: This is more blocking IO.
-    char out;
-    if (read(syncFds[0], &out, 1) != 1)
-        g_error("Failed to fully launch dbus-proxy: %s", g_strerror(errno));
-
+    waitUntilSyncedOrDie(subprocess.get(), syncFds[0]);
     return true;
 }
 

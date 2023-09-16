@@ -481,7 +481,7 @@ class GLSLTest : public ANGLETest<>
         glDeleteShader(vs);
         glDeleteShader(fs);
 
-        const std::string &errorMessage = QueryErrorMessage(program);
+        const std::string errorMessage = QueryErrorMessage(program);
         printf("%s\n", errorMessage.c_str());
 
         EXPECT_NE(std::string::npos, errorMessage.find(expectedErrorType));
@@ -5177,7 +5177,7 @@ void main(void)
 
     glUseProgram(verifyProgram);
 
-    constexpr std::array<GLfloat, kImage2Size + kImageRows *kImageCols> kOutputInitData = {};
+    constexpr std::array<GLfloat, kImage2Size + kImageRows * kImageCols> kOutputInitData = {};
     GLBuffer outputBuffer;
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, outputBuffer);
     glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(kOutputInitData), kOutputInitData.data(),
@@ -9119,7 +9119,8 @@ void main()
     glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
     ASSERT_FALSE(linkStatus);
 
-    const std::string &lackOfFragmentShader = QueryErrorMessage(program);
+    const std::string lackOfFragmentShader = QueryErrorMessage(program);
+    EXPECT_TRUE(lackOfFragmentShader != "");
 
     // The second time the program link fails because of the mismatch of the varying types.
     glAttachShader(program, fs);
@@ -9128,7 +9129,8 @@ void main()
     glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
     ASSERT_FALSE(linkStatus);
 
-    const std::string &varyingTypeMismatch = QueryErrorMessage(program);
+    const std::string varyingTypeMismatch = QueryErrorMessage(program);
+    EXPECT_TRUE(varyingTypeMismatch != "");
 
     EXPECT_EQ(std::string::npos, varyingTypeMismatch.find(lackOfFragmentShader));
 
@@ -10288,6 +10290,18 @@ TEST_P(GLSLTest, FragData)
 {
     constexpr char kFS[] = R"(void main() { gl_FragData[0] = vec4(1, 0, 0, 1); })";
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Tests using gl_FragData[0] instead of gl_FragColor with GL_SAMPLE_ALPHA_TO_COVERAGE
+// Regression test for https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/5520
+TEST_P(GLSLTest, FragData_AlphaToCoverage)
+{
+    constexpr char kFS[] = R"(void main() { gl_FragData[0] = vec4(1, 0, 0, 1); })";
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+    glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
     EXPECT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
@@ -14417,6 +14431,182 @@ void main()
     glDeleteShader(shader);
 }
 
+// Test constructors without precision
+TEST_P(GLSLTest, ConstructFromBoolVector)
+{
+    constexpr char kFS[] = R"(precision mediump float;
+uniform float u;
+void main()
+{
+    mat4 m = mat4(u);
+    mat2(0, bvec3(m));
+    gl_FragColor = vec4(m);
+})";
+
+    GLuint shader = CompileShader(GL_FRAGMENT_SHADER, kFS);
+    EXPECT_NE(0u, shader);
+    glDeleteShader(shader);
+}
+
+// Test constructing vector from matrix
+TEST_P(GLSLTest, VectorConstructorFromMatrix)
+{
+    constexpr char kFS[] = R"(precision mediump float;
+uniform mat2 umat2;
+void main()
+{
+    gl_FragColor = vec4(umat2);
+})";
+
+    GLuint shader = CompileShader(GL_FRAGMENT_SHADER, kFS);
+    EXPECT_NE(0u, shader);
+    glDeleteShader(shader);
+}
+
+// Test constructing matrix from vectors
+TEST_P(GLSLTest, MatrixConstructorFromVectors)
+{
+    constexpr char kFS[] = R"(precision mediump float;
+uniform vec2 uvec2;
+void main()
+{
+    mat2 m = mat2(uvec2, uvec2.yx);
+    gl_FragColor = vec4(m * uvec2, uvec2);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+
+    GLint uloc = glGetUniformLocation(program, "uvec2");
+    ASSERT_NE(uloc, -1);
+    glUniform2f(uloc, 0.5, 0.8);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(227, 204, 127, 204), 1);
+}
+
+// Test that constructing vector and matrix inside multiple declarations preserves the correct order
+// of operations.
+TEST_P(GLSLTest, ConstructorinSequenceOperator)
+{
+    constexpr char kFS[] = R"(precision mediump float;
+uniform vec2 u;
+void main()
+{
+    vec2 v = u;
+    mat2 m = (v[0] += 1.0, mat2(v, v[1], -v[0]));
+    gl_FragColor = vec4(m[0], m[1]);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+
+    GLint uloc = glGetUniformLocation(program, "u");
+    ASSERT_NE(uloc, -1);
+    glUniform2f(uloc, -0.5, 1.0);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(127, 255, 255, 0), 1);
+}
+
+// Test that constructing vectors inside multiple declarations preserves the correct order
+// of operations.
+TEST_P(GLSLTest, VectorConstructorsInMultiDeclaration)
+{
+    constexpr char kFS[] = R"(precision mediump float;
+uniform vec2 u;
+void main()
+{
+    vec2 v = vec2(u[0]),
+         w = mat2(v, v) * u;
+    gl_FragColor = vec4(v, w);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+
+    GLint uloc = glGetUniformLocation(program, "u");
+    ASSERT_NE(uloc, -1);
+    glUniform2f(uloc, 0.5, 0.8);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(127, 127, 166, 166), 1);
+}
+
+// Test complex constructor usage.
+TEST_P(GLSLTest_ES3, ComplexConstructor)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+uniform vec2 u; // = vec2(0.5, 0.8)
+uniform vec2 v; // = vec2(-0.2, 1.0)
+
+out vec4 color;
+
+bool f(mat2 m)
+{
+    return m[0][0] > 0.;
+}
+
+bool isEqual(float a, float b)
+{
+    return abs(a - b) < 0.01;
+}
+
+void main()
+{
+    int shouldRemainZero = 0;
+
+    // Test side effects inside constructor args after short-circuit
+    if (u.x < 0. && f(mat2(shouldRemainZero += 1, u, v)))
+    {
+        shouldRemainZero += 2;
+    }
+
+    int shouldBecomeFive = 0;
+
+    // Test directly nested constructors
+    mat4x3 m = mat4x3(mat2(shouldBecomeFive += 5, v, u));
+
+    // Test indirectly nested constructors
+    mat2 m2 = mat2(f(mat2(u, v)), f(mat2(v, u)), f(mat2(f(mat2(1.)))), -1.);
+
+    // Verify
+    bool sideEffectsOk = shouldRemainZero == 0 && shouldBecomeFive == 5;
+
+    bool mOk = isEqual(m[0][0], 5.) && isEqual(m[0][1], -0.2) && isEqual(m[0][2], 0.) &&
+               isEqual(m[1][0], 1.) && isEqual(m[1][1], 0.5) && isEqual(m[1][2], 0.) &&
+               isEqual(m[2][0], 0.) && isEqual(m[2][1], 0.) && isEqual(m[2][2], 1.) &&
+               isEqual(m[3][0], 0.) && isEqual(m[3][1], 0.) && isEqual(m[3][2], 0.);
+
+    bool m2Ok = isEqual(m2[0][0], 1.) && isEqual(m2[0][1], 0.) &&
+               isEqual(m2[1][0], 1.) && isEqual(m2[1][1], -1.);
+
+    color = vec4(sideEffectsOk ? 1 : 0, mOk ? 1 : 0, m2Ok ? 1 : 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+
+    GLint uloc = glGetUniformLocation(program, "u");
+    GLint vloc = glGetUniformLocation(program, "v");
+    ASSERT_NE(uloc, -1);
+    ASSERT_NE(vloc, -1);
+    glUniform2f(uloc, 0.5, 0.8);
+    glUniform2f(vloc, -0.2, 1.0);
+
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
+}
+
 // Test that scalar(nonScalar) constructors work.
 TEST_P(GLSLTest_ES3, ScalarConstructor)
 {
@@ -16012,6 +16202,34 @@ void main() {
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that aliasing function out parameters work even when multiple params are aliased.
+TEST_P(GLSLTest, AliasingFunctionOutParamsMultiple)
+{
+    constexpr char kFS[] = R"(precision highp float;
+
+const vec4 colorGreen = vec4(0.,1.,0.,1.);
+const vec4 colorRed   = vec4(1.,0.,0.,1.);
+
+bool outParametersAreDistinct(out float x, out float y, out float z, out float a) {
+    x = 1.0;
+    y = 2.0;
+    z = 3.0;
+    a = 4.0;
+    return x == 1.0 && y == 2.0 && z == 3.0 && a == 4.0;
+}
+void main() {
+    float x = 0.0;
+    float y = 0.0;
+    gl_FragColor = outParametersAreDistinct(x, x, y, y) ? colorGreen : colorRed;
+}
+)";
+
+    ANGLE_GL_PROGRAM(testProgram, essl1_shaders::vs::Simple(), kFS);
+    drawQuad(testProgram, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test that aliasing function inout parameters work.
 TEST_P(GLSLTest, AliasingFunctionInOutParams)
 {
@@ -16028,6 +16246,34 @@ bool inoutParametersAreDistinct(inout float x, inout float y) {
 void main() {
     float x = 0.0;
     gl_FragColor = inoutParametersAreDistinct(x, x) ? colorGreen : colorRed;
+}
+)";
+
+    ANGLE_GL_PROGRAM(testProgram, essl1_shaders::vs::Simple(), kFS);
+    drawQuad(testProgram, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that aliasing function inout parameters work when more than one param is aliased.
+TEST_P(GLSLTest, AliasingFunctionInOutParamsMultiple)
+{
+    constexpr char kFS[] = R"(precision highp float;
+
+const vec4 colorGreen = vec4(0.,1.,0.,1.);
+const vec4 colorRed   = vec4(1.,0.,0.,1.);
+
+bool inoutParametersAreDistinct(inout float x, inout float y, inout float z, inout float a) {
+    x = 1.0;
+    y = 2.0;
+    z = 3.0;
+    a = 4.0;
+    return x == 1.0 && y == 2.0 && z == 3.0 && a == 4.0;
+}
+void main() {
+    float x = 0.0;
+    float y = 0.0;
+    gl_FragColor = inoutParametersAreDistinct(x, x, y, y) ? colorGreen : colorRed;
 }
 )";
 
@@ -17749,7 +17995,11 @@ TEST_P(GLSLTest_ES3, ESSL3ExtensionMacros)
         "GL_KHR_blend_equation_advanced",
         "GL_NV_EGL_stream_consumer_external",
         "GL_NV_shader_noperspective_interpolation",
+        // Enabled on ESSL 3+ to workaround app bug. http://issuetracker.google.com/285871779
+        "GL_OES_EGL_image_external",
         "GL_OES_EGL_image_external_essl3",
+        // Enabled on ESSL 3+ to workaround app bug. http://issuetracker.google.com/285871779
+        "GL_OES_texture_3D",
         "GL_OES_sample_variables",
         "GL_OES_shader_multisample_interpolation",
         "GL_OVR_multiview",
@@ -17770,13 +18020,11 @@ TEST_P(GLSLTest_ES3, ESSL3ExtensionMacros)
         "GL_EXT_texture_buffer",
         "GL_EXT_texture_cube_map_array",
         "GL_NV_shader_framebuffer_fetch",
-        "GL_OES_EGL_image_external",
         "GL_OES_geometry_shader",
         "GL_OES_primitive_bounding_box",
         "GL_OES_shader_image_atomic",
         "GL_OES_shader_io_blocks",
         "GL_OES_standard_derivatives",
-        "GL_OES_texture_3D",
         "GL_OES_texture_buffer",
         "GL_OES_texture_cube_map_array",
         "GL_OES_texture_storage_multisample_2d_array",
@@ -17816,7 +18064,11 @@ TEST_P(GLSLTest_ES31, ESSL31ExtensionMacros)
         "GL_KHR_blend_equation_advanced",
         "GL_NV_EGL_stream_consumer_external",
         "GL_NV_shader_noperspective_interpolation",
+        // Enabled on ESSL 3+ to workaround app bug. http://issuetracker.google.com/285871779
+        "GL_OES_EGL_image_external",
         "GL_OES_EGL_image_external_essl3",
+        // Enabled on ESSL 3+ to workaround app bug. http://issuetracker.google.com/285871779
+        "GL_OES_texture_3D",
         "GL_OES_geometry_shader",
         "GL_OES_primitive_bounding_box",
         "GL_OES_sample_variables",
@@ -17836,12 +18088,40 @@ TEST_P(GLSLTest_ES31, ESSL31ExtensionMacros)
         "GL_EXT_shader_texture_lod",
         "GL_EXT_shadow_samplers",
         "GL_NV_shader_framebuffer_fetch",
-        "GL_OES_EGL_image_external",
         "GL_OES_standard_derivatives",
-        "GL_OES_texture_3D",
     });
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), fs.c_str());
     ASSERT_GL_NO_ERROR();
+}
+
+// Make sure names starting with webgl_ work.
+TEST_P(GLSLTest_ES3, NameWithWebgl)
+{
+    constexpr char kFS[] = R"(#version 300 es
+out highp vec4 webgl_color;
+void main()
+{
+  webgl_color = vec4(0, 1, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Make sure webgl_FragColor works.
+TEST_P(GLSLTest_ES3, NameWithWebglFragColor)
+{
+    constexpr char kFS[] = R"(#version 300 es
+out highp vec4 webgl_FragColor;
+void main()
+{
+  webgl_FragColor = vec4(0, 1, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
 }  // anonymous namespace

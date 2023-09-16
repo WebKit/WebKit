@@ -57,7 +57,6 @@ private:
     CSSUnitType primitiveType() const final { return m_child->primitiveType(); }
 
     void collectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const final { m_child->collectComputedStyleDependencies(dependencies); }
-    bool convertingToLengthRequiresNonNullStyle(int lengthConversion) const final { return m_child->convertingToLengthRequiresNonNullStyle(lengthConversion); }
 
     void dump(TextStream&) const final;
 

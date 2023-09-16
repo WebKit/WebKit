@@ -75,6 +75,8 @@ EGLMakeCurrentPerfTest::EGLMakeCurrentPerfTest()
     else
     {
         LoadUtilEGL(getProc);
+        // Test harness warmup calls glFinish so we need GLES too.
+        LoadUtilGLES(getProc);
 
         if (!eglGetPlatformDisplayEXT)
         {
@@ -91,6 +93,8 @@ EGLMakeCurrentPerfTest::EGLMakeCurrentPerfTest()
 
 void EGLMakeCurrentPerfTest::SetUp()
 {
+    ANGLEPerfTest::SetUp();
+
     ASSERT_NE(EGL_NO_DISPLAY, mDisplay);
     EGLint majorVersion, minorVersion;
     ASSERT_TRUE(eglInitialize(mDisplay, &majorVersion, &minorVersion));

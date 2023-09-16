@@ -36,13 +36,13 @@ namespace WebCore {
 static std::optional<PlatformMediaSession::RemoteControlCommandType> getCommand(const char* name)
 {
     static const std::pair<ComparableASCIILiteral, PlatformMediaSession::RemoteControlCommandType> commandList[] = {
-        { "Next", PlatformMediaSession::NextTrackCommand },
-        { "Pause", PlatformMediaSession::PauseCommand },
-        { "Play", PlatformMediaSession::PlayCommand },
-        { "PlayPause", PlatformMediaSession::TogglePlayPauseCommand },
-        { "Previous", PlatformMediaSession::PreviousTrackCommand },
-        { "Seek", PlatformMediaSession::SeekToPlaybackPositionCommand },
-        { "Stop", PlatformMediaSession::StopCommand }
+        { "Next", PlatformMediaSession::RemoteControlCommandType::NextTrackCommand },
+        { "Pause", PlatformMediaSession::RemoteControlCommandType::PauseCommand },
+        { "Play", PlatformMediaSession::RemoteControlCommandType::PlayCommand },
+        { "PlayPause", PlatformMediaSession::RemoteControlCommandType::TogglePlayPauseCommand },
+        { "Previous", PlatformMediaSession::RemoteControlCommandType::PreviousTrackCommand },
+        { "Seek", PlatformMediaSession::RemoteControlCommandType::SeekToPlaybackPositionCommand },
+        { "Stop", PlatformMediaSession::RemoteControlCommandType::StopCommand }
     };
 
     static const SortedArrayMap map { commandList };
@@ -63,7 +63,7 @@ static void handleMethodCall(GDBusConnection* /* connection */, const char* /* s
     auto& session = *reinterpret_cast<MediaSessionGLib*>(userData);
     auto& manager = session.manager();
     PlatformMediaSession::RemoteCommandArgument argument;
-    if (*command == PlatformMediaSession::SeekToPlaybackPositionCommand) {
+    if (*command == PlatformMediaSession::RemoteControlCommandType::SeekToPlaybackPositionCommand) {
         int64_t offset;
         g_variant_get(parameters, "(x)", &offset);
         argument.time = offset / 1000000;

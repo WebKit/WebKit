@@ -317,7 +317,7 @@ private:
         TailProcessingNode& operator=(const TailProcessingNode&) = delete;
         TailProcessingNode& operator=(TailProcessingNode&&) = delete;
         AudioNode* operator->() const { return m_node.get(); }
-        bool operator==(const TailProcessingNode& other) const { return m_node == other.m_node; }
+        friend bool operator==(const TailProcessingNode&, const TailProcessingNode&) = default;
         bool operator==(const AudioNode& node) const { return m_node == &node; }
     private:
         RefPtr<AudioNode> m_node;

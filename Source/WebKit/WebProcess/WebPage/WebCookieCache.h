@@ -25,18 +25,21 @@
 
 #pragma once
 
+#include <WebCore/CookieChangeListener.h>
 #include <WebCore/CookieJar.h>
 #include <WebCore/SameSiteInfo.h>
+#include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 
 namespace WebCore {
+struct Cookie;
 class NetworkStorageSession;
 enum class ShouldRelaxThirdPartyCookieBlocking : bool;
 }
 
 namespace WebKit {
 
-class WebCookieCache {
+class WebCookieCache : public WebCore::CookieChangeListener {
 public:
     WebCookieCache() = default;
 
@@ -45,8 +48,6 @@ public:
     String cookiesForDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::IncludeSecureCookies);
     void setCookiesFromDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, const String& cookieString, WebCore::ShouldRelaxThirdPartyCookieBlocking);
 
-    void cookiesAdded(const String& host, const Vector<WebCore::Cookie>&);
-    void cookiesDeleted(const String& host, const Vector<WebCore::Cookie>&);
     void allCookiesDeleted();
 
     void clear();
@@ -55,6 +56,10 @@ public:
 private:
     WebCore::NetworkStorageSession& inMemoryStorageSession();
     void pruneCacheIfNecessary();
+
+    // CookieChangeListener
+    void cookiesAdded(const String& host, const Vector<WebCore::Cookie>&) final;
+    void cookiesDeleted(const String& host, const Vector<WebCore::Cookie>&) final;
 
     HashSet<String> m_hostsWithInMemoryStorage;
     std::unique_ptr<WebCore::NetworkStorageSession> m_inMemoryStorageSession;

@@ -74,8 +74,6 @@ public:
 
     void dump(TextStream&) const;
 
-    bool convertingToLengthRequiresNonNullStyle(int lengthConversion) const;
-
     const CSSCalcExpressionNode& expressionNode() const { return m_expression; }
 
 private:

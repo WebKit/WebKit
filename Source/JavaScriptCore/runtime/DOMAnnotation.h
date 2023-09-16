@@ -40,11 +40,8 @@ struct DOMAttributeAnnotation {
 public:
     const ClassInfo* classInfo;
     const DOMJIT::GetterSetter* domJIT;
-};
 
-inline bool operator==(const DOMAttributeAnnotation& left, const DOMAttributeAnnotation& right)
-{
-    return left.classInfo == right.classInfo && left.domJIT == right.domJIT;
-}
+    friend bool operator==(const DOMAttributeAnnotation&, const DOMAttributeAnnotation&) = default;
+};
 
 } // namespace JSC

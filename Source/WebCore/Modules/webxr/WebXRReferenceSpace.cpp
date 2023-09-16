@@ -102,7 +102,7 @@ ExceptionOr<Ref<WebXRReferenceSpace>> WebXRReferenceSpace::getOffsetReferenceSpa
     if (!m_session)
         return Exception { InvalidStateError };
 
-    auto* document = downcast<Document>(scriptExecutionContext());
+    RefPtr document = downcast<Document>(scriptExecutionContext());
     if (!document)
         return Exception { InvalidStateError };
 

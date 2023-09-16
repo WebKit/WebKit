@@ -236,9 +236,9 @@ ImageImpl *DisplayVk::createImage(const egl::ImageState &state,
     return new ImageVk(state, context);
 }
 
-ShareGroupImpl *DisplayVk::createShareGroup()
+ShareGroupImpl *DisplayVk::createShareGroup(const egl::ShareGroupState &state)
 {
-    return new ShareGroupVk();
+    return new ShareGroupVk(state);
 }
 
 bool DisplayVk::isConfigFormatSupported(VkFormat format) const
@@ -485,10 +485,10 @@ void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const
     outExtensions->contextPriority = !getRenderer()->getFeatures().allocateNonZeroMemory.enabled;
     outExtensions->noConfigContext = true;
 
-#if defined(ANGLE_PLATFORM_ANDROID)
+#if defined(ANGLE_PLATFORM_ANDROID) || defined(ANGLE_PLATFORM_LINUX)
     outExtensions->nativeFenceSyncANDROID =
         getRenderer()->getFeatures().supportsAndroidNativeFenceSync.enabled;
-#endif  // defined(ANGLE_PLATFORM_ANDROID)
+#endif  // defined(ANGLE_PLATFORM_ANDROID) || defined(ANGLE_PLATFORM_LINUX)
 
 #if defined(ANGLE_PLATFORM_GGP)
     outExtensions->ggpStreamDescriptor = true;
@@ -536,6 +536,11 @@ void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const
             isColorspaceSupported(VK_COLOR_SPACE_EXTENDED_SRGB_NONLINEAR_EXT);
         outExtensions->glColorspaceScrgbLinear =
             isColorspaceSupported(VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT);
+        outExtensions->glColorspaceBt2020Linear =
+            isColorspaceSupported(VK_COLOR_SPACE_BT2020_LINEAR_EXT);
+        outExtensions->glColorspaceBt2020Pq =
+            isColorspaceSupported(VK_COLOR_SPACE_HDR10_ST2084_EXT);
+        outExtensions->glColorspaceBt2020Hlg = isColorspaceSupported(VK_COLOR_SPACE_HDR10_HLG_EXT);
     }
 }
 

@@ -43,12 +43,7 @@ struct QuadraticBezier {
     {
     }
 
-    bool operator==(const QuadraticBezier& rhs) const
-    {
-        return start == rhs.start
-            && control == rhs.control
-            && end == rhs.end;
-    }
+    friend bool operator==(const QuadraticBezier&, const QuadraticBezier&) = default;
     
     float approximateDistance() const
     {
@@ -85,13 +80,7 @@ struct CubicBezier {
     {
     }
 
-    bool operator==(const CubicBezier& rhs) const
-    {
-        return start == rhs.start
-            && control1 == rhs.control1
-            && control2 == rhs.control2
-            && end == rhs.end;
-    }
+    friend bool operator==(const CubicBezier&, const CubicBezier&) = default;
 
     float approximateDistance() const
     {

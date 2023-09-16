@@ -7,6 +7,7 @@
         jsTestIsAsync = true;
 
         var newWindow;
+        let checkAttempts = 0;
 
         if (window.testRunner) {
             if (testRunner.setShouldDecideNavigationPolicyAfterDelay)
@@ -23,8 +24,14 @@
         {
             try {
                 newWindow.document;
+                checkAttempts++;
                 if (newWindow.document.URL != "about:blank") {
                     testFailed("Managed to access the document at URL " + newWindow.document.URL);
+                    finish();
+                    return;
+                }
+                if (checkAttempts == 200) {
+                    testPassed("Navigation didn't happen");
                     finish();
                 }
             } catch (_e) {

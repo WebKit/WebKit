@@ -20,7 +20,8 @@ bool ValidateGetVertexAttribdv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib1d(const Context *context,
+bool ValidateVertexAttrib1d(const PrivateState &state,
+                            ErrorSet *errors,
                             angle::EntryPoint entryPoint,
                             GLuint index,
                             GLdouble x)
@@ -28,7 +29,8 @@ bool ValidateVertexAttrib1d(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib1dv(const Context *context,
+bool ValidateVertexAttrib1dv(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              const GLdouble *v)
@@ -36,7 +38,8 @@ bool ValidateVertexAttrib1dv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib1s(const Context *context,
+bool ValidateVertexAttrib1s(const PrivateState &state,
+                            ErrorSet *errors,
                             angle::EntryPoint entryPoint,
                             GLuint index,
                             GLshort x)
@@ -44,7 +47,8 @@ bool ValidateVertexAttrib1s(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib1sv(const Context *context,
+bool ValidateVertexAttrib1sv(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              const GLshort *v)
@@ -52,7 +56,8 @@ bool ValidateVertexAttrib1sv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib2d(const Context *context,
+bool ValidateVertexAttrib2d(const PrivateState &state,
+                            ErrorSet *errors,
                             angle::EntryPoint entryPoint,
                             GLuint index,
                             GLdouble x,
@@ -61,7 +66,8 @@ bool ValidateVertexAttrib2d(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib2dv(const Context *context,
+bool ValidateVertexAttrib2dv(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              const GLdouble *v)
@@ -69,7 +75,8 @@ bool ValidateVertexAttrib2dv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib2s(const Context *context,
+bool ValidateVertexAttrib2s(const PrivateState &state,
+                            ErrorSet *errors,
                             angle::EntryPoint entryPoint,
                             GLuint index,
                             GLshort x,
@@ -78,7 +85,8 @@ bool ValidateVertexAttrib2s(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib2sv(const Context *context,
+bool ValidateVertexAttrib2sv(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              const GLshort *v)
@@ -86,7 +94,8 @@ bool ValidateVertexAttrib2sv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib3d(const Context *context,
+bool ValidateVertexAttrib3d(const PrivateState &state,
+                            ErrorSet *errors,
                             angle::EntryPoint entryPoint,
                             GLuint index,
                             GLdouble x,
@@ -96,7 +105,8 @@ bool ValidateVertexAttrib3d(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib3dv(const Context *context,
+bool ValidateVertexAttrib3dv(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              const GLdouble *v)
@@ -104,7 +114,8 @@ bool ValidateVertexAttrib3dv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib3s(const Context *context,
+bool ValidateVertexAttrib3s(const PrivateState &state,
+                            ErrorSet *errors,
                             angle::EntryPoint entryPoint,
                             GLuint index,
                             GLshort x,
@@ -114,7 +125,8 @@ bool ValidateVertexAttrib3s(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib3sv(const Context *context,
+bool ValidateVertexAttrib3sv(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              const GLshort *v)
@@ -122,7 +134,8 @@ bool ValidateVertexAttrib3sv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib4Nbv(const Context *context,
+bool ValidateVertexAttrib4Nbv(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               const GLbyte *v)
@@ -130,7 +143,8 @@ bool ValidateVertexAttrib4Nbv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib4Niv(const Context *context,
+bool ValidateVertexAttrib4Niv(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               const GLint *v)
@@ -138,7 +152,8 @@ bool ValidateVertexAttrib4Niv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib4Nsv(const Context *context,
+bool ValidateVertexAttrib4Nsv(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               const GLshort *v)
@@ -146,7 +161,8 @@ bool ValidateVertexAttrib4Nsv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib4Nub(const Context *context,
+bool ValidateVertexAttrib4Nub(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               GLubyte x,
@@ -157,7 +173,8 @@ bool ValidateVertexAttrib4Nub(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib4Nubv(const Context *context,
+bool ValidateVertexAttrib4Nubv(const PrivateState &state,
+                               ErrorSet *errors,
                                angle::EntryPoint entryPoint,
                                GLuint index,
                                const GLubyte *v)
@@ -165,7 +182,8 @@ bool ValidateVertexAttrib4Nubv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib4Nuiv(const Context *context,
+bool ValidateVertexAttrib4Nuiv(const PrivateState &state,
+                               ErrorSet *errors,
                                angle::EntryPoint entryPoint,
                                GLuint index,
                                const GLuint *v)
@@ -173,7 +191,8 @@ bool ValidateVertexAttrib4Nuiv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib4Nusv(const Context *context,
+bool ValidateVertexAttrib4Nusv(const PrivateState &state,
+                               ErrorSet *errors,
                                angle::EntryPoint entryPoint,
                                GLuint index,
                                const GLushort *v)
@@ -181,7 +200,8 @@ bool ValidateVertexAttrib4Nusv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib4bv(const Context *context,
+bool ValidateVertexAttrib4bv(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              const GLbyte *v)
@@ -189,7 +209,8 @@ bool ValidateVertexAttrib4bv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib4d(const Context *context,
+bool ValidateVertexAttrib4d(const PrivateState &state,
+                            ErrorSet *errors,
                             angle::EntryPoint entryPoint,
                             GLuint index,
                             GLdouble x,
@@ -200,7 +221,8 @@ bool ValidateVertexAttrib4d(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib4dv(const Context *context,
+bool ValidateVertexAttrib4dv(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              const GLdouble *v)
@@ -208,7 +230,8 @@ bool ValidateVertexAttrib4dv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib4iv(const Context *context,
+bool ValidateVertexAttrib4iv(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              const GLint *v)
@@ -216,7 +239,8 @@ bool ValidateVertexAttrib4iv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib4s(const Context *context,
+bool ValidateVertexAttrib4s(const PrivateState &state,
+                            ErrorSet *errors,
                             angle::EntryPoint entryPoint,
                             GLuint index,
                             GLshort x,
@@ -227,7 +251,8 @@ bool ValidateVertexAttrib4s(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib4sv(const Context *context,
+bool ValidateVertexAttrib4sv(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              const GLshort *v)
@@ -235,7 +260,8 @@ bool ValidateVertexAttrib4sv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib4ubv(const Context *context,
+bool ValidateVertexAttrib4ubv(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               const GLubyte *v)
@@ -243,7 +269,8 @@ bool ValidateVertexAttrib4ubv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib4uiv(const Context *context,
+bool ValidateVertexAttrib4uiv(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               const GLuint *v)
@@ -251,7 +278,8 @@ bool ValidateVertexAttrib4uiv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttrib4usv(const Context *context,
+bool ValidateVertexAttrib4usv(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               const GLushort *v)

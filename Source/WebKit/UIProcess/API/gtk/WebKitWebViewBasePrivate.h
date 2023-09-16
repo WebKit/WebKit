@@ -54,9 +54,13 @@ void webkitWebViewBaseSetMouseIsOverScrollbar(WebKitWebViewBase*, WebKit::WebHit
 void webkitWebViewBasePropagateKeyEvent(WebKitWebViewBase*, GdkEvent*);
 void webkitWebViewBasePropagateWheelEvent(WebKitWebViewBase*, GdkEvent*);
 void webkitWebViewBaseChildMoveResize(WebKitWebViewBase*, GtkWidget*, const WebCore::IntRect&);
+#if ENABLE(FULLSCREEN_API)
+void webkitWebViewBaseWillEnterFullScreen(WebKitWebViewBase*);
 void webkitWebViewBaseEnterFullScreen(WebKitWebViewBase*);
+void webkitWebViewBaseWillExitFullScreen(WebKitWebViewBase*);
 void webkitWebViewBaseExitFullScreen(WebKitWebViewBase*);
 bool webkitWebViewBaseIsFullScreen(WebKitWebViewBase*);
+#endif
 void webkitWebViewBaseSetInspectorViewSize(WebKitWebViewBase*, unsigned size);
 void webkitWebViewBaseSetActiveContextMenuProxy(WebKitWebViewBase*, WebKit::WebContextMenuProxyGtk*);
 WebKit::WebContextMenuProxyGtk* webkitWebViewBaseGetActiveContextMenuProxy(WebKitWebViewBase*);
@@ -86,7 +90,6 @@ void webkitWebViewBaseResetClickCounter(WebKitWebViewBase*);
 void webkitWebViewBaseEnterAcceleratedCompositingMode(WebKitWebViewBase*, const WebKit::LayerTreeContext&);
 void webkitWebViewBaseUpdateAcceleratedCompositingMode(WebKitWebViewBase*, const WebKit::LayerTreeContext&);
 void webkitWebViewBaseExitAcceleratedCompositingMode(WebKitWebViewBase*);
-bool webkitWebViewBaseMakeGLContextCurrent(WebKitWebViewBase*);
 void webkitWebViewBaseWillSwapWebProcess(WebKitWebViewBase*);
 void webkitWebViewBaseDidExitWebProcess(WebKitWebViewBase*);
 void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase*);

@@ -45,15 +45,18 @@
         run('source.duration = 1');
         run('source.endOfStream()');
         waitForEventOnce('seeked', seeked);
-        run('video.currentTime = 1');
+        run('video.currentTime = 0.9');
     }
 
     function seeked() {
         waitForEventAndFail('seeked');
-        waitForEventAndEnd('ended');
+        waitForEventOnce('ended', () => {
+            // Wait a bit to make sure no seeked event is fired again.
+            sleepFor(200).then(() => { endTest(); });
+        });
         run('video.play()');
     }
-    
+
     </script>
 </head>
 <body onload="runTest()">

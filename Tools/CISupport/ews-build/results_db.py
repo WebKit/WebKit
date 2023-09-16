@@ -30,7 +30,7 @@ import twisted
 import re
 import urllib.parse
 
-from twisted_additions import TwistedAdditions
+from .twisted_additions import TwistedAdditions
 from twisted.internet import defer, reactor
 
 

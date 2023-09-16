@@ -17,6 +17,8 @@
 namespace gl
 {
 class Context;
+class PrivateState;
+class ErrorSet;
 
 // GL 4.0
 bool ValidateBeginQueryIndexed(const Context *context,
@@ -353,41 +355,49 @@ bool ValidateScissorIndexedv(const Context *context,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              const GLint *v);
-bool ValidateVertexAttribL1d(const Context *context,
+bool ValidateVertexAttribL1d(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              GLdouble x);
-bool ValidateVertexAttribL1dv(const Context *context,
+bool ValidateVertexAttribL1dv(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               const GLdouble *v);
-bool ValidateVertexAttribL2d(const Context *context,
+bool ValidateVertexAttribL2d(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              GLdouble x,
                              GLdouble y);
-bool ValidateVertexAttribL2dv(const Context *context,
+bool ValidateVertexAttribL2dv(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               const GLdouble *v);
-bool ValidateVertexAttribL3d(const Context *context,
+bool ValidateVertexAttribL3d(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              GLdouble x,
                              GLdouble y,
                              GLdouble z);
-bool ValidateVertexAttribL3dv(const Context *context,
+bool ValidateVertexAttribL3dv(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               const GLdouble *v);
-bool ValidateVertexAttribL4d(const Context *context,
+bool ValidateVertexAttribL4d(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              GLdouble x,
                              GLdouble y,
                              GLdouble z,
                              GLdouble w);
-bool ValidateVertexAttribL4dv(const Context *context,
+bool ValidateVertexAttribL4dv(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               const GLdouble *v);
@@ -678,7 +688,8 @@ bool ValidateClearNamedFramebufferuiv(const Context *context,
                                       GLenum buffer,
                                       GLint drawbuffer,
                                       const GLuint *value);
-bool ValidateClipControl(const Context *context,
+bool ValidateClipControl(const PrivateState &state,
+                         ErrorSet *errors,
                          angle::EntryPoint entryPoint,
                          ClipOrigin originPacked,
                          ClipDepthMode depthPacked);
@@ -1358,7 +1369,8 @@ bool ValidateMultiDrawElementsIndirectCount(const Context *context,
                                             GLintptr drawcount,
                                             GLsizei maxdrawcount,
                                             GLsizei stride);
-bool ValidatePolygonOffsetClamp(const Context *context,
+bool ValidatePolygonOffsetClamp(const PrivateState &state,
+                                ErrorSet *errors,
                                 angle::EntryPoint entryPoint,
                                 GLfloat factor,
                                 GLfloat units,

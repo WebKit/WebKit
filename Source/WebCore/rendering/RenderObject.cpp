@@ -911,8 +911,8 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
     // FIXME: We should really propagate only when the child renderer sticks out.
     bool repaintRectNeedsConverting = false;
     // Issue repaint on the renderer with outline: auto.
-    for (const auto* renderer = this; renderer; renderer = renderer->parent()) {
-        const auto* originalRenderer = renderer;
+    for (auto* renderer = this; renderer; renderer = renderer->parent()) {
+        auto* originalRenderer = renderer;
         if (is<RenderMultiColumnSet>(renderer->previousSibling()) && !renderer->isLegend()) {
             auto previousMultiColumnSet = downcast<RenderMultiColumnSet>(renderer->previousSibling());
             auto enclosingMultiColumnFlow = previousMultiColumnSet->multiColumnFlow();
@@ -936,7 +936,7 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
         if (!repaintRectNeedsConverting)
             repaintContainer.repaintRectangle(adjustedRepaintRect);
         else if (is<RenderLayerModelObject>(originalRenderer)) {
-            const auto& rendererWithOutline = downcast<RenderLayerModelObject>(*originalRenderer);
+            auto& rendererWithOutline = downcast<RenderLayerModelObject>(*originalRenderer);
             adjustedRepaintRect = LayoutRect(repaintContainer.localToContainerQuad(FloatRect(adjustedRepaintRect), &rendererWithOutline).boundingBox());
             rendererWithOutline.repaintRectangle(adjustedRepaintRect);
         }
@@ -1181,11 +1181,11 @@ void RenderObject::outputRegionsInformation(TextStream& stream) const
 
         stream << " [fragment containers ";
         bool first = true;
-        for (const auto* fragment : fragmentContainers) {
+        for (const auto& fragment : fragmentContainers) {
             if (!first)
                 stream << ", ";
             first = false;
-            stream << fragment;
+            stream << &fragment;
         }
         stream << "]";
     }
@@ -1205,7 +1205,7 @@ void RenderObject::outputRegionsInformation(TextStream& stream) const
 
     RenderFragmentContainer* startContainer = nullptr;
     RenderFragmentContainer* endContainer = nullptr;
-    fragmentedFlow->getFragmentRangeForBox(downcast<RenderBox>(this), startContainer, endContainer);
+    fragmentedFlow->getFragmentRangeForBox(downcast<RenderBox>(*this), startContainer, endContainer);
     stream << " [spans fragment containers in flow " << fragmentedFlow << " from " << startContainer << " to " << endContainer << "]";
 }
 
@@ -2266,7 +2266,7 @@ static Vector<FloatRect> borderAndTextRects(const SimpleRange& range, Coordinate
 
     bool useVisibleBounds = behavior.contains(RenderObject::BoundingRectBehavior::UseVisibleBounds);
 
-    HashSet<Element*> selectedElementsSet;
+    HashSet<RefPtr<Element>> selectedElementsSet;
     for (auto& node : intersectingNodesWithDeprecatedZeroOffsetStartQuirk(range)) {
         if (is<Element>(node))
             selectedElementsSet.add(&downcast<Element>(node));
@@ -2677,7 +2677,7 @@ String RenderObject::debugDescription() const
 
 bool RenderObject::isSkippedContent() const
 {
-    return parent() && parent()->style().effectiveSkippedContent();
+    return parent() && parent()->style().skippedContentReason().has_value();
 }
 
 TextStream& operator<<(TextStream& ts, const RenderObject& renderer)

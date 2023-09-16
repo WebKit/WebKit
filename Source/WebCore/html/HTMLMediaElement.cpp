@@ -459,7 +459,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_sentEndEvent(false)
     , m_pausedInternal(false)
     , m_closedCaptionsVisible(false)
-    , m_webkitLegacyClosedCaptionOverride(false)
     , m_completelyLoaded(false)
     , m_havePreparedToPlay(false)
     , m_parsingInProgress(createdByParser)
@@ -1155,15 +1154,6 @@ String HTMLMediaElement::canPlayType(const String& mimeType) const
     MediaEngineSupportParameters parameters;
     ContentType contentType(mimeType);
 
-#if PLATFORM(COCOA)
-    if (document().quirks().shouldAdvertiseSupportForHLSSubtitleTypes()
-        && contentType.containerType() == "application/vnd.apple.mpegurl"_s
-        && (contentType.codecs().contains("stpp.ttml.im1t"_s) || contentType.codecs().contains("wvtt"_s))) {
-        ALWAYS_LOG(LOGIDENTIFIER, "Quirk, ", mimeType, ": probably");
-        return "probably"_s;
-    }
-#endif
-
     parameters.type = contentType;
     parameters.contentTypesRequiringHardwareSupport = mediaContentTypesRequiringHardwareSupport();
     parameters.allowedMediaContainerTypes = allowedMediaContainerTypes();
@@ -1622,7 +1612,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
 
     if (!autoplay() && !m_havePreparedToPlay)
         m_player->setPreload(mediaSession().effectivePreloadForElement());
-    m_player->setPreservesPitch(m_webkitPreservesPitch);
+    m_player->setPreservesPitch(m_preservesPitch);
     m_player->setPitchCorrectionAlgorithm(document().settings().pitchCorrectionAlgorithm());
 
     if (!m_explicitlyMuted) {
@@ -2797,8 +2787,10 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
 
     if (m_seeking) {
         // 4.8.10.9, step 11
-        if (wasPotentiallyPlaying && m_readyState < HAVE_FUTURE_DATA)
+        if (wasPotentiallyPlaying && m_readyState < HAVE_FUTURE_DATA) {
+            ALWAYS_LOG(LOGIDENTIFIER, "queuing waiting event, currentTime = ", currentMediaTime());
             scheduleEvent(eventNames().waitingEvent);
+        }
 
         // 4.8.10.10 step 14 & 15.
         if (m_seekRequested && !m_player->seeking() && m_readyState >= HAVE_CURRENT_DATA)
@@ -3361,7 +3353,7 @@ void HTMLMediaElement::fastSeek(const MediaTime& time)
 
     MediaTime delta = time - currentMediaTime();
     MediaTime negativeTolerance = delta < MediaTime::zeroTime() ? MediaTime::positiveInfiniteTime() : delta;
-    seekWithTolerance(time, negativeTolerance, MediaTime::zeroTime(), true);
+    seekWithTolerance({ time, negativeTolerance, MediaTime::zeroTime() }, true);
 }
 
 #if ENABLE(MEDIA_STREAM)
@@ -3410,20 +3402,19 @@ void HTMLMediaElement::setAudioOutputDevice(String&& deviceId, DOMPromiseDeferre
 void HTMLMediaElement::seek(const MediaTime& time)
 {
     ALWAYS_LOG(LOGIDENTIFIER, time);
-    seekWithTolerance(time, MediaTime::zeroTime(), MediaTime::zeroTime(), true);
+    seekWithTolerance({ time, MediaTime::zeroTime(), MediaTime::zeroTime() }, true);
 }
 
 void HTMLMediaElement::seekInternal(const MediaTime& time)
 {
     ALWAYS_LOG(LOGIDENTIFIER, time);
-    seekWithTolerance(time, MediaTime::zeroTime(), MediaTime::zeroTime(), false);
+    seekWithTolerance({ time, MediaTime::zeroTime(), MediaTime::zeroTime() }, false);
 }
 
-void HTMLMediaElement::seekWithTolerance(const MediaTime& inTime, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance, bool fromDOM)
+void HTMLMediaElement::seekWithTolerance(const SeekTarget& target, bool fromDOM)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, "time = ", inTime, ", negativeTolerance = ", negativeTolerance, ", positiveTolerance = ", positiveTolerance);
+    ALWAYS_LOG(LOGIDENTIFIER, "SeekTarget = ", target);
     // 4.8.10.9 Seeking
-    MediaTime time = inTime;
 
     // 1 - Set the media element's show poster flag to false.
     setShowPosterFlag(false);
@@ -3460,13 +3451,13 @@ void HTMLMediaElement::seekWithTolerance(const MediaTime& inTime, const MediaTim
         if (m_lastSeekTime < now)
             addPlayedRange(m_lastSeekTime, now);
     }
-    m_lastSeekTime = time;
+    m_lastSeekTime = target.time;
 
     // 5 - If the seek was in response to a DOM method call or setting of an IDL attribute, then continue
     // the script. The remainder of these steps must be run asynchronously.
-    m_pendingSeek = makeUnique<PendingSeek>(now, time, negativeTolerance, positiveTolerance);
+    m_pendingSeek = makeUnique<PendingSeek>(now, target);
     if (fromDOM) {
-        ALWAYS_LOG(LOGIDENTIFIER, "enqueuing seek from ", now, " to ", time);
+        ALWAYS_LOG(LOGIDENTIFIER, "enqueuing seek from ", now, " to ", target.time);
         queueCancellableTaskKeepingObjectAlive(*this, TaskSource::MediaElement, m_seekTaskCancellationGroup, std::bind(&HTMLMediaElement::seekTask, this));
     } else
         seekTask();
@@ -3488,9 +3479,9 @@ void HTMLMediaElement::seekTask()
 
     ASSERT(m_pendingSeek);
     MediaTime now = m_pendingSeek->now;
-    MediaTime time = m_pendingSeek->targetTime;
-    MediaTime negativeTolerance = m_pendingSeek->negativeTolerance;
-    MediaTime positiveTolerance = m_pendingSeek->positiveTolerance;
+    MediaTime time = m_pendingSeek->target.time;
+    MediaTime negativeTolerance = m_pendingSeek->target.negativeThreshold;
+    MediaTime positiveTolerance = m_pendingSeek->target.positiveThreshold;
     m_pendingSeek = nullptr;
 
     ASSERT(negativeTolerance.isValid());
@@ -3565,7 +3556,7 @@ void HTMLMediaElement::seekTask()
 
     // 11 - Set the current playback position to the given new playback position
     m_seekRequested = true;
-    m_player->seekWithTolerance(time, negativeTolerance, positiveTolerance);
+    m_player->seekToTarget({ time, negativeTolerance, positiveTolerance });
 
     // 12 - Wait until the user agent has established whether or not the media data for the new playback
     // position is available, and, if it is, until it has decoded enough data to play back that position.
@@ -3763,7 +3754,7 @@ void HTMLMediaElement::setCurrentTime(double time)
 
 void HTMLMediaElement::setCurrentTimeWithTolerance(double time, double toleranceBefore, double toleranceAfter)
 {
-    seekWithTolerance(MediaTime::createWithDouble(time), MediaTime::createWithDouble(toleranceBefore), MediaTime::createWithDouble(toleranceAfter), true);
+    seekWithTolerance({ MediaTime::createWithDouble(time), MediaTime::createWithDouble(toleranceBefore), MediaTime::createWithDouble(toleranceAfter) }, true);
 }
 
 void HTMLMediaElement::setCurrentTime(const MediaTime& time)
@@ -3920,16 +3911,16 @@ void HTMLMediaElement::updatePlaybackRate()
         m_player->setRate(requestedRate);
 }
 
-bool HTMLMediaElement::webkitPreservesPitch() const
+bool HTMLMediaElement::preservesPitch() const
 {
-    return m_webkitPreservesPitch;
+    return m_preservesPitch;
 }
 
-void HTMLMediaElement::setWebkitPreservesPitch(bool preservesPitch)
+void HTMLMediaElement::setPreservesPitch(bool preservesPitch)
 {
     INFO_LOG(LOGIDENTIFIER, preservesPitch);
 
-    m_webkitPreservesPitch = preservesPitch;
+    m_preservesPitch = preservesPitch;
 
     if (!m_player)
         return;
@@ -4947,11 +4938,6 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
 
     if (trackToEnable) {
         trackToEnable->setMode(TextTrack::Mode::Showing);
-
-        // If user preferences indicate we should always display captions, make sure we reflect the
-        // proper status via the webkitClosedCaptionsVisible API call:
-        if (!webkitClosedCaptionsVisible() && closedCaptionsVisible() && displayMode == CaptionUserPreferences::AlwaysOn)
-            m_webkitLegacyClosedCaptionOverride = true;
     }
 }
 
@@ -6768,7 +6754,12 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
     m_changingVideoFullscreenMode = true;
 
 #if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
-    if (document().settings().fullScreenEnabled() && mode == VideoFullscreenModeStandard) {
+#if PLATFORM(IOS_FAMILY)
+    bool videoUsesElementFullscreen = document().settings().videoFullscreenRequiresElementFullscreen();
+#else
+    constexpr bool videoUsesElementFullscreen = true;
+#endif
+    if (videoUsesElementFullscreen && document().settings().fullScreenEnabled() && mode == VideoFullscreenModeStandard) {
         m_temporarilyAllowingInlinePlaybackAfterFullscreen = false;
         m_waitingToEnterFullscreen = true;
         document().fullscreenManager().requestFullscreenForElement(*this, nullptr, FullscreenManager::ExemptIFrameAllowFullscreenRequirement);
@@ -7166,23 +7157,6 @@ void HTMLMediaElement::setClosedCaptionsVisible(bool closedCaptionVisible)
     updateTextTrackDisplay();
 }
 
-void HTMLMediaElement::setWebkitClosedCaptionsVisible(bool visible)
-{
-    m_webkitLegacyClosedCaptionOverride = visible;
-    setClosedCaptionsVisible(visible);
-}
-
-bool HTMLMediaElement::webkitClosedCaptionsVisible() const
-{
-    return m_webkitLegacyClosedCaptionOverride && m_closedCaptionsVisible;
-}
-
-
-bool HTMLMediaElement::webkitHasClosedCaptions() const
-{
-    return hasClosedCaptions();
-}
-
 #if ENABLE(MEDIA_STATISTICS)
 unsigned HTMLMediaElement::webkitAudioDecodedByteCount() const
 {
@@ -7331,7 +7305,7 @@ void HTMLMediaElement::captionPreferencesChanged()
         return;
 
     m_captionDisplayMode = displayMode;
-    setWebkitClosedCaptionsVisible(captionDisplayMode() == CaptionUserPreferences::AlwaysOn);
+    setClosedCaptionsVisible(captionDisplayMode() == CaptionUserPreferences::AlwaysOn);
 }
 
 CaptionUserPreferences::CaptionDisplayMode HTMLMediaElement::captionDisplayMode()
@@ -7637,8 +7611,10 @@ HTMLMediaElement::SleepType HTMLMediaElement::shouldDisableSleep() const
     if (shouldBeAbleToSleep)
         return SleepType::None;
 
+#if HAVE(IDLE_SLEEP_STATE)
     if (m_elementIsHidden)
         return SleepType::System;
+#endif
 
     return SleepType::Display;
 }
@@ -8086,7 +8062,7 @@ bool HTMLMediaElement::ensureMediaControls()
         for (auto& mediaControlsScript : mediaControlsScripts) {
             if (mediaControlsScript.isEmpty())
                 continue;
-            scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(mediaControlsScript), world);
+            scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(mediaControlsScript, JSC::SourceTaintedOrigin::Untainted), world);
             RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
         }
 
@@ -8421,43 +8397,43 @@ void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::Remo
     UserGestureIndicator remoteControlUserGesture(ProcessingUserGesture, &document());
     const double defaultSkipAmount = 15;
     switch (command) {
-    case PlatformMediaSession::PlayCommand:
+    case PlatformMediaSession::RemoteControlCommandType::PlayCommand:
         play();
         break;
-    case PlatformMediaSession::StopCommand:
-    case PlatformMediaSession::PauseCommand:
+    case PlatformMediaSession::RemoteControlCommandType::StopCommand:
+    case PlatformMediaSession::RemoteControlCommandType::PauseCommand:
         pause();
         break;
-    case PlatformMediaSession::TogglePlayPauseCommand:
+    case PlatformMediaSession::RemoteControlCommandType::TogglePlayPauseCommand:
         canPlay() ? play() : pause();
         break;
-    case PlatformMediaSession::BeginSeekingBackwardCommand:
+    case PlatformMediaSession::RemoteControlCommandType::BeginSeekingBackwardCommand:
         beginScanning(Backward);
         break;
-    case PlatformMediaSession::BeginSeekingForwardCommand:
+    case PlatformMediaSession::RemoteControlCommandType::BeginSeekingForwardCommand:
         beginScanning(Forward);
         break;
-    case PlatformMediaSession::EndSeekingBackwardCommand:
-    case PlatformMediaSession::EndSeekingForwardCommand:
+    case PlatformMediaSession::RemoteControlCommandType::EndSeekingBackwardCommand:
+    case PlatformMediaSession::RemoteControlCommandType::EndSeekingForwardCommand:
         endScanning();
         break;
-    case PlatformMediaSession::BeginScrubbingCommand:
+    case PlatformMediaSession::RemoteControlCommandType::BeginScrubbingCommand:
         beginScrubbing();
         break;
-    case PlatformMediaSession::EndScrubbingCommand:
+    case PlatformMediaSession::RemoteControlCommandType::EndScrubbingCommand:
         endScrubbing();
         break;
-    case PlatformMediaSession::SkipForwardCommand: {
+    case PlatformMediaSession::RemoteControlCommandType::SkipForwardCommand: {
         auto delta = argument.time ? argument.time.value() : defaultSkipAmount;
         handleSeekToPlaybackPosition(std::min(currentTime() + delta, duration()));
         break;
     }
-    case PlatformMediaSession::SkipBackwardCommand: {
+    case PlatformMediaSession::RemoteControlCommandType::SkipBackwardCommand: {
         auto delta = argument.time ? argument.time.value() : defaultSkipAmount;
         handleSeekToPlaybackPosition(std::max(currentTime() - delta, 0.));
         break;
     }
-    case PlatformMediaSession::SeekToPlaybackPositionCommand:
+    case PlatformMediaSession::RemoteControlCommandType::SeekToPlaybackPositionCommand:
         ASSERT(argument.time);
         if (argument.time)
             handleSeekToPlaybackPosition(argument.time.value());
@@ -8557,19 +8533,19 @@ FloatSize HTMLMediaElement::naturalSize()
     return { };
 }
 
-FloatSize HTMLMediaElement::videoInlineSize() const
+FloatSize HTMLMediaElement::videoLayerSize() const
 {
-    return m_videoInlineSize;
+    return m_videoLayerSize;
 }
 
-void HTMLMediaElement::setVideoInlineSizeFenced(const FloatSize& size, WTF::MachSendRight&& fence)
+void HTMLMediaElement::setVideoLayerSizeFenced(const FloatSize& size, WTF::MachSendRight&& fence)
 {
-    if (m_videoInlineSize == size)
+    if (m_videoLayerSize == size)
         return;
 
-    m_videoInlineSize = size;
+    m_videoLayerSize = size;
     if (m_player)
-        m_player->setVideoInlineSizeFenced(size, WTFMove(fence));
+        m_player->setVideoLayerSizeFenced(size, WTFMove(fence));
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

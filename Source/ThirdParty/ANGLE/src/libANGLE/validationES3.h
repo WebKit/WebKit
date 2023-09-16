@@ -75,7 +75,8 @@ bool ValidateProgramParameteriBase(const Context *context,
 //   <drawBufferIdx> < (MAX_COMBINED_DRAW_BUFFERS_AND_PIXEL_LOCAL_STORAGE_PLANES_ANGLE -
 //                      ACTIVE_PIXEL_LOCAL_STORAGE_PLANES_ANGLE)
 //
-bool ValidateDrawBufferIndexIfActivePLS(const Context *,
+bool ValidateDrawBufferIndexIfActivePLS(const PrivateState &state,
+                                        ErrorSet *errors,
                                         angle::EntryPoint,
                                         GLuint drawBufferIdx,
                                         const char *argumentName);

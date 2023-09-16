@@ -29,7 +29,7 @@
 #include "WebGLMultiDrawInstancedBaseVertexBaseInstance.h"
 
 #include "InspectorInstrumentation.h"
-
+#include "WebGLExtensionAnyInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -48,11 +48,6 @@ WebGLMultiDrawInstancedBaseVertexBaseInstance::WebGLMultiDrawInstancedBaseVertex
 
 WebGLMultiDrawInstancedBaseVertexBaseInstance::~WebGLMultiDrawInstancedBaseVertexBaseInstance() = default;
 
-WebGLExtension::ExtensionName WebGLMultiDrawInstancedBaseVertexBaseInstance::getName() const
-{
-    return WebGLMultiDrawInstancedBaseVertexBaseInstanceName;
-}
-
 bool WebGLMultiDrawInstancedBaseVertexBaseInstance::supported(GraphicsContextGL& context)
 {
     return context.supportsExtension("GL_ANGLE_base_vertex_base_instance"_s)
@@ -61,9 +56,9 @@ bool WebGLMultiDrawInstancedBaseVertexBaseInstance::supported(GraphicsContextGL&
 
 void WebGLMultiDrawInstancedBaseVertexBaseInstance::multiDrawArraysInstancedBaseInstanceWEBGL(GCGLenum mode, Int32List&& firstsList, GCGLuint firstsOffset, Int32List&& countsList, GCGLuint countsOffset, Int32List&& instanceCountsList, GCGLuint instanceCountsOffset, Uint32List&& baseInstancesList, GCGLuint baseInstancesOffset, GCGLsizei drawcount)
 {
-    auto context = WebGLExtensionScopedContext(this);
-    if (context.isLost())
+    if (isContextLost())
         return;
+    auto& context = this->context();
 
     if (!validateDrawcount(context, "multiDrawArraysInstancedBaseInstanceWEBGL", drawcount)
         || !validateOffset(context, "multiDrawArraysInstancedBaseInstanceWEBGL", "firstsOffset out of bounds", firstsList.length(), firstsOffset, drawcount)
@@ -73,28 +68,28 @@ void WebGLMultiDrawInstancedBaseVertexBaseInstance::multiDrawArraysInstancedBase
         return;
     }
 
-    if (!context->validateVertexArrayObject("multiDrawArraysInstancedBaseInstanceWEBGL"))
+    if (!context.validateVertexArrayObject("multiDrawArraysInstancedBaseInstanceWEBGL"))
         return;
 
-    if (context->m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*context, *context->m_currentProgram))
+    if (context.m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(context, *context.m_currentProgram))
         return;
 
-    context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
+    context.clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
 
     {
-        InspectorScopedShaderProgramHighlight scopedHighlight(*context, context->m_currentProgram.get());
+        InspectorScopedShaderProgramHighlight scopedHighlight(context, context.m_currentProgram.get());
 
-        context->graphicsContextGL()->multiDrawArraysInstancedBaseInstanceANGLE(mode, GCGLSpanTuple { firstsList.data() +  firstsOffset, countsList.data() + countsOffset, instanceCountsList.data() + instanceCountsOffset, baseInstancesList.data() + baseInstancesOffset, static_cast<size_t>(drawcount) });
+        context.graphicsContextGL()->multiDrawArraysInstancedBaseInstanceANGLE(mode, GCGLSpanTuple { firstsList.data() +  firstsOffset, countsList.data() + countsOffset, instanceCountsList.data() + instanceCountsOffset, baseInstancesList.data() + baseInstancesOffset, static_cast<size_t>(drawcount) });
     }
 
-    context->markContextChangedAndNotifyCanvasObserver();
+    context.markContextChangedAndNotifyCanvasObserver();
 }
 
 void WebGLMultiDrawInstancedBaseVertexBaseInstance::multiDrawElementsInstancedBaseVertexBaseInstanceWEBGL(GCGLenum mode, Int32List&& countsList, GCGLuint countsOffset, GCGLenum type, Int32List&& offsetsList, GCGLuint offsetsOffset, Int32List&& instanceCountsList, GCGLuint instanceCountsOffset, Int32List&& baseVerticesList, GCGLuint baseVerticesOffset, Uint32List&& baseInstancesList, GCGLuint baseInstancesOffset, GCGLsizei drawcount)
 {
-    auto context = WebGLExtensionScopedContext(this);
-    if (context.isLost())
+    if (isContextLost())
         return;
+    auto& context = this->context();
 
     if (!validateDrawcount(context, "multiDrawElementsInstancedBaseVertexBaseInstanceWEBGL", drawcount)
         || !validateOffset(context, "multiDrawElementsInstancedBaseVertexBaseInstanceWEBGL", "countsOffset out of bounds", countsList.length(), countsOffset, drawcount)
@@ -105,42 +100,42 @@ void WebGLMultiDrawInstancedBaseVertexBaseInstance::multiDrawElementsInstancedBa
         return;
     }
 
-    if (!context->validateVertexArrayObject("multiDrawElementsInstancedBaseVertexBaseInstanceWEBGL"))
+    if (!context.validateVertexArrayObject("multiDrawElementsInstancedBaseVertexBaseInstanceWEBGL"))
         return;
 
-    if (context->m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*context, *context->m_currentProgram))
+    if (context.m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(context, *context.m_currentProgram))
         return;
 
-    context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
+    context.clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
 
     {
-        InspectorScopedShaderProgramHighlight scopedHighlight(*context, context->m_currentProgram.get());
+        InspectorScopedShaderProgramHighlight scopedHighlight(context, context.m_currentProgram.get());
 
-        context->graphicsContextGL()->multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(mode, GCGLSpanTuple { countsList.data() + countsOffset, offsetsList.data() + offsetsOffset, instanceCountsList.data() + instanceCountsOffset, baseVerticesList.data() + baseVerticesOffset, baseInstancesList.data() + baseInstancesOffset, static_cast<size_t>(drawcount) }, type);
+        context.graphicsContextGL()->multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(mode, GCGLSpanTuple { countsList.data() + countsOffset, offsetsList.data() + offsetsOffset, instanceCountsList.data() + instanceCountsOffset, baseVerticesList.data() + baseVerticesOffset, baseInstancesList.data() + baseInstancesOffset, static_cast<size_t>(drawcount) }, type);
     }
 
-    context->markContextChangedAndNotifyCanvasObserver();
+    context.markContextChangedAndNotifyCanvasObserver();
 }
 
-bool WebGLMultiDrawInstancedBaseVertexBaseInstance::validateDrawcount(WebGLExtensionScopedContext& context, const char* functionName, GCGLsizei drawcount)
+bool WebGLMultiDrawInstancedBaseVertexBaseInstance::validateDrawcount(WebGLRenderingContextBase& context, const char* functionName, GCGLsizei drawcount)
 {
     if (drawcount < 0) {
-        context->synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "negative drawcount");
+        context.synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "negative drawcount");
         return false;
     }
 
     return true;
 }
 
-bool WebGLMultiDrawInstancedBaseVertexBaseInstance::validateOffset(WebGLExtensionScopedContext& context, const char* functionName, const char* outOfBoundsDescription, GCGLsizei size, GCGLuint offset, GCGLsizei drawcount)
+bool WebGLMultiDrawInstancedBaseVertexBaseInstance::validateOffset(WebGLRenderingContextBase& context, const char* functionName, const char* outOfBoundsDescription, GCGLsizei size, GCGLuint offset, GCGLsizei drawcount)
 {
     if (drawcount > size) {
-        context->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "drawcount out of bounds");
+        context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "drawcount out of bounds");
         return false;
     }
 
     if (offset > static_cast<GCGLuint>(size - drawcount)) {
-        context->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, outOfBoundsDescription);
+        context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, outOfBoundsDescription);
         return false;
     }
 

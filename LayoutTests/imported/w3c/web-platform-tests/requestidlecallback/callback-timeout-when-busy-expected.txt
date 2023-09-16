@@ -1,6 +1,6 @@
 Test of requestIdleCallback timeout behavior
 
 
-FAIL requestIdleCallback not scheduled when event loop is busy. assert_false: IdleDeadline.didTimeout MUST be false if requestIdleCallback wasn't scheduled due to a timeout expected false got true
-FAIL requestIdleCallback scheduled with timeout when event loop is busy. assert_true: IdleDeadline.timeRemaining MUST be equal to zero if requestIdleCallback was scheduled due to a timeout expected true got false
+PASS requestIdleCallback not scheduled when event loop is busy.
+PASS requestIdleCallback scheduled with timeout when event loop is busy.
 

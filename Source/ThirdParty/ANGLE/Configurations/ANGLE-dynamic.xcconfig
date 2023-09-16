@@ -20,7 +20,7 @@ DYLIB_INSTALL_NAME_BASE[sdk=macosx*] = $(DYLIB_INSTALL_NAME_BASE_WK_RELOCATABLE_
 DYLIB_INSTALL_NAME_BASE_WK_RELOCATABLE_FRAMEWORKS_ = $(NORMAL_UMBRELLA_FRAMEWORKS_DIR)/WebCore.framework/Versions/A/Frameworks;
 DYLIB_INSTALL_NAME_BASE_WK_RELOCATABLE_FRAMEWORKS_YES = @loader_path/../../../;
 
-HEADER_SEARCH_PATHS = ${DERIVED_FILES_DIR} include src src/common/base src/common/third_party/xxhash third_party/zlib/google;
+HEADER_SEARCH_PATHS = ${DERIVED_FILES_DIR} WebKit include src src/common/base src/common/third_party/xxhash third_party/zlib/google;
 
 ANGLE_HEADERS_FOLDER_PATH = $(WK_LIBRARY_HEADERS_FOLDER_PATH)/ANGLE;
 

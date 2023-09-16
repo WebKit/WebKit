@@ -55,10 +55,7 @@ public:
         return fields;
     }
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject)
-    {
-        return Structure::create(vm, globalObject, jsNull(), TypeInfo(InternalFieldTupleType, Base::StructureFlags), info());
-    }
+    static Structure* createStructure(VM&, JSGlobalObject*);
 
     // These two are equivilent to @getInteralField and @putInternalField
     inline JSValue getInternalField(unsigned index) const

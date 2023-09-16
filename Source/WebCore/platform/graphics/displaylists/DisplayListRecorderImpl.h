@@ -40,9 +40,6 @@ public:
 
     bool isEmpty() const { return m_displayList.isEmpty(); }
 
-    void convertToLuminanceMask() final { }
-    void transformToColorSpace(const DestinationColorSpace&) final { }
-
 private:
     void recordSave() final;
     void recordRestore() final;
@@ -131,10 +128,9 @@ private:
     bool recordResourceUse(Gradient&) final;
     bool recordResourceUse(Filter&) final;
 
-    template<typename T, class... Args>
-    void append(Args&&... args)
+    void append(Item&& item)
     {
-        m_displayList.append<T>(std::forward<Args>(args)...);
+        m_displayList.append(WTFMove(item));
     }
 
     DisplayList& m_displayList;

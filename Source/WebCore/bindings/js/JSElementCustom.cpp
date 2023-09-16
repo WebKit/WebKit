@@ -56,12 +56,12 @@ using namespace HTMLNames;
 static JSValue createNewElementWrapper(JSDOMGlobalObject* globalObject, Ref<Element>&& element)
 {
     if (is<HTMLElement>(element))
-        return createJSHTMLWrapper(globalObject, static_reference_cast<HTMLElement>(WTFMove(element)));
+        return createJSHTMLWrapper(globalObject, downcast<HTMLElement>(WTFMove(element)));
     if (is<SVGElement>(element))
-        return createJSSVGWrapper(globalObject, static_reference_cast<SVGElement>(WTFMove(element)));
+        return createJSSVGWrapper(globalObject, downcast<SVGElement>(WTFMove(element)));
 #if ENABLE(MATHML)
     if (is<MathMLElement>(element))
-        return createJSMathMLWrapper(globalObject, static_reference_cast<MathMLElement>(WTFMove(element)));
+        return createJSMathMLWrapper(globalObject, downcast<MathMLElement>(WTFMove(element)));
 #endif
     return createWrapper<Element>(globalObject, WTFMove(element));
 }

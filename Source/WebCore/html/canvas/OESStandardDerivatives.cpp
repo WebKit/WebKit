@@ -42,11 +42,6 @@ OESStandardDerivatives::OESStandardDerivatives(WebGLRenderingContextBase& contex
 
 OESStandardDerivatives::~OESStandardDerivatives() = default;
 
-WebGLExtension::ExtensionName OESStandardDerivatives::getName() const
-{
-    return OESStandardDerivativesName;
-}
-
 bool OESStandardDerivatives::supported(GraphicsContextGL& context)
 {
     return context.supportsExtension("GL_OES_standard_derivatives"_s);

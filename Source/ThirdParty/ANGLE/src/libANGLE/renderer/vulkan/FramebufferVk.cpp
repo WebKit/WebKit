@@ -309,32 +309,10 @@ bool IsAnyAttachment3DWithoutAllLayers(const RenderTargetCache<RenderTargetVk> &
 
     return false;
 }
-
-// Determine read-only mode for depth or stencil
-bool GetReadOnlyMode(RenderTargetVk *depthStencilRenderTarget,
-                     bool renderPassHasWriteOrClear,
-                     bool isReadOnlyFeedbackLoopMode)
-{
-    const bool readOnlyMode = depthStencilRenderTarget &&
-                              !depthStencilRenderTarget->hasResolveAttachment() &&
-                              (isReadOnlyFeedbackLoopMode || !renderPassHasWriteOrClear);
-
-    // If readOnlyMode is false, we are switching out of read only mode due to depth/stencil write.
-    // We must not be in the read only feedback loop mode because the logic in
-    // DIRTY_BIT_READ_ONLY_DEPTH_FEEDBACK_LOOP_MODE should ensure we end the previous renderpass and
-    // a new renderpass will start with feedback loop disabled.
-    ASSERT(readOnlyMode || !isReadOnlyFeedbackLoopMode);
-
-    return readOnlyMode;
-}
 }  // anonymous namespace
 
 FramebufferVk::FramebufferVk(RendererVk *renderer, const gl::FramebufferState &state)
-    : FramebufferImpl(state),
-      mBackbuffer(nullptr),
-      mActiveColorComponentMasksForClear(0),
-      mReadOnlyDepthFeedbackLoopMode(false),
-      mReadOnlyStencilFeedbackLoopMode(false)
+    : FramebufferImpl(state), mBackbuffer(nullptr), mActiveColorComponentMasksForClear(0)
 {
     if (mState.isDefault())
     {
@@ -835,15 +813,6 @@ angle::Result FramebufferVk::readPixels(const gl::Context *context,
                                         gl::Buffer *packBuffer,
                                         void *pixels)
 {
-    // Note that GL_RGBX8_ANGLE is the only format where the upload format is 3-channel RGB, while
-    // the download format is 4-channel RGBX.  As such, the internal format corresponding to
-    // format+type expects 3-byte input/output.  The format is fixed here for readPixels to output
-    // 4 bytes per pixel.
-    if (format == GL_RGBX8_ANGLE)
-    {
-        format = GL_RGBA8;
-    }
-
     // Clip read area to framebuffer.
     const gl::Extents &fbSize = getState().getReadPixelsAttachment(format)->getSize();
     const gl::Rectangle fbRect(0, 0, fbSize.width, fbSize.height);
@@ -1280,7 +1249,8 @@ angle::Result FramebufferVk::blit(const gl::Context *context,
             areChannelsBlitCompatible =
                 areChannelsBlitCompatible &&
                 AreSrcAndDstColorChannelsBlitCompatible(readRenderTarget, drawRenderTarget);
-            areFormatsIdentical = AreSrcAndDstFormatsIdentical(readRenderTarget, drawRenderTarget);
+            areFormatsIdentical = areFormatsIdentical &&
+                                  AreSrcAndDstFormatsIdentical(readRenderTarget, drawRenderTarget);
         }
 
         // Now that all flipping is done, adjust the offsets for resolve and prerotation
@@ -2237,6 +2207,8 @@ void FramebufferVk::updateRenderPassDesc(ContextVk *contextVk)
 
     mCurrentFramebufferDesc.updateUnresolveMask({});
     mRenderPassDesc.setWriteControlMode(mCurrentFramebufferDesc.getWriteControlMode());
+
+    updateLegacyDither(contextVk);
 }
 
 angle::Result FramebufferVk::getAttachmentsAndRenderTargets(
@@ -2756,7 +2728,8 @@ void FramebufferVk::clearWithCommand(ContextVk *contextVk,
 
         // Because we may have changed the depth/stencil access mode, update read only depth/stencil
         // mode.
-        updateRenderPassDepthStencilReadOnlyMode(contextVk, dsAspectFlags, renderPassCommands);
+        renderPassCommands->updateDepthStencilReadOnlyMode(
+            contextVk->getDepthStencilAttachmentFlags(), dsAspectFlags);
     }
 
     if (attachments.empty())
@@ -2830,7 +2803,8 @@ void FramebufferVk::clearWithLoadOp(ContextVk *contextVk)
         renderPassCommands->updateRenderPassDepthStencilClear(dsAspects, dsClearValue);
 
         // The render pass can no longer be in read-only depth/stencil mode.
-        updateRenderPassDepthStencilReadOnlyMode(contextVk, dsAspects, renderPassCommands);
+        renderPassCommands->updateDepthStencilReadOnlyMode(
+            contextVk->getDepthStencilAttachmentFlags(), dsAspects);
     }
 }
 
@@ -3254,42 +3228,6 @@ angle::Result FramebufferVk::flushDeferredClears(ContextVk *contextVk)
     return contextVk->startRenderPass(getRotatedCompleteRenderArea(contextVk), nullptr, nullptr);
 }
 
-void FramebufferVk::updateRenderPassDepthReadOnlyMode(ContextVk *contextVk,
-                                                      vk::RenderPassCommandBufferHelper *renderPass)
-{
-    const bool readOnlyDepthMode =
-        GetReadOnlyMode(getDepthStencilRenderTarget(), renderPass->hasDepthWriteOrClear(),
-                        mReadOnlyDepthFeedbackLoopMode);
-
-    renderPass->updateStartedRenderPassWithDepthMode(readOnlyDepthMode);
-}
-
-void FramebufferVk::updateRenderPassStencilReadOnlyMode(
-    ContextVk *contextVk,
-    vk::RenderPassCommandBufferHelper *renderPass)
-{
-    const bool readOnlyStencilMode =
-        GetReadOnlyMode(getDepthStencilRenderTarget(), renderPass->hasStencilWriteOrClear(),
-                        mReadOnlyStencilFeedbackLoopMode);
-
-    renderPass->updateStartedRenderPassWithStencilMode(readOnlyStencilMode);
-}
-
-void FramebufferVk::updateRenderPassDepthStencilReadOnlyMode(
-    ContextVk *contextVk,
-    VkImageAspectFlags dsAspectFlags,
-    vk::RenderPassCommandBufferHelper *renderPass)
-{
-    if ((dsAspectFlags & VK_IMAGE_ASPECT_DEPTH_BIT) != 0)
-    {
-        updateRenderPassDepthReadOnlyMode(contextVk, renderPass);
-    }
-    if ((dsAspectFlags & VK_IMAGE_ASPECT_STENCIL_BIT) != 0)
-    {
-        updateRenderPassStencilReadOnlyMode(contextVk, renderPass);
-    }
-}
-
 void FramebufferVk::switchToFramebufferFetchMode(ContextVk *contextVk, bool hasFramebufferFetch)
 {
     // The switch happens once, and is permanent.
@@ -3311,5 +3249,17 @@ void FramebufferVk::switchToFramebufferFetchMode(ContextVk *contextVk, bool hasF
         ASSERT(hasFramebufferFetch);
         releaseCurrentFramebuffer(contextVk);
     }
+}
+
+bool FramebufferVk::updateLegacyDither(ContextVk *contextVk)
+{
+    if (contextVk->getFeatures().supportsLegacyDithering.enabled &&
+        mRenderPassDesc.isLegacyDitherEnabled() != contextVk->isDitherEnabled())
+    {
+        mRenderPassDesc.setLegacyDither(contextVk->isDitherEnabled());
+        return true;
+    }
+
+    return false;
 }
 }  // namespace rx

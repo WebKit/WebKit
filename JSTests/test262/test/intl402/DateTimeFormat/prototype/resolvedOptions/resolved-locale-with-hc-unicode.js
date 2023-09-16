@@ -7,13 +7,12 @@ description: >
   The resolved locale doesn't include a hc Unicode extension value if the
   hour12 or hourCycle option is also present.
 info: |
-  12.1.1 InitializeDateTimeFormat(dateTimeFormat, locales, options)
+  11.1.2 CreateDateTimeFormat( dateTimeFormat, locales, options, required, defaults )
     ...
-    6. Let hour12 be ? GetOption(options, "hour12", "boolean", undefined, undefined).
-    7. Let hourCycle be ? GetOption(options, "hourCycle", "string", « "h11", "h12", "h23", "h24" », undefined).
-    8. If hour12 is not undefined, then
-      a. Let hourCycle be null.
-    9. Set opt.[[hc]] to hourCycle.
+    13. Let hour12 be ? GetOption(options, "hour12", boolean, empty, undefined).
+    14. Let hourCycle be ? GetOption(options, "hourCycle", string, « "h11", "h12", "h23", "h24" », undefined).
+    15. If hour12 is not undefined, then
+      a. Set hourCycle to null.
     ...
 
   9.2.6 ResolveLocale(availableLocales, requestedLocales, options, relevantExtensionKeys, localeData)

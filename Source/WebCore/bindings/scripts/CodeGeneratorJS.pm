@@ -575,7 +575,7 @@ sub AddToIncludesForIDLType
             return;
         }
 
-        if ($overrideTypeName eq "IDLWebGLAny" || $overrideTypeName eq "IDLWebGLExtension") {
+        if ($overrideTypeName eq "IDLWebGLAny" || $overrideTypeName eq "IDLWebGLExtensionAny") {
             AddToIncludes("JSDOMConvertWebGL.h", $includesRef, $conditional);
             return;
         }
@@ -5222,10 +5222,6 @@ sub GenerateImplementation
                 $rootString  = "    ${implType}* owner = &js${interfaceName}->wrapped();\n";
                 $rootString .= "    if (UNLIKELY(reason))\n";
                 $rootString .= "        *reason = \"Reachable from ${interfaceName}\";\n";
-            } elsif (GetGenerateIsReachable($interface) eq "ImplWebGLRenderingContext") {
-                $rootString  = "    WebGLRenderingContextBase* owner = WTF::getPtr(js${interfaceName}->wrapped().context());\n";
-                $rootString .= "    if (UNLIKELY(reason))\n";
-                $rootString .= "        *reason = \"Reachable from ${interfaceName}\";\n";
             } elsif (GetGenerateIsReachable($interface) eq "ReachableFromDOMWindow") {
                 $rootString  = "    auto* owner = WTF::getPtr(js${interfaceName}->wrapped().window());\n";
                 $rootString .= "    if (!owner)\n";
@@ -5681,10 +5677,35 @@ sub GenerateAttributeSetterBodyDefinition
         push(@$outputArray, "    return true;\n");
     } else {
         push(@$outputArray, "    auto& impl = thisObject.wrapped();\n") if !$attribute->isStatic;
-       
+
+        my $generateFunctionString = sub {
+            my $nativeValue = shift;
+            my ($baseFunctionName, @arguments) = $codeGenerator->SetterExpression(\%implIncludes, $interface->type->name, $attribute);
+            push(@arguments, $nativeValue);
+
+            my $functionName = GetFullyQualifiedImplementationCallName($interface, $attribute, $baseFunctionName, "impl", $conditional);
+            AddAdditionalArgumentsForImplementationCall(\@arguments, $interface, $attribute, "impl", "lexicalGlobalObject", "", "thisObject");
+
+            unshift(@arguments, GenerateCallWithUsingReferences($attribute->extendedAttributes->{SetterCallWith}, $outputArray, "false", "thisObject"));
+            unshift(@arguments, GenerateCallWithUsingReferences($attribute->extendedAttributes->{CallWith}, $outputArray, "false", "thisObject"));
+
+            return "${functionName}(" . join(", ", @arguments) . ")";
+        };
+
         if ($codeGenerator->IsEnumType($attribute->type)) {
-            # As per section 3.5.6 of https://webidl.spec.whatwg.org/#dfn-attribute-setter, enumerations do not use
-            # the standard conversion, but rather silently fail on invalid enumeration values.
+            # As per section 3.7.6 of https://webidl.spec.whatwg.org/#dfn-attribute-setter, enumerations do not use
+            # the standard conversion, but rather silently fail on invalid enumeration values unless the attribute is nullable.
+            if ($attribute->type->isNullable) {
+                my $functionString = $generateFunctionString->("std::nullopt");
+
+                push(@$outputArray, "    if (value.isUndefinedOrNull()) {\n");
+                push(@$outputArray, "        invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {\n");
+                push(@$outputArray, "            return $functionString;\n");
+                push(@$outputArray, "        });\n");
+                push(@$outputArray, "        return true;\n");
+                push(@$outputArray, "    }\n\n");
+            }
+
             push(@$outputArray, "    auto optionalNativeValue = parseEnumeration<" . GetEnumerationClassName($attribute->type, $interface) . ">(lexicalGlobalObject, value);\n");
             push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
             push(@$outputArray, "    if (UNLIKELY(!optionalNativeValue))\n");
@@ -5699,15 +5720,7 @@ sub GenerateAttributeSetterBodyDefinition
             push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
         }
 
-        my ($baseFunctionName, @arguments) = $codeGenerator->SetterExpression(\%implIncludes, $interface->type->name, $attribute);
-
-        push(@arguments, PassArgumentExpression("nativeValue", $attribute));
-
-        my $functionName = GetFullyQualifiedImplementationCallName($interface, $attribute, $baseFunctionName, "impl", $conditional);
-        AddAdditionalArgumentsForImplementationCall(\@arguments, $interface, $attribute, "impl", "lexicalGlobalObject", "", "thisObject");
-
-        unshift(@arguments, GenerateCallWithUsingReferences($attribute->extendedAttributes->{SetterCallWith}, $outputArray, "false", "thisObject"));
-        unshift(@arguments, GenerateCallWithUsingReferences($attribute->extendedAttributes->{CallWith}, $outputArray, "false", "thisObject"));
+        my $functionString = $generateFunctionString->(PassArgumentExpression("nativeValue", $attribute));
 
         my $callTracer = $attribute->extendedAttributes->{CallTracer} || $interface->extendedAttributes->{CallTracer};
         if ($callTracer) {
@@ -5716,7 +5729,6 @@ sub GenerateAttributeSetterBodyDefinition
             GenerateCallTracer($outputArray, $callTracer, $attribute->name, \@callTracerArguments, $indent);
         }
 
-        my $functionString = "${functionName}(" . join(", ", @arguments) . ")";
         push(@$outputArray, "    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {\n");
         push(@$outputArray, "        return $functionString;\n");
         push(@$outputArray, "    });\n");
@@ -7376,7 +7388,7 @@ sub NativeToJSValueDOMConvertNeedsState
         my $overrideTypeName = $type->extendedAttributes->{OverrideIDLType};
         return 1 if $overrideTypeName eq "IDLIDBKey";
         return 1 if $overrideTypeName eq "IDLWebGLAny";
-        return 1 if $overrideTypeName eq "IDLWebGLExtension";
+        return 1 if $overrideTypeName eq "IDLWebGLExtensionAny";
 
         return 0;
     }
@@ -7409,7 +7421,7 @@ sub NativeToJSValueDOMConvertNeedsGlobalObject
         my $overrideTypeName = $type->extendedAttributes->{OverrideIDLType};
         return 1 if $overrideTypeName eq "IDLIDBKey";
         return 1 if $overrideTypeName eq "IDLWebGLAny";
-        return 1 if $overrideTypeName eq "IDLWebGLExtension";
+        return 1 if $overrideTypeName eq "IDLWebGLExtensionAny";
 
         return 0;
     }
@@ -7522,9 +7534,10 @@ sub GenerateHashTableValueArray
     my $conditionals = shift;
     my $readWriteConditionals = shift;
     my $nameEntries = shift;
+    my $string = "";
 
     my $packedSize = scalar @{$keys};
-    push(@implContent, "\nstatic const HashTableValue $nameEntries\[\] =\n\{\n");
+    $string .= "\nstatic const HashTableValue $nameEntries\[\] =\n\{\n";
 
     my $i = 0;
     foreach my $key (@{$keys}) {
@@ -7536,7 +7549,7 @@ sub GenerateHashTableValueArray
         }
         if ($conditional) {
             my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
-            push(@implContent, "#if ${conditionalString}\n");
+            $string .= "#if ${conditionalString}\n";
         }
 
         my $jscAttributes = StringifyJSCAttributes(@$specials[$i]);
@@ -7557,33 +7570,34 @@ sub GenerateHashTableValueArray
         my $readWriteConditional = $readWriteConditionals ? $readWriteConditionals->{$key} : undef;
         if ($readWriteConditional) {
             my $readWriteConditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($readWriteConditional);
-            push(@implContent, "#if ${readWriteConditionalString}\n");
+            $string .= "#if ${readWriteConditionalString}\n";
         }
 
         my $hasSecondValue = $typeTag ne "Constant";
         my $secondValue = $hasSecondValue ? ", @$value2[$i]" : "";
-        push(@implContent, "    { \"$key\"_s, ${jscAttributes}, NoIntrinsic, { HashTableValue::${typeTag}Type, @$value1[$i]$secondValue } },\n");
+        $string .= "    { \"$key\"_s, ${jscAttributes}, NoIntrinsic, { HashTableValue::${typeTag}Type, @$value1[$i]$secondValue } },\n";
 
         if ($readWriteConditional) {
-            push(@implContent, "#else\n") ;
+            $string .= "#else\n";
             my $secondValue = $hasSecondValue ? ", 0" : "";
 
             push(@{@$specials[$i]}, "PropertyAttribute::ReadOnly");
 
-            push(@implContent, "    { \"$key\"_s, " . StringifyJSCAttributes(@$specials[$i]) . ", NoIntrinsic, { HashTableValue::${typeTag}Type, @$value1[$i]$secondValue } },\n");
-            push(@implContent, "#endif\n");
+            $string .= "    { \"$key\"_s, " . StringifyJSCAttributes(@$specials[$i]) . ", NoIntrinsic, { HashTableValue::${typeTag}Type, @$value1[$i]$secondValue } },\n";
+            $string .= "#endif\n";
         }
 
         if ($conditional) {
-            push(@implContent, "#else\n");
-            push(@implContent, "    { { }, 0, NoIntrinsic, { HashTableValue::End } },\n");
-            push(@implContent, "#endif\n");
+            $string .= "#else\n";
+            $string .= "    { { }, 0, NoIntrinsic, { HashTableValue::End } },\n";
+            $string .= "#endif\n";
         }
         ++$i;
     }
 
-    push(@implContent, "    { { }, 0, NoIntrinsic, { HashTableValue::End } }\n") if (!$packedSize);
-    push(@implContent, "};\n\n");
+    $string .= "    { { }, 0, NoIntrinsic, { HashTableValue::End } }\n" if (!$packedSize);
+    $string .= "};\n\n";
+    return $string;
 }
 
 sub GenerateHashTable
@@ -7624,68 +7638,81 @@ sub GenerateHashTable
     }
 
     if ($justGenerateValueArray) {
-        GenerateHashTableValueArray($keys, $specials, $value1, $value2, $conditionals, $readWriteConditionals, $nameEntries) if $size;
+        push(@implContent, GenerateHashTableValueArray($keys, $specials, $value1, $value2, $conditionals, $readWriteConditionals, $nameEntries)) if $size;
         return;
     }
 
     # Generate size data for compact' size hash table
 
-    my @table = ();
-    my @links = ();
+    local *generateHashTableHelper = sub {
+        my ($isMac) = @_;
+        my @table = ();
+        my @links = ();
 
-    my $compactSize = ceilingToPowerOf2($size * 2);
+        my $compactSize = ceilingToPowerOf2($size * 2);
 
-    my $maxDepth = 0;
-    my $collisions = 0;
-    my $numEntries = $compactSize;
+        my $maxDepth = 0;
+        my $collisions = 0;
+        my $numEntries = $compactSize;
 
-    my $i = 0;
-    foreach (@{$keys}) {
-        my $depth = 0;
-        my $h = Hasher::GenerateHashValue($_) % $numEntries;
+        my $i = 0;
+        foreach (@{$keys}) {
+            my $depth = 0;
+            my $h = Hasher::GenerateHashValue($_, $isMac) % $numEntries;
 
-        while (defined($table[$h])) {
-            if (defined($links[$h])) {
-                $h = $links[$h];
-                $depth++;
-            } else {
-                $collisions++;
-                $links[$h] = $compactSize;
-                $h = $compactSize;
-                $compactSize++;
+            while (defined($table[$h])) {
+                if (defined($links[$h])) {
+                    $h = $links[$h];
+                    $depth++;
+                } else {
+                    $collisions++;
+                    $links[$h] = $compactSize;
+                    $h = $compactSize;
+                    $compactSize++;
+                }
             }
+
+            $table[$h] = $i;
+
+            $i++;
+            $maxDepth = $depth if ($depth > $maxDepth);
         }
 
-        $table[$h] = $i;
+        my $hashTableString = "";
+        $hashTableString .= "\nstatic const struct CompactHashIndex ${nameIndex}\[$compactSize\] = {\n";
+        for (my $i = 0; $i < $compactSize; $i++) {
+            my $T = -1;
+            if (defined($table[$i])) { $T = $table[$i]; }
+            my $L = -1;
+            if (defined($links[$i])) { $L = $links[$i]; }
+            $hashTableString .= "    { $T, $L },\n";
+        }
+        $hashTableString .= "};\n\n";
 
-        $i++;
-        $maxDepth = $depth if ($depth > $maxDepth);
+        # Dump the hash table
+        $hashTableString .= GenerateHashTableValueArray($keys, $specials, $value1, $value2, $conditionals, $readWriteConditionals, $nameEntries);
+
+        my $packedSize = scalar @{$keys};
+        my $compactSizeMask = $numEntries - 1;
+
+        my %seenPropertyAttributesHash;
+        foreach my $attributeArray (@{$specials}) {
+            $seenPropertyAttributesHash{$_} = 1 foreach @{$attributeArray};
+        }
+        my @seenPropertyAttributesArray = sort keys %seenPropertyAttributesHash;
+        my $seenPropertyAttributesString = "static_cast<uint8_t>(" . StringifyJSCAttributes(\@seenPropertyAttributesArray) . ")";
+
+        $hashTableString .= "static const HashTable $name = { $packedSize, $compactSizeMask, $seenPropertyAttributesString, ${className}::info(), $nameEntries, $nameIndex };\n";
+        return $hashTableString
+    };
+
+    my $hashTableForMacOS = generateHashTableHelper(1);
+    my $hashTableForIOS = generateHashTableHelper(0);
+    my $hashTableToWrite = $hashTableForMacOS;
+    if ($hashTableForMacOS ne $hashTableForIOS) {
+        $hashTableToWrite = "#if PLATFORM(MAC)\n" . $hashTableForMacOS . "#else\n" . $hashTableForIOS . "#endif\n";
     }
-
-    push(@implContent, "\nstatic const struct CompactHashIndex ${nameIndex}\[$compactSize\] = {\n");
-    for (my $i = 0; $i < $compactSize; $i++) {
-        my $T = -1;
-        if (defined($table[$i])) { $T = $table[$i]; }
-        my $L = -1;
-        if (defined($links[$i])) { $L = $links[$i]; }
-        push(@implContent, "    { $T, $L },\n");
-    }
-    push(@implContent, "};\n\n");
-
-    # Dump the hash table
-    GenerateHashTableValueArray($keys, $specials, $value1, $value2, $conditionals, $readWriteConditionals, $nameEntries);
-
-    my $packedSize = scalar @{$keys};
-    my $compactSizeMask = $numEntries - 1;
-
-    my %seenPropertyAttributesHash;
-    foreach my $attributeArray (@{$specials}) {
-        $seenPropertyAttributesHash{$_} = 1 foreach @{$attributeArray};
-    }
-    my @seenPropertyAttributesArray = sort keys %seenPropertyAttributesHash;
-    my $seenPropertyAttributesString = "static_cast<uint8_t>(" . StringifyJSCAttributes(\@seenPropertyAttributesArray) . ")";
-
-    push(@implContent, "static const HashTable $name = { $packedSize, $compactSizeMask, $seenPropertyAttributesString, ${className}::info(), $nameEntries, $nameIndex };\n");
+    push(@implContent, $hashTableToWrite);
 }
 
 sub SubstituteHeader

@@ -25,11 +25,10 @@
 
 #pragma once
 
-typedef struct HINSTANCE__* HINSTANCE;
+#include "windows.h"
 
 namespace WebCore {
 
-WEBCORE_EXPORT void setInstanceHandle(HINSTANCE);
-WEBCORE_EXPORT HINSTANCE instanceHandle();
+HINSTANCE instanceHandle();
     
 }

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    description("This tests SpeechSynthesis can fire voiceschanged event without crash.");
+
+    if (window.internals)
+        window.internals.enableMockSpeechSynthesizer();
+
+    window.jsTestIsAsync = true;
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    speechSynthesis.testProperty = 1;
+    const voices = speechSynthesis.getVoices();
+    speechSynthesis.onvoiceschanged = () => {
+        shouldBeTrue("speechSynthesis.testProperty !== undefined");
+        shouldBe("speechSynthesis.testProperty", '1');
+        finishJSTest(); 
+    };
+    gc();
+
+    if (window.internals) {
+        setTimeout(() => {
+            if (window.internals)
+                window.internals.simulateSpeechSynthesizerVoiceListChange();
+        }, 0);
+    } else {
+        debug("Test requires window.internals to run.");
+        finishJSTest();
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>

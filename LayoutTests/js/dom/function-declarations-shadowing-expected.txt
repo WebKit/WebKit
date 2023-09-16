@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: TypeError: Can't declare global function 'document': property must be either configurable or both writable and enumerable
+CONSOLE MESSAGE: TypeError: Can't declare global function 'window': property must be either configurable or both writable and enumerable
+CONSOLE MESSAGE: TypeError: Can't declare global function 'location': property must be either configurable or both writable and enumerable
+CONSOLE MESSAGE: TypeError: Can't declare global function 'top': property must be either configurable or both writable and enumerable
+!! Per spec (https://tc39.es/ecma262/#sec-globaldeclarationinstantiation), only TypeError exceptions should be thrown for preceding scripts.
+
+This test ensures that non-configurable global properties aren't overwriten by function declarations.
+
+PASS: typeof globalThis["document"] is "object"
+PASS: typeof globalThis["window"] is "object"
+PASS: typeof globalThis["location"] is "object"
+PASS: typeof globalThis["top"] is "object"
+

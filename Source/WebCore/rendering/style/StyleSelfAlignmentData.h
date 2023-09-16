@@ -54,10 +54,7 @@ public:
     ItemPositionType positionType() const { return static_cast<ItemPositionType>(m_positionType); }
     OverflowAlignment overflow() const { return static_cast<OverflowAlignment>(m_overflow); }
 
-    bool operator==(const StyleSelfAlignmentData& o) const
-    {
-        return m_position == o.m_position && m_positionType == o.m_positionType && m_overflow == o.m_overflow;
-    }
+    friend bool operator==(const StyleSelfAlignmentData&, const StyleSelfAlignmentData&) = default;
 
 private:
     uint8_t m_position : 4 { 0 }; // ItemPosition

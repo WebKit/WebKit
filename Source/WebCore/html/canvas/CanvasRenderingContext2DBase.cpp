@@ -59,6 +59,7 @@
 #include "ImageData.h"
 #include "OffscreenCanvas.h"
 #include "Path2D.h"
+#include "PixelBufferConversion.h"
 #include "RenderElement.h"
 #include "RenderImage.h"
 #include "RenderLayer.h"
@@ -237,12 +238,12 @@ void CanvasRenderingContext2DBase::unwindStateStack()
     // Ensure that the state stack in the ImageBuffer's context
     // is cleared before destruction, to avoid assertions in the
     // GraphicsContext dtor.
-    if (size_t stackSize = m_stateStack.size()) {
-        if (auto* context = canvasBase().existingDrawingContext()) {
-            while (--stackSize)
-                context->restore();
-        }
-    }
+    size_t stackSize = m_stateStack.size();
+    if (stackSize <= 1)
+        return;
+    // We need to keep the last state because it is tracked by CanvasBase::m_contextStateSaver.
+    if (auto* context = canvasBase().existingDrawingContext())
+        context->unwindStateStack(stackSize - 1);
 }
 
 CanvasRenderingContext2DBase::~CanvasRenderingContext2DBase()
@@ -265,12 +266,21 @@ bool CanvasRenderingContext2DBase::isAccelerated() const
 void CanvasRenderingContext2DBase::reset()
 {
     unwindStateStack();
+
     m_stateStack.resize(1);
     m_stateStack.first() = State();
+
     m_path.clear();
     m_unrealizedSaveCount = 0;
-    
+    m_cachedImageData = std::nullopt;
+
     m_recordingContext = nullptr;
+
+    clearAccumulatedDirtyRect();
+    resetTransform();
+
+    canvasBase().resetGraphicsContextState();
+    clearCanvas();
 }
 
 CanvasRenderingContext2DBase::State::State()
@@ -1702,6 +1712,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
     if (!state().hasInvertibleTransform)
         return { };
 
+    Ref protectedCanvas { sourceCanvas };
     // FIXME: Do this through platform-independent GraphicsContext API.
     ImageBuffer* buffer = sourceCanvas.buffer();
     if (!buffer)
@@ -2072,6 +2083,14 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(H
     if (cachedImage->status() == CachedResource::LoadError)
         return Exception { InvalidStateError };
 
+    // Image may have a zero-width or a zero-height.
+    Length intrinsicWidth;
+    Length intrinsicHeight;
+    FloatSize intrinsicRatio;
+    cachedImage->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
+    if (intrinsicWidth.isZero() || intrinsicHeight.isZero())
+        return nullptr;
+
     return createPattern(*cachedImage, imageElement.renderer(), repeatX, repeatY);
 }
 
@@ -2155,10 +2174,13 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(W
 }
 #endif
 
-ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(ImageBitmap&, bool, bool)
+ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(ImageBitmap& imageBitmap, bool repeatX, bool repeatY)
 {
-    // FIXME: Implement.
-    return Exception { TypeError };
+    RefPtr<ImageBuffer> buffer = imageBitmap.buffer();
+    if (!buffer)
+        return Exception { InvalidStateError };
+
+    return RefPtr<CanvasPattern> { CanvasPattern::create({ buffer.releaseNonNull() }, repeatX, repeatY, imageBitmap.originClean()) };
 }
 
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(CSSStyleImageValue&, bool, bool)
@@ -2174,6 +2196,9 @@ void CanvasRenderingContext2DBase::didDrawEntireCanvas()
 
 void CanvasRenderingContext2DBase::didDraw(std::optional<FloatRect> rect, OptionSet<DidDrawOption> options)
 {
+    if (!options.contains(DidDrawOption::PreserveCachedImageData))
+        m_cachedImageData = std::nullopt;
+
     if (!drawingContext())
         return;
 
@@ -2270,6 +2295,7 @@ GraphicsContext* CanvasRenderingContext2DBase::drawingContext() const
     return canvasBase().drawingContext();
 }
 
+
 void CanvasRenderingContext2DBase::prepareForDisplay()
 {
     if (auto buffer = canvasBase().buffer())
@@ -2309,6 +2335,93 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::createImageData(int sw
     return imageData;
 }
 
+static void roundTripThroughPremultipliedRepresentationForQuantization(unsigned bytesPerRow, uint8_t* data, const IntSize& size)
+{
+    ConstPixelBufferConversionView source {
+        .format = {
+            .alphaFormat = AlphaPremultiplication::Unpremultiplied,
+            .pixelFormat = PixelFormat::RGBA8,
+            .colorSpace = DestinationColorSpace::SRGB(),
+        },
+        .bytesPerRow = bytesPerRow,
+        .rows = data,
+    };
+    PixelBufferConversionView destination {
+        .format = {
+            .alphaFormat = AlphaPremultiplication::Premultiplied,
+            .pixelFormat = PixelFormat::RGBA8,
+            .colorSpace = DestinationColorSpace::SRGB(),
+        },
+        .bytesPerRow = bytesPerRow,
+        .rows = data,
+    };
+    convertImagePixels(source, destination, size);
+
+    source.format.alphaFormat = AlphaPremultiplication::Premultiplied;
+    destination.format.alphaFormat = AlphaPremultiplication::Unpremultiplied;
+    convertImagePixels(source, destination, size);
+}
+
+void CanvasRenderingContext2DBase::evictCachedImageData()
+{
+    if (m_cachedImageData)
+        m_cachedImageData->imageData = nullptr;
+}
+
+CanvasRenderingContext2DBase::CachedImageData::CachedImageData(CanvasRenderingContext2DBase& context)
+    : evictionTimer(context, &CanvasRenderingContext2DBase::evictCachedImageData, 5_s)
+{
+}
+
+static constexpr unsigned minimumConsecutiveCachedImageDataRequestsBeforeCaching = 2;
+static constexpr unsigned imageDataSizeThresholdForCaching = 60 * 60;
+
+bool CanvasRenderingContext2DBase::cacheImageDataIfPossible(ImageData& data, const IntPoint& destinationPosition, const IntRect& sourceRect)
+{
+    if (!destinationPosition.isZero() || !sourceRect.location().isZero() || sourceRect.size() != data.size() || sourceRect.size() != canvasBase().size())
+        return false;
+
+    if (data.colorSpace() != m_settings.colorSpace)
+        return false;
+
+    if (data.size().area() > imageDataSizeThresholdForCaching)
+        return false;
+
+    if (m_cachedImageData) {
+        if (++m_cachedImageData->requestCount >= minimumConsecutiveCachedImageDataRequestsBeforeCaching) {
+            m_cachedImageData->imageData = data.clone();
+            m_cachedImageData->evictionTimer.restart();
+        }
+    } else
+        m_cachedImageData.emplace(*this);
+
+    return true;
+}
+
+RefPtr<ImageData> CanvasRenderingContext2DBase::takeCachedImageDataIfPossible(const IntRect& sourceRect, PredefinedColorSpace colorSpace) const
+{
+    if (!m_cachedImageData || !m_cachedImageData->imageData)
+        return nullptr;
+
+    if (sourceRect != IntRect { { }, canvasBase().size() })
+        return nullptr;
+
+    if (canvasBase().size() != m_cachedImageData->imageData->size())
+        return nullptr;
+
+    if (colorSpace != m_settings.colorSpace)
+        return nullptr;
+
+    ++m_cachedImageData->requestCount;
+
+    RefPtr result = m_cachedImageData->imageData.releaseNonNull();
+
+    if (result)
+        roundTripThroughPremultipliedRepresentationForQuantization(static_cast<unsigned>(result->size().width() * 4), result->data().data(), result->size());
+
+    return result;
+}
+
 ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, int sy, int sw, int sh, std::optional<ImageDataSettings> settings) const
 {
     if (!sw || !sh)
@@ -2331,6 +2444,13 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
 
     IntRect imageDataRect { sx, sy, sw, sh };
 
+    auto computedColorSpace = ImageData::computeColorSpace(settings, m_settings.colorSpace);
+
+    if (auto imageData = takeCachedImageDataIfPossible({ sx, sy, sw, sh }, computedColorSpace))
+        return imageData.releaseNonNull();
+    if (m_cachedImageData)
+        m_cachedImageData->imageData = nullptr;
+
     canvasBase().makeRenderingResultsAvailable();
     ImageBuffer* buffer = canvasBase().buffer();
     if (!buffer) {
@@ -2339,8 +2459,6 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
             initializeEmptyImageData(imageData.returnValue());
         return imageData;
     }
-
-    auto computedColorSpace = ImageData::computeColorSpace(settings, m_settings.colorSpace);
 
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, toDestinationColorSpace(computedColorSpace) };
     auto pixelBuffer = buffer->getPixelBuffer(format, imageDataRect);
@@ -2352,7 +2470,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
 
     ASSERT(pixelBuffer->format().colorSpace == toDestinationColorSpace(computedColorSpace));
 
-    return { { ImageData::create(static_reference_cast<ByteArrayPixelBuffer>(pixelBuffer.releaseNonNull())) } };
+    return { { ImageData::create(downcast<ByteArrayPixelBuffer>(pixelBuffer.releaseNonNull())) } };
 }
 
 void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy)
@@ -2388,7 +2506,12 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy,
     if (!sourceRect.isEmpty())
         buffer->putPixelBuffer(data.pixelBuffer(), sourceRect, IntPoint { destOffset });
 
-    didDraw(FloatRect { destRect }, { }); // ignore transform, shadow, clip, and post-processing
+    OptionSet<DidDrawOption> options; // ignore transform, shadow, clip, and post-processing
+
+    if (cacheImageDataIfPossible(data, { dx, dy }, sourceRect))
+        options.add(DidDrawOption::PreserveCachedImageData);
+
+    didDraw(FloatRect { destRect }, options);
 }
 
 void CanvasRenderingContext2DBase::inflateStrokeRect(FloatRect& rect) const
@@ -2751,6 +2874,25 @@ PixelFormat CanvasRenderingContext2DBase::pixelFormat() const
 DestinationColorSpace CanvasRenderingContext2DBase::colorSpace() const
 {
     return toDestinationColorSpace(m_settings.colorSpace);
+}
+
+OptionSet<ImageBufferOptions> CanvasRenderingContext2DBase::adjustImageBufferOptionsForTesting(OptionSet<ImageBufferOptions> bufferOptions)
+{
+    if (!m_settings.renderingModeForTesting)
+        return bufferOptions;
+    switch (*m_settings.renderingModeForTesting) {
+    case CanvasRenderingContext2DSettings::RenderingMode::Default:
+        break;
+    case CanvasRenderingContext2DSettings::RenderingMode::Unaccelerated:
+        bufferOptions.remove(ImageBufferOptions::Accelerated);
+        bufferOptions.add(ImageBufferOptions::AvoidBackendSizeCheckForTesting);
+        break;
+    case CanvasRenderingContext2DSettings::RenderingMode::Accelerated:
+        bufferOptions.add(ImageBufferOptions::Accelerated);
+        bufferOptions.add(ImageBufferOptions::AvoidBackendSizeCheckForTesting);
+        break;
+    }
+    return bufferOptions;
 }
 
 } // namespace WebCore

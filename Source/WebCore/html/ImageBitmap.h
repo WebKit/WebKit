@@ -41,6 +41,7 @@ using JSC::ArrayBuffer;
 namespace WebCore {
 
 class Blob;
+class CachedImage;
 class CanvasBase;
 class CSSStyleImageValue;
 class HTMLCanvasElement;
@@ -54,7 +55,9 @@ class IntSize;
 class OffscreenCanvas;
 #endif
 class PendingImageBitmap;
+class RenderElement;
 class ScriptExecutionContext;
+class SVGImageElement;
 #if ENABLE(WEB_CODECS)
 class WebCodecsVideoFrame;
 #endif
@@ -72,6 +75,7 @@ public:
         RefPtr<HTMLVideoElement>,
 #endif
         RefPtr<HTMLCanvasElement>,
+        RefPtr<SVGImageElement>,
         RefPtr<ImageBitmap>,
 #if ENABLE(OFFSCREEN_CANVAS)
         RefPtr<OffscreenCanvas>,
@@ -129,6 +133,8 @@ private:
     static Ref<ImageBitmap> createBlankImageBuffer(ScriptExecutionContext&, bool originClean);
 
     static void createCompletionHandler(ScriptExecutionContext&, RefPtr<HTMLImageElement>&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
+    static void createCompletionHandler(ScriptExecutionContext&, RefPtr<SVGImageElement>&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
+    static void createCompletionHandler(ScriptExecutionContext&, CachedImage*, RenderElement*, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
 #if ENABLE(VIDEO)
     static void createCompletionHandler(ScriptExecutionContext&, RefPtr<HTMLVideoElement>&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
 #endif

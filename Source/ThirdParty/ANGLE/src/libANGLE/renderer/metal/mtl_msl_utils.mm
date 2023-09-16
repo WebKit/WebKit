@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #include "common/utilities.h"
-#include "compiler/translator/TranslatorMetalDirect.h"
+#include "compiler/translator/msl/TranslatorMSL.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/ShaderMtl.h"
 #include "libANGLE/renderer/metal/mtl_msl_utils.h"
@@ -25,7 +25,7 @@ template <size_t N>
 constexpr size_t ConstStrLen(const char (&)[N])
 {
     static_assert(N > 0, "C++ shouldn't allow N to be zero");
-
+    
     // The length of a string defined as a char array is the size of the array minus 1 (the
     // terminating '\0').
     return N - 1;
@@ -46,7 +46,7 @@ void TranslatedShaderInfo::reset()
     metalShaderSource    = nullptr;
     metalLibrary         = nil;
     hasUBOArgumentBuffer = false;
-    hasInvariantOrAtan   = false;
+    hasInvariant         = false;
     for (mtl::SamplerBinding &binding : actualSamplerBindings)
     {
         binding.textureBinding = mtl::kMaxShaderSamplers;
@@ -112,15 +112,14 @@ static std::string MSLGetMappedSamplerName(const std::string &originalName)
     return samplerName;
 }
 
-void MSLGetShaderSource(const gl::Context *context,
-                        const gl::ProgramState &programState,
+void MSLGetShaderSource(const gl::ProgramState &programState,
                         const gl::ProgramLinkedResources &resources,
                         gl::ShaderMap<std::string> *shaderSourcesOut)
 {
     for (const gl::ShaderType shaderType : gl::AllShaderTypes())
     {
-        gl::Shader *glShader            = programState.getAttachedShader(shaderType);
-        (*shaderSourcesOut)[shaderType] = glShader ? glShader->getTranslatedSource(context) : "";
+        const gl::SharedCompiledShaderState &glShader = programState.getAttachedShader(shaderType);
+        (*shaderSourcesOut)[shaderType]               = glShader ? glShader->translatedSource : "";
     }
 }
 
@@ -159,21 +158,16 @@ void GetAssignedSamplerBindings(const sh::TranslatorMetalReflection *reflection,
     }
 }
 
-sh::TranslatorMetalReflection *getReflectionFromShader(gl::Shader *shader)
-{
-    ShaderMtl *shaderInstance = static_cast<ShaderMtl *>(shader->getImplementation());
-    return shaderInstance->getTranslatorMetalReflection();
-}
-
-std::string updateShaderAttributes(std::string shaderSourceIn, const gl::ProgramState &programState)
+std::string updateShaderAttributes(std::string shaderSourceIn,
+                                   const gl::ProgramExecutable &executable)
 {
     // Build string to attrib map.
-    const auto &programAttributes = programState.getProgramInputs();
+    const auto &programAttributes = executable.getProgramInputs();
     std::ostringstream stream;
     std::unordered_map<std::string, uint32_t> attributeBindings;
     for (auto &attribute : programAttributes)
     {
-        const int regs = gl::VariableRegisterCount(attribute.type);
+        const int regs = gl::VariableRegisterCount(attribute.getType());
         if (regs > 1)
         {
             for (int i = 0; i < regs; i++)
@@ -181,7 +175,7 @@ std::string updateShaderAttributes(std::string shaderSourceIn, const gl::Program
                 stream.str("");
                 stream << " " << kUserDefinedNamePrefix << attribute.name << "_"
                        << std::to_string(i) << sh::kUnassignedAttributeString;
-                attributeBindings.insert({std::string(stream.str()), i + attribute.location});
+                attributeBindings.insert({std::string(stream.str()), i + attribute.getLocation()});
             }
         }
         else
@@ -189,7 +183,7 @@ std::string updateShaderAttributes(std::string shaderSourceIn, const gl::Program
             stream.str("");
             stream << " " << kUserDefinedNamePrefix << attribute.name
                    << sh::kUnassignedAttributeString;
-            attributeBindings.insert({std::string(stream.str()), attribute.location});
+            attributeBindings.insert({std::string(stream.str()), attribute.getLocation()});
             stream.str("");
         }
     }
@@ -211,12 +205,12 @@ std::string updateShaderAttributes(std::string shaderSourceIn, const gl::Program
 }
 
 std::string UpdateFragmentShaderOutputs(std::string shaderSourceIn,
-                                        const gl::ProgramState &programState,
+                                        const gl::ProgramExecutable &executable,
                                         bool defineAlpha0)
 {
     std::ostringstream stream;
     std::string outputSource    = shaderSourceIn;
-    const auto &outputVariables = programState.getOutputVariables();
+    const auto &outputVariables = executable.getOutputVariables();
 
     // For alpha-to-coverage emulation, a reference to the alpha channel
     // of color output 0 is needed. For ESSL 1.00, it is gl_FragColor or
@@ -273,8 +267,8 @@ std::string UpdateFragmentShaderOutputs(std::string shaderSourceIn,
             }
         }
     };
-    assignLocations(programState.getOutputLocations(), false);
-    assignLocations(programState.getSecondaryOutputLocations(), true);
+    assignLocations(executable.getOutputLocations(), false);
+    assignLocations(executable.getSecondaryOutputLocations(), true);
 
     if (defineAlpha0)
     {
@@ -408,15 +402,15 @@ std::string GenerateTransformFeedbackVaryingOutput(const gl::TransformFeedbackVa
 }
 
 void GenerateTransformFeedbackEmulationOutputs(
-    const gl::ProgramState &programState,
+    const gl::ProgramExecutable &executable,
     std::string *vertexShader,
     std::array<uint32_t, kMaxShaderXFBs> *xfbBindingRemapOut)
 {
     const std::vector<gl::TransformFeedbackVarying> &varyings =
-        programState.getLinkedTransformFeedbackVaryings();
-    const std::vector<GLsizei> &bufferStrides = programState.getTransformFeedbackStrides();
+        executable.getLinkedTransformFeedbackVaryings();
+    const std::vector<GLsizei> &bufferStrides = executable.getTransformFeedbackStrides();
     const bool isInterleaved =
-        programState.getTransformFeedbackBufferMode() == GL_INTERLEAVED_ATTRIBS;
+        executable.getTransformFeedbackBufferMode() == GL_INTERLEAVED_ATTRIBS;
     const size_t bufferCount = isInterleaved ? 1 : varyings.size();
 
     std::vector<std::string> xfbIndices(bufferCount);
@@ -462,16 +456,16 @@ void GenerateTransformFeedbackEmulationOutputs(
     *vertexShader = SubstituteTransformFeedbackMarkers(*vertexShader, xfbBindings, xfbOut);
 }
 
-angle::Result MTLGetMSL(const gl::Context *glContext,
-                        const gl::ProgramState &programState,
+angle::Result MTLGetMSL(Context *context,
+                        const gl::ProgramExecutable &executable,
                         const gl::Caps &glCaps,
                         const gl::ShaderMap<std::string> &shaderSources,
-                        gl::ShaderMap<TranslatedShaderInfo> *mslShaderInfoOut,
-                        size_t xfbBufferCount)
+                        const gl::ShaderMap<SharedCompiledShaderStateMtl> &shadersState,
+                        gl::ShaderMap<TranslatedShaderInfo> *mslShaderInfoOut)
 {
     // Retrieve original uniform buffer bindings generated by front end. We will need to do a remap.
     std::unordered_map<std::string, uint32_t> uboOriginalBindings;
-    const std::vector<gl::InterfaceBlock> &blocks = programState.getUniformBlocks();
+    const std::vector<gl::InterfaceBlock> &blocks = executable.getUniformBlocks();
     for (uint32_t bufferIdx = 0; bufferIdx < blocks.size(); ++bufferIdx)
     {
         const gl::InterfaceBlock &block = blocks[bufferIdx];
@@ -482,59 +476,57 @@ angle::Result MTLGetMSL(const gl::Context *glContext,
     }
     // Retrieve original sampler bindings produced by front end.
     OriginalSamplerBindingMap originalSamplerBindings;
-    const std::vector<gl::SamplerBinding> &samplerBindings = programState.getSamplerBindings();
-    const std::vector<gl::LinkedUniform> &uniforms         = programState.getUniforms();
-
-    std::unordered_set<std::string> structSamplers = {};
+    const std::vector<gl::SamplerBinding> &samplerBindings = executable.getSamplerBindings();
+    std::unordered_set<std::string> structSamplers         = {};
 
     for (uint32_t textureIndex = 0; textureIndex < samplerBindings.size(); ++textureIndex)
     {
         const gl::SamplerBinding &samplerBinding = samplerBindings[textureIndex];
-        uint32_t uniformIndex = programState.getUniformIndexFromSamplerIndex(textureIndex);
-        const gl::LinkedUniform &samplerUniform = uniforms[uniformIndex];
-        bool isSamplerInStruct        = samplerUniform.name.find('.') != std::string::npos;
-        std::string mappedSamplerName = isSamplerInStruct
-                                            ? MSLGetMappedSamplerName(samplerUniform.name)
-                                            : MSLGetMappedSamplerName(samplerUniform.mappedName);
+        uint32_t uniformIndex          = executable.getUniformIndexFromSamplerIndex(textureIndex);
+        const std::string &uniformName = executable.getUniformNames()[uniformIndex];
+        const std::string &uniformMappedName = executable.getUniformMappedNames()[uniformIndex];
+        bool isSamplerInStruct               = uniformName.find('.') != std::string::npos;
+        std::string mappedSamplerName        = isSamplerInStruct
+                                                   ? MSLGetMappedSamplerName(uniformName)
+                                                   : MSLGetMappedSamplerName(uniformMappedName);
         // These need to be prefixed later seperately
         if (isSamplerInStruct)
             structSamplers.insert(mappedSamplerName);
         originalSamplerBindings[mappedSamplerName].push_back(
-            {textureIndex, static_cast<uint32_t>(samplerBinding.boundTextureUnits.size())});
+            {textureIndex, static_cast<uint32_t>(samplerBinding.textureUnitsCount)});
     }
     for (gl::ShaderType type : {gl::ShaderType::Vertex, gl::ShaderType::Fragment})
     {
         std::string source;
         if (type == gl::ShaderType::Vertex)
         {
-            source = updateShaderAttributes(shaderSources[type], programState);
+            source = updateShaderAttributes(shaderSources[type], executable);
             // Write transform feedback output code.
             if (!source.empty())
             {
-                if (programState.getLinkedTransformFeedbackVaryings().empty())
+                if (executable.getLinkedTransformFeedbackVaryings().empty())
                 {
                     source = SubstituteTransformFeedbackMarkers(source, "", "");
                 }
                 else
                 {
                     GenerateTransformFeedbackEmulationOutputs(
-                        programState, &source, &(*mslShaderInfoOut)[type].actualXFBBindings);
+                        executable, &source, &(*mslShaderInfoOut)[type].actualXFBBindings);
                 }
             }
         }
         else
         {
             ASSERT(type == gl::ShaderType::Fragment);
-            ContextMtl *contextMtl = mtl::GetImpl(glContext);
             bool defineAlpha0 =
-                contextMtl->getDisplay()->getFeatures().emulateAlphaToCoverage.enabled ||
-                contextMtl->getDisplay()->getFeatures().generateShareableShaders.enabled;
-            source = UpdateFragmentShaderOutputs(shaderSources[type], programState, defineAlpha0);
+                context->getDisplay()->getFeatures().emulateAlphaToCoverage.enabled ||
+                context->getDisplay()->getFeatures().generateShareableShaders.enabled;
+            source = UpdateFragmentShaderOutputs(shaderSources[type], executable, defineAlpha0);
         }
         (*mslShaderInfoOut)[type].metalShaderSource =
             std::make_shared<const std::string>(std::move(source));
-        gl::Shader *shader                              = programState.getAttachedShader(type);
-        const sh::TranslatorMetalReflection *reflection = getReflectionFromShader(shader);
+        const sh::TranslatorMetalReflection *reflection =
+            &shadersState[type]->translatorMetalReflection;
         if (reflection->hasUBOs)
         {
             (*mslShaderInfoOut)[type].hasUBOArgumentBuffer = true;
@@ -565,8 +557,7 @@ angle::Result MTLGetMSL(const gl::Context *glContext,
         {
             mslShaderInfoOut->at(type).actualImageBindings[i] = reflection->getRWTextureBinding(i);
         }
-        (*mslShaderInfoOut)[type].hasInvariantOrAtan =
-            reflection->hasAtan || reflection->hasInvariance;
+        (*mslShaderInfoOut)[type].hasInvariant = reflection->hasInvariance;
     }
     return angle::Result::Continue;
 }

@@ -486,7 +486,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithOrdinal(WebCore::PageIdenti
         return;
     }
 
-    WebFrame* childFrame = WebFrame::fromCoreFrame(*coreChildFrame);
+    auto childFrame = WebFrame::fromCoreFrame(*coreChildFrame);
     if (!childFrame) {
         completionHandler(frameNotFoundErrorType, std::nullopt);
         return;
@@ -536,7 +536,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithNodeHandle(WebCore::PageIde
         return;
     }
 
-    WebFrame* frameFromElement = WebFrame::fromCoreFrame(*coreFrameFromElement);
+    auto frameFromElement = WebFrame::fromCoreFrame(*coreFrameFromElement);
     if (!frameFromElement) {
         completionHandler(frameNotFoundErrorType, std::nullopt);
         return;
@@ -574,7 +574,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithName(WebCore::PageIdentifie
         return;
     }
 
-    WebFrame* childFrame = WebFrame::fromCoreFrame(*coreChildFrame);
+    auto childFrame = WebFrame::fromCoreFrame(*coreChildFrame);
     if (!childFrame) {
         completionHandler(frameNotFoundErrorType, std::nullopt);
         return;
@@ -600,7 +600,7 @@ void WebAutomationSessionProxy::resolveParentFrame(WebCore::PageIdentifier pageI
         return;
     }
 
-    WebFrame* parentFrame = frame->parentFrame();
+    auto parentFrame = frame->parentFrame();
     if (!parentFrame) {
         completionHandler(frameNotFoundErrorType, std::nullopt);
         return;
@@ -640,9 +640,7 @@ static WebCore::FloatRect convertRectFromFrameClientToRootView(WebCore::LocalFra
         return frameView->contentsToRootView(frameView->clientToDocumentRect(clientRect));
 
     // If the frame delegates scrolling, contentsToRootView doesn't take into account scroll/zoom/scale.
-    auto* frame = dynamicDowncast<LocalFrame>(frameView->frame());
-    if (!frame)
-        return { };
+    Ref frame = frameView->frame();
     clientRect.scale(frame->pageZoomFactor() * frame->frameScaleFactor());
     clientRect.moveBy(frameView->contentsScrollPosition());
     return clientRect;
@@ -654,9 +652,7 @@ static WebCore::FloatPoint convertPointFromFrameClientToRootView(WebCore::LocalF
         return frameView->contentsToRootView(frameView->clientToDocumentPoint(clientPoint));
 
     // If the frame delegates scrolling, contentsToRootView doesn't take into account scroll/zoom/scale.
-    auto* frame = dynamicDowncast<LocalFrame>(frameView->frame());
-    if (!frame)
-        return { };
+    Ref frame = frameView->frame();
     clientPoint.scale(frame->pageZoomFactor() * frame->frameScaleFactor());
     clientPoint.moveBy(frameView->contentsScrollPosition());
     return clientPoint;

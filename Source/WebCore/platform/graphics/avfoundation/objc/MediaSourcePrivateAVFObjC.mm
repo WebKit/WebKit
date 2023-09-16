@@ -164,18 +164,6 @@ void MediaSourcePrivateAVFObjC::setReadyState(MediaPlayer::ReadyState readyState
         m_player->setReadyState(readyState);
 }
 
-void MediaSourcePrivateAVFObjC::waitForSeekCompleted()
-{
-    if (m_player)
-        m_player->waitForSeekCompleted();
-}
-
-void MediaSourcePrivateAVFObjC::seekCompleted()
-{
-    if (m_player)
-        m_player->seekCompleted();
-}
-
 MediaTime MediaSourcePrivateAVFObjC::currentMediaTime() const
 {
     return m_player ? m_player->currentMediaTime() : MediaTime::invalidTime();
@@ -239,23 +227,22 @@ void MediaSourcePrivateAVFObjC::willSeek()
         sourceBuffer->willSeek();
 }
 
-void MediaSourcePrivateAVFObjC::seekToTime(const MediaTime& time)
+void MediaSourcePrivateAVFObjC::waitForTarget(const SeekTarget& target, CompletionHandler<void(const MediaTime&)>&& completionHandler)
 {
-    if (m_client)
-        m_client->seekToTime(time);
+    if (!m_client) {
+        completionHandler(MediaTime::invalidTime());
+        return;
+    }
+    m_client->waitForTarget(target, WTFMove(completionHandler));
 }
 
-MediaTime MediaSourcePrivateAVFObjC::fastSeekTimeForMediaTime(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)
+void MediaSourcePrivateAVFObjC::seekToTime(const MediaTime& time, CompletionHandler<void()>&& completionHandler)
 {
-    MediaTime seekTime = targetTime;
-
-    for (auto it = m_activeSourceBuffers.begin(), end = m_activeSourceBuffers.end(); it != end; ++it) {
-        MediaTime sourceSeekTime = (*it)->fastSeekTimeForMediaTime(targetTime, negativeThreshold, positiveThreshold);
-        if (abs(targetTime - sourceSeekTime) > abs(targetTime - seekTime))
-            seekTime = sourceSeekTime;
+    if (!m_client) {
+        completionHandler();
+        return;
     }
-
-    return seekTime;
+    m_client->seekToTime(time, WTFMove(completionHandler));
 }
 
 FloatSize MediaSourcePrivateAVFObjC::naturalSize() const

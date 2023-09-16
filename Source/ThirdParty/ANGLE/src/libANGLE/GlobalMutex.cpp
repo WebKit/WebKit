@@ -141,17 +141,19 @@ priv::GlobalMutex *AllocateGlobalMutexImpl()
 {
     priv::GlobalMutex *currentMutex = nullptr;
     std::unique_ptr<priv::GlobalMutex> newMutex(new priv::GlobalMutex());
-    if (g_Mutex.compare_exchange_strong(currentMutex, newMutex.get(), std::memory_order_release,
-                                        std::memory_order_acquire))
+    do
     {
-        return newMutex.release();
-    }
+        if (g_Mutex.compare_exchange_weak(currentMutex, newMutex.get()))
+        {
+            return newMutex.release();
+        }
+    } while (currentMutex == nullptr);
     return currentMutex;
 }
 
 priv::GlobalMutex *GetGlobalMutex()
 {
-    priv::GlobalMutex *mutex = g_Mutex.load(std::memory_order_acquire);
+    priv::GlobalMutex *mutex = g_Mutex.load();
     return mutex != nullptr ? mutex : AllocateGlobalMutexImpl();
 }
 #endif

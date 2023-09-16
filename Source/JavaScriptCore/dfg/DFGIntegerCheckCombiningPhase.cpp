@@ -83,12 +83,7 @@ public:
             return m_kind + m_source.hash() + PtrHash<Node*>::hash(m_key);
         }
         
-        bool operator==(const RangeKey& other) const
-        {
-            return m_kind == other.m_kind
-                && m_source == other.m_source
-                && m_key == other.m_key;
-        }
+        friend bool operator==(const RangeKey&, const RangeKey&) = default;
         
         void dump(PrintStream& out) const
         {

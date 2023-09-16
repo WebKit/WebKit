@@ -9,6 +9,7 @@
 #ifndef LIBANGLE_RENDERER_DRIVER_UTILS_H_
 #define LIBANGLE_RENDERER_DRIVER_UTILS_H_
 
+#include "common/platform.h"
 #include "common/platform_helpers.h"
 #include "libANGLE/angletypes.h"
 
@@ -29,13 +30,18 @@ enum VendorID : uint32_t
     VENDOR_ID_MICROSOFT = 0x1414,
     VENDOR_ID_NVIDIA    = 0x10DE,
     VENDOR_ID_POWERVR   = 0x1010,
+#if defined(ANGLE_PLATFORM_WINDOWS)
+    // Qualcomm devices on Windows are ACPI, and use a different vendor ID than Android.
+    VENDOR_ID_QUALCOMM = 0x4D4F4351,
+#else
     // This is Qualcomm PCI Vendor ID.
     // Android doesn't have a PCI bus, but all we need is a unique id.
     VENDOR_ID_QUALCOMM = 0x5143,
-    VENDOR_ID_SAMSUNG  = 0x144D,
-    VENDOR_ID_VIVANTE  = 0x9999,
-    VENDOR_ID_VMWARE   = 0x15AD,
-    VENDOR_ID_VIRTIO   = 0x1AF4,
+#endif
+    VENDOR_ID_SAMSUNG = 0x144D,
+    VENDOR_ID_VIVANTE = 0x9999,
+    VENDOR_ID_VMWARE  = 0x15AD,
+    VENDOR_ID_VIRTIO  = 0x1AF4,
 };
 
 enum AndroidDeviceID : uint32_t
@@ -155,7 +161,7 @@ inline bool IsSwiftshader(uint32_t vendorId, uint32_t deviceId)
     return IsGoogle(vendorId) && deviceId == ANDROID_DEVICE_ID_SWIFTSHADER;
 }
 
-const char *GetVendorString(uint32_t vendorId);
+std::string GetVendorString(uint32_t vendorId);
 
 // For Linux, Intel graphics driver version is the Mesa version. The version number has three
 // fields: major revision, minor revision and release number.

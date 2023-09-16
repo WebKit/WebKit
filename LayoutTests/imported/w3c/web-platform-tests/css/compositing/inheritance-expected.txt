@@ -1,0 +1,8 @@
+
+PASS Property background-blend-mode has initial value normal
+PASS Property background-blend-mode does not inherit
+PASS Property isolation has initial value auto
+PASS Property isolation does not inherit
+PASS Property mix-blend-mode has initial value normal
+PASS Property mix-blend-mode does not inherit
+

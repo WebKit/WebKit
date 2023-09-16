@@ -396,7 +396,7 @@ ExceptionOr<Ref<CSSMathSum>> CSSNumericValue::toSum(FixedVector<String>&& units)
 
     if (parsedUnits.isEmpty()) {
         std::sort(values.begin(), values.end(), [](auto& a, auto& b) {
-            return strcmp(static_reference_cast<CSSUnitValue>(a)->unitSerialization().characters(), static_reference_cast<CSSUnitValue>(b)->unitSerialization().characters()) < 0;
+            return strcmp(downcast<CSSUnitValue>(a)->unitSerialization().characters(), downcast<CSSUnitValue>(b)->unitSerialization().characters()) < 0;
         });
         return CSSMathSum::create(WTFMove(values));
     }
@@ -405,7 +405,7 @@ ExceptionOr<Ref<CSSMathSum>> CSSNumericValue::toSum(FixedVector<String>&& units)
     for (auto& parsedUnit : parsedUnits) {
         auto temp = CSSUnitValue::create(0, parsedUnit);
         for (size_t i = 0; i < values.size();) {
-            auto value = static_reference_cast<CSSUnitValue>(values[i]);
+            auto value = downcast<CSSUnitValue>(values[i]);
             if (auto convertedValue = value->convertTo(parsedUnit)) {
                 temp->setValue(temp->value() + convertedValue->value());
                 values.remove(i);

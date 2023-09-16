@@ -35,6 +35,7 @@
 #import "CocoaImage.h"
 #import "CompletionHandlerCallChecker.h"
 #import "ContentAsStringIncludesChildFrames.h"
+#import "DefaultWebBrowserChecks.h"
 #import "DiagnosticLoggingClient.h"
 #import "FindClient.h"
 #import "FullscreenClient.h"
@@ -1178,7 +1179,8 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
             frameID = frame._handle->_frameHandle->frameID();
     }
 
-    _page->runJavaScriptInFrameInScriptWorld({ javaScriptString, sourceURL, !!asAsyncFunction, WTFMove(argumentsMap), !!forceUserGesture }, frameID, *world->_contentWorld.get(), [handler] (auto&& result) {
+    auto removeTransientActivation = WebKit::shouldEvaluateJavaScriptWithoutTransientActivation() ? WebCore::RemoveTransientActivation::Yes : WebCore::RemoveTransientActivation::No;
+    _page->runJavaScriptInFrameInScriptWorld({ javaScriptString, JSC::SourceTaintedOrigin::Untainted, sourceURL, !!asAsyncFunction, WTFMove(argumentsMap), !!forceUserGesture, removeTransientActivation }, frameID, *world->_contentWorld.get(), [handler] (auto&& result) {
         if (!handler)
             return;
 
@@ -2458,7 +2460,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (void)_dataTaskWithRequest:(NSURLRequest *)request completionHandler:(void(^)(_WKDataTask *))completionHandler
 {
-    _page->dataTaskWithRequest(request, [completionHandler = makeBlockPtr(completionHandler)] (Ref<API::DataTask>&& task) {
+    _page->dataTaskWithRequest(request, std::nullopt, [completionHandler = makeBlockPtr(completionHandler)] (Ref<API::DataTask>&& task) {
         completionHandler(wrapper(task));
     });
 }
@@ -3286,28 +3288,28 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
     OptionSet<WebCore::LayoutMilestone> milestones;
 
     if (events & _WKRenderingProgressEventFirstLayout)
-        milestones.add(WebCore::DidFirstLayout);
+        milestones.add(WebCore::LayoutMilestone::DidFirstLayout);
 
     if (events & _WKRenderingProgressEventFirstVisuallyNonEmptyLayout)
-        milestones.add(WebCore::DidFirstVisuallyNonEmptyLayout);
+        milestones.add(WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout);
 
     if (events & _WKRenderingProgressEventFirstPaintWithSignificantArea)
-        milestones.add(WebCore::DidHitRelevantRepaintedObjectsAreaThreshold);
+        milestones.add(WebCore::LayoutMilestone::DidHitRelevantRepaintedObjectsAreaThreshold);
 
     if (events & _WKRenderingProgressEventReachedSessionRestorationRenderTreeSizeThreshold)
-        milestones.add(WebCore::ReachedSessionRestorationRenderTreeSizeThreshold);
+        milestones.add(WebCore::LayoutMilestone::ReachedSessionRestorationRenderTreeSizeThreshold);
 
     if (events & _WKRenderingProgressEventFirstLayoutAfterSuppressedIncrementalRendering)
-        milestones.add(WebCore::DidFirstLayoutAfterSuppressedIncrementalRendering);
+        milestones.add(WebCore::LayoutMilestone::DidFirstLayoutAfterSuppressedIncrementalRendering);
 
     if (events & _WKRenderingProgressEventFirstPaintAfterSuppressedIncrementalRendering)
-        milestones.add(WebCore::DidFirstPaintAfterSuppressedIncrementalRendering);
+        milestones.add(WebCore::LayoutMilestone::DidFirstPaintAfterSuppressedIncrementalRendering);
 
     if (events & _WKRenderingProgressEventDidRenderSignificantAmountOfText)
-        milestones.add(WebCore::DidRenderSignificantAmountOfText);
+        milestones.add(WebCore::LayoutMilestone::DidRenderSignificantAmountOfText);
 
     if (events & _WKRenderingProgressEventFirstMeaningfulPaint)
-        milestones.add(WebCore::DidFirstMeaningfulPaint);
+        milestones.add(WebCore::LayoutMilestone::DidFirstMeaningfulPaint);
 
     return milestones;
 }

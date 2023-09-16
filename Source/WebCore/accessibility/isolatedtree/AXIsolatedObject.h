@@ -51,6 +51,8 @@ public:
     static Ref<AXIsolatedObject> create(const Ref<AccessibilityObject>&, AXIsolatedTree*);
     ~AXIsolatedObject();
 
+    ProcessID processID() const override { return tree()->processID(); }
+
     void attachPlatformWrapper(AccessibilityObjectWrapper*);
     bool isDetached() const override;
     bool isTable() const final { return boolAttributeValue(AXPropertyName::IsTable); }
@@ -179,7 +181,7 @@ private:
     bool isChecked() const override { return boolAttributeValue(AXPropertyName::IsChecked); }
     bool isEnabled() const override { return boolAttributeValue(AXPropertyName::IsEnabled); }
     bool isSelected() const override { return boolAttributeValue(AXPropertyName::IsSelected); }
-    bool isFocused() const override { return boolAttributeValue(AXPropertyName::IsFocused); }
+    bool isFocused() const override { return tree()->focusedNodeID() == objectID(); }
     bool isMultiSelectable() const override { return boolAttributeValue(AXPropertyName::IsMultiSelectable); }
     InsideLink insideLink() const final { return propertyValue<InsideLink>(AXPropertyName::InsideLink); }
     bool isRequired() const override { return boolAttributeValue(AXPropertyName::IsRequired); }

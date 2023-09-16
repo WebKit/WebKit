@@ -328,7 +328,6 @@ PASS Origin parsing: <blob:> without base
 PASS Origin parsing: <blob:blob:> without base
 PASS Origin parsing: <blob:blob:https://example.org/> without base
 PASS Origin parsing: <blob:about:blank> without base
-FAIL Origin parsing: <blob:file://host/path> without base assert_equals: origin expected "null" but got "file://"
 PASS Origin parsing: <blob:ftp://host/path> without base
 PASS Origin parsing: <blob:ws://example.org/> without base
 PASS Origin parsing: <blob:wss://example.org/> without base

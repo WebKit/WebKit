@@ -53,10 +53,6 @@ public:
         // We spill (1) the used registers by IC and (2) the used registers by Snippet.
         InlineCacheCompiler::SpillState spillState = compiler.preserveLiveRegistersToStackForCall(usedRegistersBySnippet.buildAndValidate());
 
-        jit.store32(
-            CCallHelpers::TrustedImm32(compiler.callSiteIndexForExceptionHandlingOrOriginal().bits()),
-            CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
-
         jit.makeSpaceOnStackForCCall();
 
         jit.setupArguments<FunctionType>(std::get<ArgumentsIndex>(m_arguments)...);

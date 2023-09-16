@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/CertificateInfo.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/URL.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
@@ -138,6 +139,7 @@ public:
 
     const String& provisionalURL() const { return m_committedState.provisionalURL; }
     const String& url() const { return m_committedState.url; }
+    const WebCore::SecurityOriginData& origin() const { return m_committedState.origin; }
     const String& unreachableURL() const { return m_committedState.unreachableURL; }
 
     String activeURL() const;
@@ -164,7 +166,7 @@ public:
     void didReceiveServerRedirectForProvisionalLoad(const Transaction::Token&, const String& url);
     void didFailProvisionalLoad(const Transaction::Token&);
 
-    void didCommitLoad(const Transaction::Token&, const WebCore::CertificateInfo&, bool hasInsecureContent, bool usedLegacyTLS, bool privateRelayed);
+    void didCommitLoad(const Transaction::Token&, const WebCore::CertificateInfo&, bool hasInsecureContent, bool usedLegacyTLS, bool privateRelayed, const WebCore::SecurityOriginData&);
     void didFinishLoad(const Transaction::Token&);
     void didFailLoad(const Transaction::Token&);
 
@@ -216,6 +218,7 @@ private:
 
         String provisionalURL;
         String url;
+        WebCore::SecurityOriginData origin;
 
         String unreachableURL;
 

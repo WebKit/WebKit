@@ -56,10 +56,7 @@ public:
     unsigned startOffset() const { return m_startOffset; }
     unsigned endOffset() const { return m_endOffset; }
 
-    bool operator==(const RenderRange& other) const
-    {
-        return m_start == other.m_start && m_end == other.m_end && m_startOffset == other.m_startOffset && m_endOffset == other.m_endOffset;
-    }
+    friend bool operator==(const RenderRange&, const RenderRange&) = default;
 
 private:
     WeakPtr<RenderObject> m_start;

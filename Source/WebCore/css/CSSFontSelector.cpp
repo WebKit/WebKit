@@ -245,11 +245,12 @@ void CSSFontSelector::addFontPaletteValuesRule(const StyleRuleFontPaletteValues&
     auto& name = fontPaletteValuesRule.name();
     ASSERT(!name.isNull());
 
-    auto& fontFamily = fontPaletteValuesRule.fontFamily();
-    if (fontFamily.isNull())
+    auto& fontFamilies = fontPaletteValuesRule.fontFamilies();
+    if (fontFamilies.isEmpty())
         return;
 
-    m_paletteMap.set(std::make_pair(fontFamily, name), fontPaletteValuesRule.fontPaletteValues());
+    for (auto& fontFamily : fontFamilies)
+        m_paletteMap.set(std::make_pair(fontFamily, name), fontPaletteValuesRule.fontPaletteValues());
 
     ++m_version;
 }

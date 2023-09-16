@@ -240,22 +240,20 @@ egl::Error FunctionsEGL::initialize(EGLAttrib platformType, EGLNativeDisplayType
         mEGLDisplay = mFnPtrs->getDisplayPtr(nativeDisplay);
     }
 
-    if (mEGLDisplay != EGL_NO_DISPLAY)
+    if (mEGLDisplay != EGL_NO_DISPLAY &&
+        mFnPtrs->initializePtr(mEGLDisplay, &majorVersion, &minorVersion) != EGL_TRUE)
     {
-        if (mFnPtrs->initializePtr(mEGLDisplay, &majorVersion, &minorVersion) != EGL_TRUE)
-        {
-            return egl::Error(mFnPtrs->getErrorPtr(), "Failed to initialize system egl");
-        }
+        mEGLDisplay = EGL_NO_DISPLAY;
     }
-    else
+    if (mEGLDisplay == EGL_NO_DISPLAY)
     {
         // If no display was available, try to fallback to the first available
         // native device object's display.
         mEGLDisplay = getNativeDisplay(&majorVersion, &minorVersion);
-        if (mEGLDisplay == EGL_NO_DISPLAY)
-        {
-            return egl::EglNotInitialized() << "Failed to get system egl display";
-        }
+    }
+    if (mEGLDisplay == EGL_NO_DISPLAY)
+    {
+        return egl::EglNotInitialized() << "Failed to get system egl display";
     }
     if (majorVersion < 1 || (majorVersion == 1 && minorVersion < 4))
     {

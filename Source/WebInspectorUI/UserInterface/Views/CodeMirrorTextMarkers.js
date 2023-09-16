@@ -201,3 +201,9 @@ function createCodeMirrorSpringTimingFunctionTextMarkers(codeMirror, range, opti
     const pattern = /(spring\([^)]+\))/g;
     return createCodeMirrorTextMarkers({codeMirror, range, type: "SpringTimingFunction", pattern, ...options});
 }
+
+function createCodeMirrorStepsTimingFunctionTextMarkers(codeMirror, range, options = {})
+{
+    const pattern = /(steps\([^)]+\))/g;
+    return createCodeMirrorTextMarkers({codeMirror, range, type: "StepsTimingFunction", pattern, ...options});
+}

@@ -62,8 +62,11 @@
     if (self = [super init]) {
         if ([codecInfo.name isEqualToString:@"H265"])
             m_h265Encoder = [[RTCVideoEncoderH265 alloc] initWithCodecInfo:codecInfo];
-        else
+        else {
             m_h264Encoder = [[RTCVideoEncoderH264 alloc] initWithCodecInfo:codecInfo];
+            if (!m_h264Encoder)
+                return nil;
+        }
     }
     return self;
 }
@@ -343,6 +346,9 @@ void* createLocalEncoder(const webrtc::SdpVideoFormat& format, bool useAnnexB, L
 {
     auto *codecInfo = [[RTCVideoCodecInfo alloc] initWithNativeSdpVideoFormat: format];
     auto *encoder = [[WK_RTCLocalVideoH264H265Encoder alloc] initWithCodecInfo:codecInfo];
+
+    if (!encoder)
+        return nullptr;
 
     [encoder setCallback:^BOOL(RTCEncodedImage *_Nonnull frame, id<RTCCodecSpecificInfo> _Nonnull codecSpecificInfo, RTCRtpFragmentationHeader * _Nullable header) {
         EncodedImage encodedImage = [frame nativeEncodedImage];

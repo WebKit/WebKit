@@ -73,7 +73,6 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/JSDOMExceptionHandling.h>
-#include <WebCore/PlatformScreen.h>
 #include <WebCore/RefPtrCairo.h>
 #include <WebCore/RunJavaScriptParameters.h>
 #include <WebCore/SharedBuffer.h>
@@ -89,6 +88,7 @@
 #include <wtf/text/StringBuilder.h>
 
 #if PLATFORM(GTK)
+#include "GtkSettingsManager.h"
 #include "WebKitFaviconDatabasePrivate.h"
 #include "WebKitInputMethodContextImplGtk.h"
 #include "WebKitPointerLockPermissionRequest.h"
@@ -867,14 +867,23 @@ static void webkitWebViewConstructed(GObject* object)
     priv->backForwardList = adoptGRef(webkitBackForwardListCreate(&getPage(webView).backForwardList()));
     priv->windowProperties = adoptGRef(webkitWindowPropertiesCreate());
 
-    priv->textScaleFactor = WebCore::screenDPI() / 96.;
+#if PLATFORM(GTK)
+    double dpi = GtkSettingsManager::singleton().settingsState().xftDPI.value() / 1024.0;
+    priv->textScaleFactor = dpi / 96.;
     getPage(webView).setTextZoomFactor(priv->textScaleFactor);
-    WebCore::setScreenDPIObserverHandler([webView] {
+    GtkSettingsManager::singleton().addObserver([webView](const GtkSettingsState& state) {
+        if (!state.xftDPI)
+            return;
+
+        double dpi = state.xftDPI.value() / 1024.0;
         auto& page = getPage(webView);
         auto zoomFactor = page.textZoomFactor() / webView->priv->textScaleFactor;
-        webView->priv->textScaleFactor = WebCore::screenDPI() / 96.;
+        webView->priv->textScaleFactor = dpi / 96.;
         page.setTextZoomFactor(zoomFactor * webView->priv->textScaleFactor);
     }, webView);
+#else
+    priv->textScaleFactor = 1;
+#endif
 
     priv->isWebProcessResponsive = true;
 }
@@ -1088,7 +1097,9 @@ static void webkitWebViewDispose(GObject* object)
     webView->priv->view->close();
 #endif
 
-    WebCore::setScreenDPIObserverHandler(nullptr, webView);
+#if PLATFORM(GTK)
+    GtkSettingsManager::singleton().removeObserver(webView);
+#endif
 
     G_OBJECT_CLASS(webkit_web_view_parent_class)->dispose(object);
 }
@@ -2763,29 +2774,21 @@ void webkitWebViewResourceLoadStarted(WebKitWebView* webView, WebKitWebResource*
     g_signal_emit(webView, signals[RESOURCE_LOAD_STARTED], 0, resource, uriRequest.get());
 }
 
-void webkitWebViewEnterFullScreen(WebKitWebView* webView)
-{
 #if ENABLE(FULLSCREEN_API)
+bool webkitWebViewEnterFullScreen(WebKitWebView* webView)
+{
     gboolean returnValue;
     g_signal_emit(webView, signals[ENTER_FULLSCREEN], 0, &returnValue);
-#if PLATFORM(GTK)
-    if (!returnValue)
-        webkitWebViewBaseEnterFullScreen(WEBKIT_WEB_VIEW_BASE(webView));
-#endif
-#endif
+    return returnValue;
 }
 
-void webkitWebViewExitFullScreen(WebKitWebView* webView)
+bool webkitWebViewExitFullScreen(WebKitWebView* webView)
 {
-#if ENABLE(FULLSCREEN_API)
     gboolean returnValue;
     g_signal_emit(webView, signals[LEAVE_FULLSCREEN], 0, &returnValue);
-#if PLATFORM(GTK)
-    if (!returnValue)
-        webkitWebViewBaseExitFullScreen(WEBKIT_WEB_VIEW_BASE(webView));
-#endif
-#endif
+    return returnValue;
 }
+#endif
 
 void webkitWebViewRunFileChooserRequest(WebKitWebView* webView, WebKitFileChooserRequest* request)
 {
@@ -4029,7 +4032,7 @@ void webkitWebViewRunJavascriptWithoutForcedUserGestures(WebKitWebView* webView,
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(script);
 
-    RunJavaScriptParameters params = { String::fromUTF8(script), URL { }, RunAsAsyncFunction::No, std::nullopt, ForceUserGesture::No };
+    RunJavaScriptParameters params = { String::fromUTF8(script), JSC::SourceTaintedOrigin::Untainted, URL { }, RunAsAsyncFunction::No, std::nullopt, ForceUserGesture::No, RemoveTransientActivation::Yes };
     webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), nullptr, RunJavascriptReturnType::JSCValue, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
 }
 
@@ -4038,7 +4041,7 @@ static void webkitWebViewEvaluateJavascriptInternal(WebKitWebView* webView, cons
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(script);
 
-    RunJavaScriptParameters params = { String::fromUTF8(script, length < 0 ? strlen(script) : length), URL({ }, String::fromUTF8(sourceURI)), RunAsAsyncFunction::No, std::nullopt, ForceUserGesture::Yes };
+    RunJavaScriptParameters params = { String::fromUTF8(script, length < 0 ? strlen(script) : length), JSC::SourceTaintedOrigin::Untainted, URL({ }, String::fromUTF8(sourceURI)), RunAsAsyncFunction::No, std::nullopt, ForceUserGesture::Yes, RemoveTransientActivation::Yes };
     webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), worldName, returnType, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
 }
 
@@ -4095,7 +4098,7 @@ static void webkitWebViewEvaluateJavascriptInternal(WebKitWebView* webView, cons
  *     } else {
  *         g_warning ("Error running javascript: unexpected return value");
  *     }
- *     webkit_javascript_result_unref (js_result);
+ *     g_object_unref (value);
  * }
  *
  * static void
@@ -4174,7 +4177,7 @@ static void webkitWebViewCallAsyncJavascriptFunctionInternal(WebKitWebView* webV
         return;
     }
 
-    RunJavaScriptParameters params = { String::fromUTF8(body, length < 0 ? strlen(body) : length), URL({ }, String::fromUTF8(sourceURI)), RunAsAsyncFunction::Yes, WTFMove(argumentsMap), ForceUserGesture::Yes };
+    RunJavaScriptParameters params = { String::fromUTF8(body, length < 0 ? strlen(body) : length), JSC::SourceTaintedOrigin::Untainted, URL({ }, String::fromUTF8(sourceURI)), RunAsAsyncFunction::Yes, WTFMove(argumentsMap), ForceUserGesture::Yes, RemoveTransientActivation::Yes };
     webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), worldName, returnType, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
 }
 
@@ -4234,7 +4237,7 @@ static void webkitWebViewCallAsyncJavascriptFunctionInternal(WebKitWebView* webV
  *     } else {
  *         g_warning ("Error running javascript: unexpected return value");
  *     }
- *     webkit_javascript_result_unref (js_result);
+ *     g_object_unref (value);
  * }
  *
  * static void
@@ -4504,7 +4507,7 @@ static void resourcesStreamReadCallback(GObject* object, GAsyncResult* result, g
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(g_task_get_source_object(task.get()));
     gpointer outputStreamData = g_memory_output_stream_get_data(G_MEMORY_OUTPUT_STREAM(object));
-    RunJavaScriptParameters params = { String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)), URL { }, RunAsAsyncFunction::No, std::nullopt, ForceUserGesture::Yes };
+    RunJavaScriptParameters params = { String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)), JSC::SourceTaintedOrigin::Untainted, URL { }, RunAsAsyncFunction::No, std::nullopt, ForceUserGesture::Yes, RemoveTransientActivation::Yes };
     webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), nullptr, RunJavascriptReturnType::WebKitJavascriptResult, WTFMove(task));
 }
 

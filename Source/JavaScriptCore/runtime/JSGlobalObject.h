@@ -122,6 +122,8 @@ enum class ScriptExecutionStatus {
     Stopped,
 };
 
+enum class BindingCreationContext : bool { Global, Eval };
+
 constexpr bool typeExposedByDefault = true;
 
 #define DEFINE_STANDARD_BUILTIN(macro, upperName, lowerName) macro(upperName, lowerName, lowerName, JS ## upperName, upperName, object, typeExposedByDefault)
@@ -549,6 +551,8 @@ public:
     bool m_webAssemblyEnabled { true };
     bool m_needsSiteSpecificQuirks { false };
     unsigned m_globalLexicalBindingEpoch { 1 };
+    ScopeOffset m_lastStaticGlobalOffset;
+    IdentifierSet m_varNamesDeclaredViaEval;
     String m_evalDisabledErrorMessage;
     String m_webAssemblyDisabledErrorMessage;
     RuntimeFlags m_runtimeFlags;
@@ -630,7 +634,7 @@ protected:
 
     JS_EXPORT_PRIVATE void finishCreation(VM&, JSObject*);
 
-    void addGlobalVar(const Identifier&);
+    void addSymbolTableEntry(const Identifier&);
 
 public:
     JS_EXPORT_PRIVATE ~JSGlobalObject();
@@ -641,9 +645,15 @@ public:
     JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     JS_EXPORT_PRIVATE static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
+    JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
 
-    inline void addVar(JSGlobalObject*, const Identifier&);
-    void addFunction(JSGlobalObject*, const Identifier&);
+    bool hasVarDeclaration(const RefPtr<UniquedStringImpl>&);
+
+    bool canDeclareGlobalFunction(const Identifier&);
+    template<BindingCreationContext> void createGlobalFunctionBinding(const Identifier&);
+
+    inline bool canDeclareGlobalVar(const Identifier&);
+    template<BindingCreationContext> inline void createGlobalVarBinding(const Identifier&);
 
     inline JSScope* globalScope();
     JSGlobalLexicalEnvironment* globalLexicalEnvironment() { return m_globalLexicalEnvironment.get(); }
@@ -933,6 +943,7 @@ public:
 
 #define DEFINE_ACCESSORS_FOR_LAZY_TYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase, featureFlag) \
     Structure* properName ## Structure() { return m_ ## properName ## Structure.get(this); } \
+    Structure* properName ## StructureConcurrently() { return m_ ## properName ## Structure.getConcurrently(); } \
     JSObject* properName ## Constructor() { return m_ ## properName ## Structure.constructor(this); }
 
     FOR_EACH_LAZY_BUILTIN_TYPE(DEFINE_ACCESSORS_FOR_LAZY_TYPE)

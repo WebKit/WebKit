@@ -44,7 +44,8 @@ public:
         Box,
         InlineBoxStart,
         InlineBoxEnd,
-        Float
+        Float,
+        Opaque
     };
     InlineItem(const Box& layoutBox, Type, UBiDiLevel = UBIDI_DEFAULT_LTR);
 
@@ -64,6 +65,7 @@ public:
     bool isHardLineBreak() const { return type() == Type::HardLineBreak; }
     bool isInlineBoxStart() const { return type() == Type::InlineBoxStart; }
     bool isInlineBoxEnd() const { return type() == Type::InlineBoxEnd; }
+    bool isOpaque() const { return type() == Type::Opaque; }
 
 private:
     friend class InlineItemsBuilder;
@@ -82,7 +84,7 @@ protected:
 private:
     UBiDiLevel m_bidiLevel { UBIDI_DEFAULT_LTR };
 
-    Type m_type : 3 { };
+    Type m_type : 4 { };
 
 protected:
     // For InlineTextItem

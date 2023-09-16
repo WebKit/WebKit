@@ -144,7 +144,7 @@ auto RadioInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
         // Look for more radio buttons.
         if (!is<HTMLInputElement>(*node))
             continue;
-        RefPtr<HTMLInputElement> inputElement = downcast<HTMLInputElement>(node.get());
+        RefPtr inputElement = downcast<HTMLInputElement>(node);
         if (inputElement->form() != element()->form())
             break;
         if (inputElement->isRadioButton() && inputElement->name() == element()->name() && inputElement->isFocusable()) {

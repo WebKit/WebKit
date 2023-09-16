@@ -29,7 +29,14 @@
 #include <wtf/DataLog.h>
 #include <wtf/Threading.h>
 #include <wtf/threads/Signals.h>
+#if OS(UNIX)
+#include <signal.h>
+#else
+#include <wtf/Gigacage.h>
+#include <wtf/OSAllocator.h>
+#endif
 
+#if OS(UNIX)
 class ReflectedThread : public Thread {
 public:
     using Thread::m_mutex;
@@ -62,9 +69,44 @@ TEST(Signals, SignalsWorkOnExit)
         receiverShouldKeepRunning.store(false);
         EXPECT_FALSE(static_cast<ReflectedThread&>(receiverThread.get()).hasExited());
         sleep(1_s);
-        signalFired = !pthread_kill(static_cast<ReflectedThread&>(receiverThread.get()).m_handle, std::get<0>(toSystemSignal(Signal::Usr)));
+        signalFired = !pthread_kill(static_cast<ReflectedThread&>(receiverThread.get()).m_handle, SIGUSR2);
     }
 
     receiverThread->waitForCompletion();
     EXPECT_TRUE(handlerRan || !signalFired);
 }
+#else
+TEST(Signals, SignalsAccessFault)
+{
+    static bool handlerRan = false;
+    initializeSignalHandling();
+    addSignalHandler(Signal::AccessFault, [] (Signal signal, SigInfo& sigInfo, PlatformRegisters& context) -> SignalAction {
+        RELEASE_ASSERT(signal == Signal::AccessFault);
+
+        handlerRan = true;
+#if CPU(ARM)
+        context.Pc += 2;
+#elif CPU(X86)
+        context.Eip += 3;
+#elif CPU(X86_64)
+        context.Rip += 3;
+#else
+#error Unsupported CPU
+#endif
+
+        return SignalAction::Handled;
+    });
+    activateSignalHandlersFor(Signal::AccessFault);
+
+    // Allocate a page of memory
+    char* ptr = bitwise_cast<char*>(Gigacage::tryAllocateZeroedVirtualPages(Gigacage::Primitive, 4096));
+
+    // Protect that page - 4096 bytes, not readable or writeable
+    OSAllocator::protect(ptr, 4096, false, false);
+
+    // Try and read, triggering an AccessFault
+    dataLogF("Reading from protected memory", ptr[0]);
+
+    EXPECT_TRUE(handlerRan);
+}
+#endif

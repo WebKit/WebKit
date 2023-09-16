@@ -92,11 +92,13 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSString *)accessibilityARIARelevantStatus;
 - (NSString *)accessibilityInvalidStatus;
 - (UIAccessibilityTraits)_axContainedByFieldsetTrait;
+- (UIAccessibilityTraits)_axTextEntryTrait;
 - (id)_accessibilityFieldsetAncestor;
 - (BOOL)_accessibilityHasTouchEventListener;
 - (NSString *)accessibilityExpandedTextValue;
 - (NSString *)accessibilitySortDirection;
 - (BOOL)accessibilityIsExpanded;
+- (BOOL)accessibilitySupportsARIAExpanded;
 - (BOOL)accessibilityIsIndeterminate;
 - (NSUInteger)accessibilityBlockquoteLevel;
 - (NSArray *)accessibilityFindMatchingObjects:(NSDictionary *)parameters;
@@ -704,6 +706,11 @@ bool AccessibilityUIElement::isExpanded() const
     return [m_element accessibilityIsExpanded];
 }
 
+bool AccessibilityUIElement::supportsExpanded() const
+{
+    return [m_element accessibilitySupportsARIAExpanded];
+}
+
 bool AccessibilityUIElement::isChecked() const
 {
     return false;
@@ -868,6 +875,12 @@ bool AccessibilityUIElement::hasContainedByFieldsetTrait()
 {
     UIAccessibilityTraits traits = [m_element accessibilityTraits];
     return (traits & [m_element _axContainedByFieldsetTrait]) == [m_element _axContainedByFieldsetTrait];
+}
+
+bool AccessibilityUIElement::hasTextEntryTrait()
+{
+    UIAccessibilityTraits traits = [m_element accessibilityTraits];
+    return (traits & [m_element _axTextEntryTrait]) == [m_element _axTextEntryTrait];
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::fieldsetAncestorElement()

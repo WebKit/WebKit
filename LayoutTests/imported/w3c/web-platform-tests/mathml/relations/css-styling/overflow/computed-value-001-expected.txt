@@ -1,5 +1,5 @@
 
-FAIL overflow on MathML elements assert_equals: overflow on mtr expected "scroll" but got "visible"
+PASS overflow on MathML elements
 
 
 

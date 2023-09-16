@@ -68,7 +68,7 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
     , m_scheduleRenderingTimer(*this, &RemoteLayerTreeDrawingArea::scheduleRenderingUpdateTimerFired)
     , m_preferredFramesPerSecond(DefaultPreferredFramesPerSecond)
 {
-    m_webPage.corePage()->settings().setForceCompositingMode(true);
+    webPage.corePage()->settings().setForceCompositingMode(true);
 
     m_commitQueue = adoptOSObject(dispatch_queue_create("com.apple.WebKit.WebContent.RemoteLayerTreeDrawingArea.CommitQueue", nullptr));
 
@@ -146,42 +146,48 @@ void RemoteLayerTreeDrawingArea::setRootCompositingLayer(WebCore::Frame& frame, 
             rootLayer.contentLayer = rootGraphicsLayer;
     }
     updateRootLayers();
-    triggerRenderingUpdate();
+    scheduleRenderingUpdate(ScheduleRenderingUrgency::AsSoonAsPossible);
 }
 
-void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight&, CompletionHandler<void()>&& completionHandler)
+void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, const std::optional<VisibleContentRectUpdateInfo>& info, bool flushSynchronously, const WTF::MachSendRight&, CompletionHandler<void()>&& completionHandler)
 {
     IntSize size = viewSize;
     IntSize contentSize = IntSize(-1, -1);
 
-    if (!m_webPage.minimumSizeForAutoLayout().width() || m_webPage.autoSizingShouldExpandToViewHeight() || (!m_webPage.sizeToContentAutoSizeMaximumSize().width() && !m_webPage.sizeToContentAutoSizeMaximumSize().height()))
-        m_webPage.setSize(size);
+    Ref webPage = m_webPage.get();
 
-    auto* frameView = m_webPage.localMainFrameView();
+    if (info)
+        webPage->updateVisibleContentRects(*info, info->timestamp());
 
-    if (m_webPage.autoSizingShouldExpandToViewHeight() && frameView)
+    if (!webPage->minimumSizeForAutoLayout().width() || webPage->autoSizingShouldExpandToViewHeight() || (!webPage->sizeToContentAutoSizeMaximumSize().width() && !webPage->sizeToContentAutoSizeMaximumSize().height()))
+        webPage->setSize(size);
+
+    RefPtr frameView = webPage->localMainFrameView();
+
+    if (webPage->autoSizingShouldExpandToViewHeight() && frameView)
         frameView->setAutoSizeFixedMinimumHeight(viewSize.height());
 
-    m_webPage.layoutIfNeeded();
+    webPage->layoutIfNeeded();
 
-    if (frameView && (m_webPage.minimumSizeForAutoLayout().width() || (m_webPage.sizeToContentAutoSizeMaximumSize().width() && m_webPage.sizeToContentAutoSizeMaximumSize().height()))) {
+    if (frameView && (webPage->minimumSizeForAutoLayout().width() || (webPage->sizeToContentAutoSizeMaximumSize().width() && webPage->sizeToContentAutoSizeMaximumSize().height()))) {
         contentSize = frameView->autoSizingIntrinsicContentSize();
         size = contentSize;
     }
 
-    triggerRenderingUpdate();
+    scheduleRenderingUpdate(ScheduleRenderingUrgency::AsSoonAsPossible);
     completionHandler();
 }
 
 bool RemoteLayerTreeDrawingArea::shouldUseTiledBackingForFrameView(const LocalFrameView& frameView) const
 {
     return frameView.frame().isRootFrame()
-        || m_webPage.corePage()->settings().asyncFrameScrollingEnabled();
+        || m_webPage->corePage()->settings().asyncFrameScrollingEnabled();
 }
 
 void RemoteLayerTreeDrawingArea::updatePreferences(const WebPreferencesStore& preferences)
 {
-    Settings& settings = m_webPage.corePage()->settings();
+    auto& page = *m_webPage->corePage();
+    Settings& settings = page.settings();
 
     // Fixed position elements need to be composited and create stacking contexts
     // in order to be scrolled by the ScrollingCoordinator.
@@ -193,7 +199,7 @@ void RemoteLayerTreeDrawingArea::updatePreferences(const WebPreferencesStore& pr
     m_remoteLayerTreeContext->setUseCGDisplayListsForDOMRendering(preferences.getBoolValueForKey(WebPreferencesKey::useCGDisplayListsForDOMRenderingKey()));
     m_remoteLayerTreeContext->setUseCGDisplayListImageCache(preferences.getBoolValueForKey(WebPreferencesKey::useCGDisplayListImageCacheKey()) && !preferences.getBoolValueForKey(WebPreferencesKey::replayCGDisplayListsIntoBackingStoreKey()));
 
-    DebugPageOverlays::settingsChanged(*m_webPage.corePage());
+    DebugPageOverlays::settingsChanged(page);
 }
 
 void RemoteLayerTreeDrawingArea::forceRepaintAsync(WebPage& page, CompletionHandler<void()>&& completionHandler)
@@ -204,7 +210,7 @@ void RemoteLayerTreeDrawingArea::forceRepaintAsync(WebPage& page, CompletionHand
 
 void RemoteLayerTreeDrawingArea::setDeviceScaleFactor(float deviceScaleFactor)
 {
-    m_webPage.setDeviceScaleFactor(deviceScaleFactor);
+    Ref { m_webPage.get() }->setDeviceScaleFactor(deviceScaleFactor);
 }
 
 DelegatedScrollingMode RemoteLayerTreeDrawingArea::delegatedScrollingMode() const
@@ -223,7 +229,7 @@ void RemoteLayerTreeDrawingArea::setLayerTreeStateIsFrozen(bool isFrozen)
 
     if (!m_isRenderingSuspended && m_hasDeferredRenderingUpdate) {
         m_hasDeferredRenderingUpdate = false;
-        startRenderingUpdateTimer();
+        scheduleRenderingUpdate(ScheduleRenderingUrgency::AsSoonAsPossible);
     }
 }
 
@@ -232,8 +238,8 @@ void RemoteLayerTreeDrawingArea::forceRepaint()
     if (m_isRenderingSuspended)
         return;
 
-    m_webPage.corePage()->forceRepaintAllFrames();
-    updateRendering();
+    m_webPage->corePage()->forceRepaintAllFrames();
+    scheduleRenderingUpdate(ScheduleRenderingUrgency::AsSoonAsPossible);
 }
 
 void RemoteLayerTreeDrawingArea::acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier layerID, const String& key, MonotonicTime startTime)
@@ -250,13 +256,13 @@ void RemoteLayerTreeDrawingArea::setViewExposedRect(std::optional<WebCore::Float
 {
     m_viewExposedRect = viewExposedRect;
 
-    if (auto* frameView = m_webPage.localMainFrameView())
+    if (RefPtr frameView = m_webPage->localMainFrameView())
         frameView->setViewExposedRect(m_viewExposedRect);
 }
 
 WebCore::FloatRect RemoteLayerTreeDrawingArea::exposedContentRect() const
 {
-    auto* frameView = m_webPage.localMainFrameView();
+    RefPtr frameView = m_webPage->localMainFrameView();
     if (!frameView)
         return FloatRect();
 
@@ -265,31 +271,30 @@ WebCore::FloatRect RemoteLayerTreeDrawingArea::exposedContentRect() const
 
 void RemoteLayerTreeDrawingArea::setExposedContentRect(const FloatRect& exposedContentRect)
 {
-    auto* frameView = m_webPage.localMainFrameView();
+    RefPtr frameView = m_webPage->localMainFrameView();
     if (!frameView)
         return;
     if (frameView->exposedContentRect() == exposedContentRect)
         return;
 
     frameView->setExposedContentRect(exposedContentRect);
-    triggerRenderingUpdate();
+    scheduleRenderingUpdate(ScheduleRenderingUrgency::AsSoonAsPossible);
 }
 
 void RemoteLayerTreeDrawingArea::startRenderingUpdateTimer()
 {
-    if (m_updateRenderingTimer.isActive())
+    RELEASE_ASSERT(m_state != State::WaitingForDisplayDidRefresh);
+    if (m_updateRenderingTimer.isActive()) {
+        RELEASE_ASSERT(m_state == State::WaitingForUpdateRenderingTimer);
         return;
+    }
+    m_state = State::WaitingForUpdateRenderingTimer;
     m_updateRenderingTimer.startOneShot(0_s);
 }
 
 void RemoteLayerTreeDrawingArea::triggerRenderingUpdate()
 {
-    if (m_isRenderingSuspended) {
-        m_hasDeferredRenderingUpdate = true;
-        return;
-    }
-
-    startRenderingUpdateTimer();
+    scheduleRenderingUpdate(ScheduleRenderingUrgency::AsSoonAsPossible);
 }
 
 void RemoteLayerTreeDrawingArea::setNextRenderingUpdateRequiresSynchronousImageDecoding()
@@ -299,32 +304,34 @@ void RemoteLayerTreeDrawingArea::setNextRenderingUpdateRequiresSynchronousImageD
 
 void RemoteLayerTreeDrawingArea::updateRendering()
 {
+    RELEASE_ASSERT(m_updateRenderingIsPending);
+    RELEASE_ASSERT(m_state == State::WaitingForUpdateRenderingTimer);
+    m_updateRenderingIsPending = false;
+
     if (m_isRenderingSuspended) {
         m_hasDeferredRenderingUpdate = true;
         return;
     }
 
-    if (m_waitingForBackingStoreSwap) {
-        m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap = true;
-        return;
-    }
-
     // This function is not reentrant, e.g. a rAF callback may force repaint.
-    if (m_inUpdateRendering)
+    RELEASE_ASSERT(!m_inUpdateRendering);
+
+    Ref webPage = m_webPage.get();
+    if (auto* page = webPage->corePage(); page && !page->rootFrames().computeSize())
         return;
 
-    if (auto* page = m_webPage.corePage(); page && !page->rootFrames().computeSize())
-        return;
+    RELEASE_ASSERT(!m_updateRenderingTimer.isActive());
+    m_state = State::WaitingForDisplayDidRefresh;
 
     scaleViewToFitDocumentIfNeeded();
 
     SetForScope change(m_inUpdateRendering, true);
-    m_webPage.updateRendering();
-    m_webPage.flushPendingIntrinsicContentSizeUpdate();
+    webPage->updateRendering();
+    webPage->flushPendingIntrinsicContentSizeUpdate();
 
-    auto size = m_webPage.size();
+    auto size = webPage->size();
     FloatRect visibleRect(FloatPoint(), size);
-    if (auto* mainFrameView = m_webPage.localMainFrameView()) {
+    if (RefPtr mainFrameView = webPage->localMainFrameView()) {
         if (auto exposedRect = mainFrameView->viewExposedRect())
             visibleRect.intersect(*exposedRect);
     }
@@ -333,7 +340,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     if (m_remoteLayerTreeContext->nextRenderingUpdateRequiresSynchronousImageDecoding())
         flags.add(FinalizeRenderingUpdateFlags::InvalidateImagesWithAsyncDecodes);
 
-    m_webPage.finalizeRenderingUpdate(flags);
+    webPage->finalizeRenderingUpdate(flags);
 
     willStartRenderingUpdateDisplay();
 
@@ -351,11 +358,12 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     // FIXME: Minimize these transactions if nothing changed.
     Vector<std::pair<RemoteLayerTreeTransaction, RemoteScrollingCoordinatorTransaction>> transactions;
     transactions.reserveInitialCapacity(m_rootLayers.size());
+    auto transactionID = takeNextTransactionID();
     for (auto& rootLayer : m_rootLayers) {
         rootLayer.layer->flushCompositingStateForThisLayerOnly();
         
         RemoteLayerTreeTransaction layerTransaction;
-        layerTransaction.setTransactionID(takeNextTransactionID());
+        layerTransaction.setTransactionID(transactionID);
         layerTransaction.setCallbackIDs(WTFMove(m_pendingCallbackIDs));
         
         m_remoteLayerTreeContext->buildTransaction(layerTransaction, *downcast<GraphicsLayerCARemote>(rootLayer.layer.get()).platformCALayer(), rootLayer.frameID);
@@ -363,21 +371,19 @@ void RemoteLayerTreeDrawingArea::updateRendering()
         backingStoreCollection.willCommitLayerTree(layerTransaction);
 
         // FIXME: Investigate whether this needs to be done multiple times in a page with multiple root frames.
-        m_webPage.willCommitLayerTree(layerTransaction, rootLayer.frameID);
+        webPage->willCommitLayerTree(layerTransaction, rootLayer.frameID);
         
         layerTransaction.setNewlyReachedPaintingMilestones(std::exchange(m_pendingNewlyReachedPaintingMilestones, { }));
         layerTransaction.setActivityStateChangeID(std::exchange(m_activityStateChangeID, ActivityStateChangeAsynchronous));
         
         willCommitLayerTree(layerTransaction);
-        
-        m_waitingForBackingStoreSwap = true;
-        
+
         send(Messages::RemoteLayerTreeDrawingAreaProxy::WillCommitLayerTree(layerTransaction.transactionID()));
 
         RemoteScrollingCoordinatorTransaction scrollingTransaction;
 #if ENABLE(ASYNC_SCROLLING)
-        if (m_webPage.scrollingCoordinator())
-            downcast<RemoteScrollingCoordinator>(*m_webPage.scrollingCoordinator()).buildTransaction(scrollingTransaction);
+        if (webPage->scrollingCoordinator())
+            scrollingTransaction = downcast<RemoteScrollingCoordinator>(*webPage->scrollingCoordinator()).buildTransaction();
 #endif
         transactions.uncheckedAppend({ WTFMove(layerTransaction), WTFMove(scrollingTransaction) });
     }
@@ -390,13 +396,13 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     for (auto& transactions : transactions)
         flushers.appendVector(backingStoreCollection.didFlushLayers(transactions.first));
     bool haveFlushers = flushers.size();
-    RefPtr<BackingStoreFlusher> backingStoreFlusher = BackingStoreFlusher::create(WebProcess::singleton().parentProcessConnection(), WTFMove(commitEncoder), WTFMove(flushers));
+    RefPtr<BackingStoreFlusher> backingStoreFlusher = BackingStoreFlusher::create(RefPtr { WebProcess::singleton().parentProcessConnection() }, WTFMove(commitEncoder), WTFMove(flushers));
     m_pendingBackingStoreFlusher = backingStoreFlusher;
 
     if (haveFlushers)
-        m_webPage.didPaintLayers();
+        webPage->didPaintLayers();
 
-    auto pageID = m_webPage.identifier();
+    auto pageID = webPage->identifier();
     dispatch_async(m_commitQueue.get(), makeBlockPtr([backingStoreFlusher = WTFMove(backingStoreFlusher), pageID] () mutable {
         backingStoreFlusher->flush();
 
@@ -413,7 +419,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
 
 void RemoteLayerTreeDrawingArea::didCompleteRenderingUpdateDisplay()
 {
-    m_webPage.didFlushLayerTreeAtTime(MonotonicTime::now());
+    m_webPage->didFlushLayerTreeAtTime(MonotonicTime::now());
     DrawingArea::didCompleteRenderingUpdateDisplay();
 }
 
@@ -422,7 +428,7 @@ void RemoteLayerTreeDrawingArea::displayDidRefresh()
     // FIXME: This should use a counted replacement for setLayerTreeStateIsFrozen, but
     // the callers of that function are not strictly paired.
 
-    auto wasWaitingForBackingStoreSwap = std::exchange(m_waitingForBackingStoreSwap, false);
+    RELEASE_ASSERT(m_state == State::WaitingForDisplayDidRefresh);
 
     if (!WebProcess::singleton().shouldUseRemoteRenderingFor(WebCore::RenderingPurpose::DOM)) {
         // This empty transaction serves to trigger CA's garbage collection of IOSurfaces. See <rdar://problem/16110687>
@@ -430,12 +436,10 @@ void RemoteLayerTreeDrawingArea::displayDidRefresh()
         [CATransaction commit];
     }
 
-    if (m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap || (m_isScheduled && !m_scheduleRenderingTimer.isActive())) {
-        triggerRenderingUpdate();
-        m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap = false;
-        m_isScheduled = false;
-    } else if (wasWaitingForBackingStoreSwap && m_updateRenderingTimer.isActive())
-        m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap = true;
+    m_state = State::Idle;
+    RELEASE_ASSERT(!m_updateRenderingTimer.isActive());
+    if (m_updateRenderingIsPending && !m_scheduleRenderingTimer.isActive())
+        startRenderingUpdateTimer();
     else
         send(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTreeNotTriggered(nextTransactionID()));
 }
@@ -463,13 +467,13 @@ void RemoteLayerTreeDrawingArea::tryMarkLayersVolatile(CompletionHandler<void(bo
     m_remoteLayerTreeContext->backingStoreCollection().tryMarkAllBackingStoreVolatile(WTFMove(completionFunction));
 }
 
-Ref<RemoteLayerTreeDrawingArea::BackingStoreFlusher> RemoteLayerTreeDrawingArea::BackingStoreFlusher::create(IPC::Connection* connection, UniqueRef<IPC::Encoder>&& encoder, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers)
+Ref<RemoteLayerTreeDrawingArea::BackingStoreFlusher> RemoteLayerTreeDrawingArea::BackingStoreFlusher::create(RefPtr<IPC::Connection>&& connection, UniqueRef<IPC::Encoder>&& encoder, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers)
 {
-    return adoptRef(*new RemoteLayerTreeDrawingArea::BackingStoreFlusher(connection, WTFMove(encoder), WTFMove(flushers)));
+    return adoptRef(*new RemoteLayerTreeDrawingArea::BackingStoreFlusher(WTFMove(connection), WTFMove(encoder), WTFMove(flushers)));
 }
 
-RemoteLayerTreeDrawingArea::BackingStoreFlusher::BackingStoreFlusher(IPC::Connection* connection, UniqueRef<IPC::Encoder>&& encoder, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers)
-    : m_connection(connection)
+RemoteLayerTreeDrawingArea::BackingStoreFlusher::BackingStoreFlusher(RefPtr<IPC::Connection>&& connection, UniqueRef<IPC::Encoder>&& encoder, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers)
+    : m_connection(WTFMove(connection))
     , m_commitEncoder(encoder.moveToUniquePtr())
     , m_flushers(WTFMove(flushers))
     , m_hasFlushed(false)
@@ -497,7 +501,7 @@ void RemoteLayerTreeDrawingArea::activityStateDidChange(OptionSet<WebCore::Activ
     if (activityStateChangeID != ActivityStateChangeAsynchronous) {
         m_remoteLayerTreeContext->setNextRenderingUpdateRequiresSynchronousImageDecoding();
         m_activityStateChangeID = activityStateChangeID;
-        startRenderingUpdateTimer();
+        scheduleRenderingUpdate(ScheduleRenderingUrgency::AsSoonAsPossible);
     }
 
     // FIXME: We may want to match behavior in TiledCoreAnimationDrawingArea by firing these callbacks after the next compositing flush, rather than immediately after
@@ -512,7 +516,7 @@ void RemoteLayerTreeDrawingArea::dispatchAfterEnsuringDrawing(IPC::AsyncReplyID 
     m_remoteLayerTreeContext->setNextRenderingUpdateRequiresSynchronousImageDecoding();
 
     m_pendingCallbackIDs.append(callbackID);
-    triggerRenderingUpdate();
+    scheduleRenderingUpdate(ScheduleRenderingUrgency::AsSoonAsPossible);
 }
 
 void RemoteLayerTreeDrawingArea::adoptLayersFromDrawingArea(DrawingArea& oldDrawingArea)
@@ -526,44 +530,58 @@ void RemoteLayerTreeDrawingArea::adoptLayersFromDrawingArea(DrawingArea& oldDraw
 
 void RemoteLayerTreeDrawingArea::scheduleRenderingUpdateTimerFired()
 {
-    triggerRenderingUpdate();
-    m_isScheduled = false;
+    if (m_state == State::WaitingForScheduleRenderingTimer)
+        startRenderingUpdateTimer();
+}
+
+void RemoteLayerTreeDrawingArea::scheduleRenderingUpdate(ScheduleRenderingUrgency urgency)
+{
+    if (m_updateRenderingIsPending && urgency != ScheduleRenderingUrgency::AsSoonAsPossible)
+        return;
+
+    tracePoint(RemoteLayerTreeScheduleRenderingUpdate, m_state == State::WaitingForDisplayDidRefresh);
+
+    m_updateRenderingIsPending = true;
+
+    if (m_preferredFramesPerSecond) {
+        if (m_state == State::WaitingForDisplayDidRefresh)
+            return;
+
+        if (urgency == ScheduleRenderingUrgency::AsSoonAsPossible)
+            startRenderingUpdateTimer();
+        else {
+            m_state = State::WaitingForCallOnMainRunLoop;
+            callOnMainRunLoop([self = WeakPtr { this }] () {
+                // It's possible that an ASAP request got ahead of this
+                // and started a rendering update already and we're no
+                // longer waiting for this callback.
+                if (self && self->m_state == State::WaitingForCallOnMainRunLoop)
+                    self->startRenderingUpdateTimer();
+            });
+        }
+    } else if (m_state == State::Idle || m_state == State::WaitingForDisplayDidRefresh) {
+        ASSERT(!m_scheduleRenderingTimer.isActive());
+        m_state = State::WaitingForScheduleRenderingTimer;
+        m_scheduleRenderingTimer.startOneShot(m_preferredRenderingUpdateInterval);
+    }
 }
 
 bool RemoteLayerTreeDrawingArea::scheduleRenderingUpdate()
 {
-    if (m_isScheduled)
-        return true;
-
-    tracePoint(RemoteLayerTreeScheduleRenderingUpdate, m_waitingForBackingStoreSwap);
-
-    m_isScheduled = true;
-
-    if (m_preferredFramesPerSecond) {
-        if (displayDidRefreshIsPending())
-            return true;
-
-        callOnMainRunLoop([self = WeakPtr { this }] () {
-            if (self) {
-                self->m_isScheduled = false;
-                self->triggerRenderingUpdate();
-            }
-        });
-    } else
-        m_scheduleRenderingTimer.startOneShot(m_preferredRenderingUpdateInterval);
-
+    scheduleRenderingUpdate(ScheduleRenderingUrgency::NextSuitableTime);
     return true;
 }
 
 void RemoteLayerTreeDrawingArea::renderingUpdateFramesPerSecondChanged()
 {
-    auto preferredFramesPerSecond = m_webPage.corePage()->preferredRenderingUpdateFramesPerSecond();
+    auto* page = m_webPage->corePage();
+    auto preferredFramesPerSecond = page->preferredRenderingUpdateFramesPerSecond();
 
     if (preferredFramesPerSecond && preferredFramesPerSecond != m_preferredFramesPerSecond)
         setPreferredFramesPerSecond(*preferredFramesPerSecond);
 
     m_preferredFramesPerSecond = preferredFramesPerSecond;
-    m_preferredRenderingUpdateInterval = m_webPage.corePage()->preferredRenderingUpdateInterval();
+    m_preferredRenderingUpdateInterval = page->preferredRenderingUpdateInterval();
 }
 
 } // namespace WebKit

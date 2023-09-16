@@ -247,14 +247,26 @@ angle::Result Framebuffer11::invalidateAttachment(const gl::Context *context,
 
     RenderTarget11 *renderTarget = nullptr;
     ANGLE_TRY(attachment->getRenderTarget(context, 0, &renderTarget));
-    const auto &rtv = renderTarget->getRenderTargetView();
-
-    if (rtv.valid())
+    if (attachment->getDepthSize() > 0 || attachment->getStencilSize() > 0)
     {
-        deviceContext1->DiscardView(rtv.get());
+        const auto &dsv = renderTarget->getDepthStencilView();
+        if (dsv.valid())
+        {
+            deviceContext1->DiscardView(dsv.get());
+        }
+        return angle::Result::Continue;
     }
+    else
+    {
+        const auto &rtv = renderTarget->getRenderTargetView();
 
-    return angle::Result::Continue;
+        if (rtv.valid())
+        {
+            deviceContext1->DiscardView(rtv.get());
+        }
+
+        return angle::Result::Continue;
+    }
 }
 
 angle::Result Framebuffer11::readPixelsImpl(const gl::Context *context,

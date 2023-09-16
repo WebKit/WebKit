@@ -28,13 +28,14 @@
 #include "DatabaseUtilities.h"
 #include <WebCore/PrivateClickMeasurement.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit::PCM {
 
 struct DebugInfo;
 
 // This is created, used, and destroyed on the Store's queue.
-class Database : public DatabaseUtilities {
+class Database : public DatabaseUtilities, public CanMakeWeakPtr<Database> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     Database(const String& storageDirectory);

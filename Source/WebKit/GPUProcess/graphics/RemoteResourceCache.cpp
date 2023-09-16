@@ -29,115 +29,87 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteImageBuffer.h"
+#include <WebCore/ImageBuffer.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-RemoteResourceCache::RemoteResourceCache(ProcessIdentifier webProcessIdentifier)
-    : m_resourceHeap(webProcessIdentifier)
+void RemoteResourceCache::cacheNativeImage(Ref<NativeImage>&& image)
 {
+    m_resourceHeap.add(WTFMove(image));
 }
 
-void RemoteResourceCache::cacheImageBuffer(Ref<RemoteImageBuffer>&& imageBuffer, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteResourceCache::cacheDecomposedGlyphs(Ref<DecomposedGlyphs>&& decomposedGlyphs)
 {
-    ASSERT(renderingResourceIdentifier.object() == imageBuffer->renderingResourceIdentifier());
-    Ref<ImageBuffer> buffer = WTFMove(imageBuffer);
-    m_resourceHeap.add(renderingResourceIdentifier, WTFMove(buffer));
+    m_resourceHeap.add(WTFMove(decomposedGlyphs));
 }
 
-RemoteImageBuffer* RemoteResourceCache::cachedImageBuffer(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
+void RemoteResourceCache::cacheGradient(Ref<Gradient>&& gradient)
 {
-    return static_cast<RemoteImageBuffer*>(m_resourceHeap.getImageBuffer(renderingResourceIdentifier)); 
+    m_resourceHeap.add(WTFMove(gradient));
 }
 
-RefPtr<RemoteImageBuffer> RemoteResourceCache::takeImageBuffer(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteResourceCache::cacheFilter(Ref<Filter>&& filter)
 {
-    RefPtr<RemoteImageBuffer> buffer = cachedImageBuffer(renderingResourceIdentifier);
-    m_resourceHeap.removeImageBuffer(renderingResourceIdentifier);
-    ASSERT(buffer->hasOneRef());
-    return buffer;
+    m_resourceHeap.add(WTFMove(filter));
 }
 
-void RemoteResourceCache::cacheNativeImage(Ref<NativeImage>&& image, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
-{
-    ASSERT(renderingResourceIdentifier.object() == image->renderingResourceIdentifier());
-    m_resourceHeap.add(renderingResourceIdentifier, WTFMove(image));
-}
-
-void RemoteResourceCache::cacheDecomposedGlyphs(Ref<DecomposedGlyphs>&& decomposedGlyphs, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
-{
-    ASSERT(renderingResourceIdentifier.object() == decomposedGlyphs->renderingResourceIdentifier());
-    m_resourceHeap.add(renderingResourceIdentifier, WTFMove(decomposedGlyphs));
-}
-
-void RemoteResourceCache::cacheGradient(Ref<Gradient>&& gradient, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
-{
-    m_resourceHeap.add(renderingResourceIdentifier, WTFMove(gradient));
-}
-
-void RemoteResourceCache::cacheFilter(Ref<Filter>&& filter, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
-{
-    m_resourceHeap.add(renderingResourceIdentifier, WTFMove(filter));
-}
-
-NativeImage* RemoteResourceCache::cachedNativeImage(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
+RefPtr<NativeImage> RemoteResourceCache::cachedNativeImage(RenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_resourceHeap.getNativeImage(renderingResourceIdentifier);
 }
 
-std::optional<WebCore::SourceImage> RemoteResourceCache::cachedSourceImage(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
+void RemoteResourceCache::cacheFont(Ref<Font>&& font)
 {
-    return m_resourceHeap.getSourceImage(renderingResourceIdentifier);
+    m_resourceHeap.add(WTFMove(font));
 }
 
-void RemoteResourceCache::cacheFont(Ref<Font>&& font, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
-{
-    ASSERT(renderingResourceIdentifier.object() == font->renderingResourceIdentifier());
-    m_resourceHeap.add(renderingResourceIdentifier, WTFMove(font));
-}
-
-Font* RemoteResourceCache::cachedFont(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
+RefPtr<Font> RemoteResourceCache::cachedFont(RenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_resourceHeap.getFont(renderingResourceIdentifier);
 }
 
-void RemoteResourceCache::cacheFontCustomPlatformData(Ref<FontCustomPlatformData>&& font, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteResourceCache::cacheFontCustomPlatformData(Ref<FontCustomPlatformData>&& customPlatformData)
 {
-    ASSERT(renderingResourceIdentifier.object() == font->m_renderingResourceIdentifier);
-    m_resourceHeap.add(renderingResourceIdentifier, WTFMove(font));
+    m_resourceHeap.add(WTFMove(customPlatformData));
 }
 
-FontCustomPlatformData* RemoteResourceCache::cachedFontCustomPlatformData(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
+RefPtr<FontCustomPlatformData> RemoteResourceCache::cachedFontCustomPlatformData(RenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_resourceHeap.getFontCustomPlatformData(renderingResourceIdentifier);
 }
 
-DecomposedGlyphs* RemoteResourceCache::cachedDecomposedGlyphs(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
+RefPtr<DecomposedGlyphs> RemoteResourceCache::cachedDecomposedGlyphs(RenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_resourceHeap.getDecomposedGlyphs(renderingResourceIdentifier);
 }
 
-Gradient* RemoteResourceCache::cachedGradient(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
+RefPtr<Gradient> RemoteResourceCache::cachedGradient(RenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_resourceHeap.getGradient(renderingResourceIdentifier);
 }
 
-Filter* RemoteResourceCache::cachedFilter(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
+RefPtr<Filter> RemoteResourceCache::cachedFilter(RenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_resourceHeap.getFilter(renderingResourceIdentifier);
 }
 
 void RemoteResourceCache::releaseAllResources()
 {
-    m_resourceHeap.releaseAllResources();
+    m_resourceHeap.clearAllResources();
+}
+
+void RemoteResourceCache::releaseAllDrawingResources()
+{
+    m_resourceHeap.clearAllDrawingResources();
 }
 
 void RemoteResourceCache::releaseAllImageResources()
 {
-    m_resourceHeap.releaseAllImageResources();
+    m_resourceHeap.clearAllImageResources();
 }
 
-bool RemoteResourceCache::releaseRenderingResource(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+bool RemoteResourceCache::releaseRenderingResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
     if (m_resourceHeap.removeImageBuffer(renderingResourceIdentifier)
         || m_resourceHeap.removeRenderingResource(renderingResourceIdentifier)

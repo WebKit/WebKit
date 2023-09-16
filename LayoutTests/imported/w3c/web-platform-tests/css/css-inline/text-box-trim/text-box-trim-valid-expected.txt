@@ -1,0 +1,6 @@
+
+PASS e.style['text-box-trim'] = "none" should set the property value
+PASS e.style['text-box-trim'] = "start" should set the property value
+PASS e.style['text-box-trim'] = "end" should set the property value
+PASS e.style['text-box-trim'] = "both" should set the property value
+

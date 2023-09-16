@@ -128,6 +128,7 @@ class MockFileSystem(object):
         def filter_all(fs, dirpath):
             return True
 
+        path = path.rstrip(self.sep)
         dirs_filter = dirs_filter or filter_all
 
         dirs = []

@@ -232,14 +232,10 @@ void RemoteMediaPlayerProxy::pause()
     sendCachedState();
 }
 
-void RemoteMediaPlayerProxy::seek(const MediaTime& time)
+void RemoteMediaPlayerProxy::seekToTarget(const WebCore::SeekTarget& target)
 {
-    m_player->seek(time);
-}
-
-void RemoteMediaPlayerProxy::seekWithTolerance(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
-{
-    m_player->seekWithTolerance(time, negativeTolerance, positiveTolerance);
+    ALWAYS_LOG(LOGIDENTIFIER, target);
+    m_player->seekToTarget(target);
 }
 
 void RemoteMediaPlayerProxy::setVolume(double volume)
@@ -437,6 +433,12 @@ void RemoteMediaPlayerProxy::mediaPlayerVolumeChanged()
 void RemoteMediaPlayerProxy::mediaPlayerMuteChanged()
 {
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::MuteChanged(m_player->muted()), m_id);
+}
+
+void RemoteMediaPlayerProxy::mediaPlayerSeeked(const MediaTime& time)
+{
+    ALWAYS_LOG(LOGIDENTIFIER, time);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::Seeked(time), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerTimeChanged()

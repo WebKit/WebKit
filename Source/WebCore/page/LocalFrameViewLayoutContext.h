@@ -26,6 +26,7 @@
 #pragma once
 
 #include "LayoutUnit.h"
+#include "RenderLayerModelObject.h"
 #include "Timer.h"
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -127,13 +128,14 @@ public:
 
     UpdateScrollInfoAfterLayoutTransaction& updateScrollInfoAfterLayoutTransaction();
     UpdateScrollInfoAfterLayoutTransaction* updateScrollInfoAfterLayoutTransactionIfExists() { return m_updateScrollInfoAfterLayoutTransaction.get(); }
+    void setBoxNeedsTransformUpdateAfterContainerLayout(RenderBox&, RenderBlock& container);
+    Vector<WeakPtr<RenderBox>> takeBoxesNeedingTransformUpdateAfterContainerLayout(RenderBlock&);
 
 private:
     friend class LayoutScope;
     friend class LayoutStateMaintainer;
     friend class LayoutStateDisabler;
     friend class SubtreeLayoutStateMaintainer;
-    friend class PaginatedLayoutStateMaintainer;
 
     void performLayout();
     bool canPerformLayout() const;
@@ -154,7 +156,6 @@ private:
     // These functions may only be accessed by LayoutStateMaintainer.
     // Subtree push/pop
     void pushLayoutState(RenderElement&);
-    bool pushLayoutStateForPaginationIfNeeded(RenderBlockFlow&);
     bool pushLayoutState(RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageHeight = 0_lu, bool pageHeightChanged = false);
     void popLayoutState();
 
@@ -165,7 +166,6 @@ private:
     // These functions may only be accessed by LayoutStateMaintainer or LayoutStateDisabler.
     void disablePaintOffsetCache() { m_paintOffsetCacheDisableCount++; }
     void enablePaintOffsetCache() { ASSERT(m_paintOffsetCacheDisableCount > 0); m_paintOffsetCacheDisableCount--; }
-    void layoutUsingFormattingContext();
 
     LocalFrame& frame() const;
     LocalFrameView& view() const;
@@ -192,6 +192,7 @@ private:
     std::unique_ptr<Layout::LayoutTree> m_layoutTree;
     std::unique_ptr<Layout::LayoutState> m_layoutState;
     std::unique_ptr<UpdateScrollInfoAfterLayoutTransaction> m_updateScrollInfoAfterLayoutTransaction;
+    WeakHashMap<RenderBlock, Vector<WeakPtr<RenderBox>>> m_containersWithDescendantsNeedingTransformUpdate;
 };
 
 } // namespace WebCore

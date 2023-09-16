@@ -1,0 +1,10 @@
+
+PASS Verify AudioData constructors
+PASS Verify closing and cloning AudioData
+PASS Test we can construct AudioData with a negative timestamp.
+FAIL Test conversion of uint8 data to float32 assert_array_approx_equals: interleaved channel 0 property 1, expected 1 +/- 0.003937007874015748, expected 1 but got 0.9921875
+PASS Test conversion of int16 data to float32
+PASS Test conversion of int32 data to float32
+PASS Test conversion of float32 data to float32
+PASS Test copying out planar and interleaved data
+

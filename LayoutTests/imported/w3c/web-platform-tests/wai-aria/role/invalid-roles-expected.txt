@@ -1,0 +1,8 @@
+Verifies Invalid Roles from 9.1 Roles - handling author errors
+
+x
+x
+
+PASS invalid role name foo
+PASS multiple invalid role names
+

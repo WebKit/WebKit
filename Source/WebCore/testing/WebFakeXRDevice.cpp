@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 Igalia S.L. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,10 +35,6 @@
 #include "WebFakeXRInputController.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/MathExtras.h>
-
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
-#include "IOSurface.h"
-#endif
 
 namespace WebCore {
 
@@ -122,8 +119,9 @@ void SimulatedXRDevice::initializeTrackingAndRendering(const WebCore::SecurityOr
         // There is no way to know how many simulateInputConnection calls will the device receive,
         // so notify the input sources have been initialized with an empty list. This is not a problem because
         // WPT tests rely on requestAnimationFrame updates to test the input sources.
-        callOnMainThread([this, weakThis = WeakPtr { *this }]() {
-            if (!weakThis)
+        callOnMainThread([this, weakThis = ThreadSafeWeakPtr { *this }]() {
+            auto strongThis = weakThis.get();
+            if (!strongThis)
                 return;
             if (m_trackingAndRenderingClient)
                 m_trackingAndRenderingClient->sessionDidInitializeInputSources({ });
@@ -156,9 +154,7 @@ void SimulatedXRDevice::frameTimerFired()
     data.shouldRender = true;
 
     for (auto& layer : m_layers) {
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
-        data.layers.add(layer.key, FrameData::LayerData { .surface = IOSurface::create(nullptr, recommendedResolution(PlatformXR::SessionMode::ImmersiveVr), DestinationColorSpace::SRGB()) });
-#elif USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+#if PLATFORM(COCOA)
         auto surface = IOSurface::create(nullptr, recommendedResolution(PlatformXR::SessionMode::ImmersiveVr), DestinationColorSpace::SRGB());
         data.layers.add(layer.key, FrameData::LayerData { .colorTexture = std::make_tuple(surface->createSendRight(), false) });
 #else

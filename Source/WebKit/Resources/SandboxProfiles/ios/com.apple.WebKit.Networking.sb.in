@@ -865,7 +865,9 @@
         SYS_shm_open
         SYS_shutdown
         SYS_sigaction
+#if ASAN_ENABLED
         SYS_sigaltstack
+#endif
         SYS_sigprocmask
         SYS_socket
         SYS_socketpair

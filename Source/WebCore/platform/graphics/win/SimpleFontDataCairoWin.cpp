@@ -60,11 +60,18 @@ void Font::platformInit()
 
     cairo_win32_scaled_font_select_font(scaledFont, dc);
 
+    wchar_t faceName[LF_FACESIZE];
+    GetTextFace(dc, LF_FACESIZE, faceName);
+
     OUTLINETEXTMETRIC metrics;
     GetOutlineTextMetrics(dc, sizeof(metrics), &metrics);
 
     cairo_win32_scaled_font_done_font(scaledFont);
     RestoreDC(dc, -1);
+
+    // Disable antialiasing when rendering with Ahem because many tests require this.
+    if (!_wcsicmp(faceName, L"Ahem"))
+        m_allowsAntialiasing = false;
 
     // FIXME: Needs to take OS/2 USE_TYPO_METRICS flag into account
     // https://bugs.webkit.org/show_bug.cgi?id=199186

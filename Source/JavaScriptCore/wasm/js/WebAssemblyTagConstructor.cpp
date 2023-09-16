@@ -56,7 +56,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTag, (JSGlobalObject* globalObjec
     if (!signatureObject.isObject())
         return throwVMTypeError(globalObject, scope, "WebAssembly.Tag constructor expects a tag type with the 'parameters' property."_s);
 
-    Vector<Wasm::Type> parameters;
+    Vector<Wasm::Type, 16> parameters;
     forEachInIterable(globalObject, signatureObject, [&] (auto& vm, auto* globalObject, JSValue nextType) -> void {
         auto scope = DECLARE_THROW_SCOPE(vm);
 

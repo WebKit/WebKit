@@ -48,12 +48,11 @@ FontPlatformData::FontPlatformData(RetainPtr<CTFontRef>&& font, float size, bool
 #endif
 }
 
-static RetainPtr<CTFontDescriptorRef> findFontDescriptor(CFStringRef referenceURL, CFStringRef postScriptName)
+static RetainPtr<CTFontDescriptorRef> findFontDescriptor(CFURLRef url, CFStringRef postScriptName)
 {
-    auto url = adoptCF(CFURLCreateWithString(kCFAllocatorDefault, referenceURL, nullptr));
     if (!url)
         return nullptr;
-    auto fontDescriptors = adoptCF(CTFontManagerCreateFontDescriptorsFromURL(url.get()));
+    auto fontDescriptors = adoptCF(CTFontManagerCreateFontDescriptorsFromURL(url));
     if (!fontDescriptors || !CFArrayGetCount(fontDescriptors.get()))
         return nullptr;
     if (CFArrayGetCount(fontDescriptors.get()) == 1)
@@ -70,18 +69,23 @@ static RetainPtr<CTFontDescriptorRef> findFontDescriptor(CFStringRef referenceUR
 
 RetainPtr<CTFontRef> createCTFont(CFDictionaryRef attributes, float size, CTFontDescriptorOptions options, CFStringRef referenceURL, CFStringRef desiredPostScriptName)
 {
-    auto fontDescriptor = adoptCF(CTFontDescriptorCreateWithAttributes(attributes));
+    auto desiredReferenceURL = adoptCF(CFURLCreateWithString(kCFAllocatorDefault, referenceURL, nullptr));
+
+    auto fontDescriptor = adoptCF(CTFontDescriptorCreateWithAttributesAndOptions(attributes, options));
     if (fontDescriptor) {
-        auto font = adoptCF(CTFontCreateWithFontDescriptorAndOptions(fontDescriptor.get(), size, nullptr, options));
+        auto font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr));
         auto actualPostScriptName = adoptCF(CTFontCopyPostScriptName(font.get()));
-        if (CFEqual(actualPostScriptName.get(), desiredPostScriptName))
+        auto actualReferenceURL = adoptCF(CTFontCopyAttribute(font.get(), kCTFontReferenceURLAttribute));
+        if (safeCFEqual(actualPostScriptName.get(), desiredPostScriptName) && safeCFEqual(desiredReferenceURL.get(), actualReferenceURL.get()))
             return font;
     }
 
     // CoreText couldn't round-trip the font.
     // We can fall back to doing our best to find it ourself.
-    fontDescriptor = findFontDescriptor(referenceURL, desiredPostScriptName);
-    if (!fontDescriptor)
+    fontDescriptor = findFontDescriptor(desiredReferenceURL.get(), desiredPostScriptName);
+    if (fontDescriptor)
+        fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor.get(), attributes));
+    else
         fontDescriptor = adoptCF(CTFontDescriptorCreateLastResort());
     ASSERT(fontDescriptor);
     return adoptCF(CTFontCreateWithFontDescriptorAndOptions(fontDescriptor.get(), size, nullptr, options));
@@ -179,21 +183,6 @@ CTFontRef FontPlatformData::ctFont() const
     }
 
     return m_ctFont.get();
-}
-
-RetainPtr<CFTypeRef> FontPlatformData::objectForEqualityCheck(CTFontRef ctFont)
-{
-    auto fontDescriptor = adoptCF(CTFontCopyFontDescriptor(ctFont));
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=138683 This is a shallow pointer compare for web fonts
-    // because the URL contains the address of the font. This means we might erroneously get false negatives.
-    auto object = adoptCF(CTFontDescriptorCopyAttribute(fontDescriptor.get(), kCTFontReferenceURLAttribute));
-    ASSERT(!object || CFGetTypeID(object.get()) == CFURLGetTypeID());
-    return object;
-}
-
-RetainPtr<CFTypeRef> FontPlatformData::objectForEqualityCheck() const
-{
-    return objectForEqualityCheck(ctFont());
 }
 
 RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const

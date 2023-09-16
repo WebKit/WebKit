@@ -135,16 +135,20 @@ void AccessibilityNodeObject::updateRole()
 
 AccessibilityObject* AccessibilityNodeObject::firstChild() const
 {
-    if (!node())
-        return nullptr;
-    
-    Node* firstChild = node()->firstChild();
-
-    if (!firstChild)
+    auto* currentChild = node() ? node()->firstChild() : nullptr;
+    if (!currentChild)
         return nullptr;
 
-    auto objectCache = axObjectCache();
-    return objectCache ? objectCache->getOrCreate(firstChild) : nullptr;
+    auto* cache = axObjectCache();
+    if (!cache)
+        return nullptr;
+
+    auto* axCurrentChild = cache->getOrCreate(currentChild);
+    while (!axCurrentChild && currentChild) {
+        currentChild = currentChild->nextSibling();
+        axCurrentChild = cache->getOrCreate(currentChild);
+    }
+    return axCurrentChild;
 }
 
 AccessibilityObject* AccessibilityNodeObject::lastChild() const
@@ -2382,10 +2386,17 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
                 continue;
             }
         }
-        
+
+        if (node) {
+            auto* childParentElement = child->node() ? child->node()->parentElement() : nullptr;
+            // Do not take the textUnderElement for a different element (determined by child's element parent not being us). Otherwise we may doubly-expose the same text.
+            if (childParentElement && childParentElement != node && childParentElement->shadowHost() != node)
+                continue;
+        }
+
         String childText = child->textUnderElement(mode);
         if (childText.length())
-            appendNameToStringBuilder(builder, childText);
+            appendNameToStringBuilder(builder, WTFMove(childText));
     }
 
     return builder.toString().trim(deprecatedIsSpaceOrNewline).simplifyWhiteSpace(isHTMLSpaceButNotLineBreak);
@@ -2824,7 +2835,13 @@ AccessibilityRole AccessibilityNodeObject::determineAriaRoleAttribute() const
     const AtomString& ariaRole = getAttribute(roleAttr);
     if (ariaRole.isNull() || ariaRole.isEmpty())
         return AccessibilityRole::Unknown;
-    
+
+    if (ariaRole == "text"_s) {
+        auto* document = this->document();
+        // FIXME: Eventually, let's remove support for this role entirely. This is tracked by https://bugs.webkit.org/show_bug.cgi?id=260685.
+        if (!document || !document->settings().ariaTextRoleEnabled())
+            return AccessibilityRole::Unknown;
+    }
     AccessibilityRole role = ariaRoleToWebCoreRole(ariaRole);
 
     // ARIA states if an item can get focus, it should not be presentational.
@@ -2877,9 +2894,6 @@ AccessibilityRole AccessibilityNodeObject::remapAriaRoleDueToParent(Accessibilit
         // Selects and listboxes both have options as child roles, but they map to different roles within WebCore.
         if (role == AccessibilityRole::ListBoxOption && parentAriaRole == AccessibilityRole::Menu)
             return AccessibilityRole::MenuItem;
-        // An aria "menuitem" may map to MenuButton or MenuItem depending on its parent.
-        if (role == AccessibilityRole::MenuItem && parentAriaRole == AccessibilityRole::ApplicationGroup)
-            return AccessibilityRole::MenuButton;
         
         // If the parent had a different role, then we don't need to continue searching up the chain.
         if (parentAriaRole != AccessibilityRole::Unknown)

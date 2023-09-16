@@ -607,6 +607,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case NewInternalFieldObject:
     case Spread:
     case NewRegexp:
+    case NewMap:
+    case NewSet:
     case NewSymbol:
     case ProfileType:
     case ProfileControlFlow:
@@ -725,6 +727,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case StringLocaleCompare:
     case FunctionBind:
     case DateSetTime:
+    case ArraySpliceExtract:
         return false;
 
     case StringReplaceString:

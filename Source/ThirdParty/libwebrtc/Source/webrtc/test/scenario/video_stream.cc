@@ -192,9 +192,26 @@ CreateH264SpecificSettings(VideoStreamConfig config) {
 }
 
 rtc::scoped_refptr<VideoEncoderConfig::EncoderSpecificSettings>
+CreateH265SpecificSettings(VideoStreamConfig config) {
+  RTC_DCHECK_EQ(config.encoder.layers.temporal, 1);
+  RTC_DCHECK_EQ(config.encoder.layers.spatial, 1);
+
+  VideoCodecH265 h265_settings = VideoEncoder::GetDefaultH265Settings();
+  h265_settings.frameDroppingOn = config.encoder.frame_dropping;
+  h265_settings.keyFrameInterval =
+      config.encoder.key_frame_interval.value_or(0);
+  return new rtc::RefCountedObject<
+      VideoEncoderConfig::H265EncoderSpecificSettings>(h265_settings);
+}
+
+rtc::scoped_refptr<VideoEncoderConfig::EncoderSpecificSettings>
 CreateEncoderSpecificSettings(VideoStreamConfig config) {
   using Codec = VideoStreamConfig::Encoder::Codec;
   switch (config.encoder.codec) {
+#ifdef WEBRTC_USE_H265
+    case Codec::kVideoCodecH265:
+      return CreateH265SpecificSettings(config);
+#endif
     case Codec::kVideoCodecH264:
       return CreateH264SpecificSettings(config);
     case Codec::kVideoCodecVP8:

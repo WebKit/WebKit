@@ -4,8 +4,8 @@ PASS Serialize ImageBitmap created from an HTMLVideoElement
 PASS Serialize ImageBitmap created from an HTMLVideoElement from a data URL
 PASS Serialize ImageBitmap created from a bitmap HTMLImageElement
 PASS Serialize ImageBitmap created from a vector HTMLImageElement
-FAIL Serialize ImageBitmap created from a bitmap SVGImageElement promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Serialize ImageBitmap created from a vector SVGImageElement promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Serialize ImageBitmap created from a bitmap SVGImageElement
+PASS Serialize ImageBitmap created from a vector SVGImageElement
 PASS Serialize ImageBitmap created from an OffscreenCanvas
 PASS Serialize ImageBitmap created from an ImageData
 PASS Serialize ImageBitmap created from an ImageBitmap

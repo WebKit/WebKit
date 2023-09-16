@@ -296,6 +296,11 @@ angle::Result BufferGL::getIndexRange(const gl::Context *context,
     return angle::Result::Continue;
 }
 
+size_t BufferGL::getBufferSize() const
+{
+    return mBufferSize;
+}
+
 GLuint BufferGL::getBufferID() const
 {
     return mBufferID;

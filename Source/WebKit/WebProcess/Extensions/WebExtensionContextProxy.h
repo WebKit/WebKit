@@ -38,12 +38,15 @@
 #include <wtf/WeakHashSet.h>
 
 OBJC_CLASS NSDictionary;
+OBJC_CLASS _WKWebExtensionLocalization;
 
 namespace WebKit {
 
 class WebExtensionAPINamespace;
 class WebExtensionMatchPattern;
 class WebFrame;
+struct WebExtensionAlarmParameters;
+struct WebExtensionWindowParameters;
 
 class WebExtensionContextProxy final : public RefCounted<WebExtensionContextProxy>, public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
@@ -65,10 +68,14 @@ public:
     const String& uniqueIdentifier() const { return m_uniqueIdentifier; }
 
     NSDictionary *manifest() { return m_manifest.get(); }
-    static RetainPtr<NSDictionary> parseManifest(API::Data&);
 
     double manifestVersion() { return m_manifestVersion; }
     bool supportsManifestVersion(double version) { return manifestVersion() >= version; }
+
+    _WKWebExtensionLocalization *localization() { return m_localization.get(); }
+
+    static RetainPtr<_WKWebExtensionLocalization> parseLocalization(API::Data&);
+    static RetainPtr<NSDictionary> parseJSON(API::Data&);
 
     bool inTestingMode() { return m_testingMode; }
 
@@ -83,22 +90,25 @@ public:
 private:
     explicit WebExtensionContextProxy(const WebExtensionContextParameters&);
 
-    // webNavigation support
-    void dispatchWebNavigationOnBeforeNavigateEvent(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
-    void dispatchWebNavigationOnCommittedEvent(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
-    void dispatchWebNavigationOnDOMContentLoadedEvent(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
-    void dispatchWebNavigationOnCompletedEvent(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
-    void dispatchWebNavigationOnErrorOccurredEvent(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
+    // Alarms
+    void dispatchAlarmsEvent(const WebExtensionAlarmParameters&);
 
-    // Permissions support
-    void dispatchPermissionsEvent(const WebKit::WebExtensionEventListenerType&, HashSet<String> permissions, HashSet<String> origins);
+    // Permissions
+    void dispatchPermissionsEvent(WebExtensionEventListenerType, HashSet<String> permissions, HashSet<String> origins);
 
-    // IPC::MessageReceiver.
+    // Web Navigation
+    void dispatchWebNavigationEvent(WebExtensionEventListenerType, WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
+
+    // Windows
+    void dispatchWindowsEvent(WebExtensionEventListenerType, std::optional<WebExtensionWindowParameters>);
+
+    // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     WebExtensionContextIdentifier m_identifier;
     URL m_baseURL;
     String m_uniqueIdentifier;
+    RetainPtr<_WKWebExtensionLocalization> m_localization;
     RetainPtr<NSDictionary> m_manifest;
     double m_manifestVersion { 0 };
     bool m_testingMode { false };

@@ -346,7 +346,7 @@ PlatformLayerIdentifier HTMLModelElement::platformLayerID()
     if (!renderLayerModelObject.isComposited() || !renderLayerModelObject.layer() || !renderLayerModelObject.layer()->backing())
         return { };
 
-    auto* graphicsLayer = renderLayerModelObject.layer()->backing()->graphicsLayer();
+    RefPtr graphicsLayer = renderLayerModelObject.layer()->backing()->graphicsLayer();
     if (!graphicsLayer)
         return { };
 

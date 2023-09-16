@@ -65,6 +65,7 @@ private:
 
     // WorkerObjectProxy.
     void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL) final;
+    void reportErrorToWorkerObject(const String&) final;
     void postMessageToWorkerObject(MessageWithMessagePorts&&) final { }
     void workerGlobalScopeDestroyed() final { }
     void workerGlobalScopeClosed() final;

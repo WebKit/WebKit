@@ -99,8 +99,8 @@ messages -> WebPageProxy {
 
     # Policy messages
     DecidePolicyForResponse(struct WebKit::FrameInfoData frameInfo, uint64_t navigationID, WebCore::ResourceResponse response, WebCore::ResourceRequest request, bool canShowMIMEType, String downloadAttribute) -> (struct WebKit::PolicyDecision PolicyDecision)
-    DecidePolicyForNavigationActionAsync(struct WebKit::FrameInfoData frameInfo, uint64_t navigationID, struct WebKit::NavigationActionData navigationActionData, struct WebKit::FrameInfoData originatingFrameInfoData, std::optional<WebKit::WebPageProxyIdentifier> originatingPageID, WebCore::ResourceRequest originalRequest, WebCore::ResourceRequest request, IPC::FormDataReference requestBody, WebCore::ResourceResponse redirectResponse) -> (struct WebKit::PolicyDecision PolicyDecision)
-    DecidePolicyForNavigationActionSync(struct WebKit::FrameInfoData frameInfo, uint64_t navigationID, struct WebKit::NavigationActionData navigationActionData, struct WebKit::FrameInfoData originatingFrameInfoData, std::optional<WebKit::WebPageProxyIdentifier> originatingPageID, WebCore::ResourceRequest originalRequest, WebCore::ResourceRequest request, IPC::FormDataReference requestBody, WebCore::ResourceResponse redirectResponse) -> (struct WebKit::PolicyDecision PolicyDecision) Synchronous
+    DecidePolicyForNavigationActionAsync(struct WebKit::FrameInfoData frameInfo, uint64_t navigationID, struct WebKit::NavigationActionData navigationActionData, struct WebKit::FrameInfoData originatingFrameInfoData, std::optional<WebKit::WebPageProxyIdentifier> originatingPageID, WebCore::ResourceRequest originalRequest, WebCore::ResourceRequest request, IPC::FormDataReference requestBody) -> (struct WebKit::PolicyDecision PolicyDecision)
+    DecidePolicyForNavigationActionSync(struct WebKit::FrameInfoData frameInfo, uint64_t navigationID, struct WebKit::NavigationActionData navigationActionData, struct WebKit::FrameInfoData originatingFrameInfoData, std::optional<WebKit::WebPageProxyIdentifier> originatingPageID, WebCore::ResourceRequest originalRequest, WebCore::ResourceRequest request, IPC::FormDataReference requestBody) -> (struct WebKit::PolicyDecision PolicyDecision) Synchronous
     DecidePolicyForNewWindowAction(struct WebKit::FrameInfoData frameInfo, struct WebKit::NavigationActionData navigationActionData, WebCore::ResourceRequest request, String frameName) -> (struct WebKit::PolicyDecision PolicyDecision)
 
     # Progress messages
@@ -120,7 +120,7 @@ messages -> WebPageProxy {
     WillPerformClientRedirectForFrame(WebCore::FrameIdentifier frameID, String url, double delay, enum:bool WebCore::LockBackForwardList lockBackForwardList)
     DidCancelClientRedirectForFrame(WebCore::FrameIdentifier frameID)
     DidChangeProvisionalURLForFrame(WebCore::FrameIdentifier frameID, uint64_t navigationID, URL url)
-    DidFailProvisionalLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, uint64_t navigationID, String provisionalURL, WebCore::ResourceError error, enum:bool WebCore::WillContinueLoading willContinueLoading, WebKit::UserData userData, enum:bool WebCore::WillInternallyHandleFailure willInternallyHandleFailure)
+    DidFailProvisionalLoadForFrame(struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, uint64_t navigationID, String provisionalURL, WebCore::ResourceError error, enum:bool WebCore::WillContinueLoading willContinueLoading, WebKit::UserData userData, enum:bool WebCore::WillInternallyHandleFailure willInternallyHandleFailure)
     DidCommitLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, uint64_t navigationID, String mimeType, bool hasCustomContentProvider, enum:uint8_t WebCore::FrameLoadType loadType, WebCore::CertificateInfo certificateInfo, bool usedLegacyTLS, bool wasPrivateRelayed, bool containsPluginDocument, enum:bool WebCore::HasInsecureContent hasInsecureContent, enum:uint8_t WebCore::MouseEventPolicy mouseEventPolicy, WebKit::UserData userData)
     DidFailLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, uint64_t navigationID, WebCore::ResourceError error, WebKit::UserData userData)
     DidFinishDocumentLoadForFrame(WebCore::FrameIdentifier frameID, uint64_t navigationID, WebKit::UserData userData)
@@ -163,7 +163,7 @@ messages -> WebPageProxy {
 
 #if PLATFORM(IOS_FAMILY)
     InterpretKeyEvent(struct WebKit::EditorState state, bool isCharEvent) -> (bool handled) Synchronous
-    DidReceivePositionInformation(struct WebKit::InteractionInformationAtPosition information)
+    DidReceivePositionInformation(struct WebKit::InteractionInformationAtPosition information) CanDispatchOutOfOrder
     SaveImageToLibrary(WebKit::SharedMemory::Handle handle, String authorizationToken)
     ShowPlaybackTargetPicker(bool hasVideo, WebCore::IntRect elementRect, enum:uint8_t WebCore::RouteSharingPolicy policy, String routingContextUID)
     CommitPotentialTapFailed()
@@ -347,12 +347,6 @@ messages -> WebPageProxy {
     SearchTheWeb(String string)
 #endif
 
-#if HAVE(TOUCH_BAR)
-    TouchBarMenuDataChanged(WebKit::TouchBarMenuData touchBarMenuData)
-    TouchBarMenuItemDataAdded(struct WebKit::TouchBarMenuItemData touchBarMenuItemData)
-    TouchBarMenuItemDataRemoved(struct WebKit::TouchBarMenuItemData touchBarMenuItemData)
-#endif
-
 #if USE(APPKIT)
     SubstitutionsPanelIsShowing() -> (bool isShowing) Synchronous
 #endif
@@ -372,7 +366,7 @@ messages -> WebPageProxy {
 
     SetEditableElementIsFocused(bool editableElementIsFocused)
 
-    HandleAcceptsFirstMouse(bool acceptsFirstMouse)
+    HandleAcceptsFirstMouse(bool acceptsFirstMouse) CanDispatchOutOfOrder
 #endif
 
     DidUpdateRenderingAfterCommittingLoad()
@@ -410,7 +404,7 @@ messages -> WebPageProxy {
     DisableInspectorNodeSearch()
 
     UpdateStringForFind(String findString)
-    HandleAutocorrectionContext(struct WebKit::WebAutocorrectionContext context)
+    HandleAutocorrectionContext(struct WebKit::WebAutocorrectionContext context) CanDispatchOutOfOrder
 
     ShowDataDetectorsUIForPositionInformation(struct WebKit::InteractionInformationAtPosition information)
 #endif
@@ -429,7 +423,7 @@ messages -> WebPageProxy {
     ShowPDFContextMenu(struct WebKit::PDFContextMenu contextMenu, WebKit::PDFPluginIdentifier identifier) -> (std::optional<int32_t> selectedItem) Synchronous
 #endif
 
-    DidUpdateActivityState()
+    DidUpdateActivityState() CanDispatchOutOfOrder
 
 #if ENABLE(WEB_CRYPTO)
     WrapCryptoKey(Vector<uint8_t> key) -> (bool succeeded, Vector<uint8_t> wrappedKey) Synchronous
@@ -460,7 +454,7 @@ messages -> WebPageProxy {
     HandleAutoplayEvent(enum:uint8_t WebCore::AutoplayEvent event, OptionSet<WebCore::AutoplayEventFlags> flags)
 
 #if PLATFORM(MAC)
-    DidPerformImmediateActionHitTest(struct WebKit::WebHitTestResultData result, bool contentPreventsDefault, WebKit::UserData userData)
+    DidPerformImmediateActionHitTest(struct WebKit::WebHitTestResultData result, bool contentPreventsDefault, WebKit::UserData userData) CanDispatchOutOfOrder
 #endif
     HandleMessage(String messageName, WebKit::UserData messageBody)
     HandleSynchronousMessage(String messageName, WebKit::UserData messageBody) -> (WebKit::UserData returnData) Synchronous
@@ -521,18 +515,18 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    RegisterAttachmentIdentifierFromData(String identifier, String contentType, String preferredFileName, IPC::SharedBufferReference data)
-    RegisterAttachmentIdentifierFromFilePath(String identifier, String contentType, String filePath)
-    RegisterAttachmentIdentifier(String identifier)
-    RegisterAttachmentsFromSerializedData(Vector<WebCore::SerializedAttachmentData> data)
-    CloneAttachmentData(String fromIdentifier, String toIdentifier)
-    DidInsertAttachmentWithIdentifier(String identifier, String source, bool hasEnclosingImage)
-    DidRemoveAttachmentWithIdentifier(String identifier)
-    SerializedAttachmentDataForIdentifiers(Vector<String> identifiers) -> (Vector<WebCore::SerializedAttachmentData> seralizedData) Synchronous
+    [EnabledIf='attachmentElementEnabled()'] RegisterAttachmentIdentifierFromData(String identifier, String contentType, String preferredFileName, IPC::SharedBufferReference data)
+    [EnabledIf='attachmentElementEnabled()'] RegisterAttachmentIdentifierFromFilePath(String identifier, String contentType, String filePath)
+    [EnabledIf='attachmentElementEnabled()'] RegisterAttachmentIdentifier(String identifier)
+    [EnabledIf='attachmentElementEnabled()'] RegisterAttachmentsFromSerializedData(Vector<WebCore::SerializedAttachmentData> data)
+    [EnabledIf='attachmentElementEnabled()'] CloneAttachmentData(String fromIdentifier, String toIdentifier)
+    [EnabledIf='attachmentElementEnabled()'] DidInsertAttachmentWithIdentifier(String identifier, String source, bool hasEnclosingImage)
+    [EnabledIf='attachmentElementEnabled()'] DidRemoveAttachmentWithIdentifier(String identifier)
+    [EnabledIf='attachmentElementEnabled()'] SerializedAttachmentDataForIdentifiers(Vector<String> identifiers) -> (Vector<WebCore::SerializedAttachmentData> seralizedData) Synchronous
 #if PLATFORM(IOS_FAMILY)
-    WritePromisedAttachmentToPasteboard(struct WebCore::PromisedAttachmentInfo info, String authorizationToken)
+    [EnabledIf='attachmentElementEnabled()'] WritePromisedAttachmentToPasteboard(struct WebCore::PromisedAttachmentInfo info, String authorizationToken)
 #endif
-    RequestAttachmentIcon(String identifier, String contentType, String path, String title, WebCore::FloatSize size)
+    [EnabledIf='attachmentElementEnabled()'] RequestAttachmentIcon(String identifier, String contentType, String path, String title, WebCore::FloatSize size)
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
@@ -589,32 +583,32 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-    TakeModelElementFullscreen(struct WebKit::ModelIdentifier modelIdentifier)
-    ModelElementSetInteractionEnabled(struct WebKit::ModelIdentifier modelIdentifier, bool isInteractionEnabled)
+    [EnabledIf='modelElementEnabled()'] TakeModelElementFullscreen(struct WebKit::ModelIdentifier modelIdentifier)
+    [EnabledIf='modelElementEnabled()'] ModelElementSetInteractionEnabled(struct WebKit::ModelIdentifier modelIdentifier, bool isInteractionEnabled)
 #endif
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
-    ModelElementCreateRemotePreview(String uuid, WebCore::FloatSize size) -> (Expected<std::pair<String, uint32_t>, WebCore::ResourceError> result)
-    ModelElementLoadRemotePreview(String uuid, URL url) -> (std::optional<WebCore::ResourceError> error)
-    ModelElementDestroyRemotePreview(String uuid)
-    ModelElementSizeDidChange(String uuid, WebCore::FloatSize size) -> (Expected<MachSendRight, WebCore::ResourceError> result)
-    HandleMouseDownForModelElement(String uuid, WebCore::LayoutPoint flippedLocationInElement, MonotonicTime timestamp)
-    HandleMouseMoveForModelElement(String uuid, WebCore::LayoutPoint flippedLocationInElement, MonotonicTime timestamp)
-    HandleMouseUpForModelElement(String uuid, WebCore::LayoutPoint flippedLocationInElement, MonotonicTime timestamp)
-    ModelInlinePreviewUUIDs() -> (Vector<String> uuids)
+    [EnabledIf='modelElementEnabled()'] ModelElementCreateRemotePreview(String uuid, WebCore::FloatSize size) -> (Expected<std::pair<String, uint32_t>, WebCore::ResourceError> result)
+    [EnabledIf='modelElementEnabled()'] ModelElementLoadRemotePreview(String uuid, URL url) -> (std::optional<WebCore::ResourceError> error)
+    [EnabledIf='modelElementEnabled()'] ModelElementDestroyRemotePreview(String uuid)
+    [EnabledIf='modelElementEnabled()'] ModelElementSizeDidChange(String uuid, WebCore::FloatSize size) -> (Expected<MachSendRight, WebCore::ResourceError> result)
+    [EnabledIf='modelElementEnabled()'] HandleMouseDownForModelElement(String uuid, WebCore::LayoutPoint flippedLocationInElement, MonotonicTime timestamp)
+    [EnabledIf='modelElementEnabled()'] HandleMouseMoveForModelElement(String uuid, WebCore::LayoutPoint flippedLocationInElement, MonotonicTime timestamp)
+    [EnabledIf='modelElementEnabled()'] HandleMouseUpForModelElement(String uuid, WebCore::LayoutPoint flippedLocationInElement, MonotonicTime timestamp)
+    [EnabledIf='modelElementEnabled()'] ModelInlinePreviewUUIDs() -> (Vector<String> uuids)
 #endif
 #if ENABLE(ARKIT_INLINE_PREVIEW)
-    ModelElementGetCamera(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<WebCore::HTMLModelElementCamera, WebCore::ResourceError> result)
-    ModelElementSetCamera(struct WebKit::ModelIdentifier modelIdentifier, struct WebCore::HTMLModelElementCamera camera) -> (bool success)
-    ModelElementIsPlayingAnimation(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result)
-    ModelElementSetAnimationIsPlaying(struct WebKit::ModelIdentifier modelIdentifier, bool isPlaying) -> (bool success)
-    ModelElementIsLoopingAnimation(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result)
-    ModelElementSetIsLoopingAnimation(struct WebKit::ModelIdentifier modelIdentifier, bool isLooping) -> (bool success)
-    ModelElementAnimationDuration(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<Seconds, WebCore::ResourceError> result)
-    ModelElementAnimationCurrentTime(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<Seconds, WebCore::ResourceError> result)
-    ModelElementSetAnimationCurrentTime(struct WebKit::ModelIdentifier modelIdentifier, Seconds currentTime) -> (bool success)
-    ModelElementHasAudio(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result)
-    ModelElementIsMuted(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result)
-    ModelElementSetIsMuted(struct WebKit::ModelIdentifier modelIdentifier, bool isMuted) -> (bool success)
+    [EnabledIf='modelElementEnabled()'] ModelElementGetCamera(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<WebCore::HTMLModelElementCamera, WebCore::ResourceError> result)
+    [EnabledIf='modelElementEnabled()'] ModelElementSetCamera(struct WebKit::ModelIdentifier modelIdentifier, struct WebCore::HTMLModelElementCamera camera) -> (bool success)
+    [EnabledIf='modelElementEnabled()'] ModelElementIsPlayingAnimation(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result)
+    [EnabledIf='modelElementEnabled()'] ModelElementSetAnimationIsPlaying(struct WebKit::ModelIdentifier modelIdentifier, bool isPlaying) -> (bool success)
+    [EnabledIf='modelElementEnabled()'] ModelElementIsLoopingAnimation(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result)
+    [EnabledIf='modelElementEnabled()'] ModelElementSetIsLoopingAnimation(struct WebKit::ModelIdentifier modelIdentifier, bool isLooping) -> (bool success)
+    [EnabledIf='modelElementEnabled()'] ModelElementAnimationDuration(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<Seconds, WebCore::ResourceError> result)
+    [EnabledIf='modelElementEnabled()'] ModelElementAnimationCurrentTime(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<Seconds, WebCore::ResourceError> result)
+    [EnabledIf='modelElementEnabled()'] ModelElementSetAnimationCurrentTime(struct WebKit::ModelIdentifier modelIdentifier, Seconds currentTime) -> (bool success)
+    [EnabledIf='modelElementEnabled()'] ModelElementHasAudio(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result)
+    [EnabledIf='modelElementEnabled()'] ModelElementIsMuted(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result)
+    [EnabledIf='modelElementEnabled()'] ModelElementSetIsMuted(struct WebKit::ModelIdentifier modelIdentifier, bool isMuted) -> (bool success)
 #endif
 
 #if ENABLE(APPLE_PAY_AMS_UI)
@@ -623,7 +617,7 @@ messages -> WebPageProxy {
 #endif
 
 #if USE(SYSTEM_PREVIEW)
-    BeginSystemPreview(URL url, struct WebCore::SystemPreviewInfo systemPreviewInfo) -> ()
+    BeginSystemPreview(URL url, WebCore::SecurityOriginData topOrigin, struct WebCore::SystemPreviewInfo systemPreviewInfo) -> ()
 #endif
 
     DidCreateSleepDisabler(WebCore::SleepDisablerIdentifier identifier, String reason, bool display)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,8 +72,8 @@ DelayDSPKernel::DelayDSPKernel(DelayProcessor* processor)
         return;
 
     m_maxDelayTime = processor->maxDelayTime();
-    ASSERT(m_maxDelayTime >= 0);
-    if (m_maxDelayTime < 0)
+    ASSERT(m_maxDelayTime >= 0 && !std::isnan(m_maxDelayTime));
+    if (m_maxDelayTime < 0 || std::isnan(m_maxDelayTime))
         return;
 
     m_buffer.resize(bufferLengthForDelay(m_maxDelayTime, processor->sampleRate()));
@@ -121,7 +121,12 @@ void DelayDSPKernel::processARate(const float* source, float* destination, size_
     copyToCircularBuffer(buffer, m_writeIndex, bufferLength, source, framesToProcess);
 
     for (unsigned i = 0; i < framesToProcess; ++i) {
-        double delayTime = std::clamp<double>(m_delayTimes[i], 0.0, maxDelayTime());
+        double delayTime = m_delayTimes[i];
+        if (std::isnan(delayTime))
+            delayTime = maxDelayTime();
+        else
+            delayTime = std::clamp<double>(delayTime, 0.0, maxDelayTime());
+
         double desiredDelayFrames = delayTime * sampleRate();
 
         double readPosition = m_writeIndex + bufferLength - desiredDelayFrames;

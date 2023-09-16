@@ -45,17 +45,12 @@ public:
     ListStyleType listStyleType() const { return m_listStyle; }
     const AtomString& separator() const { return m_separator; }
 
+    friend bool operator==(const CounterContent&, const CounterContent&) = default;
+
 private:
     AtomString m_identifier;
     ListStyleType m_listStyle;
     AtomString m_separator;
 };
-
-static inline bool operator==(const CounterContent& a, const CounterContent& b)
-{
-    return a.identifier() == b.identifier()
-        && a.listStyleType() == b.listStyleType()
-        && a.separator() == b.separator();
-}
 
 } // namespace WebCore

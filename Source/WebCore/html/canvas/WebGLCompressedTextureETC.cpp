@@ -53,11 +53,6 @@ WebGLCompressedTextureETC::WebGLCompressedTextureETC(WebGLRenderingContextBase& 
 
 WebGLCompressedTextureETC::~WebGLCompressedTextureETC() = default;
 
-WebGLExtension::ExtensionName WebGLCompressedTextureETC::getName() const
-{
-    return WebGLCompressedTextureETCName;
-}
-
 bool WebGLCompressedTextureETC::supported(GraphicsContextGL& context)
 {
     return context.supportsExtension("GL_ANGLE_compressed_texture_etc"_s);

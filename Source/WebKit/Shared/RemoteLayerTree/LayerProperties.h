@@ -33,6 +33,23 @@ namespace WebKit {
 class RemoteLayerBackingStore;
 class RemoteLayerBackingStoreProperties;
 
+enum class LayerChangeIndex : size_t {
+    EventRegionChanged = 38,
+#if ENABLE(SCROLLING_THREAD)
+    ScrollingNodeIDChanged,
+#endif
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    SeparatedChanged,
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    SeparatedPortalChanged,
+    DescendentOfSeparatedPortalChanged,
+#endif
+#endif
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    VisibleRectChanged,
+#endif
+};
+
 enum class LayerChange : uint64_t {
     NameChanged                         = 1LLU << 0,
     TransformChanged                    = 1LLU << 1,
@@ -72,19 +89,19 @@ enum class LayerChange : uint64_t {
     OpaqueChanged                       = 1LLU << 35,
     ContentsHiddenChanged               = 1LLU << 36,
     UserInteractionEnabledChanged       = 1LLU << 37,
-    EventRegionChanged                  = 1LLU << 38,
+    EventRegionChanged                  = 1LLU << static_cast<size_t>(LayerChangeIndex::EventRegionChanged),
 #if ENABLE(SCROLLING_THREAD)
-    ScrollingNodeIDChanged              = 1LLU << 39,
+    ScrollingNodeIDChanged              = 1LLU << static_cast<size_t>(LayerChangeIndex::ScrollingNodeIDChanged),
 #endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    SeparatedChanged                    = 1LLU << 40,
+    SeparatedChanged                    = 1LLU << static_cast<size_t>(LayerChangeIndex::SeparatedChanged),
 #if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
-    SeparatedPortalChanged              = 1LLU << 41,
-    DescendentOfSeparatedPortalChanged  = 1LLU << 42,
+    SeparatedPortalChanged              = 1LLU << static_cast<size_t>(LayerChangeIndex::SeparatedPortalChanged),
+    DescendentOfSeparatedPortalChanged  = 1LLU << static_cast<size_t>(LayerChangeIndex::DescendentOfSeparatedPortalChanged),
 #endif
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    CoverageRectChanged                 = 1LLU << 43,
+    VisibleRectChanged                  = 1LLU << static_cast<size_t>(LayerChangeIndex::VisibleRectChanged),
 #endif
 };
 
@@ -180,7 +197,7 @@ struct LayerProperties {
 #endif
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    WebCore::FloatRect coverageRect;
+    WebCore::FloatRect visibleRect;
 #endif
 };
 

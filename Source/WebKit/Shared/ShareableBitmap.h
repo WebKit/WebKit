@@ -31,6 +31,8 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/PlatformImage.h>
 #include <wtf/ArgumentCoder.h>
+#include <wtf/DebugHeap.h>
+#include <wtf/ExportMacros.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 

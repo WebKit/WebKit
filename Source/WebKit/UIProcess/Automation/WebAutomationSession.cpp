@@ -106,13 +106,18 @@ void WebAutomationSession::setClient(std::unique_ptr<API::AutomationSessionClien
 
 void WebAutomationSession::setProcessPool(WebKit::WebProcessPool* processPool)
 {
-    if (m_processPool)
-        m_processPool->removeMessageReceiver(Messages::WebAutomationSession::messageReceiverName());
+    if (auto pool = protectedProcessPool())
+        pool->removeMessageReceiver(Messages::WebAutomationSession::messageReceiverName());
 
     m_processPool = processPool;
 
-    if (m_processPool)
-        m_processPool->addMessageReceiver(Messages::WebAutomationSession::messageReceiverName(), *this);
+    if (auto pool = protectedProcessPool())
+        pool->addMessageReceiver(Messages::WebAutomationSession::messageReceiverName(), *this);
+}
+
+RefPtr<WebProcessPool> WebAutomationSession::protectedProcessPool() const
+{
+    return const_cast<WebProcessPool*>(m_processPool.get());
 }
 
 // NOTE: this class could be split at some point to support local and remote automation sessions.
@@ -289,8 +294,8 @@ void WebAutomationSession::getNextContext(Ref<WebAutomationSession>&& protectedT
         return;
     }
     auto page = pages.takeLast();
-    auto& webPageProxy = page.get();
-    webPageProxy.getWindowFrameWithCallback([this, protectedThis = WTFMove(protectedThis), callback = WTFMove(callback), pages = WTFMove(pages), contexts = WTFMove(contexts), page = WTFMove(page)](WebCore::FloatRect windowFrame) mutable {
+    Ref webPageProxy = page.get();
+    webPageProxy->getWindowFrameWithCallback([this, protectedThis = WTFMove(protectedThis), callback = WTFMove(callback), pages = WTFMove(pages), contexts = WTFMove(contexts), page = WTFMove(page)](WebCore::FloatRect windowFrame) mutable {
         contexts->addItem(protectedThis->buildBrowsingContextForPage(page.get(), windowFrame));
         getNextContext(WTFMove(protectedThis), WTFMove(pages), WTFMove(contexts), WTFMove(callback));
     });
@@ -299,7 +304,7 @@ void WebAutomationSession::getNextContext(Ref<WebAutomationSession>&& protectedT
 void WebAutomationSession::getBrowsingContexts(Ref<GetBrowsingContextsCallback>&& callback)
 {
     Vector<Ref<WebPageProxy>> pages;
-    for (auto& process : m_processPool->processes()) {
+    for (auto& process : protectedProcessPool()->processes()) {
         for (auto& page : process->pages()) {
             ASSERT(page);
             if (!page || !page->isControlledByAutomation())
@@ -458,7 +463,7 @@ void WebAutomationSession::waitForNavigationToComplete(const Inspector::Protocol
         auto frameID = webFrameIDForHandle(optionalFrameHandle, frameNotFound);
         if (frameNotFound)
             ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
-        WebFrameProxy* frame = WebFrameProxy::webFrame(frameID.value());
+        RefPtr frame = WebFrameProxy::webFrame(frameID.value());
         if (!frame)
             ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
         if (!shouldTimeoutDueToUnexpectedAlert)
@@ -544,7 +549,7 @@ void WebAutomationSession::respondToPendingFrameNavigationCallbacksWithTimeout(H
 {
     auto timeoutError = STRING_FOR_PREDEFINED_ERROR_NAME(Timeout);
     for (auto id : copyToVector(map.keys())) {
-        auto* page = findPageForFrameID(*m_processPool, id);
+        RefPtr page = findPageForFrameID(*protectedProcessPool(), id);
         auto callback = map.take(id);
         if (page && m_client->isShowingJavaScriptDialogOnPage(*this, *page))
             callback->sendSuccess(JSON::Object::create());

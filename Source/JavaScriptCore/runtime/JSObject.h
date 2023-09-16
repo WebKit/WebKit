@@ -103,6 +103,7 @@ class JSObject : public JSCell {
     enum PutMode : uint8_t {
         PutModePut,
         PutModeDefineOwnProperty,
+        PutModeDefineOwnPropertyForJSONSlow,
     };
 
 public:
@@ -166,6 +167,9 @@ public:
     template<typename PropertyNameType> JSValue getIfPropertyExists(JSGlobalObject*, const PropertyNameType&);
     bool noSideEffectMayHaveNonIndexProperty(VM&, PropertyName);
 
+    template<typename Functor>
+    void forEachIndexedProperty(JSGlobalObject*, const Functor&);
+
 private:
     static bool getOwnPropertySlotImpl(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
 public:
@@ -202,6 +206,36 @@ public:
         return m_butterfly->vectorLength();
     }
     
+    // This is only valid after using canPerformFastPropertyEnumerationCommon().
+    // This code is not checking getOwnPropertySlot override etc.
+    unsigned canHaveExistingOwnIndexedProperties() const
+    {
+        if (!hasIndexedProperties(indexingType()))
+            return false;
+
+        switch (indexingType()) {
+        case ALL_BLANK_INDEXING_TYPES:
+        case ALL_UNDECIDED_INDEXING_TYPES:
+            return false;
+        case ALL_INT32_INDEXING_TYPES:
+        case ALL_CONTIGUOUS_INDEXING_TYPES:
+        case ALL_DOUBLE_INDEXING_TYPES:
+            return m_butterfly->publicLength();
+        case ALL_ARRAY_STORAGE_INDEXING_TYPES: {
+            ArrayStorage* storage = m_butterfly->arrayStorage();
+            unsigned usedVectorLength = std::min(storage->length(), storage->vectorLength());
+            if (usedVectorLength)
+                return true;
+            SparseArrayValueMap* map = storage->m_sparseMap.get();
+            if (!map)
+                return false;
+            return map->size();
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
     static bool putInlineForJSObject(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     
     JS_EXPORT_PRIVATE static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
@@ -678,6 +712,7 @@ public:
     bool putDirect(VM&, PropertyName, JSValue, unsigned attributes = 0);
     bool putDirect(VM&, PropertyName, JSValue, unsigned attributes, PutPropertySlot&);
     bool putDirect(VM&, PropertyName, JSValue, PutPropertySlot&);
+    void putDirectForJSONSlow(VM&, PropertyName, JSValue);
     void putDirectWithoutTransition(VM&, PropertyName, JSValue, unsigned attributes = 0);
     bool putDirectNonIndexAccessor(VM&, PropertyName, GetterSetter*, unsigned attributes);
     void putDirectNonIndexAccessorWithoutTransition(VM&, PropertyName, GetterSetter*, unsigned attributes);
@@ -1017,10 +1052,7 @@ protected:
     }
 #endif
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
-    }
+    inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     // To instantiate objects you likely want JSFinalObject, below.
     // To create derived types you likely want JSNonFinalObject, below.
@@ -1203,10 +1235,7 @@ class JSNonFinalObject : public JSObject {
 public:
     typedef JSObject Base;
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
-    }
+    inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
 protected:
     explicit JSNonFinalObject(VM& vm, Structure* structure, Butterfly* butterfly = nullptr)
@@ -1257,10 +1286,7 @@ public:
 
     static JSFinalObject* create(VM&, Structure*);
     static JSFinalObject* createWithButterfly(VM&, Structure*, Butterfly*);
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, unsigned inlineCapacity)
-    {
-        return Structure::create(vm, globalObject, prototype, typeInfo(), info(), defaultIndexingType, inlineCapacity);
-    }
+    inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue, unsigned);
 
     static JSFinalObject* createDefaultEmptyObject(JSGlobalObject*);
 

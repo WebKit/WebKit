@@ -93,6 +93,18 @@ CONFIG_OPTIONS += --no-asan
 endif
 endif
 
+ifeq ($(LIBFUZZER),YES)
+CONFIG_OPTIONS += --libfuzzer
+else
+ifeq ($(LIBFUZZER),NO)
+CONFIG_OPTIONS += --no-libfuzzer
+endif
+endif
+
+ifneq ($(WK_LIBFUZZER_COVERAGE),)
+XCODE_OPTIONS += WK_LIBFUZZER_COVERAGE=$(WK_LIBFUZZER_COVERAGE)
+endif
+
 ifeq ($(TSAN),YES)
 CONFIG_OPTIONS += --tsan
 else

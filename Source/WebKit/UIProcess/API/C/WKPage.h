@@ -136,6 +136,8 @@ WK_EXPORT void WKPageSetCustomTextEncodingName(WKPageRef page, WKStringRef encod
 
 WK_EXPORT void WKPageTerminate(WKPageRef page);
 
+WK_EXPORT void WKPageResetProcessState(WKPageRef pageRef);
+
 WK_EXPORT WKStringRef WKPageGetSessionHistoryURLValueType(void);
 WK_EXPORT WKStringRef WKPageGetSessionBackForwardListItemValueType(void);
 

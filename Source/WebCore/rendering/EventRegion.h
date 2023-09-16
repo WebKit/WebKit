@@ -98,7 +98,7 @@ public:
 
     bool isEmpty() const { return m_region.isEmpty(); }
 
-    WEBCORE_EXPORT bool operator==(const EventRegion&) const;
+    friend bool operator==(const EventRegion&, const EventRegion&) = default;
 
     void unite(const Region&, const RenderStyle&, bool overrideUserModifyIsEditable = false);
     void translate(const IntSize&);

@@ -47,11 +47,6 @@ EXTTextureCompressionRGTC::EXTTextureCompressionRGTC(WebGLRenderingContextBase& 
 
 EXTTextureCompressionRGTC::~EXTTextureCompressionRGTC() = default;
 
-WebGLExtension::ExtensionName EXTTextureCompressionRGTC::getName() const
-{
-    return EXTTextureCompressionRGTCName;
-}
-
 bool EXTTextureCompressionRGTC::supported(GraphicsContextGL& context)
 {
     return context.supportsExtension("GL_EXT_texture_compression_rgtc"_s);

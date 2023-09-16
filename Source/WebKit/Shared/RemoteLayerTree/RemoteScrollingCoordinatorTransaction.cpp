@@ -501,9 +501,7 @@ bool ArgumentCoder<ScrollingStatePositionedNode>::decode(Decoder& decoder, Scrol
     return true;
 }
 
-namespace WebKit {
-
-static void encodeNodeAndDescendants(IPC::Encoder& encoder, const ScrollingStateNode& stateNode, int& encodedNodeCount)
+static void encodeNodeAndDescendants(IPC::Encoder& encoder, const ScrollingStateNode& stateNode, unsigned& encodedNodeCount)
 {
     ++encodedNodeCount;
 
@@ -532,82 +530,60 @@ static void encodeNodeAndDescendants(IPC::Encoder& encoder, const ScrollingState
         break;
     }
 
-    if (!stateNode.children())
-        return;
-
-    for (const auto& child : *stateNode.children())
-        encodeNodeAndDescendants(encoder, *child.get(), encodedNodeCount);
+    for (const auto& child : stateNode.children())
+        encodeNodeAndDescendants(encoder, child.get(), encodedNodeCount);
 }
 
-void RemoteScrollingCoordinatorTransaction::encode(IPC::Encoder& encoder) const
+void ArgumentCoder<WebCore::ScrollingStateTree>::encode(Encoder& encoder, const WebCore::ScrollingStateTree& tree)
 {
-    encoder << m_clearScrollLatching;
-
-    int numNodes = m_scrollingStateTree ? m_scrollingStateTree->nodeCount() : 0;
-    encoder << numNodes;
-    
-    bool hasNewRootNode = m_scrollingStateTree ? m_scrollingStateTree->hasNewRootStateNode() : false;
-    encoder << hasNewRootNode;
-
-    if (m_scrollingStateTree) {
-        encoder << m_scrollingStateTree->hasChangedProperties();
-
-        int numNodesEncoded = 0;
-        if (const ScrollingStateNode* rootNode = m_scrollingStateTree->rootStateNode())
-            encodeNodeAndDescendants(encoder, *rootNode, numNodesEncoded);
-
-        ASSERT_UNUSED(numNodesEncoded, numNodesEncoded == numNodes);
-    } else
-        encoder << Vector<ScrollingNodeID>();
+    encoder << tree.hasNewRootStateNode();
+    encoder << tree.hasChangedProperties();
+    encoder << tree.nodeCount();
+    unsigned numNodesEncoded = 0;
+    if (const ScrollingStateNode* rootNode = tree.rootStateNode())
+        encodeNodeAndDescendants(encoder, *rootNode, numNodesEncoded);
+    ASSERT_UNUSED(numNodesEncoded, numNodesEncoded == tree.nodeCount());
 }
 
-bool RemoteScrollingCoordinatorTransaction::decode(IPC::Decoder& decoder, RemoteScrollingCoordinatorTransaction& transaction)
+std::optional<WebCore::ScrollingStateTree> ArgumentCoder<WebCore::ScrollingStateTree>::decode(Decoder& decoder)
 {
-    return transaction.decode(decoder);
-}
-
-bool RemoteScrollingCoordinatorTransaction::decode(IPC::Decoder& decoder)
-{
-    if (!decoder.decode(m_clearScrollLatching))
-        return false;
-
-    int numNodes;
-    if (!decoder.decode(numNodes))
-        return false;
-
     bool hasNewRootNode;
     if (!decoder.decode(hasNewRootNode))
-        return false;
-    
-    m_scrollingStateTree = makeUnique<ScrollingStateTree>();
+        return std::nullopt;
 
     bool hasChangedProperties;
     if (!decoder.decode(hasChangedProperties))
-        return false;
+        return std::nullopt;
 
-    m_scrollingStateTree->setHasChangedProperties(hasChangedProperties);
+    unsigned numNodes;
+    if (!decoder.decode(numNodes))
+        return std::nullopt;
 
-    for (int i = 0; i < numNodes; ++i) {
+    ScrollingStateTree scrollingStateTree;
+
+    scrollingStateTree.setHasChangedProperties(hasChangedProperties);
+
+    for (unsigned i = 0; i < numNodes; ++i) {
         ScrollingNodeType nodeType;
         if (!decoder.decode(nodeType))
-            return false;
+            return std::nullopt;
 
         ScrollingNodeID nodeID;
         if (!decoder.decode(nodeID))
-            return false;
+            return std::nullopt;
 
         ScrollingNodeID parentNodeID;
         if (!decoder.decode(parentNodeID))
-            return false;
+            return std::nullopt;
 
-        auto createdNodeID = m_scrollingStateTree->insertNode(nodeType, nodeID, parentNodeID, notFound);
+        auto createdNodeID = scrollingStateTree.insertNode(nodeType, nodeID, parentNodeID, notFound);
         if (createdNodeID != nodeID)
-            return false;
+            return std::nullopt;
 
-        auto newNode = m_scrollingStateTree->stateNodeForID(nodeID);
+        auto newNode = scrollingStateTree.stateNodeForID(nodeID);
         ASSERT(newNode);
         if (newNode->nodeType() != nodeType)
-            return false;
+            return std::nullopt;
 
         ASSERT(!parentNodeID || newNode->parent());
         
@@ -615,39 +591,57 @@ bool RemoteScrollingCoordinatorTransaction::decode(IPC::Decoder& decoder)
         case ScrollingNodeType::MainFrame:
         case ScrollingNodeType::Subframe:
             if (!decoder.decode(downcast<ScrollingStateFrameScrollingNode>(*newNode)))
-                return false;
+                return std::nullopt;
             break;
         case ScrollingNodeType::FrameHosting:
             if (!decoder.decode(downcast<ScrollingStateFrameHostingNode>(*newNode)))
-                return false;
+                return std::nullopt;
             break;
         case ScrollingNodeType::Overflow:
             if (!decoder.decode(downcast<ScrollingStateOverflowScrollingNode>(*newNode)))
-                return false;
+                return std::nullopt;
             break;
         case ScrollingNodeType::OverflowProxy:
             if (!decoder.decode(downcast<ScrollingStateOverflowScrollProxyNode>(*newNode)))
-                return false;
+                return std::nullopt;
             break;
         case ScrollingNodeType::Fixed:
             if (!decoder.decode(downcast<ScrollingStateFixedNode>(*newNode)))
-                return false;
+                return std::nullopt;
             break;
         case ScrollingNodeType::Sticky:
             if (!decoder.decode(downcast<ScrollingStateStickyNode>(*newNode)))
-                return false;
+                return std::nullopt;
             break;
         case ScrollingNodeType::Positioned:
             if (!decoder.decode(downcast<ScrollingStatePositionedNode>(*newNode)))
-                return false;
+                return std::nullopt;
             break;
         }
     }
 
-    m_scrollingStateTree->setHasNewRootStateNode(hasNewRootNode);
+    scrollingStateTree.setHasNewRootStateNode(hasNewRootNode);
 
-    return true;
+    return { WTFMove(scrollingStateTree) };
 }
+
+namespace WebKit {
+
+RemoteScrollingCoordinatorTransaction::RemoteScrollingCoordinatorTransaction() = default;
+
+RemoteScrollingCoordinatorTransaction::RemoteScrollingCoordinatorTransaction(std::unique_ptr<WebCore::ScrollingStateTree>&& scrollingStateTree, bool clearScrollLatching)
+    : m_scrollingStateTree(WTFMove(scrollingStateTree))
+    , m_clearScrollLatching(clearScrollLatching)
+{
+    if (m_scrollingStateTree)
+        m_scrollingStateTree->attachDeserializedNodes();
+}
+
+RemoteScrollingCoordinatorTransaction::RemoteScrollingCoordinatorTransaction(RemoteScrollingCoordinatorTransaction&&) = default;
+
+RemoteScrollingCoordinatorTransaction& RemoteScrollingCoordinatorTransaction::operator=(RemoteScrollingCoordinatorTransaction&&) = default;
+
+RemoteScrollingCoordinatorTransaction::~RemoteScrollingCoordinatorTransaction() = default;
 
 #if !defined(NDEBUG) || !LOG_DISABLED
 
@@ -853,12 +847,12 @@ static void recursiveDumpNodes(TextStream& ts, const ScrollingStateNode& node, b
     ts << "node " << node.scrollingNodeID();
     dump(ts, node, changedPropertiesOnly);
 
-    if (node.children()) {
+    if (!node.children().isEmpty()) {
         TextStream::GroupScope group(ts);
         ts << "children";
 
-        for (auto& childNode : *node.children())
-            recursiveDumpNodes(ts, *childNode, changedPropertiesOnly);
+        for (auto& childNode : node.children())
+            recursiveDumpNodes(ts, childNode, changedPropertiesOnly);
     }
 }
 
@@ -868,7 +862,7 @@ static void dump(TextStream& ts, const ScrollingStateTree& stateTree, bool chang
     ts.dumpProperty("has new root node", stateTree.hasNewRootStateNode());
 
     if (stateTree.rootStateNode())
-        recursiveDumpNodes(ts, *stateTree.rootStateNode(), changedPropertiesOnly);
+        recursiveDumpNodes(ts, Ref { *stateTree.rootStateNode() }, changedPropertiesOnly);
 }
 
 String RemoteScrollingCoordinatorTransaction::description() const

@@ -12,7 +12,7 @@ features: [BigInt, Symbol, Temporal]
 const timeZone = new Temporal.TimeZone("UTC");
 const instance = new Temporal.Duration(1, 0, 0, 1);
 
-const rangeErrorTests = [
+const primitiveTests = [
   [undefined, "undefined"],
   [null, "null"],
   [true, "boolean"],
@@ -21,8 +21,12 @@ const rangeErrorTests = [
   [1n, "bigint"],
 ];
 
-for (const [relativeTo, description] of rangeErrorTests) {
-  assert.throws(RangeError, () => instance.add(new Temporal.Duration(0, 0, 0, 0, -24), { relativeTo }), `${description} does not convert to a valid ISO string`);
+for (const [relativeTo, description] of primitiveTests) {
+  assert.throws(
+    typeof relativeTo === 'string' || typeof relativeTo === 'undefined' ? RangeError : TypeError,
+    () => instance.add(new Temporal.Duration(0, 0, 0, 0, -24), { relativeTo }),
+    `${description} does not convert to a valid ISO string (first argument)`
+  );
 }
 
 const typeErrorTests = [

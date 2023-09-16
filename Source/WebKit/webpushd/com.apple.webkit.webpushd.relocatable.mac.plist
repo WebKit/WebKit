@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>EnablePressuredExit</key>
+	<true/>
+	<key>EnableTransactions</key>
+	<true/>
+	<key>Label</key>
+	<string>com.apple.webkit.webpushd</string>
+	<key>MachServices</key>
+	<dict>
+		<key>com.apple.webkit.webpushd.relocatable.service</key>
+		<true/>
+		<key>com.apple.aps.webkit.webpushd.relocatable.incoming-push</key>
+		<true/>
+	</dict>
+	<key>ProcessType</key>
+	<string>Adaptive</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>${INSTALL_PATH}/${PRODUCT_NAME}</string>
+		<string>--machServiceName</string>
+		<string>com.apple.webkit.webpushd.relocatable.service</string>
+	</array>
+	<key>StandardErrorPath</key>
+	<string>/dev/null</string>
+</dict>
+</plist>

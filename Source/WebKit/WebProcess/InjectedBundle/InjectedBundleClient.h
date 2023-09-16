@@ -51,8 +51,8 @@ public:
 
     void didCreatePage(InjectedBundle&, WebPage&) override;
     void willDestroyPage(InjectedBundle&, WebPage&) override;
-    void didReceiveMessage(InjectedBundle&, const WTF::String&, API::Object*) override;
-    void didReceiveMessageToPage(InjectedBundle&, WebPage&, const WTF::String&, API::Object*) override;
+    void didReceiveMessage(InjectedBundle&, const WTF::String&, RefPtr<API::Object>&&) override;
+    void didReceiveMessageToPage(InjectedBundle&, WebPage&, const WTF::String&, RefPtr<API::Object>&&) override;
 };
 
 } // namespace WebKit

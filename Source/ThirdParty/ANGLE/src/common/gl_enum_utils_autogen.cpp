@@ -2110,6 +2110,8 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                     return "GL_FETCH_PER_SAMPLE_ARM";
                 case 0x8F66:
                     return "GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM";
+                case 0x8F69:
+                    return "GL_TEXTURE_ASTC_DECODE_PRECISION_EXT";
                 case 0x8F94:
                     return "GL_R8_SNORM";
                 case 0x8F95:
@@ -23630,6 +23632,7 @@ static StringEnumEntry g_stringEnumTable[] = {
     {"GL_STENCIL_INDEX8", 0x8D48},
     {"GL_STENCIL_INDEX8_EXT", 0x8D48},
     {"GL_STENCIL_INDEX8_OES", 0x8D48},
+    {"GL_STENCIL_INDEX_ANGLE", 0x1901},
     {"GL_STENCIL_INDEX_OES", 0x1901},
     {"GL_STENCIL_OP_VALUE_AMD", 0x874C},
     {"GL_STENCIL_PASS_DEPTH_FAIL", 0x0B95},

@@ -29,19 +29,21 @@
 #import "DestinationColorSpace.h"
 #import "HostWindow.h"
 #import "IOSurfacePool.h"
+#import "ImageBufferBackend.h"
 #import "Logging.h"
 #import "PlatformScreen.h"
 #import "ProcessCapabilities.h"
 #import "ProcessIdentity.h"
-#import <pal/cocoa/QuartzCoreSoftLink.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/MathExtras.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/TextStream.h>
 
 #import "CoreVideoSoftLink.h"
 #import <pal/cg/CoreGraphicsSoftLink.h>
+#import <pal/cocoa/QuartzCoreSoftLink.h>
 
 namespace WebCore {
 
@@ -299,10 +301,9 @@ static IntSize computeMaximumSurfaceSize()
 {
     auto maxSize = IntSize { clampToInteger(IOSurfaceGetPropertyMaximum(kIOSurfaceWidth)), clampToInteger(IOSurfaceGetPropertyMaximum(kIOSurfaceHeight)) };
 
-#if PLATFORM(IOS_FAMILY)
     // On iOS, there's an additional 8K clamp in CA (rdar://101936907).
+    // On some macOS VMs, IOSurfaceGetPropertyMaximum() returns INT_MAX (rdar://113661708).
     maxSize.clampToMaximumSize(fallbackMaxSurfaceDimension());
-#endif
 
     if (maxSize.isZero())
         maxSize = fallbackMaxSurfaceDimension();

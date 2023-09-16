@@ -15,6 +15,7 @@
 #include "libANGLE/renderer/OverlayImpl.h"
 #include "libANGLE/renderer/d3d/CompilerD3D.h"
 #include "libANGLE/renderer/d3d/ProgramD3D.h"
+#include "libANGLE/renderer/d3d/ProgramExecutableD3D.h"
 #include "libANGLE/renderer/d3d/RenderbufferD3D.h"
 #include "libANGLE/renderer/d3d/SamplerD3D.h"
 #include "libANGLE/renderer/d3d/ShaderD3D.h"
@@ -59,6 +60,11 @@ ShaderImpl *Context9::createShader(const gl::ShaderState &data)
 ProgramImpl *Context9::createProgram(const gl::ProgramState &data)
 {
     return new ProgramD3D(data, mRenderer);
+}
+
+ProgramExecutableImpl *Context9::createProgramExecutable(const gl::ProgramExecutable *executable)
+{
+    return new ProgramExecutableD3D(executable);
 }
 
 FramebufferImpl *Context9::createFramebuffer(const gl::FramebufferState &data)
@@ -423,10 +429,10 @@ angle::Result Context9::popDebugGroup(const gl::Context *context)
 }
 
 angle::Result Context9::syncState(const gl::Context *context,
-                                  const gl::state::DirtyBits &dirtyBits,
-                                  const gl::state::DirtyBits &bitMask,
-                                  const gl::state::ExtendedDirtyBits &extendedDirtyBits,
-                                  const gl::state::ExtendedDirtyBits &extendedBitMask,
+                                  const gl::state::DirtyBits dirtyBits,
+                                  const gl::state::DirtyBits bitMask,
+                                  const gl::state::ExtendedDirtyBits extendedDirtyBits,
+                                  const gl::state::ExtendedDirtyBits extendedBitMask,
                                   gl::Command command)
 {
     mRenderer->getStateManager()->syncState(mState, dirtyBits, extendedDirtyBits);

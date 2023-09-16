@@ -34,6 +34,7 @@
 #include "RemoteMediaPlayerManagerProxyMessages.h"
 #include "RemoteMediaPlayerProxy.h"
 #include "RemoteMediaPlayerProxyConfiguration.h"
+#include "RemoteVideoFrameObjectHeap.h"
 #include "ScopedRenderingResourcesRequest.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/MediaPlayer.h>
@@ -73,7 +74,7 @@ void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier iden
     ASSERT(m_gpuConnectionToWebProcess);
     ASSERT(!m_proxies.contains(identifier));
 
-    auto proxy = RemoteMediaPlayerProxy::create(*this, identifier, m_gpuConnectionToWebProcess->connection(), engineIdentifier, WTFMove(proxyConfiguration), m_gpuConnectionToWebProcess->videoFrameObjectHeap(), m_gpuConnectionToWebProcess->webProcessIdentity());
+    auto proxy = RemoteMediaPlayerProxy::create(*this, identifier, Ref { m_gpuConnectionToWebProcess->connection() }, engineIdentifier, WTFMove(proxyConfiguration), Ref { m_gpuConnectionToWebProcess->videoFrameObjectHeap() }, m_gpuConnectionToWebProcess->webProcessIdentity());
     m_proxies.add(identifier, WTFMove(proxy));
 }
 
@@ -97,7 +98,7 @@ void RemoteMediaPlayerManagerProxy::getSupportedTypes(MediaPlayerEnums::MediaEng
         return;
     }
 
-    HashSet<String, ASCIICaseInsensitiveHash> engineTypes;
+    HashSet<String> engineTypes;
     engine->getSupportedTypes(engineTypes);
 
     auto result = WTF::map(engineTypes, [] (auto& type) {

@@ -20,3 +20,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-type-001.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-type-002.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-type-003.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-with-filter.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-with-rotation.svg

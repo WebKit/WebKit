@@ -67,6 +67,8 @@ bool ApplicationManifestLoader::startLoading()
 #endif
 
     auto credentials = m_useCredentials ? FetchOptions::Credentials::Include : FetchOptions::Credentials::Omit;
+    // The "linked resource fetch setup steps" are defined as part of:
+    // https://html.spec.whatwg.org/#link-type-manifest
     auto options = ResourceLoaderOptions(
         SendCallbackPolicy::SendCallbacks,
         ContentSniffingPolicy::SniffContent,
@@ -75,12 +77,13 @@ bool ApplicationManifestLoader::startLoading()
         ClientCredentialPolicy::CannotAskClientForCredentials,
         credentials,
         SecurityCheckPolicy::DoSecurityCheck,
-        FetchOptions::Mode::NoCors,
+        FetchOptions::Mode::Cors,
         CertificateInfoPolicy::DoNotIncludeCertificateInfo,
         ContentSecurityPolicyImposition::DoPolicyCheck,
         DefersLoadingPolicy::AllowDefersLoading,
         CachingPolicy::AllowCaching);
     options.destination = FetchOptions::Destination::Manifest;
+    options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
     CachedResourceRequest request(WTFMove(resourceRequest), options);
 
     auto cachedResource = frame->document()->cachedResourceLoader().requestApplicationManifest(WTFMove(request));

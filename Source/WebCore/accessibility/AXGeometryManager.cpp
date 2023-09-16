@@ -36,6 +36,7 @@
 #endif
 
 namespace WebCore {
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AXGeometryManager);
 
 AXGeometryManager::AXGeometryManager(AXObjectCache& owningCache)
     : m_cache(owningCache)

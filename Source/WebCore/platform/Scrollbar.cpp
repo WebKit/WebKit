@@ -227,7 +227,7 @@ void Scrollbar::startTimerIfNeeded(Seconds delay)
 
     // We can't scroll if we've hit the beginning or end.
     ScrollDirection dir = pressedPartScrollDirection();
-    if (dir == ScrollUp || dir == ScrollLeft) {
+    if (dir == ScrollDirection::ScrollUp || dir == ScrollDirection::ScrollLeft) {
         if (m_currentPos == 0)
             return;
     } else {
@@ -248,12 +248,12 @@ ScrollDirection Scrollbar::pressedPartScrollDirection()
 {
     if (m_orientation == ScrollbarOrientation::Horizontal) {
         if (m_pressedPart == BackButtonStartPart || m_pressedPart == BackButtonEndPart || m_pressedPart == BackTrackPart)
-            return ScrollLeft;
-        return ScrollRight;
+            return ScrollDirection::ScrollLeft;
+        return ScrollDirection::ScrollRight;
     } else {
         if (m_pressedPart == BackButtonStartPart || m_pressedPart == BackButtonEndPart || m_pressedPart == BackTrackPart)
-            return ScrollUp;
-        return ScrollDown;
+            return ScrollDirection::ScrollUp;
+        return ScrollDirection::ScrollDown;
     }
 }
 

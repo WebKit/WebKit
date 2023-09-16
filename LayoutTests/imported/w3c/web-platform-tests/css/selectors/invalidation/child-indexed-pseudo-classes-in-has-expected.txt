@@ -11,56 +11,56 @@ PASS Prepend #div1.green: #last_child
 PASS Prepend #div1.green: #nth_child_3n_1
 PASS Prepend #div1.green: #nth_child_3n_2
 PASS Prepend #div1.green: #nth_child_3n
-FAIL Prepend #div2.yellow: #only_child assert_equals: expected "rgb(128, 128, 128)" but got "rgb(255, 0, 0)"
+PASS Prepend #div2.yellow: #only_child
 PASS Prepend #div2.yellow: #first_child
 PASS Prepend #div2.yellow: #last_child
 PASS Prepend #div2.yellow: #nth_child_3n_1
-FAIL Prepend #div2.yellow: #nth_child_3n_2 assert_equals: expected "rgb(0, 128, 0)" but got "rgb(128, 128, 128)"
+PASS Prepend #div2.yellow: #nth_child_3n_2
 PASS Prepend #div2.yellow: #nth_child_3n
-FAIL Prepend #div3.orange: #only_child assert_equals: expected "rgb(128, 128, 128)" but got "rgb(255, 0, 0)"
+PASS Prepend #div3.orange: #only_child
 PASS Prepend #div3.orange: #first_child
 PASS Prepend #div3.orange: #last_child
 PASS Prepend #div3.orange: #nth_child_3n_1
-FAIL Prepend #div3.orange: #nth_child_3n_2 assert_equals: expected "rgb(255, 255, 0)" but got "rgb(128, 128, 128)"
-FAIL Prepend #div3.orange: #nth_child_3n assert_equals: expected "rgb(0, 128, 0)" but got "rgb(128, 128, 128)"
-FAIL Prepend #div4: #only_child assert_equals: expected "rgb(128, 128, 128)" but got "rgb(255, 0, 0)"
-FAIL Prepend #div4: #first_child assert_equals: expected "rgb(128, 128, 128)" but got "rgb(255, 165, 0)"
+PASS Prepend #div3.orange: #nth_child_3n_2
+PASS Prepend #div3.orange: #nth_child_3n
+PASS Prepend #div4: #only_child
+PASS Prepend #div4: #first_child
 PASS Prepend #div4: #last_child
-FAIL Prepend #div4: #nth_child_3n_1 assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 165, 0)"
-FAIL Prepend #div4: #nth_child_3n_2 assert_equals: expected "rgb(255, 165, 0)" but got "rgb(128, 128, 128)"
-FAIL Prepend #div4: #nth_child_3n assert_equals: expected "rgb(255, 255, 0)" but got "rgb(128, 128, 128)"
-FAIL Prepend #div5: #only_child assert_equals: expected "rgb(128, 128, 128)" but got "rgb(255, 0, 0)"
-FAIL Prepend #div5: #first_child assert_equals: expected "rgb(128, 128, 128)" but got "rgb(255, 165, 0)"
+PASS Prepend #div4: #nth_child_3n_1
+PASS Prepend #div4: #nth_child_3n_2
+PASS Prepend #div4: #nth_child_3n
+PASS Prepend #div5: #only_child
+PASS Prepend #div5: #first_child
 PASS Prepend #div5: #last_child
-FAIL Prepend #div5: #nth_child_3n_1 assert_equals: expected "rgb(255, 255, 0)" but got "rgb(255, 165, 0)"
-FAIL Prepend #div5: #nth_child_3n_2 assert_equals: expected "rgb(0, 128, 0)" but got "rgb(128, 128, 128)"
-FAIL Prepend #div5: #nth_child_3n assert_equals: expected "rgb(255, 165, 0)" but got "rgb(128, 128, 128)"
-FAIL Remove #div1: #only_child assert_equals: expected "rgb(128, 128, 128)" but got "rgb(255, 0, 0)"
-FAIL Remove #div1: #first_child assert_equals: expected "rgb(128, 128, 128)" but got "rgb(255, 165, 0)"
+PASS Prepend #div5: #nth_child_3n_1
+PASS Prepend #div5: #nth_child_3n_2
+PASS Prepend #div5: #nth_child_3n
+PASS Remove #div1: #only_child
+PASS Remove #div1: #first_child
 PASS Remove #div1: #last_child
-FAIL Remove #div1: #nth_child_3n_1 assert_equals: expected "rgb(255, 255, 0)" but got "rgb(255, 165, 0)"
+PASS Remove #div1: #nth_child_3n_1
 PASS Remove #div1: #nth_child_3n_2
-FAIL Remove #div1: #nth_child_3n assert_equals: expected "rgb(255, 165, 0)" but got "rgb(128, 128, 128)"
-FAIL Remove #div2: #only_child assert_equals: expected "rgb(128, 128, 128)" but got "rgb(255, 0, 0)"
-FAIL Remove #div2: #first_child assert_equals: expected "rgb(128, 128, 128)" but got "rgb(255, 165, 0)"
+PASS Remove #div1: #nth_child_3n
+PASS Remove #div2: #only_child
+PASS Remove #div2: #first_child
 PASS Remove #div2: #last_child
 PASS Remove #div2: #nth_child_3n_1
 PASS Remove #div2: #nth_child_3n_2
-FAIL Remove #div2: #nth_child_3n assert_equals: expected "rgb(255, 165, 0)" but got "rgb(128, 128, 128)"
-FAIL Remove #div3: #only_child assert_equals: expected "rgb(128, 128, 128)" but got "rgb(255, 0, 0)"
-FAIL Remove #div3: #first_child assert_equals: expected "rgb(128, 128, 128)" but got "rgb(255, 165, 0)"
+PASS Remove #div2: #nth_child_3n
+PASS Remove #div3: #only_child
+PASS Remove #div3: #first_child
 PASS Remove #div3: #last_child
 PASS Remove #div3: #nth_child_3n_1
 PASS Remove #div3: #nth_child_3n_2
 PASS Remove #div3: #nth_child_3n
 PASS Remove #div4: #only_child
-FAIL Remove #div4: #first_child assert_equals: expected "rgb(128, 128, 128)" but got "rgb(255, 165, 0)"
+PASS Remove #div4: #first_child
 PASS Remove #div4: #last_child
 PASS Remove #div4: #nth_child_3n_1
 PASS Remove #div4: #nth_child_3n_2
 PASS Remove #div4: #nth_child_3n
 PASS Remove #div5: #only_child
-FAIL Remove #div5: #first_child assert_equals: expected "rgb(128, 128, 128)" but got "rgb(255, 165, 0)"
+PASS Remove #div5: #first_child
 PASS Remove #div5: #last_child
 PASS Remove #div5: #nth_child_3n_1
 PASS Remove #div5: #nth_child_3n_2

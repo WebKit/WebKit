@@ -1,9 +1,9 @@
 
 PASS :has(:scope) matches expected elements on scope1
-FAIL :has(:scope .c) matches expected elements on scope1 assert_equals: expected "" but got "d02"
+PASS :has(:scope .c) matches expected elements on scope1
 PASS :has(.a :scope) matches expected elements on scope1
-FAIL .a:has(:scope) .c matches expected elements on scope1 assert_equals: expected "d02,d03" but got ""
-FAIL .a:has(:scope) .c and :is(.a :scope .c) returns same elements on scope1 assert_equals: expected "d02,d03" but got ""
+PASS .a:has(:scope) .c matches expected elements on scope1
+PASS .a:has(:scope) .c and :is(.a :scope .c) returns same elements on scope1
 PASS .a:has(:scope) .c matches expected elements on scope2
 PASS .a:has(:scope) .c and :is(.a :scope .c) returns same elements on scope2
 PASS .c:has(:is(:scope .d)) matches expected elements on scope1

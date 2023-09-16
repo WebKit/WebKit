@@ -70,7 +70,7 @@ bool CustomPropertyRegistry::registerFromAPI(CSSRegisteredCustomProperty&& prope
     // First registration wins.
     // https://drafts.css-houdini.org/css-properties-values-api/#determining-registration
     auto success = m_propertiesFromAPI.ensure(property.name, [&] {
-        return makeUnique<const CSSRegisteredCustomProperty>(WTFMove(property));
+        return makeUniqueRef<CSSRegisteredCustomProperty>(WTFMove(property));
     }).isNewEntry;
 
     if (success) {
@@ -96,44 +96,40 @@ void CustomPropertyRegistry::registerFromStylesheet(const StyleRuleProperty::Des
 
     auto& document = m_scope.document();
 
-    auto initialValue = [&]() -> RefPtr<CSSCustomPropertyValue> {
-        if (!descriptor.initialValue) {
-            // "If the value of the syntax descriptor is the universal syntax definition, then the initial-value descriptor is optional.
-            //  If omitted, the initial value of the property is the guaranteed-invalid value."
-            // https://drafts.css-houdini.org/css-properties-values-api/#initial-value-descriptor
-            if (syntax->isUniversal())
-                return CSSCustomPropertyValue::createWithID(descriptor.name, CSSValueInvalid);
+    RefPtr<CSSCustomPropertyValue> initialValue;
+    RefPtr<CSSVariableData> initialValueTokensForViewportUnits;
 
-            return nullptr;
-        }
-
+    if (descriptor.initialValue) {
         auto tokenRange = descriptor.initialValue->tokenRange();
 
-        // FIXME: This parses twice.
-        auto dependencies = CSSPropertyParser::collectParsedCustomPropertyValueDependencies(*syntax, tokenRange, strictCSSParserContext());
-        if (!dependencies.isEmpty())
-            return nullptr;
+        auto parsedInitialValue = parseInitialValue(document, descriptor.name, *syntax, tokenRange);
+        if (!parsedInitialValue)
+            return;
 
-        // We don't need to provide a real context style since only computationally independent values are allowed (no 'em' etc).
-        auto placeholderStyle = RenderStyle::create();
-        Style::Builder builder { placeholderStyle, { document, RenderStyle::defaultStyle() }, { }, { } };
-
-        return CSSPropertyParser::parseTypedCustomPropertyInitialValue(descriptor.name, *syntax, tokenRange, builder.state(), { document });
-    }();
-
-    if (!initialValue)
+        initialValue = parsedInitialValue->first;
+        if (parsedInitialValue->second == ViewportUnitDependency::Yes) {
+            initialValueTokensForViewportUnits = CSSVariableData::create(tokenRange);
+            m_scope.document().setHasStyleWithViewportUnits();
+        }
+    } else if (syntax->isUniversal()) {
+        // "If the value of the syntax descriptor is the universal syntax definition, then the initial-value descriptor is optional.
+        //  If omitted, the initial value of the property is the guaranteed-invalid value."
+        // https://drafts.css-houdini.org/css-properties-values-api/#initial-value-descriptor
+        initialValue = CSSCustomPropertyValue::createWithID(descriptor.name, CSSValueInvalid);
+    } else
         return;
 
     auto property = CSSRegisteredCustomProperty {
         AtomString { descriptor.name },
         *syntax,
         *descriptor.inherits,
-        WTFMove(initialValue)
+        WTFMove(initialValue),
+        WTFMove(initialValueTokensForViewportUnits)
     };
 
     // Last rule wins.
     // https://drafts.css-houdini.org/css-properties-values-api/#determining-registration
-    m_propertiesFromStylesheet.set(property.name, makeUnique<const CSSRegisteredCustomProperty>(WTFMove(property)));
+    m_propertiesFromStylesheet.set(property.name, makeUniqueRef<CSSRegisteredCustomProperty>(WTFMove(property)));
 
     invalidate(property.name);
 }
@@ -192,6 +188,53 @@ void CustomPropertyRegistry::notifyAnimationsOfCustomPropertyRegistration(const 
             }
         }
     }
+}
+
+auto CustomPropertyRegistry::parseInitialValue(const Document& document, const AtomString& propertyName, const CSSCustomPropertySyntax& syntax, CSSParserTokenRange tokenRange) -> Expected<std::pair<RefPtr<CSSCustomPropertyValue>, ViewportUnitDependency>, ParseInitialValueError>
+{
+    // FIXME: This parses twice.
+    auto dependencies = CSSPropertyParser::collectParsedCustomPropertyValueDependencies(syntax, tokenRange, strictCSSParserContext());
+    if (!dependencies.isComputationallyIndependent())
+        return makeUnexpected(ParseInitialValueError::NotComputationallyIndependent);
+
+    // We don't need to provide a real context style since only computationally independent values are allowed (no 'em' etc).
+    auto placeholderStyle = RenderStyle::create();
+    Style::Builder builder { placeholderStyle, { document, RenderStyle::defaultStyle() }, { }, { } };
+
+    auto initialValue = CSSPropertyParser::parseTypedCustomPropertyInitialValue(propertyName, syntax, tokenRange, builder.state(), { document });
+    if (!initialValue)
+        return makeUnexpected(ParseInitialValueError::DidNotParse);
+
+    return std::pair { WTFMove(initialValue), dependencies.viewportDimensions ? ViewportUnitDependency::Yes : ViewportUnitDependency::No };
+}
+
+bool CustomPropertyRegistry::invalidatePropertiesWithViewportUnits(Document& document)
+{
+    bool invalidatedAny = false;
+
+    auto invalidatePropertiesWithViewportUnits = [&](auto& map) {
+        for (auto& property : map.values()) {
+            if (!property->initialValueTokensForViewportUnits)
+                continue;
+
+            auto tokenRange = property->initialValueTokensForViewportUnits->tokenRange();
+            auto parsedInitialValue = parseInitialValue(document, property->name, property->syntax, tokenRange);
+            if (!parsedInitialValue) {
+                ASSERT_NOT_REACHED();
+                continue;
+            }
+            property->initialValue = WTFMove(parsedInitialValue->first);
+            ASSERT(parsedInitialValue->second == ViewportUnitDependency::Yes);
+
+            invalidate(property->name);
+            invalidatedAny = true;
+        }
+    };
+
+    invalidatePropertiesWithViewportUnits(m_propertiesFromAPI);
+    invalidatePropertiesWithViewportUnits(m_propertiesFromStylesheet);
+
+    return invalidatedAny;
 }
 
 }

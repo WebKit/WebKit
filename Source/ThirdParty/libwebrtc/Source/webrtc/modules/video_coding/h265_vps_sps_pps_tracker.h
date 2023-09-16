@@ -11,20 +11,17 @@
 #ifndef MODULES_VIDEO_CODING_H265_VPS_SPS_PPS_TRACKER_H_
 #define MODULES_VIDEO_CODING_H265_VPS_SPS_PPS_TRACKER_H_
 
+#include <cstddef>
 #include <cstdint>
 #include <map>
 #include <memory>
 #include <vector>
 
 #include "api/array_view.h"
-#include "modules/include/module_common_types.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "rtc_base/copy_on_write_buffer.h"
 
 namespace webrtc {
-
-class VCMPacket;
-
 namespace video_coding {
 
 class H265VpsSpsPpsTracker {
@@ -35,7 +32,6 @@ class H265VpsSpsPpsTracker {
     rtc::CopyOnWriteBuffer bitstream;
   };
 
-  // Returns fixed bitstream and modifies |video_header|.
   FixedBitstream CopyAndFixBitstream(rtc::ArrayView<const uint8_t> bitstream,
                                      RTPVideoHeader* video_header);
 
@@ -71,4 +67,4 @@ class H265VpsSpsPpsTracker {
 }  // namespace video_coding
 }  // namespace webrtc
 
-#endif  // MODULES_VIDEO_CODING_H264_SPS_PPS_TRACKER_H_
+#endif  // MODULES_VIDEO_CODING_H265_SPS_PPS_TRACKER_H_

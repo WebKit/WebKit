@@ -160,15 +160,6 @@ public:
 
     const Parameters& parameters() { return m_parameters; }
 
-    template<typename T>
-    T toBackendCoordinates(T t) const
-    {
-        static_assert(std::is_same<T, IntPoint>::value || std::is_same<T, IntSize>::value || std::is_same<T, IntRect>::value);
-        if (resolutionScale() != 1)
-            t.scale(resolutionScale());
-        return t;
-    }
-
     WEBCORE_EXPORT virtual String debugDescription() const = 0;
 
 protected:

@@ -1,0 +1,13 @@
+<div id=container>existing content<br></div>
+<script>
+for (let i = 0; i < 100; ++i) {
+  let span = document.createElement("span");
+  let text = document.createTextNode("some text");
+  let br = document.createElement("br");
+
+  span.appendChild(text);
+  container.appendChild(span);
+  container.appendChild(br);
+  document.body.offsetHeight;
+}
+</script>

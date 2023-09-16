@@ -4,6 +4,7 @@ URL: https://github.com/bazelbuild/bazel
 Version: 1.1.0
 License: Apache 2.0
 Security Critical: no
+Shipped: yes
 
 Description:
 Desugar is a Google-developed open-source Java library used by the build process

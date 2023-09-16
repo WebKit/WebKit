@@ -2,11 +2,13 @@
 PASS em relative inline-size
 PASS rem relative inline-size
 PASS ex relative inline-size
-FAIL rex relative inline-size assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS rex relative inline-size
 PASS ch relative inline-size
-FAIL rch relative inline-size assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS rch relative inline-size
 PASS ic relative inline-size
-FAIL ric relative inline-size assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS ric relative inline-size
 PASS lh relative inline-size
 PASS rlh relative inline-size
+PASS cap relative inline-size
+PASS rcap relative inline-size
 

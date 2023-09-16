@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ErrorType.h"
 #include "Nodes.h"
 
 namespace JSC {
@@ -39,7 +40,7 @@ class ModuleAnalyzer {
 public:
     ModuleAnalyzer(JSGlobalObject*, const Identifier& moduleKey, const SourceCode&, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables, CodeFeatures);
 
-    Expected<JSModuleRecord*, String> analyze(ModuleProgramNode&);
+    Expected<JSModuleRecord*, std::tuple<ErrorType, String>> analyze(ModuleProgramNode&);
 
     VM& vm() { return m_vm; }
 
@@ -47,7 +48,7 @@ public:
 
     void appendRequestedModule(const Identifier&, RefPtr<ScriptFetchParameters>&&);
 
-    void fail(const String& errorMessage) { m_errorMessage = errorMessage; }
+    void fail(std::tuple<ErrorType, String>&& errorMessage) { m_errorMessage = errorMessage; }
 
 private:
     void exportVariable(ModuleProgramNode&, const RefPtr<UniquedStringImpl>&, const VariableEnvironmentEntry&);
@@ -55,7 +56,7 @@ private:
     VM& m_vm;
     JSModuleRecord* m_moduleRecord;
     IdentifierSet m_requestedModules;
-    String m_errorMessage;
+    std::tuple<ErrorType, String> m_errorMessage;
 };
 
 } // namespace JSC

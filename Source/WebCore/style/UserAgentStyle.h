@@ -49,6 +49,7 @@ public:
     static StyleSheetContents* plugInsStyleSheet;
     static StyleSheetContents* popoverStyleSheet;
     static StyleSheetContents* counterStylesStyleSheet;
+    static StyleSheetContents* rubyStyleSheet;
 #if ENABLE(FULLSCREEN_API)
     static StyleSheetContents* fullscreenStyleSheet;
 #endif

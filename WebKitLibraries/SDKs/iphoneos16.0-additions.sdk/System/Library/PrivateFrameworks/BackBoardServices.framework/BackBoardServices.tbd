@@ -1,9 +1,18 @@
---- !tapi-tbd-v3
-archs:           [ x86_64, arm64, arm64e ]
-install-name:    '/System/Library/PrivateFrameworks/BackBoardServices.framework/BackBoardServices'
-objc-constraint: none
-platform: ios
+--- !tapi-tbd
+tbd-version: 4
+targets: [armv7-ios, armv7s-ios, arm64-ios, arm64e-ios]
+install-name: /System/Library/PrivateFrameworks/BackBoardServices.framework/BackBoardServices
+reexported-libraries:
+-       targets: [armv7-ios, armv7s-ios, arm64-ios, arm64e-ios]
+        libraries: [/System/Library/PrivateFrameworks/AssertionServices.framework/AssertionServices]
 exports:
-  - archs:           [ x86_64, arm64, arm64e ]
-    objc-classes:    [ BKSMousePointerDevice, BKSMousePointerService ]
+-       targets: [armv7-ios, armv7s-ios, arm64-ios, arm64e-ios]
+        objc-classes: [BKSMousePointerService]
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [armv7-ios, armv7s-ios, arm64-ios, arm64e-ios]
+install-name: /System/Library/PrivateFrameworks/AssertionServices.framework/AssertionServices
+current-version: 803.120.4
+exports: []
 ...

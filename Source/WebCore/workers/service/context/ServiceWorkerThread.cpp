@@ -72,6 +72,7 @@ public:
 
 private:
     void postExceptionToWorkerObject(const String&, int, int, const String&) final { };
+    void reportErrorToWorkerObject(const String&) final { };
     void workerGlobalScopeDestroyed() final { };
     void postMessageToWorkerObject(MessageWithMessagePorts&&) final { };
 };

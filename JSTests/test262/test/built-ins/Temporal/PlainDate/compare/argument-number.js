@@ -3,32 +3,26 @@
 
 /*---
 esid: sec-temporal.plaindate.compare
-description: A number is converted to a string, then to Temporal.PlainDate
+description: A number cannot be used in place of a Temporal.PlainDate
 features: [Temporal]
 ---*/
 
-const arg = 19761118;
-
-const result1 = Temporal.PlainDate.compare(arg, new Temporal.PlainDate(1976, 11, 18));
-assert.sameValue(result1, 0, "19761118 is a valid ISO string for PlainDate (first argument)");
-const result2 = Temporal.PlainDate.compare(new Temporal.PlainDate(1976, 11, 18), arg);
-assert.sameValue(result2, 0, "19761118 is a valid ISO string for PlainDate (second argument)");
-
 const numbers = [
   1,
+  19761118,
   -19761118,
   1234567890,
 ];
 
 for (const arg of numbers) {
   assert.throws(
-    RangeError,
+    TypeError,
     () => Temporal.PlainDate.compare(arg, new Temporal.PlainDate(1976, 11, 18)),
-    `Number ${arg} does not convert to a valid ISO string for PlainDate (first argument)`
+    "A number is not a valid ISO string for PlainDate (first argument)"
   );
   assert.throws(
-    RangeError,
+    TypeError,
     () => Temporal.PlainDate.compare(new Temporal.PlainDate(1976, 11, 18), arg),
-    `Number ${arg} does not convert to a valid ISO string for PlainDate (second argument)`
+    "A number is not a valid ISO string for PlainDate (second argument)"
   );
 }

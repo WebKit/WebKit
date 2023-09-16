@@ -83,7 +83,7 @@ generators = {
     'DXGI format support':
         'src/libANGLE/renderer/gen_dxgi_support_tables.py',
     'Emulated HLSL functions':
-        'src/compiler/translator/gen_emulated_builtin_function_tables.py',
+        'src/compiler/translator/hlsl/gen_emulated_builtin_function_tables.py',
     'Extension files':
         'src/libANGLE/gen_extensions.py',
     'GL copy conversion table':
@@ -134,7 +134,7 @@ generators = {
 # Fast and supports --verify-only without hashes.
 hashless_generators = {
     'ANGLE features': 'include/platform/gen_features.py',
-    #'Test spec JSON': 'infra/specs/generate_test_spec_json.py',
+    'Test spec JSON': 'infra/specs/generate_test_spec_json.py',
 }
 
 

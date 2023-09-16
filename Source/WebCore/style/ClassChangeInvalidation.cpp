@@ -114,30 +114,65 @@ void ClassChangeInvalidation::computeInvalidation(const SpaceSplitString& oldCla
     if (shouldInvalidateCurrent)
         m_element.invalidateStyle();
 
-    auto& ruleSets = m_element.styleResolver().ruleSets();
+    auto invalidateBeforeAndAfterChange = [](MatchElement matchElement) {
+        switch (matchElement) {
+        case MatchElement::AnySibling:
+        case MatchElement::ParentAnySibling:
+        case MatchElement::AncestorAnySibling:
+        case MatchElement::HasAnySibling:
+        case MatchElement::HasNonSubjectOrScopeBreaking:
+            return true;
+        case MatchElement::Subject:
+        case MatchElement::Parent:
+        case MatchElement::Ancestor:
+        case MatchElement::DirectSibling:
+        case MatchElement::IndirectSibling:
+        case MatchElement::ParentSibling:
+        case MatchElement::AncestorSibling:
+        case MatchElement::HasChild:
+        case MatchElement::HasDescendant:
+        case MatchElement::HasSibling:
+        case MatchElement::HasSiblingDescendant:
+        case MatchElement::Host:
+        case MatchElement::HostChild:
+            return false;
+        }
+        ASSERT_NOT_REACHED();
+        return false;
+    };
 
-    auto invalidateBeforeChange = [](ClassChangeType type, IsNegation isNegation, MatchElement matchElement) {
-        if (matchElement == MatchElement::AnySibling || matchElement == MatchElement::HasNonSubjectOrScopeBreaking)
+    auto invalidateBeforeChange = [&](ClassChangeType type, IsNegation isNegation, MatchElement matchElement) {
+        if (invalidateBeforeAndAfterChange(matchElement))
             return true;
         return type == ClassChangeType::Remove ? isNegation == IsNegation::No : isNegation == IsNegation::Yes;
     };
 
-    auto invalidateAfterChange = [](ClassChangeType type, IsNegation isNegation, MatchElement matchElement) {
-        if (matchElement == MatchElement::AnySibling || matchElement == MatchElement::HasNonSubjectOrScopeBreaking)
+    auto invalidateAfterChange = [&](ClassChangeType type, IsNegation isNegation, MatchElement matchElement) {
+        if (invalidateBeforeAndAfterChange(matchElement))
             return true;
         return type == ClassChangeType::Add ? isNegation == IsNegation::No : isNegation == IsNegation::Yes;
     };
 
-    for (auto& classChange : classChanges) {
-        if (auto* invalidationRuleSets = ruleSets.classInvalidationRuleSets(classChange.className)) {
-            for (auto& invalidationRuleSet : *invalidationRuleSets) {
-                if (invalidateBeforeChange(classChange.type, invalidationRuleSet.isNegation, invalidationRuleSet.matchElement))
-                    Invalidator::addToMatchElementRuleSets(m_beforeChangeRuleSets, invalidationRuleSet);
-                if (invalidateAfterChange(classChange.type, invalidationRuleSet.isNegation, invalidationRuleSet.matchElement))
-                    Invalidator::addToMatchElementRuleSets(m_afterChangeRuleSets, invalidationRuleSet);
+    auto collect = [&](auto& ruleSets, std::optional<MatchElement> onlyMatchElement = { }) {
+        for (auto& classChange : classChanges) {
+            if (auto* invalidationRuleSets = ruleSets.classInvalidationRuleSets(classChange.className)) {
+                for (auto& invalidationRuleSet : *invalidationRuleSets) {
+                    if (onlyMatchElement && invalidationRuleSet.matchElement != onlyMatchElement)
+                        continue;
+
+                    if (invalidateBeforeChange(classChange.type, invalidationRuleSet.isNegation, invalidationRuleSet.matchElement))
+                        Invalidator::addToMatchElementRuleSets(m_beforeChangeRuleSets, invalidationRuleSet);
+                    if (invalidateAfterChange(classChange.type, invalidationRuleSet.isNegation, invalidationRuleSet.matchElement))
+                        Invalidator::addToMatchElementRuleSets(m_afterChangeRuleSets, invalidationRuleSet);
+                }
             }
         }
-    }
+    };
+
+    collect(m_element.styleResolver().ruleSets());
+
+    if (auto* shadowRoot = m_element.shadowRoot())
+        collect(shadowRoot->styleScope().resolver().ruleSets(), MatchElement::Host);
 }
 
 void ClassChangeInvalidation::invalidateBeforeChange()

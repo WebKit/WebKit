@@ -1,5 +1,5 @@
 
-FAIL Trying to transfer a SharedArrayBuffer to this window throws Can't find variable: SharedArrayBuffer
-FAIL Trying to transfer a SharedArrayBuffer to a worker throws Can't find variable: SharedArrayBuffer
-FAIL Trying to transfer a SharedArrayBuffer through a MessagePort throws Can't find variable: SharedArrayBuffer
+PASS Trying to transfer a SharedArrayBuffer to this window throws
+PASS Trying to transfer a SharedArrayBuffer to a worker throws
+PASS Trying to transfer a SharedArrayBuffer through a MessagePort throws
 

@@ -106,6 +106,8 @@ extern EGLContext *gContextMap2;
 extern GLsync *gSyncMap2;
 extern EGLSync *gEGLSyncMap;
 extern EGLDisplay gEGLDisplay;
+extern angle::ReplayResourceMode gReplayResourceMode;
+
 void InitializeReplay4(const char *binaryDataFileName,
                        size_t maxClientArraySize,
                        size_t readBufferSize,
@@ -265,7 +267,7 @@ void ValidateSerializedState(const char *serializedState, const char *fileName, 
 #define VALIDATE_CHECKPOINT(STATE) ValidateSerializedState(STATE, __FILE__, __LINE__)
 
 #if defined(__cplusplus)
-}  // extern "C"
+}       // extern "C"
 #endif  // defined(__cplusplus)
 
 #endif  // ANGLE_TRACE_FIXTURE_H_

@@ -21,12 +21,20 @@ VK_DEFINE_HANDLE(VmaVirtualBlock)
 namespace vma
 {
 typedef VkFlags VirtualBlockCreateFlags;
+#if ANGLE_VMA_VERSION < 3000000
 typedef enum VirtualBlockCreateFlagBits
 {
-    GENERAL = 0x0000000,
+    GENERAL = 0x00000000,
     LINEAR  = 0x00000001,
     BUDDY   = 0x00000002
 } VirtualBlockCreateFlagBits;
+#else
+typedef enum VirtualBlockCreateFlagBits
+{
+    GENERAL = 0x00000000,
+    LINEAR  = 0x00000001,
+} VirtualBlockCreateFlagBits;
+#endif
 
 typedef struct StatInfo
 {
@@ -77,6 +85,7 @@ VkResult AllocateAndBindMemoryForImage(VmaAllocator allocator,
                                        VkImage *pImage,
                                        VkMemoryPropertyFlags requiredFlags,
                                        VkMemoryPropertyFlags preferredFlags,
+                                       uint32_t memoryTypeBits,
                                        bool allocateDedicatedMemory,
                                        VmaAllocation *pAllocationOut,
                                        uint32_t *pMemoryTypeIndexOut,

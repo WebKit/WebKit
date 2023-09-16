@@ -33,8 +33,8 @@
 #import "WebExtensionControllerConfiguration.h"
 #import <WebCore/WebCoreObjCExtras.h>
 
-static constexpr NSString *persistentCodingKey = @"persistent";
-static constexpr NSString *identifierCodingKey = @"identifier";
+static NSString * const persistentCodingKey = @"persistent";
+static NSString * const identifierCodingKey = @"identifier";
 
 @implementation _WKWebExtensionControllerConfiguration
 
@@ -57,7 +57,7 @@ static constexpr NSString *identifierCodingKey = @"identifier";
 
 + (instancetype)configurationWithIdentifier:(NSUUID *)identifier
 {
-    NSParameterAssert(identifier);
+    NSParameterAssert([identifier isKindOfClass:NSUUID.class]);
 
     auto uuid = WTF::UUID::fromNSUUID(identifier);
     RELEASE_ASSERT(uuid);
@@ -66,7 +66,7 @@ static constexpr NSString *identifierCodingKey = @"identifier";
 
 - (void)encodeWithCoder:(NSCoder *)coder
 {
-    NSParameterAssert(coder);
+    NSParameterAssert([coder isKindOfClass:NSCoder.class]);
 
     [coder encodeObject:self.identifier forKey:identifierCodingKey];
     [coder encodeBool:self.persistent forKey:persistentCodingKey];
@@ -74,7 +74,7 @@ static constexpr NSString *identifierCodingKey = @"identifier";
 
 - (instancetype)initWithCoder:(NSCoder *)coder
 {
-    NSParameterAssert(coder);
+    NSParameterAssert([coder isKindOfClass:NSCoder.class]);
 
     if (!(self = [super init]))
         return nil;

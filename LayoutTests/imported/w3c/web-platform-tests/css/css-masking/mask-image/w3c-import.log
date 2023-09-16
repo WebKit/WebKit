@@ -122,9 +122,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-origin-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-origin-1-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-origin-1.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-origin-2-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-origin-2-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-origin-2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-origin-3-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-origin-3-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-origin-3.html

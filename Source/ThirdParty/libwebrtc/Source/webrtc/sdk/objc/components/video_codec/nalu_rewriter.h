@@ -18,7 +18,9 @@
 #include <vector>
 
 #include "common_video/h264/h264_common.h"
+#ifdef WEBRTC_USE_H265
 #include "common_video/h265/h265_common.h"
+#endif
 #include "rtc_base/buffer.h"
 
 using webrtc::H264::NaluIndex;
@@ -44,7 +46,7 @@ bool H264AnnexBBufferToCMSampleBuffer(const uint8_t* annexb_buffer,
                                       CMSampleBufferRef* out_sample_buffer,
                                       CMMemoryPoolRef memory_pool);
 
-#ifndef DISABLE_H265
+#ifdef WEBRTC_USE_H265
 // Converts a sample buffer emitted from the VideoToolbox encoder into a buffer
 // suitable for RTP. The sample buffer is in avcc format whereas the rtp buffer
 // needs to be in Annex B format. Data is written directly to |annexb_buffer|.

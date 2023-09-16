@@ -2553,6 +2553,9 @@ class CppStyleTest(CppStyleTestBase):
                          'Extra space before last semicolon. If this should be an '
                          'empty statement, use { } instead.'
                          '  [whitespace/semicolon] [5]')
+        self.assert_lint('case DAV1D_TASK_TYPE_FG_APPLY:;',
+                         'Semicolon defining empty statement. Use { } instead.'
+                         '  [whitespace/semicolon] [5]')
         self.assert_lint('default:;',
                          'Semicolon defining empty statement. Use { } instead.'
                          '  [whitespace/semicolon] [5]')

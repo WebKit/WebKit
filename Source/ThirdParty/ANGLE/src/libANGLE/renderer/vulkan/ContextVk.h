@@ -227,6 +227,10 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     {
         return mShareGroupVk->getDescriptorSetLayoutCache();
     }
+    vk::DescriptorSetArray<vk::MetaDescriptorPool> &getMetaDescriptorPools()
+    {
+        return mShareGroupVk->getMetaDescriptorPools();
+    }
 
     // Device loss
     gl::GraphicsResetStatus getResetStatus() override;
@@ -277,10 +281,10 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     // State sync with dirty bits.
     angle::Result syncState(const gl::Context *context,
-                            const gl::state::DirtyBits &dirtyBits,
-                            const gl::state::DirtyBits &bitMask,
-                            const gl::state::ExtendedDirtyBits &extendedDirtyBits,
-                            const gl::state::ExtendedDirtyBits &extendedBitMask,
+                            const gl::state::DirtyBits dirtyBits,
+                            const gl::state::DirtyBits bitMask,
+                            const gl::state::ExtendedDirtyBits extendedDirtyBits,
+                            const gl::state::ExtendedDirtyBits extendedBitMask,
                             gl::Command command) override;
 
     // Disjoint timer queries
@@ -304,6 +308,8 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     CompilerImpl *createCompiler() override;
     ShaderImpl *createShader(const gl::ShaderState &state) override;
     ProgramImpl *createProgram(const gl::ProgramState &state) override;
+    ProgramExecutableImpl *createProgramExecutable(
+        const gl::ProgramExecutable *executable) override;
 
     // Framebuffer creation
     FramebufferImpl *createFramebuffer(const gl::FramebufferState &state) override;
@@ -668,11 +674,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     size_t getVkIndexTypeSize(gl::DrawElementsType glIndexType) const;
     bool shouldConvertUint8VkIndexType(gl::DrawElementsType glIndexType) const;
 
-    ProgramExecutableVk *getExecutable() const;
-
     bool isRobustResourceInitEnabled() const;
-
-    uint32_t getDriverUniformSize(PipelineType pipelineType) const;
 
     // Queries that begin and end automatically with render pass start and end
     angle::Result beginRenderPassQuery(QueryVk *queryVk);
@@ -739,12 +741,6 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
         return angle::Result::Continue;
     }
 
-    angle::Result bindCachedDescriptorPool(
-        DescriptorSetIndex descriptorSetIndex,
-        const vk::DescriptorSetLayoutDesc &descriptorSetLayoutDesc,
-        uint32_t descriptorCountMultiplier,
-        vk::DescriptorPoolPointer *poolPointerOut);
-
     // Put the context in framebuffer fetch mode.  If the permanentlySwitchToFramebufferFetchMode
     // feature is enabled, this is done on first encounter of framebuffer fetch, and makes the
     // context use framebuffer-fetch-enabled render passes from here on.
@@ -765,17 +761,20 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     // Whether VK_EXT_pipeline_robustness should be used to enable robust buffer access in the
     // pipeline.
-    bool shouldUsePipelineRobustness() const
+    vk::PipelineRobustness pipelineRobustness() const
     {
-        return getFeatures().supportsPipelineRobustness.enabled && mState.hasRobustAccess();
+        return getFeatures().supportsPipelineRobustness.enabled && mState.hasRobustAccess()
+                   ? vk::PipelineRobustness::Robust
+                   : vk::PipelineRobustness::NonRobust;
     }
     // Whether VK_EXT_pipeline_protected_access should be used to restrict the pipeline to protected
     // command buffers.  Note that when false, if the extension is supported, the pipeline can be
     // restricted to unprotected command buffers.
-    bool shouldRestrictPipelineToProtectedAccess() const
+    vk::PipelineProtectedAccess pipelineProtectedAccess() const
     {
-        return getFeatures().supportsPipelineProtectedAccess.enabled &&
-               mState.hasProtectedContent();
+        return getFeatures().supportsPipelineProtectedAccess.enabled && mState.hasProtectedContent()
+                   ? vk::PipelineProtectedAccess::Protected
+                   : vk::PipelineProtectedAccess::Unprotected;
     }
 
     vk::ComputePipelineFlags getComputePipelineFlags() const;
@@ -799,8 +798,15 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     bool isEligibleForMutableTextureFlush() const
     {
         return getFeatures().mutableMipmapTextureUpload.enabled && !hasDisplayTextureShareGroup() &&
-               mShareGroupVk->getContextCount() == 1;
+               mShareGroupVk->getContexts().size() == 1;
     }
+
+    vk::RenderPassUsageFlags getDepthStencilAttachmentFlags() const
+    {
+        return mDepthStencilAttachmentFlags;
+    }
+
+    bool isDitherEnabled() { return mState.isDitherEnabled(); }
 
   private:
     // Dirty bits.
@@ -1286,17 +1292,17 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     angle::Result endRenderPassIfComputeReadAfterTransformFeedbackWrite();
     angle::Result endRenderPassIfComputeAccessAfterGraphicsImageAccess();
 
-    // Update framebuffer's read-only depth feedback loop mode.  Typically called from
+    // Update read-only depth feedback loop mode.  Typically called from
     // handleDirtyGraphicsReadOnlyDepthFeedbackLoopMode, but can be called from UtilsVk in functions
     // that don't necessarily break the render pass.
-    angle::Result updateRenderPassDepthFeedbackLoopModeImpl(
-        DirtyBits::Iterator *dirtyBitsIterator,
-        DirtyBits dirtyBitMask,
-        UpdateDepthFeedbackLoopReason depthReason,
-        UpdateDepthFeedbackLoopReason stencilReason);
-    bool shouldSwitchToReadOnlyDepthStencilFeedbackLoopMode(gl::Texture *texture,
-                                                            gl::Command command,
-                                                            bool isStencilTexture) const;
+    angle::Result switchOutReadOnlyDepthStencilMode(DirtyBits::Iterator *dirtyBitsIterator,
+                                                    DirtyBits dirtyBitMask,
+                                                    UpdateDepthFeedbackLoopReason depthReason,
+                                                    UpdateDepthFeedbackLoopReason stencilReason);
+    angle::Result switchToReadOnlyDepthStencilMode(gl::Texture *texture,
+                                                   gl::Command command,
+                                                   FramebufferVk *drawFramebuffer,
+                                                   bool isStencilTexture);
 
     angle::Result onResourceAccess(const vk::CommandBufferAccess &access);
     angle::Result flushCommandBuffersIfNecessary(const vk::CommandBufferAccess &access);
@@ -1361,6 +1367,11 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     // mCurrentWindowSurface->getPreTransform().
     SurfaceRotation mCurrentRotationDrawFramebuffer;
     SurfaceRotation mCurrentRotationReadFramebuffer;
+
+    // Tracks if we are in depth/stencil *read-only* or feedback loop mode. The read only is
+    // specially allowed as both usages attachment and texture are read-only. When switching away
+    // from read-only mode, the render pass is broken is to accommodate the new writable layout.
+    vk::RenderPassUsageFlags mDepthStencilAttachmentFlags;
 
     // Keep a cached pipeline description structure that can be used to query the pipeline cache.
     // Kept in a pointer so allocations can be aligned, and structs can be portably packed.
@@ -1677,6 +1688,8 @@ ANGLE_INLINE bool UseLineRaster(const ContextVk *contextVk, gl::PrimitiveMode mo
 {
     return gl::IsLineMode(mode);
 }
+
+uint32_t GetDriverUniformSize(vk::Context *context, PipelineType pipelineType);
 }  // namespace rx
 
 // Generate a perf warning, and insert an event marker in the command buffer.

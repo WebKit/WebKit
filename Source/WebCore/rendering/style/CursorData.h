@@ -37,10 +37,7 @@ public:
     {
     }
 
-    bool operator==(const CursorData& o) const
-    {
-        return m_hotSpot == o.m_hotSpot && m_image == o.m_image;
-    }
+    friend bool operator==(const CursorData&, const CursorData&) = default;
 
     StyleImage* image() const { return m_image.get(); }    
     void setImage(RefPtr<StyleImage>&& image) { m_image = WTFMove(image); }

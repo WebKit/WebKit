@@ -48,22 +48,26 @@ messages -> NetworkProcess LegacyReceiver {
     RenameOriginInWebsiteData(PAL::SessionID sessionID, WebCore::SecurityOriginData oldOrigin, WebCore::SecurityOriginData newOrigin, OptionSet<WebKit::WebsiteDataType> websiteDataTypes) -> ()
     WebsiteDataOriginDirectoryForTesting(PAL::SessionID sessionID, struct WebCore::ClientOrigin origin, OptionSet<WebKit::WebsiteDataType> websiteDataType) -> (String directory)
 
-    DownloadRequest(PAL::SessionID sessionID, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, String suggestedFilename)
+    DownloadRequest(PAL::SessionID sessionID, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, std::optional<WebCore::SecurityOriginData> topOrigin, std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, String suggestedFilename)
     ResumeDownload(PAL::SessionID sessionID, WebKit::DownloadID downloadID, IPC::DataReference resumeData, String path, WebKit::SandboxExtension::Handle sandboxExtensionHandle, enum:bool WebKit::CallDownloadDidStart callDownloadDidStart)
     CancelDownload(WebKit::DownloadID downloadID) -> (IPC::DataReference resumeData)
 #if PLATFORM(COCOA)
     PublishDownloadProgress(WebKit::DownloadID downloadID, URL url, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
 #endif
-    DataTaskWithRequest(WebKit::WebPageProxyIdentifier pageID, PAL::SessionID sessionID, WebCore::ResourceRequest request, IPC::FormDataReference requestBody) -> (WebKit::DataTaskIdentifier taskIdentifier)
+    DataTaskWithRequest(WebKit::WebPageProxyIdentifier pageID, PAL::SessionID sessionID, WebCore::ResourceRequest request, std::optional<WebCore::SecurityOriginData> topOrigin, IPC::FormDataReference requestBody) -> (WebKit::DataTaskIdentifier taskIdentifier)
     CancelDataTask(WebKit::DataTaskIdentifier taskIdentifier, PAL::SessionID sessionID)
     ApplicationDidEnterBackground()
     ApplicationWillEnterForeground()
+
+    ContinueWillSendRequest(WebKit::DownloadID downloadID, WebCore::ResourceRequest request)
 
     SetAllowsAnySSLCertificateForWebSocket(bool enabled) -> () Synchronous
 
     FlushCookies(PAL::SessionID sessionID) -> ()
 
+#if !PLATFORM(COCOA)
     AllowSpecificHTTPSCertificateForHost(PAL::SessionID sessionID, WebCore::CertificateInfo certificate, String host)
+#endif
     AllowTLSCertificateChainForLocalPCMTesting(PAL::SessionID sessionID, WebCore::CertificateInfo certificate)
 
     SetCacheModel(enum:uint8_t WebKit::CacheModel cacheModel)
@@ -76,6 +80,10 @@ messages -> NetworkProcess LegacyReceiver {
     NotifyMediaStreamingActivity(bool activity)
 
     PreconnectTo(PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::ResourceRequest request, enum:uint8_t WebCore::StoredCredentialsPolicy storedCredentialsPolicy, std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain);
+
+#if ENABLE(SERVICE_WORKER)
+    SetInspectionForServiceWorkersAllowed(PAL::SessionID sessionID, bool inspectable)
+#endif
 
 #if ENABLE(TRACKING_PREVENTION)
     ClearPrevalentResource(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> ()
@@ -231,7 +239,6 @@ messages -> NetworkProcess LegacyReceiver {
 #endif
     SetPushAndNotificationsEnabledForOrigin(PAL::SessionID sessionID, WebCore::SecurityOriginData origin, bool enabled) -> ()
     DeletePushAndNotificationRegistration(PAL::SessionID sessionID, WebCore::SecurityOriginData origin) -> (String errorMessage)
-    GetOriginsWithPushAndNotificationPermissions(PAL::SessionID sessionID) -> (Vector<WebCore::SecurityOriginData> origins)
     HasPushSubscriptionForTesting(PAL::SessionID sessionID, URL scopeURL) -> (bool hasSubscription)
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)

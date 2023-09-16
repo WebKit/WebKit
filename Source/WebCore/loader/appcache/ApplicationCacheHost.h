@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include "LoaderMalloc.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Deque.h>
 #include <wtf/URL.h>
@@ -55,7 +56,7 @@ class SubstituteData;
 class WeakPtrImplWithEventTargetData;
 
 class ApplicationCacheHost {
-    WTF_MAKE_NONCOPYABLE(ApplicationCacheHost); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(ApplicationCacheHost); WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:
     // The Status numeric values are specified in the HTML5 spec.
     enum Status {

@@ -1230,7 +1230,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClassType::NthLastOfType:
     case CSSSelector::PseudoClassType::Drag:
     case CSSSelector::PseudoClassType::Has:
-    case CSSSelector::PseudoClassType::RelativeScope:
+    case CSSSelector::PseudoClassType::HasScope:
         return FunctionType::CannotCompile;
 
     // Optimized pseudo selectors.
@@ -1544,6 +1544,9 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
         case CSSSelector::Match::NestingParent:
         case CSSSelector::Match::Unknown:
             ASSERT_NOT_REACHED();
+            return FunctionType::CannotMatchAnything;
+        case CSSSelector::Match::ForgivingUnknown:
+        case CSSSelector::Match::ForgivingUnknownNestContaining:
             return FunctionType::CannotMatchAnything;
         }
 

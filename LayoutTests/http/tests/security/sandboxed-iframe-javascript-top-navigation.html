@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+<body>
+<p>
+Tests that an iframe with "allow-top-navigation" but without "allow-scripts"
+can not navigate the top frame to a javascript URL.
+</p>
+<iframe id="ifr" sandbox="allow-same-origin allow-top-navigation" srcdoc="<a href='javascript:alert(`FAIL`)' target='_top'>Click Me</a>"></iframe>
+<script>
+    ifr.addEventListener("load", () => {
+        ifr.contentDocument.getElementsByTagName("a")[0].click();
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+</script>
+</body>

@@ -1,5 +1,5 @@
 
-FAIL Verify EncodedAudioChunk is serializable. Can't find variable: EncodedAudioChunk
+PASS Verify EncodedAudioChunk is serializable.
 PASS Verify EncodedVideoChunk is serializable.
 PASS Verify EncodedVideoChunk cannot be stored
 

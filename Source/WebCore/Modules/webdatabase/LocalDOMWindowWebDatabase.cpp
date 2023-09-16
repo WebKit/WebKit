@@ -42,7 +42,7 @@ ExceptionOr<RefPtr<Database>> LocalDOMWindowWebDatabase::openDatabase(LocalDOMWi
     auto& manager = DatabaseManager::singleton();
     if (!manager.isAvailable())
         return Exception { SecurityError };
-    auto* document = window.document();
+    RefPtr document = window.document();
     if (!document)
         return Exception { SecurityError };
     document->addConsoleMessage(MessageSource::Storage, MessageLevel::Warning, "Web SQL is deprecated. Please use IndexedDB instead."_s);

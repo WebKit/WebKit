@@ -615,6 +615,20 @@ TextureType FromGLenum<TextureType>(GLenum from);
 GLenum ToGLenum(TextureType from);
 std::ostream &operator<<(std::ostream &os, TextureType value);
 
+enum class TilingMode : uint8_t
+{
+    Optimal = 0,
+    Linear  = 1,
+
+    InvalidEnum = 2,
+    EnumCount   = 2,
+};
+
+template <>
+TilingMode FromGLenum<TilingMode>(GLenum from);
+GLenum ToGLenum(TilingMode from);
+std::ostream &operator<<(std::ostream &os, TilingMode value);
+
 enum class VertexArrayType : uint8_t
 {
     Color        = 0,

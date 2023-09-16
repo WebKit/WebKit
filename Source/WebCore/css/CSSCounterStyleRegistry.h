@@ -38,8 +38,9 @@ enum CSSValueID : uint16_t;
 
 using CounterStyleMap = HashMap<AtomString, RefPtr<CSSCounterStyle>>;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSCounterStyleRegistry);
 class CSSCounterStyleRegistry {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSCounterStyleRegistry);
 public:
     CSSCounterStyleRegistry() = default;
     RefPtr<CSSCounterStyle> resolvedCounterStyle(const ListStyleType&);

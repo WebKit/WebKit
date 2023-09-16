@@ -1,10 +1,7 @@
-Blocked access to external URL https://www1.localhost:9443/workers/modules/resources/export-on-load-script.py
 CONSOLE MESSAGE: Importing a module script failed.
 
-Harness Error (FAIL), message = Script error.
-
 PASS Static import.
-FAIL Static import (cross-origin). promise_test: Unhandled rejection with value: "Importing a module script failed."
+FAIL Static import (cross-origin). promise_test: Unhandled rejection with value: "unknown error"
 PASS Static import (redirect).
 PASS Nested static import.
 PASS Static import and then dynamic import.

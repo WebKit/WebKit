@@ -1,6 +1,9 @@
+CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/resources/iframe-messagechannel-site-failure.html because it violates the resource's Cross-Origin-Resource-Policy response header.
 
-FAIL postMessaging to a same-origin iframe via MessageChannel allows them to see each others' modifications promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedArrayBuffer"
-FAIL postMessaging to a same-site iframe via MessageChannel allows them to see each others' modifications promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedArrayBuffer"
-FAIL postMessaging to a cross-site iframe via MessageChannel should fail Can't find variable: SharedArrayBuffer
-FAIL postMessaging with a MessageChannel that's been cross-site should succeed Can't find variable: SharedArrayBuffer
+Harness Error (TIMEOUT), message = null
+
+PASS postMessaging to a same-origin iframe via MessageChannel allows them to see each others' modifications
+TIMEOUT postMessaging to a same-site iframe via MessageChannel should fail Test timed out
+NOTRUN postMessaging to a cross-site iframe via MessageChannel should fail
+NOTRUN postMessaging with a MessageChannel that's been cross-site should succeed
 

@@ -34,6 +34,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/alignment/flex-align-baseline-line-clamp-001.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/alignment/flex-align-baseline-line-clamp-002.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/alignment/flex-align-baseline-line-clamp-003.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/alignment/flex-align-baseline-multicol-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/alignment/flex-align-baseline-multicol-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/alignment/flex-align-baseline-multicol-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/alignment/flex-align-baseline-overflow-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/alignment/flex-align-baseline-overflow-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/alignment/flex-align-baseline-overflow-003.html

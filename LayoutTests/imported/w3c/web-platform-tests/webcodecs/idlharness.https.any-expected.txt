@@ -1,20 +1,24 @@
 
 FAIL idl_test setup promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ImageDecoder"
 PASS idl_test validation
-FAIL AudioDecoder interface: existence and properties of interface object assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
-FAIL AudioDecoder interface object length assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
-FAIL AudioDecoder interface object name assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
-FAIL AudioDecoder interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
-FAIL AudioDecoder interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
-FAIL AudioDecoder interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
-FAIL AudioDecoder interface: attribute state assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
-FAIL AudioDecoder interface: attribute decodeQueueSize assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
-FAIL AudioDecoder interface: operation configure(AudioDecoderConfig) assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
-FAIL AudioDecoder interface: operation decode(EncodedAudioChunk) assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
-FAIL AudioDecoder interface: operation flush() assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
-FAIL AudioDecoder interface: operation reset() assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
-FAIL AudioDecoder interface: operation close() assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
-FAIL AudioDecoder interface: operation isConfigSupported(AudioDecoderConfig) assert_own_property: self does not have own property "AudioDecoder" expected property "AudioDecoder" missing
+FAIL AudioDecoder interface: existence and properties of interface object assert_equals: prototype of self's property "AudioDecoder" is not Function.prototype expected function "function () {
+    [native code]
+}" but got function "function EventTarget() {
+    [native code]
+}"
+PASS AudioDecoder interface object length
+PASS AudioDecoder interface object name
+FAIL AudioDecoder interface: existence and properties of interface prototype object assert_equals: prototype of AudioDecoder.prototype is not Object.prototype expected object "[object Object]" but got object "[object EventTarget]"
+PASS AudioDecoder interface: existence and properties of interface prototype object's "constructor" property
+PASS AudioDecoder interface: existence and properties of interface prototype object's @@unscopables property
+PASS AudioDecoder interface: attribute state
+PASS AudioDecoder interface: attribute decodeQueueSize
+PASS AudioDecoder interface: operation configure(AudioDecoderConfig)
+PASS AudioDecoder interface: operation decode(EncodedAudioChunk)
+PASS AudioDecoder interface: operation flush()
+PASS AudioDecoder interface: operation reset()
+PASS AudioDecoder interface: operation close()
+PASS AudioDecoder interface: operation isConfigSupported(AudioDecoderConfig)
 FAIL VideoDecoder interface: existence and properties of interface object assert_equals: prototype of self's property "VideoDecoder" is not Function.prototype expected function "function () {
     [native code]
 }" but got function "function EventTarget() {
@@ -33,20 +37,24 @@ PASS VideoDecoder interface: operation flush()
 PASS VideoDecoder interface: operation reset()
 PASS VideoDecoder interface: operation close()
 PASS VideoDecoder interface: operation isConfigSupported(VideoDecoderConfig)
-FAIL AudioEncoder interface: existence and properties of interface object assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface object length assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface object name assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface: attribute state assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface: attribute encodeQueueSize assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface: operation configure(AudioEncoderConfig) assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface: operation encode(AudioData) assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface: operation flush() assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface: operation reset() assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface: operation close() assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
-FAIL AudioEncoder interface: operation isConfigSupported(AudioEncoderConfig) assert_own_property: self does not have own property "AudioEncoder" expected property "AudioEncoder" missing
+FAIL AudioEncoder interface: existence and properties of interface object assert_equals: prototype of self's property "AudioEncoder" is not Function.prototype expected function "function () {
+    [native code]
+}" but got function "function EventTarget() {
+    [native code]
+}"
+PASS AudioEncoder interface object length
+PASS AudioEncoder interface object name
+FAIL AudioEncoder interface: existence and properties of interface prototype object assert_equals: prototype of AudioEncoder.prototype is not Object.prototype expected object "[object Object]" but got object "[object EventTarget]"
+PASS AudioEncoder interface: existence and properties of interface prototype object's "constructor" property
+PASS AudioEncoder interface: existence and properties of interface prototype object's @@unscopables property
+PASS AudioEncoder interface: attribute state
+PASS AudioEncoder interface: attribute encodeQueueSize
+PASS AudioEncoder interface: operation configure(AudioEncoderConfig)
+PASS AudioEncoder interface: operation encode(AudioData)
+PASS AudioEncoder interface: operation flush()
+PASS AudioEncoder interface: operation reset()
+PASS AudioEncoder interface: operation close()
+PASS AudioEncoder interface: operation isConfigSupported(AudioEncoderConfig)
 FAIL VideoEncoder interface: existence and properties of interface object assert_equals: prototype of self's property "VideoEncoder" is not Function.prototype expected function "function () {
     [native code]
 }" but got function "function EventTarget() {
@@ -65,17 +73,17 @@ PASS VideoEncoder interface: operation flush()
 PASS VideoEncoder interface: operation reset()
 PASS VideoEncoder interface: operation close()
 PASS VideoEncoder interface: operation isConfigSupported(VideoEncoderConfig)
-FAIL EncodedAudioChunk interface: existence and properties of interface object assert_own_property: self does not have own property "EncodedAudioChunk" expected property "EncodedAudioChunk" missing
-FAIL EncodedAudioChunk interface object length assert_own_property: self does not have own property "EncodedAudioChunk" expected property "EncodedAudioChunk" missing
-FAIL EncodedAudioChunk interface object name assert_own_property: self does not have own property "EncodedAudioChunk" expected property "EncodedAudioChunk" missing
-FAIL EncodedAudioChunk interface: existence and properties of interface prototype object assert_own_property: self does not have own property "EncodedAudioChunk" expected property "EncodedAudioChunk" missing
-FAIL EncodedAudioChunk interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "EncodedAudioChunk" expected property "EncodedAudioChunk" missing
-FAIL EncodedAudioChunk interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "EncodedAudioChunk" expected property "EncodedAudioChunk" missing
-FAIL EncodedAudioChunk interface: attribute type assert_own_property: self does not have own property "EncodedAudioChunk" expected property "EncodedAudioChunk" missing
-FAIL EncodedAudioChunk interface: attribute timestamp assert_own_property: self does not have own property "EncodedAudioChunk" expected property "EncodedAudioChunk" missing
-FAIL EncodedAudioChunk interface: attribute duration assert_own_property: self does not have own property "EncodedAudioChunk" expected property "EncodedAudioChunk" missing
-FAIL EncodedAudioChunk interface: attribute byteLength assert_own_property: self does not have own property "EncodedAudioChunk" expected property "EncodedAudioChunk" missing
-FAIL EncodedAudioChunk interface: operation copyTo(BufferSource) assert_own_property: self does not have own property "EncodedAudioChunk" expected property "EncodedAudioChunk" missing
+PASS EncodedAudioChunk interface: existence and properties of interface object
+PASS EncodedAudioChunk interface object length
+PASS EncodedAudioChunk interface object name
+PASS EncodedAudioChunk interface: existence and properties of interface prototype object
+PASS EncodedAudioChunk interface: existence and properties of interface prototype object's "constructor" property
+PASS EncodedAudioChunk interface: existence and properties of interface prototype object's @@unscopables property
+PASS EncodedAudioChunk interface: attribute type
+PASS EncodedAudioChunk interface: attribute timestamp
+PASS EncodedAudioChunk interface: attribute duration
+PASS EncodedAudioChunk interface: attribute byteLength
+PASS EncodedAudioChunk interface: operation copyTo(BufferSource)
 PASS EncodedVideoChunk interface: existence and properties of interface object
 PASS EncodedVideoChunk interface object length
 PASS EncodedVideoChunk interface object name
@@ -87,22 +95,22 @@ PASS EncodedVideoChunk interface: attribute timestamp
 PASS EncodedVideoChunk interface: attribute duration
 PASS EncodedVideoChunk interface: attribute byteLength
 PASS EncodedVideoChunk interface: operation copyTo(BufferSource)
-FAIL AudioData interface: existence and properties of interface object assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
-FAIL AudioData interface object length assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
-FAIL AudioData interface object name assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
-FAIL AudioData interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
-FAIL AudioData interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
-FAIL AudioData interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
-FAIL AudioData interface: attribute format assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
-FAIL AudioData interface: attribute sampleRate assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
-FAIL AudioData interface: attribute numberOfFrames assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
-FAIL AudioData interface: attribute numberOfChannels assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
-FAIL AudioData interface: attribute duration assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
-FAIL AudioData interface: attribute timestamp assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
-FAIL AudioData interface: operation allocationSize(AudioDataCopyToOptions) assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
-FAIL AudioData interface: operation copyTo(BufferSource, AudioDataCopyToOptions) assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
-FAIL AudioData interface: operation clone() assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
-FAIL AudioData interface: operation close() assert_own_property: self does not have own property "AudioData" expected property "AudioData" missing
+PASS AudioData interface: existence and properties of interface object
+PASS AudioData interface object length
+PASS AudioData interface object name
+PASS AudioData interface: existence and properties of interface prototype object
+PASS AudioData interface: existence and properties of interface prototype object's "constructor" property
+PASS AudioData interface: existence and properties of interface prototype object's @@unscopables property
+PASS AudioData interface: attribute format
+PASS AudioData interface: attribute sampleRate
+PASS AudioData interface: attribute numberOfFrames
+PASS AudioData interface: attribute numberOfChannels
+PASS AudioData interface: attribute duration
+PASS AudioData interface: attribute timestamp
+FAIL AudioData interface: operation allocationSize(AudioDataCopyToOptions) assert_equals: property has wrong .length expected 1 but got 0
+PASS AudioData interface: operation copyTo(BufferSource, AudioDataCopyToOptions)
+PASS AudioData interface: operation clone()
+PASS AudioData interface: operation close()
 PASS VideoFrame interface: existence and properties of interface object
 PASS VideoFrame interface object length
 PASS VideoFrame interface object name

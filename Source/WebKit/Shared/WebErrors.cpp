@@ -106,4 +106,9 @@ ResourceError httpsUpgradeRedirectLoopError(const ResourceRequest& request)
     return ResourceError(API::Error::webKitNetworkErrorDomain(), API::Error::Network::HTTPSUpgradeRedirectLoop, request.url(), WEB_UI_STRING("HTTPS Upgrade redirect loop detected", "WebKitErrorHTTPSUpgradeRedirectLoop description"));
 }
 
+ResourceError httpNavigationWithHTTPSOnlyError(const ResourceRequest& request)
+{
+    return ResourceError(API::Error::webKitNetworkErrorDomain(), API::Error::Network::HTTPNavigationWithHTTPSOnlyError, request.url(), WEB_UI_STRING("Navigation failed because the request was for an HTTP URL with HTTPS-Only enabled", "WebKitErrorHTTPSOnlyHTTPURL description"));
+}
+
 } // namespace WebKit

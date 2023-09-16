@@ -112,7 +112,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
         hasUnsupportedOptions = hasUnsupportedOptions || hasMacGLSLOptions;
 #endif
     }
-    if (!IsOutputVulkan(shaderOutput))
+    if (!IsOutputSPIRV(shaderOutput))
     {
         hasUnsupportedOptions =
             hasUnsupportedOptions || options.emulateSeamfulCubeMapSampling ||

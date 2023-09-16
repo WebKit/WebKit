@@ -52,12 +52,12 @@ WKBundleNodeHandleRef WKBundleHitTestResultCopyURLElementHandle(WKBundleHitTestR
 
 WKBundleFrameRef WKBundleHitTestResultGetFrame(WKBundleHitTestResultRef hitTestResultRef)
 {
-    return toAPI(WebKit::toImpl(hitTestResultRef)->frame());
+    return toAPI(WebKit::toImpl(hitTestResultRef)->frame().get());
 }
 
 WKBundleFrameRef WKBundleHitTestResultGetTargetFrame(WKBundleHitTestResultRef hitTestResultRef)
 {
-    return toAPI(WebKit::toImpl(hitTestResultRef)->targetFrame());
+    return toAPI(WebKit::toImpl(hitTestResultRef)->targetFrame().get());
 }
 
 WKURLRef WKBundleHitTestResultCopyAbsoluteImageURL(WKBundleHitTestResultRef hitTestResultRef)

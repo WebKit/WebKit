@@ -5278,6 +5278,11 @@ TIntermTyped *TParseContext::addIndexExpression(TIntermTyped *baseExpression,
         {
             error(location, "array index for gl_FragData must be constant zero", "[");
         }
+        else if (mShaderSpec == SH_WEBGL2_SPEC &&
+                 baseExpression->getQualifier() == EvqSecondaryFragDataEXT)
+        {
+            error(location, "array index for gl_SecondaryFragDataEXT must be constant zero", "[");
+        }
         else if (baseExpression->isArray())
         {
             TBasicType elementType = baseExpression->getType().getBasicType();

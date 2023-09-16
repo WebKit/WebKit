@@ -113,6 +113,7 @@ class Tracker(GenericTracker):
         if authentication:
             self.client = self.library.RadarClient(
                 authentication, self.library.ClientSystemIdentifier(library_name, str(library_version)),
+                retry_policy=self.radarclient().RetryPolicy(),
             )
         else:
             self.client = None
@@ -204,6 +205,8 @@ class Tracker(GenericTracker):
         )
         issue._description = '\n'.join([desc.text for desc in radar.description.items()])
         issue._opened = False if radar.state in ('Verify', 'Closed') else True
+        if radar.duplicateOfProblemID is not None:
+            issue._original = self.issue(radar.duplicateOfProblemID)
         issue._creator = self.user(
             name='{} {}'.format(radar.originator.firstName, radar.originator.lastName),
             username=radar.originator.dsid,
@@ -268,9 +271,14 @@ class Tracker(GenericTracker):
                     issue._component = issue._component[len(project):].lstrip()
                     break
 
+        if member == 'duplicates':
+            issue._duplicates = []
+            for r in radar.relationships([self.radarclient().Relationship.TYPE_ORIGINAL_OF]):
+                issue._duplicates.append(self.issue(r.related_radar.id))
+
         return issue
 
-    def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, **properties):
+    def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, original=None, **properties):
         if not self.client or not self.library:
             sys.stderr.write('radarclient inaccessible on this machine\n')
             return None
@@ -302,7 +310,12 @@ class Tracker(GenericTracker):
                 radar.resolution = 'Unresolved'
             else:
                 radar.state = 'Verify'
-                radar.resolution = 'Software Changed'
+                if original:
+                    radar.resolution = 'Duplicate'
+                    radar.duplicateOfProblemID = original.id
+                    issue._original = original
+                else:
+                    radar.resolution = 'Software Changed'
             did_change = True
 
         if project or component or version:

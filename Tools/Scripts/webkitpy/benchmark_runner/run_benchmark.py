@@ -19,6 +19,7 @@ benchmark_runner_subclasses = {
     WebServerBenchmarkRunner.name: WebServerBenchmarkRunner,
 }
 
+WEBKIT_PGO_DIR = '/private/tmp/WebKitPGO'
 
 def default_platform():
     if sys.platform.startswith('linux'):
@@ -99,7 +100,7 @@ def run_benchmark_plan(args, plan):
                                     args.local_copy, args.count, args.timeout, args.build_dir, args.output_file,
                                     args.platform, args.browser, args.browser_path, args.subtests, args.scale_unit,
                                     args.show_iteration_values, args.device_id, args.diagnose_dir,
-                                    args.diagnose_dir if args.generate_pgo_profiles else None,
+                                    WEBKIT_PGO_DIR if args.generate_pgo_profiles else None,
                                     args.diagnose_dir if args.trace_type else None,
                                     args.trace_type, args.profiling_interval,
                                     args.browser_args)

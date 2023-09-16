@@ -55,6 +55,8 @@ public:
     // AlreadyTaggedValueTag will require a specialized template qualification.
     enum AlreadyTaggedValueTag { AlreadyTaggedValue };
 
+    friend bool operator==(CodePtrBase, CodePtrBase) = default;
+
 protected:
     WTF_EXPORT_PRIVATE static void dumpWithName(void* executableAddress, void* dataLocation, const char* name, PrintStream& out);
 };
@@ -189,7 +191,7 @@ public:
     }
     explicit operator bool() const { return !(!*this); }
     
-    bool operator==(const CodePtr& other) const { return m_value == other.m_value; }
+    friend bool operator==(CodePtr, CodePtr) = default;
 
     // Disallow any casting operations (except for booleans). Instead, the client
     // should be asking taggedPtr() explicitly.

@@ -30,24 +30,33 @@
 
 #include "JSANGLEInstancedArrays.h"
 #include "JSDOMConvertBufferSource.h"
+#include "JSEXTBlendFuncExtended.h"
 #include "JSEXTBlendMinMax.h"
+#include "JSEXTClipControl.h"
 #include "JSEXTColorBufferFloat.h"
 #include "JSEXTColorBufferHalfFloat.h"
+#include "JSEXTConservativeDepth.h"
+#include "JSEXTDepthClamp.h"
 #include "JSEXTDisjointTimerQuery.h"
 #include "JSEXTDisjointTimerQueryWebGL2.h"
 #include "JSEXTFloatBlend.h"
 #include "JSEXTFragDepth.h"
 #include "JSEXTPolygonOffsetClamp.h"
+#include "JSEXTRenderSnorm.h"
 #include "JSEXTShaderTextureLOD.h"
 #include "JSEXTTextureCompressionBPTC.h"
 #include "JSEXTTextureCompressionRGTC.h"
 #include "JSEXTTextureFilterAnisotropic.h"
+#include "JSEXTTextureMirrorClampToEdge.h"
 #include "JSEXTTextureNorm16.h"
 #include "JSEXTsRGB.h"
 #include "JSKHRParallelShaderCompile.h"
+#include "JSNVShaderNoperspectiveInterpolation.h"
 #include "JSOESDrawBuffersIndexed.h"
 #include "JSOESElementIndexUint.h"
 #include "JSOESFBORenderMipmap.h"
+#include "JSOESSampleVariables.h"
+#include "JSOESShaderMultisampleInterpolation.h"
 #include "JSOESStandardDerivatives.h"
 #include "JSOESTextureFloat.h"
 #include "JSOESTextureFloatLinear.h"
@@ -72,11 +81,14 @@
 #include "JSWebGLLoseContext.h"
 #include "JSWebGLMultiDraw.h"
 #include "JSWebGLMultiDrawInstancedBaseVertexBaseInstance.h"
+#include "JSWebGLPolygonMode.h"
 #include "JSWebGLProgram.h"
 #include "JSWebGLProvokingVertex.h"
 #include "JSWebGLQuery.h"
+#include "JSWebGLRenderSharedExponent.h"
 #include "JSWebGLRenderbuffer.h"
 #include "JSWebGLSampler.h"
+#include "JSWebGLStencilTexturing.h"
 #include "JSWebGLTexture.h"
 #include "JSWebGLTimerQueryEXT.h"
 #include "JSWebGLTransformFeedback.h"
@@ -173,58 +185,171 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
     );
 }
 
-JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, WebGLExtension& extension)
+JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, WebGLExtensionAny extensionAny)
 {
-#define TO_JS(EXT) \
-    case WebGLExtension::EXT ## Name: \
-        return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXT&>(extension));
-
-    switch (extension.getName()) {
-        TO_JS(ANGLEInstancedArrays)
-        TO_JS(EXTBlendMinMax)
-        TO_JS(EXTColorBufferFloat)
-        TO_JS(EXTColorBufferHalfFloat)
-        TO_JS(EXTDisjointTimerQuery)
-        TO_JS(EXTDisjointTimerQueryWebGL2)
-        TO_JS(EXTFloatBlend)
-        TO_JS(EXTFragDepth)
-        TO_JS(EXTPolygonOffsetClamp)
-        TO_JS(EXTShaderTextureLOD)
-        TO_JS(EXTTextureCompressionBPTC)
-        TO_JS(EXTTextureCompressionRGTC)
-        TO_JS(EXTTextureFilterAnisotropic)
-        TO_JS(EXTTextureNorm16)
-        TO_JS(EXTsRGB)
-        TO_JS(KHRParallelShaderCompile)
-        TO_JS(OESDrawBuffersIndexed)
-        TO_JS(OESElementIndexUint)
-        TO_JS(OESFBORenderMipmap)
-        TO_JS(OESStandardDerivatives)
-        TO_JS(OESTextureFloat)
-        TO_JS(OESTextureFloatLinear)
-        TO_JS(OESTextureHalfFloat)
-        TO_JS(OESTextureHalfFloatLinear)
-        TO_JS(OESVertexArrayObject)
-        TO_JS(WebGLClipCullDistance)
-        TO_JS(WebGLColorBufferFloat)
-        TO_JS(WebGLCompressedTextureASTC)
-        TO_JS(WebGLCompressedTextureETC)
-        TO_JS(WebGLCompressedTextureETC1)
-        TO_JS(WebGLCompressedTexturePVRTC)
-        TO_JS(WebGLCompressedTextureS3TC)
-        TO_JS(WebGLCompressedTextureS3TCsRGB)
-        TO_JS(WebGLDebugRendererInfo)
-        TO_JS(WebGLDebugShaders)
-        TO_JS(WebGLDepthTexture)
-        TO_JS(WebGLDrawBuffers)
-        TO_JS(WebGLDrawInstancedBaseVertexBaseInstance)
-        TO_JS(WebGLLoseContext)
-        TO_JS(WebGLMultiDraw)
-        TO_JS(WebGLMultiDrawInstancedBaseVertexBaseInstance)
-        TO_JS(WebGLProvokingVertex)
-    }
-    ASSERT_NOT_REACHED();
-    return jsNull();
+    return WTF::switchOn(extensionAny,
+        [&] (Ref<ANGLEInstancedArrays> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<EXTBlendFuncExtended> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<EXTBlendMinMax> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<EXTClipControl> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<EXTColorBufferFloat> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<EXTColorBufferHalfFloat> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<EXTConservativeDepth> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<EXTDepthClamp> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<EXTDisjointTimerQuery> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<EXTDisjointTimerQueryWebGL2> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<EXTFloatBlend> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<EXTFragDepth> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<EXTPolygonOffsetClamp> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<EXTRenderSnorm> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<EXTShaderTextureLOD> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<EXTTextureCompressionBPTC> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<EXTTextureCompressionRGTC> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<EXTTextureFilterAnisotropic> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<EXTTextureMirrorClampToEdge> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<EXTTextureNorm16> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<EXTsRGB> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<KHRParallelShaderCompile> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<NVShaderNoperspectiveInterpolation> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<OESDrawBuffersIndexed> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<OESElementIndexUint> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<OESFBORenderMipmap> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<OESSampleVariables> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<OESShaderMultisampleInterpolation> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<OESStandardDerivatives> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<OESTextureFloat> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<OESTextureFloatLinear> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<OESTextureHalfFloat> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<OESTextureHalfFloatLinear> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<OESVertexArrayObject> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<WebGLClipCullDistance> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<WebGLColorBufferFloat> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<WebGLCompressedTextureASTC> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<WebGLCompressedTextureETC> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<WebGLCompressedTextureETC1> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<WebGLCompressedTexturePVRTC> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<WebGLCompressedTextureS3TC> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<WebGLCompressedTextureS3TCsRGB> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<WebGLDebugRendererInfo> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<WebGLDebugShaders> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<WebGLDepthTexture> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<WebGLDrawBuffers> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<WebGLDrawInstancedBaseVertexBaseInstance> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<WebGLLoseContext> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<WebGLMultiDraw> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<WebGLMultiDrawInstancedBaseVertexBaseInstance> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<WebGLPolygonMode> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<WebGLProvokingVertex> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<WebGLRenderSharedExponent> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        },
+        [&] (Ref<WebGLStencilTexturing> extension) {
+            return toJS(&lexicalGlobalObject, &globalObject, WTFMove(extension));
+        });
 }
 
 }

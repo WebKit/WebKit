@@ -66,17 +66,17 @@ TEST(BinaryInputStream, Overflow)
     }
 }
 
-// Test that readIntVector and writeIntVector match.
+// Test that readVector and writeVector match.
 TEST(BinaryStream, IntVector)
 {
     std::vector<unsigned int> writeData = {1, 2, 3, 4, 5};
     std::vector<unsigned int> readData;
 
     gl::BinaryOutputStream out;
-    out.writeIntVector(writeData);
+    out.writeVector(writeData);
 
     gl::BinaryInputStream in(out.data(), out.length());
-    in.readIntVector<unsigned int>(&readData);
+    in.readVector(&readData);
 
     ASSERT_EQ(writeData.size(), readData.size());
 

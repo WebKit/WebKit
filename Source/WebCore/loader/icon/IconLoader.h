@@ -39,7 +39,7 @@ class DocumentLoader;
 class LocalFrame;
 
 class IconLoader final : private CachedRawResourceClient {
-    WTF_MAKE_NONCOPYABLE(IconLoader); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(IconLoader); WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:
     IconLoader(DocumentLoader&, const URL&);
     virtual ~IconLoader();

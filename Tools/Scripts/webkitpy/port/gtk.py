@@ -199,13 +199,13 @@ class GtkPort(GLibPort):
     def _is_gtk4_build(self):
         try:
             libdir = self._build_path('lib')
-            candidates = self._filesystem.glob(os.path.join(libdir, 'libwebkit2gtk-*.so'))
+            candidates = self._filesystem.glob(os.path.join(libdir, 'libwebkit*gtk-*.so'))
             if not candidates:
                 return False
             if len(candidates) > 1:
                 _log.warning("Multiple WebKit2GTK libraries found. Skipping GTK4 detection.")
                 return False
-            return os.path.basename(candidates[0]) == 'libwebkit2gtk-5.0.so'
+            return os.path.basename(candidates[0]) == 'libwebkitgtk-6.0.so'
 
         except (webkitpy.common.system.executive.ScriptError, IOError, OSError):
             return False

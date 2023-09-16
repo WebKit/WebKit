@@ -131,7 +131,7 @@ void MediaDevices::getUserMedia(StreamConstraints&& constraints, Promise&& promi
         return;
     }
 
-    auto* document = this->document();
+    RefPtr document = this->document();
     if (!document || !document->isFullyActive()) {
         promise.reject(Exception { InvalidStateError, "Document is not fully active"_s });
         return;
@@ -245,7 +245,7 @@ static bool hasInvalidGetDisplayMediaConstraint(const MediaConstraints& constrai
 
 void MediaDevices::getDisplayMedia(DisplayMediaStreamConstraints&& constraints, Promise&& promise)
 {
-    auto* document = this->document();
+    RefPtr document = this->document();
     if (!document)
         return;
 
@@ -335,7 +335,7 @@ String MediaDevices::hashedGroupId(const String& groupId)
 
 void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise)
 {
-    auto* document = this->document();
+    RefPtr document = this->document();
     if (!document)
         return;
 
@@ -397,7 +397,7 @@ const char* MediaDevices::activeDOMObjectName() const
 
 void MediaDevices::listenForDeviceChanges()
 {
-    auto* document = this->document();
+    RefPtr document = this->document();
     auto* controller = document ? UserMediaController::from(document->page()) : nullptr;
     if (!controller)
         return;

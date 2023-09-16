@@ -40,7 +40,7 @@ function testRefEq() {
        (module
          (type (struct))
          (func (export "f") (result i32)
-           (ref.eq (struct.new_canon 0) (ref.null struct))))
+           (ref.eq (struct.new 0) (ref.null struct))))
     `).exports.f(),
     0
   );
@@ -50,7 +50,7 @@ function testRefEq() {
        (module
          (type (struct))
          (func (export "f") (result i32) (local (ref null 0))
-           (local.set 0 (struct.new_canon 0))
+           (local.set 0 (struct.new 0))
            (ref.eq (local.get 0) (local.get 0))))
     `).exports.f(),
     1
@@ -70,7 +70,7 @@ function testRefEq() {
        (module
          (type (struct))
          (func (export "f") (result i32)
-           (ref.eq (struct.new_canon 0) (struct.new_canon 0))))
+           (ref.eq (struct.new 0) (struct.new 0))))
     `).exports.f(),
     0
   );

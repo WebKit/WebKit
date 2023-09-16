@@ -14,7 +14,10 @@ UNIT_TEST_PATTERN = '*_unittest.py'
 
 
 def run_unittests(test_discovery_path):
-    test_suite = unittest.defaultTestLoader.discover(test_discovery_path, pattern=UNIT_TEST_PATTERN)
+    test_suite = unittest.defaultTestLoader.discover(
+        test_discovery_path, pattern=UNIT_TEST_PATTERN,
+        top_level_dir=os.path.dirname(os.path.abspath(__file__)),
+    )
     results = unittest.TextTestRunner(buffer=True).run(test_suite)
     if results.failures or results.errors:
         raise RuntimeError('Test failures or errors were generated during this test run.')

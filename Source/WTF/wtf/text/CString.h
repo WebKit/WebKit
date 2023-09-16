@@ -26,6 +26,7 @@
 #pragma once
 
 #include <span>
+#include <wtf/DebugHeap.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
 #include <wtf/Ref.h>

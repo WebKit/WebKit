@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2022 Igalia S.L.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -41,7 +42,7 @@ FontSetCache::FontSet::FontSet(RefPtr<FcPattern>&& fontPattern)
     }
 }
 
-RefPtr<FcPattern> FontSetCache::bestForCharacters(const FontDescription& fontDescription, bool preferColoredFont, const UChar* characters, unsigned length)
+RefPtr<FcPattern> FontSetCache::bestForCharacters(const FontDescription& fontDescription, bool preferColoredFont, StringView stringView)
 {
     auto addResult = m_cache.ensure(FontSetCacheKey(fontDescription, preferColoredFont), [&fontDescription, preferColoredFont]() -> std::unique_ptr<FontSetCache::FontSet> {
         RefPtr<FcPattern> pattern = adoptRef(FcPatternCreate());
@@ -71,15 +72,12 @@ RefPtr<FcPattern> FontSetCache::bestForCharacters(const FontDescription& fontDes
     }
 
     FcUniquePtr<FcCharSet> fontConfigCharSet(FcCharSetCreate());
-    UTF16UChar32Iterator iterator(characters, length);
-    UChar32 character = iterator.next();
     bool hasNonIgnorableCharacters = false;
-    while (character != iterator.end()) {
+    for (UChar32 character : stringView.codePoints()) {
         if (!isDefaultIgnorableCodePoint(character)) {
             FcCharSetAddChar(fontConfigCharSet.get(), character);
             hasNonIgnorableCharacters = true;
         }
-        character = iterator.next();
     }
 
     FcPattern* bestPattern = nullptr;

@@ -152,6 +152,8 @@ public:
         return IntSize(m_height, m_width);
     }
 
+    friend constexpr bool operator==(const IntSize&, const IntSize&) = default;
+
 #if USE(CG)
     WEBCORE_EXPORT explicit IntSize(const CGSize&); // don't do this implicitly since it's lossy
     WEBCORE_EXPORT operator CGSize() const;
@@ -202,11 +204,6 @@ constexpr IntSize operator-(const IntSize& a, const IntSize& b)
 constexpr IntSize operator-(const IntSize& size)
 {
     return IntSize(-size.width(), -size.height());
-}
-
-constexpr bool operator==(const IntSize& a, const IntSize& b)
-{
-    return a.width() == b.width() && a.height() == b.height();
 }
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const IntSize&);

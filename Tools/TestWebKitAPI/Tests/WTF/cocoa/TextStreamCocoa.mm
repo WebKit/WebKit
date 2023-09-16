@@ -63,3 +63,22 @@ TEST(WTF_TextStream, id)
     ts << value;
     EXPECT_EQ(ts.release(), "3"_s);
 }
+
+TEST(WTF_TextStream, CoreGraphics)
+{
+    {
+        TextStream ts;
+        ts << CGRectMake(1, 2, 3, 4);
+        EXPECT_EQ(ts.release(), "{{1.00, 2.00}, {3.00, 4.00}}"_s);
+    }
+    {
+        TextStream ts;
+        ts << CGPointMake(1, 2);
+        EXPECT_EQ(ts.release(), "{1.00, 2.00}"_s);
+    }
+    {
+        TextStream ts;
+        ts << CGSizeMake(3, 4);
+        EXPECT_EQ(ts.release(), "{3.00, 4.00}"_s);
+    }
+}

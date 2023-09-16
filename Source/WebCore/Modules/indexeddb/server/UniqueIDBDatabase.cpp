@@ -1509,16 +1509,13 @@ bool UniqueIDBDatabase::hasDataInMemory() const
     return m_backingStore ? m_backingStore->isEphemeral() : false;
 }
 
-RefPtr<ServerOpenDBRequest> UniqueIDBDatabase::takeNextRunnableRequest(RequestType requestType)
+RefPtr<ServerOpenDBRequest> UniqueIDBDatabase::takeNextRunnableRequest()
 {
     // Connection of request may be closed or lost.
     clearStalePendingOpenDBRequests();
 
-    if (!m_pendingOpenDBRequests.isEmpty()) {
-        if (requestType == RequestType::Delete && !m_pendingOpenDBRequests.first()->isDeleteRequest())
-            return nullptr;
+    if (!m_pendingOpenDBRequests.isEmpty())
         return m_pendingOpenDBRequests.takeFirst();
-    }
 
     return nullptr;
 }

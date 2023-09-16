@@ -250,6 +250,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "clUnloadPlatformCompiler";
         case EntryPoint::CLWaitForEvents:
             return "clWaitForEvents";
+        case EntryPoint::EGLAcquireExternalContextANGLE:
+            return "eglAcquireExternalContextANGLE";
         case EntryPoint::EGLBindAPI:
             return "eglBindAPI";
         case EntryPoint::EGLBindTexImage:
@@ -420,6 +422,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "eglReacquireHighPowerGPUANGLE";
         case EntryPoint::EGLReleaseDeviceANGLE:
             return "eglReleaseDeviceANGLE";
+        case EntryPoint::EGLReleaseExternalContextANGLE:
+            return "eglReleaseExternalContextANGLE";
         case EntryPoint::EGLReleaseHighPowerGPUANGLE:
             return "eglReleaseHighPowerGPUANGLE";
         case EntryPoint::EGLReleaseTexImage:

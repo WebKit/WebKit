@@ -264,19 +264,12 @@ MediaTime MediaPlayerPrivateAVFoundation::durationMediaTime() const
     return m_cachedDuration;
 }
 
-void MediaPlayerPrivateAVFoundation::seek(const MediaTime& time)
+void MediaPlayerPrivateAVFoundation::seekToTarget(const SeekTarget& target)
 {
-    seekWithTolerance(time, MediaTime::zeroTime(), MediaTime::zeroTime());
-}
-
-void MediaPlayerPrivateAVFoundation::seekWithTolerance(const MediaTime& mediaTime, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
-{
-    MediaTime time = mediaTime;
-
     if (m_seeking) {
         ALWAYS_LOG(LOGIDENTIFIER, "saving pending seek");
-        m_pendingSeek = [this, time, negativeTolerance, positiveTolerance]() {
-            seekWithTolerance(time, negativeTolerance, positiveTolerance);
+        m_pendingSeek = [this, target]() {
+            seekToTarget(target);
         };
         return;
     }
@@ -285,15 +278,17 @@ void MediaPlayerPrivateAVFoundation::seekWithTolerance(const MediaTime& mediaTim
     if (!metaDataAvailable())
         return;
 
-    if (time > durationMediaTime())
-        time = durationMediaTime();
+    SeekTarget adjustedTarget = target;
+    if (target.time > durationMediaTime())
+        adjustedTarget.time = durationMediaTime();
 
     if (currentTextTrack())
         currentTextTrack()->beginSeeking();
 
-    ALWAYS_LOG(LOGIDENTIFIER, "seeking to  ", time);
+    ALWAYS_LOG(LOGIDENTIFIER, "seeking to ", adjustedTarget.time);
 
-    seekToTime(time, negativeTolerance, positiveTolerance);
+    m_lastSeekTime = adjustedTarget.time;
+    seekToTargetInternal(adjustedTarget);
 }
 
 bool MediaPlayerPrivateAVFoundation::paused() const
@@ -682,12 +677,18 @@ void MediaPlayerPrivateAVFoundation::seekCompleted(bool finished)
         return;
     }
 
+    if (!finished)
+        return;
+
     if (currentTextTrack())
         currentTextTrack()->endSeeking();
 
     updateStates();
-    if (auto player = m_player.get())
+
+    if (auto player = m_player.get()) {
+        player->seeked(m_lastSeekTime);
         player->timeChanged();
+    }
 }
 
 void MediaPlayerPrivateAVFoundation::didEnd()
@@ -1115,9 +1116,9 @@ WTFLogChannel& MediaPlayerPrivateAVFoundation::logChannel() const
 }
 #endif
 
-const HashSet<String, ASCIICaseInsensitiveHash>& MediaPlayerPrivateAVFoundation::staticMIMETypeList()
+const HashSet<String>& MediaPlayerPrivateAVFoundation::staticMIMETypeList()
 {
-    static NeverDestroyed cache = HashSet<String, ASCIICaseInsensitiveHash> {
+    static NeverDestroyed cache = HashSet<String> {
         "application/vnd.apple.mpegurl"_s,
         "application/x-mpegurl"_s,
         "audio/3gpp"_s,

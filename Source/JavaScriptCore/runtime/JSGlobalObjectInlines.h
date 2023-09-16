@@ -37,7 +37,9 @@
 #include "JSWeakObjectMapRefInternal.h"
 #include "LinkTimeConstant.h"
 #include "ObjectPrototype.h"
+#include "ParserModes.h"
 #include "StrongInlines.h"
+#include "StructureInlines.h"
 #include <wtf/Hasher.h>
 
 namespace JSC {
@@ -302,7 +304,11 @@ inline JSArray* constructArrayNegativeIndexed(JSGlobalObject* globalObject, Arra
     auto scope = DECLARE_THROW_SCOPE(vm);
     Structure* structure = globalObject->arrayStructureForProfileDuringAllocation(globalObject, profile, newTarget);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArrayNegativeIndexed(globalObject, structure, values, length));
+    scope.release();
+    JSArray* array = constructArrayNegativeIndexed(globalObject, structure, values, length);
+    if (UNLIKELY(!array))
+        return nullptr;
+    return ArrayAllocationProfile::updateLastAllocationFor(profile, array);
 }
 
 inline OptionSet<CodeGenerationMode> JSGlobalObject::defaultCodeGenerationMode() const
@@ -431,10 +437,46 @@ inline JSScope* JSGlobalObject::globalScope()
     return m_globalLexicalEnvironment.get();
 }
 
-inline void JSGlobalObject::addVar(JSGlobalObject* globalObject, const Identifier& propertyName)
+// https://tc39.es/ecma262/#sec-hasvardeclaration
+inline bool JSGlobalObject::hasVarDeclaration(const RefPtr<UniquedStringImpl>& ident)
 {
-    if (!hasOwnProperty(globalObject, propertyName))
-        addGlobalVar(propertyName);
+    SymbolTableEntry entry = symbolTable()->get(ident.get());
+    if (!entry.isNull() && entry.scopeOffset() > m_lastStaticGlobalOffset)
+        return true;
+
+    return m_varNamesDeclaredViaEval.contains(ident);
+}
+
+// https://tc39.es/ecma262/#sec-candeclareglobalvar
+inline bool JSGlobalObject::canDeclareGlobalVar(const Identifier& ident)
+{
+    if (LIKELY(isStructureExtensible()))
+        return true;
+
+    PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
+    return getOwnPropertySlot(this, this, ident, slot);
+}
+
+// https://tc39.es/ecma262/#sec-createglobalvarbinding
+template<BindingCreationContext context>
+inline void JSGlobalObject::createGlobalVarBinding(const Identifier& ident)
+{
+    VM& vm = this->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
+    bool hasProperty = getOwnPropertySlot(this, this, ident, slot);
+    scope.assertNoExceptionExceptTermination();
+    if (UNLIKELY(hasProperty))
+        return;
+
+    ASSERT(isStructureExtensible());
+    if constexpr (context == BindingCreationContext::Global)
+        addSymbolTableEntry(ident);
+    else {
+        putDirect(vm, ident, jsUndefined());
+        m_varNamesDeclaredViaEval.add(ident.impl());
+    }
 }
 
 inline InlineWatchpointSet& JSGlobalObject::typedArraySpeciesWatchpointSet(TypedArrayType type)

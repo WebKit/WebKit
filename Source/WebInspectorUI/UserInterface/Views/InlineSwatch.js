@@ -26,18 +26,20 @@
 
 WI.InlineSwatch = class InlineSwatch extends WI.Object
 {
-    constructor(type, value, {readOnly, preventChangingColorFormats} = {})
+    constructor(type, value, {readOnly, preventChangingColorFormats, variableType, tooltip, delegate} = {})
     {
         super();
 
         this._type = type;
+        this._variableType = variableType || null;
 
         console.assert(!preventChangingColorFormats || type === WI.InlineSwatch.Type.Color);
         this._preventChangingColorFormats = !!preventChangingColorFormats;
 
-        switch (this._type) {
+        switch (this._variableType || this._type) {
         case WI.InlineSwatch.Type.CubicBezierTimingFunction:
         case WI.InlineSwatch.Type.SpringTimingFunction:
+        case WI.InlineSwatch.Type.StepsTimingFunction:
             this._swatchElement = WI.ImageUtilities.useSVGSymbol("Images/CubicBezier.svg");
             break;
 
@@ -54,7 +56,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             break;
         }
 
-        this._swatchElement.classList.add("inline-swatch", this._type.replace("inline-swatch-type-", ""));
+        this._swatchElement.classList.add("inline-swatch", (this._variableType || this._type).replace("inline-swatch-type-", ""));
 
         if (readOnly && this._type !== WI.InlineSwatch.Type.Variable)
             this._swatchElement.classList.add("read-only");
@@ -88,6 +90,10 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
                 this._swatchElement.title = WI.UIString("Edit \u201Cspring\u201D function");
                 break;
 
+            case WI.InlineSwatch.Type.StepsTimingFunction:
+                this._swatchElement.title = WI.UIString("Edit \u201Csteps\u201D function");
+                break;
+
             case WI.InlineSwatch.Type.Variable:
                 if (readOnly)
                     this._swatchElement.title = WI.UIString("Click to view variable value");
@@ -110,6 +116,8 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         this._readOnly = !!readOnly;
         this._popover = null;
 
+        this._delegate = delegate || null;
+        this._tooltip = tooltip || "";
         if (this._allowChangingColorFormats())
             this._swatchElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this));
 
@@ -161,6 +169,8 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             this._valueEditor.removeEventListener(WI.GradientEditor.Event.GradientChanged, this._valueEditorValueDidChange, this);
         else if (this._valueEditor instanceof WI.SpringTimingFunctionEditor)
             this._valueEditor.removeEventListener(WI.SpringTimingFunctionEditor.Event.SpringTimingFunctionChanged, this._valueEditorValueDidChange, this);
+        else if (this._valueEditor instanceof WI.StepsTimingFunctionEditor)
+            this._valueEditor.removeEventListener(WI.StepsTimingFunctionEditor.Event.StepsTimingFunctionChanged, this._valueEditorValueDidChange, this);
         else if (this._valueEditor instanceof WI.AlignmentEditor)
             this._valueEditor.removeEventListener(WI.AlignmentEditor.Event.ValueChanged, this._valueEditorValueDidChange, this);
 
@@ -184,6 +194,8 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             return WI.Gradient.fromString("linear-gradient(transparent, transparent)");
         case WI.InlineSwatch.Type.SpringTimingFunction:
             return WI.SpringTimingFunction.fromString("1 100 10 0");
+        case WI.InlineSwatch.Type.StepsTimingFunction:
+            return WI.StepsTimingFunction.fromString("step-end");
         default:
             return null;
         }
@@ -194,22 +206,29 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         let value = this.value;
 
         switch (this._type) {
-        case WI.InlineSwatch.Type.Color:
+        case WI.InlineSwatch.Type.Color: {
+            let title = this._tooltip;
             if (!this._readOnly) {
-                let title = WI.UIString("Click to select a color.");
+                title = WI.UIString("Click to select a color.");
                 if (this._allowChangingColorFormats())
                     title += "\n" + WI.UIString("Shift-click to switch color formats.");
                 if (InspectorFrontendHost.canPickColorFromScreen())
                     title += "\n" + WI.UIString("Option-click to pick color from screen.");
-                
-                this._swatchElement.title = title;
             }
+            this._swatchElement.title = title;
             // fallthrough
-
+        }
         case WI.InlineSwatch.Type.Gradient:
             this._swatchInnerElement.style.background = value ? value.toString() : null;
             break;
 
+        case WI.InlineSwatch.Type.Variable: {
+            if (this._variableType === WI.InlineSwatch.Type.Color) {
+                let colorVariable = this._findMatchingColorVariable(value.toString());
+                this._swatchInnerElement.style.background = colorVariable?.value || "";
+            }
+            break;
+        }
         case WI.InlineSwatch.Type.Image:
             this._swatchInnerElement.style.setProperty("background-image", `url(${value.src})`);
             break;
@@ -219,6 +238,9 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             this._swatchInnerElement.classList.toggle("rotate-left", WI.AlignmentEditor.shouldRotateGlyph(value.type));
             break;
         }
+
+        if (this._variableType)
+            value = `var(${value})`;
 
         if (!dontFireEvents)
             this.dispatchEventToListeners(WI.InlineSwatch.Event.ValueChanged, {value});
@@ -236,12 +258,23 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         let value = this.value;
 
         if (event.shiftKey && value) {
-            if (this._type === WI.InlineSwatch.Type.Color) {
+            if ((this._variableType || this._type) === WI.InlineSwatch.Type.Color) {
                 if (!this._allowChangingColorFormats()) {
                     InspectorFrontendHost.beep();
                     return;
                 }
-
+            
+                if (this._variableType === WI.InlineSwatch.Type.Color) {
+                    let colorVariable = this._findMatchingColorVariable(value.toString());
+                    if (!colorVariable)
+                        return;
+            
+                    value = colorVariable.value;
+            
+                    this._variableType = null;
+                    this._type = WI.InlineSwatch.Type.Color;
+                }
+            
                 let nextFormat = value.nextFormat();
                 console.assert(nextFormat);
                 if (nextFormat) {
@@ -260,7 +293,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         }
 
         if (event.altKey && value) {
-            if (this._type === WI.InlineSwatch.Type.Color) {
+            if ((this._variableType || this._type) === WI.InlineSwatch.Type.Color) {
                 WI.ColorPicker.pickColorFromScreen({
                     suggestedFormat: value.format,
                     suggestedGamut: value.gamut,
@@ -268,6 +301,9 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
                 }).then((pickedColor) => {
                     if (!pickedColor)
                         return;
+
+                    this._variableType = null;
+                    this._type = WI.InlineSwatch.Type.Color;
 
                     this._value = pickedColor;
                     this._updateSwatch();
@@ -289,7 +325,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         };
 
         this._valueEditor = null;
-        switch (this._type) {
+        switch (this._variableType || this._type) {
         case WI.InlineSwatch.Type.CubicBezierTimingFunction:
             this._valueEditor = new WI.CubicBezierTimingFunctionEditor;
             this._valueEditor.addEventListener(WI.CubicBezierTimingFunctionEditor.Event.CubicBezierTimingFunctionChanged, this._valueEditorValueDidChange, this);
@@ -301,7 +337,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             break;
 
         case WI.InlineSwatch.Type.Color:
-            this._valueEditor = new WI.ColorPicker({preventChangingColorFormats: this._preventChangingColorFormats});
+            this._valueEditor = new WI.ColorPicker({preventChangingColorFormats: this._preventChangingColorFormats, colorVariables: this._delegate?.inlineSwatchGetColorVariables?.(this)});
             this._valueEditor.addEventListener(WI.ColorPicker.Event.ColorChanged, this._valueEditorValueDidChange, this);
             break;
 
@@ -327,6 +363,11 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         case WI.InlineSwatch.Type.SpringTimingFunction:
             this._valueEditor = new WI.SpringTimingFunctionEditor;
             this._valueEditor.addEventListener(WI.SpringTimingFunctionEditor.Event.SpringTimingFunctionChanged, this._valueEditorValueDidChange, this);
+            break;
+
+        case WI.InlineSwatch.Type.StepsTimingFunction:
+            this._valueEditor = new WI.StepsTimingFunctionEditor;
+            this._valueEditor.addEventListener(WI.StepsTimingFunctionEditor.Event.StepsTimingFunctionChanged, this._valueEditorValueDidChange, this);
             break;
 
         case WI.InlineSwatch.Type.Alignment:
@@ -383,7 +424,19 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             this._valueEditor.springTimingFunction = value;
             break;
 
+        case WI.InlineSwatch.Type.StepsTimingFunction:
+            this._valueEditor.stepsTimingFunction = value;
+            break;
+
         case WI.InlineSwatch.Type.Variable: {
+            if (this._variableType === WI.InlineSwatch.Type.Color) {
+                let colorVariable = this._findMatchingColorVariable(value.toString());
+                if (colorVariable) {
+                    this._valueEditor.color = WI.Color.fromString(colorVariable.value);
+                    this._valueEditor.focus();
+                }
+                break;
+            }
             let codeMirror = this._valueEditor.codeMirror;
             codeMirror.setValue(value);
 
@@ -403,6 +456,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             createCodeMirrorGradientTextMarkers(codeMirror, range, optionsForType(WI.InlineSwatch.Type.Gradient));
             createCodeMirrorCubicBezierTimingFunctionTextMarkers(codeMirror, range, optionsForType(WI.InlineSwatch.Type.CubicBezierTimingFunction));
             createCodeMirrorSpringTimingFunctionTextMarkers(codeMirror, range, optionsForType(WI.InlineSwatch.Type.SpringTimingFunction));
+            createCodeMirrorStepsTimingFunctionTextMarkers(codeMirror, range, optionsForType(WI.InlineSwatch.Type.StepsTimingFunction));
             break;
         }
         }
@@ -410,6 +464,16 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
 
     _valueEditorValueDidChange(event)
     {
+        if (this._variableType && event.data.color) {
+            this._variableType = null;
+            this._type = WI.InlineSwatch.Type.Color;
+        }
+
+        if (event.data.variableName) {
+            this._variableType = WI.InlineSwatch.Type.Color;
+            this._type = WI.InlineSwatch.Type.Variable;
+        }
+
         switch (this._type) {
         case WI.InlineSwatch.Type.BoxShadow:
             this._value = event.data.boxShadow;
@@ -431,8 +495,16 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             this._value = event.data.springTimingFunction;
             break;
 
+        case WI.InlineSwatch.Type.StepsTimingFunction:
+            this._value = event.data.stepsTimingFunction;
+            break;
+
         case WI.InlineSwatch.Type.Alignment:
             this._value = event.data.alignment;
+            break;
+        
+        case WI.InlineSwatch.Type.Variable:
+            this._value = event.data.variableName;
             break;
         }
 
@@ -573,17 +645,32 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         }
         return hexFormats[0];
     }
+
+    _findMatchingColorVariable(variableName)
+    {
+        let colorVariables = this._delegate?.inlineSwatchGetColorVariables?.(this) || [];
+
+        const variableNameStart = 4;
+        const variableNameEnd = 1;
+        for (let colorVariable of colorVariables) {
+            let index = variableName.indexOf(colorVariable.name);
+            if ((!index && colorVariable.name.length === variableName.length) || (index === variableNameStart && variableNameStart + colorVariable.name.length === variableName.length - variableNameEnd))
+                return colorVariable;
+        }
+        return null;
+    }
 };
 
 WI.InlineSwatch.Type = {
-    Color: "inline-swatch-type-color",
-    Gradient: "inline-swatch-type-gradient",
-    CubicBezierTimingFunction: "inline-swatch-type-cubic-bezier-timing-function",
-    BoxShadow: "inline-swatch-type-box-shadow",
-    SpringTimingFunction: "inline-swatch-type-spring-timing-function",
-    Variable: "inline-swatch-type-variable",
-    Image: "inline-swatch-type-image",
     Alignment: "inline-swatch-type-alignment",
+    BoxShadow: "inline-swatch-type-box-shadow",
+    Color: "inline-swatch-type-color",
+    CubicBezierTimingFunction: "inline-swatch-type-cubic-bezier-timing-function",
+    Gradient: "inline-swatch-type-gradient",
+    Image: "inline-swatch-type-image",
+    SpringTimingFunction: "inline-swatch-type-spring-timing-function",
+    StepsTimingFunction: "inline-swatch-type-steps-timing-function",
+    Variable: "inline-swatch-type-variable",
 };
 
 WI.InlineSwatch.Event = {

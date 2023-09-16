@@ -28,6 +28,7 @@
 
 #import "ClassMethodSwizzler.h"
 #import "InstanceMethodSwizzler.h"
+#import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "Utilities.h"
 
@@ -291,6 +292,28 @@ static NSString *overrideBundleIdentifier(id, SEL)
     } while (clientWidth != expectedClientWidth && timeout >= 0);
 
     return clientWidth;
+}
+
+- (CGRect)elementRectFromSelector:(NSString *)selector
+{
+    __block CGRect rect;
+    __block bool doneEvaluatingScript = false;
+    auto script = [NSString stringWithFormat:@"r = document.querySelector('%@').getBoundingClientRect(); [r.left, r.top, r.width, r.height]", selector];
+    [self evaluateJavaScript:script completionHandler:^(NSArray<NSNumber *> *result, NSError *error) {
+        if (error)
+            NSLog(@"Error while getting element rect for '%@': %@", selector, error);
+        EXPECT_NULL(error);
+        rect = CGRectMake(result[0].floatValue, result[1].floatValue, result[2].floatValue, result[3].floatValue);
+        doneEvaluatingScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingScript);
+    return rect;
+}
+
+- (CGPoint)elementMidpointFromSelector:(NSString *)selector
+{
+    auto rect = [self elementRectFromSelector:selector];
+    return CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
 }
 
 @end

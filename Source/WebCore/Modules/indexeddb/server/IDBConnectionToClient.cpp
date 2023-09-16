@@ -202,8 +202,8 @@ void IDBConnectionToClient::connectionToClientClosed()
     m_isClosed = true;
     auto databaseConnections = m_databaseConnections;
 
-    for (auto* connection : databaseConnections) {
-        ASSERT(m_databaseConnections.contains(connection));
+    for (RefPtr connection : databaseConnections) {
+        ASSERT(m_databaseConnections.contains(connection.get()));
         connection->connectionClosedFromClient();
     }
 

@@ -56,7 +56,6 @@ private:
     // DrawingAreaProxy
     void sizeDidChange() override;
     void deviceScaleFactorDidChange() override;
-    void waitForBackingStoreUpdateOnNextPaint() override;
     void setBackingStoreIsDiscardable(bool) override;
 
 #if PLATFORM(GTK)
@@ -73,10 +72,6 @@ private:
 
     bool shouldSendWheelEventsToEventDispatcher() const override { return true; }
 
-#if !PLATFORM(WPE)
-    void incorporateUpdate(UpdateInfo&&);
-#endif
-
     bool alwaysUseCompositing() const;
     void enterAcceleratedCompositingMode(const LayerTreeContext&);
     void exitAcceleratedCompositingMode();
@@ -86,6 +81,8 @@ private:
     void didUpdateGeometry();
 
 #if !PLATFORM(WPE)
+    bool forceUpdateIfNeeded();
+    void incorporateUpdate(UpdateInfo&&);
     void discardBackingStoreSoon();
     void discardBackingStore();
 #endif
@@ -115,9 +112,6 @@ private:
     // The current layer tree context.
     LayerTreeContext m_layerTreeContext;
 
-    // For a new Drawing Area don't draw anything until the WebProcess has sent over the first content.
-    bool m_hasReceivedFirstUpdate { false };
-
     // Whether we're waiting for a DidUpdateGeometry message from the web process.
     bool m_isWaitingForDidUpdateGeometry { false };
 
@@ -127,6 +121,7 @@ private:
 
 #if !PLATFORM(WPE)
     bool m_isBackingStoreDiscardable { true };
+    bool m_inForceUpdate { false };
     std::unique_ptr<BackingStore> m_backingStore;
     RunLoop::Timer m_discardBackingStoreTimer;
 #endif

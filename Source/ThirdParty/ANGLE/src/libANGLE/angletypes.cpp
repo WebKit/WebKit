@@ -42,6 +42,12 @@ bool IsAdvancedBlendEquation(gl::BlendEquationType blendEquation)
     return blendEquation >= gl::BlendEquationType::Multiply &&
            blendEquation <= gl::BlendEquationType::HslLuminosity;
 }
+
+bool IsExtendedBlendFactor(gl::BlendFactorType blendFactor)
+{
+    return blendFactor >= gl::BlendFactorType::Src1Alpha &&
+           blendFactor <= gl::BlendFactorType::OneMinusSrc1Alpha;
+}
 }  // anonymous namespace
 
 RasterizerState::RasterizerState()
@@ -558,6 +564,12 @@ BlendStateExt::FactorStorage::Type BlendStateExt::expandFactorValue(const GLenum
     return FactorStorage::GetReplicatedValue(FromGLenum<BlendFactorType>(func), mParameterMask);
 }
 
+BlendStateExt::FactorStorage::Type BlendStateExt::expandFactorValue(
+    const gl::BlendFactorType func) const
+{
+    return FactorStorage::GetReplicatedValue(func, mParameterMask);
+}
+
 BlendStateExt::FactorStorage::Type BlendStateExt::expandSrcColorIndexed(const size_t index) const
 {
     ASSERT(index < mDrawBufferCount);
@@ -591,10 +603,25 @@ void BlendStateExt::setFactors(const GLenum srcColor,
                                const GLenum srcAlpha,
                                const GLenum dstAlpha)
 {
-    mSrcColor = expandFactorValue(srcColor);
-    mDstColor = expandFactorValue(dstColor);
-    mSrcAlpha = expandFactorValue(srcAlpha);
-    mDstAlpha = expandFactorValue(dstAlpha);
+    const gl::BlendFactorType srcColorFactor = FromGLenum<BlendFactorType>(srcColor);
+    const gl::BlendFactorType dstColorFactor = FromGLenum<BlendFactorType>(dstColor);
+    const gl::BlendFactorType srcAlphaFactor = FromGLenum<BlendFactorType>(srcAlpha);
+    const gl::BlendFactorType dstAlphaFactor = FromGLenum<BlendFactorType>(dstAlpha);
+
+    mSrcColor = expandFactorValue(srcColorFactor);
+    mDstColor = expandFactorValue(dstColorFactor);
+    mSrcAlpha = expandFactorValue(srcAlphaFactor);
+    mDstAlpha = expandFactorValue(dstAlphaFactor);
+
+    if (IsExtendedBlendFactor(srcColorFactor) || IsExtendedBlendFactor(dstColorFactor) ||
+        IsExtendedBlendFactor(srcAlphaFactor) || IsExtendedBlendFactor(dstAlphaFactor))
+    {
+        mUsesExtendedBlendFactorMask = mAllEnabledMask;
+    }
+    else
+    {
+        mUsesExtendedBlendFactorMask.reset();
+    }
 }
 
 void BlendStateExt::setFactorsIndexed(const size_t index,
@@ -604,10 +631,21 @@ void BlendStateExt::setFactorsIndexed(const size_t index,
                                       const GLenum dstAlpha)
 {
     ASSERT(index < mDrawBufferCount);
-    FactorStorage::SetValueIndexed(index, FromGLenum<BlendFactorType>(srcColor), &mSrcColor);
-    FactorStorage::SetValueIndexed(index, FromGLenum<BlendFactorType>(dstColor), &mDstColor);
-    FactorStorage::SetValueIndexed(index, FromGLenum<BlendFactorType>(srcAlpha), &mSrcAlpha);
-    FactorStorage::SetValueIndexed(index, FromGLenum<BlendFactorType>(dstAlpha), &mDstAlpha);
+
+    const gl::BlendFactorType srcColorFactor = FromGLenum<BlendFactorType>(srcColor);
+    const gl::BlendFactorType dstColorFactor = FromGLenum<BlendFactorType>(dstColor);
+    const gl::BlendFactorType srcAlphaFactor = FromGLenum<BlendFactorType>(srcAlpha);
+    const gl::BlendFactorType dstAlphaFactor = FromGLenum<BlendFactorType>(dstAlpha);
+
+    FactorStorage::SetValueIndexed(index, srcColorFactor, &mSrcColor);
+    FactorStorage::SetValueIndexed(index, dstColorFactor, &mDstColor);
+    FactorStorage::SetValueIndexed(index, srcAlphaFactor, &mSrcAlpha);
+    FactorStorage::SetValueIndexed(index, dstAlphaFactor, &mDstAlpha);
+
+    const bool isExtended =
+        IsExtendedBlendFactor(srcColorFactor) || IsExtendedBlendFactor(dstColorFactor) ||
+        IsExtendedBlendFactor(srcAlphaFactor) || IsExtendedBlendFactor(dstAlphaFactor);
+    mUsesExtendedBlendFactorMask.set(index, isExtended);
 }
 
 void BlendStateExt::setFactorsIndexed(const size_t index,
@@ -616,14 +654,25 @@ void BlendStateExt::setFactorsIndexed(const size_t index,
 {
     ASSERT(index < mDrawBufferCount);
     ASSERT(sourceIndex < source.mDrawBufferCount);
-    FactorStorage::SetValueIndexed(
-        index, FactorStorage::GetValueIndexed(sourceIndex, source.mSrcColor), &mSrcColor);
-    FactorStorage::SetValueIndexed(
-        index, FactorStorage::GetValueIndexed(sourceIndex, source.mDstColor), &mDstColor);
-    FactorStorage::SetValueIndexed(
-        index, FactorStorage::GetValueIndexed(sourceIndex, source.mSrcAlpha), &mSrcAlpha);
-    FactorStorage::SetValueIndexed(
-        index, FactorStorage::GetValueIndexed(sourceIndex, source.mDstAlpha), &mDstAlpha);
+
+    const gl::BlendFactorType srcColorFactor =
+        FactorStorage::GetValueIndexed(sourceIndex, source.mSrcColor);
+    const gl::BlendFactorType dstColorFactor =
+        FactorStorage::GetValueIndexed(sourceIndex, source.mDstColor);
+    const gl::BlendFactorType srcAlphaFactor =
+        FactorStorage::GetValueIndexed(sourceIndex, source.mSrcAlpha);
+    const gl::BlendFactorType dstAlphaFactor =
+        FactorStorage::GetValueIndexed(sourceIndex, source.mDstAlpha);
+
+    FactorStorage::SetValueIndexed(index, srcColorFactor, &mSrcColor);
+    FactorStorage::SetValueIndexed(index, dstColorFactor, &mDstColor);
+    FactorStorage::SetValueIndexed(index, srcAlphaFactor, &mSrcAlpha);
+    FactorStorage::SetValueIndexed(index, dstAlphaFactor, &mDstAlpha);
+
+    const bool isExtended =
+        IsExtendedBlendFactor(srcColorFactor) || IsExtendedBlendFactor(dstColorFactor) ||
+        IsExtendedBlendFactor(srcAlphaFactor) || IsExtendedBlendFactor(dstAlphaFactor);
+    mUsesExtendedBlendFactorMask.set(index, isExtended);
 }
 
 GLenum BlendStateExt::getSrcColorIndexed(size_t index) const

@@ -84,6 +84,7 @@ bool AccessibilityUIElement::scrollPageDown() { return false; }
 bool AccessibilityUIElement::scrollPageLeft() { return false; }
 bool AccessibilityUIElement::scrollPageRight() { return false; }
 bool AccessibilityUIElement::hasContainedByFieldsetTrait() { return false; }
+bool AccessibilityUIElement::hasTextEntryTrait() { return false; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::fieldsetAncestorElement() { return nullptr; }
 bool AccessibilityUIElement::isSearchField() const { return false; }
 bool AccessibilityUIElement::isTextArea() const { return false; }
@@ -93,6 +94,7 @@ bool AccessibilityUIElement::isInTable() const { return false; }
 bool AccessibilityUIElement::isInLandmark() const { return false; }
 bool AccessibilityUIElement::isInList() const { return false; }
 bool AccessibilityUIElement::isMarkAnnotation() const { return false; }
+bool AccessibilityUIElement::supportsExpanded() const { return false; }
 #endif
     
 // Unsupported methods on various platforms. As they're implemented on other platforms this list should be modified.
@@ -121,7 +123,8 @@ JSValueRef AccessibilityUIElement::searchTextWithCriteria(JSContextRef, JSValueR
 bool AccessibilityUIElement::isOnScreen() const { return true; }
 JSValueRef AccessibilityUIElement::mathRootRadicand() const { return { }; }
 unsigned AccessibilityUIElement::numberOfCharacters() const { return 0; }
-#endif
+JSValueRef AccessibilityUIElement::columns() { return { }; }
+#endif // !PLATFORM(MAC) || !ENABLE(ACCESSIBILITY)
 
 #if !PLATFORM(COCOA) || !ENABLE(ACCESSIBILITY)
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::focusedElement() const { return nullptr; }

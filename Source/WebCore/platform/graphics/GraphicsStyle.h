@@ -64,26 +64,19 @@ inline bool operator==(const GraphicsDropShadow& a, const GraphicsDropShadow& b)
 struct GraphicsGaussianBlur {
     FloatSize radius;
 
+    friend bool operator==(const GraphicsGaussianBlur&, const GraphicsGaussianBlur&) = default;
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<GraphicsGaussianBlur> decode(Decoder&);
 };
 
-inline bool operator==(const GraphicsGaussianBlur& a, const GraphicsGaussianBlur& b)
-{
-    return a.radius == b.radius;
-}
-
 struct GraphicsColorMatrix {
     std::array<float, 20> values;
+
+    friend bool operator==(const GraphicsColorMatrix&, const GraphicsColorMatrix&) = default;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<GraphicsColorMatrix> decode(Decoder&);
 };
-
-inline bool operator==(const GraphicsColorMatrix& a, const GraphicsColorMatrix& b)
-{
-    return a.values == b.values;
-}
 
 using GraphicsStyle = std::variant<
     GraphicsDropShadow,

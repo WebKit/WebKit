@@ -3,28 +3,23 @@
 
 /*---
 esid: sec-temporal.calendar.prototype.dateadd
-description: A number is converted to a string, then to Temporal.PlainDate
-includes: [temporalHelpers.js]
+description: A number cannot be used in place of a Temporal.PlainDate
 features: [Temporal]
 ---*/
 
 const instance = new Temporal.Calendar("iso8601");
 
-const arg = 19761118;
-
-const result = instance.dateAdd(arg, new Temporal.Duration());
-TemporalHelpers.assertPlainDate(result, 1976, 11, "M11", 18, "19761118 is a valid ISO string for PlainDate");
-
 const numbers = [
   1,
+  19761118,
   -19761118,
   1234567890,
 ];
 
 for (const arg of numbers) {
   assert.throws(
-    RangeError,
+    TypeError,
     () => instance.dateAdd(arg, new Temporal.Duration()),
-    `Number ${arg} does not convert to a valid ISO string for PlainDate`
+    'Numbers cannot be used in place of an ISO string for PlainDate'
   );
 }

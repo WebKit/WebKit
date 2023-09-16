@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 - 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Holger Hans Peter Freyther
  *
  * This library is free software; you can redistribute it and/or
@@ -23,6 +23,7 @@
 #define WidthIterator_h
 
 #include "GlyphBuffer.h"
+#include "TextDirection.h"
 #include <unicode/umachine.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
@@ -30,18 +31,21 @@
 namespace WebCore {
 
 class FontCascade;
+class FontCascadeDescription;
 class Font;
 class TextRun;
 struct GlyphData;
 struct GlyphIndexRange;
 struct OriginalAdvancesForCharacterTreatedAsSpace;
+struct AdvanceInternalState;
+struct SmallCapsState;
 
 using CharactersTreatedAsSpace = Vector<OriginalAdvancesForCharacterTreatedAsSpace, 64>;
 
 struct WidthIterator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WidthIterator(const FontCascade&, const TextRun&, HashSet<const Font*>* fallbackFonts = 0, bool accountForGlyphBounds = false, bool forTextEmphasis = false);
+    WidthIterator(const FontCascade&, const TextRun&, WeakHashSet<const Font>* fallbackFonts = 0, bool accountForGlyphBounds = false, bool forTextEmphasis = false);
 
     void advance(unsigned to, GlyphBuffer&);
     bool advanceOneCharacter(float& width, GlyphBuffer&);
@@ -70,7 +74,8 @@ private:
         GlyphBufferAdvance initialAdvance;
     };
     ApplyFontTransformsResult applyFontTransforms(GlyphBuffer&, unsigned lastGlyphCount, const Font&, CharactersTreatedAsSpace&);
-    void commitCurrentFontRange(GlyphBuffer&, unsigned& lastGlyphCount, unsigned currentCharacterIndex, const Font*&, const Font& newFont, const Font& primaryFont, UChar32 character, float& widthOfCurrentFontRange, float nextCharacterWidth, CharactersTreatedAsSpace&);
+    void commitCurrentFontRange(AdvanceInternalState&);
+    void startNewFontRangeIfNeeded(AdvanceInternalState&, SmallCapsState&, const FontCascadeDescription&);
     void applyInitialAdvance(GlyphBuffer&, GlyphBufferAdvance initialAdvance, unsigned lastGlyphCount);
 
     bool hasExtraSpacing() const;
@@ -86,9 +91,13 @@ private:
     AdditionalWidth calculateAdditionalWidth(GlyphBuffer&, GlyphBufferStringOffset currentCharacterIndex, unsigned leadingGlyphIndex, unsigned trailingGlyphIndex, float position) const;
     void applyAdditionalWidth(GlyphBuffer&, GlyphIndexRange, float leftAdditionalWidth, float rightAdditionalWidth, float leftExpansionAdditionalWidth, float rightExpansionAdditionalWidth);
 
+    TextDirection direction() const { return m_direction; }
+    bool rtl() const { return m_direction == TextDirection::RTL; }
+    bool ltr() const { return m_direction == TextDirection::LTR; }
+
     const FontCascade& m_font;
     const TextRun& m_run;
-    HashSet<const Font*>* m_fallbackFonts { nullptr };
+    WeakHashSet<const Font>* m_fallbackFonts { nullptr };
 
     std::optional<unsigned> m_lastCharacterIndex;
     GlyphBufferAdvance m_leftoverInitialAdvance { makeGlyphBufferAdvance() };
@@ -101,6 +110,7 @@ private:
     float m_minGlyphBoundingBoxY { std::numeric_limits<float>::max() };
     float m_firstGlyphOverflow { 0 };
     float m_lastGlyphOverflow { 0 };
+    TextDirection m_direction { TextDirection::LTR };
     bool m_containsTabs { false };
     bool m_isAfterExpansion { false };
     bool m_accountForGlyphBounds { false };
@@ -109,6 +119,6 @@ private:
     bool m_forTextEmphasis { false };
 };
 
-}
+} // namespace WebCore
 
 #endif

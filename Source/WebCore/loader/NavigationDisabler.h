@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class NavigationDisabler {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:
     NavigationDisabler(LocalFrame* frame)
         : m_frame(frame)

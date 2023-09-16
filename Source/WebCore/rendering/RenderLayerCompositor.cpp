@@ -318,7 +318,7 @@ void RenderLayerCompositor::BackingSharingState::endBackingSharingSequence(Rende
 
     for (auto& candidate : m_backingProviderCandidates) {
         candidate.sharingLayers.remove(endLayer);
-        candidate.providerLayer->backing()->setBackingSharingLayers(copyToVector(candidate.sharingLayers));
+        candidate.providerLayer->backing()->setBackingSharingLayers(WTFMove(candidate.sharingLayers));
     }
     m_backingProviderCandidates.clear();
     m_backingProviderStackingContext = nullptr;
@@ -462,10 +462,13 @@ static inline bool layersLogEnabled()
 }
 #endif
 
+static constexpr Seconds conservativeCompositingPolicyHysteresisDuration { 2_s };
+
 RenderLayerCompositor::RenderLayerCompositor(RenderView& renderView)
     : m_renderView(renderView)
     , m_updateCompositingLayersTimer(*this, &RenderLayerCompositor::updateCompositingLayersTimerFired)
     , m_updateRenderingTimer(*this, &RenderLayerCompositor::scheduleRenderingUpdate)
+    , m_compositingPolicyHysteresis([](PAL::HysteresisState) { }, conservativeCompositingPolicyHysteresisDuration)
 {
 #if PLATFORM(IOS_FAMILY)
     if (m_renderView.frameView().platformWidget())
@@ -594,6 +597,9 @@ bool RenderLayerCompositor::updateCompositingPolicy()
         return m_compositingPolicy != currentPolicy;
     }
 
+    if (!canUpdateCompositingPolicy())
+        return false;
+
     const auto isCurrentlyUnderMemoryPressureOrWarning = [] {
         return MemoryPressureHandler::singleton().isUnderMemoryPressure() || MemoryPressureHandler::singleton().isUnderMemoryWarning();
     };
@@ -608,7 +614,17 @@ bool RenderLayerCompositor::updateCompositingPolicy()
     }
 
     m_compositingPolicy = cachedMemoryPolicy == WTF::MemoryUsagePolicy::Unrestricted ? CompositingPolicy::Normal : CompositingPolicy::Conservative;
-    return m_compositingPolicy != currentPolicy;
+
+    bool didChangePolicy = currentPolicy != m_compositingPolicy;
+    if (didChangePolicy && m_compositingPolicy == CompositingPolicy::Conservative)
+        m_compositingPolicyHysteresis.impulse();
+
+    return didChangePolicy;
+}
+
+bool RenderLayerCompositor::canUpdateCompositingPolicy() const
+{
+    return m_compositingPolicyHysteresis.state() == PAL::HysteresisState::Stopped;
 }
 
 bool RenderLayerCompositor::canRender3DTransforms() const
@@ -2728,6 +2744,9 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer& layer, R
 bool RenderLayerCompositor::canBeComposited(const RenderLayer& layer) const
 {
     if (m_hasAcceleratedCompositing && layer.isSelfPaintingLayer()) {
+        if (layer.renderer().isSkippedContent())
+            return false;
+
         if (!layer.isInsideFragmentedFlow())
             return true;
 
@@ -4141,9 +4160,6 @@ void RenderLayerCompositor::updateLayerForOverhangAreasBackgroundColor()
         })();
         m_layerForOverhangAreas->setBackgroundColor(backgroundColor);
     }
-
-    if (!backgroundColor.isValid())
-        m_layerForOverhangAreas->setCustomAppearance(GraphicsLayer::CustomAppearance::ScrollingOverhang);
 }
 
 #endif // HAVE(RUBBER_BANDING)
@@ -4349,8 +4365,7 @@ void RenderLayerCompositor::ensureRootLayer()
 
 #if PLATFORM(IOS_FAMILY)
         // Page scale is applied above this on iOS, so we'll just say that our root layer applies it.
-        auto* frame = dynamicDowncast<LocalFrame>(m_renderView.frameView().frame());
-        if (frame && frame->isMainFrame())
+        if (m_renderView.frameView().frame().isMainFrame())
             m_rootContentsLayer->setAppliesPageScale();
 #endif
 
@@ -4475,8 +4490,7 @@ void RenderLayerCompositor::attachRootLayer(RootLayerAttachment attachment)
             ASSERT_NOT_REACHED();
             break;
         case RootLayerAttachedViaChromeClient: {
-            if (auto* frame = dynamicDowncast<LocalFrame>(m_renderView.frameView().frame()))
-                page().chrome().client().attachRootGraphicsLayer(*frame, rootGraphicsLayer());
+            page().chrome().client().attachRootGraphicsLayer(m_renderView.frameView().frame(), rootGraphicsLayer());
             break;
         }
         case RootLayerAttachedViaEnclosingFrame: {
@@ -4526,11 +4540,9 @@ void RenderLayerCompositor::detachRootLayer()
         break;
     }
     case RootLayerAttachedViaChromeClient: {
-        if (auto* frame = dynamicDowncast<LocalFrame>(m_renderView.frameView().frame())) {
-            if (auto* scrollingCoordinator = this->scrollingCoordinator())
-                scrollingCoordinator->frameViewWillBeDetached(m_renderView.frameView());
-            page().chrome().client().attachRootGraphicsLayer(*frame, nullptr);
-        }
+        if (auto* scrollingCoordinator = this->scrollingCoordinator())
+            scrollingCoordinator->frameViewWillBeDetached(m_renderView.frameView());
+        page().chrome().client().attachRootGraphicsLayer(m_renderView.frameView().frame(), nullptr);
     }
     break;
     case RootLayerUnattached:
@@ -4560,7 +4572,7 @@ void RenderLayerCompositor::rootLayerAttachmentChanged()
     if (auto* backing = layer ? layer->backing() : nullptr)
         backing->updateDrawsContent();
 
-    if (auto* frame = dynamicDowncast<LocalFrame>(m_renderView.frameView().frame()); !frame || !frame->isMainFrame())
+    if (!m_renderView.frameView().frame().isMainFrame())
         return;
 
     Ref<GraphicsLayer> overlayHost = page().pageOverlayController().layerWithDocumentOverlays();
@@ -5355,24 +5367,24 @@ void LegacyWebKitScrollingLayerCoordinator::registerAllViewportConstrainedLayers
     LayerMap layerMap;
     StickyContainerMap stickyContainerMap;
 
-    for (auto* layer : m_viewportConstrainedLayers) {
-        ASSERT(layer->isComposited());
+    for (auto& layer : m_viewportConstrainedLayers) {
+        ASSERT(layer.isComposited());
 
         std::unique_ptr<ViewportConstraints> constraints;
-        if (layer->renderer().isStickilyPositioned()) {
-            constraints = makeUnique<StickyPositionViewportConstraints>(compositor.computeStickyViewportConstraints(*layer));
+        if (layer.renderer().isStickilyPositioned()) {
+            constraints = makeUnique<StickyPositionViewportConstraints>(compositor.computeStickyViewportConstraints(layer));
             const RenderLayer* enclosingTouchScrollableLayer = nullptr;
-            if (compositor.isAsyncScrollableStickyLayer(*layer, &enclosingTouchScrollableLayer) && enclosingTouchScrollableLayer) {
+            if (compositor.isAsyncScrollableStickyLayer(layer, &enclosingTouchScrollableLayer) && enclosingTouchScrollableLayer) {
                 ASSERT(enclosingTouchScrollableLayer->isComposited());
                 // what
-                stickyContainerMap.add(layer->backing()->graphicsLayer()->platformLayer(), enclosingTouchScrollableLayer->backing()->scrollContainerLayer()->platformLayer());
+                stickyContainerMap.add(layer.backing()->graphicsLayer()->platformLayer(), enclosingTouchScrollableLayer->backing()->scrollContainerLayer()->platformLayer());
             }
-        } else if (layer->renderer().isFixedPositioned())
-            constraints = makeUnique<FixedPositionViewportConstraints>(compositor.computeFixedViewportConstraints(*layer));
+        } else if (layer.renderer().isFixedPositioned())
+            constraints = makeUnique<FixedPositionViewportConstraints>(compositor.computeFixedViewportConstraints(layer));
         else
             continue;
 
-        layerMap.add(layer->backing()->graphicsLayer()->platformLayer(), WTFMove(constraints));
+        layerMap.add(layer.backing()->graphicsLayer()->platformLayer(), WTFMove(constraints));
     }
     
     m_chromeClient.updateViewportConstrainedLayers(layerMap, stickyContainerMap);
@@ -5404,27 +5416,27 @@ void LegacyWebKitScrollingLayerCoordinator::updateScrollingLayer(RenderLayer& la
 
 void LegacyWebKitScrollingLayerCoordinator::registerAllScrollingLayers()
 {
-    for (auto* layer : m_scrollingLayers)
-        updateScrollingLayer(*layer);
+    for (auto& layer : m_scrollingLayers)
+        updateScrollingLayer(layer);
 }
 
 void LegacyWebKitScrollingLayerCoordinator::unregisterAllScrollingLayers()
 {
-    for (auto* layer : m_scrollingLayers) {
-        auto* backing = layer->backing();
+    for (auto& layer : m_scrollingLayers) {
+        auto* backing = layer.backing();
         ASSERT(backing);
-        m_chromeClient.removeScrollingLayer(layer->renderer().element(), backing->scrollContainerLayer()->platformLayer(), backing->scrolledContentsLayer()->platformLayer());
+        m_chromeClient.removeScrollingLayer(layer.renderer().element(), backing->scrollContainerLayer()->platformLayer(), backing->scrolledContentsLayer()->platformLayer());
     }
 }
 
 void LegacyWebKitScrollingLayerCoordinator::addScrollingLayer(RenderLayer& layer)
 {
-    m_scrollingLayers.add(&layer);
+    m_scrollingLayers.add(layer);
 }
 
 void LegacyWebKitScrollingLayerCoordinator::removeScrollingLayer(RenderLayer& layer, RenderLayerBacking& backing)
 {
-    if (m_scrollingLayers.remove(&layer)) {
+    if (m_scrollingLayers.remove(layer)) {
         auto* scrollContainerLayer = backing.scrollContainerLayer()->platformLayer();
         auto* scrolledContentsLayer = backing.scrolledContentsLayer()->platformLayer();
         m_chromeClient.removeScrollingLayer(layer.renderer().element(), scrollContainerLayer, scrolledContentsLayer);
@@ -5436,17 +5448,17 @@ void LegacyWebKitScrollingLayerCoordinator::removeLayer(RenderLayer& layer)
     removeScrollingLayer(layer, *layer.backing());
 
     // We'll put the new set of layers to the client via registerAllViewportConstrainedLayers() at flush time.
-    m_viewportConstrainedLayers.remove(&layer);
+    m_viewportConstrainedLayers.remove(layer);
 }
 
 void LegacyWebKitScrollingLayerCoordinator::addViewportConstrainedLayer(RenderLayer& layer)
 {
-    m_viewportConstrainedLayers.add(&layer);
+    m_viewportConstrainedLayers.add(layer);
 }
 
 void LegacyWebKitScrollingLayerCoordinator::removeViewportConstrainedLayer(RenderLayer& layer)
 {
-    m_viewportConstrainedLayers.remove(&layer);
+    m_viewportConstrainedLayers.remove(layer);
 }
 
 #endif

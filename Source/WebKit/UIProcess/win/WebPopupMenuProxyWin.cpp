@@ -32,6 +32,7 @@
 
 #include "NativeWebMouseEvent.h"
 #include "PlatformPopupMenuData.h"
+#include "WebKitDLL.h"
 #include "WebView.h"
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/GDIUtilities.h>
@@ -39,7 +40,6 @@
 #include <WebCore/HWndDC.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/ScrollbarTheme.h>
-#include <WebCore/WebCoreInstanceHandle.h>
 #include <windowsx.h>
 #include <wtf/HexNumber.h>
 #include <wtf/text/StringBuilder.h>
@@ -750,7 +750,7 @@ LRESULT WebPopupMenuProxyWin::onMouseWheel(HWND hWnd, UINT message, WPARAM wPara
             --i;
     }
 
-    ScrollableArea::scroll(i > 0 ? ScrollUp : ScrollDown, ScrollGranularity::Line, std::abs(i));
+    ScrollableArea::scroll(i > 0 ? ScrollDirection::ScrollUp : ScrollDirection::ScrollDown, ScrollGranularity::Line, std::abs(i));
     return 0;
 }
 

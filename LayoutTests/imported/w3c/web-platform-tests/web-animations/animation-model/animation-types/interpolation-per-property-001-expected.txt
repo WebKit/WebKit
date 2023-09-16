@@ -321,6 +321,10 @@ PASS font-variant-east-asian (type: discrete) has testInterpolation function
 PASS font-variant-east-asian uses discrete animation when animating between "full-width" and "proportional-width" with linear easing
 PASS font-variant-east-asian uses discrete animation when animating between "full-width" and "proportional-width" with effect easing
 PASS font-variant-east-asian uses discrete animation when animating between "full-width" and "proportional-width" with keyframe easing
+PASS font-variant-emoji (type: discrete) has testInterpolation function
+PASS font-variant-emoji uses discrete animation when animating between "text" and "emoji" with linear easing
+PASS font-variant-emoji uses discrete animation when animating between "text" and "emoji" with effect easing
+PASS font-variant-emoji uses discrete animation when animating between "text" and "emoji" with keyframe easing
 PASS font-variant-ligatures (type: discrete) has testInterpolation function
 PASS font-variant-ligatures uses discrete animation when animating between "common-ligatures" and "no-common-ligatures" with linear easing
 PASS font-variant-ligatures uses discrete animation when animating between "common-ligatures" and "no-common-ligatures" with effect easing

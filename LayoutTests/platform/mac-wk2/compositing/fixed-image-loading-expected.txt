@@ -13,6 +13,7 @@
           (children 1
             (GraphicsLayer
               (bounds 214.00 232.00)
+              (drawsContent 1)
             )
           )
         )

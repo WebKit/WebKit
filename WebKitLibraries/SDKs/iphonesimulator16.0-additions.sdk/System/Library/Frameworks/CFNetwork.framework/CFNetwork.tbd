@@ -1,0 +1,49 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator]
+install-name: /System/Library/Frameworks/CFNetwork.framework/CFNetwork
+current-version: 1408.0.4
+exports:
+-       targets: [i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator]
+        symbols: [_CFHTTPAuthenticationCopyMethod, _CFHTTPAuthenticationCopyRealm, _CFHTTPAuthenticationCreateFromResponse,
+                _CFHTTPAuthenticationRequiresUserNameAndPassword, _CFHTTPCookieStorageCopyCookies, _CFHTTPCookieStorageCreateFromFile,
+                _CFHTTPCookieStorageCreateFromIdentifyingData, _CFHTTPCookieStorageCreateIdentifyingData, _CFHTTPCookieStorageDeleteAllCookies,
+                _CFHTTPCookieStorageDeleteCookie, _CFHTTPCookieStorageGetCookieAcceptPolicy, _CFHTTPCookieStorageScheduleWithRunLoop,
+                _CFHTTPCookieStorageSetCookieAcceptPolicy, _CFHTTPCookieStorageSetCookies, _CFHTTPMessageApplyCredentials,
+                _CFHTTPMessageCopyAllHeaderFields, _CFHTTPMessageCopyHeaderFieldValue, _CFHTTPMessageCopyResponseStatusLine,
+                _CFHTTPMessageCopyVersion, _CFHTTPMessageCreateRequest, _CFHTTPMessageCreateResponse, _CFHTTPMessageGetResponseStatusCode,
+                _CFHTTPMessageGetTypeID, _CFHTTPMessageSetHeaderFieldValue, _CFNetworkCopyProxiesForURL, _CFNetworkCopySystemProxySettings,
+                _CFNetworkExecuteProxyAutoConfigurationURL, _CFURLCacheCopyResponseForRequest, _CFURLCacheCopySharedURLCache,
+                _CFURLCacheMemoryCapacity, _CFURLCacheSetDiskCapacity, _CFURLCacheSetMemoryCapacity, _CFURLRequestCreateMutableCopy,
+                _CFURLRequestGetRequestPriority, _CFURLRequestSetHTTPRequestBody, _CFURLRequestSetHTTPRequestBodyStream, _CFURLRequestSetRequestPriority,
+                _CFURLRequestSetShouldPipelineHTTP, _CFURLRequestSetShouldStartSynchronously, _CFURLResponseCopySuggestedFilename,
+                _CFURLResponseCreate, _CFURLResponseCreateWithHTTPResponse, _CFURLResponseGetExpectedContentLength, _CFURLResponseGetHTTPResponse,
+                _CFURLResponseGetMIMEType, _CFURLResponseGetTextEncodingName, _CFURLResponseGetURL, _CFURLResponseSetMIMEType,
+                _NSHTTPCookieComment, _NSHTTPCookieCommentURL, _NSHTTPCookieDiscard, _NSHTTPCookieDomain, _NSHTTPCookieExpires,
+                _NSHTTPCookieManagerCookiesChangedNotification, _NSHTTPCookieMaximumAge, _NSHTTPCookieName, _NSHTTPCookiePath,
+                _NSHTTPCookiePort, _NSHTTPCookieSameSiteLax, _NSHTTPCookieSameSitePolicy, _NSHTTPCookieSameSiteStrict, _NSHTTPCookieSecure,
+                _NSHTTPCookieValue, _NSHTTPCookieVersion, _NSURLAuthenticationMethodClientCertificate, _NSURLAuthenticationMethodDefault,
+                _NSURLAuthenticationMethodHTMLForm, _NSURLAuthenticationMethodHTTPBasic, _NSURLAuthenticationMethodHTTPDigest,
+                _NSURLAuthenticationMethodNTLM, _NSURLAuthenticationMethodNegotiate, _NSURLAuthenticationMethodOAuth, _NSURLAuthenticationMethodServerTrust,
+                _NSURLProtectionSpaceFTPProxy, _NSURLProtectionSpaceHTTP, _NSURLProtectionSpaceHTTPProxy, _NSURLProtectionSpaceHTTPSProxy,
+                _NSURLProtectionSpaceSOCKSProxy, _NSURLSessionTaskPriorityDefault, _NSURLSessionTaskPriorityHigh, _NSURLSessionTaskPriorityLow,
+                __CFCachedURLResponseGetMemMappedData, __CFCachedURLResponseSetBecameFileBackedCallBackBlock, __CFHTTPCookieStorageGetDefault,
+                __CFHTTPMessageSetResponseURL, __CFHostIsDomainTopLevel, __CFNetworkCopyATSContext, __CFNetworkHTTPConnectionCacheGetLimit,
+                __CFNetworkHTTPConnectionCacheSetLimit, __CFNetworkIsKnownHSTSHostWithSession, __CFNetworkSetATSContext, __CFURLCacheCopyCacheDirectory,
+                __CFURLConnectionSetFrameworkStubs, __CFURLRequestSetProtocolProperty, __CFURLRequestSetStorageSession, __CFURLResponseGetSSLCertificateContext,
+                __CFURLStorageSessionCopyCache, __CFURLStorageSessionCopyCookieStorage, __CFURLStorageSessionCreate, __CFURLStorageSessionDisableCache,
+                __kCFStreamSocketSetNoDelay, __kCFURLCachePartitionKey, __kCFURLConnectionPropertyShouldSniff, __kCFURLStorageSessionIsPrivate,
+                _kCFErrorDomainCFNetwork, _kCFHTTPAuthenticationSchemeBasic, _kCFHTTPAuthenticationSchemeDigest, _kCFHTTPAuthenticationSchemeNTLM,
+                _kCFHTTPAuthenticationSchemeNegotiate, _kCFHTTPCookieLocalFileDomain, _kCFHTTPVersion1_1, _kCFNetworkProxiesHTTPEnable,
+                _kCFNetworkProxiesHTTPPort, _kCFNetworkProxiesHTTPProxy, _kCFProxyAutoConfigurationURLKey, _kCFProxyHostNameKey,
+                _kCFProxyPortNumberKey, _kCFProxyTypeAutoConfigurationURL, _kCFProxyTypeHTTPS, _kCFProxyTypeKey, _kCFProxyTypeNone,
+                _kCFProxyTypeSOCKS, _kCFStreamPropertyCONNECTAdditionalHeaders, _kCFStreamPropertyCONNECTProxy, _kCFStreamPropertyCONNECTProxyHost,
+                _kCFStreamPropertyCONNECTProxyPort, _kCFStreamPropertyCONNECTResponse, _kCFStreamPropertyHTTPProxyHost, _kCFStreamPropertyHTTPProxyPort,
+                _kCFStreamPropertyHTTPSProxyHost, _kCFStreamPropertyHTTPSProxyPort, _kCFStreamPropertySSLPeerTrust, _kCFStreamPropertySSLSettings,
+                _kCFStreamPropertySourceApplication, _kCFStreamSSLLevel, _kCFStreamSSLPeerName, _kCFStreamSSLValidatesCertificateChain,
+                _kCFStreamSocketSecurityLevelTLSv1_2, _kCFURLRequestAllowAllPOSTCaching]
+        objc-classes: [NSCachedURLResponse, NSHTTPCookie, NSHTTPCookieStorage, NSHTTPURLResponse, NSMutableURLRequest, NSURLAuthenticationChallenge,
+                NSURLCache, NSURLConnection, NSURLCredential, NSURLCredentialStorage, NSURLDownload, NSURLProtectionSpace,
+                NSURLProtocol, NSURLRequest, NSURLResponse, NSURLSession, NSURLSessionConfiguration, NSURLSessionWebSocketMessage,
+                _NSHSTSStorage, _NSHTTPAlternativeServicesFilter, _NSHTTPAlternativeServicesStorage]
+...

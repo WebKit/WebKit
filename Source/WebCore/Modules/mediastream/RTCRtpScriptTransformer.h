@@ -33,11 +33,13 @@
 #include "RTCRtpTransformBackend.h"
 #include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/Deque.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
+class FrameRateMonitor;
 class MessagePort;
 class ReadableStream;
 class ScriptExecutionContext;
@@ -47,6 +49,9 @@ class SimpleReadableStreamSource;
 class WritableStream;
 
 struct MessageWithMessagePorts;
+
+enum RTCRtpScriptTransformerIdentifierType { };
+using RTCRtpScriptTransformerIdentifier = AtomicObjectIdentifier<RTCRtpScriptTransformerIdentifierType>;
 
 class RTCRtpScriptTransformer
     : public RefCounted<RTCRtpScriptTransformer>
@@ -91,6 +96,13 @@ private:
     RefPtr<PendingActivity<RTCRtpScriptTransformer>> m_pendingActivity;
 
     Deque<Ref<DeferredPromise>> m_pendingKeyFramePromises;
+
+#if !RELEASE_LOG_DISABLED
+    bool m_enableAdditionalLogging { false };
+    RTCRtpScriptTransformerIdentifier m_identifier;
+    std::unique_ptr<FrameRateMonitor> m_readableFrameRateMonitor;
+    std::unique_ptr<FrameRateMonitor> m_writableFrameRateMonitor;
+#endif
 };
 
 } // namespace WebCore

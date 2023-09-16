@@ -56,122 +56,122 @@ RecorderImpl::~RecorderImpl()
 
 void RecorderImpl::recordSave()
 {
-    append<Save>();
+    append(Save());
 }
 
 void RecorderImpl::recordRestore()
 {
-    append<Restore>();
+    append(Restore());
 }
 
 void RecorderImpl::recordTranslate(float x, float y)
 {
-    append<Translate>(x, y);
+    append(Translate(x, y));
 }
 
 void RecorderImpl::recordRotate(float angle)
 {
-    append<Rotate>(angle);
+    append(Rotate(angle));
 }
 
 void RecorderImpl::recordScale(const FloatSize& scale)
 {
-    append<Scale>(scale);
+    append(Scale(scale));
 }
 
 void RecorderImpl::recordSetCTM(const AffineTransform& transform)
 {
-    append<SetCTM>(transform);
+    append(SetCTM(transform));
 }
 
 void RecorderImpl::recordConcatenateCTM(const AffineTransform& transform)
 {
-    append<ConcatenateCTM>(transform);
+    append(ConcatenateCTM(transform));
 }
 
 void RecorderImpl::recordSetInlineFillColor(SRGBA<uint8_t> inlineColor)
 {
-    append<SetInlineFillColor>(inlineColor);
+    append(SetInlineFillColor(inlineColor));
 }
 
 void RecorderImpl::recordSetInlineStrokeColor(SRGBA<uint8_t> inlineColor)
 {
-    append<SetInlineStrokeColor>(inlineColor);
+    append(SetInlineStrokeColor(inlineColor));
 }
 
 void RecorderImpl::recordSetStrokeThickness(float thickness)
 {
-    append<SetStrokeThickness>(thickness);
+    append(SetStrokeThickness(thickness));
 }
 
 void RecorderImpl::recordSetState(const GraphicsContextState& state)
 {
-    append<SetState>(state);
+    append(SetState(state));
 }
 
 void RecorderImpl::recordSetLineCap(LineCap lineCap)
 {
-    append<SetLineCap>(lineCap);
+    append(SetLineCap(lineCap));
 }
 
 void RecorderImpl::recordSetLineDash(const DashArray& array, float dashOffset)
 {
-    append<SetLineDash>(array, dashOffset);
+    append(SetLineDash(array, dashOffset));
 }
 
 void RecorderImpl::recordSetLineJoin(LineJoin join)
 {
-    append<SetLineJoin>(join);
+    append(SetLineJoin(join));
 }
 
 void RecorderImpl::recordSetMiterLimit(float limit)
 {
-    append<SetMiterLimit>(limit);
+    append(SetMiterLimit(limit));
 }
 
 void RecorderImpl::recordClearShadow()
 {
-    append<ClearShadow>();
+    append(ClearShadow());
 }
 
 void RecorderImpl::recordResetClip()
 {
-    append<ResetClip>();
+    append(ResetClip());
 }
 
 void RecorderImpl::recordClip(const FloatRect& clipRect)
 {
-    append<Clip>(clipRect);
+    append(Clip(clipRect));
 }
 
 void RecorderImpl::recordClipRoundedRect(const FloatRoundedRect& clipRect)
 {
-    append<ClipRoundedRect>(clipRect);
+    append(ClipRoundedRect(clipRect));
 }
 
 void RecorderImpl::recordClipOut(const FloatRect& clipRect)
 {
-    append<ClipOut>(clipRect);
+    append(ClipOut(clipRect));
 }
 
 void RecorderImpl::recordClipOutRoundedRect(const FloatRoundedRect& clipRect)
 {
-    append<ClipOutRoundedRect>(clipRect);
+    append(ClipOutRoundedRect(clipRect));
 }
 
 void RecorderImpl::recordClipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destinationRect)
 {
-    append<ClipToImageBuffer>(imageBuffer.renderingResourceIdentifier(), destinationRect);
+    append(ClipToImageBuffer(imageBuffer.renderingResourceIdentifier(), destinationRect));
 }
 
 void RecorderImpl::recordClipOutToPath(const Path& path)
 {
-    append<ClipOutToPath>(path);
+    append(ClipOutToPath(path));
 }
 
 void RecorderImpl::recordClipPath(const Path& path, WindRule rule)
 {
-    append<ClipPath>(path, rule);
+    append(ClipPath(path, rule));
 }
 
 void RecorderImpl::recordDrawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter)
@@ -179,162 +179,162 @@ void RecorderImpl::recordDrawFilteredImageBuffer(ImageBuffer* sourceImage, const
     std::optional<RenderingResourceIdentifier> identifier;
     if (sourceImage)
         identifier = sourceImage->renderingResourceIdentifier();
-    append<DrawFilteredImageBuffer>(WTFMove(identifier), sourceImageRect, filter);
+    append(DrawFilteredImageBuffer(WTFMove(identifier), sourceImageRect, filter));
 }
 
 void RecorderImpl::recordDrawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode mode)
 {
-    append<DrawGlyphs>(font, glyphs, advances, count, localAnchor, mode);
+    append(DrawGlyphs(font, glyphs, advances, count, localAnchor, mode));
 }
 
 void RecorderImpl::recordDrawDecomposedGlyphs(const Font& font, const DecomposedGlyphs& decomposedGlyphs)
 {
-    append<DrawDecomposedGlyphs>(font.renderingResourceIdentifier(), decomposedGlyphs.renderingResourceIdentifier());
+    append(DrawDecomposedGlyphs(font.renderingResourceIdentifier(), decomposedGlyphs.renderingResourceIdentifier()));
 }
 
 void RecorderImpl::recordDrawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    append<DrawImageBuffer>(imageBuffer.renderingResourceIdentifier(), destRect, srcRect, options);
+    append(DrawImageBuffer(imageBuffer.renderingResourceIdentifier(), destRect, srcRect, options));
 }
 
 void RecorderImpl::recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    append<DrawNativeImage>(imageIdentifier, imageSize, destRect, srcRect, options);
+    append(DrawNativeImage(imageIdentifier, imageSize, destRect, srcRect, options));
 }
 
 void RecorderImpl::recordDrawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)
 {
-    append<DrawSystemImage>(systemImage, destinationRect);
+    append(DrawSystemImage(systemImage, destinationRect));
 }
 
 void RecorderImpl::recordDrawPattern(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
-    append<DrawPattern>(imageIdentifier, destRect, tileRect, transform, phase, spacing, options);
+    append(DrawPattern(imageIdentifier, destRect, tileRect, transform, phase, spacing, options));
 }
 
 void RecorderImpl::recordBeginTransparencyLayer(float opacity)
 {
-    append<BeginTransparencyLayer>(opacity);
+    append(BeginTransparencyLayer(opacity));
 }
 
 void RecorderImpl::recordEndTransparencyLayer()
 {
-    append<EndTransparencyLayer>();
+    append(EndTransparencyLayer());
 }
 
 void RecorderImpl::recordDrawRect(const FloatRect& rect, float lineWidth)
 {
-    append<DrawRect>(rect, lineWidth);
+    append(DrawRect(rect, lineWidth));
 }
 
 void RecorderImpl::recordDrawLine(const FloatPoint& point1, const FloatPoint& point2)
 {
-    append<DrawLine>(point1, point2);
+    append(DrawLine(point1, point2));
 }
 
 void RecorderImpl::recordDrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, float thickness, const DashArray& widths, bool printing, bool doubleLines, StrokeStyle style)
 {
-    append<DrawLinesForText>(blockLocation, localAnchor, widths, thickness, printing, doubleLines, style);
+    append(DrawLinesForText(blockLocation, localAnchor, widths, thickness, printing, doubleLines, style));
 }
 
 void RecorderImpl::recordDrawDotsForDocumentMarker(const FloatRect& rect, const DocumentMarkerLineStyle& style)
 {
-    append<DrawDotsForDocumentMarker>(rect, style);
+    append(DrawDotsForDocumentMarker(rect, style));
 }
 
 void RecorderImpl::recordDrawEllipse(const FloatRect& rect)
 {
-    append<DrawEllipse>(rect);
+    append(DrawEllipse(rect));
 }
 
 void RecorderImpl::recordDrawPath(const Path& path)
 {
-    append<DrawPath>(path);
+    append(DrawPath(path));
 }
 
 void RecorderImpl::recordDrawFocusRingPath(const Path& path, float outlineWidth, const Color& color)
 {
-    append<DrawFocusRingPath>(path, outlineWidth, color);
+    append(DrawFocusRingPath(path, outlineWidth, color));
 }
 
 void RecorderImpl::recordDrawFocusRingRects(const Vector<FloatRect>& rects, float outlineOffset, float outlineWidth, const Color& color)
 {
-    append<DrawFocusRingRects>(rects, outlineOffset, outlineWidth, color);
+    append(DrawFocusRingRects(rects, outlineOffset, outlineWidth, color));
 }
 
 void RecorderImpl::recordFillRect(const FloatRect& rect)
 {
-    append<FillRect>(rect);
+    append(FillRect(rect));
 }
 
 void RecorderImpl::recordFillRectWithColor(const FloatRect& rect, const Color& color)
 {
-    append<FillRectWithColor>(rect, color);
+    append(FillRectWithColor(rect, color));
 }
 
 void RecorderImpl::recordFillRectWithGradient(const FloatRect& rect, Gradient& gradient)
 {
-    append<FillRectWithGradient>(rect, gradient);
+    append(FillRectWithGradient(rect, gradient));
 }
 
 void RecorderImpl::recordFillCompositedRect(const FloatRect& rect, const Color& color, CompositeOperator op, BlendMode mode)
 {
-    append<FillCompositedRect>(rect, color, op, mode);
+    append(FillCompositedRect(rect, color, op, mode));
 }
 
 void RecorderImpl::recordFillRoundedRect(const FloatRoundedRect& rect, const Color& color, BlendMode mode)
 {
-    append<FillRoundedRect>(rect, color, mode);
+    append(FillRoundedRect(rect, color, mode));
 }
 
 void RecorderImpl::recordFillRectWithRoundedHole(const FloatRect& rect, const FloatRoundedRect& roundedRect, const Color& color)
 {
-    append<FillRectWithRoundedHole>(rect, roundedRect, color);
+    append(FillRectWithRoundedHole(rect, roundedRect, color));
 }
 
 #if ENABLE(INLINE_PATH_DATA)
 
 void RecorderImpl::recordFillLine(const PathDataLine& line)
 {
-    append<FillLine>(line);
+    append(FillLine(line));
 }
 
 void RecorderImpl::recordFillArc(const PathArc& arc)
 {
-    append<FillArc>(arc);
+    append(FillArc(arc));
 }
 
 void RecorderImpl::recordFillQuadCurve(const PathDataQuadCurve& curve)
 {
-    append<FillQuadCurve>(curve);
+    append(FillQuadCurve(curve));
 }
 
 void RecorderImpl::recordFillBezierCurve(const PathDataBezierCurve& curve)
 {
-    append<FillBezierCurve>(curve);
+    append(FillBezierCurve(curve));
 }
 
 #endif // ENABLE(INLINE_PATH_DATA)
 
 void RecorderImpl::recordFillPathSegment(const PathSegment& segment)
 {
-    append<FillPathSegment>(segment);
+    append(FillPathSegment(segment));
 }
 
 void RecorderImpl::recordFillPath(const Path& path)
 {
-    append<FillPath>(path);
+    append(FillPath(path));
 }
 
 void RecorderImpl::recordFillEllipse(const FloatRect& rect)
 {
-    append<FillEllipse>(rect);
+    append(FillEllipse(rect));
 }
 
 #if ENABLE(VIDEO)
 void RecorderImpl::recordPaintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
 {
-    append<PaintFrameForMedia>(player, destination);
+    append(PaintFrameForMedia(player, destination));
 }
 
 void RecorderImpl::recordPaintVideoFrame(VideoFrame&, const FloatRect&, bool /* shouldDiscardAlpha */)
@@ -345,82 +345,82 @@ void RecorderImpl::recordPaintVideoFrame(VideoFrame&, const FloatRect&, bool /* 
 
 void RecorderImpl::recordStrokeRect(const FloatRect& rect, float width)
 {
-    append<StrokeRect>(rect, width);
+    append(StrokeRect(rect, width));
 }
 
 #if ENABLE(INLINE_PATH_DATA)
 
 void RecorderImpl::recordStrokeLine(const PathDataLine& line)
 {
-    append<StrokeLine>(line);
+    append(StrokeLine(line));
 }
 
 void RecorderImpl::recordStrokeLineWithColorAndThickness(const PathDataLine& line, SRGBA<uint8_t> color, float thickness)
 {
-    append<SetInlineStrokeColor>(color);
-    append<SetStrokeThickness>(thickness);
-    append<StrokePathSegment>(PathSegment { line });
+    append(SetInlineStrokeColor(color));
+    append(SetStrokeThickness(thickness));
+    append(StrokePathSegment(PathSegment { line }));
 }
 
 void RecorderImpl::recordStrokeArc(const PathArc& arc)
 {
-    append<StrokeArc>(arc);
+    append(StrokeArc(arc));
 }
 
 void RecorderImpl::recordStrokeQuadCurve(const PathDataQuadCurve& curve)
 {
-    append<StrokeQuadCurve>(curve);
+    append(StrokeQuadCurve(curve));
 }
 
 void RecorderImpl::recordStrokeBezierCurve(const PathDataBezierCurve& curve)
 {
-    append<StrokeBezierCurve>(curve);
+    append(StrokeBezierCurve(curve));
 }
 
 #endif // ENABLE(INLINE_PATH_DATA)
 
 void RecorderImpl::recordStrokePathSegment(const PathSegment& segment)
 {
-    append<StrokePathSegment>(segment);
+    append(StrokePathSegment(segment));
 }
 
 void RecorderImpl::recordStrokePath(const Path& path)
 {
-    append<StrokePath>(path);
+    append(StrokePath(path));
 }
 
 void RecorderImpl::recordStrokeEllipse(const FloatRect& rect)
 {
-    append<StrokeEllipse>(rect);
+    append(StrokeEllipse(rect));
 }
 
 void RecorderImpl::recordClearRect(const FloatRect& rect)
 {
-    append<ClearRect>(rect);
+    append(ClearRect(rect));
 }
 
 void RecorderImpl::recordDrawControlPart(ControlPart& part, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
-    append<DrawControlPart>(part, borderRect, deviceScaleFactor, style);
+    append(DrawControlPart(part, borderRect, deviceScaleFactor, style));
 }
 
 #if USE(CG)
 
 void RecorderImpl::recordApplyStrokePattern()
 {
-    append<ApplyStrokePattern>();
+    append(ApplyStrokePattern());
 }
 
 void RecorderImpl::recordApplyFillPattern()
 {
-    append<ApplyFillPattern>();
+    append(ApplyFillPattern());
 }
 
 #endif // USE(CG)
 
 void RecorderImpl::recordApplyDeviceScaleFactor(float scaleFactor)
 {
-    append<ApplyDeviceScaleFactor>(scaleFactor);
+    append(ApplyDeviceScaleFactor(scaleFactor));
 }
 
 bool RecorderImpl::recordResourceUse(NativeImage& nativeImage)

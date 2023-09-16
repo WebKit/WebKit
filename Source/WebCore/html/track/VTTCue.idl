@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+ // https://www.w3.org/TR/webvtt1/#the-vttcue-interface
+
 enum AutoKeyword { "auto" };
 typedef (double or AutoKeyword) LineAndPositionSetting;
 
@@ -40,6 +42,7 @@ enum AlignSetting { "start", "center", "end", "left", "right" };
 ] interface VTTCue : TextTrackCue {
     [CallWith=CurrentDocument] constructor(double startTime, double endTime, DOMString text);
 
+    attribute VTTRegion? region;
     attribute DirectionSetting vertical;
     attribute boolean snapToLines;
     attribute LineAndPositionSetting line;
@@ -50,6 +53,4 @@ enum AlignSetting { "start", "center", "end", "left", "right" };
     attribute AlignSetting align;
     attribute DOMString text;
     DocumentFragment getCueAsHTML();
-
-    attribute VTTRegion? region;
 };

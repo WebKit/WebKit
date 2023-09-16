@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2022 Igalia S.L.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -48,11 +49,6 @@ struct FontSetCacheKey {
         return descriptionKey == other.descriptionKey && preferColoredFont == other.preferColoredFont;
     }
 
-    bool operator!=(const FontSetCacheKey& other) const
-    {
-        return !(*this == other);
-    }
-
     bool isHashTableDeletedValue() const { return descriptionKey.isHashTableDeletedValue(); }
 
     FontDescriptionKey descriptionKey;
@@ -75,7 +71,7 @@ class FontSetCache {
 public:
     FontSetCache() = default;
 
-    RefPtr<FcPattern> bestForCharacters(const FontDescription&, bool, const UChar*, unsigned);
+    RefPtr<FcPattern> bestForCharacters(const FontDescription&, bool, StringView);
     void clear();
 
 private:

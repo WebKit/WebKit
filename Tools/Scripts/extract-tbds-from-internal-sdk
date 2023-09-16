@@ -1,0 +1,154 @@
+#!/usr/bin/env python3
+
+import argparse
+import os
+import re
+import shutil
+import stat
+import subprocess
+import sys
+import tempfile
+
+parser = argparse.ArgumentParser(description='''\
+This script looks at build products produced by an Apple internal build to
+identify frameworks that WebKit uses which are not provided by a public
+SDK. It copies TBD stubs of those frameworks from an internal SDK, and strips
+them of symbols not used by the WebKit build. This process is manually run as
+part of the open-source build bringup when new Xcode SDKs are released.
+''')
+
+group1 = parser.add_argument_group('Platform flags', '''
+Pass standard WebKit platform and configuration arguments (e.g. --ios-simulator
+--release) to select a build directory and SDK directories.
+''')
+
+group2 = parser.add_argument_group('Custom paths')
+group2.add_argument('src_sdk', help='path to an internal SDK to extract framework stubs from', nargs='?')
+group2.add_argument('dst_sdk', help='path to copy framework stubs to, typically in WebKitLibraries/SDKs', nargs='?')
+group2.add_argument('--base-sdk', '-s', help='path to the public SDK that DST_SDK will be adding to')
+group2.add_argument('--build-dir', '-b', help='directory to read WebKit binaries from')
+
+opts, webkitdirs_args = parser.parse_known_args()
+scripts_dir = os.path.dirname(sys.argv[0])
+
+if not opts.build_dir:
+    opts.build_dir = subprocess.check_output(
+        ['webkit-build-directory', *webkitdirs_args, '--configuration'],
+        text=True
+    ).rstrip()
+if not opts.base_sdk or not opts.src_sdk:
+    webkitdirs_sdk_name = subprocess.check_output(
+        ['perl', f'-I{scripts_dir}', '-Mwebkitdirs', '-e', 'print xcodeSDK()', '--', *webkitdirs_args],
+        text=True
+    ).rstrip()
+if not opts.base_sdk:
+    opts.base_sdk = subprocess.check_output(
+        ('xcrun', '--show-sdk-path', '--sdk', webkitdirs_sdk_name.removesuffix('.internal')),
+        text=True
+    ).rstrip()
+if not opts.src_sdk:
+    opts.src_sdk = subprocess.check_output(
+        ('xcrun', '--show-sdk-path', '--sdk', webkitdirs_sdk_name),
+        text=True
+    ).rstrip()
+if opts.base_sdk == opts.src_sdk:
+    parser.error(f"Can't find a separate SRC_SDK and BASE_SDK for {webkitdirs_args}. "
+                 "Either switch to an Xcode which has internal SDKs, or pass these paths manually as arguments.")
+if not opts.dst_sdk:
+    major_release_sdk_name = re.sub(
+        r'(\d+)\.\d+', r'\1.0',
+        os.path.splitext(os.path.basename(opts.base_sdk))[0].lower()
+    )
+    opts.dst_sdk = os.path.normpath(f'{scripts_dir}/../../WebKitLibraries/SDKs/{major_release_sdk_name}-additions.sdk')
+
+print(f'Using symbols referenced from build artifacts in ... {opts.build_dir}')
+print(f'.... copying API stubs from ........................ {opts.src_sdk}')
+print(f'.... for libraries not present in .................. {opts.base_sdk}')
+print(f'Writing extracted API stubs to ..................... {opts.dst_sdk}')
+print()
+
+export_list_fd, export_list = tempfile.mkstemp(prefix='WebKit.exp')
+
+
+def echo_system_commands(name, args):
+    if name == 'subprocess.Popen':
+        print('\033[1mRun\033[0m', *args[1])
+    elif name == 'shutil.copyfile':
+        print('\033[1mCopy\033[0m', args[0], '->', args[1])
+    elif name == 'os.symlink':
+        print('\033[1mSymlink\033[0m', args[1], '->', args[0])
+
+
+sys.addaudithook(echo_system_commands)
+
+# Select static archives and any Mach-O executables from the build directory.
+executables = []
+for dirpath, dirnames, filenames in os.walk(opts.build_dir):
+    for name in filenames:
+        path = f'{dirpath}/{name}'
+        if name.endswith('.a'):
+            executables.append(path)
+            continue
+        # Find any executable file, and check its first four bytes for a Mach-O magic number.
+        mode = os.lstat(path).st_mode
+        if not (stat.S_ISREG(mode) and mode & stat.S_IEXEC):
+            continue
+        mach_magic = open(path, 'rb').read(4)
+        if int.from_bytes(mach_magic, 'big') in (0xfeedface, 0xfeedfacf, 0xcafebabe, 0xcafebabf,
+                                                 0xcefaedfe, 0xcffaedfe, 0xbebafeca, 0xbfbafeca):
+            executables.append(path)
+if not executables:
+    raise SystemExit(f'no executables found in {opts.build_dir}')
+
+# Using the build products given, find the dylibs in missing from the base SDK
+# that we link against.
+tbds = set()
+otool = subprocess.Popen(['otool', '-XL'] + executables, text=True, stdout=subprocess.PIPE)
+for line in otool.stdout:
+    framework, *_ = line.lstrip().partition(' ')
+    name = os.path.basename(framework)
+    stem, _ = os.path.splitext(name)
+    tbd = os.path.splitext(framework)[0] + '.tbd'
+    built_by_webkit_or_public_paths = (f'{opts.build_dir}/{name}',
+                                       f'{opts.build_dir}/{name}.framework',
+                                       f'{opts.base_sdk}/{tbd}')
+    if os.path.exists(f'{opts.src_sdk}/{tbd}') and not any(filter(os.path.exists, built_by_webkit_or_public_paths)):
+        tbds.add(tbd)
+otool.wait()
+if not tbds:
+    raise SystemExit(f'No TBDs matching linked-against frameworks found in {opts.src_sdk}')
+
+# Create an export list from the build products scanned, which will included
+# the needed symbols from these dylibs.
+subprocess.check_call(['nm', '-gj'] + executables, stdout=export_list_fd)
+
+# Copy TBDs for the identified dylibs to the sparse SDK.
+copied_tbds = []
+for tbd in tbds:
+    src_tbd = f'{opts.src_sdk}/{tbd}'
+    dst_tbd = f'{opts.dst_sdk}/{tbd}'
+
+    os.makedirs(os.path.dirname(dst_tbd), exist_ok=True)
+    shutil.copy(src_tbd, dst_tbd)
+    copied_tbds.append(dst_tbd)
+
+    framework, versions, versioned_tbd = tbd.partition('/Versions/')
+    if versions == '/Versions/':
+        # Preserve the versioned bundle structure if it exists.
+        version, name = os.path.split(versioned_tbd)
+        for src, symlink_dst in (
+                # e.g. "Versions/Current/IOKit.tbd", "<sdk>/S/L/F/IOKit.framework/IOKit.tbd"
+                (f'Versions/Current/{name}', f'{opts.dst_sdk}/{framework}/{name}'),
+                # e.g. "A", "<sdk>/S/L/F/IOKit.framework/Versions/Current"
+                (version, f'{opts.dst_sdk}/{framework}/Versions/Current')
+        ):
+            try:
+                os.unlink(symlink_dst)
+            except FileNotFoundError:
+                pass
+            os.symlink(src, symlink_dst)
+
+# Strip the symbols WebKit is not using from the TBDs.
+subprocess.check_call([f'{scripts_dir}/strip-tbd', '-s', export_list] + copied_tbds)
+
+print('\nCopied', len(copied_tbds), f'TBDs to {opts.dst_sdk}, and stripped them of unneeded symbols.')

@@ -31,6 +31,7 @@
 #include "GPUConnectionToWebProcessMessages.h"
 #include "Logging.h"
 #include "PlatformImageBufferShareableBackend.h"
+#include "RemoteImageBufferMessages.h"
 #include "RemoteImageBufferProxyMessages.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "WebPage.h"
@@ -126,13 +127,50 @@ RemoteImageBufferProxy::~RemoteImageBufferProxy()
     }
 
     flushDrawingContextAsync();
-    m_remoteRenderingBackendProxy->remoteResourceCacheProxy().releaseImageBuffer(*this);
+    m_remoteRenderingBackendProxy->remoteResourceCacheProxy().forgetImageBuffer(renderingResourceIdentifier());
+    m_remoteRenderingBackendProxy->releaseImageBuffer(renderingResourceIdentifier());
 }
 
 void RemoteImageBufferProxy::assertDispatcherIsCurrent() const
 {
     if (m_remoteRenderingBackendProxy)
         assertIsCurrent(m_remoteRenderingBackendProxy->dispatcher());
+}
+
+template<typename T>
+ALWAYS_INLINE void RemoteImageBufferProxy::send(T&& message)
+{
+    if (UNLIKELY(!m_remoteRenderingBackendProxy))
+        return;
+
+    auto result = m_remoteRenderingBackendProxy->streamConnection().send(WTFMove(message), renderingResourceIdentifier(), RemoteRenderingBackendProxy::defaultTimeout);
+#if !RELEASE_LOG_DISABLED
+    if (UNLIKELY(result != IPC::Error::NoError)) {
+        auto& parameters = m_remoteRenderingBackendProxy->parameters();
+        RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteImageBufferProxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
+            parameters.pageProxyID.toUInt64(), parameters.pageID.toUInt64(), parameters.identifier.toUInt64(), IPC::description(T::name()), IPC::errorAsString(result));
+    }
+#else
+    UNUSED_VARIABLE(result);
+#endif
+}
+
+template<typename T>
+ALWAYS_INLINE void RemoteImageBufferProxy::sendSync(T&& message)
+{
+    if (UNLIKELY(!m_remoteRenderingBackendProxy))
+        return;
+
+    auto result = m_remoteRenderingBackendProxy->streamConnection().sendSync(WTFMove(message), renderingResourceIdentifier(), RemoteRenderingBackendProxy::defaultTimeout);
+#if !RELEASE_LOG_DISABLED
+    if (UNLIKELY(!result.succeeded())) {
+        auto& parameters = m_remoteRenderingBackendProxy->parameters();
+        RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteDisplayListRecorderProxy::sendSync - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
+            parameters.pageProxyID.toUInt64(), parameters.pageID.toUInt64(), parameters.identifier.toUInt64(), IPC::description(T::name()), IPC::errorAsString(result.error));
+    }
+#else
+    UNUSED_VARIABLE(result);
+#endif
 }
 
 void RemoteImageBufferProxy::backingStoreWillChange()
@@ -269,7 +307,8 @@ void RemoteImageBufferProxy::clearBackend()
 {
     m_needsFlush = false;
     m_pendingFlush = nullptr;
-    prepareForBackingStoreChange();
+    if (m_backend)
+        prepareForBackingStoreChange();
     m_backend = nullptr;
 }
 
@@ -299,12 +338,12 @@ void RemoteImageBufferProxy::putPixelBuffer(const PixelBuffer& pixelBuffer, cons
 
 void RemoteImageBufferProxy::convertToLuminanceMask()
 {
-    m_remoteDisplayList.convertToLuminanceMask();
+    send(Messages::RemoteImageBuffer::ConvertToLuminanceMask());
 }
 
 void RemoteImageBufferProxy::transformToColorSpace(const DestinationColorSpace& colorSpace)
 {
-    m_remoteDisplayList.transformToColorSpace(colorSpace);
+    send(Messages::RemoteImageBuffer::TransformToColorSpace(colorSpace));
 }
 
 void RemoteImageBufferProxy::flushDrawingContext()
@@ -313,7 +352,7 @@ void RemoteImageBufferProxy::flushDrawingContext()
         return;
     if (m_needsFlush) {
         TraceScope tracingScope(FlushRemoteImageBufferStart, FlushRemoteImageBufferEnd);
-        m_remoteDisplayList.flushContextSync();
+        sendSync(Messages::RemoteImageBuffer::FlushContextSync());
         m_pendingFlush = nullptr;
         m_needsFlush = false;
         return;
@@ -339,7 +378,7 @@ bool RemoteImageBufferProxy::flushDrawingContextAsync()
         flushSemaphore = m_pendingFlush->tryTakeSemaphore();
     if (!flushSemaphore)
         flushSemaphore.emplace();
-    m_remoteDisplayList.flushContext(*flushSemaphore);
+    send(Messages::RemoteImageBuffer::FlushContext(*flushSemaphore));
     m_pendingFlush = RemoteImageBufferProxyFlushFence::create(WTFMove(*flushSemaphore));
     m_needsFlush = false;
     return true;
@@ -380,6 +419,8 @@ std::unique_ptr<SerializedImageBuffer> RemoteImageBufferProxy::sinkIntoSerialize
     if (!ensureBackendCreated())
         return nullptr;
 
+    m_remoteRenderingBackendProxy->remoteResourceCacheProxy().forgetImageBuffer(m_renderingResourceIdentifier);
+
     auto result = makeUnique<RemoteSerializedImageBufferProxy>(backend()->parameters(), backendInfo(), m_renderingResourceIdentifier, *m_remoteRenderingBackendProxy);
 
     clearBackend();
@@ -395,14 +436,12 @@ IPC::StreamClientConnection& RemoteImageBufferProxy::streamConnection() const
     return m_remoteRenderingBackendProxy->streamConnection();
 }
 
-
 RemoteSerializedImageBufferProxy::RemoteSerializedImageBufferProxy(const WebCore::ImageBufferBackend::Parameters& parameters, const WebCore::ImageBufferBackend::Info& info, const WebCore::RenderingResourceIdentifier& renderingResourceIdentifier, RemoteRenderingBackendProxy& backend)
     : m_parameters(parameters)
     , m_info(info)
     , m_renderingResourceIdentifier(renderingResourceIdentifier)
     , m_connection(backend.connection())
 {
-    backend.remoteResourceCacheProxy().forgetImageBuffer(m_renderingResourceIdentifier);
     backend.moveToSerializedBuffer(m_renderingResourceIdentifier);
 }
 

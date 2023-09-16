@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test-pre.js"></script>
+<canvas id="canvas" width="100" height="100"></canvas>
+<script>
+function writePixelWithImageData(ctx, r, g, b) {
+    let imageData = new ImageData(100, 100);
+    imageData.data[0] = r;
+    imageData.data[1] = g;
+    imageData.data[2] = b;
+    imageData.data[3] = 255;
+    ctx.putImageData(imageData, 0, 0);
+}
+
+function readPixelWithImageData(ctx) {
+    let imageData = ctx.getImageData(0, 0, 100, 100);
+    return [imageData.data[0], imageData.data[1], imageData.data[2]].toString();
+}
+
+const minimumConsecutiveCachedImageDataRequestsBeforeCaching = 2;
+
+let ctx = canvas.getContext("2d");
+
+// No intervening drawing command, should hit the cache.
+for (let i = 0; i <= minimumConsecutiveCachedImageDataRequestsBeforeCaching; ++i) {
+    writePixelWithImageData(ctx, 1, 1, 1);
+    shouldBe(() => readPixelWithImageData(ctx), () => "1,1,1");
+}
+
+// Intervening drawing command, should not hit the cache.
+for (let i = 0; i <= minimumConsecutiveCachedImageDataRequestsBeforeCaching; ++i) {
+    writePixelWithImageData(ctx, 2, 2, 2);
+    ctx.fillStyle = "blue";
+    ctx.fillRect(0, 0, 100, 100);
+    shouldBe(() => readPixelWithImageData(ctx), () => "0,0,255");
+}
+
+// Intervening image buffer reset, should not hit the cache.
+for (let i = 0; i <= minimumConsecutiveCachedImageDataRequestsBeforeCaching; ++i) {
+    writePixelWithImageData(ctx, 3, 3, 3);
+    canvas.width += 1;
+    shouldBe(() => readPixelWithImageData(ctx), () => "0,0,0");
+}
+</script>

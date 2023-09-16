@@ -45,10 +45,6 @@ class TransformFeedbackVk : public TransformFeedbackImpl, public angle::Observer
                                     size_t index,
                                     const gl::OffsetBindingPointer<gl::Buffer> &binding) override;
 
-    void updateDescriptorSetLayout(ContextVk *contextVk,
-                                   const ShaderInterfaceVariableInfoMap &variableInfoMap,
-                                   size_t xfbBufferCount,
-                                   vk::DescriptorSetLayoutDesc *descSetLayoutOut) const;
     void getBufferOffsets(ContextVk *contextVk,
                           GLint drawCallFirstVertex,
                           int32_t *offsetsOut,

@@ -26,6 +26,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.create2.large.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.create2.negative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.create2.nonfinite.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.create2.round.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.create2.this.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.create2.type.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.create2.zero.html

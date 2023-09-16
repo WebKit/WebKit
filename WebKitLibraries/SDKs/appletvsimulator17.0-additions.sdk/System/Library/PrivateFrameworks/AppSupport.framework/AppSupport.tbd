@@ -1,0 +1,18 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [x86_64-tvos-simulator, arm64-tvos-simulator]
+install-name: /System/Library/PrivateFrameworks/AppSupport.framework/AppSupport
+current-version: 29
+reexported-libraries:
+-       targets: [x86_64-tvos-simulator, arm64-tvos-simulator]
+        libraries: [/System/Library/PrivateFrameworks/CorePhoneNumbers.framework/CorePhoneNumbers]
+exports:
+-       targets: [x86_64-tvos-simulator, arm64-tvos-simulator]
+        objc-classes: [CPNetworkObserver]
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [x86_64-tvos-simulator, arm64-tvos-simulator]
+install-name: /System/Library/PrivateFrameworks/CorePhoneNumbers.framework/CorePhoneNumbers
+exports: []
+...

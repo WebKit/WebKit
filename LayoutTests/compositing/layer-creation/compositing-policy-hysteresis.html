@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            overflow:hidden; /* prevent scrollbars and document height from affecting test output */
+            height: 1000px;
+        }
+        body.changed .test {
+            overflow:hidden;
+            width:50%;
+            height:1002px;
+        }
+        .box {
+            margin: 10px;
+            height: 100px;
+            width: 300px;
+            padding: 4px;
+            background-color: silver;
+        }
+    </style>
+    <script>
+        var log = "";
+        if (window.testRunner)
+            window.testRunner.dumpAsText();
+
+        function logLayers(comment)
+        {
+            if (!window.testRunner)
+                return;
+            log += `${comment}\n================================\n${window.internals.layerTreeAsText(document)}`;
+        }
+
+        function dumpLayers()
+        {
+            let canvas = document.getElementsByTagName('canvas')[0];
+            var ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            document.getElementById("layers").innerText = log;
+        }
+
+        function tryForceLayout()
+        {
+            document.body.classList.toggle("changed");
+        }
+
+        function start()
+        {
+            if (!window.internals)
+                return;
+
+            // WKTR will reset to a consistent state after running a test. Part of that is
+            // forcing a CompositingPolicy override ("normal"). This means that if you run
+            // this test with `run-webkit-tests --iterations 2` (or anything greater than 1)
+            // we will be forced into CompositingPolicy::Normal and this test will fail.
+            // This clears any override that may be present on the page.
+            window.internals.compositingPolicyOverride = null;
+
+            logLayers('initial');
+
+            window.internals.beginSimulatedMemoryWarning();
+            tryForceLayout();
+            logLayers('after memory warning');
+
+            window.internals.endSimulatedMemoryWarning();
+            tryForceLayout();
+            logLayers('memory warning cleared (PASS if same number of layers as "after memory warning")');
+
+            dumpLayers();
+        }
+
+        window.addEventListener('load', start, false);
+    </script>
+</head>
+<body>
+
+<div class="box" style="transform: translate3d(10px, 1px, 1px)">
+    <pre>transform: translate3d(10px, 1px, 1px)</pre>
+    Has backing under low memory.
+</div>
+
+<div class="box" style="transform: translateZ(0)">
+    <pre>transform: translateZ(0)</pre>
+    translateZ(0): No backing under low memory.
+</div>
+
+<div class="box" style="transform: translate3d(10px, 1px, 0)">
+    <pre>transform: translate3d(10px, 1px, 0)</pre>
+    No backing under low memory.
+</div>
+
+<div class="box" style="will-change: transform">
+    <pre>will-change: transform</pre>
+    No backing under low memory.
+</div>
+
+<canvas class="box" style="box-shadow: 0 0 10px black">
+</canvas>
+
+<pre id="layers"></pre>
+
+</body>
+</html>

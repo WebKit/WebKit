@@ -135,6 +135,7 @@ struct NetworkSessionCreationParameters {
     String serviceWorkerRegistrationDirectory;
     SandboxExtension::Handle serviceWorkerRegistrationDirectoryExtensionHandle;
     bool serviceWorkerProcessTerminationDelayEnabled { true };
+    bool inspectionForServiceWorkersAllowed { true };
 #endif
 
     ResourceLoadStatisticsParameters resourceLoadStatisticsParameters;

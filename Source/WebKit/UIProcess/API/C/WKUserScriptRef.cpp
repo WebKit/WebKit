@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WKUserScriptRef.h"
 
+#include "APIArray.h"
 #include "APIUserScript.h"
 #include "WKAPICast.h"
 
@@ -34,6 +35,16 @@ using namespace WebKit;
 WKTypeID WKUserScriptGetTypeID()
 {
     return toAPI(API::UserScript::APIType);
+}
+
+WKUserScriptRef WKUserScriptCreate(WKStringRef sourceRef, WKURLRef url, WKArrayRef includeURLPatterns, WKArrayRef excludeURLPatterns, _WKUserScriptInjectionTime injectionTime, bool forMainFrameOnly)
+{
+    auto baseURLString = toWTFString(url);
+    auto allowlist = toImpl(includeURLPatterns);
+    auto blocklist = toImpl(excludeURLPatterns);
+
+    auto baseURL = baseURLString.isEmpty() ? aboutBlankURL() : URL(URL(), baseURLString);
+    return toAPI(&API::UserScript::create(WebCore::UserScript { toWTFString(sourceRef), WTFMove(baseURL), allowlist ? allowlist->toStringVector() : Vector<String>(), blocklist ? blocklist->toStringVector() : Vector<String>(), toUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::WaitForNotificationBeforeInjecting::No }, API::ContentWorld::pageContentWorld()).leakRef());
 }
 
 WKUserScriptRef WKUserScriptCreateWithSource(WKStringRef sourceRef, _WKUserScriptInjectionTime injectionTime, bool forMainFrameOnly)

@@ -69,9 +69,10 @@ public:
     bool isEnded() const final;
     WebCore::MediaPlayer::ReadyState readyState() const final;
     void setReadyState(WebCore::MediaPlayer::ReadyState) final;
-    void setIsSeeking(bool) final;
-    void waitForSeekCompleted() final;
-    void seekCompleted() final;
+
+    void waitForTarget(const WebCore::SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) final;
+    void seekToTime(const MediaTime&, CompletionHandler<void()>&&) final;
+
     void setTimeFudgeFactor(const MediaTime&) final;
 
     MediaTime duration() const { return m_client ? m_client->duration() : MediaTime(); }
@@ -85,7 +86,6 @@ private:
     MediaSourcePrivateRemote(GPUProcessConnection&, RemoteMediaSourceIdentifier, RemoteMediaPlayerMIMETypeCache&, const MediaPlayerPrivateRemote&, WebCore::MediaSourcePrivateClient&);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    void seekToTime(const MediaTime&);
     void mediaSourcePrivateShuttingDown(CompletionHandler<void()>&&);
     bool isGPURunning() const { return !m_shutdown && m_gpuProcessConnection.get(); }
 

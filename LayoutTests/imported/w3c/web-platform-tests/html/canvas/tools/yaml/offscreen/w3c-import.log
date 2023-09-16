@@ -14,13 +14,5 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/offscreen/fill-and-stroke-styles.yaml
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/offscreen/line-styles.yaml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/offscreen/meta.yaml
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/offscreen/path-objects.yaml
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/offscreen/pixel-manipulation.yaml
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/offscreen/shadows.yaml
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/offscreen/text.yaml
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/offscreen/the-canvas-state.yaml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/offscreen/the-offscreen-canvas.yaml
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/yaml/offscreen/transformations.yaml

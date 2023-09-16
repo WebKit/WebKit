@@ -157,7 +157,11 @@ TEST(LockdownMode, NotAllowedFont)
         auto targetResult = static_cast<NSNumber *>([webView objectByEvaluatingJavaScript:@"target.offsetWidth"]).intValue;
         auto referenceResult = static_cast<NSNumber *>([webView objectByEvaluatingJavaScript:@"reference.offsetWidth"]).intValue;
 
+#if PLATFORM(WATCHOS)
+        EXPECT_NE(targetResult, referenceResult);
+#else
         EXPECT_EQ(targetResult, referenceResult);
+#endif
     }
 }
 }

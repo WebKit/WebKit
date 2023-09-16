@@ -85,7 +85,7 @@ public:
     }
     ~GStreamerElementHarness();
 
-    void start(GRefPtr<GstCaps>&&);
+    void start(GRefPtr<GstCaps>&&, std::optional<const GstSegment*>&& = { });
     bool isStarted() const { return m_playing.loadRelaxed(); }
 
     bool pushSample(GRefPtr<GstSample>&&);
@@ -112,7 +112,8 @@ private:
     bool srcQuery(GstPad*, GstObject*, GstQuery*);
     bool srcEvent(GstEvent*);
 
-    void pushStickyEvents(GRefPtr<GstCaps>&&);
+    void pushStickyEvents(GRefPtr<GstCaps>&&, std::optional<const GstSegment*>&& = { });
+    void pushSegmentEvent(std::optional<const GstSegment*>&& = { });
 
     GRefPtr<GstElement> m_element;
     ProcessBufferCallback m_processOutputBufferCallback;
@@ -127,7 +128,8 @@ private:
     Deque<GRefPtr<GstEvent>> m_srcEventQueue WTF_GUARDED_BY_LOCK(m_srcEventQueueLock);
 
     Atomic<bool> m_playing { false };
-    Atomic<bool> m_stickyEventsSent { false };
+    Atomic<bool> m_capsEventSent { false };
+    Atomic<bool> m_segmentEventSent { false };
 };
 
 } // namespace WebCore

@@ -36,6 +36,7 @@
 #import "DragState.h"
 #import "EventNames.h"
 #import "FocusController.h"
+#import "HandleMouseEventResult.h"
 #import "KeyboardEvent.h"
 #import "LocalFrame.h"
 #import "LocalFrameView.h"
@@ -478,7 +479,7 @@ void EventHandler::mouseDown(WebEvent *event)
 
     CurrentEventScope scope(event);
 
-    event.wasHandled = handleMousePressEvent(currentPlatformMouseEvent());
+    event.wasHandled = handleMousePressEvent(currentPlatformMouseEvent()).wasHandled();
 
     END_BLOCK_OBJC_EXCEPTIONS
 }
@@ -493,7 +494,7 @@ void EventHandler::mouseUp(WebEvent *event)
 
     CurrentEventScope scope(event);
 
-    event.wasHandled = handleMouseReleaseEvent(currentPlatformMouseEvent());
+    event.wasHandled = handleMouseReleaseEvent(currentPlatformMouseEvent()).wasHandled();
 
     m_mouseDownView = nil;
 
@@ -516,7 +517,7 @@ void EventHandler::mouseMoved(WebEvent *event)
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
         ContentChangeObserver::MouseMovedScope observingScope(document);
 #endif
-        event.wasHandled = mouseMoved(currentPlatformMouseEvent());
+        event.wasHandled = mouseMoved(currentPlatformMouseEvent()).wasHandled();
         // Run style recalc to be able to capture content changes as the result of the mouse move event.
         document.updateStyleIfNeeded();
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
@@ -730,7 +731,7 @@ bool EventHandler::tryToBeginDragAtPoint(const IntPoint& clientPosition, const I
     auto documentPoint = protectedFrame->view() ? protectedFrame->view()->windowToContents(syntheticMouseMoveEvent.position()) : syntheticMouseMoveEvent.position();
     auto hitTestedMouseEvent = document->prepareMouseEvent(hitType, documentPoint, syntheticMouseMoveEvent);
 
-    auto subframe = subframeForHitTestResult(hitTestedMouseEvent);
+    auto subframe = dynamicDowncast<LocalFrame>(subframeForHitTestResult(hitTestedMouseEvent));
     if (subframe && subframe->eventHandler().tryToBeginDragAtPoint(adjustedClientPosition, adjustedGlobalPosition))
         return true;
 

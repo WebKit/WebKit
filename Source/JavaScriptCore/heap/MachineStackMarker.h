@@ -59,7 +59,7 @@ private:
     void tryCopyOtherThreadStack(const ThreadSuspendLocker&, Thread&, void*, size_t capacity, size_t*);
     bool tryCopyOtherThreadStacks(const AbstractLocker&, void*, size_t capacity, size_t*, Thread&);
 
-    Ref<ThreadGroup> m_threadGroup;
+    std::shared_ptr<ThreadGroup> m_threadGroup;
 };
 
 #define DECLARE_AND_COMPUTE_CURRENT_THREAD_STATE(stateName) \

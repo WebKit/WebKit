@@ -161,10 +161,7 @@ public:
     {
         return m_epochNanoseconds <= other.m_epochNanoseconds;
     }
-    constexpr bool operator==(ExactTime other) const
-    {
-        return m_epochNanoseconds == other.m_epochNanoseconds;
-    }
+    friend constexpr bool operator==(ExactTime, ExactTime) = default;
     constexpr bool operator>=(ExactTime other) const
     {
         return m_epochNanoseconds >= other.m_epochNanoseconds;
@@ -217,15 +214,7 @@ public:
     JSC_TEMPORAL_PLAIN_TIME_UNITS(JSC_DEFINE_ISO8601_PLAIN_TIME_FIELD);
 #undef JSC_DEFINE_ISO8601_DURATION_FIELD
 
-    friend bool operator==(PlainTime lhs, PlainTime rhs)
-    {
-        return lhs.hour() == rhs.hour()
-            && lhs.minute() == rhs.minute()
-            && lhs.second() == rhs.second()
-            && lhs.millisecond() == rhs.millisecond()
-            && lhs.microsecond() == rhs.microsecond()
-            && lhs.nanosecond() == rhs.nanosecond();
-    }
+    friend bool operator==(PlainTime, PlainTime) = default;
 
 private:
     uint8_t m_hour { 0 };
@@ -256,12 +245,7 @@ public:
     {
     }
 
-    friend bool operator==(PlainDate lhs, PlainDate rhs)
-    {
-        return lhs.year() == rhs.year()
-            && lhs.month() == rhs.month()
-            && lhs.day() == rhs.day();
-    }
+    friend bool operator==(PlainDate, PlainDate) = default;
 
     int32_t year() const { return m_year; }
     uint8_t month() const { return m_month; }

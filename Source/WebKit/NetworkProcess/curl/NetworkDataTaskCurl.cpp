@@ -61,8 +61,6 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
     , m_shouldRelaxThirdPartyCookieBlocking(parameters.shouldRelaxThirdPartyCookieBlocking)
     , m_sourceOrigin(parameters.sourceOrigin)
 {
-    m_session->registerNetworkDataTask(*this);
-
     auto request = parameters.request;
     if (request.url().protocolIsInHTTPFamily()) {
         if (m_storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
@@ -337,8 +335,13 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
         return;
     }
 
-    ResourceRequest request = m_firstRequest;
     URL redirectedURL = URL(m_response.url(), m_response.httpHeaderField(HTTPHeaderName::Location));
+    if (redirectedURL.protocolIsFile()) {
+        m_client->didCompleteWithError(ResourceError(CURLE_FILE_COULDNT_READ_FILE, m_response.url()));
+        return;
+    }
+
+    ResourceRequest request = m_firstRequest;
     if (!redirectedURL.hasFragmentIdentifier() && request.url().hasFragmentIdentifier())
         redirectedURL.setFragmentIdentifier(request.url().fragmentIdentifier());
     request.setURL(redirectedURL);

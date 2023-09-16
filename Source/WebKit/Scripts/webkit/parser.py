@@ -49,9 +49,15 @@ def parse(file):
     conditions = []
     master_condition = None
     superclass = []
+    namespace = "WebKit"
     for line in file:
         line = line.strip()
-        match = re.search(r'messages -> (?P<destination>[A-Za-z_0-9]+) \s*(?::\s*(?P<superclass>.*?) \s*)?(?:(?P<attributes>.*?)\s+)?{', line)
+        match = re.search(r'messages -> (?P<namespace>[A-Za-z]+)::(?P<destination>[A-Za-z_0-9]+) \s*(?::\s*(?P<superclass>.*?) \s*)?(?:(?P<attributes>.*?)\s+)?{', line)
+        if not match:
+            match = re.search(r'messages -> (?P<destination>[A-Za-z_0-9]+) \s*(?::\s*(?P<superclass>.*?) \s*)?(?:(?P<attributes>.*?)\s+)?{', line)
+        else:
+            if match.group('namespace'):
+                namespace = match.group('namespace')
         if match:
             receiver_attributes = parse_attributes_string(match.group('attributes'))
             if match.group('superclass'):
@@ -69,15 +75,21 @@ def parse(file):
             elif line.startswith('#else') or line.startswith('#elif'):
                 raise Exception("ERROR: '%s' is not supported in the *.in files" % line)
             continue
-        match = re.search(r'([A-Za-z_0-9]+)\((.*?)\)(?:(?:\s+->\s+)\((.*?)\))?(?:\s+(.*))?', line)
+        match = re.search(r'(?:\[(.*)\] (?:.* )?)?([A-Za-z_0-9]+)\((.*?)\)(?:(?:\s+->\s+)\((.*?)\))?(?:\s+(.*))?', line)
         if match:
-            name, parameters_string, reply_parameters_string, attributes_string = match.groups()
+            options_string, name, parameters_string, reply_parameters_string, attributes_string = match.groups()
             if parameters_string:
                 parameters = parse_parameters_string(parameters_string)
                 for parameter in parameters:
                     parameter.condition = combine_condition(conditions)
             else:
                 parameters = []
+
+            runtime_enablement = None
+            if options_string:
+                match = re.search(r"(?:(?:, |^)+(?:EnabledIf='(.*)'))(?:, |$)?", options_string)
+                if match:
+                    runtime_enablement = match.groups()[0]
 
             attributes = parse_attributes_string(attributes_string)
 
@@ -90,8 +102,8 @@ def parse(file):
             else:
                 reply_parameters = None
 
-            messages.append(model.Message(name, parameters, reply_parameters, attributes, combine_condition(conditions)))
-    return model.MessageReceiver(destination, superclass, receiver_attributes, messages, combine_condition(master_condition))
+            messages.append(model.Message(name, parameters, reply_parameters, attributes, combine_condition(conditions), runtime_enablement))
+    return model.MessageReceiver(destination, superclass, receiver_attributes, messages, combine_condition(master_condition), namespace)
 
 
 def parse_attributes_string(attributes_string):

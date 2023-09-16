@@ -80,7 +80,7 @@
 #include <wtf/NeverDestroyed.h>
 #endif
 
-#if USE(EGL) && USE(GBM)
+#if USE(EGL) && USE(LIBDRM)
 #include "GBMDevice.h"
 #include <xf86drm.h>
 #ifndef EGL_DRM_RENDER_NODE_FILE_EXT
@@ -374,14 +374,10 @@ void PlatformDisplay::terminateEGLDisplay()
 EGLImage PlatformDisplay::createEGLImage(EGLContext context, EGLenum target, EGLClientBuffer clientBuffer, const Vector<EGLAttrib>& attributes) const
 {
     if (eglCheckVersion(1, 5)) {
-#if USE(LIBEPOXY)
-        return eglCreateImage(m_eglDisplay, context, target, clientBuffer, attributes.isEmpty() ? nullptr : attributes.data());
-#else
         static PFNEGLCREATEIMAGEPROC s_eglCreateImage = reinterpret_cast<PFNEGLCREATEIMAGEPROC>(eglGetProcAddress("eglCreateImage"));
         if (s_eglCreateImage)
             return s_eglCreateImage(m_eglDisplay, context, target, clientBuffer, attributes.isEmpty() ? nullptr : attributes.data());
         return EGL_NO_IMAGE;
-#endif
     }
 
     if (!m_eglExtensions.KHR_image_base)
@@ -390,43 +386,31 @@ EGLImage PlatformDisplay::createEGLImage(EGLContext context, EGLenum target, EGL
     Vector<EGLint> intAttributes = attributes.map<Vector<EGLint>>([] (EGLAttrib value) {
         return value;
     });
-#if USE(LIBEPOXY)
-    return eglCreateImageKHR(m_eglDisplay, context, target, clientBuffer, intAttributes.isEmpty() ? nullptr : intAttributes.data());
-#else
     static PFNEGLCREATEIMAGEKHRPROC s_eglCreateImageKHR = reinterpret_cast<PFNEGLCREATEIMAGEKHRPROC>(eglGetProcAddress("eglCreateImageKHR"));
     if (s_eglCreateImageKHR)
         return s_eglCreateImageKHR(m_eglDisplay, context, target, clientBuffer, intAttributes.isEmpty() ? nullptr : intAttributes.data());
     return EGL_NO_IMAGE_KHR;
-#endif
 }
 
 bool PlatformDisplay::destroyEGLImage(EGLImage image) const
 {
     if (eglCheckVersion(1, 5)) {
-#if USE(LIBEPOXY)
-        return eglDestroyImage(m_eglDisplay, image);
-#else
         static PFNEGLDESTROYIMAGEPROC s_eglDestroyImage = reinterpret_cast<PFNEGLDESTROYIMAGEPROC>(eglGetProcAddress("eglDestroyImage"));
         if (s_eglDestroyImage)
             return s_eglDestroyImage(m_eglDisplay, image);
         return false;
-#endif
     }
 
     if (!m_eglExtensions.KHR_image_base)
         return false;
 
-#if USE(LIBEPOXY)
-    return eglDestroyImageKHR(m_eglDisplay, image);
-#else
     static PFNEGLDESTROYIMAGEKHRPROC s_eglDestroyImageKHR = reinterpret_cast<PFNEGLDESTROYIMAGEKHRPROC>(eglGetProcAddress("eglDestroyImageKHR"));
     if (s_eglDestroyImageKHR)
         return s_eglDestroyImageKHR(m_eglDisplay, image);
     return false;
-#endif
 }
 
-#if USE(GBM)
+#if USE(LIBDRM)
 EGLDeviceEXT PlatformDisplay::eglDevice()
 {
     if (!GLContext::isExtensionSupported(eglQueryString(nullptr, EGL_EXTENSIONS), "EGL_EXT_device_query"))
@@ -457,32 +441,54 @@ const String& PlatformDisplay::drmDeviceFile()
     return m_drmDeviceFile.value();
 }
 
-static String drmRenderNodeFromPrimaryDeviceFile(const String& primaryDeviceFile)
+static void drmForeachDevice(Function<bool(drmDevice*)>&& functor)
 {
-    if (primaryDeviceFile.isEmpty())
-        return { };
-
     drmDevicePtr devices[64];
     memset(devices, 0, sizeof(devices));
 
     int numDevices = drmGetDevices2(0, devices, std::size(devices));
     if (numDevices <= 0)
-        return { };
+        return;
+
+    for (int i = 0; i < numDevices; ++i) {
+        if (!functor(devices[i]))
+            break;
+    }
+    drmFreeDevices(devices, numDevices);
+}
+
+static String drmFirstRenderNode()
+{
+    String renderNodeDeviceFile;
+    drmForeachDevice([&](drmDevice* device) {
+        if (!(device->available_nodes & (1 << DRM_NODE_RENDER)))
+            return true;
+
+        renderNodeDeviceFile = String::fromUTF8(device->nodes[DRM_NODE_RENDER]);
+        return false;
+    });
+    return renderNodeDeviceFile;
+}
+
+static String drmRenderNodeFromPrimaryDeviceFile(const String& primaryDeviceFile)
+{
+    if (primaryDeviceFile.isEmpty())
+        return drmFirstRenderNode();
 
     String renderNodeDeviceFile;
-    for (int i = 0; i < numDevices; ++i) {
-        drmDevice* device = devices[i];
+    drmForeachDevice([&](drmDevice* device) {
         if (!(device->available_nodes & (1 << DRM_NODE_PRIMARY | 1 << DRM_NODE_RENDER)))
-            continue;
+            return true;
 
         if (String::fromUTF8(device->nodes[DRM_NODE_PRIMARY]) == primaryDeviceFile) {
             renderNodeDeviceFile = String::fromUTF8(device->nodes[DRM_NODE_RENDER]);
-            break;
+            return false;
         }
-    }
-    drmFreeDevices(devices, numDevices);
 
-    return renderNodeDeviceFile;
+        return true;
+    });
+    // If we fail to find a render node for the device file, just use the device file as render node.
+    return !renderNodeDeviceFile.isEmpty() ? renderNodeDeviceFile : primaryDeviceFile;
 }
 
 const String& PlatformDisplay::drmRenderNodeFile()
@@ -502,13 +508,17 @@ const String& PlatformDisplay::drmRenderNodeFile()
 
             // If EGL_EXT_device_drm_render_node is not present, try to get the render node using DRM API.
             m_drmRenderNodeFile = drmRenderNodeFromPrimaryDeviceFile(drmDeviceFile());
-        } else
-            m_drmRenderNodeFile = String();
+        } else {
+            // If EGLDevice is not available, just get the first render node returned by DRM.
+            m_drmRenderNodeFile = drmFirstRenderNode();
+        }
     }
 
     return m_drmRenderNodeFile.value();
 }
+#endif // USE(LIBDRM)
 
+#if USE(GBM)
 struct gbm_device* PlatformDisplay::gbmDevice()
 {
     auto& device = GBMDevice::singleton();

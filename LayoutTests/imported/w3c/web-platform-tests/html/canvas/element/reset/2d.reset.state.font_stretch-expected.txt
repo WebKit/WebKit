@@ -1,0 +1,6 @@
+2d.reset.state.font_stretch
+check that the state is reset
+Actual output:
+
+FAIL check that the state is reset assert_true: ctx.fontStretch == default_value expected true got false
+

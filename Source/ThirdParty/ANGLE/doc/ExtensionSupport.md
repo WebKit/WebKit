@@ -153,6 +153,8 @@ using data from registry_xml.py and gl.xml.
 | [GL_EXT_texture_buffer](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_buffer.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_OES_texture_buffer](https://khronos.org/registry/OpenGL/extensions/OES/OES_texture_buffer.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_OES_texture_compression_astc](https://khronos.org/registry/OpenGL/extensions/OES/OES_texture_compression_astc.txt) |  |  |  |  |  |  |  |
+| [GL_EXT_texture_compression_astc_decode_mode](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_compression_astc_decode_mode.txt) |  |  |  |  |  |  |  |
+| [GL_EXT_texture_compression_astc_decode_mode_rgb9e5](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_compression_astc_decode_mode_rgb9e5.txt) |  |  |  |  |  |  |  |
 | [GL_KHR_texture_compression_astc_hdr](https://khronos.org/registry/OpenGL/extensions/KHR/KHR_texture_compression_astc_hdr.txt) |  |  |  |  |  |  |  |
 | [GL_KHR_texture_compression_astc_ldr](https://khronos.org/registry/OpenGL/extensions/KHR/KHR_texture_compression_astc_ldr.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_KHR_texture_compression_astc_sliced_3d](https://khronos.org/registry/OpenGL/extensions/KHR/KHR_texture_compression_astc_sliced_3d.txt) |  |  |  |  |  |  |  |

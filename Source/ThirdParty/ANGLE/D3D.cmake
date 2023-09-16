@@ -40,6 +40,8 @@ set(d3d_shared_sources
     "src/libANGLE/renderer/d3d/NativeWindowD3D.h"
     "src/libANGLE/renderer/d3d/ProgramD3D.cpp"
     "src/libANGLE/renderer/d3d/ProgramD3D.h"
+    "src/libANGLE/renderer/d3d/ProgramExecutableD3D.cpp"
+    "src/libANGLE/renderer/d3d/ProgramExecutableD3D.h"
     "src/libANGLE/renderer/d3d/RenderTargetD3D.cpp"
     "src/libANGLE/renderer/d3d/RenderTargetD3D.h"
     "src/libANGLE/renderer/d3d/RenderbufferD3D.cpp"
@@ -66,13 +68,6 @@ set(d3d_shared_sources
     "src/libANGLE/renderer/d3d/driver_utils_d3d.h"
     "src/libANGLE/renderer/d3d/formatutilsD3D.h"
 )
-
-if(NOT angle_is_winuwp)
-    list(APPEND d3d_shared_sources
-        "src/libANGLE/renderer/d3d/../../../gpu_info_util/SystemInfo.cpp"
-        "src/libANGLE/renderer/d3d/../../../gpu_info_util/SystemInfo.h"
-    )
-endif()
 
 if(angle_enable_d3d9)
     set(d3d9_backend_sources

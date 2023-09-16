@@ -60,7 +60,7 @@ ExceptionOr<void> PaymentSession::canCreateSession(Document& document)
 
     auto& topDocument = document.topDocument();
     if (&document != &topDocument) {
-        for (auto* ancestorDocument = document.parentDocument(); ancestorDocument != &topDocument; ancestorDocument = ancestorDocument->parentDocument()) {
+        for (RefPtr ancestorDocument = document.parentDocument(); ancestorDocument != &topDocument; ancestorDocument = ancestorDocument->parentDocument()) {
             if (!isSecure(*ancestorDocument->loader()))
                 return Exception { InvalidAccessError, "Trying to start an Apple Pay session from a document with an insecure parent frame."_s };
         }

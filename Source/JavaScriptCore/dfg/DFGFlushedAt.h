@@ -58,11 +58,7 @@ public:
     FlushFormat format() const { return m_format; }
     VirtualRegister virtualRegister() const { return m_virtualRegister; }
     
-    bool operator==(const FlushedAt& other) const
-    {
-        return m_format == other.m_format
-            && m_virtualRegister == other.m_virtualRegister;
-    }
+    friend bool operator==(const FlushedAt&, const FlushedAt&) = default;
     
     FlushedAt merge(const FlushedAt& other) const
     {

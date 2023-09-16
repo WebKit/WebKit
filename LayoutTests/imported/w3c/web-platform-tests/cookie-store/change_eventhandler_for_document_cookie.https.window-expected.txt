@@ -1,8 +1,6 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT document.cookie set/overwrite/delete observed by CookieStore Test timed out
-NOTRUN CookieStore set/overwrite/delete observed by document.cookie
-NOTRUN CookieStore agrees with document.cookie on encoding non-ASCII cookies
-NOTRUN document.cookie agrees with CookieStore on encoding non-ASCII cookies
+PASS document.cookie set/overwrite/delete observed by CookieStore
+PASS CookieStore set/overwrite/delete observed by document.cookie
+FAIL CookieStore agrees with document.cookie on encoding non-ASCII cookies assert_equals: Cookie we wrote using document.cookie in cookie jar expected (string) "DOCUMENT-🍪=🔵" but got (undefined) undefined
+PASS document.cookie agrees with CookieStore on encoding non-ASCII cookies
 

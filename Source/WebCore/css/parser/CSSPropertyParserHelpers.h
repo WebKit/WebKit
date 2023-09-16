@@ -198,7 +198,8 @@ std::optional<CSSValueID> consumeFontStretchKeywordValueRaw(CSSParserTokenRange&
 AtomString concatenateFamilyName(CSSParserTokenRange&);
 AtomString consumeFamilyNameRaw(CSSParserTokenRange&);
 // https://drafts.csswg.org/css-fonts-4/#family-name-value
-Vector<AtomString> consumeFamilyNameList(CSSParserTokenRange&);
+Vector<AtomString> consumeFamilyNameListRaw(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeFamilyNameList(CSSParserTokenRange&);
 std::optional<FontRaw> consumeFontRaw(CSSParserTokenRange&, CSSParserMode);
 const AtomString& genericFontFamily(CSSValueID);
 WebKitFontFamilyNames::FamilyNamesIndex genericFontFamilyIndex(CSSValueID);
@@ -214,10 +215,11 @@ bool isContentPositionKeyword(CSSValueID);
 bool isContentPositionOrLeftOrRightKeyword(CSSValueID);
 bool isSelfPositionKeyword(CSSValueID);
 bool isSelfPositionOrLeftOrRightKeyword(CSSValueID);
+bool isGridBreadthIdent(CSSValueID);
 
 RefPtr<CSSValueList> consumeAlignTracks(CSSParserTokenRange&);
 RefPtr<CSSValueList> consumeJustifyTracks(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeQuotes(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeFontSizeAdjust(CSSParserTokenRange&);
@@ -230,6 +232,7 @@ RefPtr<CSSValue> consumeFamilyName(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeFontFamily(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeCounterIncrement(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeCounterReset(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeCounterSet(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeSize(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeTextIndent(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeTextTransform(CSSParserTokenRange&);

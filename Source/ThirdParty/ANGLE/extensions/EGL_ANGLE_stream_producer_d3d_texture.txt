@@ -11,7 +11,7 @@ Contributors
     Ian Ewell
     Geoff Lang
     John Bauman
-    Jeff Gilbert
+    Kelsey Gilbert
 
 Contacts
 
@@ -157,7 +157,7 @@ Revision History
     #1 (April 6, 2016) Ian Ewell
         - initial draft
 
-    #2 (November 15, 2017) Jeff Gilbert
+    #2 (November 15, 2017) Kelsey Gilbert
         - Rename from EGL_ANGLE_stream_producer_d3d_texture_nv12 to
           EGL_ANGLE_stream_producer_d3d_texture
         - Remove NV12 suffix from function names

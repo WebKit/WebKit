@@ -59,14 +59,14 @@ void DrawingAreaProxyWC::sizeDidChange()
 {
     discardBackingStore();
     m_currentBackingStoreStateID++;
-    m_webPageProxy.send(Messages::DrawingArea::UpdateGeometryWC(m_currentBackingStoreStateID, m_size), m_identifier);
+    protectedWebPageProxy()->send(Messages::DrawingArea::UpdateGeometryWC(m_currentBackingStoreStateID, m_size), m_identifier);
 }
 
 void DrawingAreaProxyWC::update(uint64_t backingStoreStateID, UpdateInfo&& updateInfo)
 {
     if (backingStoreStateID == m_currentBackingStoreStateID)
         incorporateUpdate(WTFMove(updateInfo));
-    m_webPageProxy.send(Messages::DrawingArea::DisplayDidRefresh(), m_identifier);
+    protectedWebPageProxy()->send(Messages::DrawingArea::DisplayDidRefresh(), m_identifier);
 }
 
 void DrawingAreaProxyWC::enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&)
@@ -87,11 +87,11 @@ void DrawingAreaProxyWC::incorporateUpdate(UpdateInfo&& updateInfo)
         for (const auto& rect : updateInfo.updateRects)
             damageRegion.unite(rect);
     } else
-        damageRegion = WebCore::IntRect({ }, m_webPageProxy.viewSize());
+        damageRegion = WebCore::IntRect({ }, m_webPageProxy->viewSize());
 
     m_backingStore->incorporateUpdate(WTFMove(updateInfo));
 
-    m_webPageProxy.setViewNeedsDisplay(damageRegion);
+    protectedWebPageProxy()->setViewNeedsDisplay(damageRegion);
 }
 
 void DrawingAreaProxyWC::discardBackingStore()

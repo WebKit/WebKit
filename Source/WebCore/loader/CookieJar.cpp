@@ -200,4 +200,14 @@ void CookieJar::setCookieAsync(Document&, const URL&, const Cookie&, CompletionH
     completionHandler(false);
 }
 
+#if HAVE(COOKIE_CHANGE_LISTENER_API)
+void CookieJar::addChangeListener(const String&, const CookieChangeListener&)
+{
 }
+
+void CookieJar::removeChangeListener(const String&, const CookieChangeListener&)
+{
+}
+#endif
+
+} // namespace WebCore

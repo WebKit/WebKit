@@ -1,6 +1,6 @@
 Test passes if there is a filled green square.
 
 
-FAIL Initially display:none, not focusable assert_not_equals: got disallowed value Element node <div id="target" tabindex="1"></div>
+PASS Initially display:none, not focusable
 PASS Focusable after container size change
 

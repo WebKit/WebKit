@@ -42,11 +42,6 @@ EXTTextureFilterAnisotropic::EXTTextureFilterAnisotropic(WebGLRenderingContextBa
 
 EXTTextureFilterAnisotropic::~EXTTextureFilterAnisotropic() = default;
 
-WebGLExtension::ExtensionName EXTTextureFilterAnisotropic::getName() const
-{
-    return EXTTextureFilterAnisotropicName;
-}
-
 bool EXTTextureFilterAnisotropic::supported(GraphicsContextGL& context)
 {
     return context.supportsExtension("GL_EXT_texture_filter_anisotropic"_s);

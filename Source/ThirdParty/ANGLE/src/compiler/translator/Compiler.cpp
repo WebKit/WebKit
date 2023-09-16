@@ -46,17 +46,18 @@
 #include "compiler/translator/tree_ops/RemoveDynamicIndexing.h"
 #include "compiler/translator/tree_ops/RemoveInvariantDeclaration.h"
 #include "compiler/translator/tree_ops/RemoveUnreferencedVariables.h"
+#include "compiler/translator/tree_ops/RescopeGlobalVariables.h"
 #include "compiler/translator/tree_ops/RewritePixelLocalStorage.h"
-#include "compiler/translator/tree_ops/ScalarizeVecAndMatConstructorArgs.h"
 #include "compiler/translator/tree_ops/SeparateDeclarations.h"
 #include "compiler/translator/tree_ops/SimplifyLoopConditions.h"
 #include "compiler/translator/tree_ops/SplitSequenceOperator.h"
-#include "compiler/translator/tree_ops/apple/AddAndTrueToLoopCondition.h"
-#include "compiler/translator/tree_ops/apple/RewriteDoWhile.h"
-#include "compiler/translator/tree_ops/apple/UnfoldShortCircuitAST.h"
-#include "compiler/translator/tree_ops/gl/RegenerateStructNames.h"
-#include "compiler/translator/tree_ops/gl/RewriteRepeatedAssignToSwizzled.h"
-#include "compiler/translator/tree_ops/gl/UseInterfaceBlockFields.h"
+#include "compiler/translator/tree_ops/glsl/RegenerateStructNames.h"
+#include "compiler/translator/tree_ops/glsl/RewriteRepeatedAssignToSwizzled.h"
+#include "compiler/translator/tree_ops/glsl/ScalarizeVecAndMatConstructorArgs.h"
+#include "compiler/translator/tree_ops/glsl/UseInterfaceBlockFields.h"
+#include "compiler/translator/tree_ops/glsl/apple/AddAndTrueToLoopCondition.h"
+#include "compiler/translator/tree_ops/glsl/apple/RewriteDoWhile.h"
+#include "compiler/translator/tree_ops/glsl/apple/UnfoldShortCircuitAST.h"
 #include "compiler/translator/tree_util/BuiltIn.h"
 #include "compiler/translator/tree_util/IntermNodePatternMatcher.h"
 #include "compiler/translator/tree_util/ReplaceShadowingVariables.h"
@@ -187,7 +188,7 @@ bool RemoveInvariant(sh::GLenum shaderType,
                      const ShCompileOptions &compileOptions)
 {
     if (shaderType == GL_FRAGMENT_SHADER &&
-        (IsGLSL420OrNewer(outputType) || IsOutputVulkan(outputType)))
+        (IsGLSL420OrNewer(outputType) || IsOutputSPIRV(outputType)))
         return true;
 
     if (compileOptions.removeInvariantAndCentroidForESSL3 && shaderVersion >= 300 &&
@@ -397,9 +398,10 @@ bool TCompiler::shouldRunLoopAndIndexingValidation(const ShCompileOptions &compi
 
 bool TCompiler::shouldLimitTypeSizes() const
 {
-    // WebGL shaders limit the size of variables' types in shaders,
-    // including arrays, structs and interface blocks.
-    return IsWebGLBasedSpec(mShaderSpec);
+    // Prevent unrealistically large variable sizes in shaders.  This works around driver bugs
+    // around int-size limits (such as 2GB).  The limits are generously large enough that no real
+    // shader should ever hit it.
+    return true;
 }
 
 bool TCompiler::Init(const ShBuiltInResources &resources)
@@ -645,7 +647,7 @@ bool TCompiler::getShaderBinary(const ShHandle compilerHandle,
     gl::BinaryOutputStream stream;
     gl::ShaderType shaderType = gl::FromGLenum<gl::ShaderType>(mShaderType);
     gl::CompiledShaderState state(shaderType);
-    state.buildCompiledShaderState(compilerHandle, IsOutputVulkan(mOutputType));
+    state.buildCompiledShaderState(compilerHandle, IsOutputSPIRV(mOutputType));
 
     stream.writeBytes(
         reinterpret_cast<const unsigned char *>(angle::GetANGLEShaderProgramVersion()),
@@ -884,8 +886,8 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
     }
 
     if (mShaderVersion >= 300 && mShaderType == GL_FRAGMENT_SHADER &&
-        !ValidateOutputs(root, getExtensionBehavior(), mResources.MaxDrawBuffers,
-                         hasPixelLocalStorageUniforms(), &mDiagnostics))
+        !ValidateOutputs(root, getExtensionBehavior(), mResources, hasPixelLocalStorageUniforms(),
+                         IsWebGLBasedSpec(mShaderSpec), &mDiagnostics))
     {
         return false;
     }
@@ -999,17 +1001,12 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
         }
     }
 
-    int simplifyScalarized = compileOptions.scalarizeVecAndMatConstructorArgs
-                                 ? IntermNodePatternMatcher::kScalarizedVecOrMatConstructor
-                                 : 0;
-
     // Split multi declarations and remove calls to array length().
     // Note that SimplifyLoopConditions needs to be run before any other AST transformations
     // that may need to generate new statements from loop conditions or loop expressions.
     if (!SimplifyLoopConditions(this, root,
                                 IntermNodePatternMatcher::kMultiDeclaration |
-                                    IntermNodePatternMatcher::kArrayLengthMethod |
-                                    simplifyScalarized,
+                                    IntermNodePatternMatcher::kArrayLengthMethod,
                                 &getSymbolTable()))
     {
         return false;
@@ -1021,10 +1018,18 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
     {
         return false;
     }
+
+    if (compileOptions.rescopeGlobalVariables)
+    {
+        if (!RescopeGlobalVariables(*this, *root))
+        {
+            return false;
+        }
+    }
+
     mValidateASTOptions.validateMultiDeclarations = true;
 
-    if (!SplitSequenceOperator(this, root,
-                               IntermNodePatternMatcher::kArrayLengthMethod | simplifyScalarized,
+    if (!SplitSequenceOperator(this, root, IntermNodePatternMatcher::kArrayLengthMethod,
                                &getSymbolTable()))
     {
         return false;
@@ -1213,7 +1218,7 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
 
 bool TCompiler::resizeClipAndCullDistanceBuiltins(TIntermBlock *root)
 {
-    auto resizeVariable = [=](const ImmutableString &name, uint32_t size, uint32_t maxSize) {
+    auto resizeVariable = [this, root](const ImmutableString &name, uint32_t size, uint32_t maxSize) {
         // Skip if the variable is not used or implicitly has the maximum size
         if (size == 0 || size == maxSize)
             return true;

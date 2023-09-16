@@ -150,6 +150,8 @@ static void testWebKitConsoleMessageSecurityError(ConsoleMessageTest* test, gcon
 
 void beforeAll()
 {
+    Test::shouldInitializeWebProcessExtensions = true;
+
     ConsoleMessageTest::add("WebKitConsoleMessage", "console-api", testWebKitConsoleMessageConsoleAPI);
     ConsoleMessageTest::add("WebKitConsoleMessage", "js-exception", testWebKitConsoleMessageJavaScriptException);
     ConsoleMessageTest::add("WebKitConsoleMessage", "network-error", testWebKitConsoleMessageNetworkError);

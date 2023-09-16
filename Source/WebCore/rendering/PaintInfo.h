@@ -34,8 +34,8 @@
 #include "PaintPhase.h"
 #include <limits>
 #include <wtf/HashMap.h>
-#include <wtf/ListHashSet.h>
 #include <wtf/OptionSet.h>
+#include <wtf/WeakListHashSet.h>
 
 namespace WebCore {
 
@@ -53,7 +53,7 @@ typedef HashMap<OverlapTestRequestClient*, IntRect> OverlapTestRequestMap;
  */
 struct PaintInfo {
     PaintInfo(GraphicsContext& newContext, const LayoutRect& newRect, PaintPhase newPhase, OptionSet<PaintBehavior> newPaintBehavior,
-        RenderObject* newSubtreePaintRoot = nullptr, ListHashSet<RenderInline*>* newOutlineObjects = nullptr,
+        RenderObject* newSubtreePaintRoot = nullptr, WeakListHashSet<RenderInline>* newOutlineObjects = nullptr,
         OverlapTestRequestMap* overlapTestRequests = nullptr, const RenderLayerModelObject* newPaintContainer = nullptr,
         const RenderLayer* enclosingSelfPaintingLayer = nullptr, bool newRequireSecurityOriginAccessForWidgets = false)
             : rect(newRect)
@@ -129,7 +129,7 @@ struct PaintInfo {
     PaintPhase phase;
     OptionSet<PaintBehavior> paintBehavior;
     RenderObject* subtreePaintRoot; // used to draw just one element and its visual children
-    ListHashSet<RenderInline*>* outlineObjects; // used to list outlines that should be painted by a block with inline children
+    WeakListHashSet<RenderInline>* outlineObjects; // used to list outlines that should be painted by a block with inline children
     OverlapTestRequestMap* overlapTestRequests;
     const RenderLayerModelObject* paintContainer; // the layer object that originates the current painting
     bool requireSecurityOriginAccessForWidgets { false };

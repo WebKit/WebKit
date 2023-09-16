@@ -32,7 +32,7 @@
 #include "SandboxExtension.h"
 #include "TextCheckerState.h"
 #include "UserData.h"
-#include "UserInterfaceIdiom.h"
+
 #include "WebProcessDataStoreParameters.h"
 #include <WebCore/CrossOriginMode.h>
 #include <wtf/HashMap.h>
@@ -42,14 +42,18 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(COCOA) || PLATFORM(GTK)
+#include <WebCore/ScreenProperties.h>
+#endif
+
 #if PLATFORM(COCOA)
 #include <WebCore/PlatformScreen.h>
-#include <WebCore/ScreenProperties.h>
 #include <wtf/MachSendRight.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)
 #include <WebCore/RenderThemeIOS.h>
+#include <pal/system/ios/UserInterfaceIdiom.h>
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -163,6 +167,9 @@ struct WebProcessCreationParameters {
 
 #if PLATFORM(COCOA)
     Vector<String> mediaMIMETypes;
+#endif
+
+#if PLATFORM(COCOA) || PLATFORM(GTK)
     WebCore::ScreenProperties screenProperties;
 #endif
 
@@ -212,7 +219,7 @@ struct WebProcessCreationParameters {
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    UserInterfaceIdiom currentUserInterfaceIdiom { UserInterfaceIdiom::Default };
+    PAL::UserInterfaceIdiom currentUserInterfaceIdiom { PAL::UserInterfaceIdiom::Default };
     bool supportsPictureInPicture { false };
     WebCore::RenderThemeIOS::CSSValueToSystemColorMap cssValueToSystemColorMap;
     WebCore::Color focusRingColor;

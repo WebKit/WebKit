@@ -85,7 +85,7 @@ void RenderInline::willBeDestroyed()
         if (containingBlockPaintsContinuationOutline) {
             if (RenderBlock* cb = containingBlock()) {
                 if (RenderBlock* cbCb = cb->containingBlock())
-                    ASSERT(!cbCb->paintsContinuationOutline(this));
+                    ASSERT(!cbCb->paintsContinuationOutline(*this));
             }
         }
     }
@@ -196,8 +196,7 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
 
     if (diff >= StyleDifference::Repaint) {
         if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this)) {
-            auto shouldInvalidateLineLayoutPath = selfNeedsLayout() || !LayoutIntegration::LineLayout::canUseForAfterInlineBoxStyleChange(*this, diff);
-            if (shouldInvalidateLineLayoutPath)
+            if (selfNeedsLayout())
                 lineLayout->flow().invalidateLineLayoutPath();
             else
                 lineLayout->updateStyle(*this, *oldStyle);
@@ -464,10 +463,17 @@ LayoutUnit RenderInline::innerPaddingBoxWidth() const
 
     if (LayoutIntegration::LineLayout::containing(*this)) {
         if (auto inlineBox = InlineIterator::firstInlineBoxFor(*this)) {
-            firstInlineBoxPaddingBoxLeft = inlineBox->logicalLeftIgnoringInlineDirection() + borderStart();
-            for (; inlineBox->nextInlineBox(); inlineBox.traverseNextInlineBox()) { }
-            ASSERT(inlineBox);
-            lastInlineBoxPaddingBoxRight = inlineBox->logicalRightIgnoringInlineDirection() - borderEnd();
+            if (style().isLeftToRightDirection()) {
+                firstInlineBoxPaddingBoxLeft = inlineBox->logicalLeftIgnoringInlineDirection() + borderStart();
+                for (; inlineBox->nextInlineBox(); inlineBox.traverseNextInlineBox()) { }
+                ASSERT(inlineBox);
+                lastInlineBoxPaddingBoxRight = inlineBox->logicalRightIgnoringInlineDirection() - borderEnd();
+            } else {
+                lastInlineBoxPaddingBoxRight = inlineBox->logicalRightIgnoringInlineDirection() - borderStart();
+                for (; inlineBox->nextInlineBox(); inlineBox.traverseNextInlineBox()) { }
+                ASSERT(inlineBox);
+                firstInlineBoxPaddingBoxLeft = inlineBox->logicalLeftIgnoringInlineDirection() + borderEnd();
+            }
             return std::max(0_lu, lastInlineBoxPaddingBoxRight - firstInlineBoxPaddingBoxLeft);
         }
         return { };

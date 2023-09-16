@@ -44,13 +44,7 @@ public:
         };
 
         LocationKey() {}
-        bool operator==(const LocationKey& other) const 
-        {
-            return m_globalVariableID == other.m_globalVariableID
-                && m_sourceID == other.m_sourceID
-                && m_start == other.m_start
-                && m_end == other.m_end;
-        }
+        friend bool operator==(const LocationKey&, const LocationKey&) = default;
 
         unsigned hash() const
         {

@@ -42,6 +42,8 @@ class JSBigInt;
 class JSBoundFunction;
 class JSPropertyNameEnumerator;
 class JSRopeString;
+class JSMap;
+class JSSet;
 class JSWeakMap;
 class JSWeakSet;
 class NativeExecutable;
@@ -162,16 +164,12 @@ JSC_DECLARE_JIT_OPERATION(operationNewArrayIterator, JSCell*, (VM*, Structure*))
 JSC_DECLARE_JIT_OPERATION(operationNewMapIterator, JSCell*, (VM*, Structure*));
 JSC_DECLARE_JIT_OPERATION(operationNewSetIterator, JSCell*, (VM*, Structure*));
 
-JSC_DECLARE_JIT_OPERATION(operationPutByValStrict, void, (JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue));
-JSC_DECLARE_JIT_OPERATION(operationPutByValSloppy, void, (JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue));
 JSC_DECLARE_JIT_OPERATION(operationPutByValCellStringStrict, void, (JSGlobalObject*, JSCell*, JSCell* string, EncodedJSValue encodedValue));
 JSC_DECLARE_JIT_OPERATION(operationPutByValCellStringSloppy, void, (JSGlobalObject*, JSCell*, JSCell* string, EncodedJSValue encodedValue));
 JSC_DECLARE_JIT_OPERATION(operationPutByValCellSymbolStrict, void, (JSGlobalObject*, JSCell*, JSCell* symbol, EncodedJSValue encodedValue));
 JSC_DECLARE_JIT_OPERATION(operationPutByValCellSymbolSloppy, void, (JSGlobalObject*, JSCell*, JSCell* symbol, EncodedJSValue encodedValue));
 JSC_DECLARE_JIT_OPERATION(operationPutByValBeyondArrayBoundsStrict, void, (JSGlobalObject*, JSObject*, int32_t index, EncodedJSValue encodedValue));
 JSC_DECLARE_JIT_OPERATION(operationPutByValBeyondArrayBoundsSloppy, void, (JSGlobalObject*, JSObject*, int32_t index, EncodedJSValue encodedValue));
-JSC_DECLARE_JIT_OPERATION(operationPutByValDirectStrict, void, (JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue));
-JSC_DECLARE_JIT_OPERATION(operationPutByValDirectSloppy, void, (JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue));
 JSC_DECLARE_JIT_OPERATION(operationPutByValDirectCellStringStrict, void, (JSGlobalObject*, JSCell*, JSCell* string, EncodedJSValue encodedValue));
 JSC_DECLARE_JIT_OPERATION(operationPutByValDirectCellStringSloppy, void, (JSGlobalObject*, JSCell*, JSCell* string, EncodedJSValue encodedValue));
 JSC_DECLARE_JIT_OPERATION(operationPutByValDirectCellSymbolStrict, void, (JSGlobalObject*, JSCell*, JSCell* symbol, EncodedJSValue encodedValue));
@@ -201,6 +199,7 @@ JSC_DECLARE_JIT_OPERATION(operationArrayPushDouble, EncodedJSValue, (JSGlobalObj
 JSC_DECLARE_JIT_OPERATION(operationArrayPushDoubleMultiple, EncodedJSValue, (JSGlobalObject*, JSArray*, void* buffer, int32_t elementCount));
 JSC_DECLARE_JIT_OPERATION(operationArrayPop, EncodedJSValue, (JSGlobalObject*, JSArray*));
 JSC_DECLARE_JIT_OPERATION(operationArrayPopAndRecoverLength, EncodedJSValue, (JSGlobalObject*, JSArray*));
+JSC_DECLARE_JIT_OPERATION(operationArraySpliceExtract, EncodedJSValue, (JSGlobalObject*, JSArray*, int32_t start, int32_t deleteCount, unsigned refCount));
 JSC_DECLARE_JIT_OPERATION(operationRegExpExecString, EncodedJSValue, (JSGlobalObject*, RegExpObject*, JSString*));
 JSC_DECLARE_JIT_OPERATION(operationRegExpExec, EncodedJSValue, (JSGlobalObject*, RegExpObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationRegExpExecGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, EncodedJSValue));
@@ -292,6 +291,8 @@ JSC_DECLARE_JIT_OPERATION(operationMapHash, UCPUStrictInt32, (JSGlobalObject*, E
 JSC_DECLARE_JIT_OPERATION(operationMapHashHeapBigInt, UCPUStrictInt32, (VM*, JSBigInt*));
 JSC_DECLARE_JIT_OPERATION(operationJSMapFindBucket, JSCell*, (JSGlobalObject*, JSCell*, EncodedJSValue, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationJSSetFindBucket, JSCell*, (JSGlobalObject*, JSCell*, EncodedJSValue, int32_t));
+JSC_DECLARE_JIT_OPERATION(operationNewMap, JSMap*, (VM*, Structure*));
+JSC_DECLARE_JIT_OPERATION(operationNewSet, JSSet*, (VM*, Structure*));
 
 JSC_DECLARE_JIT_OPERATION(operationParseIntDoubleNoRadix, EncodedJSValue, (JSGlobalObject*, double));
 JSC_DECLARE_JIT_OPERATION(operationParseIntStringNoRadix, EncodedJSValue, (JSGlobalObject*, JSString*));

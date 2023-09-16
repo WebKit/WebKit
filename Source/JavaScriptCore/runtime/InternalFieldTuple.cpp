@@ -3,6 +3,7 @@
 #include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include "JSInternalFieldObjectImplInlines.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 
@@ -13,6 +14,11 @@ const ClassInfo InternalFieldTuple::s_info = { "InternalFieldTuple"_s, &Base::s_
 InternalFieldTuple::InternalFieldTuple(VM& vm, Structure* structure)
     : Base(vm, structure)
 {
+}
+
+Structure* InternalFieldTuple::createStructure(VM& vm, JSGlobalObject* globalObject)
+{
+    return Structure::create(vm, globalObject, jsNull(), TypeInfo(InternalFieldTupleType, Base::StructureFlags), info());
 }
 
 template<typename Visitor>

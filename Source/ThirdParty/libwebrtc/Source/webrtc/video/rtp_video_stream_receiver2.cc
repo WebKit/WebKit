@@ -39,7 +39,7 @@
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer_raw.h"
 #include "modules/video_coding/h264_sprop_parameter_sets.h"
 #include "modules/video_coding/h264_sps_pps_tracker.h"
-#ifndef DISABLE_H265
+#ifdef WEBRTC_USE_H265
 #include "modules/video_coding/h265_vps_sps_pps_tracker.h"
 #endif
 #include "modules/video_coding/nack_requester.h"
@@ -689,12 +689,21 @@ void RtpVideoStreamReceiver2::OnReceivedPayloadData(
         packet->video_payload = std::move(fixed.bitstream);
         break;
     }
-#ifndef DISABLE_H265
+#ifdef WEBRTC_USE_H265
   } else if (packet->codec() == kVideoCodecH265) {
+    // Only when we start to receive packets will we know what payload type
+    // that will be used. When we know the payload type insert the correct
+    // sps/pps into the tracker.
+    if (packet->payload_type != last_payload_type_) {
+      last_payload_type_ = packet->payload_type;
+      InsertSpsPpsIntoTracker(packet->payload_type);
+    }
+
     video_coding::H265VpsSpsPpsTracker::FixedBitstream fixed =
         h265_tracker_.CopyAndFixBitstream(
             rtc::MakeArrayView(codec_payload.cdata(), codec_payload.size()),
             &packet->video_header);
+
     switch (fixed.action) {
       case video_coding::H265VpsSpsPpsTracker::kRequestKeyframe:
         rtcp_feedback_buffer_.RequestKeyFrame();

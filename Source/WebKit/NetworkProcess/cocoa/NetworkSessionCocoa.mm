@@ -766,8 +766,6 @@ void NetworkSessionCocoa::setClientAuditToken(const WebCore::AuthenticationChall
 
     if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
         sessionCocoa->setClientAuditToken(challenge);
-        if (NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost(challenge))
-            return completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
 
         NSURLSessionTaskTransactionMetrics *metrics = task._incompleteTaskMetrics.transactionMetrics.lastObject;
         auto tlsVersion = (tls_protocol_version_t)metrics.negotiatedTLSProtocolVersion.unsignedShortValue;
@@ -1814,24 +1812,6 @@ void NetworkSessionCocoa::clearCredentials(WallTime modifiedSince)
     }
 }
 
-bool NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost(const WebCore::AuthenticationChallenge& challenge)
-{
-    const String& host = challenge.protectionSpace().host();
-    NSArray *certificates = [NSURLRequest allowsSpecificHTTPSCertificateForHost:host];
-    if (!certificates)
-        return false;
-
-    bool requireServerCertificates = challenge.protectionSpace().authenticationScheme() == WebCore::ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested;
-    RetainPtr<SecPolicyRef> policy = adoptCF(SecPolicyCreateSSL(requireServerCertificates, host.createCFString().get()));
-
-    SecTrustRef trustRef = nullptr;
-    if (SecTrustCreateWithCertificates((CFArrayRef)certificates, policy.get(), &trustRef) != noErr)
-        return false;
-    RetainPtr<SecTrustRef> trust = adoptCF(trustRef);
-
-    return WebCore::certificatesMatch(trust.get(), challenge.nsURLAuthenticationChallenge().protectionSpace.serverTrust);
-}
-
 static CompletionHandler<void(WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential)> createChallengeCompletionHandler(Ref<NetworkProcess>&& networkProcess, PAL::SessionID sessionID,  const WebCore::AuthenticationChallenge& challenge, const String& partition, uint64_t taskIdentifier, CompletionHandler<void(WebKit::AuthenticationChallengeDisposition, const WebCore::Credential&)>&& completionHandler)
  {
     WebCore::AuthenticationChallenge authenticationChallenge { challenge };
@@ -2000,8 +1980,8 @@ void NetworkSessionCocoa::addWebPageNetworkParameters(WebPageProxyIdentifier pag
 class NetworkSessionCocoa::BlobDataTaskClient final : public NetworkDataTaskClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    BlobDataTaskClient(WebCore::ResourceRequest&& request, NetworkSessionCocoa& session, IPC::Connection* connection, DataTaskIdentifier identifier)
-        : m_task(NetworkDataTaskBlob::create(session, *this, request, session.blobRegistry().filesInBlob(request.url())))
+    BlobDataTaskClient(WebCore::ResourceRequest&& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, NetworkSessionCocoa& session, IPC::Connection* connection, DataTaskIdentifier identifier)
+        : m_task(NetworkDataTaskBlob::create(session, *this, request, session.blobRegistry().filesInBlob(request.url(), topOrigin), topOrigin ? topOrigin->securityOrigin().ptr() : nullptr))
         , m_connection(connection)
         , m_identifier(identifier)
     {
@@ -2050,11 +2030,11 @@ private:
     const DataTaskIdentifier m_identifier;
 };
 
-void NetworkSessionCocoa::dataTaskWithRequest(WebPageProxyIdentifier pageID, WebCore::ResourceRequest&& request, CompletionHandler<void(DataTaskIdentifier)>&& completionHandler)
+void NetworkSessionCocoa::dataTaskWithRequest(WebPageProxyIdentifier pageID, WebCore::ResourceRequest&& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, CompletionHandler<void(DataTaskIdentifier)>&& completionHandler)
 {
     auto identifier = DataTaskIdentifier::generate();
     if (request.url().protocolIsBlob()) {
-        m_blobDataTasksForAPI.add(identifier, makeUniqueRef<BlobDataTaskClient>(WTFMove(request), *this, networkProcess().parentProcessConnection(), identifier));
+        m_blobDataTasksForAPI.add(identifier, makeUniqueRef<BlobDataTaskClient>(WTFMove(request), topOrigin, *this, networkProcess().parentProcessConnection(), identifier));
         return completionHandler(identifier);
     }
 

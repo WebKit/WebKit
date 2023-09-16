@@ -42,7 +42,6 @@ class CanvasObserver;
 class CanvasRenderingContext;
 class Element;
 class Event;
-class GraphicsClient;
 class GraphicsContext;
 class GraphicsContextStateSaver;
 class Image;
@@ -67,6 +66,8 @@ public:
 
     virtual void refCanvasBase() = 0;
     virtual void derefCanvasBase() = 0;
+    void ref() { refCanvasBase(); }
+    void deref() { derefCanvasBase(); }
 
     virtual bool isHTMLCanvasElement() const { return false; }
     virtual bool isOffscreenCanvas() const { return false; }
@@ -112,8 +113,6 @@ public:
     virtual GraphicsContext* drawingContext() const;
     virtual GraphicsContext* existingDrawingContext() const;
 
-    GraphicsClient* graphicsClient() const;
-
     void didDraw(const std::optional<FloatRect>& rect) { return didDraw(rect, ShouldApplyPostProcessingToDirtyRect::Yes); }
     virtual void didDraw(const std::optional<FloatRect>&, ShouldApplyPostProcessingToDirtyRect);
 
@@ -133,20 +132,20 @@ public:
     bool postProcessPixelBufferResults(Ref<PixelBuffer>&&) const;
     void recordLastFillText(const String&);
 
+    void resetGraphicsContextState() const;
+
 protected:
     explicit CanvasBase(IntSize, const std::optional<NoiseInjectionHashSalt>&);
 
     virtual ScriptExecutionContext* canvasBaseScriptExecutionContext() const = 0;
 
-    virtual void setSize(const IntSize& size) { m_size = size; }
+    virtual void setSize(const IntSize&);
 
     RefPtr<ImageBuffer> setImageBuffer(RefPtr<ImageBuffer>&&) const;
     virtual bool hasCreatedImageBuffer() const { return false; }
     static size_t activePixelMemory();
 
-    void resetGraphicsContextState() const;
-
-    RefPtr<ImageBuffer> allocateImageBuffer(bool usesDisplayListDrawing, bool avoidBackendSizeCheckForTesting) const;
+    RefPtr<ImageBuffer> allocateImageBuffer() const;
     String lastFillText() const { return m_lastFillText; }
 
 private:

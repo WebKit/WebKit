@@ -101,13 +101,15 @@ private:
     void prepareForBackingStoreChange();
 
     void assertDispatcherIsCurrent() const;
+    template<typename T> void send(T&& message);
+    template<typename T> void sendSync(T&& message);
 
     IPC::StreamClientConnection& streamConnection() const;
 
     RefPtr<RemoteImageBufferProxyFlushFence> m_pendingFlush;
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
     RemoteDisplayListRecorderProxy m_remoteDisplayList;
-    bool m_needsFlush { false };
+    bool m_needsFlush { true };
 };
 
 class RemoteSerializedImageBufferProxy : public WebCore::SerializedImageBuffer {

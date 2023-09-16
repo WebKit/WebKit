@@ -48,6 +48,7 @@
 #import <wtf/text/WTFString.h>
 
 static bool navigationCompleted = false;
+static bool appSSONavigationFailed = false;
 static bool policyForAppSSOPerformed = false;
 static bool authorizationPerformed = false;
 static bool authorizationCancelled = false;
@@ -230,6 +231,12 @@ private:
     decisionHandler(_WKNavigationActionPolicyAllowWithoutTryingAppLink);
 }
 
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
+{
+    EXPECT_FALSE(navigationCompleted);
+    appSSONavigationFailed = true;
+}
+
 - (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
 {
     EXPECT_FALSE(newWindowCreated);
@@ -389,6 +396,7 @@ static bool overrideIsURLFromAppleOwnedDomain(id, SEL, NSURL *)
 static void resetState()
 {
     navigationCompleted = false;
+    appSSONavigationFailed = false;
     policyForAppSSOPerformed = false;
     authorizationPerformed = false;
     authorizationCancelled = false;
@@ -544,9 +552,10 @@ TEST(SOAuthorizationRedirect, InterceptionCancel)
     EXPECT_TRUE(policyForAppSSOPerformed);
 
     [gDelegate authorizationDidCancel:gAuthorization];
-    // FIXME: Find a delegate method that can detect load cancels.
-    Util::runFor(0.5_s);
+    Util::run(&appSSONavigationFailed);
     EXPECT_WK_STREQ("", webView.get()._committedURL.absoluteString);
+    EXPECT_FALSE(webView.get().loading);
+    EXPECT_FALSE(navigationCompleted);
 }
 
 TEST(SOAuthorizationRedirect, InterceptionCompleteWithoutData)

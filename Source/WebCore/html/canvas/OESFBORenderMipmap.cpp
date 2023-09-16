@@ -42,11 +42,6 @@ OESFBORenderMipmap::OESFBORenderMipmap(WebGLRenderingContextBase& context)
 
 OESFBORenderMipmap::~OESFBORenderMipmap() = default;
 
-WebGLExtension::ExtensionName OESFBORenderMipmap::getName() const
-{
-    return OESFBORenderMipmapName;
-}
-
 bool OESFBORenderMipmap::supported(GraphicsContextGL& context)
 {
     return context.supportsExtension("GL_OES_fbo_render_mipmap"_s);

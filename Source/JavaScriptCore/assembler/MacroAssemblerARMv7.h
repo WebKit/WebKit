@@ -592,6 +592,13 @@ public:
         urshift32(dest, imm, dest);
     }
 
+    void addUnsignedRightShift32(RegisterID src1, RegisterID src2, TrustedImm32 amount, RegisterID dest)
+    {
+        // dest = src1 + (src2 >> amount)
+        urshift32(src2, amount, dataTempRegister);
+        add32(src1, dataTempRegister, dest);
+    }
+
     void sub32(RegisterID src, RegisterID dest)
     {
         m_assembler.sub(dest, dest, src);
@@ -1283,6 +1290,17 @@ public:
         storePair32(src1, src2, Address(armAddress.base, armAddress.u.offset));
     }
 
+    void transfer32(Address src, Address dest)
+    {
+        load32(src, dataTempRegister);
+        store32(dataTempRegister, dest);
+    }
+
+    void transferPtr(Address src, Address dest)
+    {
+        transfer32(src, dest);
+    }
+
     void storeCond8(RegisterID src, Address addr, RegisterID result)
     {
         ASSERT(!addr.offset);
@@ -1686,10 +1704,14 @@ public:
         CRASH();
     }
 
-    NO_RETURN_DUE_TO_CRASH void roundTowardNearestIntDouble(FPRegisterID, FPRegisterID)
+    // this is provided (unlike the other rounding instructions) since it is
+    // used in a more limited fashion (for Uint8ClampedArray)--its range is
+    // limited to doubles that round to a 32-bit signed int--otherwise, it will
+    // saturate (and signal an FP exception [which is non-trapping])
+    void roundTowardNearestIntDouble(FPRegisterID src, FPRegisterID dest)
     {
-        ASSERT(!supportsFloatingPointRounding());
-        CRASH();
+        m_assembler.vcvt_floatingPointToSignedNearest(asSingle(dest), src);
+        m_assembler.vcvt_signedToFloatingPoint(dest, asSingle(dest));
     }
 
     void convertInt32ToFloat(RegisterID src, FPRegisterID dest)
@@ -2333,6 +2355,12 @@ public:
     {
         // use addressTempRegister incase the branch32 we call uses dataTempRegister. :-/
         load32WithUnalignedHalfWords(left, addressTempRegister);
+        return branch32(cond, addressTempRegister, right);
+    }
+
+    Jump branch32WithMemory16(RelationalCondition cond, Address left, RegisterID right)
+    {
+        MacroAssemblerHelpers::load16OnCondition(*this, cond, left, addressTempRegister);
         return branch32(cond, addressTempRegister, right);
     }
 

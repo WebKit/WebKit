@@ -63,7 +63,8 @@ bool ValidateFramebufferTexture3D(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribI1i(const Context *context,
+bool ValidateVertexAttribI1i(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              GLint x)
@@ -71,7 +72,8 @@ bool ValidateVertexAttribI1i(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribI1iv(const Context *context,
+bool ValidateVertexAttribI1iv(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               const GLint *v)
@@ -79,7 +81,8 @@ bool ValidateVertexAttribI1iv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribI1ui(const Context *context,
+bool ValidateVertexAttribI1ui(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               GLuint x)
@@ -87,7 +90,8 @@ bool ValidateVertexAttribI1ui(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribI1uiv(const Context *context,
+bool ValidateVertexAttribI1uiv(const PrivateState &state,
+                               ErrorSet *errors,
                                angle::EntryPoint entryPoint,
                                GLuint index,
                                const GLuint *v)
@@ -95,7 +99,8 @@ bool ValidateVertexAttribI1uiv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribI2i(const Context *context,
+bool ValidateVertexAttribI2i(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              GLint x,
@@ -104,7 +109,8 @@ bool ValidateVertexAttribI2i(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribI2iv(const Context *context,
+bool ValidateVertexAttribI2iv(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               const GLint *v)
@@ -112,7 +118,8 @@ bool ValidateVertexAttribI2iv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribI2ui(const Context *context,
+bool ValidateVertexAttribI2ui(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               GLuint x,
@@ -121,7 +128,8 @@ bool ValidateVertexAttribI2ui(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribI2uiv(const Context *context,
+bool ValidateVertexAttribI2uiv(const PrivateState &state,
+                               ErrorSet *errors,
                                angle::EntryPoint entryPoint,
                                GLuint index,
                                const GLuint *v)
@@ -129,7 +137,8 @@ bool ValidateVertexAttribI2uiv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribI3i(const Context *context,
+bool ValidateVertexAttribI3i(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              GLint x,
@@ -139,7 +148,8 @@ bool ValidateVertexAttribI3i(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribI3iv(const Context *context,
+bool ValidateVertexAttribI3iv(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               const GLint *v)
@@ -147,7 +157,8 @@ bool ValidateVertexAttribI3iv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribI3ui(const Context *context,
+bool ValidateVertexAttribI3ui(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               GLuint x,
@@ -157,7 +168,8 @@ bool ValidateVertexAttribI3ui(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribI3uiv(const Context *context,
+bool ValidateVertexAttribI3uiv(const PrivateState &state,
+                               ErrorSet *errors,
                                angle::EntryPoint entryPoint,
                                GLuint index,
                                const GLuint *v)
@@ -165,7 +177,8 @@ bool ValidateVertexAttribI3uiv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribI4bv(const Context *context,
+bool ValidateVertexAttribI4bv(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               const GLbyte *v)
@@ -173,7 +186,8 @@ bool ValidateVertexAttribI4bv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribI4sv(const Context *context,
+bool ValidateVertexAttribI4sv(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               const GLshort *v)
@@ -181,7 +195,8 @@ bool ValidateVertexAttribI4sv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribI4ubv(const Context *context,
+bool ValidateVertexAttribI4ubv(const PrivateState &state,
+                               ErrorSet *errors,
                                angle::EntryPoint entryPoint,
                                GLuint index,
                                const GLubyte *v)
@@ -189,7 +204,8 @@ bool ValidateVertexAttribI4ubv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribI4usv(const Context *context,
+bool ValidateVertexAttribI4usv(const PrivateState &state,
+                               ErrorSet *errors,
                                angle::EntryPoint entryPoint,
                                GLuint index,
                                const GLushort *v)
@@ -227,7 +243,8 @@ bool ValidateMultiDrawElementsBaseVertex(const Context *context,
     return true;
 }
 
-bool ValidateProvokingVertex(const Context *context,
+bool ValidateProvokingVertex(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              ProvokingVertexConvention modePacked)
 {
@@ -503,7 +520,8 @@ bool ValidateTexCoordP4uiv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribP1ui(const Context *context,
+bool ValidateVertexAttribP1ui(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               GLenum type,
@@ -513,7 +531,8 @@ bool ValidateVertexAttribP1ui(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribP1uiv(const Context *context,
+bool ValidateVertexAttribP1uiv(const PrivateState &state,
+                               ErrorSet *errors,
                                angle::EntryPoint entryPoint,
                                GLuint index,
                                GLenum type,
@@ -523,7 +542,8 @@ bool ValidateVertexAttribP1uiv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribP2ui(const Context *context,
+bool ValidateVertexAttribP2ui(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               GLenum type,
@@ -533,7 +553,8 @@ bool ValidateVertexAttribP2ui(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribP2uiv(const Context *context,
+bool ValidateVertexAttribP2uiv(const PrivateState &state,
+                               ErrorSet *errors,
                                angle::EntryPoint entryPoint,
                                GLuint index,
                                GLenum type,
@@ -543,7 +564,8 @@ bool ValidateVertexAttribP2uiv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribP3ui(const Context *context,
+bool ValidateVertexAttribP3ui(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               GLenum type,
@@ -553,7 +575,8 @@ bool ValidateVertexAttribP3ui(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribP3uiv(const Context *context,
+bool ValidateVertexAttribP3uiv(const PrivateState &state,
+                               ErrorSet *errors,
                                angle::EntryPoint entryPoint,
                                GLuint index,
                                GLenum type,
@@ -563,7 +586,8 @@ bool ValidateVertexAttribP3uiv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribP4ui(const Context *context,
+bool ValidateVertexAttribP4ui(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               GLenum type,
@@ -573,7 +597,8 @@ bool ValidateVertexAttribP4ui(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribP4uiv(const Context *context,
+bool ValidateVertexAttribP4uiv(const PrivateState &state,
+                               ErrorSet *errors,
                                angle::EntryPoint entryPoint,
                                GLuint index,
                                GLenum type,

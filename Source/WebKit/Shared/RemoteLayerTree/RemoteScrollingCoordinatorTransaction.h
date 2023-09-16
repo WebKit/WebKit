@@ -27,25 +27,32 @@
 
 #if ENABLE(UI_SIDE_COMPOSITING)
 
-#include <WebCore/ScrollingStateTree.h>
+#include <wtf/ArgumentCoder.h>
+#include <wtf/text/WTFString.h>
 
 namespace IPC {
 class Decoder;
 class Encoder;
 }
 
+namespace WebCore {
+class ScrollingStateTree;
+}
+
 namespace WebKit {
 
 class RemoteScrollingCoordinatorTransaction {
 public:
-    void setStateTreeToEncode(std::unique_ptr<WebCore::ScrollingStateTree> stateTree) { m_scrollingStateTree = WTFMove(stateTree); }
-    std::unique_ptr<WebCore::ScrollingStateTree>& scrollingStateTree() { return m_scrollingStateTree; }
+    RemoteScrollingCoordinatorTransaction();
+    RemoteScrollingCoordinatorTransaction(std::unique_ptr<WebCore::ScrollingStateTree>&&, bool);
+    RemoteScrollingCoordinatorTransaction(RemoteScrollingCoordinatorTransaction&&);
+    RemoteScrollingCoordinatorTransaction& operator=(RemoteScrollingCoordinatorTransaction&&);
+    ~RemoteScrollingCoordinatorTransaction();
 
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RemoteScrollingCoordinatorTransaction&);
+    std::unique_ptr<WebCore::ScrollingStateTree>& scrollingStateTree() { return m_scrollingStateTree; }
+    const std::unique_ptr<WebCore::ScrollingStateTree>& scrollingStateTree() const { return m_scrollingStateTree; }
 
     bool clearScrollLatching() const { return m_clearScrollLatching; }
-    void setClearScrollLatching(bool clearLatching) { m_clearScrollLatching = clearLatching; }
 
 #if !defined(NDEBUG) || !LOG_DISABLED
     String description() const;
@@ -53,8 +60,6 @@ public:
 #endif
 
 private:
-    WARN_UNUSED_RETURN bool decode(IPC::Decoder&);
-    
     std::unique_ptr<WebCore::ScrollingStateTree> m_scrollingStateTree;
     
     // Data encoded here should be "imperative" (valid just for one transaction). Stateful things should live on scrolling tree nodes.
@@ -63,5 +68,12 @@ private:
 };
 
 } // namespace WebKit
+
+namespace IPC {
+template<> struct ArgumentCoder<WebCore::ScrollingStateTree> {
+    static void encode(Encoder&, const WebCore::ScrollingStateTree&);
+    static std::optional<WebCore::ScrollingStateTree> decode(Decoder&);
+};
+}
 
 #endif // ENABLE(UI_SIDE_COMPOSITING)

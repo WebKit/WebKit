@@ -79,11 +79,7 @@ private:
         {
         }
         
-        bool operator==(const TaskWithConstraint& other) const
-        {
-            return task == other.task
-                && constraint == other.constraint;
-        }
+        friend bool operator==(const TaskWithConstraint&, const TaskWithConstraint&) = default;
         
         RefPtr<SharedTask<void(SlotVisitor&)>> task;
         MarkingConstraint* constraint { nullptr };

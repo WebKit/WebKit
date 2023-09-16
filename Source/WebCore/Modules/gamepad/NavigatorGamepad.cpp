@@ -76,8 +76,8 @@ Ref<Gamepad> NavigatorGamepad::gamepadFromPlatformGamepad(PlatformGamepad& platf
 
 const Vector<RefPtr<Gamepad>>& NavigatorGamepad::getGamepads(Navigator& navigator)
 {
-    auto* domWindow = navigator.window();
-    Document* document = domWindow ? domWindow->document() : nullptr;
+    RefPtr domWindow = navigator.window();
+    RefPtr document = domWindow ? domWindow->document() : nullptr;
     if (!document) {
         static NeverDestroyed<Vector<RefPtr<Gamepad>>> emptyGamepads;
         return emptyGamepads;

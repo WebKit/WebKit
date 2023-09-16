@@ -103,7 +103,6 @@
 		6311592628989A55006A9A12 /* LibraryPathDiagnostics.h in Headers */ = {isa = PBXBuildFile; fileRef = 6311592428989A55006A9A12 /* LibraryPathDiagnostics.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6311592728989A55006A9A12 /* LibraryPathDiagnostics.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6311592528989A55006A9A12 /* LibraryPathDiagnostics.mm */; };
 		63F9BED42898D96400371416 /* CFPrivSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 63F9BED32898D96400371416 /* CFPrivSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		641C2E5B27FBAAA5002E0814 /* GenerateProfiles.h in Headers */ = {isa = PBXBuildFile; fileRef = 641C2E5A27FBAAA5002E0814 /* GenerateProfiles.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70A993FE1AD7151300FA615B /* SymbolRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70A993FC1AD7151300FA615B /* SymbolRegistry.cpp */; };
 		70ECA60D1B02426800449739 /* AtomStringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70ECA60A1B02426800449739 /* AtomStringImpl.cpp */; };
 		7A05093F1FB9DCC500B33FB8 /* JSONValues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A05093E1FB9DCC500B33FB8 /* JSONValues.cpp */; };
@@ -801,10 +800,13 @@
 		DDF308DB27C44F08006A526F /* region.h in Headers */ = {isa = PBXBuildFile; fileRef = DDD8BB5F27B347C500C109E0 /* region.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF308DC27C44F08006A526F /* uset.h in Headers */ = {isa = PBXBuildFile; fileRef = DDD8BAEE27B347C500C109E0 /* uset.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E15556F518A0CC18006F48FB /* CryptographicUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E15556F318A0CC18006F48FB /* CryptographicUtilities.cpp */; };
+		E306FE9B2A9600D40074D0E9 /* constexpr_feature_detect.h in Headers */ = {isa = PBXBuildFile; fileRef = E306FE9A2A9600D40074D0E9 /* constexpr_feature_detect.h */; };
 		E311FB171F0A568B003C08DE /* ThreadGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E311FB151F0A568B003C08DE /* ThreadGroup.cpp */; };
 		E3149A37228BB42200BFA6C7 /* Bag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEBA64120CF37100074941C /* Bag.cpp */; };
 		E3149A39228BB43500BFA6C7 /* Vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F95B63420CB53C100479635 /* Vector.cpp */; };
 		E3149A3B228BDCAC00BFA6C7 /* ConcurrentBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3149A3A228BDCAB00BFA6C7 /* ConcurrentBuffer.cpp */; };
+		E320BFE52A7CB712003C0B3A /* unumberrangeformatter.h in Headers */ = {isa = PBXBuildFile; fileRef = E320BFE32A7CB712003C0B3A /* unumberrangeformatter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E320BFE62A7CB712003C0B3A /* localematcher.h in Headers */ = {isa = PBXBuildFile; fileRef = E320BFE42A7CB712003C0B3A /* localematcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E324FAA328C9ADBA007089DF /* StringSearch.h in Headers */ = {isa = PBXBuildFile; fileRef = E324FAA228C9ADBA007089DF /* StringSearch.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E336674A2722551100259122 /* Int128.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33667492722550900259122 /* Int128.cpp */; };
 		E361DB532891159C00B2A2B8 /* FastFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E361DB512891159B00B2A2B8 /* FastFloat.cpp */; };
@@ -845,7 +847,10 @@
 		FEC26BF3289DBBD300639A59 /* FunctionPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC26BF2289DBBD300639A59 /* FunctionPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDACD3B1630F83F00C69634 /* StackStats.cpp */; };
 		FEEA4DF9216D7BE400AC0602 /* StackPointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEEA4DF8216D7BE400AC0602 /* StackPointer.cpp */; };
+		FF41AC672A79C9BA00AC0FA5 /* WYHash.h in Headers */ = {isa = PBXBuildFile; fileRef = FF41AC662A79C9B900AC0FA5 /* WYHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FF895F11282AB96400E7BAE8 /* CompactRefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = FF895F10282AB96400E7BAE8 /* CompactRefPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FF8CB4012A88C0D3004AF498 /* SuperFastHash.h in Headers */ = {isa = PBXBuildFile; fileRef = FF8CB4002A88C0D3004AF498 /* SuperFastHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FF8CB4032A88C125004AF498 /* StringHasherInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FF8CB4022A88C125004AF498 /* StringHasherInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FF910E982979FE6F00D1A24D /* FixedBitVector.h in Headers */ = {isa = PBXBuildFile; fileRef = FF910E972979FE6F00D1A24D /* FixedBitVector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFEE46F42825DF80003BC981 /* CompactPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = FFEE46F32825DF80003BC981 /* CompactPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
@@ -1197,7 +1202,6 @@
 		6311592428989A55006A9A12 /* LibraryPathDiagnostics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LibraryPathDiagnostics.h; sourceTree = "<group>"; };
 		6311592528989A55006A9A12 /* LibraryPathDiagnostics.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LibraryPathDiagnostics.mm; sourceTree = "<group>"; };
 		63F9BED32898D96400371416 /* CFPrivSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFPrivSPI.h; sourceTree = "<group>"; };
-		641C2E5A27FBAAA5002E0814 /* GenerateProfiles.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GenerateProfiles.h; sourceTree = "<group>"; };
 		70A993FC1AD7151300FA615B /* SymbolRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolRegistry.cpp; sourceTree = "<group>"; };
 		70A993FD1AD7151300FA615B /* SymbolRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolRegistry.h; sourceTree = "<group>"; };
 		70ECA60A1B02426800449739 /* AtomStringImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AtomStringImpl.cpp; sourceTree = "<group>"; };
@@ -1697,11 +1701,14 @@
 		E15556F318A0CC18006F48FB /* CryptographicUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptographicUtilities.cpp; sourceTree = "<group>"; };
 		E15556F418A0CC18006F48FB /* CryptographicUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptographicUtilities.h; sourceTree = "<group>"; };
 		E300E521203D645F00DA79BE /* UniqueArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniqueArray.h; sourceTree = "<group>"; };
+		E306FE9A2A9600D40074D0E9 /* constexpr_feature_detect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = constexpr_feature_detect.h; sourceTree = "<group>"; };
 		E311FB151F0A568B003C08DE /* ThreadGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadGroup.cpp; sourceTree = "<group>"; };
 		E311FB161F0A568B003C08DE /* ThreadGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadGroup.h; sourceTree = "<group>"; };
 		E3149A3A228BDCAB00BFA6C7 /* ConcurrentBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConcurrentBuffer.cpp; sourceTree = "<group>"; };
 		E31CF0A5261058580036E673 /* RobinHoodHashTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RobinHoodHashTable.h; sourceTree = "<group>"; };
 		E3200AB41E9A536D003B59D2 /* PlatformRegisters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformRegisters.h; sourceTree = "<group>"; };
+		E320BFE32A7CB712003C0B3A /* unumberrangeformatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unumberrangeformatter.h; sourceTree = "<group>"; };
+		E320BFE42A7CB712003C0B3A /* localematcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = localematcher.h; sourceTree = "<group>"; };
 		E324FAA228C9ADBA007089DF /* StringSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringSearch.h; sourceTree = "<group>"; };
 		E32561122611B5B600A72CC5 /* RobinHoodHashSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RobinHoodHashSet.h; sourceTree = "<group>"; };
 		E32A207323C5902D0034A092 /* NakedRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NakedRef.h; sourceTree = "<group>"; };
@@ -1788,7 +1795,10 @@
 		FEEA4DF8216D7BE400AC0602 /* StackPointer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackPointer.cpp; sourceTree = "<group>"; };
 		FEF295BF20B49DCB00CF283A /* UTF8ConversionError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTF8ConversionError.h; sourceTree = "<group>"; };
 		FF0A436588954F3CB07DBECA /* StdList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdList.h; sourceTree = "<group>"; };
+		FF41AC662A79C9B900AC0FA5 /* WYHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WYHash.h; sourceTree = "<group>"; };
 		FF895F10282AB96400E7BAE8 /* CompactRefPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompactRefPtr.h; sourceTree = "<group>"; };
+		FF8CB4002A88C0D3004AF498 /* SuperFastHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SuperFastHash.h; sourceTree = "<group>"; };
+		FF8CB4022A88C125004AF498 /* StringHasherInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringHasherInlines.h; sourceTree = "<group>"; };
 		FF910E972979FE6F00D1A24D /* FixedBitVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FixedBitVector.h; sourceTree = "<group>"; };
 		FFEE46F32825DF80003BC981 /* CompactPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompactPtr.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -2089,7 +2099,6 @@
 				1A1D8B9B173186CE00141DA4 /* FunctionDispatcher.h */,
 				FEC26BF2289DBBD300639A59 /* FunctionPtr.h */,
 				53F1D98620477B9800EBC6BF /* FunctionTraits.h */,
-				641C2E5A27FBAAA5002E0814 /* GenerateProfiles.h */,
 				E3FD6D6627A1F6AD00935000 /* GenericHashKey.h */,
 				E3831F922703101A00EF5EB3 /* GenericTimeMixin.h */,
 				A8A472A8151A825A004123FF /* GetPtr.h */,
@@ -2499,6 +2508,7 @@
 				7CD4C26F1E2C82B900929470 /* StringConcatenateNumbers.h */,
 				A8A47327151A825B004123FF /* StringHash.h */,
 				933D63191FCB6AB90032ECD6 /* StringHasher.h */,
+				FF8CB4022A88C125004AF498 /* StringHasherInlines.h */,
 				A8A47328151A825B004123FF /* StringImpl.cpp */,
 				A8A47329151A825B004123FF /* StringImpl.h */,
 				A8A4732A151A825B004123FF /* StringOperators.h */,
@@ -2507,6 +2517,7 @@
 				CD00360D21501F7800F4ED4C /* StringToIntegerConversion.h */,
 				93F1993D19D7958D00C2390B /* StringView.cpp */,
 				1A6EB1DF187D0BD30030126F /* StringView.h */,
+				FF8CB4002A88C0D3004AF498 /* SuperFastHash.h */,
 				F72BBDB107FA424886178B9E /* SymbolImpl.cpp */,
 				70ECA60B1B02426800449739 /* SymbolImpl.h */,
 				70A993FC1AD7151300FA615B /* SymbolRegistry.cpp */,
@@ -2521,6 +2532,7 @@
 				FEF295BF20B49DCB00CF283A /* UTF8ConversionError.h */,
 				A8A4732D151A825B004123FF /* WTFString.cpp */,
 				A8A4732E151A825B004123FF /* WTFString.h */,
+				FF41AC662A79C9B900AC0FA5 /* WYHash.h */,
 			);
 			path = text;
 			sourceTree = "<group>";
@@ -2635,6 +2647,7 @@
 				DDD8BB2727B347C500C109E0 /* idna.h */,
 				DDD8BB1827B347C500C109E0 /* listformatter.h */,
 				DDD8BB2927B347C500C109E0 /* localebuilder.h */,
+				E320BFE42A7CB712003C0B3A /* localematcher.h */,
 				DDD8BB7427B347C500C109E0 /* localpointer.h */,
 				DDD8BB0827B347C500C109E0 /* locdspnm.h */,
 				DDD8BB5427B347C500C109E0 /* locid.h */,
@@ -2742,6 +2755,7 @@
 				DDD8BB2827B347C500C109E0 /* unorm2.h */,
 				DDD8BB3827B347C500C109E0 /* unum.h */,
 				DDD8BAF727B347C500C109E0 /* unumberformatter.h */,
+				E320BFE32A7CB712003C0B3A /* unumberrangeformatter.h */,
 				DDD8BB6B27B347C500C109E0 /* unumsys.h */,
 				DDD8BB1927B347C500C109E0 /* uobject.h */,
 				DDD8BB2127B347C500C109E0 /* upluralrules.h */,
@@ -2857,6 +2871,7 @@
 			children = (
 				E361DB5D289115D000B2A2B8 /* ascii_number.h */,
 				E361DB60289115D000B2A2B8 /* bigint.h */,
+				E306FE9A2A9600D40074D0E9 /* constexpr_feature_detect.h */,
 				E361DB5C289115D000B2A2B8 /* decimal_to_binary.h */,
 				E361DB5F289115D000B2A2B8 /* digit_comparison.h */,
 				E361DB57289115D000B2A2B8 /* fast_float.h */,
@@ -2995,6 +3010,7 @@
 				DD3DC88F27A4BF8E007E5B61 /* ConcurrentVector.h in Headers */,
 				DD3DC8D027A4BF8E007E5B61 /* Condition.h in Headers */,
 				DDF307F527C0870E006A526F /* config.h in Headers */,
+				E306FE9B2A9600D40074D0E9 /* constexpr_feature_detect.h in Headers */,
 				1C867D782A254F08000DE93D /* ContextualizedCFString.h in Headers */,
 				1CA6FBAB2A1D75D8001D4402 /* ContextualizedNSString.h in Headers */,
 				DDF307C627C086DF006A526F /* ConversionMode.h in Headers */,
@@ -3063,7 +3079,6 @@
 				DD3DC94E27A4BF8E007E5B61 /* FunctionTraits.h in Headers */,
 				DDF3080227C08A77006A526F /* generate-unified-source-bundles.rb in Headers */,
 				DDF3080327C08A77006A526F /* GeneratePreferences.rb in Headers */,
-				641C2E5B27FBAAA5002E0814 /* GenerateProfiles.h in Headers */,
 				DDCAF31D27B1E7C500C45308 /* GenericHashKey.h in Headers */,
 				DD3DC93127A4BF8E007E5B61 /* GenericTimeMixin.h in Headers */,
 				DD3DC94727A4BF8E007E5B61 /* GetPtr.h in Headers */,
@@ -3295,6 +3310,7 @@
 				DDF307CD27C086DF006A526F /* StringHash.h in Headers */,
 				DD3DC98227A4BF8E007E5B61 /* StringHashDumpContext.h in Headers */,
 				DDF307C927C086DF006A526F /* StringHasher.h in Headers */,
+				FF8CB4032A88C125004AF498 /* StringHasherInlines.h in Headers */,
 				DDF307CB27C086DF006A526F /* StringImpl.h in Headers */,
 				DDF307D727C086DF006A526F /* StringOperators.h in Headers */,
 				DDF307C727C086DF006A526F /* StringParsingBuffer.h in Headers */,
@@ -3303,6 +3319,7 @@
 				DDF307C527C086DF006A526F /* StringToIntegerConversion.h in Headers */,
 				DDF307E427C086DF006A526F /* StringView.h in Headers */,
 				DDF3073E27C086CD006A526F /* strtod.h in Headers */,
+				FF8CB4012A88C0D3004AF498 /* SuperFastHash.h in Headers */,
 				DD3DC89A27A4BF8E007E5B61 /* SuspendableWorkQueue.h in Headers */,
 				DDF307DA27C086DF006A526F /* SymbolImpl.h in Headers */,
 				DDF307EC27C086DF006A526F /* SymbolRegistry.h in Headers */,
@@ -3386,6 +3403,7 @@
 				E36BA9DF29E275DB00300057 /* WTFProcess.h in Headers */,
 				DD3DC97D27A4BF8E007E5B61 /* WTFSemaphore.h in Headers */,
 				DDF307C227C086DF006A526F /* WTFString.h in Headers */,
+				FF41AC672A79C9BA00AC0FA5 /* WYHash.h in Headers */,
 				DDF306EA27C08654006A526F /* XPCSPI.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3440,6 +3458,7 @@
 				DDF308A327C44F08006A526F /* idna.h in Headers */,
 				DDF3083827C44F08006A526F /* listformatter.h in Headers */,
 				DDF3085527C44F08006A526F /* localebuilder.h in Headers */,
+				E320BFE62A7CB712003C0B3A /* localematcher.h in Headers */,
 				DDF308C927C44F08006A526F /* localpointer.h in Headers */,
 				DDF3083C27C44F08006A526F /* locdspnm.h in Headers */,
 				DDF3088427C44F08006A526F /* locid.h in Headers */,
@@ -3547,6 +3566,7 @@
 				DDF3087D27C44F08006A526F /* unorm2.h in Headers */,
 				DDF308B127C44F08006A526F /* unum.h in Headers */,
 				DDF308A027C44F08006A526F /* unumberformatter.h in Headers */,
+				E320BFE52A7CB712003C0B3A /* unumberrangeformatter.h in Headers */,
 				DDF3083F27C44F08006A526F /* unumsys.h in Headers */,
 				DDF308AF27C44F08006A526F /* uobject.h in Headers */,
 				DDF3086427C44F08006A526F /* upluralrules.h in Headers */,
@@ -3591,6 +3611,7 @@
 			buildConfigurationList = 5D247B6614689B8600E78B76 /* Build configuration list for PBXNativeTarget "WTF" */;
 			buildPhases = (
 				DDE99316278D08B900F60D26 /* Product Dependencies */,
+				DD07DF4C2A7DB6640091EACE /* Symlink public SDK headers */,
 				DD3DC85D27A4BF87007E5B61 /* Headers */,
 				5D247B5E14689B8600E78B76 /* Sources */,
 				5D247B5F14689B8600E78B76 /* Frameworks */,
@@ -3661,6 +3682,28 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		DD07DF4C2A7DB6640091EACE /* Symlink public SDK headers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"$(SDK_DIR_WebKitSDKAdditions:default=Scripts)/SymlinkedHeaders.xcfilelist",
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/symlink-public-sdk-headers-for-embedded-platforms",
+			);
+			name = "Symlink public SDK headers";
+			outputFileListPaths = (
+				"$(SDK_DIR_WebKitSDKAdditions:default=Scripts)/SymlinkedHeaders-output.xcfilelist",
+			);
+			outputPaths = (
+				"$(WK_DERIVED_SDK_HEADERS_DIR)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SCRIPT_INPUT_FILE_0}\"\n";
+		};
 		DDA35E4929CA74D4006C1018 /* Generate TAPI filelist */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

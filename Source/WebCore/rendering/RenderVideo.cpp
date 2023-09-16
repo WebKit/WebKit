@@ -193,10 +193,11 @@ IntRect RenderVideo::videoBox() const
     if (videoElement().shouldDisplayPosterImage())
         intrinsicSize = m_cachedImageSize;
 
-    if (inElementOrVideoFullscreen() && contentSizeAlmostEqualsFrameSize(view().frameView().layoutSize(), contentSize(), page().deviceScaleFactor()))
+    auto videoBoxRect = snappedIntRect(replacedContentRect(intrinsicSize));
+    if (inElementOrVideoFullscreen() && contentSizeAlmostEqualsFrameSize(view().frameView().layoutSize(), videoBoxRect.size(), page().deviceScaleFactor()))
         return snappedIntRect({ contentBoxLocation(), contentSize().fitToAspectRatio(intrinsicSize, AspectRatioFitGrow) });
 
-    return snappedIntRect(replacedContentRect(intrinsicSize));
+    return videoBoxRect;
 }
 
 bool RenderVideo::shouldDisplayVideo() const
@@ -321,8 +322,9 @@ void RenderVideo::updatePlayer()
     if (videoElement().inActiveDocument())
         contentChanged(VideoChanged);
 
-    bool fitToFillInFullscreen = inElementOrVideoFullscreen() && contentSizeAlmostEqualsFrameSize(view().frameView().layoutSize(), contentSize(), page().deviceScaleFactor());
-    videoElement().updateMediaPlayer(videoBox().size(), style().objectFit() != ObjectFit::Fill && !fitToFillInFullscreen);
+    auto videoBoxSize = videoBox().size();
+    bool fitToFillInFullscreen = inElementOrVideoFullscreen() && contentSizeAlmostEqualsFrameSize(view().frameView().layoutSize(), videoBoxSize, page().deviceScaleFactor());
+    videoElement().updateMediaPlayer(videoBoxSize, style().objectFit() != ObjectFit::Fill && !fitToFillInFullscreen);
 }
 
 LayoutUnit RenderVideo::computeReplacedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const

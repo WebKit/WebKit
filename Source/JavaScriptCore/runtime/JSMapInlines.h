@@ -30,6 +30,11 @@
 
 namespace JSC {
 
+inline Structure* JSMap::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSMapType, StructureFlags), info());
+}
+
 ALWAYS_INLINE void JSMap::set(JSGlobalObject* globalObject, JSValue key, JSValue value)
 {
     add(globalObject, key, value);

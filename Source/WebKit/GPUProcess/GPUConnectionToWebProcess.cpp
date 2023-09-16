@@ -271,13 +271,12 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
 #if HAVE(AUDIT_TOKEN)
     , m_presentingApplicationAuditToken(WTFMove(parameters.presentingApplicationAuditToken))
 #endif
-    , m_isDOMRenderingEnabled(parameters.isDOMRenderingEnabled)
     , m_isLockdownModeEnabled(parameters.isLockdownModeEnabled)
     , m_allowTestOnlyIPC(parameters.allowTestOnlyIPC)
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
     , m_routingArbitrator(LocalAudioSessionRoutingArbitrator::create(*this))
 #endif
-    , m_webGPUEnabled(parameters.isWebGPUEnabled)
+    , m_preferences(parameters.preferences)
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
@@ -444,7 +443,7 @@ bool GPUConnectionToWebProcess::allowsExitUnderMemoryPressure() const
     if (hasOutstandingRenderingResourceUsage())
         return false;
 
-    if (m_isDOMRenderingEnabled)
+    if (m_preferences.isDOMRenderingEnabled)
         return false;
 
 #if ENABLE(WEB_AUDIO)
@@ -671,7 +670,7 @@ void GPUConnectionToWebProcess::performWithMediaPlayerOnMainThread(MediaPlayerId
 
 void GPUConnectionToWebProcess::createRemoteGPU(WebGPUIdentifier identifier, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle&& connectionHandle)
 {
-    MESSAGE_CHECK(m_webGPUEnabled);
+    MESSAGE_CHECK(isWebGPUEnabled());
 
     auto it = m_remoteRenderingBackendMap.find(renderingBackendIdentifier);
     if (it == m_remoteRenderingBackendMap.end())
@@ -682,22 +681,7 @@ void GPUConnectionToWebProcess::createRemoteGPU(WebGPUIdentifier identifier, Ren
     MESSAGE_CHECK(streamConnection);
 
     auto addResult = m_remoteGPUMap.ensure(identifier, [&, streamConnection = WTFMove(streamConnection)] () mutable {
-        return IPC::ScopedActiveMessageReceiveQueue { RemoteGPU::create(
-#if ENABLE(VIDEO) && PLATFORM(COCOA)
-            [&] (std::variant<WebCore::MediaPlayerIdentifier, WebKit::RemoteVideoFrameReference> identifier, Function<void(RefPtr<WebCore::VideoFrame>)>&& callback) mutable {
-                return WTF::switchOn(identifier, [&] (WebCore::MediaPlayerIdentifier i) {
-                    performWithMediaPlayerOnMainThread(i, [&callback](auto& player) {
-                        callback(player.videoFrameForCurrentTime());
-                    });
-                }, [&] (WebKit::RemoteVideoFrameReference i) {
-                    callback(videoFrameObjectHeap().get(RemoteVideoFrameReadReference(WTFMove(i))));
-                });
-            },
-#else
-            [] () mutable {
-            },
-#endif
-            identifier, *this, *renderingBackend, streamConnection.releaseNonNull()) };
+        return IPC::ScopedActiveMessageReceiveQueue { RemoteGPU::create(identifier, *this, *renderingBackend, streamConnection.releaseNonNull()) };
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }

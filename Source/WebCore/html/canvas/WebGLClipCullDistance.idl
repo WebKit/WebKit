@@ -26,7 +26,7 @@
 [
     LegacyNoInterfaceObject,
     Conditional=WEBGL,
-    GenerateIsReachable=ImplWebGLRenderingContext,
+    GenerateIsReachable,
 ] interface WebGLClipCullDistance {
     const unsigned long MAX_CLIP_DISTANCES_WEBGL = 0x0D32;
     const unsigned long MAX_CULL_DISTANCES_WEBGL = 0x82F9;

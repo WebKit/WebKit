@@ -84,6 +84,7 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "RenderedPosition.h"
+#include "RuntimeApplicationChecks.h"
 #include "Settings.h"
 #include "TextCheckerClient.h"
 #include "TextCheckingHelper.h"
@@ -105,6 +106,11 @@ using namespace HTMLNames;
 AccessibilityObject::~AccessibilityObject()
 {
     ASSERT(isDetached());
+}
+
+inline ProcessID AccessibilityObject::processID() const
+{
+    return presentingApplicationPID();
 }
 
 void AccessibilityObject::detachRemoteParts(AccessibilityDetachmentType detachmentType)
@@ -566,10 +572,7 @@ static void appendAccessibilityObject(RefPtr<AXCoreObject> object, Accessibility
         auto* frameView = dynamicDowncast<LocalFrameView>(widget);
         if (!frameView)
             return;
-        auto* localFrame = dynamicDowncast<LocalFrame>(frameView->frame());
-        if (!localFrame)
-            return;
-        auto* document = localFrame->document();
+        auto* document = frameView->frame().document();
         if (!document || !document->hasLivingRenderTree())
             return;
         
@@ -622,7 +625,9 @@ void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, De
     if (displayContentsParent && displayContentsParent != this) {
         // Make sure the display:contents parent object knows it has a child it needs to add.
         displayContentsParent->setNeedsToUpdateChildren();
-        return;
+        // Don't exit early for certain table components, as they rely on inserting children for which they are not the rightful parent to behave correctly.
+        if (!isTableColumn() && roleValue() != AccessibilityRole::TableHeaderContainer)
+            return;
     }
 
     auto thisAncestorFlags = computeAncestorFlags();
@@ -1404,10 +1409,7 @@ VisiblePosition AccessibilityObject::visiblePositionForPoint(const IntPoint& poi
         auto* frameView = dynamicDowncast<LocalFrameView>(widget);
         if (!frameView)
             break;
-        auto* localFrame = dynamicDowncast<LocalFrame>(frameView->frame());
-        if (!localFrame)
-            break;
-        auto* document = localFrame->document();
+        auto* document = frameView->frame().document();
         if (!document)
             break;
 
@@ -2038,11 +2040,7 @@ Document* AccessibilityObject::document() const
     if (!frameView)
         return nullptr;
 
-    auto* localFrame = dynamicDowncast<LocalFrame>(frameView->frame());
-    if (!localFrame)
-        return nullptr;
-
-    return localFrame->document();
+    return frameView->frame().document();
 }
     
 Page* AccessibilityObject::page() const
@@ -2715,8 +2713,8 @@ AccessibilityRole AccessibilityObject::ariaRoleToWebCoreRole(const String& value
 {
     if (value.isNull() || value.isEmpty())
         return AccessibilityRole::Unknown;
-
-    for (auto roleName : StringView(value).split(' ')) {
+    auto simplifiedValue = value.simplifyWhiteSpace(isASCIIWhitespace);
+    for (auto roleName : StringView(simplifiedValue).split(' ')) {
         AccessibilityRole role = ariaRoleMap().get<ASCIICaseInsensitiveStringViewHashTranslator>(roleName);
         if (static_cast<int>(role))
             return role;
@@ -3361,11 +3359,12 @@ bool AccessibilityObject::supportsExpanded() const
         return true;
 
     switch (roleValue()) {
+    case AccessibilityRole::Details:
+        return true;
     case AccessibilityRole::Button:
     case AccessibilityRole::CheckBox:
     case AccessibilityRole::ColumnHeader:
     case AccessibilityRole::ComboBox:
-    case AccessibilityRole::Details:
     case AccessibilityRole::DisclosureTriangle:
     case AccessibilityRole::GridCell:
     case AccessibilityRole::Link:

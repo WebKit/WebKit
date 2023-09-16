@@ -1,0 +1,10 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [i386-watchos-simulator, x86_64-watchos-simulator, arm64-watchos-simulator]
+install-name: /System/Library/PrivateFrameworks/GraphicsServices.framework/GraphicsServices
+current-version: 14
+exports:
+-       targets: [i386-watchos-simulator, x86_64-watchos-simulator, arm64-watchos-simulator]
+        symbols: [_GSCurrentEventTimestamp, _GSEventIsHardwareKeyboardAttached, _GSEventSetHardwareKeyboardAttached, _GSInitialize,
+                _GSKeyboardGetModifierState, _GSSystemRootDirectory, _kGSEventHardwareKeyboardAvailabilityChangedNotification]
+...

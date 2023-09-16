@@ -288,7 +288,7 @@ private:
         return makeUnique<MediaPlayerPrivateAVFoundationObjC>(player);
     }
 
-    void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types) const final
+    void getSupportedTypes(HashSet<String>& types) const final
     {
         return MediaPlayerPrivateAVFoundationObjC::getSupportedTypes(types);
     }
@@ -647,7 +647,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
     [m_videoLayer addObserver:m_objcObserver.get() forKeyPath:@"readyForDisplay" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextAVPlayerLayer];
     updateVideoLayerGravity();
     [m_videoLayer setContentsScale:player->playerContentsScale()];
-    m_videoLayerManager->setVideoLayer(m_videoLayer.get(), player->videoInlineSize());
+    m_videoLayerManager->setVideoLayer(m_videoLayer.get(), player->presentationSize());
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     if ([m_videoLayer respondsToSelector:@selector(setPIPModeEnabled:)])
@@ -1583,9 +1583,9 @@ void MediaPlayerPrivateAVFoundationObjC::currentMediaTimeDidChange(MediaTime&& t
         m_currentTimeDidChangeCallback(m_cachedCurrentMediaTime.isFinite() ? m_cachedCurrentMediaTime : MediaTime::zeroTime());
 }
 
-void MediaPlayerPrivateAVFoundationObjC::seekToTime(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
+void MediaPlayerPrivateAVFoundationObjC::seekToTargetInternal(const SeekTarget& target)
 {
-    ASSERT(time.isFinite());
+    ASSERT(target.time.isFinite());
 
     // setCurrentTime generates several event callbacks, update afterwards.
     setDelayCallbacks(true);
@@ -1593,9 +1593,9 @@ void MediaPlayerPrivateAVFoundationObjC::seekToTime(const MediaTime& time, const
     if (m_metadataTrack)
         m_metadataTrack->flushPartialCues();
 
-    CMTime cmTime = PAL::toCMTime(time);
-    CMTime cmBefore = PAL::toCMTime(negativeTolerance);
-    CMTime cmAfter = PAL::toCMTime(positiveTolerance);
+    CMTime cmTime = PAL::toCMTime(target.time);
+    CMTime cmBefore = PAL::toCMTime(target.negativeThreshold);
+    CMTime cmAfter = PAL::toCMTime(target.positiveThreshold);
 
     // [AVPlayerItem seekToTime] will throw an exception if a tolerance is invalid or negative.
     if (!CMTIME_IS_VALID(cmBefore) || PAL::CMTimeCompare(cmBefore, PAL::kCMTimeZero) < 0)
@@ -1608,12 +1608,11 @@ void MediaPlayerPrivateAVFoundationObjC::seekToTime(const MediaTime& time, const
     setShouldObserveTimeControlStatus(false);
     [m_avPlayerItem seekToTime:cmTime toleranceBefore:cmBefore toleranceAfter:cmAfter completionHandler:^(BOOL finished) {
         callOnMainThread([weakThis, finished] {
-            auto _this = weakThis.get();
-            if (!_this)
+            if (!weakThis)
                 return;
 
-            _this->setShouldObserveTimeControlStatus(true);
-            _this->seekCompleted(finished);
+            weakThis->setShouldObserveTimeControlStatus(true);
+            weakThis->seekCompleted(finished);
         });
     }];
 
@@ -2043,7 +2042,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return image;
 }
 
-void MediaPlayerPrivateAVFoundationObjC::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& supportedTypes)
+void MediaPlayerPrivateAVFoundationObjC::getSupportedTypes(HashSet<String>& supportedTypes)
 {
     supportedTypes = AVAssetMIMETypeCache::singleton().supportedTypes();
 }

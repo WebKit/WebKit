@@ -1,0 +1,33 @@
+<!DOCTYPE html><!-- webkit-test-runner [ RequestIdleCallbackEnabled=true ] -->
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+
+description('This tests that the deadline can be reached.');
+
+jsTestIsAsync = true;
+
+let didRunIdleCallback = false;
+onload = () => {
+    function runRAFLoop() {
+        requestAnimationFrame(runRAFLoop);
+    }
+    runRAFLoop();
+    requestIdleCallback((idleDeadline) => {
+        didRunIdleCallback = true;
+        window.idleDeadline = idleDeadline;
+        window.preferredRenderingUpdateInterval = internals.preferredRenderingUpdateInterval();
+        shouldBeTrue('idleDeadline.timeRemaining() <= preferredRenderingUpdateInterval');
+        if (idleDeadline.timeRemaining() > preferredRenderingUpdateInterval)
+            console.log(idleDeadline.timeRemaining() + ' >'  + preferredRenderingUpdateInterval);
+    });
+    setTimeout(() => {
+        shouldBeTrue('didRunIdleCallback');
+        finishJSTest();
+    }, 200);
+}
+
+</script>
+</body>
+</html>

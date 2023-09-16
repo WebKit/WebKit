@@ -710,6 +710,7 @@ protected:
     void updateAncestorsForStyleRecalc();
     void markAncestorsForInvalidatedStyle();
 
+    Vector<Ref<Node>, 1> convertNodesOrStringsIntoNodeVector(FixedVector<NodeOrString>&&);
     ExceptionOr<RefPtr<Node>> convertNodesOrStringsIntoNode(FixedVector<NodeOrString>&&);
 
 private:

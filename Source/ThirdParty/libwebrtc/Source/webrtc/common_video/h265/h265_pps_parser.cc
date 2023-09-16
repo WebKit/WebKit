@@ -13,14 +13,16 @@
 #include <memory>
 #include <vector>
 
-#include "common_video/h264/h264_common.h"
+#include "absl/types/optional.h"
 #include "common_video/h265/h265_common.h"
+#include "common_video/h265/h265_sps_parser.h"
+#include "rtc_base/bit_buffer.h"
 #include "rtc_base/bitstream_reader.h"
 #include "rtc_base/logging.h"
 
 #define RETURN_EMPTY_ON_FAIL(x) \
   if (!(x)) {                   \
-    return absl::nullopt;        \
+    return absl::nullopt;       \
   }
 
 namespace {
@@ -30,7 +32,7 @@ const int kMinPicInitQpDeltaValue = -26;
 
 namespace webrtc {
 
-// General note: this is based off the 02/2018 version of the H.265 standard.
+// General note: this is based off the 06/2019 version of the H.265 standard.
 // You can find it on this page:
 // http://www.itu.int/rec/T-REC-H.265
 
@@ -39,10 +41,8 @@ absl::optional<H265PpsParser::PpsState> H265PpsParser::ParsePps(
     size_t length) {
   // First, parse out rbsp, which is basically the source buffer minus emulation
   // bytes (the last byte of a 0x00 0x00 0x03 sequence). RBSP is defined in
-  // section 7.3.1 of the H.264 standard.
-  std::vector<uint8_t> unpacked_buffer = H264::ParseRbsp(data, length);
-  BitstreamReader bit_buffer(unpacked_buffer);
-  return ParseInternal(&bit_buffer);
+  // section 7.3.1.1 of the H.265 standard.
+  return ParseInternal(H265::ParseRbsp(data, length));
 }
 
 bool H265PpsParser::ParsePpsIds(const uint8_t* data,
@@ -53,20 +53,26 @@ bool H265PpsParser::ParsePpsIds(const uint8_t* data,
   RTC_DCHECK(sps_id);
   // First, parse out rbsp, which is basically the source buffer minus emulation
   // bytes (the last byte of a 0x00 0x00 0x03 sequence). RBSP is defined in
-  // section 7.3.1 of the H.265 standard.
-  std::vector<uint8_t> unpacked_buffer = H264::ParseRbsp(data, length);
-  BitstreamReader bit_buffer(unpacked_buffer);
-  return ParsePpsIdsInternal(&bit_buffer, pps_id, sps_id);
+  // section 7.3.1.1 of the H.265 standard.
+  std::vector<uint8_t> unpacked_buffer = H265::ParseRbsp(data, length);
+  BitstreamReader reader(unpacked_buffer);
+  *pps_id = reader.ReadExponentialGolomb();
+  *sps_id = reader.ReadExponentialGolomb();
+  return reader.Ok();
 }
 
 absl::optional<uint32_t> H265PpsParser::ParsePpsIdFromSliceSegmentLayerRbsp(
     const uint8_t* data,
     size_t length,
     uint8_t nalu_type) {
-  BitstreamReader slice_reader(rtc::MakeArrayView(data, length));
+  std::vector<uint8_t> unpacked_buffer = H265::ParseRbsp(data, length);
+  BitstreamReader slice_reader(unpacked_buffer);
 
   // first_slice_segment_in_pic_flag: u(1)
   slice_reader.ConsumeBits(1);
+  if (!slice_reader.Ok()) {
+    return absl::nullopt;
+  }
 
   if (nalu_type >= H265::NaluType::kBlaWLp &&
       nalu_type <= H265::NaluType::kRsvIrapVcl23) {
@@ -76,116 +82,139 @@ absl::optional<uint32_t> H265PpsParser::ParsePpsIdFromSliceSegmentLayerRbsp(
 
   // slice_pic_parameter_set_id: ue(v)
   uint32_t slice_pic_parameter_set_id = slice_reader.ReadExponentialGolomb();
+  if (!slice_reader.Ok()) {
+    return absl::nullopt;
+  }
 
   return slice_pic_parameter_set_id;
 }
 
 absl::optional<H265PpsParser::PpsState> H265PpsParser::ParseInternal(
-    BitstreamReader* bit_buffer) {
+    rtc::ArrayView<const uint8_t> buffer) {
+  BitstreamReader reader(buffer);
   PpsState pps;
 
-  RETURN_EMPTY_ON_FAIL(ParsePpsIdsInternal(bit_buffer, &pps.id, &pps.sps_id));
-
-  uint32_t bits_tmp;
-  uint32_t golomb_ignored;
-  // entropy_coding_mode_flag: u(1)
-  uint32_t entropy_coding_mode_flag = bit_buffer->ReadBits(1);
-  pps.entropy_coding_mode_flag = entropy_coding_mode_flag != 0;
-  // bottom_field_pic_order_in_frame_present_flag: u(1)
-  uint32_t bottom_field_pic_order_in_frame_present_flag = bit_buffer->ReadBits(1);
-  pps.bottom_field_pic_order_in_frame_present_flag =
-      bottom_field_pic_order_in_frame_present_flag != 0;
-
-  // num_slice_groups_minus1: ue(v)
-  uint32_t num_slice_groups_minus1 = bit_buffer->ReadExponentialGolomb();
-  if (num_slice_groups_minus1 > 0) {
-    // slice_group_map_type: ue(v)
-    uint32_t slice_group_map_type = bit_buffer->ReadExponentialGolomb();
-    if (slice_group_map_type == 0) {
-      for (uint32_t i_group = 0; i_group <= num_slice_groups_minus1;
-           ++i_group) {
-        // run_length_minus1[iGroup]: ue(v)
-        golomb_ignored = bit_buffer->ReadExponentialGolomb();
-      }
-    } else if (slice_group_map_type == 1) {
-      // TODO(sprang): Implement support for dispersed slice group map type.
-      // See 8.2.2.2 Specification for dispersed slice group map type.
-    } else if (slice_group_map_type == 2) {
-      for (uint32_t i_group = 0; i_group <= num_slice_groups_minus1;
-           ++i_group) {
-        // top_left[iGroup]: ue(v)
-        golomb_ignored = bit_buffer->ReadExponentialGolomb();
-        // bottom_right[iGroup]: ue(v)
-          golomb_ignored = bit_buffer->ReadExponentialGolomb();
-      }
-    } else if (slice_group_map_type == 3 || slice_group_map_type == 4 ||
-               slice_group_map_type == 5) {
-      // slice_group_change_direction_flag: u(1)
-        bits_tmp = bit_buffer->ReadBits(1);
-      // slice_group_change_rate_minus1: ue(v)
-        golomb_ignored = bit_buffer->ReadExponentialGolomb();
-    } else if (slice_group_map_type == 6) {
-      // pic_size_in_map_units_minus1: ue(v)
-      uint32_t pic_size_in_map_units_minus1 = bit_buffer->ReadExponentialGolomb();
-      uint32_t slice_group_id_bits = 0;
-      uint32_t num_slice_groups = num_slice_groups_minus1 + 1;
-      // If num_slice_groups is not a power of two an additional bit is required
-      // to account for the ceil() of log2() below.
-      if ((num_slice_groups & (num_slice_groups - 1)) != 0)
-        ++slice_group_id_bits;
-      while (num_slice_groups > 0) {
-        num_slice_groups >>= 1;
-        ++slice_group_id_bits;
-      }
-      for (uint32_t i = 0; i <= pic_size_in_map_units_minus1; i++) {
-        // slice_group_id[i]: u(v)
-        // Represented by ceil(log2(num_slice_groups_minus1 + 1)) bits.
-          bits_tmp = bit_buffer->ReadBits(slice_group_id_bits);
-      }
-    }
+  if(!ParsePpsIdsInternal(reader, pps.id, pps.sps_id)){
+    return absl::nullopt;
   }
-  // num_ref_idx_l0_default_active_minus1: ue(v)
-  bit_buffer->ReadExponentialGolomb();
-  // num_ref_idx_l1_default_active_minus1: ue(v)
-  bit_buffer->ReadExponentialGolomb();
-  // weighted_pred_flag: u(1)
-  uint32_t weighted_pred_flag;
-  weighted_pred_flag = bit_buffer->ReadBits(1);
-  pps.weighted_pred_flag = weighted_pred_flag != 0;
-  // weighted_bipred_idc: u(2)
-  pps.weighted_bipred_idc = bit_buffer->ReadBits(2);
 
-  // pic_init_qp_minus26: se(v)
-  pps.pic_init_qp_minus26 = bit_buffer->ReadSignedExponentialGolomb();
+  // dependent_slice_segments_enabled_flag: u(1)
+  pps.dependent_slice_segments_enabled_flag = reader.Read<bool>();
+  // output_flag_present_flag: u(1)
+  pps.output_flag_present_flag = reader.Read<bool>();
+  // num_extra_slice_header_bits: u(3)
+  pps.num_extra_slice_header_bits = reader.ReadBits(3);
+  // sign_data_hiding_enabled_flag: u(1)
+  reader.ConsumeBits(1);
+  // cabac_init_present_flag: u(1)
+  pps.cabac_init_present_flag = reader.Read<bool>();
+  // num_ref_idx_l0_default_active_minus1: ue(v)
+  pps.num_ref_idx_l0_default_active_minus1 = reader.ReadExponentialGolomb();
+  // num_ref_idx_l1_default_active_minus1: ue(v)
+  pps.num_ref_idx_l1_default_active_minus1 = reader.ReadExponentialGolomb();
+  // init_qp_minus26: se(v)
+  pps.pic_init_qp_minus26 = reader.ReadSignedExponentialGolomb();
   // Sanity-check parsed value
   if (pps.pic_init_qp_minus26 > kMaxPicInitQpDeltaValue ||
       pps.pic_init_qp_minus26 < kMinPicInitQpDeltaValue) {
-    RETURN_EMPTY_ON_FAIL(false);
+    return absl::nullopt;
   }
-  // pic_init_qs_minus26: se(v)
-  bit_buffer->ReadExponentialGolomb();
-  // chroma_qp_index_offset: se(v)
-  bit_buffer->ReadExponentialGolomb();
-  // deblocking_filter_control_present_flag: u(1)
   // constrained_intra_pred_flag: u(1)
-  bits_tmp = bit_buffer->ReadBits(2);
-  // redundant_pic_cnt_present_flag: u(1)
-  pps.redundant_pic_cnt_present_flag = bit_buffer->ReadBits(1);
+  reader.ConsumeBits(1);
+  // transform_skip_enabled_flag: u(1)
+  reader.ConsumeBits(1);
+  // cu_qp_delta_enabled_flag: u(1)
+  bool cu_qp_delta_enabled_flag = reader.Read<bool>();
+  if (cu_qp_delta_enabled_flag) {
+    // diff_cu_qp_delta_depth: ue(v)
+    reader.ReadExponentialGolomb();
+  }
+  // pps_cb_qp_offset: se(v)
+  reader.ReadSignedExponentialGolomb();
+  // pps_cr_qp_offset: se(v)
+  reader.ReadSignedExponentialGolomb();
+  // pps_slice_chroma_qp_offsets_present_flag: u(1)
+  reader.ConsumeBits(1);
+  // weighted_pred_flag: u(1)
+  pps.weighted_pred_flag = reader.Read<bool>();
+  // weighted_bipred_flag: u(1)
+  pps.weighted_bipred_flag = reader.Read<bool>();
+  // transquant_bypass_enabled_flag: u(1)
+  reader.ConsumeBits(1);
+  // tiles_enabled_flag: u(1)
+  bool tiles_enabled_flag = reader.Read<bool>();
+  // entropy_coding_sync_enabled_flag: u(1)
+  reader.ConsumeBits(1);
+  if (tiles_enabled_flag) {
+    // num_tile_columns_minus1: ue(v)
+    uint32_t num_tile_columns_minus1 = reader.ReadExponentialGolomb();
+    // num_tile_rows_minus1: ue(v)
+    uint32_t num_tile_rows_minus1 = reader.ReadExponentialGolomb();
+    // uniform_spacing_flag: u(1)
+    bool uniform_spacing_flag = reader.Read<bool>();
+    if (!uniform_spacing_flag) {
+      for (uint32_t i = 0; i < num_tile_columns_minus1; i++) {
+        // column_width_minus1: ue(v)
+        reader.ReadExponentialGolomb();
+      }
+      for (uint32_t i = 0; i < num_tile_rows_minus1; i++) {
+        // row_height_minus1: ue(v)
+        reader.ReadExponentialGolomb();
+      }
+      // loop_filter_across_tiles_enabled_flag: u(1)
+      reader.ConsumeBits(1);
+    }
+  }
+  // pps_loop_filter_across_slices_enabled_flag: u(1)
+  reader.ConsumeBits(1);
+  // deblocking_filter_control_present_flag: u(1)
+  bool deblocking_filter_control_present_flag = reader.Read<bool>();
+  if (deblocking_filter_control_present_flag) {
+    // deblocking_filter_override_enabled_flag: u(1)
+    reader.ConsumeBits(1);
+    // pps_deblocking_filter_disabled_flag: u(1)
+    bool pps_deblocking_filter_disabled_flag = reader.Read<bool>();
+    if (!pps_deblocking_filter_disabled_flag) {
+      // pps_beta_offset_div2: se(v)
+      reader.ReadSignedExponentialGolomb();
+      // pps_tc_offset_div2: se(v)
+      reader.ReadSignedExponentialGolomb();
+    }
+  }
+  // pps_scaling_list_data_present_flag: u(1)
+  bool pps_scaling_list_data_present_flag = 0;
+  pps_scaling_list_data_present_flag = reader.Read<bool>();
+  if (pps_scaling_list_data_present_flag) {
+    // scaling_list_data()
+    if (!H265SpsParser::ParseScalingListData(reader)) {
+      return absl::nullopt;
+    }
+  }
+  // lists_modification_present_flag: u(1)
+  pps.lists_modification_present_flag = reader.Read<bool>();
+  // log2_parallel_merge_level_minus2: ue(v)
+  reader.ReadExponentialGolomb();
+  // slice_segment_header_extension_present_flag: u(1)
+  reader.ConsumeBits(1);
 
-  // Ignore -Wunused-but-set-variable warnings.
-  (void)bits_tmp;
-  (void)golomb_ignored;
+  if (!reader.Ok()) {
+    return absl::nullopt;
+  }
 
   return pps;
 }
 
-bool H265PpsParser::ParsePpsIdsInternal(BitstreamReader* bit_buffer,
-                                        uint32_t* pps_id,
-                                        uint32_t* sps_id) {
+bool H265PpsParser::ParsePpsIdsInternal(BitstreamReader& reader,
+                                        uint32_t& pps_id,
+                                        uint32_t& sps_id) {
   // pic_parameter_set_id: ue(v)
-  *pps_id = bit_buffer->ReadExponentialGolomb();
+  pps_id = reader.ReadExponentialGolomb();
+  if (!reader.Ok())
+    return false;
   // seq_parameter_set_id: ue(v)
-  *sps_id = bit_buffer->ReadExponentialGolomb();
+  sps_id = reader.ReadExponentialGolomb();
+  if (!reader.Ok())
+    return false;
   return true;
 }
 

@@ -37,8 +37,9 @@ namespace WebCore {
 class Document;
 class DOMCSSNamespace;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSNumericFactory);
 class CSSNumericFactory final : public Supplement<DOMCSSNamespace> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSNumericFactory);
 public:
     explicit CSSNumericFactory(DOMCSSNamespace&) { }
 
@@ -47,13 +48,18 @@ public:
 
 
     // <length>
-    static Ref<CSSUnitValue> em(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_EMS); }
-    static Ref<CSSUnitValue> ex(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_EXS); }
-    static Ref<CSSUnitValue> ch(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_CHS); }
+    static Ref<CSSUnitValue> em(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_EM); }
+    static Ref<CSSUnitValue> rem(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_REM); }
+    static Ref<CSSUnitValue> ex(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_EX); }
+    static Ref<CSSUnitValue> rex(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_REX); }
+    static Ref<CSSUnitValue> cap(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_CAP); }
+    static Ref<CSSUnitValue> rcap(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_RCAP); }
+    static Ref<CSSUnitValue> ch(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_CH); }
+    static Ref<CSSUnitValue> rch(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_RCH); }
     static Ref<CSSUnitValue> ic(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_IC); }
-    static Ref<CSSUnitValue> rem(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_REMS); }
-    static Ref<CSSUnitValue> lh(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_LHS); }
-    static Ref<CSSUnitValue> rlh(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_RLHS); }
+    static Ref<CSSUnitValue> ric(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_RIC); }
+    static Ref<CSSUnitValue> lh(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_LH); }
+    static Ref<CSSUnitValue> rlh(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_RLH); }
     static Ref<CSSUnitValue> vw(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_VW); }
     static Ref<CSSUnitValue> vh(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_VH); }
     static Ref<CSSUnitValue> vi(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_VI); }

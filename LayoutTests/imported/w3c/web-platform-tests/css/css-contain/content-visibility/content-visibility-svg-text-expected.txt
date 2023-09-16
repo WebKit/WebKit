@@ -1,0 +1,7 @@
+
+PASS getComputedTextLength() should return nonzero values in a c-v:hidden subtree.
+PASS getCharNumAtPosition() should return nonzero values in a c-v:hidden subtree.
+PASS getNumberOfChars() should return nonzero values in a c-v:hidden subtree.
+PASS getCTM() should return nonzero values in a c-v:hidden subtree.
+PASS getScreenCTM() should return nonzero values in a c-v:hidden subtree.
+

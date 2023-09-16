@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+require 'fileutils'
+
 # Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -107,3 +109,5 @@ $HEADERS_BY_TYPE.each do |header_type, headers|
 end
 
 exit 1 if $error_printed
+
+FileUtils.touch "#{ENV['TARGET_TEMP_DIR']}/#{File.basename($0)}.timestamp"

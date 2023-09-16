@@ -33,80 +33,15 @@ namespace WebKit::WebPushD {
 constexpr unsigned maxSilentPushCount = 3;
 
 constexpr const char* protocolVersionKey = "protocol version";
-constexpr uint64_t protocolVersionValue = 2;
+constexpr uint64_t protocolVersionValue = 3;
 constexpr const char* protocolEncodedMessageKey = "encoded message";
-
 constexpr const char* protocolDebugMessageKey { "debug message" };
-constexpr const char* protocolDebugMessageLevelKey { "debug message level" };
 
-constexpr const char* protocolMessageTypeKey { "message type" };
-
+// FIXME: ConnectionToMachService traits requires we have a message type, so keep this placeholder here
+// until we can remove that requirement.
 enum class MessageType : uint8_t {
-    EchoTwice = 1,
-    RequestSystemNotificationPermission,
-    DeletePushAndNotificationRegistration,
-    GetOriginsWithPushAndNotificationPermissions,
-    SetDebugModeIsEnabled,
-    UpdateConnectionConfiguration,
-    InjectPushMessageForTesting,
-    InjectEncryptedPushMessageForTesting,
-    GetPendingPushMessages,
-    SubscribeToPushService,
-    UnsubscribeFromPushService,
-    GetPushSubscription,
-    GetPushPermissionState,
-    IncrementSilentPushCount,
-    RemoveAllPushSubscriptions,
-    RemovePushSubscriptionsForOrigin,
-    SetPublicTokenForTesting,
-    SetPushAndNotificationsEnabledForOrigin,
+    EchoTwice
 };
-
-enum class RawXPCMessageType : uint8_t {
-    GetPushTopicsForTesting = 192,
-};
-
-inline bool messageTypeSendsReply(MessageType messageType)
-{
-    switch (messageType) {
-    case MessageType::EchoTwice:
-    case MessageType::GetOriginsWithPushAndNotificationPermissions:
-    case MessageType::DeletePushAndNotificationRegistration:
-    case MessageType::RequestSystemNotificationPermission:
-    case MessageType::GetPendingPushMessages:
-    case MessageType::InjectPushMessageForTesting:
-    case MessageType::InjectEncryptedPushMessageForTesting:
-    case MessageType::SubscribeToPushService:
-    case MessageType::UnsubscribeFromPushService:
-    case MessageType::GetPushSubscription:
-    case MessageType::GetPushPermissionState:
-    case MessageType::IncrementSilentPushCount:
-    case MessageType::RemoveAllPushSubscriptions:
-    case MessageType::RemovePushSubscriptionsForOrigin:
-    case MessageType::SetPublicTokenForTesting:
-    case MessageType::SetPushAndNotificationsEnabledForOrigin:
-        return true;
-    case MessageType::SetDebugModeIsEnabled:
-    case MessageType::UpdateConnectionConfiguration:
-        return false;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-enum class DaemonMessageType : uint8_t {
-    DebugMessage = 1,
-};
-
-inline bool daemonMessageTypeSendsReply(DaemonMessageType messageType)
-{
-    switch (messageType) {
-    case DaemonMessageType::DebugMessage:
-        return false;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
-}
 
 } // namespace WebKit::WebPushD
 

@@ -65,6 +65,8 @@ struct CrossOriginOpenerPolicy {
     CrossOriginOpenerPolicy isolatedCopy() const &;
     CrossOriginOpenerPolicy isolatedCopy() &&;
 
+    friend bool operator==(const CrossOriginOpenerPolicy&, const CrossOriginOpenerPolicy&) = default;
+
     void addPolicyHeadersTo(ResourceResponse&) const;
 };
 
@@ -76,11 +78,6 @@ inline const String& CrossOriginOpenerPolicy::reportingEndpointForDisposition(CO
 inline bool CrossOriginOpenerPolicy::hasReportingEndpoint(COOPDisposition disposition) const
 {
     return !reportingEndpointForDisposition(disposition).isEmpty();
-}
-
-inline bool operator==(const CrossOriginOpenerPolicy& a, const CrossOriginOpenerPolicy& b)
-{
-    return a.value == b.value && a.reportOnlyValue == b.reportOnlyValue && a.reportingEndpoint == b.reportingEndpoint && a.reportOnlyReportingEndpoint == b.reportOnlyReportingEndpoint;
 }
 
 // https://html.spec.whatwg.org/multipage/origin.html#coop-enforcement-result

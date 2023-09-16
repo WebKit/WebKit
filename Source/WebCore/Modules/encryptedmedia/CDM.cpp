@@ -161,7 +161,7 @@ std::optional<String> CDM::sanitizeSessionId(const String& sessionId)
 
 String CDM::storageDirectory() const
 {
-    auto* document = downcast<Document>(scriptExecutionContext());
+    RefPtr document = downcast<Document>(scriptExecutionContext());
     if (!document)
         return emptyString();
 

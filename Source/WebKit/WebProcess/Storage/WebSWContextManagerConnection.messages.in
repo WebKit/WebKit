@@ -23,7 +23,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 messages -> WebSWContextManagerConnection {
-    InstallServiceWorker(struct WebCore::ServiceWorkerContextData contextData, struct WebCore::ServiceWorkerData workerData, String userAgent, enum:bool WebCore::WorkerThreadMode workerThreadMode)
+    InstallServiceWorker(struct WebCore::ServiceWorkerContextData contextData, struct WebCore::ServiceWorkerData workerData, String userAgent, enum:bool WebCore::WorkerThreadMode workerThreadMode, enum:bool WebCore::ServiceWorkerIsInspectable inspectable)
     UpdateAppInitiatedValue(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, enum:bool WebCore::LastNavigationWasAppInitiated lastNavigationWasAppInitiated)
     StartFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::FetchIdentifier fetchIdentifier, WebCore::ResourceRequest request, struct WebCore::FetchOptions options, IPC::FormDataReference requestBody, String referrer, bool isServiceWorkerNavigationPreloadEnabled, String clientIdentifier, String resutlingClientIdentifier)
     CancelFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::FetchIdentifier fetchIdentifier)
@@ -46,6 +46,7 @@ messages -> WebSWContextManagerConnection {
     UpdatePreferencesStore(struct WebKit::WebPreferencesStore store)
     Close()
     SetThrottleState(bool isThrottleable)
+    SetInspectable(enum:bool WebCore::ServiceWorkerIsInspectable inspectable)
 
     ConvertFetchToDownload(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::FetchIdentifier identifier)
 

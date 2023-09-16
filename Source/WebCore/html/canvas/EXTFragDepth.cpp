@@ -42,11 +42,6 @@ EXTFragDepth::EXTFragDepth(WebGLRenderingContextBase& context)
 
 EXTFragDepth::~EXTFragDepth() = default;
 
-WebGLExtension::ExtensionName EXTFragDepth::getName() const
-{
-    return EXTFragDepthName;
-}
-
 bool EXTFragDepth::supported(GraphicsContextGL& context)
 {
     return context.supportsExtension("GL_EXT_frag_depth"_s);

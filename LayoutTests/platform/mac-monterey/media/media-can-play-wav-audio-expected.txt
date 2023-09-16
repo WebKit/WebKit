@@ -1,0 +1,13 @@
+
+Test HTMLMediaElement canPlayType() method with multiple .wav MIME types.
+
+These tests may be expected to fail if the WebKit port does not support the format.
+
+EXPECTED (audio.canPlayType('audio/wav') == 'maybe') OK
+EXPECTED (audio.canPlayType('audio/x-wav') == 'maybe') OK
+EXPECTED (audio.canPlayType('audio/vnd.wave') == 'maybe') OK
+EXPECTED (audio.canPlayType('audio/wav; codecs=1') == 'probably'), OBSERVED '' FAIL
+EXPECTED (audio.canPlayType('audio/x-wav; codecs=1') == 'probably'), OBSERVED '' FAIL
+EXPECTED (audio.canPlayType('audio/vnd.wave; codecs=1') == 'probably'), OBSERVED '' FAIL
+END OF TEST
+

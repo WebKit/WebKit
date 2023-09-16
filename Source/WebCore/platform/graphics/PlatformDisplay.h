@@ -36,8 +36,10 @@ typedef void *EGLContext;
 typedef void *EGLDisplay;
 typedef void *EGLImage;
 typedef unsigned EGLenum;
-#if USE(GBM)
+#if USE(LIBDRM)
 typedef void *EGLDeviceEXT;
+#endif
+#if USE(GBM)
 struct gbm_device;
 #endif
 #endif
@@ -113,9 +115,11 @@ public:
 
     EGLImage createEGLImage(EGLContext, EGLenum target, EGLClientBuffer, const Vector<EGLAttrib>&) const;
     bool destroyEGLImage(EGLImage) const;
-#if USE(GBM)
+#if USE(LIBDRM)
     const String& drmDeviceFile();
     const String& drmRenderNodeFile();
+#endif
+#if USE(GBM)
     struct gbm_device* gbmDevice();
 #endif
 
@@ -163,7 +167,7 @@ protected:
     bool m_eglDisplayOwned { true };
     std::unique_ptr<GLContext> m_sharingGLContext;
 
-#if USE(GBM)
+#if USE(LIBDRM)
     std::optional<String> m_drmDeviceFile;
     std::optional<String> m_drmRenderNodeFile;
 #endif
@@ -193,7 +197,7 @@ private:
 
 #if USE(EGL)
     void terminateEGLDisplay();
-#if USE(GBM)
+#if USE(LIBDRM)
     EGLDeviceEXT eglDevice();
 #endif
 

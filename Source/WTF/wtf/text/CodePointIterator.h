@@ -51,11 +51,7 @@ public:
     ALWAYS_INLINE UChar32 operator*() const;
     ALWAYS_INLINE CodePointIterator& operator++();
 
-    ALWAYS_INLINE bool operator==(const CodePointIterator& other) const
-    {
-        return m_begin == other.m_begin
-            && m_end == other.m_end;
-    }
+    ALWAYS_INLINE friend bool operator==(const CodePointIterator&, const CodePointIterator&) = default;
 
     ALWAYS_INLINE bool atEnd() const
     {

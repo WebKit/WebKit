@@ -31,7 +31,6 @@
 #include "InspectorInstrumentation.h"
 #include "ScriptExecutionContext.h"
 #include "WebCoreOpaqueRootInlines.h"
-#include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
 #include "WebGLShader.h"
 #include <JavaScriptCore/SlotVisitor.h>
@@ -55,23 +54,24 @@ Lock& WebGLProgram::instancesLock()
     return s_instancesLock;
 }
 
-Ref<WebGLProgram> WebGLProgram::create(WebGLRenderingContextBase& ctx)
+RefPtr<WebGLProgram> WebGLProgram::create(WebGLRenderingContextBase& context)
 {
-    return adoptRef(*new WebGLProgram(ctx));
+    auto object = context.graphicsContextGL()->createProgram();
+    if (!object)
+        return nullptr;
+    return adoptRef(*new WebGLProgram { context, object });
 }
 
-WebGLProgram::WebGLProgram(WebGLRenderingContextBase& ctx)
-    : WebGLSharedObject(ctx)
-    , ContextDestructionObserver(ctx.scriptExecutionContext())
+WebGLProgram::WebGLProgram(WebGLRenderingContextBase& context, PlatformGLObject object)
+    : WebGLObject(context, object)
+    , ContextDestructionObserver(context.scriptExecutionContext())
 {
     ASSERT(scriptExecutionContext());
 
     {
         Locker locker { instancesLock() };
-        instances().add(this, &ctx);
+        instances().add(this, &context);
     }
-
-    setObject(ctx.graphicsContextGL()->createProgram());
 }
 
 WebGLProgram::~WebGLProgram()
@@ -84,7 +84,7 @@ WebGLProgram::~WebGLProgram()
         instances().remove(this);
     }
 
-    if (!hasGroupOrContext())
+    if (!m_context)
         return;
 
     runDestructor();
@@ -231,7 +231,7 @@ void WebGLProgram::cacheInfoIfNeeded()
     if (!object())
         return;
 
-    GraphicsContextGL* context = getAGraphicsContextGL();
+    GraphicsContextGL* context = graphicsContextGL();
     if (!context)
         return;
     GCGLint linkStatus = context->getProgrami(object(), GraphicsContextGL::LINK_STATUS);

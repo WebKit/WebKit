@@ -89,43 +89,6 @@ using namespace HTMLNames;
 #if PLATFORM(IOS_FAMILY)
 
 enum {
-    NSTextBlockAbsoluteValueType    = 0,    // Absolute value in points
-    NSTextBlockPercentageValueType  = 1     // Percentage value (out of 100)
-};
-typedef NSUInteger NSTextBlockValueType;
-
-enum {
-    NSTextBlockWidth            = 0,
-    NSTextBlockMinimumWidth     = 1,
-    NSTextBlockMaximumWidth     = 2,
-    NSTextBlockHeight           = 4,
-    NSTextBlockMinimumHeight    = 5,
-    NSTextBlockMaximumHeight    = 6
-};
-typedef NSUInteger NSTextBlockDimension;
-
-enum {
-    NSTextBlockPadding  = -1,
-    NSTextBlockBorder   =  0,
-    NSTextBlockMargin   =  1
-};
-typedef NSInteger NSTextBlockLayer;
-
-enum {
-    NSTextTableAutomaticLayoutAlgorithm = 0,
-    NSTextTableFixedLayoutAlgorithm     = 1
-};
-typedef NSUInteger NSTextTableLayoutAlgorithm;
-
-enum {
-    NSTextBlockTopAlignment         = 0,
-    NSTextBlockMiddleAlignment      = 1,
-    NSTextBlockBottomAlignment      = 2,
-    NSTextBlockBaselineAlignment    = 3
-};
-typedef NSUInteger NSTextBlockVerticalAlignment;
-
-enum {
     NSEnterCharacter                = 0x0003,
     NSBackspaceCharacter            = 0x0008,
     NSTabCharacter                  = 0x0009,
@@ -138,53 +101,9 @@ enum {
     NSParagraphSeparatorCharacter   = 0x2029,
 };
 
-enum {
-    NSLeftTabStopType = 0,
-    NSRightTabStopType,
-    NSCenterTabStopType,
-    NSDecimalTabStopType
-};
-typedef NSUInteger NSTextTabType;
-
-@interface NSColor : UIColor
-+ (id)colorWithCalibratedRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha;
-@end
-
-@interface NSTextTab ()
-- (id)initWithType:(NSTextTabType)type location:(CGFloat)loc;
-@end
-
-@interface NSParagraphStyle ()
-- (void)setHeaderLevel:(NSInteger)level;
-- (void)setTextBlocks:(NSArray *)array;
-@end
-
-@interface NSTextBlock : NSObject
-- (void)setValue:(CGFloat)val type:(NSTextBlockValueType)type forDimension:(NSTextBlockDimension)dimension;
+@interface NSTextBlock ()
 - (void)setWidth:(CGFloat)val type:(NSTextBlockValueType)type forLayer:(NSTextBlockLayer)layer edge:(NSRectEdge)edge;
-- (void)setBackgroundColor:(UIColor *)color;
-- (UIColor *)backgroundColor;
 - (void)setBorderColor:(UIColor *)color forEdge:(NSRectEdge)edge;
-- (void)setBorderColor:(UIColor *)color;        // Convenience method sets all edges at once
-- (void)setVerticalAlignment:(NSTextBlockVerticalAlignment)alignment;
-@end
-
-@interface NSTextTable : NSTextBlock
-- (void)setNumberOfColumns:(NSUInteger)numCols;
-- (void)setCollapsesBorders:(BOOL)flag;
-- (void)setHidesEmptyCells:(BOOL)flag;
-- (void)setLayoutAlgorithm:(NSTextTableLayoutAlgorithm)algorithm;
-- (NSUInteger)numberOfColumns;
-- (void)release;
-@end
-
-@interface NSTextTableBlock : NSTextBlock
-- (id)initWithTable:(NSTextTable *)table startingRow:(NSInteger)row rowSpan:(NSInteger)rowSpan startingColumn:(NSInteger)col columnSpan:(NSInteger)colSpan;     // Designated initializer
-- (NSInteger)startingColumn;
-- (NSInteger)startingRow;
-- (NSUInteger)numberOfColumns;
-- (NSInteger)columnSpan;
-- (NSInteger)rowSpan;
 @end
 
 #else

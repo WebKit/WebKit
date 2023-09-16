@@ -326,7 +326,7 @@ void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* 
     unsigned splitDepth = 1;
     const unsigned cMaxSplitDepth = 200;
     while (current && current != fromBlock) {
-        if (splitDepth < cMaxSplitDepth) {
+        if (splitDepth < cMaxSplitDepth && !current->isAnonymous()) {
             // Create a new clone.
             RenderPtr<RenderInline> cloneChild = WTFMove(cloneInline);
             cloneInline = cloneAsContinuation(downcast<RenderInline>(*current));

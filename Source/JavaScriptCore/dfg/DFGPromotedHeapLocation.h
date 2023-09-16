@@ -99,11 +99,7 @@ public:
         return m_kind + m_info;
     }
     
-    bool operator==(const PromotedLocationDescriptor& other) const
-    {
-        return m_kind == other.m_kind
-            && m_info == other.m_info;
-    }
+    friend bool operator==(const PromotedLocationDescriptor&, const PromotedLocationDescriptor&) = default;
     
     bool isHashTableDeletedValue() const
     {
@@ -179,11 +175,7 @@ public:
         return m_meta.hash() + WTF::PtrHash<Node*>::hash(m_base);
     }
     
-    bool operator==(const PromotedHeapLocation& other) const
-    {
-        return m_base == other.m_base
-            && m_meta == other.m_meta;
-    }
+    friend bool operator==(const PromotedHeapLocation&, const PromotedHeapLocation&) = default;
     
     bool isHashTableDeletedValue() const
     {

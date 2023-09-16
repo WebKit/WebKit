@@ -1,5 +1,5 @@
 
-FAIL postMessaging to this window does not give back the same SharedArrayBuffer (but does use the same backing block) Can't find variable: SharedArrayBuffer
-FAIL postMessaging to a worker and back does not give back the same SharedArrayBuffer Can't find variable: SharedArrayBuffer
-FAIL postMessaging to an iframe and back does not give back the same SharedArrayBuffer Can't find variable: SharedArrayBuffer
+FAIL postMessaging to this window does not give back the same SharedArrayBuffer (but does use the same backing block) assert_equals: clonedView[0] ends up 5 expected 5 but got 0
+PASS postMessaging to a worker and back does not give back the same SharedArrayBuffer
+PASS postMessaging to an iframe and back does not give back the same SharedArrayBuffer
 

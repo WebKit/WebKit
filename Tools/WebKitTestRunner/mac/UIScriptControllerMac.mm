@@ -45,6 +45,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <mach/mach_time.h>
+#import <pal/spi/mac/NSApplicationSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/WorkQueue.h>
 
@@ -269,17 +270,21 @@ void UIScriptControllerMac::toggleCapsLock(JSValueRef callback)
 {
     m_capsLockOn = !m_capsLockOn;
     NSWindow *window = [webView() window];
-    NSEvent *fakeEvent = [NSEvent keyEventWithType:NSEventTypeFlagsChanged
-        location:NSZeroPoint
-        modifierFlags:m_capsLockOn ? NSEventModifierFlagCapsLock : 0
-        timestamp:0
-        windowNumber:window.windowNumber
-        context:nullptr
-        characters:@""
-        charactersIgnoringModifiers:@""
-        isARepeat:NO
-        keyCode:57];
-    [window sendEvent:fakeEvent];
+    const auto makeFakeCapsLockKeyEventWithType = [capsLockOn = m_capsLockOn, window] (NSEventType eventType) {
+        return [NSEvent keyEventWithType:eventType
+            location:NSZeroPoint
+            modifierFlags:capsLockOn ? NSEventModifierFlagCapsLock : 0
+            timestamp:0
+            windowNumber:window.windowNumber
+            context:nullptr
+            characters:@""
+            charactersIgnoringModifiers:@""
+            isARepeat:NO
+            keyCode:57];
+    };
+    NSArray<NSEvent *> *fakeEventsToBeSent = @[ makeFakeCapsLockKeyEventWithType(NSEventTypeKeyDown), makeFakeCapsLockKeyEventWithType(NSEventTypeKeyUp), makeFakeCapsLockKeyEventWithType(NSEventTypeFlagsChanged) ];
+    for (NSEvent *fakeEvent in fakeEventsToBeSent)
+        [window sendEvent:fakeEvent];
     doAsyncTask(callback);
 }
 
@@ -432,6 +437,11 @@ void UIScriptControllerMac::sendEventStream(JSStringRef eventsJSON, JSValueRef c
 JSRetainPtr<JSStringRef> UIScriptControllerMac::scrollbarStateForScrollingNodeID(unsigned long long scrollingNodeID, bool isVertical) const
 {
     return adopt(JSStringCreateWithCFString((CFStringRef) [webView() _scrollbarStateForScrollingNodeID:scrollingNodeID isVertical:isVertical]));
+}
+
+void UIScriptControllerMac::setAppAccentColor(unsigned short red, unsigned short green, unsigned short blue)
+{
+    NSApp._accentColor = [NSColor colorWithRed:red / 255. green:green / 255. blue:blue / 255. alpha:1];
 }
 
 } // namespace WTR

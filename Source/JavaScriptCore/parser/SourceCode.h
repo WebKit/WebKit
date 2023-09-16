@@ -77,23 +77,16 @@ public:
 
     SourceCode subExpression(unsigned openBrace, unsigned closeBrace, int firstLine, int startColumn) const;
 
-    bool operator==(const SourceCode& other) const
-    {
-        return m_firstLine == other.m_firstLine
-            && m_startColumn == other.m_startColumn
-            && m_provider == other.m_provider
-            && m_startOffset == other.m_startOffset
-            && m_endOffset == other.m_endOffset;
-    }
+    friend bool operator==(const SourceCode&, const SourceCode&) = default;
 
 private:
     OrdinalNumber m_firstLine;
     OrdinalNumber m_startColumn;
 };
 
-inline SourceCode makeSource(const String& source, const SourceOrigin& sourceOrigin, String filename = String(), const TextPosition& startPosition = TextPosition(), SourceProviderSourceType sourceType = SourceProviderSourceType::Program)
+inline SourceCode makeSource(const String& source, const SourceOrigin& sourceOrigin, SourceTaintedOrigin sourceTaintedOrigin, String filename = String(), const TextPosition& startPosition = TextPosition(), SourceProviderSourceType sourceType = SourceProviderSourceType::Program)
 {
-    return SourceCode(StringSourceProvider::create(source, sourceOrigin, WTFMove(filename), startPosition, sourceType), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt());
+    return SourceCode(StringSourceProvider::create(source, sourceOrigin, WTFMove(filename), sourceTaintedOrigin, startPosition, sourceType), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt());
 }
 
 inline SourceCode SourceCode::subExpression(unsigned openBrace, unsigned closeBrace, int firstLine, int startColumn) const

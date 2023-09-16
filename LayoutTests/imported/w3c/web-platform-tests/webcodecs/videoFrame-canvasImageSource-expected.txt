@@ -1,6 +1,6 @@
 
 
-FAIL <video> and VideoFrame constructed VideoFrame assert_unreached: Reached unreachable code
+NOTRUN <video> and VideoFrame constructed VideoFrame AV.1 file streaming unsupported
 PASS CSSImageValue constructed VideoFrame
 PASS Image element constructed VideoFrame
 PASS SVGImageElement constructed VideoFrame

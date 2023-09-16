@@ -1013,6 +1013,12 @@ template<typename T, typename U> bool differenceOverflows(U left, U right)
     return checkedDifference<T>(left, right).hasOverflowed();
 }
 
+template<typename T> T sumIfNoOverflowOrFirstValue(T firstValue, T secondValue)
+{
+    auto result = Checked<T, RecordOverflow>(firstValue) + Checked<T, RecordOverflow>(secondValue);
+    return result.hasOverflowed() ? firstValue : result.value();
+}
+
 template<typename T, typename U>
 Checked<T, RecordOverflow> checkedProduct(U value)
 {

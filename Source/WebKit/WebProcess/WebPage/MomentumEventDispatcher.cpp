@@ -29,6 +29,7 @@
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
 
 #include "Logging.h"
+#include <WebCore/AnimationFrameRate.h>
 #include <WebCore/Scrollbar.h>
 #include <wtf/SystemTracing.h>
 

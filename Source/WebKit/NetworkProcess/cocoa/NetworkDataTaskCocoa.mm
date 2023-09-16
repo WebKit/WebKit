@@ -32,7 +32,6 @@
 #import "Download.h"
 #import "DownloadProxyMessages.h"
 #import "Logging.h"
-#import "NWSPI.h"
 #import "NetworkIssueReporter.h"
 #import "NetworkProcess.h"
 #import "NetworkSessionCocoa.h"
@@ -47,6 +46,7 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/TimingAllowOrigin.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <pal/spi/cocoa/NetworkSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
 #import <wtf/MainThread.h>
@@ -224,7 +224,6 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     restrictRequestReferrerToOriginIfNeeded(request);
 
     RetainPtr<NSURLRequest> nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
-    ASSERT(nsRequest);
     RetainPtr<NSMutableURLRequest> mutableRequest = adoptNS([nsRequest.get() mutableCopy]);
 
     if (parameters.isMainFrameNavigation
@@ -327,8 +326,6 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     if (parameters.networkActivityTracker)
         m_task.get()._nw_activity = parameters.networkActivityTracker->getPlatformObject();
 #endif
-
-    m_session->registerNetworkDataTask(*this);
 }
 
 NetworkDataTaskCocoa::~NetworkDataTaskCocoa()
@@ -410,20 +407,21 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
 
     networkLoadMetrics().hasCrossOriginRedirect = networkLoadMetrics().hasCrossOriginRedirect || !WebCore::SecurityOrigin::create(request.url())->canRequest(redirectResponse.url(), WebCore::EmptyOriginAccessPatterns::singleton());
 
+    const auto& previousRequest = m_previousRequest.isNull() ? m_firstRequest : m_previousRequest;
     if (redirectResponse.httpStatusCode() == 307 || redirectResponse.httpStatusCode() == 308) {
         ASSERT(m_lastHTTPMethod == request.httpMethod());
-        auto body = m_firstRequest.httpBody();
+        auto body = previousRequest.httpBody();
         if (body && !body->isEmpty() && !equalLettersIgnoringASCIICase(m_lastHTTPMethod, "get"_s))
             request.setHTTPBody(WTFMove(body));
         
-        String originalContentType = m_firstRequest.httpContentType();
+        String originalContentType = previousRequest.httpContentType();
         if (!originalContentType.isEmpty())
             request.setHTTPHeaderField(WebCore::HTTPHeaderName::ContentType, originalContentType);
     } else if (redirectResponse.httpStatusCode() == 303) { // FIXME: (rdar://problem/13706454).
-        if (equalLettersIgnoringASCIICase(m_firstRequest.httpMethod(), "head"_s))
+        if (equalLettersIgnoringASCIICase(previousRequest.httpMethod(), "head"_s))
             request.setHTTPMethod("HEAD"_s);
 
-        String originalContentType = m_firstRequest.httpContentType();
+        String originalContentType = previousRequest.httpContentType();
         if (!originalContentType.isEmpty())
             request.setHTTPHeaderField(WebCore::HTTPHeaderName::ContentType, originalContentType);
     }
@@ -473,6 +471,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
                 return completionHandler({ });
             if (!request.isNull())
                 restrictRequestReferrerToOriginIfNeeded(request);
+            m_previousRequest = request;
             completionHandler(WTFMove(request));
         });
     });

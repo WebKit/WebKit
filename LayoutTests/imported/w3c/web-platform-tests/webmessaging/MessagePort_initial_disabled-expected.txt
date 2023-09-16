@@ -1,3 +1,0 @@
-
-PASS MessageChannel: port message queue is initially disabled
-

@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS requestIdleCallback callbacks should be invoked in order (called iteratively)
-TIMEOUT requestIdleCallback callbacks should be invoked in order (called recursively) Test timed out
+PASS requestIdleCallback callbacks should be invoked in order (called recursively)
 

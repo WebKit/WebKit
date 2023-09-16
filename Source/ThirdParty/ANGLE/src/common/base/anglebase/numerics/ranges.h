@@ -11,18 +11,6 @@
 namespace base
 {
 
-// This function, unlike base::clamp(), does not check if `min` is greater than
-// `max`, and returns a bogus answer if it is.
-//
-// If, for some reason the broken behavior is required, please re-create this
-// min/max nesting inline in the host code and explain with a comment why it
-// is needed.
-template <class T>
-constexpr const T &BrokenClampThatShouldNotBeUsed(const T &value, const T &min, const T &max)
-{
-    return std::min(std::max(value, min), max);
-}
-
 template <typename T>
 constexpr bool IsApproximatelyEqual(T lhs, T rhs, T tolerance)
 {

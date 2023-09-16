@@ -79,8 +79,7 @@ IGNORE_GCC_WARNINGS_END
     return declaration;
 }
 
-class MatchRequest {
-public:
+struct MatchRequest {
     MatchRequest(const RuleSet& ruleSet, ScopeOrdinal styleScopeOrdinal = ScopeOrdinal::Element)
         : ruleSet(ruleSet)
         , styleScopeOrdinal(styleScopeOrdinal)
@@ -88,6 +87,7 @@ public:
     }
     const RuleSet& ruleSet;
     ScopeOrdinal styleScopeOrdinal;
+    bool matchingPartPseudoElementRules { false };
 };
 
 ElementRuleCollector::ElementRuleCollector(const Element& element, const ScopeRuleSets& ruleSets, SelectorMatchingState* selectorMatchingState)
@@ -96,7 +96,7 @@ ElementRuleCollector::ElementRuleCollector(const Element& element, const ScopeRu
     , m_userStyle(ruleSets.userStyle())
     , m_userAgentMediaQueryStyle(ruleSets.userAgentMediaQueryStyle())
     , m_selectorMatchingState(selectorMatchingState)
-    , m_result(makeUnique<MatchResult>())
+    , m_result(makeUnique<MatchResult>(element.isLink()))
 {
     ASSERT(!m_selectorMatchingState || m_selectorMatchingState->selectorFilter.parentStackIsConsistent(element.parentNode()));
 }
@@ -105,7 +105,7 @@ ElementRuleCollector::ElementRuleCollector(const Element& element, const RuleSet
     : m_element(element)
     , m_authorStyle(authorStyle)
     , m_selectorMatchingState(selectorMatchingState)
-    , m_result(makeUnique<MatchResult>())
+    , m_result(makeUnique<MatchResult>(element.isLink()))
 {
     ASSERT(!m_selectorMatchingState || m_selectorMatchingState->selectorFilter.parentStackIsConsistent(element.parentNode()));
 }
@@ -375,6 +375,8 @@ void ElementRuleCollector::matchPartPseudoElementRulesForScope(const Element& pa
             continue;
 
         MatchRequest scopeMatchRequest(*hostRules, styleScopeOrdinal);
+        scopeMatchRequest.matchingPartPseudoElementRules = true;
+
         collectMatchingRulesForList(&hostRules->partPseudoElementRules(), scopeMatchRequest);
 
         // Element may only be exposed to styling from enclosing scopes via exportparts attributes.
@@ -559,7 +561,13 @@ bool ElementRuleCollector::containerQueriesMatch(const RuleData& ruleData, const
         return true;
 
     // Style bits indicating which pseudo-elements match are set during regular element matching. Container queries need to be evaluate in the right mode.
-    auto selectionMode = ruleData.canMatchPseudoElement() ? ContainerQueryEvaluator::SelectionMode::PseudoElement : ContainerQueryEvaluator::SelectionMode::Element;
+    auto selectionMode = [&] {
+        if (matchRequest.matchingPartPseudoElementRules)
+            return ContainerQueryEvaluator::SelectionMode::PartPseudoElement;
+        if (ruleData.canMatchPseudoElement())
+            return ContainerQueryEvaluator::SelectionMode::PseudoElement;
+        return ContainerQueryEvaluator::SelectionMode::Element;
+    }();
 
     // "Style rules defined on an element inside multiple nested container queries apply when all of the wrapping container queries are true for that element."
     ContainerQueryEvaluator evaluator(element(), selectionMode, matchRequest.styleScopeOrdinal, m_selectorMatchingState);
@@ -637,8 +645,7 @@ void ElementRuleCollector::addElementInlineStyleProperties(bool includeSMILPrope
         return;
 
     if (auto* inlineStyle = downcast<StyledElement>(element()).inlineStyle()) {
-        // FIXME: Media control shadow trees seem to have problems with caching.
-        bool isInlineStyleCacheable = !inlineStyle->isMutable() && !element().isInShadowTree();
+        bool isInlineStyleCacheable = !inlineStyle->isMutable();
         addElementStyleProperties(inlineStyle, RuleSet::cascadeLayerPriorityForUnlayered, isInlineStyleCacheable, FromStyleAttribute::Yes);
     }
 
@@ -658,38 +665,6 @@ bool ElementRuleCollector::hasAnyMatchingRules(const RuleSet& ruleSet)
 
 void ElementRuleCollector::addMatchedProperties(MatchedProperties&& matchedProperties, DeclarationOrigin declarationOrigin)
 {
-    // FIXME: This should be moved to the matched properties cache code.
-    auto computeIsCacheable = [&] {
-        if (!m_result->isCacheable)
-            return false;
-
-        for (auto current : matchedProperties.properties.get()) {
-            // Currently the property cache only copy the non-inherited values and resolve
-            // the inherited ones.
-            // Here we define some exception were we have to resolve some properties that are not inherited
-            // by default. If those exceptions become too common on the web, it should be possible
-            // to build a list of exception to resolve instead of completely disabling the cache.
-            if (current.isInherited())
-                continue;
-
-            // If the property value is explicitly inherited, we need to apply further non-inherited properties
-            // as they might override the value inherited here. For this reason we don't allow declarations with
-            // explicitly inherited properties to be cached.
-            auto& value = *current.value();
-            if (isValueID(value, CSSValueInherit))
-                return false;
-
-            // The value currentColor has implicitely the same side effect. It depends on the value of color,
-            // which is an inherited value, making the non-inherited property implicitly inherited.
-            if (is<CSSPrimitiveValue>(value) && StyleColor::containsCurrentColor(downcast<CSSPrimitiveValue>(value)))
-                return false;
-        }
-
-        return true;
-    };
-
-    m_result->isCacheable = computeIsCacheable();
-
     declarationsForOrigin(declarationOrigin).append(WTFMove(matchedProperties));
 }
 

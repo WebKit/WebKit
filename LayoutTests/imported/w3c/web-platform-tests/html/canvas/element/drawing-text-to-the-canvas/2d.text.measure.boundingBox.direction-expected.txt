@@ -1,6 +1,0 @@
-2d.text.measure.boundingBox.direction
-Measurement should follow text direction
-Actual output:
-
-PASS Measurement should follow text direction
-

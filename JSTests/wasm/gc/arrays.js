@@ -130,17 +130,17 @@ function testArrayNew() {
     (module
       (type (array i32))
       (func (result (ref 0))
-        (array.new_canon 0 (i32.const 42) (i32.const 5)))
+        (array.new 0 (i32.const 42) (i32.const 5)))
     )
   `);
 
   instantiate(`
     (module
       ;; Test with subtype as well.
-      (type (array i32))
+      (type (sub (array i32)))
       (type (sub 0 (array i32)))
       (func (result (ref 0))
-        (array.new_canon 1 (i32.const 42) (i32.const 5)))
+        (array.new 1 (i32.const 42) (i32.const 5)))
     )
   `);
 }
@@ -150,17 +150,17 @@ function testArrayNewDefault() {
     (module
       (type (array i32))
       (func (result (ref 0))
-        (array.new_canon_default 0 (i32.const 5)))
+        (array.new_default 0 (i32.const 5)))
     )
   `);
 
   instantiate(`
     (module
       ;; Test with subtype as well.
-      (type (array i32))
+      (type (sub (array i32)))
       (type (sub 0 (array i32)))
       (func (result (ref 0))
-        (array.new_canon_default 1 (i32.const 5)))
+        (array.new_default 1 (i32.const 5)))
     )
   `);
 }
@@ -171,7 +171,7 @@ function testArrayGet() {
       (module
         (type (array i32))
         (func (export "f") (result i32)
-          (array.new_canon 0 (i32.const 0) (i32.const 5))
+          (array.new 0 (i32.const 0) (i32.const 5))
           (i32.const 3)
           (array.get 0))
       )
@@ -183,10 +183,10 @@ function testArrayGet() {
     let m = instantiate(`
       (module
         ;; Test with a subtype as well.
-        (type (array i32))
+        (type (sub (array i32)))
         (type (sub 0 (array i32)))
         (func (export "f") (result i32)
-          (array.new_canon 1 (i32.const 0) (i32.const 5))
+          (array.new 1 (i32.const 0) (i32.const 5))
           (i32.const 3)
           (array.get 1))
       )
@@ -199,7 +199,7 @@ function testArrayGet() {
       (module
         (type (array i32))
         (func (export "f") (result i32)
-          (array.new_canon_default 0 (i32.const 5))
+          (array.new_default 0 (i32.const 5))
           (i32.const 3)
           (array.get 0))
       )
@@ -212,7 +212,7 @@ function testArrayGet() {
       (module
         (type (array i32))
         (func (export "f") (result i32)
-          (array.new_canon 0 (i32.const 42) (i32.const 5))
+          (array.new 0 (i32.const 42) (i32.const 5))
           (i32.const 3)
           (array.get 0))
       )
@@ -225,7 +225,7 @@ function testArrayGet() {
       (module
         (type (array i64))
         (func (export "f") (result i64)
-          (array.new_canon 0 (i64.const 0x0eee_ffff_ffff_ffff) (i32.const 5))
+          (array.new 0 (i64.const 0x0eee_ffff_ffff_ffff) (i32.const 5))
           (i32.const 3)
           (array.get 0))
       )
@@ -238,7 +238,7 @@ function testArrayGet() {
       (module
         (type (array f32))
         (func (export "f") (result f32)
-          (array.new_canon 0 (f32.const 0.25) (i32.const 5))
+          (array.new 0 (f32.const 0.25) (i32.const 5))
           (i32.const 3)
           (array.get 0))
       )
@@ -251,7 +251,7 @@ function testArrayGet() {
       (module
         (type (array f64))
         (func (export "f") (result f64)
-          (array.new_canon 0 (f64.const 1e39) (i32.const 5))
+          (array.new 0 (f64.const 1e39) (i32.const 5))
           (i32.const 3)
           (array.get 0))
       )
@@ -264,7 +264,7 @@ function testArrayGet() {
       (module
         (type (array externref))
         (func (export "f") (param externref) (result externref)
-          (array.new_canon 0 (local.get 0) (i32.const 5))
+          (array.new 0 (local.get 0) (i32.const 5))
           (i32.const 3)
           (array.get 0))
       )
@@ -279,7 +279,7 @@ function testArrayGet() {
       (module
         (type (array externref))
         (func (export "f") (result externref)
-          (array.new_canon_default 0 (i32.const 5))
+          (array.new_default 0 (i32.const 5))
           (i32.const 3)
           (array.get 0))
       )
@@ -294,7 +294,7 @@ function testArrayGet() {
         (import "m" "g" (func $g))
         (global $a (mut (ref null 0)) (ref.null 0))
         (func (export "new") (param externref)
-          (array.new_canon 0 (local.get 0) (i32.const 5))
+          (array.new 0 (local.get 0) (i32.const 5))
           (call $g)
           (global.set $a))
         (func (export "get") (result externref)
@@ -336,7 +336,7 @@ function testArrayGet() {
       (module
         (type (array i32))
         (func (export "f") (result i32)
-          (array.new_canon 0 (i32.const 42) (i32.const 5))
+          (array.new 0 (i32.const 42) (i32.const 5))
           (i32.const 18)
           (array.get 0))
       )
@@ -356,7 +356,7 @@ function testArraySet() {
         (type (array (mut i32)))
         (global (mut (ref null 0)) (ref.null 0))
         (func (export "init")
-          (global.set 0 (array.new_canon 0 (i32.const 42) (i32.const 5)))
+          (global.set 0 (array.new 0 (i32.const 42) (i32.const 5)))
           (array.set 0 (global.get 0) (i32.const 3) (i32.const 84)))
         (func (export "get") (param i32) (result i32)
           (array.get 0 (global.get 0) (local.get 0)))
@@ -371,12 +371,12 @@ function testArraySet() {
     let m = instantiate(`
       (module
         ;; Test with a subtype as well.
-        (type (array (mut i32)))
+        (type (sub (array (mut i32))))
         (type (sub 0 (array (mut i32))))
-        (global (mut (ref null 0)) (ref.null 0))
+        (global (mut (ref null 1)) (ref.null 1))
         (func (export "init")
-          (global.set 0 (array.new_canon 1 (i32.const 42) (i32.const 5)))
-          (array.set 1 (global.get 0) (i32.const 3) (i32.const 84)))
+          (global.set 0 (array.new 1 (i32.const 42) (i32.const 5)))
+          (array.set 0 (global.get 0) (i32.const 3) (i32.const 84)))
         (func (export "get") (param i32) (result i32)
           (array.get 1 (global.get 0) (local.get 0)))
       )
@@ -386,13 +386,30 @@ function testArraySet() {
     assert.eq(m.exports.get(3), 84);
   }
 
+  // Should fail because the array type in the global (index 0) isn't a subtype of the
+  // type of the array.set index (index 1).
+  assert.throws(
+    () => compile(`
+      (module
+        (type (sub (array (mut i32))))
+        (type (sub 0 (array (mut i32))))
+        (global (mut (ref null 0)) (ref.null 0))
+        (func (export "init")
+          (global.set 0 (array.new 1 (i32.const 42) (i32.const 5)))
+          (array.set 1 (global.get 0) (i32.const 3) (i32.const 84)))
+      )
+    `),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't validate: array.set arrayref to type ((I32, immutable)) expected arrayref, in function at index 0"
+  );
+
   {
     let m = instantiate(`
       (module
         (type (array (mut i64)))
         (global (mut (ref null 0)) (ref.null 0))
         (func (export "init")
-          (global.set 0 (array.new_canon 0 (i64.const 0x0eee_ffff_ffff_ffff) (i32.const 5)))
+          (global.set 0 (array.new 0 (i64.const 0x0eee_ffff_ffff_ffff) (i32.const 5)))
           (array.set 0 (global.get 0) (i32.const 3) (i64.const 0x0abc_ffff_ffff_ffff)))
         (func (export "get") (param i32) (result i64)
           (array.get 0 (global.get 0) (local.get 0)))
@@ -409,7 +426,7 @@ function testArraySet() {
         (type (array (mut f32)))
         (global (mut (ref null 0)) (ref.null 0))
         (func (export "init")
-          (global.set 0 (array.new_canon 0 (f32.const 0.25) (i32.const 5)))
+          (global.set 0 (array.new 0 (f32.const 0.25) (i32.const 5)))
           (array.set 0 (global.get 0) (i32.const 3) (f32.const 0.125)))
         (func (export "get") (param i32) (result f32)
           (array.get 0 (global.get 0) (local.get 0)))
@@ -426,7 +443,7 @@ function testArraySet() {
         (type (array (mut f64)))
         (global (mut (ref null 0)) (ref.null 0))
         (func (export "init")
-          (global.set 0 (array.new_canon 0 (f64.const 1e39) (i32.const 5)))
+          (global.set 0 (array.new 0 (f64.const 1e39) (i32.const 5)))
           (array.set 0 (global.get 0) (i32.const 3) (f64.const 1e38)))
         (func (export "get") (param i32) (result f64)
           (array.get 0 (global.get 0) (local.get 0)))
@@ -443,7 +460,7 @@ function testArraySet() {
         (type (array (mut externref)))
         (global (mut (ref null 0)) (ref.null 0))
         (func (export "init") (param externref externref)
-          (global.set 0 (array.new_canon 0 (local.get 0) (i32.const 5)))
+          (global.set 0 (array.new 0 (local.get 0) (i32.const 5)))
           (array.set 0 (global.get 0) (i32.const 3) (local.get 1)))
         (func (export "get") (param i32) (result externref)
           (array.get 0 (global.get 0) (local.get 0)))
@@ -492,7 +509,7 @@ function testArraySet() {
       (module
         (type (array (mut i32)))
         (func (export "f")
-          (array.new_canon 0 (i32.const 42) (i32.const 5))
+          (array.new 0 (i32.const 42) (i32.const 5))
           (i32.const 18)
           (i32.const 84)
           (array.set 0))
@@ -512,7 +529,7 @@ function testArrayLen() {
       (module
         (type (array i32))
         (func (export "f") (result i32)
-          (array.new_canon 0 (i32.const 42) (i32.const 5))
+          (array.new 0 (i32.const 42) (i32.const 5))
           (array.len))
       )
     `);
@@ -524,7 +541,7 @@ function testArrayLen() {
       (module
         (type (array i32))
         (func (export "f") (result i32)
-          (array.new_canon 0 (i32.const 42) (i32.const 0))
+          (array.new 0 (i32.const 42) (i32.const 0))
           (array.len))
       )
     `);
@@ -556,7 +573,7 @@ function testArrayTable() {
         (type (array i32))
         (table 10 (ref null 0))
         (func (export "set") (param i32) (result)
-          (table.set (local.get 0) (array.new_canon 0 (i32.const 42) (i32.const 5))))
+          (table.set (local.get 0) (array.new 0 (i32.const 42) (i32.const 5))))
         (func (export "get") (param i32 i32) (result i32)
           (array.get 0 (table.get (local.get 0)) (local.get 1))
           )
@@ -575,8 +592,8 @@ function testArrayTable() {
         (type (array f32))
         (table 10 (ref null array))
         (func (export "set") (param i32 i32) (result)
-          (table.set (local.get 0) (array.new_canon 0 (i32.const 42) (i32.const 5)))
-          (table.set (local.get 1) (array.new_canon 1 (f32.const 42.2) (i32.const 7))))
+          (table.set (local.get 0) (array.new 0 (i32.const 42) (i32.const 5)))
+          (table.set (local.get 1) (array.new 1 (f32.const 42.2) (i32.const 7))))
         (func (export "len") (param i32) (result i32)
           (array.len (table.get (local.get 0))))
       )
@@ -620,13 +637,13 @@ function testArrayTable() {
         (table (export "t") 10 (ref null 0))
         (start 0)
         (func
-          (table.fill (i32.const 0) (array.new_canon 0 (i32.const 42) (i32.const 5)) (i32.const 10)))
-        (func (export "makeArray") (result (ref 0)) (array.new_canon_default 0 (i32.const 5))))
+          (table.fill (i32.const 0) (array.new 0 (i32.const 42) (i32.const 5)) (i32.const 10)))
+        (func (export "makeArray") (result (ref 0)) (array.new_default 0 (i32.const 5))))
     `);
     const m2 = instantiate(`
       (module
         (type (struct))
-        (func (export "makeStruct") (result (ref 0)) (struct.new_canon 0)))
+        (func (export "makeStruct") (result (ref 0)) (struct.new 0)))
     `);
     assert.eq(m.exports.t.get(0) !== null, true);
     assert.throws(

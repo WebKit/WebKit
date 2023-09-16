@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,7 @@
 #include <wtf/unicode/UTF8Conversion.h>
 
 #include <wtf/ASCIICType.h>
-#include <wtf/text/StringHasher.h>
+#include <wtf/text/StringHasherInlines.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WTF::Unicode {
@@ -146,7 +146,8 @@ unsigned calculateStringHashAndLengthFromUTF8MaskingTop8Bits(const char* data, c
             utf16Length++;
         } else {
             ASSERT(U_IS_SUPPLEMENTARY(character));
-            stringHasher.addCharacters(U16_LEAD(character), U16_TRAIL(character));
+            stringHasher.addCharacter(U16_LEAD(character));
+            stringHasher.addCharacter(U16_TRAIL(character));
             utf16Length += 2;
         }
     }

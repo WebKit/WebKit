@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<canvas id="canvas" width="10" height="10"></canvas>
+<script>
+window.jsTestIsAsync = true;
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+const putData = context.createImageData(10, 10);
+for (let y = 0; y < 10; ++y) {
+    for (let x = 0; x < 10; ++x) {
+        putData.data[(y * 10 + x) * 4 + 0] = 0;
+        putData.data[(y * 10 + x) * 4 + 1] = 131;
+        putData.data[(y * 10 + x) * 4 + 2] = 0;
+        putData.data[(y * 10 + x) * 4 + 3] = 32;
+    }
+}
+const getData = context.createImageData(10, 10);
+for (let y = 0; y < 10; ++y) {
+    for (let x = 0; x < 10; ++x) {
+        getData.data[(y * 10 + x) * 4 + 0] = 0;
+        getData.data[(y * 10 + x) * 4 + 1] = 128;
+        getData.data[(y * 10 + x) * 4 + 2] = 0;
+        getData.data[(y * 10 + x) * 4 + 3] = 32;
+    }
+}
+
+let actual;
+function get() {
+    actual = context.getImageData(0, 0, 10, 10);
+    shouldBe("actual.width", "getData.width");
+    shouldBe("actual.height", "getData.height");
+    for (let i = 0; i < actual.data.length; ++i)
+        shouldBe(`actual.data[${i}]`, `getData.data[${i}]`);
+}
+
+function put() {
+    context.putImageData(putData, 0, 0);
+}
+
+let frameCount = 0;
+function tick() {
+    if (frameCount == 15) {
+        finishJSTest();
+        return;
+    }
+    get();
+    put();
+    ++frameCount;
+    requestAnimationFrame(tick);
+}
+put();
+requestAnimationFrame(tick);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1328,7 +1328,7 @@ def is_sandboxed():
 
 
 def run_in_sandbox_if_available(args):
-    if os.environ.get('WEBKIT_JHBUILD', '0') == '1':
+    if os.environ.get('WEBKIT_JHBUILD') == '1' or os.environ.get('WEBKIT_BUILD_USE_SYSTEM_LIBRARIES') == '1':
         return None
 
     os.environ["FLATPAK_USER_DIR"] = os.environ.get("WEBKIT_FLATPAK_USER_DIR", FLATPAK_USER_DIR_PATH)

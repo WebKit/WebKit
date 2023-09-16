@@ -90,4 +90,11 @@ URL BlobURL::createBlobURL(StringView originString)
     return URL({ }, urlString);
 }
 
+#if ASSERT_ENABLED
+bool BlobURL::isInternalURL(const URL& url)
+{
+    return url.string().startsWith("blob:blobinternal://"_s);
+}
+#endif
+
 } // namespace WebCore

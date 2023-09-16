@@ -3465,6 +3465,22 @@ class YarrGenerator final : public YarrJITInfo {
                         // Clear the flag in the stackframe indicating we ran through the subpattern.
                         unsigned parenthesesFrameLocation = term->frameLocation;
                         storeToFrame(MacroAssembler::TrustedImm32(-1), parenthesesFrameLocation + BackTrackInfoParenthesesOnce::beginIndex());
+
+                        // Clear out any nested captures.
+                        if (m_compileMode == JITCompileMode::IncludeSubpatterns && term->containsAnyCaptures()) {
+                            unsigned firstPatternId = term->parentheses.subpatternId;
+                            if (term->capture())
+                                firstPatternId++;
+                            for (unsigned subpattern = firstPatternId; subpattern <= term->parentheses.lastSubpatternId; subpattern++) {
+                                clearSubpatternStart(subpattern);
+
+                                if (m_pattern.m_numDuplicateNamedCaptureGroups) {
+                                    if (auto duplicateNamedGroupId = m_pattern.m_duplicateNamedGroupForSubpatternId[subpattern])
+                                        m_jit.store32(MacroAssembler::TrustedImm32(0), MacroAssembler::Address(m_regs.output, (offsetForDuplicateNamedGroupId(duplicateNamedGroupId) * sizeof(int))));
+                                }
+                            }
+                        }
+
                         // Jump to after the parentheses, skipping the subpattern.
                         m_jit.jump(m_ops[op.m_nextOp].m_reentry);
                         // A backtrack from after the parentheses, when skipping the subpattern,

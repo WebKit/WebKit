@@ -7,52 +7,49 @@
 
 <nav role="navigation">
     <!-- All of these eval to 'false' -->
-    <ul><li><a class="ex" data-expected="false" href="/">Nav1</a></li></ul>
-    <ul><li><a class="ex" data-expected="false" href="/" aria-current="false">Nav2</a></li></ul>
-    <ul><li><a class="ex" data-expected="false" href="/" aria-current="">Nav3</a></li></ul>
-    <ul><li><a class="ex" data-expected="false" href="/" aria-current=" ">Nav4</a></li></ul>
-    <ul><li><a class="ex" data-expected="false" href="/" aria-current="	">Nav5</a></li></ul> <!-- tab char -->
-    <ul><li><a class="ex" data-expected="false" href="/" aria-current="
+    <ul><li><a data-expected="false" id="a1" href="/">Nav1</a></li></ul>
+    <ul><li><a data-expected="false" href="/" id="a2" aria-current="false">Nav2</a></li></ul>
+    <ul><li><a data-expected="false" href="/" id="a3" aria-current="">Nav3</a></li></ul>
+    <ul><li><a data-expected="false" href="/" id="a4" aria-current=" ">Nav4</a></li></ul>
+    <ul><li><a data-expected="false" href="/" id="a5" aria-current="	">Nav5</a></li></ul> <!-- tab char -->
+    <ul><li><a data-expected="false" href="/" id="a6" aria-current="
     ">Nav6</a></li></ul> <!-- newline char -->
 
     <!-- Known token values in ARIA 1.1 -->
-    <ul><li><a class="ex" data-expected="page" href="/" aria-current="page">Nav7</a></li></ul>
-    <ul><li><a class="ex" data-expected="step" href="/" aria-current="step">Nav8</a></li></ul>
-    <ul><li><a class="ex" data-expected="location" href="/" aria-current="location">Nav9</a></li></ul>
-    <ul><li><a class="ex" data-expected="date" href="/" aria-current="date">Nav10</a></li></ul>
-    <ul><li><a class="ex" data-expected="time" href="/" aria-current="time">Nav11</a></li></ul>
-    <ul><li><a class="ex" data-expected="true" href="/" aria-current="true">Nav12</a></li></ul>
+    <ul><li><a data-expected="page" href="/" id="a7" aria-current="page">Nav7</a></li></ul>
+    <ul><li><a data-expected="step" href="/" id="a8" aria-current="step">Nav8</a></li></ul>
+    <ul><li><a  data-expected="location" href="/" id="a9" aria-current="location">Nav9</a></li></ul>
+    <ul><li><a  data-expected="date" href="/" id="a10" aria-current="date">Nav10</a></li></ul>
+    <ul><li><a  data-expected="time" href="/" id="a11" aria-current="time">Nav11</a></li></ul>
+    <ul><li><a  data-expected="true" href="/" id="a12" aria-current="true">Nav12</a></li></ul>
 
     <!-- All other string values -->
-    <ul><li><a class="ex" data-expected="true" href="/" aria-current="sometext">Nav13</a></li></ul>
-    <ul><li><a class="ex" data-expected="true" href="/" aria-current="page step">Nav14</a></li></ul>
-    <ul><li><a class="ex" data-expected="page" href="/" aria-current="page ">Nav15</a></li></ul>
-    <ul><li><a class="ex" data-expected="step" href="/" aria-current="  step ">Nav16</a></li></ul>
+    <ul><li><a data-expected="true" href="/" id="a13" aria-current="sometext">Nav13</a></li></ul>
+    <ul><li><a data-expected="true" href="/" id="a14" aria-current="page step">Nav14</a></li></ul>
+    <ul><li><a data-expected="page" href="/" id="a15" aria-current="page ">Nav15</a></li></ul>
+    <ul><li><a data-expected="step" href="/" id="a16" aria-current="  step ">Nav16</a></li></ul>
 </nav>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
-    description("This tests that aria-current causes the right attribute to be returned.");
+var output = "This tests that aria-current causes the right attribute to be returned.\n\n";
 
-    function verify(value, expectation, element) {
-      if (value === expectation)
-        debug("PASS: AXARIACurrent is " + value);
-      else
-        debug("FAIL: AXARIACurrent is " + value + ". Expected: " + expectation + ". " + (element ? element.outerHTML : ""));
-    }
+function verify(value, expectation, element) {
+  if (value === expectation)
+    output += `PASS: AXARIACurrent is ${value}\n`;
+  else
+    output += `FAIL: AXARIACurrent is ${value}. Expected: ${expectation}. ${element ? element.outerHTML : ""} \n`;
+}
 
-    if (window.accessibilityController) {
-        var examples = document.querySelectorAll(".ex");
-        for (var i = 0, c = examples.length; i < c; i++) {
-            var el = examples[i];
-            el.focus();
-            var expectation = el.getAttribute("data-expected");
-            var value = accessibilityController.focusedElement.currentStateValue;
-            verify(value, expectation, el);
-        }
+if (window.accessibilityController) {
+    let examples = document.querySelectorAll("a");
+    for (let i = 0; i < examples.length; i++) {
+        let el = examples[i];
+        let expectation = el.getAttribute("data-expected");
+        let value = accessibilityController.accessibleElementById(el.id).currentStateValue;
+        verify(value, expectation, el);
     }
+    debug(output)
+}
 </script>
 <script src="../resources/js-test-post.js"></script>
 </body>

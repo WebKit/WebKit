@@ -15,6 +15,7 @@ if (WIN32)
         win/MainThreadWin.cpp
         win/OSAllocatorWin.cpp
         win/PathWalker.cpp
+        win/SignalsWin.cpp
         win/ThreadingWin.cpp
         win/Win32Handle.cpp
     )

@@ -570,7 +570,7 @@ typedef (HTMLCanvasElement) WebGLCanvas;
     GLenum getError();
 
     sequence<DOMString>? getSupportedExtensions();
-    [OverrideIDLType=IDLWebGLExtension] object? getExtension(DOMString name);
+    [OverrideIDLType=IDLWebGLExtensionAny] object? getExtension(DOMString name);
 
     [OverrideIDLType=IDLWebGLAny] any getFramebufferAttachmentParameter(GLenum target, GLenum attachment, GLenum pname);
     [OverrideIDLType=IDLWebGLAny] any getParameter(GLenum pname);

@@ -212,6 +212,7 @@ EGLDisplay GetPlatformDisplayEXT(Thread *thread,
         case EGL_PLATFORM_ANGLE_ANGLE:
         case EGL_PLATFORM_GBM_KHR:
         case EGL_PLATFORM_WAYLAND_EXT:
+        case EGL_PLATFORM_SURFACELESS_MESA:
         {
             return egl::Display::GetDisplayFromNativeDisplay(
                 platform, gl::bitCast<EGLNativeDisplayType>(native_display), attribMap);
@@ -1009,4 +1010,25 @@ void *CopyMetalSharedEventANGLE(Thread *thread, Display *display, SyncID syncID)
     return result;
 }
 
+void AcquireExternalContextANGLE(Thread *thread, egl::Display *display, SurfaceID drawAndReadPacked)
+{
+    Surface *eglSurface = display->getSurface(drawAndReadPacked);
+
+    ANGLE_EGL_TRY(thread, display->prepareForCall(), "eglAcquireExternalContextANGLE",
+                  GetDisplayIfValid(display));
+    ANGLE_EGL_TRY(thread, thread->getContext()->acquireExternalContext(eglSurface),
+                  "eglAcquireExternalContextANGLE", GetDisplayIfValid(display));
+
+    thread->setSuccess();
+}
+
+void ReleaseExternalContextANGLE(Thread *thread, egl::Display *display)
+{
+    ANGLE_EGL_TRY(thread, display->prepareForCall(), "eglReleaseExternalContextANGLE",
+                  GetDisplayIfValid(display));
+    ANGLE_EGL_TRY(thread, thread->getContext()->releaseExternalContext(),
+                  "eglReleaseExternalContextANGLE", GetDisplayIfValid(display));
+
+    thread->setSuccess();
+}
 }  // namespace egl

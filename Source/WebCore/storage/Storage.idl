@@ -35,3 +35,4 @@
     deleter undefined removeItem(DOMString key);
     undefined clear();
 };
+ 

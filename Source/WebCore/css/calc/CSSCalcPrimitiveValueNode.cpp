@@ -36,6 +36,7 @@
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSCalcPrimitiveValueNode);
 
 Ref<CSSCalcPrimitiveValueNode> CSSCalcPrimitiveValueNode::create(Ref<CSSPrimitiveValue>&& value)
 {
@@ -205,11 +206,6 @@ double CSSCalcPrimitiveValueNode::computeLengthPx(const CSSToLengthConversionDat
 void CSSCalcPrimitiveValueNode::collectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const
 {
     m_value->collectComputedStyleDependencies(dependencies);
-}
-
-bool CSSCalcPrimitiveValueNode::convertingToLengthRequiresNonNullStyle(int lengthConversion) const
-{
-    return m_value->convertingToLengthRequiresNonNullStyle(lengthConversion);
 }
 
 bool CSSCalcPrimitiveValueNode::isZero() const

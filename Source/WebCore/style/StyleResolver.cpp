@@ -99,10 +99,6 @@ public:
         : m_element(&element)
         , m_parentStyle(parentStyle)
     {
-        bool resetStyleInheritance = hasShadowRootParent(element) && downcast<ShadowRoot>(element.parentNode())->resetStyleInheritance();
-        if (resetStyleInheritance)
-            m_parentStyle = nullptr;
-
         auto& document = element.document();
         auto* documentElement = document.documentElement();
         if (!documentElement || documentElement == &element)
@@ -225,11 +221,6 @@ void Resolver::addKeyframeStyle(Ref<StyleRuleKeyframes>&& rule)
     auto& animationName = rule->name();
     m_keyframesRuleMap.set(animationName, WTFMove(rule));
     document().keyframesRuleDidChange(animationName);
-}
-
-static inline bool isAtShadowBoundary(const Element& element)
-{
-    return is<ShadowRoot>(element.parentNode());
 }
 
 BuilderContext Resolver::builderContext(const State& state)
@@ -620,7 +611,10 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
         // element context. This is fast and saves memory by reusing the style data structures.
         style.copyNonInheritedFrom(*cacheEntry->renderStyle);
 
-        if (parentStyle.inheritedEqual(*cacheEntry->parentRenderStyle) && !isAtShadowBoundary(element)) {
+        bool hasExplicitlyInherited = cacheEntry->renderStyle->hasExplicitlyInheritedProperties();
+        bool inheritedStyleEqual = parentStyle.inheritedEqual(*cacheEntry->parentRenderStyle);
+
+        if (inheritedStyleEqual && !hasExplicitlyInherited) {
             InsideLink linkStatus = state.style()->insideLink();
             // If the cache item parent style has identical inherited properties to the current parent style then the
             // resulting style will be identical too. We copy the inherited properties over from the cache and are done.
@@ -635,9 +629,11 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
             return;
         }
 
-        includedProperties = { PropertyCascade::PropertyType::Inherited };
-
-        if (!parentStyle.inheritedCustomPropertiesEqual(*cacheEntry->parentRenderStyle))
+        if (!inheritedStyleEqual)
+            includedProperties.add(PropertyCascade::PropertyType::Inherited);
+        if (hasExplicitlyInherited)
+            includedProperties.add(PropertyCascade::PropertyType::ExplicitlyInherited);
+        if (!inheritedStyleEqual && !parentStyle.inheritedCustomPropertiesEqual(*cacheEntry->parentRenderStyle))
             includedProperties.add(PropertyCascade::PropertyType::VariableReference);
     }
 

@@ -18,6 +18,7 @@
 #include <GLSLANG/ShaderLang.h>
 #include <GLSLANG/ShaderVars.h>
 
+#include <memory>
 #include <string>
 
 namespace sh
@@ -73,7 +74,7 @@ struct CompiledShaderState
     gl::BlendEquationBitSet advancedBlendEquations;
     SpecConstUsageBits specConstUsageBits;
 
-    // ANGLE_multiview.
+    // GL_OVR_multiview / GL_OVR_multiview2
     int numViews;
 
     // Geometry Shader
@@ -89,6 +90,8 @@ struct CompiledShaderState
     GLenum tessGenVertexOrder;
     GLenum tessGenPointMode;
 };
+
+using SharedCompiledShaderState = std::shared_ptr<CompiledShaderState>;
 }  // namespace gl
 
 #endif  // COMMON_COMPILEDSHADERSTATE_H_

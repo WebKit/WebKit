@@ -130,13 +130,20 @@ class Contributor(object):
 
             return result
 
-        def create(self, name=None, *emails):
+        def create(self, name=None, *emails, **kwargs):
             emails = [email for email in emails or []]
             if not name and not emails:
                 return None
 
+            github = kwargs.pop('github', None)
+            bitbucket = kwargs.pop('bitbucket', None)
+            for key in kwargs.keys():
+                raise ValueError("'{}' is not a valid argument to Contributor.create".format(key))
+
             contributor = None
-            for argument in [name] + (emails or []):
+            for argument in [name, github, bitbucket] + (emails or []):
+                if not argument:
+                    continue
                 contributor = self[argument]
                 if contributor:
                     break
@@ -147,8 +154,12 @@ class Contributor(object):
                         contributor.emails.append(email)
                 if contributor.name in contributor.emails and name:
                     contributor.name = name
+                if github:
+                    contributor.github = github
+                if bitbucket:
+                    contributor.bitbucket = bitbucket
             else:
-                contributor = Contributor(name or emails[0], emails=emails)
+                contributor = Contributor(name or emails[0], emails=emails, github=github, bitbucket=bitbucket)
 
             self[contributor.name] = contributor
             for email in contributor.emails or []:
@@ -156,6 +167,10 @@ class Contributor(object):
                     continue
                 self[email] = contributor
                 self[email.lower()] = contributor
+            if contributor.github:
+                self[contributor.github] = contributor
+            if contributor.bitbucket:
+                self[contributor.bitbucket] = contributor
             return contributor
 
         def __iter__(self):

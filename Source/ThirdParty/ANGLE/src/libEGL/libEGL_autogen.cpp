@@ -480,6 +480,19 @@ EGLBoolean EGLAPIENTRY eglReleaseDeviceANGLE(EGLDeviceEXT device)
     return EGL_ReleaseDeviceANGLE(device);
 }
 
+// EGL_ANGLE_external_context_and_surface
+void EGLAPIENTRY eglAcquireExternalContextANGLE(EGLDisplay dpy, EGLSurface drawAndRead)
+{
+    EnsureEGLLoaded();
+    return EGL_AcquireExternalContextANGLE(dpy, drawAndRead);
+}
+
+void EGLAPIENTRY eglReleaseExternalContextANGLE(EGLDisplay dpy)
+{
+    EnsureEGLLoaded();
+    return EGL_ReleaseExternalContextANGLE(dpy);
+}
+
 // EGL_ANGLE_feature_control
 const char *EGLAPIENTRY eglQueryStringiANGLE(EGLDisplay dpy, EGLint name, EGLint index)
 {
