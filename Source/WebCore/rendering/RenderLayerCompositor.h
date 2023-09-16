@@ -426,6 +426,9 @@ private:
     void updateOverlapMap(LayerOverlapMap&, const RenderLayer&, OverlapExtent&, bool didPushContainer, bool addLayerToOverlap, bool addDescendantsToOverlap = false) const;
     bool layerOverlaps(const LayerOverlapMap&, const RenderLayer&, OverlapExtent&) const;
 
+    void updateBackingSharingBeforeDescendantTraversal(BackingSharingState&, const LayerOverlapMap&, RenderLayer&, OverlapExtent&, bool willBeComposited, RenderLayer* stackingContextAncestor);
+    void updateBackingSharingAfterDescendantTraversal(BackingSharingState&, const LayerOverlapMap&, RenderLayer&, OverlapExtent&, const RenderLayer* preDescendantProviderStartLayer, RenderLayer* stackingContextAncestor);
+
     void updateCompositingLayersTimerFired();
 
     void computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer&, LayerOverlapMap&, CompositingState&, BackingSharingState&, bool& descendantHas3DTransform);
