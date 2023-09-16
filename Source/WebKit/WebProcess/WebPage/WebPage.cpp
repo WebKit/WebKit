@@ -8902,6 +8902,20 @@ void WebPage::useRedirectionForCurrentNavigation(WebCore::ResourceResponse&& res
     loader->setRedirectionAsSubstituteData(WTFMove(response));
 }
 
+void WebPage::dispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier frameID)
+{
+    auto* frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame)
+        return;
+
+    auto* coreRemoteFrame = frame->coreRemoteFrame();
+    if (!coreRemoteFrame)
+        return;
+
+    if (coreRemoteFrame->ownerElement())
+        coreRemoteFrame->ownerElement()->dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
+}
+
 } // namespace WebKit
 
 #undef WEBPAGE_RELEASE_LOG

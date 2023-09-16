@@ -250,6 +250,8 @@ private:
     void getLoadDecisionForIcons(const Vector<std::pair<WebCore::LinkIcon&, uint64_t>>&) final;
     void finishedLoadingIcon(WebCore::FragmentedSharedBuffer*);
 
+    void dispatchLoadEventToOwnerElementInAnotherProcess() final { };
+
 #if !PLATFORM(IOS_FAMILY)
     bool m_loadingIcon { false };
 #endif

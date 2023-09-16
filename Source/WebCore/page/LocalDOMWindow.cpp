@@ -92,6 +92,7 @@
 #include "PageTransitionEvent.h"
 #include "Performance.h"
 #include "PerformanceNavigationTiming.h"
+#include "RemoteFrame.h"
 #include "RequestAnimationFrameCallback.h"
 #include "ResourceLoadInfo.h"
 #include "ResourceLoadObserver.h"
@@ -2348,7 +2349,9 @@ void LocalDOMWindow::dispatchLoadEvent()
 
     // Send a separate load event to the element that owns this frame.
     if (RefPtr ownerFrame = frame()) {
-        if (RefPtr owner = ownerFrame->ownerElement())
+        if (is<RemoteFrame>(ownerFrame->tree().parent()))
+            ownerFrame->loader().client().dispatchLoadEventToOwnerElementInAnotherProcess();
+        else if (RefPtr owner = ownerFrame->ownerElement())
             owner->dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
     }
 

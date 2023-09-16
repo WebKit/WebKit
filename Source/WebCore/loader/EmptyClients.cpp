@@ -1112,6 +1112,10 @@ bool EmptyFrameLoaderClient::hasFrameSpecificStorageAccess()
 
 #endif
 
+void EmptyFrameLoaderClient::dispatchLoadEventToOwnerElementInAnotherProcess()
+{
+}
+
 inline EmptyFrameNetworkingContext::EmptyFrameNetworkingContext()
     : FrameNetworkingContext { nullptr }
 {

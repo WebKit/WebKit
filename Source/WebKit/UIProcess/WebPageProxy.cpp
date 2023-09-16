@@ -12951,6 +12951,25 @@ void WebPageProxy::useRedirectionForCurrentNavigation(const ResourceResponse& re
     send(Messages::WebPage::UseRedirectionForCurrentNavigation(response));
 }
 
+void WebPageProxy::dispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier frameID)
+{
+    auto* frame = WebFrameProxy::webFrame(frameID);
+    if (!frame)
+        return;
+
+    auto* parentFrame = frame->parentFrame();
+    if (!parentFrame)
+        return;
+
+    auto remotePageProxy = parentFrame->remotePageProxy();
+    if (!remotePageProxy) {
+        send(Messages::WebPage::DispatchLoadEventToFrameOwnerElement(frameID));
+        return;
+    }
+
+    remotePageProxy->send(Messages::WebPage::DispatchLoadEventToFrameOwnerElement(frameID));
+}
+
 } // namespace WebKit
 
 #undef WEBPAGEPROXY_RELEASE_LOG

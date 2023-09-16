@@ -627,4 +627,6 @@ messages -> WebPageProxy {
 
     DidApplyLinkDecorationFiltering(URL originalURL, URL adjustedURL)
     BroadcastFrameRemovalToOtherProcesses(WebCore::FrameIdentifier frameID)
+
+    DispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier frameID)
 }

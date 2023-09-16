@@ -734,4 +734,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     UseRedirectionForCurrentNavigation(WebCore::ResourceResponse response);
 
     UpdateFrameSize(WebCore::FrameIdentifier frame, WebCore::IntSize newSize)
+
+    DispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier frameID)
 }

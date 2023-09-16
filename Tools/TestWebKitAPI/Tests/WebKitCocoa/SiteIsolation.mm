@@ -727,8 +727,8 @@ TEST(SiteIsolation, GrandchildIframe)
 {
     HTTPServer server({
         { "/example"_s, { "<iframe id='webkit_frame' src='https://webkit.org/webkit'></iframe>"_s } },
-        { "/webkit"_s, { "<iframe srcdoc=\"<script>window.location='https://apple.com/apple'</script>\">"_s } },
-        { "/apple"_s, { "<script>alert('grandchild loaded successfully')</script>"_s } },
+        { "/webkit"_s, { "<iframe onload='alert(\"grandchild loaded successfully\")' srcdoc=\"<script>window.location='https://apple.com/apple'</script>\">"_s } },
+        { "/apple"_s, { ""_s } },
     }, HTTPServer::Protocol::HttpsProxy);
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
     [navigationDelegate allowAnyTLSCertificate];
@@ -739,9 +739,6 @@ TEST(SiteIsolation, GrandchildIframe)
     webView.get().navigationDelegate = navigationDelegate.get();
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "grandchild loaded successfully");
-
-    // FIXME: Make the load event on the grandchild frame get called.
-    // (add an onload in the response to /webkit and verify that it is actually called. It is not right now.)
 }
 
 TEST(SiteIsolation, GrandchildIframeSameOriginAsGrandparent)
@@ -1257,10 +1254,9 @@ TEST(SiteIsolation, ProvisionalLoadFailure)
     while (!frameTreesMatch(frameTrees(webView.get()).get(), Vector<ExpectedFrameTree> { expectedFrameTreesAfterAddingApple }))
         Util::spinRunLoop();
 
-    [webView evaluateJavaScript:@"iframe.src = 'https://webkit.org/webkit'" completionHandler:nil];
+    [webView evaluateJavaScript:@"iframe.onload = alert('done');iframe.src = 'https://webkit.org/webkit'" completionHandler:nil];
 
-    // FIXME: This could use the iframe's load event handler, but LocalDOMWindow::dispatchLoadEvent has no analog in RemoteDOMWindow so it's never called.
-    Util::runFor(0.5_s);
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
     checkFrameTreesInProcesses(webView.get(), WTFMove(expectedFrameTreesAfterAddingApple));
 }
 

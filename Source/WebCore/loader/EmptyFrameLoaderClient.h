@@ -200,6 +200,8 @@ private:
 #if ENABLE(TRACKING_PREVENTION)
     bool hasFrameSpecificStorageAccess() final;
 #endif
+
+    void dispatchLoadEventToOwnerElementInAnotherProcess() final;
 };
 
 } // namespace WebCore

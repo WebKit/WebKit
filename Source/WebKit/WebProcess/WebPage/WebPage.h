@@ -2119,6 +2119,8 @@ private:
 
     void useRedirectionForCurrentNavigation(WebCore::ResourceResponse&&);
 
+    void dispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier);
+
     WebCore::PageIdentifier m_identifier;
 
     std::unique_ptr<WebCore::Page> m_page;

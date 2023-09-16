@@ -2809,6 +2809,8 @@ private:
 
     bool useGPUProcessForDOMRenderingEnabled() const;
 
+    void dispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier);
+
     struct Internals;
     Internals& internals() { return m_internals; }
     const Internals& internals() const { return m_internals; }

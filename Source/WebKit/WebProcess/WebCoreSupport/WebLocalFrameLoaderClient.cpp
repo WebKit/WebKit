@@ -1960,6 +1960,14 @@ void WebLocalFrameLoaderClient::modelInlinePreviewUUIDs(CompletionHandler<void(V
 }
 #endif
 
+void WebLocalFrameLoaderClient::dispatchLoadEventToOwnerElementInAnotherProcess()
+{
+    auto* page = m_frame->page();
+    if (!page)
+        return;
+    page->send(Messages::WebPageProxy::DispatchLoadEventToFrameOwnerElement(m_frame->frameID()));
+}
+
 } // namespace WebKit
 
 #undef PREFIX_PARAMETERS
