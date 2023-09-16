@@ -51,12 +51,12 @@ static WebMouseEventButton currentMouseButton()
 {
     NSUInteger pressedMouseButtons = [NSEvent pressedMouseButtons];
     if (!pressedMouseButtons)
-        return WebMouseEventButton::NoButton;
+        return WebMouseEventButton::None;
     if (pressedMouseButtons == 1 << 0)
-        return WebMouseEventButton::LeftButton;
+        return WebMouseEventButton::Left;
     if (pressedMouseButtons == 1 << 1)
-        return WebMouseEventButton::RightButton;
-    return WebMouseEventButton::MiddleButton;
+        return WebMouseEventButton::Right;
+    return WebMouseEventButton::Middle;
 }
 
 static WebMouseEventButton mouseButtonForEvent(NSEvent *event)
@@ -65,21 +65,21 @@ static WebMouseEventButton mouseButtonForEvent(NSEvent *event)
     case NSEventTypeLeftMouseDown:
     case NSEventTypeLeftMouseUp:
     case NSEventTypeLeftMouseDragged:
-        return WebMouseEventButton::LeftButton;
+        return WebMouseEventButton::Left;
     case NSEventTypeRightMouseDown:
     case NSEventTypeRightMouseUp:
     case NSEventTypeRightMouseDragged:
-        return WebMouseEventButton::RightButton;
+        return WebMouseEventButton::Right;
     case NSEventTypeOtherMouseDown:
     case NSEventTypeOtherMouseUp:
     case NSEventTypeOtherMouseDragged:
-        return WebMouseEventButton::MiddleButton;
+        return WebMouseEventButton::Middle;
     case NSEventTypePressure:
     case NSEventTypeMouseEntered:
     case NSEventTypeMouseExited:
         return currentMouseButton();
     default:
-        return WebMouseEventButton::NoButton;
+        return WebMouseEventButton::None;
     }
 }
 
@@ -508,13 +508,13 @@ NSEventModifierFlags WebEventFactory::toNSEventModifierFlags(OptionSet<WebKit::W
 NSInteger WebEventFactory::toNSButtonNumber(WebKit::WebMouseEventButton mouseButton)
 {
     switch (mouseButton) {
-    case WebKit::WebMouseEventButton::NoButton:
+    case WebKit::WebMouseEventButton::None:
         return 0;
-    case WebKit::WebMouseEventButton::LeftButton:
+    case WebKit::WebMouseEventButton::Left:
         return 1 << 0;
-    case WebKit::WebMouseEventButton::RightButton:
+    case WebKit::WebMouseEventButton::Right:
         return 1 << 1;
-    case WebKit::WebMouseEventButton::MiddleButton:
+    case WebKit::WebMouseEventButton::Middle:
         return 1 << 2;
     }
     ASSERT_NOT_REACHED();

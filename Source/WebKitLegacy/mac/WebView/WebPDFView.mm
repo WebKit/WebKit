@@ -936,18 +936,17 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 
     NSWindow *window = [sender window];
     NSEvent *nsEvent = [window currentEvent];
-    const int noButton = -2;
-    int button = noButton;
+    WebCore::MouseButton button = WebCore::MouseButton::None;
     RefPtr<WebCore::Event> event;
     switch ([nsEvent type]) {
     case NSEventTypeLeftMouseUp:
-        button = 0;
+        button = WebCore::MouseButton::Left;
         break;
     case NSEventTypeRightMouseUp:
-        button = 1;
+        button = WebCore::MouseButton::Right;
         break;
     case NSEventTypeOtherMouseUp:
-        button = [nsEvent buttonNumber];
+        button = static_cast<WebCore::MouseButton>([nsEvent buttonNumber]);
         break;
     case NSEventTypeKeyDown: {
         auto pe = WebCore::PlatformEventFactory::createPlatformKeyboardEvent(nsEvent);
@@ -958,7 +957,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     default:
         break;
     }
-    if (button != noButton) {
+    if (button != WebCore::MouseButton::None) {
         // FIXME: Use createPlatformMouseEvent instead.
         event = WebCore::MouseEvent::create(WebCore::eventNames().clickEvent, WebCore::Event::CanBubble::Yes, WebCore::Event::IsCancelable::Yes, WebCore::Event::IsComposed::Yes,
             MonotonicTime::now(), nullptr, [nsEvent clickCount], { }, { }, 0, 0, WebCore::modifiersForEvent(nsEvent),

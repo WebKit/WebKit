@@ -327,16 +327,16 @@ inline WKEventMouseButton toAPI(WebMouseEventButton mouseButton)
     WKEventMouseButton wkMouseButton = kWKEventMouseButtonNoButton;
 
     switch (mouseButton) {
-    case WebMouseEventButton::NoButton:
+    case WebMouseEventButton::None:
         wkMouseButton = kWKEventMouseButtonNoButton;
         break;
-    case WebMouseEventButton::LeftButton:
+    case WebMouseEventButton::Left:
         wkMouseButton = kWKEventMouseButtonLeftButton;
         break;
-    case WebMouseEventButton::MiddleButton:
+    case WebMouseEventButton::Middle:
         wkMouseButton = kWKEventMouseButtonMiddleButton;
         break;
-    case WebMouseEventButton::RightButton:
+    case WebMouseEventButton::Right:
         wkMouseButton = kWKEventMouseButtonRightButton;
         break;
     }
@@ -349,17 +349,19 @@ inline WKEventMouseButton toAPI(WebCore::MouseButton mouseButton)
     WKEventMouseButton wkMouseButton = kWKEventMouseButtonNoButton;
 
     switch (mouseButton) {
-    case WebCore::MouseButton::NoButton:
+    case WebCore::MouseButton::None:
         wkMouseButton = kWKEventMouseButtonNoButton;
         break;
-    case WebCore::MouseButton::LeftButton:
+    case WebCore::MouseButton::Left:
         wkMouseButton = kWKEventMouseButtonLeftButton;
         break;
-    case WebCore::MouseButton::MiddleButton:
+    case WebCore::MouseButton::Middle:
         wkMouseButton = kWKEventMouseButtonMiddleButton;
         break;
-    case WebCore::MouseButton::RightButton:
+    case WebCore::MouseButton::Right:
         wkMouseButton = kWKEventMouseButtonRightButton;
+        break;
+    default:
         break;
     }
 

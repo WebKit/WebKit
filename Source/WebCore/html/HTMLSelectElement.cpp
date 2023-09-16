@@ -1281,7 +1281,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
             keyboardEvent.setDefaultHandled();
     }
 
-    if (event.type() == eventNames.mousedownEvent && is<MouseEvent>(event) && downcast<MouseEvent>(event).button() == LeftButton) {
+    if (event.type() == eventNames.mousedownEvent && is<MouseEvent>(event) && downcast<MouseEvent>(event).button() == MouseButton::Left) {
         focus();
 #if !PLATFORM(IOS_FAMILY)
         document().updateStyleIfNeeded();
@@ -1372,7 +1372,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
     auto& listItems = this->listItems();
 
     auto& eventNames = WebCore::eventNames();
-    if (event.type() == eventNames.mousedownEvent && is<MouseEvent>(event) && downcast<MouseEvent>(event).button() == LeftButton) {
+    if (event.type() == eventNames.mousedownEvent && is<MouseEvent>(event) && downcast<MouseEvent>(event).button() == MouseButton::Left) {
         focus();
         document().updateStyleIfNeeded();
 
@@ -1401,7 +1401,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
         }
     } else if (event.type() == eventNames.mousemoveEvent && is<MouseEvent>(event) && !downcast<RenderListBox>(*renderer()).canBeScrolledAndHasScrollableArea()) {
         MouseEvent& mouseEvent = downcast<MouseEvent>(event);
-        if (mouseEvent.button() != LeftButton || !mouseEvent.buttonDown())
+        if (mouseEvent.button() != MouseButton::Left || !mouseEvent.buttonDown())
             return;
 
         auto& renderListBox = downcast<RenderListBox>(*renderer());
@@ -1424,7 +1424,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
             }
             mouseEvent.setDefaultHandled();
         }
-    } else if (event.type() == eventNames.mouseupEvent && is<MouseEvent>(event) && downcast<MouseEvent>(event).button() == LeftButton && document().frame()->eventHandler().autoscrollRenderer() != renderer()) {
+    } else if (event.type() == eventNames.mouseupEvent && is<MouseEvent>(event) && downcast<MouseEvent>(event).button() == MouseButton::Left && document().frame()->eventHandler().autoscrollRenderer() != renderer()) {
         // This click or drag event was not over any of the options.
         if (m_lastOnChangeSelection.isEmpty())
             return;

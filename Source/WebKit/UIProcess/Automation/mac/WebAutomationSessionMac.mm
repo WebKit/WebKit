@@ -153,11 +153,11 @@ static WebCore::IntPoint viewportLocationToWindowLocation(WebCore::IntPoint loca
 static WebMouseEventButton automationMouseButtonToPlatformMouseButton(MouseButton button)
 {
     switch (button) {
-    case MouseButton::Left:   return WebMouseEventButton::LeftButton;
-    case MouseButton::Middle: return WebMouseEventButton::MiddleButton;
-    case MouseButton::Right:  return WebMouseEventButton::RightButton;
-    case MouseButton::None:   return WebMouseEventButton::NoButton;
-    default: ASSERT_NOT_REACHED();
+    case MouseButton::Left:   return WebMouseEventButton::Left;
+    case MouseButton::Middle: return WebMouseEventButton::Middle;
+    case MouseButton::Right:  return WebMouseEventButton::Right;
+    case MouseButton::None:   return WebMouseEventButton::None;
+    default: RELEASE_ASSERT_NOT_REACHED();
     }
 }
 
@@ -187,20 +187,20 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
     NSEventType dragEventType = (NSEventType)0;
     NSEventType upEventType = (NSEventType)0;
     switch (automationMouseButtonToPlatformMouseButton(button)) {
-    case WebMouseEventButton::NoButton:
+    case WebMouseEventButton::None:
         downEventType = upEventType = dragEventType = NSEventTypeMouseMoved;
         break;
-    case WebMouseEventButton::LeftButton:
+    case WebMouseEventButton::Left:
         downEventType = NSEventTypeLeftMouseDown;
         dragEventType = NSEventTypeLeftMouseDragged;
         upEventType = NSEventTypeLeftMouseUp;
         break;
-    case WebMouseEventButton::MiddleButton:
+    case WebMouseEventButton::Middle:
         downEventType = NSEventTypeOtherMouseDown;
         dragEventType = NSEventTypeLeftMouseDragged;
         upEventType = NSEventTypeOtherMouseUp;
         break;
-    case WebMouseEventButton::RightButton:
+    case WebMouseEventButton::Right:
         downEventType = NSEventTypeRightMouseDown;
         upEventType = NSEventTypeRightMouseUp;
         break;

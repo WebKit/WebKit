@@ -406,7 +406,7 @@ void HTMLModelElement::defaultEventHandler(Event& event)
     ASSERT(is<MouseEvent>(event));
     auto& mouseEvent = downcast<MouseEvent>(event);
 
-    if (mouseEvent.button() != LeftButton)
+    if (mouseEvent.button() != MouseButton::Left)
         return;
 
     if (type == eventNames().mousedownEvent && !m_isDragging && !event.defaultPrevented() && isInteractive())

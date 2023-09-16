@@ -335,13 +335,13 @@ ScrollbarButtonPressAction ScrollbarThemeAdwaita::handleMousePressEvent(Scrollba
         }();
 #endif
         // The shift key or middle/right button reverses the sense.
-        if (event.shiftKey() || event.button() != LeftButton)
+        if (event.shiftKey() || event.button() != MouseButton::Left)
             warpSlider = !warpSlider;
         return warpSlider ?
             ScrollbarButtonPressAction::CenterOnThumb:
             ScrollbarButtonPressAction::Scroll;
     case ThumbPart:
-        if (event.button() != RightButton)
+        if (event.button() != MouseButton::Right)
             return ScrollbarButtonPressAction::StartDrag;
         break;
     case BackButtonStartPart:

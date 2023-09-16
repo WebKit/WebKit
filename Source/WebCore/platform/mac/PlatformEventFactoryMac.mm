@@ -109,17 +109,17 @@ static MouseButton mouseButtonForEvent(NSEvent *event)
     case NSEventTypeLeftMouseDown:
     case NSEventTypeLeftMouseUp:
     case NSEventTypeLeftMouseDragged:
-        return LeftButton;
+        return MouseButton::Left;
     case NSEventTypeRightMouseDown:
     case NSEventTypeRightMouseUp:
     case NSEventTypeRightMouseDragged:
-        return RightButton;
+        return MouseButton::Right;
     case NSEventTypeOtherMouseDown:
     case NSEventTypeOtherMouseUp:
     case NSEventTypeOtherMouseDragged:
-        return MiddleButton;
+        return MouseButton::Middle;
     default:
-        return NoButton;
+        return MouseButton::None;
     }
 }
 

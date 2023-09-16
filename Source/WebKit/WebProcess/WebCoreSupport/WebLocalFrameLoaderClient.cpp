@@ -476,7 +476,7 @@ void WebLocalFrameLoaderClient::didSameDocumentNavigationForFrameViaJSHistoryAPI
     NavigationActionData navigationActionData {
         WebCore::NavigationType::Other,
         { }, /* modifiers */
-        WebMouseEventButton::NoButton,
+        WebMouseEventButton::None,
         WebMouseEventSyntheticClickType::NoTap,
         WebProcess::singleton().userGestureTokenIdentifier(UserGestureIndicator::currentUserGesture()),
         UserGestureIndicator::currentUserGesture() ? UserGestureIndicator::currentUserGesture()->authorizationToken() : std::nullopt,

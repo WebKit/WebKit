@@ -25,11 +25,11 @@
 
 #import "config.h"
 #import "PointerEvent.h"
-#import "PlatformMouseEvent.h"
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
 
 #import "EventNames.h"
+#import "PlatformMouseEvent.h"
 
 namespace WebCore {
 
@@ -51,9 +51,9 @@ static const AtomString& pointerEventType(PlatformTouchPoint::TouchPhaseType pha
     return nullAtom();
 }
 
-static short buttonForType(const AtomString& type)
+static MouseButton buttonForType(const AtomString& type)
 {
-    return type == eventNames().pointermoveEvent ? -1 : 0;
+    return type == eventNames().pointermoveEvent ? MouseButton::PointerMove : MouseButton::Left;
 }
 
 static unsigned short buttonsForType(const AtomString& type)

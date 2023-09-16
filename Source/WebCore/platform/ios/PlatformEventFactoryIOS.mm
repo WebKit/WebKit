@@ -92,7 +92,7 @@ public:
 
         m_position = pointForEvent(event);
         m_globalPosition = globalPointForEvent(event);
-        m_button = LeftButton; // This has always been the LeftButton on iOS.
+        m_button = MouseButton::Left; // This has always been the LeftButton on iOS.
         m_clickCount = 1; // This has always been 1 on iOS.
         m_modifiers = modifiersForEvent(event);
     }

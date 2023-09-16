@@ -194,10 +194,10 @@ inline static String pointerType(UITouchType type)
 
     auto button = [&] {
         if (!_touching)
-            return WebKit::WebMouseEventButton::NoButton;
+            return WebKit::WebMouseEventButton::None;
         if (isRightButton)
-            return WebKit::WebMouseEventButton::RightButton;
-        return WebKit::WebMouseEventButton::LeftButton;
+            return WebKit::WebMouseEventButton::Right;
+        return WebKit::WebMouseEventButton::Left;
     }();
 
     // FIXME: 'buttons' should report any buttons that are still down in the case when one button is released from a chord.

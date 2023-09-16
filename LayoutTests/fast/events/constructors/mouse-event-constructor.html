@@ -111,8 +111,8 @@ shouldBe("new MouseEvent('eventType', { button: 32767 }).button", "32767");
 shouldBe("new MouseEvent('eventType', { button: 32768 }).button", "-32768");
 shouldBe("new MouseEvent('eventType', { button: -32769 }).button", "32767");
 
-// Numbers out of the unsigned short range.
-// 2^{64}-1
+// Numbers out of the short range.
+// Greater than 2^{16}-1 or less than -2^{16}
 shouldBe("new MouseEvent('eventType', { button: 18446744073709551615 }).button", "0");
 shouldBe("new MouseEvent('eventType', { button: 12345678901234567890 }).button", "2048");
 shouldBe("new MouseEvent('eventType', { button: 123.45 }).button", "123");

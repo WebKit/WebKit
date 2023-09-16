@@ -72,7 +72,7 @@ private:
             return m_client.mouseUp(toAPI(pageBanner), toAPI(position), toAPI(button), m_client.base.clientInfo);
         }
         case WebEventType::MouseMove: {
-            if (button == WebMouseEventButton::NoButton) {
+            if (button == WebMouseEventButton::None) {
                 if (!m_client.mouseMoved)
                     return false;
 

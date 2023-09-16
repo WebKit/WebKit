@@ -108,7 +108,7 @@ static inline OptionSet<WebEventModifier> modifiersForEvent(const GdkEvent* even
 
 static inline WebMouseEventButton buttonForEvent(const GdkEvent* event)
 {
-    WebMouseEventButton button = WebMouseEventButton::NoButton;
+    WebMouseEventButton button = WebMouseEventButton::None;
     GdkEventType type = gdk_event_get_event_type(const_cast<GdkEvent*>(event));
     switch (type) {
     case GDK_ENTER_NOTIFY:
@@ -117,11 +117,11 @@ static inline WebMouseEventButton buttonForEvent(const GdkEvent* event)
         GdkModifierType state;
         gdk_event_get_state(event, &state);
         if (state & GDK_BUTTON1_MASK)
-            button = WebMouseEventButton::LeftButton;
+            button = WebMouseEventButton::Left;
         else if (state & GDK_BUTTON2_MASK)
-            button = WebMouseEventButton::MiddleButton;
+            button = WebMouseEventButton::Middle;
         else if (state & GDK_BUTTON3_MASK)
-            button = WebMouseEventButton::RightButton;
+            button = WebMouseEventButton::Right;
         break;
     }
     case GDK_BUTTON_PRESS:
@@ -134,11 +134,11 @@ static inline WebMouseEventButton buttonForEvent(const GdkEvent* event)
         gdk_event_get_button(event, &eventButton);
 
         if (eventButton == 1)
-            button = WebMouseEventButton::LeftButton;
+            button = WebMouseEventButton::Left;
         else if (eventButton == 2)
-            button = WebMouseEventButton::MiddleButton;
+            button = WebMouseEventButton::Middle;
         else if (eventButton == 3)
-            button = WebMouseEventButton::RightButton;
+            button = WebMouseEventButton::Right;
         break;
     }
     default:
@@ -244,7 +244,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, const 
 WebMouseEvent WebEventFactory::createWebMouseEvent(const IntPoint& position)
 {
     // Mouse events without GdkEvent are crossing events, handled as a mouse move.
-    return WebMouseEvent({ WebEventType::MouseMove, { }, WallTime::now() }, WebMouseEventButton::NoButton, 0, position, position, 0, 0, 0, 0);
+    return WebMouseEvent({ WebEventType::MouseMove, { }, WallTime::now() }, WebMouseEventButton::None, 0, position, position, 0, 0, 0, 0);
 }
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, const String& text, bool isAutoRepeat, bool handledByInputMethod, std::optional<Vector<CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange, Vector<String>&& commands)

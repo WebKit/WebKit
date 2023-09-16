@@ -1209,7 +1209,7 @@ static bool isContextClick(const PlatformMouseEvent& event)
 #if USE(APPKIT)
     return WebEventFactory::shouldBeHandledAsContextClick(event);
 #else
-    return event.button() == WebCore::RightButton;
+    return event.button() == WebCore::MouseButton::Right;
 #endif
 }
 
@@ -1272,7 +1272,7 @@ bool WebFrame::handleMouseEvent(const WebMouseEvent& mouseEvent)
         // Lion when legacy scrollbars are enabled, WebKit receives mouse events all the time. If it is one
         // of those cases where the page is not active and the mouse is not pressed, then we can fire a more
         // efficient scrollbars-only version of the event.
-        if (!(page()->corePage()->focusController().isActive() || (mouseEvent.button() != WebMouseEventButton::NoButton)))
+        if (!(page()->corePage()->focusController().isActive() || (mouseEvent.button() != WebMouseEventButton::None)))
             return coreLocalFrame->eventHandler().passMouseMovedEventToScrollbars(platformMouseEvent);
 #endif
         return coreLocalFrame->eventHandler().mouseMoved(platformMouseEvent);

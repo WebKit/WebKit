@@ -2118,10 +2118,10 @@ static bool getEventTypeFromWebEvent(const WebEvent& event, NSEventType& eventTy
         return true;
     case WebEventType::MouseDown:
         switch (static_cast<const WebMouseEvent&>(event).button()) {
-        case WebMouseEventButton::LeftButton:
+        case WebMouseEventButton::Left:
             eventType = NSEventTypeLeftMouseDown;
             return true;
-        case WebMouseEventButton::RightButton:
+        case WebMouseEventButton::Right:
             eventType = NSEventTypeRightMouseDown;
             return true;
         default:
@@ -2129,10 +2129,10 @@ static bool getEventTypeFromWebEvent(const WebEvent& event, NSEventType& eventTy
         }
     case WebEventType::MouseUp:
         switch (static_cast<const WebMouseEvent&>(event).button()) {
-        case WebMouseEventButton::LeftButton:
+        case WebMouseEventButton::Left:
             eventType = NSEventTypeLeftMouseUp;
             return true;
-        case WebMouseEventButton::RightButton:
+        case WebMouseEventButton::Right:
             eventType = NSEventTypeRightMouseUp;
             return true;
         default:
@@ -2140,13 +2140,13 @@ static bool getEventTypeFromWebEvent(const WebEvent& event, NSEventType& eventTy
         }
     case WebEventType::MouseMove:
         switch (static_cast<const WebMouseEvent&>(event).button()) {
-        case WebMouseEventButton::LeftButton:
+        case WebMouseEventButton::Left:
             eventType = NSEventTypeLeftMouseDragged;
             return true;
-        case WebMouseEventButton::RightButton:
+        case WebMouseEventButton::Right:
             eventType = NSEventTypeRightMouseDragged;
             return true;
-        case WebMouseEventButton::NoButton:
+        case WebMouseEventButton::None:
             eventType = NSEventTypeMouseMoved;
             return true;
         default:
@@ -2206,7 +2206,7 @@ bool PDFPlugin::handleMouseEvent(const WebMouseEvent& event)
         return false;
 
     // Right-clicks and Control-clicks always call handleContextMenuEvent as well.
-    if (event.button() == WebMouseEventButton::RightButton || (event.button() == WebMouseEventButton::LeftButton && event.controlKey()))
+    if (event.button() == WebMouseEventButton::Right || (event.button() == WebMouseEventButton::Left && event.controlKey()))
         return true;
 
     NSEvent *nsEvent = nsEventForWebMouseEvent(event);
@@ -2227,44 +2227,50 @@ bool PDFPlugin::handleMouseEvent(const WebMouseEvent& event)
             targetScrollbarForLastMousePosition->mouseExited();
 
         switch (event.button()) {
-        case WebMouseEventButton::LeftButton:
+        case WebMouseEventButton::Left:
             [m_pdfLayerController mouseDragged:nsEvent];
             return true;
-        case WebMouseEventButton::RightButton:
-        case WebMouseEventButton::MiddleButton:
+        case WebMouseEventButton::Right:
+        case WebMouseEventButton::Middle:
             return false;
-        case WebMouseEventButton::NoButton:
+        case WebMouseEventButton::None:
             [m_pdfLayerController mouseMoved:nsEvent];
             return true;
+        default:
+            return false;
         }
         break;
     case WebEventType::MouseDown:
         switch (event.button()) {
-        case WebMouseEventButton::LeftButton:
+        case WebMouseEventButton::Left:
             if (targetScrollbar)
                 return targetScrollbar->mouseDown(platformEvent);
 
             [m_pdfLayerController mouseDown:nsEvent];
             return true;
-        case WebMouseEventButton::RightButton:
+        case WebMouseEventButton::Right:
             [m_pdfLayerController rightMouseDown:nsEvent];
             return true;
-        case WebMouseEventButton::MiddleButton:
-        case WebMouseEventButton::NoButton:
+        case WebMouseEventButton::Middle:
+        case WebMouseEventButton::None:
+            return false;
+        default:
             return false;
         }
         break;
     case WebEventType::MouseUp:
         switch (event.button()) {
-        case WebMouseEventButton::LeftButton:
+        case WebMouseEventButton::Left:
             if (targetScrollbar)
                 return targetScrollbar->mouseUp(platformEvent);
 
             [m_pdfLayerController mouseUp:nsEvent];
             return true;
-        case WebMouseEventButton::RightButton:
-        case WebMouseEventButton::MiddleButton:
-        case WebMouseEventButton::NoButton:
+        case WebMouseEventButton::Right:
+        case WebMouseEventButton::Middle:
+        case WebMouseEventButton::None:
+            return false;
+        default:
             return false;
         }
         break;
@@ -2293,7 +2299,7 @@ bool PDFPlugin::showContextMenuAtPoint(const IntPoint& point)
     if (!frameView)
         return false;
     IntPoint contentsPoint = frameView->contentsToRootView(point);
-    WebMouseEvent event({ WebEventType::MouseDown, OptionSet<WebEventModifier> { }, WallTime::now() }, WebMouseEventButton::RightButton, 0, contentsPoint, contentsPoint, 0, 0, 0, 1, WebCore::ForceAtClick);
+    WebMouseEvent event({ WebEventType::MouseDown, OptionSet<WebEventModifier> { }, WallTime::now() }, WebMouseEventButton::Right, 0, contentsPoint, contentsPoint, 0, 0, 0, 1, WebCore::ForceAtClick);
     return handleContextMenuEvent(event);
 }
 
