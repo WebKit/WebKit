@@ -685,7 +685,7 @@ int DateParser::ReadMilliseconds(DateToken token)
 
 // https://github.com/v8/v8/blob/c45b7804109ece574f71fd45417b4ad498a99e6f/src/date/dateparser-inl.h#L16
 // template<typename Char>
-bool DateParser::Parse(void* isolate, const char* str, size_t size, double* out)
+bool DateParser::Parse(void*, const char* str, size_t size, double* out)
 {
     InputReader in(str, size);
     DateStringTokenizer scanner(&in);
@@ -747,11 +747,11 @@ bool DateParser::Parse(void* isolate, const char* str, size_t size, double* out)
         return false;
     bool has_read_number = !day.IsEmpty();
     // If there's anything left, continue with the legacy parser.
-    bool legacy_parser = false;
+    // bool legacy_parser = false;
     for (DateToken token = next_unhandled_token; !token.IsEndOfInput();
          token = scanner.Next()) {
         if (token.IsNumber()) {
-            legacy_parser = true;
+            // legacy_parser = true;
             has_read_number = true;
             int n = token.number();
             if (scanner.SkipSymbol(':')) {
@@ -791,7 +791,7 @@ bool DateParser::Parse(void* isolate, const char* str, size_t size, double* out)
                 scanner.SkipSymbol('-');
             }
         } else if (token.IsKeyword()) {
-            legacy_parser = true;
+            // legacy_parser = true;
             // Parse a "word" (sequence of chars. >= 'A').
             KeywordType type = token.keyword_type();
             int value = token.keyword_value();
@@ -812,7 +812,7 @@ bool DateParser::Parse(void* isolate, const char* str, size_t size, double* out)
                     return false;
             }
         } else if (token.IsAsciiSign() && (tz.IsUTC() || !time.IsEmpty())) {
-            legacy_parser = true;
+            // legacy_parser = true;
             // Parse UTC offset (only after UTC or time).
             tz.SetSign(token.ascii_sign());
             // The following number may be empty.
