@@ -141,7 +141,7 @@ void SelectionRangeData::clear()
 
 void SelectionRangeData::repaint() const
 {
-    WeakHashSet<RenderBlock> processedBlocks;
+    HashSet<RenderBlock*> processedBlocks;
     RenderObject* end = nullptr;
     if (m_renderRange.end())
         end = rendererAfterOffset(*m_renderRange.end(), m_renderRange.endOffset());
@@ -154,7 +154,7 @@ void SelectionRangeData::repaint() const
         RenderSelectionGeometry(*renderer, true).repaint();
         // Blocks are responsible for painting line gaps and margin gaps. They must be examined as well.
         for (auto* block = containingBlockBelowView(*renderer); block; block = containingBlockBelowView(*block)) {
-            if (!processedBlocks.add(*block).isNewEntry)
+            if (!processedBlocks.add(block).isNewEntry)
                 break;
             RenderSelectionGeometry(*block, true).repaint();
         }

@@ -2158,12 +2158,12 @@ void LegacyLineLayout::addOverflowFromInlineChildren()
         m_flow.addLayoutOverflow(curr->paddedLayoutOverflowRect(endPadding));
         RenderFragmentContainer* fragment = m_flow.enclosingFragmentedFlow() ? curr->containingFragment() : nullptr;
         if (fragment)
-            fragment->addLayoutOverflowForBox(m_flow, curr->paddedLayoutOverflowRect(endPadding));
+            fragment->addLayoutOverflowForBox(&m_flow, curr->paddedLayoutOverflowRect(endPadding));
         if (!m_flow.hasNonVisibleOverflow()) {
             LayoutRect childVisualOverflowRect = curr->visualOverflowRect(curr->lineTop(), curr->lineBottom());
             m_flow.addVisualOverflow(childVisualOverflowRect);
             if (fragment)
-                fragment->addVisualOverflowForBox(m_flow, childVisualOverflowRect);
+                fragment->addVisualOverflowForBox(&m_flow, childVisualOverflowRect);
         }
     }
 }

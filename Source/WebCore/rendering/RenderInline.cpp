@@ -85,7 +85,7 @@ void RenderInline::willBeDestroyed()
         if (containingBlockPaintsContinuationOutline) {
             if (RenderBlock* cb = containingBlock()) {
                 if (RenderBlock* cbCb = cb->containingBlock())
-                    ASSERT(!cbCb->paintsContinuationOutline(*this));
+                    ASSERT(!cbCb->paintsContinuationOutline(this));
             }
         }
     }

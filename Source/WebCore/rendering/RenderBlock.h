@@ -27,7 +27,7 @@
 #include "RenderBox.h"
 #include "TextRun.h"
 #include <memory>
-#include <wtf/WeakListHashSet.h>
+#include <wtf/ListHashSet.h>
 
 namespace WebCore {
 
@@ -39,7 +39,7 @@ class RenderText;
 struct BidiRun;
 struct PaintInfo;
 
-using TrackedRendererListHashSet = WeakListHashSet<RenderBox>;
+typedef ListHashSet<RenderBox*> TrackedRendererListHashSet;
 
 enum CaretType { CursorCaret, DragCaret };
 enum ContainingBlockState { NewContainingBlock, SameContainingBlock };
@@ -83,8 +83,8 @@ public:
     TrackedRendererListHashSet* positionedObjects() const;
     bool hasPositionedObjects() const
     {
-        auto* objects = positionedObjects();
-        return objects && !objects->isEmptyIgnoringNullReferences();
+        TrackedRendererListHashSet* objects = positionedObjects();
+        return objects && !objects->isEmpty();
     }
 
     void addPercentHeightDescendant(RenderBox&);
@@ -92,8 +92,8 @@ public:
     TrackedRendererListHashSet* percentHeightDescendants() const;
     bool hasPercentHeightDescendants() const
     {
-        auto* objects = percentHeightDescendants();
-        return objects && !objects->isEmptyIgnoringNullReferences();
+        TrackedRendererListHashSet* objects = percentHeightDescendants();
+        return objects && !objects->isEmpty();
     }
     static bool hasPercentHeightContainerMap();
     static bool hasPercentHeightDescendant(RenderBox&);
@@ -166,8 +166,8 @@ public:
 
     LayoutRect logicalRectToPhysicalRect(const LayoutPoint& physicalPosition, const LayoutRect& logicalRect);
 
-    void addContinuationWithOutline(RenderInline&);
-    bool paintsContinuationOutline(RenderInline&);
+    void addContinuationWithOutline(RenderInline*);
+    bool paintsContinuationOutline(RenderInline*);
 
     static RenderPtr<RenderBlock> createAnonymousWithParentRendererAndDisplay(const RenderBox& parent, DisplayType = DisplayType::Block);
     RenderPtr<RenderBlock> createAnonymousBlock(DisplayType = DisplayType::Block) const;
