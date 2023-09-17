@@ -28,10 +28,10 @@ layer at (0,0) size 1024x768 backgroundClip at (0,0) size 800x600 clip at (0,0) 
   RenderSVGViewportContainer {svg} at (0,0) size 1024x768
 layer at (0,-10) size 0x20
   RenderSVGPath {line} at (0,-10) size 0x20 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-10.00] [x2=0.00] [y2=10.00]
-layer at (416,409.66) size 71x13
-  RenderSVGText {text} at (216,9) size 71x14 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 71x13
-      chunk 1 text run 1 at (416.00,420.10) startOffset 0 endOffset 13 width 70.68: "Hue (0\x{B0}-360\x{B0})"
+layer at (416,409.23) size 74x14
+  RenderSVGText {text} at (216,9) size 74x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 74x14
+      chunk 1 text run 1 at (416.00,420.10) startOffset 0 endOffset 13 width 73.63: "Hue (0\x{B0}-360\x{B0})"
 layer at (242,454) size 45x36
   RenderSVGRect {rect} at (42,54) size 45x36 [stroke={[type=SOLID] [color=#000000] [opacity=0.70] [stroke width=7.50]}] [x=242.00] [y=454.00] [width=45.00] [height=36.00]
 layer at (212,436) size 45x36
@@ -48,10 +48,10 @@ layer at (0,0) size 1024x768 backgroundClip at (0,0) size 800x600 clip at (0,0) 
   RenderSVGViewportContainer {svg} at (0,0) size 1024x768
 layer at (0,-10) size 0x20
   RenderSVGPath {line} at (0,-10) size 0x20 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-10.00] [x2=0.00] [y2=10.00]
-layer at (416,433.66) size 74x13
-  RenderSVGText {text} at (216,33) size 74x14 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 74x13
-      chunk 1 text run 1 at (416.00,444.10) startOffset 0 endOffset 14 width 73.63: "Saturation (%)"
+layer at (416,433.23) size 77x14
+  RenderSVGText {text} at (216,33) size 77x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 77x14
+      chunk 1 text run 1 at (416.00,444.10) startOffset 0 endOffset 14 width 76.70: "Saturation (%)"
 layer at (302,459.84) size 108x9
   RenderSVGRect {rect} at (102,59.84) size 108x7.52 [fill={[type=SOLID] [color=#000000]}] [x=302.00] [y=459.85] [width=108.00] [height=7.50]
 layer at (302,463.59) size 108x1
@@ -64,10 +64,10 @@ layer at (0,0) size 1024x768 backgroundClip at (0,0) size 800x600 clip at (0,0) 
   RenderSVGViewportContainer {svg} at (0,0) size 1024x768
 layer at (0,-10) size 0x20
   RenderSVGPath {line} at (0,-10) size 0x20 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-10.00] [x2=0.00] [y2=10.00]
-layer at (416,457.66) size 51x13
-  RenderSVGText {text} at (216,57) size 51x14 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 51x13
-      chunk 1 text run 1 at (416.00,468.10) startOffset 0 endOffset 9 width 50.58: "Value (%)"
+layer at (416,457.23) size 53x14
+  RenderSVGText {text} at (216,57) size 53x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 53x14
+      chunk 1 text run 1 at (416.00,468.10) startOffset 0 endOffset 9 width 52.69: "Value (%)"
 layer at (302,483.84) size 108x9
   RenderSVGRect {rect} at (102,83.84) size 108x7.52 [fill={[type=SOLID] [color=#000000]}] [x=302.00] [y=483.85] [width=108.00] [height=7.50]
 layer at (302,487.59) size 108x1
@@ -80,14 +80,14 @@ layer at (0,0) size 1024x768 backgroundClip at (0,0) size 800x600 clip at (0,0) 
   RenderSVGViewportContainer {svg} at (0,0) size 1024x768
 layer at (0,-10) size 0x20
   RenderSVGPath {line} at (0,-10) size 0x20 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-10.00] [x2=0.00] [y2=10.00]
-layer at (416,481.66) size 60x13
-  RenderSVGText {text} at (216,81) size 61x14 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 61x13
-      chunk 1 text run 1 at (416.00,492.10) startOffset 0 endOffset 11 width 60.17: "Opacity (%)"
-layer at (212,503.56) size 231x12
-  RenderSVGText {text} at (12,103) size 231x14 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 231x13
-      chunk 1 text run 1 at (212.00,514.00) startOffset 0 endOffset 40 width 230.56: "RGBA: 0,255,0,100; HSVA: 120,100,100,100"
+layer at (416,481.23) size 63x14
+  RenderSVGText {text} at (216,81) size 63x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 63x14
+      chunk 1 text run 1 at (416.00,492.10) startOffset 0 endOffset 11 width 62.68: "Opacity (%)"
+layer at (212,503.13) size 240x14
+  RenderSVGText {text} at (12,103) size 241x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 241x14
+      chunk 1 text run 1 at (212.00,514.00) startOffset 0 endOffset 40 width 240.17: "RGBA: 0,255,0,100; HSVA: 120,100,100,100"
 layer at (500,200) size 300x100
   RenderSVGTransformableContainer {g} at (300,0) size 300x100
 layer at (500,200) size 300x100
@@ -102,10 +102,10 @@ layer at (0,0) size 1024x768 backgroundClip at (0,0) size 800x600 clip at (0,0) 
   RenderSVGViewportContainer {svg} at (0,0) size 1024x768
 layer at (0,-10) size 0x20
   RenderSVGPath {line} at (0,-10) size 0x20 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-10.00] [x2=0.00] [y2=10.00]
-layer at (716,207.06) size 71x13
-  RenderSVGText {text} at (216,7) size 71x13 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 71x13
-      chunk 1 text run 1 at (716.00,217.50) startOffset 0 endOffset 13 width 70.68: "Hue (0\x{B0}-180\x{B0})"
+layer at (716,206.63) size 74x13
+  RenderSVGText {text} at (216,6) size 74x15 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 74x14
+      chunk 1 text run 1 at (716.00,217.50) startOffset 0 endOffset 13 width 73.63: "Hue (0\x{B0}-180\x{B0})"
 layer at (542,245) size 45x30
   RenderSVGRect {rect} at (42,45) size 45x30 [stroke={[type=SOLID] [color=#787878] [stroke width=7.50]}] [x=542.00] [y=245.00] [width=45.00] [height=30.00]
 layer at (512,230) size 45x30
@@ -122,10 +122,10 @@ layer at (0,0) size 1024x768 backgroundClip at (0,0) size 800x600 clip at (0,0) 
   RenderSVGViewportContainer {svg} at (0,0) size 1024x768
 layer at (0,-10) size 0x20
   RenderSVGPath {line} at (0,-10) size 0x20 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-10.00] [x2=0.00] [y2=10.00]
-layer at (716,233.73) size 74x13
-  RenderSVGText {text} at (216,33) size 74x14 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 74x13
-      chunk 1 text run 1 at (716.00,244.17) startOffset 0 endOffset 14 width 73.63: "Saturation (%)"
+layer at (716,233.30) size 77x14
+  RenderSVGText {text} at (216,33) size 77x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 77x14
+      chunk 1 text run 1 at (716.00,244.17) startOffset 0 endOffset 14 width 76.70: "Saturation (%)"
 layer at (602,262.58) size 108x9
   RenderSVGRect {rect} at (102,62.58) size 108x7.52 [fill={[type=SOLID] [color=#000000]}] [x=602.00] [y=262.58] [width=108.00] [height=7.50]
 layer at (602,266.33) size 108x1
@@ -138,14 +138,14 @@ layer at (0,0) size 1024x768 backgroundClip at (0,0) size 800x600 clip at (0,0) 
   RenderSVGViewportContainer {svg} at (0,0) size 1024x768
 layer at (0,-10) size 0x20
   RenderSVGPath {line} at (0,-10) size 0x20 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-10.00] [x2=0.00] [y2=10.00]
-layer at (716,260.39) size 51x13
-  RenderSVGText {text} at (216,60) size 51x14 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 51x13
-      chunk 1 text run 1 at (716.00,270.83) startOffset 0 endOffset 9 width 50.58: "Value (%)"
-layer at (512,284.56) size 218x12
-  RenderSVGText {text} at (12,84) size 218x14 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 218x13
-      chunk 1 text run 1 at (512.00,295.00) startOffset 0 endOffset 38 width 217.75: "RGBA: 255,0,0,100; HSVA: 0,100,100,100"
+layer at (716,259.97) size 53x13
+  RenderSVGText {text} at (216,59) size 53x15 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 53x14
+      chunk 1 text run 1 at (716.00,270.83) startOffset 0 endOffset 9 width 52.69: "Value (%)"
+layer at (512,284.13) size 227x14
+  RenderSVGText {text} at (12,84) size 227x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 227x14
+      chunk 1 text run 1 at (512.00,295.00) startOffset 0 endOffset 38 width 226.82: "RGBA: 255,0,0,100; HSVA: 0,100,100,100"
 layer at (700,500) size 300x120 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (500,300) size 300x120
 layer at (700,500) size 300x120 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -200,17 +200,17 @@ layer at (0,0) size 1024x768 backgroundClip at (0,0) size 800x600 clip at (0,0) 
   RenderSVGViewportContainer {svg} at (0,0) size 1024x768
 layer at (0,-10) size 0x20
   RenderSVGPath {line} at (0,-10) size 0x20 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-10.00] [x2=0.00] [y2=10.00]
-layer at (490,190) size 334x153 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (490,190) size 333.78x152.73
+layer at (490,190) size 322x153 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (490,190) size 321.33x152.59
 layer at (490,190) size 320x110 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 320x110 [fill={[type=SOLID] [color=#00FFFF] [opacity=0.50]}] [x=490.00] [y=190.00] [width=320.00] [height=110.00]
-layer at (500,304.92) size 324x38 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGText {text} at (10,114) size 324x39 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 303x19
-      chunk 1 text run 1 at (500.00,320.00) startOffset 0 endOffset 41 width 302.43: "This colourPicker has a callBack function"
-    RenderSVGTSpan {tspan} at (0,0) size 324x19
-      RenderSVGInlineText {#text} at (0,19) size 324x19
-        chunk 1 text run 1 at (500.00,339.20) startOffset 0 endOffset 42 width 323.78: "attached that changes the background color"
+layer at (500,305.52) size 311x37 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (10,115) size 312x38 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 291x18
+      chunk 1 text run 1 at (500.00,320.00) startOffset 0 endOffset 41 width 290.80: "This colourPicker has a callBack function"
+    RenderSVGTSpan {tspan} at (0,0) size 312x19
+      RenderSVGInlineText {#text} at (0,19) size 312x18
+        chunk 1 text run 1 at (500.00,339.20) startOffset 0 endOffset 42 width 311.33: "attached that changes the background color"
 layer at (500,200) size 300x90
   RenderSVGTransformableContainer {g} at (10,10) size 300x90
 layer at (500,200) size 300x90
@@ -227,10 +227,10 @@ layer at (0,0) size 1024x768 backgroundClip at (0,0) size 800x600 clip at (0,0) 
   RenderSVGViewportContainer {svg} at (0,0) size 1024x768
 layer at (0,-10) size 0x20
   RenderSVGPath {line} at (0,-10) size 0x20 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-10.00] [x2=0.00] [y2=10.00]
-layer at (716,205.77) size 77x13
-  RenderSVGText {text} at (216,5) size 78x14 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 78x13
-      chunk 1 text run 1 at (716.00,216.20) startOffset 0 endOffset 14 width 77.09: "Hue (90\x{B0}-240\x{B0})"
+layer at (716,205.33) size 80x14
+  RenderSVGText {text} at (216,5) size 81x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 81x14
+      chunk 1 text run 1 at (716.00,216.20) startOffset 0 endOffset 14 width 80.30: "Hue (90\x{B0}-240\x{B0})"
 layer at (512,227) size 45x27
   RenderSVGRect {rect} at (12,27) size 45x27 [fill={[type=SOLID] [color=#00FFFF] [opacity=0.50]}] [x=512.00] [y=227.00] [width=45.00] [height=27.00]
 layer at (572,231.94) size 138x9
@@ -245,10 +245,10 @@ layer at (0,0) size 1024x768 backgroundClip at (0,0) size 800x600 clip at (0,0) 
   RenderSVGViewportContainer {svg} at (0,0) size 1024x768
 layer at (0,-10) size 0x20
   RenderSVGPath {line} at (0,-10) size 0x20 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-10.00] [x2=0.00] [y2=10.00]
-layer at (716,229.77) size 74x13
-  RenderSVGText {text} at (216,29) size 74x14 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 74x13
-      chunk 1 text run 1 at (716.00,240.20) startOffset 0 endOffset 14 width 73.63: "Saturation (%)"
+layer at (716,229.33) size 77x14
+  RenderSVGText {text} at (216,29) size 77x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 77x14
+      chunk 1 text run 1 at (716.00,240.20) startOffset 0 endOffset 14 width 76.70: "Saturation (%)"
 layer at (572,255.94) size 138x9
   RenderSVGRect {rect} at (72,55.94) size 138x7.52 [fill={[type=SOLID] [color=#000000]}] [x=572.00] [y=255.95] [width=138.00] [height=7.50]
 layer at (572,259.69) size 138x1
@@ -261,14 +261,14 @@ layer at (0,0) size 1024x768 backgroundClip at (0,0) size 800x600 clip at (0,0) 
   RenderSVGViewportContainer {svg} at (0,0) size 1024x768
 layer at (0,-10) size 0x20
   RenderSVGPath {line} at (0,-10) size 0x20 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-10.00] [x2=0.00] [y2=10.00]
-layer at (716,253.77) size 60x13
-  RenderSVGText {text} at (216,53) size 61x14 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 61x13
-      chunk 1 text run 1 at (716.00,264.20) startOffset 0 endOffset 11 width 60.17: "Opacity (%)"
-layer at (512,275.06) size 231x13
-  RenderSVGText {text} at (12,75) size 231x13 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 231x13
-      chunk 1 text run 1 at (512.00,285.50) startOffset 0 endOffset 40 width 230.56: "RGBA: 0,255,255,50; HSVA: 180,100,100,50"
+layer at (716,253.33) size 63x14
+  RenderSVGText {text} at (216,53) size 63x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 63x14
+      chunk 1 text run 1 at (716.00,264.20) startOffset 0 endOffset 11 width 62.68: "Opacity (%)"
+layer at (512,274.63) size 240x13
+  RenderSVGText {text} at (12,74) size 241x15 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 241x14
+      chunk 1 text run 1 at (512.00,285.50) startOffset 0 endOffset 40 width 240.17: "RGBA: 0,255,255,50; HSVA: 180,100,100,50"
 layer at (499,169) size 367x350 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (499,169) size 367x350
 layer at (509,441) size 112x22
@@ -279,11 +279,11 @@ layer at (511,443) size 110x20
   RenderSVGRect {rect} at (2,2) size 110x20 [fill={[type=SOLID] [color=#696969]}] [x=511.00] [y=443.00] [width=110.00] [height=20.00]
 layer at (510,442) size 110x20
   RenderSVGRect {rect} at (1,1) size 110x20 [fill={[type=SOLID] [color=#DCDCDC]}] [x=510.00] [y=442.00] [width=110.00] [height=20.00]
-layer at (518.58,446.97) size 92x13
-  RenderSVGText {text} at (9,5) size 94x14 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 93x13
-      RenderSVGInlineText {#text} at (0,0) size 93x13
-        chunk 1 (middle anchor) text run 1 at (518.58,457.40) startOffset 0 endOffset 17 width 92.84: "Hide ColourPicker"
+layer at (516.64,446.53) size 96x13
+  RenderSVGText {text} at (7,5) size 98x14 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 97x14
+      RenderSVGInlineText {#text} at (0,0) size 97x14
+        chunk 1 (middle anchor) text run 1 at (516.65,457.40) startOffset 0 endOffset 17 width 96.70: "Hide ColourPicker"
 layer at (509,469) size 112x22
   RenderSVGTransformableContainer {g} at (10,300) size 112x22
 layer at (509,469) size 110x20
@@ -292,11 +292,11 @@ layer at (511,471) size 110x20
   RenderSVGRect {rect} at (2,2) size 110x20 [fill={[type=SOLID] [color=#696969]}] [x=511.00] [y=471.00] [width=110.00] [height=20.00]
 layer at (510,470) size 110x20
   RenderSVGRect {rect} at (1,1) size 110x20 [fill={[type=SOLID] [color=#DCDCDC]}] [x=510.00] [y=470.00] [width=110.00] [height=20.00]
-layer at (524.02,474.97) size 82x13
-  RenderSVGText {text} at (15,5) size 82x14 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 82x13
-      RenderSVGInlineText {#text} at (0,0) size 82x13
-        chunk 1 (middle anchor) text run 1 at (524.02,485.40) startOffset 0 endOffset 15 width 81.95: "Set Random Fill"
+layer at (522.31,474.53) size 86x13
+  RenderSVGText {text} at (13,5) size 86x14 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 86x14
+      RenderSVGInlineText {#text} at (0,0) size 86x14
+        chunk 1 (middle anchor) text run 1 at (522.32,485.40) startOffset 0 endOffset 15 width 85.37: "Set Random Fill"
 layer at (509,497) size 112x22
   RenderSVGTransformableContainer {g} at (10,328) size 112x22
 layer at (509,497) size 110x20
@@ -305,11 +305,11 @@ layer at (511,499) size 110x20
   RenderSVGRect {rect} at (2,2) size 110x20 [fill={[type=SOLID] [color=#696969]}] [x=511.00] [y=499.00] [width=110.00] [height=20.00]
 layer at (510,498) size 110x20
   RenderSVGRect {rect} at (1,1) size 110x20 [fill={[type=SOLID] [color=#DCDCDC]}] [x=510.00] [y=498.00] [width=110.00] [height=20.00]
-layer at (514.73,502.97) size 100x13
-  RenderSVGText {text} at (5,5) size 102x14 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 101x13
-      RenderSVGInlineText {#text} at (0,0) size 101x13
-        chunk 1 (middle anchor) text run 1 at (514.73,513.40) startOffset 0 endOffset 17 width 100.53: "Set Random Stroke"
+layer at (512.64,502.53) size 104x13
+  RenderSVGText {text} at (3,5) size 106x14 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 105x14
+      RenderSVGInlineText {#text} at (0,0) size 105x14
+        chunk 1 (middle anchor) text run 1 at (512.64,513.40) startOffset 0 endOffset 17 width 104.72: "Set Random Stroke"
 layer at (499,169) size 182x22
   RenderSVGTransformableContainer {g} at (0,0) size 182x22
 layer at (499,169) size 180x20
@@ -318,11 +318,11 @@ layer at (501,171) size 180x20
   RenderSVGRect {rect} at (2,2) size 180x20 [fill={[type=SOLID] [color=#696969]}] [x=501.00] [y=171.00] [width=180.00] [height=20.00]
 layer at (500,170) size 180x20
   RenderSVGRect {rect} at (1,1) size 180x20 [fill={[type=SOLID] [color=#DCDCDC]}] [x=500.00] [y=170.00] [width=180.00] [height=20.00]
-layer at (508.69,174.97) size 162x13
-  RenderSVGText {text} at (9,5) size 164x14 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 163x13
-      RenderSVGInlineText {#text} at (0,0) size 163x13
-        chunk 1 (middle anchor) text run 1 at (508.69,185.40) startOffset 0 endOffset 29 width 162.62: "Randomly Resize Colour Picker"
+layer at (505.30,174.53) size 170x13
+  RenderSVGText {text} at (6,5) size 170x14 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 170x14
+      RenderSVGInlineText {#text} at (0,0) size 170x14
+        chunk 1 (middle anchor) text run 1 at (505.30,185.40) startOffset 0 endOffset 29 width 169.39: "Randomly Resize Colour Picker"
 layer at (684,169) size 182x22 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (185,0) size 182x22
 layer at (684,169) size 180x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -331,11 +331,11 @@ layer at (686,171) size 180x20 backgroundClip at (0,0) size 800x600 clip at (0,0
   RenderSVGRect {rect} at (2,2) size 180x20 [fill={[type=SOLID] [color=#696969]}] [x=686.00] [y=171.00] [width=180.00] [height=20.00]
 layer at (685,170) size 180x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (1,1) size 180x20 [fill={[type=SOLID] [color=#DCDCDC]}] [x=685.00] [y=170.00] [width=180.00] [height=20.00]
-layer at (697.20,174.97) size 156x13 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGText {text} at (13,5) size 156x14 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 156x13
-      RenderSVGInlineText {#text} at (0,0) size 156x13
-        chunk 1 (middle anchor) text run 1 at (697.21,185.40) startOffset 0 endOffset 27 width 155.58: "Randomly Move Colour Picker"
+layer at (693.97,174.53) size 162x13 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (9,5) size 164x14 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 163x14
+      RenderSVGInlineText {#text} at (0,0) size 163x14
+        chunk 1 (middle anchor) text run 1 at (693.97,185.40) startOffset 0 endOffset 27 width 162.06: "Randomly Move Colour Picker"
 layer at (459,498) size 27x18
   RenderSVGTransformableContainer {g} at (459,498) size 27x18
 layer at (459,498) size 25x16
@@ -344,8 +344,8 @@ layer at (461,500) size 25x16
   RenderSVGRect {rect} at (2,2) size 25x16 [fill={[type=SOLID] [color=#696969]}] [x=461.00] [y=500.00] [width=25.00] [height=16.00]
 layer at (460,499) size 25x16
   RenderSVGRect {rect} at (1,1) size 25x16 [fill={[type=SOLID] [color=#DCDCDC]}] [x=460.00] [y=499.00] [width=25.00] [height=16.00]
-layer at (464.17,501.97) size 17x13
-  RenderSVGText {text} at (5,3) size 17x14 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 17x13
-      RenderSVGInlineText {#text} at (0,0) size 17x13
-        chunk 1 (middle anchor) text run 1 at (464.18,512.40) startOffset 0 endOffset 2 width 16.64: "OK"
+layer at (463.83,501.53) size 17x13
+  RenderSVGText {text} at (4,3) size 19x14 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 18x14
+      RenderSVGInlineText {#text} at (0,0) size 18x14
+        chunk 1 (middle anchor) text run 1 at (463.83,512.40) startOffset 0 endOffset 2 width 17.34: "OK"

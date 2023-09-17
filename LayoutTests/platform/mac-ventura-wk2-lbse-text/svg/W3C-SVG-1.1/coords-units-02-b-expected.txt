@@ -4,52 +4,52 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (-5,-3.55) size 408x274 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (-5,-3.55) size 407.50x272.80
-layer at (60,19.25) size 315x20
-  RenderSVGText {text} at (65,22) size 316x21 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 316x20
-      chunk 1 text run 1 at (60.00,35.00) startOffset 0 endOffset 45 width 315.37: "CSS pixel coordinate to user space conversion"
+layer at (-5,-3.55) size 413x274 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (-5,-3.55) size 412.64x272.89
+layer at (60,19) size 322x20
+  RenderSVGText {text} at (65,22) size 322x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 322x21
+      chunk 1 text run 1 at (60.00,35.00) startOffset 0 endOffset 45 width 321.56: "CSS pixel coordinate to user space conversion"
 layer at (5,5) size 5x6
   RenderSVGTransformableContainer {g} at (10,8.55) size 5x5
 layer at (5,5) size 5x5
   RenderSVGEllipse {circle} at (0,0) size 5x5 [fill={[type=SOLID] [color=#000000]}] [cx=7.50] [cy=7.50] [r=2.50]
 layer at (6,6) size 3x3
   RenderSVGEllipse {circle} at (1,1) size 3x3 [fill={[type=SOLID] [color=#FF0000]}] [cx=7.50] [cy=7.50] [r=1.50]
-layer at (60,69.25) size 328x20
-  RenderSVGText {text} at (65,72) size 329x21 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 329x20
-      chunk 1 text run 1 at (60.00,85.00) startOffset 0 endOffset 47 width 328.06: "Percentage coordinates to user space conversion"
+layer at (60,69) size 335x20
+  RenderSVGText {text} at (65,72) size 335x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 335x21
+      chunk 1 text run 1 at (60.00,85.00) startOffset 0 endOffset 47 width 334.50: "Percentage coordinates to user space conversion"
 layer at (5,5) size 5x6
   RenderSVGTransformableContainer {g} at (10,8.55) size 5x5
 layer at (5,5) size 5x5
   RenderSVGEllipse {circle} at (0,0) size 5x5 [fill={[type=SOLID] [color=#000000]}] [cx=7.50] [cy=7.50] [r=2.50]
 layer at (6,5.98) size 4x4
   RenderSVGEllipse {circle} at (1,0.98) size 3.02x3.02 [fill={[type=SOLID] [color=#FF0000]}] [cx=7.50] [cy=7.50] [r=1.50]
-layer at (60,124.25) size 291x20
-  RenderSVGText {text} at (65,127) size 292x21 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 292x20
-      chunk 1 text run 1 at (60.00,140.00) startOffset 0 endOffset 41 width 291.32: "CSS width/height to user space conversion"
+layer at (60,124) size 297x20
+  RenderSVGText {text} at (65,127) size 298x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 298x21
+      chunk 1 text run 1 at (60.00,140.00) startOffset 0 endOffset 41 width 297.04: "CSS width/height to user space conversion"
 layer at (-5,0) size 10x11 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,3.55) size 10x10
 layer at (-5,0) size 10x5 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGRect {rect} at (0,0) size 10x5 [fill={[type=SOLID] [color=#000000]}] [x=-5.00] [y=0.00] [width=10.00] [height=5.00]
 layer at (-5,5) size 10x5 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGRect {rect} at (0,5) size 10x5 [fill={[type=SOLID] [color=#FF0000]}] [x=-5.00] [y=5.00] [width=10.00] [height=5.00]
-layer at (60,184.25) size 336x20
-  RenderSVGText {text} at (65,187) size 336x21 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 336x20
-      chunk 1 text run 1 at (60.00,200.00) startOffset 0 endOffset 48 width 335.64: "Percentage width/height to user space conversion"
+layer at (60,184) size 342x20
+  RenderSVGText {text} at (65,187) size 343x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 343x21
+      chunk 1 text run 1 at (60.00,200.00) startOffset 0 endOffset 48 width 342.22: "Percentage width/height to user space conversion"
 layer at (-5,0) size 10x11 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,3.55) size 10x10.02
 layer at (-5,0) size 10x5 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGRect {rect} at (0,0) size 10x5 [fill={[type=SOLID] [color=#000000]}] [x=-5.00] [y=0.00] [width=10.00] [height=5.00]
 layer at (-5,5) size 10x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGRect {rect} at (0,5) size 10x5.02 [fill={[type=SOLID] [color=#FF0000]}] [x=-5.00] [y=5.00] [width=10.00] [height=5.00]
-layer at (140,249.25) size 263x20
-  RenderSVGText {text} at (145,252) size 263x21 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 263x20
-      chunk 1 text run 1 at (140.00,265.00) startOffset 0 endOffset 36 width 262.49: "CSS and percentage length conversion"
+layer at (140,249) size 268x20
+  RenderSVGText {text} at (145,252) size 268x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 268x21
+      chunk 1 text run 1 at (140.00,265.00) startOffset 0 endOffset 36 width 267.63: "CSS and percentage length conversion"
 layer at (-3.55,-3.55) size 28x8 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (1.45,0) size 27.09x7.09
 layer at (-3.55,-3.55) size 8x8 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360

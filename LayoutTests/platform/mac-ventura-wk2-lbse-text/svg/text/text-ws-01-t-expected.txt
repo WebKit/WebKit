@@ -4,47 +4,47 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (15,3.02) size 422x301
-  RenderSVGTransformableContainer {g} at (15,3.02) size 421.34x300.52
-layer at (15,3.02) size 421x39
-  RenderSVGText {text} at (0,0) size 422x39 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 422x39
-      chunk 1 text run 1 at (15.00,35.00) startOffset 0 endOffset 26 width 421.33: "Basic: xml:space attribute"
-layer at (35,28.02) size 371x39
-  RenderSVGText {text} at (20,25) size 371x39 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 371x39
-      chunk 1 text run 1 at (35.00,60.00) startOffset 0 endOffset 22 width 370.92: "& whitespace handling."
-layer at (15,68.59) size 418x45
-  RenderSVGText {text} at (0,65) size 418x46 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 418x45
-      chunk 1 text run 1 at (15.00,105.00) startOffset 0 endOffset 23 width 417.84: "WS with indented lines."
-layer at (15,103.59) size 418x45
-  RenderSVGText {text} at (0,100) size 418x46 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 418x45
-      chunk 1 text run 1 at (15.00,140.00) startOffset 0 endOffset 23 width 417.84: "WS with indented lines."
+layer at (15,2.83) size 424x302
+  RenderSVGTransformableContainer {g} at (15,2.83) size 423.98x300.66
+layer at (15,2.83) size 424x39
+  RenderSVGText {text} at (0,0) size 424x39 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 424x39
+      chunk 1 text run 1 at (15.00,35.00) startOffset 0 endOffset 26 width 423.98: "Basic: xml:space attribute"
+layer at (35,27.83) size 373x39
+  RenderSVGText {text} at (20,25) size 374x39 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 374x39
+      chunk 1 text run 1 at (35.00,60.00) startOffset 0 endOffset 22 width 373.25: "& whitespace handling."
+layer at (15,68.78) size 416x45
+  RenderSVGText {text} at (0,65) size 416x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 416x45
+      chunk 1 text run 1 at (15.00,105.00) startOffset 0 endOffset 23 width 415.76: "WS with indented lines."
+layer at (15,103.78) size 416x45
+  RenderSVGText {text} at (0,100) size 416x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 416x45
+      chunk 1 text run 1 at (15.00,140.00) startOffset 0 endOffset 23 width 415.76: "WS with indented lines."
 layer at (25,145) size 350x37
-  RenderSVGRect {rect} at (10,141.98) size 350x36 [stroke={[type=SOLID] [color=#000000]}] [x=25.00] [y=145.00] [width=350.00] [height=36.00]
-layer at (28,138.59) size 340x45
-  RenderSVGText {text} at (13,135) size 341x46 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 341x45
-      chunk 1 text run 1 at (28.00,175.00) startOffset 0 endOffset 19 width 340.48: "xml:space='default'"
-layer at (15,188.59) size 416x45
-  RenderSVGText {text} at (0,185) size 416x46 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 416x45
-      chunk 1 text run 1 at (15.00,225.00) startOffset 0 endOffset 22 width 415.64: "WS non-indented lines."
-layer at (15,223.59) size 416x45
-  RenderSVGText {text} at (0,220) size 416x46 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 416x45
-      chunk 1 text run 1 at (15.00,260.00) startOffset 0 endOffset 22 width 415.64: "WS non-indented lines."
+  RenderSVGRect {rect} at (10,142.17) size 350x36 [stroke={[type=SOLID] [color=#000000]}] [x=25.00] [y=145.00] [width=350.00] [height=36.00]
+layer at (28,138.78) size 339x45
+  RenderSVGText {text} at (13,135) size 339x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 339x45
+      chunk 1 text run 1 at (28.00,175.00) startOffset 0 endOffset 19 width 338.79: "xml:space='default'"
+layer at (15,188.78) size 414x45
+  RenderSVGText {text} at (0,185) size 414x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 414x45
+      chunk 1 text run 1 at (15.00,225.00) startOffset 0 endOffset 22 width 413.57: "WS non-indented lines."
+layer at (15,223.78) size 414x45
+  RenderSVGText {text} at (0,220) size 414x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 414x45
+      chunk 1 text run 1 at (15.00,260.00) startOffset 0 endOffset 22 width 413.57: "WS non-indented lines."
 layer at (25,265) size 350x37
-  RenderSVGRect {rect} at (10,261.98) size 350x36 [stroke={[type=SOLID] [color=#000000]}] [x=25.00] [y=265.00] [width=350.00] [height=36.00]
-layer at (28,258.59) size 340x45
-  RenderSVGText {text} at (13,255) size 341x46 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 341x45
-      chunk 1 text run 1 at (28.00,295.00) startOffset 0 endOffset 19 width 340.48: "xml:space='default'"
-layer at (10,303.84) size 265x46
-  RenderSVGText {text} at (10,303) size 265x48 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 265x47
-      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.66: "$Revision: 1.7 $"
+  RenderSVGRect {rect} at (10,262.17) size 350x36 [stroke={[type=SOLID] [color=#000000]}] [x=25.00] [y=265.00] [width=350.00] [height=36.00]
+layer at (28,258.78) size 339x45
+  RenderSVGText {text} at (13,255) size 339x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 339x45
+      chunk 1 text run 1 at (28.00,295.00) startOffset 0 endOffset 19 width 338.79: "xml:space='default'"
+layer at (10,304) size 263x46
+  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 264x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.7 $"
 layer at (1,1) size 478x358
   RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -6,42 +6,42 @@ layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
 layer at (0,0) size 100x50
   RenderSVGTransformableContainer {g} at (0,0) size 100x50
-layer at (41.94,20.27) size 18x25
-  RenderSVGHiddenContainer {defs} at (41.94,20.27) size 16.13x24.73
-layer at (41.94,20.27) size 16x14
-  RenderSVGText {text} at (0,0) size 17x14 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 17x14
-      chunk 1 (middle anchor) text run 1 at (41.95,31.00) startOffset 0 endOffset 3 width 16.11: "use"
-layer at (45,35) size 11x11
-  RenderSVGEllipse {circle} at (3.06,14.73) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [cx=50.00] [cy=40.00] [r=5.00]
-layer at (41.94,20.27) size 18x25
-  RenderSVGTransformableContainer {g} at (41.94,20.27) size 16.13x24.73
-layer at (41.94,20.27) size 17x14
-  RenderSVGTransformableContainer {use} at (0,0) size 16.13x13.77
-layer at (41.94,20.27) size 16x14
-  RenderSVGText {text} at (0,0) size 17x14 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 17x14
-      chunk 1 (middle anchor) text run 1 at (41.95,31.00) startOffset 0 endOffset 3 width 16.11: "use"
-layer at (45,35) size 11x11
-  RenderSVGTransformableContainer {use} at (3.06,14.73) size 10x10
+layer at (42,20.33) size 16x25
+  RenderSVGHiddenContainer {defs} at (42,20.33) size 16x24.67
+layer at (42,20.33) size 16x14
+  RenderSVGText {text} at (0,0) size 16x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 16x14
+      chunk 1 (middle anchor) text run 1 at (42.00,31.00) startOffset 0 endOffset 3 width 16.00: "use"
+layer at (45,35) size 10x11
+  RenderSVGEllipse {circle} at (3,14.67) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [cx=50.00] [cy=40.00] [r=5.00]
+layer at (42,20.33) size 16x25
+  RenderSVGTransformableContainer {g} at (42,20.33) size 16x24.67
+layer at (42,20.33) size 16x14
+  RenderSVGTransformableContainer {use} at (0,0) size 16x13.67
+layer at (42,20.33) size 16x14
+  RenderSVGText {text} at (0,0) size 16x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 16x14
+      chunk 1 (middle anchor) text run 1 at (42.00,31.00) startOffset 0 endOffset 3 width 16.00: "use"
+layer at (45,35) size 10x11
+  RenderSVGTransformableContainer {use} at (3,14.67) size 10x10
 layer at (45,35) size 10x10
   RenderSVGEllipse {circle} at (0,0) size 10x10 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=50.00] [cy=40.00] [r=5.00]
 layer at (0,0) size 100x50
   RenderSVGRect {rect} at (0,0) size 100x50 [opacity=0.20] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
-layer at (0,-10.78) size 298x44 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (0,-10.78) size 297.31x43.77
-layer at (0,-10.78) size 297x44 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGText {text} at (0,0) size 298x44 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 291x14
-      RenderSVGInlineText {#text} at (0,0) size 291x14
-        chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 40 width 290.05: "For this test case to be successful, the"
-    RenderSVGInlineText {#text} at (290,0) size 8x14
-      chunk 1 text run 1 at (290.05,0.00) startOffset 0 endOffset 1 width 7.25: " "
-    RenderSVGTSpan {tspan} at (0,0) size 283x14
-      RenderSVGInlineText {#text} at (0,15) size 283x14
-        chunk 1 text run 1 at (0.00,15.00) startOffset 0 endOffset 39 width 282.80: "box above must show text and a circle. "
+layer at (0,-10.72) size 296x44 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,-10.72) size 295.25x43.67
+layer at (0,-10.72) size 295x44 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 296x44 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 289x14
+      RenderSVGInlineText {#text} at (0,0) size 289x14
+        chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 40 width 288.05: "For this test case to be successful, the"
+    RenderSVGInlineText {#text} at (288,0) size 8x14
+      chunk 1 text run 1 at (288.05,0.00) startOffset 0 endOffset 1 width 7.20: " "
+    RenderSVGTSpan {tspan} at (0,0) size 281x14
+      RenderSVGInlineText {#text} at (0,15) size 281x14
+        chunk 1 text run 1 at (0.00,15.00) startOffset 0 endOffset 39 width 280.85: "box above must show text and a circle. "
     RenderSVGInlineText {#text} at (0,0) size 0x0
-    RenderSVGTSpan {tspan} at (0,0) size 66x14
-      RenderSVGInlineText {#text} at (0,30) size 66x14
-        chunk 1 text run 1 at (0.00,30.00) startOffset 0 endOffset 9 width 65.26: "Bug 14927"
+    RenderSVGTSpan {tspan} at (0,0) size 65x14
+      RenderSVGInlineText {#text} at (0,30) size 65x14
+        chunk 1 text run 1 at (0.00,30.00) startOffset 0 endOffset 9 width 64.81: "Bug 14927"
     RenderSVGInlineText {#text} at (0,0) size 0x0

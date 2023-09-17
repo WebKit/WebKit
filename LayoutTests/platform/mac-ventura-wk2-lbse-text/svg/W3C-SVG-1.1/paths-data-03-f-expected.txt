@@ -72,8 +72,8 @@ layer at (98,202) size 4x5
   RenderSVGRect {rect} at (75,198.88) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [x=98.00] [y=202.00] [width=4.00] [height=4.00]
 layer at (163,252) size 4x5
   RenderSVGRect {rect} at (140,248.88) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [x=163.00] [y=252.00] [width=4.00] [height=4.00]
-layer at (215,153.86) size 250x79
-  RenderSVGPath {path} at (192,150.73) size 250x77.97 [stroke={[type=SOLID] [color=#FF0000]}] [data="M 215 190 C 220.263 245.753 240.885 245.753 265 190 C 296.645 141.819 316.847 141.819 315 190 C 309.671 227.539 329.265 227.539 365 190 C 400.955 163.953 419.859 163.953 415 190 C 413.859 205.73 432.083 205.73 465 190"]
+layer at (215,154.30) size 250x74
+  RenderSVGPath {path} at (192,151.17) size 250x72.88 [stroke={[type=SOLID] [color=#FF0000]}] [data="M 215 190 C 220.263 245.753 240.885 245.753 265 190 C 296.645 141.819 316.847 141.819 315 190 C 309.671 227.539 329.265 227.539 365 190 C 400.955 163.953 419.859 163.953 415 190 C 413.859 205.73 432.083 205.73 465 190"]
 layer at (215,235.13) size 69x13
   RenderSVGText {text} at (192,232) size 69x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 69x14

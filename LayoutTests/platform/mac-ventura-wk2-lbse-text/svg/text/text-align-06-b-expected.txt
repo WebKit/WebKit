@@ -4,12 +4,12 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (-8.34,0) size 496x302 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (-8.34,0) size 495.06x301.64
-layer at (0,3.59) size 487x45
-  RenderSVGText {text} at (8,3) size 488x46 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 487x45
-      chunk 1 text run 1 at (0.00,40.00) startOffset 0 endOffset 31 width 486.72: "Test 'baseline-shift' (vertic.)"
+layer at (-8.34,0) size 494x302 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (-8.34,0) size 492.64x301.64
+layer at (0,3.78) size 485x44
+  RenderSVGText {text} at (8,3) size 485x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 485x45
+      chunk 1 text run 1 at (0.00,40.00) startOffset 0 endOffset 31 width 484.30: "Test 'baseline-shift' (vertic.)"
 layer at (-8.34,0) size 294x302 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 293.45x301.64
 layer at (-8.34,0) size 294x302 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -71,9 +71,9 @@ layer at (251.66,0) size 33x302
         chunk 1 (vertical) text run 1 at (249.60,234.61) startOffset 0 endOffset 1 height 33.52: "x"
     RenderSVGInlineText {#text} at (4,268) size 9x34
       chunk 1 (vertical) text run 1 at (249.60,268.13) startOffset 0 endOffset 1 height 33.52: "t"
-layer at (10,303.84) size 265x46
-  RenderSVGText {text} at (10,303) size 265x48 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 265x47
-      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.66: "$Revision: 1.5 $"
+layer at (10,304) size 263x46
+  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 264x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.5 $"
 layer at (1,1) size 478x358
   RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

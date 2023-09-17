@@ -4,8 +4,8 @@ layer at (0,0) size 785x666 backgroundClip at (0,0) size 785x665.58 clip at (0,0
   RenderBlock {html} at (0,0) size 785x665.58
     RenderBody {body} at (11.52,23.03) size 761.97x631.03
       RenderBlock {p} at (0,0) size 761.97x26 [color=#000080]
-        RenderText {#text} at (0,0) size 588x26
-          text run at (0,0) width 588: "There should be a blue circle with the word \"TEST\" in it below."
+        RenderText {#text} at (0,0) size 589x26
+          text run at (0,0) width 589: "There should be a blue circle with the word \"TEST\" in it below."
       RenderBlock (anonymous) at (0,49.03) size 761.97x582
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
