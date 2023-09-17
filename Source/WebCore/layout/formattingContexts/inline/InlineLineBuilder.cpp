@@ -33,6 +33,7 @@
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "RenderStyleInlines.h"
+#include "RubyFormattingContext.h"
 #include "Shape.h"
 #include "TextUtil.h"
 #include "UnicodeBidi.h"
@@ -1112,17 +1113,8 @@ LineBuilder::Result LineBuilder::processLineBreakingResult(const LineCandidate& 
 
 LineBuilder::Result LineBuilder::handleRubyContent(const InlineItemRange& rubyContainerRange, InlineLayoutUnit availableWidthForCandidateContent)
 {
-    // This is where we create a ruby formatting context which will deal with the ruby content by placing base runs on the current line.
-    UNUSED_PARAM(availableWidthForCandidateContent);
-
-    auto& formattingGeometry = formattingContext().formattingGeometry();
-    auto currentLogicalRight = m_line.contentLogicalRight();
-    for (auto index = rubyContainerRange.startIndex(); index < rubyContainerRange.endIndex(); ++index) {
-        auto& inlineItem = m_inlineItems[index];
-        auto inlineItemWidth = formattingGeometry.inlineItemWidth(inlineItem, currentLogicalRight, isFirstFormattedLine());
-        m_line.append(inlineItem, inlineItem.layoutBox().style(), inlineItemWidth);
-        currentLogicalRight += inlineItemWidth;
-    }
+    ASSERT(m_inlineItems[rubyContainerRange.startIndex()].layoutBox().isRuby());
+    RubyFormattingContext { formattingContext(), m_inlineItems }.layoutInlineAxis(rubyContainerRange, m_line, availableWidthForCandidateContent);
     return { InlineContentBreaker::IsEndOfLine::No, { rubyContainerRange.endIndex() - rubyContainerRange.startIndex(), false } };
 }
 

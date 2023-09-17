@@ -1740,6 +1740,7 @@ layout/formattingContexts/inline/display/InlineDisplayContent.cpp
 layout/formattingContexts/inline/display/InlineDisplayContentBuilder.cpp
 layout/formattingContexts/inline/display/InlineDisplayLineBuilder.cpp
 layout/formattingContexts/inline/invalidation/InlineInvalidation.cpp
+layout/formattingContexts/inline/ruby/RubyFormattingContext.cpp
 layout/formattingContexts/inline/text/TextUtil.cpp
 layout/integration/flex/LayoutIntegrationFlexLayout.cpp
 layout/integration/inline/InlineIteratorBox.cpp

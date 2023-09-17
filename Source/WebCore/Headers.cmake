@@ -1307,6 +1307,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/formattingContexts/inline/display/InlineDisplayBox.h
     layout/formattingContexts/inline/display/InlineDisplayLine.h
 
+    layout/formattingContexts/inline/ruby/RubyFormattingContext.h
+
     layout/formattingContexts/inline/text/TextUtil.h
 
     layout/integration/LayoutIntegrationBoxTree.h
