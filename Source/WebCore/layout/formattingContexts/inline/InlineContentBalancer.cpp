@@ -140,7 +140,7 @@ void InlineContentBalancer::initialize()
     InlineItemRange layoutRange = InlineItemRange { 0, m_inlineItems.size() };
     auto floatingState = FloatingState { m_inlineFormattingContext.root() };
     auto parentBlockLayoutState = BlockLayoutState { floatingState, { } };
-    auto inlineLayoutState = InlineLayoutState { parentBlockLayoutState, { } };
+    auto inlineLayoutState = InlineLayoutState { parentBlockLayoutState, { }, { } };
     auto lineBuilder = LineBuilder { m_inlineFormattingContext, inlineLayoutState, floatingState, m_horizontalConstraints, m_inlineItems };
     auto previousLineEnd = std::optional<InlineItemPosition> { };
     auto previousLine = std::optional<PreviousLine> { };

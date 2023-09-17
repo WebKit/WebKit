@@ -441,7 +441,7 @@ FlexLayout::SizeList FlexLayout::hypotheticalCrossSizeForFlexItems(const Logical
             // FIXME: Let it run through integration codepath.
             auto floatingState = FloatingState { flexItemBox };
             auto parentBlockLayoutState = BlockLayoutState { floatingState };
-            auto inlineLayoutState = InlineLayoutState { parentBlockLayoutState, { } };
+            auto inlineLayoutState = InlineLayoutState { parentBlockLayoutState, { }, { } };
             auto& inlineFormattingState = flexFormattingContext().layoutState().ensureInlineFormattingState(flexItemBox);
             auto inlineFormattingContext = InlineFormattingContext { flexItemBox, inlineFormattingState };
             auto constraintsForInFlowContent = ConstraintsForInFlowContent { HorizontalConstraints { { }, flexItemsMainSizeList[flexItemIndex] }, { } };

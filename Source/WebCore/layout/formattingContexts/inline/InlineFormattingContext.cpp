@@ -184,14 +184,7 @@ InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& line
         auto lineIndex = previousLine ? (previousLine->lineIndex + 1) : 0lu;
         auto lineLogicalRect = createDisplayContentForInlineContent(lineIndex, lineLayoutResult, constraints, inlineLayoutState, layoutResult.displayContent);
         updateBoxGeometryForPlacedFloats(lineLayoutResult.floatContent.placedFloats);
-
-        if (auto firstLineGap = lineLayoutResult.lineGeometry.initialLetterClearGap) {
-            ASSERT(!inlineLayoutState.clearGapBeforeFirstLine());
-            inlineLayoutState.setClearGapBeforeFirstLine(*firstLineGap);
-        }
-
-        if (lineLayoutResult.isFirstLast.isLastLineWithInlineContent)
-            inlineLayoutState.setClearGapAfterLastLine(formattingGeometry().logicalTopForNextLine(lineLayoutResult, lineLogicalRect, floatingContext) - lineLogicalRect.bottom());
+        updateInlineLayoutStateWithLineLayoutResult(lineLayoutResult, inlineLayoutState, lineLogicalRect, floatingContext);
 
         auto lineContentEnd = lineLayoutResult.inlineItemRange.end;
         leadingInlineItemPosition = InlineFormattingGeometry::leadingInlineItemPositionForNextLine(lineContentEnd, previousLineEnd, needsLayoutRange.end);
@@ -205,9 +198,9 @@ InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& line
             break;
         }
 
-        lineLogicalTop = formattingGeometry().logicalTopForNextLine(lineLayoutResult, lineLogicalRect, floatingContext);
         previousLine = PreviousLine { lineIndex, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, !lineLayoutResult.inlineContent.isEmpty() && lineLayoutResult.inlineContent.last().isLineBreak(), lineLayoutResult.directionality.inlineBaseDirection, WTFMove(lineLayoutResult.floatContent.suspendedFloats) };
         previousLineEnd = lineContentEnd;
+        lineLogicalTop = formattingGeometry().logicalTopForNextLine(lineLayoutResult, lineLogicalRect, floatingContext);
     }
     InlineDisplayLineBuilder::addLineClampTrailingLinkBoxIfApplicable(*this, inlineLayoutState, layoutResult.displayContent);
     return layoutResult;
@@ -252,6 +245,19 @@ static LineEndingEllipsisPolicy lineEndingEllipsisPolicy(const RenderStyle& root
     if (rootStyle.overflowX() != Overflow::Visible && rootStyle.textOverflow() == TextOverflow::Ellipsis)
         return LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection;
     return LineEndingEllipsisPolicy::No;
+}
+
+void InlineFormattingContext::updateInlineLayoutStateWithLineLayoutResult(const LineLayoutResult& lineLayoutResult, InlineLayoutState& inlineLayoutState, const InlineRect& lineLogicalRect, const FloatingContext& floatingContext)
+{
+    if (auto firstLineGap = lineLayoutResult.lineGeometry.initialLetterClearGap) {
+        ASSERT(!inlineLayoutState.clearGapBeforeFirstLine());
+        inlineLayoutState.setClearGapBeforeFirstLine(*firstLineGap);
+    }
+
+    if (lineLayoutResult.isFirstLast.isLastLineWithInlineContent)
+        inlineLayoutState.setClearGapAfterLastLine(formattingGeometry().logicalTopForNextLine(lineLayoutResult, lineLogicalRect, floatingContext) - lineLogicalRect.bottom());
+
+    lineLayoutResult.endsWithHyphen ? inlineLayoutState.incrementSuccessiveHyphenatedLineCount() : inlineLayoutState.resetSuccessiveHyphenatedLineCount();
 }
 
 void InlineFormattingContext::updateBoxGeometryForPlacedFloats(const LineLayoutResult::PlacedFloatList& placedFloats)

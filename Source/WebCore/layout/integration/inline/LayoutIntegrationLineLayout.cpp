@@ -557,7 +557,10 @@ std::optional<LayoutRect> LineLayout::layout()
         return { constraintsForInFlowContent, m_inlineContentConstraints->visualLeft() };
     }();
     auto parentBlockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState(), lineClamp(flow()), textBoxTrim(flow()), intrusiveInitialLetterBottom() };
-    auto inlineLayoutState = Layout::InlineLayoutState { parentBlockLayoutState, WTFMove(m_nestedListMarkerOffsets) };
+    auto hyphenationLimitLines = std::optional<size_t> { };
+    if (auto limitLinesValue = rootLayoutBox().style().hyphenationLimitLines(); limitLinesValue != RenderStyle::initialHyphenationLimitLines())
+        hyphenationLimitLines = limitLinesValue;
+    auto inlineLayoutState = Layout::InlineLayoutState { parentBlockLayoutState, WTFMove(m_nestedListMarkerOffsets), hyphenationLimitLines };
     auto layoutResult = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState }.layout(inlineContentConstraints, inlineLayoutState, m_lineDamage.get());
 
     auto repaintRect = LayoutRect { constructContent(inlineLayoutState, WTFMove(layoutResult)) };

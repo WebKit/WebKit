@@ -43,6 +43,7 @@ namespace Layout {
 
 struct LineContent {
     InlineItemRange range;
+    bool endsWithHyphen { false };
     size_t partialTrailingContentLength { 0 };
     std::optional<InlineLayoutUnit> overflowLogicalWidth { };
 };
@@ -259,6 +260,7 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
         , { !result.isHangingTrailingContentWhitespace, result.hangingTrailingContentWidth }
         , { WTFMove(visualOrderList), inlineBaseDirection }
         , { isFirstFormattedLine() ? LineLayoutResult::IsFirstLast::FirstFormattedLine::WithinIFC : LineLayoutResult::IsFirstLast::FirstFormattedLine::No, isLastLine }
+        , lineContent.endsWithHyphen
         , result.nonSpanningInlineLevelBoxCount
         , { }
         , lineContent.range.isEmpty() ? std::make_optional(m_lineLogicalRect.top() + m_candidateContentMaximumHeight) : std::nullopt
@@ -278,6 +280,7 @@ void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const Use
     m_partialLeadingTextItem = { };
     m_initialLetterClearGap = { };
     m_candidateContentMaximumHeight = { };
+    inlineContentBreaker().setHyphenationDisabled(inlineLayoutState().isHyphenationDisabled());
 
     auto createLineSpanningInlineBoxes = [&] {
         auto isRootLayoutBox = [&](auto& elementBox) {
@@ -498,12 +501,10 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
         auto runsExpandHorizontally = !isInIntrinsicWidthMode() && (isLastLine ? rootStyle.textAlignLast() == TextAlignLast::Justify : rootStyle.textAlign() == TextAlignMode::Justify);
         if (runsExpandHorizontally)
             m_line.applyRunExpansion(horizontalAvailableSpace);
-        auto lineEndsWithHyphen = false;
         if (m_line.hasContent()) {
             auto& lastTextContent = m_line.runs().last().textContent();
-            lineEndsWithHyphen = lastTextContent && lastTextContent->needsHyphen;
+            lineContent.endsWithHyphen = lastTextContent && lastTextContent->needsHyphen;
         }
-        m_successiveHyphenatedLineCount = lineEndsWithHyphen ? m_successiveHyphenatedLineCount + 1 : 0;
     };
     handleLineEnding();
 
@@ -684,12 +685,6 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
     setLeadingAndTrailingHangingPunctuation();
 
     lineCandidate.inlineContent.setHasTrailingSoftWrapOpportunity(hasTrailingSoftWrapOpportunity(softWrapOpportunityIndex, layoutRange.endIndex(), m_inlineItems));
-}
-
-static bool shouldDisableHyphenation(const RenderStyle& rootStyle, unsigned successiveHyphenatedLineCount)
-{
-    unsigned limitLines = rootStyle.hyphenationLimitLines() == RenderStyle::initialHyphenationLimitLines() ? std::numeric_limits<unsigned>::max() : rootStyle.hyphenationLimitLines();
-    return successiveHyphenatedLineCount >= limitLines;
 }
 
 static inline InlineLayoutUnit availableWidth(const LineCandidate::InlineContent& candidateContent, const Line& line, InlineLayoutUnit lineWidth)
@@ -977,7 +972,6 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
             lineIsConsideredContentful,
             !m_wrapOpportunityList.isEmpty()
         };
-        inlineContentBreaker().setHyphenationDisabled(shouldDisableHyphenation(root().style(), m_successiveHyphenatedLineCount));
         lineBreakingResult = inlineContentBreaker().processInlineContent(continuousInlineContent, lineStatus);
     }
     auto lineGainsNewContent = lineBreakingResult.action == InlineContentBreaker::Result::Action::Keep || lineBreakingResult.action == InlineContentBreaker::Result::Action::Break; 

@@ -73,6 +73,7 @@ private:
 
     void collectContentIfNeeded();
     InlineRect createDisplayContentForInlineContent(size_t lineIndex, const LineLayoutResult&, const ConstraintsForInlineContent&, InlineLayoutState&, InlineDisplay::Content&);
+    void updateInlineLayoutStateWithLineLayoutResult(const LineLayoutResult&, InlineLayoutState&, const InlineRect& lineLogicalRect, const FloatingContext&);
     void updateBoxGeometryForPlacedFloats(const LineLayoutResult::PlacedFloatList&);
     void resetGeometryForClampedContent(const InlineItemRange& needsDisplayContentRange, const LineLayoutResult::SuspendedFloatList& suspendedFloats, LayoutPoint topleft);
     bool createDisplayContentForLineFromCachedContent(const ConstraintsForInlineContent&, InlineLayoutState&, InlineLayoutResult&);

@@ -92,6 +92,7 @@ private:
     bool isFirstFormattedLine() const { return !m_previousLine.has_value(); }
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
+    const InlineLayoutState& inlineLayoutState() const { return m_inlineLayoutState; }
     const BlockLayoutState& blockLayoutState() const { return m_inlineLayoutState.parentBlockLayoutState(); }
     FloatingState& floatingState() { return m_floatingState; }
     const FloatingState& floatingState() const { return const_cast<LineBuilder&>(*this).floatingState(); }
@@ -118,7 +119,6 @@ private:
     std::optional<InlineLayoutUnit> m_overflowingLogicalWidth;
     Vector<const InlineItem*> m_wrapOpportunityList;
     Vector<InlineItem> m_lineSpanningInlineBoxes;
-    unsigned m_successiveHyphenatedLineCount { 0 };
     OptionSet<UsedFloat> m_lineIsConstrainedByFloat { };
     std::optional<InlineLayoutUnit> m_initialLetterClearGap;
 };

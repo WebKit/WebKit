@@ -27,14 +27,13 @@
 
 #include "AvailableLineWidthOverride.h"
 #include "BlockLayoutState.h"
-#include "FloatingState.h"
 
 namespace WebCore {
 namespace Layout {
 
 class InlineLayoutState {
 public:
-    InlineLayoutState(BlockLayoutState&, HashMap<const ElementBox*, LayoutUnit>&& nestedListMarkerOffsets);
+    InlineLayoutState(BlockLayoutState&, HashMap<const ElementBox*, LayoutUnit>&& nestedListMarkerOffsets, std::optional<size_t> hyphenationLimitLines);
 
     void setClearGapAfterLastLine(InlineLayoutUnit verticalGap);
     InlineLayoutUnit clearGapAfterLastLine() const { return m_clearGapAfterLastLine; }
@@ -53,18 +52,25 @@ public:
     void setClampedLineIndex(size_t lineIndex) { m_clampedLineIndex = lineIndex; }
     std::optional<size_t> clampedLineIndex() const { return m_clampedLineIndex; }
 
+    void incrementSuccessiveHyphenatedLineCount() { ++m_successiveHyphenatedLineCount; }
+    void resetSuccessiveHyphenatedLineCount() { m_successiveHyphenatedLineCount = 0; }
+    bool isHyphenationDisabled() const { return m_hyphenationLimitLines && *m_hyphenationLimitLines <= m_successiveHyphenatedLineCount; }
+
 private:
     BlockLayoutState& m_parentBlockLayoutState;
     InlineLayoutUnit m_clearGapBeforeFirstLine { 0.f };
     InlineLayoutUnit m_clearGapAfterLastLine { 0.f };
     std::optional<size_t> m_clampedLineIndex { };
+    const std::optional<size_t> m_hyphenationLimitLines { };
+    size_t m_successiveHyphenatedLineCount { 0 };
     // FIXME: This is required by the integaration codepath.
     HashMap<const ElementBox*, LayoutUnit> m_nestedListMarkerOffsets;
     AvailableLineWidthOverride m_availableLineWidthOverride;
 };
 
-inline InlineLayoutState::InlineLayoutState(BlockLayoutState& parentBlockLayoutState, HashMap<const ElementBox*, LayoutUnit>&& nestedListMarkerOffsets)
+inline InlineLayoutState::InlineLayoutState(BlockLayoutState& parentBlockLayoutState, HashMap<const ElementBox*, LayoutUnit>&& nestedListMarkerOffsets, std::optional<size_t> hyphenationLimitLines)
     : m_parentBlockLayoutState(parentBlockLayoutState)
+    , m_hyphenationLimitLines(hyphenationLimitLines)
     , m_nestedListMarkerOffsets(WTFMove(nestedListMarkerOffsets))
 {
 }
