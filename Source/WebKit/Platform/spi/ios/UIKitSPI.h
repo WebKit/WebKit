@@ -110,10 +110,6 @@
 #import <UIKit/UIMenu_Private.h>
 #endif
 
-#if HAVE(UIDATEPICKER_OVERLAY_PRESENTATION)
-#import <UIKit/_UIDatePickerOverlayPresentation.h>
-#endif
-
 #if ENABLE(DRAG_SUPPORT)
 #import <UIKit/NSItemProvider+UIKitAdditions_Private.h>
 #endif
@@ -229,46 +225,6 @@ WTF_EXTERN_C_END
 @interface UIColor ()
 + (UIColor *)systemBackgroundColor;
 @end
-
-typedef NS_ENUM(NSInteger, UIDatePickerPrivateMode)  {
-    UIDatePickerModeYearAndMonth = 4269,
-};
-
-#if HAVE(UIDATEPICKER_STYLE)
-typedef NS_ENUM(NSInteger, UIDatePickerStyle) {
-    UIDatePickerStyleAutomatic = 0
-}
-#endif
-
-@interface UIDatePicker ()
-@property (nonatomic, readonly, getter=_contentWidth) CGFloat contentWidth;
-#if HAVE(UIDATEPICKER_STYLE)
-@property (nonatomic, readwrite, assign) UIDatePickerStyle preferredDatePickerStyle;
-#endif
-- (UIEdgeInsets)_appliedInsetsToEdgeOfContent;
-@end
-
-#if HAVE(UIDATEPICKER_OVERLAY_PRESENTATION)
-
-typedef NS_ENUM(NSInteger, _UIDatePickerOverlayAnchor) {
-    _UIDatePickerOverlayAnchorSourceRect = 2
-};
-
-@interface _UIDatePickerOverlayPresentation : NSObject
-
-- (instancetype)initWithSourceView:(UIView *)sourceView;
-- (void)presentDatePicker:(UIDatePicker *)datePicker onDismiss:(void(^)(BOOL retargeted))dismissHandler;
-- (void)dismissPresentationAnimated:(BOOL)animated;
-
-@property (nonatomic, weak, readonly) UIView *sourceView;
-@property (nonatomic, assign) CGRect sourceRect;
-@property (nonatomic, assign) _UIDatePickerOverlayAnchor overlayAnchor;
-@property (nonatomic, strong) UIView *accessoryView;
-@property (nonatomic, assign) BOOL accessoryViewIgnoresDefaultInsets;
-
-@end
-
-#endif
 
 @interface UIDevice ()
 - (void)setOrientation:(UIDeviceOrientation)orientation animated:(BOOL)animated;

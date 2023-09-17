@@ -128,6 +128,7 @@ private:
     void simulateRotation(DeviceOrientation*, JSValueRef) override;
     void simulateRotationLikeSafari(DeviceOrientation*, JSValueRef) override;
     bool isShowingPopover() const override;
+    bool isShowingFormValidationBubble() const override;
     JSObjectRef rectForMenuAction(JSStringRef) const override;
     JSObjectRef contextMenuRect() const override;
     JSObjectRef menuRect() const override;

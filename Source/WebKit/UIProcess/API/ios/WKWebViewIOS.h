@@ -204,6 +204,8 @@ class VisibleContentRectUpdateInfo;
 @property (nonatomic, readonly) BOOL _isWindowResizingEnabled;
 #endif
 
+@property (nonatomic, readonly) CGRect _contentRectForUserInteraction;
+
 @end
 
 _WKTapHandlingResult wkTapHandlingResult(WebKit::TapHandlingResult);

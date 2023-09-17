@@ -31,6 +31,8 @@
 #import "UIKitSPI.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
+#import "WKDatePickerPopoverController.h"
+#import "WKWebViewIOS.h"
 #import "WKWebViewPrivateForTesting.h"
 #import "WebPageProxy.h"
 #import <UIKit/UIDatePicker.h>
@@ -39,18 +41,14 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/SetForScope.h>
 
-@interface WKDateTimePicker : NSObject<WKFormControl> {
+@interface WKDateTimePicker : NSObject<WKFormControl, WKDatePickerPopoverControllerDelegate> {
     NSString *_formatString;
     RetainPtr<NSString> _initialValue;
     WKContentView *_view;
     CGPoint _interactionPoint;
     RetainPtr<UIDatePicker> _datePicker;
-#if HAVE(UIDATEPICKER_OVERLAY_PRESENTATION)
     BOOL _isDismissingDatePicker;
-
-    RetainPtr<_UIDatePickerOverlayPresentation> _datePickerPresentation;
-    RetainPtr<UIToolbar> _accessoryView;
-#endif
+    RetainPtr<WKDatePickerPopoverController> _datePickerController;
 }
 
 - (instancetype)initWithView:(WKContentView *)view datePickerMode:(UIDatePickerMode)mode;
@@ -68,6 +66,7 @@ static NSString * const kDateFormatString = @"yyyy-MM-dd"; // "2011-01-27".
 static NSString * const kMonthFormatString = @"yyyy-MM"; // "2011-01".
 static NSString * const kTimeFormatString = @"HH:mm"; // "13:45".
 static NSString * const kDateTimeFormatString = @"yyyy-MM-dd'T'HH:mm"; // "2011-01-27T13:45"
+static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>(4269);
 
 - (id)initWithView:(WKContentView *)view datePickerMode:(UIDatePickerMode)mode
 {
@@ -95,7 +94,7 @@ static NSString * const kDateTimeFormatString = @"yyyy-MM-dd'T'HH:mm"; // "2011-
     }
 
     _datePicker = adoptNS([[UIDatePicker alloc] init]);
-    [_datePicker addTarget:self action:@selector(datePickerChanged:) forControlEvents:UIControlEventValueChanged];
+    [_datePicker addTarget:self action:@selector(_dateChanged) forControlEvents:UIControlEventValueChanged];
 
     if ([self shouldForceGregorianCalendar])
         [_datePicker setCalendar:[NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian]];
@@ -103,35 +102,26 @@ static NSString * const kDateTimeFormatString = @"yyyy-MM-dd'T'HH:mm"; // "2011-
     [_datePicker setDatePickerMode:mode];
 
 #if HAVE(UIDATEPICKER_STYLE)
-    if (mode == UIDatePickerModeTime || mode == (UIDatePickerMode)UIDatePickerModeYearAndMonth)
+    if (mode == UIDatePickerModeTime || mode == yearAndMonthDatePickerMode)
         [_datePicker setPreferredDatePickerStyle:UIDatePickerStyleWheels];
     else
         [_datePicker setPreferredDatePickerStyle:UIDatePickerStyleInline];
 #endif
-
-#if HAVE(UIDATEPICKER_OVERLAY_PRESENTATION)
     _isDismissingDatePicker = NO;
-
-    _accessoryView = adoptNS([[UIToolbar alloc] init]);
-    CGSize accessorySize = [_accessoryView sizeThatFits:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
-    [[_accessoryView heightAnchor] constraintEqualToConstant:accessorySize.height].active = YES;
-
-#if HAVE(UITOOLBAR_STANDARD_APPEARANCE)
-    auto toolbarAppearance = adoptNS([[UIToolbarAppearance alloc] init]);
-    [toolbarAppearance setBackgroundEffect:nil];
-    [_accessoryView setStandardAppearance:toolbarAppearance.get()];
-#endif
-
-    auto resetButton = adoptNS([[UIBarButtonItem alloc] initWithTitle:WEB_UI_STRING_KEY("Reset", "Reset Button Date/Time Context Menu", "Reset button in date input context menu") style:UIBarButtonItemStylePlain target:self action:@selector(reset:)]);
-    auto doneButton = adoptNS([[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done:)]);
-
-    [_accessoryView setItems:@[ resetButton.get(), UIBarButtonItem.flexibleSpaceItem, doneButton.get() ]];
-#endif // HAVE(UIDATEPICKER_OVERLAY_PRESENTATION)
 
     return self;
 }
 
-#if HAVE(UIDATEPICKER_OVERLAY_PRESENTATION)
+- (void)datePickerPopoverControllerDidDismiss:(WKDatePickerPopoverController *)controller
+{
+    [self handleDatePickerPresentationDismissal];
+}
+
+- (void)datePickerPopoverControllerDidReset:(WKDatePickerPopoverController *)controller
+{
+    [self setDateTimePickerToInitialValue];
+    [_view page]->setFocusedElementValue([_view focusedElementInformation].elementContext, { });
+}
 
 - (void)handleDatePickerPresentationDismissal
 {
@@ -144,51 +134,23 @@ static NSString * const kDateTimeFormatString = @"yyyy-MM-dd'T'HH:mm"; // "2011-
 
 - (void)removeDatePickerPresentation
 {
-    if (_datePickerPresentation) {
+    if (_datePickerController) {
         if (!_isDismissingDatePicker) {
             SetForScope isDismissingDatePicker { _isDismissingDatePicker, YES };
-            [_datePickerPresentation dismissPresentationAnimated:NO];
+            [_datePickerController dismissViewControllerAnimated:NO completion:nil];
         }
 
-        _datePickerPresentation = nil;
+        _datePickerController = nil;
         [_view.webView _didDismissContextMenu];
     }
 }
 
 - (void)showDateTimePicker
 {
-    _datePickerPresentation = adoptNS([[_UIDatePickerOverlayPresentation alloc] initWithSourceView:_view]);
-    [_datePickerPresentation setSourceRect:_view.focusedElementInformation.interactionRect];
-    [_datePickerPresentation setAccessoryView:_accessoryView.get()];
-    [_datePickerPresentation setAccessoryViewIgnoresDefaultInsets:YES];
-    [_datePickerPresentation setOverlayAnchor:_UIDatePickerOverlayAnchorSourceRect];
-
-    [_datePickerPresentation presentDatePicker:_datePicker.get() onDismiss:[weakSelf = WeakObjCPtr<WKDateTimePicker>(self)](BOOL) {
-        if (auto strongSelf = weakSelf.get())
-            [strongSelf handleDatePickerPresentationDismissal];
+    _datePickerController = adoptNS([[WKDatePickerPopoverController alloc] initWithDatePicker:_datePicker.get() delegate:self]);
+    [_datePickerController presentInView:_view sourceRect:_view.focusedElementInformation.interactionRect interactionBounds:_view.webView._contentRectForUserInteraction completion:[strongSelf = retainPtr(self)] {
+        [strongSelf->_view.webView _didShowContextMenu];
     }];
-
-    [_view.webView _didShowContextMenu];
-}
-
-#endif // HAVE(UIDATEPICKER_OVERLAY_PRESENTATION)
-
-- (void)datePickerChanged:(id)sender
-{
-    [self _dateChanged];
-}
-
-- (void)reset:(id)sender
-{
-    [self setDateTimePickerToInitialValue];
-    [_view page]->setFocusedElementValue([_view focusedElementInformation].elementContext, String());
-}
-
-- (void)done:(id)sender
-{
-#if HAVE(UIDATEPICKER_OVERLAY_PRESENTATION)
-    [_datePickerPresentation dismissPresentationAnimated:YES];
-#endif
 }
 
 - (BOOL)shouldForceGregorianCalendar
@@ -201,9 +163,7 @@ static NSString * const kDateTimeFormatString = @"yyyy-MM-dd'T'HH:mm"; // "2011-
 
 - (void)dealloc
 {
-#if HAVE(UIDATEPICKER_OVERLAY_PRESENTATION)
     [self removeDatePickerPresentation];
-#endif
     [super dealloc];
 }
 
@@ -228,8 +188,8 @@ static NSString * const kDateTimeFormatString = @"yyyy-MM-dd'T'HH:mm"; // "2011-
 
 - (RetainPtr<NSDateFormatter>)dateFormatterForPicker
 {
-    RetainPtr<NSLocale> englishLocale = adoptNS([[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]);
-    RetainPtr<NSDateFormatter> dateFormatter = adoptNS([[NSDateFormatter alloc] init]);
+    auto englishLocale = adoptNS([[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]);
+    auto dateFormatter = adoptNS([[NSDateFormatter alloc] init]);
     [dateFormatter setTimeZone:[_datePicker timeZone]];
     [dateFormatter setDateFormat:_formatString];
     // Force English locale because that is what HTML5 value parsing expects.
@@ -239,7 +199,7 @@ static NSString * const kDateTimeFormatString = @"yyyy-MM-dd'T'HH:mm"; // "2011-
 
 - (void)_dateChanged
 {
-    RetainPtr<NSDateFormatter> dateFormatter = [self dateFormatterForPicker];
+    RetainPtr dateFormatter = [self dateFormatterForPicker];
     [_view updateFocusedElementValue:[dateFormatter stringFromDate:[_datePicker date]]];
 }
 
@@ -262,8 +222,16 @@ static NSString * const kDateTimeFormatString = @"yyyy-MM-dd'T'HH:mm"; // "2011-
 
 - (void)controlBeginEditing
 {
+#if PLATFORM(MACCATALYST)
+    // The date/time input popover always attempts to steal first responder from the web view upon
+    // presentation due to the Catalyst-specific `_UIPopoverHostManagerMac`, so we need to relinquish
+    // first responder to the focused element to avoid immediately blurring the focused element.
+    bool shouldRelinquishFirstResponder = true;
+#else
     auto elementType = _view.focusedElementInformation.elementType;
-    if (elementType == WebKit::InputType::Time || elementType == WebKit::InputType::DateTimeLocal)
+    bool shouldRelinquishFirstResponder = elementType == WebKit::InputType::Time || elementType == WebKit::InputType::DateTimeLocal;
+#endif
+    if (shouldRelinquishFirstResponder)
         [_view startRelinquishingFirstResponderToFocusedElement];
 
     // Set the time zone in case it changed.
@@ -273,19 +241,13 @@ static NSString * const kDateTimeFormatString = @"yyyy-MM-dd'T'HH:mm"; // "2011-
     // Also, update the actual <input> value.
     _initialValue = _view.focusedElementInformation.value;
     [self setDateTimePickerToInitialValue];
-
-#if HAVE(UIDATEPICKER_OVERLAY_PRESENTATION)
     [self showDateTimePicker];
-#endif
 }
 
 - (void)controlEndEditing
 {
     [_view stopRelinquishingFirstResponderToFocusedElement];
-
-#if HAVE(UIDATEPICKER_OVERLAY_PRESENTATION)
     [self removeDatePickerPresentation];
-#endif
 }
 
 - (NSString *)calendarType
@@ -335,7 +297,7 @@ static NSString * const kDateTimeFormatString = @"yyyy-MM-dd'T'HH:mm"; // "2011-
         mode = UIDatePickerModeTime;
         break;
     case WebKit::InputType::Month:
-        mode = (UIDatePickerMode)UIDatePickerModeYearAndMonth;
+        mode = yearAndMonthDatePickerMode;
         break;
     default:
         [self release];

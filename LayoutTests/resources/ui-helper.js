@@ -710,10 +710,10 @@ window.UIHelper = class UIHelper {
         });
     }
 
-    static isShowingPopover()
+    static isShowingFormValidationBubble()
     {
         return new Promise(resolve => {
-            testRunner.runUIScript("uiController.isShowingPopover", result => resolve(result === "true"));
+            testRunner.runUIScript("uiController.isShowingFormValidationBubble", result => resolve(result === "true"));
         });
     }
 

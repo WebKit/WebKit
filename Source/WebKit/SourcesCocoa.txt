@@ -441,6 +441,7 @@ UIProcess/Inspector/mac/WKInspectorWKWebView.mm
 UIProcess/Network/NetworkProcessProxyCocoa.mm
 
 UIProcess/ios/forms/WKAirPlayRoutePicker.mm
+UIProcess/ios/forms/WKDatePickerPopoverController.mm
 UIProcess/ios/forms/WKDatePickerViewController.mm
 UIProcess/ios/forms/WKDateTimeInputControl.mm
 UIProcess/ios/forms/WKFileUploadPanel.mm

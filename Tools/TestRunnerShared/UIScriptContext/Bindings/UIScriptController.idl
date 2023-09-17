@@ -273,6 +273,7 @@ interface UIScriptController {
     undefined dismissMenu();
 
     readonly attribute boolean isShowingPopover;
+    readonly attribute boolean isShowingFormValidationBubble;
     attribute object willPresentPopoverCallback;
     attribute object didDismissPopoverCallback;
 
