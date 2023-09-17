@@ -494,6 +494,13 @@ inline void reifyStaticProperty(VM& vm, const ClassInfo* classInfo, const Proper
                 value.domJITFunction(), ImplementationVisibility::Public, value.intrinsic(), value.signature(), attributesForStructure(value.attributes()));
             return;
         }
+        #if USE(BUN_JSC_ADDITIONS)
+        if (value.attribtes() & PropertyAttribute::Constructable) {
+            JSFunction* function = JSFunction::create(vm, thisObj.globalObject(), value.functionLength(), propertyName, value.function(), ImplementationVisibility::Public, value.intrinsic(), value.function(), nullptr);
+            putDirect(vm, propertyName, function, attributesForStructure(value.attributes()));
+            return;
+        }
+        #endif
         thisObj.putDirectNativeFunction(
             vm, thisObj.globalObject(), propertyName, value.functionLength(),
             value.function(), ImplementationVisibility::Public, value.intrinsic(), attributesForStructure(value.attributes()));
