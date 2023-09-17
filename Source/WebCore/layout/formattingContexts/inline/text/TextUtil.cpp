@@ -584,5 +584,69 @@ bool TextUtil::canUseSimplifiedTextMeasuring(StringView textContent, const Rende
     return true;
 }
 
+void TextUtil::computedExpansions(const Line::RunList& runs, size_t hangingTrailingWhitespaceLength, ExpansionInfo& expansionInfo)
+{
+    // Collect and distribute the expansion opportunities.
+    expansionInfo.opportunityCount = 0;
+    expansionInfo.opportunityList.resizeToFit(runs.size());
+    expansionInfo.behaviorList.resizeToFit(runs.size());
+    auto lastRunIndexWithContent = std::optional<size_t> { };
+
+    // Line start behaves as if we had an expansion here (i.e. fist runs should not start with allowing left expansion).
+    auto runIsAfterExpansion = true;
+    auto lastTextRunIndexForTrimming = [&]() -> std::optional<size_t> {
+        if (!hangingTrailingWhitespaceLength)
+            return { };
+        for (auto index = runs.size(); index--;) {
+            if (runs[index].isText())
+                return index;
+        }
+        return { };
+    }();
+    for (size_t runIndex = 0; runIndex < runs.size(); ++runIndex) {
+        auto& run = runs[runIndex];
+        auto expansionBehavior = ExpansionBehavior::defaultBehavior();
+        size_t expansionOpportunitiesInRun = 0;
+
+        // According to the CSS3 spec, a UA can determine whether or not
+        // it wishes to apply text-align: justify to text with collapsible spaces (and this behavior matches Blink).
+        auto mayAlterSpacingWithinText = !TextUtil::shouldPreserveSpacesAndTabs(run.layoutBox()) || hangingTrailingWhitespaceLength;
+        if (run.isText() && mayAlterSpacingWithinText) {
+            if (run.hasTextCombine())
+                expansionBehavior = ExpansionBehavior::forbidAll();
+            else {
+                expansionBehavior.left = runIsAfterExpansion ? ExpansionBehavior::Behavior::Forbid : ExpansionBehavior::Behavior::Allow;
+                expansionBehavior.right = ExpansionBehavior::Behavior::Allow;
+                auto& textContent = *run.textContent();
+                auto length = textContent.length;
+                if (lastTextRunIndexForTrimming && runIndex == *lastTextRunIndexForTrimming) {
+                    // Trailing hanging whitespace sequence is ignored when computing the expansion opportunities.
+                    length -= hangingTrailingWhitespaceLength;
+                }
+                std::tie(expansionOpportunitiesInRun, runIsAfterExpansion) = FontCascade::expansionOpportunityCount(StringView(downcast<InlineTextBox>(run.layoutBox()).content()).substring(textContent.start, length), run.inlineDirection(), expansionBehavior);
+            }
+        } else if (run.isBox())
+            runIsAfterExpansion = false;
+
+        expansionInfo.behaviorList[runIndex] = expansionBehavior;
+        expansionInfo.opportunityList[runIndex] = expansionOpportunitiesInRun;
+        expansionInfo.opportunityCount += expansionOpportunitiesInRun;
+
+        if (run.isText() || run.isBox())
+            lastRunIndexWithContent = runIndex;
+    }
+    // Forbid right expansion in the last run to prevent trailing expansion at the end of the line.
+    if (lastRunIndexWithContent && expansionInfo.opportunityList[*lastRunIndexWithContent]) {
+        expansionInfo.behaviorList[*lastRunIndexWithContent].right = ExpansionBehavior::Behavior::Forbid;
+        if (runIsAfterExpansion) {
+            // When the last run has an after expansion (e.g. CJK ideograph) we need to remove this trailing expansion opportunity.
+            // Note that this is not about trailing collapsible whitespace as at this point we trimmed them all.
+            ASSERT(expansionInfo.opportunityCount && expansionInfo.opportunityList[*lastRunIndexWithContent]);
+            --expansionInfo.opportunityCount;
+            --expansionInfo.opportunityList[*lastRunIndexWithContent];
+        }
+    }
+}
+
 }
 }

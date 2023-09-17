@@ -132,7 +132,7 @@ public:
 
         TextDirection inlineDirection() const;
         InlineLayoutUnit letterSpacing() const;
-        inline bool hasTextCombine() const;
+        bool hasTextCombine() const;
 
         UBiDiLevel bidiLevel() const { return m_bidiLevel; }
 

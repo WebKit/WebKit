@@ -95,6 +95,13 @@ public:
     static float hangableStopOrCommaEndWidth(const InlineTextItem&, const RenderStyle&);
 
     static bool canUseSimplifiedTextMeasuring(StringView, const RenderStyle& style, const RenderStyle* firstLineStyle);
+
+    struct ExpansionInfo {
+        size_t opportunityCount { 0 };
+        Vector<size_t> opportunityList;
+        Vector<ExpansionBehavior> behaviorList;
+    };
+    static void computedExpansions(const Line::RunList&, size_t hangingTrailingWhitespaceLength, ExpansionInfo&);
 };
 
 } // namespace Layout
