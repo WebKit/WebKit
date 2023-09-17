@@ -122,6 +122,7 @@ public:
 
     bool isDocumentBox() const { return m_nodeType == NodeType::DocumentElement; }
     bool isBodyBox() const { return m_nodeType == NodeType::Body; }
+    bool isRuby() const { return style().display() == DisplayType::Ruby; }
     bool isTableWrapperBox() const { return m_nodeType == NodeType::TableWrapperBox; }
     bool isTableBox() const { return m_nodeType == NodeType::TableBox; }
     bool isTableCaption() const { return style().display() == DisplayType::TableCaption; }

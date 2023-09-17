@@ -461,6 +461,10 @@ size_t InlineFormattingGeometry::nextWrapOpportunity(size_t startIndex, const In
             return index;
         }
         if (currentItem.isInlineBoxStart() || currentItem.isInlineBoxEnd()) {
+            if (currentItem.layoutBox().isRuby()) {
+                // Should be able to break _before_ <ruby>.
+                return index;
+            }
             // Need to see what comes next to decide.
             continue;
         }
@@ -511,7 +515,7 @@ size_t InlineFormattingGeometry::nextWrapOpportunity(size_t startIndex, const In
             // Soft wrap opportunity is at the first inline box that encloses the trailing content.
             for (auto candidateIndex = start + 1; candidateIndex < end; ++candidateIndex) {
                 auto& inlineItem = inlineItems[candidateIndex];
-                ASSERT(inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque());
+                ASSERT((inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque()) && !inlineItem.layoutBox().isRuby());
                 if (inlineItem.isInlineBoxStart())
                     inlineBoxStack.append({ &inlineItem.layoutBox(), candidateIndex });
                 else if (inlineItem.isInlineBoxEnd() && !inlineBoxStack.isEmpty())

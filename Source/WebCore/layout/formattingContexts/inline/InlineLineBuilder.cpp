@@ -161,14 +161,17 @@ struct LineCandidate {
 
     struct InlineContent {
         const InlineContentBreaker::ContinuousContent& continuousContent() const { return m_continuousContent; }
+        const InlineItemRange& rubyContainerRange() const { return m_rubyContainerRange; }
         const InlineItem* trailingLineBreak() const { return m_trailingLineBreak; }
         const InlineItem* trailingWordBreakOpportunity() const { return m_trailingWordBreakOpportunity; }
 
         void appendInlineItem(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
         void appendTrailingLineBreak(const InlineItem& lineBreakItem) { m_trailingLineBreak = &lineBreakItem; }
         void appendtrailingWordBreakOpportunity(const InlineItem& wordBreakItem) { m_trailingWordBreakOpportunity = &wordBreakItem; }
+        void appendRubyContainerRange(const InlineItemRange& rubyRange) { m_rubyContainerRange = rubyRange; }
         void reset();
         bool isEmpty() const { return m_continuousContent.runs().isEmpty() && !trailingWordBreakOpportunity() && !trailingLineBreak(); }
+        bool isRuby() const { return !m_rubyContainerRange.isEmpty(); }
 
         void setHasTrailingSoftWrapOpportunity(bool hasTrailingSoftWrapOpportunity) { m_hasTrailingSoftWrapOpportunity = hasTrailingSoftWrapOpportunity; }
         bool hasTrailingSoftWrapOpportunity() const { return m_hasTrailingSoftWrapOpportunity; }
@@ -180,6 +183,7 @@ struct LineCandidate {
 
     private:
         InlineContentBreaker::ContinuousContent m_continuousContent;
+        InlineItemRange m_rubyContainerRange { };
         const InlineItem* m_trailingLineBreak { nullptr };
         const InlineItem* m_trailingWordBreakOpportunity { nullptr };
         InlineLayoutUnit m_accumulatedClonedDecorationEnd { 0.f };
@@ -210,6 +214,7 @@ inline void LineCandidate::InlineContent::reset()
     m_trailingLineBreak = { };
     m_trailingWordBreakOpportunity = { };
     m_accumulatedClonedDecorationEnd = { };
+    m_rubyContainerRange = { };
 }
 
 inline void LineCandidate::reset()
@@ -597,8 +602,8 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
     // softWrapOpportunityIndex == layoutRange.end means we don't have any wrap opportunity in this content.
     ASSERT(softWrapOpportunityIndex <= layoutRange.endIndex());
 
-    auto isLineStart = currentInlineItemIndex == layoutRange.startIndex();
-    if (isLineStart && m_partialLeadingTextItem) {
+    auto isLeadingPartiaContent = currentInlineItemIndex == layoutRange.startIndex() && m_partialLeadingTextItem;
+    if (isLeadingPartiaContent) {
         ASSERT(!m_overflowingLogicalWidth);
         // Handle leading partial content first (overflowing text from the previous line).
         auto itemWidth = formattingContext().formattingGeometry().inlineItemWidth(*m_partialLeadingTextItem, currentLogicalRight, isFirstFormattedLine());
@@ -606,6 +611,34 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
         currentLogicalRight += itemWidth;
         ++currentInlineItemIndex;
     }
+
+    auto appendRubyContainerIfApplicable = [&] {
+        if (softWrapOpportunityIndex > currentInlineItemIndex || isLeadingPartiaContent)
+            return false;
+        // We must be at a ruby container and we should let the ruby formatting context handle the rest of the ruby content.
+        ASSERT(m_inlineItems[currentInlineItemIndex].layoutBox().isRuby());
+        // Ruby base content is handled as one atomic line candidate where ruby formatting context takes care of the internal details.
+        // Note that ruby content is placed on the line as regualar inline content by the ruby formatting context.
+        size_t nestingLevel = 1;
+        for (size_t index = softWrapOpportunityIndex + 1; index < layoutRange.endIndex(); ++index) {
+            auto& inlineItem = m_inlineItems[index];
+            if (!inlineItem.layoutBox().isRuby())
+                continue;
+            ASSERT(inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd());
+            nestingLevel += inlineItem.isInlineBoxEnd() ?  -1 : 1;
+            if (!nestingLevel) {
+                ASSERT(&m_inlineItems[softWrapOpportunityIndex].layoutBox() == &m_inlineItems[index].layoutBox());
+                lineCandidate.inlineContent.appendRubyContainerRange({ { softWrapOpportunityIndex, { } }, { index + 1, { } } });
+                return true;
+            }
+        }
+        ASSERT_NOT_REACHED();
+        // Let's just skip this corrupt ruby container and treat it as regular inline content.
+        ++softWrapOpportunityIndex;
+        return false;
+    };
+    if (appendRubyContainerIfApplicable())
+        return;
 
     auto firstInlineTextItemIndex = std::optional<size_t> { };
     auto lastInlineTextItemIndex = std::optional<size_t> { };
@@ -942,12 +975,14 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
 
 LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layoutRange, const LineCandidate& lineCandidate)
 {
+    auto result = LineBuilder::Result { };
     auto& inlineContent = lineCandidate.inlineContent;
-    auto& continuousInlineContent = inlineContent.continuousContent();
 
-    if (continuousInlineContent.runs().isEmpty()) {
+    auto& continuousInlineContent = inlineContent.continuousContent();
+    if (continuousInlineContent.runs().isEmpty() && !inlineContent.isRuby()) {
         ASSERT(inlineContent.trailingLineBreak() || inlineContent.trailingWordBreakOpportunity());
-        return { inlineContent.trailingLineBreak() ? InlineContentBreaker::IsEndOfLine::Yes : InlineContentBreaker::IsEndOfLine::No };
+        result = { inlineContent.trailingLineBreak() ? InlineContentBreaker::IsEndOfLine::Yes : InlineContentBreaker::IsEndOfLine::No };
+        return result;
     }
 
     auto usedConstraints = adjustedLineRectWithCandidateInlineContent(lineCandidate);
@@ -960,21 +995,21 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
         return availableWidth(inlineContent, m_line, availableTotalWidthForContent);
     }();
 
-    auto lineBreakingResult = InlineContentBreaker::Result { InlineContentBreaker::Result::Action::Keep, InlineContentBreaker::IsEndOfLine::No, { }, { } };
-    if (continuousInlineContent.logicalWidth() > availableWidthForCandidateContent) {
-        auto lineIsConsideredContentful = m_line.hasContentOrListMarker() || isLineConstrainedByFloat() || !usedConstraints.isConstrainedByFloat.isEmpty();
-        auto lineStatus = InlineContentBreaker::LineStatus {
-            m_line.contentLogicalRight(),
-            availableWidthForCandidateContent,
-            m_line.trimmableTrailingWidth(),
-            m_line.trailingSoftHyphenWidth(),
-            m_line.isTrailingRunFullyTrimmable(),
-            lineIsConsideredContentful,
-            !m_wrapOpportunityList.isEmpty()
-        };
-        lineBreakingResult = inlineContentBreaker().processInlineContent(continuousInlineContent, lineStatus);
+    auto lineGainsNewContent = true;
+    if (!inlineContent.isRuby()) {
+        auto lineBreakingResult = InlineContentBreaker::Result { InlineContentBreaker::Result::Action::Keep, InlineContentBreaker::IsEndOfLine::No, { }, { } };
+        if (continuousInlineContent.logicalWidth() > availableWidthForCandidateContent) {
+            auto lineIsConsideredContentful = m_line.hasContentOrListMarker() || isLineConstrainedByFloat() || !usedConstraints.isConstrainedByFloat.isEmpty();
+            auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidthForCandidateContent, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), lineIsConsideredContentful, !m_wrapOpportunityList.isEmpty() };
+            lineBreakingResult = inlineContentBreaker().processInlineContent(continuousInlineContent, lineStatus);
+            lineGainsNewContent = lineBreakingResult.action == InlineContentBreaker::Result::Action::Keep || lineBreakingResult.action == InlineContentBreaker::Result::Action::Break;
+        }
+        result = processLineBreakingResult(lineCandidate, layoutRange, lineBreakingResult);
+    } else {
+        result = handleRubyContent(inlineContent.rubyContainerRange(), availableWidthForCandidateContent);
+        lineGainsNewContent = !!result.committedCount.value;
     }
-    auto lineGainsNewContent = lineBreakingResult.action == InlineContentBreaker::Result::Action::Keep || lineBreakingResult.action == InlineContentBreaker::Result::Action::Break; 
+
     if (lineGainsNewContent) {
         // Sometimes in order to put this content on the line, we have to avoid additional float boxes (when the new content is taller than any previous content and we have vertically stacked floats on this line)
         // which means we need to adjust the line rect to accommodate such new constraints.
@@ -982,7 +1017,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
         m_lineIsConstrainedByFloat.add(usedConstraints.isConstrainedByFloat);
     }
     m_candidateContentMaximumHeight = usedConstraints.logicalRect.height();
-    return processLineBreakingResult(lineCandidate, layoutRange, lineBreakingResult);
+    return result;
 }
 
 LineBuilder::Result LineBuilder::processLineBreakingResult(const LineCandidate& lineCandidate, const InlineItemRange& layoutRange, const InlineContentBreaker::Result& lineBreakingResult)
@@ -1073,6 +1108,22 @@ LineBuilder::Result LineBuilder::processLineBreakingResult(const LineCandidate& 
     }
     ASSERT_NOT_REACHED();
     return { InlineContentBreaker::IsEndOfLine::No };
+}
+
+LineBuilder::Result LineBuilder::handleRubyContent(const InlineItemRange& rubyContainerRange, InlineLayoutUnit availableWidthForCandidateContent)
+{
+    // This is where we create a ruby formatting context which will deal with the ruby content by placing base runs on the current line.
+    UNUSED_PARAM(availableWidthForCandidateContent);
+
+    auto& formattingGeometry = formattingContext().formattingGeometry();
+    auto currentLogicalRight = m_line.contentLogicalRight();
+    for (auto index = rubyContainerRange.startIndex(); index < rubyContainerRange.endIndex(); ++index) {
+        auto& inlineItem = m_inlineItems[index];
+        auto inlineItemWidth = formattingGeometry.inlineItemWidth(inlineItem, currentLogicalRight, isFirstFormattedLine());
+        m_line.append(inlineItem, inlineItem.layoutBox().style(), inlineItemWidth);
+        currentLogicalRight += inlineItemWidth;
+    }
+    return { InlineContentBreaker::IsEndOfLine::No, { rubyContainerRange.endIndex() - rubyContainerRange.startIndex(), false } };
 }
 
 void LineBuilder::commitPartialContent(const InlineContentBreaker::ContinuousContent::RunList& runs, const InlineContentBreaker::Result::PartialTrailingContent& partialTrailingContent)
