@@ -1,0 +1,2 @@
+ALERT: document() /etc/passwd: /etc/hosts: /etc/group:
+
