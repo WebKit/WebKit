@@ -36,6 +36,7 @@
 #include "CSSAnimation.h"
 #include "CSSFontSelector.h"
 #include "CSSParser.h"
+#include "CSSPropertyNames.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
@@ -4264,6 +4265,21 @@ void Document::processColorScheme(const String& colorSchemeString)
 
     if (auto* page = this->page())
         page->updateStyleAfterChangeInEnvironment();
+}
+
+void Document::metaElementColorSchemeChanged()
+{
+    RefPtr<CSSValue> colorScheme;
+    auto colorSchemeString = emptyString();
+    auto cssParserContext = CSSParserContext(document());
+    for (auto& metaElement : descendantsOfType<HTMLMetaElement>(rootNode())) {
+        const AtomString& nameValue = metaElement.attributeWithoutSynchronization(nameAttr);
+        if ((equalLettersIgnoringASCIICase(nameValue, "color-scheme"_s) || equalLettersIgnoringASCIICase(nameValue, "supported-color-schemes"_s)) && (colorScheme = CSSParser::parseSingleValue(CSSPropertyColorScheme, metaElement.attributeWithoutSynchronization(contentAttr), cssParserContext))) {
+            colorSchemeString = colorScheme->cssText();
+            break;
+        }
+    }
+    processColorScheme(colorSchemeString);
 }
 #endif
 

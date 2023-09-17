@@ -1002,6 +1002,7 @@ public:
 
 #if ENABLE(DARK_MODE_CSS)
     void processColorScheme(const String& colorScheme);
+    void metaElementColorSchemeChanged();
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)

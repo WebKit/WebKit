@@ -143,6 +143,10 @@ void HTMLMetaElement::removedFromAncestor(RemovalType removalType, ContainerNode
 
     if (removalType.disconnectedFromDocument && equalLettersIgnoringASCIICase(name(), "theme-color"_s))
         oldParentOfRemovedTree.document().metaElementThemeColorChanged(*this);
+#if ENABLE(DARK_MODE_CSS)
+    else if (removalType.disconnectedFromDocument && (equalLettersIgnoringASCIICase(name(), "color-scheme"_s) || equalLettersIgnoringASCIICase(name(), "supported-color-schemes"_s)))
+        oldParentOfRemovedTree.document().metaElementColorSchemeChanged();
+#endif
 }
 
 void HTMLMetaElement::process()
@@ -174,7 +178,7 @@ void HTMLMetaElement::process()
         document().processDisabledAdaptations(contentValue);
 #if ENABLE(DARK_MODE_CSS)
     else if (equalLettersIgnoringASCIICase(nameValue, "color-scheme"_s) || equalLettersIgnoringASCIICase(nameValue, "supported-color-schemes"_s))
-        document().processColorScheme(contentValue);
+        document().metaElementColorSchemeChanged();
 #endif
     else if (equalLettersIgnoringASCIICase(nameValue, "theme-color"_s))
         document().metaElementThemeColorChanged(*this);
