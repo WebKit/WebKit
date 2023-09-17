@@ -235,7 +235,7 @@ ExceptionOr<CombinedPlaneLayout> computeLayoutAndAllocationSize(const DOMRectIni
         endOffsets.uncheckedAppend(planeEnd);
         minAllocationSize = std::max(minAllocationSize, planeEnd);
 
-        for (size_t j = 1; j < i; ++j) {
+        for (size_t j = 0; j < i; ++j) {
             if (planeEnd > computedLayouts[j].destinationOffset && endOffsets[j] > computedLayout.destinationOffset)
                 return Exception { TypeError, "planes are overlapping"_s };
         }
