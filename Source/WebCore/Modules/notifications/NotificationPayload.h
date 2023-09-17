@@ -41,6 +41,7 @@ struct NotificationPayload {
     String title;
     std::optional<unsigned long long> appBadge;
     std::optional<NotificationOptionsPayload> options;
+    bool isMutable { false };
 
     WEBCORE_EXPORT static ExceptionOr<NotificationPayload> parseJSON(const String&);
 

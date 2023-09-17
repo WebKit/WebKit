@@ -32,6 +32,7 @@ static NSString * const WebNotificationDefaultActionKey = @"WebNotificationDefau
 static NSString * const WebNotificationTitleKey = @"WebNotificationTitleKey";
 static NSString * const WebNotificationAppBadgeKey = @"WebNotificationAppBadgeKey";
 static NSString * const WebNotificationOptionsKey = @"WebNotificationOptionsKey";
+static NSString * const WebNotificationMutableKey = @"WebNotificationMutableKey";
 
 namespace WebCore {
 
@@ -67,7 +68,11 @@ std::optional<NotificationPayload> NotificationPayload::fromDictionary(NSDiction
             return std::nullopt;
     }
 
-    return NotificationPayload { defaultAction, title, WTFMove(rawAppBadge), WTFMove(rawOptions) };
+    NSNumber *isMutable = dictionary[WebNotificationMutableKey];
+    if (!isMutable)
+        return std::nullopt;
+
+    return NotificationPayload { defaultAction, title, WTFMove(rawAppBadge), WTFMove(rawOptions), [isMutable boolValue] };
 }
 
 NSDictionary *NotificationPayload::dictionaryRepresentation() const
@@ -80,6 +85,7 @@ NSDictionary *NotificationPayload::dictionaryRepresentation() const
         WebNotificationTitleKey : (NSString *)title,
         WebNotificationAppBadgeKey : nsAppBadge,
         WebNotificationOptionsKey : nsOptions,
+        WebNotificationMutableKey : @(isMutable),
     };
 }
 

@@ -1443,6 +1443,34 @@ static constexpr ASCIILiteral json34 = R"JSONRESOURCE(
     "app_badge": "18446744073709551616"
 }
 )JSONRESOURCE"_s;
+static constexpr ASCIILiteral json35 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "mutable": 39
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json36 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "mutable": { }
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json37 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "mutable": "true"
+}
+)JSONRESOURCE"_s;
+static constexpr ASCIILiteral json38 = R"JSONRESOURCE(
+{
+    "default_action_url": "https://example.com/",
+    "title": "Hello world!",
+    "mutable": true
+}
+)JSONRESOURCE"_s;
 
 static constexpr ASCIILiteral errors[] = {
     "does not contain valid JSON"_s,
@@ -1462,7 +1490,8 @@ static constexpr ASCIILiteral errors[] = {
     "'options' JSON is not valid: 'icon' member is specified but is not a string"_s,
     "'options' JSON is not valid: 'icon' member is specified but does not represent a valid URL"_s,
     "'options' JSON is not valid: 'silent' member is specified but is not a boolean"_s,
-    "'app_badge' member is specified as a string that did not parse to a valid unsigned long long"_s
+    "'app_badge' member is specified as a string that did not parse to a valid unsigned long long"_s,
+    "'mutable' member is specified but is not a boolean"_s
 };
 
 static std::pair<ASCIILiteral, ASCIILiteral> jsonAndErrors[] = {
@@ -1501,6 +1530,11 @@ static std::pair<ASCIILiteral, ASCIILiteral> jsonAndErrors[] = {
     { json32, { " "_s } },
     { json33, { " "_s } },
     { json34, errors[17] },
+    { json35, errors[18] },
+    { json36, errors[18] },
+    { json37, errors[18] },
+    { json38, { " "_s } },
+
     { { }, { } }
 };
 

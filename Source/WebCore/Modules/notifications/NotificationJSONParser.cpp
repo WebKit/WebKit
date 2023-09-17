@@ -87,6 +87,11 @@ static ASCIILiteral optionsKey()
     return "options"_s;
 }
 
+static ASCIILiteral mutableKey()
+{
+    return "mutable"_s;
+}
+
 static std::optional<unsigned long long> parseAppBadgeString(const String& badgeString)
 {
     // A valid app badge string contains only ASCII digits and represents a value equal to or less than std::numeric_limits<uint64_t>::max()
@@ -163,7 +168,14 @@ ExceptionOr<NotificationPayload> NotificationJSONParser::parseNotificationPayloa
         notificationOptions = optionsOrException.releaseReturnValue();
     }
 
-    return NotificationPayload { WTFMove(defaultActionURL), WTFMove(title), WTFMove(appBadge), WTFMove(notificationOptions) };
+    bool isMutable = false;
+    if (auto value = object.getValue(mutableKey())) {
+        if (value->type() != JSON::Value::Type::Boolean)
+            return Exception { SyntaxError, makeString("Push message with Notification disposition: '"_s, mutableKey(), "' member is specified but is not a boolean") };
+        isMutable = *(value->asBoolean());
+    }
+
+    return NotificationPayload { WTFMove(defaultActionURL), WTFMove(title), WTFMove(appBadge), WTFMove(notificationOptions), isMutable };
 }
 
 ExceptionOr<NotificationOptionsPayload> NotificationJSONParser::parseNotificationOptions(const JSON::Object& object)
