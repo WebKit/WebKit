@@ -62,7 +62,7 @@ enum class PropertyAttribute : unsigned {
     DOMAttribute      = 1 << 14, // property is a simple DOM attribute - only used by static hashtables
     DOMJITAttribute   = 1 << 15, // property is a DOM JIT attribute - only used by static hashtables
     DOMJITFunction    = 1 << 16, // property is a DOM JIT function - only used by static hashtables
-#if USE(BUN_JSC_ADDITION)
+#if USE(BUN_JSC_ADDITIONS)
     Constructable     = 1 << 17, // property is a function that is constructable - only used by static hashtables
 #endif
     BuiltinOrFunction = Builtin | Function, // helper only used by static hashtables
