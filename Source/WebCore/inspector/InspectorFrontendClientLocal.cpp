@@ -312,25 +312,23 @@ void InspectorFrontendClientLocal::moveWindowBy(float x, float y)
 
 void InspectorFrontendClientLocal::setAttachedWindow(DockSide dockSide)
 {
-    const char* side = "undocked";
-    switch (dockSide) {
-    case DockSide::Undocked:
-        side = "undocked";
-        break;
-    case DockSide::Right:
-        side = "right";
-        break;
-    case DockSide::Left:
-        side = "left";
-        break;
-    case DockSide::Bottom:
-        side = "bottom";
-        break;
-    }
+    ASCIILiteral side = [&] {
+        switch (dockSide) {
+        case DockSide::Right:
+            return "right"_s;
+        case DockSide::Left:
+            return "left"_s;
+        case DockSide::Bottom:
+            return "bottom"_s;
+        case DockSide::Undocked:
+            break;
+        }
+        return "undocked"_s;
+    }();
 
     m_dockSide = dockSide;
 
-    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setDockSide"_s, { JSON::Value::create(makeString(side)) });
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setDockSide"_s, { JSON::Value::create(String { side }) });
 }
 
 void InspectorFrontendClientLocal::restoreAttachedWindowHeight()

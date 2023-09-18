@@ -1770,7 +1770,8 @@ float RenderText::width(unsigned from, unsigned length, const FontCascade& fontC
                 // The rare case of when we switch between IFC and legacy preferred width computation.
                 if (!m_maxWidth)
                     width = maxLogicalWidth();
-                width = *m_maxWidth;
+                else
+                    width = *m_maxWidth;
             } else
                 width = maxLogicalWidth();
         } else

@@ -410,10 +410,6 @@ void MathOperator::calculateStretchyData(const RenderStyle& style, bool calculat
         for (unsigned index = 0; index < maxIndex; ++index) {
             if (stretchyCharacters[index].character == m_baseCharacter) {
                 stretchyCharacter = &stretchyCharacters[index];
-                if (!style.isLeftToRightDirection() && index < leftRightPairsCount * 2) {
-                    // If we are in right-to-left direction we select the mirrored form by adding -1 or +1 according to the parity of index.
-                    index += index % 2 ? -1 : 1;
-                }
                 break;
             }
         }

@@ -2638,7 +2638,7 @@ String Internals::parserMetaData(JSC::JSValue code)
     else
         return String();
 
-    const char* prefix = "";
+    const char* prefix;
     String functionName;
     const char* suffix = "";
 
@@ -2653,7 +2653,7 @@ String Internals::parserMetaData(JSC::JSValue code)
     else if (executable->isProgramExecutable())
         prefix = "program";
     else
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
 
     return makeString(prefix, functionName, suffix, " { ",
         executable->firstLine(), ':', executable->startColumn(), " - ",

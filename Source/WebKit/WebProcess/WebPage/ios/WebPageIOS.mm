@@ -4436,10 +4436,8 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
             send(Messages::WebPageProxy::PageScaleFactorDidChange(scaleFromUIProcess.value()));
         }
 
-        if (!hasSetPageScale && m_isInStableState) {
+        if (!hasSetPageScale && m_isInStableState)
             m_page->setPageScaleFactor(scaleToUse, scrollPosition, true);
-            hasSetPageScale = true;
-        }
     }
 
     if (scrollPosition != frameView.scrollPosition())

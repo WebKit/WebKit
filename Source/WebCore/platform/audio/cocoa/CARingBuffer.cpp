@@ -287,7 +287,6 @@ void CARingBuffer::fetchInternal(AudioBufferList* list, size_t nFrames, uint64_t
         FetchABL(list, destStartByteOffset, m_pointers, offset0, nbytes, mode, !offset1);
         if (offset1)
             FetchABL(list, destStartByteOffset + nbytes, m_pointers, 0, offset1, mode, true);
-        nbytes += offset1;
     }
 }
 

@@ -1256,9 +1256,10 @@ void WebPageProxy::didAttachToRunningProcess()
     m_webDeviceOrientationUpdateProviderProxy = makeUnique<WebDeviceOrientationUpdateProviderProxy>(*this);
 #endif
 
+#if !PLATFORM(IOS_FAMILY)
     auto currentOrientation = WebCore::naturalScreenOrientationType();
-#if PLATFORM(IOS_FAMILY)
-    currentOrientation = toScreenOrientationType(m_deviceOrientation);
+#else
+    auto currentOrientation = toScreenOrientationType(m_deviceOrientation);
 #endif
     m_screenOrientationManager = makeUnique<WebScreenOrientationManagerProxy>(*this, currentOrientation);
 

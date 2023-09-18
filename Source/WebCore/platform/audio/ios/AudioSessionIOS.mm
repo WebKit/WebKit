@@ -218,18 +218,17 @@ void AudioSessionIOS::setCategory(CategoryType newCategory, Mode newMode, RouteS
         break;
     }
 
-    NSString *modeString = AVAudioSessionModeDefault;
-    switch (newMode) {
-    case Mode::Default:
-        modeString = AVAudioSessionModeDefault;
-        break;
-    case Mode::MoviePlayback:
-        modeString = AVAudioSessionModeMoviePlayback;
-        break;
-    case Mode::VideoChat:
-        modeString = AVAudioSessionModeVideoChat;
-        break;
-    }
+    NSString *modeString = [&] {
+        switch (newMode) {
+        case Mode::MoviePlayback:
+            return AVAudioSessionModeMoviePlayback;
+        case Mode::VideoChat:
+            return AVAudioSessionModeVideoChat;
+        case Mode::Default:
+            break;
+        }
+        return AVAudioSessionModeDefault;
+    }();
 
     bool needDeviceUpdate = false;
 #if ENABLE(MEDIA_STREAM)

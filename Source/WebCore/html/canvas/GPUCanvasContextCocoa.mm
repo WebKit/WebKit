@@ -268,10 +268,8 @@ void GPUCanvasContextCocoa::markContextChangedAndNotifyCanvasObservers()
         }
     }
 
-    if (!canvasIsDirty) {
-        canvasIsDirty = true;
+    if (!canvasIsDirty)
         canvasBase().didDraw({ });
-    }
 
     if (!isAccelerated())
         return;
