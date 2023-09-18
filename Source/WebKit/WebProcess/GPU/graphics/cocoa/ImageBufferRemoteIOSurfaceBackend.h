@@ -44,7 +44,7 @@ public:
 
     static std::unique_ptr<ImageBufferRemoteIOSurfaceBackend> create(const Parameters&, ImageBufferBackendHandle);
 
-    ImageBufferRemoteIOSurfaceBackend(const Parameters& parameters, ImageBufferBackendHandle&& handle)
+    ImageBufferRemoteIOSurfaceBackend(const Parameters& parameters, MachSendRight&& handle)
         : ImageBufferBackend(parameters)
         , m_handle(WTFMove(handle))
     {
@@ -55,8 +55,8 @@ public:
     static constexpr WebCore::RenderingMode renderingMode = WebCore::RenderingMode::Accelerated;
 
     WebCore::GraphicsContext& context() final;
-    ImageBufferBackendHandle createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const final;
-    ImageBufferBackendHandle takeBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) final;
+    std::optional<ImageBufferBackendHandle> createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const final;
+    std::optional<ImageBufferBackendHandle> takeBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) final;
 
 private:
     WebCore::IntSize backendSize() const final;
@@ -80,7 +80,7 @@ private:
 
     String debugDescription() const final;
 
-    ImageBufferBackendHandle m_handle;
+    MachSendRight m_handle;
 
     WebCore::VolatilityState m_volatilityState { WebCore::VolatilityState::NonVolatile };
 };

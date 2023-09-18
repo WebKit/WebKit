@@ -124,24 +124,23 @@ RefPtr<cairo_surface_t> WebImage::createCairoSurface()
 }
 #endif
 
-ShareableBitmap::Handle WebImage::createHandle(SharedMemory::Protection protection) const
+std::optional<ShareableBitmap::Handle> WebImage::createHandle(SharedMemory::Protection protection) const
 {
     auto* backend = m_buffer->ensureBackendCreated();
     if (!backend)
-        return { };
+        return std::nullopt;
 
     const_cast<ImageBuffer&>(*m_buffer.ptr()).flushDrawingContext();
 
     auto* sharing = backend->toBackendSharing();
     if (!is<ImageBufferBackendHandleSharing>(sharing))
-        return { };
+        return std::nullopt;
 
     auto backendHandle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle(protection);
+    if (!backendHandle)
+        return std::nullopt;
 
-    if (auto handle = std::get_if<ShareableBitmap::Handle>(&backendHandle))
-        return WTFMove(*handle);
-
-    return { };
+    return std::get<ShareableBitmap::Handle>(WTFMove(*backendHandle));
 }
 
 } // namespace WebKit

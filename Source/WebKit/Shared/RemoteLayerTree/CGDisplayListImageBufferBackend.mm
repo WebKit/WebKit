@@ -117,7 +117,7 @@ CGDisplayListImageBufferBackend::CGDisplayListImageBufferBackend(const Parameter
         m_resourceCache = bridge_id_cast(adoptCF(WKCGCommandsCacheCreate(nullptr)));
 }
 
-ImageBufferBackendHandle CGDisplayListImageBufferBackend::createBackendHandle(SharedMemory::Protection) const
+std::optional<ImageBufferBackendHandle> CGDisplayListImageBufferBackend::createBackendHandle(SharedMemory::Protection) const
 {
     ASSERT(m_context);
 

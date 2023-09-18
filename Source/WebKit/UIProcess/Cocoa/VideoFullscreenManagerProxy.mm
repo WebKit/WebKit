@@ -619,23 +619,23 @@ void VideoFullscreenManagerProxy::forEachSession(Function<void(VideoFullscreenMo
     }
 }
 
-void VideoFullscreenManagerProxy::requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier identifier, CompletionHandler<void(ShareableBitmap::Handle&&)>&& completionHandler)
+void VideoFullscreenManagerProxy::requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier identifier, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&& completionHandler)
 {
     RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated();
     if (!gpuProcess) {
-        completionHandler({ });
+        completionHandler(std::nullopt);
         return;
     }
 
     auto* interface = findInterface(identifier);
     if (!interface) {
-        completionHandler({ });
+        completionHandler(std::nullopt);
         return;
     }
 
     auto playerIdentifier = valueOrDefault(interface->playerIdentifier());
     if (!playerIdentifier) {
-        completionHandler({ });
+        completionHandler(std::nullopt);
         return;
     }
 

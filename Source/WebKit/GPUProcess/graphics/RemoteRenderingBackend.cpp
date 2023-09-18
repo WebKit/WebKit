@@ -173,7 +173,7 @@ void RemoteRenderingBackend::didCreateImageBuffer(Ref<ImageBuffer> imageBuffer)
     auto handle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
     auto remoteImageBuffer = RemoteImageBuffer::create(WTFMove(imageBuffer), *this);
     m_remoteImageBuffers.add(imageBufferIdentifier, WTFMove(remoteImageBuffer));
-    send(Messages::RemoteImageBufferProxy::DidCreateBackend(WTFMove(handle)), imageBufferIdentifier);
+    send(Messages::RemoteImageBufferProxy::DidCreateBackend(WTFMove(*handle)), imageBufferIdentifier);
 }
 
 void RemoteRenderingBackend::moveToSerializedBuffer(RenderingResourceIdentifier imageBufferIdentifier)

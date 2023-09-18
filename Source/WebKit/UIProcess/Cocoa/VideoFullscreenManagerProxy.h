@@ -183,7 +183,7 @@ public:
 
     void forEachSession(Function<void(VideoFullscreenModelContext&, WebCore::PlatformVideoFullscreenInterface&)>&&);
 
-    void requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier, CompletionHandler<void(ShareableBitmap::Handle&&)>&&);
+    void requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&&);
 
 #if PLATFORM(IOS_FAMILY)
     AVPlayerViewController *playerViewController(PlaybackSessionContextIdentifier) const;

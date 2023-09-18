@@ -4904,9 +4904,9 @@ void webkit_web_view_get_snapshot(WebKitWebView* webView, WebKitSnapshotRegion r
         snapshotOptions |= SnapshotOptionsTransparentBackground;
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
-    getPage(webView).takeSnapshot({ }, { }, snapshotOptions, [task = WTFMove(task)](ShareableBitmap::Handle&& handle) {
-        if (!handle.isNull()) {
-            if (auto bitmap = ShareableBitmap::create(WTFMove(handle), SharedMemory::Protection::ReadOnly)) {
+    getPage(webView).takeSnapshot({ }, { }, snapshotOptions, [task = WTFMove(task)](std::optional<ShareableBitmap::Handle>&& handle) {
+        if (handle) {
+            if (auto bitmap = ShareableBitmap::create(WTFMove(*handle), SharedMemory::Protection::ReadOnly)) {
                 if (auto surface = bitmap->createCairoSurface()) {
                     g_task_return_pointer(task.get(), surface.leakRef(), reinterpret_cast<GDestroyNotify>(cairo_surface_destroy));
                     return;

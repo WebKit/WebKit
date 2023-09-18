@@ -244,22 +244,22 @@ void RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory()
 RefPtr<ShareableBitmap> RemoteRenderingBackendProxy::getShareableBitmap(RenderingResourceIdentifier imageBuffer, PreserveResolution preserveResolution)
 {
     auto sendResult = sendSync(Messages::RemoteImageBuffer::GetShareableBitmap(preserveResolution), imageBuffer);
-    auto [handle] = sendResult.takeReplyOr(ShareableBitmap::Handle { });
-    if (handle.isNull())
+    auto [handle] = sendResult.takeReply();
+    if (!handle)
         return { };
-    handle.takeOwnershipOfMemory(MemoryLedger::Graphics);
-    return ShareableBitmap::create(WTFMove(handle));
+    handle->takeOwnershipOfMemory(MemoryLedger::Graphics);
+    return ShareableBitmap::create(WTFMove(*handle));
 }
 
 RefPtr<Image> RemoteRenderingBackendProxy::getFilteredImage(RenderingResourceIdentifier imageBuffer, Filter& filter)
 {
     auto sendResult = sendSync(Messages::RemoteImageBuffer::GetFilteredImage(filter), imageBuffer);
-    auto [handle] = sendResult.takeReplyOr(ShareableBitmap::Handle { });
-    if (handle.isNull())
+    auto [handle] = sendResult.takeReply();
+    if (!handle)
         return { };
 
-    handle.takeOwnershipOfMemory(MemoryLedger::Graphics);
-    auto bitmap = ShareableBitmap::create(WTFMove(handle));
+    handle->takeOwnershipOfMemory(MemoryLedger::Graphics);
+    auto bitmap = ShareableBitmap::create(WTFMove(*handle));
     if (!bitmap)
         return { };
 

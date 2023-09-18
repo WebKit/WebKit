@@ -154,6 +154,7 @@ def types_that_must_be_moved():
         'WebKit::WebProcessCreationParameters',
         'Win32Handle',
         'std::optional<MachSendRight>',
+        'std::optional<WebKit::ShareableBitmap::Handle>',
         'std::optional<WebKit::ShareableResource::Handle>',
         'std::optional<WebKit::SharedVideoFrame::Buffer>',
         'std::optional<Win32Handle>'

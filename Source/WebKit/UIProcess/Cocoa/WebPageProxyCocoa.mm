@@ -587,7 +587,7 @@ void WebPageProxy::fullscreenVideoTextRecognitionTimerFired()
         return;
 
     auto identifier = *internals().currentFullscreenVideoSessionIdentifier;
-    m_videoFullscreenManager->requestBitmapImageForCurrentTime(identifier, [identifier, weakThis = WeakPtr { *this }](ShareableBitmap::Handle&& imageHandle) {
+    m_videoFullscreenManager->requestBitmapImageForCurrentTime(identifier, [identifier, weakThis = WeakPtr { *this }](std::optional<ShareableBitmap::Handle>&& imageHandle) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || protectedThis->internals().currentFullscreenVideoSessionIdentifier != identifier)
             return;
@@ -595,10 +595,12 @@ void WebPageProxy::fullscreenVideoTextRecognitionTimerFired()
         auto fullscreenManager = protectedThis->m_videoFullscreenManager;
         if (!fullscreenManager)
             return;
+        if (!imageHandle)
+            return;
 
 #if PLATFORM(IOS_FAMILY)
         if (RetainPtr controller = fullscreenManager->playerViewController(identifier))
-            protectedThis->pageClient().beginTextRecognitionForFullscreenVideo(WTFMove(imageHandle), controller.get());
+            protectedThis->pageClient().beginTextRecognitionForFullscreenVideo(WTFMove(*imageHandle), controller.get());
 #endif
     });
 }
@@ -649,7 +651,7 @@ bool WebPageProxy::updateIconForDirectory(NSFileWrapper *fileWrapper, const Stri
     auto handle = convertedImage->createHandle();
     if (!handle)
         return false;
-    send(Messages::WebPage::UpdateAttachmentIcon(identifier, WTFMove(*handle), iconSize));
+    send(Messages::WebPage::UpdateAttachmentIcon(identifier, WTFMove(handle), iconSize));
     return true;
 }
 

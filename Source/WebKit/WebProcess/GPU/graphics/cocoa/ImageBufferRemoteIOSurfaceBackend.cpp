@@ -39,27 +39,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-static TextStream& operator<<(TextStream& ts, const ImageBufferBackendHandle& handle)
-{
-    WTF::switchOn(handle,
-        [&] (const ShareableBitmap::Handle& handle) {
-            if (handle.isNull())
-                ts << "null";
-            else
-                ts << "ShareableBitmap::Handle " << &handle;
-        },
-        [&] (const MachSendRight& machSendRight) {
-            ts << "MachSendRight " << machSendRight.sendRight();
-        }
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-        , [&] (const CGDisplayList& handle) {
-            ts << "CGDisplayList handle " << &handle;
-        }
-#endif
-    );
-    return ts;
-}
-
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferRemoteIOSurfaceBackend);
 
 IntSize ImageBufferRemoteIOSurfaceBackend::calculateSafeBackendSize(const Parameters& parameters)
@@ -84,27 +63,26 @@ std::unique_ptr<ImageBufferRemoteIOSurfaceBackend> ImageBufferRemoteIOSurfaceBac
         return nullptr;
     }
 
-    return makeUnique<ImageBufferRemoteIOSurfaceBackend>(parameters, WTFMove(handle));
+    return makeUnique<ImageBufferRemoteIOSurfaceBackend>(parameters, WTFMove(std::get<MachSendRight>(handle)));
 }
 
-ImageBufferBackendHandle ImageBufferRemoteIOSurfaceBackend::createBackendHandle(SharedMemory::Protection) const
+std::optional<ImageBufferBackendHandle> ImageBufferRemoteIOSurfaceBackend::createBackendHandle(SharedMemory::Protection) const
 {
-    if (!std::holds_alternative<MachSendRight>(m_handle)) {
-        RELEASE_ASSERT_NOT_REACHED();
-        return { };
-    }
-
-    return MachSendRight { std::get<MachSendRight>(m_handle) };
+    return MachSendRight { m_handle };
 }
 
-ImageBufferBackendHandle ImageBufferRemoteIOSurfaceBackend::takeBackendHandle(SharedMemory::Protection)
+std::optional<ImageBufferBackendHandle> ImageBufferRemoteIOSurfaceBackend::takeBackendHandle(SharedMemory::Protection)
 {
     return std::exchange(m_handle, { });
 }
 
 void ImageBufferRemoteIOSurfaceBackend::setBackendHandle(ImageBufferBackendHandle&& handle)
 {
-    m_handle = WTFMove(handle);
+    if (!std::holds_alternative<MachSendRight>(handle)) {
+        RELEASE_ASSERT_NOT_REACHED();
+        return;
+    }
+    m_handle = WTFMove(std::get<MachSendRight>(handle));
 }
 
 void ImageBufferRemoteIOSurfaceBackend::clearBackendHandle()
@@ -114,7 +92,7 @@ void ImageBufferRemoteIOSurfaceBackend::clearBackendHandle()
 
 bool ImageBufferRemoteIOSurfaceBackend::hasBackendHandle() const
 {
-    return std::holds_alternative<MachSendRight>(m_handle);
+    return !!m_handle;
 }
 
 GraphicsContext& ImageBufferRemoteIOSurfaceBackend::context()
@@ -153,7 +131,7 @@ void ImageBufferRemoteIOSurfaceBackend::putPixelBuffer(const PixelBuffer&, const
 String ImageBufferRemoteIOSurfaceBackend::debugDescription() const
 {
     TextStream stream;
-    stream << "ImageBufferRemoteIOSurfaceBackend " << this << " handle " << m_handle << " " << m_volatilityState;
+    stream << "ImageBufferRemoteIOSurfaceBackend " << this << " handle " << m_handle.sendRight() << " " << m_volatilityState;
     return stream.release();
 }
 

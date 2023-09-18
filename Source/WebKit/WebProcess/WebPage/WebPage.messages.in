@@ -142,7 +142,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ClearServiceWorkerEntitlementOverride() -> ()
 #endif
 
-    RequestImageBitmap(struct WebCore::ElementContext elementContext) -> (WebKit::ShareableBitmap::Handle image, String sourceMIMEType)
+    RequestImageBitmap(struct WebCore::ElementContext elementContext) -> (std::optional<WebKit::ShareableBitmap::Handle> image, String sourceMIMEType)
 
     SetControlledByAutomation(bool controlled)
 
@@ -447,14 +447,14 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ComputePagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, WebCore::RectEdges<float> computedPageMargin)
     ComputePagesForPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, WebCore::RectEdges<float> computedPageMargin) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
 #if PLATFORM(COCOA)
-    DrawRectToImage(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize) -> (WebKit::ShareableBitmap::Handle image) ReplyCanDispatchOutOfOrder
-    DrawRectToImageDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize) -> (WebKit::ShareableBitmap::Handle image) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
+    DrawRectToImage(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize) -> (std::optional<WebKit::ShareableBitmap::Handle> image) ReplyCanDispatchOutOfOrder
+    DrawRectToImageDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize) -> (std::optional<WebKit::ShareableBitmap::Handle> image) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
     DrawPagesToPDF(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, uint32_t first, uint32_t count) -> (RefPtr<WebCore::SharedBuffer> data)
     DrawPagesToPDFDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, uint32_t first, uint32_t count) -> (RefPtr<WebCore::SharedBuffer> data) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
 #if PLATFORM(IOS_FAMILY)
     ComputePagesForPrintingiOS(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (size_t pageCount) Synchronous
     DrawToPDFiOS(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, size_t pageCount) -> (RefPtr<WebCore::SharedBuffer> data) ReplyCanDispatchOutOfOrder
-    DrawToImage(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (WebKit::ShareableBitmap::Handle data) ReplyCanDispatchOutOfOrder
+    DrawToImage(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (std::optional<WebKit::ShareableBitmap::Handle> data) ReplyCanDispatchOutOfOrder
 #endif
     DrawToPDF(WebCore::FrameIdentifier frameID, std::optional<WebCore::FloatRect> rect, bool allowTransparentBackground) -> (RefPtr<WebCore::SharedBuffer> data)
 #endif
@@ -544,7 +544,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     GetSamplingProfilerOutput() -> (String string)
     
-    TakeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, uint32_t options) -> (WebKit::ShareableBitmap::Handle image)
+    TakeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, uint32_t options) -> (std::optional<WebKit::ShareableBitmap::Handle> image)
 #if PLATFORM(MAC)
     PerformImmediateActionHitTestAtLocation(WebCore::FloatPoint location)
     ImmediateActionDidUpdate()
@@ -621,8 +621,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if ENABLE(ATTACHMENT_ELEMENT)
     InsertAttachment(String identifier, std::optional<uint64_t> fileSize, String fileName, String contentType) -> ()
     UpdateAttachmentAttributes(String identifier, std::optional<uint64_t> fileSize, String contentType, String fileName, IPC::SharedBufferReference enclosingImageData) -> ()
-    UpdateAttachmentThumbnail(String identifier, WebKit::ShareableBitmap::Handle qlThumbnailHandle)
-    UpdateAttachmentIcon(String identifier, WebKit::ShareableBitmap::Handle icon, WebCore::FloatSize size)
+    UpdateAttachmentThumbnail(String identifier, std::optional<WebKit::ShareableBitmap::Handle> qlThumbnailHandle)
+    UpdateAttachmentIcon(String identifier, std::optional<WebKit::ShareableBitmap::Handle> icon, WebCore::FloatSize size)
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)

@@ -27,8 +27,8 @@ messages -> RemoteImageBuffer NotRefCounted Stream {
     GetPixelBuffer(struct WebCore::PixelBufferFormat outputFormat, WebCore::IntRect srcRect) -> () Synchronous
     GetPixelBufferWithNewMemory(WebKit::SharedMemory::Handle handle, struct WebCore::PixelBufferFormat outputFormat, WebCore::IntRect srcRect) -> () Synchronous NotStreamEncodable
     PutPixelBuffer(Ref<WebCore::PixelBuffer> pixelBuffer,  WebCore::IntRect srcRect, WebCore::IntPoint destPoint, enum:uint8_t WebCore::AlphaPremultiplication destFormat)
-    GetShareableBitmap(enum:bool WebCore::PreserveResolution preserveResolution) -> (WebKit::ShareableBitmap::Handle handle) Synchronous NotStreamEncodableReply
-    GetFilteredImage(Ref<WebCore::Filter> filter) -> (WebKit::ShareableBitmap::Handle handle) Synchronous NotStreamEncodableReply
+    GetShareableBitmap(enum:bool WebCore::PreserveResolution preserveResolution) -> (std::optional<WebKit::ShareableBitmap::Handle> handle) Synchronous NotStreamEncodableReply
+    GetFilteredImage(Ref<WebCore::Filter> filter) -> (std::optional<WebKit::ShareableBitmap::Handle> handle) Synchronous NotStreamEncodableReply
     ConvertToLuminanceMask()
     TransformToColorSpace(WebCore::DestinationColorSpace colorSpace)
     FlushContext(IPC::Semaphore semaphore) NotStreamEncodable

@@ -73,7 +73,7 @@ ImageBufferShareableMappedIOSurfaceBitmapBackend::~ImageBufferShareableMappedIOS
     IOSurface::moveToPool(WTFMove(m_surface), m_ioSurfacePool.get());
 }
 
-ImageBufferBackendHandle ImageBufferShareableMappedIOSurfaceBitmapBackend::createBackendHandle(SharedMemory::Protection) const
+std::optional<ImageBufferBackendHandle> ImageBufferShareableMappedIOSurfaceBitmapBackend::createBackendHandle(SharedMemory::Protection) const
 {
     return ImageBufferBackendHandle(m_surface->createSendRight());
 }

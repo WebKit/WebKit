@@ -121,12 +121,11 @@ void ContextMenuContextData::encode(IPC::Encoder& encoder) const
     encoder << m_hasEntireImage;
 
 #if ENABLE(SERVICE_CONTROLS)
-    ShareableBitmap::Handle handle;
-    if (m_controlledImage) {
-        if (auto imageHandle = m_controlledImage->createHandle(SharedMemory::Protection::ReadOnly))
-            handle = WTFMove(*imageHandle);
-    }
-    encoder << WTFMove(handle);
+    std::optional<ShareableBitmap::Handle> potentialControlledImageHandle;
+    if (m_controlledImage)
+        potentialControlledImageHandle = m_controlledImage->createHandle(SharedMemory::Protection::ReadOnly);
+
+    encoder << WTFMove(potentialControlledImageHandle);
     encoder << m_controlledSelectionData;
     encoder << m_selectedTelephoneNumbers;
     encoder << m_selectionIsEditable;
@@ -137,17 +136,15 @@ void ContextMenuContextData::encode(IPC::Encoder& encoder) const
 #endif
 
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
-    ShareableBitmap::Handle potentialQRCodeNodeSnapshotImageHandle;
+    std::optional<ShareableBitmap::Handle> potentialQRCodeNodeSnapshotImageHandle;
     if (m_potentialQRCodeNodeSnapshotImage) {
-        if (auto imageHandle = m_potentialQRCodeNodeSnapshotImage->createHandle(SharedMemory::Protection::ReadOnly))
-            potentialQRCodeNodeSnapshotImageHandle = WTFMove(*imageHandle);
+        potentialQRCodeNodeSnapshotImageHandle = m_potentialQRCodeNodeSnapshotImage->createHandle(SharedMemory::Protection::ReadOnly);
     }
     encoder << WTFMove(potentialQRCodeNodeSnapshotImageHandle);
 
-    ShareableBitmap::Handle potentialQRCodeViewportSnapshotImageHandle;
+    std::optional<ShareableBitmap::Handle> potentialQRCodeViewportSnapshotImageHandle;
     if (m_potentialQRCodeViewportSnapshotImage) {
-        if (auto imageHandle = m_potentialQRCodeViewportSnapshotImage->createHandle(SharedMemory::Protection::ReadOnly))
-            potentialQRCodeViewportSnapshotImageHandle = WTFMove(*imageHandle);
+        potentialQRCodeViewportSnapshotImageHandle = m_potentialQRCodeViewportSnapshotImage->createHandle(SharedMemory::Protection::ReadOnly);
     }
     encoder << WTFMove(potentialQRCodeViewportSnapshotImageHandle);
 #endif
@@ -174,12 +171,11 @@ bool ContextMenuContextData::decode(IPC::Decoder& decoder, ContextMenuContextDat
         return false;
 
 #if ENABLE(SERVICE_CONTROLS)
-    ShareableBitmap::Handle handle;
-    if (!decoder.decode(handle))
+    auto potentialControlledImageHandle = decoder.decode<std::optional<ShareableBitmap::Handle>>();
+    if (UNLIKELY(!decoder.isValid()))
         return false;
-
-    if (!handle.isNull())
-        result.m_controlledImage = ShareableBitmap::create(WTFMove(handle), SharedMemory::Protection::ReadOnly);
+    if (*potentialControlledImageHandle)
+        result.m_controlledImage = ShareableBitmap::create(WTFMove(**potentialControlledImageHandle), SharedMemory::Protection::ReadOnly);
 
     if (!decoder.decode(result.m_controlledSelectionData))
         return false;
@@ -198,19 +194,14 @@ bool ContextMenuContextData::decode(IPC::Decoder& decoder, ContextMenuContextDat
 #endif
 
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
-    ShareableBitmap::Handle potentialQRCodeNodeSnapshotImageHandle;
-    if (!decoder.decode(potentialQRCodeNodeSnapshotImageHandle))
+    auto potentialQRCodeNodeSnapshotImageHandle = decoder.decode<std::optional<ShareableBitmap::Handle>>();
+    auto potentialQRCodeViewportSnapshotImageHandle = decoder.decode<std::optional<ShareableBitmap::Handle>>();
+    if (UNLIKELY(!decoder.isValid()))
         return false;
-
-    if (!potentialQRCodeNodeSnapshotImageHandle.isNull())
-        result.m_potentialQRCodeNodeSnapshotImage = ShareableBitmap::create(WTFMove(potentialQRCodeNodeSnapshotImageHandle), SharedMemory::Protection::ReadOnly);
-
-    ShareableBitmap::Handle potentialQRCodeViewportSnapshotImageHandle;
-    if (!decoder.decode(potentialQRCodeViewportSnapshotImageHandle))
-        return false;
-
-    if (!potentialQRCodeViewportSnapshotImageHandle.isNull())
-        result.m_potentialQRCodeViewportSnapshotImage = ShareableBitmap::create(WTFMove(potentialQRCodeViewportSnapshotImageHandle), SharedMemory::Protection::ReadOnly);
+    if (*potentialQRCodeNodeSnapshotImageHandle)
+        result.m_potentialQRCodeNodeSnapshotImage = ShareableBitmap::create(WTFMove(**potentialQRCodeNodeSnapshotImageHandle), SharedMemory::Protection::ReadOnly);
+    if (*potentialQRCodeViewportSnapshotImageHandle)
+        result.m_potentialQRCodeViewportSnapshotImage = ShareableBitmap::create(WTFMove(**potentialQRCodeViewportSnapshotImageHandle), SharedMemory::Protection::ReadOnly);
 #endif
 
     return true;

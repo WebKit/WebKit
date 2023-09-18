@@ -2433,7 +2433,7 @@ void WebAutomationSession::takeScreenshot(const Inspector::Protocol::Automation:
 #endif
 }
 
-void WebAutomationSession::didTakeScreenshot(uint64_t callbackID, ShareableBitmap::Handle&& imageDataHandle, const String& errorType)
+void WebAutomationSession::didTakeScreenshot(uint64_t callbackID, std::optional<ShareableBitmap::Handle>&& imageDataHandle, const String& errorType)
 {
     auto callback = m_screenshotCallbacks.take(callbackID);
     if (!callback)
@@ -2444,7 +2444,10 @@ void WebAutomationSession::didTakeScreenshot(uint64_t callbackID, ShareableBitma
         return;
     }
 
-    std::optional<String> base64EncodedData = platformGetBase64EncodedPNGData(WTFMove(imageDataHandle));
+    if (!imageDataHandle)
+        return;
+
+    std::optional<String> base64EncodedData = platformGetBase64EncodedPNGData(WTFMove(*imageDataHandle));
     if (!base64EncodedData)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(InternalError);
 

@@ -309,7 +309,7 @@ messages -> WebPageProxy {
     SetPromisedDataForImage(String pasteboardName, WebKit::SharedMemory::Handle imageHandle, String filename, String extension, String title, String url, String visibleURL, WebKit::SharedMemory::Handle archiveHandle, String originIdentifier)
 #endif
 #if PLATFORM(GTK) && ENABLE(DRAG_SUPPORT)
-    StartDrag(WebCore::SelectionData selectionData, OptionSet<WebCore::DragOperation> dragOperationMask, WebKit::ShareableBitmap::Handle dragImage, WebCore::IntPoint dragImageHotspot)
+    StartDrag(WebCore::SelectionData selectionData, OptionSet<WebCore::DragOperation> dragOperationMask, std::optional<WebKit::ShareableBitmap::Handle> dragImage, WebCore::IntPoint dragImageHotspot)
 #endif
 
 #if ENABLE(DRAG_SUPPORT)

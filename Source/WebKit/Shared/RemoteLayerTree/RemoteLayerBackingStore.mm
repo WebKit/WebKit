@@ -168,7 +168,7 @@ static bool hasValue(const ImageBufferBackendHandle& backendHandle)
 {
     return WTF::switchOn(backendHandle,
         [&] (const ShareableBitmap::Handle& handle) {
-            return !handle.isNull();
+            return true;
         },
         [&] (const MachSendRight& machSendRight) {
             return !!machSendRight;

@@ -4874,14 +4874,19 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
             return;
         }
 
-        strongSelf->_page->requestImageBitmap(context, [context, completion = WTFMove(completion), weakSelf = WTFMove(weakSelf)](WebKit::ShareableBitmapHandle&& imageData, auto& sourceMIMEType) mutable {
+        strongSelf->_page->requestImageBitmap(context, [context, completion = WTFMove(completion), weakSelf = WTFMove(weakSelf)](std::optional<WebKit::ShareableBitmapHandle>&& imageData, auto& sourceMIMEType) mutable {
             auto strongSelf = weakSelf.get();
             if (!strongSelf) {
                 completion();
                 return;
             }
 
-            auto imageBitmap = WebKit::ShareableBitmap::create(WTFMove(imageData));
+            if (!imageData) {
+                completion();
+                return;
+            }
+
+            auto imageBitmap = WebKit::ShareableBitmap::create(WTFMove(*imageData));
             if (!imageBitmap) {
                 completion();
                 return;

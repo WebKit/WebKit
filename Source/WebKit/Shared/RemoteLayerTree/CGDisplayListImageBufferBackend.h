@@ -46,7 +46,7 @@ public:
 
     WebCore::GraphicsContext& context() final;
     WebCore::IntSize backendSize() const final;
-    ImageBufferBackendHandle createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const final;
+    std::optional<ImageBufferBackendHandle> createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const final;
 
     void releaseGraphicsContext() final;
 

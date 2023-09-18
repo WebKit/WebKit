@@ -64,7 +64,7 @@ messages -> GPUProcess LegacyReceiver {
 #endif
 
 #if ENABLE(VIDEO)
-    RequestBitmapImageForCurrentTime(WebCore::ProcessIdentifier processIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier) -> (WebKit::ShareableBitmap::Handle handle)
+    RequestBitmapImageForCurrentTime(WebCore::ProcessIdentifier processIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier) -> (std::optional<WebKit::ShareableBitmap::Handle> handle)
 #endif
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
