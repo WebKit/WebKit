@@ -801,13 +801,13 @@ static WebCore::AuthenticatorTransport authenticatorTransport(_WKWebAuthenticati
     }
 }
 
-static Vector<WebCore::AuthenticatorTransport> authenticatorTransports(NSArray<NSNumber *> *transports)
+static Vector<String> authenticatorTransports(NSArray<NSNumber *> *transports)
 {
-    Vector<WebCore::AuthenticatorTransport> result;
+    Vector<String> result;
     result.reserveInitialCapacity(transports.count);
 
     for (NSNumber *transport : transports)
-        result.uncheckedAppend(authenticatorTransport((_WKWebAuthenticationTransport)transport.intValue));
+        result.uncheckedAppend(WebCore::toString(authenticatorTransport((_WKWebAuthenticationTransport)transport.intValue)));
 
     return result;
 }
@@ -873,10 +873,12 @@ static std::optional<WebCore::ResidentKeyRequirement> toWebCore(_WKResidentKeyRe
 static WebCore::PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria authenticatorSelectionCriteria(_WKAuthenticatorSelectionCriteria *authenticatorSelection)
 {
     WebCore::PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria result;
-    result.authenticatorAttachment = authenticatorAttachment(authenticatorSelection.authenticatorAttachment);
-    result.residentKey = toWebCore(authenticatorSelection.residentKey);
+    if (auto attachment = authenticatorAttachment(authenticatorSelection.authenticatorAttachment))
+        result.authenticatorAttachmentString = toString(*attachment);
+    if (auto residentKey = toWebCore(authenticatorSelection.residentKey))
+        result.residentKeyString = toString(*residentKey);
     result.requireResidentKey = authenticatorSelection.requireResidentKey;
-    result.userVerification = userVerification(authenticatorSelection.userVerification);
+    result.userVerificationString = toString(userVerification(authenticatorSelection.userVerification));
 
     return result;
 }
@@ -947,7 +949,7 @@ static std::span<const uint8_t> asUInt8Span(NSData* data)
         result.excludeCredentials = publicKeyCredentialDescriptors(options.excludeCredentials);
     if (options.authenticatorSelection)
         result.authenticatorSelection = authenticatorSelectionCriteria(options.authenticatorSelection);
-    result.attestation = attestationConveyancePreference(options.attestation);
+    result.attestationString = toString(attestationConveyancePreference(options.attestation));
     if (options.extensionsCBOR)
         result.extensions = WebCore::AuthenticationExtensionsClientInputs::fromCBOR(asUInt8Span(options.extensionsCBOR));
     else
@@ -1035,8 +1037,9 @@ static RetainPtr<_WKAuthenticatorAttestationResponse> wkAuthenticatorAttestation
         result.extensions = WebCore::AuthenticationExtensionsClientInputs::fromCBOR(asUInt8Span(options.extensionsCBOR));
     else
         result.extensions = authenticationExtensionsClientInputs(options.extensions);
-    result.userVerification = userVerification(options.userVerification);
-    result.authenticatorAttachment = authenticatorAttachment(options.authenticatorAttachment);
+    result.userVerificationString = toString(userVerification(options.userVerification));
+    if (auto attachment = authenticatorAttachment(options.authenticatorAttachment))
+        result.authenticatorAttachmentString = toString(*attachment);
 #endif
 
     return result;

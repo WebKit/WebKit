@@ -60,9 +60,9 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParam)
     user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
-    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, std::nullopt, true, UserVerificationRequirement::Preferred };
+    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { "platform"_s, nullString(), true, "preferred"_s };
 
-    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, AttestationConveyancePreference::None, std::nullopt };
+    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, "none"_s, std::nullopt };
     Vector<uint8_t> hash;
     Vector<String> extensions;
     hash.append(TestData::kClientDataHash, sizeof(TestData::kClientDataHash));
@@ -84,9 +84,9 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParamNoUVNoRK)
     user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
-    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, std::nullopt, false, UserVerificationRequirement::Discouraged };
+    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { "platform"_s, nullString(), false, "discouraged"_s };
 
-    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, AttestationConveyancePreference::None, std::nullopt };
+    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, "none"_s, std::nullopt };
     Vector<uint8_t> hash;
     Vector<String> extensions;
     hash.append(TestData::kClientDataHash, sizeof(TestData::kClientDataHash));
@@ -108,9 +108,9 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParamUVRequiredButNotSup
     user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
-    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, std::nullopt, false, UserVerificationRequirement::Required };
+    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { "platform"_s, nullString(), false, "required"_s };
 
-    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, AttestationConveyancePreference::None, std::nullopt };
+    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, "none"_s, std::nullopt };
     Vector<uint8_t> hash;
     Vector<String> extensions;
     hash.append(TestData::kClientDataHash, sizeof(TestData::kClientDataHash));
@@ -132,13 +132,13 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParamWithPin)
     user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
-    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, std::nullopt, true, UserVerificationRequirement::Preferred };
+    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { "platform"_s, nullString(), true, "preferred"_s };
 
     PinParameters pin;
     pin.protocol = pin::kProtocolVersion;
     pin.auth.append(TestData::kCtap2PinAuth, sizeof(TestData::kCtap2PinAuth));
 
-    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, AttestationConveyancePreference::None, std::nullopt };
+    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, "none"_s, std::nullopt };
     Vector<uint8_t> hash;
     Vector<String> extensions;
     hash.append(TestData::kClientDataHash, sizeof(TestData::kClientDataHash));
@@ -160,13 +160,13 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestRKPreferred)
     user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
-    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, ResidentKeyRequirement::Preferred, true, UserVerificationRequirement::Preferred };
+    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { "platform"_s, "preferred"_s, true, "preferred"_s };
 
     PinParameters pin;
     pin.protocol = pin::kProtocolVersion;
     pin.auth.append(TestData::kCtap2PinAuth, sizeof(TestData::kCtap2PinAuth));
 
-    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, AttestationConveyancePreference::None, std::nullopt };
+    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, "none"_s, std::nullopt };
     Vector<uint8_t> hash;
     Vector<String> extensions;
     hash.append(TestData::kClientDataHash, sizeof(TestData::kClientDataHash));
@@ -188,9 +188,9 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestRKPreferredNotSupported)
     user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
-    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, ResidentKeyRequirement::Preferred, true, UserVerificationRequirement::Required };
+    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { "platform"_s, "preferred"_s, true, "required"_s };
 
-    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, AttestationConveyancePreference::None, std::nullopt };
+    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, "none"_s, std::nullopt };
     Vector<uint8_t> hash;
     Vector<String> extensions;
     hash.append(TestData::kClientDataHash, sizeof(TestData::kClientDataHash));
@@ -212,9 +212,9 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestRKDiscouraged)
     user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
-    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, ResidentKeyRequirement::Discouraged, true, UserVerificationRequirement::Required };
+    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { "platform"_s, "discouraged"_s, true, "required"_s };
 
-    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, AttestationConveyancePreference::None, std::nullopt };
+    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, "none"_s, std::nullopt };
     Vector<uint8_t> hash;
     Vector<String> extensions;
     hash.append(TestData::kClientDataHash, sizeof(TestData::kClientDataHash));
@@ -236,14 +236,14 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestWithLargeBlob)
     user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
-    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, std::nullopt, false, UserVerificationRequirement::Discouraged };
+    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { "platform"_s, nullString(), false, "discouraged"_s };
     AuthenticationExtensionsClientInputs extensionInputs = {
         .largeBlob = AuthenticationExtensionsClientInputs::LargeBlobInputs {
             .support = "required"_s
         }
     };
 
-    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, AttestationConveyancePreference::None, extensionInputs };
+    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, "none"_s, extensionInputs };
     Vector<uint8_t> hash;
     Vector<String> extensions = { "largeBlob"_s };
     hash.append(TestData::kClientDataHash, sizeof(TestData::kClientDataHash));
@@ -265,14 +265,14 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestWithUnsupportedLargeBlob
     user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
-    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, std::nullopt, false, UserVerificationRequirement::Discouraged };
+    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { "platform"_s, nullString(), false, "discouraged"_s };
     AuthenticationExtensionsClientInputs extensionInputs = {
         .largeBlob = AuthenticationExtensionsClientInputs::LargeBlobInputs {
             .support = "required"_s
         }
     };
 
-    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, AttestationConveyancePreference::None, extensionInputs };
+    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, "none"_s, extensionInputs };
     Vector<uint8_t> hash;
     Vector<String> extensions;
     hash.append(TestData::kClientDataHash, sizeof(TestData::kClientDataHash));
@@ -309,7 +309,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequest)
     descriptor2.id = WebCore::toBufferSource(id2, sizeof(id2));
     options.allowCredentials.append(descriptor2);
 
-    options.userVerification = UserVerificationRequirement::Required;
+    options.userVerificationString = "required"_s;
 
     Vector<uint8_t> hash;
     Vector<String> extensions;
@@ -347,7 +347,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestNoUV)
     descriptor2.id = WebCore::toBufferSource(id2, sizeof(id2));
     options.allowCredentials.append(descriptor2);
 
-    options.userVerification = UserVerificationRequirement::Discouraged;
+    options.userVerificationString = "discouraged"_s;
 
     Vector<uint8_t> hash;
     Vector<String> extensions;
@@ -385,7 +385,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestUVRequiredButNotSupported)
     descriptor2.id = WebCore::toBufferSource(id2, sizeof(id2));
     options.allowCredentials.append(descriptor2);
 
-    options.userVerification = UserVerificationRequirement::Required;
+    options.userVerificationString = "required"_s;
 
     Vector<uint8_t> hash;
     Vector<String> extensions;
@@ -423,7 +423,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestWithPin)
     descriptor2.id = WebCore::toBufferSource(id2, sizeof(id2));
     options.allowCredentials.append(descriptor2);
 
-    options.userVerification = UserVerificationRequirement::Required;
+    options.userVerificationString = "required"_s;
 
     PinParameters pin;
     pin.protocol = pin::kProtocolVersion;
@@ -489,7 +489,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestLargeBlobRead)
         }
     };
 
-    options.userVerification = UserVerificationRequirement::Required;
+    options.userVerificationString = "required"_s;
 
     Vector<uint8_t> hash;
     Vector<String> extensions = { "largeBlob"_s };
@@ -532,7 +532,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestUnsupportedLargeBlobRead)
         }
     };
 
-    options.userVerification = UserVerificationRequirement::Required;
+    options.userVerificationString = "required"_s;
 
     Vector<uint8_t> hash;
     Vector<String> extensions;
@@ -579,7 +579,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestLargeBlobWrite)
         }
     };
 
-    options.userVerification = UserVerificationRequirement::Required;
+    options.userVerificationString = "required"_s;
 
     Vector<uint8_t> hash;
     Vector<String> extensions;

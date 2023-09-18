@@ -42,9 +42,11 @@ struct PublicKeyCredentialRequestOptions {
     std::optional<unsigned> timeout;
     mutable String rpId;
     Vector<PublicKeyCredentialDescriptor> allowCredentials;
-    UserVerificationRequirement userVerification { UserVerificationRequirement::Preferred };
+    String userVerificationString { "preferred"_s };
+    WEBCORE_EXPORT UserVerificationRequirement userVerification() const;
     mutable std::optional<AuthenticationExtensionsClientInputs> extensions;
-    std::optional<AuthenticatorAttachment> authenticatorAttachment { }; // Not serialized over IPC.
+    String authenticatorAttachmentString;
+    WEBCORE_EXPORT std::optional<AuthenticatorAttachment> authenticatorAttachment() const;
 #endif // ENABLE(WEB_AUTHN)
 };
 

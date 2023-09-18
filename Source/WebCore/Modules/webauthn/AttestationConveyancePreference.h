@@ -38,6 +38,10 @@ enum class AttestationConveyancePreference : uint8_t {
     Enterprise,
 };
 
+WEBCORE_EXPORT AttestationConveyancePreference toAttestationConveyancePreference(const String& preference);
+
+WEBCORE_EXPORT String toString(AttestationConveyancePreference);
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUTHN)
