@@ -29,10 +29,12 @@
 #include "InlineItem.h"
 #include "InlineTextItem.h"
 #include <unicode/ubidi.h>
+#include <wtf/Range.h>
 
 namespace WebCore {
 namespace Layout {
 
+struct ExpansionInfo;
 class InlineFormattingContext;
 class InlineSoftLineBreakItem;
 enum class IntrinsicWidthMode;
@@ -59,7 +61,6 @@ public:
     InlineLayoutUnit hangingTrailingContentWidth() const { return m_hangingContent.trailingWidth(); }
     bool isHangingTrailingContentWhitespace() const { return !!m_hangingContent.trailingWhitespaceLength(); }
 
-
     InlineLayoutUnit trimmableTrailingWidth() const { return m_trimmableTrailingContent.width(); }
     bool isTrailingRunFullyTrimmable() const { return m_trimmableTrailingContent.isTrailingRunFullyTrimmable(); }
 
@@ -73,6 +74,8 @@ public:
     const Box* removeOverflowingOurOfFlowContent();
     void resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel);
     void applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace);
+    void applyExpansionOnRange(WTF::Range<size_t> runRange, const ExpansionInfo&, InlineLayoutUnit spaceToDistribute);
+    void moveRunsBy(InlineLayoutUnit offset, size_t startRunIndex);
 
     struct Run {
         enum class Type : uint8_t {

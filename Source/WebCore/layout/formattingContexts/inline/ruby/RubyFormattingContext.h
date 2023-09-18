@@ -38,6 +38,8 @@ public:
     void layoutInlineAxis(const InlineItemRange&, Line&, InlineLayoutUnit availableWidth);
 
 private:
+    size_t layoutRubyBaseInlineAxis(Line&, const Box& rubyBaseLayoutBox, size_t rubyBaseContentStart);
+
     const InlineFormattingContext& parentFormattingContext() const { return m_parentFormattingContext; }
 
 private:

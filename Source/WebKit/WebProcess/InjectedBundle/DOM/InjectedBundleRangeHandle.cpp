@@ -56,7 +56,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-using DOMRangeHandleCache = HashMap<Range*, InjectedBundleRangeHandle*>;
+using DOMRangeHandleCache = HashMap<WebCore::Range*, InjectedBundleRangeHandle*>;
 
 static DOMRangeHandleCache& domRangeHandleCache()
 {
@@ -69,7 +69,7 @@ RefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::getOrCreate(JSConte
     return getOrCreate(JSRange::toWrapped(toJS(context)->vm(), toJS(object)));
 }
 
-RefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::getOrCreate(Range* range)
+RefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::getOrCreate(WebCore::Range* range)
 {
     if (!range)
         return nullptr;
@@ -81,7 +81,7 @@ RefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::getOrCreate(Range* 
     return rangeHandle;
 }
 
-InjectedBundleRangeHandle::InjectedBundleRangeHandle(Range& range)
+InjectedBundleRangeHandle::InjectedBundleRangeHandle(WebCore::Range& range)
     : m_range(range)
 {
 }
@@ -91,7 +91,7 @@ InjectedBundleRangeHandle::~InjectedBundleRangeHandle()
     domRangeHandleCache().remove(m_range.ptr());
 }
 
-Range& InjectedBundleRangeHandle::coreRange() const
+WebCore::Range& InjectedBundleRangeHandle::coreRange() const
 {
     return m_range.get();
 }

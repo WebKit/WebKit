@@ -40,6 +40,12 @@ enum class LineEndingEllipsisPolicy : uint8_t {
     Always
 };
 
+struct ExpansionInfo {
+    size_t opportunityCount { 0 };
+    Vector<size_t> opportunityList;
+    Vector<ExpansionBehavior> behaviorList;
+};
+
 struct InlineItemPosition {
     size_t index { 0 };
     size_t offset { 0 }; // Note that this is offset relative to the start position of the InlineItem.

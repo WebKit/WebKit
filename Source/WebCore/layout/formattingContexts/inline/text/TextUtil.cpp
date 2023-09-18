@@ -584,7 +584,7 @@ bool TextUtil::canUseSimplifiedTextMeasuring(StringView textContent, const Rende
     return true;
 }
 
-void TextUtil::computedExpansions(const Line::RunList& runs, size_t hangingTrailingWhitespaceLength, ExpansionInfo& expansionInfo)
+void TextUtil::computedExpansions(const Line::RunList& runs, WTF::Range<size_t> runRange, size_t hangingTrailingWhitespaceLength, ExpansionInfo& expansionInfo)
 {
     // Collect and distribute the expansion opportunities.
     expansionInfo.opportunityCount = 0;
@@ -603,7 +603,7 @@ void TextUtil::computedExpansions(const Line::RunList& runs, size_t hangingTrail
         }
         return { };
     }();
-    for (size_t runIndex = 0; runIndex < runs.size(); ++runIndex) {
+    for (size_t runIndex = runRange.begin(); runIndex < runRange.end(); ++runIndex) {
         auto& run = runs[runIndex];
         auto expansionBehavior = ExpansionBehavior::defaultBehavior();
         size_t expansionOpportunitiesInRun = 0;

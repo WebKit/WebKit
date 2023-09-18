@@ -111,16 +111,23 @@ void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
     if (spaceToDistribute <= 0)
         return;
 
-    auto expansion = TextUtil::ExpansionInfo { };
-    TextUtil::computedExpansions(m_runs, m_hangingContent.trailingWhitespaceLength(), expansion);
+    auto expansion = ExpansionInfo { };
+    TextUtil::computedExpansions(m_runs, { 0, m_runs.size() }, m_hangingContent.trailingWhitespaceLength(), expansion);
 
     // Anything to distribute?
     if (!expansion.opportunityCount)
         return;
+    applyExpansionOnRange({ 0, m_runs.size() }, expansion, spaceToDistribute);
+}
+
+void Line::applyExpansionOnRange(WTF::Range<size_t> runRange, const ExpansionInfo& expansion, InlineLayoutUnit spaceToDistribute)
+{
+    ASSERT(spaceToDistribute > 0);
+    ASSERT(expansion.opportunityCount);
     // Distribute the extra space.
     auto expansionToDistribute = spaceToDistribute / expansion.opportunityCount;
     auto accumulatedExpansion = InlineLayoutUnit { };
-    for (size_t runIndex = 0; runIndex < m_runs.size(); ++runIndex) {
+    for (auto runIndex = runRange.begin(); runIndex < runRange.end(); ++runIndex) {
         auto& run = m_runs[runIndex];
         // Expand and move runs by the accumulated expansion.
         run.moveHorizontally(accumulatedExpansion);
@@ -131,6 +138,16 @@ void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
     }
     // Content grows as runs expand.
     m_contentLogicalWidth += accumulatedExpansion;
+}
+
+void Line::moveRunsBy(InlineLayoutUnit offset, size_t startRunIndex)
+{
+    if (startRunIndex >= m_runs.size()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    for (auto index = startRunIndex; index < m_runs.size(); ++index)
+        m_runs[index].moveHorizontally(offset);
 }
 
 InlineLayoutUnit Line::handleTrailingTrimmableContent(TrailingContentAction trailingTrimmableContentAction)

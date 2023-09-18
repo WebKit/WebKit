@@ -29,6 +29,7 @@
 #include "InlineItem.h"
 #include "InlineLine.h"
 #include "LayoutUnits.h"
+#include <wtf/Range.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/TextBreakIterator.h>
 
@@ -39,6 +40,7 @@ class TextRun;
 
 namespace Layout {
 
+struct ExpansionInfo;
 class InlineTextBox;
 class InlineTextItem;
 
@@ -96,12 +98,7 @@ public:
 
     static bool canUseSimplifiedTextMeasuring(StringView, const RenderStyle& style, const RenderStyle* firstLineStyle);
 
-    struct ExpansionInfo {
-        size_t opportunityCount { 0 };
-        Vector<size_t> opportunityList;
-        Vector<ExpansionBehavior> behaviorList;
-    };
-    static void computedExpansions(const Line::RunList&, size_t hangingTrailingWhitespaceLength, ExpansionInfo&);
+    static void computedExpansions(const Line::RunList&, WTF::Range<size_t> runRange, size_t hangingTrailingWhitespaceLength, ExpansionInfo&);
 };
 
 } // namespace Layout
