@@ -141,7 +141,7 @@ void SelectionRangeData::clear()
 
 void SelectionRangeData::repaint() const
 {
-    HashSet<RenderBlock*> processedBlocks;
+    HashSet<CheckedPtr<RenderBlock>> processedBlocks;
     RenderObject* end = nullptr;
     if (m_renderRange.end())
         end = rendererAfterOffset(*m_renderRange.end(), m_renderRange.endOffset());

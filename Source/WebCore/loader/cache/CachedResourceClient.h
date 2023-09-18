@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <wtf/CheckedRef.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -33,7 +34,7 @@ namespace WebCore {
 class CachedResource;
 class NetworkLoadMetrics;
 
-class WEBCORE_EXPORT CachedResourceClient : public CanMakeWeakPtr<CachedResourceClient> {
+class WEBCORE_EXPORT CachedResourceClient : public CanMakeWeakPtr<CachedResourceClient>, public CanMakeCheckedPtr {
     WTF_MAKE_NONCOPYABLE(CachedResourceClient);
 public:
     enum CachedResourceClientType {

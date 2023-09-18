@@ -1687,10 +1687,10 @@ static bool layoutOverflowRectContainsAllDescendants(const RenderBox& renderBox)
 
     // If there are any position:fixed inside of us, game over.
     if (auto* viewPositionedObjects = renderBox.view().positionedObjects()) {
-        for (auto* positionedBox : *viewPositionedObjects) {
-            if (positionedBox == &renderBox)
+        for (auto& positionedBox : *viewPositionedObjects) {
+            if (positionedBox.get() == &renderBox)
                 continue;
-            if (positionedBox->isFixedPositioned() && renderBox.element()->contains(positionedBox->element()))
+            if (positionedBox.get()->isFixedPositioned() && renderBox.element()->contains(positionedBox.get()->element()))
                 return false;
         }
     }
@@ -1703,10 +1703,10 @@ static bool layoutOverflowRectContainsAllDescendants(const RenderBox& renderBox)
     // This renderer may have positioned descendants whose containing block is some ancestor.
     if (auto* containingBlock = RenderObject::containingBlockForPositionType(PositionType::Absolute, renderBox)) {
         if (auto* positionedObjects = containingBlock->positionedObjects()) {
-            for (auto* positionedBox : *positionedObjects) {
-                if (positionedBox == &renderBox)
+            for (auto& positionedBox : *positionedObjects) {
+                if (positionedBox.get() == &renderBox)
                     continue;
-                if (renderBox.element()->contains(positionedBox->element()))
+                if (renderBox.element()->contains(positionedBox.get()->element()))
                     return false;
             }
         }

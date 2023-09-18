@@ -111,7 +111,7 @@ RenderObject::SetLayoutNeededForbiddenScope::~SetLayoutNeededForbiddenScope()
 
 #endif
 
-struct SameSizeAsRenderObject : CanMakeWeakPtr<SameSizeAsRenderObject> {
+struct SameSizeAsRenderObject : CanMakeWeakPtr<SameSizeAsRenderObject>, CanMakeCheckedPtr {
     virtual ~SameSizeAsRenderObject() = default; // Allocate vtable pointer.
 #if ASSERT_ENABLED
     WeakHashSet<void*> cachedResourceClientAssociatedResources;
